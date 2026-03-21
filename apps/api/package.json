@@ -1,0 +1,11 @@
+{
+  "name": "@volaura/api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": ".venv/Scripts/uvicorn app.main:app --reload --port 8000",
+    "test": ".venv/Scripts/pytest tests/ -v",
+    "lint": ".venv/Scripts/ruff check app/",
+    "typecheck": "echo 'Python type checking skipped in turbo'"
+  }
+}

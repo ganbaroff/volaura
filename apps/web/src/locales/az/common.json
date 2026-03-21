@@ -1,0 +1,37 @@
+{
+  "landing": {
+    "title": "İstedadını sübut et. AURA-nı qazan.",
+    "subtitle": "Təsdiqlənmiş könüllülər üçün elit platforma. Qiymətləndirmənizi tamamlayın, nişanınızı qazanın və ən yaxşı təşkilatçılarla əlaqə qurun.",
+    "getStarted": "Başla",
+    "forOrganizations": "Təşkilatlar üçün"
+  },
+  "nav": {
+    "dashboard": "İdarə paneli",
+    "profile": "Profil",
+    "assessment": "Qiymətləndirmə",
+    "aura": "AURA Balı",
+    "events": "Tədbirlər",
+    "settings": "Parametrlər"
+  },
+  "auth": {
+    "login": "Daxil ol",
+    "signup": "Qeydiyyat",
+    "logout": "Çıxış",
+    "email": "E-poçt",
+    "password": "Şifrə",
+    "forgotPassword": "Şifrəni unutmusunuz?",
+    "noAccount": "Hesabınız yoxdur?",
+    "hasAccount": "Artıq hesabınız var?"
+  },
+  "common": {
+    "loading": "Yüklənir...",
+    "error": "Xəta baş verdi",
+    "save": "Saxla",
+    "cancel": "Ləğv et",
+    "delete": "Sil",
+    "edit": "Redaktə et",
+    "back": "Geri",
+    "next": "Növbəti",
+    "submit": "Göndər"
+  }
+}

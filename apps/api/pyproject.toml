@@ -1,0 +1,44 @@
+[project]
+name = "volaura-api"
+version = "0.1.0"
+description = "Volaura Backend API — Elite Volunteer Talent Platform"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi[standard]>=0.115.0",
+    "uvicorn[standard]>=0.34.0",
+    "supabase>=2.0.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "python-jose[cryptography]>=3.3.0",
+    "httpx>=0.28.0",
+    "google-genai>=1.0.0",
+    "openai>=1.60.0",
+    "adaptivetesting>=1.1.5",
+    "numpy>=2.0.0",
+    "python-telegram-bot>=21.0",
+    "loguru>=0.7.0",
+    "python-multipart>=0.0.20",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+    "black>=24.0.0",
+    "ruff>=0.8.0",
+]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "N", "UP", "B", "A", "SIM"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

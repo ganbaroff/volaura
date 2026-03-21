@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #6366f1;
+  --color-brand-light: #818cf8;
+  --color-brand-dark: #4f46e5;
+  --color-aura-platinum: #e5e4e2;
+  --color-aura-gold: #ffd700;
+  --color-aura-silver: #c0c0c0;
+  --color-aura-bronze: #cd7f32;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  :root {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.205 0.025 264.532);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.965 0.001 286.375);
+    --secondary-foreground: oklch(0.205 0.025 264.532);
+    --muted: oklch(0.965 0.001 286.375);
+    --muted-foreground: oklch(0.556 0.019 285.938);
+    --accent: oklch(0.965 0.001 286.375);
+    --accent-foreground: oklch(0.205 0.025 264.532);
+    --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: oklch(0.577 0.245 27.325);
+    --border: oklch(0.922 0.004 286.375);
+    --input: oklch(0.922 0.004 286.375);
+    --ring: oklch(0.708 0.165 254.624);
+    --radius: 0.625rem;
+  }
+
+  .dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.145 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.145 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.985 0 0);
+    --primary-foreground: oklch(0.205 0.025 264.532);
+    --secondary: oklch(0.269 0.015 285.938);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0.015 285.938);
+    --muted-foreground: oklch(0.708 0.015 285.938);
+    --accent: oklch(0.269 0.015 285.938);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.396 0.141 25.723);
+    --destructive-foreground: oklch(0.637 0.237 25.331);
+    --border: oklch(0.269 0.015 285.938);
+    --input: oklch(0.269 0.015 285.938);
+    --ring: oklch(0.556 0.165 254.624);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

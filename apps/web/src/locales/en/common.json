@@ -1,0 +1,37 @@
+{
+  "landing": {
+    "title": "Prove Your Talent. Earn Your AURA.",
+    "subtitle": "The elite platform for verified volunteers. Complete your assessment, earn your badge, and connect with top event organizers.",
+    "getStarted": "Get Started",
+    "forOrganizations": "For Organizations"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "assessment": "Assessment",
+    "aura": "AURA Score",
+    "events": "Events",
+    "settings": "Settings"
+  },
+  "auth": {
+    "login": "Log In",
+    "signup": "Sign Up",
+    "logout": "Log Out",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit"
+  }
+}

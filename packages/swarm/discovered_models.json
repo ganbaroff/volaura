@@ -1,0 +1,168 @@
+[
+  {
+    "ok": true,
+    "model": "llama-3.1-8b-instant",
+    "provider": "groq",
+    "ms": 182,
+    "response": {
+      "test_passed": true,
+      "evaluation_time": 0.05,
+      "model_accuracy": 0.98
+    }
+  },
+  {
+    "ok": true,
+    "model": "llama-3.3-70b-versatile",
+    "provider": "groq",
+    "ms": 311,
+    "response": {
+      "status": "ok",
+      "model_works": true,
+      "can_json": true
+    }
+  },
+  {
+    "ok": true,
+    "model": "allam-2-7b",
+    "provider": "groq",
+    "ms": 389,
+    "response": {
+      "status": "ok",
+      "model_works": true,
+      "can_json": true
+    }
+  },
+  {
+    "ok": true,
+    "model": "openai/gpt-oss-120b",
+    "provider": "groq",
+    "ms": 443,
+    "response": {
+      "status": "ok",
+      "model_works": true,
+      "can_json": true
+    }
+  },
+  {
+    "ok": true,
+    "model": "moonshotai/kimi-k2-instruct-0905",
+    "provider": "groq",
+    "ms": 452,
+    "response": {
+      "status": "ok",
+      "model_works": true,
+      "can_json": true
+    }
+  },
+  {
+    "ok": true,
+    "model": "moonshotai/kimi-k2-instruct",
+    "provider": "groq",
+    "ms": 453,
+    "response": {
+      "status": "ok",
+      "model_works": true,
+      "can_json": true
+    }
+  },
+  {
+    "ok": true,
+    "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "provider": "groq",
+    "ms": 465,
+    "response": {
+      "status": "ok",
+      "model_works": true,
+      "can_json": true
+    }
+  },
+  {
+    "ok": true,
+    "model": "groq/compound-mini",
+    "provider": "groq",
+    "ms": 519,
+    "response": {
+      "status": "ok",
+      "model_works": true,
+      "can_json": true
+    }
+  },
+  {
+    "ok": true,
+    "model": "gemini-flash-lite-latest",
+    "provider": "gemini",
+    "ms": 877,
+    "response": {
+      "status": "ok",
+      "model_works": true,
+      "can_json": true
+    }
+  },
+  {
+    "ok": true,
+    "model": "gemini-2.0-flash",
+    "provider": "gemini",
+    "ms": 1035,
+    "response": {
+      "status": "ok",
+      "model_works": true,
+      "can_json": true
+    }
+  },
+  {
+    "ok": true,
+    "model": "gemini-2.5-flash-lite",
+    "provider": "gemini",
+    "ms": 1137,
+    "response": {
+      "status": "ok",
+      "model_works": true,
+      "can_json": true
+    }
+  },
+  {
+    "ok": true,
+    "model": "gemini-3.1-flash-lite-preview",
+    "provider": "gemini",
+    "ms": 1603,
+    "response": {
+      "status": "ok",
+      "model_works": true,
+      "can_json": true
+    }
+  },
+  {
+    "ok": true,
+    "model": "groq/compound",
+    "provider": "groq",
+    "ms": 2361,
+    "response": {
+      "status": "ok",
+      "model_works": true,
+      "can_json": true,
+      "reasoning": "The initial request asked for a simple JSON response to confirm the model can output valid JSON. I responded with the exact JSON object as requested. The user now asks for the answer including the reasoning behind that response. To satisfy both the requirement for a valid JSON format and the request for reasoning, I have included the original fields along with an additional \"reasoning\" field that explains the steps taken: I recognized the request, generated the required JSON, and confirmed that the model is capable of producing valid JSON output."
+    }
+  },
+  {
+    "ok": true,
+    "model": "deepseek-chat",
+    "provider": "deepseek",
+    "ms": 2659,
+    "response": {
+      "status": "ok",
+      "model_works": true,
+      "can_json": true
+    }
+  },
+  {
+    "ok": true,
+    "model": "gemini-2.5-pro",
+    "provider": "gemini",
+    "ms": 2818,
+    "response": {
+      "status": "ok",
+      "model_works": true,
+      "can_json": true
+    }
+  }
+]

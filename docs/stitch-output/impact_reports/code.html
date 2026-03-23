@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="az"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-fixed-dim": "#bdc2ff",
+              "on-secondary": "#131e8c",
+              "on-secondary-container": "#a8afff",
+              "secondary": "#bdc2ff",
+              "primary-container": "#8083ff",
+              "on-secondary-fixed": "#000767",
+              "surface": "#13131b",
+              "tertiary-fixed": "#ffe16d",
+              "on-primary-fixed": "#07006c",
+              "primary-fixed": "#e1e0ff",
+              "outline": "#908fa0",
+              "secondary-container": "#2f3aa3",
+              "primary-fixed-dim": "#c0c1ff",
+              "tertiary-fixed-dim": "#e9c400",
+              "on-tertiary-fixed": "#221b00",
+              "primary": "#c0c1ff",
+              "error": "#ffb4ab",
+              "background": "#13131b",
+              "surface-container-lowest": "#0d0d15",
+              "on-primary": "#1000a9",
+              "inverse-surface": "#e4e1ed",
+              "on-tertiary-container": "#4c3f00",
+              "surface-container-highest": "#34343d",
+              "on-primary-container": "#0d0096",
+              "secondary-fixed": "#e0e0ff",
+              "outline-variant": "#464554",
+              "on-secondary-fixed-variant": "#2f3aa3",
+              "on-tertiary": "#3a3000",
+              "surface-dim": "#13131b",
+              "inverse-on-surface": "#303038",
+              "on-tertiary-fixed-variant": "#544600",
+              "on-primary-fixed-variant": "#2f2ebe",
+              "surface-variant": "#34343d",
+              "surface-tint": "#c0c1ff",
+              "tertiary-container": "#c9a900",
+              "on-error-container": "#ffdad6",
+              "inverse-primary": "#494bd6",
+              "surface-container": "#1f1f27",
+              "surface-bright": "#393841",
+              "on-surface-variant": "#c7c4d7",
+              "on-error": "#690005",
+              "tertiary": "#e9c400",
+              "on-background": "#e4e1ed",
+              "error-container": "#93000a",
+              "surface-container-low": "#1b1b23",
+              "on-surface": "#e4e1ed",
+              "surface-container-high": "#292932"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      body { background-color: #13131b; color: #e4e1ed; font-family: 'Inter', sans-serif; }
+      .headline-font { font-family: 'Plus Jakarta Sans', sans-serif; }
+      .glass-effect { background: rgba(19, 19, 27, 0.7); backdrop-filter: blur(12px); }
+      .aura-glow-gold { filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.3)); }
+      .hide-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#13131b]/70 backdrop-blur-xl shadow-2xl shadow-black/40 flex items-center justify-between px-6 h-16 w-full">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#c0c1ff] cursor-pointer hover:opacity-80 transition-opacity">arrow_back</span>
+<h1 class="font-['Plus_Jakarta_Sans'] font-semibold text-lg text-[#c0c1ff]">Təsir Hesabatı</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-white/60 hover:opacity-80 transition-opacity">more_vert</span>
+</div>
+</nav>
+<main class="pt-20 px-6 max-w-2xl mx-auto space-y-8">
+<!-- Hero Section -->
+<section class="text-center space-y-6 pt-4">
+<div class="relative inline-block">
+<!-- Aura Pulse Effect -->
+<div class="absolute inset-0 bg-[#ffd700]/20 rounded-full blur-3xl animate-pulse"></div>
+<div class="relative w-40 h-40 mx-auto bg-gradient-to-tr from-[#ffd700] to-[#ffec8b] rounded-full p-1 shadow-[0_0_50px_rgba(255,215,0,0.2)]">
+<div class="w-full h-full rounded-full bg-surface-container-low flex items-center justify-center overflow-hidden">
+<img alt="User Profile" class="w-32 h-32" data-alt="Leyla's professional gold tier avatar profile picture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkT04OnKJspVRbIi69TTxp269f0NPKoCEm7yrONA_9M4RAC4kG16q3uCoCFeHjk4jsa2DXcKYI3npdumcQVVFH_c04Nfzm7RIUptu_ztrIbS0YSRGQwQcPtgoHyr4XVgjrBRCbT0qkBdG6TIRVmnWdWSMzzuPHFiu_kMgbInCftZiTITThNaZnX0rdgIPp45QNTvIivXB5W6p9FImdZ9j4nCcTr6cwwwWy8bw7F1GS9_zH8-dOIatGgrpiQILdmXRXqYhWjYdDzmY"/>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-[#ffd700] text-on-tertiary-fixed font-bold px-3 py-1 rounded-full text-xs shadow-lg">GOLD TIER</div>
+</div>
+</div>
+<div class="space-y-2">
+<h2 class="headline-font text-3xl font-bold tracking-tight text-white">Leyla, sizin təsiriniz böyüyür!</h2>
+<p class="text-on-surface-variant text-sm max-w-xs mx-auto">Sizin fəaliyyətiniz 12 təşkilata və 450+ insana birbaşa təsir göstərib.</p>
+</div>
+</section>
+<!-- Core Metrics -->
+<section class="grid grid-cols-3 gap-3">
+<div class="bg-surface-container-low p-4 rounded-xl text-center space-y-1 hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">schedule</span>
+<div class="text-xl font-bold headline-font text-white">86h</div>
+<div class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Cəmi Saat</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl text-center space-y-1 hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">calendar_month</span>
+<div class="text-xl font-bold headline-font text-white">12</div>
+<div class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Tədbirlər</div>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl text-center space-y-1 hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">verified</span>
+<div class="text-xl font-bold headline-font text-white">8</div>
+<div class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Bacarılmış</div>
+</div>
+</section>
+<!-- Growth Visualization (Bento Style) -->
+<section class="bg-surface-container-low rounded-2xl p-6 space-y-6">
+<div class="flex justify-between items-end">
+<div>
+<h3 class="headline-font text-lg font-semibold text-white">AURA İnkişafı</h3>
+<p class="text-xs text-on-surface-variant">Son 6 ayın performansı</p>
+</div>
+<div class="text-right">
+<span class="text-2xl font-bold text-primary">2,480</span>
+<span class="text-[10px] text-tertiary ml-1">↑ 12%</span>
+</div>
+</div>
+<!-- Custom SVG Area Chart -->
+<div class="relative h-40 w-full mt-4">
+<svg class="w-full h-full overflow-visible" viewbox="0 0 400 100">
+<defs>
+<lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#c0c1ff" stop-opacity="0.4"></stop>
+<stop offset="100%" stop-color="#c0c1ff" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,80 Q50,75 100,60 T200,45 T300,30 T400,10 V100 H0 Z" fill="url(#chartGradient)"></path>
+<path d="M0,80 Q50,75 100,60 T200,45 T300,30 T400,10" fill="none" stroke="#c0c1ff" stroke-linecap="round" stroke-width="3"></path>
+<!-- Points -->
+<circle cx="100" cy="60" fill="#c0c1ff" r="4"></circle>
+<circle cx="200" cy="45" fill="#c0c1ff" r="4"></circle>
+<circle cx="300" cy="30" fill="#c0c1ff" r="4"></circle>
+<circle cx="400" cy="10" fill="#ffd700" r="5"></circle>
+</svg>
+<div class="flex justify-between mt-2 text-[10px] text-on-surface-variant font-medium">
+<span>YAN</span>
+<span>FEV</span>
+<span>MAR</span>
+<span>APR</span>
+<span>MAY</span>
+<span>İYN</span>
+</div>
+</div>
+</section>
+<!-- Top Contributions -->
+<section class="space-y-4">
+<h3 class="headline-font text-lg font-semibold text-white px-1">Ən çox töhfə verdikləriniz</h3>
+<div class="space-y-3">
+<!-- Org 1 -->
+<div class="bg-surface-container-low p-4 rounded-xl flex items-center justify-between group hover:bg-surface-container-high transition-all">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center">
+<img alt="Red Cross" class="w-8 h-8 rounded" data-alt="International Red Cross humanitarian organization logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBddKf4D17ZFMJJcf8iyJ26OJzi9Tl5_ruXVUkJz86tbGLqmIZDCkA1tWTOz5wn-eXdhzx8_i91JfAA9Zd-CFr_S4q9_bx5sktfto8PUri8snpng0W-DqLU4u3aOmz1Ohc7D6akCHkD83ekylqntOwfWLV4YA-S9-a6AZxhrG2DJsscJ1i919hjMGxQicokumOD49K1l8DHuVYIrFnJwwav0_bWRE-rZuteaLJC4nNnYQF2MzgSp583yNs6ULh2DJmeEw2LonoznnQ"/>
+</div>
+<div>
+<h4 class="font-semibold text-sm text-white">Qırmızı Aypara</h4>
+<p class="text-xs text-on-surface-variant">32 saat könüllülük</p>
+</div>
+</div>
+<div class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-1 rounded-full">TOP 5%</div>
+</div>
+<!-- Org 2 -->
+<div class="bg-surface-container-low p-4 rounded-xl flex items-center justify-between group hover:bg-surface-container-high transition-all">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center">
+<img alt="UNICEF" class="w-8 h-8 rounded" data-alt="UNICEF child advocacy organization logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDC9JepZsISF02TzEXOBupiLT3tiVFfnmZD-M1Ey0Z3WgBbbMMPv4ZEwJx68cgeKdBMncBEnoALwuZR1BwdnIv2Xpcbb9srgZIaIBcSRlp2Y38I6WHuBsMEVPgX508kOq0Cdom6uuUgPuUTmFcC5g7NQFHc8rJ3Wsly_Hk5yEYNbs-zCbv-CUsbw2XptDXUyRQMzskq56BAX3tPq5bJUW0gKrsWdO4YhgsUbyQqDYBiluY6a6r1Mp1tjhZ3HDUPORJS8ujbxoJ_dkM"/>
+</div>
+<div>
+<h4 class="font-semibold text-sm text-white">UNICEF Azerbaijan</h4>
+<p class="text-xs text-on-surface-variant">24 saat könüllülük</p>
+</div>
+</div>
+<div class="bg-surface-container-highest text-on-surface-variant text-[10px] font-bold px-2 py-1 rounded-full">TOP 10%</div>
+</div>
+<!-- Org 3 -->
+<div class="bg-surface-container-low p-4 rounded-xl flex items-center justify-between group hover:bg-surface-container-high transition-all">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center">
+<img alt="Eco Baku" class="w-8 h-8 rounded" data-alt="Local Eco Baku environmental group logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXTV72gLyInppWvLVfzOZ9ipHIwUbsVxWQek2qX2-pLMWpf9zvGx2l-Uss082LcU8vn4MhLBlMcP-bUdoCq5hHm6PBUVvrHxfClYKxMLGaEpB-zYg1RQuLljvX0hmeQhLxjzzRehkw17KFj-7khtqKdTxk9MAc-fSpFya2nMobWURKckUM8xJocBBlBqvRpae0QxDsAqii-eUA7w1tik5kqLwzVAYXCkhgB6ArRKsNgv2twqC0zuYYudPV17ISBRp0m_925hIn38o"/>
+</div>
+<div>
+<h4 class="font-semibold text-sm text-white">Eco Baku</h4>
+<p class="text-xs text-on-surface-variant">18 saat könüllülük</p>
+</div>
+</div>
+<div class="bg-surface-container-highest text-on-surface-variant text-[10px] font-bold px-2 py-1 rounded-full">ACTIVE</div>
+</div>
+</div>
+</section>
+<!-- Actions -->
+<section class="space-y-3 pt-4">
+<button class="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary-container font-bold py-4 rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-95">
+<span class="material-symbols-outlined text-lg">download</span>
+                Hesabatı yüklə (PDF)
+            </button>
+<button class="w-full bg-surface-container-high text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-surface-container-highest transition-all active:scale-95">
+<span class="material-symbols-outlined text-lg">share</span>
+                Nəticəni paylaş
+            </button>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-[#13131b]/70 backdrop-blur-xl rounded-t-[1.5rem] z-50 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+<div class="flex flex-col items-center justify-center text-white/40 px-4 py-1 hover:text-[#c0c1ff] transition-colors">
+<span class="material-symbols-outlined">home</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Ana Səhifə</span>
+</div>
+<div class="flex flex-col items-center justify-center text-white/40 px-4 py-1 hover:text-[#c0c1ff] transition-colors">
+<span class="material-symbols-outlined">group</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Şəbəkə</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-[#8083ff]/20 text-[#c0c1ff] rounded-2xl px-4 py-1 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Aura</span>
+</div>
+<div class="flex flex-col items-center justify-center text-white/40 px-4 py-1 hover:text-[#c0c1ff] transition-colors">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Profil</span>
+</div>
+</nav>
+</body></html>

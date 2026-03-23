@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="az"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-fixed": "#e0e0ff",
+              "on-primary": "#1000a9",
+              "inverse-on-surface": "#303038",
+              "surface-bright": "#393841",
+              "primary-fixed-dim": "#c0c1ff",
+              "primary-container": "#8083ff",
+              "background": "#13131b",
+              "outline": "#908fa0",
+              "on-secondary-container": "#a8afff",
+              "on-surface-variant": "#c7c4d7",
+              "on-error": "#690005",
+              "error-container": "#93000a",
+              "tertiary": "#e9c400",
+              "surface": "#13131b",
+              "surface-container": "#1f1f27",
+              "surface-container-highest": "#34343d",
+              "on-background": "#e4e1ed",
+              "inverse-surface": "#e4e1ed",
+              "tertiary-container": "#c9a900",
+              "surface-variant": "#34343d",
+              "on-secondary": "#131e8c",
+              "primary-fixed": "#e1e0ff",
+              "on-tertiary-container": "#4c3f00",
+              "surface-tint": "#c0c1ff",
+              "on-error-container": "#ffdad6",
+              "surface-container-lowest": "#0d0d15",
+              "tertiary-fixed-dim": "#e9c400",
+              "surface-dim": "#13131b",
+              "on-secondary-fixed-variant": "#2f3aa3",
+              "secondary-container": "#2f3aa3",
+              "error": "#ffb4ab",
+              "surface-container-low": "#1b1b23",
+              "on-primary-fixed": "#07006c",
+              "on-tertiary-fixed-variant": "#544600",
+              "on-tertiary": "#3a3000",
+              "on-primary-fixed-variant": "#2f2ebe",
+              "surface-container-high": "#292932",
+              "on-tertiary-fixed": "#221b00",
+              "tertiary-fixed": "#ffe16d",
+              "inverse-primary": "#494bd6",
+              "secondary-fixed-dim": "#bdc2ff",
+              "on-surface": "#e4e1ed",
+              "primary": "#c0c1ff",
+              "on-primary-container": "#0d0096",
+              "outline-variant": "#464554",
+              "secondary": "#bdc2ff",
+              "on-secondary-fixed": "#000767"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #13131b;
+            color: #e4e1ed;
+            font-family: 'Inter', sans-serif;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="bg-[#13131b]/70 backdrop-blur-xl text-[#c0c1ff] fixed top-0 w-full z-50 flex items-center justify-between px-6 py-4 w-full">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border border-outline-variant/20">
+<img class="w-full h-full object-cover" data-alt="User profile avatar with glow effect" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYQpQ4TWWLyTKYky9Rj1cFKwZOf9DTPy1RkF9gFbnFNgMMsJybXBvxkqDRmlexZKhMK15JeFv3wBWFG093IYgTf0SbYfkEBoZ_P62HAjA24snR5OSYPRxhcJmfW_ELMyi8SMNvT1pEn8I21AND4tiHSSmzZBiAMs1vAT59ZLC8WqQ-50StyI0liz1fs9oDhGPwuW5WlruFv9i-ixsQNNtwMEy_eiM-HbzDWN9yXWD0yz47PEPHyUireMXtOHl0vZvRgWaIVz3Myzg"/>
+</div>
+<h1 class="font-headline headline-md font-semibold text-indigo-200 tracking-tight">Təşkilatlar</h1>
+</div>
+<button class="material-symbols-outlined text-indigo-200 hover:opacity-80 transition-opacity p-2 bg-surface-container-low rounded-full">search</button>
+</header>
+<main class="pt-24 px-6 space-y-8">
+<!-- Search & Filter Section -->
+<section class="space-y-4">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full bg-surface-container-lowest border-none rounded-xl py-4 pl-12 pr-4 text-body-md focus:ring-2 focus:ring-primary/30 transition-all placeholder:text-outline/50" placeholder="Təşkilat axtar..." type="text"/>
+</div>
+<div class="flex gap-2 overflow-x-auto no-scrollbar -mx-6 px-6">
+<button class="px-5 py-2 rounded-full bg-primary text-on-primary text-label-sm font-semibold whitespace-nowrap">Hamısı</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-low text-on-surface-variant text-label-sm font-medium whitespace-nowrap hover:bg-surface-container-high transition-colors">Ekoloji</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-low text-on-surface-variant text-label-sm font-medium whitespace-nowrap hover:bg-surface-container-high transition-colors">Sosial</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-low text-on-surface-variant text-label-sm font-medium whitespace-nowrap hover:bg-surface-container-high transition-colors">Təhsil</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-low text-on-surface-variant text-label-sm font-medium whitespace-nowrap hover:bg-surface-container-high transition-colors">Texnologiya</button>
+</div>
+</section>
+<!-- Featured Section (Bento Inspired) -->
+<section class="space-y-4">
+<div class="flex items-end justify-between">
+<h2 class="font-headline text-xl font-semibold text-on-background">Seçilmişlər</h2>
+<span class="text-primary text-label-sm font-semibold cursor-pointer">Hamısına bax</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Featured Card 1 -->
+<div class="relative overflow-hidden rounded-2xl aspect-[16/10] group">
+<img class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Modern eco-friendly office space with plants" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfsDGYHGDsoSDlPOuYfrUOXWLyYtEOAar0-AE_zuAHNG_KemxfBAFr-NinZgnRVmKcDwWE9k6RC3rO9n66YuaSOZe7wQVjfdTtZLm4_U3L1sQ6qvJcJNlgR_3ZvT2lkrpJQAeNB-mtZlTMcd6jSuVh5OPAvsc9T50ow97JF5ckIlcF5P3-oPQbmoe9ceqmsEllkQED6kI8qGLgRrKTD5RIHJ-xzgJNYWNFEb3KrV5q189glIzZRp1CaWUn33lfP2MxTq1RCBNA1wU"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-6 w-full">
+<div class="flex items-center gap-2 mb-2">
+<span class="bg-primary/20 backdrop-blur-md text-primary px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase">PLATINUM</span>
+</div>
+<h3 class="font-headline text-lg font-bold text-white leading-tight">Green Horizon Foundation</h3>
+<p class="text-on-surface-variant text-xs mt-1 line-clamp-1">Xəzər sahillərinin təmizlənməsi layihəsi</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Organization List (Vertical Feed) -->
+<section class="space-y-6">
+<h2 class="font-headline text-xl font-semibold text-on-background">Bütün Təşkilatlar</h2>
+<div class="space-y-4">
+<!-- Org Card 1 -->
+<div class="bg-surface-container-low p-5 rounded-2xl flex flex-col gap-4 border border-outline-variant/5 hover:bg-surface-container transition-all">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-xl bg-surface-container-highest flex items-center justify-center p-2">
+<img class="w-full h-full object-contain" data-alt="Minimalist geometric organization logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlMeh8X_OOmAJZO23vSebKB5PmqITLw4yTC9qZMlI3bo839VTIG1HcGrlXFqlZWyvnSsV8haCMGeoHX8r0Fn5V5ICFVuDlJmVi-oAPR-VNuOAvKeUnwk64BUnrQ0oQlLZgZTOdlUX1ckvTWNdBq6N8JnUKNW8HuU7asZHxWrr6OgntPHjUm3d05Tmu0j3TVZ6M7R8sCrLphmHGs2nDo-nNC-LhORanMo1I5JWdzNpUlz7j53vFrZ5UbBzrdoJPR-9mNEMn-RgV5Y4"/>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<h4 class="font-headline font-semibold text-on-background">YARAT Contemporary Art</h4>
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<p class="text-label-sm text-outline">Mədəniyyət və İncəsənət</p>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-6 py-2 border-y border-outline-variant/10">
+<div class="flex flex-col">
+<span class="text-display-lg text-[20px] font-bold text-primary leading-none">120</span>
+<span class="text-[10px] text-outline uppercase tracking-wider mt-1">Könüllü</span>
+</div>
+<div class="flex flex-col">
+<span class="text-display-lg text-[20px] font-bold text-secondary leading-none">3</span>
+<span class="text-[10px] text-outline uppercase tracking-wider mt-1">Aktiv Tədbir</span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 py-3 bg-surface-container-high rounded-xl text-label-sm font-semibold text-on-surface hover:bg-surface-container-highest transition-colors">Profilə bax</button>
+<button class="px-6 py-3 bg-primary-container text-on-primary-container rounded-xl text-label-sm font-bold shadow-lg shadow-primary/10 transition-transform active:scale-95">İzlə</button>
+</div>
+</div>
+<!-- Org Card 2 -->
+<div class="bg-surface-container-low p-5 rounded-2xl flex flex-col gap-4 border border-outline-variant/5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-xl bg-surface-container-highest flex items-center justify-center p-2">
+<img class="w-full h-full object-contain" data-alt="Abstract leaf symbol for environmental org" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBW5WzhSryQy1hmQzGZm_MtxA9AjFk4-mv95MFEeJ4gINQSbWIFqs4a9U28CsShMYGF66WiVAe7HUEQXlRHxb7WlciIAHdR7u-CJC_peNH7pMsFUSdOK5Oqw85HENDuam46f9AcaMeHAIeols5GEFuDyj0AWyLrjBFNbaHaye6SBzMDbDwUIG2iBa9AY1W3Q1La3rFJ0U221jVO2tXS7eyGQbYzcfumcyzFCM8uMJ1MI527WErbOdX4rLiEOPQIUo1RgiXwizHScZg"/>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<h4 class="font-headline font-semibold text-on-background">IDEA Public Union</h4>
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<p class="text-label-sm text-outline">Ətraf mühit</p>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-6 py-2 border-y border-outline-variant/10">
+<div class="flex flex-col">
+<span class="text-display-lg text-[20px] font-bold text-primary leading-none">450+</span>
+<span class="text-[10px] text-outline uppercase tracking-wider mt-1">Könüllü</span>
+</div>
+<div class="flex flex-col">
+<span class="text-display-lg text-[20px] font-bold text-secondary leading-none">12</span>
+<span class="text-[10px] text-outline uppercase tracking-wider mt-1">Aktiv Tədbir</span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 py-3 bg-surface-container-high rounded-xl text-label-sm font-semibold text-on-surface">Profilə bax</button>
+<button class="px-6 py-3 bg-primary-container text-on-primary-container rounded-xl text-label-sm font-bold">İzlə</button>
+</div>
+</div>
+<!-- Skeleton Loading State (Placeholder) -->
+<div class="animate-pulse space-y-4 opacity-40">
+<div class="bg-surface-container-low h-48 rounded-2xl w-full"></div>
+</div>
+</div>
+</section>
+<!-- Empty State -->
+<div class="hidden flex flex-col items-center justify-center py-20 text-center space-y-4">
+<span class="material-symbols-outlined text-6xl text-surface-container-highest">domain_disabled</span>
+<div class="space-y-1">
+<p class="text-on-background font-semibold">Təşkilat tapılmadı</p>
+<p class="text-outline text-sm">Axtarış meyarlarını dəyişməyə çalışın.</p>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 bg-[#13131b]/80 backdrop-blur-lg z-50 rounded-t-3xl shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+<a class="flex flex-col items-center justify-center text-slate-500 py-2 hover:text-indigo-100 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-label text-[10px] font-medium tracking-wide">Ana Səhifə</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#292932] text-[#c0c1ff] rounded-2xl px-5 py-2 scale-105 transition-transform" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">domain</span>
+<span class="font-label text-[10px] font-medium tracking-wide">Təşkilatlar</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 py-2 hover:text-indigo-100 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">military_tech</span>
+<span class="font-label text-[10px] font-medium tracking-wide">Təsir</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 py-2 hover:text-indigo-100 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="font-label text-[10px] font-medium tracking-wide">Profil</span>
+</a>
+</nav>
+</body></html>

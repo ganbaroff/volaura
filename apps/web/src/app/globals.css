@@ -1,94 +1,219 @@
 @import "tailwindcss";
 
+/* ─────────────────────────────────────────────────────────────────────────
+   VOLAURA DESIGN SYSTEM — "The Prestigious Path"
+   Source: Stitch design system (Material 3 dark-first)
+   Do NOT edit token values here. Update STITCH-DESIGN-SYSTEM.md first.
+───────────────────────────────────────────────────────────────────────── */
+
 @theme {
-  --color-brand: #6366f1;
-  --color-brand-light: #818cf8;
-  --color-brand-dark: #4f46e5;
-  --color-aura-platinum: #e5e4e2;
-  --color-aura-gold: #ffd700;
-  --color-aura-silver: #c0c0c0;
-  --color-aura-bronze: #cd7f32;
+  /* ── Surface hierarchy (obsidian glass layers) ── */
+  --color-surface:                    #13131b;
+  --color-surface-dim:                #13131b;
+  --color-surface-bright:             #393841;
+  --color-surface-container-lowest:   #0d0d15;
+  --color-surface-container-low:      #1b1b23;
+  --color-surface-container:          #1f1f27;
+  --color-surface-container-high:     #292932;
+  --color-surface-container-highest:  #34343d;
+  --color-surface-variant:            #34343d;
+  --color-surface-tint:               #c0c1ff;
 
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* ── Primary (Indigo Focus) ── */
+  --color-primary:                    #c0c1ff;
+  --color-primary-container:          #8083ff;
+  --color-primary-fixed:              #e1e0ff;
+  --color-primary-fixed-dim:          #c0c1ff;
+  --color-on-primary:                 #1000a9;
+  --color-on-primary-container:       #0d0096;
+  --color-on-primary-fixed:           #07006c;
+  --color-on-primary-fixed-variant:   #2f2ebe;
+  --color-inverse-primary:            #494bd6;
 
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
+  /* ── Secondary (Aura Glow) ── */
+  --color-secondary:                  #bdc2ff;
+  --color-secondary-container:        #2f3aa3;
+  --color-secondary-fixed:            #e0e0ff;
+  --color-secondary-fixed-dim:        #bdc2ff;
+  --color-on-secondary:               #131e8c;
+  --color-on-secondary-container:     #a8afff;
+  --color-on-secondary-fixed:         #000767;
+  --color-on-secondary-fixed-variant: #2f3aa3;
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  /* ── Tertiary (Gold accent / achievement) ── */
+  --color-tertiary:                   #e9c400;
+  --color-tertiary-container:         #c9a900;
+  --color-tertiary-fixed:             #ffe16d;
+  --color-tertiary-fixed-dim:         #e9c400;
+  --color-on-tertiary:                #3a3000;
+  --color-on-tertiary-container:      #4c3f00;
+  --color-on-tertiary-fixed:          #221b00;
+  --color-on-tertiary-fixed-variant:  #544600;
+
+  /* ── Error ── */
+  --color-error:                      #ffb4ab;
+  --color-error-container:            #93000a;
+  --color-on-error:                   #690005;
+  --color-on-error-container:         #ffdad6;
+
+  /* ── On-colors ── */
+  --color-on-background:              #e4e1ed;
+  --color-on-surface:                 #e4e1ed;
+  --color-on-surface-variant:         #c7c4d7;
+  --color-inverse-surface:            #e4e1ed;
+  --color-inverse-on-surface:         #303038;
+
+  /* ── Outline ── */
+  --color-outline:                    #908fa0;
+  --color-outline-variant:            #464554;
+
+  /* ── AURA tier tokens ── */
+  --color-aura-platinum:              #e5e4e2;
+  --color-aura-gold:                  #ffd700;
+  --color-aura-silver:                #c0c0c0;
+  --color-aura-bronze:                #cd7f32;
+
+  /* ── shadcn/ui semantic aliases (mapped to dark Stitch palette) ── */
+  --color-background:      var(--color-surface);
+  --color-foreground:      var(--color-on-surface);
+  --color-card:            var(--color-surface-container-low);
+  --color-card-foreground: var(--color-on-surface);
+  --color-popover:         var(--color-surface-container);
+  --color-popover-foreground: var(--color-on-surface);
+  --color-muted:           var(--color-surface-container-high);
+  --color-muted-foreground: var(--color-on-surface-variant);
+  --color-accent:          var(--color-surface-container-high);
+  --color-accent-foreground: var(--color-on-surface);
+  --color-destructive:     var(--color-error-container);
+  --color-destructive-foreground: var(--color-on-error-container);
+  --color-border:          var(--color-outline-variant);
+  --color-input:           var(--color-surface-container-high);
+  --color-ring:            var(--color-primary);
+
+  /* ── Typography ── */
+  --font-sans:     "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-headline: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-body:     "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-label:    "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* ── Radius ── */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
 }
 
-@layer base {
-  :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0.025 264.532);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.965 0.001 286.375);
-    --secondary-foreground: oklch(0.205 0.025 264.532);
-    --muted: oklch(0.965 0.001 286.375);
-    --muted-foreground: oklch(0.556 0.019 285.938);
-    --accent: oklch(0.965 0.001 286.375);
-    --accent-foreground: oklch(0.205 0.025 264.532);
-    --destructive: oklch(0.577 0.245 27.325);
-    --destructive-foreground: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0.004 286.375);
-    --input: oklch(0.922 0.004 286.375);
-    --ring: oklch(0.708 0.165 254.624);
-    --radius: 0.625rem;
-  }
-
-  .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.145 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.145 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.985 0 0);
-    --primary-foreground: oklch(0.205 0.025 264.532);
-    --secondary: oklch(0.269 0.015 285.938);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0.015 285.938);
-    --muted-foreground: oklch(0.708 0.015 285.938);
-    --accent: oklch(0.269 0.015 285.938);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.396 0.141 25.723);
-    --destructive-foreground: oklch(0.637 0.237 25.331);
-    --border: oklch(0.269 0.015 285.938);
-    --input: oklch(0.269 0.015 285.938);
-    --ring: oklch(0.556 0.165 254.624);
-  }
-}
-
+/* ─── Base: dark-first (no .dark class needed — Volaura is always dark) ─── */
 @layer base {
   * {
     @apply border-border;
   }
+
+  html {
+    @apply antialiased;
+    color-scheme: dark;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    background-color: #13131b;
+    color: #e4e1ed;
+    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  }
+
+  /* Scrollbar: subtle, matches surface hierarchy */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #13131b;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #464554;
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #908fa0;
+  }
+
+  /* Selection */
+  ::selection {
+    background: rgba(192, 193, 255, 0.2);
+    color: #e4e1ed;
   }
 }
+
+/* ─── Custom utilities ─── */
+@layer utilities {
+  /* Glassmorphism header */
+  .glass-header {
+    background: rgba(19, 19, 27, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Glassmorphism nav */
+  .glass-nav {
+    background: rgba(27, 27, 35, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* AURA tier glow effects */
+  .aura-glow-platinum {
+    box-shadow: 0 0 40px rgba(229, 228, 226, 0.4), 0 0 80px rgba(99, 102, 241, 0.2);
+  }
+  .aura-glow-gold {
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+  }
+  .aura-glow-silver {
+    box-shadow: 0 0 25px rgba(192, 192, 192, 0.2);
+  }
+
+  /* Floating ambient glow blobs */
+  .ambient-glow-primary {
+    background: rgba(192, 193, 255, 0.08);
+    filter: blur(120px);
+    pointer-events: none;
+  }
+  .ambient-glow-secondary {
+    background: rgba(189, 194, 255, 0.05);
+    filter: blur(100px);
+    pointer-events: none;
+  }
+
+  /* Primary gradient button */
+  .btn-primary-gradient {
+    background: linear-gradient(135deg, #c0c1ff 0%, #8083ff 100%);
+    color: #1000a9;
+  }
+  .btn-primary-gradient:hover {
+    background: linear-gradient(135deg, #d0d1ff 0%, #9093ff 100%);
+  }
+
+  /* Podium gradient */
+  .podium-gradient {
+    background: linear-gradient(180deg, rgba(41, 41, 50, 0) 0%, rgba(27, 27, 35, 1) 100%);
+  }
+
+  /* No-line rule: use spacing/surface shifts, not borders */
+  .no-divider > * + * {
+    border-top: none;
+  }
+}
+
+/* ─── Keyframes ─── */
+@keyframes float {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-float             { animation: float 4s ease-in-out infinite; }
+.animate-float-delayed     { animation: float 4s ease-in-out infinite 1s; }
+.animate-float-more-delayed { animation: float 4s ease-in-out infinite 2s; }

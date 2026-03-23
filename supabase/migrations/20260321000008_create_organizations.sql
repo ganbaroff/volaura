@@ -40,7 +40,7 @@ SELECT
     organization_id,
     COUNT(*) AS rating_count,
     CASE WHEN COUNT(*) >= 5
-        THEN ROUND(AVG(rating) * 20, 1)  -- 1-5 → 0-100
+        THEN ROUND((AVG(rating) * 20)::numeric, 1)  -- 1-5 → 0-100
         ELSE NULL                          -- hidden until 5+ ratings
     END AS trust_score
 FROM public.organization_ratings

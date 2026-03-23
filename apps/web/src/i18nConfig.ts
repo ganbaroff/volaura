@@ -1,6 +1,6 @@
 const i18nConfig = {
-  locales: ["en", "az"] as const,
-  defaultLocale: "en" as const,
+  locales: ["az", "en"] as const,
+  defaultLocale: "az" as const,
   prefixDefault: true,
 };
 

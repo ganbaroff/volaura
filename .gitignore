@@ -47,3 +47,10 @@ htmlcov/
 # Misc
 *.log
 .vercel/
+.obsidian/
+_tmp_*
+_stitch_design/
+*.tsconfig.tsbuildinfo
+memory/
+decision-simulation-review.html
+volaura-preview.jsx

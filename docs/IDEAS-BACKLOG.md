@@ -1,0 +1,309 @@
+# Ideas Backlog
+
+## Idea #1: Authenticated Media Format / AI Detection App
+
+**Date:** 2026-03-23
+**Status:** Записано. Разобрать завтра.
+**Priority:** Отдельный проект (не Volaura)
+
+### Концепция (два варианта)
+
+**Вариант A: "JPEG+" — новый формат с защитой от копирования**
+- Фото/видео при создании получает встроенный криптографический код
+- Код запрещает публикацию без разрешения автора
+- При попытке опубликовать — появляется watermark/блокировка, которую нельзя убрать
+- Своё приложение-камера для съёмки в этом формате
+
+**Вариант B: AI Authenticity Detector**
+- Приложение определяет: реальное фото/видео или сгенерировано AI
+- Верификация подлинности медиа-контента
+
+### Мои заметки для завтрашнего разбора
+
+**По варианту A (формат):**
+- Технически ближе к C2PA/Content Credentials (Adobe, Google, Microsoft уже работают над этим — стандарт открытый)
+- Стеганография (невидимый watermark внутри пикселей) — уже существует, но ломается при скриншоте
+- Полная блокировка копирования невозможна на уровне файла (скриншот/запись экрана обходит любой DRM)
+- НО: можно сделать proof of authenticity — "этот файл точно сделан камерой X в момент Y"
+- Конкуренты: Truepic, Serelay, Content Authenticity Initiative (CAI)
+
+**По варианту B (детектор):**
+- Горячий рынок 2025-2026, много стартапов
+- Технологии: forensic analysis, metadata verification, GAN detection models
+- Конкуренты: Hive Moderation, Sensity AI, Optic, Reality Defender
+- Потенциально можно совместить A+B: приложение которое и создаёт verified media, и проверяет чужое
+
+### Вопросы для разбора
+1. Какую конкретную проблему решаем? (авторское право? deepfake? доказательство подлинности?)
+2. Кто целевая аудитория? (журналисты? контент-криейторы? суды? бизнес?)
+3. Standalone продукт или фича внутри Volaura? (например: верификация фото с ивентов)
+4. Бизнес-модель? (B2B SaaS? Consumer app? API?)
+5. Как связать с Volaura? (верификация фото-доказательств участия в ивентах?)
+
+---
+
+## Idea #2: MiroFish Decision Simulator — Human Decision Prediction Engine
+
+**Date:** 2026-03-23
+**Status:** Записано. Разобрать в отдельной сессии (после Volaura Sprint 1).
+**Priority:** Отдельный проект. Потенциально — SaaS продукт.
+
+### Концепция
+
+Переписать MiroFish (swarm intelligence для social media prediction) под **симуляцию принятия решений как это делает человек.** Не multi-agent debate (это мы уже сделали в DSP скилле для Claude), а полноценный prediction engine: "дано N вариантов — какой выберет человек/группа людей и почему?"
+
+### Научная база (проверить при разборе)
+
+Области которые нужно изучить:
+- **Prospect Theory** (Kahneman & Tversky, 1979) — люди не максимизируют utility, они оценивают losses 2x сильнее gains. Это фундамент. Каждый agent в симуляции должен иметь loss_aversion_coefficient.
+- **Bounded Rationality** (Herbert Simon) — люди не рассматривают все варианты, они satisfice (выбирают "достаточно хороший"). Agents должны иметь search_depth_limit.
+- **Social Proof / Herd Behavior** (Cialdini, Banerjee 1992) — решение зависит от того что выбрали другие. influence_weight из MiroFish уже это моделирует.
+- **Cognitive Biases as Parameters** — anchoring_bias, confirmation_bias, status_quo_bias, sunk_cost_fallacy — каждый bias как числовой параметр агента (0.0-1.0).
+- **Monte Carlo Decision Trees** — вместо дерева решений с фиксированными вероятностями, запускаем N симуляций с randomized bias parameters и смотрим distribution of outcomes.
+- **Bayesian Decision Networks** — conditional probabilities: P(выбор A | agent знает X, имеет bias Y, видел что другие выбрали Z).
+- **OASIS framework (CAMEL-AI)** — уже используется в MiroFish, даёт ready-made agent simulation loop.
+
+### Архитектура (черновик)
+
+```
+Input: Decision + Context + Agent Population Parameters
+  ↓
+[Agent Generator] — Создаёт N агентов с:
+  - persona (demographics, profession, values)
+  - cognitive_profile (MBTI, risk_tolerance, loss_aversion, biases[])
+  - social_position (influence_weight, network_centrality)
+  - information_set (что агент знает о вариантах — может быть incomplete)
+  ↓
+[Simulation Runner] — M раундов:
+  Round 1: Independent evaluation (каждый агент оценивает варианты через свои biases)
+  Round 2: Social influence (агенты видят чужие выборы, пересматривают)
+  Round 3: Commitment (финальный выбор с confidence score)
+  ↓
+[Outcome Aggregator]:
+  - Distribution: "65% выберут A, 25% B, 10% C"
+  - Confidence intervals
+  - Key factors: "loss_aversion drove 40% of A-choosers"
+  - Tipping points: "if information X is revealed, B jumps to 50%"
+  ↓
+[Report Generator] — ReACT pattern (plan → analyze → reflect)
+```
+
+### Use Cases (кому продавать)
+
+1. **Product teams**: "Какой из 3 вариантов онбординга выберут наши юзеры?" — вместо A/B теста за 2 недели, получи prediction за 5 минут
+2. **Policy makers**: "Если повысить тариф на 10%, какой % юзеров уйдёт?" — behavioral economics simulation
+3. **Marketing**: "Какое из 5 рекламных сообщений вызовет больший отклик у аудитории X?"
+4. **HR/Recruiting**: "Какой кандидат из 3 финалистов будет лучше работать в нашей команде?" — personality simulation
+5. **Volaura integration**: "Какой волонтёр из 10 кандидатов лучше подойдёт для этого ивента?" — AURA scores + personality simulation
+
+### Отличие от обычного LLM
+
+LLM (Claude/GPT) при вопросе "что выберут люди?" отвечает на основе training data. Этот движок:
+- Запускает **N независимых агентов** с разными cognitive profiles
+- Каждый агент проходит **decision pipeline** с calibrated biases
+- Результат — **статистическое распределение**, а не один ответ
+- Можно менять параметры и смотреть **sensitivity analysis**: "что если увеличить risk_tolerance с 0.3 до 0.7?"
+
+### Конкуренты / Аналоги
+
+- MiroFish (мы на нём базируемся, но он для social media, не decisions)
+- Anthropic Constitutional AI (другой домен — alignment, не prediction)
+- Replica (personality AI, но для чатботов, не для decision simulation)
+- Decision Intelligence tools (Google, Diwo) — enterprise, дорого, не agent-based
+
+### Вопросы для разбора
+1. Насколько точны agent-based decision predictions vs реальные A/B тесты? (есть ли исследования?)
+2. Calibration: как откалибровать cognitive parameters чтобы симуляция была реалистичной?
+3. Нужен ли собственный LLM или хватит Gemini/Claude как движка для agents?
+4. MVP: какой минимальный use case можно показать за 1-2 недели?
+5. Как валидировать? Нужен dataset "вот решение, вот что люди выбрали" для backtesting.
+
+### Связь с текущим DSP скиллом
+
+DSP скилл (который мы уже написали) — это **simplified version** для internal use. Decision Simulator — это **полная версия** для external product. DSP = 5 fixed personas debating. Simulator = N configurable agents with cognitive biases making probabilistic predictions.
+
+Эволюция: DSP skill → Decision Simulator MVP → SaaS product.
+
+---
+
+## Idea #3: Agent OS — Self-Improving AI Operating System (Open Source Framework)
+
+**Date:** 2026-03-23
+**Status:** Записано. Потенциально — open source + Anthropic attention.
+**Priority:** Publish after Volaura launch. Build portfolio piece NOW.
+
+### Концепция
+
+То что мы построили для Volaura — это general-purpose framework. Вынести в отдельный пакет:
+- **Operating Algorithm** — mandatory phases (Context Recovery → Scope Lock → DSP → Skills → Delegation → Execute → Retrospective → Calibration)
+- **DSP (Decision Simulation Protocol)** — configurable council personas, confidence gates, multi-round debate
+- **Persistent Memory System** — working-style.md, mistakes.md, patterns.md, deadlines.md
+- **Self-Improvement Protocol** — persona weight evolution, algorithm self-modification, calibration feedback loops
+- **Multi-Model Verification** — external model as adversarial checker
+- **Copilot Protocol** — proactive thinking, direct communication, efficiency gate
+
+### Что делает это уникальным (vs конкуренты)
+
+| Feature | LangChain | CrewAI | AutoGPT | Agent OS (ours) |
+|---------|-----------|--------|---------|-----------------|
+| Persistent memory | Code-based MemoryStore | No | Vector DB | Human-readable markdown |
+| Decision simulation | No | Multi-agent (code) | No | Prompt-based DSP |
+| Self-improvement | No | No | No | **YES — feedback loops** |
+| Confidence gates | No | No | No | **YES — ≥35/50 gate** |
+| Council evolution | No | Static agents | No | **YES — weight adjustment** |
+| Zero-code setup | No (Python) | No (Python) | No (Python) | **YES — just markdown files** |
+
+### Ключевое отличие
+
+Все существующие frameworks — для разработчиков (Python SDK). Agent OS — для людей. Настройка через markdown файлы, не через код. Любой может форкнуть, отредактировать CLAUDE.md, и получить self-improving AI partner.
+
+### Action Items
+1. Publish CLAUDE.md + DSP SKILL.md + memory/ as GitHub repo
+2. Write LinkedIn post with before/after: "Sprint 1 without Agent OS vs Sprint 2 with it"
+3. Tag @AnthropicAI, @AmandaAskell, @AlexAlbert
+4. Submit to Anthropic careers with link to repo as portfolio
+
+### Связь с Volaura
+Volaura — proof of concept. "Built with Agent OS" — в footer/about page.
+
+---
+
+## Idea #4: AI Post Assistant — платная фича Volaura
+
+**Date:** 2026-03-23
+**Status:** Записано. Интегрировать после MVP launch.
+**Priority:** Post-launch monetization feature.
+
+### Концепция
+
+Волонтёр хочет опубликовать пост о своём участии в ивенте (LinkedIn, Instagram, Facebook).
+Volaura помогает:
+1. Загрузи фото → AI генерирует подпись, хештеги, оптимальный формат для платформы
+2. MiroFish-lite прогоняет пост через симуляцию: "как отреагирует аудитория?"
+3. Предлагает 3 варианта (professional, casual, storytelling)
+4. One-click публикация через API соцсетей (или copy-paste)
+
+### Монетизация
+- Free tier: 3 поста/месяц, базовые хештеги
+- Pro ($5/mo): безлимитные посты, MiroFish simulation, multi-platform optimization
+- Org tier ($20/mo): бренд-гайдлайны, шаблоны для всех волонтёров организации
+
+### Связь с Volaura
+- Волонтёры постят → социальное доказательство → больше волонтёров приходят
+- Каждый пост = бесплатная реклама Volaura (watermark/mention в free tier)
+- Orgs хотят чтобы их волонтёры постили — org tier продаётся легко
+
+### Техническая реализация
+- Gemini 2.5 Flash для генерации текста (бесплатно)
+- DSP Quick Mode для симуляции (3 персоны, 1 раунд)
+- LinkedIn/Instagram API для публикации
+- ~2-3 дня разработки после MVP
+
+---
+
+## Idea #5: Expert Verification by Link (DSP: HIGH — реализовать в Session 9)
+
+**Откуда:** Юсиф, Session 6 стратегический разбор
+**DSP Winner:** Path C, Score 42/50
+**Суть:** Организация/эксперт получает ссылку → открывает красивый геймифицированный интерфейс → свайпает 4-6 карточек с компетенциями (не форма!) → оценка добавляется к AURA Score с весом ×1.5 поверх AI-оценки. JWT-link, expiry 7 дней.
+
+**UX принцип (от Юсифа):** НЕ мучать HR формами. Верификация должна быть такой приятной, что HR сам хочет открыть ссылку. Никаких 20 полей. Тиндер-стиль: карточка компетенции → свайп/тап от 1 до 5 → следующая → готово за 30 секунд.
+
+**Gamification верификатора:**
+- Прогресс-бар "4 из 6 компетенций оценено" с микро-анимацией на каждый свайп
+- Confetti/pulse при завершении всех карточек
+- "Спасибо! Вы подтвердили 3 навыка Лейлы." → share-prompt: "Поделитесь результатом?"
+- Badge верификатора на профиле организации: "Verified 15 volunteers" — статусный элемент
+- Leaderboard организаций: "Top Verifiers" — создаёт соревнование между org-ами
+
+**Поток (30 секунд для верификатора):**
+1. Получил ссылку в WhatsApp/email → тап
+2. Видит фото волонтёра + имя + "Оцените навыки за 30 секунд"
+3. Карточка 1: "Коммуникация" → слайдер 1-5 с emoji (😕→😊→🔥) → тап
+4. Карточка 2: "Надёжность" → то же самое
+5. ... 4-6 карточек (не больше!)
+6. Опциональное текстовое поле: "Хотите добавить что-то?" (1 поле, не 5)
+7. Confetti → "Готово! Оценка добавлена к AURA Score Лейлы."
+8. Кнопки: "Оценить ещё кого-то" / "Узнать больше о Volaura"
+
+**Почему это сильно:**
+- Убивает главную слабость AI-only: "AI сказал что я крутой" → "WEF Azerbaijan подтвердил мои навыки"
+- Создаёт B2B воронку: организации заходят как верификаторы → потом платят за поиск волонтёров
+- Вирально: организации сами рассылают ссылки своим лучшим волонтёрам
+- 30 секунд — ноль трения для HR, они даже в такси это сделают
+
+**Конкуренты:** Reputr.me — peer testimonials в свободной форме, нет AI, нет структуры. LinkedIn endorsements — клик без веса. Volaura = структура + AI + org authority + gamification.
+
+**Security mitigations (из Attacker персоны):**
+- Эксперт верифицируется через org email domain
+- max_verifications_per_expert = 5/week
+- JWT-link: stateless, expiry=7d, one-use
+- Ручная модерация первых 20 экспертов (Юсиф)
+
+**QA edge cases:** expired token → 410, wrong volunteer redirect, duplicate verification prevention
+
+**Реализация:** ~1 сессия | Backend: 2 эндпоинта + verification_records таблица | Frontend: gamified verification page (public, no auth для эксперта, swipeable cards + confetti)
+
+---
+
+## Idea #6: Swarm Intelligence Engine — Self-Improving Operational System
+
+**Date:** 2026-03-23
+**Status:** DSP v4.0 (10 agents) — в работе. Full Swarm Engine — после Volaura MVP.
+**Priority:** Модуль внутри Volaura + отдельный reusable package
+
+### Концепция
+
+Вместо одной модели, спорящей с собой (псевдо-DSP), использовать **десятки/сотни независимых агентов** (haiku, $0.001/агент) для:
+
+1. **Принятия решений** — 50+ агентов вместо 6 персон, каждый независим
+2. **Улучшения процессов** — 100 агентов анализируют CLAUDE.md и предлагают мутации
+3. **Калибровки оценок** — 50 агентов-оценщиков вместо одного Gemini вызова
+4. **Prediction market** — 200+ агентов голосуют за варианты с confidence-weighted aggregation
+
+### 5 модулей внутри Volaura
+
+| Модуль | Агенты | Задача | Стоимость |
+|--------|--------|--------|-----------|
+| Sprint Scope Swarm | 50 | "Что делать следующим?" — консенсус | $0.05 |
+| Pre-Mortem Swarm | 30 | "Как этот спринт провалится?" — 30 failure modes | $0.03 |
+| AURA Calibration Swarm | 50 | Мульти-оценщик вместо одного Gemini | $0.05 |
+| Anti-Gaming Swarm | 20 | 20 специализированных детекторов | $0.02 |
+| Algorithm Evolution Swarm | 100 | CLAUDE.md улучшает себя | $0.10 |
+
+### Reusable Swarm Engine API
+
+```python
+class SwarmEngine:
+    async def evaluate(task, agent_count=50, personas=None, aggregation="cluster") -> SwarmResult
+    async def evolve(artifact, generations=3, population=100, fitness_fn=...) -> str
+    async def predict(question, agent_count=200, stake_weighted=True) -> Prediction
+```
+
+### Масштабирование
+
+| Уровень | Агенты | Механизм | Стоимость |
+|---------|--------|----------|-----------|
+| Level 1 | 10 | Agent tool параллельно | $0.01 |
+| Level 2 | 100-200 | Agent tool волнами (20×N) | $0.20 |
+| Level 3 | 1000+ | Anthropic Batch API | $1-3 |
+| Level 4 | 10,000+ | Batch API + async orchestrator | $10-30 |
+
+### Связь с MiroFish (Idea #2)
+
+MiroFish = prediction engine для human decisions (cognitive biases, social proof).
+Swarm Engine = operational intelligence для AI project management.
+Общий фундамент: independent parallel agents + weighted aggregation + divergence detection.
+Эволюция: DSP v3.2 → DSP v4.0 (10 agents) → Swarm Engine → MiroFish Full → Prediction Market SaaS.
+
+### Operation System v4.0 (session lifecycle)
+
+```
+SESSION START
+  ├── Context Recovery Swarm (20 agents, 30 sec)
+  ├── Sprint Scope Swarm (50 agents, 1 min)
+  ├── Pre-Mortem Swarm (30 agents, 1 min)
+  ├── EXECUTE (code)
+  ├── Alignment Check (every 3 sessions) — drift detection
+  └── Algorithm Evolution (every 5 sessions) — CLAUDE.md self-improvement
+```

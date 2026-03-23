@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="az"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-container": "#8083ff",
+              "on-tertiary": "#3a3000",
+              "error-container": "#93000a",
+              "on-error": "#690005",
+              "on-surface": "#e4e1ed",
+              "on-tertiary-container": "#4c3f00",
+              "secondary-container": "#2f3aa3",
+              "inverse-on-surface": "#303038",
+              "tertiary-fixed": "#ffe16d",
+              "primary": "#c0c1ff",
+              "tertiary-container": "#c9a900",
+              "surface-tint": "#c0c1ff",
+              "on-tertiary-fixed": "#221b00",
+              "on-primary": "#1000a9",
+              "primary-fixed": "#e1e0ff",
+              "on-surface-variant": "#c7c4d7",
+              "primary-fixed-dim": "#c0c1ff",
+              "on-secondary-container": "#a8afff",
+              "surface-variant": "#34343d",
+              "surface-container-high": "#292932",
+              "surface-bright": "#393841",
+              "outline": "#908fa0",
+              "background": "#13131b",
+              "surface-dim": "#13131b",
+              "on-tertiary-fixed-variant": "#544600",
+              "tertiary": "#e9c400",
+              "inverse-surface": "#e4e1ed",
+              "inverse-primary": "#494bd6",
+              "on-primary-container": "#0d0096",
+              "surface": "#13131b",
+              "secondary-fixed-dim": "#bdc2ff",
+              "on-primary-fixed-variant": "#2f2ebe",
+              "secondary": "#bdc2ff",
+              "on-primary-fixed": "#07006c",
+              "surface-container-low": "#1b1b23",
+              "tertiary-fixed-dim": "#e9c400",
+              "surface-container-lowest": "#0d0d15",
+              "surface-container": "#1f1f27",
+              "on-secondary-fixed": "#000767",
+              "error": "#ffb4ab",
+              "surface-container-highest": "#34343d",
+              "on-error-container": "#ffdad6",
+              "on-background": "#e4e1ed",
+              "outline-variant": "#464554",
+              "secondary-fixed": "#e0e0ff",
+              "on-secondary": "#131e8c",
+              "on-secondary-fixed-variant": "#2f3aa3"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .aura-glow {
+            box-shadow: 0 0 20px rgba(192, 193, 255, 0.1);
+        }
+        .platinum-aura {
+            background: radial-gradient(circle at center, rgba(229, 228, 226, 0.15) 0%, transparent 70%);
+        }
+        .gold-aura {
+            background: radial-gradient(circle at center, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-container/30">
+<!-- Top Navigation Anchor -->
+<header class="fixed top-0 w-full z-50 bg-[#13131b]/70 backdrop-blur-xl flex items-center justify-between px-6 py-4 w-full">
+<div class="flex items-center gap-4">
+<button class="text-[#c0c1ff] hover:bg-[#1b1b23] transition-colors p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">close</span>
+</button>
+<h1 class="plus-jakarta-sans font-semibold headline-md text-[#c0c1ff]">İşə Qəbul və Dəvətlər</h1>
+</div>
+<button class="text-[#c0c1ff] font-medium px-4 py-2 hover:bg-[#1b1b23] transition-colors rounded-xl">
+            Draft
+        </button>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-5xl mx-auto">
+<!-- Progress Indicator -->
+<div class="mb-12">
+<div class="flex justify-between items-end mb-3">
+<span class="font-headline font-bold text-display-lg leading-none tracking-tighter text-primary">66%</span>
+<span class="text-label-sm uppercase tracking-widest text-outline">Mərhələ 2/3</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full w-2/3 bg-gradient-to-r from-primary to-primary-container rounded-full"></div>
+</div>
+</div>
+<!-- Filters Section (Asymmetric Bento Style) -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-10">
+<div class="md:col-span-8 bg-surface-container-low p-6 rounded-xl aura-glow">
+<h3 class="text-title-md font-semibold mb-4 text-primary">Bacarıqlar üzrə axtarış</h3>
+<div class="flex flex-wrap gap-2">
+<span class="bg-surface-container-high px-4 py-2 rounded-full text-body-md border border-primary/10 flex items-center gap-2">
+                        Marketinq <span class="material-symbols-outlined text-sm">close</span>
+</span>
+<span class="bg-surface-container-high px-4 py-2 rounded-full text-body-md border border-primary/10 flex items-center gap-2">
+                        Tədbir Menecmenti <span class="material-symbols-outlined text-sm">close</span>
+</span>
+<button class="bg-primary/10 text-primary px-4 py-2 rounded-full text-body-md border border-primary/20 hover:bg-primary/20 transition-all">
+                        + Bacarıq əlavə et
+                    </button>
+</div>
+</div>
+<div class="md:col-span-4 bg-surface-container-low p-6 rounded-xl aura-glow">
+<h3 class="text-title-md font-semibold mb-4 text-primary">Tier Seçimi</h3>
+<div class="flex flex-col gap-3">
+<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="w-5 h-5 rounded border-2 border-primary/30 group-hover:border-primary flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-xs text-primary font-bold">check</span>
+</div>
+<span class="text-body-md text-[#e5e4e2] font-semibold">Platinum Talent</span>
+</label>
+<label class="flex items-center gap-3 p-2 rounded-lg hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="w-5 h-5 rounded border-2 border-primary/30 group-hover:border-primary flex items-center justify-center transition-all">
+<span class="material-symbols-outlined text-xs text-primary font-bold">check</span>
+</div>
+<span class="text-body-md text-[#ffd700] font-semibold">Gold Talent</span>
+</label>
+</div>
+</div>
+</section>
+<!-- Elite Talent List -->
+<div class="space-y-4">
+<div class="flex items-center justify-between mb-6">
+<h2 class="font-headline font-bold headline-md">Elite Talentlər</h2>
+<span class="text-label-sm text-outline">124 nəticə tapıldı</span>
+</div>
+<!-- Talent Card 1 (Platinum) -->
+<div class="relative group">
+<div class="absolute inset-0 platinum-aura opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
+<div class="relative bg-surface-container-low p-5 rounded-xl flex items-center gap-6 border border-white/5 group-hover:border-primary/20 transition-all">
+<div class="relative">
+<img alt="Profile" class="w-20 h-20 rounded-xl object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="Professional male portrait in a dark studio" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBB9z3LvyCN3s3FJ4ZeqBinV4HRLfJFZlqAMMS8nOfHGJ8W7i4xBU84vGkr1HtN_aFvNVW8lbY1pjl3evZNNO4wXIgp8rxICv3vH5aIpVWiIckY6a-mzF3U7l-BAWsif4330wJXyB19yUv4CxA5KhmIc5Hn9qvyMf8bYRJOTNRSozvWGYrbIgRnO-qTQHA--d2TrYOBPXL6_G6wpMKMLlV0FSedJO8E_GF2NpFIEPTitneIrpX2cSESqheZr87pKLa_N3oh_3C70uU"/>
+<div class="absolute -bottom-2 -right-2 bg-[#e5e4e2] text-[#13131b] text-[10px] font-black px-2 py-0.5 rounded shadow-xl uppercase tracking-tighter">Platinum</div>
+</div>
+<div class="flex-1">
+<div class="flex items-baseline gap-2 mb-1">
+<h4 class="text-title-md font-bold text-on-surface">Elnur Məmmədov</h4>
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<p class="text-body-md text-outline mb-3">Senior Brand Strategist • 8 illik təcrübə</p>
+<div class="flex gap-4">
+<div class="flex flex-col">
+<span class="text-label-sm text-outline uppercase tracking-widest">AURA Score</span>
+<span class="font-headline font-bold text-primary tracking-tight">984</span>
+</div>
+<div class="flex flex-col">
+<span class="text-label-sm text-outline uppercase tracking-widest">Tədbirlər</span>
+<span class="font-headline font-bold text-on-surface tracking-tight">42</span>
+</div>
+</div>
+</div>
+<button class="bg-gradient-to-r from-primary to-primary-container text-on-primary-container font-semibold px-6 py-3 rounded-xl hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/10">
+                        Dəvət et
+                    </button>
+</div>
+</div>
+<!-- Talent Card 2 (Gold) -->
+<div class="relative group">
+<div class="absolute inset-0 gold-aura opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
+<div class="relative bg-surface-container-low p-5 rounded-xl flex items-center gap-6 border border-white/5 group-hover:border-primary/20 transition-all">
+<div class="relative">
+<img alt="Profile" class="w-20 h-20 rounded-xl object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="Smiling professional woman in creative office" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcuv57Ve2xL79oNJooeSx5Zm_UYs9KCRA6Eby3T1pF1P-ca1YnPxAmKfpLp6GEj8KTqlPfSCZqTgB1kQww4leWzy0nNX0TGsG5x3OVfM0ltB7ZQj--nKSKMMyplA5zi-5LNJPXf9kmlMVdS754-Nj1nWDDzJIuC1taA0cpPMe9BD6__QVFLZL4yLDExQsvB4Cxpernwg-xPHUCI2DqIFlBUQCFMHGsWJ0V3x34668yfZOhhk-Nzfj8N3c9PZsCWpk9Z8W5qDm5wTY"/>
+<div class="absolute -bottom-2 -right-2 bg-[#ffd700] text-[#13131b] text-[10px] font-black px-2 py-0.5 rounded shadow-xl uppercase tracking-tighter">Gold</div>
+</div>
+<div class="flex-1">
+<div class="flex items-baseline gap-2 mb-1">
+<h4 class="text-title-md font-bold text-on-surface">Leyla Əliyeva</h4>
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<p class="text-body-md text-outline mb-3">Event Operations Specialist • 5 illik təcrübə</p>
+<div class="flex gap-4">
+<div class="flex flex-col">
+<span class="text-label-sm text-outline uppercase tracking-widest">AURA Score</span>
+<span class="font-headline font-bold text-primary tracking-tight">856</span>
+</div>
+<div class="flex flex-col">
+<span class="text-label-sm text-outline uppercase tracking-widest">Tədbirlər</span>
+<span class="font-headline font-bold text-on-surface tracking-tight">28</span>
+</div>
+</div>
+</div>
+<button class="bg-surface-container-high text-primary font-semibold px-6 py-3 rounded-xl hover:bg-primary/10 hover:scale-105 active:scale-95 transition-all border border-primary/20">
+                        Dəvət et
+                    </button>
+</div>
+</div>
+<!-- Talent Card 3 (Platinum) -->
+<div class="relative group">
+<div class="absolute inset-0 platinum-aura opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
+<div class="relative bg-surface-container-low p-5 rounded-xl flex items-center gap-6 border border-white/5 group-hover:border-primary/20 transition-all">
+<div class="relative">
+<img alt="Profile" class="w-20 h-20 rounded-xl object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="Confident young professional male in suit" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGM39t-LDTjhKXEI_vz1Zg2UVcGM5jbxz11086K957RofwSQKbOZztWB-UE7n6sMTxVZlW1uyFwK2r6geYqphWr6mObYFeJ2VSWThBQND7gUlzZTBmn9VO0oKPxbDOqWmKLS-FmVNSYlrlaUdxdWO4e-BBtks0bCUvktPdaREWEoDXV4jORSjPJMYBEx3hTnzFLw9IbYaX3_kKxEuc0ia0xUJQLs9oaDTr5uUujfdsrytdKwPPKEfYHvU5fbzpqWK8yle70CFG0u8"/>
+<div class="absolute -bottom-2 -right-2 bg-[#e5e4e2] text-[#13131b] text-[10px] font-black px-2 py-0.5 rounded shadow-xl uppercase tracking-tighter">Platinum</div>
+</div>
+<div class="flex-1">
+<div class="flex items-baseline gap-2 mb-1">
+<h4 class="text-title-md font-bold text-on-surface">Zaur Qasımov</h4>
+</div>
+<p class="text-body-md text-outline mb-3">Creative Director • 12 illik təcrübə</p>
+<div class="flex gap-4">
+<div class="flex flex-col">
+<span class="text-label-sm text-outline uppercase tracking-widest">AURA Score</span>
+<span class="font-headline font-bold text-primary tracking-tight">1,120</span>
+</div>
+<div class="flex flex-col">
+<span class="text-label-sm text-outline uppercase tracking-widest">Tədbirlər</span>
+<span class="font-headline font-bold text-on-surface tracking-tight">67</span>
+</div>
+</div>
+</div>
+<button class="bg-gradient-to-r from-primary to-primary-container text-on-primary-container font-semibold px-6 py-3 rounded-xl hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/10">
+                        Dəvət et
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- Fixed Bottom Actions -->
+<div class="fixed bottom-0 left-0 w-full bg-[#13131b]/90 backdrop-blur-md border-t border-white/5 px-6 py-5 flex items-center justify-between z-50">
+<div class="flex flex-col">
+<span class="text-label-sm text-outline">Seçilmiş Talentlər</span>
+<span class="text-title-md font-bold text-on-surface">0 nəfər</span>
+</div>
+<div class="flex gap-3">
+<button class="bg-surface-container-high text-on-surface font-semibold px-8 py-3 rounded-xl hover:bg-surface-variant transition-all active:scale-95">
+                Geri
+            </button>
+<button class="bg-gradient-to-r from-primary to-primary-container text-on-primary-container font-bold px-12 py-3 rounded-xl hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/20">
+                Növbəti
+            </button>
+</div>
+</div>
+<!-- Background Decoration -->
+<div class="fixed top-0 right-0 -z-10 w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full pointer-events-none"></div>
+<div class="fixed bottom-0 left-0 -z-10 w-[400px] h-[400px] bg-secondary/5 blur-[100px] rounded-full pointer-events-none"></div>
+</body></html>

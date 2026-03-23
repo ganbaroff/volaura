@@ -1,12 +1,17 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "@/app/globals.css";
 import i18nConfig from "@/i18nConfig";
 import initTranslations from "@/app/i18n";
 import TranslationsProvider from "@/components/translations-provider";
 import { QueryProvider } from "@/components/query-provider";
 
-const inter = Inter({ subsets: ["latin", "latin-ext"] });
+const inter = Inter({ subsets: ["latin", "latin-ext"], variable: "--font-inter" });
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-plus-jakarta-sans",
+});
 
 export const metadata: Metadata = {
   title: "Volaura — Elite Volunteer Talent Platform",
@@ -29,12 +34,12 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
   const { resources } = await initTranslations(locale, ["common"]);
 
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <body className={inter.className}>
+    <html lang={locale} className="dark" suppressHydrationWarning>
+      <body className={`${inter.variable} ${plusJakartaSans.variable} font-sans`}>
         <TranslationsProvider
           locale={locale}
           namespaces={["common"]}
-          resources={resources}
+          resources={resources as import("i18next").Resource}
         >
           <QueryProvider>{children}</QueryProvider>
         </TranslationsProvider>

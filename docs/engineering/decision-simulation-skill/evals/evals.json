@@ -1,0 +1,23 @@
+{
+  "skill_name": "decision-simulation",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We need to decide how to implement real-time AURA score updates. Option 1: recalculate on every answer submission. Option 2: batch recalculate every 5 minutes via pg_cron. Option 3: hybrid — update individual competency on submit, recalculate total on a schedule. Which approach should we use for the Volaura assessment engine?",
+      "expected_output": "A full DSP simulation with 4-5 agents debating the three paths, weighted scores, and a clear winner with reasoning. Should identify real trade-offs (latency vs compute cost vs consistency).",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Should we store volunteer profile photos in Supabase Storage (free tier, 1GB limit) or use Cloudflare R2 (free 10GB, separate service)? We expect 5-10K volunteers in year one, each with ~200KB profile photo.",
+      "expected_output": "A DSP Quick simulation (medium stakes, straightforward storage decision) with concise scoring. Should do the math on storage needs (~2GB for 10K users) and flag that Supabase free tier won't be enough.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Critical security decision: our assessment system sends the correct answer options to the frontend and validates client-side. We found this in the security audit. How should we fix it? We could: A) move all validation to backend (more API calls), B) send encrypted answers and decrypt server-side on submit, C) use a session-based token system where the backend tracks which question was served and validates against its own state.",
+      "expected_output": "A full DSP simulation (HIGH stakes security decision). Attacker agent MUST find real vulnerabilities in each approach. Should strongly favor option C as the most secure, with option A as fallback. The encrypted approach (B) should be attacked as security-through-obscurity.",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="az"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AURA Assessment - Volaura</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "outline-variant": "#464554",
+                        "on-background": "#e4e1ed",
+                        "on-secondary-fixed-variant": "#2f3aa3",
+                        "on-secondary": "#131e8c",
+                        "secondary-fixed": "#e0e0ff",
+                        "tertiary-fixed-dim": "#e9c400",
+                        "surface-container-low": "#1b1b23",
+                        "surface-container-highest": "#34343d",
+                        "on-error-container": "#ffdad6",
+                        "error": "#ffb4ab",
+                        "surface-container-lowest": "#0d0d15",
+                        "surface-container": "#1f1f27",
+                        "on-secondary-fixed": "#000767",
+                        "on-primary-container": "#0d0096",
+                        "inverse-surface": "#e4e1ed",
+                        "inverse-primary": "#494bd6",
+                        "tertiary": "#e9c400",
+                        "secondary": "#bdc2ff",
+                        "on-primary-fixed": "#07006c",
+                        "surface": "#13131b",
+                        "secondary-fixed-dim": "#bdc2ff",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "surface-variant": "#34343d",
+                        "surface-container-high": "#292932",
+                        "surface-bright": "#393841",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "on-secondary-container": "#a8afff",
+                        "on-surface-variant": "#c7c4d7",
+                        "on-tertiary-fixed-variant": "#544600",
+                        "surface-dim": "#13131b",
+                        "outline": "#908fa0",
+                        "background": "#13131b",
+                        "on-primary": "#1000a9",
+                        "on-tertiary-fixed": "#221b00",
+                        "primary-fixed": "#e1e0ff",
+                        "tertiary-fixed": "#ffe16d",
+                        "primary": "#c0c1ff",
+                        "inverse-on-surface": "#303038",
+                        "tertiary-container": "#c9a900",
+                        "surface-tint": "#c0c1ff",
+                        "on-tertiary-container": "#4c3f00",
+                        "on-surface": "#e4e1ed",
+                        "secondary-container": "#2f3aa3",
+                        "on-tertiary": "#3a3000",
+                        "error-container": "#93000a",
+                        "primary-container": "#8083ff",
+                        "on-error": "#690005"
+                    },
+                    fontFamily: {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        .glass-header {
+            background: rgba(19, 19, 27, 0.7);
+            backdrop-filter: blur(12px);
+        }
+        .aura-pulse {
+            box-shadow: 0 0 0 0 rgba(192, 193, 255, 0.4);
+            animation: pulse-ring 2s infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.98); box-shadow: 0 0 0 0 rgba(192, 193, 255, 0.4); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(192, 193, 255, 0); }
+            100% { transform: scale(0.98); box-shadow: 0 0 0 0 rgba(192, 193, 255, 0); }
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface antialiased">
+<!-- TopAppBar Section -->
+<header class="fixed top-0 w-full z-50 glass-header">
+<div class="flex items-center justify-between px-6 h-16 w-full max-w-2xl mx-auto">
+<div class="flex items-center gap-4">
+<button class="p-2 -ml-2 rounded-full hover:bg-white/5 transition-colors text-primary">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-primary font-semibold tracking-tight text-lg">AURA Qiymətləndirilməsi</h1>
+</div>
+<button class="p-2 rounded-full hover:bg-white/5 transition-colors text-slate-400">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<main class="pt-20 pb-32 px-6 max-w-2xl mx-auto">
+<!-- Progress Section -->
+<section class="mb-10">
+<div class="flex justify-between items-end mb-4">
+<div>
+<span class="text-tertiary text-[10px] font-bold tracking-[0.2em] uppercase">Mərhələ 7 / 10</span>
+<h2 class="text-on-surface text-xl font-bold mt-1">Ünsiyyət Bacarıqları</h2>
+</div>
+<div class="text-right">
+<span class="text-primary font-bold text-2xl">70%</span>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="h-3 w-full bg-surface-container-high rounded-full overflow-hidden p-[2px]">
+<div class="h-full bg-gradient-to-r from-primary to-primary-container rounded-full transition-all duration-1000" style="width: 70%"></div>
+</div>
+<p class="text-on-surface-variant text-sm mt-4 leading-relaxed">
+                Bu bölmə sizin komanda daxilində fikir mübadiləsi və problemlərin həlli zamanı ünsiyyət tərzinizi müəyyən edir.
+            </p>
+</section>
+<!-- Assessment Form -->
+<section class="space-y-6">
+<div class="space-y-4">
+<h3 class="text-on-surface font-semibold text-md px-1">1. Çətin bir vəziyyətdə komanda yoldaşınızla necə davranırsınız?</h3>
+<div class="grid gap-3">
+<!-- Card Option: Active/Selected -->
+<label class="group relative flex items-center p-5 rounded-2xl bg-surface-container-high ring-2 ring-primary transition-all cursor-pointer">
+<input checked="" class="hidden" name="q1" type="radio"/>
+<div class="flex-1">
+<p class="text-on-surface font-medium text-sm leading-snug">Problemi sakit şəkildə müzakirə edir və ortaq həll yolu axtarıram.</p>
+</div>
+<div class="ml-4 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px] text-on-primary font-bold">check</span>
+</div>
+</label>
+<!-- Card Option: Default -->
+<label class="group relative flex items-center p-5 rounded-2xl bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer border border-transparent hover:border-outline-variant/30">
+<input class="hidden" name="q1" type="radio"/>
+<div class="flex-1">
+<p class="text-on-surface-variant group-hover:text-on-surface font-medium text-sm leading-snug transition-colors">Fikrimi qətiyyətlə bildirir və öz mövqeyimi müdafiə edirəm.</p>
+</div>
+<div class="ml-4 w-6 h-6 rounded-full border-2 border-outline-variant group-hover:border-primary/50 transition-colors"></div>
+</label>
+<!-- Card Option: Default -->
+<label class="group relative flex items-center p-5 rounded-2xl bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer border border-transparent hover:border-outline-variant/30">
+<input class="hidden" name="q1" type="radio"/>
+<div class="flex-1">
+<p class="text-on-surface-variant group-hover:text-on-surface font-medium text-sm leading-snug transition-colors">Üçüncü tərəfin (rəhbərin və ya mediatorun) müdaxiləsini gözləyirəm.</p>
+</div>
+<div class="ml-4 w-6 h-6 rounded-full border-2 border-outline-variant group-hover:border-primary/50 transition-colors"></div>
+</label>
+</div>
+</div>
+<!-- Asymmetric Stat/Aura Card -->
+<div class="mt-12 p-6 rounded-3xl bg-surface-container-lowest border border-outline-variant/10 relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-primary/10 rounded-full blur-3xl transition-transform group-hover:scale-150"></div>
+<div class="flex items-start gap-4 relative z-10">
+<div class="p-3 bg-secondary-container/30 rounded-2xl">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div>
+<h4 class="text-secondary font-bold text-sm tracking-tight">Talent Insight</h4>
+<p class="text-on-surface-variant text-xs mt-1 leading-relaxed">Sizin əvvəlki cavablarınız göstərir ki, siz <span class="text-primary font-semibold">Empatik Liderlik</span> xüsusiyyətlərinə maliksiniz.</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Navigation Footer -->
+<nav class="fixed bottom-0 left-0 w-full h-24 glass-header z-50">
+<div class="max-w-2xl mx-auto h-full flex items-center justify-between px-6 gap-4">
+<button class="flex-1 py-4 px-6 rounded-2xl bg-surface-container-high text-on-surface font-semibold text-sm hover:bg-surface-variant transition-colors">
+                Geri
+            </button>
+<button class="flex-[2] py-4 px-6 rounded-2xl bg-gradient-to-r from-primary to-primary-container text-on-primary font-bold text-sm aura-pulse flex items-center justify-center gap-2">
+                Növbəti
+                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</nav>
+<!-- Hidden Bottom Nav Mockup (Shared Component Reference) -->
+<div class="hidden">
+<div class="fixed bottom-0 left-0 w-full h-20 bg-[#1b1b23]/80 backdrop-blur-lg flex justify-around items-center px-4 pb-4 z-50 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.4)]">
+<div class="flex flex-col items-center justify-center text-slate-500">
+<span class="material-symbols-outlined">insights</span>
+<span class="text-[10px] font-medium tracking-wide">Path</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-500">
+<span class="material-symbols-outlined">diversity_3</span>
+<span class="text-[10px] font-medium tracking-wide">Network</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-[#292932] text-[#c0c1ff] rounded-2xl px-5 py-2">
+<span class="material-symbols-outlined">auto_awesome</span>
+<span class="text-[10px] font-medium tracking-wide">Impact</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-500">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-medium tracking-wide">Profile</span>
+</div>
+</div>
+</div>
+</body></html>

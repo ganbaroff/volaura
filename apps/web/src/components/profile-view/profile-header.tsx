@@ -1,0 +1,122 @@
+"use client";
+
+import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
+import { MapPin, Globe, Lock, Pencil } from "lucide-react";
+import Link from "next/link";
+import { cn } from "@/lib/utils/cn";
+
+export interface ProfileHeaderData {
+  display_name: string | null;
+  username: string;
+  bio: string | null;
+  location: string | null;
+  languages: string[];
+  is_public: boolean;
+  avatar_url: string | null;
+  badge_tier?: "platinum" | "gold" | "silver" | "bronze" | "none";
+}
+
+interface ProfileHeaderProps {
+  profile: ProfileHeaderData;
+  locale: string;
+  isOwnProfile?: boolean;
+}
+
+const TIER_RING: Record<string, string> = {
+  platinum: "ring-2 ring-violet-400",
+  gold:     "ring-2 ring-yellow-400",
+  silver:   "ring-2 ring-slate-300",
+  bronze:   "ring-2 ring-amber-600",
+  none:     "",
+};
+
+function Initials({ name }: { name: string }) {
+  const parts = name.trim().split(" ");
+  const letters =
+    parts.length >= 2
+      ? `${parts[0][0]}${parts[parts.length - 1][0]}`
+      : name.slice(0, 2);
+  return <>{letters.toUpperCase()}</>;
+}
+
+export function ProfileHeader({ profile, locale, isOwnProfile }: ProfileHeaderProps) {
+  const { t } = useTranslation();
+  const displayName = profile.display_name ?? profile.username;
+  const tier = profile.badge_tier ?? "none";
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
+      className="flex items-start gap-4"
+    >
+      {/* Avatar */}
+      <div
+        className={cn(
+          "shrink-0 size-16 rounded-full bg-primary flex items-center justify-center text-xl font-bold text-primary-foreground overflow-hidden",
+          TIER_RING[tier]
+        )}
+      >
+        {profile.avatar_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={profile.avatar_url}
+            alt={displayName}
+            className="size-full object-cover"
+          />
+        ) : (
+          <Initials name={displayName} />
+        )}
+      </div>
+
+      {/* Info */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <h2 className="text-lg font-bold text-foreground truncate">{displayName}</h2>
+            <p className="text-sm text-muted-foreground truncate">@{profile.username}</p>
+          </div>
+
+          {isOwnProfile && (
+            <Link
+              href={`/${locale}/profile/edit`}
+              aria-label={t("profile.editProfile")}
+              className="shrink-0 size-8 rounded-full border border-border bg-card flex items-center justify-center hover:bg-accent transition-colors"
+            >
+              <Pencil className="size-3.5 text-muted-foreground" />
+            </Link>
+          )}
+        </div>
+
+        {profile.bio && (
+          <p className="mt-1.5 text-sm text-foreground leading-snug line-clamp-2">
+            {profile.bio}
+          </p>
+        )}
+
+        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+          {profile.location && (
+            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+              <MapPin className="size-3" aria-hidden="true" />
+              {profile.location}
+            </span>
+          )}
+          {profile.languages.length > 0 && (
+            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+              <Globe className="size-3" aria-hidden="true" />
+              {profile.languages.join(", ")}
+            </span>
+          )}
+          {!profile.is_public && (
+            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+              <Lock className="size-3" aria-hidden="true" />
+              {t("profile.private")}
+            </span>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
+}

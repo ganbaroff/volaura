@@ -5,8 +5,8 @@ supabase>=2.0.0
 pydantic>=2.0.0
 pydantic-settings>=2.0.0
 
-# Auth
-python-jose[cryptography]>=3.3.0
+# Rate limiting
+slowapi>=0.1.9
 
 # HTTP
 httpx>=0.28.0
@@ -15,9 +15,8 @@ httpx>=0.28.0
 google-genai>=1.0.0
 openai>=1.60.0
 
-# Assessment
-adaptivetesting>=1.1.5
-numpy>=2.0.0
+# Assessment (IRT/CAT engine is pure-Python, no external dep needed)
+numpy>=1.24.0
 
 # Notifications
 python-telegram-bot>=21.0

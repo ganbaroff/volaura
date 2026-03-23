@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Volaura | Messages</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-fixed": "#221b00",
+                        "tertiary-container": "#c9a900",
+                        "surface-container-high": "#292932",
+                        "surface-container-low": "#1b1b23",
+                        "surface-container": "#1f1f27",
+                        "secondary-container": "#2f3aa3",
+                        "outline-variant": "#464554",
+                        "secondary": "#bdc2ff",
+                        "on-secondary-container": "#a8afff",
+                        "on-tertiary": "#3a3000",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "tertiary-fixed-dim": "#e9c400",
+                        "surface": "#13131b",
+                        "inverse-surface": "#e4e1ed",
+                        "on-surface-variant": "#c7c4d7",
+                        "surface-dim": "#13131b",
+                        "surface-container-lowest": "#0d0d15",
+                        "on-surface": "#e4e1ed",
+                        "on-secondary-fixed": "#000767",
+                        "on-tertiary-container": "#4c3f00",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary": "#131e8c",
+                        "error-container": "#93000a",
+                        "secondary-fixed-dim": "#bdc2ff",
+                        "on-primary-container": "#0d0096",
+                        "primary": "#c0c1ff",
+                        "on-background": "#e4e1ed",
+                        "on-error": "#690005",
+                        "on-primary": "#1000a9",
+                        "on-tertiary-fixed-variant": "#544600",
+                        "outline": "#908fa0",
+                        "error": "#ffb4ab",
+                        "primary-container": "#8083ff",
+                        "inverse-primary": "#494bd6",
+                        "surface-tint": "#c0c1ff",
+                        "background": "#13131b",
+                        "surface-bright": "#393841",
+                        "tertiary-fixed": "#ffe16d",
+                        "on-primary-fixed": "#07006c",
+                        "secondary-fixed": "#e0e0ff",
+                        "surface-variant": "#34343d",
+                        "surface-container-highest": "#34343d",
+                        "tertiary": "#e9c400",
+                        "on-secondary-fixed-variant": "#2f3aa3",
+                        "inverse-on-surface": "#303038",
+                        "primary-fixed": "#e1e0ff"
+                    },
+                    fontFamily: {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .aura-glow {
+            box-shadow: 0 0 15px rgba(192, 193, 255, 0.3);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary/30 antialiased">
+<!-- TopAppBar -->
+<header class="bg-[#13131b]/70 backdrop-blur-xl fixed top-0 w-full z-50 shadow-2xl shadow-indigo-900/20">
+<div class="flex items-center justify-between px-6 py-4 w-full">
+<div class="flex items-center gap-3">
+<div class="relative">
+<img alt="Profile" class="w-10 h-10 rounded-full border-2 border-primary/30 aura-glow object-cover" data-alt="User profile with active aura glow" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfy7PSddM1qRwl_A8Zfe2Nz9bnYeGqVp5W7SAVm5rsxq3vAx6rMO-EduixAnxa2gXY_fALeA5f_7uMhHzCW5WogeTnWT7HUmjIhoprEu3JeyzX-9qiNyabhauSXoYJfNg7Yavr59qELRXh_wBYOCFaNJcbeYWU1UAQGsHgulcpn_RhdCaZHfrmYIDmcIWZjncopG-hXHHFpp4wAiuTvm34T4hj1O_esicjwmYeB3ZkauYConOimau1LxhtQeDayn3RJtfVaD3klME"/>
+<span class="absolute bottom-0 right-0 w-3 h-3 bg-tertiary border-2 border-surface rounded-full"></span>
+</div>
+<h1 class="text-xl font-bold bg-gradient-to-r from-[#c0c1ff] to-[#8083ff] bg-clip-text text-transparent font-headline tracking-tight">Volaura</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center gap-8 mr-8">
+<a class="text-slate-400 font-headline font-semibold tracking-tight hover:opacity-80 transition-opacity" href="#">Explore</a>
+<a class="text-[#c0c1ff] font-headline font-semibold tracking-tight hover:opacity-80 transition-opacity" href="#">Messages</a>
+<a class="text-slate-400 font-headline font-semibold tracking-tight hover:opacity-80 transition-opacity" href="#">Impact</a>
+<a class="text-slate-400 font-headline font-semibold tracking-tight hover:opacity-80 transition-opacity" href="#">Profile</a>
+</div>
+<button class="p-2 text-[#c0c1ff] hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</div>
+</div>
+</header>
+<main class="pt-20 pb-28 md:pb-12 max-w-7xl mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-12 gap-6 min-h-screen">
+<!-- Conversations List (Sidebar on Desktop) -->
+<section class="md:col-span-4 flex flex-col gap-4">
+<div class="flex items-center justify-between mb-2">
+<h2 class="text-2xl font-headline font-bold text-on-surface">Mesajlar</h2>
+<button class="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center text-primary hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</div>
+<!-- Active Elite Filters -->
+<div class="flex gap-3 overflow-x-auto hide-scrollbar py-2">
+<div class="flex-shrink-0 flex flex-col items-center gap-1.5">
+<div class="w-14 h-14 rounded-full p-0.5 border-2 border-tertiary flex items-center justify-center">
+<img alt="Contact" class="w-full h-full rounded-full object-cover" data-alt="Active volunteer contact avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBz6UpsinAc4E8XFse6jWuGz7iqGRi5Gzqjj8VP2hkwVd9YH2GCoxJLG-TLr-zYmDmBwc6seqs4ak081ne9Ey0Dbv36HTwjQEdoE-kt-Vs85_NeayHRjsFcioXACZ68mTY4NxTUVWBW4nLKWrJi1aoptlz9KNAw4O_uybIdvQ2LUR64GQ1wZz5Rhw_zkxyWXwLR4Lts-XfDCZkkNkSLqpVdZD8T_Y4McoGETaUfyiu1yp9i0K0lFKucW1K0NugHOS3Wqvo_708lkY"/>
+</div>
+<span class="text-[10px] font-medium text-tertiary">Canlı</span>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center gap-1.5 opacity-60">
+<div class="w-14 h-14 rounded-full p-0.5 border-2 border-transparent flex items-center justify-center">
+<img alt="Contact" class="w-full h-full rounded-full object-cover" data-alt="Volunteer contact avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZ1PFLtDewBs8tgSsxuJQHQYAJjwFZH9rZkH2aIjZiMHWqwqTy8OWC5ZYOplQDbzskjxo-VIzLmFnKVdSuN5zNWqtIf3tY2pLXTyeXsUQVOfyJnnvISVEFojc03UxwrnVtffpTfJSUdfSbdslMW-ycexLlWRCAHyoxVZz8wr9_Rotb48l402YLOKf4f3-VlCUx6hnNoMd7sHZyZQV25aMlYAe3CBYjnO5P3hVqtfmEgTPwLEPtvmXKp1mw58ljyic5ndhDno_oQaA"/>
+</div>
+<span class="text-[10px] font-medium">Sarah</span>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center gap-1.5 opacity-60">
+<div class="w-14 h-14 rounded-full p-0.5 border-2 border-transparent flex items-center justify-center">
+<img alt="Contact" class="w-full h-full rounded-full object-cover" data-alt="Organization representative avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAw6VZr0PLZzDggpgSyFhuKqyZvfvFBIgIuBr82fAcGZBb5GMiq_e3EBb8XPq_oCXNIAMHKiqabJGqtmEnIaKTWYZSANMm87NjVE3wEHJp1Cv4w3452vGQ4_4nVyhWR4PR6X6fcoMQpC-UqqSpXBS4zIBfbmQrsU1GHXhQaD8CFhxNG6WWIG7P8rnavTpfMMEXj5cwvBLW-NuJ4SnnKjN_aDmIm6_pAiIh3veuHyDD2KDyiT8zSEtHrc6zrR-EVDdRwqmxzU8AkzQM"/>
+</div>
+<span class="text-[10px] font-medium">Marcus</span>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center gap-1.5 opacity-60">
+<div class="w-14 h-14 rounded-full p-0.5 border-2 border-transparent flex items-center justify-center">
+<img alt="Contact" class="w-full h-full rounded-full object-cover" data-alt="Premium volunteer avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdXsi3eqIyiRJFe7ZQZZwN6ahMAVPVugFejqHz18ROYDW6t-22N6pRYesbKDsrt0I2OKFlfp1_KaliBAGy1woKa-XQORmxRUb6rNfmrfrs0xRP45JxGBmUp60L6PG5UFK-k9GHQXj4Uk-BOv8dT6ZrxvEZEEQfylg_0Q0YztQU4JDqXhf0He5wtpvpznoHQKf6lY6Y09vf2St4wggKUgW5kk55uEUTVbDxXkhnTxZ7jVA25GHkLr932_JWl3841gZoEOU1uDqtf4M"/>
+</div>
+<span class="text-[10px] font-medium">Elena</span>
+</div>
+</div>
+<!-- Conversation Items -->
+<div class="flex flex-col overflow-y-auto gap-2">
+<!-- Active Conversation -->
+<div class="bg-surface-container-high rounded-2xl p-4 flex gap-4 cursor-pointer border-l-4 border-primary transition-all">
+<div class="relative flex-shrink-0">
+<img alt="Avatar" class="w-14 h-14 rounded-xl object-cover shadow-lg" data-alt="Corporate CSR manager portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPGYs9gsDYXzsoflC_eZB3J1M6JbvuONpz0I9pWmBYyEuKsszAgY_3In0SJs2apc9TwLHC4LUdAERueh7N52gaaeHvqd-dn2Rtrk-ILkbkVNVtqzlDGICH9HdxoGv8LWqXYURO9xe_xa10LRw53oIHmPY_wlJ4rF_mB6L6cgSRZS7EnyrdIoG5AtQVacmcSHOQLiNxvUcDlcI4QYWOGrCbg4KBT2iDO0JVO3cwCZ4O9fOphB3DS7GOHRW1XJY2mgkC97S8lYeqs0g"/>
+<span class="absolute -bottom-1 -right-1 w-4 h-4 bg-tertiary rounded-full border-2 border-surface-container-high"></span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-headline font-semibold text-primary truncate">Qlobal Təsir Fondu</h3>
+<span class="text-[10px] text-slate-500 whitespace-nowrap">2m ago</span>
+</div>
+<p class="text-sm text-on-surface-variant line-clamp-1 font-medium italic">"Sizin Platin portfelinizi nəzərdən keçirdik..."</p>
+</div>
+<div class="flex flex-col items-end justify-center">
+<span class="bg-primary text-on-primary-container text-[10px] font-bold px-2 py-0.5 rounded-full">3</span>
+</div>
+</div>
+<!-- Regular Conversation -->
+<div class="bg-transparent hover:bg-surface-container-low rounded-2xl p-4 flex gap-4 cursor-pointer transition-all">
+<div class="relative flex-shrink-0">
+<img alt="Avatar" class="w-14 h-14 rounded-xl object-cover" data-alt="Elite volunteer profile photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCblFWe_GkNxnEQAE4pDdUcZmfUXEs0dFoawg1DO9RI_wWqOQFFOIjf2ntSzP3Lj8CD9iYL4H95Pcd1X3bYxKcM-poZ9i00XYM-AJ2WPLWx7ck0UMDXTEjuuN2mz1Q32ZXtw7kzE95NO3btWiJU_hI9FRy72adBRJVzd2hZxmyMxJX2_bw5GLktSdjSjmW1Kia0NsKPlB9IMfDqkbgFQprUapwAXjNQ4WxLEseJxpMTrZ3jBZkY5GEmCOclYZ_29uAWhTO89lpxT0I"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-headline font-semibold text-on-surface truncate">Elnarə Vəliyeva</h3>
+<span class="text-[10px] text-slate-500 whitespace-nowrap">1h ago</span>
+</div>
+<p class="text-sm text-slate-500 line-clamp-1">Sabahkı Qala gecəsində görüşənədək!</p>
+</div>
+</div>
+<!-- Regular Conversation -->
+<div class="bg-transparent hover:bg-surface-container-low rounded-2xl p-4 flex gap-4 cursor-pointer transition-all">
+<div class="relative flex-shrink-0">
+<div class="w-14 h-14 rounded-xl bg-secondary-container flex items-center justify-center text-on-secondary-container font-bold text-xl">WF</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-headline font-semibold text-on-surface truncate">Vəhşi Təbiət Fondu</h3>
+<span class="text-[10px] text-slate-500 whitespace-nowrap">Yesterday</span>
+</div>
+<p class="text-sm text-slate-500 line-clamp-1">Sertifikat artıq təqdim olundu.</p>
+</div>
+<div class="flex flex-col items-end justify-center">
+<span class="material-symbols-outlined text-slate-600 text-sm" data-icon="done_all">done_all</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Chat View (Main Content) -->
+<section class="hidden md:flex md:col-span-8 bg-surface-container-low rounded-[2.5rem] overflow-hidden flex-col shadow-inner shadow-black/40">
+<!-- Chat Header -->
+<div class="px-8 py-5 bg-surface-container/50 backdrop-blur-md flex items-center justify-between">
+<div class="flex items-center gap-4">
+<img alt="Active Chat" class="w-10 h-10 rounded-full object-cover" data-alt="CSR Manager profile small" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMiYbLLpVaGqL_vg_-HRvSxXbbUH9XUaubhGAJ89e3XNZVQirVYWxnCfubZ1DMZ-81lPpiw0VFtBTx5LKnspRhEV69ZXXgIlHUuaq5503s0pyj0U9ytite5ltF-aaKPrt5L1Fc77fKjASV5Vcv5_x9r9z9FSJq8yAtwwfUhEu_NBr5LncerhdqdSUuoByP7s_i0psjKV-bSZa_tLoRr6I9X5ViIzpA6bxpCmcO0z_Xt54DSoCOQHHO1AGeHchqu0UT3PlTcNw8FIs"/>
+<div>
+<h3 class="font-headline font-bold text-lg leading-tight">Qlobal Təsir Fondu</h3>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 bg-tertiary rounded-full animate-pulse"></span>
+<span class="text-[10px] font-semibold text-tertiary tracking-wider">İNDİ AKTİVDİR</span>
+</div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="w-10 h-10 rounded-full hover:bg-white/5 flex items-center justify-center text-slate-400">
+<span class="material-symbols-outlined" data-icon="videocam">videocam</span>
+</button>
+<button class="w-10 h-10 rounded-full hover:bg-white/5 flex items-center justify-center text-slate-400">
+<span class="material-symbols-outlined" data-icon="info">info</span>
+</button>
+</div>
+</div>
+<!-- Messages Stream -->
+<div class="flex-1 overflow-y-auto p-8 flex flex-col gap-6 hide-scrollbar">
+<div class="flex justify-center">
+<span class="bg-surface-container-high/40 text-[10px] px-3 py-1 rounded-full text-slate-500 font-bold uppercase tracking-widest">Tuesday, Oct 24</span>
+</div>
+<!-- Incoming Message -->
+<div class="flex gap-3 max-w-[80%]">
+<img alt="Avatar" class="w-8 h-8 rounded-full self-end mb-1" data-alt="Incoming message avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjLwKZPdtSVySs_65XDBkSKViVLV0E-KjzngYp6tKIOPlgemdqAqI69WiOp4fYfda1KIC6Xj1rGbguz5MPbhs4_1jHhdxij2VupFvICBz6QOAqo-DcEBniimPuMufD2CJzfrAxm4OrjF3hQYWG4FDU66Y3Te5ssc2zfWH9wfqnCrY5URWehKfQ-KNk3k8yrbfMHywfgqNItUOn6lXY0n5DrXFL5Ixrt0Ew4pwXeb0PnwWZJoiTgfiKWV7EZeh3cJGiufoB-F0X5Cw"/>
+<div class="bg-surface-container-high text-on-surface px-5 py-3 rounded-2xl rounded-bl-none shadow-md">
+<p class="text-sm leading-relaxed">Hello Alex, we've been tracking your impact metrics this quarter. Your work with the Baku urban renewal project is truly commendable.</p>
+<span class="text-[9px] text-slate-500 mt-1 block">14:02</span>
+</div>
+</div>
+<!-- Outgoing Message -->
+<div class="flex flex-col items-end gap-1 ml-auto max-w-[80%]">
+<div class="bg-gradient-to-br from-primary to-primary-container text-on-primary-container px-5 py-3 rounded-2xl rounded-br-none shadow-lg shadow-primary/10">
+<p class="text-sm font-medium leading-relaxed">Thank you! It was a team effort. I'm looking forward to the next phase.</p>
+</div>
+<span class="text-[9px] text-slate-500 mr-2">14:05 · Read</span>
+</div>
+<!-- Incoming Message (Achievement Context) -->
+<div class="flex gap-3 max-w-[80%]">
+<img alt="Avatar" class="w-8 h-8 rounded-full self-end mb-1" data-alt="Incoming message avatar 2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgOcfXgpfm0yOsLWqrv1eZMjgnQSAAOs555Yt4AkBGe26DktpatqCD9bTIStp5n9WI3Pqt070XfTPDrdJ2JN9dd5309DaGTBD4U3yAyAaYSe1tKRa5Rghd1JyKO-neHWOH6E-j3CdJEtMj9NN4tC_YJKzXb0W3o_e0bhE140nowlH_YTlqs7QIlnvVtx85edQhzeARnTgf5j_CjjNmDeeTMj5aOyR_o840HYTHkm4xy101kiux8R_GjKLfRgPBufvfcySeCZXLqoE"/>
+<div class="bg-surface-container-high text-on-surface px-5 py-3 rounded-2xl rounded-bl-none shadow-md border-l-2 border-tertiary">
+<p class="text-sm leading-relaxed">Because of your performance, we'd like to invite you to our exclusive Platinum Gala next month. Are you available?</p>
+<div class="mt-3 p-3 bg-surface-container-lowest rounded-xl flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary" data-icon="military_tech">military_tech</span>
+<span class="text-[11px] font-bold text-tertiary uppercase tracking-tight">VIP Invitation Pending</span>
+</div>
+<span class="text-[9px] text-slate-500 mt-1 block">14:06</span>
+</div>
+</div>
+</div>
+<!-- Message Input Area -->
+<div class="p-6 bg-surface-container-low">
+<div class="bg-surface-container-lowest rounded-2xl p-2 flex items-center gap-2 border border-outline-variant/10 focus-within:border-primary/30 transition-all">
+<button class="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+</button>
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-sm py-3 px-2 text-on-surface placeholder:text-slate-600" placeholder="Type a message..." type="text"/>
+<div class="flex items-center gap-1 pr-2">
+<button class="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="sticky_note_2">sticky_note_2</span>
+</button>
+<button class="w-11 h-11 bg-primary text-on-primary-container rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-transform shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined" data-icon="send">send</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Navigation Components -->
+<!-- Mobile BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-[#1b1b23]/80 backdrop-blur-lg z-50 rounded-t-[1.5rem] shadow-[0_-8px_30px_rgb(0,0,0,0.5)]">
+<a class="flex flex-col items-center justify-center text-slate-500 hover:text-slate-300 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="explore">explore</span>
+<span class="font-inter text-[10px] font-medium tracking-wide">Explore</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#8083ff]/20 text-[#c0c1ff] rounded-2xl px-5 py-2" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="chat_bubble">chat_bubble</span>
+<span class="font-inter text-[10px] font-medium tracking-wide">Messages</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 hover:text-slate-300 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="military_tech">military_tech</span>
+<span class="font-inter text-[10px] font-medium tracking-wide">Impact</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 hover:text-slate-300 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-inter text-[10px] font-medium tracking-wide">Profile</span>
+</a>
+</nav>
+</body></html>

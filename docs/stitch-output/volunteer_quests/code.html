@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="az"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Volaura - Quests</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "outline": "#908fa0",
+                        "on-surface-variant": "#c7c4d7",
+                        "on-secondary-fixed-variant": "#2f3aa3",
+                        "on-background": "#e4e1ed",
+                        "tertiary-fixed": "#ffe16d",
+                        "surface-variant": "#34343d",
+                        "on-tertiary-container": "#4c3f00",
+                        "on-primary-fixed": "#07006c",
+                        "surface-container-highest": "#34343d",
+                        "on-primary": "#1000a9",
+                        "tertiary-fixed-dim": "#e9c400",
+                        "primary": "#c0c1ff",
+                        "tertiary-container": "#c9a900",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "on-tertiary-fixed": "#221b00",
+                        "secondary": "#bdc2ff",
+                        "primary-container": "#8083ff",
+                        "on-secondary-fixed": "#000767",
+                        "outline-variant": "#464554",
+                        "secondary-fixed-dim": "#bdc2ff",
+                        "on-error-container": "#ffdad6",
+                        "inverse-primary": "#494bd6",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "on-tertiary-fixed-variant": "#544600",
+                        "on-secondary": "#131e8c",
+                        "surface-container-lowest": "#0d0d15",
+                        "tertiary": "#e9c400",
+                        "error": "#ffb4ab",
+                        "on-primary-container": "#0d0096",
+                        "inverse-surface": "#e4e1ed",
+                        "surface-tint": "#c0c1ff",
+                        "secondary-fixed": "#e0e0ff",
+                        "surface-bright": "#393841",
+                        "background": "#13131b",
+                        "surface-container-low": "#1b1b23",
+                        "secondary-container": "#2f3aa3",
+                        "primary-fixed": "#e1e0ff",
+                        "surface-dim": "#13131b",
+                        "surface-container": "#1f1f27",
+                        "on-tertiary": "#3a3000",
+                        "on-surface": "#e4e1ed",
+                        "on-secondary-container": "#a8afff",
+                        "on-error": "#690005",
+                        "error-container": "#93000a",
+                        "inverse-on-surface": "#303038",
+                        "surface-container-high": "#292932",
+                        "surface": "#13131b"
+                    },
+                    fontFamily: {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-card { background: rgba(27, 27, 35, 0.7); backdrop-filter: blur(12px); }
+        .aura-glow { box-shadow: 0 0 20px rgba(192, 193, 255, 0.15); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 bg-[#13131b]/70 backdrop-blur-xl flex justify-between items-center px-6 py-4 w-full">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/20 aura-glow">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="User profile avatar with subtle glow" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFkNmpMb1HZnzTvwcxBl0GK9ziSN6sqVbSZRcm1UuzMK4f7bSHcm0GHEc25yE4cKuiS1FW6NXes8yuLEwB3O4RMViIpJ9NHYUZzNj8Y-AkvoixQvt9Iug_xraJQuIcMxBNNoKJ7OMNFKaPp2D2xpQsGYpy7ve7z-xbnFWrCvoLAyFpJoq3S_D31eeDLPsIn7Ei9omHeH_ZScH36BPilFlTgLlKjIRY4iB24A0SW4rEp82BbtCbvESTjOyCKPJ7759Dg5suUnzF1vg"/>
+</div>
+<span class="text-xl font-bold text-[#c0c1ff] font-headline tracking-tight">Məqsədlər</span>
+</div>
+<button class="text-[#c0c1ff] hover:opacity-80 transition-opacity p-2">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="max-w-[640px] mx-auto px-6 pt-24 space-y-8">
+<!-- Daily Progress Widget -->
+<section class="relative overflow-hidden rounded-xl bg-surface-container-low p-6 aura-glow border border-white/5">
+<div class="relative z-10 flex flex-col gap-4">
+<div class="flex justify-between items-end">
+<div>
+<p class="text-label-sm font-medium text-secondary/60 uppercase tracking-widest mb-1">Gündəlik tərəqqi</p>
+<h2 class="text-3xl font-extrabold font-headline text-on-background">45 <span class="text-lg font-medium text-primary/50">/ 100</span></h2>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-primary font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="bolt" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                            AURA
+                        </span>
+<p class="text-xs text-on-surface-variant/60">Günün hədəfi</p>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="w-full h-3 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary to-primary-container w-[45%] rounded-full shadow-[0_0_10px_rgba(128,131,255,0.5)]"></div>
+</div>
+<p class="text-sm text-on-surface-variant">Siz bu gün hədəfin 45%-nə çatmısınız. Davam edin!</p>
+</div>
+<!-- Decorative Radial Glow -->
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/10 blur-[50px] rounded-full"></div>
+</section>
+<!-- Daily Quests Section -->
+<section class="space-y-4">
+<div class="flex justify-between items-center">
+<h3 class="text-headline-md font-semibold text-on-background">Gündəlik Tapşırıqlar</h3>
+<span class="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-lg">YENİLƏNİB</span>
+</div>
+<div class="grid gap-3">
+<!-- Task Card 1 (Completed) -->
+<div class="flex items-center gap-4 p-4 rounded-xl bg-surface-container-low border border-white/5 opacity-70 group">
+<div class="w-12 h-12 flex-shrink-0 rounded-lg bg-tertiary-container/20 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</div>
+<div class="flex-grow">
+<h4 class="text-body-md font-semibold text-on-surface">Profil bio-sunu yeniləyin</h4>
+<p class="text-label-sm text-on-surface-variant">+10 AURA</p>
+</div>
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-sm" data-icon="check">check</span>
+</div>
+</div>
+<!-- Task Card 2 -->
+<div class="flex items-center gap-4 p-4 rounded-xl bg-surface-container-low border border-white/5 hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="w-12 h-12 flex-shrink-0 rounded-lg bg-primary-container/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="corporate_fare">corporate_fare</span>
+</div>
+<div class="flex-grow">
+<h4 class="text-body-md font-semibold text-on-surface">2 Təşkilata baxın</h4>
+<p class="text-label-sm text-on-surface-variant">+20 AURA</p>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-primary/20 flex items-center justify-center text-primary-container group-hover:bg-primary group-hover:text-on-primary transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</div>
+<!-- Task Card 3 -->
+<div class="flex items-center gap-4 p-4 rounded-xl bg-surface-container-low border border-white/5 hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="w-12 h-12 flex-shrink-0 rounded-lg bg-secondary-container/20 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+</div>
+<div class="flex-grow">
+<h4 class="text-body-md font-semibold text-on-surface">Bir elanı paylaşın</h4>
+<p class="text-label-sm text-on-surface-variant">+15 AURA</p>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-primary/20 flex items-center justify-center text-primary-container group-hover:bg-primary group-hover:text-on-primary transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Featured Event Quests -->
+<section class="space-y-4">
+<h3 class="text-headline-md font-semibold text-on-background">Xüsusi Tapşırıqlar</h3>
+<div class="relative group cursor-pointer overflow-hidden rounded-2xl bg-surface-container-low aspect-[16/9] flex flex-col justify-end p-6 border border-primary/20">
+<img alt="COP29 Background" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-700" data-alt="Aerial view of Baku Olympic Stadium at sunset" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaIGqlto4L7xSz7-qLHHs4bhz04AesGFBufrHL5QYRllJeKjOpFrv5HLpCc1IVPEftkchdWXuLIFPhMSrizFORbxyGZuERgFdWo2RG7IuuaFfTNC9aRZD_KweBEfNii-FJHALroo8rYIVW0IzigjYUecyawQv36i1FnOx5Z5fjevV657UUrblRJntjwJ8XTtNkFcp9VC7Q2BpgZWVL1dUaaiFAFSDkXP_0JhdwZRuc2OVeAXS2oFzhwhltNgGJhdTZrAuiQPe6lw4"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent"></div>
+<div class="relative z-10 space-y-2">
+<div class="inline-flex items-center gap-2 bg-primary text-on-primary text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Məhdud Zaman</div>
+<h4 class="text-xl font-bold font-headline text-white">COP29 Könüllüsü Ol</h4>
+<p class="text-sm text-on-surface-variant line-clamp-2">Azərbaycanın ən böyük ekoloji tədbirinə qoşulun və eksklüziv "Planet Qoruyucusu" nişanını qazanın.</p>
+<div class="flex items-center justify-between pt-2">
+<span class="text-primary font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+                            +500 AURA
+                        </span>
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-xs" data-icon="schedule">schedule</span>
+                            12 gün qalıb
+                        </div>
+</div>
+</div>
+</div>
+</section>
+<!-- Milestone Quests Section -->
+<section class="space-y-4">
+<h3 class="text-headline-md font-semibold text-on-background">Mərhələlər</h3>
+<div class="grid gap-4">
+<!-- Milestone 1 -->
+<div class="bg-surface-container-low p-5 rounded-2xl border border-white/5 flex flex-col gap-4">
+<div class="flex gap-4">
+<div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center border border-white/10">
+<span class="material-symbols-outlined text-3xl text-secondary" data-icon="event_available">event_available</span>
+</div>
+<div class="flex-grow">
+<h4 class="text-title-md font-semibold">5 Tədbirdə iştirak et</h4>
+<p class="text-sm text-on-surface-variant">2 / 5 tamamlanıb</p>
+</div>
+<div class="text-right">
+<span class="block text-primary font-bold">+100</span>
+<span class="text-[10px] uppercase text-on-surface-variant">AURA</span>
+</div>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[40%] rounded-full"></div>
+</div>
+</div>
+<!-- Milestone 2 -->
+<div class="bg-surface-container-low p-5 rounded-2xl border border-white/5 flex flex-col gap-4">
+<div class="flex gap-4">
+<div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center border border-white/10">
+<span class="material-symbols-outlined text-3xl text-tertiary" data-icon="military_tech">military_tech</span>
+</div>
+<div class="flex-grow">
+<h4 class="text-title-md font-semibold">Qızıl Səviyyəyə Çat</h4>
+<p class="text-sm text-on-surface-variant">Gümüş 3 səviyyəsindəsiniz</p>
+</div>
+<div class="text-right">
+<span class="block text-primary font-bold">+250</span>
+<span class="text-[10px] uppercase text-on-surface-variant">AURA</span>
+</div>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-[75%] rounded-full shadow-[0_0_8px_rgba(233,196,0,0.4)]"></div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full rounded-t-[1.5rem] z-50 bg-[#1b1b23]/80 backdrop-blur-lg flex justify-around items-center h-20 px-4 pb-safe w-full shadow-[0px_-10px_30px_rgba(0,0,0,0.3)]">
+<a class="flex flex-col items-center justify-center text-gray-500 hover:text-gray-300 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="text-[10px] font-medium font-label mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#292932] text-[#c0c1ff] rounded-xl px-4 py-1.5 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="bolt" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="text-[10px] font-semibold font-label mt-1 text-[#c0c1ff]">Quests</span>
+</a>
+<a class="flex flex-col items-center justify-center text-gray-500 hover:text-gray-300 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+<span class="text-[10px] font-medium font-label mt-1">Aura</span>
+</a>
+<a class="flex flex-col items-center justify-center text-gray-500 hover:text-gray-300 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="text-[10px] font-medium font-label mt-1">Profile</span>
+</a>
+</nav>
+<!-- Accessibility & Meta Elements -->
+<div class="sr-only">Volunteer Quest tracking application for Volaura. Monitor daily goals, participate in major events like COP29, and reach new milestones.</div>
+</body></html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="az"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Volaura - Tənzimləmələr</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-error": "#690005",
+              "on-primary-fixed-variant": "#2f2ebe",
+              "secondary-fixed": "#e0e0ff",
+              "on-surface-variant": "#c7c4d7",
+              "on-secondary-fixed": "#000767",
+              "background": "#13131b",
+              "outline": "#908fa0",
+              "tertiary-fixed": "#ffe16d",
+              "on-primary-container": "#0d0096",
+              "primary-fixed": "#e1e0ff",
+              "inverse-surface": "#e4e1ed",
+              "inverse-primary": "#494bd6",
+              "on-tertiary-container": "#4c3f00",
+              "on-secondary": "#131e8c",
+              "tertiary-fixed-dim": "#e9c400",
+              "on-primary": "#1000a9",
+              "surface-container-highest": "#34343d",
+              "on-primary-fixed": "#07006c",
+              "on-secondary-container": "#a8afff",
+              "secondary": "#bdc2ff",
+              "outline-variant": "#464554",
+              "surface-dim": "#13131b",
+              "primary-container": "#8083ff",
+              "tertiary-container": "#c9a900",
+              "error": "#ffb4ab",
+              "secondary-container": "#2f3aa3",
+              "tertiary": "#e9c400",
+              "primary-fixed-dim": "#c0c1ff",
+              "on-tertiary-fixed": "#221b00",
+              "surface": "#13131b",
+              "on-error-container": "#ffdad6",
+              "inverse-on-surface": "#303038",
+              "surface-container-lowest": "#0d0d15",
+              "surface-container": "#1f1f27",
+              "on-tertiary": "#3a3000",
+              "surface-variant": "#34343d",
+              "surface-bright": "#393841",
+              "error-container": "#93000a",
+              "on-tertiary-fixed-variant": "#544600",
+              "on-surface": "#e4e1ed",
+              "on-background": "#e4e1ed",
+              "on-secondary-fixed-variant": "#2f3aa3",
+              "surface-container-low": "#1b1b23",
+              "primary": "#c0c1ff",
+              "surface-tint": "#c0c1ff",
+              "secondary-fixed-dim": "#bdc2ff",
+              "surface-container-high": "#292932"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        background-color: #13131b;
+        color: #e4e1ed;
+        -webkit-font-smoothing: antialiased;
+      }
+      .glass-effect {
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#13131b]/70 backdrop-blur-xl shadow-2xl shadow-black/40">
+<div class="flex items-center justify-between px-6 h-16 w-full">
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-[#292932] transition-colors rounded-full flex items-center justify-center text-[#c0c1ff]">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-headline font-semibold text-lg text-[#c0c1ff]">Tənzimləmələr</h1>
+</div>
+<div class="flex items-center">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center border-2 border-primary/20 overflow-hidden">
+<img alt="Admin Profile" class="w-full h-full object-cover" data-alt="Organization admin profile avatar placeholder" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-ybZ0vjW-ouOPcJY3FYi7n8KaNFnPdFk1Jdw1nkGA6wN1T1N8tlwTICdc9vFzQwr837liOUHjcRTh3rAAgKKgKH9HHT1tUiU9Q8KQln8T-2DhHyhQvZojiHHOCvaoFbt7lUKKnc4MBjgu6AoZsgIF5zu7MJx6ALk3XnPv6e0b2bZ7lUI195dnkmZOd8rXcGlwlmhaSQ5rqWVKfBHZhKAjJY2aWdFflaxJwY2EE3NlDv9wfonJDzqemXbbj9H6MUOK6yIzoSTmx0c"/>
+</div>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-4 max-w-2xl mx-auto space-y-8">
+<!-- Organization Profile Section -->
+<section class="bg-surface-container-low rounded-xl p-6 shadow-xl relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
+<div class="flex flex-col items-center gap-4 relative z-10">
+<div class="relative group">
+<div class="w-24 h-24 rounded-2xl bg-surface-container-high flex items-center justify-center shadow-inner overflow-hidden border border-outline-variant/20">
+<img alt="Organization Logo" class="w-full h-full object-cover" data-alt="Red Crescent Azerbaijan logo placeholder image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFx0s0sswUQCpkR1yj6mcVqK71lF_CuQbUj1q8CpO0EH3BSsAG_X94brr6EOF4Q9f82rsOenjoXNLKciouIR9chE-wp9mB5YEuIAqb11-AsWu-QU-5SQ17bPECWPQvT8rCXiFfBeQlmWvuTd4FYxvXRmWXxpSsIZUYXqG6qm_u25h4CbVu0dUyv65zx774BixBuSJ2su9buYxhGhlKQCgEQyPWXlVlPGgkmOp9CHLWt7feUJHpa1w_tLUcEyoWOk9RHfooJwi8Pg4"/>
+</div>
+<button class="absolute -bottom-2 -right-2 bg-primary text-on-primary p-2 rounded-lg shadow-lg hover:scale-105 transition-transform flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</button>
+</div>
+<div class="text-center">
+<h2 class="text-xl font-headline font-bold text-on-surface">Azərbaycan Qızıl Aypara Cəmiyyəti</h2>
+<p class="text-sm text-on-surface-variant mt-1">Bakı, Azərbaycan</p>
+</div>
+<button class="mt-2 text-primary font-semibold text-sm hover:underline tracking-wide">Logo Dəyişdirin</button>
+</div>
+</section>
+<!-- Account Settings List -->
+<section class="space-y-2">
+<h3 class="text-xs font-bold text-outline uppercase tracking-[0.2em] px-2 mb-4">Hesab Ayarları</h3>
+<div class="bg-surface-container-low rounded-xl overflow-hidden shadow-lg">
+<a class="flex items-center justify-between p-4 hover:bg-surface-container-high transition-all group" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="info">info</span>
+</div>
+<span class="font-medium text-on-surface">Ümumi Məlumat</span>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="chevron_right">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-4 hover:bg-surface-container-high transition-all group" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="verified_user">verified_user</span>
+</div>
+<span class="font-medium text-on-surface">Təsdiqləmə Metodları</span>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="chevron_right">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-4 hover:bg-surface-container-high transition-all group" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="manage_accounts">manage_accounts</span>
+</div>
+<span class="font-medium text-on-surface">Komanda İdarəçiliyi</span>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="chevron_right">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-4 hover:bg-surface-container-high transition-all group" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</div>
+<span class="font-medium text-on-surface">Bildirişlər</span>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="chevron_right">chevron_right</span>
+</a>
+</div>
+</section>
+<!-- Security Section -->
+<section class="space-y-2">
+<h3 class="text-xs font-bold text-outline uppercase tracking-[0.2em] px-2 mb-4">Təhlükəsizlik</h3>
+<div class="bg-surface-container-low rounded-xl overflow-hidden shadow-lg">
+<div class="flex items-center justify-between p-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-icon="shield">shield</span>
+</div>
+<div>
+<p class="font-medium text-on-surface">İki faktorlu təsdiqləmə (2FA)</p>
+<p class="text-xs text-on-surface-variant">Hesabınızı daha təhlükəsiz edin</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" onclick="if(this.checked) { document.getElementById('2fa-modal').classList.remove('hidden'); document.getElementById('2fa-modal').classList.add('flex'); } else { this.checked = false; }" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<a class="flex items-center justify-between p-4 hover:bg-surface-container-high transition-all group border-t border-outline-variant/10" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-secondary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="key">key</span>
+</div>
+<span class="font-medium text-on-surface">Şifrəni Dəyişdir</span>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="open_in_new">open_in_new</span>
+</a>
+</div>
+</section>
+<!-- Support & Legal -->
+<section class="space-y-2">
+<h3 class="text-xs font-bold text-outline uppercase tracking-[0.2em] px-2 mb-4">Dəstək və Hüquqi</h3>
+<div class="bg-surface-container-low rounded-xl overflow-hidden shadow-lg">
+<a class="flex items-center justify-between p-4 hover:bg-surface-container-high transition-all group" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-tertiary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="help_center">help_center</span>
+</div>
+<span class="font-medium text-on-surface">Dəstək</span>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="chevron_right">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-4 hover:bg-surface-container-high transition-all group" href="#">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-tertiary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="gavel">gavel</span>
+</div>
+<span class="font-medium text-on-surface">Şərtlər və Qaydalar</span>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="chevron_right">chevron_right</span>
+</a>
+</div>
+</section>
+<!-- Logout Section -->
+<div class="pt-4">
+<button class="w-full py-4 bg-error-container/20 text-error font-headline font-bold rounded-xl border border-error/20 hover:bg-error-container/30 transition-all flex items-center justify-center gap-2 group">
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform" data-icon="logout">logout</span>
+                Daxil olmaq
+            </button>
+<p class="text-center text-[10px] text-outline mt-6 uppercase tracking-widest opacity-50">Volaura v1.2.0 • Bakı</p>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-[#1b1b23]/80 backdrop-blur-lg rounded-t-[1.5rem] shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+<a class="flex flex-col items-center justify-center text-gray-500 hover:text-gray-300 transition-all group" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="dashboard">dashboard</span>
+<span class="font-body text-[10px] font-medium tracking-wide">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-gray-500 hover:text-gray-300 transition-all group" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="group">group</span>
+<span class="font-body text-[10px] font-medium tracking-wide">Volunteers</span>
+</a>
+<a class="flex flex-col items-center justify-center text-gray-500 hover:text-gray-300 transition-all group" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="event">event</span>
+<span class="font-body text-[10px] font-medium tracking-wide">Events</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#c0c1ff] bg-[#292932] rounded-xl px-4 py-1 transition-all" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-body text-[10px] font-medium tracking-wide">Settings</span>
+</a>
+</nav>
+<!-- 2FA Setup Modal -->
+<div class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-background/80 backdrop-blur-xl" id="2fa-modal">
+<div class="bg-surface-container rounded-xl max-w-sm w-full p-8 shadow-2xl border border-outline-variant/20 animate-[scaleIn_0.2s_ease-out]">
+<div class="flex flex-col items-center text-center">
+<div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-primary text-3xl">security</span>
+</div>
+<h2 class="text-xl font-headline font-bold text-on-surface mb-2">İki Faktorlu Təsdiqləmə</h2>
+<p class="text-sm text-on-surface-variant mb-8">Hesabınızı qorumaq üçün aşağıdakı addımları tamamlayın.</p>
+<div class="space-y-6 w-full text-left">
+<div class="flex gap-4">
+<span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-on-primary text-xs flex items-center justify-center font-bold">1</span>
+<p class="text-sm text-on-surface">Autentifikator tətbiqini yükləyin (Google Authenticator, Authy və s.)</p>
+</div>
+<div class="flex gap-4">
+<span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-on-primary text-xs flex items-center justify-center font-bold">2</span>
+<div class="space-y-3">
+<p class="text-sm text-on-surface">QR kodu skan edin</p>
+<div class="bg-white p-2 rounded-lg inline-block shadow-inner">
+<img alt="QR Code" class="w-32 h-32" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvLX5JSsXox6GwkWjKu-5OxT0a_IfVn_j9Kh6K_DXJwPCKCaYLK1hWQfsdqwEiyZADGYCiIhqb9oQAHtXqX6bhuvxvMULpL7AlI1lyokHmKVvown-VurrJMmWcS-QTq79_gi2a4nuVWuehk5NeFCavV9lLebZUVU0XuxjSrOLQevOZn0ZfcahNHQs3wX13oIWconc5MSeYK0WP_0zx8k6y0H0jPuIlhaRW2NUOgABfLEs-BGO6xMn-VYZHt0eXpEb9iupreCu2Nbs"/>
+</div>
+</div>
+</div>
+<div class="flex gap-4">
+<span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-on-primary text-xs flex items-center justify-center font-bold">3</span>
+<div class="space-y-3 w-full">
+<p class="text-sm text-on-surface">Təsdiq kodunu daxil edin</p>
+<div class="flex gap-2 justify-between">
+<input class="w-full bg-surface-container-high border-outline-variant rounded-lg px-4 py-2 text-center text-xl tracking-[0.5em] font-bold focus:ring-primary focus:border-primary text-on-surface" maxlength="6" placeholder="000000" type="text"/>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8 w-full space-y-4">
+<button class="w-full py-3 bg-primary text-on-primary font-bold rounded-xl shadow-lg shadow-primary/30 animate-pulse hover:animate-none hover:scale-[1.02] transition-transform">
+          Təsdiqlə
+        </button>
+<button class="w-full py-2 text-sm text-outline hover:text-on-surface transition-colors" onclick="document.getElementById('2fa-modal').classList.add('hidden'); document.getElementById('2fa-modal').classList.remove('flex');">
+          Ləğv et
+        </button>
+</div>
+</div>
+</div>
+</div>
+<style>
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+</style></body></html>

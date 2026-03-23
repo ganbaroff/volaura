@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="az"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Volaura - Qeydiyyat</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-fixed": "#221b00",
+                        "on-primary": "#1000a9",
+                        "primary-fixed": "#e1e0ff",
+                        "inverse-on-surface": "#303038",
+                        "tertiary-fixed": "#ffe16d",
+                        "primary": "#c0c1ff",
+                        "tertiary-container": "#c9a900",
+                        "surface-tint": "#c0c1ff",
+                        "on-surface": "#e4e1ed",
+                        "on-tertiary-container": "#4c3f00",
+                        "secondary-container": "#2f3aa3",
+                        "primary-container": "#8083ff",
+                        "on-tertiary": "#3a3000",
+                        "error-container": "#93000a",
+                        "on-error": "#690005",
+                        "on-background": "#e4e1ed",
+                        "outline-variant": "#464554",
+                        "secondary-fixed": "#e0e0ff",
+                        "on-secondary": "#131e8c",
+                        "on-secondary-fixed-variant": "#2f3aa3",
+                        "surface-container-low": "#1b1b23",
+                        "tertiary-fixed-dim": "#e9c400",
+                        "surface-container-lowest": "#0d0d15",
+                        "surface-container": "#1f1f27",
+                        "on-secondary-fixed": "#000767",
+                        "error": "#ffb4ab",
+                        "surface-container-highest": "#34343d",
+                        "on-error-container": "#ffdad6",
+                        "tertiary": "#e9c400",
+                        "inverse-surface": "#e4e1ed",
+                        "inverse-primary": "#494bd6",
+                        "on-primary-container": "#0d0096",
+                        "surface": "#13131b",
+                        "secondary-fixed-dim": "#bdc2ff",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "secondary": "#bdc2ff",
+                        "on-primary-fixed": "#07006c",
+                        "on-surface-variant": "#c7c4d7",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "on-secondary-container": "#a8afff",
+                        "surface-variant": "#34343d",
+                        "surface-container-high": "#292932",
+                        "surface-bright": "#393841",
+                        "outline": "#908fa0",
+                        "background": "#13131b",
+                        "surface-dim": "#13131b",
+                        "on-tertiary-fixed-variant": "#544600"
+                    },
+                    fontFamily: {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-mesh {
+            background-color: #13131b;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(192, 193, 255, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(128, 131, 255, 0.05) 0px, transparent 50%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body selection:bg-primary/30 min-h-screen flex flex-col">
+<!-- Predicted TopAppBar Implementation -->
+<header class="fixed top-0 w-full z-50 bg-[#13131b]/70 backdrop-blur-xl flex items-center justify-between px-6 py-4 w-full">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#c0c1ff]">close</span>
+<h1 class="text-2xl font-bold tracking-tight text-[#c0c1ff] plus-jakarta-sans">Volaura</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-slate-400 text-sm font-medium">AZ</span>
+</div>
+</header>
+<main class="flex-grow flex items-center justify-center px-6 pt-24 pb-32 bg-mesh">
+<div class="w-full max-width-[640px] max-w-lg mx-auto">
+<!-- Hero Header Section -->
+<div class="mb-10 text-center">
+<div class="inline-flex items-center justify-center p-4 rounded-full bg-surface-container-high mb-6">
+<span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings: 'FILL' 1;">person_add</span>
+</div>
+<h2 class="font-headline text-3xl font-bold text-on-surface mb-2 tracking-tight">Qeydiyyat</h2>
+<p class="text-on-surface-variant body-md">Elite peşəkar şəbəkəsinə xoş gəlmisiniz</p>
+</div>
+<!-- Registration Form -->
+<form class="space-y-6">
+<!-- Name Field -->
+<div class="space-y-2">
+<label class="block text-label-sm font-medium text-on-surface-variant ml-1">Ad və Soyad</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline text-xl group-focus-within:text-primary transition-colors">badge</span>
+</div>
+<input class="w-full bg-surface-container-lowest border-none ring-1 ring-outline-variant/20 focus:ring-2 focus:ring-primary rounded-xl py-4 pl-12 pr-4 text-on-surface placeholder:text-outline/50 transition-all outline-none" placeholder="Ad Soyad" type="text"/>
+</div>
+</div>
+<!-- Email Field -->
+<div class="space-y-2">
+<label class="block text-label-sm font-medium text-on-surface-variant ml-1">E-poçt ünvanı</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline text-xl group-focus-within:text-primary transition-colors">mail</span>
+</div>
+<input class="w-full bg-surface-container-lowest border-none ring-1 ring-outline-variant/20 focus:ring-2 focus:ring-primary rounded-xl py-4 pl-12 pr-4 text-on-surface placeholder:text-outline/50 transition-all outline-none" placeholder="misal@volaura.com" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-2">
+<label class="block text-label-sm font-medium text-on-surface-variant ml-1">Şifrə</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline text-xl group-focus-within:text-primary transition-colors">lock</span>
+</div>
+<input class="w-full bg-surface-container-lowest border-none ring-1 ring-outline-variant/20 focus:ring-2 focus:ring-primary rounded-xl py-4 pl-12 pr-4 text-on-surface placeholder:text-outline/50 transition-all outline-none" placeholder="••••••••" type="password"/>
+<div class="absolute inset-y-0 right-0 pr-4 flex items-center cursor-pointer">
+<span class="material-symbols-outlined text-outline/60 text-xl">visibility</span>
+</div>
+</div>
+</div>
+<!-- Confirm Password Field -->
+<div class="space-y-2">
+<label class="block text-label-sm font-medium text-on-surface-variant ml-1">Şifrəni təsdiqləyin</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline text-xl group-focus-within:text-primary transition-colors">lock_reset</span>
+</div>
+<input class="w-full bg-surface-container-lowest border-none ring-1 ring-outline-variant/20 focus:ring-2 focus:ring-primary rounded-xl py-4 pl-12 pr-4 text-on-surface placeholder:text-outline/50 transition-all outline-none" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<!-- Terms -->
+<div class="flex items-start gap-3 px-1">
+<div class="mt-1">
+<input class="w-5 h-5 rounded border-outline-variant bg-surface-container-lowest text-primary focus:ring-primary focus:ring-offset-background" type="checkbox"/>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+                        Qeydiyyatdan keçərək <a class="text-primary hover:underline" href="#">İstifadəçi Şərtləri</a> və <a class="text-primary hover:underline" href="#">Məxfilik Siyasəti</a> ilə razılaşırsınız.
+                    </p>
+</div>
+<!-- Submit Action -->
+<button class="w-full bg-gradient-to-r from-primary to-primary-container text-on-primary-container font-bold py-5 rounded-xl shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 group" type="submit">
+<span>Qeydiyyatdan keç</span>
+<span class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</form>
+<!-- Social Register Option -->
+<div class="mt-8 flex items-center gap-4">
+<div class="h-[1px] flex-grow bg-outline-variant/20"></div>
+<span class="text-xs font-semibold text-outline tracking-widest uppercase">Və ya</span>
+<div class="h-[1px] flex-grow bg-outline-variant/20"></div>
+</div>
+<div class="mt-8 grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-3 bg-surface-container-low hover:bg-surface-container-high py-4 rounded-xl transition-colors border border-outline-variant/10">
+<img alt="Google icon" class="w-5 h-5 opacity-80" data-alt="Google colorful brand logo icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNmdvreBr-mEq_R5m-uMWaLp8sZA_8LczMhGYQIz47N7SXFzWovn3ehbROm3XCKKiZb_Maxwgywu-ETfm1ts29kSkwemCoxRecwjWotS0COL6sXvo9Y65izdWOf3AiePtXXOgDdYLvxjXeort2LRMYfhWkzosRJfQ708kpKc3O19S7e5ywk9Z8UUQZ6iC5t4t1CGjrFfqlMG-Opc9GNH0KtthPU_p8NyUxDGJn-ZSkNmng8DdT8etGXgsUrKjf_krexRo9d_ODQyY"/>
+<span class="text-sm font-semibold">Google</span>
+</button>
+<button class="flex items-center justify-center gap-3 bg-surface-container-low hover:bg-surface-container-high py-4 rounded-xl transition-colors border border-outline-variant/10">
+<span class="material-symbols-outlined text-on-surface text-xl" style="font-variation-settings: 'FILL' 1;">work</span>
+<span class="text-sm font-semibold">LinkedIn</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Predicted BottomNavBar Implementation -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-[#1b1b23]/80 backdrop-blur-lg rounded-t-3xl z-50 shadow-[0px_-10px_30px_rgba(0,0,0,0.3)]">
+<a class="flex flex-col items-center justify-center text-slate-500 px-6 py-2 hover:text-[#bdc2ff] transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">login</span>
+<span class="plus-jakarta-sans text-[10px] uppercase tracking-wider font-bold">Daxil ol</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#292932] text-[#c0c1ff] rounded-2xl px-6 py-2" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">person_add</span>
+<span class="plus-jakarta-sans text-[10px] uppercase tracking-wider font-bold">Qeydiyyat</span>
+</a>
+</nav>
+<!-- Footer Redirect Section -->
+<div class="fixed bottom-24 left-0 w-full text-center pb-4 z-40">
+<p class="text-on-surface-variant text-sm font-medium">
+            Hesabınız var? 
+            <a class="text-primary font-bold ml-1 hover:underline underline-offset-4 decoration-2" href="#">Daxil ol</a>
+</p>
+</div>
+</body></html>

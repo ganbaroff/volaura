@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="az"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Volaura - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/framer-motion@11.0.8/dist/framer-motion.js"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                brand: "#6366f1",
+                "aura-gold": "#ffd700",
+                surface: "#13131b",
+                "surface-container": "#1b1b23",
+                "surface-variant": "#292932",
+                primary: "#c0c1ff",
+                "on-surface": "#e4e1ed",
+                "on-surface-variant": "#908fa0",
+              },
+              borderRadius: {
+                card: "12px",
+              },
+              fontFamily: {
+                headline: ["Plus Jakarta Sans", "sans-serif"],
+                body: ["Inter", "sans-serif"],
+              },
+              animation: {
+                'pulse-brand': 'pulse-brand 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              },
+              keyframes: {
+                'pulse-brand': {
+                  '0%, 100%': { opacity: 1, transform: 'scale(1)' },
+                  '50%': { opacity: 0.9, transform: 'scale(0.98)' },
+                }
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .aura-glow {
+            box-shadow: 0 0 40px -10px rgba(99, 102, 241, 0.2);
+        }
+        /* Simulation of Framer Motion Initial States for no-JS */
+        .motion-fade-up { opacity: 0; transform: translateY(16px); }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-brand/30 antialiased">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[640px] z-50 bg-surface/80 backdrop-blur-xl border-b border-white/5">
+<div class="flex justify-between items-center px-5 h-16">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-gradient-to-tr from-brand to-primary flex items-center justify-center p-[1.5px]">
+<img alt="User" class="w-full h-full rounded-full bg-surface object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCunqpvnzqVnDpTECpbYcKB7nwnLYt7nJ1aY-vGWjE8Ji2VGBaAUsnYOCNY08TGsPnibUoVKbOEYqqBAtouFbw0h-bavNOxIvVY-E8HvUFiVUeQc2yjt96OugfQw_OlI66Ar4F-zk4M3bP2ro5m9ZnGcz9mS3e7oZHCWN-PUTdO5-AXmyXUF8xYij__BfZSkt700sYMjtMe_qJ9qzN-mY8uzOffjK1PU956uXqRlrJ_K_NuPNvmAOGXIRbN3haW0IKSkycO7VOCVLw"/>
+</div>
+<h1 class="font-headline font-bold text-xl tracking-tight text-white">{t('dashboard.title')}</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-white">notifications</span>
+</button>
+</div>
+</header>
+<main class="max-w-[640px] mx-auto pt-20 pb-32 px-5 min-h-screen">
+<!-- Welcome Card (Fade + Y:16) -->
+<section class="mb-6 p-6 rounded-card bg-gradient-to-br from-brand/10 via-transparent to-transparent border-l-[3px] border-brand transition-all duration-[400ms]" id="welcome-card">
+<h2 class="font-headline text-2xl font-bold text-white tracking-tight mb-1">
+                {t('dashboard.welcome', { name: 'Leyla' })} 👋
+            </h2>
+<p class="text-on-surface-variant text-sm leading-relaxed">
+                {t('dashboard.welcomeSub')}
+            </p>
+</section>
+<!-- AURA Score Widget (Count 0->N) -->
+<div class="mb-6 cursor-pointer group active:scale-[0.98] transition-transform" onclick="location.href='/aura'">
+<div class="bg-surface-container p-6 rounded-card aura-glow relative overflow-hidden border border-white/5">
+<div class="absolute -right-12 -top-12 w-48 h-48 bg-brand/5 rounded-full blur-3xl"></div>
+<div class="flex justify-between items-start mb-6">
+<div>
+<span class="text-[10px] font-bold text-brand tracking-[0.1em] uppercase">{t('dashboard.scoreLabel')}</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="font-headline text-5xl font-extrabold text-white tracking-tighter" id="score-counter">78.4</span>
+<span class="text-on-surface-variant font-medium text-lg">/ 100</span>
+</div>
+</div>
+<div class="bg-aura-gold/10 px-3 py-1.5 rounded-full flex items-center gap-1.5 border border-aura-gold/20">
+<span class="material-symbols-outlined text-aura-gold text-[16px]" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span class="text-aura-gold text-[10px] font-bold tracking-wider uppercase">{t('dashboard.badgeGold')}</span>
+</div>
+</div>
+<div class="space-y-3">
+<div class="h-2 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-brand to-primary rounded-full transition-all duration-[1200ms] ease-out w-[78.4%]" id="progress-bar"></div>
+</div>
+<div class="flex justify-between text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">
+<span>{t('dashboard.levelBeginner')}</span>
+<span>{t('dashboard.levelElite')}</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Stats Row (Stagger 80ms) -->
+<div class="grid grid-cols-3 gap-3 mb-6">
+<div class="bg-surface-container p-4 rounded-card flex flex-col items-center justify-center text-center border border-white/5 stat-card">
+<span class="material-symbols-outlined text-brand mb-2">local_fire_department</span>
+<span class="text-[11px] font-medium text-on-surface-variant block mb-1 uppercase tracking-tight">{t('dashboard.statStreak')}</span>
+<span class="font-headline font-bold text-white text-sm">7 {t('common.days')}</span>
+</div>
+<div class="bg-surface-container p-4 rounded-card flex flex-col items-center justify-center text-center border border-white/5 stat-card">
+<span class="material-symbols-outlined text-primary mb-2">calendar_today</span>
+<span class="text-[11px] font-medium text-on-surface-variant block mb-1 uppercase tracking-tight">{t('dashboard.statEvents')}</span>
+<span class="font-headline font-bold text-white text-sm">12</span>
+</div>
+<div class="bg-surface-container p-4 rounded-card flex flex-col items-center justify-center text-center border border-white/5 stat-card">
+<span class="material-symbols-outlined text-aura-gold mb-2" style="font-variation-settings: 'FILL' 1;">emoji_events</span>
+<span class="text-[11px] font-medium text-on-surface-variant block mb-1 uppercase tracking-tight">{t('dashboard.statLeague')}</span>
+<span class="font-headline font-bold text-white text-sm">Top 8%</span>
+</div>
+</div>
+<!-- Continue Assessment CTA (Pulse every 4s) -->
+<div class="mb-10">
+<button class="w-full relative overflow-hidden bg-brand p-4 rounded-card flex items-center justify-between shadow-lg shadow-brand/20 active:scale-95 transition-transform animate-pulse-brand">
+<div class="flex flex-col items-start text-white text-left">
+<span class="font-headline font-bold text-sm tracking-tight">{t('dashboard.ctaAssessment')}</span>
+<span class="text-[11px] opacity-80 font-medium">{t('dashboard.ctaSubtext')}</span>
+</div>
+<span class="material-symbols-outlined text-white">arrow_forward</span>
+</button>
+</div>
+<!-- Activity Feed (Stagger 60ms) -->
+<section class="mb-12">
+<div class="flex items-center justify-between mb-5">
+<h3 class="font-headline font-bold text-lg text-white">{t('dashboard.activityTitle')}</h3>
+<button class="text-brand text-xs font-bold uppercase tracking-widest px-2 py-1">{t('dashboard.viewAll')}</button>
+</div>
+<div class="space-y-3">
+<!-- Activity Item 1 -->
+<div class="flex items-center gap-4 p-4 rounded-card bg-surface-container/50 border border-white/5 activity-item">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-brand">
+<span class="material-symbols-outlined">visibility</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-semibold text-white leading-tight">{t('activity.socarView')}</p>
+<p class="text-[11px] text-on-surface-variant mt-1">2 {t('common.hoursAgo')}</p>
+</div>
+</div>
+<!-- Activity Item 2 -->
+<div class="flex items-center gap-4 p-4 rounded-card bg-surface-container/50 border border-white/5 activity-item">
+<div class="w-10 h-10 rounded-full bg-brand/10 flex items-center justify-center text-brand">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-semibold text-white leading-tight">{t('activity.auraEarned', { amount: 5 })}</p>
+<p class="text-[11px] text-on-surface-variant mt-1">Dünən, 14:20</p>
+</div>
+</div>
+<!-- Activity Item 3 -->
+<div class="flex items-center gap-4 p-4 rounded-card bg-surface-container/50 border border-white/5 activity-item">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">event_note</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-semibold text-white leading-tight">{t('activity.cop30')}</p>
+<p class="text-[11px] text-on-surface-variant mt-1">{t('common.suggested')} • {t('common.now')}</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-sm">chevron_right</span>
+</div>
+<!-- Skeleton State Mock -->
+<div class="flex items-center gap-4 p-4 rounded-card opacity-30">
+<div class="w-10 h-10 rounded-full bg-surface-variant animate-pulse"></div>
+<div class="flex-1 space-y-2">
+<div class="h-3 w-32 bg-surface-variant rounded-full animate-pulse"></div>
+<div class="h-2 w-20 bg-surface-variant rounded-full animate-pulse"></div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[640px] flex justify-around items-center px-4 pb-8 pt-4 bg-surface-container/90 backdrop-blur-xl border-t border-white/5 z-50">
+<a class="flex flex-col items-center justify-center text-brand group" href="#">
+<div class="bg-brand/10 px-4 py-1.5 rounded-xl mb-1 group-active:scale-90 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+</div>
+<span class="font-headline text-[10px] font-bold tracking-wide">{t('nav.dashboard')}</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">verified</span>
+<span class="font-headline text-[10px] font-bold tracking-wide uppercase opacity-70">AURA</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">event</span>
+<span class="font-headline text-[10px] font-bold tracking-wide uppercase opacity-70">{t('nav.events')}</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="font-headline text-[10px] font-bold tracking-wide uppercase opacity-70">{t('nav.profile')}</span>
+</a>
+</nav>
+<!-- Floating Action Button -->
+<div class="fixed bottom-28 left-1/2 translate-x-[200px] z-40 hidden sm:block">
+<button class="w-14 h-14 bg-brand text-white rounded-2xl shadow-xl shadow-brand/20 flex items-center justify-center active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</div>
+<script>
+        // Simple mock of the t() function for demonstration in HTML
+        const translations = {
+            'dashboard.title': 'Volaura',
+            'dashboard.welcome': 'Salam, {{name}}',
+            'dashboard.welcomeSub': 'Bugün 3 könüllü sizi profilinizdə axtardı.',
+            'dashboard.scoreLabel': 'AURA SCORE',
+            'dashboard.badgeGold': 'Gold Badge',
+            'dashboard.levelBeginner': 'Beginner',
+            'dashboard.levelElite': 'Elite',
+            'dashboard.statStreak': 'Streak',
+            'dashboard.statEvents': 'Tədbirlər',
+            'dashboard.statLeague': 'League',
+            'dashboard.ctaAssessment': 'Qiymətləndirməni davam et',
+            'dashboard.ctaSubtext': '3 competency remaining',
+            'dashboard.activityTitle': 'Son Fəaliyyətlər',
+            'dashboard.viewAll': 'Hamısı',
+            'nav.dashboard': 'İdarə Paneli',
+            'nav.events': 'Tədbirlər',
+            'nav.profile': 'Profil',
+            'common.days': 'gün',
+            'common.hoursAgo': 'saat əvvəl',
+            'common.suggested': 'Təklif edilən',
+            'common.now': 'İndi',
+            'activity.socarView': 'SOCAR profilinizə baxdı',
+            'activity.auraEarned': '+{{amount}} AURA qazandınız',
+            'activity.cop30': 'COP30 könüllü axtarır'
+        };
+
+        function t(key, params = {}) {
+            let text = translations[key] || key;
+            for (const [pKey, pVal] of Object.entries(params)) {
+                text = text.replace(`{{${pKey}}}`, pVal);
+            }
+            return text;
+        }
+
+        // Initialize Framer Motion-like animations
+        window.addEventListener('DOMContentLoaded', () => {
+            // Animation for Welcome Card
+            const welcomeCard = document.getElementById('welcome-card');
+            setTimeout(() => {
+                welcomeCard.style.opacity = '1';
+                welcomeCard.style.transform = 'translateY(0)';
+            }, 50);
+
+            // Score Counter Animation (0 -> 78.4 in 1200ms)
+            const scoreDisplay = document.getElementById('score-counter');
+            const targetScore = 78.4;
+            let currentScore = 0;
+            const startTime = performance.now();
+            const duration = 1200;
+
+            function animateScore(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                // Ease out cubic
+                const easeProgress = 1 - Math.pow(1 - progress, 3);
+                currentScore = (easeProgress * targetScore).toFixed(1);
+                scoreDisplay.textContent = currentScore;
+                if (progress < 1) requestAnimationFrame(animateScore);
+            }
+            requestAnimationFrame(animateScore);
+
+            // Stagger Stats Cards (80ms)
+            document.querySelectorAll('.stat-card').forEach((card, i) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(10px)';
+                card.style.transition = 'all 0.4s ease-out';
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 200 + (i * 80));
+            });
+
+            // Stagger Activity Items (60ms)
+            document.querySelectorAll('.activity-item').forEach((item, i) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(-10px)';
+                item.style.transition = 'all 0.3s ease-out';
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateX(0)';
+                }, 400 + (i * 60));
+            });
+        });
+
+        // Replace placeholders in the DOM (Simulation of React render)
+        document.body.innerHTML = document.body.innerHTML.replace(/\{t\('([^']+)'(?:,\s*\{([^}]+)\})?\)\}/g, (match, key, paramsStr) => {
+            let params = {};
+            if (paramsStr) {
+                try {
+                    // Primitive parser for the mockup
+                    const pairs = paramsStr.split(',').map(s => s.trim().split(':'));
+                    pairs.forEach(([pk, pv]) => {
+                        params[pk.trim()] = pv.trim().replace(/['"]/g, '');
+                    });
+                } catch(e) {}
+            }
+            return t(key, params);
+        });
+    </script>
+</body></html>

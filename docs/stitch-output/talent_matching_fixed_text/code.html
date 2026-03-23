@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface": "#13131b",
+              "secondary-fixed-dim": "#bdc2ff",
+              "on-primary-fixed-variant": "#2f2ebe",
+              "secondary": "#bdc2ff",
+              "on-primary-fixed": "#07006c",
+              "tertiary": "#e9c400",
+              "inverse-surface": "#e4e1ed",
+              "inverse-primary": "#494bd6",
+              "on-primary-container": "#0d0096",
+              "outline": "#908fa0",
+              "background": "#13131b",
+              "surface-dim": "#13131b",
+              "on-tertiary-fixed-variant": "#544600",
+              "on-surface-variant": "#c7c4d7",
+              "primary-fixed-dim": "#c0c1ff",
+              "on-secondary-container": "#a8afff",
+              "surface-variant": "#34343d",
+              "surface-container-high": "#292932",
+              "surface-bright": "#393841",
+              "secondary-fixed": "#e0e0ff",
+              "on-secondary": "#131e8c",
+              "on-secondary-fixed-variant": "#2f3aa3",
+              "on-background": "#e4e1ed",
+              "outline-variant": "#464554",
+              "surface-container-lowest": "#0d0d15",
+              "surface-container": "#1f1f27",
+              "on-secondary-fixed": "#000767",
+              "error": "#ffb4ab",
+              "surface-container-highest": "#34343d",
+              "on-error-container": "#ffdad6",
+              "surface-container-low": "#1b1b23",
+              "tertiary-fixed-dim": "#e9c400",
+              "secondary-container": "#2f3aa3",
+              "on-surface": "#e4e1ed",
+              "on-tertiary-container": "#4c3f00",
+              "on-error": "#690005",
+              "primary-container": "#8083ff",
+              "on-tertiary": "#3a3000",
+              "error-container": "#93000a",
+              "primary-fixed": "#e1e0ff",
+              "on-tertiary-fixed": "#221b00",
+              "on-primary": "#1000a9",
+              "tertiary-container": "#c9a900",
+              "surface-tint": "#c0c1ff",
+              "inverse-on-surface": "#303038",
+              "tertiary-fixed": "#ffe16d",
+              "primary": "#c0c1ff"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(31, 31, 39, 0.7);
+            backdrop-filter: blur(12px);
+        }
+        .aura-glow {
+            box-shadow: 0 0 20px rgba(192, 193, 255, 0.15);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-background font-body selection:bg-primary/30 min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#13131b]/70 backdrop-blur-xl shadow-2xl shadow-black/40 flex items-center justify-between px-6 h-16 w-full">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#c0c1ff] cursor-pointer" data-icon="arrow_back">arrow_back</span>
+<h1 class="font-['Plus_Jakarta_Sans'] font-semibold text-lg tracking-tight text-[#c0c1ff]">Talent Matching</h1>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#c0c1ff] opacity-80" data-icon="auto_awesome">auto_awesome</span>
+</div>
+</header>
+<main class="pt-20 px-4 space-y-6">
+<!-- Hero Section: AI Status -->
+<section class="relative overflow-hidden rounded-xl bg-surface-container-low p-6 aura-glow">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-8xl" data-icon="bolt">bolt</span>
+</div>
+<div class="relative z-10 space-y-2">
+<div class="flex items-center gap-2 text-primary text-xs font-bold uppercase tracking-widest"><span class="material-symbols-outlined text-sm" data-icon="psychology" data-weight="fill" style="font-variation-settings: 'FILL' 1;">psychology</span>AURA AI Aktivdir</div>
+<h2 class="font-headline text-2xl font-bold text-on-surface">COP30 Environmental Summit</h2>
+<p class="text-on-surface-variant text-sm max-w-[80%] leading-relaxed">COP30 Environmental Summit üçün ən yaxşı 450+ namizədi təhlil etdik və davamlılıq üzrə yüksək təcrübəsi olan namizədləri tapdıq.</p>
+<div class="pt-4 flex items-center gap-4">
+<div class="flex -space-x-3">
+<img class="w-8 h-8 rounded-full border-2 border-surface-container-low shadow-lg" data-alt="Volunteer avatar thumbnail 1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBA1NW2R1Kvc0sWLgzR9Uv_hTbDXPY9MNivvc9D7agGZjgkqpVl9ochoTNWsBNFMlSofkhVMtAPjXaTL67kjAA5HYbMjoO3gwCA0Ghe3tE0pNxVPuPRuxoeF_T0_wOjgsRklnjzt_S56prYFsi0xFNfZlX0rS-lx5SJ5zp2GSwmWxXL-AcayMwHoun36956cCNQso9JrwgmZWIY35GRMFmsFdavvRhu-_1xau6Rrnjaq-EIE292_bWpDL4NeLQxQ6Bgmfd677pPWKA"/>
+<img class="w-8 h-8 rounded-full border-2 border-surface-container-low shadow-lg" data-alt="Volunteer avatar thumbnail 2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDm5CycBWS5fB8ki9CRK7L9UShSWkoRvG-Xaw_JqTfv9uUeexjfK-OD0KJFZWSUo2MFu-g9FjW4oZIBPcCKmmaSvr27TC1tpU0R328VdE6F1XvaU0hQbBZAelhX0ztsEesdzAPbWSBazzWijTYtapiObQBoyWLa--qjs8NSutq9mSOoXu5TXD_LVBPVvbTQVoK4Xu1daa6zBx1Nyp-hzeNYw3ZqZzGuAV1i22Db1bLXHP-C66FMdJfP-NbkGOJUg5VDQl2if2v2ZsQ"/>
+<img class="w-8 h-8 rounded-full border-2 border-surface-container-low shadow-lg" data-alt="Volunteer avatar thumbnail 3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZf5-41wWqH0SgwI07DVaGSvA0OJzyY97VETR-uVk1i3_oH6BkB37FSSx52jESxmP2afZ3aosqzEEh3K192BD643klJ8zksXqPO2tvf6rsKEHD7Cbh1giZfwr2Vi806enOGRr-uWPrmtWmkmUDx3yYLg16NaOXlQmQHcVkOOMhbULkuJBeB0y9ZMcEKxBgzExhHqvh44ebSM9y-6RDCghF5tc3qOiKFbLinWa2M1x0J8Q9m2DiN4urVEvic0gbd9n5GAIdROx9SYI"/>
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-[10px] font-bold border-2 border-surface-container-low">+12</div>
+</div>
+<span class="text-xs text-on-surface-variant font-medium">15 Yüksək potensiallı uyğunluq</span>
+</div>
+</div>
+</section>
+<!-- Filters: Horizontal Scroll -->
+<section class="flex gap-3 overflow-x-auto hide-scrollbar -mx-4 px-4 py-2">
+<button class="flex-shrink-0 px-4 py-2 rounded-full bg-primary text-on-primary text-sm font-semibold shadow-lg shadow-primary/20">Bütün Talentlər</button>
+<button class="flex-shrink-0 px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant text-sm font-medium hover:bg-surface-bright transition-colors">
+                t('filters.platinum', "Platinum Tier")
+            </button>
+<button class="flex-shrink-0 px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant text-sm font-medium hover:bg-surface-bright transition-colors">
+                t('filters.sustainability', "Sustainability")
+            </button>
+<button class="flex-shrink-0 px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant text-sm font-medium hover:bg-surface-bright transition-colors">
+                t('filters.leadership', "Leadership")
+            </button>
+<button class="flex-shrink-0 px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant text-sm font-medium hover:bg-surface-bright transition-colors">
+<span class="material-symbols-outlined text-base" data-icon="tune">tune</span>
+</button>
+</section>
+<!-- Match Score Cards List -->
+<section class="space-y-4 pb-12">
+<!-- Card 1: Platinum Match -->
+<div class="bg-surface-container-low rounded-xl p-5 relative overflow-hidden group transition-all duration-300 hover:bg-surface-container-high">
+<div class="absolute top-0 right-0 h-1 w-full bg-gradient-to-r from-transparent via-tertiary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="flex gap-4">
+<div class="relative">
+<img class="w-14 h-14 rounded-xl object-cover shadow-2xl" data-alt="Portrait of Sarah Jenkins" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCA9rF8Sc3zs7ambOcGMy5T5y6NAFIC6M0AdHQNPTk8hnJkBK6b8ycFjX2sAWVyotWZGRi5dYrckGYe9b7Z5HCy2Ctd5sEjC3yx-15TIysh3hz1A21U-TtYzIQmoqrVrwmJwvOlZTs1s0c8_df6v8DpGZhl7Mv88YxXMeJzfujNHrrFXkLKtl0Yb_cEnTKg9AfOSQDnpNmED2U96byRnR0jZrU5v0zx4sEWDoxR16_LA2Bl4rls4DsHIMF-aGEUzDEYwdfwCiu3jxQ"/>
+<div class="absolute -bottom-1 -right-1 bg-tertiary text-on-tertiary rounded-full p-0.5 shadow-lg">
+<span class="material-symbols-outlined text-[12px]" data-icon="workspace_premium" data-weight="fill" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+</div>
+</div>
+<div>
+<h3 class="font-headline font-bold text-lg text-on-surface">Sarah Jenkins</h3>
+<div class="flex items-center gap-1.5">
+<span class="text-[10px] font-bold text-tertiary uppercase tracking-tighter">Platinum Elite</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="text-[10px] font-medium text-on-surface-variant">AURA 2,450</span>
+</div>
+</div>
+</div>
+<div class="relative flex flex-col items-center justify-center">
+<div class="relative flex items-center justify-center w-14 h-14">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-container-highest" cx="28" cy="28" fill="transparent" r="24" stroke="currentColor" stroke-width="3"></circle>
+<circle class="text-primary" cx="28" cy="28" fill="transparent" r="24" stroke="currentColor" stroke-dasharray="150.8" stroke-dashoffset="3" stroke-width="3"></circle>
+</svg>
+<span class="absolute text-sm font-black text-primary font-headline italic tracking-tighter">98%</span>
+</div>
+<div class="text-[8px] uppercase text-on-surface-variant font-bold mt-1 text-center leading-tight">Uyğunluq balı</div>
+</div>
+</div>
+<div class="bg-surface-container/50 rounded-lg p-3 mb-5 border-l-2 border-primary">
+<p class="text-xs text-on-surface-variant leading-relaxed italic">"İctimai danışıq və davamlılıq üzrə ekspert. Əvvəllər UNESCO tədbirlərində yaşıl təşəbbüslərə rəhbərlik edib."</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex-1 bg-gradient-to-r from-primary to-primary-container text-on-primary py-3 rounded-xl font-bold text-sm shadow-xl shadow-primary/10 active:scale-95 transition-transform">Dəvət et</button>
+<button class="px-4 py-3 bg-surface-container-high text-on-surface rounded-xl hover:bg-surface-bright transition-colors active:scale-95">
+<span class="material-symbols-outlined text-xl" data-icon="person">person</span>
+</button>
+</div>
+</div>
+<!-- Card 2: Gold Match -->
+<div class="bg-surface-container-low rounded-xl p-5 relative overflow-hidden group transition-all duration-300 hover:bg-surface-container-high">
+<div class="flex justify-between items-start mb-4">
+<div class="flex gap-4">
+<div class="relative">
+<img class="w-14 h-14 rounded-xl object-cover shadow-2xl" data-alt="Portrait of Marcus Thorne" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAv7gF66rvb9F86WXhvvTb3CejjXN9_O9-oTaq23pIgYi4Vz31dpoE-Oh3TiO7vggN-usGRmQT2Hzq_B4EnLKFAL3n8A3iH1hp5KcGi7SyO0FJFwayCt3njGP1w5W0mn3FJaOT4nXJCPTCfmlWrz3SsBVuNOJaTg7QIhdVF5zJT7q0KX6kUJqCMNJQLgkTNdlLLW_o5Vur_Zdot2HhU8Mqjb0vf3W2GtsJC2nMQ_CTYnXUV6NPjmcz05G1fqTLeQY7V6odtNRrHekI"/>
+<div class="absolute -bottom-1 -right-1 bg-on-tertiary-fixed-variant text-white rounded-full p-0.5 shadow-lg">
+<span class="material-symbols-outlined text-[12px]" data-icon="stars" data-weight="fill" style="font-variation-settings: 'FILL' 1;">stars</span>
+</div>
+</div>
+<div>
+<h3 class="font-headline font-bold text-lg text-on-surface">Marcus Thorne</h3>
+<div class="flex items-center gap-1.5">
+<span class="text-[10px] font-bold text-on-tertiary-container uppercase tracking-tighter">Gold Tier</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="text-[10px] font-medium text-on-surface-variant">AURA 1,820</span>
+</div>
+</div>
+</div>
+<div class="relative flex flex-col items-center justify-center">
+<div class="relative flex items-center justify-center w-14 h-14">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-container-highest" cx="28" cy="28" fill="transparent" r="24" stroke="currentColor" stroke-width="3"></circle>
+<circle class="text-secondary" cx="28" cy="28" fill="transparent" r="24" stroke="currentColor" stroke-dasharray="150.8" stroke-dashoffset="12" stroke-width="3"></circle>
+</svg>
+<span class="absolute text-sm font-black text-secondary font-headline italic tracking-tighter">92%</span>
+</div>
+<div class="text-[8px] uppercase text-on-surface-variant font-bold mt-1 text-center leading-tight">Uyğunluq balı</div>
+</div>
+</div>
+<div class="bg-surface-container/50 rounded-lg p-3 mb-5 border-l-2 border-secondary">
+<p class="text-xs text-on-surface-variant leading-relaxed italic">"Tullantıların idarə edilməsi protokolları sahəsində ixtisaslaşmış güclü logistika təcrübəsi."</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex-1 bg-gradient-to-r from-primary to-primary-container text-on-primary py-3 rounded-xl font-bold text-sm shadow-xl shadow-primary/10 active:scale-95 transition-transform">Dəvət et</button>
+<button class="px-4 py-3 bg-surface-container-high text-on-surface rounded-xl hover:bg-surface-bright transition-colors active:scale-95">
+<span class="material-symbols-outlined text-xl" data-icon="person">person</span>
+</button>
+</div>
+</div>
+<!-- Card 3: Silver Match -->
+<div class="bg-surface-container-low rounded-xl p-5 relative overflow-hidden group transition-all duration-300 hover:bg-surface-container-high opacity-90">
+<div class="flex justify-between items-start mb-4">
+<div class="flex gap-4">
+<div class="relative">
+<img class="w-14 h-14 rounded-xl object-cover shadow-2xl" data-alt="Portrait of Elena Rossi" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhzHzGAxvoEvaNgvmSA4hcioxuT8aCchukYcuyTGWWg4CaqEzOp5NVWhpsBgcqy3EaM-4cllJtiI0Kz4iWj6YIxdalHjLoIQ94j0SrJnaOhLgNmZ16IKeffWNlDJUyXsBznODd5HEpbnrTbeOrGyiUbRLuqzPXYAu4wSxz2dvD3y4zdHXpCEDNaHJIWZe59do7s7sZIXQGETJKZ2CQPzBH_H8cWRMkp7MOWdqztUtns7aislTsnrzSZF1JwDVz_0k-fmqcsc5vcWI"/>
+<div class="absolute -bottom-1 -right-1 bg-outline text-white rounded-full p-0.5 shadow-lg">
+<span class="material-symbols-outlined text-[12px]" data-icon="military_tech" data-weight="fill" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+</div>
+</div>
+<div>
+<h3 class="font-headline font-bold text-lg text-on-surface">Elena Rossi</h3>
+<div class="flex items-center gap-1.5">
+<span class="text-[10px] font-bold text-outline uppercase tracking-tighter">Silver Tier</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="text-[10px] font-medium text-on-surface-variant">AURA 940</span>
+</div>
+</div>
+</div>
+<div class="relative flex flex-col items-center justify-center">
+<div class="relative flex items-center justify-center w-14 h-14">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-container-highest" cx="28" cy="28" fill="transparent" r="24" stroke="currentColor" stroke-width="3"></circle>
+<circle class="text-outline" cx="28" cy="28" fill="transparent" r="24" stroke="currentColor" stroke-dasharray="150.8" stroke-dashoffset="22" stroke-width="3"></circle>
+</svg>
+<span class="absolute text-sm font-black text-outline font-headline italic tracking-tighter">85%</span>
+</div>
+<div class="text-[8px] uppercase text-on-surface-variant font-bold mt-1 text-center leading-tight">Uyğunluq balı</div>
+</div>
+</div>
+<div class="bg-surface-container/50 rounded-lg p-3 mb-5 border-l-2 border-outline/50">
+<p class="text-xs text-on-surface-variant leading-relaxed italic">"Beynəlxalq sammitlər üçün ideal çoxdilli mütəxəssis (5 dildə sərbəst danışır)."</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex-1 bg-gradient-to-r from-primary to-primary-container text-on-primary py-3 rounded-xl font-bold text-sm shadow-xl shadow-primary/10 active:scale-95 transition-transform">Dəvət et</button>
+<button class="px-4 py-3 bg-surface-container-high text-on-surface rounded-xl hover:bg-surface-bright transition-colors active:scale-95">
+<span class="material-symbols-outlined text-xl" data-icon="person">person</span>
+</button>
+</div>
+</div>
+<!-- Empty State Illustration Placeholder (Hidden if matches exist) -->
+<div class="hidden flex-col items-center justify-center py-20 text-center space-y-4">
+<div class="w-24 h-24 rounded-full bg-surface-container flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-5xl text-outline-variant" data-icon="search_off">search_off</span>
+</div>
+<h4 class="font-headline font-bold text-on-surface">t('matching.no_results', "No perfect matches yet")</h4>
+<p class="text-on-surface-variant text-sm px-12">t('matching.no_results_desc', "Try adjusting your required skills or lowering the tier threshold.")</p>
+<button class="text-primary font-bold text-sm underline underline-offset-4">t('actions.reset_filters', "Reset all filters")</button>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-[1.5rem] bg-[#1b1b23]/80 backdrop-blur-md flex justify-around items-center h-20 px-4 pb-safe w-full shadow-[0_-10px_30px_rgba(0,0,0,0.5)] bg-gradient-to-t from-[#13131b] to-transparent">
+<a class="flex flex-col items-center justify-center text-slate-500 opacity-70 hover:text-[#bdc2ff]" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-['Inter'] text-[10px] font-medium uppercase tracking-widest mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 opacity-70 hover:text-[#bdc2ff]" href="#">
+<span class="material-symbols-outlined" data-icon="event_upcoming">event_upcoming</span>
+<span class="font-['Inter'] text-[10px] font-medium uppercase tracking-widest mt-1">Events</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#c0c1ff] scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="groups" data-weight="fill" style="font-variation-settings: 'FILL' 1;">groups</span>
+<span class="font-['Inter'] text-[10px] font-medium uppercase tracking-widest mt-1">Volunteers</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 opacity-70 hover:text-[#bdc2ff]" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['Inter'] text-[10px] font-medium uppercase tracking-widest mt-1">Settings</span>
+</a>
+</nav>
+</body></html>

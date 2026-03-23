@@ -1,0 +1,210 @@
+"""Profile endpoints."""
+
+import secrets
+from datetime import UTC, datetime, timedelta
+
+from fastapi import APIRouter, HTTPException, Request
+from loguru import logger
+
+from app.config import settings
+from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
+from app.middleware.rate_limit import limiter, RATE_PROFILE_WRITE
+from app.schemas.profile import (
+    ProfileCreate,
+    ProfileResponse,
+    ProfileUpdate,
+    PublicProfileResponse,
+)
+from app.schemas.verification import (
+    CreateVerificationLinkRequest,
+    CreateVerificationLinkResponse,
+)
+
+router = APIRouter(prefix="/profiles", tags=["Profiles"])
+
+
+@router.get("/me", response_model=ProfileResponse)
+async def get_my_profile(
+    db: SupabaseUser,
+    user_id: CurrentUserId,
+) -> ProfileResponse:
+    """Get the current authenticated user's profile."""
+    result = (
+        await db.table("profiles")
+        .select("*")
+        .eq("id", user_id)
+        .single()
+        .execute()
+    )
+    if not result.data:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "PROFILE_NOT_FOUND", "message": "Profile not found"},
+        )
+    return ProfileResponse(**result.data)
+
+
+@router.post("/me", response_model=ProfileResponse, status_code=201)
+@limiter.limit(RATE_PROFILE_WRITE)
+async def create_my_profile(
+    request: Request,
+    payload: ProfileCreate,
+    db: SupabaseUser,
+    user_id: CurrentUserId,
+) -> ProfileResponse:
+    """Create a profile for the current user (called after registration)."""
+    # Check username not taken
+    existing = (
+        await db.table("profiles")
+        .select("id")
+        .eq("username", payload.username)
+        .execute()
+    )
+    if existing.data:
+        raise HTTPException(
+            status_code=409,
+            detail={"code": "USERNAME_TAKEN", "message": "Username already taken"},
+        )
+
+    result = (
+        await db.table("profiles")
+        .insert({"id": user_id, **payload.model_dump()})
+        .execute()
+    )
+    if not result.data:
+        raise HTTPException(status_code=500, detail={"code": "CREATE_FAILED", "message": "Failed to create profile"})
+
+    return ProfileResponse(**result.data[0])
+
+
+@router.put("/me", response_model=ProfileResponse)
+@limiter.limit(RATE_PROFILE_WRITE)
+async def update_my_profile(
+    request: Request,
+    payload: ProfileUpdate,
+    db: SupabaseUser,
+    user_id: CurrentUserId,
+) -> ProfileResponse:
+    """Update the current user's profile."""
+    update_data = payload.model_dump(exclude_none=True)
+    if not update_data:
+        raise HTTPException(
+            status_code=422,
+            detail={"code": "NO_FIELDS", "message": "No fields to update"},
+        )
+
+    result = (
+        await db.table("profiles")
+        .update(update_data)
+        .eq("id", user_id)
+        .execute()
+    )
+    if not result.data:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "PROFILE_NOT_FOUND", "message": "Profile not found"},
+        )
+    return ProfileResponse(**result.data[0])
+
+
+@router.post(
+    "/{volunteer_id}/verification-link",
+    response_model=CreateVerificationLinkResponse,
+    status_code=201,
+)
+@limiter.limit(RATE_PROFILE_WRITE)
+async def create_verification_link(
+    request: Request,
+    volunteer_id: str,
+    payload: CreateVerificationLinkRequest,
+    db: SupabaseAdmin,
+    user_id: CurrentUserId,
+) -> CreateVerificationLinkResponse:
+    """Create a one-use verification link for a volunteer.
+
+    Any authenticated user can create a link for any volunteer (MVP).
+    The link is sent to an expert who rates the volunteer's competency.
+    Token is valid for 7 days, single-use.
+    """
+    # Ensure target volunteer exists
+    volunteer = (
+        await db.table("profiles")
+        .select("id")
+        .eq("id", volunteer_id)
+        .single()
+        .execute()
+    )
+    if not volunteer.data:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "VOLUNTEER_NOT_FOUND", "message": "Volunteer not found"},
+        )
+
+    token = secrets.token_urlsafe(32)
+    expires_at = datetime.now(tz=UTC) + timedelta(days=7)
+    expires_at_iso = expires_at.isoformat()
+
+    result = (
+        await db.table("expert_verifications")
+        .insert(
+            {
+                "volunteer_id": volunteer_id,
+                "created_by": user_id,
+                "verifier_name": payload.verifier_name,
+                "verifier_org": payload.verifier_org,
+                "competency_id": payload.competency_id,
+                "token": token,
+                "token_expires_at": expires_at_iso,
+            }
+        )
+        .execute()
+    )
+
+    if not result.data:
+        logger.error("Failed to create verification link", volunteer_id=volunteer_id)
+        raise HTTPException(
+            status_code=500,
+            detail={"code": "CREATE_FAILED", "message": "Failed to create verification link"},
+        )
+
+    row = result.data[0]
+    verify_url = f"{settings.app_url}/az/verify/{token}"
+
+    logger.info(
+        "Verification link created",
+        volunteer_id=volunteer_id,
+        created_by=user_id,
+        competency=payload.competency_id,
+    )
+
+    return CreateVerificationLinkResponse(
+        id=row["id"],
+        token=token,
+        verify_url=verify_url,
+        expires_at=expires_at,
+        verifier_name=payload.verifier_name,
+        verifier_org=payload.verifier_org,
+        competency_id=payload.competency_id,
+    )
+
+
+@router.get("/{username}", response_model=PublicProfileResponse)
+async def get_public_profile(
+    username: str,
+    db: SupabaseAdmin,
+) -> PublicProfileResponse:
+    """Get a public profile by username — no auth required."""
+    result = (
+        await db.table("profiles")
+        .select("id, username, display_name, avatar_url, bio, location, languages, badge_issued_at")
+        .eq("username", username)
+        .eq("is_public", True)
+        .single()
+        .execute()
+    )
+    if not result.data:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "PROFILE_NOT_FOUND", "message": "Profile not found"},
+        )
+    return PublicProfileResponse(**result.data)

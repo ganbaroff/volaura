@@ -290,18 +290,8 @@ FROM (
 
 
 -- =============================================================================
--- 4. TEST ORGANIZATION (WUF13)
+-- 4. TEST ORGANIZATION — SKIPPED
 -- =============================================================================
--- Note: No real auth.users entry — this is for schema testing only
--- Real orgs created through the app's registration flow
-INSERT INTO public.organizations (
-    id, owner_id, name, type, description, verified_at, subscription_tier
-) VALUES (
-    'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-    '00000000-0000-0000-0000-000000000000'::UUID,  -- placeholder owner
-    'WUF13 Baku 2026',
-    'government',
-    'World Urban Forum 13 — Baku, Azerbaijan, May 2026. Flagship launch event for Volaura platform.',
-    NOW(),
-    'growth'
-) ON CONFLICT DO NOTHING;
+-- Removed: FK constraint requires real auth.users entry for owner_id.
+-- Organizations are created through the app registration flow.
+-- To test org features: register a user → POST /api/organizations.

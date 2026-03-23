@@ -1,10 +1,16 @@
-"""FastAPI dependencies for Supabase client and auth."""
+"""FastAPI dependencies for Supabase client and auth.
+
+Security: JWT verification uses admin.auth.get_user() which validates
+tokens server-side against Supabase's auth service. This is the ONLY
+correct way to verify JWTs — never use the anon key as a JWT secret.
+See: docs/engineering/SECURITY-STANDARDS.md
+"""
 
 from collections.abc import AsyncGenerator
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, Request
-from supabase._async.client import AsyncClient, acreate_client
+from fastapi import Depends, Header, HTTPException, Request
+from supabase._async.client import AsyncClient, create_client as acreate_client
 from loguru import logger
 
 from app.config import settings
@@ -31,7 +37,10 @@ async def get_supabase_user(request: Request) -> AsyncGenerator[AsyncClient, Non
     """
     auth_header = request.headers.get("authorization", "")
     if not auth_header.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Missing or invalid Authorization header")
+        raise HTTPException(
+            status_code=401,
+            detail={"code": "MISSING_TOKEN", "message": "Missing or invalid Authorization header"},
+        )
 
     token = auth_header.removeprefix("Bearer ")
 
@@ -46,34 +55,42 @@ async def get_supabase_user(request: Request) -> AsyncGenerator[AsyncClient, Non
     yield client
 
 
-async def get_current_user_id(request: Request) -> str:
-    """Extract user ID from Supabase JWT (sub claim).
+async def get_current_user_id(
+    request: Request,
+    admin: AsyncClient = Depends(get_supabase_admin),
+) -> str:
+    """Validate JWT server-side via Supabase admin and return user UUID.
 
-    Validates the JWT and returns the user's UUID.
+    SECURITY FIX (CVSS 9.1): Previous implementation verified JWTs using the
+    anon key — which is PUBLIC and shipped to every browser. Any attacker could
+    forge valid JWTs. Now we validate via admin.auth.get_user(token) which
+    checks the token against Supabase's auth service using the service role key.
     """
-    from jose import jwt, JWTError
-
     auth_header = request.headers.get("authorization", "")
     if not auth_header.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Missing or invalid Authorization header")
+        raise HTTPException(
+            status_code=401,
+            detail={"code": "MISSING_TOKEN", "message": "Missing or invalid Authorization header"},
+        )
 
     token = auth_header.removeprefix("Bearer ")
 
     try:
-        # Supabase JWTs use the anon key as the secret for verification
-        payload = jwt.decode(
-            token,
-            settings.supabase_anon_key,
-            algorithms=["HS256"],
-            audience="authenticated",
+        user_response = await admin.auth.get_user(token)
+        if not user_response or not user_response.user:
+            raise HTTPException(
+                status_code=401,
+                detail={"code": "INVALID_TOKEN", "message": "Invalid or expired token"},
+            )
+        return str(user_response.user.id)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.warning("JWT verification failed", error=str(e))
+        raise HTTPException(
+            status_code=401,
+            detail={"code": "INVALID_TOKEN", "message": "Invalid or expired token"},
         )
-        user_id: str | None = payload.get("sub")
-        if user_id is None:
-            raise HTTPException(status_code=401, detail="Invalid token: missing sub claim")
-        return user_id
-    except JWTError as e:
-        logger.warning(f"JWT verification failed: {e}")
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
 
 
 # Type aliases for cleaner route signatures

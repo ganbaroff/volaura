@@ -6,7 +6,14 @@
       "Bash(git -C \"/c/Users/user/OneDrive/Desktop/Yusif Files/VOLAURA\" log --oneline -5)",
       "Bash(git -C \"/c/Users/user/OneDrive/Desktop/Yusif Files/VOLAURA\" remote -v)",
       "Bash(where gh:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(python -m pytest tests/test_assessment_router.py -v)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(pnpm --version)",
+      "Bash(ls \"C:/Users/user/OneDrive/Desktop/Yusif Files/VOLAURA/apps/web/src/app/[locale]/\\(dashboard\\)/\")",
+      "Bash(mkdir -p \"C:/Users/user/OneDrive/Desktop/Yusif Files/VOLAURA/apps/web/src/app/[locale]/\\(dashboard\\)/leaderboard\")",
+      "Bash(mkdir -p \"C:/Users/user/OneDrive/Desktop/Yusif Files/VOLAURA/apps/web/src/app/[locale]/\\(dashboard\\)/notifications\")",
+      "Bash(pip install:*)"
     ]
   }
 }

@@ -11,8 +11,9 @@ Security hardening applied:
 from contextlib import asynccontextmanager
 from collections.abc import AsyncGenerator
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from loguru import logger
 
 from app.config import settings, validate_production_settings
@@ -56,6 +57,22 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type", "Accept", "Accept-Language"],
 )
+
+# CRIT-01 fix: catch unhandled exceptions — never leak DB/internal errors to client
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+    """Return generic 500 for any unhandled exception. Log the real error server-side."""
+    logger.error(
+        "Unhandled exception on {method} {path}: {error}",
+        method=request.method,
+        path=request.url.path,
+        error=str(exc),
+    )
+    return JSONResponse(
+        status_code=500,
+        content={"detail": {"code": "INTERNAL_ERROR", "message": "An unexpected error occurred"}},
+    )
+
 
 # Routers
 app.include_router(health.router, tags=["Health"])

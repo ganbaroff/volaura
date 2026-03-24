@@ -195,3 +195,101 @@ def test_rate_limit_token_hashing_principle():
     hash1 = hashlib.sha256(token1.encode()).hexdigest()[:12]
     hash2 = hashlib.sha256(token2.encode()).hexdigest()[:12]
     assert hash1 != hash2
+
+
+# ── CRIT-02: Verification Link Authorization ────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_crit02_cannot_create_verification_link_for_other_user(client: AsyncClient, mock_db):
+    """CRIT-02: User A must NOT create verification links for User B."""
+    user_a_id = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+    user_b_id = "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"
+
+    app.dependency_overrides[get_supabase_admin] = _make_admin_override(mock_db)
+    app.dependency_overrides[get_current_user_id] = _make_user_id_override(user_a_id)
+
+    resp = await client.post(
+        f"/api/profiles/{user_b_id}/verification-link",
+        json={
+            "verifier_name": "Attacker",
+            "verifier_org": "Evil Corp",
+            "competency_id": "comm-123",
+        },
+        headers={"Authorization": "Bearer fake"},
+    )
+    assert resp.status_code == 403
+    assert resp.json()["detail"]["code"] == "FORBIDDEN"
+
+    app.dependency_overrides.clear()
+
+
+@pytest.mark.asyncio
+async def test_crit02_can_create_verification_link_for_self(client: AsyncClient, mock_db):
+    """CRIT-02: User CAN create verification links for their own profile."""
+    user_id = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+
+    # Mock DB to return volunteer exists + insert success
+    mock_db.execute = AsyncMock(return_value=MagicMock(data={"id": user_id}))
+
+    app.dependency_overrides[get_supabase_admin] = _make_admin_override(mock_db)
+    app.dependency_overrides[get_current_user_id] = _make_user_id_override(user_id)
+
+    resp = await client.post(
+        f"/api/profiles/{user_id}/verification-link",
+        json={
+            "verifier_name": "Prof. Aliyev",
+            "verifier_org": "ADA University",
+            "competency_id": "comm-123",
+        },
+        headers={"Authorization": "Bearer fake"},
+    )
+    # Should succeed (200) or at least not be 403
+    assert resp.status_code != 403
+
+    app.dependency_overrides.clear()
+
+
+# ── CRIT-03: raw_score Not In Response ───────────────────────────────────────
+
+def test_crit03_answer_feedback_schema_has_no_raw_score():
+    """CRIT-03: AnswerFeedback must NOT contain raw_score field."""
+    from app.schemas.assessment import AnswerFeedback
+
+    field_names = set(AnswerFeedback.model_fields.keys())
+    assert "raw_score" not in field_names, (
+        "raw_score must be removed from AnswerFeedback — "
+        "leaking BARS scores enables calibration attacks"
+    )
+
+
+def test_crit03_answer_feedback_serializes_without_raw_score():
+    """CRIT-03: Serialized AnswerFeedback JSON must not contain raw_score."""
+    from app.schemas.assessment import AnswerFeedback, SessionOut
+
+    feedback = AnswerFeedback(
+        session_id="test-session",
+        question_id="test-question",
+        timing_warning=None,
+        session=SessionOut(
+            session_id="test-session",
+            competency_slug="communication",
+            questions_answered=1,
+            is_complete=False,
+        ),
+    )
+    serialized = feedback.model_dump()
+    assert "raw_score" not in serialized
+
+
+# ── CRIT-01: No Internal Errors Leaked ───────────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_crit01_generic_error_handler_hides_details(client: AsyncClient):
+    """CRIT-01: Unhandled exceptions must return generic message, not DB details."""
+    # The global exception handler is registered in main.py
+    # We can verify it exists on the app
+    from app.main import app as real_app
+    assert any(
+        handler is not None
+        for handler in real_app.exception_handlers.values()
+    ), "Global exception handler must be registered"

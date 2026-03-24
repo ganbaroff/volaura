@@ -119,10 +119,15 @@ class SessionOut(BaseModel):
 
 
 class AnswerFeedback(BaseModel):
-    """Immediate feedback after submitting an answer."""
+    """Immediate feedback after submitting an answer.
+
+    NOTE: raw_score intentionally NOT exposed to client (security audit CRIT-03).
+    Exposing BARS scores enables calibration attacks — users can reverse-engineer
+    what answer patterns score highest by submitting variations.
+    """
     session_id: str
     question_id: str
-    raw_score: float     # 0.0–1.0 (BARS score or MCQ 0/1)
+    # raw_score REMOVED — security audit CRIT-03 (2026-03-25)
     timing_warning: str | None = None
     session: SessionOut
 

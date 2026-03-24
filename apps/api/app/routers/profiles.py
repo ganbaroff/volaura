@@ -146,10 +146,17 @@ async def create_verification_link(
 ) -> CreateVerificationLinkResponse:
     """Create a one-use verification link for a volunteer.
 
-    Any authenticated user can create a link for any volunteer (MVP).
+    Only the volunteer themselves can request verification links.
     The link is sent to an expert who rates the volunteer's competency.
     Token is valid for 7 days, single-use.
     """
+    # CRIT-02 fix: only allow self-verification requests
+    if volunteer_id != user_id:
+        raise HTTPException(
+            status_code=403,
+            detail={"code": "FORBIDDEN", "message": "You can only request verification for your own profile"},
+        )
+
     # Ensure target volunteer exists
     volunteer = (
         await db.table("profiles")

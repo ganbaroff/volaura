@@ -283,7 +283,7 @@ async def submit_answer(
     return AnswerFeedback(
         session_id=payload.session_id,
         question_id=payload.question_id,
-        raw_score=round(raw_score, 4),
+        # raw_score REMOVED — CRIT-03: prevents BARS calibration attacks
         timing_warning=timing.get("warning"),
         session=session_out,
     )

@@ -1,0 +1,59 @@
+name: Swarm Daily Autonomy
+
+on:
+  schedule:
+    # Run every day at 05:00 UTC (09:00 Baku time, AZT = UTC+4)
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Run mode'
+        required: false
+        default: 'daily-ideation'
+        type: choice
+        options:
+          - daily-ideation
+          - code-review
+          - cto-audit
+
+jobs:
+  swarm-run:
+    name: Swarm Autonomous Run
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install swarm dependencies
+        run: |
+          pip install pydantic loguru groq google-genai python-dotenv python-telegram-bot
+
+      - name: Run autonomous swarm
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CEO_CHAT_ID: ${{ secrets.TELEGRAM_CEO_CHAT_ID }}
+        run: |
+          cd "${{ github.workspace }}"
+          python -m packages.swarm.autonomous_run --mode=${{ github.event.inputs.mode || 'daily-ideation' }}
+
+      - name: Commit proposals
+        run: |
+          git config user.name "MiroFish Swarm"
+          git config user.email "swarm@volaura.app"
+          git add memory/swarm/
+          if git diff --staged --quiet; then
+            echo "No new proposals to commit."
+          else
+            git commit -m "swarm: daily autonomous run — $(date -u +%Y-%m-%d)"
+            git push
+          fi

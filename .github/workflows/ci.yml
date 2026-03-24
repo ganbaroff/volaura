@@ -1,0 +1,116 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  frontend:
+    name: Frontend (Next.js)
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'push' ||
+      contains(join(github.event.pull_request.changed_files.*.filename, ','), 'apps/web/')
+
+    defaults:
+      run:
+        working-directory: apps/web
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+        working-directory: .
+
+      - name: TypeScript check
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Tests
+        run: pnpm vitest run
+
+      - name: Build
+        run: pnpm build
+
+  backend:
+    name: Backend (FastAPI)
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'push' ||
+      contains(join(github.event.pull_request.changed_files.*.filename, ','), 'apps/api/')
+
+    defaults:
+      run:
+        working-directory: apps/api
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt && pip install pytest pytest-asyncio ruff
+
+      - name: Lint (ruff)
+        run: ruff check app/
+
+      - name: Format check (ruff)
+        run: ruff format --check app/
+
+      - name: Tests
+        run: pytest tests/ -v --tb=short
+        env:
+          APP_ENV: test
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: npm audit (high severity)
+        run: pnpm audit --audit-level=high
+        continue-on-error: true
+
+      - name: Check for secrets in code
+        run: |
+          # Simple secret detection — block commits with API keys
+          if grep -rn "sk-[a-zA-Z0-9]\{20,\}" --include="*.ts" --include="*.tsx" --include="*.py" --include="*.env" apps/ packages/ 2>/dev/null; then
+            echo "::error::Possible API key found in source code!"
+            exit 1
+          fi
+          if grep -rn "AIza[a-zA-Z0-9_-]\{35\}" --include="*.ts" --include="*.tsx" --include="*.py" apps/ packages/ 2>/dev/null; then
+            echo "::error::Possible Google API key found in source code!"
+            exit 1
+          fi
+          echo "No secrets detected."

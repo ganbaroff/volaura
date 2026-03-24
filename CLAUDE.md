@@ -169,7 +169,14 @@ This feedback loop makes each simulation more accurate than the last.
 | Test strategy, coverage gaps | `engineering:testing-strategy` + `docs/engineering/skills/TDD-WORKFLOW.md` |
 | Bug fix | `docs/engineering/skills/TDD-WORKFLOW.md` (write failing test FIRST) |
 | Growth features, referrals, email | `growth-strategy` |
+| Writing LinkedIn posts (any series) | `docs/TONE-OF-VOICE.md` (7 principles, pre-publish checklist, series guides) |
+| Launching any MiroFish swarm | `docs/MODEL-ROSTER.md` (who to call for what domain, dead weight list) |
+| Social media simulation before publish | `packages/swarm/social_reaction.py` → `simulate_reactions()` — MANDATORY before any LinkedIn post |
 | Technical debt cleanup | `engineering:tech-debt` |
+| ANY sprint start (always) | `docs/MANDATORY-RULES.md` (7 non-negotiable rules, read FIRST) |
+| Sprint end / retrospective | `docs/SPRINT-REVIEW-TEMPLATE.md` (copy template, fill ALL sections) |
+| Research tasks (market, pricing, benchmarks) | NotebookLM skill → create notebook with sources BEFORE analysis |
+| API deployment | `docs/MANDATORY-RULES.md` Rule 3 (test PRODUCTION URL) + Rule 4 (schema verification) |
 | Session end (always) | `docs/engineering/skills/CONTINUOUS-LEARNING.md` (Step 0.5 protocol) |
 
 **Rule:** If in doubt whether a skill applies — load it. The cost of loading an irrelevant skill is 30 seconds. The cost of missing a relevant one is hours of rework.
@@ -399,6 +406,19 @@ Events are dynamic data (COP29, CIS Games, etc.) — NEVER hardcode specific eve
 - Database: `supabase/` (migrations + seed)
 - Shared: `packages/` (eslint-config, typescript-config)
 - Docs: `docs/` (HANDOFF.md, DECISIONS.md)
+
+### Claude Code Settings Merge
+- Global: `~/.claude/settings.json` — applies to all projects
+- Project: `.claude/settings.local.json` — this project only
+- Merge: permissions.allow arrays COMBINE. permissions.deny arrays COMBINE. Hooks from both fire.
+- Project-level does NOT override global — both apply simultaneously.
+- Hooks: UserPromptSubmit (session-protocol.sh), PostToolUse (auto-format.sh), Stop (session-end-check.sh)
+
+### Swarm Autonomous System
+- Daily run: `.github/workflows/swarm-daily.yml` → 09:00 Baku → 5 agents → proposals.json
+- Inbox: `memory/swarm/proposals.json` (canonical), `memory/swarm/ceo-inbox.md` (escalations)
+- Telegram: HIGH/CRITICAL proposals sent to CEO via MindShift bot
+- Session hook surfaces pending proposals at session start automatically
 
 ## API Type Safety
 FastAPI generates `/openapi.json` → `@hey-api/openapi-ts` generates:

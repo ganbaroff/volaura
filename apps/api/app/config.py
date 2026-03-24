@@ -67,4 +67,7 @@ def validate_production_settings() -> list[str]:
             warnings.append(
                 "WARNING: APP_URL is still localhost — CORS will block frontend requests."
             )
+        # Debug: log anon key status at startup
+        anon_prefix = settings.supabase_anon_key[:12] if settings.supabase_anon_key else "EMPTY"
+        warnings.append(f"DEBUG: SUPABASE_ANON_KEY prefix={anon_prefix}")
     return warnings

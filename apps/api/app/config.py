@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     # LLM
     gemini_api_key: str = ""
     openai_api_key: str = ""
+    groq_api_key: str = ""
+
+    # Swarm (multi-model BARS evaluation)
+    swarm_enabled: bool = False
 
     # Telegram
     telegram_bot_token: str = ""
@@ -34,7 +38,33 @@ class Settings(BaseSettings):
     def cors_origins(self) -> list[str]:
         if self.is_dev:
             return ["http://localhost:3000", "http://127.0.0.1:3000"]
-        return [self.app_url]
+        origins = [self.app_url]
+        # Always allow both custom domain and Vercel preview
+        known = [
+            "https://volaura.app",
+            "https://www.volaura.app",
+            "https://volaura-web.vercel.app",
+        ]
+        for k in known:
+            if k not in origins:
+                origins.append(k)
+        return origins
 
 
 settings = Settings()
+
+
+def validate_production_settings() -> list[str]:
+    """Check production-critical settings. Returns list of warnings."""
+    warnings = []
+    if not settings.is_dev:
+        if not settings.gemini_api_key and not settings.openai_api_key:
+            warnings.append(
+                "CRITICAL: No LLM API keys configured (GEMINI_API_KEY or OPENAI_API_KEY). "
+                "Open-ended assessment answers will use keyword fallback scoring."
+            )
+        if settings.app_url == "http://localhost:3000":
+            warnings.append(
+                "WARNING: APP_URL is still localhost — CORS will block frontend requests."
+            )
+    return warnings

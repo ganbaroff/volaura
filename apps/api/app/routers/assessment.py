@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 
 from fastapi import APIRouter, HTTPException, Request
 
+from app.config import settings
 from app.core.assessment import antigaming, bars
 from app.middleware.rate_limit import limiter, RATE_ASSESSMENT_START, RATE_ASSESSMENT_ANSWER
 from app.core.assessment.aura_calc import (
@@ -61,7 +62,7 @@ async def _get_competency_id(db: SupabaseAdmin, slug: str) -> str:
 async def _fetch_questions(db: SupabaseAdmin, competency_id: str) -> list[dict]:
     result = (
         await db.table("questions")
-        .select("id, question_type, question_en, question_az, options, irt_a, irt_b, irt_c, expected_concepts, competency_id")
+        .select("id, type, scenario_en, scenario_az, options, irt_a, irt_b, irt_c, expected_concepts, correct_answer, competency_id")
         .eq("competency_id", competency_id)
         .eq("is_active", True)
         .execute()
@@ -79,9 +80,9 @@ def _make_session_out(
     if next_q and not state.stopped:
         nq = QuestionOut(
             id=next_q["id"],
-            question_type=next_q["question_type"],
-            question_en=next_q["question_en"],
-            question_az=next_q["question_az"],
+            question_type=next_q["type"],
+            question_en=next_q["scenario_en"],
+            question_az=next_q["scenario_az"],
             options=next_q.get("options"),
             competency_id=next_q["competency_id"],
         )
@@ -89,8 +90,7 @@ def _make_session_out(
         session_id=session_id,
         competency_slug=competency_slug,
         questions_answered=len(state.items),
-        theta=round(state.theta, 4),
-        theta_se=round(state.theta_se, 4),
+        # theta/theta_se intentionally NOT sent to client (security audit P1)
         is_complete=state.stopped,
         stop_reason=state.stop_reason,
         next_question=nq,
@@ -213,17 +213,25 @@ async def submit_answer(
 
     # Score the answer
     raw_score: float
-    if question["question_type"] == "mcq":
-        correct_option: str | None = question.get("correct_option")
-        raw_score = 1.0 if (correct_option and payload.answer.strip() == correct_option) else 0.0
+    if question["type"] == "mcq":
+        correct_answer: str | None = question.get("correct_answer")
+        raw_score = 1.0 if (correct_answer and payload.answer.strip() == correct_answer) else 0.0
     else:
-        # Open-ended → BARS LLM evaluation
+        # Open-ended → LLM evaluation (multi-model swarm or single-model BARS)
         expected_concepts: list[dict] = question.get("expected_concepts") or []
-        raw_score = await bars.evaluate_answer(
-            question_en=question["question_en"],
-            answer=payload.answer,
-            expected_concepts=expected_concepts,
-        )
+        if settings.swarm_enabled:
+            from app.services.swarm_service import evaluate_answer as swarm_evaluate
+            raw_score = await swarm_evaluate(
+                question_en=question["scenario_en"],
+                answer=payload.answer,
+                expected_concepts=expected_concepts,
+            )
+        else:
+            raw_score = await bars.evaluate_answer(
+                question_en=question["scenario_en"],
+                answer=payload.answer,
+                expected_concepts=expected_concepts,
+            )
 
     # Update CAT state
     state = CATState.from_dict(session["answers"] or {})
@@ -342,8 +350,7 @@ async def complete_assessment(
     return AssessmentResultOut(
         session_id=session_id,
         competency_slug=slug,
-        theta=round(state.theta, 4),
-        theta_se=round(state.theta_se, 4),
+        # theta/theta_se intentionally NOT sent to client (security audit P1)
         competency_score=competency_score,
         questions_answered=len(state.items),
         stop_reason=state.stop_reason,
@@ -385,8 +392,7 @@ async def get_results(
     return AssessmentResultOut(
         session_id=session_id,
         competency_slug=slug,
-        theta=round(state.theta, 4),
-        theta_se=round(state.theta_se, 4),
+        # theta/theta_se intentionally NOT sent to client (security audit P1)
         competency_score=competency_score,
         questions_answered=len(state.items),
         stop_reason=state.stop_reason,

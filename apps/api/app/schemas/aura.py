@@ -17,14 +17,14 @@ class AuraScoreResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     volunteer_id: str
-    overall_score: float
+    total_score: float  # DB column name — was "overall_score" mismatch
     badge_tier: str
     elite_status: bool
     competency_scores: dict[str, float]
     reliability_score: float = 0.0
-    reliability_status: str = "behavioral"
+    reliability_status: str = "pending"
     events_attended: int = 0
     events_no_show: int = 0
     percentile_rank: float | None = None
     aura_history: list = []
-    calculated_at: datetime | None = None
+    last_updated: datetime | None = None

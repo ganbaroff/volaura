@@ -7,7 +7,7 @@ from fastapi import APIRouter, HTTPException, Request
 from loguru import logger
 
 from app.config import settings
-from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
+from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser, get_supabase_admin
 from app.middleware.rate_limit import limiter, RATE_PROFILE_WRITE
 from app.schemas.profile import (
     ProfileCreate,
@@ -19,6 +19,7 @@ from app.schemas.verification import (
     CreateVerificationLinkRequest,
     CreateVerificationLinkResponse,
 )
+from app.services.embeddings import upsert_volunteer_embedding
 
 router = APIRouter(prefix="/profiles", tags=["Profiles"])
 
@@ -74,6 +75,14 @@ async def create_my_profile(
     if not result.data:
         raise HTTPException(status_code=500, detail={"code": "CREATE_FAILED", "message": "Failed to create profile"})
 
+    # Trigger embedding generation (fire-and-forget, don't block response)
+    try:
+        admin_client = await anext(get_supabase_admin())
+        await upsert_volunteer_embedding(admin_client, user_id, result.data[0], aura=None)
+        logger.info("Embedding generated for new profile", user_id=user_id)
+    except Exception as e:
+        logger.warning("Embedding generation failed on profile create: {err}", err=str(e)[:200])
+
     return ProfileResponse(**result.data[0])
 
 
@@ -84,6 +93,7 @@ async def update_my_profile(
     payload: ProfileUpdate,
     db: SupabaseUser,
     user_id: CurrentUserId,
+    admin: SupabaseAdmin,
 ) -> ProfileResponse:
     """Update the current user's profile."""
     update_data = payload.model_dump(exclude_none=True)
@@ -104,6 +114,20 @@ async def update_my_profile(
             status_code=404,
             detail={"code": "PROFILE_NOT_FOUND", "message": "Profile not found"},
         )
+
+    # Trigger embedding re-generation with updated profile data
+    try:
+        aura_result = await admin.table("aura_scores").select("*").eq("volunteer_id", user_id).single().execute()
+        aura_data = aura_result.data
+    except Exception:
+        aura_data = None
+
+    try:
+        await upsert_volunteer_embedding(admin, user_id, result.data[0], aura=aura_data)
+        logger.info("Embedding updated after profile change", user_id=user_id)
+    except Exception as e:
+        logger.warning("Embedding update failed on profile update: {err}", err=str(e)[:200])
+
     return ProfileResponse(**result.data[0])
 
 

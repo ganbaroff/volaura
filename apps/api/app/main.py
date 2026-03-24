@@ -15,10 +15,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
-from app.config import settings
+from app.config import settings, validate_production_settings
 from app.middleware.rate_limit import setup_rate_limiting
 from app.middleware.security_headers import SecurityHeadersMiddleware
-from app.routers import assessment, auth, aura, badges, events, health, organizations, profiles, verification
+from app.routers import activity, assessment, auth, aura, badges, events, health, organizations, profiles, verification
 
 
 @asynccontextmanager
@@ -26,6 +26,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan — startup and shutdown events."""
     logger.info("Volaura API starting up...")
     logger.info("Environment: {env}", env=settings.app_env)
+    # Validate production-critical settings
+    for warning in validate_production_settings():
+        logger.warning(warning)
     yield
     logger.info("Volaura API shutting down...")
 
@@ -64,3 +67,4 @@ app.include_router(events.router, prefix="/api")
 app.include_router(organizations.router, prefix="/api")
 app.include_router(badges.router, prefix="/api")
 app.include_router(verification.router, prefix="/api")
+app.include_router(activity.router, prefix="/api")

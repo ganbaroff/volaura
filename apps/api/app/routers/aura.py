@@ -18,7 +18,7 @@ async def get_my_aura(
         await db.table("aura_scores")
         .select("*")
         .eq("volunteer_id", user_id)
-        .single()
+        .maybe_single()
         .execute()
     )
     if not result.data:
@@ -39,7 +39,7 @@ async def get_aura_by_id(
         await db.table("aura_scores")
         .select("*")
         .eq("volunteer_id", volunteer_id)
-        .single()
+        .maybe_single()
         .execute()
     )
     if not result.data:

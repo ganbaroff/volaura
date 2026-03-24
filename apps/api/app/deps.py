@@ -44,16 +44,10 @@ async def get_supabase_user(request: Request) -> AsyncGenerator[AsyncClient, Non
 
     token = auth_header.removeprefix("Bearer ")
 
-    anon_key = settings.supabase_anon_key
-    logger.info(
-        "get_supabase_user: anon_key_len={len} prefix={prefix}",
-        len=len(anon_key),
-        prefix=anon_key[:15] if anon_key else "EMPTY",
-    )
     try:
         client = await acreate_client(
             supabase_url=settings.supabase_url,
-            supabase_key=anon_key,
+            supabase_key=settings.supabase_anon_key,
         )
         # Set the user's JWT for RLS
         client.postgrest.auth(token)
@@ -61,12 +55,7 @@ async def get_supabase_user(request: Request) -> AsyncGenerator[AsyncClient, Non
         logger.error("Failed to create user Supabase client: {err}", err=str(e))
         raise HTTPException(
             status_code=500,
-            detail={
-                "code": "DB_CLIENT_ERROR",
-                "message": str(e),
-                "debug_key_len": len(anon_key),
-                "debug_key_prefix": anon_key[:8] if anon_key else "EMPTY",
-            },
+            detail={"code": "DB_CLIENT_ERROR", "message": str(e)},
         )
 
     yield client

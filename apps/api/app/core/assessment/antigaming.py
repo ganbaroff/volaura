@@ -68,7 +68,8 @@ def analyse(answers: list[dict[str, Any]]) -> GamingSignal:
     # ── Response-time checks ─────────────────────────────────────────────────
     for ans in answers:
         ms = int(ans.get("response_time_ms", 0))
-        if 0 < ms < TOO_FAST_MS:
+        # ms <= 0 means client sent invalid/spoofed timing — treat as rushed
+        if ms <= 0 or ms < TOO_FAST_MS:
             signal.rushed_count += 1
         elif ms > TOO_SLOW_MS:
             signal.slow_count += 1

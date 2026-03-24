@@ -98,18 +98,21 @@ class QuestionOut(BaseModel):
     question_type: str        # "mcq" | "open_ended" | "sjt"
     question_en: str
     question_az: str
-    options: list[str] | None = None  # MCQ options; None for open-ended
+    options: list[dict] | None = None  # MCQ options (key/text_en/text_az dicts); None for open-ended
     # IRT params are NOT exposed to the client
     competency_id: str
 
 
 class SessionOut(BaseModel):
-    """Lightweight session state returned after start/answer."""
+    """Lightweight session state returned after start/answer.
+
+    NOTE: theta and theta_se are intentionally NOT exposed to the client.
+    Exposing IRT ability estimates enables reverse-engineering the CAT algorithm
+    and predicting upcoming questions. (Security audit P1, 2026-03-24)
+    """
     session_id: str
     competency_slug: str
     questions_answered: int
-    theta: float
-    theta_se: float
     is_complete: bool
     stop_reason: str | None = None
     next_question: QuestionOut | None = None
@@ -125,11 +128,14 @@ class AnswerFeedback(BaseModel):
 
 
 class AssessmentResultOut(BaseModel):
-    """Full results after session completion."""
+    """Full results after session completion.
+
+    NOTE: theta/theta_se intentionally NOT exposed to client (security audit P1).
+    Exposing IRT ability estimates enables reverse-engineering the CAT algorithm.
+    """
     session_id: str
     competency_slug: str
-    theta: float
-    theta_se: float
+    # theta/theta_se REMOVED — security audit P1 (2026-03-24)
     competency_score: float   # 0–100 (theta mapped via sigmoid)
     questions_answered: int
     stop_reason: str | None = None

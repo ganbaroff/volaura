@@ -83,9 +83,12 @@ async def register(
             },
         })
     except Exception as e:
+        # Security: don't leak internal error details to client
+        from loguru import logger
+        logger.warning(f"Registration failed for {payload.email}: {e}")
         raise HTTPException(
             status_code=400,
-            detail={"code": "REGISTRATION_FAILED", "message": str(e)},
+            detail={"code": "REGISTRATION_FAILED", "message": "Registration failed. Email may already be in use."},
         )
 
     if not auth_response.session:

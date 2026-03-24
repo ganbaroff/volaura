@@ -1,5 +1,10 @@
-"""LLM client with Gemini primary + OpenAI fallback chain."""
+"""LLM client with Gemini primary + OpenAI fallback chain.
 
+Security: All LLM calls have a timeout to prevent request hangs during demos.
+Agent innovation (Kimi-K2, architecture audit 2026-03-24): graceful fallback if LLM hangs.
+"""
+
+import asyncio
 import json
 from typing import Any
 
@@ -7,17 +12,22 @@ from loguru import logger
 
 from app.config import settings
 
+# Timeout for LLM calls — prevents demo-killing hangs
+LLM_TIMEOUT_SECONDS = 15
+
 
 async def evaluate_with_llm(
     prompt: str,
     *,
     response_format: str = "json",
+    timeout: float = LLM_TIMEOUT_SECONDS,
 ) -> dict[str, Any] | str:
     """Call LLM with fallback chain: Gemini → OpenAI → error.
 
     Args:
         prompt: The full prompt to send.
         response_format: "json" for structured response, "text" for raw text.
+        timeout: Max seconds per LLM call (default 15s). Prevents request hangs.
 
     Returns:
         Parsed JSON dict or raw text string.
@@ -25,18 +35,28 @@ async def evaluate_with_llm(
     # Try Gemini first (free tier)
     if settings.gemini_api_key:
         try:
-            return await _call_gemini(prompt, response_format)
+            return await asyncio.wait_for(
+                _call_gemini(prompt, response_format),
+                timeout=timeout,
+            )
+        except asyncio.TimeoutError:
+            logger.warning(f"Gemini call timed out after {timeout}s, falling back to OpenAI")
         except Exception as e:
             logger.warning(f"Gemini call failed, falling back to OpenAI: {e}")
 
     # Fallback to OpenAI
     if settings.openai_api_key:
         try:
-            return await _call_openai(prompt, response_format)
+            return await asyncio.wait_for(
+                _call_openai(prompt, response_format),
+                timeout=timeout,
+            )
+        except asyncio.TimeoutError:
+            logger.error(f"OpenAI fallback timed out after {timeout}s")
         except Exception as e:
             logger.error(f"OpenAI fallback also failed: {e}")
 
-    raise RuntimeError("All LLM providers failed. Check API keys and rate limits.")
+    raise RuntimeError("All LLM providers failed or timed out. Check API keys and rate limits.")
 
 
 async def _call_gemini(prompt: str, response_format: str) -> dict[str, Any] | str:

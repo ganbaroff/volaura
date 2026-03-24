@@ -65,6 +65,45 @@ class VolunteerSearchRequest(BaseModel):
         return v
 
 
+class AssignAssessmentRequest(BaseModel):
+    """Assign one or more competency assessments to specific volunteers."""
+    model_config = ConfigDict(from_attributes=True)
+
+    volunteer_ids: list[str] = Field(..., min_length=1, max_length=100)
+    competency_slugs: list[str] = Field(..., min_length=1, max_length=8)
+    deadline_days: int = Field(default=14, ge=1, le=90)
+    message: str | None = Field(default=None, max_length=500)
+
+    @field_validator("volunteer_ids")
+    @classmethod
+    def validate_volunteer_ids(cls, v: list[str]) -> list[str]:
+        import uuid as _uuid
+        for vid in v:
+            try:
+                _uuid.UUID(vid)
+            except ValueError:
+                raise ValueError(f"Invalid volunteer ID: {vid}")
+        return v
+
+    @field_validator("competency_slugs")
+    @classmethod
+    def validate_competency_slugs(cls, v: list[str]) -> list[str]:
+        import re
+        slug_re = re.compile(r"^[a-z][a-z0-9_]{1,49}$")
+        for slug in v:
+            if not slug_re.match(slug):
+                raise ValueError(f"Invalid competency slug: {slug}")
+        return v
+
+
+class AssignmentResponse(BaseModel):
+    """Result of assignment operation."""
+    assigned_count: int
+    skipped_count: int
+    errors: list[str] = []
+    assignments: list[dict] = []
+
+
 class VolunteerSearchResult(BaseModel):
     volunteer_id: str
     username: str

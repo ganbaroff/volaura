@@ -258,9 +258,15 @@ def submit_response(
         theta, se = _estimate_eap(state.items)
         state.theta = theta
         state.theta_se = se
-    except Exception:
-        # EAP can fail in edge cases; keep previous estimate
-        pass
+    except Exception as e:
+        # EAP can fail in edge cases; keep previous estimate but LOG it
+        # Security audit P1: silent pass produced bogus scores when all EAP calls failed
+        from loguru import logger
+        state._eap_failures = getattr(state, "_eap_failures", 0) + 1
+        logger.warning(
+            f"EAP estimation failed (attempt #{state._eap_failures}), "
+            f"keeping theta={state.theta:.4f}: {e}"
+        )
 
     return state
 
@@ -290,5 +296,9 @@ def theta_to_score(theta: float) -> float:
 
     Clamped to [0, 100].
     """
-    raw = 100.0 / (1.0 + math.exp(-theta))
+    # Clamp theta before exp to prevent OverflowError on extreme values.
+    # Beyond ±20 the sigmoid saturates (score < 2e-7 or > 99.9999998), so
+    # clamping here is mathematically equivalent to clamping the output.
+    theta_clamped = max(-500.0, min(500.0, theta))
+    raw = 100.0 / (1.0 + math.exp(-theta_clamped))
     return max(0.0, min(100.0, raw))

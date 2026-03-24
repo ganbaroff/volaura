@@ -1,5 +1,43 @@
 # Architecture Decisions Log
 
+## Session 23 Retrospective — 2026-03-25
+
+✓ Privacy Policy page created + verified: `/en/privacy-policy`, 10 sections, GDPR tables, client component pattern.
+✓ Episodic memory logger wired into engine.py with EDM filter (≥0.8 success, ≤0.2 failure, discard noise).
+✓ Phase A gate structural enforcement deployed: hook auto-injects sprint-state + mistakes, demands 3 output lines.
+✓ Dead weight attribution logging added to providers/__init__.py (domain-aware TeamLead exclusion logged per run).
+✓ Token budget added to SCOPE LOCK step (TOKENS line) — prevents over-spending on routine tasks.
+✗ Privacy policy initially written as async server component → JSX parse error. Rewrote as "use client" component. Rule: if page only needs locale param → useParams(), not async params.
+→ 1 action for Yusif: GitHub secrets → agent autonomous system activates → team starts writing to CEO inbox.
+
+**Sprint 3 complete.** All tasks done. 1 external blocker (GitHub secrets, Yusif's action).
+**Model recommendation:** claude-sonnet-4-6 for Sprint 8 (Growth: LinkedIn post pipeline, Question Intelligence).
+
+## Session 22 Retrospective — 2026-03-25
+
+✓ Organizations schema fix (is_verified vs verified_at) — confirmed working in production. GET /organizations returns 200.
+✓ TeamLead routing wired into ProviderRegistry.allocate_agents() — domain-aware filtering active.
+✓ Phase A gate added to CLAUDE.md + session-protocol.sh — files auto-injected, 3 mandatory output lines enforced.
+✓ Memory logger (memory_logger.py) created + wired into engine.py — EDM-filtered episodic logging active.
+✗ Phase A was skipped at session start (caught mid-session by Yusif). Root cause: no enforcement mechanism existed. Fix: hooks + CLAUDE.md gate. Now structural, not memory-dependent.
+✗ Agent autonomous system never activated — GitHub Actions secrets not set. Proposals.json empty. Team was silent because cron had no API keys to run.
+→ Next session: Yusif sets 4 GitHub secrets → trigger manual workflow run → verify first Telegram message received.
+
+**Process change this session:** Phase A gate is now enforced structurally (hook reads files, injects content, demands 3 output lines). Not relying on CTO memory.
+**Model recommendation:** claude-sonnet-4-6 for next sprint (GitHub Actions debug + Pasha Bank demo polish).
+
+## Sprint 6 Retrospective — 2026-03-24
+
+✓ 6-agent council vote was used BEFORE coding — correct process. A+B+D+F unanimous (6/6). C+E correctly deferred.
+✓ DSP predicted: "F first (infra), A next (auth), D (tests), B (onboarding)." Actual: exact same order. Prediction calibration: 48/50 (2 points off — QuestionOut schema bug was not predicted).
+✗ `QuestionOut.options: list[str]` was a silent production bug — MCQ options (list of dicts) would fail schema validation on real questions. Smoke test suite caught it on first run. This validates D as correct sprint pick.
+→ Every sprint now needs a smoke test run BEFORE deployment, not after. Add to BETA-CHECKLIST.md deploy step.
+
+**Bug caught this sprint:** `QuestionOut.options: list[str]` → fixed to `list[dict]`. Would have caused 422 on every assessment start with MCQ questions in production.
+**Process win:** Agent vote executed before coding for first time autonomously. Zero Yusif escalation needed.
+
+---
+
 ## ADR-001: Monorepo with Turborepo
 **Date:** 2026-03-21
 **Decision:** Turborepo + pnpm workspaces
@@ -407,3 +445,100 @@ Winner scores 28.9/50 < 35 threshold. Exception applied: path_a is a prerequisit
 | Predicted | Actual | Delta | Action |
 |-----------|--------|-------|--------|
 | TBD after Session 14 | — | — | Check after Session 14 completes |
+
+---
+
+## Session 14c Retrospective (2026-03-24)
+
+### CTO Self-Assessment + Architecture Audit
+
+**Trigger:** Yusif asked "агенты по дизайну тоже проходились?" — exposed that CTO was self-reviewing.
+
+**Self-assessment result: 5/10 CTO**
+- Speed: 9/10. Architecture validation: 2/10. Test coverage: 3/10. Process compliance: 4/10.
+- Root cause: optimizing delivery speed at the expense of validation.
+- Same error class as Mistakes #1, #6, #13 — fourth occurrence. Now classified as systemic.
+
+**Architecture Audit (18 agents, 6 providers, $0.0003 cost):**
+- Winner: `fix_api_client_first` — 11/18 votes, 33.5/50 (below 35 gate)
+- Strong minority: `fix_security_first` — 5/18 votes
+- Zero votes for `ship_first_fix_later` — agents unanimously reject shipping as-is
+- API type generation blocked on DB migrations → executed security fixes instead
+
+**Security hardening applied (from agent innovations):**
+1. LLM 15s timeout with graceful fallback (Kimi-K2 innovation)
+2. CSP tightened: `default-src 'none'` for API server (agents flagged XSS via LLM eval)
+3. Rate limiter: documented scaling path to Supabase Edge Functions (DeepSeek innovation)
+
+**Process fix:**
+- Architecture audit is now standard pre-sprint step
+- Sprint plans must go through agents before execution
+- Mistakes.md updated with #14-17
+
+### What went as planned
+- MiroFish agents produced actionable architecture feedback in 60 seconds
+- Agents caught CSP vulnerability I missed across 14 sessions
+- Behavioral patterns file enables autonomous "дальше" decisions
+
+### What was unexpected
+- Agents unanimously rejected "ship first" — stronger stance than expected
+- API type generation winner but blocked on migrations — forced pivot to security
+- Innovation quality varied: Kimi-K2 and DeepSeek consistently best, Llama-3.1-8b weakest
+
+### Next sprint priorities (agent-informed)
+1. Run DB migrations (Yusif action, unblocks everything)
+2. `pnpm generate:api` — replace interim types (11/18 agent consensus)
+3. Frontend test skeleton (Vitest + React Testing Library)
+4. Pasha Bank demo prep: E2E assessment flow validation
+
+---
+
+## Session 15 Retrospective (2026-03-24)
+**Model:** claude-opus-4-6 → claude-sonnet-4-6 recommended next
+**Duration:** ~20 min active work
+
+### ✓ What went as planned
+- Vitest + RTL installed, 19 tests passing in 3.7s — Mistake #16 (zero frontend tests) closed
+- OpenAPI spec generated offline (no running server needed) — 30 endpoints typed
+- `next build` clean on first try — 0 type errors throughout session
+- Vercel deployed to production — first live URL
+
+### ✗ What was unexpected
+- hey-api v0.67 requires explicit `--client` flag — not in docs, wasted 2 commands
+- `openapi-ts.config.ts` had `asQueryOptions` instead of `queryOptions` — API changed between versions
+- `mocks.ts` needed `.tsx` extension — JSX in mock file
+
+### → What to feed into next simulation
+- INTERIM `client.ts` + `types.ts` still in use — generated types exist but not wired yet
+- Vercel deployed but env vars not set — frontend can't reach API until NEXT_PUBLIC_API_URL configured
+- Railway backend status still unknown — need to verify or deploy elsewhere
+- 19 tests is a start but critical flows (assessment, AURA calculation) untested end-to-end
+
+### DSP Calibration
+- Skipped DSP for technical work (obvious path: install → test → build → deploy) — correct
+- Skipped agent validation for content work (review, LinkedIn) — INCORRECT (Mistakes #19-22)
+
+### Session 15 Extended Retrospective (after Yusif's corrections)
+**Duration total:** ~3 hours active work
+
+### ✓ What went right (extended session)
+- Yusif caught 4 more CTO failures in one session (Mistakes #19-22)
+- Agent evaluation of review found real issues (31/50, failed gate)
+- Agent ranking of LinkedIn hooks provided clear Day 8-10 structure
+- 6-advisor panel produced actionable roadmap to 9.0
+- E2E test passes all 7 steps against live Supabase
+- Financial model and founding story drafted — advisors' #1 and #3 actions done
+
+### ✗ What went wrong (CTO self-assessment)
+- Delivered review without agent validation (Mistake #19) — 5th instance of self-review
+- Used wrong metrics for vision leader (Mistake #20) — cost CEO 0.5 rating points
+- Prioritized code over content quality (Mistake #21) — violated "всё на 100%"
+- Default instinct is solo execution (Mistake #22) — team-first is still an override, not default
+
+### → Key learning
+**"Сначала команда" is not a process step. It's a mindset.**
+Claude's default is single-threaded. Every strategic/evaluative question should start with agents, not end with them. The advisor panel for "roadmap to 9.0" proved this — 6 perspectives produced insights no single model would generate.
+
+### Model recommendation
+→ **Session 16: claude-sonnet-4-6** (pitch deck, deploy, financial refinement — High stakes code + content)
+→ DSP model: haiku for routine, sonnet for content evaluation

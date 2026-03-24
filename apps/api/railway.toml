@@ -1,0 +1,12 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# startCommand intentionally omitted — Dockerfile CMD handles port via shell form:
+#   CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
+# Railway's startCommand runs without shell, so $PORT won't expand there.
+healthcheckPath = "/health"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5

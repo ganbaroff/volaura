@@ -52,7 +52,7 @@ export function StatsRow({ streak, eventsCount, leaguePosition }: StatsRowProps)
       variants={stagger}
       initial="hidden"
       animate="visible"
-      className="grid grid-cols-3 gap-3"
+      className="grid grid-cols-1 gap-3 sm:grid-cols-3"
     >
       {stats.map(({ icon: Icon, value, label, suffix, highlight }) => (
         <motion.div

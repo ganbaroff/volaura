@@ -201,7 +201,76 @@ Volaura помогает:
 
 ---
 
-## Idea #5: Expert Verification by Link (DSP: HIGH — реализовать в Session 9)
+## Idea #5: B2B Competency Testing for Companies (HR + Education)
+
+**Date:** 2026-03-24
+**Status:** Записано. Высокий приоритет — интегрировать в Pasha Bank pitch.
+**Priority:** Revenue stream #2 after Volaura B2C launch.
+**Source:** Yusif, Session 14c
+
+### Концепция
+
+Volaura's IRT/CAT assessment engine — general-purpose. Тот же движок, 4 разных продукта:
+
+#### 5A: HR Competency Testing for Companies
+- Компании тестируют **существующих сотрудников** на soft skills (communication, leadership, adaptability)
+- Результат: competency matrix для HR → кого обучать, кого продвигать, кого куда назначить
+- Формат: 20-minute adaptive assessment (IRT/CAT) → красивый дашборд для HR → PDF report
+- Продажа: per-employee ($5-15 за тест) или subscription ($200-500/mo per company)
+- USP: **AI-adaptive** (не 100 одинаковых вопросов, а 8-20 точно подобранных), **anti-gaming** (timing + pattern detection), **bilingual** (AZ/EN)
+- Pasha Bank pitch: "Протестируйте 100 сотрудников за $500 вместо $5,000 у McKinsey"
+
+#### 5B: Professional Orientation for Children/Students
+- Школьники (14-17) и студенты (18-22) проходят **профориентационный тест**
+- Не "кем ты хочешь быть?" а "в чём ты силён?" — competency mapping
+- **Стиль Duolingo для детей**: яркие цвета, анимации, streaks, XP, levels, characters
+- Геймификация: "Ты прошёл уровень Коммуникации! 🎉 +50 XP"
+- Результат: "Твой профиль похож на: Event Manager / PR Specialist / Project Coordinator"
+- Продажа: школам (per-student), родителям (B2C, free tier + premium report)
+
+#### 5C: Duolingo-style Gamification (Kids vs Adults)
+- **Дети**: полная геймификация — characters, stories, achievements, streaks, leaderboards between friends
+- **Взрослые/корпорации**: серьёзный стиль — чистый UI, progress bar, competency radar chart, professional report
+- Один движок, два скина: `theme: "playful" | "professional"`
+- Технически: тот же IRT/CAT engine, разные UI components + tone of voice
+
+#### 5D: Company-Verified Badges
+- **Только компания может выдать свой бейдж** — не самоассессмент
+- Пример: "SOCAR Verified: Leadership Level 3" — выдаёт SOCAR после прохождения их теста
+- Бейдж привязан к компании → **доверие** (не "AI сказал" а "SOCAR подтвердил")
+- Компания создаёт свои вопросы (или берёт из банка) → кастомный тест → бейдж
+- Волонтёр/сотрудник проходит → бейдж на профиле Volaura + LinkedIn-sharable
+- Монетизация: компании платят за **создание кастомных тестов** ($500-2000 setup) + per-badge ($2-5)
+
+### Связь с Volaura
+
+```
+Volaura B2C (volunteers) ← same engine → Volaura B2B (companies)
+         ↓                                      ↓
+   Free assessments                    Paid assessments ($5-15/test)
+   AI badges                           Company-verified badges
+   Open leaderboard                    Internal HR dashboard
+```
+
+**Killer combo:** Волонтёр получил бейдж от SOCAR через Volaura → это и маркетинг для SOCAR ("мы развиваем таланты"), и для Volaura ("ведущие компании используют нашу платформу"), и для волонтёра ("мои навыки подтверждены SOCAR").
+
+### Техническая реализация
+
+Большая часть УЖЕ существует:
+- ✅ IRT/CAT engine (engine.py)
+- ✅ BARS LLM evaluator (bars.py)
+- ✅ Anti-gaming (antigaming.py)
+- ✅ Assessment API (assessment.py router)
+- ✅ Badge system (badges table + tier logic)
+- ❌ Нужно: multi-tenant (org creates own question bank)
+- ❌ Нужно: company-branded test pages
+- ❌ Нужно: HR dashboard (admin view per company)
+- ❌ Нужно: gamification layer toggle (playful vs professional)
+- ❌ Нужно: custom badge creation API
+
+---
+
+## Idea #6: Expert Verification by Link (DSP: HIGH — реализовать в Session 9)
 
 **Откуда:** Юсиф, Session 6 стратегический разбор
 **DSP Winner:** Path C, Score 42/50

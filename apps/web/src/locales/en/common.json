@@ -64,7 +64,10 @@
     "settings": "Settings",
     "home": "Home",
     "organizations": "Organizations",
-    "myOrganization": "My Organization"
+    "myOrganization": "My Organization",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "mainNavigation": "Main navigation"
   },
   "auth": {
     "login": "Log In",
@@ -88,7 +91,26 @@
     "hasAccount": "Already have an account?",
     "checkEmail": "Check your email to confirm your account.",
     "signingIn": "Signing you in…",
-    "unexpectedError": "An unexpected error occurred"
+    "unexpectedError": "An unexpected error occurred",
+    "forgotPasswordTitle": "Reset your password",
+    "forgotPasswordSubtitle": "Enter your email and we'll send you a reset link",
+    "sendResetLink": "Send reset link",
+    "sendingReset": "Sending...",
+    "checkEmailTitle": "Check your inbox",
+    "checkEmailDesc": "We sent a reset link to {{email}}. It expires in 1 hour.",
+    "noEmailReceived": "Didn't receive it?",
+    "tryAgain": "Try again",
+    "backToLogin": "Back to login",
+    "resetPasswordTitle": "Set new password",
+    "resetPasswordSubtitle": "Enter your new password below",
+    "verifyingLink": "Verifying reset link...",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "passwordMismatch": "Passwords do not match",
+    "updatePassword": "Update password",
+    "updatingPassword": "Updating...",
+    "passwordResetSuccess": "Password updated successfully. Please log in with your new password."
   },
   "assessment": {
     "title": "Competency Assessment",
@@ -120,7 +142,16 @@
     "errorSubmitFailed": "Answer not saved. Check your connection and tap Submit again.",
     "errorLoadingQuestion": "Couldn't load next question. Your progress is saved — tap Try Again.",
     "sessionExpired": "Your session has ended. Log in again to continue your progress.",
-    "answerPlaceholder": "Type your answer here..."
+    "answerPlaceholder": "Type your answer here...",
+    "difficulty": "Difficulty",
+    "difficulty_easy": "Easy",
+    "difficulty_medium": "Medium",
+    "difficulty_hard": "Hard",
+    "nextSteps": "What's Next",
+    "tipImprove": "Practice more in this area and retake the assessment to improve your score.",
+    "tipGood": "Great score! Try other competencies to build your full AURA profile.",
+    "tipExcellent": "Outstanding! You're in the top tier. Share your achievement with organizations.",
+    "gamingWarning": "Some responses were flagged for unusual patterns. Your score may be adjusted."
   },
   "aura": {
     "title": "Your AURA Score",
@@ -158,6 +189,29 @@
     "tech_literacy": "Tech Literacy",
     "adaptability": "Adaptability",
     "empathy_safeguarding": "Empathy & Safeguarding"
+  },
+  "onboarding": {
+    "step1Title": "Welcome, {{name}}! 👋",
+    "defaultName": "there",
+    "step1Desc": "You're one of the first on Volaura. Let's show the world your real skills in 3 minutes.",
+    "benefit1": "Verified competency score — not just a CV",
+    "benefit2": "Earn a Bronze to Platinum badge",
+    "benefit3": "Get discovered by top event organizers",
+    "benefit4": "Track your growth over time",
+    "step1Cta": "Let's go →",
+    "step2Title": "Pick your first competency",
+    "step2Desc": "Start with what you're most confident in. You can add more later.",
+    "step2Cta": "Continue →",
+    "min": "min",
+    "step3Title": "You're all set!",
+    "step3Desc": "Your first assessment: {{competency}}. ~5 minutes. No right or wrong — just show who you are.",
+    "next1": "Answer 10–15 adaptive questions",
+    "next2": "AI evaluates your responses in real time",
+    "next3": "Get your AURA score and badge",
+    "step3Cta": "Start my first assessment",
+    "skipToDashboard": "Explore dashboard first",
+    "skip": "Skip for now",
+    "back": "← Back"
   },
   "dashboard": {
     "welcome": "Welcome back",

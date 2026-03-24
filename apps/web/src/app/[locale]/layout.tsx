@@ -20,6 +20,8 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.APP_URL || "http://localhost:3000"),
 };
 
+export const dynamic = "force-dynamic";
+
 export function generateStaticParams() {
   return i18nConfig.locales.map((locale) => ({ locale }));
 }

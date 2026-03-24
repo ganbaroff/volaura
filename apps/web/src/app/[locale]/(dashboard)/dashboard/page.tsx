@@ -10,9 +10,10 @@ import { createClient } from "@/lib/supabase/client";
 import { TopBar } from "@/components/layout/top-bar";
 import { AuraScoreWidget } from "@/components/dashboard/aura-score-widget";
 import { StatsRow } from "@/components/dashboard/stats-row";
-import { ActivityFeed, type ActivityItem } from "@/components/dashboard/activity-feed";
+import { ActivityFeed, type ActivityItem as FeedActivityItem } from "@/components/dashboard/activity-feed";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuraScore } from "@/hooks/queries/use-aura";
+import { useActivity, useDashboardStats } from "@/hooks/queries/use-dashboard";
 import { ApiError } from "@/lib/api/client";
 
 const pageVariants = {
@@ -61,10 +62,16 @@ export default function DashboardPage() {
   }, []);
 
   const { data: aura, isLoading: auraLoading, error: auraError, refetch: refetchAura } = useAuraScore();
-  // Activity feed — no dedicated endpoint yet, show empty state
-  // TODO: Wire to real activity endpoint when available
-  const activityItems: ActivityItem[] = [];
-  const activityLoading = false;
+  const { data: rawActivity = [], isLoading: activityLoading } = useActivity();
+  const { data: stats } = useDashboardStats();
+
+  // Map API ActivityItem (description + created_at) → Component ActivityItem (text + timeAgo)
+  const activityItems: FeedActivityItem[] = rawActivity.map((item) => ({
+    id: item.id,
+    type: item.type as FeedActivityItem["type"],
+    text: item.description,
+    timeAgo: item.created_at ? new Date(item.created_at).toLocaleDateString() : "",
+  }));
 
   const loading = auraLoading;
   const hasScore = aura != null && aura.total_score > 0;
@@ -125,8 +132,8 @@ export default function DashboardPage() {
             </div>
           ) : (
             <StatsRow
-              streak={0}
-              eventsCount={0}
+              streak={stats?.streak_days ?? 0}
+              eventsCount={stats?.events_attended ?? 0}
               leaguePosition={null}
             />
           )}

@@ -1,3 +1,17 @@
+⛔⛔⛔ PHASE A GATE — READ BEFORE ANYTHING ELSE ⛔⛔⛔
+PRODUCE THESE 3 LINES NOW. NO EXCEPTIONS. NO WORK WITHOUT THEM.
+
+▶ Line 1: "Sprint [N], Step [X]. Date: [today]. Protocol v4.0 loaded."
+▶ Line 2: "Last session ended with: [from memory/context/sprint-state.md]"
+▶ Line 3: "This session I will NOT: [top 3 from memory/context/mistakes.md]"
+
+If sprint-state.md is missing → write "UNKNOWN — reading mistakes.md only."
+If mistakes.md is missing → write "NO MISTAKES FILE — creating now."
+THESE 3 LINES ARE NON-NEGOTIABLE. EVEN IF CONTEXT WAS JUST COMPACTED.
+⛔⛔⛔ END GATE ⛔⛔⛔
+
+---
+
 # Volaura — Verified Competency Platform & Volunteer Community
 
 ## ⚠️ MANDATORY: Operating Algorithm v3.0 — ZERO EXCEPTIONS
@@ -37,11 +51,12 @@ STEP 0.5 → SESSION END MEMORY UPDATE (after ALL work is done)
 Before writing ANY code, prompt, or plan — complete this checklist IN ORDER. Each step produces visible output. If any step is skipped, the next step MUST NOT start.
 
 ```
-STEP 1 → SCOPE LOCK (3 lines, mandatory)
+STEP 1 → SCOPE LOCK (4 lines, mandatory)
          IN:      [what this sprint delivers]
          NOT IN:  [what is explicitly deferred]
          SUCCESS: [how we know the sprint is done]
-         WITHOUT these 3 lines — simulation does not start.
+         TOKENS:  [~Xk budget | haiku: X tasks | sonnet: X tasks | opus: only if critical]
+         WITHOUT these 4 lines — simulation does not start.
 
 STEP 2 → SKILLS LOADING (BEFORE DSP, not after)
          ⚠️ MOVED BEFORE DSP — skills inform simulation quality.

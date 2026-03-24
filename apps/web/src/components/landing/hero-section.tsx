@@ -10,9 +10,9 @@ interface HeroSectionProps {
 }
 
 const BADGE_PILLS = [
-  { tier: "platinum", score: 94, label: "Platinum", color: "from-slate-300 to-slate-400", text: "text-slate-900" },
-  { tier: "gold", score: 81, label: "Gold", color: "from-yellow-400 to-amber-500", text: "text-amber-900" },
-  { tier: "silver", score: 67, label: "Silver", color: "from-gray-300 to-gray-400", text: "text-gray-800" },
+  { tier: "platinum", score: 94, labelKey: "aura.platinum", color: "from-slate-300 to-slate-400", text: "text-slate-900" },
+  { tier: "gold", score: 81, labelKey: "aura.gold", color: "from-yellow-400 to-amber-500", text: "text-amber-900" },
+  { tier: "silver", score: 67, labelKey: "aura.silver", color: "from-gray-300 to-gray-400", text: "text-gray-800" },
 ];
 
 export function HeroSection({ locale }: HeroSectionProps) {
@@ -46,7 +46,7 @@ export function HeroSection({ locale }: HeroSectionProps) {
                 transition={{ duration: 0.4, delay: i * 0.1 }}
               >
                 <Star className="h-3 w-3 fill-current" aria-hidden="true" />
-                {pill.label} · {pill.score}/100
+                {t(pill.labelKey)} · {pill.score}/100
               </motion.div>
             ))}
           </motion.div>

@@ -152,12 +152,12 @@ export default function ProfilePage() {
           <ProfileHeader
             profile={{
               username: profile.username,
-              display_name: profile.display_name,
-              bio: profile.bio,
-              location: profile.location,
-              languages: profile.languages,
-              is_public: profile.is_public,
-              avatar_url: profile.avatar_url,
+              display_name: profile.display_name ?? null,
+              bio: profile.bio ?? null,
+              location: profile.location ?? null,
+              languages: profile.languages ?? [],
+              is_public: profile.is_public ?? false,
+              avatar_url: profile.avatar_url ?? null,
               badge_tier: aura?.badge_tier ?? "none",
             }}
             locale={locale}

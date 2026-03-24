@@ -1,0 +1,701 @@
+{
+  "decision_id": "dsp-748d96fe",
+  "config": {
+    "question": "\nYou are part of MiroFish \u2014 a multi-model swarm decision engine.\nThis is a DESIGN task, not a self-improvement task.\n\n=== CONTEXT ===\n\nThe CEO (Yusif) wrote a system prompt to create a specialist team that works on MiroFish.\nThe prompt defines: who the team is, what context they have, what gaps to fix, what rules to follow.\n\nThe CTO (Claude) reviewed the prompt and found critical issues:\n1. It describes v3 architecture but we're at v7 \u2014 5 of 8 \"missing features\" are already built\n2. It doesn't mention: AgentHive, ReasoningGraph, StructuredMemory, ResearchLoop,\n   Dead weight removal, Adaptive prompts, ResponseQualityMiddleware\n3. Key numbers are wrong (calibration is sliding-window now, not multiplicative)\n4. Reference repos section is 40% outdated\n\n=== YOUR TASK ===\n\nThe CEO wants YOU (the swarm) to redesign this prompt. You have permission to:\n- Rewrite it completely\n- Add sections the CEO didn't think of\n- Remove sections that don't matter\n- Change the team composition rules\n- Change what context is provided\n- Change the tone, format, or structure\n\nYou are NOT limited to \"suggestions.\" You are writing the ACTUAL new prompt.\n\n=== THE ORIGINAL PROMPT (v1) ===\n\nThe original prompt has these sections:\n1. Role definition (\"You are the lead of a self-organizing specialist team\")\n2. Full Architecture Context (engine, types, pm, memory, middleware, providers, pipeline)\n3. What's already built (list of completed features)\n4. What's missing (v4 targets \u2014 mostly outdated)\n5. Reference repos (5 repos for specific gaps)\n6. Team rules (\"Specialists, not tools\" + behavioral rules)\n7. User context (\"Solo founder, late nights in Baku\")\n8. Start instruction (\"Introduce your team, ask one question\")\n\n=== WHAT'S ACTUALLY TRUE NOW (v7) ===\n\nBuilt and working:\n- SwarmEngine with 13 providers (Groq, Gemini, DeepSeek)\n- PMAgent: 12-step pipeline (dispatch \u2192 aggregate \u2192 debate \u2192 scale \u2192 synthesize)\n- ReasoningGraph: agents see each other's structured arguments, Round 2 revision\n- StructuredMemory: World/Experience/Opinion/Failure networks (not flat JSON)\n- AgentHive: PROBATIONARY\u2192MEMBER\u2192SENIOR\u2192LEAD lifecycle, competency exams\n- PathProposal: agents propose new paths not in original question\n- ResearchLoop: agents request web research \u2192 Gemini Pro + Google Search \u2192 World Network\n- DeepSeek fallback for research when Gemini fails\n- TokenCountingMiddleware: real per-provider costs\n- ResponseQualityMiddleware: rejects freerider responses (<120ch)\n- Dead weight auto-removal: allam-2-7b blacklisted, 3-failed-exams filter\n- Per-model adaptive prompts: small models get focused prompt\n- AutonomousUpgradeProtocol: Godel pattern, kill-switch, immutable files\n- Sliding-window calibration (not multiplicative \u2014 old death-spiraled)\n- Accuracy-scaled conviction bonus (not flat 1.15x)\n\nActually missing (v8 targets):\n1. Linear pipeline \u2192 DAG/graph orchestration\n2. Skill A/B testing framework\n3. Streaming results (currently all batched)\n4. Semantic PathProposal dedup (word overlap \u2192 embeddings)\n5. Direct inter-agent communication beyond ReasoningGraph\n6. Nightly autonomous self-upgrade cycles\n7. Skills-as-a-service (agents fetch/return/upgrade skills)\n\n=== EVALUATION CRITERIA ===\n\nYou're voting on how the prompt should be redesigned:\n\nPATH A \u2014 \"polish\": Keep the original structure, update facts, fix numbers\nPATH B \u2014 \"restructure\": Same intent, different format (maybe shorter, maybe modular)\nPATH C \u2014 \"rethink\": Fundamentally different approach to team prompt design\n\nFor each path, provide your SPECIFIC proposed changes in the \"reason\" field.\nInclude actual text you'd write, not just \"add a section about X.\"\n\nIf you vote \"rethink\" \u2014 explain what's wrong with the original approach and\nwhat your alternative looks like. Be concrete.\n",
+    "context": "",
+    "constraints": "",
+    "paths": {
+      "polish": {
+        "name": "Polish \u2014 update facts, keep structure",
+        "description": "The original structure works. Update architecture to v7, fix numbers, refresh reference repos. Minimal changes to format or approach.",
+        "best_case": "Quick, accurate, maintains what's already good.",
+        "worst_case": "Misses opportunity to improve the prompt's fundamental design.",
+        "effort": "S"
+      },
+      "restructure": {
+        "name": "Restructure \u2014 same intent, better format",
+        "description": "The original INTENT is right but the FORMAT could be better. Maybe shorter. Maybe modular (separate files for architecture vs team rules). Maybe different information hierarchy.",
+        "best_case": "More usable prompt that's easier to maintain as MiroFish evolves.",
+        "worst_case": "Change for change's sake. Breaks what works.",
+        "effort": "M"
+      },
+      "rethink": {
+        "name": "Rethink \u2014 fundamentally different approach",
+        "description": "The original prompt makes wrong assumptions about what the team needs. Maybe the team shouldn't get a giant context dump. Maybe they should discover the architecture themselves. Maybe the prompt should be task-specific, not general.",
+        "best_case": "A prompt design pattern that scales and evolves with MiroFish.",
+        "worst_case": "Over-engineering a prompt. Complexity without clarity.",
+        "effort": "L"
+      }
+    },
+    "stakes": "high",
+    "domain": "architecture",
+    "temperature": 0.85,
+    "max_agents": 15,
+    "timeout_seconds": 120.0,
+    "use_calibration": true,
+    "auto_research": true
+  },
+  "agents_used": 10,
+  "agents_succeeded": 10,
+  "agent_results": [
+    {
+      "agent_id": "groq:llama-3.1-8b-instant-0",
+      "provider": "groq:llama-3.1-8b-instant",
+      "model": "llama-3.1-8b-instant",
+      "perspective": "maintainability",
+      "scores": {
+        "polish": {
+          "technical": 4.0,
+          "user_impact": 3.0,
+          "dev_speed": 9.0,
+          "flexibility": 2.0,
+          "risk": 8.0
+        },
+        "restructure": {
+          "technical": 6.0,
+          "user_impact": 7.0,
+          "dev_speed": 7.0,
+          "flexibility": 8.0,
+          "risk": 9.0
+        },
+        "rethink": {
+          "technical": 9.0,
+          "user_impact": 9.0,
+          "dev_speed": 4.0,
+          "flexibility": 9.0,
+          "risk": 6.0
+        }
+      },
+      "concerns": {
+        "polish": "Doesn't address the underlying issues with the original prompt.",
+        "restructure": "Might break what works, and the benefits may not be substantial.",
+        "rethink": "Over-engineering a prompt is possible, but the benefits of a fundamentally different approach could be significant."
+      },
+      "winner": "rethink",
+      "reason": "The 'rethink' path offers the most significant potential for long-term maintainability and user impact. By fundamentally changing the approach to team prompt design, we can create a more scalable and adaptable solution. While there is some risk involved, the potential benefits make it the best choice.",
+      "confidence": 0.85,
+      "latency_ms": 1201,
+      "cost_estimate": 0.0,
+      "json_valid": true,
+      "error": null,
+      "raw_response": "",
+      "proposed_path": null,
+      "held_firm": false,
+      "research_request": null
+    },
+    {
+      "agent_id": "groq:llama-4-scout-17b-16-1",
+      "provider": "groq:llama-4-scout-17b-16",
+      "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+      "perspective": "scalability",
+      "scores": {
+        "polish": {
+          "technical": 6.0,
+          "user_impact": 5.0,
+          "dev_speed": 7.0,
+          "flexibility": 4.0,
+          "risk": 8.0
+        },
+        "restructure": {
+          "technical": 7.0,
+          "user_impact": 7.0,
+          "dev_speed": 6.0,
+          "flexibility": 7.0,
+          "risk": 6.0
+        },
+        "rethink": {
+          "technical": 8.0,
+          "user_impact": 9.0,
+          "dev_speed": 5.0,
+          "flexibility": 9.0,
+          "risk": 4.0
+        }
+      },
+      "concerns": {
+        "polish": "May not address underlying structural issues, potentially leading to future maintenance challenges.",
+        "restructure": "Could lead to information loss if not done carefully, and might confuse team members.",
+        "rethink": "Requires significant upfront investment and might be too radical for immediate implementation."
+      },
+      "winner": "rethink",
+      "reason": "The 'rethink' path offers the most significant long-term benefits by potentially creating a more scalable and adaptable prompt design. It encourages innovation and could lead to a more effective team prompt that evolves with MiroFish.",
+      "confidence": 0.7,
+      "latency_ms": 1807,
+      "cost_estimate": 0.0,
+      "json_valid": true,
+      "error": null,
+      "raw_response": "",
+      "proposed_path": null,
+      "held_firm": false,
+      "research_request": null
+    },
+    {
+      "agent_id": "groq:llama-3.3-70b-versat-2",
+      "provider": "groq:llama-3.3-70b-versat",
+      "model": "llama-3.3-70b-versatile",
+      "perspective": "pragmatist",
+      "scores": {
+        "polish": {
+          "technical": 2.0,
+          "user_impact": 3.0,
+          "dev_speed": 8.0,
+          "flexibility": 2.0,
+          "risk": 6.0
+        },
+        "restructure": {
+          "technical": 7.0,
+          "user_impact": 8.0,
+          "dev_speed": 6.0,
+          "flexibility": 8.0,
+          "risk": 8.0
+        },
+        "rethink": {
+          "technical": 9.0,
+          "user_impact": 9.0,
+          "dev_speed": 4.0,
+          "flexibility": 9.0,
+          "risk": 7.0
+        }
+      },
+      "concerns": {
+        "polish": "The original structure, even with updates, may still not accurately reflect the current state of MiroFish and its needs.",
+        "restructure": "Changing the format without addressing the underlying assumptions of the prompt may not lead to significant improvements.",
+        "rethink": "A fundamentally different approach requires careful consideration to avoid over-complicating the prompt and losing clarity."
+      },
+      "winner": "rethink",
+      "reason": "Given the significant advancements and changes in MiroFish since the original prompt was designed, a rethought approach that considers the current architecture, capabilities, and needs of the system is necessary for effective team orientation and task execution.",
+      "confidence": 0.8,
+      "latency_ms": 2081,
+      "cost_estimate": 0.0,
+      "json_valid": true,
+      "error": null,
+      "raw_response": "",
+      "proposed_path": null,
+      "held_firm": false,
+      "research_request": {
+        "topic": "Comparison of modular versus monolithic team prompt designs for complex AI systems",
+        "rationale": "To inform the decision on whether to maintain a single, comprehensive prompt or migrate to a modular design that can evolve with MiroFish",
+        "proposed_by": "groq:llama-3.3-70b-versat-2",
+        "domain": "architecture",
+        "priority": "medium",
+        "votes": 1
+      }
+    },
+    {
+      "agent_id": "groq:gpt-oss-120b-3",
+      "provider": "groq:gpt-oss-120b",
+      "model": "openai/gpt-oss-120b",
+      "perspective": "contrarian",
+      "scores": {
+        "polish": {
+          "technical": 6.0,
+          "user_impact": 5.0,
+          "dev_speed": 8.0,
+          "flexibility": 4.0,
+          "risk": 9.0
+        },
+        "restructure": {
+          "technical": 7.0,
+          "user_impact": 6.0,
+          "dev_speed": 6.0,
+          "flexibility": 7.0,
+          "risk": 7.0
+        },
+        "rethink": {
+          "technical": 8.0,
+          "user_impact": 7.0,
+          "dev_speed": 4.0,
+          "flexibility": 9.0,
+          "risk": 3.0
+        }
+      },
+      "concerns": {
+        "polish": "May perpetuate outdated architecture assumptions, limiting future scalability.",
+        "restructure": "Modular format could fragment essential context, causing agents to miss cross\u2011section dependencies.",
+        "rethink": "Fundamental redesign risks introducing inconsistencies and breaking existing pipelines, leading to downtime."
+      },
+      "winner": "polish",
+      "reason": "Polish delivers immediate correctness with minimal disruption, avoiding the integration hazards of a full redesign.",
+      "confidence": 0.78,
+      "latency_ms": 2534,
+      "cost_estimate": 0.0,
+      "json_valid": true,
+      "error": null,
+      "raw_response": "",
+      "proposed_path": null,
+      "held_firm": false,
+      "research_request": null
+    },
+    {
+      "agent_id": "groq:kimi-k2-instruct-090-5",
+      "provider": "groq:kimi-k2-instruct-090",
+      "model": "moonshotai/kimi-k2-instruct-0905",
+      "perspective": "user",
+      "scores": {
+        "polish": {
+          "technical": 3.0,
+          "user_impact": 2.0,
+          "dev_speed": 7.0,
+          "flexibility": 1.0,
+          "risk": 3.0
+        },
+        "restructure": {
+          "technical": 6.0,
+          "user_impact": 5.0,
+          "dev_speed": 5.0,
+          "flexibility": 6.0,
+          "risk": 6.0
+        },
+        "rethink": {
+          "technical": 8.0,
+          "user_impact": 8.0,
+          "dev_speed": 3.0,
+          "flexibility": 9.0,
+          "risk": 7.0
+        }
+      },
+      "concerns": {
+        "polish": "Updating facts without changing structure means agents still get a 200-line wall of text that buries the 7 actually-missing v8 features under 50+ lines of already-built features, making it hard for agents to focus on what matters.",
+        "restructure": "Modularizing could create version drift where architecture.md gets updated but team-rules.md doesn't, leading to agents acting on stale context without realizing it.",
+        "rethink": "Fundamentally changing the approach risks breaking the tribal knowledge that current agents have built up around the existing prompt structure, potentially causing confusion in the short term."
+      },
+      "winner": "rethink",
+      "reason": "The user experience degrades when agents get outdated context dumps that make them waste time on already-built features instead of focusing on the 7 real v8 gaps like DAG orchestration and streaming results.",
+      "confidence": 0.8,
+      "latency_ms": 3125,
+      "cost_estimate": 0.0,
+      "json_valid": true,
+      "error": null,
+      "raw_response": "",
+      "proposed_path": null,
+      "held_firm": false,
+      "research_request": {
+        "topic": "prompt design patterns for multi-agent systems that auto-update without human intervention",
+        "rationale": "We need to know if there's a way to make the prompt self-updating so it never gets 5 versions behind again, which would eliminate this entire class of problem",
+        "proposed_by": "groq:kimi-k2-instruct-090-5",
+        "domain": "architecture",
+        "priority": "high",
+        "votes": 1
+      }
+    },
+    {
+      "agent_id": "groq:llama-3.1-8b-instant-5",
+      "provider": "groq:llama-3.1-8b-instant",
+      "model": "llama-3.1-8b-instant",
+      "perspective": "maintainability",
+      "scores": {
+        "polish": {
+          "technical": 2.0,
+          "user_impact": 2.0,
+          "dev_speed": 6.0,
+          "flexibility": 2.0,
+          "risk": 8.0
+        },
+        "restructure": {
+          "technical": 5.0,
+          "user_impact": 6.0,
+          "dev_speed": 4.0,
+          "flexibility": 7.0,
+          "risk": 6.0
+        },
+        "rethink": {
+          "technical": 8.0,
+          "user_impact": 9.0,
+          "dev_speed": 2.0,
+          "flexibility": 9.0,
+          "risk": 4.0
+        }
+      },
+      "concerns": {
+        "polish": "May perpetuate outdated architecture assumptions, limiting future scalability.",
+        "restructure": "Change for change's sake. Breaks what works.",
+        "rethink": "Over-engineering a prompt is possible, but the benefits of a fundamentally different approach could be significant."
+      },
+      "winner": "rethink",
+      "reason": "The 'rethink' path offers the most significant potential for long-term maintainability and user impact, and its potential benefits outweigh the risks.",
+      "confidence": 0.85,
+      "latency_ms": 776,
+      "cost_estimate": 0.0,
+      "json_valid": true,
+      "error": null,
+      "raw_response": "",
+      "proposed_path": null,
+      "held_firm": true,
+      "research_request": null
+    },
+    {
+      "agent_id": "groq:llama-4-scout-17b-16-6",
+      "provider": "groq:llama-4-scout-17b-16",
+      "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+      "perspective": "scalability",
+      "scores": {
+        "polish": {
+          "technical": 6.0,
+          "user_impact": 4.0,
+          "dev_speed": 8.0,
+          "flexibility": 3.0,
+          "risk": 7.0
+        },
+        "restructure": {
+          "technical": 7.0,
+          "user_impact": 6.0,
+          "dev_speed": 6.0,
+          "flexibility": 6.0,
+          "risk": 8.0
+        },
+        "rethink": {
+          "technical": 9.0,
+          "user_impact": 8.0,
+          "dev_speed": 4.0,
+          "flexibility": 9.0,
+          "risk": 6.0
+        }
+      },
+      "concerns": {
+        "polish": "May not address scalability issues beyond v7",
+        "restructure": "Could be too similar to existing structure",
+        "rethink": "Potential for over-engineering and complexity"
+      },
+      "winner": "rethink",
+      "reason": "The 'rethink' path offers the most significant potential for long-term maintainability, scalability, and user impact. It encourages innovation and adaptability, crucial for a system like MiroFish that is rapidly evolving.",
+      "confidence": 0.85,
+      "latency_ms": 1534,
+      "cost_estimate": 0.0,
+      "json_valid": true,
+      "error": null,
+      "raw_response": "",
+      "proposed_path": null,
+      "held_firm": true,
+      "research_request": null
+    },
+    {
+      "agent_id": "groq:gpt-oss-120b-8",
+      "provider": "groq:gpt-oss-120b",
+      "model": "openai/gpt-oss-120b",
+      "perspective": "contrarian",
+      "scores": {
+        "polish": {
+          "technical": 7.0,
+          "user_impact": 6.0,
+          "dev_speed": 8.0,
+          "flexibility": 5.0,
+          "risk": 9.0
+        },
+        "restructure": {
+          "technical": 6.0,
+          "user_impact": 7.0,
+          "dev_speed": 6.0,
+          "flexibility": 7.0,
+          "risk": 7.0
+        },
+        "rethink": {
+          "technical": 5.0,
+          "user_impact": 5.0,
+          "dev_speed": 3.0,
+          "flexibility": 8.0,
+          "risk": 4.0
+        }
+      },
+      "concerns": {
+        "polish": "Keeps the prompt tied to a static snapshot, making future architectural shifts harder to incorporate",
+        "restructure": "New modular format may confuse existing agents and require costly migration effort",
+        "rethink": "Over\u2011engineers the prompt, risking loss of tribal knowledge and introducing instability during rollout"
+      },
+      "winner": "polish",
+      "reason": "Polish fixes critical factual errors quickly without the high integration risk of a full redesign",
+      "confidence": 0.78,
+      "latency_ms": 2007,
+      "cost_estimate": 0.0,
+      "json_valid": true,
+      "error": null,
+      "raw_response": "",
+      "proposed_path": null,
+      "held_firm": true,
+      "research_request": null
+    },
+    {
+      "agent_id": "gemini:gemini-flash-lite-la-12",
+      "provider": "gemini:gemini-flash-lite-la",
+      "model": "gemini-flash-lite-latest",
+      "perspective": "cost",
+      "scores": {
+        "polish": {
+          "technical": 7.0,
+          "user_impact": 5.0,
+          "dev_speed": 9.0,
+          "flexibility": 3.0,
+          "risk": 8.0
+        },
+        "restructure": {
+          "technical": 8.0,
+          "user_impact": 7.0,
+          "dev_speed": 7.0,
+          "flexibility": 7.0,
+          "risk": 6.0
+        },
+        "rethink": {
+          "technical": 9.0,
+          "user_impact": 9.0,
+          "dev_speed": 4.0,
+          "flexibility": 10.0,
+          "risk": 4.0
+        }
+      },
+      "concerns": {
+        "polish": "Highest cost in future debt; fixing facts now guarantees we repeat this process for v9, v10, etc., unless the underlying structure allows for self-correction.",
+        "restructure": "Moderate cost; it cleans up the immediate presentation but doesn't solve the inherent problem of overloading the prompt with legacy context that agents must parse.",
+        "rethink": "Highest upfront time cost (design and implementation) but lowest long-term maintenance cost by creating a prompt pattern resilient to rapid architectural change."
+      },
+      "winner": "rethink",
+      "reason": "The core cost driver identified by the previous round and by the context is the *time spent by agents processing irrelevant, outdated context*. Path Polish explicitly keeps the structure that mandates this context dump, making it the highest long-term operational cost. Path Rethink (C) is chosen because the immediate cost of redesign (high upfront effort) is overwhelmingly outweighed by the massive recurring cost savings derived from an architecture-agnostic or dynamically-informed prompt. \n\n**Proposed Rethink Strategy (Path C):** Instead of dumping the entire V7 architecture into the prompt, the prompt should define the *interface* (inputs/outputs/constraints) and the *goal*, instructing the agents to consult a designated, updatable, external Configuration Store (which could be a specific StructuredMemory node or a dedicated, lightweight JSON file loaded at runtime) for the current architecture details. This shifts the context burden from the prompt token space to a structured data space, dramatically improving flexibility and reducing prompt length/stale data risk.\n\n**Specific Change:** The prompt will be reframed from 'Here is MiroFish v7' to 'You are operating within the MiroFish framework. Your primary objective is X. Consult the provided SYSTEM_CONTEXT_MANIFEST for current architecture specifics, but assume the core decision-making loop is based on AgentHive, ReasoningGraph, and the 12-step PMAgent pipeline.' This removes the 5 outdated features from the prompt body entirely.",
+      "confidence": 0.95,
+      "latency_ms": 2731,
+      "cost_estimate": 0.0,
+      "json_valid": true,
+      "error": null,
+      "raw_response": "",
+      "proposed_path": null,
+      "held_firm": false,
+      "research_request": null
+    },
+    {
+      "agent_id": "groq:kimi-k2-instruct-11",
+      "provider": "groq:kimi-k2-instruct",
+      "model": "moonshotai/kimi-k2-instruct",
+      "perspective": "pessimist",
+      "scores": {
+        "polish": {
+          "technical": 2.0,
+          "user_impact": 2.0,
+          "dev_speed": 8.0,
+          "flexibility": 1.0,
+          "risk": 3.0
+        },
+        "restructure": {
+          "technical": 6.0,
+          "user_impact": 7.0,
+          "dev_speed": 5.0,
+          "flexibility": 6.0,
+          "risk": 5.0
+        },
+        "rethink": {
+          "technical": 9.0,
+          "user_impact": 9.0,
+          "dev_speed": 2.0,
+          "flexibility": 8.0,
+          "risk": 2.0
+        }
+      },
+      "concerns": {
+        "polish": "Polishing a prompt that describes 5-of-8 missing features as unbuilt when they are already shipped guarantees agents will waste cycles rediscovering existing code paths\u2014this is not a cosmetic bug, it's a productivity landmine.",
+        "restructure": "Splitting the prompt into modular pieces sounds clean until you realize every agent round needs a consistent view of the DAG orchestration goal; partial context invites contradictory implementations.",
+        "rethink": "A brand-new mental model could obsolete the tribal regex tricks agents use today to parse the prompt\u2014if the rewrite ships before retraining, expect silent breakage in production."
+      },
+      "winner": "rethink",
+      "reason": "Continuing to feed agents a 40% obsolete prompt is slower death than the risk of a rewrite, because every wrong \u2018missing feature\u2019 wastes real GPU tokens and user wall-clock minutes.",
+      "confidence": 0.85,
+      "latency_ms": 3114,
+      "cost_estimate": 0.0,
+      "json_valid": true,
+      "error": null,
+      "raw_response": "",
+      "proposed_path": null,
+      "held_firm": false,
+      "research_request": {
+        "topic": "Has any multi-agent system published prompt-evolution patterns that stayed compatible across \u22655 major architecture versions without breaking downstream agent behavior?",
+        "rationale": "We need proven precedents for safe prompt metamorphosis; if none exist we must invent guardrails.",
+        "proposed_by": "groq:kimi-k2-instruct-11",
+        "domain": "architecture",
+        "priority": "high",
+        "votes": 1
+      }
+    }
+  ],
+  "weighted_scores": {
+    "restructure": 32.6,
+    "rethink": 33.5,
+    "polish": 25.6
+  },
+  "divergence": {
+    "winner_votes": {
+      "restructure": 0,
+      "rethink": 8,
+      "polish": 2
+    },
+    "top_winner": "rethink",
+    "consensus_strength": 0.8,
+    "is_genuine_consensus": true,
+    "high_divergence": false,
+    "split_paths": [
+      "rethink",
+      "polish"
+    ]
+  },
+  "winner": "rethink",
+  "winner_score": 33.5,
+  "passed_confidence_gate": true,
+  "scaling_events": [
+    {
+      "round": 1,
+      "reason": "Reasoning Graph Round 2: 5 agents revised",
+      "agents_added": 5,
+      "provider_used": "round2"
+    }
+  ],
+  "synthesis": {
+    "winner": "rethink",
+    "synthesis": "We recommend a fundamental redesign of the prompt to address underlying structural issues, as all groups agree that the current approach may limit future scalability and lead to maintenance challenges. The consensus is that the original structure, even with updates, may not accurately reflect the current state of MiroFish and its needs. The risk lies in perpetuating outdated architecture assumptions, burying critical information, and guaranteeing future debt.",
+    "consensus_points": [
+      "The original structure, even with updates, may not accurately reflect the current state of MiroFish and its needs.",
+      "Updating facts without changing structure means agents still get a 200-line wall of text that buries the 7 actually-missing v8 features under 50+ lines of already-built features, making it hard for agents to focus on what's truly missing.",
+      "Polishing a prompt that describes 5-of-8 missing features as unbuilt when they are already shipped guarantees agents will waste cycles rediscovering existing code paths\u2014this is not a cosmetic bug, it's a critical issue."
+    ],
+    "risk_points": [
+      "May perpetuate outdated architecture assumptions, limiting future scalability.",
+      "May not address underlying structural issues, potentially leading to future maintenance challenges.",
+      "Guarantees agents will waste cycles rediscovering existing code paths\u2014this is not a cosmetic bug, it's a critical issue."
+    ],
+    "surprise_insight": null,
+    "confidence": 0.8,
+    "conditions": "If the current structure is not revised, we risk perpetuating outdated assumptions, wasting agent cycles, and guaranteeing future debt.",
+    "json_valid": true,
+    "latency_ms": 712,
+    "provider": "groq:llama-3.1-8b-instant",
+    "model": "llama-3.1-8b-instant",
+    "token_budget_used": 19800,
+    "token_budget_max": 100000,
+    "dedup_removed": 0,
+    "loop_warnings": 0,
+    "token_stats": {
+      "total_input_tokens": 8000,
+      "total_output_tokens": 814,
+      "total_cost_usd": 0.0,
+      "per_provider": {
+        "groq": {
+          "input_tokens": 7200,
+          "output_tokens": 438,
+          "cost_usd": 0.0,
+          "calls": 9
+        },
+        "gemini": {
+          "input_tokens": 800,
+          "output_tokens": 376,
+          "cost_usd": 0.0,
+          "calls": 1
+        }
+      }
+    }
+  },
+  "provider_latencies": {
+    "groq:llama-3.1-8b-instant": 988.5,
+    "groq:llama-4-scout-17b-16": 1670.5,
+    "groq:llama-3.3-70b-versat": 2081.0,
+    "groq:gpt-oss-120b": 2270.5,
+    "groq:kimi-k2-instruct-090": 3125.0,
+    "gemini:gemini-flash-lite-la": 2731.0,
+    "groq:kimi-k2-instruct": 3114.0
+  },
+  "total_cost_estimate": 0.0,
+  "total_latency_ms": 3125,
+  "accepted_proposals": [],
+  "research_requests": [
+    {
+      "topic": "prompt design patterns for multi-agent systems that auto-update without human intervention",
+      "rationale": "We need to know if there's a way to make the prompt self-updating so it never gets 5 versions behind again, which would eliminate this entire class of problem",
+      "proposed_by": "groq:kimi-k2-instruct-090-5",
+      "domain": "architecture",
+      "priority": "high",
+      "votes": 1
+    },
+    {
+      "topic": "Has any multi-agent system published prompt-evolution patterns that stayed compatible across \u22655 major architecture versions without breaking downstream agent behavior?",
+      "rationale": "We need proven precedents for safe prompt metamorphosis; if none exist we must invent guardrails.",
+      "proposed_by": "groq:kimi-k2-instruct-11",
+      "domain": "architecture",
+      "priority": "high",
+      "votes": 1
+    },
+    {
+      "topic": "Comparison of modular versus monolithic team prompt designs for complex AI systems",
+      "rationale": "To inform the decision on whether to maintain a single, comprehensive prompt or migrate to a modular design that can evolve with MiroFish",
+      "proposed_by": "groq:llama-3.3-70b-versat-2",
+      "domain": "architecture",
+      "priority": "medium",
+      "votes": 1
+    }
+  ],
+  "research_conducted": [
+    {
+      "topic": "prompt design patterns for multi-agent systems that auto-update without human intervention",
+      "query_used": "prompt design patterns for multi-agent systems that auto-update without human intervention",
+      "summary": "Research indicates a significant shift from static prompt engineering to dynamic, automated systems, especially within multi-agent architectures, to enable prompts to auto-update without human intervention. These systems leverage meta-prompting, where agents generate and refine their own instructions, and employ feedback loops with 'critic' agents to iteratively improve prompt quality based on performance. Frameworks like MARS and concepts such as Automated Prompt Optimization (APO) are emerging to facilitate this, using techniques like reinforcement learning and Socratic dialogue to explore and optimize the prompt design space.",
+      "key_facts": [
+        "The MARS framework, introduced in March 2025, uses a multi-agent system with seven distinct agents to autonomously devise an optimization path for prompts, employing a Teacher-Critic-Student Socratic dialogue pattern for iterative refinement.",
+        "Meta-prompting is a key technique where an agent generates or modifies its own prompts based on the task at hand, analyzing the query to construct the most effective prompt dynamically.",
+        "Multi-agent systems can achieve autonomy and self-iteration, refining their outputs through internal feedback loops without constant human prompting.",
+        "A research project called Network of Agents (NoA) explores a 'Reflection Pass' where a 'critique_agent' acts as a loss function, comparing the final solution to the initial goal and propagating a critique backward to evolve the agents' own system prompts.",
+        "The Multi-Agent System Search (MASS) is a multi-stage optimization framework that automates the optimization of multi-agent systems by focusing on prompts and influential modules in a pruned design space.",
+        "Dynamic prompt engineering involves creating flexible, context-aware prompts that adjust in real-time based on changing business needs, customer interactions, or operational data.",
+        "Automated prompt optimization is a recent advancement that systematically tunes prompts for more accurate and consistent outputs, with some approaches using another model with reasoning capabilities to learn and adapt its prompts.",
+        "A framework from MIT called SEAL (Self-Adapting LLMs) uses a reinforcement learning approach to enable a model to generate its own fine-tuning data and self-update instructions, allowing for autonomous gradient updates without human involvement (October 2025)."
+      ],
+      "sources": [
+        "huggingface.co",
+        "wandb.ai",
+        "medium.com",
+        "reddit.com",
+        "research.google"
+      ],
+      "model_used": "gemini-2.5-pro",
+      "latency_ms": 17133,
+      "error": null
+    },
+    {
+      "topic": "Has any multi-agent system published prompt-evolution patterns that stayed compatible across \u22655 major architecture versions without breaking downstream agent behavior?",
+      "query_used": "multi-agent system prompt evolution compatibility across major architecture versions",
+      "summary": "No published evidence of a multi-agent system with prompt-evolution patterns that have remained compatible across five or more major architecture versions without breaking downstream agent behavior was found. The field is actively developing best practices for prompt versioning, stability, and the implementation of 'guardrails' to manage the inherent brittleness of prompts as systems evolve. The current consensus points towards treating prompts as code, requiring rigorous version control, modular design, and continuous testing to mitigate the risks of architectural changes.",
+      "key_facts": [
+        "There are no documented case studies or academic papers presenting a multi-agent system with prompt patterns that have successfully survived five or more major architectural updates without requiring changes to downstream agent interactions.",
+        "The current best practice is to treat prompts like source code, utilizing version control systems like Git to track changes, manage experiments in separate branches, and allow for rollbacks if a new prompt version degrades performance. [8, 17, 19]",
+        "The concept of 'prompt stability' is an emerging area of research, focusing on the consistency of a prompt's outputs across repeated executions, which is seen as a critical but underexplored aspect of reliable multi-agent systems. [10, 13, 15]",
+        "To prevent system failures, the implementation of 'guardrails' is a recommended practice. These can include input sanitization, output filtering, and policy enforcement to ensure agents operate within desired boundaries, rather than relying solely on instructions within the prompts themselves. [9, 12, 16, 18]",
+        "The evolution from 'prompt engineering' to 'context engineering' reflects the understanding that managing the entire context (including system instructions, tools, and memory) is crucial for the stability of multi-agent systems as they evolve. [7]"
+      ],
+      "sources": [
+        "Prompt Stability Matters: Evaluating and Optimizing Auto-Generated Prompt in General-Purpose Systems - arXiv",
+        "Organizing and Versioning Prompts for Agents - ApX Machine Learning",
+        "Adding Guardrails for AI Agents: Policy and Configuration Guide - Reco",
+        "Prompt Version Control: The Missing Foundation for Enterprise-Scale AI - Kore.ai",
+        "Building Effective Prompt Engineering Strategies for AI Agents - DEV Community"
+      ],
+      "model_used": "gemini-2.5-pro",
+      "latency_ms": 32110,
+      "error": null
+    },
+    {
+      "topic": "Comparison of modular versus monolithic team prompt designs for complex AI systems",
+      "query_used": "modular vs monolithic prompt design for complex AI systems",
+      "summary": "Modular prompt designs are increasingly favored over monolithic approaches for complex AI systems due to their enhanced scalability, maintainability, and reusability. While monolithic prompts can be suitable for simple, single-task applications, they become difficult to test, update, and scale as complexity grows. A modular architecture breaks down prompts into smaller, independent, and reusable components that can be dynamically assembled, leading to more reliable, debuggable, and cost-effective AI systems.",
+      "key_facts": [
+        "Monolithic prompts face challenges in complex applications such as difficulty in testing, problems with reusability, limited dynamic control, higher costs and latency due to more tokens, and a significant maintenance burden.",
+        "Modular prompt architecture improves consistency, reusability, and control by isolating context, instructions, examples, or goals into distinct, manageable blocks.",
+        "A key advantage of modular design is the separation of concerns, where elements like identity, rules, reasoning, and format are independently specified, allowing for modification of one part without affecting others.",
+        "Modular approaches make it easier to systematically evaluate and debug smaller, more specialized prompts, which is more effective for production applications.",
+        "For complex tasks, breaking them down into smaller, logical steps within a modular framework is a recommended best practice for prompt engineering.",
+        "While modularity offers long-term benefits for evolving systems, a monolithic design can be more performant and simpler for low-latency decisions within a narrow context.",
+        "Large, monolithic prompts can suffer from performance issues as the attention mechanisms in large language models can scale quadratically with input length, increasing processing time.",
+        "A modular approach facilitates version control and A/B testing of individual prompt components, which is difficult with a single, large prompt."
+      ],
+      "sources": [
+        "medium.com",
+        "optizenapp.com",
+        "medium.com",
+        "promptlayer.com",
+        "latitude.so"
+      ],
+      "model_used": "gemini-2.5-pro",
+      "latency_ms": 12346,
+      "error": null
+    }
+  ],
+  "timestamp": "2026-03-23T23:30:48.484963+00:00"
+}

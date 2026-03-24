@@ -77,7 +77,14 @@ export function AuraScoreWidget({ score, badgeTier, isElite, locale }: AuraScore
           </p>
 
           {/* Progress bar */}
-          <div className="mt-3 h-1.5 w-full rounded-full bg-muted overflow-hidden">
+          <div
+            role="progressbar"
+            aria-valuenow={Math.round(score)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`${t("aura.overallScore")}: ${score.toFixed(1)}/100`}
+            className="mt-3 h-1.5 w-full rounded-full bg-muted overflow-hidden"
+          >
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${pct}%` }}

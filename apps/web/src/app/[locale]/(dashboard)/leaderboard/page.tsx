@@ -20,9 +20,10 @@ interface LeaderEntry {
   avatarInitial: string;
 }
 
-// ── Mock data (replace with useLeaderboard() hook when endpoint exists) ──────
+// ── Preview data (will be replaced with useLeaderboard() hook when API exists)
+// NOTE: This is demo data shown during beta. Real leaderboard populates after 10+ users complete assessments.
 
-const MOCK_LEADERS: LeaderEntry[] = [
+const PREVIEW_LEADERS: LeaderEntry[] = [
   { id: "1", rank: 1, name: "Anar Əliyev",    score: 99.4, tier: "platinum", avatarInitial: "A" },
   { id: "2", rank: 2, name: "Leyla M.",        score: 96.8, tier: "gold",     avatarInitial: "L" },
   { id: "3", rank: 3, name: "Fərid H.",        score: 92.1, tier: "silver",   avatarInitial: "F" },
@@ -31,6 +32,7 @@ const MOCK_LEADERS: LeaderEntry[] = [
   { id: "6", rank: 6, name: "Nigar S.",        score: 81.7, tier: "rising",   avatarInitial: "N" },
   { id: "7", rank: 7, name: "Günay M.",        score: 79.3, tier: "rising",   avatarInitial: "G" },
 ];
+const IS_PREVIEW = true; // flip to false when real endpoint is wired
 
 // ── Animated counter hook ─────────────────────────────────────────────────────
 
@@ -184,8 +186,8 @@ export default function LeaderboardPage() {
   const { t } = useTranslation();
   const [period, setPeriod] = useState<Period>("weekly");
 
-  const top3 = MOCK_LEADERS.slice(0, 3);
-  const rest = MOCK_LEADERS.slice(3);
+  const top3 = PREVIEW_LEADERS.slice(0, 3);
+  const rest = PREVIEW_LEADERS.slice(3);
 
   const pageVariants = {
     hidden: {},
@@ -201,6 +203,13 @@ export default function LeaderboardPage() {
       <TopBar title={t("nav.leaderboard")} />
 
       <main className="relative z-10 pt-20 pb-10 px-4 max-w-2xl mx-auto">
+        {/* Preview banner */}
+        {IS_PREVIEW && (
+          <div className="mb-4 px-4 py-2 bg-primary/10 border border-primary/20 rounded-xl text-center text-sm text-on-surface-variant">
+            {t("leaderboard.previewBanner", "Preview — real rankings appear after beta launch")}
+          </div>
+        )}
+
         {/* Period filter tabs */}
         <nav className="flex p-1 bg-surface-container-low rounded-xl mb-8">
           {(["weekly", "monthly", "allTime"] as Period[]).map((p) => (
@@ -244,7 +253,7 @@ export default function LeaderboardPage() {
         </motion.div>
 
         {/* Empty state (shown if no data) */}
-        {MOCK_LEADERS.length === 0 && (
+        {PREVIEW_LEADERS.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-20 h-20 bg-surface-container-high rounded-full flex items-center justify-center mb-6">
               <span className="text-4xl">🏆</span>

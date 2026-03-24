@@ -1,0 +1,248 @@
+{
+  "winner": "strong_founder",
+  "winner_score": 30.4,
+  "passed_confidence_gate": true,
+  "weighted_scores": {
+    "exceptional_hire": 25.9,
+    "overhyped": 18.6,
+    "prop_0": 11.6,
+    "strong_founder": 30.4,
+    "needs_more_proof": 23.3
+  },
+  "agents_used": 18,
+  "agents_succeeded": 14,
+  "total_cost": 0.000261,
+  "total_latency_ms": 25371,
+  "synthesis": {
+    "winner": "strong_founder",
+    "synthesis": "Yusif Ganbarov is a strong founder candidate due to his exceptional AI orchestration skills, operational experience, and regional market knowledge. His ability to lead a team and make strategic decisions is evident in his 48-hour sprint, where he directed Claude to build MiroFish. However, his lack of technical ownership and public recognition are concerns that need to be addressed.",
+    "consensus_points": [
+      "Yusif's AI orchestration skills are exceptional",
+      "His operational experience is valuable",
+      "Regional market knowledge is an asset"
+    ],
+    "risk_points": [
+      "Culture mismatch: founder personality in a corporate structure",
+      "May struggle with corporate structure",
+      "Internal role misalignment due to lack of traditional software product strategy experience"
+    ],
+    "surprise_insight": null,
+    "confidence": 0.8,
+    "conditions": "If Yusif fails to demonstrate sustained execution (product-market fit, revenue, team) within 6-12 months, the confidence in his founder abilities may decrease.",
+    "json_valid": true,
+    "latency_ms": 647,
+    "provider": "groq:llama-3.1-8b-instant",
+    "model": "llama-3.1-8b-instant",
+    "token_budget_used": 19800,
+    "token_budget_max": 100000,
+    "dedup_removed": 0,
+    "loop_warnings": 0,
+    "token_stats": {
+      "total_input_tokens": 11200,
+      "total_output_tokens": 1035,
+      "total_cost_usd": 0.000261,
+      "per_provider": {
+        "groq": {
+          "input_tokens": 8000,
+          "output_tokens": 504,
+          "cost_usd": 0.0,
+          "calls": 10
+        },
+        "gemini": {
+          "input_tokens": 1600,
+          "output_tokens": 400,
+          "cost_usd": 0.0,
+          "calls": 2
+        },
+        "deepseek": {
+          "input_tokens": 1600,
+          "output_tokens": 131,
+          "cost_usd": 0.00026068,
+          "calls": 2
+        }
+      }
+    }
+  },
+  "agent_insights": [
+    {
+      "model": "llama-3.1-8b-instant",
+      "winner": "strong_founder",
+      "confidence": 0.9,
+      "reason": "Strong founder path wins due to Yusif's unique combination of skills: regional market knowledge, 3 languages, event operations network, and AI orchestration capability. His skills are most valuable as a founder.",
+      "perspective": "pragmatist",
+      "concerns": {},
+      "innovation": "",
+      "self_note": ""
+    },
+    {
+      "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+      "winner": "strong_founder",
+      "confidence": 0.8,
+      "reason": "Yusif's unique combination of operational experience, AI orchestration skills, and regional market knowledge makes him a stronger founder than employee. His ability to direct AI development, manage teams, and identify business opportunities positions him well for building a regional AI company.",
+      "perspective": "security",
+      "concerns": {},
+      "innovation": "",
+      "self_note": ""
+    },
+    {
+      "model": "gemini-flash-lite-latest",
+      "winner": "strong_founder",
+      "confidence": 0.9,
+      "reason": "Yusif's greatest documented strength is the unique combination of high-stakes, on-the-ground logistical management (WUF13, COP29) and rapid, novel AI system direction (MiroFish architecture). His ability to secure verified market pricing (Volaura, AZ/TR/KZ comps) and identify specific, actionable grants ($310K potential pipeline) is far more valuable in a founder role than as an employee. He has proven execution speed (48h sprint) tied directly to actionable business strategy, making him a high-leverage operator who risks being constrained by a corporate structure that prioritizes traditional engineering over his operational/orchestration specialty. The evidence supports the idea that his unique value decays when placed within a standard corporate hierarchy.",
+      "perspective": "user",
+      "concerns": {},
+      "innovation": "",
+      "self_note": ""
+    },
+    {
+      "model": "moonshotai/kimi-k2-instruct",
+      "winner": "needs_more_proof",
+      "confidence": 0.8,
+      "reason": "48 hours proves velocity but not maintainability - needs to demonstrate handling technical debt, system evolution, and sustained execution over 6+ months.",
+      "perspective": "maintainability",
+      "concerns": {},
+      "innovation": "",
+      "self_note": ""
+    },
+    {
+      "model": "moonshotai/kimi-k2-instruct-0905",
+      "winner": "overhyped",
+      "confidence": 0.85,
+      "reason": "Claude wrote 100% of the code, the PR gap shows employers don’t even quote him, and the CrewAI comparison inflates a prompt-engineering session into an engineering milestone.",
+      "perspective": "contrarian",
+      "concerns": {},
+      "innovation": "",
+      "self_note": ""
+    },
+    {
+      "model": "openai/gpt-oss-120b",
+      "winner": "overhyped",
+      "confidence": 0.78,
+      "reason": "The evidence shows Yusif orchestrated an AI sprint but did not build the system himself, and the comparison to established AI teams is misleading, making the overhyped path the most accurate.",
+      "perspective": "pessimist",
+      "concerns": {},
+      "innovation": "",
+      "self_note": ""
+    },
+    {
+      "model": "llama-3.3-70b-versatile",
+      "winner": "",
+      "confidence": 0.0,
+      "reason": "",
+      "perspective": "",
+      "concerns": {},
+      "innovation": "",
+      "self_note": ""
+    },
+    {
+      "model": "deepseek-chat",
+      "winner": "strong_founder",
+      "confidence": 0.75,
+      "reason": "His unique combination of regional market knowledge (Azerbaijan pricing calibration, grant pipeline identification), multilingual capability, and proven operational leadership at major international events makes him more valuable as a founder than an employee.",
+      "perspective": "pragmatist_2",
+      "concerns": {},
+      "innovation": "",
+      "self_note": ""
+    },
+    {
+      "model": "groq/compound-mini",
+      "winner": "",
+      "confidence": 0.0,
+      "reason": "",
+      "perspective": "",
+      "concerns": {},
+      "innovation": "",
+      "self_note": ""
+    },
+    {
+      "model": "llama-3.1-8b-instant",
+      "winner": "strong_founder",
+      "confidence": 0.9,
+      "reason": "Yusif's unique combination of operational experience, AI orchestration skills, and regional market knowledge makes him a stronger founder than employee. His strengths in flexibility and user impact outweigh his weaknesses in dev_speed and risk.",
+      "perspective": "pragmatist",
+      "concerns": {},
+      "innovation": "",
+      "self_note": ""
+    },
+    {
+      "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+      "winner": "strong_founder",
+      "confidence": 0.8,
+      "reason": "Yusif's unique combination of operational experience, AI orchestration skills, and regional market knowledge makes him a stronger founder than employee. His ability to direct an AI CTO and develop a business strategy in 48 hours demonstrates his exceptional capabilities.",
+      "perspective": "security",
+      "concerns": {},
+      "innovation": "",
+      "self_note": ""
+    },
+    {
+      "model": "gemini-flash-lite-latest",
+      "winner": "strong_founder",
+      "confidence": 0.9,
+      "reason": "The Strong Founder path wins because Yusif's unique, documented asset is the precise intersection of high-stakes regional logistics execution (WUF13, COP29) and novel AI orchestration (MiroFish v7 ResearchLoop, Failure Network). No other path leverages his proven regional market knowledge (AZ pricing, specific grants) and language skills as effectively. While the 'Overhyped' agents rightly point out that Claude wrote the code, Yusif's contribution—the ResearchLoop idea, management philosophy, and catching memory flaws—demonstrates superior product intuition and system oversight, which is the *most* valuable skill for a founder in the AI tooling space today. The operational track record (10+ years, large scale events) mitigates the risk of immediate failure, making him better equipped to found than to be a standard employee.",
+      "perspective": "user",
+      "concerns": {},
+      "innovation": "",
+      "self_note": ""
+    },
+    {
+      "model": "moonshotai/kimi-k2-instruct-0905",
+      "winner": "needs_more_proof",
+      "confidence": 0.75,
+      "reason": "The 48-hour sprint is a flashy spike but until he ships v8-v20, signs ten paying Volaura customers, and keeps the system alive for six months, the narrative is just velocity theatre.",
+      "perspective": "contrarian",
+      "concerns": {},
+      "innovation": "",
+      "self_note": ""
+    },
+    {
+      "model": "moonshotai/kimi-k2-instruct",
+      "winner": "needs_more_proof",
+      "confidence": 0.85,
+      "reason": "A single weekend demo without tests, docs, or maintainable code is a high-risk prototype, not a sustainable product.",
+      "perspective": "maintainability",
+      "concerns": {},
+      "innovation": "",
+      "self_note": ""
+    },
+    {
+      "model": "llama-3.3-70b-versatile",
+      "winner": "",
+      "confidence": 0.0,
+      "reason": "",
+      "perspective": "",
+      "concerns": {},
+      "innovation": "",
+      "self_note": ""
+    },
+    {
+      "model": "openai/gpt-oss-120b",
+      "winner": "overhyped",
+      "confidence": 0.78,
+      "reason": "Evidence shows Yusif orchestrated Claude‑written code and inflated comparisons, while lacking direct technical output and external validation, making the hype the most dangerous misrepresentation.",
+      "perspective": "pessimist",
+      "concerns": {},
+      "innovation": "",
+      "self_note": ""
+    },
+    {
+      "model": "deepseek-chat",
+      "winner": "strong_founder",
+      "confidence": 0.8,
+      "reason": "His unique combination of regional market knowledge (Azerbaijan pricing calibration, grant pipeline identification), multilingual capability, and proven ability to orchestrate AI systems at unprecedented speed makes him more valuable as a founder than an employee.",
+      "perspective": "pragmatist_2",
+      "concerns": {},
+      "innovation": "",
+      "self_note": ""
+    },
+    {
+      "model": "groq/compound-mini",
+      "winner": "",
+      "confidence": 0.0,
+      "reason": "",
+      "perspective": "",
+      "concerns": {},
+      "innovation": "",
+      "self_note": ""
+    }
+  ]
+}

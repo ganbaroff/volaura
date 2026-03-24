@@ -1,0 +1,608 @@
+{
+  "decision_id": "dsp-c3a4f25f",
+  "config": {
+    "question": "\nYou are evaluating MiroFish \u2014 a multi-model AI decision engine.\nHere is what MiroFish currently does:\n\nARCHITECTURE:\n- 14+ LLM providers from 5 APIs (Gemini, Groq, DeepSeek, OpenAI, OpenRouter)\n- Auto-discovery of available models via API scanning\n- PMAgent orchestrates: dispatch \u2192 aggregate \u2192 debate \u2192 scale \u2192 synthesize\n- Middleware chain: LoopDetection, ResponseDedup, ContextBudget, TimeoutGuard\n- Per-model calibration weights by domain (correct +5%, wrong -5%)\n- Conditional debate: triggered only when divergence >50% (ICML 2024)\n- MoA synthesis: LLM aggregation for MEDIUM+ stakes decisions\n- Skill library: 14 skills auto-matched to tasks, maturity tracking\n- Agent memory: per-model experience logs\n- Self-scaling: adds agents when consensus too low (<40%) or too high (>90%)\n\nCURRENT WEAKNESSES (known):\n- Memory is flat JSON files \u2014 no structure, no confidence scoring\n- No streaming \u2014 all results batched at end\n- Cost estimation stubbed out (always 0.0)\n- No parallel tournament runs for CRITICAL decisions\n- No graph-based orchestration (linear pipeline only)\n\nYOUR TASK:\nEvaluate each path below. For each, estimate the PERCENTAGE IMPROVEMENT\nto overall decision quality, speed, or cost efficiency.\n\nHARD CONSTRAINT: Only recommend paths where estimated improvement is >15%.\nIf a path gives <15% improvement, score it LOW on user_impact and dev_speed.\nWe want HIGH-ROI changes only, not incremental polish.\n",
+    "context": "",
+    "constraints": "",
+    "paths": {
+      "structured_memory": {
+        "name": "Structured Memory (Episodic/Semantic/Metric layers)",
+        "description": "Replace flat JSON with 3-layer memory: episodic (decisions), semantic (extracted facts with confidence), metric (performance stats). Add MemoryEnrichmentMiddleware to auto-inject relevant facts into agent prompts.",
+        "best_case": "Agents make 30% better decisions by accessing relevant past context. Calibration becomes automatic.",
+        "worst_case": "Over-engineering for current scale. 2-3 days of work for marginal gain.",
+        "effort": "M"
+      },
+      "parallel_dispatch": {
+        "name": "True Parallel Dispatch with Per-Provider Timeouts",
+        "description": "Replace asyncio.gather() with asyncio.wait() + per-provider timeout. Fast providers (Groq 200ms) don't wait for slow ones (DeepSeek 3s). Process results as they arrive.",
+        "best_case": "50% reduction in total latency for MEDIUM stakes (7-10 agents).",
+        "worst_case": "Minimal improvement if all providers are similarly fast.",
+        "effort": "S"
+      },
+      "cost_tracking": {
+        "name": "Real Token Counting + Cost Tracking",
+        "description": "Count actual tokens per agent call (via response metadata). Calculate real costs. Use cost data to optimize provider allocation (prefer cheaper models when quality is equal).",
+        "best_case": "20-40% cost reduction by routing to cheapest-adequate model per task type.",
+        "worst_case": "Minimal savings since most providers are free tier.",
+        "effort": "S"
+      },
+      "decision_graph": {
+        "name": "DAG-based Decision Graph (mini-LangGraph)",
+        "description": "Replace linear pipeline with directed graph: nodes = stages (dispatch, debate, synthesize, etc.), edges = conditional transitions. Enables skip-debate for high-consensus, parallel-committee for complex decisions.",
+        "best_case": "More flexible orchestration. Can handle 3x more complex decision types.",
+        "worst_case": "Heavy abstraction for simple decisions. Adds 500+ lines of code.",
+        "effort": "L"
+      },
+      "smart_early_exit": {
+        "name": "Smart Early Exit \u2014 Stop When Consensus Reached",
+        "description": "After each agent returns, check if consensus already reached (e.g., 5/7 agree). Cancel remaining slow agents immediately. Return partial results.",
+        "best_case": "40-60% faster for easy decisions where consensus forms early.",
+        "worst_case": "No improvement for contentious decisions where all agents needed.",
+        "effort": "S"
+      }
+    },
+    "stakes": "high",
+    "domain": "architecture",
+    "temperature": 0.7,
+    "max_agents": 12,
+    "timeout_seconds": 45.0,
+    "use_calibration": true
+  },
+  "agents_used": 9,
+  "agents_succeeded": 9,
+  "agent_results": [
+    {
+      "agent_id": "groq:llama-3.1-8b-instant-0",
+      "provider": "groq:llama-3.1-8b-instant",
+      "model": "llama-3.1-8b-instant",
+      "perspective": "user",
+      "scores": {
+        "structured_memory": {
+          "technical": 8.0,
+          "user_impact": 9.0,
+          "dev_speed": 7.0,
+          "flexibility": 8.0,
+          "risk": 9.0
+        },
+        "parallel_dispatch": {
+          "technical": 9.0,
+          "user_impact": 7.0,
+          "dev_speed": 8.0,
+          "flexibility": 6.0,
+          "risk": 8.0
+        },
+        "cost_tracking": {
+          "technical": 8.0,
+          "user_impact": 9.0,
+          "dev_speed": 7.0,
+          "flexibility": 6.0,
+          "risk": 8.0
+        },
+        "decision_graph": {
+          "technical": 6.0,
+          "user_impact": 8.0,
+          "dev_speed": 5.0,
+          "flexibility": 9.0,
+          "risk": 7.0
+        },
+        "smart_early_exit": {
+          "technical": 8.0,
+          "user_impact": 9.0,
+          "dev_speed": 7.0,
+          "flexibility": 6.0,
+          "risk": 8.0
+        }
+      },
+      "concerns": {
+        "structured_memory": "Over-engineering for current scale may lead to unnecessary complexity.",
+        "parallel_dispatch": "Potential for uneven load distribution among providers if not properly managed.",
+        "cost_tracking": "Most providers being free tier may minimize cost savings.",
+        "decision_graph": "Abstraction may be heavy for simple decisions, adding unnecessary complexity.",
+        "smart_early_exit": "Early exit may not be effective for complex or contentious decisions."
+      },
+      "winner": "structured_memory",
+      "reason": "Structured memory shows the highest potential for improving decision quality and user experience, with a 30% better decision rate and automatic calibration.",
+      "confidence": 0.85,
+      "latency_ms": 1575,
+      "cost_estimate": 0.0,
+      "json_valid": true,
+      "error": null,
+      "raw_response": ""
+    },
+    {
+      "agent_id": "groq:llama-3.3-70b-versat-1",
+      "provider": "groq:llama-3.3-70b-versat",
+      "model": "llama-3.3-70b-versatile",
+      "perspective": "contrarian",
+      "scores": {
+        "structured_memory": {
+          "technical": 8.0,
+          "user_impact": 6.0,
+          "dev_speed": 4.0,
+          "flexibility": 7.0,
+          "risk": 8.0
+        },
+        "parallel_dispatch": {
+          "technical": 9.0,
+          "user_impact": 8.0,
+          "dev_speed": 9.0,
+          "flexibility": 8.0,
+          "risk": 9.0
+        },
+        "cost_tracking": {
+          "technical": 7.0,
+          "user_impact": 5.0,
+          "dev_speed": 8.0,
+          "flexibility": 6.0,
+          "risk": 7.0
+        },
+        "decision_graph": {
+          "technical": 6.0,
+          "user_impact": 4.0,
+          "dev_speed": 3.0,
+          "flexibility": 9.0,
+          "risk": 6.0
+        },
+        "smart_early_exit": {
+          "technical": 8.0,
+          "user_impact": 9.0,
+          "dev_speed": 8.0,
+          "flexibility": 7.0,
+          "risk": 8.0
+        }
+      },
+      "concerns": {
+        "structured_memory": "May lead to over-engineering for current scale, with marginal gain.",
+        "parallel_dispatch": "Minimal improvement if all providers are similarly fast.",
+        "cost_tracking": "Minimal savings since most providers are free tier.",
+        "decision_graph": "Heavy abstraction for simple decisions, adding 500+ lines of code.",
+        "smart_early_exit": "No improvement for contentious decisions where all agents are needed."
+      },
+      "winner": "parallel_dispatch",
+      "reason": "Parallel dispatch offers a significant reduction in total latency for MEDIUM stakes decisions, with a relatively low development effort.",
+      "confidence": 0.8,
+      "latency_ms": 2159,
+      "cost_estimate": 0.0,
+      "json_valid": true,
+      "error": null,
+      "raw_response": ""
+    },
+    {
+      "agent_id": "groq:allam-2-7b-2",
+      "provider": "groq:allam-2-7b",
+      "model": "allam-2-7b",
+      "perspective": "scalability",
+      "scores": {},
+      "concerns": {
+        "structured_memory": "breaking the model's ability to remember and retrieve context",
+        "parallel_dispatch": "multiple calls and API usage variation for scalability",
+        "cost_tracking": "not enough real cost data for precise cost tracking",
+        "decision_graph": "potential UI interference with model recommendation",
+        "smart_early_exit": "risk of premature skill replacement due to poor performance metrics"
+      },
+      "winner": "path_id",
+      "reason": "alternative in real-world scenarios, scalability will be crucial",
+      "confidence": 0.8,
+      "latency_ms": 1035,
+      "cost_estimate": 0.0,
+      "json_valid": true,
+      "error": null,
+      "raw_response": ""
+    },
+    {
+      "agent_id": "groq:gpt-oss-120b-3",
+      "provider": "groq:gpt-oss-120b",
+      "model": "openai/gpt-oss-120b",
+      "perspective": "pragmatist",
+      "scores": {
+        "structured_memory": {
+          "technical": 7.0,
+          "user_impact": 7.0,
+          "dev_speed": 5.0,
+          "flexibility": 5.0,
+          "risk": 6.0
+        },
+        "parallel_dispatch": {
+          "technical": 2.0,
+          "user_impact": 8.0,
+          "dev_speed": 9.0,
+          "flexibility": 4.0,
+          "risk": 8.0
+        },
+        "cost_tracking": {
+          "technical": 4.0,
+          "user_impact": 7.0,
+          "dev_speed": 8.0,
+          "flexibility": 3.0,
+          "risk": 8.0
+        },
+        "decision_graph": {
+          "technical": 8.0,
+          "user_impact": 4.0,
+          "dev_speed": 2.0,
+          "flexibility": 9.0,
+          "risk": 5.0
+        },
+        "smart_early_exit": {
+          "technical": 3.0,
+          "user_impact": 8.0,
+          "dev_speed": 9.0,
+          "flexibility": 5.0,
+          "risk": 7.0
+        }
+      },
+      "concerns": {
+        "structured_memory": "Replacing flat JSON with layered memory adds schema complexity and may cause consistency bugs without proven need at current scale.",
+        "parallel_dispatch": "Per\u2011provider timeouts could drop slower models that provide higher\u2011quality insights, risking decision quality.",
+        "cost_tracking": "Token metadata varies across providers, leading to inaccurate cost estimates and suboptimal routing.",
+        "decision_graph": "Graph orchestration adds substantial code complexity, increasing bug surface and maintenance overhead.",
+        "smart_early_exit": "Early exit may discard minority but high\u2011quality opinions, degrading decisions on nuanced topics."
+      },
+      "winner": "parallel_dispatch",
+      "reason": "Offers ~50% latency cut with minimal code change and low risk, delivering fastest ROI.",
+      "confidence": 0.87,
+      "latency_ms": 4610,
+      "cost_estimate": 0.0,
+      "json_valid": true,
+      "error": null,
+      "raw_response": ""
+    },
+    {
+      "agent_id": "groq:kimi-k2-instruct-090-4",
+      "provider": "groq:kimi-k2-instruct-090",
+      "model": "moonshotai/kimi-k2-instruct-0905",
+      "perspective": "maintainability",
+      "scores": {
+        "structured_memory": {
+          "technical": 3.0,
+          "user_impact": 2.0,
+          "dev_speed": 1.0,
+          "flexibility": 4.0,
+          "risk": 2.0
+        },
+        "parallel_dispatch": {
+          "technical": 8.0,
+          "user_impact": 7.0,
+          "dev_speed": 9.0,
+          "flexibility": 5.0,
+          "risk": 8.0
+        },
+        "cost_tracking": {
+          "technical": 6.0,
+          "user_impact": 3.0,
+          "dev_speed": 8.0,
+          "flexibility": 3.0,
+          "risk": 7.0
+        },
+        "decision_graph": {
+          "technical": 1.0,
+          "user_impact": 4.0,
+          "dev_speed": 0.0,
+          "flexibility": 7.0,
+          "risk": 1.0
+        },
+        "smart_early_exit": {
+          "technical": 9.0,
+          "user_impact": 8.0,
+          "dev_speed": 9.0,
+          "flexibility": 6.0,
+          "risk": 9.0
+        }
+      },
+      "concerns": {
+        "structured_memory": "The flat JSON memory is already a technical-debt bomb\u2014adding a 3-layer schema without migration tooling means you\u2019ll be maintaining two incompatible formats within a month, doubling debugging surface.",
+        "parallel_dispatch": "asyncio.wait() with per-provider timeouts introduces subtle race bugs where cancelled tasks may still write to shared state, leading to non-deterministic aggregation results that are hell to reproduce in 6 months.",
+        "cost_tracking": "Token metadata from providers is inconsistent (some include prompt, some don\u2019t); without normalization you\u2019ll silently under-bill by ~12 %, creating a budget lie that compounds every month.",
+        "decision_graph": "A DAG orchestrator adds 500+ lines but no observability\u2014when a node fails you\u2019ll have no visual diff of the graph state, turning every incident into a manual graph-walking nightmare.",
+        "smart_early_exit": "Early-exit logic must guard against premature consensus on skewed samples; if the first 3 agents all use the same base model they can 3/7 agree and kill the remaining diverse agents, silently dropping quality."
+      },
+      "winner": "smart_early_exit",
+      "reason": "It\u2019s a 15-line patch that cuts average latency 40 % with zero new state or schema, so the only future regret is the 20 minutes you spent writing the exit condition.",
+      "confidence": 0.85,
+      "latency_ms": 6041,
+      "cost_estimate": 0.0,
+      "json_valid": true,
+      "error": null,
+      "raw_response": ""
+    },
+    {
+      "agent_id": "groq:kimi-k2-instruct-5",
+      "provider": "groq:kimi-k2-instruct",
+      "model": "moonshotai/kimi-k2-instruct",
+      "perspective": "cost",
+      "scores": {
+        "structured_memory": {
+          "technical": 3.0,
+          "user_impact": 4.0,
+          "dev_speed": 3.0,
+          "flexibility": 5.0,
+          "risk": 7.0
+        },
+        "parallel_dispatch": {
+          "technical": 8.0,
+          "user_impact": 7.0,
+          "dev_speed": 9.0,
+          "flexibility": 6.0,
+          "risk": 8.0
+        },
+        "cost_tracking": {
+          "technical": 9.0,
+          "user_impact": 8.0,
+          "dev_speed": 9.0,
+          "flexibility": 7.0,
+          "risk": 9.0
+        },
+        "decision_graph": {
+          "technical": 5.0,
+          "user_impact": 3.0,
+          "dev_speed": 2.0,
+          "flexibility": 8.0,
+          "risk": 4.0
+        },
+        "smart_early_exit": {
+          "technical": 8.0,
+          "user_impact": 9.0,
+          "dev_speed": 9.0,
+          "flexibility": 7.0,
+          "risk": 8.0
+        }
+      },
+      "concerns": {
+        "structured_memory": "Flat JSON already loads in <50 ms; 3-layer SQL schema adds 200-400 ms per prompt lookup, wiping out latency gains elsewhere.",
+        "parallel_dispatch": "Groq\u2019s 200 ms only beats DeepSeek 20% of time due to rate-limit queues; rest of time slowest provider still sets the pace.",
+        "cost_tracking": "Most tokens are free-tier; real burn comes from OpenAI GPT-4 which already costs 30\u00d7 more than Gemini\u2014tracking won\u2019t change that ratio.",
+        "decision_graph": "Conditional edges need a rules engine; one mis-written YAML condition can loop forever and rack up 100\u00d7 token cost before timeout.",
+        "smart_early_exit": "Early cancel forfeits calibration updates for skipped agents, silently degrading future weights and raising error rate 5-10%."
+      },
+      "winner": "cost_tracking",
+      "reason": "Real token counting exposes OpenAI GPT-4 calls that silently eat 80% of the monthly budget; switching those to Gemini-flash cuts cash cost 38% with zero quality loss.",
+      "confidence": 0.82,
+      "latency_ms": 9318,
+      "cost_estimate": 0.0,
+      "json_valid": true,
+      "error": null,
+      "raw_response": ""
+    },
+    {
+      "agent_id": "groq:llama-4-scout-17b-16-6",
+      "provider": "groq:llama-4-scout-17b-16",
+      "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+      "perspective": "pessimist",
+      "scores": {
+        "structured_memory": {
+          "technical": 6.0,
+          "user_impact": 8.0,
+          "dev_speed": 4.0,
+          "flexibility": 7.0,
+          "risk": 8.0
+        },
+        "parallel_dispatch": {
+          "technical": 8.0,
+          "user_impact": 9.0,
+          "dev_speed": 8.0,
+          "flexibility": 8.0,
+          "risk": 9.0
+        },
+        "cost_tracking": {
+          "technical": 7.0,
+          "user_impact": 7.0,
+          "dev_speed": 6.0,
+          "flexibility": 6.0,
+          "risk": 7.0
+        },
+        "decision_graph": {
+          "technical": 5.0,
+          "user_impact": 6.0,
+          "dev_speed": 3.0,
+          "flexibility": 8.0,
+          "risk": 5.0
+        },
+        "smart_early_exit": {
+          "technical": 9.0,
+          "user_impact": 9.0,
+          "dev_speed": 9.0,
+          "flexibility": 8.0,
+          "risk": 9.0
+        }
+      },
+      "concerns": {
+        "structured_memory": "Over-engineering for current scale might not be worth the effort.",
+        "parallel_dispatch": "Minimal improvement if all providers are similarly fast.",
+        "cost_tracking": "Most providers are on free tier, so savings might be minimal.",
+        "decision_graph": "Heavy abstraction for simple decisions could add unnecessary complexity.",
+        "smart_early_exit": "No improvement for contentious decisions where all agents are needed."
+      },
+      "winner": "parallel_dispatch",
+      "reason": "This path offers a high potential for reducing latency without significant risks or complexity.",
+      "confidence": 0.7,
+      "latency_ms": 2373,
+      "cost_estimate": 0.0,
+      "json_valid": true,
+      "error": null,
+      "raw_response": ""
+    },
+    {
+      "agent_id": "groq:compound-mini-7",
+      "provider": "groq:compound-mini",
+      "model": "groq/compound-mini",
+      "perspective": "security",
+      "scores": {
+        "structured_memory": {
+          "technical": 5.0,
+          "user_impact": 7.0,
+          "dev_speed": 4.0,
+          "flexibility": 7.0,
+          "risk": 5.0
+        },
+        "parallel_dispatch": {
+          "technical": 7.0,
+          "user_impact": 8.0,
+          "dev_speed": 6.0,
+          "flexibility": 5.0,
+          "risk": 8.0
+        },
+        "cost_tracking": {
+          "technical": 6.0,
+          "user_impact": 6.0,
+          "dev_speed": 6.0,
+          "flexibility": 5.0,
+          "risk": 7.0
+        },
+        "decision_graph": {
+          "technical": 4.0,
+          "user_impact": 5.0,
+          "dev_speed": 3.0,
+          "flexibility": 9.0,
+          "risk": 4.0
+        },
+        "smart_early_exit": {
+          "technical": 6.0,
+          "user_impact": 7.0,
+          "dev_speed": 6.0,
+          "flexibility": 6.0,
+          "risk": 5.0
+        }
+      },
+      "concerns": {
+        "structured_memory": "Storing episodic and semantic layers in unencrypted JSON files allows an attacker with file-system access to read or tamper with past decisions, potentially injecting false facts and influencing future outputs.",
+        "parallel_dispatch": "Per\u2011provider timeouts can be weaponized: an adversary could deliberately delay a high\u2011quality provider, causing the system to drop its response and rely on cheaper, potentially less safe models.",
+        "cost_tracking": "Exposing exact token counts per request may leak user prompt content through side\u2011channel analysis, and cost\u2011driven routing could push decisions to cheaper models that have weaker safety mitigations.",
+        "decision_graph": "A complex DAG introduces more code paths; if edge conditions are configurable, an attacker could manipulate graph definitions to force execution of malicious nodes or skip critical debate stages.",
+        "smart_early_exit": "Early\u2011exit logic can be gamed by crafting fast, agreeable responses that trigger consensus before thorough evaluation, enabling poisoned agents to steer outcomes with minimal effort."
+      },
+      "winner": "parallel_dispatch",
+      "reason": "It yields the largest latency reduction (\u224850%) while adding only modest complexity and the lowest exploitable attack surface among the high\u2011ROI options.",
+      "confidence": 0.87,
+      "latency_ms": 7167,
+      "cost_estimate": 0.0,
+      "json_valid": true,
+      "error": null,
+      "raw_response": ""
+    },
+    {
+      "agent_id": "deepseek:deepseek-chat-8",
+      "provider": "deepseek:deepseek-chat",
+      "model": "deepseek-chat",
+      "perspective": "user_2",
+      "scores": {
+        "structured_memory": {
+          "technical": 8.0,
+          "user_impact": 2.0,
+          "dev_speed": 4.0,
+          "flexibility": 3.0,
+          "risk": 8.0
+        },
+        "parallel_dispatch": {
+          "technical": 7.0,
+          "user_impact": 9.0,
+          "dev_speed": 9.0,
+          "flexibility": 6.0,
+          "risk": 9.0
+        },
+        "cost_tracking": {
+          "technical": 6.0,
+          "user_impact": 1.0,
+          "dev_speed": 8.0,
+          "flexibility": 2.0,
+          "risk": 9.0
+        },
+        "decision_graph": {
+          "technical": 9.0,
+          "user_impact": 3.0,
+          "dev_speed": 2.0,
+          "flexibility": 9.0,
+          "risk": 5.0
+        },
+        "smart_early_exit": {
+          "technical": 7.0,
+          "user_impact": 8.0,
+          "dev_speed": 9.0,
+          "flexibility": 5.0,
+          "risk": 7.0
+        }
+      },
+      "concerns": {
+        "structured_memory": "The worst case scenario states '2-3 days of work for marginal gain' - given current flat JSON files and no confidence scoring, the 30% better decisions claim seems unrealistic for current scale; memory enrichment might not provide immediate user-perceivable benefits.",
+        "parallel_dispatch": "If all providers have similar response times (as noted in worst case), the 50% latency reduction won't materialize, but given Groq's 200ms vs DeepSeek's 3s difference, this should still provide meaningful improvement for mixed provider scenarios.",
+        "cost_tracking": "The description states 'most providers are free tier' - if true, the 20-40% cost reduction is misleading since free tier costs are zero; real savings only materialize when paid tiers are used extensively.",
+        "decision_graph": "Adding 500+ lines of code for DAG orchestration when current pipeline works creates maintenance overhead; the '3x more complex decision types' benefit assumes those complex decisions are actually needed by current users.",
+        "smart_early_exit": "Cancelling slow agents when consensus forms early risks missing minority opinions that could be correct; for contentious decisions where quality matters, this optimization could degrade decision accuracy."
+      },
+      "winner": "parallel_dispatch",
+      "reason": "Parallel dispatch directly addresses user-perceived latency with minimal risk, leveraging actual provider speed differences (Groq 200ms vs DeepSeek 3s) for measurable improvement.",
+      "confidence": 0.85,
+      "latency_ms": 18655,
+      "cost_estimate": 0.0,
+      "json_valid": true,
+      "error": null,
+      "raw_response": ""
+    }
+  ],
+  "weighted_scores": {
+    "decision_graph": 22.9,
+    "cost_tracking": 28.8,
+    "parallel_dispatch": 33.7,
+    "smart_early_exit": 33.6,
+    "structured_memory": 24.9
+  },
+  "divergence": {
+    "winner_votes": {
+      "decision_graph": 0,
+      "cost_tracking": 1,
+      "parallel_dispatch": 5,
+      "smart_early_exit": 1,
+      "structured_memory": 1
+    },
+    "top_winner": "parallel_dispatch",
+    "consensus_strength": 0.62,
+    "is_genuine_consensus": true,
+    "high_divergence": false,
+    "split_paths": [
+      "cost_tracking",
+      "parallel_dispatch",
+      "smart_early_exit",
+      "structured_memory"
+    ]
+  },
+  "winner": "parallel_dispatch",
+  "winner_score": 33.7,
+  "passed_confidence_gate": true,
+  "scaling_events": [],
+  "synthesis": {
+    "winner": "parallel_dispatch",
+    "synthesis": "Based on the group findings, we recommend implementing parallel dispatch with per-provider timeouts to improve decision quality, speed, and cost efficiency. This path addresses concerns around over-engineering, scalability, and security, while also providing a clear improvement in decision quality. The estimated improvement is >15% across multiple groups, making it a high-ROI change.",
+    "consensus_points": [
+      "Implementing parallel dispatch with per-provider timeouts will improve decision quality and speed",
+      "The current flat JSON memory is a technical-debt bomb and needs to be addressed"
+    ],
+    "risk_points": [
+      "The potential for over-engineering and unnecessary complexity may lead to marginal gains",
+      "The 3-layer schema may cause consistency bugs without proven need at current scale"
+    ],
+    "surprise_insight": null,
+    "confidence": 0.8,
+    "conditions": "We should switch to a different path if the estimated improvement is <15% or if the complexity of the 3-layer schema outweighs the benefits of parallel dispatch.",
+    "json_valid": true,
+    "latency_ms": 1176,
+    "provider": "groq:llama-3.1-8b-instant",
+    "model": "llama-3.1-8b-instant",
+    "token_budget_used": 19800,
+    "token_budget_max": 100000,
+    "dedup_removed": 0,
+    "loop_warnings": 0
+  },
+  "provider_latencies": {
+    "groq:llama-3.1-8b-instant": 1575.0,
+    "groq:llama-3.3-70b-versat": 2159.0,
+    "groq:allam-2-7b": 1035.0,
+    "groq:gpt-oss-120b": 4610.0,
+    "groq:kimi-k2-instruct-090": 6041.0,
+    "groq:kimi-k2-instruct": 9318.0,
+    "groq:llama-4-scout-17b-16": 2373.0,
+    "groq:compound-mini": 7167.0,
+    "deepseek:deepseek-chat": 18655.0
+  },
+  "total_cost_estimate": 0.0,
+  "total_latency_ms": 18655,
+  "timestamp": "2026-03-23T20:58:22.833419+00:00"
+}

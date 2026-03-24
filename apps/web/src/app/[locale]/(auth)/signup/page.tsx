@@ -49,7 +49,7 @@ export default function SignupPage() {
       }
 
       setSession(data.session);
-      router.push(`/${locale}/dashboard`);
+      router.push(`/${locale}/onboarding`);
     } catch {
       setError(t("auth.unexpectedError"));
     } finally {

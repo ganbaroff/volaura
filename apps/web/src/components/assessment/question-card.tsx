@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import type { Question } from "@/stores/assessment-store";
 import { McqOptions } from "./mcq-options";
 import { OpenTextAnswer } from "./open-text-answer";
@@ -21,6 +22,7 @@ export function QuestionCard({
   onAnswerChange,
   disabled = false,
 }: QuestionCardProps) {
+  const { t } = useTranslation();
   return (
     <AnimatePresence mode="wait" initial={false}>
       <motion.div
@@ -32,7 +34,7 @@ export function QuestionCard({
         aria-live="polite"
         aria-atomic="true"
         role="form"
-        aria-label={`Question ${questionIndex + 1}`}
+        aria-label={`${t("assessment.question")} ${questionIndex + 1}`}
         className="space-y-6"
       >
         {/* Question text */}
@@ -42,9 +44,9 @@ export function QuestionCard({
           </p>
           <span
             className="mt-2 inline-block text-xs font-medium px-2 py-0.5 rounded-full bg-muted text-muted-foreground capitalize"
-            aria-label={`Difficulty: ${question.difficulty_level}`}
+            aria-label={`${t("assessment.difficulty")}: ${t(`assessment.difficulty_${question.difficulty_level}`, { defaultValue: question.difficulty_level })}`}
           >
-            {question.difficulty_level}
+            {t(`assessment.difficulty_${question.difficulty_level}`, { defaultValue: question.difficulty_level })}
           </span>
         </div>
 

@@ -1,3 +1,9 @@
+---
+description: Supabase + pgvector rules — migrations, RLS, vector(768) only, RPC functions
+globs:
+  - "supabase/**"
+---
+
 # Database Rules (Supabase + pgvector)
 
 ## Migrations

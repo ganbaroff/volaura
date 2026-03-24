@@ -1,3 +1,9 @@
+---
+description: Next.js 14 App Router + Tailwind 4 + i18n rules — AZ primary locale, TanStack Query, shadcn
+globs:
+  - "apps/web/**"
+---
+
 # Frontend Rules (Next.js 14 + shadcn + i18n)
 
 ## App Router Only

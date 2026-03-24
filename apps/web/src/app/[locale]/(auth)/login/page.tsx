@@ -71,6 +71,12 @@ function LoginContent() {
         </p>
       )}
 
+      {message === "password-reset" && (
+        <p className="rounded-md bg-primary/10 p-3 text-sm text-primary">
+          {t("auth.passwordResetSuccess")}
+        </p>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1.5">
           <label htmlFor="email" className="text-sm font-medium">
@@ -88,9 +94,17 @@ function LoginContent() {
         </div>
 
         <div className="space-y-1.5">
-          <label htmlFor="password" className="text-sm font-medium">
-            {t("auth.password")}
-          </label>
+          <div className="flex items-center justify-between">
+            <label htmlFor="password" className="text-sm font-medium">
+              {t("auth.password")}
+            </label>
+            <Link
+              href={`/${locale}/forgot-password`}
+              className="text-xs text-muted-foreground hover:text-foreground"
+            >
+              {t("auth.forgotPassword")}
+            </Link>
+          </div>
           <input
             id="password"
             type="password"

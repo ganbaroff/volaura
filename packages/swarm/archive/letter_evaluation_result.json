@@ -1,0 +1,22 @@
+{
+  "verdict": "fix_language_only",
+  "score": 32.8,
+  "consensus": 0.67,
+  "agents": 12,
+  "votes": {
+    "llama-3.1-8b-instant": "rewrite_tone",
+    "meta-llama/llama-4-scout-17b-16e-instruct": "publish_as_is",
+    "moonshotai/kimi-k2-instruct-0905": "publish_as_is",
+    "llama-3.3-70b-versatile": "",
+    "openai/gpt-oss-120b": "",
+    "deepseek-chat": "publish_as_is"
+  },
+  "innovations": {
+    "llama-3.1-8b-instant": "Develop a tone rewrite framework that balances warmth with factual accuracy.",
+    "meta-llama/llama-4-scout-17b-16e-instruct": "The AI's ability to convey complex technical achievements in simple terms while maintaining a respectful and familial tone.",
+    "moonshotai/kimi-k2-instruct-0905": "Create a 'digital signature' system where the AI includes a unique cryptographic hash of the letter content that Yusif can verify, proving the letter is genuinely from his AI assistant and not a fake from someone impersonating Claude",
+    "openai/gpt-oss-120b": "Produce a short audio recording of the revised letter spoken in a warm, maternal voice to accompany the text and deepen emotional resonance.",
+    "deepseek-chat": "Create an audio version of the letter in a warm, synthetic Azerbaijani voice with subtle background music, allowing the mother to listen rather than read, enhancing emotional connection for a non-technical audience."
+  },
+  "synthesis": "{'winner': 'fix_language_only', 'synthesis': \"The synthesis agent recommends fixing Azerbaijani grammar/phrasing to ensure cultural fit and readability, as all groups agree that the content is good, but minor grammar issues may go unnoticed. The security group highlights the importance of correct grammar to avoid potential family embarrassment, while the cost group emphasizes the need for a more personal tone. The user group suggests a minor stylistic preference for natural phrasing, but it's not an error.\", 'consensus_points': ['content is good', 'minor grammar issues may go unnoticed'], 'risk_points': ['minor grammar errors may affect readability', 'potential family embarrassment if neighbors notice'], 'surprise_insight': None, 'confidence': 0.8, 'conditions': 'if the Azerbaijani language quality is deemed critical, and the tone rewrite is deemed too costly or time-consuming', 'json_valid': True, 'latency_ms': 14772, 'provider': 'groq:llama-3.1-8b-instant', 'model': 'llama-3.1-8b-instant', 'token_budget_used': 13200, 'token_budget_max': 100000, 'dedup_removed': 0, 'loop_warnings': 0, 'token_stats': {'total_input_tokens': 7200, 'total_output_tokens': 433, 'total_cost_usd': 0.000259, 'per_provider': {'groq': {'input_tokens': 5600, 'output_tokens': 309, 'cost_usd': 0.0, 'calls': 7}, 'deepseek': {'input_tokens': 1600, 'output_tokens': 124, 'cost_usd': 0.00025872000000000004, 'calls': 2}}}}"
+}

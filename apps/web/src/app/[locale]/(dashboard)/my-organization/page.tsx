@@ -172,9 +172,9 @@ export default function OrganizationsPage() {
                     <p className="mt-1 text-sm text-on-surface-variant line-clamp-2">{org.description}</p>
                   )}
                   <div className="mt-2 flex flex-wrap items-center gap-3">
-                    {org.trust_score !== null && (
+                    {org.trust_score != null && (
                       <span className="text-xs text-on-surface-variant">
-                        {t("orgs.trustScore")}: <span className="text-primary font-medium">{org.trust_score.toFixed(1)}</span>
+                        {t("orgs.trustScore")}: <span className="text-primary font-medium">{org.trust_score!.toFixed(1)}</span>
                       </span>
                     )}
                     {org.website_url && (

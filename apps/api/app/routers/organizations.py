@@ -133,8 +133,8 @@ async def search_volunteers(
         # Rule-based fallback: filter aura_scores + profiles
         q = (
             db_admin.table("aura_scores")
-            .select("volunteer_id, overall_score, badge_tier, elite_status")
-            .gte("overall_score", payload.min_aura)
+            .select("volunteer_id, total_score, badge_tier, elite_status")
+            .gte("total_score", payload.min_aura)
         )
         if payload.badge_tier:
             q = q.eq("badge_tier", payload.badge_tier)
@@ -170,7 +170,7 @@ async def search_volunteers(
             volunteer_id=vid,
             username=p.get("username", vid[:8]),
             display_name=p.get("display_name"),
-            overall_score=float(row.get("overall_score", 0)),
+            overall_score=float(row.get("total_score", 0)),
             badge_tier=row.get("badge_tier", "none"),
             elite_status=bool(row.get("elite_status", False)),
             location=p.get("location"),

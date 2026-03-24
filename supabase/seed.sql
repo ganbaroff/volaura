@@ -86,7 +86,8 @@ INSERT INTO public.competencies (id, slug, name_en, name_az, description_en, des
     'Müxtəlif ehtiyaclara həssaslıq, mədəni fərqindəlik, zəif iştirakçılara hörmətlə yanaşmaq.',
     0.05,
     8
-);
+)
+ON CONFLICT (id) DO NOTHING;
 
 
 -- =============================================================================
@@ -98,7 +99,8 @@ INSERT INTO public.badges (slug, name_en, name_az, description_en, description_a
 ('gold', 'Gold Volunteer', 'Qızıl Könüllü', 'Elite volunteer with AURA score 75-89.', 'AURA balı 75-89 olan elit könüllü.', 'tier'),
 ('platinum', 'Platinum Volunteer', 'Platin Könüllü', 'Top-tier volunteer with AURA score 90+.', 'AURA balı 90+ olan ən yüksək səviyyəli könüllü.', 'tier'),
 ('first_event', 'First Event', 'İlk Tədbir', 'Completed first volunteer event successfully.', 'İlk könüllü tədbirini uğurla tamamladı.', 'achievement'),
-('elite', 'Elite Volunteer ⭐', 'Elit Könüllü ⭐', 'AURA 75+ with 2 or more competencies above 75.', 'AURA 75+ və 2 və ya daha çox kompetensiya 75 üzərindədir.', 'special');
+('elite', 'Elite Volunteer ⭐', 'Elit Könüllü ⭐', 'AURA 75+ with 2 or more competencies above 75.', 'AURA 75+ və 2 və ya daha çox kompetensiya 75 üzərindədir.', 'special')
+ON CONFLICT (slug) DO NOTHING;
 
 
 -- =============================================================================
@@ -135,7 +137,8 @@ INSERT INTO public.questions (
     'Fəal dinləmə lazım olduqda aydınlaşdırma istəməyi əhatə edir. Bu hörmət göstərir və dəqiq ünsiyyəti təmin edir.',
     'Practice paraphrasing: repeat what you heard in your own words to confirm understanding.',
     'Başa düşdüyünüzü təsdiqləmək üçün eşitdiklərinizi öz sözlərinizlə təkrarlayın.'
-);
+)
+ON CONFLICT (id) DO NOTHING;
 
 -- Q2: MCQ — Conflict Communication (Medium)
 INSERT INTO public.questions (
@@ -163,7 +166,8 @@ INSERT INTO public.questions (
     'Sakinləşdirmə sakit mövcudluq və tanınmayla başlayır. Dərhal səlahiyyətlilərə müraciət gərginliyi artıra bilər.',
     'Study basic conflict resolution: LEAP method (Listen, Empathize, Agree, Partner).',
     'Əsas münaqişə həlli metodlarını öyrənin: LEAP metodu (Dinlə, Empatiya qur, Razılaş, Əməkdaşlıq et).'
-);
+)
+ON CONFLICT (id) DO NOTHING;
 
 -- Q3: Open-ended — Cross-cultural Communication (Medium)
 INSERT INTO public.questions (
@@ -191,7 +195,8 @@ INSERT INTO public.questions (
     'Mükəmməl mədəniyyətlərarası ünsiyyət sakit ton, sözsüz işarələr, sadə dil, lazım olduqda kömək axtarmaq və nəticəni izləməyi əhatə edir.',
     'Practice the 3 S''s: Slow down, Smile, Simplify. Use Google Translate as a bridge tool at events.',
     '3S-i məşq edin: Yavaşlayın, Gülümsəyin, Sadələşdirin. Tədbirlərdə körpü aləti kimi Google Translate-dən istifadə edin.'
-);
+)
+ON CONFLICT (id) DO NOTHING;
 
 -- Q4: Open-ended — Written Communication (Hard)
 INSERT INTO public.questions (
@@ -218,7 +223,8 @@ INSERT INTO public.questions (
     FALSE, FALSE,
     'Effective crisis communication requires multi-channel approach, delegation, clear message, and confirmation of coverage.',
     'Effektiv böhran kommunikasiyası çoxkanallı yanaşma, tapşırıq paylaşımı, aydın mesaj və əhatənin təsdiqlənməsini tələb edir.'
-);
+)
+ON CONFLICT (id) DO NOTHING;
 
 -- Q5: MCQ — SJT Reliability (masked — tests reliability, not communication)
 INSERT INTO public.questions (
@@ -245,48 +251,59 @@ INSERT INTO public.questions (
     TRUE, FALSE,
     'Reliability means proactively communicating issues early, not disappearing. Option C demonstrates responsibility and team respect.',
     'Etibarlılıq problemləri erkən proaktiv şəkildə bildirməyi bildirir. C seçimi məsuliyyəti və komandaya hörmət nümayiş etdirir.'
-);
+)
+ON CONFLICT (id) DO NOTHING;
 
 
 -- ---- PLACEHOLDER QUESTIONS (15) ----
 -- These have is_ai_generated=true and needs_review=true
 -- Replace with real questions as you build the question bank
+-- Guard: only insert if fewer than 15 placeholders exist for this competency
 
-INSERT INTO public.questions (
-    competency_id, difficulty, type,
-    scenario_en, scenario_az,
-    options, correct_answer,
-    irt_a, irt_b, irt_c,
-    is_ai_generated, needs_review
-)
-SELECT
-    '11111111-1111-1111-1111-111111111111',
-    difficulty,
-    'mcq',
-    'PLACEHOLDER: Communication scenario ' || n || ' (' || difficulty || ') — replace with real question.',
-    'YER TUTUCU: Kommunikasiya ssenarisi ' || n || ' (' || difficulty || ') — həqiqi sual ilə əvəz edin.',
-    '[
-        {"key": "A", "text_en": "Option A — best practice response", "text_az": "A seçimi — ən yaxşı təcrübə cavabı"},
-        {"key": "B", "text_en": "Option B — acceptable response", "text_az": "B seçimi — qəbul edilə bilən cavab"},
-        {"key": "C", "text_en": "Option C — poor response", "text_az": "C seçimi — zəif cavab"},
-        {"key": "D", "text_en": "Option D — incorrect response", "text_az": "D seçimi — yanlış cavab"}
-    ]',
-    'A',
-    1.0 + (n::FLOAT * 0.05),
-    -1.0 + (n::FLOAT * 0.15),
-    0.10,
-    TRUE,
-    TRUE
-FROM (
-    SELECT
-        gs AS n,
-        CASE
-            WHEN gs <= 5 THEN 'easy'
-            WHEN gs <= 10 THEN 'medium'
-            ELSE 'hard'
-        END AS difficulty
-    FROM generate_series(1, 15) AS gs
-) series;
+DO $$
+BEGIN
+    IF (
+        SELECT COUNT(*) FROM public.questions
+        WHERE competency_id = '11111111-1111-1111-1111-111111111111'
+          AND is_ai_generated = TRUE
+    ) < 15 THEN
+        INSERT INTO public.questions (
+            competency_id, difficulty, type,
+            scenario_en, scenario_az,
+            options, correct_answer,
+            irt_a, irt_b, irt_c,
+            is_ai_generated, needs_review
+        )
+        SELECT
+            '11111111-1111-1111-1111-111111111111',
+            difficulty,
+            'mcq',
+            'PLACEHOLDER: Communication scenario ' || n || ' (' || difficulty || ') — replace with real question.',
+            'YER TUTUCU: Kommunikasiya ssenarisi ' || n || ' (' || difficulty || ') — həqiqi sual ilə əvəz edin.',
+            '[
+                {"key": "A", "text_en": "Option A — best practice response", "text_az": "A seçimi — ən yaxşı təcrübə cavabı"},
+                {"key": "B", "text_en": "Option B — acceptable response", "text_az": "B seçimi — qəbul edilə bilən cavab"},
+                {"key": "C", "text_en": "Option C — poor response", "text_az": "C seçimi — zəif cavab"},
+                {"key": "D", "text_en": "Option D — incorrect response", "text_az": "D seçimi — yanlış cavab"}
+            ]',
+            'A',
+            1.0 + (n::FLOAT * 0.05),
+            -1.0 + (n::FLOAT * 0.15),
+            0.10,
+            TRUE,
+            TRUE
+        FROM (
+            SELECT
+                gs AS n,
+                CASE
+                    WHEN gs <= 5 THEN 'easy'
+                    WHEN gs <= 10 THEN 'medium'
+                    ELSE 'hard'
+                END AS difficulty
+            FROM generate_series(1, 15) AS gs
+        ) series;
+    END IF;
+END $$;
 
 
 -- =============================================================================

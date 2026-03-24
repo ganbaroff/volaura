@@ -54,9 +54,9 @@ function OrgCard({ org, onSelect }: { org: OrganizationResponse; onSelect: () =>
               <CheckCircle2 className="size-3.5 text-primary shrink-0" aria-label={t("orgs.verified")} />
             )}
           </div>
-          {org.trust_score !== null && (
+          {org.trust_score != null && (
             <p className="text-xs text-on-surface-variant">
-              {t("orgs.trustScore")}: <span className="text-primary font-medium">{org.trust_score.toFixed(1)}</span>
+              {t("orgs.trustScore")}: <span className="text-primary font-medium">{org.trust_score!.toFixed(1)}</span>
             </p>
           )}
         </div>

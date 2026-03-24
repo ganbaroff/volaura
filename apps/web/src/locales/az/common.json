@@ -64,7 +64,10 @@
     "settings": "Parametrlər",
     "home": "Ana səhifə",
     "organizations": "Təşkilatlar",
-    "myOrganization": "Mənim Təşkilatım"
+    "myOrganization": "Mənim Təşkilatım",
+    "openMenu": "Menyunu aç",
+    "closeMenu": "Menyunu bağla",
+    "mainNavigation": "Əsas naviqasiya"
   },
   "auth": {
     "login": "Daxil ol",
@@ -88,7 +91,26 @@
     "hasAccount": "Artıq hesabınız var?",
     "checkEmail": "Hesabınızı təsdiqləmək üçün e-poçtunuzu yoxlayın.",
     "signingIn": "Daxil olunur…",
-    "unexpectedError": "Gözlənilməz xəta baş verdi"
+    "unexpectedError": "Gözlənilməz xəta baş verdi",
+    "forgotPasswordTitle": "Şifrənizi sıfırlayın",
+    "forgotPasswordSubtitle": "E-poçtunuzu daxil edin, sıfırlama linki göndərəcəyik",
+    "sendResetLink": "Sıfırlama linki göndər",
+    "sendingReset": "Göndərilir...",
+    "checkEmailTitle": "Gələn qutunuzu yoxlayın",
+    "checkEmailDesc": "{{email}} ünvanına sıfırlama linki göndərdik. 1 saat ərzində etibarlıdır.",
+    "noEmailReceived": "Almadınız?",
+    "tryAgain": "Yenidən cəhd edin",
+    "backToLogin": "Giriş səhifəsinə qayıt",
+    "resetPasswordTitle": "Yeni şifrə təyin edin",
+    "resetPasswordSubtitle": "Aşağıda yeni şifrənizi daxil edin",
+    "verifyingLink": "Sıfırlama linki yoxlanılır...",
+    "newPassword": "Yeni şifrə",
+    "confirmPassword": "Şifrəni təsdiqlə",
+    "passwordTooShort": "Şifrə ən azı 8 simvol olmalıdır",
+    "passwordMismatch": "Şifrələr uyğun gəlmir",
+    "updatePassword": "Şifrəni yenilə",
+    "updatingPassword": "Yenilənir...",
+    "passwordResetSuccess": "Şifrə uğurla yeniləndi. Yeni şifrənizlə daxil olun."
   },
   "assessment": {
     "title": "Bacarıq Qiymətləndirməsi",
@@ -120,7 +142,16 @@
     "errorSubmitFailed": "Cavab saxlanılmadı. Bağlantınızı yoxlayın və Göndər düyməsinə yenidən basın.",
     "errorLoadingQuestion": "Növbəti sualı yükləmək mümkün olmadı. İrəliləyişiniz saxlanıldı — Yenidən Cəhd Et düyməsinə basın.",
     "sessionExpired": "Sessiyanız başa çatdı. İrəliləyişi davam etdirmək üçün yenidən daxil olun.",
-    "answerPlaceholder": "Cavabınızı buraya yazın..."
+    "answerPlaceholder": "Cavabınızı buraya yazın...",
+    "difficulty": "Çətinlik",
+    "difficulty_easy": "Asan",
+    "difficulty_medium": "Orta",
+    "difficulty_hard": "Çətin",
+    "nextSteps": "Növbəti Addımlar",
+    "tipImprove": "Bu sahədə daha çox məşq edin və balınızı yaxşılaşdırmaq üçün qiymətləndirməni təkrarlayın.",
+    "tipGood": "Əla nəticə! Tam AURA profilinizi yaratmaq üçün digər bacarıqları da sınayın.",
+    "tipExcellent": "Möhtəşəm! Siz ən yuxarı səviyyədəsiniz. Nailiyyətinizi təşkilatlarla paylaşın.",
+    "gamingWarning": "Bəzi cavablar qeyri-adi nümunələrə görə qeyd edildi. Balınız düzəldilə bilər."
   },
   "aura": {
     "title": "Sizin AURA Balınız",
@@ -148,6 +179,29 @@
     "copied": "Kopyalandı!",
     "downloadCard": "Kartı yüklə",
     "shareText": "Volaura-da AURA balım — {score} xal, {badge} nişanı! Sən də sına:"
+  },
+  "onboarding": {
+    "step1Title": "Xoş gəldin, {{name}}! 👋",
+    "defaultName": "dostum",
+    "step1Desc": "Volaura'ya ilk qatılanlardan birisən. 3 dəqiqədə dünyaya real bacarıqlarını göstərək.",
+    "benefit1": "CV deyil — təsdiqlənmiş bacarıq balı",
+    "benefit2": "Bürüncdən Platinuma qədər nişan qazan",
+    "benefit3": "Top tədbir təşkilatçıları tərəfindən kəşf ol",
+    "benefit4": "Inkişafını zaman üzrə izlə",
+    "step1Cta": "Başlayaq →",
+    "step2Title": "İlk bacarığını seç",
+    "step2Desc": "Ən çox özünə güvəndiyin bacarıqla başla. Sonra digərlərini əlavə edə bilərsən.",
+    "step2Cta": "Davam et →",
+    "min": "dəq",
+    "step3Title": "Hazırsан!",
+    "step3Desc": "İlk qiymətləndirmən: {{competency}}. ~5 dəqiqə. Düzgün cavab yoxdur — sadəcə özünü göstər.",
+    "next1": "10–15 adaptiv suala cavab ver",
+    "next2": "Süni intellekt cavablarını real vaxtda qiymətləndirir",
+    "next3": "AURA balını və nişanını al",
+    "step3Cta": "İlk qiymətləndirməni başlat",
+    "skipToDashboard": "Əvvəlcə idarə panelinə bax",
+    "skip": "Hələlik keç",
+    "back": "← Geri"
   },
   "competency": {
     "communication": "Kommunikasiya",

@@ -13,10 +13,9 @@ class OrganizationCreate(BaseModel):
 
     name: str = Field(..., min_length=2, max_length=200)
     description: str | None = Field(default=None, max_length=2000)
-    website_url: str | None = Field(default=None, max_length=500)
+    website: str | None = Field(default=None, max_length=500)
     logo_url: str | None = Field(default=None, max_length=500)
     contact_email: str | None = None
-    is_verified: bool = False
 
 
 class OrganizationUpdate(BaseModel):
@@ -24,7 +23,7 @@ class OrganizationUpdate(BaseModel):
 
     name: str | None = Field(default=None, min_length=2, max_length=200)
     description: str | None = Field(default=None, max_length=2000)
-    website_url: str | None = Field(default=None, max_length=500)
+    website: str | None = Field(default=None, max_length=500)
     logo_url: str | None = Field(default=None, max_length=500)
     contact_email: str | None = None
 
@@ -36,10 +35,10 @@ class OrganizationResponse(BaseModel):
     owner_id: str
     name: str
     description: str | None = None
-    website_url: str | None = None
+    website: str | None = None
     logo_url: str | None = None
     contact_email: str | None = None
-    is_verified: bool
+    verified_at: datetime | None = None
     subscription_tier: str
     trust_score: float | None = None
     created_at: datetime

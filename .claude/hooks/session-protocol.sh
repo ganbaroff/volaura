@@ -1,0 +1,90 @@
+#!/bin/bash
+# UserPromptSubmit hook — injects protocol checklist + swarm inbox on first message.
+# Fires BEFORE Claude reads the user's prompt.
+# stdout → Claude sees this as injected context.
+
+INPUT=$(cat)
+
+# Extract session tracking from temp file
+SESSION_MARKER="/tmp/volaura_session_active"
+
+if [ ! -f "$SESSION_MARKER" ]; then
+  # First prompt of this session — inject mandatory protocol + auto-read context files
+
+  PROJECT_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
+  SPRINT_STATE="$PROJECT_DIR/memory/context/sprint-state.md"
+  MISTAKES="$PROJECT_DIR/memory/context/mistakes.md"
+
+  echo "══════════════════════════════════════════════════════════════"
+  echo "PHASE A GATE — SESSION START — PROTOCOL v4.0"
+  echo "══════════════════════════════════════════════════════════════"
+  echo ""
+  echo "YOU MUST PRODUCE THESE 3 LINES BEFORE ANY WORK:"
+  echo "▶ Sprint [N], Step [X]. Date: $(date '+%Y-%m-%d'). Protocol v4.0 loaded."
+  echo "▶ Last session ended with: [summary from sprint-state below]"
+  echo "▶ This session I will NOT: [top 3 from mistakes below]"
+  echo "WITHOUT THESE 3 LINES — NO WORK STARTS."
+  echo ""
+
+  # Auto-inject sprint-state.md (no need to remember to read it)
+  if [ -f "$SPRINT_STATE" ]; then
+    echo "── SPRINT STATE (auto-injected) ──────────────────────────────"
+    head -40 "$SPRINT_STATE"
+    echo ""
+  else
+    echo "⚠️  memory/context/sprint-state.md NOT FOUND — create it before proceeding."
+    echo ""
+  fi
+
+  # Auto-inject mistakes.md
+  if [ -f "$MISTAKES" ]; then
+    echo "── MISTAKES / DO NOT REPEAT (auto-injected) ──────────────────"
+    head -30 "$MISTAKES"
+    echo ""
+  else
+    echo "⚠️  memory/context/mistakes.md NOT FOUND — create it before proceeding."
+    echo ""
+  fi
+
+  echo "RULES (non-negotiable):"
+  echo "- Plans >10 lines → agent review BEFORE presenting to Yusif"
+  echo "- NO solo decisions — everything through agent review"
+  echo "- Swarm = PRODUCT, not tooling"
+  echo "- CEO sees outcomes only — no curl, no schemas, no logs"
+  echo "══════════════════════════════════════════════════════════════"
+
+  # Surface swarm inbox if proposals exist
+  PROPOSALS_FILE="memory/swarm/proposals.json"
+  if [ -f "$PROPOSALS_FILE" ]; then
+    PENDING_COUNT=$(python3 -c "
+import json, sys
+try:
+    with open('$PROPOSALS_FILE', 'r') as f:
+        data = json.load(f)
+    pending = [p for p in data.get('proposals', []) if p.get('status') == 'pending']
+    escalations = [p for p in pending if p.get('escalate_to_ceo')]
+    if pending:
+        print('══════════════════════════════════════════════════════════════')
+        print(f'SWARM INBOX: {len(pending)} pending proposal(s), {len(escalations)} escalation(s)')
+        print('══════════════════════════════════════════════════════════════')
+        for e in escalations[:3]:
+            print(f'  🔴 [ESCALATE] {e[\"title\"]} (by {e[\"agent\"]})')
+        non_esc = [p for p in pending if not p.get('escalate_to_ceo')]
+        for p in non_esc[:5]:
+            sev = p.get('severity', 'medium').upper()
+            print(f'  [{sev}] {p[\"title\"]} (by {p[\"agent\"]})')
+        print('══════════════════════════════════════════════════════════════')
+        print('Read memory/swarm/proposals.json for full details.')
+        print('Update status: act/dismiss/defer via InboxProtocol.')
+except Exception as e:
+    pass
+" 2>/dev/null)
+    if [ -n "$PENDING_COUNT" ]; then
+      echo "$PENDING_COUNT"
+    fi
+  fi
+
+  touch "$SESSION_MARKER"
+fi
+
+exit 0

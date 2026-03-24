@@ -1,0 +1,107 @@
+{
+  "recommendation": "fix_api_client_first",
+  "score": 33.5,
+  "consensus": 0.65,
+  "agents": 18,
+  "cost": 0.000254,
+  "votes": {
+    "llama-3.1-8b-instant": "fix_api_client_first",
+    "meta-llama/llama-4-scout-17b-16e-instruct": "fix_security_first",
+    "llama-3.3-70b-versatile": "",
+    "gemini-flash-lite-latest": "fix_api_client_first",
+    "openai/gpt-oss-120b": "fix_security_first",
+    "moonshotai/kimi-k2-instruct": "fix_api_client_first",
+    "gemini-2.5-flash-lite": "fix_testing_first",
+    "moonshotai/kimi-k2-instruct-0905": "fix_api_client_first",
+    "deepseek-chat": "fix_security_first"
+  },
+  "concerns": {
+    "llama-3.1-8b-instant": {
+      "fix_testing_first": "Adding frontend tests might uncover issues that prevent shipping to production.",
+      "fix_security_first": "Over-engineering for 0 users might incur additional costs.",
+      "fix_api_client_first": "OpenAPI schema gaps may require manual overrides.",
+      "ship_first_fix_later": "Security incident with real user data is a high risk.",
+      "prop_0": "Proposed path may not address all security concerns.",
+      "prop_1": "Generated types might not cover all API client use cases.",
+      "prop_2": "Proposed path may not address all security concerns."
+    },
+    "meta-llama/llama-4-scout-17b-16e-instruct": {
+      "fix_testing_first": "May delay feature development for 2 weeks with uncertain immediate benefits.",
+      "fix_security_first": "Adds $5-10/mo cost for Redis/Sentry, potentially exceeding the $50/mo budget.",
+      "fix_api_client_first": "Generated types may be incomplete if OpenAPI schema has gaps.",
+      "ship_first_fix_later": "Security incidents or regressions possible without proper testing and security measures.",
+      "prop_0": "May not fully address security concerns, such as rate limiting and monitoring.",
+      "prop_1": "Relies on Supabase Edge Functions for rate limiting, which may have limitations.",
+      "prop_2": "Quick hardening measures may not be comprehensive or long-term solutions."
+    },
+    "llama-3.3-70b-versatile": {
+      "fix_testing_first": "Insufficient testing may lead to undiscovered bugs and regressions.",
+      "fix_security_first": "Security gaps could be exploited by malicious actors, especially with a single instance and no DevOps support.",
+      "fix_api_client_first": "Type safety issues may cause errors and slow down development.",
+      "ship_first_fix_later": "Shipping without proper testing and security measures could result in a security incident or data breach."
+    },
+    "gemini-flash-lite-latest": {
+      "fix_testing_first": "Massive effort (10-14 days) yields zero immediate user/client value, violating the pragmatist need to ship quickly for the 2-week Pasha Bank pitch.",
+      "fix_security_first": "Introducing Redis adds recurring cost ($5-10/mo) and complexity (new external dependency), potentially breaking the tight $50/mo budget cushion, and development time is high.",
+      "fix_api_client_first": "While developer friction is high, type mismatches are less likely to cause a catastrophic, public failure than the known in-memory rate limiter issue during a high-volume demo.",
+      "ship_first_fix_later": "Shipping the in-memory rate limiter as-is guarantees failure/security exposure if the demo/initial load spikes above Railway's restart frequency or concurrency limit.",
+      "prop_0": "Reliance on a single agent to define 'basic monitoring' for a bank demo is risky; it might miss the critical security gaps identified (like the in-memory limit).",
+      "prop_1": "Implementing a Supabase Edge Function rate limiter is complex (requires learning Edge Functions/Deno runtime) and might take longer than the estimated 1-2 days, delaying the demo.",
+      "prop_2": "CSP hardening and prompt stripping are excellent security hygiene but do nothing to address the known, immediate scaling/reliability issue of the in-memory rate limiter."
+    },
+    "openai/gpt-oss-120b": {
+      "fix_testing_first": "Testing infrastructure adds no protection; a bank demo could expose raw JWTs and RLS misconfigurations, leading to data breach.",
+      "fix_security_first": "Adding Redis for rate limiting introduces an external point of failure and $5‑10/mo cost that may exceed the $50 budget, leaving no cushion for other services.",
+      "fix_api_client_first": "Generated OpenAPI client may omit custom auth handling, causing JWT mismatches and potential unauthorized data access.",
+      "ship_first_fix_later": "In‑memory rate limiter and no monitoring mean a spike to 5,000 concurrent users will crash the single Railway instance, causing denial‑of‑service and data loss."
+    },
+    "moonshotai/kimi-k2-instruct": {
+      "fix_testing_first": "Zero tests today means a CI pipeline would be red for weeks—time you don’t have before the Pasha Bank demo.",
+      "fix_security_first": "Redis at $5–10/mo plus Sentry leaves only ~$35 for everything else; one traffic spike and you’re over budget.",
+      "fix_api_client_first": "Generated types can’t enforce RLS: if the OpenAPI spec omits hidden_verification_status, frontend still builds but queries 403.",
+      "ship_first_fix_later": "In-memory rate limiter resets on every Railway restart—an attacker can script 1000 login attempts in <60s and own the demo account.",
+      "prop_0": "Supabase Edge Functions have 10s CPU cap; a burst of 1000 malicious requests can still exhaust the limiter and starve legitimate traffic.",
+      "prop_1": "Edge-function rate limiter shares the same 10s timeout; a determined attacker can rotate IPs and still bypass the limit.",
+      "prop_2": "CSP report-only mode is noise until someone reads the reports—founder has no alerting, so injected scripts still run silently."
+    },
+    "gemini-2.5-flash-lite": {
+      "fix_testing_first": "Significant time investment with no immediate user-facing benefit, and no guarantee of preventing critical bugs before the bank demo.",
+      "fix_security_first": "Over-engineering for 0 users might strain the $50/mo budget, especially if Redis is chosen, and delays critical features needed for the demo.",
+      "fix_api_client_first": "While it improves dev speed, it doesn't address the more critical security vulnerabilities or the immediate need for a hardened system for the bank demo.",
+      "ship_first_fix_later": "Shipping with known security gaps (in-memory rate limiter, no monitoring) to a bank is an unacceptable risk that could lead to immediate data breaches or denial of service.",
+      "prop_0": "This path focuses on specific security issues but might not be comprehensive enough for a bank demo, and the reliance on Redis could push the budget.",
+      "prop_1": "This path effectively balances immediate development velocity with crucial security hardening without exceeding the budget, addressing both the API client and rate limiting using free tiers.",
+      "prop_2": "While quick and zero-cost, these security measures are more preventative and might not be sufficient to satisfy the immediate security concerns for a B2B client demo."
+    },
+    "moonshotai/kimi-k2-instruct-0905": {
+      "fix_testing_first": "Zero frontend tests means UI regressions will silently break the assessment flow; without a CI gate you'll ship broken states to a bank demo.",
+      "fix_security_first": "Redis at $5-10/mo is 10-20% of your entire runway—when the single Railway dyno restarts you still lose the limiter state; Supabase Edge Functions do the job for free.",
+      "fix_api_client_first": "The OpenAPI spec omits RLS-protected fields (e.g., hidden_verification_status) so generated types will compile but still crash at runtime when Supabase returns 403.",
+      "ship_first_fix_later": "No CSP + LLM-evaluated open answers = prompt-injection XSS that could exfiltrate JWTs; Pasha Bank's security team will kill the deal on first pen-test.",
+      "prop_0": "Supabase Edge Functions have 10s CPU/150 MB limits; at 5,000 concurrent your rate-limit logic will timeout and drop legitimate traffic.",
+      "prop_1": "Edge-rate-limit + generated types still leave the LLM prompt-injection vector unpatched; Gemini will cheerfully echo back malicious JS into the DOM.",
+      "prop_2": "Report-only CSP won't block anything; strip-tags is bypassed with Unicode homoglyphs; 1-shot prompt guard is trivially jail-broken by nesting instructions."
+    },
+    "deepseek-chat": {
+      "fix_testing_first": "Spending 2 weeks on testing infrastructure when there's a bank demo in 2 weeks and zero frontend tests means you'll have no visible progress for the demo while critical security and type safety issues remain unaddressed.",
+      "fix_security_first": "Adding Redis ($5-10/mo) on a $50/mo budget leaves little room for other essential costs, and the in-memory rate limiter is only a problem at scale - you have 0 users now and a single instance.",
+      "fix_api_client_first": "OpenAPI schema gaps could make generated types incomplete, requiring manual overrides that negate the time savings, and this doesn't address the immediate security concerns for a bank demo.",
+      "ship_first_fix_later": "Deploying with in-memory rate limiting, no frontend tests, and manual API types to a bank client demo risks immediate security incidents and broken assessment flows that could kill the deal.",
+      "prop_0": "Fixing only 'demo-critical' security issues leaves other security gaps (like CSP headers, prompt injection protection) unaddressed, and Redis cost still impacts the tight budget.",
+      "prop_1": "Supabase Edge Functions for rate limiting is unproven at scale (5,000 concurrent users), and the free tier may have limitations that could break under load during the bank demo.",
+      "prop_2": "CSP report-only mode and prompt guards don't address the fundamental rate limiting vulnerability or type safety issues - it's security theater without addressing the actual attack vectors."
+    }
+  },
+  "innovations": {
+    "llama-3.1-8b-instant": "Implementing a hybrid security demo to address critical security gaps without breaking budget.",
+    "meta-llama/llama-4-scout-17b-16e-instruct": "Using Supabase Edge Functions for rate limiting, combining security and development speed improvements.",
+    "llama-3.3-70b-versatile": "Implement a chaos engineering approach to simulate failures and test the system's resilience.",
+    "gemini-flash-lite-latest": "To eliminate the Redis cost concern and maintain the single-instance architecture, use a hardened, persistent rate limiting strategy within the Railway application itself (e.g., using a file-backed key-value store if Railway supports persistent storage, or using a shared secret/JWT claim for rate limits if possible, though Redis is still the cleanest fix for the in-memory problem).",
+    "openai/gpt-oss-120b": "Implement a lightweight Supabase Edge function that performs rate‑limiting and vector‑search throttling, eliminating the need for a separate Redis instance and staying within budget.",
+    "moonshotai/kimi-k2-instruct": "Wrap every Gemini call with a 2-second client-side timeout and a fallback canned response; if the LLM hangs, the assessment still completes and you keep the demo alive.",
+    "gemini-2.5-flash-lite": "Leveraging Supabase Edge Functions for rate limiting offers a cost-effective and scalable solution that aligns with the existing infrastructure, avoiding the need for a separate Redis instance and its associated costs and complexity.",
+    "moonshotai/kimi-k2-instruct-0905": "Wrap every LLM-bound user string with a tiny frontend WASM module that ROT13-encodes it before transit and decodes server-side after Gemini returns; this neuters prompt-injection payloads without touching CSP or prompt engineering.",
+    "deepseek-chat": "Implement a hybrid rate limiter: use in-memory for normal traffic but fall back to a simple SQL-based counter in Supabase when thresholds are approached, avoiding Redis cost while maintaining basic protection."
+  },
+  "synthesis": "{'winner': 'fix_api_client_first', 'synthesis': \"The winner, 'fix_api_client_first', is the most recommended path because it addresses the critical issue of API type safety, which is essential for scalability and maintainability, as highlighted by the 'maintainability', 'user', 'pragmatist', 'security', and 'scalability' groups. This path also acknowledges the need for testing infrastructure, but prioritizes it after addressing the more pressing concerns of API safety and security. The 'contrarian' group's concern about wasting time on testing infrastructure without addressing real-world security gaps is a valid consideration.\", 'consensus_points': ['Investing time in infra before shipping or addressing critical security/API issues might not align with the tight runway and immediate B2B client demo needs.', \"Spending 2 weeks on testing infrastructure when you have zero frontend tests and zero E2E tests means you're building scaffolding for a house that doesn't exist yet - you'll have no tests to run in CI.\"], 'risk_points': ['Risk of delaying feature development and losing potential users.', 'May delay feature development, potentially impacting user acquisition.', 'Insufficient testing may lead to undiscovered bugs and regressions.', 'Spending two weeks on testing when the B2B pitch is in two weeks risks missing the revenue opportunity entirely.', 'A bank demo could expose raw JWTs and RLS misconfigurations, leading to data breach.'], 'surprise_insight': None, 'confidence': 0.8, 'conditions': \"If the startup has a longer runway or can afford to delay feature development, then 'fix_security_first' or 'prop_1' might be a better option. However, given the tight constraints, 'fix_api_client_first' is the most recommended path.\", 'json_valid': True, 'latency_ms': 870, 'provider': 'groq:llama-3.1-8b-instant', 'model': 'llama-3.1-8b-instant', 'token_budget_used': 19800, 'token_budget_max': 100000, 'dedup_removed': 0, 'loop_warnings': 0, 'token_stats': {'total_input_tokens': 13600, 'total_output_tokens': 1181, 'total_cost_usd': 0.000254, 'per_provider': {'groq': {'input_tokens': 8800, 'output_tokens': 456, 'cost_usd': 0.0, 'calls': 11}, 'gemini': {'input_tokens': 3200, 'output_tokens': 617, 'cost_usd': 0.0, 'calls': 4}, 'deepseek': {'input_tokens': 1600, 'output_tokens': 108, 'cost_usd': 0.00025424000000000003, 'calls': 2}}}}"
+}

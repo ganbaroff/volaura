@@ -1,3 +1,9 @@
+---
+description: FastAPI + Supabase backend rules — Pydantic v2, per-request client, loguru logging
+globs:
+  - "apps/api/**"
+---
+
 # Backend Rules (FastAPI + Supabase)
 
 ## Supabase Client Pattern

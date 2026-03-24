@@ -25,6 +25,7 @@ class Settings(BaseSettings):
 
     # Telegram
     telegram_bot_token: str = ""
+    telegram_ceo_chat_id: str = ""
 
     # Stripe (MVP-1)
     stripe_secret_key: str = ""

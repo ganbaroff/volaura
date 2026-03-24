@@ -61,7 +61,12 @@ async def get_supabase_user(request: Request) -> AsyncGenerator[AsyncClient, Non
         logger.error("Failed to create user Supabase client: {err}", err=str(e))
         raise HTTPException(
             status_code=500,
-            detail={"code": "DB_CLIENT_ERROR", "message": str(e)},
+            detail={
+                "code": "DB_CLIENT_ERROR",
+                "message": str(e),
+                "debug_key_len": len(anon_key),
+                "debug_key_prefix": anon_key[:8] if anon_key else "EMPTY",
+            },
         )
 
     yield client

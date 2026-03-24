@@ -14,7 +14,7 @@ from fastapi import APIRouter, HTTPException, Request
 
 from app.config import settings
 from app.core.assessment import antigaming, bars
-from app.middleware.rate_limit import limiter, RATE_ASSESSMENT_START, RATE_ASSESSMENT_ANSWER
+from app.middleware.rate_limit import limiter, RATE_ASSESSMENT_START, RATE_ASSESSMENT_ANSWER, RATE_ASSESSMENT_COMPLETE
 from app.core.assessment.aura_calc import (
     calculate_overall,
     get_badge_tier,
@@ -151,6 +151,7 @@ async def start_assessment(
         "theta_se": state.theta_se,
         "answers": state.to_dict(),
         "current_question_id": first_q["id"] if first_q else None,
+        "question_delivered_at": datetime.now(timezone.utc).isoformat(),  # HIGH-03: server-side timing
         "started_at": datetime.now(timezone.utc).isoformat(),
     }).execute()
 
@@ -208,8 +209,19 @@ async def submit_answer(
 
     question = q_result.data
 
-    # Anti-gaming timing check
-    timing = antigaming.check_answer_timing(payload.response_time_ms)
+    # HIGH-03: Server-side timing — don't trust client response_time_ms
+    question_delivered_at = session.get("question_delivered_at")
+    if question_delivered_at:
+        try:
+            delivered_dt = datetime.fromisoformat(question_delivered_at)
+            server_elapsed_ms = int((datetime.now(timezone.utc) - delivered_dt).total_seconds() * 1000)
+        except (ValueError, TypeError):
+            server_elapsed_ms = payload.response_time_ms  # fallback to client
+    else:
+        server_elapsed_ms = payload.response_time_ms  # no server timestamp available
+
+    # Anti-gaming timing check — uses server time when available
+    timing = antigaming.check_answer_timing(server_elapsed_ms)
 
     # Score the answer
     raw_score: float
@@ -259,12 +271,13 @@ async def submit_answer(
         state.stopped = True
         state.stop_reason = "no_items_left"
 
-    # Persist updated session
+    # Persist updated session + record when next question is delivered (HIGH-03)
     update_payload: dict = {
         "theta_estimate": state.theta,
         "theta_se": state.theta_se,
         "answers": state.to_dict(),
         "current_question_id": next_q["id"] if next_q else None,
+        "question_delivered_at": datetime.now(timezone.utc).isoformat() if next_q else None,
     }
     if state.stopped:
         update_payload["status"] = "completed"
@@ -290,13 +303,21 @@ async def submit_answer(
 
 
 @router.post("/complete/{session_id}", response_model=AssessmentResultOut)
+@limiter.limit(RATE_ASSESSMENT_COMPLETE)
 async def complete_assessment(
+    request: Request,
     session_id: str,
     db_admin: SupabaseAdmin,
     db_user: SupabaseUser,
     user_id: CurrentUserId,
 ) -> AssessmentResultOut:
     """Finalise a session, run anti-gaming analysis, and upsert AURA score."""
+    # HIGH-02: Validate session_id is a proper UUID
+    try:
+        uuid.UUID(session_id)
+    except ValueError:
+        raise HTTPException(status_code=422, detail={"code": "INVALID_SESSION_ID", "message": "session_id must be a valid UUID"})
+
     session_result = (
         await db_user.table("assessment_sessions")
         .select("*")
@@ -361,7 +382,9 @@ async def complete_assessment(
 
 
 @router.get("/results/{session_id}", response_model=AssessmentResultOut)
+@limiter.limit(RATE_ASSESSMENT_COMPLETE)
 async def get_results(
+    request: Request,
     session_id: str,
     db_admin: SupabaseAdmin,
     db_user: SupabaseUser,

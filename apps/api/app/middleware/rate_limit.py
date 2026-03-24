@@ -47,6 +47,7 @@ limiter = Limiter(key_func=_key_func)
 RATE_AUTH = "5/minute"
 RATE_ASSESSMENT_START = "3/hour"
 RATE_ASSESSMENT_ANSWER = "60/hour"
+RATE_ASSESSMENT_COMPLETE = "10/hour"
 RATE_LLM = "30/hour"
 RATE_PROFILE_WRITE = "10/minute"
 RATE_DEFAULT = "60/minute"

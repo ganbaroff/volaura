@@ -38,6 +38,7 @@ from loguru import logger
 from .agent_hive import HiveExaminer
 from .agent_memory import AgentMemory
 from .memory import DecisionMemory
+from .memory_logger import log_episodic_run
 from .middleware import MiddlewareChain
 from .pm import PMAgent
 from .providers import ProviderRegistry
@@ -224,6 +225,20 @@ class SwarmEngine:
                 json_valid=r.json_valid,
                 decision_id=decision_id,
                 was_notable=r.confidence >= 0.85 and r.winner == report.winner,
+            )
+
+            # Episodic memory logger (v8) — EDM-filtered: keeps ≥0.8 (success) and ≤0.2 (failure)
+            if r.error or not r.json_valid:
+                episodic_score = 0.1  # failure → hindsight/ECHO processing
+            elif r.winner and r.winner == report.winner:
+                episodic_score = 0.9  # winning agent → consolidate success pattern
+            else:
+                episodic_score = r.confidence  # noise zone (0.2–0.8) → discarded by sleep daemon
+            log_episodic_run(
+                agent_id=f"{r.provider}:{r.model}",
+                prompt=config.question[:300],
+                response=r.reason[:500] if r.reason else "",
+                score=episodic_score,
             )
 
         logger.info(

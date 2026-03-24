@@ -129,28 +129,25 @@ class DecisionMemory:
             else:
                 models_wrong.append(model)
 
-        # Update weights
+        # v6: Sliding window calibration (replaces multiplicative death spiral)
+        # Old code used w *= 1.05 / w *= 0.95 which compounds to floor 0.3.
+        # New code records outcomes in a window — weight derived from recent accuracy.
         profiles = self.get_model_profiles()
-        weight_up = 1.05
-        weight_down = 0.95
 
         if actual_outcome == "worse":
-            # The predicted winner was wrong — penalize models that chose it
+            # The predicted winner was wrong — swap correct/wrong
             models_correct, models_wrong = models_wrong, models_correct
 
         for model_name in models_correct:
             if model_name in profiles:
                 p = profiles[model_name]
-                w = p.domain_weights.get(domain.value, p.base_weight)
-                p.domain_weights[domain.value] = min(w * weight_up, 2.0)
+                p.record_outcome(domain.value, correct=True, decision_id=decision_id)
                 p.correct_predictions += 1
-                p.accuracy = p.correct_predictions / max(p.total_evaluations, 1)
 
         for model_name in models_wrong:
             if model_name in profiles:
                 p = profiles[model_name]
-                w = p.domain_weights.get(domain.value, p.base_weight)
-                p.domain_weights[domain.value] = max(w * weight_down, 0.3)
+                p.record_outcome(domain.value, correct=False, decision_id=decision_id)
 
         self._write_json(
             self._profiles_path,

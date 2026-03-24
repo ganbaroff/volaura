@@ -15,6 +15,15 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
+# Load .env from apps/api/.env (same pattern as all other swarm scripts)
+_env_path = project_root / "apps" / "api" / ".env"
+if _env_path.exists():
+    for _line in _env_path.read_text(encoding="utf-8").splitlines():
+        _line = _line.strip()
+        if _line and not _line.startswith("#") and "=" in _line:
+            _key, _, _val = _line.partition("=")
+            os.environ.setdefault(_key.strip(), _val.strip())
+
 TEST_PROMPT = """You are evaluating a simple test. Respond ONLY with valid JSON:
 {"status": "ok", "model_works": true, "can_json": true}"""
 

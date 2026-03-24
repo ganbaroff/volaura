@@ -2,6 +2,12 @@
 Universal evaluator prompt builder - domain-agnostic.
 Generates structured prompts for any decision, any LLM.
 
+v7: Modular prompt system. Instead of hardcoded architecture context,
+prompts load live state from prompt_modules/ directory:
+  - team_identity.md: stable (who we are, rules, leadership)
+  - architecture_state.md: auto-updated (current files, providers, numbers)
+  - current_gaps.md: auto-updated (what's missing, reference repos)
+
 Research-backed design:
 - ACL 2025: answer diversity > protocol choice. Sub-perspectives maximize diversity.
 - MoA: synthesis > selection. Final synthesis prompt included.
@@ -11,8 +17,37 @@ Research-backed design:
 from __future__ import annotations
 
 import random
+from pathlib import Path
 
 from .types import SwarmConfig
+
+
+# ── Modular prompt loading ──────────────────────────
+_MODULES_DIR = Path(__file__).parent / "prompt_modules"
+
+
+def load_prompt_module(name: str) -> str:
+    """Load a prompt module file. Returns empty string if not found."""
+    path = _MODULES_DIR / name
+    if path.exists():
+        return path.read_text(encoding="utf-8")
+    return ""
+
+
+def get_team_context() -> str:
+    """Load full team context from modules (identity + architecture + gaps)."""
+    identity = load_prompt_module("team_identity.md")
+    architecture = load_prompt_module("architecture_state.md")
+    gaps = load_prompt_module("current_gaps.md")
+
+    parts = []
+    if identity:
+        parts.append(identity)
+    if architecture:
+        parts.append(architecture)
+    if gaps:
+        parts.append(gaps)
+    return "\n\n---\n\n".join(parts)
 
 # Each group topic has 3 sub-perspectives for diversity within the group
 GROUP_PERSPECTIVES: dict[str, list[tuple[str, str]]] = {
@@ -61,6 +96,21 @@ FLAT_PERSPECTIVES = [
 ]
 
 
+def _is_small_model(model_name: str) -> bool:
+    """Detect small models that need shorter prompts to perform well.
+
+    Small models (< 20B params) struggle with long prompts:
+    - They lose focus on the actual question
+    - JSON compliance drops with prompt length
+    - They're better at direct, focused tasks
+
+    v7: requested by compound-mini, kimi-k2-0905 in team feedback.
+    """
+    small_markers = ["8b", "7b", "2b", "1b", "4b", "mini", "lite", "scout-17b"]
+    name_lower = model_name.lower()
+    return any(m in name_lower for m in small_markers)
+
+
 def build_evaluator_prompt(
     config: SwarmConfig,
     agent_id: str,
@@ -68,11 +118,15 @@ def build_evaluator_prompt(
     perspective_desc: str | None = None,
     agent_memory_context: str = "",
     group_name: str = "",
+    model_name: str = "",
 ) -> str:
     """Build a universal evaluation prompt for any decision.
 
     Supports: skill injection (via SkillLibrary.inject_into_prompt after),
-    agent memory, group context, and innovation field.
+    agent memory, group context, innovation field, and model-adaptive length.
+
+    v7: small models (< 20B) get a compressed prompt that focuses on scoring.
+    Large models (70B+) get full context with memory and research instructions.
     """
 
     if not perspective:
@@ -118,6 +172,42 @@ def build_evaluator_prompt(
     group_line = f"\nGROUP: {group_name} (you are in a specialized group)" if group_name else ""
     memory_block = f"\n{agent_memory_context}" if agent_memory_context else ""
 
+    # v7: Small models get focused prompt (no optional sections that confuse them)
+    small = _is_small_model(model_name) if model_name else False
+
+    if small:
+        return f"""Evaluate this decision. Respond with valid JSON only.
+
+PERSPECTIVE: {perspective} - {perspective_desc}
+
+DECISION: {config.question}
+{context_block}{constraints_block}
+
+PATHS:
+{paths_text}
+
+SCORING: Score each path 0-10 on: technical, user_impact, dev_speed, flexibility, risk.
+risk: 0=dangerous, 10=safe. Pick the winner you believe is best. Write one concern per path.
+
+JSON response:
+{{
+  "evaluator": "{agent_id}",
+  "perspective": "{perspective}",
+  "scores": {{ {scores_template} }},
+  "concerns": {{ {concerns_template} }},
+  "winner": "path_id",
+  "reason": "why this path wins with specific evidence",
+  "confidence": 0.0,
+  "proposed_path": null,
+  "research_request": null,
+  "innovation": "one creative idea",
+  "skill_used": null,
+  "skill_helpful": true,
+  "skill_gap": null,
+  "self_note": "what I learned"
+}}"""
+
+    # Full prompt for large models (70B+, kimi-k2, deepseek, gpt-oss-120b, gemini)
     return f"""You are an independent evaluator for a decision. You have NOT seen any other evaluator's opinion. Be brutally honest and specific.
 
 PERSPECTIVE: {perspective} - {perspective_desc}{group_line}
@@ -136,6 +226,15 @@ SCORING RULES:
 - "I don't know" is valid - do NOT invent information you don't have.
 - Pick the winner YOU genuinely believe is best from YOUR perspective.
 
+PATH PROPOSAL (optional): If you see an important approach NOT listed above that you believe should be considered, propose it. Only propose if genuinely valuable — do not pad. Set to null if nothing is missing.
+
+RESEARCH REQUEST (optional): If making this decision well requires information you DON'T currently have — recent data, a benchmark, a study, a comparison — request a specific web search topic.
+Rules:
+- Be SPECIFIC: not "AI safety" but "comparison of ELO vs Glicko-2 for multi-agent weight calibration"
+- Include WHY: what gap does this fill? What decision would it change?
+- Set to null if your current knowledge is sufficient
+This request will be executed by a web researcher (Gemini Pro with Google Search) and the findings will be available to all agents in future decisions.
+
 INNOVATION: After your evaluation, propose ONE unexpected/creative idea related to this decision that nobody asked about. Must be actionable in 1 session. Think outside the box.
 
 SKILL FEEDBACK: If a SKILL was injected above, rate it: was it helpful? What's missing?
@@ -153,12 +252,25 @@ Respond ONLY with valid JSON (no markdown, no extra text):
   "winner": "path_id",
   "reason": "one sentence with specific evidence",
   "confidence": 0.0,
+  "proposed_path": {{
+    "name": "short name for proposed path",
+    "description": "what this approach involves (1-2 sentences)",
+    "rationale": "why this path was not listed but should be considered"
+  }},
+  "research_request": {{
+    "topic": "specific research question to investigate via web search",
+    "rationale": "what gap this fills and what decision it would change",
+    "domain": "architecture|code|security|business|general",
+    "priority": "high|medium|low"
+  }},
   "innovation": "one creative idea, actionable in 1 session",
   "skill_used": "skill name or null",
   "skill_helpful": true,
   "skill_gap": "what was missing from the skill, or null",
   "self_note": "what I learned from this evaluation for next time"
-}}"""
+}}
+
+Note: set "proposed_path" and "research_request" to null if you have nothing meaningful to propose."""
 
 
 def build_debate_prompt(

@@ -87,6 +87,21 @@ class ProviderRegistry:
             return []
 
         sorted_providers = sorted(available, key=lambda p: p.info().priority)
+
+        # Domain-aware filtering via TeamLead (skip for GENERAL — use all providers)
+        if domain != DomainTag.GENERAL:
+            from ..team_leads import get_tilead_for_domain
+            tilead = get_tilead_for_domain(domain)
+            excluded = [p for p in sorted_providers if p not in tilead.filter_providers(sorted_providers)]
+            sorted_providers = tilead.filter_providers(sorted_providers)
+            if excluded:
+                logger.info(
+                    "TeamLead[{d}] excluded {n} provider(s) as dead weight: {names}",
+                    d=domain.value,
+                    n=len(excluded),
+                    names=[p.get_provider_name() for p in excluded],
+                )
+
         free_providers = [p for p in sorted_providers if p.is_free()]
         paid_providers = [p for p in sorted_providers if not p.is_free()]
 

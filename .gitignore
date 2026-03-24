@@ -51,6 +51,9 @@ htmlcov/
 _tmp_*
 _stitch_design/
 *.tsconfig.tsbuildinfo
-memory/
+memory/*
+!memory/swarm/
 decision-simulation-review.html
 volaura-preview.jsx
+
+.vercel

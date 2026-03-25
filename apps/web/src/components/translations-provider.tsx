@@ -37,6 +37,10 @@ export default function TranslationsProvider({
       fallbackNS: namespaces[0],
       ns: namespaces,
       resources,
+      // Required: makes initialization synchronous when resources are pre-loaded.
+      // Without this, i18next async-inits even with resources provided, causing
+      // t() to return keys on the first render → hydration mismatch (React #425).
+      initImmediate: false,
     });
 
   return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;

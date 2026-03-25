@@ -19,7 +19,7 @@ from loguru import logger
 from app.config import settings, validate_production_settings
 from app.middleware.rate_limit import setup_rate_limiting
 from app.middleware.security_headers import SecurityHeadersMiddleware
-from app.routers import activity, assessment, auth, aura, badges, events, health, organizations, profiles, telegram_webhook, verification
+from app.routers import activity, assessment, auth, aura, badges, discovery, events, health, organizations, profiles, telegram_webhook, verification
 
 
 @asynccontextmanager
@@ -85,4 +85,5 @@ app.include_router(organizations.router, prefix="/api")
 app.include_router(badges.router, prefix="/api")
 app.include_router(verification.router, prefix="/api")
 app.include_router(activity.router, prefix="/api")
+app.include_router(discovery.router, prefix="/api")
 app.include_router(telegram_webhook.router, prefix="/api")

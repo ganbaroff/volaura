@@ -23,29 +23,42 @@ async def evaluate_answer(
     question_en: str,
     answer: str,
     expected_concepts: list[dict[str, Any]],
-) -> float:
+    return_details: bool = False,
+) -> "float | EvaluationResult":
     """Score an open-ended answer using multi-model swarm consensus.
 
     Same interface as bars.evaluate_answer() — drop-in replacement.
     Falls back to bars.evaluate_answer() on any failure.
+
+    BUG-01 fix (2026-03-25): Added return_details=True support so swarm path
+    produces evaluation_log for Phase 2 Transparent Logs. Without this, the
+    /aura/me/explanation endpoint returned empty for all swarm-evaluated sessions.
     """
+    from app.core.assessment.bars import EvaluationResult
+
     if not answer.strip():
-        return 0.0
+        result = EvaluationResult(0.0, {}, "swarm")
+        return result if return_details else 0.0
 
     try:
-        return await _swarm_evaluate(question_en, answer, expected_concepts)
+        concept_scores = await _swarm_evaluate_scores(question_en, answer, expected_concepts)
+        from app.core.assessment.bars import _aggregate
+        composite = _aggregate(concept_scores, expected_concepts)
+        if return_details:
+            return EvaluationResult(composite, concept_scores, "swarm")
+        return composite
     except Exception as e:
         logger.warning(f"Swarm evaluation failed, falling back to BARS: {e}")
         from app.core.assessment.bars import evaluate_answer as bars_evaluate
-        return await bars_evaluate(question_en, answer, expected_concepts)
+        return await bars_evaluate(question_en, answer, expected_concepts, return_details=return_details)
 
 
-async def _swarm_evaluate(
+async def _swarm_evaluate_scores(
     question_en: str,
     answer: str,
     expected_concepts: list[dict[str, Any]],
-) -> float:
-    """Run SwarmEngine to get multi-model concept scores."""
+) -> dict[str, float]:
+    """Run SwarmEngine to get multi-model concept scores. Returns raw concept scores dict."""
     import sys
     import os
 
@@ -111,9 +124,7 @@ async def _swarm_evaluate(
     if not concept_scores:
         raise ValueError("Swarm returned no parseable concept scores")
 
-    # Use BARS aggregation logic
-    from app.core.assessment.bars import _aggregate
-    return _aggregate(concept_scores, expected_concepts)
+    return concept_scores
 
 
 def _extract_consensus_scores(

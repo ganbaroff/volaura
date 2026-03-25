@@ -240,12 +240,17 @@ async def submit_answer(
         expected_concepts: list[dict] = question.get("expected_concepts") or []
         evaluation_log = None
         if settings.swarm_enabled:
+            # BUG-01 fix (2026-03-25): use return_details=True so swarm path
+            # produces evaluation_log for Phase 2 Transparent Logs.
             from app.services.swarm_service import evaluate_answer as swarm_evaluate
-            raw_score = await swarm_evaluate(
+            eval_result = await swarm_evaluate(
                 question_en=question["scenario_en"],
                 answer=payload.answer,
                 expected_concepts=expected_concepts,
+                return_details=True,
             )
+            raw_score = eval_result.composite
+            evaluation_log = eval_result.to_log()
         else:
             eval_result = await bars.evaluate_answer(
                 question_en=question["scenario_en"],

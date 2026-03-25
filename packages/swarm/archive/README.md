@@ -15,11 +15,18 @@ These files are generated during experimental runs and are not part of the activ
 ## Active vs. Archived
 
 **Active (kept in parent directory):**
-- `discovered_models.json` — Current model registry
-- `.py` files — Swarm engine source code
+- `autonomous_run.py` — Main entry point for daily autonomy
+- `engine.py`, `inbox_protocol.py`, `middleware.py` — Core infrastructure
+- `agent_hive.py`, `agent_memory.py`, `skills.py` — Agent management
+- `self_upgrade_v7.py` — Latest self-upgrade protocol
+- `providers/` — LLM provider implementations
 - `prompt_modules/` — Active prompt templates
+- `discovered_models.json` — Current model registry
 
 **Archived (kept here):**
-- One-time evaluation outputs
+- Evaluation scripts: `evaluate_cto_review*.py`, `run_*_evaluation.py`, `run_*_review.py`
+- Old self-upgrade versions: `self_upgrade*.py` (v1-v6), `self_analysis.py`
+- Experimental tools: `benchmark.py`, `architecture_audit_summary.md`
+- One-time evaluation outputs (JSON results)
 - Historical self-upgrade reports
 - Past code review sessions

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, use } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { AnimatePresence } from "framer-motion";
 import { useAssessmentStore } from "@/stores/assessment-store";
@@ -15,16 +15,12 @@ import { AlertCircle, Loader2, ChevronLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Question } from "@/stores/assessment-store";
 
-interface PageProps {
-  params: Promise<{ locale: string; sessionId: string }>;
-}
-
 type ScreenState = "question" | "evaluating" | "transition" | "error";
 
 const ESTIMATED_QUESTIONS = 10; // adaptive CAT — shown as progress estimate
 
-export default function QuestionPage({ params }: PageProps) {
-  const { locale, sessionId } = use(params);
+export default function QuestionPage() {
+  const { locale, sessionId } = useParams<{ locale: string; sessionId: string }>();
   const { t } = useTranslation();
   const router = useRouter();
   const isMounted = useRef(true);
@@ -94,7 +90,7 @@ export default function QuestionPage({ params }: PageProps) {
       if (!auth) return;
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/assessments/${sessionId}/next-question`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/assessments/${sessionId}/next-question`,
         { headers: { Authorization: auth } }
       );
 
@@ -134,7 +130,7 @@ export default function QuestionPage({ params }: PageProps) {
       if (!auth) return;
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/assessments/${sessionId}/answer`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/assessments/${sessionId}/answer`,
         {
           method: "POST",
           headers: {
@@ -189,7 +185,7 @@ export default function QuestionPage({ params }: PageProps) {
 
         try {
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/assessments/${sessionId}/status`,
+            `${process.env.NEXT_PUBLIC_API_URL}/api/assessments/${sessionId}/status`,
             { headers: { Authorization: auth } }
           );
 
@@ -230,7 +226,7 @@ export default function QuestionPage({ params }: PageProps) {
       if (!auth) return;
 
       await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/assessments/${sessionId}/answer`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/assessments/${sessionId}/answer`,
         {
           method: "POST",
           headers: {
@@ -260,7 +256,7 @@ export default function QuestionPage({ params }: PageProps) {
       if (!auth) return;
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/assessments/start`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/assessments/start`,
         {
           method: "POST",
           headers: {

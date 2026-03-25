@@ -50,7 +50,7 @@ function OrgCard({ org, onSelect }: { org: OrganizationResponse; onSelect: () =>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
             <p className="text-sm font-semibold text-on-surface truncate group-hover:text-primary transition-colors">{org.name}</p>
-            {org.is_verified && (
+            {org.verified_at && (
               <CheckCircle2 className="size-3.5 text-primary shrink-0" aria-label={t("orgs.verified")} />
             )}
           </div>
@@ -69,11 +69,11 @@ function OrgCard({ org, onSelect }: { org: OrganizationResponse; onSelect: () =>
       )}
 
       {/* Footer */}
-      {(org.website_url || org.contact_email) && (
+      {(org.website || org.contact_email) && (
         <div className="flex items-center gap-3 pt-1 border-t border-border/50">
-          {org.website_url && (
+          {org.website && (
             <a
-              href={org.website_url}
+              href={org.website}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}

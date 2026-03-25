@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState, useRef, use, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQueryClient } from "@tanstack/react-query";
@@ -78,14 +78,10 @@ function useAnimatedCounter(target: number, duration = 1500) {
 
 // ── Page Props ─────────────────────────────────────────────────────────
 
-interface PageProps {
-  params: Promise<{ locale: string; sessionId: string }>;
-}
-
 // ── Page ───────────────────────────────────────────────────────────────
 
-export default function AssessmentResultsPage({ params }: PageProps) {
-  const { locale, sessionId } = use(params);
+export default function AssessmentResultsPage() {
+  const { locale, sessionId } = useParams<{ locale: string; sessionId: string }>();
   const { t } = useTranslation();
   const router = useRouter();
   const queryClient = useQueryClient();

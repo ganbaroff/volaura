@@ -73,7 +73,7 @@ export default function AssessmentPage() {
 
       // Start the first competency session via API
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/assessments/start`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/assessments/start`,
         {
           method: "POST",
           headers: {

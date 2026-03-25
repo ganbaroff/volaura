@@ -164,7 +164,7 @@ export default function OrganizationsPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <h2 className="font-semibold text-on-surface truncate">{org.name}</h2>
-                    {org.is_verified && (
+                    {org.verified_at && (
                       <CheckCircle2 className="size-4 text-primary shrink-0" aria-label={t("orgs.verified")} />
                     )}
                   </div>
@@ -177,8 +177,8 @@ export default function OrganizationsPage() {
                         {t("orgs.trustScore")}: <span className="text-primary font-medium">{org.trust_score!.toFixed(1)}</span>
                       </span>
                     )}
-                    {org.website_url && (
-                      <a href={org.website_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-primary hover:underline">
+                    {org.website && (
+                      <a href={org.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-primary hover:underline">
                         <Globe className="size-3" aria-hidden="true" /> {t("orgs.website")}
                       </a>
                     )}

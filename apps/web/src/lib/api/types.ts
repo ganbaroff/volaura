@@ -35,7 +35,7 @@ export type AuraScore = {
   is_elite: boolean;            // maps from elite_status
   competency_scores: Record<string, number>;
   verification_level?: string;
-  last_updated?: string;
+  last_updated?: string | null;
   // Raw fields from API
   reliability_score?: number;
   reliability_status?: string;
@@ -43,7 +43,6 @@ export type AuraScore = {
   events_no_show?: number;
   percentile_rank?: number | null;
   aura_history?: unknown[];
-  calculated_at?: string | null;
 };
 
 /** Transform API response to AuraScore used by hooks */
@@ -60,7 +59,7 @@ export function toAuraScore(raw: AuraScoreResponse): AuraScore {
     events_no_show: raw.events_no_show,
     percentile_rank: raw.percentile_rank,
     aura_history: raw.aura_history,
-    calculated_at: raw.calculated_at,
+    last_updated: raw.last_updated,
   };
 }
 

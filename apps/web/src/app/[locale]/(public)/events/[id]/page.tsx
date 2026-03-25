@@ -1,6 +1,7 @@
 "use client";
 
-import { use, useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,10 +19,6 @@ import { cn } from "@/lib/utils/cn";
 import { LandingNav } from "@/components/landing/landing-nav";
 import { LandingFooter } from "@/components/landing/landing-footer";
 
-interface EventDetailPageProps {
-  params: Promise<{ locale: string; id: string }>;
-}
-
 function formatDate(iso: string, locale: string): string {
   return new Date(iso).toLocaleDateString(locale === "az" ? "az-Latn-AZ" : "en-US", {
     weekday: "long",
@@ -35,8 +32,8 @@ function formatDate(iso: string, locale: string): string {
 
 type RegisterState = "idle" | "loading" | "success" | "error";
 
-export default function EventDetailPage({ params }: EventDetailPageProps) {
-  const { locale, id } = use(params);
+export default function EventDetailPage() {
+  const { locale, id } = useParams<{ locale: string; id: string }>();
   const { t } = useTranslation();
   const [registerState, setRegisterState] = useState<RegisterState>("idle");
   const isMounted = useRef(true);

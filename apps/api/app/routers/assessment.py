@@ -196,6 +196,9 @@ async def submit_answer(
             detail={"code": "WRONG_QUESTION", "message": "This is not the current active question"},
         )
 
+    # HIGH-01: Read current version for optimistic locking
+    current_version = session.get("answer_version", 0)
+
     # Load question details
     q_result = (
         await db_admin.table("questions")
@@ -278,12 +281,22 @@ async def submit_answer(
         "answers": state.to_dict(),
         "current_question_id": next_q["id"] if next_q else None,
         "question_delivered_at": datetime.now(timezone.utc).isoformat() if next_q else None,
+        "answer_version": current_version + 1,  # HIGH-01: increment version
     }
     if state.stopped:
         update_payload["status"] = "completed"
         update_payload["completed_at"] = datetime.now(timezone.utc).isoformat()
 
-    await db_user.table("assessment_sessions").update(update_payload).eq("id", payload.session_id).execute()
+    # HIGH-01: Optimistic locking — only update if version hasn't changed
+    update_result = await db_user.table("assessment_sessions").update(
+        update_payload
+    ).eq("id", payload.session_id).eq("answer_version", current_version).execute()
+
+    if not update_result.data:
+        raise HTTPException(
+            status_code=409,
+            detail={"code": "CONCURRENT_SUBMIT", "message": "This answer was already submitted. Please refresh."},
+        )
 
     # Get competency slug for response
     comp_result = (

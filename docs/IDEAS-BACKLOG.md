@@ -376,3 +376,113 @@ SESSION START
   ├── Alignment Check (every 3 sessions) — drift detection
   └── Algorithm Evolution (every 5 sessions) — CLAUDE.md self-improvement
 ```
+
+---
+
+## Idea #7: Score Inversion Risk — Privacy-First Assessment Architecture
+**Date:** 2026-03-25
+**Source:** Yusif, Session 28 (strategic insight)
+**Status:** MUST SOLVE before B2B launch. Core product design decision.
+**Priority:** CRITICAL — blocks B2B adoption if wrong.
+
+### Проблема (от Yusif)
+Координатор проходит тест → скор показывает "Senior Manager уровень."
+Менеджер проходит тест → скор показывает "Specialist уровень."
+Результат: отношения испорчены, организация отказывается от Volaura, менеджер может уволить координатора.
+
+### Решение: Privacy by Default + Role-Calibrated Scores
+1. **Результаты видит ТОЛЬКО сам пользователь** — по умолчанию приватно
+2. **Организация видит агрегированные данные** (средний AURA отдела) — не индивидуальные
+3. **Пользователь сам решает** делиться или нет (кнопка "Поделиться бейджем")
+4. **Скоры калиброваны внутри роли** — координатор 90/100 = отличный координатор, менеджер 90/100 = отличный менеджер. Разные шкалы, нет прямого сравнения
+5. **Volaura не ранжирует людей друг против друга** — показывает положение относительно своего потенциала
+
+### Требования к реализации
+- [ ] Role selection at assessment start (volunteer / coordinator / specialist / manager / senior manager)
+- [ ] Role-calibrated question pools and scoring curves
+- [ ] Privacy toggle per competency (share/hide)
+- [ ] Org dashboard shows ONLY aggregate + opted-in individuals
+- [ ] No cross-role ranking in any UI element
+
+---
+
+## Idea #8: Transparent AI Evaluation Logs — "Show Your Work"
+**Date:** 2026-03-25
+**Source:** Yusif, Session 28
+**Status:** Записано. Unique differentiator — nobody does this.
+**Priority:** HIGH — builds trust, kills "black box" objection.
+
+### Проблема
+Ни одна платформа не объясняет ПОЧЕМУ у человека такой скор.
+GRE не говорит "ты потерял баллы на inference questions."
+IELTS не говорит "твой writing слабее speaking."
+Все дают цифру без аргументации.
+
+### Решение: Публичные логи оценки
+Для каждого скора пользователь видит:
+1. **Какие ответы повлияли** и как (конкретные вопросы → конкретные баллы)
+2. **Какие критерии использованы** (BARS framework, ISO 10667-2)
+3. **Как AI оценил** (краткое обоснование от Gemini — не raw JSON)
+4. **Какие исследования за этим стоят** (ссылки на фреймворки)
+5. **Выбор: поделиться скором С объяснением или БЕЗ**
+
+### Yusif: "Никаких ошибок. Никаких 'ой извините перепутали'. Мы стандарт. Только то что можем аргументировать."
+
+### Реализация
+- [ ] Store LLM evaluation rationale per answer (already partially done in BARS)
+- [ ] Expose evaluation_log endpoint (per assessment session)
+- [ ] UI: expandable "Why this score?" section per competency
+- [ ] Research citations linked to each competency definition
+- [ ] "Share with explanation" button → generates shareable report with full reasoning
+
+---
+
+## Idea #9: Fear-of-Weakness Strategy — Behavioral Design for Test Adoption
+**Date:** 2026-03-25
+**Source:** Yusif, Session 28
+**Status:** Записано. Needs research on behavioral nudges.
+
+### Insight (от Yusif)
+"Люди боятся показывать свои слабые стороны. Я перестал бояться этого и наоборот это дало мне суперсилу."
+
+### Стратегия
+1. **Private first** — первые результаты видишь только ты. Привыкаешь к цифрам без страха
+2. **Progress framing** — делишься не "у меня 63" а "я вырос с 63 до 78 за 3 месяца"
+3. **Leaders go first** — Yusif публикует свой скор открыто. Сигнал: сильные не боятся
+4. **Бесплатно для первых 100** — снимаем финансовый барьер, даём привыкнуть
+
+### Ценовые уровни (от Yusif, черновик)
+| Уровень | Цена | Что получаешь |
+|---------|------|---------------|
+| Basic | Бесплатно | Пройди тест, увидь результат, поделись если хочешь |
+| Badge Share | $5 | Цифровой бейдж для LinkedIn/CV |
+| Verified Badge | $20 | Печать Volaura + публикация в базе + личный код для поиска |
+| Premium (позже) | $1000 | White-glove: живое интервью + расширенный отчёт + личный аналитик |
+
+**Заметка Yusif:** "Уникальные продукты имеют свойство популярностью пользоваться среди богатых." Premium tier — НЕ сейчас, но держать в голове.
+**CTO вердикт:** $1000 tier имеет смысл ТОЛЬКО когда Volaura = стандарт. Сейчас это размоет бренд. Premium = pay-for-premium-PROCESS (не pay-to-win).
+
+---
+
+## Idea #10: CEO ↔ Agent Bidirectional Chat via Telegram
+**Date:** 2026-03-25
+**Source:** Yusif, Session 28
+**Status:** Not implemented. Yusif sent 6 messages, nobody replied.
+**Priority:** HIGH — CEO communication channel is broken.
+
+### Проблема
+Telegram bot принимает сообщения от CEO но не маршрутизирует ответы обратно.
+6 сообщений без ответа = CEO talking to a wall.
+
+### Решение
+- Bot receives CEO message → classifies topic → routes to relevant agent(s)
+- Agent processes → generates response → bot sends reply in same thread
+- Logging: all messages persisted in memory/swarm/ceo-inbox.md
+- Routing rules: keywords → agent mapping (architecture → CTO, content → Content Lead, etc.)
+
+### Реализация
+- [ ] Telegram bot webhook handler for incoming messages
+- [ ] Message classifier (simple keyword matching or LLM)
+- [ ] Agent dispatch (launch relevant agent with message as prompt)
+- [ ] Response routing back to Telegram thread
+- [ ] Fallback: if no agent matches → CTO handles

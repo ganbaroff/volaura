@@ -75,6 +75,7 @@ def _make_session_out(
     competency_slug: str,
     state: CATState,
     next_q: dict | None,
+    role_level: str = "volunteer",
 ) -> SessionOut:
     nq = None
     if next_q and not state.stopped:
@@ -89,6 +90,7 @@ def _make_session_out(
     return SessionOut(
         session_id=session_id,
         competency_slug=competency_slug,
+        role_level=role_level,
         questions_answered=len(state.items),
         # theta/theta_se intentionally NOT sent to client (security audit P1)
         is_complete=state.stopped,
@@ -147,6 +149,7 @@ async def start_assessment(
         "volunteer_id": user_id,
         "competency_id": competency_id,
         "status": "in_progress",
+        "role_level": payload.role_level,  # Phase 1: role-level tracking
         "theta_estimate": state.theta,
         "theta_se": state.theta_se,
         "answers": state.to_dict(),
@@ -155,7 +158,7 @@ async def start_assessment(
         "started_at": datetime.now(timezone.utc).isoformat(),
     }).execute()
 
-    return _make_session_out(session_id, payload.competency_slug, state, first_q)
+    return _make_session_out(session_id, payload.competency_slug, state, first_q, payload.role_level)
 
 
 @router.post("/answer", response_model=AnswerFeedback)
@@ -306,7 +309,7 @@ async def submit_answer(
     )
     slug = comp_result.data["slug"] if comp_result.data else ""
 
-    session_out = _make_session_out(payload.session_id, slug, state, next_q)
+    session_out = _make_session_out(payload.session_id, slug, state, next_q, session.get("role_level", "volunteer"))
 
     return AnswerFeedback(
         session_id=payload.session_id,

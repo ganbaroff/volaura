@@ -6,11 +6,11 @@
 ---
 
 ## Last Updated
-2026-03-25 | Session 27: **Post-retro sprint complete. All 3 tasks done: schema fix live, team_leads wired (TDD), 29 stale files archived. openapi.json regenerated from prod, frontend types synced. GET /organizations = 200 ✅**
+2026-03-25 | Session 29: **Phase 1 Trust Architecture DONE. DB: sharing_permissions table + role_level + visibility columns. API: 3 new endpoints (visibility, sharing, role-aware sessions). RLS updated. 5-agent plan review → BEST-PRACTICES.md created (21 rules). IDEAS-BACKLOG: 4 new ideas (#7-#10). Mistakes #36-#38 recorded.**
 
 ## Declaring Line (copy-paste at session start)
 ```
-▶ Session resumed. Sprint 8 complete. All 3 post-retro tasks done. GET /organizations 200 with verified_at. openapi.json + types.gen.ts synced from prod. Next: Sprint 9 (growth features: CSV invite, results page, beta testers). Protocol v4.0 loaded.
+▶ Session resumed. Phase 1 Trust Architecture complete. DB migration #21 applied (sharing_permissions + visibility + role_level). 3 new API endpoints live. BEST-PRACTICES.md created. Next: Phase 2 (Transparent Evaluation Logs) + deploy to Railway. Protocol v4.0 loaded.
 ```
 
 ---

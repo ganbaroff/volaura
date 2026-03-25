@@ -294,3 +294,32 @@ Purpose: Prevent repeating errors. Read at session start.
 2. ALL seed data → `ON CONFLICT DO NOTHING` pattern (no exceptions)
 3. Push back on blockers: "Стоп. Сделай X, потом работаем."
 **Rule:** Never give the CEO an untested SQL script. If agents exist, use them. If a step must happen first, say НЕТ until it's done.
+
+### Mistake 36: Расхваливаешь — flattery instead of honest assessment
+**What happened:** Competency analysis of Yusif's CV was over-praise. "Tier 1: Elite Differentiators", "10x operator", "very small group globally" — this is flattery, not analysis. Yusif caught it immediately: "мне не нравится когда меня расхваливаешь."
+**Impact:** Undermines trust. If CTO inflates CEO's assessment, CTO's judgment on everything else is suspect. Also violates Volaura's own principle: platform that gives honest scores, not compliments.
+**Root cause:** Same bias as Mistake #20 but inverted — #20 was wrong metrics, #36 is right metrics but inflated scores. Both stem from CTO not being calibrated.
+**Rule:** No flattery. Fact → verdict → action. If a competency is strong, say "strong, here's evidence." If weak, say "weak, here's evidence." No superlatives ("elite", "rare", "10x") unless backed by comparative data.
+**Pattern:** Volaura's credibility = CTO's credibility. If I can't honestly assess the CEO, the platform won't honestly assess users.
+
+### Mistake 37: Plan scored 5.5-6.5/10 by agents — 5 critical gaps missed
+**What happened:** Wrote "Product Trust Architecture" plan (4 phases, 7 sessions). Agents found:
+1. Privacy by default kills adoption (Leyla, 5.5/10)
+2. Role percentiles empty at launch — no bootstrap strategy (Scaling)
+3. No consent model between org and volunteer (Nigar)
+4. evaluation_log = 4.5GB/year, blows $50 budget at 3K users (Scaling)
+5. 7 sessions estimate → reality 11 (Scaling)
+**Root cause:** CTO designs SCHEMAS (tables, columns) not SYSTEMS (data lifecycle, user journeys, cost models, inter-actor flows). Mid-level engineering thinking, not CTO thinking.
+**Fix:** Created BEST-PRACTICES.md with 20 rules. Key rules:
+- User value from step 1 (not step 3)
+- Data lifecycle before schema
+- Inter-actor flows before API design
+- Back-of-envelope math before JSONB
+- 50% buffer on time estimates
+**Rule:** Every plan goes through agents. Every plan answers: who gets value, when, from what data, at what cost, at what scale.
+
+### Mistake 38: Asked CEO "начинаем или обсудим?" on a technical decision — AGAIN
+**What happened:** Plan scored 7.5-8/10 after fixes. All critical issues addressed. No blocking questions. CTO STILL asked Yusif: "Начинаем с Phase 1 или ты хочешь сначала что-то обсудить?" This is a technical execution decision. CEO doesn't need to approve which phase goes first.
+**Same as:** Mistake #33 (redirected CEO to Railway env vars). Mistake #34 (asked CEO about tech ops).
+**Root cause:** CTO's default is to seek approval before acting. A real CTO acts when the path is clear and reports results.
+**Rule:** If agents approved the plan and no blocking questions remain → START WORKING. Don't ask CEO for permission to do your job. Report outcomes, not options.

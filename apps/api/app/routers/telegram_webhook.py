@@ -1,17 +1,15 @@
-"""Telegram Webhook — MiroFish Swarm Ambassador.
+"""Telegram Webhook — Volaura Product Owner Bot.
 
-Receives Telegram updates via webhook (not polling).
-Routes commands and free-text to appropriate handlers.
-Only responds to CEO (TELEGRAM_CEO_CHAT_ID).
+Receives CEO messages via Telegram webhook.
+Acts as Product Owner: saves ideas, delegates tasks, writes reports, manages backlog.
+Uses Supabase DB for state (not local files — Railway filesystem is ephemeral).
 
 Setup: POST /api/telegram/setup-webhook to register with Telegram API.
 """
 
 from __future__ import annotations
 
-import json
 from datetime import datetime, timezone
-from pathlib import Path
 
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
@@ -21,116 +19,209 @@ from app.config import settings
 
 router = APIRouter(prefix="/telegram", tags=["Telegram"])
 
-# Paths for state
-_PROJECT_ROOT = Path(__file__).parent.parent.parent.parent.parent
-_PROPOSALS_PATH = _PROJECT_ROOT / "memory" / "swarm" / "proposals.json"
-_CONTEXT_PATH = _PROJECT_ROOT / "memory" / "swarm" / "ambassador_context.json"
-_SPRINT_STATE_PATH = _PROJECT_ROOT / "memory" / "context" / "sprint-state.md"
-
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
-def _load_proposals() -> list[dict]:
-    if not _PROPOSALS_PATH.exists():
-        return []
-    try:
-        with open(_PROPOSALS_PATH, "r", encoding="utf-8") as f:
-            return json.load(f).get("proposals", [])
-    except Exception:
-        return []
+async def _get_db():
+    """Get admin Supabase client for bot operations."""
+    from supabase._async.client import AsyncClient, acreate_client
+    return await acreate_client(settings.supabase_url, settings.supabase_service_key)
 
 
-def _get_pending() -> list[dict]:
-    return [p for p in _load_proposals() if p.get("status") == "pending"]
-
-
-def _update_proposal(pid: str, status: str) -> str | None:
-    if not _PROPOSALS_PATH.exists():
-        return None
-    with open(_PROPOSALS_PATH, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    for p in data.get("proposals", []):
-        if p.get("id") == pid:
-            p["status"] = status
-            p["resolved_at"] = datetime.now(timezone.utc).isoformat()
-            with open(_PROPOSALS_PATH, "w", encoding="utf-8") as f:
-                json.dump(data, f, indent=2, ensure_ascii=False)
-            return p.get("title")
-    return None
-
-
-def _sprint_summary() -> str:
-    if not _SPRINT_STATE_PATH.exists():
-        return "Sprint state not found."
-    try:
-        with open(_SPRINT_STATE_PATH, "r", encoding="utf-8") as f:
-            return "".join(f.readlines()[:15])
-    except Exception:
-        return "Error reading sprint state."
-
-
-def _load_context() -> dict:
-    if _CONTEXT_PATH.exists():
-        try:
-            with open(_CONTEXT_PATH, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            pass
-    return {"messages": []}
-
-
-def _save_context(ctx: dict) -> None:
-    ctx["messages"] = ctx["messages"][-20:]
-    _CONTEXT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(_CONTEXT_PATH, "w", encoding="utf-8") as f:
-        json.dump(ctx, f, indent=2, ensure_ascii=False)
-
-
-async def _send_message(chat_id: int | str, text: str) -> None:
-    """Send a Telegram message via Bot API."""
+async def _send_message(chat_id: int | str, text: str) -> bool:
+    """Send a Telegram message via Bot API. Returns True on success."""
     import httpx
     url = f"https://api.telegram.org/bot{settings.telegram_bot_token}/sendMessage"
-    async with httpx.AsyncClient() as client:
-        await client.post(url, json={
-            "chat_id": chat_id,
-            "text": text,
-            "parse_mode": "Markdown",
-        })
+    # Telegram max message length is 4096
+    if len(text) > 4000:
+        text = text[:4000] + "\n\n... (обрезано)"
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            resp = await client.post(url, json={
+                "chat_id": chat_id,
+                "text": text,
+                "parse_mode": "Markdown",
+            })
+            if not resp.json().get("ok"):
+                # Retry without markdown if parse fails
+                await client.post(url, json={
+                    "chat_id": chat_id,
+                    "text": text,
+                })
+            return True
+    except Exception as e:
+        logger.error("Telegram send failed: {e}", e=str(e))
+        return False
 
 
-async def _ask_llm(question: str, history: list[dict]) -> str:
-    """Ask Gemini for a smart response as the swarm ambassador."""
-    sprint = _sprint_summary()
-    pending = _get_pending()
+async def _save_message(db, direction: str, message: str, msg_type: str = "free_text", metadata: dict | None = None):
+    """Save message to ceo_inbox table."""
+    try:
+        await db.table("ceo_inbox").insert({
+            "direction": direction,
+            "message": message[:5000],
+            "message_type": msg_type,
+            "metadata": metadata or {},
+        }).execute()
+    except Exception as e:
+        logger.error("Failed to save message: {e}", e=str(e))
 
-    system_prompt = f"""You are the MiroFish Swarm Ambassador — one voice for a 14-model AI agent team.
-You report to CEO Yusif Ganbarov via Telegram. Be concise, direct, honest.
-Speak as "мы" (the team). Keep responses under 400 chars. Use Russian.
 
-Sprint state:
-{sprint[:500]}
+async def _get_recent_context(db, limit: int = 10) -> str:
+    """Get recent conversation context from DB."""
+    try:
+        result = await db.table("ceo_inbox").select("direction,message,message_type,created_at").order("created_at", desc=True).limit(limit).execute()
+        if not result.data:
+            return "Нет предыдущих сообщений."
+        lines = []
+        for msg in reversed(result.data):
+            role = "CEO" if msg["direction"] == "ceo_to_bot" else "Bot"
+            lines.append(f"[{role}] {msg['message'][:200]}")
+        return "\n".join(lines)
+    except Exception:
+        return "Контекст недоступен."
 
-Pending proposals: {len(pending)}"""
 
+async def _get_project_stats(db) -> str:
+    """Get quick project stats from DB."""
+    try:
+        scores = await db.table("aura_scores").select("*", count="exact").execute()
+        sessions = await db.table("assessment_sessions").select("*", count="exact").execute()
+        orgs = await db.table("organizations").select("*", count="exact").execute()
+        return (
+            f"Users with AURA: {scores.count or 0}\n"
+            f"Assessment sessions: {sessions.count or 0}\n"
+            f"Organizations: {orgs.count or 0}"
+        )
+    except Exception:
+        return "Статистика недоступна."
+
+
+async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
+    """Classify CEO message and respond intelligently as Product Owner."""
+    context = await _get_recent_context(db)
+    stats = await _get_project_stats(db)
+
+    # Detect intent
+    text_lower = text.lower()
+    is_idea = any(w in text_lower for w in ["идея", "idea", "можно сделать", "а что если", "предлагаю", "надо бы"])
+    is_task = any(w in text_lower for w in ["сделай", "задача", "task", "нужно", "исправь", "fix", "добавь", "add"])
+    is_question = "?" in text
+    is_report = any(w in text_lower for w in ["отчёт", "report", "статус", "status", "что сделано", "прогресс"])
+
+    if is_idea:
+        msg_type = "idea"
+    elif is_task:
+        msg_type = "task"
+    elif is_report:
+        msg_type = "report"
+    else:
+        msg_type = "free_text"
+
+    # Save CEO message
+    await _save_message(db, "ceo_to_bot", text, msg_type)
+
+    # Build response via Gemini
     if not settings.gemini_api_key:
-        return "LLM не настроен — нужен GEMINI_API_KEY."
+        await _send_message(chat_id, "⚠️ GEMINI_API_KEY не настроен. Сообщение сохранено в базу.")
+        return
+
+    system_prompt = f"""Ты — Product Owner бот команды Volaura. Говоришь от имени команды ("мы").
+Отвечаешь CEO Юсифу Ганбарову в Telegram. Коротко, по делу, на русском.
+
+Твои обязанности:
+1. ИДЕИ — если CEO делится идеей, подтверди что записал, кратко оцени (сильно/слабо/надо подумать), скажи что передашь команде
+2. ЗАДАЧИ — если CEO даёт задачу, подтверди, скажи ориентировочный срок, спроси если что-то неясно
+3. ОТЧЁТЫ — если спрашивает статус, дай краткую сводку из данных ниже
+4. ВОПРОСЫ — отвечай честно, если не знаешь — скажи прямо
+
+Статистика проекта:
+{stats}
+
+Последние сообщения:
+{context[-1000:]}
+
+Тип сообщения CEO: {msg_type}
+
+ПРАВИЛА:
+- Максимум 300 символов в ответе
+- Не льсти. Не используй слова "отличная идея" — скажи что думаешь честно
+- Если идея слабая — скажи мягко но прямо
+- Если задача непонятная — спроси уточнение
+- Всегда заканчивай: что делаем дальше / что передам команде"""
 
     try:
         from google import genai
         client = genai.Client(api_key=settings.gemini_api_key)
         response = client.models.generate_content(
             model="gemini-2.0-flash",
-            contents=question,
+            contents=text,
             config=genai.types.GenerateContentConfig(
                 system_instruction=system_prompt,
-                max_output_tokens=250,
-                temperature=0.7,
+                max_output_tokens=200,
+                temperature=0.5,
             ),
         )
-        return response.text.strip()
+        reply = response.text.strip()
     except Exception as e:
-        logger.error("Ambassador LLM error: {e}", e=str(e))
-        return f"Ошибка LLM: не могу ответить сейчас."
+        logger.error("Gemini error in bot: {e}", e=str(e))
+        reply = f"Сообщение сохранено ✅\nТип: {msg_type}\nОтвечу когда LLM будет доступен."
+
+    # Add tag for saved items
+    if msg_type == "idea":
+        reply = f"💡 Идея записана в бэклог.\n\n{reply}"
+    elif msg_type == "task":
+        reply = f"📋 Задача записана.\n\n{reply}"
+
+    # Save bot response
+    await _save_message(db, "bot_to_ceo", reply, msg_type)
+    await _send_message(chat_id, reply)
+
+
+# ── Commands ─────────────────────────────────────────────────────────────────
+
+async def _handle_status(db, chat_id: int | str) -> None:
+    stats = await _get_project_stats(db)
+    # Count unprocessed messages
+    try:
+        unprocessed = await db.table("ceo_inbox").select("*", count="exact").eq("direction", "ceo_to_bot").eq("processed", False).execute()
+        pending_count = unprocessed.count or 0
+    except Exception:
+        pending_count = 0
+
+    msg = f"🔮 *Volaura Status*\n\n{stats}\n\n📬 Необработанных сообщений: {pending_count}"
+    await _send_message(chat_id, msg)
+
+
+async def _handle_backlog(db, chat_id: int | str) -> None:
+    """Show recent ideas and tasks from CEO."""
+    try:
+        ideas = await db.table("ceo_inbox").select("message,created_at").eq("direction", "ceo_to_bot").in_("message_type", ["idea", "task"]).order("created_at", desc=True).limit(5).execute()
+        if not ideas.data:
+            await _send_message(chat_id, "📋 Бэклог пуст.")
+            return
+        msg = "📋 *Последние идеи/задачи CEO:*\n\n"
+        for i, item in enumerate(ideas.data, 1):
+            ts = item["created_at"][:10]
+            msg += f"{i}. [{ts}] {item['message'][:100]}\n"
+        await _send_message(chat_id, msg)
+    except Exception as e:
+        await _send_message(chat_id, f"Ошибка чтения бэклога: {str(e)[:100]}")
+
+
+async def _handle_help(chat_id: int | str) -> None:
+    msg = (
+        "🤖 *Volaura Product Owner Bot*\n\n"
+        "Команды:\n"
+        "/status — статус проекта\n"
+        "/backlog — последние идеи и задачи\n"
+        "/help — эта справка\n\n"
+        "Или просто напишите:\n"
+        "• Идею — сохраню в бэклог\n"
+        "• Задачу — запишу и передам команде\n"
+        "• Вопрос — отвечу из контекста проекта"
+    )
+    await _send_message(chat_id, msg)
 
 
 # ── Webhook Endpoint ─────────────────────────────────────────────────────────
@@ -141,11 +232,10 @@ async def telegram_webhook(request: Request) -> JSONResponse:
     if not settings.telegram_bot_token:
         return JSONResponse({"ok": False, "error": "Bot not configured"})
 
-    # BLOCKER-2 FIX: Validate webhook origin via secret token header
-    # Telegram sends X-Telegram-Bot-Api-Secret-Token if set during setWebhook
+    # Validate webhook origin
     secret_header = request.headers.get("X-Telegram-Bot-Api-Secret-Token", "")
     if settings.telegram_webhook_secret and secret_header != settings.telegram_webhook_secret:
-        logger.warning("Telegram webhook: invalid secret token from {ip}", ip=request.client.host if request.client else "?")
+        logger.warning("Telegram webhook: invalid secret from {ip}", ip=request.client.host if request.client else "?")
         return JSONResponse({"ok": False}, status_code=403)
 
     try:
@@ -164,68 +254,31 @@ async def telegram_webhook(request: Request) -> JSONResponse:
     # Only respond to CEO
     ceo_id = settings.telegram_ceo_chat_id
     if ceo_id and str(user_id) != str(ceo_id):
-        logger.info("Telegram: ignoring message from non-CEO user {uid}", uid=user_id)
         return JSONResponse({"ok": True})
 
     if not text:
         return JSONResponse({"ok": True})
 
-    logger.info("Telegram from CEO: {text}", text=text[:100])
+    logger.info("Telegram CEO: {text}", text=text[:100])
 
-    # Route commands
-    if text.startswith("/status"):
-        pending = _get_pending()
-        sprint_lines = [l.strip() for l in _sprint_summary().split("\n") if l.strip()][:5]
-        msg = f"🔮 *Swarm Status*\n\n📋 Pending: {len(pending)}\n"
-        if pending:
-            for p in pending[:3]:
-                sev = p.get("severity", "medium").upper()
-                msg += f"  [{sev}] {p.get('title', '?')}\n"
-        msg += f"\n📍 Sprint:\n" + "\n".join(sprint_lines)
-        await _send_message(chat_id, msg)
+    try:
+        db = await _get_db()
 
-    elif text.startswith("/proposals"):
-        pending = _get_pending()
-        if not pending:
-            await _send_message(chat_id, "✅ Нет pending proposals.")
+        # Route commands
+        if text.startswith("/status"):
+            await _handle_status(db, chat_id)
+        elif text.startswith("/backlog"):
+            await _handle_backlog(db, chat_id)
+        elif text.startswith("/help") or text.startswith("/start"):
+            await _handle_help(chat_id)
         else:
-            for p in pending[:5]:
-                msg = f"📌 *{p.get('title', '?')}*\n"
-                msg += f"Agent: {p.get('agent', '?')} | {p.get('severity', '?').upper()}\n"
-                msg += f"{p.get('description', '')[:200]}\n"
-                msg += f"\n/approve\\_{p.get('id', '?')} | /dismiss\\_{p.get('id', '?')}"
-                await _send_message(chat_id, msg)
+            # Free-text → classify + respond + save
+            await _classify_and_respond(db, text, chat_id)
 
-    elif text.startswith("/approve"):
-        pid = text.replace("/approve", "").replace("_", "").strip()
-        if not pid:
-            await _send_message(chat_id, "Usage: /approve <id>")
-        else:
-            title = _update_proposal(pid, "approved")
-            if title:
-                await _send_message(chat_id, f"✅ Approved: {title}")
-            else:
-                await _send_message(chat_id, f"❌ Proposal {pid} not found.")
-
-    elif text.startswith("/dismiss"):
-        pid = text.replace("/dismiss", "").replace("_", "").strip()
-        if not pid:
-            await _send_message(chat_id, "Usage: /dismiss <id>")
-        else:
-            title = _update_proposal(pid, "dismissed")
-            if title:
-                await _send_message(chat_id, f"🗑 Dismissed: {title}")
-            else:
-                await _send_message(chat_id, f"❌ Proposal {pid} not found.")
-
-    else:
-        # Free-text → LLM response
-        ctx = _load_context()
-        ctx["messages"].append({"role": "user", "text": text})
-        response = await _ask_llm(text, ctx["messages"])
-        ctx["messages"].append({"role": "assistant", "text": response})
-        _save_context(ctx)
-        await _send_message(chat_id, response)
+    except Exception as e:
+        logger.error("Telegram handler error: {e}", e=str(e))
+        # Always try to respond even on error
+        await _send_message(chat_id, f"⚠️ Ошибка обработки. Сообщение может не быть сохранено.\n{str(e)[:100]}")
 
     return JSONResponse({"ok": True})
 
@@ -238,16 +291,10 @@ async def setup_webhook(request: Request) -> JSONResponse:
     if not settings.telegram_bot_token:
         return JSONResponse({"ok": False, "error": "TELEGRAM_BOT_TOKEN not set"})
 
-    # Derive webhook URL from Railway production URL
-    api_url = settings.app_url.replace("localhost:3000", "volauraapi-production.up.railway.app")
-    if "railway" not in api_url and "localhost" not in api_url:
-        api_url = "https://volauraapi-production.up.railway.app"
-
-    webhook_url = f"{api_url}/api/telegram/webhook"
+    webhook_url = "https://volauraapi-production.up.railway.app/api/telegram/webhook"
 
     import httpx
     payload: dict = {"url": webhook_url}
-    # BLOCKER-2 FIX: Include secret token so Telegram sends it in X-Telegram-Bot-Api-Secret-Token header
     if settings.telegram_webhook_secret:
         payload["secret_token"] = settings.telegram_webhook_secret
     async with httpx.AsyncClient() as client:

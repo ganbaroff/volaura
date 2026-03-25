@@ -1,6 +1,7 @@
 """AURA score Pydantic schemas."""
 
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
@@ -21,6 +22,7 @@ class AuraScoreResponse(BaseModel):
     badge_tier: str
     elite_status: bool
     competency_scores: dict[str, float]
+    visibility: str = "public"  # public | badge_only | hidden
     reliability_score: float = 0.0
     reliability_status: str = "pending"
     events_attended: int = 0
@@ -28,3 +30,15 @@ class AuraScoreResponse(BaseModel):
     percentile_rank: float | None = None
     aura_history: list = []
     last_updated: datetime | None = None
+
+
+class UpdateVisibilityRequest(BaseModel):
+    """Allow user to change their score visibility."""
+    visibility: Literal["public", "badge_only", "hidden"]
+
+
+class SharingPermissionRequest(BaseModel):
+    """Grant/revoke sharing permission to an organization."""
+    org_id: str
+    permission_type: Literal["read_score", "read_full_eval", "export_report"]
+    action: Literal["grant", "revoke"]

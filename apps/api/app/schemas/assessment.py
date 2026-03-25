@@ -36,9 +36,13 @@ def _validate_uuid(value: str, field_name: str) -> str:
 
 # ── Request schemas ───────────────────────────────────────────────────────────
 
+VALID_ROLE_LEVELS = ("volunteer", "coordinator", "specialist", "manager", "senior_manager")
+
+
 class StartAssessmentRequest(BaseModel):
     competency_slug: str  # e.g. "communication"
     language: Literal["en", "az"] = "en"
+    role_level: Literal["volunteer", "coordinator", "specialist", "manager", "senior_manager"] = "volunteer"
 
     @field_validator("competency_slug")
     @classmethod
@@ -112,6 +116,7 @@ class SessionOut(BaseModel):
     """
     session_id: str
     competency_slug: str
+    role_level: str = "volunteer"
     questions_answered: int
     is_complete: bool
     stop_reason: str | None = None

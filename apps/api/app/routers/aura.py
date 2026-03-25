@@ -1,8 +1,9 @@
 """AURA score endpoints."""
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
+from app.middleware.rate_limit import limiter, RATE_DEFAULT
 from app.schemas.aura import (
     AuraScoreResponse,
     SharingPermissionRequest,
@@ -10,6 +11,16 @@ from app.schemas.aura import (
 )
 
 router = APIRouter(prefix="/aura", tags=["AURA"])
+
+# Confidence label mapping — never expose internal model names to clients
+# Security: exposing model names enables calibration attacks (adversarial prompting)
+_MODEL_CONFIDENCE: dict[str, str] = {
+    "gemini-2.5-flash": "high",
+    "gpt-4o-mini": "high",
+    "keyword_fallback": "pattern_matched",
+    "swarm": "high",
+    "unknown": "unknown",
+}
 
 
 @router.get("/me", response_model=AuraScoreResponse)
@@ -34,11 +45,20 @@ async def get_my_aura(
 
 
 @router.get("/{volunteer_id}", response_model=AuraScoreResponse)
+@limiter.limit(RATE_DEFAULT)
 async def get_aura_by_id(
+    request: Request,
     volunteer_id: str,
     db: SupabaseAdmin,
 ) -> AuraScoreResponse:
-    """Get any volunteer's AURA score (public profiles only, respects visibility)."""
+    """Get any volunteer's AURA score (public profiles only, respects visibility).
+
+    Uses service-role client (SupabaseAdmin) to check existence before enforcing
+    visibility — intentional for public discovery of non-hidden profiles.
+
+    Security (CRIT-04): Identical 404 response for hidden vs nonexistent profiles
+    to prevent volunteer existence enumeration attacks.
+    """
     result = (
         await db.table("aura_scores")
         .select("*")
@@ -52,11 +72,12 @@ async def get_aura_by_id(
             detail={"code": "AURA_NOT_FOUND", "message": "AURA score not found"},
         )
     # Respect visibility setting
+    # CRIT-04: Use identical error code for hidden AND nonexistent — prevents enumeration
     visibility = result.data.get("visibility", "public")
     if visibility == "hidden":
         raise HTTPException(
             status_code=404,
-            detail={"code": "AURA_HIDDEN", "message": "This volunteer's score is private"},
+            detail={"code": "AURA_NOT_FOUND", "message": "AURA score not found"},
         )
     if visibility == "badge_only":
         # Return only badge tier + total score, strip competency details
@@ -98,11 +119,15 @@ async def get_aura_explanation(
         for item in items:
             eval_log = item.get("evaluation_log")
             if eval_log:
+                # CRIT-05: Never expose internal model names — prevents calibration attacks.
+                # Map model_used → evaluation_confidence (high/pattern_matched/unknown)
+                raw_model = eval_log.get("model_used", "unknown")
+                confidence = _MODEL_CONFIDENCE.get(raw_model, "unknown")
                 item_explanations.append({
                     "question_id": item.get("question_id"),
                     "raw_score": round(item.get("raw_score", 0), 3),
                     "concept_scores": eval_log.get("concept_scores", {}),
-                    "model_used": eval_log.get("model_used", "unknown"),
+                    "evaluation_confidence": confidence,  # high | pattern_matched | unknown
                     "methodology": eval_log.get("methodology", "BARS"),
                 })
 
@@ -148,9 +173,25 @@ async def update_visibility(
 async def manage_sharing_permission(
     body: SharingPermissionRequest,
     db: SupabaseUser,
+    db_admin: SupabaseAdmin,
     user_id: CurrentUserId,
 ):
     """Grant or revoke sharing permission to an organization."""
+    # HIGH-05: Validate org exists before creating permission record.
+    # Prevents phantom permissions to nonexistent orgs.
+    org_check = (
+        await db_admin.table("organizations")
+        .select("id")
+        .eq("id", body.org_id)
+        .maybe_single()
+        .execute()
+    )
+    if not org_check.data:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "ORG_NOT_FOUND", "message": "Organization not found"},
+        )
+
     if body.action == "grant":
         await (
             db.table("sharing_permissions")

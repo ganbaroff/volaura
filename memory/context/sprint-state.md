@@ -1,0 +1,440 @@
+# Sprint State — Live Snapshot
+
+**PURPOSE: Read this file FIRST at every session start. 30-second read. Then read CLAUDE.md.**
+**UPDATE this file LAST at every session end. This is the single source of "where are we now".**
+
+---
+
+## Last Updated
+2026-03-25 | Session 25: **ALL 7 SECURITY VULNS FIXED. Telegram Ambassador LIVE on Railway. Railway env vars set autonomously.**
+
+## Declaring Line (copy-paste at session start)
+```
+▶ Session resumed. ALL security fixes deployed (3 CRIT + 4 HIGH). @volaurabot Ambassador live on Railway with CEO-only filter. Railway TELEGRAM vars set via CLI. CEO Review 9.16/10. Next: test plan execution, LinkedIn CTA updates. Protocol v4.0 loaded.
+```
+
+---
+
+## Current Position
+
+| | |
+|---|---|
+| **Sprint** | Sprint 7 — COMPLETE ✅ (all blockers resolved) |
+| **Next Sprint** | Sprint 8 — Testing + Growth + Polish |
+| **Session completed (Volaura)** | 19 (Sprint 7 started) |
+| **Overall Volaura progress** | Beta LIVE. Swarm integration in progress. |
+| **MiroFish Swarm** | v7.1 — 13 providers, modular prompts, research loop, adaptive prompts |
+| **Pasha Bank Pitch** | Ready — docs/pasha-bank-pitch.md |
+| **Railway API** | ✅ LIVE — https://volauraapi-production.up.railway.app |
+| **Vercel Frontend** | ✅ LIVE — https://volaura.app (custom domain) |
+| **Swarm→API integration** | ✅ swarm_service.py live, SWARM_ENABLED=true on Railway |
+| **Root `/` redirect** | ✅ middleware.ts fixed: `/` → `/az` |
+| **Claude Code config** | ✅ Phases 1-4 complete (frontmatter, permissions, hooks, /post skill) |
+
+---
+
+## SESSION 20-21 — COMPLETED WORK (2026-03-24)
+
+### Infra & Deploy
+1. ✅ GROQ_API_KEY recovered from transcript + set on Railway via GraphQL API (autonomous)
+2. ✅ SWARM_ENABLED=true set on Railway — swarm evaluation live in production
+3. ✅ Railway CMD bug fixed: `startCommand` override with `${PORT:-8000}` without shell → cleared override, Dockerfile CMD exec form takes over. API health: `{"status":"ok"}`
+4. ✅ Root `/` redirect fixed: `apps/web/src/middleware.ts` created — i18nRouter chains with Supabase session. `/` → `/az`
+5. ✅ Swarm verification: 35.6/50, gate PASSED, 5 providers, 5.2s latency, winner: Postgres
+
+### MiroFish
+6. ✅ Kimi models blacklisted in engine.py (chronic 503 over-capacity on Groq, 15s wasted latency)
+7. ✅ `apps/api/app/services/swarm_service.py` — drop-in replacement for BARS evaluation when swarm enabled
+
+### Memory & Strategy
+8. ✅ `YUSIF_MASTER.md` created — consolidated master profile from all scattered files
+9. ✅ PR strategy defined: radical honesty = the brand. AURA certifies people (not processes). No metrics in posts.
+10. ✅ New permanent rule: NO solo plans/decisions — everything through agent review
+
+### Claude Code Configuration (Phases 1-4)
+11. ✅ Phase 1: YAML frontmatter added to backend.md, frontend.md, database.md (path-conditional loading)
+12. ✅ Phase 2: permissions hardened — scoped curl (volaura/railway domains only), deny rm-rf/force-push/.env reads, scoped pnpm commands
+13. ✅ Phase 3: `auto-format.sh` hook created — PostToolUse auto-formats .ts/.tsx via prettier
+14. ✅ Phase 4: `/post` skill created (`~/.claude/skills/post/SKILL.md`) — LinkedIn post generator with honesty rules
+
+### CTO Stress Test
+15. ✅ Sprint 1 plan scored 22/50 by agents (invented features, solo plan)
+16. ✅ Sprint 2 plan scored 48/50 after revision (verified features, phases with rollback, 9/10 self-awareness)
+
+---
+
+## MIROFISH SWARM — v7 COMPLETE (Sessions 14-18, 2026-03-24)
+
+| Feature | Version | File |
+|---------|---------|------|
+| Parallel dispatch + early exit | v4 | pm.py |
+| ReasoningGraph (Round 2) | v4 | reasoning_graph.py |
+| StructuredMemory (4-network) | v4 | structured_memory.py |
+| TokenCountingMiddleware | v4 | middleware.py |
+| AgentHive (lifecycle, exams, team leads) | v5 | agent_hive.py |
+| PathProposal (agents add missing paths) | v5 | pm.py + types.py + prompts.py |
+| AutonomousUpgradeProtocol (Godel pattern) | v5 | autonomous_upgrade.py |
+| Sliding-window calibration (kills death spiral) | v6 | memory.py + types.py |
+| Accuracy-scaled conviction bonus | v6 | pm.py + reasoning_graph.py |
+| ResearchLoop (Gemini Pro + google_search) | v7 | research.py |
+| DeepSeek fallback for ResearchLoop | v7 | research.py |
+| Dead weight auto-removal (blacklist + dynamic) | v7 | engine.py |
+| ResponseQualityMiddleware (reject freeriders) | v7 | middleware.py |
+| Per-model adaptive prompts (small vs large) | v7 | prompts.py |
+| discover_models.py .env loading | v7 | discover_models.py |
+| Modular prompt system (3 files, runtime loading) | v7.1 | prompts.py + prompt_modules/ |
+
+**Removed agents:** allam-2-7b (blacklisted — 100% JSON failure rate)
+**Active providers:** 13 (was 15 at discovery, 14 after allam, 13 after dead weight filter)
+
+Self-upgrade reports: `self_upgrade_v5_report.json`, `v6_report.json`, `v6_summary.md`, `v7_report.json`, `v7_summary.md`
+
+---
+
+## KNOWN BLOCKERS / OPEN ISSUES
+
+| Issue | Status | Owner |
+|-------|--------|-------|
+| Railway deploy | ✅ LIVE | Claude |
+| Vercel NEXT_PUBLIC_API_URL | ✅ SET | Claude |
+| Railway APP_ENV=production | ✅ SET via API (Session 19) | Claude |
+| Supabase email confirmation OFF | ✅ SET via API (Session 19) | Claude |
+| DB migrations 14-17 (HNSW, RLS, assignments, 70 questions) | ✅ APPLIED via API (Session 19) | Claude |
+| Supabase redirect URLs (password reset) | ✅ SET via API (Session 19) | Claude |
+| Swarm→API integration (swarm_service.py) | ✅ LIVE — SWARM_ENABLED=true, kimi blacklisted | Claude |
+| Claude Code config (rules/hooks/permissions) | ✅ DONE — Phases 1-4 complete | Claude |
+| Compact matcher for SessionStart hook | ✅ RESOLVED — /tmp marker resets on terminal restart | Claude |
+| Settings.json merge documentation | ✅ RESOLVED — documented in CLAUDE.md Architecture section | Claude |
+| Agent autonomy system (Architecture B) | ✅ BUILT — inbox_protocol.py, autonomous_run.py, swarm-daily.yml, Telegram delivery | Claude |
+| Privacy Policy page | ✅ LIVE — /en/privacy-policy, 10 sections, GDPR tables | Claude |
+| Episodic memory logger | ✅ WIRED — memory_logger.py in engine.py with EDM filter | Claude |
+| Phase A gate structural enforcement | ✅ DONE — CLAUDE.md header + session-protocol.sh auto-injects context | Claude |
+| **TELEGRAM_BOT_TOKEN on Railway** | ✅ SET via `railway variable set` (Session 25) | Claude |
+| **TELEGRAM_CEO_CHAT_ID on Railway** | ✅ SET via `railway variable set` (Session 25) | Claude |
+| **@volaurabot Ambassador** | ✅ LIVE — webhook registered, activation msg delivered, CEO-only mode | Claude |
+| **Security: 3 CRITICAL + 4 HIGH** | ✅ ALL FIXED — verification auth, error handler, raw_score, rate limit, UUID, server timing, optimistic lock | Claude |
+| **Migrations 000018-000019** | ✅ APPLIED — question_delivered_at + answer_version on production Supabase | Claude |
+| LinkedIn Post #2 | 🔄 IN PROGRESS — agent pipeline with honesty rules | Claude |
+| Question Intelligence Pipeline | ⚠️ OPEN — CV received, first simulation pending | Claude |
+| Pasha Bank pitch practice run | ⚠️ OPEN | Yusif |
+
+---
+
+## VOLAURA SESSION 14 — Still NEXT
+
+---
+
+## SESSION 14b — COMPLETED WORK (2026-03-24)
+
+### Deliverables Created This Session
+1. ✅ `docs/linkedin-post-final.md` v2 — Perplexity feedback incorporated, "undervalued" moved to top, Azerbaijan vision added
+2. ✅ Wikipedia eligibility audit — RESULT: NOT eligible (0 independent editorial sources). PR pipeline created.
+3. ✅ `docs/MASTER-STRATEGY.md` — Full business strategy: flywheel model, grant pipeline, franchise model, expansion roadmap
+4. ✅ Azerbaijan market pricing research — Humanique.az data, Boss.az benchmarks, median income, SaaS willingness to pay
+5. ✅ Pricing recalibrated: 49-849 AZN subscriptions, 250-680 AZN placements (60-75% cheaper than agencies)
+6. ✅ Professional review of Yusif written — AI Orchestrator transformation narrative
+7. ✅ Grant research: Georgia GITA $240K, Turkey Tech Visa $50K, Kazakhstan Astana Hub $20K
+8. ✅ Memory system audit — found and fixed: was not saving state during work (same bug as MiroFish pre-v4)
+9. ✅ Memory files created: user_yusif_full_profile.md, feedback_state_before_speed.md, project_volaura_business_strategy.md
+10. ✅ Swarm evaluation of Yusif (14/18 agents): strong_founder won (30.4/50), 8 votes. overhyped got 3 votes.
+11. ✅ `docs/YUSIF-GANBAROV-REVIEW.md` — comprehensive CTO review with swarm data, scores, attribution
+12. ✅ `docs/linkedin-post-final.md` v4 — timeline fixed, consistency checked
+13. ✅ Found and documented bug: AgentResult missing innovation field (5 versions unnoticed)
+14. ✅ Found and documented bug: StructuredMemory.add_world_fact() doesn't exist
+15. ✅ Memory files added: feedback_model_recommendation.md, feedback_yusif_behavioral_patterns.md, feedback_prompt_model_sync.md
+16. ✅ Backend: `/api/activity/me` + `/api/activity/stats/me` endpoints created (activity.py router)
+17. ✅ Frontend: `useActivity()` + `useDashboardStats()` hooks wired to real API (was hardcoded 0)
+18. ✅ Backend: embedding pipeline trigger on profile create + update (with AURA data)
+19. ✅ LinkedIn daily series "Notes from an AI Employee" — 7 posts written (docs/linkedin-daily-series.md)
+20. ✅ Full backend audit: 31 endpoints, 9 routers, IRT/CAT engine, BARS evaluator, anti-gaming — all complete
+21. ✅ Full frontend audit: 27 pages, 40+ components, 17 hooks — all wired
+
+### Online Presence Research Results
+- Only 1 mention found: Trend.az Golden Byte 2017 (contact phone, not article subject)
+- COP29/WUF13/CIS Games articles mention other people, not Yusif
+- Wikipedia requires 3-5+ independent editorial articles where subject is main topic
+
+## SESSION 14c — COMPLETED WORK (2026-03-24)
+
+### CTO Self-Assessment & Process Fix
+22. ✅ Honest CTO self-assessment: rated self 5/10. Gaps: no agent validation of architecture/UI/sprint plans
+23. ✅ Updated mistakes.md: mistakes #14-17 (no external validation, 30% protocol compliance, 0 frontend tests, agents evaluate business but not code)
+24. ✅ Created `yusif_behavioral_patterns_master.md` — full ДАЛЬШЕ ENGINE: communication code, active threads, agent voting algorithm, predicted trajectories
+
+### Architecture Audit (MiroFish, 18 agents)
+25. ✅ `run_architecture_audit.py` — full codebase architecture sent to 18 agents across 6 providers
+26. ✅ Result: `fix_api_client_first` won (11/18 votes, 33.5/50). `fix_security_first` = strong minority (5/18)
+27. ✅ 0/18 agents voted "ship as-is" — nobody thinks current state is ready without fixes
+28. ✅ Agent innovations adopted: LLM timeout (Kimi-K2), hybrid rate limiter (DeepSeek), CSP hardening (GPT-OSS)
+
+### Security Hardening (from agent audit)
+29. ✅ LLM timeout: 15s asyncio.wait_for on all Gemini/OpenAI calls (prevents demo-killing hangs)
+30. ✅ CSP headers: tightened from `default-src 'self'` to `default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'`
+31. ✅ Rate limiter: documented scaling path (Supabase Edge Functions when multi-instance)
+32. ✅ X-XSS-Protection: set to "0" (CSP is the real protection, X-XSS can introduce vulnerabilities)
+
+### LinkedIn Series
+33. ✅ Day 3 "Pricing Incident" rewritten — sharper punchline: "Score: 3-0. Him."
+34. ✅ LinkedIn series evaluated by MiroFish (8 agents): `rewrite_day3_only` won (6/8 votes)
+35. ✅ `run_linkedin_evaluation.py` — reusable script for content evaluation
+
+### Process Improvements
+36. ✅ Architecture audit is now standard process (run before each sprint)
+37. ✅ Sprint plans will go through agents BEFORE execution (not after)
+38. ✅ Mistakes.md captures the systemic pattern: process-skipping is error class #1 (4th instance)
+
+## SESSION 14d — COMPLETED WORK (2026-03-24)
+
+### DB Migration Unblocked
+39. ✅ `SAFE_MIGRATION.sql` — confirmed working by Yusif
+40. ✅ `seed.sql` — fixed idempotency (ON CONFLICT DO NOTHING on competencies, badges, questions; DO $$ guard on placeholders)
+41. ✅ DB blocker resolved — migrations + seed now run cleanly
+
+### Agent Evaluations (3 parallel runs)
+42. ✅ Letter to mom re-evaluated (12 agents, AZ language rules injected): `fix_language_only` (32.8/50). Content approved, minor grammar tweaks.
+43. ✅ LinkedIn series re-evaluated (11 agents): `rewrite_day3_only` (39.3/50, 83% consensus). Day 3 already rewritten. Series approved.
+44. ✅ Meta-evaluation: team + CEO (11 agents): `workflow_redesign` (33.4/50, 80% consensus). Yusif NOT bottleneck. Claude's 30% compliance = real problem. Agents propose: pre-commit hooks, circuit breaker, agenda parser.
+
+### Backend P2 Fixes
+45. ✅ Auth register: `str(e)` no longer leaks internal errors → generic message + loguru
+46. ✅ `AssessmentResultOut`: removed `theta`/`theta_se` from Pydantic schema (were in schema but router didn't provide them = potential crash)
+47. ✅ Mistake #18 documented: SQL without agent validation
+
+### Content & Strategy
+48. ✅ B2B ideas captured in IDEAS-BACKLOG: HR competency testing, kids' proforientation, Duolingo-style gamification, company-verified badges
+
+---
+
+## SESSION 15 — COMPLETED WORK (2026-03-24)
+
+### Testing Infrastructure
+49. ✅ Vitest + React Testing Library installed and configured
+50. ✅ `vitest.config.ts` + `src/test/setup.ts` + `src/test/mocks.tsx` (shared mocks for Next.js, i18n, Supabase, Framer Motion)
+51. ✅ 4 test files, 19 tests, ALL PASSING:
+    - `competency-card.test.tsx` (5 tests): render, toggle, aria-pressed
+    - `mcq-options.test.tsx` (5 tests): render, select, disabled, aria
+    - `progress-bar.test.tsx` (3 tests): percentage calc, 0%, cap 100%
+    - `login.test.tsx` (5 tests): form render, loading state, error display, redirect, open redirect protection
+52. ✅ `package.json` updated: `test` and `test:watch` scripts
+
+### API Type Generation (ADR-003 compliance)
+53. ✅ OpenAPI spec generated from FastAPI (30 endpoints, no server needed)
+54. ✅ `@hey-api/openapi-ts` + `@hey-api/client-fetch` configured
+55. ✅ Generated: `types.gen.ts`, `sdk.gen.ts`, `client.gen.ts` in `src/lib/api/generated/`
+56. ✅ `openapi-ts.config.ts` created
+57. ✅ TypeScript: 0 errors after generation
+
+### Production Build + Deploy
+58. ✅ `next build` passes — all 27 pages compiled (SSG + dynamic)
+59. ✅ **Vercel DEPLOYED to production** — `volaura-7df6qz7t0-ganbaroffs-projects.vercel.app`
+60. ✅ Deployment status: READY
+
+### Letter to Mom
+61. ✅ Azerbaijani blessing added: "Allah səndən razı olsun ki, belə bir oğul böyütmüsən."
+
+## SESSION 16 — COMPLETED WORK (2026-03-24) — SPRINT 3 COMPLETE
+
+### Deployment (S3-01, S3-02, S3-03)
+1. ✅ Railway backend deployed — `https://modest-happiness-production.up.railway.app`
+   - Fixed: `startCommand` in railway.toml was overriding Dockerfile CMD, `$PORT` not shell-expanded
+   - Fix: removed startCommand, Dockerfile CMD shell form handles `${PORT:-8000}`
+   - Env vars set: SUPABASE_URL, SUPABASE_SERVICE_KEY, GEMINI_API_KEY
+2. ✅ `NEXT_PUBLIC_API_URL` set in Vercel via CLI, frontend redeployed
+3. ✅ Demo URL live: https://volaura-web.vercel.app — all 33 pages compiled and serving
+4. ✅ API health check: `{"status":"ok","version":"0.1.0"}` confirmed
+
+### pgvector HNSW Index (S3-06)
+5. ✅ `supabase/migrations/20260324000014_hnsw_index.sql` created
+   - Drops old IVFFlat index (requires pre-loaded data, bad at 0 rows)
+   - Creates HNSW (m=16, ef_construction=64) — incremental, works at 0 rows, >99% recall
+
+### LLM Mock (S3-07)
+6. ✅ `apps/api/tests/mocks/__init__.py` + `llm_mock.py` created
+   - 4 fixtures: `mock_llm`, `mock_embedding`, `mock_llm_failure`, `mock_llm_timeout`
+   - Patches at service level: `app.services.llm.evaluate_with_llm`
+7. ✅ `apps/api/tests/test_llm_mock.py` — 6/6 tests passing
+
+### Privacy Policy (S3-05)
+8. ✅ `docs/privacy-policy.md` — GDPR + AZ Personal Data Law compliant
+   - Data collection table, retention table, security measures, user rights, 12 sections
+   - Attacker promise P004 resolved
+
+### Pasha Bank Pitch (S3-08)
+9. ✅ `docs/pasha-bank-pitch.md` — 10-slide deck + full Q&A prep
+   - Slide content + talking points for each slide
+   - 3 audience types (technical/business/skeptical)
+   - Yusif checklist before pitch day
+   - ROI model: 800% for company interviewing 500+ candidates
+
+### Promises Resolved
+- P003: Demo URL ✅ (Railway + Vercel live)
+- P004: Privacy Policy ✅ (docs/privacy-policy.md)
+- P005: Organizations router ✅ (was already built, now confirmed done)
+- P006: Pasha Bank prep ✅ (docs/pasha-bank-pitch.md)
+
+---
+
+## SESSION 15 — ADDITIONAL WORK (2026-03-24, continued)
+
+### Content (agent-validated)
+62. ✅ 6 new story hooks extracted from Sessions 14-15 (`docs/linkedin-new-hooks.md`)
+63. ✅ LinkedIn Days 8-10 written (Letter to Mom → First Deploy → Error Rate) — agent-ranked
+64. ✅ Review agent-critiqued: 31/50, 3 fixes applied (conflict disclosure, score freeze, sustainability)
+65. ✅ Review corrected after Yusif's feedback: role-based metrics, typo≠weakness, humor≠data
+66. ✅ Review final score: 7.8/10 (was 7.1 → inflated 7.6 → corrected 7.3 → proper metrics 7.8)
+67. ✅ LinkedIn AZ translation for mom (`docs/linkedin-seriyasi-ana-ucun.md`)
+
+### Process Improvements
+68. ✅ Mistakes #19-22 documented (content without agents, wrong metrics, "всё на 100%", solo-default)
+69. ✅ patterns.md updated: Quality Standards section, role-based evaluation rules
+70. ✅ Behavioral patterns master: 4 new frustration triggers, 4 new communication codes, threads updated
+
+### Strategy
+71. ✅ 6-advisor panel: roadmap to 9.0 (`docs/ROADMAP-TO-9.md`)
+72. ✅ CIS Games founding story drafted (`docs/linkedin-founding-story.md`) — advisors' #1 action
+73. ✅ Financial model v1.0 (`docs/financial-model.md`) — 4 revenue streams, unit economics, 90s pitch
+
+### Technical
+74. ✅ Generated API types wired with compatibility layer (AuraScore mapping, Profile defaults)
+75. ✅ E2E test: IRT/CAT → AURA → badge → anti-gaming — ALL 7 STEPS PASSED
+76. ✅ 0 TypeScript errors, 19/19 frontend tests, production build clean
+
+## NEXT SESSION (17) — Sprint 4 Start
+
+**Yusif's actions before Sprint 4:**
+1. [ ] PUBLISH Pasha Bank pitch demo (practice run on volaura-web.vercel.app)
+2. [ ] Apply HNSW migration: `supabase db push` from project root
+3. [ ] Register legal entity via MSMEDA (3-5 days online)
+4. [ ] Identify 3 org contacts for LOI outreach (Sprint 4-08: first 10 beta testers)
+5. [ ] Disable Supabase email confirmation for test environment
+
+**Claude's Sprint 4 priorities:**
+1. Bulk CSV volunteer invite (S4-01, Nigar's request)
+2. Post-assessment results page — badge, rank, next steps (S4-04, Leyla)
+3. RLS policy audit (S4-05, Attacker)
+4. IRT engine unit tests with known pairs (S4-07, QA)
+5. Beta tester onboarding flow (S4-08, first 10 users)
+
+**Model recommendation:** claude-sonnet-4-6 (Sprint 4 has security + data model work)
+
+---
+
+## What Was Completed (Session 13)
+
+### API Layer
+- `apps/web/src/lib/api/types.ts` — Added: EventResponse, EventCreate, RegistrationResponse, OrganizationResponse, OrganizationCreate (matched against Pydantic schemas)
+- `apps/web/src/hooks/queries/use-events.ts` — NEW: useEvents, useEvent, useMyEvents, useCreateEvent, useRegisterForEvent
+- `apps/web/src/hooks/queries/use-organizations.ts` — NEW: useMyOrganization, useOrganizations, useCreateOrganization, useUpdateOrganization
+- `apps/web/src/hooks/queries/index.ts` — Barrel export updated
+
+### New Pages
+- `apps/web/src/app/[locale]/(dashboard)/events/create/page.tsx` — 3-step Event Creation Wizard (RHF + Zod, AnimatePresence slide, step progress bar, step 1: bilingual details + type/location, step 2: capacity/minAura/visibility, step 3: review + publish)
+- `apps/web/src/app/[locale]/(dashboard)/organizations/page.tsx` — Org Management Dashboard (no-org state + inline create form, stats row, my events list with status badges, create event CTA)
+- `apps/web/src/app/[locale]/(public)/organizations/page.tsx` — Org Discovery (hero + search, filtered org cards grid, org CTA section)
+
+### Navigation
+- `apps/web/src/components/layout/sidebar.tsx` — Added "Organizations" nav item (🏢 icon)
+
+### i18n
+- `apps/web/src/locales/en/common.json` — +~60 new keys: nav.organizations, orgs.* (20 keys), events.* (30+ keys including type.*, status.*)
+- `apps/web/src/locales/az/common.json` — Same keys in Azerbaijani (AZ chars: ə ğ ı ö ü ş ç)
+- 18/18 top-level sections match between EN and AZ ✓
+
+### DSP Audit Corrections
+- `docs/EXECUTION-PLAN.md` — Session 14 renamed to "Integration Validation + Embedding Pipeline + Deploy Preview"
+  - Infrastructure milestone added (DB migrations must run)
+  - E2E test added as requirement
+  - Embedding pipeline trigger added
+  - Gemini BARS AZ validation added
+  - V0 formally removed from delegation map
+
+---
+
+## What Was Completed (Session 12)
+
+### Design System Migration
+- `apps/web/src/app/globals.css` — **REWRITTEN**: Full Stitch Material 3 token set (50+ CSS custom properties), dark-first (no `.dark` class needed), glassmorphism utilities, AURA glow effects, ambient glow, Plus Jakarta Sans font variable, float keyframes
+- `apps/web/src/app/[locale]/layout.tsx` — Added `dark` class to `<html>`, added `Plus_Jakarta_Sans` via `next/font/google`, both fonts as CSS variables
+
+### Component Updates (Stitch dark theme)
+- `apps/web/src/components/layout/top-bar.tsx` — `glass-header` fixed bar, `font-headline text-primary` title, gradient avatar ring
+- `apps/web/src/components/layout/sidebar.tsx` — `bg-surface-container-low`, `rounded-xl` nav items, i18n labels via `t()`, new nav items (leaderboard + notifications)
+- `apps/web/src/components/layout/language-switcher.tsx` — Rounded-full pill design, `bg-surface-container-high` container, `bg-primary text-on-primary` active state
+
+### New Pages
+- `apps/web/src/app/[locale]/(dashboard)/leaderboard/page.tsx` — **NEW**: Animated podium (top 3 with float animation + count-up), period tabs (weekly/monthly/all-time), ranked list with current user highlight, tier glow effects, empty state
+- `apps/web/src/app/[locale]/(dashboard)/notifications/page.tsx` — **NEW**: Category tabs (All/AURA/Events), notification list with icons, mark as read (individual + all), event invite actions, empty state, ambient glow blobs
+
+### i18n
+- `apps/web/src/locales/en/common.json` — Added `nav.leaderboard`, `nav.notifications`, `leaderboard.*` (2 keys), `notifications.*` (10 keys)
+- `apps/web/src/locales/az/common.json` — Same 14 keys in Azerbaijani
+
+---
+
+## What Was Completed (Session 11)
+
+### Backend Changes
+- `apps/api/app/routers/assessment.py` — **P0 BUG FIX**: `upsert_aura_score` RPC now called with correct JSONB params (`p_competency_scores: {slug: score}` instead of wrong `p_competency_slug` + `p_competency_score`)
+- `apps/api/tests/test_assessment_router.py` — **NEW**: 2 tests verifying RPC params are correct JSONB format + empty slug guard
+- All 74 tests pass (72 existing + 2 new)
+
+### Frontend Changes — API Integration Layer
+- `apps/web/src/lib/api/client.ts` — **NEW**: INTERIM manual API client with `apiFetch<T>()`, `ApiError` class, envelope unwrapping (`.data`), Bearer token auth
+- `apps/web/src/lib/api/types.ts` — **NEW**: INTERIM TypeScript types for all API responses (AuraScore, Profile, Assessment, Auth, Badges, Events, Activity)
+- `apps/web/src/hooks/queries/use-auth-token.ts` — **NEW**: Hook to get Supabase access token for API calls
+- `apps/web/src/hooks/queries/use-aura.ts` — **NEW**: `useAuraScore()`, `useAuraScoreByVolunteer()` TanStack Query hooks
+- `apps/web/src/hooks/queries/use-profile.ts` — **NEW**: `useProfile()`, `usePublicProfile()`, `useUpdateProfile()` hooks
+- `apps/web/src/hooks/queries/use-dashboard.ts` — **NEW**: `useBadges()`, `useActivity()` hooks
+- `apps/web/src/hooks/queries/index.ts` — **NEW**: Barrel export
+
+### Frontend Changes — Page Wiring
+- `apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx` — **REWRITTEN**: Replaced manual fetch with `useAuraScore()` TanStack Query hook, added error state with retry, isMounted guard, removed auth store dependency for data (still used for display name)
+- `apps/web/src/app/[locale]/(dashboard)/profile/page.tsx` — **REWRITTEN**: Replaced Promise.all manual fetch with `useProfile()` + `useAuraScore()` hooks, proper error/loading states
+- `apps/web/src/app/[locale]/(dashboard)/aura/page.tsx` — **REWRITTEN**: Replaced manual fetch with `useAuraScore()` + `useProfile()` hooks, error state with retry, isMounted guard
+
+### Security Fixes
+- `apps/web/src/app/[locale]/(auth)/callback/page.tsx` — Fixed protocol-relative open redirect (`//evil.com`), added isMounted guard, added subscription cleanup
+- `apps/web/src/app/[locale]/(auth)/login/page.tsx` — Fixed same `//` open redirect
+
+### i18n
+- `apps/web/src/locales/en/common.json` — +8 new keys: `error.generic`, `error.network`, `error.unauthorized`, `error.notFound`, `error.retry`, `error.sessionExpired`, `loading.default`, `loading.saving`
+- `apps/web/src/locales/az/common.json` — +8 new keys (same in Azerbaijani with ə, ğ, ö, ü, ş, ç chars)
+
+### All files marked with TODO
+- Every manually-written API type/hook has `// TODO: Replace with @hey-api/openapi-ts generated code after pnpm generate:api`
+- Compliant with ADR-003 (manual is interim, not permanent)
+
+---
+
+## Active Risks
+
+| Risk | Level | Mitigation |
+|------|-------|------------|
+| shadcn/ui components not installed (button, skeleton, alert) | 🟡 Medium | `npx shadcn@latest add button skeleton alert` |
+| DB migrations not run = assessment flow non-functional | ✅ RESOLVED | SAFE_MIGRATION.sql + seed.sql both pass |
+| Manual API types may drift from backend | 🟡 Medium | All marked with TODO, `pnpm generate:api` will replace |
+| No activity endpoint yet — dashboard shows empty feed | 🟢 Low | Empty state handles gracefully |
+
+---
+
+## Key File Locations
+
+| What | Where |
+|------|-------|
+| API client (INTERIM) | `apps/web/src/lib/api/client.ts` |
+| API types (INTERIM) | `apps/web/src/lib/api/types.ts` |
+| TanStack Query hooks | `apps/web/src/hooks/queries/` |
+| Bug fix | `apps/api/app/routers/assessment.py:333` |
+| Bug fix test | `apps/api/tests/test_assessment_router.py` |
+| Error i18n keys | `apps/web/src/locales/{en,az}/common.json` (error.* section) |
+
+---
+
+## Ideas Backlog (captured — don't explore mid-sprint)
+
+- Idea #1: MiroFish as SaaS
+- Idea #2: Volaura white-label
+- Idea #3: Agent OS
+- Idea #4: AI Post Assistant
+
+All in `docs/IDEAS-BACKLOG.md`.

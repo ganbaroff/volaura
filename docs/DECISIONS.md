@@ -1,5 +1,18 @@
 # Architecture Decisions Log
 
+## Session 27 Retrospective — 2026-03-25
+
+✓ All 3 post-retro sprint tasks confirmed complete (schema fix + team_leads wiring + cleanup)
+✓ GET /organizations = 200 with correct `verified_at` / `website` fields — 500 error resolved
+✓ openapi.json regenerated from production Railway URL (not stale localhost)
+✓ Frontend types (types.gen.ts) regenerated — `is_verified` gone, `verified_at` correct
+✓ Swarm daily run auto-committed at 09:00 Baku (e055a91) — confirms GitHub Actions fully operational
+✗ openapi.json had stale is_verified because generate:api uses localhost — added workaround: run openapi-ts directly against file path
+→ Next: Sprint 9 growth features — CSV volunteer invite, post-assessment results page, beta tester onboarding
+
+**GET /organizations status: 200 ✅ | openapi.json: synced ✅ | github: pushed ✅**
+**Model recommendation:** claude-sonnet-4-6 (Sprint 9 has data model + RLS work)
+
 ## Session 24 Retrospective — 2026-03-25
 
 ✓ CRIT-02 fixed: verification-link endpoint now requires volunteer_id == user_id (3 lines + 2 tests)

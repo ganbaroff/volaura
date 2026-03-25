@@ -184,7 +184,30 @@ class SwarmEngine:
             logger.error("No providers available.")
             return SwarmReport(config=config)
 
-        report = await self.pm.run(config, self.providers)
+        # v8: Domain-aware provider selection via TeamLead.
+        # GENERAL → full pool (round-robin, no domain bias).
+        # Specific domain → filter through TeamLead preferred pool with fallback.
+        # Fallback: if filtering would empty the pool, use full pool minus avoided models.
+        active_providers = self.providers
+        if config.domain != DomainTag.GENERAL:
+            from .team_leads import get_tilead_for_domain
+            tilead = get_tilead_for_domain(config.domain)
+            filtered = tilead.filter_providers(self.providers)
+            if filtered:
+                active_providers = filtered
+                logger.info(
+                    "TeamLead({domain}): {n}/{total} providers active",
+                    domain=config.domain.value,
+                    n=len(filtered),
+                    total=len(self.providers),
+                )
+            else:
+                logger.warning(
+                    "TeamLead({domain}): filtered pool empty — using full pool",
+                    domain=config.domain.value,
+                )
+
+        report = await self.pm.run(config, active_providers)
 
         # Store in memory
         decision_id = self.memory.store_decision(report)

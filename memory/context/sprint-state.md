@@ -6,11 +6,11 @@
 ---
 
 ## Last Updated
-2026-03-25 | Session 29: **Phase 1 Trust Architecture DONE. DB: sharing_permissions table + role_level + visibility columns. API: 3 new endpoints (visibility, sharing, role-aware sessions). RLS updated. 5-agent plan review → BEST-PRACTICES.md created (21 rules). IDEAS-BACKLOG: 4 new ideas (#7-#10). Mistakes #36-#38 recorded.**
+2026-03-25 | Session 30: **All sprint plan tasks done. BUG-01 fixed (swarm path now returns EvaluationResult, evaluation_log stored for Phase 2). Security patches: CRIT-04, CRIT-05, HIGH-05, rate limiting. Agent infra: shared-context.md + agent-feedback-log.md + agent-roster.md. Verified: team_leads already wired in engine.py (v8, lines 187-208). Orgs schema already correct. File cleanup agent running.**
 
 ## Declaring Line (copy-paste at session start)
 ```
-▶ Session resumed. Phase 1 Trust Architecture complete. DB migration #21 applied (sharing_permissions + visibility + role_level). 3 new API endpoints live. BEST-PRACTICES.md created. Next: Phase 2 (Transparent Evaluation Logs) + deploy to Railway. Protocol v4.0 loaded.
+▶ Session resumed. Sprint 8 backend work complete. Phase 1+2 live + security patched + BUG-01 fixed. Next: Phase 3 (adoption UX + org discovery endpoint GET /volunteers/discovery). File cleanup may still be pending. Protocol v4.0 loaded.
 ```
 
 ---
@@ -113,6 +113,8 @@ Self-upgrade reports: `self_upgrade_v5_report.json`, `v6_report.json`, `v6_summa
 | **TELEGRAM_CEO_CHAT_ID on Railway** | ✅ SET via `railway variable set` (Session 25) | Claude |
 | **@volaurabot Ambassador** | ✅ LIVE — webhook registered, activation msg delivered, CEO-only mode | Claude |
 | **Security: 3 CRITICAL + 4 HIGH** | ✅ ALL FIXED — verification auth, error handler, raw_score, rate limit, UUID, server timing, optimistic lock | Claude |
+| **BUG-01: swarm evaluation_log** | ✅ FIXED (2026-03-25) — swarm path now returns EvaluationResult, Phase 2 works for swarm + BARS | Claude |
+| **Phase 1+2 security patches** | ✅ FIXED (2026-03-25) — CRIT-04, CRIT-05, HIGH-05, rate limit on /aura/{id} | Claude |
 | **Migrations 000018-000019** | ✅ APPLIED — question_delivered_at + answer_version on production Supabase | Claude |
 | LinkedIn Post #2 | 🔄 IN PROGRESS — agent pipeline with honesty rules | Claude |
 | Question Intelligence Pipeline | ⚠️ OPEN — CV received, first simulation pending | Claude |

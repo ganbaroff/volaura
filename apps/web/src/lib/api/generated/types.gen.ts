@@ -30,7 +30,7 @@ export type AssessmentResultOut = {
 
 export type AuraScoreResponse = {
     volunteer_id: string;
-    overall_score: number;
+    total_score: number;
     badge_tier: string;
     elite_status: boolean;
     competency_scores: {

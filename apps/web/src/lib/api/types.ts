@@ -21,7 +21,7 @@ export type {
 } from "./generated/types.gen";
 
 // ── AuraScore (compatibility alias) ──
-// Generated type is `AuraScoreResponse` with `overall_score` / `elite_status`
+// Generated type is `AuraScoreResponse` with `total_score` / `elite_status`
 // Hooks and dashboard use `AuraScore` with `total_score` / `is_elite`
 // This adapter keeps existing code working while we migrate
 import type { AuraScoreResponse } from "./generated/types.gen";
@@ -30,7 +30,7 @@ export type BadgeTier = "platinum" | "gold" | "silver" | "bronze" | "none";
 
 export type AuraScore = {
   volunteer_id: string;
-  total_score: number;          // maps from overall_score
+  total_score: number;          // maps from total_score (was overall_score in stale generated type)
   badge_tier: BadgeTier;
   is_elite: boolean;            // maps from elite_status
   competency_scores: Record<string, number>;
@@ -50,7 +50,7 @@ export type AuraScore = {
 export function toAuraScore(raw: AuraScoreResponse): AuraScore {
   return {
     volunteer_id: raw.volunteer_id,
-    total_score: raw.overall_score,
+    total_score: raw.total_score,
     badge_tier: (raw.badge_tier as BadgeTier) || "none",
     is_elite: raw.elite_status,
     competency_scores: raw.competency_scores,

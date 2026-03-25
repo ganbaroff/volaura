@@ -28,6 +28,28 @@ export type AssessmentResultOut = {
     completed_at?: string | null;
 };
 
+/**
+ * Assign one or more competency assessments to specific volunteers.
+ */
+export type AssignAssessmentRequest = {
+    volunteer_ids: Array<string>;
+    competency_slugs: Array<string>;
+    deadline_days?: number;
+    message?: string | null;
+};
+
+/**
+ * Result of assignment operation.
+ */
+export type AssignmentResponse = {
+    assigned_count: number;
+    skipped_count: number;
+    errors?: Array<string>;
+    assignments?: Array<{
+        [key: string]: unknown;
+    }>;
+};
+
 export type AuraScoreResponse = {
     volunteer_id: string;
     total_score: number;
@@ -42,7 +64,7 @@ export type AuraScoreResponse = {
     events_no_show?: number;
     percentile_rank?: number | null;
     aura_history?: Array<unknown>;
-    calculated_at?: string | null;
+    last_updated?: string | null;
 };
 
 export type AuthResponse = {
@@ -159,10 +181,9 @@ export type LoginRequest = {
 export type OrganizationCreate = {
     name: string;
     description?: string | null;
-    website_url?: string | null;
+    website?: string | null;
     logo_url?: string | null;
     contact_email?: string | null;
-    is_verified?: boolean;
 };
 
 export type OrganizationResponse = {
@@ -170,10 +191,10 @@ export type OrganizationResponse = {
     owner_id: string;
     name: string;
     description?: string | null;
-    website_url?: string | null;
+    website?: string | null;
     logo_url?: string | null;
     contact_email?: string | null;
-    is_verified: boolean;
+    verified_at?: string | null;
     subscription_tier: string;
     trust_score?: number | null;
     created_at: string;
@@ -183,7 +204,7 @@ export type OrganizationResponse = {
 export type OrganizationUpdate = {
     name?: string | null;
     description?: string | null;
-    website_url?: string | null;
+    website?: string | null;
     logo_url?: string | null;
     contact_email?: string | null;
 };
@@ -251,7 +272,9 @@ export type QuestionOut = {
     question_type: string;
     question_en: string;
     question_az: string;
-    options?: Array<string> | null;
+    options?: Array<{
+        [key: string]: unknown;
+    }> | null;
     competency_id: string;
 };
 
@@ -386,6 +409,24 @@ export type HealthCheckHealthGetResponses = {
 };
 
 export type HealthCheckHealthGetResponse = HealthCheckHealthGetResponses[keyof HealthCheckHealthGetResponses];
+
+export type EnvDebugHealthEnvDebugGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/health/env-debug';
+};
+
+export type EnvDebugHealthEnvDebugGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type EnvDebugHealthEnvDebugGetResponse = EnvDebugHealthEnvDebugGetResponses[keyof EnvDebugHealthEnvDebugGetResponses];
 
 export type RegisterApiAuthRegisterPostData = {
     body: RegisterRequest;
@@ -1141,6 +1182,31 @@ export type SearchVolunteersApiOrganizationsSearchVolunteersPostResponses = {
 };
 
 export type SearchVolunteersApiOrganizationsSearchVolunteersPostResponse = SearchVolunteersApiOrganizationsSearchVolunteersPostResponses[keyof SearchVolunteersApiOrganizationsSearchVolunteersPostResponses];
+
+export type AssignAssessmentsApiOrganizationsAssignAssessmentsPostData = {
+    body: AssignAssessmentRequest;
+    path?: never;
+    query?: never;
+    url: '/api/organizations/assign-assessments';
+};
+
+export type AssignAssessmentsApiOrganizationsAssignAssessmentsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AssignAssessmentsApiOrganizationsAssignAssessmentsPostError = AssignAssessmentsApiOrganizationsAssignAssessmentsPostErrors[keyof AssignAssessmentsApiOrganizationsAssignAssessmentsPostErrors];
+
+export type AssignAssessmentsApiOrganizationsAssignAssessmentsPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: AssignmentResponse;
+};
+
+export type AssignAssessmentsApiOrganizationsAssignAssessmentsPostResponse = AssignAssessmentsApiOrganizationsAssignAssessmentsPostResponses[keyof AssignAssessmentsApiOrganizationsAssignAssessmentsPostResponses];
 
 export type GetOpenBadgeCredentialApiBadgesVolunteerIdCredentialGetData = {
     body?: never;

@@ -85,7 +85,9 @@ export function EventCard({ event, locale }: EventCardProps) {
         <div className="flex flex-col gap-1.5 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <Calendar className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-            <span>{formatDate(event.startDate, locale)}</span>
+            {/* suppressHydrationWarning: toLocaleDateString output differs between
+                Node.js (server, limited ICU) and browser (full locale support) */}
+            <span suppressHydrationWarning>{formatDate(event.startDate, locale)}</span>
           </div>
           <div className="flex items-center gap-2">
             <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />

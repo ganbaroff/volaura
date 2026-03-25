@@ -140,7 +140,7 @@ export default function EventDetailPage() {
               <Calendar className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
               <div>
                 <p className="text-xs font-medium text-muted-foreground">{t("events.date")}</p>
-                <p className="text-sm font-semibold text-foreground">
+                <p className="text-sm font-semibold text-foreground" suppressHydrationWarning>
                   {formatDate(event.startDate, locale)}
                 </p>
               </div>

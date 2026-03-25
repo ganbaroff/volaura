@@ -113,9 +113,9 @@ export default function AuraPage() {
     );
   }
 
-  // ── Empty state ──
+  // ── Empty state — also catches aura record with no total_score yet ──
 
-  if (!aura) {
+  if (!aura || aura.total_score == null) {
     return (
       <>
         <TopBar title={t("aura.title")} />
@@ -155,9 +155,9 @@ export default function AuraPage() {
             <p className="text-sm text-muted-foreground">{t("aura.overallScore")}</p>
             <p
               className="text-6xl font-black tabular-nums text-foreground"
-              aria-label={`${t("aura.overallScore")}: ${aura.total_score.toFixed(1)}`}
+              aria-label={`${t("aura.overallScore")}: ${(aura.total_score ?? 0).toFixed(1)}`}
             >
-              {animatedScore.toFixed(1)}
+              {(animatedScore ?? 0).toFixed(1)}
             </p>
           </motion.div>
 

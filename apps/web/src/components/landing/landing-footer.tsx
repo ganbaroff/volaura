@@ -50,8 +50,8 @@ export function LandingFooter({ locale }: LandingFooterProps) {
             </Link>
           </nav>
 
-          {/* Copyright */}
-          <p className="text-xs text-muted-foreground">
+          {/* Copyright — suppressHydrationWarning: year computed at render time */}
+          <p className="text-xs text-muted-foreground" suppressHydrationWarning>
             © {year} Volaura. {t("landing.footerRights")}
           </p>
         </div>

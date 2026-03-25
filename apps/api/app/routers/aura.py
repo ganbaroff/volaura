@@ -66,6 +66,63 @@ async def get_aura_by_id(
     return AuraScoreResponse(**result.data)
 
 
+@router.get("/me/explanation")
+async def get_aura_explanation(
+    db: SupabaseUser,
+    user_id: CurrentUserId,
+):
+    """Get detailed explanation of AURA score — per-competency breakdown with evaluation logs.
+    Phase 2: Transparent Evaluation Logs — 'Show Your Work'.
+    """
+    # Get completed sessions with evaluation data
+    sessions_result = (
+        await db.table("assessment_sessions")
+        .select("competency_id,answers,role_level,completed_at")
+        .eq("volunteer_id", user_id)
+        .eq("status", "completed")
+        .order("completed_at", desc=True)
+        .execute()
+    )
+    if not sessions_result.data:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "NO_ASSESSMENTS", "message": "Complete an assessment first to see explanations"},
+        )
+
+    explanations = []
+    for session in sessions_result.data:
+        answers = session.get("answers", {})
+        items = answers.get("items", [])
+        # Collect evaluation logs from items
+        item_explanations = []
+        for item in items:
+            eval_log = item.get("evaluation_log")
+            if eval_log:
+                item_explanations.append({
+                    "question_id": item.get("question_id"),
+                    "raw_score": round(item.get("raw_score", 0), 3),
+                    "concept_scores": eval_log.get("concept_scores", {}),
+                    "model_used": eval_log.get("model_used", "unknown"),
+                    "methodology": eval_log.get("methodology", "BARS"),
+                })
+
+        if item_explanations:
+            explanations.append({
+                "competency_id": session.get("competency_id"),
+                "role_level": session.get("role_level", "volunteer"),
+                "completed_at": session.get("completed_at"),
+                "items_evaluated": len(item_explanations),
+                "evaluations": item_explanations,
+            })
+
+    return {
+        "volunteer_id": user_id,
+        "explanation_count": len(explanations),
+        "methodology_reference": "BARS (Behaviourally Anchored Rating Scale) aligned with ISO 10667-2",
+        "explanations": explanations,
+    }
+
+
 @router.patch("/me/visibility")
 async def update_visibility(
     body: UpdateVisibilityRequest,

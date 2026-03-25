@@ -39,6 +39,7 @@ class ItemRecord:
     response: int  # 0 or 1 (for open-ended: binarised via BARS threshold)
     raw_score: float  # 0.0-1.0 continuous score (BARS output)
     response_time_ms: int
+    evaluation_log: dict | None = None  # Phase 2: BARS per-concept breakdown
 
 
 @dataclass
@@ -71,6 +72,7 @@ class CATState:
                     "response": r.response,
                     "raw_score": r.raw_score,
                     "response_time_ms": r.response_time_ms,
+                    **({"evaluation_log": r.evaluation_log} if r.evaluation_log else {}),
                 }
                 for r in self.items
             ],
@@ -87,6 +89,7 @@ class CATState:
                 response=r["response"],
                 raw_score=r["raw_score"],
                 response_time_ms=r["response_time_ms"],
+                evaluation_log=r.get("evaluation_log"),
             )
             for r in data.get("items", [])
         ]
@@ -231,6 +234,7 @@ def submit_response(
     irt_c: float,
     raw_score: float,
     response_time_ms: int,
+    evaluation_log: dict | None = None,
 ) -> CATState:
     """Record a response and update theta estimate.
 
@@ -250,6 +254,7 @@ def submit_response(
         response=binary_response,
         raw_score=raw_score,
         response_time_ms=response_time_ms,
+        evaluation_log=evaluation_log,
     )
     state.items.append(record)
 

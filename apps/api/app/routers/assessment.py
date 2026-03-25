@@ -231,12 +231,14 @@ async def submit_answer(
 
     # Score the answer
     raw_score: float
+    evaluation_log: dict | None = None
     if question["type"] == "mcq":
         correct_answer: str | None = question.get("correct_answer")
         raw_score = 1.0 if (correct_answer and payload.answer.strip() == correct_answer) else 0.0
     else:
         # Open-ended → LLM evaluation (multi-model swarm or single-model BARS)
         expected_concepts: list[dict] = question.get("expected_concepts") or []
+        evaluation_log = None
         if settings.swarm_enabled:
             from app.services.swarm_service import evaluate_answer as swarm_evaluate
             raw_score = await swarm_evaluate(
@@ -245,13 +247,16 @@ async def submit_answer(
                 expected_concepts=expected_concepts,
             )
         else:
-            raw_score = await bars.evaluate_answer(
+            eval_result = await bars.evaluate_answer(
                 question_en=question["scenario_en"],
                 answer=payload.answer,
                 expected_concepts=expected_concepts,
+                return_details=True,
             )
+            raw_score = eval_result.composite
+            evaluation_log = eval_result.to_log()
 
-    # Update CAT state
+    # Update CAT state (with evaluation log if available — Phase 2: Transparent Logs)
     state = CATState.from_dict(session["answers"] or {})
     state = submit_response(
         state,
@@ -261,6 +266,7 @@ async def submit_answer(
         irt_c=float(question.get("irt_c", 0.0)),
         raw_score=raw_score,
         response_time_ms=payload.response_time_ms,
+        evaluation_log=evaluation_log,
     )
 
     # Check stopping criteria

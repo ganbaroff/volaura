@@ -50,11 +50,31 @@ Example: {{"active_listening": 0.8, "empathy": 0.6}}
 
 # ── Main entry point ─────────────────────────────────────────────────────────
 
+class EvaluationResult:
+    """Structured evaluation result with per-concept scores and metadata."""
+
+    def __init__(self, composite: float, concept_scores: dict[str, float], model_used: str):
+        self.composite = composite
+        self.concept_scores = concept_scores
+        self.model_used = model_used
+
+    def to_log(self) -> dict[str, Any]:
+        """Return evaluation log for storage in DB (Phase 2: Transparent Logs)."""
+        return {
+            "composite_score": round(self.composite, 3),
+            "concept_scores": {k: round(v, 3) for k, v in self.concept_scores.items()},
+            "model_used": self.model_used,
+            "methodology": "BARS (Behaviourally Anchored Rating Scale)",
+            "framework": "ISO 10667-2 aligned",
+        }
+
+
 async def evaluate_answer(
     question_en: str,
     answer: str,
     expected_concepts: list[dict[str, Any]],
-) -> float:
+    return_details: bool = False,
+) -> float | EvaluationResult:
     """Score an open-ended answer using BARS rubric via LLM.
 
     Args:
@@ -62,12 +82,14 @@ async def evaluate_answer(
         answer: The volunteer's raw text answer.
         expected_concepts: List of concept dicts, each with at least a `name` key.
             e.g. [{"name": "active_listening", "weight": 0.5}, ...]
+        return_details: If True, return EvaluationResult with per-concept scores.
 
     Returns:
-        Composite score 0.0–1.0.
+        Composite score 0.0–1.0 (or EvaluationResult if return_details=True).
     """
     if not answer.strip():
-        return 0.0
+        result = EvaluationResult(0.0, {}, "empty_answer")
+        return result if return_details else 0.0
 
     concept_names = [c["name"] for c in expected_concepts]
     concepts_json = json.dumps(concept_names)
@@ -80,18 +102,28 @@ async def evaluate_answer(
 
     # Try primary (Gemini) → fallback (OpenAI) → keyword rule matching
     scores: dict[str, float] | None = None
+    model_used = "unknown"
 
     scores = await _try_gemini(prompt)
+    if scores is not None:
+        model_used = "gemini-2.5-flash"
 
     if scores is None:
         logger.warning("Gemini evaluation failed — trying OpenAI fallback")
         scores = await _try_openai(prompt, concept_names)
+        if scores is not None:
+            model_used = "gpt-4o-mini"
 
     if scores is None:
         logger.warning("OpenAI evaluation failed — using keyword rule matching")
         scores = _keyword_fallback(answer, expected_concepts)
+        model_used = "keyword_fallback"
 
-    return _aggregate(scores, expected_concepts)
+    composite = _aggregate(scores, expected_concepts)
+
+    if return_details:
+        return EvaluationResult(composite, scores, model_used)
+    return composite
 
 
 # ── LLM backends ─────────────────────────────────────────────────────────────

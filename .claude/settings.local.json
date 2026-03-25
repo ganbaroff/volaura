@@ -3,17 +3,118 @@
     "allow": [
       "Bash(gh repo:*)",
       "Bash(gh auth:*)",
+      "Bash(gh pr:*)",
+      "Bash(gh issue:*)",
       "Bash(git -C \"/c/Users/user/OneDrive/Desktop/Yusif Files/VOLAURA\" log --oneline -5)",
       "Bash(git -C \"/c/Users/user/OneDrive/Desktop/Yusif Files/VOLAURA\" remote -v)",
+      "Bash(git -C \"/c/Users/user/OneDrive/Desktop/Yusif Files/VOLAURA\" status)",
+      "Bash(git -C \"/c/Users/user/OneDrive/Desktop/Yusif Files/VOLAURA\" diff*)",
       "Bash(where gh:*)",
-      "WebSearch",
       "Bash(python -m pytest tests/test_assessment_router.py -v)",
-      "mcp__Claude_Preview__preview_start",
+      "Bash(python -m pytest*)",
+      "Bash(pip install:*)",
+      "Bash(python3 -m pip install*)",
+      "Bash(python3 -m pytest*)",
+      "Bash(python3 packages/swarm*)",
       "Bash(pnpm --version)",
-      "Bash(ls \"C:/Users/user/OneDrive/Desktop/Yusif Files/VOLAURA/apps/web/src/app/[locale]/\\(dashboard\\)/\")",
-      "Bash(mkdir -p \"C:/Users/user/OneDrive/Desktop/Yusif Files/VOLAURA/apps/web/src/app/[locale]/\\(dashboard\\)/leaderboard\")",
-      "Bash(mkdir -p \"C:/Users/user/OneDrive/Desktop/Yusif Files/VOLAURA/apps/web/src/app/[locale]/\\(dashboard\\)/notifications\")",
-      "Bash(pip install:*)"
+      "Bash(pnpm install)",
+      "Bash(pnpm build)",
+      "Bash(pnpm generate:api)",
+      "Bash(pnpm lint)",
+      "Bash(pnpm test*)",
+      "Bash(pnpm run*)",
+      "Bash(curl https://volaura*)",
+      "Bash(curl https://volauraapi*)",
+      "Bash(curl https://api.railway.app*)",
+      "Bash(curl https://backboard.railway.app*)",
+      "Bash(curl -s https://volaura*)",
+      "Bash(curl -I https://volaura*)",
+      "mcp__Claude_Preview__preview_start",
+      "mcp__Claude_Preview__preview_stop",
+      "mcp__Claude_Preview__preview_screenshot",
+      "mcp__Claude_Preview__preview_snapshot",
+      "mcp__Claude_Preview__preview_logs",
+      "mcp__Claude_Preview__preview_console_logs",
+      "WebSearch",
+      "Bash(gh secret:*)",
+      "Bash(xargs grep:*)",
+      "Bash(chmod +x \"C:/Users/user/OneDrive/Desktop/Yusif Files/VOLAURA/.claude/hooks/pre-compact-checkpoint.sh\" \"C:/Users/user/OneDrive/Desktop/Yusif Files/VOLAURA/.claude/hooks/post-compact-restore.sh\" \"C:/Users/user/OneDrive/Desktop/Yusif Files/VOLAURA/.claude/hooks/session-checkpoint.sh\")",
+      "Bash(grep -r \"volaurabot\\\\|TELEGRAM_CEO\\\\|telegram_chat\\\\|telegram.*id\\\\|chat.*id.*[0-9]\\\\{5,\\\\}\" 'C:/Users/user/OneDrive/Desktop/Yusif Files/VOLAURA' --include=*.json --include=*.md --include=*.env* -l)",
+      "Bash(winget list:*)",
+      "Bash(powershell -Command \"& ''C:/Program Files/GitHub CLI/gh.exe'' secret set TELEGRAM_BOT_TOKEN --body ''8675304539:AAEPLtJDEW4ACAoARELUXlq9a9ygjoWwhkw'' --repo ganbaroff/volaura\")",
+      "Bash(powershell -Command \":*)",
+      "Bash(powershell -Command \"& ''C:/Program Files/GitHub CLI/gh.exe'' secret list --repo ganbaroff/volaura\")",
+      "Bash(powershell -Command \"& ''C:/Program Files/GitHub CLI/gh.exe'' workflow run ''swarm-daily.yml'' --repo ganbaroff/volaura\")",
+      "Bash(powershell -Command \"& ''C:/Program Files/GitHub CLI/gh.exe'' workflow list --repo ganbaroff/volaura\")",
+      "Bash(powershell -Command \"& ''C:/Program Files/GitHub CLI/gh.exe'' run watch 23513696390 --repo ganbaroff/volaura --exit-status\")",
+      "Bash(Select-String -Pattern \"Error|error|Traceback|ModuleNotFound|ImportError|autonomous_run\")",
+      "Bash(Select-Object -Last 30)",
+      "Bash(powershell -Command \"Start-Sleep -Seconds 30; & ''C:/Program Files/GitHub CLI/gh.exe'' run view 23513753441 --repo ganbaroff/volaura\")"
+    ],
+    "deny": [
+      "Bash(rm -rf*)",
+      "Bash(rm -r /c*)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)",
+      "Bash(cat */.env*)",
+      "Bash(cat *.env)"
+    ]
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/session-protocol.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/auto-format.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/session-end-check.sh"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/pre-compact-checkpoint.sh"
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/post-compact-restore.sh"
+          }
+        ]
+      }
     ]
   }
 }

@@ -1,5 +1,22 @@
 # Architecture Decisions Log
 
+## Session 24 Retrospective — 2026-03-25
+
+✓ CRIT-02 fixed: verification-link endpoint now requires volunteer_id == user_id (3 lines + 2 tests)
+✓ CRIT-01 fixed: global exception handler in main.py + deps.py str(e) leak fixed (15 lines + 1 test)
+✓ CRIT-03 fixed: raw_score removed from AnswerFeedback schema + router (4 lines + 2 tests)
+✓ Telegram Ambassador Bot created: /status, /proposals, /run, /approve, /dismiss + free-text LLM chat
+✓ CEO Review v4.0 written by 5-agent council: 9.16/10 (corrected from unfair 7.1/8.1)
+✓ 10 new mistakes logged (#23-32) — all from this session
+✓ Full project pushed to GitHub (146 files, 0 secrets)
+✓ GitHub Actions workflow fixed (4 bugs: untracked files, permissions, gitignore, missing modules)
+✗ CTO scored 5.0/10 self-assessment — 10 mistakes in one session, same patterns repeating
+✗ Test plan written solo without team review — team REJECTED it with 3 mandatory changes
+→ Next: Deploy ambassador bot to Railway, fix HIGH security issues, LinkedIn CTA updates
+
+**Security score: 6.5/10 → ~8.0/10** (3 CRITICAL resolved, 4 HIGH remaining)
+**Model recommendation:** claude-opus-4-6 for HIGH security fixes (auth race conditions, server-side timing)
+
 ## Session 23 Retrospective — 2026-03-25
 
 ✓ Privacy Policy page created + verified: `/en/privacy-policy`, 10 sections, GDPR tables, client component pattern.

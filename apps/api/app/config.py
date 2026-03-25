@@ -26,6 +26,7 @@ class Settings(BaseSettings):
     # Telegram
     telegram_bot_token: str = ""
     telegram_ceo_chat_id: str = ""
+    telegram_webhook_secret: str = "volaura-swarm-2026"  # validated on each webhook call
 
     # Stripe (MVP-1)
     stripe_secret_key: str = ""

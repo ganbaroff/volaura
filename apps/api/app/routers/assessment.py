@@ -288,9 +288,11 @@ async def submit_answer(
         update_payload["completed_at"] = datetime.now(timezone.utc).isoformat()
 
     # HIGH-01: Optimistic locking — only update if version hasn't changed
-    update_result = await db_user.table("assessment_sessions").update(
+    # BLOCKER-1 FIX: Use db_admin (service_role) for updates — user-level UPDATE policy removed
+    # to prevent direct PostgREST theta manipulation
+    update_result = await db_admin.table("assessment_sessions").update(
         update_payload
-    ).eq("id", payload.session_id).eq("answer_version", current_version).execute()
+    ).eq("id", payload.session_id).eq("volunteer_id", user_id).eq("answer_version", current_version).execute()
 
     if not update_result.data:
         raise HTTPException(
@@ -349,7 +351,8 @@ async def complete_assessment(
     if session["status"] == "in_progress":
         state.stopped = True
         state.stop_reason = "manual_complete"
-        await db_user.table("assessment_sessions").update({
+        # BLOCKER-1 FIX: Use db_admin for updates (user-level UPDATE policy removed)
+        await db_admin.table("assessment_sessions").update({
             "status": "completed",
             "theta_estimate": state.theta,
             "theta_se": state.theta_se,

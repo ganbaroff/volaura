@@ -141,6 +141,13 @@ async def telegram_webhook(request: Request) -> JSONResponse:
     if not settings.telegram_bot_token:
         return JSONResponse({"ok": False, "error": "Bot not configured"})
 
+    # BLOCKER-2 FIX: Validate webhook origin via secret token header
+    # Telegram sends X-Telegram-Bot-Api-Secret-Token if set during setWebhook
+    secret_header = request.headers.get("X-Telegram-Bot-Api-Secret-Token", "")
+    if settings.telegram_webhook_secret and secret_header != settings.telegram_webhook_secret:
+        logger.warning("Telegram webhook: invalid secret token from {ip}", ip=request.client.host if request.client else "?")
+        return JSONResponse({"ok": False}, status_code=403)
+
     try:
         update = await request.json()
     except Exception:
@@ -239,10 +246,14 @@ async def setup_webhook(request: Request) -> JSONResponse:
     webhook_url = f"{api_url}/api/telegram/webhook"
 
     import httpx
+    payload: dict = {"url": webhook_url}
+    # BLOCKER-2 FIX: Include secret token so Telegram sends it in X-Telegram-Bot-Api-Secret-Token header
+    if settings.telegram_webhook_secret:
+        payload["secret_token"] = settings.telegram_webhook_secret
     async with httpx.AsyncClient() as client:
         resp = await client.post(
             f"https://api.telegram.org/bot{settings.telegram_bot_token}/setWebhook",
-            json={"url": webhook_url},
+            json=payload,
         )
         result = resp.json()
 

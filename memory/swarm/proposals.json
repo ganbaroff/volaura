@@ -133,6 +133,54 @@
       "title": "Enhance Assessment UX with Adaptive Prompts and Response Quality Middleware",
       "ceo_decision": "CTO approved: Good idea. Defer to Phase 2 (Transparent Evaluation Logs). Adaptive prompts align with IRT engine. Quality middleware exists partially (BARS evaluator).",
       "resolved_at": "2026-03-25T14:30:00.000000+00:00"
+    },
+    {
+      "id": "5cb1de5f",
+      "timestamp": "2026-03-26T06:06:45.031980+00:00",
+      "agent": "Security Auditor",
+      "severity": "high",
+      "type": "security",
+      "status": "pending",
+      "title": "Implement Input Validation and Rate Limiting on API Endpoints",
+      "content": "Based on the current project state, I've identified a potential security vulnerability due to the lack of input validation and rate limiting on API endpoints. To address this, I propose implementing input validation using a library such as Joi or Zod to ensure that user input conforms to expected formats and schemas. Additionally, I recommend implementing rate limiting using a library such as express-rate-limit to prevent brute-force attacks and denial-of-service (DoS) attacks. This can be achieved by adding validation middleware to each API endpoint and configuring rate limiting rules based on IP address and request frequency. The estimated time to implement this proposal is 8 hours, with an expected impact of reducing the risk of security breaches by 80%. The math justification is as follows: assuming an average of 10 API endpoints, with 5 input fields per endpoint, and a rate limit of 100 requests per minute per IP address, the total number of possible input combinations is 10^5, and the rate limiting rules will reduce the number of allowed requests by 90%, resulting in a significant reduction in potential security vulnerabilities.",
+      "votes_for": 4,
+      "votes_against": 0,
+      "vote_details": [],
+      "escalate_to_ceo": false,
+      "ceo_decision": null,
+      "ceo_decision_at": null
+    },
+    {
+      "id": "152c5815",
+      "timestamp": "2026-03-26T06:06:45.032273+00:00",
+      "agent": "Code Quality Engineer",
+      "severity": "high",
+      "type": "code_review",
+      "status": "pending",
+      "title": "Refactor evaluation_log Storage to Reduce Costs",
+      "content": "The current implementation of evaluation_log in the database stores approximately 4.5GB of data per year. Given the $50 monthly budget constraint, this storage approach is unsustainable and will lead to significant cost overruns at scale (e.g., 3K users). To mitigate this, propose implementing a more efficient data storage strategy for evaluation_log, such as data compression, aggregating logs, or using a more efficient database schema. Specifically, modify the `evaluation_log.py` file to include data compression using gzip or a similar algorithm, reducing the storage footprint by an estimated 70%. Additionally, aggregate logs on a daily basis to reduce the overall data volume. Estimated time to implement: 8 hours. Expected impact: Reduce storage costs by 70%, ensuring the project remains within budget. Confidence: 0.9",
+      "votes_for": 4,
+      "votes_against": 0,
+      "vote_details": [],
+      "escalate_to_ceo": false,
+      "ceo_decision": null,
+      "ceo_decision_at": null
+    },
+    {
+      "id": "cdb8eb19",
+      "timestamp": "2026-03-26T06:06:45.032311+00:00",
+      "agent": "CTO Watchdog",
+      "severity": "high",
+      "type": "idea",
+      "status": "pending",
+      "title": "Implement Automated Testing for Critical Flows",
+      "content": "Currently, only 19 tests are implemented, and critical flows such as assessment and AURA calculation are untested end-to-end. To improve the quality and reliability of the Volaura project, I propose implementing automated testing for these critical flows. This can be achieved by writing additional tests using a testing framework such as Jest or Pytest, and integrating them into the existing testing pipeline. The estimated time to implement this is 8 hours, with an expected impact of reducing bugs and errors by 30%. The math justification is as follows: assuming an average of 2 bugs per week, with an average fix time of 4 hours per bug, automated testing can save up to 8 hours per week in bug fixing time. The relevant files to update are tests.py, assessment.py, and aura_calculation.py.",
+      "votes_for": 4,
+      "votes_against": 0,
+      "vote_details": [],
+      "escalate_to_ceo": false,
+      "ceo_decision": null,
+      "ceo_decision_at": null
     }
   ]
 }

@@ -8,15 +8,23 @@ class Settings(BaseSettings):
     # Supabase
     supabase_url: str = "http://127.0.0.1:54321"
     supabase_service_key: str = ""
-    supabase_anon_key: str = ""
-    # Fallback anon key under a different env var name (SUPABASE_ANON_JWT) —
-    # Railway's Supabase integration intercepts SUPABASE_ANON_KEY and injects
-    # an empty or wrong-format value. SUPABASE_ANON_JWT is not intercepted.
-    supabase_anon_jwt: str = ""
+    # Anon key — PUBLIC key, safe to hardcode as fallback (like Stripe publishable key).
+    # Supabase anon keys are designed to be exposed in browser/client-side code.
+    # env var SUPABASE_ANON_KEY may be intercepted by Railway's Supabase integration;
+    # SUPABASE_ANON_JWT is the unintercepted fallback name.
+    # If both env vars are missing (Railway interception), the hardcoded default is used.
+    _ANON_KEY_DEFAULT: str = (
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+        ".eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2eWt5c3Zka2Fsa2Jzd21nZnV0Iiwicm9sZSI6ImFub24i"
+        "LCJpYXQiOjE3NzQyMTgyODQsImV4cCI6MjA4OTc5NDI4NH0"
+        ".W4Ck1Mn8LSwMuaSg-dGnVncQeTwSwvNH2Rpp6B-JPL8"
+    )
+    supabase_anon_key: str = _ANON_KEY_DEFAULT
+    supabase_anon_jwt: str = ""  # reads SUPABASE_ANON_JWT env var
 
     @property
     def effective_anon_key(self) -> str:
-        """Returns the best available anon key — SUPABASE_ANON_JWT takes priority."""
+        """Returns the best available anon key — SUPABASE_ANON_JWT > SUPABASE_ANON_KEY > hardcoded."""
         return self.supabase_anon_jwt or self.supabase_anon_key
 
     # API

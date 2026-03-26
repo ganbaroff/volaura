@@ -1,31 +1,104 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
-import { useAuthStore } from "@/stores/auth-store";
+import { createClient } from "@/lib/supabase/client";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
 type Step = 1 | 2 | 3;
 
+interface FormData {
+  display_name: string;
+  username: string;
+  location: string;
+  languages: string[];
+  selectedCompetency: string;
+}
+
 interface CompetencyInfo {
   slug: string;
   icon: string;
-  minutes: number;
 }
 
 const COMPETENCIES: CompetencyInfo[] = [
-  { slug: "communication",      icon: "💬", minutes: 5 },
-  { slug: "reliability",        icon: "⏰", minutes: 4 },
-  { slug: "english_proficiency",icon: "🌍", minutes: 5 },
-  { slug: "leadership",         icon: "🧭", minutes: 5 },
-  { slug: "event_performance",  icon: "🏆", minutes: 4 },
-  { slug: "tech_literacy",      icon: "💻", minutes: 4 },
-  { slug: "adaptability",       icon: "🔄", minutes: 4 },
-  { slug: "empathy_safeguarding",icon: "🤝", minutes: 3 },
+  { slug: "communication",       icon: "💬" },
+  { slug: "reliability",         icon: "⏰" },
+  { slug: "english_proficiency", icon: "🌍" },
+  { slug: "leadership",          icon: "🧭" },
+  { slug: "event_performance",   icon: "🏆" },
+  { slug: "tech_literacy",       icon: "💻" },
+  { slug: "adaptability",        icon: "🔄" },
+  { slug: "empathy_safeguarding", icon: "🤝" },
 ];
+
+const LANGUAGE_OPTIONS = ["Azerbaijani", "English", "Russian", "Turkish", "Arabic"];
+
+// ── Slide variants ─────────────────────────────────────────────────────────────
+
+const slideVariants = {
+  enter: { opacity: 0, x: 40 },
+  center: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -40 },
+};
+
+// ── Progress bar ───────────────────────────────────────────────────────────────
+
+function ProgressBar({ step }: { step: Step }) {
+  const pct = step === 1 ? 33 : step === 2 ? 66 : 100;
+  return (
+    <div className="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden mb-8">
+      <motion.div
+        className="h-full bg-primary rounded-full"
+        initial={{ width: 0 }}
+        animate={{ width: `${pct}%` }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+      />
+    </div>
+  );
+}
+
+// ── Step label ─────────────────────────────────────────────────────────────────
+
+function StepLabel({ step, t }: { step: Step; t: (k: string, opts?: Record<string, string | number>) => string }) {
+  return (
+    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-2 text-center">
+      {t("onboarding.step")} {step} / 3
+    </p>
+  );
+}
+
+// ── Input ──────────────────────────────────────────────────────────────────────
+
+function Input({
+  label,
+  value,
+  onChange,
+  placeholder,
+  disabled,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  disabled?: boolean;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <label className="text-sm font-medium text-foreground">{label}</label>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        disabled={disabled}
+        className="w-full h-11 px-3 rounded-xl border border-border bg-card text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+      />
+    </div>
+  );
+}
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
@@ -33,29 +106,89 @@ export default function OnboardingPage() {
   const { t } = useTranslation();
   const { locale } = useParams<{ locale: string }>();
   const router = useRouter();
-  const displayName = useAuthStore((s) => s.user?.user_metadata?.display_name ?? s.user?.email ?? "");
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => { isMounted.current = false; };
+  }, []);
 
   const [step, setStep] = useState<Step>(1);
-  const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [formData, setFormData] = useState<FormData>({
+    display_name: "",
+    username: "",
+    location: "",
+    languages: [],
+    selectedCompetency: "",
+  });
+
+  function setField<K extends keyof FormData>(key: K, value: FormData[K]) {
+    setFormData((prev) => ({ ...prev, [key]: value }));
+  }
+
+  function toggleLanguage(lang: string) {
+    setFormData((prev) => ({
+      ...prev,
+      languages: prev.languages.includes(lang)
+        ? prev.languages.filter((l) => l !== lang)
+        : [...prev.languages, lang],
+    }));
+  }
 
   function goNext() {
     if (step < 3) setStep((s) => (s + 1) as Step);
   }
+
   function goBack() {
     if (step > 1) setStep((s) => (s - 1) as Step);
   }
-  function skip() {
-    router.push(`/${locale}/dashboard`);
-  }
-  function startAssessment() {
-    router.push(`/${locale}/assessment`);
+
+  async function handleFinish() {
+    setSaving(true);
+    setError(null);
+    try {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      const payload: Record<string, unknown> = {};
+      if (formData.display_name.trim()) payload.display_name = formData.display_name.trim();
+      if (formData.username.trim()) payload.username = formData.username.trim();
+      if (formData.location.trim()) payload.location = formData.location.trim();
+      if (formData.languages.length > 0) payload.languages = formData.languages;
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
+      const res = await fetch(`${apiUrl}/api/profiles/me`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok && res.status !== 404) {
+        // 404 means profile endpoint doesn't exist yet — graceful fallback
+        const body = await res.json().catch(() => ({}));
+        throw new Error((body as { detail?: string }).detail ?? "Failed to save profile");
+      }
+
+      if (isMounted.current) {
+        router.push(`/${locale}/dashboard`);
+      }
+    } catch (err) {
+      if (isMounted.current) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+        setSaving(false);
+      }
+    }
   }
 
-  const slideVariants = {
-    enter: { opacity: 0, x: 40 },
-    center: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: -40 },
-  };
+  const step1Valid = formData.display_name.trim().length > 0 && formData.username.trim().length > 0;
+  const step3Valid = formData.selectedCompetency.length > 0;
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center px-4 py-12">
@@ -64,20 +197,18 @@ export default function OnboardingPage() {
       <div className="fixed bottom-[-5%] right-[-5%] w-[30%] h-[30%] ambient-glow-secondary pointer-events-none z-0" />
 
       <div className="relative z-10 w-full max-w-lg">
-        {/* Progress dots */}
-        <div className="flex justify-center gap-2 mb-8">
-          {([1, 2, 3] as Step[]).map((s) => (
-            <div
-              key={s}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                s === step ? "w-8 bg-primary" : s < step ? "w-2 bg-primary/50" : "w-2 bg-surface-container-high"
-              }`}
-            />
-          ))}
+        {/* Header */}
+        <div className="text-center mb-6">
+          <h1 className="text-2xl font-bold text-foreground">{t("onboarding.title")}</h1>
         </div>
+
+        {/* Progress bar */}
+        <ProgressBar step={step} />
 
         {/* Step content */}
         <AnimatePresence mode="wait">
+
+          {/* ── Step 1: Identity ── */}
           {step === 1 && (
             <motion.div
               key="step1"
@@ -86,44 +217,39 @@ export default function OnboardingPage() {
               animate="center"
               exit="exit"
               transition={{ duration: 0.3 }}
-              className="space-y-8 text-center"
+              className="space-y-6"
             >
-              <div className="text-7xl">🌟</div>
-              <div className="space-y-3">
-                <h1 className="text-3xl font-bold text-on-surface">
-                  {t("onboarding.step1Title", { name: displayName?.split(" ")[0] || t("onboarding.defaultName") })}
-                </h1>
-                <p className="text-on-surface-variant text-base max-w-sm mx-auto">
-                  {t("onboarding.step1Desc")}
-                </p>
-              </div>
+              <StepLabel step={1} t={t} />
+              <h2 className="text-xl font-bold text-foreground text-center">
+                {t("onboarding.step1.title")}
+              </h2>
 
-              <div className="grid grid-cols-2 gap-3 text-left">
-                {[
-                  { icon: "🎯", key: "onboarding.benefit1" },
-                  { icon: "🏅", key: "onboarding.benefit2" },
-                  { icon: "🔍", key: "onboarding.benefit3" },
-                  { icon: "📈", key: "onboarding.benefit4" },
-                ].map(({ icon, key }) => (
-                  <div key={key} className="flex items-start gap-2 p-3 bg-surface-container-low rounded-xl">
-                    <span className="text-xl">{icon}</span>
-                    <p className="text-sm text-on-surface-variant">{t(key)}</p>
-                  </div>
-                ))}
+              <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+                <Input
+                  label={t("onboarding.displayName")}
+                  value={formData.display_name}
+                  onChange={(v) => setField("display_name", v)}
+                  placeholder="Leyla Həsənova"
+                />
+                <Input
+                  label={t("onboarding.username")}
+                  value={formData.username}
+                  onChange={(v) => setField("username", v.toLowerCase().replace(/\s+/g, "_"))}
+                  placeholder="leyla_hasanova"
+                />
               </div>
 
               <button
                 onClick={goNext}
-                className="w-full h-12 rounded-2xl bg-primary text-on-primary font-semibold text-base transition-all hover:opacity-90 active:scale-95"
+                disabled={!step1Valid}
+                className="w-full h-12 rounded-2xl bg-primary text-primary-foreground font-semibold text-base transition-all hover:opacity-90 active:scale-95 disabled:opacity-40"
               >
-                {t("onboarding.step1Cta")}
-              </button>
-              <button onClick={skip} className="w-full text-sm text-on-surface-variant hover:text-on-surface transition-colors">
-                {t("onboarding.skip")}
+                {t("onboarding.next")}
               </button>
             </motion.div>
           )}
 
+          {/* ── Step 2: Location & Languages ── */}
           {step === 2 && (
             <motion.div
               key="step2"
@@ -134,50 +260,60 @@ export default function OnboardingPage() {
               transition={{ duration: 0.3 }}
               className="space-y-6"
             >
-              <div className="text-center space-y-2">
-                <h2 className="text-2xl font-bold text-on-surface">{t("onboarding.step2Title")}</h2>
-                <p className="text-sm text-on-surface-variant">{t("onboarding.step2Desc")}</p>
-              </div>
+              <StepLabel step={2} t={t} />
+              <h2 className="text-xl font-bold text-foreground text-center">
+                {t("onboarding.step2.title")}
+              </h2>
 
-              <div className="grid grid-cols-2 gap-3">
-                {COMPETENCIES.map(({ slug, icon, minutes }) => (
-                  <button
-                    key={slug}
-                    onClick={() => setSelectedSlug(slug === selectedSlug ? null : slug)}
-                    className={`p-4 rounded-2xl text-left transition-all border-2 ${
-                      selectedSlug === slug
-                        ? "border-primary bg-primary/10"
-                        : "border-transparent bg-surface-container-low hover:bg-surface-container-high"
-                    }`}
-                  >
-                    <div className="text-2xl mb-2">{icon}</div>
-                    <p className="text-sm font-semibold text-on-surface">{t(`competency.${slug}`)}</p>
-                    <p className="text-xs text-on-surface-variant mt-0.5">~{minutes} {t("onboarding.min")}</p>
-                  </button>
-                ))}
+              <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+                <Input
+                  label={t("onboarding.location")}
+                  value={formData.location}
+                  onChange={(v) => setField("location", v)}
+                  placeholder="Baku, Azerbaijan"
+                />
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground">
+                    {t("onboarding.languages")}
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {LANGUAGE_OPTIONS.map((lang) => (
+                      <button
+                        key={lang}
+                        type="button"
+                        onClick={() => toggleLanguage(lang)}
+                        className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all border ${
+                          formData.languages.includes(lang)
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "bg-card text-foreground border-border hover:bg-accent"
+                        }`}
+                      >
+                        {lang}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               <div className="flex gap-3">
                 <button
                   onClick={goBack}
-                  className="h-12 px-6 rounded-2xl bg-surface-container-high text-on-surface font-medium transition-all hover:opacity-80"
+                  className="h-12 px-6 rounded-2xl bg-card border border-border text-foreground font-medium transition-all hover:bg-accent"
                 >
                   {t("onboarding.back")}
                 </button>
                 <button
                   onClick={goNext}
-                  disabled={!selectedSlug}
-                  className="flex-1 h-12 rounded-2xl bg-primary text-on-primary font-semibold transition-all hover:opacity-90 disabled:opacity-40"
+                  className="flex-1 h-12 rounded-2xl bg-primary text-primary-foreground font-semibold transition-all hover:opacity-90 active:scale-95"
                 >
-                  {t("onboarding.step2Cta")}
+                  {t("onboarding.next")}
                 </button>
               </div>
-              <button onClick={skip} className="w-full text-sm text-on-surface-variant hover:text-on-surface transition-colors">
-                {t("onboarding.skip")}
-              </button>
             </motion.div>
           )}
 
+          {/* ── Step 3: First Competency ── */}
           {step === 3 && (
             <motion.div
               key="step3"
@@ -186,45 +322,59 @@ export default function OnboardingPage() {
               animate="center"
               exit="exit"
               transition={{ duration: 0.3 }}
-              className="space-y-8 text-center"
+              className="space-y-6"
             >
-              <div className="text-7xl">🚀</div>
-              <div className="space-y-3">
-                <h2 className="text-2xl font-bold text-on-surface">{t("onboarding.step3Title")}</h2>
-                <p className="text-on-surface-variant text-sm max-w-sm mx-auto">
-                  {t("onboarding.step3Desc", {
-                    competency: t(`competency.${selectedSlug ?? "communication"}`),
-                  })}
+              <StepLabel step={3} t={t} />
+              <div className="text-center space-y-1">
+                <h2 className="text-xl font-bold text-foreground">
+                  {t("onboarding.step3.title")}
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  {t("onboarding.step3.subtitle")}
                 </p>
               </div>
 
-              {/* What happens next */}
-              <div className="space-y-3 text-left">
-                {[
-                  { step: "1", key: "onboarding.next1" },
-                  { step: "2", key: "onboarding.next2" },
-                  { step: "3", key: "onboarding.next3" },
-                ].map(({ step: s, key }) => (
-                  <div key={key} className="flex items-center gap-4 p-3 bg-surface-container-low rounded-xl">
-                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                      <span className="text-sm font-bold text-primary">{s}</span>
-                    </div>
-                    <p className="text-sm text-on-surface">{t(key)}</p>
-                  </div>
+              <div className="grid grid-cols-2 gap-3">
+                {COMPETENCIES.map(({ slug, icon }) => (
+                  <button
+                    key={slug}
+                    type="button"
+                    onClick={() => setField("selectedCompetency", slug === formData.selectedCompetency ? "" : slug)}
+                    className={`p-4 rounded-2xl text-left transition-all border-2 ${
+                      formData.selectedCompetency === slug
+                        ? "border-primary bg-primary/10"
+                        : "border-transparent bg-card hover:bg-accent"
+                    }`}
+                  >
+                    <div className="text-2xl mb-2">{icon}</div>
+                    <p className="text-sm font-semibold text-foreground">{t(`competency.${slug}`)}</p>
+                  </button>
                 ))}
               </div>
 
-              <button
-                onClick={startAssessment}
-                className="w-full h-12 rounded-2xl bg-primary text-on-primary font-semibold text-base transition-all hover:opacity-90 active:scale-95"
-              >
-                {t("onboarding.step3Cta")}
-              </button>
-              <button onClick={skip} className="w-full text-sm text-on-surface-variant hover:text-on-surface transition-colors">
-                {t("onboarding.skipToDashboard")}
-              </button>
+              {error && (
+                <p className="text-sm text-destructive text-center">{error}</p>
+              )}
+
+              <div className="flex gap-3">
+                <button
+                  onClick={goBack}
+                  disabled={saving}
+                  className="h-12 px-6 rounded-2xl bg-card border border-border text-foreground font-medium transition-all hover:bg-accent disabled:opacity-50"
+                >
+                  {t("onboarding.back")}
+                </button>
+                <button
+                  onClick={handleFinish}
+                  disabled={!step3Valid || saving}
+                  className="flex-1 h-12 rounded-2xl bg-primary text-primary-foreground font-semibold transition-all hover:opacity-90 active:scale-95 disabled:opacity-40"
+                >
+                  {saving ? t("onboarding.saving") : t("onboarding.finish")}
+                </button>
+              </div>
             </motion.div>
           )}
+
         </AnimatePresence>
       </div>
     </div>

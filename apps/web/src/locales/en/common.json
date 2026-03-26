@@ -151,7 +151,23 @@
     "tipImprove": "Practice more in this area and retake the assessment to improve your score.",
     "tipGood": "Great score! Try other competencies to build your full AURA profile.",
     "tipExcellent": "Outstanding! You're in the top tier. Share your achievement with organizations.",
-    "gamingWarning": "Some responses were flagged for unusual patterns. Your score may be adjusted."
+    "gamingWarning": "Some responses were flagged for unusual patterns. Your score may be adjusted.",
+    "scoringAdjusted": "Score adjusted for fair assessment",
+    "scoringAdjustedDesc": "We detected some patterns in your responses. Your score was adjusted accordingly.",
+    "gamingFlag": {
+      "excessiveRushing": "Some answers were submitted too quickly",
+      "alternatingPattern": "Suspicious response pattern detected",
+      "groupAlternatingPattern": "Suspicious grouped response pattern",
+      "allIdenticalResponses": "All responses were identical",
+      "timeClustering": "Response timing was unusually uniform",
+      "excessiveSlowness": "Some answers had very long pauses"
+    },
+    "coaching": "Your personalized coaching",
+    "coachingSubtitle": "Based on your score, here's how to improve:",
+    "coachingExcellent": "Keep up the excellent work!",
+    "coachingTryThis": "Try this:",
+    "coachingError": "Unable to load coaching tips",
+    "coachingLoading": "Generating your coaching..."
   },
   "aura": {
     "title": "Your AURA Score",
@@ -178,7 +194,13 @@
     "copyLink": "Copy link",
     "copied": "Copied!",
     "downloadCard": "Download card",
-    "shareText": "I just got my AURA score on Volaura — {score} points with a {badge} badge! Check yours:"
+    "shareText": "I just got my AURA score on Volaura — {score} points with a {badge} badge! Check yours:",
+    "whyThisScore": "Why this score?",
+    "conceptScores": "Concept Breakdown",
+    "evaluationConfidence": "Confidence",
+    "methodology": "Method",
+    "noExplanations": "Complete an assessment to see your score breakdown",
+    "methodologyNote": "Based on ISO 10667-2 aligned methodology"
   },
   "competency": {
     "communication": "Communication",
@@ -191,6 +213,25 @@
     "empathy_safeguarding": "Empathy & Safeguarding"
   },
   "onboarding": {
+    "title": "Complete your profile",
+    "step": "Step",
+    "step1": {
+      "title": "Your identity"
+    },
+    "displayName": "Display Name",
+    "username": "Username",
+    "step2": {
+      "title": "Where are you from?"
+    },
+    "location": "Location",
+    "languages": "Languages you speak",
+    "step3": {
+      "title": "Your first skill",
+      "subtitle": "Pick the skill you want to verify first"
+    },
+    "next": "Next",
+    "finish": "Let's go!",
+    "saving": "Saving...",
     "step1Title": "Welcome, {{name}}! 👋",
     "defaultName": "there",
     "step1Desc": "You're one of the first on Volaura. Let's show the world your real skills in 3 minutes.",
@@ -322,11 +363,22 @@
     "language": "Language",
     "interfaceLanguage": "Interface language",
     "notifications": "Notifications",
-    "privacy": "Privacy",
+    "privacy": "AURA Privacy",
     "account": "Account",
     "accountDescription": "Manage your account settings via your profile page.",
     "deleteAccount": "Delete Account",
-    "deleteWarning": "This action cannot be undone."
+    "deleteWarning": "This action cannot be undone.",
+    "displayName": "Display name",
+    "username": "Username",
+    "location": "Location",
+    "visibility": "Who can see your AURA score?",
+    "visibilityPublic": "Public — Everyone can see",
+    "visibilityBadgeOnly": "Badge Only — Shows tier, not score",
+    "visibilityHidden": "Hidden — Only you can see",
+    "saveChanges": "Save changes",
+    "signOut": "Sign out",
+    "dangerZone": "Account Actions",
+    "saved": "Saved!"
   },
   "verify": {
     "pageSubtitle": "Expert Verification",
@@ -401,6 +453,9 @@
     "periodAllTime": "All time"
   },
   "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications yet",
+    "comingSoon": "More notification types coming soon",
     "categoryAll": "All",
     "categoryAura": "AURA Updates",
     "categoryEvents": "Event Invites",
@@ -452,6 +507,8 @@
     "noOrgsYet": "No organizations registered yet.",
     "ctaTitle": "Run events for your organization?",
     "ctaSubtitle": "Register your organization to post events and discover top volunteers.",
-    "ctaButton": "Register Organization"
+    "ctaButton": "Register Organization",
+    "volunteerCta": "Volunteer with us",
+    "aboutSection": "About this organization"
   }
 }

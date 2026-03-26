@@ -151,7 +151,23 @@
     "tipImprove": "Bu sahədə daha çox məşq edin və balınızı yaxşılaşdırmaq üçün qiymətləndirməni təkrarlayın.",
     "tipGood": "Əla nəticə! Tam AURA profilinizi yaratmaq üçün digər bacarıqları da sınayın.",
     "tipExcellent": "Möhtəşəm! Siz ən yuxarı səviyyədəsiniz. Nailiyyətinizi təşkilatlarla paylaşın.",
-    "gamingWarning": "Bəzi cavablar qeyri-adi nümunələrə görə qeyd edildi. Balınız düzəldilə bilər."
+    "gamingWarning": "Bəzi cavablar qeyri-adi nümunələrə görə qeyd edildi. Balınız düzəldilə bilər.",
+    "scoringAdjusted": "Ədalətli qiymətləndirmə üçün bal tənzimləndi",
+    "scoringAdjustedDesc": "Cavablarınızda bəzi nümunələr aşkar edildi. Balınız müvafiq olaraq tənzimləndi.",
+    "gamingFlag": {
+      "excessiveRushing": "Bəzi cavablar çox tez göndərildi",
+      "alternatingPattern": "Şübhəli cavab nümunəsi aşkar edildi",
+      "groupAlternatingPattern": "Şübhəli qruplaşdırılmış cavab nümunəsi",
+      "allIdenticalResponses": "Bütün cavablar eyni idi",
+      "timeClustering": "Cavab vaxtı qeyri-adi dərəcədə vahid idi",
+      "excessiveSlowness": "Bəzi cavablarda çox uzun fasilələr var idi"
+    },
+    "coaching": "Fərdi məsləhətləriniz",
+    "coachingSubtitle": "Balınıza əsasən, necə inkişaf edə bilərsiniz:",
+    "coachingExcellent": "Əla işinizi davam etdirin!",
+    "coachingTryThis": "Bunu sınayın:",
+    "coachingError": "Məsləhətlər yüklənə bilmədi",
+    "coachingLoading": "Məsləhətləriniz hazırlanır..."
   },
   "aura": {
     "title": "Sizin AURA Balınız",
@@ -178,9 +194,34 @@
     "copyLink": "Linki kopyala",
     "copied": "Kopyalandı!",
     "downloadCard": "Kartı yüklə",
-    "shareText": "Volaura-da AURA balım — {score} xal, {badge} nişanı! Sən də sına:"
+    "shareText": "Volaura-da AURA balım — {score} xal, {badge} nişanı! Sən də sına:",
+    "whyThisScore": "Bu bal niyə?",
+    "conceptScores": "Konsept bölgüsü",
+    "evaluationConfidence": "Etibarlılıq",
+    "methodology": "Metodologiya",
+    "noExplanations": "Bal bölgüsünü görmək üçün qiymətləndirmə keçirin",
+    "methodologyNote": "ISO 10667-2 standartına uyğun metodologiya əsasında"
   },
   "onboarding": {
+    "title": "Profilinizi tamamlayın",
+    "step": "Addım",
+    "step1": {
+      "title": "Şəxsiyyətiniz"
+    },
+    "displayName": "Göstərilən ad",
+    "username": "İstifadəçi adı",
+    "step2": {
+      "title": "Haradan gəlirsiniz?"
+    },
+    "location": "Məkan",
+    "languages": "Bildiyiniz dillər",
+    "step3": {
+      "title": "İlk bacarığınız",
+      "subtitle": "İlk olaraq hansı bacarığı doğrulamaq istəyirsiniz?"
+    },
+    "next": "İrəli",
+    "finish": "Başlayaq!",
+    "saving": "Saxlanılır...",
     "step1Title": "Xoş gəldin, {{name}}! 👋",
     "defaultName": "dostum",
     "step1Desc": "Volaura'ya ilk qatılanlardan birisən. 3 dəqiqədə dünyaya real bacarıqlarını göstərək.",
@@ -322,11 +363,22 @@
     "language": "Dil",
     "interfaceLanguage": "İnterfeys dili",
     "notifications": "Bildirişlər",
-    "privacy": "Məxfilik",
+    "privacy": "AURA Məxfiliyi",
     "account": "Hesab",
     "accountDescription": "Hesab parametrlərini profil səhifəsindən idarə edin.",
     "deleteAccount": "Hesabı Sil",
-    "deleteWarning": "Bu əməliyyat geri qaytarıla bilməz."
+    "deleteWarning": "Bu əməliyyat geri qaytarıla bilməz.",
+    "displayName": "Göstərilən ad",
+    "username": "İstifadəçi adı",
+    "location": "Məkan",
+    "visibility": "AURA balınızı kim görə bilər?",
+    "visibilityPublic": "İctimai — Hamı görə bilər",
+    "visibilityBadgeOnly": "Yalnız nişan — Dərəcəni göstərir, balı yox",
+    "visibilityHidden": "Gizli — Yalnız siz görə bilərsiniz",
+    "saveChanges": "Dəyişiklikləri saxla",
+    "signOut": "Çıxış",
+    "dangerZone": "Hesab Əməliyyatları",
+    "saved": "Saxlandı!"
   },
   "verify": {
     "pageSubtitle": "Ekspert Təsdiqi",
@@ -401,6 +453,9 @@
     "periodAllTime": "Bütün vaxtlar"
   },
   "notifications": {
+    "title": "Bildirişlər",
+    "empty": "Hələ bildiriş yoxdur",
+    "comingSoon": "Yaxın zamanda daha çox bildiriş növü gələcək",
     "categoryAll": "Hamısı",
     "categoryAura": "Bal Yenilənmələri",
     "categoryEvents": "Tədbir Dəvətləri",
@@ -452,6 +507,8 @@
     "noOrgsYet": "Hələ qeydiyyatdan keçmiş təşkilat yoxdur.",
     "ctaTitle": "Öz tədbirlərini keçirirsən?",
     "ctaSubtitle": "Təşkilatınızı qeydiyyatdan keçirin, tədbirlər yerləşdirin, ən yaxşı könüllüləri tapın.",
-    "ctaButton": "Təşkilat Qeydiyyatı"
+    "ctaButton": "Təşkilat Qeydiyyatı",
+    "volunteerCta": "Könüllü olun",
+    "aboutSection": "Bu təşkilat haqqında"
   }
 }

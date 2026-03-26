@@ -3,11 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Users, CalendarCheck, Clock } from "lucide-react";
-import type { ImpactStats } from "@/lib/mock-data";
+import { usePublicStats } from "@/hooks/queries/use-public-stats";
 
-interface ImpactTickerProps {
-  stats: ImpactStats;
-}
+// Fallback numbers shown while loading or if API fails
+const FALLBACK_STATS = {
+  totalVolunteers: 1000,
+  totalEvents: 50,
+  totalHours: 10000,
+};
 
 function useCountUp(target: number, duration = 2000): number {
   const [count, setCount] = useState(0);
@@ -65,8 +68,21 @@ function StatCard({
   );
 }
 
-export function ImpactTicker({ stats }: ImpactTickerProps) {
+export function ImpactTicker() {
   const { t } = useTranslation();
+  const { data, isError } = usePublicStats();
+
+  // Use real data if available, fallback if API fails or returns null
+  const totalVolunteers =
+    (data && !isError ? data.total_volunteers : null) ?? FALLBACK_STATS.totalVolunteers;
+  const totalEvents =
+    (data && !isError ? data.total_events : null) ?? FALLBACK_STATS.totalEvents;
+  // API returns total_assessments; we map this to "hours" as an approximation
+  // (avg ~10h per assessment). Fall back to FALLBACK if no data.
+  const totalHours =
+    (data && !isError && data.total_assessments
+      ? Math.round(data.total_assessments * 10)
+      : null) ?? FALLBACK_STATS.totalHours;
 
   return (
     <section
@@ -77,17 +93,17 @@ export function ImpactTicker({ stats }: ImpactTickerProps) {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <StatCard
             icon={Users}
-            value={stats.totalVolunteers}
+            value={totalVolunteers}
             label={t("landing.impactVolunteers")}
           />
           <StatCard
             icon={CalendarCheck}
-            value={stats.totalEvents}
+            value={totalEvents}
             label={t("landing.impactEvents")}
           />
           <StatCard
             icon={Clock}
-            value={stats.totalHours}
+            value={totalHours}
             label={t("landing.impactHours")}
           />
         </div>

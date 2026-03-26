@@ -2,11 +2,18 @@
 
 import { cn } from "@/lib/utils/cn";
 
+interface McqOption {
+  key: string;
+  text_en: string;
+  text_az: string;
+}
+
 interface McqOptionsProps {
-  options: string[];
-  selected: string | null;
-  onSelect: (option: string) => void;
+  options: McqOption[];
+  selected: string | null; // selected option key
+  onSelect: (optionKey: string) => void;
   disabled?: boolean;
+  locale?: string;
 }
 
 const OPTION_LABELS = ["A", "B", "C", "D", "E"];
@@ -16,18 +23,20 @@ export function McqOptions({
   selected,
   onSelect,
   disabled = false,
+  locale = "en",
 }: McqOptionsProps) {
   return (
     <div className="space-y-3" role="group" aria-label="Answer options">
       {options.map((option, index) => {
-        const isSelected = selected === option;
+        const isSelected = selected === option.key;
+        const displayText = locale === "az" ? option.text_az : option.text_en;
         return (
           <button
-            key={option}
+            key={option.key}
             type="button"
             disabled={disabled}
             aria-pressed={isSelected}
-            onClick={() => onSelect(option)}
+            onClick={() => onSelect(option.key)}
             className={cn(
               "w-full flex items-center gap-3 rounded-xl border-2 p-4 text-left",
               "transition-all duration-150",
@@ -49,7 +58,7 @@ export function McqOptions({
             >
               {OPTION_LABELS[index] ?? index + 1}
             </span>
-            <span className="text-sm font-medium">{option}</span>
+            <span className="text-sm font-medium">{displayText}</span>
           </button>
         );
       })}

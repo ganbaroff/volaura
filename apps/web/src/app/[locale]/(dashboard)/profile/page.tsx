@@ -14,6 +14,7 @@ import { ExpertVerifications } from "@/components/profile-view/expert-verificati
 import { ActivityTimeline } from "@/components/profile-view/activity-timeline";
 import { useProfile } from "@/hooks/queries/use-profile";
 import { useAuraScore } from "@/hooks/queries/use-aura";
+import { useDashboardStats } from "@/hooks/queries/use-dashboard";
 import { ApiError } from "@/lib/api/client";
 
 /* ─── Section wrapper ─── */
@@ -94,6 +95,8 @@ export default function ProfilePage() {
     isLoading: auraLoading,
   } = useAuraScore();
 
+  const { data: dashboardStats } = useDashboardStats();
+
   const loading = profileLoading || auraLoading;
 
   // Handle 401
@@ -173,8 +176,8 @@ export default function ProfilePage() {
         >
           <ImpactMetrics
             data={{
-              events_count: 0,
-              hours_volunteered: 0,
+              events_count: dashboardStats?.events_attended ?? 0,
+              hours_volunteered: dashboardStats?.total_hours ?? 0,
               verified_skills: competencies.length,
             }}
           />

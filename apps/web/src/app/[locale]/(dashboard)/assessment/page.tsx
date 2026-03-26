@@ -29,7 +29,7 @@ export default function AssessmentPage() {
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const locale = i18n.language;
-  const { setCompetencies } = useAssessmentStore();
+  const { setCompetencies, setSession, setQuestion } = useAssessmentStore();
 
   const [selected, setSelected] = useState<Set<CompetencyId>>(new Set());
   const [isStarting, setIsStarting] = useState(false);
@@ -73,14 +73,14 @@ export default function AssessmentPage() {
 
       // Start the first competency session via API
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/assessments/start`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/assessment/start`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${session.access_token}`,
           },
-          body: JSON.stringify({ competency: competencyList[0] }),
+          body: JSON.stringify({ competency_slug: competencyList[0] }),
         }
       );
 
@@ -88,7 +88,14 @@ export default function AssessmentPage() {
         throw new Error("start_failed");
       }
 
-      const data = (await res.json()) as { session_id: string };
+      const data = (await res.json()) as {
+        session_id: string;
+        next_question: import("@/stores/assessment-store").Question | null;
+      };
+      setSession(data.session_id);
+      if (data.next_question) {
+        setQuestion(data.next_question);
+      }
       router.push(`/${locale}/assessment/${data.session_id}`);
     } catch {
       setError(t("assessment.errorStartFailed"));

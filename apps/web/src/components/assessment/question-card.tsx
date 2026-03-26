@@ -5,10 +5,10 @@ import { useTranslation } from "react-i18next";
 import type { Question } from "@/stores/assessment-store";
 import { McqOptions } from "./mcq-options";
 import { OpenTextAnswer } from "./open-text-answer";
-import { RatingScale } from "./rating-scale";
 
 interface QuestionCardProps {
   question: Question;
+  questionText: string; // locale-aware text (question_en or question_az)
   questionIndex: number; // for animation key
   answer: string;
   onAnswerChange: (value: string) => void;
@@ -17,12 +17,15 @@ interface QuestionCardProps {
 
 export function QuestionCard({
   question,
+  questionText,
   questionIndex,
   answer,
   onAnswerChange,
   disabled = false,
 }: QuestionCardProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language;
+
   return (
     <AnimatePresence mode="wait" initial={false}>
       <motion.div
@@ -40,39 +43,35 @@ export function QuestionCard({
         {/* Question text */}
         <div className="rounded-2xl bg-card border border-border p-5">
           <p className="text-base font-medium text-foreground leading-relaxed">
-            {question.text}
+            {questionText}
           </p>
           <span
             className="mt-2 inline-block text-xs font-medium px-2 py-0.5 rounded-full bg-muted text-muted-foreground capitalize"
-            aria-label={`${t("assessment.difficulty")}: ${t(`assessment.difficulty_${question.difficulty_level}`, { defaultValue: question.difficulty_level })}`}
           >
-            {t(`assessment.difficulty_${question.difficulty_level}`, { defaultValue: question.difficulty_level })}
+            {question.question_type === "mcq"
+              ? t("assessment.typeMultipleChoice", { defaultValue: "Multiple Choice" })
+              : question.question_type === "sjt"
+              ? t("assessment.typeSJT", { defaultValue: "Situational Judgment" })
+              : t("assessment.typeOpenEnded", { defaultValue: "Open Response" })}
           </span>
         </div>
 
         {/* Answer input */}
         <div>
-          {question.type === "mcq" && question.options && (
+          {question.question_type === "mcq" && question.options && (
             <McqOptions
               options={question.options}
               selected={answer || null}
               onSelect={onAnswerChange}
               disabled={disabled}
+              locale={locale}
             />
           )}
 
-          {question.type === "open_text" && (
+          {(question.question_type === "open_ended" || question.question_type === "sjt") && (
             <OpenTextAnswer
               value={answer}
               onChange={onAnswerChange}
-              disabled={disabled}
-            />
-          )}
-
-          {question.type === "rating_scale" && (
-            <RatingScale
-              value={answer ? parseInt(answer, 10) : null}
-              onChange={(v) => onAnswerChange(String(v))}
               disabled={disabled}
             />
           )}

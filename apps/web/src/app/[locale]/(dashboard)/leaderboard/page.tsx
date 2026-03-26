@@ -4,10 +4,14 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { TopBar } from "@/components/layout/top-bar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useLeaderboard } from "@/hooks/queries/use-leaderboard";
+import type { LeaderboardPeriod, LeaderboardEntry } from "@/hooks/queries/use-leaderboard";
+import { RefreshCw } from "lucide-react";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
-type Period = "weekly" | "monthly" | "allTime";
+type UiPeriod = "weekly" | "monthly" | "allTime";
 type Tier = "platinum" | "gold" | "silver" | "bronze" | "rising";
 
 interface LeaderEntry {
@@ -20,19 +24,31 @@ interface LeaderEntry {
   avatarInitial: string;
 }
 
-// ── Preview data (will be replaced with useLeaderboard() hook when API exists)
-// NOTE: This is demo data shown during beta. Real leaderboard populates after 10+ users complete assessments.
+// ── Period mapping ────────────────────────────────────────────────────────────
 
-const PREVIEW_LEADERS: LeaderEntry[] = [
-  { id: "1", rank: 1, name: "Anar Əliyev",    score: 99.4, tier: "platinum", avatarInitial: "A" },
-  { id: "2", rank: 2, name: "Leyla M.",        score: 96.8, tier: "gold",     avatarInitial: "L" },
-  { id: "3", rank: 3, name: "Fərid H.",        score: 92.1, tier: "silver",   avatarInitial: "F" },
-  { id: "4", rank: 4, name: "Orxan Vəliyev",  score: 88.5, tier: "bronze",   avatarInitial: "O" },
-  { id: "5", rank: 5, name: "Sən",             score: 84.2, tier: "bronze",   avatarInitial: "S", isCurrentUser: true },
-  { id: "6", rank: 6, name: "Nigar S.",        score: 81.7, tier: "rising",   avatarInitial: "N" },
-  { id: "7", rank: 7, name: "Günay M.",        score: 79.3, tier: "rising",   avatarInitial: "G" },
-];
-const IS_PREVIEW = true; // flip to false when real endpoint is wired
+const UI_TO_API_PERIOD: Record<UiPeriod, LeaderboardPeriod> = {
+  weekly: "weekly",
+  monthly: "monthly",
+  allTime: "all_time",
+};
+
+function normalizeTier(badgeTier: string): Tier {
+  const valid: Tier[] = ["platinum", "gold", "silver", "bronze"];
+  const lower = badgeTier?.toLowerCase() as Tier;
+  return valid.includes(lower) ? lower : "rising";
+}
+
+function toLeaderEntry(entry: LeaderboardEntry): LeaderEntry {
+  const name = entry.display_name || entry.username || `#${entry.rank}`;
+  return {
+    id: `${entry.rank}`,
+    rank: entry.rank,
+    name,
+    score: entry.total_score,
+    tier: normalizeTier(entry.badge_tier),
+    avatarInitial: name.charAt(0).toUpperCase(),
+  };
+}
 
 // ── Animated counter hook ─────────────────────────────────────────────────────
 
@@ -64,6 +80,25 @@ const TIER_CONFIG: Record<Tier, { label: string; color: string; glowClass: strin
   bronze:   { label: "Bronze",   color: "#cd7f32", glowClass: "",                   borderColor: "#cd7f32" },
   rising:   { label: "Rising",   color: "#908fa0", glowClass: "",                   borderColor: "transparent" },
 };
+
+// ── Skeleton ──────────────────────────────────────────────────────────────────
+
+function LeaderboardSkeleton() {
+  return (
+    <div className="space-y-3">
+      {/* Podium skeleton */}
+      <div className="flex items-end justify-center gap-2 min-h-[300px] pt-12 mb-12">
+        <Skeleton className="w-[120px] h-[180px] rounded-t-2xl" />
+        <Skeleton className="w-[140px] h-[240px] rounded-t-3xl" />
+        <Skeleton className="w-[120px] h-[160px] rounded-t-2xl" />
+      </div>
+      {/* Row skeletons */}
+      {[1, 2, 3, 4].map((i) => (
+        <Skeleton key={i} className="h-[72px] rounded-2xl" />
+      ))}
+    </div>
+  );
+}
 
 // ── PodiumEntry sub-component ─────────────────────────────────────────────────
 
@@ -176,23 +211,26 @@ function RankRow({ entry }: { entry: LeaderEntry }) {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
-const PERIOD_KEYS: Record<Period, string> = {
+const PERIOD_KEYS: Record<UiPeriod, string> = {
   weekly:  "leaderboard.periodWeekly",
   monthly: "leaderboard.periodMonthly",
   allTime: "leaderboard.periodAllTime",
 };
 
+const pageVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08 } },
+};
+
 export default function LeaderboardPage() {
   const { t } = useTranslation();
-  const [period, setPeriod] = useState<Period>("weekly");
+  const [uiPeriod, setUiPeriod] = useState<UiPeriod>("weekly");
 
-  const top3 = PREVIEW_LEADERS.slice(0, 3);
-  const rest = PREVIEW_LEADERS.slice(3);
+  const { data, isLoading, error, refetch } = useLeaderboard(UI_TO_API_PERIOD[uiPeriod]);
 
-  const pageVariants = {
-    hidden: {},
-    visible: { transition: { staggerChildren: 0.08 } },
-  };
+  const entries: LeaderEntry[] = (data?.entries ?? []).map(toLeaderEntry);
+  const top3 = entries.slice(0, 3);
+  const rest = entries.slice(3);
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -203,21 +241,14 @@ export default function LeaderboardPage() {
       <TopBar title={t("nav.leaderboard")} />
 
       <main className="relative z-10 pt-20 pb-10 px-4 max-w-2xl mx-auto">
-        {/* Preview banner */}
-        {IS_PREVIEW && (
-          <div className="mb-4 px-4 py-2 bg-primary/10 border border-primary/20 rounded-xl text-center text-sm text-on-surface-variant">
-            {t("leaderboard.previewBanner", "Preview — real rankings appear after beta launch")}
-          </div>
-        )}
-
         {/* Period filter tabs */}
         <nav className="flex p-1 bg-surface-container-low rounded-xl mb-8">
-          {(["weekly", "monthly", "allTime"] as Period[]).map((p) => (
+          {(["weekly", "monthly", "allTime"] as UiPeriod[]).map((p) => (
             <button
               key={p}
-              onClick={() => setPeriod(p)}
+              onClick={() => setUiPeriod(p)}
               className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${
-                period === p
+                uiPeriod === p
                   ? "bg-surface-container-high text-primary shadow-sm"
                   : "text-on-surface-variant hover:text-on-surface"
               }`}
@@ -227,33 +258,25 @@ export default function LeaderboardPage() {
           ))}
         </nav>
 
-        {/* Podium */}
-        <section className="relative flex items-end justify-center gap-2 md:gap-6 mb-12 min-h-[300px] podium-gradient pt-12 rounded-3xl overflow-hidden">
-          {/* Order: 2nd, 1st, 3rd */}
-          <PodiumEntry entry={top3[1]} size="sm" delay={300} />
-          <PodiumEntry entry={top3[0]} size="lg" delay={0} />
-          <PodiumEntry entry={top3[2]} size="sm" delay={500} />
-        </section>
+        {/* Loading state */}
+        {isLoading && <LeaderboardSkeleton />}
 
-        {/* Rankings list (rank 4+) */}
-        <motion.div
-          variants={pageVariants}
-          initial="hidden"
-          animate="visible"
-          className="space-y-3"
-        >
-          {rest.map((entry) => (
-            <motion.div
-              key={entry.id}
-              variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
+        {/* Error state */}
+        {error && !isLoading && (
+          <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
+            <p className="text-sm text-on-surface-variant">{t("error.generic")}</p>
+            <button
+              onClick={() => refetch()}
+              className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
             >
-              <RankRow entry={entry} />
-            </motion.div>
-          ))}
-        </motion.div>
+              <RefreshCw className="size-3.5" aria-hidden="true" />
+              {t("error.retry")}
+            </button>
+          </div>
+        )}
 
-        {/* Empty state (shown if no data) */}
-        {PREVIEW_LEADERS.length === 0 && (
+        {/* Empty state */}
+        {!isLoading && !error && entries.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-20 h-20 bg-surface-container-high rounded-full flex items-center justify-center mb-6">
               <span className="text-4xl">🏆</span>
@@ -265,6 +288,54 @@ export default function LeaderboardPage() {
               {t("leaderboard.emptyDesc")}
             </p>
           </div>
+        )}
+
+        {/* Podium — only if we have at least 3 entries */}
+        {!isLoading && !error && top3.length >= 3 && (
+          <section className="relative flex items-end justify-center gap-2 md:gap-6 mb-12 min-h-[300px] podium-gradient pt-12 rounded-3xl overflow-hidden">
+            {/* Order: 2nd, 1st, 3rd */}
+            <PodiumEntry entry={top3[1]} size="sm" delay={300} />
+            <PodiumEntry entry={top3[0]} size="lg" delay={0} />
+            <PodiumEntry entry={top3[2]} size="sm" delay={500} />
+          </section>
+        )}
+
+        {/* Partial podium — fewer than 3 entries */}
+        {!isLoading && !error && top3.length > 0 && top3.length < 3 && (
+          <motion.div
+            variants={pageVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-3 mb-4"
+          >
+            {top3.map((entry) => (
+              <motion.div
+                key={entry.id}
+                variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
+              >
+                <RankRow entry={entry} />
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+
+        {/* Rankings list (rank 4+) */}
+        {!isLoading && !error && rest.length > 0 && (
+          <motion.div
+            variants={pageVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-3"
+          >
+            {rest.map((entry) => (
+              <motion.div
+                key={entry.id}
+                variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
+              >
+                <RankRow entry={entry} />
+              </motion.div>
+            ))}
+          </motion.div>
         )}
       </main>
     </div>

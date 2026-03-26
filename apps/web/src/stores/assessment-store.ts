@@ -1,22 +1,48 @@
 import { create } from "zustand";
 
+/**
+ * Matches backend QuestionOut schema (apps/api/app/schemas/assessment.py)
+ * Fields: id, question_type, question_en, question_az, options, competency_id
+ */
 export interface Question {
   id: string;
-  text: string;
-  type: "mcq" | "open_text" | "rating_scale";
-  options?: string[];
-  time_limit_seconds: number;
-  difficulty_level: "easy" | "medium" | "hard";
+  question_type: string; // "mcq" | "open_ended" | "sjt"
+  question_en: string;
+  question_az: string;
+  options: Array<{ key: string; text_en: string; text_az: string }> | null;
+  competency_id: string;
 }
 
-interface AssessmentState {
+/**
+ * Matches backend SessionOut schema
+ */
+export interface SessionState {
+  session_id: string;
+  competency_slug: string;
+  role_level: string;
+  questions_answered: number;
+  is_complete: boolean;
+  stop_reason: string | null;
+  next_question: Question | null;
+}
+
+/**
+ * Matches backend AnswerFeedback schema
+ */
+export interface AnswerFeedback {
+  session_id: string;
+  question_id: string;
+  timing_warning: string | null;
+  session: SessionState;
+}
+
+interface AssessmentStore {
   sessionId: string | null;
   currentQuestion: Question | null;
   selectedCompetencies: string[];
   currentCompetencyIndex: number;
   answeredCount: number;
   isSubmitting: boolean;
-  isEvaluating: boolean; // 202 Accepted — waiting for LLM
   error: string | null;
 
   // Actions
@@ -26,19 +52,17 @@ interface AssessmentState {
   incrementAnswered: () => void;
   nextCompetency: () => void;
   setSubmitting: (v: boolean) => void;
-  setEvaluating: (v: boolean) => void;
   setError: (e: string | null) => void;
   reset: () => void;
 }
 
-export const useAssessmentStore = create<AssessmentState>((set) => ({
+export const useAssessmentStore = create<AssessmentStore>((set) => ({
   sessionId: null,
   currentQuestion: null,
   selectedCompetencies: [],
   currentCompetencyIndex: 0,
   answeredCount: 0,
   isSubmitting: false,
-  isEvaluating: false,
   error: null,
 
   setSession: (id) => set({ sessionId: id }),
@@ -53,7 +77,6 @@ export const useAssessmentStore = create<AssessmentState>((set) => ({
       currentQuestion: null,
     })),
   setSubmitting: (v) => set({ isSubmitting: v }),
-  setEvaluating: (v) => set({ isEvaluating: v }),
   setError: (e) => set({ error: e }),
   reset: () =>
     set({
@@ -63,7 +86,6 @@ export const useAssessmentStore = create<AssessmentState>((set) => ({
       currentCompetencyIndex: 0,
       answeredCount: 0,
       isSubmitting: false,
-      isEvaluating: false,
       error: null,
     }),
 }));

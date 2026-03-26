@@ -9,7 +9,6 @@ import { HowItWorks } from "@/components/landing/how-it-works";
 import { OrgCta } from "@/components/landing/org-cta";
 import { LandingNav } from "@/components/landing/landing-nav";
 import { LandingFooter } from "@/components/landing/landing-footer";
-import { getMockImpactStats } from "@/lib/mock-data";
 
 interface LandingPageProps {
   params: Promise<{ locale: string }>;
@@ -36,9 +35,6 @@ export async function generateMetadata({
 export default async function LandingPage({ params }: LandingPageProps) {
   const { locale } = await params;
 
-  // Session 11: replace with real API call — GET /api/stats/public
-  const stats = getMockImpactStats();
-
   return (
     <>
       {/* Skip to main content — must be FIRST focusable element in DOM */}
@@ -51,7 +47,7 @@ export default async function LandingPage({ params }: LandingPageProps) {
       <LandingNav locale={locale} />
       <main id="main-content">
         <HeroSection locale={locale} />
-        <ImpactTicker stats={stats} />
+        <ImpactTicker />
         <FeaturesGrid />
         <HowItWorks />
         <OrgCta locale={locale} />

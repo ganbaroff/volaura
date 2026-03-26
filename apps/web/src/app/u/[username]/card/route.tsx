@@ -157,7 +157,7 @@ export async function GET(
 
         {/* Footer */}
         <div style={{ position: "absolute", bottom: 36, right: 48, fontSize: 14, color: "#475569", display: "flex" }}>
-          volaura.az
+          volaura.app
         </div>
       </div>
     ),

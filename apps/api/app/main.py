@@ -8,6 +8,7 @@ Security hardening applied:
 - Structured error responses on all endpoints
 """
 
+import asyncio
 from contextlib import asynccontextmanager
 from collections.abc import AsyncGenerator
 
@@ -16,10 +17,23 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from loguru import logger
 
+import sentry_sdk
+
 from app.config import settings, validate_production_settings
 from app.middleware.rate_limit import setup_rate_limiting
+
+# Sentry error monitoring — silent if DSN not set
+if settings.sentry_dsn:
+    sentry_sdk.init(
+        dsn=settings.sentry_dsn,
+        environment=settings.app_env,
+        traces_sample_rate=0.1,
+    )
+    logger.info("Sentry monitoring enabled")
+
 from app.middleware.security_headers import SecurityHeadersMiddleware
-from app.routers import activity, assessment, auth, aura, badges, discovery, events, health, organizations, profiles, telegram_webhook, verification
+from app.routers import activity, assessment, auth, aura, badges, discovery, events, health, invites, leaderboard, organizations, profiles, stats, telegram_webhook, verification
+from app.services.reeval_worker import run_reeval_worker
 
 
 @asynccontextmanager
@@ -30,7 +44,18 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # Validate production-critical settings
     for warning in validate_production_settings():
         logger.warning(warning)
+
+    # Start async re-evaluation worker (ADR-010: keyword_fallback → LLM upgrade queue)
+    reeval_task = asyncio.create_task(run_reeval_worker(), name="reeval_worker")
+
     yield
+
+    # Graceful shutdown: cancel background worker and wait for it to stop
+    reeval_task.cancel()
+    try:
+        await asyncio.wait_for(asyncio.shield(reeval_task), timeout=5.0)
+    except (asyncio.CancelledError, asyncio.TimeoutError):
+        pass
     logger.info("Volaura API shutting down...")
 
 
@@ -82,8 +107,11 @@ app.include_router(aura.router, prefix="/api")
 app.include_router(assessment.router, prefix="/api")
 app.include_router(events.router, prefix="/api")
 app.include_router(organizations.router, prefix="/api")
+app.include_router(invites.router, prefix="/api")
 app.include_router(badges.router, prefix="/api")
 app.include_router(verification.router, prefix="/api")
 app.include_router(activity.router, prefix="/api")
 app.include_router(discovery.router, prefix="/api")
+app.include_router(leaderboard.router, prefix="/api")
+app.include_router(stats.router, prefix="/api")
 app.include_router(telegram_webhook.router, prefix="/api")

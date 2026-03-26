@@ -3,7 +3,8 @@
 from fastapi import APIRouter, HTTPException, Request
 
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
-from app.middleware.rate_limit import limiter, RATE_DEFAULT
+from app.middleware.rate_limit import limiter, RATE_DEFAULT, RATE_LLM, RATE_PROFILE_WRITE
+from app.core.assessment.aura_calc import apply_activity_boost, calculate_effective_score
 from app.schemas.aura import (
     AuraScoreResponse,
     SharingPermissionRequest,
@@ -23,8 +24,30 @@ _MODEL_CONFIDENCE: dict[str, str] = {
 }
 
 
+def _with_effective_score(data: dict) -> dict:
+    """Compute and inject effective_score (decay-adjusted) into AURA data dict."""
+    last_updated = data.get("last_updated")
+    raw_score = data.get("total_score", 0.0)
+    if last_updated is not None and raw_score:
+        if isinstance(last_updated, str):
+            try:
+                from datetime import datetime
+                last_updated = datetime.fromisoformat(last_updated)
+            except (ValueError, TypeError):
+                last_updated = None
+        if last_updated is not None:
+            decayed = calculate_effective_score(raw_score, last_updated)
+            # Activity boost: recent event participation counteracts decay
+            events_recent = int(data.get("events_attended", 0))
+            boosted = apply_activity_boost(decayed, events_recent)
+            data = {**data, "effective_score": boosted}
+    return data
+
+
 @router.get("/me", response_model=AuraScoreResponse)
+@limiter.limit(RATE_DEFAULT)
 async def get_my_aura(
+    request: Request,
     db: SupabaseUser,
     user_id: CurrentUserId,
 ) -> AuraScoreResponse:
@@ -41,59 +64,23 @@ async def get_my_aura(
             status_code=404,
             detail={"code": "AURA_NOT_FOUND", "message": "No AURA score yet — complete an assessment first"},
         )
-    return AuraScoreResponse(**result.data)
-
-
-@router.get("/{volunteer_id}", response_model=AuraScoreResponse)
-@limiter.limit(RATE_DEFAULT)
-async def get_aura_by_id(
-    request: Request,
-    volunteer_id: str,
-    db: SupabaseAdmin,
-) -> AuraScoreResponse:
-    """Get any volunteer's AURA score (public profiles only, respects visibility).
-
-    Uses service-role client (SupabaseAdmin) to check existence before enforcing
-    visibility — intentional for public discovery of non-hidden profiles.
-
-    Security (CRIT-04): Identical 404 response for hidden vs nonexistent profiles
-    to prevent volunteer existence enumeration attacks.
-    """
-    result = (
-        await db.table("aura_scores")
-        .select("*")
-        .eq("volunteer_id", volunteer_id)
-        .maybe_single()
-        .execute()
-    )
-    if not result.data:
-        raise HTTPException(
-            status_code=404,
-            detail={"code": "AURA_NOT_FOUND", "message": "AURA score not found"},
-        )
-    # Respect visibility setting
-    # CRIT-04: Use identical error code for hidden AND nonexistent — prevents enumeration
-    visibility = result.data.get("visibility", "public")
-    if visibility == "hidden":
-        raise HTTPException(
-            status_code=404,
-            detail={"code": "AURA_NOT_FOUND", "message": "AURA score not found"},
-        )
-    if visibility == "badge_only":
-        # Return only badge tier + total score, strip competency details
-        return AuraScoreResponse(
-            **{**result.data, "competency_scores": {}, "aura_history": []}
-        )
-    return AuraScoreResponse(**result.data)
+    return AuraScoreResponse(**_with_effective_score(dict(result.data)))
 
 
 @router.get("/me/explanation")
+@limiter.limit(RATE_LLM)
 async def get_aura_explanation(
+    request: Request,
     db: SupabaseUser,
     user_id: CurrentUserId,
 ):
     """Get detailed explanation of AURA score — per-competency breakdown with evaluation logs.
     Phase 2: Transparent Evaluation Logs — 'Show Your Work'.
+    DeCE detail (quote + confidence) included when available from LLM evaluations.
+
+    Route ordering: MUST be registered BEFORE /{volunteer_id} wildcard.
+    FastAPI matches routes in registration order — if the wildcard is first,
+    /me/explanation would match as volunteer_id="me" and return a 404.
     """
     # Get completed sessions with evaluation data
     sessions_result = (
@@ -123,13 +110,20 @@ async def get_aura_explanation(
                 # Map model_used → evaluation_confidence (high/pattern_matched/unknown)
                 raw_model = eval_log.get("model_used", "unknown")
                 confidence = _MODEL_CONFIDENCE.get(raw_model, "unknown")
-                item_explanations.append({
+                explanation_entry: dict = {
                     "question_id": item.get("question_id"),
-                    "raw_score": round(item.get("raw_score", 0), 3),
-                    "concept_scores": eval_log.get("concept_scores", {}),
+                    "concept_scores": {
+                        k: v for k, v in eval_log.get("concept_scores", {}).items()
+                        if isinstance(k, str) and isinstance(v, (int, float))
+                    },
                     "evaluation_confidence": confidence,  # high | pattern_matched | unknown
                     "methodology": eval_log.get("methodology", "BARS"),
-                })
+                }
+                # DeCE: include per-concept breakdown with quotes when available
+                dece_details = eval_log.get("concept_details")
+                if dece_details and isinstance(dece_details, list):
+                    explanation_entry["concept_details"] = dece_details
+                item_explanations.append(explanation_entry)
 
         if item_explanations:
             explanations.append({
@@ -148,8 +142,55 @@ async def get_aura_explanation(
     }
 
 
+@router.get("/{volunteer_id}", response_model=AuraScoreResponse)
+@limiter.limit(RATE_DEFAULT)
+async def get_aura_by_id(
+    request: Request,
+    volunteer_id: str,
+    db: SupabaseAdmin,
+) -> AuraScoreResponse:
+    """Get any volunteer's AURA score (public profiles only, respects visibility).
+
+    Uses service-role client (SupabaseAdmin) to check existence before enforcing
+    visibility — intentional for public discovery of non-hidden profiles.
+
+    Security (CRIT-04): Identical 404 response for hidden vs nonexistent profiles
+    to prevent volunteer existence enumeration attacks.
+
+    Route ordering: MUST come AFTER /me and /me/explanation — wildcard captures anything.
+    """
+    result = (
+        await db.table("aura_scores")
+        .select("*")
+        .eq("volunteer_id", volunteer_id)
+        .maybe_single()
+        .execute()
+    )
+    if not result.data:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "AURA_NOT_FOUND", "message": "AURA score not found"},
+        )
+    # Respect visibility setting
+    # CRIT-04: Use identical error code for hidden AND nonexistent — prevents enumeration
+    visibility = result.data.get("visibility", "public")
+    if visibility == "hidden":
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "AURA_NOT_FOUND", "message": "AURA score not found"},
+        )
+    if visibility == "badge_only":
+        # Return only badge tier + total score, strip competency details
+        return AuraScoreResponse(
+            **_with_effective_score({**result.data, "competency_scores": {}, "aura_history": []})
+        )
+    return AuraScoreResponse(**_with_effective_score(dict(result.data)))
+
+
 @router.patch("/me/visibility")
+@limiter.limit(RATE_PROFILE_WRITE)
 async def update_visibility(
+    request: Request,
     body: UpdateVisibilityRequest,
     db: SupabaseUser,
     user_id: CurrentUserId,
@@ -170,7 +211,9 @@ async def update_visibility(
 
 
 @router.post("/me/sharing")
+@limiter.limit(RATE_PROFILE_WRITE)
 async def manage_sharing_permission(
+    request: Request,
     body: SharingPermissionRequest,
     db: SupabaseUser,
     db_admin: SupabaseAdmin,

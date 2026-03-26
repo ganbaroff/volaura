@@ -28,6 +28,7 @@ class AuraScoreResponse(BaseModel):
     events_attended: int = 0
     events_no_show: int = 0
     percentile_rank: float | None = None
+    effective_score: float | None = None  # decay-adjusted score (computed at request time, not stored)
     aura_history: list = []
     last_updated: datetime | None = None
 

@@ -26,7 +26,10 @@ class Settings(BaseSettings):
     # Telegram
     telegram_bot_token: str = ""
     telegram_ceo_chat_id: str = ""
-    telegram_webhook_secret: str = "volaura-swarm-2026"  # validated on each webhook call
+    telegram_webhook_secret: str = ""  # Must be set in production via TELEGRAM_WEBHOOK_SECRET
+
+    # Monitoring
+    sentry_dsn: str = ""  # If set, errors are reported to Sentry
 
     # Stripe (MVP-1)
     stripe_secret_key: str = ""
@@ -68,5 +71,10 @@ def validate_production_settings() -> list[str]:
         if settings.app_url == "http://localhost:3000":
             warnings.append(
                 "WARNING: APP_URL is still localhost — CORS will block frontend requests."
+            )
+        if not settings.telegram_webhook_secret:
+            warnings.append(
+                "WARNING: TELEGRAM_WEBHOOK_SECRET is not set — Telegram webhook endpoint "
+                "will reject all incoming updates (no secret = 403 on every call)."
             )
     return warnings

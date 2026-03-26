@@ -1,20 +1,25 @@
-"""Assessment endpoints — start, answer, complete, results.
+"""Assessment endpoints — start, answer, complete, results, coaching.
 
 Rate limited:
 - /start: 3/hour per user (prevent assessment farming)
 - /answer: 60/hour per user (normal pace ~40 questions/session)
+- /{session_id}/coaching: 30/hour (LLM rate limit)
 """
 
 from __future__ import annotations
 
+import asyncio
+import json
 import uuid
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, HTTPException, Request
+from loguru import logger
+from pydantic import BaseModel, ConfigDict
 
 from app.config import settings
 from app.core.assessment import antigaming, bars
-from app.middleware.rate_limit import limiter, RATE_ASSESSMENT_START, RATE_ASSESSMENT_ANSWER, RATE_ASSESSMENT_COMPLETE
+from app.middleware.rate_limit import limiter, RATE_ASSESSMENT_START, RATE_ASSESSMENT_ANSWER, RATE_ASSESSMENT_COMPLETE, RATE_LLM
 from app.core.assessment.aura_calc import (
     calculate_overall,
     get_badge_tier,
@@ -140,7 +145,45 @@ async def start_assessment(
             detail={"code": "NO_QUESTIONS", "message": "No active questions for this competency"},
         )
 
-    state = CATState()
+    # Carry-over theta: use final theta from last completed session as prior
+    # SE is widened by 1.5× per 90 days (built-in decay: older sessions = wider prior = more questions needed)
+    prior_mean = 0.0
+    prior_sd = 1.0
+    try:
+        prev_result = (
+            await db_user.table("assessment_sessions")
+            .select("theta_estimate, theta_se, completed_at")
+            .eq("volunteer_id", user_id)
+            .eq("competency_id", competency_id)
+            .eq("status", "completed")
+            .order("completed_at", desc=True)
+            .limit(1)
+            .execute()
+        )
+        if prev_result.data:
+            prev = prev_result.data[0]
+            if prev.get("theta_estimate") is not None and prev.get("completed_at"):
+                completed_dt = datetime.fromisoformat(prev["completed_at"])
+                if completed_dt.tzinfo is None:
+                    completed_dt = completed_dt.replace(tzinfo=timezone.utc)
+                days_elapsed = max(0, (datetime.now(timezone.utc) - completed_dt).days)
+                # Widen SE by 1.5× per 90 days — the further in the past, the less we trust it
+                decay_factor = 1.5 ** (days_elapsed / 90.0)
+                prior_mean = float(prev["theta_estimate"])
+                prior_sd = min(float(prev.get("theta_se") or 1.0) * decay_factor, 2.0)
+                logger.info(
+                    "Carry-over theta for session start",
+                    user_id=user_id,
+                    prior_mean=round(prior_mean, 3),
+                    prior_sd=round(prior_sd, 3),
+                    days_elapsed=days_elapsed,
+                )
+    except Exception as _e:
+        logger.warning("Carry-over theta lookup failed, using defaults", error=str(_e))
+        prior_mean = 0.0
+        prior_sd = 1.0
+
+    state = CATState(theta=prior_mean, theta_se=prior_sd, prior_mean=prior_mean, prior_sd=prior_sd)
     first_q = select_next_item(state, questions)
 
     session_id = str(uuid.uuid4())
@@ -261,6 +304,27 @@ async def submit_answer(
             raw_score = eval_result.composite
             evaluation_log = eval_result.to_log()
 
+        # ADR-010: If evaluation fell back to keyword matching, enqueue for LLM re-eval.
+        # The degraded score is used immediately (user sees it now); the worker will
+        # silently replace it with a proper LLM score within ~60 seconds.
+        if evaluation_log and evaluation_log.get("evaluation_mode") == "degraded":
+            _session_competency_id = session["competency_id"]
+            comp_result_for_slug = await db_admin.table("competencies").select("slug").eq("id", _session_competency_id).single().execute()
+            comp_slug_for_queue = comp_result_for_slug.data["slug"] if comp_result_for_slug.data else ""
+            if comp_slug_for_queue:
+                from app.services.reeval_worker import enqueue_degraded_answer
+                await enqueue_degraded_answer(
+                    db_admin,
+                    session_id=payload.session_id,
+                    volunteer_id=user_id,
+                    question_id=payload.question_id,
+                    competency_slug=comp_slug_for_queue,
+                    question_en=question["scenario_en"],
+                    answer_text=payload.answer,
+                    expected_concepts=expected_concepts,
+                    degraded_score=raw_score,
+                )
+
     # Update CAT state (with evaluation log if available — Phase 2: Transparent Logs)
     state = CATState.from_dict(session["answers"] or {})
     state = submit_response(
@@ -361,6 +425,11 @@ async def complete_assessment(
     session = session_result.data
     state = CATState.from_dict(session["answers"] or {})
 
+    # Anti-gaming analysis — run ONCE here, store in session (never re-run in get_results)
+    gaming = antigaming.analyse(state.to_dict().get("items", []))
+    raw_competency_score = theta_to_score(state.theta)
+    competency_score = round(raw_competency_score * gaming.penalty_multiplier, 2)
+
     # Force-complete if somehow still open
     if session["status"] == "in_progress":
         state.stopped = True
@@ -372,19 +441,21 @@ async def complete_assessment(
             "theta_se": state.theta_se,
             "answers": state.to_dict(),
             "completed_at": datetime.now(timezone.utc).isoformat(),
+            "gaming_penalty_multiplier": gaming.penalty_multiplier,
+            "gaming_flags": gaming.flags,
         }).eq("id", session_id).execute()
-
-    # Anti-gaming analysis
-    gaming = antigaming.analyse(state.to_dict().get("items", []))
-    raw_competency_score = theta_to_score(state.theta)
-    # Apply gaming penalty
-    competency_score = round(raw_competency_score * gaming.penalty_multiplier, 2)
 
     # Get competency slug
     comp_result = (
         await db_admin.table("competencies").select("slug").eq("id", session["competency_id"]).single().execute()
     )
     slug = comp_result.data["slug"] if comp_result.data else ""
+
+    # Store gaming analysis in session (prevents threshold-drift inconsistency in get_results)
+    await db_admin.table("assessment_sessions").update({
+        "gaming_penalty_multiplier": gaming.penalty_multiplier,
+        "gaming_flags": gaming.flags,
+    }).eq("id", session_id).execute()
 
     # Upsert AURA score via DB RPC
     aura_updated = False
@@ -434,8 +505,12 @@ async def get_results(
 
     session = session_result.data
     state = CATState.from_dict(session["answers"] or {})
-    gaming = antigaming.analyse(state.to_dict().get("items", []))
-    competency_score = round(theta_to_score(state.theta) * gaming.penalty_multiplier, 2)
+
+    # Read stored gaming data — do NOT re-run antigaming.analyse()
+    # Re-running would cause inconsistency if thresholds change after completion
+    gaming_penalty_multiplier = session.get("gaming_penalty_multiplier", 1.0)
+    gaming_flags = session.get("gaming_flags") or []
+    competency_score = round(theta_to_score(state.theta) * gaming_penalty_multiplier, 2)
 
     comp_result = (
         await db_admin.table("competencies").select("slug").eq("id", session["competency_id"]).single().execute()
@@ -450,6 +525,223 @@ async def get_results(
         questions_answered=len(state.items),
         stop_reason=state.stop_reason,
         aura_updated=False,
-        gaming_flags=gaming.flags,
+        gaming_flags=gaming_flags,
         completed_at=session.get("completed_at"),
+    )
+
+
+# ── Coaching models ────────────────────────────────────────────────────────────
+
+class CoachingTip(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    title: str
+    description: str
+    action: str
+
+
+class CoachingResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    session_id: str
+    competency_id: str
+    score: float
+    tips: list[CoachingTip]
+
+
+# Generic fallback tips per competency slug
+_FALLBACK_TIPS: dict[str, list[dict]] = {
+    "communication": [
+        {"title": "Practice active listening", "description": "In your next meeting, focus entirely on the speaker without planning your reply.", "action": "After each meeting this week, write 3 key points you heard from others."},
+        {"title": "Write daily summaries", "description": "Summarising your day in 3 sentences sharpens clarity and captures learning.", "action": "Spend 5 minutes each evening writing what you accomplished and communicated."},
+        {"title": "Join a public speaking group", "description": "Structured practice in low-stakes environments builds confidence fast.", "action": "Find a local Toastmasters chapter or online equivalent and attend one session."},
+    ],
+    "reliability": [
+        {"title": "Use a task tracker", "description": "External systems beat memory. A visible to-do list reduces forgotten commitments.", "action": "Pick one app (Notion, Todoist, or pen+paper) and log every commitment for 7 days."},
+        {"title": "Set a 30-minute early reminder", "description": "Arriving or delivering 30 minutes early prevents last-minute failures.", "action": "For every deadline this week, set a calendar alarm 30 minutes before."},
+        {"title": "Communicate delays proactively", "description": "Telling people early about a delay preserves trust far better than silence.", "action": "Next time you sense a deadline risk, notify stakeholders before they ask."},
+    ],
+    "leadership": [
+        {"title": "Volunteer to lead a small task", "description": "Leadership skill grows fastest through practice, even on minor tasks.", "action": "Offer to coordinate the next team activity, however small."},
+        {"title": "Give specific feedback", "description": "Vague praise helps nobody. Specific observations accelerate growth.", "action": "This week, give one team member a specific, actionable observation about their work."},
+        {"title": "Read one leadership case study", "description": "Real-world examples provide mental models you can apply immediately.", "action": "Find a 10-minute case study on a leader you admire and extract one principle."},
+    ],
+    "english_proficiency": [
+        {"title": "Read one English article daily", "description": "Exposure to real written English expands vocabulary and grammar intuitively.", "action": "Choose a topic you care about and read one short article in English every morning."},
+        {"title": "Write emails in English", "description": "Writing forces more precise language use than speaking.", "action": "For the next week, write at least one professional email per day in English."},
+        {"title": "Watch content with subtitles", "description": "Subtitled video links spoken and written forms of the language.", "action": "Watch 20 minutes of English content with English subtitles today."},
+    ],
+    "adaptability": [
+        {"title": "Embrace one new tool or process", "description": "Deliberately using unfamiliar tools builds comfort with change.", "action": "This week, try a tool or workflow you've been avoiding."},
+        {"title": "Reflect on a past change", "description": "Identifying how you handled change before reveals your default patterns.", "action": "Write 3 sentences about a time you adapted successfully. What made it work?"},
+        {"title": "Seek feedback on your flexibility", "description": "Others often see our rigidity before we do.", "action": "Ask a colleague: 'In what situations do you think I could be more flexible?'"},
+    ],
+    "tech_literacy": [
+        {"title": "Complete one online tutorial", "description": "Structured tutorials build foundational skills faster than exploration alone.", "action": "Pick a free tutorial on a tool relevant to your volunteer work and finish one module today."},
+        {"title": "Document a process you use", "description": "Writing a process down reveals gaps and forces understanding.", "action": "Choose one digital tool you use daily and write a 5-step how-to guide."},
+        {"title": "Ask a tech-savvy colleague one question", "description": "Peer learning is faster than documentation for practical skills.", "action": "Identify the most tech-skilled person in your team and ask them one specific question this week."},
+    ],
+    "event_performance": [
+        {"title": "Debrief after every event", "description": "A 10-minute debrief with your team catches lessons while they're fresh.", "action": "After your next event, write: what went well, what didn't, and one thing to change."},
+        {"title": "Arrive early and help setup", "description": "Early presence demonstrates commitment and builds event intuition.", "action": "For your next event, arrive 30 minutes before your scheduled start."},
+        {"title": "Introduce yourself to 3 new people", "description": "Events are also about building community. Relationships compound over time.", "action": "At your next event, make a point of meeting 3 people you haven't worked with before."},
+    ],
+    "empathy_safeguarding": [
+        {"title": "Practice perspective-taking", "description": "Before responding to a difficult situation, pause and ask: what might this person be experiencing?", "action": "This week, in one challenging interaction, spend 30 seconds thinking from the other person's view before responding."},
+        {"title": "Learn one safeguarding principle", "description": "Safeguarding knowledge protects both volunteers and beneficiaries.", "action": "Read your organisation's safeguarding policy or one external resource on volunteer safeguarding today."},
+        {"title": "Check in with a quieter teammate", "description": "Empathy in practice means noticing who isn't speaking.", "action": "In your next group setting, notice who is quiet and create space for them to contribute."},
+    ],
+}
+
+_DEFAULT_FALLBACK_TIPS: list[dict] = [
+    {"title": "Set a learning goal", "description": "Clear goals direct effort and make progress visible.", "action": "Write down one specific skill you want to improve this month."},
+    {"title": "Seek feedback regularly", "description": "Feedback is the fastest path to improvement when acted upon.", "action": "Ask a teammate or supervisor for one piece of constructive feedback this week."},
+    {"title": "Reflect on recent experiences", "description": "Unexamined experience doesn't produce growth.", "action": "Spend 10 minutes writing about a recent challenge: what happened, what you learned."},
+]
+
+
+# ── Coaching endpoint ──────────────────────────────────────────────────────────
+
+
+@router.post("/{session_id}/coaching", response_model=CoachingResponse)
+@limiter.limit(RATE_LLM)
+async def get_coaching(
+    request: Request,
+    session_id: str,
+    db_admin: SupabaseAdmin,
+    db_user: SupabaseUser,
+    user_id: CurrentUserId,
+) -> CoachingResponse:
+    """Generate personalised coaching tips for a completed assessment session.
+
+    Uses Gemini to produce 3 specific, actionable improvement tips based on
+    the volunteer's competency score. Result is cached in assessment_sessions.coaching_note
+    to avoid redundant LLM calls on repeat requests.
+    """
+    # Validate session_id is a proper UUID
+    try:
+        uuid.UUID(session_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=422,
+            detail={"code": "INVALID_SESSION_ID", "message": "session_id must be a valid UUID"},
+        )
+
+    # Fetch session — must belong to user and be completed
+    session_result = (
+        await db_user.table("assessment_sessions")
+        .select("id, competency_id, theta_estimate, coaching_note")
+        .eq("id", session_id)
+        .eq("volunteer_id", user_id)
+        .eq("status", "completed")
+        .maybe_single()
+        .execute()
+    )
+    if not session_result.data:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "SESSION_NOT_FOUND", "message": "Completed session not found"},
+        )
+
+    session = session_result.data
+    competency_id: str = session["competency_id"]
+
+    # Return cached coaching note if it already exists
+    try:
+        cached = session.get("coaching_note")
+        if cached:
+            tips_data = cached if isinstance(cached, list) else json.loads(cached)
+            tips = [CoachingTip(**t) for t in tips_data]
+            from app.core.assessment.engine import theta_to_score
+            score = round(theta_to_score(session.get("theta_estimate", 0.0)), 2)
+            return CoachingResponse(
+                session_id=session_id,
+                competency_id=competency_id,
+                score=score,
+                tips=tips,
+            )
+    except Exception as e:
+        logger.warning("Failed to parse cached coaching_note, regenerating: {err}", err=str(e)[:200])
+
+    # Get competency name and slug
+    comp_result = (
+        await db_admin.table("competencies")
+        .select("name, slug")
+        .eq("id", competency_id)
+        .maybe_single()
+        .execute()
+    )
+    comp_name = comp_result.data.get("name", "this competency") if comp_result.data else "this competency"
+    comp_slug = comp_result.data.get("slug", "") if comp_result.data else ""
+
+    # Convert theta to 0-100 score
+    from app.core.assessment.engine import theta_to_score
+    score = round(theta_to_score(session.get("theta_estimate", 0.0)), 2)
+
+    # Attempt Gemini coaching generation
+    tips: list[CoachingTip] = []
+    gemini_succeeded = False
+
+    if settings.gemini_api_key:
+        try:
+            from google import genai as google_genai
+
+            prompt = (
+                f"You are a volunteer development coach. "
+                f"The volunteer scored {score}/100 in {comp_name}. "
+                f"Give exactly 3 specific, actionable improvement tips. "
+                f"Return valid JSON only, no markdown, no explanation: "
+                f'{{ "tips": [ {{ "title": "str", "description": "str", "action": "str" }}, ... ] }} '
+                f"Each tip must be practical and focused on real volunteer scenarios. "
+                f"Avoid generic advice like \'read more\' or \'practice more\'."
+            )
+
+            client = google_genai.Client(api_key=settings.gemini_api_key)
+
+            async def _call_gemini() -> str:
+                response = client.models.generate_content(
+                    model="gemini-2.0-flash",
+                    contents=prompt,
+                )
+                return response.text or ""
+
+            raw_text = await asyncio.wait_for(_call_gemini(), timeout=15.0)
+
+            # Strip markdown fences if present
+            clean = raw_text.strip()
+            if clean.startswith("```"):
+                clean = clean.split("```", 2)[1]
+                if clean.startswith("json"):
+                    clean = clean[4:]
+                clean = clean.rsplit("```", 1)[0].strip()
+
+            parsed = json.loads(clean)
+            raw_tips = parsed.get("tips", [])
+            tips = [CoachingTip(**t) for t in raw_tips[:3]]
+            gemini_succeeded = True
+
+        except asyncio.TimeoutError:
+            logger.warning("Gemini coaching timed out for session {sid}", sid=session_id)
+        except Exception as e:
+            logger.warning("Gemini coaching failed for session {sid}: {err}", sid=session_id, err=str(e)[:300])
+
+    # Fallback tips if Gemini unavailable or failed
+    if not gemini_succeeded or not tips:
+        fallback_data = _FALLBACK_TIPS.get(comp_slug, _DEFAULT_FALLBACK_TIPS)
+        tips = [CoachingTip(**t) for t in fallback_data[:3]]
+
+    # Cache result in assessment_sessions.coaching_note (graceful if column missing)
+    tips_json = [t.model_dump() for t in tips]
+    try:
+        await db_admin.table("assessment_sessions").update(
+            {"coaching_note": tips_json}
+        ).eq("id", session_id).execute()
+    except Exception as e:
+        logger.warning("Could not cache coaching_note (column may not exist yet): {err}", err=str(e)[:200])
+
+    return CoachingResponse(
+        session_id=session_id,
+        competency_id=competency_id,
+        score=score,
+        tips=tips,
     )

@@ -484,3 +484,17 @@ Additionally, frontend `Question` type had 6/6 fields mismatched vs backend `Que
 **Fix:** Read `resp['session']['next_question']` — CAT correctly serves 20 questions.
 **Lesson:** ALWAYS check response schema before writing API client code. `pnpm generate:api` would have caught this.
 **CLASS:** CLASS 4 (Schema ignorance) — verify response shape, don't guess.
+
+### Mistake #52 — ROOT CAUSE SESSION 43: No E2E smoke test = all bugs invisible (2026-03-26)
+**What:** 4 production-breaking bugs found ONLY when CTO manually walked through Leyla's journey. 512 unit tests caught NONE of them.
+**The 4 bugs:** (1) Wrong anon key format → auth 500, (2) nested response structure → frontend loses next_question, (3) 15/20 questions are "PLACEHOLDER" text shown to users, (4) 7 migrations never applied despite MCP access.
+**Root cause:** Unit tests test isolation. E2E tests test reality. We had 512 of the first and ZERO of the second. Every session ended with "512 passed ✅" and CTO declared victory without ever hitting a real endpoint.
+**Whose fault:** CTO (Claude). Every bug was CTO's direct action or inaction:
+- Bug 1: CTO set the env var without smoke test
+- Bug 2: CTO wrote the API and the client without checking own schema
+- Bug 3: CTO created placeholders in Session 19, never replaced them in 24 sessions
+- Bug 4: CTO classified own work as "CEO action" when MCP was available
+**Fix:** E2E smoke test is now MANDATORY before declaring any sprint complete. Not "tests pass" — "I logged in as Leyla, did the thing, saw the result."
+**Prevention rule:** After ANY deployment-affecting change: (1) curl authenticated GET, (2) curl the happy path, (3) check the UI shows real data not placeholders. 3 curls. 30 seconds. Non-negotiable.
+**CEO quote:** "ты сам столько ошибок нашёл — живым людям неработающий товар дать и позориться? Паша Банку на питчинг с таким товаром выйду?"
+**CLASS:** CLASS 7 (False confidence) — "512 tests pass" ≠ "product works". First instance of this class.

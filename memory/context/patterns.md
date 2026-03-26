@@ -451,3 +451,12 @@ Security Agent's route shadowing finding was dismissed in Session 25 ("FastAPI h
 
 ### Agent team review finds what solo review misses
 Session 42 proof: solo implementation → 0 bugs found. Team review → 7 bugs found (2× P0, 1× P1, 4× P2). The route ordering bug (/me/explanation unreachable) would have shipped to production invisible — no test covers it, no user would discover it until they try the endpoint.
+
+## Pattern: E2E Smoke Test Before Sprint Close (Session 43)
+**Rule:** NEVER declare a sprint complete with only unit tests. Always walk through the full user journey manually (curl or browser) against the REAL production/staging environment.
+**3-curl minimum:**
+1. `curl /health` — server alive
+2. `curl -H "Bearer ..." /api/profiles/me` — auth works
+3. `curl -X POST /api/assessment/start` → answer → complete — happy path works
+**Why:** Session 43 found 4 production-breaking bugs that 512 unit tests missed. Unit tests test code. Smoke tests test product.
+**Anti-pattern detected:** "512 passed ✅" → sprint complete → celebration → production broken.

@@ -14,6 +14,7 @@ Math references:
 from __future__ import annotations
 
 import math
+import random
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -21,7 +22,7 @@ from typing import Any
 # Stopping criteria constants
 MAX_ITEMS = 20
 SE_THRESHOLD = 0.3
-MIN_ITEMS_BEFORE_SE_STOP = 3  # Need at least 3 answers before SE stop
+MIN_ITEMS_BEFORE_SE_STOP = 5  # Need at least 3 answers before SE stop
 ABILITY_SCALE_MIN = -4.0
 ABILITY_SCALE_MAX = 4.0
 
@@ -39,6 +40,7 @@ class ItemRecord:
     response: int  # 0 or 1 (for open-ended: binarised via BARS threshold)
     raw_score: float  # 0.0-1.0 continuous score (BARS output)
     response_time_ms: int
+    theta_at_answer: float = 0.0   # RT-IRT: theta snapshot BEFORE this item was administered
     evaluation_log: dict | None = None  # Phase 2: BARS per-concept breakdown
 
 
@@ -53,7 +55,10 @@ class CATState:
     theta_se: float = 1.0       # standard error of estimate
     items: list[ItemRecord] = field(default_factory=list)
     stopped: bool = False
-    stop_reason: str | None = None  # "se_threshold" | "max_items" | "no_items_left"
+    stop_reason: str | None = None  # "se_threshold" | "max_items" | "no_items_left" | "eap_degraded"
+    eap_failures: int = 0       # S8.1: count of EAP estimation failures across requests
+    prior_mean: float = 0.0   # stored for EAP re-estimation across session
+    prior_sd: float = 1.0     # stored for EAP re-estimation across session
 
     # --- serialisation helpers ----------------------------------------
 
@@ -63,6 +68,9 @@ class CATState:
             "theta_se": self.theta_se,
             "stopped": self.stopped,
             "stop_reason": self.stop_reason,
+            "eap_failures": self.eap_failures,
+            "prior_mean": self.prior_mean,
+            "prior_sd": self.prior_sd,
             "items": [
                 {
                     "question_id": r.question_id,
@@ -72,6 +80,7 @@ class CATState:
                     "response": r.response,
                     "raw_score": r.raw_score,
                     "response_time_ms": r.response_time_ms,
+                    "theta_at_answer": r.theta_at_answer,
                     **({"evaluation_log": r.evaluation_log} if r.evaluation_log else {}),
                 }
                 for r in self.items
@@ -89,6 +98,7 @@ class CATState:
                 response=r["response"],
                 raw_score=r["raw_score"],
                 response_time_ms=r["response_time_ms"],
+                theta_at_answer=r.get("theta_at_answer", 0.0),
                 evaluation_log=r.get("evaluation_log"),
             )
             for r in data.get("items", [])
@@ -98,6 +108,9 @@ class CATState:
             theta_se=data.get("theta_se", 1.0),
             stopped=data.get("stopped", False),
             stop_reason=data.get("stop_reason"),
+            eap_failures=data.get("eap_failures", 0),  # S8.1: backward-compat default=0
+            prior_mean=data.get("prior_mean", 0.0),
+            prior_sd=data.get("prior_sd", 1.0),
             items=items,
         )
 
@@ -191,6 +204,7 @@ def _estimate_eap(
 def select_next_item(
     state: CATState,
     available_questions: list[dict[str, Any]],
+    epsilon: float = 0.15,
 ) -> dict[str, Any] | None:
     """Select the next item to administer using Maximum Fisher Information (MFI).
 
@@ -207,6 +221,11 @@ def select_next_item(
 
     if not remaining:
         return None
+
+    # ε-greedy: with probability epsilon, select a random item (anti-gaming / exposure control)
+    # Prevents hot items from receiving 80%+ of traffic and leaking via coordination channels
+    if len(remaining) > 1 and random.random() < epsilon:
+        return random.choice(remaining)
 
     # Select item with maximum Fisher information at current theta
     best_q = None
@@ -245,6 +264,7 @@ def submit_response(
         Updated CATState.
     """
     binary_response = 1 if raw_score >= 0.5 else 0
+    theta_snapshot = state.theta  # RT-IRT: capture theta BEFORE updating with this response
 
     record = ItemRecord(
         question_id=question_id,
@@ -253,6 +273,7 @@ def submit_response(
         irt_c=irt_c,
         response=binary_response,
         raw_score=raw_score,
+        theta_at_answer=theta_snapshot,
         response_time_ms=response_time_ms,
         evaluation_log=evaluation_log,
     )
@@ -260,18 +281,26 @@ def submit_response(
 
     # Re-estimate theta with all answered items
     try:
-        theta, se = _estimate_eap(state.items)
+        theta, se = _estimate_eap(state.items, prior_mean=state.prior_mean, prior_sd=state.prior_sd)
         state.theta = theta
         state.theta_se = se
     except Exception as e:
-        # EAP can fail in edge cases; keep previous estimate but LOG it
-        # Security audit P1: silent pass produced bogus scores when all EAP calls failed
+        # S8.1: eap_failures is a proper dataclass field — survives to_dict/from_dict
+        # across HTTP requests. Dynamic _eap_failures attribute was lost on every
+        # deserialization, allowing silent score corruption to accumulate indefinitely.
         from loguru import logger
-        state._eap_failures = getattr(state, "_eap_failures", 0) + 1
+        state.eap_failures += 1
         logger.warning(
-            f"EAP estimation failed (attempt #{state._eap_failures}), "
+            f"EAP estimation failed (attempt #{state.eap_failures}), "
             f"keeping theta={state.theta:.4f}: {e}"
         )
+        # Abort session after 3 cumulative EAP failures (prevents bogus scores)
+        if state.eap_failures >= 3:
+            state.stopped = True
+            state.stop_reason = "eap_degraded"
+            logger.error(
+                f"EAP failed {state.eap_failures} times — stopping session (eap_degraded)"
+            )
 
     return state
 

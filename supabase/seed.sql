@@ -184,11 +184,11 @@ INSERT INTO public.questions (
     'You are coordinating a registration desk at an international conference. A foreign delegate approaches and appears confused — they speak limited English and seem frustrated. Describe exactly what you would do.',
     'Siz beynəlxalq konfranslarda qeydiyyat masasını koordinasiya edirsiniz. Xarici bir nümayəndə yaxınlaşır və çaşqın görünür — onun ingilis dili məhduddur və əsəblilik hiss olunur. Dəqiq nə edərdiniz?',
     '[
-        {"name": "calm_tone", "weight": 0.20, "keywords": ["calm", "slow", "smile", "patient", "relax", "friendly", "sakit", "gülümsə"]},
-        {"name": "nonverbal_support", "weight": 0.20, "keywords": ["gesture", "point", "show", "visual", "map", "sign", "işarə", "göstər"]},
-        {"name": "simplify_language", "weight": 0.20, "keywords": ["simple", "short", "basic words", "avoid jargon", "sadə", "qısa"]},
-        {"name": "seek_help", "weight": 0.20, "keywords": ["colleague", "translator", "app", "Google Translate", "supervisor", "həmkar", "tərcüməçi"]},
-        {"name": "follow_through", "weight": 0.20, "keywords": ["confirm", "check", "ensure resolved", "follow up", "təsdiqlə", "nəticəni yoxla"]}
+        {"name": "calm_tone", "weight": 0.20, "keywords": ["spoke slowly and clearly", "kept my voice soft", "maintained a calm demeanor", "reduced my speaking pace", "stayed patient despite the frustration", "sakit ton saxladım", "yavaş danışdım"]},
+        {"name": "nonverbal_support", "weight": 0.20, "keywords": ["used hand gestures to indicate", "drew a quick sketch", "pointed to a map", "used visual aids to guide", "showed them the registration form", "əl hərəkətlərindən istifadə etdim", "xəritəni göstərdim"]},
+        {"name": "simplify_language", "weight": 0.20, "keywords": ["used short simple sentences", "avoided technical jargon", "spoke one step at a time", "repeated key information more slowly", "used basic words they might know", "qısa sadə cümlələr işlətdim", "texniki terminlərdən çəkindim"]},
+        {"name": "seek_help", "weight": 0.20, "keywords": ["found a bilingual colleague to assist", "used a translation app", "called over a team member who spoke their language", "asked a nearby colleague to help translate", "used Google Translate as a bridge", "ikidilli həmkar tapdım", "tərcümə proqramından istifadə etdim"]},
+        {"name": "follow_through", "weight": 0.20, "keywords": ["confirmed they completed registration successfully", "checked they had everything they needed", "ensured the delegate was no longer confused", "stayed with them until the issue was resolved", "followed up after handing them to a colleague", "qeydiyyatı tamamladıqlarını təsdiqlədi", "nəticəni yoxladım"]}
     ]',
     2.0, 0.3, 0.0,
     'Excellent cross-cultural communication uses calm tone, non-verbal cues, simplified language, seeks help when needed, and follows through.',
@@ -213,11 +213,11 @@ INSERT INTO public.questions (
     'Your team coordinator just texted: "The session room changed to B-14, inform all attendees ASAP." You have 10 minutes and 50 attendees scattered across the venue. Describe your communication plan.',
     'Komanda koordinatorunuz yazı yazdı: "Sessiya otağı B-14-ə dəyişdirildi, bütün iştirakçıları dərhal xəbərdar edin." Binanın hər yerinə səpələnmiş 50 iştirakçı üçün 10 dəqiqəniz var. Kommunikasiya planınızı təsvir edin.',
     '[
-        {"name": "prioritize_channels", "weight": 0.25, "keywords": ["broadcast", "group message", "announce", "speaker", "multiple channels", "yayım", "qrup mesaj"]},
-        {"name": "delegate", "weight": 0.20, "keywords": ["team", "split", "assign", "volunteers", "divide", "komanda", "bölüşdür"]},
-        {"name": "clear_message", "weight": 0.25, "keywords": ["room number", "B-14", "time", "direction", "clear", "otaq nömrəsi", "aydın"]},
-        {"name": "confirm_coverage", "weight": 0.15, "keywords": ["check", "confirm all informed", "follow up", "account for", "yoxla"]},
-        {"name": "stay_calm", "weight": 0.15, "keywords": ["calm", "systematic", "don''t panic", "organized", "sakit", "sistematik"]}
+        {"name": "prioritize_channels", "weight": 0.25, "keywords": ["sent a group message to all attendees", "used the event app to broadcast", "made an announcement over the public address system", "contacted attendees simultaneously through multiple channels", "reached everyone at once via messaging platform", "bütün iştirakçılara qrup mesajı göndərdim", "ictimai elan sistemi ilə xəbər verdim"]},
+        {"name": "delegate", "weight": 0.20, "keywords": ["split the venue into sections and assigned each volunteer a zone", "sent a different volunteer to each floor", "divided the team to cover the whole building", "each team member took responsibility for a different area", "coordinated with my team to cover all areas simultaneously", "binayı bölgələrə bölüb hər könüllüyə sahə təyin etdim", "komandanı müxtəlif əraziləri əhatə etmək üçün böldüm"]},
+        {"name": "clear_message", "weight": 0.25, "keywords": ["clearly stated the new room is B-14", "gave exact directions to room B-14", "specified the floor and building of the new location", "included the room number in every message", "made sure the message had the room number and timing", "yeni otağın B-14 olduğunu bildirdim", "hər mesajda otaq nömrəsini göstərdim"]},
+        {"name": "confirm_coverage", "weight": 0.15, "keywords": ["each volunteer reported back once their area was covered", "confirmed all 50 attendees were reached", "collected confirmation from each zone volunteer", "verified no one was missed before the session started", "did a headcount at the new room to verify everyone arrived", "hər könüllü öz ərazisini əhatə etdikdən sonra bildirdi", "50 iştirakçının hamısına çatdığımı təsdiqlədi"]},
+        {"name": "stay_calm", "weight": 0.15, "keywords": ["maintained composure despite the time pressure", "stayed focused and worked systematically through each zone", "kept the team calm while moving quickly", "communicated urgency without causing panic", "worked through the problem in an organized manner", "vaxt təzyiqi altında özünü itirmədi", "panikaya yol vermədən təcililik hissini çatdırdım"]}
     ]',
     2.2, 0.8, 0.0,
     FALSE, FALSE,

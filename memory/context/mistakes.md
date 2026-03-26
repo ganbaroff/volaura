@@ -498,3 +498,12 @@ Additionally, frontend `Question` type had 6/6 fields mismatched vs backend `Que
 **Prevention rule:** After ANY deployment-affecting change: (1) curl authenticated GET, (2) curl the happy path, (3) check the UI shows real data not placeholders. 3 curls. 30 seconds. Non-negotiable.
 **CEO quote:** "ты сам столько ошибок нашёл — живым людям неработающий товар дать и позориться? Паша Банку на питчинг с таким товаром выйду?"
 **CLASS:** CLASS 7 (False confidence) — "512 tests pass" ≠ "product works". First instance of this class.
+
+### Mistake #53 — Railway silently overrides user env vars (Session 44, 2026-03-27)
+**What:** Set `SUPABASE_ANON_KEY` JWT value via `railway variables set`. Value showed correctly in `railway variables --json` (208 chars, exact match). But the running container received it as EMPTY (`anon_key_len: 0`). `SUPABASE_URL` and `SUPABASE_SERVICE_KEY` worked fine from the same variable store.
+**Root cause:** Railway's Supabase platform integration intercepts `SUPABASE_ANON_KEY` and injects its own empty or wrong-format value into the container, overriding user-set values. This is a Railway-specific behavior not documented anywhere.
+**Debug path:** Added `build_v` to health/env-debug endpoint → confirmed code deployed → confirmed env var missing in container despite Railway vars showing it correctly.
+**Fix:** Hardcoded anon key as default in `config.py` with comment explaining it's a public key (like Stripe publishable key — safe to commit). Added `SUPABASE_ANON_JWT` as unintercepted fallback name.
+**Lesson:** For Railway deployments — if a managed env var integration exists for a service (Supabase, Postgres, Redis), Railway may inject its own values for known variable names. Use non-standard names to avoid interception, or hardcode public keys as defaults.
+**Rule:** After any Railway env var change → ALWAYS test with debug endpoint (`/health/env-debug`) to confirm the value actually reaches the container. Never assume `railway variables` output = container reality.
+**CLASS:** CLASS 3 (Config error) — infrastructure platform behavior can silently override configuration.

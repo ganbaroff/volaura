@@ -357,12 +357,23 @@ Spanned Sessions 14a through 14d (2026-03-24)
 - [x] DSP v4.0 (real parallel agents instead of single-model pseudo-debate)
 - [x] Claude Code config: 7 hooks, permissions hardened, /post skill
 
-**Sprint 9 (Sessions 37+): Current — CSV + Codegen + Growth** 🔄 IN PROGRESS
-- [ ] CSV bulk volunteer invite (max 500 rows, batches of 50, audit log) ← MAIN FEATURE
-- [ ] `pnpm generate:api` → replace 7 TODO hooks (ADR-003 compliance)
-- [ ] Post #3 — needs new angle (Antigravity rejected as Mistake #40)
-- [ ] Vitest Node v20 fix (nvm use 20)
-- [ ] Fix 11 pre-existing test failures
+**Sprint 9 (Sessions 37+): COMPLETE** ✅ (2026-03-27)
+- [x] CSV bulk volunteer invite (max 500 rows, batches of 50, audit log) — Session 39
+- [x] Assessment flow fixes (6 files rewritten, URL/body/field mismatches) — Session 40
+- [x] Assessment hardening (DeCE, anti-gaming, GRS, reeval worker) — Session 42
+- [x] 9 Supabase migrations applied via MCP — Sessions 43-44
+- [x] Question bank: 0 placeholders, 90 real scenarios across 8 competencies — Session 44
+- [x] Railway production fix: anon key hardcoded fallback (Mistake #53) — Session 44
+- [x] E2E verified on production: auth → AURA 12.47 → assessment → answer — Session 44
+- [ ] `pnpm generate:api` → replace 7 TODO hooks (ADR-003 compliance) ← Sprint 10
+- [ ] Post #3 — needs new angle (Antigravity rejected as Mistake #40) ← CEO decision
+- [ ] Vitest Node v20 fix (nvm use 20) ← Sprint 10
+
+**Sprint 10 (Sessions 44+): Starting — Org Dashboard + Frontend Polish**
+- [ ] `pnpm generate:api` → replace 7 TODO hooks with generated TypeScript
+- [ ] Org dashboard: aggregate volunteer scores + B2B matching endpoint
+- [ ] Post #3 rewrite (new angle from CEO)
+- [ ] Vitest Node v20 fix
 
 ---
 

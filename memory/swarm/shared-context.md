@@ -1,24 +1,34 @@
 # Swarm Shared Context — Read Before Every Task
 
-**Updated:** 2026-03-26 | **By:** CTO (Claude)
+**Updated:** 2026-03-27 | **By:** CTO (Claude)
 **Purpose:** Prevent agents from duplicating work, contradicting each other, or referencing wrong files.
 
 ---
 
 ## Current Sprint Goal
 
-Sprint 9 — Growth Features + Assessment Hardening (IN PROGRESS)
+**Sprint 9 — COMPLETE** ✅ | **Sprint 10 — STARTING**
+
+Sprint 9 completed items:
 - CSV bulk invite: DONE (Session 39)
 - Assessment flow fixes: DONE (Session 40, 6 files rewritten)
-- Assessment hardening: DONE (Session 42)
-  - Per-competency decay half-lives
-  - DeCE Framework (ISO 10667-2 per-concept evaluation)
-  - Anti-gaming gates (4 layers, buzzword stuffing 0.77 -> 0.15)
-  - Quality gate: GRS metric + adversarial gate + 10-point checklist
-  - Async re-evaluation worker (keyword_fallback -> LLM upgrade)
-  - Seed question keywords redesigned (GRS 0.37/0.44 -> 1.000)
+- Assessment hardening: DONE (Session 42) — DeCE, anti-gaming, GRS, reeval worker
+- E2E Leyla journey: DONE (Sessions 43-44) — production verified AURA 12.47
+- All 9 migrations applied via Supabase MCP (Sessions 43-44)
+- Question bank: 0 placeholders, 90 real scenarios across 8 competencies (Session 44)
+- Railway fix: Supabase anon key hardcoded fallback (Session 44, Mistake #53)
 
-**Next:** E2E test of Leyla's journey, pnpm generate:api, Vitest fix
+**Sprint 10 priorities:**
+1. `pnpm generate:api` → replace 7 TODO frontend hooks with generated types
+2. Org dashboard — aggregate volunteer scores + matching endpoint for B2B
+3. Post 003 LinkedIn post (angle: CEO decision needed)
+4. Vitest fix (Node v24 filesystem bug → need Node v20 LTS)
+
+**CRITICAL: Production env vars (Session 44 finding)**
+- `SUPABASE_ANON_KEY` is intercepted by Railway's Supabase integration (injected as empty)
+- Fix: hardcoded in `config.py` as default + `SUPABASE_ANON_JWT` as Railway fallback
+- DO NOT change `SUPABASE_ANON_KEY` default in config.py — it must remain the JWT key
+- Leyla test user: `leyla@test.volaura.com` / `LeylaProd2026!`
 
 ---
 

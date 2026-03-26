@@ -47,7 +47,7 @@ async def get_supabase_user(request: Request) -> AsyncGenerator[AsyncClient, Non
     try:
         client = await acreate_client(
             supabase_url=settings.supabase_url,
-            supabase_key=settings.supabase_anon_key,
+            supabase_key=settings.effective_anon_key,
         )
         # Set the user's JWT for RLS
         client.postgrest.auth(token)

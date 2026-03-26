@@ -24,14 +24,17 @@ async def health_check() -> HealthResponse:
 async def env_debug() -> dict:
     """Temporary debug endpoint — remove after diagnosis."""
     anon_key = settings.supabase_anon_key
-    svc_key = settings.supabase_service_key
+    anon_jwt = settings.supabase_anon_jwt
+    effective = settings.effective_anon_key
     return {
         "anon_key_set": bool(anon_key),
         "anon_key_len": len(anon_key),
-        "anon_key_prefix": anon_key[:15] if anon_key else "",
-        "svc_key_set": bool(svc_key),
+        "anon_jwt_set": bool(anon_jwt),
+        "anon_jwt_len": len(anon_jwt),
+        "effective_anon_len": len(effective),
+        "effective_anon_set": bool(effective),
         "os_anon_key": os.environ.get("SUPABASE_ANON_KEY", "NOT SET")[:20],
-        "os_svc_key": os.environ.get("SUPABASE_SERVICE_KEY", "NOT SET")[:15],
+        "os_anon_jwt": os.environ.get("SUPABASE_ANON_JWT", "NOT SET")[:20],
         "supabase_url": settings.supabase_url[:40],
-        "build_v": "2",
+        "build_v": "3",
     }

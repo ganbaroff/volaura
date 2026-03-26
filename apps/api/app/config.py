@@ -9,6 +9,15 @@ class Settings(BaseSettings):
     supabase_url: str = "http://127.0.0.1:54321"
     supabase_service_key: str = ""
     supabase_anon_key: str = ""
+    # Fallback anon key under a different env var name (SUPABASE_ANON_JWT) —
+    # Railway's Supabase integration intercepts SUPABASE_ANON_KEY and injects
+    # an empty or wrong-format value. SUPABASE_ANON_JWT is not intercepted.
+    supabase_anon_jwt: str = ""
+
+    @property
+    def effective_anon_key(self) -> str:
+        """Returns the best available anon key — SUPABASE_ANON_JWT takes priority."""
+        return self.supabase_anon_jwt or self.supabase_anon_key
 
     # API
     api_port: int = 8000

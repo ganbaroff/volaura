@@ -234,7 +234,12 @@ async def telegram_webhook(request: Request) -> JSONResponse:
 
     # Validate webhook origin
     secret_header = request.headers.get("X-Telegram-Bot-Api-Secret-Token", "")
-    if settings.telegram_webhook_secret and secret_header != settings.telegram_webhook_secret:
+    if not settings.telegram_webhook_secret:
+        # No secret configured — block all requests in production, allow in dev
+        if not settings.is_dev:
+            logger.error("Telegram webhook: TELEGRAM_WEBHOOK_SECRET not set in production — rejecting request")
+            return JSONResponse({"ok": False}, status_code=403)
+    elif secret_header != settings.telegram_webhook_secret:
         logger.warning("Telegram webhook: invalid secret from {ip}", ip=request.client.host if request.client else "?")
         return JSONResponse({"ok": False}, status_code=403)
 

@@ -7,16 +7,19 @@ Compatible with LinkedIn's digital credential import.
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Request
 
 from app.deps import SupabaseAdmin
+from app.middleware.rate_limit import limiter, RATE_DISCOVERY
 
 router = APIRouter(prefix="/badges", tags=["Badges"])
 
 # ── Open Badges 3.0 JSON-LD ───────────────────────────────────────────────────
 
 @router.get("/{volunteer_id}/credential")
+@limiter.limit(RATE_DISCOVERY)
 async def get_open_badge_credential(
     volunteer_id: str,
     request: Request,
@@ -25,7 +28,17 @@ async def get_open_badge_credential(
     """Return an Open Badges 3.0 Verifiable Credential for a volunteer's AURA badge.
 
     The credential is publicly accessible — no auth required.
+    Rate limited (RATE_DISCOVERY) to prevent volunteer enumeration.
     """
+    # Validate UUID format before any DB call (SECURITY-REVIEW.md Point 2)
+    try:
+        UUID(volunteer_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=422,
+            detail={"code": "INVALID_UUID", "message": "volunteer_id must be a valid UUID"},
+        )
+
     # Fetch profile
     profile_result = await db.table("profiles").select(
         "id, username, display_name, badge_issued_at"
@@ -36,21 +49,28 @@ async def get_open_badge_credential(
 
     profile = profile_result.data
 
-    # Fetch AURA score
     aura_result = await db.table("aura_scores").select(
-        "overall_score, badge_tier, elite_status, calculated_at"
+        "total_score, badge_tier, elite_status, last_updated"
     ).eq("volunteer_id", volunteer_id).single().execute()
 
     if not aura_result.data:
         raise HTTPException(status_code=404, detail={"code": "AURA_NOT_FOUND", "message": "No AURA score found"})
 
     aura = aura_result.data
+
+    # Respect visibility setting (CRIT-04 parity with aura.py /{volunteer_id})
+    # Identical 404 for hidden vs nonexistent — prevents enumeration
+    if aura.get("visibility") == "hidden":
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "AURA_NOT_FOUND", "message": "No AURA score found"},
+        )
     base_url = str(request.base_url).rstrip("/")
     username = profile["username"]
     name = profile["display_name"] or username
     tier = aura["badge_tier"].capitalize()
-    score = float(aura["overall_score"])
-    issued_at = aura.get("calculated_at") or datetime.now(timezone.utc).isoformat()
+    score = float(aura["total_score"])
+    issued_at = aura.get("last_updated") or datetime.now(timezone.utc).isoformat()
 
     # Open Badges 3.0 / W3C Verifiable Credential
     return {

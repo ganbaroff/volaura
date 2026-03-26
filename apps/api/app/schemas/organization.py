@@ -107,7 +107,7 @@ class VolunteerSearchResult(BaseModel):
     volunteer_id: str
     username: str
     display_name: str | None = None
-    overall_score: float
+    total_score: float
     badge_tier: str
     elite_status: bool
     location: str | None = None

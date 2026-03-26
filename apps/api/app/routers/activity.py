@@ -35,9 +35,9 @@ async def get_my_activity(
     try:
         assessments = (
             await db.table("assessment_sessions")
-            .select("id, competency_slug, theta, is_complete, completed_at")
+            .select("id, competency_id, theta_estimate, status, completed_at")
             .eq("volunteer_id", user_id)
-            .eq("is_complete", True)
+            .eq("status", "completed")
             .order("completed_at", desc=True)
             .limit(limit)
             .execute()
@@ -46,11 +46,11 @@ async def get_my_activity(
             items.append({
                 "id": row["id"],
                 "type": "assessment",
-                "description": f"Completed {row['competency_slug']} assessment",
+                "description": "Completed competency assessment",
                 "created_at": row["completed_at"],
                 "metadata": {
-                    "competency_slug": row["competency_slug"],
-                    "theta": row.get("theta"),
+                    "competency_id": row["competency_id"],
+                    "theta_estimate": row.get("theta_estimate"),
                 },
             })
     except Exception as e:
@@ -83,7 +83,7 @@ async def get_my_activity(
     # 3. Event registrations
     try:
         registrations = (
-            await db.table("event_registrations")
+            await db.table("registrations")
             .select("id, event_id, status, registered_at")
             .eq("volunteer_id", user_id)
             .order("registered_at", desc=True)
@@ -159,7 +159,7 @@ async def get_my_stats(
     # Count events attended (status = 'attended' or 'checked_in')
     try:
         result = (
-            await db.table("event_registrations")
+            await db.table("registrations")
             .select("id", count="exact")
             .eq("volunteer_id", user_id)
             .in_("status", ["attended", "checked_in", "registered"])
@@ -173,12 +173,12 @@ async def get_my_stats(
     try:
         result = (
             await db.table("assessment_sessions")
-            .select("competency_slug")
+            .select("competency_id")
             .eq("volunteer_id", user_id)
-            .eq("is_complete", True)
+            .eq("status", "completed")
             .execute()
         )
-        unique_competencies = {row["competency_slug"] for row in (result.data or [])}
+        unique_competencies = {row["competency_id"] for row in (result.data or [])}
         verified_skills = len(unique_competencies)
     except Exception as e:
         logger.warning("Failed to count skills: {err}", err=str(e)[:200])
@@ -192,7 +192,7 @@ async def get_my_stats(
             await db.table("assessment_sessions")
             .select("completed_at")
             .eq("volunteer_id", user_id)
-            .eq("is_complete", True)
+            .eq("status", "completed")
             .gte("completed_at", seven_days_ago)
             .execute()
         )

@@ -214,10 +214,17 @@ class TestTimingEdgeCases:
         assert signal.penalty_multiplier < 1.0
 
     def test_no_penalty_clean_session(self):
-        """Normal timing should keep penalty_multiplier at 1.0."""
+        """Normal timing should keep penalty_multiplier at 1.0.
+
+        S8.2: Timing must be VARIED (natural human variance) — uniform timing now
+        triggers is_time_clustered (CV < 0.15). Real users don't answer at exactly
+        the same millisecond every time.
+        """
+        responses = [1, 0, 1, 1, 0, 1, 0, 0]
+        timings = [8_000, 15_000, 6_000, 12_000, 9_000, 20_000, 7_000, 18_000]  # CV ≈ 0.45
         answers = [
-            {"response_time_ms": 15_000, "response": r, "raw_score": 0.7}
-            for r in [1, 0, 1, 1, 0, 1, 0, 0]
+            {"response_time_ms": t, "response": r, "raw_score": 0.7}
+            for r, t in zip(responses, timings)
         ]
         signal = antigaming.analyse(answers)
         assert signal.penalty_multiplier == 1.0

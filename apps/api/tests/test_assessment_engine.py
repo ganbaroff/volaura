@@ -150,9 +150,15 @@ def test_should_not_stop_early():
 # ── Anti-gaming ───────────────────────────────────────────────────────────────
 
 def test_no_flags_for_clean_answers():
-    # Non-alternating, varied pattern with normal timing
+    # Non-alternating, varied pattern with genuinely varied timing (humans aren't robots)
+    # S8.2: Using uniform timing like 10_000 for all answers now correctly triggers
+    # is_time_clustered (CV=0). Real answers have natural variance.
     responses = [1, 1, 0, 1, 0, 0]
-    answers = [{"response_time_ms": 10_000, "response": r, "raw_score": 0.7} for r in responses]
+    timings = [8_000, 15_000, 6_000, 12_000, 9_000, 20_000]  # natural variance, CV ≈ 0.43
+    answers = [
+        {"response_time_ms": t, "response": r, "raw_score": 0.7}
+        for r, t in zip(responses, timings)
+    ]
     signal = antigaming.analyse(answers)
     assert signal.overall_flag is False
     assert signal.penalty_multiplier == 1.0

@@ -3,7 +3,7 @@
 # This runs automatically when Claude Code is about to compress conversation
 # Everything saved here gets re-injected by post-compact-restore.sh
 
-MEMORY_DIR="$HOME/.claude/projects/C--Users-user-OneDrive-Desktop-Yusif-Files-VOLAURA/memory"
+MEMORY_DIR="$HOME/.claude/projects/C--Projects-VOLAURA/memory"
 STATE_FILE="$MEMORY_DIR/context_checkpoint.md"
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M')
 

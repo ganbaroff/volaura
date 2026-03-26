@@ -2,7 +2,8 @@
 
 > 49 документов. 1577-строчный мегапромпт. 6-ролевой аудит. Безопасность по NIST/OWASP/SDL.
 > Дата: 2026-03-23
-> Статус: IN PROGRESS — Фаза 1 (Backend) завершена.
+> Статус: IN PROGRESS — Sprint 9. Фазы 1-3 завершены. Фазы 4-5 частично. LIVE: Railway + Vercel + volaura.app.
+> Last synced: 2026-03-26 Session 42 (assessment hardening + keyword redesign)
 
 ---
 
@@ -291,143 +292,141 @@ Input:  docs/stitch-output/ (41 screens), docs/design/STITCH-DESIGN-SYSTEM.md
 - [ ] Visual consistency check across all migrated pages (deferred to Session 13)
 - [ ] engineering:code-review (deferred to Session 13)
 
-**Сессия 13: Org Launch Bundle — Event Wizard + Org Dashboard + Org Discovery**
+**Сессия 13: Org Launch Bundle — Event Wizard + Org Dashboard + Org Discovery** ✅ PARTIALLY DONE
 ```
 Tool:   Claude Code (claude-sonnet-4-6)
 DSP:    Path B (Org Pages + API Wiring) — 43/50
 Skills: design:handoff, design:ux-writing, design:critique, engineering:code-review
-Input:  docs/stitch-output/ (event creation, org dashboard, org discovery screens)
 ```
-- [ ] INTERIM types for EventResponse, EventCreate, OrganizationResponse, RegistrationResponse
-- [ ] TanStack Query hooks: useEvents, useEvent, useCreateEvent, useMyOrganization, useOrganizations
-- [ ] Event creation wizard (3-step: details → recruitment → review & publish) with RHF + Zod
-- [ ] Org management dashboard (stats cards, my events list, create event CTA)
-- [ ] Org discovery page (public, org cards grid, search)
-- [ ] Update Sidebar with org nav items (conditional)
-- [ ] i18n: ~30 new keys EN + AZ for all 3 pages
-- [ ] engineering:code-review
-- [ ] All pages in Stitch dark theme
+- [x] INTERIM types for EventResponse, EventCreate, OrganizationResponse, RegistrationResponse
+- [x] TanStack Query hooks: useEvents, useEvent, useCreateEvent, useMyOrganization, useOrganizations
+- [x] Event creation wizard (3-step: details → recruitment → review & publish) with RHF + Zod
+- [x] Org management dashboard (stats cards, my events list, create event CTA)
+- [x] Org discovery page (public, org cards grid, search)
+- [x] Update Sidebar with org nav items (conditional)
+- [x] i18n: ~30 new keys EN + AZ for all 3 pages
+- [x] engineering:code-review
+- [ ] All pages in Stitch dark theme ← DEFERRED (dark theme is live, Stitch token migration done)
 
-**Сессия 14: Integration Validation + Embedding Pipeline + Deploy Preview**
+**Сессия 14 (merged into 14a-14d): Integration + Deploy + Security** ✅ DONE
 ```
-Tool:   Claude Code (claude-sonnet-4-6)
-DSP:    Required before start (High stakes — first deploy)
-⚠️ BLOCKER: DB migrations MUST run before this session (ALL_MIGRATIONS_COMBINED.sql + seed.sql)
+Spanned Sessions 14a through 14d (2026-03-24)
 ```
-- [ ] ⚠️ Infrastructure milestone: confirm DB migrations ran + seed data loaded
-- [ ] E2E critical path test: registration → assessment → AURA score → badge (manual + automated)
-- [ ] Embedding pipeline: trigger on profile create/update (Supabase Edge Function or pg_cron)
-- [ ] Gemini BARS validation on real AZ-language answers (test with 5 real responses)
-- [ ] Talent Matching UI (pgvector search backend ready, wire frontend)
-- [ ] Deploy to Vercel (Stage 1 — frontend preview URL)
-- [ ] Activity feed wiring (live social proof)
-- [ ] V0 removed from delegation map (Claude writes all UI directly — confirmed Session 6-13)
+- [x] ⚠️ Infrastructure milestone: DB migrations ran + seed data loaded (SAFE_MIGRATION.sql + idempotent seed)
+- [x] Embedding pipeline: trigger on profile create/update (apps/api/app/services/embeddings.py)
+- [x] Deploy to Vercel: ✅ LIVE at volaura.app
+- [x] Deploy to Railway: ✅ LIVE at modest-happiness-production.up.railway.app
+- [x] Activity feed wiring: `/api/activity/me` + `/api/activity/stats/me` endpoints, useActivity() hook
+- [x] V0 removed from delegation map (Claude writes all UI directly — confirmed Session 6-13)
+- [x] Architecture audit by 18 agents: `fix_api_client_first` won (11/18 votes)
+- [x] Security hardening: LLM timeout 15s, CSP headers, auth error leak fixed
+- [x] Backend P2 fixes: register error leak, AssessmentResultOut schema, loguru
+- [ ] Talent Matching UI ← DEFERRED to post-beta (backend pgvector ready, frontend not built)
+- [ ] E2E automated tests ← DEFERRED (manual testing done, Playwright not set up)
 
 ---
 
-### ФАЗА 4: Testing + Security (сессии 15-18)
+### SPRINT 3-9 WORK (Sessions 15-37, 2026-03-24 → 2026-03-26) — NOT IN ORIGINAL PLAN
 
-**Сессия 15: Security Hardening**
-```
-Input:  SECURITY-STANDARDS.md
-Tool:   Claude
-```
-- [ ] Penetration test P1 scenarios (10 tests)
-- [ ] RLS verification for every table
-- [ ] Rate limit testing
-- [ ] Input validation edge cases
-- [ ] CORS verification
+> Sprints 3-9 emerged from real-world priorities. Original Phase 4-6 plan is partially superseded.
+> See `memory/context/sprint-state.md` for full session-by-session log.
 
-**Сессия 16: Frontend Testing**
-```
-Tool:   Claude
-```
-- [ ] Component tests (Vitest + Testing Library)
-- [ ] E2E tests (Playwright): auth flow, assessment flow, results
-- [ ] Accessibility audit (WCAG 2.1 AA)
-- [ ] Lighthouse scores (Performance > 90, a11y > 95)
+**Sprint 3-4 (Sessions 15-18): Testing + MiroFish Swarm** ✅
+- [x] 18 backend test files (pytest-asyncio)
+- [x] 11 frontend test files (Vitest + Testing Library)
+- [x] MiroFish v4-v7.1 complete (13 providers, research loop, adaptive prompts, dead weight auto-removal)
+- [x] Sliding-window calibration, accuracy-scaled conviction, ResponseQualityMiddleware
 
-**Сессия 17: Backend Testing**
-```
-Tool:   Claude
-```
-- [ ] pytest for all endpoints
-- [ ] Integration tests (DB + API)
-- [ ] LLM evaluation tests (mock Gemini)
-- [ ] Rate limit tests
-- [ ] Edge cases: expired session, concurrent assessment, etc.
+**Sprint 5-6 (Sessions 19-25): Deploy + Security + Agent Autonomy** ✅
+- [x] Railway deploy LIVE + Vercel LIVE + volaura.app domain
+- [x] Supabase production migrations applied (000001-000023)
+- [x] GROQ_API_KEY + TELEGRAM tokens on Railway
+- [x] Agent autonomy system: inbox_protocol.py, autonomous_run.py, swarm-daily.yml
+- [x] @volaurabot LIVE on Telegram (CEO notifications)
+- [x] Privacy Policy page (/en/privacy-policy)
+- [x] 7 CRITICAL + HIGH security issues fixed
+- [x] Rate limiting on /aura/{id}
 
-**Сессия 18: Cross-browser + Mobile**
-```
-Tool:   Claude + Manual
-```
-- [ ] Chrome, Firefox, Safari, Edge
-- [ ] iOS Safari, Android Chrome
-- [ ] PWA install test
-- [ ] Offline assessment (if implemented)
-- [ ] Performance on slow 3G
+**Sprint 7-8 (Sessions 26-36): Production Polish + 47 Routes** ✅
+- [x] 47 backend routes (was 31 at Session 14)
+- [x] All frontend 404 nav links fixed
+- [x] Real data everywhere (no more mock data)
+- [x] Migration 000027 applied
+- [x] LinkedIn Post #1 published, Post #2 in pipeline
+- [x] Mega-retrospective → MANDATORY-RULES.md, SPRINT-REVIEW-TEMPLATE.md, CONTINUOUS-LEARNING.md
+- [x] DSP v4.0 (real parallel agents instead of single-model pseudo-debate)
+- [x] Claude Code config: 7 hooks, permissions hardened, /post skill
+
+**Sprint 9 (Sessions 37+): Current — CSV + Codegen + Growth** 🔄 IN PROGRESS
+- [ ] CSV bulk volunteer invite (max 500 rows, batches of 50, audit log) ← MAIN FEATURE
+- [ ] `pnpm generate:api` → replace 7 TODO hooks (ADR-003 compliance)
+- [ ] Post #3 — needs new angle (Antigravity rejected as Mistake #40)
+- [ ] Vitest Node v20 fix (nvm use 20)
+- [ ] Fix 11 pre-existing test failures
 
 ---
 
-### ФАЗА 5: Deploy + Launch (сессии 19-22)
+### ФАЗА 4: Testing + Security — PARTIALLY COMPLETE (merged into Sprints 3-8)
 
-**Сессия 19: Infrastructure**
-```
-Input:  engineering/DEPLOY-CHECKLIST.md
-Tool:   Claude
-```
-- [ ] Supabase project setup (production)
-- [ ] Run all migrations
-- [ ] Vercel deployment (frontend)
-- [ ] Railway deployment (backend)
-- [ ] Custom domain: volaura.com
-- [ ] SSL/TLS verification
-- [ ] Environment variables set everywhere
-
-**Сессия 20: Pre-seed Data**
-- [ ] 30-50 volunteer profiles (real friends)
-- [ ] 3-5 organizations
-- [ ] 3-5 past events (COP29, CIS Games, etc.)
-- [ ] Test complete user journey 3 times
-
-**Сессия 21: Monitoring + Analytics**
-- [ ] Error tracking (Sentry or LogRocket — free tier)
-- [ ] Analytics events (growth/LAUNCH-ACTIVATION-PLAN.md UTM structure)
-- [ ] Supabase dashboard monitoring
-- [ ] Railway logs monitoring
-- [ ] Uptime monitoring (UptimeRobot — free)
-
-**Сессия 22: Launch Day**
-```
-Input:  growth/LAUNCH-ACTIVATION-PLAN.md
-```
-- [ ] LinkedIn post #1
-- [ ] TikTok video #1
-- [ ] HR букеты отправлены
-- [ ] WhatsApp тексты готовы
-- [ ] Мониторинг конверсии в реальном времени
+- [x] Security hardening: 7 CRITICAL+HIGH fixed, CSP, LLM timeout, rate limiting, auth error leak
+- [x] RLS policies on all tables
+- [x] Backend tests: 18 test files (pytest-asyncio) — auth, profiles, AURA, assessment, security, RLS
+- [x] Frontend tests: 11 test files (Vitest + Testing Library)
+- [x] LLM evaluation tests (mock Gemini in test_llm_mock.py)
+- [ ] E2E tests (Playwright) ← NOT DONE — using Claude in Chrome + Preview instead
+- [ ] Accessibility audit (WCAG 2.1 AA) ← NOT DONE formally
+- [ ] Lighthouse scores ← NOT DONE
+- [ ] Cross-browser testing ← NOT DONE
+- [ ] PWA setup ← DEFERRED
 
 ---
 
-### ФАЗА 6: Post-Launch (сессии 23-25)
+### ФАЗА 5: Deploy + Launch — PARTIALLY COMPLETE (merged into Sprints 5-8)
 
-**Сессия 23: Week 1 Fixes**
+**Infrastructure** ✅
+- [x] Supabase project setup (production) — hvykysvdkalkbswmgfut
+- [x] Run all migrations (27 total, 000001-000027)
+- [x] Vercel deployment — volaura.app LIVE
+- [x] Railway deployment — modest-happiness-production.up.railway.app LIVE
+- [x] Custom domain: volaura.app (not .com — domain choice was CEO decision)
+- [x] Environment variables set everywhere (Railway, Vercel, .env, GitHub Secrets)
+
+**Pre-seed Data** ⚠️ PARTIAL
+- [ ] 30-50 volunteer profiles (real friends) ← NOT DONE — seed.sql has test data only
+- [ ] 3-5 organizations ← NOT DONE
+- [ ] 3-5 past events ← NOT DONE
+- [x] User journey tested manually multiple times
+
+**Monitoring** ⚠️ PARTIAL
+- [ ] Error tracking (Sentry/LogRocket) ← NOT SET UP
+- [ ] Analytics events ← NOT SET UP
+- [x] Supabase dashboard available
+- [x] Railway logs available (get_runtime_logs via Vercel MCP)
+- [ ] Uptime monitoring ← NOT SET UP
+
+**Launch** 🔄 IN PROGRESS
+- [x] LinkedIn post #1 published
+- [ ] LinkedIn post #2 (in pipeline)
+- [ ] LinkedIn post #3 (needs new angle — Antigravity rejected)
+- [ ] TikTok, WhatsApp, HR букеты ← NOT STARTED
+
+---
+
+### ФАЗА 6: Post-Launch / Growth — BLOCKED (waiting for beta testers)
+
+**Pre-requisites before Phase 6:**
+- [ ] CSV bulk invite shipped (Sprint 9) — enables batch onboarding
+- [ ] `supabase db push` for 3 pending migrations (CEO action)
+- [ ] Email confirmation disabled in Supabase (CEO action)
+- [ ] 30-50 real volunteer profiles seeded
+
+**When unblocked:**
 - [ ] Hotfix bugs from real usage
-- [ ] Adjust rate limits based on traffic
-- [ ] Fix i18n issues reported by users
-- [ ] Respond to first user feedback
-
-**Сессия 24: Growth Features**
-- [ ] Referral system live
+- [ ] Referral system activated
 - [ ] First monthly league
 - [ ] Streak tracking active
-- [ ] Email lifecycle fully operational
-
-**Сессия 25: Analytics Review + Iteration**
+- [ ] Email lifecycle
 - [ ] Week 1 metrics vs targets
-- [ ] Conversion funnel analysis
-- [ ] User feedback synthesis
-- [ ] Priority fixes for week 2
 
 ---
 

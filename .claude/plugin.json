@@ -1,0 +1,27 @@
+{
+  "name": "volaura",
+  "version": "1.0.0",
+  "description": "Volaura engineering skills — security review, TDD workflow, system design, product strategy, continuous learning",
+  "skills": [
+    {
+      "name": "security-review",
+      "description": "10-point security checklist for FastAPI endpoints, RLS policies, auth flows, and input validation. P0-P3 severity scale.",
+      "path": "docs/engineering/skills/SECURITY-REVIEW.md"
+    },
+    {
+      "name": "tdd-workflow",
+      "description": "Red→Green→Refactor workflow for FastAPI+pytest. Write failing test first, then implement. Covers async tests, Supabase mocking, fixture patterns.",
+      "path": "docs/engineering/skills/TDD-WORKFLOW.md"
+    },
+    {
+      "name": "continuous-learning",
+      "description": "Session-end pattern extraction protocol. Extract mistakes, patterns, and decisions to memory files before closing session.",
+      "path": "docs/engineering/skills/CONTINUOUS-LEARNING.md"
+    },
+    {
+      "name": "product-strategy",
+      "description": "Product strategy evaluation — feature prioritization, competitive positioning, KPIs, user personas, product-market fit analysis.",
+      "path": ".claude/skills/product-strategy/SKILL.md"
+    }
+  ]
+}

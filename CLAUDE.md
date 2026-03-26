@@ -33,6 +33,7 @@ STEP 0 → CONTEXT RECOVERY
          WITHOUT this declaration — do NOT proceed to any work.
 
 STEP 0.5 → SESSION END MEMORY UPDATE (after ALL work is done)
+         CTO files (ALWAYS):
          Update: memory/context/sprint-state.md → current position + next session
          Update: memory/projects/volaura.md → completed items
          Update: memory/context/deadlines.md → milestone status
@@ -40,7 +41,24 @@ STEP 0.5 → SESSION END MEMORY UPDATE (after ALL work is done)
          Update: memory/context/patterns.md → new patterns if any
          Update: docs/EXECUTION-PLAN.md → mark [x] on completed items
          Update: docs/DECISIONS.md → add retrospective
-         WITHOUT this — session is not closed properly.
+
+         Agent files (IF agents were used OR assessment/pipeline code changed):
+         Update: memory/swarm/shared-context.md → sprint goal, file tree, schema, pipeline
+         Update: memory/swarm/agent-feedback-log.md → new findings with accuracy
+         Update: memory/swarm/agent-roster.md → new agents, score updates, routing table
+         Update: memory/swarm/career-ladder.md → promotions/demotions if earned
+
+         Downstream impact check (ALWAYS — for EVERY code change):
+         | If changed...                  | Also update                                              |
+         | seed.sql (questions/keywords)  | test fixtures, shared-context.md, audit script           |
+         | bars.py (evaluation pipeline)  | shared-context.md, TDD-WORKFLOW.md                       |
+         | New file in app/               | shared-context.md (file tree), agent-roster.md (routing) |
+         | Router ordering                | shared-context.md (CRITICAL section)                     |
+         | Anti-gaming gates              | shared-context.md (gates list), TDD-WORKFLOW.md          |
+         | New migration                  | shared-context.md (schema), deadlines.md (pending count) |
+         | Agent skill file               | agent-launch-template.md (if new template needed)        |
+
+         WITHOUT updating ALL applicable files — session is not closed properly.
 ```
 
 ### Phase B: PRE-SPRINT (before ANY code/design/plan)
@@ -108,6 +126,15 @@ STEP 5 → DELEGATION MAP (explicit, written)
 ### Phase C: EXECUTION
 
 ```
+STEP 5.5 → AGENT ROUTING CHECK (before Step 6 — External Architecture Review 2026-03-25)
+         Read: memory/swarm/agent-roster.md "When to Call" table
+         Match current task against routing rules.
+         If match found → launch agent(s) BEFORE executing.
+         If no match → document WHY no agent needed (1 line).
+         WITHOUT visible "Agents consulted: [list]" or "No agent needed: [reason]"
+         → do NOT proceed to Step 6.
+         Skipping this step = Mistake #14/#17/#31 class (solo execution).
+
 STEP 6 → EXECUTE
          Follow the DSP winner path.
          Follow the delegation map.
@@ -273,8 +300,9 @@ Read in this order, BEFORE any work:
 3. `memory/context/working-style.md` → who Yusif is
 4. `memory/context/mistakes.md` → what NOT to repeat
 5. `memory/context/patterns.md` → what works
-6. `docs/EXECUTION-PLAN.md` (last 30 lines) → current sprint
-7. `docs/DECISIONS.md` (last entry) → last retrospective
+6. `memory/context/mcp-toolkit.md` → Section 4 decision matrix: which MCP/skill for this sprint's tasks
+7. `docs/EXECUTION-PLAN.md` (last 30 lines) → current sprint
+8. `docs/DECISIONS.md` (last entry) → last retrospective
 
 ### Memory Protocol (session END — MANDATORY)
 Update ALL of these before session closes. No exceptions.

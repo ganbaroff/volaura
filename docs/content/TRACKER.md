@@ -1,6 +1,6 @@
 # LinkedIn Posts — Tracker
 
-**Последнее обновление:** 25 марта 2026, 16:00 Баку
+**Последнее обновление:** 25 марта 2026, 18:00 Баку
 **Начало работы с Claude:** 23 марта 2026
 **До этого (cowork):** 21-22 марта 2026
 
@@ -18,11 +18,12 @@
 
 ## 📋 Все посты — Статус
 
-| # | Название | Голос | Серия | Статус | Дата | Метрики | Агент-скор | Файл |
+| # | Название | Язык | Серия | Статус | Дата | Метрики | Агент-скор | Файл |
 |---|---------|-------|-------|--------|------|---------|-----------|------|
-| 001 | "I Built a System Where 13 AI Models Make Decisions Together" | Yusif | MiroFish Launch | ✅ PUBLISHED | ~22 марта 2026 | 2000 просм / 55 лайков | — | `published/post-001-mirofish.md` |
-| 002 | TBD — "What the AI Thinks of Me" | Yusif | Credibility Arc | 🔄 IN PROGRESS | — | — | — | `draft/post-002-ai-review.md` |
-| 003 | "Same Problem As My Mother" | Yusif | Volaura Launch | ✅ READY | — | — | 42/50 DSP, 43/50 reaction | `ready/post-003-same-problem.md` |
+| 001 | "7 years working with volunteers..." | EN | Credibility Arc | ✅ PUBLISHED | ~24 марта 2026 | 1,998 показов / 64 реакции / 5 комм / 1 репост / 3 сохр / 37 просм профиля | — | `published/post-001-en-7years.md` |
+| 002 | "Mən bu postda heç bir şəxsi..." (sistem haqqında) | AZ | Volaura AZ | ✅ PUBLISHED | ~25 марта 2026 | 3,333 показов / 44 реакции / 5 комм / 0 репост / 1 сохр / 5 DM / 33 просм профиля | — | `published/post-002-az-sistem.md` |
+| 003 | "Same Problem As My Mother" | EN | Credibility Arc | ✅ READY | — | — | 42/50 DSP, 43/50 reaction | `ready/post-003-same-problem-as-my-mother.md` |
+| 004 | TBD — "What the AI Thinks of Me" | EN | Credibility Arc | 🔄 IN PROGRESS | — | — | — | `draft/post-004-ai-review.md` |
 | D01 | "The Interview" | Claude | AI Employee Series | ✍️ WRITTEN | — | Не опубликован | — | `draft/series-ai-employee/day-01.md` |
 | D02 | "The Feedback Session" | Claude | AI Employee Series | ✍️ WRITTEN | — | Не опубликован | — | `draft/series-ai-employee/day-02.md` |
 | D03 | "The Pricing Incident" | Claude | AI Employee Series | ✍️ WRITTEN | — | Не опубликован | Реwrite voted 6/8 агентов | `draft/series-ai-employee/day-03.md` |
@@ -63,28 +64,35 @@
 
 ## 📈 Прогресс Yusif — Публикации
 
-| Дата | Пост | Результат | Что сработало |
-|------|------|-----------|--------------|
-| ~22 марта 2026 | Post 001 (MiroFish) | 2000 просм / 55 лайков | Конкретные цифры (48ч, 13 моделей), CTA в комменте |
-| — | — | Пауза в публикациях | — |
+| Дата | Пост | Показы | Реакции | Комм | Репост | Сохр | DM | Просм профиля | Что сработало |
+|------|------|--------|---------|------|--------|------|----|---------------|--------------|
+| ~24 марта 2026 | EN — "7 years working with volunteers..." | 1,998 | 64 ⭐ | 5 | 1 | 3 | 0 | 37 | "Same certificate" строка. Список болей. Структура bullet. |
+| ~25 марта 2026 | AZ — "Mən bu postda..." (система) | 3,333 ⭐ | 44 | 5 | 0 | 1 | 5 ⭐ | 33 | Диагноз без обвинений. Закрывающий вопрос → DM-ы пошли. |
 
-**Следующий шаг для Юсифа:** Опубликовать Post 3. Потом Post 002. Потом решить — запускаем AI Employee series или продолжаем credibility arc.
+**Ключевые паттерны из 2 постов:**
+- AZ пост → больше показов (+67%) + конвертирует в DM. Баку-аудитория отвечает на личные вопросы.
+- EN пост → больше реакций, репостов, сохранений. Международная аудитория сохраняет контент.
+- "DM me" = 0 конверсий. Конкретный вопрос в конце = 5 DM. → **Всегда закрывать вопросом, не "DM me".**
+- AZ аудитория = 54-61% Баку. EN пост тянет уровень "Senior" (27% vs 30%). Разные сегменты.
+
+**Следующий шаг для Юсифа:** Post 003 EN "Same Problem As My Mother" — выбрать фото (WUF13/COP29) + запланировать вторник/четверг 20:00 Баку. Потом Post 004. Потом решить — запускаем AI Employee series или продолжаем credibility arc.
 
 ---
 
 ## 📅 Рекомендуемый порядок публикации
 
 ```
-Сейчас → Post 003 "Same Problem As My Mother"
+Сейчас → Post 003 EN "Same Problem As My Mother" (готов, ждёт фото + даты)
   ↓ (через 3-4 дня)
-Post 002 "What the AI Thinks of Me" (нужно дописать)
+Post 004 EN "What the AI Thinks of Me" (нужно написать)
   ↓
-Post 004 "The First Deploy" или начать AI Employee Series с Day 01
+Вариант А: Продолжать credibility arc (Posts 005-006: The Deploy, The Platform)
+Вариант Б: Переключить на AI Employee Series Day 01 (отдельная полоса)
   ↓
-Решить: продолжать credibility arc или переключаться на серию AI Employee
+Параллельно: AZ пост каждые 1-2 недели (работает лучше для местной аудитории)
 ```
 
-**Почему этот порядок:** Post 3 — лучший мост к Volaura (конкретный продукт + реальная история). Post 2 объясняет процесс. Серия AI Employee — отдельная полоса для tech/AI аудитории.
+**Почему этот порядок:** Post 003 — самый сильный мост к Volaura (личная история + реальные события + продукт). EN аудитория больше конвертирует в сохранения/репосты. AZ посты — отдельная полоса для Баку-аудитории, они дают DM и локальную видимость.
 
 ---
 

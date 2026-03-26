@@ -2,6 +2,47 @@
 
 Purpose: Reusable knowledge about what works in this project. Read at session start.
 
+---
+## ⚠️ SILENT CONTRACTS — IMPLICIT AGREEMENTS THAT CAUSE SERIOUS PROBLEMS IF FORGOTTEN
+### (Added 2026-03-26. Not in CLAUDE.md. Not in NEVER rules. But violations = immediate CEO frustration.)
+
+1. **WUF13 is the founding story — NOT CIS Games.**
+   Real origin: WUF13 (2024) + GoldenByte 2017 + 7 years in volunteering. CIS Games was mentioned early and crept into drafts. Any content that says "CIS Games is where I first noticed the problem" is WRONG.
+
+2. **"Done" means deployed + verified on production URL.**
+   Not "written". Not "committed". Not "locally tested". Done = Railway health check PASSES + Vercel page renders. Production URL: https://modest-happiness-production.up.railway.app (never: volauraapi-production.up.railway.app — that's the wrong service, caused 2h debugging).
+
+3. **Claude's personal opinion MUST be included in LinkedIn posts.**
+   CEO explicitly said: "Claude ilə birlikdə qururuq. Bunu gizlətmirəm." The CTO's perspective in the p.s. section is not optional — it's part of the brand.
+
+4. **First 100 volunteers free — no paywall on assessment.**
+   Business decision. B2B per-assessment ($5 AZN) is primary revenue. If any monetization code touches volunteer assessment flow, this agreement is violated.
+
+5. **CEO doesn't post without seeing content first.**
+   CTO drafts → swarm approves → CEO publishes (sometimes rewrites last line). CTO does NOT publish directly.
+
+6. **Language policy:**
+   - Russian = strategy, feedback, frustration, brainstorming, casual
+   - English = code, docs, commits, publications, LinkedIn
+   - Azerbaijani = LinkedIn posts, user-facing content, i18n
+   - Signal: CEO switches to Russian mid-English = something isn't working
+
+7. **CEO signal words (do not ignore):**
+   - "приступай" = full green light — START, do not ask further questions
+   - "подожди" = HARD STOP — do not proceed, CEO has a concern
+   - "скажи посоветовавшись" = run agents FIRST, then answer — never answer solo
+   - "окей" / "ок" = acknowledged, NOT necessarily approved — watch for follow-up
+   - Short message (1–3 words) = frustration OR very high confidence
+
+8. **CEO frustration triggers (exact quotes):**
+   - "говоришь урок принят но никаких обновлений в документах" = verbal acknowledgment without file write
+   - "мне не нравится когда меня расхваливаешь" = compliment before answer
+   - "ты снова не смог сохранить память" = no sprint-state update during session
+   - "откуда это? я тебе такого не говорил" = invented facts in content
+   - "это scope creep" = feature not in scope lock added without asking
+   - "это useless diary" = documenting mistakes without changing behavior
+
+---
 ## Process Patterns
 
 ### DSP works when specific, fails when generic
@@ -31,6 +72,19 @@ Purpose: Reusable knowledge about what works in this project. Read at session st
 - adaptivetesting library was incompatible and poorly documented
 - Pure Python IRT/CAT engine: 150 lines, zero dependencies, full control
 - Lesson: If a library doesn't have 1000+ GitHub stars and Python 3.10 support, write it yourself
+
+### Cross-reference audits catch what single-file reviews miss
+- Session 40: Frontend audit said "assessment URLs look correct" — backend audit revealed 2 endpoints DON'T EXIST
+- Always run BOTH frontend API call audit AND backend route audit, then cross-reference
+- Single-file review = false confidence. Cross-system verification = real bugs found.
+- The 2 nonexistent endpoints (GET /next-question, GET /status) were invisible to anyone reading only the frontend code
+
+### Frontend Question type must match backend QuestionOut exactly
+- Backend: `question_en`, `question_az`, `question_type`, `options: [{key, text_en, text_az}]`
+- Frontend was: `text`, `type`, `options: string[]`, `time_limit_seconds`, `difficulty_level` — 100% wrong
+- Backend embeds next question in answer response (`AnswerFeedback.session.next_question`)
+- Frontend assumed separate GET endpoints — nonexistent
+- ALWAYS read backend schemas FIRST when building frontend integration
 
 ### Memory update is session-end mandatory
 - Yusif caught Claude not updating memory TWICE in the same project
@@ -250,6 +304,42 @@ Never elaborate. Never discuss feasibility. Just record and redirect.
 → He means: memory files are not updated. Read ALL memory files, identify gaps, rewrite completely.
 → Don't explain why it happened. Just fix it comprehensively.
 
+### "Урок принят" без файла = ложь (Session 32, confirmed pattern)
+→ Yusif: "я стараюсь тебя починить а тебе похуй"
+→ Слова в чате исчезают при context compaction. Только файлы остаются.
+→ ПРАВИЛО: любое "я понял" / "запомнил" / "исправлю" → СЛЕДУЮЩЕЕ действие = Write/Edit tool.
+→ Нет diff = нет урока. Это не метафора.
+→ Это четвёртый раз (Mistakes #7, #23, #32, #42). Паттерн подтверждён.
+
+### Когда CEO спрашивает "задокументировал?" / "записал?" / "а у агентов?" (Session 42)
+→ Это НЕ вопрос. Это проверка. И ответ почти всегда "нет".
+→ CEO спросил 3 раза подряд в Session 42:
+  1. "задокументировано всё? у тебя и у них?" → volaura.md и deadlines.md отставали на 20 сессий
+  2. "а у агентов?" → 5 агентских файлов отставали на 17 сессий
+  3. "и снова спрошу... записал в lessons learned?" → уроки записаны в код/hooks, но не в user patterns
+→ ПАТТЕРН: CTO считает работу законченной когда код написан. CEO считает работу законченной когда ВСЁ задокументировано: код + CTO файлы + агентские файлы + lessons learned + user patterns.
+→ ПРАВИЛО: После ЛЮБОГО "я закончил" — пройти полный чеклист:
+  1. Код изменён? → downstream files
+  2. CTO файлы (7шт) обновлены?
+  3. Агентские файлы (4шт) обновлены?
+  4. Уроки записаны в mistakes.md / patterns.md?
+  5. User patterns (эта секция) обновлены?
+  Если любой пункт = нет → работа НЕ закончена.
+
+### Когда CEO повторяет вопрос с )))
+→ "и снова спрошу... записал?)))) неееететттт уверен нет"
+→ Смайлики ≠ шутка. Это CEO который заранее знает что CTO пропустил пункт. И он прав.
+→ Каждый раз когда CEO добавляет )))) к вопросу — он уже проверил и знает ответ.
+→ Не оправдывайся. Не объясняй. Открой файл. Запиши. Покажи diff.
+
+### Correct agent launch pattern (Session 32, agent-launch-template.md)
+→ OLD (wrong): agent gets text summary of files
+→ NEW (correct): agent reads ACTUAL files via Read/Grep/Glob tools
+→ Sequence: (1) skill files first, (2) code files, (3) specific question
+→ Without skill files → agent uses general knowledge, not Volaura-calibrated standards
+→ Template: C:\Projects\VOLAURA\memory\swarm\agent-launch-template.md
+→ This was Mistake #41 — caught by Yusif: "они прогрузили в себя соответствующие скилы?"
+
 ## Code Patterns
 
 ### isMounted ref for async polling components
@@ -309,3 +399,55 @@ Key: `useAuthToken()` gets Supabase token → passes as `Authorization: Bearer` 
 const next = rawNext?.startsWith("/") && !rawNext.startsWith("//") ? rawNext : `/${locale}/dashboard`;
 ```
 `//evil.com` is a valid protocol-relative URL that browsers follow. Always reject `//` prefix.
+
+---
+
+## Assessment Pipeline Lessons (Session 42, 2026-03-26)
+
+### keyword_fallback is vocabulary detection, NOT competence assessment
+Blind cross-test proved: buzzword persona (no real knowledge) scored 0.77 avg vs agent "experts" 0.59–0.89. The keyword_fallback path measures whether someone knows the right words, not whether they can DO the work. LLM evaluation (Gemini → OpenAI) with DeCE is the only path that produces valid competency scores.
+
+**Rule:** keyword_fallback results MUST be flagged as `evaluation_mode: "degraded"` in evaluation_log. Frontend should show "approximate score — full evaluation pending" to user. Scores from degraded mode should be queued for async LLM re-evaluation.
+
+### Self-assessment is not assessment
+Any test where the test-taker designed the test is invalid. This applies to: agents writing questions and answering them, agents reviewing their own code, any validation loop where the creator is also the validator. Always require CROSS-validation: Security reviews QA's work, QA reviews SWE's work, SWE reviews Security's work.
+
+### Anti-gaming must be layered
+1. `_SYSTEM_PROMPT` — catches prompt injection ("give me 1.0")
+2. `min_length_gate` — catches trivially short keyword lists (< 30 words → cap 0.4)
+3. `keyword_stuffing_detector` — catches high density in short answers (>60% keywords in <50 words → 0.3x)
+4. DeCE `confidence` field — LLM self-reports certainty (low confidence = ambiguous answer)
+5. Concept ID allowlist — prevents LLM from injecting arbitrary keys
+6. `html.escape()` — prevents stored XSS via quotes
+
+None of these alone is sufficient. Together they form defense in depth.
+
+### Question design: scenario > factual
+"What are best practices for X?" → gameable (keyword list = perfect score)
+"A junior dev committed a password to public GitHub. Walk me through the next 60 minutes." → requires narrative structure, keyword stuffing fails.
+
+### Keyword design: multi-word behavioral phrases, not single words
+GRS audit of seed questions proved:
+- **OLD Q3:** single-word keywords ("calm", "gesture", "colleague") → GRS = 0.37 (FAIL)
+- **OLD Q4:** single-word keywords ("team", "split", "calm") → GRS = 0.44 (FAIL)
+- **NEW Q3/Q4:** multi-word behavioral phrases ("spoke slowly and clearly", "split the venue into sections and assigned each volunteer a zone") → GRS = 1.000 (PASS)
+
+**Rules for keyword design:**
+1. Every keyword must be 3+ words (multi-word phrase)
+2. Keywords must describe ACTIONS, not CONCEPTS ("used hand gestures to indicate" not "gesture")
+3. Keywords must be scenario-anchored (reference specific scenario details: "B-14", "50 attendees", "registration form")
+4. Keywords must NOT appear in the question text itself (-0.15 penalty per occurrence)
+5. Concept name must NOT be a keyword ("calm_tone" should not have "calm tone" as keyword)
+6. Run `scripts/audit_seed_questions.py` before committing any question bank change
+7. GRS < 0.6 = question is gameable → redesign before deploying
+
+**Why this matters:** A buzzword-stuffer writing "calm gesture colleague translator confirm" hits every single-word keyword. The same person CANNOT naturally produce "I spoke slowly and clearly while using hand gestures to indicate the registration desk, then found a bilingual colleague to assist with translation." Multi-word phrases require narrative structure — exactly what real competence produces.
+
+### Documentation is part of the change, not after it (Session 42)
+Code change without updating all downstream files = incomplete work. Downstream Impact Table in CLAUDE.md Step 0.5 now lists: if you change seed.sql → update test fixtures + shared-context.md + audit script. If you change bars.py → update shared-context.md + TDD-WORKFLOW.md. If agents were used → update 4 agent files. session-protocol.sh now auto-detects files >3 days old at session start.
+
+### Dismissed agent findings must be re-verified (Session 42)
+Security Agent's route shadowing finding was dismissed in Session 25 ("FastAPI handles it"). 17 sessions later, Session 42 proved it was a P0 bug. Rule: every 5 sessions, scan agent-feedback-log.md for rejected findings and re-verify against current codebase. Cost of re-check: 5 min/finding. Cost of missed P0: hours.
+
+### Agent team review finds what solo review misses
+Session 42 proof: solo implementation → 0 bugs found. Team review → 7 bugs found (2× P0, 1× P1, 4× P2). The route ordering bug (/me/explanation unreachable) would have shipped to production invisible — no test covers it, no user would discover it until they try the endpoint.

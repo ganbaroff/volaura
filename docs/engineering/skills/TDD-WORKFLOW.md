@@ -132,6 +132,24 @@ assert scores["communication"] == 85
 # GOOD: each test creates its own fixtures via pytest fixtures/factories
 ```
 
+## Question Bank Changes — GRS Gate (added 2026-03-26)
+
+**Any change to `expected_concepts` keywords in seed.sql or questions table MUST pass GRS.**
+
+```bash
+cd apps/api
+python ../../scripts/audit_seed_questions.py  # must show all PASS
+```
+
+Rules for keyword design:
+1. Every keyword must be 3+ words (multi-word behavioral phrase)
+2. Keywords must describe ACTIONS, not CONCEPTS ("used hand gestures to indicate" not "gesture")
+3. Keywords must be scenario-anchored (reference specific scenario details)
+4. Keywords must NOT appear in the question text itself
+5. GRS < 0.6 = question is gameable = DO NOT DEPLOY
+
+**Source:** Session 42 — blind cross-test proved single-word keywords let buzzword stuffing score 0.77 (nearly matching real experts). Old Q3 GRS=0.37, Old Q4 GRS=0.07. After redesign: both 1.000.
+
 ## Running Tests
 
 ```bash

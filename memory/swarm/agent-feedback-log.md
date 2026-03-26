@@ -34,6 +34,9 @@
 | 25 | needs-agent | TOP | Schema snapshot in every task prompt | implemented | Created shared-context.md with DB schema | Highest leverage improvement |
 | 25 | needs-agent | — | Shared context file pre-run | implemented | Created this file (shared-context.md) | Done |
 | 25 | needs-agent | — | Feedback loop (this file) | implemented | Created agent-feedback-log.md | Done |
+| 25 | cleanup-agent | — | Delete 4 gitignored temp files | implemented | _tmp_* + decision-simulation-review.html + volaura-preview.jsx deleted | Agent correctly found only gitignored artifacts, no core files touched |
+| 25 | cleanup-agent | — | README stubs for assessment/ + skills/ | implemented | 2 README stubs created | Good coverage — found real gaps |
+| 25 | cleanup-agent | — | Archive swarm reports | skipped | Already organized | Correct — no action needed |
 
 ---
 
@@ -57,6 +60,50 @@ These types of proposals waste time. Avoid repeating:
 4. **Concrete file paths** — "fix line 39 in aura.py" > "fix the auth issue"
 5. **Calibrated estimates** — "3 hours, not 3 days" with specific breakdown
 
+| 42 | security-agent | P0-ROUTE | Route ordering: /me/explanation unreachable (shadowed by /{volunteer_id}) | implemented | Fixed — reordered routes in aura.py. Static before parameterized. | **Session 25 agent was RIGHT, CTO was WRONG.** Previously dismissed as "FastAPI handles it" — it doesn't. |
+| 42 | security-agent | P0-XSS | Stored XSS via unescaped DeCE quotes from LLM | implemented | Fixed — html.escape() on all LLM-extracted quotes before storage | Correct — LLM output is untrusted data |
+| 42 | security-agent | P1-INJECT | Concept ID injection via LLM returning arbitrary keys | implemented | Fixed — concept ID allowlist filter | Correct — LLM can hallucinate key names |
+| 42 | qa-agent | CROSS-TEST | Blind cross-test proving keyword_fallback = vocabulary test | implemented | 33 tests, 3 personas. Buzzwords scored 0.77 vs experts 0.59-0.89. | Methodology was correct — CEO validated findings |
+| 42 | qa-agent | SELF-ASSESS | Self-assessment was circular (Mistake #47) | acknowledged | Agents designed questions, knew keywords, scored their own answers. | CEO caught it: "they prepared the test and took it knowing answers" |
+| 42 | swe-agent | VERB-REGEX | Expanded verb regex from 45 to 100+ verbs | implemented | Added assessment-domain verbs (explain, recognize, escalate, verify, protect). Fixed false positive: expert answer dropped 0.881 -> 0.485, restored to 0.65 ratio. | Correct diagnosis and fix |
+| 42 | qa-agent | GRS-GATE | Generated 95 tests for decay + DeCE, 24 tests for quality gate | implemented | All tests passing (512 total, +220 new) | High quality output — tests caught real edge cases |
+
+---
+
+## Rejected Patterns (learn from these)
+
+These types of proposals waste time. Avoid repeating:
+
+1. **API gateway / microservices** — rejected every time. Monolith works.
+2. **Redis** — not needed until 2+ Railway instances. Stop proposing.
+3. **ORM (SQLAlchemy, Prisma)** — Supabase SDK only. Non-negotiable.
+4. **Privacy by default (hidden scores)** — CEO chose public by default. Don't re-litigate.
+5. **OpenAI as primary LLM** — Gemini is primary. OpenAI is fallback. Cost decision.
+6. **Single-word keywords in questions** — Proven gameable (Session 42). GRS gate enforces multi-word.
+7. **Self-assessment as evidence** — Circular by definition (Mistake #47). Use blind cross-testing.
+
+---
+
+## High-Value Proposal Patterns (do more of these)
+
+1. **Specific security vulnerabilities with CVSS score** — always gets attention
+2. **Storage/cost math** — CTO missed the 14-43GB/year calculation; agent caught it
+3. **User journey gaps** — Leyla/Nigar persona reviews catch what code reviews miss
+4. **Concrete file paths** — "fix line 39 in aura.py" > "fix the auth issue"
+5. **Calibrated estimates** — "3 hours, not 3 days" with specific breakdown
+6. **Blind cross-testing methodology** — Session 42 proved its value (CEO validated)
+7. **GRS analysis on new questions** — compute_grs() before proposing any question
+
+---
+
+## Dismissed Findings Review (every 5 sessions — added Session 42)
+
+**Why this exists:** Security Agent found route shadowing in Session 25. CTO dismissed it as "FastAPI handles it." It was a P0 bug that lived in production for 17 sessions until Session 42. Cost: unknown number of users hit dead /me/explanation endpoint.
+
+**Rule:** Every 5 sessions, scan this log for `rejected` or `acknowledged` findings. Re-verify each one against current codebase. If the finding is still valid → fix it. Cost of re-checking: 5 minutes per finding. Cost of a missed P0: hours of debugging + user impact.
+
+**Next review due:** Session 47
+
 ---
 
 ## Notes for Next Review Cycle
@@ -64,3 +111,5 @@ These types of proposals waste time. Avoid repeating:
 - BUG-01 (swarm evaluation_log) needs agent proposal with specific code change
 - Phase 3 scope needs product-agent input on discovery endpoint design
 - Architecture agent should review team_leads.py wiring when it's planned (BUG-04)
+- QA agent should run GRS audit on any new questions proposed by agents
+- Security agent's route ordering finding deserves score upgrade (dismissed Session 25, proved correct Session 42)

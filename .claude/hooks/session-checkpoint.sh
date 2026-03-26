@@ -3,7 +3,7 @@
 # Saves incremental session state so context isn't lost even without compaction
 # Usage: /loop 30m save session checkpoint
 
-MEMORY_DIR="$HOME/.claude/projects/C--Users-user-OneDrive-Desktop-Yusif-Files-VOLAURA/memory"
+MEMORY_DIR="$HOME/.claude/projects/C--Projects-VOLAURA/memory"
 PERIODIC_FILE="$MEMORY_DIR/session_periodic_state.md"
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M')
 

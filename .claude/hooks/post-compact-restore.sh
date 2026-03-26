@@ -3,7 +3,7 @@
 # stdout from this script is added directly to Claude's context
 # This is how we survive context loss
 
-MEMORY_DIR="$HOME/.claude/projects/C--Users-user-OneDrive-Desktop-Yusif-Files-VOLAURA/memory"
+MEMORY_DIR="$HOME/.claude/projects/C--Projects-VOLAURA/memory"
 CHECKPOINT="$MEMORY_DIR/context_checkpoint.md"
 PROJECT_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
 

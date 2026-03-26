@@ -51,7 +51,44 @@ if [ ! -f "$SESSION_MARKER" ]; then
   echo "- NO solo decisions — everything through agent review"
   echo "- Swarm = PRODUCT, not tooling"
   echo "- CEO sees outcomes only — no curl, no schemas, no logs"
+  echo ""
+  echo "CTO HEALTH CHECK (do BEFORE sprint work):"
+  echo "- Update daily-log.md with today's standup"
+  echo "- Check agent-roster.md scores (last updated?)"
+  echo "- Check EXECUTION-PLAN.md is current"
+  echo "- If sprint ended since last session → fill SPRINT-REVIEW-TEMPLATE.md"
   echo "══════════════════════════════════════════════════════════════"
+
+  # ── STALENESS DETECTOR (added 2026-03-26, Lesson from Session 42) ──
+  # If any memory/swarm file is older than 3 days → warn CTO
+  echo ""
+  STALE_FOUND=0
+  NOW=$(date +%s)
+  for dir in "$PROJECT_DIR/memory/context" "$PROJECT_DIR/memory/swarm" "$PROJECT_DIR/memory/projects"; do
+    if [ -d "$dir" ]; then
+      for f in "$dir"/*.md; do
+        if [ -f "$f" ]; then
+          FILE_MOD=$(stat -c %Y "$f" 2>/dev/null || stat -f %m "$f" 2>/dev/null)
+          if [ -n "$FILE_MOD" ]; then
+            DAYS_OLD=$(( (NOW - FILE_MOD) / 86400 ))
+            if [ "$DAYS_OLD" -gt 3 ]; then
+              if [ "$STALE_FOUND" -eq 0 ]; then
+                echo "⚠️  STALE FILES DETECTED (>3 days old):"
+                STALE_FOUND=1
+              fi
+              BASENAME=$(basename "$f")
+              DIRNAME=$(basename "$(dirname "$f")")
+              echo "  ⚠️  $DIRNAME/$BASENAME — ${DAYS_OLD} days old"
+            fi
+          fi
+        fi
+      done
+    fi
+  done
+  if [ "$STALE_FOUND" -eq 1 ]; then
+    echo "  → Review and update stale files BEFORE starting work."
+    echo ""
+  fi
 
   # Surface swarm inbox if proposals exist
   PROPOSALS_FILE="memory/swarm/proposals.json"

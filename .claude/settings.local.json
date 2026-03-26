@@ -49,7 +49,30 @@
       "Bash(powershell -Command \"& ''C:/Program Files/GitHub CLI/gh.exe'' run watch 23513696390 --repo ganbaroff/volaura --exit-status\")",
       "Bash(Select-String -Pattern \"Error|error|Traceback|ModuleNotFound|ImportError|autonomous_run\")",
       "Bash(Select-Object -Last 30)",
-      "Bash(powershell -Command \"Start-Sleep -Seconds 30; & ''C:/Program Files/GitHub CLI/gh.exe'' run view 23513753441 --repo ganbaroff/volaura\")"
+      "Bash(powershell -Command \"Start-Sleep -Seconds 30; & ''C:/Program Files/GitHub CLI/gh.exe'' run view 23513753441 --repo ganbaroff/volaura\")",
+      "Bash(find /c/Projects/VOLAURA/apps/api/app/routers -name *.py -type f)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(npm search:*)",
+      "Bash(python -m json.tool)",
+      "mcp__a4a42010-a0eb-4671-ac17-b3e2d1dc9689__get_deployment_build_logs",
+      "Bash(vercel deploy:*)",
+      "Bash(pnpm install:*)",
+      "Bash(CI=true pnpm install --no-frozen-lockfile)",
+      "Bash(python3 -c \"import secrets; print\\(secrets.token_urlsafe\\(32\\)\\)\")",
+      "Bash(railway variable:*)",
+      "Bash(railway link:*)",
+      "Bash(railway status:*)",
+      "Bash(railway list:*)",
+      "Bash(ls \"C:\\\\Projects\\\\VOLAURA\\\\apps\\\\web\\\\src\\\\app\\\\[locale]\\\\\\(dashboard\\)\\\\assessment\"\")",
+      "Bash(python -c \":*)",
+      "Bash(set PYTHONIOENCODING=utf-8)",
+      "Bash(python ....scriptsaudit_seed_questions.py)",
+      "Read(//mnt/c/Projects/VOLAURA/apps/**)",
+      "Bash(python ../../scripts/audit_seed_questions.py)",
+      "Read(//mnt/c/**)",
+      "Read(//c/Projects//**)",
+      "mcp__supabase__list_projects",
+      "mcp__supabase__list_migrations"
     ],
     "deny": [
       "Bash(rm -rf*)",
@@ -68,6 +91,17 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/session-protocol.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/pre-tool-decision-gate.sh"
           }
         ]
       }

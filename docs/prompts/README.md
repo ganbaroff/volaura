@@ -18,6 +18,11 @@ These were one-off prompts for specific sessions. Kept for reference.
 - `V0-SESSION6-*`, `V0-SESSION7-*` — V0 component prompts
 - `STITCH-SESSION8-*`, `STITCH-SESSION9-*` — Stitch design prompts
 
+## Review Prompts
+
+- `PERPLEXITY-REVIEW-PROMPT.md` — Perplexity research review template
+- `PERPLEXITY-REVIEW-SPRINT2.md` — Sprint 2 review (historical)
+
 ## Audit Prompts
 
 - `AUDIT-ACCESSIBILITY.md` — WCAG 2.1 accessibility review checklist

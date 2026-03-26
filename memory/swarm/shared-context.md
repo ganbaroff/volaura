@@ -1,18 +1,24 @@
 # Swarm Shared Context — Read Before Every Task
 
-**Updated:** 2026-03-25 | **By:** CTO (Claude Sonnet)
+**Updated:** 2026-03-26 | **By:** CTO (Claude)
 **Purpose:** Prevent agents from duplicating work, contradicting each other, or referencing wrong files.
 
 ---
 
 ## Current Sprint Goal
 
-Trust Architecture Phase 1+2 — SHIPPED (2026-03-25)
-- Phase 1: Privacy model (visibility, role_level, sharing_permissions)
-- Phase 2: Transparent evaluation logs (BARS EvaluationResult, /aura/me/explanation)
-- Security fixes applied post-review (enumeration leak, model_used exposure, org validation)
+Sprint 9 — Growth Features + Assessment Hardening (IN PROGRESS)
+- CSV bulk invite: DONE (Session 39)
+- Assessment flow fixes: DONE (Session 40, 6 files rewritten)
+- Assessment hardening: DONE (Session 42)
+  - Per-competency decay half-lives
+  - DeCE Framework (ISO 10667-2 per-concept evaluation)
+  - Anti-gaming gates (4 layers, buzzword stuffing 0.77 -> 0.15)
+  - Quality gate: GRS metric + adversarial gate + 10-point checklist
+  - Async re-evaluation worker (keyword_fallback -> LLM upgrade)
+  - Seed question keywords redesigned (GRS 0.37/0.44 -> 1.000)
 
-**Next sprint:** Phase 3 — Adoption/Progress framing + discovery endpoint for orgs
+**Next:** E2E test of Leyla's journey, pnpm generate:api, Vitest fix
 
 ---
 
@@ -31,6 +37,10 @@ Trust Architecture Phase 1+2 — SHIPPED (2026-03-25)
 | Public visibility by default (not hidden) | ACTIVE | Adoption-first, Leyla's feedback |
 | All DB writes via db_admin in assessment (not db_user) | ACTIVE | BLOCKER-1 fix, prevents theta manipulation |
 | loguru for logging (not print()) | ACTIVE | Structured logs to Railway |
+| ADR-010: keyword_fallback = evaluation_mode "degraded" | ACTIVE | Session 42 — keyword matching is vocabulary test, not competence |
+| DeCE Framework: per-concept {score, quote, confidence} | ACTIVE | Session 42 — ISO 10667-2 Clause 6.7 compliance |
+| Per-competency decay half-lives (not uniform) | ACTIVE | Session 42 — tech=730d, leadership=1640d, weighted avg=1295d |
+| Multi-word behavioral phrase keywords (not single words) | ACTIVE | Session 42 — GRS gate requires >= 0.6, single words fail |
 
 ---
 
@@ -42,7 +52,9 @@ Trust Architecture Phase 1+2 — SHIPPED (2026-03-25)
 - **Celery/workers** — Use Supabase Edge Functions or pg_cron instead.
 - **OpenAI as primary** — Gemini is primary. OpenAI is fallback only.
 - **SQLAlchemy** — Supabase SDK only.
-- **Privacy by default** — Already decided: PUBLIC by default (see Phase 1 decision log).
+- **Privacy by default** — Already decided: PUBLIC by default.
+- **keyword_fallback as valid evaluation** — It measures vocabulary, not competence. Always flag as "degraded".
+- **Single-word keywords in questions** — Proven gameable (GRS < 0.4). All keywords must be 3+ word behavioral phrases.
 
 ---
 
@@ -51,38 +63,81 @@ Trust Architecture Phase 1+2 — SHIPPED (2026-03-25)
 ```
 apps/api/app/
   routers/
-    aura.py          — AURA score endpoints (updated 2026-03-25)
-    assessment.py    — Assessment start/answer/complete/results
-    organizations.py — Org endpoints (has schema bug, fixed Sprint N)
+    aura.py          — AURA score + /me/explanation (route order matters!)
+    assessment.py    — Assessment start/answer/complete/results + enqueue degraded
+    organizations.py — Org endpoints
     profiles.py      — Volunteer profiles
-    telegram_webhook.py — CEO↔Bot bidirectional (rewritten 2026-03-25, Supabase-backed)
+    telegram_webhook.py — CEO<->Bot bidirectional
   core/assessment/
     engine.py        — IRT/CAT adaptive engine (3PL + EAP)
-    bars.py          — BARS LLM evaluator (EvaluationResult class)
-    antigaming.py    — Anti-gaming analysis
-    aura_calc.py     — AURA score calculation
+    bars.py          — BARS LLM evaluator + DeCE + 4 anti-gaming gates
+    aura_calc.py     — AURA score + per-competency decay half-lives
+    quality_gate.py  — GRS metric + adversarial gate + 10-point checklist (NEW Session 42)
   schemas/
-    aura.py          — AuraScoreResponse, UpdateVisibilityRequest, SharingPermissionRequest
-    assessment.py    — SessionOut, StartAssessmentRequest, SubmitAnswerRequest, etc.
-    organization.py  — OrganizationResponse (verified_at not is_verified, website not website_url)
+    aura.py          — AuraScoreResponse, UpdateVisibilityRequest
+    assessment.py    — SessionOut, StartAssessmentRequest, SubmitAnswerRequest
+    organization.py  — OrganizationResponse
   services/
+    reeval_worker.py — Async LLM re-evaluation of degraded answers (NEW Session 42)
     swarm_service.py — Multi-model swarm evaluation
     llm.py           — LLM abstraction layer
   middleware/
-    rate_limit.py    — slowapi rate limiting (constants: RATE_AUTH, RATE_ASSESSMENT_*)
+    rate_limit.py    — slowapi rate limiting
   deps.py            — Supabase client Depends(), CurrentUserId
   config.py          — Settings (pydantic-settings)
-  main.py            — FastAPI app, router registration
+  main.py            — FastAPI app, router registration, reeval_worker lifespan
 
 supabase/migrations/
-  20260325000021_add_privacy_role_visibility.sql  — Phase 1 schema
-  20260325000022_create_ceo_inbox.sql             — Telegram ceo_inbox table
+  ...30+ migration files including:
+  20260326000029_evaluation_queue.sql     — Queue for degraded answer re-evaluation
+  20260326000030_update_question_keywords_grs.sql — Keyword redesign for GRS compliance
 
-packages/swarm/
-  engine.py          — ProviderRegistry, allocate_agents() — NEEDS team_leads wiring
-  team_leads.py      — TeamLead classes (Content/Business/Security/Architecture/Speed)
-  pm.py              — Swarm orchestrator
+scripts/
+  audit_seed_questions.py  — GRS audit tool for question bank
 ```
+
+---
+
+## CRITICAL: Route Ordering in FastAPI
+
+**Session 42 P0 bug:** `/me/explanation` was UNREACHABLE because `/{volunteer_id}` wildcard was registered first. FastAPI matches in registration order. Static routes MUST precede parameterized routes:
+
+```python
+@router.get("/me")              # exact — FIRST
+@router.get("/me/explanation")  # exact — SECOND
+@router.get("/{volunteer_id}")  # wildcard — LAST
+```
+
+**Any agent reviewing aura.py or any router with /{id} patterns MUST verify route order.**
+
+---
+
+## Assessment Pipeline (Session 42 — KNOW THIS)
+
+```
+User submits answer
+  -> evaluate_answer() in bars.py
+     -> Try Gemini (DeCE format: {score, quote, confidence} per concept)
+     -> If Gemini fails -> Try OpenAI
+     -> If both fail -> keyword_fallback (4 anti-gaming gates)
+        -> Flag evaluation_mode="degraded" in log
+        -> Enqueue for async LLM re-evaluation (reeval_worker.py)
+           -> Worker polls every 60s, re-evaluates via Gemini
+           -> Silently patches session answers + AURA score
+```
+
+**Anti-gaming gates (stack multiplicatively):**
+1. min_length: < 30 words -> cap at 0.4
+2. stuffing_detection: >60% keywords in <50 words -> 0.3x
+3. coherence_heuristic: verb_count/keyword_hits < 0.4 -> 0.55x
+4. scenario_relevance: token overlap < 15% -> 0.65x
+
+**Question keyword design rules (GRS gate):**
+- All keywords must be 3+ words (behavioral phrases)
+- Keywords must describe ACTIONS, not CONCEPTS
+- Keywords must be scenario-anchored
+- GRS < 0.6 = question is gameable = DO NOT DEPLOY
+- Run: scripts/audit_seed_questions.py before any question change
 
 ---
 
@@ -90,12 +145,14 @@ packages/swarm/
 
 | ID | Issue | Status | Owner |
 |----|-------|--------|-------|
-| BUG-01 | Swarm path (swarm_enabled=True) doesn't produce evaluation_log → Phase 2 broken for swarm evals | OPEN | Next sprint |
-| BUG-02 | k-anonymity not implemented (org sees stats with <5 users) | OPEN | Phase 3 |
-| BUG-03 | Role percentile curves empty at launch (need bootstrap strategy) | OPEN | Phase 3 |
-| BUG-04 | team_leads.py never called in engine.py allocate_agents() | OPEN | Next sprint |
-| BUG-05 | evaluation_log storage: 14-43GB/year at 3K users — archive strategy needed | OPEN | Before 500 users |
-| BUG-06 | No RLS integration tests (all tests use mocks) | OPEN | Next sprint |
+| BUG-01 | Swarm path doesn't produce evaluation_log | OPEN | Next sprint |
+| BUG-02 | k-anonymity not implemented (<5 users) | OPEN | Phase 3 |
+| BUG-03 | Role percentile curves empty at launch | OPEN | Phase 3 |
+| BUG-04 | team_leads.py never called in engine.py | OPEN | Next sprint |
+| BUG-05 | evaluation_log storage: 14-43GB/year at 3K users | OPEN | Before 500 users |
+| BUG-06 | No RLS integration tests | OPEN | Next sprint |
+| BUG-07 | 5 pending migrations need supabase db push (CEO action) | OPEN | SHIP_BLOCKER |
+| BUG-08 | Email confirmation blocks beta registration (CEO: disable in dashboard) | OPEN | SHIP_BLOCKER |
 
 ---
 
@@ -108,11 +165,7 @@ total_score FLOAT NOT NULL
 badge_tier TEXT NOT NULL  -- Bronze/Silver/Gold/Platinum
 elite_status BOOLEAN DEFAULT FALSE
 competency_scores JSONB DEFAULT '{}'
-visibility TEXT DEFAULT 'public' CHECK (IN ('public','badge_only','hidden'))
-reliability_score FLOAT DEFAULT 0.0
-reliability_status TEXT DEFAULT 'pending'
-events_attended INT DEFAULT 0
-events_no_show INT DEFAULT 0
+visibility TEXT DEFAULT 'public'
 percentile_rank FLOAT
 aura_history JSONB DEFAULT '[]'
 last_updated TIMESTAMPTZ DEFAULT NOW()
@@ -122,41 +175,30 @@ id UUID PRIMARY KEY
 volunteer_id UUID REFERENCES auth.users(id)
 competency_id UUID REFERENCES competencies(id)
 status TEXT  -- in_progress | completed
-role_level TEXT DEFAULT 'volunteer' CHECK (IN ('volunteer','coordinator','specialist','manager','senior_manager'))
+role_level TEXT DEFAULT 'volunteer'
 theta_estimate FLOAT DEFAULT 0.0
 theta_se FLOAT DEFAULT 1.0
-answers JSONB DEFAULT '{}'  -- CATState serialized (items, theta, theta_se, stopped, stop_reason)
+answers JSONB DEFAULT '{}'
 current_question_id UUID
-question_delivered_at TIMESTAMPTZ
-answer_version INT DEFAULT 0
 started_at TIMESTAMPTZ
 completed_at TIMESTAMPTZ
 
--- sharing_permissions
+-- evaluation_queue (NEW — Session 42, ADR-010)
 id UUID PRIMARY KEY
-user_id UUID REFERENCES auth.users(id)
-org_id UUID REFERENCES organizations(id)
-permission_type TEXT CHECK (IN ('read_score','read_full_eval','export_report'))
-granted_at TIMESTAMPTZ DEFAULT NOW()
-revoked_at TIMESTAMPTZ
-UNIQUE(user_id, org_id, permission_type)
-
--- ceo_inbox (Telegram messages)
-id UUID PRIMARY KEY
-direction TEXT  -- inbound | outbound
-message TEXT
-message_type TEXT  -- idea | task | question | report | command | response
-metadata JSONB DEFAULT '{}'
-processed BOOLEAN DEFAULT FALSE
-created_at TIMESTAMPTZ DEFAULT NOW()
-
--- competencies
-id UUID PRIMARY KEY
-slug TEXT UNIQUE  -- communication, reliability, english_proficiency, leadership, ...
-name_en TEXT
-name_az TEXT
-weight FLOAT
-is_active BOOLEAN DEFAULT TRUE
+session_id UUID REFERENCES assessment_sessions(id)
+volunteer_id UUID REFERENCES auth.users(id)
+question_id UUID REFERENCES questions(id)
+competency_slug TEXT NOT NULL
+question_en TEXT NOT NULL
+answer_text TEXT NOT NULL
+expected_concepts JSONB NOT NULL
+degraded_score FLOAT NOT NULL
+status TEXT DEFAULT 'pending'  -- pending | processing | done | failed
+retry_count INT DEFAULT 0
+llm_score FLOAT
+llm_model TEXT
+score_delta FLOAT
+queued_at TIMESTAMPTZ DEFAULT NOW()
 
 -- questions
 id UUID PRIMARY KEY
@@ -166,7 +208,7 @@ scenario_en TEXT
 scenario_az TEXT
 options JSONB  -- for MCQ
 correct_answer TEXT  -- for MCQ
-expected_concepts JSONB  -- [{name, weight, keywords}]
+expected_concepts JSONB  -- [{name, weight, keywords}] — keywords MUST be multi-word phrases
 irt_a FLOAT DEFAULT 1.0
 irt_b FLOAT DEFAULT 0.0
 irt_c FLOAT DEFAULT 0.0
@@ -175,30 +217,12 @@ is_active BOOLEAN DEFAULT TRUE
 
 ---
 
-## API Response Format
-
-All endpoints return structured errors:
-```json
-{"code": "SNAKE_CASE_CODE", "message": "Human readable message"}
-```
-
-No standard response envelope yet (`{data, meta}` deferred — ADR-003 pending implementation).
-
----
-
 ## AURA Weights (DO NOT CHANGE)
-- communication: 0.20
-- reliability: 0.15
-- english_proficiency: 0.15
-- leadership: 0.15
-- event_performance: 0.10
-- tech_literacy: 0.10
-- adaptability: 0.10
-- empathy_safeguarding: 0.05
+- communication: 0.20, reliability: 0.15, english_proficiency: 0.15, leadership: 0.15
+- event_performance: 0.10, tech_literacy: 0.10, adaptability: 0.10, empathy_safeguarding: 0.05
 
 ## Badge Tiers
-- Platinum: >= 90
-- Gold: >= 75
-- Silver: >= 60
-- Bronze: >= 40
-- None: < 40
+Platinum >= 90, Gold >= 75, Silver >= 60, Bronze >= 40, None < 40
+
+## Decay Half-Lives (per competency)
+tech_literacy/event_performance: 730d, english_proficiency: 1095d, communication/reliability/adaptability: 1460d, leadership/empathy: 1640d, weighted avg: 1295.2d

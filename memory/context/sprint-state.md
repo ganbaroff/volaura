@@ -6,12 +6,35 @@
 ---
 
 ## Last Updated
-2026-03-25 | Session 30: **All sprint plan tasks done. BUG-01 fixed (swarm path now returns EvaluationResult, evaluation_log stored for Phase 2). Security patches: CRIT-04, CRIT-05, HIGH-05, rate limiting. Agent infra: shared-context.md + agent-feedback-log.md + agent-roster.md. Verified: team_leads already wired in engine.py (v8, lines 187-208). Orgs schema already correct. File cleanup agent running.**
+2026-03-26 | Session 42 (continued): **ADDITIONS AFTER "есть дополнения?" — all 3 items resolved.**
+**(12) Seed question keywords redesigned** — OLD Q3 GRS=0.37 (FAIL), OLD Q4 GRS=0.44 (FAIL) → NEW Q3/Q4 GRS=1.000 (PASS). Single-word keywords replaced with multi-word behavioral phrases. Updated: seed.sql + new migration 000030.
+**(13) GRS audit script created** — scripts/audit_seed_questions.py. Run `python scripts/audit_seed_questions.py` from apps/api/ to verify any question bank changes pass GRS.
+**(14) reeval_worker wiring VERIFIED** — main.py lifespan() confirmed to have asyncio.create_task(run_reeval_worker()). assessment.py confirmed to call enqueue_degraded_answer() on evaluation_mode="degraded". Stack is complete end-to-end.
+**Session 42 full summary (1-11):** Per-competency decay half-lives, DeCE Framework, 7 P0/P1 bugs fixed, 512 tests (+220), anti-gaming gates (buzzwords 0.77→0.15), blind cross-test proving keyword_fallback = vocabulary test, ADR-010 degraded mode flag, quality_gate.py, reeval_worker.py + migration 000029, verb regex 45→100+.
 
 ## Declaring Line (copy-paste at session start)
 ```
-▶ Session resumed. Sprint 8 backend work complete. Phase 1+2 live + security patched + BUG-01 fixed. Next: Phase 3 (adoption UX + org discovery endpoint GET /volunteers/discovery). File cleanup may still be pending. Protocol v4.0 loaded.
+▶ Session resumed. Sprint 9 IN PROGRESS. 51 backend routes. Assessment flow FIXED (6 files rewritten). REMAINING: (1) E2E test of Leyla's journey (needs email confirmation OFF), (2) pnpm generate:api, (3) Vitest Node v20, (4) 11 pre-existing test fixes, (5) Post 003. Protocol v4.0 loaded.
 ```
+
+## NEXT SESSION PRIORITIES
+1. ~~Sprint 9 — CSV bulk invite~~ ✅ DONE (Session 39)
+2. ~~Sprint 9 — Assessment flow fixes~~ ✅ DONE (Session 40) — 6 files rewritten
+3. Sprint 9 — E2E test of Leyla's full journey (register → assessment → AURA → badge)
+4. Sprint 9 — API codegen: `pnpm generate:api` → replace 7 TODO hooks
+5. Sprint 9 — Migrations 000028 + 000029 (evaluation_queue) + 000030 (question keywords) need `supabase db push` (CEO action)
+6. Post 003 rewrite — agent team review with TONE-OF-VOICE.md + TRACKER.md
+7. Vitest fix — Node v24 has filesystem bug, need Node v20 LTS
+
+## CEO-REQUIRED ACTIONS (CTO is blocked until these are done)
+| Action | Priority | Status |
+|--------|----------|--------|
+| `supabase db push` — 5 pending migrations (HNSW, RLS fixes, assignment columns, evaluation_queue 000029, question keywords 000030) | SHIP_BLOCKER | ⚠️ OPEN |
+| Disable email confirmation in Supabase dashboard | SHIP_BLOCKER | ⚠️ OPEN — blocks beta testers from registering |
+| Verify Telegram bot received autonomous run message | P1 | ⚠️ OPEN |
+| Post 3 angle — "Antigravity" rejected as Mistake #40, new angle needed | BEFORE_BETA | ⚠️ CEO decision |
+| Legal entity jurisdiction — Georgia, Turkey, or AZ? | BEFORE_BETA | ⚠️ CEO decision (conflicts: GITA=AZ, KOSGEB=Turkey) |
+| Pasha Bank meeting date | BEFORE_BETA | ⚠️ CEO relationship |
 
 ---
 
@@ -19,10 +42,10 @@
 
 | | |
 |---|---|
-| **Sprint** | Sprint 8 — IN PROGRESS (live audit + bug fixes + swarm wiring) |
-| **Next Sprint** | Sprint 9 — Growth features (CSV invite, results page, beta testers) |
-| **Session completed (Volaura)** | 19 (Sprint 7 started) |
-| **Overall Volaura progress** | Beta LIVE. Swarm integration in progress. |
+| **Sprint** | Sprint 9 — IN PROGRESS (CSV invite, API codegen, Post 003, Vitest fix) |
+| **Next Sprint** | Sprint 10 — Beta onboarding (real volunteers, growth features) |
+| **Session completed (Volaura)** | 40 |
+| **Overall Volaura progress** | Beta LIVE. 51 routes. Assessment flow FIXED. Infra audit complete. AGILE practices being enforced. |
 | **MiroFish Swarm** | v7.1 — 13 providers, modular prompts, research loop, adaptive prompts |
 | **Pasha Bank Pitch** | Ready — docs/pasha-bank-pitch.md |
 | **Railway API** | ✅ LIVE — https://volauraapi-production.up.railway.app |

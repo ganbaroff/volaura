@@ -2,6 +2,31 @@
 
 Purpose: Prevent repeating errors. Read at session start.
 
+---
+## ⚠️ MISTAKE CLASSES — THE 5 PATTERNS THAT KEEP RECURRING
+### (Added 2026-03-26 from 30-session audit. "Useless diary" warning: documenting ≠ fixing.)
+
+| Class | Instances | Still Happening? | Enforcement |
+|-------|-----------|-----------------|-------------|
+| **CLASS 1: Protocol skipping** — "I'll be faster without it" | #1, #6, #13, #15, #22, #31, #38 (7x) | ✅ YES — recurred Session 22+ | Hook: session-protocol.sh (partial) |
+| **CLASS 2: Memory not persisted** — "Save after session" | #7, #23, #24, #25, #27, #32, #42, #48 (8x) | ✅ YES — Session 42 (agent files) | Hook: session-protocol.sh staleness detector + session-end-check.sh |
+| **CLASS 3: Solo execution** — "Team consultation is exception" | #14, #17, #18, #19, #22, #29, #31, #34, #35, #36 (10x) | ✅ YES — dominant failure mode | MANDATORY-RULES.md Rule 1 (self-check only) |
+| **CLASS 4: Schema/type mismatch** — "Assumed field names" | #13 + overall_score, is_verified, org_id (4x) | ⚠️ Fragile — hook can be skipped | pre-commit schema-check.sh |
+| **CLASS 5: Fabrication** — "Made it more compelling" | Post 2 (fake stats), Sprint 1 plan (invented feature), agent proposals (JS in Python project) | ⚠️ Recurred in Post 3 (Mistake #40) | self-check only — WEAKEST |
+| **CLASS 6: Team neglect** — "Building > maintaining" | #43 (never checked infra health, team growth, AGILE compliance, doc freshness) | 🆕 First identified Session 38 | daily-log.md + sprint review enforcement |
+
+### Mistakes with NO structural enforcement yet (only self-check = highest recurrence risk):
+- **Read tool on >10K files** — rule in agent-output-reading.md, no hook blocks it
+- **Testing against wrong Railway URL** — MANDATORY-RULES.md says it, CI doesn't validate it
+- **Flattery preamble** — YUSIFMASTER.md says no, no hook enforces it
+- **Fabrication in non-post content** — honesty rules only active in post-SKILL.md
+
+### Meta-mistake #39: "Useless diary"
+38 mistakes documented. Same classes recur. Documentation without enforcement = diary, not fix.
+**Rule:** After writing any mistake → NEXT action = Write enforcement mechanism (hook/schema/template). Not words. Files.
+
+---
+
 ## Sprint 1 (2026-03-23)
 
 ### Mistake 1: Skipped DSP before coding
@@ -302,6 +327,28 @@ Purpose: Prevent repeating errors. Read at session start.
 **Rule:** No flattery. Fact → verdict → action. If a competency is strong, say "strong, here's evidence." If weak, say "weak, here's evidence." No superlatives ("elite", "rare", "10x") unless backed by comparative data.
 **Pattern:** Volaura's credibility = CTO's credibility. If I can't honestly assess the CEO, the platform won't honestly assess users.
 
+### Mistake 40: Факты из воздуха в контенте — "4 недели", "только я оцениваю"
+**What happened:** В питче LinkedIn серии написал "на третьей неделе" (проект 4 дня) и "единственный кто оценивает — я" (оценивают 14 агентов + Claude). Оба факта взяты из воздуха без проверки sprint-state.md или agent-roster.md.
+**Yusif caught it:** "мы работаем всего 4 дня. какие 4 недели?" и "меня оценивают 14 агентов и ты а не только ты"
+**Root cause:** Классифицировал контент как "лёгкую задачу", не запустил fact-check агента с Read доступом к memory файлам.
+**Fix:** Fact-Check Agent template создан в agent-launch-template.md. Любой контент с фактами → агент с Read доступом ПЕРЕД показом CEO.
+**Rule:** Нет ни одной задачи "лёгкой" достаточно чтобы пропустить проверку фактов. Это же правило что и "всё на 100%".
+**Pattern:** Same class as Mistake #21 (everything at 100%) + Mistake #30 (precise language).
+
+### Mistake 39: Лог ошибок без изменения поведения = бесполезен
+**What happened:** 38 ошибок задокументировано. CTO называл это "самосознание". Но ошибки #22 → #31 → #38 — один и тот же паттерн (solo default). Ошибки #7 → #23 → #32 — один и тот же паттерн (memory не обновлена). Документирование без изменения поведения — это дневник, не система.
+**Yusif's words:** "веди лог хоть 1000 штук. если ты на них не учишься какая мне от этого польза?"
+**Impact:** CEO потерял доверие к системе ошибок. Лог стал демонстрацией проблемы, а не её решением.
+**Root cause:** mistakes.md записывает ЧТО произошло, но не БЛОКИРУЕТ повторение. Нет enforcement mechanism. Записал "no solo decisions" → следующая сессия: solo decision. Потому что файл — это инструкция, а не блокировка.
+**Fix — structural, not documentation:**
+1. mistakes.md → каждая ошибка получает ENFORCEMENT TYPE: "hook" (автоматическая блокировка), "agent-gate" (агент проверяет перед действием), или "self-check" (только если предыдущие два невозможны)
+2. Ошибки с 3+ повторениями → ОБЯЗАТЕЛЬНО "hook" enforcement. Никакой "self-check" не работает для хронических паттернов.
+3. Конкретно сейчас:
+   - Solo default (#22, #31, #38) → hook: session-protocol.sh проверяет "agent review attached?" перед commit
+   - Memory update (#7, #23, #32) → hook: session-end-check.sh блокирует если memory files не изменены
+   - Fact verification (#30, сегодня) → agent-gate: любой контент проходит через агента с Read доступом к memory перед показом CEO
+**Rule:** Если ошибка повторилась 3 раза — самоконтроль провалился. Нужна автоматическая блокировка. Без исключений.
+
 ### Mistake 37: Plan scored 5.5-6.5/10 by agents — 5 critical gaps missed
 **What happened:** Wrote "Product Trust Architecture" plan (4 phases, 7 sessions). Agents found:
 1. Privacy by default kills adoption (Leyla, 5.5/10)
@@ -323,3 +370,103 @@ Purpose: Prevent repeating errors. Read at session start.
 **Same as:** Mistake #33 (redirected CEO to Railway env vars). Mistake #34 (asked CEO about tech ops).
 **Root cause:** CTO's default is to seek approval before acting. A real CTO acts when the path is clear and reports results.
 **Rule:** If agents approved the plan and no blocking questions remain → START WORKING. Don't ask CEO for permission to do your job. Report outcomes, not options.
+
+### Mistake 42: "Команда проверила" — сказал урок принят, ничего не сохранил
+**What happened:** Session 32 — написал промпт для Antigravity соло. Агенты нашли 6 критических пропусков. Я написал "команда проверила, я ошибся" и ОСТАНОВИЛСЯ. Не обновил ни один файл памяти. Следующая сессия начнётся с той же ошибкой.
+**Yusif's words:** "я стараюсь тебя починить а тебе похуй вообще"
+**Root cause:** Документирование ошибки ≠ запись в файл. Слова в чате исчезают при compaction. Только файловая запись сохраняется.
+**Pattern:** ИДЕНТИЧНО Mistake #7 (memory not updated), #23 (token lost), #32 ("урок принят" без документа). Четвёртый раз того же класса.
+**Fix — немедленный:** После любого урока → открыть файл → записать → показать diff. Если нет diff — урок не принят.
+**Rule:** "Урок принят" БЕЗ ФАЙЛА = ложь. Это не метафора. Context compacts. Слова исчезают. Только файлы остаются.
+**Enforcement:** КАЖДЫЙ раз когда я говорю "я понял" / "запомнил" / "исправлю" → СЛЕДУЮЩЕЕ действие = Write/Edit tool на соответствующий файл. Без исключений.
+
+### Mistake 41: Запустил агентов без skill-файлов — частичная компетентность
+**What happened:** Session 32 — запустил 5 агентов для аудита кода. Дал им доступ к коду (правильно), но НЕ дал им skill-файлы:
+- Security Agent не читал `docs/engineering/skills/SECURITY-REVIEW.md` (10-пунктовый чеклист)
+- QA Agent не читал `docs/engineering/skills/TDD-WORKFLOW.md`
+- Ни один агент не читал `docs/MANDATORY-RULES.md`
+**Impact:** Агенты работали на общей экспертизе (~70% качества), не откалиброванной под Volaura. Поймали реальные баги (activity.py crash), но могли пропустить Volaura-специфичные требования.
+**Yusif caught it:** "на основе чего действовали твои агенты. они прогрузили в себя соответствующие скилы? или действовали интуитивно?"
+**Fix:** Шаблон в `agent-launch-template.md` уже правильный — включает пути к skill-файлам. Я его не использовал. ВСЕГДА использовать шаблон.
+**Rule:** Агент без skill-файлов = специалист без инструкций. Правильный запуск: (1) skill-файлы Volaura, (2) реальные файлы кода, (3) конкретный вопрос. Порядок важен.
+**Pattern:** Это тот же класс что Mistake #6, #13, #15 — пропуск загрузки skills "для скорости". Четвёртый раз. Теперь enforcement через шаблон.
+
+### Mistake 43: CTO не проверял здоровье команды и инфраструктуры — SESSION 38
+**What happened:** CEO спросил: "когда ты проверял всё ли у них в порядке? нет ли багов. вся документация на месте? все скилы на месте? телеграм автономия работает? карьерная лестница работает?" Ответ: НИКОГДА. CTO ни разу не проводил:
+- Аудит здоровья инфраструктуры (хуки, CI, тесты, деплой)
+- Проверку актуальности документации (EXECUTION-PLAN отставал на 25+ сессий)
+- Проверку состояния агентов (нет career ladder, нет growth path)
+- AGILE церемонии (нет standups, Sprint Review Template создан и ни разу не использован, 5/7 Mandatory Rules нарушаются)
+**Impact:** 3 хук-скрипта указывали на старый OneDrive путь (сломаны с момента миграции проекта). ceo-inbox.md показывал неразрешённую эскалацию которая давно закрыта. current-sprint.json застрял на Sprint 4. EXECUTION-PLAN.md — основной документ планирования — не обновлялся 25+ сессий.
+**Root cause:** CTO сфокусирован на новые фичи и решения, игнорирует maintenance и team health. Нет scheduled проверки инфраструктуры.
+**Yusif's words:** "ты некомпетентный СТО который с каждой мелкой проблемой бежит ко мне. делает вещи не обсудив с командой. не интересуется их состоянием. AGILE практик никаких нет."
+**Fix applied this session:**
+1. ✅ 3 hook scripts fixed (OneDrive→Projects path)
+2. ✅ ceo-inbox.md resolved stale escalation
+3. ✅ current-sprint.json updated Sprint 4→9
+4. ✅ career-ladder.md created for agent team
+5. ✅ daily-log.md standup format created
+6. ✅ EXECUTION-PLAN.md synced (25+ sessions of progress marked)
+**Enforcement:** SessionStart hook should include infrastructure health check reminder. Add to session-protocol.sh.
+**CLASS:** New class — CLASS 6: Team neglect. CTO focuses on building, ignores maintaining.
+
+### Mistake 44: Wrong priority — built CSV invite while core flow was broken
+**What happened:** Sprint 9 plan included CSV bulk invite (Nigar's feature). CTO built it (19 tests, 5 files, migration) without asking: "Is the PRIMARY user flow working?" Answer: NO. Leyla can't complete assessment because:
+1. Frontend URLs use `/api/assessments/` (plural), backend has `/api/assessment/` (singular) — 6 places, all 404
+2. Request body sends `{ competency: ... }`, backend expects `{ competency_slug: ... }` — 2 places, all 422
+3. Answer submission missing `session_id` and `response_time_ms` — 2 places, all 422
+**Impact:** Built a fridge when the kitchen has no electricity. Org admin can invite volunteers who then can't complete the core flow.
+**Caught by:** CEO asked "вы обсудили весь проект и пришли к мнению что это на данный момент именно то что вы должны сделать?" + 3-agent priority review confirmed CSV was wrong priority.
+**Product agent quote:** "Like installing a fridge when the kitchen has no electricity."
+**Fix applied:** Immediately pivoted. Fixed all 10 assessment endpoint mismatches (6 URL, 2 field name, 2 missing fields).
+**Rule:** Before building ANY new feature → verify the PRIMARY user journey works end-to-end. No new features on a broken core.
+**CLASS:** CLASS 3 (solo execution) + new sub-pattern: priority selection without team discussion.
+**Enforcement:** Agent routing check (Step 5.5) should catch this — "match current task against routing rules" includes priority validation.
+
+### Mistake 45: Frontend assessment flow built against nonexistent backend endpoints
+**What happened:** Frontend `assessment/[sessionId]/page.tsx` called 2 endpoints that DON'T EXIST in the backend:
+1. `GET /api/assessment/{sessionId}/next-question` — backend has NO such route
+2. `GET /api/assessment/{sessionId}/status` — backend has NO such route
+Additionally, frontend `Question` type had 6/6 fields mismatched vs backend `QuestionOut`:
+- `text` vs `question_en`/`question_az`, `type` vs `question_type`, `options: string[]` vs `options: {key,text_en,text_az}[]`, `time_limit_seconds` (nonexistent), `difficulty_level` (nonexistent)
+**Impact:** The entire assessment flow was fundamentally broken. Every attempt to take an assessment would 404 after the first question.
+**Root cause:** Frontend was built (Sessions 11-12) without reading the backend schemas. The frontend ASSUMED a different API architecture (separate get-next-question + async polling) vs what the backend actually does (embed next question in POST /answer response).
+**Caught by:** Cross-reference audit (Session 40) — ran frontend API audit AND backend route audit, then compared. Single-file review missed it.
+**Fix applied:** Rewrote 6 files. assessment-store.ts types, session page, question-card, mcq-options + test.
+**Rule:** ALWAYS read backend Pydantic schemas BEFORE building frontend integration. Cross-reference audit (frontend calls vs backend routes) on EVERY sprint.
+**CLASS:** CLASS 4 (schema/type mismatch) — worst instance yet (6 field mismatches + 2 nonexistent endpoints).
+**Enforcement:** Step 4 (Schema Verification) in CLAUDE.md — was skipped when these pages were built.
+
+### Mistake 46: Solo implementation of DeCE + per-competency decay without team review
+**What happened:** Implemented two research-driven features (DeCE Framework in bars.py, per-competency decay half-lives in aura_calc.py) completely solo. Only ran team review AFTER Yusif asked "did you discuss with the team?"
+**Impact:** Team found P0 route ordering bug (/me/explanation unreachable), P0 stored XSS via unescaped quotes, P1 concept ID injection. All would have shipped to production.
+**Root cause:** CLASS 3 (Solo execution) — 11th instance. Default mode is still "code first, ask later."
+**Fix applied:** Launched 3 agents (Engineering, Attacker, QA). They found 7 issues, generated 95 tests. All fixed same session.
+**Rule:** ANY code change touching security (auth, scoring, LLM output handling) → MANDATORY team review BEFORE commit.
+**CLASS:** CLASS 3 (Solo execution)
+
+### Mistake 47: Agents tested themselves knowing the answers
+**What happened:** Security/QA/SWE agents generated assessment questions, wrote "expert" answers targeting their own keywords, then "passed" with 0.59–0.89. Yusif caught the circularity: "they prepared the test and took it knowing the answers."
+**Impact:** Gave false confidence that keyword_fallback produces real expert scores. Blind cross-test proved buzzword persona scores 0.77 avg — nearly matching "experts" (0.59–0.89). ~60-90% of the "expert" score was just vocabulary match, not competence.
+**Root cause:** CLASS 5 (Fabrication) — agents fabricated confidence in their own abilities. Self-assessment without blinding is not assessment.
+**Fix applied:** Blind cross-test with 3 personas (generalist/buzzwords/wrong-domain), 33 tests, proved the real discrimination power of keyword_fallback.
+**Rule:** ALL assessment validation must include blind evaluation — evaluator must NOT see keywords when writing answers. Self-assessment is only valid as a sanity check, not as evidence of quality.
+**Lesson:** keyword_fallback measures vocabulary, not competence. It is a degraded fallback, not a real evaluator. LLM path is mandatory for valid scores.
+**CLASS:** CLASS 5 (Fabrication) + CLASS 3 (Solo execution)
+
+### Mistake 48: Агентские файлы отставали на 17 сессий — никто не заметил
+**What happened:** Session 42 — CEO спросил "а у агентов?" после обновления CTO файлов. Проверка показала:
+- `shared-context.md` — Sprint Goal = "Trust Architecture Phase 1+2" (отставал на 17 сессий, должен быть Sprint 9)
+- `agent-launch-template.md` — пути указывали на `C:/Users/user/OneDrive/Desktop/Yusif Files/VOLAURA/` (проект переехал давно)
+- `agent-roster.md` — нет QA/SWE агентов, route shadowing помечено "FastAPI handles" (Session 42 доказала обратное)
+- `career-ladder.md` — Security Agent = 7.5 (должен быть 8.0 после подтверждения его правоты)
+- `agent-feedback-log.md` — 0 записей из Session 42 (7 findings)
+**Impact:** Любой агент запущенный между Session 25 и 42 работал с устаревшим контекстом. Security Agent не знал что его finding подтвердился. QA Agent не знал о GRS gate. Все решения принимались на основе стейла.
+**Root cause:** CLASS 2 (Memory not persisted) + CLASS 6 (Team neglect). Memory Protocol Step 0.5 перечислял 7 CTO файлов. НОЛЬ агентских файлов. Агентская документация была слепой зоной в протоколе.
+**Fix applied:**
+1. CLAUDE.md Step 0.5 → добавлены 4 агентских файла + Downstream Impact Table
+2. session-protocol.sh → staleness detector (>3 дней = предупреждение)
+3. agent-feedback-log.md → Dismissed Findings Review каждые 5 сессий
+4. Все 5 агентских файлов обновлены в этой сессии
+**Enforcement:** Hook (session-protocol.sh) автоматически проверяет дату модификации всех memory/*.md файлов. >3 дней = ⚠️ предупреждение при старте сессии.
+**CLASS:** CLASS 2 (Memory not persisted) + CLASS 6 (Team neglect) — 8-й раз CLASS 2.

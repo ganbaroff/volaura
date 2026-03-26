@@ -1,5 +1,16 @@
 # Architecture Decisions Log
 
+## Session 42 (continued) Retrospective — 2026-03-26
+
+✓ Seed question keyword redesign: OLD Q3 GRS=0.37 → 1.000 | OLD Q4 GRS=0.44 → 1.000
+✓ Migration 000030 created: UPDATE expected_concepts for Q3+Q4 (fixes live DB, seed.sql handles new setups)
+✓ Audit script created: scripts/audit_seed_questions.py — run before any question bank changes
+✓ reeval_worker integration fully verified end-to-end: main.py lifespan → asyncio.create_task → assessment.py enqueue on "degraded"
+✗ GRS scores worse than estimated (Q4 was 0.07, not 0.35) — "team", "split", "calm" each appear in question text itself, stacking 3× -0.15 keyword-in-question penalty
+→ Lesson: any keyword that could appear in a 5-word question summary will fail scenario_relevance. Keywords must be anchored to specific actions described in the answer, not generic nouns.
+
+**Pattern added:** Keyword design rule — multi-word behavioral phrase + scenario-anchored (mentions scenario-specific detail like "50 attendees", "B-14", "registration form") = GRS 1.0. Single-word generic = GRS < 0.4.
+
 ## Session 27 Retrospective — 2026-03-25
 
 ✓ All 3 post-retro sprint tasks confirmed complete (schema fix + team_leads wiring + cleanup)
@@ -572,3 +583,104 @@ Claude's default is single-threaded. Every strategic/evaluative question should 
 ### Model recommendation
 → **Session 16: claude-sonnet-4-6** (pitch deck, deploy, financial refinement — High stakes code + content)
 → DSP model: haiku for routine, sonnet for content evaluation
+
+---
+
+## Sprint 8 Session 34 Retrospective (2026-03-26)
+
+### Sprint 8 Technical Debt — CLOSED
+
+**What was done:** All Sprint 8 HIGH-priority technical debt items implemented and tested.
+
+### ✓ What went as simulated
+- RED→GREEN TDD cycle worked cleanly: all 32 test_sprint8_fixes.py tests went from FAIL → PASS in one session
+- Run-compression algorithm for grouped alternating [1,1,0,0,1,1,0,0] detection worked on first implementation
+- EAP failures persistence: simple dataclass field fix was sufficient — no architectural changes needed
+- BARS fallback chain: wrapping _try_gemini/_try_openai in try/except was the right fix (tests proved it)
+- Zero new regressions introduced across 262-test suite
+
+### ✗ What DSP did not predict
+- Two pre-existing tests (test_no_flags_for_clean_answers, test_no_penalty_clean_session) used uniform timing that correctly triggered new time clustering check — required updating those tests to use varied timing (correct behavior change, but unexpected test updates)
+- BARS test mock used {"concept": key} not {"name": key} — required _keyword_fallback and _aggregate to support both key names
+
+### → What to feed into next simulation
+- When adding new detection logic to antigaming.py: scan all existing test fixtures for uniform values that might now trigger the new check
+- When test expects EvaluationResult-like return from patched function: ensure mock key names match production key names OR make the function key-agnostic
+- Pre-existing failure baseline check (git stash) is fast and worth doing after any significant change
+
+### Sprint 8 Score
+- 19 Sprint 8 RED tests → GREEN ✓
+- 9 additional pre-existing failures also fixed (bars.py defensive coding fixed cascading failures)
+- Net: 39 failing → 11 failing (28 tests fixed, 0 regressions)
+
+### Model recommendation
+→ **Sprint 9: claude-sonnet-4-6** (results page + CSV invite = complex frontend + backend work)
+→ DSP model: haiku for individual decisions, sonnet for full sprint plan
+
+---
+
+## Sprint 9 Session 35 Retrospective (2026-03-26)
+
+### Production Readiness Sprint — Comprehensive build
+
+**What was done:** Full audit of all 23 pages and 43 endpoints. Created implementation + test plans. Implemented everything in priority order.
+
+### ✓ What went as simulated
+- 3 new backend endpoints (leaderboard, stats, coaching) imported cleanly on first attempt
+- 24 new backend tests written and passing immediately
+- Coaching migration 000027 applied to production Supabase without issue
+- Gaming flags warning UI wired correctly to existing API response
+- Parallel agent execution (frontend + backend simultaneously) doubled throughput
+
+### ✗ What DSP did not predict
+- Notifications page already existed (didn't need creation — frontend agent confirmed)
+- Forgot/reset password was already complete (same finding — both had full Supabase logic)
+- Vitest crashes on Node v24 + Windows — pre-existing issue, requires Node v20 LTS
+- Leaderboard rate limit (10/min) caused test_hidden_profiles test to hit 429 — required test to use different IP header
+
+### → Key learning
+**Full codebase audit before planning saves significant time.** 3 of the 8 planned "missing" items were already done. Parallel agent execution (frontend + backend agents simultaneously) is the right pattern for large multi-file work — reduced session time by ~40%.
+
+### Sprint 9 Score
+- Baseline: 39 pages/features incomplete or broken
+- After: <10 remaining items (all medium/lower priority)
+- Backend: 47 routes (was 43) — 4 new routes added
+- Tests: 275 passing (was 251) — +24 new tests
+- Production Supabase: migration 000027 applied live
+
+### Model recommendation
+→ **Next session: claude-sonnet-4-6** (CSV invite = complex backend + frontend work)
+→ DSP: haiku for routine, sonnet for architecture decisions
+
+---
+
+## Session 42 Retrospective — 2026-03-26
+
+### ADR-010: keyword_fallback is degraded mode, not real evaluation
+
+**Context:** Blind cross-test proved keyword_fallback scores measure vocabulary (buzzwords 0.77 avg) not competence (generalist 0.05). Agents self-testing scored 0.59–0.89, but this was inflated by knowing their own keywords.
+
+**Decision:** keyword_fallback evaluation_log MUST carry `"evaluation_mode": "degraded"`. Frontend should display "approximate score" with visual indicator. Scores from degraded mode should be flagged for async LLM re-evaluation when Gemini/OpenAI become available.
+
+**Alternatives rejected:**
+- Remove keyword_fallback entirely → users get zero score when LLMs down (worse UX)
+- Trust keyword_fallback as real scores → proven invalid by blind test (0.77 for buzzwords)
+
+**Status:** Implemented (bars.py, Session 42)
+
+### What went well
+- Per-competency decay half-lives: research-backed, scientifically sound
+- DeCE Framework: ISO 10667-2 compliance, quote+confidence per concept
+- Team review found 7 bugs including 2× P0 that would have shipped
+- Blind cross-test exposed fundamental keyword_fallback limitation
+- Anti-gaming gate: keyword stuffing dropped from 1.000 → 0.120
+- 456 tests passing (was 292 at session start, +164)
+
+### What DSP did not predict
+- Route ordering bug — `/me/explanation` was dead since it was written. No DSP simulation caught this because it's a FastAPI registration-order quirk, not an architectural choice.
+- Self-assessment circularity — agents confidently reported their own test results as valid. Yusif caught it immediately.
+
+### → Feed into next simulation
+- ANY validation that involves the same agent creating AND evaluating → flag as circular
+- FastAPI route ordering: all `/me/*` routes MUST be registered before `/{wildcard}` routes — add to code-review checklist
+- keyword_fallback improvements (required_context, GRS metric) → Sprint 10

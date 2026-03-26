@@ -470,3 +470,17 @@ Additionally, frontend `Question` type had 6/6 fields mismatched vs backend `Que
 4. Все 5 агентских файлов обновлены в этой сессии
 **Enforcement:** Hook (session-protocol.sh) автоматически проверяет дату модификации всех memory/*.md файлов. >3 дней = ⚠️ предупреждение при старте сессии.
 **CLASS:** CLASS 2 (Memory not persisted) + CLASS 6 (Team neglect) — 8-й раз CLASS 2.
+
+### Mistake #50 — SUPABASE_ANON_KEY wrong format (Session 43, 2026-03-26)
+**What:** Railway + local .env had `sb_publishable_...` format anon key. supabase-py needs JWT format (`eyJhbG...`). Result: every authenticated endpoint returned DB_CLIENT_ERROR 500.
+**Root cause:** When Supabase migrated to new key format (publishable keys), both .env and Railway were updated to new format without testing SDK compatibility.
+**Fix:** Updated both local .env and Railway var to JWT-format anon key.
+**Lesson:** After ANY env var change, run a smoke test (authenticated GET /api/profiles/me). New Supabase key formats require JWT-format keys for supabase-py SDK.
+**CLASS:** CLASS 3 (Config error) — env var changes must be tested, not assumed.
+
+### Mistake #51 — Answer response structure assumed flat (Session 43, 2026-03-26)
+**What:** Test script read `d.get('next_question')` at top level of answer response. Actual structure: `d['session']['next_question']` (nested in AnswerFeedback.session: SessionOut). Caused false conclusion "CAT serves only 1 question."
+**Root cause:** Didn't check OpenAPI spec / Pydantic response model before writing test code.
+**Fix:** Read `resp['session']['next_question']` — CAT correctly serves 20 questions.
+**Lesson:** ALWAYS check response schema before writing API client code. `pnpm generate:api` would have caught this.
+**CLASS:** CLASS 4 (Schema ignorance) — verify response shape, don't guess.

@@ -6,35 +6,43 @@
 ---
 
 ## Last Updated
-2026-03-26 | Session 42 (continued): **ADDITIONS AFTER "есть дополнения?" — all 3 items resolved.**
-**(12) Seed question keywords redesigned** — OLD Q3 GRS=0.37 (FAIL), OLD Q4 GRS=0.44 (FAIL) → NEW Q3/Q4 GRS=1.000 (PASS). Single-word keywords replaced with multi-word behavioral phrases. Updated: seed.sql + new migration 000030.
-**(13) GRS audit script created** — scripts/audit_seed_questions.py. Run `python scripts/audit_seed_questions.py` from apps/api/ to verify any question bank changes pass GRS.
-**(14) reeval_worker wiring VERIFIED** — main.py lifespan() confirmed to have asyncio.create_task(run_reeval_worker()). assessment.py confirmed to call enqueue_degraded_answer() on evaluation_mode="degraded". Stack is complete end-to-end.
-**Session 42 full summary (1-11):** Per-competency decay half-lives, DeCE Framework, 7 P0/P1 bugs fixed, 512 tests (+220), anti-gaming gates (buzzwords 0.77→0.15), blind cross-test proving keyword_fallback = vocabulary test, ADR-010 degraded mode flag, quality_gate.py, reeval_worker.py + migration 000029, verb regex 45→100+.
+2026-03-26 | Session 43: **E2E VERIFIED. All migrations applied. Railway fixed. Full Leyla journey works.**
+**Key accomplishments:**
+- 7 pending migrations applied via Supabase MCP (no CEO action needed)
+- Railway SUPABASE_ANON_KEY fixed: was `sb_publishable_...` (incompatible with supabase-py), changed to JWT format
+- Email confirmation confirmed OFF (signup returns session immediately)
+- Test user Leyla created: `leyla@test.volaura.com` / `TestLeyla2026!`
+- Full E2E: 20 questions → score 62.33 → AURA 12.47 → badge tier → explanation endpoint
+- 5 commits pushed (106 files): assessment hardening, AURA decay, new endpoints, frontend, docs
+- Security advisory fixes: 6 functions search_path + ceo_inbox RLS
+- Scheduled task created: `cto-health-check` (daily 09:25 Baku)
+- Bug found: answer response is nested in `session` field (frontend must read `resp.session.next_question`)
 
 ## Declaring Line (copy-paste at session start)
 ```
-▶ Session resumed. Sprint 9 IN PROGRESS. 51 backend routes. Assessment flow FIXED (6 files rewritten). REMAINING: (1) E2E test of Leyla's journey (needs email confirmation OFF), (2) pnpm generate:api, (3) Vitest Node v20, (4) 11 pre-existing test fixes, (5) Post 003. Protocol v4.0 loaded.
+▶ Session resumed. Sprint 9 NEAR COMPLETE. E2E verified. 51 routes. Railway LIVE. REMAINING: (1) pnpm generate:api, (2) Vitest Node v20, (3) 11 pre-existing test fixes, (4) Post 003, (5) question bank for 7 other competencies. Protocol v4.0 loaded.
 ```
 
 ## NEXT SESSION PRIORITIES
 1. ~~Sprint 9 — CSV bulk invite~~ ✅ DONE (Session 39)
-2. ~~Sprint 9 — Assessment flow fixes~~ ✅ DONE (Session 40) — 6 files rewritten
-3. Sprint 9 — E2E test of Leyla's full journey (register → assessment → AURA → badge)
-4. Sprint 9 — API codegen: `pnpm generate:api` → replace 7 TODO hooks
-5. Sprint 9 — Migrations 000028 + 000029 (evaluation_queue) + 000030 (question keywords) need `supabase db push` (CEO action)
-6. Post 003 rewrite — agent team review with TONE-OF-VOICE.md + TRACKER.md
-7. Vitest fix — Node v24 has filesystem bug, need Node v20 LTS
+2. ~~Sprint 9 — Assessment flow fixes~~ ✅ DONE (Session 40)
+3. ~~Sprint 9 — E2E Leyla journey~~ ✅ VERIFIED (Session 43) — 20 questions, AURA works
+4. ~~Sprint 9 — Migrations~~ ✅ APPLIED via MCP (Session 43) — all 7 pending
+5. Sprint 9 — API codegen: `pnpm generate:api` → replace 7 TODO hooks
+6. Sprint 10 — Question bank for remaining 7 competencies (currently only communication has real scenarios)
+7. Sprint 10 — Org dashboard (aggregate volunteer scores, matching)
+8. Post 003 rewrite
+9. Vitest fix — Node v24 filesystem bug, need Node v20 LTS
 
-## CEO-REQUIRED ACTIONS (CTO is blocked until these are done)
+## CEO-REQUIRED ACTIONS
 | Action | Priority | Status |
 |--------|----------|--------|
-| `supabase db push` — 5 pending migrations (HNSW, RLS fixes, assignment columns, evaluation_queue 000029, question keywords 000030) | SHIP_BLOCKER | ⚠️ OPEN |
-| Disable email confirmation in Supabase dashboard | SHIP_BLOCKER | ⚠️ OPEN — blocks beta testers from registering |
-| Verify Telegram bot received autonomous run message | P1 | ⚠️ OPEN |
+| ~~`supabase db push`~~ | ~~SHIP_BLOCKER~~ | ✅ CTO applied via MCP (Session 43) |
+| ~~Disable email confirmation~~ | ~~SHIP_BLOCKER~~ | ✅ Already OFF (confirmed Session 43) |
 | Post 3 angle — "Antigravity" rejected as Mistake #40, new angle needed | BEFORE_BETA | ⚠️ CEO decision |
-| Legal entity jurisdiction — Georgia, Turkey, or AZ? | BEFORE_BETA | ⚠️ CEO decision (conflicts: GITA=AZ, KOSGEB=Turkey) |
+| Legal entity jurisdiction — Georgia, Turkey, or AZ? | BEFORE_BETA | ⚠️ CEO decision |
 | Pasha Bank meeting date | BEFORE_BETA | ⚠️ CEO relationship |
+| Invite first 5 trusted volunteers for beta testing | P1 | ⚠️ CEO action — platform ready |
 
 ---
 
@@ -42,10 +50,10 @@
 
 | | |
 |---|---|
-| **Sprint** | Sprint 9 — IN PROGRESS (CSV invite, API codegen, Post 003, Vitest fix) |
-| **Next Sprint** | Sprint 10 — Beta onboarding (real volunteers, growth features) |
-| **Session completed (Volaura)** | 40 |
-| **Overall Volaura progress** | Beta LIVE. 51 routes. Assessment flow FIXED. Infra audit complete. AGILE practices being enforced. |
+| **Sprint** | Sprint 9 — NEAR COMPLETE (E2E verified, remaining: codegen, vitest) |
+| **Next Sprint** | Sprint 10 — Question bank expansion (7 competencies) + Org dashboard |
+| **Session completed (Volaura)** | 43 |
+| **Overall Volaura progress** | E2E VERIFIED. 51 routes. Full Leyla journey works. Railway fixed. 7 migrations applied. Ready for beta testers. |
 | **MiroFish Swarm** | v7.1 — 13 providers, modular prompts, research loop, adaptive prompts |
 | **Pasha Bank Pitch** | Ready — docs/pasha-bank-pitch.md |
 | **Railway API** | ✅ LIVE — https://volauraapi-production.up.railway.app |

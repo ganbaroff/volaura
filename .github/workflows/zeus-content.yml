@@ -1,0 +1,61 @@
+name: ZEUS Content Engine
+
+on:
+  schedule:
+    # Run every 4 hours (06:00, 10:00, 14:00, 18:00, 22:00 UTC)
+    # = 10:00, 14:00, 18:00, 22:00, 02:00 Baku time
+    - cron: '17 2,6,10,14,18 * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Run mode'
+        required: false
+        default: 'scheduled'
+        type: choice
+        options:
+          - scheduled
+          - event
+      event_json:
+        description: 'Event JSON (for event mode only)'
+        required: false
+        default: '{}'
+        type: string
+
+jobs:
+  zeus-run:
+    name: ZEUS Content Generation
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install ZEUS dependencies
+        run: |
+          pip install pydantic loguru groq google-genai python-dotenv python-telegram-bot supabase
+
+      - name: Run ZEUS content engine
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CEO_CHAT_ID: ${{ secrets.TELEGRAM_CEO_CHAT_ID }}
+          ZEUS_VOLAURA_CHANNEL: ${{ secrets.ZEUS_VOLAURA_CHANNEL }}
+          ZEUS_BRANDEDBY_CHANNEL: ${{ secrets.ZEUS_BRANDEDBY_CHANNEL }}
+          ZEUS_MINDSHIFT_CHANNEL: ${{ secrets.ZEUS_MINDSHIFT_CHANNEL }}
+          ZEUS_ECOSYSTEM_CHANNEL: ${{ secrets.ZEUS_ECOSYSTEM_CHANNEL }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          cd "${{ github.workspace }}"
+          python -m packages.swarm.zeus_content_run \
+            --mode=${{ github.event.inputs.mode || 'scheduled' }} \
+            --event-json='${{ github.event.inputs.event_json || '{}' }}'

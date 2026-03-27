@@ -401,17 +401,61 @@ Sprint A1 ✅ DONE (Session 46) — Volaura Crystal Bridge
 - [x] Anti-farming: check game_character_rewards BEFORE INSERT
 - [x] Acceptance: crystal_balance 100→150, verified_skills=[communication silver 62.33] on production
 
-Sprint A2: MindShift → Shared Auth + character_state
-Sprint A3: Life Simulator Bug Fixes (10 P0-P2 bugs)
+Sprint A0.5: character_state architecture hardening ← NEXT (added 2026-03-27 after ecosystem assessment)
+- [ ] character_state → read-only aggregation layer (materialized view, not write bus)
+- [ ] Each product owns its own data, character_state = computation layer
+- [ ] Single point of failure eliminated BEFORE scale
+- Reason: Нигяр + Scaling Engineer both flagged. One bad migration = all 5 products down.
+
+Sprint ZEUS-1: Autonomous Content Engine (2–3 weeks from now) ← HIGH PRIORITY
+- [ ] Supabase webhook on character_events INSERT (event_type = skill_verified, milestone_reached)
+- [ ] FastAPI endpoint: receive webhook → Claude API → generate channel-specific post
+- [ ] Content moderation layer: Claude classifies safe/unsafe before publish
+- [ ] Pyrogram (not Telethon) with human-like delays (random 60–180s)
+- [ ] Rate limiter: max 8 posts/day per channel
+- [ ] zeus_publications log table in Supabase
+- [ ] n8n REMOVED — replaced by Supabase webhooks + FastAPI + APScheduler
+- Reason: World practices show zero-CAC flywheel determines A vs C scenario. $730K revenue difference.
+
+Sprint A2: MindShift → feature inside Volaura (NOT standalone product)
+- [ ] MindShift focus features integrated as "Focus Mode" section in Volaura
+- [ ] Shared auth (same Supabase instance)
+- [ ] Focus sessions → character_state xp_earned events
+- Note: mindshift.app → 301 redirect to volaura.az/focus (check traffic first)
+
+Sprint A3: Life Simulator → Career Path inside Volaura (NOT standalone)
+- [ ] Life Sim bug fixes (10 P0-P2: event_queue_controller.gd:202, game_loop_controller.gd:91)
+- [ ] Career Path view inside Volaura (post-assessment unlock)
+- [ ] "RPG where real skills matter" framing, NOT "gamified productivity" (Habitica lesson)
+
 Sprint A4: Voice AI Twin (Kokoro, queue infrastructure)
 Sprint A5: Stripe integration (crystal purchase)
 Sprint A6: Pro tier billing
 
-**Track B: BrandedBy (parallel chat)**
+**Track B: BrandedBy (parallel chat) ← REVISED PRIORITY**
+> ⚠️ CRITICAL: BrandedBy share mechanic = difference between $110K and $840K ARR at Month 18.
+> This is the highest-leverage sprint in the entire ecosystem. Runs parallel to ZEUS-1.
+
 - Brief: memory/brandedby_implementation_brief.md (ready)
-- Sprint B1: DB migration D1→Supabase, fix celebrity data (Cyrillic)
-- Sprint B2: SIMA integration, Stripe Elements
-- Sprint B3: AI video pipeline (SadTalker/Wav2Lip, queue)
+- Pivot confirmed: Regular users first (AI Twin), celebrities later
+- Domain: brandedby.xyz ✅
+
+Sprint B1: Foundation (Supabase migration, auth, basic UI)
+Sprint B2: AI Twin MVP (text-only avatar, character_state integration)
+Sprint B3: Video pipeline + SHARE MECHANIC ← THE MOST IMPORTANT SPRINT
+  - [ ] AI Twin video generation (SadTalker/Wav2Lip or Replicate)
+  - [ ] Delivery screen: ONE button "Share on LinkedIn / TikTok"
+  - [ ] Video: 15 seconds, user face, subtle "Made with BrandedBy" watermark
+  - [ ] K-factor 0.40 target (viral coefficient)
+  - [ ] Crystal redemption flow: Volaura crystals → BrandedBy queue skip
+  - [ ] Monthly AI Twin refresh (AURA updated → new video → share again) = churn prevention
+
+**Never-Revoke List (write now, enforce forever)** ← Added 2026-03-27
+Based on Replika collapse analysis — these features once active for a user CANNOT be removed without 90-day notice + full refund:
+- crystal_balance earned (never expires, never removed)
+- verified_skills in character_state (once verified, baseline never removed)
+- AURA tier achieved (baseline tier never decremented without user consent)
+- Crystal purchases (queue skips valid until used, no expiry)
 
 ---
 

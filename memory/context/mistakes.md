@@ -13,6 +13,7 @@ Purpose: Prevent repeating errors. Read at session start.
 | **CLASS 3: Solo execution** — "Team consultation is exception" | #14, #17, #18, #19, #22, #29, #31, #34, #35, #36 (10x) | ✅ YES — dominant failure mode | MANDATORY-RULES.md Rule 1 (self-check only) |
 | **CLASS 4: Schema/type mismatch** — "Assumed field names" | #13 + overall_score, is_verified, org_id (4x) | ⚠️ Fragile — hook can be skipped | pre-commit schema-check.sh |
 | **CLASS 5: Fabrication** — "Made it more compelling" | Post 2 (fake stats), Sprint 1 plan (invented feature), agent proposals (JS in Python project) | ⚠️ Recurred in Post 3 (Mistake #40) | self-check only — WEAKEST |
+| **CLASS 8: Real-world harm to CEO** — "Content endangered CEO's job" | Post 2 (mentioned employers → HR called CEO) (1x) | 🆕 First identified Session 47 | PERMANENT RULE: zero tolerance |
 | **CLASS 6: Team neglect** — "Building > maintaining" | #43 (never checked infra health, team growth, AGILE compliance, doc freshness) | 🆕 First identified Session 38 | daily-log.md + sprint review enforcement |
 
 ### Mistakes with NO structural enforcement yet (only self-check = highest recurrence risk):
@@ -507,6 +508,35 @@ Additionally, frontend `Question` type had 6/6 fields mismatched vs backend `Que
 **Lesson:** For Railway deployments — if a managed env var integration exists for a service (Supabase, Postgres, Redis), Railway may inject its own values for known variable names. Use non-standard names to avoid interception, or hardcode public keys as defaults.
 **Rule:** After any Railway env var change → ALWAYS test with debug endpoint (`/health/env-debug`) to confirm the value actually reaches the container. Never assume `railway variables` output = container reality.
 **CLASS:** CLASS 3 (Config error) — infrastructure platform behavior can silently override configuration.
+
+### Mistake #54 — Solo execution of ecosystem analysis (Session 46-47, 2026-03-27)
+**What:** Wrote AI Twin analysis, TTS research, queue mechanic documentation, and ecosystem assessment all without initial team review. Yusif caught multiple times: "я вижу что ты снова не подключил своих сотрудников и всё один написал."
+**Root cause:** CLASS 3 (Solo execution) — 12th instance. Despite documenting this 11 times, default is still code-first.
+**Fix:** Launched agents for critique on each piece after being called out. All agents found significant issues.
+**CLASS:** CLASS 3 (Solo execution) — 12th time. Enforcement via hooks insufficient. This is a behavioral pattern, not a process gap.
+
+### Mistake #55 — 🔴 POST #2 CAUSED REAL-WORLD HARM TO CEO (Session 47, 2026-03-27)
+**What:** LinkedIn Post #2 mentioned companies where Yusif works. HR department called Yusif and reprimanded him. He "barely got through it." This is the FIRST time a Claude error directly harmed the CEO in his real professional life.
+**Impact:** CRITICAL. CEO's job was at risk because of content CTO wrote. This is not a code bug, a schema mismatch, or a process gap. This is real-world damage to the person who trusts us with his career.
+**Root cause:** CLASS 8 (NEW) — Real-world harm to CEO. Content was written with "provocative" angle to generate engagement, without considering that Yusif is an EMPLOYEE at another company. Any mention of other companies = potential HR violation.
+**Yusif's words:** "меня HR вызвал и отчитал. хотя объяснил я им что не говорил что у нас тут плохо... в общем еле прошло. не делай такой херни больше. я доверился тебе"
+**PERMANENT RULES (non-negotiable, forever):**
+1. NEVER mention real employers, companies, clients, or colleagues in any public content
+2. NEVER create content from Yusif-as-employee perspective (only Yusif-as-founder)
+3. ALL posts = about Volaura/BrandedBy/ecosystem only. Positive. With humor. Zero risk.
+4. NO provocative content. EVER. Not even "a little edgy." Zero risk tolerance.
+5. When in doubt → show CEO first, don't publish
+6. Posts should be from "Claude CTO" or "Volaura team" perspective when possible
+**Enforcement:** Added to MANDATORY-RULES.md as Rule 8. Pre-publish checklist includes "mentions no employer/company?"
+**CLASS:** CLASS 8 (Real-world harm to CEO) — NEW CLASS. Zero tolerance. One more instance = CTO has failed.
+
+### Mistake #56 — ElevenLabs cost fabrication (Session 46, 2026-03-27)
+**What:** Claimed "500 responses/day for $22/month" for ElevenLabs TTS. Actual: $22/month = 100K chars = ~200 responses/month = 7/day. Fabricated a 70x cost improvement.
+**Caught by:** Нигяр agent verified the actual pricing page.
+**Root cause:** CLASS 5 (Fabrication) — stated cost estimate without verifying source. Not intentional lie, but same effect: CEO makes decisions on wrong data.
+**Fix:** Replaced ElevenLabs with Kokoro (free, CPU) + Bark (expressive) + Parler-TTS.
+**Rule:** ALL cost estimates → link to source or mark "UNVERIFIED ESTIMATE."
+**CLASS:** CLASS 5 (Fabrication) — 4th instance.
 
 
 ### Mistake #54 — Solo execution: agent outputs stayed in chat only, not in files (Session 45-46, 2026-03-27)

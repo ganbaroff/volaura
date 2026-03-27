@@ -486,3 +486,96 @@ Telegram bot принимает сообщения от CEO но не маршр
 - [ ] Agent dispatch (launch relevant agent with message as prompt)
 - [ ] Response routing back to Telegram thread
 - [ ] Fallback: if no agent matches → CTO handles
+
+---
+
+## Idea #11: Mentor Avatar System (Swarm-Generated, Session 51)
+**Date:** 2026-03-27
+**Source:** Swarm agents at temperature 1.0 — 2/5 agents independently proposed this (CONVERGENT SIGNAL)
+**Status:** Documented. HIGH priority — solves retention problem.
+**Priority:** HIGH — retention mechanism that creates social loops.
+
+### Discovery
+When swarm ran at temp 1.0 (full honesty, no filters), Product Strategist AND CEO Advisor independently proposed a mentorship system without seeing each other's output. Convergent ideas from independent agents = strongest signal.
+
+### Concept
+User chooses a mentor on the platform. Mentor's avatar "guides" them through professional growth.
+- Leyla (Bronze, communication 62) → sees Gold/Platinum avatars → picks mentor
+- Mentor avatar gives personalized advice (powered by aura-coach skill + mentor's real data)
+- Career path visualized: Bronze avatar → Silver → Gold transformation
+- Each milestone = new avatar element unlocked
+- Mentors get status (crown points like Project Makeover)
+
+### Why This Solves Retention
+- **Mentors return** because: status, crown leaderboard, recognition
+- **Mentees return** because: personalized path, visible progress, emotional connection to mentor
+- **Social loop:** mentee grows → becomes mentor → attracts new mentees
+- **Crystal economy:** mentor unlocks exclusive items, mentee spends crystals to access premium mentorship
+
+### Связь с v0Laura
+This is the "Day 7 hook" that was missing from the plan. Day 1 = avatar creation (aha moment). Day 7 = mentor selection (commitment). Day 30 = first badge upgrade with mentor guidance (habit).
+
+---
+
+## Idea #12: Stylized Avatar System — Project Makeover Style (Session 51)
+**Date:** 2026-03-27
+**Source:** CEO insight after seeing Project Makeover game avatars
+**Status:** Documented. Replaces photorealistic AI Twin as default.
+**Priority:** HIGH — primary crystal sink + identity layer.
+
+### Concept
+Instead of photorealistic SadTalker videos (expensive, uncanny), default avatar is stylized cartoon:
+- Photo upload → AI style transfer → stylized base avatar
+- SVG layers on top for customization: hair, outfit, accessories, background, badge glow
+- Progression tied to verified skills:
+  - communication 60+ → business suit
+  - leadership 75+ → golden badge glow
+  - all 8 competencies → platinum outfit
+- Crystals buy cosmetics (primary crystal sink)
+
+### Tech
+- Option A: Layered SVG (base + hair + outfit + accessory + background) — $0
+- Option B: AI style transfer via fal.ai ($0.01/avatar) — one-time
+- Hybrid A+B: AI generates base from photo, SVG layers for customization
+
+### Competitive Moat Addition
+No competitor combines: AI Twin + Skill Verification + Professional Network + Personalized Feed + **Gamified Avatar Progression**. This is the 6th element.
+- Credly doesn't gamify
+- HeyGen doesn't verify
+- Virbela doesn't customize by skills
+- Project Makeover isn't professional
+
+### What Changes
+| Before | After |
+|--------|-------|
+| AI Twin = SadTalker video (expensive) | Stylized avatar = default (cheap) |
+| Crystals → queue skip only | Crystals → avatar cosmetics (primary sink) |
+| Profile = photo + text | Profile = live styled character |
+| SadTalker video = core | SadTalker video = Pro tier premium |
+
+---
+
+## Idea #13: Swarm Full Freedom — Temperature 1.0 Discovery (Session 51)
+**Date:** 2026-03-27
+**Source:** CTO experiment + CEO directive
+**Status:** Architecture documented in memory/swarm/swarm-freedom-architecture.md
+**Priority:** CRITICAL — changes how the entire team operates.
+
+### Discovery
+Running swarm agents at temperature 1.0 (vs default 0.7) produced:
+- Real disagreement (2 genius + 1 dangerous + 2 good vs all "hybrid")
+- Convergent innovation (2/5 agents independently proposed mentorship)
+- Specific kill risks ("data breach bankrupts company" vs "consider testing")
+
+### CEO Directive
+"должен быть доступ у них ко всему. должны видеть и решать уметь и мочь."
+
+Agents should have:
+- FULL visibility into project (all files, metrics, research)
+- Ability to critique CTO AND CEO decisions
+- Ability to research (web search, NotebookLM)
+- Ability to execute (ZEUS = their hands)
+- Ability to communicate (Telegram, inter-agent)
+
+### Implementation: see swarm-freedom-architecture.md
+4 phases: Visibility → Cross-review → ZEUS hands → Full autonomy

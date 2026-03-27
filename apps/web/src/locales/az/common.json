@@ -246,6 +246,20 @@
     "skip": "Hələlik keç",
     "back": "← Geri"
   },
+  "welcome": {
+    "title": "Xoş gəldiniz, {{name}}! 🎉",
+    "defaultName": "dostum",
+    "subtitle": "İndi həqiqi bir şey qazanacaqsınız.",
+    "whatIsAura": "AURA balı nədir?",
+    "benefit1": "8 kompetensiya — real adaptiv suallar vasitəsilə yoxlanılır",
+    "benefit2": "Bürünc → Platinum badge — LinkedIn və Telegram-da paylaşın",
+    "benefit3": "Təşkilatlar istedad hovuzumuzu axtarır — sizi tapırlar",
+    "selectedCompetency": "İlk qiymətləndirməniz:",
+    "startCta": "{{competency}} Qiymətləndirməsini Başlayın",
+    "startCtaGeneric": "İlk qiymətləndirməni başlayın",
+    "exploreCta": "Əvvəlcə idarə panelini araşdırın →",
+    "takes": "~5 dəqiqə çəkir"
+  },
   "competency": {
     "communication": "Kommunikasiya",
     "reliability": "Etibarlılıq",

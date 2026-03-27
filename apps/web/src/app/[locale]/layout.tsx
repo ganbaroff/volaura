@@ -5,6 +5,7 @@ import i18nConfig from "@/i18nConfig";
 import initTranslations from "@/app/i18n";
 import TranslationsProvider from "@/components/translations-provider";
 import { QueryProvider } from "@/components/query-provider";
+import { UTMCapture } from "@/components/utm-capture";
 
 const inter = Inter({ subsets: ["latin", "latin-ext"], variable: "--font-inter" });
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -43,7 +44,10 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
           namespaces={["common"]}
           resources={resources as import("i18next").Resource}
         >
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            <UTMCapture />
+            {children}
+          </QueryProvider>
         </TranslationsProvider>
       </body>
     </html>

@@ -177,7 +177,11 @@ export default function OnboardingPage() {
       }
 
       if (isMounted.current) {
-        router.push(`/${locale}/dashboard`);
+        // Route to focused welcome screen — highest-conversion funnel entry
+        const dest = formData.selectedCompetency
+          ? `/${locale}/welcome?competency=${formData.selectedCompetency}`
+          : `/${locale}/welcome`;
+        router.push(dest);
       }
     } catch (err) {
       if (isMounted.current) {

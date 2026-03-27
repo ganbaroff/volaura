@@ -256,6 +256,20 @@
     "skip": "Skip for now",
     "back": "← Back"
   },
+  "welcome": {
+    "title": "You're in, {{name}}! 🎉",
+    "defaultName": "there",
+    "subtitle": "You're about to earn something real.",
+    "whatIsAura": "What is an AURA score?",
+    "benefit1": "8 competencies — verified through real adaptive questions",
+    "benefit2": "Bronze → Platinum badge shared on LinkedIn and Telegram",
+    "benefit3": "Organizations search our talent pool — you get discovered",
+    "selectedCompetency": "Your first assessment:",
+    "startCta": "Start {{competency}} Assessment",
+    "startCtaGeneric": "Start your first assessment",
+    "exploreCta": "Explore dashboard first →",
+    "takes": "Takes ~5 minutes"
+  },
   "dashboard": {
     "welcome": "Welcome back",
     "yourScore": "Your AURA Score",

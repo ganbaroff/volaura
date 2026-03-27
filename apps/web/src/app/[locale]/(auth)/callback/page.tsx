@@ -5,6 +5,7 @@ import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/auth-store";
+import { readAndClearAttribution } from "@/components/utm-capture";
 
 export default function AuthCallbackPage() {
   return (
@@ -33,6 +34,24 @@ function AuthCallbackContent() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!isMounted.current) return;
       setSession(session);
+
+      // Attribution capture: write UTM/referral data from localStorage to profile (fire-and-forget)
+      if (session?.access_token) {
+        const attribution = readAndClearAttribution();
+        if (Object.keys(attribution).length > 0) {
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/profiles/me`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify(attribution),
+          }).catch(() => {
+            // Non-blocking — analytics loss is acceptable, auth must not fail
+          });
+        }
+      }
+
       const rawNext = searchParams.get("next");
       // Only allow relative paths starting with "/" but not "//" (prevents protocol-relative open redirect)
       const next = rawNext?.startsWith("/") && !rawNext.startsWith("//") ? rawNext : `/${locale}/dashboard`;

@@ -6,7 +6,29 @@
 ---
 
 ## Last Updated
-2026-03-27 | Session 51 (Activation Wave): **UTM capture + Welcome page + ProfileUpdate attribution LIVE on volaura.app. Backend ProfileUpdate schema extended. Onboarding now routes to /welcome?competency=X.**
+2026-03-27 | Session 51 (MASSIVE): **v0Laura architecture shift. 12 commits. Full E2E verified. Bug found & fixed.**
+
+## Session 51 — v0Laura Architecture Shift (2026-03-27 evening)
+- **ARCHITECTURE SHIFT:** 5 separate products → 1 platform + skill library (v0Laura)
+- Memory consolidation daemon: `packages/swarm/memory_consolidation.py` (hippocampus → neocortex)
+- 6 product skills: content-formatter, aura-coach, assessment-generator, behavior-pattern-analyzer, ai-twin-responder, feed-curator
+- Skill evolution engine: `packages/swarm/skill_evolution.py` (neuroplasticity, health 72/100)
+- Skill execution API: `POST /api/skills/{name}` (one endpoint, all skills alive)
+- Telegram bidirectional: `/proposals`, `/ask {agent}`, `act/dismiss/defer {id}`, `/skills`
+- E2E Leyla journey VERIFIED: login → assessment → 10 IRT/CAT questions → LLM eval → AURA → explanation
+- BUG FOUND & FIXED: upsert_aura_score was overwriting competency_scores (JSONB replace → merge)
+- Security: 4 SECURITY_DEFINER views fixed to INVOKER (questions_safe kept intentional)
+- Skill evolution issues: 5 found → 5 fixed → 0 remaining
+- Swarm updated: shared-context + agent-roster + autonomous_run know about skill architecture
+- Daily cycle: agents → proposals → Telegram → memory consolidation → skill evolution
+- API routes: 51 → 53
+- **200 volunteers can be invited — full path works**
+
+## Next Session Priority:
+1. NotebookLM research: v0Laura competitive positioning + professional metaverse landscape
+2. Wire feed-curator skill output to /dashboard UI
+3. Badge share button on /aura
+4. RU question translations x30
 
 ## Session 51 accomplishments (2026-03-27):
 - `apps/api/app/schemas/profile.py`: ProfileUpdate + referral_code, utm_source, utm_campaign

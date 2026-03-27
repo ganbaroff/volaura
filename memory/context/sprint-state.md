@@ -6,8 +6,14 @@
 ---
 
 ## Last Updated
-2026-03-27 | Session 45 (Ecosystem): **Sprint A0 COMPLETE. character_state as Thalamus live on production.**
-**Key accomplishments:**
+2026-03-27 | Session 46 (Monetization Docs): **Sprint A0 documentation complete.**
+**Session 46 accomplishments:**
+- monetization_framework.md created (memory/) — full tier structure, crystal economy, 12 queue applications, ethics red lines, AZN pricing, revenue projections
+- docs/MONETIZATION-ROADMAP.md created — project-level roadmap (checked into repo)
+- docs/AI-TWIN-CONCEPT.md created — phases, tech stack, "AI draft + approve" pattern, BrandedBy integration
+- MEMORY.md index updated with monetization_framework.md
+
+**Session 45 (Ecosystem) accomplishments:**
 - Ecosystem Master Plan v3.0 written: 3 parallel tracks (A/B/C), ADHD-safe crystal economy v2, Ramachandran neuroscience principles
 - BrandedBy implementation brief completed: 461 lines, 18 sections, self-contained handoff for parallel chat
 - Sprint A0 delivered: character_state cross-product event bus live on production
@@ -19,7 +25,7 @@
 
 ## Declaring Line (copy-paste at session start)
 ```
-▶ Session resumed. Sprint A0 COMPLETE. Date: 2026-03-27. character_state thalamus live (6/6 E2E pass). NEXT: Sprint A1 — Volaura assessment completion → crystal_earned + skill_verified events (idempotency via game_character_rewards). Protocol v4.0 loaded.
+▶ Session resumed. Sprint A0 COMPLETE + Monetization docs written. Date: 2026-03-27. NEXT: Sprint A1 — Volaura assessment completion → crystal_earned + skill_verified events. Protocol v4.0 loaded.
 ```
 
 ## NEXT SESSION PRIORITIES (Ecosystem Track A)

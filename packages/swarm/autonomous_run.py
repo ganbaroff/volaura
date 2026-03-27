@@ -414,6 +414,23 @@ async def main():
             logger.error(f"Memory consolidation failed: {e}")
             print(f"✗ Memory consolidation failed: {e}")
 
+    # ── Skill evolution (neuroplasticity) ─────────────────────────────────────
+    # Scans all product skills → checks quality → suggests improvements
+    # Skills that can't improve themselves are dead skills
+    if not args.skip_consolidation:
+        print("Running skill evolution (neuroplasticity)...")
+        try:
+            from swarm.skill_evolution import evolve
+            groq_key = os.environ.get("GROQ_API_KEY", "")
+            summary = await evolve(groq_key=groq_key or None)
+            health = summary.get("health", "?")
+            print(f"✓ Skill evolution complete — {summary['skills']} skills, health={health}/100")
+            if summary.get("issues", 0) > 0:
+                print(f"  ⚠ {summary['issues']} issues found — see skill-evolution-log.md")
+        except Exception as e:
+            logger.error(f"Skill evolution failed: {e}")
+            print(f"✗ Skill evolution failed: {e}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

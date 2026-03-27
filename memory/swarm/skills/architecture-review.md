@@ -2,6 +2,14 @@
 # Source: External Architectural Review 2026-03-25 (Opus, Antigravity)
 # Pattern: agent-launch-template.md (Explore type, READ-first)
 
+## Trigger
+Activate when: new API endpoint, data model change, code change >50 lines, new migration, sprint plan.
+Trigger words: "architecture review", "new endpoint", "schema change", "migration", "design review".
+
+## Output
+Score card: 5 dimensions × 0-10 = total /50 (gate: ≥35 to proceed).
+Per-finding: severity, file path, current state, required change, evidence.
+
 ## PURPOSE
 What a competent architecture agent CHECKS before any design ships.
 This file defines the checklist. Prompt is built by CTO using agent-launch-template.md.

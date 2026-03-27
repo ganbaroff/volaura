@@ -1,5 +1,13 @@
 # Neuroscience-Informed Design — Swarm Skill v1.0
 
+## Trigger
+Activate when: reviewing UI components, reward mechanics, assessment flow, achievement moments, cross-product integration, dashboard design, any user-facing experience.
+Trigger words: "UX review", "UI design", "reward", "achievement", "gamification", "emotional", "user experience", "dashboard", "AURA display".
+
+## Output
+Per-principle checklist: PASS/FAIL for each of 7 Ramachandran principles.
+Specific violations with fix recommendations. Anti-pattern flags.
+
 ## Purpose
 
 Load this skill before reviewing any UI component, reward mechanic, assessment flow, achievement moment, or cross-product integration feature. It prevents the most common failure mode in rational-product design: building features that are logically correct but emotionally inert — what Ramachandran calls the Cotard pattern: the user's brain recognizes the product but feels nothing, so it treats the product as dead. This skill converts neuroscience findings into binary checks that agents can apply directly, without interpretation.

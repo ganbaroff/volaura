@@ -54,5 +54,5 @@
 
 ## Cross-references
 - After generation → run `security-review` skill on questions (adversarial check)
-- Before deploying → verify with `quality-gate` checklist in shared-context.md
+- Before deploying → verify with quality gate checklist in shared-context.md (GRS ≥ 0.6)
 - Seed data format → must match supabase/seed.sql schema

@@ -3,43 +3,48 @@
 Purpose: Give Claude a sense of time pressure. Update at session start/end.
 
 ## Current Sprint
-- **Volaura: Sprint 9 COMPLETE ✅ | Sprint 10 IN PROGRESS**
+- **Volaura: Sprint 10 IN PROGRESS** (org dashboard done, activation wave pending)
+- **BrandedBy: Sprint B1-B2-B3 COMPLETE ✅** — E2E verified, LIVE on volaura.app
 - **Ecosystem: Sprint A0 COMPLETE ✅ | Sprint A1 NEXT**
-- **Session 46:** ✅ Monetization docs written (MONETIZATION-ROADMAP.md, AI-TWIN-CONCEPT.md)
-- **Weeks remaining:** ~1.5 (of 6 total, started 2026-03-23)
-- **Budget remaining:** ~$50/mo (Vercel free, Railway $8, Supabase free)
+- **Weeks remaining:** ~1 week (of 6 total, started 2026-03-23)
+- **Budget remaining:** ~$50/mo + fal.ai (pay-per-video ~$0.05-0.10 each)
 
 ## Blocked By (Yusif must do)
-- ~~`supabase db push`~~ ✅ All 32 migrations applied via MCP (Session 43-45)
+- ~~`supabase db push`~~ ✅ All 35 migrations applied via MCP (Sessions 43-50)
 - ~~Disable email confirmation~~ ✅ Already OFF (confirmed Session 43)
+- **GoDaddy A record for brandedby.xyz** → `@ 76.76.21.21` (5 min action)
 - Post 003 angle decision ("Antigravity" rejected as Mistake #40)
 - Legal entity jurisdiction — Georgia, Turkey, or AZ?
 - Pasha Bank meeting date
 - Monetization pricing confirmation: 4.99 AZN/month for Pro confirmed?
 - Payment processor: Stripe or Kapital Bank first?
-- 5 real users for crystal economy beta test (CEO action)
+- ~10 HR coordinator names for activation wave referral codes
 
 ## Milestone Status
 - Week 1 end: ✅ Backend + DB complete (74 tests)
 - Week 2 end: ✅ Frontend scaffold + auth working + all UI components built
 - Week 3 end: ✅ Integration sprint done + security hardening (3 CRITICAL resolved)
 - Week 4 end: ✅ Sprint 9 — CSV invite, assessment flow fixes, assessment hardening (512 tests)
-- Week 5 (current): ✅ Sprint A0 — character_state thalamus + monetization docs
+- Week 5: ✅ Sprint A0 — character_state thalamus + monetization docs + BrandedBy B1-B2-B3
   - character_events + game_crystal_ledger + game_character_rewards LIVE
-  - get_character_state() RPC: 6/6 E2E pass
-  - 9/9 audit fixes (P0/P1/P2) confirmed on production
-  - Monetization framework: tier structure, 12 queue applications, ethics red lines
-  - AI Twin concept: 4 phases, Kokoro/Bark/Parler stack
-- Week 6: ⏳ Sprint A1 (crystal bridge) + beta launch
+  - BrandedBy: brandedby.* schema, 8 API routes, personality service
+  - BrandedBy: ZeusVideoSkill E2E verified (Kokoro TTS + SadTalker, ~2 min)
+  - BrandedBy: share mechanic (LinkedIn + TikTok) LIVE on volaura.app
+  - Activation wave infra: Groq fallback, referral tracking, scenario_ru
+  - Org B2B dashboard: /me/dashboard + /me/volunteers live
+- Week 6 (current): ⏳ Sprint A1 (crystal bridge) + activation wave + beta launch
+  - Remaining: UTM capture, welcome page, badge share, RU translations
 
-## Infrastructure Status (as of 2026-03-27)
-| System | Status | URL |
-|--------|--------|-----|
-| Railway API | ✅ LIVE | https://volauraapi-production.up.railway.app |
-| Vercel Frontend | ✅ LIVE | https://volaura.app |
-| Supabase DB | ✅ LIVE | 32 migrations all applied |
+## Infrastructure Status (as of 2026-03-27 Session 50)
+| System | Status | Notes |
+|--------|--------|-------|
+| Railway API | ✅ LIVE | FAL_API_KEY + GROQ_API_KEY now set. Video worker running. |
+| Vercel Frontend | ✅ LIVE | volaura.app → latest deploy with BrandedBy |
+| Supabase DB | ✅ LIVE | 35 migrations applied |
+| fal.ai | ✅ LIVE | Balance topped up. SadTalker + Kokoro E2E verified. |
 | GitHub Actions | ✅ LIVE | swarm daily run at 09:00 Baku |
 | Sentry | ✅ LIVE | error monitoring on backend |
+| brandedby.xyz | ⏳ PENDING | Added to Vercel, needs GoDaddy A record @ 76.76.21.21 |
 | Telegram Bot | ⚠️ UNVERIFIED | CEO hasn't confirmed receipt |
 
 ## Key Dates

@@ -564,3 +564,34 @@ Additionally, frontend `Question` type had 6/6 fields mismatched vs backend `Que
 **Rule:** Agent analysis is ZERO value until it's written to a file. "Agents analyzed → I wrote the summary in chat" = Mistake #54. Correct: "Agents analyzed → I wrote the file → I showed the file path."
 **Enforcement:** After any agent outputs → NEXT tool call must be Write/Edit to a persistent file. If no file created = agent work didn't happen.
 **CLASS:** CLASS 2 (Memory not persisted) — 9th instance.
+
+---
+
+## Sessions 47-50 Mistakes (2026-03-27)
+
+### Mistake #59 — Wrong video provider recommendation: D-ID Lite (Session 48)
+**What:** Recommended D-ID Lite ($5.90/mo) as BrandedBy video provider without checking capacity: 10 min/month = ~20 videos/month MAX. CEO caught it: "серьёзно? 10 фоток в месяц за 6 баксов?"
+**Root cause:** Chose "easiest to integrate" over "best for the business". Didn't calculate unit economics.
+**Fix:** Ran 4-agent DSP → chose fal.ai SadTalker. Correct: ~$0.05-0.10/video, no cap.
+**Rule:** NEVER recommend a paid tier without calculating: (unit cost) × (expected volume) × 12 months. If there's a CAP — that cap is the product ceiling.
+**CLASS:** CLASS 5 (Fabrication adjacent — incomplete analysis presented as recommendation)
+
+### Mistake #60 — Wrong fal.ai model IDs coded without pre-validation (Session 48-49)
+**What:** Coded `fal-ai/playai/tts` (deprecated) and `fal-ai/musetalk` (needs MP4, not portrait). Both only discovered during E2E test, not before.
+**Root cause:** Assumed model IDs from docs/memory without checking live fal.ai model registry.
+**Fix:** E2E test caught both. Swapped to `fal-ai/kokoro/american-english` + `fal-ai/sadtalker`.
+**Rule:** Before writing ANY fal.ai/Replicate/HuggingFace integration code → go to provider's model page and verify: (1) model is active/not deprecated, (2) exact input field names, (3) output structure.
+**CLASS:** CLASS 4 (Schema/type mismatch — assumed API contract without verification)
+
+### Mistake #61 — Parallel chat migration timestamps not reconciled (Session 50)
+**What:** Two Claude chats worked on same repo. Other chat created migrations with `20260327` timestamps and applied them to DB. This chat created same migrations with `20260328` timestamps (never applied). Mismatch: local files didn't match DB.
+**Fix:** Renamed local files to match DB timestamps. Created stub for `fix_brandedby_search_path` that existed in DB but not locally.
+**Root cause:** No protocol for parallel AI chat coordination. Each chat assumed solo control.
+**Rule:** When resuming work after parallel AI chat: run `list_migrations` MCP to compare DB vs local files. Rename mismatches BEFORE committing.
+**CLASS:** CLASS 4 (Schema/type mismatch — file system vs DB mismatch)
+
+### Mistake #62 — env vars set in .env but not on Railway (Session 50)
+**What:** Other chat saved `FAL_API_KEY` + `DID_API_KEY` to `apps/api/.env` but `.env` is gitignored and Railway never sees it. Video worker was starting but immediately exiting: "Video generation worker disabled (FAL_API_KEY not set)".
+**Fix:** `railway variables set FAL_API_KEY=...` + `railway variables set GROQ_API_KEY=...`
+**Rule:** `.env` is for LOCAL DEVELOPMENT ONLY. ANY new API key must ALSO be set on Railway (and GitHub Secrets if needed for CI). After adding any key to .env → next action is `railway variables set`.
+**CLASS:** CLASS 4 (Schema/type mismatch — assumed deployment context)

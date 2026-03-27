@@ -6,7 +6,7 @@
 ---
 
 ## Last Updated
-2026-03-27 | Session 49 (Sprint B3): **ZEUS video skill + async worker + share mechanic COMPLETE. Full BrandedBy pipeline live.**
+2026-03-27 | Session 50 (Sprint B3 Deploy): **FAL_API_KEY + GROQ_API_KEY deployed to Railway. volaura.app updated. brandedby.xyz pending GoDaddy A record. Full documentation sync across shared-context.md + DECISIONS.md.**
 
 **Session 47 accomplishments:**
 - docs/MASS-ACTIVATION-PLAN.md created — answers 5 onboarding questions + Sprint 10.5 plan
@@ -62,9 +62,17 @@
 - Sidebar: "AI Twin" / "AI Əkizim" nav entry added (✦ icon)
 - fal.ai key saved: `6d31ab9a-6785-42b1-ad7b-b4434bca981a:092a28dcf05de7bef1da7c71b1242fae` (valid, balance = $0 → needs top-up)
 
+## Session 50 accomplishments (2026-03-27):
+- FAL_API_KEY + GROQ_API_KEY deployed to Railway (were only in .env locally — now live)
+- volaura.app → new production deployment with full BrandedBy (Vercel alias updated)
+- brandedby.xyz → added to Vercel project (GoDaddy A record @ 76.76.21.21 pending from Yusif)
+- Migration timestamp mismatch fixed: 20260328→20260327 renames + missing fix_brandedby_search_path stub
+- Full documentation sync: shared-context.md, DECISIONS.md, sprint-state.md updated
+- Identified: Vercel auto-deploy from main was not firing (deployed manually via `vercel --prod`)
+
 ## Declaring Line (copy-paste at session start)
 ```
-▶ Session resumed. Sprint B3 COMPLETE. Date: 2026-03-27. Full BrandedBy pipeline built: ZEUS skill + worker + share mechanic. NEXT: Top up fal.ai balance → test E2E → deploy to Railway → brandedby.xyz domain. Protocol v4.0 loaded.
+▶ Session resumed. Sprint B3 DEPLOYED. Date: 2026-03-27. BrandedBy live on volaura.app. FAL_API_KEY on Railway. NEXT: (1) Yusif adds GoDaddy A record for brandedby.xyz, (2) UTM capture at auth callback, (3) Welcome page. Protocol v4.0 loaded.
 ```
 
 ## NEXT SESSION PRIORITIES (Activation Wave — 3-4 days to ship)

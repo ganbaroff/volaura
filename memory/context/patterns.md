@@ -3,6 +3,45 @@
 Purpose: Reusable knowledge about what works in this project. Read at session start.
 
 ---
+## New Patterns (Session 47-50, 2026-03-27)
+
+### Pattern: LLM Fallback Chain for Scale Events
+**Context:** Gemini free tier = 15 RPM. At activation wave (3K users/day × 8 questions) = 16.7 RPM → system crash.
+**Solution:** bars.py fallback chain: Gemini → Groq (14,400 req/day FREE, 30 RPM) → OpenAI → keyword_fallback
+**Rule:** Groq MUST be configured before any activation wave. GROQ_API_KEY on Railway + validate_production_settings() warns if missing.
+
+### Pattern: Referral Tracking at Registration
+**Context:** Need to track conversion from HR coordinator referrals.
+**Solution:** Capture ?ref= + utm_source + utm_campaign → localStorage at /register → PATCH profile at auth/callback.
+**CRITICAL:** Use localStorage NOT sessionStorage. Auth callback fires after redirect — sessionStorage loses data across tabs.
+
+### Pattern: Parallel AI Chat Coordination
+**Context:** Two Claude sessions working on same repo create migration timestamp collisions.
+**Solution:** After merging parallel chat work:
+1. Run `railway variables` to check if keys from .env were deployed (they aren't auto-deployed)
+2. Check `git log` to verify no duplicate commits
+3. Run Supabase `list_migrations` to compare DB timestamps vs local file timestamps
+4. Rename local migration files to match DB timestamps if mismatched
+5. Create stub migrations for any DB-only migrations missing locally
+
+### Pattern: fal.ai Model Pre-Validation
+**Context:** fal-ai/playai/tts (deprecated) and fal-ai/musetalk (needs MP4, not portrait) were coded without validation.
+**Solution:** Before writing ANY fal.ai integration code, check model status at fal.ai/models.
+**Confirmed working models (2026-03-27):** fal-ai/kokoro/american-english, fal-ai/sadtalker
+**SadTalker inputs:** `source_image_url` + `driven_audio_url` (not `video_url` or `audio_url`)
+**SadTalker note:** fal workers can't reach Supabase Storage URLs. ALWAYS call `_ensure_fal_url()` first.
+
+### Pattern: _ensure_fal_url() Before Any fal.ai Processing
+**Context:** fal.ai workers block arbitrary CDNs (Supabase Storage, GCS, imgur).
+**Solution:** `_ensure_fal_url()` in zeus_video_skill.py downloads photo locally → uploads to fal.media via `fal_client.upload_file()`.
+**Rule:** Any fal.ai model that accepts image/video URLs needs this wrapper. Not optional.
+
+### Pattern: Vercel Auto-Deploy May Not Fire
+**Context:** Direct pushes to main didn't trigger new production deployment on Vercel.
+**Solution:** After significant pushes, verify with `vercel ls` if new production deployment appeared. If not, run `vercel --prod` from `apps/web/`.
+
+---
+
 ## ⚠️ SILENT CONTRACTS — IMPLICIT AGREEMENTS THAT CAUSE SERIOUS PROBLEMS IF FORGOTTEN
 ### (Added 2026-03-26. Not in CLAUDE.md. Not in NEVER rules. But violations = immediate CEO frustration.)
 

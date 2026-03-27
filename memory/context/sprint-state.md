@@ -6,29 +6,58 @@
 ---
 
 ## Last Updated
-2026-03-27 | Session 51 (MASSIVE): **v0Laura architecture shift. 12 commits. Full E2E verified. Bug found & fixed.**
+2026-03-27 | Session 51 FINAL: **18 commits. v0Laura shift. OWASP 15/22 fixed. Swarm freedom live.**
 
-## Session 51 — v0Laura Architecture Shift (2026-03-27 evening)
-- **ARCHITECTURE SHIFT:** 5 separate products → 1 platform + skill library (v0Laura)
-- Memory consolidation daemon: `packages/swarm/memory_consolidation.py` (hippocampus → neocortex)
+## Session 51 — FULL SUMMARY (2026-03-27)
+
+### Architecture
+- **v0Laura paradigm:** 5 separate products → 1 platform + skill library
 - 6 product skills: content-formatter, aura-coach, assessment-generator, behavior-pattern-analyzer, ai-twin-responder, feed-curator
-- Skill evolution engine: `packages/swarm/skill_evolution.py` (neuroplasticity, health 72/100)
-- Skill execution API: `POST /api/skills/{name}` (one endpoint, all skills alive)
-- Telegram bidirectional: `/proposals`, `/ask {agent}`, `act/dismiss/defer {id}`, `/skills`
-- E2E Leyla journey VERIFIED: login → assessment → 10 IRT/CAT questions → LLM eval → AURA → explanation
-- BUG FOUND & FIXED: upsert_aura_score was overwriting competency_scores (JSONB replace → merge)
-- Security: 4 SECURITY_DEFINER views fixed to INVOKER (questions_safe kept intentional)
-- Skill evolution issues: 5 found → 5 fixed → 0 remaining
-- Swarm updated: shared-context + agent-roster + autonomous_run know about skill architecture
-- Daily cycle: agents → proposals → Telegram → memory consolidation → skill evolution
-- API routes: 51 → 53
-- **200 volunteers can be invited — full path works**
+- Skills NOT YET wired to UI (exist as API + markdown, not rendered in frontend)
 
-## Next Session Priority:
-1. NotebookLM research: v0Laura competitive positioning + professional metaverse landscape
-2. Wire feed-curator skill output to /dashboard UI
-3. Badge share button on /aura
-4. RU question translations x30
+### Engines Built
+- Memory consolidation daemon: `packages/swarm/memory_consolidation.py`
+- Skill evolution engine: `packages/swarm/skill_evolution.py` (health 72/100, 0 issues)
+- Skill execution API: `POST /api/skills/{name}` (5 skills executable)
+
+### Security (OWASP Audit)
+- 22 findings total. **15 FIXED (68%)**
+- CRIT-01 FIXED: /health/env-debug deleted (exposed secrets)
+- CRIT-03 FIXED: setup-webhook now requires auth
+- 4 HIGH FIXED: rate limits, audit logging, ownership checks, log leak
+- 6 MEDIUM FIXED: password policy, events rate limit, leaderboard logging, orgs select, events draft filter, skills error sanitization
+- **Remaining 7:** 1 CRIT (hardcoded anon key — refactor), 2 HIGH (telegram _get_db pattern, register admin key), 4 LOW
+
+### Swarm
+- Freedom architecture v2.0: full visibility, critique CTO/CEO, temp 1.0
+- Telegram bidirectional: /proposals, /ask {agent}, act/dismiss/defer
+- Swarm patterns documented in memory/feedback_swarm_patterns.md
+- Temperature discovery: 1.0 > 0.7 for strategy (convergent ideas = strongest signal)
+
+### Verification
+- E2E Leyla journey VERIFIED (full path works)
+- BUG FOUND & FIXED: upsert_aura_score JSONB merge (was overwriting competencies)
+
+### Research
+- NotebookLM notebook "v0Laura Competitive Landscape" created with 7 sources + deep research
+- Competitive moat: 6 elements, nobody has all 6
+- Ideas #11-13 in IDEAS-BACKLOG: Mentor Avatar, Stylized Avatar, Swarm Freedom
+
+### Stats
+- 18 commits, API 53 routes, 22 migrations applied
+
+## Next Session Priority (CTO + Swarm decided):
+1. **Wire feed-curator → /dashboard** (skills become alive in UI)
+2. **Invite 10 volunteers** (controlled test, not 200)
+3. **Avatar system prototype** (after user feedback from first 10)
+4. Badge share button on /aura
+5. RU question translations x30
+
+## OWASP Remaining (7 — not launch blockers):
+- CRIT-02: hardcoded anon key in config.py (refactor to env-only)
+- HIGH-01: telegram _get_db() bypasses Depends pattern
+- HIGH-05: register uses admin key for signup
+- LOW-01/04/05: minor hardening
 
 ## Session 51 accomplishments (2026-03-27):
 - `apps/api/app/schemas/profile.py`: ProfileUpdate + referral_code, utm_source, utm_campaign

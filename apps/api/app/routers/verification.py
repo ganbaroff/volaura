@@ -18,10 +18,11 @@ AURA integration:
 from datetime import UTC, datetime
 from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, Path
+from fastapi import APIRouter, HTTPException, Path, Request
 from loguru import logger
 
 from app.deps import SupabaseAdmin
+from app.middleware.rate_limit import limiter
 from app.schemas.verification import (
     SubmitVerificationRequest,
     SubmitVerificationResponse,
@@ -160,7 +161,9 @@ TokenParam = Annotated[str, Path(max_length=100, description="One-use verificati
 
 
 @router.get("/{token}", response_model=VerificationTokenInfo)
+@limiter.limit("10/minute")
 async def get_verification_info(
+    request: Request,
     token: TokenParam,
     db: SupabaseAdmin,
 ) -> VerificationTokenInfo:
@@ -184,7 +187,9 @@ async def get_verification_info(
 
 
 @router.post("/{token}", response_model=SubmitVerificationResponse, status_code=201)
+@limiter.limit("5/minute")
 async def submit_verification(
+    request: Request,
     token: TokenParam,
     payload: SubmitVerificationRequest,
     db: SupabaseAdmin,

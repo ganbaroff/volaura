@@ -481,5 +481,6 @@ async def setup_webhook(request: Request) -> JSONResponse:
         )
         result = resp.json()
 
-    logger.info("Telegram webhook setup: {url} → {result}", url=webhook_url, result=result)
-    return JSONResponse(result)
+    # HIGH-02 FIX: Don't log full API response (may contain bot token)
+    logger.info("Telegram webhook setup: ok={ok}", ok=result.get("ok"))
+    return JSONResponse({"ok": result.get("ok"), "description": result.get("description", "")})

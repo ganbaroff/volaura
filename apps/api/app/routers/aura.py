@@ -207,6 +207,8 @@ async def update_visibility(
             status_code=404,
             detail={"code": "AURA_NOT_FOUND", "message": "No AURA score to update"},
         )
+    # HIGH-06 FIX: audit log for visibility changes
+    logger.info("AURA visibility changed", user_id=user_id, visibility=body.visibility)
     return {"status": "ok", "visibility": body.visibility}
 
 

@@ -6,6 +6,7 @@ import secrets
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, HTTPException, Query, Request
+from loguru import logger
 
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
 from app.middleware.rate_limit import limiter, RATE_PROFILE_WRITE
@@ -107,8 +108,12 @@ async def delete_event(
     db: SupabaseUser,
     user_id: CurrentUserId,
 ) -> None:
-    """Delete (cancel) an event — org owner only."""
-    await db.table("events").update({"status": "cancelled"}).eq("id", event_id).execute()
+    """Delete (cancel) an event — org owner only (RLS enforced)."""
+    result = await db.table("events").update({"status": "cancelled"}).eq("id", event_id).execute()
+    # HIGH-04 + HIGH-06 FIX: verify update succeeded + audit log
+    if not result.data:
+        raise HTTPException(status_code=404, detail={"code": "EVENT_NOT_FOUND", "message": "Event not found or not owned"})
+    logger.info("Event cancelled", user_id=user_id, event_id=event_id)
 
 
 # ── Registrations ─────────────────────────────────────────────────────────────

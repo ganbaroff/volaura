@@ -24,7 +24,10 @@
 |------|-----------|
 | New API endpoint design | Architecture Agent |
 | RLS policy review | Security Agent |
-| New feature UX review | Product Agent |
+| New feature UX review | Product Agent + load: neuroscience-design skill |
+| Any UI copy / achievement / reward mechanic | Product Agent + load: neuroscience-design skill |
+| Assessment UX flow review | Product Agent + load: neuroscience-design skill |
+| Cross-product integration feature | Architecture Agent + load: neuroscience-design skill |
 | Sprint planning critique | All agents in parallel |
 | Code change >50 lines | Architecture + Security |
 | New user-facing flow | Product Agent |

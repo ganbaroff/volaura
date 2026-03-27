@@ -25,6 +25,32 @@ const sectionVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" as const } },
 };
 
+// ── Neuroscience helper: relative time (Conscious → Unconscious friction reduction)
+// "2 hours ago" is processed faster than "3/27/2026" — no date parsing required.
+function getRelativeTime(dateStr: string): string {
+  const now = Date.now();
+  const then = new Date(dateStr).getTime();
+  const diffMs = now - then;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays === 1) return "yesterday";
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return new Date(dateStr).toLocaleDateString();
+}
+
+// ── Neuroscience helper: time-of-day greeting (Brain Constructs Reality)
+// Opening word sets emotional tone for the entire session.
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+}
+
 export default function DashboardPage() {
   const { locale } = useParams<{ locale: string }>();
   const { t } = useTranslation();
@@ -65,12 +91,13 @@ export default function DashboardPage() {
   const { data: rawActivity = [], isLoading: activityLoading } = useActivity();
   const { data: stats } = useDashboardStats();
 
-  // Map API ActivityItem (description + created_at) → Component ActivityItem (text + timeAgo)
+  // Map API ActivityItem → Component ActivityItem
+  // timeAgo uses relative time (getRelativeTime) instead of locale date string
   const activityItems: FeedActivityItem[] = rawActivity.map((item) => ({
     id: item.id,
     type: item.type as FeedActivityItem["type"],
     text: item.description,
-    timeAgo: item.created_at ? new Date(item.created_at).toLocaleDateString() : "",
+    timeAgo: item.created_at ? getRelativeTime(item.created_at) : "",
   }));
 
   const loading = auraLoading;
@@ -93,10 +120,10 @@ export default function DashboardPage() {
         animate="visible"
         className="p-4 space-y-5 pb-8"
       >
-        {/* ── Welcome ── */}
+        {/* ── Welcome — time-aware greeting (Brain Constructs Reality principle) ── */}
         <motion.div variants={sectionVariants}>
           <h2 className="text-xl font-bold text-foreground">
-            {t("dashboard.welcome")}{displayName ? `, ${displayName}` : ""}!
+            {getGreeting()}{displayName ? `, ${displayName}` : ""}! 👋
           </h2>
         </motion.div>
 
@@ -123,6 +150,8 @@ export default function DashboardPage() {
         </motion.div>
 
         {/* ── Stats Row ── */}
+        {/* TODO Sprint A2: replace leaguePosition (always null) with real league rank
+            once the leagues feature ships. For now StatsRow shows "—" via its own null guard. */}
         <motion.div variants={sectionVariants}>
           {loading ? (
             <div className="grid grid-cols-3 gap-3">
@@ -151,23 +180,38 @@ export default function DashboardPage() {
           </div>
         </motion.div>
 
-        {/* ── Quick Actions ── */}
+        {/* ── Quick Actions — Peak Shift: dominant primary CTA ── */}
+        {/* hasScore: full-width "See your AURA" (dominant) + smaller secondary below.
+            !hasScore: NoScoreBanner replaces the AURA widget above; QuickActions
+            only shows the assessment link as the single dominant action. */}
         <motion.div variants={sectionVariants} className="space-y-2">
           <SectionHeader label={t("dashboard.quickActions")} />
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <QuickAction
+          {hasScore ? (
+            <div className="flex flex-col gap-3">
+              {/* Primary — full-width dominant CTA */}
+              <QuickActionPrimary
+                href={`/${locale}/aura`}
+                icon={<Sparkles className="size-5 text-yellow-400" aria-hidden="true" />}
+                label={t("nav.aura")}
+                sub={t("aura.overallScore")}
+              />
+              {/* Secondary — smaller, visually subordinate */}
+              <QuickAction
+                href={`/${locale}/assessment`}
+                icon={<ClipboardList className="size-5 text-primary" aria-hidden="true" />}
+                label={t("dashboard.startAssessment")}
+                sub={t("assessment.title")}
+              />
+            </div>
+          ) : (
+            /* No score: single full-width dominant action */
+            <QuickActionPrimary
               href={`/${locale}/assessment`}
               icon={<ClipboardList className="size-5 text-primary" aria-hidden="true" />}
               label={t("dashboard.startAssessment")}
               sub={t("assessment.title")}
             />
-            <QuickAction
-              href={`/${locale}/aura`}
-              icon={<Sparkles className="size-5 text-yellow-400" aria-hidden="true" />}
-              label={t("nav.aura")}
-              sub={t("aura.overallScore")}
-            />
-          </div>
+          )}
         </motion.div>
       </motion.div>
     </>
@@ -184,6 +228,7 @@ function SectionHeader({ label }: { label: string }) {
   );
 }
 
+// Secondary quick-action card — standard size, visually subordinate
 function QuickAction({
   href,
   icon,
@@ -212,6 +257,37 @@ function QuickAction({
   );
 }
 
+// Primary dominant quick-action — full-width, elevated border + background (Peak Shift)
+function QuickActionPrimary({
+  href,
+  icon,
+  label,
+  sub,
+}: {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+  sub: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="flex items-center gap-4 rounded-2xl border-2 border-primary/40 bg-primary/5 p-5 transition-all hover:border-primary/70 hover:bg-primary/10 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    >
+      <span className="shrink-0 size-11 rounded-full bg-primary/10 flex items-center justify-center">
+        {icon}
+      </span>
+      <div className="flex-1 min-w-0">
+        <p className="text-base font-semibold text-foreground truncate">{label}</p>
+        <p className="text-xs text-muted-foreground truncate">{sub}</p>
+      </div>
+      <ChevronRight className="size-5 text-primary shrink-0" aria-hidden="true" />
+    </Link>
+  );
+}
+
+// NoScoreBanner — emotionally charged, link-style card that drives first assessment
+// Replaces the passive dashed card with a discovery-framing CTA
 function NoScoreBanner({
   locale,
   t,
@@ -220,26 +296,25 @@ function NoScoreBanner({
   t: (k: string) => string;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35 }}
-      className="rounded-2xl border border-dashed border-border bg-card p-5 text-center space-y-3"
+    <Link
+      href={`/${locale}/assessment`}
+      className="block rounded-2xl border-2 border-primary/40 bg-primary/5 p-6 transition-all hover:border-primary/70 hover:bg-primary/10 active:scale-[0.99]"
     >
-      <div className="size-12 rounded-full bg-muted flex items-center justify-center mx-auto">
-        <Sparkles className="size-6 text-muted-foreground" aria-hidden="true" />
+      <div className="flex flex-col gap-3">
+        <div className="text-3xl" aria-hidden="true">🔍</div>
+        <div>
+          <p className="font-bold text-foreground text-lg leading-snug">
+            Your AURA score is waiting to be discovered
+          </p>
+          <p className="text-sm text-muted-foreground mt-1">
+            {t("aura.noScoreDescription")} · ~5 minutes
+          </p>
+        </div>
+        <div className="flex items-center gap-1.5 text-primary font-semibold text-sm">
+          {t("aura.startAssessment")} <ChevronRight className="size-4" aria-hidden="true" />
+        </div>
       </div>
-      <div className="space-y-1">
-        <p className="text-sm font-semibold text-foreground">{t("aura.noScoreYet")}</p>
-        <p className="text-xs text-muted-foreground">{t("aura.noScoreDescription")}</p>
-      </div>
-      <Link
-        href={`/${locale}/assessment`}
-        className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
-      >
-        {t("aura.startAssessment")}
-      </Link>
-    </motion.div>
+    </Link>
   );
 }
 

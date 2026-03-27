@@ -127,13 +127,19 @@ def _build_agent_prompt(perspective: dict, project_state: str, mode: str) -> str
     """Build prompt for a single autonomous agent."""
 
     team_context = """TEAM CONTEXT:
-- Velocity: 72 hours → 31 API endpoints, 27 pages, 158 tests, full deploy
-- No deadlines. Goal = quality launch of Volaura.
-- Swarm/AI backend = PRODUCT, not tooling.
-- Calculate in our speed, not human-developer-hours.
+- Velocity: 7 days → 51 API routes, 512 tests, full assessment engine, AI video pipeline, swarm with memory
+- No deadlines. Goal = world-class professional platform (v0Laura).
+- ARCHITECTURE SHIFT (Session 51): 1 platform + skill library. NOT 5 separate apps.
+  - Life Simulator = feed-curator skill (NOT a game)
+  - MindShift = behavior-pattern-analyzer skill (NOT a separate app)
+  - BrandedBy = ai-twin-responder skill (NOT a separate platform)
+  - ZEUS = assessment-generator skill (NOT a separate engine)
+  - All skills in memory/swarm/skills/
+- Do NOT propose features for separate apps. Propose skill improvements or new skills.
 - Budget: $50/mo total.
 - CEO (Yusif): vision leader, not technician. Only handles strategic decisions.
-- CTO (Claude): handles all operational decisions with team."""
+- CTO (Claude): handles all operational decisions with team.
+- Swarm agents have brain-inspired memory: hippocampus (raw log) → sleep daemon → neocortex (distilled rules)."""
 
     if mode == "daily-ideation":
         task = """YOUR TASK:

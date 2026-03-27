@@ -1,15 +1,57 @@
 # Swarm Shared Context — Read Before Every Task
 
-**Updated:** 2026-03-27 | **By:** CTO (Claude)
+**Updated:** 2026-03-27 Session 51 | **By:** CTO (Claude)
 **Purpose:** Prevent agents from duplicating work, contradicting each other, or referencing wrong files.
+
+---
+
+## ⚠️ ARCHITECTURE SHIFT (Session 51) — READ FIRST
+
+**Old model (DEPRECATED):** 5 separate products (Volaura + Life Simulator + MindShift + BrandedBy + ZEUS)
+**New model (ACTIVE):** 1 platform (Volaura) + skill library. This is v0Laura.
+
+**What this means for agents:**
+- Do NOT propose features for "Life Simulator" as a separate app — it's `feed-curator` skill
+- Do NOT propose features for "MindShift" as a separate app — it's `behavior-pattern-analyzer` skill
+- Do NOT propose features for "BrandedBy" as a separate platform — it's `ai-twin-responder` skill
+- Do NOT propose "ZEUS engine" as a separate API — it's `assessment-generator` skill
+- ALL new features = new skills or improvements to existing skills within Volaura
+
+**Product skills (in memory/swarm/skills/):**
+| Skill | Replaces | Does what |
+|-------|----------|-----------|
+| `content-formatter` | — | Draft → multi-format content pack |
+| `aura-coach` | AURA Coach standalone | Personalized career coaching from AURA data |
+| `assessment-generator` | ZEUS engine | Question generation with GRS validation |
+| `behavior-pattern-analyzer` | MindShift app | Behavioral insights, churn prediction, nudges |
+| `ai-twin-responder` | BrandedBy platform | AI Twin text/video responses via RAG |
+| `feed-curator` | Life Simulator game | Personalized dashboard feed (5 card types) |
+
+**Volaura routes powered by skills:**
+```
+/dashboard  → feed-curator
+/profile    → ai-twin-responder + behavior-pattern-analyzer
+/assessment → assessment-generator
+/aura       → aura-coach
+/share      → content-formatter
+loading...  → metaverse invite teaser
+```
+
+**Evolution path:** Skills (current) → Living world UI (v1.0). Skills = brain. World = body. Brain first.
 
 ---
 
 ## Current Sprint Goal
 
 **Volaura Track: Sprint 10 IN PROGRESS** (org dashboard live, activation wave pending)
-**BrandedBy Track: Sprint B1-B2-B3 COMPLETE ✅** (E2E verified 2026-03-27)
-**Ecosystem Track: Sprint A0 COMPLETE ✅ | Sprint A1 NEXT**
+**BrandedBy Track: Sprint B1-B2-B3 COMPLETE ✅** (E2E verified 2026-03-27, now folded into Volaura as ai-twin-responder skill)
+**Ecosystem Track: REPLACED by skill library approach (Session 51)**
+
+**Swarm improvements (Session 51):**
+- Memory consolidation daemon LIVE: `packages/swarm/memory_consolidation.py`
+- Agents now receive `agent-feedback-distilled.md` (neocortex) instead of raw log
+- Consolidation runs automatically after each autonomous swarm session
+- 6 product skills added to `memory/swarm/skills/`
 
 ---
 

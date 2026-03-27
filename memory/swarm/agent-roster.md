@@ -1,7 +1,7 @@
 # Agent Roster — Swarm Team
 
 **Purpose:** Agents know who's on the team and what each agent is best at.
-**Updated:** 2026-03-26 (Session 42)
+**Updated:** 2026-03-27 (Session 51 — skill library architecture)
 
 ---
 
@@ -43,6 +43,16 @@
 | SQL scripts / migrations | Architecture + Security |
 | CEO evaluation / professional review | All agents in parallel |
 | Route ordering review (/{id} patterns) | Security Agent (Session 42 P0: route shadowing IS real) |
+| Dashboard personalization | Product Agent + load: feed-curator skill |
+| AI Twin feature review | Product + Security + load: ai-twin-responder skill |
+| Assessment question creation | QA Engineer + Security + load: assessment-generator skill |
+| User behavior analysis / retention | Product Agent + load: behavior-pattern-analyzer skill |
+| AURA coaching feature | Product Agent + load: aura-coach + neuroscience-design skills |
+| Content/post generation | Product Agent + load: content-formatter skill |
+| Any "Life Simulator" proposal | REDIRECT → feed-curator skill (no separate app — Session 51) |
+| Any "MindShift" proposal | REDIRECT → behavior-pattern-analyzer skill (no separate app — Session 51) |
+| Any "BrandedBy standalone" proposal | REDIRECT → ai-twin-responder skill (no separate platform — Session 51) |
+| Any "ZEUS engine" proposal | REDIRECT → assessment-generator skill (no separate API — Session 51) |
 
 ---
 

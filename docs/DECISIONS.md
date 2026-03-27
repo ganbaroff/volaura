@@ -1,5 +1,32 @@
 # Architecture Decisions Log
 
+## Sessions 47-50 Retrospective — 2026-03-27 (Sprint 10.5 + BrandedBy B1-B2-B3)
+
+✓ Sprint 10.5 Activation Wave infrastructure: Groq fallback in bars.py (Gemini→Groq→OpenAI→keyword chain)
+✓ referral_code + utm_source + utm_campaign + referral_stats VIEW — migration applied to production
+✓ scenario_ru nullable column — migration applied to production
+✓ Org B2B dashboard: GET /organizations/me/dashboard + GET /organizations/me/volunteers live
+✓ MASS-ACTIVATION-PLAN.md — 5 volunteer onboarding questions answered + Sprint 10.5 roadmap
+✓ BrandedBy Sprint B1: brandedby.* schema LIVE (ai_twins + generations + RLS + triggers)
+✓ BrandedBy Sprint B2: 8 FastAPI routes + personality service (character_state → Gemini → prompt)
+✓ BrandedBy Sprint B3: ZeusVideoSkill (Kokoro TTS + SadTalker) + async video worker + share mechanic
+✓ E2E verified: portrait JPG → ~2 min → .mp4 video URL (fal.ai production, real spend)
+✓ Stale log messages fixed (MuseTalk references → SadTalker after model swap)
+✓ FAL_API_KEY + GROQ_API_KEY set on Railway (were in .env only, not deployed)
+✓ volaura.app updated to latest deployment (BrandedBy now live on production)
+✓ brandedby.xyz added to Vercel project (pending GoDaddy A record: @ 76.76.21.21)
+✗ D-ID was incorrectly recommended first (10 vid/mo cap = not scalable) — caught by CEO "серьёзно?"
+✗ fal-ai/playai/tts was wrong (deprecated) — found only during E2E test, not pre-research
+✗ fal-ai/musetalk was wrong (needs MP4, not portrait) — found only during E2E test
+✗ Other AI session built same code from scratch → timestamp collision on migrations (fixed: renamed to match DB)
+→ Pre-validate fal.ai model IDs against live API docs BEFORE writing code, not during E2E
+→ When parallel AI chats work on same repo → CTO must verify timestamps match DB before committing
+
+**DSP winner: ZEUS + fal.ai SadTalker (40/50 after correction)** — 4-agent swarm confirmed
+**Model recommendation for Sprint A1:** claude-sonnet-4-6 (assessment/character_state integration, security-sensitive)
+
+---
+
 ## Sessions 45-46 Retrospective — 2026-03-27 (Sprint A0 + Monetization Docs)
 
 ✓ Sprint A0: character_state as Thalamus — POST/GET /api/character/* live on production (6/6 E2E)

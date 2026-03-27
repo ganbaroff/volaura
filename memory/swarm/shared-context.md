@@ -7,37 +7,82 @@
 
 ## Current Sprint Goal
 
-**Volaura Track: Sprint 9 COMPLETE ✅ | Sprint 10 STARTING**
+**Volaura Track: Sprint 10 IN PROGRESS** (org dashboard live, activation wave pending)
+**BrandedBy Track: Sprint B1-B2-B3 COMPLETE ✅** (E2E verified 2026-03-27)
 **Ecosystem Track: Sprint A0 COMPLETE ✅ | Sprint A1 NEXT**
 
-Sprint 9 completed items:
-- CSV bulk invite: DONE (Session 39)
-- Assessment flow fixes: DONE (Session 40, 6 files rewritten)
-- Assessment hardening: DONE (Session 42) — DeCE, anti-gaming, GRS, reeval worker
-- E2E Leyla journey: DONE (Sessions 43-44) — production verified AURA 12.47
-- All 9 migrations applied via Supabase MCP (Sessions 43-44)
-- Question bank: 0 placeholders, 90 real scenarios across 8 competencies (Session 44)
-- Railway fix: Supabase anon key hardcoded fallback (Session 44, Mistake #53)
+---
 
-Sprint A0 completed items (Sessions 45-46):
-- character_state as Thalamus: cross-product event bus LIVE on production
-- Migration 000031: character_events + game_crystal_ledger + game_character_rewards
-- Migration 000032: audit fixes (CHECK constraints, BIGINT, search_path, regex guards, skill_unverified)
-- routers/character.py: POST /api/character/events, GET /api/character/state, GET /api/character/events
-- schemas/character.py: EventType (8), SourceProduct (4), CharacterStateOut, VerifiedSkillOut
-- E2E: 6/6 smoke tests pass, 9/9 P0/P1/P2 audit fixes confirmed on production
-- docs/MONETIZATION-ROADMAP.md + docs/AI-TWIN-CONCEPT.md written
+### BrandedBy Sprint B1-B2-B3 — COMPLETE ✅ (Sessions 48-50, 2026-03-27)
 
-**Sprint A1 priorities (NEXT):**
+**What was built (committed to main, deployed to volaura.app):**
+
+| File | What it does |
+|------|-------------|
+| `supabase/migrations/20260327151415_create_brandedby_schema.sql` | brandedby schema, ai_twins + generations tables, RLS, updated_at trigger |
+| `supabase/migrations/20260327151441_fix_brandedby_search_path.sql` | SET search_path TO '' security fix |
+| `supabase/migrations/20260327161705_brandedby_retry_count.sql` | retry_count INT DEFAULT 0 on generations |
+| `apps/api/app/schemas/brandedby.py` | Pydantic v2: AITwinCreate/Update/Out, GenerationCreate/Out, TwinStatus/GenerationType literals |
+| `apps/api/app/routers/brandedby.py` | 8 routes: POST/GET/PATCH twins, refresh-personality, activate, POST/GET/GET generations |
+| `apps/api/app/services/brandedby_personality.py` | character_state → Gemini → personality_prompt (rule-based fallback) |
+| `apps/api/app/services/video_generation_worker.py` | Async poll worker: queued→processing→completed/failed, stale-lock recovery, MAX_RETRIES=2 |
+| `packages/swarm/zeus_video_skill.py` | ZeusVideoSkill: script → Kokoro TTS → audio_url → SadTalker → video_url |
+| `apps/web/src/hooks/queries/use-brandedby.ts` | TanStack Query hooks, 5s polling on queued/processing |
+| `apps/web/src/app/.../brandedby/page.tsx` | BrandedBy dashboard: 3-step setup + generate form + history |
+| `apps/web/src/app/.../generations/[id]/page.tsx` | Video player + LinkedIn share + TikTok download ($730K mechanic) |
+
+**E2E verified pipeline:**
+```
+portrait JPG + script
+  → fal-ai/kokoro/american-english (TTS) → .wav audio URL
+  → fal-ai/sadtalker (lip-sync) → .mp4 video URL (~2 min)
+```
+
+**Architecture decisions (BrandedBy):**
+- fal.ai SadTalker = Phase 1 (not D-ID — 10 vid/mo cap, not scalable; not MuseTalk — needs MP4 input not image; not LivePortrait — non-commercial InsightFace)
+- fal.ai Kokoro TTS = Phase 1 (not PlayAI — deprecated; `fal-ai/kokoro/american-english`, voice: `am_adam`)
+- SadTalker inputs: `source_image_url` + `driven_audio_url` (NOT `video_url`)
+- `_ensure_fal_url()`: re-uploads arbitrary CDN photos to fal.media before SadTalker (fal workers can't reach Supabase Storage)
+- Queue mechanic: free = 48h wait, 25 crystals = skip queue, Pro = instant
+- `QUEUE_SKIP_CRYSTAL_COST = 25`
+- brandedby.* schema: separate PostgreSQL schema (isolates from public.* Volaura tables)
+- Auth is shared: auth.users JWT = one login for all products
+
+**Production state:**
+- FAL_API_KEY ✅ on Railway
+- GROQ_API_KEY ✅ on Railway
+- volaura.app ✅ updated (latest deploy with BrandedBy)
+- brandedby.xyz ⏳ pending A record in GoDaddy: `@ 76.76.21.21`
+
+---
+
+### Volaura Sprint 10 — IN PROGRESS
+
+Sprint 10 completed:
+- Org dashboard: GET /api/organizations/me/dashboard + GET /api/organizations/me/volunteers (B2B matching)
+- OrgDashboardStats + OrgVolunteerRow schemas
+- /org-volunteers page: 4 stat cards, badge distribution, volunteer table with search + filter
+- MASS-ACTIVATION-PLAN.md: 5 onboarding questions answered, Sprint 10.5 plan
+- Migration 000034: referral_code + utm_source + utm_campaign + referral_stats VIEW
+- Migration 000035: scenario_ru column on questions
+- Groq fallback in bars.py: Gemini → Groq → OpenAI → keyword_fallback
+- config.py: GROQ_API_KEY warning in validate_production_settings
+
+Sprint 10 pending:
+1. **UTM capture at auth callback** — save UTM params to localStorage at /register → PATCH profile at auth/callback
+2. **Welcome page** — /welcome with "Start Assessment" CTA (biggest conversion fix — 60% bounce)
+3. **Badge share button** — LinkedIn/TikTok share on /aura page post-completion
+4. **30 RU question translations** — scripts/translate_ru.py via Gemini batch
+5. **pnpm generate:api** — replace 7 TODO hooks with generated TypeScript (ADR-003)
+6. CEO provides ~10 HR coordinator names → generate ref codes → activation wave
+
+---
+
+### Sprint A1 — NEXT
+
 1. POST /api/assessment/complete → emit crystal_earned + skill_verified events
 2. game_character_rewards idempotency: check BEFORE INSERT
 3. Acceptance: Complete assessment → GET /character/state shows crystals + verified_skills
-
-**Sprint 10 priorities:**
-1. `pnpm generate:api` → replace 7 TODO frontend hooks with generated types
-2. Org dashboard — aggregate volunteer scores + matching endpoint for B2B
-3. Post 003 LinkedIn post (angle: CEO decision needed)
-4. Vitest fix (Node v24 filesystem bug → need Node v20 LTS)
 
 **CRITICAL: Production env vars (Session 44 finding)**
 - `SUPABASE_ANON_KEY` is intercepted by Railway's Supabase integration (injected as empty)
@@ -65,7 +110,51 @@ Sprint A0 completed items (Sessions 45-46):
 | ADR-010: keyword_fallback = evaluation_mode "degraded" | ACTIVE | Session 42 — keyword matching is vocabulary test, not competence |
 | DeCE Framework: per-concept {score, quote, confidence} | ACTIVE | Session 42 — ISO 10667-2 Clause 6.7 compliance |
 | Per-competency decay half-lives (not uniform) | ACTIVE | Session 42 — tech=730d, leadership=1640d, weighted avg=1295d |
+| fal.ai SadTalker for BrandedBy video | ACTIVE | Session 48-49 — NOT MuseTalk (needs MP4), NOT LivePortrait (non-commercial), NOT D-ID (cap 20 vid/mo) |
+| fal.ai Kokoro TTS for BrandedBy audio | ACTIVE | Session 49 — NOT PlayAI (deprecated). Model: fal-ai/kokoro/american-english, voice: am_adam |
+| _ensure_fal_url() before SadTalker | ACTIVE | Session 49 — fal workers can't reach Supabase Storage. Must re-upload to fal.media CDN first |
+| Groq as Gemini fallback in bars.py | ACTIVE | Session 47 — Free tier 14,400 req/day. Chain: Gemini → Groq → OpenAI → keyword_fallback |
+| brandedby.* separate schema | ACTIVE | Session 48 — Isolates from public.* Volaura. Auth is shared (auth.users JWT) |
 | Multi-word behavioral phrase keywords (not single words) | ACTIVE | Session 42 — GRS gate requires >= 0.6, single words fail |
+
+---
+
+## BrandedBy — DB Schema Snapshot
+
+```sql
+-- brandedby.ai_twins
+id UUID PRIMARY KEY DEFAULT gen_random_uuid()
+user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE
+display_name TEXT NOT NULL
+tagline TEXT
+photo_url TEXT                    -- portrait photo (Supabase Storage or R2)
+voice_id TEXT                     -- TTS voice identifier (Phase 2)
+personality_prompt TEXT           -- auto-generated from character_state via Gemini
+status TEXT DEFAULT 'draft'       -- draft | active | suspended
+CONSTRAINT ai_twins_one_per_user UNIQUE (user_id)  -- one AI Twin per user
+
+-- brandedby.generations
+id UUID PRIMARY KEY DEFAULT gen_random_uuid()
+twin_id UUID NOT NULL REFERENCES brandedby.ai_twins(id) ON DELETE CASCADE
+user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE
+gen_type TEXT DEFAULT 'video'     -- video | audio | text_chat
+input_text TEXT NOT NULL          -- script
+output_url TEXT                   -- generated video URL (fal.ai CDN)
+thumbnail_url TEXT
+status TEXT DEFAULT 'queued'      -- queued | processing | completed | failed
+error_message TEXT
+queue_position INT                -- free=wait, crystal skip = jump ahead
+crystal_cost INT DEFAULT 0        -- crystals spent to skip
+duration_seconds INT
+processing_started_at TIMESTAMPTZ
+completed_at TIMESTAMPTZ
+retry_count INT DEFAULT 0         -- MAX_RETRIES=2 in worker
+```
+
+**RLS rules:**
+- Users read/create/update/delete ONLY their own ai_twins
+- Users read/create ONLY their own generations
+- Status transitions (queued→processing→completed) handled ONLY by service_role (backend)
 
 ---
 
@@ -80,6 +169,10 @@ Sprint A0 completed items (Sessions 45-46):
 - **Privacy by default** — Already decided: PUBLIC by default.
 - **keyword_fallback as valid evaluation** — It measures vocabulary, not competence. Always flag as "degraded".
 - **Single-word keywords in questions** — Proven gameable (GRS < 0.4). All keywords must be 3+ word behavioral phrases.
+- **D-ID for BrandedBy video** — Invalidated. $5.90/mo = only ~20 videos/month cap. Not scalable.
+- **LivePortrait / SadTalker via Replicate** — LivePortrait = non-commercial (InsightFace dependency). SadTalker on Replicate = slow (4 min) + no SLA. Use fal.ai SadTalker.
+- **MuseTalk for portrait input** — MuseTalk requires MP4 video input, NOT still image. For portrait→video use SadTalker.
+- **fal-ai/playai/tts** — Deprecated by fal.ai. Use fal-ai/kokoro/american-english.
 
 ---
 
@@ -90,37 +183,66 @@ apps/api/app/
   routers/
     aura.py          — AURA score + /me/explanation (route order matters!)
     assessment.py    — Assessment start/answer/complete/results + enqueue degraded
-    organizations.py — Org endpoints
+    organizations.py — Org endpoints + /me/dashboard + /me/volunteers (B2B)
     profiles.py      — Volunteer profiles
     telegram_webhook.py — CEO<->Bot bidirectional
-    character.py     — Cross-product event bus (NEW Session 45)
+    character.py     — Cross-product event bus
                         POST /api/character/events, GET /api/character/state, GET /api/character/events
+    brandedby.py     — AI Twin platform (NEW Sprint B1-B2)
+                        POST/GET/PATCH /api/brandedby/twins
+                        POST /api/brandedby/twins/{id}/refresh-personality
+                        POST /api/brandedby/twins/{id}/activate
+                        POST/GET /api/brandedby/generations
+                        GET /api/brandedby/generations/{id}
   core/assessment/
     engine.py        — IRT/CAT adaptive engine (3PL + EAP)
-    bars.py          — BARS LLM evaluator + DeCE + 4 anti-gaming gates
+    bars.py          — BARS LLM evaluator + DeCE + 4 anti-gaming gates + Groq fallback
     aura_calc.py     — AURA score + per-competency decay half-lives
-    quality_gate.py  — GRS metric + adversarial gate + 10-point checklist (NEW Session 42)
+    quality_gate.py  — GRS metric + adversarial gate + 10-point checklist
   schemas/
     aura.py          — AuraScoreResponse, UpdateVisibilityRequest
     assessment.py    — SessionOut, StartAssessmentRequest, SubmitAnswerRequest
-    organization.py  — OrganizationResponse
-    character.py     — EventType, SourceProduct, CharacterEventCreate/Out, CharacterStateOut (NEW Session 45)
+    organization.py  — OrganizationResponse, OrgDashboardStats, OrgVolunteerRow, BadgeDistribution
+    character.py     — EventType, SourceProduct, CharacterEventCreate/Out, CharacterStateOut
+    brandedby.py     — AITwinCreate/Update/Out, GenerationCreate/Out, TwinStatus, GenerationType (NEW)
   services/
-    reeval_worker.py — Async LLM re-evaluation of degraded answers (NEW Session 42)
-    swarm_service.py — Multi-model swarm evaluation
-    llm.py           — LLM abstraction layer
+    reeval_worker.py      — Async LLM re-evaluation of degraded answers
+    video_generation_worker.py — Async BrandedBy video worker (queued→processing→completed, 15s poll) (NEW)
+    brandedby_personality.py   — character_state → Gemini → personality_prompt (NEW)
+    swarm_service.py      — Multi-model swarm evaluation
+    llm.py               — LLM abstraction layer
   middleware/
     rate_limit.py    — slowapi rate limiting
   deps.py            — Supabase client Depends(), CurrentUserId
-  config.py          — Settings (pydantic-settings)
-  main.py            — FastAPI app, router registration, reeval_worker lifespan
+  config.py          — Settings (pydantic-settings) — FAL_API_KEY, GROQ_API_KEY added
+  main.py            — FastAPI app, router registration, reeval_worker + video_worker lifespan
+
+packages/swarm/
+  zeus_video_skill.py — ZeusVideoSkill class (NEW Sprint B3)
+                        script → fal-ai/kokoro/american-english TTS → audio_url
+                        photo + audio → fal-ai/sadtalker → video_url
+                        _ensure_fal_url(): re-uploads to fal.media CDN (CRITICAL)
+
+apps/web/src/
+  app/[locale]/(dashboard)/
+    brandedby/page.tsx              — AI Twin setup (3 steps) + generate form + history (NEW)
+    brandedby/generations/[id]/page.tsx — Video player + LinkedIn/TikTok share (NEW)
+    org-volunteers/page.tsx         — Org B2B dashboard (NEW)
+  hooks/queries/
+    use-brandedby.ts    — useMyTwin, useGenerations, useGeneration (5s polling), mutations (NEW)
+    use-organizations.ts — useOrgDashboard, useOrgVolunteers added
 
 supabase/migrations/
-  ...32 migration files including:
+  ...35 migration files including:
   20260326000029_evaluation_queue.sql             — Queue for degraded answer re-evaluation
   20260326000030_update_question_keywords_grs.sql — Keyword redesign for GRS compliance
-  20260327000031_character_state_tables.sql       — character_events + game_crystal_ledger + game_character_rewards (NEW)
-  20260327000032_character_state_fixes.sql        — CHECK constraints, BIGINT, search_path, skill_unverified (NEW)
+  20260327000031_character_state_tables.sql       — character_events + game_crystal_ledger + game_character_rewards
+  20260327000032_character_state_fixes.sql        — CHECK constraints, BIGINT, search_path, skill_unverified
+  20260327000034_activation_tracking.sql          — referral_code + utm_* on profiles + referral_stats VIEW
+  20260327000035_scenario_ru_column.sql           — scenario_ru on questions (nullable RU fallback)
+  20260327151415_create_brandedby_schema.sql      — brandedby.* schema, ai_twins + generations (NEW)
+  20260327151441_fix_brandedby_search_path.sql    — search_path security fix (NEW)
+  20260327161705_brandedby_retry_count.sql        — retry_count on brandedby.generations (NEW)
 
 scripts/
   audit_seed_questions.py  — GRS audit tool for question bank
@@ -148,8 +270,9 @@ scripts/
 User submits answer
   -> evaluate_answer() in bars.py
      -> Try Gemini (DeCE format: {score, quote, confidence} per concept)
-     -> If Gemini fails -> Try OpenAI
-     -> If both fail -> keyword_fallback (4 anti-gaming gates)
+     -> If Gemini fails -> Try Groq llama-3.3-70b (FREE: 14,400 req/day, 30 RPM)
+     -> If Groq fails -> Try OpenAI gpt-4o-mini
+     -> If all LLMs fail -> keyword_fallback (4 anti-gaming gates)
         -> Flag evaluation_mode="degraded" in log
         -> Enqueue for async LLM re-evaluation (reeval_worker.py)
            -> Worker polls every 60s, re-evaluates via Gemini

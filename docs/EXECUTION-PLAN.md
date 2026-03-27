@@ -395,11 +395,11 @@ Sprint A0 ✅ DONE (Session 45) — character_state as Thalamus
 - [x] E2E verified: 6/6 smoke tests pass, 9/9 audit fixes confirmed on production
 - [x] Monetization framework documented (docs/MONETIZATION-ROADMAP.md, docs/AI-TWIN-CONCEPT.md)
 
-Sprint A1 (next): Volaura Crystal Bridge
-- [ ] Hook into POST /api/assessment/complete → emit crystal_earned + skill_verified events
-- [ ] Idempotency: game_character_rewards (one claim per competency per user)
-- [ ] Anti-farming: check game_character_rewards BEFORE INSERT
-- [ ] Acceptance: Complete assessment → GET /character/state shows crystals + verified_skills
+Sprint A1 ✅ DONE (Session 46) — Volaura Crystal Bridge
+- [x] Hook into POST /api/assessment/complete → emit crystal_earned + skill_verified events
+- [x] Idempotency: game_character_rewards (one claim per competency per user)
+- [x] Anti-farming: check game_character_rewards BEFORE INSERT
+- [x] Acceptance: crystal_balance 100→150, verified_skills=[communication silver 62.33] on production
 
 Sprint A2: MindShift → Shared Auth + character_state
 Sprint A3: Life Simulator Bug Fixes (10 P0-P2 bugs)

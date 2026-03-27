@@ -25,18 +25,17 @@
 
 ## Declaring Line (copy-paste at session start)
 ```
-▶ Session resumed. Sprint A0 COMPLETE + Monetization docs written. Date: 2026-03-27. NEXT: Sprint A1 — Volaura assessment completion → crystal_earned + skill_verified events. Protocol v4.0 loaded.
+▶ Session resumed. Sprint A1 COMPLETE. Date: 2026-03-27. crystal_balance 100->150 on assessment complete, skill_verified silver 62.33 confirmed on production. NEXT: Sprint A2 — MindShift shared auth + character_state. Protocol v4.0 loaded.
 ```
 
 ## NEXT SESSION PRIORITIES (Ecosystem Track A)
 1. ~~Sprint A0 — character_state tables + API~~ ✅ DONE (Session 45) — 6/6 E2E pass
-2. Sprint A1 — Volaura Crystal Bridge: assessment complete → crystal_earned + skill_verified events
-   - Hook into POST /api/assessment/complete
-   - Idempotency via game_character_rewards (one claim per competency per user)
-   - Anti-farming: check before INSERT, not after
+2. ~~Sprint A1 — Volaura Crystal Bridge~~ ✅ DONE (Session 46) — crystal_balance 100→150, skill_verified silver 62.33
+   - assessment complete → crystal_earned (50, idempotent) + skill_verified (score+tier) LIVE
+   - Idempotency: game_character_rewards blocks duplicate crystal payouts
 3. Sprint A2 — MindShift → Shared Auth + character_state (focus session → xp_earned event)
 4. Sprint A3 — Life Simulator bug fixes (10 P0-P2 bugs, see ecosystem_master_plan.md)
-5. BrandedBy parallel chat: brief ready at memory/brandedby_implementation_brief.md
+5. BrandedBy parallel chat: prompt ready at docs/BRANDEDBY-HANDOFF-PROMPT.md
 
 ## NEXT SESSION PRIORITIES (Volaura Track, paused)
 - Sprint 10 — pnpm generate:api (replace 7 TODO hooks)

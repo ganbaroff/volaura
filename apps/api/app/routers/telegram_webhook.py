@@ -10,6 +10,7 @@ Setup: POST /api/telegram/setup-webhook to register with Telegram API.
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from pathlib import Path
 
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
@@ -209,17 +210,157 @@ async def _handle_backlog(db, chat_id: int | str) -> None:
         await _send_message(chat_id, f"Ошибка чтения бэклога: {str(e)[:100]}")
 
 
+async def _handle_proposals(db, chat_id: int | str) -> None:
+    """Show latest swarm proposals for CEO to act on."""
+    import json as _json
+    proposals_path = Path(__file__).parent.parent.parent.parent.parent / "memory" / "swarm" / "proposals.json"
+    try:
+        if not proposals_path.exists():
+            await _send_message(chat_id, "📭 Нет активных proposals.")
+            return
+        with open(proposals_path, "r", encoding="utf-8") as f:
+            data = _json.load(f)
+
+        pending = [p for p in data.get("proposals", []) if p.get("status") == "pending"]
+        if not pending:
+            await _send_message(chat_id, "✅ Все proposals обработаны.")
+            return
+
+        msg = f"📋 *Pending Proposals ({len(pending)}):*\n\n"
+        for p in pending[:5]:
+            sev = {"critical": "🔴", "high": "🟠", "medium": "🟡", "low": "🟢"}.get(p.get("severity", ""), "⚪")
+            pid = p.get("id", "?")[:8]
+            msg += f"{sev} `{pid}` {p.get('title', '?')}\n"
+            msg += f"   Agent: {p.get('agent', '?')} | Votes: +{p.get('votes_for', 0)}/-{p.get('votes_against', 0)}\n\n"
+
+        msg += "Ответьте: `act {id}` / `dismiss {id}` / `defer {id}`"
+        await _send_message(chat_id, msg)
+    except Exception as e:
+        await _send_message(chat_id, f"⚠️ Ошибка чтения proposals: {str(e)[:100]}")
+
+
+async def _handle_proposal_action(db, chat_id: int | str, action: str, proposal_id: str) -> None:
+    """Process CEO's decision on a proposal: act, dismiss, or defer."""
+    import json as _json
+    proposals_path = Path(__file__).parent.parent.parent.parent.parent / "memory" / "swarm" / "proposals.json"
+    try:
+        with open(proposals_path, "r", encoding="utf-8") as f:
+            data = _json.load(f)
+
+        found = False
+        for p in data.get("proposals", []):
+            if p.get("id", "").startswith(proposal_id):
+                old_status = p.get("status")
+                if action == "act":
+                    p["status"] = "approved"
+                elif action == "dismiss":
+                    p["status"] = "rejected"
+                elif action == "defer":
+                    p["status"] = "deferred"
+                p["ceo_decision_at"] = datetime.now(timezone.utc).isoformat()
+                found = True
+
+                with open(proposals_path, "w", encoding="utf-8") as f:
+                    _json.dump(data, f, indent=2, ensure_ascii=False)
+
+                emoji = {"act": "✅", "dismiss": "❌", "defer": "⏸️"}.get(action, "")
+                await _send_message(chat_id, f"{emoji} Proposal `{proposal_id}`: {old_status} → {p['status']}\n\n*{p.get('title', '')}*\n\nCTO получит решение при следующей сессии.")
+                # Save to inbox for tracking
+                await _save_message(db, "ceo_to_bot", f"{action} {proposal_id}: {p.get('title', '')}", "proposal_decision")
+                break
+
+        if not found:
+            await _send_message(chat_id, f"⚠️ Proposal `{proposal_id}` не найден. Используйте /proposals.")
+
+    except Exception as e:
+        await _send_message(chat_id, f"⚠️ Ошибка: {str(e)[:100]}")
+
+
+async def _handle_ask_agent(db, chat_id: int | str, agent_name: str, question: str) -> None:
+    """Route CEO's question to a specific agent perspective via LLM."""
+    agent_map = {
+        "security": "Security Auditor — CVSS scoring, attack vectors, RLS gaps, OWASP top 10",
+        "scaling": "Scaling Engineer — bottlenecks at 10x, database, API latency, infrastructure",
+        "product": "Product Strategist — user journeys, Leyla/Nigar personas, adoption, retention",
+        "quality": "Code Quality Engineer — tech debt, patterns, maintainability, test coverage",
+        "watchdog": "CTO Watchdog — process compliance, memory updates, protocol v4.0",
+    }
+
+    if agent_name not in agent_map:
+        agents_list = ", ".join(agent_map.keys())
+        await _send_message(chat_id, f"⚠️ Agent `{agent_name}` не найден.\n\nДоступные: {agents_list}")
+        return
+
+    if not settings.gemini_api_key:
+        await _send_message(chat_id, "⚠️ GEMINI_API_KEY не настроен.")
+        return
+
+    stats = await _get_project_stats(db)
+    perspective = agent_map[agent_name]
+
+    try:
+        from google import genai
+        client = genai.Client(api_key=settings.gemini_api_key)
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=question,
+            config=genai.types.GenerateContentConfig(
+                system_instruction=f"""Ты — {perspective} в swarm команде Volaura.
+CEO (Юсиф) задаёт тебе прямой вопрос через Telegram.
+
+Проект: verified professional platform, 51 API route, 512 tests, $50/mo budget.
+Stats: {stats}
+
+Отвечай от своей роли. Коротко (макс 200 слов). На русском. Честно — если не знаешь, скажи.
+Если вопрос вне твоей экспертизы — скажи какого агента спросить.""",
+                max_output_tokens=300,
+                temperature=0.5,
+            ),
+        )
+        reply = f"🤖 *{agent_name.title()} Agent:*\n\n{response.text.strip()}"
+    except Exception as e:
+        reply = f"⚠️ Agent `{agent_name}` не смог ответить: {str(e)[:100]}"
+
+    await _save_message(db, "bot_to_ceo", f"[{agent_name}] {reply[:500]}", "agent_response")
+    await _send_message(chat_id, reply)
+
+
+async def _handle_skills(chat_id: int | str) -> None:
+    """List available product skills."""
+    skills_dir = Path(__file__).parent.parent.parent.parent.parent / "memory" / "swarm" / "skills"
+    if not skills_dir.exists():
+        await _send_message(chat_id, "⚠️ Папка skills не найдена.")
+        return
+
+    msg = "🧠 *Product Skills:*\n\n"
+    for f in sorted(skills_dir.glob("*.md")):
+        with open(f, "r", encoding="utf-8") as fh:
+            title = fh.readline().replace("#", "").strip()
+        msg += f"• `{f.stem}` — {title[:60]}\n"
+
+    msg += "\n_Skills запускаются через API: POST /api/skills/{name}_"
+    await _send_message(chat_id, msg)
+
+
 async def _handle_help(chat_id: int | str) -> None:
     msg = (
-        "🤖 *Volaura Product Owner Bot*\n\n"
-        "Команды:\n"
+        "🤖 *Volaura Swarm Bot*\n\n"
+        "*Команды:*\n"
         "/status — статус проекта\n"
-        "/backlog — последние идеи и задачи\n"
+        "/proposals — pending proposals от роя\n"
+        "/backlog — идеи и задачи CEO\n"
+        "/skills — список product skills\n"
+        "/ask {agent} {вопрос} — спросить агента\n"
         "/help — эта справка\n\n"
-        "Или просто напишите:\n"
-        "• Идею — сохраню в бэклог\n"
-        "• Задачу — запишу и передам команде\n"
-        "• Вопрос — отвечу из контекста проекта"
+        "*Agents:* security, scaling, product, quality, watchdog\n\n"
+        "*Proposal actions:*\n"
+        "`act {id}` — одобрить\n"
+        "`dismiss {id}` — отклонить\n"
+        "`defer {id}` — отложить\n\n"
+        "*Или просто напишите:*\n"
+        "• Идею → бэклог\n"
+        "• Задачу → команде\n"
+        "• Вопрос → ответ из контекста"
     )
     await _send_message(chat_id, msg)
 
@@ -272,10 +413,32 @@ async def telegram_webhook(request: Request) -> JSONResponse:
         # Route commands
         if text.startswith("/status"):
             await _handle_status(db, chat_id)
+        elif text.startswith("/proposals"):
+            await _handle_proposals(db, chat_id)
         elif text.startswith("/backlog"):
             await _handle_backlog(db, chat_id)
+        elif text.startswith("/skills"):
+            await _handle_skills(chat_id)
+        elif text.startswith("/ask "):
+            # /ask security What are our RLS gaps?
+            parts = text[5:].strip().split(" ", 1)
+            agent = parts[0] if parts else ""
+            question = parts[1] if len(parts) > 1 else ""
+            if agent and question:
+                await _handle_ask_agent(db, chat_id, agent.lower(), question)
+            else:
+                await _send_message(chat_id, "⚠️ Формат: /ask {agent} {вопрос}\nAgents: security, scaling, product, quality, watchdog")
         elif text.startswith("/help") or text.startswith("/start"):
             await _handle_help(chat_id)
+        elif text.lower().startswith(("act ", "dismiss ", "defer ")):
+            # Proposal actions: act abc123 / dismiss abc123 / defer abc123
+            parts = text.split(" ", 1)
+            action = parts[0].lower()
+            pid = parts[1].strip() if len(parts) > 1 else ""
+            if pid:
+                await _handle_proposal_action(db, chat_id, action, pid)
+            else:
+                await _send_message(chat_id, "⚠️ Формат: `act {proposal_id}` / `dismiss {id}` / `defer {id}`")
         else:
             # Free-text → classify + respond + save
             await _classify_and_respond(db, text, chat_id)

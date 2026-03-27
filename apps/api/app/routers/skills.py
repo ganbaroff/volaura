@@ -14,11 +14,12 @@ import re
 from pathlib import Path
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from loguru import logger
 from pydantic import BaseModel, ConfigDict
 
 from app.deps import SupabaseAdmin, SupabaseUser, CurrentUserId
+from app.middleware.rate_limit import limiter, RATE_LLM
 from app.services.llm import evaluate_with_llm
 
 router = APIRouter(prefix="/skills", tags=["skills"])
@@ -196,9 +197,11 @@ async def list_skills():
 
 
 @router.post("/{skill_name}", response_model=SkillResponse)
+@limiter.limit("5/minute")
 async def execute_skill(
+    request: Request,
     skill_name: str,
-    request: SkillRequest,
+    body: SkillRequest,
     db: SupabaseUser,
     user_id: CurrentUserId,
 ):
@@ -223,7 +226,7 @@ async def execute_skill(
     user_context = await _get_user_context(db, user_id)
 
     # Build prompt
-    prompt = _build_skill_prompt(skill_content, user_context, request)
+    prompt = _build_skill_prompt(skill_content, user_context, body)
 
     # Execute via LLM
     try:
@@ -238,10 +241,11 @@ async def execute_skill(
 
     except Exception as e:
         logger.error(f"Skill '{skill_name}' execution failed: {e}")
+        # MED-03 FIX: Don't leak internal error details to client
         raise HTTPException(
             status_code=502,
             detail={
                 "code": "SKILL_EXECUTION_FAILED",
-                "message": f"Skill execution failed: {str(e)[:100]}",
+                "message": "Skill execution failed. Try again later.",
             },
         )

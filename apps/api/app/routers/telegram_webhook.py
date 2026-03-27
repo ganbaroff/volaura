@@ -455,9 +455,18 @@ async def telegram_webhook(request: Request) -> JSONResponse:
 
 @router.post("/setup-webhook")
 async def setup_webhook(request: Request) -> JSONResponse:
-    """Register the webhook URL with Telegram API. Call once after deploy."""
+    """Register the webhook URL with Telegram API. Call once after deploy.
+
+    CRIT-03 FIX: Requires secret header to prevent unauthorized webhook re-registration.
+    Call with: curl -X POST .../api/telegram/setup-webhook -H "X-Admin-Secret: <TELEGRAM_WEBHOOK_SECRET>"
+    """
     if not settings.telegram_bot_token:
         return JSONResponse({"ok": False, "error": "TELEGRAM_BOT_TOKEN not set"})
+
+    # Auth check: require webhook secret as admin header
+    admin_secret = request.headers.get("X-Admin-Secret", "")
+    if not settings.telegram_webhook_secret or admin_secret != settings.telegram_webhook_secret:
+        return JSONResponse({"ok": False, "error": "Unauthorized"}, status_code=403)
 
     webhook_url = "https://volauraapi-production.up.railway.app/api/telegram/webhook"
 

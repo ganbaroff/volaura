@@ -32,7 +32,7 @@ if settings.sentry_dsn:
     logger.info("Sentry monitoring enabled")
 
 from app.middleware.security_headers import SecurityHeadersMiddleware
-from app.routers import activity, assessment, auth, aura, badges, discovery, events, health, invites, leaderboard, organizations, profiles, stats, telegram_webhook, verification
+from app.routers import activity, assessment, auth, aura, badges, character, discovery, events, health, invites, leaderboard, organizations, profiles, stats, telegram_webhook, verification
 from app.services.reeval_worker import run_reeval_worker
 
 
@@ -115,3 +115,4 @@ app.include_router(discovery.router, prefix="/api")
 app.include_router(leaderboard.router, prefix="/api")
 app.include_router(stats.router, prefix="/api")
 app.include_router(telegram_webhook.router, prefix="/api")
+app.include_router(character.router, prefix="/api")

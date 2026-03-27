@@ -32,8 +32,9 @@ if settings.sentry_dsn:
     logger.info("Sentry monitoring enabled")
 
 from app.middleware.security_headers import SecurityHeadersMiddleware
-from app.routers import activity, assessment, auth, aura, badges, character, discovery, events, health, invites, leaderboard, organizations, profiles, stats, telegram_webhook, verification
+from app.routers import activity, assessment, auth, aura, badges, brandedby, character, discovery, events, health, invites, leaderboard, organizations, profiles, stats, telegram_webhook, verification
 from app.services.reeval_worker import run_reeval_worker
+from app.services.video_generation_worker import run_video_generation_worker
 
 
 @asynccontextmanager
@@ -48,14 +49,19 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # Start async re-evaluation worker (ADR-010: keyword_fallback → LLM upgrade queue)
     reeval_task = asyncio.create_task(run_reeval_worker(), name="reeval_worker")
 
+    # Start BrandedBy video generation worker (no-op if FAL_API_KEY not set)
+    video_task = asyncio.create_task(run_video_generation_worker(), name="video_worker")
+
     yield
 
-    # Graceful shutdown: cancel background worker and wait for it to stop
+    # Graceful shutdown: cancel background workers and wait for them to stop
     reeval_task.cancel()
-    try:
-        await asyncio.wait_for(asyncio.shield(reeval_task), timeout=5.0)
-    except (asyncio.CancelledError, asyncio.TimeoutError):
-        pass
+    video_task.cancel()
+    for task in (reeval_task, video_task):
+        try:
+            await asyncio.wait_for(asyncio.shield(task), timeout=5.0)
+        except (asyncio.CancelledError, asyncio.TimeoutError):
+            pass
     logger.info("Volaura API shutting down...")
 
 
@@ -116,3 +122,4 @@ app.include_router(leaderboard.router, prefix="/api")
 app.include_router(stats.router, prefix="/api")
 app.include_router(telegram_webhook.router, prefix="/api")
 app.include_router(character.router, prefix="/api")
+app.include_router(brandedby.router, prefix="/api")

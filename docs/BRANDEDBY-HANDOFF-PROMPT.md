@@ -53,8 +53,8 @@ Frontend:  Next.js 14 App Router + TypeScript + Tailwind 4 + shadcn/ui (Vercel)
 Backend:   FastAPI (Python 3.11+) — SHARED с Volaura, расширить apps/api/
 Database:  Supabase PostgreSQL + RLS — SHARED с Volaura (схема brandedby.*)
 Storage:   Cloudflare R2 (видео/аудио файлы)
-AI Video:  SadTalker / Wav2Lip (open source) → Phase 2: HeyGen API
-TTS:       Kokoro (82M params, CPU, self-hosted, $0) → Phase 2: Bark via Replicate ($0.01)
+AI Video:  D-ID Lite API ($5.90/mo, 10min) → Phase 2: Kling LipSync on fal.ai ($0.42/30s)
+TTS:       D-ID built-in (Phase 1) → Phase 2: Gemini TTS or Kokoro (if Kling pipeline)
 Payments:  Stripe Checkout Sessions + Stripe Billing
 Hosting:   Vercel (frontend) + Railway (backend, shared)
 ```
@@ -207,8 +207,8 @@ CREATE TABLE brandedby.video_orders (
 
 | Решение | Сессия | Риск если неверно | Действие |
 |---------|--------|------|---------|
-| SadTalker > HeyGen для Phase 1 | 45 | HeyGen проще, но дорже | Проверь текущий прайс HeyGen Lite ($29/мес = 60 кредитов) |
-| Kokoro CPU на Railway | 45 | Время генерации неизвестно на Railway CPU | Тест: сгенерировать 30s аудио, измерить |
+| ~~SadTalker > HeyGen~~ **INVALIDATED** | 45→47 | LivePortrait = non-commercial (InsightFace). SadTalker = lower quality. | **D-ID Lite ($5.90/mo, 10min video)** = Phase 1 winner. 1 API call, no pipeline. Kling LipSync on fal.ai ($0.42/30s) = Phase 2. |
+| ~~Kokoro CPU на Railway~~ **INVALIDATED** | 45→47 | D-ID handles TTS internally, Kokoro not needed for Phase 1 | Revisit for Phase 2 if moving to Kling LipSync pipeline |
 | brandedby.* схема в Volaura Supabase | 45 | Один DB instance = single point of failure | Приемлемо при <$50/мес бюджете |
 | Stripe Checkout (не PaymentIntents) | 45 | Checkout = redirect flow, не embedded | Для Phase 1 ок, Phase 3 нужен Elements |
 

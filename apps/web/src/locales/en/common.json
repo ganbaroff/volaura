@@ -68,7 +68,8 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "mainNavigation": "Main navigation",
-    "orgVolunteers": "Volunteers"
+    "orgVolunteers": "Volunteers",
+    "brandedby": "AI Twin"
   },
   "auth": {
     "login": "Log In",

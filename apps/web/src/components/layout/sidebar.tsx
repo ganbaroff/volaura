@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { href: "/profile",        labelKey: "nav.profile",        icon: "◉" },
   { href: "/aura",           labelKey: "nav.aura",           icon: "◈" },
   { href: "/assessment",     labelKey: "nav.assessment",     icon: "◑" },
+  { href: "/brandedby",      labelKey: "nav.brandedby",      icon: "✦" },
   { href: "/events",         labelKey: "nav.events",         icon: "◎" },
   { href: "/my-organization", labelKey: "nav.myOrganization", icon: "🏢" },
   { href: "/org-volunteers",  labelKey: "nav.orgVolunteers",  icon: "👥" },

@@ -460,3 +460,24 @@ Session 42 proof: solo implementation → 0 bugs found. Team review → 7 bugs f
 3. `curl -X POST /api/assessment/start` → answer → complete — happy path works
 **Why:** Session 43 found 4 production-breaking bugs that 512 unit tests missed. Unit tests test code. Smoke tests test product.
 **Anti-pattern detected:** "512 passed ✅" → sprint complete → celebration → production broken.
+
+## Pattern: LLM Fallback Chain for Scale Events (Session 47)
+**Discovered:** Activation wave analysis (11K contacts → 3K/day → Gemini 15 RPM saturates at 110 users/hour)
+**Rule:** Before any user activation wave, verify LLM provider chain handles the expected load WITHOUT rate-limiting.
+**Chain for assessment evaluation:**
+1. Gemini 2.5 Flash (primary — 15 RPM free)
+2. Groq llama-3.3-70b (secondary — 14,400 req/day free → absorbs wave)
+3. OpenAI gpt-4o-mini (tertiary — paid, rate-limit-resistant)
+4. keyword_fallback (always-available degraded mode)
+**Capacity math pattern:** users/hour × questions/user = LLM calls/hour ÷ 60 = RPM needed.
+Compare against provider free tier. If exceeded → add next fallback tier.
+**localStorage rule:** For multi-step auth flows (register → email confirm → callback), use localStorage (not sessionStorage) to preserve state across tab changes and redirects.
+
+## Pattern: Referral Tracking at Registration (Session 47)
+**Discovered:** Activation wave needs to attribute signups to HR coordinators for B2B pipeline.
+**Rule:** Any activation wave MUST have `referral_code` + `utm_source` + `utm_campaign` captured at signup.
+**Implementation:** 
+1. Frontend saves ?ref + utm_* params to localStorage at /register page load
+2. Auth callback reads localStorage → PATCH /api/profiles/me with referral_source
+3. Supabase VIEW: referral_stats → CEO can query without analytics tool
+**Anti-pattern:** Launching activation wave without referral tracking = no data to know what worked, who to reward, or which HR to convert to B2B customer.

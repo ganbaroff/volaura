@@ -539,6 +539,23 @@ Additionally, frontend `Question` type had 6/6 fields mismatched vs backend `Que
 **CLASS:** CLASS 5 (Fabrication) — 4th instance.
 
 
+### Mistake #57 — ZEUS designed from scratch when MiroFish existed (Session 47, 2026-03-27)
+**What:** CTO spent 4 hours designing ZEUS as a new autonomous content system — architecture, scheduler, moderation layer, publish logic, Telegram integration. Then team raised: "Why didn't you just clone MiroFish? It already has all of this: agent loop, Groq/Gemini, python-telegram-bot, scheduling, delays."
+**Caught by:** Yusif: "кстати почему никто из вас это не предложил коллеги?" + team audit of chat
+**Root cause:** CLASS 3 (Solo execution) — built without checking if existing infrastructure solved the problem. MiroFish = 80% of ZEUS. CTO was "in the zone" building instead of consulting the team.
+**Fix applied:** Refactored ZEUS to clone autonomous_run.py pattern. Build time: 4.5h instead of 12h.
+**Rule:** Before writing ANY new service, check `packages/` and `apps/` for existing solutions. "Already built" check must precede design work. If unclear → ask team.
+**Enforcement:** Pre-sprint Step 0 must include "Does this already exist?" check. See CLAUDE.md Phase B checklist.
+**CLASS:** CLASS 3 (Solo execution) — 11th instance.
+
+### Mistake #58 — sessionStorage vs localStorage at auth callback (Session 47, 2026-03-27)
+**What:** In MASS-ACTIVATION-PLAN.md, CTO wrote "save UTM params to sessionStorage at /register → read at auth callback." Scaling Engineer caught: sessionStorage is scoped per-tab. The auth callback fires in the SAME tab after email confirmation redirect — but if the user opens a new tab (common mobile behavior), sessionStorage is lost.
+**Caught by:** Scaling Engineer agent in DSP stress test.
+**Root cause:** CLASS 4 (Schema/type mismatch equivalent) — assumed browser storage behavior without verifying cross-tab scope rules.
+**Fix applied:** Corrected in MASS-ACTIVATION-PLAN.md to use localStorage.
+**Rule:** For auth flows with redirects, always use localStorage (not sessionStorage) for data that needs to survive navigation and tab changes.
+**CLASS:** CLASS 4 (Technical assumption) — 5th instance.
+
 ### Mistake #54 — Solo execution: agent outputs stayed in chat only, not in files (Session 45-46, 2026-03-27)
 **What:** 3 agents analyzed queue mechanic, tier structure, and ethics. Their outputs stayed in chat. Session ended without writing ANY documentation files. Yusif: "в документах ничего ты не сохранил. и нету никакого конкретного родмяпа от тебя."
 **Same as:** Mistake #42 (said lesson learned, saved nothing). Mistake #7, #23, #32 — CLASS 2 chain.

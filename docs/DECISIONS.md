@@ -700,3 +700,28 @@ Claude's default is single-threaded. Every strategic/evaluative question should 
 - ANY validation that involves the same agent creating AND evaluating → flag as circular
 - FastAPI route ordering: all `/me/*` routes MUST be registered before `/{wildcard}` routes — add to code-review checklist
 - keyword_fallback improvements (required_context, GRS metric) → Sprint 10
+
+---
+
+## Sprint B3 — BrandedBy Video Pipeline + Share Mechanic (Session 49, 2026-03-27)
+
+**Decision: ZEUS + fal.ai MuseTalk as video generation architecture**
+- DSP: 4 parallel haiku agents, 4 paths scored
+- Winner: ZEUS + fal.ai MuseTalk (40/50) — corrected for queue mechanic (free users wait 48h anyway → cold start irrelevant)
+- Modal GPU (29/50) failed confidence gate — Docker + cold start complexity unacceptable for solo founder
+- D-ID rejected: 10 min/month Lite plan cap = ~20 videos. Not scalable at K-factor 0.40.
+
+### ✓ What went as simulated
+- fal.ai MuseTalk integration was straightforward (submit + handler.get pattern)
+- Worker pattern from reeval_worker.py transferred cleanly — same polling/locking/retry structure
+- Column name mismatch caught early (output_url vs video_url, processing_started_at vs started_at) — schema verification step prevented 422 errors
+
+### ✗ What DSP did not predict
+- Schema column names differed from what worker assumed — requires Schema Verification step even for own code written 1 session ago
+- No `retry_count` column in original migration — required additional migration + apply
+
+### → Feed into next simulation
+- When building workers against existing tables: re-read migration SQL before writing update queries
+- fal.ai balance = $0 (key valid) — must top up before E2E test. Add "check API balance" to deploy checklist for fal.ai
+- K-factor mechanic is built but unproven — first real test after fal.ai top-up
+

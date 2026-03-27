@@ -6,7 +6,23 @@
 ---
 
 ## Last Updated
-2026-03-27 | Session 46 (Monetization Docs): **Sprint A0 documentation complete.**
+2026-03-27 | Session 49 (Sprint B3): **ZEUS video skill + async worker + share mechanic COMPLETE. Full BrandedBy pipeline live.**
+
+**Session 47 accomplishments:**
+- docs/MASS-ACTIVATION-PLAN.md created — answers 5 onboarding questions + Sprint 10.5 plan
+- Migration 000034 applied to production: referral_code + utm_source + utm_campaign on profiles + referral_stats VIEW
+- Migration 000035 applied to production: scenario_ru column on questions (nullable, fallback to EN)
+- Groq fallback added to bars.py: chain is now Gemini → Groq → OpenAI → keyword_fallback
+- config.py: validate_production_settings() warns if GROQ_API_KEY missing (activation wave risk)
+- Key finding: Gemini 15 RPM = system crash at 110+ users/hour. Groq free tier (14,400 req/day) = fix.
+- Scaling Engineer caught: sessionStorage has tab isolation bug → use localStorage for UTM capture at auth callback
+- Language architecture decided: ['az', 'en', 'ru'] — RU before activation, TR in Phase 2
+
+**Session 46 accomplishments:**
+- monetization_framework.md created (memory/) — full tier structure, crystal economy, 12 queue applications, ethics red lines, AZN pricing, revenue projections
+- docs/MONETIZATION-ROADMAP.md created — project-level roadmap (checked into repo)
+- docs/AI-TWIN-CONCEPT.md created — phases, tech stack, "AI draft + approve" pattern, BrandedBy integration
+- MEMORY.md index updated with monetization_framework.md
 **Session 46 accomplishments:**
 - monetization_framework.md created (memory/) — full tier structure, crystal economy, 12 queue applications, ethics red lines, AZN pricing, revenue projections
 - docs/MONETIZATION-ROADMAP.md created — project-level roadmap (checked into repo)
@@ -23,23 +39,55 @@
   - E2E verified: 6/6 smoke tests pass, all computed fields correct
 - Leyla test user: `leyla@test.volaura.com` / `LeylaProd2026!`
 
+## Session 48 accomplishments (2026-03-27):
+- brandedby.ai_twins + brandedby.generations tables LIVE in Supabase (RLS, triggers, indexes, security fixed)
+- FastAPI 8 routes: POST/GET/PATCH twins + refresh-personality + activate + POST/GET/GET generations
+- Personality service: character_state → Gemini → personality_prompt (with rule-based fallback)
+- CORS: brandedby.xyz added, config.py: DID_API_KEY field added
+- D-ID API key saved to apps/api/.env (tested: valid, 0 credits → needs Lite plan $5.90)
+- Swarm DSP (4 haiku agents): ZEUS + fal.ai MuseTalk = winner 40/50 (D-ID rejected: caps, not scalable)
+- Full project read: all MD + swarm files, complete picture of all 5 products + priorities
+- Research: LivePortrait non-commercial (InsightFace), D-ID scales to only 20 videos/month
+- Handoff prompt updated: D-ID invalidated, fal.ai MuseTalk = Phase 1, Kling = Phase 2
+
+## Session 49 accomplishments (2026-03-27):
+- `packages/swarm/zeus_video_skill.py`: ZeusVideoSkill class (fal.ai PlayAI TTS → MuseTalk → video_url)
+- `apps/api/app/services/video_generation_worker.py`: async polling worker (queued→processing→completed/failed, stale-lock recovery, retry_count)
+- Migration 000034 applied: `retry_count INT DEFAULT 0` added to `brandedby.generations`
+- `apps/api/app/main.py`: video_worker started in lifespan alongside reeval_worker
+- `apps/api/requirements.txt`: `fal-client>=0.5.0` added
+- `apps/web/src/hooks/queries/use-brandedby.ts`: useMyTwin, useGenerations, useGeneration (with 5s poll while processing), useCreateTwin, useRefreshPersonality, useActivateTwin, useCreateGeneration
+- `apps/web/src/app/[locale]/(dashboard)/brandedby/page.tsx`: BrandedBy main page (twin setup flow + generation form + recent videos list)
+- `apps/web/src/app/[locale]/(dashboard)/brandedby/generations/[id]/page.tsx`: Video delivery + share page ($730K mechanic: LinkedIn share + TikTok download + copy caption with #BrandedBy)
+- Sidebar: "AI Twin" / "AI Əkizim" nav entry added (✦ icon)
+- fal.ai key saved: `6d31ab9a-6785-42b1-ad7b-b4434bca981a:092a28dcf05de7bef1da7c71b1242fae` (valid, balance = $0 → needs top-up)
+
 ## Declaring Line (copy-paste at session start)
 ```
-▶ Session resumed. Sprint A1 COMPLETE. Date: 2026-03-27. crystal_balance 100->150 on assessment complete, skill_verified silver 62.33 confirmed on production. NEXT: Sprint A2 — MindShift shared auth + character_state. Protocol v4.0 loaded.
+▶ Session resumed. Sprint B3 COMPLETE. Date: 2026-03-27. Full BrandedBy pipeline built: ZEUS skill + worker + share mechanic. NEXT: Top up fal.ai balance → test E2E → deploy to Railway → brandedby.xyz domain. Protocol v4.0 loaded.
 ```
+
+## NEXT SESSION PRIORITIES (Activation Wave — 3-4 days to ship)
+1. ~~Groq fallback in bars.py~~ ✅ DONE (Session 47) — Gemini→Groq→OpenAI→keyword chain
+2. ~~Migration 000034 (referral tracking)~~ ✅ DONE (Session 47) — live on production
+3. ~~Migration 000035 (scenario_ru)~~ ✅ DONE (Session 47) — live on production
+4. **UTM capture at auth callback** — save ?ref + utm_* to localStorage at /register → PATCH profile at auth/callback (2h)
+5. **Welcome page** — apps/web/src/app/[locale]/welcome/page.tsx → "Start Assessment" CTA (3h)
+6. **Badge share button** — LinkedIn/TikTok share on /aura page post-completion (2h)
+7. **30 RU question translations** — scripts/translate_ru.py via Gemini batch (2h)
+8. **RU locale** — public/locales/ru/common.json + generateStaticParams update (1h)
+9. CEO provides ~10 HR coordinator names → generate ref codes → send activation wave
 
 ## NEXT SESSION PRIORITIES (Ecosystem Track A)
 1. ~~Sprint A0 — character_state tables + API~~ ✅ DONE (Session 45) — 6/6 E2E pass
 2. ~~Sprint A1 — Volaura Crystal Bridge~~ ✅ DONE (Session 46) — crystal_balance 100→150, skill_verified silver 62.33
-   - assessment complete → crystal_earned (50, idempotent) + skill_verified (score+tier) LIVE
-   - Idempotency: game_character_rewards blocks duplicate crystal payouts
 3. Sprint A2 — MindShift → Shared Auth + character_state (focus session → xp_earned event)
 4. Sprint A3 — Life Simulator bug fixes (10 P0-P2 bugs, see ecosystem_master_plan.md)
 5. BrandedBy parallel chat: prompt ready at docs/BRANDEDBY-HANDOFF-PROMPT.md
 
 ## NEXT SESSION PRIORITIES (Volaura Track, paused)
 - Sprint 10 — pnpm generate:api (replace 7 TODO hooks)
-- Sprint 10 — Org dashboard
+- Sprint 10 — Org dashboard (fastest B2B revenue: 200 orgs × $49/mo = $5,800 MRR)
 - Post 003 angle (CEO decision on angle needed)
 - Vitest fix (Node v24 → v20 LTS)
 

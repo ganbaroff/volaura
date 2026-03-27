@@ -54,6 +54,7 @@ class Settings(BaseSettings):
 
     # BrandedBy — AI video generation
     did_api_key: str = ""  # D-ID API key (Phase 1: Lite plan $5.90/mo)
+    fal_api_key: str = ""  # fal.ai API key — MuseTalk + Kling LipSync (DSP winner)
 
     @property
     def is_dev(self) -> bool:

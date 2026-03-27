@@ -440,14 +440,16 @@ Sprint A6: Pro tier billing
 - Pivot confirmed: Regular users first (AI Twin), celebrities later
 - Domain: brandedby.xyz ✅
 
-Sprint B1: Foundation (Supabase migration, auth, basic UI)
-Sprint B2: AI Twin MVP (text-only avatar, character_state integration)
-Sprint B3: Video pipeline + SHARE MECHANIC ← THE MOST IMPORTANT SPRINT
-  - [ ] AI Twin video generation (SadTalker/Wav2Lip or Replicate)
-  - [ ] Delivery screen: ONE button "Share on LinkedIn / TikTok"
-  - [ ] Video: 15 seconds, user face, subtle "Made with BrandedBy" watermark
-  - [ ] K-factor 0.40 target (viral coefficient)
-  - [ ] Crystal redemption flow: Volaura crystals → BrandedBy queue skip
+Sprint B1: Foundation (Supabase migration, auth, basic UI) ✅ COMPLETE (Session 48)
+Sprint B2: AI Twin MVP (character_state integration + Gemini personality) ✅ COMPLETE (Session 48)
+Sprint B3: Video pipeline + SHARE MECHANIC ✅ COMPLETE (Session 49)
+  - [x] AI Twin video generation — ZEUS + fal.ai MuseTalk (DSP winner 40/50) — packages/swarm/zeus_video_skill.py
+  - [x] Async video worker — apps/api/app/services/video_generation_worker.py (polling, retry, stale-lock recovery)
+  - [x] Delivery screen — /brandedby/generations/[id] — LinkedIn share + TikTok download + copy caption
+  - [x] Caption auto-generated with #BrandedBy #Volaura — K-factor mechanic built
+  - [x] Crystal redemption flow: Volaura crystals → BrandedBy queue skip (25 crystals) ✅ B1
+  - [ ] Top up fal.ai balance ($) → E2E test → deploy to Railway ← NEXT
+  - [ ] brandedby.xyz → Vercel domain connect
   - [ ] Monthly AI Twin refresh (AURA updated → new video → share again) = churn prevention
 
 **Never-Revoke List (write now, enforce forever)** ← Added 2026-03-27

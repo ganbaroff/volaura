@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
-"""ZEUS Video Skill — AI Twin video generation via fal.ai MuseTalk.
+"""ZEUS Video Skill — AI Twin video generation via fal.ai SadTalker.
 
-DSP winner (Session 48, 40/50): ZEUS orchestrates fal.ai MuseTalk.
+DSP winner (Session 48, 40/50): ZEUS orchestrates fal.ai lip-sync.
 Architecture:
-    script → fal.ai TTS → audio_url
-    photo_url + audio_url → fal.ai MuseTalk → video_url
+    script → fal.ai Kokoro TTS → audio_url
+    photo_url + audio_url → fal.ai SadTalker → video_url
+
+Note: MuseTalk requires an MP4 video input (not a portrait image).
+SadTalker is designed for portrait image + audio → talking-head video.
 
 Pipeline is fully async (asyncio.to_thread wraps blocking fal_client calls).
 Integrates with brandedby.generations queue via status updates to Supabase.
@@ -40,14 +43,16 @@ except ImportError:
 
 
 # ── fal.ai model IDs ──────────────────────────────────────────
-FAL_MUSETALK_MODEL = "fal-ai/musetalk"
+# SadTalker: portrait IMAGE + audio → talking-head video (MuseTalk requires MP4 video)
+FAL_SADTALKER_MODEL = "fal-ai/sadtalker"
 FAL_TTS_MODEL = "fal-ai/kokoro/american-english"  # PlayAI deprecated; Kokoro $0.02/1k chars
 
 # ── Quality / cost settings ───────────────────────────────────
-MUSETALK_CONFIG = {
-    "face_resize_factor": 1.0,       # 1.0 = natural size
-    "fps": 25,                        # standard lip-sync fps
-    "audio_padding": 0.3,             # seconds of silence padding
+SADTALKER_CONFIG = {
+    "face_model_resolution": "512",  # higher quality (256 = faster, cheaper)
+    "expression_scale": 1.0,         # natural expression intensity
+    "still_mode": True,              # fewer head movements = more professional
+    "preprocess": "full",            # process full image (not just crop)
 }
 
 TTS_CONFIG = {
@@ -113,7 +118,7 @@ class ZeusVideoSkill:
         return video_url
 
     async def _generate_audio(self, script: str, *, voice: str | None = None) -> str:
-        """Convert script to audio via fal.ai PlayAI TTS.
+        """Convert script to audio via fal.ai Kokoro TTS.
 
         Returns a public audio URL hosted on fal.ai CDN.
         """
@@ -145,27 +150,63 @@ class ZeusVideoSkill:
 
         return str(audio_url)
 
+    async def _ensure_fal_url(self, url: str) -> str:
+        """Re-upload photo to fal.media CDN.
+
+        fal.ai workers can't reliably download from arbitrary CDNs
+        (Supabase Storage, imgur, GCS, etc. are often blocked).
+        We download locally then upload to fal.media via upload_file().
+        """
+        if "fal.media" in url or "fal.run" in url:
+            return url  # Already on fal CDN
+
+        import tempfile
+        import urllib.request as _urllib
+
+        try:
+            tmp = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+            tmp.close()
+            await asyncio.to_thread(_urllib.urlretrieve, url, tmp.name)
+            fal_url = await asyncio.to_thread(fal_client.upload_file, tmp.name)
+            logger.info("Photo uploaded to fal.media", fal_url=str(fal_url)[:60])
+            return str(fal_url)
+        except Exception as e:
+            logger.warning(
+                "Failed to re-upload photo to fal.media, using original URL",
+                error=str(e)[:200],
+            )
+            return url  # Fallback: try original anyway
+        finally:
+            try:
+                import os as _os
+                _os.unlink(tmp.name)
+            except Exception:
+                pass
+
     async def _generate_video(self, photo_url: str, audio_url: str) -> str:
-        """Run fal.ai MuseTalk: photo + audio → talking-head video.
+        """Run fal.ai SadTalker: portrait image + audio → talking-head video.
 
         Returns a public video URL hosted on fal.ai CDN.
         """
-        musetalk_input = {
-            "video_url": photo_url,    # MuseTalk accepts single image URL
-            "audio_url": audio_url,
-            **MUSETALK_CONFIG,
+        # Ensure photo is on fal.media CDN (fal workers can't reach arbitrary URLs)
+        source_url = await self._ensure_fal_url(photo_url)
+
+        sadtalker_input = {
+            "source_image_url": source_url,  # portrait image (JPG/PNG)
+            "driven_audio_url": audio_url,   # audio to lip-sync
+            **SADTALKER_CONFIG,
         }
 
         try:
             # Use submit + result for async (avoids blocking Railway thread pool)
             handler = await asyncio.to_thread(
                 fal_client.submit,
-                FAL_MUSETALK_MODEL,
-                arguments=musetalk_input,
+                FAL_SADTALKER_MODEL,
+                arguments=sadtalker_input,
             )
             result = await asyncio.to_thread(handler.get)
         except Exception as e:
-            logger.error("fal.ai MuseTalk failed", error=str(e))
+            logger.error("fal.ai SadTalker failed", error=str(e))
             raise RuntimeError(f"Video generation failed: {e}") from e
 
         # Extract video URL from result
@@ -175,8 +216,8 @@ class ZeusVideoSkill:
             or result.get("url")
         )
         if not video_url:
-            logger.error("MuseTalk result missing video URL", result=result)
-            raise RuntimeError(f"MuseTalk returned no video URL. Result: {result}")
+            logger.error("SadTalker result missing video URL", result=result)
+            raise RuntimeError(f"SadTalker returned no video URL. Result: {result}")
 
         return str(video_url)
 

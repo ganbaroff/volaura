@@ -32,7 +32,7 @@ router = APIRouter(prefix="/organizations", tags=["Organizations"])
 @router.get("", response_model=list[OrganizationResponse])
 async def list_organizations(db: SupabaseAdmin) -> list[OrganizationResponse]:
     """List all public organizations."""
-    result = await db.table("organizations").select("*").order("name").execute()
+    result = await db.table("organizations").select("id, name, description, logo_url, type, website, is_active").order("name").execute()
     return [OrganizationResponse(**row) for row in (result.data or [])]
 
 

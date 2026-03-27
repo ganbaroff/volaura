@@ -103,7 +103,7 @@ async def get_leaderboard(
             total_count=len(entries),
         )
 
-    except Exception as e:
-        logger.warning("Leaderboard query failed: {err}", err=str(e)[:300])
+    except Exception:
+        logger.exception("Leaderboard query failed")
         # Return empty list rather than 500 — public endpoint should degrade gracefully
         return LeaderboardResponse(entries=[], period=period, total_count=0)

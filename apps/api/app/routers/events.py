@@ -9,7 +9,7 @@ from fastapi import APIRouter, HTTPException, Query, Request
 from loguru import logger
 
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
-from app.middleware.rate_limit import limiter, RATE_PROFILE_WRITE
+from app.middleware.rate_limit import limiter, RATE_PROFILE_WRITE, RATE_DISCOVERY
 from app.schemas.event import (
     CheckInRequest,
     CoordinatorRatingRequest,
@@ -26,7 +26,9 @@ router = APIRouter(prefix="/events", tags=["Events"])
 # ── List & create ─────────────────────────────────────────────────────────────
 
 @router.get("", response_model=list[EventResponse])
+@limiter.limit(RATE_DISCOVERY)
 async def list_events(
+    request: Request,
     db: SupabaseAdmin,
     status: str | None = Query(None),
     limit: int = Query(20, le=100),
@@ -43,7 +45,7 @@ async def list_events(
 @router.get("/{event_id}", response_model=EventResponse)
 async def get_event(event_id: str, db: SupabaseAdmin) -> EventResponse:
     """Get a single event by ID."""
-    result = await db.table("events").select("*").eq("id", event_id).single().execute()
+    result = await db.table("events").select("*").eq("id", event_id).neq("status", "draft").single().execute()
     if not result.data:
         raise HTTPException(status_code=404, detail={"code": "EVENT_NOT_FOUND", "message": "Event not found"})
     return EventResponse(**result.data)

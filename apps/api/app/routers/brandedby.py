@@ -339,6 +339,15 @@ async def create_generation(
 
     crystal_cost = 0
     if body.skip_queue:
+        # SECURITY NOTE (MED-08 / TOCTOU): The balance check and deduction below
+        # are NOT atomic. A concurrent request could pass the balance check before
+        # the deduction is committed, resulting in a crystal double-spend.
+        # Proper fix: use a PostgreSQL RPC function that performs
+        # SELECT ... FOR UPDATE on game_crystal_ledger rows for this user_id,
+        # then checks balance and inserts the deduction atomically inside a
+        # single transaction. Until that RPC exists, this race window remains
+        # open under concurrent requests from the same user.
+
         # Check crystal balance via character_state RPC
         state = await db.rpc(
             "get_character_state", {"p_user_id": user_id}

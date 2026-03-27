@@ -377,6 +377,44 @@ Spanned Sessions 14a through 14d (2026-03-24)
 
 ---
 
+### ФАЗА ECOSYSTEM: Cross-Product Integration (Sessions 45+)
+
+> Parallel to Volaura Track 10. 3 tracks (A/B/C). Full plan: memory/ecosystem_master_plan.md
+> Monetization: docs/MONETIZATION-ROADMAP.md | AI Twin: docs/AI-TWIN-CONCEPT.md
+
+**Last synced: 2026-03-27 Session 46**
+
+**Track A: Core Integration (CTO leads)**
+
+Sprint A0 ✅ DONE (Session 45) — character_state as Thalamus
+- [x] Migration 000031: character_events + game_crystal_ledger + game_character_rewards (RLS on all)
+- [x] Migration 000032: audit fixes — CHECK constraints, BIGINT, search_path, regex guards, skill_unverified
+- [x] schemas/character.py: EventType (8 types), SourceProduct, DAILY_CRYSTAL_CAP, CharacterEventCreate/Out/StateOut
+- [x] routers/character.py: POST /api/character/events, GET /api/character/state, GET /api/character/events
+- [x] main.py: character router registered at /api prefix
+- [x] E2E verified: 6/6 smoke tests pass, 9/9 audit fixes confirmed on production
+- [x] Monetization framework documented (docs/MONETIZATION-ROADMAP.md, docs/AI-TWIN-CONCEPT.md)
+
+Sprint A1 (next): Volaura Crystal Bridge
+- [ ] Hook into POST /api/assessment/complete → emit crystal_earned + skill_verified events
+- [ ] Idempotency: game_character_rewards (one claim per competency per user)
+- [ ] Anti-farming: check game_character_rewards BEFORE INSERT
+- [ ] Acceptance: Complete assessment → GET /character/state shows crystals + verified_skills
+
+Sprint A2: MindShift → Shared Auth + character_state
+Sprint A3: Life Simulator Bug Fixes (10 P0-P2 bugs)
+Sprint A4: Voice AI Twin (Kokoro, queue infrastructure)
+Sprint A5: Stripe integration (crystal purchase)
+Sprint A6: Pro tier billing
+
+**Track B: BrandedBy (parallel chat)**
+- Brief: memory/brandedby_implementation_brief.md (ready)
+- Sprint B1: DB migration D1→Supabase, fix celebrity data (Cyrillic)
+- Sprint B2: SIMA integration, Stripe Elements
+- Sprint B3: AI video pipeline (SadTalker/Wav2Lip, queue)
+
+---
+
 ### ФАЗА 4: Testing + Security — PARTIALLY COMPLETE (merged into Sprints 3-8)
 
 - [x] Security hardening: 7 CRITICAL+HIGH fixed, CSP, LLM timeout, rate limiting, auth error leak

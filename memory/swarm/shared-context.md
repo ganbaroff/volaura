@@ -7,7 +7,8 @@
 
 ## Current Sprint Goal
 
-**Sprint 9 — COMPLETE** ✅ | **Sprint 10 — STARTING**
+**Volaura Track: Sprint 9 COMPLETE ✅ | Sprint 10 STARTING**
+**Ecosystem Track: Sprint A0 COMPLETE ✅ | Sprint A1 NEXT**
 
 Sprint 9 completed items:
 - CSV bulk invite: DONE (Session 39)
@@ -17,6 +18,20 @@ Sprint 9 completed items:
 - All 9 migrations applied via Supabase MCP (Sessions 43-44)
 - Question bank: 0 placeholders, 90 real scenarios across 8 competencies (Session 44)
 - Railway fix: Supabase anon key hardcoded fallback (Session 44, Mistake #53)
+
+Sprint A0 completed items (Sessions 45-46):
+- character_state as Thalamus: cross-product event bus LIVE on production
+- Migration 000031: character_events + game_crystal_ledger + game_character_rewards
+- Migration 000032: audit fixes (CHECK constraints, BIGINT, search_path, regex guards, skill_unverified)
+- routers/character.py: POST /api/character/events, GET /api/character/state, GET /api/character/events
+- schemas/character.py: EventType (8), SourceProduct (4), CharacterStateOut, VerifiedSkillOut
+- E2E: 6/6 smoke tests pass, 9/9 P0/P1/P2 audit fixes confirmed on production
+- docs/MONETIZATION-ROADMAP.md + docs/AI-TWIN-CONCEPT.md written
+
+**Sprint A1 priorities (NEXT):**
+1. POST /api/assessment/complete → emit crystal_earned + skill_verified events
+2. game_character_rewards idempotency: check BEFORE INSERT
+3. Acceptance: Complete assessment → GET /character/state shows crystals + verified_skills
 
 **Sprint 10 priorities:**
 1. `pnpm generate:api` → replace 7 TODO frontend hooks with generated types
@@ -78,6 +93,8 @@ apps/api/app/
     organizations.py — Org endpoints
     profiles.py      — Volunteer profiles
     telegram_webhook.py — CEO<->Bot bidirectional
+    character.py     — Cross-product event bus (NEW Session 45)
+                        POST /api/character/events, GET /api/character/state, GET /api/character/events
   core/assessment/
     engine.py        — IRT/CAT adaptive engine (3PL + EAP)
     bars.py          — BARS LLM evaluator + DeCE + 4 anti-gaming gates
@@ -87,6 +104,7 @@ apps/api/app/
     aura.py          — AuraScoreResponse, UpdateVisibilityRequest
     assessment.py    — SessionOut, StartAssessmentRequest, SubmitAnswerRequest
     organization.py  — OrganizationResponse
+    character.py     — EventType, SourceProduct, CharacterEventCreate/Out, CharacterStateOut (NEW Session 45)
   services/
     reeval_worker.py — Async LLM re-evaluation of degraded answers (NEW Session 42)
     swarm_service.py — Multi-model swarm evaluation
@@ -98,9 +116,11 @@ apps/api/app/
   main.py            — FastAPI app, router registration, reeval_worker lifespan
 
 supabase/migrations/
-  ...30+ migration files including:
-  20260326000029_evaluation_queue.sql     — Queue for degraded answer re-evaluation
+  ...32 migration files including:
+  20260326000029_evaluation_queue.sql             — Queue for degraded answer re-evaluation
   20260326000030_update_question_keywords_grs.sql — Keyword redesign for GRS compliance
+  20260327000031_character_state_tables.sql       — character_events + game_crystal_ledger + game_character_rewards (NEW)
+  20260327000032_character_state_fixes.sql        — CHECK constraints, BIGINT, search_path, skill_unverified (NEW)
 
 scripts/
   audit_seed_questions.py  — GRS audit tool for question bank

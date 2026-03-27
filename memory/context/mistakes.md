@@ -507,3 +507,13 @@ Additionally, frontend `Question` type had 6/6 fields mismatched vs backend `Que
 **Lesson:** For Railway deployments — if a managed env var integration exists for a service (Supabase, Postgres, Redis), Railway may inject its own values for known variable names. Use non-standard names to avoid interception, or hardcode public keys as defaults.
 **Rule:** After any Railway env var change → ALWAYS test with debug endpoint (`/health/env-debug`) to confirm the value actually reaches the container. Never assume `railway variables` output = container reality.
 **CLASS:** CLASS 3 (Config error) — infrastructure platform behavior can silently override configuration.
+
+
+### Mistake #54 — Solo execution: agent outputs stayed in chat only, not in files (Session 45-46, 2026-03-27)
+**What:** 3 agents analyzed queue mechanic, tier structure, and ethics. Their outputs stayed in chat. Session ended without writing ANY documentation files. Yusif: "в документах ничего ты не сохранил. и нету никакого конкретного родмяпа от тебя."
+**Same as:** Mistake #42 (said lesson learned, saved nothing). Mistake #7, #23, #32 — CLASS 2 chain.
+**Root cause:** CTO treated chat responses as "done". Agent outputs only persist if written to disk. Context compacts. Chat disappears.
+**Fix applied (Session 46):** Wrote docs/MONETIZATION-ROADMAP.md, docs/AI-TWIN-CONCEPT.md, memory/monetization_framework.md, updated EXECUTION-PLAN.md, DECISIONS.md, shared-context.md, deadlines.md.
+**Rule:** Agent analysis is ZERO value until it's written to a file. "Agents analyzed → I wrote the summary in chat" = Mistake #54. Correct: "Agents analyzed → I wrote the file → I showed the file path."
+**Enforcement:** After any agent outputs → NEXT tool call must be Write/Edit to a persistent file. If no file created = agent work didn't happen.
+**CLASS:** CLASS 2 (Memory not persisted) — 9th instance.

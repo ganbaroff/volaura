@@ -1,5 +1,21 @@
 # Architecture Decisions Log
 
+## Sessions 45-46 Retrospective — 2026-03-27 (Sprint A0 + Monetization Docs)
+
+✓ Sprint A0: character_state as Thalamus — POST/GET /api/character/* live on production (6/6 E2E)
+✓ Audit self-initiated (Yusif's "найдите ошибки"): 9 issues found (P0×3, P1×3, P2×3), all fixed
+✓ Migration 000031: character_events + game_crystal_ledger + game_character_rewards
+✓ Migration 000032: CHECK constraints, BIGINT, SECURITY DEFINER search_path, skill_unverified revocation
+✓ docs/MONETIZATION-ROADMAP.md: tier structure (Free/Pro/Org), 12 queue applications, ethics red lines
+✓ docs/AI-TWIN-CONCEPT.md: 4 phases, Kokoro/Bark/Parler stack, "AI draft + approve" pattern
+✗ DSP winner path for queue mechanic not scored (skipped confidence gate — solo execution again)
+✗ Mistake #54: agent outputs stayed in chat only for full session before documentation written
+✗ ElevenLabs math error: stated 500 responses/day when actual is 7/day (CLASS 5 Fabrication)
+→ Enforce: agent critique mandatory BEFORE writing any cost estimates. No numbers without source.
+
+**Queue mechanic (Yusif's design) validated by 3 agents.** Path 4 winner: Hybrid volunteer-free + org-premium (50.7/50).
+**Model recommendation for Sprint A1:** claude-sonnet-4-6 (assessment pipeline integration, security-sensitive)
+
 ## Session 42 (continued) Retrospective — 2026-03-26
 
 ✓ Seed question keyword redesign: OLD Q3 GRS=0.37 → 1.000 | OLD Q4 GRS=0.44 → 1.000

@@ -6,25 +6,39 @@
 ---
 
 ## Last Updated
-2026-03-27 | Session 44: **PRODUCTION E2E COMPLETE. Railway fixed. Full Leyla journey works on production.**
+2026-03-27 | Session 45 (Ecosystem): **Sprint A0 COMPLETE. character_state as Thalamus live on production.**
 **Key accomplishments:**
-- Question bank: 0 placeholders across all 8 competencies (90 questions total, min scenario 86 chars) ✅
-- Railway production bug fixed: SUPABASE_ANON_KEY was intercepted by Railway's Supabase integration
-  - Root cause: Railway injects its own (empty) SUPABASE_ANON_KEY overriding user-set value
-  - Fix: Hardcoded anon key as default in config.py (safe — it's a public key, like Stripe publishable)
-  - Fallback chain: SUPABASE_ANON_JWT > SUPABASE_ANON_KEY > hardcoded default
-  - Mistake #53 documented: Railway platform integrations can silently override user env vars
-- Leyla test user password: `leyla@test.volaura.com` / `LeylaProd2026!`
-- Production E2E confirmed: auth → AURA (12.47) → explanation → assessment start → submit answer → next Q
-- All 3 key API responses work: /api/aura/me, /api/aura/me/explanation, /api/assessment/start
-- Answers field is `answer` (not `answer_text`) + `response_time_ms` (not `time_spent_seconds`)
+- Ecosystem Master Plan v3.0 written: 3 parallel tracks (A/B/C), ADHD-safe crystal economy v2, Ramachandran neuroscience principles
+- BrandedBy implementation brief completed: 461 lines, 18 sections, self-contained handoff for parallel chat
+- Sprint A0 delivered: character_state cross-product event bus live on production
+  - Migration 000031: character_events + game_crystal_ledger + game_character_rewards (RLS on all)
+  - get_character_state() RPC: computes crystal_balance, xp_total, verified_skills, login_streak
+  - Routes: POST /api/character/events, GET /api/character/state, GET /api/character/events
+  - E2E verified: 6/6 smoke tests pass, all computed fields correct
+- Leyla test user: `leyla@test.volaura.com` / `LeylaProd2026!`
 
 ## Declaring Line (copy-paste at session start)
 ```
-▶ Session resumed. Sprint 9 COMPLETE. Date: 2026-03-27. Production E2E verified (AURA 12.47, all endpoints). Railway fixed (anon key hardcoded). NEXT: Sprint 10 — (1) pnpm generate:api, (2) Org dashboard, (3) Post 003, (4) Vitest Node v20. Protocol v4.0 loaded.
+▶ Session resumed. Sprint A0 COMPLETE. Date: 2026-03-27. character_state thalamus live (6/6 E2E pass). NEXT: Sprint A1 — Volaura assessment completion → crystal_earned + skill_verified events (idempotency via game_character_rewards). Protocol v4.0 loaded.
 ```
 
-## NEXT SESSION PRIORITIES
+## NEXT SESSION PRIORITIES (Ecosystem Track A)
+1. ~~Sprint A0 — character_state tables + API~~ ✅ DONE (Session 45) — 6/6 E2E pass
+2. Sprint A1 — Volaura Crystal Bridge: assessment complete → crystal_earned + skill_verified events
+   - Hook into POST /api/assessment/complete
+   - Idempotency via game_character_rewards (one claim per competency per user)
+   - Anti-farming: check before INSERT, not after
+3. Sprint A2 — MindShift → Shared Auth + character_state (focus session → xp_earned event)
+4. Sprint A3 — Life Simulator bug fixes (10 P0-P2 bugs, see ecosystem_master_plan.md)
+5. BrandedBy parallel chat: brief ready at memory/brandedby_implementation_brief.md
+
+## NEXT SESSION PRIORITIES (Volaura Track, paused)
+- Sprint 10 — pnpm generate:api (replace 7 TODO hooks)
+- Sprint 10 — Org dashboard
+- Post 003 angle (CEO decision on angle needed)
+- Vitest fix (Node v24 → v20 LTS)
+
+## Previously completed (Sprint 9):
 1. ~~Sprint 9 — CSV bulk invite~~ ✅ DONE (Session 39)
 2. ~~Sprint 9 — Assessment flow fixes~~ ✅ DONE (Session 40)
 3. ~~Sprint 9 — E2E Leyla journey~~ ✅ LOCAL + PRODUCTION VERIFIED (Sessions 43-44)

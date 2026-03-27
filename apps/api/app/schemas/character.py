@@ -11,19 +11,25 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
-# Valid event types — enforced at API layer
+# Valid event types — enforced at both API (here) and DB (CHECK constraint)
 EventType = Literal[
     "crystal_earned",
     "crystal_spent",
     "skill_verified",
+    "skill_unverified",   # revokes a previously verified skill
     "xp_earned",
-    "stat_changed",
+    "stat_changed",       # Life Simulator character stat update
     "login_streak",
     "milestone_reached",
 ]
 
-# Valid source products
+# Valid source products — enforced at both API and DB
 SourceProduct = Literal["volaura", "mindshift", "lifesim", "brandedby"]
+
+# Daily crystal cap per source — prevents login farming
+DAILY_CRYSTAL_CAP: dict[str, int] = {
+    "daily_login": 15,
+}
 
 
 class CharacterEventCreate(BaseModel):
@@ -56,18 +62,34 @@ class CharacterEventOut(BaseModel):
     created_at: datetime
 
 
+class VerifiedSkillOut(BaseModel):
+    """A single verified skill entry in the character state."""
+
+    slug: str
+    aura_score: float | None = None
+    badge_tier: str | None = None
+
+
 class CharacterStateOut(BaseModel):
     """Computed character state — derived from all events + crystal ledger.
 
     This is the 'thalamus' view: one read shows the full cross-product state.
+    All four products read from this — Volaura, MindShift, Life Simulator, BrandedBy.
     """
 
     user_id: UUID
-    crystal_balance: int = Field(ge=0, description="Current crystal balance from ledger")
+    crystal_balance: int = Field(
+        ge=0,
+        description="Current crystal balance (floored at 0 — prevented from going negative at write time)",
+    )
     xp_total: int = Field(ge=0, description="Lifetime XP earned across all products")
-    verified_skills: list[str] = Field(
+    verified_skills: list[VerifiedSkillOut] = Field(
         default_factory=list,
-        description="Volaura competency slugs verified by assessment",
+        description="Volaura competency slugs verified by assessment, with score and badge tier",
+    )
+    character_stats: dict[str, int] = Field(
+        default_factory=dict,
+        description="Life Simulator character stats — latest value per stat key (e.g. strength, intelligence)",
     )
     login_streak: int = Field(ge=0, description="Current consecutive login days")
     event_count: int = Field(ge=0, description="Total events in history")

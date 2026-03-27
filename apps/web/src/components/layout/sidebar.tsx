@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { href: "/assessment",     labelKey: "nav.assessment",     icon: "◑" },
   { href: "/events",         labelKey: "nav.events",         icon: "◎" },
   { href: "/my-organization", labelKey: "nav.myOrganization", icon: "🏢" },
+  { href: "/org-volunteers",  labelKey: "nav.orgVolunteers",  icon: "👥" },
   { href: "/leaderboard",    labelKey: "nav.leaderboard",    icon: "🏆" },
   { href: "/notifications",  labelKey: "nav.notifications",  icon: "🔔" },
   { href: "/settings",       labelKey: "nav.settings",       icon: "◧" },

@@ -67,7 +67,8 @@
     "myOrganization": "Mənim Təşkilatım",
     "openMenu": "Menyunu aç",
     "closeMenu": "Menyunu bağla",
-    "mainNavigation": "Əsas naviqasiya"
+    "mainNavigation": "Əsas naviqasiya",
+    "orgVolunteers": "Könüllülər"
   },
   "auth": {
     "login": "Daxil ol",
@@ -510,5 +511,22 @@
     "ctaButton": "Təşkilat Qeydiyyatı",
     "volunteerCta": "Könüllü olun",
     "aboutSection": "Bu təşkilat haqqında"
+  },
+  "orgDash": {
+    "title": "Könüllü Paneli",
+    "subtitle": "Qiymətləndirmənin tamamlanmasını və AURA ballarını izləyin",
+    "assigned": "Təyin edildi",
+    "completed": "Tamamlandı",
+    "avgAura": "Ort. AURA",
+    "topTier": "Qızıl / Platin",
+    "badgeDist": "Bej Paylanması",
+    "topVolunteers": "⭐ Ən Yaxşı Könüllülər",
+    "searchVolunteers": "Könüllü axtar…",
+    "showing": "{{count}} könüllü göstərilir",
+    "noVolunteers": "Hələ könüllü təyin edilməyib.",
+    "noSearchResults": "Axtarışa uyğun könüllü tapılmadı",
+    "goToOrg": "Təşkilat Panelinə keç →",
+    "pendingTitle": "gözləyən qiymətləndirmə",
+    "pendingDesc": "Könüllülərə tapşırıq verilib, lakin hələ tamamlamayıblar."
   }
 }

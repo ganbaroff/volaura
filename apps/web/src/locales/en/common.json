@@ -67,7 +67,8 @@
     "myOrganization": "My Organization",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
-    "mainNavigation": "Main navigation"
+    "mainNavigation": "Main navigation",
+    "orgVolunteers": "Volunteers"
   },
   "auth": {
     "login": "Log In",
@@ -510,5 +511,22 @@
     "ctaButton": "Register Organization",
     "volunteerCta": "Volunteer with us",
     "aboutSection": "About this organization"
+  },
+  "orgDash": {
+    "title": "Volunteer Dashboard",
+    "subtitle": "Track assessment completion and AURA scores across your volunteers",
+    "assigned": "Assigned",
+    "completed": "Completed",
+    "avgAura": "Avg AURA",
+    "topTier": "Gold / Platinum",
+    "badgeDist": "Badge Distribution",
+    "topVolunteers": "⭐ Top Volunteers",
+    "searchVolunteers": "Search volunteers…",
+    "showing": "Showing {{count}} volunteers",
+    "noVolunteers": "No volunteers assigned yet. Use the search to find and assign assessments.",
+    "noSearchResults": "No volunteers match your search",
+    "goToOrg": "Go to Organization Dashboard →",
+    "pendingTitle": "assessments pending",
+    "pendingDesc": "Volunteers have been assigned but haven't completed their assessment yet."
   }
 }

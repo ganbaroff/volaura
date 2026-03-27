@@ -1,0 +1,382 @@
+"use client";
+
+import { useRef, useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+import {
+  Users, TrendingUp, Award, CheckCircle2, Clock,
+  ChevronRight, Loader2, BarChart3, Search,
+} from "lucide-react";
+import { useOrgDashboard, useOrgVolunteers } from "@/hooks/queries/use-organizations";
+import { cn } from "@/lib/utils/cn";
+import type { OrgVolunteerRow } from "@/lib/api/types";
+
+// ── Animations ─────────────────────────────────────────────────────────────────
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.28, ease: "easeOut" as const } },
+};
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.06 } },
+};
+
+// ── Badge tier styles ───────────────────────────────────────────────────────────
+
+const TIER_STYLES: Record<string, { bg: string; text: string; label: string }> = {
+  platinum: { bg: "bg-sky-400/15", text: "text-sky-300", label: "Platinum" },
+  gold:     { bg: "bg-yellow-400/15", text: "text-yellow-300", label: "Gold" },
+  silver:   { bg: "bg-slate-300/15", text: "text-slate-300", label: "Silver" },
+  bronze:   { bg: "bg-orange-400/15", text: "text-orange-300", label: "Bronze" },
+  none:     { bg: "bg-surface-container", text: "text-on-surface-variant", label: "—" },
+};
+
+// ── Stat card ──────────────────────────────────────────────────────────────────
+
+function StatCard({
+  icon,
+  value,
+  label,
+  sub,
+  highlight,
+}: {
+  icon: React.ReactNode;
+  value: string | number;
+  label: string;
+  sub?: string;
+  highlight?: boolean;
+}) {
+  return (
+    <motion.div variants={fadeUp} className="rounded-xl border border-border bg-surface-container-low p-4 space-y-1">
+      <div className={cn("mb-1.5", highlight ? "text-primary" : "text-on-surface-variant")}>{icon}</div>
+      <p className={cn("text-2xl font-bold tabular-nums", highlight ? "text-primary" : "text-on-surface")}>{value}</p>
+      <p className="text-xs text-on-surface-variant">{label}</p>
+      {sub && <p className="text-xs text-on-surface-variant/60">{sub}</p>}
+    </motion.div>
+  );
+}
+
+// ── Volunteer row ──────────────────────────────────────────────────────────────
+
+function VolunteerRow({ row, onClick }: { row: OrgVolunteerRow; onClick: () => void }) {
+  const tier = TIER_STYLES[row.badge_tier?.toLowerCase() ?? "none"] ?? TIER_STYLES.none;
+  const score = row.overall_score != null ? row.overall_score.toFixed(1) : "—";
+
+  return (
+    <motion.div
+      variants={fadeUp}
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === "Enter" && onClick()}
+      className="flex items-center gap-3 rounded-xl border border-border bg-surface-container-low px-4 py-3 cursor-pointer hover:bg-surface-container hover:border-primary/30 transition-all"
+    >
+      {/* Avatar initials */}
+      <span className="size-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-sm font-bold text-primary">
+        {(row.display_name ?? row.username)[0]?.toUpperCase() ?? "?"}
+      </span>
+
+      {/* Name + username */}
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-on-surface truncate">
+          {row.display_name ?? row.username}
+        </p>
+        <p className="text-xs text-on-surface-variant">@{row.username}</p>
+      </div>
+
+      {/* Badge tier */}
+      <span className={cn("shrink-0 text-xs font-medium px-2 py-0.5 rounded-full", tier.bg, tier.text)}>
+        {tier.label}
+      </span>
+
+      {/* AURA score */}
+      <span className="shrink-0 text-sm font-bold tabular-nums text-on-surface w-10 text-right">
+        {score}
+      </span>
+
+      {/* Competencies */}
+      <span className="shrink-0 text-xs text-on-surface-variant w-16 text-right">
+        {row.competencies_completed} comp.
+      </span>
+
+      <ChevronRight className="size-4 text-on-surface-variant shrink-0" aria-hidden="true" />
+    </motion.div>
+  );
+}
+
+// ── Badge distribution mini-chart ──────────────────────────────────────────────
+
+function BadgeBar({
+  label,
+  count,
+  total,
+  color,
+}: {
+  label: string;
+  count: number;
+  total: number;
+  color: string;
+}) {
+  const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+  return (
+    <div className="flex items-center gap-2 text-xs">
+      <span className="w-14 text-on-surface-variant shrink-0">{label}</span>
+      <div className="flex-1 h-1.5 rounded-full bg-border overflow-hidden">
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${pct}%` }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+          className={cn("h-full rounded-full", color)}
+        />
+      </div>
+      <span className="w-5 text-right text-on-surface-variant tabular-nums">{count}</span>
+    </div>
+  );
+}
+
+// ── Page ───────────────────────────────────────────────────────────────────────
+
+const STATUS_FILTERS = [
+  { key: undefined,       label: "All" },
+  { key: "assigned",      label: "Assigned" },
+  { key: "completed",     label: "Completed" },
+  { key: "in_progress",   label: "In Progress" },
+];
+
+export default function OrgVolunteersPage() {
+  const { t } = useTranslation();
+  const { locale } = useParams<{ locale: string }>();
+  const router = useRouter();
+  const isMounted = useRef(true);
+  useEffect(() => () => { isMounted.current = false; }, []);
+
+  const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
+  const [search, setSearch] = useState("");
+
+  const { data: stats, isLoading: statsLoading } = useOrgDashboard();
+  const { data: volunteers, isLoading: volsLoading } = useOrgVolunteers({ status: statusFilter, limit: 50 });
+
+  const filtered = (volunteers ?? []).filter((v) => {
+    if (!search) return true;
+    const q = search.toLowerCase();
+    return (
+      v.username.toLowerCase().includes(q) ||
+      (v.display_name ?? "").toLowerCase().includes(q)
+    );
+  });
+
+  const totalBadges = stats
+    ? stats.badge_distribution.platinum +
+      stats.badge_distribution.gold +
+      stats.badge_distribution.silver +
+      stats.badge_distribution.bronze +
+      stats.badge_distribution.none
+    : 0;
+
+  const isLoading = statsLoading || volsLoading;
+
+  return (
+    <div className="min-h-screen bg-background px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-3xl space-y-8">
+
+        {/* Header */}
+        <motion.div initial="hidden" animate="visible" variants={fadeUp}>
+          <h1 className="font-headline text-2xl font-bold text-on-surface">
+            {t("orgDash.title", { defaultValue: "Volunteer Dashboard" })}
+          </h1>
+          <p className="mt-1 text-sm text-on-surface-variant">
+            {t("orgDash.subtitle", { defaultValue: "Track assessment completion and AURA scores across your volunteers" })}
+          </p>
+        </motion.div>
+
+        {isLoading && (
+          <div className="flex justify-center py-16">
+            <Loader2 className="size-6 animate-spin text-primary" role="status" aria-label="Loading" />
+          </div>
+        )}
+
+        {!isLoading && stats && (
+          <>
+            {/* Stats row */}
+            <motion.div variants={stagger} initial="hidden" animate="visible" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <StatCard
+                icon={<Users className="size-5" />}
+                value={stats.total_assigned}
+                label={t("orgDash.assigned", { defaultValue: "Assigned" })}
+                highlight={false}
+              />
+              <StatCard
+                icon={<CheckCircle2 className="size-5" />}
+                value={stats.total_completed}
+                label={t("orgDash.completed", { defaultValue: "Completed" })}
+                sub={`${Math.round(stats.completion_rate * 100)}% rate`}
+                highlight
+              />
+              <StatCard
+                icon={<TrendingUp className="size-5" />}
+                value={stats.avg_aura_score != null ? stats.avg_aura_score.toFixed(1) : "—"}
+                label={t("orgDash.avgAura", { defaultValue: "Avg AURA" })}
+              />
+              <StatCard
+                icon={<Award className="size-5" />}
+                value={stats.badge_distribution.platinum + stats.badge_distribution.gold}
+                label={t("orgDash.topTier", { defaultValue: "Gold/Platinum" })}
+              />
+            </motion.div>
+
+            {/* Badge distribution */}
+            {totalBadges > 0 && (
+              <motion.div variants={fadeUp} initial="hidden" animate="visible" className="rounded-xl border border-border bg-surface-container-low p-5 space-y-3">
+                <div className="flex items-center gap-2">
+                  <BarChart3 className="size-4 text-on-surface-variant" aria-hidden="true" />
+                  <h3 className="text-sm font-semibold text-on-surface">
+                    {t("orgDash.badgeDist", { defaultValue: "Badge Distribution" })}
+                  </h3>
+                </div>
+                <div className="space-y-2">
+                  <BadgeBar label="Platinum" count={stats.badge_distribution.platinum} total={totalBadges} color="bg-sky-400" />
+                  <BadgeBar label="Gold"     count={stats.badge_distribution.gold}     total={totalBadges} color="bg-yellow-400" />
+                  <BadgeBar label="Silver"   count={stats.badge_distribution.silver}   total={totalBadges} color="bg-slate-400" />
+                  <BadgeBar label="Bronze"   count={stats.badge_distribution.bronze}   total={totalBadges} color="bg-orange-400" />
+                  <BadgeBar label="None"     count={stats.badge_distribution.none}     total={totalBadges} color="bg-border" />
+                </div>
+              </motion.div>
+            )}
+
+            {/* Top volunteers highlight */}
+            {stats.top_volunteers.length > 0 && (
+              <motion.div variants={fadeUp} initial="hidden" animate="visible" className="rounded-xl border border-primary/20 bg-primary/5 p-5 space-y-3">
+                <h3 className="text-sm font-semibold text-primary">
+                  {t("orgDash.topVolunteers", { defaultValue: "⭐ Top Volunteers" })}
+                </h3>
+                <div className="space-y-2">
+                  {stats.top_volunteers.map((v) => {
+                    const tier = TIER_STYLES[v.badge_tier?.toLowerCase() ?? "none"] ?? TIER_STYLES.none;
+                    return (
+                      <div
+                        key={v.volunteer_id}
+                        className="flex items-center gap-3 text-sm"
+                      >
+                        <span className="size-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary shrink-0">
+                          {(v.display_name ?? v.username)[0]?.toUpperCase()}
+                        </span>
+                        <span className="flex-1 text-on-surface truncate">{v.display_name ?? v.username}</span>
+                        <span className={cn("text-xs px-1.5 py-0.5 rounded-full font-medium", tier.bg, tier.text)}>
+                          {tier.label}
+                        </span>
+                        <span className="font-bold tabular-nums text-on-surface w-10 text-right">
+                          {v.overall_score?.toFixed(1) ?? "—"}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+          </>
+        )}
+
+        {/* Volunteer list */}
+        <div className="space-y-4">
+          {/* Filters */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-on-surface-variant" aria-hidden="true" />
+              <input
+                type="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={t("orgDash.searchVolunteers", { defaultValue: "Search volunteers…" })}
+                className="w-full rounded-xl border border-outline-variant bg-surface-container pl-9 pr-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+              />
+            </div>
+
+            <div className="flex gap-1.5 shrink-0">
+              {STATUS_FILTERS.map(({ key, label }) => (
+                <button
+                  key={label}
+                  onClick={() => setStatusFilter(key)}
+                  className={cn(
+                    "rounded-lg px-3 py-1.5 text-xs font-medium transition-colors border",
+                    statusFilter === key
+                      ? "bg-primary text-on-primary border-primary"
+                      : "border-outline-variant text-on-surface-variant hover:bg-surface-container"
+                  )}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* List */}
+          {volsLoading && (
+            <div className="flex justify-center py-8">
+              <Loader2 className="size-5 animate-spin text-primary" role="status" aria-label="Loading" />
+            </div>
+          )}
+
+          {!volsLoading && filtered.length === 0 && (
+            <div className="py-12 text-center space-y-2">
+              <Users className="mx-auto size-10 text-on-surface-variant" aria-hidden="true" />
+              <p className="text-sm text-on-surface-variant">
+                {search
+                  ? t("orgDash.noSearchResults", { defaultValue: "No volunteers match your search" })
+                  : t("orgDash.noVolunteers", { defaultValue: "No volunteers assigned yet. Use the search to find and assign assessments." })}
+              </p>
+              {!search && (
+                <button
+                  onClick={() => router.push(`/${locale}/my-organization`)}
+                  className="mt-2 text-sm text-primary underline-offset-2 hover:underline"
+                >
+                  {t("orgDash.goToOrg", { defaultValue: "Go to Organization Dashboard →" })}
+                </button>
+              )}
+            </div>
+          )}
+
+          {!volsLoading && filtered.length > 0 && (
+            <>
+              <p className="text-xs text-on-surface-variant">
+                {t("orgDash.showing", {
+                  count: filtered.length,
+                  defaultValue: `Showing ${filtered.length} volunteer${filtered.length !== 1 ? "s" : ""}`,
+                })}
+              </p>
+              <motion.div variants={stagger} initial="hidden" animate="visible" className="space-y-2">
+                {filtered.map((v) => (
+                  <VolunteerRow
+                    key={v.volunteer_id}
+                    row={v}
+                    onClick={() => router.push(`/${locale}/u/${v.username}`)}
+                  />
+                ))}
+              </motion.div>
+            </>
+          )}
+        </div>
+
+        {/* Pending assignments notice */}
+        {!isLoading && stats && stats.total_assigned > stats.total_completed && (
+          <motion.div variants={fadeUp} initial="hidden" animate="visible" className="rounded-xl border border-yellow-400/20 bg-yellow-400/5 p-4">
+            <div className="flex items-start gap-3">
+              <Clock className="size-4 text-yellow-400 mt-0.5 shrink-0" aria-hidden="true" />
+              <div>
+                <p className="text-sm font-medium text-on-surface">
+                  {stats.total_assigned - stats.total_completed}{" "}
+                  {t("orgDash.pendingTitle", { defaultValue: "assessments pending" })}
+                </p>
+                <p className="mt-0.5 text-xs text-on-surface-variant">
+                  {t("orgDash.pendingDesc", { defaultValue: "Volunteers have been assigned but haven't completed their assessment yet." })}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+      </div>
+    </div>
+  );
+}

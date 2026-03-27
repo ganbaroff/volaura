@@ -52,6 +52,9 @@ class Settings(BaseSettings):
     stripe_secret_key: str = ""
     stripe_webhook_secret: str = ""
 
+    # BrandedBy — AI video generation
+    did_api_key: str = ""  # D-ID API key (Phase 1: Lite plan $5.90/mo)
+
     @property
     def is_dev(self) -> bool:
         return self.app_env == "development"
@@ -66,6 +69,8 @@ class Settings(BaseSettings):
             "https://volaura.app",
             "https://www.volaura.app",
             "https://volaura-web.vercel.app",
+            "https://brandedby.xyz",
+            "https://www.brandedby.xyz",
         ]
         for k in known:
             if k not in origins:
@@ -80,10 +85,16 @@ def validate_production_settings() -> list[str]:
     """Check production-critical settings. Returns list of warnings."""
     warnings = []
     if not settings.is_dev:
-        if not settings.gemini_api_key and not settings.openai_api_key:
+        if not settings.gemini_api_key and not settings.groq_api_key and not settings.openai_api_key:
             warnings.append(
-                "CRITICAL: No LLM API keys configured (GEMINI_API_KEY or OPENAI_API_KEY). "
+                "CRITICAL: No LLM API keys configured (GEMINI_API_KEY, GROQ_API_KEY, or OPENAI_API_KEY). "
                 "Open-ended assessment answers will use keyword fallback scoring."
+            )
+        if settings.gemini_api_key and not settings.groq_api_key:
+            warnings.append(
+                "WARNING: GROQ_API_KEY not set. Gemini rate-limit events (15 RPM free tier) "
+                "will fall through to OpenAI (paid) instead of free Groq tier. "
+                "Set GROQ_API_KEY on Railway before activation wave."
             )
         if settings.app_url == "http://localhost:3000":
             warnings.append(

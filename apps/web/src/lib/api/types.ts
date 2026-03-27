@@ -125,3 +125,36 @@ export interface DashboardStats {
   verified_skills: number;
   streak_days: number;
 }
+
+
+// ── Org B2B dashboard ─────────────────────────────────────────────────────────
+// Mirrors apps/api/app/schemas/organization.py — OrgDashboardStats, OrgVolunteerRow
+
+export interface BadgeDistribution {
+  platinum: number;
+  gold: number;
+  silver: number;
+  bronze: number;
+  none: number;
+}
+
+export interface OrgVolunteerRow {
+  volunteer_id: string;
+  username: string;
+  display_name: string | null;
+  overall_score: number | null;
+  badge_tier: string | null;
+  competencies_completed: number;
+  last_activity: string | null;
+}
+
+export interface OrgDashboardStats {
+  org_id: string;
+  org_name: string;
+  total_assigned: number;
+  total_completed: number;
+  completion_rate: number;
+  avg_aura_score: number | null;
+  badge_distribution: BadgeDistribution;
+  top_volunteers: OrgVolunteerRow[];
+}

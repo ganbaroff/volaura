@@ -3,7 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch, ApiError } from "@/lib/api/client";
 import { useAuthToken } from "./use-auth-token";
-import type { OrganizationResponse, OrganizationCreate } from "@/lib/api/types";
+import type { OrganizationResponse, OrganizationCreate, OrgDashboardStats, OrgVolunteerRow } from "@/lib/api/types";
 
 // TODO: Replace with @hey-api/openapi-ts generated hooks after pnpm generate:api
 
@@ -78,5 +78,44 @@ export function useUpdateOrganization() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["organizations", "me"] });
     },
+  });
+}
+
+/** Org B2B dashboard stats — completion rate, avg AURA, badge distribution */
+export function useOrgDashboard() {
+  const getToken = useAuthToken();
+
+  return useQuery<OrgDashboardStats, ApiError>({
+    queryKey: ["organizations", "me", "dashboard"],
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      return apiFetch<OrgDashboardStats>("/api/organizations/me/dashboard", { token });
+    },
+    staleTime: 2 * 60 * 1000,
+    retry: 1,
+    throwOnError: false,
+  });
+}
+
+/** List volunteers assigned assessments by this org */
+export function useOrgVolunteers(params?: { status?: string; limit?: number; offset?: number }) {
+  const getToken = useAuthToken();
+
+  return useQuery<OrgVolunteerRow[], ApiError>({
+    queryKey: ["organizations", "me", "volunteers", params],
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      const search = new URLSearchParams();
+      if (params?.status) search.set("status", params.status);
+      if (params?.limit) search.set("limit", String(params.limit));
+      if (params?.offset) search.set("offset", String(params.offset));
+      const qs = search.toString();
+      return apiFetch<OrgVolunteerRow[]>(`/api/organizations/me/volunteers${qs ? `?${qs}` : ""}`, { token });
+    },
+    staleTime: 60 * 1000,
+    retry: 1,
+    throwOnError: false,
   });
 }

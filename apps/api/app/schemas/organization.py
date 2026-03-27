@@ -107,9 +107,42 @@ class VolunteerSearchResult(BaseModel):
     volunteer_id: str
     username: str
     display_name: str | None = None
-    total_score: float
+    overall_score: float               # renamed from total_score for API consistency
     badge_tier: str
     elite_status: bool
     location: str | None = None
     languages: list[str] = []
     similarity: float | None = None     # cosine similarity from pgvector
+
+
+# ── Org dashboard schemas ──────────────────────────────────────────────────────
+
+class BadgeDistribution(BaseModel):
+    platinum: int = 0
+    gold: int = 0
+    silver: int = 0
+    bronze: int = 0
+    none: int = 0
+
+
+class OrgDashboardStats(BaseModel):
+    """Aggregate stats for the org management dashboard."""
+    org_id: str
+    org_name: str
+    total_assigned: int          # total assessment sessions created by this org
+    total_completed: int         # sessions with status='completed'
+    completion_rate: float       # completed / assigned (0.0–1.0)
+    avg_aura_score: float | None # average AURA total_score across completed volunteers
+    badge_distribution: BadgeDistribution
+    top_volunteers: list["OrgVolunteerRow"]  # top 5 by AURA score
+
+
+class OrgVolunteerRow(BaseModel):
+    """One volunteer row in the org dashboard table."""
+    volunteer_id: str
+    username: str
+    display_name: str | None = None
+    overall_score: float | None = None
+    badge_tier: str | None = None
+    competencies_completed: int    # how many competencies this user completed for this org
+    last_activity: str | None = None   # ISO datetime of last completed session

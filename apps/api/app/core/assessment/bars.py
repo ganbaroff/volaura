@@ -1,8 +1,14 @@
 """BARS (Behaviourally Anchored Rating Scale) LLM evaluator.
 
 For open-ended assessment questions, this module uses Gemini 2.5 Flash
-(with OpenAI GPT-4o-mini fallback, then keyword-based rule matching) to
-score a volunteer's answer against the expected BARS concepts.
+(with Groq llama-3.3-70b fallback, then OpenAI GPT-4o-mini, then keyword-based
+rule matching) to score a volunteer's answer against the expected BARS concepts.
+
+Fallback chain rationale (2026-03-27, activation wave capacity planning):
+    Gemini free tier: 15 RPM → saturates at ~110 users/hour (8 questions each)
+    Groq free tier: 14,400 req/day, 30 RPM → absorbs 3K/day wave without cost
+    OpenAI: paid fallback (last resort, rate-limit-resistant)
+    keyword_fallback: zero-cost degraded mode (vocabulary match, not comprehension)
 
 The evaluator returns a 0.0–1.0 composite score.
 
@@ -193,7 +199,17 @@ async def evaluate_answer(
         model_used = "gemini-2.5-flash"
 
     if scores is None:
-        logger.warning("Gemini evaluation failed — trying OpenAI fallback")
+        logger.warning("Gemini evaluation failed — trying Groq fallback")
+        try:
+            scores, concept_details = await _try_groq(prompt)
+        except Exception as e:
+            logger.warning(f"Groq BARS evaluation raised: {e}")
+
+        if scores is not None:
+            model_used = "groq-llama-3.3-70b"
+
+    if scores is None:
+        logger.warning("Groq evaluation failed — trying OpenAI fallback")
         openai_result: Any = None
         try:
             openai_result = await _try_openai(prompt, concept_names)
@@ -272,6 +288,49 @@ async def _try_gemini(prompt: str) -> _DeCE_RESULT:
         return None, None
     except Exception as e:
         logger.warning(f"Gemini BARS evaluation error: {e}")
+        return None, None
+
+
+async def _try_groq(prompt: str) -> _DeCE_RESULT:
+    """Call Groq llama-3.3-70b-versatile as secondary fallback (DeCE format).
+
+    Groq free tier: 14,400 requests/day, 30 RPM — absorbs activation wave load
+    without cost. Uses same JSON-mode prompt as Gemini. No DeCE concept_details
+    (Groq doesn't support JSON schema constraints), but returns flat score dict.
+
+    Returns:
+        Tuple of (concept_scores dict, None) or (None, None) on failure.
+        concept_details is always None — Groq doesn't return quotes.
+    """
+    if not settings.groq_api_key:
+        return None, None
+    try:
+        from groq import AsyncGroq  # type: ignore
+
+        client = AsyncGroq(api_key=settings.groq_api_key)
+        response = await asyncio.wait_for(
+            client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[
+                    {"role": "system", "content": _SYSTEM_PROMPT},
+                    {"role": "user", "content": prompt},
+                ],
+                response_format={"type": "json_object"},
+                max_tokens=512,
+                temperature=0.1,
+            ),
+            timeout=_LLM_TIMEOUT_S,
+        )
+        raw = response.choices[0].message.content or ""
+        # _parse_dece_scores returns (scores, concept_details)
+        # Groq may not produce concept_details — that's OK, scores are sufficient
+        scores, concept_details = _parse_dece_scores(raw)
+        return scores, concept_details
+    except asyncio.TimeoutError:
+        logger.warning(f"Groq BARS evaluation timed out after {_LLM_TIMEOUT_S}s")
+        return None, None
+    except Exception as e:
+        logger.warning(f"Groq BARS evaluation error: {e}")
         return None, None
 
 

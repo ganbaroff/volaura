@@ -6,7 +6,24 @@
 ---
 
 ## Last Updated
-2026-03-27 | Session 50 (Sprint B3 Deploy): **FAL_API_KEY + GROQ_API_KEY deployed to Railway. volaura.app updated. brandedby.xyz pending GoDaddy A record. Full documentation sync across shared-context.md + DECISIONS.md.**
+2026-03-27 | Session 51 (Activation Wave): **UTM capture + Welcome page + ProfileUpdate attribution LIVE on volaura.app. Backend ProfileUpdate schema extended. Onboarding now routes to /welcome?competency=X.**
+
+## Session 51 accomplishments (2026-03-27):
+- `apps/api/app/schemas/profile.py`: ProfileUpdate + referral_code, utm_source, utm_campaign
+- `apps/web/src/components/utm-capture.tsx`: UTMCapture component (URL params → localStorage) + readAndClearAttribution() helper
+- Root layout: <UTMCapture /> mounted globally (catches any landing URL with ?ref= or ?utm_*)
+- Auth callback: after session established, fire-and-forget PUT /api/profiles/me with localStorage UTM (clears after write)
+- `/[locale]/welcome` page: post-onboarding activation screen — value prop + competency callout + single Start Assessment CTA (no sidebar)
+- Onboarding handleFinish: redirects to /welcome?competency={slug} instead of /dashboard
+- i18n: welcome.* keys added to EN + AZ locales (AZ ~25% longer, correct special chars)
+- Deployed: volaura.app → volaura-2n9vs30py-ganbaroffs-projects.vercel.app ✅
+
+## Activation Wave — Remaining (Sprint 10):
+- ⏳ Badge share button on /aura (2h) — LinkedIn/TikTok share post-assessment
+- ⏳ Sprint A1 crystal bridge: assessment/complete → emit crystal_earned + skill_verified (4h, after RLS audit)
+- ⏳ RU question translations x30 (2h)
+- ⏳ GoDaddy A record for brandedby.xyz → @ 76.76.21.21 (Yusif, 5 min)
+- ⏳ ~10 HR coordinator names for activation wave referral codes (Yusif)
 
 **Session 47 accomplishments:**
 - docs/MASS-ACTIVATION-PLAN.md created — answers 5 onboarding questions + Sprint 10.5 plan

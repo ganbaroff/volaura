@@ -34,8 +34,8 @@ Goal: collect BEST volunteers, create real professional credential. 200+ in pipe
 - ✅ Referral tracking migration (referral_code + utm_* + referral_stats VIEW)
 - ✅ scenario_ru column on questions
 - ✅ Org B2B dashboard (/me/dashboard + /me/volunteers)
-- ⏳ UTM capture at auth/callback (2h)
-- ⏳ Welcome page /welcome (3h — biggest conversion fix)
+- ✅ UTM capture at auth/callback — ProfileUpdate + UTMCapture component + callback PATCH
+- ✅ Welcome page /welcome — post-onboarding activation screen with competency CTA
 - ⏳ Badge share button on /aura (2h)
 - ⏳ RU question translations x30 (2h)
 - ⏳ CEO provides ~10 HR coordinator names for ref codes

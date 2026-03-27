@@ -72,7 +72,8 @@
       "Read(//mnt/c/**)",
       "Read(//c/Projects//**)",
       "mcp__supabase__list_projects",
-      "mcp__supabase__list_migrations"
+      "mcp__supabase__list_migrations",
+      "Bash(grep -r \"brandedby\\\\|BrandedBy\\\\|branded-by\" /c/Projects/VOLAURA --include=*.ts --include=*.tsx --include=*.py --include=*.json --include=*.sql --include=*.md)"
     ],
     "deny": [
       "Bash(rm -rf*)",

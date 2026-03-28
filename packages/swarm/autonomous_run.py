@@ -286,6 +286,87 @@ async def _call_agent(
         return None
 
 
+async def _judge_proposal(
+    proposal: Proposal,
+    env: dict[str, str],
+) -> None:
+    """Cross-model judge: score a proposal on 5 criteria using a DIFFERENT model family.
+
+    Asymmetric judging (MT-Bench / Zheng et al. 2023): if Groq generated → Gemini judges.
+    Avoids 10-25% self-favor inflation measured in LLM-as-judge research.
+
+    Scoring: binary pass/fail per criterion (not 1-5 scales which produce inaction).
+    - Specificity: references actual files, functions, or endpoints (not vague advice)
+    - Evidence: claims backed by observable facts from project state (not assumptions)
+    - Actionability: CTO can act on this in <2h without clarification
+    - Novelty: not already proposed, implemented, or documented
+    - Impact: clear outcome metric defined (not "would be nice")
+
+    Score = number of criteria passed (0–5). Stored in proposal for ranking.
+    Does NOT block proposal storage — judge failure is graceful (score=None).
+    """
+    gemini_key = env.get("GEMINI_API_KEY", "")
+    if not gemini_key:
+        return  # Judge unavailable — don't block the run
+
+    judge_prompt = f"""You are a proposal quality judge for an AI swarm system.
+Score this proposal against 5 criteria. Reply with JSON only.
+
+PROPOSAL:
+Agent: {proposal.agent}
+Severity: {proposal.severity.value}
+Title: {proposal.title}
+Content: {proposal.content[:800]}
+
+SCORING CRITERIA (binary pass=true/fail=false per criterion):
+1. specificity — References actual files, function names, or endpoints (NOT vague advice like "improve the code")
+2. evidence — Claims backed by observable facts from the project (NOT pure speculation)
+3. actionability — CTO can implement this in <2 hours without asking for clarification
+4. novelty — This is a new finding, not something already documented or recently proposed
+5. impact — A clear measurable outcome or metric is defined (NOT just "would be nice")
+
+JSON format:
+{{"specificity": true/false, "evidence": true/false, "actionability": true/false, "novelty": true/false, "impact": true/false, "reasoning": "1-2 sentences on the lowest-scoring area"}}"""
+
+    try:
+        from google import genai
+        client = genai.Client(api_key=gemini_key)
+        resp = await asyncio.wait_for(
+            asyncio.to_thread(
+                client.models.generate_content,
+                model="gemini-2.0-flash",
+                contents=judge_prompt,
+                config={"response_mime_type": "application/json"},
+            ),
+            timeout=15.0,
+        )
+        raw = resp.text or ""
+        data = json.loads(raw)
+
+        criteria = {
+            "specificity": bool(data.get("specificity")),
+            "evidence": bool(data.get("evidence")),
+            "actionability": bool(data.get("actionability")),
+            "novelty": bool(data.get("novelty")),
+            "impact": bool(data.get("impact")),
+        }
+        score = sum(1 for v in criteria.values() if v)
+
+        proposal.judge_score = score
+        proposal.judge_model = "gemini-2.0-flash"
+        proposal.judge_reasoning = data.get("reasoning", "")[:300]
+        proposal.judge_criteria = criteria
+
+        logger.info(
+            "Judge [{agent}]: {score}/5 — {title}",
+            agent=proposal.agent, score=score, title=proposal.title[:60],
+        )
+
+    except Exception as e:
+        logger.warning(f"Judge failed for '{proposal.title[:50]}': {e}")
+        # Graceful — proposal still gets stored, just without a score
+
+
 async def run_autonomous(mode: str = "daily-ideation") -> list[Proposal]:
     """Run all 5 agents in parallel, collect proposals, vote, store."""
     logger.info(f"Autonomous swarm run starting: mode={mode}")
@@ -377,6 +458,17 @@ async def run_autonomous(mode: str = "daily-ideation") -> list[Proposal]:
     if convergent_count:
         logger.info(f"Convergence detected: {convergent_count} proposals share overlapping themes — HIGH SIGNAL")
 
+    # Cross-model judge all proposals in parallel (B7 — Approach 1).
+    # Gemini judges Groq-generated proposals (asymmetric — avoids self-favor bias).
+    # Failures are graceful — judging never blocks proposal storage.
+    judge_tasks = [_judge_proposal(p, env) for p in proposals]
+    await asyncio.gather(*judge_tasks, return_exceptions=True)
+
+    judged = sum(1 for p in proposals if p.judge_score is not None)
+    if judged:
+        avg_score = sum(p.judge_score for p in proposals if p.judge_score is not None) / judged
+        logger.info(f"Judge complete: {judged}/{len(proposals)} proposals scored, avg={avg_score:.1f}/5")
+
     # Store all proposals
     stored_ids = []
     for proposal in proposals:
@@ -430,8 +522,9 @@ async def send_telegram_notifications(proposals: list[Proposal]) -> None:
                 emoji = "🟠"
             convergent_tag = " [CONVERGENT — emerged independently]" if p.convergent else ""
             escalate_tag = " [ESCALATE TO CEO]" if p.escalate_to_ceo else ""
+            judge_tag = f" [Quality: {p.judge_score}/5]" if p.judge_score is not None else ""
             msg = (
-                f"{emoji} **Swarm {p.type.value.upper()}**{convergent_tag}{escalate_tag}\n\n"
+                f"{emoji} **Swarm {p.type.value.upper()}**{convergent_tag}{escalate_tag}{judge_tag}\n\n"
                 f"**{p.title}**\n"
                 f"Agent: {p.agent}\n"
                 f"Votes: +{p.votes_for}/-{p.votes_against}\n\n"

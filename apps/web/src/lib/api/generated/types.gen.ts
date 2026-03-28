@@ -237,6 +237,11 @@ export type ProfileResponse = {
     badge_open_badges_url?: string | null;
     created_at: string;
     updated_at: string;
+    // Added 2026-03-29 (Sprint A5): fields from profiles_org_fields migration.
+    // Remove this comment once pnpm generate:api runs against updated backend.
+    account_type?: "volunteer" | "organization";
+    visible_to_orgs?: boolean;
+    org_type?: string | null;
 };
 
 export type ProfileUpdate = {
@@ -248,6 +253,8 @@ export type ProfileUpdate = {
         [key: string]: unknown;
     } | null;
     is_public?: boolean | null;
+    visible_to_orgs?: boolean | null;
+    org_type?: string | null;
 };
 
 /**

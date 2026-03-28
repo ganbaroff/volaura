@@ -595,3 +595,29 @@ Additionally, frontend `Question` type had 6/6 fields mismatched vs backend `Que
 **Fix:** `railway variables set FAL_API_KEY=...` + `railway variables set GROQ_API_KEY=...`
 **Rule:** `.env` is for LOCAL DEVELOPMENT ONLY. ANY new API key must ALSO be set on Railway (and GitHub Secrets if needed for CI). After adding any key to .env → next action is `railway variables set`.
 **CLASS:** CLASS 4 (Schema/type mismatch — assumed deployment context)
+
+### Mistake #63 — Swarm launched without skills loading (Session 52)
+**What:** CTO launched 4 agents for sprint planning without loading required skills (design:critique, design:accessibility-review, design:ux-writing, neuroscience-design). Protocol Step 2 says "Skills loaded: [list]" BEFORE DSP/agents. Skipped entirely.
+**Impact:** Rой not equipped to catch UI/UX gaps → recommended "invite 10 volunteers" before any UI review. CEO caught it.
+**Fix:** Before ANY agent launch, mandatory "Skills loaded:" declaration. Add to agent-launch-template.md.
+**Rule:** Skills are agent equipment. Launching agents without skills = sending soldiers without weapons.
+**CLASS:** CLASS 1 (Protocol skipping)
+
+### Mistake #64 — Rой recommended user invite before UI/UX audit (Session 52)
+**What:** All 4 agents (Product, Architecture, Security, SWE) ranked priorities. NONE flagged "we haven't verified the UI works for real users." Product Agent — whose literal job is user journey gaps — proposed inviting 10 volunteers as priority #2 without checking if the UI is usable.
+**Impact:** Would have invited real people to a product with 65% hardcoded EN strings, broken AZ username regex, no password toggle, unreadable leaderboard tiers. CEO caught it.
+**Fix:** Product Agent prompt must include: "Before recommending user-facing work: has UI/UX been audited for this sprint's changes?" Add as mandatory check.
+**Rule:** Never recommend "invite users" without "audit what they'll see" first.
+**CLASS:** CLASS 3 (Solo execution — team skipped validation step)
+
+### Mistake #65 — Code shipped without post-implementation team review (Session 52)
+**What:** CTO wrote >200 LOC new code (FeedCards, use-skill, client interceptor). By protocol: "Code change >50 lines → Architecture + Security review." No agents reviewed the code after writing.
+**Fix:** After writing code, launch QA + Security agents on the diff before declaring task complete.
+**Rule:** tsc + next build ≠ reviewed. Types passing ≠ good code.
+**CLASS:** CLASS 3 (Solo execution)
+
+### Mistake #66 — Security Agent proposals are stale copies (Session 52)
+**What:** 3 pending proposals in proposals.json repeat "Implement Input Validation and Rate Limiting" — already done, already approved, already in production. Security Agent doesn't update its context between runs.
+**Fix:** Before each swarm run, filter proposals.json: dismiss any pending proposal that matches an already-approved title. Add dedup check to swarm runner.
+**Rule:** Agents must read their own feedback log before proposing. Repeating solved problems = wasted CEO time.
+**CLASS:** CLASS 6 (Team neglect — agent maintenance)

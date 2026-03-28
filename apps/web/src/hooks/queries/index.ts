@@ -1,4 +1,5 @@
-// TODO: Replace with @hey-api/openapi-ts generated hooks after pnpm generate:api
+// Hook barrel — generated SDK handles auth via client interceptor (ADR-003)
+// Hooks not yet migrated to SDK: leaderboard, brandedby, public-stats, aura-explanation (endpoints not in OpenAPI spec)
 export { useAuraScore, useAuraScoreByVolunteer } from "./use-aura";
 export { useAuraExplanation } from "./use-aura-explanation";
 export type { AuraExplanationResponse, CompetencyExplanation, EvaluationItem, ConceptScore } from "./use-aura-explanation";
@@ -11,3 +12,5 @@ export { useLeaderboard } from "./use-leaderboard";
 export type { LeaderboardEntry, LeaderboardResponse, LeaderboardPeriod } from "./use-leaderboard";
 export { usePublicStats } from "./use-public-stats";
 export type { PublicStats } from "./use-public-stats";
+export { useSkill } from "./use-skill";
+export type { SkillResponse } from "./use-skill";

@@ -1,40 +1,39 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  getMyOrganizationApiOrganizationsMeGet,
+  listOrganizationsApiOrganizationsGet,
+  createOrganizationApiOrganizationsPost,
+  updateMyOrganizationApiOrganizationsMePut,
+} from "@/lib/api/generated";
 import { apiFetch, ApiError } from "@/lib/api/client";
 import { useAuthToken } from "./use-auth-token";
 import type { OrganizationResponse, OrganizationCreate, OrgDashboardStats, OrgVolunteerRow } from "@/lib/api/types";
 
-// TODO: Replace with @hey-api/openapi-ts generated hooks after pnpm generate:api
-
 /** My organization — the one the current user owns */
 export function useMyOrganization() {
-  const getToken = useAuthToken();
-
-  return useQuery<OrganizationResponse, ApiError>({
+  return useQuery<OrganizationResponse>({
     queryKey: ["organizations", "me"],
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
-      return apiFetch<OrganizationResponse>("/api/organizations/me", { token });
+      const { data, error } = await getMyOrganizationApiOrganizationsMeGet();
+      if (error || !data) throw new Error("Failed to fetch organization");
+      return data as unknown as OrganizationResponse;
     },
     staleTime: 5 * 60 * 1000,
     retry: 1,
-    // 404 = no org yet — treat as null, not error
     throwOnError: false,
   });
 }
 
 /** Public org list — no auth required */
 export function useOrganizations(params?: { limit?: number; offset?: number }) {
-  return useQuery<OrganizationResponse[], ApiError>({
+  return useQuery<OrganizationResponse[]>({
     queryKey: ["organizations", "list", params],
     queryFn: async () => {
-      const search = new URLSearchParams();
-      if (params?.limit) search.set("limit", String(params.limit));
-      if (params?.offset) search.set("offset", String(params.offset));
-      const qs = search.toString();
-      return apiFetch<OrganizationResponse[]>(`/api/organizations${qs ? `?${qs}` : ""}`);
+      const { data, error } = await listOrganizationsApiOrganizationsGet();
+      if (error) throw new Error("Failed to fetch organizations");
+      return (data ?? []) as unknown as OrganizationResponse[];
     },
     staleTime: 5 * 60 * 1000,
     retry: 2,
@@ -42,18 +41,13 @@ export function useOrganizations(params?: { limit?: number; offset?: number }) {
 }
 
 export function useCreateOrganization() {
-  const getToken = useAuthToken();
   const queryClient = useQueryClient();
 
-  return useMutation<OrganizationResponse, ApiError, OrganizationCreate>({
-    mutationFn: async (data) => {
-      const token = await getToken();
-      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
-      return apiFetch<OrganizationResponse>("/api/organizations", {
-        method: "POST",
-        token,
-        body: JSON.stringify(data),
-      });
+  return useMutation<OrganizationResponse, Error, OrganizationCreate>({
+    mutationFn: async (body) => {
+      const { data, error } = await createOrganizationApiOrganizationsPost({ body });
+      if (error || !data) throw new Error("Failed to create organization");
+      return data as unknown as OrganizationResponse;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
@@ -62,24 +56,23 @@ export function useCreateOrganization() {
 }
 
 export function useUpdateOrganization() {
-  const getToken = useAuthToken();
   const queryClient = useQueryClient();
 
-  return useMutation<OrganizationResponse, ApiError, Partial<OrganizationCreate>>({
-    mutationFn: async (data) => {
-      const token = await getToken();
-      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
-      return apiFetch<OrganizationResponse>("/api/organizations/me", {
-        method: "PUT",
-        token,
-        body: JSON.stringify(data),
+  return useMutation<OrganizationResponse, Error, Partial<OrganizationCreate>>({
+    mutationFn: async (body) => {
+      const { data, error } = await updateMyOrganizationApiOrganizationsMePut({
+        body: body as OrganizationCreate,
       });
+      if (error || !data) throw new Error("Failed to update organization");
+      return data as unknown as OrganizationResponse;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["organizations", "me"] });
     },
   });
 }
+
+// ── Org B2B endpoints (not in generated SDK — manual apiFetch) ──
 
 /** Org B2B dashboard stats — completion rate, avg AURA, badge distribution */
 export function useOrgDashboard() {

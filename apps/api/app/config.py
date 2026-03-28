@@ -27,6 +27,11 @@ class Settings(BaseSettings):
         """Returns the best available anon key — SUPABASE_ANON_JWT > SUPABASE_ANON_KEY > hardcoded."""
         return self.supabase_anon_jwt or self.supabase_anon_key
 
+    @property
+    def using_hardcoded_anon_key(self) -> bool:
+        """True if neither env var is set and the hardcoded fallback is active."""
+        return not self.supabase_anon_jwt and self.supabase_anon_key == self._ANON_KEY_DEFAULT
+
     # API
     api_port: int = 8000
     app_env: str = "development"
@@ -86,6 +91,11 @@ def validate_production_settings() -> list[str]:
     """Check production-critical settings. Returns list of warnings."""
     warnings = []
     if not settings.is_dev:
+        if settings.using_hardcoded_anon_key:
+            warnings.append(
+                "WARNING: Using hardcoded Supabase anon key fallback. "
+                "Set SUPABASE_ANON_JWT on Railway to use env-based key."
+            )
         if not settings.gemini_api_key and not settings.groq_api_key and not settings.openai_api_key:
             warnings.append(
                 "CRITICAL: No LLM API keys configured (GEMINI_API_KEY, GROQ_API_KEY, or OPENAI_API_KEY). "

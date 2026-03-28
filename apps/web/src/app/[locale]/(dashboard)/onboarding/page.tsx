@@ -34,7 +34,15 @@ const COMPETENCIES: CompetencyInfo[] = [
   { slug: "empathy_safeguarding", icon: "🤝" },
 ];
 
-const LANGUAGE_OPTIONS = ["Azerbaijani", "English", "Russian", "Turkish", "Arabic"];
+// Language option keys are stable English identifiers stored in DB.
+// Labels are i18n keys so they render in the user's current locale.
+const LANGUAGE_OPTIONS = [
+  { key: "Azerbaijani", labelKey: "onboarding.languageAzerbaijani" },
+  { key: "English",     labelKey: "onboarding.languageEnglish" },
+  { key: "Russian",     labelKey: "onboarding.languageRussian" },
+  { key: "Turkish",     labelKey: "onboarding.languageTurkish" },
+  { key: "Arabic",      labelKey: "onboarding.languageArabic" },
+] as const;
 
 // ── Slide variants ─────────────────────────────────────────────────────────────
 
@@ -185,13 +193,14 @@ export default function OnboardingPage() {
       }
     } catch (err) {
       if (isMounted.current) {
-        setError(err instanceof Error ? err.message : "An error occurred");
+        setError(t("error.generic", { defaultValue: "Something went wrong. Please try again." }));
         setSaving(false);
       }
     }
   }
 
-  const step1Valid = formData.display_name.trim().length > 0 && formData.username.trim().length > 0;
+  // display_name is optional — only username (3+ chars) required to proceed
+  const step1Valid = formData.username.trim().length >= 3;
   const step3Valid = formData.selectedCompetency.length > 0;
 
   return (
@@ -282,18 +291,18 @@ export default function OnboardingPage() {
                     {t("onboarding.languages")}
                   </label>
                   <div className="flex flex-wrap gap-2">
-                    {LANGUAGE_OPTIONS.map((lang) => (
+                    {LANGUAGE_OPTIONS.map(({ key, labelKey }) => (
                       <button
-                        key={lang}
+                        key={key}
                         type="button"
-                        onClick={() => toggleLanguage(lang)}
+                        onClick={() => toggleLanguage(key)}
                         className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all border ${
-                          formData.languages.includes(lang)
+                          formData.languages.includes(key)
                             ? "bg-primary text-primary-foreground border-primary"
                             : "bg-card text-foreground border-border hover:bg-accent"
                         }`}
                       >
-                        {lang}
+                        {t(labelKey)}
                       </button>
                     ))}
                   </div>

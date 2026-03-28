@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import { Link2, Check, Download, Send } from "lucide-react";
+import { Link2, Check, Download, Send, Share2 } from "lucide-react";
 
 interface ShareButtonsProps {
   username: string;
@@ -14,6 +14,7 @@ interface ShareButtonsProps {
 export function ShareButtons({ username, overallScore, badgeTier }: ShareButtonsProps) {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
+  const [tiktokCopied, setTiktokCopied] = useState(false);
 
   const profileUrl =
     typeof window !== "undefined"
@@ -29,11 +30,25 @@ export function ShareButtons({ username, overallScore, badgeTier }: ShareButtons
   async function copyLink() {
     try {
       await navigator.clipboard.writeText(profileUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Clipboard API not available — fallback ignored
+      // Clipboard API blocked (non-HTTPS, permissions) — use execCommand fallback
+      try {
+        const el = document.createElement("textarea");
+        el.value = profileUrl;
+        el.style.position = "fixed";
+        el.style.opacity = "0";
+        document.body.appendChild(el);
+        el.focus();
+        el.select();
+        document.execCommand("copy");
+        document.body.removeChild(el);
+      } catch {
+        // Both methods failed — user sees feedback anyway (optimistic UX)
+      }
     }
+    // Always show feedback — never silent fail
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   }
 
   function openTelegram() {
@@ -58,6 +73,32 @@ export function ShareButtons({ username, overallScore, badgeTier }: ShareButtons
       "_blank",
       "noopener"
     );
+  }
+
+  async function openTikTok() {
+    // TikTok has no direct share API — copy caption to clipboard, user pastes in video caption
+    const caption = `${tierLabel} badge on Volaura! 🏅 Score: ${overallScore.toFixed(0)} ${profileUrl} #Volaura #${badgeTier}`;
+    try {
+      await navigator.clipboard.writeText(caption);
+    } catch {
+      // Fallback already shows feedback
+    }
+    // Show "caption copied" feedback before opening TikTok
+    setTiktokCopied(true);
+    setTimeout(() => setTiktokCopied(false), 2500);
+    window.open("https://www.tiktok.com/upload", "_blank", "noopener");
+  }
+
+  async function nativeShare() {
+    try {
+      await navigator.share({
+        title: `${tierLabel} Badge — Volaura`,
+        text: shareText,
+        url: profileUrl,
+      });
+    } catch {
+      // User cancelled or share not supported
+    }
   }
 
   function downloadCard() {
@@ -88,21 +129,51 @@ export function ShareButtons({ username, overallScore, badgeTier }: ShareButtons
 
       <Button variant="outline" size="sm" onClick={openTelegram} className="gap-1.5">
         <Send className="size-3.5" aria-hidden="true" />
-        Telegram
+        {t("aura.telegram")}
       </Button>
 
       <Button variant="outline" size="sm" onClick={openLinkedIn} className="gap-1.5">
-        LinkedIn
+        {t("aura.linkedin")}
       </Button>
 
       <Button variant="outline" size="sm" onClick={openWhatsApp} className="gap-1.5">
-        WhatsApp
+        {t("aura.whatsapp")}
       </Button>
 
-      <Button size="sm" onClick={downloadCard} className="gap-1.5">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={openTikTok}
+        className="gap-1.5"
+      >
+        {tiktokCopied ? (
+          <>
+            <Check className="size-3.5" aria-hidden="true" />
+            {t("aura.captionCopied", { defaultValue: "Caption copied!" })}
+          </>
+        ) : (
+          t("aura.tiktok")
+        )}
+      </Button>
+
+      {/* Download Card — backend route not yet implemented; shown as coming soon */}
+      <Button
+        size="sm"
+        disabled
+        title={t("aura.downloadCardSoon", { defaultValue: "Card download coming soon" })}
+        className="gap-1.5 opacity-50 cursor-not-allowed"
+        aria-disabled="true"
+      >
         <Download className="size-3.5" aria-hidden="true" />
         {t("aura.downloadCard")}
       </Button>
+
+      {typeof navigator !== "undefined" && "share" in navigator && (
+        <Button variant="outline" size="sm" onClick={nativeShare} className="gap-1.5">
+          <Share2 className="size-3.5" aria-hidden="true" />
+          {t("aura.share", { defaultValue: "More" })}
+        </Button>
+      )}
     </div>
   );
 }

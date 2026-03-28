@@ -21,6 +21,30 @@ export interface LeaderboardResponse {
 
 export type LeaderboardPeriod = "weekly" | "monthly" | "all_time";
 
+export interface MyRankResponse {
+  rank: number | null;
+  total_users: number;
+}
+
+/**
+ * Current user's all-time rank — used by dashboard StatsRow.
+ * Backend: GET /api/leaderboard/me (authenticated)
+ */
+export function useMyLeaderboardRank() {
+  const getToken = useAuthToken();
+
+  return useQuery<MyRankResponse, ApiError>({
+    queryKey: ["leaderboard", "me"],
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      return apiFetch<MyRankResponse>("/api/leaderboard/me", { token });
+    },
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+  });
+}
+
 /**
  * Fetches the leaderboard for the given period.
  * Backend: GET /api/leaderboard?period=weekly|monthly|all_time&limit=50

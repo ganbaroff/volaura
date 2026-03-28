@@ -129,11 +129,14 @@
     "expired": "Sessiya bitdi",
     "selectAtLeastOne": "Ən azı bir bacarıq seçin",
     "estimatedTime": "~{{n}} dəq",
+    "totalTime": "Cəmi ~{{n}} dəq",
     "questionProgress": "Sual {{current}} / ~{{total}}",
     "questionForm": "Qiymətləndirmə forması",
     "progress": "Sual irəliləyişi",
     "skipQuestion": "Bu sualı keç",
+    "leaveTitle": "Qiymətləndirmədən çıxılsın?",
     "leaveWarning": "Tərk etsəniz, irəliləyişiniz itəcək. Davam edirsiniz?",
+    "leaveConfirm": "Bəli, çıxım",
     "timerExpired": "Vaxt bitdi — növbəti suala keçilir",
     "takingBreak": "İrəliləyiş saxlanıldı. İstənilən vaxt qayıda bilərsiniz.",
     "competencyComplete": "{name} tamamlandı ✓",
@@ -202,7 +205,21 @@
     "evaluationConfidence": "Etibarlılıq",
     "methodology": "Metodologiya",
     "noExplanations": "Bal bölgüsünü görmək üçün qiymətləndirmə keçirin",
-    "methodologyNote": "ISO 10667-2 standartına uyğun metodologiya əsasında"
+    "methodologyNote": "ISO 10667-2 standartına uyğun metodologiya əsasında",
+    "scoreMeaning_top5": "Təsdiqlənmiş könüllülərin ən yaxşı 5%-i",
+    "scoreMeaning_above": "Ortalamadan yuxarı təsdiqlənmiş könüllü",
+    "scoreMeaning_foundation": "Təsdiqlənmiş əsas — inkişaf etməyə davam edin",
+    "scoreMeaning_progress": "Qiymətləndirmə davam edir",
+    "hiddenStrengthLabel": "Gizli güc aşkar edildi",
+    "hiddenStrengthDesc": "Bu bacarıq sizi əksər könüllülərdən fərqləndirir.",
+    "revealingAura": "AURA-nız açılır...",
+    "rising": "Yüksələn Ulduz",
+    "telegram": "Telegram",
+    "linkedin": "LinkedIn",
+    "whatsapp": "WhatsApp",
+    "tiktok": "TikTok",
+    "captionCopied": "Başlıq kopyalandı!",
+    "downloadCardSoon": "Tezliklə"
   },
   "onboarding": {
     "title": "Profilinizi tamamlayın",
@@ -244,7 +261,12 @@
     "step3Cta": "İlk qiymətləndirməni başlat",
     "skipToDashboard": "Əvvəlcə idarə panelinə bax",
     "skip": "Hələlik keç",
-    "back": "← Geri"
+    "back": "← Geri",
+    "languageAzerbaijani": "Azərbaycanca",
+    "languageEnglish": "English",
+    "languageRussian": "Русский",
+    "languageTurkish": "Türkçe",
+    "languageArabic": "العربية"
   },
   "welcome": {
     "title": "Xoş gəldiniz, {{name}}! 🎉",
@@ -280,7 +302,16 @@
     "recentActivity": "Son Fəaliyyət",
     "startAssessment": "Qiymətləndirmənizi Keçin",
     "noScore": "AURA balınızı almaq üçün ilk qiymətləndirmənizi tamamlayın",
-    "quickActions": "Sürətli Əməliyyatlar"
+    "quickActions": "Sürətli Əməliyyatlar",
+    "greetingMorning": "Sabahınız xeyir",
+    "greetingAfternoon": "Günortanız xeyir",
+    "greetingEvening": "Axşamınız xeyir",
+    "feed": {
+      "title": "Sizin üçün tövsiyələr",
+      "empty": "Fərdi tövsiyələri açmaq üçün qiymətləndirməni tamamlayın"
+    },
+    "activityEmpty": "Hekayəniz buradan başlayır",
+    "activityEmptyHint": "İlk fəaliyyətinizi görmək üçün qiymətləndirmənizi tamamlayın"
   },
   "profile": {
     "title": "Profil",

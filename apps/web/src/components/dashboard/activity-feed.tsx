@@ -56,8 +56,13 @@ export function ActivityFeed({ items, loading, locale }: ActivityFeedProps) {
 
   if (items.length === 0) {
     return (
-      <div className="py-6 text-center">
-        <p className="text-sm text-muted-foreground">{t("dashboard.noScore")}</p>
+      <div className="py-6 text-center space-y-1">
+        <p className="text-sm font-medium text-on-surface">
+          {t("dashboard.activityEmpty", { defaultValue: "Your story starts here" })}
+        </p>
+        <p className="text-xs text-muted-foreground">
+          {t("dashboard.activityEmptyHint", { defaultValue: "Complete an assessment to see your first activity" })}
+        </p>
       </div>
     );
   }

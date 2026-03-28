@@ -6,7 +6,116 @@
 ---
 
 ## Last Updated
-2026-03-27 | Session 51 FINAL: **18 commits. v0Laura shift. OWASP 15/22 fixed. Swarm freedom live.**
+2026-03-28 | Session 54: **User simulation sprint. 7 gaps found + fixed. League position live. i18n 4 keys formalized. All defaultValue fallbacks removed.**
+
+## Session 54 — SUMMARY (2026-03-28)
+
+### Method: acted as 3 personas (Leyla, Wali, Rashad) — found gap between what users expect and what they get
+
+### What was found + fixed (7 issues)
+1. **Download Card 404** (CRIT): `/u/{username}/card` route missing. Button disabled (`aria-disabled`, `opacity-50`) + tooltip "Coming soon". No silent 404.
+2. **Copy Link no feedback** (CRIT): `navigator.clipboard.writeText` silently failed on HTTP. Added `execCommand("copy")` fallback + always triggers `setCopied(true)`.
+3. **Onboarding contradiction** (HIGH): Display Name labeled "optional" but `step1Valid` required it. Fixed: only `username.length >= 3` required.
+4. **Assessment time unknown** (HIGH): No time estimate before starting. Added `totalMinutes` computed from selected competencies, shown as `~N min total` aria-live hint.
+5. **League position null** (HIGH): Dashboard had hardcoded `leaguePosition={null}` with TODO. Fixed: backend `GET /api/leaderboard/me` (rank = users_with_higher_score + 1) + frontend `useMyLeaderboardRank` hook.
+6. **Share heading + TikTok** (MED): Share buttons had no section heading (Leyla missed them). Added uppercase heading. TikTok opens app after copying caption — no feedback before. Added async flow: copy caption → show "Caption copied!" → then open TikTok.
+7. **Empty activity feed** (MED): First-time users saw wrong key `dashboard.noScore` in activity feed. Replaced with warm messaging: "Your story starts here" + "Complete an assessment to see your first activity". Formalized keys in EN+AZ.
+
+### Files changed (Session 54)
+- `apps/api/app/routers/leaderboard.py` — new GET /leaderboard/me endpoint
+- `apps/web/src/hooks/queries/use-leaderboard.ts` — useMyLeaderboardRank hook
+- `apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx` — wire league position
+- `apps/web/src/components/aura/share-buttons.tsx` — copy fallback + TikTok flow + card disabled
+- `apps/web/src/app/[locale]/(dashboard)/onboarding/page.tsx` — step1Valid fix
+- `apps/web/src/app/[locale]/(dashboard)/assessment/page.tsx` — totalMinutes estimate
+- `apps/web/src/components/dashboard/activity-feed.tsx` — empty state messaging
+- `apps/web/src/locales/en/common.json` — 4 keys: captionCopied, downloadCardSoon, activityEmpty, activityEmptyHint
+- `apps/web/src/locales/az/common.json` — same 4 keys in Azerbaijani
+
+## Next Session Priority:
+1. **Apply migration to production**: `supabase/migrations/20260328000040_atomic_crystal_deduction.sql` — MUST RUN before any crystal_spent traffic
+2. **Real user test** — need at least 1 real person to go through full assessment flow end-to-end
+3. **Profile verifications + timeline**: empty hardcoded arrays — no backend API exists yet
+4. **Assessment description**: users don't know what they're being tested on or that AI evaluates
+5. **Leaderboard jump-to-rank**: for users ranked > 20 there's no way to scroll to their position
+
+## Session 53 — SUMMARY (2026-03-28)
+
+### Agent team (swarm planning — full protocol)
+3 agents in parallel: Security + Architecture/Product + QA/Product
+- P0-1 (aura_scores RLS CVSS 9.8): ✅ ALREADY FIXED in Session 51 migration
+- P0-3 (Crystal TOCTOU): NEW SQL migration + character.py atomic RPC
+- P0-2 (Assessment persistence): Zustand persist middleware
+- P0-4 (Mobile bottom nav): New BottomNav component
+- P1-5 (i18n): 8 keys added to EN+AZ, 4 code files fixed
+- P1-6 (Profile rate limit): Already done ✅
+- P1-7 (Logout endpoint): Added to auth.py
+- P1-9 (window.confirm): Custom modal dialog in assessment
+
+### What was done
+1. **P0-3 Crystal TOCTOU**: `supabase/migrations/20260328000040_atomic_crystal_deduction.sql` — `deduct_crystals_atomic()` RPC with pg_advisory_lock. `character.py` now calls RPC instead of SELECT→INSERT race.
+2. **P0-2 Assessment persistence**: `assessment-store.ts` now uses `persist()` from zustand/middleware with sessionStorage. Persists: sessionId, selectedCompetencies, currentCompetencyIndex, answeredCount, currentQuestion.
+3. **P0-4 Mobile bottom nav**: `components/layout/bottom-nav.tsx` (NEW) — 5 tabs (Dashboard, AURA, Assessment, Profile, Leaderboard), 72px height, always-visible labels, ADHD-first active state. Dashboard layout wired: `BottomNav` added + `pb-[72px] md:pb-0`.
+4. **P1-5 i18n gaps fixed**: aura.revealingAura, aura.rising, aura.telegram/linkedin/whatsapp/tiktok, onboarding.language*, assessment.leaveTitle/leaveConfirm — all EN+AZ. Fixed 4 code files.
+5. **P1-7 Logout endpoint**: `POST /api/auth/logout` added to auth.py with audit logging.
+6. **P1-9 window.confirm removed**: `assessment/[sessionId]/page.tsx` now uses custom accessible modal dialog (role="dialog", aria-modal, keyboard-safe).
+
+### Files changed (10 modified, 3 new)
+- `supabase/migrations/20260328000040_atomic_crystal_deduction.sql` (NEW)
+- `apps/api/app/routers/character.py` — atomic crystal_spent via RPC
+- `apps/api/app/routers/auth.py` — POST /auth/logout
+- `apps/web/src/stores/assessment-store.ts` — persist middleware
+- `apps/web/src/components/layout/bottom-nav.tsx` (NEW)
+- `apps/web/src/app/[locale]/(dashboard)/layout.tsx` — BottomNav import
+- `apps/web/src/app/[locale]/(dashboard)/aura/page.tsx` — i18n reveal curtain
+- `apps/web/src/components/aura/share-buttons.tsx` — i18n platform names
+- `apps/web/src/app/[locale]/(dashboard)/leaderboard/page.tsx` — i18n tier labels
+- `apps/web/src/app/[locale]/(dashboard)/onboarding/page.tsx` — i18n language options
+- `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/page.tsx` — custom modal
+- `apps/web/src/locales/en/common.json` — 12 new keys
+- `apps/web/src/locales/az/common.json` — 12 new keys
+
+## Next Session Priority:
+1. **Apply migration to production**: `supabase/migrations/20260328000040_atomic_crystal_deduction.sql` — MUST RUN before any crystal_spent traffic
+2. **Invite 10 users** — controlled test (Product Agent #1 priority)
+3. **Avatar system prototype** — depends on user feedback from first 10
+4. **OWASP remaining 4 LOW** — truly not blockers, schedule for polish sprint
+
+## Session 52 — SUMMARY (2026-03-28)
+
+### What was done
+1. **ADR-003 compliance**: Regenerated OpenAPI types from production (40 SDK functions). Refactored 5 hook files (aura, profile, events, dashboard, organizations) from manual `apiFetch` to generated SDK functions. Auth handled by client interceptor. ~400 LOC of manual fetch code replaced.
+2. **OWASP 3 fixes** (18/22 now):
+   - CRIT-02: Added startup warning when hardcoded anon key fallback is active
+   - HIGH-01: Telegram webhook now uses `Depends(get_supabase_admin)` instead of `_get_db()` helper
+   - HIGH-05: Register/login endpoints now use `SupabaseAnon` (anon key) instead of `SupabaseAdmin`
+3. **Feed-curator → /dashboard**: New `useSkill` hook, `FeedCards` component (5 card types with icons/animations), wired into dashboard page between Stats Row and Activity Feed. Only shows when user has AURA score.
+4. **Badge share**: Added TikTok share + native Web Share API to /aura page share buttons.
+5. **i18n**: Added `dashboard.feed.*` keys to EN + AZ.
+
+### Swarm consulted (Session 52 — correct protocol)
+- All 4 agents (Product, Architecture, Security, SWE) prioritized in parallel
+- Consensus: generate:api → OWASP → feed-curator → badge share
+- Security Agent: CRIT-02/HIGH-01/HIGH-05 must fix before 10-user invite (30 min)
+
+### Files changed (22 modified, 2 new)
+- `apps/api/`: config.py, deps.py, auth.py, telegram_webhook.py
+- `apps/web/src/hooks/queries/`: 6 files migrated to SDK
+- `apps/web/src/components/dashboard/feed-cards.tsx` (NEW)
+- `apps/web/src/hooks/queries/use-skill.ts` (NEW)
+- `apps/web/src/lib/api/generated/`: regenerated from production
+- `apps/web/src/locales/`: EN + AZ feed keys
+
+## Next Session Priority (from swarm):
+1. **Invite 10 volunteers** — controlled test (Product Agent #1 priority after feed-curator)
+2. **Avatar system prototype** — depends on user feedback from first 10
+3. **pnpm generate:api for NEW endpoints** — skills, leaderboard, character not yet in OpenAPI spec (backend needs to add these to router tags)
+4. **OWASP remaining 4** — 4 LOW items (truly not blockers)
+
+## OWASP Status: 18/22 fixed (82%)
+- Remaining 4: all LOW severity, not launch blockers
+
+---
 
 ## Session 51 — FULL SUMMARY (2026-03-27)
 

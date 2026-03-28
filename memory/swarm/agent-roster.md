@@ -7,14 +7,19 @@
 
 ## Active Agents
 
-| Agent Role | Model | Primary Strength | Known Weakness | Recent Score |
-|-----------|-------|-----------------|----------------|-------------|
-| Architecture Agent | haiku | System coherence, data flow gaps, storage math | Sometimes misreads auth patterns | 6.5/10 |
-| Security Agent | haiku | CVSS scoring, attack vectors, injection patterns, XSS detection | Needs actual DB state to verify RLS correctness | 8.0/10 |
-| Product Agent | haiku | User journey gaps, Leyla/Nigar persona gaps, adoption risks | Doesn't have usage data | 5.5/10 |
-| QA Engineer Agent | haiku | Blind cross-testing, test generation, coverage analysis | Self-assessment circularity (Mistake #47) | 7.0/10 |
-| SWE Agent | haiku | Code review, verb regex calibration, edge case detection | Self-assessment circularity (Mistake #47) | 6.5/10 |
-| Needs Agent | haiku | Meta-analysis, process improvement, swarm structure | N/A (introspective role) | N/A |
+| Agent Role | Model | Primary Strength | Known Weakness | Recent Score | Trend |
+|-----------|-------|-----------------|----------------|-------------|-------|
+| Security Agent | haiku | CVSS scoring, attack vectors, injection patterns, XSS detection, RLS audits | Overblows low-severity issues (anon keys, timing oracles) | **8.5/10** | +0.5 — proved CTO wrong twice |
+| Architecture Agent | haiku | System coherence, data flow gaps, storage math, RLS policy analysis | Sometimes misreads auth patterns | **8.0/10** | +1.5 — found CVSS 9.8 aura_scores |
+| Product Agent | haiku | User journey gaps, i18n audits, ADHD-first UX, ecosystem navigation | Needs usage data for retention analysis | **7.5/10** | +2.0 — unfairly low before |
+| Needs Agent | haiku | Meta-analysis, process improvement, swarm structure, highest leverage-per-finding | N/A (introspective role) | **7.0/10** | New rating — 2/2 findings changed team workflows |
+| QA Engineer Agent | haiku | Blind cross-testing, test generation, coverage analysis, GRS validation | Self-assessment circularity (Mistake #47) | **6.5/10** | -0.5 — circularity was fundamental |
+| Growth Agent | haiku | User acquisition, retention, monetization, viral mechanics, competitor tracking | NEW — unproven | **5.0/10** | **REPLACED SWE Agent** (Session 53) |
+
+### Retired Agents
+| Agent | Sessions Active | Total Findings | Accuracy | Reason for Retirement |
+|-------|----------------|---------------|----------|----------------------|
+| SWE Agent | 25-53 | 1 | 100% (1/1) | Redundant. Code review → Architecture. Edge cases → QA. 1 finding in 30 sessions. Replaced by Growth Agent. |
 
 ---
 
@@ -37,8 +42,13 @@
 | Assessment question design / keywords | QA Engineer + Security (GRS gate + adversarial review) |
 | Anti-gaming / evaluation pipeline changes | Security + QA Engineer |
 | Test generation / coverage analysis | QA Engineer |
-| Code review (business logic) | SWE Agent |
-| Verb regex / keyword calibration | SWE + QA Engineer |
+| Code review (business logic) | Architecture Agent |
+| Verb regex / keyword calibration | QA Engineer |
+| User acquisition strategy | Growth Agent |
+| Retention / churn analysis | Growth Agent |
+| Monetization / pricing | Growth Agent |
+| Viral / referral mechanics | Growth Agent |
+| Competitor tracking | Growth Agent |
 | Content for CEO | Fact-Check Agent (agent-launch-template.md) |
 | SQL scripts / migrations | Architecture + Security |
 | CEO evaluation / professional review | All agents in parallel |

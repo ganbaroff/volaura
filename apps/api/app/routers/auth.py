@@ -8,14 +8,14 @@ import re
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
 
-from app.deps import CurrentUserId, SupabaseAdmin
+from app.deps import CurrentUserId, SupabaseAdmin, SupabaseAnon
 from app.middleware.rate_limit import limiter, RATE_AUTH
 from app.schemas.profile import ProfileResponse
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
-# Username validation: 3-30 chars, alphanumeric + underscore/hyphen
-USERNAME_RE = re.compile(r"^[a-zA-Z0-9_-]{3,30}$")
+# Username validation: 3-30 chars, alphanumeric + underscore/hyphen + Azerbaijani chars
+USERNAME_RE = re.compile(r"^[a-zA-Z0-9_\-əğıöüşçƏĞİÖÜŞÇ]{3,30}$")
 
 
 class RegisterRequest(BaseModel):
@@ -74,9 +74,9 @@ class AuthResponse(BaseModel):
 async def register(
     request: Request,
     payload: RegisterRequest,
-    db: SupabaseAdmin,
+    db: SupabaseAnon,
 ) -> AuthResponse:
-    """Register a new volunteer via Supabase Auth."""
+    """Register a new volunteer via Supabase Auth (anon key — OWASP HIGH-05 fix)."""
     try:
         auth_response = await db.auth.sign_up({
             "email": payload.email,
@@ -115,9 +115,9 @@ async def register(
 async def login(
     request: Request,
     payload: LoginRequest,
-    db: SupabaseAdmin,
+    db: SupabaseAnon,
 ) -> AuthResponse:
-    """Login with email + password."""
+    """Login with email + password (anon key — OWASP HIGH-05 fix)."""
     try:
         auth_response = await db.auth.sign_in_with_password({
             "email": payload.email,
@@ -152,3 +152,20 @@ async def get_me(
     if not result.data:
         return {"user_id": user_id, "profile": None}
     return {"user_id": user_id, "profile": result.data}
+
+
+@router.post("/logout", status_code=200)
+@limiter.limit(RATE_AUTH)
+async def logout(
+    request: Request,
+    user_id: CurrentUserId,
+) -> dict:
+    """Logout — audit log entry for session termination (OWASP A07 compliance).
+
+    JWT invalidation happens client-side via supabase.auth.signOut().
+    This endpoint serves as an audit trail so session endings are recorded.
+    """
+    from loguru import logger
+
+    logger.info("User logout", user_id=str(user_id))
+    return {"message": "Logged out"}

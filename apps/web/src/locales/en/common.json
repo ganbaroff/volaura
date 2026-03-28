@@ -129,11 +129,14 @@
     "expired": "Session expired",
     "selectAtLeastOne": "Select at least one competency",
     "estimatedTime": "~{{n}} min",
+    "totalTime": "~{{n}} min total",
     "questionProgress": "Question {{current}} of ~{{total}}",
     "questionForm": "Assessment form",
     "progress": "Question progress",
     "skipQuestion": "Skip this question",
+    "leaveTitle": "Leave assessment?",
     "leaveWarning": "If you leave, your progress will be lost. Continue?",
+    "leaveConfirm": "Yes, leave",
     "timerExpired": "Time's up — moving to next question",
     "takingBreak": "Progress saved. You can return any time.",
     "competencyComplete": "{name} complete ✓",
@@ -202,7 +205,21 @@
     "evaluationConfidence": "Confidence",
     "methodology": "Method",
     "noExplanations": "Complete an assessment to see your score breakdown",
-    "methodologyNote": "Based on ISO 10667-2 aligned methodology"
+    "methodologyNote": "Based on ISO 10667-2 aligned methodology",
+    "scoreMeaning_top5": "Top 5% of verified volunteers",
+    "scoreMeaning_above": "Above average verified volunteer",
+    "scoreMeaning_foundation": "Verified foundation — keep building",
+    "scoreMeaning_progress": "Assessment in progress",
+    "hiddenStrengthLabel": "Hidden strength detected",
+    "hiddenStrengthDesc": "This competency sets you apart from most volunteers.",
+    "revealingAura": "Revealing your AURA...",
+    "rising": "Rising Star",
+    "telegram": "Telegram",
+    "linkedin": "LinkedIn",
+    "whatsapp": "WhatsApp",
+    "tiktok": "TikTok",
+    "captionCopied": "Caption copied!",
+    "downloadCardSoon": "Coming soon"
   },
   "competency": {
     "communication": "Communication",
@@ -254,7 +271,12 @@
     "step3Cta": "Start my first assessment",
     "skipToDashboard": "Explore dashboard first",
     "skip": "Skip for now",
-    "back": "← Back"
+    "back": "← Back",
+    "languageAzerbaijani": "Azerbaijani",
+    "languageEnglish": "English",
+    "languageRussian": "Russian",
+    "languageTurkish": "Turkish",
+    "languageArabic": "Arabic"
   },
   "welcome": {
     "title": "You're in, {{name}}! 🎉",
@@ -280,7 +302,16 @@
     "recentActivity": "Recent Activity",
     "startAssessment": "Take Your Assessment",
     "noScore": "Complete your first assessment to get your AURA score",
-    "quickActions": "Quick Actions"
+    "quickActions": "Quick Actions",
+    "greetingMorning": "Good morning",
+    "greetingAfternoon": "Good afternoon",
+    "greetingEvening": "Good evening",
+    "feed": {
+      "title": "Recommended for you",
+      "empty": "Complete an assessment to unlock personalized recommendations"
+    },
+    "activityEmpty": "Your story starts here",
+    "activityEmptyHint": "Complete an assessment to see your first activity"
   },
   "profile": {
     "title": "Profile",

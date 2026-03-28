@@ -19,6 +19,7 @@ export default function SignupPage() {
   const [displayName, setDisplayName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -76,7 +77,7 @@ export default function SignupPage() {
             required
             minLength={3}
             maxLength={30}
-            pattern="[-a-zA-Z0-9_]+"
+            pattern="[-a-zA-Z0-9_əğıöüşçƏĞİÖÜŞÇ]+"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
@@ -117,17 +118,27 @@ export default function SignupPage() {
           <label htmlFor="password" className="text-sm font-medium">
             {t("auth.password")}
           </label>
-          <input
-            id="password"
-            type="password"
-            autoComplete="new-password"
-            required
-            minLength={8}
-            maxLength={128}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
-          />
+          <div className="relative">
+            <input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="new-password"
+              required
+              minLength={8}
+              maxLength={128}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="flex h-10 w-full rounded-md border border-border bg-background px-3 pr-10 py-2 text-sm outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              aria-label={showPassword ? t("auth.hidePassword", { defaultValue: "Hide password" }) : t("auth.showPassword", { defaultValue: "Show password" })}
+            >
+              {showPassword ? "👁" : "👁‍🗨"}
+            </button>
+          </div>
         </div>
 
         {error && (

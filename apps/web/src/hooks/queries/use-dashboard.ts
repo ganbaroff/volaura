@@ -1,12 +1,15 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import {
+  getMyActivityApiActivityMeGet,
+  getMyStatsApiActivityStatsMeGet,
+} from "@/lib/api/generated";
 import { apiFetch, ApiError } from "@/lib/api/client";
 import { useAuthToken } from "./use-auth-token";
 import type { Badge, ActivityItem, DashboardStats } from "@/lib/api/types";
 
-// TODO: Replace with @hey-api/openapi-ts generated hooks after pnpm generate:api
-
+// Badges endpoint not in OpenAPI spec — keep manual
 export function useBadges() {
   const getToken = useAuthToken();
 
@@ -23,18 +26,18 @@ export function useBadges() {
 }
 
 /**
- * Activity feed — aggregated from assessment_sessions, badges, events, behavior_signals.
+ * Activity feed — uses generated SDK.
  * Backend: GET /api/activity/me
  */
 export function useActivity(limit = 20) {
-  const getToken = useAuthToken();
-
-  return useQuery<ActivityItem[], ApiError>({
+  return useQuery<ActivityItem[]>({
     queryKey: ["activity", limit],
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
-      return apiFetch<ActivityItem[]>(`/api/activity/me?limit=${limit}`, { token });
+      const { data, error } = await getMyActivityApiActivityMeGet({
+        query: { limit },
+      });
+      if (error) throw new Error("Failed to fetch activity");
+      return (data ?? []) as ActivityItem[];
     },
     staleTime: 2 * 60 * 1000,
     retry: 2,
@@ -42,18 +45,16 @@ export function useActivity(limit = 20) {
 }
 
 /**
- * Dashboard stats — events attended, verified skills, streak, hours.
+ * Dashboard stats — uses generated SDK.
  * Backend: GET /api/activity/stats/me
  */
 export function useDashboardStats() {
-  const getToken = useAuthToken();
-
-  return useQuery<DashboardStats, ApiError>({
+  return useQuery<DashboardStats>({
     queryKey: ["dashboard", "stats"],
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
-      return apiFetch<DashboardStats>("/api/activity/stats/me", { token });
+      const { data, error } = await getMyStatsApiActivityStatsMeGet();
+      if (error || !data) throw new Error("Failed to fetch dashboard stats");
+      return data as DashboardStats;
     },
     staleTime: 5 * 60 * 1000,
     retry: 2,

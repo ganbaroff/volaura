@@ -8,8 +8,8 @@ from fastapi import APIRouter, HTTPException, Query, Request
 from loguru import logger
 from pydantic import BaseModel, ConfigDict
 
-from app.deps import SupabaseAdmin
-from app.middleware.rate_limit import limiter, RATE_DISCOVERY
+from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
+from app.middleware.rate_limit import limiter, RATE_DISCOVERY, RATE_DEFAULT
 
 router = APIRouter(prefix="/leaderboard", tags=["Leaderboard"])
 
@@ -107,3 +107,59 @@ async def get_leaderboard(
         logger.exception("Leaderboard query failed")
         # Return empty list rather than 500 — public endpoint should degrade gracefully
         return LeaderboardResponse(entries=[], period=period, total_count=0)
+
+
+class MyRankResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    rank: int | None
+    total_users: int
+
+
+@router.get("/me", response_model=MyRankResponse)
+@limiter.limit(RATE_DEFAULT)
+async def get_my_rank(
+    request: Request,
+    db: SupabaseAdmin,
+    user_id: CurrentUserId,
+) -> MyRankResponse:
+    """Return current user's all-time leaderboard rank.
+
+    Used by dashboard StatsRow to show competitive position without
+    calling the full leaderboard (which is public + limited to top 50).
+    """
+    # Get this user's score
+    my_result = (
+        await db.table("aura_scores")
+        .select("total_score")
+        .eq("volunteer_id", str(user_id))
+        .eq("visibility", "public")
+        .maybe_single()
+        .execute()
+    )
+    if not my_result.data:
+        return MyRankResponse(rank=None, total_users=0)
+
+    my_score = float(my_result.data.get("total_score") or 0)
+
+    # Count public users with strictly higher score → rank = that count + 1
+    higher_result = (
+        await db.table("aura_scores")
+        .select("volunteer_id", count="exact")
+        .eq("visibility", "public")
+        .not_.is_("total_score", "null")
+        .gt("total_score", my_score)
+        .execute()
+    )
+    rank = (higher_result.count or 0) + 1
+
+    # Total public users on leaderboard
+    total_result = (
+        await db.table("aura_scores")
+        .select("volunteer_id", count="exact")
+        .eq("visibility", "public")
+        .not_.is_("total_score", "null")
+        .execute()
+    )
+    total = total_result.count or 0
+
+    return MyRankResponse(rank=rank, total_users=total)

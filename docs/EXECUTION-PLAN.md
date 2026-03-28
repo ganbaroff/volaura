@@ -365,15 +365,19 @@ Spanned Sessions 14a through 14d (2026-03-24)
 - [x] Question bank: 0 placeholders, 90 real scenarios across 8 competencies — Session 44
 - [x] Railway production fix: anon key hardcoded fallback (Mistake #53) — Session 44
 - [x] E2E verified on production: auth → AURA 12.47 → assessment → answer — Session 44
-- [ ] `pnpm generate:api` → replace 7 TODO hooks (ADR-003 compliance) ← Sprint 10
+- [x] `pnpm generate:api` → replace 7 TODO hooks (ADR-003 compliance) — Session 52
+- [x] OWASP HIGH-01 + HIGH-05 + CRIT-02 warning — Session 52
+- [x] Feed-curator skill → /dashboard (FeedCards component + useSkill hook) — Session 52
+- [x] Badge share: TikTok + native Web Share API — Session 52
 - [ ] Post #3 — needs new angle (Antigravity rejected as Mistake #40) ← CEO decision
 - [ ] Vitest Node v20 fix (nvm use 20) ← Sprint 10
 
-**Sprint 10 (Sessions 44+): Starting — Org Dashboard + Frontend Polish**
-- [ ] `pnpm generate:api` → replace 7 TODO hooks with generated TypeScript
+**Sprint 10 (Sessions 44+): Org Dashboard + Frontend Polish**
+- [x] `pnpm generate:api` → replace TODO hooks with generated SDK — Session 52
 - [ ] Org dashboard: aggregate volunteer scores + B2B matching endpoint
 - [ ] Post #3 rewrite (new angle from CEO)
 - [ ] Vitest Node v20 fix
+- [ ] Invite 10 volunteers (controlled test) ← NEXT
 
 ---
 

@@ -99,7 +99,21 @@ async def get_current_user_id(
         )
 
 
+async def get_supabase_anon() -> AsyncGenerator[AsyncClient, None]:
+    """Anon Supabase client — for unauthenticated operations (register, login).
+
+    Uses the public anon key. Supabase RLS applies normally.
+    OWASP HIGH-05 fix: auth operations should use anon key, not service role.
+    """
+    client = await acreate_client(
+        supabase_url=settings.supabase_url,
+        supabase_key=settings.effective_anon_key,
+    )
+    yield client
+
+
 # Type aliases for cleaner route signatures
 SupabaseAdmin = Annotated[AsyncClient, Depends(get_supabase_admin)]
 SupabaseUser = Annotated[AsyncClient, Depends(get_supabase_user)]
+SupabaseAnon = Annotated[AsyncClient, Depends(get_supabase_anon)]
 CurrentUserId = Annotated[str, Depends(get_current_user_id)]

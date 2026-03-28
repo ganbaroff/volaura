@@ -1,26 +1,22 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { apiFetch, ApiError } from "@/lib/api/client";
-import { useAuthToken } from "./use-auth-token";
+import { getMyAuraApiAuraMeGet, getAuraByIdApiAuraVolunteerIdGet } from "@/lib/api/generated";
 import type { AuraScore } from "@/lib/api/types";
 import type { AuraScoreResponse } from "@/lib/api/generated/types.gen";
 import { toAuraScore } from "@/lib/api/types";
 
 /**
- * Fetches current user's AURA score.
- * Uses generated AuraScoreResponse type, transforms to AuraScore for UI compatibility.
+ * Fetches current user's AURA score via generated SDK.
+ * Auth handled by client interceptor.
  */
 export function useAuraScore() {
-  const getToken = useAuthToken();
-
-  return useQuery<AuraScore, ApiError>({
+  return useQuery<AuraScore>({
     queryKey: ["aura-score"],
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
-      const raw = await apiFetch<AuraScoreResponse>("/api/aura/me", { token });
-      return toAuraScore(raw);
+      const { data, error } = await getMyAuraApiAuraMeGet();
+      if (error || !data) throw new Error("Failed to fetch AURA score");
+      return toAuraScore(data as unknown as AuraScoreResponse);
     },
     staleTime: 5 * 60 * 1000,
     retry: 2,
@@ -28,15 +24,14 @@ export function useAuraScore() {
 }
 
 export function useAuraScoreByVolunteer(volunteerId: string | undefined) {
-  const getToken = useAuthToken();
-
-  return useQuery<AuraScore, ApiError>({
+  return useQuery<AuraScore>({
     queryKey: ["aura-score", volunteerId],
     queryFn: async () => {
-      const token = await getToken();
-      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
-      const raw = await apiFetch<AuraScoreResponse>(`/api/aura/${volunteerId}`, { token });
-      return toAuraScore(raw);
+      const { data, error } = await getAuraByIdApiAuraVolunteerIdGet({
+        path: { volunteer_id: volunteerId! },
+      });
+      if (error || !data) throw new Error("Failed to fetch AURA score");
+      return toAuraScore(data as unknown as AuraScoreResponse);
     },
     enabled: !!volunteerId,
     staleTime: 5 * 60 * 1000,

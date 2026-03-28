@@ -1,5 +1,36 @@
 # Architecture Decisions Log
 
+## Session 54 Retrospective — 2026-03-28 (User simulation sprint)
+
+✓ Acted as Leyla/Wali/Rashad — found 7 gaps between expected and actual UX
+✓ League position: backend `/api/leaderboard/me` + frontend hook — null no more
+✓ Copy Link: execCommand fallback eliminates silent failure on HTTP/older browsers
+✓ Onboarding: step1Valid now only requires username ≥ 3 chars (display_name optional as labeled)
+✓ Assessment time estimate: ~N min shown before starting (reduces abandonment)
+✓ Download Card: disabled cleanly with tooltip (no 404, no silent error)
+✓ TikTok share: async copy-then-open flow — user sees "Caption copied!" feedback first
+✓ Activity feed: warm empty state replaces wrong translation key
+
+✗ DSP simulation didn't predict the Telegram-style group of personas would uncover this many gaps in one pass. Real user simulation >> automated tests for UX gaps.
+
+→ Next: Apply atomic crystal migration to production. Real user test (not simulation). Backend for profile verifications.
+
+## Session 53 Retrospective — 2026-03-28 (P0+P1 security + UX sprint)
+
+✓ Crystal TOCTOU fixed: `deduct_crystals_atomic()` RPC with pg_advisory_lock eliminates double-spend race
+✓ Assessment session now survives browser refresh: Zustand persist(sessionStorage) with partialize
+✓ Mobile bottom nav live: 5-tab ADHD-first nav (Dashboard, AURA, Assessment, Profile, Leaderboard)
+✓ i18n sweep complete: 12 keys added to EN+AZ, 4 code files fixed (no more hardcoded English)
+✓ Logout endpoint: POST /auth/logout with audit logging (OWASP A07 compliance)
+✓ window.confirm removed: custom accessible modal dialog (role=dialog, aria-modal, Cancel + Leave)
+✓ P0-1 (aura_scores RLS CVSS 9.8): confirmed already fixed in Session 51 migration
+
+✗ DSP simulation predicted aura_scores RLS as unfixed — agent discovered it was already patched.
+  Calibration: Security Agent confidence in "already fixed" findings = 10/10 (reads actual migrations)
+
+→ Next: Apply migration 20260328000040 to production BEFORE any crystal traffic.
+  Then 10-user invite. Avatar system after first feedback.
+
 ## Sessions 47-50 Retrospective — 2026-03-27 (Sprint 10.5 + BrandedBy B1-B2-B3)
 
 ✓ Sprint 10.5 Activation Wave infrastructure: Groq fallback in bars.py (Gemini→Groq→OpenAI→keyword chain)

@@ -73,12 +73,13 @@ function useAnimatedCounter(target: number, duration = 1400) {
 
 // ── Tier display config ───────────────────────────────────────────────────────
 
+// WCAG AA contrast fix (Mistake #64 audit): dark text colors for readability
 const TIER_CONFIG: Record<Tier, { label: string; color: string; glowClass: string; borderColor: string }> = {
-  platinum: { label: "Platinum", color: "#e5e4e2", glowClass: "aura-glow-platinum", borderColor: "#e5e4e2" },
-  gold:     { label: "Gold",     color: "#ffd700", glowClass: "aura-glow-gold",     borderColor: "#ffd700" },
-  silver:   { label: "Silver",   color: "#c0c0c0", glowClass: "aura-glow-silver",   borderColor: "#c0c0c0" },
-  bronze:   { label: "Bronze",   color: "#cd7f32", glowClass: "",                   borderColor: "#cd7f32" },
-  rising:   { label: "Rising",   color: "#908fa0", glowClass: "",                   borderColor: "transparent" },
+  platinum: { label: "Platinum", color: "#6b6b6b", glowClass: "aura-glow-platinum", borderColor: "#e5e4e2" },
+  gold:     { label: "Gold",     color: "#b8860b", glowClass: "aura-glow-gold",     borderColor: "#ffd700" },
+  silver:   { label: "Silver",   color: "#696969", glowClass: "aura-glow-silver",   borderColor: "#c0c0c0" },
+  bronze:   { label: "Bronze",   color: "#8b5e3c", glowClass: "",                   borderColor: "#cd7f32" },
+  rising:   { label: "Rising",   color: "#6b6880", glowClass: "",                   borderColor: "transparent" },
 };
 
 // ── Skeleton ──────────────────────────────────────────────────────────────────
@@ -111,6 +112,7 @@ interface PodiumEntryProps {
 function PodiumEntry({ entry, size, delay }: PodiumEntryProps) {
   const animated = useAnimatedCounter(entry.score, 1600);
   const tier = TIER_CONFIG[entry.tier];
+  const { t } = useTranslation();
   const isLg = size === "lg";
 
   return (
@@ -144,7 +146,7 @@ function PodiumEntry({ entry, size, delay }: PodiumEntryProps) {
           className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-[10px] font-bold px-3 py-0.5 rounded-full uppercase tracking-wider whitespace-nowrap"
           style={{ backgroundColor: tier.color, color: "#13131b" }}
         >
-          {tier.label}
+          {t(`aura.${entry.tier}`)}
         </div>
       </div>
 
@@ -167,6 +169,7 @@ function PodiumEntry({ entry, size, delay }: PodiumEntryProps) {
 
 function RankRow({ entry }: { entry: LeaderEntry }) {
   const tier = TIER_CONFIG[entry.tier];
+  const { t } = useTranslation();
   return (
     <div
       className={`flex items-center gap-4 p-4 rounded-2xl transition-colors ${
@@ -199,7 +202,7 @@ function RankRow({ entry }: { entry: LeaderEntry }) {
           className="text-[10px] font-bold uppercase tracking-widest"
           style={{ color: tier.color }}
         >
-          {tier.label}
+          {t(`aura.${entry.tier}`)}
         </span>
       </div>
       <div className="text-right">

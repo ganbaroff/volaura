@@ -143,7 +143,7 @@ function NewGenerationForm({ twinId }: { twinId: string }) {
         </Button>
       </div>
       {error && (
-        <p className="text-sm text-destructive">{error.detail}</p>
+        <p className="text-sm text-destructive" role="alert">{t("error.generic", { defaultValue: "Something went wrong. Please try again." })}</p>
       )}
     </form>
   );

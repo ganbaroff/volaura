@@ -14,6 +14,9 @@ import { ActivityFeed, type ActivityItem as FeedActivityItem } from "@/component
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuraScore } from "@/hooks/queries/use-aura";
 import { useActivity, useDashboardStats } from "@/hooks/queries/use-dashboard";
+import { useMyLeaderboardRank } from "@/hooks/queries/use-leaderboard";
+import { useSkill } from "@/hooks/queries/use-skill";
+import { FeedCards, type FeedCard } from "@/components/dashboard/feed-cards";
 import { ApiError } from "@/lib/api/client";
 
 const pageVariants = {
@@ -44,11 +47,12 @@ function getRelativeTime(dateStr: string): string {
 
 // ── Neuroscience helper: time-of-day greeting (Brain Constructs Reality)
 // Opening word sets emotional tone for the entire session.
-function getGreeting(): string {
+// Returns i18n key — translated in locales/*/common.json
+function getGreetingKey(): string {
   const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  return "Good evening";
+  if (hour < 12) return "dashboard.greetingMorning";
+  if (hour < 17) return "dashboard.greetingAfternoon";
+  return "dashboard.greetingEvening";
 }
 
 export default function DashboardPage() {
@@ -90,6 +94,28 @@ export default function DashboardPage() {
   const { data: aura, isLoading: auraLoading, error: auraError, refetch: refetchAura } = useAuraScore();
   const { data: rawActivity = [], isLoading: activityLoading } = useActivity();
   const { data: stats } = useDashboardStats();
+  const { data: myRank } = useMyLeaderboardRank();
+
+  // Feed curator — personalized recommendations (only when user has AURA score)
+  const { data: feedData, isLoading: feedLoading } = useSkill(
+    "feed-curator",
+    { language: locale },
+    { enabled: aura != null && aura.total_score > 0, staleTime: 5 * 60 * 1000 },
+  );
+
+  // Parse feed cards from skill output
+  const feedCards: FeedCard[] = (() => {
+    if (!feedData?.output) return [];
+    try {
+      const output = feedData.output;
+      if (typeof output === "string") return JSON.parse(output) as FeedCard[];
+      if (Array.isArray(output)) return output as FeedCard[];
+      if ("cards" in output && Array.isArray(output.cards)) return output.cards as FeedCard[];
+      return [];
+    } catch {
+      return [];
+    }
+  })();
 
   // Map API ActivityItem → Component ActivityItem
   // timeAgo uses relative time (getRelativeTime) instead of locale date string
@@ -123,7 +149,7 @@ export default function DashboardPage() {
         {/* ── Welcome — time-aware greeting (Brain Constructs Reality principle) ── */}
         <motion.div variants={sectionVariants}>
           <h2 className="text-xl font-bold text-foreground">
-            {getGreeting()}{displayName ? `, ${displayName}` : ""}! 👋
+            {t(getGreetingKey())}{displayName ? `, ${displayName}` : ""}! 👋
           </h2>
         </motion.div>
 
@@ -163,10 +189,28 @@ export default function DashboardPage() {
             <StatsRow
               streak={stats?.streak_days ?? 0}
               eventsCount={stats?.events_attended ?? 0}
-              leaguePosition={null}
+              leaguePosition={myRank?.rank ?? null}
             />
           )}
         </motion.div>
+
+        {/* ── Personalized Feed (feed-curator skill) ── */}
+        {hasScore && (
+          <motion.div variants={sectionVariants} className="space-y-2">
+            <SectionHeader label={t("dashboard.feed.title", { defaultValue: "Recommended for you" })} />
+            <FeedCards
+              cards={feedCards}
+              loading={feedLoading}
+              locale={locale}
+              onCardAction={(card) => {
+                if (card.type === "challenge") router.push(`/${locale}/assessment`);
+                else if (card.type === "event") router.push(`/${locale}/events`);
+                else if (card.type === "people") router.push(`/${locale}/leaderboard`);
+                else if (card.type === "achievement") router.push(`/${locale}/aura`);
+              }}
+            />
+          </motion.div>
+        )}
 
         {/* ── Recent Activity ── */}
         <motion.div variants={sectionVariants} className="space-y-2">

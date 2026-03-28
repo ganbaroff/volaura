@@ -52,21 +52,15 @@ function useAnimatedCounter(target: number, duration = 1200, enabled = true) {
 // ── Score meaning line ───────────────────────────────────────────────────
 
 function ScoreMeaning({ score }: { score: number }) {
-  // TODO: i18n — localize these strings (AZ team: keys aura.scoreMeaning_top5,
-  //   aura.scoreMeaning_above, aura.scoreMeaning_foundation, aura.scoreMeaning_progress)
-  let label: string;
-  if (score >= 90) {
-    label = "Top 5% of verified volunteers";
-  } else if (score >= 75) {
-    label = "Above average verified volunteer";
-  } else if (score >= 60) {
-    label = "Verified foundation — keep building";
-  } else {
-    label = "Assessment in progress";
-  }
+  const { t } = useTranslation();
+  let key: string;
+  if (score >= 90) key = "aura.scoreMeaning_top5";
+  else if (score >= 75) key = "aura.scoreMeaning_above";
+  else if (score >= 60) key = "aura.scoreMeaning_foundation";
+  else key = "aura.scoreMeaning_progress";
 
   return (
-    <p className="text-sm text-muted-foreground mt-1 font-medium">{label}</p>
+    <p className="text-sm text-muted-foreground mt-1 font-medium">{t(key)}</p>
   );
 }
 
@@ -105,15 +99,13 @@ function SavantDiscovery({ competencyScores, revealed }: SavantDiscoveryProps) {
           <span className="text-2xl mt-0.5" aria-hidden="true">🔍</span>
           <div>
             <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">
-              {/* TODO: i18n — key aura.hiddenStrengthLabel */}
-              Hidden strength detected
+              {t("aura.hiddenStrengthLabel")}
             </p>
             <p className="text-base font-bold text-foreground">
               {competencyLabel}: {Math.round(topScore)}/100
             </p>
             <p className="text-sm text-muted-foreground mt-0.5">
-              {/* TODO: i18n — key aura.hiddenStrengthDesc */}
-              This competency sets you apart from most volunteers.
+              {t("aura.hiddenStrengthDesc")}
             </p>
           </div>
         </motion.div>
@@ -144,8 +136,7 @@ function RevealCurtain() {
         ◈
       </motion.div>
       <p className="text-base font-semibold text-foreground tracking-wide">
-        {/* TODO: i18n — key aura.revealingAura */}
-        Revealing your AURA...
+        {t("aura.revealingAura")}
       </p>
     </motion.div>
   );
@@ -343,13 +334,17 @@ export default function AuraPage() {
           </motion.div>
         </motion.div>
 
-        {/* Share — immediately below score, minimal, no card wrapper */}
+        {/* Share — visual section header makes buttons discoverable (Leyla test: buttons missed without heading) */}
         {profile && revealed && (
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.4 }}
+            className="space-y-2"
           >
+            <p className="text-sm font-semibold text-on-surface-variant uppercase tracking-wider">
+              {t("aura.share")}
+            </p>
             <ShareButtons
               username={profile.username}
               overallScore={aura.total_score}

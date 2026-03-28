@@ -12,21 +12,18 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from pathlib import Path
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import JSONResponse
 from loguru import logger
+from supabase._async.client import AsyncClient
 
 from app.config import settings
+from app.deps import get_supabase_admin
 
 router = APIRouter(prefix="/telegram", tags=["Telegram"])
 
-
-# ── Helpers ──────────────────────────────────────────────────────────────────
-
-async def _get_db():
-    """Get admin Supabase client for bot operations."""
-    from supabase._async.client import AsyncClient, acreate_client
-    return await acreate_client(settings.supabase_url, settings.supabase_service_key)
+# Type alias for Depends injection
+SupabaseAdmin = AsyncClient
 
 
 async def _send_message(chat_id: int | str, text: str) -> bool:
@@ -368,8 +365,11 @@ async def _handle_help(chat_id: int | str) -> None:
 # ── Webhook Endpoint ─────────────────────────────────────────────────────────
 
 @router.post("/webhook")
-async def telegram_webhook(request: Request) -> JSONResponse:
-    """Receive Telegram update via webhook."""
+async def telegram_webhook(
+    request: Request,
+    db: AsyncClient = Depends(get_supabase_admin),
+) -> JSONResponse:
+    """Receive Telegram update via webhook. Uses Depends for admin client (OWASP HIGH-01 fix)."""
     if not settings.telegram_bot_token:
         return JSONResponse({"ok": False, "error": "Bot not configured"})
 
@@ -408,9 +408,7 @@ async def telegram_webhook(request: Request) -> JSONResponse:
     logger.info("Telegram CEO: {text}", text=text[:100])
 
     try:
-        db = await _get_db()
-
-        # Route commands
+        # Route commands (db injected via Depends)
         if text.startswith("/status"):
             await _handle_status(db, chat_id)
         elif text.startswith("/proposals"):

@@ -1,22 +1,30 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  listEventsApiEventsGet,
+  getEventApiEventsEventIdGet,
+  createEventApiEventsPost,
+  registerForEventApiEventsEventIdRegisterPost,
+  myRegistrationsApiEventsMyRegistrationsGet,
+} from "@/lib/api/generated";
 import { apiFetch, ApiError } from "@/lib/api/client";
 import { useAuthToken } from "./use-auth-token";
 import type { EventResponse, EventCreate, RegistrationResponse } from "@/lib/api/types";
 
-// TODO: Replace with @hey-api/openapi-ts generated hooks after pnpm generate:api
-
 export function useEvents(params?: { status?: string; limit?: number; offset?: number }) {
-  return useQuery<EventResponse[], ApiError>({
+  return useQuery<EventResponse[]>({
     queryKey: ["events", params],
     queryFn: async () => {
-      const search = new URLSearchParams();
-      if (params?.status) search.set("status", params.status);
-      if (params?.limit) search.set("limit", String(params.limit));
-      if (params?.offset) search.set("offset", String(params.offset));
-      const qs = search.toString();
-      return apiFetch<EventResponse[]>(`/api/events${qs ? `?${qs}` : ""}`);
+      const { data, error } = await listEventsApiEventsGet({
+        query: {
+          status: params?.status,
+          limit: params?.limit,
+          offset: params?.offset,
+        },
+      });
+      if (error) throw new Error("Failed to fetch events");
+      return (data ?? []) as unknown as EventResponse[];
     },
     staleTime: 2 * 60 * 1000,
     retry: 2,
@@ -24,15 +32,22 @@ export function useEvents(params?: { status?: string; limit?: number; offset?: n
 }
 
 export function useEvent(eventId: string | undefined) {
-  return useQuery<EventResponse, ApiError>({
+  return useQuery<EventResponse>({
     queryKey: ["events", eventId],
-    queryFn: async () => apiFetch<EventResponse>(`/api/events/${eventId}`),
+    queryFn: async () => {
+      const { data, error } = await getEventApiEventsEventIdGet({
+        path: { event_id: eventId! },
+      });
+      if (error || !data) throw new Error("Failed to fetch event");
+      return data as unknown as EventResponse;
+    },
     enabled: !!eventId,
     staleTime: 2 * 60 * 1000,
     retry: 2,
   });
 }
 
+// /api/events/my returns EventResponse[] with registration context — not in generated SDK
 export function useMyEvents() {
   const getToken = useAuthToken();
 
@@ -49,18 +64,13 @@ export function useMyEvents() {
 }
 
 export function useCreateEvent() {
-  const getToken = useAuthToken();
   const queryClient = useQueryClient();
 
-  return useMutation<EventResponse, ApiError, EventCreate>({
-    mutationFn: async (data) => {
-      const token = await getToken();
-      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
-      return apiFetch<EventResponse>("/api/events", {
-        method: "POST",
-        token,
-        body: JSON.stringify(data),
-      });
+  return useMutation<EventResponse, Error, EventCreate>({
+    mutationFn: async (body) => {
+      const { data, error } = await createEventApiEventsPost({ body });
+      if (error || !data) throw new Error("Failed to create event");
+      return data as unknown as EventResponse;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["events"] });
@@ -69,18 +79,15 @@ export function useCreateEvent() {
 }
 
 export function useRegisterForEvent() {
-  const getToken = useAuthToken();
   const queryClient = useQueryClient();
 
-  return useMutation<RegistrationResponse, ApiError, { eventId: string }>({
+  return useMutation<RegistrationResponse, Error, { eventId: string }>({
     mutationFn: async ({ eventId }) => {
-      const token = await getToken();
-      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
-      return apiFetch<RegistrationResponse>(`/api/events/${eventId}/register`, {
-        method: "POST",
-        token,
-        body: JSON.stringify({}),
+      const { data, error } = await registerForEventApiEventsEventIdRegisterPost({
+        path: { event_id: eventId },
       });
+      if (error || !data) throw new Error("Failed to register for event");
+      return data as unknown as RegistrationResponse;
     },
     onSuccess: (_data, { eventId }) => {
       queryClient.invalidateQueries({ queryKey: ["events", eventId] });

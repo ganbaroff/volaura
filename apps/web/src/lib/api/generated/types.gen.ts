@@ -1364,5 +1364,5 @@ export type GetMyStatsApiActivityStatsMeGetResponses = {
 export type GetMyStatsApiActivityStatsMeGetResponse = GetMyStatsApiActivityStatsMeGetResponses[keyof GetMyStatsApiActivityStatsMeGetResponses];
 
 export type ClientOptions = {
-    baseUrl: `${string}://${string}` | (string & {});
+    baseUrl: 'https://modest-happiness-production.up.railway.app' | (string & {});
 };

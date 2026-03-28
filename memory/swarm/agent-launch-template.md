@@ -148,6 +148,43 @@ while using hand gestures" require narrative structure — real competence, not 
 
 ---
 
+## ⛔ PRE-LAUNCH GATE — MANDATORY BEFORE ANY AGENT LAUNCH (Mistake #63/#64/#65)
+
+**CTO must complete these checks BEFORE launching agents. No exceptions.**
+
+### Gate 1: Skills Loaded (Mistake #63)
+```
+Read CLAUDE.md Skills Matrix → match current task → load ALL matching rows.
+Write visible declaration: "Skills loaded: [list]. Key guidance: [bullets]."
+If declaration missing → agents launch WITHOUT domain knowledge → garbage in, garbage out.
+```
+
+### Gate 2: UI Audit Check (Mistake #64)
+```
+If task involves user-facing changes OR "invite users" is on the table:
+  → Has UI/UX been audited for THIS sprint's changes? YES/NO
+  → If NO → add UI audit as priority BEFORE any user invite
+  → Product Agent prompt MUST include: "Before recommending user invite: has UI been audited?"
+```
+
+### Gate 3: Post-Implementation Review (Mistake #65)
+```
+After writing >50 LOC new code:
+  → Launch QA + Security agents on the diff BEFORE declaring task complete
+  → tsc + next build ≠ reviewed
+  → Types passing ≠ good code
+```
+
+### Gate 4: Proposal Dedup (Mistake #66)
+```
+Before swarm run:
+  → Read proposals.json
+  → Any pending proposal matching an already-approved/dismissed title → auto-dismiss
+  → Agent must read agent-feedback-log.md before proposing
+```
+
+---
+
 ## RULES FOR ALL AGENT LAUNCHES
 
 1. Always use `subagent_type="Explore"` for research/review (has Read/Grep/Glob)
@@ -156,6 +193,9 @@ while using hand gestures" require narrative structure — real competence, not 
 4. Always include "Every fact must come from files you read" instruction
 5. For content tasks: Fact-Check Agent MUST run before delivering to CEO
 6. For plan tasks (>10 lines): Strategy Agent or critique agent MUST run first
+7. **NEW (Mistake #63):** Agent prompts MUST include loaded skill guidance, not just role description
+8. **NEW (Mistake #64):** Product Agent MUST check "has UI been audited?" before recommending user-facing launches
+9. **NEW (Mistake #65):** After code >50 LOC → launch QA + Security review agents before marking complete
 
 ---
 

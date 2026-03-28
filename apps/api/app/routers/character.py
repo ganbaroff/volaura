@@ -62,24 +62,32 @@ async def create_character_event(
                 },
             )
 
-    # ── P0-1 FIX: Balance check before crystal_spent ────────────────────────
+    # ── P0-3 FIX: Atomic crystal deduction (advisory lock — no TOCTOU race) ──
+    # Old approach: SELECT balance → check → INSERT (2 separate async calls = race).
+    # New approach: single RPC acquires pg_advisory_lock, checks, inserts atomically.
+    # Ledger INSERT for crystal_spent is done INSIDE the RPC — skip manual insert below.
+    _crystal_spent_handled_by_rpc = False
     if body.event_type == "crystal_spent":
-        balance_result = (
-            await db.table("game_crystal_ledger")
-            .select("amount")
-            .eq("user_id", str(user_id))
-            .execute()
-        )
-        current_balance = sum(row["amount"] for row in (balance_result.data or []))
         amount = body.payload["amount"]  # already validated above
-        if current_balance < amount:
+        deduction = await db.rpc(
+            "deduct_crystals_atomic",
+            {
+                "p_user_id": str(user_id),
+                "p_amount": amount,
+                "p_source": body.payload.get("source", body.source_product),
+                "p_reference_id": body.payload.get("reference_id"),
+            },
+        ).execute()
+        row0 = (deduction.data or [{}])[0]
+        if not row0.get("success"):
             raise HTTPException(
                 status_code=422,
                 detail={
-                    "code": "INSUFFICIENT_CRYSTALS",
-                    "message": f"Cannot spend {amount} crystals — balance is {current_balance}",
+                    "code": row0.get("error_code", "CRYSTAL_DEDUCTION_FAILED"),
+                    "message": row0.get("error_msg", "Crystal deduction failed"),
                 },
             )
+        _crystal_spent_handled_by_rpc = True
 
     # ── P0-3 FIX: Idempotency for volaura_assessment crystal rewards ─────────
     if (
@@ -151,8 +159,8 @@ async def create_character_event(
 
     stored = result.data[0]
 
-    # ── Update crystal ledger (event already stored — log inconsistency if fails) ──
-    if body.event_type in ("crystal_earned", "crystal_spent"):
+    # ── Update crystal ledger (earned only — spent is handled atomically by RPC) ──
+    if body.event_type in ("crystal_earned", "crystal_spent") and not _crystal_spent_handled_by_rpc:
         amount = body.payload["amount"]
         ledger_amount = amount if body.event_type == "crystal_earned" else -amount
         ledger_row = {

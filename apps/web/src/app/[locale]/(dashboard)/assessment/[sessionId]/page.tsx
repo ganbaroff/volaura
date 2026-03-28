@@ -43,6 +43,7 @@ export default function QuestionPage() {
   const [screen, setScreen] = useState<ScreenState>("question");
   const [localError, setLocalError] = useState<string | null>(null);
   const [timingWarning, setTimingWarning] = useState<string | null>(null);
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
 
   const currentCompetency = selectedCompetencies[currentCompetencyIndex];
   const nextCompetencyName = selectedCompetencies[currentCompetencyIndex + 1];
@@ -259,10 +260,13 @@ export default function QuestionPage() {
   }, [nextCompetency, nextCompetencyName, getAuthHeader, setSession, setQuestion, router, currentLocale, t]);
 
   const handleLeave = () => {
-    if (window.confirm(t("assessment.leaveWarning"))) {
-      reset();
-      router.push(`/${currentLocale}/dashboard`);
-    }
+    setShowLeaveConfirm(true);
+  };
+
+  const handleConfirmLeave = () => {
+    setShowLeaveConfirm(false);
+    reset();
+    router.push(`/${currentLocale}/dashboard`);
   };
 
   // Get the display text for the current question based on locale
@@ -409,6 +413,41 @@ export default function QuestionPage() {
           >
             {t("assessment.skipQuestion")}
           </Button>
+        </div>
+      )}
+
+      {/* Leave confirmation modal — replaces window.confirm (ADHD-first, accessible) */}
+      {showLeaveConfirm && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="leave-dialog-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
+        >
+          <div className="w-full max-w-sm rounded-2xl bg-surface-container-low p-6 shadow-xl space-y-4">
+            <h2 id="leave-dialog-title" className="text-base font-bold text-on-surface">
+              {t("assessment.leaveTitle")}
+            </h2>
+            <p className="text-sm text-on-surface-variant">
+              {t("assessment.leaveWarning")}
+            </p>
+            <div className="flex gap-3 justify-end">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowLeaveConfirm(false)}
+              >
+                {t("common.cancel")}
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleConfirmLeave}
+              >
+                {t("assessment.leaveConfirm")}
+              </Button>
+            </div>
+          </div>
         </div>
       )}
     </div>

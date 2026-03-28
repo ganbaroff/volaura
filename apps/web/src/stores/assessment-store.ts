@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 /**
  * Matches backend QuestionOut schema (apps/api/app/schemas/assessment.py)
@@ -56,30 +57,9 @@ interface AssessmentStore {
   reset: () => void;
 }
 
-export const useAssessmentStore = create<AssessmentStore>((set) => ({
-  sessionId: null,
-  currentQuestion: null,
-  selectedCompetencies: [],
-  currentCompetencyIndex: 0,
-  answeredCount: 0,
-  isSubmitting: false,
-  error: null,
-
-  setSession: (id) => set({ sessionId: id }),
-  setQuestion: (q) => set({ currentQuestion: q }),
-  setCompetencies: (c) => set({ selectedCompetencies: c, currentCompetencyIndex: 0 }),
-  incrementAnswered: () => set((s) => ({ answeredCount: s.answeredCount + 1 })),
-  nextCompetency: () =>
-    set((s) => ({
-      currentCompetencyIndex: s.currentCompetencyIndex + 1,
-      answeredCount: 0,
-      sessionId: null,
-      currentQuestion: null,
-    })),
-  setSubmitting: (v) => set({ isSubmitting: v }),
-  setError: (e) => set({ error: e }),
-  reset: () =>
-    set({
+export const useAssessmentStore = create<AssessmentStore>()(
+  persist(
+    (set) => ({
       sessionId: null,
       currentQuestion: null,
       selectedCompetencies: [],
@@ -87,5 +67,47 @@ export const useAssessmentStore = create<AssessmentStore>((set) => ({
       answeredCount: 0,
       isSubmitting: false,
       error: null,
+
+      setSession: (id) => set({ sessionId: id }),
+      setQuestion: (q) => set({ currentQuestion: q }),
+      setCompetencies: (c) => set({ selectedCompetencies: c, currentCompetencyIndex: 0 }),
+      incrementAnswered: () => set((s) => ({ answeredCount: s.answeredCount + 1 })),
+      nextCompetency: () =>
+        set((s) => ({
+          currentCompetencyIndex: s.currentCompetencyIndex + 1,
+          answeredCount: 0,
+          sessionId: null,
+          currentQuestion: null,
+        })),
+      setSubmitting: (v) => set({ isSubmitting: v }),
+      setError: (e) => set({ error: e }),
+      reset: () =>
+        set({
+          sessionId: null,
+          currentQuestion: null,
+          selectedCompetencies: [],
+          currentCompetencyIndex: 0,
+          answeredCount: 0,
+          isSubmitting: false,
+          error: null,
+        }),
     }),
-}));
+    {
+      name: "volaura-assessment",
+      // sessionStorage clears on tab close — user can't resume a cold session
+      // (prevents stale 409 conflict if backend session already expired)
+      storage: createJSONStorage(() =>
+        typeof window !== "undefined" ? sessionStorage : localStorage
+      ),
+      version: 1,
+      // Only persist session-critical fields — not transient UI state
+      partialize: (s) => ({
+        sessionId: s.sessionId,
+        selectedCompetencies: s.selectedCompetencies,
+        currentCompetencyIndex: s.currentCompetencyIndex,
+        answeredCount: s.answeredCount,
+        currentQuestion: s.currentQuestion,
+      }),
+    }
+  )
+);

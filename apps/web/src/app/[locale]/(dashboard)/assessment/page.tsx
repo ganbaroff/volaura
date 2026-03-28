@@ -35,6 +35,12 @@ export default function AssessmentPage() {
   const [isStarting, setIsStarting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Total estimated minutes for selected competencies — shown before start
+  const totalMinutes = Array.from(selected).reduce((sum, id) => {
+    const comp = COMPETENCIES.find((c) => c.id === id);
+    return sum + (comp?.estimatedMinutes ?? 0);
+  }, 0);
+
   const toggle = useCallback((id: string) => {
     setSelected((prev) => {
       const next = new Set(prev);
@@ -140,6 +146,16 @@ export default function AssessmentPage() {
           );
         })}
       </div>
+
+      {/* Total time estimate — shown as soon as any competency is selected */}
+      {selected.size > 0 && (
+        <p className="text-sm text-center text-muted-foreground" aria-live="polite">
+          {t("assessment.totalTime", {
+            n: totalMinutes,
+            defaultValue: `~${totalMinutes} min total`,
+          })}
+        </p>
+      )}
 
       <Button
         onClick={handleStart}

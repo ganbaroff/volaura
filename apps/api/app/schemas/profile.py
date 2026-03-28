@@ -86,3 +86,23 @@ class PublicProfileResponse(BaseModel):
     location: str | None = None
     languages: list[str] = []
     badge_issued_at: datetime | None = None
+
+
+class DiscoverableVolunteer(BaseModel):
+    """Volunteer profile visible to org users on the discovery page.
+
+    Only includes volunteers who have opted in (visible_to_orgs=True).
+    AURA score joined from aura_scores table.
+    """
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    username: str
+    display_name: str | None = None
+    avatar_url: str | None = None
+    bio: str | None = None
+    location: str | None = None
+    languages: list[str] = []
+    # AURA data (None if volunteer hasn't completed any assessment)
+    total_score: float | None = None
+    badge_tier: str | None = None

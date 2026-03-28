@@ -8,12 +8,14 @@ from loguru import logger
 
 from app.config import settings
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser, get_supabase_admin
-from app.middleware.rate_limit import limiter, RATE_PROFILE_WRITE, RATE_DEFAULT
+from fastapi import Query
+from app.middleware.rate_limit import limiter, RATE_PROFILE_WRITE, RATE_DEFAULT, RATE_DISCOVERY
 from app.schemas.profile import (
     ProfileCreate,
     ProfileResponse,
     ProfileUpdate,
     PublicProfileResponse,
+    DiscoverableVolunteer,
 )
 from app.schemas.verification import (
     CreateVerificationLinkRequest,
@@ -221,6 +223,69 @@ async def create_verification_link(
         verifier_org=payload.verifier_org,
         competency_id=payload.competency_id,
     )
+
+
+@router.get("/public", response_model=list[DiscoverableVolunteer])
+@limiter.limit(RATE_DISCOVERY)
+async def list_public_volunteers(
+    request: Request,
+    db: SupabaseAdmin,
+    user_id: CurrentUserId,
+    limit: int = Query(default=20, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+) -> list[DiscoverableVolunteer]:
+    """List volunteers who have opted in to org discovery (visible_to_orgs=True).
+
+    Requires authentication as an organization account (account_type='organization').
+    Ordered by AURA score descending. Paginated.
+    """
+    # Dual org-role check: JWT (account_type in profile) + DB verification
+    caller = (
+        await db.table("profiles")
+        .select("account_type")
+        .eq("id", str(user_id))
+        .maybe_single()
+        .execute()
+    )
+    if not caller.data or caller.data.get("account_type") != "organization":
+        raise HTTPException(
+            status_code=403,
+            detail={"code": "ORG_REQUIRED", "message": "Only organization accounts can browse volunteers"},
+        )
+
+    # Fetch opted-in volunteers joined with AURA score, ordered by score
+    result = (
+        await db.table("profiles")
+        .select(
+            "id, username, display_name, avatar_url, bio, location, languages, "
+            "aura_scores(total_score, badge_tier)"
+        )
+        .eq("visible_to_orgs", True)
+        .eq("is_public", True)
+        .eq("account_type", "volunteer")
+        .order("aura_scores(total_score)", desc=True, nulls_last=True)
+        .range(offset, offset + limit - 1)
+        .execute()
+    )
+
+    volunteers: list[DiscoverableVolunteer] = []
+    for row in result.data or []:
+        aura = row.get("aura_scores")
+        # aura_scores is a list (one-to-many join result) — take first visible entry
+        aura_row = aura[0] if isinstance(aura, list) and aura else aura if isinstance(aura, dict) else None
+        volunteers.append(DiscoverableVolunteer(
+            id=row["id"],
+            username=row["username"],
+            display_name=row.get("display_name"),
+            avatar_url=row.get("avatar_url"),
+            bio=row.get("bio"),
+            location=row.get("location"),
+            languages=row.get("languages") or [],
+            total_score=float(aura_row["total_score"]) if aura_row and aura_row.get("total_score") is not None else None,
+            badge_tier=aura_row.get("badge_tier") if aura_row else None,
+        ))
+
+    return volunteers
 
 
 @router.get("/{username}", response_model=PublicProfileResponse)

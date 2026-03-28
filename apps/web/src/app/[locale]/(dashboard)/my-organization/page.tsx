@@ -4,7 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { Building2, Calendar, Users, Plus, ExternalLink, CheckCircle2, Loader2, Globe, UserCheck } from "lucide-react";
+import { Building2, Calendar, Users, Plus, ExternalLink, CheckCircle2, Loader2, Globe, UserCheck, Upload } from "lucide-react";
 import { useMyOrganization, useCreateOrganization } from "@/hooks/queries/use-organizations";
 import { useMyEvents } from "@/hooks/queries/use-events";
 import { cn } from "@/lib/utils/cn";
@@ -198,12 +198,20 @@ export default function OrganizationsPage() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-on-surface">{t("orgs.myEvents")}</h3>
-                <button
-                  onClick={() => router.push(`/${locale}/events/create`)}
-                  className="flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-semibold text-on-primary hover:opacity-90 transition-opacity"
-                >
-                  <Plus className="size-3.5" aria-hidden="true" /> {t("events.create")}
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => router.push(`/${locale}/my-organization/invite`)}
+                    className="flex items-center gap-1.5 rounded-xl border border-border bg-surface-container px-3.5 py-2 text-xs font-semibold text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors"
+                  >
+                    <Upload className="size-3.5" aria-hidden="true" /> {t("orgs.bulkInvite", { defaultValue: "Invite" })}
+                  </button>
+                  <button
+                    onClick={() => router.push(`/${locale}/events/create`)}
+                    className="flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-semibold text-on-primary hover:opacity-90 transition-opacity"
+                  >
+                    <Plus className="size-3.5" aria-hidden="true" /> {t("events.create")}
+                  </button>
+                </div>
               </div>
 
               {eventsLoading && (

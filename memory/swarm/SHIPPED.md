@@ -6,6 +6,40 @@
 
 ---
 
+## Session 63 (2026-03-29) — SPRINTS A2-A8: NOTIFICATIONS → CSV INVITE
+
+| Code | Location | What it does | Status | How to verify |
+|------|----------|-------------|--------|---------------|
+| `GET /api/notifications/unread-count` | `apps/api/app/routers/notifications.py` | Returns `{unread_count}`. RLS-compliant via SupabaseUser. | ✅ LIVE | GET with user JWT |
+| `GET /api/notifications` | `apps/api/app/routers/notifications.py` | Full notification list with total. Optional unread filter. | ✅ LIVE | GET with user JWT |
+| `PATCH /api/notifications/read-all` | `apps/api/app/routers/notifications.py` | Mark all unread → read. Returns updated count. | ✅ LIVE | PATCH with user JWT |
+| `PATCH /api/notifications/{id}/read` | `apps/api/app/routers/notifications.py` | Mark single notification read. | ✅ LIVE | PATCH with user JWT |
+| `useUnreadCount/useNotifications/useMarkAllRead` | `apps/web/src/hooks/queries/use-notifications.ts` | TanStack Query hooks for all notification endpoints. | ✅ LIVE | Used by sidebar + notifications page |
+| Sidebar notification badge | `apps/web/src/components/layout/sidebar.tsx` | Red dot on hamburger + number badge on notifications nav item. Polls every 2min. | ✅ LIVE | Visit sidebar with unread notifications |
+| Notifications page (real) | `apps/web/src/app/[locale]/(dashboard)/notifications/page.tsx` | Real data replaces mock. Category filter (All/AURA/Events/Org). Mark read on click. | ✅ LIVE | Visit /notifications |
+| `GET /{event_id}/attendees` | `apps/api/app/routers/events.py` | Org-owner-only enriched view: registrations + profiles + aura_scores join. Returns `EventAttendeeRow[]`. | ✅ LIVE | GET with org-owner JWT |
+| `coordinator_rate_volunteer` → AURA | `apps/api/app/routers/events.py` | After saving star rating: recalculates avg across all ratings, normalizes (avg-1)/4×100, calls upsert_aura_score RPC. Non-blocking. | ✅ LIVE | Rate a checked-in volunteer |
+| `useEventAttendees/useRateVolunteer` | `apps/web/src/hooks/queries/use-events.ts` | TanStack hooks for attendees view + coordinator rating mutation. | ✅ LIVE | Used by attendees page |
+| `/events/[eventId]/attendees` | `apps/web/src/app/[locale]/(dashboard)/events/[eventId]/attendees/page.tsx` | Attendees list: check-in status, badge chip, AURA score, 1-5 star rating (one-shot disable). 403 if not org owner. | ✅ LIVE | Click Attendees on org event card |
+| "Attendees" button on org events | `apps/web/src/app/[locale]/(dashboard)/my-organization/page.tsx` | UserCheck button per event card → /events/{id}/attendees | ✅ LIVE | Visit /my-organization as org user |
+| `types.gen.ts` manual patch | `apps/web/src/lib/api/generated/types.gen.ts` | Added account_type, visible_to_orgs, org_type to ProfileResponse + ProfileUpdate. Remove when pnpm generate:api runs live. | ✅ PATCHED | Import ProfileResponse |
+| Mobile z-index fix | `apps/web/src/components/layout/sidebar.tsx` + `top-bar.tsx` | Hamburger z-[60] (was z-40, hidden under TopBar z-50). TopBar pl-14 md:pl-6. overflow-x:hidden on body. | ✅ LIVE | Test at 375px width |
+| `DELETE /api/auth/me` | `apps/api/app/routers/auth.py` | GDPR account deletion: admin.delete_user → cascades all DB data. RATE_AUTH limited. | ✅ LIVE | DELETE with user JWT |
+| Delete account UI | `apps/web/src/app/[locale]/(dashboard)/settings/page.tsx` | Danger Zone: 2-step modal, must type "DELETE", calls API then signOut. | ✅ LIVE | Visit /settings → Delete Account |
+| `/my-organization/invite` | `apps/web/src/app/[locale]/(dashboard)/my-organization/invite/page.tsx` | CSV bulk invite: drag-drop zone, file picker, FormData POST to /api/organizations/{org_id}/invites/bulk. Results: created/skipped/errors grid + per-row audit log. | ✅ LIVE | Visit /my-organization → Invite |
+| "Invite" button on org dashboard | `apps/web/src/app/[locale]/(dashboard)/my-organization/page.tsx` | Upload icon button in events header → /my-organization/invite | ✅ LIVE | Visit /my-organization as org user |
+| Firuza accuracy update | `memory/swarm/skills/firuza-assistant.md` | A1-A5 accuracy: 4/4 correct (100%). Wins execution micro-decisions vs Nigar (2/2, B2B domain). | ✅ UPDATED | Read file |
+
+## Session 62 (2026-03-29) — SPRINT A1: PER-QUESTION BREAKDOWN
+
+| Code | Location | What it does | Status | How to verify |
+|------|----------|-------------|--------|---------------|
+| `useQuestionBreakdown(sessionId)` | `apps/web/src/hooks/queries/use-assessment.ts` | TanStack Query hook: GET /api/assessment/results/{sessionId}/questions. Returns QuestionBreakdown (session_id, competency_slug, questions[]). Auth via useAuthToken. 404/422 → no redirect (page handles it). | ✅ LIVE | Import from use-assessment |
+| `/assessment/[sessionId]/questions` | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/questions/page.tsx` | Per-question breakdown: grouped correct/incorrect sections, difficulty badge (Easy/Med/Hard/Expert), response time (seconds), locale-aware question text (AZ preferred). 404/422 → redirects to complete page. | ✅ LIVE | Complete an assessment → click breakdown button |
+| "See Question Breakdown" button | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/complete/page.tsx` | ListChecks icon button between CoachingTips and share nudge → navigates to /questions sub-page | ✅ LIVE | Complete any assessment |
+| Firuza council persona | `memory/swarm/skills/firuza-assistant.md` | New DSP council member: precision-first analyst, accuracy tracked from Sprint A1 | ✅ CREATED | Read file |
+| i18n keys (EN+AZ) | `apps/web/src/locales/*/common.json` | seeBreakdown, questionBreakdown, correct, incorrect, responseTime, difficulty_expert, backToResults, sessionNotFound, questionsCorrect | ✅ LIVE | Both locales updated |
+
 ## Session 61 (2026-03-28) — SPRINT 5: SEMANTIC VOLUNTEER SEARCH
 
 | Code | Location | What it does | Status | How to verify |

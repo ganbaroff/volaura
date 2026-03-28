@@ -1,5 +1,35 @@
 # Architecture Decisions Log
 
+## Session 63 Retrospective — 2026-03-29 (Sprints A2-A8: Notifications → CSV Invite — Autonomous Sprints 2-8/10)
+
+✓ A2: Notifications backend built from scratch (4 endpoints), real frontend replaces mock. Sidebar badge live.
+✓ A3: Event attendees view: org-owner-only, enriched join (profiles + aura_scores), badge chip display.
+✓ A4: Star rating → AURA event_performance: (avg_stars-1)/4×100 normalization, non-blocking propagation via upsert_aura_score RPC.
+✓ A5: Generated types patched (account_type, visible_to_orgs, org_type) — manual patch with comment for pnpm generate:api. Firuza 4/4 correct, Nigar 2/2 correct — both 100% in domain. Firuza leads on execution micro-decisions.
+✓ A6: Hamburger z-[60] fix (was hidden under TopBar z-50). TopBar pl-14 md:pl-6 space for hamburger. overflow-x: hidden on body.
+✓ A7: DELETE /api/auth/me → admin.delete_user → cascades all data. Settings page 2-step confirm (must type "DELETE"). GDPR compliant.
+✓ A8: Bulk invite UI complete. Drag-drop + FormData POST + per-row audit log with status icons. "Invite" button on org dashboard.
+
+✗ useAuthToken() called inside mutationFn (A4) — React rule violation. Fixed by hoisting to hook level. Pattern: always hoist getToken = useAuthToken() before all callbacks.
+✗ Doc updates deferred across sprints — only caught at A8 commit. Keep doc cadence per sprint not per block.
+
+→ Sprint A9: Swarm architecture upgrade — agent-roster.md improvements, new skill files from sprint learnings, protocol clarifications.
+→ Council calibration: Firuza confirmed as execution micro-decision specialist. Nigar better for B2B feature decisions (flagged in A2 category filter prediction).
+
+## Session 62 Retrospective — 2026-03-29 (Sprint A1: Per-Question Breakdown — Autonomous Sprint 1/10)
+
+✓ QA critique predicted 404 on incomplete session → handled via useEffect redirect in questions page. No blank screen possible.
+✓ RLS concern (Attacker) resolved before any code: `assessment_sessions` SELECT confirmed `USING (auth.uid() = volunteer_id)` — double-check at app level is redundant but acceptable.
+✓ Firuza's UX recommendation (group by correct/incorrect instead of sequential) adopted — reduces ADHD cognitive load; correct/incorrect sections with clear headers.
+✓ TypeScript clean compile — all 3 new files pass tsc --noEmit.
+✓ No use-assessment.ts existed — created from scratch (not generated). Backend endpoint exists from Sprint 3. Frontend/backend now connected.
+
+✗ DSP not run in full format (context was mid-sprint — critique ran pre-compaction). Running from summary context skips formal STEP 3 format.
+✗ `assessment.retake` key doesn't exist — only `aura.retake`. Caught by grep after writing questions page. Pattern: always grep for i18n key existence before using defaultValue fallback.
+
+→ Sprint A2: Notification badge on sidebar + notifications page wired to real GET /api/notifications endpoint. Backend migration already applied (Session 60). Frontend shows zero notifications currently.
+→ Council calibration starts now: Firuza Sprint A1 prediction correct (404 handling = real issue, found and shipped). Nigar no predictions recorded for A1 (not on-domain).
+
 ## Session 61 Retrospective — 2026-03-28 (Sprint 5: Semantic Volunteer Search)
 
 ✓ Swarm found CRITICAL: /search/volunteers had zero auth check — any authenticated user could enumerate all volunteers. Fixed with dual-check (account_type + org ownership) before code touched prod.

@@ -1,27 +1,36 @@
-"""Assessment endpoints — start, answer, complete, results, coaching.
+"""Assessment endpoints — start, answer, complete, results, coaching, info.
 
 Rate limited:
 - /start: 3/hour per user (prevent assessment farming)
 - /answer: 60/hour per user (normal pace ~40 questions/session)
 - /{session_id}/coaching: 30/hour (LLM rate limit)
+- /info/{slug}: RATE_DISCOVERY (10/min) — metadata read
+
+Business logic lives in app/services/assessment/:
+- rewards.py   — crystal + skill_verified events
+- helpers.py   — DB lookups + session state builders
+- coaching_service.py — Gemini tips + per-competency fallbacks
 """
 
 from __future__ import annotations
 
-import asyncio
-import json
 import uuid
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, HTTPException, Request
 from loguru import logger
-from pydantic import BaseModel, ConfigDict
 
 from app.config import settings
 from app.core.assessment import antigaming, bars
-from app.middleware.rate_limit import limiter, RATE_ASSESSMENT_START, RATE_ASSESSMENT_ANSWER, RATE_ASSESSMENT_COMPLETE, RATE_LLM
+from app.middleware.rate_limit import (
+    limiter,
+    RATE_ASSESSMENT_START,
+    RATE_ASSESSMENT_ANSWER,
+    RATE_ASSESSMENT_COMPLETE,
+    RATE_LLM,
+    RATE_DISCOVERY,
+)
 from app.core.assessment.aura_calc import (
-    BADGE_TIERS,
     calculate_overall,
     get_badge_tier,
     is_elite,
@@ -36,185 +45,28 @@ from app.core.assessment.engine import (
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
 from app.schemas.assessment import (
     AnswerFeedback,
+    AssessmentInfoOut,
     AssessmentResultOut,
-    QuestionOut,
+    CoachingResponse,
+    CoachingTip,
     SessionOut,
     StartAssessmentRequest,
     SubmitAnswerRequest,
 )
+from app.services.assessment.coaching_service import generate_coaching_tips
+from app.services.assessment.helpers import get_competency_id, fetch_questions, make_session_out
+from app.services.assessment.rewards import emit_assessment_rewards
 
 router = APIRouter(prefix="/assessment", tags=["Assessment"])
 
-# Crystal reward per competency completion (completion-based, NOT score-based)
-_CRYSTAL_REWARD = 50
 
-
-# ── helpers ───────────────────────────────────────────────────────────────────
-
-
-def _competency_badge_tier(score: float) -> str | None:
-    """Return badge tier name for a competency score using the same thresholds as AURA."""
-    for tier_name, threshold in BADGE_TIERS:
-        if score >= threshold:
-            return tier_name
-    return None
-
-
-async def _emit_assessment_rewards(
-    db: SupabaseAdmin,
-    user_id: str,
-    skill_slug: str,
-    competency_score: float,
-) -> None:
-    """Emit crystal_earned + skill_verified character events after assessment completion.
-
-    Best-effort: logs errors but never raises — must not fail the complete_assessment response.
-    Idempotency: game_character_rewards table ensures one crystal claim per user per competency.
-    Anti-farming: idempotency check happens BEFORE any write.
-    """
-    # ── Idempotency check: already rewarded for this competency? ─────────────
-    reward_check = (
-        await db.table("game_character_rewards")
-        .select("claimed")
-        .eq("user_id", user_id)
-        .eq("skill_slug", skill_slug)
-        .execute()
-    )
-    crystals_already_claimed = bool(reward_check.data)
-
-    # ── crystal_earned event (50 per competency, once only) ──────────────────
-    if not crystals_already_claimed:
-        try:
-            # Insert character event
-            await db.table("character_events").insert({
-                "user_id": user_id,
-                "event_type": "crystal_earned",
-                "payload": {
-                    "amount": _CRYSTAL_REWARD,
-                    "source": "volaura_assessment",
-                    "skill_slug": skill_slug,
-                    "_schema_version": 1,
-                },
-                "source_product": "volaura",
-            }).execute()
-
-            # Insert crystal ledger entry
-            await db.table("game_crystal_ledger").insert({
-                "user_id": user_id,
-                "amount": _CRYSTAL_REWARD,
-                "source": "volaura_assessment",
-                "reference_id": skill_slug,
-            }).execute()
-
-            # Mark reward as claimed (idempotency lock)
-            await db.table("game_character_rewards").upsert({
-                "user_id": user_id,
-                "skill_slug": skill_slug,
-                "crystals": _CRYSTAL_REWARD,
-                "claimed": True,
-                "claimed_at": datetime.now(timezone.utc).isoformat(),
-            }).execute()
-
-            logger.info(
-                "Crystal reward emitted",
-                user_id=user_id,
-                skill_slug=skill_slug,
-                crystals=_CRYSTAL_REWARD,
-            )
-        except Exception as exc:
-            logger.error(
-                "Failed to emit crystal reward — manual reconciliation needed",
-                user_id=user_id,
-                skill_slug=skill_slug,
-                error=str(exc),
-            )
-
-    # ── skill_verified event (only if score >= Bronze threshold) ────────────
-    badge_tier = _competency_badge_tier(competency_score)
-    if badge_tier is not None:
-        try:
-            await db.table("character_events").insert({
-                "user_id": user_id,
-                "event_type": "skill_verified",
-                "payload": {
-                    "skill_slug": skill_slug,
-                    "aura_score": round(competency_score, 2),
-                    "badge_tier": badge_tier,
-                    "_schema_version": 1,
-                },
-                "source_product": "volaura",
-            }).execute()
-
-            logger.info(
-                "Skill verified event emitted",
-                user_id=user_id,
-                skill_slug=skill_slug,
-                score=competency_score,
-                badge_tier=badge_tier,
-            )
-        except Exception as exc:
-            logger.error(
-                "Failed to emit skill_verified event",
-                user_id=user_id,
-                skill_slug=skill_slug,
-                error=str(exc),
-            )
-
-
-async def _get_competency_id(db: SupabaseAdmin, slug: str) -> str:
-    result = (
-        await db.table("competencies")
-        .select("id")
-        .eq("slug", slug)
-        .single()
-        .execute()
-    )
-    if not result.data:
-        raise HTTPException(
-            status_code=404,
-            detail={"code": "COMPETENCY_NOT_FOUND", "message": f"Competency '{slug}' not found"},
-        )
-    return result.data["id"]
-
-
-async def _fetch_questions(db: SupabaseAdmin, competency_id: str) -> list[dict]:
-    result = (
-        await db.table("questions")
-        .select("id, type, scenario_en, scenario_az, options, irt_a, irt_b, irt_c, expected_concepts, correct_answer, competency_id")
-        .eq("competency_id", competency_id)
-        .eq("is_active", True)
-        .execute()
-    )
-    return result.data or []
-
-
-def _make_session_out(
-    session_id: str,
-    competency_slug: str,
-    state: CATState,
-    next_q: dict | None,
-    role_level: str = "volunteer",
-) -> SessionOut:
-    nq = None
-    if next_q and not state.stopped:
-        nq = QuestionOut(
-            id=next_q["id"],
-            question_type=next_q["type"],
-            question_en=next_q["scenario_en"],
-            question_az=next_q["scenario_az"],
-            options=next_q.get("options"),
-            competency_id=next_q["competency_id"],
-        )
-    return SessionOut(
-        session_id=session_id,
-        competency_slug=competency_slug,
-        role_level=role_level,
-        questions_answered=len(state.items),
-        # theta/theta_se intentionally NOT sent to client (security audit P1)
-        is_complete=state.stopped,
-        stop_reason=state.stop_reason,
-        next_question=nq,
-    )
+# ── helpers moved to services (see imports above) ─────────────────────────────
+# get_competency_id  ← app.services.assessment.helpers
+# fetch_questions    ← app.services.assessment.helpers
+# make_session_out   ← app.services.assessment.helpers
+# emit_assessment_rewards ← app.services.assessment.rewards
+# generate_coaching_tips  ← app.services.assessment.coaching_service
+# CoachingTip / CoachingResponse / AssessmentInfoOut ← app.schemas.assessment
 
 
 # ── endpoints ─────────────────────────────────────────────────────────────────
@@ -230,7 +82,7 @@ async def start_assessment(
     user_id: CurrentUserId,
 ) -> SessionOut:
     """Start a new CAT session for a given competency."""
-    competency_id = await _get_competency_id(db_admin, payload.competency_slug)
+    competency_id = await get_competency_id(db_admin, payload.competency_slug)
 
     # Check for in-progress session
     existing = (
@@ -295,7 +147,7 @@ async def start_assessment(
             starts_today=daily_count,
         )
 
-    questions = await _fetch_questions(db_admin, competency_id)
+    questions = await fetch_questions(db_admin, competency_id)
     if not questions:
         raise HTTPException(
             status_code=422,
@@ -358,7 +210,7 @@ async def start_assessment(
         "started_at": datetime.now(timezone.utc).isoformat(),
     }).execute()
 
-    return _make_session_out(session_id, payload.competency_slug, state, first_q, payload.role_level)
+    return make_session_out(session_id, payload.competency_slug, state, first_q, payload.role_level)
 
 
 @router.post("/answer", response_model=AnswerFeedback)
@@ -502,7 +354,7 @@ async def submit_answer(
 
     # Get next question (if not stopped)
     competency_id = session["competency_id"]
-    all_questions = await _fetch_questions(db_admin, competency_id) if not stopped else []
+    all_questions = await fetch_questions(db_admin, competency_id) if not stopped else []
     next_q = select_next_item(state, all_questions) if not stopped else None
 
     if not next_q and not stopped:
@@ -541,7 +393,7 @@ async def submit_answer(
     )
     slug = comp_result.data["slug"] if comp_result.data else ""
 
-    session_out = _make_session_out(payload.session_id, slug, state, next_q, session.get("role_level", "volunteer"))
+    session_out = make_session_out(payload.session_id, slug, state, next_q, session.get("role_level", "volunteer"))
 
     return AnswerFeedback(
         session_id=payload.session_id,
@@ -629,7 +481,7 @@ async def complete_assessment(
     # ── Sprint A1: Emit crystal_earned + skill_verified to character_state ───
     # Best-effort: never blocks the response. Idempotency via game_character_rewards.
     if slug:
-        await _emit_assessment_rewards(
+        await emit_assessment_rewards(
             db=db_admin,
             user_id=str(user_id),
             skill_slug=slug,
@@ -702,75 +554,9 @@ async def get_results(
     )
 
 
-# ── Coaching models ────────────────────────────────────────────────────────────
-
-class CoachingTip(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    title: str
-    description: str
-    action: str
-
-
-class CoachingResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    session_id: str
-    competency_id: str
-    score: float
-    tips: list[CoachingTip]
-
-
-# Generic fallback tips per competency slug
-_FALLBACK_TIPS: dict[str, list[dict]] = {
-    "communication": [
-        {"title": "Practice active listening", "description": "In your next meeting, focus entirely on the speaker without planning your reply.", "action": "After each meeting this week, write 3 key points you heard from others."},
-        {"title": "Write daily summaries", "description": "Summarising your day in 3 sentences sharpens clarity and captures learning.", "action": "Spend 5 minutes each evening writing what you accomplished and communicated."},
-        {"title": "Join a public speaking group", "description": "Structured practice in low-stakes environments builds confidence fast.", "action": "Find a local Toastmasters chapter or online equivalent and attend one session."},
-    ],
-    "reliability": [
-        {"title": "Use a task tracker", "description": "External systems beat memory. A visible to-do list reduces forgotten commitments.", "action": "Pick one app (Notion, Todoist, or pen+paper) and log every commitment for 7 days."},
-        {"title": "Set a 30-minute early reminder", "description": "Arriving or delivering 30 minutes early prevents last-minute failures.", "action": "For every deadline this week, set a calendar alarm 30 minutes before."},
-        {"title": "Communicate delays proactively", "description": "Telling people early about a delay preserves trust far better than silence.", "action": "Next time you sense a deadline risk, notify stakeholders before they ask."},
-    ],
-    "leadership": [
-        {"title": "Volunteer to lead a small task", "description": "Leadership skill grows fastest through practice, even on minor tasks.", "action": "Offer to coordinate the next team activity, however small."},
-        {"title": "Give specific feedback", "description": "Vague praise helps nobody. Specific observations accelerate growth.", "action": "This week, give one team member a specific, actionable observation about their work."},
-        {"title": "Read one leadership case study", "description": "Real-world examples provide mental models you can apply immediately.", "action": "Find a 10-minute case study on a leader you admire and extract one principle."},
-    ],
-    "english_proficiency": [
-        {"title": "Read one English article daily", "description": "Exposure to real written English expands vocabulary and grammar intuitively.", "action": "Choose a topic you care about and read one short article in English every morning."},
-        {"title": "Write emails in English", "description": "Writing forces more precise language use than speaking.", "action": "For the next week, write at least one professional email per day in English."},
-        {"title": "Watch content with subtitles", "description": "Subtitled video links spoken and written forms of the language.", "action": "Watch 20 minutes of English content with English subtitles today."},
-    ],
-    "adaptability": [
-        {"title": "Embrace one new tool or process", "description": "Deliberately using unfamiliar tools builds comfort with change.", "action": "This week, try a tool or workflow you've been avoiding."},
-        {"title": "Reflect on a past change", "description": "Identifying how you handled change before reveals your default patterns.", "action": "Write 3 sentences about a time you adapted successfully. What made it work?"},
-        {"title": "Seek feedback on your flexibility", "description": "Others often see our rigidity before we do.", "action": "Ask a colleague: 'In what situations do you think I could be more flexible?'"},
-    ],
-    "tech_literacy": [
-        {"title": "Complete one online tutorial", "description": "Structured tutorials build foundational skills faster than exploration alone.", "action": "Pick a free tutorial on a tool relevant to your volunteer work and finish one module today."},
-        {"title": "Document a process you use", "description": "Writing a process down reveals gaps and forces understanding.", "action": "Choose one digital tool you use daily and write a 5-step how-to guide."},
-        {"title": "Ask a tech-savvy colleague one question", "description": "Peer learning is faster than documentation for practical skills.", "action": "Identify the most tech-skilled person in your team and ask them one specific question this week."},
-    ],
-    "event_performance": [
-        {"title": "Debrief after every event", "description": "A 10-minute debrief with your team catches lessons while they're fresh.", "action": "After your next event, write: what went well, what didn't, and one thing to change."},
-        {"title": "Arrive early and help setup", "description": "Early presence demonstrates commitment and builds event intuition.", "action": "For your next event, arrive 30 minutes before your scheduled start."},
-        {"title": "Introduce yourself to 3 new people", "description": "Events are also about building community. Relationships compound over time.", "action": "At your next event, make a point of meeting 3 people you haven't worked with before."},
-    ],
-    "empathy_safeguarding": [
-        {"title": "Practice perspective-taking", "description": "Before responding to a difficult situation, pause and ask: what might this person be experiencing?", "action": "This week, in one challenging interaction, spend 30 seconds thinking from the other person's view before responding."},
-        {"title": "Learn one safeguarding principle", "description": "Safeguarding knowledge protects both volunteers and beneficiaries.", "action": "Read your organisation's safeguarding policy or one external resource on volunteer safeguarding today."},
-        {"title": "Check in with a quieter teammate", "description": "Empathy in practice means noticing who isn't speaking.", "action": "In your next group setting, notice who is quiet and create space for them to contribute."},
-    ],
-}
-
-_DEFAULT_FALLBACK_TIPS: list[dict] = [
-    {"title": "Set a learning goal", "description": "Clear goals direct effort and make progress visible.", "action": "Write down one specific skill you want to improve this month."},
-    {"title": "Seek feedback regularly", "description": "Feedback is the fastest path to improvement when acted upon.", "action": "Ask a teammate or supervisor for one piece of constructive feedback this week."},
-    {"title": "Reflect on recent experiences", "description": "Unexamined experience doesn't produce growth.", "action": "Spend 10 minutes writing about a recent challenge: what happened, what you learned."},
-]
-
+# ── Coaching models → moved to app/schemas/assessment.py ──────────────────────
+# CoachingTip, CoachingResponse: imported above from app.schemas.assessment
+# _FALLBACK_TIPS, _DEFAULT_FALLBACK_TIPS: in app/services/assessment/coaching_service.py
 
 # ── Coaching endpoint ──────────────────────────────────────────────────────────
 
@@ -790,7 +576,6 @@ async def get_coaching(
     the volunteer's competency score. Result is cached in assessment_sessions.coaching_note
     to avoid redundant LLM calls on repeat requests.
     """
-    # Validate session_id is a proper UUID
     try:
         uuid.UUID(session_id)
     except ValueError:
@@ -819,12 +604,11 @@ async def get_coaching(
     competency_id: str = session["competency_id"]
 
     # Return cached coaching note if it already exists
+    # coaching_note is JSONB — Supabase returns it as a Python list already
     try:
         cached = session.get("coaching_note")
-        if cached:
-            tips_data = cached if isinstance(cached, list) else json.loads(cached)
-            tips = [CoachingTip(**t) for t in tips_data]
-            from app.core.assessment.engine import theta_to_score
+        if cached and isinstance(cached, list):
+            tips = [CoachingTip(**t) for t in cached]
             score = round(theta_to_score(session.get("theta_estimate", 0.0)), 2)
             return CoachingResponse(
                 session_id=session_id,
@@ -846,61 +630,16 @@ async def get_coaching(
     comp_name = comp_result.data.get("name", "this competency") if comp_result.data else "this competency"
     comp_slug = comp_result.data.get("slug", "") if comp_result.data else ""
 
-    # Convert theta to 0-100 score
-    from app.core.assessment.engine import theta_to_score
     score = round(theta_to_score(session.get("theta_estimate", 0.0)), 2)
 
-    # Attempt Gemini coaching generation
-    tips: list[CoachingTip] = []
-    gemini_succeeded = False
-
-    if settings.gemini_api_key:
-        try:
-            from google import genai as google_genai
-
-            prompt = (
-                f"You are a volunteer development coach. "
-                f"The volunteer scored {score}/100 in {comp_name}. "
-                f"Give exactly 3 specific, actionable improvement tips. "
-                f"Return valid JSON only, no markdown, no explanation: "
-                f'{{ "tips": [ {{ "title": "str", "description": "str", "action": "str" }}, ... ] }} '
-                f"Each tip must be practical and focused on real volunteer scenarios. "
-                f"Avoid generic advice like \'read more\' or \'practice more\'."
-            )
-
-            client = google_genai.Client(api_key=settings.gemini_api_key)
-
-            async def _call_gemini() -> str:
-                response = client.models.generate_content(
-                    model="gemini-2.0-flash",
-                    contents=prompt,
-                )
-                return response.text or ""
-
-            raw_text = await asyncio.wait_for(_call_gemini(), timeout=15.0)
-
-            # Strip markdown fences if present
-            clean = raw_text.strip()
-            if clean.startswith("```"):
-                clean = clean.split("```", 2)[1]
-                if clean.startswith("json"):
-                    clean = clean[4:]
-                clean = clean.rsplit("```", 1)[0].strip()
-
-            parsed = json.loads(clean)
-            raw_tips = parsed.get("tips", [])
-            tips = [CoachingTip(**t) for t in raw_tips[:3]]
-            gemini_succeeded = True
-
-        except asyncio.TimeoutError:
-            logger.warning("Gemini coaching timed out for session {sid}", sid=session_id)
-        except Exception as e:
-            logger.warning("Gemini coaching failed for session {sid}: {err}", sid=session_id, err=str(e)[:300])
-
-    # Fallback tips if Gemini unavailable or failed
-    if not gemini_succeeded or not tips:
-        fallback_data = _FALLBACK_TIPS.get(comp_slug, _DEFAULT_FALLBACK_TIPS)
-        tips = [CoachingTip(**t) for t in fallback_data[:3]]
+    tips = await generate_coaching_tips(
+        session_id=session_id,
+        competency_id=competency_id,
+        competency_name=comp_name,
+        competency_slug=comp_slug,
+        score=score,
+        gemini_api_key=settings.gemini_api_key,
+    )
 
     # Cache result in assessment_sessions.coaching_note (graceful if column missing)
     tips_json = [t.model_dump() for t in tips]
@@ -916,4 +655,71 @@ async def get_coaching(
         competency_id=competency_id,
         score=score,
         tips=tips,
+    )
+
+
+# ── Assessment info endpoint ────────────────────────────────────────────────
+
+
+@router.get("/info/{competency_slug}", response_model=AssessmentInfoOut)
+@limiter.limit(RATE_DISCOVERY)
+async def get_assessment_info(
+    request: Request,
+    competency_slug: str,
+    db_user: SupabaseUser,
+    user_id: CurrentUserId,
+) -> AssessmentInfoOut:
+    """Return metadata for a competency before the volunteer starts the assessment.
+
+    Includes time estimate, retake eligibility, and days until retake becomes available.
+    Used by the pre-assessment info page to show the volunteer what to expect.
+    """
+    RETEST_COOLDOWN_DAYS = 7
+
+    # Fetch competency metadata (name, description, time_estimate_minutes, can_retake)
+    comp_result = (
+        await db_user.table("competencies")
+        .select("id, name, description, slug, time_estimate_minutes, can_retake")
+        .eq("slug", competency_slug)
+        .eq("is_active", True)
+        .maybe_single()
+        .execute()
+    )
+    if not comp_result.data:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "COMPETENCY_NOT_FOUND", "message": f"Competency '{competency_slug}' not found"},
+        )
+
+    comp = comp_result.data
+    competency_id: str = comp["id"]
+    can_retake: bool = comp.get("can_retake", True)
+
+    # Compute days_until_retake from last completed session
+    days_until_retake: int | None = None
+    recent = (
+        await db_user.table("assessment_sessions")
+        .select("completed_at")
+        .eq("volunteer_id", user_id)
+        .eq("competency_id", competency_id)
+        .eq("status", "completed")
+        .order("completed_at", desc=True)
+        .limit(1)
+        .execute()
+    )
+    if recent.data and recent.data[0].get("completed_at"):
+        last_completed = datetime.fromisoformat(recent.data[0]["completed_at"])
+        if last_completed.tzinfo is None:
+            last_completed = last_completed.replace(tzinfo=timezone.utc)
+        days_since = (datetime.now(timezone.utc) - last_completed).days
+        if days_since < RETEST_COOLDOWN_DAYS:
+            days_until_retake = RETEST_COOLDOWN_DAYS - days_since
+
+    return AssessmentInfoOut(
+        competency_slug=competency_slug,
+        name=comp["name"],
+        description=comp.get("description"),
+        time_estimate_minutes=comp.get("time_estimate_minutes", 15),
+        can_retake=can_retake,
+        days_until_retake=days_until_retake,
     )

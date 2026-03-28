@@ -152,3 +152,32 @@ class AssessmentResultOut(BaseModel):
     aura_updated: bool = False
     gaming_flags: list[str] = []
     completed_at: datetime | None = None
+
+
+class CoachingTip(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    title: str
+    description: str
+    action: str
+
+
+class CoachingResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    session_id: str
+    competency_id: str
+    score: float
+    tips: list[CoachingTip]
+
+
+class AssessmentInfoOut(BaseModel):
+    """Pre-assessment info shown before starting a competency assessment."""
+    model_config = ConfigDict(from_attributes=True)
+
+    competency_slug: str
+    name: str
+    description: str | None = None
+    time_estimate_minutes: int
+    can_retake: bool
+    days_until_retake: int | None = None  # null if user never completed or not authenticated

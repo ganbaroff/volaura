@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect, useCallback } from "react";
+import { useUnreadCount } from "@/hooks/queries/use-notifications";
 
 const NAV_ITEMS = [
   { href: "/dashboard",      labelKey: "nav.dashboard",      icon: "⊞" },
@@ -30,6 +31,8 @@ export function Sidebar() {
   const clear = useAuthStore((s) => s.clear);
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const { data: unreadData } = useUnreadCount();
+  const unreadCount = unreadData?.unread_count ?? 0;
 
   // Close sidebar on route change (mobile)
   useEffect(() => {
@@ -109,6 +112,10 @@ export function Sidebar() {
           {NAV_ITEMS.map(({ href, labelKey, icon }) => {
             const fullHref = `/${locale}${href}`;
             const isActive = pathname === fullHref || pathname.startsWith(`${fullHref}/`);
+            const isNotifications = href === "/notifications";
+            const badge = isNotifications && unreadCount > 0
+              ? Math.min(unreadCount, 99)
+              : null;
             return (
               <Link
                 key={href}
@@ -121,7 +128,15 @@ export function Sidebar() {
                 }`}
               >
                 <span className="text-base" aria-hidden="true">{icon}</span>
-                {t(labelKey)}
+                <span className="flex-1">{t(labelKey)}</span>
+                {badge !== null && (
+                  <span
+                    aria-label={`${badge} unread`}
+                    className="inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full bg-primary text-on-primary text-[10px] font-bold px-1"
+                  >
+                    {badge > 99 ? "99+" : badge}
+                  </span>
+                )}
               </Link>
             );
           })}

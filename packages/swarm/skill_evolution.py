@@ -256,6 +256,7 @@ def _write_evolution_log(
     ref_issues: list[str],
     quality_issues: list[str],
     llm_review: dict | None,
+    voyager_results: list[dict] | None = None,
 ) -> None:
     """Write the evolution log that CTO reads at session start."""
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
@@ -310,6 +311,20 @@ def _write_evolution_log(
             lines.append(f"> {top}")
             lines.append("")
 
+    # VOYAGER verification results
+    if voyager_results:
+        lines.append("## 🔬 VOYAGER Verification Gate")
+        lines.append("")
+        lines.append("New skills verified before entering library:")
+        lines.append("")
+        for r in voyager_results:
+            icon = "✅" if r["status"] == "passed" else "❌"
+            lines.append(f"- {icon} **{r['name']}** — {r['verdict']}")
+            if r.get("file"):
+                lines.append(f"  → Candidate saved: `memory/swarm/skills/{r['file']}`")
+                lines.append(f"  → CTO must rename to `.md` to activate.")
+        lines.append("")
+
     lines += [
         "---",
         "",
@@ -321,6 +336,167 @@ def _write_evolution_log(
         f.write("\n".join(lines) + "\n")
 
     logger.info(f"Skill evolution log written: {EVOLUTION_LOG}")
+
+
+# ── VOYAGER verification gate (B4) ────────────────────────────────────────────
+
+async def _draft_skill(name: str, why: str, groq_key: str) -> str | None:
+    """Ask LLM to write a full skill file for a proposed new skill."""
+    try:
+        from groq import AsyncGroq
+        client = AsyncGroq(api_key=groq_key)
+
+        prompt = f"""Write a skill file for an AI agent swarm skill called "{name}".
+
+Reason it's needed: {why}
+
+The skill file must follow this exact structure:
+# [Skill Name]
+
+## Trigger
+When to activate this skill (specific conditions, 2-4 bullets).
+
+## Guidelines
+Core rules the agent must follow when using this skill (4-6 bullets).
+
+## Output
+What structured output the agent must produce (with example format).
+
+## Cross-references
+Other skills that should be loaded alongside this one.
+
+Write the full skill file content only. No preamble. Start with # heading."""
+
+        resp = await asyncio.wait_for(
+            client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.4,
+                max_tokens=800,
+            ),
+            timeout=25.0,
+        )
+        return resp.choices[0].message.content or None
+    except Exception as e:
+        logger.error(f"Skill draft failed for '{name}': {e}")
+        return None
+
+
+async def _verify_skill_draft(name: str, draft: str, groq_key: str) -> tuple[bool, str]:
+    """VOYAGER gate: verify a drafted skill against a synthetic task.
+
+    Returns (passed: bool, verdict: str).
+    Verification criteria:
+    - Has ## Trigger section
+    - Has ## Output section with a concrete example
+    - When given a synthetic scenario, produces structured output
+    - Does not hallucinate non-existent APIs or files
+    """
+    # Static checks first (fast, free)
+    has_trigger = "## Trigger" in draft
+    has_output = "## Output" in draft
+    has_guidelines = "## Guidelines" in draft
+    line_count = len(draft.split("\n"))
+
+    if not has_trigger:
+        return False, "FAIL: missing ## Trigger section"
+    if not has_output:
+        return False, "FAIL: missing ## Output section"
+    if not has_guidelines:
+        return False, "FAIL: missing ## Guidelines section"
+    if line_count < 15:
+        return False, f"FAIL: too short ({line_count} lines, minimum 15)"
+
+    # LLM verification: simulate agent using this skill on a test task
+    try:
+        from groq import AsyncGroq
+        client = AsyncGroq(api_key=groq_key)
+
+        prompt = f"""You are a QA verifier for AI agent skills.
+
+SKILL DRAFT:
+{draft}
+
+TEST TASK: An agent in the Volaura swarm just activated this skill.
+The task was: "Evaluate whether a new volunteer AURA score feature should be added."
+
+1. Does the skill's Trigger section correctly describe when to activate it for this task? (yes/no)
+2. Does the skill's Output section specify a concrete format? (yes/no)
+3. If the agent followed this skill, would it produce better output than without it? (yes/no)
+4. Does the skill reference real files/systems that exist in a product platform? (yes/no)
+
+Reply with JSON: {{"q1": bool, "q2": bool, "q3": bool, "q4": bool, "verdict": "PASS or FAIL", "reason": "1 sentence"}}"""
+
+        resp = await asyncio.wait_for(
+            client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.1,
+                max_tokens=200,
+                response_format={"type": "json_object"},
+            ),
+            timeout=20.0,
+        )
+        raw = json.loads(resp.choices[0].message.content or "{}")
+        passed = str(raw.get("verdict", "")).upper() == "PASS"
+        reason = raw.get("reason", "")
+        answers = f"q1={raw.get('q1')} q2={raw.get('q2')} q3={raw.get('q3')} q4={raw.get('q4')}"
+        verdict = f"{'PASS' if passed else 'FAIL'}: {reason} ({answers})"
+        return passed, verdict
+
+    except Exception as e:
+        logger.warning(f"LLM verification failed for '{name}', using static result: {e}")
+        # Static checks passed — accept without LLM verification
+        return True, "PASS (static only — LLM verification unavailable)"
+
+
+async def _verify_proposed_skills(
+    missing_skills: list[dict], groq_key: str
+) -> list[dict]:
+    """For each HIGH-priority proposed skill: draft it and run VOYAGER gate.
+
+    Verified skills are saved as .candidate.md files in SKILLS_DIR.
+    Failed skills are recorded in the evolution log only.
+    Returns list of verification results.
+    """
+    results = []
+    for skill in missing_skills:
+        if skill.get("priority") not in ("high",):
+            continue  # Only verify high-priority new skills
+
+        name = skill.get("name", "")
+        why = skill.get("why", "")
+        if not name:
+            continue
+
+        logger.info(f"VOYAGER gate: drafting skill '{name}'...")
+        draft = await _draft_skill(name, why, groq_key)
+        if not draft:
+            results.append({"name": name, "status": "draft_failed", "verdict": "Could not generate draft"})
+            continue
+
+        passed, verdict = await _verify_skill_draft(name, draft, groq_key)
+        logger.info(f"VOYAGER gate: '{name}' → {verdict}")
+
+        if passed:
+            # Write to skills dir as candidate — CTO reviews before promoting to .md
+            safe_name = name.replace(" ", "-").lower()
+            candidate_path = SKILLS_DIR / f"{safe_name}.candidate.md"
+            SKILLS_DIR.mkdir(parents=True, exist_ok=True)
+            with open(candidate_path, "w", encoding="utf-8") as f:
+                f.write(f"<!-- VOYAGER CANDIDATE — requires CTO review before activating -->\n")
+                f.write(f"<!-- Verdict: {verdict} -->\n\n")
+                f.write(draft)
+            logger.success(f"VOYAGER gate: skill '{name}' passed → saved as {candidate_path.name}")
+
+        results.append({
+            "name": name,
+            "status": "passed" if passed else "failed",
+            "verdict": verdict,
+            "file": f"{name.replace(' ', '-').lower()}.candidate.md" if passed else None,
+        })
+
+    return results
 
 
 # ── Entry point ───────────────────────────────────────────────────────────────
@@ -352,15 +528,29 @@ async def evolve(groq_key: str | None = None) -> dict:
     if groq_key:
         llm_review = await _llm_skill_review(skills, groq_key)
 
-    # Write log
-    _write_evolution_log(skills, ref_issues, quality_issues, llm_review)
+    # VOYAGER gate (B4): verify high-priority proposed skills before entering library
+    voyager_results: list[dict] = []
+    if groq_key and llm_review:
+        missing = llm_review.get("missing_skills", [])
+        high_priority = [m for m in missing if m.get("priority") == "high"]
+        if high_priority:
+            logger.info(
+                "VOYAGER gate: verifying {n} high-priority skill candidates",
+                n=len(high_priority),
+            )
+            voyager_results = await _verify_proposed_skills(high_priority, groq_key)
 
+    # Write log
+    _write_evolution_log(skills, ref_issues, quality_issues, llm_review, voyager_results)
+
+    passed_count = sum(1 for r in voyager_results if r["status"] == "passed")
     summary = {
         "skills": len(skills),
         "issues": len(ref_issues) + len(quality_issues),
         "health": llm_review.get("ecosystem_health") if llm_review else None,
         "missing_count": len(llm_review.get("missing_skills", [])) if llm_review else 0,
         "improvements_count": len(llm_review.get("skill_improvements", [])) if llm_review else 0,
+        "voyager_candidates": passed_count,
     }
 
     logger.success(

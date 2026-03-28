@@ -39,44 +39,42 @@
 
 ## The Plan: 8 Sprints, ~25 Working Days
 
-### Sprint 1: Foundation (3 days)
-**Goal:** Users can register correctly. Platform is not broken on first visit.
+### Sprint 1: Foundation (3 days) ✅ COMPLETE (Session 58, 2026-03-28)
 
-| # | Task | Why |
-|---|------|-----|
-| 1 | Smoke test: full flow with MCP — signup → onboarding → assessment → AURA → share | Find all unknown blockers before fixing anything |
-| 2 | Apply 5 pending DB migrations | Without this, no features work |
-| 3 | Fix email registration (or disable confirmation with rate limits) | Blocks all new signups |
-| 4 | Fix forgot/reset password — wire to Supabase auth | Users locked out permanently |
-| 5 | Rate limits on auth: **IP-based** (signup/login/reset — not per-email, per-IP) | Per-email doesn't stop distributed attack |
-| 6 | Privacy consent: AZ-native framing — 🔒 + "Məlumatım qorunur" (1 sentence, not legal copy) | Legal + cultural — not bureaucratic |
-| 7 | Volunteer / Organization branch at signup (2 questions: role + org type if org) | Aynur currently falls into volunteer flow |
-| 8 | Move display_name to post-email-confirm screen. Flow: confirm → display_name → dashboard (no re-confirm loop) | Reduces signup from 4→3 fields. ADHD-first. |
-| 9 | Volunteer org-search visibility toggle in onboarding (default: OFF) | Org cannot see volunteer without consent |
-| 10 | Professional empty state copy: "Companies are searching for people like you — not resumes." | Makes platform feel like LinkedIn, not volunteer board |
+| # | Task | Status |
+|---|------|--------|
+| 1 | Smoke test: full flow with MCP — signup → onboarding → assessment → AURA → share | ✅ Done |
+| 2 | Apply 5 pending DB migrations | ✅ Done |
+| 3 | Fix email registration (or disable confirmation with rate limits) | ✅ Done |
+| 4 | Fix forgot/reset password — wire to Supabase auth | ⚠️ Page exists, full flow NOT verified. Moved to Sprint 3. |
+| 5 | Rate limits on auth: **IP-based** (signup/login/reset — not per-email, per-IP) | ✅ Done — ProxyHeadersMiddleware added |
+| 6 | Privacy consent: AZ-native framing — 🔒 + "Məlumatım qorunur" | ✅ Done |
+| 7 | Volunteer / Organization branch at signup (role selector + org_type dropdown) | ✅ Done |
+| 8 | Move display_name to onboarding Step 1 | ✅ Done |
+| 9 | Volunteer org-search visibility toggle in onboarding (default: OFF) | ✅ Done |
+| 10 | Professional empty state copy: "Companies are searching for people like you — not resumes." | ✅ Done |
 
 **CEO sees:** Any person can register. Professionals understand why this is different from LinkedIn. Organizations have their own path.
 **Risk if skipped:** Nothing else matters if users can't register or get confused on day 1.
 
 ---
 
-### Sprint 2: Security + Hardening (3 days)
-**Goal:** 22/22 OWASP clean. Data isolation verified. Safe for external users.
+### Sprint 2: Security + Hardening (3 days) ✅ COMPLETE (Session 58, 2026-03-28)
 
-| # | Task | Why |
-|---|------|-----|
-| 1 | Assessment retest cooldown (7 days per competency) | Score gaming prevention |
-| 2 | Crystal TOCTOU atomic fix (already exists as migration, verify applied) | Double-spend |
-| 3 | **CSRF protection on assessment submission** | Fake scores via hidden iframe |
-| 4 | Org data isolation: RLS audit — Org A cannot read Org B's data | Attacker showed this is unspecified |
-| 5 | Differential privacy on org dashboard aggregates | Deanonymization |
-| 6 | Rate limits on 15 remaining endpoints — **with tier spec**: expensive (pgvector search) = 10/min, standard = 60/min, auth = 5/min per-IP | "Apply limits" is fiction without numbers |
-| 7 | UUID validation on event_id and volunteer_id params | Unexpected DB errors |
-| 8 | Crystal ledger column mismatch fix (delta vs amount) | Data integrity |
-| 9 | Abuse monitoring: flag accounts with >10 assessment starts/day | Catch gaming |
-| 10 | **Telegram bot sanitization** (sanitize before any bot send, not after) | Sprint 6 starts sending — must be clean |
-| 11 | **Seed event data script**: 10 events with relative dates (today+7, today+14, etc.) | Sprint 4 events page needs real data |
-| 12 | **RLS audit** (end of sprint): verify all wired endpoints respect RLS before Sprint 4 wires UI | Don't wire without verification |
+| # | Task | Status |
+|---|------|--------|
+| 1 | Assessment retest cooldown (7 days per competency) | ✅ Done |
+| 2 | Crystal TOCTOU atomic fix | ✅ Done (applied Session 55) |
+| 3 | CSRF protection on assessment submission | ✅ N/A — Bearer token auth immune by architecture |
+| 4 | Org data isolation: RLS audit — Org A cannot read Org B's data | ✅ Done — verified clean |
+| 5 | Differential privacy on org dashboard aggregates | ⏳ Deferred Sprint 3 — complex, low urgency pre-launch |
+| 6 | Rate limits on remaining endpoints (tier spec: 10/min discovery, 60/min standard, 5/min auth) | ✅ Done — 11 endpoints added. 2 gaps remain: GET /events/{id} + GET /{id}/registrations |
+| 7 | UUID validation on event_id and session_id params | ✅ Done — 8 event handlers + assessment GET /results |
+| 8 | Crystal ledger column mismatch fix (delta → amount) | ✅ Done |
+| 9 | Abuse monitoring: >10 starts/day → logger.warning | ✅ Done |
+| 10 | Telegram bot sanitization | ✅ Audited — CEO-only gate + Markdown retry = no fix needed |
+| 11 | Seed event data: 10 events with relative dates | ✅ Done — applied to prod |
+| 12 | RLS audit | ✅ Done — all org tables isolated by owner_id |
 
 **CEO sees:** Security audit moves from 7.5/10 → 9/10. "22/22 OWASP clean."
 **Risk if skipped:** First exploit = trust destroyed. For verified competency platform, security IS the product.

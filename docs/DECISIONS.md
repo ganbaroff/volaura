@@ -783,3 +783,48 @@ Claude's default is single-threaded. Every strategic/evaluative question should 
 - fal.ai balance = $0 (key valid) — must top up before E2E test. Add "check API balance" to deploy checklist for fal.ai
 - K-factor mechanic is built but unproven — first real test after fal.ai top-up
 
+
+---
+
+## Sprint 1 — Foundation (Sessions 57-58, 2026-03-28)
+
+**Decision: Volunteer/Org branch at signup (immediate, not Sprint 5)**
+- DSP: RECURSIVE-CRITICISM Round 1 (Aynur) — "Org admin has no path, falls into volunteer flow"
+- Winner: 2-card role selector + conditional org_type dropdown at signup
+- Accepted risk: org_type stored in user_metadata then forwarded at onboarding — thin but sufficient pre-B2B dashboard
+
+### ✓ What went as simulated
+- Signup redesign + onboarding branching worked cleanly — org_type → user_metadata → forwarded to profiles
+- Railway deploy fix was root cause of 3+ sessions of stale production (Railpack auto-detected Node, ignored Python)
+- Rate limit gaps were systematic: 11 endpoints unprotected — sweep approach worked
+
+### ✗ What DSP did not predict
+- `org_type` was written to user_metadata but NOT forwarded to POST /api/profiles/me — silent data loss. Caught in self-audit.
+- `profiles GET /me` had same `.single()` crash as auth.py — same bug class, missed because protocol was skipped
+- T4 (forgot-password) was marked ✅ without end-to-end verification — page exists, reset flow never tested
+
+### → Feed into next simulation
+- Protocol skip = blind spots. All 3 bugs above caught only because self-audit happened AFTER declaring done — not before
+- `TASK-PROTOCOL.md` created: swarm critique loop with hard gates. Every task uses it going forward
+- "Page loads" ≠ "flow works" — T4 should be Sprint 3 scope, not carried as false ✅
+
+---
+
+## Sprint 2 — Security Hardening (Sessions 57-58, 2026-03-28)
+
+**Decision: CSRF marked N/A (Bearer token architecture immune by design)**
+- Analysis: Authorization header (not cookies) = no CSRF surface. Not a missing fix.
+- Accepted risk: documented in sprint state, not a deferred item
+
+### ✓ What went as simulated
+- Crystal ledger column mismatch (`delta` vs `amount`) found via one DB query — exactly the type of check the protocol mandates
+- Telegram: CEO-only gate (HMAC + user_id allowlist) + Markdown retry fallback = no sanitization needed
+- UUID validation was systematic: `_validate_uuid()` pattern from invites.py applied to all event_id and session_id handlers
+
+### ✗ What DSP did not predict
+- `brandedby.py` had 3 wrong column names (`delta`, `reason`, `source_event_type`) — would have caused silent DB errors on queue skip
+- 2 rate limit gaps remain: `GET /events/{event_id}` and `GET /{event_id}/registrations` missing @limiter.limit — missed in sweep
+
+### → Feed into next simulation
+- Schema audit = query first, assume nothing. Even own code from the same session has wrong column names
+- Rate limit sweep: grep for `@router.get\|@router.post` then verify each has `@limiter.limit` above it — no exceptions

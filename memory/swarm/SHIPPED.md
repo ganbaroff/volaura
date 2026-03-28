@@ -56,6 +56,44 @@
 | `feedback_swarm_patterns.md` | `memory/swarm/` | Temp 1.0 rules, convergent signal patterns, swarm anti-patterns | ✅ DOC |
 | `SHIPPED.md` | `memory/swarm/` | THIS FILE — log of what exists in production | ✅ DOC |
 
+## Session 56 (2026-03-28) — AURA COACH + DASHBOARD FIX
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| `aura-coach` wired to `/aura` | `apps/web/src/app/[locale]/(dashboard)/aura/page.tsx` | `useSkill("aura-coach")` fires after reveal animation. Shows STRENGTH_MAP + GROWTH_PATH + PEER_CONTEXT. Skeleton during load → AuraCoach component. | ✅ LIVE |
+| AURA 404 fix | `apps/web/src/app/[locale]/(dashboard)/aura/page.tsx` | API returns 404 when no score → frontend now shows "Start Assessment" instead of crashing | ✅ LIVE |
+
+## Session 57 (2026-03-28) — TEAM EXPANSION + SPRINT PLAN V3
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| `sales-deal-strategist.md` | `memory/swarm/skills/` | B2B deal strategy, pricing, org onboarding | ✅ SKILL |
+| `sales-discovery-coach.md` | `memory/swarm/skills/` | Discovery questions, intro requests, B2B flow | ✅ SKILL |
+| `linkedin-content-creator.md` | `memory/swarm/skills/` | AURA-to-LinkedIn portability, professional brand | ✅ SKILL |
+| `cultural-intelligence-strategist.md` | `memory/swarm/skills/` | CIS/AZ cultural framing, trust signals, naming | ✅ SKILL |
+| `behavioral-nudge-engine.md` | `memory/swarm/skills/` | ADHD-first design, cognitive load, engagement | ✅ SKILL |
+| `accessibility-auditor.md` | `memory/swarm/skills/` | WCAG, AZ chars (ə ğ ş ç), mobile a11y — activates Sprint 6 | ✅ SKILL |
+| `RECURSIVE-CRITICISM.md` | `docs/engineering/skills/` | Standard: 2-round critique on all plans before execution | ✅ DOC |
+| `SPRINT-PLAN-V3.md` | `docs/` | Final plan: 8 sprints, 25 days, swarm-validated (38/50) | ✅ DOC |
+| Railway deploy fix | root `railway.toml` + `Dockerfile.railway` | Fixes Railway building Node instead of Python — root-level config now forces Docker | ✅ LIVE |
+
+## Session 58 (2026-03-28) — SPRINT 1+2 SECURITY HARDENING
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Signup redesign | `apps/web/src/app/[locale]/(auth)/signup/page.tsx` | Role selector (volunteer/org), org_type dropdown, AZ privacy consent, display_name removed | ✅ LIVE |
+| Onboarding rewrite | `apps/web/src/app/[locale]/(dashboard)/onboarding/page.tsx` | username pre-fill from user_metadata, org 2-step flow, visible_to_orgs toggle (default OFF), org_type forwarded to API | ✅ LIVE |
+| `account_type`, `visible_to_orgs`, `org_type` fields | `apps/api/app/schemas/profile.py` + `supabase/migrations/` | New profile fields with validators. Migration applied to prod. | ✅ LIVE |
+| `ProxyHeadersMiddleware` | `apps/api/app/main.py` | Railway proxy: real client IP now reaches rate limiter (was always proxy IP) | ✅ LIVE |
+| Professional empty states | `apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx` | NoScoreBanner: volunteer → "Companies searching for you", org → "Verified talent waiting" | ✅ LIVE |
+| Assessment retest cooldown | `apps/api/app/routers/assessment.py` | 7-day block per competency after completion | ✅ LIVE |
+| Abuse monitoring | `apps/api/app/routers/assessment.py` | >10 starts/day → logger.warning (no block) | ✅ LIVE |
+| Rate limits (11 endpoints) | `activity.py`, `auth.py`, `profiles.py`, `organizations.py`, `invites.py`, `events.py` | @limiter.limit added to 11 endpoints previously unprotected | ✅ LIVE |
+| UUID validation | `events.py` (8 handlers), `assessment.py` GET /results | `_validate_uuid()` helper + call on all event_id and session_id path params | ✅ LIVE |
+| Crystal ledger fix | `apps/api/app/routers/brandedby.py` | `"delta"` → `"amount"`, removed non-existent columns `reason`/`source_event_type` | ✅ LIVE |
+| Seed events (10 events) | Supabase migration | 10 events with relative dates (NOW() + INTERVAL), status=open | ✅ APPLIED |
+| `TASK-PROTOCOL.md` | `docs/` | 10-step swarm critique loop: skills → plan → critique → response → counter-critique → execute → report → swarm review. Hard gates. | ✅ DOC |
+
 ---
 
 ## DAILY EXECUTION CYCLE (what runs automatically)

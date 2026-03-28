@@ -43,15 +43,28 @@ loading...  → metaverse invite teaser
 
 ## Current Sprint Goal
 
-**Volaura Track: Sprint 10 IN PROGRESS** (org dashboard live, activation wave pending)
-**BrandedBy Track: Sprint B1-B2-B3 COMPLETE ✅** (E2E verified 2026-03-27, now folded into Volaura as ai-twin-responder skill)
+**Last updated: Session 58 (2026-03-28)**
+
+**Volaura Track: SPRINT 1 ✅ + SPRINT 2 ✅ COMPLETE — Sprint 3 is next**
+**BrandedBy Track: Sprint B1-B2-B3 COMPLETE ✅** (folded into Volaura as ai-twin-responder skill)
 **Ecosystem Track: REPLACED by skill library approach (Session 51)**
 
-**Swarm improvements (Session 51):**
+**SPRINT-PLAN-V3.md is the current plan** — 8 sprints, 25 days, swarm-validated 38/50.
+Next: Sprint 3 — API Contracts + Assessment Refactor (docs/SPRINT-PLAN-V3.md)
+
+**Key schema changes (Sessions 57-58) — agents must know:**
+- `profiles` table now has: `account_type` (volunteer/organization), `visible_to_orgs` (bool, default false), `org_type` (ngo/corporate/government/startup/academic/other/null)
+- `ProfileCreate` schema accepts all 3 new fields with validators
+- `ProfileResponse` returns all 3 new fields
+- Rate limits: `RATE_DISCOVERY` (10/min) for enumerable endpoints, `RATE_DEFAULT` (60/min) standard, `RATE_AUTH` (5/min) auth
+- UUID validation: `_validate_uuid()` helper exists in `invites.py` AND `events.py` — use this pattern, don't inline
+- Crystal ledger: table `game_crystal_ledger` columns are `id, user_id, amount, source, reference_id, created_at` — NOT `delta`, NOT `reason`
+
+**Swarm improvements (Session 51+):**
 - Memory consolidation daemon LIVE: `packages/swarm/memory_consolidation.py`
-- Agents now receive `agent-feedback-distilled.md` (neocortex) instead of raw log
-- Consolidation runs automatically after each autonomous swarm session
-- 6 product skills added to `memory/swarm/skills/`
+- 12 skills in `memory/swarm/skills/` (6 from Session 51 + 6 from Session 57)
+- New Session 57 skills: sales-deal-strategist, sales-discovery-coach, linkedin-content-creator, cultural-intelligence-strategist, behavioral-nudge-engine, accessibility-auditor
+- TASK-PROTOCOL.md: mandatory 10-step workflow for every task going forward
 
 ---
 

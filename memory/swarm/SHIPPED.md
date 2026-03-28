@@ -77,6 +77,23 @@
 | `SPRINT-PLAN-V3.md` | `docs/` | Final plan: 8 sprints, 25 days, swarm-validated (38/50) | ✅ DOC |
 | Railway deploy fix | root `railway.toml` + `Dockerfile.railway` | Fixes Railway building Node instead of Python — root-level config now forces Docker | ✅ LIVE |
 
+## Session 59 (2026-03-28) — SPRINT 3: API CONTRACTS + ASSESSMENT REFACTOR
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Assessment router split | `services/assessment/` (3 modules) | `rewards.py` (crystal+skill events), `helpers.py` (DB lookups), `coaching_service.py` (Gemini+fallbacks). Router 919→660 lines. | ✅ LIVE |
+| `CoachingTip`, `CoachingResponse`, `AssessmentInfoOut` | `schemas/assessment.py` | Moved from router, added to schemas | ✅ LIVE |
+| `QuestionResultOut`, `QuestionBreakdownOut` | `schemas/assessment.py` | Per-question result with mapped difficulty labels (no IRT leak) | ✅ LIVE |
+| `GET /assessment/info/{slug}` | `routers/assessment.py` | Pre-assessment info: time estimate, can_retake, days_until_retake | ✅ LIVE |
+| `GET /assessment/results/{id}/questions` | `routers/assessment.py` | Per-question breakdown: difficulty_label, is_correct, response_time_ms. IRT params mapped to easy/medium/hard/expert. | ✅ LIVE |
+| Competency info migration | `supabase/migrations/20260328230000` | `time_estimate_minutes`, `can_retake` columns added to competencies | ✅ APPLIED |
+| Events rate limit fix | `routers/events.py` | Added @limiter.limit to GET /{id} and GET /{id}/registrations | ✅ LIVE |
+| B2B search API docs | `docs/api/volunteer-search-api.md` | Full request/response spec for org volunteer search | ✅ DOC |
+| API E2E tests (3) | `tests/test_assessment_api_e2e.py` | Happy path, retest cooldown, question breakdown security | ✅ TEST |
+| RLS write vectors (6) | `tests/test_rls_audit.py` | UPDATE/DELETE/INSERT isolation, questions_safe enforcement, naked TRUE check | ✅ TEST |
+| Protocol enforcement hook | `.claude/hooks/protocol-enforce.sh` | Blocks Edit/Write on apps/ until protocol step >= 6 | ✅ LIVE |
+| TASK-PROTOCOL v2.0 | `docs/TASK-PROTOCOL.md` + `CHECKLIST.md` | v2.0: context check, blockers, exit condition, doc gate, pre-commit review | ✅ DOC |
+
 ## Session 58 (2026-03-28) — SPRINT 1+2 SECURITY HARDENING
 
 | Code | Location | What it does | Status |

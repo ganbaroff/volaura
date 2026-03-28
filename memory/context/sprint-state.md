@@ -6,7 +6,37 @@
 ---
 
 ## Last Updated
-2026-03-28 | Session 58: **Security hardening complete. Sprint 1+2 bug fixes committed. TASK-PROTOCOL v1.0 created. Next: use TASK-PROTOCOL for every task going forward.**
+2026-03-28 | Session 59: **Sprint 3 complete. Assessment router split (919→660 lines, 3 service modules). Per-question breakdown endpoint live. 35 RLS tests. TASK-PROTOCOL v2.0 + enforcement hook active. Next: Sprint 4 (Frontend wiring).**
+
+## Session 59 — SUMMARY (2026-03-28)
+
+### What was done
+1. **Assessment router refactored** — 919-line monolith split into thin router + 3 services: `rewards.py`, `helpers.py`, `coaching_service.py`. Services never import from routers (circular import prevention).
+2. **2 new endpoints** — `GET /info/{slug}` (pre-assessment metadata), `GET /results/{id}/questions` (per-question breakdown with mapped difficulty labels, no IRT leak)
+3. **Migration applied** — `time_estimate_minutes` + `can_retake` on competencies table (Supabase prod)
+4. **Events rate limit gaps closed** — 2 missing @limiter.limit decorators added
+5. **B2B search API documented** — Full request/response spec in `docs/api/volunteer-search-api.md`
+6. **API E2E tests** — 3 tests: happy path, retest cooldown, question breakdown security
+7. **RLS write vector tests** — 6 new tests (35 total): UPDATE/DELETE/INSERT isolation, questions_safe enforcement
+8. **TASK-PROTOCOL v2.0** — fill-in checklist + enforcement hook (blocks production code until step >= 6)
+9. **CEO effectiveness review** — 2 independent AI evaluators (Nexus/haiku, Axiom/sonnet). CEO score: 7-8/10. Key finding: enforcement gap is at CEO layer, not AI layer.
+
+### Commits this session
+- `2723d15` — feat(sprint3): rate limits + competency info migration + B2B API docs [CP1]
+- `aebcfd0` — refactor(assessment): split 919-line router into thin router + 3 service modules
+- `230e5ab` — feat(assessment): per-question breakdown endpoint + QuestionResultOut schema
+- `2f897a1` — test(assessment): API-level E2E tests — happy path, cooldown, question breakdown
+- `bf6fb65` — test(security): add write vector isolation tests — UPDATE/DELETE/INSERT RLS checks
+
+### Key decisions
+- **IRT params NEVER exposed** — mapped to easy/medium/hard/expert labels. raw_score → boolean is_correct.
+- **Assessment router services rule** — services/ NEVER imports from routers/ (documented in `__init__.py`)
+- **Per-question breakdown business case validated** — Sprint Plan V3 Task 4, 9-persona DSP
+
+### Next session
+Sprint 4: Frontend Wiring. Assessment info page, assessment flow with sessionStorage, results page with question breakdown, AURA reveal animation polish.
+
+---
 
 ## Session 58 — SUMMARY (2026-03-28)
 

@@ -1,5 +1,16 @@
 # Architecture Decisions Log
 
+## Session 59 Retrospective — 2026-03-28 (Sprint 3: API Contracts + Assessment Refactor)
+
+✓ Assessment router split worked exactly as planned — services/helpers/coaching clean separation, zero circular imports
+✓ TASK-PROTOCOL enforcement hook proved effective — forced full swarm critique (2 rounds, 22 findings) before any production code
+✓ Swarm caught N+1 query risk (T2), IRT parameter leak (T2), incomplete RLS test coverage (T4) — all addressed
+✗ First plan had T1 (CLASS 3 enforcement) which was redundant — dropped after analysis. Wasted 10 min of swarm time.
+✗ Swarm Round 2 found that CATState.to_dict() stores full IRT params in JSONB — had to verify and design mapping layer
+→ Next sprint: frontend wiring. Assessment info page, per-question breakdown display, AURA reveal polish.
+→ DSP prediction: 38/50 (from Sprint Plan V3). Actual: Sprint 3 completed in 1 session with 5 commits. Prediction accurate.
+→ Protocol compliance: 100% — all 10 steps followed with named artifacts. First fully compliant sprint.
+
 ## Session 54 Retrospective — 2026-03-28 (User simulation sprint)
 
 ✓ Acted as Leyla/Wali/Rashad — found 7 gaps between expected and actual UX

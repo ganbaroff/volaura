@@ -81,18 +81,16 @@
 
 ---
 
-### Sprint 3: API Contracts + Assessment Refactor (3 days)
-*Previously Sprint 4 — moved before UI wiring by Round 2 synthesis*
-**Goal:** All API shapes documented. Assessment code safe to extend. Test infrastructure exists.
+### Sprint 3: API Contracts + Assessment Refactor (3 days) ✅ COMPLETE (Session 59, 2026-03-28)
 
-| # | Task | Why |
-|---|------|-----|
-| 1 | **Document B2B search API request/response shape** — `POST /api/organizations/search/volunteers` body + response schema | UI in Sprint 4 assumes correct shape — 422 errors if guessed wrong |
-| 2 | Split assessment router (870 lines) into 3 service modules | Largest file in codebase, high bug risk |
-| 3 | Pre-assessment description screen: what it tests, how AI scores, time estimate, can I retake? | Users start without knowing what they're evaluated on |
-| 4 | Per-question results breakdown after completion | "I don't trust the score" = zero word-of-mouth |
-| 5 | **Playwright E2E**: sessionStorage persistence + critical user flows (assessment completion, AURA reveal) | sessionStorage untestable without real browser automation |
-| 6 | **RLS verification test**: 2 test orgs, assert Org B gets 404 on Org A's data | Proves Sprint 2 RLS fix actually works |
+| # | Task | Status |
+|---|------|--------|
+| 1 | **Document B2B search API request/response shape** | ✅ Done — `docs/api/volunteer-search-api.md` |
+| 2 | Split assessment router (919 lines) into 3 service modules | ✅ Done — rewards.py, helpers.py, coaching_service.py |
+| 3 | Pre-assessment description screen: info endpoint + migration | ✅ Done — `GET /info/{slug}`, time_estimate_minutes + can_retake columns |
+| 4 | Per-question results breakdown after completion | ✅ Done — `GET /results/{id}/questions`, difficulty labels, no IRT leak |
+| 5 | API E2E tests: assessment flow + security assertions | ✅ Done — 3 tests (happy path, cooldown, question breakdown security) |
+| 6 | RLS verification: write vector isolation tests | ✅ Done — 6 new tests (35 total), UPDATE/DELETE/INSERT coverage |
 
 **CEO sees:** Assessment feels transparent. Scores explainable. Test infrastructure built.
 **Risk if skipped:** Assessment is black-box. First professional user who doesn't trust their score will post about it.

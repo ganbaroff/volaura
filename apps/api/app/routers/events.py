@@ -245,6 +245,39 @@ async def coordinator_rate_volunteer(
 
     if not result.data:
         raise HTTPException(status_code=404, detail={"code": "REGISTRATION_NOT_FOUND", "message": "Registration not found"})
+
+    # Propagate to AURA event_performance — best effort (never blocks response)
+    reg_data = result.data[0]
+    volunteer_id = reg_data.get("volunteer_id")
+    if volunteer_id:
+        try:
+            # Average all coordinator ratings for this volunteer (across all events)
+            rated_regs = await db_admin.table("registrations") \
+                .select("coordinator_rating") \
+                .eq("volunteer_id", volunteer_id) \
+                .not_.is_("coordinator_rating", "null") \
+                .execute()
+            ratings = [r["coordinator_rating"] for r in (rated_regs.data or []) if r.get("coordinator_rating")]
+            if ratings:
+                avg_rating = sum(ratings) / len(ratings)
+                # Normalize 1-5 stars → 0-100 AURA score
+                event_performance_score = round((avg_rating - 1) / 4 * 100, 2)
+                await db_admin.rpc(
+                    "upsert_aura_score",
+                    {
+                        "p_volunteer_id": volunteer_id,
+                        "p_competency_scores": {"event_performance": event_performance_score},
+                    },
+                ).execute()
+                logger.info(
+                    "AURA event_performance updated",
+                    volunteer_id=volunteer_id,
+                    avg_rating=avg_rating,
+                    event_performance_score=event_performance_score,
+                )
+        except Exception as exc:
+            logger.warning("AURA event_performance update failed (non-blocking)", error=str(exc))
+
     return RegistrationResponse(**result.data[0])
 
 

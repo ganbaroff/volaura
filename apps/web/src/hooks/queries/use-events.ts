@@ -75,6 +75,33 @@ export interface EventAttendeeRow {
   badge_tier: string | null;
 }
 
+export interface CoordinatorRatingPayload {
+  registration_id: string;
+  rating: number;
+  feedback?: string;
+}
+
+/** Rate a volunteer as coordinator — POST /events/{id}/rate/coordinator */
+export function useRateVolunteer(eventId: string) {
+  const getToken = useAuthToken();
+  const queryClient = useQueryClient();
+
+  return useMutation<unknown, ApiError, CoordinatorRatingPayload>({
+    mutationFn: async (payload) => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      return apiFetch(`/api/events/${eventId}/rate/coordinator`, {
+        method: "POST",
+        token,
+        body: JSON.stringify(payload),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["events", eventId, "attendees"] });
+    },
+  });
+}
+
 /** Enriched attendee list — org owner only */
 export function useEventAttendees(eventId: string | undefined) {
   const getToken = useAuthToken();

@@ -1,12 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { Loader2, ArrowLeft, Users, UserCheck, UserX } from "lucide-react";
+import { Loader2, ArrowLeft, Users, UserCheck, UserX, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
-import { useEventAttendees } from "@/hooks/queries/use-events";
+import { useEventAttendees, useRateVolunteer } from "@/hooks/queries/use-events";
 import { useEvent } from "@/hooks/queries/use-events";
 import type { EventAttendeeRow } from "@/hooks/queries/use-events";
 import { ApiError } from "@/lib/api/client";
@@ -39,9 +40,72 @@ const STATUS_COLORS: Record<string, string> = {
   checked_in: "text-primary",
 };
 
+// ── Star rating widget ─────────────────────────────────────────────────────────
+
+function StarRating({
+  registrationId,
+  onRate,
+  isPending,
+}: {
+  registrationId: string;
+  onRate: (registrationId: string, rating: number) => void;
+  isPending: boolean;
+}) {
+  const [hovered, setHovered] = useState<number | null>(null);
+  const [selected, setSelected] = useState<number | null>(null);
+
+  function handleClick(star: number) {
+    if (isPending) return;
+    setSelected(star);
+    onRate(registrationId, star);
+  }
+
+  return (
+    <div
+      className="flex items-center gap-0.5"
+      role="group"
+      aria-label="Rate volunteer"
+    >
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          type="button"
+          disabled={isPending || selected !== null}
+          onClick={(e) => { e.stopPropagation(); handleClick(star); }}
+          onMouseEnter={() => setHovered(star)}
+          onMouseLeave={() => setHovered(null)}
+          className="p-0.5 disabled:opacity-50"
+          aria-label={`${star} star`}
+        >
+          <Star
+            className={cn(
+              "size-4 transition-colors",
+              (hovered ?? selected ?? 0) >= star
+                ? "fill-amber-400 text-amber-400"
+                : "text-muted-foreground",
+            )}
+          />
+        </button>
+      ))}
+    </div>
+  );
+}
+
 // ── Attendee row ───────────────────────────────────────────────────────────────
 
-function AttendeeRow({ a, locale, index }: { a: EventAttendeeRow; locale: string; index: number }) {
+function AttendeeRow({
+  a,
+  locale,
+  index,
+  onRate,
+  isRatingPending,
+}: {
+  a: EventAttendeeRow;
+  locale: string;
+  index: number;
+  onRate: (registrationId: string, rating: number) => void;
+  isRatingPending: boolean;
+}) {
   const router = useRouter();
   const statusColor = STATUS_COLORS[a.status] ?? "text-muted-foreground";
   const displayName = a.display_name ?? a.username ?? a.volunteer_id.slice(0, 8);
@@ -92,6 +156,15 @@ function AttendeeRow({ a, locale, index }: { a: EventAttendeeRow; locale: string
       <span className={cn("text-xs font-medium capitalize shrink-0", statusColor)}>
         {a.status.replace(/_/g, " ")}
       </span>
+
+      {/* Star rating — only for checked-in volunteers */}
+      {checkedIn && (
+        <StarRating
+          registrationId={a.registration_id}
+          onRate={onRate}
+          isPending={isRatingPending}
+        />
+      )}
     </motion.div>
   );
 }
@@ -105,6 +178,11 @@ export default function EventAttendeesPage() {
 
   const { data: event } = useEvent(eventId);
   const { data: attendees, isLoading, error } = useEventAttendees(eventId);
+  const rateVolunteer = useRateVolunteer(eventId);
+
+  function handleRate(registrationId: string, rating: number) {
+    rateVolunteer.mutate({ registration_id: registrationId, rating });
+  }
 
   const eventTitle = locale === "az"
     ? (event?.title_az ?? event?.title_en ?? "")
@@ -176,7 +254,14 @@ export default function EventAttendeesPage() {
       {!isLoading && (attendees ?? []).length > 0 && (
         <div className="space-y-2">
           {attendees!.map((a, i) => (
-            <AttendeeRow key={a.registration_id} a={a} locale={locale} index={i} />
+            <AttendeeRow
+              key={a.registration_id}
+              a={a}
+              locale={locale}
+              index={i}
+              onRate={handleRate}
+              isRatingPending={rateVolunteer.isPending}
+            />
           ))}
         </div>
       )}

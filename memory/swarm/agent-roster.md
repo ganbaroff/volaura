@@ -84,6 +84,12 @@ Source: https://github.com/msitarzewski/agency-agents.git (full repo reviewed, n
 | SQL scripts / migrations | Architecture + Security |
 | CEO evaluation / professional review | All agents in parallel |
 | Route ordering review (/{id} patterns) | Security Agent (Session 42 P0: route shadowing IS real) |
+| GDPR / account deletion endpoint | Security Agent (irreversible, cascade risk) |
+| Bulk file upload endpoint (CSV, images) | Security Agent (formula injection, size limits, MIME validation) |
+| Mobile layout / responsive fixes | Product Agent + load: accessibility-auditor skill |
+| Custom hook authoring | load: REACT-HOOKS-PATTERNS.md (hooks-in-callbacks is Class 1 bug) |
+| Any `useMutation` / `useQuery` hook | Architecture Agent (hook placement, token freshness, envelope) |
+| Council accuracy tracking | Firuza (execution micro-decisions) + Nigar (B2B feature decisions) |
 | Dashboard personalization | Product Agent + load: feed-curator skill |
 | AI Twin feature review | Product + Security + load: ai-twin-responder skill |
 | Assessment question creation | QA Engineer + Security + load: assessment-generator skill |
@@ -150,3 +156,5 @@ QA/SWE/Security agents generated assessment questions, wrote "expert" answers ta
 | QA Engineer | 42 | Yes (blind cross-test was correct methodology) | Proved keyword_fallback = vocabulary test |
 | QA Engineer | 42 | Partial (self-assessment was circular) | Mistake #47: scored 0.59-0.89 on own questions |
 | SWE Agent | 42 | Yes (verb regex calibration correct) | Expanded 45 -> 100+ verbs, fixed false positives |
+| **Firuza (council)** | 62-63 | **4/4 correct (100%)** | Sprint A1: 404 handling (✓), A3: check-in visualization (✓), A4: one-shot disable (✓), A5: removal comment (✓). Domain: execution micro-decisions, UX precision, ADHD-first validation. |
+| **Nigar (council)** | 62-63 | **2/2 correct (100%)** | A2: category tabs (✓), A3: registration count header (✓). Domain: B2B feature decisions, org workflows. |

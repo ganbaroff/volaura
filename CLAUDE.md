@@ -210,6 +210,8 @@ This feedback loop makes each simulation more accurate than the last.
 | Handing V0 output to integration | `design:handoff` |
 | Architecture decisions, ADR | `engineering:architecture` |
 | Any code change > 50 lines | `engineering:code-review` |
+| Writing React custom hooks (`use*.ts`) | `docs/engineering/skills/REACT-HOOKS-PATTERNS.md` (hooks-in-callbacks = Class 1 bug) |
+| Any `useMutation` or `useQuery` hook | `docs/engineering/skills/REACT-HOOKS-PATTERNS.md` checklist |
 | Deploy to staging/production | `engineering:deploy-checklist` |
 | New feature design | `design:user-research`, `engineering:system-design` |
 | Reviewing existing code/design | `design:critique`, `engineering:code-review` |

@@ -6,7 +6,32 @@
 ---
 
 ## Last Updated
-2026-03-28 | Session 57: **Team expansion sprint. 6 new agents hired from agency-agents repo (full 164-file review by 3 new personas: Kamal, Aynur, Rauf). Sales, Cultural, LinkedIn, A11y, Nudge skills live. Sprint Plan V2 updated with 3 new Sprint 1 tasks found by new agents. 9 DSP council personas now active.**
+2026-03-28 | Session 58: **Security hardening complete. Sprint 1+2 bug fixes committed. TASK-PROTOCOL v1.0 created. Next: use TASK-PROTOCOL for every task going forward.**
+
+## Session 58 — SUMMARY (2026-03-28)
+
+### What was done
+1. **2 bug fixes committed** — `org_type` propagation (onboarding never forwarded it to API), `profiles GET /me` `.single()` → `.maybe_single()` crash fix
+2. **UUID validation added to all path params** — `assessment GET /results/{session_id}` (was missing), all 8 `event_id` handlers in events.py (new `_validate_uuid` helper + import)
+3. **Crystal ledger column mismatch fixed** — `brandedby.py` used `"delta"` + non-existent columns; corrected to `"amount"` + `"source"` (matching actual DB schema: `id, user_id, amount, source, reference_id, created_at`)
+4. **Telegram sanitization audited** — CEO-only gate (webhook secret + user_id allowlist) + Markdown retry fallback already in place. No fix needed.
+5. **TASK-PROTOCOL v1.0 created** — `docs/TASK-PROTOCOL.md`. Swarm critique loop: skills → scope lock → plan → swarm critique → response table → counter-critique → execute → report → swarm work review → CEO. Hard gates at every step. Committed.
+
+### Commits this session
+- `ef94e9f` — fix(profiles): org_type propagation + maybe_single crash fix
+- `7a387fc` — fix(security): UUID validation + crystal ledger column mismatch
+- `637557e` — docs: TASK-PROTOCOL v1.0 — Swarm Critique Loop
+
+### Key decisions
+- **TASK-PROTOCOL mandatory going forward** — Yusif confirmed, load with "Загрузи TASK-PROTOCOL.md и начни"
+- **T4 (forgot-password flow) still unverified** — page exists, full email→token→reset flow never tested. NOT done. Sprint 3 scope.
+- **2 rate limit gaps** — `GET /events/{event_id}` and `GET /{event_id}/registrations` missing `@limiter.limit`. Noted for Sprint 3.
+
+### Next session
+Load: `docs/TASK-PROTOCOL.md` + `memory/context/sprint-state.md`
+First task under new protocol: Yusif decides.
+
+---
 
 ## Session 57 — SUMMARY (2026-03-28)
 

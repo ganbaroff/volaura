@@ -38,6 +38,15 @@ EVOLUTION_LOG = project_root / "memory" / "swarm" / "skill-evolution-log.md"
 SHARED_CONTEXT = project_root / "memory" / "swarm" / "shared-context.md"
 DISTILLED_FILE = project_root / "memory" / "swarm" / "agent-feedback-distilled.md"
 
+# EvoSkill (B3): raw failed trajectory logs live in SWARM_DATA_DIR (GitHub Actions)
+# or ~/.swarm/ (local dev). Path mirrors AgentMemory.log_trajectory().
+_swarm_data_dir = os.environ.get("SWARM_DATA_DIR")
+TRAJECTORIES_FILE = (
+    Path(_swarm_data_dir) / "agent-trajectories.jsonl"
+    if _swarm_data_dir
+    else Path.home() / ".swarm" / "agent-trajectories.jsonl"
+)
+
 
 def _scan_skills() -> list[dict]:
     """Scan all skill files and extract metadata."""
@@ -126,6 +135,45 @@ def _check_quality(skills: list[dict]) -> list[str]:
     return issues
 
 
+def _load_failed_trajectories(max_entries: int = 20) -> str:
+    """Load recent failed agent trajectories from agent-trajectories.jsonl.
+
+    EvoSkill pattern (B3): skill evolution should use raw failure traces,
+    not just distilled summaries. Returns the last N wrong-outcome entries
+    formatted for the LLM prompt.
+    """
+    if not TRAJECTORIES_FILE.exists():
+        return ""
+
+    try:
+        lines = []
+        with open(TRAJECTORIES_FILE, "r", encoding="utf-8") as f:
+            for raw in f:
+                raw = raw.strip()
+                if raw:
+                    try:
+                        lines.append(json.loads(raw))
+                    except json.JSONDecodeError:
+                        continue
+
+        # Keep only failures, most recent first
+        failures = [e for e in lines if e.get("outcome") == "wrong"]
+        recent = failures[-max_entries:]
+
+        if not recent:
+            return ""
+
+        parts = [f"RECENT FAILED AGENT TRAJECTORIES (last {len(recent)} failures):"]
+        for entry in recent:
+            parts.append(
+                f"- [{entry.get('model', '?')}] Task: {entry.get('task', '')[:100]}"
+            )
+            parts.append(f"  Response: {entry.get('response', '')[:150]}")
+        return "\n".join(parts)
+    except OSError:
+        return ""
+
+
 async def _llm_skill_review(skills: list[dict], groq_key: str) -> dict | None:
     """Use LLM to review skills and suggest improvements."""
     try:
@@ -147,7 +195,10 @@ async def _llm_skill_review(skills: list[dict], groq_key: str) -> dict | None:
         distilled = ""
         if DISTILLED_FILE.exists():
             with open(DISTILLED_FILE, "r", encoding="utf-8") as f:
-                distilled = f.read()[:3000]
+                distilled = f.read()[:2000]
+
+        # EvoSkill (B3): also read raw failed trajectories — higher signal than summaries
+        trajectories = _load_failed_trajectories()
 
         prompt = f"""You are a skill evolution engine for an AI agent swarm.
 
@@ -156,6 +207,8 @@ CURRENT SKILLS:
 
 DISTILLED AGENT KNOWLEDGE:
 {distilled}
+
+{trajectories}
 
 Analyze the skill library and output JSON:
 {{

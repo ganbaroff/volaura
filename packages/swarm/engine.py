@@ -224,6 +224,8 @@ class SwarmEngine:
                     chose_winner=r.winner,
                     was_correct=None,  # calibrate later
                     self_note=r.reason[:200],
+                    full_prompt=config.question,
+                    full_response=r.reason,
                 )
 
                 # Structured memory — experience network (v4)
@@ -263,6 +265,26 @@ class SwarmEngine:
                 response=r.reason[:500] if r.reason else "",
                 score=episodic_score,
             )
+
+            # EvoSkill trajectory logging (B3) — raw failed trajectories into agent-trajectories.jsonl.
+            # skill_evolution.py reads this alongside summaries to close the gap with EvoSkill/VOYAGER.
+            # Log failures always; log successes only when agent was the winner (high-signal).
+            if r.error or not r.json_valid:
+                self.agent_memory.log_trajectory(
+                    model=r.model,
+                    task=config.question,
+                    full_prompt=config.question,
+                    full_response=r.raw_response or r.error or "",
+                    outcome="wrong",
+                )
+            elif r.winner and r.winner == report.winner:
+                self.agent_memory.log_trajectory(
+                    model=r.model,
+                    task=config.question,
+                    full_prompt=config.question,
+                    full_response=r.reason or "",
+                    outcome="correct",
+                )
 
         logger.info(
             "Decision: winner={w} score={s}/50 agents={a}/{t} latency={ms}ms id={id}",

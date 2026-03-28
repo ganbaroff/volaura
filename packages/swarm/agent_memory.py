@@ -29,12 +29,20 @@ class AgentMemory:
         chose_winner: str,
         was_correct: bool | None,  # None if not yet calibrated
         self_note: str = "",
+        full_prompt: str = "",
+        full_response: str = "",
     ) -> None:
-        """Record one experience for a model."""
+        """Record one experience for a model.
+
+        full_prompt / full_response are stored for WRONG entries so that
+        get_context_for_agent() can surface the exact failure trace (Reflexion pattern,
+        arXiv:2303.11366). Agents that see "You wrote X, correct was Y" stop repeating
+        the same mistake vs agents that only see the lesson label.
+        """
         path = self._model_path(model)
         logs = self._load(path)
 
-        logs.append({
+        entry: dict = {
             "task": task_summary[:200],
             "skill": skill_used,
             "skill_helpful": skill_helpful,
@@ -42,7 +50,14 @@ class AgentMemory:
             "correct": was_correct,
             "note": self_note[:300],
             "timestamp": datetime.now(timezone.utc).isoformat(),
-        })
+        }
+        # Only persist full traces for wrong/uncalibrated entries (saves space)
+        if full_prompt:
+            entry["full_prompt"] = full_prompt[:500]
+        if full_response:
+            entry["full_response"] = full_response[:500]
+
+        logs.append(entry)
 
         # Keep last 100 experiences per model
         if len(logs) > 100:
@@ -68,10 +83,20 @@ class AgentMemory:
                 correct_tag = " [WRONG - learn from this]"
 
             note = entry.get("note", "")
-            lines.append(
+            line = (
                 f"- Task: {entry['task'][:80]} | Chose: {entry['winner']}{correct_tag}"
                 + (f" | Note: {note[:80]}" if note else "")
             )
+            lines.append(line)
+
+            # Reflexion trace: for WRONG entries, show exactly what was said and what was right.
+            # "You wrote X. The correct answer was Y." — 91% vs 80% HumanEval (arXiv:2303.11366).
+            if entry.get("correct") is False:
+                full_resp = entry.get("full_response", "")
+                if full_resp:
+                    lines.append(f"  You wrote: {full_resp[:200]}")
+                if note:
+                    lines.append(f"  Correct was: {note[:200]}")
 
         return "\n".join(lines)
 
@@ -94,6 +119,37 @@ class AgentMemory:
             "pending": pending,
             "accuracy": correct / max(correct + wrong, 1),
         }
+
+    def log_trajectory(
+        self,
+        model: str,
+        task: str,
+        full_prompt: str,
+        full_response: str,
+        outcome: str,  # "correct" | "wrong" | "pending"
+        skill_used: str | None = None,
+    ) -> None:
+        """Append a raw task trajectory to agent-trajectories.jsonl.
+
+        EvoSkill (sentient-agi/EvoSkill) pattern: skill evolution works from
+        raw failed trajectory logs, not distilled summaries. Each line is one
+        JSON object — append-only, never overwritten.
+
+        skill_evolution.py reads this file alongside agent-feedback-distilled.md
+        to close the gap between our engine and EvoSkill/VOYAGER state-of-the-art.
+        """
+        traj_path = self.data_dir.parent / "agent-trajectories.jsonl"
+        record = {
+            "model": model,
+            "task": task[:300],
+            "prompt": full_prompt[:800],
+            "response": full_response[:800],
+            "outcome": outcome,
+            "skill": skill_used,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+        with open(traj_path, "a", encoding="utf-8") as f:
+            f.write(json.dumps(record, ensure_ascii=False, default=str) + "\n")
 
     def mark_calibration(self, model: str, decision_id: str, was_correct: bool) -> None:
         """After calibration, update past experiences with correct/wrong."""

@@ -142,6 +142,57 @@ Rule: Strategic decisions → temp 1.0. Code review → temp 0.7.
 
 ---
 
+## Autonomous Evaluation Research (live agent, 2026-03-29)
+
+Source: research agent a2ee620736d04382a — 45 tool uses, 273s, 54k tokens.
+
+### 3-Layer Automated Evaluation Pipeline
+
+| Layer | Approach | Runs | Replaces | Status |
+|-------|----------|------|----------|--------|
+| L1 | Cross-model judge (5 criteria, binary, asymmetric) | At proposal time in autonomous_run.py | Manual CTO "was this good?" | ✅ SHIPPED (B7) |
+| L2 | Prometheus rubric scoring per agent role | Nightly in memory_consolidation.py | Manual career-ladder score updates | B8 candidate |
+| L3 | Outcome correlation (judge score vs CTO disposition) | Weekly | Manual calibration of who to trust | B9 candidate |
+
+### Key Research Findings
+
+**Known biases and mitigations (empirically validated):**
+1. **Position bias** — LLMs favor the first response ~65% of the time in pairwise comparisons. Fix: run twice with swapped order.
+2. **Verbosity bias** — longer responses score higher even when less correct. Fix: binary pass/fail outperforms 1-5 scales (Hamel Husain, "Critique Shadowing").
+3. **Self-enhancement** — 10% inflation for GPT-4, 25% for Claude-v1. Fix: asymmetric model routing (implemented in B7).
+
+**Calibration target:** MT-Bench found GPT-4 achieves >80% agreement with humans (~81% inter-human). Take 50 historical proposals with known outcomes → if judge agrees >75%, calibrated. Re-validate quarterly.
+
+**What NOT to do:**
+- Same model generates and judges its own output (25% self-favor)
+- Numeric 1-5 scales without rubric anchors (produce inaction on 3/4 scores)
+- Average divergent judge scores (divergence IS the signal — don't destroy it)
+- Calibrate on "agreement with majority" rather than "agreement with ground truth"
+
+### B8: Prometheus Rubric Scoring (half-day)
+
+`pip install prometheus-eval` — supports LiteLLM with Gemini/Claude backends.
+Per-agent-role rubrics (one each: Security, Architecture, Product, QA, CTO Watchdog).
+Wire into `memory_consolidation.py` to auto-update career-ladder scores.
+
+```python
+from prometheus_eval.litellm import PrometheusLiteLLM
+judge = PrometheusLiteLLM(model="gemini/gemini-2.0-flash-exp")
+feedback, score = judge.single_absolute_grade(
+    instruction=agent_task_prompt,
+    response=agent_output,
+    rubric=SECURITY_AGENT_RUBRIC,
+)
+```
+
+### B9: Outcome Correlation (1 day)
+
+Weekly script: compare `judge_score` in proposals.json against CTO's actual `status` (acted/dismissed/deferred).
+If `judge_score >= 4` → `acted` >80% of the time: judges are calibrated.
+If not: tighten rubric criteria wording.
+
+---
+
 ## Boldest Innovations Research (live agent, 2026-03-29)
 
 Source: research agent a09ffd457d4007070 — 12 tool uses, 212s, 53k tokens.

@@ -24,6 +24,8 @@
 | `AgentStatus.QUARANTINE` | `packages/swarm/agent_hive.py` | SentinelNet immune system: weight 0.3x, credibility_score decay/recovery, auto-rehabilitation. Triggered by chronic underperformance (15+ decisions, <25% accuracy) OR streak (5 consecutive wrong). | ✅ SHIPPED | Run decisions with consistently wrong agent |
 | `is_quarantined()` / `get_quarantine_summary()` | `packages/swarm/agent_hive.py` | Public methods for checking quarantine status + report. | ✅ SHIPPED | hive.get_quarantine_summary() |
 | QUARANTINE check in dead-weight filter | `packages/swarm/engine.py` | Quarantined agents excluded from dispatch pool before exam/JSON checks. | ✅ SHIPPED | Check _filter_dead_weight() |
+| Cross-model judge `_judge_proposal()` | `packages/swarm/autonomous_run.py` | Gemini 2.0 Flash judges Groq-generated proposals on 5 criteria (specificity, evidence, actionability, novelty, impact). Binary pass/fail, asymmetric to avoid 25% self-favor bias. Score 0-5 stored per proposal. | ✅ SHIPPED | Run autonomous_run.py, check proposals.json judge_score |
+| `judge_score`/`judge_criteria` fields | `packages/swarm/inbox_protocol.py` | Proposal model gains judge_score (0-5), judge_model, judge_reasoning, judge_criteria dict. Telegram shows [Quality: N/5]. | ✅ SHIPPED | Check proposals.json after daily run |
 
 ## Session 63 (2026-03-29) — SPRINTS A9-A10: SWARM UPGRADE + PRE-LAUNCH RESILIENCE
 

@@ -21,6 +21,9 @@
 | VOYAGER verification gate | `packages/swarm/skill_evolution.py` | HIGH-priority proposed skills: drafted by LLM → static checks → LLM verification → saved as .candidate.md. CTO renames to activate. | ✅ SHIPPED | Run skill_evolution.py with GROQ_API_KEY |
 | `adas_agent_designer.py` | `packages/swarm/adas_agent_designer.py` | Reads failure archive → Gemini designs 1 new agent role → writes .agent-proposal.md for CTO review + Telegram notification. | ✅ SHIPPED | python -m packages.swarm.adas_agent_designer |
 | `swarm-adas.yml` | `.github/workflows/swarm-adas.yml` | Weekly GitHub Action (Sunday 06:00 UTC) that runs ADAS meta-agent designer. | ✅ SHIPPED | GitHub Actions → ADAS Weekly Agent Designer |
+| `AgentStatus.QUARANTINE` | `packages/swarm/agent_hive.py` | SentinelNet immune system: weight 0.3x, credibility_score decay/recovery, auto-rehabilitation. Triggered by chronic underperformance (15+ decisions, <25% accuracy) OR streak (5 consecutive wrong). | ✅ SHIPPED | Run decisions with consistently wrong agent |
+| `is_quarantined()` / `get_quarantine_summary()` | `packages/swarm/agent_hive.py` | Public methods for checking quarantine status + report. | ✅ SHIPPED | hive.get_quarantine_summary() |
+| QUARANTINE check in dead-weight filter | `packages/swarm/engine.py` | Quarantined agents excluded from dispatch pool before exam/JSON checks. | ✅ SHIPPED | Check _filter_dead_weight() |
 
 ## Session 63 (2026-03-29) — SPRINTS A9-A10: SWARM UPGRADE + PRE-LAUNCH RESILIENCE
 

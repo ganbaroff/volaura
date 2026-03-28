@@ -71,6 +71,19 @@ Only after B3-B5 generate 50+ calibrated outcomes with proper trajectory logging
 
 ---
 
+## Shipped: B1-B6 Summary
+
+| Sprint | What | Status |
+|--------|------|--------|
+| B1 | StructuredMemory persistence (SWARM_DATA_DIR env var) | ✅ SHIPPED |
+| B2 | Convergent idea detection (Jaccard post-hoc, 🎯 Telegram) | ✅ SHIPPED |
+| B3 | Reflexion traces + EvoSkill trajectory logging (agent-trajectories.jsonl) | ✅ SHIPPED |
+| B4 | VOYAGER verification gate (.candidate.md before library entry) | ✅ SHIPPED |
+| B5 | ADAS meta-agent designer (weekly GitHub Action, .agent-proposal.md) | ✅ SHIPPED |
+| B6 | SentinelNet QUARANTINE status (credibility_score, rehabilitation path) | ✅ SHIPPED |
+
+---
+
 ## Deferred: Decision Table
 
 | Innovation | Why Deferred | Prerequisites |
@@ -78,7 +91,8 @@ Only after B3-B5 generate 50+ calibrated outcomes with proper trajectory logging
 | ReasoningGraph in daily run | Data model mismatch (AgentResult vs dict). 2x API cost. | Refactor `_call_agent()` to return `AgentResult` objects |
 | AutonomousUpgrade in Actions | Ephemeral backup (no recovery if job crashes). Self-classified risk. | Persistent backup (S3 or git-committed), independent risk classifier |
 | DSPy prompt optimization | No labeled training data. CEO approval ≠ quality signal. Agents drift to Product domain. | 50+ calibrated proposal outcomes with outcome tracking pipeline |
-| Darwin Gödel Machine (arXiv 2025) | Research-only. Our `autonomous_upgrade.py` is linear; DGM requires population/Archive Trees. | Extend autonomous_upgrade to population model; significant architecture work |
+| Darwin Gödel Machine (arXiv 2025) | First step: 3 SWARM_VARIANT cron jobs (free, 7-day comparison). Full population requires architecture work. | static benchmark questions must rotate (Goodhart's Law — see research agent finding) |
+| Voyager executable skills | Agent-written Python tools in Docker sandbox → auto-PR. Highest risk (prompt injection via tool code). | Docker sandbox with network=none, strict import allowlist, typed function signature |
 
 ---
 
@@ -125,3 +139,47 @@ temp 1.0 → 2/5 convergent innovations (never at 0.7)
 
 Rule: Strategic decisions → temp 1.0. Code review → temp 0.7.
 **Status: Documented but not enforced in autonomous_run.py. B4 candidate.**
+
+---
+
+## Boldest Innovations Research (live agent, 2026-03-29)
+
+Source: research agent a09ffd457d4007070 — 12 tool uses, 212s, 53k tokens.
+
+### 3 Boldest Ideas Ranked by Confidence-to-Prototype
+
+| Idea | Delivers | Primary Risk | Status | First Step (free) |
+|------|----------|-------------|--------|-------------------|
+| **SentinelNet Immune System** | Credibility-based quarantine, domain-specific scores, self-healing | False positives on genuinely dissenting agents (Attacker persona) | ✅ **SHIPPED (B6)** | QUARANTINE enum + credibility_score — done |
+| **DGM Population Variants** | Parallel agent configs, archive tree, measurable benchmark improvement | Goodhart's Law — agents overfit static benchmark questions | Deferred | 3 cron jobs with `SWARM_VARIANT` env, 7-day comparison, zero cost |
+| **Voyager Executable Skills** | Agent-written Python tools, Docker sandbox, auto-PR | Prompt injection via tool code; env-var exfiltration attempts within 3-5 turns | Research stage | `docker run --network none` function runner, Groq writes skill, exit-0 → PR |
+
+### Safety Consensus (ICLR 2026 Workshop on AI with Recursive Self-Improvement)
+
+Three points confirmed by research agent across 12 sources:
+
+1. **Goodhart's Law is the primary failure mode.** Every self-improving system in 2025 literature eventually optimized its benchmark. Our `autonomous_upgrade.py` uses 5 static benchmark questions. These MUST rotate or self-improvement is theater.
+
+2. **Safety boundary must be structural, not prompt-based.** "Do not modify these files" as a prompt = bypassed. `IMMUTABLE_FILES` + filesystem permissions = robust. The `swarm-freedom-architecture.md` statement "Agents CAN'T push to production" — needs branch protection rule, not markdown.
+
+3. **Co-improvement beats pure self-improvement.** Human-in-the-loop for HIGH risk + weekly CEO review is the right design. The mistake would be eliminating those gates to "go faster."
+
+### DGM Proof-of-Concept (zero spend)
+
+```yaml
+# Three separate daily cron runs with different configs:
+SWARM_VARIANT: default     # current behavior
+SWARM_VARIANT: high_temp   # temperature=1.0 everywhere
+SWARM_VARIANT: conservative # temperature=0.5, larger confidence threshold
+```
+
+After 7 days: compare `proposal_acceptance_rate` across variants from upgrade log. The winner becomes new default. This is the DGM loop without the infrastructure cost.
+
+### Notable Papers from Agent Research
+
+- Darwin Gödel Machine: SWE-bench 20%→50% (arXiv 2025)
+- Imbue Darwinian Evolver: production-ready, open-source (February 2026)
+- SentinelNet: near-perfect malicious agent detection in 2 rounds (arXiv 2509.14956)
+- Self-Improving AI Co-Improvement: human-AI beats pure auto-improvement (arXiv 2512.05356)
+- SwarmAgentic: fully automated agent system generation (2025)
+- EvoLattice: persistent internal-population evolution (arXiv 2512.13857)

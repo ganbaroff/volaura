@@ -14,6 +14,7 @@ from app.middleware.rate_limit import limiter, RATE_PROFILE_WRITE, RATE_DISCOVER
 from app.schemas.event import (
     CheckInRequest,
     CoordinatorRatingRequest,
+    EventAttendeeRow,
     EventCreate,
     EventResponse,
     EventUpdate,
@@ -298,6 +299,56 @@ async def list_registrations(
 
     result = await db_admin.table("registrations").select("*").eq("event_id", event_id).execute()
     return [RegistrationResponse(**row) for row in (result.data or [])]
+
+
+@router.get("/{event_id}/attendees", response_model=list[EventAttendeeRow])
+@limiter.limit(RATE_DISCOVERY)
+async def list_attendees(
+    request: Request,
+    event_id: str,
+    db_admin: SupabaseAdmin,
+    user_id: CurrentUserId,
+) -> list[EventAttendeeRow]:
+    """Enriched attendee list — org owner only. Joins profiles + AURA scores."""
+    _validate_uuid(event_id, "event_id")
+
+    event_result = await db_admin.table("events").select("organization_id").eq("id", event_id).single().execute()
+    if not event_result.data:
+        raise HTTPException(status_code=404, detail={"code": "EVENT_NOT_FOUND", "message": "Event not found"})
+
+    org_result = await db_admin.table("organizations").select("owner_id").eq("id", event_result.data["organization_id"]).single().execute()
+    if not org_result.data or org_result.data["owner_id"] != str(user_id):
+        raise HTTPException(status_code=403, detail={"code": "NOT_ORG_OWNER", "message": "Only the organization owner can view attendees"})
+
+    regs = await db_admin.table("registrations").select("id, volunteer_id, status, registered_at, checked_in_at").eq("event_id", event_id).order("registered_at", desc=True).execute()
+    if not regs.data:
+        return []
+
+    volunteer_ids = [r["volunteer_id"] for r in regs.data]
+
+    profiles_result = await db_admin.table("profiles").select("id, display_name, username").in_("id", volunteer_ids).execute()
+    aura_result = await db_admin.table("aura_scores").select("volunteer_id, total_score, badge_tier").in_("volunteer_id", volunteer_ids).execute()
+
+    profile_map = {p["id"]: p for p in (profiles_result.data or [])}
+    aura_map = {a["volunteer_id"]: a for a in (aura_result.data or [])}
+
+    rows: list[EventAttendeeRow] = []
+    for reg in regs.data:
+        vid = reg["volunteer_id"]
+        p = profile_map.get(vid, {})
+        a = aura_map.get(vid, {})
+        rows.append(EventAttendeeRow(
+            registration_id=reg["id"],
+            volunteer_id=vid,
+            status=reg["status"],
+            registered_at=reg["registered_at"],
+            checked_in_at=reg.get("checked_in_at"),
+            display_name=p.get("display_name"),
+            username=p.get("username"),
+            total_score=a.get("total_score"),
+            badge_tier=a.get("badge_tier"),
+        ))
+    return rows
 
 
 @router.get("/my/registrations", response_model=list[RegistrationResponse])

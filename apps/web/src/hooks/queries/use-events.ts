@@ -63,6 +63,36 @@ export function useMyEvents() {
   });
 }
 
+export interface EventAttendeeRow {
+  registration_id: string;
+  volunteer_id: string;
+  status: string;
+  registered_at: string;
+  checked_in_at: string | null;
+  display_name: string | null;
+  username: string | null;
+  total_score: number | null;
+  badge_tier: string | null;
+}
+
+/** Enriched attendee list — org owner only */
+export function useEventAttendees(eventId: string | undefined) {
+  const getToken = useAuthToken();
+
+  return useQuery<EventAttendeeRow[], ApiError>({
+    queryKey: ["events", eventId, "attendees"],
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      return apiFetch<EventAttendeeRow[]>(`/api/events/${eventId}/attendees`, { token });
+    },
+    enabled: !!eventId,
+    staleTime: 60 * 1000,
+    retry: 1,
+    throwOnError: false,
+  });
+}
+
 export function useCreateEvent() {
   const queryClient = useQueryClient();
 

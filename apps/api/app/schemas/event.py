@@ -96,6 +96,21 @@ class CheckInRequest(BaseModel):
     check_in_code: str
 
 
+class EventAttendeeRow(BaseModel):
+    """Enriched attendee for org dashboard — joins profile + AURA."""
+    model_config = ConfigDict(from_attributes=True)
+
+    registration_id: str
+    volunteer_id: str
+    status: str
+    registered_at: datetime
+    checked_in_at: datetime | None = None
+    display_name: str | None = None
+    username: str | None = None
+    total_score: float | None = None
+    badge_tier: str | None = None
+
+
 class CoordinatorRatingRequest(BaseModel):
     registration_id: str
     rating: int

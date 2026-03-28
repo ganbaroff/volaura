@@ -4,7 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { Building2, Calendar, Users, Plus, ExternalLink, CheckCircle2, Loader2, Globe } from "lucide-react";
+import { Building2, Calendar, Users, Plus, ExternalLink, CheckCircle2, Loader2, Globe, UserCheck } from "lucide-react";
 import { useMyOrganization, useCreateOrganization } from "@/hooks/queries/use-organizations";
 import { useMyEvents } from "@/hooks/queries/use-events";
 import { cn } from "@/lib/utils/cn";
@@ -247,6 +247,15 @@ export default function OrganizationsPage() {
                       <span className={cn("shrink-0 text-xs font-medium px-2 py-0.5 rounded-full border", STATUS_STYLES[ev.status] ?? STATUS_STYLES.draft)}>
                         {t(`events.status.${ev.status}`, { defaultValue: ev.status })}
                       </span>
+                      <button
+                        type="button"
+                        aria-label={t("events.viewAttendees", { defaultValue: "View attendees" })}
+                        className="shrink-0 flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors px-2 py-1 rounded-lg hover:bg-primary/10"
+                        onClick={(e) => { e.stopPropagation(); router.push(`/${locale}/events/${ev.id}/attendees`); }}
+                      >
+                        <UserCheck className="size-3.5" aria-hidden="true" />
+                        {t("events.attendees", { defaultValue: "Attendees" })}
+                      </button>
                       <ExternalLink className="size-3.5 text-on-surface-variant shrink-0" aria-hidden="true" />
                     </motion.div>
                   ))}

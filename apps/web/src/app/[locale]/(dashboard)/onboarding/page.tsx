@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 // ── Types ──────────────────────────────────────────────────────────────────────
 
 type Step = 1 | 2 | 3;
+type AccountType = "volunteer" | "organization";
 
 interface FormData {
   display_name: string;
@@ -16,6 +17,7 @@ interface FormData {
   location: string;
   languages: string[];
   selectedCompetency: string;
+  visible_to_orgs: boolean;
 }
 
 interface CompetencyInfo {
@@ -54,8 +56,8 @@ const slideVariants = {
 
 // ── Progress bar ───────────────────────────────────────────────────────────────
 
-function ProgressBar({ step }: { step: Step }) {
-  const pct = step === 1 ? 33 : step === 2 ? 66 : 100;
+function ProgressBar({ step, totalSteps }: { step: Step; totalSteps: number }) {
+  const pct = Math.round((step / totalSteps) * 100);
   return (
     <div className="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden mb-8">
       <motion.div
@@ -70,10 +72,10 @@ function ProgressBar({ step }: { step: Step }) {
 
 // ── Step label ─────────────────────────────────────────────────────────────────
 
-function StepLabel({ step, t }: { step: Step; t: (k: string, opts?: Record<string, string | number>) => string }) {
+function StepLabel({ step, total, t }: { step: Step; total: number; t: (k: string, opts?: Record<string, string | number>) => string }) {
   return (
     <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-2 text-center">
-      {t("onboarding.step")} {step} / 3
+      {t("onboarding.step")} {step} / {total}
     </p>
   );
 }
@@ -124,6 +126,7 @@ export default function OnboardingPage() {
   const [step, setStep] = useState<Step>(1);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [accountType, setAccountType] = useState<AccountType>("volunteer");
 
   const [formData, setFormData] = useState<FormData>({
     display_name: "",
@@ -131,7 +134,25 @@ export default function OnboardingPage() {
     location: "",
     languages: [],
     selectedCompetency: "",
+    visible_to_orgs: false,
   });
+
+  // Pre-fill username and account_type from signup user_metadata
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!isMounted.current) return;
+      const meta = session?.user?.user_metadata;
+      if (meta) {
+        if (meta.username) {
+          setFormData((prev) => ({ ...prev, username: meta.username as string }));
+        }
+        if (meta.account_type === "organization" || meta.account_type === "volunteer") {
+          setAccountType(meta.account_type as AccountType);
+        }
+      }
+    });
+  }, []);
 
   function setField<K extends keyof FormData>(key: K, value: FormData[K]) {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -146,8 +167,16 @@ export default function OnboardingPage() {
     }));
   }
 
+  // Orgs have 2 steps (no competency selection); volunteers have 3
+  const totalSteps = accountType === "organization" ? 2 : 3;
+
   function goNext() {
-    if (step < 3) setStep((s) => (s + 1) as Step);
+    if (step === 2 && accountType === "organization") {
+      // Orgs skip competency selection — save and route directly
+      handleFinish();
+    } else if (step < 3) {
+      setStep((s) => (s + 1) as Step);
+    }
   }
 
   function goBack() {
@@ -162,11 +191,19 @@ export default function OnboardingPage() {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
 
-      const payload: Record<string, unknown> = {};
+      const payload: Record<string, unknown> = {
+        account_type: accountType,
+      };
       if (formData.display_name.trim()) payload.display_name = formData.display_name.trim();
       if (formData.username.trim()) payload.username = formData.username.trim();
       if (formData.location.trim()) payload.location = formData.location.trim();
       if (formData.languages.length > 0) payload.languages = formData.languages;
+      if (accountType === "volunteer") {
+        payload.visible_to_orgs = formData.visible_to_orgs;
+        // org_type only applies to org accounts — don't send for volunteers
+      }
+      // org_type was collected at signup and is in user_metadata; API will read it from there
+      // (no separate field needed in onboarding)
 
       const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
       const res = await fetch(`${apiUrl}/api/profiles/me`, {
@@ -179,19 +216,17 @@ export default function OnboardingPage() {
       });
 
       if (!res.ok && res.status !== 404) {
-        // 404 means profile endpoint doesn't exist yet — graceful fallback
         const body = await res.json().catch(() => ({}));
         throw new Error((body as { detail?: string }).detail ?? "Failed to save profile");
       }
 
       if (isMounted.current) {
-        // Route to focused welcome screen — highest-conversion funnel entry
         const dest = formData.selectedCompetency
           ? `/${locale}/welcome?competency=${formData.selectedCompetency}`
           : `/${locale}/welcome`;
         router.push(dest);
       }
-    } catch (err) {
+    } catch {
       if (isMounted.current) {
         setError(t("error.generic", { defaultValue: "Something went wrong. Please try again." }));
         setSaving(false);
@@ -199,7 +234,6 @@ export default function OnboardingPage() {
     }
   }
 
-  // display_name is optional — only username (3+ chars) required to proceed
   const step1Valid = formData.username.trim().length >= 3;
   const step3Valid = formData.selectedCompetency.length > 0;
 
@@ -216,7 +250,7 @@ export default function OnboardingPage() {
         </div>
 
         {/* Progress bar */}
-        <ProgressBar step={step} />
+        <ProgressBar step={step} totalSteps={totalSteps} />
 
         {/* Step content */}
         <AnimatePresence mode="wait">
@@ -232,7 +266,7 @@ export default function OnboardingPage() {
               transition={{ duration: 0.3 }}
               className="space-y-6"
             >
-              <StepLabel step={1} t={t} />
+              <StepLabel step={1} total={totalSteps} t={t} />
               <h2 className="text-xl font-bold text-foreground text-center">
                 {t("onboarding.step1.title")}
               </h2>
@@ -262,7 +296,7 @@ export default function OnboardingPage() {
             </motion.div>
           )}
 
-          {/* ── Step 2: Location & Languages ── */}
+          {/* ── Step 2: Location, Languages, Visibility ── */}
           {step === 2 && (
             <motion.div
               key="step2"
@@ -273,7 +307,7 @@ export default function OnboardingPage() {
               transition={{ duration: 0.3 }}
               className="space-y-6"
             >
-              <StepLabel step={2} t={t} />
+              <StepLabel step={2} total={totalSteps} t={t} />
               <h2 className="text-xl font-bold text-foreground text-center">
                 {t("onboarding.step2.title")}
               </h2>
@@ -307,26 +341,51 @@ export default function OnboardingPage() {
                     ))}
                   </div>
                 </div>
+
+                {/* Org-search visibility — volunteers only */}
+                {accountType === "volunteer" && (
+                  <label className="flex items-start gap-3 cursor-pointer pt-1">
+                    <input
+                      type="checkbox"
+                      checked={formData.visible_to_orgs}
+                      onChange={(e) => setField("visible_to_orgs", e.target.checked)}
+                      className="mt-0.5 h-4 w-4 rounded border-border accent-primary flex-shrink-0"
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      {t("onboarding.visibleToOrgs")}
+                    </span>
+                  </label>
+                )}
               </div>
+
+              {error && (
+                <p className="text-sm text-destructive text-center">{error}</p>
+              )}
 
               <div className="flex gap-3">
                 <button
                   onClick={goBack}
-                  className="h-12 px-6 rounded-2xl bg-card border border-border text-foreground font-medium transition-all hover:bg-accent"
+                  disabled={saving}
+                  className="h-12 px-6 rounded-2xl bg-card border border-border text-foreground font-medium transition-all hover:bg-accent disabled:opacity-50"
                 >
                   {t("onboarding.back")}
                 </button>
                 <button
                   onClick={goNext}
-                  className="flex-1 h-12 rounded-2xl bg-primary text-primary-foreground font-semibold transition-all hover:opacity-90 active:scale-95"
+                  disabled={saving}
+                  className="flex-1 h-12 rounded-2xl bg-primary text-primary-foreground font-semibold transition-all hover:opacity-90 active:scale-95 disabled:opacity-40"
                 >
-                  {t("onboarding.next")}
+                  {saving
+                    ? t("onboarding.saving")
+                    : accountType === "organization"
+                      ? t("onboarding.finish")
+                      : t("onboarding.next")}
                 </button>
               </div>
             </motion.div>
           )}
 
-          {/* ── Step 3: First Competency ── */}
+          {/* ── Step 3: First Competency (volunteers only) ── */}
           {step === 3 && (
             <motion.div
               key="step3"
@@ -337,7 +396,7 @@ export default function OnboardingPage() {
               transition={{ duration: 0.3 }}
               className="space-y-6"
             >
-              <StepLabel step={3} t={t} />
+              <StepLabel step={3} total={totalSteps} t={t} />
               <div className="text-center space-y-1">
                 <h2 className="text-xl font-bold text-foreground">
                   {t("onboarding.step3.title")}

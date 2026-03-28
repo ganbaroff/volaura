@@ -7,22 +7,31 @@ import { useTranslation } from "react-i18next";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/auth-store";
 
+type AccountType = "volunteer" | "organization";
+type OrgType = "ngo" | "corporate" | "government" | "startup" | "academic" | "other";
+
 export default function SignupPage() {
   const { locale } = useParams<{ locale: string }>();
   const router = useRouter();
   const { t } = useTranslation();
   const setSession = useAuthStore((s) => s.setSession);
 
+  const [accountType, setAccountType] = useState<AccountType>("volunteer");
+  const [orgType, setOrgType] = useState<OrgType | "">("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
-  const [displayName, setDisplayName] = useState("");
+  const [privacyConsented, setPrivacyConsented] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!privacyConsented) {
+      setError(t("auth.privacyConsent"));
+      return;
+    }
     setError(null);
     setLoading(true);
 
@@ -34,7 +43,8 @@ export default function SignupPage() {
         options: {
           data: {
             username: username.trim().toLowerCase(),
-            display_name: displayName.trim() || username.trim(),
+            account_type: accountType,
+            org_type: accountType === "organization" ? orgType || null : null,
           },
         },
       });
@@ -66,6 +76,54 @@ export default function SignupPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Role selection */}
+        <div className="space-y-2">
+          <p className="text-sm font-medium">{t("auth.accountTypeLabel")}</p>
+          <div className="grid grid-cols-2 gap-3">
+            {(["volunteer", "organization"] as AccountType[]).map((type) => (
+              <button
+                key={type}
+                type="button"
+                onClick={() => setAccountType(type)}
+                className={`rounded-lg border-2 p-3 text-left transition-colors ${
+                  accountType === type
+                    ? "border-primary bg-primary/5"
+                    : "border-border hover:border-primary/50"
+                }`}
+              >
+                <div className="text-sm font-medium">
+                  {t(`auth.accountType${type === "volunteer" ? "Volunteer" : "Org"}`)}
+                </div>
+                <div className="text-xs text-muted-foreground mt-0.5">
+                  {t(`auth.accountType${type === "volunteer" ? "Volunteer" : "Org"}Desc`)}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Org type (only for organizations) */}
+        {accountType === "organization" && (
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium">{t("auth.orgTypeLabel")}</label>
+            <select
+              value={orgType}
+              onChange={(e) => setOrgType(e.target.value as OrgType)}
+              required
+              className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+            >
+              <option value="">—</option>
+              <option value="ngo">{t("auth.orgTypeNgo")}</option>
+              <option value="corporate">{t("auth.orgTypeCorporate")}</option>
+              <option value="government">{t("auth.orgTypeGov")}</option>
+              <option value="startup">{t("auth.orgTypeStartup")}</option>
+              <option value="academic">{t("auth.orgTypeAcademic")}</option>
+              <option value="other">{t("auth.orgTypeOther")}</option>
+            </select>
+          </div>
+        )}
+
+        {/* Username */}
         <div className="space-y-1.5">
           <label htmlFor="username" className="text-sm font-medium">
             {t("auth.username")}
@@ -84,21 +142,7 @@ export default function SignupPage() {
           />
         </div>
 
-        <div className="space-y-1.5">
-          <label htmlFor="displayName" className="text-sm font-medium">
-            {t("auth.displayName")}{" "}
-            <span className="text-muted-foreground">({t("auth.displayNameOptional")})</span>
-          </label>
-          <input
-            id="displayName"
-            type="text"
-            autoComplete="name"
-            value={displayName}
-            onChange={(e) => setDisplayName(e.target.value)}
-            className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
-          />
-        </div>
-
+        {/* Email */}
         <div className="space-y-1.5">
           <label htmlFor="email" className="text-sm font-medium">
             {t("auth.email")}
@@ -114,6 +158,7 @@ export default function SignupPage() {
           />
         </div>
 
+        {/* Password */}
         <div className="space-y-1.5">
           <label htmlFor="password" className="text-sm font-medium">
             {t("auth.password")}
@@ -141,13 +186,26 @@ export default function SignupPage() {
           </div>
         </div>
 
+        {/* Privacy consent — AZ-native framing */}
+        <label className="flex items-start gap-2.5 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={privacyConsented}
+            onChange={(e) => setPrivacyConsented(e.target.checked)}
+            className="mt-0.5 h-4 w-4 rounded border-border accent-primary flex-shrink-0"
+          />
+          <span className="text-sm text-muted-foreground">
+            {t("auth.privacyConsent")}
+          </span>
+        </label>
+
         {error && (
           <p className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</p>
         )}
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || !privacyConsented}
           className="h-10 w-full rounded-md bg-primary font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
         >
           {loading ? t("auth.creatingAccount") : t("auth.signupAction")}

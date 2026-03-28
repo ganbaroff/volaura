@@ -11,11 +11,18 @@ import { toAuraScore } from "@/lib/api/types";
  * Auth handled by client interceptor.
  */
 export function useAuraScore() {
-  return useQuery<AuraScore>({
+  return useQuery<AuraScore | null>({
     queryKey: ["aura-score"],
     queryFn: async () => {
       const { data, error } = await getMyAuraApiAuraMeGet();
-      if (error || !data) throw new Error("Failed to fetch AURA score");
+      if (error) {
+        // 404 = no AURA score yet — return null so the page shows empty state
+        const errBody = error as unknown as Record<string, unknown>;
+        const detail = errBody?.detail as Record<string, unknown> | undefined;
+        if (detail?.code === "AURA_NOT_FOUND") return null;
+        throw new Error("Failed to fetch AURA score");
+      }
+      if (!data) return null;
       return toAuraScore(data as unknown as AuraScoreResponse);
     },
     staleTime: 5 * 60 * 1000,
@@ -24,13 +31,19 @@ export function useAuraScore() {
 }
 
 export function useAuraScoreByVolunteer(volunteerId: string | undefined) {
-  return useQuery<AuraScore>({
+  return useQuery<AuraScore | null>({
     queryKey: ["aura-score", volunteerId],
     queryFn: async () => {
       const { data, error } = await getAuraByIdApiAuraVolunteerIdGet({
         path: { volunteer_id: volunteerId! },
       });
-      if (error || !data) throw new Error("Failed to fetch AURA score");
+      if (error) {
+        const errBody = error as unknown as Record<string, unknown>;
+        const detail = errBody?.detail as Record<string, unknown> | undefined;
+        if (detail?.code === "AURA_NOT_FOUND") return null;
+        throw new Error("Failed to fetch AURA score");
+      }
+      if (!data) return null;
       return toAuraScore(data as unknown as AuraScoreResponse);
     },
     enabled: !!volunteerId,

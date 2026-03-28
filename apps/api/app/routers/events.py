@@ -44,7 +44,8 @@ async def list_events(
 
 
 @router.get("/{event_id}", response_model=EventResponse)
-async def get_event(event_id: str, db: SupabaseAdmin) -> EventResponse:
+@limiter.limit(RATE_DISCOVERY)
+async def get_event(request: Request, event_id: str, db: SupabaseAdmin) -> EventResponse:
     """Get a single event by ID."""
     _validate_uuid(event_id, "event_id")
     result = await db.table("events").select("*").eq("id", event_id).neq("status", "draft").single().execute()
@@ -277,7 +278,9 @@ async def volunteer_rate_event(
 
 
 @router.get("/{event_id}/registrations", response_model=list[RegistrationResponse])
+@limiter.limit(RATE_DISCOVERY)
 async def list_registrations(
+    request: Request,
     event_id: str,
     db_admin: SupabaseAdmin,
     user_id: CurrentUserId,

@@ -9,7 +9,7 @@ from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
 
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseAnon
-from app.middleware.rate_limit import limiter, RATE_AUTH
+from app.middleware.rate_limit import limiter, RATE_AUTH, RATE_DEFAULT
 from app.schemas.profile import ProfileResponse
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -137,7 +137,9 @@ async def login(
 
 
 @router.get("/me")
+@limiter.limit(RATE_DEFAULT)
 async def get_me(
+    request: Request,
     user_id: CurrentUserId,
     db: SupabaseAdmin,
 ) -> dict:

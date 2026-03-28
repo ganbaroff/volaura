@@ -9,7 +9,7 @@ from fastapi import APIRouter, HTTPException, Query, Request
 from loguru import logger
 
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
-from app.middleware.rate_limit import limiter, RATE_PROFILE_WRITE, RATE_DEFAULT
+from app.middleware.rate_limit import limiter, RATE_PROFILE_WRITE, RATE_DEFAULT, RATE_DISCOVERY
 from app.schemas.organization import (
     AssignAssessmentRequest,
     AssignmentResponse,
@@ -30,14 +30,16 @@ router = APIRouter(prefix="/organizations", tags=["Organizations"])
 # ── Org CRUD ──────────────────────────────────────────────────────────────────
 
 @router.get("", response_model=list[OrganizationResponse])
-async def list_organizations(db: SupabaseAdmin) -> list[OrganizationResponse]:
+@limiter.limit(RATE_DEFAULT)
+async def list_organizations(request: Request, db: SupabaseAdmin) -> list[OrganizationResponse]:
     """List all public organizations."""
     result = await db.table("organizations").select("id, name, description, logo_url, type, website, is_active").order("name").execute()
     return [OrganizationResponse(**row) for row in (result.data or [])]
 
 
 @router.get("/me", response_model=OrganizationResponse)
-async def get_my_organization(db_admin: SupabaseAdmin, user_id: CurrentUserId) -> OrganizationResponse:
+@limiter.limit(RATE_DEFAULT)
+async def get_my_organization(request: Request, db_admin: SupabaseAdmin, user_id: CurrentUserId) -> OrganizationResponse:
     """Get the organization owned by the current user."""
     result = await db_admin.table("organizations").select("*").eq("owner_id", user_id).single().execute()
     if not result.data:
@@ -96,7 +98,8 @@ async def update_my_organization(
 
 
 @router.get("/{org_id}", response_model=OrganizationResponse)
-async def get_organization(org_id: str, db: SupabaseAdmin) -> OrganizationResponse:
+@limiter.limit(RATE_DEFAULT)
+async def get_organization(request: Request, org_id: str, db: SupabaseAdmin) -> OrganizationResponse:
     """Get a public organization by ID."""
     result = await db.table("organizations").select("*").eq("id", org_id).single().execute()
     if not result.data:
@@ -107,7 +110,9 @@ async def get_organization(org_id: str, db: SupabaseAdmin) -> OrganizationRespon
 # ── Org dashboard ─────────────────────────────────────────────────────────────
 
 @router.get("/me/dashboard", response_model=OrgDashboardStats)
+@limiter.limit(RATE_DEFAULT)
 async def get_org_dashboard(
+    request: Request,
     db_admin: SupabaseAdmin,
     user_id: CurrentUserId,
 ) -> OrgDashboardStats:
@@ -207,7 +212,9 @@ async def get_org_dashboard(
 
 
 @router.get("/me/volunteers", response_model=list[OrgVolunteerRow])
+@limiter.limit(RATE_DISCOVERY)
 async def list_org_volunteers(
+    request: Request,
     db_admin: SupabaseAdmin,
     user_id: CurrentUserId,
     status: str | None = Query(default=None, description="Filter by session status: assigned|completed|in_progress"),

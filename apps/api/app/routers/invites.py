@@ -292,7 +292,8 @@ async def list_invites(
 
 
 @router.get("/{org_id}/invites/template")
-async def download_invite_template() -> JSONResponse:
+@limiter.limit("30/minute")
+async def download_invite_template(request: Request) -> JSONResponse:
     """Return the expected CSV template for bulk invite."""
     return JSONResponse(
         content={

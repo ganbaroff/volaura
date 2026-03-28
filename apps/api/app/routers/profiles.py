@@ -8,7 +8,7 @@ from loguru import logger
 
 from app.config import settings
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser, get_supabase_admin
-from app.middleware.rate_limit import limiter, RATE_PROFILE_WRITE
+from app.middleware.rate_limit import limiter, RATE_PROFILE_WRITE, RATE_DEFAULT
 from app.schemas.profile import (
     ProfileCreate,
     ProfileResponse,
@@ -25,7 +25,9 @@ router = APIRouter(prefix="/profiles", tags=["Profiles"])
 
 
 @router.get("/me", response_model=ProfileResponse)
+@limiter.limit(RATE_DEFAULT)
 async def get_my_profile(
+    request: Request,
     db: SupabaseUser,
     user_id: CurrentUserId,
 ) -> ProfileResponse:
@@ -220,7 +222,9 @@ async def create_verification_link(
 
 
 @router.get("/{username}", response_model=PublicProfileResponse)
+@limiter.limit(RATE_DEFAULT)
 async def get_public_profile(
+    request: Request,
     username: str,
     db: SupabaseAdmin,
 ) -> PublicProfileResponse:

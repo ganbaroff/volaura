@@ -251,6 +251,50 @@ async def start_assessment(
             },
         )
 
+    # Retest cooldown: 7 days per competency — prevent score gaming via repeated attempts
+    RETEST_COOLDOWN_DAYS = 7
+    recent = (
+        await db_user.table("assessment_sessions")
+        .select("completed_at")
+        .eq("volunteer_id", user_id)
+        .eq("competency_id", competency_id)
+        .eq("status", "completed")
+        .order("completed_at", desc=True)
+        .limit(1)
+        .execute()
+    )
+    if recent.data and recent.data[0].get("completed_at"):
+        last_completed = datetime.fromisoformat(recent.data[0]["completed_at"])
+        if last_completed.tzinfo is None:
+            last_completed = last_completed.replace(tzinfo=timezone.utc)
+        days_since = (datetime.now(timezone.utc) - last_completed).days
+        if days_since < RETEST_COOLDOWN_DAYS:
+            retry_after = RETEST_COOLDOWN_DAYS - days_since
+            raise HTTPException(
+                status_code=429,
+                detail={
+                    "code": "RETEST_COOLDOWN",
+                    "message": f"You can retake this assessment in {retry_after} day(s)",
+                    "retry_after_days": retry_after,
+                },
+            )
+
+    # Abuse monitoring: flag high-frequency starters (>10 starts in 24h)
+    starts_today = (
+        await db_user.table("assessment_sessions")
+        .select("id", count="exact")
+        .eq("volunteer_id", user_id)
+        .gte("started_at", (datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)).isoformat())
+        .execute()
+    )
+    daily_count = starts_today.count or 0
+    if daily_count >= 10:
+        logger.warning(
+            "Abuse signal: high assessment start frequency",
+            user_id=user_id,
+            starts_today=daily_count,
+        )
+
     questions = await _fetch_questions(db_admin, competency_id)
     if not questions:
         raise HTTPException(

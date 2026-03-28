@@ -9,16 +9,19 @@ No dedicated activity table needed. We query:
 Returns a unified, time-sorted feed of recent activity.
 """
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Request
 from loguru import logger
 
 from app.deps import CurrentUserId, SupabaseUser
+from app.middleware.rate_limit import limiter, RATE_DEFAULT
 
 router = APIRouter(prefix="/activity", tags=["Activity"])
 
 
 @router.get("/me")
+@limiter.limit(RATE_DEFAULT)
 async def get_my_activity(
+    request: Request,
     db: SupabaseUser,
     user_id: CurrentUserId,
     limit: int = Query(default=20, ge=1, le=100),
@@ -144,7 +147,9 @@ async def get_my_activity(
 
 
 @router.get("/stats/me")
+@limiter.limit(RATE_DEFAULT)
 async def get_my_stats(
+    request: Request,
     db: SupabaseUser,
     user_id: CurrentUserId,
 ) -> dict:

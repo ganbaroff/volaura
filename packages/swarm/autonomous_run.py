@@ -342,16 +342,40 @@ async def run_autonomous(mode: str = "daily-ideation") -> list[Proposal]:
         except Exception as e:
             logger.warning(f"Failed to create proposal from agent output: {e}")
 
-    # Cross-voting: each agent votes on others' proposals
-    # (simplified: if same severity/type pattern → vote for)
-    for proposal in proposals:
-        supporting = sum(
-            1 for r in raw_results
-            if r.get("agent") != proposal.agent
-            and r.get("severity") == proposal.severity.value
-        )
-        proposal.votes_for = 1 + supporting  # self + similar severity
-        proposal.votes_against = len(raw_results) - proposal.votes_for
+    # Convergence detection: post-hoc content similarity (NOT real-time to avoid anchoring bias).
+    # Two proposals are convergent if their title+content jaccard word overlap > threshold.
+    # This finds ideas that emerged INDEPENDENTLY from agents with different lenses — high signal.
+    CONVERGENCE_THRESHOLD = 0.35
+
+    def _word_overlap(a: str, b: str) -> float:
+        wa = set(a.lower().split())
+        wb = set(b.lower().split())
+        if not wa or not wb:
+            return 0.0
+        return len(wa & wb) / max(len(wa | wb), 1)
+
+    convergent_ids: set[int] = set()
+    for i, p1 in enumerate(proposals):
+        text1 = f"{p1.title} {p1.content}"
+        for j, p2 in enumerate(proposals):
+            if i >= j:
+                continue
+            text2 = f"{p2.title} {p2.content}"
+            if _word_overlap(text1, text2) >= CONVERGENCE_THRESHOLD:
+                convergent_ids.add(i)
+                convergent_ids.add(j)
+
+    for i, proposal in enumerate(proposals):
+        if i in convergent_ids:
+            proposal.convergent = True
+            proposal.votes_for = 2  # convergent = at least 2 independent votes
+        else:
+            proposal.votes_for = 1
+        proposal.votes_against = len(proposals) - proposal.votes_for
+
+    convergent_count = len(convergent_ids)
+    if convergent_count:
+        logger.info(f"Convergence detected: {convergent_count} proposals share overlapping themes — HIGH SIGNAL")
 
     # Store all proposals
     stored_ids = []
@@ -364,9 +388,11 @@ async def run_autonomous(mode: str = "daily-ideation") -> list[Proposal]:
         )
 
     # Summary
+    convergent_total = sum(1 for p in proposals if p.convergent)
     logger.info(
         f"Autonomous run complete: {len(proposals)} proposals stored, "
-        f"{sum(1 for p in proposals if p.escalate_to_ceo)} escalations"
+        f"{sum(1 for p in proposals if p.escalate_to_ceo)} escalations, "
+        f"{convergent_total} convergent (high signal)"
     )
 
     return proposals
@@ -381,13 +407,14 @@ async def send_telegram_notifications(proposals: list[Proposal]) -> None:
         logger.info("Telegram not configured (TELEGRAM_BOT_TOKEN / TELEGRAM_CEO_CHAT_ID missing)")
         return
 
+    # Send: HIGH/CRITICAL + any convergent proposals (independent emergence = high signal)
     high_proposals = [
         p for p in proposals
-        if p.severity in (Severity.CRITICAL, Severity.HIGH) or p.escalate_to_ceo
+        if p.severity in (Severity.CRITICAL, Severity.HIGH) or p.escalate_to_ceo or p.convergent
     ]
 
     if not high_proposals:
-        logger.info("No HIGH/CRITICAL proposals to send to Telegram")
+        logger.info("No HIGH/CRITICAL/convergent proposals to send to Telegram")
         return
 
     try:
@@ -395,10 +422,16 @@ async def send_telegram_notifications(proposals: list[Proposal]) -> None:
         bot = Bot(token=bot_token)
 
         for p in high_proposals:
-            emoji = "🔴" if p.severity == Severity.CRITICAL else "🟠"
+            if p.convergent:
+                emoji = "🎯"  # convergent = multiple agents independently reached same idea
+            elif p.severity == Severity.CRITICAL:
+                emoji = "🔴"
+            else:
+                emoji = "🟠"
+            convergent_tag = " [CONVERGENT — emerged independently]" if p.convergent else ""
             escalate_tag = " [ESCALATE TO CEO]" if p.escalate_to_ceo else ""
             msg = (
-                f"{emoji} **Swarm {p.type.value.upper()}**{escalate_tag}\n\n"
+                f"{emoji} **Swarm {p.type.value.upper()}**{convergent_tag}{escalate_tag}\n\n"
                 f"**{p.title}**\n"
                 f"Agent: {p.agent}\n"
                 f"Votes: +{p.votes_for}/-{p.votes_against}\n\n"

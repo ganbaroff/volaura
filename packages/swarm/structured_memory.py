@@ -171,6 +171,11 @@ class StructuredMemory:
     _MAX_FAILURES = 300  # failures are gold — keep many
 
     def __init__(self, data_dir: Path | None = None):
+        import os
+        # SWARM_DATA_DIR env var allows GitHub Actions to persist memory in the repo.
+        # Local dev: falls back to ~/.swarm (unchanged behaviour).
+        if data_dir is None and (env_dir := os.environ.get("SWARM_DATA_DIR")):
+            data_dir = Path(env_dir)
         self.data_dir = (data_dir or Path.home() / ".swarm") / "memory"
         self.data_dir.mkdir(parents=True, exist_ok=True)
 

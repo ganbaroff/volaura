@@ -57,6 +57,7 @@ class Proposal(BaseModel):
     votes_against: int = 0
     vote_details: list[dict[str, Any]] = Field(default_factory=list)
     escalate_to_ceo: bool = False
+    convergent: bool = False  # True if 2+ agents independently proposed similar idea
     ceo_decision: str | None = None
     ceo_decision_at: str | None = None
 

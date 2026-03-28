@@ -10,9 +10,11 @@ import { BadgeDisplay } from "@/components/aura/badge-display";
 import { CompetencyBreakdown } from "@/components/aura/competency-breakdown";
 import { ShareButtons } from "@/components/aura/share-buttons";
 import { Button } from "@/components/ui/button";
-import { Loader2, RefreshCw } from "lucide-react";
+import { Loader2, RefreshCw, Sparkles } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAuraScore } from "@/hooks/queries/use-aura";
 import { useProfile } from "@/hooks/queries/use-profile";
+import { useSkill } from "@/hooks/queries/use-skill";
 import { ApiError } from "@/lib/api/client";
 import { EvaluationLog } from "@/components/aura/evaluation-log";
 
@@ -117,6 +119,7 @@ function SavantDiscovery({ competencyScores, revealed }: SavantDiscoveryProps) {
 // ── Reveal Curtain ───────────────────────────────────────────────────────
 
 function RevealCurtain() {
+  const { t } = useTranslation();
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -139,6 +142,27 @@ function RevealCurtain() {
         {t("aura.revealingAura")}
       </p>
     </motion.div>
+  );
+}
+
+// ── AURA Coach ───────────────────────────────────────────────────────────
+
+function AuraCoach({ output }: { output: string | Record<string, unknown> }) {
+  const { t } = useTranslation();
+  const text = typeof output === "string" ? output : JSON.stringify(output, null, 2);
+
+  return (
+    <div className="rounded-xl border border-primary/20 bg-primary/5 p-5 space-y-3">
+      <div className="flex items-center gap-2">
+        <Sparkles className="size-4 text-primary" aria-hidden="true" />
+        <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">
+          {t("aura.coach.title", { defaultValue: "Your Growth Path" })}
+        </h3>
+      </div>
+      <p className="text-sm text-foreground/80 whitespace-pre-line leading-relaxed">
+        {text}
+      </p>
+    </div>
   );
 }
 
@@ -170,6 +194,12 @@ export default function AuraPage() {
   } = useAuraScore();
 
   const { data: profile } = useProfile();
+
+  const { data: coachData, isLoading: coachLoading } = useSkill(
+    "aura-coach",
+    { language: locale },
+    { enabled: revealed && aura != null && (aura.total_score ?? 0) > 0, staleTime: 10 * 60 * 1000 },
+  );
 
   // Trigger reveal sequence once data is ready
   useEffect(() => {
@@ -390,6 +420,26 @@ export default function AuraPage() {
           </h3>
           <CompetencyBreakdown scores={aura.competency_scores} />
         </motion.div>
+
+        {/* AURA Coach — personalized growth path, loads after reveal */}
+        {revealed && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7, duration: 0.5 }}
+          >
+            {coachLoading ? (
+              <div className="rounded-xl border border-primary/20 bg-primary/5 p-5 space-y-2">
+                <Skeleton className="h-4 w-48" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-4/5" />
+                <Skeleton className="h-4 w-3/4" />
+              </div>
+            ) : coachData?.output ? (
+              <AuraCoach output={coachData.output} />
+            ) : null}
+          </motion.div>
+        )}
 
         {/* Why this score? — Evaluation Log */}
         <motion.div

@@ -189,7 +189,7 @@ export default function DashboardPage() {
             <StatsRow
               streak={stats?.streak_days ?? 0}
               eventsCount={stats?.events_attended ?? 0}
-              leaguePosition={myRank?.rank ?? null}
+              leaguePosition={myRank?.rank != null ? `#${myRank.rank}` : null}
             />
           )}
         </motion.div>

@@ -73,7 +73,19 @@
       "Read(//c/Projects//**)",
       "mcp__supabase__list_projects",
       "mcp__supabase__list_migrations",
-      "Bash(grep -r \"brandedby\\\\|BrandedBy\\\\|branded-by\" /c/Projects/VOLAURA --include=*.ts --include=*.tsx --include=*.py --include=*.json --include=*.sql --include=*.md)"
+      "Bash(grep -r \"brandedby\\\\|BrandedBy\\\\|branded-by\" /c/Projects/VOLAURA --include=*.ts --include=*.tsx --include=*.py --include=*.json --include=*.sql --include=*.md)",
+      "Bash(grep -r \"TODO.*openapi\\\\|TODO.*hook\\\\|pnpm generate:api\" /c/Projects/VOLAURA/apps/web/src --include=*.ts --include=*.tsx)",
+      "Bash(find /c/Projects/VOLAURA -type f -name *OWASP* -o -name *owasp* -o -name *security*audit*)",
+      "Bash(wc -l /c/Projects/VOLAURA/apps/web/src/hooks/queries/*.ts)",
+      "Bash(wc -l /c/Projects/VOLAURA/apps/api/app/routers/*.py)",
+      "Skill(update-config)",
+      "Skill(update-config:*)",
+      "mcp__supabase__apply_migration",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(py -3.12 --version)",
+      "Bash(python3.12 --version)",
+      "Bash(where python:*)"
     ],
     "deny": [
       "Bash(rm -rf*)",
@@ -114,17 +126,6 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/auto-format.sh"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash .claude/hooks/session-end-check.sh"
           }
         ]
       }

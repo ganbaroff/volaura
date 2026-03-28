@@ -81,6 +81,27 @@
 | `feed-curator` wired to `/dashboard` | already existed from Session 54 | `useSkill("feed-curator")` + `FeedCards` component — confirmed wired and complete. | ✅ CONFIRMED |
 | `leaguePosition` type fix | `apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx` | `myRank?.rank` (number) now formatted as `#${rank}` string. TS error resolved. | ✅ LIVE |
 | `RevealCurtain` missing `t()` fix | `apps/web/src/app/[locale]/(dashboard)/aura/page.tsx` | Pre-existing bug: `t()` called without `useTranslation()`. Added hook call. | ✅ LIVE |
+| AURA 404→empty state fix | `apps/web/src/hooks/queries/use-aura.ts` | API returns 404 when no score exists. Previously threw error ("Something went wrong"). Now returns null → page shows empty state with "Start Assessment" CTA. | ✅ LIVE |
+| Sprint Plan v2 (3-round swarm review) | `docs/SPRINT-PLAN-V2.md` | 8 sprints, 25 days. Architecture Agent → Product + Security critics → synthesis. 78 features audited, 39 security findings. | ✅ DOC |
+
+## Session 57 (2026-03-28) — TEAM EXPANSION SPRINT
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| `sales-deal-strategist.md` | `memory/swarm/skills/` | B2B deal architecture, MEDDPICC for Volaura, org pricing tiers, red flags | ✅ LIVE |
+| `sales-discovery-coach.md` | `memory/swarm/skills/` | B2B discovery flows, org onboarding questions, Gap Selling for Volaura | ✅ LIVE |
+| `linkedin-content-creator.md` | `memory/swarm/skills/` | AURA score portability, LinkedIn share templates for Kamal/Rauf personas | ✅ LIVE |
+| `cultural-intelligence-strategist.md` | `memory/swarm/skills/` | AZ/CIS cultural audit, invisible exclusion patterns, AZ text/naming rules | ✅ LIVE |
+| `accessibility-auditor.md` | `memory/swarm/skills/` | WCAG 2.2 AA, radar chart fix, Volaura component risk map, AZ a11y | ✅ LIVE (activates Sprint 6) |
+| `behavioral-nudge-engine.md` | `memory/swarm/skills/` | ADHD-first validation, cognitive load budgeting, notification cadence | ✅ LIVE (DSP skill) |
+| 3 new DSP personas | `CLAUDE.md` | Kamal (senior professional), Aynur (talent acquisition), Rauf (mid-career) added to council | ✅ LIVE |
+| Sprint Plan V2 updated | `docs/SPRINT-PLAN-V2.md` | Sprint 1 +3 tasks: org/volunteer branch, post-confirm display_name, professional empty state | ✅ LIVE |
+| Skills Matrix updated | `CLAUDE.md` | 9 new routing rows for B2B, cultural, accessibility, nudge, LinkedIn skills | ✅ LIVE |
+
+**How new agents were hired:** Full repo (164 agent files) given to Kamal + Aynur + Rauf personas. Their nominations + existing 6-agent votes synthesized. Reality Checker rejected (duplicates Attacker). 6 agents hired.
+
+| `SPRINT-PLAN-V3.md` | `docs/` | Sprint Plan after 2-round recursive criticism (9 personas, 18→38/50). Swaps Sprint 3↔4, IP rate limits, CSRF, org RLS, volunteer opt-in, Telegram sanitization moved to Sprint 2. | ✅ DOC |
+| `RECURSIVE-CRITICISM.md` | `docs/engineering/skills/` | Standard protocol for recursive plan criticism. 2 rounds minimum for sprint plans. | ✅ DOC |
 
 ---
 

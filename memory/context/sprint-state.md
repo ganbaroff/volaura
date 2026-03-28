@@ -6,7 +6,72 @@
 ---
 
 ## Last Updated
-2026-03-28 | Session 54: **User simulation sprint. 7 gaps found + fixed. League position live. i18n 4 keys formalized. All defaultValue fallbacks removed.**
+2026-03-28 | Session 57: **Team expansion sprint. 6 new agents hired from agency-agents repo (full 164-file review by 3 new personas: Kamal, Aynur, Rauf). Sales, Cultural, LinkedIn, A11y, Nudge skills live. Sprint Plan V2 updated with 3 new Sprint 1 tasks found by new agents. 9 DSP council personas now active.**
+
+## Session 57 — SUMMARY (2026-03-28)
+
+### What was done
+1. **3 new DSP personas added** — Kamal (senior professional), Aynur (talent acquisition), Rauf (mid-career) — correct "LinkedIn of new era" representation
+2. **Full agency-agents repo reviewed** — 164 agent files across 12 categories, given to new personas (not pre-selected by CTO)
+3. **6 agents hired:** sales-deal-strategist, sales-discovery-coach, linkedin-content-creator, cultural-intelligence-strategist, accessibility-auditor, behavioral-nudge-engine
+4. **6 skill files created** in `memory/swarm/skills/` — adapted for Volaura/AZ context
+5. **agent-roster.md updated** — new hires table, 15 new routing rows
+6. **CLAUDE.md updated** — 9 new Skills Matrix rows, 9-persona DSP council
+7. **Sprint Plan V2 updated** — 3 new Sprint 1 tasks from new agents: org/volunteer branch, post-confirm display_name, professional empty state copy
+8. **New agents immediately deployed** on Sprint 1 review — found B2B gap (no org branch), AZ cultural issues (consent copy, field order), professional value prop gap (Talent Card)
+
+### Sprint Plan V3 (also Session 57)
+After hiring new agents, ran 2-round recursive criticism on the combined plan. 9 personas. 18 critical/high findings in Round 1, 9 in Round 2. Final plan score: 38/50. Key structural change: Sprint 3 and 4 swapped (API spec before UI). Plan V3 in `docs/SPRINT-PLAN-V3.md`. Recursive criticism now documented as standard in `docs/engineering/skills/RECURSIVE-CRITICISM.md`.
+
+### Key insights from new agents
+- Platform was designed for volunteer management. New personas revealed it needs to feel like "companies find you", not "you apply"
+- B2B registration gap: Aynur (HR manager) currently falls into volunteer onboarding with no org path
+- ADHD-first claim was unvalidated — Behavioral Nudge Engine found cognitive load issues in registration form
+- Cultural framing: AZ consent copy should say "I understand my data is protected" not "I agree to legal terms"
+
+## Session 55 — SUMMARY (2026-03-28)
+
+### What was done
+1. **Crystal TOCTOU migration applied to production** — `deduct_crystals_atomic()` now live on Supabase `hvykysvdkalkbswmgfut`
+2. **Sessions 52-54 committed + pushed** — 43 files, commit `00aec17`
+3. **Stop hook infinite loop killed** — removed `Stop` event entry from `.claude/settings.local.json`
+4. **OpenSpace MCP installed** — `C:/tools/openspace-venv`, configured in `.mcp.json`, confirmed working
+5. **`volaura-security-review` OpenSpace skill created** — `docs/openspace-skills/volaura-security-review/skill.md`
+6. **HANDOFF-SESSION-55.md created** — clean handoff doc for new chats
+7. **START-SESSION-VOLAURA.md created** — master brain-activation index, mandatory at every session start
+8. **Session 55 commit pushed** — `2747635` (after rebasing onto remote's `3c47a1e`)
+9. **4 pending swarm proposals resolved** — 2 dismissed (premature), 2 marked resolved by existing work
+
+### Files changed (Session 55)
+- `START-SESSION-VOLAURA.md` (NEW) — master session index
+- `HANDOFF-SESSION-55.md` (NEW) — handoff doc
+- `docs/openspace-skills/volaura-security-review/skill.md` (NEW) — first OpenSpace skill
+- `docs/research/` — 4 research files committed
+- `.claude/settings.local.json` — Stop hook removed
+- `.mcp.json` — OpenSpace MCP server added
+- `memory/swarm/proposals.json` — 4 proposals resolved
+
+## Session 56 — SUMMARY (2026-03-28)
+
+### What was done
+1. **`aura-coach` skill wired to `/aura` page** — `useSkill("aura-coach")` fires after reveal animation. Skeleton during load → `AuraCoach` component shows STRENGTH_MAP + GROWTH_PATH + PEER_CONTEXT text. Placed between competency breakdown and evaluation log.
+2. **`feed-curator` on `/dashboard` confirmed** — already wired from Session 54. `useSkill`, `FeedCards` component, feed section in JSX — all complete. No changes needed.
+3. **Two pre-existing TS bugs fixed:**
+   - `RevealCurtain` used `t()` without `useTranslation()` — added hook call
+   - `leaguePosition` received `number | null`, expected `string | null` — formatted as `#${rank}`
+4. **0 TS errors** — clean compile after changes
+5. **Commit `2c70b03` pushed** to `main`
+
+### Files changed (Session 56)
+- `apps/web/src/app/[locale]/(dashboard)/aura/page.tsx` — aura-coach wired + RevealCurtain t() fix
+- `apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx` — leaguePosition type fix
+- `memory/swarm/SHIPPED.md` — Session 56 entries added
+
+## Next Session Priority:
+1. **Real user test** — put 1 real person through: signup → onboarding → assessment → AURA → share
+2. **Profile verifications backend** — hardcoded `[]` — no API yet
+3. **Assessment description** — users don't know what they're tested on or that AI evaluates them
+4. **Leaderboard jump-to-rank** — users ranked >20 can't find themselves (jump-to-rank UI missing)
 
 ## Session 54 — SUMMARY (2026-03-28)
 

@@ -23,6 +23,24 @@
 
 ---
 
+## New Hires (Session 57 — 2026-03-28)
+
+Hired after full swarm vote (6 original + 3 new personas — Kamal, Aynur, Rauf).
+Source: https://github.com/msitarzewski/agency-agents.git (full repo reviewed, not pre-selected).
+
+| Agent Skill | File | Activate | Primary Role |
+|-------------|------|----------|--------------|
+| Sales Deal Strategist | `skills/sales-deal-strategist.md` | Now | B2B deal architecture, org pricing, MEDDPICC |
+| Sales Discovery Coach | `skills/sales-discovery-coach.md` | Now | B2B discovery flows, org onboarding questions |
+| LinkedIn Content Creator | `skills/linkedin-content-creator.md` | Sprint 3 | AURA score portability, professional brand |
+| Cultural Intelligence Strategist | `skills/cultural-intelligence-strategist.md` | Sprint 3 | AZ/CIS cultural audit, invisible exclusion |
+| Accessibility Auditor | `skills/accessibility-auditor.md` | Sprint 6 | WCAG 2.2 AA, radar chart fix, keyboard nav |
+| Behavioral Nudge Engine | `skills/behavioral-nudge-engine.md` | Now (as DSP skill) | ADHD-first validation, cognitive load audit |
+
+**Why these 6:** Original swarm was modeling a volunteer management platform. New personas (Kamal = senior professional, Aynur = talent acquisition, Rauf = ambitious mid-career) revealed: no B2B sales architecture, no professional brand portability, no cultural context for AZ market.
+
+---
+
 ## When to Call Each Agent
 
 | Task | Best Agent |
@@ -50,6 +68,19 @@
 | Viral / referral mechanics | Growth Agent |
 | Competitor tracking | Growth Agent |
 | Content for CEO | Fact-Check Agent (agent-launch-template.md) |
+| B2B org pricing / deal structure | `sales-deal-strategist` skill |
+| Org onboarding flow / intro request design | `sales-discovery-coach` skill |
+| B2B org dashboard feature design | `sales-deal-strategist` + `sales-discovery-coach` |
+| AURA score sharing / LinkedIn portability | `linkedin-content-creator` skill |
+| Any user-facing copy (AZ/CIS market) | `cultural-intelligence-strategist` skill |
+| Professional profile features | `linkedin-content-creator` + `cultural-intelligence-strategist` |
+| Onboarding / registration flow | `behavioral-nudge-engine` + `cultural-intelligence-strategist` |
+| Assessment UX changes | `behavioral-nudge-engine` skill |
+| Notification design / email templates | `behavioral-nudge-engine` skill |
+| Empty state / error state copy | `behavioral-nudge-engine` + `cultural-intelligence-strategist` |
+| Sprint 6+ — accessibility audit | `accessibility-auditor` skill |
+| Custom interactive component (modals, forms) | `accessibility-auditor` skill (even pre-Sprint 6) |
+| Any screen with >3 interactive decisions | `behavioral-nudge-engine` (cognitive load check) |
 | SQL scripts / migrations | Architecture + Security |
 | CEO evaluation / professional review | All agents in parallel |
 | Route ordering review (/{id} patterns) | Security Agent (Session 42 P0: route shadowing IS real) |

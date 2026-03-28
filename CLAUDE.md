@@ -227,6 +227,15 @@ This feedback loop makes each simulation more accurate than the last.
 | Research tasks (market, pricing, benchmarks) | NotebookLM skill → create notebook with sources BEFORE analysis |
 | API deployment | `docs/MANDATORY-RULES.md` Rule 3 (test PRODUCTION URL) + Rule 4 (schema verification) |
 | Session end (always) | `docs/engineering/skills/CONTINUOUS-LEARNING.md` (Step 0.5 protocol) |
+| B2B features, org dashboard, pricing | `memory/swarm/skills/sales-deal-strategist.md` + `memory/swarm/skills/sales-discovery-coach.md` |
+| Org onboarding, intro request, search flow | `memory/swarm/skills/sales-discovery-coach.md` |
+| AURA sharing, professional profile, external visibility | `memory/swarm/skills/linkedin-content-creator.md` |
+| Any user-facing copy, onboarding, notifications | `memory/swarm/skills/cultural-intelligence-strategist.md` |
+| AZ/CIS cultural review (naming, framing, trust) | `memory/swarm/skills/cultural-intelligence-strategist.md` |
+| Assessment UX, onboarding flow, engagement | `memory/swarm/skills/behavioral-nudge-engine.md` |
+| Empty states, notifications, re-engagement | `memory/swarm/skills/behavioral-nudge-engine.md` |
+| New screen with >3 interactive decisions | `memory/swarm/skills/behavioral-nudge-engine.md` (cognitive load check) |
+| Sprint 6+ UI work, custom components, forms | `memory/swarm/skills/accessibility-auditor.md` |
 
 **Rule:** If in doubt whether a skill applies — load it. The cost of loading an irrelevant skill is 30 seconds. The cost of missing a relevant one is hours of rework.
 
@@ -339,13 +348,18 @@ Real adversarial check — not Claude arguing with itself.
 - `claude-sonnet-4-6` → Full DSP (High/Critical stakes), code generation, complex debugging
 - `claude-opus-4-6` → ONLY for irreversible Critical decisions, max 1-2 per project
 
-**6 council personas (always use all 6 for High/Critical):**
+**9 council personas (use all for High/Critical; for B2B features ALWAYS include Aynur):**
 1. **Leyla** — Volunteer (22yo, mobile, Baku, AZ native). Influence: 1.0
 2. **Nigar** — Org Admin (HR manager, 50+ volunteers, desktop). Influence: 1.0
 3. **Attacker** — Adversary. Finds exploits in every path. Influence: 1.2
 4. **Scaling Engineer** — Bottleneck analyst. Asks "what at 10x?". Influence: 1.1
 5. **Yusif** — Founder (budget $50/mo, 6-week timeline, growth-focused). Influence: 1.0
-6. **QA Engineer** — Test coverage, edge cases, regression risk. Influence: 0.9 ← NEW
+6. **QA Engineer** — Test coverage, edge cases, regression risk. Influence: 0.9
+7. **Kamal** — Senior professional (34yo, Baku, wants to be found by companies). Influence: 1.0 ← NEW
+8. **Aynur** — Talent Acquisition manager (corp, 200+ employees, B2B buyer). Influence: 1.1 ← NEW
+9. **Rauf** — Ambitious mid-career (28yo, building professional brand, AZ market). Influence: 1.0 ← NEW
+
+**Rule:** For any feature touching professional profiles, B2B, or competency visibility → Kamal + Aynur + Rauf are MANDATORY council members. They represent the actual target audience of "LinkedIn of the new era."
 
 **Protocol (5 steps):**
 1. **IDENTIFY:** State decision + stakes (Low/Med/High/Critical) + reversibility

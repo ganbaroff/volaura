@@ -38,10 +38,18 @@
 | 3 | Fix email registration flow (or add rate limits if disabling confirmation) | Currently blocks all new signups |
 | 4 | Fix forgot/reset password — wire frontend to Supabase auth | Users locked out permanently if they forget password |
 | 5 | Add rate limits to auth endpoints (signup, login, reset) | Mandatory if registration is open |
-| 6 | Add privacy policy consent checkbox to signup | Legal requirement before any real user data |
+| 6 | Add privacy policy consent checkbox — AZ-native framing | 🔒 emoji + 1-line explainer in AZ, not legal copy. "Mən məlumatımın qorunduğunu başa düşürəm" |
+| 7 | Add Volunteer / Organization branch at registration | Aynur (B2B buyer) currently lands on volunteer flow with no org path. 2-question branch: role + org type. Routes to separate onboarding. |
+| 8 | Move display_name collection to post-email-confirm screen | Reduces signup form from 4 fields to 3. Single-action pattern. ADHD-first. |
+| 9 | Replace empty AURA state copy for professional users | "Companies are searching for people like you — not resumes." + Talent Card preview. Different from volunteer empty state. |
 
-**CEO sees:** Working signup-to-AURA flow end-to-end. Can share link and someone can actually use it.
-**Risk if skipped:** Nothing else matters if users can't register.
+**Added by new agents (Session 57):**
+- Tasks 7-9 found by Sales Deal Strategist (B2B gap), Behavioral Nudge Engine (cognitive load), and LinkedIn Content Creator (professional value prop)
+- Without task 7: every org that registers falls into volunteer flow → churn immediately
+- Without task 9: professionals don't understand why this platform is different from LinkedIn
+
+**CEO sees:** Working signup-to-AURA flow end-to-end. Professionals and orgs both land in the right place. Can share link and someone can actually use it.
+**Risk if skipped:** Nothing else matters if users can't register. B2B revenue path blocked from day 1.
 
 ---
 

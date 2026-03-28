@@ -50,7 +50,7 @@ async def get_open_badge_credential(
     profile = profile_result.data
 
     aura_result = await db.table("aura_scores").select(
-        "total_score, badge_tier, elite_status, last_updated"
+        "total_score, badge_tier, elite_status, last_updated, visibility"
     ).eq("volunteer_id", volunteer_id).single().execute()
 
     if not aura_result.data:

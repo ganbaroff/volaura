@@ -39,7 +39,7 @@ function AuthCallbackContent() {
       if (session?.access_token) {
         const attribution = readAndClearAttribution();
         if (Object.keys(attribution).length > 0) {
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/profiles/me`, {
+          fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/profiles/me`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",

@@ -55,7 +55,7 @@ def build_profile_text(profile: dict, aura: dict | None) -> str:
         parts.append(f"Languages: {', '.join(profile['languages'])}")
 
     if aura:
-        parts.append(f"AURA score: {aura.get('overall_score', 0):.1f}")
+        parts.append(f"AURA score: {aura.get('total_score', 0):.1f}")
         parts.append(f"Badge: {aura.get('badge_tier', 'none')}")
         if aura.get("elite_status"):
             parts.append("Elite volunteer")

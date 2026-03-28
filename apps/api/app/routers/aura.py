@@ -1,6 +1,7 @@
 """AURA score endpoints."""
 
 from fastapi import APIRouter, HTTPException, Request
+from loguru import logger
 
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
 from app.middleware.rate_limit import limiter, RATE_DEFAULT, RATE_LLM, RATE_PROFILE_WRITE

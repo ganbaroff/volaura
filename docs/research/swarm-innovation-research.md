@@ -27,7 +27,9 @@
 
 ---
 
-## Next Sprint: B3 (Reflexion-style mistakes.md)
+## Sprint Roadmap: B3-B6
+
+### B3 (next): Reflexion traces + EvoSkill raw trajectories
 
 **Based on:** Reflexion paper (arXiv:2303.11366, NeurIPS 2023) — 91% vs 80% on HumanEval.
 
@@ -43,6 +45,29 @@
 3. In `get_context_for_agent()` — include trace for WRONG entries: "You wrote: X. The correct answer was: Y."
 
 **Expected outcome:** Agents stop repeating known mistakes because they see the full failure trace, not just the lesson label.
+
+**+ EvoSkill upgrade** (sentient-agi/EvoSkill): `skill_evolution.py` currently uses distilled summaries from `agent-feedback-distilled.md`. EvoSkill uses **raw failed trajectory logs**. Change: log full agent task traces to a structured `agent-trajectories.jsonl` file, feed those to `skill_evolution.py` alongside summaries. One-sprint change, closes the gap between our evolution engine and VOYAGER/EvoSkill state of the art.
+
+### B4: VOYAGER verification gate for skills
+
+Before new skills enter `memory/swarm/skills/`, require them to pass a simulated task:
+1. `skill_evolution.py` proposes a new skill (currently goes straight to `skill-evolution-log.md`)
+2. Run the skill against a synthetic scenario ("Given a proposal from a Security Agent, does this skill produce a structured output with: trigger, output, cross-refs?")
+3. Only add to library if it passes — prevents library rot (current health: 70/100)
+
+### B5: ADAS meta-agent (1 new agent/week)
+
+ADAS (arXiv:2408.08435, ICLR 2025) — meta-agent writes new agents, tests them, promotes successful ones.
+Our `agent-feedback-log.md` + `career-ladder.md` = already the archive ADAS needs.
+Practical first step: weekly GitHub Action that:
+1. Reads `agent-feedback-log.md` (failures) + `career-ladder.md` (promotions)
+2. Asks Gemini: "Based on these patterns, design 1 new agent role that would catch what current agents missed"
+3. Proposes new agent as a skill file + routing table entry
+4. CTO reviews before activating
+
+### B6: DSPy prompt optimization
+
+Only after B3-B5 generate 50+ calibrated outcomes with proper trajectory logging.
 
 ---
 
@@ -66,8 +91,11 @@
 | letta-ai/letta | ~16k | OS-inspired memory hierarchy (core/archival/episodic). `.af` agent-file format — serialized agent state. | Skip for now (requires running Letta server). `agent-file` format maps onto our `agent-roster.md` concept — revisit when agents need portable state. |
 | topoteretes/cognee | ~? | ECL pipeline (Extract→Cognify→Load). Reads .md files natively. Cross-agent knowledge sharing. | Can ingest existing `memory/swarm/` markdown into queryable graph. Low migration effort. Evaluate if semantic search over swarm memory becomes a bottleneck. |
 | MemTensor/MemOS | ~? | MemCubes (arXiv:2507.03724, EMNLP 2025). OpenClaw Plugin = "Persistent skill memory for cross-task skill reuse and evolution." 159% improvement in temporal reasoning. | **Conceptually identical to our skill-evolution-log.md** — but automated. **B4-B5 candidate**. Linux-ready. |
-| stanfordnlp/dspy | ~25k | Systematic prompt optimization (SIMBA/MIPROv2). Needs 20-50+ labeled examples. | Implement after 50+ calibrated outcomes exist. |
-| noahshinn/reflexion | NeurIPS 2023 | Verbal post-mortems stored as episodic memory. 91% vs 80% on HumanEval. | Implement as B3. |
+| stanfordnlp/dspy | ~25k | Systematic prompt optimization (SIMBA/MIPROv2). Needs 20-50+ labeled examples. | B6 — implement after 50+ calibrated outcomes. |
+| noahshinn/reflexion | NeurIPS 2023 | Verbal post-mortems stored as episodic memory. 91% vs 80% on HumanEval. | B3. |
+| sentient-agi/EvoSkill | ? | Skill discovery from raw failed trajectories. `skill_only` + `prompt_only` modes. Git branches for evolution history. | **B3** — closest architectural match to `skill_evolution.py`. Add raw trajectory logging. |
+| ShengranHu/ADAS | ICLR 2025, arXiv:2408.08435 | Meta-agent writes new agents, tests them, promotes to archive. Outperforms hand-designed state-of-the-art. | **B5** — highest leverage. Our `agent-feedback-log.md` = the archive ADAS needs. |
+| MineDojo/Voyager | arXiv:2305.16291 | Ever-growing skill library with self-verification gate before entry. Compositional skills. | **B4** — skill verification gate. Prevents library rot (current: 70/100). |
 | Darwin Gödel Machine | arXiv 2025 | Population-based agent evolution with Archive Trees. SWE-bench 20%→50%. | Research-only for now. Our `autonomous_upgrade.py` is the linear version. |
 
 ---

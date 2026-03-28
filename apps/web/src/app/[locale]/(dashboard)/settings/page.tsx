@@ -35,6 +35,12 @@ export default function SettingsPage() {
   // Sign out state
   const [signingOut, setSigningOut] = useState(false);
 
+  // Delete account state
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
   // Seed form fields when profile loads
   useEffect(() => {
     if (profile) {
@@ -94,6 +100,23 @@ export default function SettingsPage() {
       router.push(`/${locale}/login`);
     } catch {
       setSigningOut(false);
+    }
+  }
+
+  async function handleDeleteAccount() {
+    if (deleteConfirmText !== "DELETE") return;
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      const token = await getToken();
+      if (!token) throw new Error(t("error.unauthorized"));
+      await apiFetch("/api/auth/me", { method: "DELETE", token });
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      router.push(`/${locale}/login`);
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : t("error.generic"));
+      setDeleting(false);
     }
   }
 
@@ -229,19 +252,83 @@ export default function SettingsPage() {
         </section>
 
         {/* Account Actions / Danger Zone */}
-        <section className="rounded-xl border border-destructive/30 bg-card p-5">
-          <h2 className="mb-4 text-base font-semibold text-destructive">
+        <section className="rounded-xl border border-destructive/30 bg-card p-5 space-y-4">
+          <h2 className="text-base font-semibold text-destructive">
             {t("settings.dangerZone")}
           </h2>
-          <button
-            type="button"
-            onClick={handleSignOut}
-            disabled={signingOut}
-            className="h-10 rounded-md border border-destructive px-4 text-sm font-medium text-destructive transition-colors hover:bg-destructive hover:text-destructive-foreground disabled:opacity-50"
-          >
-            {signingOut ? t("loading.saving") : t("settings.signOut")}
-          </button>
+
+          {/* Sign out */}
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">{t("settings.signOutDesc", { defaultValue: "Sign out of your account" })}</p>
+            <button
+              type="button"
+              onClick={handleSignOut}
+              disabled={signingOut}
+              className="h-9 rounded-md border border-destructive px-3 text-sm font-medium text-destructive transition-colors hover:bg-destructive hover:text-destructive-foreground disabled:opacity-50"
+            >
+              {signingOut ? t("loading.saving") : t("settings.signOut")}
+            </button>
+          </div>
+
+          {/* Delete account */}
+          <div className="border-t border-destructive/20 pt-4">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-sm font-medium text-destructive">{t("settings.deleteAccount", { defaultValue: "Delete Account" })}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{t("settings.deleteAccountDesc", { defaultValue: "Permanently delete your account and all data. This cannot be undone." })}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowDeleteConfirm(true)}
+                className="shrink-0 h-9 rounded-md bg-destructive/10 border border-destructive/30 px-3 text-sm font-medium text-destructive transition-colors hover:bg-destructive hover:text-destructive-foreground"
+              >
+                {t("settings.deleteAccount", { defaultValue: "Delete" })}
+              </button>
+            </div>
+          </div>
         </section>
+
+        {/* Delete confirmation modal */}
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+            <div className="w-full max-w-sm rounded-2xl border border-destructive/30 bg-card p-6 space-y-4 shadow-2xl">
+              <h3 className="text-lg font-bold text-destructive">
+                {t("settings.deleteAccountConfirmTitle", { defaultValue: "Delete account permanently?" })}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {t("settings.deleteAccountConfirmDesc", { defaultValue: 'This will permanently delete your AURA score, assessments, and profile. Type "DELETE" to confirm.' })}
+              </p>
+              <input
+                type="text"
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder="DELETE"
+                className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-destructive/40"
+                aria-label={t("settings.typeDelete", { defaultValue: 'Type DELETE to confirm' })}
+              />
+              {deleteError && (
+                <p className="rounded-md bg-destructive/10 p-2 text-xs text-destructive">{deleteError}</p>
+              )}
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmText(""); setDeleteError(null); }}
+                  className="flex-1 h-10 rounded-md border border-border text-sm font-medium text-muted-foreground hover:bg-muted transition-colors"
+                >
+                  {t("common.cancel", { defaultValue: "Cancel" })}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDeleteAccount}
+                  disabled={deleteConfirmText !== "DELETE" || deleting}
+                  className="flex-1 h-10 rounded-md bg-destructive text-sm font-medium text-destructive-foreground disabled:opacity-40 hover:bg-destructive/90 transition-colors"
+                >
+                  {deleting ? t("loading.saving") : t("settings.deleteAccount", { defaultValue: "Delete Forever" })}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
     </>

@@ -156,6 +156,35 @@ async def get_me(
     return {"user_id": user_id, "profile": result.data}
 
 
+@router.delete("/me", status_code=200)
+@limiter.limit(RATE_AUTH)
+async def delete_account(
+    request: Request,
+    db_admin: SupabaseAdmin,
+    user_id: CurrentUserId,
+) -> dict:
+    """Permanently delete the current user's account and all associated data.
+
+    Steps:
+    1. Delete auth user via Supabase admin API (cascades to profiles, sessions, etc.)
+    2. Return success — client must call supabase.auth.signOut() to clear local state.
+
+    GDPR compliance: all user data removed. This action is irreversible.
+    """
+    from loguru import logger
+
+    try:
+        await db_admin.auth.admin.delete_user(user_id)
+        logger.info("Account deleted", user_id=str(user_id))
+    except Exception as e:
+        logger.error("Account deletion failed", user_id=str(user_id), error=str(e))
+        raise HTTPException(
+            status_code=500,
+            detail={"code": "DELETION_FAILED", "message": "Account deletion failed. Please try again."},
+        )
+    return {"message": "Account deleted successfully"}
+
+
 @router.post("/logout", status_code=200)
 @limiter.limit(RATE_AUTH)
 async def logout(

@@ -32,11 +32,13 @@ async def get_my_profile(
     user_id: CurrentUserId,
 ) -> ProfileResponse:
     """Get the current authenticated user's profile."""
+    # maybe_single() returns None instead of throwing APIError 406 when no row exists.
+    # Same fix as auth.py — .single() crashes for new users who haven't completed onboarding.
     result = (
         await db.table("profiles")
         .select("*")
         .eq("id", user_id)
-        .single()
+        .maybe_single()
         .execute()
     )
     if not result.data:

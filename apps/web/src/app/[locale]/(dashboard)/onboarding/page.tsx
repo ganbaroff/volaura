@@ -200,10 +200,12 @@ export default function OnboardingPage() {
       if (formData.languages.length > 0) payload.languages = formData.languages;
       if (accountType === "volunteer") {
         payload.visible_to_orgs = formData.visible_to_orgs;
-        // org_type only applies to org accounts — don't send for volunteers
       }
-      // org_type was collected at signup and is in user_metadata; API will read it from there
-      // (no separate field needed in onboarding)
+      if (accountType === "organization") {
+        // org_type was captured in user_metadata at signup — read it here and persist to profile
+        const orgType = session?.user?.user_metadata?.org_type;
+        if (orgType) payload.org_type = orgType;
+      }
 
       const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
       const res = await fetch(`${apiUrl}/api/profiles/me`, {

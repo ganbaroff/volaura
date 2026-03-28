@@ -6,6 +6,22 @@
 
 ---
 
+## Session 63 (2026-03-29) — SPRINTS B1-B5: SWARM SELF-IMPROVEMENT
+
+| Code | Location | What it does | Status | How to verify |
+|------|----------|-------------|--------|---------------|
+| `SWARM_DATA_DIR` env var | `packages/swarm/structured_memory.py` | StructuredMemory persists to repo (memory/swarm/structured/) instead of ephemeral ~/.swarm/. GitHub Actions sets this. | ✅ SHIPPED | Check swarm-daily.yml env block |
+| `git pull --rebase` before push | `.github/workflows/swarm-daily.yml` | Prevents concurrent runner push conflicts. Commits memory/ alongside proposals/. | ✅ SHIPPED | Check workflow step |
+| `convergent: bool` field | `packages/swarm/inbox_protocol.py` | Marks proposals where 2+ agents independently proposed same idea (highest quality signal). | ✅ SHIPPED | Check proposals.json for convergent=true |
+| Jaccard word overlap detection | `packages/swarm/autonomous_run.py` | Post-hoc convergence detection (threshold=0.35). Replaces broken severity-based voting. Convergent → Telegram with 🎯. | ✅ SHIPPED | Run swarm, check Telegram |
+| `full_prompt`/`full_response` in log_experience | `packages/swarm/agent_memory.py` | Stores failure traces. get_context_for_agent() shows "You wrote X. Correct was Y." for WRONG entries (Reflexion, arXiv:2303.11366). | ✅ SHIPPED | Check agent_logs/*.json |
+| `log_trajectory()` method | `packages/swarm/agent_memory.py` | Appends raw task traces to agent-trajectories.jsonl (EvoSkill pattern). | ✅ SHIPPED | Run engine.decide(), check agent-trajectories.jsonl |
+| trajectory logging in engine | `packages/swarm/engine.py` | Calls log_trajectory() for failures + winners. Passes full_prompt+response to log_experience(). | ✅ SHIPPED | Run SwarmEngine decision |
+| `_load_failed_trajectories()` | `packages/swarm/skill_evolution.py` | Reads agent-trajectories.jsonl and injects into LLM skill review prompt. EvoSkill gap closed. | ✅ SHIPPED | Run skill_evolution.py |
+| VOYAGER verification gate | `packages/swarm/skill_evolution.py` | HIGH-priority proposed skills: drafted by LLM → static checks → LLM verification → saved as .candidate.md. CTO renames to activate. | ✅ SHIPPED | Run skill_evolution.py with GROQ_API_KEY |
+| `adas_agent_designer.py` | `packages/swarm/adas_agent_designer.py` | Reads failure archive → Gemini designs 1 new agent role → writes .agent-proposal.md for CTO review + Telegram notification. | ✅ SHIPPED | python -m packages.swarm.adas_agent_designer |
+| `swarm-adas.yml` | `.github/workflows/swarm-adas.yml` | Weekly GitHub Action (Sunday 06:00 UTC) that runs ADAS meta-agent designer. | ✅ SHIPPED | GitHub Actions → ADAS Weekly Agent Designer |
+
 ## Session 63 (2026-03-29) — SPRINTS A9-A10: SWARM UPGRADE + PRE-LAUNCH RESILIENCE
 
 | Code | Location | What it does | Status | How to verify |

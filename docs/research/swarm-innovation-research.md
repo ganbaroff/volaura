@@ -100,6 +100,24 @@ Only after B3-B5 generate 50+ calibrated outcomes with proper trajectory logging
 
 ---
 
+## Framework Comparison Verdict (live research)
+
+**Do not replace `packages/swarm/` with any external framework.**
+
+Volaura's hand-coded swarm already has capabilities that no external framework provides:
+- Multi-provider mixing (Groq + Gemini + DeepSeek) with dynamic dead-weight filtering
+- Domain-weighted calibration via sliding accuracy window (AgentHive)
+- MoA-style cross-group LLM synthesis (from ACL 2025 + MoA papers)
+- Research loop with web grounding (WebResearcher → StructuredMemory)
+
+What frameworks would ADD (only one is genuine):
+- **LangGraph**: durable execution / checkpointing that survives Railway restarts mid-decision. Not a real problem at current 30-second decision timeout. **Consider if daily swarm run grows beyond 5 minutes.**
+- Everything else: CrewAI/AutoGen/Swarm add nothing we don't already have, at the cost of framework lock-in.
+
+**Confirmed by:** live comparison of framework capabilities vs `packages/swarm/engine.py` implementation.
+
+---
+
 ## Temperature Finding (from swarm-freedom-architecture.md)
 
 temp 0.7 → fake consensus, all "hybrid" verdicts

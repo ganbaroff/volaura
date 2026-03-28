@@ -20,8 +20,9 @@
 
 | # | File | What's in it | Read when |
 |---|------|-------------|-----------|
-| 1 | `memory/context/sprint-state.md` | **WHERE ARE WE RIGHT NOW** — last session summary, next priorities | Always first |
-| 2 | `CLAUDE.md` | Operating algorithm, tech stack, all rules | Always second |
+| 0 | `memory/swarm/SHIPPED.md` | **WHAT CODE EXISTS** — every Python file, router, feature built. If not here → you don't know it exists | **ALWAYS FIRST — before everything** |
+| 1 | `memory/context/sprint-state.md` | **WHERE ARE WE RIGHT NOW** — last session summary, next priorities | Always |
+| 2 | `CLAUDE.md` | Operating algorithm, tech stack, all rules | Always |
 | 3 | `memory/context/mistakes.md` | 5 mistake classes + 50+ specific errors. What NOT to repeat | Always |
 | 4 | `memory/context/patterns.md` | What WORKS. Patterns that proved themselves | Always |
 | 5 | `memory/context/working-style.md` | Who Yusif is. Communication style. Expectations | Always |

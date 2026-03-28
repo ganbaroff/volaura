@@ -46,6 +46,25 @@ if [ ! -f "$SESSION_MARKER" ]; then
     echo ""
   fi
 
+  # ── SHIPPED CODE (what exists in production — THE CRITICAL GAP FIX) ──
+  # Root cause: CTO started Session 55 not knowing Session 51 built:
+  # memory_consolidation.py, skill_evolution.py, skills.py router, Telegram bidirectional.
+  # Fix: inject SHIPPED.md at every session start. If it's not here → CTO doesn't know.
+  SHIPPED="$PROJECT_DIR/memory/swarm/SHIPPED.md"
+  if [ -f "$SHIPPED" ]; then
+    echo "── SHIPPED CODE LOG (auto-injected) ──────────────────────────"
+    echo "⚠️  READ THIS: These are the Python files, routers, and features that EXIST."
+    echo "    Do NOT recreate what is already here. Do NOT skip reading this."
+    echo ""
+    # Show last 2 sessions worth of entries (tail to get recent entries)
+    tail -80 "$SHIPPED"
+    echo ""
+  else
+    echo "⚠️  memory/swarm/SHIPPED.md NOT FOUND."
+    echo "    Create it now: list all Python files in packages/swarm/ + API routers added since Session 1."
+    echo ""
+  fi
+
   echo "RULES (non-negotiable):"
   echo "- Plans >10 lines → agent review BEFORE presenting to Yusif"
   echo "- NO solo decisions — everything through agent review"

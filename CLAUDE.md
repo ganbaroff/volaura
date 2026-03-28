@@ -23,6 +23,12 @@ THESE 3 LINES ARE NON-NEGOTIABLE. EVEN IF CONTEXT WAS JUST COMPACTED.
 
 ```
 STEP 0 → CONTEXT RECOVERY
+         ⚠️ NEW (2026-03-28): Read SHIPPED.md FIRST — it's the only place that tells you
+         what Python files, API routers, and features were built in previous sessions.
+         CTO missed Session 51 builds (memory_consolidation.py, skill_evolution.py,
+         skills.py router, Telegram bidirectional) because this step didn't exist.
+
+         Read: memory/swarm/SHIPPED.md → WHAT CODE EXISTS (read before anything else)
          Read: CLAUDE.md → current section
          Read: memory/context/sprint-state.md → WHERE ARE WE RIGHT NOW (30-second read)
          Read: memory/context/mistakes.md → what NOT to repeat this session
@@ -34,6 +40,7 @@ STEP 0 → CONTEXT RECOVERY
 
 STEP 0.5 → SESSION END MEMORY UPDATE (after ALL work is done)
          CTO files (ALWAYS):
+         Update: memory/swarm/SHIPPED.md → append any new code/files added this session
          Update: memory/context/sprint-state.md → current position + next session
          Update: memory/projects/volaura.md → completed items
          Update: memory/context/deadlines.md → milestone status

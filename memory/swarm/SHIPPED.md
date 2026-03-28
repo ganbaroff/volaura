@@ -6,6 +6,15 @@
 
 ---
 
+## Session 61 (2026-03-28) — SPRINT 5: SEMANTIC VOLUNTEER SEARCH
+
+| Code | Location | What it does | Status | How to verify |
+|------|----------|-------------|--------|---------------|
+| Search endpoint hardened | `apps/api/app/routers/organizations.py` POST /search/volunteers | Dual org check (account_type + org ownership), RATE_DISCOVERY, asyncio.wait_for timeout, fallback pagination fix, missing-profile skip | ✅ LIVE | POST with org JWT |
+| `useVolunteerSearch()` | `apps/web/src/hooks/queries/use-organizations.ts` | Mutation hook: POST /api/organizations/search/volunteers, typed payload + result | ✅ LIVE | Used by /discover search mode |
+| `/discover` upgraded | `apps/web/src/app/[locale]/(dashboard)/discover/page.tsx` | Browse|Smart Search mode toggle. Smart Search: query input, AURA quick filters (Any/Bronze+/Silver+/Gold+), badge tier pills, similarity labels (High/Good/Partial), clear → browse | ✅ LIVE | Visit /az/discover as org user |
+| Sidebar: /discover link | `apps/web/src/components/layout/sidebar.tsx` | Added 🔍 Discover nav link | ✅ LIVE | Open sidebar |
+
 ## Session 60 (2026-03-28) — SPRINT 4: BACKEND WIRING + B2B PATH
 
 | Code | Location | What it does | Status | How to verify |

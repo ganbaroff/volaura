@@ -1,5 +1,19 @@
 # Architecture Decisions Log
 
+## Session 61 Retrospective — 2026-03-28 (Sprint 5: Semantic Volunteer Search)
+
+✓ Swarm found CRITICAL: /search/volunteers had zero auth check — any authenticated user could enumerate all volunteers. Fixed with dual-check (account_type + org ownership) before code touched prod.
+✓ Swarm found rate limit mismatch (RATE_DEFAULT vs RATE_DISCOVERY) — prevented Gemini budget exhaustion by automated scripts.
+✓ Fallback pagination bug caught: language/location filters ran AFTER slice, could return 3 results when limit=10 existed. Fixed before shipping.
+✓ Mode toggle (Browse | Smart Search) is clean UX — respects 3-decision nudge engine rule.
+✓ Similarity shown as High/Good/Partial labels (not raw float) — avoids volunteer confusion about "what is 0.68?".
+
+✗ Round 2 caught that org auth check needed BOTH account_type check AND org ownership check — Round 1 only specified one. Always run Round 2.
+✗ asyncio.wait_for doesn't guarantee connection cleanup — documented but no explicit fix shipped (acceptable for v1 volume).
+
+→ Next: Assessment UX frontend (info page + per-question breakdown display), event registration management UI, volunteer rating after events.
+→ DSP calibration: Swarm found 3 blocking issues before any code written. Protocol saved ~1 hour of post-ship debugging.
+
 ## Session 60 Retrospective — 2026-03-28 (Sprint 4: Backend Wiring + B2B Path)
 
 ✓ Swarm caught CLASS 4 issue (MockEvent camelCase vs real API snake_case) in Round 1 — all 4 files refactored cleanly

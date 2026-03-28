@@ -1,0 +1,49 @@
+name: ADAS Weekly Agent Designer
+
+on:
+  schedule:
+    # Run every Sunday at 06:00 UTC (10:00 Baku time, AZT = UTC+4)
+    - cron: '0 6 * * 0'
+  workflow_dispatch: {}
+
+jobs:
+  adas-design:
+    name: Design New Agent from Failure Archive
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install google-genai python-telegram-bot python-dotenv loguru pydantic
+
+      - name: Run ADAS meta-agent designer
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CEO_CHAT_ID: ${{ secrets.TELEGRAM_CEO_CHAT_ID }}
+        run: |
+          cd "${{ github.workspace }}"
+          python -m packages.swarm.adas_agent_designer
+
+      - name: Commit agent proposal
+        run: |
+          git config user.name "MiroFish Swarm"
+          git config user.email "swarm@volaura.app"
+          git add memory/swarm/skills/*.agent-proposal.md
+          if git diff --staged --quiet; then
+            echo "No new agent proposals to commit."
+          else
+            git pull --rebase origin main
+            git commit -m "swarm(adas): weekly agent design proposal — $(date -u +%Y-%m-%d)"
+            git push
+          fi

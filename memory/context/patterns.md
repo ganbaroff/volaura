@@ -515,8 +515,86 @@ Compare against provider free tier. If exceeded → add next fallback tier.
 ## Pattern: Referral Tracking at Registration (Session 47)
 **Discovered:** Activation wave needs to attribute signups to HR coordinators for B2B pipeline.
 **Rule:** Any activation wave MUST have `referral_code` + `utm_source` + `utm_campaign` captured at signup.
-**Implementation:** 
+**Implementation:**
 1. Frontend saves ?ref + utm_* params to localStorage at /register page load
 2. Auth callback reads localStorage → PATCH /api/profiles/me with referral_source
 3. Supabase VIEW: referral_stats → CEO can query without analytics tool
 **Anti-pattern:** Launching activation wave without referral tracking = no data to know what worked, who to reward, or which HR to convert to B2B customer.
+
+---
+
+## Swarm Patterns (Session 51, 2026-03-27)
+
+### Temperature 1.0 > 0.7 for strategic decisions
+**Discovered:** Session 51 — same 5 agents, different temps, radically different output quality.
+| Setting | Verdict diversity | Ideas quality | Usefulness |
+|---------|------------------|---------------|------------|
+| temp 0.7 | All "hybrid" (fake consensus) | Generic | 3/10 |
+| temp 0.9 | All "trash" (herd negativity) | Some specific | 5/10 |
+| temp 1.0 | 2 genius + 1 dangerous + 2 good | **Convergent innovation** | 8/10 |
+**Rule:** Strategy + architecture + plan critique → temp 1.0. Code review → temp 0.7.
+**Why:** Lower temps produce consensus. Consensus = agents averaging each other. Disagreement = real signal.
+
+### Convergent swarm ideas = highest signal
+**Pattern:** When 2+ agents independently propose the SAME idea at temp 1.0 — that's the most valuable output. Session 51: Product Strategist AND CEO Advisor both proposed "mentorship system" without seeing each other. Neither was told to think about mentorship.
+**Rule:** Track convergent proposals separately. If N≥2 agents independently reach same idea → treat as validated hypothesis, not just suggestion.
+**Implementation:** See memory/swarm/swarm-freedom-architecture.md
+
+### Freedom mandate: criticise CTO and each other
+**Discovered:** Agents with "be polite" prompts produce useless output. Agents with "insult if needed, name specific files and CVEs" produce real findings.
+**Rule:** Agent prompts must explicitly grant permission to: (1) criticise CTO decisions, (2) disagree with other agents, (3) reference specific code files and endpoints.
+**Anti-pattern:** "Please review our architecture and provide suggestions" → bland, safe output.
+**Pattern:** "Find 5 concrete reasons this will FAIL. Name the file, table, or endpoint. No softening." → actionable output.
+
+### Swarm "roast" gives better plan critique than solo CTO review
+**Proof:** Original plan scored 12/100 avg (Security 10, Scaling 12, Product 20, Code 10, Watchdog 10). Revised plan after incorporating roast = significantly better. Solo CTO review would have missed: security audit before launch, load testing gap, zero retention strategy.
+**Rule:** Before any major sprint plan → run roast at temp 1.0. Accept the pain.
+
+---
+
+## Pattern: User Simulation Finds What Automated Tests Miss (Session 54, 2026-03-28)
+
+**Method:** CTO acts as 3 real personas (Leyla/Wali/Rashad) with specific context:
+- Leyla: 22yo, mobile only, Baku, AZ native, first time using the product
+- Wali: org admin, desktop, 50+ volunteers to manage, time-poor
+- Rashad: returning user, wants to share results, on TikTok
+**Result:** Found 7 critical/high UX gaps that 512 unit tests and all automated checks missed.
+**Gaps found:**
+1. Download Card → 404 (no route existed)
+2. Copy link → silent failure on HTTP (clipboard API blocked)
+3. Onboarding contradiction (optional field required for next step)
+4. Assessment time unknown (no estimate before starting)
+5. League position hardcoded null
+6. Share heading missing (users missed the buttons)
+7. Empty activity feed showed wrong key
+**Rule:** Before any sprint is "done" — walk through the full product as Leyla (mobile, AZ, first time). Not as CTO who knows where everything is. As a user who doesn't.
+**Anti-pattern:** 512 tests pass → sprint complete. Tests test code. Simulation tests the product.
+
+---
+
+## Pattern: Advisory Lock for Atomic Database Operations (Session 53, 2026-03-28)
+
+**Problem:** SELECT balance → INSERT deduction = two async calls. Concurrent requests both pass the check → both insert → negative balance (double-spend TOCTOU).
+**Solution:** PostgreSQL `pg_advisory_lock(key)` scoped to `user_id`. Lock acquired inside DB function, SELECT+INSERT are atomic.
+**Implementation:** `deduct_crystals_atomic()` RPC in `supabase/migrations/20260328000040_atomic_crystal_deduction.sql`
+**Key detail:** Lock key derived from UUID via md5+bit casting (bigint). Released on error path too (EXCEPTION WHEN OTHERS → unlock → RAISE).
+**Rule:** ANY operation that follows SELECT→then→write pattern on financial/crystal/score data MUST use advisory lock or DB-level transaction. Never two separate async calls.
+
+---
+
+## Pattern: JSONB Merge vs Overwrite Bug (Session 51, 2026-03-27)
+
+**Bug:** `upsert_aura_score` used `competency_scores = p_competency_scores`. When user completed leadership assessment after communication, communication score was DELETED.
+**Fix:** `competency_scores = aura_scores.competency_scores || p_competency_scores` — JSONB merge.
+**Rule:** Any `UPDATE ... SET jsonb_column = new_value` on a column that accumulates data → MUST use `||` merge operator. Never full overwrite.
+**Discovery method:** E2E Leyla journey caught it. Unit tests didn't — they only tested single-competency scenarios.
+
+---
+
+## Pattern: OpenSpace MCP for Reusable Skills (Session 55, 2026-03-28)
+
+**What it is:** OpenSpace converts solved problems into reusable skill files. Next time same problem appears → skill loads instead of re-solving from scratch.
+**Setup:** `C:/tools/openspace-venv`, configured in `.mcp.json`. Tools: `execute_task`, `search_skills`, `upload_skill`, `fix_skill`.
+**Skill location:** `docs/openspace-skills/` — OpenSpace-format directories with `skill.md`.
+**Rule:** After solving any non-trivial problem (security audit, API design pattern, DB migration pattern) → `upload_skill` to preserve it.
+**First skill created:** `docs/openspace-skills/volaura-security-review/skill.md` — 10-point OWASP checklist for FastAPI endpoints.

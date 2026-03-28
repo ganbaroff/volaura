@@ -64,3 +64,6 @@ decision-simulation-review.html
 volaura-preview.jsx
 
 .vercel
+
+# Per-session protocol state (not committed)
+.claude/protocol-state.json

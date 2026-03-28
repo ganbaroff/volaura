@@ -85,7 +85,9 @@
       "Bash(git commit:*)",
       "Bash(py -3.12 --version)",
       "Bash(python3.12 --version)",
-      "Bash(where python:*)"
+      "Bash(where python:*)",
+      "Bash(pnpm --filter web tsc --noEmit)",
+      "Bash(npx tsc:*)"
     ],
     "deny": [
       "Bash(rm -rf*)",
@@ -112,6 +114,10 @@
       {
         "matcher": "Edit|Write|Bash",
         "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/protocol-enforce.sh"
+          },
           {
             "type": "command",
             "command": "bash .claude/hooks/pre-tool-decision-gate.sh"

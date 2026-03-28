@@ -10,10 +10,26 @@ DSP prediction vs reality, CEO response gate. Основано на критик
 
 ---
 
+## ⚡ БЫСТРЫЙ СТАРТ (используй это, не читай весь файл)
+
+```
+1. Открыть: docs/TASK-PROTOCOL-CHECKLIST.md
+2. Скопировать шаблон
+3. Заполнять шаг за шагом
+4. Каждый шаг → писать .claude/protocol-state.json
+5. После Step 6 → production код разблокирован автоматически
+```
+
+**Хук `protocol-enforce.sh` блокирует Edit/Write на `apps/` `supabase/` `.github/`
+пока `.claude/protocol-state.json` не содержит `current_step >= 6`.**
+
+---
+
 ## Как использовать
 
 Yusif отправляет этот файл перед каждой задачей: **"Загрузи TASK-PROTOCOL.md и начни."**
-Claude объявляет: `"TASK-PROTOCOL v2.0 loaded."` и следует шагам.
+Claude открывает `docs/TASK-PROTOCOL-CHECKLIST.md`, копирует шаблон, заполняет шаги.
+Объявление `"loaded"` без заполнения шаблона — не артефакт. Хук всё равно заблокирует.
 
 **Главное правило:** Каждый шаг производит **именованный артефакт**.
 Нельзя перейти к шагу N без артефакта шага N-1.

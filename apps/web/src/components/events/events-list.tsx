@@ -3,14 +3,14 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { EventCard } from "./event-card";
-import type { MockEvent } from "@/lib/mock-data";
+import type { EventResponse } from "@/lib/api/types";
 import { CalendarX } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
 type FilterTab = "all" | "upcoming" | "past";
 
 interface EventsListProps {
-  events: MockEvent[];
+  events: EventResponse[];
   locale: string;
 }
 
@@ -22,7 +22,9 @@ export function EventsList({ events, locale }: EventsListProps) {
 
   const filtered = events.filter((e) => {
     if (activeFilter === "all") return true;
-    return e.status === activeFilter || (activeFilter === "upcoming" && e.status === "live");
+    const isPast = e.status === "completed" || e.status === "closed" || e.status === "cancelled";
+    if (activeFilter === "past") return isPast;
+    return !isPast; // "upcoming" = open
   });
 
   return (

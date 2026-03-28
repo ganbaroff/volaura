@@ -1,18 +1,19 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
-import { MapPin, Users, Calendar, CheckCircle2 } from "lucide-react";
+import { MapPin, Users, Calendar, CheckCircle2, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
-import type { MockEvent } from "@/lib/mock-data";
+import { useRegisterForEvent } from "@/hooks/queries/use-events";
+import type { EventResponse } from "@/lib/api/types";
 
 interface EventCardProps {
-  event: MockEvent;
+  event: EventResponse;
   locale: string;
 }
 
-function formatDate(iso: string, locale: string): string {
+function formatDate(iso: string | Date, locale: string): string {
   return new Date(iso).toLocaleDateString(locale === "az" ? "az-Latn-AZ" : "en-US", {
     day: "numeric",
     month: "long",
@@ -20,36 +21,40 @@ function formatDate(iso: string, locale: string): string {
   });
 }
 
+/** Maps API status to display category */
+function getDisplayStatus(status: string): "live" | "upcoming" | "past" {
+  if (status === "open") return "upcoming";
+  if (status === "completed" || status === "closed" || status === "cancelled") return "past";
+  return "upcoming";
+}
+
 const STATUS_STYLES = {
-  live: "bg-red-500/10 text-red-600 border-red-200",
+  live:     "bg-red-500/10 text-red-600 border-red-200",
   upcoming: "bg-emerald-500/10 text-emerald-700 border-emerald-200",
-  past: "bg-muted text-muted-foreground border-border",
+  past:     "bg-muted text-muted-foreground border-border",
 } as const;
 
 export function EventCard({ event, locale }: EventCardProps) {
   const { t } = useTranslation();
-  const [registering, setRegistering] = useState(false);
-  const [registered, setRegistered] = useState(false);
   const isMounted = useRef(true);
+  const registerMutation = useRegisterForEvent();
 
   useEffect(() => {
     isMounted.current = true;
     return () => { isMounted.current = false; };
   }, []);
 
-  const isFull = event.currentVolunteers >= event.maxVolunteers;
-  const spotsLeft = event.maxVolunteers - event.currentVolunteers;
-  const isPast = event.status === "past";
-  const title = locale === "az" ? event.titleAz : event.title;
-  const location = locale === "az" ? event.locationAz : event.location;
+  const displayStatus = getDisplayStatus(event.status);
+  const isPast = displayStatus === "past";
+  const isOpen = event.status === "open";
+  const isFull = event.capacity != null && event.capacity <= 0;
+  const title = locale === "az" ? event.title_az : event.title_en;
 
-  async function handleRegister() {
-    // Session 11: replace with real POST /api/events/{id}/register
-    setRegistering(true);
-    await new Promise((r) => setTimeout(r, 800)); // simulate API
-    if (!isMounted.current) return;
-    setRegistering(false);
-    setRegistered(true);
+  const registered = registerMutation.isSuccess;
+  const registering = registerMutation.isPending;
+
+  function handleRegister() {
+    registerMutation.mutate({ eventId: event.id });
   }
 
   return (
@@ -59,74 +64,44 @@ export function EventCard({ event, locale }: EventCardProps) {
     >
       {/* Status bar */}
       <div
-        className={cn(
-          "px-4 py-1.5 text-xs font-semibold border-b",
-          STATUS_STYLES[event.status]
-        )}
+        className={cn("px-4 py-1.5 text-xs font-semibold border-b", STATUS_STYLES[displayStatus])}
         aria-live="polite"
       >
-        {event.status === "live"
+        {displayStatus === "live"
           ? t("events.live")
-          : event.status === "upcoming"
+          : displayStatus === "upcoming"
             ? t("events.upcoming")
             : t("events.past")}
       </div>
 
       <div className="flex flex-1 flex-col p-5 gap-4">
-        {/* Title + Organizer */}
-        <div>
-          <h3 className="mb-0.5 text-base font-semibold leading-snug text-foreground line-clamp-2">
-            {title}
-          </h3>
-          <p className="text-xs text-muted-foreground">{event.organizerName}</p>
-        </div>
+        {/* Title */}
+        <h3 className="text-base font-semibold leading-snug text-foreground line-clamp-2">
+          {title}
+        </h3>
 
         {/* Meta */}
         <div className="flex flex-col gap-1.5 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <Calendar className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-            {/* suppressHydrationWarning: toLocaleDateString output differs between
-                Node.js (server, limited ICU) and browser (full locale support) */}
-            <span suppressHydrationWarning>{formatDate(event.startDate, locale)}</span>
+            {/* suppressHydrationWarning: toLocaleDateString differs server/browser */}
+            <span suppressHydrationWarning>{formatDate(event.start_date, locale)}</span>
           </div>
-          <div className="flex items-center gap-2">
-            <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-            <span className="truncate">{location}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Users className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-            <span>
-              {t("events.volunteersCount", { count: event.currentVolunteers })}
-              {!isPast && event.maxVolunteers > 0 && (
-                <span className="ml-1 text-xs">
-                  {isFull ? (
-                    <span className="text-destructive font-medium">
-                      · {t("events.full")}
-                    </span>
-                  ) : (
-                    <span className="text-emerald-600 font-medium">
-                      · {t("events.spotsLeft", { count: spotsLeft })}
-                    </span>
-                  )}
-                </span>
-              )}
-            </span>
-          </div>
-        </div>
-
-        {/* Tags */}
-        {event.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5" aria-label="Event tags">
-            {event.tags.slice(0, 3).map((tag) => (
-              <span
-                key={tag}
-                className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
-              >
-                {tag}
+          {event.location && (
+            <div className="flex items-center gap-2">
+              <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span className="truncate">{event.location}</span>
+            </div>
+          )}
+          {event.capacity != null && (
+            <div className="flex items-center gap-2">
+              <Users className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <span>
+                {t("events.capacity", { count: event.capacity, defaultValue: `${event.capacity} spots` })}
               </span>
-            ))}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
 
         {/* Actions */}
         <div className="mt-auto flex items-center gap-2 pt-1">
@@ -137,7 +112,7 @@ export function EventCard({ event, locale }: EventCardProps) {
             {t("events.viewDetails")}
           </Link>
 
-          {!isPast && (
+          {isOpen && (
             <button
               type="button"
               onClick={handleRegister}
@@ -161,7 +136,7 @@ export function EventCard({ event, locale }: EventCardProps) {
                   {t("events.registered")}
                 </span>
               ) : registering ? (
-                t("events.registering")
+                <Loader2 className="mx-auto h-4 w-4 animate-spin" aria-hidden="true" />
               ) : isFull ? (
                 t("events.full")
               ) : (

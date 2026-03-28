@@ -146,3 +146,44 @@ class OrgVolunteerRow(BaseModel):
     badge_tier: str | None = None
     competencies_completed: int    # how many competencies this user completed for this org
     last_activity: str | None = None   # ISO datetime of last completed session
+
+
+
+# ── Intro Requests ─────────────────────────────────────────────────────────────
+
+class IntroRequestCreate(BaseModel):
+    volunteer_id: str
+    project_name: str = Field(..., min_length=2, max_length=200)
+    timeline: str
+    message: str | None = Field(default=None, max_length=500)
+
+    @field_validator("timeline")
+    @classmethod
+    def validate_timeline(cls, v: str) -> str:
+        allowed = {"urgent", "normal", "flexible"}
+        if v not in allowed:
+            raise ValueError(f"timeline must be one of {allowed}")
+        return v
+
+    @field_validator("volunteer_id")
+    @classmethod
+    def validate_volunteer_uuid(cls, v: str) -> str:
+        import uuid as _uuid
+        try:
+            _uuid.UUID(v)
+        except ValueError:
+            raise ValueError("volunteer_id must be a valid UUID")
+        return v
+
+
+class IntroRequestResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    org_id: str
+    volunteer_id: str
+    project_name: str
+    timeline: str
+    message: str | None = None
+    status: str
+    created_at: datetime

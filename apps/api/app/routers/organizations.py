@@ -14,6 +14,8 @@ from app.schemas.organization import (
     AssignAssessmentRequest,
     AssignmentResponse,
     BadgeDistribution,
+    IntroRequestCreate,
+    IntroRequestResponse,
     OrgDashboardStats,
     OrgVolunteerRow,
     OrganizationCreate,
@@ -482,3 +484,113 @@ async def assign_assessments(
         errors=errors,
         assignments=assignments,
     )
+
+
+# ── Intro Requests ─────────────────────────────────────────────────────────────
+
+@router.post("/intro-requests", response_model=IntroRequestResponse, status_code=201)
+@limiter.limit("5/hour")
+async def create_intro_request(
+    request: Request,
+    payload: IntroRequestCreate,
+    db: SupabaseAdmin,
+    user_id: CurrentUserId,
+) -> IntroRequestResponse:
+    """Send an introduction request from an org to a volunteer.
+
+    Requirements:
+    - Caller must be account_type='organization' (dual-checked: this endpoint + DB)
+    - Volunteer must have visible_to_orgs=True
+    - Only one pending request per org-volunteer pair (DB unique constraint)
+    Creates a notification for the volunteer.
+    """
+    # Dual org-role check: DB lookup on caller's account_type
+    caller_result = (
+        await db.table("profiles")
+        .select("account_type, display_name, username")
+        .eq("id", str(user_id))
+        .maybe_single()
+        .execute()
+    )
+    if not caller_result.data or caller_result.data.get("account_type") != "organization":
+        raise HTTPException(
+            status_code=403,
+            detail={"code": "ORG_REQUIRED", "message": "Only organization accounts can send introduction requests"},
+        )
+    org_name = caller_result.data.get("display_name") or caller_result.data.get("username") or "An organization"
+
+    # Verify volunteer is opted in and exists
+    volunteer_result = (
+        await db.table("profiles")
+        .select("id, display_name, username, visible_to_orgs, account_type")
+        .eq("id", payload.volunteer_id)
+        .maybe_single()
+        .execute()
+    )
+    if not volunteer_result.data:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "VOLUNTEER_NOT_FOUND", "message": "Volunteer not found"},
+        )
+    vol = volunteer_result.data
+    if not vol.get("visible_to_orgs"):
+        raise HTTPException(
+            status_code=403,
+            detail={"code": "NOT_DISCOVERABLE", "message": "This volunteer has not opted in to org discovery"},
+        )
+    if vol.get("account_type") == "organization":
+        raise HTTPException(
+            status_code=422,
+            detail={"code": "INVALID_TARGET", "message": "Cannot send introduction request to an organization account"},
+        )
+
+    # Insert intro request (unique constraint handles duplicate pending)
+    try:
+        intro_result = (
+            await db.table("intro_requests")
+            .insert({
+                "org_id": str(user_id),
+                "volunteer_id": payload.volunteer_id,
+                "project_name": payload.project_name,
+                "timeline": payload.timeline,
+                "message": payload.message,
+                "status": "pending",
+            })
+            .execute()
+        )
+    except Exception as e:
+        err_str = str(e)
+        if "unique" in err_str.lower() or "duplicate" in err_str.lower():
+            raise HTTPException(
+                status_code=409,
+                detail={"code": "REQUEST_ALREADY_PENDING", "message": "You already have a pending introduction request for this volunteer"},
+            ) from e
+        logger.error("Failed to create intro request", error=err_str[:300])
+        raise HTTPException(status_code=500, detail={"code": "CREATE_FAILED", "message": "Failed to create introduction request"}) from e
+
+    if not intro_result.data:
+        raise HTTPException(status_code=500, detail={"code": "CREATE_FAILED", "message": "Failed to create introduction request"})
+
+    intro = intro_result.data[0]
+
+    # Create notification for the volunteer (fire-and-forget, don't fail the request if this errors)
+    vol_name = vol.get("display_name") or vol.get("username") or "Volunteer"
+    try:
+        await db.table("notifications").insert({
+            "user_id": payload.volunteer_id,
+            "type": "intro_request",
+            "title": f"{org_name} wants to connect",
+            "body": f"Introduction request for: {payload.project_name}",
+            "reference_id": intro["id"],
+            "is_read": False,
+        }).execute()
+    except Exception as e:
+        logger.warning("Failed to create notification for intro request", error=str(e)[:200], intro_id=intro["id"])
+
+    logger.info(
+        "Intro request created",
+        org_id=str(user_id),
+        volunteer_id=payload.volunteer_id,
+        intro_id=intro["id"],
+    )
+    return IntroRequestResponse(**intro)

@@ -91,6 +91,41 @@ export function useOrgDashboard() {
   });
 }
 
+export interface IntroRequestPayload {
+  volunteer_id: string;
+  project_name: string;
+  timeline: "urgent" | "normal" | "flexible";
+  message?: string;
+}
+
+export interface IntroRequestResult {
+  id: string;
+  org_id: string;
+  volunteer_id: string;
+  project_name: string;
+  timeline: string;
+  message: string | null;
+  status: string;
+  created_at: string;
+}
+
+/** Send a Request Introduction to a volunteer */
+export function useCreateIntroRequest() {
+  const getToken = useAuthToken();
+
+  return useMutation<IntroRequestResult, ApiError, IntroRequestPayload>({
+    mutationFn: async (payload) => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      return apiFetch<IntroRequestResult>("/api/organizations/intro-requests", {
+        token,
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+    },
+  });
+}
+
 /** List volunteers assigned assessments by this org */
 export function useOrgVolunteers(params?: { status?: string; limit?: number; offset?: number }) {
   const getToken = useAuthToken();

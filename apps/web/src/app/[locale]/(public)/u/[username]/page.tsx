@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AuraRadarChart } from "@/components/aura/radar-chart";
 import { ShareButtons } from "@/components/aura/share-buttons";
+import { IntroRequestButton } from "@/components/profile/intro-request-button";
 import initTranslations from "@/app/i18n";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
@@ -159,6 +160,9 @@ export default async function PublicProfilePage({ params }: Props) {
             {t("publicProfile.auraNotAvailable")}
           </div>
         )}
+
+        {/* Org-only: Request Introduction */}
+        <IntroRequestButton volunteerId={profile.id} volunteerName={name} />
 
         {/* CTA */}
         <div className="rounded-xl border border-primary/20 bg-primary/5 p-5 text-center space-y-3">

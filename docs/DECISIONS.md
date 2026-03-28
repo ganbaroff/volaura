@@ -1,5 +1,12 @@
 # Architecture Decisions Log
 
+## Session 63 Bug Audit — 2026-03-29 (3 confirmed bugs fixed)
+
+✓ activity.py: events_attended always 0 — status values 'attended'/'checked_in'/'registered' don't exist in schema (CHECK: pending|approved|rejected|waitlisted|cancelled). Fixed: .eq("status","approved").not_.is_("checked_in_at","null"). Dashboard stats now show real data.
+✓ skills.py: _load_skill() blocking file I/O in async endpoint — event loop stall under concurrent load. Fixed: asyncio.to_thread. HTTPException(404) propagates correctly.
+✓ engine.py: `from .agent_hive import AgentStatus` inside provider filter loop — moved to top-level import.
+→ Bug #1 was silent (exception caught, logged as warning, 0 returned). All users saw 0 events_attended since feature shipped. No retroactive fix needed — data was never corrupted, just uncounted.
+
 ## Session 63 Retrospective — 2026-03-29 (Sprints A9-A10: Swarm Upgrade + Pre-Launch — Autonomous Sprints 9-10/10)
 
 ✓ A9: REACT-HOOKS-PATTERNS.md created — 5 rules, prevents Class 1 bug (hooks in callbacks). agent-roster.md updated with new routing rows and Firuza/Nigar accuracy tracking. CLAUDE.md Skills Matrix updated.

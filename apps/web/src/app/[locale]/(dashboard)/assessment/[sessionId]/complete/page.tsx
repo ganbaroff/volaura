@@ -18,6 +18,7 @@ import {
   RotateCcw,
   ChevronDown,
   ChevronUp,
+  ListChecks,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { createClient } from "@/lib/supabase/client";
@@ -453,6 +454,25 @@ export default function AssessmentResultsPage() {
             competencyId={result.competency_slug}
             score={score}
           />
+        </motion.div>
+      )}
+
+      {/* Question breakdown link */}
+      {result && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.15 }}
+        >
+          <Button
+            onClick={() => router.push(`/${locale}/assessment/${sessionId}/questions`)}
+            variant="outline"
+            size="sm"
+            className="w-full gap-2"
+          >
+            <ListChecks className="size-4" />
+            {t("assessment.seeBreakdown")}
+          </Button>
         </motion.div>
       )}
 

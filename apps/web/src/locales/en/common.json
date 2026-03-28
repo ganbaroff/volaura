@@ -185,7 +185,16 @@
     "coachingExcellent": "Keep up the excellent work!",
     "coachingTryThis": "Try this:",
     "coachingError": "Unable to load coaching tips",
-    "coachingLoading": "Generating your coaching..."
+    "coachingLoading": "Generating your coaching...",
+    "seeBreakdown": "See Question Breakdown",
+    "questionBreakdown": "Question Breakdown",
+    "correct": "Correct",
+    "incorrect": "Incorrect",
+    "responseTime": "{{n}}s",
+    "difficulty_expert": "Expert",
+    "backToResults": "Back to Results",
+    "sessionNotFound": "Session not found or not yet complete.",
+    "questionsCorrect": "{{correct}} of {{total}} correct"
   },
   "aura": {
     "title": "Your AURA Score",

@@ -185,7 +185,16 @@
     "coachingExcellent": "Əla işinizi davam etdirin!",
     "coachingTryThis": "Bunu sınayın:",
     "coachingError": "Məsləhətlər yüklənə bilmədi",
-    "coachingLoading": "Məsləhətləriniz hazırlanır..."
+    "coachingLoading": "Məsləhətləriniz hazırlanır...",
+    "seeBreakdown": "Sual Təfsilatına Bax",
+    "questionBreakdown": "Sual Təfsilatı",
+    "correct": "Düzgün",
+    "incorrect": "Səhv",
+    "responseTime": "{{n}}s",
+    "difficulty_expert": "Ekspert",
+    "backToResults": "Nəticələrə Qayıt",
+    "sessionNotFound": "Sessiya tapılmadı və ya hələ tamamlanmayıb.",
+    "questionsCorrect": "{{total}}-dən {{correct}} düzgün"
   },
   "aura": {
     "title": "Sizin AURA Balınız",

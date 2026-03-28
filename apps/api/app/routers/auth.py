@@ -142,15 +142,15 @@ async def get_me(
     db: SupabaseAdmin,
 ) -> dict:
     """Get current user info from JWT."""
+    # maybe_single() returns None (not an exception) when no row exists.
+    # .single() throws APIError 406 when no profile — breaks new users who skipped onboarding.
     result = (
         await db.table("profiles")
         .select("id, username, display_name, avatar_url")
         .eq("id", user_id)
-        .single()
+        .maybe_single()
         .execute()
     )
-    if not result.data:
-        return {"user_id": user_id, "profile": None}
     return {"user_id": user_id, "profile": result.data}
 
 

@@ -57,15 +57,18 @@
 
 ---
 
-## External Repos Found
+## External Repos Found (live research, 2026-03-29)
 
 | Repo | Stars | What It Does | Our Verdict |
 |------|-------|-------------|-------------|
-| mem0ai/mem0 | ~37k | Hybrid memory (vector + KV + graph). MCP server available. Supabase/pgvector backend. | We already have StructuredMemory which is more domain-specific. Skip unless we need MCP integration. |
-| getzep/graphiti | ~20k | Temporal knowledge graph (arXiv:2501.13956). Facts have validity windows — "what did we know on date X?" | Interesting for failure network. Consider for B4. |
+| mem0ai/mem0 | ~37k | Hybrid memory (vector + KV + graph). MCP server. Supabase/pgvector backend. agent_id scoping. | Our StructuredMemory is more domain-specific. Add if we need MCP integration for Claude Code to query swarm memory directly. |
+| getzep/graphiti | ~20k | Temporal knowledge graph (arXiv:2501.13956). Facts have temporal validity windows. 94.8% DMR benchmark. Needs Neo4j (separate infra). | **B4 candidate** — `agent-feedback-log.md` is append-only; Graphiti would enable "Session 48 finding superseded by Session 51" without deletion. |
+| letta-ai/letta | ~16k | OS-inspired memory hierarchy (core/archival/episodic). `.af` agent-file format — serialized agent state. | Skip for now (requires running Letta server). `agent-file` format maps onto our `agent-roster.md` concept — revisit when agents need portable state. |
+| topoteretes/cognee | ~? | ECL pipeline (Extract→Cognify→Load). Reads .md files natively. Cross-agent knowledge sharing. | Can ingest existing `memory/swarm/` markdown into queryable graph. Low migration effort. Evaluate if semantic search over swarm memory becomes a bottleneck. |
+| MemTensor/MemOS | ~? | MemCubes (arXiv:2507.03724, EMNLP 2025). OpenClaw Plugin = "Persistent skill memory for cross-task skill reuse and evolution." 159% improvement in temporal reasoning. | **Conceptually identical to our skill-evolution-log.md** — but automated. **B4-B5 candidate**. Linux-ready. |
 | stanfordnlp/dspy | ~25k | Systematic prompt optimization (SIMBA/MIPROv2). Needs 20-50+ labeled examples. | Implement after 50+ calibrated outcomes exist. |
 | noahshinn/reflexion | NeurIPS 2023 | Verbal post-mortems stored as episodic memory. 91% vs 80% on HumanEval. | Implement as B3. |
-| Darwin Gödel Machine | arXiv 2025 | Population-based agent evolution with Archive Trees. SWE-bench 20%→50%. | Research-only for now. |
+| Darwin Gödel Machine | arXiv 2025 | Population-based agent evolution with Archive Trees. SWE-bench 20%→50%. | Research-only for now. Our `autonomous_upgrade.py` is the linear version. |
 
 ---
 

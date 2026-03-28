@@ -61,6 +61,12 @@ class AgentStatus(str, Enum):
     MEMBER = "member"              # Competency confirmed — full 1.0x weight
     SENIOR = "senior"              # 50+ decisions, accuracy ≥ 70% — 1.1x weight
     LEAD = "lead"                  # Team lead for their group — 1.2x weight
+    QUARANTINE = "quarantine"      # Chronic underperformer — weight 0.3x, proposals flagged
+                                   # SentinelNet pattern (arXiv 2509.14956): credibility-based
+                                   # isolation. Agent stays active (not removed) but outputs
+                                   # go to quarantine-inbox for CTO review before acting.
+                                   # Rehabilitation: accuracy must recover to ≥ MEMBER threshold
+                                   # over next 10 calibrated decisions to auto-restore.
 
 
 STATUS_WEIGHTS: dict[str, float] = {
@@ -68,9 +74,11 @@ STATUS_WEIGHTS: dict[str, float] = {
     AgentStatus.MEMBER: 1.0,
     AgentStatus.SENIOR: 1.1,
     AgentStatus.LEAD: 1.2,
+    AgentStatus.QUARANTINE: 0.3,  # Still contributes but with minimal weight
 }
 
 STATUS_ORDER = [
+    AgentStatus.QUARANTINE,   # lowest
     AgentStatus.PROBATIONARY,
     AgentStatus.MEMBER,
     AgentStatus.SENIOR,
@@ -152,6 +160,12 @@ class AgentProfile(BaseModel):
 
     # Notable moments
     notable_decisions: list[str] = []  # decision_ids where agent was uniquely correct
+
+    # SentinelNet (arXiv 2509.14956) — credibility tracking
+    credibility_score: float = 1.0     # 0.0–1.0. Decays on wrong, recovers on correct.
+    consecutive_failures: int = 0      # reset on any correct decision
+    quarantine_reason: str = ""        # why this agent was quarantined (empty if not)
+    quarantine_since: str | None = None  # timestamp when quarantine started
 
     # Hive position
     current_group: str | None = None
@@ -238,6 +252,11 @@ class HiveExaminer:
     MIN_DOMAIN_SAMPLES: int = 3            # min decisions per domain to judge
     NOTABLE_CONFIDENCE_THRESHOLD: float = 0.85  # confidence needed to mark decision notable
 
+    # SentinelNet quarantine thresholds (arXiv 2509.14956)
+    QUARANTINE_MIN_DECISIONS: int = 15     # minimum calibrated decisions before quarantine is possible
+    QUARANTINE_ACCURACY_THRESHOLD: float = 0.25  # accuracy below this → quarantine
+    QUARANTINE_CONSECUTIVE_FAILURES: int = 5     # 5 wrong in a row → quarantine regardless of total
+
     def __init__(self, data_dir: Path | None = None):
         base = (data_dir or Path.home() / ".swarm") / "hive"
         self.profiles_dir = base / "profiles"
@@ -280,6 +299,32 @@ class HiveExaminer:
     def get_weight_map(self, models: list[str]) -> dict[str, float]:
         """Return {model: multiplier} for a list of models."""
         return {m: self.get_weight_multiplier(m) for m in models}
+
+    def is_quarantined(self, model: str) -> bool:
+        """Return True if this agent is currently in QUARANTINE status.
+
+        Used by engine.py to flag proposals before committing to inbox.
+        Quarantined agents still run and can contribute (weight 0.3x),
+        but their proposals are marked for CTO review.
+        """
+        p = self.get_profile(model)
+        return p is not None and p.status == AgentStatus.QUARANTINE
+
+    def get_quarantine_summary(self) -> list[dict]:
+        """Return all currently quarantined agents with their reason."""
+        all_profiles = self._load_all_profiles()
+        return [
+            {
+                "model": p.model,
+                "reason": p.quarantine_reason,
+                "since": p.quarantine_since,
+                "accuracy": p.accuracy_overall,
+                "decisions": p.decisions_made,
+                "credibility": p.credibility_score,
+            }
+            for p in all_profiles
+            if p.status == AgentStatus.QUARANTINE
+        ]
 
     # ------------------------------------------------------------------
     # Public: Onboarding
@@ -375,6 +420,9 @@ class HiveExaminer:
 
         if was_correct is True:
             profile.decisions_correct += 1
+            profile.consecutive_failures = 0  # reset streak
+            # Credibility recovery: +5% per correct (capped at 1.0)
+            profile.credibility_score = min(1.0, profile.credibility_score + 0.05)
             # Update domain accuracy
             n = profile.domain_decision_counts.get(domain, 0) + 1
             profile.domain_decision_counts[domain] = n
@@ -383,6 +431,9 @@ class HiveExaminer:
             profile.accuracy_by_domain[domain] = old_acc + (1.0 - old_acc) / n
         elif was_correct is False:
             profile.decisions_wrong += 1
+            profile.consecutive_failures += 1
+            # Credibility decay: -10% per wrong (capped at 0.0)
+            profile.credibility_score = max(0.0, profile.credibility_score - 0.10)
             n = profile.domain_decision_counts.get(domain, 0) + 1
             profile.domain_decision_counts[domain] = n
             old_acc = profile.accuracy_by_domain.get(domain, 0.0)
@@ -832,13 +883,61 @@ class HiveExaminer:
     # ------------------------------------------------------------------
 
     def _recompute_status(self, profile: AgentProfile) -> None:
-        """Recompute status and weight based on performance data."""
+        """Recompute status and weight based on performance data.
+
+        SentinelNet (B6): agents can now enter QUARANTINE (downward path).
+        Two conditions trigger quarantine:
+        1. Chronic underperformer: 15+ calibrated decisions AND accuracy < 25%
+        2. Streak: 5 consecutive wrong answers regardless of total count
+
+        Rehabilitation: quarantined agents auto-restore when accuracy recovers
+        to ≥ MEMBER threshold over their recent decisions.
+        """
         if profile.is_team_lead:
             return  # leads keep their status until dethroned
 
         d = profile.decisions_made
+        calibrated = profile.decisions_correct + profile.decisions_wrong
         a = profile.accuracy_overall
 
+        # --- QUARANTINE check (takes priority over promotion) ---
+        chronic = (
+            calibrated >= self.QUARANTINE_MIN_DECISIONS
+            and a < self.QUARANTINE_ACCURACY_THRESHOLD
+        )
+        streak = profile.consecutive_failures >= self.QUARANTINE_CONSECUTIVE_FAILURES
+
+        if chronic or streak:
+            if profile.status != AgentStatus.QUARANTINE:
+                # New quarantine event — log the reason
+                if chronic:
+                    profile.quarantine_reason = (
+                        f"Chronic underperformer: {calibrated} decisions, "
+                        f"accuracy {a:.0%} < {self.QUARANTINE_ACCURACY_THRESHOLD:.0%} threshold"
+                    )
+                else:
+                    profile.quarantine_reason = (
+                        f"Streak: {profile.consecutive_failures} consecutive wrong answers"
+                    )
+                profile.quarantine_since = datetime.now(timezone.utc).isoformat()
+                logger.warning(
+                    "Hive: {m} QUARANTINED — {r}",
+                    m=profile.model, r=profile.quarantine_reason,
+                )
+            profile.status = AgentStatus.QUARANTINE
+            profile.weight_multiplier = STATUS_WEIGHTS[AgentStatus.QUARANTINE]
+            return
+
+        # --- REHABILITATION: was quarantined, now recovering ---
+        if profile.status == AgentStatus.QUARANTINE and a >= self.MEMBER_ACCURACY_THRESHOLD:
+            logger.info(
+                "Hive: {m} rehabilitated — accuracy {a:.0%} restored to member threshold",
+                m=profile.model, a=a,
+            )
+            profile.quarantine_reason = ""
+            profile.quarantine_since = None
+
+        # --- Normal promotion logic ---
         if d >= self.SENIOR_DECISIONS and a >= self.SENIOR_ACCURACY_THRESHOLD:
             new = AgentStatus.SENIOR
         elif d >= self.PROBATIONARY_DECISIONS and a >= self.MEMBER_ACCURACY_THRESHOLD:

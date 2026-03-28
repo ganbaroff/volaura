@@ -156,9 +156,18 @@ class SwarmEngine:
                 logger.info("Dead weight: {m} blacklisted (never produces valid JSON)", m=model)
                 continue
 
-            # Check hive profile for chronic failure
+            # Check hive profile for chronic failure or quarantine
             profile = self.hive.get_profile(model)
             if profile:
+                # Remove if SentinelNet QUARANTINE — credibility too low to dispatch
+                from .agent_hive import AgentStatus as _AS
+                if profile.status == _AS.QUARANTINE:
+                    logger.info(
+                        "Dead weight: {m} quarantined ({r})",
+                        m=model, r=profile.quarantine_reason[:60] if profile.quarantine_reason else "?",
+                    )
+                    continue
+
                 # Remove if 3+ consecutive exam failures
                 if profile.exams_failed >= 3 and profile.exams_passed == 0:
                     logger.info(

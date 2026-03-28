@@ -379,9 +379,8 @@ async def create_generation(
         # Double-entry ledger
         await db.table("game_crystal_ledger").insert({
             "user_id": user_id,
-            "delta": -QUEUE_SKIP_CRYSTAL_COST,
-            "reason": "brandedby_queue_skip",
-            "source_event_type": "crystal_spent",
+            "amount": -QUEUE_SKIP_CRYSTAL_COST,
+            "source": "brandedby_queue_skip",
         }).execute()
 
         crystal_cost = QUEUE_SKIP_CRYSTAL_COST

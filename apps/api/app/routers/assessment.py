@@ -659,6 +659,11 @@ async def get_results(
     user_id: CurrentUserId,
 ) -> AssessmentResultOut:
     """Retrieve results for a completed session."""
+    try:
+        uuid.UUID(session_id)
+    except ValueError:
+        raise HTTPException(status_code=422, detail={"code": "INVALID_SESSION_ID", "message": "session_id must be a valid UUID"})
+
     session_result = (
         await db_user.table("assessment_sessions")
         .select("*")

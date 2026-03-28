@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import secrets
+import uuid
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, HTTPException, Query, Request
@@ -45,6 +46,7 @@ async def list_events(
 @router.get("/{event_id}", response_model=EventResponse)
 async def get_event(event_id: str, db: SupabaseAdmin) -> EventResponse:
     """Get a single event by ID."""
+    _validate_uuid(event_id, "event_id")
     result = await db.table("events").select("*").eq("id", event_id).neq("status", "draft").single().execute()
     if not result.data:
         raise HTTPException(status_code=404, detail={"code": "EVENT_NOT_FOUND", "message": "Event not found"})
@@ -91,6 +93,7 @@ async def update_event(
     db_admin: SupabaseAdmin,
 ) -> EventResponse:
     """Update an event — org owner only."""
+    _validate_uuid(event_id, "event_id")
     update_data = payload.model_dump(mode="json", exclude_none=True)
     if not update_data:
         raise HTTPException(status_code=422, detail={"code": "NO_FIELDS", "message": "No fields to update"})
@@ -111,6 +114,7 @@ async def delete_event(
     user_id: CurrentUserId,
 ) -> None:
     """Delete (cancel) an event — org owner only (RLS enforced)."""
+    _validate_uuid(event_id, "event_id")
     result = await db.table("events").update({"status": "cancelled"}).eq("id", event_id).execute()
     # HIGH-04 + HIGH-06 FIX: verify update succeeded + audit log
     if not result.data:
@@ -130,6 +134,7 @@ async def register_for_event(
     db_admin: SupabaseAdmin,
 ) -> RegistrationResponse:
     """Volunteer registers for an event."""
+    _validate_uuid(event_id, "event_id")
     # Check event is open
     event = await db_admin.table("events").select("status, capacity").eq("id", event_id).single().execute()
     if not event.data:
@@ -181,6 +186,7 @@ async def check_in(
     allowing check-in. Without this, any authenticated user with a leaked
     check-in code could check in volunteers.
     """
+    _validate_uuid(event_id, "event_id")
     # Verify caller is event coordinator (org owner)
     event = await db.table("events").select("organization_id").eq("id", event_id).single().execute()
     if not event.data:
@@ -219,6 +225,7 @@ async def coordinator_rate_volunteer(
     user_id: CurrentUserId,
 ) -> RegistrationResponse:
     """Coordinator rates a volunteer after the event."""
+    _validate_uuid(event_id, "event_id")
     # Verify caller owns the event's organization
     event = await db_admin.table("events").select("organization_id").eq("id", event_id).single().execute()
     if not event.data:
@@ -249,6 +256,7 @@ async def volunteer_rate_event(
     user_id: CurrentUserId,
 ) -> RegistrationResponse:
     """Volunteer rates an event after attending."""
+    _validate_uuid(event_id, "event_id")
     reg = await db.table("registrations").select("*").eq("event_id", event_id).eq("volunteer_id", user_id).single().execute()
     if not reg.data:
         raise HTTPException(status_code=404, detail={"code": "REGISTRATION_NOT_FOUND", "message": "You are not registered for this event"})
@@ -275,6 +283,7 @@ async def list_registrations(
     user_id: CurrentUserId,
 ) -> list[RegistrationResponse]:
     """List registrations for an event — org owner only."""
+    _validate_uuid(event_id, "event_id")
     # SECURITY: Verify requesting user owns the event's organization
     event_result = await db_admin.table("events").select("organization_id").eq("id", event_id).single().execute()
     if not event_result.data:
@@ -296,3 +305,14 @@ async def my_registrations(
     """List the current volunteer's registrations."""
     result = await db.table("registrations").select("*").eq("volunteer_id", user_id).order("registered_at", desc=True).execute()
     return [RegistrationResponse(**row) for row in (result.data or [])]
+
+
+def _validate_uuid(value: str, field_name: str) -> None:
+    """Validate UUID format to prevent injection."""
+    try:
+        uuid.UUID(value)
+    except (ValueError, AttributeError):
+        raise HTTPException(
+            status_code=422,
+            detail={"code": "INVALID_UUID", "message": f"Invalid {field_name} format"},
+        )

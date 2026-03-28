@@ -119,6 +119,7 @@
     background-color: #13131b;
     color: #e4e1ed;
     font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+    overflow-x: hidden; /* Prevent horizontal scroll on mobile at 375px */
   }
 
   /* Scrollbar: subtle, matches surface hierarchy */

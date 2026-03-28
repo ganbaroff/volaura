@@ -11,7 +11,7 @@ export function TopBar({ title }: TopBarProps) {
   const user = useAuthStore((s) => s.user);
 
   return (
-    <header className="glass-header fixed top-0 z-50 flex h-16 w-full items-center justify-between px-6 shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
+    <header className="glass-header fixed top-0 z-50 flex h-16 w-full items-center justify-between px-6 pl-14 md:pl-6 shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
       <h1 className="font-headline text-base font-semibold text-primary">{title}</h1>
       <div className="flex items-center gap-3">
         <LanguageSwitcher />

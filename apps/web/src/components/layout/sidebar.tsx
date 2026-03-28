@@ -64,11 +64,18 @@ export function Sidebar() {
       <button
         onClick={() => setIsOpen(true)}
         aria-label={t("nav.openMenu")}
-        className="fixed left-3 top-3 z-40 flex size-10 items-center justify-center rounded-xl bg-surface-container text-on-surface md:hidden"
+        className="relative fixed left-3 top-3 z-[60] flex size-10 items-center justify-center rounded-xl bg-surface-container text-on-surface md:hidden"
       >
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
           <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
+        {/* Unread notification dot — visible when there are unread notifications */}
+        {unreadCount > 0 && (
+          <span
+            aria-label={`${unreadCount} unread notifications`}
+            className="absolute top-1.5 right-1.5 size-2.5 rounded-full bg-primary"
+          />
+        )}
       </button>
 
       {/* Mobile overlay */}

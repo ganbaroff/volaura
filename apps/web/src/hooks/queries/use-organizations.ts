@@ -126,6 +126,45 @@ export function useCreateIntroRequest() {
   });
 }
 
+// ── Semantic volunteer search ──────────────────────────────────────────────
+
+export interface VolunteerSearchPayload {
+  query: string;
+  min_aura?: number;
+  badge_tier?: "platinum" | "gold" | "silver" | "bronze" | null;
+  limit?: number;
+  offset?: number;
+}
+
+export interface VolunteerSearchResultItem {
+  volunteer_id: string;
+  username: string;
+  display_name: string | null;
+  overall_score: number;
+  badge_tier: string;
+  elite_status: boolean;
+  location: string | null;
+  languages: string[];
+  similarity: number | null;
+}
+
+/** Semantic volunteer search — POST /api/organizations/search/volunteers */
+export function useVolunteerSearch() {
+  const getToken = useAuthToken();
+
+  return useMutation<VolunteerSearchResultItem[], ApiError, VolunteerSearchPayload>({
+    mutationFn: async (payload) => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      return apiFetch<VolunteerSearchResultItem[]>("/api/organizations/search/volunteers", {
+        token,
+        method: "POST",
+        body: JSON.stringify({ limit: 20, ...payload }),
+      });
+    },
+  });
+}
+
 /** List volunteers assigned assessments by this org */
 export function useOrgVolunteers(params?: { status?: string; limit?: number; offset?: number }) {
   const getToken = useAuthToken();

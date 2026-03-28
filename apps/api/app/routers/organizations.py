@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import uuid
 from datetime import datetime, timedelta, timezone
 
@@ -301,7 +302,7 @@ async def list_org_volunteers(
 # ── Volunteer search ──────────────────────────────────────────────────────────
 
 @router.post("/search/volunteers", response_model=list[VolunteerSearchResult])
-@limiter.limit(RATE_DEFAULT)
+@limiter.limit(RATE_DISCOVERY)
 async def search_volunteers(
     request: Request,
     payload: VolunteerSearchRequest,
@@ -310,11 +311,50 @@ async def search_volunteers(
 ) -> list[VolunteerSearchResult]:
     """Semantic volunteer search using pgvector + rule-based fallback.
 
-    Requires B2B auth. Uses Gemini embeddings for semantic search;
-    falls back to rule-based filter if embedding unavailable.
+    Requires organization account. Uses Gemini embeddings for semantic search;
+    falls back to rule-based filter if embedding unavailable or slow.
     """
-    # Attempt semantic search
-    query_embedding = await generate_embedding(payload.query)
+    # Dual org-role check: account_type in profiles + owns an organization row
+    caller = (
+        await db_admin.table("profiles")
+        .select("account_type")
+        .eq("id", str(user_id))
+        .maybe_single()
+        .execute()
+    )
+    if not caller.data or caller.data.get("account_type") != "organization":
+        raise HTTPException(
+            status_code=403,
+            detail={"code": "ORG_REQUIRED", "message": "Only organization accounts can search volunteers"},
+        )
+    org_row = (
+        await db_admin.table("organizations")
+        .select("id")
+        .eq("owner_id", str(user_id))
+        .maybe_single()
+        .execute()
+    )
+    if not org_row.data:
+        raise HTTPException(
+            status_code=403,
+            detail={"code": "ORG_REQUIRED", "message": "Create an organization profile before searching"},
+        )
+
+    # Validate non-empty query
+    if not payload.query.strip():
+        raise HTTPException(
+            status_code=422,
+            detail={"code": "QUERY_REQUIRED", "message": "Search query cannot be empty"},
+        )
+
+    # Attempt semantic embedding with timeout
+    query_embedding = None
+    try:
+        query_embedding = await asyncio.wait_for(generate_embedding(payload.query), timeout=0.8)
+    except asyncio.TimeoutError:
+        logger.warning("Embedding timeout on volunteer search — using rule-based fallback", query=payload.query[:50])
+    except Exception as e:
+        logger.warning("Embedding error on volunteer search — using rule-based fallback", error=str(e)[:100])
 
     if query_embedding:
         rpc_result = await db_admin.rpc(
@@ -327,7 +367,8 @@ async def search_volunteers(
         ).execute()
         rows = (rpc_result.data or [])[payload.offset: payload.offset + payload.limit]
     else:
-        # Rule-based fallback: filter aura_scores + profiles
+        # Rule-based fallback: fetch generously (5× limit), apply filters, then slice
+        fetch_count = min(payload.limit * 5, 100)
         q = (
             db_admin.table("aura_scores")
             .select("volunteer_id, total_score, badge_tier, elite_status")
@@ -335,44 +376,60 @@ async def search_volunteers(
         )
         if payload.badge_tier:
             q = q.eq("badge_tier", payload.badge_tier)
+        aura_result = await q.limit(fetch_count).execute()
+        all_rows = aura_result.data or []
 
-        aura_result = await q.limit(payload.limit + payload.offset).execute()
-        rows = (aura_result.data or [])[payload.offset:]
+        # Enrich with profile data to apply language/location pre-filter
+        if all_rows and (payload.languages or payload.location):
+            pids = [r["volunteer_id"] for r in all_rows]
+            p_result = await db_admin.table("profiles").select(
+                "id, languages, location"
+            ).in_("id", pids).execute()
+            p_map = {p["id"]: p for p in (p_result.data or [])}
+            filtered: list[dict] = []
+            for row in all_rows:
+                p = p_map.get(row["volunteer_id"], {})
+                if payload.languages:
+                    vol_langs = p.get("languages") or []
+                    if not any(lang in vol_langs for lang in payload.languages):
+                        continue
+                if payload.location and payload.location.lower() not in (p.get("location") or "").lower():
+                    continue
+                filtered.append(row)
+            all_rows = filtered
+
+        rows = all_rows[payload.offset: payload.offset + payload.limit]
 
     if not rows:
         return []
 
-    # Enrich with profile data
+    # Enrich with full profile data
     volunteer_ids = [r["volunteer_id"] for r in rows]
     profiles_result = await db_admin.table("profiles").select(
         "id, username, display_name, location, languages"
     ).in_("id", volunteer_ids).execute()
-
     profile_map = {p["id"]: p for p in (profiles_result.data or [])}
 
     results = []
     for row in rows:
         vid = row["volunteer_id"]
-        p = profile_map.get(vid, {})
-
-        # Apply post-filter for languages and location
-        if payload.languages:
-            vol_langs = p.get("languages") or []
-            if not any(lang in vol_langs for lang in payload.languages):
-                continue
-        if payload.location and payload.location.lower() not in (p.get("location") or "").lower():
+        p = profile_map.get(vid)
+        if not p:
+            # Profile missing — skip stale score row
+            logger.warning("Volunteer in aura_scores but no profile found", volunteer_id=vid)
             continue
 
+        sim_raw = row.get("similarity")
         results.append(VolunteerSearchResult(
             volunteer_id=vid,
-            username=p.get("username", vid[:8]),
+            username=p["username"],
             display_name=p.get("display_name"),
-            overall_score=float(row.get("total_score", 0)),
-            badge_tier=row.get("badge_tier", "none"),
+            overall_score=float(row.get("total_score") or 0),
+            badge_tier=row.get("badge_tier") or "none",
             elite_status=bool(row.get("elite_status", False)),
             location=p.get("location"),
             languages=p.get("languages") or [],
-            similarity=row.get("similarity"),
+            similarity=float(sim_raw) if sim_raw is not None else None,
         ))
 
     return results

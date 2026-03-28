@@ -6,6 +6,18 @@
 
 ---
 
+## Session 63 (2026-03-29) — SPRINTS A9-A10: SWARM UPGRADE + PRE-LAUNCH RESILIENCE
+
+| Code | Location | What it does | Status | How to verify |
+|------|----------|-------------|--------|---------------|
+| `REACT-HOOKS-PATTERNS.md` | `docs/engineering/skills/` | 5 rules for React hooks safety: no hooks in callbacks, isMounted, fresh token, one-shot buttons, envelope unwrap. Prevents Class 1 bug. | ✅ CREATED | Load when writing use*.ts files |
+| agent-roster.md routing rows | `memory/swarm/agent-roster.md` | New routing: GDPR deletion → Security, bulk upload → Security, mobile → Product+accessibility, custom hooks → REACT-HOOKS-PATTERNS, useMutation → Architecture | ✅ UPDATED | Read When to Call table |
+| Firuza/Nigar accuracy tracking | `memory/swarm/agent-roster.md` | A1-A8: Firuza 4/4 (execution), Nigar 2/2 (B2B). Both confirmed in council. | ✅ UPDATED | Read Agent Improvement Tracking |
+| CLAUDE.md Skills Matrix | `CLAUDE.md` | Added React hooks skill rows: writing use*.ts + any useMutation/useQuery hook | ✅ UPDATED | Read Skills Matrix |
+| `not-found.tsx` | `apps/web/src/app/[locale]/not-found.tsx` | Branded 404 page: 404 code + message + "Go to Dashboard" button. Locale-aware routing. | ✅ LIVE | Navigate to non-existent route |
+| `loading.tsx` | `apps/web/src/app/[locale]/(dashboard)/loading.tsx` | Spinner shown during dashboard route transitions (Next.js streaming). | ✅ LIVE | Navigate between dashboard pages on slow connection |
+| `global-error.tsx` | `apps/web/src/app/global-error.tsx` | Root-level error boundary: catches crashes from root layout. Full HTML/body, no Tailwind (safe). | ✅ LIVE | Throw in root layout to test |
+
 ## Session 63 (2026-03-29) — SPRINTS A2-A8: NOTIFICATIONS → CSV INVITE
 
 | Code | Location | What it does | Status | How to verify |

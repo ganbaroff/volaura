@@ -1,5 +1,17 @@
 # Architecture Decisions Log
 
+## Session 63 Retrospective — 2026-03-29 (Sprints A9-A10: Swarm Upgrade + Pre-Launch — Autonomous Sprints 9-10/10)
+
+✓ A9: REACT-HOOKS-PATTERNS.md created — 5 rules, prevents Class 1 bug (hooks in callbacks). agent-roster.md updated with new routing rows and Firuza/Nigar accuracy tracking. CLAUDE.md Skills Matrix updated.
+✓ A10: not-found.tsx (404 page), loading.tsx (dashboard spinner), global-error.tsx (root-level error boundary). All three were missing — blank screens in production for 404/crash cases.
+✓ TypeScript clean across all 10 sprints — zero type errors shipped.
+
+✗ Sentry DSN setup deferred (requires user credential). Documented as pre-launch prerequisite.
+✗ `pnpm generate:api` still pending — manual types.gen.ts patch from A5 still in place. Requires live backend.
+
+→ 10 autonomous sprint block complete. Firuza selection verdict: Firuza (4/4, execution micro-decisions). Nigar (2/2, B2B decisions). Both remain in council — different domains.
+→ Next: back to regular sprint cadence. Recommend Sprint N+1: Sentry setup + production smoke test.
+
 ## Session 63 Retrospective — 2026-03-29 (Sprints A2-A8: Notifications → CSV Invite — Autonomous Sprints 2-8/10)
 
 ✓ A2: Notifications backend built from scratch (4 endpoints), real frontend replaces mock. Sidebar badge live.

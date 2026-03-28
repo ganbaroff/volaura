@@ -161,13 +161,16 @@ async def get_my_stats(
     verified_skills = 0
     streak_days = 0
 
-    # Count events attended (status = 'attended' or 'checked_in')
+    # Count events attended: approved registration + coordinator confirmed check-in.
+    # Valid statuses: pending|approved|rejected|waitlisted|cancelled (schema constraint).
+    # checked_in_at IS NOT NULL means coordinator physically verified attendance.
     try:
         result = (
             await db.table("registrations")
             .select("id", count="exact")
             .eq("volunteer_id", user_id)
-            .in_("status", ["attended", "checked_in", "registered"])
+            .eq("status", "approved")
+            .not_.is_("checked_in_at", "null")
             .execute()
         )
         events_attended = result.count or 0

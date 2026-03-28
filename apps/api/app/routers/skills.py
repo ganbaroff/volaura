@@ -10,6 +10,7 @@ This router reads them, injects user data, calls LLM, returns output.
 
 from __future__ import annotations
 
+import asyncio
 import re
 from pathlib import Path
 from typing import Any
@@ -219,8 +220,9 @@ async def execute_skill(
             },
         )
 
-    # Load skill
-    skill_content = _load_skill(skill_name)
+    # Load skill — wrapped in asyncio.to_thread to avoid blocking the event loop.
+    # _load_skill raises HTTPException(404) on missing skill; to_thread propagates it correctly.
+    skill_content = await asyncio.to_thread(_load_skill, skill_name)
 
     # Get user context from DB
     user_context = await _get_user_context(db, user_id)

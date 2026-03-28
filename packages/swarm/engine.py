@@ -35,7 +35,7 @@ from typing import Any
 
 from loguru import logger
 
-from .agent_hive import HiveExaminer
+from .agent_hive import AgentStatus, HiveExaminer
 from .agent_memory import AgentMemory
 from .memory import DecisionMemory
 from .memory_logger import log_episodic_run
@@ -160,8 +160,7 @@ class SwarmEngine:
             profile = self.hive.get_profile(model)
             if profile:
                 # Remove if SentinelNet QUARANTINE — credibility too low to dispatch
-                from .agent_hive import AgentStatus as _AS
-                if profile.status == _AS.QUARANTINE:
+                if profile.status == AgentStatus.QUARANTINE:
                     logger.info(
                         "Dead weight: {m} quarantined ({r})",
                         m=model, r=profile.quarantine_reason[:60] if profile.quarantine_reason else "?",

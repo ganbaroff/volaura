@@ -6,6 +6,23 @@
 
 ---
 
+## Session 60 (2026-03-28) — SPRINT 4: BACKEND WIRING + B2B PATH
+
+| Code | Location | What it does | Status | How to verify |
+|------|----------|-------------|--------|---------------|
+| Migration: `profiles_org_fields` | `supabase/migrations/20260328240000_...` | Adds account_type (volunteer/organization), visible_to_orgs, org_type to profiles. Index on visible_to_orgs=TRUE. | ✅ APPLIED | `SELECT account_type, visible_to_orgs FROM profiles LIMIT 1` |
+| Migration: `create_notifications` | `supabase/migrations/20260328240001_...` | notifications table: 7 types, user_id FK, is_read, RLS (user reads own, service inserts) | ✅ APPLIED | `SELECT * FROM notifications LIMIT 1` |
+| Migration: `create_intro_requests` | `supabase/migrations/20260328240002_...` | intro_requests table: org→volunteer, timeline enum, status, unique pending index, 4 RLS policies | ✅ APPLIED | `SELECT * FROM intro_requests LIMIT 1` |
+| Events pages: real API | `apps/web/src/app/[locale]/(public)/events/` | events/page.tsx + events/[id]/page.tsx use real `useEvents`/`useEvent` hooks. `event-card.tsx` and `events-list.tsx` use `EventResponse` (snake_case fields). `getMockEvents()` removed. | ✅ LIVE | Visit /events in browser |
+| `DiscoverableVolunteer` schema | `apps/api/app/schemas/profile.py` | New Pydantic model for the public volunteer browse response | ✅ LIVE | `GET /api/profiles/public` |
+| `GET /api/profiles/public` | `apps/api/app/routers/profiles.py` | Org-only endpoint: lists visible_to_orgs=TRUE volunteers with AURA join, ordered by score | ✅ LIVE | Need org JWT to call |
+| `/discover` dashboard page | `apps/web/src/app/[locale]/(dashboard)/discover/page.tsx` | Org-only volunteer browse: search by name/location, badge tier badge, AURA score, click→/u/username | ✅ LIVE | Visit /az/discover as org user |
+| `useDiscoverableVolunteers()` | `apps/web/src/hooks/queries/use-profile.ts` | React Query hook for GET /api/profiles/public | ✅ LIVE | Used by /discover page |
+| `IntroRequestCreate/Response` schemas | `apps/api/app/schemas/organization.py` | Pydantic models: volunteer_id (UUID validated), timeline enum, project_name, message (max 500) | ✅ LIVE | Part of POST endpoint |
+| `POST /api/organizations/intro-requests` | `apps/api/app/routers/organizations.py` | Dual org-role check + volunteer visibility guard + 5/hour rate limit + fire-and-forget notification | ✅ LIVE | POST with org JWT |
+| `useCreateIntroRequest()` | `apps/web/src/hooks/queries/use-organizations.ts` | Mutation hook: JSON.stringify body, 409 dedup handling, ApiError typed | ✅ LIVE | Used by IntroRequestButton |
+| `IntroRequestButton` | `apps/web/src/components/profile/intro-request-button.tsx` | Client component: org-only gate via useMyOrganization(), modal (3 fields), success/error toast | ✅ LIVE | Visit /u/[username] as org user |
+
 ## Session 51 (2026-03-27) — ARCHITECTURE SPRINT
 
 | Code | Location | What it does | Status | How to verify |

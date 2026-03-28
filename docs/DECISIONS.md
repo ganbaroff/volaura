@@ -1,5 +1,19 @@
 # Architecture Decisions Log
 
+## Session 60 Retrospective — 2026-03-28 (Sprint 4: Backend Wiring + B2B Path)
+
+✓ Swarm caught CLASS 4 issue (MockEvent camelCase vs real API snake_case) in Round 1 — all 4 files refactored cleanly
+✓ DB migrations: 3 applied to prod in one session (notifications, intro_requests, profiles org fields) — all with proper RLS
+✓ Dual org-role check pattern established: JWT auth + DB account_type=organization (anti-spoofing)
+✓ Route ordering issue (public vs /{username} wildcard) caught and handled before runtime
+✓ Fire-and-forget notification pattern works well — main request never fails due to notification errors
+
+✗ `account_type` not in generated types — couldn't use Profile.accountType in IntroRequestButton. Worked around with `useMyOrganization()` check. Real fix: `pnpm generate:api` after backend next deploy.
+✗ TASK-PROTOCOL enforcement hook blocked `.claude/protocol-state.json` from being staged (gitignored). Non-blocking but slightly annoying.
+
+→ Next sprint: Assessment UX (info page, question breakdown display, AURA reveal). Add `account_type` to Profile type via `pnpm generate:api`. Add /discover to sidebar nav.
+→ DSP calibration: Sprint 4 scope completed in 1 session, all 4 checkpoints shipped. Protocol compliance: 100% (all 10 steps followed).
+
 ## Session 59 Retrospective — 2026-03-28 (Sprint 3: API Contracts + Assessment Refactor)
 
 ✓ Assessment router split worked exactly as planned — services/helpers/coaching clean separation, zero circular imports

@@ -6,7 +6,31 @@
 ---
 
 ## Last Updated
-2026-03-28 | Session 59: **Sprint 3 complete. Assessment router split (919→660 lines, 3 service modules). Per-question breakdown endpoint live. 35 RLS tests. TASK-PROTOCOL v2.0 + enforcement hook active. Next: Sprint 4 (Frontend wiring).**
+2026-03-28 | Session 60: **Sprint 4 complete. 4 checkpoints: DB migrations (notifications + intro_requests), events pages wired to real API (remove getMockEvents), org volunteer discovery (GET /profiles/public + /discover page), Request Introduction MVP (POST /organizations/intro-requests + modal). Next: Sprint 5 (Assessment UX + sidebar nav).**
+
+## Session 60 — SUMMARY (2026-03-28)
+
+### What was done
+1. **3 DB migrations applied to prod** — `profiles_org_fields` (account_type, visible_to_orgs, org_type), `create_notifications` (7 notification types, RLS), `create_intro_requests` (4 RLS policies, unique pending index)
+2. **Events pages refactored** — `events/page.tsx` + `events/[id]/page.tsx` + `event-card.tsx` + `events-list.tsx` all switched from `getMockEvents()` / camelCase `MockEvent` to real `EventResponse` (snake_case) + real `useEvents`/`useEvent` hooks
+3. **Org volunteer discovery** — `GET /api/profiles/public` endpoint (dual org-role DB check, joins aura_scores) + `/discover` dashboard page with search, skeleton, badge display, AURA score
+4. **Request Introduction MVP** — `POST /api/organizations/intro-requests` (5/hour rate limit, volunteer visibility guard, fire-and-forget notification) + `useCreateIntroRequest()` mutation + `IntroRequestButton` modal component on `/u/[username]` page
+5. **`DiscoverableVolunteer` schema** added to `app/schemas/profile.py` + `useDiscoverableVolunteers()` hook
+
+### Commits this session
+- `84062cf` — feat(schema): notifications + intro_requests tables, profiles index [CP1]
+- `848a0c9` — feat(events): wire events pages to real API — remove getMockEvents [CP2]
+- `fc89540` — feat(discover): public volunteer browse for org users [CP3]
+- `b134b4e` — feat(intro): Request Introduction MVP — backend endpoint + frontend modal [CP4]
+
+### Key decisions
+- `GET /profiles/public` placed BEFORE `/{username}` wildcard to avoid route shadowing
+- `IntroRequestButton` uses `useMyOrganization()` to detect org users (account_type not yet in generated types)
+- Unique pending index at DB level (not app level) for intro request dedup — 409 on duplicate
+- Notification insert is fire-and-forget in intro request endpoint (won't break main flow)
+
+### Next session
+Sprint 5: Assessment UX improvements (info page, question breakdown display, AURA reveal animation), sidebar/nav link for /discover page, account_type added to Profile type + pnpm generate:api.
 
 ## Session 59 — SUMMARY (2026-03-28)
 

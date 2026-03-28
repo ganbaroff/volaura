@@ -325,7 +325,13 @@
       "empty": "Fərdi tövsiyələri açmaq üçün qiymətləndirməni tamamlayın"
     },
     "activityEmpty": "Hekayəniz buradan başlayır",
-    "activityEmptyHint": "İlk fəaliyyətinizi görmək üçün qiymətləndirmənizi tamamlayın"
+    "activityEmptyHint": "İlk fəaliyyətinizi görmək üçün qiymətləndirmənizi tamamlayın",
+    "noScoreHeadline": "Şirkətlər sizi axtarır — CV yox, real bacarıq",
+    "noScoreSub": "AURA balınızı alın və uyğun təşkilatlar tərəfindən kəşf olunun",
+    "noScoreCta": "İlk Qiymətləndirməni Başla →",
+    "orgZeroHeadline": "Yoxlanılmış istedad sizi gözləyir",
+    "orgZeroSub": "Könüllülər AURA balı ilə qiymətləndirilir. Razılıq vermiş profillərə baxın.",
+    "orgZeroCta": "Könüllüləri Kəşf Et →"
   },
   "profile": {
     "title": "Profil",

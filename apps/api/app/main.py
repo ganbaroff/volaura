@@ -16,6 +16,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from loguru import logger
+from starlette.middleware.proxy_headers import ProxyHeadersMiddleware
 
 import sentry_sdk
 
@@ -73,6 +74,12 @@ app = FastAPI(
     docs_url="/docs" if settings.is_dev else None,
     redoc_url="/redoc" if settings.is_dev else None,
 )
+
+# Security: Trust X-Forwarded-For from Railway's reverse proxy so per-IP rate
+# limits use the real client IP, not the proxy's internal address.
+# Safe: Railway's load balancer controls the network layer; external clients
+# cannot spoof X-Forwarded-For past it.
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 
 # Security: Rate limiting
 setup_rate_limiting(app)

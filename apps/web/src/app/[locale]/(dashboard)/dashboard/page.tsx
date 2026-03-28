@@ -76,8 +76,9 @@ export default function DashboardPage() {
     });
   }, [locale, router]);
 
-  // Get user display name from Supabase
+  // Get user display name + account_type from Supabase
   const [displayName, setDisplayName] = useState("");
+  const [accountType, setAccountType] = useState<"volunteer" | "organization">("volunteer");
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data }) => {
@@ -87,6 +88,9 @@ export default function DashboardPage() {
           data.user.email?.split("@")[0] ??
           ""
         );
+        if (data.user.user_metadata?.account_type === "organization") {
+          setAccountType("organization");
+        }
       }
     });
   }, []);
@@ -171,7 +175,7 @@ export default function DashboardPage() {
               locale={locale}
             />
           ) : (
-            <NoScoreBanner locale={locale} t={t} />
+            <NoScoreBanner locale={locale} t={t} accountType={accountType} />
           )}
         </motion.div>
 
@@ -330,32 +334,38 @@ function QuickActionPrimary({
   );
 }
 
-// NoScoreBanner — emotionally charged, link-style card that drives first assessment
-// Replaces the passive dashed card with a discovery-framing CTA
+// NoScoreBanner — professional value prop framing.
+// Volunteer: "Companies are searching for you — not a résumé"
+// Org:       "Verified talent is waiting for you"
 function NoScoreBanner({
   locale,
   t,
+  accountType,
 }: {
   locale: string;
   t: (k: string) => string;
+  accountType: "volunteer" | "organization";
 }) {
+  const isOrg = accountType === "organization";
+  const href = isOrg ? `/${locale}/leaderboard` : `/${locale}/assessment`;
+
   return (
     <Link
-      href={`/${locale}/assessment`}
+      href={href}
       className="block rounded-2xl border-2 border-primary/40 bg-primary/5 p-6 transition-all hover:border-primary/70 hover:bg-primary/10 active:scale-[0.99]"
     >
       <div className="flex flex-col gap-3">
-        <div className="text-3xl" aria-hidden="true">🔍</div>
+        <div className="text-3xl" aria-hidden="true">{isOrg ? "🏢" : "🎯"}</div>
         <div>
           <p className="font-bold text-foreground text-lg leading-snug">
-            Your AURA score is waiting to be discovered
+            {isOrg ? t("dashboard.orgZeroHeadline") : t("dashboard.noScoreHeadline")}
           </p>
           <p className="text-sm text-muted-foreground mt-1">
-            {t("aura.noScoreDescription")} · ~5 minutes
+            {isOrg ? t("dashboard.orgZeroSub") : t("dashboard.noScoreSub")}
           </p>
         </div>
         <div className="flex items-center gap-1.5 text-primary font-semibold text-sm">
-          {t("aura.startAssessment")} <ChevronRight className="size-4" aria-hidden="true" />
+          {isOrg ? t("dashboard.orgZeroCta") : t("dashboard.noScoreCta")}
         </div>
       </div>
     </Link>

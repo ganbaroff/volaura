@@ -325,7 +325,13 @@
       "empty": "Complete an assessment to unlock personalized recommendations"
     },
     "activityEmpty": "Your story starts here",
-    "activityEmptyHint": "Complete an assessment to see your first activity"
+    "activityEmptyHint": "Complete an assessment to see your first activity",
+    "noScoreHeadline": "Companies are searching for you — not a résumé",
+    "noScoreSub": "Get your AURA score and be discovered by the right organizations",
+    "noScoreCta": "Start your first assessment →",
+    "orgZeroHeadline": "Verified talent is waiting for you",
+    "orgZeroSub": "Volunteers are assessed on real skills. Browse opted-in profiles.",
+    "orgZeroCta": "Explore Volunteers →"
   },
   "profile": {
     "title": "Profile",

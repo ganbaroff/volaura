@@ -78,7 +78,11 @@ async def _call_gemini(prompt: str, response_format: str) -> dict[str, Any] | st
     text = response.text or ""
 
     if response_format == "json":
-        return json.loads(text)
+        try:
+            return json.loads(text)
+        except json.JSONDecodeError as e:
+            logger.warning(f"Gemini returned invalid JSON: {e} — raw: {text[:200]}")
+            return {}
     return text
 
 
@@ -96,10 +100,17 @@ async def _call_openai(prompt: str, response_format: str) -> dict[str, Any] | st
         kwargs["response_format"] = {"type": "json_object"}
 
     response = await client.chat.completions.create(**kwargs)
+    if not response.choices:
+        logger.error("OpenAI returned empty choices list")
+        raise RuntimeError("OpenAI returned empty response")
     text = response.choices[0].message.content or ""
 
     if response_format == "json":
-        return json.loads(text)
+        try:
+            return json.loads(text)
+        except json.JSONDecodeError as e:
+            logger.warning(f"OpenAI returned invalid JSON: {e} — raw: {text[:200]}")
+            return {}
     return text
 
 

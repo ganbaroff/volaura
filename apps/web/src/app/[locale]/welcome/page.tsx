@@ -81,7 +81,7 @@ function WelcomeContent() {
       }
       // Fetch display name from profile
       if (session) {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
         fetch(`${apiUrl}/api/profiles/me`, {
           headers: { Authorization: `Bearer ${session.access_token}` },
         })

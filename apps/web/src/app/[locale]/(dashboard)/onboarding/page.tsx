@@ -207,7 +207,7 @@ export default function OnboardingPage() {
         if (orgType) payload.org_type = orgType;
       }
 
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
       const res = await fetch(`${apiUrl}/api/profiles/me`, {
         method: "POST",
         headers: {

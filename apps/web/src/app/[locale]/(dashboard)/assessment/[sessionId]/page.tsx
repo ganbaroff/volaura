@@ -117,7 +117,7 @@ export default function QuestionPage() {
       if (!auth) return;
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/assessment/answer`,
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/assessment/answer`,
         {
           method: "POST",
           headers: {
@@ -187,7 +187,7 @@ export default function QuestionPage() {
       if (!auth) return;
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/assessment/answer`,
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/assessment/answer`,
         {
           method: "POST",
           headers: {
@@ -231,7 +231,7 @@ export default function QuestionPage() {
       if (!auth) return;
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/assessment/start`,
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/assessment/start`,
         {
           method: "POST",
           headers: {

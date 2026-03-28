@@ -49,6 +49,8 @@ from app.schemas.assessment import (
     AssessmentResultOut,
     CoachingResponse,
     CoachingTip,
+    QuestionBreakdownOut,
+    QuestionResultOut,
     SessionOut,
     StartAssessmentRequest,
     SubmitAnswerRequest,
@@ -722,4 +724,116 @@ async def get_assessment_info(
         time_estimate_minutes=comp.get("time_estimate_minutes", 15),
         can_retake=can_retake,
         days_until_retake=days_until_retake,
+    )
+
+
+# ── Per-question breakdown ──────────────────────────────────────────────────
+
+# IRT difficulty mapping: irt_b → human-readable label
+# Thresholds chosen to map the standard normal range to 4 buckets.
+_DIFFICULTY_THRESHOLDS: list[tuple[float, str]] = [
+    (1.5, "expert"),   # irt_b >= 1.5
+    (0.5, "hard"),     # 0.5 <= irt_b < 1.5
+    (-0.5, "medium"),  # -0.5 <= irt_b < 0.5
+]
+_DIFFICULTY_DEFAULT = "easy"  # irt_b < -0.5
+
+
+def _irt_b_to_label(irt_b: float) -> str:
+    """Map IRT difficulty parameter to a human-readable label. Never exposes numeric value."""
+    for threshold, label in _DIFFICULTY_THRESHOLDS:
+        if irt_b >= threshold:
+            return label
+    return _DIFFICULTY_DEFAULT
+
+
+@router.get("/results/{session_id}/questions", response_model=QuestionBreakdownOut)
+@limiter.limit(RATE_DISCOVERY)
+async def get_question_breakdown(
+    request: Request,
+    session_id: str,
+    db_admin: SupabaseAdmin,
+    db_user: SupabaseUser,
+    user_id: CurrentUserId,
+) -> QuestionBreakdownOut:
+    """Return per-question breakdown for a completed session.
+
+    Each question shows: text (EN/AZ), difficulty label, correctness, response time.
+    IRT parameters and raw scores are NEVER exposed (security audit CRIT-03).
+    """
+    try:
+        uuid.UUID(session_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=422,
+            detail={"code": "INVALID_SESSION_ID", "message": "session_id must be a valid UUID"},
+        )
+
+    # Fetch completed session — user can only see own
+    session_result = (
+        await db_user.table("assessment_sessions")
+        .select("id, competency_id, answers, theta_estimate, gaming_penalty_multiplier")
+        .eq("id", session_id)
+        .eq("volunteer_id", user_id)
+        .eq("status", "completed")
+        .maybe_single()
+        .execute()
+    )
+    if not session_result.data:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "SESSION_NOT_FOUND", "message": "Completed session not found"},
+        )
+
+    session = session_result.data
+    state = CATState.from_dict(session["answers"] or {})
+
+    if not state.items:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "NO_ANSWERS", "message": "Session has no answered questions"},
+        )
+
+    # Batch-fetch question texts (single query, not N+1)
+    question_ids = [item.question_id for item in state.items]
+    q_result = (
+        await db_admin.table("questions")
+        .select("id, scenario_en, scenario_az")
+        .in_("id", question_ids)
+        .execute()
+    )
+    q_map = {q["id"]: q for q in (q_result.data or [])}
+
+    # Get competency slug for response
+    comp_result = (
+        await db_admin.table("competencies")
+        .select("slug")
+        .eq("id", session["competency_id"])
+        .maybe_single()
+        .execute()
+    )
+    comp_slug = comp_result.data["slug"] if comp_result.data else "unknown"
+
+    # Build per-question results — IRT params mapped to labels, raw_score → boolean
+    questions_out: list[QuestionResultOut] = []
+    for item in state.items:
+        q_data = q_map.get(item.question_id, {})
+        questions_out.append(QuestionResultOut(
+            question_id=item.question_id,
+            question_en=q_data.get("scenario_en"),
+            question_az=q_data.get("scenario_az"),
+            difficulty_label=_irt_b_to_label(item.irt_b),
+            is_correct=item.raw_score > 0,
+            response_time_ms=item.response_time_ms,
+        ))
+
+    competency_score = round(
+        theta_to_score(state.theta) * (session.get("gaming_penalty_multiplier") or 1.0), 2
+    )
+
+    return QuestionBreakdownOut(
+        session_id=session_id,
+        competency_slug=comp_slug,
+        competency_score=competency_score,
+        questions=questions_out,
     )

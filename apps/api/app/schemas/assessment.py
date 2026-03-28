@@ -171,6 +171,33 @@ class CoachingResponse(BaseModel):
     tips: list[CoachingTip]
 
 
+class QuestionResultOut(BaseModel):
+    """Per-question result shown after session completion.
+
+    NOTE: IRT parameters (irt_a/b/c) and raw_score intentionally NOT exposed.
+    difficulty_label is a mapped human-readable label from irt_b thresholds.
+    is_correct is derived from raw_score > 0 (binary, no numeric leak).
+    """
+    model_config = ConfigDict(from_attributes=True)
+
+    question_id: str
+    question_en: str | None = None
+    question_az: str | None = None
+    difficulty_label: Literal["easy", "medium", "hard", "expert"]
+    is_correct: bool
+    response_time_ms: int | None = None
+
+
+class QuestionBreakdownOut(BaseModel):
+    """Full per-question breakdown for a completed session."""
+    model_config = ConfigDict(from_attributes=True)
+
+    session_id: str
+    competency_slug: str
+    competency_score: float
+    questions: list[QuestionResultOut]
+
+
 class AssessmentInfoOut(BaseModel):
     """Pre-assessment info shown before starting a competency assessment."""
     model_config = ConfigDict(from_attributes=True)

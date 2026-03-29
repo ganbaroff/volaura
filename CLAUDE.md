@@ -351,8 +351,8 @@ Real adversarial check — not Claude arguing with itself.
 - `claude-opus-4-6` → ONLY for irreversible Critical decisions, max 1-2 per project
 
 **9 council personas (use all for High/Critical; for B2B features ALWAYS include Aynur):**
-1. **Leyla** — Volunteer (22yo, mobile, Baku, AZ native). Influence: 1.0
-2. **Nigar** — Org Admin (HR manager, 50+ volunteers, desktop). Influence: 1.0
+1. **Leyla** — Young professional (22yo, mobile, Baku, AZ native, wants to be found by orgs). Influence: 1.0
+2. **Nigar** — Org Admin (HR manager, 50+ team members, searches talent on desktop). Influence: 1.0
 3. **Attacker** — Adversary. Finds exploits in every path. Influence: 1.2
 4. **Scaling Engineer** — Bottleneck analyst. Asks "what at 10x?". Influence: 1.1
 5. **Yusif** — Founder (budget $50/mo, 6-week timeline, growth-focused). Influence: 1.0
@@ -394,9 +394,25 @@ Fallback: Path [Y] if [condition]
 Full protocol + SKILL.md: `docs/engineering/decision-simulation-skill/SKILL.md`
 
 ## Project Overview
-Volaura is a verified competency platform and community for the best volunteers in Azerbaijan (CIS/MENA expansion later).
-NOT "another volunteer platform" — a platform for verified skills where organizations CHOOSE talent and volunteers ASPIRE to be listed.
-Events are dynamic data (COP29, CIS Games, etc.) — NEVER hardcode specific event names or dates.
+Volaura is a **Verified Professional Talent Platform** — where skills are proven through adaptive assessment, not claimed on CVs.
+NOT a volunteer platform. NOT a LinkedIn clone. A platform where organizations search talent by verified AURA score, and professionals aspire to earn badges that travel across the full ecosystem.
+
+**Positioning (locked — DSP Sprint E1, 2026-03-29):**
+- User tagline: "Prove your skills. Earn your AURA. Get found by top organizations."
+- Org tagline: "Search talent by verified skill and score, not unverified CVs."
+- NEVER say "volunteer platform" or "LinkedIn competitor". Say "verified talent platform."
+
+**Ecosystem position:** VOLAURA is the rational assessment layer in a 5-product ecosystem:
+- VOLAURA → verified skills (AURA score, badges, assessments)
+- MindShift → daily habits (focus sessions, streaks, psychotype)
+- Life Simulator → game character (stats, crystals, progression in Godot 4)
+- BrandedBy → professional identity (AI twin, video presence)
+- ZEUS → autonomous agent framework (local Windows, cloud-accessible via ngrok)
+
+All products share Supabase auth and write to `character_events` table. One user, five touchpoints.
+Crystal economy: VOLAURA assessments → crystal_earned events → visible in Life Simulator.
+
+Events are dynamic data (any event, any org) — NEVER hardcode specific event names or dates.
 
 ## Tech Stack
 

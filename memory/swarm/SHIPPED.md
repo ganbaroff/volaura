@@ -282,3 +282,17 @@ After any session that adds/changes code:
 | {file/feature} | {location} | {what it does} | ✅ LIVE | {how to test} |
 ```
 Add to the correct session section. Never delete old entries — archive to SHIPPED-ARCHIVE.md when file exceeds 200 lines.
+
+---
+
+## Session 66 — 2026-03-29
+
+| What | Where | Does what | Status |
+|------|-------|-----------|--------|
+| `TASK-PROTOCOL.md` v3.0 | `docs/` | +10 protocol steps from 5 swarm agents: Steps 0.1 (Mistakes Audit), 0.25 (Team Selection), 1.5 (Decision Type Gate), 3.5 (Ecosystem Blast Radius), 3.7 (User Journey Walkthrough), 6.5 (Security Pre-Commit Checklist), 9.5 (Work Verdict Gate), 10.5 (CEO Silence Timeout). OPT-OUT not OPT-IN principle. | ✅ DOC |
+| `TASK-PROTOCOL-CHECKLIST.md` v3.0 | `docs/` | Synced with protocol v3.0. All 10 new steps have fill-in templates. | ✅ DOC |
+| `use-assessment.ts` fixes | `apps/web/src/hooks/queries/` | Fix CLASS 4: difficulty_label type lowercase (was Title Case — API always lowercase). Add competency_score to QuestionBreakdown. Add AssessmentInfo interface + useAssessmentInfo hook (staleTime 10min). | ✅ LIVE |
+| `assessment/[sessionId]/questions/page.tsx` fixes | `apps/web/src/app/[locale]/(dashboard)/` | Fix DIFFICULTY_COLORS to lowercase keys. DifficultyBadge normalizes defensively. competencyLabel uses t() with fallback. | ✅ LIVE |
+| i18n keys EN + AZ | `apps/web/src/locales/*/common.json` | Move difficulty_expert adjacent to sibling keys (was orphaned). Add 6 info page keys: infoAbout, infoTimeLabel, infoRetakeAvailable, infoRetakeCooldown ({{days}}), infoNoDescription, infoContinueButton. | ✅ LIVE |
+| `assessment/info/[slug]/page.tsx` | `apps/web/src/app/[locale]/(dashboard)/assessment/info/[slug]/` | NEW: Pre-assessment info page. Fetches GET /api/assessment/info/{slug}. Shows competency label (t()), description (null-safe), time estimate, retake status. Auth redirect with returnTo. 404/429/5xx error states. isMounted on all router.replace. retakeBlocked checks both can_retake and days_until_retake. | ✅ LIVE |
+| "About" link in assessment callout | `apps/web/src/app/[locale]/(dashboard)/assessment/page.tsx` | Added inside preselectedComp && block — links to /assessment/info/{slug}. | ✅ LIVE |

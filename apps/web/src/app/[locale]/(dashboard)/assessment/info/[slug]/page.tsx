@@ -118,7 +118,7 @@ export default function AssessmentInfoPage() {
 
   const description = data.description ?? t("assessment.infoNoDescription");
 
-  const retakeBlocked = data.days_until_retake != null && data.days_until_retake > 0;
+  const retakeBlocked = !data.can_retake || (data.days_until_retake != null && data.days_until_retake > 0);
 
   // ── Render ────────────────────────────────────────────────────────────────
 

@@ -101,17 +101,18 @@ async def _get_user_context(db: Any, user_id: str) -> dict[str, Any]:
         logger.debug(f"AURA fetch failed: {e}")
 
     try:
-        # Recent competency scores
-        scores_resp = (
-            await db.table("competency_scores")
-            .select("competency_slug, score, evaluated_at")
-            .eq("volunteer_id", user_id)
-            .order("evaluated_at", desc=True)
-            .limit(20)
-            .execute()
-        )
-        if scores_resp.data:
-            context["competency_scores"] = scores_resp.data
+        # Competency scores — stored as JSONB in aura_scores.competency_scores, NOT a separate table.
+        # Old code queried db.table("competency_scores") which doesn't exist → always empty.
+        aura_row = await db.table("aura_scores").select("competency_scores").eq("volunteer_id", user_id).single().execute()
+        if aura_row.data:
+            raw = aura_row.data.get("competency_scores")
+            if isinstance(raw, dict) and raw:
+                # Convert {slug: score} dict → list of {competency_slug, score} for template compatibility
+                context["competency_scores"] = [
+                    {"competency_slug": slug, "score": score}
+                    for slug, score in raw.items()
+                    if isinstance(score, (int, float))
+                ]
     except Exception as e:
         logger.debug(f"Competency scores fetch failed: {e}")
 

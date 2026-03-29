@@ -74,20 +74,15 @@ async def get_public_stats(
     except Exception as e:
         logger.warning("Failed to count events: {err}", err=str(e)[:200])
 
-    # Average AURA score — fetch scores and compute in Python
-    # (Supabase SDK does not expose aggregate functions directly)
+    # Average AURA score — computed server-side via PostgreSQL AVG() RPC.
+    # Old approach: fetch ALL rows into Python memory → O(n) bandwidth, wrong at scale.
+    # New approach: avg_aura_score() returns a single float — O(1) bandwidth.
     try:
-        result = (
-            await db.table("aura_scores")
-            .select("total_score")
-            .not_.is_("total_score", "null")
-            .execute()
-        )
-        scores = [row["total_score"] for row in (result.data or []) if row.get("total_score") is not None]
-        if scores:
-            avg_aura_score = round(sum(scores) / len(scores), 1)
+        result = await db.rpc("avg_aura_score").execute()
+        if result.data is not None:
+            avg_aura_score = float(result.data) if result.data != [] else 0.0
     except Exception as e:
-        logger.warning("Failed to compute avg AURA: {err}", err=str(e)[:200])
+        logger.warning("Failed to compute avg AURA via RPC: {err}", err=str(e)[:200])
 
     return PublicStatsResponse(
         total_volunteers=total_volunteers,

@@ -194,7 +194,9 @@
     "difficulty_expert": "Ekspert",
     "backToResults": "Nəticələrə Qayıt",
     "sessionNotFound": "Sessiya tapılmadı və ya hələ tamamlanmayıb.",
-    "questionsCorrect": "{{total}}-dən {{correct}} düzgün"
+    "questionsCorrect": "{{total}}-dən {{correct}} düzgün",
+    "recommended": "Sizin üçün tövsiyə olunur",
+    "min": "dəq"
   },
   "aura": {
     "title": "Sizin AURA Balınız",

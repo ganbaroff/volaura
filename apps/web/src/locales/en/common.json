@@ -194,7 +194,9 @@
     "difficulty_expert": "Expert",
     "backToResults": "Back to Results",
     "sessionNotFound": "Session not found or not yet complete.",
-    "questionsCorrect": "{{correct}} of {{total}} correct"
+    "questionsCorrect": "{{correct}} of {{total}} correct",
+    "recommended": "Recommended for you",
+    "min": "min"
   },
   "aura": {
     "title": "Your AURA Score",

@@ -156,5 +156,5 @@ QA/SWE/Security agents generated assessment questions, wrote "expert" answers ta
 | QA Engineer | 42 | Yes (blind cross-test was correct methodology) | Proved keyword_fallback = vocabulary test |
 | QA Engineer | 42 | Partial (self-assessment was circular) | Mistake #47: scored 0.59-0.89 on own questions |
 | SWE Agent | 42 | Yes (verb regex calibration correct) | Expanded 45 -> 100+ verbs, fixed false positives |
-| **Firuza (council)** | 62-63 | **4/4 correct (100%)** | Sprint A1: 404 handling (✓), A3: check-in visualization (✓), A4: one-shot disable (✓), A5: removal comment (✓). Domain: execution micro-decisions, UX precision, ADHD-first validation. |
+| **Firuza (council)** | 62-63, 69 | **4/4 correct (100%)** | Sprint A1: 404 handling (✓), A3: check-in visualization (✓), A4: one-shot disable (✓), A5: removal comment (✓). Domain: execution micro-decisions, UX precision, ADHD-first validation. **v2.0 (Session 69):** Upgraded to proactive scanning. Influence 1.0→1.1. Pre-sprint UX audit + cross-sprint pattern detection added. Path to Expert: maintain accuracy + constructive disagreement + expand scope. |
 | **Nigar (council)** | 62-63 | **2/2 correct (100%)** | A2: category tabs (✓), A3: registration count header (✓). Domain: B2B feature decisions, org workflows. |

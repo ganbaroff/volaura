@@ -6,6 +6,31 @@
 
 ---
 
+## Session 69 (2026-03-29) — Production blockers + Sentry + strategic simulation
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Health check v2 | `apps/api/app/routers/health.py` | Verifies Supabase + LLM config, returns degraded/ok | ✅ SHIPPED |
+| Assessment localStorage | `apps/web/src/stores/assessment-store.ts` | sessionStorage → localStorage (refresh-safe) | ✅ SHIPPED |
+| Session expiry warning | `apps/web/src/app/.../assessment/[sessionId]/page.tsx` | 3s warning before redirect to login | ✅ SHIPPED |
+| ErrorAlertingMiddleware | `apps/api/app/middleware/error_alerting.py` | 5xx → CEO Telegram (rate-limited 1/5min) | ✅ NEW |
+| Sentry monitoring | Railway env + `apps/api/app/config.py` | Org: volaura, Project: volaura-api, DSN configured | ✅ DEPLOYED |
+| All LLM keys on Railway | Railway env vars | Gemini + Groq + OpenAI + DeepSeek — 27 total vars | ✅ DEPLOYED |
+| P1/P2 batch fixes | Multiple routers + frontend | badges maybe_single, skills RATE_LLM, leaderboard avatar, org grid responsive, telegram atomic write, embeddings logging, LLM structured logging, config warning | ✅ SHIPPED |
+| LAUNCH-BLOCKERS.md | `docs/LAUNCH-BLOCKERS.md` | 19-item launch readiness checklist with capacity math | ✅ NEW |
+| STRATEGIC-SIMULATION-RESULTS.md | `docs/STRATEGIC-SIMULATION-RESULTS.md` | DSP 3-path simulation, Agile framework, CEO action list | ✅ NEW |
+| CEO-QUESTIONS-RESOLVED.md | `docs/CEO-QUESTIONS-RESOLVED.md` | 9 strategic questions answered from memory + research | ✅ NEW |
+| GROWTH-STRATEGY-PLAYBOOK.md | `docs/GROWTH-STRATEGY-PLAYBOOK.md` | Grants + registration + promotion with verified data | ✅ NEW |
+| SWARM-HANDOFF.md | `docs/SWARM-HANDOFF.md` | Swarm documentation for partner CTOs | ✅ NEW |
+| AUDIT-REPORT.md | `docs/AUDIT-REPORT.md` | 62 findings (8 P0, 19 P1, 22 P2, 13 P3) | ✅ NEW |
+| TASK-PROTOCOL v4.0 | `docs/TASK-PROTOCOL.md` | Team-first proposals, parallel batches, agent override | ✅ SHIPPED |
+| 3 improved skills | `.claude/skills/` | accelerator-grant-searcher, promotion-agency, startup-registration-finder | ✅ NEW |
+| Firuza v2.0 | `memory/swarm/skills/firuza-assistant.md` | Upgraded from reactive → proactive, expanded scope | ✅ UPDATED |
+
+Blockers resolved: 9/10 (4 code fixes, 4 false positives, 1 Sentry+keys deployed). BUG-07+BUG-08 confirmed resolved via Supabase MCP.
+
+---
+
 ## Session 68 (2026-03-29) — Sprint B+D+A: Type generation + onboarding fix + notifications
 
 | Code | Location | What it does | Status |

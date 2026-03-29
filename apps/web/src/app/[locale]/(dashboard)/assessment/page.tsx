@@ -153,6 +153,13 @@ function AssessmentContent() {
               {t(`competency.${preselectedComp.id}`, { defaultValue: preselectedComp.id })}
             </p>
           </div>
+          <button
+            type="button"
+            onClick={() => router.push(`/${locale}/assessment/info/${preselectedComp.id}`)}
+            className="text-xs text-primary hover:underline shrink-0"
+          >
+            {t("assessment.infoAbout", { defaultValue: "About" })}
+          </button>
           <span className="text-xs text-muted-foreground shrink-0">
             ~{preselectedComp.estimatedMinutes} {t("assessment.min", { defaultValue: "min" })}
           </span>

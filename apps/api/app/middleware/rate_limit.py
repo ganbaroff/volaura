@@ -34,7 +34,7 @@ def _key_func(request: Request) -> str:
     if auth.startswith("Bearer "):
         # Hash the FULL token, not just prefix — JWT headers share common prefix
         # Security audit P1: auth[7:40] caused collisions across all Supabase users
-        token_hash = hashlib.sha256(auth[7:].encode()).hexdigest()[:12]
+        token_hash = hashlib.sha256(auth[7:].encode()).hexdigest()[:24]
         return f"{ip}:{token_hash}"
     return ip
 

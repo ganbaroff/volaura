@@ -8,21 +8,24 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect, useCallback } from "react";
 import { useUnreadCount } from "@/hooks/queries/use-notifications";
+import { useProfile } from "@/hooks/queries/use-profile";
 
-const NAV_ITEMS = [
+type NavItem = { href: string; labelKey: string; icon: string; orgOnly?: boolean };
+
+const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard",      labelKey: "nav.dashboard",      icon: "⊞" },
   { href: "/profile",        labelKey: "nav.profile",        icon: "◉" },
   { href: "/aura",           labelKey: "nav.aura",           icon: "◈" },
   { href: "/assessment",     labelKey: "nav.assessment",     icon: "◑" },
   { href: "/brandedby",      labelKey: "nav.brandedby",      icon: "✦" },
   { href: "/events",         labelKey: "nav.events",         icon: "◎" },
-  { href: "/my-organization", labelKey: "nav.myOrganization", icon: "🏢" },
-  { href: "/org-volunteers",  labelKey: "nav.orgVolunteers",  icon: "👥" },
-  { href: "/discover",        labelKey: "nav.discover",       icon: "🔍" },
+  { href: "/my-organization", labelKey: "nav.myOrganization", icon: "🏢", orgOnly: true },
+  { href: "/org-volunteers",  labelKey: "nav.orgVolunteers",  icon: "👥", orgOnly: true },
+  { href: "/discover",        labelKey: "nav.discover",       icon: "🔍", orgOnly: true },
   { href: "/leaderboard",    labelKey: "nav.leaderboard",    icon: "🏆" },
   { href: "/notifications",  labelKey: "nav.notifications",  icon: "🔔" },
   { href: "/settings",       labelKey: "nav.settings",       icon: "◧" },
-] as const;
+];
 
 export function Sidebar() {
   const { locale } = useParams<{ locale: string }>();
@@ -33,6 +36,8 @@ export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const { data: unreadData } = useUnreadCount();
   const unreadCount = unreadData?.unread_count ?? 0;
+  const { data: profile } = useProfile();
+  const isOrg = (profile as { account_type?: string } | undefined)?.account_type === "organization";
 
   // Close sidebar on route change (mobile)
   useEffect(() => {
@@ -116,7 +121,7 @@ export function Sidebar() {
 
         {/* Nav */}
         <nav className="flex-1 space-y-1">
-          {NAV_ITEMS.map(({ href, labelKey, icon }) => {
+          {NAV_ITEMS.filter((item) => !item.orgOnly || isOrg).map(({ href, labelKey, icon }) => {
             const fullHref = `/${locale}${href}`;
             const isActive = pathname === fullHref || pathname.startsWith(`${fullHref}/`);
             const isNotifications = href === "/notifications";

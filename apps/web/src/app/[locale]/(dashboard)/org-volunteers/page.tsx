@@ -167,12 +167,9 @@ export default function OrgVolunteersPage() {
     );
   });
 
-  const totalBadges = stats
-    ? stats.badge_distribution.platinum +
-      stats.badge_distribution.gold +
-      stats.badge_distribution.silver +
-      stats.badge_distribution.bronze +
-      stats.badge_distribution.none
+  const bd = stats?.badge_distribution;
+  const totalBadges = bd
+    ? (bd.platinum ?? 0) + (bd.gold ?? 0) + (bd.silver ?? 0) + (bd.bronze ?? 0) + (bd.none ?? 0)
     : 0;
 
   const isLoading = statsLoading || volsLoading;
@@ -221,7 +218,7 @@ export default function OrgVolunteersPage() {
               />
               <StatCard
                 icon={<Award className="size-5" />}
-                value={stats.badge_distribution.platinum + stats.badge_distribution.gold}
+                value={(bd?.platinum ?? 0) + (bd?.gold ?? 0)}
                 label={t("orgDash.topTier", { defaultValue: "Gold/Platinum" })}
               />
             </motion.div>
@@ -236,11 +233,11 @@ export default function OrgVolunteersPage() {
                   </h3>
                 </div>
                 <div className="space-y-2">
-                  <BadgeBar label="Platinum" count={stats.badge_distribution.platinum} total={totalBadges} color="bg-sky-400" />
-                  <BadgeBar label="Gold"     count={stats.badge_distribution.gold}     total={totalBadges} color="bg-yellow-400" />
-                  <BadgeBar label="Silver"   count={stats.badge_distribution.silver}   total={totalBadges} color="bg-slate-400" />
-                  <BadgeBar label="Bronze"   count={stats.badge_distribution.bronze}   total={totalBadges} color="bg-orange-400" />
-                  <BadgeBar label="None"     count={stats.badge_distribution.none}     total={totalBadges} color="bg-border" />
+                  <BadgeBar label="Platinum" count={bd?.platinum ?? 0} total={totalBadges} color="bg-sky-400" />
+                  <BadgeBar label="Gold"     count={bd?.gold ?? 0}     total={totalBadges} color="bg-yellow-400" />
+                  <BadgeBar label="Silver"   count={bd?.silver ?? 0}   total={totalBadges} color="bg-slate-400" />
+                  <BadgeBar label="Bronze"   count={bd?.bronze ?? 0}   total={totalBadges} color="bg-orange-400" />
+                  <BadgeBar label="None"     count={bd?.none ?? 0}     total={totalBadges} color="bg-border" />
                 </div>
               </motion.div>
             )}

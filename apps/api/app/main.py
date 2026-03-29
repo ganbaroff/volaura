@@ -16,7 +16,10 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from loguru import logger
-from starlette.middleware.proxy_headers import ProxyHeadersMiddleware
+try:
+    from starlette.middleware.proxy_headers import ProxyHeadersMiddleware
+except ImportError:
+    from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
 import sentry_sdk
 

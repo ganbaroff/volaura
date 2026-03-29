@@ -32,7 +32,7 @@ function AuthCallbackContent() {
   useEffect(() => {
     const supabase = createClient();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!isMounted.current) return;
       setSession(session);
 
@@ -55,8 +55,28 @@ function AuthCallbackContent() {
 
       const rawNext = searchParams.get("next");
       // Only allow relative paths starting with "/" but not "//" (prevents protocol-relative open redirect)
-      const next = rawNext?.startsWith("/") && !rawNext.startsWith("//") ? rawNext : `/${locale}/dashboard`;
-      router.replace(next);
+      if (rawNext?.startsWith("/") && !rawNext.startsWith("//")) {
+        router.replace(rawNext);
+        return;
+      }
+
+      // Route new users (no profile) to onboarding, returning users to dashboard
+      if (session?.access_token) {
+        try {
+          const res = await fetch(`${API_BASE}/api/profiles/me`, {
+            headers: { Authorization: `Bearer ${session.access_token}` },
+          });
+          if (!isMounted.current) return;
+          if (res.status === 404) {
+            router.replace(`/${locale}/onboarding`);
+            return;
+          }
+        } catch {
+          // Network error — fall through to dashboard
+        }
+      }
+
+      router.replace(`/${locale}/dashboard`);
     });
 
     return () => subscription.unsubscribe();

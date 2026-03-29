@@ -6,6 +6,58 @@
 
 ---
 
+## Session 68 (2026-03-29) — Sprint B+D+A: Type generation + onboarding fix + notifications
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| `pnpm generate:api` output | `apps/web/src/lib/api/generated/` | 419 types, 78 SDK functions from 66 API paths. ADR-003 compliance. | ✅ SHIPPED |
+| ProxyHeadersMiddleware fallback | `apps/api/app/main.py` | starlette 1.0 removed proxy_headers → fallback to uvicorn import | ✅ SHIPPED |
+| Callback onboarding routing | `apps/web/src/app/[locale]/(auth)/callback/page.tsx` | New users (no profile) → /onboarding. Returning users → /dashboard. | ✅ SHIPPED |
+| notification_service.py | `apps/api/app/services/notification_service.py` | Fire-and-forget `notify()` helper for all routers | ✅ NEW |
+| Assessment notifications | `apps/api/app/services/assessment/rewards.py` | `assessment_complete` + `badge_earned` notifications on rewards emit | ✅ SHIPPED |
+| Org notification refactor | `apps/api/app/routers/organizations.py` | Inline notification insert → uses notification_service.py | ✅ SHIPPED |
+| SWARM-HANDOFF.md | `docs/SWARM-HANDOFF.md` | Complete swarm documentation for partner CTOs | ✅ NEW |
+| MINDSHIFT-INTEGRATION-SPEC corrections | `docs/MINDSHIFT-INTEGRATION-SPEC.md` | Streak=Zustand, XP=placeholder, stat names corrected | ✅ UPDATED |
+
+Verified: BUG-07 (all 33 migrations in production), BUG-08 (autoconfirm ON). Both resolved.
+
+### Sprint E additions (same session):
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Public AURA privacy fix | `apps/api/app/routers/aura.py` | Strip `last_updated` from public `/{volunteer_id}` (Security P2) | ✅ SHIPPED |
+| CompetencyBreakdown freshness | `apps/web/src/components/aura/competency-breakdown.tsx` | Per-competency freshness label (teal/amber/slate) + retake CTA | ✅ SHIPPED |
+| effective_score display | `apps/web/src/app/[locale]/(dashboard)/aura/page.tsx` | AURA page shows decay-adjusted score, not raw | ✅ SHIPPED |
+| AuraScore type + transformer | `apps/web/src/lib/api/types.ts` | Added `effective_score` to AuraScore type + toAuraScore() | ✅ SHIPPED |
+| Freshness i18n (EN + AZ) | `apps/web/src/locales/{en,az}/common.json` | 6 new keys each: retakeNow, retakeIn, freshnessRecent/Weeks/Month, freshnessLabel | ✅ SHIPPED |
+
+### P0 Batch fixes (same session):
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| TASK-PROTOCOL v4.0 | `docs/TASK-PROTOCOL.md` | Team-first proposals, parallel batches, agent override, proportional gates | ✅ SHIPPED |
+| Public profile meta fix | `apps/web/src/app/[locale]/(public)/u/[username]/page.tsx` | "volunteer profile" → "professional profile" in meta description | ✅ SHIPPED |
+| Discover page copy fix | `apps/web/src/app/[locale]/(dashboard)/discover/page.tsx` | "Volunteer discovery" → "Talent discovery" in error message | ✅ SHIPPED |
+| Role-based nav filtering | `apps/web/src/components/layout/sidebar.tsx` | Org-only items (my-org, org-volunteers, discover) hidden for professionals | ✅ SHIPPED |
+| volunteerCta copy fix (EN+AZ) | `apps/web/src/locales/{en,az}/common.json` | "Contribute to our events" → "Share your expertise at our events" | ✅ SHIPPED |
+
+---
+
+## Session 67 (2026-03-29) — Sprint E1: Ecosystem Identity — rebrand + MindShift integration spec
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| EN i18n rebrand | `apps/web/src/locales/en/common.json` | 20+ volunteer strings → talent/professionals/participants | ✅ SHIPPED |
+| AZ i18n rebrand | `apps/web/src/locales/az/common.json` | 20+ könüllü strings → istedadlar/peşəkarlar/iştirakçılar | ✅ SHIPPED |
+| CLAUDE.md positioning | `CLAUDE.md` | Project Overview: "Verified Professional Talent Platform", 5-product ecosystem | ✅ SHIPPED |
+| PROJECT-OVERVIEW.md | `docs/PROJECT-OVERVIEW.md` | Full living description of 5-product ecosystem | ✅ NEW |
+| ADR-006 | `docs/adr/ADR-006-ecosystem-architecture.md` | Shared Supabase, event-sourced character_state, crystal economy decisions | ✅ NEW |
+| MINDSHIFT-INTEGRATION-SPEC.md | `docs/MINDSHIFT-INTEGRATION-SPEC.md` | Exact API contract for MindShift ↔ VOLAURA (Sprint E2 implementation guide) | ✅ NEW |
+
+Note: character_state API, migrations, and rewards service confirmed already built in Sprint 52-54. Not rebuilt this session.
+
+---
+
 ## Session 65 (2026-03-29) — TASK-PROTOCOL recursive audit (CX-1 to CX-4) + Assessment UX
 
 | Code | Location | What it does | Status | How to verify |

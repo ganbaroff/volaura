@@ -57,10 +57,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const name = profile.display_name ?? profile.username;
   return {
     title: `${name} — Volaura`,
-    description: `${name}'s verified volunteer profile on Volaura. View their AURA score and competency breakdown.`,
+    description: `${name}'s verified professional profile on Volaura. View their AURA score and competency breakdown.`,
     openGraph: {
       title: `${name} on Volaura`,
-      description: profile.bio ?? `Verified volunteer profile`,
+      description: profile.bio ?? `Verified professional profile`,
       images: [`/u/${username}/card`],
     },
     twitter: {

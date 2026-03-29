@@ -185,7 +185,10 @@ async def get_aura_by_id(
         return AuraScoreResponse(
             **_with_effective_score({**result.data, "competency_scores": {}, "aura_history": []})
         )
-    return AuraScoreResponse(**_with_effective_score(dict(result.data)))
+    # Strip last_updated from public view — prevents assessment timing inference (Security P2)
+    public_data = dict(result.data)
+    public_data.pop("last_updated", None)
+    return AuraScoreResponse(**_with_effective_score(public_data))
 
 
 @router.patch("/me/visibility")

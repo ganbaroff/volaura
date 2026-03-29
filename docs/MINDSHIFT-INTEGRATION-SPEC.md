@@ -134,7 +134,7 @@ async function fetchAuraBadge(volauraToken: string) {
 
 ### 2.1 Supabase Auth Migration
 
-**MindShift's current state:** Has its own Supabase project at `[redacted].supabase.co`
+**MindShift's current state:** Has its own Supabase project at `cinctbslvejqicxanvnr.supabase.co`
 
 **Migration plan:**
 1. Export MindShift's `auth.users` → seed into VOLAURA's Supabase (preserving emails)
@@ -179,10 +179,11 @@ await fetch("https://api.volaura.app/api/character/events", {
 
 **Crystal conversion:** `floor(xp_earned / 100)` crystals awarded per session. Daily cap: 15 crystals from MindShift source.
 
+> ⚠️ **Sprint E2 prerequisite:** `users.xp_total` column exists in MindShift's Supabase but has **no calculation logic** — it's a placeholder. The crystal conversion cannot work until MindShift implements XP accumulation (increment on session save). This must be MindShift-side Sprint E2 work item #0 before wiring crystal awards.
+
 **Life Simulator effect:**
-- Focus minutes → INT stat boost (`focus_minutes * 2` = INT XP)
-- Tasks completed → STR stat boost
-- Psychotype maps: achiever→STR, explorer→INT, connector→CHA, planner→WIS
+- Focus minutes → `intelligence` stat boost (actual character.gd field)
+- Psychotype maps: achiever→`energy`, explorer→`intelligence`, connector→`social`, planner→`happiness`
 
 ---
 
@@ -190,9 +191,13 @@ await fetch("https://api.volaura.app/api/character/events", {
 
 **Trigger:** Daily login in MindShift, after streak update
 
+> ⚠️ **Implementation note (from code audit):** MindShift streak state lives in **Zustand store persisted to localStorage** — it is NOT stored in Supabase. Fields: `currentStreak`, `longestStreak`, `lastActiveDate` in the streak slice. This means MindShift cannot read streak from a DB query — the streak event must be emitted from the client where the Zustand store is loaded. The trigger point is: when `useStreakStore` hydrates or updates `currentStreak`, compare to last emitted value and fire if changed.
+
 **MindShift calls:**
 ```typescript
 // Only when streak changes (once per day max)
+// Read from Zustand store: const { currentStreak } = useStreakStore()
+// NOT from Supabase DB — streak is client-side only
 await fetch("https://api.volaura.app/api/character/events", {
   method: "POST",
   headers: { Authorization: `Bearer ${token}` },
@@ -201,7 +206,7 @@ await fetch("https://api.volaura.app/api/character/events", {
     payload: {
       _schema_version: 1,
       buff_type: "consistency",
-      streak_days: currentStreak,
+      streak_days: currentStreak, // from Zustand, not DB
       // 7+ days = 0.9x age progression rate in Life Sim
       // 30+ days = 0.75x age progression rate
     },
@@ -324,13 +329,15 @@ These rules from MindShift's guardrails apply to ALL integration touchpoints:
 - [ ] Add `mindshift` to accepted `source_product` enum in schemas
 - [ ] Rate limit for MindShift source: 30 events/minute
 
-**MindShift side:**
+**MindShift side (prerequisites first — unblock before wiring):**
+- [ ] **[PREREQ] Implement XP calculation** — increment `users.xp_total` on focus session save. Currently `xp_total` column exists but has zero calculation logic. Crystal conversion (`floor(xp/100)`) is blocked on this.
+- [ ] **[PREREQ] Streak emit hook** — add side-effect in `useStreakStore` to call VOLAURA API when `currentStreak` changes. Streaks live in Zustand/localStorage, NOT Supabase — cannot trigger from DB.
 - [ ] Add env var: `VITE_VOLAURA_API_URL=https://api.volaura.app`
 - [ ] Create `src/shared/lib/volaura-bridge.ts` — typed API client
-- [ ] Migrate Supabase project URL to shared project
-- [ ] PostSessionFlow: call bridge after session saved
+- [ ] Migrate Supabase project URL to shared project (`cinctbslvejqicxanvnr` → VOLAURA project)
+- [ ] PostSessionFlow: call bridge after session saved (XP prereq must be done first)
 - [ ] ProgressPage: fetch and display AURA badge
-- [ ] Daily login: emit streak event if streak changed
+- [ ] Daily login: emit streak event if streak changed (streak hook prereq must be done first)
 - [ ] EnergyPicker: emit vital_logged on energy selection
 
 ---

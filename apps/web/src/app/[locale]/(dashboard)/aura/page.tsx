@@ -224,9 +224,12 @@ export default function AuraPage() {
     return () => clearTimeout(curtainTimer);
   }, [aura]);
 
+  // Use effective (decay-adjusted) score when available, fallback to raw total
+  const displayScore = aura?.effective_score ?? aura?.total_score ?? 0;
+
   // Counter only runs once reveal is complete, with slower 2s drama
   const animatedScore = useAnimatedCounter(
-    aura?.total_score ?? 0,
+    displayScore,
     2000,
     revealed
   );
@@ -327,11 +330,11 @@ export default function AuraPage() {
             <p className="text-sm text-muted-foreground">{t("aura.overallScore")}</p>
             <p
               className="text-6xl font-black tabular-nums text-foreground"
-              aria-label={`${t("aura.overallScore")}: ${(aura.total_score ?? 0).toFixed(1)}`}
+              aria-label={`${t("aura.overallScore")}: ${displayScore.toFixed(1)}`}
             >
               {(animatedScore ?? 0).toFixed(1)}
             </p>
-            <ScoreMeaning score={aura.total_score} />
+            <ScoreMeaning score={displayScore} />
           </div>
 
           {/* Badge with spring overshoot on reveal */}
@@ -418,7 +421,7 @@ export default function AuraPage() {
           <h3 className="mb-4 text-sm font-semibold text-muted-foreground uppercase tracking-wider">
             {t("aura.breakdown")}
           </h3>
-          <CompetencyBreakdown scores={aura.competency_scores} />
+          <CompetencyBreakdown scores={aura.competency_scores} lastUpdated={aura.last_updated} isOwner />
         </motion.div>
 
         {/* AURA Coach — personalized growth path, loads after reveal */}

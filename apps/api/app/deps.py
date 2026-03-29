@@ -42,7 +42,12 @@ async def get_supabase_user(request: Request) -> AsyncGenerator[AsyncClient, Non
             detail={"code": "MISSING_TOKEN", "message": "Missing or invalid Authorization header"},
         )
 
-    token = auth_header.removeprefix("Bearer ")
+    token = auth_header.removeprefix("Bearer ").strip()
+    if not token:
+        raise HTTPException(
+            status_code=401,
+            detail={"code": "EMPTY_TOKEN", "message": "Bearer token is empty"},
+        )
 
     try:
         client = await acreate_client(

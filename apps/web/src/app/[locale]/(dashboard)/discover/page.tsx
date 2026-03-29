@@ -299,7 +299,7 @@ export default function DiscoverPage() {
               {browseError && (
                 <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-6 text-center space-y-2">
                   <p className="text-sm font-medium text-on-surface">
-                    {t("discover.accessError", { defaultValue: "Volunteer discovery requires an organization account." })}
+                    {t("discover.accessError", { defaultValue: "Talent discovery requires an organization account." })}
                   </p>
                   <p className="text-xs text-on-surface-variant">
                     {t("discover.accessErrorDesc", { defaultValue: "Make sure your account is set up as an organization." })}

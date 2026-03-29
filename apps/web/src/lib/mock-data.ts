@@ -64,9 +64,9 @@ export function getMockEvents(): MockEvent[] {
       title: "Environmental Awareness Campaign",
       titleAz: "Ətraf Mühit Maarifçilik Kampaniyası",
       description:
-        "Join volunteers across Baku to raise awareness about sustainable practices. Activities include community outreach, workshops, and park cleanup.",
+        "Join professionals across Baku to raise awareness about sustainable practices. Activities include community outreach, workshops, and park cleanup.",
       descriptionAz:
-        "Dayanıqlı təcrübələr haqqında maarifçilik üçün Bakı könüllülərinə qoşulun. Fəaliyyətlərə icma ilə ünsiyyət, seminarlar və park təmizliyi daxildir.",
+        "Dayanıqlı təcrübələr haqqında maarifçilik üçün Bakı peşəkarlarına qoşulun. Fəaliyyətlərə icma ilə ünsiyyət, seminarlar və park təmizliyi daxildir.",
       organizerName: "Green Azerbaijan NGO",
       location: "Baku, Heydar Aliyev Center",
       locationAz: "Bakı, Heydər Əliyev Mərkəzi",

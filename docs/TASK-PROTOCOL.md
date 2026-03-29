@@ -1,467 +1,283 @@
-# TASK PROTOCOL v3.0 — Swarm Critique Loop
+# TASK PROTOCOL v4.0 — Swarm-First Batch Execution
 
-**Версия:** 3.0 | **Обновлено:** 2026-03-29
-**Изменения v3.0:** +Step 0.1 (Mistakes Audit), +Step 0.25 (Team Selection),
-+METRICS в Scope Lock, +Step 1.5 (Decision Type Gate), +Step 3.5 (Ecosystem Blast Radius),
-+Step 3.7 (User Journey Walkthrough), +Step 6.5 (Security Pre-Commit Checklist),
-Step 9 теперь требует explicit APPROVED/BLOCKED, +Step 9.5 (Work Verdict Gate),
-+Step 10.5 (CEO Silence Timeout).
-Основано на независимых предложениях 5 агентов роя (Security, Architecture, Product, Needs, Growth).
+**Version:** 4.0 | **Updated:** 2026-03-29
+**Previous:** v3.0 (Swarm Critique Loop — CTO proposes, team critiques)
+**Change:** Team proposes, team debates, best wins. CTO is one voice, not THE voice. Parallel batches, not sequential sprints.
 
-**Почему существует:** Claude самостоятельно проверяет свою работу — это не верификация, это самообман.
-Рой — внешняя проверка, которую нельзя подделать.
-
-**Принцип v3.0 (Needs Agent):** Протокол работает как OPT-OUT, не OPT-IN.
-CTO не "решает" использовать протокол. CTO документирует ПОЧЕМУ шаг пропускается.
-"Кажется простым" — не причина. "Исключение" требует явного одобрения CEO.
+**Why v4.0 exists:** CEO feedback — "CTO proposes and team just attacks. That's wrong. Team should propose radically different paths. You can do 12-20 things at once. Fix basics first. I'm tired of technical details — decide yourselves."
 
 ---
 
-## ⚡ БЫСТРЫЙ СТАРТ (используй это, не читай весь файл)
+## How It Works (30-second summary)
 
 ```
-1. Открыть: docs/TASK-PROTOCOL-CHECKLIST.md
-2. Скопировать шаблон
-3. Заполнять шаг за шагом
-4. Каждый шаг → писать .claude/protocol-state.json
-5. После Step 6 → production код разблокирован автоматически
+1. TEAM PROPOSES     → Each agent reads codebase + memory → proposes tasks independently
+2. BATCH ASSEMBLES   → All proposals triaged → 12-20 tasks batched by size
+3. TEAM DEBATES      → Agents argue priorities. 3+ votes override CTO.
+4. PARALLEL EXECUTE  → Tasks run simultaneously. Agents own their domain.
+5. BATCH CLOSES      → One report to CEO. Memory updated.
 ```
 
-**Хук `protocol-enforce.sh` блокирует Edit/Write на `apps/` `supabase/` `.github/`
-пока `.claude/protocol-state.json` не содержит `current_step >= 6`.**
+**Core principle:** Protocol is OPT-OUT, not OPT-IN. Skipping a step requires documenting WHY.
 
 ---
 
-## Как использовать
+## Required Reads (before every batch)
 
-Yusif отправляет этот файл перед каждой задачей: **"Загрузи TASK-PROTOCOL.md и начни."**
-Claude открывает `docs/TASK-PROTOCOL-CHECKLIST.md`, копирует шаблон, заполняет шаги.
-Объявление `"loaded"` без заполнения шаблона — не артефакт. Хук всё равно заблокирует.
-
-**Главное правило:** Каждый шаг производит **именованный артефакт**.
-Нельзя перейти к шагу N без артефакта шага N-1.
-"Понятно", "принято", "учёл" — не артефакты. Это обход.
-
----
-
-## ШАГИ
-
-### ШАГ 0 — СКИЛЫ (артефакт: `Skills: [список] + правила`)
-
-1. Открыть CLAUDE.md → Skills Matrix
-2. Выписать ВСЕ подходящие строки (не одну)
-3. Для каждого скила: 2 конкретных правила для ЭТОЙ задачи
-4. Объявить: `"Skills: [список]. Правила: [буллеты]"`
-
-→ БЕЗ ДЕКЛАРАЦИИ — шаг 0.1 не начинается.
+| File | What it tells you | When |
+|------|-------------------|------|
+| [`memory/swarm/SHIPPED.md`](../memory/swarm/SHIPPED.md) | What code exists (prevents rebuilding) | Batch start |
+| [`memory/context/mistakes.md`](../memory/context/mistakes.md) | CLASS 1-8 recurring errors | Batch start |
+| [`memory/context/patterns.md`](../memory/context/patterns.md) | What works, silent contracts | Batch start |
+| [`memory/swarm/agent-roster.md`](../memory/swarm/agent-roster.md) | Team capabilities, routing table | Batch start |
+| [`memory/context/sprint-state.md`](../memory/context/sprint-state.md) | Current position | Batch start |
+| [`memory/swarm/shared-context.md`](../memory/swarm/shared-context.md) | Architecture decisions, schema, known bugs | During planning |
+| [`CLAUDE.md`](../CLAUDE.md) | Skills Matrix, NEVER/ALWAYS rules | During execution |
+| [`memory/swarm/agent-feedback-log.md`](../memory/swarm/agent-feedback-log.md) | Past proposals: accepted/rejected/why | During proposals |
 
 ---
 
-### ШАГ 0.1 — MISTAKES AUDIT (артефакт: `"This session I will NOT: [3 пункта]"`)
+## PHASE 1: TEAM PROPOSES (replaces "CTO defines sprint")
 
-**Обязательно перед любой работой.** Прочитать `memory/context/mistakes.md`.
+### Step 1.0 — Agent Proposal Round
 
-Написать явно:
+Each agent independently reads the codebase and memory files, then proposes what to work on.
+
+**Each agent writes:**
 ```
-This session I will NOT:
-1. [Mistake CLASS X — конкретное поведение]
-2. [Mistake CLASS X — конкретное поведение]
-3. [Mistake CLASS X — конкретное поведение]
+PROPOSAL: [task name]
+CLASS: MICRO (≤10 lines) | SMALL (10-50) | MEDIUM (50-200) | LARGE (200+)
+WHY NOW: [1 sentence — what breaks/stalls if we don't do this]
+FILES: [specific paths this touches]
+BLOCKS: [what this unblocks downstream]
 ```
 
-Выбирать ТЕ ошибки, которые наиболее вероятны для ЭТОЙ задачи (не произвольные три).
+**Rules:**
+- CTO proposes too — but as ONE voice among 6, not the decider
+- Agents read `agent-feedback-log.md` to avoid re-proposing rejected ideas
+- Agents read `SHIPPED.md` to avoid proposing work that's done
+- Each agent can propose 1-3 tasks
+- Proposals can be ANY size — a 5-line copy fix alongside architecture work
 
-**Почему:** CLASS 3 (solo execution) встречалась 10 раз. Каждый раз CTO "забывал".
-Декларация в начале сессии делает ошибку видимой до того, как она совершена.
+### Step 1.1 — Proposal Triage
 
-→ БЕЗ ЯВНОЙ ДЕКЛАРАЦИИ — шаг 0.25 не начинается.
+Needs Agent collects all proposals and orders by:
+1. **P0 blockers** — things that make the product broken for users RIGHT NOW
+2. **High leverage** — things that unblock the most downstream work
+3. **Polish** — things that improve but don't unblock
+4. **Deferred** — nice-to-have, not now
+
+No proposal is rejected at this stage. All get classified.
+
+### Step 1.2 — Priority Debate
+
+**All agents see all proposals.** Any agent can:
+- **Support** another agent's proposal: "+1, because [reason]"
+- **Challenge**: "This is lower priority than [X] because [reason]"
+- **Merge**: "Proposals A and B should be one task because [shared files]"
+
+**Vote rule:** If 3+ agents agree on priority order, it stands. CTO cannot override. CTO can argue but needs 3+ agents to agree with the counter-argument.
+
+**Output:** Ordered task list with assignments.
 
 ---
 
-### ШАГ 0.25 — TEAM SELECTION (артефакт: `Team: [список агентов] + роли`)
+## PHASE 2: BATCH ASSEMBLY
 
-Перед любой работой — явно объявить КОГО берём на эту задачу.
+### Step 2.0 — Batch Lock
 
 ```
-Team:
-- [Agent type] → [роль в этой задаче]
-- [Agent type] → [роль в этой задаче]
-CTO solo: [если задача < 5 строк или typo — указать почему solo достаточно]
+BATCH: [date-based ID, e.g., 2026-03-30-A]
+TASKS: [count, typically 12-20]
+PARALLEL STREAMS:
+  UI/UX:        [tasks] → [agent]
+  Backend/API:  [tasks] → [agent]
+  Database:     [tasks] → [agent]
+  Integration:  [tasks] → [agent]
+  Fixes/Polish: [tasks] → [agent]
+DEPENDENCIES: [task X blocks task Y — list all hard deps]
 ```
 
-Справочник: `memory/swarm/agent-roster.md` → "When to Call" таблица.
+### Step 2.1 — Task Self-Classification
 
-**Почему:** Агенты не должны ждать пока CTO "захочет" их спросить.
-Команда объявляется в начале, не когда уже застряли.
+Each task declares its weight. Protocol gates scale automatically:
 
-→ БЕЗ TEAM DECLARATION — шаг 0.5 не начинается.
+| Class | Lines | Gate Level | What's required |
+|-------|-------|------------|-----------------|
+| **MICRO** | ≤10 | Minimal | Step 1 proposal + execute + verify. No critique round. |
+| **SMALL** | 10-50 | Light | + 1 peer review before merge |
+| **MEDIUM** | 50-200 | Standard | + Security checklist + 1 critique round |
+| **LARGE** | 200+ | Full | + Blast radius check + 2 critique rounds + user journey walkthrough |
+
+**CTO can bump a task ±1 level with written reason.** Any agent can contest the bump.
+
+### Step 2.2 — Domain Ownership
+
+Agents own domains, not individual tasks. An agent handles ALL tasks in their domain:
+
+| Domain | Primary Owner | Cross-Review By |
+|--------|--------------|-----------------|
+| Assessment pipeline | QA Engineer | Security |
+| Org/B2B features | Sales Strategist | Product |
+| User profiles + UX | Product Agent | Accessibility |
+| Scoring + data model | Architecture Agent | Security |
+| Events + growth | Growth Agent | Product |
+| Notifications + infra | Architecture Agent | Security |
+
+**Merge conflict prevention:** Each domain maps to specific directories. Agents don't touch files outside their domain without announcing it.
 
 ---
 
-### ШАГ 0.5 — CONTEXT CHECK (артефакт: `Context: [что изменилось]`)
+## PHASE 3: EXECUTION (parallel)
 
-Прочитать перед началом:
-- `memory/swarm/SHIPPED.md` → что существует (последние 2 сессии)
-- `git log --oneline -5` → что менялось недавно
-- `memory/context/sprint-state.md` → текущая позиция
+### Step 3.0 — Skills + Mistakes Declaration (per task, 2 min)
 
-Объявить: `"Context: [список изменений которые влияют на эту задачу / NONE если ничего]"`
+Before writing any code:
+```
+Skills loaded: [from CLAUDE.md Skills Matrix]
+This task I will NOT: [top 2 mistakes from mistakes.md relevant to THIS task]
+```
 
-**Почему:** 80% "я думал что X" сюрпризов происходят потому что что-то выше по стеку изменилось.
+### Step 3.1 — Security Pre-Check (MEDIUM + LARGE only)
 
-→ БЕЗ CONTEXT DECLARATION — шаг 1 не начинается.
+```
+□ Rate limiting on new endpoints?
+□ RLS policies on new tables?
+□ Pydantic validation on inputs?
+□ Auth + ownership checks?
+□ No sensitive data in logs?
+□ Parameterized SQL?
+```
+
+### Step 3.2 — Execute
+
+- Follow the proposal scope. Don't expand.
+- Checkpoint commits at natural breakpoints: `git commit -m "[TASK-ID] description"`
+- If blocked: announce blocker, continue unblocked parts. Don't wait.
+- If deviating from plan: log reason BEFORE deviating.
+
+### Step 3.3 — Peer Review (SMALL+ tasks)
+
+Agent who didn't write the code reviews it. Looks for:
+- Schema mismatches (CLASS 4 mistake)
+- Security gaps
+- Missing i18n
+- NEVER/ALWAYS rule violations
+
+Verdict: **APPROVED** / **APPROVED WITH NOTES** / **BLOCKED**
+
+If BLOCKED → fix → re-review. Not restart.
 
 ---
 
-### ШАГ 1 — SCOPE LOCK (артефакт: 6 строк)
+## PHASE 4: BATCH CLOSE
+
+### Step 4.0 — Documentation Gate
+
+Every task produces AT LEAST ONE update to:
+
+| If you changed... | Update... |
+|-------------------|-----------|
+| API endpoint / DB schema | `memory/swarm/SHIPPED.md` + `shared-context.md` |
+| User-facing flow | `memory/context/sprint-state.md` |
+| Architecture decision | `docs/DECISIONS.md` |
+| Found new mistake pattern | `memory/context/mistakes.md` |
+| Found working pattern | `memory/context/patterns.md` |
+
+### Step 4.1 — Batch Report to CEO
+
+One report for the entire batch, not per-task:
 
 ```
-IN:       [что конкретно доставляется — тестируемый результат]
-NOT IN:   [что явно откладывается]
-SUCCESS:  [как узнаём что готово — наблюдаемый результат, не "код написан"]
-TOKENS:   [~Xk бюджет → ~$Y стоимость]
-BLOCKERS: [что нужно решить ДО начала / NONE если нет]
-METRICS:  [как измерим бизнес-эффект через 7 дней / N/A если внутренняя задача]
+BATCH: [ID]
+COMPLETED: [count] tasks — [1-line each]
+DEFERRED: [count] — [why each]
+DISCOVERED: [gaps found during execution]
+BUSINESS IMPACT: [what users can now do that they couldn't before]
+QUESTION: [one question if needed, or NONE]
 ```
 
-Если BLOCKERS не NONE → остановиться, сообщить CEO, ждать разблокировки.
-METRICS не может быть "N/A" для user-facing фич. Если не знаешь метрику — это BLOCKER.
+CEO responds: **APPROVE / CHANGE / DEFER**
 
-→ БЕЗ ВСЕХ 6 СТРОК — шаг 1.5 не начинается.
+### Step 4.2 — Retrospective (Needs Agent writes)
+
+```
+BATCH: [ID]
+What went smooth: [list]
+What was friction: [list]
+Protocol step that helped most: [which step caught biggest issue]
+Protocol step that was overkill: [which step to simplify next time]
+New mistakes: [add to mistakes.md if any]
+New patterns: [add to patterns.md if any]
+```
 
 ---
 
-### ШАГ 1.5 — DECISION TYPE GATE (артефакт: `Gate: [тип решения] → [маршрут]`)
+## AGENT OVERRIDE RULES
 
-Определить тип задачи:
+| Situation | Rule |
+|-----------|------|
+| CTO rejects a proposal | Proposing agent + 2 others can override (3-agent vote) |
+| Critique finds issue but 2+ agents disagree | Agent proceeds, logged in protocol-state.json |
+| CTO wants to add scope mid-batch | Needs 3+ agent agreement, or it goes to next batch |
+| P0 production bug | CTO can invoke HOTFIX mode (skip critique, keep security check) |
+| 2-1 split on any decision | Force debate, then escalate to CEO if no consensus |
 
-| Тип | Критерии | Маршрут |
-|-----|----------|---------|
-| **Тривиальный** | < 20 строк, нет архитектуры/схемы/безопасности | CTO solo → сразу шаг 2 |
-| **Стандартный** | 20-100 строк, затрагивает существующие файлы | Полный протокол, 1 агент в шагах 3+5 |
-| **Архитектурный** | Новая схема, новый эндпоинт, изменение middleware/RLS | Обязательно шаги 3+5+8.5. Минимум 2 агента в роу |
-| **Критический** | Миграция прод БД, auth изменения, публичный API | +Step 3.5 (blast radius) + Step 3.5 adversarial. Opus для DSP |
-
-Объявить: `"Gate: [тип]. Маршрут: [что пропускаем/не пропускаем]."`
-
-**Почему:** Текущий протокол применяется одинаково к typo и к migration.
-Это либо перегружает мелкие задачи, либо недостаточно защищает критические.
-
-→ БЕЗ GATE DECLARATION — шаг 2 не начинается.
+**CTO never has unilateral tiebreaker.** Force consensus or escalate.
 
 ---
 
-### ШАГ 2 — ПЛАН (артефакт: нумерованные шаги)
+## TASK SIZE EXAMPLES (calibration)
 
-Написать план: пронумерованные шаги, каждый ≤ 2 строки.
-Для задач > 100 строк кода — пометить **checkpoint markers** `[CP1]`, `[CP2]` — точки промежуточного коммита.
-Не писать код. Не открывать файлы для изменения.
-
-→ ПЛАН ГОТОВ — собрать context package для роя (шаг 3).
-
----
-
-### ШАГ 3 — РОЙ КРИТИКУЕТ ПЛАН (артефакт: critique-round-1)
-
-**Сначала подготовить Context Package для агента:**
-```
-- Затронутые файлы: [список]
-- Затронутые таблицы/эндпоинты: [список]
-- Открытые проблемы безопасности: [из SHIPPED.md или NONE]
-- Масштаб: [ожидаемое число пользователей / запросов в сутки]
-- Необратимые операции: [миграции, удаления, изменения схемы / NONE]
-```
-
-Запустить Agent (haiku) с промптом:
-```
-"Контекст: [context package выше]
-План: [план из шага 2]
-
-Найди ВСЕ проблемы. Будь конкретным: называй файлы, таблицы, эндпоинты.
-Каждая проблема: что сломается, когда, почему.
-НЕ говори 'выглядит нормально' — если не нашёл — смотри хуже."
-```
-
-Роутинг персон: см. `docs/engineering/skills/RECURSIVE-CRITICISM.md`.
-Получить критику. НЕ начинать выполнение.
-
-→ БЕЗ ПОЛУЧЕННОЙ КРИТИКИ — шаг 3.5 не начинается.
+| Example | Class | Why |
+|---------|-------|-----|
+| Fix i18n string "volunteer" → "professional" | MICRO | 1 line, 1 file |
+| Add rate limiter to endpoint | MICRO | 1 decorator |
+| Hide org-only nav from professionals | SMALL | Conditional render in sidebar.tsx |
+| Add email notification settings | MEDIUM | New settings page + API endpoint |
+| Org search service + UI | LARGE | Service + router + tests + React page |
+| DB migration volunteer_id → user_id | LARGE | Touches every table, needs deprecation |
 
 ---
 
-### ШАГ 3.5 — ECOSYSTEM BLAST RADIUS (артефакт: blast-radius-report)
+## FAILURE MODES TO WATCH
 
-**Только для Архитектурного и Критического типов (из шага 1.5).**
-
-Запустить Agent (haiku):
-```
-"Задача: [описание из Scope Lock]
-Затронутые файлы: [список]
-
-Назови ВСЕ компоненты экосистемы, которые пострадают от этого изменения:
-- Другие эндпоинты которые зависят от изменяемых таблиц/функций
-- Frontend компоненты которые читают изменяемые API
-- Другие продукты экосистемы (MindShift, BrandedBy, ZEUS, Life Sim)
-- Swarm agents которые используют эти данные
-- Telegram интеграции которые зависят от этих событий
-Для каждого: что сломается и насколько критично (P0/P1/P2)."
-```
-
-Если P0 найден → BLOCKER. Добавить в шаг 1 BLOCKERS и уведомить CEO.
-Если только P1/P2 → задокументировать в плане, исправить в рамках задачи если возможно.
-
-→ BLAST RADIUS ЧИСТ (или задокументирован) → шаг 3.7.
+| Pattern | CLASS | Detection |
+|---------|-------|-----------|
+| CTO decides alone without team | CLASS 3 | No "Team:" declaration in proposal |
+| "Done" without verification | CLASS 1 | No curl/test evidence in report |
+| Memory not updated after batch | CLASS 2 | SHIPPED.md stale after session |
+| Assumed field names | CLASS 4 | No schema read before coding |
+| Invented metrics | CLASS 5 | No source file for claimed number |
+| Built features when basics broken | CEO feedback | P0 issues exist but team builds P3 features |
 
 ---
 
-### ШАГ 3.7 — USER JOURNEY WALKTHROUGH (артефакт: journey-check)
+## PROTOCOL EVOLUTION
 
-**Только для user-facing задач (фичи, UX, onboarding, assessment flow).**
+This document improves every batch. Needs Agent proposes changes in Step 4.2 retrospective. Team votes. Changes logged here:
 
-Пройти мысленно (или через preview) реальный путь пользователя:
-
-```
-Персона: [Leyla / Nigar / Kamal / другая]
-Точка входа: [откуда приходит пользователь]
-Шаги: [1 → 2 → 3 → ...]
-Точка выхода: [что пользователь видит/чувствует в конце]
-Слабые места: [где может застрять, растеряться, сдаться]
-```
-
-Если слабые места найдены → добавить в план исправление ИЛИ задокументировать как Known Gap.
-
-**Почему:** 512 тестов ≠ продукт работает. Реальный путь пользователя ≠ happy path из тестов.
-
-→ JOURNEY CHECK DONE → шаг 4.
+| Version | Date | Change | Trigger |
+|---------|------|--------|---------|
+| v1.0 | 2026-03-28 | Initial: skills → plan → critique → execute | Session 59 |
+| v2.0 | 2026-03-28 | Added checklist + enforcement hook | Session 59 |
+| v3.0 | 2026-03-29 | +Mistakes audit, +team selection, +blast radius, +CEO gate | 5 agent proposals |
+| **v4.0** | **2026-03-29** | **Team-first proposals, parallel batches, agent override, proportional gates** | **CEO directive: "Team decides, not CTO alone"** |
 
 ---
 
-### ШАГ 4 — МОЙ ОТВЕТ НА КРИТИКУ (артефакт: response-table)
-
-| # | Пункт критики | Принято/Отклонено | Конкретное изменение ИЛИ причина отклонения с обоснованием |
-|---|--------------|-------------------|-------------------------------------------------------------|
-
-**Запрещённые ответы:** "учёл", "принято", "хорошее замечание" — без конкретного изменения.
-Каждый пункт — строка. Отклонение требует обоснования (не просто "несогласен").
-
-→ БЕЗ ПОЛНОЙ ТАБЛИЦЫ — шаг 5 не начинается.
-
----
-
-### ШАГ 5 — РОЙ КОНТРКРИТИКУЕТ (артефакт: critique-round-2)
-
-Отправить рою: обновлённый план + response-table.
-```
-"Найди что я пропустил в ответах.
-Что я неправильно отклонил? Какие новые риски появились?
-Мои ответы адресуют корень или только симптом?"
-```
-
-**EXIT CONDITION:** Максимум 2 раунда. После раунда 2 — CTO принимает решение и идёт дальше.
-Если раунд 2 нашёл Critical → 1 дополнительный раунд, затем решение в любом случае.
-Бесконечный debate = потраченные токены без продвижения.
-
-→ БЕЗ ВТОРОЙ КРИТИКИ — шаг 6 не начинается.
-
----
-
-### ШАГ 6 — ФИНАЛЬНЫЙ ПЛАН (артефакт: final-plan)
-
-Обновить план с изменениями раунда 2.
-Пометить: `[R1]` — из раунда 1, `[R2]` — из раунда 2.
-Подтвердить checkpoint markers из шага 2 (добавить если нужно).
-
-→ ФИНАЛЬНЫЙ ПЛАН ГОТОВ — шаг 6.5.
-
----
-
-### ШАГ 6.5 — SECURITY PRE-COMMIT CHECKLIST (артефакт: security-check)
-
-**Обязательно для всех задач кроме Тривиальных (из шага 1.5).**
-
-Пройти чеклист перед написанием первой строки кода:
-
-```
-□ Новые эндпоинты: @limiter.limit(RATE_DEFAULT) добавлен?
-□ Новые таблицы: RLS политики прописаны и протестированы?
-□ Пользовательский ввод: валидируется через Pydantic (не raw)?
-□ Auth check: JWT проверяется на каждом защищённом эндпоинте?
-□ Ownership check: пользователь может читать/изменять только своё?
-□ Логирование: чувствительные данные (токены, пароли) НЕ логируются?
-□ Error messages: не раскрывают внутреннюю структуру (stack traces)?
-□ SQL: параметризованные запросы (никакой конкатенации строк)?
-```
-
-Объявить: `"Security check: [список пройденных / список N/A с причиной]"`
-Если любой пункт fails → BLOCKER. Код не пишется пока не исправлено.
-
-**Почему:** OWASP vulnerabilities нашли в сессии 52 потому что security check был ПОСЛЕ написания кода.
-Inverting order: 10 минут проверки ДО = часы исправления после исключаются.
-
-→ SECURITY CHECK PASSED → шаг 7.
-
----
-
-### ШАГ 7 — ВЫПОЛНЕНИЕ (артефакт: код + checkpoint коммиты)
-
-Следовать финальному плану точно.
-- `engineering:code-review` после каждого изменения > 50 строк
-- На каждом `[CPn]` из плана → `git commit` + краткое сообщение что сделано
-- Если нужно отклониться от плана → задокументировать причину ПЕРЕД отклонением
-- Не объявлять "готово" пока все шаги плана не выполнены
-
-→ ВСЕ ШАГИ ПЛАНА ЗАВЕРШЕНЫ + checkpoint коммиты сделаны → шаг 7.5.
-
----
-
-### ШАГ 7.5 — DOCUMENTATION GATE (артефакт: doc-checklist)
-
-**Обязательно проверить перед отчётом.** Определить тип задачи и обновить ВСЕ файлы из соответствующего ряда:
-
-| Тип задачи | Обязательные файлы к обновлению |
-|------------|--------------------------------|
-| Новый/изменённый API эндпоинт | `memory/swarm/SHIPPED.md`, `memory/swarm/shared-context.md` (если schema) |
-| Миграция БД / RLS изменение | `memory/swarm/SHIPPED.md`, `memory/swarm/shared-context.md` |
-| UX / flow изменение | `memory/context/sprint-state.md` |
-| Bug fix влияющий на данные | `docs/DECISIONS.md` (1 строка: что сломалось, что починили) |
-| Любой sprint-completing commit | `memory/context/sprint-state.md`, `docs/SPRINT-PLAN-V3.md` (отметить [x]) |
-| Любая задача | `docs/DECISIONS.md` ретроспектива (шаг 8 отчёт туда тоже идёт) |
-
-Объявить: `"Doc gate: [список обновлённых файлов] / [список пропущенных с причиной]"`
-
-Если файл пропущен без причины → задача НЕ завершена.
-
-→ DOC GATE PASSED — шаг 8.5.
-
----
-
-### ШАГ 8.5 — PRE-COMMIT REVIEW (артефакт: pre-commit-verdict)
-
-**ДО финального push** (checkpoint коммиты уже есть — финальный merge/push под контролем):
-
-Запустить Agent (haiku):
-```
-"Проверь изменения ПЕРЕД пушем:
-- Есть ли security регрессия? (новые эндпоинты без @limiter, RLS пропущен)
-- Схема БД соответствует коду? (column names, types)
-- Необратимые операции безопасны? (migration rollback status)
-- Что ещё сломается от этого изменения?
-Затронутые файлы: [список из шага 7]"
-```
-
-Если BLOCKED → исправить → повторить шаг 7 для исправления.
-Если APPROVED → финальный push.
-
-→ PRE-COMMIT VERDICT RECEIVED — шаг 8.
-
----
-
-### ШАГ 8 — ОТЧЁТ (артефакт: work-report)
-
-```
-СДЕЛАНО:          [файлы, функции, таблицы — конкретно]
-НЕ СДЕЛАНО:       [что отложено и почему]
-СЮРПРИЗ:          [что план не предусмотрел — честно]
-РИСКИ:            [что ещё может сломаться]
-PREDICTION VS ACT: [DSP предсказал X, на деле получилось Y. Дельта: ±N]
-ДОКАЗАТЕЛЬСТВО:   [curl output / test result / screenshot — не только слова]
-```
-
-Отправить рою на финальную проверку (шаг 9).
-
----
-
-### ШАГ 9 — РОЙ ПРОВЕРЯЕТ РАБОТУ (артефакт: work-verdict)
-
-Запустить Agent (haiku):
-```
-"Проверь этот отчёт: [work-report].
-Соответствует ли реализация заявленному?
-Что пропущено? Что выглядит неправильно?
-Сравни с финальным планом: [final-plan].
-Проверь доказательства: [curl output / test results].
-
-Вердикт ОБЯЗАТЕЛЕН. Один из трёх:
-APPROVED — реализация соответствует плану, доказательства достаточны
-APPROVED WITH NOTES — работает, но [конкретные замечания для следующей задачи]
-BLOCKED — [конкретная причина]. Вернуться к шагу 7.5."
-```
-
-Если BLOCKED → исправить → вернуться к шагу 7.5.
-**Готово только когда рой выдал APPROVED или APPROVED WITH NOTES.**
-Тишина агента или "выглядит нормально" — не вердикт. Переспросить явно.
-
----
-
-### ШАГ 9.5 — WORK VERDICT GATE (артефакт: verdict-declaration)
-
-**CTO явно объявляет:**
-```
-Verdict: APPROVED / APPROVED WITH NOTES
-Notes: [если APPROVED WITH NOTES — что будет исправлено в следующей задаче]
-Ready for CEO: YES
-```
-
-Если вердикт BLOCKED — этот шаг не достигается.
-Этот шаг существует потому что Step 9 может вернуть verbose output.
-Явное APPROVED/BLOCKED — единственное что важно для Step 10.
-
-→ VERDICT DECLARED — шаг 10.
-
----
-
-### ШАГ 10 — CEO (артефакт: CEO ответ)
-
-```
-Результат:       [что сделано — 1 строка]
-Бизнес-эффект:  [что разблокировано / что изменилось для пользователей]
-Вопрос:          [один вопрос если нужен / NONE]
-```
-
-Никогда: процесс, ошибки, промежуточные шаги, "я думал о..."
-
-**CEO должен явно ответить: APPROVE / CHANGE / DEFER.**
-Тишина ≠ одобрение. Без явного ответа CEO — см. шаг 10.5.
-
----
-
-### ШАГ 10.5 — CEO SILENCE TIMEOUT (артефакт: timeout-action)
-
-```
-Если CEO не ответил через 4 часа → отправить напоминание (1 строка):
-  "Жду APPROVE/CHANGE/DEFER на: [результат из шага 10]"
-
-Если CEO не ответил через 8 часов → PAUSE WORK.
-  Записать в memory/context/sprint-state.md:
-  "PAUSED: ожидание CEO approval на [задача]. Время паузы: [timestamp]."
-  Уведомить через Telegram если бот активен.
-
-Если CEO ответил CHANGE → вернуться к шагу 1 с новым scope.
-Если CEO ответил DEFER → закрыть задачу, записать в DECISIONS.md.
-```
-
-**Почему:** CTO продолжал работать без approval и делал решения которые CEO потом менял.
-Это тратило токены, время, и создавало технический долг из неодобренных фич.
-
----
-
-## Исключения (требуют явного разрешения CEO)
-
-| Ситуация | Что можно пропустить | Что нельзя пропустить НИКОГДА |
-|----------|---------------------|-------------------------------|
-| Hotfix (прод сломан) | Шаги 3-6.5, 8.5 | Шаги 0, 0.1, 0.25, 0.5, 1, 7, 7.5, 8, 9, 9.5, 10 |
-| Typo / < 5 строк | Шаги 3-6.5, 8.5 | Шаги 0, 0.1, 0.25, 0.5, 1, 7, 7.5, 8, 9, 9.5, 10 |
-| Тривиальный (из Gate) | Шаги 3.5, 3.7, 6.5 | Всё остальное |
-| Любая другая задача | Ничего | Весь протокол |
-
-"Задача кажется простой" — не исключение. CLASS 1 ошибки всегда начинаются так.
-
----
-
-## Связанные файлы
-
-- `docs/engineering/skills/RECURSIVE-CRITICISM.md` — роутинг персон для шагов 3 и 5
-- `CLAUDE.md` → Skills Matrix — для шага 0
-- `memory/context/mistakes.md` — CLASS 1/2/3 ошибки которые этот протокол предотвращает
-- `memory/swarm/SHIPPED.md` — читается в шаге 0.5, обновляется в шаге 7.5
-- `memory/swarm/agent-roster.md` — читается в шаге 0.25 для Team Selection
+## LINKED FILES
+
+| Purpose | File |
+|---------|------|
+| Batch task tracking | `docs/BATCH-TASKS.md` (created per batch) |
+| Enforcement state | `.claude/protocol-state.json` |
+| Checklist template | `docs/TASK-PROTOCOL-CHECKLIST.md` |
+| Agent capabilities | `memory/swarm/agent-roster.md` |
+| What exists | `memory/swarm/SHIPPED.md` |
+| Architecture decisions | `memory/swarm/shared-context.md` |
+| Past proposals | `memory/swarm/agent-feedback-log.md` |
+| Recurring mistakes | `memory/context/mistakes.md` |
+| Working patterns | `memory/context/patterns.md` |
+| Sprint position | `memory/context/sprint-state.md` |
+| Skills reference | `CLAUDE.md` → Skills Matrix |

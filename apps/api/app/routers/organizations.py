@@ -630,19 +630,14 @@ async def create_intro_request(
 
     intro = intro_result.data[0]
 
-    # Create notification for the volunteer (fire-and-forget, don't fail the request if this errors)
-    vol_name = vol.get("display_name") or vol.get("username") or "Volunteer"
-    try:
-        await db.table("notifications").insert({
-            "user_id": payload.volunteer_id,
-            "type": "intro_request",
-            "title": f"{org_name} wants to connect",
-            "body": f"Introduction request for: {payload.project_name}",
-            "reference_id": intro["id"],
-            "is_read": False,
-        }).execute()
-    except Exception as e:
-        logger.warning("Failed to create notification for intro request", error=str(e)[:200], intro_id=intro["id"])
+    # Create notification for the volunteer (fire-and-forget)
+    from app.services.notification_service import notify
+    await notify(
+        db, payload.volunteer_id, "intro_request",
+        f"{org_name} wants to connect",
+        body=f"Introduction request for: {payload.project_name}",
+        reference_id=intro["id"],
+    )
 
     logger.info(
         "Intro request created",

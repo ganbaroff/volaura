@@ -12,6 +12,7 @@ from loguru import logger
 
 from app.core.assessment.aura_calc import BADGE_TIERS
 from app.deps import SupabaseAdmin
+from app.services.notification_service import notify
 
 # Crystal reward per competency completion (completion-based, NOT score-based)
 CRYSTAL_REWARD = 50
@@ -83,6 +84,12 @@ async def emit_assessment_rewards(
                 skill_slug=skill_slug,
                 crystals=CRYSTAL_REWARD,
             )
+            await notify(
+                db, user_id, "assessment_complete",
+                f"Assessment complete: {skill_slug.replace('_', ' ').title()}",
+                body=f"You earned {CRYSTAL_REWARD} crystals!",
+                reference_id=skill_slug,
+            )
         except Exception as exc:
             logger.error(
                 "Failed to emit crystal reward — manual reconciliation needed",
@@ -113,6 +120,12 @@ async def emit_assessment_rewards(
                 skill_slug=skill_slug,
                 score=competency_score,
                 badge_tier=badge_tier,
+            )
+            await notify(
+                db, user_id, "badge_earned",
+                f"{badge_tier} badge earned!",
+                body=f"{skill_slug.replace('_', ' ').title()}: {badge_tier} ({competency_score:.0f}/100)",
+                reference_id=skill_slug,
             )
         except Exception as exc:
             logger.error(

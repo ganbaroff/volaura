@@ -30,13 +30,12 @@ export type BadgeTier = "platinum" | "gold" | "silver" | "bronze" | "none";
 
 export type AuraScore = {
   volunteer_id: string;
-  total_score: number;          // maps from total_score (was overall_score in stale generated type)
+  total_score: number;
+  effective_score?: number | null;
   badge_tier: BadgeTier;
-  is_elite: boolean;            // maps from elite_status
+  is_elite: boolean;
   competency_scores: Record<string, number>;
-  verification_level?: string;
   last_updated?: string | null;
-  // Raw fields from API
   reliability_score?: number;
   reliability_status?: string;
   events_attended?: number;
@@ -50,6 +49,7 @@ export function toAuraScore(raw: AuraScoreResponse): AuraScore {
   return {
     volunteer_id: raw.volunteer_id,
     total_score: raw.total_score,
+    effective_score: raw.effective_score,
     badge_tier: (raw.badge_tier as BadgeTier) || "none",
     is_elite: raw.elite_status,
     competency_scores: raw.competency_scores,
@@ -75,7 +75,6 @@ export type Profile = {
   location: string | null;
   languages: string[];
   is_public: boolean;
-  badge_tier?: BadgeTier;
   created_at: string;
   updated_at: string;
 };
@@ -127,34 +126,9 @@ export interface DashboardStats {
 }
 
 
-// ── Org B2B dashboard ─────────────────────────────────────────────────────────
-// Mirrors apps/api/app/schemas/organization.py — OrgDashboardStats, OrgVolunteerRow
-
-export interface BadgeDistribution {
-  platinum: number;
-  gold: number;
-  silver: number;
-  bronze: number;
-  none: number;
-}
-
-export interface OrgVolunteerRow {
-  volunteer_id: string;
-  username: string;
-  display_name: string | null;
-  overall_score: number | null;
-  badge_tier: string | null;
-  competencies_completed: number;
-  last_activity: string | null;
-}
-
-export interface OrgDashboardStats {
-  org_id: string;
-  org_name: string;
-  total_assigned: number;
-  total_completed: number;
-  completion_rate: number;
-  avg_aura_score: number | null;
-  badge_distribution: BadgeDistribution;
-  top_volunteers: OrgVolunteerRow[];
-}
+// ── Org B2B dashboard — re-exported from generated types (single source of truth) ──
+export type {
+  BadgeDistribution,
+  OrgDashboardStats,
+  OrgVolunteerRow,
+} from "./generated/types.gen";

@@ -15,9 +15,9 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Volaura — Elite Volunteer Talent Platform",
+  title: "Volaura — Verified Professional Talent Platform",
   description:
-    "Volaura is a verified volunteer talent platform. Get your AURA score, share your achievements, and connect with top event organizers.",
+    "Prove your skills through adaptive assessment. Earn your AURA badge. Get discovered by top organizations.",
   metadataBase: new URL(process.env.APP_URL || "http://localhost:3000"),
 };
 

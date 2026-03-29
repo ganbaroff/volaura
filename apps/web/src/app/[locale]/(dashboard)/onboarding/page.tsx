@@ -251,6 +251,18 @@ export default function OnboardingPage() {
           <h1 className="text-2xl font-bold text-foreground">{t("onboarding.title")}</h1>
         </div>
 
+        {/* Discovery narrative — explains WHY before asking WHO */}
+        {step === 1 && (
+          <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 mb-4 text-center space-y-1">
+            <p className="text-sm font-semibold text-foreground">
+              {t("onboarding.whyTitle", { defaultValue: "Prove your skills. Get discovered." })}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {t("onboarding.whyDesc", { defaultValue: "One assessment earns your AURA badge. Organizations actively search for verified professionals like you." })}
+            </p>
+          </div>
+        )}
+
         {/* Progress bar */}
         <ProgressBar step={step} totalSteps={totalSteps} />
 
@@ -278,13 +290,13 @@ export default function OnboardingPage() {
                   label={t("onboarding.displayName")}
                   value={formData.display_name}
                   onChange={(v) => setField("display_name", v)}
-                  placeholder="Leyla Həsənova"
+                  placeholder={t("onboarding.namePlaceholder", { defaultValue: "Your full name" })}
                 />
                 <Input
                   label={t("onboarding.username")}
                   value={formData.username}
                   onChange={(v) => setField("username", v.toLowerCase().replace(/\s+/g, "_"))}
-                  placeholder="leyla_hasanova"
+                  placeholder={t("onboarding.usernamePlaceholder", { defaultValue: "your_username" })}
                 />
               </div>
 
@@ -319,7 +331,7 @@ export default function OnboardingPage() {
                   label={t("onboarding.location")}
                   value={formData.location}
                   onChange={(v) => setField("location", v)}
-                  placeholder="Baku, Azerbaijan"
+                  placeholder={t("onboarding.locationPlaceholder", { defaultValue: "Your city" })}
                 />
 
                 <div className="space-y-2">

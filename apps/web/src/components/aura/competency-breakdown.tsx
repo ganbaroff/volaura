@@ -1,10 +1,15 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { useParams } from "next/navigation";
 
 interface CompetencyBreakdownProps {
   scores: Record<string, number>;
+  lastUpdated?: string | null;
+  /** Hide freshness + retake for public/org views */
+  isOwner?: boolean;
 }
 
 const COMPETENCY_ORDER = [
@@ -18,6 +23,8 @@ const COMPETENCY_ORDER = [
   { id: "empathy_safeguarding", weight: 5 },
 ] as const;
 
+const RETEST_COOLDOWN_DAYS = 7;
+
 const staggerChildren = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.08 } },
@@ -28,8 +35,24 @@ const slideUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" as const } },
 };
 
-export function CompetencyBreakdown({ scores }: CompetencyBreakdownProps) {
+function getFreshnessInfo(daysSince: number) {
+  if (daysSince <= 7) return { key: "freshnessRecent", color: "text-cyan-600" };
+  if (daysSince <= 21) return { key: "freshnessWeeks", color: "text-amber-600" };
+  return { key: "freshnessMonth", color: "text-muted-foreground" };
+}
+
+export function CompetencyBreakdown({ scores, lastUpdated, isOwner = false }: CompetencyBreakdownProps) {
   const { t } = useTranslation();
+  const { locale } = useParams<{ locale: string }>();
+
+  const daysSinceUpdate = lastUpdated
+    ? Math.max(0, Math.floor((Date.now() - new Date(lastUpdated).getTime()) / 86_400_000))
+    : null;
+
+  const canRetake = daysSinceUpdate !== null && daysSinceUpdate >= RETEST_COOLDOWN_DAYS;
+  const daysUntilRetake = daysSinceUpdate !== null ? Math.max(0, RETEST_COOLDOWN_DAYS - daysSinceUpdate) : null;
+
+  const freshness = daysSinceUpdate !== null ? getFreshnessInfo(daysSinceUpdate) : null;
 
   return (
     <motion.div
@@ -41,6 +64,7 @@ export function CompetencyBreakdown({ scores }: CompetencyBreakdownProps) {
       {COMPETENCY_ORDER.map(({ id, weight }) => {
         const score = Math.round(scores[id] ?? 0);
         const label = t(`competency.${id}`, { defaultValue: id });
+        const assessed = score > 0;
 
         return (
           <motion.div key={id} variants={slideUp}>
@@ -65,6 +89,27 @@ export function CompetencyBreakdown({ scores }: CompetencyBreakdownProps) {
                 className="h-full rounded-full bg-primary"
               />
             </div>
+
+            {/* Freshness + retake — only for owner, only if assessed */}
+            {isOwner && assessed && freshness && (
+              <div className="flex items-center justify-between mt-1.5">
+                <span className={`text-xs ${freshness.color}`}>
+                  {t(`aura.${freshness.key}`)}
+                </span>
+                {canRetake ? (
+                  <Link
+                    href={`/${locale}/assessment?competency=${id}`}
+                    className="text-xs font-medium text-cyan-600 hover:text-cyan-700 transition-colors"
+                  >
+                    {t("aura.retakeNow")}
+                  </Link>
+                ) : daysUntilRetake !== null && daysUntilRetake > 0 ? (
+                  <span className="text-xs text-muted-foreground">
+                    {t("aura.retakeIn", { days: daysUntilRetake })}
+                  </span>
+                ) : null}
+              </div>
+            )}
           </motion.div>
         );
       })}

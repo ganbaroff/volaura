@@ -87,6 +87,32 @@ class Settings(BaseSettings):
 settings = Settings()
 
 
+def assert_production_ready() -> None:
+    """Raise RuntimeError for settings that will cause silent failures in production.
+
+    Called at startup lifespan. Fails the process early rather than serving broken
+    responses (e.g., CORS blocking all requests because APP_URL is still localhost).
+
+    Only runs when APP_ENV == "production" (not staging, not development).
+    """
+    if settings.app_env != "production":
+        return
+    errors: list[str] = []
+    if not settings.supabase_service_key:
+        errors.append(
+            "SUPABASE_SERVICE_KEY is not set — API cannot perform admin DB operations."
+        )
+    if settings.app_url == "http://localhost:3000":
+        errors.append(
+            "APP_URL is still http://localhost:3000 — CORS will block all frontend requests."
+        )
+    if errors:
+        raise RuntimeError(
+            "Production startup failed — fix these settings before deploying:\n"
+            + "\n".join(f"  • {e}" for e in errors)
+        )
+
+
 def validate_production_settings() -> list[str]:
     """Check production-critical settings. Returns list of warnings."""
     warnings = []

@@ -20,7 +20,7 @@ from starlette.middleware.proxy_headers import ProxyHeadersMiddleware
 
 import sentry_sdk
 
-from app.config import settings, validate_production_settings
+from app.config import settings, assert_production_ready, validate_production_settings
 from app.middleware.rate_limit import setup_rate_limiting
 
 # Sentry error monitoring — silent if DSN not set
@@ -32,6 +32,7 @@ if settings.sentry_dsn:
     )
     logger.info("Sentry monitoring enabled")
 
+from app.middleware.request_id import RequestIdMiddleware
 from app.middleware.security_headers import SecurityHeadersMiddleware
 from app.routers import activity, assessment, auth, aura, badges, brandedby, character, discovery, events, health, invites, leaderboard, notifications, organizations, profiles, skills, stats, telegram_webhook, verification
 from app.services.reeval_worker import run_reeval_worker
@@ -43,7 +44,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan — startup and shutdown events."""
     logger.info("Volaura API starting up...")
     logger.info("Environment: {env}", env=settings.app_env)
-    # Validate production-critical settings
+    # Fail fast for production blockers (SUPABASE_SERVICE_KEY, APP_URL)
+    assert_production_ready()
+    # Warn about non-blocking but important gaps
     for warning in validate_production_settings():
         logger.warning(warning)
 
@@ -96,6 +99,9 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type", "Accept", "Accept-Language"],
 )
 
+# Outermost middleware: correlation ID on every request/response (including errors)
+app.add_middleware(RequestIdMiddleware)
+
 # CRIT-01 fix: catch unhandled exceptions — never leak DB/internal errors to client
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
@@ -105,6 +111,7 @@ async def global_exception_handler(request: Request, exc: Exception) -> JSONResp
         method=request.method,
         path=request.url.path,
         error=str(exc),
+        request_id=getattr(request.state, "request_id", "unknown"),
     )
     return JSONResponse(
         status_code=500,

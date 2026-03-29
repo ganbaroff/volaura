@@ -7,14 +7,14 @@
 
 ## Active Agents
 
-| Agent Role | Model | Primary Strength | Known Weakness | Recent Score | Trend |
-|-----------|-------|-----------------|----------------|-------------|-------|
-| Security Agent | haiku | CVSS scoring, attack vectors, injection patterns, XSS detection, RLS audits | Overblows low-severity issues (anon keys, timing oracles) | **8.5/10** | +0.5 — proved CTO wrong twice |
-| Architecture Agent | haiku | System coherence, data flow gaps, storage math, RLS policy analysis | Sometimes misreads auth patterns | **8.0/10** | +1.5 — found CVSS 9.8 aura_scores |
-| Product Agent | haiku | User journey gaps, i18n audits, ADHD-first UX, ecosystem navigation | Needs usage data for retention analysis | **7.5/10** | +2.0 — unfairly low before |
-| Needs Agent | haiku | Meta-analysis, process improvement, swarm structure, highest leverage-per-finding | N/A (introspective role) | **7.0/10** | New rating — 2/2 findings changed team workflows |
-| QA Engineer Agent | haiku | Blind cross-testing, test generation, coverage analysis, GRS validation | Self-assessment circularity (Mistake #47) | **6.5/10** | -0.5 — circularity was fundamental |
-| Growth Agent | haiku | User acquisition, retention, monetization, viral mechanics, competitor tracking | NEW — unproven | **5.0/10** | **REPLACED SWE Agent** (Session 53) |
+| Agent Role | Model | Primary Strength | Known Weakness | Score | Trend | Session 69 Audit |
+|-----------|-------|-----------------|----------------|-------|-------|-----------------|
+| Security Agent | haiku | CVSS scoring, attack vectors, XSS, RLS, route ordering | Overblows low-severity (improving) | **9.0/10** | ↑ +0.5 | 8/9 correct (88.9%). Route shadowing vindicated. Promoted to Expert. |
+| Architecture Agent | haiku | System coherence, data flow, storage math, cost analysis | Context misreads on auth patterns | **8.5/10** | ↑ +0.5 | 6/8 correct (75%). Storage math was top insight. |
+| Product Agent | haiku | User journey gaps, 100% acceptance rate, ADHD-first UX | Needs usage data, doesn't propose wireframes | **8.0/10** | ↑ +0.5 | 6/6 correct (100%). Zero false positives. Ready for Expert. |
+| Needs Agent | haiku | Meta-analysis, schema snapshot, process improvement | Low volume, introspective only | **7.0/10** | — | 2/2 correct (100%). Foundational impact. |
+| QA Engineer | haiku | Blind cross-testing, 95+ test generation, GRS validation | Self-assessment circularity (Mistake #47) | **6.5/10** | — | 7/8 correct (87.5%). Needs enforcement: no self-eval. |
+| Growth Agent | haiku | Acquisition, retention, viral mechanics, competitor tracking | UNPROVEN — 0 findings | **5.0/10** | ⏳ | Hired Session 53. Must deliver in Sprint 5+ or face same fate as SWE Agent. |
 
 ### Retired Agents
 | Agent | Sessions Active | Total Findings | Accuracy | Reason for Retirement |
@@ -28,16 +28,20 @@
 Hired after full swarm vote (6 original + 3 new personas — Kamal, Aynur, Rauf).
 Source: https://github.com/msitarzewski/agency-agents.git (full repo reviewed, not pre-selected).
 
-| Agent Skill | File | Activate | Primary Role |
-|-------------|------|----------|--------------|
-| Sales Deal Strategist | `skills/sales-deal-strategist.md` | Now | B2B deal architecture, org pricing, MEDDPICC |
-| Sales Discovery Coach | `skills/sales-discovery-coach.md` | Now | B2B discovery flows, org onboarding questions |
-| LinkedIn Content Creator | `skills/linkedin-content-creator.md` | Sprint 3 | AURA score portability, professional brand |
-| Cultural Intelligence Strategist | `skills/cultural-intelligence-strategist.md` | Sprint 3 | AZ/CIS cultural audit, invisible exclusion |
-| Accessibility Auditor | `skills/accessibility-auditor.md` | Sprint 6 | WCAG 2.2 AA, radar chart fix, keyboard nav |
-| Behavioral Nudge Engine | `skills/behavioral-nudge-engine.md` | Now (as DSP skill) | ADHD-first validation, cognitive load audit |
+| Agent Skill | File | Activate | Primary Role | Session 69 Audit | Findings |
+|-------------|------|----------|--------------|------------------|----------|
+| Sales Deal Strategist | `skills/sales-deal-strategist.md` | Sprint 5 | B2B deal architecture, org pricing | ⏸️ Deferred (OK) | 0 |
+| Sales Discovery Coach | `skills/sales-discovery-coach.md` | Sprint 5 | B2B discovery flows, org onboarding | ⏸️ Deferred (OK) | 0 |
+| LinkedIn Content Creator | `skills/linkedin-content-creator.md` | Sprint 3+ | AURA score portability, professional brand | ⏸️ Deferred (load soon) | 0 |
+| Cultural Intelligence Strategist | `skills/cultural-intelligence-strategist.md` | **NOW** | AZ/CIS cultural audit, invisible exclusion | 🔴 CRITICAL GAP — should be active | 0 |
+| Accessibility Auditor | `skills/accessibility-auditor.md` | Sprint 6 (early load recommended) | WCAG 2.2 AA, radar chart fix, keyboard nav | ⚠️ Early load for assessment form | 0 |
+| Behavioral Nudge Engine | `skills/behavioral-nudge-engine.md` | **NOW** | ADHD-first validation, cognitive load audit | 🔴 CRITICAL GAP — should be DSP-loaded every sprint | 0 |
 
-**Why these 6:** Original swarm was modeling a volunteer management platform. New personas (Kamal = senior professional, Aynur = talent acquisition, Rauf = ambitious mid-career) revealed: no B2B sales architecture, no professional brand portability, no cultural context for AZ market.
+**Session 69 red flag:** 6 hired skills, 0 findings, 0 feedback entries. Two are critical gaps:
+- **Behavioral Nudge Engine** — ADHD-first claims unvalidated without this skill loaded
+- **Cultural Intelligence Strategist** — AZ/CIS users may face invisible exclusion (naming, gender, competition framing)
+
+**Action:** Load both IMMEDIATELY in next sprint. Don't wait for "the right time."
 
 ---
 

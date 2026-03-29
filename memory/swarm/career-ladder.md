@@ -19,60 +19,121 @@
 
 ## Current Agent Assessments
 
-### Security Agent -- 8.0/10 -- Expert
+### Security Agent — 9.0/10 — Expert ⭐
 
-Strong CVSS scoring, attack vector identification, injection pattern detection. 4/5 findings correct in Session 25. **Promoted to Expert after Session 42:** route shadowing finding from Session 25 (dismissed as "false positive") was proven CORRECT — /me/explanation was unreachable. Additionally found P0 stored XSS and P1 concept injection in Session 42 (3/3 correct). Score: 7/8 = 87.5% accuracy across 2 sessions.
+**Session 69 audit:** 8/9 findings correct (88.9%) across Sessions 25-69.
+**Promoted to 9.0** after route shadowing vindication (Session 25 → 42: agent was right, CTO was wrong, P0 bug lived 17 sessions).
+
+Key wins: P0 route ordering, P0 stored XSS, P1 concept injection, P1 bearer validation, token hash collision fix.
+
+**Growth objectives to reach Principal (9.0+):**
+1. Proactive threat modeling — propose 2-3 security improvements per sprint, not just flag issues
+2. Build migration-to-policy validator — audit RLS from schema files without live DB
+3. Mentor other agents on security-relevant decisions (teach Architecture about auth patterns)
+
+**Tasks:** Auth flow design, pre-migration RLS audits, security section of every sprint plan.
+
+---
+
+### Architecture Agent — 8.5/10 — Expert (newly promoted)
+
+**Session 69 audit:** 6/8 findings correct (75%) across Sessions 25-69.
+**Promoted from 8.0** — storage math (14-43GB/year) was second-highest leverage finding. SupabaseAdmin misread was correct risk identification, wrong fix.
+
+Key wins: Storage math, CVSS 9.8 aura_scores, system coherence reviews, type safety migration strategy.
+
+**Growth objectives to reach Principal (9.0+):**
+1. Verify against live codebase — check actual FastAPI routing before proposing auth changes
+2. Add cost/latency breakdowns — every proposal includes "saves X queries/Y ms"
+3. Shadow Security Agent on auth reviews — learn RLS policy nuances
+
+**Tasks:** Data model proposals, migration review, performance bottleneck analysis, type safety strategy.
+
+---
+
+### Product Agent — 8.0/10 — Expert (newly promoted)
+
+**Session 69 audit:** 6/6 findings correct (100%) across Sessions 25-69.
+**Promoted from 7.5** — zero false positives, 100% acceptance rate. All persona-based findings shipped.
+
+Key wins: public-by-default trust analysis, discovery endpoint gap, ADHD-first onboarding narrative, 62-finding audit product section.
+
+**Growth objectives to reach Principal (9.0+):**
+1. Propose wireframe-level solutions — don't just flag problems, show what the fix looks like
+2. Partner with Growth Agent — retention cohort analysis needs product perspective
+3. Reference competitor patterns — "LinkedIn does X, we should do Y because Z"
+
+**Tasks:** Pre-build UX reviews, onboarding flow critique, i18n gap analysis, persona walkthroughs every sprint.
+
+---
+
+### Needs Agent — 7.0/10 — Proficient (meta role)
+
+**Session 69 audit:** 2/2 findings correct (100%). Schema snapshot was the highest-leverage finding in swarm history.
+
+**Growth objectives:**
+1. Track recommendation adoption — maintain improvement log with acceptance rate
+2. Measure impact — "before: 0% schema context. After: 100%"
+3. Expand to cross-agent coordination — identify when agents duplicate work or miss handoffs
+4. Run batch capacity planning — prevent proposal explosion under v4.0
+
+**Tasks:** Post-sprint process audits, agent feedback synthesis, shared-context maintenance, v4.0 protocol tuning.
+
+---
+
+### QA Engineer — 6.5/10 — Proficient
+
+**Session 69 audit:** 7/8 findings correct (87.5%). Blind cross-test methodology was excellent. Self-assessment circularity (Mistake #47) was CLASS 5 error.
+
+**STRUCTURAL FIX REQUIRED:** QA questions must be evaluated by a DIFFERENT agent (Security or Product). Self-evaluation = permanent ban. No exceptions.
 
 **Growth objectives to reach Expert (8.0+):**
-1. Eliminate false positives -- verify findings against actual framework behavior before reporting
-2. Develop ability to verify RLS correctness without live DB state (use migration files + schema snapshots)
-3. Expand from reactive review to proactive threat modeling (propose security improvements, not just flag issues)
+1. BLIND methodology ALWAYS — pre-commit hook should block self-evaluated questions
+2. GRS-validated questions: multi-word behavioral phrases, no single-word buzzwords
+3. Expand to: assessment pipeline integration tests (bars.py + quality_gate.py + reeval_worker.py)
 
-**Tasks to take on more:** Auth flow design reviews, pre-migration RLS audits, security section of sprint planning.
+**Tasks:** Question bank GRS audits, blind cross-validation, anti-gaming gate regression tests.
 
-### Architecture Agent -- 6.5/10 -- Proficient
+---
 
-Good at system coherence and data flow analysis. 4/6 correct in Session 25 (SupabaseAdmin recommendation was wrong context).
+### Growth Agent — 5.0/10 — Competent (UNPROVEN)
 
-**Growth objectives to reach Expert (8.0+):**
-1. Verify recommendations against actual codebase patterns before proposing (the SupabaseUser/Admin misread cost credibility)
-2. Add quantitative analysis to proposals -- latency estimates, query cost, storage projections
-3. Develop cross-domain awareness: understand auth patterns well enough to avoid wrong-context recommendations
+**Session 69 audit:** 0 findings. Replaced SWE Agent (1 finding in 30 sessions). Must prove value or face same retirement.
 
-**Tasks to take on more:** Data model change proposals, migration review, performance bottleneck analysis.
+**SWE Agent warning:** SWE had 100% accuracy but 1 finding in 30 sessions = redundant. Growth Agent must show higher volume + accuracy to justify the slot.
 
-### Product Agent -- 5.5/10 -- Competent
+**Survival requirements (next 3 sprints):**
+1. Establish growth baseline — CAC, LTV, churn cohort analysis
+2. Partner with Product Agent — retention diagnosis
+3. Competitive tracking — monitor LinkedIn, boss.az, local platforms
+4. Deliver 3+ actionable findings per sprint or face retirement review
 
-Identifies real user journey gaps using Leyla/Nigar personas. All findings in Session 25 were valid. Limited by lack of usage data.
+**Tasks:** Growth metrics baseline, cohort analysis, viral loop design, competitor tracking.
 
-**Growth objectives to reach Proficient (6.0+):**
-1. Prioritize findings by business impact instead of listing all gaps equally
-2. Propose specific solutions (wireframe-level), not just flag problems
-3. Reference competitor patterns or industry benchmarks to strengthen recommendations
+---
 
-**Tasks to take on more:** Pre-build UX reviews for new features, onboarding flow critique, i18n/localization gap analysis.
+### Firuza (Council) — 7.5/10* — Proficient → Expert path
 
-### QA Engineer Agent -- 7.0/10 -- Proficient (NEW — Session 42)
+**Session 69 audit:** 4/4 correct (100%). v2.0 upgrade: reactive → proactive. Influence 1.0 → 1.1.
+*See `memory/swarm/skills/firuza-assistant.md` for full v2.0 protocol.*
 
-Designed and executed blind cross-test methodology that proved keyword_fallback = vocabulary test. Generated 95 tests for decay + DeCE, 24 for quality gate, 33 for blind cross-validation. Self-assessment was circular (Mistake #47) but the agent correctly identified the limitation when challenged.
+---
 
-**Growth objectives to reach Expert (8.0+):**
-1. Always use blind methodology — never evaluate own questions/answers (Mistake #47 was a CLASS 5 error)
-2. Generate GRS-validated questions with multi-word behavioral phrase keywords (current: some still single-word)
-3. Develop regression test suites that catch anti-gaming gate edge cases without manual prompting
+### Nigar (Council) — 6.5/10* — Proficient (awaiting B2B sprint)
 
-**Tasks to take on more:** Question bank audits (GRS gate), blind cross-validation of new questions, assessment pipeline integration tests.
+**Session 69 audit:** 2/2 correct (100%). Low volume — only 2 on-domain sprints (A2, A3).
 
-### SWE Agent -- 6.5/10 -- Proficient (NEW — Session 42)
+**Growth objectives:**
+1. Lead Sprint 5 B2B planning — primary voice on org dashboard + discovery
+2. MEDDPICC alignment check — verify Sales skills flow through UI
+3. Org persona walkthrough — test as Aynur (talent acquisition buyer)
+4. Deliver 4+ findings in Sprint 5 to confirm tier
 
-Correctly diagnosed verb regex calibration issue (45 verbs missed assessment-domain verbs). Expanded to 100+ verbs, fixing false positive where expert answer ratio dropped from 0.881 to 0.485. Self-assessment was circular (Mistake #47).
+---
 
-**Growth objectives to reach Expert (8.0+):**
-1. Always validate regex changes against known-good expert answers (test-driven)
-2. Self-assessment only as sanity check, never as evidence of quality
-3. Expand to full assessment pipeline code reviews (bars.py, quality_gate.py, reeval_worker.py)
+### SWE Agent — RETIRED (Session 53)
 
-**Tasks to take on more:** Assessment pipeline code reviews, regex/NLP calibration, performance optimization.
+1 finding in 30 sessions. Replaced by Growth Agent. Verb regex work absorbed by QA Engineer.
 
 ### Needs Agent -- N/A (meta role)
 

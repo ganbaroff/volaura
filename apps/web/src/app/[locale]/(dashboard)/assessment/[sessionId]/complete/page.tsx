@@ -248,7 +248,9 @@ export default function AssessmentResultsPage() {
   const hasGamingFlags = (result?.gaming_flags?.length ?? 0) > 0;
 
   const competencyLabel = result?.competency_slug
-    ? result.competency_slug.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+    ? t(`competency.${result.competency_slug}`, {
+        defaultValue: result.competency_slug.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+      })
     : "";
 
   // ── Loading state ────────────────────────────────────────────────────

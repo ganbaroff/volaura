@@ -1,5 +1,31 @@
 # Architecture Decisions Log
 
+## Session 64 Sprint CX-2 — 2026-03-29 (Self-Generated Plan Iter 2: Frontend Architecture)
+
+✓ API_BASE exported from lib/api/client.ts. 10 pages updated to import instead of duplicating env lookup. card/route.tsx (Edge Function) fixed ?? → || only (can't import from client.ts).
+✓ Fixed ?? vs || inconsistency (3 files used ?? which doesn't replace empty string).
+✗ Audit found organizations.py in-memory pagination — deferred (requires new RPC migration).
+→ 11→1 point of API config: future URL changes require 1 edit, not grep+replace across 11 files.
+
+## Session 64 Sprint CX-1 — 2026-03-29 (Self-Generated Plan: Security + Performance)
+
+✓ brandedby.py MED-08 TOCTOU crystal race FIXED: deduct_crystals_atomic RPC (advisory lock). Old 2-call pattern removed. reference_id=uuid4() per request. character_events audit trail kept post-RPC.
+✓ events.py /my/registrations: @limiter.limit + Request param + .limit(50) cap added. Was completely unrate-limited.
+✓ avg_aura_score() RPC migration: PostgreSQL AVG() O(1) vs old O(n) Python fetch of all rows. stats.py updated.
+✓ skills.py: competency_scores queried wrong table (doesn't exist). Fixed to extract from aura_scores JSONB. All 5 skills now get actual competency data.
+
+✗ Swarm critique found that original plan had 3 wrong assumptions: notifications rate limit (already existed), search max_length (already 500), competency_scores as separate table.
+→ Recursive self-improvement process: audit→plan→swarm critique×2→fix validated 4 real issues from 16 candidates.
+
+## Session 64 Bug Sweep — 2026-03-29 (12 bugs fixed, 3 commits)
+
+✓ Batch 1 (75fac2a): activity.py events_attended=0 (wrong status values), skills.py blocking I/O (asyncio.to_thread), engine.py AgentStatus import-in-loop
+✓ Batch 2 (fd973ff): llm.py JSONDecodeError both Gemini+OpenAI paths, empty choices IndexError, 5 frontend ?? "" → || "http://localhost:8000" (onboarding, welcome, assessment x3)
+✓ Batch 3 (ea4ae4b): aura.py missing logger import (NameError→500 on visibility change), badges.py missing visibility in SELECT (hidden AURA scores were exposed — security), embeddings.py overall_score→total_score (embeddings had wrong AURA score since feature shipped), callback/page.tsx API URL fallback
+
+✗ Audit agent found no more bugs after batch 3.
+→ Methodology: 2 parallel audit agents (Explore subagent) reading actual file content. Found 4 bugs in batch 2, 4 in batch 3 — layered approach works.
+
 ## Session 63 Bug Audit — 2026-03-29 (3 confirmed bugs fixed)
 
 ✓ activity.py: events_attended always 0 — status values 'attended'/'checked_in'/'registered' don't exist in schema (CHECK: pending|approved|rejected|waitlisted|cancelled). Fixed: .eq("status","approved").not_.is_("checked_in_at","null"). Dashboard stats now show real data.
@@ -916,3 +942,38 @@ Claude's default is single-threaded. Every strategic/evaluative question should 
 ### → Feed into next simulation
 - Schema audit = query first, assume nothing. Even own code from the same session has wrong column names
 - Rate limit sweep: grep for `@router.get\|@router.post` then verify each has `@limiter.limit` above it — no exceptions
+
+---
+
+## TASK-PROTOCOL v3.0 Update (Session 66, 2026-03-29)
+
+**Decision: Synthesize 5 swarm agent proposals into TASK-PROTOCOL.md v3.0**
+- Trigger: CTO answered meta-questions solo (CLASS 3 × 1 this session). User caught it.
+  Swarm consulted independently — returned divergent, non-obvious improvements.
+- All 5 agents (Security, Architecture, Product, Needs, Growth) consulted in parallel.
+  Changes based on their proposals only — CTO did not pre-filter or frame.
+
+### Changes applied
+- Step 0.1 (Mistakes Audit): Explicit "I will NOT" declaration before any work. Prevents CLASS 3 repeat.
+- Step 0.25 (Team Selection): Team declared at start, not when stuck. Prevents solo execution default.
+- Step 1 (Scope Lock): +METRICS row. User-facing fics cannot have N/A metrics.
+- Step 1.5 (Decision Type Gate): Trivial/Standard/Architectural/Critical routing. Stops over-processing typos AND under-protecting migrations.
+- Step 3.5 (Ecosystem Blast Radius): Cross-product impact check for Arch/Critical. Prevents silent breakage in MindShift/BrandedBy/ZEUS.
+- Step 3.7 (User Journey Walkthrough): Real path walkthrough for user-facing tasks. "512 tests ≠ product works."
+- Step 6.5 (Security Pre-Commit Checklist): 8-point check BEFORE writing code. OWASP issues in Session 52 caught AFTER code written.
+- Step 9 (Work Verdict Gate): Explicit APPROVED/APPROVED WITH NOTES/BLOCKED required. "Looks good" is not a verdict.
+- Step 9.5 (Work Verdict Gate declaration): CTO declares verdict explicitly before Step 10.
+- Step 10.5 (CEO Silence Timeout): 4h reminder, 8h pause. Prevents unauthorized forward work.
+
+### ✓ What went as simulated
+- 5 independent agents produced genuinely different priorities (not echo chamber)
+- Needs Agent identified root principle: OPT-OUT not OPT-IN
+- Security Agent caught gap: security check was AFTER code, not before
+
+### ✗ What DSP did not predict
+- Step 3.5 and 3.7 are conditional — will need enforcement mechanism to prevent skipping them
+- TASK-PROTOCOL-CHECKLIST.md not yet updated to match v3.0 (deferred)
+
+### → Feed into next simulation
+- Protocol updates need paired checklist updates. CHECKLIST.md is what actually gets used.
+- "OPT-OUT with CEO approval" principle should propagate to CLAUDE.md exception tables too.

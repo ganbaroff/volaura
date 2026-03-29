@@ -173,6 +173,11 @@ function AssessmentContent() {
         </Alert>
       )}
 
+      {/* ADHD guidance: reduce decision paralysis (Behavioral Nudge Engine finding BNE-001) */}
+      <p className="text-xs text-muted-foreground text-center">
+        {t("assessment.guidance", { defaultValue: "New here? Start with 1-2 competencies. You can always come back for more." })}
+      </p>
+
       <div className="grid gap-3" role="group" aria-label={t("assessment.selectCompetencies")}>
         {COMPETENCIES.map((comp) => {
           const label = t(`competency.${comp.id}`, { defaultValue: comp.id });
@@ -192,12 +197,17 @@ function AssessmentContent() {
       </div>
 
       {selected.size > 0 && (
-        <p className="text-sm text-center text-muted-foreground" aria-live="polite">
-          {t("assessment.totalTime", {
-            n: totalMinutes,
-            defaultValue: `~${totalMinutes} min total`,
-          })}
-        </p>
+        <div className="text-center space-y-1">
+          <p className="text-sm text-muted-foreground" aria-live="polite">
+            {t("assessment.totalTime", {
+              n: totalMinutes,
+              defaultValue: `~${totalMinutes} min total`,
+            })}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            💾 {t("assessment.canSave", { defaultValue: "You can save and resume anytime — no pressure to finish in one go" })}
+          </p>
+        </div>
       )}
 
       <Button

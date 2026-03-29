@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     # Anon key — PUBLIC key, safe to hardcode as fallback (like Stripe publishable key).
     # Supabase anon keys are designed to be exposed in browser/client-side code.
     # env var SUPABASE_ANON_KEY may be intercepted by Railway's Supabase integration;
+    # ⚠️ PUBLIC anon key for Volaura Supabase project (hvykysvdkalkbswmgfut).
+    # This is intentionally public — RLS enforces all access control.
+    # Do NOT replace with a different project's key without understanding RLS implications.
     # SUPABASE_ANON_JWT is the unintercepted fallback name.
     # If both env vars are missing (Railway interception), the hardcoded default is used.
     _ANON_KEY_DEFAULT: str = (

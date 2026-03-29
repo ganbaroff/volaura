@@ -39,7 +39,7 @@ function normalizeTier(badgeTier: string): Tier {
 }
 
 function toLeaderEntry(entry: LeaderboardEntry): LeaderEntry {
-  const name = entry.display_name || entry.username || `#${entry.rank}`;
+  const name = entry.display_name || entry.username || "?";
   return {
     id: `${entry.rank}`,
     rank: entry.rank,

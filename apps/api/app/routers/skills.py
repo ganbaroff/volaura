@@ -200,7 +200,7 @@ async def list_skills(request: Request):
 
 
 @router.post("/{skill_name}", response_model=SkillResponse)
-@limiter.limit("5/minute")
+@limiter.limit(RATE_LLM)
 async def execute_skill(
     request: Request,
     skill_name: str,

@@ -80,7 +80,7 @@ async def get_public_stats(
     try:
         result = await db.rpc("avg_aura_score").execute()
         if result.data is not None:
-            avg_aura_score = float(result.data) if result.data != [] else 0.0
+            avg_aura_score = float(result.data) if result.data is not None else 0.0
     except Exception as e:
         logger.warning("Failed to compute avg AURA via RPC: {err}", err=str(e)[:200])
 

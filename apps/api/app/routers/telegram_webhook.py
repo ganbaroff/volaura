@@ -9,6 +9,7 @@ Setup: POST /api/telegram/setup-webhook to register with Telegram API.
 
 from __future__ import annotations
 
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -257,8 +258,17 @@ async def _handle_proposal_action(db, chat_id: int | str, action: str, proposal_
                 p["ceo_decision_at"] = datetime.now(timezone.utc).isoformat()
                 found = True
 
-                with open(proposals_path, "w", encoding="utf-8") as f:
-                    _json.dump(data, f, indent=2, ensure_ascii=False)
+                # Atomic write: temp file + rename prevents TOCTOU race (P1-02)
+                import tempfile
+                tmp_fd, tmp_path = tempfile.mkstemp(dir=proposals_path.parent, suffix=".json")
+                try:
+                    with os.fdopen(tmp_fd, "w", encoding="utf-8") as tmp_f:
+                        _json.dump(data, tmp_f, indent=2, ensure_ascii=False)
+                    os.replace(tmp_path, proposals_path)
+                except Exception:
+                    if os.path.exists(tmp_path):
+                        os.remove(tmp_path)
+                    raise
 
                 emoji = {"act": "✅", "dismiss": "❌", "defer": "⏸️"}.get(action, "")
                 await _send_message(chat_id, f"{emoji} Proposal `{proposal_id}`: {old_status} → {p['status']}\n\n*{p.get('title', '')}*\n\nCTO получит решение при следующей сессии.")

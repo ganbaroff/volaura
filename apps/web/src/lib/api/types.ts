@@ -108,8 +108,8 @@ export interface Badge {
   metadata: Record<string, unknown>;
 }
 
-// ── Activity ──
-export interface ActivityItem {
+// ── Activity (API shape — distinct from component's ActivityItem which has text+timeAgo) ──
+export interface ApiActivityItem {
   id: string;
   type: "assessment" | "event" | "verification" | "badge";
   description: string;

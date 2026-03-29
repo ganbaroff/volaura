@@ -87,7 +87,13 @@
       "Bash(python3.12 --version)",
       "Bash(where python:*)",
       "Bash(pnpm --filter web tsc --noEmit)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(grep -n \"MOCK\\\\|mock_data\\\\|mock\\\\|getMock\\\\|MOCK_\" C:/Projects/VOLAURA/apps/web/src/app/[locale]/\\\\\\(dashboard\\\\\\)/dashboard/page.tsx)",
+      "Bash(grep -l \"notification\" /c/Projects/VOLAURA/supabase/migrations/*.sql)",
+      "Bash(grep -A 30 \"CREATE TABLE.*profiles\" /c/Projects/VOLAURA/supabase/migrations/*.sql)",
+      "Bash(cat \"C:/Projects/VOLAURA/apps/web/src/app/[locale]/\\(dashboard\\)/onboarding/page.tsx\")",
+      "Bash(cat \"C:/Projects/VOLAURA/apps/web/src/app/[locale]/\\(dashboard\\)/assessment/[sessionId]/complete/page.tsx\")",
+      "Bash(cat \"C:/Projects/VOLAURA/apps/web/src/app/[locale]/\\(dashboard\\)/dashboard/page.tsx\")"
     ],
     "deny": [
       "Bash(rm -rf*)",

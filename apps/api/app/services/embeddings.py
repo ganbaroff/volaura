@@ -30,7 +30,7 @@ async def generate_embedding(text: str) -> list[float] | None:
         embedding = response.embeddings[0].values
         return list(embedding)
     except Exception as e:
-        logger.warning(f"Embedding generation failed: {e}")
+        logger.warning("Embedding generation failed", text_length=len(text), error=str(e)[:200])
         return None
 
 

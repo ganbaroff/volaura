@@ -40,9 +40,9 @@ async def evaluate_with_llm(
                 timeout=timeout,
             )
         except asyncio.TimeoutError:
-            logger.warning(f"Gemini call timed out after {timeout}s, falling back to OpenAI")
+            logger.warning("Gemini call timed out, falling back", timeout=timeout)
         except Exception as e:
-            logger.warning(f"Gemini call failed, falling back to OpenAI: {e}")
+            logger.warning("Gemini call failed, falling back", error=str(e)[:200])
 
     # Fallback to OpenAI
     if settings.openai_api_key:

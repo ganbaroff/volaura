@@ -63,7 +63,7 @@ function CreateOrgForm({ onDone }: { onDone: () => void }) {
       <h3 className="font-semibold text-on-surface">{t("orgs.createTitle")}</h3>
       <div className="space-y-1.5">
         <label className="text-xs font-medium text-on-surface-variant uppercase tracking-wide">{t("orgs.orgName")}</label>
-        <input value={name} onChange={(e) => setName(e.target.value)} required minLength={2} maxLength={200} className={inputClass} placeholder="COP29 Volunteer Team" />
+        <input value={name} onChange={(e) => setName(e.target.value)} required minLength={2} maxLength={200} className={inputClass} placeholder={t("orgs.namePlaceholder", { defaultValue: "Your organization name" })} />
       </div>
       <div className="space-y-1.5">
         <label className="text-xs font-medium text-on-surface-variant uppercase tracking-wide">{t("orgs.orgDescription")}</label>
@@ -188,7 +188,7 @@ export default function OrganizationsPage() {
             </motion.div>
 
             {/* Stats row */}
-            <motion.div variants={stagger} initial="hidden" animate="visible" className="grid grid-cols-3 gap-3">
+            <motion.div variants={stagger} initial="hidden" animate="visible" className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <StatCard icon={<Calendar className="size-5" />} value={totalEvents} label={t("orgs.totalEvents")} />
               <StatCard icon={<Globe className="size-5" />} value={openEvents} label={t("orgs.openEvents")} highlight />
               <StatCard icon={<CheckCircle2 className="size-5" />} value={completedEvents} label={t("orgs.completedEvents")} />

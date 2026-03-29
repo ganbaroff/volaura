@@ -7,7 +7,7 @@ import {
 } from "@/lib/api/generated";
 import { apiFetch, ApiError } from "@/lib/api/client";
 import { useAuthToken } from "./use-auth-token";
-import type { Badge, ActivityItem, DashboardStats } from "@/lib/api/types";
+import type { Badge, ApiActivityItem, DashboardStats } from "@/lib/api/types";
 
 // Badges endpoint not in OpenAPI spec — keep manual
 export function useBadges() {
@@ -30,14 +30,14 @@ export function useBadges() {
  * Backend: GET /api/activity/me
  */
 export function useActivity(limit = 20) {
-  return useQuery<ActivityItem[]>({
+  return useQuery<ApiActivityItem[]>({
     queryKey: ["activity", limit],
     queryFn: async () => {
       const { data, error } = await getMyActivityApiActivityMeGet({
         query: { limit },
       });
       if (error) throw new Error("Failed to fetch activity");
-      return (data ?? []) as ActivityItem[];
+      return (data ?? []) as ApiActivityItem[];
     },
     staleTime: 2 * 60 * 1000,
     retry: 2,

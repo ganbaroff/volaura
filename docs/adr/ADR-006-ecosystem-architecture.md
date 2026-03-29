@@ -111,10 +111,12 @@ CREATE TABLE public.game_character_rewards (
 - CloudSaveManager must store JWT from auth flow
 - `CLOUD_ENABLED = true` in `cloud_save_manager.gd`
 - Character stats boosted by verified skills on game load:
-  - `communication` score → CHA stat
-  - `reliability` score → END stat
-  - `tech_literacy` → INT stat
-  - `leadership` → STR stat
+  - `communication` score → `social` stat (Life Sim actual field name)
+  - `reliability` score → `energy` stat
+  - `tech_literacy` → `intelligence` stat
+  - `leadership` → `social` + `happiness` stats
+  Note: Life Sim character.gd uses: health, money, happiness, energy, intelligence, social
+  (not STR/INT/WIS/CHA — those were design names, not code names)
 - Crystal balance displayed from `GET /api/character/crystals`
 
 ---

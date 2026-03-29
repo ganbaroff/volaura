@@ -20,7 +20,7 @@ from loguru import logger
 from pydantic import BaseModel, ConfigDict
 
 from app.deps import SupabaseAdmin, SupabaseUser, CurrentUserId
-from app.middleware.rate_limit import limiter, RATE_LLM
+from app.middleware.rate_limit import limiter, RATE_DEFAULT, RATE_LLM
 from app.services.llm import evaluate_with_llm
 
 router = APIRouter(prefix="/skills", tags=["skills"])
@@ -183,7 +183,8 @@ def _format_context(ctx: dict) -> str:
 # ── Routes ────────────────────────────────────────────────────────────────────
 
 @router.get("/")
-async def list_skills():
+@limiter.limit(RATE_DEFAULT)
+async def list_skills(request: Request):
     """List all available product skills."""
     skills = []
     if SKILLS_DIR.exists():

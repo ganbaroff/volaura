@@ -69,6 +69,15 @@ class AuthResponse(BaseModel):
     user_id: str
 
 
+class MeResponse(BaseModel):
+    user_id: str
+    profile: dict | None = None
+
+
+class MessageResponse(BaseModel):
+    message: str
+
+
 @router.post("/register", response_model=AuthResponse, status_code=201)
 @limiter.limit(RATE_AUTH)
 async def register(
@@ -136,13 +145,13 @@ async def login(
     )
 
 
-@router.get("/me")
+@router.get("/me", response_model=MeResponse)
 @limiter.limit(RATE_DEFAULT)
 async def get_me(
     request: Request,
     user_id: CurrentUserId,
     db: SupabaseAdmin,
-) -> dict:
+) -> MeResponse:
     """Get current user info from JWT."""
     # maybe_single() returns None (not an exception) when no row exists.
     # .single() throws APIError 406 when no profile — breaks new users who skipped onboarding.
@@ -153,16 +162,16 @@ async def get_me(
         .maybe_single()
         .execute()
     )
-    return {"user_id": user_id, "profile": result.data}
+    return MeResponse(user_id=user_id, profile=result.data)
 
 
-@router.delete("/me", status_code=200)
+@router.delete("/me", status_code=200, response_model=MessageResponse)
 @limiter.limit(RATE_AUTH)
 async def delete_account(
     request: Request,
     db_admin: SupabaseAdmin,
     user_id: CurrentUserId,
-) -> dict:
+) -> MessageResponse:
     """Permanently delete the current user's account and all associated data.
 
     Steps:
@@ -182,15 +191,15 @@ async def delete_account(
             status_code=500,
             detail={"code": "DELETION_FAILED", "message": "Account deletion failed. Please try again."},
         )
-    return {"message": "Account deleted successfully"}
+    return MessageResponse(message="Account deleted successfully")
 
 
-@router.post("/logout", status_code=200)
+@router.post("/logout", status_code=200, response_model=MessageResponse)
 @limiter.limit(RATE_AUTH)
 async def logout(
     request: Request,
     user_id: CurrentUserId,
-) -> dict:
+) -> MessageResponse:
     """Logout — audit log entry for session termination (OWASP A07 compliance).
 
     JWT invalidation happens client-side via supabase.auth.signOut().
@@ -199,4 +208,4 @@ async def logout(
     from loguru import logger
 
     logger.info("User logout", user_id=str(user_id))
-    return {"message": "Logged out"}
+    return MessageResponse(message="Logged out")

@@ -14,16 +14,17 @@ import { ApiError } from "@/lib/api/client";
 // ── Difficulty badge ────────────────────────────────────────────────────
 
 const DIFFICULTY_COLORS: Record<string, string> = {
-  Easy:   "bg-green-500/15 text-green-400 ring-green-500/25",
-  Medium: "bg-amber-500/15 text-amber-400 ring-amber-500/25",
-  Hard:   "bg-orange-500/15 text-orange-400 ring-orange-500/25",
-  Expert: "bg-red-500/15 text-red-400 ring-red-500/25",
+  easy:   "bg-green-500/15 text-green-400 ring-green-500/25",
+  medium: "bg-amber-500/15 text-amber-400 ring-amber-500/25",
+  hard:   "bg-orange-500/15 text-orange-400 ring-orange-500/25",
+  expert: "bg-red-500/15 text-red-400 ring-red-500/25",
 };
 
 function DifficultyBadge({ label }: { label: string }) {
   const { t } = useTranslation();
-  const colorClass = DIFFICULTY_COLORS[label] ?? DIFFICULTY_COLORS.Medium;
-  const i18nKey = `assessment.difficulty_${label.toLowerCase()}`;
+  const normalized = label.toLowerCase();
+  const colorClass = DIFFICULTY_COLORS[normalized] ?? DIFFICULTY_COLORS.medium;
+  const i18nKey = `assessment.difficulty_${normalized}`;
   return (
     <span
       className={cn(
@@ -136,9 +137,9 @@ export default function QuestionBreakdownPage() {
   const correctQuestions = questions.filter((q) => q.is_correct);
   const incorrectQuestions = questions.filter((q) => !q.is_correct);
 
-  const competencyLabel = data.competency_slug
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  const competencyLabel = t(`competency.${data.competency_slug}`, {
+    defaultValue: data.competency_slug.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+  });
 
   // ── Results ───────────────────────────────────────────────────────────
 

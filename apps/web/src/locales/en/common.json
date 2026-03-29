@@ -165,6 +165,7 @@
     "difficulty_easy": "Easy",
     "difficulty_medium": "Medium",
     "difficulty_hard": "Hard",
+    "difficulty_expert": "Expert",
     "nextSteps": "What's Next",
     "tipImprove": "Practice more in this area and retake the assessment to improve your score.",
     "tipGood": "Great score! Try other competencies to build your full AURA profile.",
@@ -191,12 +192,17 @@
     "correct": "Correct",
     "incorrect": "Incorrect",
     "responseTime": "{{n}}s",
-    "difficulty_expert": "Expert",
     "backToResults": "Back to Results",
     "sessionNotFound": "Session not found or not yet complete.",
     "questionsCorrect": "{{correct}} of {{total}} correct",
     "recommended": "Recommended for you",
-    "min": "min"
+    "min": "min",
+    "infoAbout": "About this assessment",
+    "infoTimeLabel": "Estimated time",
+    "infoRetakeAvailable": "Available now",
+    "infoRetakeCooldown": "Available in {{days}} days",
+    "infoNoDescription": "Test your skills and get a verified score for this competency.",
+    "infoContinueButton": "Continue to Assessment"
   },
   "aura": {
     "title": "Your AURA Score",

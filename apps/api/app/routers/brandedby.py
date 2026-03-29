@@ -17,6 +17,8 @@ Security:
 - Queue skip costs crystals (checked via character_events ledger)
 """
 
+from uuid import uuid4
+
 from fastapi import APIRouter, HTTPException, Query, Request
 from loguru import logger
 
@@ -339,52 +341,62 @@ async def create_generation(
 
     crystal_cost = 0
     if body.skip_queue:
-        # SECURITY NOTE (MED-08 / TOCTOU): The balance check and deduction below
-        # are NOT atomic. A concurrent request could pass the balance check before
-        # the deduction is committed, resulting in a crystal double-spend.
-        # Proper fix: use a PostgreSQL RPC function that performs
-        # SELECT ... FOR UPDATE on game_crystal_ledger rows for this user_id,
-        # then checks balance and inserts the deduction atomically inside a
-        # single transaction. Until that RPC exists, this race window remains
-        # open under concurrent requests from the same user.
-
-        # Check crystal balance via character_state RPC
-        state = await db.rpc(
-            "get_character_state", {"p_user_id": user_id}
-        ).execute()
-        balance = state.data[0]["crystal_balance"] if state.data else 0
-
-        if balance < QUEUE_SKIP_CRYSTAL_COST:
-            raise HTTPException(
-                status_code=402,
-                detail={
-                    "code": "INSUFFICIENT_CRYSTALS",
-                    "message": f"Need {QUEUE_SKIP_CRYSTAL_COST} crystals, have {balance}",
+        # P0-3 FIX (MED-08): Atomic crystal deduction via advisory-lock RPC.
+        # Old pattern: SELECT balance → check → INSERT (2 async calls = TOCTOU race).
+        # New pattern: deduct_crystals_atomic acquires pg_advisory_lock, checks balance,
+        # and inserts into game_crystal_ledger atomically — no race window.
+        # reference_id = uuid4() makes each HTTP request unique; advisory lock prevents
+        # concurrent-request double-spend from the same user (multiple tabs).
+        reference_id = str(uuid4())
+        try:
+            deduction = await db.rpc(
+                "deduct_crystals_atomic",
+                {
+                    "p_user_id": str(user_id),
+                    "p_amount": QUEUE_SKIP_CRYSTAL_COST,
+                    "p_source": "brandedby_queue_skip",
+                    "p_reference_id": reference_id,
                 },
+            ).execute()
+            row0 = (deduction.data or [{}])[0]
+            if not row0.get("success"):
+                raise HTTPException(
+                    status_code=402,
+                    detail={
+                        "code": row0.get("error_code", "INSUFFICIENT_CRYSTALS"),
+                        "message": row0.get("error_msg", f"Need {QUEUE_SKIP_CRYSTAL_COST} crystals to skip queue"),
+                    },
+                )
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error("Crystal deduction RPC failed", user_id=user_id, error=str(e))
+            raise HTTPException(
+                status_code=500,
+                detail={"code": "CRYSTAL_DEDUCTION_FAILED", "message": "Failed to process crystal payment"},
             )
 
-        # Deduct crystals via character event
-        await db.table("character_events").insert({
-            "user_id": user_id,
-            "event_type": "crystal_spent",
-            "payload": {
-                "_schema_version": 1,
-                "amount": QUEUE_SKIP_CRYSTAL_COST,
-                "reason": "brandedby_queue_skip",
-                "generation_type": body.gen_type,
-            },
-            "source_product": "brandedby",
-        }).execute()
-
-        # Double-entry ledger
-        await db.table("game_crystal_ledger").insert({
-            "user_id": user_id,
-            "amount": -QUEUE_SKIP_CRYSTAL_COST,
-            "source": "brandedby_queue_skip",
-        }).execute()
+        # Audit trail: character_events records the spend action (game_crystal_ledger is
+        # handled by the RPC — do NOT insert manually). Wrap in try/except: crystal already
+        # spent, so a failed audit insert must not rollback the deduction.
+        try:
+            await db.table("character_events").insert({
+                "user_id": user_id,
+                "event_type": "crystal_spent",
+                "payload": {
+                    "_schema_version": 1,
+                    "amount": QUEUE_SKIP_CRYSTAL_COST,
+                    "reason": "brandedby_queue_skip",
+                    "generation_type": body.gen_type,
+                    "reference_id": reference_id,
+                },
+                "source_product": "brandedby",
+            }).execute()
+        except Exception as e:
+            logger.error("character_events audit insert failed (crystal already deducted)", user_id=user_id, error=str(e))
 
         crystal_cost = QUEUE_SKIP_CRYSTAL_COST
-        logger.info("Queue skip: crystals deducted", user_id=user_id, cost=crystal_cost)
+        logger.info("Queue skip: crystals deducted atomically", user_id=user_id, cost=crystal_cost)
 
     # Calculate queue position (0 if skipped, otherwise count of queued jobs ahead)
     queue_position = 0

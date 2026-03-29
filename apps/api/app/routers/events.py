@@ -10,7 +10,7 @@ from fastapi import APIRouter, HTTPException, Query, Request
 from loguru import logger
 
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
-from app.middleware.rate_limit import limiter, RATE_PROFILE_WRITE, RATE_DISCOVERY
+from app.middleware.rate_limit import limiter, RATE_PROFILE_WRITE, RATE_DISCOVERY, RATE_DEFAULT
 from app.schemas.event import (
     CheckInRequest,
     CoordinatorRatingRequest,
@@ -385,12 +385,14 @@ async def list_attendees(
 
 
 @router.get("/my/registrations", response_model=list[RegistrationResponse])
+@limiter.limit(RATE_DEFAULT)
 async def my_registrations(
+    request: Request,
     db: SupabaseUser,
     user_id: CurrentUserId,
 ) -> list[RegistrationResponse]:
     """List the current volunteer's registrations."""
-    result = await db.table("registrations").select("*").eq("volunteer_id", user_id).order("registered_at", desc=True).execute()
+    result = await db.table("registrations").select("*").eq("volunteer_id", user_id).order("registered_at", desc=True).limit(50).execute()
     return [RegistrationResponse(**row) for row in (result.data or [])]
 
 

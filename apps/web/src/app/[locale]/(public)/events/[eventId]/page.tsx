@@ -38,10 +38,10 @@ function getDisplayStatus(status: string): "live" | "upcoming" | "past" {
 }
 
 export default function EventDetailPage() {
-  const { locale, id } = useParams<{ locale: string; id: string }>();
+  const { locale, eventId } = useParams<{ locale: string; eventId: string }>();
   const { t } = useTranslation();
   const isMounted = useRef(true);
-  const { data: event, isLoading, isError } = useEvent(id);
+  const { data: event, isLoading, isError } = useEvent(eventId);
   const registerMutation = useRegisterForEvent();
 
   useEffect(() => {

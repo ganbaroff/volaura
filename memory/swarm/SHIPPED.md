@@ -6,6 +6,28 @@
 
 ---
 
+## Session 65 (2026-03-29) — TASK-PROTOCOL recursive audit (CX-1 to CX-4) + Assessment UX
+
+| Code | Location | What it does | Status | How to verify |
+|------|----------|-------------|--------|---------------|
+| `deduct_crystals_atomic` RPC in brandedby.py | `apps/api/app/routers/brandedby.py` | TOCTOU crystal double-spend race fixed via pg_advisory_lock RPC | ✅ SHIPPED | Concurrent queue skip requests — only one deducts |
+| `@limiter.limit(RATE_DEFAULT)` on `/my/registrations` | `apps/api/app/routers/events.py` | Rate limit + .limit(50) cap added to previously unlimited endpoint | ✅ SHIPPED | Check endpoint decorator |
+| `avg_aura_score()` PostgreSQL RPC | `supabase/migrations/20260329055859_avg_aura_score_rpc.sql` | O(1) server-side AVG replaces O(n) Python fetch in stats.py | ✅ DEPLOYED | `SELECT public.avg_aura_score()` → returns real value |
+| `stats.py` avg_aura_score via RPC | `apps/api/app/routers/stats.py` | Uses db.rpc("avg_aura_score") instead of fetching all rows | ✅ SHIPPED | GET /api/stats/public returns real avg |
+| `skills.py` JSONB extraction fix | `apps/api/app/routers/skills.py` | Reads competency_scores from aura_scores JSONB column (was querying non-existent table) | ✅ SHIPPED | Execute skill → gets real competency context |
+| `API_BASE` exported constant | `apps/web/src/lib/api/client.ts` | Single source for API URL, imported by 11 pages | ✅ SHIPPED | No more duplicate env lookups |
+| `RequestIdMiddleware` | `apps/api/app/middleware/request_id.py` | X-Request-ID UUID4 on all responses, correlation tracing | ✅ SHIPPED | Check any API response headers |
+| `assert_production_ready()` | `apps/api/app/config.py` | Raises RuntimeError at startup if APP_ENV=production and SERVICE_KEY empty or APP_URL=localhost | ✅ SHIPPED | Deploy with missing keys → fails fast |
+| CORS `expose_headers: X-Request-ID` | `apps/api/app/main.py` | Browsers can read X-Request-ID cross-origin | ✅ SHIPPED | Check CORS response headers |
+| `MeResponse` / `MessageResponse` schemas | `apps/api/app/routers/auth.py` | response_model on GET /auth/me, DELETE /auth/me, POST /auth/logout | ✅ SHIPPED | OpenAPI /docs shows typed schemas |
+| Rate limit on `GET /skills/` | `apps/api/app/routers/skills.py` | @limiter.limit(RATE_DEFAULT) added to list_skills() | ✅ SHIPPED | Check endpoint decorator |
+| Assessment `?competency=` pre-select | `apps/web/src/app/[locale]/(dashboard)/assessment/page.tsx` | Reads URL param, pre-selects competency, shows info callout. Suspense wrapper added. isMounted fix. | ✅ SHIPPED | Navigate to /assessment?competency=communication |
+| `assessment.recommended` + `assessment.min` i18n | `apps/web/src/locales/en/common.json` + `az/common.json` | Translation keys for info callout | ✅ SHIPPED | Check locales |
+| `response_time_ms` tracking | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/page.tsx` | Sends real elapsed ms (was always 0) — anti-gaming flags now have real data | ✅ SHIPPED | Submit answer → check request payload |
+| `competencyLabel` i18n on results page | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/complete/page.tsx` | Uses t('competency.{slug}') instead of string manipulation | ✅ SHIPPED | Switch to AZ locale → see AZ competency name |
+
+---
+
 ## Session 63 (2026-03-29) — SPRINTS B1-B5: SWARM SELF-IMPROVEMENT
 
 | Code | Location | What it does | Status | How to verify |

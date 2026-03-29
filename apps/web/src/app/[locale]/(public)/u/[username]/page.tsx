@@ -5,8 +5,9 @@ import { AuraRadarChart } from "@/components/aura/radar-chart";
 import { ShareButtons } from "@/components/aura/share-buttons";
 import { IntroRequestButton } from "@/components/profile/intro-request-button";
 import initTranslations from "@/app/i18n";
+import { API_BASE } from "@/lib/api/client";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const API_URL = API_BASE;
 
 interface PublicProfile {
   id: string;

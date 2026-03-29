@@ -14,6 +14,7 @@ import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
+import { API_BASE } from "@/lib/api/client";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -81,8 +82,7 @@ function WelcomeContent() {
       }
       // Fetch display name from profile
       if (session) {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-        fetch(`${apiUrl}/api/profiles/me`, {
+        fetch(`${API_BASE}/api/profiles/me`, {
           headers: { Authorization: `Bearer ${session.access_token}` },
         })
           .then((r) => r.json())

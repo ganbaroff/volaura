@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { Upload, ArrowLeft, CheckCircle2, XCircle, AlertCircle, FileText, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
-import { apiFetch, ApiError } from "@/lib/api/client";
+import { apiFetch, ApiError, API_BASE } from "@/lib/api/client";
 import { useAuthToken } from "@/hooks/queries/use-auth-token";
 import { useMyOrganization } from "@/hooks/queries/use-organizations";
 
@@ -83,7 +83,7 @@ export default function BulkInvitePage() {
       formData.append("file", file);
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/organizations/${org.id}/invites/bulk`,
+        `${API_BASE}/api/organizations/${org.id}/invites/bulk`,
         {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },

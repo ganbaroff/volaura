@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { API_BASE } from "@/lib/api/client";
 
 // Static competency metadata — labels fetched from i18n, weights from CLAUDE.md
 const COMPETENCIES = [
@@ -79,7 +80,7 @@ export default function AssessmentPage() {
 
       // Start the first competency session via API
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/assessment/start`,
+        `${API_BASE}/api/assessment/start`,
         {
           method: "POST",
           headers: {

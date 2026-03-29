@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/auth-store";
 import { readAndClearAttribution } from "@/components/utm-capture";
+import { API_BASE } from "@/lib/api/client";
 
 export default function AuthCallbackPage() {
   return (
@@ -39,7 +40,7 @@ function AuthCallbackContent() {
       if (session?.access_token) {
         const attribution = readAndClearAttribution();
         if (Object.keys(attribution).length > 0) {
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/profiles/me`, {
+          fetch(`${API_BASE}/api/profiles/me`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",

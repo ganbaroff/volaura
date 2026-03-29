@@ -4,8 +4,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Building2, Calendar, Globe } from "lucide-react";
 import initTranslations from "@/app/i18n";
+import { API_BASE } from "@/lib/api/client";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const API_URL = API_BASE;
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 

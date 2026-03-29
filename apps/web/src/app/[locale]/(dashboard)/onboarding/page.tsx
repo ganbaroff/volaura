@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
+import { API_BASE } from "@/lib/api/client";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -207,8 +208,7 @@ export default function OnboardingPage() {
         if (orgType) payload.org_type = orgType;
       }
 
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-      const res = await fetch(`${apiUrl}/api/profiles/me`, {
+      const res = await fetch(`${API_BASE}/api/profiles/me`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

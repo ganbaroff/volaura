@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { BadgeCheck, AlertCircle, Clock, CheckCircle2, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils/cn";
+import { API_BASE } from "@/lib/api/client";
 
 /* ─── Types ─── */
 type TokenState = "loading" | "valid" | "invalid" | "expired" | "used";
@@ -22,7 +23,7 @@ interface VolunteerInfo {
 }
 
 /* ─── Constants ─── */
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const API_URL = API_BASE;
 
 const COMPETENCY_LABELS: Record<string, { en: string; az: string }> = {
   communication:        { en: "Communication",       az: "Kommunikasiya" },

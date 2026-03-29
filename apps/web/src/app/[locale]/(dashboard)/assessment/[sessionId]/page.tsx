@@ -24,6 +24,7 @@ export default function QuestionPage() {
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const isMounted = useRef(true);
+  const questionStartTime = useRef<number>(Date.now()); // response time tracking for anti-gaming
   const currentLocale = i18n.language || locale;
 
   const {
@@ -94,10 +95,11 @@ export default function QuestionPage() {
         return;
       }
 
-      // Show next question
+      // Show next question — reset timer for response time tracking
       setQuestion(session.next_question);
       setAnswer("");
       setScreen("question");
+      questionStartTime.current = Date.now();
     },
     [isLastCompetency, currentLocale, router, setQuestion]
   );
@@ -129,7 +131,7 @@ export default function QuestionPage() {
             session_id: sessionId,
             question_id: currentQuestion.id,
             answer,
-            response_time_ms: 0, // TODO: track actual response time via useRef
+            response_time_ms: Date.now() - questionStartTime.current,
           }),
         }
       );
@@ -199,7 +201,7 @@ export default function QuestionPage() {
             session_id: sessionId,
             question_id: currentQuestion.id,
             answer: "__SKIPPED__",
-            response_time_ms: 0,
+            response_time_ms: Date.now() - questionStartTime.current,
           }),
         }
       );
@@ -252,6 +254,7 @@ export default function QuestionPage() {
         setQuestion(data.next_question);
         setAnswer("");
         setScreen("question");
+        questionStartTime.current = Date.now();
       }
 
       router.replace(`/${currentLocale}/assessment/${data.session_id}`);

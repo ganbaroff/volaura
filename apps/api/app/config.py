@@ -40,21 +40,23 @@ class Settings(BaseSettings):
     app_env: str = "development"
     app_url: str = "http://localhost:3000"
 
-    # LLM
-    gemini_api_key: str = ""
-    openai_api_key: str = ""
-    groq_api_key: str = ""
+    # LLM — V-BRAIN chain: primary→fallback→fallback→keyword
+    # GEM=aura-eyes, GRQ=quick-pulse, OAI=deep-cortex, DSK=shadow-mind
+    gemini_api_key: str = ""     # GEM: primary evaluator (15 RPM free, unlimited paid)
+    openai_api_key: str = ""     # OAI: tertiary fallback
+    groq_api_key: str = ""       # GRQ: secondary fallback (paid tier active 2026-03-29)
+    deepseek_api_key: str = ""   # DSK: experimental (swarm candidate)
 
     # Swarm (multi-model BARS evaluation)
     swarm_enabled: bool = False
 
-    # Telegram
+    # Telegram — V-NERVE: CEO↔bot bidirectional + error alerting
     telegram_bot_token: str = ""
     telegram_ceo_chat_id: str = ""
-    telegram_webhook_secret: str = ""  # Must be set in production via TELEGRAM_WEBHOOK_SECRET
+    telegram_webhook_secret: str = ""
 
-    # Monitoring
-    sentry_dsn: str = ""  # If set, errors are reported to Sentry
+    # Monitoring — V-EYE: error tracking + performance
+    sentry_dsn: str = ""         # Org: volaura, Project: volaura-api (created 2026-03-29)
 
     # Stripe (MVP-1)
     stripe_secret_key: str = ""

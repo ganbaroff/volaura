@@ -103,6 +103,10 @@ app.add_middleware(
     expose_headers=["X-Request-ID"],
 )
 
+# Error alerting: send 5xx to CEO Telegram (rate-limited, 1 per 5 min)
+from app.middleware.error_alerting import ErrorAlertingMiddleware
+app.add_middleware(ErrorAlertingMiddleware)
+
 # Outermost middleware: correlation ID on every request/response (including errors)
 app.add_middleware(RequestIdMiddleware)
 

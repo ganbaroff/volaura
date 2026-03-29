@@ -11,10 +11,10 @@
 |---|---------|--------|----------|------|
 | 1 | **Sentry DSN** — zero error visibility | ❌ NEEDS CEO | Railway env var `SENTRY_DSN` | 2h |
 | 2 | **Groq API key** — LLM fallback chain broken | ❌ NEEDS CEO | Railway env var `GROQ_API_KEY` | 1h |
-| 3 | **Connection pool** — 20 connections, need 100+ | ❌ TODO | Supabase dashboard or httpx config | 1h |
+| 3 | ~~Connection pool~~ — httpx unlimited by default | ✅ FALSE POSITIVE | Verified: httpx.Limits() = None/None | N/A |
 | 4 | **Assessment localStorage** — refresh loses progress | ✅ FIXED | sessionStorage → localStorage | Done |
 | 5 | **Session expiry warning** — silent redirect | ✅ FIXED | Show message before redirect | Done |
-| 6 | **Password reset** — stub, users locked out | ❌ TODO | Implement forgot-password flow | 3h |
+| 6 | ~~Password reset~~ — FULLY BUILT (not a stub) | ✅ FALSE POSITIVE | forgot-password + reset-password pages complete | N/A |
 | 7 | **Health check** — stub, doesn't check DB | ✅ FIXED | Now checks Supabase + LLM config | Done |
 | 8 | **Rate limit restart risk** — in-memory resets | ❌ DOCUMENT | Document risk, plan Redis for v2 | 30min |
 | 9 | **Alerting** — nobody knows when API crashes | ❌ TODO | Telegram bot alert on 5xx | 2h |

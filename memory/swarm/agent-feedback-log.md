@@ -112,6 +112,18 @@ These types of proposals waste time. Avoid repeating:
 
 ---
 
+## Session 69 — Skill Activations (First-Time Findings)
+
+| Session | Agent/Skill | Proposal ID | Short Title | Status | Outcome | Note |
+|---------|-------------|-------------|-------------|--------|---------|------|
+| 69 | Behavioral Nudge | BNE-001 | Assessment 8-select cognitive overload | open | 4 findings: single-path violation, no save messaging, time estimates missing | **FIRST ACTIVATION. HIGH impact.** |
+| 69 | Cultural Intelligence | CIS-001 | Percentile framing = competitive, not collectivist | open | P0: "Top 5%" framing alienates AZ users. Reframe as achievement levels. | **FIRST ACTIVATION. P0 launch blocker.** |
+| 69 | Cultural Intelligence | CIS-002 | Name field lacks patronymic hint | open | P1: "Adınız Soyadınız (məs. Yusif Eldar oğlu)" | **AZ UX friction.** |
+| 69 | Firuza (v2.0) | FIR-v2-001 | Proactive scan protocol activated | implemented | Upgrade: reactive → proactive, influence 1.1 | **V2.0 shipped.** |
+| 69 | Security | SEC-S69-001 | Route shadowing vindication | acknowledged | Score: 8.5 → 9.0 (Expert ⭐) | **CTO was wrong, agent was right.** |
+
+---
+
 ## Notes for Next Review Cycle
 
 - BUG-01 (swarm evaluation_log) needs agent proposal with specific code change

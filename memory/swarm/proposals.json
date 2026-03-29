@@ -277,6 +277,22 @@
       "escalate_to_ceo": false,
       "ceo_decision": null,
       "ceo_decision_at": null
+    },
+    {
+      "id": "195ea7bf",
+      "timestamp": "2026-03-29T06:06:30.447606+00:00",
+      "agent": "CTO Watchdog",
+      "severity": "high",
+      "type": "idea",
+      "status": "pending",
+      "title": "Implement Security Reviewer Skill to Address Consistent Security Vulnerability Proposals",
+      "content": "Develop a Security Reviewer skill to address the consistent need for security vulnerability proposals with CVSS scores. This skill will automatically analyze code changes and detect potential security vulnerabilities, providing a CVSS score for each vulnerability. The skill will be integrated into the existing assessment-generator skill and will use the compute_grs() function to calculate the CVSS score. This will improve the ecosystem's health and user value by reducing the risk of security breaches.",
+      "votes_for": 2,
+      "votes_against": 0,
+      "vote_details": [],
+      "escalate_to_ceo": false,
+      "ceo_decision": null,
+      "ceo_decision_at": null
     }
   ]
 }

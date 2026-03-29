@@ -94,10 +94,10 @@ export const useAssessmentStore = create<AssessmentStore>()(
     }),
     {
       name: "volaura-assessment",
-      // sessionStorage clears on tab close — user can't resume a cold session
-      // (prevents stale 409 conflict if backend session already expired)
+      // localStorage survives refresh + tab close — users don't lose 30min of assessment
+      // Staleness: reset() is called on assessment completion, preventing stale resume
       storage: createJSONStorage(() =>
-        typeof window !== "undefined" ? sessionStorage : localStorage
+        typeof window !== "undefined" ? localStorage : localStorage
       ),
       version: 1,
       // Only persist session-critical fields — not transient UI state

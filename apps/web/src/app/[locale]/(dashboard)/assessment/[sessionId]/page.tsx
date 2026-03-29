@@ -71,7 +71,11 @@ export default function QuestionPage() {
       data: { session },
     } = await supabase.auth.getSession();
     if (!session) {
-      router.push(`/${currentLocale}/login`);
+      // Don't silently redirect — inform user their session expired
+      if (isMounted.current) {
+        setLocalError(t("assessment.sessionExpired", { defaultValue: "Your session has ended. Log in again to continue your progress." }));
+      }
+      setTimeout(() => router.push(`/${currentLocale}/login`), 3000);
       return null;
     }
     return `Bearer ${session.access_token}`;

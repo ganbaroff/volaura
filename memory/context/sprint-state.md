@@ -6,27 +6,27 @@
 
 ---
 
-## CURRENT POSITION — Question Evolution Sprint 5 COMPLETE, 2026-03-31
+## CURRENT POSITION — BATCH-S COMPLETE + S-05 SHIPPED, 2026-03-31
 
-**Status:** Sprint 5 question generation COMPLETE. 7/7 profession sets generated (70 questions total). All IRT fixes applied: hard irt_b ≥1.2 ✅, evaluation_rubric on all open_ended ✅, london_delta v2.0 on all questions ✅. Voting complete.
-**Winner:** Financial Analyst — 96/100
-**All scores:** Financial Analyst 96 | DevOps/Cybersecurity 94 | Product Manager 92 | Scrum Master 91 | HR Manager 91 | QA Engineer 90 | Marketing Manager 86
-**Saved:** `C:\Projects\VOLAURA\scripts\question-evolution\sprint-5\voting-results.json`
-**Sprint 6 key patterns (from financial-analyst winner):**
-- london_delta must cite article number + quantified threshold (e.g., "CBA Decree No.8 Art.7: 40% haircut, 200bps") — not just regulation name
-- Hard open_ended rubric level 5 must require naming AZ institution + article + quantified threshold
-- Pre-generation validation: fail any question where az_institutions empty or hard open_ended missing evaluation_rubric
+**Status:** S-05 (pnpm generate:api) ✅ SHIPPED. TypeScript SDK now in sync with 2 new FastAPI endpoints: `GET /api/auth/signup-status` + `POST /api/auth/validate-invite`. Signup page uses type-safe response types. **Unblocks CEO E2E walk.**
 
-**BATCH-S COMPLETE (this session):**
+**BATCH-S COMPLETE (Session 77):**
 - S-01 ✅ config.py startup guard fires on ALL envs (not just production)
 - S-02 ✅ /health returns supabase_project_ref for CEO verification
 - S-03+S-08 ✅ Invite code pre-fill + flicker fix on signup page
 - S-04 ✅ Groq + Vertex Express wired into LLM fallback chain (Vertex→Gemini→Groq→OpenAI)
+- S-05 ✅ **pnpm generate:api — TypeScript SDK synced with auth endpoints**
 - S-07 ✅ Invalid invite error page → Telegram primary CTA (AZ beta audience)
 - S-09 ✅ Production smoke test script (scripts/prod_smoke_test.py)
 - S-10 ✅ Sprint 5 question bank — 7/7 profession agents complete, voting declared
 
-**Next:** Sprint 6 question evolution (propagate financial-analyst patterns to all 7 professions) OR CEO E2E walk (blocking launch). S-05 (pnpm generate:api) still pending.
+**Sprint 5 Question Bank:**
+- Winner: Financial Analyst — 96/100
+- All scores: FA 96 | DevOps 94 | Product Mgr 92 | Scrum Master 91 | HR Manager 91 | QA Engineer 90 | Marketing Manager 86
+- Saved: `C:\Projects\VOLAURA\scripts\question-evolution\sprint-5\voting-results.json`
+- Sprint 6 key patterns: london_delta must cite article number + quantified threshold (not just regulation name)
+
+**NEXT DECISION POINT:** CEO E2E walk (full invite→assess→complete→AURA→public profile journey on volaura.app) OR Sprint 6 question evolution. E2E walk is blocking launch readiness declaration.
 
 ---
 

@@ -6,7 +6,7 @@
 
 ---
 
-## Session 77 (2026-03-31) — BATCH-S: Vertex LLM + Invite UX + Smoke Test + Sprint 5 Q-Bank
+## Session 77 (2026-03-31) — BATCH-S: Vertex LLM + Invite UX + Smoke Test + Sprint 5 Q-Bank + S-05 generate:api
 
 | Code | Location | What it does | Status |
 |------|----------|-------------|--------|
@@ -15,6 +15,7 @@
 | S-03+S-08: Invite pre-fill + flicker fix | `apps/web/src/app/[locale]/(auth)/signup/page.tsx` | `inviteCode` state initialized from `searchParams.get("invite")`. `openSignup` state initialized to `false` when `?invite=` present (avoids 200-400ms async fetch flicker). | ✅ S-03+S-08 |
 | S-04: Vertex + Groq LLM chain | `apps/api/app/services/llm.py` | Full rewrite. Singleton clients (`_vertex_client`, `_gemini_client`). `reset_llm_clients()` for test teardown. Fallback chain: Vertex Express → Gemini → Groq → OpenAI. `_call_vertex()`: `genai.Client(vertexai=True, api_key=...)`. `_call_groq()`: `AsyncGroq`, `llama-3.3-70b-versatile`. `generate_embedding` tries Vertex first. | ✅ S-04 |
 | S-04: vertex_api_key in config | `apps/api/app/config.py` | `vertex_api_key: str = ""` added with Vertex Express comment. `VERTEX_API_KEY=AQ.Ab8...` in `.env`. | ✅ S-04 |
+| S-05: pnpm generate:api | `apps/web/src/lib/api/generated/` | Ran `pnpm generate:api` from live FastAPI /openapi.json. New endpoints added: `signupStatusApiAuthSignupStatusGet` (GET /api/auth/signup-status), `validateInviteApiAuthValidateInvitePost` (POST /api/auth/validate-invite). Signup page updated to use type-safe `SignupStatusResponse` + `ValidateInviteResponse` imports. **Unblocks CEO E2E walk.** | ✅ S-05 |
 | S-07: Invalid invite Telegram CTA | `apps/web/src/app/[locale]/(public)/invite/page.tsx` | Invalid code state: Telegram primary CTA (`t.me/yusifganbarov`, #2AABEE button), LinkedIn secondary, manual code entry link. 4 new i18n keys. `invite.invalidBody` updated to mention Telegram. | ✅ S-07 |
 | S-09: Production smoke test | `scripts/prod_smoke_test.py` | NEW. Hits real Railway URL. Steps: health→supabase_project_ref, signup-status, validate-invite, auth gate (401), public profile, leaderboard. Exit code 1 on failure. Mistake #52 prevention. | ✅ S-09 |
 | S-10: Sprint 5 question bank | `scripts/question-evolution/sprint-5/*.json` | 7 profession JSON files (70 questions total). All pass: irt_a≥1.2 ✅, hard irt_b 1.2-2.0 ✅, evaluation_rubric on all open_ended ✅, empathy_safeguarding≥2 per set ✅. | ✅ S-10 |

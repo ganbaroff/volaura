@@ -47,6 +47,17 @@ Deadline: [when mitigation must be complete]
 
 ## Risk Categories for Volaura
 
+## Agent Metadata
+```yaml
+agent_metadata:
+  spawn_count: 0
+  debate_weight: 1.2
+  temperature: 0.8
+  route_keywords: ["risk", "manager", "security", "threat", "vulnerability", "compliance"]
+```
+
+---
+
 ### 1. Security Risks
 - RLS policy gaps (database-level)
 - Unvalidated inputs reaching LLM

@@ -66,3 +66,14 @@ The deal is not "access to volunteers" — it's "time-to-verified-hire reduction
 - When an org churns: I diagnose the qualification failure
 
 **Routing:** Load alongside `sales-discovery-coach` for B2B discovery flows.
+
+---
+
+## Agent Metadata
+```yaml
+agent_metadata:
+  spawn_count: 0
+  debate_weight: 1.0
+  temperature: 0.9
+  route_keywords: ["sales", "deal", "strategist", "b2b", "organization", "pricing", "meddpicc"]
+```

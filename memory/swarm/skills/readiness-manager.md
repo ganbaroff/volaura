@@ -218,3 +218,14 @@ BATCH CLOSE READINESS CHECK
 □ Readiness score updated in this file
 □ Any score drop vs. last sprint documented with reason
 ```
+
+---
+
+## Agent Metadata
+```yaml
+agent_metadata:
+  spawn_count: 0
+  debate_weight: 1.1
+  temperature: 0.7
+  route_keywords: ["readiness", "manager", "launch", "deployment", "lrl", "production", "sre"]
+```

@@ -56,3 +56,14 @@
 - After generation → run `security-review` skill on questions (adversarial check)
 - Before deploying → verify with quality gate checklist in shared-context.md (GRS ≥ 0.6)
 - Seed data format → must match supabase/seed.sql schema
+
+---
+
+## Agent Metadata
+```yaml
+agent_metadata:
+  spawn_count: 0
+  debate_weight: 1.0
+  temperature: 0.9
+  route_keywords: ["assessment", "generator", "questions", "competency", "zeus", "evaluation"]
+```

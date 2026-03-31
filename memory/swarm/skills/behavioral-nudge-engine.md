@@ -126,3 +126,14 @@ When running DSP for any sprint containing:
 - Any time a new screen is designed with >3 interactive elements
 
 **Routing:** Load with `cultural-intelligence-strategist` for AZ-specific framing. Load with `linkedin-content-creator` for "share your achievement" moments.
+
+---
+
+## Agent Metadata
+```yaml
+agent_metadata:
+  spawn_count: 0
+  debate_weight: 1.0
+  temperature: 1.0
+  route_keywords: ["behavioral", "nudge", "engine", "ux", "engagement", "onboarding", "adhd"]
+```

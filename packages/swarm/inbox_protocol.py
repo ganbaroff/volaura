@@ -202,6 +202,34 @@ class InboxProtocol:
 
         return "\n".join(lines)
 
+    def cleanup_stale(self, days: int = 30) -> int:
+        """Auto-dismiss proposals that have been pending longer than N days.
+
+        Prevents CEO cognitive overload from an ever-growing inbox of
+        proposals that were never acted on. Returns count of dismissed proposals.
+        """
+        from datetime import timedelta
+        cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+        data = self._load()
+        count = 0
+        for p in data["proposals"]:
+            if p["status"] == "pending":
+                try:
+                    created = datetime.fromisoformat(p["timestamp"])
+                    # Make timezone-aware if naive (legacy records)
+                    if created.tzinfo is None:
+                        created = created.replace(tzinfo=timezone.utc)
+                    if created < cutoff:
+                        p["status"] = ProposalStatus.DISMISSED.value
+                        p["ceo_decision"] = f"Auto-dismissed: pending > {days} days"
+                        p["ceo_decision_at"] = datetime.now(timezone.utc).isoformat()
+                        count += 1
+                except (ValueError, KeyError):
+                    pass
+        if count:
+            self._save(data)
+        return count
+
     def get_stats(self) -> dict:
         """Get inbox statistics."""
         data = self._load()

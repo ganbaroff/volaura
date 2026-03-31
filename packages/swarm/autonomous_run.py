@@ -39,6 +39,7 @@ from swarm.inbox_protocol import (
     ProposalType,
     Severity,
 )
+from swarm.perspective_registry import PerspectiveRegistry
 
 # ──────────────────────────────────────────────────────────────
 # Agent perspectives — each gets a unique lens
@@ -74,6 +75,24 @@ PERSPECTIVES = [
         "lens": "Google SRE + ITIL v4 + LRR standard. Score platform readiness across 5 dimensions: Functional (0-20), Operational (0-20), Security (0-20), UX (0-20), Rollback (0-20). LRL 1-7. A score <70/100 is a NO-GO for any public launch. Flag any dimension below 12/20 as a launch blocker.",
     },
 ]
+
+
+def _route_skills_for_perspective(perspective_name: str, skills_dir: Path) -> list[str]:
+    """Match skill files to a perspective by keyword overlap.
+
+    Compares words in perspective_name against skill file stem words
+    (hyphen-split). Returns matching skill file stems (without .md).
+    Low-cost routing — no LLM call required.
+    """
+    if not skills_dir.exists():
+        return []
+    perspective_words = set(perspective_name.lower().split())
+    matched = []
+    for skill_file in sorted(skills_dir.glob("*.md")):
+        skill_words = set(skill_file.stem.lower().replace("-", " ").split())
+        if perspective_words & skill_words:
+            matched.append(skill_file.stem)
+    return matched
 
 
 def _read_project_state(project_root: Path) -> str:
@@ -265,10 +284,13 @@ Tag [ESCALATE] if you find process violations."""
     else:
         task = f"YOUR TASK: {mode}"
 
+    weight_line = f"\nYOUR CALIBRATION: {perspective.get('weight_context', '')}" if perspective.get('weight_context') else ""
+    skills_line = f"\nROUTED SKILLS: {', '.join(perspective.get('routed_skills', []))}" if perspective.get('routed_skills') else ""
+
     return f"""{team_context}
 
 YOUR PERSPECTIVE: {perspective['name']}
-YOUR LENS: {perspective['lens']}
+YOUR LENS: {perspective['lens']}{weight_line}{skills_line}
 
 {task}
 
@@ -433,11 +455,20 @@ async def run_autonomous(mode: str = "daily-ideation") -> list[Proposal]:
     env = dict(os.environ)
     project_state = _read_project_state(project_root)
     inbox = InboxProtocol(project_root)
+    registry = PerspectiveRegistry(project_root)
+    skills_dir = project_root / "memory" / "swarm" / "skills"
 
-    # Launch all agents in parallel
+    # Launch all agents in parallel (weight context injected per perspective)
     tasks = []
     for perspective in PERSPECTIVES:
-        prompt = _build_agent_prompt(perspective, project_state, mode)
+        weight_ctx = registry.inject_weight_context(perspective["name"])
+        routed_skills = _route_skills_for_perspective(perspective["name"], skills_dir)
+        enriched_perspective = {
+            **perspective,
+            "weight_context": weight_ctx,
+            "routed_skills": routed_skills,
+        }
+        prompt = _build_agent_prompt(enriched_perspective, project_state, mode)
         tasks.append(_call_agent(prompt, perspective["name"], env))
 
     results = await asyncio.gather(*tasks, return_exceptions=True)
@@ -528,6 +559,10 @@ async def run_autonomous(mode: str = "daily-ideation") -> list[Proposal]:
         avg_score = sum(p.judge_score for p in proposals if p.judge_score is not None) / judged
         logger.info(f"Judge complete: {judged}/{len(proposals)} proposals scored, avg={avg_score:.1f}/5")
 
+    # Update PerspectiveRegistry weights based on judge scores
+    for proposal in proposals:
+        registry.update(proposal.agent, proposal.judge_score)
+
     # Store all proposals
     stored_ids = []
     for proposal in proposals:
@@ -600,10 +635,28 @@ async def send_telegram_notifications(proposals: list[Proposal]) -> None:
 async def main():
     parser = argparse.ArgumentParser(description="Autonomous Swarm Run")
     parser.add_argument("--mode", default="daily-ideation",
-                        choices=["daily-ideation", "code-review", "cto-audit"])
+                        choices=["daily-ideation", "code-review", "cto-audit", "self-upgrade"])
     parser.add_argument("--skip-consolidation", action="store_true",
                         help="Skip memory consolidation (useful for quick runs)")
     args = parser.parse_args()
+
+    if args.mode == "self-upgrade":
+        # Self-upgrade execution requires: staging branch target, test gate before merge,
+        # human approval gate for medium-risk patches, file-path constraint in patch schema.
+        # Not yet implemented — blocked by Security Agent (DSP 2026-03-31, score 12/50).
+        # See docs/DECISIONS.md for full risk register and hardening requirements.
+        logger.warning(
+            "self-upgrade mode is not yet active. "
+            "Security gate not met: requires staging branch + test execution + human review loop. "
+            "See DSP sprint gate result 2026-03-31."
+        )
+        print(
+            "\n[self-upgrade] Mode registered but execution not yet active.\n"
+            "Security requirement: patch system must target swarm-staging branch,\n"
+            "run tests before merge, and require human approval for medium-risk patches.\n"
+            "Implement hardening first — see docs/DECISIONS.md.\n"
+        )
+        return
 
     proposals = await run_autonomous(args.mode)
 

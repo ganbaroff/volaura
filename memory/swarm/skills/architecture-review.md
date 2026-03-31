@@ -150,3 +150,14 @@ After each review, record in agent-roster.md "Agent Improvement Tracking":
 - CTO MUST launch for all triggers above — skipping = Mistake #14/#17/#31 class
 - Score < 35/50 → design does NOT proceed
 - CRITICAL findings → fix BEFORE any other work
+
+---
+
+## Agent Metadata
+```yaml
+agent_metadata:
+  spawn_count: 0
+  debate_weight: 1.0
+  temperature: 0.7
+  route_keywords: ["architecture", "review", "design", "schema", "migration", "endpoint"]
+```

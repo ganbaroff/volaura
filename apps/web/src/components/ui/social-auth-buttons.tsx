@@ -1,17 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 type Provider = "google" | "github";
 
+/** Shared key — imported by auth callback to read & clear after OAuth redirect */
+export const OAUTH_META_KEY = "volaura_oauth_meta";
+
 interface SocialAuthButtonsProps {
   redirectTo: string;
   /** Extra metadata stored in localStorage before OAuth redirect (picked up by callback) */
   meta?: Record<string, string>;
 }
+
+const PROVIDER_LABELS: Record<Provider, string> = {
+  google: "Google",
+  github: "GitHub",
+};
 
 const PROVIDER_ICONS: Record<Provider, React.ReactNode> = {
   google: (
@@ -52,17 +60,17 @@ export function SocialAuthButtons({ redirectTo, meta }: SocialAuthButtonsProps) 
   const [loading, setLoading] = useState<Provider | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const supabase = useMemo(() => createClient(), []);
+
   async function handleOAuth(provider: Provider) {
     setError(null);
     setLoading(provider);
 
     try {
-      // Persist any metadata (e.g. account_type) so callback can use it
       if (meta && Object.keys(meta).length > 0) {
-        localStorage.setItem("volaura_oauth_meta", JSON.stringify(meta));
+        localStorage.setItem(OAUTH_META_KEY, JSON.stringify(meta));
       }
 
-      const supabase = createClient();
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider,
         options: { redirectTo },
@@ -72,7 +80,6 @@ export function SocialAuthButtons({ redirectTo, meta }: SocialAuthButtonsProps) 
         setError(t("auth.oauthError"));
         setLoading(null);
       }
-      // On success the browser redirects — no further state update needed
     } catch {
       setError(t("auth.oauthError"));
       setLoading(null);
@@ -95,7 +102,7 @@ export function SocialAuthButtons({ redirectTo, meta }: SocialAuthButtonsProps) 
             ) : (
               PROVIDER_ICONS[provider]
             )}
-            <span className="capitalize">{provider === "google" ? "Google" : "GitHub"}</span>
+            <span>{PROVIDER_LABELS[provider]}</span>
           </button>
         ))}
       </div>

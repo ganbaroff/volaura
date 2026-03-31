@@ -184,7 +184,7 @@ export default function SignupPage() {
       {/* Social auth — only available when invite gate is off */}
       {openSignup !== false && (
         <SocialAuthButtons
-          redirectTo={`${typeof window !== "undefined" ? window.location.origin : ""}/${locale}/callback`}
+          redirectTo={`${window.location.origin}/${locale}/callback`}
           meta={{ account_type: accountType, ...(orgType ? { org_type: orgType } : {}) }}
         />
       )}

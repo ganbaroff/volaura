@@ -5,7 +5,8 @@ import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/auth-store";
-import { readAndClearAttribution } from "@/components/utm-capture";
+import { readAndClearAttribution, readAndClearFromStorage } from "@/components/utm-capture";
+import { OAUTH_META_KEY } from "@/components/ui/social-auth-buttons";
 import { API_BASE } from "@/lib/api/client";
 
 export default function AuthCallbackPage() {
@@ -39,19 +40,7 @@ function AuthCallbackContent() {
       // Attribution + OAuth metadata capture (fire-and-forget)
       if (session?.access_token) {
         const attribution = readAndClearAttribution();
-
-        // OAuth signup: read account_type / org_type stored before redirect
-        let oauthMeta: Record<string, string> = {};
-        try {
-          const raw = localStorage.getItem("volaura_oauth_meta");
-          if (raw) {
-            oauthMeta = JSON.parse(raw) as Record<string, string>;
-            localStorage.removeItem("volaura_oauth_meta");
-          }
-        } catch {
-          // Ignore malformed data
-        }
-
+        const oauthMeta = readAndClearFromStorage(OAUTH_META_KEY);
         const payload = { ...attribution, ...oauthMeta };
         if (Object.keys(payload).length > 0) {
           fetch(`${API_BASE}/api/profiles/me`, {

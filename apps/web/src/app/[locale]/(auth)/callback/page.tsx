@@ -36,17 +36,31 @@ function AuthCallbackContent() {
       if (!isMounted.current) return;
       setSession(session);
 
-      // Attribution capture: write UTM/referral data from localStorage to profile (fire-and-forget)
+      // Attribution + OAuth metadata capture (fire-and-forget)
       if (session?.access_token) {
         const attribution = readAndClearAttribution();
-        if (Object.keys(attribution).length > 0) {
+
+        // OAuth signup: read account_type / org_type stored before redirect
+        let oauthMeta: Record<string, string> = {};
+        try {
+          const raw = localStorage.getItem("volaura_oauth_meta");
+          if (raw) {
+            oauthMeta = JSON.parse(raw) as Record<string, string>;
+            localStorage.removeItem("volaura_oauth_meta");
+          }
+        } catch {
+          // Ignore malformed data
+        }
+
+        const payload = { ...attribution, ...oauthMeta };
+        if (Object.keys(payload).length > 0) {
           fetch(`${API_BASE}/api/profiles/me`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${session.access_token}`,
             },
-            body: JSON.stringify(attribution),
+            body: JSON.stringify(payload),
           }).catch(() => {
             // Non-blocking — analytics loss is acceptable, auth must not fail
           });

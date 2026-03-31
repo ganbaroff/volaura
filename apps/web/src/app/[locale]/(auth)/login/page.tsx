@@ -6,6 +6,7 @@ import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/auth-store";
+import { SocialAuthButtons } from "@/components/ui/social-auth-buttons";
 
 export default function LoginPage() {
   return (
@@ -77,6 +78,10 @@ function LoginContent() {
           {t("auth.passwordResetSuccess")}
         </p>
       )}
+
+      <SocialAuthButtons
+        redirectTo={`${typeof window !== "undefined" ? window.location.origin : ""}/${locale}/callback`}
+      />
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1.5">

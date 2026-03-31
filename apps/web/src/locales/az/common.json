@@ -138,7 +138,12 @@
     "updatingPassword": "Yenilənir...",
     "passwordResetSuccess": "Şifrə uğurla yeniləndi. Zəhmət olmasa, yeni şifrənizlə daxil olun.",
     "welcomeAboard": "Sıramıza xoş gəlmisiniz!",
-    "foundingMemberMessage": "Siz təsisçi üzvsünüz. Sizin nömrəniz həmişəlik rezerv olunub."
+    "foundingMemberMessage": "Siz təsisçi üzvsünüz. Sizin nömrəniz həmişəlik rezerv olunub.",
+    "orContinueWith": "və ya davam edin",
+    "continueWithGoogle": "Google ilə davam et",
+    "continueWithGitHub": "GitHub ilə davam et",
+    "oauthError": "Giriş uğursuz oldu. Yenidən cəhd edin.",
+    "oauthInviteRequired": "Dəvət kodu tələb olunan beta dövründə sosial qeydiyyat mövcud deyil."
   },
   "assessment": {
     "title": "Səriştə qiymətləndirməsi",

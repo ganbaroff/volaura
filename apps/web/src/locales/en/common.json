@@ -138,7 +138,12 @@
     "updatingPassword": "Updating...",
     "passwordResetSuccess": "Password updated successfully. Please log in with your new password.",
     "welcomeAboard": "Welcome aboard!",
-    "foundingMemberMessage": "You're a Founding Member. Your number is reserved forever."
+    "foundingMemberMessage": "You're a Founding Member. Your number is reserved forever.",
+    "orContinueWith": "or continue with",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithGitHub": "Continue with GitHub",
+    "oauthError": "Sign-in failed. Please try again.",
+    "oauthInviteRequired": "Social sign-up is unavailable during invite-only beta. Use email + invite code."
   },
   "assessment": {
     "title": "Competency Assessment",

@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/auth-store";
 import { API_BASE } from "@/lib/api/client";
 import type { SignupStatusResponse, ValidateInviteResponse } from "@/lib/api/generated/types.gen";
+import { SocialAuthButtons } from "@/components/ui/social-auth-buttons";
 
 type AccountType = "volunteer" | "organization";
 type OrgType = "ngo" | "corporate" | "government" | "startup" | "academic" | "other";
@@ -179,6 +180,14 @@ export default function SignupPage() {
           </span>
         ))}
       </div>
+
+      {/* Social auth — only available when invite gate is off */}
+      {openSignup !== false && (
+        <SocialAuthButtons
+          redirectTo={`${typeof window !== "undefined" ? window.location.origin : ""}/${locale}/callback`}
+          meta={{ account_type: accountType, ...(orgType ? { org_type: orgType } : {}) }}
+        />
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Role selection */}

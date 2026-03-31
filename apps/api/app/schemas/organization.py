@@ -29,20 +29,22 @@ class OrganizationUpdate(BaseModel):
 
 
 class OrganizationResponse(BaseModel):
+    """Public organization response — owner_id intentionally excluded to prevent UUID enumeration."""
     model_config = ConfigDict(from_attributes=True)
 
     id: str
-    owner_id: str
     name: str
     description: str | None = None
     website: str | None = None
     logo_url: str | None = None
     contact_email: str | None = None
+    type: str | None = None
+    is_active: bool | None = None
     verified_at: datetime | None = None
-    subscription_tier: str
+    subscription_tier: str | None = None
     trust_score: float | None = None
-    created_at: datetime
-    updated_at: datetime
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
 
 class VolunteerSearchRequest(BaseModel):

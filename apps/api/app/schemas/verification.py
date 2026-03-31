@@ -70,7 +70,7 @@ class VerificationTokenInfo(BaseModel):
 class SubmitVerificationRequest(BaseModel):
     """Request body for POST /api/verify/{token}."""
 
-    rating: int = Field(..., ge=1, le=5)
+    rating: float = Field(..., ge=1.0, le=5.0)
     comment: str | None = Field(None, max_length=500)
 
     @field_validator("comment")
@@ -88,7 +88,7 @@ class SubmitVerificationResponse(BaseModel):
     status: Literal["verified"] = "verified"
     volunteer_display_name: str
     competency_id: str
-    rating: int
+    rating: float
 
 
 class TokenErrorCode(BaseModel):

@@ -1,0 +1,446 @@
+[
+  {
+    "id": "prof-pm-scrum-s2-001",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "question_type": "mcq",
+    "difficulty": "easy",
+    "irt_a": 0.8,
+    "irt_b": -1.2,
+    "irt_c": 0.2,
+    "question_en": "Your team is delivering a mobile banking feature for Kapital Bank's online platform. The sprint ends on Friday. On Wednesday, the compliance officer sends a 12-page regulatory document requiring specific UI disclosures on all transaction screens — the exact screens your team is building. The sprint demo is already scheduled with the bank's IT director. What is the first thing you do?",
+    "question_az": "Komandanız Kapital Bankın onlayn platformu üçün mobil bank xüsusiyyəti çatdırır. Sprint cümə günü bitir. Çərşənbə günü uyğunluq məmuru bütün əməliyyat ekranlarında — komandanızın qurduğu ekranlarda — xüsusi UI açıqlamalarını tələb edən 12 səhifəlik tənzimləyici sənəd göndərir. Sprint nümayişi artıq bankın İT direktoru ilə planlaşdırılıb. İlk nə edərsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Complete the sprint as planned — compliance is a separate workstream and should not derail a committed sprint goal.",
+        "text_az": "Planlaşdırıldığı kimi sprintin tamamlayın — uyğunluq ayrı iş axınıdır və öhdəlik götürülmüş sprint hədəfini ləğv etməməlidir."
+      },
+      {
+        "key": "B",
+        "text_en": "Immediately assess which disclosure items can be added within the sprint boundary, transparently communicate the constraint to the Product Owner and IT director, and propose a scope-adjusted demo.",
+        "text_az": "Dərhal hansı açıqlama maddələrinin sprint hüdudlarına əlavə edilə biləcəyini qiymətləndirin, məhdudiyyəti Məhsul Sahibinə və İT direktoruna şəffaf şəkildə çatdırın və əhatə dairəsinə uyğunlaşdırılmış nümayiş təklif edin."
+      },
+      {
+        "key": "C",
+        "text_en": "Ask the compliance officer to reissue the document after the sprint ends so it does not interfere with the current commitment.",
+        "text_az": "Uyğunluq məmurundan cari öhdəliyə müdaxilə etməmək üçün sənədi sprint bitdikdən sonra yenidən buraxmasını xahiş edin."
+      },
+      {
+        "key": "D",
+        "text_en": "Quietly add the disclosures to the backlog and tell the IT director the sprint went as planned.",
+        "text_az": "Açıqlamaları sükutla iş yığınına əlavə edin və İT direktoruna sprintin planlaşdırıldığı kimi getdiyini söyləyin."
+      }
+    ],
+    "correct_answer": "B",
+    "explanation_en": "Reliability in Scrum means transparent commitment management — not ignoring real constraints (A, C) and not hiding them (D). The professional move is rapid impact assessment + transparent stakeholder communication.",
+    "explanation_az": "Scrumdakı etibarlılıq şəffaf öhdəlik idarəçiliyini nəzərdə tutur — real məhdudiyyətləri görməməzliyə vurmaq (A, C) və ya gizlətmək (D) deyil.",
+    "tags": [
+      "scrum",
+      "sprint-commitment",
+      "regulatory",
+      "kapital-bank",
+      "stakeholder-communication"
+    ],
+    "role_level": "coordinator",
+    "london_test_fail": false
+  },
+  {
+    "id": "prof-pm-scrum-s2-002",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "question_type": "sjt",
+    "difficulty": "medium",
+    "irt_a": 1.2,
+    "irt_b": 0.3,
+    "irt_c": 0.15,
+    "question_en": "You are Scrum Master for the E-GOV Azerbaijan portal team. Your sprint goal is to deliver the 'Digital Signature Integration' feature by Thursday for a Ministry of Digital Development review. On Tuesday your senior developer tells you: the State Registry API has an undocumented rate limit — 10 calls/minute — discovered only in staging. The feature requires 400 calls/minute at peak. The ministry official cannot reschedule. Rate each response from most to least professional:",
+    "question_az": "Siz E-GOV Azərbaycan portalı komandası üçün Scrum Mastersiniz. Sprint hədəfiniz 'Rəqəmsal İmza İnteqrasiyası' xüsusiyyətini Rəqəmsal İnkişaf Nazirliyinin yoxlaması üçün cümə axşamına qədər çatdırmaqdır. Çərşənbə günü baş tərtibatçınız bildirir: Dövlət Reyestri API-si yalnız test mühitində aşkarlanan sənədsiz sürət məhdudiyyətinə malikdir — dəqiqədə 10 zəng. Xüsusiyyət pik vaxtlarda dəqiqədə 400 zənq tələb edir. Nazirlik məmuru vaxtı dəyişdirə bilmir. Hər cavabı ən peşəkardandan ən az peşəkara qədər sıralayın:",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Immediately escalate to Ministry technical counterpart with specific technical details and propose a partial demo of the signature flow with mocked rate limiting, committing to full integration in Sprint N+1.",
+        "text_az": "Dərhal Nazirliyin texniki əlaqədar şəxsinə xüsusi texniki təfərrüatlarla eskalasiya edin və süni sürət məhdudiyyəti ilə imza axınının qismən nümayişini təklif edin, N+1 Sprintdə tam inteqrasiyaya öhdəlik götürün."
+      },
+      {
+        "key": "B",
+        "text_en": "Demo the feature against the staging environment, present the rate limit finding as a 'known issue' slide, and show a written mitigation plan.",
+        "text_az": "Xüsusiyyəti test mühitinə qarşı nümayiş etdirin, sürət məhdudiyyəti tapıntısını 'məlum problem' slaydı kimi təqdim edin və yazılı azaltma planı göstərin."
+      },
+      {
+        "key": "C",
+        "text_en": "Request an emergency sprint extension of 2 days and ask the ministry to postpone the review.",
+        "text_az": "2 günlük fövqəladə sprint uzadılması tələb edin və nazirliyindən yoxlamanı təxirə salmasını xahiş edin."
+      },
+      {
+        "key": "D",
+        "text_en": "Demo with a caching layer that makes it appear the rate limit is handled, planning to build the real solution after the review.",
+        "text_az": "Sürət məhdudiyyətinin həll edildiyi görünən keşləmə qatı ilə nümayiş edin, yoxlamadan sonra real həll qurmağı planlayın."
+      }
+    ],
+    "correct_answer": "A",
+    "sjt_ranking": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "explanation_en": "A is most professional: transparent escalation with a concrete partial deliverable and firm commitment. B is acceptable but less proactive. C avoids the issue. D is deceptive — a reliability failure.",
+    "explanation_az": "A ən peşəkardır: konkret qismən çatdırılabilər və möhkəm öhdəliklə şəffaf eskalasiya. B qəbul edilə bilər, lakin daha az proaktivdir. C məsələdən qaçır. D aldadıcıdır — etibarlılıq uğursuzluğu.",
+    "tags": [
+      "scrum",
+      "reliability",
+      "egov",
+      "api-constraint",
+      "ministry-stakeholder"
+    ],
+    "role_level": "coordinator",
+    "london_test_fail": true
+  },
+  {
+    "id": "prof-pm-scrum-s2-003",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "question_type": "open_ended",
+    "difficulty": "hard",
+    "irt_a": 1.6,
+    "irt_b": 1.4,
+    "irt_c": 0.05,
+    "question_en": "You are the Scrum Master for SOCAR Digital Transformation Program — a 14-month initiative modernizing offshore platform management software. The Program Manager (a 58-year-old SOCAR veteran with 30 years on offshore platforms) has told you directly: 'We committed to the Ministry of Energy that the emergency shutdown module would be live by Q3. I don't care about your sprint velocity or story points. I need that date kept.' It is now Sprint 7 of 22. Your current velocity suggests Q3 is achievable only if zero scope is added. The engineering lead privately tells you: three newly discovered integration requirements from the international platform vendor will add at minimum 3 sprint-equivalents of work. Describe your complete approach.",
+    "question_az": "Siz SOCAR Rəqəmsal Transformasiya Proqramı üçün Scrum Mastersiniz — dəniz platforması idarəetmə proqram təminatını modernizasiya edən 14 aylıq təşəbbüs. Proqram Meneceri (dəniz platformalarında 30 illik təcrübəsi olan 58 yaşlı SOCAR veteranı) sizə birbaşa deyib: 'Biz Enerji Nazirliyinə fövqəladə dayanma modulunun 3-cü rübə qədər canlı olacağını öhdəsinə götürdük. Mən sprint sürətinizi və ya hekayə nöqtələrinizi əhəmiyyət vermirəm. Bu tarix gözlənilməlidir.' İndi 22-dən 7-ci sprintdir. Cari sürətiniz Q3-ün yalnız sıfır əhatə dairəsi əlavə edilərsə əldə edilə biləcəyini göstərir. Mühəndislik rəhbəri özəl olaraq sizə bildirir: beynəlxalq platforma satıcısından 3 yeni aşkar edilmiş inteqrasiya tələbi minimum 3 sprint-ekvivalent iş əlavə edəcək. Tam yanaşmanızı təsvir edin.",
+    "question_ru": null,
+    "options": null,
+    "correct_answer": null,
+    "evaluation_rubric": {
+      "bars_anchors": {
+        "5": "Candidate demonstrates: (1) immediate quantified transparency — presents the 3-sprint gap as data, not opinion; (2) cultural intelligence — frames conversation around the Program Manager's real concern (Ministry commitment, safety), not Scrum ceremony justification; (3) structured decision options — proposes 3 real paths: scope reduction (what can be cut from emergency shutdown module without compromising safety certification), parallel teams (additional resource to close gap), or revised commitment with Ministry; (4) proactive risk register — documents the vendor integration risk formally; (5) does NOT lecture on Scrum values to a 30-year SOCAR veteran.",
+        "4": "Candidate addresses the gap transparently and proposes 2 paths, but misses cultural framing or does not address the Ministry angle.",
+        "3": "Candidate identifies the problem but defaults to generic Scrum theory ('the backlog should be prioritized') without addressing the institutional reality.",
+        "2": "Candidate proposes only one path or defers the problem to the next planning event.",
+        "1": "Candidate agrees to keep Q3 without addressing the scope gap, or lectures on Scrum ceremonies to the veteran."
+      }
+    },
+    "tags": [
+      "scrum",
+      "socar",
+      "reliability",
+      "scope-creep",
+      "stakeholder-management",
+      "cultural-intelligence"
+    ],
+    "role_level": "manager",
+    "london_test_fail": true
+  },
+  {
+    "id": "prof-pm-scrum-s2-004",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "question_type": "mcq",
+    "difficulty": "easy",
+    "irt_a": 0.9,
+    "irt_b": -1.0,
+    "irt_c": 0.2,
+    "question_en": "You are Scrum Master at PASHA Technology. During a sprint retrospective, your team's most experienced developer — 12 years at PASHA, respected across the company — says: 'I don't see the point of retrospectives. We discuss the same issues every sprint and nothing changes.' Two junior developers stay silent. What is the most effective response in that moment?",
+    "question_az": "Siz PASHA Technology-də Scrum Mastersiniz. Sprint retrospektivi zamanı komandanızın ən təcrübəli tərtibatçısı — PASHA-da 12 il, şirkət daxilində hörmətli — deyir: 'Retrospektivlərin mənasını görmürəm. Hər sprintdə eyni məsələləri müzakirə edirik və heç nə dəyişmir.' İki gənc tərtibatçı sükut saxlayır. Həmin anda ən effektiv cavab nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Explain the Scrum Guide's rationale for retrospectives and why they are non-negotiable in the framework.",
+        "text_az": "Retrospektivlər üçün Scrum Bələdçisinin məntiqini və niyə çərçivədə danışılmaz olduqlarını izah edin."
+      },
+      {
+        "key": "B",
+        "text_en": "Acknowledge his observation directly: ask him to name the top one issue from the last 3 retrospectives that remained unresolved, then facilitate a focused 20-minute session on that single item with a named owner and a 2-week deadline.",
+        "text_az": "Müşahidəsini birbaşa etiraf edin: son 3 retrospektivdən həll edilməmiş qalan 1 ən əsas məsələni adlandırmasını xahiş edin, sonra adlı sahibi və 2 həftəlik son tarixi olan həmin bir maddə üzərində 20 dəqiqəlik fokuslanmış sessiya aparın."
+      },
+      {
+        "key": "C",
+        "text_en": "Suggest shortening the retrospective to 15 minutes to reduce the perceived waste.",
+        "text_az": "Qəbul edilən israfı azaltmaq üçün retrospektivi 15 dəqiqəyə qısaltmağı təklif edin."
+      },
+      {
+        "key": "D",
+        "text_en": "Ask the two junior developers what they think before addressing the senior developer's concern.",
+        "text_az": "Baş tərtibatçının narahatlığını həll etmədən əvvəl iki gənc tərtibatçının nə düşündüyünü soruşun."
+      }
+    ],
+    "correct_answer": "B",
+    "explanation_en": "A fails by lecturing a 12-year veteran with theory — this damages trust. B validates his experience, converts the complaint into actionable focus, and demonstrates that retrospectives CAN produce change. C and D are evasions.",
+    "explanation_az": "A 12 illik veteranı nəzəriyyə ilə mühazirə etməklə uğursuz olur — bu etimadı zədələyir. B onun təcrübəsini doğrulayır, şikayəti fəal diqqətə çevirir və retrospektivlərin dəyişiklik istehsal edə BİLƏCƏYİNİ nümayiş etdirir.",
+    "tags": [
+      "scrum",
+      "retrospective",
+      "leadership",
+      "senior-developer",
+      "pasha-technology"
+    ],
+    "role_level": "coordinator",
+    "london_test_fail": false
+  },
+  {
+    "id": "prof-pm-scrum-s2-005",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "question_type": "sjt",
+    "difficulty": "medium",
+    "irt_a": 1.3,
+    "irt_b": 0.5,
+    "irt_c": 0.15,
+    "question_en": "You are leading a Scrum team at ASAN xidmət's technology division. The Deputy Director (your team's primary stakeholder) attends the Sprint Review and says publicly: 'I want to add the 'SMS notification for all 42 service types' feature to this sprint — it's urgent. Citizens are complaining.' The sprint has 2 days remaining. Your team is already at 97% capacity. The Deputy Director outranks your Product Owner. Rank the following responses from most to least appropriate:",
+    "question_az": "Siz ASAN xidmətin texnologiya bölməsindəki Scrum komandasına rəhbərlik edirsiniz. Müavin Direktor (komandanızın əsas maraqlı tərəfi) Sprint İcmalına qatılır və açıq şəkildə deyir: 'Bu sprinte '42 xidmət növü üçün SMS bildirişi' xüsusiyyətini əlavə etmək istəyirəm — bu təcilidir. Vətəndaşlar şikayət edir.' Sprintin 2 günü qalır. Komandanız artıq 97% tutum ilə işləyir. Müavin Direktor Məhsul Sahibinizdən yuxarıdır. Aşağıdakı cavabları ən uyğundan ən az uyğuna qədər sıralayın:",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Immediately agree — the Deputy Director outranks the Product Owner and citizen service is the mission.",
+        "text_az": "Dərhal razılaşın — Müavin Direktor Məhsul Sahibindən yuxarıdır və vətəndaş xidməti missiyasıdır."
+      },
+      {
+        "key": "B",
+        "text_en": "Privately tell the Deputy Director after the meeting that the team's capacity is full, and propose next sprint.",
+        "text_az": "Görüşdən sonra Müavin Direktora özəl olaraq komandanın tutumunun dolu olduğunu söyləyin və növbəti sprinti təklif edin."
+      },
+      {
+        "key": "C",
+        "text_en": "In the room, acknowledge the urgency, show the current sprint board (capacity visible), explain the trade-off: adding this feature requires removing an equivalent item — ask the Deputy Director and Product Owner to jointly decide what comes out.",
+        "text_az": "Otaqda, təcililiyi etiraf edin, cari sprint lövhəsini göstərin (tutum görünən), müqayisəli mübadilə izah edin: bu xüsusiyyətin əlavə edilməsi ekvivalent maddənin çıxarılmasını tələb edir — Müavin Direktoru və Məhsul Sahibini birlikdə nəyin çıxacağına qərar verməyə dəvət edin."
+      },
+      {
+        "key": "D",
+        "text_en": "Accept the feature, ask the team to work overtime for 2 days, and deliver both the original sprint goal and the new request.",
+        "text_az": "Xüsusiyyəti qəbul edin, komandadan 2 gün artıq iş saatı işləməsini xahiş edin və həm orijinal sprint hədəfini, həm də yeni tələbi çatdırın."
+      }
+    ],
+    "correct_answer": "C",
+    "sjt_ranking": [
+      "C",
+      "B",
+      "A",
+      "D"
+    ],
+    "explanation_en": "C is correct: it respects the stakeholder's authority while making trade-offs visible and keeping decision power with the right people. B avoids the public moment. A abandons process entirely. D burns the team.",
+    "explanation_az": "C doğrudur: maraqlı tərəfin səlahiyyətinə hörmət edir, müqayisəli mübadilələri görünən edir və qərar gücünü doğru insanlarla saxlayır.",
+    "tags": [
+      "scrum",
+      "scope-creep",
+      "leadership",
+      "asan-xidmət",
+      "stakeholder-authority"
+    ],
+    "role_level": "specialist",
+    "london_test_fail": true
+  },
+  {
+    "id": "prof-pm-scrum-s2-006",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "question_type": "open_ended",
+    "difficulty": "hard",
+    "irt_a": 1.7,
+    "irt_b": 1.6,
+    "irt_c": 0.05,
+    "question_en": "You have been hired as an Agile Coach to run Scrum for a 22-person SOCAR IT team in Baku. The team has worked in a waterfall model for 11 years. The VP of IT — a respected 55-year-old engineer who built the legacy system — attended your first sprint planning and told you afterward: 'You're wasting my engineers' time on ceremonies. In my experience, good engineers know what to do. Daily standups are a Soviet-style control mechanism.' Three team leads privately agreed with him. Six months later you need to show measurable transformation. What is your full approach for the first 90 days?",
+    "question_az": "Siz Bakıdakı 22 nəfərlik SOCAR İT komandası üçün Scrum idarə etmək üçün Çevik Məşqçi kimi işə götürülmüsünüz. Komanda 11 il suyun altında model üzrə işləyib. İT VP — köhnə sistemi quran hörmətli 55 yaşlı mühəndis — ilk sprint planlamasına qatıldı və sonradan sizə dedi: 'Mühəndislərimizin vaxtını mərasimlərə xərcləyirsiniz. Mənim təcrübəmdə yaxşı mühəndislər nə etməli olduqlarını bilirlər. Gündəlik standup-lar Sovet üslublu nəzarət mexanizmidir.' Üç komanda liderinin özəl olaraq onunla razılaşdı. 6 ay sonra ölçülə bilən transformasiyanı göstərməlisiniz. İlk 90 gün üçün tam yanaşmanız nədir?",
+    "question_ru": null,
+    "options": null,
+    "correct_answer": null,
+    "evaluation_rubric": {
+      "bars_anchors": {
+        "5": "Candidate demonstrates: (1) Does NOT start with Scrum ceremonies — starts with the VP's real goal (delivery speed, quality, predictability) and maps Scrum practices to those goals in the VP's language; (2) coalition-building — works through the 3 team leads who privately agreed, NOT against the VP; (3) measurement-first — proposes a before/after metric framework (defect rate, release frequency, unplanned work %) that the VP recognizes as engineering metrics, not Scrum metrics; (4) ceremony redesign for AZ culture — standups become 'risk radar' (10 mins, standing, no status reports — only blockers); retrospectives become 'technical debt sessions'; (5) 90-day milestone with specific, VP-verifiable outcomes.",
+        "4": "Addresses cultural resistance and proposes AZ-adapted ceremonies, but misses coalition-building or measurement framework.",
+        "3": "Proposes standard Scrum adoption plan without addressing AZ cultural context or the VP's specific objections.",
+        "2": "Focuses primarily on selling Scrum theory or training.",
+        "1": "Proposes overriding the VP's concerns or implementing ceremonies without buy-in."
+      }
+    },
+    "tags": [
+      "scrum",
+      "agile-transformation",
+      "socar",
+      "leadership",
+      "az-culture",
+      "waterfall-to-agile"
+    ],
+    "role_level": "manager",
+    "london_test_fail": true
+  },
+  {
+    "id": "prof-pm-scrum-s2-007",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency_slug": "communication",
+    "question_type": "mcq",
+    "difficulty": "medium",
+    "irt_a": 1.1,
+    "irt_b": 0.2,
+    "irt_c": 0.18,
+    "question_en": "You are Scrum Master for the ASAN xidmət citizen portal team. Your Product Owner asks you to present sprint velocity data to the Deputy Minister — a 60-year-old official who has never used Jira and manages his own teams via weekly Word document status reports. He asks: 'How do I know your team is on track? When will the digital ID renewal feature be ready?' What communication approach is most effective?",
+    "question_az": "Siz ASAN xidmət vətəndaş portalı komandası üçün Scrum Mastersiniz. Məhsul Sahibiniz sizi sprint sürəti məlumatlarını Müavin Nazirə — Jira-nı heç vaxt istifadə etməmiş və öz komandalarını həftəlik Word sənədi status hesabatları vasitəsilə idarə edən 60 yaşlı məmura — təqdim etməyi xahiş edir. O soruşur: 'Komandanızın yolda olduğunu necə bilirəm? Rəqəmsal şəxsiyyət vəsiqəsinin yenilənməsi xüsusiyyəti nə vaxt hazır olacaq?' Ən effektiv kommunikasiya yanaşması nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Show the Jira burndown chart and explain story points as a measure of work completed versus remaining.",
+        "text_az": "Jira burndown qrafikini göstərin və hekayə nöqtələrini tamamlanan işin qalan işlə müqayisəsinin ölçüsü kimi izah edin."
+      },
+      {
+        "key": "B",
+        "text_en": "Translate velocity into a timeline: 'Based on our last 4 sprints, we complete 2-3 features per 2 weeks. The digital ID feature has 4 remaining pieces. Estimated delivery: 3-4 weeks. Here is a one-page visual with the 3 key milestones and their dates.'",
+        "text_az": "Sürəti zaman cədvəlinə çevirin: 'Son 4 sprintimizə əsasən, 2 həftədə 2-3 xüsusiyyət tamamlayırıq. Rəqəmsal şəxsiyyət vəsiqəsi xüsusiyyətinin 4 qalan hissəsi var. Təxmini çatdırılma: 3-4 həftə. Budur 3 əsas mərhələ və onların tarixlərini olan bir səhifəlik vizual.'"
+      },
+      {
+        "key": "C",
+        "text_en": "Explain that Scrum does not commit to fixed dates and the Deputy Minister should understand that delivery is probabilistic.",
+        "text_az": "Scrum-un sabit tarixlərə öhdəlik götürmədiyini və Müavin Nazirin çatdırılmanın ehtimali olduğunu başa düşməli olduğunu izah edin."
+      },
+      {
+        "key": "D",
+        "text_en": "Ask the Product Owner to handle communication with the Deputy Minister since that is outside the Scrum Master role.",
+        "text_az": "Məhsul Sahibindən Müavin Nazir ilə kommunikasiyanı idarə etməsini xahiş edin, çünki bu, Scrum Master rolunun xaricindədir."
+      }
+    ],
+    "correct_answer": "B",
+    "explanation_en": "B meets the Deputy Minister where he is — dates, milestones, one-page visual — translating technical velocity into a format that maps to his existing mental model. A uses unfamiliar tooling. C is technically accurate but politically deaf. D is abdication.",
+    "explanation_az": "B Müavin Nazirə öz yerindən yaxınlaşır — tarixlər, mərhələlər, bir səhifəlik vizual — texniki sürəti onun mövcud mental modeli ilə uyğun formata çevirir.",
+    "tags": [
+      "scrum",
+      "velocity",
+      "communication",
+      "asan-xidmet",
+      "government-stakeholder"
+    ],
+    "role_level": "specialist",
+    "london_test_fail": true
+  },
+  {
+    "id": "prof-pm-scrum-s2-008",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency_slug": "communication",
+    "question_type": "sjt",
+    "difficulty": "medium",
+    "irt_a": 1.2,
+    "irt_b": 0.4,
+    "irt_c": 0.15,
+    "question_en": "You are the Scrum Master at a Baku-based fintech company delivering a B2B payments platform for corporate clients. The CTO — formerly a project manager with 15 years of Gantt chart experience — requests a Gantt chart showing the next 6 months of development. You have a Scrum team with fluctuating velocity (40-65 story points/sprint). Rank the following responses from most to least appropriate:",
+    "question_az": "Siz korporativ müştərilər üçün B2B ödəniş platforması çatdıran Bakı əsaslı fintech şirkətdəki Scrum Mastersiniz. CTO — 15 illik Gantt qrafiki təcrübəsi olan keçmiş layihə meneceri — növbəti 6 aylıq inkişafı göstərən Gantt qrafiki tələb edir. Dəyişkən sürəti olan Scrum komandanız var (sprint üzrə 40-65 hekayə nöqtəsi). Aşağıdakı cavabları ən uyğundan ən az uyğuna qədər sıralayın:",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Decline the request, explaining that Gantt charts are incompatible with Scrum and the CTO should trust the process.",
+        "text_az": "Gantt qrafiklərinin Scrum ilə uyğunsuzluğunu izah edərək sorğunu rədd edin və CTO prosesə etibar etməlidir."
+      },
+      {
+        "key": "B",
+        "text_en": "Create a Gantt chart using average velocity (52 points) as a fixed assumption, presenting it as a definitive delivery schedule.",
+        "text_az": "Orta sürəti (52 xal) sabit fərziyyə kimi istifadə edərək Gantt qrafiki yaradın, onu qəti çatdırılma cədvəli kimi təqdim edin."
+      },
+      {
+        "key": "C",
+        "text_en": "Create a roadmap in the CTO's preferred format (visual timeline) but show 3 scenario bands: optimistic (65pts/sprint), realistic (52pts/sprint), conservative (40pts/sprint), with feature names not dates as fixed anchors.",
+        "text_az": "CTO-nun üstünlük verdiyi formatda (vizual zaman çiləyici) yol xəritəsi yaradın, lakin 3 ssenarit bandını göstərin: optimist (sprint üzrə 65 xal), real (sprint üzrə 52 xal), mühafizəkar (sprint üzrə 40 xal) — tarixlər deyil, xüsusiyyət adları sabit lövbər kimi."
+      },
+      {
+        "key": "D",
+        "text_en": "Ask the CTO to attend sprint planning and sprint reviews so they can see real progress rather than a projected chart.",
+        "text_az": "CTO-dan projected qrafik əvəzinə real tərəqqini görmək üçün sprint planlaması və sprint icmallarına qatılmasını xahiş edin."
+      }
+    ],
+    "correct_answer": "C",
+    "sjt_ranking": [
+      "C",
+      "D",
+      "B",
+      "A"
+    ],
+    "explanation_en": "C bridges the CTO's mental model with Scrum's probabilistic reality — scenario bands are honest, the format is familiar. D is good but doesn't resolve the immediate request. B creates false precision. A is pure obstruction.",
+    "explanation_az": "C CTO-nun mental modelini Scrum-un ehtimal reallığı ilə birləşdirir — ssenarit bandları dürüstdür, format tanışdır. D yaxşıdır, lakin ani sorğunu həll etmir.",
+    "tags": [
+      "scrum",
+      "gantt",
+      "communication",
+      "fintech",
+      "cto-stakeholder",
+      "roadmap"
+    ],
+    "role_level": "specialist",
+    "london_test_fail": true
+  },
+  {
+    "id": "prof-pm-scrum-s2-009",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "question_type": "open_ended",
+    "difficulty": "hard",
+    "irt_a": 1.5,
+    "irt_b": 1.5,
+    "irt_c": 0.05,
+    "question_en": "You are Scrum Master for the Baku Metro IT modernization project — a 3-year contract to replace legacy ticketing and access control systems. You are in Sprint 14 of 36. On Monday morning, the State Committee for Property Issues publishes new regulations requiring biometric data collected at metro stations to be processed exclusively on government-certified servers, with a mandatory audit log format that is incompatible with your current database schema. The regulation takes effect in 45 days. Your current architecture uses a hybrid cloud approach explicitly designed to avoid this requirement (the original project scope predates the regulation). Describe how you adapt.",
+    "question_az": "Siz Bakı Metro İT modernizasiya layihəsi üçün Scrum Mastersiniz — köhnə bilet və giriş nəzarəti sistemlərini əvəz etmək üçün 3 illik müqavilə. 36-dan 14-cü sprintdəsiniz. Bazar ertəsi səhər Əmlak Məsələləri üzrə Dövlət Komitəsi metro stansiyalarında toplanan biometrik məlumatların yalnız hökumət sertifikatlı serverlərda işlənməsini tələb edən yeni qaydalar dərc edir, məcburi audit jurnalı formatı isə mövcud verilənlər bazası sxeminizlə uyğunsuzluq təşkil edir. Tənzimləmə 45 gün ərzində qüvvəyə minir. Mövcud arxitekturanız bu tələbdən qaçmaq üçün xüsusi olaraq hazırlanmış hibrid bulud yanaşmasından istifadə edir (orijinal layihə əhatəsi tənzimləmədən əvvəldir). Necə uyğunlaşacağınızı təsvir edin.",
+    "question_ru": null,
+    "options": null,
+    "correct_answer": null,
+    "evaluation_rubric": {
+      "bars_anchors": {
+        "5": "Candidate demonstrates: (1) immediate multi-stakeholder notification — Metro IT Director, legal counsel, the government project sponsor — same day, not after analysis is complete; (2) formal sprint interrupt — defines what a mid-sprint architectural spike looks like (time-boxed, 3-5 days, spike story for schema migration research), does NOT panic-extend the sprint indefinitely; (3) contract and scope change management — frames this as a change request against the original contract, not a team failure; (4) 45-day backward plan — identifies critical path: legal review of audit format (3 days) → architecture decision (2 days) → migration plan (5 days) → sprint replanning (1 day) → execution (34 days); (5) team psychological safety — communicates to team that this is external force majeure, not a planning failure.",
+        "4": "Addresses stakeholder notification, sprint interrupt, and backward planning but misses contract framing or team communication.",
+        "3": "Identifies the problem and calls a meeting, but treats it as a normal sprint planning issue without recognizing the contract and regulatory dimensions.",
+        "2": "Focuses only on the technical migration without addressing stakeholder notification or sprint process.",
+        "1": "Continues current sprint without addressing the regulation or proposes ignoring the 45-day deadline."
+      }
+    },
+    "tags": [
+      "scrum",
+      "regulation-change",
+      "adaptability",
+      "baku-metro",
+      "architecture-pivot",
+      "government-compliance"
+    ],
+    "role_level": "manager",
+    "london_test_fail": true
+  },
+  {
+    "id": "prof-pm-scrum-s2-010",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "question_type": "mcq",
+    "difficulty": "hard",
+    "irt_a": 1.5,
+    "irt_b": 1.3,
+    "irt_c": 0.1,
+    "question_en": "SOCAR's Digital Transformation Office is scaling from 2 Scrum teams to 8 teams across Baku headquarters, Sangachal terminal, and an international vendor team in London. The IT Director wants to implement SAFe (Scaled Agile Framework). You are preparing the first Program Increment (PI) Planning event — a 2-day synchronized planning session for all 8 teams. The London vendor team works in UTC, the Baku teams in UTC+4. The Sangachal terminal has intermittent internet connectivity (offshore environment). The PI Planning requires all teams to produce a Program Board showing cross-team dependencies. Which setup decision is most critical to the success of this PI Planning?",
+    "question_az": "SOCAR-ın Rəqəmsal Transformasiya Ofisi Bakı baş ofisi, Sangaçal terminalı və Londondakı beynəlxalq satıcı komandası arasında 2 Scrum komandasından 8 komandaya böyüyür. İT Direktoru SAFe (Scaled Agile Framework) tətbiq etmək istəyir. İlk Proqram Artımı (PI) Planlaması tədbirini hazırlayırsınız — bütün 8 komanda üçün 2 günlük sinxronlaşdırılmış planlaşdırma sessiyası. London satıcı komandası UTC-də, Bakı komandaları UTC+4-də işləyir. Sangaçal terminalının aralıq internet bağlantısı var (dəniz mühiti). PI Planlaması bütün komandaların komandalar arası asılılıqları göstərən Proqram Lövhəsi istehsal etməsini tələb edir. Bu PI Planlamasının uğuru üçün ən kritik qurulum qərarı hansıdır?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Schedule the 2-day event in Baku time (UTC+4), require the London team to join remotely, and use Miro for the Program Board so all teams share one digital canvas.",
+        "text_az": "2 günlük tədbiri Bakı vaxtında (UTC+4) planlaşdırın, London komandasının uzaqdan qoşulmasını tələb edin və bütün komandaların bir rəqəmsal kətan paylaşması üçün Proqram Lövhəsi üçün Miro istifadə edin."
+      },
+      {
+        "key": "B",
+        "text_en": "Pre-position a physical Program Board template and printed team backlogs at Sangachal 48 hours before PI Planning; assign a dedicated on-site facilitator with satellite uplink backup; run the event in a time window (10:00-17:00 Baku = 06:00-13:00 UTC) acceptable to both locations; use async dependency capture for London's off-hours.",
+        "text_az": "PI Planlamasından 48 saat əvvəl Sangaçalda fiziki Proqram Lövhəsi şablonu və çap edilmiş komanda iş yığınlarını yerləşdirin; ehtiyat peyk bağlantısı olan xüsusi yerli fasilitator təyin edin; hər iki yer üçün qəbul edilə bilən vaxt pəncərəsində (Bakı 10:00-17:00 = UTC 06:00-13:00) tədbiri keçirin; Londonun iş saatlarından kənar asılılıq tutumu üçün asinxron istifadə edin."
+      },
+      {
+        "key": "C",
+        "text_en": "Delay PI Planning until Sangachal terminal upgrades its internet connection and all 8 teams can participate synchronously.",
+        "text_az": "Sangaçal terminalı internet bağlantısını yeniləyənə və bütün 8 komanda sinxron iştirak edə bilənə qədər PI Planlamasını təxirə salın."
+      },
+      {
+        "key": "D",
+        "text_en": "Run PI Planning only for the 7 Baku teams and have the London vendor team submit their program increments via email before the event.",
+        "text_az": "PI Planlamasını yalnız 7 Bakı komandası üçün keçirin və London satıcı komandasının tədbirdən əvvəl proqram artımlarını e-poçtla göndərməsini tələb edin."
+      }
+    ],
+    "correct_answer": "B",
+    "explanation_en": "B is the only option that solves all three constraints simultaneously: Sangachal's connectivity (physical backup + satellite), timezone conflict (Baku-UTC overlap window), and cross-team dependency capture (async for London). A ignores connectivity risk. C blocks delivery. D breaks the cross-team dependency mapping that PI Planning exists to create.",
+    "explanation_az": "B eyni anda üç məhdudiyyəti həll edən yeganə seçimdir: Sangaçalın bağlantısı (fiziki ehtiyat + peyk), saat dilimi konflikti (Bakı-UTC üst-üstə düşmə pəncərəsi) və komandalar arası asılılıq tutumu (London üçün asinxron). A bağlantı riskini görməzlikdən gəlir. C çatdırılmanı bloklayır. D PI Planlamasının yaratmaq üçün mövcud olduğu komandalar arası asılılıq xəritəsini pozur.",
+    "tags": [
+      "safe",
+      "pi-planning",
+      "socar",
+      "tech-literacy",
+      "distributed-teams",
+      "offshore"
+    ],
+    "role_level": "senior_manager",
+    "london_test_fail": true
+  }
+]

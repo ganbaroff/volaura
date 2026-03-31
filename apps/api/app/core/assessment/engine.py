@@ -145,6 +145,9 @@ def _fisher_information(theta: float, a: float, b: float, c: float) -> float:
 
 def _normal_density(x: float, mean: float = 0.0, sd: float = 1.0) -> float:
     """Standard normal density function."""
+    # BUG-QA-021 FIX: guard against sd<=0 — would cause ZeroDivisionError in EAP estimation
+    if sd <= 0.0:
+        sd = 1e-6
     z = (x - mean) / sd
     return math.exp(-0.5 * z * z) / (sd * math.sqrt(2.0 * math.pi))
 

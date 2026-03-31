@@ -23,6 +23,23 @@
 
 ---
 
+## New Hires (Session 76 — 2026-03-30) — International Standard Roles
+
+Added at CEO request: "риск менеджера и Readyness manager — они всегда должны быть в команде"
+
+| Agent Role | Standard | File | Primary Strength | Score |
+|-----------|---------|------|-----------------|-------|
+| **Risk Manager** | ISO 31000:2018 + COSO ERM | `skills/risk-manager.md` | Likelihood×Impact scoring, risk register, blocks CRITICAL risks from shipping | **NEW** |
+| **Readiness Manager** | Google SRE + ITIL v4 + LRR | `skills/readiness-manager.md` | Go/No-Go decisions, LRL scoring (1-7), platform readiness audit, rollback planning | **NEW** |
+
+**Pairing rule:** Risk Manager (proactive — "could this go wrong?") + Readiness Manager (retrospective — "is this ready?") must BOTH approve before any MEDIUM+ feature ships.
+
+**When to call:**
+- Risk Manager: every sprint start (scan for new risks) + any security/data change
+- Readiness Manager: every batch close + before any deployment targeting real users
+
+---
+
 ## New Hires (Session 57 — 2026-03-28)
 
 Hired after full swarm vote (6 original + 3 new personas — Kamal, Aynur, Rauf).
@@ -100,6 +117,8 @@ Source: https://github.com/msitarzewski/agency-agents.git (full repo reviewed, n
 | User behavior analysis / retention | Product Agent + load: behavior-pattern-analyzer skill |
 | AURA coaching feature | Product Agent + load: aura-coach + neuroscience-design skills |
 | Content/post generation | Product Agent + load: content-formatter skill |
+| Any LinkedIn post / content batch | Communications Strategist | Read: TONE-OF-VOICE, SESSION-FINDINGS, metrics → Output: filled CONTENT-BRIEF-TEMPLATE.md |
+| Any content batch (LinkedIn, PR, email) | Cultural Intelligence Agent (MANDATORY for every batch) + Communications Strategist (reads brief, owns narrative arc) |
 | Any "Life Simulator" proposal | REDIRECT → feed-curator skill (no separate app — Session 51) |
 | Any "MindShift" proposal | REDIRECT → behavior-pattern-analyzer skill (no separate app — Session 51) |
 | Any "BrandedBy standalone" proposal | REDIRECT → ai-twin-responder skill (no separate platform — Session 51) |

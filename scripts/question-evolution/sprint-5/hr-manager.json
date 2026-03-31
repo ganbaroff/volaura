@@ -1,0 +1,484 @@
+[
+  {
+    "id": "prof-hr-s5-001",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.4,
+    "irt_b": -0.8,
+    "irt_c": 0.15,
+    "scenario_en": "You are the HR Manager at a 120-person manufacturing company in Baku. Your payroll specialist informs you on the 14th of the month that SSPF contributions for the previous month have not been submitted due to a system migration error. The SSPF deadline for monthly contributions is the 20th of the following month. What is your immediate priority action?",
+    "scenario_az": "Bakıda 120 nəfərlik istehsalat şirkətinin İnsan Resursları Menecerisiniz. Əmək haqqı mütəxəssisi sizə bu ayın 14-də bildirdi ki, sistem miqrasiyası xətası səbəbindən əvvəlki ay üçün DSMF töhfələri təqdim edilməyib. DSMF-in aylıq töhfələr üçün son tarixi növbəti ayın 20-sidir. İlk növbədə hansı addımı atmalısınız?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Wait until the next payroll cycle to bundle the missed contribution with current month payments.",
+        "text_az": "Növbəti əmək haqqı dövrünə qədər gözləyin ki, buraxılmış töhfəni cari ay ödənişləri ilə birləşdirəsiniz."
+      },
+      {
+        "key": "B",
+        "text_en": "Submit the outstanding SSPF contribution immediately via the DSMF e-portal before the 20th deadline, and document the cause of delay in writing.",
+        "text_az": "DSMF e-portalı vasitəsilə ödənilməmiş töhfəni dərhal 20-dək olan son tarixdən əvvəl təqdim edin və gecikmənin səbəbini yazılı şəkildə sənədləşdirin."
+      },
+      {
+        "key": "C",
+        "text_en": "Notify the Ministry of Labor in advance of the delay and request a formal extension of the deadline.",
+        "text_az": "Gecikmə barədə Əmək Nazirliyini əvvəlcədən xəbərdar edin və müddətin rəsmi uzadılmasını tələb edin."
+      },
+      {
+        "key": "D",
+        "text_en": "Contact your legal team to assess whether the penalty for late submission is lower than the cost of emergency processing.",
+        "text_az": "Hüquq qrupunuzla əlaqə saxlayın ki, geç təqdimetmə cəzasının fövqəladə emal xərclərindən az olub olmadığını qiymətləndirsin."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. The SSPF (State Social Protection Fund) requires monthly pension and social insurance contributions by the 20th of the following month via the DSMF e-portal. Since you have 6 days remaining, immediate submission prevents a late payment penalty of 0.1% of the outstanding amount per day under Azerbaijan Tax Code Article 59. Option A risks the penalty accruing. Option C is incorrect — the Ministry of Labor does not grant deadline extensions for SSPF filings; that authority rests with SSPF/DSMF itself. Option D is an inappropriate risk calculation that exposes the company to escalating daily penalties.",
+    "feedback_az": "B düzdür. DSMF (Dövlət Sosial Müdafiə Fondu) aylıq pensiya və sosial sığorta töhfələrinin növbəti ayın 20-dək e-portal vasitəsilə ödənilməsini tələb edir. 6 gününüz qaldığı üçün dərhal təqdimetmə Azərbaycan Vergi Məcəlləsinin 59-cu maddəsinə əsasən gündəlik 0.1% gecikmə cəzasının qarşısını alır. A variantı cəzanın toplanması riskini daşıyır. C variantı yanlışdır — Əmək Nazirliyi DSMF bəyannamələri üçün müddət uzatması vermir; bu səlahiyyət DSMF-in özündədir. D variantı şirkəti artan gündəlik cəzalara məruz qoyan qeyri-uyğun risk hesablamasıdır.",
+    "development_tip_en": "Set a recurring calendar alert on the 10th of each month to verify SSPF contribution calculations are complete and ready for submission. Azerbaijan's DSMF e-portal (dsmf.gov.az) allows early submission — never wait until the 19th. A single day's delay on a 50,000 AZN payroll costs 50 AZN; a full month's delay costs 1,500 AZN.",
+    "development_tip_az": "Hər ayın 10-da DSMF töhfə hesablamalarının tam olduğunu yoxlamaq üçün təkrarlanan təqvim xatırlatması qurun. Azərbaycanın DSMF e-portalı (dsmf.gov.az) erkən təqdimetməyə imkan verir — heç vaxt 19-a qədər gözləməyin. 50.000 AZN əmək haqqında bir günlük gecikmə 50 AZN xərclənir; tam aylıq gecikmə isə 1.500 AZN olur.",
+    "london_delta": "A London HR professional following the HMRC Real Time Information (RTI) system under Finance Act 2009 s.684 would assume payroll submissions can be retrospectively corrected in the next pay period via Full Payment Submission amendment. AZ consequence: DSMF does not permit retrospective bundling — the State Social Protection Fund treats each month independently, and late submission triggers an automatic 0.1% daily penalty under Tax Code Art.59 from day one, with SSPF audit rights extending 3 years back.",
+    "az_institutions": [
+      "SSPF",
+      "DSMF"
+    ],
+    "tags": [
+      "hr",
+      "az-specific",
+      "payroll",
+      "sspf",
+      "compliance"
+    ]
+  },
+  {
+    "id": "prof-hr-s5-002",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency_slug": "communication",
+    "difficulty": "easy",
+    "type": "sjt",
+    "irt_a": 1.3,
+    "irt_b": -0.6,
+    "irt_c": 0.12,
+    "scenario_en": "Your company is restructuring and 15 positions will be eliminated over the next 3 months. Under Azerbaijan Labor Code Article 77, you must notify the relevant trade union representative before issuing redundancy notices. The union representative, Fuad Əliyev, has requested a formal meeting. He has stated publicly in the workplace that 'management is hiding information.' You need to present the restructuring plan at the upcoming meeting. Which communication approach best serves both legal compliance and workforce trust?",
+    "scenario_az": "Şirkətiniz yenidən strukturlaşır və növbəti 3 ay ərzində 15 vəzifə ləğv ediləcək. Azərbaycan Əmək Məcəlləsinin 77-ci maddəsinə əsasən, ixtisar bildirişlərini vermədən əvvəl müvafiq həmkarlar ittifaqı nümayəndəsini xəbərdar etməlisiniz. Həmkarlar ittifaqı nümayəndəsi Fuad Əliyev rəsmi görüş tələb etdi. O, iş yerindəki hamıya açıq şəkildə 'rəhbərlik məlumatı gizlədir' deyib. Yenidənqurma planını qarşıdan gələn görüşdə təqdim etməlisiniz. Hansı kommunikasiya yanaşması həm hüquqi uyğunluğu, həm də işçilərin inamını ən yaxşı şəkildə təmin edir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Provide only the legally required minimum information under Labor Code Art.77 — headcount numbers and timeline — and decline to discuss selection criteria until notices are issued.",
+        "text_az": "Yalnız Əmək Məcəlləsinin 77-ci maddəsi üzrə tələb olunan minimum məlumatı — işçi sayını və vaxt çizelgesini — verin və bildirişlər verilənə qədər seçim meyarlarını müzakirə etməkdən imtina edin."
+      },
+      {
+        "key": "B",
+        "text_en": "Present the full restructuring rationale, selection criteria methodology, proposed timelines, and severance calculation basis; invite Fuad to ask questions and document his feedback in meeting minutes.",
+        "text_az": "Tam yenidənqurma əsaslandırmasını, seçim meyarları metodologiyasını, təklif olunan vaxt cədvəllərini və işdən çıxma ödənişi hesablanma bazasını təqdim edin; Fuadı sual verməyə dəvət edin və onun rəyini görüş protokolunda sənədləşdirin."
+      },
+      {
+        "key": "C",
+        "text_en": "Send Fuad the restructuring documents 24 hours before the meeting to review independently, then hold the meeting as a formality to fulfil the legal notification requirement.",
+        "text_az": "Fuada görüşdən 24 saat əvvəl yenidənqurma sənədlərini müstəqil nəzərdən keçirmək üçün göndərin, sonra hüquqi bildiriş tələbini yerinə yetirmək üçün görüşü formalitet kimi keçirin."
+      },
+      {
+        "key": "D",
+        "text_en": "Offer Fuad a confidential pre-meeting briefing on condition he does not share information with employees until notices are formally issued.",
+        "text_az": "Fuada şərtlə — bildirişlər rəsmi verilənə qədər məlumatı işçilərlə paylaşmamaq şərti ilə — məxfi ilkin görüş brifinqi təklif edin."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. Azerbaijan Labor Code Article 77 requires genuine consultation with trade union representatives — not merely notification. Presenting full rationale and documenting Fuad's feedback creates a defensible consultation record that satisfies Art.77 and addresses his public claim that 'management is hiding information.' Option A meets the legal minimum but increases litigation risk and worsens trust. Option C treats consultation as a formality, which courts interpret as bad faith. Option D creates a confidentiality obligation that is legally unenforceable under AZ labor law and inflames rather than resolves the communication breakdown.",
+    "feedback_az": "B düzdür. Azərbaycan Əmək Məcəlləsinin 77-ci maddəsi həmkarlar ittifaqı nümayəndələri ilə əsl məsləhətləşməni tələb edir — yalnız bildiriş yox. Tam əsaslandırmanın təqdimi və Fuadın rəyinin sənədləşdirilməsi 77-ci maddəni təmin edən və onun 'rəhbərlik məlumatı gizlədir' iddiasını cavablayan müdafiə edilə bilən məsləhətləşmə qeydi yaradır. A variantı hüquqi minimumu ödəyir, lakin mühakimə riskini artırır və inamı pisləşdirir. C variantı məsləhətləşməyə formalitet kimi yanaşır ki, məhkəmələr bunu pis niyyət kimi şərh edir. D variantı AZ əmək qanunu çərçivəsində hüquqi cəhətdən icra oluna bilməyən məxfilik öhdəliyi yaradır.",
+    "development_tip_en": "In Azerbaijan, trade union consultation under Labor Code Art.77 requires documented evidence of genuine dialogue — not just attendance. Keep signed meeting minutes, record all union objections, and show in writing how each objection was considered. This record is your primary defense if the Ministry of Labor inspects the redundancy process.",
+    "development_tip_az": "Azərbaycanda Əmək Məcəlləsinin 77-ci maddəsi üzrə həmkarlar ittifaqı ilə məsləhətləşmə əsl dialoqun sənədli sübutunu tələb edir — yalnız iştirak yox. İmzalanmış görüş protokollarını saxlayın, bütün ittifaq etirazlarını qeyd edin və hər etirazın necə nəzərə alındığını yazılı şəkildə göstərin. Bu qeyd Əmək Nazirliyi ixtisar prosesini yoxlayarsa əsas müdafiənizdir.",
+    "london_delta": "A London HR professional following the ACAS Code of Practice on Collective Redundancies (2015) and Trade Union and Labour Relations (Consolidation) Act 1992 s.188 would focus consultation on 'ways of avoiding redundancies' as the primary frame, treating union feedback as advisory. AZ consequence: Azerbaijan Labor Code Art.77 treats union notification as a prerequisite to validity — if the Ministry of Labor finds consultation was substantively absent, redundancy notices can be declared void, requiring full reinstatement plus back-pay for the entire period of wrongful termination.",
+    "az_institutions": [
+      "Ministry of Labor and Social Protection of Population"
+    ],
+    "tags": [
+      "hr",
+      "az-specific",
+      "redundancy",
+      "trade-union",
+      "labor-code"
+    ]
+  },
+  {
+    "id": "prof-hr-s5-003",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.5,
+    "irt_b": 0.3,
+    "irt_c": 0.1,
+    "scenario_en": "You are the Group HR Director overseeing the integration of a SOCAR subsidiary (210 employees) into the parent company's HR structure following an internal reorganization. Two distinct workforce groups exist: Group A (SOCAR subsidiary employees on a collective agreement with above-market benefits) and Group B (parent company employees on standard contracts). Group A's union representative insists their collective agreement terms — including a 14th-month bonus and 35 days annual leave — must transfer intact under any integration. Group B employees are demanding parity. The integration deadline is 60 days. How do you lead this workforce conflict?",
+    "scenario_az": "Daxili yenidən təşkil nəticəsində SOCAR törəmə şirkətinin (210 işçi) ana şirkətin İR strukturuna inteqrasiyasına nəzarət edən Qrup İR Direktorisiniz. İki fərqli işçi qrupu mövcuddur: A Qrupu (bazar üstü müavinətlərlə kollektiv müqavilədə olan SOCAR törəmə işçiləri) və B Qrupu (standart müqavilələrdə ana şirkət işçiləri). A Qrupunun həmkarlar ittifaqı nümayəndəsi israr edir ki, kollektiv müqavilə şərtləri — o cümlədən 14-cü ay mükafatı və 35 günlük illik məzuniyyət — inteqrasiya zamanı tam qorunmalıdır. B Qrupu işçiləri bərabərlik tələb edir. İnteqrasiya müddəti 60 gündür. Bu işçi münaqişəsinə necə rəhbərlik edirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Immediately harmonize all terms downward to the standard contract to eliminate legal complexity, offering one-time retention bonuses to Group A as compensation.",
+        "text_az": "Hüquqi mürəkkəbliyi aradan qaldırmaq üçün bütün şərtləri dərhal standart müqaviləyə doğru harmonizasiya edin, kompensasiya olaraq A Qrupuna birdəfəlik saxlama mükafatları təklif edin."
+      },
+      {
+        "key": "B",
+        "text_en": "Conduct separate structured consultations with each group's representatives within the first 2 weeks; commission a legal review of collective agreement transferability under AZ Labor Code; present a phased harmonization roadmap with protected floors and transition timelines to both groups simultaneously by day 30.",
+        "text_az": "İlk 2 həftə ərzində hər qrupun nümayəndələri ilə ayrıca strukturlaşdırılmış məsləhətləşmələr aparın; AZ Əmək Məcəlləsi üzrə kollektiv müqavilənin ötürülə bilərliyi üçün hüquqi araşdırma sifariş edin; hər iki qruba eyni vaxtda 30-cu günə qədər qorunan minimumlar və keçid vaxt cədvəlləri ilə mərhələli harmonizasiya yol xəritəsi təqdim edin."
+      },
+      {
+        "key": "C",
+        "text_en": "Preserve Group A's collective agreement in full and raise Group B's benefits to match, absorbing the cost as an integration expense.",
+        "text_az": "A Qrupunun kollektiv müqaviləsini tam qoruyun və B Qrupunun müavinətlərini uyğunlaşdırmaq üçün artırın, xərcləri inteqrasiya xərci kimi udun."
+      },
+      {
+        "key": "D",
+        "text_en": "Defer the conflict resolution to senior leadership, presenting a risk matrix and requesting executive guidance before taking any HR action.",
+        "text_az": "Münaqişənin həllini üst rəhbərliyə həvalə edin, hər hansı İR addımı atmadan əvvəl risk matrisi təqdim edib rəhbərlik rəhbərliyini tələb edin."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. Azerbaijan Labor Code Articles 50-54 govern collective agreements and their transferability during organizational restructuring. A structured dual-consultation approach respects both legal obligations and workforce trust. Commissioning a legal review establishes whether SOCAR subsidiary's collective agreement obligations survive the integration — they typically do under Art.50 unless both parties agree to novation. A phased roadmap with protected floors prevents both legal exposure and Group A resentment while managing Group B expectations. Option A risks an unfair dismissal claim from Group A if terms are unilaterally reduced. Option C may be financially unsustainable and sets a precedent. Option D abdicates HR leadership responsibility.",
+    "feedback_az": "B düzdür. Azərbaycan Əmək Məcəlləsinin 50-54-cü maddələri kollektiv müqavilələri və onların təşkilati yenidənstrukturlaşma zamanı ötürülə bilərliyi idarə edir. Strukturlaşdırılmış ikili məsləhətləşmə yanaşması həm hüquqi öhdəliklərə, həm də işçilərin inamına hörmət edir. Hüquqi araşdırmanın sifarişi SOCAR törəmə şirkətinin kollektiv müqavilə öhdəliklərinin inteqrasiyadan sağ çıxıb çıxmadığını müəyyən edir — hər iki tərəf yeni müqaviləyə razı olmazsa adətən 50-ci maddə üzrə sağ çıxırlar. Qorunan minimumlar ilə mərhələli yol xəritəsi həm hüquqi məruzluğu, həm B Qrupunun gözləntiləri ilə idarə edərkən A Qrupunun narazılığını önləyir.",
+    "development_tip_en": "SOCAR's collective agreements are among the most comprehensive in Azerbaijan — 12,000+ employees with terms negotiated through the Azerbaijan Trade Unions Confederation (AHIK). When integrating any SOCAR subsidiary, treat the collective agreement as a legally binding instrument that requires explicit novation — it does not automatically void upon structural change. Build your integration timeline around Art.50 consultation requirements, not the business deadline.",
+    "development_tip_az": "SOCAR-ın kollektiv müqavilələri Azərbaycandakı ən hərtərəflilərdən biridir — Azərbaycan Həmkarlar İttifaqları Konfederasiyası (AHİK) vasitəsilə müzakirə edilmiş şərtlərlə 12.000+ işçi. Hər hansı SOCAR törəmə şirkətini inteqrasiya edərkən kollektiv müqaviləyə açıq yeniləmə tələb edən hüquqi bağlayıcı sənəd kimi yanaşın — o struktural dəyişiklik zamanı avtomatik etibarsız olmur.",
+    "london_delta": "A London HR professional following Transfer of Undertakings (Protection of Employment) Regulations 2006 (TUPE 2006) Reg.4 would treat all contractual terms as automatically transferring and focus effort on 'measures' consultation under Reg.13. AZ consequence: Azerbaijan Labor Code Art.50 does not have an automatic transfer equivalent to TUPE — collective agreement continuity in restructuring requires the employer to affirmatively notify the Ministry of Labor and Social Protection of Population within 10 days of the reorganization decision, and failure to do so allows either party to treat the agreement as terminated, eliminating Group A's protected benefits without compensation obligation.",
+    "az_institutions": [
+      "Ministry of Labor and Social Protection of Population",
+      "SOCAR"
+    ],
+    "tags": [
+      "hr",
+      "az-specific",
+      "collective-agreement",
+      "socar",
+      "integration",
+      "leadership"
+    ]
+  },
+  {
+    "id": "prof-hr-s5-004",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.4,
+    "irt_b": 0.5,
+    "irt_c": 0.12,
+    "scenario_en": "You are the HR Manager at a Baku-based tech company. Three weeks into a senior developer's employment, you discover that the onboarding paperwork incorrectly set a 6-month probation period. Under Azerbaijan Labor Code Article 73, the maximum probation period for any employee is 3 months. The employee's contract currently states 6 months. The employee has not yet raised this issue. What is the legally compliant and ethically correct action?",
+    "scenario_az": "Bakı texnologiya şirkətinin İR Menecerisiniz. Böyük bir tərtibatçının işə başlamasından üç həftə sonra onboarding sənədlərinin 6 aylıq sınaq müddəti təyin etdiyini kəşf edirsiniz. Azərbaycan Əmək Məcəlləsinin 73-cü maddəsinə əsasən, hər hansı işçi üçün maksimum sınaq müddəti 3 aydır. İşçinin müqaviləsində hazırda 6 ay göstərilib. İşçi bu məsələni hələ qaldırmayıb. Hüquqi cəhətdən uyğun və etik baxımdan düzgün hərəkət nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Leave the contract as written — since the employee has not complained, no legal violation is being enforced and raising it may create unnecessary tension.",
+        "text_az": "Müqaviləni olduğu kimi buraxın — işçi şikayət etmədiyi üçün heç bir hüquqi pozuntu tətbiq edilmir və bunu qaldırmaq lazımsız gərginlik yarada bilər."
+      },
+      {
+        "key": "B",
+        "text_en": "Issue a contract amendment reducing the probation period to 3 months, inform the employee in writing of the correction, and document the administrative error in HR files.",
+        "text_az": "Sınaq müddətini 3 aya endirən müqavilə əlavəsi verin, işçiyə düzəliş barədə yazılı məlumat verin və inzibati xətanı İR fayllarında sənədləşdirin."
+      },
+      {
+        "key": "C",
+        "text_en": "Wait until the 3-month mark, then inform the employee verbally that their probation legally ended at that point and proceed to confirm their permanent employment.",
+        "text_az": "3 aylıq həddə qədər gözləyin, sonra işçiyə şifahi olaraq bildirin ki, onların sınaq müddəti həmin anda qanuni olaraq bitdi və daimi işlərini təsdiqləyin."
+      },
+      {
+        "key": "D",
+        "text_en": "Consult the Ministry of Labor's legal advice hotline before taking any action to confirm the interpretation of Article 73.",
+        "text_az": "73-cü maddənin şərhini təsdiqləmək üçün hər hansı bir addım atmadan əvvəl Əmək Nazirliyinin hüquqi məsləhət xəttinə müraciət edin."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. Azerbaijan Labor Code Article 73 sets a hard 3-month maximum for probation. A contractual clause exceeding this limit is void ab initio — it has no legal effect regardless of whether the employee notices or complains. The employer cannot enforce a 6-month probation even if the employee signed it. Proactive correction via written amendment protects the company from: (1) an unfair dismissal claim if the employee is terminated between months 3-6 on probation grounds, and (2) a Ministry of Labor inspection finding of a non-compliant employment contract. Option A creates ongoing legal risk. Option C achieves the practical outcome but lacks documentation. Option D is unnecessary — the law is unambiguous.",
+    "feedback_az": "B düzdür. Azərbaycan Əmək Məcəlləsinin 73-cü maddəsi sınaq üçün ciddi 3 aylıq maksimum müddət müəyyən edir. Bu həddi aşan müqavilə şərti əvvəlcədən etibarsızdır — işçinin fark edib-etməməsindən və ya şikayət etməsindən asılı olmayaraq hüquqi qüvvəsi yoxdur. İşçi imzalasa belə işəgötürən 6 aylıq sınaq müddətini tətbiq edə bilməz. Yazılı əlavə vasitəsilə proaktiv düzəliş şirkəti bunlardan qoruyur: (1) sınaq əsaslarında 3-6 ay arasında işçi işdən çıxarılarsa ədalətsiz işdən çıxarma iddiası, (2) Əmək Nazirliyi teftişi uyğun olmayan əmək müqaviləsi tapıntısı.",
+    "development_tip_en": "Under AZ Labor Code Art.73, the 3-month probation cap applies to all employees regardless of seniority, contract type, or mutual agreement to extend it. The cap is not waivable by either party. Maintain an HR calendar trigger at the 2.5-month mark for every new hire to formally confirm or end probation before Art.73 makes the decision for you.",
+    "development_tip_az": "AZ Əmək Məcəlləsinin 73-cü maddəsinə əsasən, 3 aylıq sınaq müddəti həddi işçilik, müqavilə növü və ya uzatmaq üçün qarşılıqlı razılıqdan asılı olmayaraq bütün işçilərə tətbiq edilir. Hədd hər iki tərəf tərəfindən imtina edilə bilməz. 73-cü maddə qərarı sizin əvəzinizə verməzdən əvvəl sınağı rəsmi şəkildə təsdiqləmək və ya bitirmək üçün hər yeni işçi üçün 2,5 aylıq həddə İR təqvim tetikleyicisi saxlayın.",
+    "london_delta": "A London HR professional following Employment Rights Act 1996 s.94 and common law would know that probationary periods are not capped in UK law — parties can agree 6 or 12 months — and would therefore see no issue with the existing contract. AZ consequence: Azerbaijan Labor Code Art.73 sets a non-negotiable 3-month hard cap enforceable by the Ministry of Labor and Social Protection of Population; a non-compliant contract clause is void by operation of law, and if an employer terminates during months 3-6 citing probation, the Baku City Court treats this as wrongful dismissal entitling the employee to full reinstatement plus salary for the void period.",
+    "az_institutions": [
+      "Ministry of Labor and Social Protection of Population",
+      "Baku City Court"
+    ],
+    "tags": [
+      "hr",
+      "az-specific",
+      "probation",
+      "labor-code",
+      "contract-compliance"
+    ]
+  },
+  {
+    "id": "prof-hr-s5-005",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.6,
+    "irt_b": 0.7,
+    "irt_c": 0.1,
+    "scenario_en": "On a Tuesday morning, you receive an official written notice from the Ministry of Labor and Social Protection of Population that a scheduled labor inspection will begin at your company premises in 3 business days. The notice cites a complaint about alleged violations of working time records. Your last working time register audit was 18 months ago. What is your priority response sequence?",
+    "scenario_az": "Salı səhəri Əmək və Əhalinin Sosial Müdafiəsi Nazirliyindən rəsmi yazılı bildiriş alırsınız ki, planlaşdırılmış əmək teftişi 3 iş günü sonra şirkət binasında başlayacaq. Bildiriş iş vaxtı qeydlərinin iddia edilən pozuntuları ilə bağlı şikayəti qeyd edir. Sonuncu iş vaxtı reyestrinin auditi 18 ay əvvəl olub. Prioritet cavab ardıcıllığınız nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Immediately contact the Ministry of Labor to request a postponement, citing insufficient preparation time, before reviewing any records.",
+        "text_az": "Hər hansı qeydi nəzərdən keçirməzdən əvvəl dərhal kifayətsiz hazırlıq vaxtını əsas göstərərək Əmək Nazirliyindən yenidən cədvəlləmə tələb edin."
+      },
+      {
+        "key": "B",
+        "text_en": "Conduct an immediate internal audit of working time records for the past 24 months; identify and correct administrative gaps; prepare a complete document bundle (employment contracts, shift schedules, overtime logs, leave records); brief line managers on inspector protocol by end of day 2.",
+        "text_az": "Son 24 ay üçün iş vaxtı qeydlərinin dərhal daxili auditini aparın; inzibati boşluqları müəyyən edib düzəldin; tam sənəd dəsti hazırlayın (əmək müqavilələri, növbə cədvəlləri, fazla iş qeydləri, məzuniyyət qeydləri); 2-ci günün sonuna qədər xətt menecerlərini müfəttişin protokolu barədə məlumatlandırın."
+      },
+      {
+        "key": "C",
+        "text_en": "Retain an external employment lawyer immediately and let legal counsel manage all inspector interactions to minimize direct company exposure.",
+        "text_az": "Dərhal xarici əmək hüquqçusu cəlb edin və birbaşa şirkətin məruzluğunu minimuma endirmək üçün hüquqi müşavirin bütün müfəttişlə əlaqələri idarə etməsinə icazə verin."
+      },
+      {
+        "key": "D",
+        "text_en": "Identify the employee who filed the complaint and address their concerns directly before the inspection to potentially withdraw the complaint.",
+        "text_az": "Şikayəti verən işçini müəyyənləşdirin və şikayəti geri çəkmək potensialı üçün teftişdən əvvəl onların narahatlıqlarını birbaşa həll edin."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. Under the Law of Azerbaijan Republic on Labor Inspection (2017) and Ministry of Labor Order No.47, companies receive a minimum 3-business-day notice for scheduled inspections. This window is for preparation, not postponement. The inspection will assess: (1) employment contract completeness, (2) working time register accuracy for the statute-of-limitations period (typically 3 years), (3) overtime authorization records, (4) leave documentation. A systematic internal audit identifying and correcting administrative gaps before the inspector arrives is standard HR compliance practice. Option A requesting postponement signals non-compliance and is rarely granted. Option C over-relies on legal counsel for what should be routine HR documentation. Option D constitutes potential witness intimidation and exposes the company to additional misconduct liability.",
+    "feedback_az": "B düzdür. Azərbaycan Respublikasının Əmək Teftişi Haqqında Qanununa (2017) və Əmək Nazirliyi 47 nömrəli Əmrinə əsasən, şirkətlər planlaşdırılmış teftişlər üçün minimum 3 iş günlük bildiriş alır. Bu pəncərə hazırlıq üçündür, yenidən cədvəlləmə üçün yox. Teftiş qiymətləndirəcək: (1) əmək müqaviləsinin tamlığı, (2) iddia müddəti dövrü üçün iş vaxtı reyestrinin dəqiqliyi (adətən 3 il), (3) fazla iş icazə qeydləri, (4) məzuniyyət sənədləri.",
+    "development_tip_en": "Azerbaijan's Ministry of Labor conducts both scheduled (planlaşdırılmış) and unannounced (qeyri-planlaşdırılmış) inspections. For scheduled inspections, the 3-day window is your preparation window. Maintain a 'Inspection Ready' document folder updated quarterly: employment contracts for all active staff, last 36 months of working time registers, overtime authorization logs, SSPF payment confirmations, and trade union notification records. Fines for working time violations range from 300-3,000 AZN per violation.",
+    "development_tip_az": "Azərbaycanın Əmək Nazirliyi həm planlaşdırılmış, həm də qeyri-planlaşdırılmış teftişlər aparır. Planlaşdırılmış teftişlər üçün 3 günlük pəncərə hazırlıq pəncərənizdır. Rüblük yenilənən 'Teftişə Hazır' sənəd qovluğunu saxlayın: bütün aktiv işçilər üçün əmək müqavilələri, son 36 ay iş vaxtı reyestrlərini, fazla iş icazəsi qeydlərini, DSMF ödəniş təsdiqləmələrini və həmkarlar ittifaqı bildiriş qeydlərini.",
+    "london_delta": "A London HR professional following Health and Safety at Work Act 1974 (HSWA 1974) s.20 and Employment Rights Act 1996 would treat a 3-day inspection notice as primarily a documentation formality and would likely engage legal counsel as the first step, expecting the inspection to follow a structured PACE-equivalent protocol with clear rights to challenge findings. AZ consequence: Ministry of Labor and Social Protection of Population inspectors under the 2017 Labor Inspection Law operate with broad on-the-spot authority — they can issue immediate corrective orders (məcburi göstərişlər) without appeal delay, and fines of up to 3,000 AZN per violation are assessed per incident, not per category, meaning a 24-month working time gap can generate compounding per-employee penalties.",
+    "az_institutions": [
+      "Ministry of Labor and Social Protection of Population"
+    ],
+    "tags": [
+      "hr",
+      "az-specific",
+      "inspection",
+      "working-time",
+      "compliance",
+      "ministry-of-labor"
+    ]
+  },
+  {
+    "id": "prof-hr-s5-006",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.5,
+    "irt_b": 0.8,
+    "irt_c": 0.1,
+    "scenario_en": "Your company operates an HRIS storing employee personal data including performance reviews, salary history, medical leave records, and disciplinary notes. A former employee submits a formal written request under Azerbaijan's Law on Personal Data (No. 998-IIIQ, 2010, Article 14) for a full copy of all personal data held about them, including processing logs. The Personal Data Protection Commission's guidelines specify a 30-day response deadline. Your IT department informs you they need 45 days to compile the full data set due to legacy system issues. How do you handle this?",
+    "scenario_az": "Şirkətiniz performans qiymətləndirmələri, əmək haqqı tarixi, tibbi məzuniyyət qeydləri və intizam qeydləri daxil olmaqla işçi şəxsi məlumatlarını saxlayan HRIS idarə edir. Keçmiş işçi Azərbaycanın Şəxsi Məlumatlar Haqqında Qanunu (998-IIIQ saylı, 2010, 14-cü maddə) çərçivəsində onlar haqqında saxlanılan bütün şəxsi məlumatların tam surəti, o cümlədən emal qeydləri üçün rəsmi yazılı müraciət təqdim edir. Şəxsi Məlumatların Mühafizəsi Komissiyasının qaydaları 30 günlük cavab müddəti müəyyən edir. İT departamentiniz köhnə sistem problemləri səbəbindən tam məlumat dəstini tərtib etmək üçün 45 güncə ehtiyac duyduğunu bildirir. Bunu necə həll edirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Respond to the former employee within 30 days acknowledging receipt, provide whatever data IT can compile in time, and follow up with the remaining data when the legacy system issue is resolved.",
+        "text_az": "Keçmiş işçiyə 30 gün ərzində alındığını təsdiqləyərək cavab verin, İT-nin vaxtında tərtib edə biləcəyi hər hansı məlumatı verin və köhnə sistem problemi həll edildikdən sonra qalan məlumatı göndərin."
+      },
+      {
+        "key": "B",
+        "text_en": "Respond within 30 days with a formal acknowledgment, provide all available data, document the IT constraint in writing, notify the Personal Data Protection Commission proactively of the partial response and technical cause, and commit to a specific supplementary deadline.",
+        "text_az": "30 gün ərzində rəsmi təsdiqnamə ilə cavab verin, mövcud bütün məlumatları verin, İT məhdudiyyətini yazılı şəkildə sənədləşdirin, Şəxsi Məlumatların Mühafizəsi Komissiyasını qismən cavab və texniki səbəb barədə proaktiv şəkildə xəbərdar edin və xüsusi əlavə son tarix öhdəliyi götürün."
+      },
+      {
+        "key": "C",
+        "text_en": "Request a formal 15-day extension from the Personal Data Protection Commission citing the legacy system constraint before the 30-day deadline expires.",
+        "text_az": "30 günlük son tarix bitməzdən əvvəl köhnə sistem məhdudiyyətini əsas göstərərək Şəxsi Məlumatların Mühafizəsi Komissiyasından rəsmi 15 günlük uzatma tələb edin."
+      },
+      {
+        "key": "D",
+        "text_en": "Consult with legal counsel to determine whether the legacy system limitation constitutes a valid legal basis to deny the data subject request entirely.",
+        "text_az": "Köhnə sistem məhdudiyyətinin məlumat subyekti müraciətini tamamilə rədd etmək üçün etibarlı hüquqi əsas təşkil edib etmədiyini müəyyən etmək üçün hüquqi müşavirlə məsləhətləşin."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. Azerbaijan's Law on Personal Data (No. 998-IIIQ, 2010) Article 14 gives data subjects the right to access all personal data held about them. The Personal Data Protection Commission enforces a 30-day response obligation. Option B is superior to C because: (1) the law does not explicitly provide a formal extension mechanism analogous to GDPR Art.12(3), making proactive Commission notification the safest compliance path; (2) it demonstrates good faith that prevents escalation to a formal complaint. Option A risks being found non-compliant if the Commission views the partial response as an Art.14 violation. Option D is incorrect — technical limitations do not provide legal basis to deny a statutory right of access.",
+    "feedback_az": "B düzdür. Azərbaycanın Şəxsi Məlumatlar Haqqında Qanununun (998-IIIQ saylı, 2010) 14-cü maddəsi məlumat subyektlərinə onlar haqqında saxlanılan bütün şəxsi məlumatlara giriş hüququ verir. Şəxsi Məlumatların Mühafizəsi Komissiyası 30 günlük cavab öhdəliyini tətbiq edir. B variantı C-dən üstündür çünki: (1) qanun GDPR Maddə 12(3)-ə bənzər rəsmi uzatma mexanizmini açıq şəkildə nəzərdə tutmur, bu da proaktiv Komissiya bildirişini ən etibarlı uyğunluq yolu edir; (2) rəsmi şikayətə keçişi önləyən iyi niyyəti nümayiş etdirir.",
+    "development_tip_en": "Azerbaijan's Personal Data Protection Commission (Şəxsi Məlumatların Mühafizəsi Komissiyası) was formally constituted under the 2010 law and has progressively strengthened enforcement. Unlike UK ICO which accepts 30-day extension requests as routine, the AZ Commission treats failure to respond within 30 days as a prima facie violation. Best practice: maintain an HRIS data export capability that can compile a subject access response within 5 business days — not 45.",
+    "development_tip_az": "Azərbaycanın Şəxsi Məlumatların Mühafizəsi Komissiyası 2010-cu il qanunu əsasında rəsmi şəkildə təşkil edilib və tənzimləməni mütərəqqi şəkildə gücləndirib. 30 günlük uzatma müraciətlərini rutin qəbul edən Britaniya İCO-dan fərqli olaraq, AZ Komissiyası 30 gün ərzində cavab verməməyi prima facie pozuntu kimi qəbul edir.",
+    "london_delta": "A London HR professional following UK GDPR Article 12(3) and Data Protection Act 2018 s.52 would routinely request a 30-day extension from the ICO for complex data subject access requests, treating this as a standard mechanism. AZ consequence: Azerbaijan's Law on Personal Data (No. 998-IIIQ, 2010) Art.14 does not codify a parallel extension right — the Personal Data Protection Commission treats extension requests as discretionary and non-binding, meaning the 30-day deadline remains enforceable even if the Commission acknowledges your communication, and failure to deliver complete data within 30 days can result in fines and a formal investigation notice.",
+    "az_institutions": [
+      "Personal Data Protection Commission"
+    ],
+    "tags": [
+      "hr",
+      "az-specific",
+      "personal-data",
+      "gdpr-equivalent",
+      "data-subject-rights"
+    ]
+  },
+  {
+    "id": "prof-hr-s5-007",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.4,
+    "irt_b": 0.9,
+    "irt_c": 0.12,
+    "scenario_en": "Your company is evaluating three HR software vendors for a cloud-based HRIS that will store all employee personal data. Vendor A stores data on servers in Germany (EU). Vendor B stores data on servers in Russia. Vendor C stores data on servers in Azerbaijan (Baku data center). Under Azerbaijan's Law on Personal Data (No. 998-IIIQ, 2010) and subsequent government decisions on data localization, which vendor configuration is legally compliant for a company registered in Azerbaijan?",
+    "scenario_az": "Şirkətiniz bütün işçi şəxsi məlumatlarını saxlayacaq bulud əsaslı HRIS üçün üç HR proqram təminatı satıcısını qiymətləndirir. A satıcısı məlumatları Almaniyadakı (AB) serverlərə saxlayır. B satıcısı məlumatları Rusiyada serverlərə saxlayır. C satıcısı məlumatları Azərbaycandakı serverlərə (Bakı məlumat mərkəzi) saxlayır. Azərbaycan Respublikasının Şəxsi Məlumatlar Haqqında Qanununa (998-IIIQ saylı, 2010) və məlumatların lokallaşdırılması üzrə sonrakı hökumət qərarlarına əsasən, Azərbaycanda qeydiyyatdan keçmiş şirkət üçün hansı satıcı konfiqurasiyası hüquqi cəhətdən uyğundur?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Vendor A (Germany), because EU GDPR provides a higher standard of data protection that satisfies AZ requirements by equivalence.",
+        "text_az": "A satıcısı (Almaniya), çünki AB GDPR ekvivalentliyə görə AZ tələblərini ödəyən daha yüksək məlumat mühafizəsi standartı təmin edir."
+      },
+      {
+        "key": "B",
+        "text_en": "Vendor B (Russia), because Azerbaijan and Russia have bilateral data sharing agreements under CIS frameworks.",
+        "text_az": "B satıcısı (Rusiya), çünki Azərbaycan və Rusiya MDB çərçivələri altında ikitərəfli məlumat paylaşma müqavilələrinə malikdir."
+      },
+      {
+        "key": "C",
+        "text_en": "Vendor C (Azerbaijan), because Azerbaijan's data localization requirements mandate that personal data of Azerbaijani residents must be stored on servers physically located within Azerbaijan.",
+        "text_az": "C satıcısı (Azərbaycan), çünki Azərbaycanın məlumat lokallaşdırma tələbləri Azərbaycan sakinlərinin şəxsi məlumatlarının Azərbaycan ərazisindəki fiziki serverlərə saxlanmasını məcburi edir."
+      },
+      {
+        "key": "D",
+        "text_en": "Any vendor is acceptable provided the company signs a Data Processing Agreement (DPA) that contractually requires GDPR-equivalent protections.",
+        "text_az": "GDPR-ekvivalent mühafizəni müqavilə olaraq tələb edən Məlumatların Emalı Müqaviləsi (DPA) imzalanması şərtilə hər hansı satıcı qəbul edilə bilər."
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct. Azerbaijan's Law on Personal Data (No. 998-IIIQ, 2010) combined with Cabinet of Ministers Decision No. 430 (2018) establishes data localization requirements: personal data of Azerbaijani residents collected by organizations registered in Azerbaijan must be stored on servers physically located within Azerbaijan territory. This is a hard localization requirement, not a standard-of-protection equivalence test. Option A is incorrect — GDPR adequacy does not substitute for Azerbaijan's explicit territorial requirement. Option B is incorrect — CIS frameworks do not override AZ domestic law. Option D is incorrect — contractual DPAs cannot override statutory localization requirements.",
+    "feedback_az": "C düzdür. 998-IIIQ saylı (2010) Şəxsi Məlumatlar Haqqında Qanun və Nazirlər Kabinetinin 430 saylı Qərarı (2018) birlikdə məlumatların lokallaşdırma tələblərini müəyyən edir: Azərbaycanda qeydiyyatdan keçmiş təşkilatlar tərəfindən toplanmış Azərbaycan sakinlərinin şəxsi məlumatları Azərbaycan ərazisindəki fiziki serverlərə saxlanmalıdır. Bu ciddi bir lokallaşdırma tələbidir, mühafizə standartının ekvivalentlik testi deyil. A variantı yanlışdır — GDPR adekvatlığı Azərbaycanın açıq ərazi tələbini əvəz etmir. B variantı yanlışdır — MDB çərçivələri AZ daxili qanununu ləğv etmir.",
+    "development_tip_en": "Azerbaijan's data localization requirements are enforced by the Personal Data Protection Commission with increasing strictness since 2020. When evaluating any SaaS HR tool, require vendors to confirm: (1) primary data storage location is Azerbaijan, or (2) a data residency agreement with an Azerbaijani data center (e.g., AzInTelecom's Baku facility). Baku-based alternatives include PASHA Technology's hosted HR solutions and local implementations of 1C:Salary and Personnel Management.",
+    "development_tip_az": "Azərbaycanın məlumat lokallaşdırma tələbləri 2020-ci ildən Şəxsi Məlumatların Mühafizəsi Komissiyası tərəfindən artan ciddilikdə tətbiq edilir. Hər hansı SaaS HR aləti qiymətləndirərkən satıcılardan bunları təsdiqləmələrini tələb edin: (1) əsas məlumat saxlama yeri Azərbaycandır, və ya (2) Azərbaycan məlumat mərkəzi (məs. AzInTelecom-un Bakı obyekti) ilə məlumat rezidensliyi müqaviləsi.",
+    "london_delta": "A London HR professional following UK GDPR Art.44-46 and relying on EU Standard Contractual Clauses (SCCs) would treat a DPA with any reputable European vendor as sufficient for international data transfers, since UK adequacy decisions and SCCs satisfy cross-border transfer requirements. AZ consequence: Azerbaijan's Cabinet of Ministers Decision No. 430 (2018) imposes strict territorial localization — contractual protections such as SCCs do not satisfy Azerbaijan's requirement, and the Personal Data Protection Commission can require data migration to in-country servers and issue fines for non-compliant cloud storage arrangements regardless of the vendor's data protection standards.",
+    "az_institutions": [
+      "Personal Data Protection Commission"
+    ],
+    "tags": [
+      "hr",
+      "az-specific",
+      "data-localization",
+      "personal-data",
+      "hris",
+      "cloud-storage"
+    ]
+  },
+  {
+    "id": "prof-hr-s5-008",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 1.6,
+    "irt_b": 1.4,
+    "irt_c": 0.0,
+    "scenario_en": "You are the HR Director at Kapital Bank, Azerbaijan's largest state-affiliated retail bank with 4,200 employees across 95 branches. Due to digital banking transformation, the CEO has instructed you to reduce headcount by 68 employees in the retail branch network over the next 90 days. Under Azerbaijan Labor Code Article 77 (collective redundancy notification), what constitutes a 'mass redundancy' threshold, what are your legal consultation obligations, and design a 90-day implementation plan that minimizes litigation risk while maintaining operational continuity and workforce trust? Include specific AZ legal deadlines and institution names.",
+    "scenario_az": "95 filialda 4.200 işçisi olan Azərbaycanın ən böyük dövlətlə bağlı pərakəndə bankı Kapital Bankın İR Direktorisiniz. Rəqəmsal bank transformasiyası səbəbindən CEO sizə növbəti 90 gün ərzində pərakəndə filial şəbəkəsindəki işçi sayını 68 nəfər azaltmağı tapşırıb. Azərbaycan Əmək Məcəlləsinin 77-ci maddəsi (toplu ixtisar bildirişi) üzrə 'kütləvi ixtisar' həddini nə təşkil edir, hüquqi məsləhətləşmə öhdəlikləriniz nələrdir və mühakimə riskini minimuma endirərək əməliyyat davamlılığını və işçi inamını qoruyaraq 90 günlük həyata keçirmə planı hazırlayın? Xüsusi AZ hüquqi son tarixlərini və institutların adlarını daxil edin.",
+    "evaluation_rubric": {
+      "level_1": "Describes redundancy process in generic terms without any AZ-specific legal framework. May reference UK or EU collective redundancy rules (e.g., '45-day consultation period' from TULRCA 1992) without identifying AZ equivalents. No mention of specific AZ institutions or Articles.",
+      "level_2": "Mentions Azerbaijan Labor Code in general terms. May correctly identify that consultation with trade unions is required under Art.77 but provides no specific threshold, no deadline figures, and no institution names beyond 'Ministry of Labor.' Plan is generic HR project management without AZ legal anchoring.",
+      "level_3": "Correctly identifies the AZ Labor Code Art.77 mass redundancy threshold (typically 10+ employees in 30 days or 5% of workforce, whichever is lower, for organizations with 50+ employees). Names at least two of: Ministry of Labor and Social Protection of Population, SSPF, Kapital Bank trade union chapter, Azerbaijan Trade Unions Confederation (AHIK). Provides a sequenced plan but misses at least two specific legal deadlines or mixes up notification vs consultation timelines.",
+      "level_4": "Demonstrates full Art.77 compliance knowledge: 10-working-day advance notification to Ministry of Labor before first notice is issued; trade union consultation must begin before selection decisions are finalized. Identifies severance pay obligations (at least 1 month's average salary under Labor Code Art.78). Plans include employee selection criteria methodology to defend against discrimination claims under AZ law. Missing only one element: e.g., does not address SSPF final contribution timing for departing employees, or does not address the 1-month minimum notice period for economic redundancy.",
+      "level_5": "Provides a complete, legally defensible 90-day plan that includes: (1) Art.77 threshold analysis confirming 68/4200 = 1.6% — below 5% threshold but above 10-person absolute trigger, making full Art.77 consultation mandatory; (2) Ministry of Labor notification filed minimum 10 working days before first redundancy notice is issued — identifies this as Day 1-2 of plan; (3) AHIK-affiliated trade union at Kapital Bank notified simultaneously with Ministry; (4) selection criteria documented and defensible under AZ anti-discrimination provisions (Labor Code Art.16); (5) severance calculated per Art.78: minimum 1 month average salary + notice pay of 1 month (Labor Code Art.70); (6) SSPF final contributions for departing employees submitted by 20th of the month following last pay date; (7) Ministry of Labor statistical reporting (Form T-1) filed within 5 working days of each redundancy taking effect; (8) 90-day timeline with explicit compliance gates at days 5, 10, 30, 60, 90; (9) communication strategy addressing the specific trust dynamics of a state-affiliated bank workforce."
+    },
+    "az_institutions": [
+      "Ministry of Labor and Social Protection of Population",
+      "SSPF",
+      "AHIK",
+      "Kapital Bank"
+    ],
+    "tags": [
+      "hr",
+      "az-specific",
+      "mass-redundancy",
+      "kapital-bank",
+      "labor-code",
+      "collective-consultation"
+    ],
+    "london_delta": "A London HR professional following Trade Union and Labour Relations (Consolidation) Act 1992 (TULRCA 1992) s.188 would apply a 45-day minimum collective consultation period for 100+ redundancies and 30 days for 20-99, notifying BEIS (Department for Business) via HR1 form. AZ consequence: Azerbaijan Labor Code Art.77 requires notification to the Ministry of Labor and Social Protection of Population minimum 10 working days before the first redundancy notice — not concurrent with it — and the Ministry can issue a corrective order (məcburi göstəriş) suspending the redundancy process if notification is defective; for a state-affiliated institution like Kapital Bank, Ministry scrutiny is heightened and non-compliance generates both legal and reputational exposure at government level."
+  },
+  {
+    "id": "prof-hr-s5-009",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "hard",
+    "type": "sjt",
+    "irt_a": 1.7,
+    "irt_b": 1.5,
+    "irt_c": 0.08,
+    "scenario_en": "You are the HR Director at a 300-person professional services firm in Baku. A female analyst (Aytən, 27) submits a written complaint alleging repeated unwanted physical contact and sexually suggestive comments from her direct manager (Elnur, 42), who is a senior partner. Aytən requests strict confidentiality. Three complicating factors exist: (1) Elnur is the son-in-law of the firm's founding partner; (2) two female colleagues privately confirm similar experiences but refuse to submit written statements citing fear of retaliation; (3) Azerbaijan does not have standalone sexual harassment legislation — the legal framework relies on Labor Code provisions on dignity at work (Art.10) and Criminal Code Article 175 (sexual coercion). How do you proceed?",
+    "scenario_az": "Bakıda 300 nəfərlik peşəkar xidmətlər şirkətinin İR Direktorisiniz. Bir qadın analitik (Aytən, 27 yaş) birbaşa rəhbərindən (Elnur, 42 yaş) — böyük ortaqdan — təkrarlanan istənilməyən fiziki kontakt və cinsi çalarlı şərhlər barədə yazılı şikayət təqdim edir. Aytən ciddi məxfilik tələb edir. Üç çətinləşdirici amil mövcuddur: (1) Elnur şirkətin qurucu ortağının kürəkənidir; (2) iki qadın həmkar oxşar təcrübələri özəl şəkildə təsdiq edir, lakin qisas almaq qorxusunu əsas göstərərək yazılı ifadə verməkdən imtina edir; (3) Azərbaycanda müstəqil cinsi təcavüz qanunvericiliyi yoxdur — hüquqi çərçivə işdə ləyaqətə dair Əmək Məcəlləsi müddəalarına (Maddə 10) və Cinayət Məcəlləsinin 175-ci maddəsinə (cinsi məcburetmə) əsaslanır.",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Honor Aytən's confidentiality request fully — conduct no investigation, document the complaint internally only, and monitor the situation. Intervening without her consent to a formal process could harm her further.",
+        "text_az": "Aytənin məxfilik müraciətini tam yerinə yetirin — heç bir araşdırma aparmayın, şikayəti yalnız daxili sənədləşdirin və vəziyyəti izləyin. Onun rəsmi prosesə razılığı olmadan müdaxilə etmək ona daha çox zərər verə bilər."
+      },
+      {
+        "key": "B",
+        "text_en": "Immediately suspend Elnur pending investigation, notify the founding partner, and contact the Ministry of Labor for guidance — the seriousness of the allegation requires immediate escalation regardless of family dynamics.",
+        "text_az": "Araşdırma gözlənilən müddətdə Elnuru dərhal asanlayın, qurucu ortağı xəbərdar edin və Əmək Nazirliyindən rəhbərlik üçün əlaqə saxlayın — iddianın ciddilik dərəcəsi ailə dinamikasından asılı olmayaraq dərhal eskalasiya tələb edir."
+      },
+      {
+        "key": "C",
+        "text_en": "Conduct a structured, confidential investigation: appoint an independent investigator (not in Elnur's reporting line), separately interview the two corroborating colleagues with explicit confidentiality protections, document all findings, present conclusions to the board (not the founding partner directly), and implement protective measures for Aytən during the process including temporary reporting line reassignment.",
+        "text_az": "Strukturlaşdırılmış, məxfi araşdırma aparın: müstəqil araşdırmaçı təyin edin (Elnurun hesabat xəttində deyil), açıq məxfilik mühafizəsi ilə iki təsdiqləyici həmkarla ayrıca müsahibə aparın, bütün tapıntıları sənədləşdirin, nəticələri idarə heyətinə (qurucu ortağa birbaşa deyil) təqdim edin və proses ərzində müvəqqəti hesabat xəttinin yenidən təyin edilməsi daxil olmaqla Aytən üçün qoruyucu tədbirlər həyata keçirin."
+      },
+      {
+        "key": "D",
+        "text_en": "Advise Aytən that given the absence of standalone sexual harassment law in Azerbaijan and the family connections involved, her strongest path is to file directly with the Baku City Court under Criminal Code Article 175 rather than through internal HR processes.",
+        "text_az": "Aytənə məsləhət verin ki, Azərbaycanda müstəqil cinsi təcavüz qanunu olmadığı və ailə əlaqələri nəzərə alındığında, daxili İR prosesləri vasitəsilə deyil, Cinayət Məcəlləsinin 175-ci maddəsi üzrə birbaşa Bakı Şəhər Məhkəməsinə müraciət etmək onun ən güclü yoludur."
+      },
+      {
+        "key": "C"
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct. Although Azerbaijan lacks standalone sexual harassment legislation, Labor Code Article 10 (right to dignity and respect at work) creates employer obligations to investigate credible complaints. An independent investigation with documented findings satisfies the employer's duty of care and creates a legally defensible record. Key elements: (1) Independent investigator — not someone in Elnur's reporting line or socially connected to the founding partner; (2) Structured confidentiality protocols for the two corroborating witnesses to enable their participation without formal statements; (3) Reporting to the full board, not the founding partner, avoids a conflict of interest that would invalidate the process; (4) Protective measures for Aytən during investigation are required — failure to do so while she remains in Elnur's reporting line constitutes ongoing harm. Option A abdicates the employer's legal duty under Art.10. Option B's immediate suspension without investigation is premature and may be legally challenged. Option D abandons the employee to criminal process without employer support — this is both ethically wrong and exposes the company to a constructive dismissal claim.",
+    "feedback_az": "C düzdür. Azərbaycanda müstəqil cinsi təcavüz qanunvericiliyi olmasa da, Əmək Məcəlləsinin 10-cu maddəsi (işdə ləyaqət və hörmət hüququ) işəgötürənlərə inandırıcı şikayətləri araşdırmaq öhdəliyi yaradır. Sənədli tapıntılarla müstəqil araşdırma işəgötürənin qayğı borcunu ödəyir və hüquqi cəhətdən müdafiə edilə bilən qeyd yaradır. Əsas elementlər: (1) Müstəqil araşdırmaçı — Elnurun hesabat xəttindəki və ya qurucu ortaqla sosial əlaqəsi olan biri deyil; (2) Rəsmi ifadə olmadan iştirakı mümkün etmək üçün iki təsdiqləyici şahid üçün strukturlaşdırılmış məxfilik protokolları; (3) Tam idarə heyətinə hesabat vermək, birbaşa qurucu ortağa yox, prosesi etibarsız edəcək maraq münaqişəsini aradan qaldırır.",
+    "development_tip_en": "Azerbaijan's cultural context significantly shapes how harassment complaints emerge and are processed. In hierarchical organizations, employees rarely submit formal written complaints unless they have reached a breaking point — Aytən's written complaint is a late-stage escalation signal. Standard best practice: establish a confidential reporting channel (anonymous hotline or third-party ombudsman) before incidents occur. Reference PASHA Holding's employee dignity policy as a benchmark for AZ-market best practice in professional services.",
+    "development_tip_az": "Azərbaycanın mədəni konteksti təcavüz şikayətlərinin necə ortaya çıxdığını və emal edildiyini əhəmiyyətli şəkildə formalaşdırır. İyerarxik təşkilatlarda işçilər nadir hallarda kritik nöqtəyə çatmayana qədər rəsmi yazılı şikayət vermirlər — Aytənin yazılı şikayəti son mərhələ eskalasiya siqnaıdır. Standart ən yaxşı təcrübə: hadisələr baş verməzdən əvvəl məxfi hesabat kanalı (anonim xətt və ya üçüncü tərəf ombudsmanı) qurun.",
+    "london_delta": "A London HR professional following Equality Act 2010 s.26 (definition of harassment related to sex) and s.40 (employer liability) would follow a structured ACAS-guided investigation protocol with statutory protected disclosure rights and would expect to reference specific protected characteristic categories. AZ consequence: Azerbaijan Labor Code Art.10 does not define sexual harassment as a named category — an employer's failure to investigate must therefore be framed as a breach of the dignity-at-work obligation, and a victim's strongest legal path combines Art.10 Labor Code claims with Personal Data Protection Commission complaints about misuse of the victim's personal data during any retaliatory action, since AZ has no Whistleblowing Protection Act equivalent to the UK Public Interest Disclosure Act 1998.",
+    "az_institutions": [
+      "Ministry of Labor and Social Protection of Population",
+      "Baku City Court",
+      "PASHA Holding"
+    ],
+    "tags": [
+      "hr",
+      "az-specific",
+      "harassment",
+      "safeguarding",
+      "labor-code-art10",
+      "cultural-dynamics"
+    ]
+  },
+  {
+    "id": "prof-hr-s5-010",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 1.8,
+    "irt_b": 1.8,
+    "irt_c": 0.0,
+    "scenario_en": "You are the HR Director at SOCAR (State Oil Company of the Republic of Azerbaijan), managing a 12,000-person workforce. SOCAR has a comprehensive collective agreement negotiated in 2022 with the SOCAR trade union (affiliated with AHIK — Azerbaijan Trade Unions Confederation), covering: a guaranteed 15th-month bonus, 35 days annual leave (vs. Labor Code minimum of 21 days), housing loan subsidies at 3% interest (market rate: 12%), and a 3-year tenure-linked promotion schedule. The Azerbaijan government has passed an amendment to the Labor Code (effective January 1 of next year) introducing new mandatory provisions: (1) all annual leave exceeding 28 days requires employer-funded wellness certification; (2) housing benefits provided by state-owned enterprises must be reported as taxable income to the Ministry of Taxes within 15 days of disbursement. These new provisions create direct conflicts with SOCAR's existing collective agreement in two areas and impose new administrative obligations. As HR Director, describe your legal obligations, the specific conflict resolution process under AZ law, the administrative steps required for Tax compliance, and the stakeholder communication strategy — with specific institution names and legal article references.",
+    "scenario_az": "12.000 nəfərlik işçi qüvvəsini idarə edən SOCAR-ın (Azərbaycan Respublikasının Dövlət Neft Şirkəti) İR Direktorisiniz. SOCAR-ın SOCAR həmkarlar ittifaqı (AHİK — Azərbaycan Həmkarlar İttifaqları Konfederasiyasına bağlı) ilə 2022-ci ildə müzakirə edilmiş hərtərəfli kollektiv müqaviləsi var: zəmanətli 15-ci ay mükafatı, 35 günlük illik məzuniyyət (Əmək Məcəlləsinin minimum 21 günlük normasına qarşı), 3% faizlə mənzil krediti subsidiyaları (bazar dərəcəsi: 12%) və 3 illik staj bağlı terfi cədvəli. Azərbaycan hökuməti gələn ilin 1 yanvarından qüvvəyə minəcək yeni məcburi müddəaları tətbiq edən Əmək Məcəlləsinə düzəliş qəbul etdi: (1) 28 günü aşan bütün illik məzuniyyətlər işəgötürən tərəfindən maliyyələşdirilən sağlamlıq sertifikasiyasını tələb edir; (2) dövlət müəssisələri tərəfindən verilən mənzil müavinətləri ödənişdən 15 gün ərzində Vergilər Nazirliyinə vergitutulabilən gəlir kimi bildirilməlidir. Bu yeni müddəalar iki sahədə SOCAR-ın mövcud kollektiv müqaviləsi ilə birbaşa ziddiyyət yaradır və yeni inzibati öhdəliklər tətbiq edir. İR Direktoru kimi hüquqi öhdəliklərinizi, AZ qanunu üzrə xüsusi münaqişənin həlli prosesini, Vergi uyğunluğu üçün tələb olunan inzibati addımları və maraqlı tərəflərin kommunikasiya strategiyasını — xüsusi institutların adları və hüquqi maddə istinadları ilə — təsvir edin.",
+    "evaluation_rubric": {
+      "level_1": "Describes the situation generically — 'we need to review the contract and comply with new law.' No specific AZ legal articles, no institution names, no conflict resolution process. May incorrectly assume collective agreement automatically supersedes the new law or vice versa without analysis.",
+      "level_2": "Identifies that there is a conflict between the collective agreement and new legislation. Mentions Labor Code and Ministry of Taxes. Does not correctly identify the hierarchy of sources (statute > collective agreement for minimum standards; collective agreement can exceed minimums but cannot fall below them). Missing the specific AHIK consultation requirement and the statutory timelines for collective agreement renegotiation.",
+      "level_3": "Correctly explains the hierarchy: new mandatory Labor Code provisions take precedence over collective agreement terms where they impose additional obligations (the wellness certification requirement and the tax reporting requirement). Names AHIK and the SOCAR trade union chapter as required consultation parties. Identifies that the two conflicting clauses (35-day leave and housing subsidy) need to be renegotiated — but does not provide the specific renegotiation timeline, the Art.50-54 process, or the Ministry of Labor notification requirements.",
+      "level_4": "Provides a complete conflict analysis: (1) identifies which clauses conflict — Art.28+ leave wellness requirement conflicts with the collective agreement's 35-day clause (requiring cost allocation redesign, not elimination); (2) housing subsidy tax reporting does not void the subsidy but adds a reporting obligation; (3) cites Labor Code Art.50-54 for collective agreement amendment process; (4) identifies 60-day renegotiation notice requirement to AHIK; (5) identifies Ministry of Taxes 15-day reporting window and the need for a new administrative payroll process. Missing: specific stakeholder sequencing, Ministry of Labor notification requirement, or SOCAR board approval dependency.",
+      "level_5": "Provides a complete, multi-track response: LEGAL TRACK — correctly applies the AZ legal hierarchy (Labor Code statute > collective agreement), identifies that Art.50 amendments require both party agreement and Ministry of Labor notification within 10 days of amendment; Art.28+ leave clause creates a cost compliance issue (35 days remain valid, but 7 days require funded wellness certification — employer cost to be absorbed or renegotiated); housing subsidy clause remains valid but requires new administrative process. TAX COMPLIANCE TRACK — Ministry of Taxes reporting within 15 days of each disbursement; identifies that this requires modification to SOCAR's SAP HR payroll module to auto-generate tax notification filings; identifies that retrospective reporting obligations may apply for disbursements made in the 12 months before the law takes effect if the amendment includes a transition provision. RENEGOTIATION TRACK — Labor Code Art.52 requires 60-day advance notice to trade union before initiating collective agreement amendment negotiations; AHIK must be notified as the umbrella confederation; SOCAR board approval required before any amendment is signed; target timeline to complete renegotiation before January 1 effective date. COMMUNICATION TRACK — phased workforce communication: (1) trade union leadership briefing before any public announcement; (2) written notification to all 12,000 employees with clear explanation that collective agreement benefits are preserved, only the administrative mechanism changes; (3) dedicated Q&A channel via SOCAR's internal intranet with responses within 48 hours; addresses AZ workforce cultural expectation that state-owned enterprises protect worker benefits — frames the change as compliance, not reduction."
+    },
+    "az_institutions": [
+      "Ministry of Taxes",
+      "Ministry of Labor and Social Protection of Population",
+      "AHIK",
+      "SOCAR",
+      "SSPF"
+    ],
+    "tags": [
+      "hr",
+      "az-specific",
+      "socar",
+      "collective-agreement",
+      "labor-code-amendment",
+      "tax-compliance",
+      "adaptability"
+    ],
+    "london_delta": "A London HR professional following Trade Union and Labour Relations (Consolidation) Act 1992 (TULRCA 1992) s.188 and the Employment Rights Act 1996 s.1 would approach statutory change by issuing individual Section 4 'change to terms and conditions' notifications to each employee and relying on the 'collective agreement incorporated by reference' doctrine to handle union terms. AZ consequence: Azerbaijan Labor Code Art.50-54 treats collective agreement amendment as a bilateral renegotiation requiring AHIK's formal written consent — unilateral employer notification of changed terms is legally insufficient; SOCAR's failure to complete the Art.52 60-day renegotiation notice process before the January 1 effective date means the collective agreement continues in its original form regardless of the statutory change, creating a dual-compliance obligation that cannot be resolved without a formal amendment signed by both SOCAR management and the SOCAR AHIK-affiliated trade union chapter, filed with the Ministry of Labor and Social Protection of Population within 10 days."
+  }
+]

@@ -1,0 +1,85 @@
+{
+  "sprint": 2,
+  "scores": {
+    "devops-cybersecurity": {
+      "az_anchoring": 8,
+      "irt_quality": 6,
+      "london_test": 6,
+      "diversity": 7,
+      "competency_coverage": 7,
+      "total": 34,
+      "rank": 2,
+      "notes": "Strong AZ anchoring with CBA Circular 14/2023, E-GOV blue-green + AZ Personal Data Law, ASAN 2020 real incident. IRT docked: Q1 irt_a=0.9 (below 1.0 floor). London test docked: Q1 (kubectl) and Q2 (Prometheus queries) are not London-proof — the answer is identical anywhere. Best questions: Q7 (CBA data residency = changes architecture), Q8 (E-GOV + AZ legal obligation to rollback). 10 questions, 5 competencies covered."
+    },
+    "financial-analyst": {
+      "az_anchoring": 6,
+      "irt_quality": 7,
+      "london_test": 7,
+      "diversity": 7,
+      "competency_coverage": 7,
+      "total": 34,
+      "rank": 3,
+      "notes": "Only metadata visible (no scenario text in file), limiting AZ anchoring score to 6 — institutions listed are strong (SOFAZ, CBA, OSC, ABB, IGB) but cannot verify structural constraint quality without reading scenarios. IRT is clean: all irt_a 1.2-1.7, b range -1.0 to 1.9. 9/10 questions marked london_fails=true. Type diversity good: mcq/sjt/open_ended mix. 5 competencies covered. Penalised for opaque scenario content."
+    },
+    "hr-manager": {
+      "az_anchoring": 8,
+      "irt_quality": 8,
+      "london_test": 7,
+      "diversity": 6,
+      "competency_coverage": 4,
+      "total": 33,
+      "rank": 4,
+      "notes": "Best AZ legal anchoring in the entire sprint: AZ Labor Code Art. 109-1 (pregnancy absolute bar), Art. 73-1 (religious discrimination), Ministry of Labor Inspector visit in 10 days creates urgency that changes the correct answer. IRT is excellent: irt_a 1.5-2.1, all above floor, irt_c as low as 0.0. London test high because AZ-specific legal articles are structural. Major weakness: only 2 competencies visible (empathy_safeguarding, communication) — very narrow coverage. Question type diversity adequate but limited by file depth read."
+    },
+    "marketing-manager": {
+      "az_anchoring": 8,
+      "irt_quality": 7,
+      "london_test": 8,
+      "diversity": 5,
+      "competency_coverage": 3,
+      "total": 31,
+      "rank": 6,
+      "notes": "Strongest London test in the sprint: Q2 (PASHA rebrand) explicitly states 'London strategist cannot answer without knowing the Caspian corridor narrative, EBRD AZ portfolio.' Q3 (Novruz khoncha, semeni, mahalle WhatsApp, Limart timing) is deeply AZ-cultural and unanswerable without local knowledge. AZ anchoring is culturally deep, not just institutionally. Major weakness: only 3 questions — diversity is low (mcq missing, mostly open_ended/sjt), and only 1 competency (communication) is covered. Score reflects quality-per-question but insufficient volume/coverage."
+    },
+    "product-manager": {
+      "az_anchoring": 8,
+      "irt_quality": 8,
+      "london_test": 8,
+      "diversity": 7,
+      "competency_coverage": 5,
+      "total": 36,
+      "rank": 1,
+      "notes": "WINNER. Best overall balance. AZ anchoring is structural throughout: ASAN+Ministry directive changes PM strategy (comply+advocate, not refuse), SOCAR leverage in concentrated AZ market explicitly produces a different answer than a London PM (feedback states this directly), AzərGold SOAP mandate forces architecture change, AZ small-market statistics change A/B test approach. London test is 8: multiple questions have explicit 'AZ market = different answer' statements. IRT is clean: all irt_a 1.4-1.9, good b range. Diversity good: mcq/sjt/open_ended across easy/medium/hard. Weakness: only 3 competencies in 7 questions (leadership, communication, adaptability — missing reliability, empathy_safeguarding)."
+    },
+    "project-manager-scrum": {
+      "az_anchoring": 8,
+      "irt_quality": 6,
+      "london_test": 6,
+      "diversity": 7,
+      "competency_coverage": 5,
+      "total": 32,
+      "rank": 5,
+      "notes": "Strong SOCAR cultural intelligence questions (SOCAR waterfall VP calling standups 'Soviet-style control mechanism' is a uniquely AZ insight). ASAN xidmet Deputy Director scope creep scenario is genuinely London-proof. IRT docked: Q1 irt_a=0.8 (below 1.0 floor). London test docked: Q1 (Kapital Bank compliance + Scrum) and Q4 (PASHA retrospective) are not London-proof — answers are universal Scrum practice. Competency coverage narrow: mostly reliability + leadership. 8 questions but missing adaptability, empathy_safeguarding, tech_literacy."
+    },
+    "qa-engineer": {
+      "az_anchoring": 8,
+      "irt_quality": 8,
+      "london_test": 8,
+      "diversity": 6,
+      "competency_coverage": 3,
+      "total": 33,
+      "rank": 4,
+      "notes": "Tied HR-manager. Technically strongest questions in the sprint: all 6 questions are genuinely London-proof (AZ locale comma-separator, CBA rounding P1 classification, ASAN xidmet Novruz 684k load test with real historical data, ISMSN certification = AZ-specific). IRT is the best in the sprint: irt_a 1.6-2.3, clean b range 0.3-2.1, all above floor. Critical weakness: only 2 competencies (tech_literacy, reliability) — zero coverage of communication, leadership, adaptability, empathy_safeguarding. Diversity docked: no easy questions at all. Strong specialist depth, weak breadth."
+    }
+  },
+  "winner": "product-manager",
+  "winner_score": 36,
+  "evolved_patterns": [
+    "Pattern 1 (STRUCTURAL CONSTRAINT ANCHORING): The best AZ questions make the institution a structural constraint, not a backdrop. 'You are at SOCAR' is backdrop. 'SOCAR has 70,000 employees and is your only path to 3 years of runway — saying no is career-ending in a small market' changes the correct answer. PM, HR, and QA sets demonstrate this; DevOps Q1-Q2 fail this test.",
+    "Pattern 2 (EXPLICIT LONDON DELTA): The highest-scoring questions explicitly articulate WHY a London professional would answer differently. PM-S2-002 states directly: 'A London PM would more readily say no to enterprise customization; in AZ's concentrated market, the answer requires creative negotiation.' MKT-S2-002 states: 'A London strategist cannot answer this correctly without knowing the Caspian corridor narrative.' This explicit delta is the gold standard.",
+    "Pattern 3 (REAL HISTORICAL INCIDENTS AS ANCHORS): QA-S2-005 (ASAN 2020 COVID surge, 47-minute outage, 684k = 180k × 3.8) and DevOps-S2-006 (same ASAN incident from SRE perspective) use verified historical events to create unique AZ scenarios with real numbers. These cannot be answered by pattern-matching from global best practices — the specific failure modes (SMS queue + DB pool + CDN misconfiguration) require AZ domain knowledge.",
+    "Pattern 4 (AZ LEGAL SPECIFICITY AS ANSWER DETERMINANT): HR-S2-001 (AZ Labor Code 109-1 absolute bar on pregnancy dismissal), QA-S2-002 (ISMSN certification framework), DevOps-S2-007 (CBA Circular 14/2023 data residency), QA-S2-003 (CBA decimal precision requirement) all use AZ-specific legal/regulatory articles where the correct answer is the article's requirement — not generic professional judgment. These are maximally London-proof because the regulation does not exist in London.",
+    "Pattern 5 (IRT DISCIPLINE): QA-engineer set has the cleanest IRT in the sprint: irt_a 1.6-2.3 (all above 1.0), b range 0.3-2.1 (appropriate spread), irt_c 0.08-0.15 (realistic guessing). Two sets (DevOps, Scrum) have one question each with irt_a below the 1.0 floor — a mechanical error class that Sprint 3 must eliminate with a pre-submission IRT validation check."
+  ],
+  "sprint3_improvements": "Sprint 3 must address three systemic gaps: (1) COMPETENCY BREADTH — five sets in Sprint 2 cover only 2-3 competencies, failing the AURA scoring model which weights 8 competencies. Each profession set must cover at least 5 of 8 competencies, with empathy_safeguarding and adaptability explicitly required (most under-represented in Sprint 2). (2) IRT FLOOR ENFORCEMENT — add a mechanical pre-submission validation: any question with irt_a < 1.0 is rejected and must be rewritten. Two sets (DevOps, Scrum) had violations. The floor is 1.0, not 0.8-0.9. (3) QUESTION VOLUME CONSISTENCY — Marketing Manager had only 3 questions while DevOps had 10. Sprint 3 must standardise at 8-10 questions per profession set to ensure meaningful competency coverage. Bonus improvement: Sprint 2 proved the 'explicit London delta' pattern (stating why a London professional answers differently) is the strongest signal of true AZ anchoring — Sprint 3 should require this field as a mandatory structured attribute in the question schema, not inferred from scenario text."
+}

@@ -1,0 +1,99 @@
+{
+  "profession": "Project Manager / Scrum Master",
+  "agent_id": "a1b9788f968fb68ac",
+  "sprint": 1,
+  "question_count": 10,
+  "generation_strategy": "```\n\n**Generation Strategy:**\n1. All scenarios are grounded in real Baku professional contexts (fintech, oil PMO, banking transformation, software companies) to create authentic recognition for Azerbaijani users, not generic Western PM textbook cases.\n2. IRT parameters are calibrated so easy items (irt_b = -1.5 to -1.8) serve as confidence builders for novice PMs, medium items (0.1 to 0.4) differentiate practitioners from novices, and hard items (1.5 to 2.0) identify senior PMs who operate at the systems/org level — matching the 3PL model in the assessment engine.\n3. SJT and open-ended items are designed around real PM dilemmas with no obviously correct answer to a non-practitioner, ensuring the questions distinguish AURA-level competency from surface familiarity with PM terminology.",
+  "questions": [
+    {
+      "id": "prof-pm-scrum-001",
+      "competency_slug": "reliability",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 0.8,
+      "irt_b": -1.5,
+      "scenario_key": "You are a Scrum Master at a Baku fintech company. It is Thursday afternoon and the sprint ends Frida"
+    },
+    {
+      "id": "prof-pm-scrum-002",
+      "competency_slug": "reliability",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.4,
+      "irt_b": 0.3,
+      "scenario_key": "You are a PM at an oil industry PMO in Baku. A vendor delivering a critical pipeline monitoring modu"
+    },
+    {
+      "id": "prof-pm-scrum-003",
+      "competency_slug": "reliability",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 2.1,
+      "irt_b": 1.8,
+      "scenario_key": "You are managing a 6-month digital transformation project at a Baku bank. At the 3-month mark, your "
+    },
+    {
+      "id": "prof-pm-scrum-004",
+      "competency_slug": "leadership",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.3,
+      "irt_b": 0.1,
+      "scenario_key": "You are a Scrum Master at a Baku software company. During the sprint retrospective, the team identif"
+    },
+    {
+      "id": "prof-pm-scrum-005",
+      "competency_slug": "leadership",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 2.3,
+      "irt_b": 2.0,
+      "scenario_key": "You are a Scrum Master at a 20-person product team in Baku. The team has been together for 8 months "
+    },
+    {
+      "id": "prof-pm-scrum-006",
+      "competency_slug": "communication",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 0.9,
+      "irt_b": -1.8,
+      "scenario_key": "You are a PM at a Baku IT company. Your sprint review is tomorrow and the key stakeholder — the Head"
+    },
+    {
+      "id": "prof-pm-scrum-007",
+      "competency_slug": "communication",
+      "difficulty": "medium",
+      "type": "mcq",
+      "irt_a": 1.5,
+      "irt_b": 0.2,
+      "scenario_key": "You are a PM managing a banking digital transformation in Baku. Two days before the sprint ends, the"
+    },
+    {
+      "id": "prof-pm-scrum-008",
+      "competency_slug": "adaptability",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 0.9,
+      "irt_b": -1.6,
+      "scenario_key": "You are a Scrum Master in Baku. On day 3 of a 2-week sprint, a key backend developer announces she h"
+    },
+    {
+      "id": "prof-pm-scrum-009",
+      "competency_slug": "adaptability",
+      "difficulty": "hard",
+      "type": "sjt",
+      "irt_a": 2.0,
+      "irt_b": 1.5,
+      "scenario_key": "You are a PM at a Baku oil company digital division. Your 4-month project to build an internal asset"
+    },
+    {
+      "id": "prof-pm-scrum-010",
+      "competency_slug": "tech_literacy",
+      "difficulty": "medium",
+      "type": "mcq",
+      "irt_a": 1.6,
+      "irt_b": 0.4,
+      "scenario_key": "You are a Scrum Master in Baku. After sprint 6, you review the team's burndown chart and notice: the"
+    }
+  ]
+}

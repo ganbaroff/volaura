@@ -10,6 +10,8 @@ updated: 2026-03-29
 
 ## How It Works
 
+**0. Each model READS source files before writing. No summaries. No briefs without reading.**
+
 ```
 1. CTO defines brief (topic, audience, format, tone rules)
 2. 3 models write INDEPENDENTLY (same brief, no seeing each other)
@@ -51,7 +53,18 @@ After every post:
 ```
 | Date | Topic | SPARK | CORTEX | PRISM | Winner |
 |------|-------|-------|--------|-------|--------|
+| 2026-03-29 | The Team | 7.4 | 7.45 | 6.2 | CORTEX |
+| 2026-03-29 | The Mistakes | 7.65 | 7.55 | 7.1 | SPARK |
+| 2026-03-29 | The Audit | 7.3 | 7.2 | 7.0 | SPARK |
+| 2026-03-29 | The Democracy | 7.8 | 7.9 | 7.5 | CORTEX |
+| 2026-03-29 | The Culture Test | 7.9 | 8.0 | 7.6 | CORTEX |
+| 2026-03-29 | The Numbers | 7.8 | 7.1 | 7.6 | SPARK |
+| 2026-03-29 | The Team (v2) | 8.45 | 8.30 | 8.15 | SPARK |
+| 2026-03-29 | The Mistakes (v2) | 9.00 | 8.15 | 7.90 | SPARK |
 ```
+**Current win rates (8 posts):** SPARK 5/8 (62.5%) | CORTEX 3/8 (37.5%) | PRISM 0/8 (0%)
+**PRISM status:** ELIMINATED. 0 wins from 8 posts. Replace at post #10 with DeepSeek or Mistral.
+**Note (2026-03-29):** v2 rewrites scored significantly higher after TONE-OF-VOICE.md update banned bullet-point formatting. Humor throughline rule = measurable score improvement.
 
 After 10 posts: model with <20% win rate gets replaced by new candidate (DeepSeek, Mistral, etc.)
 
@@ -67,6 +80,13 @@ After 10 posts: model with <20% win rate gets replaced by new candidate (DeepSee
 ## Brief Template
 
 ```
+FILES TO READ (mandatory before writing a single word):
+  TONE-OF-VOICE: C:\Projects\VOLAURA\docs\TONE-OF-VOICE.md (full)
+  AZ AUDIENCE: C:\Projects\VOLAURA\docs\AZ-LINKEDIN-AUDIENCE.md (full)
+  PUBLISHED POSTS: C:\Projects\VOLAURA\docs\content\LINKEDIN-SERIES-CLAUDE-CTO.md (DAY 1 published post)
+  SESSION LOGS: C:\Projects\VOLAURA\docs\SESSION-FINDINGS.md (last 10 entries)
+  BRIEF TEMPLATE: C:\Projects\VOLAURA\docs\CONTENT-BRIEF-TEMPLATE.md
+
 POST BRIEF:
   Topic: [specific angle]
   Audience: [Leyla? Nigar? Kamal? Rauf? Aynur?]

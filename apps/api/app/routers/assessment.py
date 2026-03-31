@@ -56,8 +56,9 @@ from app.schemas.assessment import (
     SubmitAnswerRequest,
 )
 from app.services.assessment.coaching_service import generate_coaching_tips
-from app.services.assessment.helpers import get_competency_id, fetch_questions, make_session_out
+from app.services.assessment.helpers import get_competency_id, fetch_questions, make_session_out, get_competency_slug
 from app.services.assessment.rewards import emit_assessment_rewards
+from app.services.notification_service import notify
 
 router = APIRouter(prefix="/assessment", tags=["Assessment"])
 
@@ -86,6 +87,36 @@ async def start_assessment(
     """Start a new CAT session for a given competency."""
     competency_id = await get_competency_id(db_admin, payload.competency_slug)
 
+    # PAYWALL: check subscription status before allowing new session
+    # Gated by PAYMENT_ENABLED kill switch — False during beta, True when billing is live.
+    if settings.payment_enabled:
+        sub_result = (
+            await db_user.table("profiles")
+            .select("subscription_status")
+            .eq("id", user_id)
+            .maybe_single()
+            .execute()
+        )
+        # Fail-closed: if no profile row exists (shouldn't happen post-onboarding),
+        # block by default. A missing profile is not a free pass to unlimited assessments.
+        if not sub_result.data:
+            raise HTTPException(
+                status_code=402,
+                detail={
+                    "code": "SUBSCRIPTION_REQUIRED",
+                    "message": "Your trial has ended. Subscribe to continue.",
+                },
+            )
+        sub_status = sub_result.data.get("subscription_status", "trial")
+        if sub_status in ("expired", "cancelled"):
+            raise HTTPException(
+                status_code=402,
+                detail={
+                    "code": "SUBSCRIPTION_REQUIRED",
+                    "message": "Your trial has ended. Subscribe to continue.",
+                },
+            )
+
     # Check for in-progress session
     existing = (
         await db_user.table("assessment_sessions")
@@ -105,6 +136,55 @@ async def start_assessment(
             },
         )
 
+    # SECURITY: Rapid-restart cooldown — 30 minutes between ANY starts (including abandoned).
+    # Prevents answer-fishing: start → see hard question → abandon → restart to cherry-pick.
+    # The 7-day cooldown below only gates COMPLETED sessions; this gates ALL starts.
+    RAPID_RESTART_COOLDOWN_MINUTES = 30
+    recent_start = (
+        await db_user.table("assessment_sessions")
+        .select("started_at, status")
+        .eq("volunteer_id", user_id)
+        .eq("competency_id", competency_id)
+        .neq("status", "completed")  # completed sessions use the 7-day cooldown below
+        .order("started_at", desc=True)
+        .limit(1)
+        .execute()
+    )
+    if recent_start.data and recent_start.data[0].get("started_at"):
+        try:
+            last_start = datetime.fromisoformat(recent_start.data[0]["started_at"].replace("Z", "+00:00"))
+        except (ValueError, TypeError):
+            last_start = None
+        if last_start is not None:
+            if last_start.tzinfo is None:
+                last_start = last_start.replace(tzinfo=timezone.utc)
+            minutes_since = (datetime.now(timezone.utc) - last_start).total_seconds() / 60
+            if minutes_since < RAPID_RESTART_COOLDOWN_MINUTES:
+                retry_in = int(RAPID_RESTART_COOLDOWN_MINUTES - minutes_since) + 1
+                logger.warning(
+                    "Rapid-restart attempt blocked",
+                    user_id=user_id,
+                    competency_id=competency_id,
+                    minutes_since=round(minutes_since, 1),
+                )
+                # Re-engagement notification: fire-and-forget, never blocks the 429 response.
+                # Tells the user exactly when they can come back — turns a dead end into a nudge.
+                await notify(
+                    db_admin,
+                    user_id,
+                    "assessment_cooldown",
+                    "Retake window opens soon",
+                    body=f"Your {payload.competency_slug.replace('_', ' ').title()} retake is ready in {retry_in} minute(s) — come back to improve your AURA score.",
+                )
+                raise HTTPException(
+                    status_code=429,
+                    detail={
+                        "code": "RAPID_RESTART_COOLDOWN",
+                        "message": f"Please wait {retry_in} minute(s) before starting a new session for this competency",
+                        "retry_after_minutes": retry_in,
+                    },
+                )
+
     # Retest cooldown: 7 days per competency — prevent score gaming via repeated attempts
     RETEST_COOLDOWN_DAYS = 7
     recent = (
@@ -121,7 +201,8 @@ async def start_assessment(
         last_completed = datetime.fromisoformat(recent.data[0]["completed_at"])
         if last_completed.tzinfo is None:
             last_completed = last_completed.replace(tzinfo=timezone.utc)
-        days_since = (datetime.now(timezone.utc) - last_completed).days
+        # BUG-009 FIX: use total_seconds() not .days — .days truncates (1d 23h = 1, not 2)
+        days_since = int((datetime.now(timezone.utc) - last_completed).total_seconds() // 86400)
         if days_since < RETEST_COOLDOWN_DAYS:
             retry_after = RETEST_COOLDOWN_DAYS - days_since
             raise HTTPException(
@@ -177,7 +258,7 @@ async def start_assessment(
                 completed_dt = datetime.fromisoformat(prev["completed_at"])
                 if completed_dt.tzinfo is None:
                     completed_dt = completed_dt.replace(tzinfo=timezone.utc)
-                days_elapsed = max(0, (datetime.now(timezone.utc) - completed_dt).days)
+                days_elapsed = max(0.0, (datetime.now(timezone.utc) - completed_dt).total_seconds() / 86400)
                 # Widen SE by 1.5× per 90 days — the further in the past, the less we trust it
                 decay_factor = 1.5 ** (days_elapsed / 90.0)
                 prior_mean = float(prev["theta_estimate"])
@@ -225,6 +306,8 @@ async def submit_answer(
     user_id: CurrentUserId,
 ) -> AnswerFeedback:
     """Submit an answer to the current question and get the next item."""
+    # Capture now_utc once — used for expiry check, timing, and session update timestamps
+    now_utc = datetime.now(timezone.utc)
     # Load session
     session_result = (
         await db_user.table("assessment_sessions")
@@ -246,6 +329,51 @@ async def submit_answer(
             status_code=409,
             detail={"code": "SESSION_NOT_ACTIVE", "message": "This session is already completed"},
         )
+
+    # SEC-ANSWER-01: Subscription gate on every answer submission — fail-closed.
+    # A user could start a session while on trial (gated), let subscription expire,
+    # then continue submitting answers indefinitely. This closes that gap.
+    # Pattern mirrors start_assessment paywall (lines ~90-117). Both must stay in sync.
+    if settings.payment_enabled:
+        sub_result = (
+            await db_user.table("profiles")
+            .select("subscription_status")
+            .eq("id", user_id)
+            .maybe_single()
+            .execute()
+        )
+        if not sub_result.data:
+            raise HTTPException(
+                status_code=402,
+                detail={
+                    "code": "SUBSCRIPTION_REQUIRED",
+                    "message": "Your trial has ended. Subscribe to continue.",
+                },
+            )
+        sub_status = sub_result.data.get("subscription_status", "trial")
+        if sub_status in ("expired", "cancelled"):
+            raise HTTPException(
+                status_code=402,
+                detail={
+                    "code": "SUBSCRIPTION_REQUIRED",
+                    "message": "Your trial has ended. Subscribe to continue.",
+                },
+            )
+
+    # BUG-010 FIX: reject answers to expired sessions
+    # BUG-QA-023 FIX: wrap fromisoformat in try/except — malformed expires_at must not crash
+    expires_at_str = session.get("expires_at")
+    if expires_at_str:
+        try:
+            expires_at = datetime.fromisoformat(expires_at_str.replace("Z", "+00:00"))
+        except (ValueError, TypeError):
+            logger.warning("Malformed expires_at in session — skipping expiry check", session_id=session.get("id"), expires_at_raw=expires_at_str)
+            expires_at = None
+        if expires_at and now_utc > expires_at:
+            raise HTTPException(
+                status_code=410,
+                detail={"code": "SESSION_EXPIRED", "message": "This assessment session has expired. Please start a new one."},
+            )
 
     if session.get("current_question_id") != payload.question_id:
         raise HTTPException(
@@ -270,11 +398,29 @@ async def submit_answer(
     question = q_result.data
 
     # HIGH-03: Server-side timing — don't trust client response_time_ms
+    # SECURITY: Reject future question_delivered_at (DB manipulation detection).
+    # If a user tampers with assessment_sessions directly, question_delivered_at
+    # could be a future timestamp — server_elapsed_ms would be negative, bypassing
+    # all timing anti-gaming checks. Clamp to 0 and log the anomaly.
     question_delivered_at = session.get("question_delivered_at")
     if question_delivered_at:
         try:
-            delivered_dt = datetime.fromisoformat(question_delivered_at)
-            server_elapsed_ms = int((datetime.now(timezone.utc) - delivered_dt).total_seconds() * 1000)
+            delivered_dt = datetime.fromisoformat(question_delivered_at.replace("Z", "+00:00"))
+            if delivered_dt.tzinfo is None:
+                delivered_dt = delivered_dt.replace(tzinfo=timezone.utc)
+            if delivered_dt > now_utc:
+                # Future timestamp = tampered session — log and treat as 0ms elapsed
+                logger.warning(
+                    "Future question_delivered_at detected — possible DB manipulation",
+                    user_id=user_id,
+                    session_id=payload.session_id,
+                    delivered_at=question_delivered_at,
+                    server_now=now_utc.isoformat(),
+                    skew_ms=int((delivered_dt - now_utc).total_seconds() * 1000),
+                )
+                server_elapsed_ms = 0  # treat as instant answer — triggers timing flag
+            else:
+                server_elapsed_ms = int((now_utc - delivered_dt).total_seconds() * 1000)
         except (ValueError, TypeError):
             server_elapsed_ms = payload.response_time_ms  # fallback to client
     else:
@@ -288,14 +434,63 @@ async def submit_answer(
     evaluation_log: dict | None = None
     if question["type"] == "mcq":
         correct_answer: str | None = question.get("correct_answer")
-        raw_score = 1.0 if (correct_answer and payload.answer.strip() == correct_answer) else 0.0
+        if not correct_answer:
+            logger.warning("MCQ question has no correct_answer", question_id=question.get("id"))
+        raw_score = 1.0 if (correct_answer and payload.answer.strip().lower() == correct_answer.strip().lower()) else 0.0
     else:
         # Open-ended → LLM evaluation (multi-model swarm or single-model BARS)
         expected_concepts: list[dict] = question.get("expected_concepts") or []
         evaluation_log = None
-        if settings.swarm_enabled:
+
+        # ── Per-user daily LLM cap (RISK-013) ────────────────────────────────
+        # Cap open-ended LLM evaluations at 20/day per user to prevent Gemini
+        # RPM saturation by adversarial accounts (60 answers/hour × 5 accounts
+        # = 300 LLM calls → saturates 15 RPM in seconds).
+        # Strategy: count all answered items in today's sessions for this user.
+        # Each session stores items in answers JSONB — fetch answers field only.
+        # Max payload: ~3 sessions × ~8 items × ~200 bytes = tiny, no joins needed.
+        # Over the cap → force keyword_fallback (same as normal LLM failure path).
+        # The reeval_worker picks up degraded answers and rescores within ~60s.
+        _DAILY_LLM_CAP = 20
+        _force_degraded = False
+        try:
+            today_start = (
+                datetime.now(timezone.utc)
+                .replace(hour=0, minute=0, second=0, microsecond=0)
+                .isoformat()
+            )
+            today_sessions_result = (
+                await db_admin.table("assessment_sessions")
+                .select("answers")
+                .eq("volunteer_id", user_id)
+                .gte("started_at", today_start)
+                .execute()
+            )
+            daily_llm_count = 0
+            for _sess in (today_sessions_result.data or []):
+                _answers_blob = _sess.get("answers") or {}
+                daily_llm_count += len(_answers_blob.get("items", []))
+
+            if daily_llm_count >= _DAILY_LLM_CAP:
+                _force_degraded = True
+                logger.warning(
+                    "daily_llm_cap_hit",
+                    user_id=user_id,
+                    daily_count=daily_llm_count,
+                    cap=_DAILY_LLM_CAP,
+                )
+        except Exception as _cap_err:
+            # Cap check failure must never block the answer path — proceed normally
+            logger.warning(
+                "daily_llm_cap_check_failed — proceeding without cap",
+                user_id=user_id,
+                error=str(_cap_err)[:120],
+            )
+
+        if settings.swarm_enabled and not _force_degraded:
             # BUG-01 fix (2026-03-25): use return_details=True so swarm path
             # produces evaluation_log for Phase 2 Transparent Logs.
+            # Daily cap (_force_degraded=True) bypasses swarm — bars keyword_fallback used instead.
             from app.services.swarm_service import evaluate_answer as swarm_evaluate
             eval_result = await swarm_evaluate(
                 question_en=question["scenario_en"],
@@ -311,6 +506,7 @@ async def submit_answer(
                 answer=payload.answer,
                 expected_concepts=expected_concepts,
                 return_details=True,
+                force_degraded=_force_degraded,
             )
             raw_score = eval_result.composite
             evaluation_log = eval_result.to_log()
@@ -319,9 +515,7 @@ async def submit_answer(
         # The degraded score is used immediately (user sees it now); the worker will
         # silently replace it with a proper LLM score within ~60 seconds.
         if evaluation_log and evaluation_log.get("evaluation_mode") == "degraded":
-            _session_competency_id = session["competency_id"]
-            comp_result_for_slug = await db_admin.table("competencies").select("slug").eq("id", _session_competency_id).single().execute()
-            comp_slug_for_queue = comp_result_for_slug.data["slug"] if comp_result_for_slug.data else ""
+            comp_slug_for_queue = await get_competency_slug(db_admin, session["competency_id"])
             if comp_slug_for_queue:
                 from app.services.reeval_worker import enqueue_degraded_answer
                 await enqueue_degraded_answer(
@@ -369,12 +563,12 @@ async def submit_answer(
         "theta_se": state.theta_se,
         "answers": state.to_dict(),
         "current_question_id": next_q["id"] if next_q else None,
-        "question_delivered_at": datetime.now(timezone.utc).isoformat() if next_q else None,
+        "question_delivered_at": now_utc.isoformat() if next_q else None,
         "answer_version": current_version + 1,  # HIGH-01: increment version
     }
     if state.stopped:
         update_payload["status"] = "completed"
-        update_payload["completed_at"] = datetime.now(timezone.utc).isoformat()
+        update_payload["completed_at"] = now_utc.isoformat()
 
     # HIGH-01: Optimistic locking — only update if version hasn't changed
     # BLOCKER-1 FIX: Use db_admin (service_role) for updates — user-level UPDATE policy removed
@@ -389,11 +583,8 @@ async def submit_answer(
             detail={"code": "CONCURRENT_SUBMIT", "message": "This answer was already submitted. Please refresh."},
         )
 
-    # Get competency slug for response
-    comp_result = (
-        await db_admin.table("competencies").select("slug").eq("id", competency_id).single().execute()
-    )
-    slug = comp_result.data["slug"] if comp_result.data else ""
+    # Get competency slug for response (cached — 8-row static table)
+    slug = await get_competency_slug(db_admin, competency_id)
 
     session_out = make_session_out(payload.session_id, slug, state, next_q, session.get("role_level", "volunteer"))
 
@@ -434,6 +625,40 @@ async def complete_assessment(
         raise HTTPException(status_code=404, detail={"code": "SESSION_NOT_FOUND", "message": "Session not found"})
 
     session = session_result.data
+
+    # BUG-015 FIX: if session already completed, return stored results without re-running pipeline.
+    # Prevents: double upsert_aura_score, duplicate aura_history entries, double emit_rewards.
+    # Race scenario: submit_answer(last Q) + complete_assessment fire simultaneously.
+    if session.get("status") == "completed":
+        comp_result_early = (
+            await db_admin.table("competencies").select("slug").eq("id", session["competency_id"]).single().execute()
+        )
+        slug_early = comp_result_early.data["slug"] if comp_result_early.data else ""
+        state_early = CATState.from_dict(session["answers"] or {})
+        stored_multiplier = float(session.get("gaming_penalty_multiplier") or 1.0)
+        stored_flags = session.get("gaming_flags") or []
+        competency_score_early = round(theta_to_score(state_early.theta) * stored_multiplier, 2)
+        return AssessmentResultOut(
+            session_id=session_id,
+            competency_slug=slug_early,
+            competency_score=competency_score_early,
+            questions_answered=len(state_early.items),
+            stop_reason=state_early.stop_reason,
+            aura_updated=False,  # already updated in the original complete call
+            gaming_flags=stored_flags,
+            completed_at=session.get("completed_at") or datetime.now(timezone.utc),
+        )
+
+    # BUG-010 FIX: reject completion of expired sessions (expired but in_progress sessions)
+    expires_at_str = session.get("expires_at")
+    if expires_at_str and session.get("status") == "in_progress":
+        expires_at = datetime.fromisoformat(expires_at_str.replace("Z", "+00:00"))
+        if datetime.now(timezone.utc) > expires_at:
+            raise HTTPException(
+                status_code=410,
+                detail={"code": "SESSION_EXPIRED", "message": "This assessment session has expired. Please start a new one."},
+            )
+
     state = CATState.from_dict(session["answers"] or {})
 
     # Anti-gaming analysis — run ONCE here, store in session (never re-run in get_results)
@@ -441,17 +666,24 @@ async def complete_assessment(
     raw_competency_score = theta_to_score(state.theta)
     competency_score = round(raw_competency_score * gaming.penalty_multiplier, 2)
 
-    # Force-complete if somehow still open
+    # Force-complete if somehow still open — single UPDATE merging all fields (no race condition)
     if session["status"] == "in_progress":
         state.stopped = True
         state.stop_reason = "manual_complete"
         # BLOCKER-1 FIX: Use db_admin for updates (user-level UPDATE policy removed)
+        # BUG-001 FIX: merged gaming columns into single UPDATE — eliminates double-write race
         await db_admin.table("assessment_sessions").update({
             "status": "completed",
             "theta_estimate": state.theta,
             "theta_se": state.theta_se,
             "answers": state.to_dict(),
             "completed_at": datetime.now(timezone.utc).isoformat(),
+            "gaming_penalty_multiplier": gaming.penalty_multiplier,
+            "gaming_flags": gaming.flags,
+        }).eq("id", session_id).execute()
+    else:
+        # Session was already completed — still sync final gaming analysis in one update
+        await db_admin.table("assessment_sessions").update({
             "gaming_penalty_multiplier": gaming.penalty_multiplier,
             "gaming_flags": gaming.flags,
         }).eq("id", session_id).execute()
@@ -462,23 +694,42 @@ async def complete_assessment(
     )
     slug = comp_result.data["slug"] if comp_result.data else ""
 
-    # Store gaming analysis in session (prevents threshold-drift inconsistency in get_results)
-    await db_admin.table("assessment_sessions").update({
-        "gaming_penalty_multiplier": gaming.penalty_multiplier,
-        "gaming_flags": gaming.flags,
-    }).eq("id", session_id).execute()
-
     # Upsert AURA score via DB RPC
     aura_updated = False
     if slug:
-        rpc_result = await db_admin.rpc(
-            "upsert_aura_score",
-            {
-                "p_volunteer_id": user_id,
-                "p_competency_scores": {slug: competency_score},
-            },
-        ).execute()
-        aura_updated = rpc_result.data is not None
+        try:
+            rpc_result = await db_admin.rpc(
+                "upsert_aura_score",
+                {
+                    "p_volunteer_id": user_id,
+                    "p_competency_scores": {slug: competency_score},
+                },
+            ).execute()
+            aura_updated = rpc_result.data is not None
+            if not aura_updated:
+                logger.warning(
+                    "upsert_aura_score returned no data",
+                    user_id=str(user_id),
+                    competency_slug=slug,
+                    session_id=session_id,
+                )
+        except Exception as rpc_error:
+            logger.error(
+                "upsert_aura_score RPC failed — AURA score not updated",
+                user_id=str(user_id),
+                competency_slug=slug,
+                session_id=session_id,
+                error=str(rpc_error),
+            )
+            aura_updated = False
+            # Best-effort: mark session as needing AURA sync so CTO can query
+            # SELECT id FROM assessment_sessions WHERE pending_aura_sync = true
+            try:
+                await db_admin.table("assessment_sessions").update(
+                    {"pending_aura_sync": True}
+                ).eq("id", session_id).execute()
+            except Exception:
+                pass  # non-fatal — primary error is already logged above
 
     # ── Sprint A1: Emit crystal_earned + skill_verified to character_state ───
     # Best-effort: never blocks the response. Idempotency via game_character_rewards.
@@ -713,7 +964,8 @@ async def get_assessment_info(
         last_completed = datetime.fromisoformat(recent.data[0]["completed_at"])
         if last_completed.tzinfo is None:
             last_completed = last_completed.replace(tzinfo=timezone.utc)
-        days_since = (datetime.now(timezone.utc) - last_completed).days
+        # BUG-009 FIX: use total_seconds() not .days — .days truncates (1d 23h = 1, not 2)
+        days_since = int((datetime.now(timezone.utc) - last_completed).total_seconds() // 86400)
         if days_since < RETEST_COOLDOWN_DAYS:
             days_until_retake = RETEST_COOLDOWN_DAYS - days_since
 
@@ -798,7 +1050,7 @@ async def get_question_breakdown(
     question_ids = [item.question_id for item in state.items]
     q_result = (
         await db_admin.table("questions")
-        .select("id, scenario_en, scenario_az")
+        .select("id, scenario_en, scenario_az, scenario_ru")
         .in_("id", question_ids)
         .execute()
     )
@@ -822,6 +1074,7 @@ async def get_question_breakdown(
             question_id=item.question_id,
             question_en=q_data.get("scenario_en"),
             question_az=q_data.get("scenario_az"),
+            question_ru=q_data.get("scenario_ru"),
             difficulty_label=_irt_b_to_label(item.irt_b),
             is_correct=item.raw_score > 0,
             response_time_ms=item.response_time_ms,

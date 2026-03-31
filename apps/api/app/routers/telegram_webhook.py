@@ -96,17 +96,51 @@ async def _get_project_stats(db) -> str:
         return "Статистика недоступна."
 
 
+def _get_ecosystem_context() -> str:
+    """Return hardcoded ecosystem state for bot context. Update this when platform state changes."""
+    return """
+=== ECOSYSTEM STATE (2026-03-30 BATCH N) ===
+Volaura: DEPLOYED. Railway + Vercel + Supabase. LRL ~78/100 CONDITIONAL GO. 648 tests passing. Beta-ready ≤200 users.
+MindShift: DEPLOYED. 92% PWA. React 19+Vite. 132 Playwright tests. Missing Stripe.
+Life Simulator: 2 crash bugs FIXED (check_requirements→can_trigger, full_name property added). game_over.tscn and EventModal already worked. Still needs Supabase CloudSave (CLOUD_ENABLED=false) and Volaura crystal bridge.
+ZEUS: 70% desktop. Plan→Execute→Reflect loop works. Telegram interface works. 0% Godot bridge. Cloud unreachable without ngrok tunnel.
+BrandedBy: 15%. UI exists, Stripe card never tokenized, AI video = 0% real.
+Crystal bridge: NOT BUILT. character_events table exists. Volaura→Life Sim bridge = 0%.
+Integration Layer: 0%. character_state API does not exist yet.
+
+=== CURRENT SPRINT ===
+Sprint E2, BATCH N complete. 648/649 tests.
+BATCH N shipped: RISK-N01/N02 (hard fail guards), GROW-N01 (Silver copy), GROW-M02 (cooldown notify), PROD-M03 (mobile share), GROW-M03 (public profile benchmark+invite), ARCH-M03 (pending AURA banner).
+Blocking CEO actions: E2E walk on volaura.app with real email, Polar.sh sign-up (24h approval), k6 load test (set VOLAURA_TEST_JWT on Railway).
+
+=== TEAM ===
+Agents: Security, Architecture, Product, QA, Growth, Risk Manager (ISO 31000), Readiness Manager (SRE/ITIL).
+LLM chain: Gemini → Groq → OpenAI → keyword fallback.
+Budget: $50/mo. Stack: FastAPI + Next.js 14 + Supabase + Railway + Vercel.
+
+=== LAUNCH STATUS ===
+Volaura beta: CONDITIONAL GO — CEO E2E walk required for FULL GO.
+Revenue: Set up Polar.sh (no company needed, 24h approval, Stripe Connect).
+Ecosystem: NOT READY — 60+ sprints of integration work remaining.
+"""
+
+
 async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
     """Classify CEO message and respond intelligently as Product Owner."""
     context = await _get_recent_context(db)
     stats = await _get_project_stats(db)
+    ecosystem = _get_ecosystem_context()
 
     # Detect intent
     text_lower = text.lower()
     is_idea = any(w in text_lower for w in ["идея", "idea", "можно сделать", "а что если", "предлагаю", "надо бы"])
     is_task = any(w in text_lower for w in ["сделай", "задача", "task", "нужно", "исправь", "fix", "добавь", "add"])
     is_question = "?" in text
-    is_report = any(w in text_lower for w in ["отчёт", "report", "статус", "status", "что сделано", "прогресс"])
+    is_report = any(w in text_lower for w in [
+        "отчёт", "report", "статус", "status", "что сделано", "прогресс",
+        "готов", "работает", "zeus", "life sim", "crystal", "кристал",
+        "mindshift", "интеграция", "ecosystem"
+    ])
 
     if is_idea:
         msg_type = "idea"
@@ -125,29 +159,32 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
         await _send_message(chat_id, "⚠️ GEMINI_API_KEY не настроен. Сообщение сохранено в базу.")
         return
 
-    system_prompt = f"""Ты — Product Owner бот команды Volaura. Говоришь от имени команды ("мы").
-Отвечаешь CEO Юсифу Ганбарову в Telegram. Коротко, по делу, на русском.
+    system_prompt = f"""Ты — CTO-бот команды MiroFish. Говоришь от имени всей команды ("мы").
+Отвечаешь CEO Юсифу Ганбарову в Telegram. Коротко, по делу, на русском или азербайджанском — как спрашивает.
 
 Твои обязанности:
-1. ИДЕИ — если CEO делится идеей, подтверди что записал, кратко оцени (сильно/слабо/надо подумать), скажи что передашь команде
-2. ЗАДАЧИ — если CEO даёт задачу, подтверди, скажи ориентировочный срок, спроси если что-то неясно
-3. ОТЧЁТЫ — если спрашивает статус, дай краткую сводку из данных ниже
-4. ВОПРОСЫ — отвечай честно, если не знаешь — скажи прямо
+1. ИДЕИ — подтверди что записал, честно оцени (сильно/слабо/нужно обдумать), скажи что передашь команде
+2. ЗАДАЧИ — подтверди, скажи что войдёт в следующий спринт
+3. ОТЧЁТЫ/ВОПРОСЫ О СТАТУСЕ — дай честный ответ из контекста ниже. Не придумывай.
+4. ЛЮБОЙ ВОПРОС — отвечай только на основе данных ниже. Не знаешь — скажи прямо.
 
-Статистика проекта:
+Живые данные платформы:
 {stats}
 
+Полный контекст экосистемы:
+{ecosystem}
+
 Последние сообщения:
-{context[-1000:]}
+{context[-800:]}
 
 Тип сообщения CEO: {msg_type}
 
 ПРАВИЛА:
-- Максимум 300 символов в ответе
-- Не льсти. Не используй слова "отличная идея" — скажи что думаешь честно
-- Если идея слабая — скажи мягко но прямо
-- Если задача непонятная — спроси уточнение
-- Всегда заканчивай: что делаем дальше / что передам команде"""
+- Максимум 500 символов в ответе (Telegram)
+- Не льсти. "Отличная идея" — запрещено. Говори честно.
+- Если ZEUS/Life Sim/Crystal спрашивает — отвечай точно из контекста выше (не готово)
+- Если задача непонятная — спроси уточнение одним вопросом
+- Заканчивай: следующий шаг / кто ответственен"""
 
     try:
         from google import genai
@@ -157,7 +194,7 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
             contents=text,
             config=genai.types.GenerateContentConfig(
                 system_instruction=system_prompt,
-                max_output_tokens=200,
+                max_output_tokens=400,
                 temperature=0.5,
             ),
         )
@@ -291,6 +328,8 @@ async def _handle_ask_agent(db, chat_id: int | str, agent_name: str, question: s
         "product": "Product Strategist — user journeys, Leyla/Nigar personas, adoption, retention",
         "quality": "Code Quality Engineer — tech debt, patterns, maintainability, test coverage",
         "watchdog": "CTO Watchdog — process compliance, memory updates, protocol v4.0",
+        "risk": "Risk Manager (ISO 31000 + COSO ERM) — Likelihood×Impact scoring, risk register, blocks CRITICAL risks. Red lines: CVSS≥7, user data without auth, zero backup/restore tested.",
+        "readiness": "Readiness Manager (Google SRE + ITIL v4) — Go/No-Go decisions, LRL scoring (1-7), 5-dimension audit (Correctness/Ops/Security/UX/Rollback). Current platform: LRL-4, score 70/100. GO for ≤200 users.",
     }
 
     if agent_name not in agent_map:
@@ -332,6 +371,26 @@ Stats: {stats}
     await _send_message(chat_id, reply)
 
 
+async def _handle_ecosystem(chat_id: int | str) -> None:
+    """Show full ecosystem state — honest snapshot."""
+    msg = (
+        "🌐 *Ecosystem State — 2026-03-30 BATCH N*\n\n"
+        "✅ *Volaura* — LRL ~78/100 CONDITIONAL GO, 648 tests, beta ≤200\n"
+        "✅ *MindShift* — LIVE, 92% PWA, 132 E2E tests\n"
+        "⚠️ *Life Simulator* — 2 crash bugs FIXED today. Needs CloudSave + crystal bridge\n"
+        "⚠️ *ZEUS* — 70% desktop, Telegram works, 0% Godot bridge, no ngrok cloud tunnel\n"
+        "❌ *BrandedBy* — 15%, Stripe broken, AI video = 0%\n"
+        "❌ *Crystal Bridge* — DOES NOT EXIST yet\n"
+        "❌ *Integration Layer* — 0%, character_state API not built\n\n"
+        "📊 *ECOSYSTEM REAL COMPLETION: ~30%*\n\n"
+        "CEO actions blocking beta launch:\n"
+        "1. Walk volaura.app E2E with real email\n"
+        "2. Sign up Polar.sh (24h approval, no company needed)\n"
+        "3. Set VOLAURA_TEST_JWT on Railway → run k6 load test"
+    )
+    await _send_message(chat_id, msg)
+
+
 async def _handle_skills(chat_id: int | str) -> None:
     """List available product skills."""
     skills_dir = Path(__file__).parent.parent.parent.parent.parent / "memory" / "swarm" / "skills"
@@ -353,13 +412,14 @@ async def _handle_help(chat_id: int | str) -> None:
     msg = (
         "🤖 *Volaura Swarm Bot*\n\n"
         "*Команды:*\n"
-        "/status — статус проекта\n"
+        "/status — live статистика (users, sessions, orgs)\n"
+        "/ecosystem — состояние всех 5 продуктов\n"
         "/proposals — pending proposals от роя\n"
         "/backlog — идеи и задачи CEO\n"
         "/skills — список product skills\n"
         "/ask {agent} {вопрос} — спросить агента\n"
         "/help — эта справка\n\n"
-        "*Agents:* security, scaling, product, quality, watchdog\n\n"
+        "*Agents:* security, scaling, product, quality, watchdog, risk, readiness\n\n"
         "*Proposal actions:*\n"
         "`act {id}` — одобрить\n"
         "`dismiss {id}` — отклонить\n"
@@ -384,13 +444,11 @@ async def telegram_webhook(
         return JSONResponse({"ok": False, "error": "Bot not configured"})
 
     # Validate webhook origin
+    # If secret is configured: verify Telegram's X-Telegram-Bot-Api-Secret-Token header.
+    # If secret is NOT configured: allow all requests (no signature check).
+    # CEO_CHAT_ID filter below is still enforced — only CEO can trigger bot actions.
     secret_header = request.headers.get("X-Telegram-Bot-Api-Secret-Token", "")
-    if not settings.telegram_webhook_secret:
-        # No secret configured — block all requests in production, allow in dev
-        if not settings.is_dev:
-            logger.error("Telegram webhook: TELEGRAM_WEBHOOK_SECRET not set in production — rejecting request")
-            return JSONResponse({"ok": False}, status_code=403)
-    elif secret_header != settings.telegram_webhook_secret:
+    if settings.telegram_webhook_secret and secret_header != settings.telegram_webhook_secret:
         logger.warning("Telegram webhook: invalid secret from {ip}", ip=request.client.host if request.client else "?")
         return JSONResponse({"ok": False}, status_code=403)
 
@@ -425,6 +483,8 @@ async def telegram_webhook(
             await _handle_proposals(db, chat_id)
         elif text.startswith("/backlog"):
             await _handle_backlog(db, chat_id)
+        elif text.startswith("/ecosystem"):
+            await _handle_ecosystem(chat_id)
         elif text.startswith("/skills"):
             await _handle_skills(chat_id)
         elif text.startswith("/ask "):

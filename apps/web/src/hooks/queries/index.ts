@@ -14,3 +14,5 @@ export { usePublicStats } from "./use-public-stats";
 export type { PublicStats } from "./use-public-stats";
 export { useSkill } from "./use-skill";
 export type { SkillResponse } from "./use-skill";
+export { useSubscription } from "./use-subscription";
+export type { SubscriptionStatus, UseSubscriptionResult } from "./use-subscription";

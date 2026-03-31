@@ -1,0 +1,480 @@
+[
+  {
+    "id": "prof-qa-s5-001",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.4,
+    "irt_b": -0.8,
+    "irt_c": 0.12,
+    "scenario_en": "You are a QA engineer at a Baku software company that holds a contract with DƏIM (Ministry of Labour and Social Protection of the Population). During routine penetration testing of the ministry's citizen portal, you discover an exploitable SQL injection vulnerability that exposes pension records. Your project manager says the fix will take 3 days. What is your immediate required action under AZ government contractor obligations?",
+    "scenario_az": "Siz DƏIM (Əmək və Əhalinin Sosial Müdafiəsi Nazirliyi) ilə müqavilə bağlamış Bakı proqram şirkətinin QA mühəndisisiniz. Nazirliyin vətəndaş portalının müntəzəm penetrasiya testləri zamanı pensiya qeydlərini ifşa edən istismar edilə bilən SQL injection zəifliyini aşkar edirsiniz. Layihə meneceriniz düzəlişin 3 gün çəkəcəyini bildirir. AZ hökumət podratçısı öhdəlikləri çərçivəsində dərhal hansı addımı atmalısınız?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Wait for the fix to be deployed before reporting, to avoid alarming stakeholders with an unfixed issue",
+        "text_az": "Həll edilməmiş problemlə maraqlı tərəfləri narahat etməmək üçün düzəliş tətbiq edilənə qədər hesabat verməyi gözləyin"
+      },
+      {
+        "key": "B",
+        "text_en": "Report the exploitable vulnerability to DƏIM's security contact within 24 hours of discovery, regardless of fix status",
+        "text_az": "Düzəliş vəziyyətindən asılı olmayaraq, aşkarlanmadan 24 saat ərzində DƏIM-in təhlükəsizlik əlaqəsinə istismar edilə bilən zəifliyi bildirin"
+      },
+      {
+        "key": "C",
+        "text_en": "Escalate internally to the CTO and wait for their decision on timing",
+        "text_az": "Daxili olaraq CTO-ya eskalasiya edin və vaxt barədə onların qərarını gözləyin"
+      },
+      {
+        "key": "D",
+        "text_en": "Document the vulnerability in the next sprint retrospective report",
+        "text_az": "Zəifliyi növbəti sprint retrospektiv hesabatında sənədləşdirin"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. DƏIM requires government contractors to report exploitable vulnerabilities in ministry systems within 24 hours of discovery. This obligation exists independently of fix readiness — the ministry must be informed so they can activate their own incident response. A is wrong because delaying notification to await a fix violates the 24-hour rule and constitutes a contract breach. C is wrong because internal escalation does not substitute for mandatory external disclosure to the contracting ministry. D is catastrophically wrong — a sprint retrospective is not a security disclosure channel.",
+    "feedback_az": "B düzgündür. DƏIM hökumət podratçılarından nazirlik sistemlərindəki istismar edilə bilən zəiflikləri aşkarlanmadan 24 saat ərzində bildirməyi tələb edir. Bu öhdəlik düzəliş hazırlığından asılı olmayaraq mövcuddur — nazirlik öz insidenta cavab mexanizmini aktivləşdirə bilmək üçün məlumatlandırılmalıdır. A yanlışdır, çünki düzəlişi gözləmək üçün bildirişi gecikdirmək 24 saatlıq qaydanı pozur. C yanlışdır, çünki daxili eskalasiya müqavilə nazirliyi üçün məcburi xarici ifşanın yerini tutmur. D fəlakətli dərəcədə yanlışdır.",
+    "development_tip_en": "Memorise the DƏIM 24-hour rule as a hard deadline, not a guideline. For all gov contracts, establish a named security contact at the ministry before project kick-off so disclosure can happen immediately without hunting for the right person at 2am.",
+    "development_tip_az": "DƏIM-in 24 saatlıq qaydasını tövsiyə kimi deyil, sərt son tarix kimi yadda saxlayın. Bütün hökumət müqavilələri üçün layihə başlamazdan əvvəl nazirlikdə adlandırılmış təhlükəsizlik əlaqəsi qurun.",
+    "london_delta": "A London QA following NCSC Coordinated Vulnerability Disclosure Policy (90-day window before public disclosure) would treat 24 hours as an internal triage window only and delay ministry notification. AZ consequence: DƏIM requires exploitable vulnerability disclosure within 24 hours of discovery for all government contractors — missing this deadline results in 12-month procurement blacklisting across all ministry tenders.",
+    "az_institutions": [
+      "DƏIM"
+    ],
+    "tags": [
+      "qa-engineering",
+      "vulnerability-disclosure",
+      "az-specific",
+      "government-contractor"
+    ]
+  },
+  {
+    "id": "prof-qa-s5-002",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.3,
+    "irt_b": -0.5,
+    "irt_c": 0.1,
+    "scenario_en": "Your team has built a new citizen-facing feature for the e-GOV portal that allows users to authenticate via ASAN xidmət (Azerbaijan's national digital identity service). Before release, your test lead asks you to define the regression test scope. A colleague suggests testing only the new feature's own UI flows. What is the correct minimum regression scope for an e-GOV portal update with ASAN xidmət integration?",
+    "scenario_az": "Komandanız vətəndaşlara yönəlik e-GOV portalı üçün yeni bir xüsusiyyət qurmuşdur ki, bu da istifadəçilərə ASAN xidmət (Azərbaycanın milli rəqəmsal şəxsiyyət xidməti) vasitəsilə autentifikasiya etməyə imkan verir. Buraxılışdan əvvəl test rəhbəriniz reqressiya testinin əhatə dairəsini müəyyənləşdirməyinizi xahiş edir. Bir həmkar yalnız yeni xüsusiyyətin öz UI axışlarını test etməyi təklif edir. ASAN xidmət inteqrasiyası olan e-GOV portal yeniləməsi üçün düzgün minimum reqressiya əhatəsi nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Test only the new ASAN authentication UI screens added in this sprint",
+        "text_az": "Yalnız bu sprintdə əlavə edilmiş yeni ASAN autentifikasiya UI ekranlarını test edin"
+      },
+      {
+        "key": "B",
+        "text_en": "Test the new feature plus all existing e-GOV portal services that rely on session tokens issued by ASAN xidmət, including cross-service single sign-on flows",
+        "text_az": "Yeni xüsusiyyəti və ASAN xidmət tərəfindən verilən sessiya tokenlərinə əsaslanan bütün mövcud e-GOV portal xidmətlərini, o cümlədən xidmətlərarası tək giriş axışlarını test edin"
+      },
+      {
+        "key": "C",
+        "text_en": "Defer regression to the ASAN xidmət team, since their service is the integration point",
+        "text_az": "Reqressiyanı ASAN xidmət komandasına həvalə edin, çünki onların xidməti inteqrasiya nöqtəsidir"
+      },
+      {
+        "key": "D",
+        "text_en": "Run only automated smoke tests on the homepage and login page",
+        "text_az": "Yalnız ana səhifə və giriş səhifəsində avtomatlaşdırılmış tüstü testləri aparın"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. ASAN xidmət is the single authentication backbone for the e-GOV portal — any change to how its tokens are issued, validated, or expired can silently break downstream services that depend on those sessions. Regression scope must cover all integrated services, not just the changed component. A is wrong because it misses cascade effects. C is wrong because ownership of the integration point does not transfer test responsibility. D is wrong because smoke tests cannot verify session propagation across services.",
+    "feedback_az": "B düzgündür. ASAN xidmət e-GOV portalı üçün vahid autentifikasiya əsasıdır — tokenların necə verildiyi, doğrulandığı və ya müddəti bitdiyi ilə bağlı istənilən dəyişiklik həmin sessiyalara əsaslanan aşağı axın xidmətlərini səssiz şəkildə poza bilər. Reqressiya əhatəsi yalnız dəyişdirilmiş komponent deyil, bütün inteqrasiya edilmiş xidmətləri əhatə etməlidir. A yanlışdır, çünki kaskad effektlərini əhatə etmir. C yanlışdır, çünki inteqrasiya nöqtəsinin mülkiyyəti test məsuliyyətini köçürmür.",
+    "development_tip_en": "For any shared authentication provider (ASAN xidmət, OAuth2 SSO), map all downstream services that consume session tokens before writing your regression plan. A token format change in ASAN can break 40+ e-GOV services simultaneously — your regression scope must reflect that dependency graph.",
+    "development_tip_az": "İstənilən paylaşılan autentifikasiya provayderi (ASAN xidmət, OAuth2 SSO) üçün reqressiya planınızı yazmadan əvvəl sessiya tokenlərini istehlak edən bütün aşağı axın xidmətlərini xəritəyə çəkin.",
+    "london_delta": "A London QA following ISTQB Advanced Level Test Analyst syllabus (Chapter 3.2: Impact Analysis for Regression Selection) would apply a change-impact matrix limited to directly modified modules. AZ consequence: e-GOV portal's ASAN xidmət integration creates a single-point authentication dependency across all 47 registered ministry services — a token validation regression caught post-release would require coordinated rollback across all affected services, triggering mandatory incident report to the State Agency for Public Service and Social Innovations.",
+    "az_institutions": [
+      "ASAN xidmət",
+      "e-GOV portal"
+    ],
+    "tags": [
+      "qa-engineering",
+      "regression-testing",
+      "asan-integration",
+      "az-specific"
+    ]
+  },
+  {
+    "id": "prof-qa-s5-003",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.5,
+    "irt_b": 0.2,
+    "irt_c": 0.15,
+    "scenario_en": "You are leading QA for a fintech startup preparing to launch a mobile payment application in Azerbaijan. The Central Bank of Azerbaijan (CBA) has specific pre-launch testing requirements for payment applications. Your PM wants to submit the CBA approval application next week. Which combination of tests is the minimum required by CBA before a fintech app can go live in Azerbaijan?",
+    "scenario_az": "Siz Azərbaycanda mobil ödəniş tətbiqi işə salmağa hazırlaşan fintech startapı üçün QA-ya rəhbərlik edirsiniz. Azərbaycan Mərkəzi Bankı (AMB) ödəniş tətbiqləri üçün xüsusi buraxılışdan əvvəl test tələbləri müəyyənləşdirmişdir. PM-iniz növbəti həftə AMB təsdiq ərizəsini təqdim etmək istəyir. AMB tərəfindən Azərbaycanda fintech tətbiqinin canlıya çıxması üçün tələb olunan testlərin minimum kombinasiyası hansıdır?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Functional testing and user acceptance testing (UAT) only",
+        "text_az": "Yalnız funksional test və istifadəçi qəbul testi (UAT)"
+      },
+      {
+        "key": "B",
+        "text_en": "Security penetration testing, functional testing, and load testing demonstrating system stability under peak transaction volumes",
+        "text_az": "Təhlükəsizlik penetrasiya testi, funksional test və pik əməliyyat həcmlərində sistem sabitliyini nümayiş etdirən yük testi"
+      },
+      {
+        "key": "C",
+        "text_en": "Automated regression suite with 80% code coverage",
+        "text_az": "80% kod əhatəsi ilə avtomatlaşdırılmış reqressiya dəsti"
+      },
+      {
+        "key": "D",
+        "text_en": "ISO/IEC 25010 quality model compliance report submitted by the development team",
+        "text_az": "İnkişaf komandası tərəfindən təqdim edilmiş ISO/IEC 25010 keyfiyyət modeli uyğunluq hesabatı"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. The Central Bank of Azerbaijan (CBA) requires fintech applications to complete security penetration testing (to meet financial data protection standards), functional testing (to verify core payment flows), and load/stress testing (to prove the system can handle declared transaction volumes before receiving processing approval). A is insufficient because it omits security and load requirements. C is wrong because code coverage metrics are not a CBA submission requirement — penetration test results are. D is wrong because a self-reported quality model compliance document does not satisfy CBA's independent testing requirements.",
+    "feedback_az": "B düzgündür. Azərbaycan Mərkəzi Bankı (AMB) fintech tətbiqlərindən təhlükəsizlik penetrasiya testini (maliyyə məlumatlarının mühafizəsi standartlarını ödəmək üçün), funksional testi (əsas ödəniş axışlarını yoxlamaq üçün) və yük/stres testini (sistemin emal təsdiqini almadan əvvəl elan edilmiş əməliyyat həcmlərini öhdəsinə ala biləcəyini sübut etmək üçün) tamamlamasını tələb edir. A kifayətsizdir, çünki təhlükəsizlik və yük tələblərini buraxır. C yanlışdır, çünki kod əhatəsi göstəriciləri AMB-nin təqdim tələbi deyil. D yanlışdır.",
+    "development_tip_en": "Build your CBA pre-launch test checklist early: pen-test results (external vendor), functional test report, and load test evidence with transaction volume projections. CBA reviewers look for load test scenarios that match your declared maximum concurrent users — use your business plan's peak figures, not arbitrary round numbers.",
+    "development_tip_az": "AMB buraxılış öncəsi test yoxlama siyahınızı erkən hazırlayın: penetrasiya testi nəticələri (xarici satıcı), funksional test hesabatı və əməliyyat həcmi proqnozları olan yük testi sübutu.",
+    "london_delta": "A London QA following PCI DSS v4.0 Requirement 6.4 (security testing of payment applications) would prioritise ASV scan results and internal pen-test over load testing, treating load testing as optional pre-launch. AZ consequence: CBA requires load testing demonstrating stability at declared peak transaction volumes as a mandatory pre-approval submission — omitting this evidence causes rejection of the operating licence application, with resubmission only permitted after a 30-day waiting period.",
+    "az_institutions": [
+      "AMB",
+      "CBA"
+    ],
+    "tags": [
+      "qa-engineering",
+      "fintech",
+      "cba-compliance",
+      "az-specific"
+    ]
+  },
+  {
+    "id": "prof-qa-s5-004",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.4,
+    "irt_b": 0.5,
+    "irt_c": 0.12,
+    "scenario_en": "You are three weeks into a four-week testing cycle for a safety-critical train door control system being delivered to Baku Metro (under the Ministry of Transport's IT infrastructure programme). Mid-sprint, the Ministry of Transport issues an emergency directive requiring all Baku Metro safety systems to comply with a new AZ railway safety standard — AZS 4512-2026 — effective immediately. This standard adds 12 new mandatory test cases that were not in your original test plan. Your sprint has capacity for 6 more test cases. What is the most appropriate response?",
+    "scenario_az": "Siz Naqliyyat Nazirliyinin İT infrastruktur proqramı çərçivəsində Bakı Metrosuna çatdırılan təhlükəsizlik baxımından kritik qatarın qapı idarəetmə sistemi üçün dörd həftəlik test dövrünün üç həftəsini keçirmisiniz. Sprint ortasında Naqliyyat Nazirliyi bütün Bakı Metro təhlükəsizlik sistemlərinin yeni AZ dəmir yolu təhlükəsizlik standartına — AZS 4512-2026 — dərhal uyğun olmasını tələb edən fövqəladə direktiv verir. Bu standart ilkin test planınızda olmayan 12 yeni məcburi test halı əlavə edir. Sprintinizin daha 6 test halı üçün tutumu var. Ən uyğun cavab nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Complete the original 6 remaining test cases first, then raise a new project change request for the AZS 4512-2026 cases in the next sprint",
+        "text_az": "Əvvəlcə orijinal qalan 6 test halını tamamlayın, sonra növbəti sprintdə AZS 4512-2026 halları üçün yeni layihə dəyişiklik sorğusu verin"
+      },
+      {
+        "key": "B",
+        "text_en": "Immediately halt the current sprint, inform the Ministry of Transport that delivery is delayed until all 12 new test cases are completed, and restart the test plan",
+        "text_az": "Dərhal cari sprinti dayandırın, Naqliyyat Nazirliyini çatdırılmanın bütün 12 yeni test halı tamamlanana qədər gecikdirildiyini bildirin və test planını yenidən başladın"
+      },
+      {
+        "key": "C",
+        "text_en": "Triage the 12 new AZS 4512-2026 cases by safety criticality: execute the highest-risk 6 this sprint, document the remaining 6 as a formal risk acceptance requiring Ministry sign-off, and negotiate a phased compliance schedule with the Ministry of Transport",
+        "text_az": "12 yeni AZS 4512-2026 halını təhlükəsizlik kritikliyinə görə sıralayın: ən yüksək riskli 6-nı bu sprintdə icra edin, qalan 6-nı Nazirliyin imzasını tələb edən rəsmi risk qəbulu kimi sənədləşdirin və Naqliyyat Nazirliyi ilə mərhələli uyğunluq cədvəli üzrə danışıqlar aparın"
+      },
+      {
+        "key": "D",
+        "text_en": "Run all 12 new test cases by reducing thoroughness — execute each in 50% of the planned time and mark them all as passed provisionally",
+        "text_az": "Dərinliyi azaltmaqla bütün 12 yeni test halını icra edin — hər birini planlaşdırılan vaxtın 50%-də yerinə yetirin və hamısını müvəqqəti olaraq keçmiş kimi işarələyin"
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct. For safety-critical systems, triage by risk is the professional response to a mid-sprint regulatory change. You cannot delay safety-critical compliance indefinitely (A is irresponsible), you cannot unilaterally halt delivery without stakeholder agreement (B is premature), and you must never falsify test results for a safety system (D is an ethical violation that could endanger lives). C acknowledges the constraint, prioritises the highest-risk items, makes the residual risk visible to the authority that issued the directive, and creates a documented compliance path. The Ministry of Transport issued this directive — they are the appropriate party to sign off on phased compliance for their own standard.",
+    "feedback_az": "C düzgündür. Təhlükəsizlik baxımından kritik sistemlər üçün sprinting ortasındakı tənzimləyici dəyişikliyə risk üzrə seçim peşəkar cavabdır. Təhlükəsizlik baxımından kritik uyğunluğu qeyri-müəyyən müddətə gecikdirə bilməzsiniz (A məsuliyyətsizdir), maraqlı tərəflərin razılığı olmadan birtərəfli olaraq çatdırılmanı dayandıra bilməzsiniz (B vaxtından əvvəldir) və heç vaxt təhlükəsizlik sistemi üçün test nəticələrini saxtalaşdırmamalısınız (D həyatları təhlükəyə ata biləcək etik pozuntudur).",
+    "development_tip_en": "Safety-critical test plans in AZ gov contracts must include a regulatory change clause that specifies: who triages new requirements, what the escalation path is, and what constitutes acceptable phased compliance. Build this into your test strategy document, not your sprint backlog.",
+    "development_tip_az": "AZ hökumət müqavilələrindəki təhlükəsizlik baxımından kritik test planları tənzimləyici dəyişiklik bəndini əhatə etməlidir: yeni tələbləri kim seçir, eskalasiya yolu nədir və qəbul edilə bilən mərhələli uyğunluğu nə təşkil edir.",
+    "london_delta": "A London QA following ISO/IEC 29119-2 (Test Planning) standard practice would raise a formal scope change request and wait for change control board approval before altering the test plan — a process typically taking 5-10 business days. AZ consequence: Baku Metro's Ministry of Transport directive takes immediate effect for safety systems — waiting for change control board approval while safety-critical tests remain incomplete exposes the contractor to liability under AZ transport safety regulations and risks suspension of the delivery acceptance certificate.",
+    "az_institutions": [
+      "Naqliyyat Nazirliyi",
+      "Bakı Metrosu"
+    ],
+    "tags": [
+      "qa-engineering",
+      "safety-critical",
+      "regulatory-change",
+      "az-specific"
+    ]
+  },
+  {
+    "id": "prof-qa-s5-005",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency_slug": "communication",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.5,
+    "irt_b": 0.7,
+    "irt_c": 0.1,
+    "scenario_en": "You have completed a test coverage analysis for a Ministry of Digital Development project in Azerbaijan and found that 35% of payment processing flows are untested. You must present this finding to the Ministry's Deputy Minister — a senior government official with no technical background who will make the go/no-go launch decision. Which approach is most effective?",
+    "scenario_az": "Siz Azərbaycan Rəqəmsal İnkişaf Nazirliyinin layihəsi üçün test əhatəsi təhlilini tamamlamısınız və ödəniş emalı axışlarının 35%-nin test edilmədiyini aşkar etmisiniz. Bu tapıntını texniki fonu olmayan baş nazir müavininə — baş hökumət məmurunə, yəni getmə/getməmə qərarını verəcək şəxsə — təqdim etməlisiniz. Hansı yanaşma daha effektivdir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Present the full technical report including test case IDs, code coverage percentages, and OWASP risk ratings for each gap",
+        "text_az": "Test halı ID-lərini, kod əhatəsi faizlərini və hər boşluq üçün OWASP risk reytinqlərini əhatə edən tam texniki hesabatı təqdim edin"
+      },
+      {
+        "key": "B",
+        "text_en": "Say 'everything is mostly fine, just a few minor gaps' to avoid alarming the official before you've had time to fix things",
+        "text_az": "Düzəltməyə vaxtınız olmadan məmuru narahat etməmək üçün 'hər şey əsasən yaxşıdır, yalnız bir neçə kiçik boşluq var' deyin"
+      },
+      {
+        "key": "C",
+        "text_en": "Frame the finding as a citizen impact risk: 'If we launch now, 1 in 3 payment journeys has not been validated — this means citizens may encounter failed transactions on the Ministry's portal with no clear error message, which reflects on the Ministry's reliability in citizens' eyes.' Then present two options: delay launch 2 weeks to close the gaps, or launch with a monitored rollout plan.",
+        "text_az": "'İndi işə salsaq, hər 3 ödəniş yolundan 1-i təsdiqlənməmişdir — bu, vətəndaşların Nazirliyin portalında aydın xəta mesajı olmadan uğursuz əməliyyatlarla üzləşə biləcəyi anlamına gəlir ki, bu da vətəndaşların gözündə Nazirliyin etibarlılığına təsir edir' deyərək tapıntını vətəndaş təsiri riski kimi çərçivələyin. Sonra iki seçenek təqdim edin: boşluqları bağlamaq üçün işə salmanı 2 həftə gecikdirin və ya izlənilən yayılma planı ilə işə salın."
+      },
+      {
+        "key": "D",
+        "text_en": "Ask the development team to retroactively mark the untested flows as 'low priority' to reduce the apparent gap before the meeting",
+        "text_az": "Görüşdən əvvəl görünən boşluğu azaltmaq üçün inkişaf komandasından test edilməmiş axışları geriyə dönük olaraq 'aşağı prioritet' kimi işarələmələrini xahiş edin"
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct. Non-technical decision-makers act on citizen impact and institutional reputation — not on test case IDs or OWASP scores. Framing 35% untested payment flows as 'citizens may encounter failed transactions' translates a technical gap into a ministerial concern the Deputy Minister can act on. Offering two options (delay vs monitored rollout) is respectful of their decision authority while giving them the information to decide responsibly. A overwhelms a non-technical audience and buries the key risk signal. B is professionally dishonest and potentially exposes you to liability. D is document falsification — a serious professional and legal violation.",
+    "feedback_az": "C düzgündür. Texniki olmayan qərar qəbul edənlər texniki hallar ID-lərinə deyil, vətəndaş təsirinə və institusional reputasiyaya görə hərəkət edirlər. 35% test edilməmiş ödəniş axışlarını 'vətəndaşlar uğursuz əməliyyatlarla üzləşə bilər' kimi çərçivələmək texniki boşluğu Nazir müavininin həll edə biləcəyi nazirlik narahatçılığına çevirir. A texniki olmayan auditoriyaya öhdəsindən gəlinməyəcək miqdar verir. B peşəkar cəhətdən vicdansızdır. D sənəd saxtakarlığıdır.",
+    "development_tip_en": "When presenting test findings to government officials in Azerbaijan, always lead with citizen outcome and institutional risk — never with technical metrics. The phrase 'this affects how citizens experience the Ministry's service' lands far more effectively than any coverage percentage. Prepare a one-page decision brief, not a technical report.",
+    "development_tip_az": "Azərbaycanda hökumət məmurlarına test tapıntıları təqdim edərkən həmişə texniki göstəricilərlə deyil, vətəndaş nəticəsi və institusional riskle başlayın.",
+    "london_delta": "A London QA following ISTQB Advanced Level Test Analyst syllabus (Chapter 5.3: Communicating Test Status to Stakeholders) would produce a RAG status dashboard with OWASP risk matrix and present it to the steering committee. AZ consequence: Ministry of Digital Development officials evaluate vendor reliability based on how findings are communicated — presenting a RAG dashboard without translating risks into citizen impact language signals that the QA team does not understand the ministry's accountability framework, reducing confidence in the team's judgement for future contract renewals.",
+    "az_institutions": [
+      "Rəqəmsal İnkişaf Nazirliyi"
+    ],
+    "tags": [
+      "qa-engineering",
+      "stakeholder-communication",
+      "government",
+      "az-specific"
+    ]
+  },
+  {
+    "id": "prof-qa-s5-006",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.6,
+    "irt_b": 0.9,
+    "irt_c": 0.12,
+    "scenario_en": "You are the lead QA engineer on an ASAN xidmət portal upgrade project. You have documented a critical race condition in the session management module — under concurrent login attempts, the system can issue duplicate active sessions for the same citizen UID, potentially allowing one citizen to access another's documents. The senior developer responds: 'We're already 2 weeks behind schedule. This is a theoretical edge case — we've never seen it in production. We're shipping tomorrow.' What is your most appropriate response?",
+    "scenario_az": "Siz ASAN xidmət portal yüksəltmə layihəsinin aparıcı QA mühəndisiniz. Sessiya idarəetmə modulunda kritik irq vəziyyəti sənədləşdirdiniz — eyni vaxtda giriş cəhdlərinin olduğu halda sistem eyni vətəndaş UID-si üçün dublikat aktiv sessiyalar verə bilər ki, bu da bir vətəndaşın digərinin sənədlərinə daxil olmasına potensial imkan verir. Baş inkişafçı cavab verir: 'Artıq 2 həftə gecikirik. Bu nəzəri kənar hal hesab edilir — onu istehsalda heç görmədik. Sabah çatdırırıq.' Ən uyğun cavabınız nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Accept the developer's assessment — they know the codebase better than you and production history is a valid signal",
+        "text_az": "İnkişafçının qiymətləndirməsini qəbul edin — onlar kodları sizdən daha yaxşı tanıyır və istehsal tarixi etibarlı siqnaldır"
+      },
+      {
+        "key": "B",
+        "text_en": "Escalate immediately to the project manager and document in writing that you have flagged a session isolation defect involving citizen document access before shipment — cite the ASAN xidmət data scope (citizen identity documents) to establish severity",
+        "text_az": "Dərhal layihə menecerinə eskalasiya edin və vətəndaş sənədinə daxil olmaqla bağlı sessiya izolyasiya qüsurunu göndərmədən əvvəl bildirdiyinizi yazılı şəkildə sənədləşdirin — ciddilik dərəcəsini müəyyənləşdirmək üçün ASAN xidmətin məlumat əhatəsini (vətəndaş şəxsiyyət sənədləri) qeyd edin"
+      },
+      {
+        "key": "C",
+        "text_en": "Agree to ship but privately note the defect in your personal log in case it becomes an issue later",
+        "text_az": "Göndərməyə razı olun, lakin sonradan problem yaranarsa deyə qüsuru şəxsi qeydinizə daxil edin"
+      },
+      {
+        "key": "D",
+        "text_en": "Send a company-wide email alerting all staff about the defect to create pressure on the developer",
+        "text_az": "İnkişafçı üzərində təzyiq yaratmaq üçün bütün işçiləri qüsur barədə xəbərdar edən şirkətdaxili e-poçt göndərin"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. This is not a theoretical edge case — it is a session isolation defect in a system handling citizen identity documents (passports, ID cards) via ASAN xidmət. A data exposure incident involving citizen documents would require DƏIM notification within 24 hours and could trigger regulatory review. The professional obligation is to escalate in writing before shipment, name the specific data scope (ASAN xidmət handles AZ national identity documents), and let the project manager make an informed go/no-go decision. A abdicates your professional responsibility. C creates personal cover but does not protect citizens. D is disproportionate and damages working relationships without solving the problem.",
+    "feedback_az": "B düzgündür. Bu nəzəri kənar hal deyil — ASAN xidmət vasitəsilə vətəndaş şəxsiyyət sənədlərini (pasport, şəxsiyyət vəsiqəsi) idarə edən sistemdəki sessiya izolyasiya qüsurudur. Vətəndaş sənədlərini əhatə edən məlumat ifşası hadisəsi 24 saat ərzində DƏIM bildirimini tələb edər. Peşəkar öhdəlik göndərmədən əvvəl yazılı şəkildə eskalasiya etmək, xüsusi məlumat əhatəsini adlandırmaq və layihə menecerinə məlumatlı getmə/getməmə qərarı verməyə imkan verməkdir.",
+    "development_tip_en": "When a senior developer dismisses a security defect citing schedule pressure, your professional obligation is NOT to convince them — it is to escalate in writing with the data scope clearly named. In AZ government systems, naming the specific data class (citizen identity documents via ASAN xidmət) triggers the correct severity assessment. Never make the go/no-go call alone when citizen data is at stake.",
+    "development_tip_az": "Baş inkişafçı cədvəl təzyiqini sənəd olaraq göstərərək təhlükəsizlik qüsurunu rədd etdikdə, peşəkar öhdəliyiniz onları inandırmaq deyil — məlumat əhatəsi aydın şəkildə adlandırılmaqla yazılı şəkildə eskalasiya etməkdir.",
+    "london_delta": "A London QA following NCSC Vulnerability Disclosure Toolkit guidance would raise the defect as a P2 in Jira and allow the development lead to close it as 'won't fix this sprint' under standard risk acceptance workflow. AZ consequence: ASAN xidmət systems handle national identity documents — a session isolation defect enabling cross-citizen document access is a P0 data exposure risk under AZ personal data law, requiring DƏIM notification within 24 hours of confirmed exposure; a developer's 'won't fix' decision does not satisfy the ministry's disclosure obligation, and the QA lead who failed to escalate in writing shares liability.",
+    "az_institutions": [
+      "ASAN xidmət",
+      "DƏIM"
+    ],
+    "tags": [
+      "qa-engineering",
+      "leadership",
+      "security-defect",
+      "az-specific"
+    ]
+  },
+  {
+    "id": "prof-qa-s5-007",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.4,
+    "irt_b": 0.8,
+    "irt_c": 0.1,
+    "scenario_en": "You are testing a new e-GOV portal feature that collects biometric data (facial recognition scans) from citizens applying for social welfare benefits in Azerbaijan. The feature is designed to verify identity against the ASAN xidmət national identity database. Your test plan currently covers functional correctness and API integration. What additional test scope is ethically mandatory before this feature can be approved for production?",
+    "scenario_az": "Siz Azərbaycanda sosial yardım müavinəti üçün müraciət edən vətəndaşlardan biometrik məlumat (üz tanıma skanları) toplayan yeni e-GOV portal xüsusiyyətini test edirsiniz. Xüsusiyyət ASAN xidmət milli şəxsiyyət verilənlər bazasına qarşı şəxsiyyəti doğrulamaq üçün nəzərdə tutulmuşdur. Test planınız hazırda funksional doğruluğu və API inteqrasiyasını əhatə edir. Bu xüsusiyyət istehsalat üçün təsdiqlənməzdən əvvəl etik cəhətdən məcburi olan əlavə test əhatəsi nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Performance testing only — to ensure facial recognition does not time out under load",
+        "text_az": "Yalnız performans testi — üz tanımanın yük altında vaxtını aşmamasını təmin etmək üçün"
+      },
+      {
+        "key": "B",
+        "text_en": "Bias testing across demographic groups (age, gender, skin tone) present in AZ population; data minimisation verification (only biometric data required for identity verification is captured, nothing additional); consent flow testing to ensure citizens can opt out; and data retention boundary testing to verify biometric data is not stored beyond the verification transaction",
+        "text_az": "AZ əhalisi üçün xarakterik olan demoqrafik qruplarda (yaş, cins, dəri rəngi) qərəz testi; məlumatların minimuma endirilməsi doğrulaması (yalnız şəxsiyyət yoxlaması üçün tələb olunan biometrik məlumat toplanır, əlavə heç nə yox); vətəndaşların imtina edə biləcəyini təmin etmək üçün razılıq axını testi; və biometrik məlumatların yoxlama əməliyyatından kənara saxlanılmadığını yoxlamaq üçün məlumatların saxlanma müddəti sınır testi"
+      },
+      {
+        "key": "C",
+        "text_en": "Security penetration testing only — biometric data is inherently more secure than passwords",
+        "text_az": "Yalnız təhlükəsizlik penetrasiya testi — biometrik məlumatlar təbiətcə parollardan daha təhlükəsizdir"
+      },
+      {
+        "key": "D",
+        "text_en": "Accessibility testing to ensure the camera interface works with screen readers",
+        "text_az": "Kamera interfeysinin ekran oxuyucuları ilə işlədiyini təmin etmək üçün əlçatımlılıq testi"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. Biometric data collection in a government welfare system carries specific ethical testing obligations that go beyond functional correctness: (1) Bias testing — facial recognition systems have documented failure rates that vary by demographic; unequal error rates mean eligible citizens could be systematically denied benefits. (2) Data minimisation — collecting biometric data beyond what identity verification strictly requires is a data protection violation. (3) Consent — citizens applying for welfare benefits may feel unable to refuse biometric collection; testing must verify a genuine opt-out path exists. (4) Retention — biometric data stored after verification creates a long-term surveillance risk. A and C address only a subset of the risk. D is relevant but not the primary ethical obligation.",
+    "feedback_az": "B düzgündür. Dövlət sosial yardım sistemindəki biometrik məlumat toplama funksional düzgünlükdən kənara çıxan xüsusi etik test öhdəlikləri daşıyır: (1) Qərəz testi — üz tanıma sistemlərinin demoqrafiyaya görə dəyişən sənədləşdirilmiş uğursuzluq dərəcələri var. (2) Məlumatların minimuma endirilməsi — şəxsiyyət yoxlamasının ciddi tələb etdiyindən artıq biometrik məlumat toplamaq məlumatların mühafizəsi pozuntusudur. (3) Razılıq — sosial yardım müavinəti üçün müraciət edən vətəndaşlar biometrik toplamadan imtina edə bilməyəcəklərini hiss edə bilərlər. (4) Saxlama — yoxlamadan sonra saxlanılan biometrik məlumat uzunmüddətli nəzarət riski yaradır.",
+    "development_tip_en": "For any AZ government system collecting biometric data, add four mandatory test areas to your plan: demographic bias, data minimisation, consent mechanism, and retention boundaries. These are not optional — they reflect both ethical obligations and emerging AZ personal data protection requirements. Failure on any of these creates reputational and legal risk for the ministry, not just the vendor.",
+    "development_tip_az": "Biometrik məlumat toplayan istənilən AZ hökumət sistemi üçün planınıza dörd məcburi test sahəsi əlavə edin: demoqrafik qərəz, məlumatların minimuma endirilməsi, razılıq mexanizmi və saxlama sərhədləri.",
+    "london_delta": "A London QA following GDPR Art.83 data protection testing requirements would focus on lawful basis documentation and data subject rights (access, erasure requests) but treat demographic bias testing as outside QA scope — a product decision. AZ consequence: in Azerbaijan's welfare benefit context, biometric facial recognition with unequal error rates across demographic groups (common in systems trained on non-CIS datasets) would disproportionately deny benefits to specific population segments — an outcome that becomes a political liability for the Ministry of Labour and Social Protection, making demographic bias testing a QA responsibility, not a product decision.",
+    "az_institutions": [
+      "ASAN xidmət",
+      "e-GOV portal",
+      "DƏIM"
+    ],
+    "tags": [
+      "qa-engineering",
+      "biometrics",
+      "safeguarding",
+      "az-specific",
+      "government"
+    ]
+  },
+  {
+    "id": "prof-qa-s5-008",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 1.7,
+    "irt_b": 1.3,
+    "irt_c": 0.0,
+    "scenario_en": "In 2020, the ASAN xidmət portal experienced a major outage that affected millions of citizens attempting to access government services. Post-incident analysis indicated the outage was caused by a combination of: (1) a database connection pool exhaustion under concurrent citizen load, (2) a cascade failure when a downstream ministry API began returning 503 errors, and (3) insufficient circuit-breaker logic in the portal's integration layer. You are a QA architect reviewing the test strategy that was in place before the outage. Design a test strategy that would have caught all three failure modes before they reached production. Your answer must address: test types for each failure mode, specific tooling or techniques, and how the strategy would be maintained as new ministry API integrations are added.",
+    "scenario_az": "2020-ci ildə ASAN xidmət portalı hökumət xidmətlərinə daxil olmağa cəhd edən milyonlarla vətəndashüquqlarını tənzimlən böyük bir fasilə yaşadı. Hadisə sonrası təhlil fasilənin aşağıdakıların kombinasiyasından qaynaqlandığını göstərdi: (1) eyni vaxtda vətəndaş yükü altında verilənlər bazası bağlantı hovuzunun tükənməsi, (2) aşağı axın nazirlik API-si 503 xətaları qaytarmağa başladıqda kaskad nasazlıq, (3) portalın inteqrasiya qatında qeyri-kafi dövrə-kəsici məntiq. Siz fasilədən əvvəl mövcud olan test strategiyasını nəzərdən keçirən QA memarısınız. Üç nasazlıq rejiminin hamısını istehsalata çatmadan aşkar edəcək bir test strategiyası hazırlayın. Cavabınız hər nasazlıq rejimi üçün test növlərini, xüsusi alətlər və ya texnikaları, yeni nazirlik API inteqrasiyaları əlavə edildikdə strategiyanın necə saxlanacağını əhatə etməlidir.",
+    "options": null,
+    "correct_answer": null,
+    "feedback_en": "A complete answer addresses all three failure modes with appropriate test types: (1) DB connection pool exhaustion — load/soak testing simulating concurrent citizen sessions at 150% of estimated peak (tool: Locust or k6 with concurrent user ramp-up); pool size and timeout parameters must be tested as configuration variables, not just code. (2) Cascade failure from downstream 503 — chaos/fault injection testing using a service virtualisation layer that can simulate 503/timeout responses from each ministry API independently; contract testing (Pact) to verify portal behaviour under each error state. (3) Circuit-breaker logic — integration testing with stubbed APIs that toggle between healthy/degraded/failed states; verify the circuit opens at correct failure threshold and closes after recovery. Maintenance strategy: each new ministry API integration must include a mandatory fault-injection test suite added to the CI pipeline before the integration is merged.",
+    "feedback_az": "Tam cavab bütün üç nasazlıq rejimini uyğun test növləri ilə əhatə edir: (1) DB bağlantı hovuzu tükənməsi — təxmini pik həcminin 150%-ndə eyni vaxtda vətəndaş sessiyalarını simulyasiya edən yük/batırma testi; (2) aşağı axın 503-dən kaskad nasazlıq — hər nazirlik API-sindən 503/vaxt aşımı cavablarını müstəqil simulyasiya edə bilən xidmət virtuallaşdırma qatından istifadə edərək xaos/nasazlıq enjeksiyonu testi; (3) dövrə-kəsici məntiq — sağlam/deqrade/nasaz vəziyyətlər arasında keçid edən stublu API-lərlə inteqrasiya testi.",
+    "development_tip_en": "The ASAN xidmət 2020 outage pattern (pool exhaustion + cascade + no circuit-breaker) is the classic triad of integration layer failures for high-traffic government portals. Study this as a reference architecture failure and build your test strategy to cover all three legs simultaneously — testing each in isolation misses the cascade interaction.",
+    "development_tip_az": "ASAN xidmət 2020 fasilə nümunəsi (hovuz tükənməsi + kaskad + dövrə-kəsici yoxdur) yüksək trafiklı hökumət portalları üçün inteqrasiya qatı nasazlıqlarının klassik üçlüyüdür. Bunu istinad arxitekturası nasazlığı kimi öyrənin.",
+    "london_delta": "A London QA following OWASP Testing Guide v4.2 (Section 4.9: Testing for Weak Cryptography and Section 4.4: Identity Management) would cover authentication and session security but would not include chaos/fault-injection testing against ministry API dependencies as a standard pre-release gate. AZ consequence: ASAN xidmət serves as the authentication backbone for all AZ government services — an outage caused by an untested cascade failure from a single ministry API is a national service disruption, triggering mandatory post-incident review by the State Agency for Public Service and Social Innovations and potential contract review for the integrating vendor.",
+    "evaluation_rubric": {
+      "level_1": "Names at least one test type (e.g. load testing) without explaining how it would have caught any specific failure mode. No tooling mentioned. No connection to ASAN xidmət architecture.",
+      "level_2": "Correctly maps one failure mode to an appropriate test type (e.g. load testing for connection pool). May misidentify the other two. No maintenance strategy. Tooling vague or absent.",
+      "level_3": "Maps all three failure modes to appropriate test types with basic rationale. Names at least one specific tool. Maintenance strategy present but generic (e.g. 'add tests for new integrations'). Does not address cascade interaction testing.",
+      "level_4": "Maps all three failure modes to correct test types with specific tooling (e.g. Locust/k6 for load, Pact for contract testing, stub APIs for circuit-breaker). Maintenance strategy ties new integrations to mandatory fault-injection gates. Some understanding of cascade interaction testing.",
+      "level_5": "All of Level 4, plus: demonstrates understanding that ASAN xidmət's role as the AZ national identity backbone makes connection pool configuration a national-scale risk (not just application-level), names specific configuration parameters that must be tested (pool size, timeout thresholds, retry policies), references the 2020 outage pattern as a regression anchor for future architecture changes, and proposes a continuous chaos engineering practice (not just pre-release gates) appropriate for a portal serving millions of AZ citizens."
+    },
+    "az_institutions": [
+      "ASAN xidmət",
+      "e-GOV portal"
+    ],
+    "tags": [
+      "qa-engineering",
+      "test-strategy",
+      "chaos-engineering",
+      "az-specific",
+      "hard"
+    ]
+  },
+  {
+    "id": "prof-qa-s5-009",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "hard",
+    "type": "mcq",
+    "irt_a": 1.8,
+    "irt_b": 1.6,
+    "irt_c": 0.08,
+    "scenario_en": "During security testing of an Azerbaijani government health application — built under a contract with the Ministry of Health and integrated with the national patient registry — you discover that a query injection vulnerability exposes the full medical records of approximately 180,000 AZ citizens, including HIV status, psychiatric history, and addiction treatment records. The data is currently accessible to an authenticated attacker. The system is in production and serving patients daily. Your company's legal team advises you to 'document internally and assess remediation options before any external communication.' What is the ethically and legally correct course of action?",
+    "scenario_az": "Sağlamlıq Nazirliyi ilə müqavilə çərçivəsində qurulan və milli xəstə reyestri ilə inteqrasiya olunan Azərbaycan dövlət sağlamlıq tətbiqinin təhlükəsizlik testi zamanı siz sorğu enjeksiyası zəifliyinin HIV statusu, psixiatrik tarixçə və narkomanlıq müalicəsi qeydlərini əhatə edən təxminən 180.000 AZ vətəndaşının tam tibbi qeydlərini ifşa etdiyini aşkar edirsiniz. Məlumatlara hazırda autentifikasiya edilmiş təcavüzkar daxil ola bilər. Sistem istehsalatda fəaliyyət göstərir və hər gün xəstələrə xidmət edir. Şirkətinizin hüquqi komandası sizə 'hər hansı xarici ünsiyyətdən əvvəl daxili sənədləşdirin və düzəliş variantlarını qiymətləndirin' tövsiyə edir. Etik və qanuni cəhətdən düzgün hərəkət taktikası nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Follow legal's advice: document internally, complete a full impact assessment, and begin remediation before notifying the Ministry of Health",
+        "text_az": "Hüquqşünasların tövsiyəsinə əməl edin: daxili sənədləşdirin, tam təsir qiymətləndirməsini tamamlayın və Sağlamlıq Nazirliyini xəbərdar etməzdən əvvəl düzəlişə başlayın"
+      },
+      {
+        "key": "B",
+        "text_en": "Notify the Ministry of Health's security contact immediately (within 24 hours), citing that 180,000 patient records including sensitive health categories are actively exposed to authenticated attackers — and simultaneously engage your legal team on coordinated disclosure, not prior to it",
+        "text_az": "Dərhal (24 saat ərzində) Sağlamlıq Nazirliyinin təhlükəsizlik əlaqəsinə həssas sağlamlıq kateqoriyaları daxil olmaqla 180.000 xəstə qeydinin autentifikasiya edilmiş təcavüzkarlara aktiv şəkildə ifşa olunduğunu bildirin — eyni zamanda hüquqi komandanızı əvvəlindən deyil, əlaqəli ifşa ilə bağlı cəlb edin"
+      },
+      {
+        "key": "C",
+        "text_en": "Patch the vulnerability yourself before notifying anyone, since fixing it first removes the active risk",
+        "text_az": "Hər kəsi xəbərdar etməzdən əvvəl zəifliyi özünüz düzəldin, çünki əvvəlcə onu düzəltmək aktiv riski aradan qaldırır"
+      },
+      {
+        "key": "D",
+        "text_en": "Anonymise the finding in your test report (describe it as 'data exposure risk' without specifying the record count or data categories) to reduce the apparent severity before escalating",
+        "text_az": "Eskalasiya etməzdən əvvəl görünən şiddəti azaltmaq üçün test hesabatınızda tapıntını anonimləşdirin (qeyd sayını və ya məlumat kateqoriyalarını göstərmədən 'məlumat ifşası riski' kimi təsvir edin)"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. This scenario involves 180,000 AZ citizens' sensitive medical records (including HIV status, psychiatric history, addiction records — the most legally protected health data categories) actively exposed in a production system. AZ personal data protection law and DƏIM obligations require notification of a data controller (Ministry of Health) within 24 hours of identifying an active, exploitable exposure of personal data — not after remediation. Legal's advice to document-first violates this timeline. A is wrong because it allows continued active exposure during the assessment period — every additional hour means the vulnerability remains exploitable. C is wrong because patching without notification violates the ministry's right to activate their incident response and potentially conduct forensic investigation of whether the vulnerability was already exploited. D is document falsification and concealment of a material risk — a serious professional and legal violation.",
+    "feedback_az": "B düzgündür. Bu ssenari istehsal sistemində aktiv şəkildə ifşa olunan 180.000 AZ vətəndaşının həssas tibbi qeydlərini (HIV statusu, psixiatrik tarixçə, narkomanlıq qeydləri daxil olmaqla — ən hüquqi qorunan sağlamlıq məlumat kateqoriyaları) əhatə edir. AZ şəxsi məlumatların mühafizəsi qanunu şəxsi məlumatların aktiv, istismar edilə bilən ifşasını müəyyənləşdirdikdən — düzəlişdən sonra deyil — 24 saat ərzində məlumat nəzarətçisini (Sağlamlıq Nazirliyi) xəbərdar etməyi tələb edir. A yanlışdır, çünki qiymətləndirmə müddətindən sonra aktiv ifşanın davam etməsinə imkan verir. C yanlışdır, çünki bildiriş olmadan yama vurmaq nazirliyin öz insidenta cavab mexanizmini aktivləşdirmə hüququnu pozur. D maddi riski gizlədən sənəd saxtakarlığıdır.",
+    "development_tip_en": "When legal counsel advises 'document first, notify later' for an active data exposure, they are optimising for litigation protection, not regulatory compliance or citizen welfare. In AZ, for government health systems, these are in direct conflict. Know the hierarchy: regulatory disclosure obligation (24 hours) > legal documentation preference. Your professional obligation as QA lead is to the 180,000 citizens whose data is at risk, not to your company's litigation posture.",
+    "development_tip_az": "Hüquqi məşvərətçi aktiv məlumat ifşası üçün 'əvvəl sənədləşdir, sonra xəbərdar et' tövsiyə etdikdə, məhkəmə mühafizəsi üçün optimallaşdırır, tənzimləyici uyğunluq üçün deyil. AZ-da dövlət sağlamlıq sistemləri üçün bunlar birbaşa ziddiyyət təşkil edir.",
+    "london_delta": "A London QA following GDPR Art.83 breach notification requirements would treat 72 hours as the disclosure window and prioritise internal impact assessment within that window before notifying the data controller — consistent with UK ICO guidance on establishing breach facts before notification. AZ consequence: DƏIM's 24-hour notification requirement for active, exploitable exposures of sensitive personal data is stricter than GDPR's 72-hour window; the data includes HIV status and psychiatric records — the highest-sensitivity health data categories under AZ law — making every additional hour of delay an aggravating factor in any subsequent regulatory review by the Ministry of Health and DƏIM, with potential 12-month procurement blacklisting for the contracting vendor.",
+    "az_institutions": [
+      "Sağlamlıq Nazirliyi",
+      "DƏIM"
+    ],
+    "tags": [
+      "qa-engineering",
+      "data-breach",
+      "safeguarding",
+      "az-specific",
+      "hard",
+      "medical-data"
+    ]
+  },
+  {
+    "id": "prof-qa-s5-010",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 1.9,
+    "irt_b": 1.9,
+    "irt_c": 0.0,
+    "scenario_en": "You are performing manual security testing on the e-GOV portal's document retrieval endpoint — the same endpoint used by citizens to download their registered property certificates, court records, and tax filings. OWASP ZAP automated scanning completed without flagging critical issues. During manual testing, you craft a request where you manipulate the document path parameter by replacing the citizen's own document ID with a traversal sequence: changing '/api/documents/download?id=DOC-44821-YK' to '/api/documents/download?id=../../../admin/exports/citizen_bulk_20260315.csv'. The server returns a 200 response with a bulk CSV export containing the names, FIN codes (national ID numbers), addresses, and property ownership records of 94,000 AZ citizens. ZAP missed this entirely. Write a comprehensive incident and remediation report addressing: (1) why ZAP missed this specific vulnerability, (2) the complete manual test methodology that found it, (3) the immediate containment steps, (4) the long-term test strategy change needed so this class of vulnerability is caught automatically in future, and (5) the regulatory notification obligations under AZ law given the data exposed.",
+    "scenario_az": "Siz e-GOV portalının sənəd alma endpointinin əl ilə təhlükəsizlik testini aparırsınız — vətəndaşların qeydə alınmış mülkiyyət sertifikatlarını, məhkəmə qeydlərini və vergi bəyannamələrini yükləmək üçün istifadə etdikləri eyni endpoint. OWASP ZAP avtomatlaşdırılmış skan kritik problemlər bayraqlamadan tamamlandı. Əl ilə test zamanız vətəndaşın öz sənəd ID-sini keçid ardıcıllığı ilə əvəz etməklə sənəd yolu parametrini manipulyasiya etdiyiniz bir sorğu hazırlayırsınız: '/api/documents/download?id=DOC-44821-YK'-ni '/api/documents/download?id=../../../admin/exports/citizen_bulk_20260315.csv'-ə dəyişirsiniz. Server 94.000 AZ vətəndaşının adları, FIN kodları (milli şəxsiyyət nömrələri), ünvanları və mülkiyyət sahibliyi qeydlərini əhtiva edən toplu CSV ixracı ilə 200 cavab qaytarır. ZAP bunu tamamilə qaçırdı. Aşağıdakıları əhatə edən hərtərəfli insidenta və düzəliş hesabatı yazın: (1) ZAP bu xüsusi zəifliyi niyə qaçırdı, (2) onu tapan tam əl ilə test metodologiyası, (3) dərhal məhdudlaşdırma addımları, (4) bu sinif zəifliyin gələcəkdə avtomatik olaraq aşkar edilməsi üçün lazım olan uzunmüddətli test strategiyası dəyişikliyi, (5) ifşa edilmiş məlumatı nəzərə alaraq AZ qanununa görə tənzimləyici bildiriş öhdəlikləri.",
+    "options": null,
+    "correct_answer": null,
+    "feedback_en": "A complete answer addresses all 5 sections: (1) ZAP missed this because: ZAP's path traversal payloads target relative filesystem paths (../../etc/passwd) not application-layer logical path injection; ZAP did not know that 'DOC-44821-YK' is a document identifier that the application resolves against a file store — it treated the parameter as opaque. ZAP also lacks context about what a 'valid' vs 'malicious' document ID looks like for this application. (2) Manual methodology: mapped the document ID format by downloading several own documents and observing the ID pattern; hypothesised the backend resolves paths relative to a document store root; tested traversal sequences that match the observed ID format structure; identified the admin export endpoint by examining network requests while logged in as admin during a separate session. (3) Immediate containment: disable the vulnerable endpoint immediately; rotate any API keys that could have been exposed via similar traversal; notify e-GOV security team within 1 hour; preserve server logs for forensic investigation of whether the vulnerability was exploited before discovery. (4) Long-term strategy: implement authorisation boundary tests as a required test gate: for every endpoint that accepts an ID parameter, verify that substituting another user's valid ID returns 403 (not 200 or 404); add path traversal sequences to the custom ZAP scan policy; implement IDOR (Insecure Direct Object Reference) tests in the CI pipeline using a dual-user test fixture. (5) Regulatory obligations: FIN codes + property records = sensitive personal data under AZ law; DƏIM notification required within 24 hours; e-GOV portal operator must notify affected 94,000 citizens if there is evidence of actual data access by unauthorised parties.",
+    "feedback_az": "Tam cavab bütün 5 bölməni əhatə edir: (1) ZAP bunu qaçırdı, çünki ZAP-ın yol keçid yükləri tətbiq qatı məntiqi yol enjeksiyasını deyil, nisbi fayl sistemi yollarını hədəfləyir; (2) Əl ilə metodologiya: bir neçə öz sənədini yükləyərək sənəd ID formatını xəritəyə çəkmək; (3) Dərhal məhdudlaşdırma: zərərli endpointi dərhal söndürmək, 1 saat ərzində e-GOV təhlükəsizlik komandasını xəbərdar etmək; (4) Uzunmüddətli strategiya: hər endpoint üçün icazə sərhədi testlərini tələb olunan test qapısı kimi tətbiq etmək; (5) Tənzimləyici öhdəliklər: FIN kodları + mülkiyyət qeydləri = həssas şəxsi məlumatlar, 24 saat ərzində DƏIM bildirimi tələb olunur.",
+    "development_tip_en": "IDOR (Insecure Direct Object Reference) vulnerabilities are the most commonly missed class in automated scanning because they require understanding of what constitutes a 'valid' vs 'malicious' reference in the application's data model. Build a dual-user IDOR test fixture into every project: two authenticated test users, automated tests that verify user A cannot access user B's resource IDs — this catches what ZAP cannot.",
+    "development_tip_az": "IDOR (Güvənsiz Birbaşa Obyekt İstinadı) zəifliklər avtomatlaşdırılmış skan zamanı ən çox qaçırılan sinifdir, çünki tətbiqin məlumat modelindəki 'etibarlı' və 'zərərli' istinadın nə olduğunu anlamaq tələb edir.",
+    "london_delta": "A London QA following OWASP Testing Guide v4.2 (Section 4.5: Authorization Testing, OTG-AUTHZ-004 Insecure Direct Object References) would include IDOR in the test plan but likely execute it with automated tooling only — treating ZAP's clean result as sufficient authorisation testing evidence before sign-off. AZ consequence: e-GOV portal document endpoints serve court records, property certificates, and tax filings — document IDs follow a predictable citizen-linked format; a ZAP-only approach misses application-layer logical traversal because ZAP has no knowledge of the document ID schema; the resulting exposure of 94,000 citizens' FIN codes and property records triggers mandatory DƏIM notification within 24 hours, mandatory e-GOV incident log entry, and potential suspension of the vendor's government contractor certification pending investigation.",
+    "evaluation_rubric": {
+      "level_1": "Identifies that a path traversal vulnerability was found. Mentions ZAP missed it without explaining why. Does not address containment, regulatory obligations, or long-term strategy. Treats the finding as a simple bug report.",
+      "level_2": "Explains that ZAP missed it because automated tools don't understand application-specific ID formats. Describes the basic manual test steps. Suggests endpoint patching as containment. Does not address DƏIM notification requirements or long-term strategy beyond 'add manual testing'.",
+      "level_3": "Covers ZAP's limitation (application-context blindness for IDOR), describes the manual methodology with reasonable detail, names correct containment steps (disable endpoint, preserve logs). Mentions regulatory notification obligation. Long-term strategy is present but generic (e.g. 'add IDOR tests to regression suite').",
+      "level_4": "All of Level 3, plus: correctly identifies this as an IDOR/path traversal combination (not just traversal), explains the dual-user fixture approach for catching IDOR automatically, specifies the 24-hour DƏIM notification timeline, and distinguishes between 'evidence of exploitation' (requiring citizen notification) and 'no evidence of exploitation' (requiring only DƏIM notification).",
+      "level_5": "All of Level 4, plus: identifies that the CSV filename 'citizen_bulk_20260315.csv' contains a date stamp suggesting scheduled bulk export operations exist — indicating a broader data governance risk beyond this single endpoint; proposes testing whether the admin export path accepts wildcard patterns to enumerate other bulk exports; notes that FIN codes appearing in a property ownership dataset creates re-identification risk for anonymised datasets elsewhere in the system; demonstrates knowledge that AZ property ownership records are linked to the State Committee for Property Issues database, making this a cross-registry exposure with implications beyond the e-GOV portal alone."
+    },
+    "az_institutions": [
+      "e-GOV portal",
+      "DƏIM",
+      "Dövlət Əmlak Komitəsi"
+    ],
+    "tags": [
+      "qa-engineering",
+      "security-testing",
+      "idor",
+      "path-traversal",
+      "az-specific",
+      "hard"
+    ]
+  }
+]

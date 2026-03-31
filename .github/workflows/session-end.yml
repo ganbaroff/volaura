@@ -1,0 +1,98 @@
+name: Session End Hook
+
+on:
+  push:
+    branches: [main]
+    # Only trigger when backend/frontend/migration code changed (not just docs/memory)
+    paths:
+      - 'apps/api/**'
+      - 'apps/web/src/**'
+      - 'supabase/migrations/**'
+      - 'packages/swarm/**'
+
+jobs:
+  session-end-hook:
+    name: Capture Session Diff → Swarm Context
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 10  # need history for diff
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install loguru
+
+      - name: Run session-end hook (capture diff → SESSION-DIFFS.jsonl)
+        run: |
+          cd "${{ github.workspace }}"
+          python -m packages.swarm.session_end_hook
+
+      - name: Commit session diff and updated context
+        run: |
+          git config user.name "MiroFish Swarm"
+          git config user.email "swarm@volaura.app"
+          git add memory/swarm/SESSION-DIFFS.jsonl memory/swarm/shared-context.md
+          if git diff --staged --quiet; then
+            echo "No session diff changes to commit."
+          else
+            git pull --rebase origin main
+            git commit -m "swarm: session-end hook — $(date -u +%Y-%m-%d %H:%M UTC)"
+            git push
+          fi
+
+  session-mini-swarm:
+    name: Session Mini-Swarm (3 agents review this session's changes)
+    runs-on: ubuntu-latest
+    needs: session-end-hook
+    # Run async — don't block the push
+    if: ${{ github.ref == 'refs/heads/main' }}
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 10
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install swarm dependencies
+        run: |
+          pip install pydantic loguru groq google-genai python-dotenv python-telegram-bot
+
+      - name: Run session mini-swarm (focused review of THIS session's changes)
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CEO_CHAT_ID: ${{ secrets.TELEGRAM_CEO_CHAT_ID }}
+          SWARM_DATA_DIR: memory/swarm/structured
+        run: |
+          cd "${{ github.workspace }}"
+          python -m packages.swarm.autonomous_run --mode=code-review
+
+      - name: Commit mini-swarm proposals
+        run: |
+          git config user.name "MiroFish Swarm"
+          git config user.email "swarm@volaura.app"
+          git add memory/swarm/
+          if git diff --staged --quiet; then
+            echo "No mini-swarm proposals to commit."
+          else
+            git pull --rebase origin main
+            git commit -m "swarm: session mini-swarm review — $(date -u +%Y-%m-%d %H:%M UTC)"
+            git push
+          fi

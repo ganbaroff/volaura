@@ -572,6 +572,74 @@ Compare against provider free tier. If exceeded → add next fallback tier.
 
 ---
 
+## Patterns: Sessions 68–69 (2026-03-29)
+
+### Cultural Framing: Absolute Score > Percentile in AZ
+**Source:** Cultural Intelligence Agent first-ever activation, Session 69
+**Finding:** Competitive framing ("Top 5% in your field", "Outperform peers") creates shame in collectivist AZ/CIS culture. Users don't want to appear to outrank their network — they want to be PART of it.
+**Fix:** "AURA score is 78/100" (absolute) → "Top 5%" (competitive) is wrong direction. Add social framing: "Trusted by top organizations."
+**Rule:** Any copy that implies ranking against others = review with Cultural Intelligence Agent before shipping. Use absolute scores, community membership, organizational trust — never peer comparison.
+
+### localStorage vs sessionStorage: The Auth Redirect Rule
+**Finding:** Any state that needs to survive a redirect (auth callback, OAuth flow, multi-tab) must use localStorage. sessionStorage is cleared on redirect and tab close.
+**Rule:** `selectedCompetencies`, referral codes, UTM params, onboarding progress = localStorage. Temporary UI state only = sessionStorage.
+**Files:** `apps/web/src/stores/assessment-store.ts`
+
+### .maybe_single() Not .single() for Optional DB Rows
+**Finding:** `.single()` throws 406 (PGRST116) when 0 rows returned. `.maybe_single()` returns None.
+**Rule:** ALWAYS use `.maybe_single()` unless you are 100% certain the row exists (e.g., looking up by verified PK).
+**Example fail pattern:** `badges.single()` → user with no badges → 406 → unhandled exception in frontend
+
+### Health Check Must Test Actual Stack
+**Finding:** `GET /health` returned `{"status": "ok"}` always, regardless of DB connectivity or LLM config. This is a lie.
+**Rule:** Health checks must: (1) ping Supabase with a real query, (2) verify critical env vars present, (3) return 503 if anything fails.
+**Impact:** Railway auto-restart won't help if health check always reports OK despite DB being unreachable.
+
+### Skills Hired But Not Called = 0% ROI
+**Finding:** Behavioral Nudge Engine and Cultural Intelligence Agent were on the roster for 11 sessions without being called. First activation (Session 69) found 7 new P0/P1 issues.
+**Rule:** At EVERY sprint start, check agent-roster.md "When to Call" table. Sprint with user-facing copy → Cultural Intelligence. Sprint with UX decisions → Behavioral Nudge. No exceptions.
+**Anti-pattern:** "They're on the roster, that's enough." It's not.
+
+### QA Must Be Structurally Blind (Cannot Self-Validate)
+**Finding:** QA Agent was writing keywords AND certifying them as "independently validated." Same agent = not independent.
+**Rule:** The creator of content cannot validate that same content. QA validates SWE code. Cultural Intelligence validates copy written by CTO. Never: agent writes → same agent certifies.
+**Script:** `scripts/validate_qa_blind.py` — rejects single-word keyword matches
+
+### LinkedIn Content: Audience Crossing = Viral
+**Finding:** From MiroFish 50-persona simulation (Session 69):
+- Posts targeting ONE audience (HR, VC, product) plateau at ~2K impressions
+- Posts that cross audience boundaries reach viral (5K+)
+- Day 6 "Culture Test" (78/100 vs "Top 5%") was viral because HR + product + VC + founders all had personal experience with this
+**Rule:** Before publishing, ask: "Which 3 different audiences have immediate personal stakes in this insight?" If answer is 0-1, reframe. If answer is 3+, publish first.
+
+### Starlette Middleware Fallback Pattern
+**Finding:** `starlette.middleware.trustedhost.ProxyHeadersMiddleware` was removed in Starlette 0.46+. Hard import fails.
+**Fix:**
+```python
+try:
+    from starlette.middleware.trustedhost import ProxyHeadersMiddleware
+    app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
+except ImportError:
+    from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
+    app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
+```
+**Rule:** Never import starlette internals without a try/except fallback. Starlette removes things without deprecation warnings.
+
+### "Done" = CEO Can't Find Bugs, Not "Claude Can't Find Bugs"
+**Source:** CEO challenge "are we ready to launch?" → 10 blockers found
+**Finding:** CTO's proximity to the code creates blind spots. Assessment store using sessionStorage was not caught by automated tests, code review, or agent audit. It was caught by asking "what happens if the user refreshes mid-assessment?"
+**Rule:** Before declaring ANY sprint done, ask: "If CEO opened this in a fresh incognito window and used it for 5 minutes, what would break?" Run that scenario before closing.
+
+### MiroFish vs Custom Swarm — When to Use Each
+**Finding (Session 69):**
+- Custom swarm (current) = optimal for: product/code decisions, codebase-aware analysis, sprint planning, security review
+- MiroFish approach = optimal for: content simulation, audience reaction prediction, social behavior modeling
+- MiroFish uses Zep Cloud (paid memory) + OASIS (Twitter-focused) — these don't add value for code decisions
+**Recommendation:** Keep custom swarm for product/code. Use MiroFish METHODOLOGY (not platform) for content testing.
+**Status:** Team vote pending (see docs/SESSION-FINDINGS.md)
+
+---
+
 ## Pattern: Advisory Lock for Atomic Database Operations (Session 53, 2026-03-28)
 
 **Problem:** SELECT balance → INSERT deduction = two async calls. Concurrent requests both pass the check → both insert → negative balance (double-spend TOCTOU).
@@ -598,3 +666,55 @@ Compare against provider free tier. If exceeded → add next fallback tier.
 **Skill location:** `docs/openspace-skills/` — OpenSpace-format directories with `skill.md`.
 **Rule:** After solving any non-trivial problem (security audit, API design pattern, DB migration pattern) → `upload_skill` to preserve it.
 **First skill created:** `docs/openspace-skills/volaura-security-review/skill.md` — 10-point OWASP checklist for FastAPI endpoints.
+
+---
+
+## Process Patterns (Session 73, 2026-03-29)
+
+### P-049: TASK-PROTOCOL flow type detection is non-negotiable
+**Problem:** Session 72 — CTO ran "Team Proposes" phase for a task that needed "CTO Plan → Critique." Entire batch had to restart.
+**Rule:** Before any batch starts, CTO declares FLOW TYPE verbatim: "Team Proposes / CTO Plan / HOTFIX." Ambiguous CEO signal → ask before proceeding. This costs 30 seconds. Wrong flow costs a session.
+**Enforcement:** Step 0.5 in TASK-PROTOCOL v5.0.
+
+### P-050: MICRO task fastpath prevents process overhead on trivial changes
+**Pattern:** A 2-line copy fix going through MEDIUM task gates (skills declaration, security checklist, peer review, cross-QA) adds 20-30 minutes of process with zero risk reduction.
+**Rule:** ≤10 lines + 1-2 files + no auth/security implications = FASTPATH. Skip Steps 3.0, 3.1, 3.3, 3.4.
+**Not a blanket skip:** CTO declares MICRO explicitly. Any agent can contest. Security/auth changes can never be MICRO regardless of line count.
+
+### P-051: "What's next" must be proactive, not reactive
+**Pattern:** Every batch, CEO asks "что дальше." CTO answers. This wastes CEO's question budget and implies CTO stopped thinking at task completion.
+**Rule:** Batch close ALWAYS includes "WHAT'S NEXT: 3 items" — declared by CTO, not prompted by CEO. If CEO never has to ask "что дальше," the protocol is working.
+**Enforcement:** Step 4.1 in TASK-PROTOCOL v5.0.
+
+### P-052: Agent proposals must be parallel, not sequential
+**Problem:** 6 agents proposing sequentially = 90 minutes wall-clock time. All-parallel = 25 minutes.
+**Rule:** Declare a 15-min READ window (all agents read simultaneously) + 10-min PROPOSE window (all write proposals in parallel). Synchronize at Needs Agent for triage. Parallel = not "batch-sequential per agent."
+**Savings:** ~70 minutes per batch.
+
+### P-053: EFFORT estimate on every proposal enables triage by value-per-hour
+**Pattern:** Needs Agent orders by priority. CTO doesn't know if P0 takes 20 min or 4 hours. A fast P0 and a slow P0 are treated the same — but the fast one should go first (builds momentum, unblocks more).
+**Rule:** Every proposal includes EFFORT: [20 min | 1.5h | 4h | >4h]. Triage order: P0+LOW_EFFORT first.
+
+### P-054: Cross-QA is the only way to prevent circular self-validation
+**Problem (Mistake #47 class):** QA writes tests → QA validates tests → QA certifies quality. Same agent at every point. Circular.
+**Rule:** QA writes tests. DIFFERENT agent (Architecture or Security) spot-checks: are tests actually running the code? Do they cover failure cases? Test data realistic?
+**Analogy:** A proof-reader editing their own writing sees what they meant to write, not what they wrote.
+
+### P-055: "Tests verified" without test execution = bureaucracy
+**Pattern:** Agent generates test file. Writes "QA verified." Tests never ran against actual code. Batch closes with false confidence.
+**Rule:** "Verified" = tests RAN (pytest output) + PASSED (0 failing) + CI confirms. Test file existence = 0% verified. Must show execution output or CI link.
+
+### P-056: Cultural brief re-approval after ANY copy revision
+**Problem:** C5 Cultural checkpoint approves the brief. Copywriter changes hook/framing after approval. Cultural gate is now stale but looks approved.
+**Rule:** Any change to hook/CTA/framing/audience target = Cultural Intelligence re-reads from top. Not "brief was already approved." Revision resets approval for the revised section.
+
+### P-057: Agent briefing template — always inject VOLAURA CONTEXT BLOCK
+**Discovered:** 2026-03-30 Session 76 (CEO caught agents returning contextually wrong research)
+**Pattern:** Every agent subprocess starts with zero memory. CTO assumes shared context — it doesn't exist after context compression. Agents answer the literal question without knowing: what the product is, who the founder is, what's already decided, what the budget is.
+**Solution:** The VOLAURA CONTEXT BLOCK (docs/AGENT-BRIEFING-TEMPLATE.md) is a 300-word project context block that MUST be pasted at the top of every agent prompt. It covers: what Volaura is, Yusif's profile, target users, tech stack, current stage, what's already decided, current sprint goal, NEVER/output format.
+**Rule:** Before launching any agent:
+1. Copy VOLAURA CONTEXT BLOCK from `docs/AGENT-BRIEFING-TEMPLATE.md`
+2. Fill in `[CURRENT SPRINT]` and `[What's already decided]`
+3. Specify output format explicitly
+**Blocking gate:** Step 1.0.3 in TASK-PROTOCOL v5.3. Missing context block = CLASS 3 mistake.
+**Analogy:** Hiring a consultant for a 1-hour engagement without an onboarding brief. You get generic advice optimized for someone else's situation.

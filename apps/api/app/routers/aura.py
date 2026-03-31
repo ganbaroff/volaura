@@ -4,9 +4,10 @@ from fastapi import APIRouter, HTTPException, Request
 from loguru import logger
 
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
-from app.middleware.rate_limit import limiter, RATE_DEFAULT, RATE_LLM, RATE_PROFILE_WRITE
+from app.middleware.rate_limit import limiter, RATE_DEFAULT, RATE_DISCOVERY, RATE_LLM, RATE_PROFILE_WRITE
 from app.core.assessment.aura_calc import apply_activity_boost, calculate_effective_score
 from app.schemas.aura import (
+    AuraExplanationResponse,
     AuraScoreResponse,
     SharingPermissionRequest,
     UpdateVisibilityRequest,
@@ -55,7 +56,7 @@ async def get_my_aura(
     """Get the current user's AURA score."""
     result = (
         await db.table("aura_scores")
-        .select("*")
+        .select("volunteer_id,total_score,badge_tier,elite_status,competency_scores,visibility,reliability_score,reliability_status,events_attended,events_no_show,percentile_rank,aura_history,last_updated")
         .eq("volunteer_id", user_id)
         .maybe_single()
         .execute()
@@ -68,7 +69,7 @@ async def get_my_aura(
     return AuraScoreResponse(**_with_effective_score(dict(result.data)))
 
 
-@router.get("/me/explanation")
+@router.get("/me/explanation", response_model=AuraExplanationResponse)
 @limiter.limit(RATE_LLM)
 async def get_aura_explanation(
     request: Request,
@@ -90,6 +91,7 @@ async def get_aura_explanation(
         .eq("volunteer_id", user_id)
         .eq("status", "completed")
         .order("completed_at", desc=True)
+        .limit(10)  # Scaling: cap at 10 most recent — answers JSONB can be 5-10KB each
         .execute()
     )
     if not sessions_result.data:
@@ -99,6 +101,7 @@ async def get_aura_explanation(
         )
 
     explanations = []
+    pending_reeval_count = 0  # BUG-012: track degraded answers awaiting LLM re-eval
     for session in sessions_result.data:
         answers = session.get("answers", {})
         items = answers.get("items", [])
@@ -107,6 +110,9 @@ async def get_aura_explanation(
         for item in items:
             eval_log = item.get("evaluation_log")
             if eval_log:
+                # BUG-012: count degraded answers — these are queued for LLM re-eval
+                if eval_log.get("evaluation_mode") == "degraded":
+                    pending_reeval_count += 1
                 # CRIT-05: Never expose internal model names — prevents calibration attacks.
                 # Map model_used → evaluation_confidence (high/pattern_matched/unknown)
                 raw_model = eval_log.get("model_used", "unknown")
@@ -138,19 +144,24 @@ async def get_aura_explanation(
     return {
         "volunteer_id": user_id,
         "explanation_count": len(explanations),
+        "has_pending_evaluations": pending_reeval_count > 0,  # BUG-012: LLM re-eval queued, scores will improve
+        "pending_reeval_count": pending_reeval_count,         # BUG-012: how many answers are being re-evaluated
         "methodology_reference": "BARS (Behaviourally Anchored Rating Scale) aligned with ISO 10667-2",
         "explanations": explanations,
     }
 
 
 @router.get("/{volunteer_id}", response_model=AuraScoreResponse)
-@limiter.limit(RATE_DEFAULT)
+@limiter.limit(RATE_DISCOVERY)
 async def get_aura_by_id(
     request: Request,
     volunteer_id: str,
     db: SupabaseAdmin,
 ) -> AuraScoreResponse:
     """Get any volunteer's AURA score (public profiles only, respects visibility).
+
+    Public endpoint — no auth required. Called by /u/[username] for anonymous visitors.
+    Rate limited to RATE_DISCOVERY (10/min) to prevent bulk enumeration scraping.
 
     Uses service-role client (SupabaseAdmin) to check existence before enforcing
     visibility — intentional for public discovery of non-hidden profiles.
@@ -181,14 +192,44 @@ async def get_aura_by_id(
             detail={"code": "AURA_NOT_FOUND", "message": "AURA score not found"},
         )
     if visibility == "badge_only":
-        # Return only badge tier + total score, strip competency details
-        return AuraScoreResponse(
-            **_with_effective_score({**result.data, "competency_scores": {}, "aura_history": []})
-        )
+        # Return only badge tier + total score — strip ALL private fields
+        _PRIVATE_FIELDS = {"competency_scores", "aura_history", "last_updated",
+                           "events_attended", "events_no_show", "events_late",
+                           "reliability_score", "reliability_status"}
+        badge_data = {k: v for k, v in result.data.items() if k not in _PRIVATE_FIELDS}
+        badge_data["competency_scores"] = {}
+        badge_data["aura_history"] = []
+        return AuraScoreResponse(**_with_effective_score(badge_data))
     # Strip last_updated from public view — prevents assessment timing inference (Security P2)
     public_data = dict(result.data)
     public_data.pop("last_updated", None)
     return AuraScoreResponse(**_with_effective_score(public_data))
+
+
+@router.get("/me/visibility")
+@limiter.limit(RATE_DEFAULT)
+async def get_visibility(
+    request: Request,
+    db: SupabaseUser,
+    user_id: CurrentUserId,
+):
+    """Get current AURA score visibility setting.
+
+    Settings page seeds the radio buttons from this endpoint — prevents
+    silently overriding the user's saved preference (Leyla simulation P0 fix).
+    Returns {"visibility": "public"|"badge_only"|"hidden"} or 404 if no score yet.
+    """
+    result = (
+        await db.table("aura_scores")
+        .select("visibility")
+        .eq("volunteer_id", user_id)
+        .maybe_single()
+        .execute()
+    )
+    if not result.data:
+        # No score yet — return default so frontend can still render the setting
+        return {"visibility": "public"}
+    return {"visibility": result.data.get("visibility", "public")}
 
 
 @router.patch("/me/visibility")

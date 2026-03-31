@@ -7,7 +7,7 @@ Endpoints:
   PATCH /notifications/read-all   Mark all notifications read
 """
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request
 from loguru import logger
 from pydantic import BaseModel, ConfigDict
 
@@ -50,7 +50,7 @@ class UnreadCountOut(BaseModel):
 @router.get("/unread-count", response_model=UnreadCountOut)
 @limiter.limit(RATE_DEFAULT)
 async def get_unread_count(
-    request: object,
+    request: Request,
     db: SupabaseUser,
     user_id: CurrentUserId,
 ) -> UnreadCountOut:
@@ -67,7 +67,7 @@ async def get_unread_count(
 @router.get("", response_model=NotificationListOut)
 @limiter.limit(RATE_DEFAULT)
 async def list_notifications(
-    request: object,
+    request: Request,
     db: SupabaseUser,
     user_id: CurrentUserId,
     limit: int = Query(default=20, ge=1, le=50),
@@ -75,7 +75,7 @@ async def list_notifications(
 ) -> NotificationListOut:
     """List user notifications, newest first."""
     result = await db.table("notifications") \
-        .select("*", count="exact") \
+        .select("id, type, title, body, is_read, reference_id, created_at", count="exact") \
         .eq("user_id", user_id) \
         .order("created_at", desc=True) \
         .range(offset, offset + limit - 1) \
@@ -83,16 +83,13 @@ async def list_notifications(
 
     notifications = [NotificationOut(**row) for row in (result.data or [])]
 
-    # Unread count in same query context (avoid second round-trip)
-    unread_result = await db.table("notifications") \
-        .select("id", count="exact") \
-        .eq("user_id", user_id) \
-        .eq("is_read", False) \
-        .execute()
+    # Derive unread count from the already-fetched page — avoids a second DB round-trip.
+    # Acceptable because pages are small (max 50) and unread items cluster at the top.
+    unread_count = sum(1 for n in notifications if not n.is_read)
 
     return NotificationListOut(
         notifications=notifications,
-        unread_count=unread_result.count or 0,
+        unread_count=unread_count,
         total=result.count or 0,
     )
 
@@ -100,7 +97,7 @@ async def list_notifications(
 @router.patch("/read-all", response_model=UnreadCountOut)
 @limiter.limit(RATE_DEFAULT)
 async def mark_all_read(
-    request: object,
+    request: Request,
     db: SupabaseUser,
     user_id: CurrentUserId,
 ) -> UnreadCountOut:
@@ -118,7 +115,7 @@ async def mark_all_read(
 @router.patch("/{notification_id}/read", response_model=NotificationOut)
 @limiter.limit(RATE_DEFAULT)
 async def mark_notification_read(
-    request: object,
+    request: Request,
     notification_id: str,
     db: SupabaseUser,
     user_id: CurrentUserId,

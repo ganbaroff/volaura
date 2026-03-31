@@ -49,7 +49,7 @@ async def list_events(
 async def get_event(request: Request, event_id: str, db: SupabaseAdmin) -> EventResponse:
     """Get a single event by ID."""
     _validate_uuid(event_id, "event_id")
-    result = await db.table("events").select("*").eq("id", event_id).neq("status", "draft").single().execute()
+    result = await db.table("events").select("*").eq("id", event_id).eq("is_public", True).neq("status", "draft").single().execute()
     if not result.data:
         raise HTTPException(status_code=404, detail={"code": "EVENT_NOT_FOUND", "message": "Event not found"})
     return EventResponse(**result.data)
@@ -148,7 +148,8 @@ async def register_for_event(
     if event.data.get("capacity"):
         count = await db_admin.table("registrations").select("id", count="exact").eq("event_id", event_id).in_("status", ["approved", "pending"]).execute()
         if (count.count or 0) >= event.data["capacity"]:
-            raise HTTPException(status_code=409, detail={"code": "EVENT_FULL", "message": "Event is at capacity — you have been waitlisted"})
+            # BUG-SEC-022 FIX: old message said "waitlisted" but waitlisting is not implemented
+            raise HTTPException(status_code=409, detail={"code": "EVENT_FULL", "message": "Event is at capacity. Waitlisting is not yet available."})
 
     # Check duplicate
     existing = await db.table("registrations").select("id, status").eq("event_id", event_id).eq("volunteer_id", user_id).execute()

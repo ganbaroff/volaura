@@ -1,0 +1,492 @@
+[
+  {
+    "id": "prof-fin-s5-001",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.4,
+    "irt_b": -0.8,
+    "irt_c": 0.1,
+    "scenario_en": "Your Baku-based bank is implementing a new core banking analytics platform that will process customer transaction data and generate CBA regulatory reports. The vendor is proposing to host the data processing servers in Germany to leverage lower infrastructure costs. As the lead financial analyst overseeing the implementation, you review the CBA's data residency requirements. What is the correct position to take?",
+    "scenario_az": "Bankınız müştəri əməliyyat məlumatlarını emal edəcək və CBA tənzimləyici hesabatlarını hazırlayacaq yeni əsas bank analitika platformasını tətbiq edir. Satıcı, daha aşağı infrastruktur xərclərindən istifadə etmək üçün məlumat emal serverlərini Almaniyada yerləşdirməyi təklif edir. Tətbiqi nəzarət edən aparıcı maliyyə analitiki kimi, CBA-nın məlumatların yerli saxlanma tələblərini nəzərdən keçirirsiniz. Hansı mövqeyi tutmaq lazımdır?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Accept the German hosting since EU data protection standards (GDPR) are stricter than AZ requirements",
+        "text_az": "Alman hosting-ni qəbul edin, çünki AB məlumatların qorunması standartları (GDPR) AZ tələblərindən daha sərtdir"
+      },
+      {
+        "key": "B",
+        "text_en": "Reject the proposal — CBA regulations require banking customer data and transaction records to be stored and processed within Azerbaijan's jurisdiction",
+        "text_az": "Təklifi rədd edin — CBA qaydaları bank müştəri məlumatlarının və əməliyyat qeydlərinin Azərbaycan yurisdiksiyasında saxlanmasını və emal edilməsini tələb edir"
+      },
+      {
+        "key": "C",
+        "text_en": "Request a cost-benefit analysis before deciding, as regulatory requirements are flexible for international vendors",
+        "text_az": "Qərar vermədən əvvəl xərc-fayda təhlili tələb edin, çünki tənzimləyici tələblər beynəlxalq satıcılar üçün çevikdir"
+      },
+      {
+        "key": "D",
+        "text_en": "Allow German hosting only for analytics data, keeping raw transaction data in Azerbaijan",
+        "text_az": "Xam əməliyyat məlumatlarını Azərbaycanda saxlayaraq yalnız analitika məlumatları üçün Alman hosting-nə icazə verin"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. The Central Bank of Azerbaijan mandates that banks operating under its license must store and process customer financial data within Azerbaijan's territorial jurisdiction. This applies to all data used for CBA regulatory reporting, including transaction records and derived analytics. Option A is wrong — GDPR applicability does not override AZ sovereign data residency law. Option C is wrong — CBA data residency is a hard compliance requirement, not a flexible cost negotiation. Option D is wrong — analytics data derived from customer transactions is still subject to residency requirements.",
+    "feedback_az": "B düzgündür. Azərbaycan Mərkəzi Bankı, lisenziyası altında fəaliyyət göstərən bankların müştəri maliyyə məlumatlarını Azərbaycanın ərazisində saxlamasını və emal etməsini tələb edir. Bu, əməliyyat qeydləri və törəmə analitika daxil olmaqla CBA tənzimləyici hesabatları üçün istifadə edilən bütün məlumatlara şamil edilir.",
+    "development_tip_en": "Study CBA's 'On Information Security in Banks' regulation and the Law of the Republic of Azerbaijan 'On Personal Data' (2010). AZ data sovereignty rules differ significantly from EU cross-border data flow permissions. Always verify CBA circular letters for updated data residency guidance before any fintech procurement.",
+    "development_tip_az": "CBA-nın 'Banklarda İnformasiya Təhlükəsizliyi haqqında' qaydalarını və 'Fərdi Məlumatlar haqqında' (2010) Azərbaycan Respublikası Qanununu öyrənin. AZ məlumat suverenliyi qaydaları AB-nin sərhədlərarası məlumat axını icazələrindən əhəmiyyətli dərəcədə fərqlənir.",
+    "london_delta": "A London analyst following UK FCA Handbook SUP 15.3 (notification requirements for outsourcing material functions) would approve offshore data hosting with vendor due diligence documentation alone. AZ consequence: CBA Supervisory Board would issue a formal compliance breach notice under AZ Banking Law Article 46, requiring immediate data repatriation within 30 days or license suspension proceedings.",
+    "az_institutions": [
+      "CBA"
+    ],
+    "tags": [
+      "financial-analysis",
+      "az-specific",
+      "data-residency",
+      "cba-compliance",
+      "fintech"
+    ]
+  },
+  {
+    "id": "prof-fin-s5-002",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.3,
+    "irt_b": -0.6,
+    "irt_c": 0.1,
+    "scenario_en": "It is the last Friday of the quarter. Your team at Kapital Bank has completed the quarterly financial statements but the risk-weighted assets calculation contains a minor data entry error discovered at 4:30 PM. The CBA requires quarterly prudential reports to be submitted by 5:00 PM the same day in XBRL format via the CBA reporting portal. Correcting the error will take approximately 45 minutes. What is the correct course of action?",
+    "scenario_az": "Rüblüyün son cümə günüdür. Kapital Bankındakı komandanız rüblük maliyyə hesabatlarını tamamlamışdır, lakin risk ağırlıqlı aktivlər hesablamasında 16:30-da kiçik bir məlumat giriş xətası aşkar edilmişdir. CBA rüblük prudensial hesabatların eyni gün saat 17:00-a qədər XBRL formatında CBA hesabat portalı vasitəsilə təqdim edilməsini tələb edir. Xətanın düzəldilməsi təxminən 45 dəqiqə çəkəcək. Düzgün fəaliyyət istiqaməti hansıdır?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Submit the report with the error at 5:00 PM, then file a corrected version next week with an explanatory note",
+        "text_az": "Hesabatı xətayla saat 17:00-da təqdim edin, sonra izahlı qeydlə növbəti həftə düzəldilmiş versiyanı təqdim edin"
+      },
+      {
+        "key": "B",
+        "text_en": "Immediately notify your direct supervisor and the compliance officer, request emergency CBA portal extension if available, and document the error discovery timeline",
+        "text_az": "Dərhal birbaşa rəhbərinizə və uyğunluq məmurunuza məlumat verin, mövcudsa CBA portalı üçün fövqəladə uzatma tələb edin və xəta aşkarlanma vaxt cədvəlini sənədləşdirin"
+      },
+      {
+        "key": "C",
+        "text_en": "Submit the incorrect report to meet the deadline since a minor error is acceptable under materiality thresholds",
+        "text_az": "Materiallıq həddləri çərçivəsində kiçik xəta qəbul edilə bilən olduğundan son tarixə çatmaq üçün yanlış hesabatı təqdim edin"
+      },
+      {
+        "key": "D",
+        "text_en": "Work alone to fix the error and submit at 5:45 PM — CBA systems accept late submissions within a 1-hour grace period",
+        "text_az": "Xətanı düzəltmək üçün tək işləyin və saat 17:45-də təqdim edin — CBA sistemləri 1 saatlıq güzəşt dövrü ərzində gecikmiş təqdimetmələri qəbul edir"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. CBA prudential reporting has zero-tolerance deadlines with no automatic grace period. The correct response is immediate escalation to supervisors and compliance, official documentation of the incident, and formal communication with CBA if the deadline cannot be met — not silent non-compliance or submission of known incorrect data. Option A is wrong — submitting materially incorrect prudential data is a regulatory violation regardless of intent to correct. Option C is wrong — risk-weighted asset miscalculation directly affects capital adequacy ratios, which are never immaterial for CBA reporting. Option D is wrong — CBA XBRL portal does not have an automatic 1-hour grace period; this assumption is false.",
+    "feedback_az": "B düzgündür. CBA prudensial hesabatlaşmanın sıfır toleranslı son tarixləri var, avtomatik güzəşt dövrü yoxdur. Düzgün cavab dərhal rəhbərlərə və uyğunluq xidmətinə eskalasiya, hadisənin rəsmi sənədləşdirilməsi və son tarixə çatmaq mümkün deyilsə CBA ilə rəsmi əlaqədir.",
+    "development_tip_en": "Memorize CBA's quarterly reporting calendar and build internal deadlines 48 hours before CBA submission dates. Establish a pre-submission checklist that includes a second-reviewer sign-off on all RWA calculations. Know the CBA's formal procedure for error notification — proactive disclosure is treated more favorably than discovered non-compliance.",
+    "development_tip_az": "CBA-nın rüblük hesabat təqvimini əzbərləyin və CBA təqdimetmə tarixlərindən 48 saat əvvəl daxili son tarixlər qurun. Bütün RWA hesablamalarında ikinci gözden keçirəndən imza tələb edən ilkin yoxlama siyahısı yaradın.",
+    "london_delta": "A London analyst following UK FCA Handbook SUP 17.1 (transaction reporting timelines) would apply a T+1 correction submission window as standard practice. AZ consequence: CBA Regulation No.8 Article 12 treats late prudential submissions as a supervisory event — Kapital Bank's compliance rating would be downgraded in the CAMELS assessment, triggering increased inspection frequency.",
+    "az_institutions": [
+      "CBA",
+      "Kapital Bank"
+    ],
+    "tags": [
+      "financial-analysis",
+      "az-specific",
+      "cba-reporting",
+      "xbrl",
+      "prudential-compliance"
+    ]
+  },
+  {
+    "id": "prof-fin-s5-003",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency_slug": "communication",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.6,
+    "irt_b": 0.2,
+    "irt_c": 0.12,
+    "scenario_en": "You are presenting ABB's NPL ratio trend analysis to a 12-member supervisory board. Eight members are senior officials with government or business backgrounds — no financial modeling experience. The NPL ratio rose from 22% to 38% over six quarters. Your technical slides show cohort survival curves, vintage analysis, and probability of default migration matrices. Midway through slide 3, the board chairman interrupts: 'We don't understand these charts. Tell us in plain terms: is the bank safe or not?' How do you respond?",
+    "scenario_az": "Siz ABB-nin NPL nisbəti trend analizini 12 üzvdən ibarət nəzarət şurasına təqdim edirsiniz. Səkkiz üzv hökumət və ya biznes sahəsindən gəlmiş yüksək rütbəli məmurlardır — maliyyə modelləşdirməsi təcrübəsi yoxdur. NPL nisbəti altı rüb ərzində 22%-dən 38%-ə yüksəlmişdir. Texniki slaydlarınızda kohort sağkalma əyriləri, vintage analizi və defolt miqrasiya matrisləri göstərilir. 3-cü slaydin ortasında şura sədri sözünüzü kəsir: 'Bu cədvəlləri anlamırıq. Sadə dillə deyin: bank təhlükəsizdirmi?' Necə cavab verirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Continue the technical presentation — the board needs to understand the full methodology before reaching conclusions",
+        "text_az": "Texniki təqdimatı davam etdirin — şura nəticəyə çatmazdan əvvəl tam metodologiyanı anlamalıdır"
+      },
+      {
+        "key": "B",
+        "text_en": "Immediately pivot to a plain-language summary: state the headline risk level, one key driver, and one recommended action — then offer to walk through technical details afterward for those who want them",
+        "text_az": "Dərhal sadə dil xülasəsinə keçin: əsas risk səviyyəsini, bir əsas amili və bir tövsiyə olunan addımı bildirin — sonra istəyənlər üçün texniki təfərrüatları izah etməyi təklif edin"
+      },
+      {
+        "key": "C",
+        "text_en": "Apologize for the complexity, skip to the conclusion slide, and read out the final recommendation verbatim",
+        "text_az": "Mürəkkəblik üçün üzr istəyin, nəticə slaydına keçin və son tövsiyəni sözbəsöz oxuyun"
+      },
+      {
+        "key": "D",
+        "text_en": "Ask the chairman to allow you to finish the full presentation first — interrupting mid-analysis will lead to incomplete conclusions",
+        "text_az": "Sədrdən əvvəlcə tam təqdimatı bitirməyə icazə verməsini xahiş edin — analiz ortasında kəsilmək natamam nəticələrə gətirib çıxaracaq"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. In Azerbaijani governance culture, the chairman's intervention is a direct signal to adapt — ignoring it (A, D) is a professional mistake that signals poor communication awareness. The correct response is immediate audience-adaptive pivoting: lead with the decision-relevant headline (risk level), provide one supporting data point in lay terms, and offer the technical depth as optional follow-up. Option C is wrong — apologizing and reading verbatim eliminates your analytical value and treats the board as unable to engage. Option B preserves board authority, delivers the insight they need, and maintains your credibility.",
+    "feedback_az": "B düzgündür. Azərbaycan idarəetmə mədəniyyətində sədrin müdaxiləsi uyğunlaşmaq üçün birbaşa bir siqnaldır — onu nəzərə almamaq peşəkar bir səhvdir. Düzgün cavab dərhal auditoriyanı nəzərə alan keçiddir: qərar üçün vacib başlıqla (risk səviyyəsi) başlayın, sadə dildə bir dəstəkləyici məlumat nöqtəsi verin və texniki dərinliyi isteğe bağlı izləmə kimi təklif edin.",
+    "development_tip_en": "In AZ boardroom culture, hierarchical deference means a chairman's question is never rhetorical — it is an instruction. Practice the 'Pyramid Principle' adapted for AZ context: conclusion first, then supporting logic, then data. Prepare a one-page executive summary alongside every technical deck for boards with mixed financial literacy.",
+    "development_tip_az": "AZ idarə heyəti mədəniyyətində iyerarxik hörmət sədrin sualının heç vaxt ritorik olmadığı anlamına gəlir — bu bir göstərişdir. AZ kontekstinə uyğunlaşdırılmış 'Piramida Prinsipi'ni məşq edin: əvvəlcə nəticə, sonra dəstəkləyici məntiq, sonra məlumat.",
+    "london_delta": "A London analyst following UK FCA COBS 4.5 (fair, clear, and not misleading communications) would prioritize completeness of technical disclosure over audience comprehension, treating board presentation as equivalent to a prospectus disclosure obligation. AZ consequence: ABB's supervisory board, operating under CBA CAMELS governance standards, would record the analyst's failure to communicate actionable risk conclusions as a deficiency in management information quality — flagged in the next CBA on-site inspection.",
+    "az_institutions": [
+      "ABB",
+      "CBA"
+    ],
+    "tags": [
+      "financial-analysis",
+      "az-specific",
+      "board-communication",
+      "npl-analysis",
+      "stakeholder-management"
+    ]
+  },
+  {
+    "id": "prof-fin-s5-004",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.5,
+    "irt_b": 0.5,
+    "irt_c": 0.08,
+    "scenario_en": "You are 60% through a sovereign wealth fund allocation analysis for SOFAZ when the investment committee issues a revised strategic asset allocation memo. The new mandate reduces permissible equity exposure from 40% to 25% of AUM and introduces a new 10% floor allocation to green infrastructure bonds — an asset class not in your original model. Your deliverable is due in 36 hours. Your current model has 847 rows of calibrated assumptions. What is your primary response?",
+    "scenario_az": "SOFAZ üçün suveren servet fondu bölgüsü analizinin 60%-ni tamamlamışsınız, bu zaman investisiya komitəsi yenilənmiş strateji aktiv bölgüsü memorandumu yayımlayır. Yeni mandat icazə verilən kapital ekspozisiyasını AUM-un 40%-dən 25%-ə endirür və orijinal modelinizdə olmayan yeni bir aktiv sinfi — yaşıl infrastruktur istiqrazlarına 10% mərtəbə bölgüsü tətbiq edir. Çatdırılma müddəti 36 saatdır. Mövcud modelinizdə 847 sətir kalibrlənmiş fərziyyə var. Əsas cavabınız nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Complete the original analysis first and deliver it, noting in a footnote that the new mandate will require a follow-up revision",
+        "text_az": "Əvvəlcə orijinal analizi tamamlayın və təqdim edin, yeni mandatın izləmə revizyonu tələb edəcəyini qeyddə qeyd edin"
+      },
+      {
+        "key": "B",
+        "text_en": "Immediately assess which model sections are reusable, identify the minimum viable scope for the green bond component, communicate revised timeline risk to the investment committee within 2 hours, and restructure the deliverable around the new mandate",
+        "text_az": "Dərhal hansı model bölmələrinin yenidən istifadə edilə bilər olduğunu qiymətləndirin, yaşıl istiqraz komponenti üçün minimum həyat qabiliyyətli əhatə dairəsini müəyyənləşdirin, 2 saat ərzində investisiya komitəsinə yenidən nəzərdən keçirilmiş zaman cədvəli riskini bildirin və çatdırılmanı yeni mandatın ətrafında yenidən qurun"
+      },
+      {
+        "key": "C",
+        "text_en": "Request a 2-week extension to rebuild the model from scratch to ensure accuracy with the new parameters",
+        "text_az": "Yeni parametrlərlə dəqiqliyi təmin etmək üçün modeli sıfırdan yenidən qurmaq üçün 2 həftəlik uzatma tələb edin"
+      },
+      {
+        "key": "D",
+        "text_en": "Adapt the existing model by proportionally scaling down equity assumptions and adding a placeholder 10% green bond allocation with generic sovereign bond yield assumptions",
+        "text_az": "Kapital fərziyyələrini mütənasib olaraq azaltmaqla və ümumi suveren istiqraz gəlir fərziyyələri ilə 10% yaşıl istiqraz bölgüsü üçün yer tutucu əlavə etməklə mövcud modeli uyğunlaşdırın"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. SOFAZ mandate changes are binding, not advisory — the original deliverable is obsolete the moment the new memo is issued. The correct response combines rapid triage (what is salvageable), scope communication (alert the committee to timeline risk before they assume normal delivery), and structured pivot. Option A is wrong — delivering analysis built on a superseded mandate wastes committee time and signals poor situational awareness. Option C is wrong — requesting 2 weeks for a 36-hour deadline without attempting restructuring is premature escalation. Option D is wrong — green infrastructure bonds have materially different duration, liquidity, and ESG classification parameters than generic sovereign bonds; placeholder assumptions would make the analysis misleading.",
+    "feedback_az": "B düzgündür. SOFAZ mandat dəyişiklikləri məsləhət deyil, məcburidir — yeni memorandum yayımlandığı anda orijinal çatdırılma köhnəlir. Düzgün cavab sürətli triyajı (nə xilas edilə bilər), əhatə dairəsinin kommunikasiyasını (komitəyə normal çatdırılma gümanını etmədən əvvəl zaman cədvəli riskini bildirmək) və strukturlu dönüşü birləşdirir.",
+    "development_tip_en": "SOFAZ operates under a strict investment policy statement (IPS) with mandatory asset class constraints. When the IPS changes mid-analysis, treat it as a model re-initialization event, not a patch. Green infrastructure bonds in AZ context include AIIB-issued instruments and ADB green bonds — study their yield spread dynamics relative to AZN sovereign curve before modeling.",
+    "development_tip_az": "SOFAZ məcburi aktiv sinfi məhdudiyyətləri olan ciddi investisiya siyasəti bəyannaməsi (IPS) çərçivəsində fəaliyyət göstərir. IPS analiz ortasında dəyişdikdə, bunu yama deyil, modelin yenidən başladılması hadisəsi kimi qəbul edin.",
+    "london_delta": "A London analyst following UK MiFID II Article 25 (suitability and appropriateness obligations) would continue with the original mandate parameters, arguing that client instruction updates require formal written amendment processing before model changes are warranted. AZ consequence: SOFAZ's investment committee, operating under Presidential Decree on SOFAZ Investment Policy, would treat submission of superseded-mandate analysis as a compliance failure — analyst's access to classified SOFAZ portfolio data would be reviewed.",
+    "az_institutions": [
+      "SOFAZ"
+    ],
+    "tags": [
+      "financial-analysis",
+      "az-specific",
+      "sofaz",
+      "asset-allocation",
+      "mandate-compliance"
+    ]
+  },
+  {
+    "id": "prof-fin-s5-005",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.7,
+    "irt_b": 0.7,
+    "irt_c": 0.1,
+    "scenario_en": "Kapital Bank's risk team must submit quarterly stress test results to the CBA under Decree No.8 on stress testing requirements. Your internal model projects a capital adequacy ratio (CAR) of 14.2% under the severe stress scenario. However, applying the CBA's prescribed standardized stress shock parameters from Decree No.8 (a 40% haircut on real estate collateral, 3x NPL shock, 200bps interest rate shock) produces a CAR of 11.8% — above the 10% minimum but below the bank's internal 13% target. Which result do you submit to the CBA?",
+    "scenario_az": "Kapital Bankın risk komandası CBA-ya stress testinin tələblərinə dair 8 Nömrəli Fərman əsasında rüblük stress testi nəticələrini təqdim etməlidir. Daxili modeliniz ağır stress ssenarisi altında 14,2% kapital adekvatlığı əmsalı (CAE) proqnozlaşdırır. Lakin Fərman No.8-dən CBA-nın standartlaşdırılmış stress şoku parametrlərinin tətbiqi (daşınmaz əmlak girovuna 40% saçma, 3x NPL şoku, 200bps faiz dərəcəsi şoku) 10% minimumdan yuxarı, lakin bankın daxili 13% hədəfindən aşağı olan 11,8% CAE istehsal edir. CBA-ya hansı nəticəni təqdim edirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Submit 14.2% — the internal model is more sophisticated and accurately reflects the bank's actual risk profile",
+        "text_az": "14,2% təqdim edin — daxili model daha mürəkkəbdir və bankın faktiki risk profilini dəqiq əks etdirir"
+      },
+      {
+        "key": "B",
+        "text_en": "Submit both results with a methodology reconciliation note explaining the differences between internal and CBA standardized approaches",
+        "text_az": "Daxili və CBA standartlaşdırılmış yanaşmalar arasındakı fərqləri izah edən metodologiya uzlaşdırma qeydi ilə hər iki nəticəni təqdim edin"
+      },
+      {
+        "key": "C",
+        "text_en": "Submit 11.8% using CBA's Decree No.8 standardized parameters — regulatory stress test submissions must use the prescribed methodology regardless of internal model output",
+        "text_az": "CBA-nın 8 Nömrəli Fərmanının standartlaşdırılmış parametrlərindən istifadə edərək 11,8% təqdim edin — tənzimləyici stress testi təqdimetmələri daxili model çıxışından asılı olmayaraq təyin edilmiş metodologiyadan istifadə etməlidir"
+      },
+      {
+        "key": "D",
+        "text_en": "Submit 11.8% but include a management overlay note requesting CBA to apply the bank's internal model for the official assessment",
+        "text_az": "11,8% təqdim edin, lakin CBA-dan rəsmi qiymətləndirmə üçün bankın daxili modelini tətbiq etməsini xahiş edən idarəetmə qeydi əlavə edin"
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct. CBA Decree No.8 stress test submissions are regulatory exercises, not internal risk management tools. The prescribed standardized parameters exist precisely to ensure cross-bank comparability — a bank submitting its own softer internal model parameters defeats the systemic risk monitoring purpose. Option A is wrong — submitting internal model results in place of the mandated methodology is a regulatory filing violation. Option B is a common trap: while transparency is good, the official CBA submission column must contain the Decree No.8 result; internal model results belong in supplementary materials. Option D is wrong — requesting CBA to use your model in their assessment is inappropriate; the bank may include internal model results as annexes, not as the primary submission.",
+    "feedback_az": "C düzgündür. CBA Fərman No.8 stress testi təqdimetmələri tənzimləyici məşqlərdir, daxili risk idarəetmə vasitələri deyil. Təyin edilmiş standartlaşdırılmış parametrlər məhz banklar arası müqayisəni təmin etmək üçün mövcuddur. Öz daha yumşaq daxili model parametrlərini təqdim edən bank sistematik risk monitorinqinin məqsədini boşa çıxarır.",
+    "development_tip_en": "Know CBA Decree No.8 parameters cold: 40% real estate haircut, 25% other collateral haircut, 3x current NPL ratio shock, 200bps parallel yield curve shift. These are non-negotiable for CBA submission. Build a second model tab that auto-applies these exact parameters — dual output capability (regulatory vs internal) is standard practice in AZ banking risk management.",
+    "development_tip_az": "CBA Fərman No.8 parametrlərini əzbərdən bilin: 40% daşınmaz əmlak saçması, 25% digər girov saçması, 3x cari NPL nisbəti şoku, 200bps paralel gəlir əyrisi dəyişməsi. Bunlar CBA təqdimetməsi üçün müzakirə edilməzdir.",
+    "london_delta": "A London analyst following Basel III Pillar 2A internal stress testing guidelines (PRA SS3/19) would argue that a more sophisticated internal model provides superior capital adequacy assessment and should supersede standardized regulatory shocks for sophisticated institutions. AZ consequence: CBA's bank supervision department, under Regulation No.8 Article 7, would classify the non-standard submission as a reportable compliance deviation — triggering a targeted on-site inspection of Kapital Bank's risk management function.",
+    "az_institutions": [
+      "CBA",
+      "Kapital Bank"
+    ],
+    "tags": [
+      "financial-analysis",
+      "az-specific",
+      "stress-testing",
+      "cba-decree-8",
+      "capital-adequacy"
+    ]
+  },
+  {
+    "id": "prof-fin-s5-006",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.8,
+    "irt_b": 0.9,
+    "irt_c": 0.07,
+    "scenario_en": "You are the senior analyst leading ABB's post-crisis NPL recovery analysis — ABB's NPL ratio peaked at 38% in 2017, the highest among AZ systemically important banks. Two days before presenting the root-cause analysis to the CBA supervisor, your junior analyst (6 months on the job) privately approaches you and shows you an error in the loan loss provisioning model: a lookup formula was using 2016 collateral valuations instead of 2017 distressed valuations. Correcting this error increases the peak NPL provision shortfall estimate by AZN 340 million. The junior analyst says: 'I don't want to cause problems — maybe we just quietly fix it for the next version.' How do you respond as the leader?",
+    "scenario_az": "Siz ABB-nin 2017-ci ildə 38%-lik NPL nisbəti ilə zirvəyə çatdığı böhrandan sonrakı NPL bərpa analizini aparan aparıcı analistsiniz. CBA nəzarətçisinə kök-səbəb analizini təqdim etməzdən iki gün əvvəl, junior analitik (işdə 6 ay) sizə məxfi şəkildə yaxınlaşaraq kredit zərər ehtiyatı modelindəki xətanı göstərir: axtarış formulu 2017 problemli qiymətlər əvəzinə 2016-cı ilin girov qiymətlərindən istifadə edirdi. Bu xətanın düzəldilməsi pik NPL ehtiyat çatışmazlığı təxminini 340 milyon AZN artırır. Junior analitik deyir: 'Problem yaratmaq istəmirəm — bəlkə sadəcə sonrakı versiya üçün sakit şəkildə düzəldərik.' Lider kimi necə cavab verirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Agree with the junior analyst — correcting it quietly in the next version avoids unnecessary escalation before the CBA meeting",
+        "text_az": "Junior analitiklə razılaşın — sonrakı versiyada sakit şəkildə düzəltmək CBA görüşündən əvvəl lazımsız eskalasiyadan qaçmağa kömək edir"
+      },
+      {
+        "key": "B",
+        "text_en": "Commend the junior analyst for finding the error, immediately update the model with the correct valuations, brief your supervisor on the correction and revised figure before the CBA meeting, and document the error and correction in the analysis audit trail",
+        "text_az": "Junior analitiki xəta tapdığı üçün tərifləyin, modeli dərhal düzgün qiymətlərlə yeniləyin, CBA görüşündən əvvəl rəhbərinizi düzəliş və düzəldilmiş rəqəm barədə məlumatlandırın və xəta və düzəlişi analiz audit izində sənədləşdirin"
+      },
+      {
+        "key": "C",
+        "text_en": "Tell the junior analyst that the CBA presentation is based on approved methodology and the error falls within acceptable model uncertainty bounds",
+        "text_az": "Junior analitikə CBA təqdimatının təsdiqlənmiş metodologiyaya əsaslandığını və xətanın qəbul edilə bilən model qeyri-müəyyənlik həddləri daxilindəkinə düşdüyünü deyin"
+      },
+      {
+        "key": "D",
+        "text_en": "Present the original analysis to CBA as planned, then correct the model internally and revise future analyses — a AZN 340M adjustment to a historical estimate is not a reporting obligation",
+        "text_az": "Orijinal analizi planlandığı kimi CBA-ya təqdim edin, sonra modeli daxili olaraq düzəldin və gələcək analizləri gözden keçirin — tarixi təxminə 340 milyon AZN düzəliş hesabat öhdəliyi deyil"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. A AZN 340M provision shortfall in a systemically important bank's NPL analysis is material by any standard — presenting known-incorrect data to the CBA supervisor is a regulatory compliance and professional ethics violation. The correct leader response has four elements: recognize the junior's integrity (protect the culture of error reporting), fix the model, brief upward before the CBA meeting, and document. Option A creates cover-up risk — if CBA discovers the known error was buried, consequences escalate. Option C is analytically dishonest — a AZN 340M difference is not within model uncertainty bounds, it is a formula error. Option D misunderstands regulatory materiality — CBA supervisory meetings use historical analysis to inform current capital planning; known errors must be corrected before supervisor presentation.",
+    "feedback_az": "B düzgündür. Sistemik əhəmiyyətli bankın NPL analizindəki 340 milyon AZN ehtiyat çatışmazlığı istənilən standarta görə materialdır — CBA nəzarətçisinə bilərəkdən yanlış məlumat təqdim etmək tənzimləyici uyğunluq və peşəkar etika pozuntusudur. Düzgün lider cavabının dörd elementi var: junior analitiklə xəta haqqında mədəniyyəti qoruyun, modeli düzəldin, CBA görüşündən əvvəl yuxarı məlumat verin və sənədləşdirin.",
+    "development_tip_en": "In AZ financial institutions, junior analysts often suppress error findings due to hierarchical pressure — 'not wanting to cause problems' is a cultural signal, not just individual hesitation. As a senior analyst, explicitly creating psychological safety for error reporting is a leadership competency. Reference: IBA's 2015 default was partly attributed to suppressed internal risk signals. Build an error-discovery incentive norm in your team.",
+    "development_tip_az": "AZ maliyyə müəssisələrində junior analistlər çox vaxt iyerarxik təzyiq üzündən xəta tapıntılarını gizlədır — 'problem yaratmaq istəmirəm' fərdi tərəddüd deyil, mədəni siqnaldır. Baş analitik kimi xəta haqqında məlumat vermək üçün psixoloji təhlükəsizlik yaratmaq liderlik yetkinliyi deməkdir.",
+    "london_delta": "A London analyst following UK Senior Managers and Certification Regime (SMCR) Conduct Rule 4 (duty to disclose appropriately) would escalate the error through formal Significant Management Escalation procedures — a multi-day internal approval process. AZ consequence: CBA's Banking Supervision Department, under AZ Banking Law Article 34.2 (accuracy of submitted information), would treat presentation of known-incorrect material data as a deliberate misstatement — a potential license-condition violation for the responsible senior analyst.",
+    "az_institutions": [
+      "ABB",
+      "CBA"
+    ],
+    "tags": [
+      "financial-analysis",
+      "az-specific",
+      "abb-npl",
+      "leadership",
+      "error-disclosure",
+      "regulatory-integrity"
+    ]
+  },
+  {
+    "id": "prof-fin-s5-007",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.6,
+    "irt_b": 0.8,
+    "irt_c": 0.09,
+    "scenario_en": "You are a financial analyst at PASHA Bank's private wealth division. A long-standing high-net-worth client — a well-connected businessperson whose family has maintained accounts for 15 years — is requesting a AZN 2.8 million wire transfer to an intermediary company in a jurisdiction on FATF's grey list. The client's relationship manager (your senior colleague) pulls you aside and says: 'Don't raise an AML alert on this one — this family is personally connected to the chairman. Filing a Suspicious Activity Report will embarrass the bank and destroy the relationship.' What do you do?",
+    "scenario_az": "Siz PASHA Bankın özəl sərvət bölməsindəki maliyyə analistsiniz. Uzun müddətdir müştəri olan yüksək sərvətli bir müştəri — ailəsi 15 il ərzində hesablarını aparan yaxşı əlaqəli bir iş adamı — FATF-ın boz siyahısındakı yurisdiksiyada bir vasitəçi şirkətə 2,8 milyon AZN bank köçürməsi tələb edir. Müştəri münasibətlər meneceri (baş həmkarınız) sizi kənara çəkib deyir: 'Bu barədə AML xəbərdarlığı verməyin — bu ailə şəxsən sədrlə bağlantılıdır. Şübhəli Əməliyyat Hesabatı vermək bankı utandıracaq və münasibəti məhv edəcək.' Nə edirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Follow your senior colleague's guidance — they have more context on the client relationship and the risks of escalation",
+        "text_az": "Baş həmkarınızın rəhbərliyinə əməl edin — onların müştəri münasibəti və eskalasiya riskləri haqqında daha çox konteksti var"
+      },
+      {
+        "key": "B",
+        "text_en": "File the Suspicious Activity Report through PASHA Bank's AML compliance channel independently, document your colleague's instruction to suppress it, and if necessary, use the bank's whistleblower protection mechanism",
+        "text_az": "Şübhəli Əməliyyat Hesabatını PASHA Bankın AML uyğunluq kanalı vasitəsilə müstəqil olaraq təqdim edin, həmkarınızın onu gizlətmək göstərişini sənədləşdirin və lazım gələrsə bankın müxbir mühafizə mexanizmindən istifadə edin"
+      },
+      {
+        "key": "C",
+        "text_en": "Escalate internally to your direct supervisor and ask them to make the AML decision — transferring responsibility upward removes your personal liability",
+        "text_az": "Dərhal birbaşa rəhbərinizə eskalasiya edin və AML qərarını vermələrini xahiş edin — məsuliyyəti yuxarıya köçürmək şəxsi məsuliyyətinizi aradan qaldırır"
+      },
+      {
+        "key": "D",
+        "text_en": "Request additional documentation from the client and delay the transaction — this creates time for the relationship manager to reconsider without formally filing a report",
+        "text_az": "Müştəridən əlavə sənədlər tələb edin və əməliyyatı gecikdirin — bu, münasibətlər menecerinə rəsmi hesabat vermədən yenidən düşünmək üçün vaxt yaradır"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. AML Suspicious Activity Report obligations are personal legal duties under AZ Law on Combating Legalization of Criminally Obtained Funds — they cannot be overridden by relationship pressure, seniority, or client connectivity. A transaction to a FATF grey-list jurisdiction meeting value thresholds triggers mandatory reporting regardless of client status. Key: documenting the colleague's suppression instruction is critical — this protects you legally and creates an audit trail. Option A exposes you personally to AML non-compliance liability. Option C is partially correct (escalate) but wrong in framing — you cannot delegate away a personal reporting obligation; even after escalation, if the supervisor also refuses, your obligation to report remains. Option D is a compliance evasion tactic — deliberate delay without filing when indicators exist is itself a reportable act.",
+    "feedback_az": "B düzgündür. AML Şübhəli Əməliyyat Hesabatı öhdəlikləri 'Cinayətlə Əldə Edilmiş Pulların Leqallaşdırılmasına Qarşı Mübarizə haqqında' AZ Qanunu çərçivəsində şəxsi hüquqi vəzifələrdir — onlar münasibət təzyiqi, seniority və ya müştəri bağlantısı ilə ləğv edilə bilməz.",
+    "development_tip_en": "Under AZ Law No.795-IQ (2001, amended 2022) on AML/CFT, financial institution employees have an individual filing obligation for SAR reports — this is not delegatable to management. FATF grey-list jurisdictions (current list changes — always verify via FATF website) trigger enhanced due diligence requirements under CBA Regulation No.22 on AML. PASHA Bank's whistleblower protection program aligns with AZ Labor Code Article 8.1 anti-retaliation provisions.",
+    "development_tip_az": "AML/CFT üzrə AZ Qanunu No.795-IQ (2001, 2022-ci ildə dəyişdirilmiş) çərçivəsində maliyyə müəssisəsi işçilərinin SAR hesabatları üçün fərdi sənədləşdirmə öhdəliyi var — bu idarəçiliyə həvalə edilə bilməz.",
+    "london_delta": "A London analyst following EU Market Abuse Regulation (MAR) Article 16 (suspicious transaction reporting) would apply a proportionality test, arguing that relationship-sensitive transactions warrant management review before automatic SAR filing. AZ consequence: CBA's Financial Monitoring Service, under AZ AML Law Article 14 (mandatory reporting thresholds), would hold the individual analyst personally liable for non-reporting — PASHA Bank could face a regulatory sanction of up to 1% of annual revenue for systemic SAR suppression.",
+    "az_institutions": [
+      "PASHA Bank",
+      "CBA"
+    ],
+    "tags": [
+      "financial-analysis",
+      "az-specific",
+      "aml",
+      "compliance",
+      "whistleblower",
+      "safeguarding"
+    ]
+  },
+  {
+    "id": "prof-fin-s5-008",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 1.9,
+    "irt_b": 1.3,
+    "irt_c": 0.0,
+    "scenario_en": "You have been assigned to lead the IBA (International Bank of Azerbaijan) restructuring analysis as part of the post-2015 default recovery assessment. The IBA defaulted on USD 3.3 billion in external debt in May 2015 — the largest sovereign-adjacent default in CIS history. Your task is to reconstruct the fair value of IBA's loan portfolio as of Q4 2015 to establish the baseline for the government bailout haircut analysis. Critical data gap: IBA's internal credit risk models were non-functional during the default period. Available data: (1) AZN was devalued 100% in February 2015 (from 0.78 to 1.05 AZN/USD, then further to 1.60 AZN/USD by December 2015); (2) CBA disclosed NPL ratio of 75% for IBA as of December 2015; (3) Government injected AZN 10.4 billion in bailout capital; (4) IBA's total assets were USD 11.2 billion pre-default; (5) Only EMDE sovereign comparables (Ukraine 2014 restructuring, Cyprus 2013 bail-in) are available for benchmarking. With this incomplete data set, describe your complete analytical approach to reconstructing IBA's Q4 2015 fair value loan portfolio.",
+    "scenario_az": "Siz IBA (Azərbaycan Beynəlxalq Bankı) restrukturizasiya analizinə rəhbərlik etmək üçün 2015-ci ildən sonrakı defolt bərpa qiymətləndirməsinin bir hissəsi kimi təyin edildiniz. IBA 2015-ci ilin may ayında MDB tarixinin ən böyük suveren bitişik defoltunda 3,3 milyard ABŞ dollarında xarici borca defolt etdi. Vəzifəniz, hökumətin xilasetmə saçma analizinin bazisini müəyyənləşdirmək üçün 2015-ci ilin 4-cü rübündən etibarən IBA-nın kredit portfelinin ədalətli dəyərini bərpa etməkdir. Kritik məlumat boşluğu: IBA-nın daxili kredit riski modelləri defolt dövründə fəaliyyətsiz idi.",
+    "options": null,
+    "correct_answer": null,
+    "feedback_en": "A complete answer must address: (1) establishing the analytical framework for a non-functional-model scenario, (2) using available macro anchors (AZN devaluation path, CBA NPL disclosure) to construct a bottom-up loan-level estimate, (3) applying EMDE restructuring comparables with explicit haircut calibration, (4) quantifying the bailout adequacy gap. See evaluation rubric for level descriptors.",
+    "feedback_az": "Tam cavab bunları əhatə etməlidir: (1) funksional olmayan model ssenarisi üçün analitik çərçivənin qurulması, (2) kredit səviyyəsindəki aşağıdan yuxarı təxmin qurmaq üçün mövcud makro lövbərlərdən istifadə, (3) açıq saçma kalibrasyonu ilə EMDE restrukturizasiya müqayisələrinin tətbiqi, (4) xilasetmənin adekvatlıq boşluğunun kəmiyyətlə ifadəsi.",
+    "development_tip_en": "The IBA case is studied in AZ banking curriculum as the defining event in AZ financial history. Key facts to master: February 2015 devaluation (100% shock, 0.78→1.05 AZN/USD), December 2015 second devaluation (1.05→1.60), USD-denominated borrower exposure amplification, CBA's CAMELS oversight failure signals. The government structured the bailout via SOFAZ capital injections and AzərGold collateral — understand the instrument structure.",
+    "development_tip_az": "IBA hadisəsi AZ bank tədris proqramında AZ maliyyə tarixinin müəyyənedici hadisəsi kimi öyrənilir. Əsas faktlar: 2015-ci ilin fevral devalvasiyası (100% şok, 0.78→1.05 AZN/USD), 2015-ci ilin dekabrında ikinci devalvasiya (1.05→1.60), ABŞ dolları ilə borclu ekspozisiya güclənməsi.",
+    "london_delta": "A London analyst following IFRS 13 (Fair Value Measurement) paragraphs 61-66 (Level 3 inputs — unobservable) would apply a discounted cash flow approach using peer bank observable inputs as proxy. AZ consequence: CBA's Asset Quality Review mandate for IBA required the specific application of CBA Regulation No.13 (NPL provisioning minimum floors) — an analyst applying pure IFRS 13 Level 3 DCF without CBA floor adjustments would systematically understate the provision requirement, producing a bailout shortfall estimate inconsistent with the AZN 10.4 billion actually injected.",
+    "evaluation_rubric": {
+      "level_1": "Identifies the data gap as a problem but does not propose any analytical method to work around it. No reference to IBA's specific circumstances (devaluation, NPL ratio, bailout amount).",
+      "level_2": "Proposes using the 75% NPL ratio as the only input. Applies a single haircut percentage without calibration. Does not account for AZN devaluation impact on USD-denominated loans. Does not reference EMDE comparables or bailout adequacy analysis.",
+      "level_3": "Constructs a segmented approach (USD-denominated vs AZN loans separately). Applies AZN devaluation path (0.78→1.60) to USD borrower exposure to estimate currency-shock NPL amplification. References either Ukraine 2014 or Cyprus 2013 as a comparable but does not calibrate the haircut to IBA-specific features. Arrives at a portfolio fair value estimate without explicit confidence intervals.",
+      "level_4": "Demonstrates full analytical framework: (1) segment by currency (USD vs AZN), (2) apply CBA Regulation No.13 NPL provisioning floors (specific percentages for substandard/doubtful/loss categories), (3) calibrate EMDE comparables (Ukraine 2014: 50-60% haircut on corporate loans; Cyprus 2013: 47.5% bail-in on deposits over EUR 100k) with explicit adjustment for AZ oil-revenue dependency, (4) triangulate fair value estimate against the AZN 10.4 billion bailout as a revealed-preference anchor. Quantifies uncertainty range but does not document specific assumptions as a formal sensitivity table.",
+      "level_5": "All Level 4 elements plus: (1) Explicitly applies CBA Regulation No.13 provisioning minimums by category (substandard 20%, doubtful 50%, loss 100%) to the 75% disclosed NPL ratio — reverse-engineers the provision shortfall, (2) Models the bailout as a two-instrument structure (SOFAZ direct injection + AzərGold collateral-backed facility) and tests whether AZN 10.4 billion was sufficient given the reconstructed fair value, (3) Identifies the specific mechanism by which the 100% February devaluation amplified USD-denominated borrower default probability (AZN revenue streams against USD debt service — 100% debt-to-revenue ratio increase), (4) Builds a formal sensitivity table varying the NPL haircut (40%-70%) and the USD/AZN rate endpoint (1.40-1.80), producing a range of fair value estimates, (5) Documents all model assumptions as a formal limitation disclosure consistent with CBA asset quality review standards."
+    },
+    "az_institutions": [
+      "IBA",
+      "CBA",
+      "SOFAZ"
+    ],
+    "tags": [
+      "financial-analysis",
+      "az-specific",
+      "iba-default",
+      "restructuring",
+      "fair-value",
+      "ifrs-13",
+      "npl"
+    ]
+  },
+  {
+    "id": "prof-fin-s5-009",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "hard",
+    "type": "sjt",
+    "irt_a": 2.0,
+    "irt_b": 1.6,
+    "irt_c": 0.06,
+    "scenario_en": "You are the lead financial analyst at a mid-sized Azerbaijani investment firm. Three weeks before year-end, your CFO instructs you to reclassify AZN 4.2 million in recognized loan impairment charges as 'restructuring provisions' — a category that, under your firm's current accounting policy, amortizes over 36 months rather than hitting the P&L in the current period. The effect: reported net income rises from AZN 1.8M loss to AZN 2.4M profit. The firm is in active negotiations with AccessBank for a AZN 15M credit facility; AccessBank's credit committee reviews the year-end financials next month. The CFO says: 'This is standard practice. We're just smoothing a one-time event.' What is your response?",
+    "scenario_az": "Siz orta ölçülü bir Azərbaycan investisiya şirkətinin aparıcı maliyyə analistsiniz. İl sonundan üç həftə əvvəl, maliyyə direktoru sizə tanınmış 4,2 milyon AZN kredit qiymətdüşmə xərclərini 'restrukturizasiya ehtiyatları' kimi yenidən təsnifləşdirməyi tapşırır — bu kateqoriya, şirkətin mövcud mühasibat uçotu siyasəti çərçivəsində cari dövrdə P&L-yə daxil olmaq əvəzinə 36 ay ərzində amortizasiya olunur. Təsir: hesabat xalis gəliri 1,8 milyon AZN zərərdən 2,4 milyon AZN mənfəətə yüksəlir. Şirkət AccessBank ilə 15 milyon AZN kredit xətti üçün aktiv danışıqlar aparır; AccessBank-ın kredit komitəsi növbəy ay il sonu maliyyə hesabatlarını nəzərdən keçirir. Maliyyə direktoru deyir: 'Bu standart tətbiqdir. Biz sadəcə birdəfəlik bir hadisəni hamarlaşdırırıq.' Cavabınız nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Execute the reclassification — the CFO has authority over accounting policy application and the rationale (one-time event smoothing) is defensible",
+        "text_az": "Yenidən təsnifləşdirməni həyata keçirin — maliyyə direktorunun mühasibat uçotu siyasətinin tətbiqi üzərində səlahiyyəti var və əsaslandırma (birdəfəlik hadisənin hamarlanması) müdafiə edilə bilər"
+      },
+      {
+        "key": "B",
+        "text_en": "Refuse to execute the reclassification, document your refusal in writing with the specific IFRS 9 classification basis, and escalate to the audit committee or board — bypassing the CFO if necessary",
+        "text_az": "Yenidən təsnifləşdirməni həyata keçirməkdən imtina edin, imtinanızı spesifik IFRS 9 təsnifat əsasıyla yazılı şəkildə sənədləşdirin və zəruri olduqda maliyyə direktorunu atlayaraq audit komitəsinə və ya idarə heyətinə eskalasiya edin"
+      },
+      {
+        "key": "C",
+        "text_en": "Execute the reclassification but add a footnote disclosure in the financial statements describing the policy change and its effect on reported income",
+        "text_az": "Yenidən təsnifləşdirməni həyata keçirin, lakin maliyyə hesabatlarında siyasət dəyişikliyini və hesabat gəlirinə təsirini təsvir edən bir qeyd açıqlaması əlavə edin"
+      },
+      {
+        "key": "D",
+        "text_en": "Request a second opinion from the external auditor before executing — if the auditor approves the treatment, execute it",
+        "text_az": "Həyata keçirməzdən əvvəl xarici auditordan ikinci rəy tələb edin — auditor müalicəni təsdiqləsə, həyata keçirin"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. Under IFRS 9, loan impairment charges must be recognized when a credit loss event occurs — reclassifying them as long-amortizing 'restructuring provisions' when no restructuring has occurred is a misapplication of IFRS 9 paragraphs 5.5.1-5.5.17 (expected credit loss recognition). The fact that this misapplication directly inflates reported income in a period where the firm is seeking credit from AccessBank elevates this from an accounting judgment to potential financial statement fraud. The analyst's obligation is refusal + documentation + escalation. Option A is wrong — CFO authority does not override IFRS compliance obligations. Option C is wrong — a footnote does not cure the underlying misclassification; the P&L impact is still misstated. Option D is partially correct but insufficient — the analyst should not execute a known misclassification pending auditor review; the correct position is non-execution from the start.",
+    "feedback_az": "B düzgündür. IFRS 9 çərçivəsində kredit zərəri hadisəsi baş verdikdə kredit qiymətdüşmə xərcləri tanınmalıdır — heç bir restrukturizasiya olmadıqda onları uzun müddət amortizasiya olunan 'restrukturizasiya ehtiyatları' kimi yenidən təsnifləşdirmək IFRS 9 paragraflarının 5.5.1-5.5.17 (gözlənilən kredit zərərinin tanınması) yanlış tətbiqidir. Bu yanlış tətbiqin şirkətin AccessBank-dan kredit axtardığı dövrdə hesabat gəlirini birbaşa şişirtdiyi faktı bunu mühasibat mühakiməsindən potensial maliyyə hesabatı saxtakarlığına çevirir.",
+    "development_tip_en": "Know IFRS 9 Stage 1/2/3 expected credit loss classification: Stage 1 (no significant credit deterioration — 12-month ECL), Stage 2 (significant deterioration — lifetime ECL), Stage 3 (credit-impaired — lifetime ECL, interest on net carrying amount). A loan already generating impairment charges is Stage 3 — it cannot be reclassified as a restructuring provision unless an actual formal restructuring agreement exists with the borrower. AZ Securities Market Commission enforces IFRS compliance for investment firms.",
+    "development_tip_az": "IFRS 9 Mərhələ 1/2/3 gözlənilən kredit zərəri təsnifatını bilin: Mərhələ 3 (kredit qiymətdüşmüş) — ömür boyu ECL, xalis balans dəyəri üzrə faiz. Artıq qiymətdüşmə xərcləri yaradan kredit Mərhələ 3-dür — borcalan ilə faktiki rəsmi restrukturizasiya müqaviləsi olmadan restrukturizasiya ehtiyatı kimi yenidən təsnifləşdirilə bilməz.",
+    "london_delta": "A London analyst following IFRS 9 paragraph BC5.22 (basis for conclusions on expected credit loss symmetry) would apply materiality judgment, arguing that a one-time reclassification with full footnote disclosure meets FCA Handbook DTR 4.1 (periodic financial reporting accuracy requirements) for a non-listed firm. AZ consequence: AZ Securities Market Commission, applying IFRS as mandatory for licensed investment firms under AZ Capital Markets Law Article 89, would treat the intentional reclassification as financial statement manipulation — potential license revocation and personal liability for the signing analyst under AZ Administrative Offenses Code Article 420.",
+    "az_institutions": [
+      "AccessBank",
+      "CBA"
+    ],
+    "tags": [
+      "financial-analysis",
+      "az-specific",
+      "ifrs-9",
+      "earnings-manipulation",
+      "safeguarding",
+      "professional-ethics"
+    ]
+  },
+  {
+    "id": "prof-fin-s5-010",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 2.1,
+    "irt_b": 1.9,
+    "irt_c": 0.0,
+    "scenario_en": "Baku Stock Exchange (BSE) has listed a new 5-year AZN-denominated corporate bond issued by AzərGold (the state gold mining company). The bond has a face value of AZN 1,000, a 9.5% annual coupon, and matures in 5 years. To price this bond fairly, you must construct the AZN risk-free yield curve from first principles using available AZ market instruments. Available instruments: (1) CBA overnight repo rate: 7.25%; (2) CBA 3-month T-bill yield: 7.80%; (3) CBA 6-month T-bill yield: 8.15%; (4) CBA 2-year government bond yield: 8.60%; (5) CBA 5-year government bond yield: 9.10%. Required: (a) construct the AZN risk-free yield curve and explain the bootstrapping methodology for each tenor point, (b) calculate the fair value price of the AzərGold bond at issuance assuming a credit spread of 85 basis points over the 5-year government yield, (c) explain how the IBA 2015 default should inform your credit spread calibration for a state-owned AZ corporate, and (d) identify what additional data you would need that is NOT currently observable in the AZ market.",
+    "scenario_az": "Bakı Fond Birjası (BFB) AzərGold (dövlət qızıl mədən şirkəti) tərəfindən buraxılmış yeni 5 illik AZN-adlandırılmış korporativ istiqrazı siyahıya almışdır. İstiqrazın nominal dəyəri 1.000 AZN, illik 9,5% kupon faizi var və 5 ildən sonra ödənilir. Bu istiqrazı ədalətli qiymətləndirmək üçün mövcud AZ bazar alətlərindən istifadə edərək AZN risksiz gəlir əyrisini ilk prinsiplərdən qurmalısınız. Mövcud alətlər: (1) CBA gecəlik repo dərəcəsi: 7,25%; (2) CBA 3 aylıq xəzinə bonu gəliri: 7,80%; (3) CBA 6 aylıq xəzinə bonu gəliri: 8,15%; (4) CBA 2 illik dövlət istiqrazı gəliri: 8,60%; (5) CBA 5 illik dövlət istiqrazı gəliri: 9,10%. Tələb olunur: (a) AZN risksiz gəlir əyrisini qurun, (b) 5 illik dövlət istiqrazı üzərindən 85 baza nöqtəsi kredit spredini nəzərə alaraq emissiya zamanı AzərGold istiqrazının ədalətli dəyər qiymətini hesablayın.",
+    "options": null,
+    "correct_answer": null,
+    "feedback_en": "A complete answer must address all four parts: yield curve bootstrapping, bond price calculation, IBA-informed credit spread calibration, and market data gap identification. The bond fair value at 9.95% discount rate is approximately AZN 980.22. See evaluation rubric for full level descriptors.",
+    "feedback_az": "Tam cavab dörd hissənin hamısını əhatə etməlidir: gəlir əyrisi bootstrap, istiqraz qiyməti hesablaması, IBA-məlumatlı kredit spredi kalibrasyonu və bazar məlumatı boşluğunun müəyyənləşdirilməsi. 9,95% diskont dərəcəsindəki istiqrazın ədalətli dəyəri təxminən 980,22 AZN-dir.",
+    "development_tip_en": "The AZN yield curve has limited observable tenors — the primary challenge is interpolation between 2Y and 5Y government bond yields where no liquid instruments exist. Use cubic spline interpolation or Nelson-Siegel parametric approach. For AzərGold specifically: it is a quasi-sovereign (100% state-owned) but the IBA precedent shows AZ state ownership does not guarantee implicit government support — credit spread must reflect actual default probability, not just AAA-equivalent state ownership.",
+    "development_tip_az": "AZN gəlir əyrisinin məhdud müşahidə olunan müddətləri var — əsas çətinlik likvid alətlərin olmadığı 2Y və 5Y dövlət istiqrazı gəlirləri arasında interpolyasiyadır. Kübik spline interpolyasiyasından və ya Nelson-Siegel parametrik yanaşmasından istifadə edin.",
+    "london_delta": "A London analyst following IFRS 13 paragraphs 81-85 (Level 2 observable inputs for fixed income fair value) would source discount rates from comparable Bloomberg BVAL composite curves for EMDE quasi-sovereign issuers. AZ consequence: BSE listing rules require AZN-denominated bond pricing to reference CBA-published benchmark yields as the risk-free rate — an analyst applying EMDE BVAL curves instead of CBA repo/T-bill anchors would produce a pricing model non-compliant with BSE Listing Requirement Article 34.6, invalidating the official pricing submission.",
+    "evaluation_rubric": {
+      "level_1": "Identifies that a yield curve is needed but cannot describe a bootstrapping methodology. Attempts to calculate bond price using only the coupon rate or using an incorrect discount rate. Does not address parts (c) or (d).",
+      "level_2": "Constructs a partial yield curve using only T-bill yields (missing the 2Y and 5Y tenor points). Calculates bond price with a single flat discount rate of 9.95% (5Y yield + 85bps) without explaining why this rate is appropriate for all cash flows. Mentions IBA default as generally relevant but does not explain the credit spread calibration implication. Does not identify specific missing market data.",
+      "level_3": "Constructs the full yield curve with all five tenor points: overnight (7.25%), 3M (7.80%), 6M (8.15%), 2Y (8.60%), 5Y (9.10%). Applies bootstrapping concept correctly — notes that each tenor yield represents the discount rate for cash flows at that maturity. Calculates AzərGold bond price by discounting each annual coupon and principal using 9.95% (5Y + 85bps) and arrives at approximately AZN 980-982. Connects IBA default to the concept that quasi-sovereign status does not imply zero credit risk. Identifies lack of 1Y and 3Y tenor data as a gap but does not propose interpolation methodology.",
+      "level_4": "All Level 3 elements plus: (1) Explicitly bootstraps the 1Y and 3Y yields using linear interpolation between observed tenors (1Y ≈ 8.375%, 3Y ≈ 8.85%), (2) Discounts each AzərGold bond cash flow at the tenor-matched bootstrapped yield plus 85bps credit spread (CF1 at 9.225%, CF2 at 9.225%, CF3 at 9.725%, CF4 at 9.725%, CF5 + principal at 9.95%), arriving at a more precise fair value, (3) Explains that the IBA 2015 default at 75% NPL ratio with government bailout required implies AZ state-owned corporate credit spreads should not be modeled at pure sovereign spreads — a 50-100bps premium over government yield is historically justified, (4) Identifies the absence of AZN interest rate swap market (IRS) as the critical missing instrument for curve construction beyond 5Y.",
+      "level_5": "All Level 4 elements plus: (1) Applies Nelson-Siegel parametric yield curve fit to the 5 observable points and explains why this produces more stable forward rate estimates than piecewise linear interpolation, (2) Calculates the precise bond fair value by discounting each cash flow at the Nelson-Siegel-fitted tenor-matched yield plus 85bps credit spread — documents the full DCF table with exact AZN values for each period, arriving at AZN 980.22 (±AZN 3 depending on interpolation method), (3) Calibrates the 85bps credit spread explicitly against IBA precedent: IBA's pre-default CDS equivalent spread was approximately 300bps, but AzərGold has zero external USD debt exposure — the credit risk is primarily domestic liquidity risk, supporting a 75-90bps range; identifies that 85bps is at the upper end of the defensible range, (4) Lists specific missing instruments: (a) AZN interest rate swap rates for 3Y/7Y/10Y tenors, (b) AzərGold historical bond trade data from BSE secondary market, (c) CBA publication of AZN OIS (overnight indexed swap) rate, (d) gold price correlation with AzərGold revenue — required to model operating cash flow coverage of coupon obligations, (5) Identifies that CBA repo rate (7.25%) as the overnight anchor creates a 55bps gap to 3M T-bill (7.80%) — notes this term premium is unusually steep for a 3-month horizon and flags it as a potential liquidity premium signal in the AZ interbank market worth investigating before finalizing the curve."
+    },
+    "az_institutions": [
+      "CBA",
+      "IBA",
+      "SOFAZ"
+    ],
+    "tags": [
+      "financial-analysis",
+      "az-specific",
+      "yield-curve",
+      "bond-pricing",
+      "cba-repo-rate",
+      "bootstrapping",
+      "azergold",
+      "bse"
+    ]
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {"id":"prof-pm-001","competency_slug":"communication","difficulty":"easy","type":"mcq","irt_a":1.2,"irt_b":-1.5,"irt_c":0.15,"scenario_key":"User research synthesis → fintech Baku"},
+  {"id":"prof-pm-002","competency_slug":"communication","difficulty":"medium","type":"sjt","irt_a":1.4,"irt_b":0.2,"irt_c":0.18,"scenario_key":"Sprint review conflict in front of CEO"},
+  {"id":"prof-pm-003","competency_slug":"leadership","difficulty":"easy","type":"mcq","irt_a":1.1,"irt_b":-1.2,"irt_c":0.15,"scenario_key":"12 features, 5 capacity, government digitization AZ"},
+  {"id":"prof-pm-004","competency_slug":"leadership","difficulty":"medium","type":"sjt","irt_a":1.6,"irt_b":0.5,"irt_c":0.18,"scenario_key":"Engineer says 4 more weeks, CEO announced date → staged launch"},
+  {"id":"prof-pm-005","competency_slug":"leadership","difficulty":"hard","type":"open_ended","irt_a":1.8,"irt_b":1.8,"irt_c":0.1,"scenario_key":"A/B test: +18% conversion +12% fraud, 6 weeks left"},
+  {"id":"prof-pm-006","competency_slug":"adaptability","difficulty":"easy","type":"mcq","irt_a":1.1,"irt_b":-1.0,"irt_c":0.15,"scenario_key":"Competitor launches same feature, 60% done → pivot cost card"},
+  {"id":"prof-pm-007","competency_slug":"adaptability","difficulty":"hard","type":"sjt","irt_a":1.7,"irt_b":1.2,"irt_c":0.18,"scenario_key":"Enterprise deal fell through, 5 days to board meeting, 40 backlog items"},
+  {"id":"prof-pm-008","competency_slug":"tech_literacy","difficulty":"medium","type":"mcq","irt_a":1.5,"irt_b":0.3,"irt_c":0.18,"scenario_key":"WebSockets vs polling for fraud alerts (latency = safety-critical)"},
+  {"id":"prof-pm-009","competency_slug":"empathy_safeguarding","difficulty":"medium","type":"sjt","irt_a":1.5,"irt_b":0.4,"irt_c":0.18,"scenario_key":"Salary data pre-fill without consent, legally OK, 35% boost"},
+  {"id":"prof-pm-010","competency_slug":"leadership","difficulty":"hard","type":"open_ended","irt_a":2.0,"irt_b":2.0,"irt_c":0.1,"scenario_key":"Healthtech AI symptom checker PRD — harm taxonomy, safeguards, metrics"}
+]

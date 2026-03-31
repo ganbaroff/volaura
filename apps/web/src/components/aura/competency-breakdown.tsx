@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { useParams } from "next/navigation";
+import { triggerHaptic } from "@/lib/haptics";
 
 interface CompetencyBreakdownProps {
   scores: Record<string, number>;
@@ -45,6 +47,12 @@ export function CompetencyBreakdown({ scores, lastUpdated, isOwner = false }: Co
   const { t } = useTranslation();
   const { locale } = useParams<{ locale: string }>();
 
+  // Single gentle tap when competency scores first render — ADHD reward signal
+  // Only fires if owner is viewing their own scores (not org/public views)
+  useEffect(() => {
+    if (isOwner) triggerHaptic("gentle_reminder");
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const daysSinceUpdate = lastUpdated
     ? Math.max(0, Math.floor((Date.now() - new Date(lastUpdated).getTime()) / 86_400_000))
     : null;
@@ -68,9 +76,9 @@ export function CompetencyBreakdown({ scores, lastUpdated, isOwner = false }: Co
 
         return (
           <motion.div key={id} variants={slideUp}>
-            <div className="flex items-center justify-between text-sm mb-1.5">
-              <span className="font-medium text-foreground">{label}</span>
-              <span className="text-xs text-muted-foreground tabular-nums">
+            <div className="flex items-center justify-between gap-2 text-sm mb-1.5">
+              <span className="font-medium text-foreground truncate min-w-0">{label}</span>
+              <span className="text-xs text-muted-foreground tabular-nums shrink-0">
                 {score}/100 · {weight}%
               </span>
             </div>

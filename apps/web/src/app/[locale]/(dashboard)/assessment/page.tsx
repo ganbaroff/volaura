@@ -44,13 +44,15 @@ function AssessmentContent() {
     return () => { isMounted.current = false; };
   }, []);
 
-  // Pre-select competency from ?competency= query param (onboarding → welcome → assessment flow)
+  // Pre-select competency from ?competency= query param, or default to communication (BATCH-O A1)
   useEffect(() => {
     const slug = searchParams.get("competency");
-    if (!slug) return;
-    const valid = COMPETENCIES.find((c) => c.id === slug);
-    if (valid) {
-      setSelected(new Set([valid.id]));
+    if (slug) {
+      const valid = COMPETENCIES.find((c) => c.id === slug);
+      if (valid) setSelected(new Set([valid.id]));
+    } else {
+      // Default: pre-select highest-weight competency to eliminate 8-way decision paralysis
+      setSelected(new Set(["communication"]));
     }
   }, [searchParams]);
 
@@ -110,6 +112,16 @@ function AssessmentContent() {
       });
 
       if (!res.ok) {
+        // BATCH-O A3: expose cooldown wait time — 429 means rate limited, show minutes remaining
+        if (res.status === 429) {
+          const retryAfter = res.headers.get("Retry-After");
+          const waitMin = retryAfter ? Math.ceil(parseInt(retryAfter, 10) / 60) : 30;
+          if (isMounted.current) {
+            setError(t("assessment.cooldownError", { minutes: waitMin }));
+            setIsStarting(false);
+          }
+          return;
+        }
         throw new Error("start_failed");
       }
 

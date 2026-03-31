@@ -16,7 +16,7 @@ import { API_BASE } from "@/lib/api/client";
 
 type ScreenState = "question" | "transition" | "error";
 
-const ESTIMATED_QUESTIONS = 10; // adaptive CAT — shown as progress estimate
+const ESTIMATED_QUESTIONS = 8; // adaptive CAT — matches current pool size (8 MCQs per competency)
 const DEFAULT_TIME_LIMIT_SECONDS = 120; // 2 minutes per question
 
 export default function QuestionPage() {
@@ -46,6 +46,34 @@ export default function QuestionPage() {
   const [localError, setLocalError] = useState<string | null>(null);
   const [timingWarning, setTimingWarning] = useState<string | null>(null);
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
+  const [isSlowFetch, setIsSlowFetch] = useState(false);
+  // PROD-M01: Brief "Saved ✓" confirmation after successful answer submission
+  const [answerSaved, setAnswerSaved] = useState(false);
+  // Recovery state: shown when currentQuestion is null after 6s (e.g. refresh mid-session)
+  const [isStuck, setIsStuck] = useState(false);
+
+  // Show "Still working..." after 4s — LLM evaluation can take up to 8s
+  useEffect(() => {
+    if (!isSubmitting) {
+      setIsSlowFetch(false);
+      return;
+    }
+    const id = setTimeout(() => setIsSlowFetch(true), 4_000);
+    return () => clearTimeout(id);
+  }, [isSubmitting]);
+
+  // Stuck-spinner detection: if currentQuestion is null for >6s on the question screen,
+  // surface a recovery button instead of spinning forever (happens on refresh mid-session).
+  useEffect(() => {
+    if (currentQuestion || screen !== "question") {
+      setIsStuck(false);
+      return;
+    }
+    const id = setTimeout(() => {
+      if (isMounted.current) setIsStuck(true);
+    }, 6_000);
+    return () => clearTimeout(id);
+  }, [currentQuestion, screen]);
 
   const currentCompetency = selectedCompetencies[currentCompetencyIndex];
   const nextCompetencyName = selectedCompetencies[currentCompetencyIndex + 1];
@@ -159,6 +187,10 @@ export default function QuestionPage() {
         setTimingWarning(feedback.timing_warning);
       }
 
+      // PROD-M01: Brief "Saved ✓" visual confirmation before next question renders
+      setAnswerSaved(true);
+      setTimeout(() => { if (isMounted.current) setAnswerSaved(false); }, 600);
+
       incrementAnswered();
       handleSessionUpdate(feedback.session);
     } catch {
@@ -230,8 +262,8 @@ export default function QuestionPage() {
    * Start the next competency assessment (transition screen → next competency).
    */
   const handleNextCompetency = useCallback(async () => {
-    nextCompetency();
     setLocalError(null);
+    setSubmitting(true);
 
     try {
       const auth = await getAuthHeader();
@@ -252,6 +284,8 @@ export default function QuestionPage() {
       if (!res.ok) throw new Error("start_failed");
 
       const data = (await res.json()) as SessionState;
+      // Advance competency index only after confirmed success — prevents stuck state on network error
+      nextCompetency();
       setSession(data.session_id);
 
       if (data.next_question) {
@@ -264,8 +298,10 @@ export default function QuestionPage() {
       router.replace(`/${currentLocale}/assessment/${data.session_id}`);
     } catch {
       setLocalError(t("assessment.errorStartFailed"));
+    } finally {
+      if (isMounted.current) setSubmitting(false);
     }
-  }, [nextCompetency, nextCompetencyName, getAuthHeader, setSession, setQuestion, router, currentLocale, t]);
+  }, [nextCompetency, nextCompetencyName, getAuthHeader, setSubmitting, setSession, setQuestion, router, currentLocale, t]);
 
   const handleLeave = () => {
     setShowLeaveConfirm(true);
@@ -293,7 +329,13 @@ export default function QuestionPage() {
     });
 
     return (
-      <div className="mx-auto max-w-lg px-4 py-8">
+      <div className="w-full mx-auto max-w-lg px-4 sm:px-6 py-8 space-y-4">
+        {localError && (
+          <Alert variant="destructive" role="alert">
+            <AlertCircle className="size-4" aria-hidden="true" />
+            <AlertDescription>{localError}</AlertDescription>
+          </Alert>
+        )}
         <div className="flex flex-col items-center text-center space-y-6 py-12">
           <div className="size-16 rounded-full bg-green-500/10 flex items-center justify-center">
             <svg className="size-8 text-green-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
@@ -304,8 +346,15 @@ export default function QuestionPage() {
             <h2 className="text-xl font-semibold">{completedLabel}</h2>
             <p className="text-sm text-muted-foreground">{continueLabel}</p>
           </div>
-          <Button onClick={handleNextCompetency} size="lg">
-            {t("assessment.continueButton", { defaultValue: "Continue" })}
+          <Button onClick={handleNextCompetency} size="lg" className="w-full sm:w-auto min-h-[44px]" disabled={isSubmitting} aria-busy={isSubmitting}>
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />
+                {t("common.loading")}
+              </>
+            ) : (
+              t("assessment.continueButton", { defaultValue: "Continue" })
+            )}
           </Button>
         </div>
       </div>
@@ -313,13 +362,13 @@ export default function QuestionPage() {
   }
 
   return (
-    <div className="mx-auto max-w-lg px-4 py-6 space-y-4">
+    <div className="w-full mx-auto max-w-lg px-4 sm:px-6 py-6 space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <button
           type="button"
           onClick={handleLeave}
-          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors min-h-[44px] min-w-[44px]"
           aria-label={t("common.back")}
         >
           <ChevronLeft className="size-4" aria-hidden="true" />
@@ -340,7 +389,7 @@ export default function QuestionPage() {
         />
         <p className="text-xs text-muted-foreground" aria-live="polite">
           {t("assessment.questionProgress", {
-            current: answeredCount + 1,
+            current: Math.min(answeredCount + 1, ESTIMATED_QUESTIONS),  // BATCH-O Q1: cap at total — prevents "9 of 8"
             total: ESTIMATED_QUESTIONS,
           })}
         </p>
@@ -386,8 +435,24 @@ export default function QuestionPage() {
         )}
 
         {screen === "question" && !currentQuestion && (
-          <div key="loading" className="flex justify-center py-12">
-            <Loader2 className="size-8 animate-spin text-primary" aria-label={t("common.loading")} />
+          <div key="loading" className="flex flex-col items-center justify-center gap-4 py-12 text-center">
+            {isStuck ? (
+              <>
+                <p className="text-sm text-muted-foreground">
+                  {t("assessment.refreshedMidSession", {
+                    defaultValue: "It looks like you refreshed mid-assessment. Your progress is saved.",
+                  })}
+                </p>
+                <Button
+                  variant="outline"
+                  onClick={() => router.replace(`/${currentLocale}/assessment`)}
+                >
+                  {t("assessment.returnToSelection", { defaultValue: "Return to competency selection" })}
+                </Button>
+              </>
+            ) : (
+              <Loader2 className="size-8 animate-spin text-primary" aria-label={t("common.loading")} />
+            )}
           </div>
         )}
       </AnimatePresence>
@@ -402,10 +467,17 @@ export default function QuestionPage() {
             className="w-full"
             aria-busy={isSubmitting}
           >
-            {isSubmitting ? (
+            {answerSaved ? (
+              <span className="flex items-center gap-1.5">
+                <svg className="size-4 text-green-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+                {t("assessment.answerSaved", { defaultValue: "Saved" })}
+              </span>
+            ) : isSubmitting ? (
               <>
                 <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />
-                {t("common.loading")}
+                {isSlowFetch ? t("assessment.stillWorking") : t("common.loading")}
               </>
             ) : (
               t("assessment.submit")
@@ -415,7 +487,7 @@ export default function QuestionPage() {
           <Button
             variant="ghost"
             size="sm"
-            className="text-muted-foreground"
+            className="text-muted-foreground min-h-[44px]"
             onClick={handleSkip}
             disabled={isSubmitting}
           >
@@ -439,10 +511,11 @@ export default function QuestionPage() {
             <p className="text-sm text-on-surface-variant">
               {t("assessment.leaveWarning")}
             </p>
-            <div className="flex gap-3 justify-end">
+            <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <Button
                 variant="outline"
                 size="sm"
+                className="w-full sm:w-auto min-h-[44px]"
                 onClick={() => setShowLeaveConfirm(false)}
               >
                 {t("common.cancel")}
@@ -450,6 +523,7 @@ export default function QuestionPage() {
               <Button
                 variant="destructive"
                 size="sm"
+                className="w-full sm:w-auto min-h-[44px]"
                 onClick={handleConfirmLeave}
               >
                 {t("assessment.leaveConfirm")}

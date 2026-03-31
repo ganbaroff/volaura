@@ -162,6 +162,8 @@ export default function ProfilePage() {
               is_public: profile.is_public ?? false,
               avatar_url: profile.avatar_url ?? null,
               badge_tier: aura?.badge_tier ?? "none",
+              registration_number: profile.registration_number,
+              registration_tier: profile.registration_tier,
             }}
             locale={locale}
             isOwnProfile={true}

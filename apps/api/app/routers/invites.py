@@ -61,7 +61,8 @@ async def bulk_invite_volunteers(
     # ── Auth: verify org ownership BEFORE parsing file ──
     _validate_uuid(org_id, "org_id")
 
-    org_result = await db_admin.table("organizations").select("id, owner_id, name").eq("id", org_id).single().execute()
+    # BUG-SEC-025 FIX: .single() raises APIError(406) when org not found; .maybe_single() returns None
+    org_result = await db_admin.table("organizations").select("id, owner_id, name").eq("id", org_id).maybe_single().execute()
     if not org_result.data:
         raise HTTPException(
             status_code=404,
@@ -268,8 +269,8 @@ async def list_invites(
     """List invites for an organization, optionally filtered by status or batch."""
     _validate_uuid(org_id, "org_id")
 
-    # Verify ownership
-    org_result = await db_admin.table("organizations").select("id, owner_id").eq("id", org_id).single().execute()
+    # Verify ownership — BUG-SEC-025 FIX: .maybe_single() returns None instead of raising APIError
+    org_result = await db_admin.table("organizations").select("id, owner_id").eq("id", org_id).maybe_single().execute()
     if not org_result.data or org_result.data["owner_id"] != user_id:
         raise HTTPException(
             status_code=403,

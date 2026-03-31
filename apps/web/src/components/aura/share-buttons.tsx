@@ -6,15 +6,33 @@ import { Button } from "@/components/ui/button";
 import { Link2, Check, Download, Send, Share2 } from "lucide-react";
 
 interface ShareButtonsProps {
-  username: string;
+  username: string | null | undefined;
   overallScore: number;
   badgeTier: string;
+  /** URL to the settings page — passed by parent so this component stays locale-unaware */
+  settingsUrl?: string;
 }
 
-export function ShareButtons({ username, overallScore, badgeTier }: ShareButtonsProps) {
+export function ShareButtons({ username, overallScore, badgeTier, settingsUrl }: ShareButtonsProps) {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
   const [tiktokCopied, setTiktokCopied] = useState(false);
+
+  // BUG-GROWTH-8 FIX: Guard includes direct link to Settings — no dead end for users without username
+  if (!username) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        {t("aura.setUsernameToShare", {
+          defaultValue: "Set a username in Settings to unlock sharing.",
+        })}{" "}
+        {settingsUrl && (
+          <a href={settingsUrl} className="text-primary hover:underline font-medium">
+            {t("aura.goToSettings", { defaultValue: "Go to Settings →" })}
+          </a>
+        )}
+      </p>
+    );
+  }
 
   const profileUrl =
     typeof window !== "undefined"
@@ -112,7 +130,7 @@ export function ShareButtons({ username, overallScore, badgeTier }: ShareButtons
         variant="outline"
         size="sm"
         onClick={copyLink}
-        className="gap-1.5"
+        className="gap-1.5 min-h-[44px] sm:min-h-0"
       >
         {copied ? (
           <>
@@ -127,16 +145,16 @@ export function ShareButtons({ username, overallScore, badgeTier }: ShareButtons
         )}
       </Button>
 
-      <Button variant="outline" size="sm" onClick={openTelegram} className="gap-1.5">
+      <Button variant="outline" size="sm" onClick={openTelegram} className="gap-1.5 min-h-[44px] sm:min-h-0">
         <Send className="size-3.5" aria-hidden="true" />
         {t("aura.telegram")}
       </Button>
 
-      <Button variant="outline" size="sm" onClick={openLinkedIn} className="gap-1.5">
+      <Button variant="outline" size="sm" onClick={openLinkedIn} className="gap-1.5 min-h-[44px] sm:min-h-0">
         {t("aura.linkedin")}
       </Button>
 
-      <Button variant="outline" size="sm" onClick={openWhatsApp} className="gap-1.5">
+      <Button variant="outline" size="sm" onClick={openWhatsApp} className="gap-1.5 min-h-[44px] sm:min-h-0">
         {t("aura.whatsapp")}
       </Button>
 
@@ -144,7 +162,7 @@ export function ShareButtons({ username, overallScore, badgeTier }: ShareButtons
         variant="outline"
         size="sm"
         onClick={openTikTok}
-        className="gap-1.5"
+        className="gap-1.5 min-h-[44px] sm:min-h-0"
       >
         {tiktokCopied ? (
           <>

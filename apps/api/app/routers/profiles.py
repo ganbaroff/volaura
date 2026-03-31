@@ -1,14 +1,13 @@
 """Profile endpoints."""
 
 import secrets
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime, timedelta, timezone
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Query, Request
 from loguru import logger
 
 from app.config import settings
-from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser, get_supabase_admin
-from fastapi import Query
+from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
 from app.middleware.rate_limit import limiter, RATE_PROFILE_WRITE, RATE_DEFAULT, RATE_DISCOVERY
 from app.schemas.profile import (
     ProfileCreate,
@@ -22,8 +21,28 @@ from app.schemas.verification import (
     CreateVerificationLinkResponse,
 )
 from app.services.embeddings import upsert_volunteer_embedding
+from app.services.notification_service import notify
 
 router = APIRouter(prefix="/profiles", tags=["Profiles"])
+
+
+def _anonymize_name(display_name: str | None) -> str:
+    """Server-side name anonymization for public volunteer listings.
+
+    SEC-03: /profiles/public was returning raw display_name, letting orgs
+    cross-reference with the anonymized /volunteers/discovery endpoint to
+    deanonymize all volunteers. Fixed by applying the same anonymization.
+
+    Result: "Leyla A." (first name + last initial).
+    """
+    if not display_name or not display_name.strip():
+        return "Volunteer"
+    parts = display_name.strip().split()
+    first = parts[0][:20]  # cap at 20 chars
+    if len(parts) == 1:
+        return first
+    last_initial = parts[-1][0].upper()
+    return f"{first} {last_initial}."
 
 
 @router.get("/me", response_model=ProfileResponse)
@@ -36,9 +55,16 @@ async def get_my_profile(
     """Get the current authenticated user's profile."""
     # maybe_single() returns None instead of throwing APIError 406 when no row exists.
     # Same fix as auth.py — .single() crashes for new users who haven't completed onboarding.
+    # Explicit column list — excludes stripe_customer_id, stripe_subscription_id
+    # (internal payment references that have no client-side use and must not leak).
     result = (
         await db.table("profiles")
-        .select("*")
+        .select(
+            "id, username, display_name, bio, avatar_url, location, languages, "
+            "account_type, is_public, visible_to_orgs, org_type, registration_number, "
+            "registration_tier, subscription_status, trial_started_at, trial_ends_at, "
+            "subscription_started_at, subscription_ends_at, created_at, updated_at"
+        )
         .eq("id", user_id)
         .maybe_single()
         .execute()
@@ -57,6 +83,7 @@ async def create_my_profile(
     request: Request,
     payload: ProfileCreate,
     db: SupabaseUser,
+    db_admin: SupabaseAdmin,
     user_id: CurrentUserId,
 ) -> ProfileResponse:
     """Create a profile for the current user (called after registration)."""
@@ -81,10 +108,22 @@ async def create_my_profile(
     if not result.data:
         raise HTTPException(status_code=500, detail={"code": "CREATE_FAILED", "message": "Failed to create profile"})
 
+    # GROWTH-2: If invited by an org, mark matching invite as accepted
+    if payload.invited_by_org_id:
+        try:
+            user_resp = await db_admin.auth.admin.get_user_by_id(user_id)
+            user_email = user_resp.user.email if user_resp and user_resp.user else None
+            if user_email:
+                await db_admin.table("organization_invites").update({
+                    "status": "accepted",
+                    "accepted_at": datetime.now(UTC).isoformat(),
+                }).eq("org_id", payload.invited_by_org_id).eq("email", user_email).eq("status", "pending").execute()
+        except Exception as e:
+            logger.warning("Invite status update failed (non-fatal)", user_id=user_id, error=str(e)[:200])
+
     # Trigger embedding generation (fire-and-forget, don't block response)
     try:
-        admin_client = await anext(get_supabase_admin())
-        await upsert_volunteer_embedding(admin_client, user_id, result.data[0], aura=None)
+        await upsert_volunteer_embedding(db_admin, user_id, result.data[0], aura=None)
         logger.info("Embedding generated for new profile", user_id=user_id)
     except Exception as e:
         logger.warning("Embedding generation failed on profile create: {err}", err=str(e)[:200])
@@ -123,7 +162,7 @@ async def update_my_profile(
 
     # Trigger embedding re-generation with updated profile data
     try:
-        aura_result = await admin.table("aura_scores").select("*").eq("volunteer_id", user_id).single().execute()
+        aura_result = await admin.table("aura_scores").select("*").eq("volunteer_id", user_id).maybe_single().execute()
         aura_data = aura_result.data
     except Exception:
         aura_data = None
@@ -163,12 +202,12 @@ async def create_verification_link(
             detail={"code": "FORBIDDEN", "message": "You can only request verification for your own profile"},
         )
 
-    # Ensure target volunteer exists
+    # Ensure target volunteer exists (.maybe_single() returns None instead of raising 406)
     volunteer = (
         await db.table("profiles")
         .select("id")
         .eq("id", volunteer_id)
-        .single()
+        .maybe_single()
         .execute()
     )
     if not volunteer.data:
@@ -205,7 +244,7 @@ async def create_verification_link(
         )
 
     row = result.data[0]
-    verify_url = f"{settings.app_url}/az/verify/{token}"
+    verify_url = f"{settings.app_url}/{settings.default_locale}/verify/{token}"
 
     logger.info(
         "Verification link created",
@@ -276,7 +315,7 @@ async def list_public_volunteers(
         volunteers.append(DiscoverableVolunteer(
             id=row["id"],
             username=row["username"],
-            display_name=row.get("display_name"),
+            display_name=_anonymize_name(row.get("display_name")),  # SEC-03: never leak full name
             avatar_url=row.get("avatar_url"),
             bio=row.get("bio"),
             location=row.get("location"),
@@ -289,7 +328,7 @@ async def list_public_volunteers(
 
 
 @router.get("/{username}", response_model=PublicProfileResponse)
-@limiter.limit(RATE_DEFAULT)
+@limiter.limit(RATE_DISCOVERY)  # SEC-Q2: tighter limit — 10/min prevents username enumeration
 async def get_public_profile(
     request: Request,
     username: str,
@@ -298,10 +337,13 @@ async def get_public_profile(
     """Get a public profile by username — no auth required."""
     result = (
         await db.table("profiles")
-        .select("id, username, display_name, avatar_url, bio, location, languages, badge_issued_at")
+        .select(
+            "id, username, display_name, avatar_url, bio, location, languages, "
+            "badge_issued_at, registration_number, registration_tier"
+        )
         .eq("username", username)
         .eq("is_public", True)
-        .single()
+        .maybe_single()
         .execute()
     )
     if not result.data:
@@ -309,4 +351,118 @@ async def get_public_profile(
             status_code=404,
             detail={"code": "PROFILE_NOT_FOUND", "message": "Profile not found"},
         )
-    return PublicProfileResponse(**result.data)
+
+    # GROW-M03: compute percentile rank — % of public users with a lower AURA score.
+    # Two cheap COUNT queries; skipped entirely if the user has no aura_scores row.
+    percentile_rank: float | None = None
+    try:
+        volunteer_id = result.data["id"]
+        score_row = (
+            await db.table("aura_scores")
+            .select("total_score")
+            .eq("volunteer_id", volunteer_id)
+            .maybe_single()
+            .execute()
+        )
+        if score_row.data and score_row.data.get("total_score") is not None:
+            user_score: float = float(score_row.data["total_score"])
+            # Count users with a lower score (public volunteers only)
+            # SEC-Q2: filter by visibility="public" so private/badge_only scores
+            # don't leak aggregate platform stats via percentile_rank.
+            lower_resp = (
+                await db.table("aura_scores")
+                .select("volunteer_id", count="exact")
+                .lt("total_score", user_score)
+                .eq("visibility", "public")
+                .execute()
+            )
+            total_resp = (
+                await db.table("aura_scores")
+                .select("volunteer_id", count="exact")
+                .eq("visibility", "public")
+                .execute()
+            )
+            lower_count: int = lower_resp.count or 0
+            total_count: int = total_resp.count or 0
+            if total_count > 0:
+                percentile_rank = round((lower_count / total_count) * 100, 1)
+    except Exception as exc:
+        logger.warning("percentile_rank computation failed (non-fatal)", error=str(exc)[:200])
+
+    return PublicProfileResponse(**result.data, percentile_rank=percentile_rank)
+
+
+@router.post("/{username}/view", status_code=204)
+@limiter.limit("20/minute")
+async def record_profile_view(
+    request: Request,
+    username: str,
+    db: SupabaseAdmin,
+    user_id: CurrentUserId,
+) -> None:
+    """Record that an authenticated org viewed a volunteer's profile.
+
+    Sends an `org_view` notification to the volunteer — deduped: at most 1 notification
+    per (org, volunteer) pair per 24 hours. Silently returns 204 for non-org callers
+    (no error, no notification — safe to call from any authenticated user).
+
+    Security: org identity comes from JWT, never from request body.
+    """
+    # Verify caller is an org (dual check: JWT + DB)
+    caller = (
+        await db.table("profiles")
+        .select("account_type, display_name, username")
+        .eq("id", str(user_id))
+        .maybe_single()
+        .execute()
+    )
+    if not caller.data or caller.data.get("account_type") != "organization":
+        return  # silently succeed — no error for volunteer-to-volunteer page views
+
+    # Look up the volunteer being viewed
+    volunteer = (
+        await db.table("profiles")
+        .select("id, display_name")
+        .eq("username", username)
+        .eq("is_public", True)
+        .maybe_single()
+        .execute()
+    )
+    if not volunteer.data:
+        return  # volunteer deleted or set private — no notification
+
+    volunteer_id = volunteer.data["id"]
+
+    # Don't notify orgs viewing themselves
+    if str(user_id) == volunteer_id:
+        return
+
+    # Dedup: skip if this org already sent an org_view notification for this volunteer in last 24h
+    since = (datetime.now(tz=timezone.utc) - timedelta(hours=24)).isoformat()
+    existing = (
+        await db.table("notifications")
+        .select("id")
+        .eq("user_id", volunteer_id)
+        .eq("type", "org_view")
+        .eq("reference_id", str(user_id))
+        .gte("created_at", since)
+        .execute()
+    )
+    if existing.data:
+        return  # already notified — don't spam
+
+    # Fire-and-forget notification
+    org_name = caller.data.get("display_name") or caller.data.get("username") or "An organization"
+    await notify(
+        db,
+        user_id=volunteer_id,
+        notification_type="org_view",
+        title=f"{org_name} viewed your profile",
+        body="Organizations can request introductions if they're interested.",
+        reference_id=str(user_id),  # org's user_id — used for dedup key
+    )
+    logger.info(
+        "org_view notification sent",
+        org_id=user_id,
+        volunteer_id=volunteer_id,
+    )

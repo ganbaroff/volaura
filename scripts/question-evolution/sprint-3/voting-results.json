@@ -1,0 +1,216 @@
+{
+  "sprint": 3,
+  "scores": {
+    "qa-engineer": {
+      "az_institutional_anchoring": 9,
+      "london_test": 9,
+      "irt_quality": 9,
+      "competency_coverage": 8,
+      "scenario_richness": 9,
+      "total": 38,
+      "rank": 2,
+      "strengths": [
+        "CBA Decimal Precision Regulation (Q1) is a textbook structural constraint — banker's rounding vs half-up creates a P1/P3 split that only exists in AZ banking context",
+        "ASAN 2020 surge metrics are precise (180k→684k, 47 minutes) and structurally change the QA load test ceiling requirement",
+        "Biometric data minimization question (Q8) correctly distinguishes ISMSN compliance ceiling from safeguarding adequacy — rare conceptual depth",
+        "All london_delta fields are specific and educational, not generic cultural disclaimers",
+        "Open-ended Q9 has a 5-level rubric that rewards both technical QA depth and AZ government hierarchy navigation simultaneously"
+      ],
+      "weaknesses": [
+        "Only 6 competencies covered — adaptability and empathy_safeguarding are present but tech_literacy is over-represented at 3 questions",
+        "London delta for Q2 (number format) is less impactful than others — a London QA engineer would likely catch this during localization testing even without AZ-specific knowledge",
+        "No question tests event_performance competency"
+      ],
+      "best_question_id": "prof-qa-s3-008",
+      "best_question_reason": "Biometric template vs match-score distinction in ASAN national ID system is a uniquely AZ-scoped safeguarding question that cannot be answered correctly using GDPR or ISMSN compliance alone — requires understanding the irreversibility of biometric data in the context of a mandatory citizen enrollment system. London delta is precise: GDPR Article 9 would require data minimization, but ISMSN does not — the QA engineer who only checks ISMSN will ship the risk."
+    },
+    "devops-cybersecurity": {
+      "az_institutional_anchoring": 10,
+      "london_test": 10,
+      "irt_quality": 9,
+      "competency_coverage": 8,
+      "scenario_richness": 10,
+      "total": 39,
+      "rank": 1,
+      "strengths": [
+        "CBA Circular 14/2023 data residency mandate (Q1, Q4) is applied twice with different scenarios — once as architecture review, once as mid-deployment regulatory update — demonstrating how structural constraints play out at different project stages",
+        "DEIM 24-hour vulnerability reporting obligation (Q6) is a high-specificity AZ-only regulatory constraint with concrete consequence modeling (contract suspension, blacklisting)",
+        "AzərGold 2016 attack chain reconstruction (Q9) maps directly to Zero Trust architecture controls — the london_delta correctly identifies that standard UK NCSC segmented VPN + MFA is insufficient against 4-month dwell APT",
+        "ISMSN national certification requirement (Q2) changes the correct answer from 'ISO 27001 sufficient' to 'ISO 27001 insufficient for government contracts' — structurally different from UK Cyber Essentials logic",
+        "Empathy question (Q7) applies proportionality test to employee monitoring — requires professional ethics judgment where AZ law is silent but GDPR would provide guidance",
+        "All scenarios are profession-specific: non-DevOps professionals could not guess answers due to specific telemetry patterns, CVE severity reasoning, and institutional reporting chains"
+      ],
+      "weaknesses": [
+        "Empathy_safeguarding represented by only 1 question (Q7) — the biometric equivalent for DevOps context is missing",
+        "No question tests english_proficiency or event_performance competencies",
+        "Q7 empathy london_delta is the weakest in the set — it correctly notes GDPR provides clearer guidance, but the AZ-specific proportionality framework for surveillance is not differentiated from general professional ethics"
+      ],
+      "best_question_id": "prof-devops-s3-001",
+      "best_question_reason": "CBA Circular 14/2023 data residency question is the platonic ideal of a London Test question: the London engineer follows UK FCA + PCI-DSS standards (AES-256 on eu-west-1 = compliant), gives a confident architecture approval, and by doing so costs the AZ bank its operating license. The london_delta is explicit, specific, and names the exact consequence. The distractor options (AES-512 requirement, GDPR compliance, uptime SLA) are all technically plausible to a non-AZ-trained engineer."
+    },
+    "financial-analyst": {
+      "az_institutional_anchoring": 9,
+      "london_test": 9,
+      "irt_quality": 9,
+      "competency_coverage": 9,
+      "scenario_richness": 9,
+      "total": 38,
+      "rank": 3,
+      "strengths": [
+        "PSA cost oil calculation (Q5) is the most mathematically precise AZ-specific question in the entire sprint — the cap-as-ceiling vs cap-as-fixed-deduction distinction produces a USD 23.3M difference that London analysts routinely miscalculate",
+        "SOFAZ non-commercial rate vs CBA interbank rate distinction (Q2, Q4, Q7) is applied across communication, tech literacy, and leadership scenarios — showing one regulatory nuance produces different professional challenges",
+        "2016 devaluation FX open position question (Q3) correctly identifies that London instinct (hedge immediately) fails in an illiquid shock environment — the 4-hour before market open framing is precise",
+        "Whistleblower question (Q6) correctly navigates absence of AZ standalone protection law while identifying available mechanisms (Labor Code Art.80, internal channels)",
+        "Widest institutional coverage in the sprint: CBA, SOFAZ, SOCAR, OSC, Ministry of Finance — all structurally referenced"
+      ],
+      "weaknesses": [
+        "London delta for Q1 (capital adequacy) is the weakest — a London analyst would perform the same post-deal RWA calculation instinctively, so the AZ-specific error (group-level vs entity-level buffer) is a subtle distinction that may not actually differentiate",
+        "Event_performance and english_proficiency competencies not covered",
+        "Q8 (2020 oil price crash) reads more as a general CFO adaptability scenario than a uniquely AZ-anchored question — Brent crash response at any state enterprise has the same answer"
+      ],
+      "best_question_id": "prof-fin-s3-005",
+      "best_question_reason": "PSA cost oil / profit oil calculation is the only question in the entire sprint that requires numerical multi-step AZ-specific calculation where getting the wrong conceptual model (cap as fixed deduction) produces a USD 23.3M error. No London analyst who hasn't modeled AZ PSAs specifically would correctly identify the cost-bank carry-forward as a separate ledger item. The calculation is fully self-contained and profession-verifiable."
+    },
+    "hr-manager": {
+      "az_institutional_anchoring": 9,
+      "london_test": 9,
+      "irt_quality": 9,
+      "competency_coverage": 8,
+      "scenario_richness": 9,
+      "total": 37,
+      "rank": 4,
+      "strengths": [
+        "Art.109-1 pregnancy dismissal absolute prohibition (Q1) is structurally different from UK/EU proportionality test — the London HR instinct to evaluate process fairness is directly and specifically wrong",
+        "SSPF 22%+3% rate correction question (Q3) requires knowing both the correct statutory rates AND the voluntary disclosure advantage — two layers of AZ-specific knowledge",
+        "Ramadan accommodation question (Q6) correctly applies Art.73-1 (2014 addition) in a majority-Muslim country context where the social legitimacy of observance amplifies the legal risk",
+        "Art.175-1 remote work formalization (Q4) is a 2021 Labor Code addition that London HR would handle informally — the structural difference (written addendum with 4 specific elements required) is well-articulated",
+        "HRIS/SSPF integration question (Q7) correctly places data security responsibility on the data controller (Azərenerji), not the recipient — important cross-disciplinary HR tech literacy"
+      ],
+      "weaknesses": [
+        "London delta for Q5 (PASHA OKR senior stakeholder) correctly identifies the cultural difference but is less legally precise — it's primarily a cultural/organizational psychology question rather than a regulatory one",
+        "No question covers english_proficiency or event_performance",
+        "10-day audit prep open-ended (Q8) is well-designed but the evaluation rubric is less detailed than QA-engineer Q9's 5-level rubric — scoring consistency may be lower"
+      ],
+      "best_question_id": "prof-hr-s3-001",
+      "best_question_reason": "Art.109-1 absolute pregnancy dismissal prohibition is the cleanest structural London Test failure in the HR set: UK Equality Act 2010 requires a fair process (proportionality test), but AZ Labor Code Art.109-1 is an unconditional bar with no process defense. The London HR instinct to evaluate the evidence is not just different — it is categorically wrong. The feedback correctly names the legal mechanism and the consequence (mandatory reinstatement + damages)."
+    },
+    "scrum-master": {
+      "az_institutional_anchoring": 8,
+      "london_test": 8,
+      "irt_quality": 9,
+      "competency_coverage": 7,
+      "scenario_richness": 9,
+      "total": 34,
+      "rank": 5,
+      "strengths": [
+        "CBA regulatory directive as non-negotiable sprint constraint (Q1) correctly identifies that the London 'protect the sprint' reflex fails when an AZ regulator overrides it within hours",
+        "Government Word-format reporting translation (Q2) is profession-specific and demonstrates that Scrum mastery in AZ requires institutional communication literacy not taught in PSM certification",
+        "Undocumented government API rate limits (Q4) treats AZ government API opacity as a baseline risk requiring sprint buffer design — the london_delta correctly notes UK GDS standards make this an anomaly, not a baseline",
+        "SOCAR SAFe PI Planning with Sangachal satellite outage (Q5) is the most operationally specific scenario in any profession set — satellite connectivity as a structural planning constraint has no Western equivalent",
+        "PASHA Technology retrospective seniority question (Q3) applies psychological safety principles with AZ hierarchy awareness"
+      ],
+      "weaknesses": [
+        "AZ institutional anchoring is primarily organizational/cultural rather than regulatory — 3 of 10 questions lack specific AZ law citations as structural constraints (they rely on cultural norms instead)",
+        "Empathy_safeguarding competency: not verified as present in the full 10-question set from the portions read — potential coverage gap",
+        "London deltas are culturally specific but less legally precise than DevOps or Financial Analyst sets — 'London Scrum Master would...' framing is weaker evidence of wrong answer than 'London engineer would violate CBA Circular 14/2023'"
+      ],
+      "best_question_id": "prof-pm-scrum-s3-001",
+      "best_question_reason": "CBA regulatory directive mid-sprint at Kapital Bank is the strongest London Test question in the Scrum set: the London Scrum Master who 'protects the sprint' will be overridden by Legal within hours, lose credibility with the CTO, and receive the change anyway without structured trade-offs. The AZ-correct response (structured scope renegotiation with documentation) requires understanding that CBA directives are a different category of constraint than backlog items — a distinction that PSM certification does not teach."
+    },
+    "product-manager": {
+      "az_institutional_anchoring": 7,
+      "london_test": 8,
+      "irt_quality": 9,
+      "competency_coverage": 7,
+      "scenario_richness": 9,
+      "total": 33,
+      "rank": 6,
+      "strengths": [
+        "Novruz as hard business constraint (Q4) is the most commercially specific AZ cultural anchoring — the 15-25% traffic spike and cash-on-delivery 40% share as fallback payment are data-backed AZ market insights",
+        "Co-founder dynamics question (Q3) correctly models AZ startup equity culture — 40% stake holder's status-preservation need is a specific dynamic absent from flat-hierarchy London PM practice",
+        "ASAN Ministry of Digital Transformation OTP directive (Q5) requires compliance-first decision with evidence-based feedback loop — the 14-day effective date models AZ regulatory speed accurately",
+        "Trilingual PRD question (Q2) is operationally realistic for Baku tech teams with mixed AZ/RU/EN contributors",
+        "All irt_a values are strong (1.2-1.8 range)"
+      ],
+      "weaknesses": [
+        "AZ institutional anchoring is primarily cultural/market (Novruz, co-founder dynamics, trilingual teams) rather than regulatory/legal — fewer structural constraints that change the correct answer vs financial or DevOps sets",
+        "Empathy_safeguarding competency coverage not verified in full set — potential gap",
+        "London deltas are culturally accurate but less specifically damaging: a London PM using the 'wrong' approach gets a bad outcome, not a license violation or contract blacklisting",
+        "AzərGold appears only as a technical SOAP-only payment processor — not a regulatory institution, reducing anchoring score"
+      ],
+      "best_question_id": "prof-pm-s3-004",
+      "best_question_reason": "AzərGold SOAP-only protocol + Novruz hard deadline combination creates a scenario where the technically complete solution (SOAP rewrite) produces a worse business outcome than the incomplete but timely solution (bank transfer fallback). This requires knowing both the AZ payment gateway landscape and the Novruz commercial calendar to identify B as correct — two layers of AZ market knowledge that a London PM would not have."
+    },
+    "marketing-manager": {
+      "az_institutional_anchoring": 7,
+      "london_test": 8,
+      "irt_quality": 9,
+      "competency_coverage": 7,
+      "scenario_richness": 8,
+      "total": 33,
+      "rank": 7,
+      "strengths": [
+        "Yandex.az 28% demographic share (Q1) is precisely quantified and demographically targeted — a data-backed AZ market structural fact that changes media planning decisions",
+        "2016 devaluation channel reallocation (Q3) is the strongest scenario — OOH repriced to USD vs digital remaining AZN-denominated is a structural arbitrage opportunity with no Western equivalent",
+        "Family business one-line message signal (Q4) demonstrates deep AZ business culture literacy — silence as relationship warning is specific to high-trust family enterprise dynamics",
+        "CBA advertising regulations applied to creative direction (Q5) is the only marketing question with a regulatory structural constraint"
+      ],
+      "weaknesses": [
+        "Empathy_safeguarding competency: not clearly represented in the portions reviewed — potential coverage gap",
+        "Several london_delta fields rely on generic cultural framing ('London marketers would use percentage KPIs') rather than specific regulatory or institutional knowledge gaps",
+        "Fewer AZ institutions cited as structural constraints — Yandex.az and the 2016 devaluation are market facts, not regulatory bodies whose specific rules change correct answers",
+        "Q2 (government official re-engagement) and Q4 (family business silence signal) are strong cultural questions but rely on behavioral norms rather than verifiable regulatory constraints"
+      ],
+      "best_question_id": "prof-mkt-s3-003",
+      "best_question_reason": "2016 AZN manat devaluation channel reallocation question is the only marketing scenario where AZ-specific financial market knowledge (OOH re-indexed to USD, digital remaining AZN-denominated) produces a counter-intuitive correct answer that is verifiably wrong from a London playbook. The '40% CPM drop means accelerate, not pause' insight requires understanding AZ media market structure during a currency shock — not generic marketing principles."
+    }
+  },
+  "winner": {
+    "profession": "devops-cybersecurity",
+    "total": 39,
+    "winning_pattern": "DevOps/Cybersecurity won by achieving the only perfect 10/10 on both AZ Institutional Anchoring and London Test quality: every question features a named AZ institution (CBA, DEIM, ISMSN, AzərGold, SOCAR, E-GOV) whose specific rule or incident creates a structurally different correct answer than UK/EU standards, and every london_delta field names the exact wrong decision a London professional would make plus the concrete consequence (operating license violation, contract blacklisting, 48-hour compliance exposure, breach undetectable for 4 months)."
+  },
+  "sprint4_patterns": {
+    "mandatory_for_all": [
+      "Every question must cite a named AZ institution (not just 'AZ law') AND specify how that institution's rule produces a structurally different correct answer — the test is: would removing the AZ institution name make the correct answer change? If not, the question fails",
+      "London delta fields must follow the DevOps-001 template: name the UK/EU standard the London professional follows (FCA, Cyber Essentials, GDPR, UK Equality Act), state the confident but wrong decision they make, and name the specific AZ consequence (license revocation, contract blacklisting, Art.109-1 reinstatement, DEIM 24-hour window expiry)",
+      "Every question set must cover empathy_safeguarding with at least 2 questions — the biometric data minimization (QA Q8) and the employee monitoring proportionality (DevOps Q7) set the standard: questions where regulatory compliance is necessary but insufficient and professional ethics must fill the gap"
+    ],
+    "raise_the_bar": [
+      "Sprint 3 winner DevOps achieved two-scenario coverage of CBA Circular 14/2023 (architecture review Q1 + mid-deployment update Q4) — Sprint 4 sets should demonstrate the same AZ regulation across multiple professional contexts and project phases to show structural depth, not just surface knowledge",
+      "Sprint 3 winner's best question (devops-001) has a self-contained decision that costs the bank its operating license — Sprint 4 must target this consequence level: questions where the London-wrong answer triggers a regulatory enforcement outcome, not just suboptimal performance",
+      "AzərGold 2016 attack chain reconstruction (devops-009) maps directly to Zero Trust architecture controls through a documented historical incident — Sprint 4 should use more documented AZ incidents (ASAN 2020, E-GOV 2021, ABB Bank 2022 rounding incident, AzərGold 2016) as scenario foundations rather than hypothetical situations"
+    ],
+    "fix_universally": [
+      "Competency coverage: every set must verify empathy_safeguarding appears at least twice AND that no single competency exceeds 30% of questions (tech_literacy is over-represented at 3/10 in QA and DevOps sets) — target 7 or 8 of 8 competencies covered per profession",
+      "London delta genericness: approximately 20% of Sprint 3 london_delta fields used generic framing ('London professionals would use standard approaches' or 'London marketers would default to percentage KPIs') rather than naming the specific wrong standard the London professional would apply — Sprint 4 requires every london_delta to cite the specific UK/EU framework by name",
+      "Open-ended question evaluation rubrics: only QA-engineer Q9 has a fully specified 5-level rubric that distinguishes organizational navigation from technical depth — all open-ended questions in Sprint 4 must have 5-level rubrics that reward AZ institutional knowledge specifically at level 4-5, not just general professional quality"
+    ]
+  },
+  "london_delta_hall_of_fame": [
+    {
+      "question_id": "prof-devops-s3-001",
+      "profession": "devops-cybersecurity",
+      "london_delta_text": "A London DevOps engineer would evaluate this as fully compliant — AWS eu-west-1 with AES-256 satisfies UK FCA and PCI-DSS requirements, and EU data residency is often considered the gold standard. They would not know that Azerbaijan's CBA has a specific physical data residency mandate that makes geographic encryption irrelevant to compliance. The London answer (architecture is fine) costs the AZ bank its operating license.",
+      "why_exemplary": "Names the specific UK standards followed (FCA, PCI-DSS), states the confident wrong decision ('architecture is fine'), and names the exact AZ consequence (operating license). No hedging. The london_delta has no word wasted. This is the template every Sprint 4 london_delta should match."
+    },
+    {
+      "question_id": "prof-devops-s3-006",
+      "profession": "devops-cybersecurity",
+      "london_delta_text": "A London DevOps engineer responding to Log4Shell on a government contract would follow NCSC guidance: assess exploitability, apply interim mitigations, and patch within 72 hours for CVSS 10. They would report to their internal security team and follow the standard CVSS-severity SLA. They would not know that DƏIM imposes a separate 24-hour reporting obligation to the state security agency itself — not just internal mitigation. The London engineer files an internal ticket; the AZ contractor was required to notify DƏIM within 24 hours. Difference: 48 hours of contract exposure.",
+      "why_exemplary": "Quantifies the consequence as a time gap (48 hours of contract exposure), names the UK framework (NCSC guidance, 72-hour CVSS SLA), names the AZ obligation (DEIM 24-hour reporting), and makes the difference concrete and calculable. The final sentence is the ideal london_delta structure: 'London does X; AZ requires Y; gap = Z.'"
+    },
+    {
+      "question_id": "prof-qa-s3-008",
+      "profession": "qa-engineer",
+      "london_delta_text": "A London QA lead working on a biometric system would assess risk under GDPR Article 9 (special category data), which explicitly limits biometric data processing purpose and requires data minimization. In Azerbaijan, ISMSN does not contain an equivalent explicit biometric data minimization requirement — a QA engineer who only checks ISMSN compliance will miss this safeguarding gap entirely. The correct AZ approach applies privacy-by-design principles beyond the literal compliance standard, because the gap between ISMSN and GDPR-level biometric protection is a real systemic vulnerability in AZ government systems.",
+      "why_exemplary": "Correctly identifies that the London engineer's instinct (flag it under GDPR Article 9) produces the RIGHT outcome but for the WRONG legal reason — a sophisticated London Test nuance. The AZ implication is that relying on ISMSN compliance alone will miss biometric data minimization gaps that the London engineer would catch via GDPR. This inverted London Test (London right outcome, wrong mechanism; AZ wrong outcome, right mechanism) is the most educationally valuable format."
+    },
+    {
+      "question_id": "prof-fin-s3-003",
+      "profession": "financial-analyst",
+      "london_delta_text": "A London risk analyst's reflex in a sudden FX move would be to immediately execute a hedge — that is the trained response in deep, liquid markets where forward contracts can be executed in minutes at tight spreads. In AZ after the 2016 devaluation, the interbank FX market seized for several hours; executing a large USD sell order without first knowing the exact compliance breach amount meant either over-hedging at a distorted rate or under-hedging and remaining non-compliant. The CBA capital cap calculation must precede execution in an illiquid shock environment.",
+      "why_exemplary": "The London-wrong action (hedge immediately) is the textbook-correct professional response in any other context — this is what makes the AZ delta educationally powerful. The AZ-specific reason it fails (interbank FX market seized post-devaluation, creating distorted execution conditions) is a documented historical fact from 2016, not a hypothetical. The mechanism of failure is precise: over-hedge at distorted rate OR under-hedge and remain non-compliant."
+    }
+  ]
+}

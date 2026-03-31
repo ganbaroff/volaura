@@ -327,30 +327,7 @@ class TestBarsTimeoutFallback:
 
     @pytest.mark.asyncio
     async def test_gemini_timeout_falls_back_to_openai(self):
-        """If Gemini times out (15s), BARS must try OpenAI."""
-        from app.core.assessment import bars
-        import asyncio
-
-        async def mock_gemini_timeout(*args, **kwargs):
-            raise asyncio.TimeoutError("Gemini timed out")
-
-        with patch.object(bars, "_try_gemini", side_effect=mock_gemini_timeout):
-            with patch.object(bars, "_try_openai", return_value=MagicMock(
-                composite=0.7,
-                to_log=lambda: {"model_used": "gpt-4o-mini", "concept_scores": {}}
-            )) as mock_openai:
-                result = await bars.evaluate_answer(
-                    question_en="Describe your leadership approach.",
-                    answer="I lead by example and communicate clearly.",
-                    expected_concepts=[{"concept": "leadership", "weight": 1.0}],
-                    return_details=True,
-                )
-                mock_openai.assert_called_once(), "OpenAI not called after Gemini timeout"
-                assert result.composite >= 0.0
-
-    @pytest.mark.asyncio
-    async def test_both_llms_timeout_falls_back_to_keyword(self):
-        """If both LLMs time out, BARS must use keyword fallback."""
+        """If Gemini + Groq both time out (15s), BARS must try OpenAI."""
         from app.core.assessment import bars
         import asyncio
 
@@ -358,17 +335,42 @@ class TestBarsTimeoutFallback:
             raise asyncio.TimeoutError("timed out")
 
         with patch.object(bars, "_try_gemini", side_effect=mock_timeout):
-            with patch.object(bars, "_try_openai", side_effect=mock_timeout):
-                result = await bars.evaluate_answer(
-                    question_en="Describe teamwork.",
-                    answer="I collaborate and support my team.",
-                    expected_concepts=[{"concept": "teamwork", "weight": 1.0}],
-                    return_details=True,
-                )
-                assert result is not None, "BARS returned None — keyword fallback failed"
-                assert 0.0 <= result.composite <= 1.0, (
-                    f"Keyword fallback score {result.composite} out of [0, 1]"
-                )
+            with patch.object(bars, "_try_groq", side_effect=mock_timeout):
+                with patch.object(bars, "_try_openai", return_value=MagicMock(
+                    composite=0.7,
+                    to_log=lambda: {"model_used": "gpt-4o-mini", "concept_scores": {}}
+                )) as mock_openai:
+                    result = await bars.evaluate_answer(
+                        question_en="Describe your leadership approach.",
+                        answer="I lead by example and communicate clearly.",
+                        expected_concepts=[{"concept": "leadership", "weight": 1.0}],
+                        return_details=True,
+                    )
+                    mock_openai.assert_called_once(), "OpenAI not called after Gemini+Groq timeout"
+                    assert result.composite >= 0.0
+
+    @pytest.mark.asyncio
+    async def test_both_llms_timeout_falls_back_to_keyword(self):
+        """If all LLMs time out, BARS must use keyword fallback."""
+        from app.core.assessment import bars
+        import asyncio
+
+        async def mock_timeout(*args, **kwargs):
+            raise asyncio.TimeoutError("timed out")
+
+        with patch.object(bars, "_try_gemini", side_effect=mock_timeout):
+            with patch.object(bars, "_try_groq", side_effect=mock_timeout):
+                with patch.object(bars, "_try_openai", side_effect=mock_timeout):
+                    result = await bars.evaluate_answer(
+                        question_en="Describe teamwork.",
+                        answer="I collaborate and support my team.",
+                        expected_concepts=[{"concept": "teamwork", "weight": 1.0}],
+                        return_details=True,
+                    )
+                    assert result is not None, "BARS returned None — keyword fallback failed"
+                    assert 0.0 <= result.composite <= 1.0, (
+                        f"Keyword fallback score {result.composite} out of [0, 1]"
+                    )
 
     @pytest.mark.asyncio
     async def test_keyword_fallback_returns_valid_score(self):
@@ -379,12 +381,13 @@ class TestBarsTimeoutFallback:
             raise Exception("LLM unavailable")
 
         with patch.object(bars, "_try_gemini", side_effect=mock_timeout):
-            with patch.object(bars, "_try_openai", side_effect=mock_timeout):
-                result = await bars.evaluate_answer(
-                    question_en="What does reliability mean to you?",
-                    answer="Being on time and keeping promises.",
-                    expected_concepts=[{"concept": "reliability", "weight": 1.0}],
-                    return_details=True,
-                )
-                assert result is not None
+            with patch.object(bars, "_try_groq", side_effect=mock_timeout):
+                with patch.object(bars, "_try_openai", side_effect=mock_timeout):
+                    result = await bars.evaluate_answer(
+                        question_en="What does reliability mean to you?",
+                        answer="Being on time and keeping promises.",
+                        expected_concepts=[{"concept": "reliability", "weight": 1.0}],
+                        return_details=True,
+                    )
+                    assert result is not None
                 assert 0.0 <= result.composite <= 1.0

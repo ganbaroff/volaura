@@ -60,13 +60,35 @@ export function AuraRadarChart({
   const heights = { sm: 200, md: 300, lg: 400 };
   const stroke = BADGE_STROKE[badgeTier] ?? BADGE_STROKE.none;
 
+  // BATCH-O A11Y #4: screen-reader accessible table mirrors the visual radar chart
+  const srTable = (
+    <table className="sr-only" aria-label={t("aura.competencyRadar")}>
+      <caption>{t("aura.competencyRadar")}</caption>
+      <thead>
+        <tr>
+          <th scope="col">{t("aura.competency")}</th>
+          <th scope="col">{t("aura.score")}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((row) => (
+          <tr key={row.subject}>
+            <td>{row.subject}</td>
+            <td>{row.score}/100</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.85 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
-      aria-label={t("aura.competencyRadar")}
+      aria-hidden="true"  // visual chart hidden from AT; sr-only table provides the data
     >
+      {srTable}
       <ResponsiveContainer width="100%" height={heights[size]}>
         <RadarChart data={data} margin={{ top: 10, right: 20, bottom: 10, left: 20 }}>
           <PolarGrid stroke="hsl(var(--border))" />

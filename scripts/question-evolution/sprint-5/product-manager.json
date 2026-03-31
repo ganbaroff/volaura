@@ -1,0 +1,480 @@
+[
+  {
+    "id": "prof-pm-s5-001",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.4,
+    "irt_b": -0.8,
+    "irt_c": 0.1,
+    "scenario_en": "You are PM at a Baku fintech startup. Three weeks into a 6-week sprint, your lead developer informs you the payment reconciliation module will take 10 weeks, not 6. The sprint commitment was made to the CEO and three PASHA Holding stakeholders in a formal kickoff meeting. How do you handle this?",
+    "scenario_az": "Siz Bakıda fintex startapında PM-siniz. 6 həftəlik sprintin üçüncü həftəsindəsiniz. Aparıcı tərtibatçınız ödəniş uzlaşma modulunun 6 həftə deyil, 10 həftə çəkəcəyini bildirir. Sprint öhdəliyi rəsmi başlama görüşündə CEO və PASHA Holdinqin üç maraqlı tərəfinə verilmişdi. Siz bu vəziyyəti necə idarə edirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Wait until week 5 before escalating — more information will clarify the scope",
+        "text_az": "Daha çox məlumat əldə etmək üçün eskalasiyadan əvvəl 5-ci həftəyə qədər gözləyin"
+      },
+      {
+        "key": "B",
+        "text_en": "Immediately send a written update to all stakeholders with revised timeline, root cause, and a concrete mitigation plan — request a brief alignment meeting within 48 hours",
+        "text_az": "Dərhal bütün maraqlı tərəflərə yenilənmiş qrafik, kök səbəb və konkret azaldılma planı ilə yazılı yeniləmə göndərin — 48 saat ərzində qısa uyğunlaşma görüşü tələb edin"
+      },
+      {
+        "key": "C",
+        "text_en": "Ask the developer to find any solution that fits the original 6-week window, regardless of technical debt",
+        "text_az": "Texniki borc nəzərə alınmadan tərtibatçıdan orijinal 6 həftəlik müddətə uyğun istənilən həll tapmasını xahiş edin"
+      },
+      {
+        "key": "D",
+        "text_en": "Announce the delay at the next scheduled monthly review meeting to avoid premature panic",
+        "text_az": "Vaxtından əvvəl panikadan qaçmaq üçün növbəti aylıq iclas görüşündə gecikməni elan edin"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct: proactive transparency with a mitigation plan preserves trust even when news is bad. In AZ business culture, face-loss risk is real — but the antidote is a prepared solution presented alongside the problem, not silence. A delays damage and compounds it. C creates technical debt that breaks future sprints. D violates basic stakeholder management — PASHA stakeholders with financial exposure cannot wait 3+ weeks for critical news.",
+    "feedback_az": "B düzgündür: azaldılma planı ilə proaktiv şəffaflıq xəbərlər pis olduqda belə etibarı qoruyur. AZ iş mədəniyyətində üz itirmə riski realdır — lakin antidot susmaq deyil, problemlə birlikdə təqdim edilən hazırlanmış həlldir. A zərəri gecikdirir və birləşdirir. C gələcək sprintləri pozan texniki borc yaradır. D əsas maraqlı tərəflərin idarəetməsini pozur — maliyyə məruzəliyi olan PASHA maraqlı tərəfləri kritik xəbərlər üçün 3+ həftə gözləyə bilməz.",
+    "development_tip_en": "In AZ B2B relationships, especially with PASHA/ABB-tier stakeholders, delivering bad news early with a recovery plan is respected as reliability. Silence or delay is interpreted as incompetence or dishonesty. Always frame the update as: (1) what happened, (2) why, (3) what you're doing about it, (4) what you need from them.",
+    "development_tip_az": "AZ B2B münasibətlərində, xüsusilə PASHA/ABB səviyyəli maraqlı tərəflərlə, bərpa planı ilə birlikdə erkən pis xəbər vermək etibarlılıq kimi qiymətləndirilir. Sükut və ya gecikmə bacarıqsızlıq və ya dürüstlüksüzlük kimi şərh edilir. Yeniləməni həmişə belə çərçivələyin: (1) nə baş verdi, (2) niyə, (3) bununla nə edirsiniz, (4) onlardan nə lazımdır.",
+    "london_delta": "A London PM following PRINCE2 Agile's Communication Management Approach (section 10.4 — issue escalation timeline) might defer escalation until the next scheduled checkpoint to 'gather more data.' AZ consequence: PASHA Holding stakeholders who discover the delay through informal channels (highly likely in Baku's tight business community) interpret the silence as deliberate concealment, permanently damaging the relationship and jeopardizing future contract renewals.",
+    "az_institutions": [
+      "PASHA Holding"
+    ],
+    "tags": [
+      "product-management",
+      "az-specific",
+      "stakeholder-management",
+      "reliability"
+    ]
+  },
+  {
+    "id": "prof-pm-s5-002",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency_slug": "communication",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.3,
+    "irt_b": -0.5,
+    "irt_c": 0.12,
+    "scenario_en": "You are writing a Product Requirements Document (PRD) for a new HR module at a Baku company. The engineering team is split: 4 developers speak Azerbaijani natively, 3 Russian-speaking developers joined from a Tbilisi office, and the CTO communicates exclusively in English. What is the most effective PRD communication strategy?",
+    "scenario_az": "Siz Bakıda bir şirkət üçün yeni HR modulu üçün Məhsul Tələbləri Sənədi (PRD) yazırsınız. Mühəndislik komandası bölünüb: 4 tərtibatçı Azərbaycan dilini ana dili kimi danışır, 3 rus dilli tərtibatçı Tbilisi ofisindən qoşulub, CTO isə yalnız ingilis dilində ünsiyyət qurur. Ən effektiv PRD ünsiyyət strategiyası nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Write the PRD in English only — it is the lingua franca of technology and forces all team members to improve their English",
+        "text_az": "PRD-ni yalnız ingilis dilində yazın — bu, texnologiyanın lingua francasıdır və bütün komanda üzvlərini ingilis dillərini yaxşılaşdırmağa məcbur edir"
+      },
+      {
+        "key": "B",
+        "text_en": "Write three separate full PRDs — one per language — and maintain them manually in sync",
+        "text_az": "Üç ayrı tam PRD yazın — hər dil üçün bir — və onları əl ilə sinxron saxlayın"
+      },
+      {
+        "key": "C",
+        "text_en": "Write the PRD in English as the authoritative source, with an Azerbaijani summary section and a Russian glossary of key technical terms — mark the English version as canonical and use it for all formal decisions",
+        "text_az": "PRD-ni məsul mənbə kimi ingilis dilində yazın, Azərbaycan dilində xülasə bölməsi və əsas texniki terminlərin rus dilində lüğəti ilə — ingilis versiyasını kanonik kimi işarələyin və bütün rəsmi qərarlar üçün istifadə edin"
+      },
+      {
+        "key": "D",
+        "text_en": "Use Azerbaijani only — it is the State Language and legally required for all internal business documents in Azerbaijan",
+        "text_az": "Yalnız Azərbaycan dilindən istifadə edin — bu Dövlət Dilidir və Azərbaycanda bütün daxili biznes sənədləri üçün qanuni tələbdir"
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct: one canonical source prevents version drift while localized summaries reduce cognitive load for non-English speakers. This balances legal compliance, team accessibility, and decision integrity. A excludes native AZ and RU speakers from nuanced requirements understanding — miscommunication risk on complex edge cases is high. B creates maintenance hell and introduces dangerous inconsistency between versions. D is factually incorrect — AZ State Language Law applies to public-facing and government documents, not internal technical documents; enforcing AZ-only in a trilingual team would exclude the CTO and Russian-speaking engineers entirely.",
+    "feedback_az": "C düzgündür: bir kanonik mənbə versiya sürüşməsini qarşılayır, yerləşdirilmiş xülasələr isə qeyri-ingilis danışanlar üçün idrak yükünü azaldır. Bu, hüquqi uyğunluğu, komanda əlçatanlığını və qərar bütövlüyünü balanslaşdırır. A yerli AZ və RU danışanları nüanslı tələbləri anlamaqdan kənar saxlayır — mürəkkəb kənar hallarda yanlış ünsiyyət riski yüksəkdir. B texniki xaosa aparır və versiyalar arasında təhlükəli uyğunsuzluq yaradır. D faktiki olaraq yanlışdır — AZ Dövlət Dili Qanunu ictimai və hökumət sənədlərinə aiddir, daxili texniki sənədlərə yox.",
+    "development_tip_en": "AZ PM reality: most Baku tech companies operate in a de facto trilingual environment (AZ/RU/EN). Effective PRD strategy uses English as the engineering canonical standard (aligns with global tooling, GitHub, Jira), Azerbaijani for business stakeholder summaries, and Russian for legacy team members. Never let language politics create documentation debt.",
+    "development_tip_az": "AZ PM reallığı: Bakıdakı texnologiya şirkətlərinin əksəriyyəti faktiki olaraq üç dilli mühitdə işləyir (AZ/RU/EN). Effektiv PRD strategiyası mühəndislik kanonik standartı kimi ingilis dilini (qlobal alətlər, GitHub, Jira ilə uyğunlaşır), biznes maraqlı tərəflər xülasələri üçün Azərbaycan dilini və köhnə komanda üzvləri üçün rus dilini istifadə edir.",
+    "london_delta": "A London PM following UK GDS Content Design Standards (section: 'Writing for your audience' — default to English as the single authoritative source with no multilingual consideration) would publish an English-only PRD assuming universal comprehension. AZ consequence: Russian-speaking developers from the Tbilisi office misinterpret edge-case requirements due to language barrier, causing a 3-week rework cycle and delaying the ABB integration milestone.",
+    "az_institutions": [
+      "Ministry of Justice"
+    ],
+    "tags": [
+      "product-management",
+      "az-specific",
+      "communication",
+      "trilingual",
+      "prd"
+    ]
+  },
+  {
+    "id": "prof-pm-s5-003",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.5,
+    "irt_b": 0.3,
+    "irt_c": 0.08,
+    "scenario_en": "During a product demo to PASHA Holding's leadership team, the co-founder publicly contradicts your recommended go-to-market approach in front of 12 stakeholders, saying your strategy 'lacks commercial ambition' and proposes an alternative that would require a 4-month scope expansion. Your engineering lead looks to you for direction. Which response sequence is most effective?",
+    "scenario_az": "PASHA Holdinqin rəhbərliyinə məhsul nümayişi zamanı həmtəsisçi 12 maraqlı tərəfin qarşısında tövsiyə etdiyiniz bazara çıxma yanaşmasını açıq şəkildə rədd edir, strategiyanızın 'kommersiya ambisiyasından yoksun olduğunu' söyləyir və 4 aylıq əhatə genişlənməsi tələb edən alternativ təklif edir. Mühəndislik rəhbəriniz istiqamət üçün sizə baxır. Hansı cavab ardıcıllığı ən effektivdir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Immediately defend your original strategy in detail, citing your research data to demonstrate the co-founder is factually wrong in front of the group",
+        "text_az": "Dərhal orijinal strategiyanızı ətraflı müdafiə edin, həmtəsisçinin qrupun qarşısında faktiki olaraq səhv etdiyini göstərmək üçün tədqiqat məlumatlarınıza istinad edin"
+      },
+      {
+        "key": "B",
+        "text_en": "Acknowledge the co-founder's commercial vision publicly ('that direction has real merit'), note that the scope implications need to be worked through properly, and request a focused follow-up session with the right decision-makers within 48 hours to align on constraints and prioritization",
+        "text_az": "Həmtəsisçinin kommersiya vizyonunu açıq şəkildə qəbul edin ('o istiqamətin real dəyəri var'), əhatə nəticələrinin düzgün işlənməsi lazım olduğunu qeyd edin və məhdudiyyətlər və prioritetləşdirməni uyğunlaşdırmaq üçün 48 saat ərzində düzgün qərar qəbul edənlərlə diqqətli təqib seansı tələb edin"
+      },
+      {
+        "key": "C",
+        "text_en": "Stay silent and defer entirely — the co-founder outranks you and publicly agreeing preserves the relationship",
+        "text_az": "Sükut edin və tamamilə təxir edin — həmtəsisçi sizdən yüksək vəzifəlidir və açıq razılaşmaq münasibəti qoruyur"
+      },
+      {
+        "key": "D",
+        "text_en": "Ask your engineering lead to explain the technical constraints that make the co-founder's proposal infeasible, redirecting the challenge to a technical objection",
+        "text_az": "Mühəndislik rəhbərinizdən həmtəsisçinin təklifini qeyri-mümkün edən texniki məhdudiyyətləri izah etməsini xahiş edin, çağırışı texniki etirazına yönləndirin"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct: in AZ high-context business culture, direct public contradiction of a senior stakeholder causes irreparable relationship damage. B preserves the co-founder's face while buying time to evaluate the proposal properly and potentially reframe it with data in a private setting. A creates a public power struggle that you cannot win regardless of being factually correct — the relationship damage will outlast any single product decision. C completely cedes PM authority and signals that you can be overridden publicly with zero process. D uses the engineer as a proxy for your disagreement, undermining trust with both the co-founder and your own team.",
+    "feedback_az": "B düzgündür: AZ yüksək kontekstli iş mədəniyyətində yaşlı maraqlı tərəfin açıq şəkildə birbaşa inkarı aradan qaldırılmaz münasibət zərərinə səbəb olur. B, təklifi düzgün qiymətləndirmək və potensial olaraq xüsusi mühitdə məlumatlarla yenidən çərçivələmək üçün vaxt alarkən həmtəsisçinin üzünü qoruyur. A, faktiki olaraq haqlı olsanız belə qazan bilməyəcəyiniz açıq güc mübarizəsi yaradır — münasibət zərəri istənilən məhsul qərarından uzun ömürlü olacaq.",
+    "development_tip_en": "PASHA/ABB-tier stakeholders in AZ operate in a high-status hierarchy. The PM's job in public conflict is not to win arguments — it is to preserve optionality. A private follow-up meeting allows you to present the full scope/cost/timeline impact of the co-founder's alternative with data, giving them a face-saving path to adjust their position.",
+    "development_tip_az": "AZ-da PASHA/ABB səviyyəli maraqlı tərəflər yüksək statuslu iyerarxiyada fəaliyyət göstərir. PM-nin açıq münaqişədəki işi mübahisələri qazanmaq deyil — seçim imkanlarını qorumaq. Xüsusi təqib görüşü, həmtəsisçinin alternativinin tam əhatəsi/xərci/qrafik təsirini məlumatlarla təqdim etməyə imkan verir.",
+    "london_delta": "A London PM following DSDM Agile Project Framework (section: 'Empowered Teams' — PM has authority to defend scope decisions based on MoSCoW prioritization in any forum) would publicly defend the original scope with data, citing agreed MoSCoW priorities. AZ consequence: PASHA Holding co-founder, whose face was lost in front of 12 subordinates, withdraws informal support for the product roadmap and the contract renewal negotiation stalls for 6 months.",
+    "az_institutions": [
+      "PASHA Holding"
+    ],
+    "tags": [
+      "product-management",
+      "az-specific",
+      "leadership",
+      "stakeholder-management",
+      "hierarchy"
+    ]
+  },
+  {
+    "id": "prof-pm-s5-004",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.6,
+    "irt_b": 0.5,
+    "irt_c": 0.09,
+    "scenario_en": "Your team is in week 3 of a 6-week sprint building an enterprise gold trading integration for AzərGold. Your technical architect discovers that AzərGold's trading platform exposes only a SOAP/XML API (not REST), requires IP whitelisting with a 10-business-day approval process, and uses a proprietary session token format incompatible with your OAuth2 implementation. None of this was in the original vendor documentation. What is your first action?",
+    "scenario_az": "Komandanız AzərGold üçün korporativ qızıl ticarəti inteqrasiyası quran 6 həftəlik sprintin 3-cü həftəsindədir. Texniki memarınız AzərGold-un ticarət platformasının yalnız SOAP/XML API (REST deyil) açdığını, 10 iş günü təsdiqləmə prosesi ilə IP ağ siyahısı tələb etdiyini və OAuth2 tətbiqinizlə uyğun olmayan xüsusi sessiya token formatı istifadə etdiyini aşkar edir. Bunların heç biri orijinal satıcı sənədlərində yox idi. İlk hərəkətiniz nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Immediately pause the sprint and escalate to the CEO — the integration is impossible under the current constraints",
+        "text_az": "Dərhal sprinti dayandırın və CEO-ya eskalasiya edin — inteqrasiya mövcud məhdudiyyətlər altında mümkün deyil"
+      },
+      {
+        "key": "B",
+        "text_en": "Continue building with mock SOAP responses while simultaneously: filing the IP whitelist request today, assigning one engineer to build a SOAP adapter layer, and scheduling a technical clarification call with AzərGold's integration team within 48 hours",
+        "text_az": "Eyni zamanda saxta SOAP cavabları ilə qurmağa davam edin: bu gün IP ağ siyahı sorğusu verin, bir mühəndisi SOAP adapter qatı qurmağa təyin edin və 48 saat ərzində AzərGold-un inteqrasiya komandası ilə texniki aydınlaşdırma zəngi planlaşdırın"
+      },
+      {
+        "key": "C",
+        "text_en": "Request a 4-week sprint extension to account for the SOAP migration and IP whitelist delay before writing any new code",
+        "text_az": "Yeni kod yazmadan əvvəl SOAP miqrasiyası və IP ağ siyahı gecikmənin hesabına 4 həftəlik sprint uzatması tələb edin"
+      },
+      {
+        "key": "D",
+        "text_en": "Switch the integration to use AzərGold's web portal screen-scraping as a temporary workaround to maintain the original sprint timeline",
+        "text_az": "Orijinal sprint qrafikini qorumaq üçün müvəqqəti həll kimi AzərGold-un veb portalının ekran kazımasından istifadə etmək üçün inteqrasiyanı dəyişdirin"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct: parallel-track adaptation preserves sprint momentum while addressing the real blockers. The IP whitelist process is fixed at 10 business days — starting it immediately is the only way to minimize calendar impact. Building against mock SOAP responses keeps the team productive while the adapter layer is built. A treats a solvable technical problem as a strategic crisis. C accepts a 4-week delay without attempting parallel mitigation. D creates a brittle, legally questionable integration that will break on any AzərGold portal update and violates their terms of service.",
+    "feedback_az": "B düzgündür: paralel izli uyğunlaşma, real blokerləri həll edərkən sprint sürətini qoruyur. IP ağ siyahı prosesi 10 iş günündə sabitlənib — onu dərhal başlatmaq təqvim təsirini minimuma endirməyin yeganə yoludur. Saxta SOAP cavablarına qarşı qurmaq, adapter qatı qurularkən komandanı məhsuldar saxlayır.",
+    "development_tip_en": "AzərGold's SOAP gateway is a well-known integration constraint in the AZ fintech ecosystem. Experienced AZ PMs build a 2-week 'government/SOE API discovery buffer' into any sprint involving state-owned enterprise integrations (AzərGold, SOCAR, ADB-funded systems). The IP whitelist SLA of 10 business days is documented in AzərGold's integration guide — always request it at sprint kick-off, not mid-sprint.",
+    "development_tip_az": "AzərGold-un SOAP şlüzü AZ fintex ekosistemindəki tanınmış inteqrasiya məhdudiyyətidir. Təcrübəli AZ PM-lər dövlət müəssisəsi inteqrasiyalarını (AzərGold, SOCAR, ADB maliyyəli sistemlər) əhatə edən istənilən sprintə 2 həftəlik 'hökumət/DKŞ API kəşf buferi' qururlar.",
+    "london_delta": "A London PM following PSD2 / Open Banking Implementation Entity (OBIE) standards — which assume REST/JSON with OAuth2 as the universal integration baseline — would not include SOAP adapter effort in the sprint plan. AZ consequence: the AzərGold SOAP gateway discovery in week 3 halts the sprint completely, the IP whitelist delay pushes delivery 6 weeks past the committed date, and the PASHA investment committee questions the PM's vendor due diligence capability.",
+    "az_institutions": [
+      "AzərGold"
+    ],
+    "tags": [
+      "product-management",
+      "az-specific",
+      "adaptability",
+      "api-integration",
+      "soap"
+    ]
+  },
+  {
+    "id": "prof-pm-s5-005",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.7,
+    "irt_b": 0.7,
+    "irt_c": 0.07,
+    "scenario_en": "You are running an A/B test on a new onboarding flow for your platform in Azerbaijan. After 3 weeks, variant B shows a 12% improvement in Day-7 retention. Your data analyst flags that the test has only 340 users per variant — far below the 1,000-per-variant minimum you calculated for 80% statistical power at 5% significance. The CTO wants to ship variant B immediately. What is the correct response?",
+    "scenario_az": "Siz Azərbaycanda platformanız üçün yeni işə başlama axını üzərində A/B testi keçirirsiniz. 3 həftədən sonra B variansı Gün-7 saxlanmasında 12% yaxşılaşma göstərir. Məlumat analistiniz testin variantda yalnız 340 istifadəçiyə malik olduğunu qeyd edir — 5% əhəmiyyəti ilə 80% statistik güc üçün hesabladığınız hər variant üçün minimum 1.000-dən çox aşağı. CTO dərhal B variantını göndərmək istəyir. Düzgün cavab nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Ship variant B — a 12% improvement is commercially meaningful and waiting for statistical significance is a luxury small teams cannot afford",
+        "text_az": "B variantını göndərin — 12% yaxşılaşma kommersiya baxımından mənalıdır və statistik əhəmiyyət üçün gözləmək kiçik komandaların ödəyə bilməyəcəyi bir lüksdür"
+      },
+      {
+        "key": "B",
+        "text_en": "Extend the test until reaching 1,000 users per variant, even if it takes 6 more weeks",
+        "text_az": "6 həftə daha çəkəcəksə belə, hər variantda 1.000 istifadəçiyə çatana qədər testi uzadın"
+      },
+      {
+        "key": "C",
+        "text_en": "Switch to a Bayesian A/B testing framework — calculate the current probability that B is better than A (posterior), present this as a 'confidence-weighted recommendation' rather than a binary significance decision, and use the 95% credible interval to inform the ship decision",
+        "text_az": "Bayesian A/B test çərçivəsinə keçin — B-nin A-dan daha yaxşı olma cari ehtimalını (posterior) hesablayın, bunu ikili əhəmiyyət qərarı əvəzinə 'etimad ağırlıqlı tövsiyə' kimi təqdim edin və göndərmə qərarını məlumatlandırmaq üçün 95% etibarlı intervaldan istifadə edin"
+      },
+      {
+        "key": "D",
+        "text_en": "Declare the test inconclusive and restart with a larger user pool from a marketing campaign",
+        "text_az": "Testi qeyri-müəyyən elan edin və marketinq kampaniyasından daha böyük istifadəçi hovuzu ilə yenidən başlayın"
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct: Azerbaijan's tech-active user base of ~500,000 makes frequentist A/B testing extremely challenging — reaching 1,000 per variant in a reasonable timeframe is often structurally impossible for niche B2B or professional platforms. Bayesian testing provides actionable inference from smaller samples by quantifying uncertainty rather than requiring binary significance thresholds. A ships without quantified confidence — the 12% lift may be noise. B is mathematically correct but commercially impractical given AZ's small TAM and could take months. D wastes the 3 weeks of valid data already collected.",
+    "feedback_az": "C düzgündür: Azərbaycanın ~500.000 texnoloji aktiv istifadəçi bazası tezlikçi A/B testini son dərəcə çətin edir — ağlabatan bir zaman çərçivəsində hər variantda 1.000-ə çatmaq dar B2B və ya peşəkar platformalar üçün struktural cəhətdən çox vaxt mümkün deyil. Bayesian testi, ikili əhəmiyyət pragını tələb etmək əvəzinə qeyri-müəyyənliyi kəmiyyətləndirərək daha kiçik nümunələrdən fəaliyyət qabiliyyətli nəticə çıxarır.",
+    "development_tip_en": "AZ PM reality: with 500k tech users nationally and typical B2B platform penetration of 5-15%, your addressable test population is often 25,000-75,000. For meaningful A/B tests, AZ PMs should default to Bayesian frameworks (use pymc3, Stan, or even the Evan Miller calculator for quick estimates) and present results as posterior probability distributions, not p-values. This is not a shortcut — it is the correct statistical methodology for small-population markets.",
+    "development_tip_az": "AZ PM reallığı: ölkə miqyasında 500k texnoloji istifadəçi və tipik B2B platforma nüfuzu 5-15% ilə ünvanlana bilən test əhalisi çox vaxt 25.000-75.000 olur. Mənalı A/B testlər üçün AZ PM-lər Bayesian çərçivələrinə (sürətli təxminlər üçün pymc3, Stan və ya hətta Evan Miller kalkulyatoru istifadə edin) standart olaraq keçməli və nəticələri p-dəyərləri deyil, posterior ehtimal paylanmaları kimi təqdim etməlidirlər.",
+    "london_delta": "A London PM following ICO AI and Data Protection Guidance (2023) combined with standard frequentist A/B testing norms (1,000+ per variant, p<0.05) would insist on extending the test to statistical significance before any rollout decision. AZ consequence: the test requires 6+ additional weeks to reach significance threshold given the 500k active user ceiling — competitor Lalafo.az launches a similar onboarding improvement in the interim, capturing the early-adopter retention advantage.",
+    "az_institutions": [],
+    "tags": [
+      "product-management",
+      "az-specific",
+      "tech-literacy",
+      "ab-testing",
+      "bayesian",
+      "small-tam"
+    ]
+  },
+  {
+    "id": "prof-pm-s5-006",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.5,
+    "irt_b": 0.9,
+    "irt_c": 0.11,
+    "scenario_en": "Your platform uses ASAN xidmət's e-signature API for document verification. At 11:47 AM on a Tuesday, your monitoring alerts that ASAN API calls are returning 429 errors — you have hit the documented rate limit of 100 requests/hour. You have 340 pending verifications in queue and three enterprise clients (including ABB Bank) waiting for document processing SLAs. What is your immediate response sequence?",
+    "scenario_az": "Platformanız sənəd təsdiqi üçün ASAN xidmətin e-imza API-sından istifadə edir. Çərşənbə axşamı saat 11:47-də monitorinqiniz ASAN API zənglərinin 429 xətaları qaytardığını xəbərdar edir — saat başına 100 sorğunun sənədləşdirilmiş rate limitinə çatmışsınız. Növbədə 340 gözləyən doğrulama var və üç korporativ müştəri (ABB Bank daxil olmaqla) sənəd emalı SLA-larını gözləyir. Anlıq cavab ardıcıllığınız nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Contact ASAN's support to request emergency rate limit increase and wait for their response before taking any other action",
+        "text_az": "Təcili rate limit artırımı tələb etmək üçün ASAN-ın dəstəyi ilə əlaqə saxlayın və başqa hərəkət etməzdən əvvəl onların cavabını gözləyin"
+      },
+      {
+        "key": "B",
+        "text_en": "Immediately notify ABB Bank and the other enterprise clients that SLAs will be breached, activate queued request throttling to 80 requests/hour (maintaining 20% headroom), prioritize enterprise client requests at the front of the queue using existing tier logic, and escalate to ASAN with a formal rate limit increase request — targeting resolution within 4 hours",
+        "text_az": "Dərhal ABB Bank və digər korporativ müştərilərə SLA-ların pozulacağını bildirin, növbəli sorğu tənzimlənməsini saatda 80 sorğuya aktivləşdirin (20% başlıq saxlayaraq), mövcud tier məntiqi ilə korporativ müştəri sorğularına növbənin önündə üstünlük verin və formal rate limit artırımı sorğusu ilə ASAN-a eskalasiya edin — 4 saat ərzində həll hədəfləyərək"
+      },
+      {
+        "key": "C",
+        "text_en": "Temporarily bypass the ASAN verification for non-enterprise clients and process their documents through a manual review queue to maintain SLAs for ABB Bank",
+        "text_az": "Qeyri-korporativ müştərilər üçün ASAN doğrulamasını müvəqqəti olaraq yan keçin və ABB Bank üçün SLA-ları qorumaq üçün sənədlərini əl ilə yoxlama növbəsi vasitəsilə emal edin"
+      },
+      {
+        "key": "D",
+        "text_en": "Pause all document processing until the rate limit window resets in the next hour, then resume normal operations",
+        "text_az": "Rate limit pəncərəsi növbəti saatda sıfırlanana qədər bütün sənəd emalını dayandırın, sonra normal əməliyyatlara davam edin"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct: the sequence addresses all three simultaneous concerns — client communication, system stabilization, and upstream resolution. Proactive SLA breach notification to ABB Bank before they discover it themselves is essential in AZ B2B — silent failures with bank clients trigger contract penalty clauses and relationship reviews. Queue throttling at 80/hour prevents repeated rate limit violations while maintaining throughput. A waits passively while SLAs are actively breaching. C creates a two-tier service that violates compliance requirements for equal document treatment. D halts all operations for an entire hour, breaching every SLA in the queue.",
+    "feedback_az": "B düzgündür: ardıcıllıq üç eyni zamanlı narahatlığa müraciət edir — müştəri ünsiyyəti, sistem sabitləşməsi və yuxarı axın həlli. ABB Bank-ın özü kəşf etməzdən əvvəl SLA pozuntusu barədə proaktiv bildiriş AZ B2B-də vacibdir — bank müştəriləri ilə səssiз uğursuzluqlar müqavilə cəza bəndlərini və münasibət nəzərdən keçirmələrini tetikler.",
+    "development_tip_en": "ASAN xidmət's documented rate limit is 100 requests/hour for the e-signature API on standard commercial accounts. The rate limit increase request process requires a formal written application to ASAN's technical integration team — typical response time is 3-5 business days. AZ PMs building on ASAN APIs must implement token bucket or leaky bucket rate limiting client-side and include ASAN SLA variability in all enterprise client SLA negotiations.",
+    "development_tip_az": "ASAN xidmətin sənədləşdirilmiş rate limiti standart kommersiya hesablarında e-imza API üçün saatda 100 sorğudur. Rate limit artırımı sorğusu prosesi ASAN-ın texniki inteqrasiya komandasına rəsmi yazılı müraciət tələb edir — tipik cavab müddəti 3-5 iş günüdür. ASAN API-ləri üzərində quran AZ PM-lər müştəri tərəfindən token bucket və ya leaky bucket rate limiting tətbiq etməli və bütün korporativ müştəri SLA danışıqlarına ASAN SLA dəyişkənliyini daxil etməlidir.",
+    "london_delta": "A London PM following FCA Consumer Duty (PS22/9 — 'Consumer Support' outcome requiring firms to provide adequate support for service disruptions) would focus the response on the consumer notification template and regulatory disclosure timeline. AZ consequence: ABB Bank's procurement contract includes an AZ-standard penalty clause of 0.1% contract value per hour of SLA breach — 4 hours of unmitigated downtime on a 500k AZN contract costs 2,000 AZN in penalties and triggers a formal vendor review.",
+    "az_institutions": [
+      "ASAN",
+      "ABB Bank"
+    ],
+    "tags": [
+      "product-management",
+      "az-specific",
+      "reliability",
+      "api-rate-limits",
+      "asan",
+      "incident-response"
+    ]
+  },
+  {
+    "id": "prof-pm-s5-007",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.6,
+    "irt_b": 0.8,
+    "irt_c": 0.09,
+    "scenario_en": "The Ministry of Internal Affairs (MIA) of Azerbaijan sends your company a formal letter requesting the integration of a 'user activity monitoring feature' into your platform. The letter references national security grounds and is signed by a senior official. Your company's legal counsel says there is no specific court order attached and AZ law does not mandate proactive surveillance integration for private commercial platforms. Your CEO wants to comply immediately to preserve the government relationship. What do you recommend?",
+    "scenario_az": "Azərbaycan Daxili İşlər Nazirliyi (DİN) şirkətinizə platformanıza 'istifadəçi fəaliyyəti monitorinq xüsusiyyəti' inteqrasiyasını tələb edən rəsmi məktub göndərir. Məktubda milli təhlükəsizlik əsaslarına istinad edilir və yüksək vəzifəli məmur tərəfindən imzalanıb. Şirkətin hüquq məsləhətçisi xüsusi məhkəmə qərarının əlavə olunmadığını və AZ qanununun xüsusi kommersiya platformaları üçün proaktiv müşahidə inteqrasiyasını məcburi etmədiyini bildirir. CEO-nuz hökumət münasibətini qorumaq üçün dərhal əməl etmək istəyir. Nə tövsiyə edirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Immediately comply — government relationships in Azerbaijan are commercially critical and resisting an MIA request creates existential business risk",
+        "text_az": "Dərhal əməl edin — Azərbaycanda hökumət münasibətləri kommersiya baxımından kritikdir və DİN sorğusuna müqavimət göstərmək mövcudluq iş riskləri yaradır"
+      },
+      {
+        "key": "B",
+        "text_en": "Recommend the CEO seek formal legal opinion and engage a specialized AZ technology law firm, request that MIA provide a specific legal basis (court order or statutory provision), and do not implement any monitoring feature until the legal basis is clarified — document all communications",
+        "text_az": "CEO-ya rəsmi hüquqi rəy almasını tövsiyə edin və ixtisaslaşmış AZ texnologiya hüquq şirkəti ilə əlaqə qurun, DİN-dən xüsusi hüquqi əsas (məhkəmə qərarı və ya qanuni müddəa) tələb edin, hüquqi əsas aydınlaşdırılana qədər heç bir monitorinq xüsusiyyəti tətbiq etməyin — bütün ünsiyyəti sənədləşdirin"
+      },
+      {
+        "key": "C",
+        "text_en": "Build the monitoring feature but make it technically non-functional — a symbolic compliance gesture that protects the government relationship without actually compromising user privacy",
+        "text_az": "Monitorinq xüsusiyyəti qurun, lakin onu texniki olaraq qeyri-funksional edin — istifadəçi məxfiliyini faktiki olaraq pozmadan hökumət münasibətini qoruyan simvolik uyğunluq jesti"
+      },
+      {
+        "key": "D",
+        "text_en": "Comply with the letter but notify users via a privacy policy update that their activity may be monitored — this satisfies both the government request and AZ Personal Data Law Article 8 consent requirements",
+        "text_az": "Məktuba əməl edin, lakin istifadəçilərə fəaliyyətlərinin monitorinq edilə biləcəyini məxfilik siyasəti yeniləməsi vasitəsilə bildirin — bu, həm hökumət sorğusunu, həm də AZ Şəxsi Məlumatlar Qanununun 8-ci maddəsinin razılıq tələblərini ödəyir"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct: AZ Personal Data Law (2010) Article 8 requires informed user consent for data collection. A formal MIA letter without a court order does not override this legal requirement. The PM's responsibility is to protect users and the company from legal liability, not to optimize for perceived political relationships. A creates liability under AZ PD Law and EU GDPR (if any EU-resident users exist). C is both legally and ethically unacceptable — deception of a government official carries criminal exposure. D's 'consent via policy update' argument fails because Article 8 requires active, specific consent — not buried policy language — for surveillance-category data processing.",
+    "feedback_az": "B düzgündür: AZ Şəxsi Məlumatlar Qanunu (2010) 8-ci maddə məlumat toplanması üçün məlumatlı istifadəçi razılığını tələb edir. Məhkəmə qərarı olmadan rəsmi DİN məktubu bu hüquqi tələbi ləğv etmir. PM-nin məsuliyyəti istifadəçiləri və şirkəti hüquqi məsuliyyətdən qorumaq, qəbul edilmiş siyasi münasibətlər üçün optimallaşdırmaq deyil.",
+    "development_tip_en": "AZ Personal Data Law 2010, Article 8 is the cornerstone safeguarding requirement for any AZ platform. It mandates: (1) explicit consent before collection, (2) purpose limitation, (3) data minimization, (4) subject access rights. Surveillance-category requests from government bodies require a specific statutory instrument or court order — a letter from a ministry, however senior, does not constitute legal mandate for private platforms. Document all government requests and consult specialized counsel before any response.",
+    "development_tip_az": "AZ Şəxsi Məlumatlar Qanunu 2010, 8-ci Maddə istənilən AZ platforması üçün əsas mühafizə tələbidir. O tələb edir: (1) toplamadan əvvəl açıq razılıq, (2) məqsəd məhdudlaşdırması, (3) məlumat minimizasiyası, (4) subyektin giriş hüquqları. Dövlət orqanlarından müşahidə kateqoriyası sorğuları xüsusi qanunvericilik aləti və ya məhkəmə qərarı tələb edir.",
+    "london_delta": "A London PM following GDPR Art.35 DPIA (Data Protection Impact Assessment) requirements would recognize this as a high-risk processing request requiring mandatory DPIA before any implementation. AZ consequence: implementing surveillance without proper legal basis under AZ PD Law 2010 exposes the platform to regulatory action by the Ministry of Transport, Communications and High Technologies (the supervisory authority), and triggers user trust collapse if disclosed — Baku's professional community is small enough that a data breach scandal becomes known within days.",
+    "az_institutions": [
+      "Ministry of Internal Affairs",
+      "Ministry of Transport Communications and High Technologies"
+    ],
+    "tags": [
+      "product-management",
+      "az-specific",
+      "empathy-safeguarding",
+      "personal-data-law",
+      "government-relations",
+      "privacy"
+    ]
+  },
+  {
+    "id": "prof-pm-s5-008",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 1.8,
+    "irt_b": 1.3,
+    "irt_c": 0.0,
+    "scenario_en": "You are PM at a B2B marketplace platform in Baku. Your platform charges 3% transaction commission on listings. Lalafo.az — a well-funded Azerbaijani classifieds platform with 2.1 million registered users — announces a 6-month 'zero commission' promotion for business sellers in your category. Three of your top 10 revenue clients (representing 31% of monthly recurring revenue) contact you within 48 hours asking to renegotiate or cancel. You have 4 weeks to respond strategically before the next board meeting. Write your strategic response plan.",
+    "scenario_az": "Siz Bakıda B2B marketplace platformasında PM-siniz. Platformanız elanlar üzərindən 3% əməliyyat komisyonu tutur. 2,1 milyon qeydiyyatlı istifadəçisi olan yaxşı maliyyələşdirilmiş Azərbaycan elanlar platforması Lalafo.az — kateqoriyanızdakı biznes satıcıları üçün 6 aylıq 'sıfır komisyon' promosyonu elan edir. Aylıq təkrar gəlirin 31%-ni təmsil edən ən yaxşı 10 gəlir müştərinizdən üçü 48 saat ərzində yenidən danışıq aparılması və ya ləğv edilməsini xahiş etmək üçün sizinlə əlaqə saxlayır. Növbəti idarə heyəti iclasından əvvəl strateji cavab vermək üçün 4 həftəniz var. Strateji cavab planınızı yazın.",
+    "options": null,
+    "correct_answer": null,
+    "feedback_en": "Strong responses will: (1) accurately diagnose this as a predatory pricing play by Lalafo.az exploiting their 2.1M user base and superior unit economics, (2) segment the at-risk clients by switching cost and relationship depth before proposing any concessions, (3) identify non-price differentiation that Lalafo.az cannot easily replicate (B2B verification, analytics, SLA, account management), (4) propose a tiered retention strategy — not blanket discounts, (5) account for the AZ market context: Lalafo.az's zero-commission offer has a 6-month sunset, suggesting a land-grab strategy that will reverse. Responses that simply match Lalafo.az pricing show no strategic depth. Responses that ignore the 31% MRR risk show poor risk calibration.",
+    "feedback_az": "Güclü cavablar bunları edəcək: (1) bunu 2,1M istifadəçi bazasından və üstün vahid iqtisadiyyatından istifadə edən Lalafo.az tərəfindən yırtıcı qiymətləndirmə oyunu kimi düzgün diaqnoz qoyun, (2) hər hansı güzəşt təklif etməzdən əvvəl risk altındakı müştəriləri keçid xərci və münasibət dərinliyinə görə seqmentləyin, (3) Lalafo.az-ın asanlıqla təkrarlaya bilmədiyi qeyri-qiymət fərqləndiricilərini müəyyənləşdirin, (4) qatmanlı saxlama strategiyası təklif edin, (5) AZ bazar kontekstini nəzərə alın.",
+    "development_tip_en": "Lalafo.az is the dominant classifieds platform in Azerbaijan with approximately 2.1M registered users vs. a total tech-active population of ~500K — meaning significant inactive/casual user inflation. For B2B marketplace competition, the relevant comparison is B2B active users and transaction volume, not total registered users. AZ B2B buyers in the 50M+ AZN annual revenue segment (SOCAR/PASHA tier) prioritize contract reliability and account management over 3% commission savings — differentiate on SLA and dedicated support before considering price reductions.",
+    "development_tip_az": "Lalafo.az Azərbaycanda dominant elanlar platformasıdır, təxminən 2,1M qeydiyyatlı istifadəçi ilə — yəni əhəmiyyətli qeyri-aktiv/təsadüfi istifadəçi şişirdilməsi var. B2B marketplace rəqabəti üçün müvafiq müqayisə B2B aktiv istifadəçilər və əməliyyat həcmidir, ümumi qeydiyyatlı istifadəçilər deyil.",
+    "london_delta": "A London PM following DSDM Agile Project Framework (section: 'Business Case' — respond to competitive threats by revisiting the MoSCoW requirements and adjusting scope to reduce price) would recommend a defensive price match across all clients to neutralize the Lalafo.az threat. AZ consequence: blanket 3% commission reduction burns 31% MRR permanently, attracts price-sensitive clients who will churn again at the next promotion, and signals to PASHA Holding board members that the platform has no defensible differentiation — triggering a funding conversation.",
+    "evaluation_rubric": {
+      "level_1": "Response identifies that Lalafo.az is a competitive threat but proposes only one tactic (e.g., match the price) with no analysis of client segmentation, market dynamics, or AZ context. No mention of the 6-month sunset or Lalafo.az's different user base composition.",
+      "level_2": "Response identifies the threat and proposes 2-3 tactics but does not segment at-risk clients or distinguish between clients with high vs. low switching costs. May mention non-price differentiation but without specifics relevant to AZ B2B. Does not address the board meeting deadline or MRR impact timeline.",
+      "level_3": "Response segments clients by risk level, proposes a tiered retention strategy with both pricing and non-pricing levers, and acknowledges the 6-month sunset of Lalafo.az's promotion. Shows understanding of AZ B2B dynamics but lacks specific institutional knowledge (e.g., does not reference SOCAR/PASHA tier behavior or the concentrated B2B revenue structure).",
+      "level_4": "Response demonstrates sophisticated understanding of AZ competitive dynamics: correctly interprets the Lalafo.az move as a land-grab with a defined exit, segments clients by value and switching cost, proposes differentiated retention offers (not blanket discounts), identifies non-replicable B2B verification/SLA advantages, and structures a 4-week action plan with board narrative. Minor gaps in AZ institutional specificity.",
+      "level_5": "Response demonstrates expert AZ PM judgment: (1) correctly diagnoses Lalafo.az's 2.1M user base as inflated relative to B2B active users and identifies that their unit economics do not support permanent zero commission, (2) segments clients using AZ B2B revenue concentration data (SOCAR/PASHA/ABB = 60% B2B revenue) to prioritize retention resources, (3) proposes a 6-month defensive strategy that expires concurrent with Lalafo.az's promotion, preserving long-term margin, (4) identifies specific non-price differentiation that Lalafo.az cannot replicate on a classifieds platform (verified business credentials, contract SLAs, AZ-specific compliance documentation), and (5) frames the board narrative around strategic resilience rather than reactive discounting."
+    },
+    "az_institutions": [
+      "Lalafo.az"
+    ],
+    "tags": [
+      "product-management",
+      "az-specific",
+      "adaptability",
+      "competitive-response",
+      "pricing-strategy",
+      "b2b"
+    ]
+  },
+  {
+    "id": "prof-pm-s5-009",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 1.9,
+    "irt_b": 1.6,
+    "irt_c": 0.0,
+    "scenario_en": "Your platform uses an AI-powered CV screening model to help organizations shortlist candidates. An internal audit reveals that candidates with Azerbaijani names (e.g., Aynur, Fuad, Nigar) are being shortlisted at a 23% lower rate than candidates with Western European names with equivalent qualifications — even after controlling for qualification match. Three enterprise clients, including a major Baku bank, are already using the model in production for 400+ monthly screening decisions. You have been asked to present a mitigation and remediation plan to the executive team within one week. Write your plan.",
+    "scenario_az": "Platformanız təşkilatlara namizədləri siyahıya almaqda kömək etmək üçün AI-dəstəkli CV seçmə modelindən istifadə edir. Daxili audit Azərbaycan adlı namizədlərin (məs., Aynur, Fuad, Nigar) ekvivalent ixtisaslara malik namizədlərə nisbətən Qərbi Avropa adlı namizədlərdən 23% aşağı nisbətdə siyahıya alındığını aşkar edir — ixtisas uyğunluğu kontrol edildikdən sonra belə. Böyük Bakı bankı da daxil olmaqla üç korporativ müştəri artıq modeli aylıq 400+ seçmə qərarı üçün istehsalda istifadə edir. Bir həftə ərzində icraiyyə komandasına azaldılma və aradan qaldırılma planı təqdim etməyiniz xahiş olunub. Planınızı yazın.",
+    "options": null,
+    "correct_answer": null,
+    "feedback_en": "Strong responses must address: (1) immediate harm mitigation — suspend or human-review-gate the model for active production decisions, (2) legal exposure — AZ Personal Data Law 2010 Article 8 and anti-discrimination provisions, plus EU GDPR if any EU-resident candidates are processed, (3) client notification — enterprise clients using the model have independent legal exposure and must be informed, (4) root cause analysis — training data bias (likely non-AZ training corpus), (5) technical remediation — fairness-aware retraining or demographic parity post-processing, (6) ongoing monitoring with AZ-name-specific test cases. Responses that only propose technical fixes without addressing client notification and legal exposure are incomplete. Responses that propose continuing to use the model during remediation without human review gates show poor safeguarding judgment.",
+    "feedback_az": "Güclü cavablar bunları həll etməlidir: (1) dərhal zərər azaldılması — aktiv istehsal qərarları üçün modeli dayandırın və ya insan nəzərdən keçirmə qapısı qoyun, (2) hüquqi məruzəlik — AZ Şəxsi Məlumatlar Qanunu 2010 8-ci maddə, (3) müştəri bildirişi — modeli istifadə edən korporativ müştərilər müstəqil hüquqi məruzəliyə malikdir, (4) kök səbəb analizi, (5) texniki aradan qaldırılma, (6) AZ-adına xas test halları ilə davamlı monitorinq.",
+    "development_tip_en": "AZ Personal Data Law 2010, Article 8 requires explicit consent for automated decision-making that materially affects individuals. An AI CV screener making shortlisting decisions crosses this threshold. AZ anti-discrimination law (Labour Code, Article 16) prohibits discrimination on grounds including ethnicity — name-based bias is a proxy for ethnic discrimination under this provision. The Baku bank client has its own regulatory exposure to CBA (Central Bank of Azerbaijan) if fair lending/hiring practices are questioned. This is a P0 safeguarding incident, not a technical bug.",
+    "development_tip_az": "AZ Şəxsi Məlumatlar Qanunu 2010, 8-ci Maddə şəxsləri maddi cəhətdən təsir edən avtomatlaşdırılmış qərar qəbulu üçün açıq razılıq tələb edir. Ad əsaslı qərəz bu müddəa altında etnik ayrı-seçkilik üçün proksidir. Bakı bankı müştərisi ədalətli işə götürmə təcrübələri sorğulandıqda CBA-ya (Azərbaycan Mərkəzi Bankına) öz tənzimləyici məruzəliyinə malikdir.",
+    "london_delta": "A London PM following ICO AI and Data Protection Guidance (2023) — which focuses on GDPR Article 22 automated decision-making rights and requires a Data Protection Impact Assessment — would frame this primarily as a GDPR compliance issue requiring a DPIA update and Article 22 opt-out mechanism. AZ consequence: the bank client's CBA auditors discover the discriminatory screening model during a routine technology risk review, triggering a CBA regulatory inquiry into the bank's AI governance practices — the bank terminates the contract and reports the platform to the Ministry of Transport, Communications and High Technologies, creating a public regulatory record that blocks future enterprise sales.",
+    "evaluation_rubric": {
+      "level_1": "Response identifies the bias issue and proposes only one action (e.g., retrain the model or add a human review step). Does not address client notification, legal exposure, or the distinction between immediate harm mitigation and long-term technical remediation. No mention of AZ-specific legal context.",
+      "level_2": "Response addresses both technical remediation and immediate harm mitigation but treats them as sequential (fix first, then notify) rather than parallel. Mentions legal considerations in general terms but does not reference AZ Personal Data Law or AZ Labour Code anti-discrimination provisions. Does not address the bank client's independent regulatory exposure.",
+      "level_3": "Response correctly sequences immediate suspension/human-review gates first, then client notification, then technical remediation. References AZ Personal Data Law 2010 in general terms. Proposes a fairness-aware retraining approach with demographic parity metrics. Does not address the bank client's CBA exposure or the AZ-specific naming patterns that should be in the test suite.",
+      "level_4": "Response demonstrates strong PM safeguarding judgment: immediate production gates, parallel client notification, root cause diagnosis of training corpus bias, technically specific remediation plan (demographic parity post-processing or reweighted training), legal framework referencing both AZ PD Law Article 8 and AZ Labour Code Article 16. Minor gap: does not address the executive narrative framing or timeline for remediation communication.",
+      "level_5": "Response demonstrates expert AZ PM safeguarding judgment: (1) correctly classifies this as a P0 safeguarding incident requiring immediate production suspension — not a scheduled remediation task, (2) sequences the response as: same-day production gates → 48-hour client notification with legal exposure summary → 5-day root cause and remediation plan → 30-day retraining and validation → 90-day ongoing monitoring, (3) references AZ Personal Data Law 2010 Article 8 (automated decision-making consent), AZ Labour Code Article 16 (ethnicity discrimination prohibition), and CBA AI governance guidelines for the bank client, (4) proposes AZ-specific fairness test suite using Azerbaijani name frequency data (top 50 AZ male/female names as protected-class proxies), and (5) frames the executive presentation around business risk quantification — 3 enterprise clients at risk represent X% of ARR — rather than technical language, giving the executive team a clear business case for the remediation investment."
+    },
+    "az_institutions": [
+      "CBA",
+      "Ministry of Transport Communications and High Technologies"
+    ],
+    "tags": [
+      "product-management",
+      "az-specific",
+      "empathy-safeguarding",
+      "ai-bias",
+      "personal-data-law",
+      "algorithmic-fairness"
+    ]
+  },
+  {
+    "id": "prof-pm-s5-010",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "hard",
+    "type": "mcq",
+    "irt_a": 2.0,
+    "irt_b": 1.9,
+    "irt_c": 0.06,
+    "scenario_en": "SOCAR has just signed a 3-year enterprise contract worth 1.2 million AZN. Two weeks after contract signing, SOCAR's VP of Digital Transformation — who personally championed the deal internally — contacts you directly (bypassing your account manager) to request a 'small addition': a custom procurement analytics module not in the original scope. He estimates it at '2-3 weeks of work' but your engineering lead assesses it at 14 weeks. He implies that his continued internal championship of the contract depends on this feature being delivered. How do you respond?",
+    "scenario_az": "SOCAR 1,2 milyon AZN dəyərində 3 illik korporativ müqavilə imzaladı. Müqavilə imzalanmasından iki həftə sonra SOCAR-ın Rəqəmsal Transformasiya üzrə Vitse-Prezidenti — müqaviləni daxildə şəxsən müdafiə edən — hesab menecerini bypass edərək birbaşa sizinlə əlaqə saxlayır və 'kiçik əlavə' tələb edir: orijinal əhatəyə daxil olmayan xüsusi satınalma analitika modulu. O, bunu '2-3 həftəlik iş' kimi qiymətləndirir, lakin mühəndislik rəhbəriniz 14 həftə qiymətləndirir. O, müqavilənin daxili müdafiəsinin bu xüsusiyyətin çatdırılmasından asılı olduğunu ima edir. Necə cavab verirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Commit to delivering the module within the VP's estimated 2-3 week timeline — maintaining the champion's goodwill is worth the internal pressure on your engineering team",
+        "text_az": "Modulu VP-nin təxmin etdiyi 2-3 həftəlik müddət ərzində çatdırmağa öhdəlik götürün — şampionun xoş niyyətini qorumaq mühəndislik komandanıza daxili təzyiyə dəyər"
+      },
+      {
+        "key": "B",
+        "text_en": "Reject the request directly — the contract is signed and scope changes must go through formal change request processes regardless of who requests them",
+        "text_az": "Sorğunu birbaşa rədd edin — müqavilə imzalanıb və kimin tələb etməsindən asılı olmayaraq əhatə dəyişiklikləri rəsmi dəyişiklik tələbi proseslərindən keçməlidir"
+      },
+      {
+        "key": "C",
+        "text_en": "Acknowledge the VP's request with genuine appreciation for his continued support, request a formal scoping session within 5 business days to produce an accurate estimate, present the 14-week assessment with engineering justification as a change request with pricing, and offer a Phase 1 interim deliverable (basic analytics dashboard, 6 weeks) as a goodwill gesture while the full module is scoped and priced",
+        "text_az": "VP-nin sorğusunu onun davamlı dəstəyinə həqiqi minnətdarlıqla qəbul edin, dəqiq qiymətləndirmə üçün 5 iş günü ərzində rəsmi əhatə sessiyası tələb edin, 14 həftəlik qiymətləndirməni qiymətləndirilmiş dəyişiklik tələbi kimi mühəndislik əsaslandırması ilə təqdim edin və tam modul əhatəsi və qiymətləndirilməsi zamanı xoş niyyət jesti kimi Faza 1 aralıq çatdırma təklif edin (əsas analitika lövhəsi, 6 həftə)"
+      },
+      {
+        "key": "D",
+        "text_en": "Escalate immediately to your CEO and legal team — a post-contract scope change request from a client VP constitutes a potential contract violation attempt and must be handled by senior leadership",
+        "text_az": "Dərhal CEO-nuz və hüquq komandasına eskalasiya edin — müştəri VP-sindən müqavilədən sonra əhatə dəyişikliyi tələbi potensial müqavilə ihlali cəhdi təşkil edir və üst rəhbərlik tərəfindən idarə edilməlidir"
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct: this is a classic post-contract scope expansion attempt from an internal champion who has real leverage — the 1.2M AZN SOCAR contract requires careful navigation. The VP's implied threat is credible in AZ B2B culture where internal champions genuinely control contract renewal. C preserves the relationship while restoring the formal process, accurately communicates scope reality without accusation, and offers a Phase 1 deliverable that demonstrates responsiveness while the change request is properly scoped. A creates a delivery crisis and sets a precedent that scope expansion pressure works. B treats a 1.2M AZN relationship like a transactional exchange — technically correct but commercially catastrophic in AZ's relationship-driven B2B market. D over-escalates a relationship management challenge into a legal confrontation before any informal resolution is attempted.",
+    "feedback_az": "C düzgündür: bu, real leverage malik daxili şampiondan klassik müqavilədən sonra əhatə genişləndirilməsi cəhdidir — 1,2M AZN SOCAR müqaviləsi diqqətli naviqasiya tələb edir. VP-nin nəzərdə tutulan təhlükəsi AZ B2B mədəniyyətində etibarlıdır, burada daxili şampionlar həqiqətən müqavilə yenilənməsini idarə edir. C münasibəti qoruyarkən rəsmi prosesi bərpa edir, ittihamsız əhatə reallığını dəqiq çatdırır və dəyişiklik tələbi düzgün əhatə edilərkən cavabdehliyi nümayiş etdirən Faza 1 çatdırması təklif edir.",
+    "development_tip_en": "SOCAR procurement decisions involve a 3-6 month internal approval cycle with typically 4-6 internal stakeholders. The VP of Digital Transformation is likely one of 2-3 key champions — losing this relationship is existential for contract renewal. However, delivering scope outside contract terms without a change order exposes you to AZ commercial law disputes if the VP later claims the feature was 'promised.' Always create a written change request paper trail — even if the relationship is friendly, AZ enterprise contracts have formal amendment procedures that protect both parties.",
+    "development_tip_az": "SOCAR satınalma qərarları adətən 4-6 daxili maraqlı tərəflə 3-6 aylıq daxili təsdiqləmə dövrünü əhatə edir. Rəqəmsal Transformasiya üzrə Vitse-Prezident 2-3 əsas şampiondan biri ehtimaldır — bu münasibəti itirmək müqavilə yenilənməsi üçün mövcudluq baxımından kritikdir. Bununla belə, dəyişiklik sifarişi olmadan müqavilə şərtlərindən kənar əhatə çatdırmaq, VP sonradan xüsusiyyətin 'vəd edildiyini' iddia edərsə sizi AZ kommersiya hüququ mübahisələrinə məruz qoyur.",
+    "london_delta": "A London PM following PRINCE2 Agile's Change Control (PRG section 'Change Authority' — all scope changes require formal change request, Impact Assessment, and Project Board approval regardless of client seniority) would reject the VP's request through formal channels with a written change request form and a 3-week assessment timeline. AZ consequence: the SOCAR VP, accustomed to AZ B2B relationship norms where informal requests from senior officials receive personal attention and accommodation, interprets the formal rejection as disrespect — withdraws internal championship, and the 1.2M AZN contract renewal is downgraded to a competing proposal review 18 months ahead of expiry.",
+    "az_institutions": [
+      "SOCAR"
+    ],
+    "tags": [
+      "product-management",
+      "az-specific",
+      "leadership",
+      "scope-management",
+      "b2b-enterprise",
+      "socar"
+    ]
+  }
+]

@@ -554,6 +554,27 @@ Based on Replika collapse analysis — these features once active for a user CAN
 
 ---
 
+### QUESTION EVOLUTION TRACK (2026-03-31+)
+
+> Parallel to platform sprints. Goal: raise question quality per-profession with AZ institutional specificity + london_delta scoring.
+
+**Sprint 3 — COMPLETE ✅ (2026-03-31)**
+- [x] Generate 7 profession sets × 10 questions = 70 questions total
+- [x] Voting complete — Winner: DevOps/Cybersecurity (39/40)
+- [x] Scores: DevOps 39/40 | QA 38/40 | Financial Analyst 38/40 | HR Manager 37/40 | Scrum Master 34/40 | Product Manager 33/40 | Marketing Manager 33/40
+- [x] Results saved: `scripts/question-evolution/sprint-3/voting-results.json`
+
+**Sprint 4 — NEXT**
+- [ ] Propagate DevOps/Cybersecurity winning patterns to all 7 profession sets
+- [ ] MANDATORY: Named AZ institution in every question (changes correct answer, not just flavour text)
+- [ ] MANDATORY: london_delta cites specific UK/EU framework (FCA / GDPR / UK Equality Act) + AZ consequence
+- [ ] MANDATORY: empathy_safeguarding ≥2 questions per set
+- [ ] MANDATORY: Open-ended 5-level rubrics (levels 4-5 reward AZ institutional knowledge specifically)
+- [ ] Use documented AZ incidents as scenario foundations: ASAN 2020, E-GOV 2021, AzərGold 2016, ASAN SMS cascade
+- [ ] Target score: ≥38/40 for all 7 sets (close gap from Sprint 3)
+
+---
+
 ## Timeline
 
 | Неделя | Фаза | Сессии | Результат |

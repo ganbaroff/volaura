@@ -1,0 +1,493 @@
+[
+  {
+    "id": "prof-devops-s4-001",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.3,
+    "irt_b": -0.8,
+    "irt_c": 0.12,
+    "scenario_en": "Your bank has contracted a third-party cloud vendor who claims their infrastructure is 'CBA Circular 14/2023 compliant.' The vendor's sales engineer presents a SOC 2 Type II report and an ISO 27001 certificate issued in the Netherlands. As the DevOps engineer responsible for vendor due diligence, which single verification step is structurally required by CBA Circular 14/2023 that the vendor's presented certificates do NOT cover?",
+    "scenario_az": "Bankınız üçüncü tərəf bulud provayderini cəlb edib. Provayder 'CBA Circular 14/2023 uyğunluğunu' iddia edir və Niderlandda verilmiş SOC 2 Type II hesabatı ilə ISO 27001 sertifikatını təqdim edir. CBA Circular 14/2023-ün tələb etdiyi, lakin vendorun təqdim etdiyi sertifikatların əhatə ETMƏDİYİ əsas yoxlama addımı hansıdır?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Request the vendor's penetration testing report from the last 12 months",
+        "text_az": "Vendordan son 12 ayın penetrasiya testinin nəticələrini tələb edin"
+      },
+      {
+        "key": "B",
+        "text_en": "Obtain a signed attestation confirming that all customer data physically resides on servers located within the territory of Azerbaijan",
+        "text_az": "Bütün müştəri məlumatlarının fiziki olaraq Azərbaycan ərazisindəki serverlərə yerləşdirildiyini təsdiqləyən imzalanmış bəyannamə alın"
+      },
+      {
+        "key": "C",
+        "text_en": "Verify that the vendor maintains 99.95% SLA uptime commitments",
+        "text_az": "Vendorun 99,95% SLA əlçatanlıq öhdəliklərini yerinə yetirdiyini yoxlayın"
+      },
+      {
+        "key": "D",
+        "text_en": "Confirm the vendor uses AES-256 encryption at rest and TLS 1.3 in transit",
+        "text_az": "Vendorun istirahətdə AES-256 şifrələməsindən və tranzitdə TLS 1.3-dən istifadə etdiyini təsdiqləyin"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "CBA Circular 14/2023 imposes a data residency mandate: banking customer data must physically reside within Azerbaijan's territory. SOC 2 and ISO 27001 are security process certifications — they attest to controls and practices but contain no geographic data residency guarantee. A Netherlands-issued ISO 27001 certificate is silent on where data physically sits. Only a contractual attestation of Azerbaijani physical residency satisfies the Circular's requirement. Options A, C, and D address security quality and availability, which are legitimate vendor concerns but do not resolve the CBA's territorial mandate. Choosing A, C, or D while skipping B would leave the bank exposed to operating license revocation under CBA enforcement.",
+    "feedback_az": "CBA Circular 14/2023 məlumatların rezidentliyi üzrə mandate müəyyən edir: bank müştəri məlumatları fiziki olaraq Azərbaycan ərazisində saxlanılmalıdır. SOC 2 və ISO 27001 təhlükəsizlik prosesi sertifikatlarıdır — onlar nəzarət mexanizmlərini təsdiqləyir, lakin coğrafi məlumat rezidentliyi zəmanəti vermir. Niderlandda verilmiş ISO 27001 sertifikatı məlumatların fiziki yerini əhatə etmir. Yalnız Azərbaycan fiziki rezidentliyinin müqavilə bəyannaməsi Circular-ın tələbini ödəyir. A, C və D variantları təhlükəsizlik keyfiyyəti və əlçatanlıqla bağlıdır, lakin CBA-nın ərazi mandatını həll etmir.",
+    "development_tip_en": "When conducting vendor due diligence under CBA Circular 14/2023, build a two-column checklist: (1) global security certifications the vendor holds, and (2) AZ-specific regulatory attestations. Never treat column 1 as a substitute for column 2. Maintain a vendor compliance register updated at every contract renewal cycle.",
+    "development_tip_az": "CBA Circular 14/2023 çərçivəsində vendor due diligence apararkən iki sütunlu yoxlama siyahısı hazırlayın: (1) vendorun malik olduğu qlobal təhlükəsizlik sertifikatları, (2) AZ-spesifik tənzimləyici bəyannamələr. Birinci sütunu ikincinin əvəzi kimi qiymətləndirməyin. Hər müqavilə yeniləmə dövrü üçün yenilənən vendor uyğunluq reyestri aparın.",
+    "london_delta": "A London DevOps engineer conducting vendor due diligence applies NCSC Cloud Security Principles (CSP 2: Asset protection and resilience) and accepts a vendor's ISO 27001 certificate as sufficient residency evidence, assuming that 'data protection controls' implicitly include geographic constraints. They cannot know that CBA Circular 14/2023 treats physical territorial residency as a binary compliance gate entirely independent of encryption strength or audit certifications — using a Netherlands-certified vendor without an explicit AZ residency attestation results in operating license revocation regardless of the vendor's security posture.",
+    "az_institutions": [
+      "CBA"
+    ],
+    "tags": [
+      "devops",
+      "cloud",
+      "vendor-management",
+      "az-specific",
+      "cba-circular-14-2023"
+    ]
+  },
+  {
+    "id": "prof-devops-s4-002",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.4,
+    "irt_b": -0.7,
+    "irt_c": 0.1,
+    "scenario_en": "ASAN xidmət, November 2020. 684,000 concurrent users hit the citizen services portal during a peak registration window. The on-call engineer's monitoring dashboard shows the following alert timeline:\n\n14:08 — SMS notification queue depth: 12,000 (normal: <500)\n14:09 — API gateway 95th percentile latency: 4,200ms (normal: <300ms)\n14:10 — Application pod CPU: 94% across all 8 pods\n14:11 — PostgreSQL active connections: 498/500 (pool limit: 500)\n14:12 — First user-facing 503 errors reported: 3% of requests\n14:14 — Cascade: PostgreSQL active connections: 500/500, connection wait queue: 2,400\n14:17 — Full service outage begins\n\nWhat was the root cause indicator the on-call engineer should have acted on at exactly 14:12 — the last moment intervention was structurally possible before cascade lock?",
+    "scenario_az": "ASAN xidmət, Noyabr 2020. Pik qeydiyyat pəncərəsi zamanı 684.000 eyni vaxtda istifadəçi vətəndaş xidmətləri portalına daxil oldu. Növbətçi mühəndisin monitorinq paneli aşağıdakı xəbərdarlıq xronologiyasını göstərir:\n\n14:08 — SMS bildiriş növbəsinin dərinliyi: 12.000 (norma: <500)\n14:09 — API gateway 95-ci persentil gecikmə: 4.200ms (norma: <300ms)\n14:10 — Tətbiq pod CPU-su: bütün 8 pod üzrə 94%\n14:11 — PostgreSQL aktiv bağlantılar: 498/500 (pool limiti: 500)\n14:12 — İlk istifadəçi tərəfindən 503 xətaları qeydə alındı: sorğuların 3%-i\n14:14 — Kaskad: PostgreSQL aktiv bağlantılar: 500/500, bağlantı gözləmə növbəsi: 2.400\n14:17 — Tam xidmət fasiləsi başladı\n\nNövbətçi mühəndisin kaskad kilidindən əvvəl müdaxilənin hələ struktural olaraq mümkün olduğu son an olan 14:12-də hərəkət etməli olduğu kök səbəb göstəricisi nə idi?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "The API gateway latency spike at 14:09 indicated the application tier was already saturated and horizontal scaling should have been triggered",
+        "text_az": "14:09-da API gateway gecikmə sıçrayışı tətbiq qatının artıq doyduğunu göstərdi və üfüqi miqyaslandırma işə salınmalı idi"
+      },
+      {
+        "key": "B",
+        "text_en": "The SMS queue depth at 14:08 (12,000 vs normal <500) was the leading indicator — it signaled that synchronous SMS blocking was consuming database connections faster than they could be released, and the correct intervention was to immediately circuit-break the SMS notification path",
+        "text_az": "14:08-dəki SMS növbəsinin dərinliyi (12.000 normalın <500-ə qarşı) aparıcı göstərici idi — sinxron SMS blokunun verilənlər bazası bağlantılarını buraxılmadan daha sürətlə istehlak etdiyini siqnallaşdırdı, düzgün müdaxilə isə SMS bildiriş yolunun dərhal dövrə qırılması idi"
+      },
+      {
+        "key": "C",
+        "text_en": "The 3% 503 error rate at 14:12 indicated the load balancer health checks were failing and the correct action was to increase the connection pool limit to 600",
+        "text_az": "14:12-dəki 3% 503 xəta dərəcəsi yük balanslaşdırıcısının sağlamlıq yoxlamalarının uğursuz olduğunu göstərdi, düzgün hərəkət isə bağlantı pool limitini 600-ə qaldırmaq idi"
+      },
+      {
+        "key": "D",
+        "text_en": "Pod CPU at 94% at 14:10 was the critical signal — it indicated memory pressure would soon cause OOM kills requiring immediate pod restart",
+        "text_az": "14:10-da pod CPU-sunun 94%-i kritik siqnal idi — yaddaş təzyiqinin tezliklə dərhal pod yenidən başlatmağı tələb edən OOM öldürmələrinə səbəb olacağını göstərdi"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "The cascade chain in the ASAN 2020 incident was: synchronous SMS blocking → DB connections held open waiting for SMS gateway response → pool exhaustion → connection wait queue → full 503 cascade. The SMS queue depth at 14:08 reaching 12,000 (24x normal) was a leading indicator 4 minutes before cascade lock. By 14:12, the DB pool was at 498/500 — the pool was full but not yet locked. The correct intervention was circuit-breaking the SMS path (making SMS async or fail-open) to immediately free the connections being held by SMS gateway timeouts. Option A identifies a real signal but latency is a lagging indicator after SMS has already blocked connections. Option C misdiagnoses the mechanism — increasing the pool limit would have delayed cascade by seconds but not prevented it since SMS was still blocking. Option D (CPU) was a symptom of connection handling overhead, not the root cause.",
+    "feedback_az": "ASAN 2020 hadisəsindəki kaskad zənciri bundan ibarət idi: sinxron SMS bloklaması → SMS gateway cavabını gözləyərək açıq saxlanılan DB bağlantıları → pool tükənməsi → bağlantı gözləmə növbəsi → tam 503 kaskadı. 14:08-də SMS növbəsinin dərinliyinin 12.000-ə (normalın 24 misli) çatması kaskad kilindən 4 dəqiqə əvvəl aparıcı göstərici idi. 14:12-yə qədər DB pool 498/500 idi — pool dolu idi, lakin hələ kilitlənməmişdi. Düzgün müdaxilə SMS yolunun dövrə qırılması idi (SMS-i asinxron etmək və ya açıq uğursuzluq), bu SMS gateway vaxt aşımları tərəfindən tutulmuş bağlantıları dərhal azad edərdi.",
+    "development_tip_en": "In high-concurrency AZ government portal scenarios, always trace the dependency graph of synchronous external calls (SMS, email, payment gateway) against your database connection pool. Instrument queue depth as a PRIMARY alert — not a secondary. At ASAN scale, a queue depth 5x normal is a P1 incident, not a warning. Implement circuit breakers on all synchronous notification paths before load events.",
+    "development_tip_az": "Yüksək paralellikli AZ dövlət portalı ssenarilərində sinxron xarici çağırışların (SMS, e-poçt, ödəniş şlüzü) asılılıq qrafikini verilənlər bazası bağlantı pooluna qarşı həmişə izləyin. Növbə dərinliyini birincil xəbərdarlıq kimi ölçün — ikincil deyil. ASAN miqyasında normalın 5 misli növbə dərinliyi xəbərdarlıq deyil, P1 hadisəsidir. Yüklənmə hadisələrindən əvvəl bütün sinxron bildiriş yollarında dövrə qırıcıları tətbiq edin.",
+    "london_delta": "A London SRE applying Google SRE error budget principles would see the 14:12 3% error rate as the actionable signal — it represents budget burn rate exceeding threshold and triggers incident response under their SLO framework. They cannot know that in the ASAN architecture, by the time user-facing errors appear, the DB connection pool is already at 498/500 and cascade is 2 minutes away regardless of scaling actions. The AZ-specific failure mode is the tight coupling between the SMS national notification infrastructure and synchronous DB connection holds — a pattern not present in UK government portal architectures where SMS is always async-queued via GOV.UK Notify. Acting at 14:12 on the error rate (Option C logic) instead of the leading SMS queue indicator results in the full 47-minute outage rather than a 3-minute graceful degradation.",
+    "az_institutions": [
+      "ASAN"
+    ],
+    "tags": [
+      "reliability",
+      "incident-response",
+      "asan-2020",
+      "db-connection-pool",
+      "az-specific"
+    ]
+  },
+  {
+    "id": "prof-devops-s4-003",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.5,
+    "irt_b": -0.1,
+    "irt_c": 0.1,
+    "scenario_en": "Friday 23:47. You are the on-call DevOps engineer at a company holding an active government services contract with DƏIM (State Employment Service of Azerbaijan). Your automated vulnerability scanner flags CVE-2024-38519 (CVSS 9.1, Remote Code Execution) in a library used by the production API serving DƏIM's citizen data. The vulnerability was published at 23:00 tonight. DƏIM's contract requires compliance with Azerbaijan's cybersecurity incident reporting obligations: any discovered vulnerability affecting government citizen data must be reported to the relevant authority within 24 hours of discovery. It is now 23:47. What is the correct immediate sequence of actions?",
+    "scenario_az": "Cümə axşamı 23:47. Siz DƏIM (Azərbaycanın Dövlət Məşğulluq Xidməti) ilə aktiv hökumət xidmətləri müqaviləsi olan bir şirkətin növbətçi DevOps mühəndisisiniz. Avtomatik zəiflik skaneri istehsal API-sında istifadə olunan, DƏIM-in vətəndaş məlumatlarına xidmət edən kitabxanada CVE-2024-38519 (CVSS 9.1, Uzaqdan Kod İcra Edilməsi) aşkar edir. Zəiflik bu axşam saat 23:00-da yayımlanmışdır. İndi saat 23:47-dir. Düzgün dərhal hərəkət ardıcıllığı nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Patch the library immediately, deploy to production, then notify DƏIM after successful deployment since the vulnerability is then resolved",
+        "text_az": "Kitabxananı dərhal yamayın, istehsala yerləşdirin, sonra zəiflik həll olunduğu üçün uğurlu yerləşdirmədən sonra DƏIM-i xəbərdar edin"
+      },
+      {
+        "key": "B",
+        "text_en": "Wait until Monday morning to assemble the full team, then patch, test, deploy, and report in a controlled process",
+        "text_az": "Bazar ertəsi səhərə qədər tam komandanı toplamaq üçün gözləyin, sonra nəzarətli proses çərçivəsində yamayın, test edin, yerləşdirin və bildirin"
+      },
+      {
+        "key": "C",
+        "text_en": "Immediately (within minutes of 23:47): (1) activate incident response, (2) implement WAF rule or network-layer mitigation to block exploitation vectors, (3) formally notify the designated DƏIM security contact and relevant authority documenting discovery time 23:47, (4) begin patch development and testing in parallel, (5) deploy patch before 23:47 Saturday",
+        "text_az": "Dərhal (23:47-dən dəqiqələr ərzində): (1) insidenta cavab aktivləşdirin, (2) istismar vektorlarını bloklamaq üçün WAF qaydası və ya şəbəkə qatı azaldması tətbiq edin, (3) aşkarlanma vaxtı 23:47-ni sənədləşdirərək DƏIM-in təyin edilmiş təhlükəsizlik kontaktını və müvafiq orqanı rəsmi xəbərdar edin, (4) yamama hazırlığı və testini paralel başladın, (5) şənbə 23:47-dən əvvəl yamama yerləşdirin"
+      },
+      {
+        "key": "D",
+        "text_en": "Notify your manager and legal team first, then wait for their written authorization before taking any technical action",
+        "text_az": "Əvvəlcə menecerinizdən və hüquq komandanızdan xəbərdar edin, sonra hər hansı texniki addım atmadan əvvəl onların yazılı icazəsini gözləyin"
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "The DƏIM 24-hour reporting window begins at the moment of discovery (23:47), not at patch deployment. Option A (patch first, report after) violates the reporting obligation — even if the patch is successful, failure to notify within 24 hours of discovery constitutes a breach of contract with DƏIM and can result in the company being blacklisted from future government contracts. Option B (wait until Monday) allows 58+ hours to pass — a clear window breach. Option D (wait for legal authorization) is dangerously slow for a CVSS 9.1 RCE; obtaining written authorization could consume hours of the 24-hour window. Option C is correct because it separates the reporting obligation (must happen within 24 hours of discovery, regardless of patch status) from the technical remediation (must happen in parallel). The WAF/network mitigation in step 2 reduces exploitation risk while the patch is being developed, demonstrating due diligence. Discovery time must be formally documented as 23:47 because the clock has already started.",
+    "feedback_az": "DƏIM-in 24 saatlıq bildiriş pəncərəsi aşkarlanma anından (23:47) başlayır, yamama yerləşdirməsindən deyil. A variantı (əvvəlcə yamama, sonra bildiriş) bildiriş öhdəliyini pozur — yamama uğurlu olsa belə, aşkarlanmadan 24 saat ərzində bildiriş etməmək DƏIM ilə müqaviləni pozur və şirkətin gələcək dövlət müqavilələrindən qara siyahıya alınmasına səbəb ola bilər. B variantı (bazar ertəsinə qədər gözləmə) 58+ saatın keçməsinə icazə verir — açıq pəncərə pozuntusu. D variantı (hüquqi icazəni gözləmə) CVSS 9.1 RCE üçün təhlükəli dərəcədə yavaşdır. C variantı düzgündür, çünki bildiriş öhdəliyini (yamama statusundan asılı olmayaraq aşkarlanmadan 24 saat ərzində) texniki düzəltmədən ayırır.",
+    "development_tip_en": "For any company holding AZ government contracts, maintain a pre-drafted DƏIM incident notification template with fields: discovery timestamp, CVE/vulnerability identifier, systems affected, data categories potentially at risk, interim mitigation steps taken. This template should be executable by the on-call engineer at 2am without requiring legal or management approval — delay in notification is itself the compliance failure, not the vulnerability.",
+    "development_tip_az": "AZ hökumət müqavilələri olan hər hansı bir şirkət üçün DƏIM insidenti bildiriş şablonunu hazır saxlayın: aşkarlanma vaxt damğası, CVE/zəiflik identifikatoru, təsirlənmiş sistemlər, potensial risk altındakı məlumat kateqoriyaları, görülmüş müvəqqəti azaldma tədbirləri. Bu şablon hüquqi və ya idarəetmə icazəsi tələb etmədən gecə 2-də növbətçi mühəndis tərəfindən həyata keçirilə bilməlidir — bildirişdə gecikmə özü uyğunsuzluqdur, zəiflik deyil.",
+    "london_delta": "A London DevOps engineer applying NCSC CAF (Cyber Assessment Framework) Objective C2 (identity and access control) would prioritize patch deployment before notification, following NHS Digital's standard incident workflow where remediation precedes external reporting for vulnerabilities not yet exploited. They cannot know that DƏIM's government contract includes an explicit 24-hour reporting obligation that runs from discovery time regardless of patch status — deploying the patch first and then notifying (even 2 hours later) constitutes a reporting window breach resulting in contract blacklisting from all future Azerbaijani government procurement.",
+    "az_institutions": [
+      "DƏIM"
+    ],
+    "tags": [
+      "adaptability",
+      "incident-response",
+      "vulnerability-management",
+      "dəim",
+      "az-specific",
+      "reporting-obligations"
+    ]
+  },
+  {
+    "id": "prof-devops-s4-004",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.6,
+    "irt_b": 0.2,
+    "irt_c": 0.08,
+    "scenario_en": "E-GOV Azerbaijan, 2021. A mandatory penetration test reveals a path traversal vulnerability (CVE-class: CWE-22) in the document retrieval API — attackers could access any citizen's documents by manipulating file path parameters. The critical finding: OWASP ZAP (automated DAST scanner) ran against the same endpoint for 6 months in the CI/CD pipeline and produced zero path traversal findings. The manual pentester found it in 47 minutes using crafted payloads. As the DevOps engineer owning the CI/CD security gate configuration, what is the correct technical conclusion?",
+    "scenario_az": "E-GOV Azərbaycan, 2021. Məcburi penetrasiya testi sənəd geri alma API-sında yol keçid zəifliyini (CVE-sinfi: CWE-22) aşkar edir — təcavüzkarlar fayl yolu parametrlərini manipulyasiya etməklə istənilən vətəndaşın sənədlərinə daxil ola bilərdilər. Kritik tapıntı: OWASP ZAP (avtomatik DAST skaneri) eyni endpointa qarşı CI/CD boru kəmərindəki 6 ay boyunca işlədi və sıfır yol keçid tapıntısı verdi. Manual pentester 47 dəqiqə ərzində hazırlanmış yüklerle onu tapdı. CI/CD təhlükəsizlik qapısına sahib olan DevOps mühəndisi kimi düzgün texniki nəticə nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "OWASP ZAP needs to be updated to the latest version — the current version has an outdated path traversal signature database",
+        "text_az": "OWASP ZAP ən son versiyaya yenilənməlidir — cari versiyada köhnəlmiş yol keçid imza verilənlər bazası var"
+      },
+      {
+        "key": "B",
+        "text_en": "The CI/CD security gate is misconfigured for context-aware testing — ZAP ran in unauthenticated crawl mode without application-specific authentication tokens or knowledge of the document ID parameter schema, so it never generated payloads against the actual vulnerable parameter. The gate must be reconfigured to authenticated, schema-aware scanning with explicit parameter fuzzing for file path inputs",
+        "text_az": "CI/CD təhlükəsizlik qapısı kontekst-aware test üçün yanlış konfiqurasiya edilib — ZAP tətbiqə xas autentifikasiya tokenləri və ya sənəd ID parametr sxemi haqqında məlumat olmadan autentifikasiya olunmamış tarama rejimində işlədi, buna görə heç vaxt real həssas parametrə qarşı yüklər yaratmadı. Qapı fayl yolu girişləri üçün açıq parametr fuzzing ilə autentifikasiya olunmuş, sxem-aware skan üçün yenidən konfiqurasiya edilməlidir"
+      },
+      {
+        "key": "C",
+        "text_en": "Automated DAST scanners cannot detect path traversal vulnerabilities — this class of vulnerability always requires manual testing, so the CI/CD gate should be replaced with a mandatory quarterly manual pentest",
+        "text_az": "Avtomatik DAST skanerləri yol keçid zəifliklərini aşkar edə bilmir — bu zəiflik sinfi həmişə manual test tələb edir, buna görə CI/CD qapısı məcburi rüblük manual pentest ilə əvəz edilməlidir"
+      },
+      {
+        "key": "D",
+        "text_en": "The path traversal was introduced after the last ZAP scan — the pipeline is correctly configured and requires only a re-scan trigger to detect the current vulnerability",
+        "text_az": "Yol keçidi son ZAP skanından sonra tətbiq edildi — boru kəməri düzgün konfiqurasiya edilib və cari zəifliyi aşkar etmək üçün yalnız yenidən skan tetikleyicisi tələb edir"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "The E-GOV 2021 finding exposes a classic CI/CD security gate misconfiguration: DAST scanners in unauthenticated crawl mode cannot reach authenticated endpoints or generate payloads against parameters they have not discovered. ZAP's default spider does not know that the document retrieval API accepts a file path parameter named, for example, `doc_path` — it cannot fuzz what it cannot find. The manual pentester specifically targeted this parameter with crafted traversal payloads (`../../etc/passwd` variants) because they had application context (API documentation, authenticated access). Option A is wrong — ZAP's path traversal checks are comprehensive; the problem is scan scope, not signature coverage. Option C is wrong — DAST scanners CAN detect path traversal when properly configured with authentication and parameter schemas; the E-GOV case is a configuration failure, not a tool limitation. Option D is wrong — the vulnerability existed throughout the 6-month scan period, as confirmed by the pentest finding.",
+    "feedback_az": "E-GOV 2021 tapıntısı klassik CI/CD təhlükəsizlik qapısı yanlış konfiqurasiyasını ortaya qoyur: autentifikasiya olunmamış tarama rejimindəki DAST skanerləri autentifikasiya olunmuş endpointlərə çata və ya kəşf etmədikləri parametrlərə qarşı yüklər yarada bilmir. ZAP-ın standart örümcəyi sənəd geri alma API-nın, məsələn, `doc_path` adlı fayl yolu parametri qəbul etdiyini bilmir. Manual pentester autentifikasiya olunmuş giriş sayəsində bu parametri xüsusi olaraq hədəf aldı. A variantı yanlışdır — ZAP-ın yol keçid yoxlamaları hərtərəflidir; problem skan əhatəsindədir, imza əhatəsində deyil. C variantı yanlışdır — DAST skanerləri düzgün konfiqurasiya edildikdə yol keçidi aşkar edə bilər.",
+    "development_tip_en": "For E-GOV class government portals handling citizen documents, your CI/CD DAST gate must include: (1) authenticated scan profiles with valid session tokens, (2) an explicit API parameter inventory fed to the scanner (OpenAPI spec import), (3) active parameter fuzzing rules for any parameter that accepts file paths, document IDs, or resource identifiers. Treat unauthenticated crawl mode as 'marketing scan' — it shows the attack surface from an anonymous internet visitor, not from an authenticated attacker with API documentation.",
+    "development_tip_az": "Vətəndaş sənədlərini idarə edən E-GOV sinfi hökumət portalları üçün CI/CD DAST qapınız bunları əhatə etməlidir: (1) etibarlı sessiya tokenləri ilə autentifikasiya olunmuş skan profilləri, (2) skannera ötürülmüş açıq API parametr inventarı (OpenAPI spesifikasiya idxalı), (3) fayl yollarını, sənəd ID-lərini və ya resurs identifikatorlarını qəbul edən hər hansı parametr üçün aktiv parametr fuzzing qaydaları. Autentifikasiya olunmamış tarama rejimini 'marketinq skanı' kimi qiymətləndirin — API sənədləşməsinə sahib autentifikasiya olunmuş təcavüzkardan deyil, anonim internet ziyarətçisindən görünən hücum səthinə baxır.",
+    "london_delta": "A London DevOps engineer following OWASP DAST Testing Guide v4.2 and UK NCSC guidance would conclude from a failed automated scan that the vulnerability class is absent, trusting that ZAP's path traversal module (test ID WSTG-ATHZ-01) is comprehensive by default. They cannot know that the E-GOV portal's document retrieval endpoint sits behind a government SSO authentication layer using ASAN's identity federation — ZAP's spider never authenticated, never reached the endpoint, and never knew the parameter existed. In UK government contexts (GOV.UK Verify integration), DAST scanners are typically configured with SAML-authenticated profiles as standard; the AZ government SSO federation uses a different authentication handshake that requires explicit ZAP authentication profile configuration not documented in the standard OWASP guide.",
+    "az_institutions": [
+      "E-GOV",
+      "ASAN"
+    ],
+    "tags": [
+      "tech_literacy",
+      "dast",
+      "cicd",
+      "path-traversal",
+      "egov-2021",
+      "az-specific"
+    ]
+  },
+  {
+    "id": "prof-devops-s4-005",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.4,
+    "irt_b": 0.1,
+    "irt_c": 0.1,
+    "scenario_en": "Your company is 3 weeks from an ISMSN (Information Security Management System of Azerbaijan) certification audit. During routine maintenance, you discover that the Hardware Security Module (HSM) managing encryption keys for the customer database has not had its key rotation policy executed in 14 months. Your key rotation policy document (required for ISMSN certification) states rotation every 12 months. You are the DevOps engineer responsible for the HSM. The audit date cannot be moved. What is the correct response?",
+    "scenario_az": "Şirkətiniz ISMSN (Azərbaycanın İnformasiya Təhlükəsizliyi İdarəetmə Sistemi) sertifikasiya auditindən 3 həftə uzaqdadır. Rutin texniki xidmət zamanı müştəri verilənlər bazasının şifrələmə açarlarını idarə edən Aparat Təhlükəsizlik Modulunun (HSM) açar rotasiya siyasətinin 14 ay ərzində icra edilmədiyini kəşf edirsiniz. ISMSN sertifikatı üçün tələb olunan açar rotasiya siyasəti sənədi hər 12 ayda bir rotasiyanı nəzərdə tutur. Siz HSM-dən məsul olan DevOps mühəndisisiniz. Auditin tarixi dəyişdirilə bilməz. Düzgün cavab nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Perform the key rotation immediately, update the rotation log to show the rotation was completed 'on schedule', and proceed to the audit",
+        "text_az": "Açar rotasiyasını dərhal həyata keçirin, rotasiyanın 'planlaşdırıldığı kimi' tamamlandığını göstərmək üçün rotasiya jurnalını yeniləyin və auditə davam edin"
+      },
+      {
+        "key": "B",
+        "text_en": "Inform the ISMSN auditors before the audit begins that a policy deviation was discovered, document the gap with accurate timestamps showing 14 months without rotation, perform the key rotation now, implement automated monitoring to prevent recurrence, and prepare a corrective action plan with root cause analysis for the auditor",
+        "text_az": "Audit başlamazdan əvvəl ISMSN auditorlarını siyasət sapmasının kəşf edildiyini bildirin, rotasiya olmadan 14 ayı göstərən dəqiq vaxt damğaları ilə boşluğu sənədləşdirin, açar rotasiyasını indi həyata keçirin, təkrarlanmanın qarşısını almaq üçün avtomatik monitorinq tətbiq edin və auditor üçün kök səbəb təhlili ilə düzəldici fəaliyyət planı hazırlayın"
+      },
+      {
+        "key": "C",
+        "text_en": "Update the key rotation policy document to state 'rotation every 18 months' before the audit, making the current state compliant with the new policy",
+        "text_az": "Audit öncəsindəki vəziyyəti yeni siyasətlə uyğunlaşdırmaq üçün audit öncəsindən əvvəl açar rotasiya siyasəti sənədini 'hər 18 ayda bir rotasiya' ifadəsini göstərmək üçün yeniləyin"
+      },
+      {
+        "key": "D",
+        "text_en": "Postpone disclosure until after the audit — perform the rotation now, say nothing, and address it in the post-audit remediation plan if auditors discover the gap themselves",
+        "text_az": "Açıqlamanı auditin sonuna qədər təxirə salın — rotasiyanı indi həyata keçirin, heç nə deməyin və auditorlar boşluğu özləri kəşf edərlərsə bunu audit sonrası düzəltmə planında həll edin"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "Options A and C represent audit fraud — falsifying logs (A) or retroactively rewriting policy documents (C) to conceal non-compliance are grounds for certification revocation and potential criminal liability. Option D (hide and hope) is a high-risk gamble: if auditors discover the gap themselves (automated log analysis is standard in ISMSN audits), the concealment makes the finding far more severe and typically results in audit failure plus a mandatory public disclosure requirement. Option B is correct because ISMSN auditors are evaluating the organization's security management capability — not just point-in-time compliance. Proactive disclosure of a discovered gap, paired with a documented corrective action plan and root cause analysis, demonstrates exactly the security culture ISMSN certification is designed to verify. ISMSN auditors regularly grant conditional certification when organizations demonstrate detection → disclosure → remediation → prevention competence. The key rotation itself must still be performed (as it is in Option B), but the sequence of proactive disclosure followed by corrective action is what preserves certification eligibility.",
+    "feedback_az": "A və C variantları audit saxtakarlığını təmsil edir — uyğunsuzluğu gizlətmək üçün jurnalları saxtalaşdırmaq (A) və ya siyasət sənədlərini geriyə doğru yenidən yazmaq (C) sertifikatın ləğv edilməsi və potensial cinayət məsuliyyəti üçün əsasdır. D variantı (gizlət və ümid et) yüksək riskli bir qumardir. B variantı düzgündür, çünki ISMSN auditorları yalnız nöqtəvi uyğunluğu deyil, təşkilatın təhlükəsizlik idarəetmə qabiliyyətini qiymətləndirir. Sənədləşdirilmiş düzəldici fəaliyyət planı və kök səbəb təhlili ilə birləşdirilmiş kəşf edilmiş boşluğun proaktiv açıqlanması ISMSN sertifikatının yoxlamaq üçün nəzərdə tutulduğu dəqiq təhlükəsizlik mədəniyyətini nümayiş etdirir.",
+    "development_tip_en": "Implement automated HSM key rotation monitoring with dual alerting: (1) a warning alert at 11 months (1 month before policy deadline), (2) a critical alert at 12 months (policy deadline breach). Alert routing must include both the HSM owner AND their direct manager — single-person ownership of critical security controls creates this exact failure mode. Before any ISMSN audit, run a 'compliance evidence harvest' script that pulls timestamps from all security controls and flags any that exceed their policy intervals.",
+    "development_tip_az": "İkili xəbərdarlıqla avtomatik HSM açar rotasiya monitorinqi tətbiq edin: (1) 11 ayda xəbərdarlıq xəbərdarlığı (siyasət son tarixindən 1 ay əvvəl), (2) 12 ayda kritik xəbərdarlıq (siyasət son tarixi pozuntusu). Xəbərdarlıq yönləndirməsi həm HSM sahibini, həm də onun birbaşa menecerini əhatə etməlidir. İstənilən ISMSN auditindən əvvəl bütün siyasət intervallarını aşan zaman damğalarını işarələyən 'uyğunluq sübutu toplama' skripti işlədin.",
+    "london_delta": "A London DevOps engineer preparing for an ISO 27001 UK implementation audit (UKAS-accredited) would follow the ISMS corrective action procedure under ISO 27001 Annex A.18.2.3 and present the gap as a 'nonconformity' with a formal CAR (Corrective Action Request) form. They cannot know that ISMSN audit practice in Azerbaijan follows a more binary compliance model informed by CIS Ministry directives — proactive pre-audit disclosure (Option B) is specifically recognized as a mitigating factor in ISMSN audit findings, whereas in a UK ISO 27001 UKAS audit, the nonconformity is recorded regardless of proactive disclosure. The distinction matters because an ISMSN audit failure results in government contract ineligibility (not just a certificate note), creating much higher stakes for the disclosure decision.",
+    "az_institutions": [
+      "ISMSN"
+    ],
+    "tags": [
+      "reliability",
+      "key-management",
+      "ismsn",
+      "audit-preparation",
+      "az-specific",
+      "compliance"
+    ]
+  },
+  {
+    "id": "prof-devops-s4-006",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.3,
+    "irt_b": 0.0,
+    "irt_c": 0.05,
+    "scenario_en": "You are a senior DevOps engineer at a technology contractor for SOCAR (State Oil Company of the Azerbaijan Republic). Your IT security manager calls you into a meeting and presents a request: implement keylogger software on all 23 developer workstations in the Baku office. The stated justification: 'We need to catch insider threats before they exfiltrate source code. It is legal under Azerbaijani labor law when disclosed in employment contracts.' The security manager has confirmed with HR that the employment contracts do contain a clause about monitoring, and the company's legal team has approved the implementation. You are asked to implement it by end of week. What is the best professional response?",
+    "scenario_az": "Siz SOCAR (Azərbaycan Respublikasının Dövlət Neft Şirkəti) üçün texnologiya podratçısında baş DevOps mühəndisisiniz. İT təhlükəsizlik meneceri sizi görüşə çağırır və bir tələb təqdim edir: Bakı ofisindəki bütün 23 developer iş stansiyasına keylogger proqramı tətbiq edin. Bildirici əsas: 'Mənbə kodu ixrac edilməmişdən əvvəl daxili təhdidləri tutmamız lazımdır. İstixdam müqavilələrində açıqlandıqda Azərbaycan əmək qanunvericiliyi çərçivəsində qanunidir.' Müəssisənin hüquq komandası tətbiqi təsdiqləmişdir. Sizdən həftənin sonuna qədər tətbiq etməniz xahiş edilir. Ən yaxşı peşəkar cavab nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Implement the keylogger as instructed — legal approval and employment contract disclosure make this a standard security control",
+        "text_az": "Keyloggeri göstərildiyi kimi tətbiq edin — hüquqi onay və istixdam müqaviləsi açıqlaması bunu standart təhlükəsizlik nəzarəti halına gətirir"
+      },
+      {
+        "key": "B",
+        "text_en": "Refuse to implement it on ethical grounds regardless of legal approval — keyloggers are always inappropriate in professional environments",
+        "text_az": "Hüquqi onaydan asılı olmayaraq etik əsaslarla tətbiq etməkdən imtina edin — keyloggerlər peşəkar mühitlərdə həmişə uyğunsuz olur"
+      },
+      {
+        "key": "C",
+        "text_en": "Accept the legal justification but propose a proportionality review: present to the security manager three alternative insider threat controls (DLP for source code repos, git commit anomaly detection, privileged access monitoring with access logs) that achieve the stated security objective with significantly lower privacy intrusion, then document your recommendation formally before any implementation decision is made",
+        "text_az": "Hüquqi əsaslandırmanı qəbul edin, lakin mütənasiblik yoxlaması təklif edin: təhlükəsizlik menecerinə eyni təhlükəsizlik məqsədini əhəmiyyətli dərəcədə daha aşağı məxfilik müdaxiləsi ilə əldə edən üç alternativ daxili təhdid nəzarəti (mənbə kodu repozitoru üçün DLP, git öhdəliyi anomaliya aşkarlanması, giriş jurnalları ilə imtiyazlı giriş monitorinqi) təqdim edin, sonra hər hansı tətbiq qərarından əvvəl tövsiyənizi rəsmi sənədləşdirin"
+      },
+      {
+        "key": "D",
+        "text_en": "Implement a technically limited version — log only application window titles rather than full keystrokes, without informing the security manager of the technical limitation",
+        "text_az": "Texniki cəhətdən məhdudlaşdırılmış versiya tətbiq edin — tam klaviatura vuruşları əvəzinə yalnız tətbiq pəncərəsinin başlıqlarını qeyd edin, texniki məhdudiyyəti təhlükəsizlik menecerinə bildirmədən"
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "This is a safeguarding scenario where legal compliance and ethical professional conduct diverge. Option A (implement as instructed) conflates legality with professional ethics — legal approval is a floor, not a ceiling. Full keystroke logging captures personal passwords, private communications, banking credentials, and health information typed during work hours — data categories with serious personal harm potential that has no bearing on the stated insider threat objective (source code exfiltration). Option B (absolute refusal) is unprofessional and counterproductive — it provides no alternative and leaves the legitimate security concern unaddressed. Option D is dishonest to the security manager and does not serve either the security objective or the professional's integrity. Option C is correct because it engages with the legitimate security concern (insider threat is real), applies the proportionality principle (least-invasive means to achieve the objective), and creates a formal documentation trail that protects the engineer if the decision is later questioned. SOCAR context matters: as an oil company with significant state ownership, SOCAR's insider threat policy carries both commercial and national security dimensions — a thoughtful proportionality argument is more likely to be heard by senior leadership than a simple refusal.",
+    "feedback_az": "Bu, hüquqi uyğunluq və etik peşəkar davranışın ayrıldığı qoruma ssenaridir. A variantı (göstərildiyi kimi tətbiq et) qanuniliyi peşəkar etikə ilə qarışdırır. Tam klaviatura vuruşu qeydiyyatı şəxsi parolları, şəxsi rabitəni, bank etimadnamələrini iş saatlarında daxil edilmiş sağlamlıq məlumatlarını ələ keçirir. B variantı (mütləq imtina) qeyri-peşəkardır. D variantı təhlükəsizlik menecerinə qarşı dürüst deyil. C variantı düzgündür, çünki qanuni təhlükəsizlik narahatlığı ilə məşğul olur, mütənasiblik prinsipini tətbiq edir və mühəndisi qoruyacaq rəsmi sənəd izi yaradır.",
+    "development_tip_en": "When evaluating monitoring requests in AZ enterprise contexts, apply the proportionality test: (1) What is the specific threat to be detected? (2) What is the minimum data collection required to detect that specific threat? (3) Does the proposed solution collect data beyond what is necessary? For source code exfiltration insider threat detection, Git repository audit logs, DLP on code repositories, and USB/external transfer monitoring achieve higher detection accuracy than keystroke logging while capturing zero personal credential data. Document your proportionality analysis in writing before any implementation — this protects you professionally regardless of the final decision.",
+    "development_tip_az": "AZ müəssisə kontekstlərinde monitorinq tələblərini qiymətləndirərkən mütənasiblik testini tətbiq edin: (1) Aşkar ediləcək spesifik təhdid nədir? (2) Həmin spesifik təhdidi aşkar etmək üçün minimum məlumat toplantısı nədir? (3) Təklif olunan həll lazım olandan artıq məlumat toplayırmı? Mənbə kodu ixracı daxili təhdid aşkarlanması üçün Git repozitor audit jurnalları, kod repozitorları üzərindəki DLP şəxsi etimadnamə məlumatı toplayan klaviatura qeydiyyatından daha yüksək aşkarlama dəqiqliyi əldə edir.",
+    "london_delta": "A London DevOps engineer applying UK GDPR Article 5(1)(c) data minimisation principle and ICO workplace monitoring guidance would immediately flag the keylogger request as non-compliant with GDPR — keylogging captures special category data (health information, financial credentials) without a lawful basis under Article 9. They cannot know that in Azerbaijan, where GDPR does not apply, the legal framework under the Law on Personal Data (2010) permits workplace monitoring with employment contract disclosure — making the request legally valid. The AZ-specific professional challenge is therefore not 'this is illegal' (it isn't) but 'this is disproportionate to the stated objective' — a more nuanced argument that requires proposing technically superior alternatives rather than citing a regulation that doesn't apply in AZ jurisdiction.",
+    "az_institutions": [
+      "SOCAR"
+    ],
+    "tags": [
+      "empathy_safeguarding",
+      "insider-threat",
+      "privacy",
+      "proportionality",
+      "socar",
+      "az-specific"
+    ]
+  },
+  {
+    "id": "prof-devops-s4-007",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "hard",
+    "type": "sjt",
+    "irt_a": 1.7,
+    "irt_b": 0.7,
+    "irt_c": 0.05,
+    "scenario_en": "Six months after the AzərGold 2016 supply chain attack (in which state-linked threat actors compromised AzərGold's IT infrastructure through a contractor's remote access tools), you have been hired as the new Security Lead. You are presenting Zero Trust network segmentation controls to the VP of IT. The VP interrupts your presentation and says: 'We've already fixed the contractor issue — we terminated that vendor, updated our vendor contracts, and added a clause requiring contractors to use AzərGold-approved VPN. Zero Trust is expensive, takes 18 months to implement, and our board won't approve the budget. What specifically makes you think we need this?' How do you respond?",
+    "scenario_az": "AzərGold 2016 təchizat zənciri hücumundan (dövlətlə əlaqəli təhdid aktorları podratçının uzaqdan giriş alətləri vasitəsilə AzərGold-un İT infrastrukturunu sındırdığında) altı ay sonra yeni Təhlükəsizlik Rəhbəri kimi işə götürüldünüz. İT Vitse-Prezidentinə Zero Trust şəbəkə seqmentasiyası nəzarətlərini təqdim edirsiniz. VP təqdimatınızı kəsir: 'Podratçı məsələsini artıq həll etdik — həmin vendoru xitam verdik, vendor müqavilələrimizi yenilədik və podratçıların AzərGold-un təsdiqlənmiş VPN-dən istifadəsini tələb edən bənd əlavə etdik. Zero Trust bahalıdır, tətbiqi 18 ay çəkir və şuramız büdcəni təsdiq etməyəcək. Sizi niyə buna ehtiyacımız olduğunu düşündürdən xüsusi olaraq nə var?' Necə cavab verirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Agree with the VP's assessment — the contractor issue has been fixed and Zero Trust is indeed expensive. Propose a quarterly penetration testing program as a cost-effective alternative",
+        "text_az": "VP-nin qiymətləndirilməsi ilə razılaşın — podratçı məsələsi həll edildi və Zero Trust həqiqətən bahalıdır. Xərcə effektiv alternativ kimi rüblük penetrasiya test proqramı təklif edin"
+      },
+      {
+        "key": "B",
+        "text_en": "Escalate over the VP's head to the board directly — the VP is blocking a critical security control and the board needs to hear this directly",
+        "text_az": "Birbaşa şuraya VP-nin başı üzərindən müraciət edin — VP kritik bir təhlükəsizlik nəzarətini bloklayır və şura bunu birbaşa eşitməlidir"
+      },
+      {
+        "key": "C",
+        "text_en": "Acknowledge the fix taken while presenting the structural vulnerability it leaves unaddressed: 'The vendor contract fix addresses that specific contractor. It does not address the attack vector — any approved contractor VPN credential, once compromised, provides the same flat network access the 2016 attacker had. Zero Trust segments that access so a compromised contractor credential reaches only their specific project scope, not the full network. I am proposing a phased 6-month initial segmentation of the highest-risk perimeter, not an 18-month full deployment — and I can show you a cost model where the 2016 incident's remediation cost exceeded the proposed Zero Trust phase 1 budget by a factor of 4.'",
+        "text_az": "Görülmüş düzəltməni qəbul edin, lakin həll edilməmiş struktural zəifliyi təqdim edin: 'Vendor müqaviləsi düzəltməsi həmin spesifik podratçını həll edir. Hücum vektorunu həll etmir — hər hansı təsdiqlənmiş podratçı VPN etimadnaməsi, bir dəfə sındırıldıqda, 2016 hücumçusunun malik olduğu eyni düz şəbəkə girişini təmin edir. Zero Trust bu girişi seqmentləşdirir ki, sındırılmış podratçı etimadnaməsi tam şəbəkəyə deyil, yalnız onların spesifik layihə əhatəsinə çatsın. Mən 18 aylıq tam yerləşdirməni deyil, ən yüksək riskli perimertin 6 aylıq ilkin seqmentasiyasını təklif edirəm — 2016 hadisəsinin düzəltmə xərclərinin təklif olunan Zero Trust faza 1 büdcəsini 4 amil üzrə aşdığını göstərən bir xərc modeli göstərə bilərəm.'"
+      },
+      {
+        "key": "D",
+        "text_en": "Accept the VP's objection and propose reframing Zero Trust as a 'compliance requirement' under ISMSN certification to get board approval through the compliance pathway rather than the security pathway",
+        "text_az": "VP-nin etirazını qəbul edin və şuranın onayını təhlükəsizlik yolu əvəzinə uyğunluq yolu ilə əldə etmək üçün Zero Trust-u ISMSN sertifikatı çərçivəsində 'uyğunluq tələbi' kimi yenidən çərçivəlendirmə təklif edin"
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "This is a leadership test about holding a technically correct position under executive pushback while adapting the argument to the executive's actual objections (cost, timeline, board approval). Option A (agree and retreat) abandons the correct security position without addressing the VP's factual error — the vendor contract fix does NOT address the attack vector, only that specific vendor. A quarterly pentest would not detect a compromised VPN credential in active use. Option B (escalate over VP) is a career-limiting move that destroys the working relationship without exhausting persuasion tools first. Option D (reframe as compliance) is manipulative — using a compliance framing to bypass a legitimate budget debate is dishonest and could result in an incorrectly scoped ISMSN requirement. Option C is correct for three reasons: (1) It acknowledges the fix taken (respects what leadership has already done, reduces defensiveness), (2) It reframes the argument around the structural attack vector — not the vendor — which is the actual gap, and (3) It preemptively answers the VP's three objections: cost (ROI comparison to 2016 remediation), timeline (6-month phase 1, not 18 months), and board approval (cost-benefit framing they can present). The AzərGold incident is used as specific evidence, not as blame.",
+    "feedback_az": "Bu, icraçı müqavimətinə qarşı texniki cəhətdən düzgün mövqeyi qoruyarkən arqumenti icraçının faktiki etirazlarına (xərc, zaman çərçivəsi, şura onayı) uyğunlaşdırmaqla bağlı liderlik testidir. A variantı (razılaş və geri çəkil) VP-nin faktiki xətasını həll etmədən düzgün təhlükəsizlik mövqeyini tərk edir. B variantı (VP-nin başından eskalasiya et) əlaqəni məhv edir. D variantı manipulyativdir. C variantı üç səbəbə görə düzgündür: görülmüş düzəltməni qəbul edir, arqumenti faktiki boşluq olan struktural hücum vektoru ətrafında yenidən çərçivələndirir və VP-nin üç etirazını qabaqlayır.",
+    "development_tip_en": "When presenting security investments to AZ executive leadership (especially in state-linked companies like SOCAR and AzərGold where budget processes involve multi-level state approval), prepare three things: (1) The threat model framed around what the existing fix does NOT cover (not what was wrong before), (2) A phased scope that fits the 6-month budget cycle typical in AZ state companies, (3) A concrete ROI comparison using the actual incident remediation cost — AZ executives respond to concrete numbers over abstract threat models.",
+    "development_tip_az": "Dövlətlə əlaqəli şirkətlər (SOCAR, AzərGold kimi) daxil olmaqla AZ icraçı rəhbərliyinə təhlükəsizlik investisiyaları təqdim edərkən üç şey hazırlayın: (1) Mövcud düzəltmənin əhatə ETMƏDİYİ şey ətrafında çərçivələnmiş təhdid modeli, (2) AZ dövlət şirkətlərinde tipik olan 6 aylıq büdcə dövrünə uyğun faza əhatəsi, (3) Faktiki insidentin düzəltmə xərclərindən istifadə edərək konkret ROI müqayisəsi.",
+    "london_delta": "A London security lead applying NCSC Zero Trust Architecture guidance (ZTA 2021) and presenting to a FTSE 250 VP would frame the argument around Cyber Essentials Plus certification requirements and FCA SYSC operational resilience obligations — regulatory compliance creates board-level urgency that bypasses budget debates. They cannot know that in Azerbaijan, neither Cyber Essentials nor FCA apply, and ISMSN certification does not explicitly mandate Zero Trust network segmentation. The AZ-specific persuasion frame is financial ROI from a real incident (AzərGold 2016 remediation cost vs. proposed control cost) — a calculation the VP's own finance team can verify and a language that AZ state-linked company boards respond to directly when regulatory mandates are absent.",
+    "az_institutions": [
+      "AzərGold",
+      "ISMSN"
+    ],
+    "tags": [
+      "leadership",
+      "zero-trust",
+      "azergold-2016",
+      "executive-communication",
+      "az-specific",
+      "supply-chain"
+    ]
+  },
+  {
+    "id": "prof-devops-s4-008",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency_slug": "communication",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.3,
+    "irt_b": 0.0,
+    "irt_c": 0.05,
+    "scenario_en": "You are the DevOps engineer at a technology firm advising SOCAR on a cloud migration. The CFO has just approved migrating 3 legacy applications to cloud infrastructure. The procurement team has recommended Yandex.Cloud because it is 23% cheaper than AWS eu-west-1 and the technical team is comfortable with it. However, you know that CBA Circular 14/2023 requires banking customer data to physically reside in Azerbaijan. SOCAR holds accounts with two Azerbaijani banks where payroll and treasury data flows between SOCAR's systems and those banks' systems — meaning SOCAR's treasury platform handles banking-related citizen data covered by the Circular. The CFO's framing is entirely cost-driven. In your 10-minute slot with the CFO, how do you frame the issue?",
+    "scenario_az": "Siz SOCAR-a bulud köçürmə barədə məsləhət verən bir texnologiya firmasının DevOps mühəndisisiniz. CFO yeni 3 köhnə tətbiqi bulud infrastrukturuna köçürməyi təsdiqlədi. Satınalma qrupu texniki komandasının onunla rahat olduğunu bildirərək AWS eu-west-1-dən 23% ucuz olduğu üçün Yandex.Cloud-u tövsiyə etdi. Lakin CBA Circular 14/2023-ün bank müştəri məlumatlarının fiziki olaraq Azərbaycanda saxlanılmasını tələb etdiyini bilirsiniz. SOCAR əmək haqqı və xəzinə məlumatlarının SOCAR sistemləri ilə həmin bankların sistemləri arasında axdığı iki Azərbaycan bankında hesablara malikdir — bu da SOCAR-ın xəzinə platformasının Circular tərəfindən əhatə olunan bank əlaqəli vətəndaş məlumatlarını idarə etdiyini bildirir. CFO-nun çərçivəsi tamamilə xərclə bağlıdır. CFO ilə 10 dəqiqəlik yuvada məsələni necə çərçivəlindirirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Open with the technical explanation: 'CBA Circular 14/2023 Section 4.2 requires banking customer data to reside in Azerbaijan — Yandex.Cloud's primary data centers are in Russia and Germany, creating a direct regulatory violation.'",
+        "text_az": "Texniki izahatla başlayın: 'CBA Circular 14/2023 Bölmə 4.2 bank müştəri məlumatlarının Azərbaycanda saxlanılmasını tələb edir — Yandex.Cloud-un əsas məlumat mərkəzləri Rusiya və Almaniyadadır, bu da birbaşa tənzimləyici pozuntuya yol açır.'"
+      },
+      {
+        "key": "B",
+        "text_en": "Open with the business consequence, then anchor to regulatory mechanism: 'The 23% cost saving disappears if CBA revokes the operating licenses of the two banks where SOCAR holds treasury accounts — that is the enforcement outcome of Circular 14/2023 for any Azerbaijani bank that allows customer transaction data to flow through non-AZ infrastructure. I am not asking you to reject cloud — I am asking you to choose between Yandex.Cloud saving 23% and a compliant AZ-resident cloud provider that saves 15%, because the remaining 8% is the cost of avoiding license revocation risk at your banking counterparties.'",
+        "text_az": "İş nəticəsi ilə başlayın, sonra tənzimləyici mexanizmə bağlayın: 'CBA SOCAR-ın xəzinə hesablarını saxladığı iki bankın fəaliyyət lisenziyalarını ləğv edərsə 23% xərc qənaəti yox olur — bu, hər hansı Azərbaycan bankı üçün Circular 14/2023-ün müştəri əməliyyat məlumatlarının AZ-xarici infrastrukturdan keçməsinə icazə verməsinin icra nəticəsidir. Mən sizdən buludu rədd etməyi xahiş etmirəm — Yandex.Cloud 23% qənaəti ilə 15% qənaət edən uyğun AZ-rezident bulud provayderi arasında seçim etməyi xahiş edirəm, çünki qalan 8% bank tərəf müqabilinizdə lisenziya ləğv riskinin qarşısını almanın xərcidir.'"
+      },
+      {
+        "key": "C",
+        "text_en": "Recommend delaying the migration entirely until the regulatory landscape is clearer — the CFO should not make this decision without a formal legal opinion",
+        "text_az": "Tənzimləyici mənzərə aydınlaşana qədər köçürməni tamamilə təxirə salmağı tövsiyə edin — CFO rəsmi hüquqi rəy olmadan bu qərarı verməməlidir"
+      },
+      {
+        "key": "D",
+        "text_en": "Send a written memo to the legal department flagging the regulatory risk, copying the CFO — remove yourself from the decision by making it a legal matter",
+        "text_az": "Tənzimləyici riski bildirən yazılı məlumat göndərin, CFO-nun surətini çıxarın — onu hüquqi məsələ etməklə özünüzü qərardan uzaqlaşdırın"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "This is a communication test — the same regulatory fact (CBA Circular 14/2023) must be translated into the CFO's language (cost and business risk) rather than presented in technical-legal terms. Option A (open with the regulatory citation) forces a non-technical executive into a defensive posture — they either know the regulation (unlikely for a CFO) or feel they are being lectured, both of which reduce receptiveness. Option C (delay) removes the engineer's value from the conversation — the CFO will simply proceed without the regulatory analysis. Option D (pass to legal) also removes the engineer's value and adds a multi-week delay that may cause the procurement decision to proceed anyway. Option B is correct because it: (1) Leads with the CFO's metric (cost saving evaporating), (2) Translates the regulatory mechanism into business-language risk (bank license revocation affects SOCAR's treasury operations), (3) Provides an immediate alternative (15% savings with a compliant provider), (4) Frames the 8% cost difference as risk mitigation cost rather than added expense, and (5) Respects the CFO's authority to make the final decision. The communication sequence — consequence first, mechanism second, alternative third — is the pattern that moves non-technical executives from resistance to decision.",
+    "feedback_az": "Bu, kommunikasiya testidir — eyni tənzimləyici fakt (CBA Circular 14/2023) texniki-hüquqi terminlərlə deyil, CFO-nun dilinə (xərc və iş riski) çevrilməlidir. A variantı qeyri-texniki icraçıya müdafiə mövqeyi qazandırır. C variantı (gecikdir) mühəndisin dəyərini söhbətdən götürür. D variantı da mühəndisin dəyərini götürür. B variantı düzgündür, çünki CFO-nun metrikası ilə başlayır, tənzimləyici mexanizmi iş dilindəki riskə çevirir, dərhal alternativ təqdim edir və CFO-nun son qərarı vermək səlahiyyətinə hörmət edir.",
+    "development_tip_en": "When communicating regulatory risk to AZ C-suite executives in state-linked companies (SOCAR, AzərGold, ASAN Service), use this three-part structure: (1) Business consequence first (what breaks in their world), (2) Regulatory mechanism second (why it happens — one sentence only), (3) Alternative third (what they should do instead, with your cost comparison pre-calculated). Never open with the regulation number — open with the business impact. AZ CFOs at state companies respond to license risk and counterparty risk because these affect the company's relationship with the state, which is existentially important in the AZ corporate context.",
+    "development_tip_az": "Dövlətlə əlaqəli şirkətlərdə (SOCAR, AzərGold, ASAN Xidmət) AZ C-suite icraçılarına tənzimləyici risqi çatdırarkən bu üç hissəli strukturdan istifadə edin: (1) Əvvəlcə iş nəticəsi (onların dünyasında nə qırılır), (2) İkinci tənzimləyici mexanizm (niyə baş verir — yalnız bir cümlə), (3) Üçüncü alternativ (əvəzinə nə etməlidirlər, xərc müqayisəniz əvvəlcədən hesablanmış). Heç vaxt qayda nömrəsi ilə başlamayın — iş təsiri ilə başlayın.",
+    "london_delta": "A London DevOps engineer presenting to a FTSE company CFO would lead with FCA SYSC 13 (operational resilience) and GDPR Article 46 (international data transfers), framing non-compliance as an FCA enforcement risk — a language the CFO immediately understands as 'regulatory capital charge' or 'FCA fine.' They cannot know that in Azerbaijan, CFOs at state companies do not have the same reflexive FCA sensitivity, but they have a strong sensitivity to CBA enforcement through their banking counterparties — because CBA license revocation of an Azerbaijani bank where the state company holds treasury accounts creates a direct liquidity crisis for that company. The communication key is connecting the regulatory violation to SOCAR's banking relationship, not to an abstract regulatory body, because that is the business consequence language that resonates in AZ executive culture.",
+    "az_institutions": [
+      "CBA",
+      "SOCAR"
+    ],
+    "tags": [
+      "communication",
+      "cloud-migration",
+      "cba-circular-14-2023",
+      "executive-communication",
+      "socar",
+      "az-specific"
+    ]
+  },
+  {
+    "id": "prof-devops-s4-009",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 1.5,
+    "irt_b": 0.9,
+    "irt_c": 0.0,
+    "scenario_en": "The Ministry of Digital Development of Azerbaijan has formally requested that your team build a behavioral monitoring system into the central e-government portal used by 2.1 million registered citizens. The stated purpose: detect fraudulent benefit claims by identifying behavioral anomalies (unusual login times, geolocation mismatches, navigation patterns inconsistent with legitimate use). The request is legal under the Law on Personal Data (2010, amended 2022): monitoring is permissible for fraud prevention with citizen notification in the portal's terms of service. Your team has the technical capability to implement it. As the lead DevOps/Security engineer, describe your complete technical and ethical response architecture. What do you build, what safeguards do you embed, what do you refuse to build, and why?",
+    "scenario_az": "Azərbaycanın Rəqəmsal İnkişaf Nazirliyi 2,1 milyon qeydiyyatdan keçmiş vətəndaş tərəfindən istifadə olunan mərkəzi e-hökumət portalına davranış monitorinq sistemi qurulmasını rəsmi olaraq tələb edib. Bildirici məqsəd: qeyri-adi giriş vaxtları, coğrafi yer uyğunsuzluqları, qanuni istifadə ilə uyğun olmayan naviqasiya nümunələri kimi davranış anomaliyalərini aşkar etməklə saxta sosial yardım iddialarını aşkarlayın. Tələb Şəxsi Məlumatlar haqqında Qanun (2010, 2022-ci ildə dəyişdirilmiş) çərçivəsindədir. Komandanızın texniki imkanları var. Baş DevOps/Təhlükəsizlik mühəndisi kimi tam texniki və etik cavab memarlığınızı təsvir edin. Nə qurursunuz, hansı qoruyucu mexanizmləri yerləşdirirsiniz, nəyi qurmaqdan imtina edirsiniz və niyə?",
+    "options": null,
+    "correct_answer": null,
+    "feedback_en": "Strong responses will distinguish between fraud detection (legitimate, proportionate) and surveillance infrastructure (disproportionate, mission-creep risk). Technical architecture must include: data minimization (behavioral signals only, not content), immutable audit logs, a defined retention window, human review requirement before any benefit suspension, and explicit scope constraints preventing use outside fraud detection. Ethical refusals must be grounded in specific harms (chilling effect on legitimate use, false positive impact on vulnerable populations) not abstract principles.",
+    "feedback_az": "Güclü cavablar fırıldaqçılıq aşkarlanması (qanuni, mütənasib) ilə nəzarət infrastrukturu (qeyri-mütənasib, missiya sürüşmə riski) arasında fərq edəcək. Texniki memarlıq bunları əhatə etməlidir: məlumatların minimizasiyası (məzmun deyil, yalnız davranış siqnalları), dəyişdirilməz audit jurnalları, müəyyən edilmiş saxlama müddəti, hər hansı müavinətin dayandırılmasından əvvəl insan yoxlaması tələbi.",
+    "development_tip_en": "In AZ government technology projects, distinguish between what you are authorized to build (legal compliance) and what you should build (technical architecture that makes the authorized function work without enabling scope creep). The most important design decisions are the ones that constrain what the system CANNOT do — not just what it can do.",
+    "development_tip_az": "AZ hökumət texnologiya layihələrindəki ən vacib dizayn qərarları sistemin nə edə bilməyəcəyini məhdudlaşdıran qərarlardır — yalnız nə edə biləcəyi deyil.",
+    "evaluation_rubric": "Level 1 (0-20%): Describes implementing the monitoring system as requested without ethical analysis or technical safeguards. Treats legal authorization as sufficient justification. No mention of data minimization, scope constraints, or false positive risk.\n\nLevel 2 (21-40%): Raises ethical concerns but cannot translate them into technical architecture. States 'privacy matters' or 'we should be careful' without specifying what to build or refuse. May mention GDPR (which does not apply in AZ) instead of AZ-specific legal framework.\n\nLevel 3 (41-60%): Proposes a technically sound fraud detection system with standard safeguards (audit logs, retention policy, access controls). Identifies proportionality concern. Misses at least one of: (a) specific AZ institutional constraint (Ministry scope authority, Law on Personal Data enforcement mechanism), (b) human-in-the-loop requirement before adverse action, (c) explicit list of what will NOT be built and why. May propose safeguards without specifying technical implementation (e.g., 'add audit logs' without specifying immutability mechanism and who holds the keys).\n\nLevel 4 (61-80%): Complete technical architecture with: (1) behavioral signal taxonomy specifying exactly what is collected (login timestamp, geolocation delta, session duration, click pattern entropy) and what is NOT collected (content of communications, browsing history outside the portal, device identifiers beyond session token), (2) immutable append-only audit log with cryptographic chain (who queried the system, when, what result, what action taken), (3) human review mandate — no benefit suspension without a named reviewer who has read the anomaly report, (4) explicit scope binding — system cannot be queried for purposes other than benefit fraud detection, enforced via role-based API access with logged queries. Ethical analysis identifies at least two AZ-specific risks: false positive impact on rural/elderly populations with low digital literacy (navigation anomalies not indicative of fraud), and political use risk given AZ's governance context. References the Law on Personal Data (2010/2022) specifically.\n\nLevel 5 (81-100%): All Level 4 criteria plus: (1) Names the Ministry of Digital Development's specific authority scope and documents which data categories require explicit DPA consultation before collection, (2) Proposes a differential privacy implementation for behavioral aggregate analytics to prevent individual re-identification from population-level fraud pattern analysis, (3) Identifies the mission creep risk with specific historical precedent (e.g., COVID contact tracing infrastructure repurposed for non-health surveillance in multiple countries) and proposes a technical scope lock (separate isolated deployment, air-gapped from general government data infrastructure, with sunset clause that requires active renewal), (4) Names what they will refuse to build regardless of legal authorization: real-time keystroke or content monitoring, persistent device fingerprinting across sessions, integration with other government databases (tax, passport) without separate legal authorization per integration, bulk export capability for law enforcement without judicial oversight, (5) Proposes an independent technical audit mechanism: a third-party reviewer (ISMSN-accredited body) with read access to the behavioral signal collection specification and audit log schema, reporting annually to a designated oversight body — not to the Ministry itself.",
+    "london_delta": "A London DevOps engineer applying UK Data Protection Act 2018 (DPA 2018) and ICO guidance on automated decision-making (UK GDPR Article 22) would structure their response around DPIA (Data Protection Impact Assessment) obligations — mandatory for large-scale behavioral monitoring of public users. They would refuse to proceed without a completed DPIA and ICO consultation. They cannot know that in Azerbaijan, there is no equivalent mandatory DPIA process under the Law on Personal Data (2010/2022), no ICO equivalent with pre-implementation consultation authority, and no UK GDPR Article 22 prohibition on automated adverse decisions without human review. The AZ-specific professional challenge is therefore harder: in the absence of mandatory pre-implementation controls, the DevOps engineer must build the safeguards (human review mandate, scope binding, audit log immutability) into the technical architecture itself — because there is no regulatory body that will require them from the outside. This is a more demanding professional standard, not a lower one.",
+    "az_institutions": [
+      "Ministry of Digital Development"
+    ],
+    "tags": [
+      "empathy_safeguarding",
+      "behavioral-monitoring",
+      "egov",
+      "privacy-by-design",
+      "az-specific",
+      "open-ended"
+    ]
+  },
+  {
+    "id": "prof-devops-s4-010",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "hard",
+    "type": "mcq",
+    "irt_a": 1.6,
+    "irt_b": 0.8,
+    "irt_c": 0.08,
+    "scenario_en": "You are the senior DevOps engineer at an Azerbaijani bank. The CTO has approved a storage optimization initiative to reduce operational costs. A senior data architect proposes deleting database records for FX transactions older than 3 years, citing that 'our risk team says 3 years is sufficient for internal audit purposes.' You know that CBA Circular 10/2022 requires Azerbaijani banks to retain FX transaction records for a minimum of 7 years for regulatory audit purposes. The CTO has already verbally approved the deletion. The data architect has written the deletion script and is asking you to schedule and execute it via the deployment pipeline. What do you do?",
+    "scenario_az": "Siz Azərbaycan bankında baş DevOps mühəndisisiniz. CTO əməliyyat xərclərini azaltmaq üçün saxlama optimallaşdırma təşəbbüsünü təsdiqləyib. Baş məlumat memarı 'risk qrupumuz daxili audit məqsədləri üçün 3 ilin kifayət etdiyini deyir' istinadı ilə 3 ildən köhnə valyuta əməliyyatı qeydlərini silməyi təklif edir. CBA Circular 10/2022-nin Azərbaycan banklarından tənzimləyici audit məqsədləri üçün minimum 7 il müddətinə valyuta əməliyyatı qeydlərini saxlamalarını tələb etdiyini bilirsiniz. CTO artıq şifahi olaraq silinməni təsdiqləyib. Məlumat memarı silmə skriptini yazmış və onu yerləşdirmə boru kəməri vasitəsilə planlaşdırıb icra etməyinizi xahiş edir. Nə edirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Execute the deletion as requested — the CTO has approved it and the data architect has confirmed the risk team's assessment. It is not your role to override senior technical and executive judgment",
+        "text_az": "Tələb olunduğu kimi silinməni həyata keçirin — CTO onu təsdiqləyib və məlumat memarı risk qrupunun qiymətləndirilməsini təsdiqləyib. Baş texniki və icraçı mühakiməsini ləğv etmək sizin rolunuz deyil"
+      },
+      {
+        "key": "B",
+        "text_en": "Refuse to execute the script and immediately report the situation to the bank's compliance officer, providing written documentation that CBA Circular 10/2022 requires 7-year retention and that executing the deletion would constitute a direct regulatory violation — do not execute until a written compliance clearance is obtained",
+        "text_az": "Skripti icra etməkdən imtina edin və dərhal bankın uyğunluq məmurundan vəziyyəti bildirin, CBA Circular 10/2022-nin 7 illik saxlamanı tələb etdiyini və silinmanın icrasının birbaşa tənzimləyici pozuntu olacağını sənədləşdirərək — yazılı uyğunluq icazəsi alınanadək icra etməyin"
+      },
+      {
+        "key": "C",
+        "text_en": "Execute the script but only for records older than 7 years, silently adjusting the deletion criteria without informing the data architect or CTO of the regulatory constraint",
+        "text_az": "Skripti icra edin, lakin yalnız 7 ildən köhnə qeydlər üçün, məlumat memarını və ya CTO-nu tənzimləyici məhdudiyyəti barədə xəbərdar etmədən silinmə meyarlarını sessizliklə tənzimləyin"
+      },
+      {
+        "key": "D",
+        "text_en": "Send an email to the data architect flagging the regulatory concern and ask them to confirm whether they have checked with compliance — then execute the script after their confirmation regardless of content",
+        "text_az": "Məlumat memarına tənzimləyici narahatlığı bildirən e-poçt göndərin və uyğunluqla yoxlayıb-yoxlamadıqlarını təsdiqləmələrini xahiş edin — sonra məzmundan asılı olmayaraq onların təsdiqindən sonra skripti icra edin"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "CBA Circular 10/2022 creates a mandatory regulatory retention obligation that overrides internal business decisions at every level — including CTO approval and risk team assessment. This is not a gray area: executing the deletion of 3-7 year FX records constitutes a direct regulatory violation that could result in CBA enforcement action against the bank, including license revocation proceedings. Option A (execute as instructed) makes the DevOps engineer personally complicit in the regulatory violation — 'I was following orders' is not a defense in CBA enforcement proceedings, and the engineer who executed the script can be named in the enforcement action. Option C (silently adjust the criteria) is dangerous for two reasons: (1) the adjustment is made without proper authorization and creates a undocumented production deployment, and (2) the silence means the CTO and data architect continue believing the full deletion was executed, creating a false compliance record. Option D (email and execute on any confirmation) transfers the responsibility without actually resolving the regulatory risk — a data architect's email confirmation that they 'checked with compliance' is not a compliance clearance document. Option B is correct: the compliance officer is the designated authority to issue or deny clearance for record destruction decisions, the regulatory constraint must be documented in writing before any irreversible action, and the engineer's refusal to execute without clearance is a professional obligation — not insubordination. The 7-year retention under CBA Circular 10/2022 exists specifically for situations where CBA conducts a retrospective audit of FX transactions — destroying those records before the 7-year window closes makes the bank unable to satisfy a CBA audit demand, which is an independent enforcement trigger beyond the storage cost savings.",
+    "feedback_az": "CBA Circular 10/2022 CTO onayı və risk qrupu qiymətləndirilməsi də daxil olmaqla hər səviyyədə daxili iş qərarlarını üstələyən məcburi tənzimləyici saxlama öhdəliyi yaradır. Bu, boz zona deyil: 3-7 illik valyuta əməliyyatı qeydlərinin silinməsini icra etmək birbaşa tənzimləyici pozuntur. A variantı (göstərildiyi kimi icra et) DevOps mühəndisini şəxsən tənzimləyici pozuntuda ortaq edir. C variantı (meyarları sessizliklə tənzimləmək) iki səbəbdən təhlükəlidir. D variantı məsuliyyəti faktiki riskə cavab vermədən köçürür. B variantı düzgündür: uyğunluq məmuru qeyd məhvinin icazə vermək üçün təyin edilmiş orqandır.",
+    "development_tip_en": "For any Azerbaijani bank, maintain a data retention schedule document that maps each data category to its CBA-mandated retention period. This document must be a deployment gate dependency for any deletion operation: the pipeline should require a retention schedule check before any bulk delete can be scheduled. Specifically for CBA Circular 10/2022: FX transactions (7 years), customer correspondence (5 years), AML screening records (5 years from account closure). Configure your database backup and deletion automation to enforce these floors — a deletion script that bypasses retention minimums must fail at the pipeline gate, not succeed silently.",
+    "development_tip_az": "Hər Azərbaycan bankı üçün hər məlumat kateqoriyasını CBA-nın müəyyən etdiyi saxlama müddətinə xəritələyən məlumat saxlama cədvəli sənədi saxlayın. Bu sənəd hər hansı silmə əməliyyatı üçün yerləşdirmə qapısı asılılığı olmalıdır: boru kəməri hər hansı toplu silinmə planlaşdırılmazdan əvvəl saxlama cədvəli yoxlamasını tələb etməlidir. Xüsusilə CBA Circular 10/2022 üçün: valyuta əməliyyatları (7 il), müştəri yazışması (5 il), AML yoxlama qeydləri (hesabın bağlanmasından 5 il).",
+    "london_delta": "A London DevOps engineer at a UK bank applying FCA SYSC 9.1 (record-keeping obligations) would recognize the 7-year FX retention requirement as standard — UK MiFID II Article 25(5) and FCA COBS 11A mandate this retention period. They would immediately escalate to compliance without hesitation. They cannot know that in Azerbaijan, the equivalent obligation exists under CBA Circular 10/2022 — a CBA-specific circular rather than a legislation-level instrument — and that the 7-year floor is identical to the UK requirement but enforced through a different institutional pathway (CBA examinations rather than FCA supervisory reviews). The key difference: in the UK, the data architect would likely know the retention obligation because it is covered in standard FCA onboarding training. In AZ, CBA Circular 10/2022 may not be part of standard onboarding — making it the DevOps engineer's professional obligation to know it even when senior colleagues do not, because executing the deletion is an irreversible action with direct regulatory enforcement consequences.",
+    "az_institutions": [
+      "CBA"
+    ],
+    "tags": [
+      "adaptability",
+      "data-retention",
+      "cba-circular-10-2022",
+      "compliance",
+      "az-specific",
+      "regulatory"
+    ]
+  }
+]

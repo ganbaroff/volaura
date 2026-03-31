@@ -34,8 +34,8 @@ router = APIRouter(prefix="/organizations", tags=["Organizations"])
 
 @router.get("", response_model=list[OrganizationResponse])
 @limiter.limit(RATE_DEFAULT)
-async def list_organizations(request: Request, db: SupabaseAdmin) -> list[OrganizationResponse]:
-    """List all public organizations."""
+async def list_organizations(request: Request, db: SupabaseAdmin, user_id: CurrentUserId) -> list[OrganizationResponse]:
+    """List all public organizations. Requires authentication to prevent unauthenticated enumeration."""
     result = await db.table("organizations").select("id, name, description, logo_url, type, website, is_active").order("name").execute()
     return [OrganizationResponse(**row) for row in (result.data or [])]
 
@@ -44,7 +44,7 @@ async def list_organizations(request: Request, db: SupabaseAdmin) -> list[Organi
 @limiter.limit(RATE_DEFAULT)
 async def get_my_organization(request: Request, db_admin: SupabaseAdmin, user_id: CurrentUserId) -> OrganizationResponse:
     """Get the organization owned by the current user."""
-    result = await db_admin.table("organizations").select("*").eq("owner_id", user_id).single().execute()
+    result = await db_admin.table("organizations").select("*").eq("owner_id", user_id).maybe_single().execute()
     if not result.data:
         raise HTTPException(
             status_code=404,
@@ -102,9 +102,9 @@ async def update_my_organization(
 
 @router.get("/{org_id}", response_model=OrganizationResponse)
 @limiter.limit(RATE_DEFAULT)
-async def get_organization(request: Request, org_id: str, db: SupabaseAdmin) -> OrganizationResponse:
-    """Get a public organization by ID."""
-    result = await db.table("organizations").select("*").eq("id", org_id).single().execute()
+async def get_organization(request: Request, org_id: str, db: SupabaseAdmin, user_id: CurrentUserId) -> OrganizationResponse:
+    """Get a public organization by ID. Requires authentication to prevent unauthenticated UUID enumeration."""
+    result = await db.table("organizations").select("*").eq("id", org_id).maybe_single().execute()
     if not result.data:
         raise HTTPException(status_code=404, detail={"code": "ORG_NOT_FOUND", "message": "Organization not found"})
     return OrganizationResponse(**result.data)
@@ -125,7 +125,7 @@ async def get_org_dashboard(
     and top 5 volunteers for the org owner's dashboard.
     """
     # Get org
-    org_result = await db_admin.table("organizations").select("id, name").eq("owner_id", user_id).single().execute()
+    org_result = await db_admin.table("organizations").select("id, name").eq("owner_id", user_id).maybe_single().execute()
     if not org_result.data:
         raise HTTPException(
             status_code=404,
@@ -134,11 +134,15 @@ async def get_org_dashboard(
     org_id = org_result.data["id"]
     org_name = org_result.data["name"]
 
-    # All sessions assigned by this org
+    # All sessions assigned by this org — SEC-Q4 / BUG-005: capped at 2000 to prevent OOM.
+    # Dashboard stats are approximations; full accuracy requires async aggregation (post-launch).
+    _DASHBOARD_SESSION_CAP = 2000
     sessions_result = await db_admin.table("assessment_sessions").select(
         "volunteer_id, status"
-    ).eq("assigned_by_org_id", org_id).execute()
+    ).eq("assigned_by_org_id", org_id).limit(_DASHBOARD_SESSION_CAP).execute()
     sessions = sessions_result.data or []
+    if len(sessions) == _DASHBOARD_SESSION_CAP:
+        logger.warning("get_org_dashboard: session cap reached — stats are approximate", org_id=org_id, cap=_DASHBOARD_SESSION_CAP)
 
     total_assigned = len(sessions)
     completed_vols = {s["volunteer_id"] for s in sessions if s["status"] == "completed"}
@@ -229,7 +233,7 @@ async def list_org_volunteers(
     Returns profile + AURA data for each volunteer.
     Supports filtering by session status (assigned/completed/in_progress).
     """
-    org_result = await db_admin.table("organizations").select("id").eq("owner_id", user_id).single().execute()
+    org_result = await db_admin.table("organizations").select("id").eq("owner_id", user_id).maybe_single().execute()
     if not org_result.data:
         raise HTTPException(
             status_code=404,
@@ -238,6 +242,9 @@ async def list_org_volunteers(
     org_id = org_result.data["id"]
 
     # Get distinct volunteer IDs assigned by this org
+    # SEC-Q4 / BUG-005: cap at 10k sessions to prevent OOM on large orgs.
+    # Pagination is applied at volunteer level after dedup — this cap bounds memory usage.
+    _LIST_SESSION_CAP = 10_000
     q = db_admin.table("assessment_sessions").select("volunteer_id, status").eq("assigned_by_org_id", org_id)
     if status:
         valid_statuses = {"assigned", "completed", "in_progress"}
@@ -248,8 +255,10 @@ async def list_org_volunteers(
             )
         q = q.eq("status", status)
 
-    sessions_result = await q.execute()
+    sessions_result = await q.limit(_LIST_SESSION_CAP).execute()
     sessions = sessions_result.data or []
+    if len(sessions) == _LIST_SESSION_CAP:
+        logger.warning("list_org_volunteers: session cap reached — pagination may be incomplete", org_id=org_id, cap=_LIST_SESSION_CAP)
 
     # Distinct volunteers with completion counts
     vol_data: dict[str, dict] = {}
@@ -352,7 +361,7 @@ async def search_volunteers(
     try:
         query_embedding = await asyncio.wait_for(generate_embedding(payload.query), timeout=0.8)
     except asyncio.TimeoutError:
-        logger.warning("Embedding timeout on volunteer search — using rule-based fallback", query=payload.query[:50])
+        logger.warning("Embedding timeout on volunteer search — using rule-based fallback", query_len=len(payload.query))  # SEC-Q5: no raw query — may contain PII (names, emails)
     except Exception as e:
         logger.warning("Embedding error on volunteer search — using rule-based fallback", error=str(e)[:100])
 
@@ -373,6 +382,8 @@ async def search_volunteers(
             db_admin.table("aura_scores")
             .select("volunteer_id, total_score, badge_tier, elite_status")
             .gte("total_score", payload.min_aura)
+            # BUG-013 FIX: only return profiles with visibility=public — hidden/badge_only must not appear in org search
+            .eq("visibility", "public")
         )
         if payload.badge_tier:
             q = q.eq("badge_tier", payload.badge_tier)
@@ -399,6 +410,17 @@ async def search_volunteers(
             all_rows = filtered
 
         rows = all_rows[payload.offset: payload.offset + payload.limit]
+
+    if not rows:
+        return []
+
+    # BUG-013 FIX: post-filter by visibility=public (covers semantic/RPC path which can't filter in-query).
+    # Rule-based path already has .eq("visibility","public") above — this is defense-in-depth.
+    vis_result = await db_admin.table("aura_scores").select("volunteer_id").eq("visibility", "public").in_(
+        "volunteer_id", [r["volunteer_id"] for r in rows]
+    ).execute()
+    public_ids = {r["volunteer_id"] for r in (vis_result.data or [])}
+    rows = [r for r in rows if r["volunteer_id"] in public_ids]
 
     if not rows:
         return []
@@ -454,7 +476,7 @@ async def assign_assessments(
     4. Duplicate assignments skipped (not error)
     """
     # Verify caller owns an org
-    org_result = await db_admin.table("organizations").select("id, name").eq("owner_id", user_id).single().execute()
+    org_result = await db_admin.table("organizations").select("id, name").eq("owner_id", user_id).maybe_single().execute()
     if not org_result.data:
         raise HTTPException(
             status_code=403,

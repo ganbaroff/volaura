@@ -439,7 +439,8 @@ class TestFisherInformationAndMFI:
             _make_question("q_pos2", a=1.5, b=2.0, c=0.0),
         ]
         state = CATState(theta=0.0)
-        selected = select_next_item(state, questions)
+        # epsilon=0 disables ε-greedy — tests deterministic MFI, not exposure-control randomness
+        selected = select_next_item(state, questions, epsilon=0)
         assert selected is not None
         assert selected["id"] == "q_zero", (
             f"At theta=0, MFI should select b=0 item, selected b={selected['irt_b']}"
@@ -453,7 +454,8 @@ class TestFisherInformationAndMFI:
             _make_question("q_pos2", a=1.5, b=2.0, c=0.0),   # ← should win at theta=2
         ]
         state = CATState(theta=2.0)
-        selected = select_next_item(state, questions)
+        # epsilon=0 disables ε-greedy — tests deterministic MFI, not exposure-control randomness
+        selected = select_next_item(state, questions, epsilon=0)
         assert selected is not None
         assert selected["id"] == "q_pos2", (
             f"At theta=2, MFI should select b=2 item, selected b={selected['irt_b']}"
@@ -467,7 +469,8 @@ class TestFisherInformationAndMFI:
         ]
         state = CATState(theta=0.0)
         state.items.append(_make_item("q_zero", a=2.0, b=0.0, c=0.0, response=1))
-        selected = select_next_item(state, questions)
+        # epsilon=0 disables ε-greedy — tests deterministic MFI
+        selected = select_next_item(state, questions, epsilon=0)
         assert selected is not None
         assert selected["id"] == "q_pos1", (
             "MFI should skip answered item and select next-best"

@@ -50,6 +50,61 @@ def _cache_key(question_en: str, answer: str, concepts_json: str) -> str:
 # so we enforce our own timeout here.  (Security audit 2026-03-25, CVSS 7.5)
 _LLM_TIMEOUT_S = 15.0
 
+# ── Keyword-fallback spike detection ─────────────────────────────────────────
+# Counts keyword_fallback invocations in the current UTC hour.
+# When the count hits _FALLBACK_SPIKE_THRESHOLD, a Telegram alert fires once
+# (subsequent hits in the same hour are silent — reset on the hour boundary).
+# In-memory only: resets on dyno restart. That's acceptable — we only care about
+# sustained degradation within a single running instance.
+_FALLBACK_SPIKE_THRESHOLD = 10
+_fallback_count: int = 0
+_fallback_hour: "datetime | None" = None
+
+
+async def _maybe_alert_fallback_spike() -> None:
+    """Increment the hourly keyword-fallback counter and alert on threshold breach."""
+    from datetime import datetime  # local import — avoids circular at module load
+
+    global _fallback_count, _fallback_hour
+
+    current_hour = datetime.utcnow().replace(minute=0, second=0, microsecond=0)
+    if _fallback_hour != current_hour:
+        _fallback_hour = current_hour
+        _fallback_count = 0
+
+    _fallback_count += 1
+
+    if _fallback_count == _FALLBACK_SPIKE_THRESHOLD:
+        logger.warning(
+            "LLM keyword_fallback spike — all LLM providers degraded",
+            fallback_count=_fallback_count,
+            hour=current_hour.isoformat(),
+            alert="keyword_fallback_spike",
+        )
+        # Send Telegram alert using the same pattern as error_alerting middleware.
+        # Fire-and-forget: alert failure must never block the evaluation path.
+        try:
+            import httpx
+            from app.config import settings as _settings
+
+            token = _settings.telegram_bot_token
+            chat_id = _settings.telegram_ceo_chat_id
+            if token and chat_id:
+                text = (
+                    f"⚠️ *VOLAURA — LLM Fallback Spike*\n\n"
+                    f"All LLM providers (Gemini / Groq / OpenAI) failed.\n"
+                    f"`keyword_fallback` mode active: "
+                    f"`{_fallback_count}` evaluations this hour.\n\n"
+                    f"AURA scores in degraded mode — check Railway logs."
+                )
+                async with httpx.AsyncClient(timeout=5) as client:
+                    await client.post(
+                        f"https://api.telegram.org/bot{token}/sendMessage",
+                        json={"chat_id": chat_id, "text": text, "parse_mode": "Markdown"},
+                    )
+        except Exception as _e:
+            logger.warning("Failed to send fallback spike Telegram alert", error=str(_e)[:100])
+
 
 # ── Prompt ──────────────────────────────────────────────────────────────────
 
@@ -147,6 +202,7 @@ async def evaluate_answer(
     answer: str,
     expected_concepts: list[dict[str, Any]],
     return_details: bool = False,
+    force_degraded: bool = False,
 ) -> float | EvaluationResult:
     """Score an open-ended answer using BARS rubric via LLM.
 
@@ -156,6 +212,9 @@ async def evaluate_answer(
         expected_concepts: List of concept dicts, each with at least a `name` key.
             e.g. [{"name": "active_listening", "weight": 0.5}, ...]
         return_details: If True, return EvaluationResult with per-concept scores.
+        force_degraded: If True, skip all LLM calls and use keyword_fallback directly.
+            Used when the per-user daily LLM cap is hit — the answer is queued for
+            re-evaluation by the reeval_worker once capacity is available.
 
     Returns:
         Composite score 0.0–1.0 (or EvaluationResult if return_details=True).
@@ -163,6 +222,15 @@ async def evaluate_answer(
     if not answer.strip():
         result = EvaluationResult(0.0, {}, "empty_answer")
         return result if return_details else 0.0
+
+    # ── Daily LLM cap: skip all LLM providers, go straight to keyword_fallback ──
+    if force_degraded:
+        scores = _keyword_fallback(answer, expected_concepts, question_text=question_en)
+        composite = _aggregate(scores, expected_concepts)
+        result = EvaluationResult(composite, scores, "keyword_fallback", concept_details=None)
+        if return_details:
+            return result
+        return composite
 
     # Support both "name" and "concept" keys for concept dicts (test + prod compatibility)
     concept_names = [c.get("name") or c.get("concept", "") for c in expected_concepts]
@@ -226,7 +294,15 @@ async def evaluate_answer(
             model_used = "gpt-4o-mini"
 
     if scores is None:
-        logger.warning("OpenAI evaluation failed — using keyword rule matching")
+        # Structured metric: set a Sentry alert on llm_fallback=True to detect AURA score inflation
+        # Alert threshold: >10% of answers in any 1h window → Gemini/Groq capacity issue
+        logger.warning(
+            "All LLM providers exhausted — using keyword fallback (degraded scoring mode)",
+            llm_fallback=True,
+            provider="keyword_fallback",
+        )
+        # Spike detection: alert once per hour when threshold is hit (fires Telegram if configured)
+        asyncio.ensure_future(_maybe_alert_fallback_spike())
         scores = _keyword_fallback(answer, expected_concepts, question_text=question_en)
         concept_details = None  # keyword fallback has no quotes
         model_used = "keyword_fallback"

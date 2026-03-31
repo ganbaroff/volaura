@@ -1,0 +1,490 @@
+[
+  {
+    "id": "prof-fin-s3-001",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.2,
+    "irt_b": -1.2,
+    "irt_c": 0.15,
+    "scenario_en": "You are a junior analyst at an Azerbaijani commercial bank. CBA Regulation No. 8 requires your bank to maintain a minimum Tier 1 capital adequacy ratio of 6% and a total capital adequacy ratio of 10%. Your current Tier 1 ratio is 6.4% and you are reviewing a proposed AZN 50 million loan to a mid-sized construction company. The credit risk weight for this exposure is 100%. Which action is most consistent with reliable compliance obligations before approving the loan?",
+    "scenario_az": "Siz Azərbaycan kommersiya bankında kiçik analitiksiniz. CBA-nın 8 nömrəli Qaydası bankınızdan minimum 6% Tier 1 kapital adekvatlığı əmsalı və 10% ümumi kapital adekvatlığı əmsalı saxlamağı tələb edir. Hazırda Tier 1 əmsalınız 6.4%-dir və orta ölçülü tikinti şirkətinə 50 milyon AZN kredit verilməsi təklifi nəzərdən keçirirsiniz. Bu məruz qalma üçün kredit risk çəkisi 100%-dir. Krediti təsdiqləmədən əvvəl etibarlı uyğunluq öhdəlikləri ilə ən uyğun hansı hərəkətdir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Approve the loan because the current Tier 1 ratio exceeds the 6% minimum",
+        "text_az": "Cari Tier 1 əmsalı 6%-lik minimumu keçdiyindən krediti təsdiqləyin"
+      },
+      {
+        "key": "B",
+        "text_en": "Calculate the post-loan Tier 1 ratio using risk-weighted assets before recommending approval",
+        "text_az": "Təsdiqləməni tövsiyə etməzdən əvvəl risk çəkili aktivlər istifadə edərək kredit sonrası Tier 1 əmsalını hesablayın"
+      },
+      {
+        "key": "C",
+        "text_en": "Escalate immediately to the CBA for guidance since the loan amount is significant",
+        "text_az": "Kredit məbləği əhəmiyyətli olduğundan dərhal CBA-ya rəhbərlik üçün müraciət edin"
+      },
+      {
+        "key": "D",
+        "text_en": "Defer the loan decision until the next quarterly capital review",
+        "text_az": "Növbəti rüblük kapital baxışına qədər kredit qərarını təxirə salın"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. CBA Regulation No. 8 compliance is not a static check — it must be evaluated against the post-transaction capital position. A AZN 50m loan at 100% risk weight adds AZN 50m to risk-weighted assets, which reduces the Tier 1 ratio. If capital is unchanged at, say, AZN 320m and current RWA is AZN 5,000m (ratio = 6.4%), adding AZN 50m RWA gives AZN 5,050m and a new ratio of 6.34% — still compliant, but the calculation must be done first. A is wrong because the current ratio does not account for the new exposure. C is wrong — escalation to CBA is not a standard step for individual loan review. D is wrong — deferral is unnecessary if capital math is performed.",
+    "feedback_az": "B düzgündür. CBA-nın 8 nömrəli Qaydası uyğunluğu statik yoxlama deyil — əməliyyat sonrası kapital vəziyyətinə qarşı qiymətləndirilməlidir. 100% risk çəkisindəki 50 milyon AZN kredit risk çəkili aktivlərə 50 milyon AZN əlavə edir. A yanlışdır, çünki cari əmsal yeni məruz qalmanı nəzərə almır. C yanlışdır — fərdi kredit icmalı üçün CBA-ya müraciət standart addım deyil. D yanlışdır — kapital hesablaması aparılarsa, təxirə salma lazımsızdır.",
+    "development_tip_en": "Internalize CBA Regulation No. 8 as a dynamic constraint. Before any material credit decision, run the post-deal capital waterfall: new RWA = existing RWA + (loan amount × risk weight). Compare resulting Tier 1 and total capital ratios against the regulatory minimums AND your bank's internal buffer targets (typically 1-2% above CBA minimum).",
+    "development_tip_az": "CBA-nın 8 nömrəli Qaydasını dinamik məhdudiyyət kimi mənimsəyin. Hər hansı əhəmiyyətli kredit qərarından əvvəl əməliyyat sonrası kapital şəlalısını işlədin: yeni RWA = mövcud RWA + (kredit məbləği × risk çəkisi). Nəticədə alınan Tier 1 və ümumi kapital əmsallarını tənzimləyici minimumlara VƏ bankın daxili bufer hədəflərinə (adətən CBA minimumundan 1-2% yüksək) qarşı müqayisə edin.",
+    "london_delta": "A London analyst working under Basel III/PRA rules would perform the same post-deal RWA calculation instinctively — this is standard training. However, a London analyst unfamiliar with CBA Regulation No. 8 might assume the AZ regime uses a consolidated group-level buffer rather than entity-level hard minimums, leading them to approve without checking if the local subsidiary's standalone ratio breaches the 6% Tier 1 floor.",
+    "az_institutions": [
+      "CBA"
+    ],
+    "tags": [
+      "capital-adequacy",
+      "CBA-regulation-8",
+      "credit-risk",
+      "az-banking-regulation"
+    ]
+  },
+  {
+    "id": "prof-fin-s3-002",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency_slug": "communication",
+    "difficulty": "easy",
+    "type": "sjt",
+    "irt_a": 1.1,
+    "irt_b": -0.9,
+    "irt_c": 0.12,
+    "scenario_en": "You are presenting your bank's quarterly financial results to a SOFAZ external auditor. The auditor has a background in public administration, not accounting, and has asked why your foreign currency reserve valuation differs from the figure published in the SOFAZ annual report. Your bank uses the CBA interbank rate (1.7002 AZN/USD) while SOFAZ uses its non-commercial rate (1.7000 AZN/USD) for state budget calculations. The 0.02% rate gap creates a AZN 340,000 variance on a USD 170 million position. How do you explain this most effectively?",
+    "scenario_az": "Siz bankınızın rüblük maliyyə nəticələrini SOFAZ xarici auditoruna təqdim edirsiniz. Auditorun mühasibatlıq deyil, dövlət idarəçiliyi üzrə təcrübəsi var və xarici valyuta ehtiyatı qiymətləndirilməsinin nə üçün SOFAZ-ın illik hesabatında dərc edilən rəqəmdən fərqləndiyini soruşub. Bankınız CBA banklararası məzənnəsindən (1.7002 AZN/USD) istifadə edir, SOFAZ isə dövlət büdcəsi hesablamaları üçün qeyri-kommersiya məzənnəsindən (1.7000 AZN/USD) istifadə edir. 0.02% məzənnə fərqi 170 milyon ABŞ dolları mövqeyində 340.000 AZN fərq yaradır. Bunu necə ən effektiv izah edirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Explain that your bank follows CBA interbank rate rules and SOFAZ uses a different methodology — both are correct under their respective mandates",
+        "text_az": "Bankınızın CBA banklararası məzənnə qaydalarına əməl etdiyini, SOFAZ-ın isə fərqli metodologiya istifadə etdiyini izah edin — hər ikisi öz müvafiq mandatları çərçivəsində düzgündür"
+      },
+      {
+        "key": "B",
+        "text_en": "Provide a technical breakdown of Basel III FX marking standards and how they supersede local rate choices",
+        "text_az": "Basel III FX işarələmə standartlarının texniki izahını verin və onların yerli məzənnə seçimlərini necə üstələdiyini göstərin"
+      },
+      {
+        "key": "C",
+        "text_en": "Acknowledge the variance, state the exact AZN 340,000 figure, and suggest the auditor cross-reference CBA Circular No. 10/2022 which mandates interbank rate usage for commercial bank FX positions",
+        "text_az": "Fərqi qəbul edin, dəqiq 340.000 AZN rəqəmini bildirin və auditorun kommersiya bankının FX mövqeləri üçün banklararası məzənnənin istifadəsini məcburi edən CBA-nın 10/2022 nömrəli Sirkularına istinad etməsini təklif edin"
+      },
+      {
+        "key": "D",
+        "text_en": "Request that the meeting be rescheduled so your CFO can address the question directly",
+        "text_az": "CFO-nuzun sualı birbaşa cavablandıra bilməsi üçün görüşün yenidən planlaşdırılmasını xahiş edin"
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct. Effective communication with a non-technical auditor requires three things: acknowledge the concern directly (don't minimize it), quantify the variance precisely so it is transparent (AZN 340,000 is material but explainable), and ground the explanation in a regulatory reference the auditor can independently verify. CBA Circular No. 10/2022 provides the authoritative basis for why commercial banks use the interbank rate, which is distinct from SOFAZ's sovereign wealth fund mandate. A is partially correct but lacks the specific regulatory anchor that makes it verifiable. B is wrong — Basel III jargon alienates a public administration auditor. D is wrong — escalation signals inability to handle a reasonable question.",
+    "feedback_az": "C düzgündür. Qeyri-texniki auditorla effektiv ünsiyyət üç şeyi tələb edir: narahatlığı birbaşa qəbul edin (kiçiltməyin), fərqi dəqiq kəmiyyətləndiriniz ki, şəffaf olsun (340.000 AZN əhəmiyyətlidir, lakin izah edilə bilər) və auditorun müstəqil şəkildə yoxlaya biləcəyi normativ istinadda izahı əsaslandırın. A qismən düzgündür, lakin onu yoxlanıla bilən edən xüsusi normativ lövbər çatışmır. B yanlışdır — Basel III jarqonu dövlət idarəçiliyi auditorunu yabançılaşdırır. D yanlışdır — eskalasiya ağlabatan sualı idarə edə bilməməyi bildirir.",
+    "development_tip_en": "When presenting to non-finance audiences in AZ public sector contexts, always prepare a one-page rate reconciliation showing: (1) which rate your entity uses, (2) what regulation mandates it, (3) the exact AZN variance, and (4) why the variance is expected and not an error. Auditors from SOFAZ or the Ministry of Finance have deep public finance backgrounds but may not know commercial banking rate conventions.",
+    "development_tip_az": "AZ dövlət sektoru kontekstlərinde qeyri-maliyyə auditoriyalarına təqdimat edərkən həmişə bir səhifəlik məzənnə uzlaşdırması hazırlayın: (1) hansı məzənnəni istifadə etdiyinizi, (2) onu hansı qaydanın məcburi etdiyini, (3) dəqiq AZN fərqini və (4) fərqin nə üçün gözlənilən olduğunu və xəta olmadığını göstərin.",
+    "london_delta": "A London analyst presenting to a UK National Audit Office examiner would default to Basel III / IFRS 9 fair value marking language — language that both parties share. In AZ, the SOFAZ non-commercial rate is a sovereign policy rate with no UK equivalent; a London analyst would not know to cite CBA Circular No. 10/2022 as the authoritative reference distinguishing commercial bank from sovereign wealth fund FX marking obligations.",
+    "az_institutions": [
+      "SOFAZ",
+      "CBA"
+    ],
+    "tags": [
+      "communication",
+      "SOFAZ-audit",
+      "FX-rate-reconciliation",
+      "non-technical-audience",
+      "CBA-circular-10-2022"
+    ]
+  },
+  {
+    "id": "prof-fin-s3-003",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.4,
+    "irt_b": 0.3,
+    "irt_c": 0.1,
+    "scenario_en": "It is January 2016. You are an FX risk analyst at a mid-sized Azerbaijani bank. The AZN/USD rate has just moved from 1.05 to 1.28 overnight (following the December 21, 2015 CBA devaluation announcement) — a 21% single-day move. Your bank holds a long USD position of USD 45 million and an AZN-denominated loan book of AZN 680 million. CBA Circular No. 10/2022 predecessor rules cap FX open positions at 15% of capital. Your capital base is AZN 280 million. You have 4 hours before markets open. What is your most critical first action?",
+    "scenario_az": "2016-cı ilin yanvarıdır. Siz orta ölçülü Azərbaycan bankında FX risk analitikisiniz. AZN/USD məzənnəsi bir gecədə 1.05-dən 1.28-ə yüksəldi (21 dekabr 2015-ci il CBA devalvasiya elanından sonra) — gündəlik 21% hərəkət. Bankınızın 45 milyon ABŞ dolları uzun USD mövqeyi və 680 milyon AZN AZN-nominallı kredit kitabı var. CBA-nın 10/2022 nömrəli Sirkularının sələfi qaydaları FX açıq mövqelərini kapitalın 15%-i ilə məhdudlaşdırır. Kapital bazanız 280 milyon AZN-dir. Bazarlar açılmadan 4 saatınız var. Ən kritik ilk addımınız nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Immediately hedge the USD 45 million long position by selling USD forward contracts to neutralize FX risk before market open",
+        "text_az": "Bazar açılmadan FX riskini neytrallaşdırmaq üçün vadeli USD müqavilələrini sataraq 45 milyon ABŞ dollarlı uzun mövqeyi dərhal hedcinq edin"
+      },
+      {
+        "key": "B",
+        "text_en": "Recalculate your open FX position in AZN terms at the new rate to determine if the 15% capital cap is breached, then escalate to treasury and board if it is",
+        "text_az": "15% kapital həddinin keçilib-keçilmədiyini müəyyən etmək üçün yeni məzənnədə AZN ifadəsindəki açıq FX mövqeyinizi yenidən hesablayın, sonra keçibsə, xəzinədarlığa və idarə heyətinə bildirin"
+      },
+      {
+        "key": "C",
+        "text_en": "Wait for the CBA to issue official guidance on the new rate before taking any position adjustments",
+        "text_az": "Hər hansı mövqe düzəlişi etmədən əvvəl CBA-nın yeni məzənnə üzrə rəsmi rəhbərlik verməsini gözləyin"
+      },
+      {
+        "key": "D",
+        "text_en": "Sell AZN 200 million of the loan book to reduce AZN exposure and rebalance the currency mix",
+        "text_az": "AZN məruz qalmasını azaltmaq və valyuta qarışığını yenidən balanslaşdırmaq üçün kredit kitabının 200 milyon AZN-nini satın"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. The critical adaptive action in a devaluation shock is first to establish the new compliance position before executing trades. At the new rate of 1.28, the USD 45m long position is worth AZN 57.6m. The 15% capital cap on a AZN 280m capital base allows a maximum open FX position of AZN 42m. The position of AZN 57.6m breaches the cap by AZN 15.6m. This calculation must drive the escalation and trade sizing. A is wrong — hedging before calculating the breach amount leads to over- or under-hedging. C is wrong — waiting for CBA guidance when you have 4 hours until market open is a regulatory breach in the making. D is wrong — selling AZN loan book assets is a multi-day process, not a 4-hour emergency measure, and does not address the FX open position rule directly.",
+    "feedback_az": "B düzgündür. Devalvasiya şokunda kritik adaptiv hərəkət əvvəlcə ticarətləri icra etməzdən əvvəl yeni uyğunluq vəziyyətini müəyyən etməkdir. Yeni 1.28 məzənnəsində 45 milyon ABŞ dollarlı uzun mövqe 57.6 milyon AZN dəyərindədir. 280 milyon AZN kapital bazasında 15% kapital həddidini maksimum 42 milyon AZN açıq FX mövqeyinə icazə verir. 57.6 milyon AZN mövqey həddini 15.6 milyon AZN aşır. A yanlışdır — pozuntu məbləğini hesablamadan əvvəl hedcinq həddən artıq və ya az hedcinqə aparır. C yanlışdır — bazar açılışına 4 saat qalarkən CBA rəhbərliyini gözləmək inkişaf edən normativ pozuntudur. D yanlışdır — AZN kredit kitabı aktivlərini satmaq çox günlük proses olmaqla FX açıq mövqe qaydasına birbaşa toxunmur.",
+    "development_tip_en": "In AZ, devaluation events move fast and the CBA does not pre-announce rate changes to market participants (as the 2015 and 2016 events showed). Build a 'devaluation stress template' in Excel that auto-recalculates your open FX position in AZN terms for any given rate input, shows the 15% capital cap breach/compliance in real time, and identifies the minimum hedge notional needed to return to compliance. This template should be runnable in under 10 minutes.",
+    "development_tip_az": "AZ-da devalvasiya hadisələri sürətlə baş verir və CBA bazar iştirakçılarına məzənnə dəyişikliklərini əvvəlcədən elan etmir (2015 və 2016 hadisələrinin göstərdiyi kimi). Excel-də hər hansı məzənnə girişi üçün AZN ifadəsindəki açıq FX mövqeyinizi avtomatik yenidən hesablayan, 15% kapital həddinin pozulmasını/uyğunluğunu real vaxtda göstərən və uyğunluğa qayıtmaq üçün lazım olan minimum hedcinq nominalını müəyyən edən 'devalvasiya stress şablonu' hazırlayın.",
+    "london_delta": "A London risk analyst's reflex in a sudden FX move would be to immediately execute a hedge — that is the trained response in deep, liquid markets where forward contracts can be executed in minutes at tight spreads. In AZ after the 2016 devaluation, the interbank FX market seized for several hours; executing a large USD sell order without first knowing the exact compliance breach amount meant either over-hedging at a distorted rate or under-hedging and remaining non-compliant. The CBA capital cap calculation must precede execution in an illiquid shock environment.",
+    "az_institutions": [
+      "CBA"
+    ],
+    "tags": [
+      "adaptability",
+      "2016-devaluation",
+      "FX-open-position",
+      "CBA-capital-cap",
+      "crisis-response"
+    ]
+  },
+  {
+    "id": "prof-fin-s3-004",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.3,
+    "irt_b": 0.5,
+    "irt_c": 0.12,
+    "scenario_en": "You are building a risk dashboard for your bank's treasury desk. CBA Circular No. 10/2022 mandates that commercial banks must not hold a net open FX position in any single currency exceeding 15% of regulatory capital, and the total aggregate FX open position must not exceed 20% of capital. Your bank operates in USD, EUR, GBP, and RUB. The treasury team wants to automate the compliance alert. Which data architecture correctly implements the real-time CBA circular constraint in your system?",
+    "scenario_az": "Siz bankınızın xəzinədarlıq masası üçün risk nümunəsi qurursunuz. CBA-nın 10/2022 nömrəli Sirkuları kommersiya banklarının hər hansı bir valyutada tənzimləyici kapitalın 15%-ni keçən xalis açıq FX mövqeyi saxlamamasını, ümumi məcmu FX açıq mövqeyinin isə kapitalın 20%-ni keçməməsini məcburi edir. Bankınız USD, EUR, GBP və RUB-da fəaliyyət göstərir. Xəzinədarlıq komandası uyğunluq xəbərdarlığını avtomatlaşdırmaq istəyir. Hansı data arxitekturası sisteminizde real vaxtlı CBA sirkulyar məhdudiyyətini düzgün həyata keçirir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "One alert: sum all FX positions in AZN equivalent and trigger if total > 20% of capital",
+        "text_az": "Bir xəbərdarlıq: bütün FX mövqelərini AZN ekvivalentinə cəmləyin və cəm kapitalın 20%-ni keçərsə tetikleyin"
+      },
+      {
+        "key": "B",
+        "text_en": "Two alert layers: (1) per-currency alert if any single currency net position > 15% of capital AND (2) aggregate alert if sum of absolute net positions > 20% of capital, both recalculated at live CBA interbank rates",
+        "text_az": "İki xəbərdarlıq qatı: (1) hər hansı bir valyutanın xalis mövqeyi kapitalın 15%-ni keçərsə valyuta üzrə xəbərdarlıq VƏ (2) mütləq xalis mövqelərin cəmi kapitalın 20%-ni keçərsə məcmu xəbərdarlıq, hər ikisi canlı CBA banklararası məzənnələrindən yenidən hesablanır"
+      },
+      {
+        "key": "C",
+        "text_en": "Four separate alerts, one per currency, each checking against a 5% per-currency cap (20% total / 4 currencies)",
+        "text_az": "Dörd ayrı xəbərdarlıq, hər valyuta üçün bir, hər biri valyuta başına 5% həddə qarşı yoxlanır (20% cəm / 4 valyuta)"
+      },
+      {
+        "key": "D",
+        "text_en": "Daily end-of-day batch calculation using the SOFAZ non-commercial rate, reported to risk committee next morning",
+        "text_az": "SOFAZ qeyri-kommersiya məzənnəsindən istifadə edərək günlük gün sonu toplu hesablama, sabah səhər risk komitəsinə hesabat"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. CBA Circular No. 10/2022 imposes two distinct constraints that must be monitored simultaneously and independently: a per-currency limit of 15% of capital (meaning any single currency — USD, EUR, GBP, or RUB — cannot individually exceed the threshold) and an aggregate limit of 20% of capital across all currencies combined. A implements only the aggregate check and would miss a single-currency breach where, for example, a USD position alone exceeds 15% even if total is under 20%. C invents a 5% per-currency rule that does not exist in the circular. D is wrong on two counts: the SOFAZ non-commercial rate is not the correct rate for commercial bank FX position marking, and batch end-of-day reporting means intraday breaches go undetected.",
+    "feedback_az": "B düzgündür. CBA-nın 10/2022 nömrəli Sirkuları eyni vaxtda və müstəqil şəkildə izlənməli olan iki fərqli məhdudiyyət qoyur: kapitalın 15%-lik valyuta üzrə limit (yəni istənilən tək valyuta — USD, EUR, GBP və ya RUB — həddini ayrı-ayrılıqda keçə bilməz) və bütün valyutalar üzrə kapitalın 20%-lik məcmu limit. A yalnız məcmu yoxlamanı həyata keçirir. C sirkülarda mövcud olmayan 5% valyuta üzrə qaydanı icad edir. D iki cəhətdən yanlışdır: SOFAZ qeyri-kommersiya məzənnəsi kommersiya bankının FX mövqeyi işarələnməsi üçün düzgün məzənnə deyil, gün sonu toplu hesabat isə gün ərzindəki pozuntuların aşkar edilməməsi deməkdir.",
+    "development_tip_en": "When implementing regulatory compliance systems in AZ, always read the circular text yourself rather than relying on summaries. CBA circulars often have multiple nested conditions (per-currency AND aggregate) that are easily collapsed into a single rule in informal summaries. Build your alert logic to mirror the exact structure of the regulation, with separate database columns for each constraint threshold.",
+    "development_tip_az": "AZ-da tənzimləyici uyğunluq sistemlərini tətbiq edərkən, xülasələrə güvənmək əvəzinə sirkulyar mətni həmişə özünüz oxuyun. CBA sirkulyarlarında tez-tez qeyri-rəsmi xülasələrdə bir qayda kimi sıxışdırılan çoxlu iç-içə şərtlər (valyuta üzrə VƏ məcmu) olur.",
+    "london_delta": "A London quant building a FX limit monitoring system under PRA/FCA rules would design multi-layer alert hierarchies as a matter of course — this is standard practice. However, the specific CBA rate to use for AZN conversion is non-obvious: a London analyst would likely default to a Bloomberg composite rate or the ECB reference rate methodology, when CBA Circular No. 10/2022 specifically requires the CBA interbank rate for position marking — using the SOFAZ non-commercial rate (option D) is a common AZ-specific error that a London analyst might not even know to avoid.",
+    "az_institutions": [
+      "CBA"
+    ],
+    "tags": [
+      "tech-literacy",
+      "CBA-circular-10-2022",
+      "FX-position-limits",
+      "risk-dashboard",
+      "compliance-automation"
+    ]
+  },
+  {
+    "id": "prof-fin-s3-005",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.5,
+    "irt_b": 0.7,
+    "irt_c": 0.1,
+    "scenario_en": "You are a financial analyst at an international oil company operating under a Production Sharing Agreement (PSA) with SOCAR. The PSA has a cost recovery cap of 55% — meaning the company can recover operating and capital costs from up to 55% of gross production ('cost oil') before profit oil is split. Gross production for Q3 is 1,200,000 barrels at USD 82/bbl. Cumulative unrecovered costs carried forward are USD 18.5 million. Q3 operating costs are USD 12.3 million. Calculate the correct profit oil available for the PSA split.",
+    "scenario_az": "Siz SOCAR ilə İstehsalın Bölüşdürülməsi Sazişi (İBS) çərçivəsində fəaliyyət göstərən beynəlxalq neft şirkətinin maliyyə analitikisiniz. İBS-in xərc bərpası həddinin 55% olması — şirkətin mənfəət neftini bölüşdürməzdən əvvəl ümumi istehsalın 55%-nə ('xərc nefti') qədər olan əməliyyat və kapital xərclərini bərpa edə biləcəyi deməkdir. 3-cü rübdəki ümumi istehsal 82 ABŞ dolları/barrel qiymətlə 1.200.000 barreldir. İrəli keçirilmiş kumulyativ bərpa edilməmiş xərclər 18,5 milyon ABŞ dollarıdır. 3-cü rübdəki əməliyyat xərcləri 12,3 milyon ABŞ dollarıdır. İBS bölüşdürülməsi üçün mövcud düzgün mənfəət neftini hesablayın.",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "USD 54.12 million (gross revenue USD 98.4m minus Q3 opex USD 12.3m minus carried forward costs USD 18.5m minus 55% cost oil cap USD 13.48m)",
+        "text_az": "54,12 milyon ABŞ dolları (ümumi gəlir 98,4 milyon ABŞ dolları minus 3-cü rüb əməliyyat xərcləri 12,3 milyon ABŞ dolları minus irəli keçirilmiş xərclər 18,5 milyon ABŞ dolları minus 55% xərc nefti həddidini 13,48 milyon ABŞ dolları)"
+      },
+      {
+        "key": "B",
+        "text_en": "USD 44.22 million (gross revenue USD 98.4m, cost oil capped at 55% = USD 54.12m, actual total costs USD 30.8m — since costs are below the cap, full cost recovery applies, profit oil = USD 98.4m - USD 54.12m = USD 44.28m)",
+        "text_az": "44,22 milyon ABŞ dolları (ümumi gəlir 98,4 milyon ABŞ dolları, xərc nefti 55% = 54,12 milyon ABŞ dolları ilə məhdudlaşdırılır, faktiki ümumi xərclər 30,8 milyon ABŞ dolları — xərclər həddidini altında olduğundan tam xərc bərpası tətbiq edilir)"
+      },
+      {
+        "key": "C",
+        "text_en": "USD 67.6 million (profit oil = gross revenue USD 98.4m minus total recoverable costs USD 30.8m = USD 67.6m, because both Q3 opex and carried forward costs are fully recoverable)",
+        "text_az": "67,6 milyon ABŞ dolları (mənfəət nefti = ümumi gəlir 98,4 milyon ABŞ dolları minus ümumi bərpa edilə bilən xərclər 30,8 milyon ABŞ dolları = 67,6 milyon ABŞ dolları)"
+      },
+      {
+        "key": "D",
+        "text_en": "USD 85.9 million (profit oil = gross revenue USD 98.4m minus Q3 opex only USD 12.3m = USD 86.1m, because carried forward costs are a prior-period adjustment not applicable to Q3 profit oil calculation)",
+        "text_az": "85,9 milyon ABŞ dolları (mənfəət nefti = ümumi gəlir 98,4 milyon ABŞ dolları minus yalnız 3-cü rüb əməliyyat xərcləri 12,3 milyon ABŞ dolları = 86,1 milyon ABŞ dolları)"
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct. The PSA cost oil mechanism works as follows: Step 1 — calculate cost oil cap: 1,200,000 bbl × USD 82 × 55% = USD 54.12 million. Step 2 — calculate total costs eligible for recovery: Q3 opex USD 12.3m + carried forward unrecovered costs USD 18.5m = USD 30.8m. Step 3 — compare total costs to cap: USD 30.8m < USD 54.12m cap, therefore FULL cost recovery applies (the cap is not binding in this quarter). Step 4 — profit oil = gross revenue USD 98.4m − total recovered costs USD 30.8m = USD 67.6m. B incorrectly calculates profit oil as gross minus the cap (not gross minus actual costs) when costs are below the cap. D ignores carried forward costs which are explicitly part of the PSA cost recovery mechanism. A double-counts by subtracting both actual costs and the cap.",
+    "feedback_az": "C düzgündür. PSA xərc nefti mexanizmi belə işləyir: Addım 1 — xərc nefti həddini hesablayın: 1.200.000 barrel × 82 ABŞ dolları × 55% = 54,12 milyon ABŞ dolları. Addım 2 — bərpa üçün uyğun ümumi xərcləri hesablayın: 3-cü rüb əməliyyat xərcləri 12,3 milyon ABŞ dolları + bərpa edilməmiş xərclər 18,5 milyon ABŞ dolları = 30,8 milyon ABŞ dolları. Addım 3 — ümumi xərcləri həddilə müqayisə edin: 30,8 milyon ABŞ dolları < 54,12 milyon ABŞ dolları həddidini, buna görə TAM xərc bərpası tətbiq edilir. Addım 4 — mənfəət nefti = ümumi gəlir 98,4 milyon ABŞ dolları − bərpa edilmiş xərclər 30,8 milyon ABŞ dolları = 67,6 milyon ABŞ dolları.",
+    "development_tip_en": "In PSA modeling, the cost oil cap is a ceiling, not a fixed deduction. When actual costs fall below the cap, you recover all actual costs — the cap only binds when costs exceed it. Build a two-branch model in Excel: if total_costs <= cap, profit_oil = revenue - total_costs; if total_costs > cap, profit_oil = revenue - cap. Azerbaijani PSAs also have a 'cost bank' mechanism where unrecovered costs carry forward indefinitely — always track the cumulative cost bank balance separately.",
+    "development_tip_az": "PSA modelləşdirilməsinde xərc nefti həddidini tavan deyil, sabit tutma deyil. Faktiki xərclər həddidinin altına düşdükdə bütün faktiki xərcləri bərpa edirsiniz — hədd yalnız xərclər onu keçdikdə bağlayıcıdır. Excel-də iki qolllu model qurun: total_xərclər <= hədd olduqda, mənfəət_nefti = gəlir - ümumi_xərclər; total_xərclər > hədd olduqda, mənfəət_nefti = gəlir - hədd.",
+    "london_delta": "A London oil analyst familiar with North Sea PSA/petroleum licence structures would know the cost oil cap concept but would default to treating it as a fixed deduction from revenue — a common simplification used in early-stage models. In AZ OSC PSAs, the distinction between 'cap as ceiling vs fixed deduction' changes the profit oil calculation by USD 23.3 million in this scenario. London analysts also rarely model a multi-period 'cost bank' carry-forward — AZ PSAs are unusual in explicitly stating this mechanism and tracking it as a separate ledger item.",
+    "az_institutions": [
+      "SOCAR",
+      "OSC"
+    ],
+    "tags": [
+      "reliability",
+      "PSA",
+      "cost-oil",
+      "profit-oil",
+      "SOCAR",
+      "production-sharing-agreement",
+      "AZ-oil-sector"
+    ]
+  },
+  {
+    "id": "prof-fin-s3-006",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.2,
+    "irt_b": 0.8,
+    "irt_c": 0.1,
+    "scenario_en": "You are a senior analyst at a large Azerbaijani bank. A junior colleague comes to you privately and explains that the branch manager has been instructing front-line staff to report falsely inflated deposit figures to meet quarterly targets — a practice that distorts the bank's reported liquidity ratios sent to the CBA. Azerbaijan does not have a standalone whistleblower protection law. The colleague is afraid of retaliation but believes the practice is illegal. What is the most professionally appropriate course of action?",
+    "scenario_az": "Siz böyük bir Azərbaycan bankının baş analitikisiniz. Kiçik bir həmkarınız sizinlə şəxsən görüşür və filial müdirinin CBA-ya göndərilən bankın hesabat likvidlik nisbətlərini təhrif edən rüblük hədəflərə çatmaq üçün ön cərgə işçilərini yanlış şişirdilmiş depozit rəqəmlərini hesabat verməyə göstəriş verdiyini izah edir. Azərbaycanda ayrıca müxbir müdafiəsi qanunu yoxdur. Həmkarınız intiqamdan qorxur, lakin tətbiqin qeyri-qanuni olduğuna inanır. Peşəkar baxımdan ən uyğun hərəkət nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Advise the colleague to report directly to the CBA's banking supervision department using the CBA's formal complaint portal, which offers anonymous submission",
+        "text_az": "Həmkarınıza anonim müraciət imkanı təklif edən CBA-nın rəsmi şikayət portalı vasitəsilə CBA-nın bank nəzarəti departamentinə birbaşa müraciət etməyi məsləhət görün"
+      },
+      {
+        "key": "B",
+        "text_en": "Advise the colleague to document the evidence in writing, report through the bank's internal compliance/audit committee using whatever internal channel exists, and simultaneously consult a labor lawyer about protections available under AZ Labor Code Article 80 (dismissal restrictions) before escalating externally",
+        "text_az": "Həmkarınıza sübutları yazılı şəkildə sənədləşdirməyi, mövcud daxili kanal vasitəsilə bankın daxili uyğunluq/audit komitəsinə hesabat verməyi, xarici eskalasiyadan əvvəl AZ Əmək Məcəlləsinin 80-ci maddəsi (işdən çıxarma məhdudiyyətləri) altında mövcud qoruma barədə əmək hüquqçusuna müraciət etməyi məsləhət görün"
+      },
+      {
+        "key": "C",
+        "text_en": "Take no action because without a whistleblower protection law, any report will expose the colleague to termination and the bank's legal team will deny all evidence",
+        "text_az": "Heç bir hərəkət etməyin, çünki müxbir müdafiəsi qanunu olmadan hər hansı hesabat həmkarı işdən çıxarılmağa məruz qoyacaq və bankın hüquq komandası bütün sübutları inkar edəcək"
+      },
+      {
+        "key": "D",
+        "text_en": "Anonymously submit the evidence directly to the CBA on behalf of the colleague without their knowledge, to protect them from retaliation",
+        "text_az": "Həmkarınızı intiqamdan qorumaq üçün onların xəbəri olmadan onlar adından CBA-ya sübutları anonim şəkildə birbaşa göndərin"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. In the absence of a dedicated whistleblower protection law in Azerbaijan, the best path combines three elements: (1) internal documentation first — creates an evidence trail and satisfies any internal escalation obligation under the bank's own compliance framework; (2) use of available internal channels — the bank's compliance committee or internal audit function is the first escalation point under standard AML/financial crime frameworks that AZ banks must maintain per CBA licensing requirements; (3) proactive legal protection assessment — AZ Labor Code Article 80 restricts arbitrary dismissal and provides a basis for a wrongful termination claim if the colleague is retaliated against. A is not wrong, but skipping internal channels and going directly to the CBA may be premature and can backfire if the internal evidence is not yet documented. C is an abdication of professional responsibility. D violates the colleague's autonomy — acting on their behalf without consent removes their agency in a situation that directly affects their livelihood.",
+    "feedback_az": "B düzgündür. Azərbaycanda xüsusi müxbir müdafiəsi qanununun olmaması şəraitinde ən yaxşı yol üç elementi birləşdirir: (1) əvvəlcə daxili sənədləşdirmə; (2) mövcud daxili kanalların istifadəsi; (3) aktiv hüquqi qoruma qiymətləndirməsi — AZ Əmək Məcəlləsinin 80-ci maddəsi ixtiyari işdən çıxarmanı məhdudlaşdırır. A tam yanlış deyil, lakin CBA-ya birbaşa getmək erkən ola bilər. C peşəkar məsuliyyətin tərk edilməsidir. D həmkarın razılığı olmadan onların adından hərəkət etmək onların iradəsini pozur.",
+    "development_tip_en": "In AZ financial services, the absence of formal whistleblower protection means you must construct informal protection through documented process compliance. The most defensible position is: (a) report through official internal channels first (creates a paper trail that makes retaliation harder to justify), (b) keep a personal copy of all communications, (c) understand AZ Labor Code Articles 75-80 on termination restrictions. If the internal channel is compromised, the CBA's banking supervision function does accept anonymous reports — but this step works better after internal escalation is documented.",
+    "development_tip_az": "AZ maliyyə xidmətlərinde rəsmi müxbir müdafiəsinin olmaması, sənədləşdirilmiş proses uyğunluğu vasitəsilə qeyri-rəsmi qoruma qurmanız lazım olduğunu bildirir. Ən müdafiə edilə bilən mövqe: (a) əvvəlcə rəsmi daxili kanallar vasitəsilə hesabat verin, (b) bütün yazışmaların şəxsi nüsxəsini saxlayın, (c) işdən çıxarma məhdudiyyətləri üzrə AZ Əmək Məcəlləsinin 75-80-ci maddələrini anlayın.",
+    "london_delta": "A London analyst operating under the FCA's Protected Disclosures Act and the Employment Rights Act 1996 (UK whistleblower statute) would default to recommending direct FCA disclosure — a legally protected channel with automatic employer retaliation prohibitions. In AZ, no such direct regulatory disclosure right exists; the AZ Labor Code's termination restrictions are procedural (harder to fire without justification) not substantive (explicit whistleblower immunity). A London analyst who recommended the FCA-equivalent path (direct CBA report) without first assessing the AZ legal context would inadvertently expose the colleague to dismissal with limited recourse.",
+    "az_institutions": [
+      "CBA"
+    ],
+    "tags": [
+      "empathy-safeguarding",
+      "whistleblower",
+      "AZ-labor-code",
+      "no-formal-protection",
+      "financial-misconduct",
+      "compliance"
+    ]
+  },
+  {
+    "id": "prof-fin-s3-007",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "hard",
+    "type": "sjt",
+    "irt_a": 1.6,
+    "irt_b": 1.3,
+    "irt_c": 0.08,
+    "scenario_en": "You lead the treasury risk team at a mid-sized AZ bank. The CBA has just published updated guidance confirming that SOFAZ's non-commercial rate (1.7000 AZN/USD) diverges from the CBA interbank rate (1.7025 AZN/USD) by 25 basis points on a USD 850 million sovereign FX reserve position your team is helping value for a government-linked client. The 0.15% rate gap creates a USD 1.27 million difference in reported position value — material for the client's annual report. Your most experienced analyst argues you should use the SOFAZ rate because 'that's what the client expects and we don't want to create problems.' A junior analyst argues for the interbank rate because 'CBA rules require it for commercial bank valuations.' The client meeting is in 3 hours. How do you lead the team to resolution?",
+    "scenario_az": "Siz orta ölçülü AZ bankının xəzinədarlıq risk qrupuna rəhbərlik edirsiniz. CBA, qrupunuzun dövlətlə əlaqəli müştəri üçün dəyərləndirməyə kömək etdiyi 850 milyon ABŞ dolları suveren FX ehtiyat mövqeyindəki SOFAZ-ın qeyri-kommersiya məzənnəsinin (1.7000 AZN/USD) CBA banklararası məzənnəsindən (1.7025 AZN/USD) 25 baza nöqtəsi ilə fərqləndiyini təsdiqləyən yenilənmiş rəhbərlik yayımladı. 0.15% məzənnə fərqi müştərinin illik hesabatında hesabat verilmiş mövqe dəyərindəki 1,27 milyon ABŞ dolları fərq yaradır — müştəri üçün əhəmiyyətli. Ən təcrübəli analitikünüz 'müştəri bunu gözləyir və problem yaratmaq istəmirik' deyərək SOFAZ məzənnəsinin istifadəsini müdafiə edir. Kiçik bir analitik 'CBA qaydaları kommersiya bankı qiymətləndirmələri üçün bunu tələb edir' deyərək banklararası məzənnəni müdafiə edir. Müştəri görüşü 3 saat sonradır. Qrupu həllə necə rəhbərlik edirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Side with the junior analyst immediately — CBA rules govern, present the interbank rate valuation at the meeting and explain the regulatory basis if the client questions it",
+        "text_az": "Dərhal kiçik analitikle razılaşın — CBA qaydaları idarə edir, görüşdə banklararası məzənnə qiymətləndirilməsini təqdim edin və müştəri sual versə normativ əsası izah edin"
+      },
+      {
+        "key": "B",
+        "text_en": "Prepare dual valuation: primary valuation at CBA interbank rate (regulatory-compliant), secondary valuation at SOFAZ rate (for client context), present both with explicit labeling and let the client choose",
+        "text_az": "İkili qiymətləndirmə hazırlayın: CBA banklararası məzənnəsindəki əsas qiymətləndirmə (normativ uyğun), müştəri konteksti üçün SOFAZ məzənnəsindəki ikinci qiymətləndirmə, hər ikisini açıq etiketləmə ilə təqdim edin"
+      },
+      {
+        "key": "C",
+        "text_en": "Postpone the meeting by 24 hours to allow formal written guidance from your bank's legal and compliance team before committing to either rate in a client-facing document",
+        "text_az": "Müştəriyə yönelik sənəddə hər hansı məzənnəyə əlavə etməzdən əvvəl bankın hüquq və uyğunluq qrupundan rəsmi yazılı rəhbərlik almaq üçün görüşü 24 saat təxirə salın"
+      },
+      {
+        "key": "D",
+        "text_en": "Acknowledge both perspectives, declare the CBA interbank rate as the only regulatory-compliant option for your bank's commercial valuation, prepare a clear one-paragraph rate reconciliation note for the client explaining the USD 1.27 million gap, and brief the senior analyst privately on why regulatory compliance is non-negotiable even with relationship pressure",
+        "text_az": "Hər iki perspektivi qəbul edin, CBA banklararası məzənnəsini bankınızın kommersiya qiymətləndirilməsi üçün yeganə normativ uyğun seçim kimi elan edin, müştəri üçün 1,27 milyon ABŞ dolları fərqini izah edən aydın bir paraqraflı məzənnə uzlaşdırma qeydi hazırlayın və baş analitiki münasibətsiz təzyiq olsa belə normativ uyğunluğun qeyri-danışıqlı olduğu barədə şəxsən məlumatlandırın"
+      }
+    ],
+    "correct_answer": "D",
+    "feedback_en": "D is correct. This is a leadership question, not just a technical one. The leader must do four things: (1) demonstrate intellectual fairness by acknowledging both perspectives before deciding — this preserves team trust; (2) make the technically correct call — the CBA interbank rate is mandatory for commercial bank valuations per CBA guidance, this is not a judgment call; (3) prepare the client communication proactively — the USD 1.27 million gap is material and the client deserves a transparent explanation, not a number that appears without context; (4) develop the senior analyst privately — publicly overriding an experienced colleague damages morale, but the compliance lesson must land. A is technically correct but misses the leadership dimension of handling the team disagreement and preparing client communication. B is wrong — presenting two rates to a client in an official valuation creates confusion and implies the bank is uncertain about its own regulatory obligations. C is wrong — a 24-hour postponement is excessive and disproportionate to a question that can be resolved with a phone call to the bank's compliance officer in under an hour.",
+    "feedback_az": "D düzgündür. Bu yalnız texniki deyil, liderlik sualdır. Lider dörd şey etməlidir: (1) hər iki perspektivi qəbul edərək intellektual ədalətliliyi nümayiş etdirin; (2) texniki cəhətdən düzgün qərar qəbul edin — CBA banklararası məzənnəsi kommersiya bank qiymətləndirmələri üçün məcburidir; (3) müştəri kommunikasiyasını proaktiv şəkildə hazırlayın; (4) baş analitiki şəxsən inkişaf etdirin. A texniki cəhətdən düzgündür, lakin komanda anlaşmazlığını idarə etmə və müştəri kommunikasiyası hazırlamanın liderlik ölçüsünü qaçırır. B yanlışdır — rəsmi qiymətləndirilmədə müştəriyə iki məzənnə təqdim etmək çaşqınlıq yaradır.",
+    "development_tip_en": "Relationship pressure from government-linked clients is common in AZ financial services — the implicit message is often 'use the number that makes our report look consistent.' Build your credibility by becoming the analyst who proactively explains the rate gap rather than the one who avoids it. A well-written one-paragraph reconciliation note actually increases client trust; it shows you understand their reporting context while maintaining your regulatory integrity.",
+    "development_tip_az": "Dövlətlə əlaqəli müştərilərdən münasibət təzyiqi AZ maliyyə xidmətlərinde yaygındır. Məzənnə fərqini qaçırmaq əvəzinə proaktiv şəkildə izah edən analitik olmaqla etibarlılığınızı artırın. Yaxşı yazılmış bir paraqraflı uzlaşdırma qeydi müştəri etibarını artırır; tənzimləyici bütövlüyünüzü qoruyarkən onların hesabat kontekstini anladığınızı göstərir.",
+    "london_delta": "A London treasury team lead facing a similar rate dispute between Bloomberg composite and a sovereign reference rate would treat option D as obvious — the regulatory rate governs, client gets an explanatory note, junior colleague who raised the compliance point gets acknowledged. What London does not have is the specific AZ dynamic where a government-linked client's 'expectation' to use the SOFAZ rate carries an implicit relationship cost that a senior analyst might weight heavily. The London-trained leader might underestimate how much political capital this decision consumes and fail to brief the senior analyst privately before the meeting — creating a team cohesion problem that outlasts the immediate technical question.",
+    "az_institutions": [
+      "SOFAZ",
+      "CBA"
+    ],
+    "tags": [
+      "leadership",
+      "SOFAZ-rate",
+      "CBA-interbank-rate",
+      "team-decision",
+      "regulatory-compliance",
+      "client-communication"
+    ]
+  },
+  {
+    "id": "prof-fin-s3-008",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "hard",
+    "type": "sjt",
+    "irt_a": 1.7,
+    "irt_b": 1.5,
+    "irt_c": 0.08,
+    "scenario_en": "It is April 2020. You are the chief financial analyst at an Azerbaijani state enterprise. Brent crude has crashed to USD 25/bbl (from USD 65 in January). SOFAZ has announced an emergency drawdown of USD 2.3 billion to support the state budget — the largest since the 2016 devaluation. The Finance Ministry has revised GDP growth from +2.5% to -3.0%. Your enterprise's operating budget was approved in December 2019 at an oil price assumption of USD 55/bbl, with AZN 145 million in capital expenditure planned for Q2-Q3. The budget cannot be formally revised until the next parliamentary session in 6 weeks. You must present an updated financial position to your board in 48 hours. What is the most adaptive and professionally defensible approach?",
+    "scenario_az": "2020-ci ilin Aprel ayıdır. Siz Azərbaycan dövlət müəssisəsinin baş maliyyə analitikisiniz. Brent nefti ABŞ dolları 65-dən (Yanvarda) 25 ABŞ dollarına/barrel düşüb. SOFAZ dövlət büdcəsini dəstəkləmək üçün 2016-cı ildəki devalvasiyadan bəri ən böyük 2,3 milyard ABŞ dolları məbləğilə təcili çəkilmə elan etdi. Maliyyə Nazirliyi ÜDM artımını +2.5%-dən -3.0%-ə düzəltdi. Müəssisənizin əməliyyat büdcəsi Dekabr 2019-cu ildə 55 ABŞ dolları/barrel neft qiyməti fərziyyəsi ilə, 2-3-cü rüblər üçün planlaşdırılmış 145 milyon AZN kapital xərcləri ilə təsdiqlənib. Büdcə 6 həftə sonra növbəti parlament sessiyasına qədər rəsmi şəkildə baxıla bilməz. İdarə heyətinizə 48 saatda yenilənmiş maliyyə vəziyyətini təqdim etməlisiniz. Ən adaptiv və peşəkar müdafiə edilə bilən yanaşma nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Present the approved budget as-is and note that formal revision requires parliamentary approval — no interim adjustments should be made without that authorization",
+        "text_az": "Təsdiqlənmiş büdcəni olduğu kimi təqdim edin və rəsmi baxışın parlament təsdiqini tələb etdiyini qeyd edin — bu icazəsiz heç bir aralıq düzəliş edilməməlidir"
+      },
+      {
+        "key": "B",
+        "text_en": "Prepare three scenario models (USD 25/bbl, USD 35/bbl, USD 45/bbl) alongside the approved budget baseline, show cash flow impact and capital expenditure sustainability for each, identify which Q2-Q3 capital projects can be deferred without contractual penalty, and recommend the board approve an internal spending freeze pending formal budget revision",
+        "text_az": "Üç ssenari modeli (25, 35, 45 ABŞ dolları/barrel) hazırlayın, hər biri üçün pul vəsaitlərinin hərəkəti təsirini və kapital xərcləri davamlılığını göstərin, hansı 2-3-cü rüb kapital layihələrinin müqaviləyə ziyan vermədən təxirə salına biləcəyini müəyyən edin və idarə heyətinə rəsmi büdcə baxışını gözləyərkən daxili xərc dondurulmasını tövsiyə edin"
+      },
+      {
+        "key": "C",
+        "text_en": "Unilaterally cancel all Q2 capital expenditure to preserve cash, inform the board of the decision as a fait accompli",
+        "text_az": "Pul vəsaitlərini qorumaq üçün birtərəfli olaraq bütün 2-ci rüb kapital xərclərini ləğv edin, qərar barədə idarə heyətini fakt kimi məlumatlandırın"
+      },
+      {
+        "key": "D",
+        "text_en": "Wait for the Finance Ministry to issue a revised budget circular before making any internal adjustments, and present the board with an unchanged position pending official guidance",
+        "text_az": "Hər hansı daxili düzəliş etməzdən əvvəl Maliyyə Nazirliyinin yenilənmiş büdcə sirkularını buraxmasını gözləyin və rəsmi rəhbərliyi gözləyərkən idarə heyətinə dəyişməz bir mövqe təqdim edin"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. The core adaptive challenge here is operating in the gap between an obsolete approved budget and a 6-week legislative delay. The professionally defensible solution has four components: (1) scenario modeling — presenting three price scenarios alongside the baseline is standard crisis financial management and gives the board the information they need to govern; (2) cash flow impact quantification — the approved AZN 145m capex at USD 55/bbl may be unsustainable at USD 25/bbl depending on revenue indexation; (3) deferral analysis — identifying which capex items have no contractual penalty for delay gives the board real options without requiring formal budget revision; (4) the internal spending freeze recommendation is a governance-appropriate mechanism — it gives the board authority to act before the parliamentary session without formally breaching the approved budget. A is an abdication of the analyst role — presenting an obsolete document without scenario context in a crisis is negligent. C is wrong — unilateral capex cancellation without board authorization exceeds the analyst's authority. D is wrong — waiting 6 weeks for a ministry circular when you have 48 hours to brief the board is a failure of adaptive management.",
+    "feedback_az": "B düzgündür. Buradaki əsas adaptiv problem köhnəlmiş təsdiqlənmiş büdcə ilə 6 həftəlik qanunvericilik gecikmesi arasındaki boşluqda fəaliyyət göstərməkdir. Peşəkar müdafiə edilə bilən həll dörd komponentə malikdir: (1) ssenari modelləşdirməsi; (2) pul vəsaitlərinin hərəkəti təsirinin kəmiyyətləndirilməsi; (3) təxir analizi; (4) daxili xərc dondurulması tövsiyəsi. A analitik rolunun tərk edilməsidir. C yanlışdır — birtərəfli kapeks ləğvi analitikın səlahiyyətini aşır. D yanlışdır — 6 həftə gözləmək adaptiv idarəetmənin uğursuzluğudur.",
+    "development_tip_en": "In AZ state enterprise finance, the formal budget revision cycle (parliamentary approval) moves slowly by design. Build a 'shadow budget' practice: maintain a live scenario model that is always current with actual price assumptions, and be ready to present it alongside the official approved budget in any board meeting. The shadow budget is not unauthorized — it is a management tool. Frame it explicitly as 'board information for governance decisions' and it serves as the bridge between approved authority and operational reality.",
+    "development_tip_az": "AZ dövlət müəssisəsi maliyyəsinde rəsmi büdcə baxış dövrü (parlament təsdiqı) qəsdən yavaş gedir. 'Kölgə büdcəsi' təcrübəsi qurun: həmişə faktiki qiymət fərziyyələri ilə canlı olan ssenari modelini saxlayın. Kölgə büdcəsi icazəsiz deyil — bu idarəetmə alətidir. Onu açıq şəkildə 'idarəetmə qərarları üçün idarə heyəti məlumatı' kimi çərçivəyə alın.",
+    "london_delta": "A London CFO at a listed company facing an oil price crash would immediately invoke the 'material uncertainty' disclosure framework under UK GAAP or IFRS, trigger an emergency board meeting, and publish an RNS (regulatory news service) update — all within 48 hours. This reflex exists because UK capital markets regulations mandate rapid disclosure of material changes. In AZ, state enterprises have no listed equity and no RNS obligation; the constraint is parliamentary budget approval cycles. A London-trained analyst might correctly identify the need for scenario modeling but underestimate the political and legal sensitivity of recommending capex deferral in a state enterprise context before receiving top-down Ministry guidance.",
+    "az_institutions": [
+      "SOFAZ"
+    ],
+    "tags": [
+      "adaptability",
+      "COVID-2020",
+      "SOFAZ-drawdown",
+      "state-enterprise",
+      "crisis-budget",
+      "scenario-modeling",
+      "oil-price-shock"
+    ]
+  },
+  {
+    "id": "prof-fin-s3-009",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 1.5,
+    "irt_b": 1.8,
+    "irt_c": 0.0,
+    "scenario_en": "You are a senior risk analyst at a regional Azerbaijani bank. You discover that a branch manager in a lower-income district of Baku has been systematically steering elderly and low-financial-literacy customers toward a 3-year AZN-denominated savings product with a 4.5% nominal rate — lower than the current CBA policy rate of 8.75% and well below inflation. The product generates higher fee income for the branch and counts toward the manager's quarterly sales KPIs. When you raise this internally, the compliance team tells you 'the product is CBA-approved and there is no specific mis-selling regulation in AZ.' You have evidence of 47 affected customers across a 14-month period with an average account size of AZN 18,500. Describe what you would do and why, addressing: (1) your immediate actions, (2) the systemic risk this represents, (3) how you balance regulatory compliance with ethical responsibility in an environment with regulatory gaps.",
+    "scenario_az": "Siz regional Azərbaycan bankının baş risk analitikisiniz. Bakının aşağı gəlirli bir rayonundakı filial müdirinin yaşlı və maliyyə savadı aşağı olan müştəriləri mütəmadi olaraq CBA-nın cari 8.75% siyasət dövlüsündən aşağı və inflyasiyadan çox altda olan 4.5% nominal dövlüsü ilə 3 illik AZN-nominallı əmanət məhsuluna yönəltdiyini kəşf edirsiniz. Məhsul filial üçün daha yüksək komission gəliri yaradır və müdirin rüblük satış KPI-larına hesablanır. Bunu daxili olaraq qaldırdığınızda, uyğunluq qrupu sizə 'məhsul CBA tərəfindən təsdiqlənib və AZ-da xüsusi yanlış satış tənzimlənməsi yoxdur' deyir. Orta hesab ölçüsü 18.500 AZN olan 14 aylıq dövrdə 47 zərərçəkmiş müştərinin sübutlarınız var. Nə edəcəyinizi və nə üçün izah edin: (1) dərhal hərəkətləriniz, (2) bunun təmsil etdiyi sistemli risk, (3) tənzimləyici boşluqlarla mühitdə tənzimləyici uyğunluq ilə etik məsuliyyəti necə tarazlaşdırdığınız.",
+    "evaluation_rubric": {
+      "bars_anchors": {
+        "5": "Identifies immediate actions across at least 3 levels (evidence preservation, internal escalation beyond the compliance team to CTO/CRO level, and consideration of external escalation to CBA banking supervision as a formal complaint even without a mis-selling regulation). Quantifies the systemic risk correctly: AZN 18,500 × 47 = AZN 869,500 in affected deposits at a rate 4.25% below policy rate, representing AZN 36,954 annual real-income loss across the affected population, and correctly identifies reputational and regulatory risk escalation if the practice is discovered by CBA during a routine examination. Articulates the regulatory gap clearly: 'CBA-approved product' does not mean the conduct of sale is compliant — AZ lacks a formal suitability obligation akin to MiFID II or UK COBS but the bank's own internal conduct policy and duty of care obligations likely cover this. Proposes specific customer remediation steps (e.g., option to exit the product at no penalty, proactive outreach to the 47 customers). Explicitly addresses the AZ context: low-financial-literacy elderly customers in lower-income districts are a protected class under general principles of AZ consumer protection law even without a specific mis-selling statute.",
+        "4": "Identifies immediate actions at 2 levels (evidence preservation plus escalation). Quantifies systemic risk partially (total deposits affected but misses annual income loss calculation). Correctly states regulatory gap but does not propose customer remediation. Understands that 'CBA-approved product' ≠ 'compliant conduct of sale.' Does not articulate the AZ consumer protection law angle.",
+        "3": "Identifies immediate actions (escalation) but does not structure evidence preservation. Correctly identifies the ethical problem but frames it only as a regulatory question. Does not quantify the impact. Suggests waiting for regulatory guidance rather than proactive internal action. Misses customer remediation.",
+        "2": "Frames the response as 'there is nothing I can do because there is no regulation.' Identifies the problem but defers entirely to compliance team's conclusion. Does not consider escalating above the compliance team. Shows no customer-impact quantification.",
+        "1": "Either accepts the compliance team's conclusion without challenge, or proposes extreme action (public disclosure, media) without exhausting internal channels first. No quantification, no systemic risk analysis, no remediation proposal."
+      }
+    },
+    "feedback_en": "A strong response must distinguish between regulatory compliance (the product is CBA-approved) and conduct compliance (the manner of sale may violate suitability standards the bank is responsible for even absent specific regulation). Key dimensions: immediate action should include preserving the evidence of 47 customer accounts, escalating to Chief Risk Officer or board audit committee (not just compliance), and flagging that this likely constitutes a finding that would emerge in a CBA examination. The systemic risk is twofold: financial (AZN 869,500 in deposits earning below-inflation returns = real wealth destruction for vulnerable customers) and reputational (if CBA or media discovers this, the bank faces both supervisory action and public trust loss). The ethical-regulatory balance requires acknowledging that legal minimalism ('no specific mis-selling regulation') is not a professional standard for a risk analyst — the analyst's duty of care to customers, articulated in the bank's own conduct of business policies, is the operative standard.",
+    "feedback_az": "Güclü cavab tənzimləyici uyğunluq (məhsul CBA tərəfindən təsdiqlənib) ilə davranış uyğunluğunu (satış tərzi xüsusi tənzimləmə olmasa da bankın cavabdeh olduğu uyğunluq standartlarını poza bilər) fərqləndirməlidir. Dərhal hərəkət 47 müştəri hesabının sübutlarını qorumağı, Baş Risk Direktoru və ya idarə heyəti audit komitəsinə eskalasiya etməyi (yalnız uyğunluq deyil) əhatə etməlidir. Sistemli risk ikitərəflidir: maliyyə (inflyasyondan aşağı gəlir qazanan 869.500 AZN əmanətlər = həssas müştərilər üçün real sərvət məhvi) və reputasiya (CBA bunu kəşf etsə, bank nəzarət tədbirləri və ictimai güvən itkisiylə üzləşir).",
+    "development_tip_en": "In AZ financial services, the absence of a formal suitability regulation (like MiFID II or UK COBS) does not mean suitability is irrelevant — it means the standard is set by your bank's own internal policies and general consumer protection principles. Every bank operating under CBA licensing has a conduct-of-business section in its internal policy manual. When a compliance team tells you 'there is no specific regulation,' your next question should always be: 'What does our internal conduct policy say?' That internal policy is your regulatory floor.",
+    "development_tip_az": "AZ maliyyə xidmətlərinde rəsmi uyğunluq tənzimlənməsinin (MiFID II kimi) olmaması uyğunluğun əhəmiyyətsiz olduğu demək deyil — standartın bankınızın öz daxili siyasətlər tərəfindən müəyyən edildiyi anlamına gəlir. Uyğunluq qrupu sizə 'xüsusi tənzimləmə yoxdur' dedikdə növbəti sualınız həmişə olmalıdır: 'Daxili davranış siyasətimiz nə deyir?'",
+    "london_delta": "A London risk analyst would immediately recognize this as a FCA Principle 6 (Treating Customers Fairly) and COBS 9 (suitability) violation — with formal regulatory language, escalation paths, and potential FCA Section 166 skilled person review implications. In AZ, none of these formal frameworks exist; the analyst must construct the ethical argument from first principles (duty of care, internal conduct policy, general consumer protection law) rather than citing regulatory chapter and verse. A London analyst parachuted into this situation might actually be less effective — they would spend time looking for the AZ equivalent of COBS when none exists, rather than building the case from the bank's own internal policies.",
+    "az_institutions": [
+      "CBA"
+    ],
+    "tags": [
+      "empathy-safeguarding",
+      "mis-selling",
+      "financial-literacy",
+      "vulnerable-customers",
+      "regulatory-gap",
+      "conduct-risk",
+      "AZ-consumer-protection"
+    ]
+  },
+  {
+    "id": "prof-fin-s3-010",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 1.6,
+    "irt_b": 2.1,
+    "irt_c": 0.0,
+    "scenario_en": "You are a financial modeler at ABB (Azerbaijan Business Bank). The treasury team needs to price a 3-year AZN-denominated corporate bond being issued by a mid-sized Azerbaijani manufacturer. No AZN corporate bond yield curve exists — the only observable AZN fixed income instruments are: (1) CBA-issued 1-year treasury bills at 9.10%, (2) 2-year Ministry of Finance bills at 9.45%, (3) IBA (International Bank of Azerbaijan) 2-year senior unsecured bonds at 10.20%, (4) ABB's own 3-year senior bond issued 8 months ago at 11.00% (still trading at par). The issuing manufacturer has no public credit rating, revenue of AZN 220 million, EBITDA margin of 18%, and a net debt/EBITDA of 3.4x. AZN inflation is running at 6.8%. Describe your methodology for pricing this bond, the key assumptions, and the specific AZ market constraints that make standard EMBI+ or European HY pricing models inapplicable here.",
+    "scenario_az": "Siz ABB (Azərbaycan Biznes Bankı) bank maliyyə modelçisisiniz. Xəzinədarlıq qrupu orta ölçülü Azərbaycan istehsalçısı tərəfindən buraxılan 3 illik AZN-nominallı korporativ istiqraz qiymətləndirməsi üçün yardım istəyir. AZN korporativ istiqraz gəlir əyrisi mövcud deyil — yeganə müşahidə edilə bilən AZN sabit gəlirli alətlər bunlardır: (1) CBA tərəfindən buraxılan 1 illik dövlət vekselləri 9.10%-də, (2) 2 illik Maliyyə Nazirliyi vekselləri 9.45%-də, (3) IBA (Azərbaycan Beynəlxalq Bankı) 2 illik baş güvəncəsiz istiqrazlar 10.20%-də, (4) ABB-nin 8 ay əvvəl buraxılan öz 3 illik baş istiqrazı 11.00%-də (hələ par-da ticarət edilir). Buraxan istehsalçının ictimai kredit reytinqi yoxdur, gəliri 220 milyon AZN-dir, EBITDA marjı 18%-dir, xalis borc/EBITDA 3.4x-dir. AZN inflyasiyası 6.8%-dir. Bu istiqrazı qiymətləndirmək üçün metodologiyanı, əsas fərziyyələri və standart EMBI+ və ya Avropa HY qiymətləndirmə modellərini burada tətbiq edilə bilməz edən xüsusi AZ bazar məhdudiyyətlərini izah edin.",
+    "evaluation_rubric": {
+      "bars_anchors": {
+        "5": "Constructs a synthetic AZN risk-free rate curve using the three observable points (1yr CBA T-bill 9.10%, 2yr MoF bill 9.45%, extrapolating the 3yr sovereign proxy via linear or Nelson-Siegel interpolation to approximately 9.65-9.80%). Derives an AZN corporate credit spread by using the ABB 3yr bond (11.00%) as the closest comparable — this implies a BBB-equivalent AZN corporate spread of ~120-135bps over the synthetic sovereign. Adjusts the spread for issuer-specific factors: (a) no public rating → add 50-75bps illiquidity/rating uncertainty premium; (b) net debt/EBITDA 3.4x is sub-investment-grade by EM standards → add 80-120bps; (c) EBITDA margin 18% is thin for a manufacturer with AZN-denominated revenue but potentially USD-exposed input costs (commodity risk). Arrives at a pricing range of approximately 12.5-13.5% YTM. Explicitly states why EMBI+ is inapplicable: EMBI+ is a USD-denominated sovereign/quasi-sovereign index, AZN instruments are not included, and AZ has no sovereign Eurobond in the relevant maturity. States why European HY models are inapplicable: European HY is EUR-denominated, uses EBA regulatory capital charges and ESMA liquidity classifications that are irrelevant in AZ, and European HY spreads are calibrated to markets with deep secondary liquidity — the AZN corporate bond market has near-zero secondary trading volume. Notes AZ-specific constraint: AZN inflation at 6.8% creates a real yield question — at 12.5-13.5% nominal, the real yield is 5.7-6.7%, reasonable for a sub-investment-grade AZ corporate but must be disclosed to investors.",
+        "4": "Constructs the synthetic sovereign curve and identifies ABB bond as comparable. Derives a credit spread and adds illiquidity premium. Arrives at a pricing estimate in the 12-14% range. Correctly states EMBI+ is USD-denominated and therefore inapplicable. Does not address input cost currency risk or fully explain European HY inapplicability.",
+        "3": "Identifies the absence of a yield curve as the central problem. Uses ABB bond as anchor. Adds a qualitative 'spread' for credit quality but does not quantify it systematically. Mentions inflation as a factor but does not calculate real yield. Does not address EMBI+/European HY inapplicability with specificity.",
+        "2": "Starts from a global EM benchmark (e.g., EMBI+ + country spread) without explaining that AZN instruments are not part of that index. Arrives at a number but cannot justify the spread construction. Misses the real yield analysis.",
+        "1": "Cannot construct a pricing methodology in the absence of a yield curve. Recommends waiting for a credit rating before pricing. Confuses nominal and real yield. Has no AZ-specific analysis."
+      }
+    },
+    "feedback_en": "The core technical challenge is constructing a synthetic AZN risk-free curve from sparse observable data and then deriving an appropriate corporate credit spread in a market with negligible secondary trading. The three-point sovereign curve (9.10%, 9.45%, extrapolated ~9.70% 3yr) provides the floor. The ABB 3yr bond at 11.00% over its own synthetic sovereign implies a ~130bps institutional bank spread. The unrated manufacturer at 3.4x leverage needs: base rate (~9.70%) + bank senior spread proxy (130bps) + sub-investment-grade leverage adjustment (100-150bps) + illiquidity premium for zero-rating (50-75bps) = 12.50-13.95% YTM. EMBI+ is inapplicable because it is a USD-denominated index of sovereign and quasi-sovereign dollar bonds — AZN corporate paper is structurally excluded. European HY is inapplicable because the spread calibration assumes deep secondary market liquidity, MiFID II disclosure infrastructure, and EUR-USD cross-currency basis none of which exist in AZ.",
+    "feedback_az": "Əsas texniki problem seyrek müşahidə edilə bilən məlumatlardan sintetik AZN risksiz əyrisini qurmaq və sonra əhəmiyyətsiz ikinci dərəcəli ticarəti olan bazarda uyğun korporativ kredit faizini türetməkdir. Üç nöqtəli suveren əyri (9.10%, 9.45%, ekstrapolyasiya edilmiş ~9.70% 3 illik) tabanı təmin edir. ABB-nin 3 illik istiqrazı öz sintetik suveren üzərindən 11.00%-də ~130 baza nöqtəlik institusional bank yayılmasını nəzərdə tutur. Reytingsiz istehsalçı 3.4x levereclə tələb edir: baza dövlü (~9.70%) + bank baş yayılma proksi (130 baz nöqtəsi) + sub-investisiya dərəcəli leverec düzəlişi (100-150 baz nöqtəsi) + sıfır-reytinq üçün likvidlik azlığı mükafatı (50-75 baz nöqtəsi) = 12.50-13.95% YTM.",
+    "development_tip_en": "In the absence of a formal AZN corporate bond yield curve, maintain your own internal 'AZN credit reference table' — a spreadsheet updated quarterly with all observable AZN fixed income instruments, their tenor, issuer type, and implied spread over sovereign. This becomes your pricing anchor for any new AZN issuance. The IBA bond (10.20%) and ABB bond (11.00%) are your most valuable data points: both are senior unsecured, both are AZN-denominated, and both are from recognizable AZ financial institutions — they give you a 'AZN institutional senior credit' reference rate from which corporate non-financial spreads can be derived.",
+    "development_tip_az": "Rəsmi AZN korporativ istiqraz gəlir əyrisinin olmaması şəraitinde öz daxili 'AZN kredit istinad cədvəlinizi' saxlayın — bütün müşahidə edilə bilən AZN sabit gəlirli alətləri, onların müddəti, emitent növü və suveren üzərindəki nəzərdə tutulan faizi ilə rüblük yenilənən cədvəl. Bu, hər hansı yeni AZN emissiyası üçün qiymətləndirmə lövbərinizə çevrilir.",
+    "london_delta": "A London fixed income analyst pricing a sterling corporate bond would open Bloomberg, pull the gilt curve, find comparables from the sterling investment-grade or high-yield index, apply sector and ratings-adjusted spreads from a deep liquid market, and arrive at a price in 20 minutes. None of these inputs exist for AZN: no Bloomberg AZN corporate index, no credit ratings on most issuers, no liquid secondary market. The London analyst's training fails completely in the data-sparse AZ environment — the skill required is not faster Bloomberg navigation but methodological construction from first principles. A London-trained analyst who tries to map EMBI+ or European HY spreads to an AZN corporate without adjusting for AZN market structure will systematically underprice illiquidity risk by 100-200bps.",
+    "az_institutions": [
+      "ABB",
+      "IBA",
+      "CBA"
+    ],
+    "tags": [
+      "tech-literacy",
+      "bond-pricing",
+      "AZN-yield-curve",
+      "credit-spread",
+      "ABB",
+      "IBA",
+      "illiquidity-premium",
+      "EMBI-inapplicable",
+      "AZ-capital-markets"
+    ]
+  }
+]

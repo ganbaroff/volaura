@@ -77,6 +77,8 @@ export type Profile = {
   is_public: boolean;
   created_at: string;
   updated_at: string;
+  registration_number: number | null;
+  registration_tier: string | null;
 };
 
 /** Transform API ProfileResponse to Profile with safe defaults */
@@ -92,6 +94,8 @@ export function toProfile(raw: ProfileResponse): Profile {
     is_public: raw.is_public ?? false,
     created_at: raw.created_at,
     updated_at: raw.updated_at,
+    registration_number: raw.registration_number ?? null,
+    registration_tier: raw.registration_tier ?? null,
   };
 }
 

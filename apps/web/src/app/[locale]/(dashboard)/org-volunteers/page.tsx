@@ -97,7 +97,7 @@ function VolunteerRow({ row, onClick }: { row: OrgVolunteerRow; onClick: () => v
       </span>
 
       {/* Competencies */}
-      <span className="shrink-0 text-xs text-on-surface-variant w-16 text-right">
+      <span className="hidden sm:inline shrink-0 text-xs text-on-surface-variant w-16 text-right">
         {row.competencies_completed} comp.
       </span>
 
@@ -290,7 +290,7 @@ export default function OrgVolunteersPage() {
               />
             </div>
 
-            <div className="flex gap-1.5 shrink-0">
+            <div className="flex flex-wrap gap-1.5 shrink-0">
               {STATUS_FILTERS.map(({ key, label }) => (
                 <button
                   key={label}

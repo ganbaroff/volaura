@@ -11,16 +11,17 @@ class Settings(BaseSettings):
     # Anon key — PUBLIC key, safe to hardcode as fallback (like Stripe publishable key).
     # Supabase anon keys are designed to be exposed in browser/client-side code.
     # env var SUPABASE_ANON_KEY may be intercepted by Railway's Supabase integration;
-    # ⚠️ PUBLIC anon key for Volaura Supabase project (hvykysvdkalkbswmgfut).
+    # ⚠️ PUBLIC anon key for Volaura Supabase project (dwdgzfusjsobnixgyzjk) — PAID plan.
+    # Project ref: dwdgzfusjsobnixgyzjk (new paid project, migrated 2026-03-28).
+    # Old ref hvykysvdkalkbswmgfut is blocked at startup by RISK-011 guard above.
     # This is intentionally public — RLS enforces all access control.
-    # Do NOT replace with a different project's key without understanding RLS implications.
     # SUPABASE_ANON_JWT is the unintercepted fallback name.
     # If both env vars are missing (Railway interception), the hardcoded default is used.
     _ANON_KEY_DEFAULT: str = (
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
-        ".eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2eWt5c3Zka2Fsa2Jzd21nZnV0Iiwicm9sZSI6ImFub24i"
-        "LCJpYXQiOjE3NzQyMTgyODQsImV4cCI6MjA4OTc5NDI4NH0"
-        ".W4Ck1Mn8LSwMuaSg-dGnVncQeTwSwvNH2Rpp6B-JPL8"
+        ".eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR3ZGd6ZnVzanNvYm5peGd5emprIiwicm9sZSI6ImFub24i"
+        "LCJpYXQiOjE3NzQ4OTU0MDQsImV4cCI6MjA5MDQ3MTQwNH0"
+        ".rbyIBLRONffOKCmfiLJQU_RVEgDmQ5MjUMPj8I8GxOw"
     )
     supabase_anon_key: str = _ANON_KEY_DEFAULT
     supabase_anon_jwt: str = ""  # reads SUPABASE_ANON_JWT env var
@@ -39,6 +40,7 @@ class Settings(BaseSettings):
     api_port: int = 8000
     app_env: str = "development"
     app_url: str = "http://localhost:3000"
+    default_locale: str = "az"  # AZ is primary locale; used in server-generated URLs
 
     # LLM — V-BRAIN chain: primary→fallback→fallback→keyword
     # GEM=aura-eyes, GRQ=quick-pulse, OAI=deep-cortex, DSK=shadow-mind
@@ -59,12 +61,40 @@ class Settings(BaseSettings):
     sentry_dsn: str = ""         # Org: volaura, Project: volaura-api (created 2026-03-29)
 
     # Stripe (MVP-1)
+    # ── KILL SWITCH ──────────────────────────────────────────────────────────────
+    # payment_enabled=False (default): paywall bypassed, checkout returns 503.
+    # All Stripe infrastructure is wired and tested — flip to True + set keys to activate.
+    # Set PAYMENT_ENABLED=true on Railway when ready to charge.
+    payment_enabled: bool = False
     stripe_secret_key: str = ""
     stripe_webhook_secret: str = ""
+    stripe_price_id: str = ""  # Monthly subscription price ID (e.g. price_xxx from Stripe dashboard)
+
+    # Invite gate — controlled beta access (RISK-014)
+    # open_signup=True  → anyone can register (dev default)
+    # open_signup=False → invite code required (set on Railway for production)
+    # beta_invite_code  → set BETA_INVITE_CODE env var on Railway (empty = gate disabled even if open_signup=False)
+    open_signup: bool = True
+    beta_invite_code: str = ""
+
+    # Google Cloud — Translation LLM for AZ language quality (research 2026-03-31)
+    # Primary AZ translation path: Google Translation LLM (Gemini-powered, best quality for agglutinative AZ)
+    # Setup: enable Cloud Translation API in GCP console, set GOOGLE_APPLICATION_CREDENTIALS on Railway
+    # Free tier: 500k chars/month — covers all Volaura content at current scale
+    # If not set, falls back to Gemini direct translation with AZ-specialized prompt
+    gcp_project_id: str = ""  # GCP project with Translation API enabled
+
+    # MindShift — companion ADHD app (cross-product crystal/XP events)
+    mindshift_url: str = ""  # e.g. https://mindshift.app — added to CORS in production
 
     # BrandedBy — AI video generation
     did_api_key: str = ""  # D-ID API key (Phase 1: Lite plan $5.90/mo)
     fal_api_key: str = ""  # fal.ai API key — MuseTalk + Kling LipSync (DSP winner)
+
+    # Vertex AI — enterprise LLM SLA upgrade (Express API key — $100/mo budget cap)
+    # Use: genai.Client(vertexai=True, api_key=vertex_api_key) — NOT project/location ADC
+    # Fallback chain: Vertex Express → AI Studio Gemini → Groq → OpenAI
+    vertex_api_key: str = ""  # AQ.Ab8... format Express key
 
     @property
     def is_dev(self) -> bool:
@@ -86,6 +116,9 @@ class Settings(BaseSettings):
         for k in known:
             if k not in origins:
                 origins.append(k)
+        # MindShift cross-product integration — set MINDSHIFT_URL on Railway
+        if self.mindshift_url and self.mindshift_url not in origins:
+            origins.append(self.mindshift_url)
         return origins
 
 
@@ -98,8 +131,20 @@ def assert_production_ready() -> None:
     Called at startup lifespan. Fails the process early rather than serving broken
     responses (e.g., CORS blocking all requests because APP_URL is still localhost).
 
-    Only runs when APP_ENV == "production" (not staging, not development).
+    RISK-011 check fires on ALL environments — data loss from wrong DB is not
+    limited to production. All other checks are production-only.
     """
+    # RISK-011: Old Supabase project guard — fires on ALL envs (not production-only).
+    # If SUPABASE_URL still points to old free-tier project, writes go to wrong DB.
+    # Assessments, AURA scores, and user data will be silently lost in ANY environment.
+    OLD_PROJECT_REFS = ("hvykysvdkalkbswmgfut",)
+    for old_ref in OLD_PROJECT_REFS:
+        if old_ref in settings.supabase_url:
+            raise RuntimeError(
+                f"STARTUP BLOCKED: SUPABASE_URL still points to old project ({old_ref}). "
+                f"Update Railway env var to https://dwdgzfusjsobnixgyzjk.supabase.co"
+            )
+
     if settings.app_env != "production":
         return
     errors: list[str] = []
@@ -111,6 +156,32 @@ def assert_production_ready() -> None:
         errors.append(
             "APP_URL is still http://localhost:3000 — CORS will block all frontend requests."
         )
+    # RISK-M01: LLM cost spiral guard — Gemini without Groq falls to paid OpenAI.
+    # At activation wave (110 users/hr × 8 questions), Gemini 15 RPM free tier saturates
+    # in 5 minutes. Without Groq (14,400 req/day free), cost falls to OpenAI at ~$240/day.
+    if settings.gemini_api_key and not settings.groq_api_key:
+        errors.append(
+            "GROQ_API_KEY is not set — Gemini rate-limit events will fall to paid OpenAI "
+            "(est. $240/day at activation wave). Set GROQ_API_KEY on Railway before launch."
+        )
+    # RISK-N01: Telegram secret — WARNING only (not hard fail).
+    # Without secret: bot accepts all Telegram updates (no signature verification).
+    # With secret: Telegram adds X-Telegram-Bot-Api-Secret-Token header to every update.
+    # Security risk without secret is LOW (CEO_CHAT_ID filter is still enforced).
+    # Hard fail removed: app must start even without Telegram fully configured.
+    # RISK-N02: Stripe webhook signature guard when payment is active.
+    # If payment_enabled=True but webhook secret is missing, unsigned webhook events are
+    # accepted — an attacker can POST fake subscription.created and get free Pro access.
+    if settings.payment_enabled and not settings.stripe_webhook_secret:
+        errors.append(
+            "STRIPE_WEBHOOK_SECRET is not set but PAYMENT_ENABLED=True — webhook endpoint "
+            "accepts unsigned Stripe events. Attacker can grant free Pro subscriptions. "
+            "Set STRIPE_WEBHOOK_SECRET on Railway before enabling payments."
+        )
+    # RISK-011: Old Supabase project guard — prevent split writes after migration.
+    # If SUPABASE_URL still points to the old free-tier project, writes go to the wrong
+    # database. Assessments, AURA scores, and user data will be silently lost.
+    # New project ref: dwdgzfusjsobnixgyzjk (paid plan, active since 2026-03-28).
     if errors:
         raise RuntimeError(
             "Production startup failed — fix these settings before deploying:\n"
@@ -146,5 +217,9 @@ def validate_production_settings() -> list[str]:
             warnings.append(
                 "WARNING: TELEGRAM_WEBHOOK_SECRET is not set — Telegram webhook endpoint "
                 "will reject all incoming updates (no secret = 403 on every call)."
+            )
+        if not settings.sentry_dsn:
+            warnings.append(
+                "WARNING: SENTRY_DSN not set — production errors will not be tracked in Sentry."
             )
     return warnings

@@ -16,6 +16,7 @@ from httpx import ASGITransport, AsyncClient
 
 from app.main import app
 from app.deps import get_supabase_admin, get_supabase_user, get_current_user_id
+from app.services.assessment.helpers import clear_question_cache
 
 
 # ── Constants ──────────────────────────────────────────────────────────────────
@@ -88,8 +89,21 @@ def _build_chainable(execute_side_effects: list):
     mock.select = MagicMock(return_value=mock)
     mock.insert = MagicMock(return_value=mock)
     mock.update = MagicMock(return_value=mock)
+    mock.delete = MagicMock(return_value=mock)
     mock.eq = MagicMock(return_value=mock)
+    mock.neq = MagicMock(return_value=mock)
+    mock.gte = MagicMock(return_value=mock)
+    mock.lte = MagicMock(return_value=mock)
+    mock.gt = MagicMock(return_value=mock)
+    mock.lt = MagicMock(return_value=mock)
+    mock.order = MagicMock(return_value=mock)
+    mock.limit = MagicMock(return_value=mock)
+    mock.range = MagicMock(return_value=mock)
+    mock.filter = MagicMock(return_value=mock)
+    mock.not_ = MagicMock(return_value=mock)
+    mock.in_ = MagicMock(return_value=mock)
     mock.single = MagicMock(return_value=mock)
+    mock.maybe_single = MagicMock(return_value=mock)
     mock.rpc = MagicMock(return_value=mock)
 
     responses = iter(execute_side_effects)
@@ -97,6 +111,9 @@ def _build_chainable(execute_side_effects: list):
     async def _execute(*args, **kwargs):
         try:
             val = next(responses)
+            # Pre-built MagicMock (e.g. for count queries) — pass through directly
+            if isinstance(val, MagicMock):
+                return val
             return MagicMock(data=val)
         except StopIteration:
             return MagicMock(data=None)
@@ -115,7 +132,12 @@ async def test_start_assessment_returns_first_question():
         [MCQ_QUESTION],            # questions list
     ])
     user = _build_chainable([
+        # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
         [],                        # no existing in-progress session
+        [],                        # rapid-restart cooldown check (no recent abandoned sessions)
+        [],                        # retest cooldown check (no completed sessions)
+        MagicMock(data=[], count=0),  # abuse monitoring count query
+        [],                        # carry-over theta (no prior completed session)
         {"id": SESSION_ID},        # insert session
     ])
 
@@ -193,7 +215,8 @@ async def test_submit_correct_mcq_answer():
 
         assert resp.status_code == 200, f"Expected 200, got {resp.status_code}: {resp.text}"
         body = resp.json()
-        assert body["raw_score"] == 1.0, f"Correct MCQ should score 1.0, got {body['raw_score']}"
+        # raw_score removed from response (CRIT-03 security fix — prevents calibration attacks)
+        assert "raw_score" not in body, "raw_score must NOT be in response (CRIT-03)"
         assert body["question_id"] == Q_MCQ_ID
         assert "session" in body
     finally:
@@ -244,7 +267,7 @@ async def test_submit_wrong_mcq_answer():
 
         assert resp.status_code == 200
         body = resp.json()
-        assert body["raw_score"] == 0.0, f"Wrong MCQ should score 0.0, got {body['raw_score']}"
+        assert "raw_score" not in body, "raw_score must NOT be in response (CRIT-03)"
     finally:
         app.dependency_overrides.clear()
 
@@ -252,6 +275,10 @@ async def test_submit_wrong_mcq_answer():
 @pytest.mark.asyncio
 async def test_submit_open_ended_uses_keyword_fallback():
     """Open-ended answer with LLM disabled → keyword fallback still returns 0.0–1.0."""
+    # Clear module-level caches so all DB calls flow through the mock in a
+    # deterministic order regardless of which tests ran before this one.
+    clear_question_cache()
+
     in_progress_session = {
         "id": SESSION_ID,
         "volunteer_id": USER_ID,
@@ -263,23 +290,35 @@ async def test_submit_open_ended_uses_keyword_fallback():
         "theta_se": 1.0,
     }
 
+    # Admin call order for degraded (keyword fallback) path:
+    # 1. question detail
+    # 2. daily LLM cap check (assessment_sessions for today — open-ended path only)
+    # 3. competency slug for re-eval queue (degraded path)
+    # 4. enqueue_degraded_answer insert into evaluation_queue
+    # 5. fetch_questions (next item selection)
+    # 6. update session (db_admin; optimistic locking)
+    # 7. competency slug for make_session_out (or cache hit after call 3)
     admin = _build_chainable([
-        OPEN_QUESTION,
-        [OPEN_QUESTION],
-        {"slug": COMP_SLUG},
+        OPEN_QUESTION,                      # 1. question detail
+        [],                                 # 2. daily LLM cap check (no sessions today)
+        {"slug": COMP_SLUG},                # 3. competency slug for re-eval queue
+        [{"id": "queue-row-1"}],            # 4. evaluation_queue insert result (truthy)
+        [OPEN_QUESTION],                    # 5. fetch_questions
+        [{"id": SESSION_ID}],               # 6. update session result (must be truthy)
+        {"slug": COMP_SLUG},                # 7. competency slug for make_session_out
     ])
     user = _build_chainable([
-        in_progress_session,
-        {"id": SESSION_ID},
+        in_progress_session,            # session lookup
     ])
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
     app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
 
-    # Disable LLM — force keyword fallback
-    with patch("app.core.assessment.bars._try_gemini", AsyncMock(return_value=None)), \
-         patch("app.core.assessment.bars._try_openai", AsyncMock(return_value=None)):
+    # Disable all LLMs — force keyword fallback
+    with patch("app.core.assessment.bars._try_gemini", AsyncMock(return_value=(None, None))), \
+         patch("app.core.assessment.bars._try_groq", AsyncMock(return_value=(None, None))), \
+         patch("app.core.assessment.bars._try_openai", AsyncMock(return_value=(None, None))):
 
         try:
             transport = ASGITransport(app=app)
@@ -298,7 +337,8 @@ async def test_submit_open_ended_uses_keyword_fallback():
 
             assert resp.status_code == 200, f"Expected 200, got {resp.status_code}: {resp.text}"
             body = resp.json()
-            assert 0.0 <= body["raw_score"] <= 1.0, f"Score out of range: {body['raw_score']}"
+            assert "raw_score" not in body, "raw_score must NOT be in response (CRIT-03)"
+            assert "session" in body
         finally:
             app.dependency_overrides.clear()
 
@@ -306,11 +346,14 @@ async def test_submit_open_ended_uses_keyword_fallback():
 @pytest.mark.asyncio
 async def test_complete_assessment_returns_aura_score():
     """POST /api/assessment/complete/{session_id} → score in [0, 100]."""
+    # status="in_progress" — forces the full pipeline path:
+    # gaming update → slug lookup → upsert_aura_score RPC → aura_updated=True.
+    # A "completed" session would hit the early-return path (aura_updated=False).
     completed_session = {
         "id": SESSION_ID,
         "volunteer_id": USER_ID,
         "competency_id": COMP_ID,
-        "status": "completed",
+        "status": "in_progress",
         "theta_estimate": 0.5,
         "theta_se": 0.3,
         "answers": {
@@ -330,14 +373,16 @@ async def test_complete_assessment_returns_aura_score():
                 }
             ],
         },
-        "completed_at": "2026-03-24T12:00:00Z",
+        "completed_at": None,
     }
 
     rpc_mock = MagicMock()
     rpc_mock.execute = AsyncMock(return_value=MagicMock(data=True))
 
+    # Admin call order: 1. update gaming columns, 2. competency slug lookup, 3. rpc (overridden)
     admin = _build_chainable([
-        {"slug": COMP_SLUG},      # competency slug lookup
+        [{"id": SESSION_ID}],     # 1. update gaming columns (truthy = no exception)
+        {"slug": COMP_SLUG},      # 2. competency slug lookup
     ])
     admin.rpc = MagicMock(return_value=rpc_mock)
 
@@ -478,6 +523,7 @@ async def test_cannot_start_duplicate_session():
         {"id": COMP_ID},  # competency lookup
     ])
     user = _build_chainable([
+        # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
         [{"id": "existing-session-id"}],  # existing in-progress session found
     ])
 
@@ -500,3 +546,183 @@ async def test_cannot_start_duplicate_session():
         assert "session_id" in body["detail"]
     finally:
         app.dependency_overrides.clear()
+
+
+@pytest.mark.asyncio
+async def test_submit_answer_returns_410_when_session_expired():
+    """POST /api/assessment/answer with a past expires_at → 410 SESSION_EXPIRED.
+
+    Covers assessment.py lines 325-336:
+        expires_at_str = session.get("expires_at")
+        if expires_at_str:
+            expires_at = datetime.fromisoformat(...)
+            if expires_at and now_utc > expires_at:
+                raise HTTPException(status_code=410, detail={"code": "SESSION_EXPIRED", ...})
+    """
+    expired_session = {
+        "id": SESSION_ID,
+        "volunteer_id": USER_ID,
+        "competency_id": COMP_ID,
+        "status": "in_progress",
+        "current_question_id": Q_MCQ_ID,
+        "answers": {"theta": 0.0, "theta_se": 1.0, "stopped": False, "items": []},
+        "theta_estimate": 0.0,
+        "theta_se": 1.0,
+        "expires_at": "2020-01-01T00:00:00+00:00",  # far in the past
+    }
+
+    user = _build_chainable([expired_session])
+    admin = _build_chainable([])
+
+    app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
+    app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
+    app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
+
+    try:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            resp = await ac.post(
+                "/api/assessment/answer",
+                json={
+                    "session_id": SESSION_ID,
+                    "question_id": Q_MCQ_ID,
+                    "answer": "B",
+                    "response_time_ms": 5000,
+                },
+                headers={"Authorization": "Bearer fake-token"},
+            )
+
+        assert resp.status_code == 410, (
+            f"Expected 410 SESSION_EXPIRED for expired session, got {resp.status_code}: {resp.text}"
+        )
+        body = resp.json()
+        assert body["detail"]["code"] == "SESSION_EXPIRED", (
+            f"Expected code SESSION_EXPIRED, got: {body['detail']}"
+        )
+    finally:
+        app.dependency_overrides.clear()
+
+
+@pytest.mark.asyncio
+async def test_complete_assessment_returns_410_when_session_expired():
+    """POST /api/assessment/complete/{session_id} with a past expires_at → 410 SESSION_EXPIRED.
+
+    Covers assessment.py lines 564-572:
+        expires_at_str = session.get("expires_at")
+        if expires_at_str and session.get("status") == "in_progress":
+            expires_at = datetime.fromisoformat(...)
+            if datetime.now(timezone.utc) > expires_at:
+                raise HTTPException(status_code=410, detail={"code": "SESSION_EXPIRED", ...})
+    """
+    expired_session = {
+        "id": SESSION_ID,
+        "volunteer_id": USER_ID,
+        "competency_id": COMP_ID,
+        "status": "in_progress",  # must be in_progress — completed sessions skip this gate
+        "theta_estimate": 0.5,
+        "theta_se": 0.3,
+        "answers": {"theta": 0.5, "theta_se": 0.3, "stopped": False, "items": []},
+        "completed_at": None,
+        "expires_at": "2020-01-01T00:00:00+00:00",  # far in the past
+    }
+
+    user = _build_chainable([expired_session])
+    admin = _build_chainable([])
+
+    app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
+    app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
+    app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
+
+    try:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            resp = await ac.post(
+                f"/api/assessment/complete/{SESSION_ID}",
+                headers={"Authorization": "Bearer fake-token"},
+            )
+
+        assert resp.status_code == 410, (
+            f"Expected 410 SESSION_EXPIRED for expired session, got {resp.status_code}: {resp.text}"
+        )
+        body = resp.json()
+        assert body["detail"]["code"] == "SESSION_EXPIRED", (
+            f"Expected code SESSION_EXPIRED, got: {body['detail']}"
+        )
+    finally:
+        app.dependency_overrides.clear()
+
+
+@pytest.mark.asyncio
+async def test_submit_answer_returns_409_on_version_conflict():
+    """answer_version optimistic lock fires when concurrent submit beats us.
+
+    Covers assessment.py lines 488-496:
+        update_result = await db_admin.table("assessment_sessions").update(...)
+            .eq("answer_version", current_version).execute()
+        if not update_result.data:
+            raise HTTPException(status_code=409, detail={"code": "CONCURRENT_SUBMIT", ...})
+
+    The winning concurrent submit already incremented answer_version in the DB,
+    so our UPDATE's .eq("answer_version", current_version) matches nothing → data=[].
+    """
+    # Clear module-level caches so all DB calls flow through the mock in a
+    # deterministic order regardless of which tests ran before this one.
+    clear_question_cache()
+
+    in_progress_session = {
+        "id": SESSION_ID,
+        "volunteer_id": USER_ID,
+        "competency_id": COMP_ID,
+        "status": "in_progress",
+        "current_question_id": Q_MCQ_ID,
+        "answers": {"theta": 0.0, "theta_se": 1.0, "stopped": False, "items": []},
+        "theta_estimate": 0.0,
+        "theta_se": 1.0,
+        # answer_version present — concurrent submit will have incremented this
+        "answer_version": 3,
+    }
+
+    # Admin call order (MCQ path, no LLM, caches cleared):
+    #   1. question detail lookup       (.single())
+    #   2. fetch_questions list         (next item selection — cache miss)
+    #   3. UPDATE with optimistic lock  → returns [] (version mismatch = concurrent submit)
+    admin = _build_chainable([
+        MCQ_QUESTION,   # 1. question detail
+        [MCQ_QUESTION], # 2. fetch_questions (cache cleared, so DB hit)
+        [],             # 3. UPDATE returns empty list — optimistic lock version conflict
+    ])
+    user = _build_chainable([
+        in_progress_session,  # session fetch
+    ])
+
+    app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
+    app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
+    app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
+
+    try:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            resp = await ac.post(
+                "/api/assessment/answer",
+                json={
+                    "session_id": SESSION_ID,
+                    "question_id": Q_MCQ_ID,
+                    "answer": "B",
+                    "response_time_ms": 5000,
+                },
+                headers={"Authorization": "Bearer fake-token"},
+            )
+
+        assert resp.status_code == 409, (
+            f"Expected 409 CONCURRENT_SUBMIT, got {resp.status_code}: {resp.text}"
+        )
+        body = resp.json()
+        assert body["detail"]["code"] == "CONCURRENT_SUBMIT", (
+            f"Expected code CONCURRENT_SUBMIT, got: {body['detail']}"
+        )
+        assert "already submitted" in body["detail"]["message"].lower(), (
+            f"Expected user-facing message about duplicate submit, got: {body['detail']['message']}"
+        )
+    finally:
+        app.dependency_overrides.clear()
+        clear_question_cache()  # leave caches clean for subsequent tests

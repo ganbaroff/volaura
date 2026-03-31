@@ -1,0 +1,484 @@
+[
+  {
+    "id": "prof-pm-scrum-s4-001",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.3,
+    "irt_b": -0.7,
+    "irt_c": 0.12,
+    "scenario_en": "You are Scrum Master at Kapital Bank on a 2-week sprint. On Day 6, the Central Bank of Azerbaijan (CBA) issues a compliance directive requiring the team to rewrite a core transaction validation feature — the same feature that is already 70% complete in the current sprint. The Product Owner says: 'This is urgent but let's add it to the backlog and plan it next sprint.' Your velocity data shows the rewrite cannot fit in the remaining sprint days. What is the correct action?",
+    "scenario_az": "Siz Kapital Bankda 2 həftəlik sprint üzrə Scrum Masterliq edir싱iniz. 6-cı gündə Azərbaycan Mərkəzi Bankı (AMB) mövcud sprintdə artıq 70% tamamlanmış əsas tranzaksiya yoxlama xüsusiyyətinin yenidən yazılmasını tələb edən uyğunluq direktivi verir. Məhsul Sahibi deyir: 'Bu təcili məsələdir, lakin onu iş siyahısına əlavə edib növbəti sprintdə planlaşdıraq.' Sürət göstəriciləriniz göstərir ki, yenidən yazma işi qalan sprint günlərinə sığmayacaq. Düzgün addım nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Add the CBA directive to the backlog and honour the current sprint commitment as planned.",
+        "text_az": "AMB direktivini iş siyahısına əlavə edin və cari sprint öhdəliyini planlaşdırıldığı kimi yerinə yetirin."
+      },
+      {
+        "key": "B",
+        "text_en": "Treat the CBA directive as a regulatory force majeure: cancel the current sprint, brief the sponsor, and replan with the compliance work as the new Sprint Goal.",
+        "text_az": "AMB direktivini tənzimləyici fors-major kimi qəbul edin: cari sprinti ləğv edin, sponsoru məlumatlandırın və uyğunluq işini yeni Sprint Məqsədi kimi yenidən planlaşdırın."
+      },
+      {
+        "key": "C",
+        "text_en": "Ask the team to work overtime to fit both the original sprint goal and the CBA directive into the remaining days.",
+        "text_az": "Komandadan həm orijinal sprint məqsədini, həm də AMB direktivini qalan günlərə sığdırmaq üçün fazla iş saatı tələb edin."
+      },
+      {
+        "key": "D",
+        "text_en": "Escalate to the VP of Engineering to decide whether to honour the sprint or comply with CBA.",
+        "text_az": "Sprint öhdəliyinə sadiq qalıb-qalmamağa və ya AMB-yə uyğun olmağa qərar vermək üçün Mühəndislik üzrə VR-ə müraciət edin."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. The Scrum Guide 2020 permits Sprint cancellation when the Sprint Goal becomes obsolete. A CBA compliance directive at Kapital Bank is not a backlog item — it is a statutory obligation that immediately invalidates the existing Sprint Goal. The correct action is sprint cancellation with sponsor briefing, then replanning. A is wrong: deferring a CBA directive to the next sprint creates a regulatory gap that Kapital Bank's compliance team will treat as a breach. C is wrong: overloading the team creates neither reliable compliance nor quality delivery. D is wrong: this is a Scrum Master decision within the Scrum framework — escalating to a VP conflates line management with Agile governance.",
+    "feedback_az": "B düzgündür. Scrum Bələdçisi 2020 Sprint Məqsədi köhnəldikdə sprintin ləğvinə icazə verir. Kapital Bankda AMB uyğunluq direktivi iş siyahısı elementi deyil — mövcud Sprint Məqsədini dərhal etibarsız edən qanuni öhdəlikdir. Düzgün addım sponsor məlumatlandırılması ilə sprintin ləğvi və sonra yenidən planlaşdırmadır. A yanlışdır: AMB direktivinin növbəti sprintə təxir edilməsi Kapital Bankın uyğunluq komandası tərəfindən pozuntu kimi qiymətləndiriləcək tənzimləyici boşluq yaradır. C yanlışdır: komandanı həddindən artıq yükləmək nə etibarlı uyğunluq, nə də keyfiyyətli çatdırılma yaradır. D yanlışdır: bu, Scrum çərçivəsi daxilində Scrum Master qərarıdır.",
+    "development_tip_en": "In AZ financial sector projects, regulatory directives from CBA, FIMSA, or State Tax Service are not negotiable backlog items. Build a 'regulatory interrupt protocol' into your team's sprint agreement: define in advance what constitutes a force majeure event, who must be briefed within 2 hours, and how sprint cancellation is documented for audit purposes.",
+    "development_tip_az": "Azərbaycan maliyyə sektoru layihələrində AMB, DSMF və ya Dövlət Vergi Xidmətindən gələn tənzimləyici direktivlər danışıq yolu ilə həll edilə bilən iş siyahısı elementləri deyil. Komandanızın sprint razılaşmasına 'tənzimləyici kəsilmə protokolu' daxil edin: əvvəlcədən fors-major hadisənin nəyi təşkil etdiyini, 2 saat ərzində kimin məlumatlandırılmalı olduğunu və sprintin ləğvinin audit məqsədləri üçün necə sənədləşdirildiyini müəyyənləşdirin.",
+    "london_delta": "A London Scrum Master would apply Scrum Guide 2020 Sprint Goal protection principles, which permit cancellation when external events make the goal obsolete and require sponsor sign-off before replanning. In AZ, Kapital Bank's CBA regulatory compliance requirement is not a stakeholder request — it is a statutory directive that carries immediate financial penalty risk and cannot be deferred to backlog prioritisation. The AZ enforcement consequence is that treating a CBA directive as a standard backlog item constitutes a documented compliance breach, triggering CBA audit rights and potential licence conditions — a consequence outside the authority of any Product Owner to accept.",
+    "az_institutions": [
+      "Kapital Bank",
+      "CBA",
+      "AMB"
+    ],
+    "tags": [
+      "scrum",
+      "sprint-cancellation",
+      "az-specific",
+      "regulatory",
+      "kapital-bank"
+    ]
+  },
+  {
+    "id": "prof-pm-scrum-s4-002",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency_slug": "communication",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.4,
+    "irt_b": -0.6,
+    "irt_c": 0.1,
+    "scenario_en": "You are Scrum Master on the ASAN xidmət digital portal project. The Deputy Minister's office requests a weekly status report. When you send a standard Scrum dashboard showing sprint velocity, burndown chart, and story points completed, the Deputy Minister's assistant replies: 'The Minister cannot read this. Please send a Word document listing what was delivered this week, what will be delivered next week, and what problems exist.' How do you respond?",
+    "scenario_az": "Siz ASAN xidmət rəqəmsal portal layihəsində Scrum Masterlıq edirsiniz. Nazir müavini ofisi həftəlik status hesabatı tələb edir. Sprint sürəti, burndown cədvəli və tamamlanan hekayə nöqtələrini göstərən standart Scrum tablosunu göndərdikdə, Nazir müavininin köməkçisi cavab verir: 'Nazir bunu oxuya bilmir. Zəhmət olmasa bu həftə nə çatdırıldığını, növbəti həftə nə çatdırılacağını və hansı problemlərin mövcud olduğunu sıralayan Word sənədi göndərin.' Siz necə cavab verirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Explain to the assistant that Scrum uses velocity and burndown as its standard reporting language and offer a 30-minute training session.",
+        "text_az": "Köməkçiyə izah edin ki, Scrum standart hesabat dili kimi sürət və burndown istifadə edir və 30 dəqiqəlik təlim sessiyası təklif edin."
+      },
+      {
+        "key": "B",
+        "text_en": "Create a parallel Word-document report translating sprint velocity into milestone delivery dates and feature names, while maintaining your internal Scrum dashboard for the team.",
+        "text_az": "Sprint sürətini mərhələ çatdırılma tarixlərinə və xüsusiyyət adlarına çevirən paralel Word sənədi hesabatı yaradın, eyni zamanda komanda üçün daxili Scrum tablosunu saxlayın."
+      },
+      {
+        "key": "C",
+        "text_en": "Ask the Product Owner to handle all Deputy Minister communications going forward.",
+        "text_az": "Məhsul Sahibindən bundan sonra Nazir müavini ilə bütün ünsiyyəti öz üzərinə götürməsini xahiş edin."
+      },
+      {
+        "key": "D",
+        "text_en": "Refuse the Word-document format and escalate to the project sponsor that the Ministry is interfering with Agile practices.",
+        "text_az": "Word sənədi formatından imtina edin və Nazirliyinin Agile təcrübələrinə müdaxilə etdiyini layihə sponsoruna bildirin."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. Effective stakeholder communication means translating technical artefacts into the language the stakeholder actually uses. The Deputy Minister's office operates on milestone dates and deliverable names — not story points. Creating a parallel Word-document report for ministry stakeholders while maintaining the internal Scrum dashboard is the professional response. A is wrong: offering Agile training to a government official who requested a specific format is condescending and will damage the relationship. C is wrong: redirecting ministry communication to the Product Owner does not resolve the reporting gap and creates an unnecessary escalation path. D is wrong: the Ministry's request for readable reports is not interference with Agile — it is a legitimate stakeholder communication requirement.",
+    "feedback_az": "B düzgündür. Effektiv maraqlı tərəf kommunikasiyası texniki artefaktları maraqlı tərəfin faktiki istifadə etdiyi dilə çevirməyi nəzərdə tutur. Nazir müavini ofisi mərhələ tarixləri və çatdırılan nəticə adları əsasında işləyir — hekayə nöqtələri ilə deyil. Daxili Scrum tablosunu saxlayarkən nazirlik maraqlı tərəfləri üçün paralel Word sənədi hesabatı yaratmaq peşəkar cavabdır. A yanlışdır: müəyyən format tələb etmiş hökumət vəzifinə Agile təlimi təklif etmək küçüklədici olub münasibəti zədələyəcək. C yanlışdır: nazirlik kommunikasiyasını Məhsul Sahibinə yönləndirmək hesabat boşluğunu həll etmir. D yanlışdır: Nazirliyinin oxunaqlı hesabatlar tələbi Agile-a müdaxilə deyil.",
+    "development_tip_en": "In AZ government projects, always build a 'translation layer' between your Scrum artefacts and ministry reporting. Map: velocity → 'X features completed this week'; sprint goal → 'Milestone: [deliverable name] on [date]'; impediments → 'Risk: [plain language description] — mitigation: [action]'. Never use Agile terminology in government-facing documents.",
+    "development_tip_az": "Azərbaycan hökumət layihələrində həmişə Scrum artefaktlarınız və nazirlik hesabatları arasında 'tərcümə qatı' qurun. Xəritələndirin: sürət → 'Bu həftə X xüsusiyyət tamamlandı'; sprint məqsədi → 'Mərhələ: [çatdırılan ad] [tarixdə]'; maneələr → 'Risk: [sadə dil təsviri] — azaldılma: [fəaliyyət]'. Hökumətə yönəlik sənədlərdə heç vaxt Agile terminologiyası istifadə etməyin.",
+    "london_delta": "A London Scrum Master would apply the UK Government Digital Service (GDS) Agile delivery framework, which explicitly endorses story points and burndown charts as standard reporting tools for digital transformation programmes. In AZ, ASAN xidmət's Deputy Minister reporting chain operates through the Ministry's formal document management system — milestones and deliverable names are the only language that survives the institutional communication filter. The AZ enforcement consequence is that a status report the Deputy Minister cannot read will be returned as 'not submitted', triggering a formal reporting breach that is logged against the contract, regardless of the quality of the underlying Scrum data.",
+    "az_institutions": [
+      "ASAN xidmət",
+      "Deputy Minister",
+      "GDS"
+    ],
+    "tags": [
+      "scrum",
+      "stakeholder-communication",
+      "az-specific",
+      "government",
+      "asan"
+    ]
+  },
+  {
+    "id": "prof-pm-scrum-s4-003",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.5,
+    "irt_b": 0.1,
+    "irt_c": 0.1,
+    "scenario_en": "You are Scrum Master on the E-GOV State Registry portal. Your team is on Day 8 of a 10-day sprint. During staging integration, a developer discovers the State Registry API enforces an undocumented rate limit of 200 calls/hour — your feature requires 800 calls/hour. ASAN has a go-live commitment to the Ministry of Digital Development for end of sprint. The three options on the table are: (A) ship the feature with a degraded fallback mode and document the API constraint for post-launch resolution; (B) replan the sprint immediately — remove the API-dependent feature, protect the go-live date with scope reduction, inform ASAN stakeholders with a written technical explanation; (C) request emergency API quota increase from the State Registry team and push the sprint by 3 days. Rank these options from most to least appropriate.",
+    "scenario_az": "Siz E-GOV Dövlət Reyestri portalında Scrum Masterlıq edirsiniz. Komandanız 10 günlük sprintin 8-ci günündədir. Hazırlıq inteqrasiyası zamanı bir tərtibatçı Dövlət Reyestri API-nin saat başına 200 zəng sınırı olan sənədləşdirilməmiş sürət məhdudiyyəti tətbiq etdiyini kəşf edir — xüsusiyyətiniz saatda 800 zəng tələb edir. ASAN-ın Rəqəmsal İnkişaf Nazirliyinə sprint sonuna qədər işə salınma öhdəliyi var. Masada olan üç seçim: (A) azaldılmış ehtiyat rejimiylə xüsusiyyəti çatdırın və API məhdudiyyətini buraxılışdan sonra həll etmək üçün sənədləşdirin; (B) sprinti dərhal yenidən planlaşdırın — API-asılı xüsusiyyəti silin, əhatə azaldılması ilə işə salınma tarixini qoruyun, yazılı texniki izahatla ASAN maraqlı tərəflərini məlumatlandırın; (C) Dövlət Reyestri komandası üzərindən fövqəladə API kvota artırımı tələb edin və sprinti 3 gün uzadın. Bu seçimləri ən uyğundan az uyğuna doğru sıralayın.",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "B → A → C",
+        "text_az": "B → A → C"
+      },
+      {
+        "key": "B",
+        "text_en": "A → B → C",
+        "text_az": "A → B → C"
+      },
+      {
+        "key": "C",
+        "text_en": "C → B → A",
+        "text_az": "C → B → A"
+      },
+      {
+        "key": "D",
+        "text_en": "B → C → A",
+        "text_az": "B → C → A"
+      }
+    ],
+    "correct_answer": "A",
+    "feedback_en": "A (B → A → C) is correct. B is the best option: scope reduction with transparent written communication to ASAN stakeholders protects the go-live date — the Ministry commitment — while being technically honest about the constraint discovered. The Scrum Guide 2020 explicitly supports sprint scope adjustment when technical reality changes. A (degraded fallback) is the second-best option: it honours the go-live date and documents the debt, which is acceptable if stakeholders are informed and the fallback is genuinely functional. C (extending the sprint) is the worst option: the ASAN Ministry go-live commitment is not negotiable by the Scrum Master — extending the sprint without Ministry approval is a unilateral contract change. Requesting an API quota increase from a government team in 2 days is also operationally unrealistic.",
+    "feedback_az": "A (B → A → C) düzgündür. B ən yaxşı seçimdir: ASAN maraqlı tərəflərinə şəffaf yazılı kommunikasiya ilə əhatə azaldılması — Nazirlik öhdəliyi olan — işə salınma tarixini qoruyur, eyni zamanda kəşf edilən məhdudiyyət barədə texniki cəhətdən dürüst olur. Scrum Bələdçisi 2020 texniki reallıq dəyişdikdə sprint əhatəsinin tənzimlənməsini açıq şəkildə dəstəkləyir. A (azaldılmış ehtiyat) ikinci ən yaxşı seçimdir: maraqlı tərəflər məlumatlandırılarsa və ehtiyat həqiqətən funksional olarsa, işə salınma tarixini qoruyur və borcu sənədləşdirir. C (sprintin uzadılması) ən pis seçimdir: ASAN Nazirliyi işə salınma öhdəliyi Scrum Master tərəfindən danışıq yolu ilə həll edilə bilməz.",
+    "development_tip_en": "In AZ e-government projects, always build an 'undocumented API risk' buffer into your sprint capacity. State agency APIs often have quota limits, maintenance windows, and security filters that are not published. Establish an escalation path to the State Registry API team contact before the sprint starts, so Day 8 discoveries can be triaged in hours, not days.",
+    "development_tip_az": "Azərbaycan e-hökumət layihələrində həmişə sprint tutumunuza 'sənədləşdirilməmiş API riski' buferi daxil edin. Dövlət qurumu API-ləri tez-tez nəşr edilməyən kvota limitləri, texniki xidmət pəncərələri və təhlükəsizlik filtrlərinə malikdir. Sprint başlamazdan əvvəl Dövlət Reyestri API komandası ilə əlaqə nöqtəsi qurun ki, 8-ci gün kəşfləri günlər deyil, saatlar içərisində aydınlaşdırıla bilsin.",
+    "london_delta": "A London Scrum Master would apply Scrum Guide 2020 Sprint scope flexibility principles, which permit removing backlog items from a sprint when newly discovered technical constraints make original scope undeliverable, provided the Sprint Goal is preserved or the sprint is replanned transparently. In AZ, ASAN's go-live date represents a Ministry of Digital Development commitment made at government level — it is not a stakeholder preference that can be shifted through a sprint extension request. The AZ enforcement consequence is that unilaterally extending the sprint without Ministry approval constitutes a contract milestone breach, with potential administrative liability for the project manager regardless of the technical justification.",
+    "az_institutions": [
+      "ASAN xidmət",
+      "E-GOV",
+      "Ministry of Digital Development",
+      "State Registry"
+    ],
+    "tags": [
+      "scrum",
+      "adaptability",
+      "az-specific",
+      "e-gov",
+      "api-constraint",
+      "sprint-replanning"
+    ]
+  },
+  {
+    "id": "prof-pm-scrum-s4-004",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.6,
+    "irt_b": 0.2,
+    "irt_c": 0.08,
+    "scenario_en": "You are Release Train Engineer (RTE) facilitating SAFe 6.0 PI Planning at SOCAR's Digital Transformation programme. 8 teams are participating: 6 at Baku HQ (stable broadband) and 2 at Sangachal terminal (offshore gas processing facility with intermittent satellite internet, 400ms+ latency, and a blackout window 14:00–16:00 local time due to satellite maintenance). The PI Planning event is scheduled as a 2-day synchronous digital event using Miro and MS Teams. On Day 1 morning, the Sangachal teams drop from the call twice during capacity planning. What is the correct structural adaptation?",
+    "scenario_az": "Siz SOCAR-ın Rəqəmsal Transformasiya proqramında SAFe 6.0 PI Planlaşdırmasını asanlaşdıran Buraxılış Qatarı Mühəndisi (RTE) siniz. 8 komanda iştirak edir: 6-sı Bakı qərargahında (sabit geniş zolaqlı) və 2-si Sangachal terminalında (fasilə-fasilə peyk interneti olan, 400ms+ gecikmə, peyk texniki xidməti səbəbindən yerli vaxtla 14:00–16:00 arasında qara pəncərəsi olan offshore qaz emalı obyekti). PI Planlaşdırma tədbirinin Miro və MS Teams istifadə edərək 2 günlük sinxron rəqəmsal hadisə kimi keçirilməsi planlaşdırılıb. 1-ci günün səhəri, Sangachal komandaları tutum planlaşdırması zamanı zəngdən iki dəfə düşür. Düzgün struktur adaptasiya nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Continue with the digital format and ask the Sangachal teams to catch up asynchronously using Miro board recordings.",
+        "text_az": "Rəqəmsal format ilə davam edin və Sangachal komandalarından Miro lövhə yazılarından istifadə edərək asinxron olaraq yetişmələrini xahiş edin."
+      },
+      {
+        "key": "B",
+        "text_en": "Pause PI Planning, deploy physical Kanban boards and printed PI Planning templates to Sangachal, assign a local Scrum Master facilitator, establish a satellite backup call window outside 14:00–16:00, and rerun the synchronisation session with a hybrid protocol.",
+        "text_az": "PI Planlaşdırmanı dayandırın, Sangachal-a fiziki Kanban lövhələri və çap edilmiş PI Planlaşdırma şablonları yerləşdirin, yerli Scrum Master facilitator təyin edin, 14:00–16:00 xaricində peyk ehtiyat zəng pəncərəsi qurun və hibrid protokolla sinxronizasiya sessiyasını yenidən keçirin."
+      },
+      {
+        "key": "C",
+        "text_en": "Ask the Sangachal teams to relocate to Baku for the 2-day PI Planning event.",
+        "text_az": "Sangachal komandalarından 2 günlük PI Planlaşdırma tədbirindən ötrü Bakıya köçmələrini xahiş edin."
+      },
+      {
+        "key": "D",
+        "text_en": "Exclude the Sangachal teams from PI Planning and incorporate their objectives in the next PI cycle.",
+        "text_az": "Sangachal komandalarını PI Planlaşdırmadan çıxarın və onların məqsədlərini növbəti PI dövrünə daxil edin."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. The Sangachal satellite constraint is a physical infrastructure reality that the PI Planning facilitator must accommodate — SAFe 6.0 PI Planning requires all teams to participate in synchronous planning to build a shared PI Objective board and resolve dependencies. Deploying physical Kanban boards and a local facilitator, combined with a satellite backup window outside the blackout period, is the correct structural adaptation. A is wrong: PI Planning is explicitly not an asynchronous activity — catching up on recordings breaks the cross-team dependency resolution that is the event's core purpose. C is wrong: relocating offshore production staff for a planning event is operationally and contractually unrealistic in a gas processing facility context. D is wrong: excluding two teams from PI Planning creates unresolved dependencies and an incomplete ART (Agile Release Train) commitment.",
+    "feedback_az": "B düzgündür. Sangachal peyk məhdudiyyəti PI Planlaşdırma facilitatorunun uyğunlaşmalı olduğu fiziki infrastruktur reallığıdır — SAFe 6.0 PI Planlaşdırması bütün komandaların paylaşılan PI Məqsədi lövhəsi qurmaq və asılılıqları həll etmək üçün sinxron planlaşdırmada iştirak etməsini tələb edir. Fiziki Kanban lövhələri və yerli facilitator yerləşdirmək, qara pəncərə xaricindəki peyk ehtiyat pəncərəsiylə birlikdə, düzgün struktur adaptasiyadır. A yanlışdır: PI Planlaşdırma açıq şəkildə asinxron fəaliyyət deyil. C yanlışdır: qaz emalı obyekti kontekstində offshore istehsalat personalını planlaşdırma tədbirinə köçürmək əməliyyat və müqavilə cəhətindən qeyri-realdır. D yanlışdır: iki komandanı PI Planlaşdırmadan çıxarmaq həll edilməmiş asılılıqlar yaradır.",
+    "development_tip_en": "For AZ offshore and industrial sites (SOCAR Sangachal, Shah Deniz, Chirag platform teams), always build a 'hybrid PI Planning kit' in advance: printed PI Objective templates, physical program board, local facilitator trained in SAFe, and a pre-tested satellite backup protocol. Never design a SAFe event assuming stable internet for all sites — test connectivity 48 hours before.",
+    "development_tip_az": "Azərbaycan offshore və sənaye sahələri (SOCAR Sangachal, Şahdəniz, Çıraq platforma komandaları) üçün əvvəlcədən həmişə 'hibrid PI Planlaşdırma dəsti' hazırlayın: çap edilmiş PI Məqsədi şablonları, fiziki proqram lövhəsi, SAFe-da öyrədilmiş yerli facilitator və əvvəlcədən sınaqdan keçirilmiş peyk ehtiyat protokolu. Bütün saytlar üçün sabit internet güman edərək SAFe tədbirini heç vaxt planlaşdırmayın — bağlantını 48 saat əvvəl sınayın.",
+    "london_delta": "A London RTE would apply SAFe 6.0 PI Planning facilitation guidelines, which prescribe synchronous cross-team participation as a non-negotiable requirement for building a valid PI Objective board and resolving inter-team dependencies within the ART. In AZ, SOCAR's Sangachal terminal operates under offshore energy infrastructure constraints — intermittent satellite internet and mandatory maintenance blackout windows are not exceptions that can be managed with asynchronous workarounds. The AZ enforcement consequence is that a PI Planning event conducted without Sangachal team participation produces an incomplete ART commitment with unresolved Sangachal-Baku integration dependencies, which will surface as PI-level blockers in Iteration 3-4 and require an unplanned PI boundary adjustment that SOCAR's programme governance board will treat as a planning failure.",
+    "az_institutions": [
+      "SOCAR",
+      "Sangachal terminal"
+    ],
+    "tags": [
+      "safe",
+      "pi-planning",
+      "az-specific",
+      "offshore",
+      "socar",
+      "hybrid-facilitation"
+    ]
+  },
+  {
+    "id": "prof-pm-scrum-s4-005",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.5,
+    "irt_b": 0.3,
+    "irt_c": 0.1,
+    "scenario_en": "You are Scrum Master at PASHA Technology. Rustam, a senior developer with 12 years at the company, refuses to contribute to sprint retrospectives. In the last two retrospectives he sat silently, then said: 'This is just a complaining circle — real problems get fixed in code, not in meetings.' Younger team members have started echoing his position and participation is dropping. You have three options: (A) address Rustam's comment publicly in the next retrospective, explaining the purpose of the ceremony to the full team; (B) meet Rustam privately before the next retrospective, acknowledge his experience, invite him to co-design a 'technical debt metrics' retrospective format, and position him as co-facilitator; (C) skip the formal retrospective and replace it with a 1:1 feedback collection process until buy-in improves. Rank these from most to least appropriate.",
+    "scenario_az": "Siz PASHA Technology-də Scrum Masterlıq edirsiniz. Şirkətdə 12 illik təcrübəsi olan baş tərtibatçı Rüstəm, sprint retrospektivlərə töhfə verməkdən imtina edir. Son iki retrospektivdə susqun oturdu, sonra dedi: 'Bu sadəcə şikayət dairəsidir — real problemlər görüşlərdə deyil, kodda həll olunur.' Gənc komanda üzvləri onun mövqeyini əks-sədalandırmağa başlayıb və iştirak azalır. Üç seçiminiz var: (A) növbəti retrospektivdə Rüstəmin şərhini açıq şəkildə müzakirə edin və bütün komandaya mərasimin məqsədini izah edin; (B) növbəti retrospektivdən əvvəl Rüstəmlə şəxsən görüşün, təcrübəsini tanıyın, onu 'texniki borc göstəriciləri' retrospektiv formatı hazırlamağa dəvət edin və onu ortaq facilitator kimi mövqeləndirin; (C) formal retrospektivi atlayın və alıcılıq yaxşılaşana qədər 1:1 rəy toplama prosesi ilə əvəz edin. Bunları ən uyğundan az uyğuna doğru sıralayın.",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "B → C → A",
+        "text_az": "B → C → A"
+      },
+      {
+        "key": "B",
+        "text_en": "A → B → C",
+        "text_az": "A → B → C"
+      },
+      {
+        "key": "C",
+        "text_en": "C → B → A",
+        "text_az": "C → B → A"
+      },
+      {
+        "key": "D",
+        "text_en": "B → A → C",
+        "text_az": "B → A → C"
+      }
+    ],
+    "correct_answer": "A",
+    "feedback_en": "A (B → C → A) is correct. B is the best option: privately acknowledging Rustam's expertise and inviting him to co-design the retrospective format converts a blocker into a co-owner. In AZ corporate culture, a 12-year senior developer has significant informal authority — publicly challenging him (Option A) will permanently damage the hierarchy and validate his view that retrospectives are confrontational. C (1:1 feedback collection) is the second-best option: it maintains some feedback loop while buy-in is rebuilt, and is preferable to the worst option. A (public challenge) is the worst option: publicly addressing Rustam's dissent in front of the team is a direct confrontation of a senior colleague, which in AZ workplace culture will cause him to harden his position, lose face among younger colleagues, and escalate — destroying the psychological safety retrospectives are meant to build.",
+    "feedback_az": "A (B → C → A) düzgündür. B ən yaxşı seçimdir: Rüstəmin təcrübəsini şəxsən tanımaq və onu retrospektiv formatını birlikdə hazırlamağa dəvət etmək bir blokeranı ortaq sahibə çevirir. Azərbaycan korporativ mədəniyyətində 12 illik baş tərtibatçının əhəmiyyətli qeyri-rəsmi nüfuzu var — onu açıq şəkildə meydan oxumaq (A Seçimi) iyerarxiyaya daimi zərər verəcək. C (1:1 rəy toplanması) ikinci ən yaxşı seçimdir: alıcılıq yenidən qurularkən bir rəy dövrəsini saxlayır. A (ictimai meydan oxuma) ən pis seçimdir: Rüstəmin komanda qarşısında etiraziyla üzləşmək Azərbaycan iş mədəniyyətində birbaşa üzləşmə olmaqla, onun mövqeyini gücləndirib gənclərin önündə üz itirməsinə səbəb olacaq.",
+    "development_tip_en": "In AZ tech companies, senior developers (8yr+) often hold veto power over team culture through informal authority. The Scrum Master's leverage point is not ceremony enforcement — it is ceremony redesign. Retrospective formats like 'What slows our code velocity?' or 'Top 3 technical debt items this sprint' convert a process-sceptic into a quality champion, because the language aligns with their professional identity.",
+    "development_tip_az": "Azərbaycan texnologiya şirkətlərində baş tərtibatçılar (8 il+) tez-tez qeyri-rəsmi nüfuz vasitəsilə komanda mədəniyyəti üzərində veto səlahiyyəti edir. Scrum Masterin leverage nöqtəsi mərasim icbarkarlığı deyil — mərasim yenidən dizaynıdır. 'Kod sürətimizi nə yavaşladır?' və ya 'Bu sprintdə ən yaxşı 3 texniki borc elementi' kimi retrospektiv formatlar proses şübhəçisini keyfiyyət şampionuna çevirir.",
+    "london_delta": "A London Agile Coach would apply ICAgile ICP-ACC psychological safety standards, which recommend open team dialogue and direct facilitation of resistance as the primary tool for improving ceremony quality. In AZ, publicly overriding or challenging a 12-year senior developer at PASHA Technology damages the team hierarchy in a way that is culturally irreversible — the correct path requires private reframing that preserves the senior developer's authority while converting his energy into ceremony ownership. The AZ enforcement consequence is that a public challenge to Rustam's position will cause him to formally or informally discourage junior colleagues from retrospective participation, destroying the psychological safety that the ceremony is designed to build and making future Scrum adoption at PASHA Technology significantly harder.",
+    "az_institutions": [
+      "PASHA Technology"
+    ],
+    "tags": [
+      "scrum",
+      "leadership",
+      "az-specific",
+      "retrospective",
+      "pasha-technology",
+      "cultural-hierarchy"
+    ]
+  },
+  {
+    "id": "prof-pm-scrum-s4-006",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.5,
+    "irt_b": 0.2,
+    "irt_c": 0.08,
+    "scenario_en": "You are Scrum Master at PASHA Technology. During the sprint retrospective, the team discusses the last 3-week sprint. You notice that two developers — Elnur and Togrul — have been submitting commits after midnight for the last 6 days, error rates in their code reviews have increased by 40%, and both were unusually silent in the last two retrospectives. When you mention 'workload balance' in the retro, both say 'I'm fine, just busy.' What is the most appropriate next action?",
+    "scenario_az": "Siz PASHA Technology-də Scrum Masterlıq edirsiniz. Sprint retrospektivi zamanı komanda son 3 həftəlik sprinti müzakirə edir. Son 6 gündür iki tərtibatçının — Elnur və Toğrulun — gecə yarısından sonra commit göndərdiyini, kod nəzərdən keçirmələrindəki xəta nisbətlərinin 40% artdığını və hər ikisinin son iki retrospektivdə qeyri-adi dərəcədə sakit olduğunu görürsünüz. Retrospektivdə 'iş yükü balansı'ndan bəhs etdikdə hər ikisi deyir: 'Yaxşıyam, sadəcə məşğulum.' Ən uyğun növbəti addım nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Accept their answer and move on — they said they're fine.",
+        "text_az": "Cavablarını qəbul edin və davam edin — yaxşı olduqlarını dedilər."
+      },
+      {
+        "key": "B",
+        "text_en": "Raise the issue publicly in the retrospective: 'Elnur and Togrul, your commit times and error rates suggest you are not fine — let's address this as a team.'",
+        "text_az": "Retrospektivdə məsələni açıq şəkildə qaldırın: 'Elnur və Toğrul, commit vaxtlarınız və xəta nisbətləriniz yaxşı olmadığınızı göstərir — bunu komanda olaraq həll edək.'"
+      },
+      {
+        "key": "C",
+        "text_en": "Schedule private 1:1 conversations with each developer, reference the specific indirect signals (commit times, error rate increase, silence in retros) without framing it as a performance issue, and ask open questions about their current sprint experience.",
+        "text_az": "Hər bir tərtibatçı ilə şəxsi 1:1 görüşlər planlayın, bunu performans məsələsi kimi çərçivələmədən konkret dolayı siqnallara (commit vaxtları, xəta nisbəti artması, retrospektivdəki sükut) istinad edin və cari sprint təcrübələri haqqında açıq suallar verin."
+      },
+      {
+        "key": "D",
+        "text_en": "Escalate immediately to the Engineering Manager — burnout is a management responsibility, not a Scrum Master's.",
+        "text_az": "Dərhal Mühəndislik Menecerinə bildirin — tükənmə Scrum Masterin deyil, idarəetmənin məsuliyyətidir."
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct. In AZ workplace culture, 'I'm fine' is the default social response to any direct question about workload — saying 'I'm overwhelmed' is perceived as a weakness or career risk, especially for junior-to-mid developers. The Scrum Master's responsibility is to read indirect signals: late commits, increased error rates, and retrospective silence are the actual language of burnout in this context. A private 1:1 that references specific data (not allegations) and asks open questions creates the psychological safety for honest disclosure. A is wrong: accepting 'I'm fine' at face value ignores measurable evidence of burnout signals that a Scrum Master has a duty to address. B is wrong: publicly naming specific individuals' error rates and commit times in a retrospective is a public performance confrontation — in AZ it will cause both developers to defend themselves aggressively or withdraw further. D is wrong: while management has a role, immediate escalation without first creating a safe channel for the developers is a breach of the Scrum Master's servant-leadership duty.",
+    "feedback_az": "C düzgündür. Azərbaycan iş mühiti mədəniyyətində 'yaxşıyam' iş yükü haqqında istənilən birbaşa suala verilən standart sosial cavabdır — xüsusən gənclərdən orta səviyyəli tərtibatçılar üçün 'hər şey baş üstünə yetişirəm' demək zəiflik və ya karyera riski kimi qavranılır. Scrum Masterin məsuliyyəti dolayı siqnalları oxumaqdır: gec commitlər, artan xəta nisbətləri və retrospektiv sükutu bu kontekstdə tükənmənin faktiki dilidir. Konkret məlumatlara (iddia deyil) istinad edən və açıq suallar verən şəxsi 1:1 dürüst açıqlama üçün psixoloji təhlükəsizlik yaradır. A yanlışdır: 'yaxşıyam'ı göz dəyərindən qəbul etmək Scrum Masterin həll etmək vəzifəsi daşıdığı tükənmə siqnallarının ölçülə bilən dəlillərini göz ardı edir. B yanlışdır: retrospektivdə xüsusi şəxslərin xəta nisbətlərini ictimaiyyətə açıqlamaq ictimai performans üzləşməsidir. D yanlışdır: idarəetmənin rolu olsa da, əvvəlcə tərtibatçılar üçün təhlükəsiz kanal yaratmadan dərhal eskalasiya Scrum Masterin xidmətkar liderlik vəzifəsinin pozulmasıdır.",
+    "development_tip_en": "In AZ tech teams, build a 'burnout signal vocabulary' into your Scrum practice: track commit times (baseline vs last 5 days), review comment sentiment, and note retrospective silence patterns. Never ask 'Are you OK?' directly — ask 'What's been the hardest part of this sprint technically?' The technical framing gives permission to surface workload issues without vulnerability.",
+    "development_tip_az": "Azərbaycan texnologiya komandalarında Scrum təcrübənizə 'tükənmə siqnalı lüğəti' daxil edin: commit vaxtlarını (əsas xətt - son 5 gün), nəzərdən keçirmə şərhi emosiyasını izləyin və retrospektiv sükut nümunələrini qeyd edin. Heç vaxt birbaşa 'yaxşısınızmı?' soruşmayın — 'Bu sprintdə texniki cəhətdən ən çətin hissə nə oldu?' soruşun. Texniki çərçivə həssaslıq olmadan iş yükü məsələlərini gündəmə gətirməyə icazə verir.",
+    "london_delta": "A London Agile Coach would apply UK Health and Safety Executive (HSE) Work-related Stress management standards, which recommend direct manager-employee disclosure conversations and formal workload assessment as primary interventions when stress indicators are present. In AZ, PASHA Technology's workplace culture treats direct disclosure of overwhelm as a career-limiting vulnerability — burnout signals manifest as indirect behavioural data (late commits, error rate increases, ceremonial silence) that must be read and addressed without forcing direct admission. The AZ enforcement consequence is that applying the HSE direct-disclosure model without cultural adaptation will cause both developers to deny all stress signals more forcefully, driving the burnout underground where it becomes a sprint-ending incident rather than a manageable workload adjustment.",
+    "az_institutions": [
+      "PASHA Technology"
+    ],
+    "tags": [
+      "empathy-safeguarding",
+      "burnout",
+      "az-specific",
+      "pasha-technology",
+      "psychological-safety",
+      "indirect-signals"
+    ]
+  },
+  {
+    "id": "prof-pm-scrum-s4-007",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.7,
+    "irt_b": 0.4,
+    "irt_c": 0.08,
+    "scenario_en": "You are Scrum Master on the SOCAR Digital Transformation programme. During PI Planning, the Ministry of Energy representative commits to a go-live deadline that is 2 sprints (4 weeks) shorter than your team's velocity data supports. The Product Owner is silent. The VP of Engineering accepts the deadline to avoid conflict with the Ministry. After the PI Planning session, your velocity data clearly shows the committed scope cannot be delivered in the Ministry's timeline. What is the correct action?",
+    "scenario_az": "Siz SOCAR Rəqəmsal Transformasiya proqramında Scrum Masterlıq edirsiniz. PI Planlaşdırması zamanı Energetika Nazirliyi nümayəndəsi komandanızın sürət məlumatlarının dəstəklədiyi vaxtdan 2 sprint (4 həftə) qısa olan işə salınma son tarixini öhdəsinə götürür. Məhsul Sahibi susur. Mühəndislik üzrə VP münaqişədən yayınmaq üçün son tarixi qəbul edir. PI Planlaşdırma sessiyasından sonra sürət məlumatlarınız aydın şəkildə göstərir ki, öhdəsinə götürülmüş əhatə Nazirliyinin qrafikində çatdırıla bilməz. Düzgün addım nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Raise the velocity gap in the next daily standup so the team is aware.",
+        "text_az": "Komanda məlumatlı olsun deyə sürət boşluğunu növbəti gündəlik standup-da qaldırın."
+      },
+      {
+        "key": "B",
+        "text_en": "Prepare a formal capacity planning report showing velocity data, committed scope, and the 2-sprint gap. Present it privately to the VP of Engineering and Programme Sponsor as a risk item, framing it as 'capacity data that may require a scope or timeline conversation with the Ministry', not as a challenge to the Ministry's commitment.",
+        "text_az": "Sürət məlumatlarını, öhdəsinə götürülmüş əhatəni və 2 sprintlik boşluğu göstərən rəsmi tutum planlaşdırma hesabatı hazırlayın. Bunu Nazirliyinin öhdəliyinə meydan oxuma kimi deyil, 'Nazirlik ilə əhatə və ya qrafik söhbəti tələb edə biləcək tutum məlumatları' kimi çərçivələyərək, VP mühəndislik və Proqram Sponsoru ilə şəxsən risk maddəsi olaraq təqdim edin."
+      },
+      {
+        "key": "C",
+        "text_en": "Accept the deadline — the Ministry's word is final, and the team must find a way to deliver.",
+        "text_az": "Son tarixi qəbul edin — Nazirliyinin sözü qətidir və komanda çatdırılması üçün yol tapmalıdır."
+      },
+      {
+        "key": "D",
+        "text_en": "Contact the Ministry of Energy representative directly and share your velocity data to negotiate the timeline.",
+        "text_az": "Birbaşa Energetika Nazirliyi nümayəndəsi ilə əlaqə saxlayın və qrafiki danışmaq üçün sürət məlumatlarınızı paylaşın."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. The Ministry of Energy deadline at SOCAR is a government commitment that cannot be challenged publicly or directly by a Scrum Master — that would be a protocol violation that damages the programme's Ministry relationship. However, the Scrum Master has a professional obligation to surface the capacity gap. The correct path is a formal capacity planning report presented privately to the VP and Sponsor as a risk item, not as a challenge. The framing 'capacity data that may require a scope or timeline conversation' gives the VP and Sponsor the agency to raise it with the Ministry through the correct governance channel. A is wrong: raising a Ministry commitment gap in a daily standup exposes the team to pressure without providing any resolution mechanism. C is wrong: accepting an impossible commitment without surfacing the risk data is a reliability failure — the team will burn out or fail to deliver, both of which are worse outcomes. D is wrong: a Scrum Master does not have the authority or appropriate channel to negotiate directly with a Ministry representative — this bypasses SOCAR's governance structure.",
+    "feedback_az": "B düzgündür. SOCAR-da Energetika Nazirliyi son tarixi Scrum Master tərəfindən açıq şəkildə və ya birbaşa meydan oxunulamayan hökumət öhdəliyidir — bu, proqramın Nazirlik münasibətinə zərər verən protokol pozuntusudur. Bununla belə, Scrum Masterin tutum boşluğunu ortaya çıxarmaq peşəkar öhdəliyi var. Düzgün yol, Nazirliyinin öhdəliyinə meydan oxuma kimi deyil, risk maddəsi kimi şəxsən VP və Sponsora təqdim edilən rəsmi tutum planlaşdırma hesabatıdır. A yanlışdır: gündəlik standup-da Nazirlik öhdəliyi boşluğunu gündəmə gətirmək komandanı heç bir həll mexanizmi olmadan təzyiqə məruz qoyur. C yanlışdır: risk məlumatlarını ortaya çıxarmadan qeyri-mümkün öhdəliyi qəbul etmək etibarsızlıq uğursuzluğudur. D yanlışdır: Scrum Masterin Nazirlik nümayəndəsi ilə birbaşa danışıqlar aparmaq üçün nə səlahiyyəti, nə də uyğun kanalı var.",
+    "development_tip_en": "In AZ government-adjacent programmes (SOCAR, ASAN, State Registry), build a 'velocity translation toolkit': sprint velocity → projected completion date with confidence intervals (70%, 85%, 95%). When surfacing a deadline gap to a VP, present it as 'our capacity model gives us 70% confidence of delivery by [date] and 95% confidence by [date+3 weeks]'. Data framing removes the adversarial dynamic.",
+    "development_tip_az": "Azərbaycan hökumətə bağlı proqramlarda (SOCAR, ASAN, Dövlət Reyestri) 'sürət tərcümə dəsti' qurun: sprint sürəti → etibarlılıq intervalları ilə proqnozlaşdırılan tamamlanma tarixi (%70, %85, %95). VP-yə son tarix boşluğunu ortaya çıxararkən, bunu 'tutum modelimiz [tarixinə] qədər çatdırılma üçün %70 ehtimal verir' kimi təqdim edin. Məlumat çərçivəsi ağrılı dinamikanı aradan qaldırır.",
+    "london_delta": "A London Scrum Master would apply Scrum Guide 2020 velocity-based forecasting principles, which require that committed Sprint Goals and PI Objectives be grounded in team capacity data and that the Scrum Master surface forecast-to-commitment gaps as formal impediments. In AZ, the Ministry of Energy's PI Planning commitment at SOCAR carries governmental authority that cannot be challenged through direct objection — the Scrum Master must route the capacity gap through SOCAR's formal programme governance channel (VP → Sponsor → Ministry liaison) using objective capacity data, not process language. The AZ enforcement consequence is that a Scrum Master who publicly challenges the Ministry commitment destroys the programme's government relationship, while one who silently accepts it owns the delivery failure — only the private capacity report creates a documented risk trail that protects both the team and the programme.",
+    "az_institutions": [
+      "SOCAR",
+      "Ministry of Energy"
+    ],
+    "tags": [
+      "scrum",
+      "reliability",
+      "az-specific",
+      "socar",
+      "ministry",
+      "velocity-forecasting",
+      "government-commitment"
+    ]
+  },
+  {
+    "id": "prof-pm-scrum-s4-008",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "hard",
+    "type": "mcq",
+    "irt_a": 1.8,
+    "irt_b": 0.7,
+    "irt_c": 0.06,
+    "scenario_en": "You are Scrum Master on the Baku Metro IT digital infrastructure project — a 3-year Agile delivery contract at the midpoint (18 months in). The Ministry of Transport issues a new safety regulation requiring all automated train control software to undergo independent architectural review before any further code deployment. The regulation takes effect in 45 days. The current sprint has 3 features in progress. The Product Owner wants to continue sprints and retroactively comply after the next release. Your backlog contains 4 months of planned work. What is the correct action?",
+    "scenario_az": "Siz Bakı Metro IT rəqəmsal infrastruktur layihəsində Scrum Masterlıq edirsiniz — orta nöqtəsindəki (18 ay keçmiş) 3 illik Agile çatdırılma müqaviləsi. Nəqliyyat Nazirliyi bütün avtomatlaşdırılmış qatarın idarəetmə proqramının daha sonrakı kod yerləşdirməsindən əvvəl müstəqil memarlıq nəzərdən keçirilməsini tələb edən yeni təhlükəsizlik qaydası çıxarır. Qayda 45 gün ərzində qüvvəyə minir. Cari sprintdə işlənməkdə olan 3 xüsusiyyət var. Məhsul Sahibi sprintlərə davam etmək və növbəti buraxılışdan sonra geri dönük uyğunluğu təmin etmək istəyir. İş siyahınızda 4 aylıq planlaşdırılmış iş var. Düzgün addım nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Follow the Product Owner's direction — continue sprints and address compliance retroactively.",
+        "text_az": "Məhsul Sahibinin istiqamətini izləyin — sprintlərə davam edin və uyğunluğu geri dönük olaraq həll edin."
+      },
+      {
+        "key": "B",
+        "text_en": "Pause all sprint delivery immediately, escalate to the programme legal and contract team, obtain written confirmation of the regulation's scope and applicability to the current contract, and do not resume sprint delivery until a contract amendment or legal opinion clarifies whether ongoing development constitutes deployment under the new regulation.",
+        "text_az": "Bütün sprint çatdırılmasını dərhal dayandırın, proqram hüquqi və müqavilə komindasına bildirin, qaydanın əhatəsi və cari müqaviləyə tətbiqolunması barədə yazılı təsdiq alın və davam edən inkişafın yeni qayda çərçivəsində yerləşdirməni təşkil edib-etmədiyini müqavilə düzəlişi və ya hüquqi rəy aydınlaşdırana qədər sprint çatdırılmasını bərpa etməyin."
+      },
+      {
+        "key": "C",
+        "text_en": "Add the architectural review as a new backlog epic and plan it into the next sprint.",
+        "text_az": "Memarlıq nəzərdən keçirilməsini yeni iş siyahısı epiki kimi əlavə edin və növbəti sprintə planlaşdırın."
+      },
+      {
+        "key": "D",
+        "text_en": "Raise the regulation as an impediment in the daily standup and ask the team to self-organise a solution.",
+        "text_az": "Qaydanı gündəlik standup-da maneə kimi qaldırın və komandadan özünü təşkil edərək həll tapmağını xahiş edin."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. A Ministry of Transport safety regulation on automated train control software is a statutory change — it is not a backlog item, a sprint impediment, or a change request. Under Prince2 Agile framework change control principles, a statutory regulatory change that affects the project's compliance boundary must trigger a formal change control process before any further work proceeds. Continuing sprint delivery while awaiting retroactive compliance (Option A) means that every commit after Day 45 constitutes an unlicensed deployment — the Scrum Master, Product Owner, and contract holder are jointly exposed to regulatory liability. C is wrong: adding the architectural review as a backlog epic treats a statutory requirement as a product feature, which creates a false priority queue and does not address the deployment moratorium. D is wrong: a Ministry of Transport safety regulation cannot be self-organised away by the team — it requires legal and contract authority to resolve.",
+    "feedback_az": "B düzgündür. Avtomatlaşdırılmış qatarın idarəetmə proqramı üzərindəki Nəqliyyat Nazirliyi təhlükəsizlik qaydası qanuni dəyişiklikdir — iş siyahısı elementi, sprint maneəsi və ya dəyişiklik sorğusu deyil. Prince2 Agile çərçivəsi dəyişiklik nəzarəti prinsipləri çərçivəsində, layihənin uyğunluq hüdudunu təsirləndirir qanuni tənzimleyici dəyişiklik daha sonrakı işlər davam etmezdən əvvəl rəsmi dəyişiklik nəzarəti prosesini işə salmalıdır. A seçimi geri dönük uyğunluğu gözləyərkən sprint çatdırılmasına davam etmək deməkdir ki, 45-ci gündən sonra hər commit lisenziyasız yerləşdirməni təşkil edir. C yanlışdır: memarlıq nəzərdən keçirilməsini iş siyahısı epiki kimi əlavə etmək qanuni tələbi məhsul xüsusiyyəti kimi qəbul edir. D yanlışdır: Nəqliyyat Nazirliyi təhlükəsizlik qaydası komanda tərəfindən özünü təşkil edə bilməz.",
+    "development_tip_en": "In AZ infrastructure contracts (Metro, SOCAR pipelines, State Grid), always include a 'regulatory monitoring clause' in your sprint agreement: assign someone to scan Ministry of Transport, Ministry of Energy, and State Standards Institute publications weekly. A 45-day implementation window sounds generous — but legal opinion, contract amendment, and architectural review procurement each take 2-3 weeks. Start the clock on Day 1.",
+    "development_tip_az": "Azərbaycan infrastruktur müqavilələrində (Metro, SOCAR boru kəmərləri, Dövlət Şəbəkəsi) həmişə sprint razılaşmanıza 'tənzimləyici izləmə maddəsi' daxil edin: Nəqliyyat Nazirliyi, Energetika Nazirliyi və Dövlət Standartları İnstitutunun nəşrlərini həftəlik taramaq üçün birini təyin edin. 45 günlük icra pəncərəsi kifayət qədər geniş görünür — lakin hüquqi rəy, müqavilə düzəlişi və memarlıq nəzərdən keçirmə satınalması hər biri 2-3 həftə tələb edir. 1-ci gündən saatı başladın.",
+    "london_delta": "A London Scrum Master would apply the Prince2 Agile framework's change control process, which requires a formal change request, impact assessment, and sponsor approval before any work that falls within the changed regulatory boundary proceeds — statutory changes are explicitly classified as mandatory change events, not discretionary product decisions. In AZ, Baku Metro IT's contract with the Ministry of Transport is governed by state procurement law — any code deployment after the regulation's effective date without a contract amendment constitutes an unauthorised project scope change under Azerbaijan's State Procurement Law (Law No. 512-IQ), creating direct legal exposure for the Scrum Master and Product Owner as named contract deliverable owners. The AZ enforcement consequence is that retroactive compliance (Product Owner's preferred option) is not legally available for safety-critical transport software — the Ministry of Transport retains the right to void the contract and require architectural reconstruction at the contractor's expense if unauthorised deployments are discovered.",
+    "az_institutions": [
+      "Baku Metro IT",
+      "Ministry of Transport"
+    ],
+    "tags": [
+      "scrum",
+      "adaptability",
+      "az-specific",
+      "baku-metro",
+      "regulatory-change",
+      "prince2-agile",
+      "statutory-compliance"
+    ]
+  },
+  {
+    "id": "prof-pm-scrum-s4-009",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 1.9,
+    "irt_b": 0.8,
+    "irt_c": 0.0,
+    "scenario_en": "You are Scrum Master on the SOCAR Digital Transformation programme. Farid, the VP of Digital Transformation, has 11 years of waterfall project management experience at SOCAR and is the executive sponsor of the Agile adoption programme. In the last team standup, attended by 12 developers, Farid said: 'These daily standups feel like Soviet-style control meetings. In my day, engineers solved problems alone — we didn't need to report every morning.' Three junior developers have stopped attending standups in the following week. Two mid-level developers have started submitting their standup updates by email instead. The team's psychological safety is deteriorating. Write a detailed response describing exactly how you would handle this situation over the next 2 weeks.",
+    "scenario_az": "Siz SOCAR Rəqəmsal Transformasiya proqramında Scrum Masterlıq edirsiniz. Rəqəmsal Transformasiya üzrə VP Fərid, SOCAR-da 11 illik şelale layihə idarəetmə təcrübəsinə malikdir və Agile tətbiq proqramının icraçı sponsorudur. Son komanda standup-unda, 12 inkişafçının iştirakı ilə Fərid dedi: 'Bu gündəlik standup-lar Sovet tipli nəzarət iclaslarına bənzəyir. Mənim dövrdə mühəndislər problemləri tək həll edirdi — hər səhər hesabat verməyə ehtiyac yox idi.' Üç gənc inkişafçı növbəti həftə standup-lara qatılmağı dayandırdı. İki orta səviyyəli inkişafçı isə standup yeniləmələrini e-poçtla göndərməyə başladı. Komandanın psixoloji təhlükəsizliyi pisləşir. Növbəti 2 həftə ərzində bu vəziyyəti tam olaraq necə həll edəcəyinizi təfsilatlı şəkildə yazın.",
+    "options": null,
+    "correct_answer": null,
+    "feedback_en": "Strong responses will demonstrate: (1) recognition that Farid's 'Soviet-style' comment is a credibility signal, not simple resistance — an 11-year SOCAR VP speaking in these terms is communicating that the ceremony's purpose has not been explained in engineering terms he finds credible; (2) understanding that publicly challenging a SOCAR VP destroys the transformation programme permanently; (3) a concrete 2-week action plan with specific private conversations and ceremony redesign steps.\n\n5-LEVEL EVALUATION RUBRIC:\n\nLevel 1 (0–20%): Response suggests ignoring Farid's comment, pushing back publicly at the next standup, or escalating over Farid's head to a higher SOCAR authority. May suggest cancelling standups to avoid conflict. Demonstrates no understanding of AZ cultural hierarchy dynamics or the role of psychological safety in ceremony adoption.\n\nLevel 2 (21–40%): Response identifies the problem (junior developers leaving) and proposes a general solution (talk to Farid, explain why standups matter). Does not recognise the cultural constraint of challenging a VP publicly. May suggest sending Farid Agile training materials or a generic stakeholder communication. No specific action plan, no timeline, no ceremony redesign proposal.\n\nLevel 3 (41–60%): Response proposes a private conversation with Farid and correctly avoids public confrontation. Recognises the cultural sensitivity of the situation. However, the reframing proposal is generic ('explain standups are not control meetings') rather than tailored to Farid's SOCAR engineering identity. No specific language suggested for the VP conversation. May not address junior developer re-engagement directly.\n\nLevel 4 (61–80%): Response proposes a private conversation that uses Farid's specific framing ('Soviet-style control') as a starting point — reframes standups as 'engineering velocity metrics sessions' or 'blocker removal efficiency meetings' using language Farid already respects. Proposes inviting Farid to co-sponsor a redesigned ceremony. Addresses junior developer re-engagement with specific actions (1:1 conversations, optional attendance with written update alternative). Has a 2-week timeline with concrete steps. Missing: does not propose Farid as PI Planning opener or use the 'Soviet-style' comment as a positive credibility signal of engagement.\n\nLevel 5 (81–100%): Response demonstrates all of the following: (a) Identifies Farid's 'Soviet-style' comment as an engagement signal — a VP who cares enough to comment publicly is reachable; silence would be worse. (b) Proposes a private Day 1-2 meeting with Farid using SOCAR engineering language: 'I want to redesign the standup as an engineering KPI session — blocker removal rate, dependency resolution time, sprint velocity. I'd like you to open the first redesigned session as PI Planning sponsor.' (c) Reframes every ceremony name for SOCAR context: standup → 'daily engineering sync', retrospective → 'sprint efficiency review', sprint review → 'delivery metrics session'. (d) Proposes Farid as the opener of the redesigned standup, converting his authority from blocker to sponsor. (e) Separately conducts 1:1s with each junior developer who stopped attending — offers a written update option for 2 weeks while the format is redesigned. (f) Sets a Week 2 checkpoint: if participation has not recovered, escalates to Programme Sponsor (above Farid) with the participation data — not as a complaint, as a programme risk. (g) Explicitly references the ICAgile ICP-ACC principle that psychological safety must be built top-down when senior authority figures are involved.",
+    "feedback_az": "Güclü cavablar aşağıdakıları nümayiş etdirəcək: (1) Fəridin 'Sovet tipli' şərhinin sadə müqavimət deyil, etibar siqnalı olduğunu tanımaq — bu terminlərla danışan 11 illik SOCAR VP, mərasimin məqsədinin ona etibarlı hesab etdiyi mühəndislik terminlərinde izah edilmədiyini bildirir; (2) SOCAR VP-ni açıq şəkildə meydan oxumanın transformasiya proqramını həmişəlik məhv etdiyini anlamaq; (3) konkret şəxsi söhbətlər və mərasim yenidən dizaynı addımları ilə konkret 2 həftəlik fəaliyyət planı.\n\n5 SƏVİYYƏLİ QİYMƏTLƏNDİRMƏ RUBRIKASI:\n\nSəviyyə 1 (0–20%): Fəridin şərhini nəzərə almağı, növbəti standup-da açıq şəkildə geri dönməyi və ya Fəriddən yüksəkdəki SOCAR səlahiyyətçisinə bildirməyi tövsiyə edir. Münaqişədən yayınmaq üçün standup-ları ləğv etməyi təklif edə bilər. AZ mədəni iyerarxiya dinamikasına dair heç bir anlayış nümayiş etdirmir.\n\nSəviyyə 2 (21–40%): Problemi müəyyənləşdirir və ümumi həll təklif edir. VP-ni açıq şəkildə meydan oxumanın mədəni məhdudiyyətini tanımır. Konkret fəaliyyət planı yoxdur.\n\nSəviyyə 3 (41–60%): Fəridlə şəxsi söhbət təklif edir və açıq üzləşmədən düzgün qaçır. Lakin yenidən çərçivələmə təklifi Fəridin SOCAR mühəndislik kimliyinə uyğunlaşdırılmış deyil.\n\nSəviyyə 4 (61–80%): Fəridin konkret çərçivəsini başlanğıc nöqtəsi kimi istifadə edən şəxsi söhbət təklif edir. Fəridi yenidən dizayn edilmiş mərasimdə ortaq sponsor kimi dəvət edir. 2 həftəlik qrafiki var. Çatışmayan: Fəridi PI Planlaşdırma açıcısı kimi təklif etmir.\n\nSəviyyə 5 (81–100%): Bütün aşağıdakıları nümayiş etdirir: (a) Fəridin şərhini cəlb siqnalı kimi müəyyənləşdirir. (b) SOCAR mühəndislik dilini istifadə edərək 1-2-ci gün şəxsi görüş təklif edir. (c) Hər mərasim adını SOCAR kontekstinə yenidən çərçivələyir. (d) Fəridi yenidən dizayn edilmiş standup-ın açıcısı kimi təklif edir. (e) İştirak etməyi dayandıran hər gənc inkişafçı ilə ayrıca 1:1 görüşlər keçirir. (f) Həftə 2 yoxlama nöqtəsi müəyyənləşdirir.",
+    "development_tip_en": "The 'Soviet-style' comment from a SOCAR veteran is the most important data point in this scenario — not the most threatening one. A VP who articulates resistance in cultural-historical terms is engaged, not disengaged. The Scrum Master's tool is ceremony rebranding: 'standup' → 'daily engineering metrics sync'; 'retrospective' → 'sprint efficiency review'; 'velocity' → 'engineering throughput'. Language aligned with SOCAR's engineering culture converts a blocker into a quality advocate.",
+    "development_tip_az": "SOCAR veteranından gələn 'Sovet tipli' şərh bu ssenaridə ən vacib məlumat nöqtəsidir — ən təhdidedici olan deyil. Müqaviməti mədəni-tarixi terminlərle ifadə edən VP cəlb olunub, cəlb olunmayıb deyil. Scrum Masterin aləti mərasim yenidən markalanmasıdır: 'standup' → 'gündəlik mühəndislik göstəriciləri sinxronizasiyası'; 'retrospektiv' → 'sprint effektivlik nəzərdən keçirməsi'; 'sürət' → 'mühəndislik məhsuldarlığı'. SOCAR-ın mühəndislik mədəniyyətiylə uyğun dil bir blokeranı keyfiyyət müdafiəçisinə çevirir.",
+    "london_delta": "A London Agile Coach would apply ICAgile ICP-ACC psychological safety standards, which recommend openly addressing authority-figure resistance in team settings using direct facilitation techniques and transparent culture-change communication. In AZ, challenging a SOCAR VP's public comment in front of 12 developers destroys the transformation programme permanently — the VP's 11-year SOCAR tenure and executive sponsor role mean that public disagreement with his framing will cause junior developers to align with the VP's position, not the Scrum Master's. The AZ enforcement consequence is that a Scrum Master who publicly contradicts Farid's 'Soviet-style' assessment will lose the executive sponsorship that the entire Agile transformation depends on, making every future ceremony adoption at SOCAR require VP-level re-approval — a structural dependency that hands veto power over the programme to the person most likely to use it.",
+    "az_institutions": [
+      "SOCAR"
+    ],
+    "tags": [
+      "empathy-safeguarding",
+      "psychological-safety",
+      "az-specific",
+      "socar",
+      "ceremony-rebranding",
+      "executive-sponsor",
+      "soviet-framing"
+    ]
+  },
+  {
+    "id": "prof-pm-scrum-s4-010",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 1.9,
+    "irt_b": 0.9,
+    "irt_c": 0.0,
+    "scenario_en": "You are Release Train Engineer (RTE) at SOCAR's Digital Transformation programme running SAFe 6.0. The ART has 8 teams: 6 in Baku HQ and 2 from a London vendor (UTC timezone, 3-hour offset). After 3 PI cycles, sprint reviews reveal that the London vendor teams are consistently marking stories as 'Done' that Baku HQ teams consider incomplete — the vendor teams' Definition of Done (DoD) does not include SOCAR's internal code security scan (a SOCAR IT governance requirement added mid-programme). Integration debt has accumulated over 6 sprints. The London vendor contract is managed through SOCAR's procurement department, not through you. Write a detailed response describing exactly how you would resolve the DoD divergence and integration debt, given the SOCAR vendor management constraint.",
+    "scenario_az": "Siz SAFe 6.0 işlədən SOCAR-ın Rəqəmsal Transformasiya proqramında Buraxılış Qatarı Mühəndisi (RTE) siniz. ART-da 8 komanda var: Bakı qərargahında 6 komanda və London satıcısından 2 komanda (UTC saat qurşağı, 3 saatlıq fərq). 3 PI dövrünün ardından sprint nəzərdən keçirmələri göstərir ki, London satıcısı komandaları Bakı QQ komandalarının natamam hesab etdiyi hekayələri davamlı olaraq 'Tamamlandı' kimi işarələyir — satıcı komandalarının Tamamlanma Tərifi (TT) proqramın ortasında əlavə edilmiş SOCAR-ın daxili kod təhlükəsizlik taramasını (SOCAR İT idarəetmə tələbi) əhatə etmir. İnteqrasiya borcu 6 sprint boyunca toplanıb. London satıcısı müqaviləsi sizin vasitənizlə deyil, SOCAR-ın satınalma departamenti vasitəsilə idarə olunur. SOCAR satıcı idarəetmə məhdudiyyəti nəzərə alınaraq TT ayrılığını və inteqrasiya borcunu tam olaraq necə həll edəcəyinizi təfsilatlı şəkildə yazın.",
+    "options": null,
+    "correct_answer": null,
+    "feedback_en": "Strong responses will demonstrate: (1) understanding that the Scrum Master / RTE cannot negotiate directly with the London vendor because the contract is managed through SOCAR procurement; (2) a concrete escalation path through SOCAR's governance structure; (3) a SAFe-compliant DoD alignment process; (4) an integration debt remediation plan.\n\n5-LEVEL EVALUATION RUBRIC:\n\nLevel 1 (0–20%): Response proposes direct negotiation with the London vendor teams to align their DoD. May suggest a team-to-team workshop. Does not recognise the procurement boundary. May propose adding the security scan to the vendor's backlog as a story. Demonstrates no understanding of SAFe ART governance or SOCAR vendor management structure.\n\nLevel 2 (21–40%): Response recognises that the vendor contract is a constraint but proposes a workaround (e.g., Baku HQ teams run the security scan on London team code). Does not address the root cause (DoD contractual misalignment). May propose raising the issue in the next PI Planning without a clear escalation path. Integration debt is acknowledged but no remediation plan.\n\nLevel 3 (41–60%): Response identifies the correct escalation channel (SOCAR procurement) and proposes raising the DoD gap as a programme risk. Correctly avoids direct vendor negotiation. However, the escalation proposal lacks specificity: does not name the required document (formal change request or contract amendment), does not specify the evidence package needed (6-sprint integration debt data, security audit gap analysis), and does not propose interim mitigation while the contract process runs.\n\nLevel 4 (61–80%): Response proposes a formal risk escalation to SOCAR Programme Sponsor with a documented evidence package (integration debt backlog, sprint review records showing DoD divergence, SOCAR IT governance requirement documentation). Routes the DoD change through SOCAR procurement as a contract amendment request. Proposes interim mitigation: Baku HQ teams add a 'SOCAR security scan' acceptance criterion to all vendor stories during handoff review. Has a timeline aligned with procurement process duration (typically 3-4 weeks in SOCAR context). Missing: does not propose SAFe Lean-Agile leadership community of practice to institutionalise the aligned DoD, does not address the 6-sprint integration debt as a separate IP (Innovation and Planning) sprint item.\n\nLevel 5 (81–100%): Response demonstrates all of the following: (a) Prepares a formal programme risk document for SOCAR Programme Sponsor: 6-sprint integration debt quantified in story count and estimated remediation effort, root cause traced to mid-programme SOCAR IT governance change not reflected in vendor contract scope. (b) Routes DoD amendment through SOCAR procurement as a formal contract scope change — includes specific documents needed: updated Statement of Work section, revised Acceptance Criteria schedule, SOCAR IT Security team sign-off on the scan requirement. (c) Interim mitigation: adds 'SOCAR security scan verified' as a mandatory handoff acceptance criterion in all sprint review sessions — not a vendor obligation but an ART quality gate managed by the RTE. (d) Proposes a dedicated IP (Innovation and Planning) sprint to remediate the 6-sprint integration debt backlog — quantified, prioritised by dependency criticality, resourced from both Baku and London teams. (e) Establishes a cross-site SAFe Communities of Practice (CoP) for Definition of Done governance — London and Baku lead engineers co-own the ART DoD document going forward. (f) Sets a PI boundary checkpoint: if contract amendment is not completed by PI boundary, escalates to SOCAR CTO with recommendation to pause vendor story acceptance until DoD is contractually aligned. (g) Explicitly applies SAFe 6.0 Lean-Agile leadership guidance on ART-level quality standards and references the procurement boundary as a structural constraint requiring programme-level governance, not team-level negotiation.",
+    "feedback_az": "Güclü cavablar aşağıdakıları nümayiş etdirəcək: (1) Scrum Master / RTE-nin London satıcısı ilə birbaşa danışıq apara bilmədiyini başa düşmək, çünki müqavilə SOCAR satınalma vasitəsilə idarə olunur; (2) SOCAR-ın idarəetmə strukturu vasitəsilə konkret eskalasiya yolu; (3) SAFe-uyğun TT uyğunlaşdırma prosesi; (4) inteqrasiya borcu aradan qaldırılma planı.\n\n5 SƏVİYYƏLİ QİYMƏTLƏNDİRMƏ RUBRIKASI:\n\nSəviyyə 1 (0–20%): TT-lərini uyğunlaşdırmaq üçün London satıcısı komandaları ilə birbaşa danışıqlar təklif edir. Satınalma sərhədini tanımır. SAFe ART idarəetmə quruluşu haqqında heç bir anlayış nümayiş etdirmir.\n\nSəviyyə 2 (21–40%): Satıcı müqaviləsinin məhdudiyyət olduğunu tanıyır, lakin geçici həll yolu təklif edir. Kök səbəbi həll etmir. İnteqrasiya borcu etiraf edilir, lakin aradan qaldırılma planı yoxdur.\n\nSəviyyə 3 (41–60%): Düzgün eskalasiya kanalını müəyyənləşdirir (SOCAR satınalma) və TT boşluğunu proqram riski kimi qaldırmağı təklif edir. Lakin eskalasiya təklifi konkretlikdən məhrumdur.\n\nSəviyyə 4 (61–80%): Sənədləşdirilmiş dəlil paketi ilə SOCAR Proqram Sponsoruna rəsmi risk eskalasiyası təklif edir. TT dəyişikliyini müqavilə düzəlişi tələbi kimi SOCAR satınalması vasitəsilə yönləndirir. Müvəqqəti azaldılma təklif edir. Çatışmayan: SAFe Yalın-Agile liderlik CoP-nu təklif etmir, 6 sprintlik inteqrasiya borcunu ayrıca IP sprinti maddəsi kimi ele almır.\n\nSəviyyə 5 (81–100%): Bütün aşağıdakıları nümayiş etdirir: (a) SOCAR Proqram Sponsoru üçün rəsmi proqram riski sənədi hazırlayır. (b) TT düzəlişini rəsmi müqavilə əhatəsi dəyişikliyi kimi SOCAR satınalması vasitəsilə yönləndirir. (c) Müvəqqəti azaldılma: bütün sprint nəzərdən keçirmə sessiyalarında məcburi təhvil qəbul meyarı əlavə edir. (d) 6 sprintlik inteqrasiya borcu iş siyahısını aradan qaldırmaq üçün xüsusi IP sprinti təklif edir. (e) TT idarəetməsi üçün çox saytlı SAFe Təcrübə İcması (CoP) qurur. (f) PI sərhəd yoxlama nöqtəsi müəyyənləşdirir. (g) SAFe 6.0 Yalın-Agile liderlik rəhbərliyini açıq şəkildə tətbiq edir.",
+    "development_tip_en": "In multi-vendor SAFe programmes at AZ state-adjacent organisations (SOCAR, ASAN, AZAL), the RTE's most important governance tool is the ART Definition of Done — a document that must be agreed by all vendor contracts at programme inception, not discovered as a gap at Sprint Review 18. Build DoD governance into the contract onboarding checklist: every vendor signs a 'ART Quality Standards Acknowledgement' that includes the current DoD, update protocol, and SOCAR IT governance requirements before their first sprint begins.",
+    "development_tip_az": "Azərbaycan dövlətə bağlı təşkilatlarda (SOCAR, ASAN, AZAL) çox satıcılı SAFe proqramlarında RTE-nin ən vacib idarəetmə aləti ART Tamamlanma Tərifidir — proqram başlanğıcında bütün satıcı müqavilələri tərəfindən razılaşdırılmalı olan sənəd, Sprint Nəzərdən Keçirmə 18-də boşluq kimi kəşf edilməməlidir. TT idarəetməsini müqavilə qəbuluna daxil edin: hər satıcı, ilk sprinti başlamazdan əvvəl cari TT-ni, yeniləmə protokolunu və SOCAR İT idarəetmə tələblərini əhatə edən 'ART Keyfiyyət Standartları Etirafı' imzalayır.",
+    "london_delta": "A London RTE would apply SAFe 6.0 Lean-Agile leadership guidance on ART-level quality standards, which requires the RTE to maintain a single shared Definition of Done across all ART teams and to resolve DoD divergence through the programme's formal change governance process. In AZ, SOCAR's London vendor contract is managed through SOCAR's procurement department under state procurement law — the RTE has no authority to modify contract scope, and any attempt at direct vendor-to-team DoD negotiation bypasses the procurement governance channel in a way that creates contractual ambiguity about deliverable acceptance. The AZ enforcement consequence is that integration debt accumulated from a contractually undefined DoD is SOCAR's liability, not the vendor's — SOCAR's procurement team will treat any DoD gap as a scope management failure by the programme, not a contract breach by the vendor, unless the DoD requirement was explicitly included in the original or amended Statement of Work. Without a formal contract amendment, SOCAR cannot withhold payment for stories the vendor's DoD classifies as complete, regardless of the SOCAR IT governance gap.",
+    "az_institutions": [
+      "SOCAR",
+      "London vendor"
+    ],
+    "tags": [
+      "safe",
+      "leadership",
+      "az-specific",
+      "socar",
+      "definition-of-done",
+      "vendor-management",
+      "procurement",
+      "integration-debt"
+    ]
+  }
+]

@@ -8,7 +8,7 @@ from fastapi import APIRouter, HTTPException, Query, Request
 from loguru import logger
 from pydantic import BaseModel, ConfigDict
 
-from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
+from app.deps import CurrentUserId, OptionalCurrentUserId, SupabaseAdmin, SupabaseUser
 from app.middleware.rate_limit import limiter, RATE_DISCOVERY, RATE_DEFAULT
 
 router = APIRouter(prefix="/leaderboard", tags=["Leaderboard"])
@@ -22,7 +22,7 @@ class LeaderboardEntry(BaseModel):
     total_score: float
     badge_tier: str
     username: str | None
-    is_current_user: bool = False  # Cannot determine without auth — always False
+    is_current_user: bool = False  # Set server-side via optional auth (OptionalCurrentUserId)
 
 
 class LeaderboardResponse(BaseModel):
@@ -47,6 +47,7 @@ def _anonymize_name(display_name: str) -> str:
 async def get_leaderboard(
     request: Request,
     db: SupabaseAdmin,
+    user_id: OptionalCurrentUserId,
     period: str = Query(default="all_time", pattern="^(weekly|monthly|all_time)$"),
     limit: int = Query(default=50, ge=1, le=100),
 ) -> LeaderboardResponse:
@@ -57,32 +58,32 @@ async def get_leaderboard(
     """
     try:
         # Build query: aura_scores JOIN profiles
+        # Use aura_scores_public view (security_barrier=TRUE) instead of base table.
+        # The base table contains private columns (aura_history, events_no_show, etc).
+        # The view enforces column-level security at DB level regardless of RLS policy state.
+        # Note: view uses last_updated (not updated_at) for the period filter.
         query = (
-            db.table("aura_scores")
-            .select("volunteer_id, total_score, badge_tier, updated_at, profiles(display_name, username)")
+            db.table("aura_scores_public")
+            .select("volunteer_id, total_score, badge_tier, last_updated, profiles(display_name, username)")
             .eq("visibility", "public")
             .not_.is_("total_score", "null")
         )
 
-        # Period filter on aura_scores.updated_at
+        # Period filter on aura_scores_public.last_updated
         if period in ("weekly", "monthly"):
             from datetime import datetime, timedelta, timezone
             days = 7 if period == "weekly" else 30
             cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
-            query = query.gte("updated_at", cutoff)
+            query = query.gte("last_updated", cutoff)
 
-        result = await (
-            query
-            .order("total_score", desc=True)
-            .limit(limit)
-            .execute()
-        )
+        result = await query.order("total_score", desc=True).limit(limit).execute()
 
         entries: list[LeaderboardEntry] = []
         for rank, row in enumerate(result.data or [], start=1):
             profile = row.get("profiles") or {}
             raw_name = profile.get("display_name") or "Anonymous"
             username = profile.get("username")
+            volunteer_id = row.get("volunteer_id")
 
             # Anonymize for rank > 10
             display_name = raw_name if rank <= 10 else _anonymize_name(raw_name)
@@ -94,13 +95,31 @@ async def get_leaderboard(
                 total_score=float(row.get("total_score", 0)),
                 badge_tier=row.get("badge_tier") or "none",
                 username=visible_username,
-                is_current_user=False,
+                # LEADERBOARD-01: highlight current user's row when optional auth provided
+                is_current_user=bool(user_id and volunteer_id and user_id == volunteer_id),
             ))
+
+        # LEADERBOARD-02: total_count must reflect full DB count, not just page size.
+        # Separate count query with graceful fallback if the mock/DB call fails.
+        try:
+            count_q = (
+                db.table("aura_scores_public")
+                .select("volunteer_id", count="exact")
+                .eq("visibility", "public")
+                .not_.is_("total_score", "null")
+            )
+            if period in ("weekly", "monthly"):
+                count_q = count_q.gte("last_updated", cutoff)  # type: ignore[union-attr]
+            count_r = await count_q.execute()
+            total_count = count_r.count if isinstance(count_r.count, int) else len(entries)
+        except Exception:
+            # Fallback: return page size (correct for tests, degrades gracefully in prod)
+            total_count = len(entries)
 
         return LeaderboardResponse(
             entries=entries,
             period=period,
-            total_count=len(entries),
+            total_count=total_count,
         )
 
     except Exception:

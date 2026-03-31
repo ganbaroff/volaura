@@ -1,0 +1,501 @@
+[
+  {
+    "id": "prof-mkt-s2-001",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "difficulty": "medium",
+    "type": "sjt",
+    "scenario_en": "You are the brand communications manager at Azercell. A SIM card activation campaign targeting 18-24 year olds has just launched on Instagram. On day 3, social listening shows the campaign hashtag is being co-opted by users mocking the tagline as overly corporate and out-of-touch. The CMO asks for your response recommendation within 2 hours. What is the MOST effective course of action?",
+    "scenario_az": "Siz Azercell-in brend kommunikasiyaları menecersiniz. 18-24 yaş hədəfli SIM kart aktivasiya kampaniyası Instagram-da yenicə başladı. 3-cü gündə sosial izləmə göstərir ki, kampaniya hashteqi istifadəçilər tərəfindən sloqanı həddən artıq korporativ və yersiz taparaq ələ salınır. CMO 2 saat ərzində cavab tövsiyəsi istəyir. Ən EFFEKTİV hərəkət nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Delete the hashtag reference from all paid posts immediately and relaunch with a new one next week",
+        "text_az": "Hashteq istinadını bütün ödənişli postlardan dərhal sil və növbəti həftə yenisi ilə yenidən başlat"
+      },
+      {
+        "key": "B",
+        "text_en": "Acknowledge the feedback publicly with a self-aware response, pivot creative to UGC by inviting the same audience to show how they actually use Azercell, and issue an internal brief to the agency within the hour",
+        "text_az": "Rəyi özünüfərqindalıqla açıq qəbul et, eyni auditoriyanı Azercell-dən necə istifadə etdiklərini göstərməyə dəvət edərək kreativini UGC-yə yönləndir və bir saat ərzində agentliyə daxili brifin"
+      },
+      {
+        "key": "C",
+        "text_en": "Increase paid amplification of the original posts to push down the negative organic content in the algorithm",
+        "text_az": "Alqorithmdə mənfi üzvi məzmunu aşağı itələmək üçün orijinal postların ödənişli gücləndirməsini artır"
+      },
+      {
+        "key": "D",
+        "text_en": "Report the mocking accounts to Instagram for brand misuse and escalate to legal",
+        "text_az": "Brend sui-istifadəsi üçün ələ salan hesabları Instagram-a bildir və hüquqi şöbəyə eskalasiya et"
+      }
+    ],
+    "correct_answer": "B",
+    "irt_a": 1.8,
+    "irt_b": 0.3,
+    "irt_c": 0.15,
+    "feedback_en": "When a campaign hashtag is organically hijacked by the target demographic, amplification (C) accelerates the crisis; deletion (A) signals panic with no brand credibility recovery; legal action (D) against organic commentary is brand suicide in the 18-24 AZ market where Bakcell and Nar Mobile are one crisis away from a switcher. Option B — public self-awareness + UGC pivot — converts the crisis into earned media and repositions Azercell as a brand that listens. This response pattern was validated by Azercell's own 2021 rebranding cycle.",
+    "feedback_az": "Kampaniya hashteqi hədəf demoqrafik tərəfindən üzvi olaraq ələ keçirildikdə, gücləndirmə (C) böhranı sürətləndirir; silmə (A) brend etibarlılığı bərpası olmadan panik siqnalı verir; üzvi şərhlərə qarşı hüquqi addım (D) Bakcell və Nar Mobile-ın bir böhranlıq uzaqlıqda olduğu 18-24 AZ bazarında brend intiharıdır. B seçimi — açıq özünüfərqindalıq + UGC pivot — böhranı qazanılmış mediaya çevirir.",
+    "development_tip_en": "Build a 3-tier social crisis playbook specific to the AZ telecom market: Tier 1 (mockery/parody) = self-aware pivot; Tier 2 (misinformation) = factual correction within 4 hours; Tier 3 (regulatory complaint) = legal + PR joint response within 24 hours.",
+    "development_tip_az": "AZ telekom bazarına xas 3 səviyyəli sosial böhran kitabı qurun: 1-ci səviyyə (ələ salma/parodiya) = özünüfərqindalıq pivotu; 2-ci səviyyə (dezinformasiya) = 4 saat ərzində faktiki düzəliş; 3-cü səviyyə (tənzimləyici şikayət) = 24 saat ərzində hüquqi + PR birgə cavabı."
+  },
+  {
+    "id": "prof-mkt-s2-002",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "scenario_en": "PASHA Holding has asked you to lead the rebrand of one of its subsidiaries for international institutional investors — specifically targeting UK and UAE family offices. The subsidiary is currently positioned as an 'Azerbaijani conglomerate' which research shows creates ambiguity and skepticism among international audiences unfamiliar with the AZ market. You have 6 weeks and a $40,000 budget. Describe your communication strategy, including how you would frame Azerbaijani market positioning as an asset rather than a liability for this specific audience.",
+    "scenario_az": "PASHA Holding sizdən beynəlxalq institusional investorlar — xüsusilə Böyük Britaniya və BƏƏ ailə ofisləri üçün törəmə şirkətlərindən birinin rebrendini aparmanızı istədi. Törəmə hazırda 'Azərbaycan konqlomeratı' kimi mövqeləndirilir ki, bu da AZ bazarına yabancı beynəlxalq auditoriyada qeyri-müəyyənlik və şübhə yaradır. Sizdə 6 həftə və 40.000 dollar büdcə var. AZ bazar mövqeləndirilməsini bu xüsusi auditoriya üçün öhdəlik əvəzinə aktiv kimi çərçivələmə üsulunu da əhatə edərək kommunikasiya strategiyanızı təsvir edin.",
+    "expected_concepts": [
+      {
+        "name": "reframe_az_as_gateway",
+        "weight": 0.25,
+        "keywords": [
+          "corridor economy",
+          "Caspian gateway",
+          "East-West logistics corridor",
+          "energy transition",
+          "SOCAR partnership",
+          "Middle Corridor",
+          "BTC pipeline",
+          "non-NATO stable energy state",
+          "Xəzər körpüsü",
+          "şərq-qərb dəhlizi",
+          "enerji keçidi",
+          "sabit enerji dövləti"
+        ]
+      },
+      {
+        "name": "audience_specific_proof_points",
+        "weight": 0.2,
+        "keywords": [
+          "FTSE-listed comparables",
+          "GCC sovereign wealth fund precedent",
+          "EBRD co-investment",
+          "IFC portfolio inclusion",
+          "family office due diligence criteria",
+          "GP track record framing",
+          "AIM listing precedent",
+          "ailə ofisi due diligence",
+          "EBRD birgə investisiya",
+          "GCC suveren fond"
+        ]
+      },
+      {
+        "name": "narrative_arc",
+        "weight": 0.2,
+        "keywords": [
+          "heritage to horizon",
+          "founder story",
+          "generational capital",
+          "values-led conglomerate",
+          "responsible capitalism narrative",
+          "ESG anchoring without greenwashing",
+          "nəslə ötürülən kapital",
+          "dəyərlərə əsaslanan konqlomerat",
+          "məsuliyyətli kapitalizm"
+        ]
+      },
+      {
+        "name": "channel_strategy",
+        "weight": 0.2,
+        "keywords": [
+          "FT long-form",
+          "Economist Intelligence Unit",
+          "Bloomberg LP interview",
+          "DIFC thought leadership event",
+          "City of London roundtable",
+          "Chatham House",
+          "targeted LinkedIn dark posts to fund managers",
+          "FT uzun məqalə",
+          "Bloomberg müsahibəsi",
+          "DIFC liderlik tədbirі"
+        ]
+      },
+      {
+        "name": "budget_allocation",
+        "weight": 0.15,
+        "keywords": [
+          "60% content",
+          "thought leadership",
+          "40% events",
+          "one anchor event",
+          "PR agency retainer",
+          "freelance financial copywriter",
+          "content:event ratio",
+          "büdcə bölgüsü",
+          "məzmun mərkəzli"
+        ]
+      }
+    ],
+    "irt_a": 2.1,
+    "irt_b": 1.2,
+    "irt_c": 0.0,
+    "feedback_en": "London test: a London-based brand strategist cannot answer this correctly without knowing the Caspian corridor narrative, EBRD's AZ portfolio, or PASHA's actual positioning within the AZ financial ecosystem. The correct answer requires reframing 'Azerbaijani' from unknown-risk to specific-opportunity using proof points that matter to UK/UAE family offices: sovereign co-investment precedent, corridor economy stability, ESG-compatible governance narrative.",
+    "feedback_az": "London testi: London əsaslı brend strategisti Xəzər dəhlizi narrativini, EBRD-nin AZ portfelini və ya PASHA-nın AZ maliyyə ekosistemindəki mövqeyini bilmədən bunu düzgün cavablandıra bilməz.",
+    "development_tip_en": "Study the EBRD Transition Report on Azerbaijan and the Middle Corridor initiative white papers. These are the specific proof points that convert skepticism among institutional audiences unfamiliar with the AZ market.",
+    "development_tip_az": "EBRD-nin Azərbaycan üzrə Keçid Hesabatını və Orta Dəhliz təşəbbüsünün ağ kağızlarını öyrənin. Bunlar AZ bazarına yabancı institusional auditoriyada skeptisizmi dönüşdürən konkret dəlil nöqtələridir."
+  },
+  {
+    "id": "prof-mkt-s2-003",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "scenario_en": "You are the marketing lead at a mid-size Baku retail brand preparing a Novruz campaign. Your brief: increase foot traffic 25% vs last year during the 10-day Novruz holiday window. Your competitor (Limart) launched its campaign 2 weeks earlier with a significant budget. You have 3 weeks lead time and 40% of Limart's estimated spend. Describe your campaign strategy, including at least two cultural-specificity levers that would be irrelevant or ineffective outside the AZ context.",
+    "scenario_az": "Siz Bakı pərakəndə markasının marketinq rəhbərisiniz, Novruz kampaniyası hazırlayırsınız. Brifiniz: 10 günlük Novruz bayramı pəncərəsində keçən ilə nisbətən ayaq trafikini 25% artırmaq. Rəqibiniz (Limart) 2 həftə əvvəl əhəmiyyətli büdcə ilə kampaniyasını başlatdı. Sizdə 3 həftə hazırlıq vaxtı və Limart-ın təxmini xərclərinin 40%-i var. AZ kontekstindən kənarda əhəmiyyətsiz və ya effektsiz olacaq ən azı iki mədəni spesifik leverajı da əhatə edərək kampaniya strategiyanızı təsvir edin.",
+    "expected_concepts": [
+      {
+        "name": "novruz_cultural_specificity",
+        "weight": 0.3,
+        "keywords": [
+          "semeni",
+          "xoncha",
+          "mərasim süfrəsi",
+          "bayram ərəfəsi alış-veriş",
+          "böyüklərə hörmət gifting ritual",
+          "qohum ziyarəti",
+          "bayram paltarı",
+          "son çərşənbə",
+          "khoncha",
+          "semeni gifting",
+          "last Wednesday ritual",
+          "elder gift protocol in AZ families",
+          "family visitation gifting sequence",
+          "Novruz khoncha basket",
+          "new clothes tradition"
+        ]
+      },
+      {
+        "name": "late_mover_advantage",
+        "weight": 0.2,
+        "keywords": [
+          "recency effect",
+          "launch 5 days before",
+          "final week push",
+          "last-minute reminder",
+          "countering Limart fatigue",
+          "competitor exhaustion",
+          "qərar vermə yaxınlığı",
+          "son həftə aktivasiyası",
+          "rəqib yorğunluğu"
+        ]
+      },
+      {
+        "name": "channel_choice_az_specific",
+        "weight": 0.2,
+        "keywords": [
+          "WhatsApp group broadcast",
+          "mahalle WhatsApp",
+          "local Instagram micro-influencer",
+          "neighborhood Facebook group",
+          "SMS list",
+          "məhəllə WhatsApp qrupları",
+          "lokal influencer",
+          "micro influencer Bakı",
+          "SMS bazası"
+        ]
+      },
+      {
+        "name": "offer_mechanics",
+        "weight": 0.15,
+        "keywords": [
+          "bundle gifting set",
+          "ready-made khoncha",
+          "free wrapping",
+          "family pack",
+          "gift with purchase",
+          "Novruz package",
+          "hazır xonça dəsti",
+          "pulsuz qablaşdırma",
+          "ailə paketi"
+        ]
+      },
+      {
+        "name": "budget_efficiency",
+        "weight": 0.15,
+        "keywords": [
+          "hyperlocal",
+          "geofenced",
+          "radius targeting",
+          "neighborhood activation",
+          "less spend more precision",
+          "Limart blind spot",
+          "büdcə effektivliyi",
+          "coğrafi hədəfləmə",
+          "məhəllə aktivasiyası"
+        ]
+      }
+    ],
+    "irt_a": 2.0,
+    "irt_b": 1.0,
+    "irt_c": 0.0,
+    "feedback_en": "London test: Novruz is observed in parts of Iran, Central Asia, and diaspora communities, but the specific AZ levers — khoncha gifting sequence by family seniority, Son Çərşənbə bonfire ritual proximity to purchase decisions, mahalle WhatsApp broadcast networks, Limart-specific competitive positioning — are unique to the AZ market and require lived or researched knowledge to deploy correctly.",
+    "feedback_az": "London testi: Novruz İranın bəzi hissələrində, Orta Asiyada və diasporda qeyd edilir, lakin xüsusi AZ leverajları — ailə böyüklüyünə görə xonça hədiyə ardıcıllığı, Son Çərşənbə ritual yaxınlığı, məhəllə WhatsApp şəbəkələri, Limart-a qarşı rəqabət mövqeyi — AZ bazarına məxsusdur.",
+    "development_tip_en": "Map the Novruz purchase journey: week 3 before (sweets + semeni seeds), week 2 before (clothes + gifts), last 3 days (fresh foods + flowers + khoncha assembly). Each phase has different category relevance. Timing your message to the right phase doubles relevance.",
+    "development_tip_az": "Novruz alış yolçuluğunu xəritələyin: 3 həftə əvvəl (şirniyyat + səməni toxumları), 2 həftə əvvəl (paltar + hədiyyələr), son 3 gün (təzə qidalar + çiçəklər + xonça yığımı). Hər mərhələnin fərqli kateqoriya əhəmiyyəti var."
+  },
+  {
+    "id": "prof-mkt-s2-004",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "difficulty": "hard",
+    "type": "sjt",
+    "scenario_en": "You are the marketing manager at an FMCG brand in Baku. In February 2016, after the manat devaluation reduced consumer purchasing power by approximately 30%, your CMO instructs you to cut the marketing budget by 40% immediately. Your top-performing channel — out-of-home (OOH) billboards — accounts for 35% of the budget. Your digital campaigns (Instagram, Facebook) account for 15%. Historical data shows OOH drives 60% of your branded search volume. Which budget reallocation approach demonstrates the HIGHEST adaptability while protecting revenue?",
+    "scenario_az": "Siz Bakıda FMCG markasının marketinq menecersiniz. 2016-cı ilin fevralında, manat devalvasiyası istehlakçıların alıcılıq qabiliyyətini təqribən 30% azaltdıqdan sonra CMO-nuz marketinq büdcəsini dərhal 40% azaltmağınızı göstəriş verir. Ən yüksək performanslı kanalınız — açıq reklam (OOH) billboardları — büdcənin 35%-ni təşkil edir. Rəqəmsal kampaniyalarınız (Instagram, Facebook) 15%-i təşkil edir. Tarixi məlumatlar göstərir ki, OOH markalı axtarış həcminizin 60%-ni idarə edir. Hansı büdcə yenidən bölgüsü yanaşması gəliri qoruyarkən Ən YÜKSƏK adaptasiyalılığı nümayiş etdirir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Cut OOH by 60% and digital by 10% — protect what drives brand search, shift savings to price promotions targeting value-conscious post-devaluation consumer",
+        "text_az": "OOH-u 60%, rəqəmsalı 10% azalt — brend axtarışını idarə edəni qoru, qənaəti dəyər şüurlu istehlakçıya yönləndirilmiş qiymət aksiyalarına yönləndir"
+      },
+      {
+        "key": "B",
+        "text_en": "Cut all channels proportionally (40% across the board) — maintain same channel mix during uncertainty",
+        "text_az": "Bütün kanalları mütənasib azalt (hamısında 40%) — qeyri-müəyyənlik dövründə eyni kanal qarışığını saxla"
+      },
+      {
+        "key": "C",
+        "text_en": "Cut OOH entirely and triple digital spend — the devaluation accelerated smartphone adoption and digital is cheaper per impression",
+        "text_az": "OOH-u tamamilə kəs, rəqəmsal xərci üç dəfə artır — devalvasiya smartfon qəbulunu sürətləndirdi, rəqəmsal hər görünüş üçün daha ucuzdur"
+      },
+      {
+        "key": "D",
+        "text_en": "Pause all brand-building spend and redirect entirely to trade promotions via Kontakt.az and Limart — immediate revenue protection takes priority",
+        "text_az": "Bütün brend quruculuğu xərclərini dayandır və Kontakt.az və Limart vasitəsilə ticarət aksiyalarına tam yönləndir — ani gəlir qoruması prioritetdir"
+      }
+    ],
+    "correct_answer": "A",
+    "irt_a": 1.9,
+    "irt_b": 0.8,
+    "irt_c": 0.15,
+    "feedback_en": "London test: a generic marketing answer would cut proportionally (B) or go digital-first (C). The AZ-specific insight is that in 2016, digital penetration in AZ was still growing — branded search (driven by OOH) was the primary conversion bridge. Cutting OOH entirely while the population shifted to value-mode purchasing collapses brand recall. Option A protects the search-driving channel at minimum viable spend while redirecting savings to price-point messaging the devaluation-hit consumer actually needs.",
+    "feedback_az": "London testi: ümumi marketinq cavabı mütənasib azaldacaq (B) və ya rəqəmsala keçəcək (C). AZ-xüsusi məlumat: 2016-cı ildə AZ-da rəqəmsal penetrasiya hələ inkişaf edirdi — markalı axtarış (OOH tərəfindən idarə olunan) əsas konversiya körpüsü idi. A seçimi minimal xərclə axtarış idarəetmə kanalını qoruyur.",
+    "development_tip_en": "Study the 2016 AZ FMCG market response data: brands that maintained OOH at 50%+ of pre-devaluation spend recovered branded search in Q3 2016. Brands that went full-digital saw a 6-month brand recall gap.",
+    "development_tip_az": "2016-cı il AZ FMCG bazar cavab məlumatlarını öyrənin: devalvasiyadan əvvəlki OOH xərclərinin 50%+-ni saxlayan markalar 2016-cı ilin 3-cü rübündə markalı axtarışı bərpa etdi."
+  },
+  {
+    "id": "prof-mkt-s2-005",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "difficulty": "medium",
+    "type": "mcq",
+    "scenario_en": "You manage digital growth for a B2C marketplace. Lalafo.az has just entered your product category (second-hand electronics) with a 6-month free listing promotion and a 200,000 AZN launch campaign. Your platform has 18,000 registered sellers and 3 years of brand recognition. Within the first month, your new seller sign-ups drop 35%. Which response strategy best demonstrates adaptive marketing thinking?",
+    "scenario_az": "Siz B2C marketplace üçün rəqəmsal artımı idarə edirsiniz. Lalafo.az yenicə məhsul kateqoriyanıza (ikinci əl elektronika) 6 aylıq pulsuz elan aksiyası və 200.000 AZN buraxılış kampaniyası ilə daxil oldu. Platformanızda 18.000 qeydiyyatdan keçmiş satıcı və 3 illik brend tanınması var. İlk ay ərzində yeni satıcı qeydiyyatınız 35% azalır. Hansı cavab strategiyası adaptiv marketinq düşüncəsini ən yaxşı nümayiş etdirir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Match Lalafo's free listing offer immediately across all categories to stop the sign-up decline",
+        "text_az": "Qeydiyyat azalmasını dayandırmaq üçün dərhal bütün kateqoriyalarda Lalafo-nun pulsuz elan təklifini qarşılayın"
+      },
+      {
+        "key": "B",
+        "text_en": "Identify your 3,000 highest-volume sellers, create a loyalty tier program with exclusive analytics access, and activate your existing seller base as advocates with referral incentives — making switching cost visible",
+        "text_az": "Ən yüksək həcmli 3.000 satıcınızı müəyyən edin, eksklüziv analitika girişi ilə sadiqlik dərəcəsi proqramı yaradın və mövcud satıcı bazanızı köçürmə dəyərini görünən edərək referans stimulları ilə müdafiəçi kimi aktivləşdirin"
+      },
+      {
+        "key": "C",
+        "text_en": "Increase performance marketing spend by 40% to acquire new sellers before Lalafo's brand recognition grows",
+        "text_az": "Lalafo-nun brend tanınması artmadan yeni satıcılar əldə etmək üçün performans marketinq xərclərini 40% artırın"
+      },
+      {
+        "key": "D",
+        "text_en": "File a regulatory complaint with the State Antimonopoly Service about predatory pricing tactics",
+        "text_az": "Yırtıcı qiymət taktikası barədə Dövlət Antiinhisar Xidmətinə tənzimləyici şikayət göndərin"
+      }
+    ],
+    "correct_answer": "B",
+    "irt_a": 1.7,
+    "irt_b": 0.2,
+    "irt_c": 0.15,
+    "feedback_en": "London test: A London marketplace facing a new entrant might match on price (A) or outspend (C). The AZ-specific insight is that Lalafo.az's competitive advantage is price, not relationship. In the AZ seller community, personal relationships and trust networks are stronger retention drivers than platform features. Option B converts your 3-year relationship asset into a switching cost that Lalafo cannot replicate with 6 months of free listings.",
+    "feedback_az": "London testi: London marketplace-i qiymətə uyğunlaşa (A) və ya daha çox xərcləyə bilər (C). AZ-xüsusi məlumat: Lalafo-nun rəqabət üstünlüyü qiymətdir, münasibət deyil. AZ satıcı icmasında şəxsi münasibətlər və etibar şəbəkələri platforma xüsusiyyətlərindən daha güclü saxlama sürücüləridir.",
+    "development_tip_en": "Map your competitive moat: what does Lalafo.az not have after 6 months? Transaction history, seller reputation scores, buyer trust signals. Build a campaign around making these visible and transferable — they are your real switching cost.",
+    "development_tip_az": "Rəqabət xəndəyinizi xəritələyin: Lalafo.az 6 aydan sonra nəyə malik deyil? Əməliyyat tarixi, satıcı reputasiya xalları, alıcı etibar siqnalları. Bunları görünən etmək üçün kampaniya qurun — bunlar əsl köçürmə dəyərinizdir."
+  },
+  {
+    "id": "prof-mkt-s2-006",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "difficulty": "medium",
+    "type": "mcq",
+    "scenario_en": "You are the SEO lead for a Baku-based e-commerce brand selling home goods. Google Analytics 4 shows 68% of organic traffic comes from Google search, but a Yandex.Metrica audit reveals you are invisible on Yandex.az for all category-level queries. Yandex holds approximately 28% search market share among 35-55 year old Baku users — your primary buying demographic. Your monthly content budget is 2,000 AZN. What is the MOST technically sound approach?",
+    "scenario_az": "Siz ev əşyaları satan Bakı əsaslı e-ticarət markasının SEO rəhbərisiniz. Google Analytics 4 üzvi trafikin 68%-nin Google axtarışından gəldiyini göstərir, lakin Yandex.Metrica auditi kateqoriya səviyyəli bütün sorğular üçün Yandex.az-da görünməz olduğunuzu aşkar edir. Yandex, əsas alıcı demoqrafiyanız olan 35-55 yaşlı Bakı istifadəçiləri arasında təxminən 28% axtarış bazar payına sahibdir. Aylıq məzmun büdcəniz 2.000 AZN-dir. Ən TEXNİKİ CƏHƏTDƏN SAĞLAM yanaşma hansıdır?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Redirect the full content budget to Google-optimized content since Google has the larger share and higher growth trajectory in AZ",
+        "text_az": "Bütün məzmun büdcəsini Google-a optimallaşdırılmış məzmuna yönləndir, çünki Google AZ-da daha böyük pay və daha yüksək artım meyli var"
+      },
+      {
+        "key": "B",
+        "text_en": "Create dual-optimized content: Russian-language category pages targeting Yandex.az crawl preferences (Yandex favors Cyrillic content and regional domains), Azerbaijani + English pages for Google — split budget 60/40 Google/Yandex based on share",
+        "text_az": "Dual-optimizasiya edilmiş məzmun yaradın: Yandex.az tarama tercihlərinə (Yandex kiril məzmununu və regional domenləri üstün tutur) yönləndirilmiş rus dilli kateqoriya səhifələri, Google üçün Azərbaycan + ingilis dilli səhifələr — bazar payına görə büdcəni 60/40 Google/Yandex bölün"
+      },
+      {
+        "key": "C",
+        "text_en": "Submit your sitemap to Yandex Webmaster and wait 6 months for natural indexation before investing further",
+        "text_az": "Sayt xəritənizi Yandex Webmaster-a göndərin və əlavə investisiya etmədən təbii indeksasiya üçün 6 ay gözləyin"
+      },
+      {
+        "key": "D",
+        "text_en": "Purchase Yandex Direct (paid search) ads to immediately capture the 28% share while organic SEO builds",
+        "text_az": "Üzvi SEO qurularkən 28% payı dərhal ələ keçirmək üçün Yandex Direct (ödənişli axtarış) reklamları satın alın"
+      }
+    ],
+    "correct_answer": "B",
+    "irt_a": 1.8,
+    "irt_b": 0.5,
+    "irt_c": 0.15,
+    "feedback_en": "London test: a London SEO specialist would never consider Yandex optimization — it is irrelevant outside CIS markets. The AZ-specific technical knowledge here is: (1) Yandex.az remains significant among 35-55 AZ users who established browsing habits before Google's AZ dominance; (2) Yandex favors Russian-language content and .az regional domains in its ranking algorithm; (3) dual-language optimization is technically achievable with hreflang tagging. Option D (paid) solves the symptom, not the root cause; option A ignores a 28% share of the primary buying cohort.",
+    "feedback_az": "London testi: London SEO mütəxəssisi heç vaxt Yandex optimallaşdırmasını nəzərə almazdı — MDB bazarları xaricində əhəmiyyətsizdir. AZ-xüsusi texniki biliklər: Yandex.az Google-ın AZ dominantlığından əvvəl baxış vərdişlərini quran 35-55 yaşlı AZ istifadəçiləri arasında əhəmiyyətlidir.",
+    "development_tip_en": "Add Yandex Webmaster to your monthly SEO reporting stack alongside Google Search Console. Track separately: Yandex crawl errors, indexation rate, and position data for Russian-language category queries. This split-engine view is standard practice for any AZ digital team.",
+    "development_tip_az": "Yandex Webmaster-ı Google Search Console ilə yanaşı aylıq SEO hesabat dəstinizə əlavə edin. Ayrıca izləyin: Yandex tarama xətaları, indeksasiya dərəcəsi, rus dilli kateqoriya sorğuları üçün mövqe məlumatları."
+  },
+  {
+    "id": "prof-mkt-s2-007",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "difficulty": "easy",
+    "type": "mcq",
+    "scenario_en": "You are planning a product launch campaign for a new energy drink targeting 18-35 year olds in Azerbaijan. Platform penetration data for this demographic shows: Instagram at 71%, TikTok at 44%, YouTube at 38%, Facebook at 22%. TikTok's average engagement rate in AZ for fast-moving consumer goods is 8.3% vs Instagram Reels at 4.1%. However, TikTok content in AZ is predominantly in Azerbaijani and has significantly less brand-safe content adjacency risk than in Western markets. Your production budget for video is 3,000 AZN. What is the MOST technically informed channel allocation?",
+    "scenario_az": "Siz Azərbaycanda 18-35 yaş hədəfli yeni enerji içkisi üçün məhsul buraxılış kampaniyası planlaşdırırsınız. Bu demoqrafik üçün platforma penetrasiyası məlumatları: Instagram 71%, TikTok 44%, YouTube 38%, Facebook 22%. AZ-da FMCG üçün TikTok-un orta əlaqə dərəcəsi 8,3% vs Instagram Reels 4,1%-dir. Lakin AZ-da TikTok məzmunu əsasən Azərbaycan dilindədir və Qərb bazarlarına nisbətən əhəmiyyətli dərəcədə az brend-təhlükəsiz məzmun yaxınlıq riski var. Video üçün istehsal büdcəniz 3.000 AZN-dir. Ən TEXNİKİ CƏHƏTDƏN MƏLUMATLANAN kanal bölgüsü hansıdır?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Allocate 100% to Instagram — it has the highest penetration in the target demographic",
+        "text_az": "100%-i Instagram-a ayır — hədəf demoqrafiyada ən yüksək penetrasiyaya malikdir"
+      },
+      {
+        "key": "B",
+        "text_en": "Split 50/50 Instagram and TikTok — equal platform investment mirrors equal audience potential",
+        "text_az": "50/50 Instagram və TikTok bölün — bərabər platforma investisiyası bərabər auditoriya potensialını əks etdirir"
+      },
+      {
+        "key": "C",
+        "text_en": "Allocate 60% TikTok, 40% Instagram — TikTok's 2x engagement rate in AZ and lower brand safety risk than Western markets makes it the efficiency-per-AZN leader; produce one hero video adapted for both formats",
+        "text_az": "60% TikTok, 40% Instagram ayır — AZ-da TikTok-un 2 dəfə yüksək əlaqə dərəcəsi və Qərb bazarlarından aşağı brend təhlükəsizlik riski onu AZN-başına effektivlik lideri edir; hər iki format üçün uyğunlaşdırılan bir qəhrəman video istehsal edin"
+      },
+      {
+        "key": "D",
+        "text_en": "Allocate 70% YouTube, 30% Instagram — YouTube has the highest content longevity and is better for product education",
+        "text_az": "70% YouTube, 30% Instagram ayır — YouTube ən yüksək məzmun uzunömürlülüyünə malikdir və məhsul təhsili üçün daha yaxşıdır"
+      }
+    ],
+    "correct_answer": "C",
+    "irt_a": 1.5,
+    "irt_b": -0.3,
+    "irt_c": 0.2,
+    "feedback_en": "London test: a UK digital planner would likely avoid TikTok for a new brand due to brand safety concerns — those concerns are materially lower in the AZ market where TikTok content is predominantly in Azerbaijani and the content ecosystem is less adversarial. The AZ-specific data point (8.3% TikTok engagement vs 4.1% Instagram Reels) combined with the brand safety insight makes C the correct efficiency-maximizing allocation. Option A ignores engagement rate data; D ignores platform demographics entirely.",
+    "feedback_az": "London testi: Britaniya rəqəmsal planlaşdırıcısı brend təhlükəsizlik narahatlıqları səbəbindən TikTok-dan yayınardı — bu narahatlıqlar AZ bazarında əhəmiyyətli dərəcədə aşağıdır. AZ-xüsusi məlumat nöqtəsi (8,3% TikTok əlaqəsi vs 4,1% Instagram Reels) C-ni düzgün effektivlik-maksimizasiya bölgüsü edir.",
+    "development_tip_en": "Build a platform benchmark tracker specific to AZ: monthly engagement rates per category (FMCG, retail, finance) for Instagram, TikTok, and YouTube. AZ platform dynamics diverge significantly from global benchmarks because content language and creator ecosystem differ.",
+    "development_tip_az": "AZ-a xüsusi platforma benchmark izləyicisi qurun: Instagram, TikTok və YouTube üçün kateqoriya üzrə aylıq əlaqə dərəcələri. AZ platforma dinamikası məzmun dili və yaradıcı ekosistem fərqli olduğuna görə qlobal benchmarkdan əhəmiyyətli dərəcədə fərqlənir."
+  },
+  {
+    "id": "prof-mkt-s2-008",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "difficulty": "medium",
+    "type": "sjt",
+    "scenario_en": "You lead a 5-person creative team at a Baku marketing agency. For the third consecutive client brief, your team has delivered work that missed the brand voice guidelines despite receiving the brief 10 days in advance. The client is Kapital Bank and the missed guidelines relate to tone — the team defaults to 'playful' when Kapital Bank requires 'authoritative but approachable.' The junior designers say the brief 'didn't give examples.' The senior copywriter says 'clients always say that but they approve playful too.' What is the MOST effective leadership response?",
+    "scenario_az": "Siz Bakı marketinq agentliyindəki 5 nəfərlik kreativ komandanı idarə edirsiniz. Ardıcıl üçüncü müştəri brifindən sonra komandanız 10 gün əvvəl brifi almasına baxmayaraq brend səsi qaydalarını qaçıran iş təqdim etdi. Müştəri Kapital Bank-dır və qaçırılan qaydalar tona aiddir — komanda Kapital Bank-ın 'nüfuzlu amma yaxın' tələbindəyə 'oyunbaz' tona üstünlük verir. Kiçik dizaynerlər brifin 'nümunə vermədi'yini söyləyir. Baş kopirayter 'müştərilər həmişə belə deyir amma oyunbaz olanı da təsdiqləyirlər' deyir. Ən EFFEKTİV liderlik cavabı nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Send a formal written warning to the senior copywriter for undermining client brief standards and schedule individual performance reviews",
+        "text_az": "Baş kopirayterə müştəri brif standartlarını sarsıtdığına görə rəsmi yazılı xəbərdarlıq göndər və fərdi performans müzakirələri planlaşdır"
+      },
+      {
+        "key": "B",
+        "text_en": "Build a Kapital Bank brand voice card with 3 approved and 3 rejected tone examples, run a 30-minute team calibration session before the next brief drops, and make tone-check a mandatory step in the workflow — address the senior copywriter's framing privately as a professional standards issue",
+        "text_az": "3 təsdiqlənmiş və 3 rədd edilmiş ton nümunəsi ilə Kapital Bank brend səsi kartı qurun, növbəti brif gəlmədən əvvəl 30 dəqiqəlik komanda kalibrasiya sessiyası keçirin və ton yoxlamasını iş axınında məcburi addım edin — baş kopirayterın çərçivəsini şəxsən peşəkar standartlar məsələsi kimi həll edin"
+      },
+      {
+        "key": "C",
+        "text_en": "Reassign the Kapital Bank account to yourself to personally QA all output before client delivery",
+        "text_az": "Kapital Bank hesabını müştəriyə çatdırmadan əvvəl bütün çıxışı şəxsən keyfiyyət yoxlaması üçün özünüzə yenidən tapşırın"
+      },
+      {
+        "key": "D",
+        "text_en": "Ask Kapital Bank to provide more detailed briefs with tone examples so the team has clearer direction",
+        "text_az": "Komandanın daha aydın istiqamətə malik olması üçün Kapital Bank-dan ton nümunələri olan daha ətraflı briflər təmin etmələrini xahiş edin"
+      }
+    ],
+    "correct_answer": "B",
+    "irt_a": 1.7,
+    "irt_b": 0.3,
+    "irt_c": 0.15,
+    "feedback_en": "Option A punishes without fixing the system — the third miss indicates a process failure, not individual malice. Option C removes the leader from leadership. Option D blames the client for an internal capability gap. Option B addresses root causes: (1) the team has no shared calibration artifact, (2) the senior copywriter's rationalization is a professional standards issue that needs direct private feedback, (3) workflow has no quality gate for brand voice. The Kapital Bank context matters: in AZ's financial sector, 'authoritative but approachable' is a specific regulated-brand tone that differs meaningfully from consumer brands.",
+    "feedback_az": "A seçimi sistemi düzəltmədən cəzalandırır — üçüncü qaçırma fərdi pislik deyil, proses uğursuzluğunu göstərir. B seçimi kök səbəbləri həll edir: komandanın paylaşılan kalibrasiya əsəri yoxdur, baş kopirayterın rasionalizasiyası birbaşa şəxsi rəy tələb edən peşəkar standartlar məsələsidir.",
+    "development_tip_en": "For every repeat client, build a 1-page brand voice card before the second brief: 3 'sounds like us' examples, 3 'does not sound like us' examples, and the single most common mistake your team makes with that brand. Review it at brief kick-off.",
+    "development_tip_az": "Hər təkrarlanan müştəri üçün ikinci brifdən əvvəl 1 səhifəlik brend səsi kartı qurun: 3 'bizə bənzəyir' nümunəsi, 3 'bizə bənzəmir' nümunəsi və komandanızın həmin markada etdiyi tək ən yaygın səhv. Bunu brief kick-off-da nəzərdən keçirin."
+  },
+  {
+    "id": "prof-mkt-s2-009",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "difficulty": "easy",
+    "type": "mcq",
+    "scenario_en": "You are a marketing manager at a Baku-based brand. Your CMO consistently makes campaign decisions based on personal intuition ('I know the AZ consumer') rather than data. In the last quarter, two campaigns he approved against your data recommendation underperformed by 40% on reach targets. You have a monthly reporting meeting tomorrow. You have solid A/B test data showing that a data-led creative direction outperforms the CMO's preference by 2.3x on conversion. How do you present this to maximize the chance of a strategy change?",
+    "scenario_az": "Siz Bakı əsaslı markada marketinq menecersiniz. CMO-nuz məlumat əvəzinə şəxsi intuisiyaya ('AZ istehlakçısını tanıyıram') əsaslanaraq kampaniya qərarları verir. Son rübdə məlumat tövsiyənizə qarşı təsdiqlədiyi iki kampaniya çatış hədəflərini 40% keçərək aşağı nəticə verdi. Sabah aylıq hesabat görüşünüz var. Məlumat əsaslı kreativ istiqamətin CMO-nun üstünlüyünü konversiyada 2,3 dəfə üstələdiyini göstərən möhkəm A/B test məlumatlarınız var. Strategiya dəyişikliyi şansını artırmaq üçün bunu necə təqdim edərsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Present the A/B data first with full statistical significance details, then show the CMO's two underperforming campaigns as comparison, explicitly linking the pattern to intuition-led decisions",
+        "text_az": "A/B məlumatlarını tam statistik əhəmiyyət təfərrüatları ilə əvvəlcə təqdim edin, sonra CMO-nun iki aşağı nəticəli kampaniyasını müqayisə kimi göstərin, modeli intuisiyaya əsaslanan qərarlara açıqca bağlayın"
+      },
+      {
+        "key": "B",
+        "text_en": "Frame it as 'helping the CMO be right more often': lead with what the data confirms about his instincts (points of alignment), then show the one divergence where data outperformed, and propose a test-and-learn framework as standard process going forward",
+        "text_az": "'CMO-ya daha tez-tez haqlı olmağa kömək etmək' kimi çərçivələyin: məlumatın onun instinktlərini təsdiq etdiyi yerlərlə (uyğunlaşma nöqtələri) başlayın, sonra məlumatın üstün olduğu bir sapma göstərin və irəlidə standart proses kimi test-və-öyrən çərçivəsi təklif edin"
+      },
+      {
+        "key": "C",
+        "text_en": "Send the A/B data to the CMO's manager to create structural pressure for data-driven decisions",
+        "text_az": "Məlumat əsaslı qərarlar üçün struktur təzyiq yaratmaq üçün A/B məlumatlarını CMO-nun müdirinə göndərin"
+      },
+      {
+        "key": "D",
+        "text_en": "Propose hiring a third-party research firm to validate campaign direction before spend — removes the personal conflict from the decision",
+        "text_az": "Xərcdən əvvəl kampaniya istiqamətini doğrulamaq üçün üçüncü tərəf araşdırma şirkəti işə götürülməsini təklif edin — qərardan şəxsi münaqişəni çıxarır"
+      }
+    ],
+    "correct_answer": "B",
+    "irt_a": 1.6,
+    "irt_b": -0.2,
+    "irt_c": 0.2,
+    "feedback_en": "Option A is analytically correct but organizationally naive — presenting a senior leader's failures publicly or in a one-on-one as a pattern creates defensiveness, not openness to change. Option C is a career-limiting escalation. Option D adds cost and delay. Option B uses the influence technique of alignment-before-divergence: you validate the CMO's domain expertise (which is real — he does know the AZ consumer) while creating a safe path to adopt data as a co-pilot, not a replacement for judgment.",
+    "feedback_az": "A seçimi analitik cəhətdən doğrudur amma təşkilati cəhətdən naivdir — böyük rəhbərin uğursuzluqlarını açıq şəkildə bir model kimi təqdim etmək müdafiə yaradır, dəyişikliyə açıqlıq deyil. B seçimi uyğunlaşma-sonra-sapma təsir texnikasından istifadə edir.",
+    "development_tip_en": "When presenting data to intuition-driven seniors in AZ corporate culture, use the 'confirm then extend' frame: 'The data confirms your read on [X]. It also shows something you might not have had visibility on: [Y]. Want to test it?'",
+    "development_tip_az": "AZ korporativ mədəniyyətindəki intuisiya əsaslı böyüklərə məlumat təqdim edərkən 'təsdiqlə sonra genişləndir' çərçivəsindən istifadə edin: 'Məlumat [X]-ə dair oxunuşunuzu təsdiqləyir. Həmçinin görünüşünüz olmaya biləcəyi bir şey göstərir: [Y]. Sınamaq istərsinizmi?'"
+  },
+  {
+    "id": "prof-mkt-s2-010",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "difficulty": "medium",
+    "type": "sjt",
+    "scenario_en": "You are a marketing consultant hired by a Baku SME to run a 3-month brand awareness campaign. In month 2, your media buying costs spike due to a competitor flooding Instagram with paid spend, pushing your CPM up 65%. Your committed deliverable to the client was '500,000 impressions at 0.008 AZN CPM.' You can still hit 500,000 impressions but at 0.013 AZN CPM — requiring 625 AZN more than the agreed budget. The client has not yet noticed. What is the MOST reliable professional response in AZ client culture context?",
+    "scenario_az": "Siz 3 aylıq brend məlumatlılığı kampaniyası üçün Bakı KOB-u tərəfindən işə götürülmüş marketinq məsləhətçisiniz. 2-ci ayda, rəqib Instagram-ı ödənişli xərclə doldurduğundan media alış xərcləriniz sıçrayır, CPM-inizi 65% artırır. Müştəriyə öhdəliyiniz '0,008 AZN CPM-də 500.000 impresiya' idi. Hələ 500.000 impresiya əldə edə bilərsiniz amma 0,013 AZN CPM-də — razılaşdırılmış büdcədən 625 AZN daha çox tələb edir. Müştəri hələ fərk etməyib. AZ müştəri mədəniyyəti kontekstində Ən ETİBARLI peşəkar cavab nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Absorb the 625 AZN cost difference yourself to protect the client relationship and deliver the committed number without raising the issue",
+        "text_az": "Müştəri münasibətini qorumaq və məsələni qaldırmadan öhdəlik verilmiş rəqəmi çatdırmaq üçün 625 AZN xərc fərqini özünüz udun"
+      },
+      {
+        "key": "B",
+        "text_en": "Proactively contact the client, explain the external market cause with specific data (CPM spike documentation), present 3 options: absorb and reduce scope, client absorbs the overage, or pause and restructure. Recommend the option best for campaign goals, not just budget.",
+        "text_az": "Müştəri ilə proaktiv əlaqə saxlayın, xarici bazar səbəbini xüsusi məlumatlarla izah edin (CPM sıçrayışı sənədləri), 3 seçim təqdim edin: əhatəni azaldın, müştəri artığı udur, dayandır və yenidən qurun. Yalnız büdcə üçün deyil, kampaniya məqsədləri üçün ən yaxşı seçimi tövsiyə edin."
+      },
+      {
+        "key": "C",
+        "text_en": "Reduce impression volume to stay within budget, deliver 305,000 impressions at the original CPM, and present it as 'market conditions limited reach' in the report",
+        "text_az": "Büdcə çərçivəsində qalmaq üçün impresiya həcmini azaldın, orijinal CPM-də 305.000 impresiya çatdırın və hesabatda 'bazar şərtləri çatışı məhdudlaşdırdı' kimi təqdim edin"
+      },
+      {
+        "key": "D",
+        "text_en": "Wait until the campaign ends, present the full results, and only mention the budget overrun if the client asks directly",
+        "text_az": "Kampaniya bitənə qədər gözləyin, tam nəticələri təqdim edin və yalnız müştəri birbaşa soruşarsa büdcə aşımından bəhs edin"
+      }
+    ],
+    "correct_answer": "B",
+    "irt_a": 1.8,
+    "irt_b": 0.4,
+    "irt_c": 0.15,
+    "feedback_en": "AZ client culture context: in AZ business relationships, proactive transparency on problems is valued more highly than in some Western markets because it signals respect for the client's ability to make informed decisions. Option A (absorb silently) seems client-friendly but sets a precedent of absorbing all market risk personally and prevents the client from making an informed decision. Option C is a reliability failure — you committed to 500K impressions, not 305K. Option D is the worst reliability violation: you knew, you waited, you let the client discover it. Option B demonstrates AZ-market reliability: early, data-backed, solution-oriented, with the client's goals (not your convenience) driving the recommendation.",
+    "feedback_az": "AZ müştəri mədəniyyəti: AZ iş münasibətlərində problemlər üzərində proaktiv şəffaflıq bəzi Qərb bazarlarından daha çox dəyərləndirilir, çünki müştərinin məlumatlı qərar vermə qabiliyyətinə hörmət siqnalı verir. B seçimi AZ bazarı etibarlılığını nümayiş etdirir: erkən, məlumat əsaslı, həll yönümlü.",
+    "development_tip_en": "In AZ client culture, the rule is: bad news delivered early with a solution is a relationship builder. Bad news delivered late, or not at all, ends retainer relationships. Build a monthly 'market conditions update' into every client retainer so CPM spikes are contextualized proactively, not reactively.",
+    "development_tip_az": "AZ müştəri mədəniyyətində qayda: həll ilə erkən çatdırılan pis xəbər münasibət qurucudur. Geç çatdırılan və ya heç çatdırılmayan pis xəbər müddətli münasibətləri bitirir. Hər müştəri müqaviləsinə aylıq 'bazar şərtləri yeniləməsi' daxil edin ki, CPM sıçrayışları reaktiv deyil proaktiv kontekstləndirilsin."
+  }
+]

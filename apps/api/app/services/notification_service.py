@@ -5,11 +5,12 @@ Usage:
     await notify(db_admin, user_id, "badge_earned", "You earned Gold!", body="Communication: Gold badge")
 """
 
+from supabase._async.client import AsyncClient as AsyncSupabaseClient
 from loguru import logger
 
 
 async def notify(
-    db_admin,
+    db_admin: AsyncSupabaseClient,
     user_id: str,
     notification_type: str,
     title: str,

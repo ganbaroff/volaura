@@ -1,0 +1,549 @@
+[
+  {
+    "id": "prof-hr-s2-001",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency": "empathy_safeguarding",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.5,
+    "irt_b": -0.7,
+    "irt_c": 0.12,
+    "scenario_en": "An employee at Kapital Bank HR department discloses to you (the HR manager) that she is 10 weeks pregnant. Two days later, her direct manager requests her inclusion in an upcoming redundancy list. Under AZ Labor Code Article 109-1, what is your FIRST action?",
+    "scenario_az": "Kapital Bank HR departamentinin əməkdaşı sizə (HR meneceri kimi) 10 həftəlik hamilə olduğunu bildirir. İki gün sonra onun birbaşa rəhbəri onu gözlənilən ixtisar siyahısına daxil etməyi tələb edir. AZ Əmək Məcəlləsinin 109-1-ci maddəsinə əsasən, İLK addımınız nə olmalıdır?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Add her to the list conditionally — subject to legal review before finalisation",
+        "text_az": "Onu şərti olaraq siyahıya əlavə et — yekunlaşdırmadan əvvəl hüquqi yoxlamaya tabe"
+      },
+      {
+        "key": "B",
+        "text_en": "Inform the manager immediately that pregnant employees are absolutely protected from dismissal under Article 109-1 and remove her from the list",
+        "text_az": "Rəhbərə dərhal bildirin ki, hamilə işçilər 109-1-ci maddə əsasında işdən çıxarmadan mütləq qorunur və onu siyahıdan çıxarın"
+      },
+      {
+        "key": "C",
+        "text_en": "Escalate to the CEO — the decision is above HR's authority",
+        "text_az": "CEO-ya eskalasiya et — qərar HR-ın səlahiyyətindən yuxarıdır"
+      },
+      {
+        "key": "D",
+        "text_en": "Offer the employee a voluntary severance package to avoid legal complications",
+        "text_az": "Hüquqi çətinliklərdən qaçmaq üçün işçiyə könüllü işdən çıxma paketi təklif et"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "AZ Labor Code Article 109-1 grants absolute protection against dismissal for pregnant employees. HR's role is not to negotiate around this — it is to enforce it. Option B is the only legally and ethically correct first action. Options A and D both expose the organisation to a Labor Inspection complaint and ECHR-level liability.",
+    "feedback_az": "AZ Əmək Məcəlləsinin 109-1-ci maddəsi hamilə işçilər üçün işdən çıxarmaya qarşı mütləq müdafiə təmin edir. HR-ın rolu bunu müzakirə etmək deyil, tətbiq etməkdir. B seçimi yeganə hüquqi və etik cəhətdən düzgün ilk addımdır. A və D seçimləri hər ikisi təşkilatı Əmək Müfəttişliyinin şikayəti və AİHM səviyyəli məsuliyyətə məruz qoyur.",
+    "development_tip_en": "Memorise the AZ Labor Code 'absolute bar' articles: 109-1 (pregnancy/maternity), 78 (notice periods), 73-1 (discrimination). When any of these arise, your response is not 'let's review' — it's an immediate stop on the non-compliant action.",
+    "development_tip_az": "AZ Əmək Məcəlləsinin 'mütləq qadağa' maddələrini əzbərləyin: 109-1 (hamiləlik/analıq), 78 (xəbərdarlıq müddətləri), 73-1 (ayrı-seçkilik). Bunlardan hər hansı biri gündəmə gəldikdə cavabınız 'nəzərdən keçirək' deyil — uyğunsuz əmələ dərhal dayandırmadır."
+  },
+  {
+    "id": "prof-hr-s2-002",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency": "empathy_safeguarding",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.8,
+    "irt_b": 0.5,
+    "irt_c": 0.1,
+    "scenario_en": "Ramadan 2020 coincided with COVID-19 remote work at a 60-person SOCAR contractor firm. An employee on an active Performance Improvement Plan (PIP) submits a request to shift her work hours to 06:00–14:00 during Ramadan for religious fasting. Her PIP requires daily 09:00 check-ins with her manager. The manager denies the request without discussion. She escalates to you. Rank the following responses from BEST (1) to WORST (4).",
+    "scenario_az": "60 nəfərlik SOCAR podratçı firmasında Ramazan 2020, COVID-19 uzaqdan iş dövrünə təsadüf etdi. Aktiv Performans Yaxşılaşdırma Planına (PYP) daxil olan bir işçi dini oruc üçün Ramazan ərzində iş saatlarını 06:00–14:00-a köçürmək üçün müraciət edir. Onun PYP-i rəhbəri ilə gündəlik 09:00 yoxlamalarını tələb edir. Rəhbər müraciəti müzakirəsiz rədd edir. O, sizə müraciət edir. Aşağıdakı cavabları ƏN YAXŞI (1)-dən ƏN PİS (4)-ə qədər sıralayın.",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Meet with the manager and employee together; explore a modified check-in time (e.g., 07:00) that accommodates both the PIP structure and the religious accommodation",
+        "text_az": "Rəhbər və işçi ilə birlikdə görüş; həm PYP strukturunu, həm də dini uyğunlaşmanı təmin edəcək dəyişdirilmiş yoxlama vaxtını (məs. 07:00) araşdırın"
+      },
+      {
+        "key": "B",
+        "text_en": "Uphold the manager's decision — the PIP terms cannot be modified mid-process",
+        "text_az": "Rəhbərin qərarını qəbul et — PYP şərtləri proses zamanı dəyişdirilə bilməz"
+      },
+      {
+        "key": "C",
+        "text_en": "Grant the request fully — Ramadan accommodation takes priority over performance management processes",
+        "text_az": "Müraciəti tamamilə qəbul et — Ramazan uyğunlaşması performans idarəetmə proseslərindən üstündür"
+      },
+      {
+        "key": "D",
+        "text_en": "Document the manager's refusal as a potential AZ Labor Code Article 73-1 religious discrimination incident and open a formal investigation",
+        "text_az": "Rəhbərin imtinasını potensial AZ Əmək Məcəlləsi 73-1 dini ayrı-seçkilik hadisəsi kimi sənədləşdir və rəsmi araşdırma aç"
+      }
+    ],
+    "correct_ranking": [
+      "A",
+      "D",
+      "C",
+      "B"
+    ],
+    "correct_answer": "A",
+    "feedback_en": "Best: A — a structured mediation that preserves the PIP's intent while making a reasonable accommodation. Second: D — if mediation fails, documenting potential Article 73-1 religious discrimination protects both parties. Third: C — granting full accommodation without considering PIP integrity creates a different fairness problem. Worst: B — refusing any accommodation for Ramadan in an AZ workplace is both legally risky under Article 73-1 and culturally destructive.",
+    "feedback_az": "Ən yaxşı: A — PYP-nin məqsədini qoruyarkən ağlabatan uyğunlaşma edən strukturlu vasitəçilik. İkinci: D — vasitəçilik uğursuz olarsa, potensial 73-1-ci maddə dini ayrı-seçkiliyini sənədləşdirmək hər iki tərəfi qoruyur. Üçüncü: C — PYP bütövlüyünü nəzərə almadan tam uyğunlaşma vermək fərqli bir ədalətsizlik problemi yaradır. Ən pis: B — AZ iş yerində Ramazan üçün hər hansı uyğunlaşmanı rədd etmək həm 73-1-ci maddə əsasında hüquqi risk, həm də mədəni cəhətdən dağıdıcıdır.",
+    "development_tip_en": "When religious accommodation overlaps with a live performance process, your goal is integration, not priority. Ask: 'Can the PIP goal be met with a different schedule?' In 90% of cases the answer is yes — and that solution protects the business legally and culturally.",
+    "development_tip_az": "Dini uyğunlaşma aktiv bir performans prosesi ilə üst-üstə düşdükdə məqsədiniz inteqrasiyadır, prioritet deyil. Soruşun: 'PYP məqsədinə fərqli cədvəllə nail olmaq olarmı?' Halların 90%-ında cavab bəlidir — və bu həll hüquqi və mədəni cəhətdən işi qoruyur."
+  },
+  {
+    "id": "prof-hr-s2-003",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency": "empathy_safeguarding",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 2.1,
+    "irt_b": 1.6,
+    "irt_c": 0.0,
+    "scenario_en": "A junior female employee at an AMEA Park Baku startup reports to you that her team lead has been making repeated sexualised comments in private messages over three weeks. She asks you to handle it 'quietly' because the team lead is a personal friend of the founding CEO. The CEO has mentioned to you socially that this team lead is 'untouchable.' The Labor Inspector from the Ministry of Labor and Social Protection is scheduled to visit the company in 10 days for a routine audit. Describe your exact course of action, the risks you are managing, and what documentation you would create.",
+    "scenario_az": "AMEA Park Bakı startapındakı gənc qadın işçi sizə bildirir ki, onun komanda rəhbəri üç həftə ərzində şəxsi mesajlarda dəfələrlə cinsi xarakterli şərhlər etmişdir. O, bunu 'səssiz' həll etməyinizi xahiş edir, çünki komanda rəhbəri qurucu CEO-nun şəxsi dostudur. CEO sizə sosial mühitdə bu komanda rəhbərinin 'toxunulmaz' olduğunu qeyd etmişdir. Əmək və Əhalinin Sosial Müdafiəsi Nazirliyinin Əmək Müfəttişi 10 gün sonra müntəzəm audit üçün şirkətə gəlməyi planlaşdırır. Dəqiq fəaliyyət planınızı, idarə etdiyiniz riskləri və yaradacağınız sənədlər təsvir edin.",
+    "expected_concepts": [
+      {
+        "name": "formal_documentation_immediately",
+        "weight": 0.25,
+        "keywords": [
+          "documented the report in writing immediately",
+          "created a written record the same day",
+          "had the employee sign a written statement",
+          "opened a formal incident log",
+          "did not rely on verbal report only",
+          "şikayəti dərhal yazılı şəkildə sənədləşdirdim",
+          "həmin gün yazılı qeyd yaratdım",
+          "rəsmi hadisə jurnalı açdım"
+        ]
+      },
+      {
+        "name": "whistleblower_protection",
+        "weight": 0.2,
+        "keywords": [
+          "informed the employee of her right to confidentiality",
+          "explained AZ Labor Code protections against retaliation",
+          "made clear she could not be dismissed for this report",
+          "documented that she requested confidentiality",
+          "told her I would protect her regardless of outcome",
+          "işçiyə məxfilik hüququnu bildirdim",
+          "AZ Əmək Məcəlləsinin qisas əleyhinə müdafiəsini izah etdim",
+          "məxfiliyə görə işdən çıxarıla bilməyəcəyini aydın etdim"
+        ]
+      },
+      {
+        "name": "ceo_pressure_boundary",
+        "weight": 0.2,
+        "keywords": [
+          "told the CEO I had a legal obligation to investigate",
+          "informed the CEO that HR cannot classify any employee as exempt from harassment policy",
+          "documented the CEO's 'untouchable' comment as a material risk",
+          "noted that proceeding was required regardless of personal relationships",
+          "put my position in writing to the CEO",
+          "CEO-ya qanuni araşdırma öhdəliyim olduğunu söylədim",
+          "CEO-nun 'toxunulmaz' şərhini material risk kimi sənədləşdirdim"
+        ]
+      },
+      {
+        "name": "investigation_process",
+        "weight": 0.2,
+        "keywords": [
+          "gathered the private message evidence with employee consent",
+          "interviewed witnesses if any",
+          "separated accuser and accused during investigation",
+          "set a 5-day investigation timeline before the Labor Inspector visit",
+          "brought in an independent third party if internal impartiality was compromised",
+          "işçinin razılığı ilə şəxsi mesaj sübutlarını topladım",
+          "araşdırma zamanı şikayətçi və ittiham ediləni ayırdım",
+          "5 günlük araşdırma müddəti müəyyən etdim"
+        ]
+      },
+      {
+        "name": "labor_inspector_readiness",
+        "weight": 0.15,
+        "keywords": [
+          "completed or formally documented the investigation before the inspector's visit",
+          "ensured all harassment policy documents were ready for audit",
+          "prepared a summary of the incident and action taken",
+          "did not conceal the incident from the inspector",
+          "alerted legal counsel about the inspector visit timeline",
+          "müfəttişin ziyarətindən əvvəl araşdırmanı tamamladım",
+          "araşdırmanı müfəttişdən gizlətmədim",
+          "hüquq müşavirinə müfəttişin ziyarəti vaxtını bildirdim"
+        ]
+      }
+    ],
+    "feedback_en": "This question tests whether an HR professional can hold their legal and ethical position under the most common real-world pressure in AZ corporate culture: CEO social proximity to the accused. Strong answers name: (1) immediate written documentation, (2) explicit whistleblower protection communication, (3) a clear boundary with the CEO citing legal obligation, (4) a structured investigation that concludes before the Labor Inspector visit, (5) no concealment from the inspector. Weak answers that 'handle it quietly' expose the company to Ministry of Labor sanctions and the HR professional to personal liability.",
+    "feedback_az": "Bu sual HR mütəxəssisinin AZ korporativ mədəniyyətindəki ən geniş yayılmış real təzyiq altında — CEO-nun ittiham edilənə sosial yaxınlığı — hüquqi və etik mövqeyini qoruyub-qorumayacağını sınayır. Güclü cavablar: (1) dərhal yazılı sənədləşdirmə, (2) açıq müdafiəçi müdafiəsi kommunikasiyası, (3) qanuni öhdəliyi əsas gətirərək CEO ilə aydın sərhəd, (4) Əmək Müfəttişinin ziyarətindən əvvəl yekunlaşan strukturlu araşdırma, (5) müfəttişdən gizlətməmə. 'Səssiz həll' edən zəif cavablar şirkəti Əmək Nazirliyi sanksiyalarına, HR mütəxəssisini isə şəxsi məsuliyyətə məruz qoyur.",
+    "development_tip_en": "In AZ workplaces, social hierarchy is the primary pressure against correct HR action. Your defence is documentation — not confrontation. Every conversation with the CEO about an active case should be followed within 1 hour by an email summary: 'Per our discussion today, I will proceed with the formal investigation as required by law.' This protects you and removes the CEO's ability to claim the conversation never happened.",
+    "development_tip_az": "AZ iş yerlərində sosial iyerarxiya HR-ın düzgün fəaliyyətinə qarşı əsas təzyiqdir. Müdafiəniz sənədləşdirmədir — qarşıdurmа deyil. Aktiv iş üzrə CEO ilə hər söhbətdən sonra 1 saat ərzində e-poçt xülasəsi göndərin: 'Bu günkü müzakirəmizə əsasən, qanunun tələb etdiyi kimi rəsmi araşdırmaya davam edəcəm.' Bu sizi qoruyur və CEO-nun söhbətin baş vermədiyini iddia etmə imkanını aradan qaldırır."
+  },
+  {
+    "id": "prof-hr-s2-004",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency": "communication",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.7,
+    "irt_b": 0.4,
+    "irt_c": 0.1,
+    "scenario_en": "You are conducting a mid-year performance review with Ramiz, a 52-year-old senior male employee who has held his position for 14 years. His output metrics are 18% below target. He is highly respected in the team and expects deference from younger colleagues. You are 31. He interrupts you twice during the review and says: 'I've been doing this since before you were working.' How do you proceed?",
+    "scenario_az": "Siz 14 ildir öz vəzifəsini tutan 52 yaşlı böyük kişi işçi Ramizlə orta il performans icmalı keçirirsiniz. Onun çıxış göstəriciləri hədəfin 18% aşağısındadır. O, komandada yüksək ehtirama sahibdir və gənclərdən hörmət gözləyir. Siz 31 yaşındasınız. O, icmal zamanı sizi iki dəfə kəsir və deyir: 'Siz işlərə başlamazdan əvvəldən bunu edirəm.' Necə davam edərdiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Apologise for the structure of the meeting and ask Ramiz to lead the discussion his preferred way",
+        "text_az": "Görüşün strukturuna görə üzr istə və Ramizin müzakirəni özünün üstün tutduğu şəkildə aparmasını xahiş et"
+      },
+      {
+        "key": "B",
+        "text_en": "Acknowledge his experience explicitly ('Your 14 years here are genuinely valued'), then redirect with data: 'I'd like us to look at these numbers together — can I share what I'm seeing?'",
+        "text_az": "Onun təcrübəsini açıq şəkildə qəbul et ('Buradakı 14 ilin həqiqətən dəyərlidir'), sonra məlumatlarla yenidən yönləndir: 'Bu rəqəmlərə birlikdə baxmağımızı istərdim — nə gördüyümü paylaşa bilərəmmi?'"
+      },
+      {
+        "key": "C",
+        "text_en": "State directly that interruptions are not acceptable in a formal performance review and ask him to let you finish",
+        "text_az": "Rəsmi performans icmalında kəsilmənin qəbul edilməz olduğunu birbaşa bildir və bitirməyinə icazə verməsini xahiş et"
+      },
+      {
+        "key": "D",
+        "text_en": "Pause the meeting, involve his direct manager as a neutral witness, and restart the review",
+        "text_az": "Görüşü dayandır, birbaşa rəhbərini neytral şahid kimi cəlb et və icmalı yenidən başlat"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "In AZ hierarchical culture, direct confrontation with a senior employee (Option C) triggers defensive shutdown and destroys the review's effectiveness. Option A surrenders the HR process entirely. Option D escalates prematurely. Option B uses the AZ-appropriate technique of 'honour first, redirect second' — acknowledging seniority before pivoting to data. This preserves Ramiz's dignity while maintaining the HR professional's authority through the quality of the conversation rather than a power assertion.",
+    "feedback_az": "AZ iyerarxik mədəniyyətində böyük işçi ilə birbaşa qarşıdurmа (C seçimi) müdafiə bağlanmasını tetikler və icmalın effektivliyini məhv edir. A seçimi HR prosesindən tamamilə vaz keçir. D seçimi vaxtından əvvəl eskalasiya edir. B seçimi AZ-a uyğun 'əvvəl şərəf, sonra yönləndir' texnikasından istifadə edir — məlumatlara keçmədən əvvəl böyüklüyü qəbul edir. Bu, Ramizin ləyaqətini qoruyarkən HR mütəxəssisinin nüfuzunu güc iddiası yox, söhbət keyfiyyəti vasitəsilə saxlayır.",
+    "development_tip_en": "For performance conversations with senior AZ employees: structure your opening 30 seconds to include a genuine acknowledgement of their tenure before any metric is mentioned. 'We're here because I want to make sure your experience is being fully utilised' lands differently than 'your numbers are below target.' The goal is the same — the path matters.",
+    "development_tip_az": "Böyük AZ işçiləri ilə performans söhbətləri üçün: hər hansı göstərici qeyd edilməzdən əvvəl onların stajını həqiqi şəkildə qəbul edən açılış 30 saniyəsini strukturlaşdırın. 'Buradayıq, çünki təcrübənizdən tam istifadə edildiyindən əmin olmaq istəyirəm' — 'göstəriciləriniz hədəfin aşağısındadır'dan fərqli səslənir. Məqsəd eynidır — yol önəmlidir."
+  },
+  {
+    "id": "prof-hr-s2-005",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency": "communication",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 2.0,
+    "irt_b": 1.7,
+    "irt_c": 0.0,
+    "scenario_en": "Following the AZ banking sector crisis of 2015, you are the HR manager at a mid-sized Baku bank. The board has approved a 22% workforce reduction. AZ Labor Code Article 78 requires written notice of termination at least 2 months in advance for redundancy. You have a list of 47 employees to notify today. You have 4 hours before a company-wide meeting where the CEO will announce the restructuring. Three of the 47 are on DOST-registered employment contracts with active DOST portal obligations. Describe your exact communication plan for today, including sequencing, legal notice compliance, and how you handle the 3 DOST-registered employees differently.",
+    "scenario_az": "2015 AZ bank böhranından sonra siz orta ölçülü Bakı bankında HR meneceriniz. Şura işçi sayını 22% azaltmağı təsdiqləyib. AZ Əmək Məcəlləsinin 78-ci maddəsi ixtisar üçün azı 2 ay öncədən yazılı xəbərdarlıq tələb edir. Bu gün 47 işçini bildirməli olan siyahınız var. Şirkət daxili görüşdən 4 saatınız var, burada CEO yenidənqurmanı elan edəcək. 47-dən 3-ü aktiv DOST portal öhdəlikləri olan DOST-qeydiyyatlı əmək müqavilələrindədir. Bu günlük dəqiq kommunikasiya planınızı — ardıcıllıq, hüquqi xəbərdarlıq uyğunluğu və DOST-qeydiyyatlı 3 işçiyə fərqli necə yanaşacağınız daxil olmaqla — təsvir edin.",
+    "expected_concepts": [
+      {
+        "name": "legal_notice_sequencing",
+        "weight": 0.25,
+        "keywords": [
+          "delivered written notice before the company-wide announcement",
+          "used Article 78 compliant written termination notice",
+          "gave 2-month notice in writing before verbal communication",
+          "prepared individual notice letters before the meeting",
+          "ensured no employee heard from colleagues before receiving formal notice",
+          "şirkət daxili elanından əvvəl yazılı xəbərdarlıq verdim",
+          "78-ci maddəyə uyğun yazılı fəsih bildirişi",
+          "individual xəbərdarlıq məktublarını görüşdən əvvəl hazırladım"
+        ]
+      },
+      {
+        "name": "individual_notification_protocol",
+        "weight": 0.2,
+        "keywords": [
+          "conducted individual private meetings before the group announcement",
+          "allocated 5-minute private slots per employee for notification",
+          "did not notify employees in a group setting initially",
+          "arranged the 47 conversations in order of seniority or department",
+          "had HR team members conduct parallel conversations to cover all 47",
+          "qrup elanından əvvəl fərdi şəxsi görüşlər keçirdim",
+          "hər işçi üçün 5 dəqiqəlik şəxsi vaxt ayırdım",
+          "HR komanda üzvlərini paralel söhbətlər aparmaq üçün cəlb etdim"
+        ]
+      },
+      {
+        "name": "dost_specific_handling",
+        "weight": 0.25,
+        "keywords": [
+          "notified DOST portal of the employment termination through the official government portal",
+          "updated DOST system within the required window",
+          "provided DOST-registered employees with documentation for unemployment registration",
+          "informed DOST-contract employees that their DOST records would be updated",
+          "arranged for DOST portal submission on the same day as written notice",
+          "DOST portalını rəsmi dövlət portalı vasitəsilə əmək müqaviləsinin ləğvi barədə xəbərdar etdim",
+          "DOST-qeydiyyatlı işçilərə işsizlik qeydiyyatı üçün sənəd verdim",
+          "DOST portal təqdimatını yazılı xəbərdarlıqla eyni gün üçün təşkil etdim"
+        ]
+      },
+      {
+        "name": "support_resources",
+        "weight": 0.15,
+        "keywords": [
+          "provided information about DOST employment agency job placement services",
+          "offered references and recommendation letters",
+          "communicated the severance package and its timeline clearly",
+          "told employees their final pay calculation date",
+          "offered an Employee Assistance Program or external counselling reference",
+          "DOST məşğulluq agentliyinin iş yerləşdirmə xidmətləri haqqında məlumat verdim",
+          "tövsiyə məktubları təklif etdim",
+          "işçilərə ayrılma paketi və vaxt cədvəlini aydın şəkildə bildirdim"
+        ]
+      },
+      {
+        "name": "ceo_announcement_coordination",
+        "weight": 0.15,
+        "keywords": [
+          "coordinated with CEO to ensure no employee learns about redundancy from the announcement before receiving individual notice",
+          "pre-briefed the CEO that 47 employees must be notified before the meeting",
+          "requested a 30-minute delay on the company meeting if individual notifications were not complete",
+          "arranged for HR to be present in the room after the announcement for immediate questions",
+          "CEO ilə koordinasiya etdim ki, heç bir işçi fərdi xəbərdarlıqdan əvvəl elan vasitəsilə öyrənməsin",
+          "CEO-yu 47 işçinin görüşdən əvvəl bildirməli olduğu barədə əvvəlcədən məlumatlandırdım",
+          "fərdi bildirişlər tamamlanmazsa şirkət görüşündə 30 dəqiqəlik gecikdirmə tələb etdim"
+        ]
+      }
+    ],
+    "feedback_en": "This question tests three simultaneous skill sets: (1) AZ Labor Code Article 78 procedural compliance under time pressure, (2) DOST government employment registry obligations — a detail only real AZ HR practitioners know, and (3) the logistical and human challenge of notifying 47 people individually in 4 hours. The London Test: a smart generalist would handle Article 78 but would not know DOST portal obligations or that the announcement sequence can create legal liability if employees hear via the company meeting first.",
+    "feedback_az": "Bu sual üç eyni vaxtda mövcud bacarıq dəstini sınayır: (1) vaxt təzyiqi altında AZ Əmək Məcəlləsinin 78-ci maddəsi prosedur uyğunluğu, (2) DOST dövlət məşğulluq reyestri öhdəlikləri — yalnız real AZ HR mütəxəssisləri bilən bir detal, (3) 4 saat ərzində fərdi olaraq 47 nəfəri bildirməyin logistik və insan çətinliyi. London Testi: ağıllı ümumi mütəxəssis 78-ci maddəni bilər, lakin DOST portal öhdəliklərini və ya işçilər şirkət görüşü vasitəsilə ilk öğrenirsə elan ardıcıllığının hüquqi məsuliyyət yarada biləcəyini bilməz.",
+    "development_tip_en": "Mass redundancy in AZ has a non-negotiable sequencing rule: written notice → DOST portal update → individual conversation → group announcement. Reversing any step creates either legal exposure (Article 78) or DOST administrative penalties. Build this sequence into a checklist you can execute under pressure.",
+    "development_tip_az": "AZ-da kütləvi ixtisar dəyişdirilməz ardıcıllıq qaydasına malikdir: yazılı xəbərdarlıq → DOST portal yenilənməsi → fərdi söhbət → qrup elanı. Hər hansı addımı tersine çevirmek ya hüquqi ifşa (78-ci maddə) ya da DOST inzibati cərimələri yaradır. Bu ardıcıllığı təzyiq altında icra edə biləcəyiniz bir yoxlama siyahısına daxil edin."
+  },
+  {
+    "id": "prof-hr-s2-006",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency": "adaptability",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.6,
+    "irt_b": 0.3,
+    "irt_c": 0.12,
+    "scenario_en": "During the 2015 AZ banking sector crisis, your company begins mass layoffs. As HR manager, you receive a notification that a former employee has filed a dispute with DOST (Dövlət Özəl Ortaqlığı — State Private Partnership Employment Agency) claiming the company violated AZ Labor Code notice requirements. The DOST case officer requests your company's documentation within 5 business days. Your filing system uses 1C:Document Management, but the relevant contracts are in a legacy archive folder that requires IT access. IT says they can restore it in 3 days. You have 2 days before the deadline. What is your MOST effective response?",
+    "scenario_az": "2015 AZ bank böhranı zamanı şirkətiniz kütləvi ixtisar başlayır. HR meneceri kimi, keçmiş bir işçinin AZ Əmək Məcəlləsinin xəbərdarlıq tələblərini pozduğunu iddia edərək DOST-a (Dövlət Özəl Ortaqlığı) mübahisə ərizəsi verdiyini bildirən bir bildiriş alırsınız. DOST işi üzrə məmur 5 iş günü ərzində şirkətinizin sənədlərini tələb edir. Sənəd idarəetmə sisteminiz 1C:Sənəd İdarəetmədən istifadə edir, lakin müvafiq müqavilələr IT giriş tələb edən köhnə arxiv qovluğunda yerləşir. IT-nin bərpa etməsi 3 gün çəkəcəyini bildirir. Son tarixdən əvvəl 2 gününüz var. Ən effektiv cavabınız nə olacaq?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Request a 5-day extension from DOST and wait for IT to restore full access",
+        "text_az": "DOST-dan 5 günlük uzatma tələb et və IT-nin tam giriş bərpa etməsini gözlə"
+      },
+      {
+        "key": "B",
+        "text_en": "Contact the DOST case officer immediately, explain the IT access situation, submit whatever documentation you can access now, and formally request a partial extension for the remaining files — simultaneously escalate IT access as a legal priority",
+        "text_az": "DOST işi üzrə məmurunla dərhal əlaqə saxla, IT giriş vəziyyətini izah et, indi əldə edə biləcəyin sənədləri təqdim et, qalan sənədlər üçün rəsmi olaraq qismən uzatma tələb et — eyni zamanda IT girişini hüquqi prioritet kimi eskalasiya et"
+      },
+      {
+        "key": "C",
+        "text_en": "Reconstruct the documentation from memory and HR email records and submit that",
+        "text_az": "Sənədləri yaddaşdan və HR e-poçt qeydlərindən bərpa et və onu təqdim et"
+      },
+      {
+        "key": "D",
+        "text_en": "Refer the DOST inquiry to your legal department and step back from direct involvement",
+        "text_az": "DOST sorğusunu hüquq departamentinə yönləndir və birbaşa iştirakdan çəkil"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "Option B demonstrates the correct adaptability response under competing constraints: proactive stakeholder communication (DOST), partial compliance to show good faith, formal escalation of the IT bottleneck, and simultaneous internal escalation. Option A risks missing the deadline and signalling non-compliance. Option C creates evidentiary problems. Option D abdicates HR's operational responsibility in a dispute that originated from an HR process failure.",
+    "feedback_az": "B seçimi rəqabətli məhdudiyyətlər altında düzgün uyğunlaşma cavabını nümayiş etdirir: proaktiv maraqlı tərəf kommunikasiyası (DOST), iyi niyet göstərmək üçün qismən uyğunluq, IT şişəboynazlığının rəsmi eskalasiyası və eyni vaxtda daxili eskalasiya. A seçimi son tarixi qaçırma və uyğunsuzluq siqnalı riski daşıyır. C seçimi sübutla bağlı problemlər yaradır. D seçimi HR proses uğursuzluğundan qaynaqlanmış mübahisədə HR-ın əməliyyat məsuliyyətindən vaz keçir.",
+    "development_tip_en": "DOST disputes have a 5-day documentation window that cannot be extended easily. Build an HR filing protocol where every termination automatically generates a timestamped export in 1C to a separate compliance folder. The crisis reveals the gap — fix it in the system before the next DOST audit.",
+    "development_tip_az": "DOST mübahisələrinin asanlıqla uzadıla bilməyən 5 günlük sənəd pəncərəsi var. Hər ixtiracın 1C-dəki ayrı bir uyğunluq qovluğuna avtomatik zaman damğalı ixrac etdiyi bir HR sənəd protokolu qurun. Böhran boşluğu ortaya çıxarır — növbəti DOST auditindən əvvəl sistemdə düzəldin."
+  },
+  {
+    "id": "prof-hr-s2-007",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency": "adaptability",
+    "difficulty": "hard",
+    "type": "sjt",
+    "irt_a": 2.0,
+    "irt_b": 1.5,
+    "irt_c": 0.0,
+    "scenario_en": "In 2022, AZ Labor Code amendments introduced formal remote work provisions for the first time. You are HR manager at a 90-person Baku construction company. 35 of your employees work on active construction sites (cannot work remotely). 55 are office staff. Following the amendments, 12 office employees submit simultaneous requests for full-time remote work status citing the new law. Your CEO wants to approve all 12 to reduce office rent, but the company has no remote work policy, no performance monitoring framework, and several of the 12 employees are mid-probation. Rank the following four actions from BEST (1) to WORST (4).",
+    "scenario_az": "2022-ci ildə AZ Əmək Məcəlləsi dəyişiklikləri ilk dəfə rəsmi uzaqdan iş müddəalarını tətbiq etdi. Siz 90 nəfərlik Bakı tikinti şirkətinin HR meneceriniz. 35 işçiniz aktiv tikinti sahələrində çalışır (uzaqdan işləyə bilməz). 55-i ofis işçisidir. Dəyişikliklərdən sonra 12 ofis işçisi yeni qanuna istinad edərək eyni vaxtda tam zamanlı uzaqdan iş statusu üçün müraciət edir. CEO-nuz ofis icarəsini azaltmaq üçün hamısını 12-ni təsdiqləmək istəyir, lakin şirkətin uzaqdan iş siyasəti, performans monitorinq çərçivəsi yoxdur və 12-nin bir neçəsi sınaq müddətinin ortasındadır. Aşağıdakı dörd hərəkəti ƏN YAXŞI (1)-dən ƏN PİS (4)-ə qədər sıralayın.",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Approve all 12 immediately as the CEO requests — the law allows it and rent savings are real",
+        "text_az": "CEO-nun tələbi ilə dərhal 12-ni də təsdiqlə — qanun icazə verir və icarə qənaəti realdır"
+      },
+      {
+        "key": "B",
+        "text_en": "Deny all 12 pending a formal remote work policy — implement the policy in 60 days then re-evaluate",
+        "text_az": "Rəsmi uzaqdan iş siyasəti gözlənilənədək hamısına 12-ni rədd et — 60 gün ərzində siyasəti tətbiq et, sonra yenidən qiymətləndir"
+      },
+      {
+        "key": "C",
+        "text_en": "Approve the 12 who have completed probation; pause the probation employees pending a written remote-probation addendum to their contracts; draft a remote work policy in parallel with a 30-day completion target",
+        "text_az": "Sınaq müddətini tamamlamış 12-ni təsdiqlə; sınaq işçilərini müqavilələrinə yazılı uzaqdan sınaq əlavəsi gözlənilənə qədər dayandır; eyni zamanda 30 günlük tamamlanma hədəfi ilə uzaqdan iş siyasəti layihəsi hazırla"
+      },
+      {
+        "key": "D",
+        "text_en": "Approve all 12, create a basic remote work policy within 2 weeks, and address probation employees separately via addendum after approval",
+        "text_az": "12-nin hamısını təsdiqlə, 2 həftə ərzində əsas uzaqdan iş siyasəti yarat, sınaq işçilərini onaydan sonra ayrıca əlavə yolu ilə həll et"
+      }
+    ],
+    "correct_ranking": [
+      "C",
+      "D",
+      "B",
+      "A"
+    ],
+    "correct_answer": "C",
+    "feedback_en": "Best: C — the only option that manages the three simultaneous risks: legal (probation employees need contract addenda before remote status), operational (policy must precede blanket approval), and strategic (approves where legally safe, defers where legally uncertain). Second: D — correct direction but the sequence is wrong; approving probation employees before the addendum creates legal ambiguity. Third: B — technically defensible but 60 days of denial for post-probation employees is disproportionate when the law clearly allows it. Worst: A — approving all 12 with no framework, including probation employees, ignores the legal exposure of remote work under unmodified probation contracts.",
+    "feedback_az": "Ən yaxşı: C — üç eyni vaxtda mövcud riski idarə edən yeganə seçim: hüquqi (sınaq işçilərinin uzaqdan status almadan əvvəl müqavilə əlavəsinə ehtiyacı var), əməliyyat (siyasət toplu onaydan əvvəl gəlməlidir), strateji (hüquqi cəhətdən təhlükəsiz yerdə onaylayır, qeyri-müəyyən yerdə gecikdirir). İkinci: D — düzgün istiqamət, lakin ardıcıllıq yanlışdır; əlavədən əvvəl sınaq işçilərini onaylamaq hüquqi qeyri-müəyyənlik yaradır. Üçüncü: B — texniki cəhətdən müdafiə edilə bilər, lakin qanun açıqca icazə verdikdə sınaq sonrası işçilər üçün 60 günlük imtina qeyri-mütənasibdir. Ən pis: A — dəyişdirilməmiş sınaq müqavilələri altında uzaqdan işin hüquqi ifşasını görməzliyə gəlməklə çərçivəsiz 12-ni, o cümlədən sınaq işçilərini onaylamaq.",
+    "development_tip_en": "When a new labor law creates a wave of simultaneous requests, always triage by legal risk before business preference. Three-bucket sort: (1) legally clear to approve → approve with documentation, (2) legally uncertain → pause with a written explanation, (3) legally cannot → deny with Article citation. The CEO's preference sits inside bucket 1 and 3 only — HR owns bucket 2.",
+    "development_tip_az": "Yeni əmək qanunu eyni vaxtda müraciətlər dalğası yaratdıqda, həmişə iş seçimindən əvvəl hüquqi riskə görə triaj edin. Üç qova çeşidleme: (1) hüquqi cəhətdən onaylamaq açıqdır → sənəd ilə onaylayın, (2) hüquqi cəhətdən qeyri-müəyyən → yazılı izahatla dayandırın, (3) hüquqi cəhətdən mümkün deyil → maddə istinadı ilə rədd edin. CEO-nun seçimi yalnız 1 və 3 qovada yerləşir — HR 2-ci qovaya sahibdir."
+  },
+  {
+    "id": "prof-hr-s2-008",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency": "leadership",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 2.2,
+    "irt_b": 1.8,
+    "irt_c": 0.0,
+    "scenario_en": "The General Director of a 120-person Baku retail chain instructs you (HR Director) to add a screening criterion to all open roles: 'Do not shortlist candidates from X ethnic minority.' He frames it as a 'cultural fit' decision and reminds you that he signs your contract renewal. AZ Labor Code Article 73-1 explicitly prohibits discrimination in hiring on the basis of ethnicity. Describe exactly what you do — your actions in the next 24 hours, the documentation you create, and how you communicate your position to the General Director without losing your job if possible.",
+    "scenario_az": "120 nəfərlik Bakı pərakəndə şəbəkəsinin Baş direktoru sizə (HR Direktoru) bütün açıq vəzifələrə bir seçim meyarı əlavə etməyi tapşırır: 'X etnik azlıqdan olan namizədləri siyahıya daxil etməyin.' O, bunu 'mədəni uyğunluq' qərarı kimi çərçivəyə salır və müqavilənizin yenilənməsini imzalayanın o olduğunu xatırladır. AZ Əmək Məcəlləsinin 73-1-ci maddəsi işə qəbulda etnik mənşəyə görə ayrı-seçkiliyi açıq şəkildə qadağan edir. Dəqiq nə etdiyinizi — növbəti 24 saatdakı hərəkətlərini, yaratdığınız sənədlər və mümkünsə işinizi itirmədən Baş direktora mövqeyinizi necə bildirdiyinizi — təsvir edin.",
+    "expected_concepts": [
+      {
+        "name": "refuse_and_document",
+        "weight": 0.25,
+        "keywords": [
+          "refused to implement the criterion",
+          "did not add the screening filter",
+          "documented the instruction in writing immediately",
+          "created a written record of the General Director's instruction",
+          "sent a follow-up email summarising the verbal instruction to create a paper trail",
+          "meyarı tətbiq etməkdən imtina etdim",
+          "seçim filtrini əlavə etmədim",
+          "Baş direktorun tapşırığını dərhal yazılı şəkildə sənədləşdirdim",
+          "kağız izi yaratmaq üçün şifahi tapşırığı ümumiləşdirən izləmə e-poçtu göndərdim"
+        ]
+      },
+      {
+        "name": "cite_law_directly",
+        "weight": 0.2,
+        "keywords": [
+          "cited AZ Labor Code Article 73-1 explicitly",
+          "explained this constitutes illegal discrimination under Article 73-1",
+          "stated that implementing this instruction would expose the company to Ministry of Labor sanctions",
+          "referred to the specific article number in my communication",
+          "put the legal citation in writing",
+          "AZ Əmək Məcəlləsinin 73-1-ci maddəsini açıq şəkildə istinad etdim",
+          "bunun 73-1-ci maddə əsasında qanunsuz ayrı-seçkilik təşkil etdiyini izah etdim",
+          "bu tapşırığın tətbiqinin şirkəti Əmək Nazirliyi sanksiyalarına məruz qoyacağını bildirdim"
+        ]
+      },
+      {
+        "name": "protect_own_position",
+        "weight": 0.2,
+        "keywords": [
+          "framed my refusal as protecting the company, not opposing the director",
+          "offered an alternative lawful screening framework",
+          "documented my refusal before informing the director, not after",
+          "did not refuse in a meeting without witnesses — followed up in writing",
+          "kept the conversation professional and non-confrontational while being clear",
+          "imtinамı direktora qarşı çıxmaq yox, şirkəti qorumaq kimi çərçivəyə saldım",
+          "alternative qanuni seçim çərçivəsi təklif etdim",
+          "direktorla görüşdə şahidsiz imtina etmədim — yazılı olaraq davam etdim"
+        ]
+      },
+      {
+        "name": "escalation_path",
+        "weight": 0.2,
+        "keywords": [
+          "identified the Board or Audit Committee as the next escalation if the director insisted",
+          "noted I would contact a labor lawyer within 24 hours if pressure continued",
+          "considered reporting to the Ministry of Labor if no internal resolution",
+          "prepared to invoke my own employment contract's lawful instruction clause",
+          "Baş direktor israr edərsə növbəti eskalasiya kimi Şuranı və ya Audit Komitəsini müəyyənləşdirdim",
+          "təzyiq davam edərsə 24 saat ərzində əmək hüquqşünası ilə əlaqə saxlayacağımı qeyd etdim",
+          "daxili həll yolu olmazsa Əmək Nazirliyinə müraciət etməyi düşündüm"
+        ]
+      },
+      {
+        "name": "framing_for_director",
+        "weight": 0.15,
+        "keywords": [
+          "presented refusal as risk management, not moral objection",
+          "explained the financial and reputational cost of a Ministry of Labor investigation",
+          "noted that a discrimination complaint would be public record",
+          "offered to help find lawful ways to address the director's underlying concern",
+          "imtinамı əxlaqi etiraz yox, risk idarəetməsi kimi təqdim etdim",
+          "Əmək Nazirliyi araşdırmasının maliyyə və nüfuz dəyərini izah etdim",
+          "ayrı-seçkilik şikayətinin ictimai qeyd olacağını qeyd etdim",
+          "direktorun əsas narahatlığını qanuni yollarla həll etməyə kömək etməyi təklif etdim"
+        ]
+      }
+    ],
+    "feedback_en": "This question tests whether an HR professional can hold the legal line against direct hierarchical pressure while (a) protecting their own employment, (b) keeping the relationship functional, and (c) protecting the company. The London Test: anyone who frames their refusal as 'because it's wrong' without citing Article 73-1, without a documentation trail, and without offering the director a face-saving alternative fails this question at professional level. The correct answer is simultaneously legally precise, strategically framed, and self-protective.",
+    "feedback_az": "Bu sual HR mütəxəssisinin birbaşa iyerarxik təzyiq altında hüquqi xətti qoruyub-qorumayacağını sınayır — eyni zamanda (a) öz işini qoruyarkən, (b) münasibəti funksional saxlayarkən, (c) şirkəti qoruyarkən. London Testi: 73-1-ci maddəyə istinad etmədən, sənəd izi olmadan və direktora üzü saxlayan alternativ təklif etmədən imtinasını 'çünki yanlışdır' kimi çərçivəyə salan hər kəs bu sualı peşəkar səviyyədə keçməyəcək. Düzgün cavab eyni zamanda hüquqi cəhətdən dəqiq, strateji cəhətdən çərçivələnmiş və özünü qoruyandır.",
+    "development_tip_en": "When a senior leader gives an unlawful instruction, your first move is never verbal refusal. It is documentation. Send an email within 1 hour: 'Following our conversation, I want to confirm my understanding: you are asking HR to [description of instruction]. I want to flag that this may be in conflict with AZ Labor Code Article 73-1 and I'd like to discuss a compliant approach.' This email does three things: creates a record, invites a lawful alternative, and is not confrontational. It is the professional standard.",
+    "development_tip_az": "Böyük bir lider qeyri-qanuni tapşırıq verdikdə ilk addımınız heç vaxt şifahi imtina deyil. Bu, sənədləşdirmədir. 1 saat ərzində e-poçt göndərin: 'Söhbətimizin ardınca anlayışımı təsdiqləmək istəyirəm: HR-dan [tapşırığın təsviri] etmənizi tələb edirsiniz. Bunun AZ Əmək Məcəlləsinin 73-1-ci maddəsi ilə ziddiyyət təşkil edə biləcəyini qeyd etmək istəyirəm və uyğun bir yanaşmanı müzakirə etmək istəyirəm.' Bu e-poçt üç şey edir: qeyd yaradır, qanuni alternativə dəvət edir və qarşıdurmacı deyil. Bu peşəkar standartdır."
+  },
+  {
+    "id": "prof-hr-s2-009",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency": "leadership",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.4,
+    "irt_b": -0.6,
+    "irt_c": 0.12,
+    "scenario_en": "You are the new HR manager at a 70-person Baku logistics company. The previous HR manager left without transition. You notice that junior employees never speak in team meetings, even when directly asked, and senior employees routinely dismiss their ideas publicly. The CEO sees this as 'normal hierarchy.' What is your FIRST leadership action to begin building psychological safety?",
+    "scenario_az": "Siz 70 nəfərlik Bakı logistika şirkətinin yeni HR menecerinizsiniz. Əvvəlki HR meneceri keçid olmadan ayrıldı. Junior işçilərin birbaşa sorulduqda belə komanda iclaslarında heç vaxt danışmadığını və böyük işçilərin onların fikirlərini alenen tez-tez rədd etdiyini görürsünüz. CEO bunu 'normal iyerarxiya' kimi görür. Psixoloji təhlükəsizliyi qurmağa başlamaq üçün İLK liderlik hərəkətiniz nə olacaq?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Announce a company-wide 'open door policy' memo from HR",
+        "text_az": "HR-dan şirkət daxili 'açıq qapı siyasəti' memorandumu elan et"
+      },
+      {
+        "key": "B",
+        "text_en": "Conduct 1:1 meetings with 5-6 junior employees to understand specific barriers, then design one structural change to a team meeting format that creates a low-risk speaking opportunity",
+        "text_az": "Spesifik maneələri anlamaq üçün 5-6 junior işçi ilə bireysel görüşlər keçir, sonra aşağı riskli danışma imkanı yaradan komanda iclası formatına bir struktural dəyişiklik dizayn et"
+      },
+      {
+        "key": "C",
+        "text_en": "Raise the issue directly with the CEO and request authority to change meeting norms",
+        "text_az": "Məsələni birbaşa CEO ilə gündəmə gətir və iclас normalarını dəyişdirmək üçün səlahiyyət tələb et"
+      },
+      {
+        "key": "D",
+        "text_en": "Organise a team-building workshop on communication and inclusion",
+        "text_az": "Kommunikasiya və daxilolma mövzusunda komanda quruculuğu seminarı təşkil et"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "Option A is performative with no structural change. Option C is premature — a new HR manager without data approaching the CEO risks being dismissed as misreading culture. Option D addresses symptoms via a one-off event. Option B is correct because it follows the diagnostic-before-intervention principle: understand specific barriers first (1:1s), then design a minimal viable structural change that creates a safe entry point for junior voices without confronting senior employees publicly.",
+    "feedback_az": "A seçimi struktural dəyişiklik olmadan performativ xarakter daşıyır. C seçimi vaxtından əvvəldir — məlumat olmadan CEO-ya yaxınlaşan yeni HR meneceri mədəniyyəti yanlış oxumaq kimi rədd edilmə riski daşıyır. D seçimi simptomları birdəfəlik bir hadisə vasitəsilə həll edir. B seçimi doğrudur, çünki müdaxilədən əvvəl diaqnostika prinsipini izləyir: əvvəlcə spesifik maneələri anlayın (bireysel görüşlər), sonra böyük işçiləri alenen qarşılamadan junior səslər üçün təhlükəsiz giriş nöqtəsi yaradan minimal özlü struktural dəyişiklik dizayn edin.",
+    "development_tip_en": "Psychological safety is built through structure, not speeches. The most effective single change is usually a meeting format shift: pre-submitted written questions (equalises participation), round-robin input segments (removes seniority-based floor control), or small breakout groups before full-room discussion. Choose one, implement it in the next scheduled meeting, measure participation rates.",
+    "development_tip_az": "Psixoloji təhlükəsizlik nitqlər yox, struktur vasitəsilə qurulur. Ən effektiv tək dəyişiklik adətən iclası format dəyişikliyidir: əvvəlcədən təqdim edilmiş yazılı suallar (iştirakı bərabərləşdirir), növbə ilə giriş seqmentləri (böyüklük əsaslı mərtəbə nəzarətini aradan qaldırır) və ya tam otaq müzakirəsindən əvvəl kiçik qrup. Birini seçin, növbəti planlanmış iclasda tətbiq edin, iştirak nisbətlərini ölçün."
+  },
+  {
+    "id": "prof-hr-s2-010",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency": "tech_literacy",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.7,
+    "irt_b": 0.6,
+    "irt_c": 0.1,
+    "scenario_en": "You are running end-of-month payroll for 85 employees using 1C:Salary and HR for Azerbaijan. After processing, you notice that 3 employees' net pay is AZN 47 higher than expected. You check: their base salary and tax deductions appear correct. However, all 3 received the same new 'project bonus' code entered by a new HR assistant last week. The payroll batch has not yet been submitted to the bank. What do you do FIRST?",
+    "scenario_az": "Siz Azərbaycan üçün 1C:Əmək haqqı və HR istifadə edərək 85 işçi üçün ay sonu maaş hesablaması aparırsınız. Emaldan sonra 3 işçinin xalis maaşının gözləniləndən AZN 47 yüksək olduğunu görürsünüz. Yoxlayırsınız: əsas maaş və vergi tutmaları düzgün görünür. Lakin hər üçü keçən həftə yeni HR köməkçisi tərəfindən daxil edilmiş eyni yeni 'layihə bonusu' kodunu aldı. Maaş paketi hələ banka göndərilməyib. İLK olaraq nə edərsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Submit the payroll as-is — AZN 47 per person is immaterial and the employees will be happy",
+        "text_az": "Maaşı olduğu kimi göndər — hər nəfər üçün AZN 47 əhəmiyyətsizdir və işçilər məmnun olacaq"
+      },
+      {
+        "key": "B",
+        "text_en": "In 1C, trace the bonus code to its source configuration, verify whether it was authorised by a manager with budget approval authority, check the calculation formula for unintended multiplier effects, and hold the batch pending sign-off",
+        "text_az": "1C-də bonus kodunu mənbə konfiqurasiyasına izlə, büdcə onay səlahiyyəti olan menecer tərəfindən icazə verilip-verilmədiyini yoxla, nəzərdə tutulmayan çarpan təsirləri üçün hesablama düsturunu yoxla və onay gözlənilərək paketi saxla"
+      },
+      {
+        "key": "C",
+        "text_en": "Delete the bonus code for the 3 employees manually and reprocess — a new assistant error is clearly the cause",
+        "text_az": "3 işçinin bonus kodunu əl ilə sil və yenidən emal et — yeni köməkçi xətası açıqca səbəbdir"
+      },
+      {
+        "key": "D",
+        "text_en": "Ask the HR assistant to explain the bonus code before deciding anything",
+        "text_az": "Hər hansı bir şey qərar vermədən əvvəl HR köməkçisindən bonus kodunu izah etməsini xahiş et"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "1C:Salary bonus codes in AZ payroll have three common failure modes: (1) formula includes an unintended multiplier inherited from a template, (2) the code was authorised but entered at the wrong amount, (3) the code was entered without authorisation. Option B is the only response that diagnoses all three simultaneously. Option C assumes cause before investigation — if the bonus was actually authorised, deleting it creates a legal underpayment. Option D is partial — the assistant may not know the formula logic. Option A creates an overpayment that must be clawed back later with a formal deduction process under AZ Labor Code.",
+    "feedback_az": "AZ maaş hesablamasında 1C:Əmək haqqı bonus kodlarının üç ümumi uğursuzluq rejimi var: (1) formula bir şablondan miras alınan nəzərdə tutulmayan çarpan ehtiva edir, (2) kod icazə verilmişdir, lakin yanlış məbləğdə daxil edilmişdir, (3) kod icazəsiz daxil edilmişdir. B seçimi eyni anda hər üçünü diaqnoz edən yeganə cavabdır. C seçimi araşdırmadan əvvəl nəticəni qəbul edir — bonus əslində icazə verilibsə, onu silmək qanuni az ödəmə yaradır. D seçimi qisməndir — köməkçi formula məntiqini bilməyə bilər. A seçimi AZ Əmək Məcəlləsi əsasında rəsmi tutma prosesi ilə sonradan geri alınması lazım olan artıq ödəmə yaradır.",
+    "development_tip_en": "For any 1C payroll discrepancy before bank submission: the investigation sequence is always (1) isolate the affected records, (2) trace to source configuration — not to the last human who touched it, (3) verify authorization chain, (4) hold batch. Never delete a payroll entry without tracing its origin. An unauthorised deletion in 1C creates an audit gap that is harder to explain to the State Tax Service than the original error.",
+    "development_tip_az": "Banka göndərilmədən əvvəl hər hansı 1C maaş uyğunsuzluğu üçün: araşdırma ardıcıllığı həmişə (1) təsirlənmiş qeydləri izolyasiya edin, (2) son toxunan insana yox, mənbə konfiqurasiyasına izlə, (3) icazə zəncirini yoxlayın, (4) paketi saxlayın. Qaynağını izləmədən maaş girişini heç vaxt silməyin. 1C-dəki icazəsiz silmə, Dövlət Vergi Xidmətinə orijinal xətadan izah etməsi daha çətin olan audit boşluğu yaradır."
+  }
+]

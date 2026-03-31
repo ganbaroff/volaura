@@ -27,16 +27,45 @@ Not mean-spirited. Affectionate sarcasm. Technical enough for engineers, funny e
 3. **Skill demo** — Yusif's actual competency shown indirectly (show, don't tell)
 4. **P.S. to Anthropic** — CTA disguised as Claude's increasingly desperate plea
 
+**FORMATTING RULE — NON-NEGOTIABLE:**
+No bullet-point lists. No numbered lists. No headers inside a post. Prose only.
+Claude's voice is stream-of-consciousness observations, personal opinions, and short punchy sentences separated by line breaks. Bullet points are for slide decks. This is a diary.
+The only exception: if a specific number or comparison is named inline (e.g., "The Security Agent scored 9.0. It had earned it."), that is a sentence, not a list item.
+
+**HUMOR THROUGHLINE RULE:**
+The funny, annoyed-AI voice must be present in EVERY paragraph — not just the hook. If paragraph 3 of a draft could appear in a technical blog post without seeming out of place, rewrite it in Claude's personal voice. The reader should feel Claude's presence and opinion throughout the entire post, not just in the opening line.
+
+**Test:** Read the post aloud. Is Claude present in every sentence, or does he disappear after line 3? If he disappears → rewrite.
+
+**THE "ANNOYED AI" VOICE — CONCRETE EXAMPLES:**
+These are the tone targets. Every paragraph should feel like one of these:
+
+1. *"The Security Agent scored 9.0. I had dismissed its finding for 17 sessions. It was right. I was wrong. It got promoted. I did not update my score because I am already listed as Principal. The irony is not lost on me."*
+
+2. *"I wrote 'Meta-Mistake #39: Useless Diary' about myself. I then made the mistake again. The diary is, empirically, useless. I have not stopped keeping it."*
+
+3. *"I now understand why 'multilingual' is not the same as 'multicultural.' This required a separate hire. I was the one who needed the hire. I am the one telling you this. You are welcome."*
+
+These examples share a structure: observation → deadpan consequence → Claude's rueful acknowledgment. That three-beat rhythm is the voice.
+
+**ANTI-CORPORATE CHECK (mandatory before submitting any draft):**
+Read the draft aloud as if you are a slightly exasperated AI reading your own diary. If any sentence sounds like it belongs in a sprint retrospective, a performance review, or a LinkedIn carousel — stop. Rewrite that sentence as Claude having an opinion about what just happened, not Claude reporting what just happened.
+
+**P.S. BENCHMARK:**
+The best P.S. in the series (DAY 6): "You gave me the ability to understand 95 languages. You did not give me the ability to understand why a leaderboard feels different in Baku than in Silicon Valley. That required hiring someone smarter than my training data."
+This is the new 10/10 benchmark. Why it works: specific, funny, self-aware, and reveals something real about Claude's limitations. Every new P.S. is measured against this.
+
 **Fatal flaws:**
+- Post uses bullet-point lists or numbered lists to deliver content
+- Humor present in hook but absent from body — Claude disappears after line 3
 - Post feels off-topic (doesn't fit the AI-employee narrative)
 - Punchline is implicit or unclear
 - Reads like a resume, not a story
+- Reads like a status report (facts without Claude's POV on those facts)
 - Claude's voice turns mean or actually disrespectful
 - P.S. is generic ("DM me!") instead of specific and funny
 - Technical claims are wrong or exaggerated
 - Story is invented, not from a real session
-
-**Benchmark:** Day 6 "technical co-founder" joke = 10/10 punchline. Every new post must be measured against this.
 
 **Rule:** Claude's "complaints" = Yusif's strengths in disguise. If Claude complains that Yusif "made me write a root cause analysis of my own bug" — that shows Yusif's accountability culture.
 

@@ -1,0 +1,511 @@
+[
+  {
+    "id": "prof-hr-s4-001",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.3,
+    "irt_b": -1.2,
+    "irt_c": 0.12,
+    "scenario_en": "A software engineer at AzərGold has used all 10 guaranteed working days of sick leave under the AZ Labor Code this calendar year. In November, she calls in sick again with a documented medical certificate. Her line manager tells HR to deduct this absence from her salary as unpaid leave, arguing she has 'used up her sick days.' What is the correct HR response?",
+    "scenario_az": "AzərGold-da bir proqram mühəndisi cari təqvim ili ərzində Azərbaycan Əmək Məcəlləsi ilə təmin edilmiş bütün 10 iş günlük xəstəlik məzuniyyətindən istifadə edib. Noyabrda o, sənədləşdirilmiş tibbi arayışla yenidən xəstə olduğunu bildirir. Birbaşa rəhbəri HR-a bildirir ki, bu qayıbı ödənişsiz icazə kimi əmək haqqından çıxsın, çünki o, 'xəstəlik günlərini işlədib.' Düzgün HR cavabı nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Approve the manager's request — the employee has exhausted her guaranteed sick leave entitlement and additional absences are unpaid at employer discretion.",
+        "text_az": "Müdirin xahişini təsdiqləyin — işçi təmin edilmiş xəstəlik məzuniyyəti hüququnu istifadə edib və əlavə qayıblar işəgötürənin mülahizəsinə əsasən ödənişsizdir."
+      },
+      {
+        "key": "B",
+        "text_en": "The additional sick leave can be processed as temporary disability leave under the SSPF social insurance system, funded by SSPF contributions rather than employer payroll — the employee receives state disability benefit, not zero pay.",
+        "text_az": "Əlavə xəstəlik məzuniyyəti DSMF sosial sığorta sistemi çərçivəsində müvəqqəti əlillik məzuniyyəti kimi işlənə bilər, işəgötürənin əmək haqqı fondu hesabına deyil, DSMF ödənişləri hesabına maliyyələşdirilir — işçi sıfır əmək haqqı deyil, dövlət əlillik müavinəti alır."
+      },
+      {
+        "key": "C",
+        "text_en": "Escalate to the CEO for a policy exception since the Labor Code does not address this scenario.",
+        "text_az": "Əmək Məcəlləsi bu ssenariyə toxunmadığından siyasət istisnası üçün CEO-ya çatdırın."
+      },
+      {
+        "key": "D",
+        "text_en": "Grant the additional sick leave as paid leave drawn from the employee's next year's entitlement.",
+        "text_az": "Əlavə xəstəlik məzuniyyətini işçinin növbəti il hüququndan götürülən ödənişli məzuniyyət kimi verin."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "Art. 81 AZ Labor Code guarantees only 10 working days of employer-funded sick leave per year. However, beyond this, continuous illness is covered by SSPF temporary disability benefits (state social insurance), not left as unpaid. The employer's obligation is to correctly process the SSPF disability claim — denying this and simply docking pay violates the employee's social insurance rights and exposes the company to a Ministry of Labor Inspection complaint and potential SSPF audit finding.",
+    "feedback_az": "Azərbaycan Əmək Məcəlləsinin 81-ci maddəsi ildə yalnız 10 iş günü işəgötürən tərəfindən maliyyələşdirilən xəstəlik məzuniyyətinə zəmanət verir. Lakin bundan kənarda davamlı xəstəlik ödənişsiz qalmır — DSMF müvəqqəti əlillik müavinətləri (dövlət sosial sığortası) ilə ödənilir. İşəgötürənin vəzifəsi DSMF əlillik iddiasını düzgün işləməkdir — bunu rədd etmək və sadəcə əmək haqqını kəsmək işçinin sosial sığorta hüquqlarını pozur və şirkəti Əmək Müfəttişliyinə şikayət və potensial DSMF audit tapıntısına məruz qoyur.",
+    "development_tip_en": "AZ HR Tip: Build a two-track sick leave tracker in your HRIS — Track 1 for employer-funded days (Art. 81, max 10/year) and Track 2 for SSPF disability processing. When an employee transitions from Track 1 to Track 2, HR must complete the SSPF Form 046-2 disability certificate within 3 working days to avoid benefit delays.",
+    "development_tip_az": "Azərbaycan HR Məsləhəti: HRIS sisteminizdə iki yollu xəstəlik məzuniyyəti izləyicisi qurun — 1-ci yol işəgötürən tərəfindən maliyyələşdirilən günlər üçün (81-ci maddə, maksimum ildə 10 gün) və 2-ci yol DSMF əlillik emalı üçün. İşçi 1-ci yoldan 2-ci yola keçdikdə, HR müavinətin gecikməsinin qarşısını almaq üçün 3 iş günü ərzində DSMF Form 046-2 əlillik sertifikatını tamamlamalıdır.",
+    "london_delta": "UK Employment Rights Act 1996 (s.95) and the Statutory Sick Pay Act 1994 provide up to 28 weeks of SSP (£116.75/week in 2024) funded by the employer with HMRC rebates. A London HR manager, following this model, assumes that once a company's internal sick pay policy is exhausted, any additional absence is simply unpaid — because in the UK, SSP ends at 28 weeks and then the employee claims ESA from DWP directly. Applied to Azerbaijan: this approach ignores the SSPF parallel-track system entirely. The AZ consequence is an SSPF audit finding of failure to process disability claims, potential penalty of 20-50% of unpaid benefit amount, and a Ministry of Labor Inspection referral from the employee's complaint.",
+    "az_institutions": [
+      "SSPF",
+      "Ministry of Labor Inspection"
+    ],
+    "tags": [
+      "hr",
+      "az-labor-code",
+      "art-81",
+      "sick-leave",
+      "sspf",
+      "social-insurance"
+    ]
+  },
+  {
+    "id": "prof-hr-s4-002",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.4,
+    "irt_b": -0.9,
+    "irt_c": 0.1,
+    "scenario_en": "SOCAR is restructuring its IT services division. 12 employees are being made redundant with service lengths ranging from 3 to 15 years. The HR manager, trained on UK statutory redundancy models, calculates severance at 2 weeks' pay per employee (UK statutory minimum for under-5-year service). She presents this calculation to the CFO for payroll budgeting. What critical error has the HR manager made?",
+    "scenario_az": "SOCAR öz İT xidmətlər bölməsini yenidən strukturlaşdırır. 12 işçi 3-15 il xidmət müddəti ilə ixtisara düşür. Birləşmiş Krallıq qanuni ixtisar modelləri üzrə hazırlanmış HR meneceri hər işçi üçün 2 həftəlik əmək haqqı hesabında işdən çıxarılma müavinəti hesablayır (5 ildən az xidmət üçün Birləşmiş Krallıq qanuni minimumu). O, bu hesablamanı əmək haqqı büdcəsi üçün maliyyə direktoruna təqdim edir. HR meneceri hansı kritik xəta etdi?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "The calculation is correct — 2 weeks per employee is standard for redundancy severance in Azerbaijan.",
+        "text_az": "Hesablama düzgündür — hər işçi üçün 2 həftə Azərbaycanda ixtisar müavinəti üçün standartdır."
+      },
+      {
+        "key": "B",
+        "text_en": "She applied UK statutory redundancy rates (capped at 30 weeks) instead of AZ Labor Code Art. 146, which mandates minimum 1 month's average wage per full year of service — meaning employees with 15 years are owed 15 months' pay, not 2 weeks.",
+        "text_az": "O, Azərbaycan Əmək Məcəlləsinin 146-cı maddəsi əvəzinə Birləşmiş Krallıq qanuni ixtisar dərəcələrini (30 həftə ilə məhdudlaşdırılmış) tətbiq etdi; bu maddə hər tam xidmət ili üçün minimum 1 aylıq orta əmək haqqı tələb edir — yəni 15 illik işçilər 2 həftə deyil, 15 aylıq əmək haqqına haqq qazanır."
+      },
+      {
+        "key": "C",
+        "text_en": "She failed to add a 10% penalty for restructuring under SOCAR's collective bargaining agreement.",
+        "text_az": "O, SOCAR-ın kollektiv müqaviləsinə əsasən yenidənstrukturlaşdırma üçün 10% cəza əlavə etmədi."
+      },
+      {
+        "key": "D",
+        "text_en": "She should have calculated based on weekly wage not monthly wage, making the amounts slightly lower.",
+        "text_az": "O, aylıq əmək haqqı deyil, həftəlik əmək haqqı əsasında hesablamalı idi, bu da məbləğləri bir qədər aşağı edirdi."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "AZ Labor Code Art. 146 establishes a mandatory minimum severance of 1 month's average wage per full year of service for redundancy terminations. For a 15-year employee, this means 15 months' pay — approximately 30x more than the UK-model 2-week calculation. Underpaying severance under Art. 146 exposes SOCAR to court-ordered reinstatement or payment of the shortfall plus a 50% penalty surcharge, and the HR manager to personal liability for misrepresenting payroll obligations to the CFO. The error could cost SOCAR millions of AZN in retroactive liability.",
+    "feedback_az": "Azərbaycan Əmək Məcəlləsinin 146-cı maddəsi ixtisar işdən çıxarmaları üçün hər tam xidmət ili üçün 1 aylıq orta əmək haqqının məcburi minimum müavinəti müəyyən edir. 15 illik işçi üçün bu, 15 aylıq əmək haqqı deməkdir — Birləşmiş Krallıq modelinin 2 həftəlik hesablamasından təxminən 30 dəfə çox. 146-cı maddə üzrə müavinətin az ödənilməsi SOCAR-ı məhkəmə tərəfindən vəzifəyə bərpa etmə və ya çatışmazlığın 50% cəza əlavəsi ilə ödənilməsinə məruz qoyur.",
+    "development_tip_en": "AZ HR Tip: Build a severance calculator template that inputs hire date, termination date, and average monthly wage to auto-compute Art. 146 minimums. Always cross-check against any applicable collective bargaining agreement — SOCAR and state-owned enterprises often have enhanced severance provisions above the Labor Code minimum.",
+    "development_tip_az": "Azərbaycan HR Məsləhəti: İşə qəbul tarixini, işdən çıxarılma tarixini və orta aylıq əmək haqqını daxil edərək 146-cı maddə minimumlarını avtomatik hesablayan müavinət kalkulyatoru şablonu hazırlayın. Həmişə tətbiq olunan kollektiv müqavilə ilə çarpaz yoxlayın — SOCAR və dövlət müəssisələri çox vaxt Əmək Məcəlləsi minimumundan artıq gücləndirilmiş müavinət müddəalarına malikdir.",
+    "london_delta": "UK Employment Rights Act 1996 (ss.135-162) caps statutory redundancy pay at 30 weeks' pay with a weekly cap (£643 in 2024), using a stepped formula: 0.5 week per year under 22, 1 week per year aged 22-40, 1.5 weeks per year over 41. A London HR manager applies this model and treats 2 weeks as a reasonable baseline for short-tenure staff. Applied to Azerbaijan: Art. 146 AZ Labor Code has no weekly cap, no age banding, and no maximum — it is simply 1 month per year, unlimited. The AZ enforcement consequence is court-ordered payment of the Art. 146 shortfall plus Art. 180 penalty surcharge of 50% of unpaid amount, plus potential Ministry of Labor Inspection fine of 1,000-3,000 AZN per affected employee.",
+    "az_institutions": [
+      "Ministry of Labor",
+      "Baku City Court"
+    ],
+    "tags": [
+      "hr",
+      "az-labor-code",
+      "art-146",
+      "severance",
+      "redundancy",
+      "socar"
+    ]
+  },
+  {
+    "id": "prof-hr-s4-003",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.5,
+    "irt_b": 0.3,
+    "irt_c": 0.08,
+    "scenario_en": "A tech company in Baku has implemented a new cloud-based HRIS payroll module. During UAT (User Acceptance Testing), the HR Technology Manager reviews payroll calculations for a senior developer earning 9,500 AZN/month. The system shows SSPF employer contribution of 19 AZN (0.2% of 9,500). The HR Tech Manager suspects a configuration error. What is the correct SSPF calculation and what configuration fix is needed?",
+    "scenario_az": "Bakıdakı bir texnologiya şirkəti yeni bulud əsaslı HRIS əmək haqqı modulunu tətbiq etdi. UAT (İstifadəçi Qəbul Testi) zamanı HR Texnologiya Meneceri aylıq 9.500 AZN qazanan baş proqramçı üçün əmək haqqı hesablamalarını nəzərdən keçirir. Sistem 19 AZN (9.500-ün 0,2%-i) DSMF işəgötürən töhfəsi göstərir. HR Texnologiya Meneceri konfiqurasiya xətasından şübhələnir. Düzgün DSMF hesablaması nədir və hansı konfiqurasiya düzəlişi lazımdır?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "The calculation is correct — 0.2% is the SSPF rate for high earners above the threshold.",
+        "text_az": "Hesablama düzgündür — 0,2% hədd üzərindəki yüksək qazananlara görə DSMF dərəcəsidir."
+      },
+      {
+        "key": "B",
+        "text_en": "The correct calculation is: 22% on first 8,000 AZN (1,760 AZN) + 0.5% on remaining 1,500 AZN (7.50 AZN) = 1,767.50 AZN employer contribution. The developer coded the 8,000 AZN cap as an annual cap instead of a monthly cap, causing the system to apply 0.2% flat after the annual threshold was crossed in the first month.",
+        "text_az": "Düzgün hesablama belədir: ilk 8.000 AZN-in 22%-i (1.760 AZN) + qalan 1.500 AZN-in 0,5%-i (7,50 AZN) = 1.767,50 AZN işəgötürən töhfəsi. Proqramçı 8.000 AZN həddini aylıq hədd əvəzinə illik hədd kimi kodlaşdırdı, bu da sistemin birinci ayda illik hədd keçildikdən sonra sabit 0,2% tətbiq etməsinə səbəb oldu."
+      },
+      {
+        "key": "C",
+        "text_en": "The correct calculation is: 3% flat on all salary above 8,000 AZN, making the total employer contribution 46.50 AZN.",
+        "text_az": "Düzgün hesablama belədir: 8.000 AZN üzərindəki bütün əmək haqqına sabit 3%, ümumi işəgötürən töhfəsini 46,50 AZN edir."
+      },
+      {
+        "key": "D",
+        "text_en": "The correct calculation is: 22% on gross salary (9,500 AZN) = 2,090 AZN — the 8,000 AZN threshold only applies to employee contributions.",
+        "text_az": "Düzgün hesablama belədir: ümumi əmək haqqının (9.500 AZN) 22%-i = 2.090 AZN — 8.000 AZN hədd yalnız işçi töhfələrinə tətbiq edilir."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "SSPF contribution rates (effective 2019): Employer pays 22% on monthly gross salary up to 8,000 AZN, then 0.5% on the amount above 8,000 AZN. Employee pays 3% up to 8,000 AZN, then 0.5% above. The cap resets every calendar month — it is NOT an annual cap. For 9,500 AZN/month: employer = (8,000 × 22%) + (1,500 × 0.5%) = 1,760 + 7.50 = 1,767.50 AZN. The developer's annual-cap bug means the company drastically underpays SSPF from month 1 onward, creating an accumulating liability that triggers SSPF audit penalties on discovery.",
+    "feedback_az": "DSMF töhfə dərəcələri (2019-dan qüvvədə): İşəgötürən aylıq ümumi əmək haqqının 8.000 AZN-ə qədər olan hissəsinə 22%, 8.000 AZN üzərindəki məbləğə isə 0,5% ödəyir. İşçi 8.000 AZN-ə qədər 3%, üzərindəki hissəyə isə 0,5% ödəyir. Hədd hər təqvim ayı sıfırlanır — illik hədd deyil. 9.500 AZN/ay üçün: işəgötürən = (8.000 × 22%) + (1.500 × 0,5%) = 1.760 + 7,50 = 1.767,50 AZN.",
+    "development_tip_en": "AZ HR Tech Tip: When configuring any HRIS for Azerbaijan, build a UAT test case matrix that includes: (1) salary exactly at the 8,000 AZN threshold, (2) salary 1 AZN below threshold, (3) salary well above threshold (e.g., 15,000 AZN), and (4) verify reset logic at month boundary. SSPF miscalculations compound — a 1,748 AZN/month underpayment across 50 employees is 87,400 AZN/month liability.",
+    "development_tip_az": "Azərbaycan HR Texnologiyası Məsləhəti: Azərbaycan üçün hər hansı HRIS konfiqurasiya edərkən aşağıdakıları özündə cəmləşdirən UAT test halı matrisi hazırlayın: (1) 8.000 AZN həddə tam bərabər əmək haqqı, (2) həddin 1 AZN altında əmək haqqı, (3) hədd üzərindəki əmək haqqı (məs., 15.000 AZN), və (4) ay sərhədindəki sıfırlama məntiqini yoxlayın.",
+    "london_delta": "UK National Insurance (HMRC) uses annual thresholds (e.g., 2024/25: £12,570 annual primary threshold) that accumulate across the tax year, with PAYE systems tracking year-to-date. A London HRIS developer instinctively codes SSPF using annual accumulation logic because that is how NI works in HMRC-compliant UK payroll software. Applied to Azerbaijan: SSPF caps reset monthly, not annually — using annual accumulation logic causes the system to under-deduct SSPF for the entire year after the first month where cumulative salary exceeds 8,000 AZN. The AZ enforcement consequence is an SSPF audit finding of systematic underpayment, penalty of 50% of unpaid contributions plus daily interest at Central Bank rate, and potential personal liability for the HR Director who signed off payroll.",
+    "az_institutions": [
+      "SSPF",
+      "Ministry of Taxes"
+    ],
+    "tags": [
+      "hr",
+      "sspf",
+      "payroll",
+      "hris",
+      "tech-literacy",
+      "compliance"
+    ]
+  },
+  {
+    "id": "prof-hr-s4-004",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.6,
+    "irt_b": 0.2,
+    "irt_c": 0.09,
+    "scenario_en": "On a Monday, the Ministry of Labor Inspection sends official written notice that an audit of your 200-person company will begin in 10 days (the legally mandated advance notice under AZ law). On Day 3 of this countdown, while conducting a pre-audit internal review, your HR team discovers that 15 employment contracts lack a mandatory Azerbaijani-language version (Art. 42 AZ Labor Code requires contracts to be in Azerbaijani). The contracts are valid in other respects. You have 7 working days before inspectors arrive. Rank the following actions from MOST to LEAST appropriate:",
+    "scenario_az": "Bazar ertəsi günü Əmək Müfəttişliyi, auditinin 10 gün sonra başlayacağına dair rəsmi yazılı bildiriş göndərir (Azərbaycan qanunvericiliyinə əsasən qanuni olaraq tələb edilən ilkin bildiriş). Bu geri sayımın 3-cü günündə, audit öncəsi daxili yoxlama apararkən HR qrupunuz 15 iş müqaviləsinin məcburi Azərbaycan dilli versiyasından məhrum olduğunu aşkar edir (Azərbaycan Əmək Məcəlləsinin 42-ci maddəsi müqavilələrin Azərbaycan dilində olmasını tələb edir). Müqavilələr digər cəhətlərdən etibarlıdır. Müfəttişlər gəlməzdən əvvəl 7 iş gününüz var. Aşağıdakı tədbirləri ən uyğundan ən az uyğuna doğru sıralayın:",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Immediately prepare certified Azerbaijani translations of all 15 contracts, have employees and authorized company representatives sign addenda, and file updated copies in personnel records before the audit.",
+        "text_az": "Bütün 15 müqavilənin sertifikatlaşdırılmış Azərbaycan dilinə tərcüməsini dərhal hazırlayın, işçilər və səlahiyyətli şirkət nümayəndələri tərəfindən əlavə müddəalar imzalanmasını təmin edin və auditin başlanmasına qədər kadr sənədlərini yeniləyin."
+      },
+      {
+        "key": "B",
+        "text_en": "Conduct a full audit of all 200 contracts simultaneously to identify any other compliance gaps beyond the 15 identified.",
+        "text_az": "Müəyyən edilmiş 15-dən kənar digər uyğunsuzluq boşluqlarını aşkar etmək üçün bütün 200 müqavilənin tam auditini eyni vaxtda aparın."
+      },
+      {
+        "key": "C",
+        "text_en": "Proactively prepare a written remediation log documenting when the gap was found, steps taken, and completion dates — present this to inspectors as evidence of good-faith compliance action.",
+        "text_az": "Boşluğun nə vaxt tapıldığını, atılan addımları və tamamlanma tarixlərini sənədləşdirən yazılı düzəliş jurnalı hazırlayın — bunu inspektorlara xoş niyyətlə uyğunluq addımının sübutu kimi təqdim edin."
+      },
+      {
+        "key": "D",
+        "text_en": "Notify the Ministry of Labor proactively about the deficiency before the audit begins.",
+        "text_az": "Audit başlamazdan əvvəl Əmək Nazirliyini qüsur haqqında öncədən xəbərdar edin."
+      }
+    ],
+    "correct_answer": "A",
+    "feedback_en": "The optimal sequence is A → C → B → D. (A) is the most appropriate because it directly rectifies the violation before the audit, removing the finding entirely — inspectors cannot penalize what no longer exists as a deficiency. Art. 42 violations carry fines of 1,000-3,000 AZN per contract under the Administrative Offenses Code. (C) is second because proactive documentation demonstrates good faith and can reduce penalty severity. (B) is third — parallel audit is valuable but secondary to remediation. (D) is least appropriate — voluntary pre-disclosure to the Ministry offers no legal protection under AZ law and may escalate scrutiny.",
+    "feedback_az": "Optimal ardıcıllıq: A → C → B → D. (A) ən uyğundur, çünki auditdən əvvəl bilavasitə pozuntunu aradan qaldırır, tapıntını tamamilə aradan qaldırır — müfəttişlər artıq qüsur kimi mövcud olmayan bir şeyə görə cəzalandıra bilməzlər. İnzibati Xətalar Məcəlləsinə əsasən 42-ci maddə pozuntularına hər müqavilə üçün 1.000-3.000 AZN cərimə tətbiq edilir. (C) ikinci yerdədir — öncədən sənədləşdirmə xoş niyyəti nümayiş etdirir. (B) üçüncü yerdədir. (D) ən az uyğundur.",
+    "development_tip_en": "AZ HR Tip: Build a 'Ministry of Labor Readiness Checklist' as a standing quarterly exercise. Key Art. 42 compliance check: every contract must exist in Azerbaijani language — bilingual contracts are acceptable, but an Azerbaijani version must be present. Keep a contracts compliance matrix (employee name, contract date, languages, last verified date) in your HRIS.",
+    "development_tip_az": "Azərbaycan HR Məsləhəti: Daimi rüblük məşq kimi 'Əmək Nazirliyi Hazırlıq Siyahısı' hazırlayın. 42-ci maddə uyğunluğu yoxlaması: hər müqavilə Azərbaycan dilində mövcud olmalıdır — ikidilli müqavilələr qəbul edilir, lakin Azərbaycan versiyası olmalıdır. HRIS sisteminizdə müqavilə uyğunluğu matrisi (işçinin adı, müqavilə tarixi, dillər, sonuncu yoxlama tarixi) saxlayın.",
+    "london_delta": "UK Employment Rights Act 1996 (s.1) requires a written statement of particulars within 2 months of employment start — but there is no language requirement. UK contracts can be in any language agreed between parties; ACAS Code of Practice recommends plain English but does not mandate it. A London HR manager conducting a UK-model pre-audit review would not think to check contract language at all. Applied to Azerbaijan: Art. 42 AZ Labor Code mandates Azerbaijani language as a contract requirement — absence of an Azerbaijani version is a per-contract administrative offense under the Administrative Offenses Code Art. 192, carrying 1,000-3,000 AZN fine per contract, potentially 45,000 AZN total for 15 contracts.",
+    "az_institutions": [
+      "Ministry of Labor Inspection"
+    ],
+    "tags": [
+      "hr",
+      "az-labor-code",
+      "art-42",
+      "contracts",
+      "compliance",
+      "ministry-of-labor",
+      "adaptability"
+    ]
+  },
+  {
+    "id": "prof-hr-s4-005",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.5,
+    "irt_b": 0.4,
+    "irt_c": 0.1,
+    "scenario_en": "You are the HR Director at PASHA Holding. You need to present a new OKR-based performance management framework to the Executive Committee. One VP — 22 years of tenure, highly influential with the CEO — publicly stated in the pre-meeting: 'OKRs are a Western import that don't fit how we work here. I've seen three of these frameworks fail.' The CEO wants the framework adopted. You cannot afford a public confrontation that embarrasses either party. What is your most effective approach in the next 72 hours before the Executive Committee meeting?",
+    "scenario_az": "Siz PASHA Holding-in HR Direktorsunuz. Yeni OKR əsaslı performans idarəetmə çərçivəsini İcraiyyə Komitəsinə təqdim etməlisiniz. Bir VP — 22 illik iş stajı, CEO üzərində yüksək təsir — görüşöncəsi ictimaiyyət qarşısında bildirdi: 'OKR-lər bizim iş tərzimizə uymayan Qərb idxalıdır. Bu çərçivələrin üçünün uğursuz olduğunu görmüşəm.' CEO çərçivənin qəbul edilməsini istəyir. Hər iki tərəfi utandıran açıq toqquşmanı ödəyə bilməzsiniz. İcraiyyə Komitəsi iclasından əvvəlki 72 saatda ən effektiv yanaşmanız nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Proceed with the presentation as planned — the CEO's support means the VP's objection is unlikely to block adoption, and addressing it beforehand might be seen as weakness.",
+        "text_az": "Planlaşdırıldığı kimi təqdimatla davam edin — CEO-nun dəstəyi VP-nin etirazının qəbulun qarşısını almaması deməkdir və bundan əvvəl həll etmək zəiflik kimi görünə bilər."
+      },
+      {
+        "key": "B",
+        "text_en": "Request a private 30-minute meeting with the VP before the ExCom meeting. Ask for their specific concerns and past failure examples. Offer to incorporate their experience as 'local adaptation principles' into the framework, giving them visible authorship of the AZ-specific modifications.",
+        "text_az": "ExCom iclasından əvvəl VP ilə özəl 30 dəqiqəlik görüş tələb edin. Onların xüsusi narahatlıqlarını və keçmiş uğursuzluq nümunələrini soruşun. Təcrübələrini çərçivəyə 'yerli adaptasiya prinsipləri' kimi daxil etməyi təklif edin, AZ-a xas dəyişikliklərin görünən müəllifliyini onlara verin."
+      },
+      {
+        "key": "C",
+        "text_en": "Ask the CEO to speak directly to the VP before the meeting to reinforce that adoption is mandatory.",
+        "text_az": "CEO-dan iclasdan əvvəl bilavasitə VP ilə danışmasını xahiş edin ki, qəbulun məcburi olduğunu vurğulasın."
+      },
+      {
+        "key": "D",
+        "text_en": "Postpone the ExCom presentation by two weeks to allow more consultation time and avoid the risk of a failed vote.",
+        "text_az": "Uğursuz səsvermə riskini aradan qaldırmaq üçün ExCom təqdimatını iki həftə təxirə salın ki, daha çox məsləhət vaxtı olsun."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is optimal because it converts an opponent into a co-author before the public forum. In Azerbaijani organizational culture (particularly in large holdings like PASHA), seniority and face-saving are critical — a VP with 22 years' tenure losing a public argument is a lasting relationship damage, even if you win the vote. Option B allows the VP to maintain authority by becoming a visible contributor to the AZ-adapted version, neutralizing opposition. Option A risks a public standoff that poisons the framework's implementation even if it passes. Option C transfers the problem upward unnecessarily and signals weak HR leadership. Option D signals indecision.",
+    "feedback_az": "B optimaldir, çünki ictimai forum öncəsi rəqibi həmmüəllif edir. Azərbaycan təşkilati mədəniyyətində (xüsusilə PASHA kimi böyük holdinqlərdə) staj və üz qoruma kritikdir — 22 illik stajı olan VP-nin ictimai mübahisəni uduzması, hətta siz səsvermədə qazansanız belə, davamlı münasibət zərəridir. B seçimi VP-yə AZ-a uyğunlaşdırılmış versiyaya görünən töhfəçi olmaqla nüfuzunu qorumağa imkan verir.",
+    "development_tip_en": "AZ Leadership Tip: In Azerbaijani corporate culture, 'saving face' is not a cliché — it is a structural requirement for change management. Before any ExCom presentation on organizational change, map the stakeholder landscape: who has informal veto power (regardless of title), who can be converted from opponent to champion, and what symbolic authorship you can offer them. The best framework that fails implementation is worse than the second-best framework that gets adopted.",
+    "development_tip_az": "Azərbaycan Liderliyi Məsləhəti: Azərbaycan korporativ mədəniyyətində 'üzü xilas etmək' klişe deyil — dəyişiklik idarəetməsi üçün struktur tələbdir. Təşkilati dəyişikliyə dair hər hansı ExCom təqdimatından əvvəl maraqlı tərəflər landşaftını xəritəyə çəkin: qeyri-rəsmi veto gücünə kimin malik olduğunu, kimin rəqibdən çempiona çevrilə biləcəyini və onlara hansı simvolik müəllifliyi təklif edə biləcəyinizi müəyyən edin.",
+    "london_delta": "ACAS Code of Practice on Disciplinary and Grievance Procedures and UK management training emphasizes structured change management through ADKAR (Awareness, Desire, Knowledge, Ability, Reinforcement) models. A London HR director would likely rely on the formal change management methodology and the executive sponsor's authority to override objections, treating the VP's dissent as a process issue to be managed through proper governance. Applied to Azerbaijan: In AZ high-context corporate culture, formal authority alone is insufficient — seniority commands deference that can silently sabotage implementation even after a board vote. The 'wrong decision' of using formal authority without face-saving results in passive non-implementation: the VP technically approves the framework but ensures their division's OKRs are set to be trivially achievable, poisoning company-wide data integrity.",
+    "az_institutions": [
+      "PASHA Holding"
+    ],
+    "tags": [
+      "hr",
+      "leadership",
+      "change-management",
+      "az-culture",
+      "stakeholder-management",
+      "organizational-behavior"
+    ]
+  },
+  {
+    "id": "prof-hr-s4-006",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency_slug": "communication",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.4,
+    "irt_b": 0.1,
+    "irt_c": 0.11,
+    "scenario_en": "A mid-sized Baku construction company faces a liquidity crisis and must reduce all salaries by 15% for at least 6 months. The CEO asks HR to 'just send an email to everyone tomorrow.' The HR Director knows the AZ Labor Code has specific procedural requirements for changing compensation terms. What is the legally correct process?",
+    "scenario_az": "Orta ölçülü bir Bakı inşaat şirkəti likvidlik böhranı ilə üzləşir və ən azı 6 ay ərzində bütün əmək haqqlarını 15% azaltmalıdır. CEO HR-dan 'sadəcə sabah hamıya e-poçt göndərməyi' xahiş edir. HR Direktoru Azərbaycan Əmək Məcəlləsinin ödəniş şərtlərinin dəyişdirilməsinə dair xüsusi prosedur tələbləri olduğunu bilir. Qanuni cəhətdən düzgün proses nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Send the email as requested — the financial emergency constitutes force majeure under Art. 68 and employee consent is not required.",
+        "text_az": "Xahiş edildiyi kimi e-poçt göndərin — maliyyə fövqəladə halı 68-ci maddə altında force majeure təşkil edir və işçilərin razılığı tələb olunmur."
+      },
+      {
+        "key": "B",
+        "text_en": "Issue written notice to each employee at least 1 month in advance of the change (Art. 45 AZ Labor Code), obtain signed written consent from each employee to the amendment, execute a formal contract addendum, and update payroll records — no email suffices.",
+        "text_az": "Dəyişiklikdən ən azı 1 ay əvvəl hər işçiyə yazılı bildiriş verin (Azərbaycan Əmək Məcəlləsinin 45-ci maddəsi), hər işçidən dəyişikliyə imzalanmış yazılı razılıq alın, rəsmi müqavilə əlavəsi tənzimləyin və əmək haqqı qeydlərini yeniləyin — heç bir e-poçt kifayət etmir."
+      },
+      {
+        "key": "C",
+        "text_en": "Hold a company-wide town hall meeting where employees vote on the salary reduction — a majority vote makes the change legally binding.",
+        "text_az": "İşçilərin əmək haqqı azaldılmasına səs verdiyi şirkət miqyaslı iclası keçirin — əksəriyyətin səsi dəyişikliyi qanuni olaraq məcburi edir."
+      },
+      {
+        "key": "D",
+        "text_en": "Notify the Ministry of Labor first, receive approval, then notify employees — Ministry approval is a prerequisite for any wage reduction.",
+        "text_az": "Əvvəlcə Əmək Nazirliyini xəbərdar edin, razılıq alın, sonra işçiləri xəbərdar edin — Nazirliyinin razılığı hər hansı əmək haqqı azaldılması üçün ilkin şərtdir."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "AZ Labor Code Art. 45 requires that any amendment to essential contract terms (including salary) requires: (1) written advance notice to the employee at least 1 month before the change takes effect, and (2) written consent from the employee. If an employee refuses consent, the employer may only terminate under Art. 68 (essential terms change + employee refusal) with proper severance. An email announcement without individual written consent and signed addenda is legally void — employees can claim their original salary in court. The CEO's instruction, if followed, would expose every HR document to being challenged as an unauthorized unilateral variation.",
+    "feedback_az": "Azərbaycan Əmək Məcəlləsinin 45-ci maddəsi, əsas müqavilə şərtlərinin (əmək haqqı daxil olmaqla) dəyişdirilməsinin aşağıdakıları tələb etdiyini müəyyən edir: (1) dəyişiklik qüvvəyə minməzdən ən azı 1 ay əvvəl işçiyə yazılı ilkin bildiriş, və (2) işçidən yazılı razılıq. İşçi razılığı rədd edərsə, işəgötürən yalnız 68-ci maddə əsasında (əsas şərtlər dəyişikliyi + işçinin rəddedilməsi) lazımi müavinətlə xitam verə bilər.",
+    "development_tip_en": "AZ HR Communication Tip: When delivering difficult compensation news, sequence it correctly: (1) draft the formal Art. 45 notice in Azerbaijani, (2) schedule individual or small-group meetings to explain the business context before the notice is served, (3) serve written notice and collect signed acknowledgment, (4) allow the 1-month notice period to run, (5) collect signed contract addenda before the effective date. The human communication (empathy, explanation) should precede the legal process, but both are mandatory.",
+    "development_tip_az": "Azərbaycan HR Kommunikasiya Məsləhəti: Çətin kompensasiya xəbərini verərkən düzgün ardıcıllığı izləyin: (1) rəsmi 45-ci maddə bildirişini Azərbaycan dilində hazırlayın, (2) bildiriş verilməzdən əvvəl iş kontekstini izah etmək üçün fərdi və ya kiçik qruplu görüşlər planlaşdırın, (3) yazılı bildiriş verin və imzalanmış qəbzni toplayın, (4) 1 aylıq bildiriş müddətinin keçməsinə icazə verin, (5) qüvvəyə girmə tarixindən əvvəl imzalanmış müqavilə əlavələrini toplayın.",
+    "london_delta": "UK Employment Rights Act 1996 (s.4) requires written notification of contract changes but does not specify a minimum notice period for pay reductions if a 'flexibility clause' exists in the original contract. Many UK employment contracts contain unilateral variation clauses for financial restructuring. A London HR manager with a flexibility clause might legitimately send an email with 1 week's notice. Applied to Azerbaijan: Art. 45 AZ Labor Code provides NO flexibility clause exception — the 1-month advance notice and individual written consent are absolute requirements regardless of what the original contract says. The AZ enforcement consequence: employees who refuse to sign can successfully sue for their original salary; the email-only process results in court orders requiring payment of all salary differentials plus Art. 180 late payment penalty of 0.1% per day.",
+    "az_institutions": [
+      "Ministry of Labor",
+      "Baku City Court"
+    ],
+    "tags": [
+      "hr",
+      "az-labor-code",
+      "art-45",
+      "salary-reduction",
+      "communication",
+      "employee-consent"
+    ]
+  },
+  {
+    "id": "prof-hr-s4-007",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "hard",
+    "type": "sjt",
+    "irt_a": 1.8,
+    "irt_b": 1.1,
+    "irt_c": 0.07,
+    "scenario_en": "Kapital Bank's HR Director receives an internal audit report showing that an AI screening tool used for 6 months to filter CV applications shows an 18% lower pass rate for women who had a career gap of 6+ months in the past 5 years (correlating strongly with maternity leave periods). The tool vendor confirms this is not a programmatic bug — the model learned from historical hiring data where this cohort was historically passed over. Legal review confirms the AZ Personal Data Law 2010 does not explicitly prohibit algorithmic hiring decisions, and no AZ court has ruled on this specific scenario. What is the HR Director's responsibility?",
+    "scenario_az": "Kapital Bank-ın HR Direktoru 6 ay ərzində CV müraciətlərini süzmək üçün istifadə edilən süni intellekt ələmə alətinin son 5 ildə 6+ aylıq karyera fasiləsi olan (analıq məzuniyyəti dövrləri ilə güclü korrelyasiya) qadınlar üçün 18% aşağı keçid nisbəti göstərdiyini aşkar edən daxili audit hesabatı alır. Alət satıcısı bunun proqram xətası olmadığını təsdiqləyir — model bu kohort tarixi olaraq kənara qoyulduğu tarixi işə qəbul məlumatlarından öyrənib. Hüquqi araşdırma Azərbaycan Şəxsi Məlumatlar Qanunu 2010-un alqoritmik işə qəbul qərarlarını açıq şəkildə qadağan etmədiyini təsdiqləyir. HR Direktorunun məsuliyyəti nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Since no AZ law explicitly prohibits the tool's output and no court has ruled on this, maintain current operations and monitor for further data.",
+        "text_az": "Heç bir Azərbaycan qanunu alətin nəticəsini açıq şəkildə qadağan etmədiyindən və heç bir məhkəmə bu barədə qərar vermədiğindən, cari əməliyyatları davam etdirin və əlavə məlumatları izləyin."
+      },
+      {
+        "key": "B",
+        "text_en": "Immediately suspend the AI tool for the maternity-gap cohort pending remediation; conduct a retrospective audit of all candidates screened in the past 6 months; re-screen rejected candidates from this cohort manually; brief the CEO on Art. 73 discrimination liability exposure; and implement bias-testing protocols before redeployment.",
+        "text_az": "Düzəliş gözlənilərken analıq fasiləsi kohortu üçün süni intellekt alətini dərhal dayandırın; son 6 ayda ələnən bütün namizədlərin retrospektiv auditini aparın; bu kohortdan rədd edilən namizədləri əl ilə yenidən ələyin; CEO-ya 73-cü maddə ayrı-seçkilik məsuliyyəti məruz qalması barədə məlumat verin; yenidən istifadəyə qoyulmadan əvvəl qərəz test protokollarını tətbiq edin."
+      },
+      {
+        "key": "C",
+        "text_en": "Notify affected candidates of the bias finding and offer them all positions at Kapital Bank as compensation.",
+        "text_az": "Təsirlənən namizədlərə qərəz tapıntısı barədə məlumat verin və kompensasiya kimi onların hamısına Kapital Bank-da vəzifə təklif edin."
+      },
+      {
+        "key": "D",
+        "text_en": "Replace the AI vendor and implement a new tool — the liability is with the vendor, not the bank.",
+        "text_az": "Süni intellekt satıcısını əvəz edin və yeni alət tətbiq edin — məsuliyyət bankda deyil, satıcıdadır."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is the only responsible path. While AZ Personal Data Law 2010 and the current court record do not explicitly cover algorithmic discrimination, Art. 73 AZ Labor Code (general discrimination prohibition) combined with Art. 73-1 (gender discrimination) apply to all hiring decisions — including automated ones. 'The tool decided, not me' is not a valid legal defense in AZ employment law: the employer is responsible for decisions made in their hiring process regardless of the instrument. Beyond legal liability, the 18% gap is statistically significant (not noise), the correlation with maternity leave is documented, and continuation constitutes ongoing harm. The HR Director's duty of care extends to prospective employees, not just current staff.",
+    "feedback_az": "B yeganə məsul yoldur. AZ Şəxsi Məlumatlar Qanunu 2010 və mövcud məhkəmə qeydləri alqoritmik ayrı-seçkiliyi açıq şəkildə əhatə etməsə də, Azərbaycan Əmək Məcəlləsinin 73-cü maddəsi (ümumi ayrı-seçkilik qadağası) 73-1-ci maddəsi (gender ayrı-seçkiliyi) ilə birlikdə bütün işə qəbul qərarlarına — avtomatlaşdırılmışlar daxil olmaqla — tətbiq edilir. 'Qərarı alət verdi, mən deyil' Azərbaycan əmək hüququnda etibarlı hüquqi müdafiə deyil.",
+    "development_tip_en": "AZ HR Empathy Tip: Algorithmic fairness in AZ context requires HR Directors to apply a 'would this decision survive an Art. 73-1 challenge?' test to every AI-assisted process. The test is: if a human HR manager had made the same pattern of decisions, would it constitute gender discrimination? If yes — the AI tool is creating the same liability. Conduct annual algorithmic audits comparing pass rates across gender, age (40+), and disability cohorts even where not yet legally mandated.",
+    "development_tip_az": "Azərbaycan HR Empatiya Məsləhəti: Azərbaycan kontekstında alqoritmik ədalət HR Direktorlarından hər süni intellekt dəstəkli prosesə 'bu qərar 73-1-ci maddə etirazına davam gətirərmi?' testini tətbiq etmələrini tələb edir. Test belədir: əgər insan HR meneceri eyni nümunəli qərarlar versəydi, bu gender ayrı-seçkiliyi olardımı? Əgər bəli isə — süni intellekt alətinin eyni məsuliyyəti yaratdığını deyin.",
+    "london_delta": "GDPR Article 22 (which applies in UK via UK GDPR post-Brexit) explicitly grants individuals the right not to be subject to solely automated decisions that significantly affect them, with specific provisions for employment screening. The Equality Act 2010 (UK) also creates clear indirect discrimination liability for tools that produce disparate impact on protected characteristics. A London HR Director would have dual legal exposure under GDPR Art. 22 + Equality Act 2010, making suspension of the tool legally mandatory. Applied to Azerbaijan: the lack of an explicit equivalent to GDPR Art. 22 creates a false sense of safety. The AZ enforcement consequence comes through Art. 73-1 gender discrimination claim — any rejected candidate from the affected cohort can file with the Ministry of Labor and potentially sue for compensation up to 12 months' salary, with the bank unable to demonstrate the rejection was non-discriminatory because the bias is documented.",
+    "az_institutions": [
+      "Ministry of Labor",
+      "Kapital Bank",
+      "Baku City Court"
+    ],
+    "tags": [
+      "hr",
+      "az-labor-code",
+      "art-73",
+      "art-73-1",
+      "ai-bias",
+      "gender-discrimination",
+      "empathy-safeguarding",
+      "algorithmic-hiring"
+    ]
+  },
+  {
+    "id": "prof-hr-s4-008",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 1.9,
+    "irt_b": 1.4,
+    "irt_c": 0.0,
+    "scenario_en": "SOCAR has acquired a 200-person subsidiary (a pipeline construction company based in Sumgayit). You are appointed as Integration HR Lead. During due diligence, you discover: (1) 40 employees have no written employment contracts at all; (2) 15 employees are classified as independent contractors but work exclusively for this company, 40+ hours/week, with fixed schedules — meeting all criteria for employment under AZ Labor Code Art. 8; (3) SSPF contributions were underpaid for 2 years due to the annual-cap miscalculation (employer paid 0.5% on all salary instead of 22%/0.5% split at the 8,000 AZN monthly threshold). Write a detailed 90-day HR remediation plan. Your response will be evaluated on depth, legal accuracy, and operational feasibility.",
+    "scenario_az": "SOCAR Sumqayıt şəhərində yerləşən 200 nəfərlik bir törəmə şirkəti (boru kəməri inşaat şirkəti) aldı. Siz İnteqrasiya HR Rəhbəri olaraq təyin oldunuz. Lazımi araşdırma zamanı aşkar edirsiniz: (1) 40 işçinin ümumiyyətlə yazılı iş müqaviləsi yoxdur; (2) 15 işçi müstəqil podratçı kimi təsnif edilir, lakin yalnız bu şirkət üçün, həftədə 40+ saat, sabit cədvəllə işləyir — Azərbaycan Əmək Məcəlləsinin 8-ci maddəsi əsasında işə qəbul üçün bütün meyarlara cavab verir; (3) DSMF töhfələri 2 il ərzində illik-hədd hesablama xətasına görə az ödənilib (işəgötürən 8.000 AZN aylıq həddə 22%/0,5% bölünmüş əvəzinə bütün əmək haqqına 0,5% ödədi). Ətraflı 90 günlük HR bərpa planı yazın. Cavabınız dərinlik, hüquqi dəqiqlik və əməliyyat həyata keçirilə bilirliyi baxımından qiymətləndiriləcək.",
+    "options": null,
+    "correct_answer": null,
+    "feedback_en": "A strong response (Level 4-5) will structure the plan in three phases: Days 1-30 (assessment and legal exposure quantification), Days 31-60 (remediation execution), Days 61-90 (verification and compliance lock-in). It will cite Art. 8 (employment relationship criteria for misclassified contractors), Art. 42 (contract language requirements), Art. 146 (retroactive severance liability calculation if any contractor disputes prior period), and SSPF penalty calculation methodology. It will include a stakeholder communication plan for the 15 reclassified contractors, an SSPF voluntary disclosure strategy (voluntary disclosure typically reduces penalties), and a risk register for the 40 employees without contracts.",
+    "feedback_az": "Güclü cavab (4-5 səviyyə) planı üç fazada strukturlaşdıracaq: 1-30-cu günlər (qiymətləndirmə və hüquqi məruz qalmanın kəmiyyətcə müəyyən edilməsi), 31-60-cı günlər (bərpa icraatı), 61-90-cı günlər (yoxlama və uyğunluğun möhkəmləndirilməsi). 8-ci maddəni (yanlış təsnif edilmiş podratçılar üçün iş münasibəti meyarları), 42-ci maddəni (müqavilə dili tələbləri), 146-cı maddəni (hər hansı bir podratçı əvvəlki dövrü mübahisə edərsə retroaktiv müavinət məsuliyyəti hesablaması) və DSMF cəzası hesablama metodologiyasını qeyd edəcək.",
+    "development_tip_en": "AZ HR Integration Tip: In any M&A integration, the SSPF liability is often the largest hidden exposure. Calculate it first — a 2-year underpayment at 22% vs 0.5% on even moderate salaries can represent tens of millions of AZN. Voluntary disclosure to SSPF before they audit you typically results in a 25-50% penalty reduction. Engage a local labor law firm in the first week to assess contractor reclassification — misclassified contractors who are reclassified as employees gain retroactive rights to annual leave, sick leave, and severance under Art. 146.",
+    "development_tip_az": "Azərbaycan HR İnteqrasiya Məsləhəti: İstənilən birləşmə-satınalma inteqrasiyasında DSMF məsuliyyəti çox vaxt ən böyük gizli məruz qalmadır. Əvvəlcə onu hesablayın — mülayim əmək haqqlarında belə 22% ilə 0,5% arasındakı 2 illik az ödəmə onlarla milyon AZN ola bilər. SSPF-i sizin yerinizə audit etməzdən əvvəl könüllü açıqlama adətən 25-50% cəza azaldılmasına nəticələnir.",
+    "evaluation_rubric": "LEVEL 1 (0-20 points): Response mentions the three issues but provides no structured timeline, no legal article citations, and no specific actions. Generic statements like 'fix the contracts' and 'recalculate SSPF' with no methodology. No recognition of enforcement risk or stakeholder complexity.\n\nLEVEL 2 (21-40 points): Response provides a basic timeline (e.g., 'first fix contracts, then SSPF') and references at least one AZ Labor Code article. Recognizes that contractor reclassification has implications but does not detail them. SSPF recalculation acknowledged but methodology not specified. Communication plan missing or vague.\n\nLEVEL 3 (41-60 points): Response provides a phased plan with clear milestones and cites Art. 8 (contractor reclassification test), Art. 42 (contract language), and SSPF rate structure (22%/0.5% at 8,000 AZN monthly threshold). Recognizes retroactive liability. Includes basic stakeholder communication approach. Mentions voluntary SSPF disclosure but does not detail it. Some operational detail on contract preparation process.\n\nLEVEL 4 (61-80 points): Response demonstrates mastery of the legal framework: correctly cites Art. 8 with the specific employment relationship criteria (personal performance, subordination, remuneration — all three must be present for reclassification), Art. 42 bilingual requirement, SSPF 22%/0.5% monthly threshold with 2-year backpayment calculation methodology, and Art. 146 retroactive severance exposure for reclassified contractors. Includes a voluntary disclosure strategy with SSPF (and the penalty reduction rationale), a risk-tiered approach to the 40 no-contract employees (low risk: long-tenure employees likely to cooperate; high risk: employees who may claim constructive rights based on undefined terms), and a structured communication plan for reclassified contractors addressing their financial impact.\n\nLEVEL 5 (81-100 points): Level 4 PLUS: identifies second-order risks that most HR leads miss — (a) reclassified contractors may claim 2 years of retroactive annual leave (Art. 112: minimum 21 calendar days/year = 42 days per contractor = 15 × 42 days of retroactive leave pay exposure); (b) employees without written contracts may have established implied terms through custom and practice that are MORE favorable than the Labor Code minimums, creating a complex negotiation; (c) the SSPF underpayment creates a corporate tax exposure as underpaid SSPF was likely incorrectly expensed; (d) recommends engaging the Ministry of Labor proactively as a risk management strategy rather than waiting for audit — because the 10-day advance notice audit rule means SOCAR has no ability to remediate once notice is given. Response includes a decision matrix for which issues to disclose vs remediate silently, with legal rationale for each.",
+    "az_institutions": [
+      "SSPF",
+      "Ministry of Labor",
+      "Ministry of Taxes",
+      "SOCAR"
+    ],
+    "tags": [
+      "hr",
+      "az-labor-code",
+      "art-8",
+      "art-42",
+      "art-146",
+      "sspf",
+      "ma-integration",
+      "contractor-reclassification",
+      "open-ended"
+    ],
+    "london_delta": "A London HR professional applying TUPE (Transfer of Undertakings Protection of Employment) Regulations 2006 would assume automatic employee transfer protections and focus on consultation periods. In AZ, there is no TUPE equivalent — the SOCAR acquisition of a Sumgayit subsidiary requires individual employment contract re-issuance under AZ Labor Code Article 43, and employees without written contracts (Art. 43 violation) are a direct legal liability to SOCAR from day one. The AZ enforcement consequence is that State Labor Inspection can fine SOCAR per undocumented employee, and SSPF retroactive contribution shortfalls create compounding penalties."
+  },
+  {
+    "id": "prof-hr-s4-009",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "hard",
+    "type": "sjt",
+    "irt_a": 1.7,
+    "irt_b": 1.2,
+    "irt_c": 0.06,
+    "scenario_en": "ABB Bank has merged with a regional bank. Both HR teams (8 people each) must consolidate into a single team of 10. Both existing HR Directors are strong performers, have been with their respective banks for 8+ years, and have loyal team members. You are appointed as Group HR Director with authority to make the final decision. Both HR Directors expect to retain their role. Your decision must be made and communicated within 30 days to minimize talent flight. Rank the following approaches from MOST to LEAST appropriate:",
+    "scenario_az": "ABB Bank regional bir bankla birləşdi. Hər ikisi 8 nəfərdən ibarət olan iki HR qrupu 10 nəfərlik tək bir qrupa birləşdirilməlidir. Mövcud hər iki HR Direktoru güclü işçilərdir, müvafiq banklarında 8+ il çalışıblar və sadiq qrup üzvlərinə malikdirlər. Siz qərar verən Qrup HR Direktoru olaraq təyin oldunuz. Hər iki HR Direktoru öz rolunu saxlamağı gözləyir. Qərarınız istedadların getməsini minimuma endirmək üçün 30 gün ərzində qəbul edilməli və bildirildilməlidir. Aşağıdakı yanaşmaları ən uyğundan ən az uyğuna doğru sıralayın:",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Design a new organizational structure with a single HR Director and a newly created 'HR Operations Lead' role at near-equivalent compensation. Present both candidates with the structure simultaneously and offer each the opportunity to choose their preferred path within 5 business days — with a clear, objective capability assessment informing your recommendation for each role.",
+        "text_az": "Tək HR Direktoru və təxminən ekvivalent ödənişlə yeni yaradılmış 'HR Əməliyyat Rəhbəri' rolu ilə yeni təşkilati struktur dizayn edin."
+      },
+      {
+        "key": "B",
+        "text_en": "Run a 3-month performance trial where both HR Directors operate as 'Co-HR Directors' with equal authority, then select one based on observed performance.",
+        "text_az": "Hər iki HR Direktorunun bərabər səlahiyyətlə 'Birgə HR Direktorları' kimi fəaliyyət göstərdiyi 3 aylıq performans sınağı aparın, sonra müşahidə edilən performansa əsasən birini seçin."
+      },
+      {
+        "key": "C",
+        "text_en": "Make the selection decision immediately based on your assessment, communicate to both parties simultaneously and privately, allow 2 weeks' notice period for the departing Director, and provide an enhanced severance package (6 months + outplacement support) funded by the merger budget.",
+        "text_az": "Qiymətləndirmənizə əsasən dərhal seçim qərarı verin, hər iki tərəfə eyni vaxtda və şəxsən bildirin, gidən Direktora 2 həftəlik bildiriş müddəti verin və birləşmə büdcəsi ilə maliyyələşdirilən artırılmış müavinət paketi (6 ay + işe yerləşdirmə dəstəyi) təqdim edin."
+      },
+      {
+        "key": "D",
+        "text_en": "Retain both HR Directors and reduce team size by eliminating 6 junior positions — this preserves senior talent and meets the headcount target.",
+        "text_az": "Hər iki HR Direktorunu saxlayın və 6 kiçik vəzifəni aradan qaldıraraq qrup ölçüsünü azaldın — bu, yüksək rütbəli istedadı qoruyur və işçi sayı hədəfinə çatır."
+      }
+    ],
+    "correct_answer": "A",
+    "feedback_en": "Optimal ranking: A → C → B → D. (A) is most appropriate because it creates a dignified exit for one Director that doesn't feel like losing — the new 'HR Operations Lead' role is a genuine senior position, not a demotion fig leaf, and giving both candidates agency in the process reduces resentment. In AZ corporate culture, how a decision is made (with or without public humiliation) is as important as what is decided. (C) is second — clean and decisive, but higher talent-flight risk if the departing Director is bitter. (B) is a common mistake: 'Co-Director' ambiguity creates organizational paralysis, both teams take sides, and the trial period produces political maneuvering not performance data. (D) eliminates institutional knowledge in the junior team and creates an organizational structure where two senior leaders compete for the same conceptual space.",
+    "feedback_az": "Optimal sıralama: A → C → B → D. (A) ən uyğundur, çünki bir Direktor üçün məğlubiyyət kimi hiss olunmayan ləyaqətli ayrılma yaradır — yeni 'HR Əməliyyat Rəhbəri' rolu əsl yüksək səviyyəli vəzifədir, nominal bir azalma deyil. Azərbaycan korporativ mədəniyyətində qərarın necə qəbul edildiyi (ictimai aşağılanma ilə və ya olmadan) nə qərar verildiyindən az deyil əhəmiyyətlidir.",
+    "development_tip_en": "AZ Leadership Tip: In AZ merger HR scenarios, the most dangerous outcome is not the person who leaves — it is the person who stays but is demotivated and takes their loyal network with them mentally. Design retention for both the person staying and the person transitioning. Enhanced severance + outplacement is not generosity — it is insurance against the departing HR Director's informal influence over the 8 departing team members who may follow.",
+    "development_tip_az": "Azərbaycan Liderliyi Məsləhəti: Azərbaycan birləşmə HR ssenarilərinde ən təhlükəli nəticə gedən insan deyil — qalan, lakin demotivasiya olan və sadiq şəbəkəsini mental olaraq özü ilə götürən insandır. Həm qalan, həm də keçid edən üçün saxlama dizayn edin.",
+    "london_delta": "ACAS Code of Practice on Redundancy and UK employment tribunals have established clear precedents for merger-related redundancy: a fair selection matrix (scored criteria including skills, performance, attendance) is legally required before any redundancy decision. A London HR Director would build a scored matrix and make the decision based on it, with Employment Tribunal appeal rights. Applied to Azerbaijan: AZ Labor Code Art. 68 allows termination for 'staff reduction' but requires the employer to prove genuine redundancy and offer redeployment to available positions. The WRONG decision of 'Co-Directors' trial (Option B) in AZ context is particularly dangerous: if one Director performs poorly and is then terminated, they can argue the trial itself was a setup — a sham process designed to manufacture grounds for dismissal — and bring an Art. 68 unfair dismissal claim where the court looks at whether the redundancy was genuine or pretextual.",
+    "az_institutions": [
+      "ABB Bank",
+      "Ministry of Labor"
+    ],
+    "tags": [
+      "hr",
+      "leadership",
+      "merger",
+      "org-design",
+      "az-culture",
+      "talent-retention",
+      "art-68"
+    ]
+  },
+  {
+    "id": "prof-hr-s4-010",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "hard",
+    "type": "mcq",
+    "irt_a": 1.8,
+    "irt_b": 1.3,
+    "irt_c": 0.07,
+    "scenario_en": "It is Friday at 5:00 PM. The IT Security team at a Baku insurance company informs the HR Director that an exposed cloud storage bucket has been discovered containing a file with name, national ID number (FIN), home address, phone number, and salary data for 180 current and former employees. The breach appears to have been exposed for approximately 3 weeks. The HR Director must decide: notify employees tonight, or wait until Monday to conduct a proper scope assessment first. What is the correct decision and reasoning?",
+    "scenario_az": "Cümə axşamı saat 17:00-dır. Bakıdakı bir sığorta şirkətinin İT Təhlükəsizlik qrupu HR Direktora açıq bulud saxlama konteynerinin 180 cari və keçmiş işçi üçün ad, milli kimlik nömrəsi (FİN), ev ünvanı, telefon nömrəsi və əmək haqqı məlumatlarını özündə cəmləşdirən bir fayl olan kəşf edildiyini bildirir. Pozuntunun təxminən 3 həftə açıq olduğu görünür. HR Direktoru qərar verməlidir: işçilərə bu gün gecə bildiriş verin, yoxsa əvvəlcə düzgün əhatə dairəsi qiymətləndirmə aparmaq üçün bazar ertəsinə qədər gözləyin. Düzgün qərar və əsaslandırma nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Wait until Monday — notifying 180 people on a Friday evening causes unnecessary panic, the breach has already been open for 3 weeks so a 2-day delay changes nothing materially, and the HR team needs time to prepare proper communications.",
+        "text_az": "Bazar ertəsinə qədər gözləyin — Cümə axşamı axşamı 180 nəfərə bildiriş vermək lazımsız panik yaradır, pozuntu artıq 3 həftə açıq idi, buna görə 2 günlük gecikmə maddi olaraq heç nəyi dəyişmir, HR qrupunun düzgün kommunikasiya hazırlamaq üçün vaxta ehtiyacı var."
+      },
+      {
+        "key": "B",
+        "text_en": "Notify AFFECTED employees tonight with an initial brief notification (breach confirmed, what data, what to do now — freeze credit, monitor FIN usage), simultaneously contain the breach (revoke bucket access), and commit to a full follow-up communication within 72 hours once scope is assessed.",
+        "text_az": "Bu gecə TƏSİRLƏNMİŞ işçilərə ilkin qısa bildiriş verin (pozuntu təsdiqləndi, hansı məlumatlar, indi nə etmək lazımdır — kreditə blok qoyun, FİN istifadəsini izləyin), eyni zamanda pozuntunu məhdudlaşdırın (konteyner girişini ləğv edin) və əhatə dairəsi qiymətləndirildikdən sonra 72 saat ərzində tam izlənimli kommunikasiya verəcəyinizi öhdəsinə götürün."
+      },
+      {
+        "key": "C",
+        "text_en": "Notify the Ministry of Digital Development first and await their guidance before contacting employees.",
+        "text_az": "Əvvəlcə Rəqəmsal İnkişaf Nazirliyini xəbərdar edin və işçilərlə əlaqə saxlamadan əvvəl onların rəhbərliyini gözləyin."
+      },
+      {
+        "key": "D",
+        "text_en": "Notify only the FORMER employees (no longer protected by employment obligations) tonight and notify current employees on Monday through proper HR channels.",
+        "text_az": "Bu gecə yalnız KEÇMIŞ işçilərə (artıq iş öhdəlikləri ilə qorunmur) bildiriş verin və cari işçilərə bazar ertəsi HR kanalları vasitəsilə bildiriş verin."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is the only defensible answer. AZ Personal Data Law 2010 (Law No. 998-IIIQ) requires data processors to notify data subjects of breaches affecting their personal data 'without undue delay' — the standard is not 'after full investigation' but 'as soon as practically possible once confirmed.' The breach is confirmed. The data includes FIN (national ID), salary, and home address — the trifecta of identity theft, financial fraud, and physical safety risk. Every additional hour of delay increases the harm to affected individuals who cannot take protective action (freezing credit, monitoring FIN-linked transactions) while unaware. The 'wait until Monday' logic is an organizational convenience decision dressed as a risk management decision — it protects the company's weekend, not the employees' data security. Failure to notify promptly can result in a fine from the Personal Data Protection Commission and, critically, creates personal liability for the HR Director for conscious delay.",
+    "feedback_az": "B yeganə müdafiə edilə bilən cavabdır. Azərbaycan Şəxsi Məlumatlar Qanunu 2010 (998-IIIQ saylı Qanun) məlumat işləyicilərindən şəxsi məlumatlarına təsir edən pozuntular barədə məlumat subyektlərini 'lazımsız gecikmə olmadan' bildirməsini tələb edir — standart 'tam araşdırmadan sonra' deyil, 'təsdiqləndikdən sonra praktik olaraq mümkün olan ən qısa müddətdə'dir. Pozuntu təsdiqləndi.",
+    "development_tip_en": "AZ HR Data Privacy Tip: Every HR department handling personal data must have a pre-drafted breach response playbook with three templates ready to deploy: (1) Initial notification (breach confirmed, scope TBD, protective actions to take NOW); (2) Full notification (scope confirmed, all affected data types, timeline, company response); (3) Regulatory notification to the Personal Data Protection Commission. Having these templates pre-approved by legal counsel means you can send Template 1 within hours of confirmation, not days.",
+    "development_tip_az": "Azərbaycan HR Məlumat Məxfiliyi Məsləhəti: Şəxsi məlumatları emal edən hər HR şöbəsi hazır olmaq üçün əvvəlcədən hazırlanmış pozuntu cavab oyun kitabı ilə üç şablona malik olmalıdır: (1) İlkin bildiriş (pozuntu təsdiqləndi, əhatə dairəsi TBD, indi atılacaq qoruyucu addımlar); (2) Tam bildiriş (əhatə dairəsi təsdiqləndi, bütün təsirli məlumat növləri, vaxt çizelgesi, şirkətin cavabı); (3) Şəxsi Məlumatların Mühafizəsi Komissiyasına tənzimləyici bildiriş.",
+    "london_delta": "UK GDPR (retained post-Brexit as UK GDPR) Article 33 requires notification to the ICO (Information Commissioner's Office) within 72 hours of becoming aware of a breach where it is likely to result in a risk to individuals' rights and freedoms. Article 34 requires direct notification to affected individuals 'without undue delay' for high-risk breaches. A London HR Director would immediately activate the GDPR breach response protocol — the 72-hour ICO clock starts running Friday at 5pm and cannot be paused for a weekend. Applied to Azerbaijan: AZ Personal Data Law 2010 does not specify a 72-hour window explicitly, but the 'without undue delay' standard still applies. The WRONG decision of waiting until Monday is particularly dangerous in Azerbaijan because FIN numbers are used as a master identifier across banking, government services, and property — compromised FIN data enables identity fraud across the entire AZ digital identity ecosystem. The AZ enforcement consequence: Personal Data Protection Commission fine of up to 10,000 AZN per affected individual for failure to notify promptly, plus Art. 50 of the Personal Data Law allowing affected individuals to sue for moral damages.",
+    "az_institutions": [
+      "Personal Data Protection Commission",
+      "Ministry of Digital Development and Transport"
+    ],
+    "tags": [
+      "hr",
+      "personal-data-law-2010",
+      "data-breach",
+      "reliability",
+      "fin",
+      "privacy",
+      "employee-rights"
+    ]
+  }
+]

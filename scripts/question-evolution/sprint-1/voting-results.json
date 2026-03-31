@@ -1,0 +1,72 @@
+{
+  "scores": {
+    "devops": {
+      "schema": 9,
+      "profession": 10,
+      "irt": 9,
+      "az": 6,
+      "total": 34,
+      "rank": 3
+    },
+    "financial": {
+      "schema": 9,
+      "profession": 10,
+      "irt": 8,
+      "az": 10,
+      "total": 37,
+      "rank": 1
+    },
+    "hr": {
+      "schema": 9,
+      "profession": 8,
+      "irt": 8,
+      "az": 8,
+      "total": 33,
+      "rank": 4
+    },
+    "marketing": {
+      "schema": 8,
+      "profession": 6,
+      "irt": 8,
+      "az": 5,
+      "total": 27,
+      "rank": 7
+    },
+    "product": {
+      "schema": 9,
+      "profession": 7,
+      "irt": 8,
+      "az": 4,
+      "total": 28,
+      "rank": 6
+    },
+    "scrum": {
+      "schema": 9,
+      "profession": 8,
+      "irt": 9,
+      "az": 7,
+      "total": 33,
+      "rank": 4
+    },
+    "qa": {
+      "schema": 9,
+      "profession": 9,
+      "irt": 9,
+      "az": 6,
+      "total": 33,
+      "rank": 4
+    }
+  },
+  "winner": "financial",
+  "runner_up": "devops",
+  "winner_reasoning": "The Financial Analyst set achieves the highest AZ cultural specificity of any set — SOCAR subsidiaries, CBA regulatory circulars, the 2015 manat devaluation, AZN/USD exposure, and Absheron oil revenue models are load-bearing elements of the questions themselves, not cosmetic decoration. Every hard question (prof-fin-003, prof-fin-005, prof-fin-007) requires genuine domain knowledge — the 2015 devaluation reference with Monte Carlo simulation (irt_b=2.2) cannot be answered by a competent non-financial professional, which is the gold standard for profession specificity. The IRT calibration is mostly sound with one flag: irt_b=2.2 on prof-fin-007 (hard) is at the outer edge of the declared range but defensible given the extreme scenario complexity; irt_a=0.8 on prof-fin-008 (easy Excel question) is the lowest discrimination value across all sets and correctly reflects that tool familiarity questions are weakly discriminating.",
+  "winner_patterns": [
+    "Pattern 1 — Institutional anchoring: Embed real named institutions as structural constraints (SOCAR subsidiary, CBA circular, Absheron oil field) so that the scenario only makes sense to someone who operates in that institutional context — not as a backdrop but as the actual source of difficulty (e.g., 'CBA circular changes model assumption mid-project' requires knowing what a CBA regulatory change means for financial models).",
+    "Pattern 2 — Historical event as cognitive load: Reference a real, dateable market event (2015 AZN devaluation) as a required analytical input rather than flavoring — 'build a scenario analysis referencing 2015 devaluation + Monte Carlo' requires the candidate to know the event's magnitude and character, not just that it happened.",
+    "Pattern 3 — Ethical pressure from named authority: The most discriminating SJT questions (prof-fin-002, prof-fin-005) place the candidate under pressure from a specific authority (CFO before board, CFO disagreeing with analysis) — this tests professional integrity under realistic power dynamics, not generic 'what would you do' ethics.",
+    "Pattern 4 — Tool specificity as proxy for expertise tier: Easy questions use specific tool names that signal expertise level (VLOOKUP vs INDEX/MATCH, two-variable Data Table) rather than generic 'what software would you use' — this creates a clean difficulty gradient where easy = tool recall, medium = tool application, hard = model judgment under uncertainty.",
+    "Pattern 5 — Hard questions require compounding domain knowledge: The hardest questions (prof-fin-003: mid-audit DCF error + CBA compliance; prof-fin-007: AZN exposure + Monte Carlo + 2015 reference) require the candidate to hold multiple domain-specific concepts simultaneously — this is the correct pattern for irt_b > 1.5, where difficulty should come from cognitive load of domain integration, not from obscure trivia."
+  ],
+  "weakest_element": "AZ cultural grounding is inconsistently structural vs cosmetic across all sets. DevOps mentions 'Baku gov portal SLA' once; Marketing uses 'AZ e-commerce' and 'AZ market competitor' as interchangeable with any market; Product barely grounds in AZ at all ('AZ startup ecosystem references' is aspirational, not demonstrated in the question summaries). The failure mode is the same across all weak sets: AZ context is applied to the scenario wrapper (location, company name) rather than to the cognitive problem itself. A question is truly AZ-grounded only when removing the AZ context changes the correct answer — as it does in Financial (AZN devaluation changes the Monte Carlo assumptions; CBA regulation changes the compliance path) and HR (hierarchical gender dynamics in AZ workplace change the intervention strategy). All sets in Sprint 2 must embed AZ context as a decision-forcing variable, not a label.",
+  "sprint2_recommendation": "For every question above medium difficulty, add one AZ-specific institutional or regulatory constraint that changes the correct answer — the test is: 'would this question have the same correct answer if set in London?' If yes, the AZ grounding is cosmetic and must be redesigned. Apply the Financial set's pattern of named institutions (SOCAR, CBA, AZN/USD) as load-bearing scenario elements to all 7 professions — DevOps should reference Azerbaijani data residency law or DOST agency infrastructure requirements; QA should reference AZ banking sector change-freeze windows; Scrum should embed ASAN xidmət delivery constraints."
+}

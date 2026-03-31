@@ -1,0 +1,99 @@
+{
+  "profession": "HR Manager / Talent Acquisition",
+  "agent_id": "a7f8d88c9328320d2",
+  "sprint": 1,
+  "question_count": 10,
+  "generation_strategy": "```\n\n---\n\n**Generation Strategy (3 lines):**\n1. Cultural specificity prioritized: all 10 questions embed Azerbaijan-specific dynamics — hierarchical management culture, Ramadan observance in employment contexts, gender dynamics in senior roles, high-power-distance communication norms — making these questions diagnostic for HR professionals operating specifically in the AZ/CIS market, not generic Western HR scenarios.\n2. Ethical tension design: 7 of 10 questions feature a structural tension (legal duty vs. management pressure, cultural sensitivity vs. performance standards, confidentiality vs. safeguarding obligation) with a clearly defensible correct answer that requires reasoning, not recall — ensuring the AURA score reflects actual HR judgment capacity.\n3. IRT calibration logic: easy questions (irt_b -1.5 to -0.8) test foundational HR principles any trained professional should know; medium questions (0.2 to 0.5) require applied judgment under organizational pressure; hard questions (1.2 to 1.8) require simultaneous legal literacy, cultural intelligence, and ethical spine — differentiating senior from junior HR practitioners.",
+  "questions": [
+    {
+      "id": "prof-hr-001",
+      "competency_slug": "empathy_safeguarding",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 1.2,
+      "irt_b": -1.5,
+      "scenario_key": "A new employee approaches you privately after their second week and says they feel overwhelmed and a"
+    },
+    {
+      "id": "prof-hr-002",
+      "competency_slug": "empathy_safeguarding",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.6,
+      "irt_b": 0.4,
+      "scenario_key": "A senior male manager — well-respected and a top performer — has been informally reported by two fem"
+    },
+    {
+      "id": "prof-hr-003",
+      "competency_slug": "empathy_safeguarding",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 2.0,
+      "irt_b": 1.8,
+      "scenario_key": "During Ramadan, a Muslim employee on a performance improvement plan (PIP) tells you their productivi"
+    },
+    {
+      "id": "prof-hr-004",
+      "competency_slug": "communication",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 1.1,
+      "irt_b": -1.2,
+      "scenario_key": "You are delivering a performance review to an employee who has met most targets but consistently arr"
+    },
+    {
+      "id": "prof-hr-005",
+      "competency_slug": "communication",
+      "difficulty": "hard",
+      "type": "sjt",
+      "irt_a": 1.8,
+      "irt_b": 1.2,
+      "scenario_key": "A department head asks you to redesign the onboarding program. After interviewing 8 recent hires, yo"
+    },
+    {
+      "id": "prof-hr-006",
+      "competency_slug": "adaptability",
+      "difficulty": "medium",
+      "type": "mcq",
+      "irt_a": 1.4,
+      "irt_b": 0.2,
+      "scenario_key": "Your company announces a rapid expansion: 40 new hires needed in 6 weeks across 3 departments. Your "
+    },
+    {
+      "id": "prof-hr-007",
+      "competency_slug": "adaptability",
+      "difficulty": "hard",
+      "type": "sjt",
+      "irt_a": 2.2,
+      "irt_b": 1.6,
+      "scenario_key": "Your company is conducting a round of layoffs — 15% of staff — due to a funding shortfall. You have "
+    },
+    {
+      "id": "prof-hr-008",
+      "competency_slug": "leadership",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.5,
+      "irt_b": 0.3,
+      "scenario_key": "A line manager comes to you and asks you to help them put a high-performing but 'difficult' employee"
+    },
+    {
+      "id": "prof-hr-009",
+      "competency_slug": "leadership",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 1.2,
+      "irt_b": -0.8,
+      "scenario_key": "You notice a pattern across three departments: high-performing junior employees are leaving within 1"
+    },
+    {
+      "id": "prof-hr-010",
+      "competency_slug": "reliability",
+      "difficulty": "medium",
+      "type": "open_ended",
+      "irt_a": 1.7,
+      "irt_b": 0.5,
+      "scenario_key": "You have verbally committed to a hiring manager that you will present 5 shortlisted candidates for a"
+    }
+  ]
+}

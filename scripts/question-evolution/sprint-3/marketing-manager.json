@@ -1,0 +1,483 @@
+[
+  {
+    "id": "prof-mkt-s3-001",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.2,
+    "irt_b": -0.8,
+    "irt_c": 0.12,
+    "scenario_en": "You are launching a digital marketing campaign targeting 35-55 year old professionals in Baku for a B2B financial services product. Your agency recommends allocating 80% of search budget to Google Ads. A local media consultant flags that this demographic has significantly different search behaviour in Azerbaijan. Which allocation best reflects the actual search landscape for this audience?",
+    "scenario_az": "Siz Bakıda 35-55 yaş arası peşəkarlara yönəlik B2B maliyyə xidmətləri üçün rəqəmsal marketinq kampaniyası başladırsınız. Agentliyiniz axtarış büdcəsinin 80%-ni Google Ads-ə ayırmağı tövsiyə edir. Yerli media məsləhətçisi bu auditoriya üçün Azərbaycanda axtarış davranışının əhəmiyyətli dərəcədə fərqli olduğunu bildirir. Hansı bölgü bu auditoriya üçün həqiqi axtarış mənzərəsini ən yaxşı əks etdirir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "90% Google Ads, 10% Yandex.az — Google dominates all demographics globally",
+        "text_az": "90% Google Ads, 10% Yandex.az — Google qlobal olaraq bütün demoqrafik qrupları üstələyir"
+      },
+      {
+        "key": "B",
+        "text_en": "65% Google Ads, 35% Yandex.az — reflecting Yandex's 28% search share in the 35-55 AZ demographic and its stronger brand associations with Russian-language professional content",
+        "text_az": "65% Google Ads, 35% Yandex.az — Yandex-in 35-55 yaş AZ demoqrafiyasında 28% axtarış payını və rus dilli peşəkar məzmunla güclü brend assosiasiyalarını əks etdirir"
+      },
+      {
+        "key": "C",
+        "text_en": "50% Google Ads, 50% Yandex.az — equal split is safest when uncertain",
+        "text_az": "50% Google Ads, 50% Yandex.az — qeyri-müəyyənlik zamanı bərabər bölgü ən təhlükəsizdir"
+      },
+      {
+        "key": "D",
+        "text_en": "100% Google Ads — Yandex.az is negligible and not worth the operational complexity",
+        "text_az": "100% Google Ads — Yandex.az əhəmiyyətsizdir və əməliyyat mürəkkəbliyinə dəyməz"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. Yandex.az holds approximately 28% search share among the 35-55 demographic in Azerbaijan — a legacy of Soviet-era cultural affinity and continued Russian-language media consumption in this age group. For B2B financial services targeting this cohort, ignoring Yandex means missing over a quarter of relevant search traffic. A is wrong because Google's global dominance does not translate uniformly to all AZ demographics. C's equal split overweights Yandex relative to its actual share. D is factually incorrect and operationally negligent for this specific audience.",
+    "feedback_az": "B düzgündür. Yandex.az Azərbaycanda 35-55 yaş demoqrafiyası arasında təxminən 28% axtarış payına malikdir — bu, sovet dövrü mədəni yaxınlığının və bu yaş qrupunda davam edən rus dilli media istehlakının nəticəsidir. Bu kohortunu hədəf alan B2B maliyyə xidmətləri üçün Yandex-i nəzərə almamaq müvafiq axtarış trafikinin dörddə birindən çoxunu itirmək deməkdir. A yanlışdır, çünki Google-un qlobal üstünlüyü bütün AZ demoqrafik qruplarına eyni şəkildə şamil edilmir. C Yandex-i həqiqi payına nisbətən artıq qiymətləndirir. D bu spesifik auditoriya üçün faktiki cəhətdən yanlış və əməliyyat baxımından ihmalkar yanaşmadır.",
+    "development_tip_en": "Always segment AZ search behaviour by age cohort before allocating budget. The 35-55 demographic maintains meaningful Yandex usage — particularly for Russian-language queries, financial news, and professional research. Build Yandex.az campaign management capability into your agency workflow for any B2B product targeting this age group in Azerbaijan.",
+    "development_tip_az": "Büdcəni bölüşdürməzdən əvvəl həmişə AZ axtarış davranışını yaş kohortuna görə seqmentləşdirin. 35-55 yaş demoqrafiyası Yandex istifadəsini mənalı şəkildə davam etdirir — xüsusilə rus dilli sorğular, maliyyə xəbərləri və peşəkar araşdırmalar üçün. Azərbaycanda bu yaş qrupunu hədəf alan istənilən B2B məhsul üçün agentlik iş axınıza Yandex.az kampaniya idarəetmə imkanını daxil edin.",
+    "london_delta": "A London digital strategist defaults to Google-first planning because Google holds 90%+ search share across all UK demographics. They would not know that the 35-55 AZ cohort retains materially higher Yandex usage — a structural artefact of Soviet-era media habits with no Western equivalent — and would systematically under-invest in Yandex.az for precisely the demographic most likely to be B2B decision-makers.",
+    "az_institutions": [
+      "Yandex.az"
+    ],
+    "tags": [
+      "marketing",
+      "az-specific",
+      "search-advertising",
+      "b2b",
+      "demographic-targeting"
+    ]
+  },
+  {
+    "id": "prof-mkt-s3-002",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency_slug": "communication",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.1,
+    "irt_b": -0.7,
+    "irt_c": 0.1,
+    "scenario_en": "You are presenting a 6-month digital marketing campaign results to a senior official at a government ministry in Baku. Your campaign achieved a 340% ROI, CPC of 0.18 AZN, and CTR of 4.7%. The official has limited digital marketing background. Mid-presentation, you notice the official is disengaged and checking his phone. Which communication adjustment is most appropriate?",
+    "scenario_az": "Siz Bakıda bir nazirliyin yüksək rütbəli məmurunun qarşısında 6 aylıq rəqəmsal marketinq kampaniyasının nəticələrini təqdim edirsiniz. Kampaniyanız 340% ROI, 0.18 AZN CPC və 4.7% CTR əldə etdi. Məmurun rəqəmsal marketinq sahəsində məhdud bilgisi var. Təqdimat zamanı məmurun diqqətinin dağıldığını və telefonunu yoxladığını görürsünüz. Hansı kommunikasiya düzəlişi ən uyğundur?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Continue with technical metrics but speak more slowly and repeat key figures — the data will speak for itself",
+        "text_az": "Texniki göstəricilərlə davam edin, lakin daha yavaş danışın və əsas rəqəmləri təkrarlayın — məlumatlar özü danışacaq"
+      },
+      {
+        "key": "B",
+        "text_en": "Immediately pivot to AZN outcomes and milestone language: 'This campaign generated 47,000 AZN in traceable revenue and created 3 new institutional partnerships — delivering on both your ministry's economic targets and visibility goals'",
+        "text_az": "Dərhal AZN nəticələrinə və mərhələ dilinə keçin: 'Bu kampaniya 47.000 AZN izlənilə bilən gəlir yaratdı və 3 yeni institusional tərəfdaşlıq qurdu — nazirliyin həm iqtisadi hədəflərinə, həm də görünürlük məqsədlərinə nail oldu'"
+      },
+      {
+        "key": "C",
+        "text_en": "Ask the official directly what metrics matter most to them and restart the presentation from that point",
+        "text_az": "Məmurdan birbaşa hansı göstəricilərin onlar üçün ən vacib olduğunu soruşun və təqdimata həmin nöqtədən yenidən başlayın"
+      },
+      {
+        "key": "D",
+        "text_en": "Acknowledge the disengagement, apologise for the technical detail, and offer to send a simplified one-page summary after the meeting",
+        "text_az": "Diqqətsizliyi qəbul edin, texniki detallar üçün üzr istəyin və görüşdən sonra sadələşdirilmiş bir səhifəlik xülasə göndərməyi təklif edin"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. AZ government communication norms prioritise outcomes expressed in monetary value (AZN) and institutional milestones over percentage-based performance metrics. A senior official evaluates success through the lens of economic contribution and ministry mandate delivery — not CTR or CPC. Pivoting instantly to this language, without pausing to ask or apologise, maintains authority and respect. A doubles down on the ineffective approach. C is technically reasonable but interrupts the formal presentation register and may be perceived as uncertain preparation. D is too deferential and signals weak presenter confidence in an AZ institutional context.",
+    "feedback_az": "B düzgündür. AZ dövlət kommunikasiya normaları faizlə ifadə edilmiş performans göstəricilərinə deyil, pul dəyəri (AZN) və institusional mərhələlərlə ifadə edilmiş nəticələrə üstünlük verir. Yüksək rütbəli məmur uğuru iqtisadi töhfə və nazirlik mandatının yerinə yetirilməsi prizmasından qiymətləndirir — CTR və ya CPC-dən yox. Bu dilə dərhal keçmək, durmadan sual vermədən və ya üzr istəmədən, nüfuz və hörmət saxlayır. A effektsiz yanaşmanı gücləndirir. C texniki cəhətdən ağlabatandır, lakin rəsmi təqdimat rejimini pozur və zəif hazırlıq kimi qəbul edilə bilər. D AZ institusional kontekstdə həddən artıq tabe olmaq deməkdir və zəif təqdimatçı inamına işarə edir.",
+    "development_tip_en": "In AZ government and SOE presentations, always prepare two versions of your data narrative: the technical deck for working-level teams, and an AZN-outcome deck for senior officials. Senior AZ officials measure marketing value through economic impact language — jobs, revenue, partnerships, national visibility — not digital KPIs. Know which room you are walking into before you open the first slide.",
+    "development_tip_az": "AZ hökumət və dövlət müəssisəsi təqdimatlarında həmişə məlumat hekayənizin iki versiyasını hazırlayın: iş səviyyəli komandalar üçün texniki dəst və yüksək rütbəli məmurlar üçün AZN-nəticə dəsti. Böyük AZ məmurları marketinq dəyərini rəqəmsal KPI-larla deyil, iqtisadi təsir dili ilə — iş yerləri, gəlir, tərəfdaşlıqlar, milli görünürlük — ölçürlər. İlk slaydı açmazdan əvvəl hansı otağa girəcəyinizi bilin.",
+    "london_delta": "A London marketer presenting to a government stakeholder would likely maintain percentage-based ROI language, believing the numbers justify themselves — a norm in performance-marketing-literate Western public sector contexts. They would not recognise that AZ senior officials operate within a ministerial mandate framework where AZN impact and institutional milestone language is the primary legitimacy signal, and that percentage jargon signals a disconnect from their priorities.",
+    "az_institutions": [
+      "Azərbaycan Nazirlər Kabineti"
+    ],
+    "tags": [
+      "marketing",
+      "az-specific",
+      "government-communication",
+      "stakeholder-management",
+      "presentation"
+    ]
+  },
+  {
+    "id": "prof-mkt-s3-003",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.5,
+    "irt_b": 0.1,
+    "irt_c": 0.13,
+    "scenario_en": "It is February 2016. The Azerbaijani manat has devalued twice in 12 months — the second devaluation dropping USD/AZN from 1.05 to 1.60. Your FMCG client's Q2 marketing budget (originally planned in AZN) has effectively lost 35% of its import purchasing power. OOH inventory costs have spiked 28% as media owners reprice to USD. Meanwhile, digital CPM rates across Azerbaijani platforms have dropped 40% as local advertisers pause spend. What is the most strategically sound channel reallocation?",
+    "scenario_az": "2016-cı ilin fevralıdır. Azərbaycan manası 12 ay ərzində iki dəfə devalvasiyaya uğrayıb — ikinci devalvasiya USD/AZN-i 1.05-dən 1.60-a düşürüb. FMCG müştərinizin Q2 marketinq büdcəsi (əvvəlcə AZN-də planlaşdırılmışdı) idxal alıcılıq gücünün 35%-ni itirdi. OOH inventar xərcləri media sahibləri USD ilə yenidən qiymətləndirdikcə 28% artdı. Bu arada yerli reklamçılar xərclərini dayandırdıqca Azərbaycan platformalarında rəqəmsal CPM dərəcələri 40% düşüb. Ən strateji cəhətdən əsaslı kanal yenidən bölgüsü hansıdır?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Maintain the original OOH-heavy allocation — physical presence signals brand stability during economic uncertainty and maintains consumer trust",
+        "text_az": "Orijinal OOH ağır bölgünü saxlayın — fiziki varlıq iqtisadi qeyri-müəyyənlik zamanı brendin sabitliyini siqnallaşdırır və istehlakçı etibarını qoruyur"
+      },
+      {
+        "key": "B",
+        "text_en": "Aggressively shift 60-70% of budget to digital channels immediately — the 40% CPM drop creates a counter-cyclical share-of-voice opportunity while competitors pause, and digital costs are in AZN not USD",
+        "text_az": "Büdcənin 60-70%-ni dərhal rəqəmsal kanallara köçürün — 40% CPM düşüşü rəqiblər fasilə verərkən əks-dövri səs payı imkanı yaradır və rəqəmsal xərclər USD deyil, AZN ilə aparılır"
+      },
+      {
+        "key": "C",
+        "text_en": "Cut all marketing spend by 35% proportionally across all channels and wait for currency stabilisation before reallocating",
+        "text_az": "Bütün kanallar üzrə marketinq xərclərini mütənasib olaraq 35% azaldın və yenidən bölüşdürmədən əvvəl valyutanın sabitləşməsini gözləyin"
+      },
+      {
+        "key": "D",
+        "text_en": "Consolidate remaining budget entirely into TV — local AZ TV costs are AZN-denominated and TV viewing increases during economic downturns",
+        "text_az": "Qalan büdcəni tamamilə televiziyaya konsolidasiya edin — yerli AZ televiziya xərcləri AZN ilə müəyyən edilir və iqtisadi tənəzzül zamanı televiziya izləmə artır"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. The 2016 AZ manat devaluation created a structural counter-cyclical opportunity that sophisticated local marketers exploited: OOH became effectively USD-denominated (expensive), while digital platforms repriced in AZN (cheap). The 40% CPM drop was not a signal to pause — it was a signal to accelerate digital investment to capture share-of-voice while competitors froze. Brands that maintained digital presence in Q2-Q3 2016 recovered faster post-stabilisation. A is wrong because OOH cost spikes make it a poor capital allocation. C forfeits the competitive window. D is partially valid (TV is AZN-denominated) but TV production costs are also significant, and digital offers more precise targeting at lower entry cost.",
+    "feedback_az": "B düzgündür. 2016-cı il AZN manat devalvasiyası bacarıqlı yerli marketoloqların istifadə etdiyi struktur əks-dövri imkan yaratdı: OOH effektiv olaraq USD-lə müəyyən edildi (bahalı), rəqəmsal platformalar isə AZN ilə yenidən qiymətləndirildi (ucuz). 40% CPM düşüşü dayandırmaq üçün deyil — rəqiblər donarkən səs payını ələ keçirmək üçün rəqəmsal investisiyaları sürətləndirmək üçün siqnal idi. 2016-cı ilin Q2-Q3-də rəqəmsal varlığını qoruyan brendlər sabitləşmədən sonra daha sürətli bərpa oldu. A yanlışdır, çünki OOH xərc artımları onu zəif kapital bölgüsü edir. C rəqabət pəncərəsindən imtina edir. D qismən etibarlıdır (TV AZN-lə müəyyən edilir), lakin TV istehsal xərcləri də əhəmiyyətlidir və rəqəmsal daha aşağı giriş xərci ilə daha dəqiq hədəfləmə təklif edir.",
+    "development_tip_en": "In high-inflation or devaluation environments, always map your media channels by currency denomination before repricing — not after. AZ marketers who understood that OOH was functionally USD-indexed while digital remained AZN-indexed in 2016 gained a measurable competitive advantage. Build a channel currency map as a standard tool in your AZ media planning toolkit.",
+    "development_tip_az": "Yüksək inflyasiya və ya devalvasiya mühitlərində həmişə media kanallarınızı yenidən qiymətləndirmədən əvvəl valyuta denominasiyasına görə xəritələyin — sonra deyil. OOH-un funksional olaraq USD-indeksli, rəqəmsalın isə 2016-cı ildə AZN-indeksli qaldığını başa düşən AZ marketoloqlar ölçülə bilən rəqabət üstünlüyü əldə etdi. Kanal valyuta xəritəsini AZ media planlaması alət dəstinizdə standart alət kimi qurun.",
+    "london_delta": "A London brand manager facing currency pressure would typically apply a proportional cut across all channels, or maintain premium OOH as a brand stability signal — the standard Western recession playbook. They would have no frame of reference for an environment where OOH and digital channels are denominated in different effective currencies, making B the counter-intuitive but correct answer that requires AZ-specific market knowledge to identify.",
+    "az_institutions": [],
+    "tags": [
+      "marketing",
+      "az-specific",
+      "crisis-marketing",
+      "media-planning",
+      "devaluation-2016",
+      "channel-strategy"
+    ]
+  },
+  {
+    "id": "prof-mkt-s3-004",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.4,
+    "irt_b": 0.2,
+    "irt_c": 0.11,
+    "scenario_en": "Your agency missed the deadline for delivering creative assets to a major Baku-based retail client by 3 working days. The delay caused the client to miss the first week of their Novruz campaign window. The client is a second-generation family business — the founder's son manages the marketing relationship with you. He has not called to complain. Instead, he sent a one-line message: 'We saw the delay.' In an AZ business context, what does this response signal and what is the correct recovery action?",
+    "scenario_az": "Agentliyiniz Bakıdakı böyük pərakəndə müştəriyə kreativ materialları təhvil vermə son tarixini 3 iş günü keçirdi. Gecikdirmə müştərinin Novruz kampaniya pəncərəsinin ilk həftəsini qaçırmasına səbəb oldu. Müştəri ikinci nəsil ailə biznesidir — qurucunun oğlu marketinq münasibətlərini sizinlə idarə edir. O, şikayət etmək üçün zəng etməyib. Bunun əvəzinə bir sətirli mesaj göndərdi: 'Gecikməni gördük.' AZ biznes kontekstində bu cavab nəyi siqnallaşdırır və düzgün bərpa hərəkəti nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "The message is a factual acknowledgement — respond professionally by email with a formal apology, root cause analysis, and SLA improvement plan within 24 hours",
+        "text_az": "Mesaj faktiki bir qəbul etmədir — 24 saat ərzində rəsmi üzrxahlıq, kök-səbəb analizi və SLA təkmilləşdirmə planı ilə peşəkar şəkildə e-poçtla cavab verin"
+      },
+      {
+        "key": "B",
+        "text_en": "The silence and one-line message is a serious relationship signal in AZ business culture — call immediately, acknowledge the impact on their Novruz window specifically, and propose a concrete make-good (free additional campaign assets or a partial credit) within the same conversation",
+        "text_az": "Sükut və bir sətirlik mesaj AZ biznes mədəniyyətində ciddi münasibət siqnalıdır — dərhal zəng edin, xüsusilə onların Novruz pəncərəsinə olan təsiri qəbul edin və eyni söhbət ərzində konkret kompensasiya (pulsuz əlavə kampaniya materialları və ya qismən kredit) təklif edin"
+      },
+      {
+        "key": "C",
+        "text_en": "The client is signalling they want a discount — respond with a proposed credit note and revised SLA terms in writing to protect your agency contractually",
+        "text_az": "Müştəri endirim istədiyini siqnallaşdırır — agentliyinizi müqavilə baxımından qorumaq üçün yazılı olaraq təklif edilmiş kredit qeydi və yenilənmiş SLA şərtləri ilə cavab verin"
+      },
+      {
+        "key": "D",
+        "text_en": "Proceed normally on remaining deliverables and let the relationship recover organically — over-responding to a one-line message risks escalating a minor issue",
+        "text_az": "Qalan çatdırılmalarda normal şəkildə davam edin və münasibətin üzvi şəkildə bərpasına icazə verin — bir sətirlik mesaja həddən artıq cavab vermək kiçik bir məsələni eskalasiya etmə riski daşıyır"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. In AZ business culture — particularly with family-owned businesses where the founder's son carries the relationship — a restrained one-line message after a significant failure is not a mild acknowledgement. It is a signal that the relationship is under strain and that the client is measuring how you respond. The absence of a complaint call does not mean indifference; it means the client is watching whether you take initiative to make it right. A written-only response misses the relational register. Option A is technically professional but culturally insufficient — email creates formal distance when warmth is required. C misreads the signal as transactional. D is the worst response: it reads as indifference in a relationship-driven market.",
+    "feedback_az": "B düzgündür. AZ biznes mədəniyyətində — xüsusilə qurucunun oğlunun münasibəti daşıdığı ailə müəssisələrində — əhəmiyyətli bir uğursuzluqdan sonra çəkimli bir sətirlik mesaj yüngül qəbul deyildir. Bu, münasibətin gərginlik altında olduğu və müştərinin sizin necə cavab verdiyinizi ölçdüyü siqnaldır. Şikayət zənginin olmaması laqeydlik demək deyil; bu, müştərinin hər şeyi düzəltmək üçün təşəbbüs göstərib-göstərmədiyinizi izlədiyini bildirir. Yalnız yazılı cavab əlaqəsel registri qaçırır. A seçimi texniki cəhətdən peşəkardır, lakin mədəni cəhətdən qeyri-kafidir — e-poçt səmimiyyət tələb olunduqda formal məsafə yaradır. C siqnalı transaksional kimi yanlış oxuyur. D ən pis cavabdır: münasibətə əsaslanan bazarda laqeydlik kimi oxunur.",
+    "development_tip_en": "In AZ client relationships — especially with family businesses — relationship health is communicated through tone and gesture, not complaint frequency. A client who does not complain is not necessarily satisfied; they may be testing whether you honour the relationship without being pushed. After any significant delivery failure, call before emailing, acknowledge the specific business impact (not just the process failure), and offer something tangible rather than a process promise.",
+    "development_tip_az": "AZ müştəri münasibətlərində — xüsusilə ailə müəssisələrinin olduğu — münasibət sağlamlığı şikayət tezliyiylə deyil, ton və jestlə ifadə edilir. Şikayət etməyən müştəri mütləq razı deyil; onlar sizi itələmədən münasibəti hörmətlə qorup-qorumadığınızı yoxlaya bilərlər. Hər hansı əhəmiyyətli çatdırılma uğursuzluğundan sonra e-poçtdan əvvəl zəng edin, spesifik biznes təsirini (yalnız proses uğursuzluğunu deyil) qəbul edin və proses vədi yerinə əlçatan bir şey təklif edin.",
+    "london_delta": "A London account manager would default to a formal written apology with SLA documentation — the standard contractual recovery process in Western agency-client relationships. They would not recognise that a one-line message from a family business founder's son carries the weight of a relationship warning signal, and that the absence of an immediate phone call from your side would be read as indifference rather than professional restraint.",
+    "az_institutions": [],
+    "tags": [
+      "marketing",
+      "az-specific",
+      "client-relations",
+      "family-business",
+      "novruz",
+      "relationship-recovery"
+    ]
+  },
+  {
+    "id": "prof-mkt-s3-005",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.6,
+    "irt_b": 0.3,
+    "irt_c": 0.14,
+    "scenario_en": "You are Creative Director at an agency managing Kapital Bank's brand refresh campaign. Your creative team has developed a bold visual identity — warm colours, playful typography, aspirational lifestyle imagery — that tested well with the 25-35 demographic in focus groups. However, Kapital Bank's compliance team cites CBA (Central Bank of Azerbaijan) advertising regulations requiring: risk disclosure in all financial product communications, no lifestyle imagery implying guaranteed financial outcomes, and conservative colour palettes for regulated products. Your junior creative team believes compliance is killing the campaign and pushes back. How do you lead this?",
+    "scenario_az": "Siz Kapital Bankın brend yeniləmə kampaniyasını idarə edən agentlikdə Kreativ Direktorsunuz. Kreativ komandanız fokus qruplarında 25-35 yaş demoqrafiyasında yaxşı test edilmiş cəsarətli vizual kimlik — isti rənglər, oyunbaz tipoqrafiya, tövsiyəli həyat tərzi görüntüləri — hazırlamışdır. Lakin Kapital Bankın uyğunluq komandası CBA (Azərbaycan Mərkəzi Bankı) reklam tənzimləmələrini sitat gətirir: bütün maliyyə məhsulu kommunikasiyalarında risk açıqlaması, təmin edilmiş maliyyə nəticələrini nəzərdə tutan həyat tərzi görüntülərinin olmaması və tənzimlənən məhsullar üçün mühafizəkar rəng paltrasının olması tələbi. Kiçik kreativ komandasınız uyğunluğun kampaniyanı məhv etdiyini düşünür və geri itələyir. Bunu necə rəhbərlik edirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Support your creative team's position — the CBA constraints are overly restrictive and can be negotiated with Kapital Bank's legal team if you present a strong creative case",
+        "text_az": "Kreativ komandanızın mövqeyini dəstəkləyin — CBA məhdudiyyətləri həddən artıq məhdudlaşdırıcıdır və güclü kreativ dəlil təqdim etsəniz Kapital Bankın hüquqi komandası ilə müzakirə edilə bilər"
+      },
+      {
+        "key": "B",
+        "text_en": "Frame compliance constraints as creative constraints — brief the team to achieve the same emotional resonance within CBA parameters: warm tones within approved palette, aspiration through human stories rather than outcome imagery, risk disclosure integrated as a trust signal rather than a legal footnote",
+        "text_az": "Uyğunluq məhdudiyyətlərini kreativ məhdudiyyət kimi çərçivəyə salın — komandaya CBA parametrləri daxilində eyni emosional rezonansı əldə etmək üçün brifing verin: təsdiqlənmiş palitra daxilində isti tonlar, nəticə görüntüləri əvəzinə insan hekayələri vasitəsilə tövsiyə, hüquqi qeyd yerinə etibar siqnalı kimi inteqrasiya edilmiş risk açıqlaması"
+      },
+      {
+        "key": "C",
+        "text_en": "Escalate the conflict to the Kapital Bank marketing director — the compliance team overreach needs to be resolved at client level, not within your agency",
+        "text_az": "Münaqişəni Kapital Bankın marketinq direktoruna eskalasiya edin — uyğunluq komandası müdaxiləsi agentliyinizdə deyil, müştəri səviyyəsində həll edilməlidir"
+      },
+      {
+        "key": "D",
+        "text_en": "Produce two campaign versions — one CBA-compliant for the client presentation and one unconstrained creative to show what is possible — and let the client choose",
+        "text_az": "İki kampaniya versiyası hazırlayın — müştəri təqdimatı üçün CBA-uyğun biri və mümkün olanı göstərmək üçün məhdudiyyətsiz kreativ biri — və müştərinin seçməsinə icazə verin"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. CBA advertising regulations for financial products are legally binding — this is not a negotiation point (eliminating A). The leadership task is to redirect creative energy within real constraints rather than against them. Reframing compliance requirements as creative constraints — a well-documented professional creative discipline — maintains team morale and often produces stronger work by forcing precision. Integrating risk disclosures as trust signals (e.g., 'We tell you the risks because we respect your intelligence') is a proven financial services creative technique that turns a liability into a differentiator. C creates unnecessary client-side conflict. D is indecisive leadership and risks presenting non-compliant work that undermines agency credibility.",
+    "feedback_az": "B düzgündür. Maliyyə məhsulları üçün CBA reklam tənzimləmələri hüquqi cəhətdən məcburidir — bu müzakirə nöqtəsi deyil (A-nı aradan qaldırır). Liderlik vəzifəsi kreativ enerjini məhdudiyyətlərə qarşı deyil, real məhdudiyyətlər daxilindəyə yönəltməkdir. Uyğunluq tələblərini kreativ məhdudiyyet kimi yenidən çərçivəyə salmaq — yaxşı sənədləşdirilmiş peşəkar kreativ intizam — komanda mənəviyyatını qoruyur və dəqiqliyi məcbur etməklə çox vaxt daha güclü iş yaradır. Risk açıqlamalarını etibar siqnalları kimi inteqrasiya etmək (məs., 'Zəkangüzlüyünüzə hörmət etdiyimiz üçün risklər haqqında danışırıq') məsuliyyəti fərqliləşdirici amilə çevirən sübut edilmiş maliyyə xidmətləri kreativ texnikasıdır. C lazımsız müştəri tərəfli münaqişə yaradır. D qərarsız liderliktir və agentlik etibarlılığını zəiflədə biləcək uyğun olmayan iş təqdim etmə riski daşıyır.",
+    "development_tip_en": "In AZ regulated sectors (banking, insurance, telecom — all with specific CBA or ASAN requirements), the strongest creative directors treat regulatory constraints as a brief component, not a post-production problem. Build your knowledge of CBA financial advertising guidelines into your standard financial sector onboarding. Clients like Kapital Bank and ABB operate in a compliance-first environment — understanding this before the brief saves two revision rounds.",
+    "development_tip_az": "AZ tənzimlənmiş sektorlarında (hamısı spesifik CBA və ya ASAN tələbləri olan bank, sığorta, telekommunikasiya) ən güclü kreativ direktorlar tənzimləmə məhdudiyyətlərini istehsal sonrası problem kimi deyil, brief komponenti kimi qəbul edir. CBA maliyyə reklam qaydaları haqqında biliklərinizi standart maliyyə sektoru onboarding prosesinizdə qurun. Kapital Bank və ABB kimi müştərilər uyğunluq-öncelikli mühitdə fəaliyyət göstərir — briefdən əvvəl bunu başa düşmək iki düzəliş turunu xilas edir.",
+    "london_delta": "A London Creative Director would likely frame CBA compliance as a constraint to push back against, and would have negotiating instincts developed in an environment where financial advertising regulations are present but less prescriptive than in AZ. They would not know that CBA financial product advertising rules are non-negotiable and that presenting non-compliant work to Kapital Bank's team signals either ignorance of local regulation or disregard for client risk — both fatal to the relationship.",
+    "az_institutions": [
+      "Kapital Bank",
+      "CBA",
+      "ABB"
+    ],
+    "tags": [
+      "marketing",
+      "az-specific",
+      "financial-marketing",
+      "cba-regulations",
+      "creative-leadership",
+      "compliance"
+    ]
+  },
+  {
+    "id": "prof-mkt-s3-006",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "hard",
+    "type": "sjt",
+    "irt_a": 1.8,
+    "irt_b": 0.8,
+    "irt_c": 0.07,
+    "scenario_en": "You are Head of Marketing for a mid-sized Azerbaijani electronics retailer. Your category has operated with 8-12% commission listings on Tap.az. Lalafo.az announces a permanent zero-fee listing model, causing a significant portion of casual sellers and small competitors to migrate to Lalafo within 6 weeks. Your Q3 marketing budget has been cut 30% by the CFO citing 'market disruption risk.' You still need to maintain category leadership. You have three options on the table. Rank them by strategic effectiveness and select the best primary action.",
+    "scenario_az": "Siz orta ölçülü Azərbaycan elektronika pərakəndəçisinin Marketinq Rəhbərisiniz. Kateqoriyanız Tap.az-da 8-12% komisyon siyahıları ilə fəaliyyət göstərmişdir. Lalafo.az daimi sıfır komissiyalı siyahılama modeli elan edir və bu, 6 həftə ərzində təsadüfi satıcıların və kiçik rəqiblərin əhəmiyyətli bir hissəsinin Lalafo-ya köçməsinə səbəb olur. CFO 'bazar pozulma riski' əsasında Q3 marketinq büdcənizi 30% azaldıb. Yenə də kateqoriyada liderliyi qorumaq lazımdır. Masada üç seçiminiz var. Onları strateji effektivliyinə görə sıralayın və ən yaxşı əsas hərəkəti seçin.",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Accelerate brand differentiation: redirect 70% of remaining budget to content marketing and Instagram/TikTok showcasing product expertise, after-sale service guarantees, and authorised dealer credentials — attributes Lalafo zero-fee casual sellers structurally cannot offer",
+        "text_az": "Brend fərqləndirilməsini sürətləndirin: qalan büdcənin 70%-ni Lalafo sıfır komissiyalı təsadüfi satıcıların struktur olaraq təklif edə bilməyəcəyi atributları — məhsul təcrübəsi, satış sonrası xidmət zəmanətləri və səlahiyyətli dilerlər mövqeyini — nümayiş etdirən məzmun marketinqi və Instagram/TikTok-a yönləndirin"
+      },
+      {
+        "key": "B",
+        "text_en": "Negotiate volume-based commission reduction with Tap.az to match Lalafo's price competitiveness, and pass savings directly to consumers as a price promotion",
+        "text_az": "Lalafo-nun qiymət rəqabətliliyinə uyğunlaşmaq üçün Tap.az ilə həcmə əsaslanan komisyon endirimini müzakirə edin və əmanətləri birbaşa istehlakçılara qiymət promosyonu kimi ötürün"
+      },
+      {
+        "key": "C",
+        "text_en": "Launch on Lalafo.az immediately to capture the migrating audience and maintain presence where attention is shifting, even with zero differentiation strategy",
+        "text_az": "Sıfır fərqləndirmə strategiyası ilə belə diqqətin köçdüyü yerdə varlığı qorumaq üçün köçən auditoriyaya çatmaq məqsədilə dərhal Lalafo.az-da başlayın"
+      }
+    ],
+    "correct_answer": "A",
+    "feedback_en": "A is the correct primary action. Lalafo's zero-fee model disrupts the casual and price-sensitive seller segment — it does not disrupt the authorised dealer, after-sales service, and product expertise segment. The strategic error would be to compete on Lalafo's terms (price) when you have structural advantages (warranty, expertise, authorisation) that casual sellers cannot replicate. With a 30% budget cut, concentrating on brand differentiation through content — specifically attributes that expose Lalafo sellers' structural weaknesses — is the highest-leverage spend. B is a valid secondary move but does not address why customers should choose you over price-only competitors. C surrenders the differentiation advantage and enters a price war on Lalafo's platform — structurally disadvantageous.",
+    "feedback_az": "A düzgün əsas hərəkətdir. Lalafo-nun sıfır komissiya modeli təsadüfi və qiymətə həssas satıcı seqmentini pozur — səlahiyyətli diler, satış sonrası xidmət və məhsul təcrübəsi seqmentini deyil. Strateji səhv, təsadüfi satıcıların təkrarlaya bilmədiyi struktur üstünlükləriniz (zəmanət, təcrübə, icazə) olduğu halda Lalafo şərtlərindən (qiymət) rəqabət etmək olardı. 30% büdcə kəsintisi ilə məzmun vasitəsilə brend fərqləndirilməsinə — xüsusən Lalafo satıcılarının struktur zəifliklərini açıqlayan atributlara — konsentrasiya etmək ən yüksək leverajlı xərcdir. B etibarlı ikinci addımdır, lakin müştərilərin niyə yalnız qiymət rəqiblərinin önündə sizi seçməsi lazım olduğunu həll etmir. C fərqliləşdirmə üstünlüyündən imtina edir və Lalafo platformasında qiymət müharibəsinə girir — struktur olaraq dezavantajlıdır.",
+    "development_tip_en": "When a platform disrupts your category by removing cost barriers to entry, always map what the new entrants structurally cannot do — not what they cost. Lalafo zero-fee listings attracted casual sellers who cannot offer warranties, authorised dealer status, or consistent after-sales support. These are your moat. In AZ electronics retail, the post-purchase service relationship (repair network, warranty claims, spare parts) is a trust signal that marketplaces cannot replicate — and it is largely invisible until communicated explicitly.",
+    "development_tip_az": "Bir platform girişə xərc maneələrini aradan qaldıraraq kateqoriyanızı pozduqda həmişə yeni iştirakçıların struktur olaraq nə edə bilməyəcəyini xəritələyin — nə qədər başa gəldiklərini deyil. Lalafo sıfır komissiyalı siyahılar zəmanət, səlahiyyətli diler statusu və ya ardıcıl satış sonrası dəstək təklif edə bilməyən təsadüfi satıcıları cəlb etdi. Bunlar sizin xəndəyinizdir. AZN elektronika pərakəndəsatışında satınalma sonrası xidmət münasibəti (təmir şəbəkəsi, zəmanət iddiaları, ehtiyat hissələri) bazarların təkrarlaya bilmədiyi etibar siqnalıdır — və açıq şəkildə kommunikasiya edilənə qədər böyük ölçüdə görünməzdir.",
+    "london_delta": "A London retail marketer facing a zero-fee competitor disruption would likely default to a price matching or promotional response — the standard Western competitive reaction to marketplace disruption. They would not recognise that in the AZ electronics market, the authorised dealer credential and post-sale service network carry disproportionate trust weight because consumer electronics fraud and counterfeit products are a known market risk, making the 'can you actually fix it?' question more salient than in the UK.",
+    "az_institutions": [
+      "Lalafo.az",
+      "Tap.az"
+    ],
+    "tags": [
+      "marketing",
+      "az-specific",
+      "marketplace-disruption",
+      "competitive-strategy",
+      "brand-differentiation",
+      "budget-constraint"
+    ]
+  },
+  {
+    "id": "prof-mkt-s3-007",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.5,
+    "irt_b": 0.1,
+    "irt_c": 0.12,
+    "scenario_en": "You are the Marketing Manager for a food delivery app operating in Baku. Ramadan (Ramazan) begins in 3 weeks. Your performance marketing team has pre-scheduled a campaign featuring food photography, a 'Beat the lunch rush' headline, and 12pm–2pm peak-hour push notifications. A junior team member raises a concern. What is the most appropriate response?",
+    "scenario_az": "Siz Bakıda fəaliyyət göstərən yemək çatdırılma tətbiqinin Marketinq Menecerisiniz. Ramazan 3 həftə sonra başlayır. Performans marketinq komandanız yemək fotoqrafiyası, 'Nahar vaxtının gedişinə qalib gəlin' başlığı və günorta 12-dən 14-ə qədər pik saat push bildirişləri özəlliyi olan bir kampaniyanı əvvəlcədən planlaşdırmışdır. Kiçik bir komanda üzvü narahatlığını bildirdi. Ən uyğun cavab nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "The campaign is commercially appropriate — Ramazan does not prohibit food advertising, only fasting. Many users are not fasting and the campaign should run as planned",
+        "text_az": "Kampaniya kommersiya baxımından uyğundur — Ramazan yemək reklamını deyil, yalnız orucluğu qadağan edir. Bir çox istifadəçi oruc tutmur və kampaniya planlandığı kimi davam etməlidir"
+      },
+      {
+        "key": "B",
+        "text_en": "Pause the campaign entirely for the duration of Ramazan — food delivery is incompatible with religious observance periods",
+        "text_az": "Kampaniyanı Ramazan müddətinə tam dayandırın — yemək çatdırılması dini müşahidə dövrləri ilə uyğunsuzdur"
+      },
+      {
+        "key": "C",
+        "text_en": "Reschedule daytime push notifications to post-iftar windows (after 8pm), replace food imagery with Ramazan-appropriate visuals (lanterns, family iftar settings), shift messaging to iftar convenience and sehri delivery, and brief the team on the cultural calendar for the quarter",
+        "text_az": "Gündüz push bildirişlərini iftar sonrası pəncərələrə (saat 20:00-dan sonra) köçürün, yemək görüntülərini Ramazana uyğun vizuallarla (fənərlər, ailə iftar mühiti) əvəzləyin, mesajı iftar rahatlığı və səhər çatdırılmasına yönəldin və komandaya rüb üçün mədəni təqvim haqqında məlumat verin"
+      },
+      {
+        "key": "D",
+        "text_en": "Add a Ramazan greeting to the existing campaign creative and run it unchanged — acknowledging the occasion is sufficient cultural adaptation",
+        "text_az": "Mövcud kampaniya kreativinə Ramazan salamı əlavə edin və onu dəyişmədən yayımlayın — münasibəti qəbul etmək kifayət qədər mədəni uyğunlaşmadır"
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct. Ramazan in Azerbaijan is a major religious and social observance affecting the majority of the adult population. Food and drink imagery during daylight fasting hours (typically 5am to 8-9pm depending on the year) is not merely insensitive — it is a commercial misjudgement that signals cultural illiteracy to your core user base. The correct response is not to stop operating (B) — food delivery is highly relevant during Ramazan for iftar preparation and sehri (pre-dawn meal) convenience. The adaptation is to flip the campaign: post-iftar timing, iftar-relevant messaging, appropriate visuals. A is technically legal but commercially self-harming. D is the worst outcome — tokenistic adaptation with an insensitive core message is worse than no adaptation.",
+    "feedback_az": "C düzgündür. Azərbaycanda Ramazan böyük yetkinlər əhalisinin əksəriyyətinə təsir edən əhəmiyyətli dini və sosial müşahidədir. Gündüz oruc saatlarında (adətən il asılı olaraq səhər 5-dən axşam 8-9-a qədər) yemək və içki görüntüsü yalnız həssaslıqsız deyil — bu, əsas istifadəçi bazanıza mədəni savadsızlığı siqnallaşdıran kommersiya yanlış mühakiməsidir. Düzgün cavab əməliyyatları dayandırmaq deyil (B) — yemək çatdırılması iftar hazırlığı və səhər (şəfəq öncəsi yemək) rahatlığı üçün Ramazanda çox müvafiqdir. Uyğunlaşma kampaniyanı çevirmək deməkdir: iftar sonrası vaxt, iftara uyğun mesajlaşma, uyğun vizuallar. A texniki cəhətdən qanunidir, lakin kommersiya baxımından özünə ziyan vurur. D ən pis nəticədir — həssas əsas mesajla simvolik uyğunlaşma, uyğunlaşmamaqdan daha pisdir.",
+    "development_tip_en": "Build a cultural calendar into your AZ marketing planning cycle as a non-negotiable input. Key dates: Ramazan (daytime messaging restrictions, post-iftar opportunity), Novruz (purchase journey mapping by week), Gurban Bayram (family gathering context), and school year transitions. In Baku, a food delivery brand that correctly adapts to Ramazan — leaning into iftar and sehri convenience — typically sees 15-25% higher engagement in post-iftar windows than their standard peak. The opportunity is in cultural alignment, not avoidance.",
+    "development_tip_az": "AZ marketinq planlaşdırma dövrünüzə mədəni təqvimi məcburi giriş kimi daxil edin. Əsas tarixlər: Ramazan (gündüz mesajlaşma məhdudiyyətləri, iftar sonrası imkan), Novruz (həftəyə görə alış-veriş yolçuluğunun xəritəlndirilməsi), Qurban Bayramı (ailə yığıncağı konteksti) və məktəb ilinin keçidləri. Bakıda Ramazana düzgün uyğunlaşan — iftar və səhər rahatlığına eğilen — yemək çatdırılma brendlər adətən iftar sonrası pəncərələrdə standart pikdən 15-25% daha yüksək engagement görür. İmkan mədəni uyğunlaşmadadır, yaxından uzaqlaşmada deyil.",
+    "london_delta": "A London food delivery marketer would be aware of Ramadan but would likely treat it as a niche consideration affecting a minority demographic — the UK Muslim population is approximately 6.7% of the total. They would have no intuition for a context where Ramazan is a majority cultural practice in a predominantly Muslim country, and where food imagery during fasting hours is not a minority sensitivity but a mainstream cultural norm that the brand must adapt to or face significant reputational and commercial cost.",
+    "az_institutions": [],
+    "tags": [
+      "marketing",
+      "az-specific",
+      "ramadan",
+      "cultural-sensitivity",
+      "food-delivery",
+      "campaign-timing"
+    ]
+  },
+  {
+    "id": "prof-mkt-s3-008",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "hard",
+    "type": "mcq",
+    "irt_a": 1.9,
+    "irt_b": 0.9,
+    "irt_c": 0.08,
+    "scenario_en": "You are planning the Q4 social media budget for a mid-tier FMCG brand (household cleaning products) in Azerbaijan. Your platform data shows: Instagram 71% penetration among 18-35 demographic, TikTok 44% penetration with 3.2x engagement rate vs Instagram for your category. Your London-trained CMO argues that TikTok carries brand safety risks and recommends capping TikTok at 15% of social budget. Your local social media analyst argues that TikTok content in Azerbaijan is predominantly Azerbaijani-language and brand-safe. You have 40,000 AZN social budget. What is the most analytically sound allocation and reasoning?",
+    "scenario_az": "Siz Azərbaycanda orta dərəcəli FMCG brendinin (ev təmizliyə məhsulları) Q4 sosial media büdcəsini planlaşdırırsınız. Platforma məlumatlarınız göstərir: 18-35 demoqrafiyasında Instagram-da 71% nüfuz, TikTok-da 44% nüfuz, kateqoriya üçün Instagram-la müqayisədə 3.2x engagement dərəcəsi. London-da təhsil almış CMO-nuz TikTok-un brend təhlükəsizliyi risklərini daşıdığını iddia edir və sosial büdcənin 15%-ni TikTok-a məhdudlaşdırmağı tövsiyə edir. Yerli sosial media analitikçiniz isə Azərbaycanda TikTok məzmununun əsasən Azərbaycan dilindədir və brend üçün təhlükəsizdir deyir. Sizdə 40.000 AZN sosial büdcə var. Ən analitik cəhətdən əsaslı bölgü və əsaslandırma nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Follow the CMO's guidance: 85% Instagram (34,000 AZN), 15% TikTok (6,000 AZN) — seniority and global best practice should take precedence over local analyst opinion",
+        "text_az": "CMO-nun rəhbərliyinə əməl edin: 85% Instagram (34.000 AZN), 15% TikTok (6.000 AZN) — üst vəzifə və qlobal ən yaxşı təcrübə yerli analist rəyindən üstün olmalıdır"
+      },
+      {
+        "key": "B",
+        "text_en": "Allocate 50% Instagram (20,000 AZN), 40% TikTok (16,000 AZN), 10% testing reserve — justified by AZ-specific TikTok engagement data, local content safety profile, and counter-cyclical discovery opportunity while competitors under-invest in TikTok",
+        "text_az": "50% Instagram (20.000 AZN), 40% TikTok (16.000 AZN), 10% test ehtiyatı — AZ-spesifik TikTok engagement məlumatları, yerli məzmun təhlükəsizliyi profili ilə əsaslandırılır və rəqiblər TikTok-a az sərmayə qoyarkən əks-dövri kəşf imkanı"
+      },
+      {
+        "key": "C",
+        "text_en": "Allocate 60% Instagram (24,000 AZN), 30% TikTok (12,000 AZN), 10% YouTube — a moderate TikTok investment that tests the channel without alarming the CMO",
+        "text_az": "60% Instagram (24.000 AZN), 30% TikTok (12.000 AZN), 10% YouTube — CMO-nu həyəcanlandırmadan kanalı sınayan mülayim TikTok investisiyası"
+      },
+      {
+        "key": "D",
+        "text_en": "Maintain 70% Instagram (28,000 AZN), 20% TikTok (8,000 AZN), 10% Facebook — aligning with platform penetration share rather than engagement rate",
+        "text_az": "70% Instagram (28.000 AZN), 20% TikTok (8.000 AZN), 10% Facebook — engagement dərəcəsi yerinə platforma nüfuz payına uyğunlaşdırma"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. The CMO's brand safety concern is a legitimate global heuristic — but it is based on the Western TikTok content landscape, which includes significant non-Azerbaijani, politically charged, or brand-unsafe content. The AZ TikTok environment is structurally different: the platform's content is predominantly Azerbaijani-language, community-generated, and does not exhibit the same brand adjacency risks. A 3.2x engagement advantage combined with competitor under-investment in TikTok is a measurable share-of-voice opportunity that a 15% cap structurally forfeits. The 10% testing reserve is analytically sound — it allows for rapid reallocation based on Q4 performance data. A defers to authority over evidence. C is an institutional compromise rather than an evidence-based decision. D uses penetration share as a proxy for value allocation — a logical error when engagement data is available.",
+    "feedback_az": "B düzgündür. CMO-nun brend təhlükəsizliyi narahatlığı qanuni qlobal evristikadır — lakin əhəmiyyətli qeyri-Azərbaycan, siyasi cəhətdən yüklü və ya brend üçün təhlükəli məzmun daxil olan Qərb TikTok məzmun mənzərəsinə əsaslanır. AZ TikTok mühiti struktur olaraq fərqlidir: platformanın məzmunu ağırlıqlı olaraq Azərbaycan dilindədir, icma tərəfindən yaradılmışdır və eyni brend qonşuluğu risklərini nümayiş etdirmir. Rəqiblərin TikTok-a az sərmayə qoyması ilə birləşdirilmiş 3.2x engagement üstünlüyü, 15% limitin struktur olaraq imtina etdiyi ölçülə bilən səs payı imkanıdır. 10% test ehtiyatı analitik cəhətdən əsaslıdır — Q4 performans məlumatlarına əsasən sürətli yenidən bölgüyə imkan verir. A sübutun üzərindəki nüfuza əməl edir. C sübutlara əsaslanan qərar yerinə institusional kompromisdir. D engagement məlumatları mövcud ikən dəyər bölgüsü üçün nüfuz payını proxy kimi istifadə edir — məntiq xətası.",
+    "development_tip_en": "When applying global platform guidelines to the AZ market, always decompose the risk rationale to its structural assumptions. TikTok brand safety concerns in Western markets derive from specific content adjacency patterns that may not exist in a predominantly single-language national market. Build a platform content audit process — specifically sampling AZ TikTok content in your category quarterly — so that your channel decisions are grounded in local content reality, not imported risk frameworks.",
+    "development_tip_az": "Qlobal platforma qaydaları AZ bazarına tətbiq edərkən həmişə risk əsaslandırmasını struktur fərziyyələrinə qədər parçalayın. Qərb bazarlarında TikTok brend təhlükəsizliyi narahatlıqları AZ kimi ağırlıqlı birilliik milli bazarda mövcud olmaya biləcək spesifik məzmun qonşuluğu nümunələrindən qaynaqlanır. Platforma məzmun audit prosesi qurun — xüsusilə kateqoriyanızda AZ TikTok məzmununu rüblük nümunə götürün — kanal qərarlarınızın idxal edilmiş risk çərçivələrinə deyil, yerli məzmun gerçəkliyinə əsaslanması üçün.",
+    "london_delta": "A London-trained CMO's TikTok brand safety concern is entirely valid in the UK context — where TikTok content spans global languages, political content, and unpredictable algorithm adjacency. They cannot know that Azerbaijan's TikTok ecosystem is structurally different: predominantly Azerbaijani-language, primarily lifestyle and entertainment, with materially lower brand adjacency risk. Accepting the CMO's cap without challenging its structural assumptions costs 25% of a measurably superior engagement channel.",
+    "az_institutions": [],
+    "tags": [
+      "marketing",
+      "az-specific",
+      "tiktok",
+      "social-media",
+      "brand-safety",
+      "fmcg",
+      "platform-strategy"
+    ]
+  },
+  {
+    "id": "prof-mkt-s3-009",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency_slug": "communication",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 2.0,
+    "irt_b": 1.1,
+    "irt_c": 0.0,
+    "scenario_en": "PASHA Holding is preparing a rebrand for an international investor audience — primarily European family offices and EBRD-adjacent funds considering exposure to the South Caucasus. The brief requires a narrative positioning that moves PASHA beyond 'Azerbaijani conglomerate' to a strategic Caspian corridor player. You are the lead strategist. Write the core narrative framework (150-200 words) that would anchor this rebrand — including the Caspian corridor argument, the infrastructure thesis, and the credibility bridge to European investors.",
+    "scenario_az": "PASHA Holdinq beynəlxalq investor auditoriyası üçün — ilk növbədə Cənubi Qafqaza məruz qalmağı nəzərdən keçirən Avropa ailə ofisləri və EBRD-yaxın fondlar — rebrand hazırlayır. Brief, PASHA-nı 'Azərbaycan konqlomeratı'ndan strateji Xəzər dəhlizi oyunçusuna keçirən narrativ mövqeləndirməni tələb edir. Siz aparıcı strateqsiniz. Bu rebranda dayaqlanacaq əsas narrativ çərçivəsini (150-200 söz) yazın — Xəzər dəhlizi arqumentini, infrastruktur tezasini və Avropa investorlarına etibar körpüsünü daxil etməklə.",
+    "options": [],
+    "correct_answer": "",
+    "feedback_en": "A strong response anchors PASHA's narrative in the structural geography of the Middle Corridor (Baku–Tbilisi–Kars, Trans-Caspian route), not in financial performance claims. Key elements that must appear: (1) The Caspian corridor as Europe's viable alternative supply chain to Russian and Chinese routes — citing Middle Corridor cargo growth (tripled 2021-2023) and EU single market access via Georgia Association Agreement. (2) PASHA's conglomerate structure as a feature, not a risk — diversified exposure across banking (Kapital Bank, PASHA Bank), hospitality, and construction mirrors the infrastructure thesis. (3) EBRD credibility bridge: PASHA has received EBRD financing, aligning it with European development finance standards — this is the most potent validator for European family office audiences. (4) Avoid: claims about AZ democracy, oil dependency language, or vague 'emerging market opportunity' framing. These trigger Western investor risk premia rather than defusing them. A response that contains generic investor-speak without Caspian corridor specifics scores Low.",
+    "feedback_az": "Güclü cavab PASHA-nın narrativini maliyyə performansı iddialarında deyil, Orta Dəhlizin struktur coğrafiyasında (Bakı–Tbilisi–Qars, Transxəzər marşrutu) lövbərləndirir. Görünməsi lazım olan əsas elementlər: (1) Xəzər dəhlizi Avropanın Rusiya və Çin marşrutlarına münasib alternativ təchizat zənciri kimi — Orta Dəhliz yük artımını (2021-2023-cü illərdə üç qat) və Gürcüstan Assosiasiya Müqaviləsi vasitəsilə AB vahid bazarına çıxışı sitat gətirir. (2) PASHA-nın konqlorat strukturu risk deyil, xüsusiyyət kimi — bank (Kapital Bank, PASHA Bank), qonaqpərvərlik və tikinti sahəsində diversifikasiya edilmiş ekspozisiya infrastruktur tezasini əks etdirir. (3) EBRD etibar körpüsü: PASHA EBRD maliyyələşdirməsi aldı, onu Avropa inkişaf maliyyəsi standartlarına uyğunlaşdırdı — bu, Avropa ailə ofisi auditoriyaları üçün ən güclü doğrulaşdırıcıdır. (4) Qaçınılacaqlar: AZ demokratiyası haqqında iddialar, neft asılılığı dili və ya qeyri-müəyyən 'inkişaf etməkdə olan bazar imkanı' çərçivəsi. Bunlar Qərb investoru risk primlərini aradan qaldırmaq əvəzinə aktivləşdirir.",
+    "development_tip_en": "For international investor communication from AZ, the Caspian corridor narrative is the single most defensible positioning because it is structural and verifiable. European investors are not unfamiliar with AZ — they are unfamiliar with AZ as something other than an oil economy. The EBRD relationship is the most credible bridge: EBRD due diligence standards are familiar to European family offices, and EBRD co-investment signals institutional-grade governance. Build this into your investor relations playbook for any AZ client with international aspirations.",
+    "development_tip_az": "AZ-dan beynəlxalq investor kommunikasiyası üçün Xəzər dəhlizi narrativi tək ən müdafiə edilə bilən mövqeləndirmədir, çünki struktur və yoxlana biləndir. Avropa investorları AZ-a yad deyil — onlar AZ-ı neft iqtisadiyyatından başqa bir şey kimi tanımır. EBRD münasibəti ən etibarlı körpüdür: EBRD due diligence standartları Avropa ailə ofisləri üçün tanışdır və EBRD birgə investisiya institusional səviyyəli idarəetməni siqnallaşdırır. Bunu beynəlxalq ambisiyaları olan hər hansı AZ müştəri üçün investor münasibətləri oyun kitabınıza daxil edin.",
+    "london_delta": "A London brand strategist asked to rebrand a Caspian conglomerate for European investors would default to generic emerging market positioning — political stability assurances, GDP growth rates, demographic dividend language. They would not know the specific EBRD AZ portfolio, would not know the Middle Corridor cargo growth statistics, and would not know that the Baku–Tbilisi–Kars rail link plus the Trans-Caspian International Transport Route constitute a structural logistics argument that is specifically compelling to European supply chain-sensitive investors post-2022. Without this knowledge, the narrative remains generic and fails to differentiate PASHA from any other EM conglomerate.",
+    "az_institutions": [
+      "PASHA Holding",
+      "PASHA Bank",
+      "Kapital Bank",
+      "EBRD"
+    ],
+    "tags": [
+      "marketing",
+      "az-specific",
+      "investor-relations",
+      "caspian-corridor",
+      "rebrand",
+      "b2b-communication",
+      "ebrd"
+    ]
+  },
+  {
+    "id": "prof-mkt-s3-010",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "hard",
+    "type": "sjt",
+    "irt_a": 1.9,
+    "irt_b": 1.0,
+    "irt_c": 0.06,
+    "scenario_en": "You launched an influencer campaign 3 weeks ago for a new Azerbaijani skincare brand. The campaign used 4 influencers with a combined 480,000 followers. Post-campaign analytics reveal that on average 40% of the follower counts are fake or bot accounts — discovered after campaign completion. The brand founder is furious. Your team is preparing two response strategies. Additionally, one of the influencers has already reposted campaign content into a local Mahalle WhatsApp group network (estimated 15,000 real reach). Select the response approach that best balances consumer trust protection, client relationship recovery, and honest disclosure.",
+    "scenario_az": "Siz 3 həftə əvvəl yeni bir Azərbaycan dəriyaxşılaşdırma brendinin influencer kampaniyasını başlatdınız. Kampaniya ümumilikdə 480.000 izləyicisi olan 4 influencerdən istifadə etdi. Kampaniya sonrası analitika, izləyici saylarının ortalama 40%-nin saxta və ya bot hesablar olduğunu ortaya qoyur — kampaniya tamamlandıqdan sonra kəşf edilir. Brend qurucusu qəzəblənib. Komandanız iki cavab strategiyası hazırlayır. Bundan əlavə, influencerlərdən biri artıq kampaniya məzmununu yerli Məhəllə WhatsApp qrupu şəbəkəsinə paylaşıb (təxmini 15.000 həqiqi çatış). Istehlakçı etibarının qorunması, müştəri münasibətlərinin bərpası və dürüst açıqlama arasında ən yaxşı balansı saxlayan cavab yanaşmasını seçin.",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Issue a public statement acknowledging the fake follower discovery, name the influencers involved, and announce a full refund to the client — transparency above all else protects the brand's long-term consumer trust",
+        "text_az": "Saxta izləyicilərin kəşfini qəbul edən, əlaqəli influencerləri adlandıran və müştəriyə tam geri ödəniş elan edən ictimai bəyanat verin — hər şeydən əvvəl şəffaflıq brendin uzunmüddətli istehlakçı etibarını qoruyur"
+      },
+      {
+        "key": "B",
+        "text_en": "Privately disclose the audit findings to the client with a documented performance adjustment (refund for non-delivered reach), source and verify the Mahalle WhatsApp real-audience data as actual proof of authentic delivery, and brief the influencers that future contracts will require third-party follower audits — protecting the client, the authentic reach already delivered, and correcting the procurement process",
+        "text_az": "Müştəriyə audit tapıntılarını sənədləşdirilmiş performans düzəlişi ilə (çatdırılmamış reach üçün geri ödəniş) özəl olaraq açıqlayın, Məhəllə WhatsApp həqiqi auditoriya məlumatlarını həqiqi çatdırılmanın sübutu kimi mənbə tapın və doğrulayın, influencerləri gələcək müqavilələrin üçüncü tərəf izləyici auditlərini tələb edəcəyi barədə məlumatlandırın — müştərini, artıq çatdırılmış həqiqi reach-i qoruyur və satınalma prosesini düzəldir"
+      },
+      {
+        "key": "C",
+        "text_en": "Attribute the analytics discrepancy to platform measurement variance, do not disclose the fake follower finding to the client, and negotiate a discount on the next campaign as a goodwill gesture",
+        "text_az": "Analitika uyuşmazlığını platforma ölçüm varyansına aid edin, saxta izləyici tapıntısını müştəriyə açıqlamayın və xoş niyyət jesti olaraq növbəti kampaniyada endirim müzakirə edin"
+      },
+      {
+        "key": "D",
+        "text_en": "Terminate all four influencer contracts immediately and issue a public apology on behalf of the brand — taking full responsibility signals strength and accelerates trust recovery in the AZ market",
+        "text_az": "Bütün dörd influencer müqaviləsini dərhal fəshedın və brend adından ictimai üzrxahlıq edin — tam məsuliyyət götürmək güc siqnallaşdırır və AZ bazarında etibar bərpasını sürətləndirir"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. The response balances multiple obligations simultaneously. First, the client deserves honest disclosure and financial remedy — non-delivery of contracted reach is a performance failure that must be acknowledged and compensated. Second, the Mahalle WhatsApp distribution is a critical insight that partially redeems the campaign: 15,000 verified real-human reach via peer-to-peer distribution in a high-trust local network is arguably more valuable than equivalent Instagram impressions. Documenting this authentic reach is both honest and protective of the agency's work quality. Third, systemic correction (third-party audits as a contract requirement) demonstrates professionalism without theatrical self-flagellation. A is disproportionate and legally risky — public naming can expose the agency to defamation risk if the influencers dispute the audit methodology. C is dishonest and a safeguarding failure — concealing known fraud from a client is an ethical violation. D is reactive and performative — public apology on behalf of a client without client consent is an overreach.",
+    "feedback_az": "B düzgündür. Cavab eyni anda çoxlu öhdəliklər arasında balans saxlayır. Birincisi, müştəri dürüst açıqlama və maliyyə müalicəsinə layiqdir — müqavilə edilmiş reach-in çatdırılmaması qəbul edilməli və kompensasiya edilməli performans uğursuzluğudur. İkincisi, Məhəllə WhatsApp paylaşımı kampaniyanı qismən bəraət qazandıran kritik içgörüdür: yüksək etibar yerli şəbəkəsində nəzər-nəzərə paylaşım vasitəsilə 15.000 doğrulanmış həqiqi insan reach-i ekvivalent Instagram göstəricilərinə görə daha dəyərli ola bilər. Bu həqiqi reach-i sənədləşdirmək həm dürüst, həm də agentliyin iş keyfiyyətini qoruyucudur. Üçüncüsü, sistematik düzəliş (müqavilə tələbi kimi üçüncü tərəf auditləri) teatral özünü cəzalandırma olmadan peşəkarlığı nümayiş etdirir. A qeyri-mütənasib və hüquqi cəhətdən riskllidir — ictimai adlandırma influencerlər audit metodologiyasını mübahisə edərsə agentliyi iftira riskiylə üz-üzə gətirir. C vicdansızdır və qoruma uğursuzluğudur — müştəridən məlum saxtakarlığın gizlədilməsi etik pozuntudur. D reaktiv və performatifdır — müştəri razılığı olmadan müştəri adından ictimai üzrxahlıq həddaşmadır.",
+    "development_tip_en": "In AZ influencer marketing, fake follower rates can be materially higher than Western benchmarks due to the smaller organic creator economy. Build follower audit (using tools like HypeAuditor or Modash) into pre-contract verification as a standard step — not post-campaign forensics. The Mahalle WhatsApp channel is a genuine high-trust distribution vector in AZ: real peer recommendations in closed community groups carry conversion weight that open social media cannot replicate. Treat it as a measurable channel, not informal noise.",
+    "development_tip_az": "AZ influencer marketinqində saxta izləyici dərəcələri daha kiçik üzvi yaradıcı iqtisadiyyatı səbəbindən Qərb meyarlarından əhəmiyyətli dərəcədə yüksək ola bilər. İzləyici auditini (HypeAuditor və ya Modash kimi alətlər istifadə edərək) kampaniya sonrası məhkəmə ekspertizası deyil, standart addım kimi müqaviləöncəsi yoxlamaya daxil edin. Məhəllə WhatsApp kanalı AZ-da həqiqi yüksək etibar paylama vektoru: qapalı icma qruplarında həqiqi həmyaşıd tövsiyələri açıq sosial medianın təkrarlaya bilmədiyi konversiya ağırlığı daşıyır. Onu qeyri-rəsmi küy deyil, ölçülə bilən kanal kimi qəbul edin.",
+    "london_delta": "A London influencer marketing manager would follow a public-transparency-first protocol — disclosure, public apology, contract termination — which is the standard Western crisis PR playbook for influencer fraud. They would not recognise that public naming in a small national market like Azerbaijan can disproportionately damage all parties (influencer, agency, brand) given the tight professional networks involved, and they would have no frame of reference for treating Mahalle WhatsApp distribution as a measurable, high-trust reach channel that partially compensates for fake follower fraud.",
+    "az_institutions": [],
+    "tags": [
+      "marketing",
+      "az-specific",
+      "influencer-marketing",
+      "fake-followers",
+      "consumer-trust",
+      "mahalle-whatsapp",
+      "crisis-management"
+    ]
+  }
+]

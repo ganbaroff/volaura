@@ -1,9 +1,12 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Clock } from "lucide-react";
 import { AuraRadarChart } from "@/components/aura/radar-chart";
 import { ShareButtons } from "@/components/aura/share-buttons";
 import { IntroRequestButton } from "@/components/profile/intro-request-button";
+import { ProfileViewTracker } from "@/components/profile/profile-view-tracker";
+import { ChallengeButton } from "@/components/profile/challenge-button";
 import initTranslations from "@/app/i18n";
 import { API_BASE } from "@/lib/api/client";
 
@@ -18,6 +21,9 @@ interface PublicProfile {
   location: string | null;
   languages: string[];
   badge_issued_at: string | null;
+  registration_number: number | null;
+  registration_tier: string | null;
+  percentile_rank: number | null;
 }
 
 interface AuraScore {
@@ -90,28 +96,40 @@ export default async function PublicProfilePage({ params }: Props) {
 
   return (
     <main className="min-h-screen bg-background">
+      <ProfileViewTracker username={username} />
       {/* Header bar */}
-      <div className="border-b border-border px-6 py-3 flex items-center justify-between">
-        <Link href={`/${locale}`} className="font-bold text-lg">Volaura</Link>
+      <div className="border-b border-border px-4 py-3 flex items-center justify-between gap-2">
+        <Link href={`/${locale}`} className="font-bold text-lg shrink-0">Volaura</Link>
         <Link
           href={`/${locale}/signup`}
-          className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          className="rounded-lg bg-primary px-3 py-2.5 min-h-[44px] flex items-center text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
-          Get your AURA score
+          {t("publicProfile.getAuraScore")}
         </Link>
       </div>
 
-      <div className="mx-auto max-w-2xl p-6 space-y-6">
+      <div className="mx-auto max-w-2xl px-4 py-6 space-y-6">
         {/* Profile header */}
-        <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-xl font-bold text-primary-foreground">
+        <div className="flex items-center gap-3">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary text-xl font-bold text-primary-foreground">
             {name[0].toUpperCase()}
           </div>
-          <div>
-            <h1 className="text-2xl font-bold">{name}</h1>
+          <div className="min-w-0">
+            <h1 className="text-xl font-bold truncate">{name}</h1>
             <p className="text-muted-foreground">@{profile.username}</p>
             {profile.location && (
               <p className="text-sm text-muted-foreground">{profile.location}</p>
+            )}
+            {profile.registration_number && (
+              <p className="text-xs font-mono text-muted-foreground mt-0.5">
+                {profile.registration_tier === "founding_100" ? "⭐ " : ""}
+                #{String(profile.registration_number).padStart(4, "0")}
+                {profile.registration_tier === "founding_100"
+                  ? ` · ${t("profile.foundingMember")}`
+                  : profile.registration_tier === "founding_1000"
+                  ? ` · ${t("profile.founding1000")}`
+                  : ""}
+              </p>
             )}
           </div>
         </div>
@@ -133,32 +151,44 @@ export default async function PublicProfilePage({ params }: Props) {
         {/* AURA section */}
         {aura ? (
           <>
-            <div className="rounded-xl border border-border bg-card p-5 flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">{t("publicProfile.auraScore")}</p>
-                <p className="text-4xl font-bold">{aura.overall_score.toFixed(1)}</p>
-                <p className={`mt-1 text-sm font-semibold capitalize ${BADGE_COLORS[aura.badge_tier] ?? ""}`}>
-                  {aura.badge_tier} {aura.elite_status && "· Elite ⭐"}
-                </p>
-              </div>
-              <div className="w-40">
-                <AuraRadarChart
-                  competencyScores={aura.competency_scores}
-                  badgeTier={aura.badge_tier}
-                  size="sm"
-                />
+            <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-sm text-muted-foreground">{t("publicProfile.auraScore")}</p>
+                  <p className="text-3xl sm:text-4xl font-bold">{aura.overall_score.toFixed(1)}</p>
+                  <p className={`mt-1 text-sm font-semibold capitalize ${BADGE_COLORS[aura.badge_tier] ?? ""}`}>
+                    {aura.badge_tier} {aura.elite_status && "· Elite ⭐"}
+                  </p>
+                  {profile.percentile_rank !== null && profile.percentile_rank !== undefined && (
+                    <p className="mt-1.5 text-xs font-medium text-primary">
+                      {t("profile.topPercent", { percent: Math.round(100 - profile.percentile_rank) })}
+                    </p>
+                  )}
+                </div>
+                <div className="w-32 sm:w-40 shrink-0">
+                  <AuraRadarChart
+                    competencyScores={aura.competency_scores}
+                    badgeTier={aura.badge_tier}
+                    size="sm"
+                  />
+                </div>
               </div>
             </div>
 
-            <ShareButtons
-              username={profile.username}
-              overallScore={aura.overall_score}
-              badgeTier={aura.badge_tier}
-            />
+            <div className="flex flex-wrap items-center gap-3">
+              <ShareButtons
+                username={profile.username}
+                overallScore={aura.overall_score}
+                badgeTier={aura.badge_tier}
+              />
+              <ChallengeButton username={profile.username} />
+            </div>
           </>
         ) : (
-          <div className="rounded-xl border border-border bg-card p-5 text-center text-muted-foreground">
-            {t("publicProfile.auraNotAvailable")}
+          <div className="rounded-xl border border-border bg-card p-5 text-center space-y-2">
+            <Clock className="mx-auto h-5 w-5 text-muted-foreground" aria-hidden="true" />
+            <p className="text-sm font-medium">{t("publicProfile.assessmentInProgress")}</p>
+            <p className="text-sm text-muted-foreground">{t("publicProfile.assessmentInProgressDesc")}</p>
           </div>
         )}
 
@@ -175,7 +205,7 @@ export default async function PublicProfilePage({ params }: Props) {
             href={`/${locale}/signup`}
             className="inline-block rounded-lg bg-primary px-6 py-2.5 font-medium text-primary-foreground hover:bg-primary/90"
           >
-            Get started — it&apos;s free
+            {t("publicProfile.getStarted")}
           </Link>
         </div>
       </div>

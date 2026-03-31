@@ -29,6 +29,7 @@ from app.schemas.character import (
     CharacterEventCreate,
     CharacterEventOut,
     CharacterStateOut,
+    CrystalBalanceOut,
 )
 
 router = APIRouter(prefix="/character", tags=["Character"])
@@ -243,6 +244,41 @@ async def get_character_state(
         state_data = state_data[0] if state_data else {}
 
     return CharacterStateOut(**state_data)
+
+
+@router.get("/crystals", response_model=CrystalBalanceOut)
+@limiter.limit(RATE_DEFAULT)
+async def get_crystal_balance(
+    request: Request,
+    user_id: CurrentUserId,
+    db: SupabaseAdmin,
+) -> CrystalBalanceOut:
+    """Return crystal balance for the authenticated user.
+
+    Lightweight alternative to GET /state — used by MindShift to show the
+    crystal counter in the focus session overlay without the cost of the full
+    5-query get_character_state RPC.
+
+    Implementation: single SUM over game_crystal_ledger (indexed on user_id).
+    """
+    result = (
+        await db.table("game_crystal_ledger")
+        .select("amount")
+        .eq("user_id", str(user_id))
+        .execute()
+    )
+
+    rows = result.data or []
+    raw_balance = sum(row["amount"] for row in rows)
+    balance = max(0, raw_balance)  # floor at 0 — consistent with CharacterStateOut guarantee
+
+    logger.info("Crystal balance fetched", user_id=user_id, balance=balance)
+
+    return CrystalBalanceOut(
+        user_id=user_id,
+        crystal_balance=balance,
+        computed_at=datetime.now(timezone.utc),
+    )
 
 
 @router.get("/events", response_model=list[CharacterEventOut])

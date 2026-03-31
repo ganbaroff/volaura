@@ -65,6 +65,14 @@ PERSPECTIVES = [
         "name": "CTO Watchdog",
         "lens": "Is the CTO (Claude) following process? Check: are plans going through agents? Are memory files updated? Is protocol v4.0 being followed? Flag any process violations. You can escalate directly to CEO.",
     },
+    {
+        "name": "Risk Manager",
+        "lens": "ISO 31000:2018 + COSO ERM. Score every open item by Likelihood×Impact (1-5 each). CRITICAL=20-25, HIGH=12-19, MEDIUM=6-11. Flag: unmitigated CRITICAL risks, missing rollback plans, single points of failure, launch blockers. Output a mini Risk Register entry for each finding.",
+    },
+    {
+        "name": "Readiness Manager",
+        "lens": "Google SRE + ITIL v4 + LRR standard. Score platform readiness across 5 dimensions: Functional (0-20), Operational (0-20), Security (0-20), UX (0-20), Rollback (0-20). LRL 1-7. A score <70/100 is a NO-GO for any public launch. Flag any dimension below 12/20 as a launch blocker.",
+    },
 ]
 
 
@@ -140,6 +148,38 @@ def _read_project_state(project_root: Path) -> str:
         # Just the first section — what agents need
         state_parts.append("## SWARM FREEDOM ARCHITECTURE (your future capabilities)\n" + content[:3000])
 
+    # ── SESSION-DIFFS.jsonl — what actually changed recently ─────────────────
+    # This closes the "42% already done" gap: agents see git-level changes, not
+    # just static memory files. Updated on every push to main via session-end.yml.
+    session_diffs_file = project_root / "memory" / "swarm" / "SESSION-DIFFS.jsonl"
+    if session_diffs_file.exists():
+        with open(session_diffs_file, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+        # Read last 3 sessions (most recent first)
+        recent_entries = []
+        for raw_line in reversed(lines[-3:]):
+            try:
+                import json as _json
+                entry = _json.loads(raw_line.strip())
+                summary = (
+                    f"[{entry.get('timestamp', '?')[:16]}] "
+                    f"{entry.get('sprint_headline', '?')} | "
+                    f"files changed: {entry.get('files_changed_count', '?')} | "
+                    f"migrations: {entry.get('new_migrations', [])} | "
+                    f"routes: {entry.get('new_routes', [])}"
+                )
+                recent_entries.append(summary)
+                # Include diff_summary from most recent entry
+                if not recent_entries[1:] and entry.get("diff_summary"):
+                    recent_entries.append("DIFF:\n" + entry["diff_summary"][:1500])
+            except Exception:
+                pass
+        if recent_entries:
+            state_parts.append(
+                "## RECENTLY SHIPPED (read this FIRST — prevents re-proposing done work)\n"
+                + "\n".join(recent_entries)
+            )
+
     # Previous proposals (so agents don't repeat)
     inbox = InboxProtocol(project_root)
     pending = inbox.get_pending()
@@ -189,7 +229,24 @@ Requirements:
 - Must include math justification (time to implement, expected impact)
 - Must be actionable THIS WEEK (not a future vision)
 - If you believe the CTO missed something critical, add [ESCALATE] tag
-- If you have a complaint about CTO process, state it directly"""
+- If you have a complaint about CTO process, state it directly
+
+STRATEGIC CONTEXT FOR THIS RUN (CEO directive):
+The CEO wants to integrate ANUS (Autonomous Networked Utility System — an open-source
+autonomous AI coding agent CLI, github.com/anus-dev/anus) as a PLATFORM FEATURE in Volaura/MindShift.
+Vision: users assign a coding task via the platform → an ANUS agent runs on their local PC →
+codes autonomously → reports back. Human presence verified via camera (SIMA-style, client-side
+face detection) every 20 minutes to maintain legal oversight.
+
+This is a new `agent-task-runner` skill in the Volaura skill library.
+Key questions the CEO wants the team to resolve:
+1. What is the minimum viable architecture for task dispatch (Supabase polling vs WebSocket vs other)?
+2. How to sandbox ANUS so it can't read .env / system files?
+3. What presence-check implementation is legally clean across AZ/EU/US?
+4. What does the `agent_tasks` Supabase schema look like?
+5. What is the biggest risk nobody is talking about?
+
+Apply your specific lens to ONE of these questions and produce a concrete proposal."""
     elif mode == "code-review":
         task = """YOUR TASK:
 Review the current codebase state and find 1 concrete issue.
@@ -223,10 +280,12 @@ RESPONSE FORMAT (JSON only):
     "title": "one-line summary of your proposal",
     "severity": "critical|high|medium|low",
     "type": "idea|escalation|complaint|code_review|security",
-    "content": "full proposal with specific details, file references, math",
-    "escalate_to_ceo": true/false,
+    "content": "IMPORTANT: this must be a plain STRING (not an object). Full proposal with specific details, file references, math — written as prose text.",
+    "escalate_to_ceo": true,
     "confidence": 0.0-1.0
-}}"""
+}}
+
+CRITICAL: "content" field MUST be a string, NOT a JSON object or nested dict. Write it as plain text."""
 
 
 async def _call_agent(
@@ -559,8 +618,8 @@ async def main():
     print(f"Proposals: {len(proposals)}")
     print(f"Escalations: {sum(1 for p in proposals if p.escalate_to_ceo)}")
     for p in proposals:
-        emoji = {"critical": "🔴", "high": "🟠", "medium": "🟡", "low": "🟢"}
-        print(f"  {emoji.get(p.severity.value, '⚪')} [{p.severity.value}] {p.title}")
+        emoji = {"critical": "[CRIT]", "high": "[HIGH]", "medium": "[MED]", "low": "[LOW]"}
+        print(f"  {emoji.get(p.severity.value, '[?]')} {p.title}")
     print(f"{'='*60}\n")
 
     # ── Memory consolidation (SWS sleep cycle) ─────────────────────────────────

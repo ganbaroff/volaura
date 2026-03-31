@@ -1,0 +1,12 @@
+[
+  {"id":"prof-mkt-001","competency_slug":"communication","difficulty":"easy","type":"mcq","irt_a":1.2,"irt_b":-1.8,"irt_c":0.2,"scenario_key":"Ramadan campaign brief → campaign objective first"},
+  {"id":"prof-mkt-002","competency_slug":"communication","difficulty":"medium","type":"sjt","irt_a":1.6,"irt_b":0.3,"irt_c":0.15,"scenario_key":"WhatsApp rumor CBA fine, Friday, legal unreachable → holding statement"},
+  {"id":"prof-mkt-003","competency_slug":"communication","difficulty":"hard","type":"open_ended","irt_a":2.1,"irt_b":1.9,"irt_c":0.1,"scenario_key":"143K followers 6.8% engagement, HQ mandates formal tone → business case counterproposal"},
+  {"id":"prof-mkt-004","competency_slug":"adaptability","difficulty":"medium","type":"sjt","irt_a":1.7,"irt_b":0.5,"irt_c":0.15,"scenario_key":"Novruz: Meta algo drops reach 60%, 72h → Reels+WhatsApp+micro-influencers"},
+  {"id":"prof-mkt-005","competency_slug":"adaptability","difficulty":"hard","type":"open_ended","irt_a":2.3,"irt_b":2.2,"irt_c":0.1,"scenario_key":"850K influencer political post → terminate, 6-week gap, team at capacity"},
+  {"id":"prof-mkt-006","competency_slug":"tech_literacy","difficulty":"easy","type":"mcq","irt_a":1.1,"irt_b":-1.5,"irt_c":0.25,"scenario_key":"ROAS 1.4 target 3.0, mobile bounce 78% → landing page"},
+  {"id":"prof-mkt-007","competency_slug":"tech_literacy","difficulty":"medium","type":"mcq","irt_a":1.5,"irt_b":0.2,"irt_c":0.2,"scenario_key":"Email: open 14% vs 22% avg → fix first broken metric first"},
+  {"id":"prof-mkt-008","competency_slug":"leadership","difficulty":"hard","type":"sjt","irt_a":1.9,"irt_b":1.4,"irt_c":0.12,"scenario_key":"Agency 2 months late, blames briefs, morale dropping → structured retrospective + SLA"},
+  {"id":"prof-mkt-009","competency_slug":"english_proficiency","difficulty":"medium","type":"mcq","irt_a":1.4,"irt_b":0.1,"irt_c":0.2,"scenario_key":"'Empower' / 'smarter not harder' → cultural-linguistic intelligence for AZ"},
+  {"id":"prof-mkt-010","competency_slug":"reliability","difficulty":"easy","type":"mcq","irt_a":1.0,"irt_b":-1.6,"irt_c":0.25,"scenario_key":"Sunday evening: report has error, 2h fix vs 10min submit as-is"}
+]

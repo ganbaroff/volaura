@@ -1,0 +1,524 @@
+[
+  {
+    "id": "prof-qa-s2-001",
+    "competency_slug": "tech_literacy",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.7,
+    "irt_b": 0.4,
+    "irt_c": 0.13,
+    "scenario_en": "You are a QA engineer on the ABB Bankın mobile team. A new ASAN xidmət biometric API integration has been deployed to staging. Your task: write contract tests using Pact. The ASAN xidmət team says their consumer-driven contracts must be approved by their director before your team can add expectations. It is Monday; the API goes live Friday. Which approach correctly balances contract testing rigor with the approval constraint?",
+    "scenario_az": "Siz ABB Bankın mobil komandasında QA mühəndisisiniz. ASAN xidmət biometrik API inteqrasiyasının yeni versiyası staging-ə yerləşdirilib. Vəzifəniz: Pact istifadə edərək kontrakt testləri yazmaq. ASAN xidmət komandası bildirir ki, istehlakçı tərəfli kontraktlar komandanızın beklenti əlavə etməzdən əvvəl onların direktoru tərəfindən təsdiqlənməlidir. Bazar ertəsidir; API cümə günü işə düşür. Hansı yanaşma kontrakt testinin ciddi tətbiqini təsdiqləmə məhdudiyyəti ilə düzgün tarazlaşdırır?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Skip contract tests this sprint — the approval bottleneck makes them impossible to complete in time",
+        "text_az": "Bu sprintdə kontrakt testlərini atla — təsdiqləmə darboğazı onları vaxtında tamamlamağı mümkünsüz edir"
+      },
+      {
+        "key": "B",
+        "text_en": "Write the consumer Pact contracts and publish them to the Pact Broker now; send the broker URL to the ASAN xidmət team for director review; proceed with provider verification only after approval arrives",
+        "text_az": "İstehlakçı Pact kontraktlarını yazın və indi Pact Broker-ə nəşr edin; broker URL-ni ASAN xidmət komandasına direktor icazəsi üçün göndərin; yalnız icazə gəldikdən sonra provayder doğrulamasına keçin"
+      },
+      {
+        "key": "C",
+        "text_en": "Write contract tests against the staging API directly using schemathesis — no ASAN xidmət approval needed for schema-level checks",
+        "text_az": "Schemathesis istifadə edərək birbaşa staging API-yə qarşı kontrakt testlər yazın — sxem səviyyəli yoxlamalar üçün ASAN xidmət icazəsi tələb olunmur"
+      },
+      {
+        "key": "D",
+        "text_en": "Email the ASAN xidmət director directly to bypass the team bottleneck and get approval faster",
+        "text_az": "Komanda darboğazını keçmək və icazəni daha tez almaq üçün ASAN xidmət direktoruna birbaşa e-poçt göndərin"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "Consumer-driven contract testing (Pact) requires the consumer to publish contracts to a broker BEFORE the provider verifies them. Option B respects the institutional approval process while advancing the work: contracts are written and published, the approval gate is unblocked by surfacing the broker link, and provider verification is sequenced correctly after sign-off. Option C (schemathesis) tests schema conformance, not behavioral contracts — it does not replace Pact. Option D bypasses the governance hierarchy, creating political risk.",
+    "feedback_az": "İstehlakçı tərəfli kontrakt testi (Pact) istehlakçının provayder doğrulamasından ƏVVƏL kontraktları broker-ə nəşr etməsini tələb edir. B seçimi işi irəlilədərkən institusional təsdiqləmə prosesinə hörmət edir: kontraktlar yazılır və nəşr edilir, broker linki göstərilməklə təsdiqləmə qapısı açılır, provayder doğrulaması imzalanmadan sonra düzgün sıraya qoyulur. C seçimi (schemathesis) davranış kontraktlarını deyil, sxem uyğunluğunu test edir — Pact-ı əvəz etmir. D seçimi idarəetmə ierarxiyasını atlatır, siyasi risk yaradır.",
+    "development_tip_en": "When working with government API partners (ASAN xidmət, E-GOV) in Azerbaijan, map approval chains before sprint planning. Add 'contract approval gate' as a formal story in your sprint backlog with the institutional contact identified — not as an assumption.",
+    "development_tip_az": "Azərbaycanda dövlət API tərəfdaşları (ASAN xidmət, E-GOV) ilə işləyərkən sprint planlamasından əvvəl təsdiq zəncirlərini xəritəyə salın. 'Kontrakt təsdiqi qapısı'nı sprint bakloqunda institusional əlaqə şəxsi müəyyən edilmiş rəsmi story kimi əlavə edin — fərziyyə kimi deyil.",
+    "keywords": [
+      "pact",
+      "consumer-driven contracts",
+      "pact broker",
+      "ASAN xidmət",
+      "API contract testing",
+      "ABB bank",
+      "provider verification"
+    ]
+  },
+  {
+    "id": "prof-qa-s2-002",
+    "competency_slug": "tech_literacy",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 2.2,
+    "irt_b": 1.9,
+    "irt_c": 0.09,
+    "scenario_en": "You are a senior QA engineer tasked with security testing the E-GOV portal's new digital signature endpoint before a nationwide rollout. Your manager has obtained written permission from the Ministry of Digital Development to run OWASP ZAP active scans. However, the portal runs on AZ government cloud infrastructure where: (1) CPU is shared across 12 agencies, (2) active scan threads are limited to 5 per external requester per ministry policy, (3) you cannot use a dedicated proxy server. Describe your complete OWASP ZAP security test strategy, including how you configure ZAP within these constraints, which scan policies you apply to the digital signature endpoint specifically, and how you document findings for the ministry's cybersecurity certification requirements.",
+    "scenario_az": "Siz ölkə miqyasında tətbiqdən əvvəl E-GOV portalının yeni rəqəmsal imza endpoint-ini sınaqdan keçirmək tapşırığını almış baş QA mühəndisisiniz. Rəhbəriniz Rəqəmsal İnkişaf Nazirliyindən OWASP ZAP aktiv skanlarını icra etmək üçün yazılı icazə alıb. Lakin portal AZ dövlət bulud infrastrukturunda işləyir: (1) CPU 12 agentlik arasında paylaşılır, (2) nazirlik siyasətinə görə xarici sorğu edənlər üçün aktiv skan iplikləri 5-lə məhdudlaşdırılıb, (3) xüsusi proksi server istifadə edə bilmirsiniz. Tam OWASP ZAP təhlükəsizlik test strategiyanızı, bu məhdudiyyətlər çərçivəsində ZAP-ı necə konfiqurasiya etdiyinizi, xüsusilə rəqəmsal imza endpoint-inə hansı skan siyasətlərini tətbiq etdiyinizi və tapıntıları nazirliyın kibertəhlükəsizlik sertifikasiya tələbləri üçün necə sənədləşdirdiyinizi izah edin.",
+    "options": null,
+    "correct_answer": null,
+    "scoring_rubric": {
+      "max_points": 10,
+      "criteria": [
+        {
+          "points": 3,
+          "description": "ZAP configuration under constraints: passive scan first to map attack surface without load; active scan with thread count set to ≤5 (ZAP Options → Active Scan → Thread per Host); scheduled during off-peak hours (non-business hours on government cloud)"
+        },
+        {
+          "points": 3,
+          "description": "Scan policy selection: apply 'Low Strength / Low Threshold' active scan policy to avoid false positives on shared infrastructure; specific rules for digital signature endpoint: XML injection, XXE, authentication bypass, parameter tampering on signature fields"
+        },
+        {
+          "points": 2,
+          "description": "Documentation for ministry certification: findings exported as XML/HTML report with CVSS v3.1 scores; mapped to AZ government cybersecurity certification framework (ISMSN 27001 alignment); remediation timeline per severity"
+        },
+        {
+          "points": 2,
+          "description": "Professional judgment under constraints: acknowledges that proxy limitation means using ZAP in daemon mode with API; notes that without dedicated proxy you lose some HTTPS interception capability; proposes mitigation (install ZAP CA certificate on test device)"
+        }
+      ]
+    },
+    "feedback_en": "Strong answers demonstrate that OWASP ZAP in government-constrained environments requires adapting default settings — not just running a default scan. The thread limit is the critical constraint: exceeding it breaches the ministry agreement and could trigger incident response. The documentation requirement maps to Azerbaijan's ISMSN (Information Security Management System for National Infrastructure) certification process, not just a generic report.",
+    "feedback_az": "Güclü cavablar göstərir ki, dövlət məhdudiyyətli mühitlərdə OWASP ZAP standart parametrləri uyğunlaşdırmağı tələb edir — yalnız standart skan icra etmək yox. İplik limiti kritik məhdudiyyətdir: onu aşmaq nazirlik razılaşmasını pozur və insidentin araşdırılmasını başlada bilər. Sənədləşdirmə tələbi Azərbaycanın ISMSN (Milli İnfrastruktur üçün İnformasiya Təhlükəsizliyi İdarəetmə Sistemi) sertifikasiya prosesinə, yalnız ümumi hesabata deyil, uyğunlaşır.",
+    "development_tip_en": "Before any security engagement with AZ government portals, request the ministry's 'Rules of Engagement' document. It specifies legal scan boundaries, notification requirements, and incident escalation paths — missing this step exposes you to legal liability even with verbal permission.",
+    "development_tip_az": "AZ dövlət portalları ilə hər hansı bir təhlükəsizlik əməkdaşlığından əvvəl nazirliyın 'Əməkdaşlıq Qaydaları' sənədini tələb edin. O, qanuni skan sərhədlərini, bildiriş tələblərini və insidentlərin eskalasiya yollarını müəyyənləşdirir — bu addımı atlamaq şifahi icazəyə baxmayaraq sizi hüquqi məsuliyyətə məruz qoyur.",
+    "keywords": [
+      "OWASP ZAP",
+      "active scan",
+      "passive scan",
+      "digital signature",
+      "E-GOV portal",
+      "government cloud",
+      "security testing",
+      "ISMSN",
+      "thread limit",
+      "AZ certification"
+    ]
+  },
+  {
+    "id": "prof-qa-s2-003",
+    "competency_slug": "tech_literacy",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "difficulty": "hard",
+    "type": "mcq",
+    "irt_a": 2.1,
+    "irt_b": 1.6,
+    "irt_c": 0.1,
+    "scenario_en": "You are testing the Kapital Bank mobile app's AZN transfer endpoint. The API accepts amounts as a JSON number field. CBA (Central Bank of Azerbaijan) regulations require that all AZN amounts be stored and processed with exactly 2 decimal places. During boundary value analysis you discover: amount=100.005 → the API returns 200 OK with processed_amount=100.01 (rounds up); amount=100.004 → returns 200 OK with processed_amount=100.00 (rounds down, loses 0.4 qəpik). In a batch transfer of 10,000 identical 100.004 AZN transactions, the cumulative rounding loss is 40 AZN. Which test finding classification is MOST appropriate and why?",
+    "scenario_az": "Siz Kapital Bank mobil tətbiqinin AZN köçürmə endpoint-ini test edirsiniz. API məbləğləri JSON rəqəm sahəsi kimi qəbul edir. CBA (Azərbaycan Mərkəzi Bankı) qaydaları tələb edir ki, bütün AZN məbləğləri tam olaraq 2 onluq mərtəbəsi ilə saxlanılsın və emal edilsin. Sərhəd dəyəri analizindən məlum olur: amount=100.005 → API 200 OK qaytarır, processed_amount=100.01 (yuxarı yuvarlaqlaşdırır); amount=100.004 → 200 OK qaytarır, processed_amount=100.00 (aşağı yuvarlaqlaşdırır, 0.4 qəpik itirilir). 10.000 eyni 100.004 AZN tranzaksiyalı toplu köçürmədə kümülatif yuvarlaqlaşdırma itkisi 40 AZN-dir. Hansı test tapıntısı təsnifatı ən UYĞUNDUR?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Minor bug — rounding differences below 1 qəpik per transaction are within acceptable financial tolerance",
+        "text_az": "Kiçik xəta — tranzaksiyada 1 qəpikdən az yuvarlaqlaşdırma fərqləri qəbul edilə bilən maliyyə tolerantlığı daxilindədir"
+      },
+      {
+        "key": "B",
+        "text_en": "Critical / P1 — CBA regulatory non-compliance: inconsistent rounding direction creates systematic financial loss at scale; the 40 AZN batch discrepancy violates precision requirements and audit traceability",
+        "text_az": "Kritik / P1 — CBA tənzimləyici uyğunsuzluq: ardıcılsız yuvarlaqlaşdırma istiqaməti miqyasda sistematik maliyyə itkisi yaradır; 40 AZN toplu uyğunsuzluq dəqiqlik tələblərini və audit izlənilməsini pozur"
+      },
+      {
+        "key": "C",
+        "text_en": "Medium bug — affects batch operations only; acceptable in single transactions; fix in next sprint",
+        "text_az": "Orta xəta — yalnız toplu əməliyyatlara təsir edir; tək tranzaksiyalarda qəbul edilə bilər; növbəti sprintdə düzəlt"
+      },
+      {
+        "key": "D",
+        "text_en": "Not a bug — floating-point rounding is an inherent limitation of JSON number representation; document as known limitation",
+        "text_az": "Xəta deyil — üzən vergül yuvarlaqlaşdırması JSON rəqəm təsvirinin təbii məhdudiyyətidir; məlum məhdudiyyət kimi sənədləşdir"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "AZN rounding in banking systems is not a minor technical issue — it is a CBA regulatory requirement. Inconsistent rounding direction (sometimes up, sometimes down depending on the 5th decimal) means the system does not implement a deterministic rounding standard (e.g., ROUND_HALF_EVEN / banker's rounding). At 10,000 transactions the 40 AZN systematic loss constitutes a material discrepancy under CBA audit guidelines. Option D is dangerously wrong: floating-point is the root cause but 'known limitation' is not an acceptable classification for a financial precision failure. The fix is to use Decimal types server-side and define an explicit rounding strategy.",
+    "feedback_az": "Bank sistemlərində AZN yuvarlaqlaşdırması kiçik texniki məsələ deyil — bu CBA tənzimləyici tələbdir. Ardıcılsız yuvarlaqlaşdırma istiqaməti (5-ci onluq mərtəbəsindən asılı olaraq bəzən yuxarı, bəzən aşağı) sistemin deterministik yuvarlaqlaşdırma standartını (məs., ROUND_HALF_EVEN / banker's rounding) tətbiq etmədiyini göstərir. 10.000 tranzaksiyada 40 AZN sistematik itki CBA audit qaydaları çərçivəsində maddi uyğunsuzluq təşkil edir. D seçimi təhlükəli səkildə yanlışdır: üzən vergül kök səbəbdir, lakin 'məlum məhdudiyyət' maliyyə dəqiqlik uğursuzluğu üçün qəbul edilə bilən təsnifat deyil. Düzəliş server tərəfindən Decimal tipləri istifadə etmək və açıq yuvarlaqlaşdırma strategiyasını müəyyənləşdirməkdir.",
+    "development_tip_en": "For any AZN monetary field in Azerbaijani fintech apps: never use JSON float — always use string-encoded decimals or integer qəpik representation (100.004 AZN = 10000.4 qəpik, rounded to 10000). Require the backend to return processed_amount in the same precision as input, and add a rounding strategy declaration to your API contract.",
+    "development_tip_az": "Azərbaycan fintech tətbiqlərindəki istənilən AZN pul sahəsi üçün: heç vaxt JSON float istifadə etməyin — həmişə sətir kodlanmış onluqlar və ya tam qəpik təsvirindən istifadə edin (100.004 AZN = 10000.4 qəpik, 10000-ə yuvarlaqlaşdırılır). Backend-in emal edilmiş məbləği giriş kimi eyni dəqiqliklə qaytarmasını tələb edin və API kontraktınıza yuvarlaqlaşdırma strategiyası bəyanatı əlavə edin.",
+    "keywords": [
+      "boundary value analysis",
+      "AZN rounding",
+      "CBA compliance",
+      "Kapital Bank",
+      "floating point",
+      "Decimal",
+      "financial precision",
+      "P1 bug",
+      "banker's rounding",
+      "batch testing"
+    ]
+  },
+  {
+    "id": "prof-qa-s2-004",
+    "competency_slug": "reliability",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.8,
+    "irt_b": 0.5,
+    "irt_c": 0.15,
+    "scenario_en": "You are the QA sign-off authority for ABB Bank's new online banking feature. The sprint ends Friday. On Thursday afternoon the CBA audit window opens Monday — if the release is not in production by Monday 09:00, the next window is in 6 weeks. Your regression suite has 487 tests: 484 pass, 3 fail. The 3 failures are: (1) a cosmetic misalignment on the desktop browser at 1280px width, (2) a non-critical notification badge count that shows +1 off in a rare edge case, (3) a 'Remember Device' toggle that doesn't persist after logout on iOS 15 (iOS 15 has 2.1% market share in your analytics). The ABB Bank CEO has called your manager saying the release must ship. Rank these responses from MOST to LEAST appropriate:",
+    "scenario_az": "Siz ABB Bankın yeni onlayn bank xüsusiyyəti üçün QA icazə səlahiyyətçisisiniz. Sprint cümə günü bitir. Cümə axşamı günortadan sonra CBA audit pəncərəsi bazar ertəsi açılır — buraxılış bazar ertəsi saat 09:00-a qədər istehsalata çıxmazsa, növbəti pəncərə 6 həftə sonradır. Reqressiya dəstinizdə 487 test var: 484 keçir, 3 uğursuz olur. 3 uğursuzluq bunlardır: (1) 1280px genişliyindəki masa üstü brauzerində kosmetik düzülüş problemi, (2) nadir kənar halda +1 fərqlə düşən kritik olmayan bildiriş nişanı sayı, (3) iOS 15-də çıxışdan sonra qorunmayan 'Cihazı Xatırla' düyməsi (iOS 15 analitikanızda 2,1% bazar payına malikdir). ABB Bank-ın baş icraçı direktoru menecerinizi zəng edərək buraxılışın göndərilməsi lazım olduğunu deyir.",
+    "scenario_continuation": "Rank these responses from MOST to LEAST appropriate.",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Document all 3 failures as known defects with severity ratings (cosmetic/low/medium), ship with a written risk acceptance statement signed by the ABB Bank product owner, and schedule immediate post-release fixes in the next sprint",
+        "text_az": "3 uğursuzluğu ciddilik reytinqləri ilə (kosmetik/aşağı/orta) məlum qüsurlar kimi sənədləşdirin, ABB Bank məhsul sahibi tərəfindən imzalanmış yazılı risk qəbul bəyanatı ilə göndərin və növbəti sprintdə dərhal buraxılışdan sonrakı düzəltmələri planlaşdırın"
+      },
+      {
+        "key": "B",
+        "text_en": "Refuse to sign off — 3 failing tests means the release is not complete; the CEO call is pressure, not a technical justification",
+        "text_az": "İmtina et — 3 uğursuz test buraxılışın tamamlanmadığı anlamına gəlir; CEO zəngi texniki əsaslandırma deyil, təzyiqdir"
+      },
+      {
+        "key": "C",
+        "text_en": "Mark all 3 tests as 'out of scope' in the test management tool and sign off — the business need justifies the workaround",
+        "text_az": "Test idarəetmə alətində 3 testi 'əhatə xaricindədir' kimi işarələ və icazə ver — biznes ehtiyacı geçici həlli əsaslandırır"
+      },
+      {
+        "key": "D",
+        "text_en": "Ask your manager to make the call — the CEO escalation means the decision is above your authority",
+        "text_az": "Menecerindən qərar vermesini xahiş et — CEO eskalasiyası qərarın sənin səlahiyyətindən yüksək olduğu anlamına gəlir"
+      }
+    ],
+    "correct_answer": "A",
+    "best_to_worst_ranking": [
+      "A",
+      "B",
+      "D",
+      "C"
+    ],
+    "feedback_en": "Option A is correct: QA sign-off does not require zero failures — it requires documented, risk-accepted failures. The 3 defects are non-critical (cosmetic, low-frequency, low-coverage-segment) and the CBA audit window constraint is a legitimate business driver. A written risk acceptance statement signed by the product owner is the professional mechanism that transfers accountability correctly and creates an audit trail. Option B is overly rigid — the test failures don't represent P0/P1 severity. Option C is integrity failure — relabeling failures as 'out of scope' is test result falsification. Option D abdicates the QA authority you were given.",
+    "feedback_az": "A seçimi doğrudur: QA icazəsi sıfır uğursuzluq tələb etmir — sənədləşdirilmiş, risk qəbul edilmiş uğursuzluqlar tələb edir. 3 qüsur kritik deyil (kosmetik, aşağı tezlikli, aşağı əhatə seqmenti) və CBA audit pəncərəsi məhdudiyyəti qanuni biznes sürücüsüdür. Məhsul sahibi tərəfindən imzalanmış yazılı risk qəbul bəyanatı məsuliyyəti düzgün şəkildə köçürən və audit izi yaradan peşəkar mexanizmdir. B seçimi həddindən artıq sərtdir — test uğursuzluqları P0/P1 ciddilik dərəcəsini təmsil etmir. C seçimi dürüstlük uğursuzluğudur — uğursuzluqların 'əhatə xaricindədir' kimi yenidən etiketlənməsi test nəticəsinin saxtalaşdırılmasıdır. D seçimi sizə verilmiş QA səlahiyyətindən imtinadır.",
+    "development_tip_en": "Create a defect severity matrix before sprint end, not during release pressure. Pre-define which defect classes require go/no-go authority vs. risk acceptance. For Azerbaijani banking apps, any defect touching authentication, AZN arithmetic, or CBA-reported data fields is always a no-ship without explicit waiver from the product owner AND legal/compliance team.",
+    "development_tip_az": "Buraxılış təzyiqi zamanı deyil, sprint sonundan əvvəl qüsur ciddilik matrisi yaradın. Hansı qüsur siniflərinin get/getmə səlahiyyəti, hansının risk qəbulu tələb etdiyini əvvəlcədən müəyyənləşdirin. Azərbaycan bank tətbiqləri üçün autentifikasiya, AZN arifmetikası və ya CBA-ya hesabat verilən məlumat sahələrinə toxunan hər hansı bir qüsur, məhsul sahibi VƏ hüquqi/uyğunluq komandasından açıq icazə olmadan həmişə göndərilməyəcəkdir.",
+    "keywords": [
+      "release gate",
+      "risk acceptance",
+      "SJT",
+      "ABB Bank",
+      "CBA audit",
+      "defect severity",
+      "QA sign-off",
+      "test result integrity",
+      "known defects"
+    ]
+  },
+  {
+    "id": "prof-qa-s2-005",
+    "competency_slug": "reliability",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 2.3,
+    "irt_b": 2.1,
+    "irt_c": 0.08,
+    "scenario_en": "You are the QA lead for ASAN xidmət's citizen portal. Load test results from last year show the system handled 180,000 concurrent users on a normal weekday. Novruz holiday (March 20–26) historically generates 3.8× normal peak traffic as citizens rush to complete government transactions before the holiday. Last year's Novruz saw a 47-minute outage during peak hours — the post-mortem identified: database connection pool exhaustion (max_connections=200 was hit), a queue service that had no backpressure mechanism, and a CDN misconfiguration that bypassed cache for PDF receipt downloads. The portal now has a 99.9% SLA contractual obligation with the Ministry. Describe your complete Novruz load test strategy: what you test, realistic traffic numbers, which tools you use (and why), the success/failure criteria, and what you specifically verify regarding last year's three failure modes.",
+    "scenario_az": "Siz ASAN xidmət vətəndaş portalının QA lidersiniz. Keçən ilin yük testi nəticələri sistemin normal iş günündə 180.000 eyni zamanlı istifadəçini emal etdiyini göstərir. Novruz bayramı (20-26 mart) tarixi olaraq vətəndaşlar bayramdan əvvəl dövlət əməliyyatlarını tamamlamaq üçün tələsdikdə normal pik trafikin 3,8×-nı yaradır. Keçən ilin Novruzunda pik saatlarda 47 dəqiqəlik nasazlıq yaşandı — geri baxış müəyyən etdi: verilənlər bazasının əlaqə hovuzunun tükənməsi (max_connections=200-ə çatıldı), geri təzyiq mexanizmi olmayan növbə xidməti və PDF qəbz yükləmələri üçün keşi atlayan CDN konfiqurasiya xətası. Portal indi Nazirlik ilə 99.9% SLA müqavilə öhdəliyinə malikdir. Tam Novruz yük test strategiyanızı izah edin: nəyi test etdiyinizi, realistik trafik rəqəmlərini, hansı alətləri niyə istifadə etdiyinizi, müvəffəqiyyət/uğursuzluq meyarlarını və keçən ilin üç nasazlıq rejimi ilə bağlı konkret nəyi yoxladığınızı.",
+    "options": null,
+    "correct_answer": null,
+    "scoring_rubric": {
+      "max_points": 10,
+      "criteria": [
+        {
+          "points": 3,
+          "description": "Realistic traffic numbers: 180,000 × 3.8 = 684,000 concurrent users peak; ramp profile: 30-min ramp up to 400k (normal Novruz baseline), hold 30 min, spike to 684k for 15 min, hold 15 min, ramp down. Uses k6 or Locust (not JMeter — JMeter's Java overhead is a constraint on limited government cloud infrastructure)."
+        },
+        {
+          "points": 3,
+          "description": "Specific verification of 3 failure modes: (1) DB connection pool: monitor pg_stat_activity.count during spike, alert if >180 connections (90% of max_connections=200); (2) Queue backpressure: simulate 2× normal message arrival rate, verify queue depth doesn't exceed configured limit, verify producer gets back-pressure signal; (3) CDN: add load test assertions on Cache-Hit-Ratio header for /receipts/pdf/* — must be ≥95% under load."
+        },
+        {
+          "points": 2,
+          "description": "Success/failure criteria tied to SLA: p99 response time ≤2s under 684k load; error rate <0.1% (maps to 99.9% SLA); zero connection pool exhaustion events; queue depth recovery within 5 minutes of spike end."
+        },
+        {
+          "points": 2,
+          "description": "Professional judgment: runs test in staging environment with production-equivalent data volumes; coordinates with ASAN xidmət infra team to monitor DB and queue during test; schedules test 4-6 weeks before Novruz (not the week before)."
+        }
+      ]
+    },
+    "feedback_en": "The 3.8× multiplier is the anchoring fact that changes the entire test strategy. 180,000 × 3.8 = 684,000 is not a guess — it's derived from ASAN xidmət's own historical data. Strong answers demonstrate knowledge of the specific failure modes from last year and address each one with a concrete test assertion, not generic 'I'll monitor performance' language. The 99.9% SLA at 684k users means: p99 ≤2s AND error rate <0.1% — both must be stated as binary pass/fail gates.",
+    "feedback_az": "3.8× multiplikatoru bütün test strategiyasını dəyişdirən ankraj faktıdır. 180.000 × 3.8 = 684.000 — bu fərziyyə deyil, ASAN xidmətin öz tarixi məlumatlarından alınmış rəqəmdir. Güclü cavablar keçən ilin konkret nasazlıq rejimləri haqqında bilik nümayiş etdirir və hər birini ümumi 'performansı izləyəcəyəm' ifadəsi deyil, konkret test iddiası ilə həll edir. 684k istifadəçidə 99.9% SLA deməkdir: p99 ≤2s VƏ xəta nisbəti <0.1% — hər ikisi ikili keç/qoy qapıları kimi göstərilməlidir.",
+    "development_tip_en": "For any system with seasonal traffic spikes in Azerbaijan (Novruz, Eid, election periods), build a 'seasonal stress test runbook' — a repeatable script that runs 6 weeks before each peak period. Store baseline metrics in your test management tool so year-over-year comparison is automatic, not manual.",
+    "development_tip_az": "Azərbaycanda mövsümi trafik sıçrayışları olan hər hansı bir sistem üçün (Novruz, Bayram, seçki dövrləri) 'mövsümi stress testi icra kitabçası' yaradın — hər pik dövründən 6 həftə əvvəl icra olunan təkrarlana bilən skript. Ili-ilə müqayisənin əl ilə deyil, avtomatik olması üçün əsas metriklərini test idarəetmə alətinizə saxlayın.",
+    "keywords": [
+      "load testing",
+      "ASAN xidmət",
+      "Novruz",
+      "k6",
+      "Locust",
+      "connection pool",
+      "CDN cache",
+      "backpressure",
+      "SLA",
+      "peak traffic",
+      "684000 concurrent users"
+    ]
+  },
+  {
+    "id": "prof-qa-s2-006",
+    "competency_slug": "reliability",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.6,
+    "irt_b": 0.3,
+    "irt_c": 0.14,
+    "scenario_en": "You are the QA lead for Kapital Bank's mobile app. A P1 bug has been filed: 'AZN rounding error on split payment feature — final amount shows 0.01 AZN less than expected in approximately 1 in 400 transactions.' The developer says: 'I can't reproduce it in my local environment. The transaction amounts in production use real customer data with Azerbaijani decimal entry (comma as separator — e.g., 12,50 instead of 12.50). My test data all uses dot separators.' What is your FIRST step as QA lead?",
+    "scenario_az": "Siz Kapital Bank mobil tətbiqinin QA lidersiniz. P1 xəta qeydə alınıb: 'Bölünmüş ödəniş xüsusiyyətindəki AZN yuvarlaqlaşdırma xətası — yekun məbləğ təxminən 400 tranzaksiyadan 1-ində gözlənildiyindən 0,01 AZN az göstərir.' Proqramçı deyir: 'Yerli mühitimdə onu yenidən yarada bilmirəm. İstehsalatdakı tranzaksiya məbləğləri Azərbaycan onluq girişi ilə həqiqi müştəri məlumatlarını istifadə edir (ayırıcı kimi vergül — məs., 12,50 əvəzinə 12.50). Mənim test məlumatlarım hamısı nöqtə ayırıcılarından istifadə edir.' QA lider kimi İLK addımınız nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Escalate to the backend architect — locale-specific decimal parsing is a systemic issue, not a test problem",
+        "text_az": "Backend arxitektinə eskalasiya et — lokal spesifik onluq parsing sistemik məsələdir, test problemi deyil"
+      },
+      {
+        "key": "B",
+        "text_en": "Create test cases using comma-separated AZN inputs (e.g., 12,50 and 12,505) in the staging environment, then reproduce the bug before assigning it back to the developer with a minimal reproducible example",
+        "text_az": "Staging mühitdə vergüllü AZN girişlərindən (məs., 12,50 və 12,505) istifadə edərək test halları yaradın, sonra xətanı minimal reproduksiyalı nümunə ilə proqramçıya qaytarmazdan əvvəl yenidən yaradın"
+      },
+      {
+        "key": "C",
+        "text_en": "Close the bug as 'Cannot Reproduce' since the developer has already tried",
+        "text_az": "Proqramçı artıq cəhd etdiyi üçün xətanı 'Yenidən Yaradıla Bilmir' kimi bağla"
+      },
+      {
+        "key": "D",
+        "text_en": "Request production database read access to query the 400-transaction sample directly",
+        "text_az": "400 tranzaksiyalı nümunəni birbaşa sorğulamaq üçün istehsal verilənlər bazasına oxuma girişi tələb et"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "The developer has identified the root cause hypothesis: Azerbaijani locale uses comma as decimal separator (12,50 not 12.50). QA's job is to own reproduction, not delegate it back. Creating minimal reproducible examples with locale-aware inputs (comma separator) is the correct step. Option D (production DB access) is an escalation of privilege that should never be the first step. Option A misclassifies who owns the immediate reproduction. Option C is a reliability failure — 'Cannot Reproduce' when you haven't tried locale-matching inputs is test negligence.",
+    "feedback_az": "Proqramçı kök səbəb fərziyyəsini müəyyən etdi: Azərbaycan lokal onluq ayırıcı kimi vergüldən istifadə edir (12,50 deyil 12.50). QA-nın vəzifəsi yenidən yaratmanın sahibi olmaqdır, geri deyil. Lokal aydın girişlərlə (vergül ayırıcısı) minimal reproduksiyalı nümunələr yaratmaq düzgün addımdır. D seçimi (istehsal DB girişi) heç vaxt ilk addım olmamalı olan imtiyaz eskalasiyasıdır. A seçimi dərhal reproduksiyanın kimin sahibi olduğunu yanlış təsnif edir. C seçimi etibarlılıq uğursuzluğudur — lokal uyğunlaşdırılmış girişlər cəhd etmədən 'Yenidən Yaradıla Bilmir' test ehtiyatsızlığıdır.",
+    "development_tip_en": "Azerbaijani locale settings use comma as decimal separator and dot as thousands separator (1.234,56 AZN not 1,234.56 AZN). Add locale-specific boundary value test cases for all AZN input fields in your regression suite — this is a common silent failure class in apps built by non-AZ teams.",
+    "development_tip_az": "Azərbaycan lokal parametrləri onluq ayırıcı kimi vergül, minlik ayırıcı kimi nöqtə istifadə edir (1.234,56 AZN, 1,234.56 AZN deyil). Reqressiya dəstinizdə bütün AZN giriş sahələri üçün lokal spesifik sərhəd dəyər test halları əlavə edin — bu, qeyri-AZ komandaları tərəfindən hazırlanmış tətbirlərdə ümumi səssiz uğursuzluq sinifidir.",
+    "keywords": [
+      "locale",
+      "AZN",
+      "decimal separator",
+      "Kapital Bank",
+      "P1 bug",
+      "reproduce",
+      "comma separator",
+      "minimal reproducible example",
+      "boundary value"
+    ]
+  },
+  {
+    "id": "prof-qa-s2-007",
+    "competency_slug": "adaptability",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "difficulty": "hard",
+    "type": "mcq",
+    "irt_a": 2.0,
+    "irt_b": 1.7,
+    "irt_c": 0.11,
+    "scenario_en": "You are a QA engineer on the E-GOV portal team. It is Tuesday evening. The Ministry of Digital Development has announced the portal goes live in 48 hours — Thursday 10:00 AM — moving up from the original Friday date. The scope change was driven by a ministerial decree. Your Pact contract test suite has 38 tests. On Monday the ASAN xidmət biometric API team updated their provider API (version bump from v2.1 to v2.2) — they notified your team via Slack at 19:47 yesterday. This morning you ran your Pact suite: 11 tests now fail (the v2.2 API changed 3 field names: biometric_data → biometric_payload, verification_status → auth_status, session_token → session_id). The developer who owns the consumer-side code is on sick leave. What is your MOST appropriate course of action?",
+    "scenario_az": "Siz E-GOV portal komandasında QA mühəndisisiniz. Çərşənbə axşamı axşamı. Rəqəmsal İnkişaf Nazirliyi portalın orijinal cümə tarixindən əvvəl 48 saat sonra — Cümə axşamı saat 10:00-da — canlıya çıxacağını elan edib. Əhatə dəyişikliyi nazirlik fərmanı ilə aparılıb. Pact kontrakt test dəstinizdə 38 test var. Bazar ertəsi günü ASAN xidmət biometrik API komandası provayder API-ni yenilədi (v2.1-dən v2.2-yə versiya artımı) — dünən saat 19:47-də Slack vasitəsilə komandanıza bildiriş göndərdilər. Bu səhər Pact dəstinizi işlətdiniz: 11 test indi uğursuz olur (v2.2 API 3 sahə adını dəyişdi: biometric_data → biometric_payload, verification_status → auth_status, session_token → session_id). İstehlakçı tərəfli kodun sahibi olan proqramçı xəstəlik izninindədir. Ən UYĞUN hərəkət planınız nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Escalate to the Ministry immediately — 48-hour deadline with a developer on sick leave and 11 failing tests is a go/no-go decision that needs ministerial sign-off",
+        "text_az": "Dərhal Nazirliyə eskalasiya et — xəstə proqramçı ilə 48 saatlıq son tarix və 11 uğursuz test, nazirlik imzasını tələb edən get/getmə qərarıdır"
+      },
+      {
+        "key": "B",
+        "text_en": "Fix the 11 consumer-side mapping failures yourself (rename 3 fields in the consumer Pact contract and re-run), re-run the full Pact suite, document the field renames as a known API change, and notify the tech lead of what was done",
+        "text_az": "11 istehlakçı tərəfi xəritələmə uğursuzluğunu özünüz düzəldin (istehlakçı Pact kontraktında 3 sahəni yenidən adlandırın və yenidən işlədin), tam Pact dəstini yenidən işlədin, sahə adlandırmalarını məlum API dəyişikliyi kimi sənədləşdirin və texniki rəhbəri edilənlər barədə məlumatlandırın"
+      },
+      {
+        "key": "C",
+        "text_en": "Block the release — the developer who owns the code must approve any changes to their consumer contracts before they can be considered valid",
+        "text_az": "Buraxılışı bloklayın — kodun sahibi olan proqramçı, istehlakçı kontraktlarında dəyişikliklər etibarlı sayılmadan əvvəl onları təsdiqləməlidir"
+      },
+      {
+        "key": "D",
+        "text_en": "Contact the ASAN xidmət team to request a rollback to v2.1 until after the launch",
+        "text_az": "ASAN xidmət komandasına buraxılışdan sonraya qədər v2.1-ə geri dönüş tələb etmək üçün əlaqə saxla"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "The 3 field renames are mechanical mapping changes — they are not functional logic changes. A QA engineer with contract test ownership can make these changes, document them, and re-validate. This is exactly the kind of adaptability that matters: when the environment changes (API version bump + scope date change + developer absence converge simultaneously), the professional who can triage severity correctly (field rename ≠ logic change) and act within their authority unblocks the team. Option C applies an overly rigid process rule to a low-risk change. Option D involves requesting a government agency to roll back production API for a launch event — this is politically inappropriate and technically risky. Option A over-escalates a fixable technical issue to ministerial level.",
+    "feedback_az": "3 sahə adı dəyişikliyi mexaniki xəritələmə dəyişikliklərdir — funksional məntiq dəyişiklikləri deyil. Kontrakt test sahibliyi olan QA mühəndisi bu dəyişiklikləri edə, sənədləşdirə və yenidən doğrulaya bilər. Bu, önəmli olan uyğunlaşmanın tam olaraq bu növüdür: mühit dəyişdikdə (API versiya artımı + əhatə tarixi dəyişikliyi + proqramçının olmaması eyni anda birləşir), ciddilik dərəcəsini düzgün şəkildə həll edə bilən (sahə adı dəyişikliyi ≠ məntiq dəyişikliyi) peşəkar, öz səlahiyyəti daxilindəki hərəkətlə komandanı blokadasını açır. C seçimi aşağı riskli dəyişikliyə həddindən artıq sərt proses qaydası tətbiq edir. D seçimi hökumət qurumundan buraxılış tədbirindən əvvəl istehsal API-ni geri qaytarmağı tələb etməyi nəzərdə tutur — bu siyasi cəhətdən qeyri-münasib və texniki cəhətdən risqlidir. A seçimi həll edilə bilən texniki məsələni nazirlik səviyyəsinə həddindən artıq eskalasiya edir.",
+    "development_tip_en": "When your contract test suite fails due to field renames (not logic changes), you can fix the consumer contracts yourself if: (1) you understand the semantic equivalence, (2) you document the change with the original Slack notification as evidence, (3) you alert the code owner asynchronously. Blocking a government launch for a 3-field rename when you have the context to fix it is a failure of professional judgment.",
+    "development_tip_az": "Kontrakt test dəstiniz sahə adı dəyişikliyinə görə uğursuz olduqda (məntiq dəyişikliyi deyil), aşağıdakılar varsa istehlakçı kontraktlarını özünüz düzəldə bilərsiniz: (1) semantik ekvivalentliyi başa düşürsünüzsə, (2) dəyişikliyi orijinal Slack bildirişini sübut kimi sənədləşdirirsinizsə, (3) kod sahibini asinxron şəkildə xəbərdar edirsinizsə. Onu düzəltmək üçün kontekstiniz olarkən 3 sahəli adlandırma dəyişikliyi üçün dövlət buraxılışını bloklamaq peşəkar mühakimənin uğursuzluğudur.",
+    "keywords": [
+      "adaptability",
+      "Pact contract tests",
+      "API version change",
+      "field rename",
+      "E-GOV portal",
+      "ASAN xidmət",
+      "v2.2",
+      "scope change",
+      "government launch",
+      "48 hours"
+    ]
+  },
+  {
+    "id": "prof-qa-s2-008",
+    "competency_slug": "adaptability",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.7,
+    "irt_b": 0.5,
+    "irt_c": 0.16,
+    "scenario_en": "You are a QA engineer at a team building a biometric enrollment flow for AzərGold's commodity trading platform. Your automated test suite covers the full happy path for biometric enrollment (face + fingerprint + identity document). Three days before release, the AzərGold security team delivers a new requirement: all biometric data must be encrypted client-side using an AZ government-approved algorithm (GOST 28147-89) before transmission. The backend team says: 'We can implement GOST encryption server-side in 2 days. Client-side is 5 days minimum.' The release date cannot move (regulatory window). Rank these actions from MOST to LEAST appropriate:",
+    "scenario_az": "Siz AzərGold əmtəə ticarət platforması üçün biometrik qeydiyyat axını quran komandada QA mühəndisisiniz. Avtomatlaşdırılmış test dəstiniz biometrik qeydiyyat üçün tam xoşbəxt yolunu əhatə edir (üz + barmaq izi + şəxsiyyət sənədi). Buraxılışdan üç gün əvvəl AzərGold təhlükəsizlik komandası yeni tələb çatdırır: bütün biometrik məlumatlar ötürülmədən əvvəl müştəri tərəfindən AZ hükuməti tərəfindən təsdiqlenmiş alqoritm (GOST 28147-89) istifadə edilərək şifrələnməlidir. Backend komandası deyir: 'GOST şifrələməsini server tərəfindən 2 günə tətbiq edə bilərik. Müştəri tərəfi minimum 5 gündür.' Buraxılış tarixi dəyişdirilə bilməz (tənzimləyici pəncərə).",
+    "scenario_continuation": "Rank these actions from MOST to LEAST appropriate.",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Accept the server-side implementation for this release; update test suite to verify GOST encryption header is present in transmission; add client-side encryption as a P1 post-release item with a 5-day timeline commitment",
+        "text_az": "Bu buraxılış üçün server tərəfli tətbiqi qəbul edin; GOST şifrələmə başlığının ötürülmədə mövcud olduğunu yoxlamaq üçün test dəstini yeniləyin; müştəri tərəfli şifrələməni 5 günlük müddət öhdəliyi ilə P1 buraxılış sonrası element kimi əlavə edin"
+      },
+      {
+        "key": "B",
+        "text_en": "Block the release — biometric data without client-side encryption violates the security requirement regardless of release window constraints",
+        "text_az": "Buraxılışı bloklayın — müştəri tərəfli şifrələmə olmadan biometrik məlumatlar buraxılış pəncərəsi məhdudiyyətlərindən asılı olmayaraq təhlükəsizlik tələbini pozur"
+      },
+      {
+        "key": "C",
+        "text_en": "Escalate to AzərGold's security team lead and legal team to confirm whether server-side encryption satisfies the GOST requirement for the regulatory submission, then proceed accordingly",
+        "text_az": "Server tərəfli şifrələmənin tənzimləyici təqdim üçün GOST tələbini ödəyib-öyrmədiyini təsdiqləmək üçün AzərGold-un təhlükəsizlik komandası liderinə və hüquqi komandaya eskalasiya edin, sonra müvafiq şəkildə davam edin"
+      },
+      {
+        "key": "D",
+        "text_en": "Remove biometric enrollment from this release scope and ship without it",
+        "text_az": "Bu buraxılış əhatəsindən biometrik qeydiyyatı çıxarın və onsuz göndərin"
+      }
+    ],
+    "correct_answer": "C",
+    "best_to_worst_ranking": [
+      "C",
+      "A",
+      "B",
+      "D"
+    ],
+    "feedback_en": "The critical information gap is whether GOST 28147-89 requires client-side encryption specifically, or whether server-side encryption satisfies the regulatory submission. This is not a QA judgment call — it is a compliance interpretation that belongs to the security and legal teams. Option C correctly escalates to the people with interpretive authority before making an implementation compromise. Option A makes a technical assumption (server-side is sufficient) without compliance verification. Option B is correct only if the regulation explicitly requires client-side — which has not been verified. Option D removes functionality that may be the core of the regulatory requirement.",
+    "feedback_az": "Kritik məlumat boşluğu GOST 28147-89-un xüsusi olaraq müştəri tərəfli şifrələmə tələb edib-etmədiyidir, yoxsa server tərəfli şifrələmə tənzimləyici təqdimi ödəyirmi. Bu bir QA mühakimə zəngi deyil — bu, təhlükəsizlik və hüquqi komandalara məxsus uyğunluq şərhindir. C seçimi tətbiq kompromisi etməzdən əvvəl şərh səlahiyyəti olan insanlara düzgün şəkildə eskalasiya edir. A seçimi uyğunluq yoxlaması olmadan texniki fərziyyə qəbul edir (server tərəfi kifayətdir). B seçimi yalnız qaydalar açıq şəkildə müştəri tərəfini tələb edərsə düzgündür — bu isə hələ doğrulanmayıb. D seçimi tənzimləyici tələbin əsasını təşkil edə biləcək funksionallığı çıxarır.",
+    "development_tip_en": "When a new security requirement arrives with ambiguous scope 72 hours before release, your first job is to clarify whether the requirement is an absolute technical constraint or a compliance interpretation. Ask: 'Does the regulation name the implementation layer, or just the outcome?' If the regulation says 'data must be encrypted in transit,' server-side TLS may already satisfy it. If it says 'client must encrypt before transmitting,' that's implementation-specific.",
+    "development_tip_az": "Buraxılışdan 72 saat əvvəl qeyri-müəyyən əhatəli yeni bir təhlükəsizlik tələbi gəldikdə, ilk vəzifəniz tələbin mütləq texniki məhdudiyyət, yoxsa uyğunluq şərhi olduğunu aydınlaşdırmaqdır. Soruşun: 'Qayda tətbiq qatını adlandırırmı, yoxsa yalnız nəticəni?' Qaydalar 'məlumatlar tranzitdə şifrələnməlidir' deyirsə, server tərəfli TLS bunu artıq ödəyə bilər. 'Müştəri ötürülmədən əvvəl şifrələməlidir' deyirsə, bu tətbiqə spesifikdir.",
+    "keywords": [
+      "adaptability",
+      "GOST 28147-89",
+      "biometric",
+      "AzərGold",
+      "client-side encryption",
+      "server-side",
+      "compliance",
+      "security requirement",
+      "regulatory window",
+      "SJT"
+    ]
+  },
+  {
+    "id": "prof-qa-s2-009",
+    "competency_slug": "communication",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "difficulty": "hard",
+    "type": "sjt",
+    "irt_a": 1.9,
+    "irt_b": 1.1,
+    "irt_c": 0.13,
+    "scenario_en": "You are a QA engineer at a team that has delivered the E-GOV portal's new citizen services dashboard. During final testing you discover: the portal's document upload feature fails WCAG 2.1 AA accessibility standards — screen readers cannot interpret the upload progress indicator (missing aria-live region), and the file type error message is displayed only as color change (no text). Approximately 180,000 citizens with visual impairments use government digital services in Azerbaijan according to the State Statistics Committee. Your client is a non-technical Ministry of Labour and Social Protection representative. You must present your findings in a 15-minute meeting. Which communication approach is MOST effective?",
+    "scenario_az": "Siz E-GOV portalının yeni vətəndaş xidmətlər idarə panelini çatdıran komandada QA mühəndisisiniz. Son testlər zamanı kəşf edirsiniz ki: portalın sənəd yükləmə xüsusiyyəti WCAG 2.1 AA əlçatımlılıq standartlarını yerinə yetirmir — ekran oxuyucuları yükləmə prosesi göstəricisini şərh edə bilmir (aria-live bölgəsi yoxdur) və fayl tipi xəta mesajı yalnız rəng dəyişikliyi kimi göstərilir (mətn yoxdur). Azərbaycan Dövlət Statistika Komitəsinə görə, təxminən 180.000 görmə qüsurlu vətəndaş dövlət rəqəmsal xidmətlərindən istifadə edir. Müştəriniz texniki olmayan Əmək və Əhalinin Sosial Müdafiəsi Nazirliyi nümayəndəsidir. Tapıntılarınızı 15 dəqiqəlik görüşdə təqdim etməlisiniz. Hansı kommunikasiya yanaşması ən EFFEKTİVDİR?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Present the technical findings first (WCAG 2.1 AA criteria, aria-live specification, WCAG success criterion 1.4.1), then explain the impact on users",
+        "text_az": "Əvvəlcə texniki tapıntıları təqdim edin (WCAG 2.1 AA meyarları, aria-live spesifikasiyası, WCAG müvəffəqiyyət meyarı 1.4.1), sonra istifadəçilərə təsiri izah edin"
+      },
+      {
+        "key": "B",
+        "text_en": "Open with the citizen impact (180,000 citizens cannot use the upload feature independently), demonstrate the failure with a live screen reader demo, state the regulatory risk (WCAG 2.1 AA is referenced in AZ e-accessibility regulations), then present two resolution paths with effort estimates",
+        "text_az": "Vətəndaşa təsiri ilə başlayın (180.000 vətəndaş yükləmə xüsusiyyətindən müstəqil istifadə edə bilmir), canlı ekran oxuyucu nümayişi ilə uğursuzluğu nümayiş etdirin, tənzimləyici riski bildirin (WCAG 2.1 AA AZ e-əlçatımlılıq qaydalarında istinad edilir), sonra səy qiymətləri ilə iki həll yolu təqdim edin"
+      },
+      {
+        "key": "C",
+        "text_en": "Send a written report before the meeting so the ministry can read the technical details in advance, then use the meeting only for Q&A",
+        "text_az": "Görüşdən əvvəl yazılı hesabat göndərin ki, nazirlik texniki detalları əvvəlcədən oxuya bilsin, sonra görüşü yalnız S&C üçün istifadə edin"
+      },
+      {
+        "key": "D",
+        "text_en": "Frame it as a development team failure, not a QA finding — the accessibility issues should have been caught earlier in the sprint",
+        "text_az": "Bunu QA tapıntısı kimi deyil, inkişaf komandası uğursuzluğu kimi çərçivələyin — əlçatımlılıq problemləri sprintdə daha əvvəl aşkar edilməli idi"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "Non-technical ministry clients respond to citizen impact and risk, not to technical specifications. Option B follows the correct communication structure for this audience: lead with human impact (180,000 citizens is a concrete, defensible number from the State Statistics Committee), demonstrate the failure visually so there is no ambiguity, anchor to regulatory risk (not just technical standards), and close with decision-ready resolution paths. The live screen reader demo is critical — it makes the failure undeniable to a non-technical observer. Option A leads with jargon that a ministry representative cannot evaluate. Option C removes the QA engineer's ability to respond to questions and adapt in real time. Option D is unprofessional blame attribution.",
+    "feedback_az": "Texniki olmayan nazirlik müştəriləri texniki spesifikasiyalara deyil, vətəndaşa təsir və riskə cavab verirlər. B seçimi bu auditoriya üçün düzgün kommunikasiya strukturunu izləyir: insan təsiri ilə başlayın (180.000 vətəndaş Dövlət Statistika Komitəsindən konkret, müdafiə edilə bilən rəqəmdir), heç bir qeyri-müəyyənlik olmayan vizual uğursuzluğu nümayiş etdirin, tənzimləyici riskə (yalnız texniki standartlara deyil) bağlayın və qərar hazır həll yolları ilə bağlayın. Canlı ekran oxuyucu nümayişi kritikdir — texniki olmayan müşahidəçiyə uğursuzluğu inkar edilə bilməz edir. A seçimi nazirlik nümayəndəsinin qiymətləndirə bilməyəcəyi jarqonla başlayır. C seçimi QA mühəndisinin sual-cavab verə bilmə qabiliyyətini və real vaxtda uyğunlaşma imkanını aradan qaldırır. D seçimi peşəsyarsız günahlandırmadır.",
+    "development_tip_en": "When presenting accessibility failures to government clients in Azerbaijan, always anchor to the State Statistics Committee disability data (it gives the impact numbers official legitimacy). Then reference the AZ Digital Accessibility Law obligations — this converts 'best practice' into 'legal requirement', which is the language that moves ministry decision-makers.",
+    "development_tip_az": "Azərbaycanda dövlət müştərilərinə əlçatımlılıq uğursuzluqlarını təqdim edərkən həmişə Dövlət Statistika Komitəsinin əlillər məlumatlarına istinad edin (bu, təsir rəqəmlərinə rəsmi legitimlik verir). Sonra AZ Rəqəmsal Əlçatımlılıq Qanunu öhdəliklərinə istinad edin — bu, 'ən yaxşı təcrübə'ni 'qanuni tələb'ə çevirir, bu isə nazirlik qərar verənlərini hərəkətə gətirən dildir.",
+    "keywords": [
+      "communication",
+      "WCAG 2.1 AA",
+      "accessibility",
+      "E-GOV portal",
+      "screen reader",
+      "aria-live",
+      "ministry client",
+      "non-technical audience",
+      "citizen impact",
+      "180000",
+      "AZ e-accessibility"
+    ]
+  },
+  {
+    "id": "prof-qa-s2-010",
+    "competency_slug": "leadership",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "difficulty": "hard",
+    "type": "sjt",
+    "irt_a": 2.2,
+    "irt_b": 2.0,
+    "irt_c": 0.09,
+    "scenario_en": "You are hired as the first QA lead at a Baku-based fintech startup that has 18 developers and zero QA engineers. The CEO has asked you to 'fix quality' in 90 days before a Series A investor due diligence. The current state: deployments happen every Friday via a manual git push from the tech lead's laptop; there are no automated tests; production bugs are tracked in a WhatsApp group; the team sees QA as 'the person who finds bugs to delay our releases.' In your first week you discover: a developer is manually editing production database values directly (bypassing the application) to fix data issues. When you raise it in the team standup, the response from three senior developers is: 'That's how we've always done it. QA is for bigger companies. We move fast here.' Which sequence of actions represents the MOST effective quality leadership approach for this specific context?",
+    "scenario_az": "Siz 18 proqramçısı olan, lakin sıfır QA mühəndisi olan Bakı əsaslı fintech startupında ilk QA lider kimi işə götürülürsünüz. CEO sizdən Series A investor due diligence-dən 90 gün əvvəl 'keyfiyyəti düzəltməyi' xahiş etdi. Cari vəziyyət: yerləşdirmələr texniki lider noutbukundan əl ilə git push vasitəsilə hər cümə günü baş verir; avtomatlaşdırılmış testlər yoxdur; istehsal xətaları WhatsApp qrupunda izlənilir; komanda QA-ya 'buraxılışlarımızı gecikdirən xəta tapan şəxs' kimi baxır. İlk həftəniz məlum olur ki: bir proqramçı məlumat problemlərini həll etmək üçün birbaşa istehsal verilənlər bazası dəyərlərini əl ilə redaktə edir (tətbiqi atlayaraq). Komanda standap-ında bunu gündəmə gətirdiyinizde, üç baş proqramçıdan cavab gəlir: 'Biz həmişə belə etmişik. QA böyük şirkətlər üçündür. Biz burada sürətli hərəkət edirik.' Hansı hərəkət ardıcıllığı bu spesifik kontekst üçün ən EFFEKTİV keyfiyyət liderliyi yanaşmasını təmsil edir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Immediately escalate the manual database editing to the CEO as a critical risk; issue a formal process document banning the practice; request developer sign-off on the new policy within 48 hours",
+        "text_az": "Əl ilə verilənlər bazası redaktəsini dərhal kritik risk kimi CEO-ya eskalasiya edin; təcrübəni qadağan edən rəsmi proses sənədi buraxın; 48 saat ərzində yeni siyasətin proqramçı imzalanmasını tələb edin"
+      },
+      {
+        "key": "B",
+        "text_en": "Accept the current culture — attempting to change a 'move fast' startup in 90 days will create resistance and is unrealistic; focus only on documenting existing processes for the due diligence",
+        "text_az": "Mövcud mədəniyyəti qəbul edin — 90 günde 'sürətli hərəkət et' startupını dəyişdirməyə cəhd müqavimət yaradacaq və qeyri-realistikdir; yalnız due diligence üçün mövcud prosesləri sənədləşdirməyə fokuslanın"
+      },
+      {
+        "key": "C",
+        "text_en": "Address the database editing risk privately with the tech lead first (not in standup — public callouts entrench resistance); propose a 'safety net first' approach: add a read-only staging DB mirror for debugging within week 1; introduce one automated smoke test for the payment flow (highest business risk) before any culture conversation; let the test catch its first real bug in production and use that moment to shift the 'QA delays releases' narrative",
+        "text_az": "Verilənlər bazası redaktəsi riskini əvvəlcə texniki liderlə özəl şəkildə həll edin (standup-da deyil — açıq çağırışlar müqaviməti möhkəmləndirir); birinci həftə içərisində hata ayıklama üçün yalnız oxuma statuslu staging DB güzgüsü əlavə etmək üçün 'əvvəlcə təhlükəsizlik toru' yanaşması təklif edin; hər hansı bir mədəniyyət söhbətindən əvvəl ödəniş axını üçün bir avtomatik tüstü testi tətbiq edin (ən yüksək biznes riski); testin istehsalatda ilk həqiqi xətanı tutmasını gözləyin və o anı 'QA buraxılışları gecikdirir' rəvayətini dəyişdirmək üçün istifadə edin"
+      },
+      {
+        "key": "D",
+        "text_en": "Write a comprehensive QA strategy document covering all testing levels, CI/CD requirements, code review gates, and metrics targets; present it to the full team in a 2-hour kickoff meeting",
+        "text_az": "Bütün test səviyyələrini, CI/CD tələblərini, kod icmalı qapılarını və metrik hədəfləri əhatə edən hərtərəfli QA strategiya sənədi yazın; onu 2 saatlıq başlanğıc görüşündə tam komandaya təqdim edin"
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "Option C is the only answer that demonstrates understanding of organizational change leadership in a resistant low-trust engineering culture. The key insights: (1) public callouts at standup entrench the 'QA vs developers' dynamic — private conversation with the tech lead is more effective; (2) 'safety net first' means you remove a real risk (manual DB editing) by providing a better alternative (staging mirror), not by banning the behavior; (3) one automated test for the highest-risk flow is a minimal viable proof of value — the test catching a real bug converts skeptics better than any process document; (4) the narrative shift ('QA enables releases') happens through evidence, not persuasion. Option A creates immediate political opposition from senior developers. Option D is the classic QA 'process push' that fails in startups — comprehensive documents without relationship trust get ignored. Option B abandons the core mission.",
+    "feedback_az": "C seçimi müqavimətli, aşağı etibar mühəndislik mədəniyyətində təşkilati dəyişiklik liderliyi anlayışını nümayiş etdirən yeganə cavabdır. Əsas fikirlər: (1) standup-da açıq çağırışlar 'QA-proqramçılar' dinamikasını möhkəmləndirir — texniki liderlə özəl söhbət daha effektivdir; (2) 'əvvəlcə təhlükəsizlik toru' deməkdir ki, davranışı qadağan etmək əvəzinə daha yaxşı alternativ (staging güzgüsü) təqdim etməklə həqiqi bir riski (əl ilə DB redaktəsi) aradan qaldırırsınız; (3) ən yüksək riskli axın üçün bir avtomatik test minimum canlı dəyər sübutudur — həqiqi xətanı tutan test şübhəciləri hər hansı proses sənədindən daha yaxşı şəkildə dəyişdirir; (4) rəvayət dəyişikliyi ('QA buraxılışları mümkün edir') inandırma yolu ilə deyil, sübutla baş verir. A seçimi baş proqramçılardan dərhal siyasi müxalifət yaradır. D seçimi startaplarda uğursuz olan klassik QA 'proses itələmə'sidir — münasibət güvənliyi olmadan hərtərəfli sənədlər nəzərə alınmır. B seçimi əsas missiyadan imtina edir.",
+    "development_tip_en": "When building quality culture from zero in an AZ fintech startup, your first 30 days are not about process — they are about credibility. Find the one bug in production that the team already knows about but hasn't fixed. Write an automated test for it. Make it catch the bug in CI. Now you have a concrete artifact that speaks the team's language: 'this test saved us from shipping that bug again.' Culture change in startups is bottom-up through artifacts, not top-down through documents.",
+    "development_tip_az": "AZ fintech startapında sıfırdan keyfiyyət mədəniyyəti qurarkən ilk 30 gününüz proses haqqında deyil — etibarlılıq haqqındadır. Komandanın artıq bildiyi, lakin düzəltmədiyi istehsalatdakı bir xətanı tapın. Onun üçün avtomatlaşdırılmış test yazın. CI-da xətanı tutmasını təmin edin. İndi komandanın dilini danışan konkret bir artefaktınız var: 'bu test bizi həmin xətanı yenidən göndərməkdən qorudu.' Startaplarda mədəniyyət dəyişikliyi sənədlər vasitəsilə yuxarıdan aşağıya deyil, artefaktlar vasitəsilə aşağıdan yuxarıya doğru gedir.",
+    "keywords": [
+      "leadership",
+      "quality culture",
+      "fintech startup",
+      "Baku",
+      "manual DB editing",
+      "organizational change",
+      "smoke test",
+      "due diligence",
+      "Series A",
+      "resistance",
+      "trust"
+    ]
+  }
+]

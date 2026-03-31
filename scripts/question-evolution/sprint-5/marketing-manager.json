@@ -1,0 +1,498 @@
+[
+  {
+    "id": "prof-mkt-s5-001",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.4,
+    "irt_b": -0.8,
+    "irt_c": 0.1,
+    "scenario_en": "You are launching a B2C e-commerce brand targeting both 18-34 urban Azerbaijanis and 35-55 regional buyers. Your digital team proposes running search ads only on Google. A senior colleague flags that Yandex.az captures 28% of search queries among the 35-55 demographic in Azerbaijan. Your monthly search budget is ₼4,000.",
+    "scenario_az": "Siz 18-34 yaşlı şəhər azərbaycanlılarını və 35-55 yaşlı regional alıcıları hədəf alan B2C e-ticarət brendini işə salırsınız. Rəqəmsal komandanız yalnız Google-da axtarış reklamları yerləşdirməyi təklif edir. Bir yoldaşınız Yandex.az-ın Azərbaycanda 35-55 yaş qrupunda axtarış sorgularının 28%-ni tutduğunu qeyd edir. Aylıq axtarış büdcəniz 4.000 ₼-dir.",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Keep 100% on Google — it has global dominance and better analytics.",
+        "text_az": "100%-i Google-da saxlayın — qlobal üstünlüyü var və analitikası daha yaxşıdır."
+      },
+      {
+        "key": "B",
+        "text_en": "Split ₼2,800 Google / ₼1,200 Yandex.az, with Yandex targeting 35-55 keywords in Azerbaijani and Russian.",
+        "text_az": "2.800 ₼ Google / 1.200 ₼ Yandex.az bölüşdürün, Yandex-də 35-55 yaş açar sözlərini Azərbaycan və rus dillərinə yönləndirin."
+      },
+      {
+        "key": "C",
+        "text_en": "Move entirely to Yandex.az to capture underserved demand.",
+        "text_az": "Xidmət göstərilməyən tələbi ödəmək üçün tam olaraq Yandex.az-a keçin."
+      },
+      {
+        "key": "D",
+        "text_en": "Pause search and redirect all budget to Instagram and TikTok.",
+        "text_az": "Axtarışı dayandırın və bütün büdcəni Instagram və TikTok-a yönləndirin."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. Yandex.az holds 28% search share among the 35-55 demographic — a segment that indexes high for considered purchases. A proportional split (70/30) captures both audiences. A ignores a documented AZ market reality. C abandons the dominant engine for the 18-34 segment. D exits the high-intent search channel entirely, wasting purchase-ready traffic.",
+    "feedback_az": "B düzgündür. Yandex.az 35-55 yaş qrupunda 28% axtarış payına malikdir — bu seqment düşünülmüş alışlar üçün yüksək indeksə malikdir. Mütənasib bölgü (70/30) hər iki auditoriyani əhatə edir. A sənədləşdirilmiş AZ bazar reallığını nəzərə almır. C 18-34 seqment üçün dominant mühərriki tərk edir. D yüksək niyyətli axtarış kanalını tamamilə bağlayır.",
+    "development_tip_en": "In Azerbaijan, dual-engine SEO/SEM is not optional for brands targeting 35+ buyers. Yandex.az and Russian-language keyword variants are essential for regional penetration. Always segment campaign analytics by engine and demographic cohort separately.",
+    "development_tip_az": "Azərbaycanda 35+ alıcıları hədəfləyən brendlər üçün ikili mühərrik SEO/SEM məcburi hesab edilir. Yandex.az və rus dilli açar söz variantları regional nüfuz üçün vacibdir. Kampaniya analitikasını həmişə mühərrik və demoqrafik kohort üzrə ayrı-ayrılıqda seqmentləşdirin.",
+    "london_delta": "A London marketer following Google-first doctrine (standard IAB Europe digital planning guidance, which assumes Google 90%+ search dominance in Western markets) would allocate 100% budget to Google. AZ consequence: Yandex.az 35-55 demographic missed entirely — Kapital Bank and Lalafo.az competitors who run dual-engine campaigns capture that purchase-ready segment at lower CPC due to reduced auction competition.",
+    "az_institutions": [
+      "Yandex.az",
+      "Kapital Bank",
+      "Lalafo.az"
+    ],
+    "tags": [
+      "marketing",
+      "az-specific",
+      "search-marketing",
+      "dual-engine",
+      "yandex"
+    ]
+  },
+  {
+    "id": "prof-mkt-s5-002",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency_slug": "communication",
+    "difficulty": "easy",
+    "type": "sjt",
+    "irt_a": 1.3,
+    "irt_b": -0.6,
+    "irt_c": 0.12,
+    "scenario_en": "You are presenting a Ramazan social media content calendar to the marketing director of Azercell, Azerbaijan's largest telecom with 47% market share. The calendar includes daily posts for the 30-day Ramazan period. Slides 3-7 feature product promotion posts using food and drink imagery — bowls of plov, glasses of tea — scheduled for daytime hours. The director has not yet reviewed the deck.",
+    "scenario_az": "Siz 47% bazar payına sahib Azərbaycanın ən böyük telekomunikasiya şirkəti Azercell-in marketinq direktoruna Ramazan sosial media kontent təqvimini təqdim edirsiniz. Təqvim 30 günlük Ramazan dövrü üçün gündəlik paylaşımları əhatə edir. 3-7-ci slaydlarda gündüz saatlarına planlanmış plov kasaları, çay stəkanları kimi qida və içki şəkilləri olan məhsul tanıtım postları var. Direktor hələ dəstəyi nəzərdən keçirməyib.",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Present the full calendar as planned — let the director flag any concerns.",
+        "text_az": "Planlandığı kimi tam təqvimi təqdim edin — direktoru öz narahatlıqlarını bildirsin."
+      },
+      {
+        "key": "B",
+        "text_en": "Before presenting, verbally note: 'Slides 3-7 use food imagery — I recommend we shift those posts to post-iftar hours and replace daytime slots with non-food creative. Flagging this before we walk through it.'",
+        "text_az": "Təqdim etməzdən əvvəl şifahi qeyd edin: '3-7-ci slaydlarda qida şəkilləri var — həmin postları iftar sonrası saatlara keçirməyi və gündüz slotlarını qidasız kreativlə əvəz etməyi tövsiyə edirəm. Bunu nəzərdən keçirməzdən əvvəl qeyd edirəm.'"
+      },
+      {
+        "key": "C",
+        "text_en": "Skip slides 3-7 entirely during the presentation without explanation.",
+        "text_az": "Təqdimat zamanı 3-7-ci slaydları izahat vermədən tamamilə atlayın."
+      },
+      {
+        "key": "D",
+        "text_en": "Send the calendar by email and let the director review it asynchronously to avoid a difficult conversation.",
+        "text_az": "Çətin söhbətdən qaçmaq üçün təqvimi e-poçtla göndərin və direktorun onu asinxron olaraq nəzərdən keçirməsinə imkan verin."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. Proactively flagging the sensitivity before the director sees the slides demonstrates cultural competence and protects the client relationship. Ramazan is a major AZ religious observation — daytime food/drink imagery in brand content is a well-known sensitivity for AZ audiences. A puts the client in the uncomfortable position of correcting you. C is evasive and unprofessional. D is avoidant and delays a necessary quality correction.",
+    "feedback_az": "B düzgündür. Direktor slaydları görməzdən əvvəl həssaslığı proaktiv şəkildə qeyd etmək mədəni səriştəni nümayiş etdirir və müştəri münasibətini qoruyur. Ramazan Azərbaycanda mühüm dini müşahidədir — gündüz saatlarında brend kontentdə qida/içki şəkilləri AZ auditoriyası üçün məlum bir həssaslıqdır. A müştərini sizi düzəltmək üçün narahat vəziyyətə salır. C qaçaqdır və qeyri-peşəkardır. D qaçınmadır və zəruri keyfiyyət korreksiyasını gecikdirir.",
+    "development_tip_en": "For AZ clients in Ramazan, the professional standard is to audit all content for food, drink, and celebratory imagery before any client-facing presentation. Shifting daytime posts to post-iftar (after 20:00 in April) is the correct mitigation — engagement also increases at that time.",
+    "development_tip_az": "Ramazan ayında AZ müştəriləri üçün peşəkar standart, hər hansı müştəri qarşısında təqdimetmədən əvvəl bütün kontenti qida, içki və bayram şəkilləri üçün yoxlamaqdır. Gündüz postlarını iftar sonrasına (Aprel ayında saat 20:00-dan sonra) keçirmək düzgün azaldma üsuludur — bu vaxt nişanlanma da artır.",
+    "london_delta": "A London marketer following ASA/CAP Code scheduling guidance (which focuses on watershed rules for alcohol and gambling, not religious observation periods) would schedule food/drink imagery based on audience peak times alone — typically 12:00-14:00 for food brands. AZ consequence: Azercell brand reputation risk in a market where 96% of the population identifies as Muslim — the post goes live, community backlash follows, and CBA-regulated financial co-promotions in the calendar face review.",
+    "az_institutions": [
+      "Azercell",
+      "CBA"
+    ],
+    "tags": [
+      "marketing",
+      "az-specific",
+      "ramazan",
+      "cultural-sensitivity",
+      "communication"
+    ]
+  },
+  {
+    "id": "prof-mkt-s5-003",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.5,
+    "irt_b": 0.3,
+    "irt_c": 0.13,
+    "scenario_en": "It is February 2016. The AZN has devalued twice — first in February 2015 (34% drop) and again in December 2015 (48% additional drop against USD). You are the marketing director for a mid-size AZ retail chain. Your annual marketing budget was set in AZN in January 2015. Your current OOH (billboard) contracts with JCDecaux Azerbaijan are priced in USD and now cost 2.1× more in AZN terms. Your digital agency invoices in AZN. You must recommend a Q1-Q2 2016 channel reallocation to the board.",
+    "scenario_az": "2016-cı ilin fevral ayıdır. AZN iki dəfə ucuzlaşıb — əvvəlcə 2015-ci ilin fevralında (34% düşüş), sonra isə 2015-ci ilin dekabrında (USD qarşısında əlavə 48% düşüş). Siz orta ölçülü AZ pərakəndə ticarət şəbəkəsinin marketinq direktorusunuz. İllik marketinq büdcəniz 2015-ci ilin yanvarında AZN-də müəyyən edilib. JCDecaux Azerbaijan ilə mövcud OOH (billboard) müqavilələriniz USD-də qiymətləndirilir və indi AZN baxımından 2,1 dəfə baha başa gəlir. Rəqəmsal agentliyin hesab-fakturaları AZN-dədir. Siz 2016-cı ilin I-II rübl üçün kanal yenidən bölüşdürülməsini idarə heyətinə tövsiyə etməlisiniz.",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Honour all OOH contracts — breaking contracts damages brand credibility with JCDecaux Azerbaijan.",
+        "text_az": "Bütün OOH müqavilələrinə riayət edin — müqavilələri pozmaq JCDecaux Azerbaijan ilə brend etibarlılığını zədələyir."
+      },
+      {
+        "key": "B",
+        "text_en": "Immediately exit all OOH, move 100% to digital — the budget is the same in AZN and digital CPMs are lower.",
+        "text_az": "Dərhal bütün OOH-dan çıxın, 100%-i rəqəmsala köçürün — büdcə AZN-də eynidir və rəqəmsal CPM-lər daha aşağıdır."
+      },
+      {
+        "key": "C",
+        "text_en": "Negotiate OOH contract renegotiation or early exit clauses with JCDecaux Azerbaijan, reduce OOH to highest-ROI sites only, reallocate freed AZN to Yandex.az display and Instagram — which maintained AZN pricing — and shift messaging from aspirational to value/reliability.",
+        "text_az": "JCDecaux Azerbaijan ilə OOH müqaviləsinin yenidən müzakirəsi və ya erkən çıxış bəndlərini danışıq yolu ilə həll edin, OOH-u yalnız ən yüksək ROI saytlarına qədər azaldın, azad olunmuş AZN-i AZN qiymətlərini qoruyan Yandex.az display və Instagram-a köçürün və mesajı arzuolunan dəyərərdən dəyər/etibarlılığa keçirin."
+      },
+      {
+        "key": "D",
+        "text_en": "Freeze all marketing spend and wait for the AZN to stabilise before committing to any channel.",
+        "text_az": "Bütün marketinq xərclərini dondurun və hər hansı bir kanala öhdəlik götürməzdən əvvəl AZN-nin sabitləşməsini gözləyin."
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct. The 2015-2016 AZN devaluation created a structural cost asymmetry: USD-denominated OOH became 2.1× more expensive in real terms while AZN-denominated digital maintained its relative cost. The correct response is partial OOH exit (negotiated, not unilateral), concentration on highest-ROI placements, reallocation to AZN-priced digital channels, and a messaging shift to value/reliability — which indexed higher in AZ consumer research during devaluation periods. A ignores the structural cost problem. B is too abrupt — OOH still contributes brand salience for retail. D is commercially passive during a critical retention period.",
+    "feedback_az": "C düzgündür. 2015-2016 AZN devalvasiyası struktural xərc asimmetriyası yaratdı: USD-denominated OOH real baxımdan 2,1 dəfə bahalı oldu, AZN-denominated rəqəmsal isə nisbi xərclərini qorudu. Düzgün cavab qismən OOH çıxışı (danışıqlı, birtərəfli deyil), ən yüksək ROI yerləşdirmələrə konsentrasiya, AZN qiymətli rəqəmsal kanallara yenidən bölüşdürmə və dəyər/etibarlılığa mesaj keçişidir. A struktural xərc problemini nəzərə almır. B çox qəfil — OOH pərakəndə ticarət üçün hələ də brend sezilirliyi təmin edir. D kritik saxlama dövrü zamanı ticarət baxımından passivdir.",
+    "development_tip_en": "AZ marketers who lived through 2015-2016 learned to classify channels by invoice currency, not just CPM. USD-denominated contracts (many OOH vendors, some imported media tools) carry FX risk. Maintain a channel currency map and include AZN-pricing negotiation as a standard vendor contract clause.",
+    "development_tip_az": "2015-2016-cı illəri yaşayan AZ marketoloqlar kanalları yalnız CPM-ə görə deyil, hesab-faktura valyutasına görə təsnif etməyi öyrəndilər. USD-denominated müqavilələr (bir çox OOH satıcıları, bəzi idxal edilmiş media alətləri) valyuta riskini daşıyır. Kanal valyuta xəritəsini saxlayın və AZN qiymətləndirməsi danışıqlarını standart satıcı müqaviləsi bəndi kimi daxil edin.",
+    "london_delta": "A London marketer following standard CMA (Competition and Markets Authority) contract fulfilment guidance — which prioritises honouring contractual commitments to maintain market competition integrity — would maintain all OOH contracts. AZ consequence: JCDecaux Azerbaijan USD contracts consume 62% of the Q1 budget at post-devaluation exchange rates, leaving insufficient AZN for digital activation during the highest retail traffic quarter of the year.",
+    "az_institutions": [
+      "JCDecaux Azerbaijan",
+      "Yandex.az"
+    ],
+    "tags": [
+      "marketing",
+      "az-specific",
+      "devaluation",
+      "ooh",
+      "budget-reallocation",
+      "adaptability"
+    ]
+  },
+  {
+    "id": "prof-mkt-s5-004",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.6,
+    "irt_b": 0.5,
+    "irt_c": 0.11,
+    "scenario_en": "You are the brand manager at Kapital Bank, Azerbaijan's second-largest retail bank. On Monday morning, CBA (Central Bank of Azerbaijan) issues a formal written request under advertising regulations requiring that your current TV and digital campaign for a consumer loan product include specific risk disclosure language within 72 hours. The campaign is live across 3 TV channels and Meta/Instagram. The creative agency is on a 5-day turnaround for any revision. Today is Monday 09:00.",
+    "scenario_az": "Siz Azərbaycanın ikinci ən böyük pərakəndə bankı olan Kapital Bank-da brend menecersiniz. Bazar ertəsi səhər CBA (Azərbaycan Mərkəzi Bankı) reklam qaydaları çərçivəsində formal yazılı tələb göndərir: istehlak krediti məhsuluna dair cari TV və rəqəmsal kampaniyada 72 saat ərzində xüsusi risk açıqlama dili əlavə edilməlidir. Kampaniya 3 TV kanalında və Meta/Instagram-da yayımlanır. Kreativ agentliyin hər hansı revizyona 5 günlük dönüş müddəti var. Bu gün bazar ertəsi saat 09:00-dır.",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Notify the creative agency now and ask for an expedited 72-hour turnaround — the CBA deadline drives the timeline.",
+        "text_az": "Kreativ agentliyə indi bildirin və CBA son tarixinin zaman çizelgesini idarə etdiyi 72 saatlıq sürətləndirilmiş dönüş müddəti istəyin."
+      },
+      {
+        "key": "B",
+        "text_en": "Pause digital immediately, request CBA a 5-day extension, continue TV unchanged pending agency turnaround.",
+        "text_az": "Rəqəmsalı dərhal dayandırın, CBA-dan 5 günlük uzadılma istəyin, agentliyin cavab müddəti gözlənilən müddətdə TV-ni dəyişmədən davam etdirin."
+      },
+      {
+        "key": "C",
+        "text_en": "Pause ALL campaign channels within 4 hours, deploy text-overlay patch for digital (in-house) same day, brief agency for broadcast version — aim to restore within 48 hours with disclosure included.",
+        "text_az": "4 saat ərzində Bütün kampaniya kanallarını dayandırın, rəqəmsal üçün həmin gün mətn-overlay yamağı yerləşdirin (daxili), yayım versiyası üçün agentliyə tapşırıq verin — açıqlama daxil edilmiş şəkildə 48 saat ərzində bərpaya çalışın."
+      },
+      {
+        "key": "D",
+        "text_en": "Continue running the campaign and prepare a compliance report to submit to CBA explaining the 5-day agency constraint.",
+        "text_az": "Kampaniyaya davam edin və 5 günlük agentlik məhdudiyyətini izah edən CBA-ya təqdim etmək üçün uyğunluq hesabatı hazırlayın."
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct. CBA's 72-hour requirement is a regulatory deadline, not a negotiating position. The correct response is immediate pause of all channels (protecting Kapital Bank from continued non-compliance), a same-day digital patch using text overlay (which does not require full agency turnaround), and an accelerated agency brief for the broadcast version. A correctly escalates urgency but does not address the gap between 72 hours and the 5-day agency turnaround. B requesting an extension from CBA on a formal advertising regulation notice is high-risk and typically refused. D is a direct compliance violation — continuing to run a flagged campaign risks CBA sanction and potential campaign suspension order.",
+    "feedback_az": "C düzgündür. CBA-nın 72 saatlıq tələbi tənzimləyici son tarixdir, danışıq mövqeyi deyil. Düzgün cavab bütün kanalların dərhal dayandırılması (Kapital Bank-ı davam edən uyğunsuzluqdan qoruma), mətn overlay-dan istifadə edərək eyni gün rəqəmsal yamaq (tam agentlik dönüşü tələb etmir) və yayım versiyası üçün sürətləndirilmiş agentlik tapşırığıdır. A aktiv şəkildə təcililiyi artırır, lakin 72 saat ilə 5 günlük agentlik dönüşü arasındakı boşluğu həll etmir. B CBA-dan formal reklam tənzimlənməsi bildirişinə uzadılma istəmək yüksək risklidir və adətən rədd edilir. D birbaşa uyğunsuzluq pozuntusudur — işarələnmiş kampaniyanı yayımlamağa davam etmək CBA sanksiyası və potensial kampaniya dayandırılması əmri riskini yaradır.",
+    "development_tip_en": "CBA advertising regulation requests carry strict 72-hour windows. AZ financial sector brand managers must maintain in-house text-overlay capability for exactly this scenario — waiting for a creative agency is not a compliance strategy. Build a 'compliance patch kit' with pre-approved disclosure language for each product type.",
+    "development_tip_az": "CBA reklam tənzimlənməsi tələbləri ciddi 72 saatlıq pəncərələrə malikdir. AZ maliyyə sektoru brend menecerləri məhz bu ssenari üçün daxili mətn-overlay imkanını qorumalıdır — kreativ agentliyi gözləmək uyğunluq strategiyası deyil. Hər məhsul növü üçün əvvəlcədən təsdiqlənmiş açıqlama dili ilə 'uyğunluq yamaq dəsti' yaradın.",
+    "london_delta": "A London marketer following FCA Section 21 of the Financial Services and Markets Act 2000 (financial promotions approval process) would know that an approved promotion can continue until a formal CMA or FCA suspension order — and would prepare a compliance report rather than self-pausing. AZ consequence: CBA advertising regulation operates on a 72-hour compulsory modification window with no grace period; continuing to run earns a formal sanction record against Kapital Bank's advertising compliance file, escalating to potential product promotion ban.",
+    "az_institutions": [
+      "Kapital Bank",
+      "CBA"
+    ],
+    "tags": [
+      "marketing",
+      "az-specific",
+      "cba-compliance",
+      "financial-advertising",
+      "reliability"
+    ]
+  },
+  {
+    "id": "prof-mkt-s5-005",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.7,
+    "irt_b": 0.7,
+    "irt_c": 0.1,
+    "scenario_en": "You are the head of brand for PASHA Holding, Azerbaijan's largest diversified conglomerate. PASHA Holding has approved a new regional positioning centred on the Caspian corridor — framing Azerbaijan as a bridge between Europe and Central Asia, with PASHA as the enabling infrastructure. Your creative team has delivered a campaign concept that instead focuses on Baku city aesthetics: flame towers, modern architecture, urban lifestyle. The concept is polished and the team is proud of it. The Caspian corridor brief was given 6 weeks ago in writing.",
+    "scenario_az": "Siz Azərbaycanın ən böyük diversifikasiya edilmiş konqlomeratı PASHA Holding-in brend rəhbərisiniz. PASHA Holding Xəzər dəhlizi ətrafında yeni regional mövqeləndirməni təsdiqləyib — Azərbaycanı Avropa ilə Mərkəzi Asiya arasında körpü kimi təqdim edir, PASHA isə imkan verən infrastruktur kimi. Kreativ komandanız əvəzinə Bakı şəhər estetikasına — alov qüllələri, müasir memarlıq, şəhər həyat tərzi — fokuslanmış kampaniya konsepsiyası təqdim edib. Konsepsiya cilalanmışdır və komanda bundan qürurlananır. Xəzər dəhlizi brifinq 6 həftə əvvəl yazılı şəkildə verilmişdi.",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Approve the concept — the team worked hard and the Baku aesthetic is still broadly on-brand for PASHA Holding.",
+        "text_az": "Konsepsiyanı təsdiqləyin — komanda çox çalışıb və Bakı estetikası hələ PASHA Holding üçün geniş şəkildə brendə uyğundur."
+      },
+      {
+        "key": "B",
+        "text_en": "Reject the concept in the all-team meeting and reassign the brief to a different creative lead.",
+        "text_az": "Bütün komanda görüşündə konsepsiyanı rədd edin və brifinqi fərqli kreativ rəhbərə yenidən tapşırın."
+      },
+      {
+        "key": "C",
+        "text_en": "Meet privately with the creative lead before any group review: acknowledge the quality of execution, be direct that the concept does not deliver the Caspian corridor brief, diagnose whether the brief was unclear or the direction was a creative choice, and set a 48-hour re-brief with specific narrative anchors.",
+        "text_az": "Hər hansı qrup baxışından əvvəl kreativ rəhbərlə özəl görüşün: icraat keyfiyyətini tanıyın, konsepsiyanın Xəzər dəhlizi brifinqini yerinə yetirmədiyini birbaşa bildirin, brifinqin qeyri-aydın olub-olmadığını və ya istiqamətin yaradıcı seçim olub-olmadığını diaqnoz edin və xüsusi narrativ lövbərlərlə 48 saatlıq yenidən brifinq müəyyən edin."
+      },
+      {
+        "key": "D",
+        "text_en": "Ask PASHA Holding's marketing committee to clarify the brief again before giving the team any feedback.",
+        "text_az": "Komandaya hər hansı rəy vermədən əvvəl PASHA Holding-in marketinq komitəsindən brifinqi yenidən aydınlaşdırmağı xahiş edin."
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct. Effective brand leadership at PASHA Holding requires protecting both the strategic positioning and the team's capability to deliver it. A private conversation before group review preserves psychological safety, enables honest diagnosis, and creates a clear corrective path. A approves off-brief work — this would require re-explaining to PASHA Holding's committee later. B public rejection damages team morale and does not diagnose the root cause. D escalates backwards — the brief was written and signed off 6 weeks ago, the issue is execution not clarity.",
+    "feedback_az": "C düzgündür. PASHA Holding-də effektiv brend rəhbərliyi həm strateji mövqeləndirməni, həm də komandanın onu yerinə yetirmə qabiliyyətini qorumağı tələb edir. Qrup baxışından əvvəl özəl söhbət psixoloji təhlükəsizliyi qoruyur, dürüst diaqnozu mümkün edir və aydın korrektiv yol yaradır. A brifinqdən kənar işi təsdiqləyir — bu, daha sonra PASHA Holding-in komitəsinə yenidən izah tələb edəcək. B ictimai rədd komanda mənəviyyatına zərər verir və kök səbəbi diaqnoz etmir. D irəliyə deyil, geriyə eskalasiya edir — brifinq 6 həftə əvvəl yazıldı və imzalandı, problem aydınlıq deyil, icraatdır.",
+    "development_tip_en": "PASHA Holding's Caspian corridor narrative is a locked strategic positioning — it is tied to Azerbaijan's state-level economic diplomacy. Creative teams may drift to Baku lifestyle imagery because it is more tangible. Brief anchoring in writing with visual mood boards and 3 explicit 'off-limit' directions reduces this drift.",
+    "development_tip_az": "PASHA Holding-in Xəzər dəhlizi narrativi kilidlənmiş strateji mövqeləndirmədir — Azərbaycanın dövlət səviyyəli iqtisadi diplomatiyası ilə bağlıdır. Kreativ komandalar Bakı həyat tərzi şəkillərinə meyl edə bilər, çünki bu daha konkretdir. Vizual mood board-larla yazılı brifinq lövbərləmə və 3 açıq 'qadağan istiqamət' bu meyli azaldır.",
+    "london_delta": "A London marketer following ASA/CAP Code best practice for B2B brand campaigns (which emphasises creative latitude for brand-led narratives and typically defers to the agency's creative interpretation) would review the Baku concept against the brief flexibly and likely approve with minor adjustments. AZ consequence: PASHA Holding's Caspian corridor positioning is aligned with SOCAR and Azerbaijan's Belt-and-Road integration narrative — deviating to Baku lifestyle imagery in regional markets (Georgia, Kazakhstan) signals a local brand, not a corridor infrastructure brand, undermining the B2B positioning with international investors.",
+    "az_institutions": [
+      "PASHA Holding",
+      "SOCAR"
+    ],
+    "tags": [
+      "marketing",
+      "az-specific",
+      "brand-leadership",
+      "caspian-corridor",
+      "creative-direction"
+    ]
+  },
+  {
+    "id": "prof-mkt-s5-006",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.5,
+    "irt_b": 0.9,
+    "irt_c": 0.14,
+    "scenario_en": "You are the marketing manager for a halal-certified food brand, Şirvanşah Foods, launching a product campaign during Ramazan. The campaign brief calls for aspirational lifestyle imagery. Your social media team has scheduled 14:00 posts featuring people enjoying meals outdoors in sunny weather. A junior team member flags that this is the middle of the fasting day. The agency argues the imagery does not show anyone eating — just the food product in an outdoor setting.",
+    "scenario_az": "Siz Ramazan zamanı məhsul kampaniyası başladan halal sertifikatlı qida brendinin — Şirvanşah Foods-un marketinq menecerisiniz. Kampaniya brifinqi arzuolunan həyat tərzi şəkillərini nəzərdə tutur. Sosial media komandanız günəşli havada açıq havada yeməkləri zövqlə yeyən insanları göstərən saat 14:00 postları planlaşdırıb. Gənc komanda üzvü bunun orucluq gününün ortası olduğunu qeyd edir. Agentlik isə şəkillərin heç kiminin yemək yeməsini göstərmədiyini — sadəcə açıq hava mühitindəki qida məhsulunu göstərdiyini müdafiə edir.",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Accept the agency's argument — the food product is not being consumed in the imagery, so there is no safeguarding issue.",
+        "text_az": "Agentliyin arqumentini qəbul edin — şəkillərdə qida məhsulu istehlak edilmir, ona görə də mühafizə problemi yoxdur."
+      },
+      {
+        "key": "B",
+        "text_en": "Reschedule all product visibility posts to post-iftar hours (after 20:00), replace daytime slots with brand values content (team, sourcing, community), and brief the agency that Ramazan daytime scheduling for food brands is a firm Şirvanşah Foods policy going forward.",
+        "text_az": "Bütün məhsul görünürlük postlarını iftar sonrası saatlara (saat 20:00-dan sonra) yenidən planlaşdırın, gündüz slotlarını brend dəyərləri kontenti (komanda, mənbə, icma) ilə əvəz edin və agentliyə qida brendləri üçün Ramazan gündüz planlamasının irəlidə Şirvanşah Foods-un ciddi siyasəti olduğunu bildirin."
+      },
+      {
+        "key": "C",
+        "text_en": "Add a disclaimer text to each post: 'Respect Ramazan — enjoy after iftar.'",
+        "text_az": "Hər posta xəbərdarlıq mətni əlavə edin: 'Ramazana hörmət edin — iftardan sonra zövq alın.'"
+      },
+      {
+        "key": "D",
+        "text_en": "Pause the entire Ramazan campaign and relaunch after Eid to avoid any risk.",
+        "text_az": "Hər hansı riskdən qaçmaq üçün bütün Ramazan kampaniyasını dayandırın və Bayramdan sonra yenidən başladın."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. Even implicit food imagery — the product in an outdoor daytime setting during Ramazan — creates an association with the act of eating during fasting hours for AZ Muslim audiences. The halal certification of Şirvanşah Foods makes the brand especially visible to observant consumers, raising the stakes. A accepts a technically correct but contextually insensitive argument. C is a performative disclaimer on a post that should not exist at that time. D is commercially self-defeating — Ramazan is a high-purchase period for food brands; the correct response is scheduling adjustment, not cancellation.",
+    "feedback_az": "B düzgündür. Hətta örtülü qida şəkilləri — Ramazan zamanı açıq hava gündüz mühitindəki məhsul — AZ müsəlman auditoriyası üçün orucluq saatlarında yemək yemə aktı ilə əlaqə yaradır. Şirvanşah Foods-un halal sertifikatı brendin dindarlara xüsusilə görünür olmasını təmin edir, riskləri artırır. A texniki cəhətdən düzgün, lakin kontekst baxımından həssas olmayan arqumenti qəbul edir. C həmin vaxtda olmamalı bir postdakı nümayişkaranə xəbərdarlıqdır. D ticarət baxımından özünü məhv edəndir — Ramazan qida brendləri üçün yüksək alış dövrdür; düzgün cavab ləğv deyil, planlamanın tənzimlənməsidir.",
+    "development_tip_en": "For AZ food brands during Ramazan, the professional standard is zero food product visibility between Fajr and Maghrib — typically 05:30-20:00 in April. Replace daytime slots with ingredient sourcing, team story, or community content. Post-iftar engagement for food brands in AZ spikes 3-4× versus regular evenings — schedule highest-conversion content there.",
+    "development_tip_az": "Ramazan zamanı AZ qida brendləri üçün peşəkar standart Fəcr ilə Məğrib arasında — Aprel ayında adətən 05:30-20:00 arasında — sıfır qida məhsulu görünürlüyüdür. Gündüz slotlarını xammal mənbəyi, komanda hekayəsi və ya icma kontenti ilə əvəz edin. AZ-da qida brendləri üçün iftar sonrası nişanlanma adi axşamlara nisbətən 3-4 dəfə artır — ən yüksək konversiya kontentyini oraya planlayın.",
+    "london_delta": "A London marketer following ASA/CAP Code scheduling rules (which do not include religious fasting observation windows as a scheduling constraint for food advertising) would schedule food product imagery at 14:00 as peak daytime engagement. AZ consequence: Şirvanşah Foods halal brand equity — built on explicit trust with observant Muslim consumers — takes a measurable reputational hit; competitor brands with Ramazan-aware scheduling capture share-of-voice during the highest purchase intention period of the year.",
+    "az_institutions": [
+      "Şirvanşah Foods"
+    ],
+    "tags": [
+      "marketing",
+      "az-specific",
+      "ramazan",
+      "halal",
+      "empathy",
+      "safeguarding",
+      "food-brand"
+    ]
+  },
+  {
+    "id": "prof-mkt-s5-007",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.8,
+    "irt_b": 0.8,
+    "irt_c": 0.1,
+    "scenario_en": "You are planning a Q3 paid social campaign for a youth fashion brand targeting 18-28 year olds in Azerbaijan. Platform penetration data for this demographic shows: Instagram 71%, TikTok 44%, YouTube 38%, Facebook 22%. Your campaign objective is brand awareness + purchase intent. Budget is ₼10,000. Your creative team can produce 3 high-quality video assets or 8 static/carousel assets. TikTok's average engagement rate for AZ fashion content is 6.2% versus Instagram's 2.9%.",
+    "scenario_az": "Siz Azərbaycanda 18-28 yaşlıları hədəfləyən gənc moda brendi üçün Q3 ödənişli sosial kampaniya planlaşdırırsınız. Bu demoqrafik üçün platforma nüfuz məlumatları: Instagram 71%, TikTok 44%, YouTube 38%, Facebook 22%. Kampaniya məqsədiniz brend şüuru + alış niyyətidir. Büdcə 10.000 ₼-dir. Kreativ komandanız 3 yüksək keyfiyyətli video aktiv və ya 8 statik/karusel aktiv istehsal edə bilər. AZ moda kontenti üçün TikTok-un ortalama nişanlanma dərəcəsi 2,9% olan Instagram-a qarşı 6,2%-dir.",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Allocate 90% to Instagram — it has the highest penetration and your brand's existing audience is there.",
+        "text_az": "90%-i Instagram-a ayırın — ən yüksək nüfuza malikdir və brendinizin mövcud auditoriyası oradadır."
+      },
+      {
+        "key": "B",
+        "text_en": "Allocate 50% TikTok / 50% Instagram, produce 3 video assets optimised for TikTok vertical format, use static for Instagram. TikTok's higher engagement rate at lower CPM justifies this split for awareness.",
+        "text_az": "50% TikTok / 50% Instagram ayırın, TikTok şaquli formatı üçün optimallaşdırılmış 3 video aktiv istehsal edin, Instagram üçün statik istifadə edin. Daha aşağı CPM-dəki TikTok-un daha yüksək nişanlanma dərəcəsi bu bölgünü məlumatlılıq üçün əsaslandırır."
+      },
+      {
+        "key": "C",
+        "text_en": "Split equally across all four platforms — diversification reduces algorithm risk.",
+        "text_az": "Bütün dörd platforma bərabər bölüşdürün — diversifikasiya alqoritm riskini azaldır."
+      },
+      {
+        "key": "D",
+        "text_en": "Concentrate 70% on YouTube — video content has the highest purchase intent lift for fashion.",
+        "text_az": "70%-i YouTube-a cəmləyin — video kontenti moda üçün ən yüksək alış niyyəti artımına malikdir."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. The data supports a TikTok-weighted split for awareness: 6.2% vs 2.9% engagement rate means TikTok generates 2.1× the audience interaction per impression for this demographic. TikTok's AZ CPM for 18-28 fashion is also lower than Instagram's, improving reach efficiency. Instagram remains essential for the 71% penetration base and purchase intent (link-in-bio, product tags). Producing 3 vertical video assets optimised for TikTok is the right creative decision given the budget constraint. A misreads the brief — penetration alone does not determine media efficiency. C spreads budget too thin across Facebook (22% penetration, low youth engagement). D YouTube at 38% penetration is weaker than both Instagram and TikTok for this demographic.",
+    "feedback_az": "B düzgündür. Məlumatlar məlumatlılıq üçün TikTok ağırlıqlı bölgünü dəstəkləyir: 6,2% - 2,9% nişanlanma dərəcəsi o deməkdir ki, TikTok bu demoqrafik üçün hər impresiyaya 2,1 dəfə daha çox auditoriya qarşılıqlı əlaqəsi yaradır. TikTok-un 18-28 moda üçün AZ CPM-i Instagram-ınkından da aşağıdır, çatma səmərəliliyini artırır. Instagram 71% nüfuz bazası və alış niyyəti üçün (bio-dakı link, məhsul teqləri) vacib olaraq qalır. Büdcə məhdudiyyəti nəzərə alındığında TikTok üçün optimallaşdırılmış 3 şaquli video aktiv istehsal etmək düzgün kreativ qərardır. A brifinqi yanlış oxuyur — nüfuz tək başına media səmərəliliyini müəyyən etmir. C büdcəni Facebook-da (22% nüfuz, aşağı gənclik nişanlanması) çox incə yayır. D bu demoqrafik üçün 38% nüfuzlu YouTube həm Instagram, həm də TikTok-dan zəifdir.",
+    "development_tip_en": "AZ youth marketers must distinguish between penetration (audience size) and engagement rate (audience quality of interaction). For awareness campaigns, TikTok's AZ engagement data consistently outperforms Instagram for 18-28 fashion. Always separate awareness metrics (reach, frequency) from intent metrics (click-through, saves, link taps) when evaluating platform mix.",
+    "development_tip_az": "AZ gənclik marketoloqları nüfuz (auditoriya ölçüsü) ilə nişanlanma dərəcəsi (auditoriya qarşılıqlı əlaqəsinin keyfiyyəti) arasında fərqləndirməlidir. Məlumatlılıq kampaniyaları üçün TikTok-un AZ nişanlanma məlumatları 18-28 moda üçün ardıcıl olaraq Instagram-ı üstələyir. Platforma qarışığını qiymətləndirərkən həmişə məlumatlılıq metriklərini (əhatə, tezlik) niyyət metriklərindən (klik-keçid, saxlama, link toxunuşları) ayırın.",
+    "london_delta": "A London marketer following IAB Europe Transparency & Consent Framework (TCF 2.2) campaign planning guidance — which emphasises first-party data matching and Meta's Custom Audiences as the primary efficiency lever — would concentrate spend on Instagram/Meta for its superior data enrichment and retargeting capabilities. AZ consequence: TCF 2.2's first-party data advantage assumes high GDPR consent rates; AZ market consent infrastructure is less mature, reducing Meta's data advantage, while TikTok's algorithmic reach for 18-28 in AZ operates independently of first-party data — making the TCF-optimised Meta-heavy allocation systematically underperform versus a TikTok-weighted split.",
+    "az_institutions": [],
+    "tags": [
+      "marketing",
+      "az-specific",
+      "tiktok",
+      "instagram",
+      "paid-social",
+      "engagement-rate",
+      "youth-fashion"
+    ]
+  },
+  {
+    "id": "prof-mkt-s5-008",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 1.6,
+    "irt_b": 1.3,
+    "irt_c": 0.0,
+    "scenario_en": "You are the head of marketing for a mid-size AZ consumer electronics retailer, TechMart Azerbaijan, with 12 physical stores in Baku and Ganja. Lalafo.az — Azerbaijan's largest C2C/B2C marketplace with 4.2 million monthly users — has just launched an 'Electronics' category with subsidised seller fees for the next 90 days, directly targeting your category. Simultaneously, your CFO has imposed a 3-month marketing budget freeze effective immediately, citing macroeconomic uncertainty. You cannot spend from the central marketing budget. You still have: your CRM database of 84,000 customers, your 3 store managers who run Mahalle WhatsApp groups, your in-store staff, and your supplier co-op marketing agreements with 4 brands (Samsung, LG, Xiaomi, Bosch). Write your 90-day response strategy.",
+    "scenario_az": "Siz Bakı və Gəncədə 12 fiziki mağazası olan orta ölçülü AZ istehlak elektronikası pərakəndəçisi TechMart Azerbaijan-ın marketinq rəhbərisiniz. 4,2 milyon aylıq istifadəçisi olan Azərbaycanın ən böyük C2C/B2C bazarı Lalafo.az — növbəti 90 gün üçün subsidiyalı satıcı ödənişləri ilə 'Elektronika' kateqoriyası başlatdı, birbaşa sizin kateqoriyanızı hədəf alır. Eyni zamanda, CFO-unuz makroiqtisadi qeyri-müəyyənliyə istinad edərək dərhal qüvvəyə minən 3 aylıq marketinq büdcəsi donması tətbiq edib. Mərkəzi marketinq büdcəsindən xərcləyə bilmirsiniz. Sizdə hələ var: 84.000 müştərinin CRM verilənlər bazası, Mahalle WhatsApp qruplarını idarə edən 3 mağaza meneceri, mağaza daxili heyət və 4 brendlə (Samsung, LG, Xiaomi, Bosch) təchizatçı ortaqlıq marketinq müqavilələriniz. 90 günlük cavab strategiyanızı yazın.",
+    "options": null,
+    "correct_answer": null,
+    "feedback_en": "A strong response activates all zero-budget channels simultaneously: (1) CRM segmentation — identify top 20% by LTV, send re-engagement sequence via SMS/email with service-differentiated messaging (warranty, installation, after-sale support that Lalafo.az cannot match); (2) Mahalle WhatsApp groups — each store manager activates their 50-200 person local groups with hyperlocal offers, product availability, and rapid response — this channel has zero cost and high trust; (3) supplier co-op — immediately activate Samsung/LG/Xiaomi/Bosch co-op budgets for in-store POS, co-branded social posts, and joint promotions — co-op funds are not frozen; (4) in-store staff as content creators — product demo videos, unboxing, honest reviews for Instagram/TikTok using personal accounts (organic, no ad spend); (5) service differentiation positioning — TechMart's physical presence, warranty service centres, installation teams are structural advantages Lalafo.az cannot replicate; (6) Lalafo.az risk narrative — subtly surface issues with C2C electronics purchases (no warranty, counterfeit risk, no installation) through trusted content channels.",
+    "feedback_az": "Güclü cavab bütün sıfır büdcəli kanalları eyni vaxtda aktivləşdirir: (1) CRM seqmentasiyası — LTV üzrə ən yüksək 20%-i müəyyən edin, Lalafo.az-ın uyğuşdura bilməyəcəyi xidmət fərqli mesajlaşma (zəmanət, quraşdırma, satış sonrası dəstək) ilə SMS/e-poçt vasitəsilə yenidən nişanlanma ardıcıllığı göndərin; (2) Mahalle WhatsApp qrupları — hər mağaza meneceri yerli təkliflərlə, məhsul mövcudluğu ilə və sürətli cavab ilə 50-200 nəfərlik yerli qruplarını aktivləşdirir — bu kanalın sıfır xərci var və yüksək etibarı var; (3) təchizatçı ortaqlığı — Samsung/LG/Xiaomi/Bosch ortaqlıq büdcələrini dərhal mağazadaxili POS, birgə brendlənmiş sosial postlar və birgə promosyonlar üçün aktivləşdirin — ortaqlıq fondları donmayıb; (4) mağaza daxili heyət kontent yaradıcıları kimi — şəxsi hesablardan istifadə edərək Instagram/TikTok üçün məhsul demo videoları, qablaşdırmanı açmaq, dürüst rəylər (üzvi, reklam xərci yoxdur); (5) xidmət fərqliləşdirmə mövqeləndirməsi — TechMart-ın fiziki mövcudluğu, zəmanət xidmət mərkəzləri, quraşdırma komandaları Lalafo.az-ın təkrarlaya bilməyəcəyi struktural üstünlüklərdir; (6) Lalafo.az risk narrativi — etibarlı kontent kanalları vasitəsilə C2C elektronika alışlarının problemlərini (zəmanətsiz, saxta risk, quraşdırma yoxdur) dolayısıyla üzə çıxarın.",
+    "development_tip_en": "Mahalle WhatsApp groups are an underutilised zero-cost channel in AZ retail marketing. Groups of 50-200 neighbourhood members trust local store managers they know personally. A well-managed WhatsApp activation during a competitive threat can outperform paid digital for retention — document conversion rates by store to build the business case for formalising this channel.",
+    "development_tip_az": "Mahalle WhatsApp qrupları AZ pərakəndə marketingdə az istifadə edilən sıfır xərcli kanaldır. 50-200 qonşuluq üzvündən ibarət qruplar şəxsən tanıdıqları yerli mağaza menecerinə etibar edir. Rəqabət təhlükəsi zamanı yaxşı idarə olunan WhatsApp aktivasiyası saxlama üçün ödənişli rəqəmsalı üstələyə bilər — bu kanalı rəsmiləşdirmək üçün iş arqumenti qurmaq üçün mağaza üzrə konversiya dərəcələrini sənədləşdirin.",
+    "london_delta": "A London marketer following CMA (Competition and Markets Authority) influencer guidance and standard digital-first competitive response playbook would recommend activating paid influencer partnerships and Google Shopping campaigns to counter the Lalafo.az listing advantage. AZ consequence: paid influencer and Google Shopping both require marketing budget that is frozen — the London-default digital response is entirely budget-dependent, missing the zero-cost AZ channels (Mahalle WhatsApp, supplier co-op, CRM) that are specifically adapted to the AZ retail relationship economy.",
+    "evaluation_rubric": {
+      "level_1": "Response describes general marketing actions without referencing the specific assets available (CRM, WhatsApp groups, co-op agreements) or the Lalafo.az competitive context. No zero-budget constraint acknowledged.",
+      "level_2": "Response acknowledges the budget freeze and identifies 1-2 available channels (e.g., CRM or WhatsApp) but does not construct a coordinated 90-day strategy. Missing supplier co-op activation or service differentiation angle.",
+      "level_3": "Response activates 3-4 channels coherently (CRM, WhatsApp groups, co-op, in-store staff content) with a logical sequencing. Lalafo.az competitive positioning addressed but without specific AZ structural differentiators (warranty, installation, physical service).",
+      "level_4": "Response activates all major zero-budget channels with clear rationale, addresses Lalafo.az's structural limitations (no warranty, C2C risk), uses Mahalle WhatsApp groups with specific reach estimates (50-200 per group × 3 stores), activates supplier co-op funds as non-frozen budget. 90-day phasing present.",
+      "level_5": "Full Level 4 plus: quantified CRM segmentation (top 20% LTV), specific Mahalle WhatsApp group dynamics cited (50-200 neighbourhood members, trust-based conversion), Samsung/LG/Xiaomi/Bosch co-op activation with specific content types (POS, co-branded social), Lalafo.az risk narrative strategy (C2C counterfeit/warranty gap), and a post-freeze budget case built from zero-cost channel performance data. Demonstrates understanding that TechMart Azerbaijan's physical infrastructure is an asset Lalafo.az cannot replicate."
+    },
+    "az_institutions": [
+      "TechMart Azerbaijan",
+      "Lalafo.az",
+      "Samsung",
+      "LG",
+      "Xiaomi",
+      "Bosch"
+    ],
+    "tags": [
+      "marketing",
+      "az-specific",
+      "competitive-response",
+      "zero-budget",
+      "whatsapp",
+      "crm",
+      "lalafo",
+      "adaptability"
+    ]
+  },
+  {
+    "id": "prof-mkt-s5-009",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 1.7,
+    "irt_b": 1.6,
+    "irt_c": 0.0,
+    "scenario_en": "You are the marketing director for a financial services brand, BirBank (subsidiary of Kapital Bank), running a major influencer campaign with a mid-tier AZ influencer (380,000 Instagram followers) promoting a new savings product. Three weeks into the campaign, a third-party audit tool flags that 40% of the influencer's followers are likely fake (bot accounts or purchased followers). The campaign has already delivered ₼180,000 in influencer fees and ₼40,000 in paid amplification. The influencer's contract includes a 'follower authenticity' clause but does not specify a remediation threshold. CBA advertising regulations require that financial product testimonials reflect genuine customer experience. You must decide how to proceed.",
+    "scenario_az": "Siz yeni əmanət məhsulunu tanıdan orta səviyyəli AZ influencer-ı (380.000 Instagram izləyicisi) ilə böyük influencer kampaniyası aparan maliyyə xidmətləri brendinin — Kapital Bank törəmə şirkəti BirBank-ın marketinq direktorusunuz. Kampaniyanın üçüncü həftəsində üçüncü tərəfin audit aləti influencer-ın izləyicilərinin 40%-nin saxta (bot hesablar və ya satın alınmış izləyicilər) olduğunu işarələyir. Kampaniya artıq influencer ödənişlərindən 180.000 ₼ və ödənişli gücləndinrmədən 40.000 ₼ xərcləyib. Influencer müqaviləsi 'izləyici həqiqiliyi' bəndini əhatə edir, lakin bərpa həddi göstərmir. CBA reklam qaydaları tələb edir ki, maliyyə məhsulu şəhadətnamələri həqiqi müştəri təcrübəsini əks etdirsin. Necə davam edəcəyinizə qərar verməlisiniz.",
+    "options": null,
+    "correct_answer": null,
+    "feedback_en": "A strong response addresses four dimensions simultaneously: (1) CBA compliance — the 40% fake follower finding means BirBank is potentially broadcasting a financial product testimonial to a substantially artificial audience, which may trigger CBA's requirement that testimonials reflect genuine reach; immediate legal/compliance team consultation is required; (2) contract enforcement — the 'follower authenticity' clause provides grounds for partial or full fee recovery negotiation; document the audit findings formally before any communication with the influencer; (3) campaign pause decision — given CBA's financial promotion regulations and the unquantified compliance risk, pausing remaining paid amplification is the safest immediate action; this protects against compounding the exposure; (4) audience impact assessment — the genuine 60% (228,000 real followers) may still represent meaningful reach for the target demographic; a data-led decision on whether to continue with renegotiated terms requires authentic engagement rate analysis (not just follower count); (5) internal escalation — BirBank's compliance officer and Kapital Bank's legal team must be briefed before any public action; CBA compliance issues carry institutional risk beyond the marketing budget.",
+    "feedback_az": "Güclü cavab dörd ölçünü eyni vaxtda həll edir: (1) CBA uyğunluğu — 40% saxta izləyici tapıntısı o deməkdir ki, BirBank potensial olaraq əsasən süni auditoriyaya maliyyə məhsulu şəhadətnaməsini yayımlayır, bu da CBA-nın şəhadətnamələrin həqiqi çatmasını əks etdirməsi tələbini işə sala bilər; dərhal hüquqi/uyğunluq komandası ilə məsləhətləşmə tələb olunur; (2) müqavilənin icrası — 'izləyici həqiqiliyi' bəndi qismən və ya tam ödəniş bərpası danışığı üçün əsas verir; influencer-la hər hansı ünsiyyətdən əvvəl audit tapıntılarını rəsmi şəkildə sənədləşdirin; (3) kampaniyasının dayandırılması qərarı — CBA-nın maliyyə təşviqatı qaydaları və kəmiyyətsiz uyğunluq riski nəzərə alındığında, qalan ödənişli gücləndinrməni dayandırmaq ən təhlükəsiz dərhal hərəkətdir; bu, məruz qalmanın güclənməsindən qoruyur; (4) auditoriya təsiri qiymətləndirməsi — həqiqi 60% (228.000 real izləyici) hələ də hədəf demoqrafik üçün mənalı əhatə əlaqəsini təmsil edə bilər; yenidən müzakirə edilmiş şərtlərlə davam edib etməmək barəsində məlumatlara əsaslanan qərar həqiqi nişanlanma dərəcəsi təhlilini tələb edir (yalnız izləyici sayını deyil); (5) daxili eskalasiya — BirBank-ın uyğunluq zabitini və Kapital Bank-ın hüquqi komandası hər hansı ictimai hərəkətdən əvvəl məlumatlandırılmalıdır; CBA uyğunluq məsələləri marketinq büdcəsinin xaricindəki institusional riski daşıyır.",
+    "development_tip_en": "CBA financial product advertising regulations make influencer fake follower exposure a compliance issue, not just a media efficiency issue. AZ financial marketers must include follower authenticity audit clauses with defined remediation thresholds (e.g., >20% fake followers triggers fee renegotiation) in all influencer contracts. Audit using a third-party tool before campaign launch is the professional standard — catching this at week 3 is a process failure.",
+    "development_tip_az": "CBA maliyyə məhsulu reklam qaydaları influencer saxta izləyici məruzəsini yalnız media səmərəliliyi məsələsi deyil, uyğunluq məsələsi halına gətirir. AZ maliyyə marketoloqları bütün influencer müqavilələrindəki müəyyən edilmiş bərpa hədləri (məsələn, >20% saxta izləyici ödəniş yenidən müzakirəsini işə salır) ilə izləyici həqiqiliyi audit bəndlərini daxil etməlidir. Kampaniya başlamazdan əvvəl üçüncü tərəfin aləti ilə audit peşəkar standartdır — bunu 3-cü həftədə aşkar etmək proses nasazlığıdır.",
+    "london_delta": "A London marketer following EU Digital Services Act (DSA) influencer disclosure requirements (which focus on transparency of paid promotion labelling, not follower authenticity) and IAB Europe TCF 2.2 media buying standards would treat the 40% fake follower finding as a media fraud/viewability issue requiring credit from the media agency, not a compliance escalation. AZ consequence: BirBank's campaign falls under CBA advertising regulations for financial products, which require that testimonials and endorsements reflect genuine customer reach — the DSA disclosure-only framework misses the CBA authenticity requirement entirely, leaving BirBank exposed to a formal CBA advertising compliance inquiry.",
+    "evaluation_rubric": {
+      "level_1": "Response treats the fake follower finding as a purely media efficiency problem (wasted spend). No mention of CBA regulatory implications or internal escalation to compliance/legal.",
+      "level_2": "Response identifies the CBA compliance dimension and recommends pausing the campaign, but does not address contract enforcement (follower authenticity clause), audience impact assessment of genuine 60%, or the distinction between marketing and compliance escalation paths.",
+      "level_3": "Response addresses CBA compliance, campaign pause, and contract enforcement with some specificity. Missing: formal documentation sequence before influencer communication, BirBank/Kapital Bank legal escalation, and genuine audience reach analysis (228,000 real followers may retain value).",
+      "level_4": "Response covers all four dimensions: CBA compliance consultation, contract enforcement documentation, campaign pause with rationale, and genuine audience assessment. Internal escalation to BirBank compliance officer mentioned. Specific CBA rule cited (testimonials must reflect genuine customer experience).",
+      "level_5": "Full Level 4 plus: specific follower authenticity threshold recommended for future contracts (>20% triggers renegotiation), CBA 72-hour financial promotion modification window applied to pause decision timeline, Kapital Bank legal team briefed as parent entity, audit-before-launch as standard practice formalized, and a proposed renegotiation framework offered (e.g., fee reduction proportional to fake follower percentage, continuation with authentic engagement rate as KPI replacement). Demonstrates that CBA financial advertising regulation makes this a compliance event, not just a vendor dispute."
+    },
+    "az_institutions": [
+      "BirBank",
+      "Kapital Bank",
+      "CBA"
+    ],
+    "tags": [
+      "marketing",
+      "az-specific",
+      "influencer",
+      "cba-compliance",
+      "fake-followers",
+      "financial-advertising",
+      "empathy-safeguarding"
+    ]
+  },
+  {
+    "id": "prof-mkt-s5-010",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency_slug": "communication",
+    "difficulty": "hard",
+    "type": "mcq",
+    "irt_a": 1.9,
+    "irt_b": 1.9,
+    "irt_c": 0.08,
+    "scenario_en": "You are the brand director for PASHA Holding, preparing a rebranding presentation for a panel of international investors — including a London-based sovereign wealth fund and a Frankfurt-based infrastructure fund — considering a combined €200M commitment to PASHA's Caspian corridor infrastructure projects. The panel has 45 minutes. The core narrative must position Azerbaijan as a first-choice infrastructure investment destination within the Europe-Central Asia corridor, and PASHA as the local partner with the institutional credibility, network, and execution capability to reduce their investment risk. You must choose the opening narrative frame for your presentation.",
+    "scenario_az": "Siz PASHA Holding-in brend direktoru olaraq Londonda yerləşən suveren sərvət fondu və Frankfurtdakı infrastruktur fondunu əhatə edən beynəlxalq investor paneli üçün yenidən brendləşdirmə təqdimatı hazırlayırsınız — PASHA-nın Xəzər dəhlizi infrastruktur layihələrinə birlikdə 200 milyon avro öhdəlik nəzərdən keçirirlər. Panelinanın 45 dəqiqəsi var. Əsas narrativ Azərbaycanı Avropa-Mərkəzi Asiya dəhlizindəki birinci seçim infrastruktur investisiya hədəfi, PASHA-nı isə investisiya risklərini azaltmaq üçün institusional etibarlılığa, şəbəkəyə və icra qabiliyyətinə malik yerli tərəfdaş kimi mövqeləndirməlidir. Siz təqdimatınız üçün açılış narrativ çərçivəsini seçməlisiniz.",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Open with Azerbaijan's oil and gas heritage — production volumes, SOCAR partnerships, Shah Deniz Phase 2 delivery — to establish credibility through proven infrastructure execution.",
+        "text_az": "Sübut edilmiş infrastruktur icrası vasitəsilə etibarlılıq qurmaq üçün Azərbaycanın neft və qaz mirası — istehsal həcmləri, SOCAR tərəfdaşlıqları, Şahdəniz Mərhələ 2 çatdırılması — ilə başlayın."
+      },
+      {
+        "key": "B",
+        "text_en": "Open with a geopolitical framing: 'Azerbaijan is the only corridor that connects Europe to Central Asia without crossing Russian or Iranian territory — and PASHA has built the institutional relationships on both ends of that corridor over 30 years.'",
+        "text_az": "Geosiyasi çərçivə ilə başlayın: 'Azərbaycan Avropanı Mərkəzi Asiyaya Rusiya və ya İran ərazisindən keçmədən birləşdirən yeganə dəhlizdir — PASHA isə 30 il ərzində həmin dəhlizin hər iki ucunda institusional münasibətlər qurub.'"
+      },
+      {
+        "key": "C",
+        "text_en": "Open with PASHA Holding's internal financial metrics: revenue growth, EBITDA margins, asset diversification across banking, real estate, and hospitality.",
+        "text_az": "PASHA Holding-in daxili maliyyə göstəriciləri ilə başlayın: gəlir artımı, EBITDA marjaları, bank, daşınmaz əmlak və mehmanxanaçılıq sahəsindəki aktiv diversifikasiyası."
+      },
+      {
+        "key": "D",
+        "text_en": "Open with PASHA's CSR and ESG credentials — sustainability commitments, community impact in Azerbaijan — to align with the sovereign wealth fund's ESG investment mandate.",
+        "text_az": "Suveren sərvət fondunun ESG investisiya mandatı ilə uyğunlaşmaq üçün PASHA-nın KSM və ESG etimadnaməsi — davamlılıq öhdəlikləri, Azərbaycanda icma təsiri — ilə başlayın."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. The London sovereign wealth fund and Frankfurt infrastructure fund are evaluating a €200M corridor infrastructure commitment. Their primary risk concern is geopolitical route security — specifically, whether the Azerbaijan corridor is viable given the Russia-Ukraine conflict, Iran sanctions exposure, and Central Asian volatility. Opening with the unique geopolitical position (the only Europe-Central Asia corridor bypassing both Russia and Iran) directly addresses their most pressing risk assessment question, and anchoring PASHA's 30-year institutional relationship network immediately positions them as the risk-reduction partner, not just a local operator. A opens with oil/gas heritage — infrastructure investors already know this; it does not differentiate PASHA from SOCAR. C opens with internal financials — relevant but not the opening frame for an audience whose primary concern is corridor viability. D ESG credentials are a table-stakes addition, not an opening frame for a €200M infrastructure decision.",
+    "feedback_az": "B düzgündür. London suveren sərvət fondu və Frankfurt infrastruktur fondu 200 milyon avroluk dəhliz infrastruktur öhdəliyini qiymətləndirir. Onların əsas risk narahatlığı geosiyasi marşrut təhlükəsizliyidir — xüsusilə, Rusiya-Ukrayna münaqişəsi, İran sanksiyaları məruzəsi və Mərkəzi Asiya dəyişkənliyi nəzərə alındığında Azərbaycan dəhlizinin həyata keçirilə bilən olub-olmadığı. Unikal geosiyasi mövqe (həm Rusiyadan, həm də İrandan keçən yeganə Avropa-Mərkəzi Asiya dəhlizi) ilə başlamaq onların ən təxirəsalınmaz risk qiymətləndirmə sualını birbaşa həll edir və PASHA-nın 30 illik institusional münasibətlər şəbəkəsini lövbərləmək onları dərhal yalnız yerli operator deyil, riski azaldıcı tərəfdaş kimi mövqeləndiririr. A neft/qaz mirası ilə başlayır — infrastruktur investorları bunu artıq bilir; PASHA-nı SOCAR-dan fərqləndirmir. C daxili maliyyə göstəriciləri ilə başlayır — əlaqəlidir, lakin əsas narahatlığı dəhliz həyata keçirilə bilirliyi olan auditoriya üçün açılış çərçivəsi deyil. D ESG etimadnaməsi 200 milyon avroluk infrastruktur qərarı üçün açılış çərçivəsi deyil, masa üstü əlavədir.",
+    "development_tip_en": "International infrastructure investors evaluating AZ corridor projects post-2022 have one primary concern: route security in a volatile geopolitical environment. AZ's structural position as the only Europe-Central Asia route avoiding Russian and Iranian territory is a unique asset that became significantly more valuable after February 2022. Senior AZ brand communicators serving international capital must lead with geopolitical position, not operational metrics — the latter comes in slide 4, not slide 1.",
+    "development_tip_az": "2022-ci ildən sonra AZ dəhliz layihələrini qiymətləndirən beynəlxalq infrastruktur investorlarının bir əsas narahatlığı var: qeyri-sabit geosiyasi mühitdə marşrut təhlükəsizliyi. AZ-ın Rusiya və İran ərazisindən qaçan yeganə Avropa-Mərkəzi Asiya marşrutu kimi struktural mövqeyi 2022-ci ilin fevralından sonra əhəmiyyətli dərəcədə daha dəyərli olan unikal aktivdir. Beynəlxalq kapitala xidmət edən yüksək səviyyəli AZ brend kommunikatorları geosiyasi mövqe ilə başlamalı, əməliyyat metriklərindən başlamamalıdır — sonuncusu 1-ci slaydda deyil, 4-cü slayddadır.",
+    "london_delta": "A London marketer following Interbrand's brand valuation framework (which leads with brand strength metrics, financial performance, and role of brand in purchase decisions) would open with PASHA's financial metrics and brand equity scores — C in this question. AZ consequence: a €200M infrastructure investor panel in 2024 is not evaluating PASHA's brand equity score; they are stress-testing corridor viability given Russia-Ukraine and Iran sanctions; leading with EBITDA instead of geopolitical route security signals that PASHA's brand team does not understand the risk calculus of institutional infrastructure capital — and the panel's first impression is of a local corporate, not a corridor-class investment partner.",
+    "az_institutions": [
+      "PASHA Holding",
+      "SOCAR"
+    ],
+    "tags": [
+      "marketing",
+      "az-specific",
+      "international-investors",
+      "caspian-corridor",
+      "brand-communication",
+      "geopolitical-positioning",
+      "hard"
+    ]
+  }
+]

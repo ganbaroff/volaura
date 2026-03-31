@@ -9,15 +9,15 @@
 
 | # | Blocker | Status | Requires | Time |
 |---|---------|--------|----------|------|
-| 1 | **Sentry DSN** — zero error visibility | ❌ NEEDS CEO | Railway env var `SENTRY_DSN` | 2h |
-| 2 | **Groq API key** — LLM fallback chain broken | ❌ NEEDS CEO | Railway env var `GROQ_API_KEY` | 1h |
+| 1 | **Sentry DSN** — zero error visibility | ✅ RESOLVED (Session 69) | Sentry org: volaura, project: volaura-api, DSN on Railway | Done |
+| 2 | **Groq API key** — LLM fallback chain broken | ✅ RESOLVED (Session 69) | All 27 env vars on Railway including GROQ_API_KEY | Done |
 | 3 | ~~Connection pool~~ — httpx unlimited by default | ✅ FALSE POSITIVE | Verified: httpx.Limits() = None/None | N/A |
 | 4 | **Assessment localStorage** — refresh loses progress | ✅ FIXED | sessionStorage → localStorage | Done |
 | 5 | **Session expiry warning** — silent redirect | ✅ FIXED | Show message before redirect | Done |
 | 6 | ~~Password reset~~ — FULLY BUILT (not a stub) | ✅ FALSE POSITIVE | forgot-password + reset-password pages complete | N/A |
 | 7 | **Health check** — stub, doesn't check DB | ✅ FIXED | Now checks Supabase + LLM config | Done |
-| 8 | **Rate limit restart risk** — in-memory resets | ❌ DOCUMENT | Document risk, plan Redis for v2 | 30min |
-| 9 | **Alerting** — nobody knows when API crashes | ❌ TODO | Telegram bot alert on 5xx | 2h |
+| 8 | **Rate limit restart risk** — in-memory resets | ✅ RESOLVED (Session 70) | Documented in rate_limit.py lines 8-10. Redis planned for 2+ instances. | Done |
+| 9 | **Alerting** — nobody knows when API crashes | ✅ RESOLVED (Session 69) | ErrorAlertingMiddleware: 5xx → CEO Telegram (rate-limited 1/5min) | Done |
 | 10 | **Results i18n** — competency names | ✅ FALSE POSITIVE | Already uses t() with fallback | N/A |
 
 ### CEO Actions Required:
@@ -31,11 +31,11 @@
 
 | # | Issue | Status | Time |
 |---|-------|--------|------|
-| 11 | Load test 100 concurrent users | ❌ | 4h |
-| 12 | Mobile responsive fixes (375px) | ❌ | 2h |
-| 13 | Signup button loading spinner | ❌ | 30min |
-| 14 | Assessment retry button on error | ❌ | 30min |
-| 15 | Network timeout messaging ("Still loading...") | ❌ | 1h |
+| 11 | Load test 100 concurrent users | 🔧 SCRIPT READY (Session 74) | `scripts/load_test.js` — k6 script ready. CEO runs: `k6 run scripts/load_test.js`. Needs: `npm install -g k6` + set `VOLAURA_TEST_JWT` env var for assessment flow. | CEO action |
+| 12 | Mobile responsive fixes (375px) | ✅ FIXED (Session 74) | Dashboard skeleton grid-cols-1 sm:grid-cols-3, volunteer row hides competency col on mobile, filter buttons flex-wrap | Done |
+| 13 | Signup button loading spinner | ✅ FIXED (Session 70) | Loader2 icon added | Done |
+| 14 | Assessment retry button on error | ✅ FIXED (Session 74) | nextCompetency() deferred to after successful fetch; transition screen shows error alert + loading state on Continue button | Done |
+| 15 | Network timeout messaging ("Still loading...") | ✅ FIXED (Session 70) | isSlowFetch state + 4s timer | Done |
 
 ---
 
@@ -44,9 +44,9 @@
 | # | Issue | Status | Time |
 |---|-------|--------|------|
 | 16 | Redis rate limiter (replace in-memory) | ❌ | 4h |
-| 17 | GIN index on character_events.payload | ❌ | 30min |
+| 17 | GIN index on character_events.payload | ✅ MIGRATION READY (Session 70) | 20260329060000_character_events_gin_index.sql — apply via supabase db push | Done |
 | 18 | Assessment question pool expansion (11/competency → 20+) | ❌ | CEO content |
-| 19 | Disaster recovery runbook | ❌ | 2h |
+| 19 | Disaster recovery runbook | ✅ WRITTEN (Session 74) | `docs/DISASTER-RECOVERY-RUNBOOK.md` — covers API down, 504, auth, DB, LLM degraded, bad deploy, Telegram alert. Env var table + post-incident checklist. | Done |
 
 ---
 

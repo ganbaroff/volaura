@@ -6,6 +6,7 @@ correct way to verify JWTs — never use the anon key as a JWT secret.
 See: docs/engineering/SECURITY-STANDARDS.md
 """
 
+import asyncio
 from collections.abc import AsyncGenerator
 from typing import Annotated
 
@@ -16,16 +17,49 @@ from loguru import logger
 from app.config import settings
 
 
-async def get_supabase_admin() -> AsyncGenerator[AsyncClient, None]:
-    """Admin Supabase client (service role key) — for server-side operations.
+# --- Admin client singleton ---------------------------------------------------
+# httpx.AsyncClient (underlying transport) is coroutine-safe and designed for
+# shared use across concurrent requests. A single instance maintains a connection
+# pool to Supabase PostgREST, avoiding the "100 requests = 100 TCP connections"
+# problem that causes 504s at scale (PostgREST default max_connections=100).
+#
+# User clients CANNOT be singletons: each request injects a different JWT via
+# client.postgrest.auth(token), so they must remain per-request.
+# ------------------------------------------------------------------------------
 
-    Creates a per-request client to ensure RLS isolation.
+_admin_client: AsyncClient | None = None
+_admin_lock = asyncio.Lock()
+
+
+async def _get_or_create_admin_client() -> AsyncClient:
+    """Return the singleton admin client, creating it on first call.
+
+    Double-checked locking: the outer `if` avoids acquiring the lock on
+    every request (fast path). The inner `if` prevents double-initialisation
+    when two coroutines race through the outer check simultaneously.
+    """
+    global _admin_client
+    if _admin_client is not None:
+        return _admin_client
+    async with _admin_lock:
+        if _admin_client is None:
+            _admin_client = await acreate_client(
+                supabase_url=settings.supabase_url,
+                supabase_key=settings.supabase_service_key,
+            )
+    return _admin_client
+
+
+async def get_supabase_admin() -> AsyncGenerator[AsyncClient, None]:
+    """Admin Supabase client — singleton, shared across requests for connection pooling.
+
+    Creates once on first use, then reuses the underlying httpx connection pool.
+    This prevents per-request TCP connection exhaustion at scale (100+ concurrent
+    users would otherwise saturate PostgREST's default max_connections=100).
+
     Uses service role key which bypasses RLS — use carefully.
     """
-    client = await acreate_client(
-        supabase_url=settings.supabase_url,
-        supabase_key=settings.supabase_service_key,
-    )
+    client = await _get_or_create_admin_client()
     yield client
 
 
@@ -117,8 +151,33 @@ async def get_supabase_anon() -> AsyncGenerator[AsyncClient, None]:
     yield client
 
 
+async def get_optional_user_id(
+    request: Request,
+    admin: AsyncClient = Depends(get_supabase_admin),
+) -> str | None:
+    """Like get_current_user_id but returns None when no token is present.
+
+    Used for endpoints that are public but can personalise results when
+    the caller is authenticated (e.g. leaderboard is_current_user flag).
+    """
+    auth_header = request.headers.get("authorization", "")
+    if not auth_header.startswith("Bearer "):
+        return None
+    token = auth_header.removeprefix("Bearer ").strip()
+    if not token:
+        return None
+    try:
+        user_response = await admin.auth.get_user(token)
+        if not user_response or not user_response.user:
+            return None
+        return str(user_response.user.id)
+    except Exception:
+        return None
+
+
 # Type aliases for cleaner route signatures
 SupabaseAdmin = Annotated[AsyncClient, Depends(get_supabase_admin)]
 SupabaseUser = Annotated[AsyncClient, Depends(get_supabase_user)]
 SupabaseAnon = Annotated[AsyncClient, Depends(get_supabase_anon)]
 CurrentUserId = Annotated[str, Depends(get_current_user_id)]
+OptionalCurrentUserId = Annotated[str | None, Depends(get_optional_user_id)]

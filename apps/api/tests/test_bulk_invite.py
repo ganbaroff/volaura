@@ -60,7 +60,7 @@ def mock_admin_for_bulk(
         m = MagicMock()
 
         if table_name == "organizations":
-            # .select().eq().single().execute()
+            # .select().eq().maybe_single().execute()  — BUG-SEC-025: router uses maybe_single
             single_mock = MagicMock()
             result = MagicMock()
             if org_exists:
@@ -72,7 +72,7 @@ def mock_admin_for_bulk(
             else:
                 result.data = None
             single_mock.execute = AsyncMock(return_value=result)
-            m.select.return_value.eq.return_value.single.return_value = single_mock
+            m.select.return_value.eq.return_value.maybe_single.return_value = single_mock
             return m
 
         if table_name == "organization_invites":

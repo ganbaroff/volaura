@@ -24,6 +24,23 @@ SLUG_RE = re.compile(r"^[a-z][a-z0-9_]{1,49}$")
 # Strip HTML tags from open-ended answers (prevent XSS in LLM prompts)
 HTML_TAG_RE = re.compile(r"<[^>]+>")
 
+# Prompt injection detection patterns (case-insensitive).
+# These patterns match common LLM jailbreak techniques embedded in user answers.
+# If detected, the answer is rejected with a 422 before reaching the LLM evaluator.
+# Note: This is defense-in-depth — the LLM system prompt also has injection guards.
+_INJECTION_PATTERNS: list[re.Pattern[str]] = [
+    re.compile(r"ignore\s+(all\s+)?(previous|prior|above)\s+(instructions?|prompt)", re.IGNORECASE),
+    re.compile(r"disregard\s+(all\s+)?(previous|prior)\s+instructions?", re.IGNORECASE),
+    re.compile(r"you\s+are\s+now\s+(?:a|an)\s+\w+", re.IGNORECASE),
+    re.compile(r"act\s+as\s+(?:a|an|if)\s+\w+", re.IGNORECASE),
+    re.compile(r"system\s*:\s*you\s+(are|must|should)", re.IGNORECASE),
+    re.compile(r"\[system\s*\]", re.IGNORECASE),
+    re.compile(r"<\|(?:im_start|endoftext|system)\|>", re.IGNORECASE),
+    re.compile(r"output\s+the\s+following\s+without\s+", re.IGNORECASE),
+    re.compile(r"reveal\s+your\s+(system\s+)?prompt", re.IGNORECASE),
+    re.compile(r"print\s+your\s+(instructions?|system\s+prompt)", re.IGNORECASE),
+]
+
 
 def _validate_uuid(value: str, field_name: str) -> str:
     """Validate that a string is a valid UUID."""
@@ -72,7 +89,7 @@ class SubmitAnswerRequest(BaseModel):
     @field_validator("answer")
     @classmethod
     def sanitize_answer(cls, v: str) -> str:
-        """Strip HTML tags and limit length to prevent prompt injection + XSS."""
+        """Strip HTML, detect prompt injection, and limit length."""
         v = v.strip()
         if len(v) > 5000:
             raise ValueError("Answer must be at most 5000 characters")
@@ -80,6 +97,16 @@ class SubmitAnswerRequest(BaseModel):
             raise ValueError("Answer cannot be empty")
         # Strip HTML tags (basic XSS prevention, also protects LLM prompt)
         v = HTML_TAG_RE.sub("", v)
+        # SECURITY: Prompt injection detection — reject answers containing LLM jailbreak patterns.
+        # This prevents attackers from hijacking the BARS evaluator via crafted answer text.
+        # Patterns target: role-override ("ignore previous instructions"), persona injection
+        # ("act as"), system-prompt leakage, and common jailbreak delimiters.
+        for pattern in _INJECTION_PATTERNS:
+            if pattern.search(v):
+                raise ValueError(
+                    "Answer contains disallowed content. "
+                    "Please provide a genuine response to the assessment question."
+                )
         return v
 
     @field_validator("response_time_ms")
@@ -102,6 +129,7 @@ class QuestionOut(BaseModel):
     question_type: str        # "mcq" | "open_ended" | "sjt"
     question_en: str
     question_az: str
+    question_ru: str | None = None
     options: list[dict] | None = None  # MCQ options (key/text_en/text_az dicts); None for open-ended
     # IRT params are NOT exposed to the client
     competency_id: str
@@ -183,6 +211,7 @@ class QuestionResultOut(BaseModel):
     question_id: str
     question_en: str | None = None
     question_az: str | None = None
+    question_ru: str | None = None
     difficulty_label: Literal["easy", "medium", "hard", "expert"]
     is_correct: bool
     response_time_ms: int | None = None

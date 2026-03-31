@@ -15,6 +15,8 @@ export interface ProfileHeaderData {
   is_public: boolean;
   avatar_url: string | null;
   badge_tier?: "platinum" | "gold" | "silver" | "bronze" | "none";
+  registration_number?: number | null;
+  registration_tier?: string | null;
 }
 
 interface ProfileHeaderProps {
@@ -77,6 +79,26 @@ export function ProfileHeader({ profile, locale, isOwnProfile }: ProfileHeaderPr
           <div className="min-w-0">
             <h2 className="text-lg font-bold text-foreground truncate">{displayName}</h2>
             <p className="text-sm text-muted-foreground truncate">@{profile.username}</p>
+            {profile.registration_number != null && (
+              <p className="text-xs text-muted-foreground font-mono mt-0.5">
+                #{String(profile.registration_number).padStart(4, "0")}
+                {profile.registration_tier === "founding_100" && (
+                  <span className="ml-2 text-xs font-medium text-amber-500">
+                    {t("profile.foundingMember")}
+                  </span>
+                )}
+                {profile.registration_tier === "founding_1000" && (
+                  <span className="ml-2 text-xs font-medium text-cyan-600">
+                    {t("profile.founding1000")}
+                  </span>
+                )}
+                {profile.registration_tier === "early_adopter" && (
+                  <span className="ml-2 text-xs font-medium text-blue-500">
+                    {t("profile.earlyAdopter")}
+                  </span>
+                )}
+              </p>
+            )}
           </div>
 
           {isOwnProfile && (

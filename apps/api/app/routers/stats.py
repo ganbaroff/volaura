@@ -4,11 +4,12 @@ No auth required — used for landing page social proof.
 Queries are COUNT aggregates only — fast and safe on free-tier Supabase.
 """
 
+from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Request
 from loguru import logger
 from pydantic import BaseModel, ConfigDict
 
-from app.deps import SupabaseAdmin
+from app.deps import CurrentUserId, SupabaseAdmin
 from app.middleware.rate_limit import limiter, RATE_DEFAULT
 
 router = APIRouter(prefix="/stats", tags=["Stats"])
@@ -80,7 +81,7 @@ async def get_public_stats(
     try:
         result = await db.rpc("avg_aura_score").execute()
         if result.data is not None:
-            avg_aura_score = float(result.data) if result.data is not None else 0.0
+            avg_aura_score = round(float(result.data), 1)
     except Exception as e:
         logger.warning("Failed to compute avg AURA via RPC: {err}", err=str(e)[:200])
 
@@ -89,4 +90,101 @@ async def get_public_stats(
         total_assessments=total_assessments,
         total_events=total_events,
         avg_aura_score=avg_aura_score,
+    )
+
+
+class BetaFunnelStats(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    sessions_started: int
+    sessions_completed: int
+    sessions_abandoned: int   # in_progress AND updated_at < 24h ago (proxy metric)
+    completion_rate: float    # completed / started (0.0–1.0)
+    abandonment_rate: float   # abandoned / started
+    registrations: int        # total profiles created
+    aura_scores_generated: int
+
+
+@router.get("/beta-funnel", response_model=BetaFunnelStats)
+@limiter.limit("10/minute")
+async def get_beta_funnel_stats(
+    request: Request,
+    db: SupabaseAdmin,
+    user_id: CurrentUserId,
+) -> BetaFunnelStats:
+    """Beta funnel health metrics — for the failure protocol.
+
+    SEC-Q3: Restricted to organization accounts only. Volunteers have no use for
+    this data, and exposing completion/abandonment rates to all users leaks operational
+    intelligence (platform health, abuse detection timing, user count signals).
+
+    Abandonment proxy: sessions with status='in_progress' AND updated_at < 24h ago.
+    This is not perfect (some users may still be in progress) but is a good signal.
+    """
+    # SEC-Q3: org-only guard — volunteers get 403
+    caller_row = (
+        await db.table("profiles")
+        .select("account_type")
+        .eq("id", user_id)
+        .maybe_single()
+        .execute()
+    )
+    account_type = (caller_row.data or {}).get("account_type", "volunteer")
+    if account_type == "volunteer":
+        raise HTTPException(
+            status_code=403,
+            detail={"code": "FORBIDDEN", "message": "This endpoint is restricted to organization accounts"},
+        )
+
+    cutoff = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
+
+    started = completed = abandoned = registrations = aura_generated = 0
+
+    try:
+        r = await db.table("assessment_sessions").select("id", count="exact").execute()
+        started = r.count or 0
+    except Exception as e:
+        logger.warning("beta_funnel: count started failed", error=str(e)[:100])
+
+    try:
+        r = await db.table("assessment_sessions").select("id", count="exact").eq("status", "completed").execute()
+        completed = r.count or 0
+    except Exception as e:
+        logger.warning("beta_funnel: count completed failed", error=str(e)[:100])
+
+    try:
+        r = await (
+            db.table("assessment_sessions")
+            .select("id", count="exact")
+            .eq("status", "in_progress")
+            .lt("updated_at", cutoff)
+            .execute()
+        )
+        abandoned = r.count or 0
+    except Exception as e:
+        logger.warning("beta_funnel: count abandoned failed", error=str(e)[:100])
+
+    try:
+        r = await db.table("profiles").select("id", count="exact").execute()
+        registrations = r.count or 0
+    except Exception as e:
+        logger.warning("beta_funnel: count registrations failed", error=str(e)[:100])
+
+    try:
+        r = await db.table("aura_scores").select("volunteer_id", count="exact").execute()
+        aura_generated = r.count or 0
+    except Exception as e:
+        logger.warning("beta_funnel: count aura_scores failed", error=str(e)[:100])
+
+    completion_rate = round(completed / started, 3) if started > 0 else 0.0
+    abandonment_rate = round(abandoned / started, 3) if started > 0 else 0.0
+
+    return BetaFunnelStats(
+        sessions_started=started,
+        sessions_completed=completed,
+        sessions_abandoned=abandoned,
+        completion_rate=completion_rate,
+        abandonment_rate=abandonment_rate,
+        registrations=registrations,
+        aura_scores_generated=aura_generated,
     )

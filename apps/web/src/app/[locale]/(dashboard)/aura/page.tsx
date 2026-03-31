@@ -1,22 +1,25 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { TopBar } from "@/components/layout/top-bar";
 import { AuraRadarChart } from "@/components/aura/radar-chart";
 import { BadgeDisplay } from "@/components/aura/badge-display";
 import { CompetencyBreakdown } from "@/components/aura/competency-breakdown";
 import { ShareButtons } from "@/components/aura/share-buttons";
 import { Button } from "@/components/ui/button";
-import { Loader2, RefreshCw, Sparkles } from "lucide-react";
+import { Clock, RefreshCw, Sparkles } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuraScore } from "@/hooks/queries/use-aura";
 import { useProfile } from "@/hooks/queries/use-profile";
+import { useAssessmentStore } from "@/stores/assessment-store";
 import { useSkill } from "@/hooks/queries/use-skill";
 import { ApiError } from "@/lib/api/client";
 import { EvaluationLog } from "@/components/aura/evaluation-log";
+import { triggerHaptic } from "@/lib/haptics";
 
 // ── Animated counter hook ────────────────────────────────────────────────
 
@@ -120,18 +123,19 @@ function SavantDiscovery({ competencyScores, revealed }: SavantDiscoveryProps) {
 
 function RevealCurtain() {
   const { t } = useTranslation();
+  const prefersReducedMotion = useReducedMotion();
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: prefersReducedMotion ? 0 : 0.3 }}
       className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/95 backdrop-blur-sm"
       aria-live="polite"
       aria-label="Revealing your AURA score"
     >
       <motion.div
-        animate={{ scale: [1, 1.08, 1], opacity: [0.6, 1, 0.6] }}
+        animate={prefersReducedMotion ? {} : { scale: [1, 1.08, 1], opacity: [0.6, 1, 0.6] }}
         transition={{ repeat: Infinity, duration: 1.4, ease: "easeInOut" }}
         className="text-6xl mb-6"
         aria-hidden="true"
@@ -173,11 +177,14 @@ export default function AuraPage() {
   const locale = i18n.language;
   const router = useRouter();
   const isMounted = useRef(true);
+  const prefersReducedMotion = useReducedMotion(); // BATCH-O A11Y: respect user motion preference
+  const activeSessionId = useAssessmentStore((s) => s.sessionId); // BATCH-O AU2: route Continue to active session
 
   // Reveal sequence — fires exactly once per mount
   const revealFiredRef = useRef(false);
   const [showCurtain, setShowCurtain] = useState(false);
   const [revealed, setRevealed] = useState(false);
+  const [showSharePrompt, setShowSharePrompt] = useState(false);
 
   useEffect(() => {
     isMounted.current = true;
@@ -208,6 +215,24 @@ export default function AuraPage() {
     revealFiredRef.current = true;
 
     if (!isMounted.current) return;
+
+    // BUG-GROWTH-6 FIX: use localStorage to skip curtain animation on revisits.
+    // Key includes score value — animation re-fires only when score actually changes.
+    const revealKey = `aura_reveal_shown_${Math.round(aura.total_score)}`;
+    const alreadyRevealed = typeof localStorage !== "undefined" && localStorage.getItem(revealKey);
+
+    if (alreadyRevealed) {
+      // Revisit: skip animation, show score immediately
+      setRevealed(true);
+      triggerHaptic("task_complete"); // Subtle confirmation — not the full reveal sequence
+      return;
+    }
+
+    // First time seeing this score — run full reveal animation
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(revealKey, "1");
+    }
+
     setShowCurtain(true);
 
     // Hold curtain for 800ms (300ms fade-in + 500ms hold), then reveal
@@ -218,6 +243,21 @@ export default function AuraPage() {
       setTimeout(() => {
         if (!isMounted.current) return;
         setRevealed(true);
+        triggerHaptic("badge_reveal"); // First-time AURA reveal — dramatic crescendo pattern
+        // BUG-GROWTH-7 FIX: share prompt resets after 24h (not just once per session).
+        // Uses localStorage timestamp — survives tab close, resets daily.
+        const shareKey = "aura_share_prompted_at";
+        const tsStr = typeof localStorage !== "undefined" ? localStorage.getItem(shareKey) : null;
+        const shouldShowPrompt = !tsStr || (Date.now() - parseInt(tsStr, 10)) > 24 * 60 * 60 * 1000;
+        if (shouldShowPrompt) {
+          setTimeout(() => {
+            if (!isMounted.current) return;
+            setShowSharePrompt(true);
+            if (typeof localStorage !== "undefined") {
+              localStorage.setItem(shareKey, Date.now().toString());
+            }
+          }, 5000); // BATCH-O AU4: delay past counter animation (2000ms) + reveal sequence (~2.5s total)
+        }
       }, 350);
     }, 800);
 
@@ -227,10 +267,10 @@ export default function AuraPage() {
   // Use effective (decay-adjusted) score when available, fallback to raw total
   const displayScore = aura?.effective_score ?? aura?.total_score ?? 0;
 
-  // Counter only runs once reveal is complete, with slower 2s drama
+  // Counter only runs once reveal is complete; skip animation if user prefers reduced motion
   const animatedScore = useAnimatedCounter(
     displayScore,
-    2000,
+    prefersReducedMotion ? 0 : 2000,
     revealed
   );
 
@@ -248,14 +288,28 @@ export default function AuraPage() {
   // ── Loading ──
 
   if (auraLoading) {
+    // BATCH-O A11Y #5: skeleton layout matches page structure — no bare spinner
     return (
       <>
         <TopBar title={t("aura.title")} />
-        <div className="flex h-64 items-center justify-center">
-          <Loader2
-            className="size-8 animate-spin text-primary"
-            aria-label={t("common.loading")}
-          />
+        <div className="p-4 space-y-5 pb-8" aria-busy="true" aria-label={t("common.loading")}>
+          {/* Score header skeleton */}
+          <div className="rounded-2xl border border-border bg-card p-6 space-y-3">
+            <Skeleton className="h-3 w-24" />
+            <Skeleton className="h-14 w-32" />
+            <Skeleton className="h-5 w-20" />
+          </div>
+          {/* Radar skeleton */}
+          <Skeleton className="h-[300px] w-full rounded-2xl" />
+          {/* Competency bars skeleton */}
+          <div className="space-y-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="space-y-1.5">
+                <Skeleton className="h-3 w-32" />
+                <Skeleton className="h-2 w-full" />
+              </div>
+            ))}
+          </div>
         </div>
       </>
     );
@@ -281,9 +335,10 @@ export default function AuraPage() {
     );
   }
 
-  // ── Empty state — also catches aura record with no total_score yet ──
+  // ── AURA-02: Distinguish "never started" (!aura) from "in progress" (aura exists, score null) ──
 
-  if (!aura || aura.total_score == null) {
+  if (!aura) {
+    // No AURA record at all — user has never started an assessment
     return (
       <>
         <TopBar title={t("aura.title")} />
@@ -300,7 +355,33 @@ export default function AuraPage() {
             {t("aura.noScoreDescription")}
           </p>
           <Button asChild size="lg" className="mt-2">
-            <a href={`/${locale}/assessment`}>{t("aura.startAssessment")}</a>
+            <Link href={`/${locale}/assessment`}>{t("aura.startAssessment")}</Link>
+          </Button>
+        </div>
+      </>
+    );
+  }
+
+  if (aura.total_score == null) {
+    // AURA record exists but score not yet finalized — assessment is in progress
+    return (
+      <>
+        <TopBar title={t("aura.title")} />
+        <div className="flex flex-col items-center justify-center gap-4 p-12 text-center">
+          <div className="size-16 rounded-full bg-muted/40 flex items-center justify-center">
+            <Clock className="size-8 text-muted-foreground" aria-hidden="true" />
+          </div>
+          <h2 className="text-xl font-semibold text-foreground">
+            {t("aura.assessmentInProgress")}
+          </h2>
+          <p className="text-sm text-muted-foreground max-w-xs">
+            {t("aura.assessmentInProgressDesc")}
+          </p>
+          <Button asChild size="lg" className="mt-2">
+            {/* BATCH-O AU2: if Zustand has active sessionId, resume it — don't create a new session */}
+            <Link href={activeSessionId ? `/${locale}/assessment/${activeSessionId}` : `/${locale}/assessment`}>
+              {t("assessment.infoContinueButton")}
+            </Link>
           </Button>
         </div>
       </>
@@ -324,12 +405,12 @@ export default function AuraPage() {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: revealed ? 1 : 0, x: revealed ? 0 : -20 }}
           transition={{ duration: 0.5 }}
-          className="flex items-start justify-between gap-6"
+          className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6"
         >
-          <div>
+          <div className="min-w-0">
             <p className="text-sm text-muted-foreground">{t("aura.overallScore")}</p>
             <p
-              className="text-6xl font-black tabular-nums text-foreground"
+              className="text-5xl sm:text-6xl font-black tabular-nums text-foreground"
               aria-label={`${t("aura.overallScore")}: ${displayScore.toFixed(1)}`}
             >
               {(animatedScore ?? 0).toFixed(1)}
@@ -382,9 +463,52 @@ export default function AuraPage() {
               username={profile.username}
               overallScore={aura.total_score}
               badgeTier={aura.badge_tier}
+              settingsUrl={`/${locale}/settings`}
             />
           </motion.div>
         )}
+
+        {/* Share prompt modal — fires 3s after first reveal (Product Agent recommendation) */}
+        <AnimatePresence>
+          {showSharePrompt && profile && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+              onClick={() => setShowSharePrompt(false)}
+            >
+              <motion.div
+                initial={{ y: 40, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 40, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className="w-full max-w-sm rounded-2xl bg-card border border-border p-6 space-y-4 shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="text-center space-y-1">
+                  <p className="text-lg font-bold text-foreground">
+                    {t("aura.sharePromptTitle", { defaultValue: "Your AURA score is live." })}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("aura.sharePromptBody", { defaultValue: "Share it so organizations can find you." })}
+                  </p>
+                </div>
+                <ShareButtons
+                  username={profile.username}
+                  overallScore={aura.total_score}
+                  badgeTier={aura.badge_tier}
+                />
+                <button
+                  onClick={() => setShowSharePrompt(false)}
+                  className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors py-1"
+                >
+                  {t("common.dismiss", { defaultValue: "Dismiss" })}
+                </button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Savant Discovery — hidden strength card */}
         {aura.competency_scores && (
@@ -451,6 +575,46 @@ export default function AuraPage() {
           transition={{ delay: 0.65, duration: 0.5 }}
         >
           <EvaluationLog />
+        </motion.div>
+
+        {/* ISSUE-AU3: NextStepCard — what to do after seeing AURA score */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: revealed ? 1 : 0, y: revealed ? 0 : 16 }}
+          transition={{ delay: 0.75, duration: 0.5 }}
+          className="space-y-3 pb-6"
+        >
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+            {t("aura.nextSteps", { defaultValue: "Keep Going" })}
+          </h2>
+          <div className="space-y-2">
+            {/* Assess more competencies */}
+            <button
+              type="button"
+              onClick={() => router.push(`/${locale}/assessment`)}
+              className="w-full flex items-center gap-3 rounded-xl bg-surface-container-low p-3 text-left hover:bg-muted/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <span className="text-2xl shrink-0" aria-hidden="true">🎯</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground">{t("aura.nextStepAssess")}</p>
+                <p className="text-xs text-muted-foreground">{t("aura.nextStepAssessDesc")}</p>
+              </div>
+              <span className="text-muted-foreground shrink-0" aria-hidden="true">→</span>
+            </button>
+            {/* View leaderboard — see how you compare */}
+            <button
+              type="button"
+              onClick={() => router.push(`/${locale}/leaderboard`)}
+              className="w-full flex items-center gap-3 rounded-xl bg-surface-container-low p-3 text-left hover:bg-muted/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <span className="text-2xl shrink-0" aria-hidden="true">🏅</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground">{t("aura.nextStepLeaderboard")}</p>
+                <p className="text-xs text-muted-foreground">{t("aura.nextStepLeaderboardDesc")}</p>
+              </div>
+              <span className="text-muted-foreground shrink-0" aria-hidden="true">→</span>
+            </button>
+          </div>
         </motion.div>
       </div>
     </>

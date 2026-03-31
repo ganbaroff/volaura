@@ -1,0 +1,206 @@
+{
+  "metadata": {
+    "n_simulations": 100000,
+    "timestamp": "2026-03-29T19:42:29.091826+00:00",
+    "seed": 42,
+    "bank_size": 160,
+    "elapsed_seconds": 36.6
+  },
+  "overall": {
+    "rmse": 0.30451457724120856,
+    "mae": 0.23950864209119735,
+    "bias": -0.0003518230240446262,
+    "correlation": 0.9528859113503959
+  },
+  "by_ability_level": {
+    "very_low": {
+      "n": 6852,
+      "rmse": 0.3896244883277469,
+      "mae": 0.30155583132761193,
+      "mean_se": 0.3330020780245822,
+      "mean_n_items": 19.259194395796847
+    },
+    "low": {
+      "n": 24142,
+      "rmse": 0.30232710324826,
+      "mae": 0.23772322178539534,
+      "mean_se": 0.2991914482238997,
+      "mean_n_items": 17.141993206859414
+    },
+    "medium": {
+      "n": 38411,
+      "rmse": 0.28502384001627556,
+      "mae": 0.22523389478150843,
+      "mean_se": 0.29864955835876866,
+      "mean_n_items": 17.73044180052589
+    },
+    "high": {
+      "n": 23898,
+      "rmse": 0.29585179280263074,
+      "mae": 0.2357118329471943,
+      "mean_se": 0.3029162082451025,
+      "mean_n_items": 19.343208636706
+    },
+    "very_high": {
+      "n": 6697,
+      "rmse": 0.34861527478583604,
+      "mae": 0.2778839952658434,
+      "mean_se": 0.3150192024759284,
+      "mean_n_items": 19.606988203673286
+    }
+  },
+  "item_exposure": {
+    "overexposed_count": 18,
+    "underexposed_count": 102,
+    "top_10_overexposed": [
+      {
+        "idx": 11,
+        "comp": "communication",
+        "b": 0.06,
+        "exposure_rate": 0.9876,
+        "overexposed": true,
+        "underexposed": false
+      },
+      {
+        "idx": 5,
+        "comp": "communication",
+        "b": -0.516,
+        "exposure_rate": 0.6714,
+        "overexposed": true,
+        "underexposed": false
+      },
+      {
+        "idx": 99,
+        "comp": "event_performance",
+        "b": 0.378,
+        "exposure_rate": 0.651,
+        "overexposed": true,
+        "underexposed": false
+      },
+      {
+        "idx": 22,
+        "comp": "reliability",
+        "b": 0.075,
+        "exposure_rate": 0.6324,
+        "overexposed": true,
+        "underexposed": false
+      },
+      {
+        "idx": 151,
+        "comp": "empathy_safeguarding",
+        "b": -0.332,
+        "exposure_rate": 0.6099,
+        "overexposed": true,
+        "underexposed": false
+      },
+      {
+        "idx": 115,
+        "comp": "tech_literacy",
+        "b": -0.425,
+        "exposure_rate": 0.5792,
+        "overexposed": true,
+        "underexposed": false
+      },
+      {
+        "idx": 150,
+        "comp": "empathy_safeguarding",
+        "b": -0.088,
+        "exposure_rate": 0.5652,
+        "overexposed": true,
+        "underexposed": false
+      },
+      {
+        "idx": 42,
+        "comp": "english_proficiency",
+        "b": 0.003,
+        "exposure_rate": 0.5405,
+        "overexposed": true,
+        "underexposed": false
+      },
+      {
+        "idx": 142,
+        "comp": "empathy_safeguarding",
+        "b": 0.144,
+        "exposure_rate": 0.5338,
+        "overexposed": true,
+        "underexposed": false
+      },
+      {
+        "idx": 86,
+        "comp": "event_performance",
+        "b": 0.412,
+        "exposure_rate": 0.5118,
+        "overexposed": true,
+        "underexposed": false
+      }
+    ]
+  },
+  "gap_analysis": {
+    "easy_count": 69,
+    "easy_needed": 0,
+    "medium_count": 34,
+    "medium_needed": 0,
+    "hard_count": 57,
+    "hard_needed": 0
+  },
+  "session_stats": {
+    "mean_questions": 18.2,
+    "median_questions": 19.0,
+    "pct_stopped_at_se": 71.42,
+    "pct_stopped_at_max": 40.49,
+    "mean_final_se": 0.3033,
+    "pct_se_below_030": 71.42
+  },
+  "real_questions_analysis": [
+    {
+      "id": "Q1",
+      "label": "Active Listening (Easy)",
+      "a": 1.5,
+      "b": -1.2,
+      "c": 0.1,
+      "difficulty_bucket": "easy",
+      "peak_info_theta": -1.09,
+      "max_fisher_info": 0.464
+    },
+    {
+      "id": "Q2",
+      "label": "Conflict Communication (Medium)",
+      "a": 1.8,
+      "b": 0.1,
+      "c": 0.15,
+      "difficulty_bucket": "medium",
+      "peak_info_theta": 0.21,
+      "max_fisher_info": 0.607
+    },
+    {
+      "id": "Q3",
+      "label": "Cross-cultural (Medium)",
+      "a": 2.0,
+      "b": 0.3,
+      "c": 0.0,
+      "difficulty_bucket": "medium",
+      "peak_info_theta": 0.29,
+      "max_fisher_info": 1.0
+    },
+    {
+      "id": "Q4",
+      "label": "Written Communication (Hard)",
+      "a": 2.2,
+      "b": 0.8,
+      "c": 0.0,
+      "difficulty_bucket": "hard",
+      "peak_info_theta": 0.79,
+      "max_fisher_info": 1.21
+    },
+    {
+      "id": "Q5",
+      "label": "SJT Reliability (Easy-Med)",
+      "a": 2.5,
+      "b": -0.5,
+      "c": 0.1,
+      "difficulty_bucket": "medium",
+      "peak_info_theta": -0.43,
+      "max_fisher_info": 1.288
+    }
+  ]
+}

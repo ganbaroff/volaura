@@ -100,6 +100,42 @@ export type AssignmentResponse = {
     }>;
 };
 
+/**
+ * Aggregated evaluation data for one competency session.
+ */
+export type AuraCompetencyExplanation = {
+    competency_id?: string | null;
+    role_level: string;
+    completed_at?: string | null;
+    items_evaluated: number;
+    evaluations: Array<AuraEvaluationItem>;
+};
+
+/**
+ * Per-question evaluation log entry from a completed assessment session.
+ */
+export type AuraEvaluationItem = {
+    question_id?: string | null;
+    concept_scores: {
+        [key: string]: number;
+    };
+    evaluation_confidence: string;
+    methodology: string;
+    concept_details?: Array<unknown> | null;
+};
+
+/**
+ * Response for GET /aura/me/explanation — transparent per-competency breakdown.
+ */
+export type AuraExplanationResponse = {
+    volunteer_id: string;
+    explanation_count: number;
+    has_pending_evaluations: boolean;
+    pending_reeval_count: number;
+    methodology_reference: string;
+    explanations: Array<AuraCompetencyExplanation>;
+};
+
 export type AuraScoreResponse = {
     volunteer_id: string;
     total_score: number;
@@ -132,6 +168,16 @@ export type BadgeDistribution = {
     silver?: number;
     bronze?: number;
     none?: number;
+};
+
+export type BetaFunnelStats = {
+    sessions_started: number;
+    sessions_completed: number;
+    sessions_abandoned: number;
+    completion_rate: number;
+    abandonment_rate: number;
+    registrations: number;
+    aura_scores_generated: number;
 };
 
 export type BodyBulkInviteVolunteersApiOrganizationsOrgIdInvitesBulkPost = {
@@ -217,6 +263,13 @@ export type CheckInRequest = {
     check_in_code: string;
 };
 
+/**
+ * Response for POST /api/subscription/create-checkout.
+ */
+export type CheckoutSessionResponse = {
+    checkout_url: string;
+};
+
 export type CoachingResponse = {
     session_id: string;
     competency_id: string;
@@ -259,6 +312,21 @@ export type CreateVerificationLinkResponse = {
 };
 
 /**
+ * Lightweight crystal balance — for MindShift quick-check without full state RPC.
+ *
+ * Cheaper than GET /character/state: 1 SQL aggregate vs 5 serial queries.
+ * MindShift reads this to show the crystal counter in the focus session overlay.
+ */
+export type CrystalBalanceOut = {
+    user_id: string;
+    /**
+     * Current crystal balance
+     */
+    crystal_balance: number;
+    computed_at: string;
+};
+
+/**
  * Volunteer profile visible to org users on the discovery page.
  *
  * Only includes volunteers who have opted in (visible_to_orgs=True).
@@ -284,6 +352,8 @@ export type DiscoveryMeta = {
     limit: number;
     has_more: boolean;
     next_after_score?: number | null;
+    next_after_events?: number | null;
+    next_after_updated?: string | null;
     next_after_id?: string | null;
 };
 
@@ -311,7 +381,6 @@ export type DiscoveryVolunteer = {
     competency_score?: number | null;
     role_level?: string | null;
     events_attended?: number;
-    events_no_show?: number;
     last_updated?: string | null;
 };
 
@@ -429,6 +498,9 @@ export type HttpValidationError = {
 export type HealthResponse = {
     status: string;
     version: string;
+    database: string;
+    llm_configured: boolean;
+    supabase_project_ref: string;
 };
 
 export type IntroRequestCreate = {
@@ -558,19 +630,23 @@ export type OrganizationCreate = {
     contact_email?: string | null;
 };
 
+/**
+ * Public organization response — owner_id intentionally excluded to prevent UUID enumeration.
+ */
 export type OrganizationResponse = {
     id: string;
-    owner_id: string;
     name: string;
     description?: string | null;
     website?: string | null;
     logo_url?: string | null;
     contact_email?: string | null;
+    type?: string | null;
+    is_active?: boolean | null;
     verified_at?: string | null;
-    subscription_tier: string;
+    subscription_tier?: string | null;
     trust_score?: number | null;
-    created_at: string;
-    updated_at: string;
+    created_at?: string | null;
+    updated_at?: string | null;
 };
 
 export type OrganizationUpdate = {
@@ -594,6 +670,7 @@ export type ProfileCreate = {
     account_type?: string;
     visible_to_orgs?: boolean;
     org_type?: string | null;
+    invited_by_org_id?: string | null;
 };
 
 export type ProfileResponse = {
@@ -615,6 +692,11 @@ export type ProfileResponse = {
     badge_open_badges_url?: string | null;
     created_at: string;
     updated_at: string;
+    registration_number?: number | null;
+    registration_tier?: string | null;
+    subscription_status?: string;
+    trial_ends_at?: string | null;
+    is_subscription_active?: boolean;
 };
 
 export type ProfileUpdate = {
@@ -644,6 +726,9 @@ export type PublicProfileResponse = {
     location?: string | null;
     languages?: Array<string>;
     badge_issued_at?: string | null;
+    registration_number?: number | null;
+    registration_tier?: string | null;
+    percentile_rank?: number | null;
 };
 
 export type PublicStatsResponse = {
@@ -671,6 +756,7 @@ export type QuestionOut = {
     question_type: string;
     question_en: string;
     question_az: string;
+    question_ru?: string | null;
     options?: Array<{
         [key: string]: unknown;
     }> | null;
@@ -688,6 +774,7 @@ export type QuestionResultOut = {
     question_id: string;
     question_en?: string | null;
     question_az?: string | null;
+    question_ru?: string | null;
     difficulty_label: 'easy' | 'medium' | 'hard' | 'expert';
     is_correct: boolean;
     response_time_ms?: number | null;
@@ -738,6 +825,10 @@ export type SharingPermissionRequest = {
     org_id: string;
     permission_type: 'read_score' | 'read_full_eval' | 'export_report';
     action: 'grant' | 'revoke';
+};
+
+export type SignupStatusResponse = {
+    open_signup: boolean;
 };
 
 /**
@@ -796,6 +887,14 @@ export type SubmitVerificationResponse = {
     rating: number;
 };
 
+export type SubscriptionStatus = {
+    status: string;
+    trial_ends_at: string | null;
+    subscription_ends_at: string | null;
+    days_remaining: number;
+    is_active: boolean;
+};
+
 export type UnreadCountOut = {
     unread_count: number;
 };
@@ -805,6 +904,14 @@ export type UnreadCountOut = {
  */
 export type UpdateVisibilityRequest = {
     visibility: 'public' | 'badge_only' | 'hidden';
+};
+
+export type ValidateInviteRequest = {
+    invite_code: string;
+};
+
+export type ValidateInviteResponse = {
+    valid: boolean;
 };
 
 export type ValidationError = {
@@ -865,6 +972,13 @@ export type VolunteerSearchResult = {
     similarity?: number | null;
 };
 
+/**
+ * Stripe webhook handler always returns this on success.
+ */
+export type WebhookAck = {
+    received?: boolean;
+};
+
 export type HealthCheckHealthGetData = {
     body?: never;
     path?: never;
@@ -880,6 +994,47 @@ export type HealthCheckHealthGetResponses = {
 };
 
 export type HealthCheckHealthGetResponse = HealthCheckHealthGetResponses[keyof HealthCheckHealthGetResponses];
+
+export type SignupStatusApiAuthSignupStatusGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/auth/signup-status';
+};
+
+export type SignupStatusApiAuthSignupStatusGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: SignupStatusResponse;
+};
+
+export type SignupStatusApiAuthSignupStatusGetResponse = SignupStatusApiAuthSignupStatusGetResponses[keyof SignupStatusApiAuthSignupStatusGetResponses];
+
+export type ValidateInviteApiAuthValidateInvitePostData = {
+    body: ValidateInviteRequest;
+    path?: never;
+    query?: never;
+    url: '/api/auth/validate-invite';
+};
+
+export type ValidateInviteApiAuthValidateInvitePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ValidateInviteApiAuthValidateInvitePostError = ValidateInviteApiAuthValidateInvitePostErrors[keyof ValidateInviteApiAuthValidateInvitePostErrors];
+
+export type ValidateInviteApiAuthValidateInvitePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ValidateInviteResponse;
+};
+
+export type ValidateInviteApiAuthValidateInvitePostResponse = ValidateInviteApiAuthValidateInvitePostResponses[keyof ValidateInviteApiAuthValidateInvitePostResponses];
 
 export type RegisterApiAuthRegisterPostData = {
     body: RegisterRequest;
@@ -1127,6 +1282,33 @@ export type GetPublicProfileApiProfilesUsernameGetResponses = {
 
 export type GetPublicProfileApiProfilesUsernameGetResponse = GetPublicProfileApiProfilesUsernameGetResponses[keyof GetPublicProfileApiProfilesUsernameGetResponses];
 
+export type RecordProfileViewApiProfilesUsernameViewPostData = {
+    body?: never;
+    path: {
+        username: string;
+    };
+    query?: never;
+    url: '/api/profiles/{username}/view';
+};
+
+export type RecordProfileViewApiProfilesUsernameViewPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RecordProfileViewApiProfilesUsernameViewPostError = RecordProfileViewApiProfilesUsernameViewPostErrors[keyof RecordProfileViewApiProfilesUsernameViewPostErrors];
+
+export type RecordProfileViewApiProfilesUsernameViewPostResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type RecordProfileViewApiProfilesUsernameViewPostResponse = RecordProfileViewApiProfilesUsernameViewPostResponses[keyof RecordProfileViewApiProfilesUsernameViewPostResponses];
+
 export type GetMyAuraApiAuraMeGetData = {
     body?: never;
     path?: never;
@@ -1154,8 +1336,10 @@ export type GetAuraExplanationApiAuraMeExplanationGetResponses = {
     /**
      * Successful Response
      */
-    200: unknown;
+    200: AuraExplanationResponse;
 };
+
+export type GetAuraExplanationApiAuraMeExplanationGetResponse = GetAuraExplanationApiAuraMeExplanationGetResponses[keyof GetAuraExplanationApiAuraMeExplanationGetResponses];
 
 export type GetAuraByIdApiAuraVolunteerIdGetData = {
     body?: never;
@@ -1183,6 +1367,20 @@ export type GetAuraByIdApiAuraVolunteerIdGetResponses = {
 };
 
 export type GetAuraByIdApiAuraVolunteerIdGetResponse = GetAuraByIdApiAuraVolunteerIdGetResponses[keyof GetAuraByIdApiAuraVolunteerIdGetResponses];
+
+export type GetVisibilityApiAuraMeVisibilityGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/aura/me/visibility';
+};
+
+export type GetVisibilityApiAuraMeVisibilityGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: unknown;
+};
 
 export type UpdateVisibilityApiAuraMeVisibilityPatchData = {
     body: UpdateVisibilityRequest;
@@ -2196,6 +2394,11 @@ export type DiscoverVolunteersApiVolunteersDiscoveryGetData = {
         badge_tier?: string | null;
         sort_by?: string;
         after_score?: number | null;
+        after_events?: number | null;
+        /**
+         * ISO datetime cursor for sort_by=recent
+         */
+        after_updated?: string | null;
         after_id?: string | null;
         limit?: number;
     };
@@ -2267,20 +2470,9 @@ export type GetMyRankApiLeaderboardMeGetResponse = GetMyRankApiLeaderboardMeGetR
 export type GetUnreadCountApiNotificationsUnreadCountGetData = {
     body?: never;
     path?: never;
-    query: {
-        request: unknown;
-    };
+    query?: never;
     url: '/api/notifications/unread-count';
 };
-
-export type GetUnreadCountApiNotificationsUnreadCountGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type GetUnreadCountApiNotificationsUnreadCountGetError = GetUnreadCountApiNotificationsUnreadCountGetErrors[keyof GetUnreadCountApiNotificationsUnreadCountGetErrors];
 
 export type GetUnreadCountApiNotificationsUnreadCountGetResponses = {
     /**
@@ -2294,8 +2486,7 @@ export type GetUnreadCountApiNotificationsUnreadCountGetResponse = GetUnreadCoun
 export type ListNotificationsApiNotificationsGetData = {
     body?: never;
     path?: never;
-    query: {
-        request: unknown;
+    query?: {
         limit?: number;
         offset?: number;
     };
@@ -2323,20 +2514,9 @@ export type ListNotificationsApiNotificationsGetResponse = ListNotificationsApiN
 export type MarkAllReadApiNotificationsReadAllPatchData = {
     body?: never;
     path?: never;
-    query: {
-        request: unknown;
-    };
+    query?: never;
     url: '/api/notifications/read-all';
 };
-
-export type MarkAllReadApiNotificationsReadAllPatchErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type MarkAllReadApiNotificationsReadAllPatchError = MarkAllReadApiNotificationsReadAllPatchErrors[keyof MarkAllReadApiNotificationsReadAllPatchErrors];
 
 export type MarkAllReadApiNotificationsReadAllPatchResponses = {
     /**
@@ -2352,9 +2532,7 @@ export type MarkNotificationReadApiNotificationsNotificationIdReadPatchData = {
     path: {
         notification_id: string;
     };
-    query: {
-        request: unknown;
-    };
+    query?: never;
     url: '/api/notifications/{notification_id}/read';
 };
 
@@ -2391,6 +2569,22 @@ export type GetPublicStatsApiStatsPublicGetResponses = {
 };
 
 export type GetPublicStatsApiStatsPublicGetResponse = GetPublicStatsApiStatsPublicGetResponses[keyof GetPublicStatsApiStatsPublicGetResponses];
+
+export type GetBetaFunnelStatsApiStatsBetaFunnelGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/stats/beta-funnel';
+};
+
+export type GetBetaFunnelStatsApiStatsBetaFunnelGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: BetaFunnelStats;
+};
+
+export type GetBetaFunnelStatsApiStatsBetaFunnelGetResponse = GetBetaFunnelStatsApiStatsBetaFunnelGetResponses[keyof GetBetaFunnelStatsApiStatsBetaFunnelGetResponses];
 
 export type TelegramWebhookApiTelegramWebhookPostData = {
     body?: never;
@@ -2488,6 +2682,22 @@ export type GetCharacterStateApiCharacterStateGetResponses = {
 };
 
 export type GetCharacterStateApiCharacterStateGetResponse = GetCharacterStateApiCharacterStateGetResponses[keyof GetCharacterStateApiCharacterStateGetResponses];
+
+export type GetCrystalBalanceApiCharacterCrystalsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/character/crystals';
+};
+
+export type GetCrystalBalanceApiCharacterCrystalsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: CrystalBalanceOut;
+};
+
+export type GetCrystalBalanceApiCharacterCrystalsGetResponse = GetCrystalBalanceApiCharacterCrystalsGetResponses[keyof GetCrystalBalanceApiCharacterCrystalsGetResponses];
 
 export type GetMyTwinApiBrandedbyTwinsGetData = {
     body?: never;
@@ -2731,6 +2941,54 @@ export type ExecuteSkillApiSkillsSkillNamePostResponses = {
 };
 
 export type ExecuteSkillApiSkillsSkillNamePostResponse = ExecuteSkillApiSkillsSkillNamePostResponses[keyof ExecuteSkillApiSkillsSkillNamePostResponses];
+
+export type GetSubscriptionStatusApiSubscriptionStatusGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/subscription/status';
+};
+
+export type GetSubscriptionStatusApiSubscriptionStatusGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: SubscriptionStatus;
+};
+
+export type GetSubscriptionStatusApiSubscriptionStatusGetResponse = GetSubscriptionStatusApiSubscriptionStatusGetResponses[keyof GetSubscriptionStatusApiSubscriptionStatusGetResponses];
+
+export type CreateCheckoutSessionApiSubscriptionCreateCheckoutPostData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/subscription/create-checkout';
+};
+
+export type CreateCheckoutSessionApiSubscriptionCreateCheckoutPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: CheckoutSessionResponse;
+};
+
+export type CreateCheckoutSessionApiSubscriptionCreateCheckoutPostResponse = CreateCheckoutSessionApiSubscriptionCreateCheckoutPostResponses[keyof CreateCheckoutSessionApiSubscriptionCreateCheckoutPostResponses];
+
+export type StripeWebhookApiSubscriptionWebhookPostData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/subscription/webhook';
+};
+
+export type StripeWebhookApiSubscriptionWebhookPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: WebhookAck;
+};
+
+export type StripeWebhookApiSubscriptionWebhookPostResponse = StripeWebhookApiSubscriptionWebhookPostResponses[keyof StripeWebhookApiSubscriptionWebhookPostResponses];
 
 export type ClientOptions = {
     baseUrl: 'http://localhost:8000' | (string & {});

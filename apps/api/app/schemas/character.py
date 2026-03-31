@@ -95,3 +95,15 @@ class CharacterStateOut(BaseModel):
     event_count: int = Field(ge=0, description="Total events in history")
     last_event_at: datetime | None = None
     computed_at: datetime
+
+
+class CrystalBalanceOut(BaseModel):
+    """Lightweight crystal balance — for MindShift quick-check without full state RPC.
+
+    Cheaper than GET /character/state: 1 SQL aggregate vs 5 serial queries.
+    MindShift reads this to show the crystal counter in the focus session overlay.
+    """
+
+    user_id: UUID
+    crystal_balance: int = Field(ge=0, description="Current crystal balance")
+    computed_at: datetime

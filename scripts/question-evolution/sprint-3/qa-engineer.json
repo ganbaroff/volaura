@@ -1,0 +1,498 @@
+[
+  {
+    "id": "prof-qa-s3-001",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.1,
+    "irt_b": -1.2,
+    "irt_c": 0.1,
+    "scenario_en": "You are testing a payment module for an Azerbaijani e-commerce platform. The system calculates a total of 1.005 AZN. During code review, you notice the developer implemented banker's rounding (round-half-to-even), which would display this as 1.00 AZN. How should you classify this defect?",
+    "scenario_az": "Siz Azərbaycan e-ticarət platforması üçün ödəniş modulunu test edirsiniz. Sistem 1.005 AZN məbləği hesablayır. Kod icmalı zamanı developperin banker's yuvarlama (cüt rəqəmə yuvarlama) tətbiq etdiyini görürsünüz, bu da məbləği 1.00 AZN kimi göstərəcək. Bu qüsuru necə təsnif etməlisiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "P3 — minor display issue, does not affect business logic",
+        "text_az": "P3 — kiçik görüntü problemi, biznes məntiqinə təsir etmir"
+      },
+      {
+        "key": "B",
+        "text_en": "P1 — CBA Decimal Precision Regulation violation requiring emergency hotfix and incident report",
+        "text_az": "P1 — Mərkəzi Bankın Onluq Dəqiqlik Qaydası pozuntusu, fövqəladə düzəliş və insidentlər haqqında hesabat tələb edir"
+      },
+      {
+        "key": "C",
+        "text_en": "P2 — functional bug, fix in next sprint, no regulatory implications",
+        "text_az": "P2 — funksional xəta, növbəti sprintdə düzəldilsin, tənzimləyici nəticələr yoxdur"
+      },
+      {
+        "key": "D",
+        "text_en": "P4 — cosmetic issue, can be deferred to backlog",
+        "text_az": "P4 — kosmetik problem, arxa plana təxirə salına bilər"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. The CBA Decimal Precision Regulation mandates that AZN must display exactly 2 decimal places using half-up rounding (1.005 → 1.01). Banker's rounding produces 1.00 — a regulatory violation. ABB Bank's 2022 incident with this exact bug resulted in a P1 classification, an emergency hotfix, and a mandatory CBA incident report. A is wrong because CBA classifies this as compliance, not display. C is wrong because regulatory violations cannot wait for a sprint cycle. D is wrong for the same reason.",
+    "feedback_az": "B düzgündür. Mərkəzi Bankın Onluq Dəqiqlik Qaydası AZN-nin yarım-yuxarı yuvarlama ilə dəqiq 2 onluq işarə göstərməsini tələb edir (1.005 → 1.01). Banker's yuvarlama 1.00 verir — bu tənzimləyici pozuntudur. ABB Bankın 2022-ci il insidenti P1 kimi təsnif edildi, fövqəladə düzəliş və Mərkəzi Banka məcburi hesabat tələb etdi.",
+    "development_tip_en": "Study CBA Payment System Regulations, specifically the decimal precision requirements for AZN transactions. Practice writing test cases that explicitly verify half-up rounding (not banker's rounding) at boundary values: x.xx4 → rounds down, x.xx5 → rounds up. Include CBA compliance as a test category in your test plans for any financial module.",
+    "development_tip_az": "Mərkəzi Bankın Ödəniş Sistemi Qaydalarını, xüsusən AZN əməliyyatları üçün onluq dəqiqlik tələblərini öyrənin. x.xx4 → aşağı, x.xx5 → yuxarı yuvarlama üçün sınaq halları yazın. Maliyyə modullarının sınaq planlarına CBA uyğunluğunu ayrıca kateqoriya kimi daxil edin.",
+    "london_delta": "A London QA engineer would classify AZN decimal precision as a locale/display issue (P3) and log it for the next sprint. In Azerbaijan, the CBA Decimal Precision Regulation explicitly classifies incorrect AZN rounding as a compliance violation — making it a P1 bug requiring an emergency hotfix and a formal incident report to the Central Bank. The regulatory severity does not exist in UK/EU payment standards where banker's rounding is often acceptable.",
+    "az_institutions": [
+      "CBA",
+      "ABB"
+    ],
+    "tags": [
+      "qa",
+      "az-specific",
+      "cba-compliance",
+      "rounding",
+      "financial"
+    ]
+  },
+  {
+    "id": "prof-qa-s3-002",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.0,
+    "irt_b": -0.9,
+    "irt_c": 0.12,
+    "scenario_en": "You are writing localization test cases for a financial dashboard that will be used by Azerbaijani bank employees. The system must display the number one thousand two hundred thirty-four manat and fifty-six qəpik. Which display format should your test case validate as CORRECT for the AZ locale?",
+    "scenario_az": "Siz Azərbaycan bank işçiləri tərəfindən istifadə ediləcək maliyyə tablosunun lokalizasiya sınaq hallarını yazırsınız. Sistem min iki yüz otuz dörd manat əlli altı qəpik məbləğini göstərməlidir. Sınaq halınız AZ lokalı üçün hansı format DOĞRU olaraq yoxlamalıdır?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "1,234.56 AZN",
+        "text_az": "1,234.56 AZN"
+      },
+      {
+        "key": "B",
+        "text_en": "1.234,56 AZN",
+        "text_az": "1.234,56 AZN"
+      },
+      {
+        "key": "C",
+        "text_en": "1 234.56 AZN",
+        "text_az": "1 234.56 AZN"
+      },
+      {
+        "key": "D",
+        "text_en": "AZN 1234.56",
+        "text_az": "AZN 1234.56"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. The AZ locale uses a period as the thousands separator and a comma as the decimal separator: 1.234,56 AZN. This follows the European number formatting standard adopted in Azerbaijan. A uses the US/UK format (comma thousands, period decimal) — incorrect for AZ. C uses a space separator common in French/Russian locales — not the AZ standard. D places currency before the number without proper separators — incorrect format.",
+    "feedback_az": "B düzgündür. AZ lokalı minlik ayırıcı olaraq nöqtə, onluq ayırıcı olaraq vergül istifadə edir: 1.234,56 AZN. A ABŞ/Böyük Britaniya formatıdır (vergül — minlik, nöqtə — onluq) — AZ üçün yanlışdır. C Fransız/Rus lokallarında istifadə edilən boşluq ayırıcısıdır — AZ standartı deyil.",
+    "development_tip_en": "Build a localization test matrix for AZ that covers: thousands separator (period), decimal separator (comma), currency symbol position (after number), date format (DD.MM.YYYY), and time format (24-hour). Reference the az-AZ ICU locale data and test with actual AZ bank employee users to catch format assumptions your team may have missed.",
+    "development_tip_az": "AZ üçün lokalizasiya sınaq matrisi qurun: minlik ayırıcı (nöqtə), onluq ayırıcı (vergül), valyuta simvolunun mövqeyi (rəqəmdən sonra), tarix formatı (GG.AA.İİİİ), vaxt formatı (24 saatlıq). az-AZ ICU lokal məlumatlarına müraciət edin.",
+    "london_delta": "A London QA engineer would default to testing the en-GB or en-US number format (1,234.56) and treat it as the baseline. In Azerbaijan, the correct locale format is 1.234,56 — using European-style separators. This distinction causes silent failures in financial systems where format validation is strict, and a London engineer would likely only catch the bug after a bank user complaint, not in test design.",
+    "az_institutions": [
+      "CBA"
+    ],
+    "tags": [
+      "qa",
+      "az-specific",
+      "localization",
+      "number-format",
+      "i18n"
+    ]
+  },
+  {
+    "id": "prof-qa-s3-003",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.4,
+    "irt_b": 0.1,
+    "irt_c": 0.1,
+    "scenario_en": "During the ASAN xidmət 2020 COVID-19 surge, the platform experienced a 47-minute outage when simultaneous users jumped from 180,000 to 684,000 (3.8× baseline). Post-incident analysis identified three root causes: SMS queue saturation, database connection pool exhaustion, and CDN misconfiguration. You are the QA lead tasked with designing a regression test suite to prevent recurrence. Which test strategy BEST addresses the most critical root cause?",
+    "scenario_az": "ASAN xidmət 2020 COVID-19 artımı zamanı platforma eyni vaxtda istifadəçi sayı 180.000-dən 684.000-ə (3,8× baza xətti) qalxdıqda 47 dəqiqəlik nasazlıq yaşadı. Hadisədən sonrakı analiz üç əsas səbəb müəyyən etdi: SMS növbəsinin doyması, verilənlər bazası əlaqə hovuzunun tükənməsi və CDN yanlış konfiqurasiyası. Siz QA aparıcısı kimi yenidən baş verməni önləmək üçün reqressiya sınaq dəsti hazırlamalısınız. Hansı sınaq strategiyası ən kritik kök səbəbi ən yaxşı şəkildə həll edir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Load test SMS delivery at 2× baseline only, since 3.8× is an anomaly unlikely to recur",
+        "text_az": "SMS çatdırılmasını yalnız 2× baza xəttində yükləyin, çünki 3,8× yenidən baş vermə ehtimalı az olan anormallıqdır"
+      },
+      {
+        "key": "B",
+        "text_en": "Simulate DB connection pool exhaustion at 4× baseline load, verify pool size auto-scales and circuit breakers trip before cascading failure",
+        "text_az": "4× baza xətti yükündə verilənlər bazası əlaqə hovuzu tükənməsini simulyasiya edin, hovuz ölçüsünün avtomatik miqyaslandığını və kaskad nasazlıqdan əvvəl dövrə kəsicilərinin işə düşdüyünü yoxlayın"
+      },
+      {
+        "key": "C",
+        "text_en": "Write unit tests for each SMS template to ensure message content is correct under load",
+        "text_az": "Hər SMS şablonu üçün yük altında mesaj məzmununun doğru olduğunu yoxlamaq üçün vahid testlər yazın"
+      },
+      {
+        "key": "D",
+        "text_en": "Conduct a CDN configuration review checklist without load testing, since CDN issues are configuration not code",
+        "text_az": "CDN konfiqurasiya icmal siyahısı aparın, çünki CDN problemləri konfiqurasiya ilə bağlıdır, kod ilə deyil"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. The ASAN 2020 post-mortem identified DB connection pool exhaustion as the primary cascading failure trigger — once the pool was exhausted, all three systems (SMS, DB, CDN) degraded simultaneously. The correct regression strategy targets the most critical dependency: validating that connection pool auto-scaling and circuit breakers activate before pool exhaustion cascades. A is wrong because setting the ceiling at 2× fails to test the actual incident threshold (3.8×). C tests content, not capacity — irrelevant to the root cause. D ignores load as a factor and treats CDN as isolated — the incident showed CDN misconfiguration combined with load caused the outage.",
+    "feedback_az": "B düzgündür. ASAN 2020 post-mortem analizi verilənlər bazası əlaqə hovuzu tükənməsini əsas kaskad nasazlıq tetikleyicisi kimi müəyyən etdi. Düzgün reqressiya strategiyası ən kritik asılılığı hədəfləyir: hovuz tükənməsindən əvvəl avtomatik miqyaslandırma və dövrə kəsicilərinin aktivləşməsini yoxlamaq.",
+    "development_tip_en": "Study the ASAN 2020 incident as a case study in government platform resilience. Build a load test suite using k6 or Locust that tests at 2×, 4×, and 6× baseline simultaneously — not sequentially. Include connection pool metrics in your performance dashboards and set alerts at 70% pool utilization (not 100%). Circuit breaker patterns (Hystrix-style) should be a mandatory test category for any AZ government-integrated service.",
+    "development_tip_az": "ASAN 2020 insidentini dövlət platforması dayanıqlığında bir nümunə olaraq öyrənin. k6 və ya Locust istifadə edərək eyni vaxtda 2×, 4× və 6× baza xəttini sınayan yük sınaq dəsti qurun. Əlaqə hovuzu göstəricilərini izləyin və 70% istifadə səviyyəsində xəbərdarlıqlar qurun.",
+    "london_delta": "A London QA engineer would design load tests targeting 2–3× baseline, treating 3.8× as an outlier scenario. In Azerbaijan, ASAN xidmət is the primary e-government gateway for over 3 million registered users — a single COVID-era policy announcement can generate 3.8× surge in under 10 minutes. The correct AZ government platform standard must test at 5× to account for policy-driven demand spikes that have no UK/EU equivalent at this concentration.",
+    "az_institutions": [
+      "ASAN"
+    ],
+    "tags": [
+      "qa",
+      "az-specific",
+      "load-testing",
+      "asan",
+      "reliability",
+      "db-pool"
+    ]
+  },
+  {
+    "id": "prof-qa-s3-004",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "hard",
+    "type": "mcq",
+    "irt_a": 1.7,
+    "irt_b": 1.4,
+    "irt_c": 0.08,
+    "scenario_en": "Your team is 3 weeks into a 6-week sprint for ABB Bank's new mobile banking feature. The CBA has just announced a surprise audit window starting in 4 weeks. Your QA manager wants to freeze all regression testing for the 2 weeks prior to audit to avoid introducing new defects. The product manager wants to continue the sprint and deploy the feature before the audit begins. You are the QA lead. What is your recommended course of action?",
+    "scenario_az": "Komandanız ABB Bankın yeni mobil bank funksiyası üçün 6 həftəlik sprintin 3-cü həftəsindədir. Mərkəzi Bank 4 həftə sonra başlayan gözlənilməz audit pəncərəsini elan etdi. QA meneceriniz yeni defektlər tətbiq etməmək üçün auditdən əvvəlki 2 həftəyə reqressiya sınaqlarını dondurmaq istəyir. Məhsul meneceri sprinti davam etdirmək və audit başlamazdan əvvəl funksiyanı yerləşdirmək istəyir. Siz QA aparıcısısınız. Tövsiyə etdiyiniz hərəkət planı nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Support the product manager — deploy the feature before audit, freeze only post-deployment regression in the 2 weeks before audit",
+        "text_az": "Məhsul menecerinə dəstək verin — funksiyanı auditdən əvvəl yerləşdirin, yalnız yerləşdirmə sonrası reqressiyanı dondurun"
+      },
+      {
+        "key": "B",
+        "text_en": "Support the QA manager — freeze regression immediately, halt the sprint, and focus all QA effort on audit preparation documentation",
+        "text_az": "QA menecerinə dəstək verin — reqressiyanı dərhal dondurun, sprinti dayandırın, bütün QA səylərini audit hazırlığı sənədləşməsinə yönəldin"
+      },
+      {
+        "key": "C",
+        "text_en": "Escalate to the CBA directly to request an audit window extension — 4 weeks is insufficient notice under banking regulations",
+        "text_az": "Birbaşa Mərkəzi Banka müraciət edin — bank qaydaları çərçivəsində 4 həftə kifayət qədər bildiriş deyil"
+      },
+      {
+        "key": "D",
+        "text_en": "Propose a risk-stratified approach: complete the sprint on schedule, run full regression before deployment, deploy only if P1/P2 defect count is zero, then enter audit-freeze mode",
+        "text_az": "Risk əsaslı yanaşma təklif edin: sprinti cədvəldə tamamlayın, yerləşdirmədən əvvəl tam reqressiya aparın, yalnız P1/P2 defekt sayı sıfır olduqda yerləşdirin, sonra audit dondurma rejiminə keçin"
+      }
+    ],
+    "correct_answer": "D",
+    "feedback_en": "D is correct. The risk-stratified approach resolves the tension between sprint delivery and audit readiness. A pre-deployment full regression run with a hard P1/P2 gate ensures the new feature does not introduce audit-visible defects, while the sprint timeline is respected. A is wrong because deploying before a complete regression creates uncontrolled audit risk — any defect found during the CBA audit has regulatory consequences. B is wrong because halting the sprint wastes 3 weeks of completed work and still leaves open the question of deployment. C is wrong — QA leads do not have standing to escalate to the CBA directly; that requires Director-level approval at the bank. The ABB Bank 2022 incident showed that even seemingly minor rounding issues required a CBA incident report — proactive quality gates are the correct AZ banking QA posture.",
+    "feedback_az": "D düzgündür. Risk əsaslı yanaşma sprint çatdırılması ilə audit hazırlığı arasındakı gərginliyi həll edir. Yerləşdirməqabağı tam reqressiya P1/P2 səviyyəsindəki qapı audit görünən defektlərin olmamasını təmin edir. A yanlışdır, çünki tam reqressiya olmadan yerləşdirmə idarə olunmaz audit riski yaradır. B yanlışdır, çünki 3 həftəlik işi itirməyə dəymir. C yanlışdır — QA aparıcısının Mərkəzi Banka birbaşa müraciət etmə səlahiyyəti yoxdur.",
+    "development_tip_en": "Study CBA audit preparation protocols for Azerbaijani banking software. Build a standing 'audit-readiness' test suite that runs weekly — separate from your sprint regression — specifically targeting CBA compliance test cases (decimal precision, transaction logging, access control). This means an audit announcement requires no sprint disruption because you are always audit-ready.",
+    "development_tip_az": "Azərbaycan bank proqram təminatı üçün Mərkəzi Bank audit hazırlığı protokollarını öyrənin. Həftəlik işləyən, sprints reqressiyasından ayrı 'audit hazırlığı' sınaq dəsti qurun — CBA uyğunluq sınaq hallarını (onluq dəqiqlik, əməliyyat qeydi, giriş nəzarəti) hədəfləyən.",
+    "london_delta": "A London QA lead would treat a 4-week audit window as ample time and continue the sprint with a simple feature freeze 1 week before audit. In Azerbaijan, CBA audits carry regulatory consequence risk that is structurally different from FCA audits — a P1 defect discovered during a CBA audit can trigger mandatory public disclosure and Director-level accountability. The correct AZ response requires a formal P1/P2 zero-defect gate before any deployment in an audit window, not just a code freeze.",
+    "az_institutions": [
+      "CBA",
+      "ABB"
+    ],
+    "tags": [
+      "qa",
+      "az-specific",
+      "cba-audit",
+      "risk-management",
+      "banking"
+    ]
+  },
+  {
+    "id": "prof-qa-s3-005",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.3,
+    "irt_b": 0.2,
+    "irt_c": 0.1,
+    "scenario_en": "Your team is in week 4 of a 6-week sprint building an API integration for an ASAN xidmət-connected service. The Ministry of Digital Development has just published new ISMSN (Information Security Management System of Azerbaijan) requirements. The new rules require all external API integrations to undergo a Director-level approval process before go-live — a step not in your original test plan. Go-live is in 2 weeks. How do you adapt your test plan?",
+    "scenario_az": "Komandanız ASAN xidmətə qoşulmuş xidmət üçün API inteqrasiyası quran 6 həftəlik sprintin 4-cü həftəsindədir. Rəqəmsal İnkişaf Nazirliyi yeni ISMSN tələblərini dərc etdi. Yeni qaydalar canlıya keçməzdən əvvəl bütün xarici API inteqrasiyalarının Direktor səviyyəsində təsdiq prosesindən keçməsini tələb edir — bu addım orijinal sınaq planınızda yox idi. Canlıya keçiş 2 həftə sonradır. Sınaq planınızı necə uyğunlaşdırırsınız?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Proceed with the original test plan — ISMSN requirements apply to new projects only, not in-flight sprints",
+        "text_az": "Orijinal sınaq planı ilə davam edin — ISMSN tələbləri yalnız yeni layihələrə aiddir, davam edən sprintlərə deyil"
+      },
+      {
+        "key": "B",
+        "text_en": "Pause all testing until Director approval is received, even if it delays go-live by weeks",
+        "text_az": "Direktor təsdiqi alınana qədər bütün sınaqları dayandırın, hətta bu həftələrlə gecikmə yaratsa belə"
+      },
+      {
+        "key": "C",
+        "text_en": "Immediately add ISMSN compliance test cases to the remaining 2 weeks, escalate the Director approval requirement to project sponsor same day, and prepare a go/no-go decision memo with two scenarios (approved on time vs delayed)",
+        "text_az": "Dərhal qalan 2 həftəyə ISMSN uyğunluq sınaq halları əlavə edin, həmin gün Direktor təsdiq tələbini layihə sponsoruna bildirin və iki ssenarili qərar memorandumu hazırlayın (vaxtında təsdiqlənmə vs gecikmə)"
+      },
+      {
+        "key": "D",
+        "text_en": "Remove the API integration from this sprint scope entirely and deliver only the internal features",
+        "text_az": "API inteqrasiyasını bu sprint həcmindən tamamilə çıxarın və yalnız daxili funksiyaları çatdırın"
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct. Mid-sprint regulatory changes require parallel adaptation: adding compliance test cases to the active sprint (so technical quality is not compromised) AND immediately surfacing the organizational blocker (Director approval) to the sponsor level on the same day. The go/no-go memo with two scenarios prevents a last-minute surprise. A is wrong — ISMSN requirements apply to any system going live after the effective date, regardless of sprint start date. B is wrong because pausing testing wastes the remaining sprint capacity that can be used to prepare compliant test evidence. D is wrong because scope reduction does not eliminate the compliance requirement — the API integration still needs approval before it ships.",
+    "feedback_az": "C düzgündür. Sprint ortasında tənzimləyici dəyişikliklər paralel uyğunlaşma tələb edir: aktiv sprintə uyğunluq sınaq halları əlavə etmək VƏ həmin gün təşkilati maneəni (Direktor təsdiqi) sponsor səviyyəsinə bildirmək. A yanlışdır — ISMSN tələbləri effektiv tarixdən sonra canlıya keçən istənilən sistemə aiddir.",
+    "development_tip_en": "Subscribe to Ministry of Digital Development regulatory update feeds and include a 'regulatory change check' step in your sprint planning template. For ASAN-connected systems specifically, build a compliance test category that maps to ISMSN controls from day one — this means new requirements add test cases, not new test categories, which is far faster to adapt.",
+    "development_tip_az": "Rəqəmsal İnkişaf Nazirliyinin tənzimləyici yenilik axınlarına abunə olun və sprint planlaşdırma şablonunuza 'tənzimləyici dəyişiklik yoxlaması' addımı əlavə edin. ASAN-a qoşulmuş sistemlər üçün xüsusilə ilk gündən ISMSN nəzarətlərinə uyğunlaşdırılmış uyğunluq sınaq kateqoriyası qurun.",
+    "london_delta": "A London QA engineer would treat a mid-sprint regulatory change as a project manager problem and continue testing per the original plan, assuming legal would handle the compliance question. In Azerbaijan, ISMSN compliance is a technical QA responsibility — the Director approval process requires QA to produce documented test evidence as part of the approval package. A London engineer would miss this and the Director approval would be blocked waiting for QA artifacts that were never planned.",
+    "az_institutions": [
+      "ASAN",
+      "Ministry of Digital Development"
+    ],
+    "tags": [
+      "qa",
+      "az-specific",
+      "ismsn",
+      "regulatory-change",
+      "adaptability"
+    ]
+  },
+  {
+    "id": "prof-qa-s3-006",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "hard",
+    "type": "sjt",
+    "irt_a": 1.6,
+    "irt_b": 1.3,
+    "irt_c": 0.08,
+    "scenario_en": "You are the QA Lead for a SOCAR Digital (state oil company) project. A senior developer — who is 15 years your senior and holds a title of 'Senior Expert' — pushed a hotfix directly to production without running the regression suite, bypassing your QA sign-off process. The hotfix caused a P2 defect that is now live. When you raise this in the team meeting, the senior developer says: 'I have been doing this for 20 years. Your process slows us down. The Director agrees with me.' How do you respond?",
+    "scenario_az": "Siz SOCAR Rəqəmsal (dövlət neft şirkəti) layihəsinin QA Aparıcısısınız. Sizdən 15 yaş böyük və 'Baş Ekspert' adına sahib olan baş developer reqressiya dəsti işlətmədən, QA imzalama prosesinizi keçərək birbaşa istehsalata düzəliş göndərdi. Düzəliş hazırda canlıda olan P2 qüsuruna səbəb oldu. Komanda iclasında bunu qaldırdığınızda baş developer deyir: 'Mən bunu 20 ildir edirəm. Sizin prosesiniz bizi ləngidər. Direktor mənimlə razıdır.' Necə cavab verirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Back down immediately — challenging a Senior Expert publicly in a state-linked company damages relationships and your own career",
+        "text_az": "Dərhal geri çəkilin — dövlətlə əlaqəli şirkətdə ictimaiyyət qarşısında Baş Ekspertə meydan oxumaq münasibətlərə və karyeranıza zərər verir"
+      },
+      {
+        "key": "B",
+        "text_en": "Escalate directly to the Director in the same meeting to force a ruling on the QA process",
+        "text_az": "Eyni iclasda QA prosesi üzrə qərar vermək üçün birbaşa Direktora müraciət edin"
+      },
+      {
+        "key": "C",
+        "text_en": "Acknowledge the seniority, then redirect to the P2 defect as evidence: propose a post-incident review focused on process improvement (not blame), and follow up with a written proposal for a 'fast-track hotfix protocol' that preserves QA sign-off with a 2-hour SLA",
+        "text_az": "Yüksək vəzifəni qəbul edin, sonra P2 qüsurunu sübut kimi ortaya qoyun: günahlandırma deyil, proses təkmilləşdirməsinə yönəlmiş insidentdən sonrakı icmal təklif edin və 2 saatlıq SLA ilə QA imzalamanı qoruyan 'sürətli düzəliş protokolu' üçün yazılı təklif hazırlayın"
+      },
+      {
+        "key": "D",
+        "text_en": "Document the incident in the QA log and say nothing further — process enforcement in hierarchical organizations requires Director mandate, not QA lead advocacy",
+        "text_az": "İnsidenti QA qeydiyyat kitabında qeyd edin və daha heç nə deməyin — iyerarxik təşkilatlarda proses tətbiqi Direktor mandatı tələb edir, QA aparıcısının müdafiəsi deyil"
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct. In SOCAR's hierarchical culture, directly confronting seniority in public (B) triggers defensive escalation and loses the technical argument. Backing down (A) abandons the QA function entirely. Silent documentation (D) produces no process change. The correct approach acknowledges the organizational reality while anchoring the response to objective evidence (the live P2 defect, not process theory). The 'fast-track hotfix protocol' reframes the conversation from 'QA slows us down' to 'QA can sign off in 2 hours' — addressing the developer's actual complaint while preserving the gate. In AZ state-linked corporate culture, written proposals that go through formal channels have institutional weight that verbal challenges in meetings do not.",
+    "feedback_az": "C düzgündür. SOCAR-ın iyerarxik mədəniyyətində ictimaiyyət qarşısında yüksək vəzifəyə birbaşa meydan oxumaq müdafiə eskalasiyasına səbəb olur. Geri çəkilmək QA funksiyasından imtina deməkdir. Səssiz sənədləşmə heç bir proses dəyişikliyi vermir. Düzgün yanaşma — obyektiv dəlilə (canlı P2 qüsur) əsaslanaraq, sürətli protokol vasitəsilə həm iyerarxiyanı, həm də QA keyfiyyətini qorumaq.",
+    "development_tip_en": "Study organizational influence strategies for hierarchical AZ corporate environments. The key is converting process arguments into business risk arguments — a QA lead who says 'the P2 defect cost us X hours of incident response' is speaking the language of SOCAR management. Build post-incident reviews as a regular practice; they create institutional memory that supports QA authority over time without requiring confrontation.",
+    "development_tip_az": "İyerarxik AZ korporativ mühitləri üçün təşkilati təsir strategiyalarını öyrənin. Proses arqumentlərini biznes riski arqumentlərinə çevirməyin əsası — 'P2 qüsur bizə X saat insidentin aradan qaldırılmasına başa gəldi' deyən QA aparıcısı SOCAR rəhbərliyinin dilini danışır.",
+    "london_delta": "A London QA lead would feel empowered to challenge the process violation directly in the team meeting, citing DORA metrics and citing the pipeline gates as non-negotiable. In SOCAR's AZ corporate hierarchy, a public challenge to a 20-year Senior Expert — regardless of technical merit — is received as insubordination, not professional quality advocacy. The correct AZ approach channels the same technical argument through face-saving mechanisms (post-incident review, written proposal) that allow the senior developer to adopt better practices without public loss of status.",
+    "az_institutions": [
+      "SOCAR"
+    ],
+    "tags": [
+      "qa",
+      "az-specific",
+      "leadership",
+      "corporate-hierarchy",
+      "socar",
+      "process"
+    ]
+  },
+  {
+    "id": "prof-qa-s3-007",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency_slug": "communication",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.1,
+    "irt_b": -0.8,
+    "irt_c": 0.12,
+    "scenario_en": "You need to send a test completion report to the Deputy Director of the State Tax Service of Azerbaijan. The report summarizes results of a UAT cycle for their new taxpayer portal. You have 47 defects found: 0 P1, 2 P2, 12 P3, 33 P4. Which communication approach is most appropriate for this audience?",
+    "scenario_az": "Azərbaycan Dövlət Vergi Xidmətinin Direktor müavinə sınaq tamamlanma hesabatı göndərməlisiniz. Hesabat yeni vergi ödəyicisi portalı üçün UAT dövrünün nəticələrini ümumiləşdirir. 47 qüsur tapıldı: 0 P1, 2 P2, 12 P3, 33 P4. Bu auditoriya üçün ən uyğun ünsiyyət yanaşması hansıdır?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Send the full defect list with Jira ticket IDs, reproduction steps, and technical environment details so the Deputy Director has complete information",
+        "text_az": "Tam məlumat üçün Jira bilet ID-ləri, reproduksiya addımları və texniki mühit detalları ilə tam qüsur siyahısı göndərin"
+      },
+      {
+        "key": "B",
+        "text_en": "Send a one-page executive summary in Azerbaijani: system readiness verdict, P1/P2 count as go/no-go indicators, risk summary, and recommended decision — with full defect log attached separately",
+        "text_az": "Azərbaycanca bir səhifəlik icraiyyə xülasəsi göndərin: sistem hazırlığı hökmü, P1/P2 sayı getmə/getməmə göstəriciləri kimi, risk xülasəsi və tövsiyə olunan qərar — tam qüsur jurnalı ayrıca əlavə olaraq"
+      },
+      {
+        "key": "C",
+        "text_en": "Send the report in English only — government officials in Azerbaijan are expected to work with English technical documents",
+        "text_az": "Hesabatı yalnız ingilis dilində göndərin — Azərbaycanda dövlət məmurlarından ingilis texniki sənədlərlə işləmələri gözlənilir"
+      },
+      {
+        "key": "D",
+        "text_en": "Present all 47 defects in order of discovery with full technical details — completeness demonstrates QA thoroughness",
+        "text_az": "47 qüsurun hamısını kəşf sırası ilə tam texniki detallarla təqdim edin — tamlıq QA dəqiqliyini nümayiş etdirir"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. A Deputy Director in an Azerbaijani government ministry makes go/no-go deployment decisions, not defect triage decisions. The correct communication format is an Azerbaijani-language executive summary with a clear verdict, P1/P2 as binary go/no-go signals, and the technical details attached (not embedded) for delegation to technical staff. A overwhelms a non-technical decision-maker with technical noise. C is wrong — formal government communications in Azerbaijan are conducted in Azerbaijani; sending English-only documentation to a state ministry is both unprofessional and a barrier to the decision. D is wrong for the same reason as A.",
+    "feedback_az": "B düzgündür. Azərbaycan dövlət nazirliyindəki Direktor müavini qüsur seçim qərarları deyil, yerləşdirmənin olub-olmayacağına dair qərarlar verir. Düzgün ünsiyyət formatı aydın hökmü, P1/P2-ni ikili getmə/getməmə siqnalları kimi göstərən, texniki detalları isə əlavə olaraq əlavə edən Azərbaycanca icraiyyə xülasəsidir.",
+    "development_tip_en": "Build two versions of every formal test report: a technical version (for developers and QA team) and an executive version (for Deputy Director level and above). The executive version should always be in Azerbaijani, use traffic-light RAG status (Red/Amber/Green), lead with a verdict, and keep to one page. Practice translating technical defect counts into business risk language: '2 P2 defects = 2 scenarios where taxpayers cannot complete a transaction' is clearer than '2 P2 open'.",
+    "development_tip_az": "Hər rəsmi sınaq hesabatının iki versiyasını hazırlayın: texniki versiya (developerlər üçün) və icraiyyə versiyası (Direktor müavini səviyyəsi üçün). İcraiyyə versiyası həmişə Azərbaycanca olmalı, trafik işığı RAG statusu istifadə etməli, hökmə aparmalı və bir səhifədə qalmalıdır.",
+    "london_delta": "A London QA lead would send a comprehensive test report in English with full defect details, assuming the Deputy Director has a technical advisor to interpret it. In Azerbaijan's government ministries, the Deputy Director is often the final decision-maker and communications must be in Azerbaijani. An English-only, detail-heavy report causes delays (translation required) and signals that the QA team does not understand government stakeholder communication norms.",
+    "az_institutions": [
+      "State Tax Service"
+    ],
+    "tags": [
+      "qa",
+      "az-specific",
+      "communication",
+      "government-reporting",
+      "azerbaijani-language"
+    ]
+  },
+  {
+    "id": "prof-qa-s3-008",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "hard",
+    "type": "sjt",
+    "irt_a": 1.7,
+    "irt_b": 1.5,
+    "irt_c": 0.07,
+    "scenario_en": "You are QA Lead for a new ASAN xidmət biometric enrollment system that will collect fingerprints and facial scans from all Azerbaijani citizens renewing national ID cards. During testing, you discover the system logs raw biometric templates (not just match scores) to a centralized audit database accessible by 340 government employees. The system passes all ISMSN compliance tests. Your manager says: 'ISMSN is satisfied, ship it.' How do you respond?",
+    "scenario_az": "Siz milli şəxsiyyət vəsiqəsini yeniləyən bütün Azərbaycan vətəndaşlarından barmaq izi və üz skanı toplayacaq yeni ASAN xidmət biometrik qeydiyyat sisteminin QA Aparıcısısınız. Sınaq zamanı sistemin 340 dövlət işçisinin girişinin olduğu mərkəzləşdirilmiş audit verilənlər bazasına xam biometrik şablonlar (yalnız uyğunluq hesabları deyil) qeyd etdiyini kəşf edirsiniz. Sistem bütün ISMSN uyğunluq sınaqlarını keçir. Meneceriniz deyir: 'ISMSN ödənildi, göndərin.' Necə cavab verirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Agree and ship — ISMSN compliance is the legal threshold, and the access control decision is an architecture choice outside QA scope",
+        "text_az": "Razılaşın və göndərin — ISMSN uyğunluğu qanuni hədddir və giriş nəzarəti qərarı QA həcmindən kənar memarlıq seçimidir"
+      },
+      {
+        "key": "B",
+        "text_en": "Raise a formal P1 defect: 'biometric template exposure to 340 users violates data minimization principle', request security architecture review before sign-off, and document your escalation in writing",
+        "text_az": "Rəsmi P1 qüsur qaldırın: '340 istifadəçiyə biometrik şablon ifşası məlumatların minimizasiyası prinsipini pozur', imzalama öncəsi təhlükəsizlik memarlığı icmalı tələb edin və eskalasiyunuzu yazılı şəkildə sənədləşdirin"
+      },
+      {
+        "key": "C",
+        "text_en": "Raise the concern verbally to your manager only — written documentation could create liability for the QA team if the system ships",
+        "text_az": "Narahatlığı yalnız menecerinizə şifahi şəkildə bildirin — yazılı sənəd sistem göndərilirsə QA komandası üçün məsuliyyət yarada bilər"
+      },
+      {
+        "key": "D",
+        "text_en": "Accept the manager's decision and add a note in the test summary that ISMSN compliance was the accepted standard — this protects QA team from future accountability",
+        "text_az": "Menecerinizin qərarını qəbul edin və sınaq xülasəsine ISMSN uyğunluğunun qəbul edilmiş standart olduğu qeydini əlavə edin — bu gələcəkdə QA komandanı hesabatlılıqdan qoruyur"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. ISMSN compliance is a necessary but not sufficient condition for biometric systems at national scale. Raw biometric templates (not hashed match scores) stored accessibly by 340 users represents a critical privacy and safeguarding risk regardless of ISMSN status — biometrics are irreversible, meaning a breach cannot be remediated by a password reset. The data minimization principle (store only what is necessary for the function) is violated when raw templates are retained instead of match scores. A formal written P1 is required: it creates an institutional record that the risk was identified and surfaces it to a level above the QA manager. A and D both accept a safeguarding failure by treating regulatory compliance as an ethical ceiling. C is wrong because undocumented verbal escalation provides no accountability trail.",
+    "feedback_az": "B düzgündür. ISMSN uyğunluğu milli miqyaslı biometrik sistemlər üçün zəruri lakin kifayətsiz şərtdir. 340 istifadəçi tərəfindən əldə edilə bilən xam biometrik şablonlar kritik gizlilik riski yaradır — biometrika geri dönüşü olmayan məlumatdır. Məlumatların minimizasiyası prinsipi pozulur. Rəsmi yazılı P1 tələb olunur: bu, riskin müəyyən edildiyini sənədləşdirən institusional qeyd yaradır.",
+    "development_tip_en": "Study the intersection of ISMSN compliance and privacy-by-design principles for government biometric systems. Learn the difference between storing biometric match scores (acceptable for audit) versus raw templates (creates irreversible exposure risk). When working on citizen-facing systems in Azerbaijan, treat biometric data with a higher standard than ISMSN mandates — the population has no alternative identity document, meaning a breach is a permanent harm with no remediation path.",
+    "development_tip_az": "Dövlət biometrik sistemlər üçün ISMSN uyğunluğu ilə dizaynda gizlilik prinsiplərinin kəsişməsini öyrənin. Biometrik uyğunluq hesablarını saxlamaq (audit üçün qəbul edilə bilən) ilə xam şablonları saxlamaq (geri dönüşü olmayan ifşa riski yaradır) arasındakı fərqi öyrənin.",
+    "london_delta": "A London QA lead working on a biometric system would assess risk under GDPR Article 9 (special category data), which explicitly limits biometric data processing purpose and requires data minimization. In Azerbaijan, ISMSN does not contain an equivalent explicit biometric data minimization requirement — a QA engineer who only checks ISMSN compliance will miss this safeguarding gap entirely. The correct AZ approach applies privacy-by-design principles beyond the literal compliance standard, because the gap between ISMSN and GDPR-level biometric protection is a real systemic vulnerability in AZ government systems.",
+    "az_institutions": [
+      "ASAN",
+      "Ministry of Digital Development"
+    ],
+    "tags": [
+      "qa",
+      "az-specific",
+      "biometrics",
+      "privacy",
+      "ismsn",
+      "safeguarding",
+      "government"
+    ]
+  },
+  {
+    "id": "prof-qa-s3-009",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 1.8,
+    "irt_b": 1.6,
+    "irt_c": 0.0,
+    "scenario_en": "You are the QA Lead for the e-GOV portal. During staging validation 48 hours before the scheduled go-live, your security scan reveals a path traversal vulnerability in the document upload module — exactly the attack vector found in the 2021 e-GOV security audit (OWASP ZAP missed it; only manual penetration testing found it). The fix requires a developer to patch the upload handler and you need to re-run the full security regression suite (estimated 6 hours). Go-live is in 48 hours. The Deputy Minister's office has sent invitations to a public launch ceremony. Describe your complete response plan.",
+    "scenario_az": "Siz e-GOV portalının QA Aparıcısısınız. Planlanmış canlıya keçişdən 48 saat əvvəl mərhələlənmiş doğrulamada sənəd yükləmə modulunda yol keçid zəifliyini aşkar edirsiniz — tam 2021-ci il e-GOV təhlükəsizlik auditində tapılan hücum vektoru (OWASP ZAP onu qaçırdı; yalnız manual penetrasiya testi tapdı). Düzəliş developerin yükləmə işləyicisini yamalamasını tələb edir və siz tam təhlükəsizlik reqressiya dəstini yenidən işlətməlisiniz (6 saat). Canlıya keçiş 48 saat sonradır. Nazir müavininin ofisi ictimai açılış mərasiminə dəvətnamələr göndərib. Tam cavab planınızı təsvir edin.",
+    "evaluation_rubric": {
+      "5": "Response demonstrates all of: (1) Immediate escalation chain clearly defined — QA Lead → Project Manager → Deputy Minister's office, same hour, in writing. (2) Path traversal classified as P0/Critical security defect with explicit reference to 2021 precedent and OWASP ZAP miss pattern. (3) Parallel workstreams identified: developer patches in parallel with QA preparing regression environment, not sequentially. (4) Risk-stratified go/no-go decision: go-live delayed only if patch + 6hr regression cannot complete within 36-hour buffer (allowing 12hr final verification before go-live). (5) Ceremony management recommendation: Deputy Minister informed same day with factual risk briefing, not bureaucratic hedging. (6) Post-incident: propose adding path traversal manual pentest as mandatory pre-go-live gate, citing 2021 precedent. Demonstrates AZ government hierarchy awareness and technical depth simultaneously.",
+      "4": "Covers escalation, P0 classification, parallel workstreams, and ceremony delay recommendation, but misses either: post-incident process improvement OR specific reference to 2021 precedent as institutional justification for the delay decision. Technical response is sound but organizational navigation is incomplete.",
+      "3": "Correctly identifies the severity and recommends delay, but describes sequential workflow (fix then test) rather than parallel, and does not clearly define the escalation chain or address the ceremony. Shows solid QA instinct but limited organizational and project management thinking.",
+      "2": "Recommends delaying go-live but lacks a structured plan — no escalation chain, no parallel workstreams, no ceremony management, no post-incident recommendation. Correct intuition, poor execution planning.",
+      "1": "Recommends proceeding with go-live despite the path traversal vulnerability, OR proposes a workaround (e.g., disabling document upload) without addressing root cause. Shows fundamental misunderstanding of security severity or organizational responsibility."
+    },
+    "feedback_en": "The highest-scoring response treats this as a simultaneous organizational and technical problem. Technically: path traversal is a P0 security defect — the 2021 e-GOV incident where OWASP ZAP missed it establishes institutional precedent that automated scans are insufficient. The fix must be validated by the same manual pentest methodology that originally found the class of vulnerability, not just by re-running ZAP. Organizationally: the Deputy Minister's ceremony creates political pressure that must be neutralized by same-day factual escalation in writing — not managed by delaying the notification. Parallel workstreams (developer patching simultaneously with QA preparing regression environment) compress the 6-hour window into the available 36-hour buffer before final verification.",
+    "feedback_az": "Ən yüksək bal alan cavab bunu eyni vaxtda təşkilati və texniki problem kimi qəbul edir. Texniki baxımdan: yol keçidi P0 təhlükəsizlik qüsurudur — OWASP ZAP-ın onu qaçırdığı 2021-ci il e-GOV insidenti avtomatlaşdırılmış skanların kifayətsiz olduğunu sübut edən institusional presedentdir. Təşkilati baxımdan: Nazir müavininin mərasimi siyasi təzyiq yaradır — bu, gecikdirilmiş xəbərdarlıqla deyil, həmin gün yazılı faktiki eskalasiya ilə aradan qaldırılmalıdır.",
+    "development_tip_en": "Build a 'security regression protocol' document for your team that explicitly lists vulnerability classes where OWASP ZAP is insufficient and manual pentest is mandatory — path traversal in file upload handlers is the primary example from AZ government system history. Reference the 2021 e-GOV finding in the document so future QA engineers understand the institutional precedent. Practice writing go/no-go decision memos that quantify delay risk vs security risk in terms that Deputy Minister-level stakeholders can evaluate.",
+    "development_tip_az": "Komandanız üçün OWASP ZAP-ın kifayətsiz olduğu və manual pentest məcburi olan zəiflik siniflərini açıq şəkildə sadalayan 'təhlükəsizlik reqressiya protokolu' sənədi hazırlayın — fayl yükləmə işləyicilərindəki yol keçidi AZ hökumət sistemi tarixindən əsas nümunədir.",
+    "london_delta": "A London QA lead would run OWASP ZAP, see it pass, and treat the document upload as tested. The 2021 e-GOV audit established a clear AZ-specific finding: OWASP ZAP consistently misses path traversal in AZ government portal upload handlers because of how the handlers implement custom file path resolution. This is not a generic OWASP limitation — it is a documented pattern in AZ e-government systems that requires a mandatory manual pentest layer that no London-trained QA engineer would instinctively add.",
+    "az_institutions": [
+      "e-GOV",
+      "Ministry of Digital Development"
+    ],
+    "tags": [
+      "qa",
+      "az-specific",
+      "security",
+      "path-traversal",
+      "egov",
+      "adaptability",
+      "open-ended"
+    ]
+  },
+  {
+    "id": "prof-qa-s3-010",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.4,
+    "irt_b": 0.4,
+    "irt_c": 0.1,
+    "scenario_en": "You are testing a new user data export feature for an Azerbaijani HR platform used by 12 large employers. The feature allows employers to export employee personal data (name, salary, health records, performance scores). During testing, you discover there is no audit log for who exports what data, and no time limit on export access. The platform's legal team says: 'We comply with AZ Personal Data Law 2010 — there is no explicit breach notification timeline requirement, so our logging requirements are minimal.' How do you classify this safeguarding gap?",
+    "scenario_az": "Siz 12 böyük işəgötürən tərəfindən istifadə edilən Azərbaycan HR platforması üçün yeni istifadəçi məlumat ixrac funksiyasını sınaqdan keçirirsiniz. Funksiya işəgötürənlərə işçilərin şəxsi məlumatlarını (ad, maaş, sağlamlıq qeydləri, performans qiymətləri) ixrac etmələrə imkan verir. Sınaq zamanı kim nə məlumat ixrac etdiyinə dair audit jurnalı olmadığını və ixrac girişinə vaxt məhdudiyyəti olmadığını kəşf edirsiniz. Platformanın hüquq komandası deyir: 'Biz 2010-cu il AZ Fərdi Məlumat Qanununa uyğunuq — açıq pozuntu bildiriş müddəti tələbi yoxdur, ona görə də jurnal tələblərimiz minimaldır.' Bu təhlükəsizlik boşluğunu necə təsnif edirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Accept the legal team's assessment — if AZ law has no explicit audit logging requirement, QA has no basis to raise it as a defect",
+        "text_az": "Hüquq komandanın qiymətləndirməsini qəbul edin — AZ qanununun açıq audit jurnalı tələbi yoxdursa, QA-nın onu qüsur kimi qaldırmaq üçün əsası yoxdur"
+      },
+      {
+        "key": "B",
+        "text_en": "Classify as a P2 safeguarding defect: absence of audit logs for sensitive employee data export creates an undetectable insider threat and eliminates the ability to conduct a breach investigation, regardless of whether AZ law explicitly mandates it",
+        "text_az": "P2 təhlükəsizlik qüsuru kimi təsnif edin: həssas işçi məlumatı ixracı üçün audit jurnallarının olmaması AZ qanununun açıq tələb edib-etməməsindən asılı olmayaraq, aşkar edilə bilməyən daxili təhlükə yaradır və pozuntunun araşdırılması imkanını aradan qaldırır"
+      },
+      {
+        "key": "C",
+        "text_en": "Raise it as a P4 UX improvement — add a notification email to employees when their data is exported, which satisfies transparency without requiring an audit log",
+        "text_az": "P4 UX təkmilləşdirməsi kimi qaldırın — məlumatları ixrac edildikdə işçilərə bildiriş e-poçtu əlavə edin, bu audit jurnalı tələb etmədən şəffaflığı təmin edir"
+      },
+      {
+        "key": "D",
+        "text_en": "Escalate to the DPA (Data Protection Authority) of Azerbaijan directly — legal ambiguity requires regulatory clarification before QA can classify the gap",
+        "text_az": "Birbaşa Azərbaycanın Məlumatların Mühafizəsi Orqanına müraciət edin — hüquqi qeyri-müəyyənlik QA boşluğu təsnif etməzdən əvvəl tənzimləyici aydınlıq tələb edir"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. The legal team's argument confuses regulatory minimum with safeguarding adequacy. The AZ Personal Data Law 2010's absence of an explicit breach notification timeline is a known gap relative to GDPR — but that gap means the organization carries MORE risk, not less, because a breach may be undetectable without audit logs. Salary, health records, and performance scores are sensitive categories. The absence of audit logging for mass export means: (a) an insider threat is undetectable until post-harm, (b) if a breach is later discovered, the investigation has no evidentiary trail. This is a P2 safeguarding defect regardless of the minimum legal standard. A treats regulatory compliance as an ethical ceiling — a professional error in QA. C misunderstands the threat model — employee notification does not create an audit trail for the employer's actions. D is wrong because QA does not need regulatory clarification to classify a safeguarding risk.",
+    "feedback_az": "B düzgündür. Hüquq komandanın arqumenti tənzimləyici minimumu təhlükəsizliyin adekvatlığı ilə qarışdırır. AZ Fərdi Məlumat Qanununun açıq pozuntu bildiriş müddəti olmaması təşkilatın DAHA ÇIOX risk daşıdığını bildirir, çünki audit jurnalı olmadan pozuntu aşkar edilə bilməz. Maaş, sağlamlıq qeydləri və performans qiymətləri həssas kateqoriyalardır. P2 təhlükəsizlik qüsuru kimi təsnif edilməlidir.",
+    "development_tip_en": "Study the relationship between the AZ Personal Data Law 2010 and international data protection standards. Build a 'safeguarding floor' document for your team that lists controls required by sound practice even when AZ law is silent — audit logging for sensitive data exports, data minimization for biometric systems, and consent records for health data are the three most common gaps. The principle is: regulatory compliance is the minimum; safeguarding adequacy is the QA standard.",
+    "development_tip_az": "2010-cu il AZ Fərdi Məlumat Qanunu ilə beynəlxalq məlumatların mühafizəsi standartları arasındakı əlaqəni öyrənin. Komandanız üçün AZ qanunu susduğunda belə sağlam təcrübə tərəfindən tələb olunan nəzarətləri sadalayan 'təhlükəsizlik mərtəbəsi' sənədi hazırlayın.",
+    "london_delta": "A London QA engineer would immediately flag the missing audit log as a GDPR Article 30 violation (records of processing activities) and classify it as a P1. In Azerbaijan, where GDPR does not apply and the AZ Personal Data Law 2010 has no equivalent explicit requirement, the legal team's 'minimum compliance' argument appears superficially valid. The London engineer's instinct (flag it) is correct, but the reasoning (GDPR) is inapplicable. The correct AZ QA reasoning is: absence of a legal mandate does not eliminate safeguarding risk — audit logs for sensitive data export are required by sound professional practice regardless of jurisdiction.",
+    "az_institutions": [
+      "Ministry of Labor and Social Protection"
+    ],
+    "tags": [
+      "qa",
+      "az-specific",
+      "personal-data-law",
+      "privacy",
+      "audit-logging",
+      "empathy-safeguarding"
+    ]
+  }
+]

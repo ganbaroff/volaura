@@ -20,6 +20,7 @@ class ProfileCreate(ProfileBase):
     account_type: str = "volunteer"
     visible_to_orgs: bool = False
     org_type: str | None = None
+    invited_by_org_id: str | None = None  # GROWTH-2: org attribution from invite link
 
     @field_validator("username")
     @classmethod
@@ -72,6 +73,12 @@ class ProfileResponse(ProfileBase):
     badge_open_badges_url: str | None = None
     created_at: datetime
     updated_at: datetime
+    registration_number: int | None = None
+    registration_tier: str | None = None  # founding_100 | founding_1000 | early_adopter | standard
+    # Subscription fields — present on all profile reads so frontend can gate features
+    subscription_status: str = "trial"  # trial | active | expired | cancelled
+    trial_ends_at: datetime | None = None
+    is_subscription_active: bool = True  # True when status is 'trial' or 'active'
 
 
 class PublicProfileResponse(BaseModel):
@@ -86,6 +93,9 @@ class PublicProfileResponse(BaseModel):
     location: str | None = None
     languages: list[str] = []
     badge_issued_at: datetime | None = None
+    registration_number: int | None = None
+    registration_tier: str | None = None  # founding_100 | founding_1000 | early_adopter | standard
+    percentile_rank: float | None = None  # GROW-M03: % of public users with lower AURA score
 
 
 class DiscoverableVolunteer(BaseModel):

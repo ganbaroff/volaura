@@ -1,0 +1,744 @@
+{
+  "devops": {
+    "profession": "DevOps / Cybersecurity Engineer",
+    "file": "devops-cybersecurity.json",
+    "questions": [
+      {
+        "id": "prof-devops-001",
+        "type": "mcq",
+        "difficulty": "easy",
+        "competency": "tech_literacy",
+        "irt_a": 1.2,
+        "irt_b": -1.5,
+        "irt_c": 0.15,
+        "scenario": "CI/CD pipeline COPY failed: file not found in build context"
+      },
+      {
+        "id": "prof-devops-002",
+        "type": "mcq",
+        "difficulty": "easy",
+        "competency": "reliability",
+        "irt_a": 1.1,
+        "irt_b": -1.2,
+        "irt_c": 0.15,
+        "scenario": "02:30 AM PagerDuty alert, runbook says rollback"
+      },
+      {
+        "id": "prof-devops-003",
+        "type": "mcq",
+        "difficulty": "easy",
+        "competency": "tech_literacy",
+        "irt_a": 1.3,
+        "irt_b": -1.0,
+        "irt_c": 0.15,
+        "scenario": "CrashLoopBackOff: DATABASE_URL not set"
+      },
+      {
+        "id": "prof-devops-004",
+        "type": "sjt",
+        "difficulty": "medium",
+        "competency": "adaptability",
+        "irt_a": 1.4,
+        "irt_b": 0.2,
+        "irt_c": 0.2,
+        "scenario": "Friday 17:45, CVSS 9.8, change freeze in 15 min"
+      },
+      {
+        "id": "prof-devops-005",
+        "type": "mcq",
+        "difficulty": "medium",
+        "competency": "reliability",
+        "irt_a": 1.5,
+        "irt_b": 0.3,
+        "irt_c": 0.15,
+        "scenario": "99.9% SLA math: 52 min downtime on Baku gov portal"
+      },
+      {
+        "id": "prof-devops-006",
+        "type": "sjt",
+        "difficulty": "medium",
+        "competency": "communication",
+        "irt_a": 1.6,
+        "irt_b": 0.4,
+        "irt_c": 0.2,
+        "scenario": "Postmortem: manager wants to soften language"
+      },
+      {
+        "id": "prof-devops-007",
+        "type": "mcq",
+        "difficulty": "hard",
+        "competency": "tech_literacy",
+        "irt_a": 1.8,
+        "irt_b": 1.2,
+        "irt_c": 0.15,
+        "scenario": "privileged: true + docker.sock hostPath mount"
+      },
+      {
+        "id": "prof-devops-008",
+        "type": "sjt",
+        "difficulty": "hard",
+        "competency": "leadership",
+        "irt_a": 1.7,
+        "irt_b": 1.0,
+        "irt_c": 0.2,
+        "scenario": "Junior pushed to main 3rd time bypassing PR review"
+      },
+      {
+        "id": "prof-devops-009",
+        "type": "open_ended",
+        "difficulty": "hard",
+        "competency": "adaptability",
+        "irt_a": 2.0,
+        "irt_b": 1.5,
+        "irt_c": 0.1,
+        "scenario": "03:15 AM: xmr-miner-v2 pod in kube-system, cryptomining incident"
+      },
+      {
+        "id": "prof-devops-010",
+        "type": "open_ended",
+        "difficulty": "medium",
+        "competency": "empathy_safeguarding",
+        "irt_a": 1.6,
+        "irt_b": 0.5,
+        "irt_c": 0.15,
+        "scenario": "PR logs passwords to Elasticsearch, already approved by senior"
+      }
+    ]
+  },
+  "financial": {
+    "profession": "Financial Analyst / Risk Officer",
+    "file": "financial-analyst.json",
+    "questions": [
+      {
+        "id": "prof-fin-001",
+        "type": "mcq",
+        "difficulty": "easy",
+        "competency": "reliability",
+        "irt_a": 1.0,
+        "irt_b": -1.5,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-fin-002",
+        "type": "sjt",
+        "difficulty": "medium",
+        "competency": "reliability",
+        "irt_a": 1.4,
+        "irt_b": 0.3,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-fin-003",
+        "type": "open_ended",
+        "difficulty": "hard",
+        "competency": "reliability",
+        "irt_a": 2.1,
+        "irt_b": 1.8,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-fin-004",
+        "type": "mcq",
+        "difficulty": "easy",
+        "competency": "communication",
+        "irt_a": 0.9,
+        "irt_b": -1.2,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-fin-005",
+        "type": "sjt",
+        "difficulty": "hard",
+        "competency": "communication",
+        "irt_a": 1.8,
+        "irt_b": 1.2,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-fin-006",
+        "type": "mcq",
+        "difficulty": "medium",
+        "competency": "adaptability",
+        "irt_a": 1.3,
+        "irt_b": 0.1,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-fin-007",
+        "type": "open_ended",
+        "difficulty": "hard",
+        "competency": "adaptability",
+        "irt_a": 2.3,
+        "irt_b": 2.2,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-fin-008",
+        "type": "mcq",
+        "difficulty": "easy",
+        "competency": "tech_literacy",
+        "irt_a": 0.8,
+        "irt_b": -1.8,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-fin-009",
+        "type": "mcq",
+        "difficulty": "medium",
+        "competency": "tech_literacy",
+        "irt_a": 1.2,
+        "irt_b": 0.4,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-fin-010",
+        "type": "sjt",
+        "difficulty": "medium",
+        "competency": "leadership",
+        "irt_a": 1.5,
+        "irt_b": 0.5,
+        "irt_c": null,
+        "scenario": ""
+      }
+    ]
+  },
+  "hr": {
+    "profession": "HR Manager / Talent Acquisition",
+    "file": "hr-manager.json",
+    "questions": [
+      {
+        "id": "prof-hr-001",
+        "type": "mcq",
+        "difficulty": "easy",
+        "competency": "empathy_safeguarding",
+        "irt_a": 1.2,
+        "irt_b": -1.5,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-hr-002",
+        "type": "sjt",
+        "difficulty": "medium",
+        "competency": "empathy_safeguarding",
+        "irt_a": 1.6,
+        "irt_b": 0.4,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-hr-003",
+        "type": "open_ended",
+        "difficulty": "hard",
+        "competency": "empathy_safeguarding",
+        "irt_a": 2.0,
+        "irt_b": 1.8,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-hr-004",
+        "type": "mcq",
+        "difficulty": "easy",
+        "competency": "communication",
+        "irt_a": 1.1,
+        "irt_b": -1.2,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-hr-005",
+        "type": "sjt",
+        "difficulty": "hard",
+        "competency": "communication",
+        "irt_a": 1.8,
+        "irt_b": 1.2,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-hr-006",
+        "type": "mcq",
+        "difficulty": "medium",
+        "competency": "adaptability",
+        "irt_a": 1.4,
+        "irt_b": 0.2,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-hr-007",
+        "type": "sjt",
+        "difficulty": "hard",
+        "competency": "adaptability",
+        "irt_a": 2.2,
+        "irt_b": 1.6,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-hr-008",
+        "type": "sjt",
+        "difficulty": "medium",
+        "competency": "leadership",
+        "irt_a": 1.5,
+        "irt_b": 0.3,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-hr-009",
+        "type": "mcq",
+        "difficulty": "easy",
+        "competency": "leadership",
+        "irt_a": 1.2,
+        "irt_b": -0.8,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-hr-010",
+        "type": "open_ended",
+        "difficulty": "medium",
+        "competency": "reliability",
+        "irt_a": 1.7,
+        "irt_b": 0.5,
+        "irt_c": null,
+        "scenario": ""
+      }
+    ]
+  },
+  "marketing": {
+    "profession": "Marketing Manager",
+    "file": "marketing-manager.json",
+    "questions": [
+      {
+        "id": "prof-mkt-001",
+        "type": "mcq",
+        "difficulty": "easy",
+        "competency": "communication",
+        "irt_a": 1.2,
+        "irt_b": -1.8,
+        "irt_c": 0.2,
+        "scenario": ""
+      },
+      {
+        "id": "prof-mkt-002",
+        "type": "sjt",
+        "difficulty": "medium",
+        "competency": "communication",
+        "irt_a": 1.6,
+        "irt_b": 0.3,
+        "irt_c": 0.15,
+        "scenario": ""
+      },
+      {
+        "id": "prof-mkt-003",
+        "type": "open_ended",
+        "difficulty": "hard",
+        "competency": "communication",
+        "irt_a": 2.1,
+        "irt_b": 1.9,
+        "irt_c": 0.1,
+        "scenario": ""
+      },
+      {
+        "id": "prof-mkt-004",
+        "type": "sjt",
+        "difficulty": "medium",
+        "competency": "adaptability",
+        "irt_a": 1.7,
+        "irt_b": 0.5,
+        "irt_c": 0.15,
+        "scenario": ""
+      },
+      {
+        "id": "prof-mkt-005",
+        "type": "open_ended",
+        "difficulty": "hard",
+        "competency": "adaptability",
+        "irt_a": 2.3,
+        "irt_b": 2.2,
+        "irt_c": 0.1,
+        "scenario": ""
+      },
+      {
+        "id": "prof-mkt-006",
+        "type": "mcq",
+        "difficulty": "easy",
+        "competency": "tech_literacy",
+        "irt_a": 1.1,
+        "irt_b": -1.5,
+        "irt_c": 0.25,
+        "scenario": ""
+      },
+      {
+        "id": "prof-mkt-007",
+        "type": "mcq",
+        "difficulty": "medium",
+        "competency": "tech_literacy",
+        "irt_a": 1.5,
+        "irt_b": 0.2,
+        "irt_c": 0.2,
+        "scenario": ""
+      },
+      {
+        "id": "prof-mkt-008",
+        "type": "sjt",
+        "difficulty": "hard",
+        "competency": "leadership",
+        "irt_a": 1.9,
+        "irt_b": 1.4,
+        "irt_c": 0.12,
+        "scenario": ""
+      },
+      {
+        "id": "prof-mkt-009",
+        "type": "mcq",
+        "difficulty": "medium",
+        "competency": "english_proficiency",
+        "irt_a": 1.4,
+        "irt_b": 0.1,
+        "irt_c": 0.2,
+        "scenario": ""
+      },
+      {
+        "id": "prof-mkt-010",
+        "type": "mcq",
+        "difficulty": "easy",
+        "competency": "reliability",
+        "irt_a": 1.0,
+        "irt_b": -1.6,
+        "irt_c": 0.25,
+        "scenario": ""
+      }
+    ]
+  },
+  "product": {
+    "profession": "Product Manager",
+    "file": "product-manager.json",
+    "questions": [
+      {
+        "id": "prof-pm-001",
+        "type": "mcq",
+        "difficulty": "easy",
+        "competency": "communication",
+        "irt_a": 1.2,
+        "irt_b": -1.5,
+        "irt_c": 0.15,
+        "scenario": ""
+      },
+      {
+        "id": "prof-pm-002",
+        "type": "sjt",
+        "difficulty": "medium",
+        "competency": "communication",
+        "irt_a": 1.4,
+        "irt_b": 0.2,
+        "irt_c": 0.18,
+        "scenario": ""
+      },
+      {
+        "id": "prof-pm-003",
+        "type": "mcq",
+        "difficulty": "easy",
+        "competency": "leadership",
+        "irt_a": 1.1,
+        "irt_b": -1.2,
+        "irt_c": 0.15,
+        "scenario": ""
+      },
+      {
+        "id": "prof-pm-004",
+        "type": "sjt",
+        "difficulty": "medium",
+        "competency": "leadership",
+        "irt_a": 1.6,
+        "irt_b": 0.5,
+        "irt_c": 0.18,
+        "scenario": ""
+      },
+      {
+        "id": "prof-pm-005",
+        "type": "open_ended",
+        "difficulty": "hard",
+        "competency": "leadership",
+        "irt_a": 1.8,
+        "irt_b": 1.8,
+        "irt_c": 0.1,
+        "scenario": ""
+      },
+      {
+        "id": "prof-pm-006",
+        "type": "mcq",
+        "difficulty": "easy",
+        "competency": "adaptability",
+        "irt_a": 1.1,
+        "irt_b": -1.0,
+        "irt_c": 0.15,
+        "scenario": ""
+      },
+      {
+        "id": "prof-pm-007",
+        "type": "sjt",
+        "difficulty": "hard",
+        "competency": "adaptability",
+        "irt_a": 1.7,
+        "irt_b": 1.2,
+        "irt_c": 0.18,
+        "scenario": ""
+      },
+      {
+        "id": "prof-pm-008",
+        "type": "mcq",
+        "difficulty": "medium",
+        "competency": "tech_literacy",
+        "irt_a": 1.5,
+        "irt_b": 0.3,
+        "irt_c": 0.18,
+        "scenario": ""
+      },
+      {
+        "id": "prof-pm-009",
+        "type": "sjt",
+        "difficulty": "medium",
+        "competency": "empathy_safeguarding",
+        "irt_a": 1.5,
+        "irt_b": 0.4,
+        "irt_c": 0.18,
+        "scenario": ""
+      },
+      {
+        "id": "prof-pm-010",
+        "type": "open_ended",
+        "difficulty": "hard",
+        "competency": "leadership",
+        "irt_a": 2.0,
+        "irt_b": 2.0,
+        "irt_c": 0.1,
+        "scenario": ""
+      }
+    ]
+  },
+  "scrum": {
+    "profession": "Project Manager / Scrum Master",
+    "file": "project-manager-scrum.json",
+    "questions": [
+      {
+        "id": "prof-pm-scrum-001",
+        "type": "mcq",
+        "difficulty": "easy",
+        "competency": "reliability",
+        "irt_a": 0.8,
+        "irt_b": -1.5,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-pm-scrum-002",
+        "type": "sjt",
+        "difficulty": "medium",
+        "competency": "reliability",
+        "irt_a": 1.4,
+        "irt_b": 0.3,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-pm-scrum-003",
+        "type": "open_ended",
+        "difficulty": "hard",
+        "competency": "reliability",
+        "irt_a": 2.1,
+        "irt_b": 1.8,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-pm-scrum-004",
+        "type": "sjt",
+        "difficulty": "medium",
+        "competency": "leadership",
+        "irt_a": 1.3,
+        "irt_b": 0.1,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-pm-scrum-005",
+        "type": "open_ended",
+        "difficulty": "hard",
+        "competency": "leadership",
+        "irt_a": 2.3,
+        "irt_b": 2.0,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-pm-scrum-006",
+        "type": "mcq",
+        "difficulty": "easy",
+        "competency": "communication",
+        "irt_a": 0.9,
+        "irt_b": -1.8,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-pm-scrum-007",
+        "type": "mcq",
+        "difficulty": "medium",
+        "competency": "communication",
+        "irt_a": 1.5,
+        "irt_b": 0.2,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-pm-scrum-008",
+        "type": "mcq",
+        "difficulty": "easy",
+        "competency": "adaptability",
+        "irt_a": 0.9,
+        "irt_b": -1.6,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-pm-scrum-009",
+        "type": "sjt",
+        "difficulty": "hard",
+        "competency": "adaptability",
+        "irt_a": 2.0,
+        "irt_b": 1.5,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-pm-scrum-010",
+        "type": "mcq",
+        "difficulty": "medium",
+        "competency": "tech_literacy",
+        "irt_a": 1.6,
+        "irt_b": 0.4,
+        "irt_c": null,
+        "scenario": ""
+      }
+    ]
+  },
+  "qa": {
+    "profession": "QA Engineer / Software Tester",
+    "file": "qa-engineer.json",
+    "questions": [
+      {
+        "id": "prof-qa-001",
+        "type": "mcq",
+        "difficulty": "easy",
+        "competency": "tech_literacy",
+        "irt_a": 1.2,
+        "irt_b": -1.5,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-qa-002",
+        "type": "mcq",
+        "difficulty": "medium",
+        "competency": "tech_literacy",
+        "irt_a": 1.6,
+        "irt_b": 0.3,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-qa-003",
+        "type": "open_ended",
+        "difficulty": "hard",
+        "competency": "tech_literacy",
+        "irt_a": 2.1,
+        "irt_b": 1.8,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-qa-004",
+        "type": "mcq",
+        "difficulty": "easy",
+        "competency": "reliability",
+        "irt_a": 1.1,
+        "irt_b": -1.8,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-qa-005",
+        "type": "sjt",
+        "difficulty": "medium",
+        "competency": "reliability",
+        "irt_a": 1.8,
+        "irt_b": 0.5,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-qa-006",
+        "type": "open_ended",
+        "difficulty": "hard",
+        "competency": "reliability",
+        "irt_a": 2.3,
+        "irt_b": 2.0,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-qa-007",
+        "type": "sjt",
+        "difficulty": "medium",
+        "competency": "adaptability",
+        "irt_a": 1.7,
+        "irt_b": 0.4,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-qa-008",
+        "type": "mcq",
+        "difficulty": "hard",
+        "competency": "adaptability",
+        "irt_a": 2.0,
+        "irt_b": 1.5,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-qa-009",
+        "type": "sjt",
+        "difficulty": "medium",
+        "competency": "communication",
+        "irt_a": 1.5,
+        "irt_b": 0.2,
+        "irt_c": null,
+        "scenario": ""
+      },
+      {
+        "id": "prof-qa-010",
+        "type": "sjt",
+        "difficulty": "hard",
+        "competency": "leadership",
+        "irt_a": 2.2,
+        "irt_b": 1.9,
+        "irt_c": null,
+        "scenario": ""
+      }
+    ]
+  }
+}

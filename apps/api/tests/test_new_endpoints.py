@@ -299,6 +299,100 @@ class TestLeaderboard:
             app.dependency_overrides.pop(get_supabase_admin, None)
 
     @pytest.mark.asyncio
+    async def test_leaderboard_is_current_user_set_when_authenticated(self):
+        """QA-M01: is_current_user=True on authenticated user's own leaderboard entry.
+
+        LEADERBOARD-01 fix: OptionalCurrentUserId dep compares volunteer_id with JWT user.
+        Without auth → all is_current_user=False. With auth → matching entry flips to True.
+        """
+        current_user_id = str(uuid4())
+        other_user_id = str(uuid4())
+
+        admin_mock = MagicMock()
+        # OptionalCurrentUserId dep calls admin.auth.get_user(token) — must return current user
+        user_obj = MagicMock()
+        user_obj.user = MagicMock()
+        user_obj.user.id = current_user_id
+        admin_mock.auth = MagicMock()
+        admin_mock.auth.get_user = AsyncMock(return_value=user_obj)
+
+        def mock_table(table_name):
+            m = MagicMock()
+            result = MagicMock()
+            result.data = [
+                {"volunteer_id": current_user_id, "total_score": 95.0, "badge_tier": "platinum",
+                 "updated_at": "2026-03-30T00:00:00Z",
+                 "profiles": {"display_name": "Current User", "username": "currentuser"}},
+                {"volunteer_id": other_user_id, "total_score": 88.0, "badge_tier": "gold",
+                 "updated_at": "2026-03-30T00:00:00Z",
+                 "profiles": {"display_name": "Other User", "username": "otheruser"}},
+            ]
+            m.select.return_value.eq.return_value.not_.is_.return_value.order.return_value.limit.return_value.execute = AsyncMock(return_value=result)
+            return m
+
+        admin_mock.table.side_effect = mock_table
+
+        async def override_admin():
+            yield admin_mock
+
+        app.dependency_overrides[get_supabase_admin] = override_admin
+        try:
+            async with make_client() as client:
+                response = await client.get(
+                    "/api/leaderboard",
+                    headers={"Authorization": "Bearer fake_valid_token"},
+                )
+            assert response.status_code == 200
+            entries = response.json()["entries"]
+            assert len(entries) == 2
+
+            # First entry is current user — must be highlighted
+            assert entries[0]["is_current_user"] is True, (
+                f"Authenticated user's own entry must have is_current_user=True, got {entries[0]}"
+            )
+            # Second entry is someone else — must NOT be highlighted
+            assert entries[1]["is_current_user"] is False, (
+                f"Other user's entry must have is_current_user=False, got {entries[1]}"
+            )
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
+
+    @pytest.mark.asyncio
+    async def test_leaderboard_is_current_user_false_without_auth(self):
+        """QA-M01: is_current_user=False for all entries when no auth token provided."""
+        admin_mock = MagicMock()
+        admin_mock.auth = MagicMock()
+        admin_mock.auth.get_user = AsyncMock(side_effect=Exception("no token"))
+
+        def mock_table(table_name):
+            m = MagicMock()
+            result = MagicMock()
+            result.data = [
+                {"volunteer_id": str(uuid4()), "total_score": 90.0, "badge_tier": "gold",
+                 "updated_at": "2026-03-30T00:00:00Z",
+                 "profiles": {"display_name": "Someone", "username": "someone"}},
+            ]
+            m.select.return_value.eq.return_value.not_.is_.return_value.order.return_value.limit.return_value.execute = AsyncMock(return_value=result)
+            return m
+
+        admin_mock.table.side_effect = mock_table
+
+        async def override_admin():
+            yield admin_mock
+
+        app.dependency_overrides[get_supabase_admin] = override_admin
+        try:
+            async with make_client() as client:
+                response = await client.get("/api/leaderboard")  # no Authorization header
+            assert response.status_code == 200
+            entries = response.json()["entries"]
+            assert all(not e["is_current_user"] for e in entries), (
+                "All entries must have is_current_user=False when no auth provided"
+            )
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
+
+    @pytest.mark.asyncio
     async def test_leaderboard_no_auth_required(self):
         """GET /api/leaderboard without any Authorization header still returns 200."""
         admin_mock = MagicMock()
@@ -340,9 +434,18 @@ class TestPublicStats:
         event_count: int = 18,
         avg_scores: list[float] | None = None,
     ) -> MagicMock:
-        """Build a mock for the stats endpoint's 4 sequential DB calls."""
+        """Build a mock for the stats endpoint's DB calls.
+
+        The endpoint uses:
+          - db.table("profiles").select(...).execute()       → count
+          - db.table("assessment_sessions").select(...).execute() → count
+          - db.table("events").select(...).execute()         → count
+          - db.rpc("avg_aura_score").execute()               → single float
+        """
         if avg_scores is None:
             avg_scores = [73.4, 81.2, 65.0]
+
+        avg_value = sum(avg_scores) / len(avg_scores) if avg_scores else 0.0
 
         admin_mock = MagicMock()
 
@@ -367,14 +470,17 @@ class TestPublicStats:
                 result.data = []
                 m.select.return_value.neq.return_value.execute = AsyncMock(return_value=result)
 
-            elif table_name == "aura_scores":
-                result = MagicMock()
-                result.data = [{"total_score": s} for s in avg_scores]
-                m.select.return_value.not_.is_.return_value.execute = AsyncMock(return_value=result)
-
             return m
 
         admin_mock.table.side_effect = mock_table
+
+        # RPC mock: avg_aura_score() returns a single float
+        rpc_result = MagicMock()
+        rpc_result.data = avg_value
+        rpc_mock = MagicMock()
+        rpc_mock.execute = AsyncMock(return_value=rpc_result)
+        admin_mock.rpc = MagicMock(return_value=rpc_mock)
+
         return admin_mock
 
     @pytest.mark.asyncio
@@ -549,15 +655,30 @@ class TestCoachingEndpoint:
 
     @pytest.mark.asyncio
     async def test_coaching_requires_auth(self):
-        """POST /api/assessment/{session_id}/coaching without JWT returns 401."""
+        """POST /api/assessment/{session_id}/coaching without JWT returns 401.
+
+        Note: get_current_user_id depends on get_supabase_admin. FastAPI resolves
+        admin dep BEFORE the auth check can short-circuit — so we must provide a
+        minimal admin mock to avoid acreate_client(supabase_key=None) crash in CI.
+        """
+        admin_mock = self._make_admin_mock()
+
+        async def override_admin():
+            yield admin_mock
+
+        app.dependency_overrides[get_supabase_admin] = override_admin
         valid_session_id = str(uuid4())
-        async with make_client() as client:
-            response = await client.post(
-                f"/api/assessment/{valid_session_id}/coaching"
+        try:
+            async with make_client() as client:
+                response = await client.post(
+                    f"/api/assessment/{valid_session_id}/coaching"
+                    # intentionally no Authorization header
+                )
+            assert response.status_code == 401, (
+                f"Coaching endpoint must require auth — got {response.status_code}"
             )
-        assert response.status_code == 401, (
-            f"Coaching endpoint must require auth — got {response.status_code}"
-        )
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
 
     @pytest.mark.asyncio
     async def test_coaching_session_not_found_returns_404(self):
@@ -622,7 +743,7 @@ class TestCoachingEndpoint:
                 mock_settings.gemini_api_key = "fake-key"
 
                 # Patch google.genai.Client inside the router
-                with patch("app.routers.assessment.asyncio.wait_for", new_callable=AsyncMock) as mock_wait:
+                with patch("app.services.assessment.coaching_service.asyncio.wait_for", new_callable=AsyncMock) as mock_wait:
                     mock_wait.return_value = gemini_response
 
                     async with make_client() as client:
@@ -668,7 +789,7 @@ class TestCoachingEndpoint:
             with patch("app.routers.assessment.settings") as mock_settings:
                 mock_settings.gemini_api_key = "fake-key"
 
-                with patch("app.routers.assessment.asyncio.wait_for", new_callable=AsyncMock) as mock_wait:
+                with patch("app.services.assessment.coaching_service.asyncio.wait_for", new_callable=AsyncMock) as mock_wait:
                     mock_wait.side_effect = Exception("Gemini API unavailable")
 
                     async with make_client() as client:
@@ -712,7 +833,7 @@ class TestCoachingEndpoint:
         app.dependency_overrides[get_supabase_user] = override_user
         app.dependency_overrides[get_current_user_id] = override_user_id
         try:
-            with patch("app.routers.assessment.asyncio.wait_for", new_callable=AsyncMock) as mock_gemini:
+            with patch("app.services.assessment.coaching_service.asyncio.wait_for", new_callable=AsyncMock) as mock_gemini:
                 mock_gemini.side_effect = Exception("Should not be called for cached sessions")
 
                 async with make_client() as client:
@@ -987,5 +1108,378 @@ class TestSecurityEndpoints:
                 assert response.status_code == 429, (
                     f"Unexpected status {response.status_code} — expected 200 or 429"
                 )
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
+
+
+# ── CLASS 5: TestLeaderboardTotalCount ─────────────────────────────────────────
+
+
+class TestLeaderboardTotalCount:
+    """QA-M02 — total_count reflects full DB count, not page size.
+
+    LEADERBOARD-02 fix: A separate count query runs after the paginated main
+    query.  total_count must be the DB total (e.g. 200) even when limit=50
+    returns only 50 entries.  A try/except fallback degrades to len(entries)
+    when the count query fails (test isolation, count() not available, etc.).
+    """
+
+    @pytest.mark.asyncio
+    async def test_total_count_reflects_db_count_not_page_size(self):
+        """total_count=200 even when only 50 entries are returned (limit=50)."""
+        admin_mock = MagicMock()
+        call_n = {"v": 0}
+
+        def mock_table(table_name):
+            call_n["v"] += 1
+            m = MagicMock()
+
+            if call_n["v"] == 1:
+                # ── First call: main paginated query ────────────────────────
+                main_result = MagicMock()
+                main_result.data = [
+                    {
+                        "volunteer_id": str(uuid4()),
+                        "total_score": float(100 - i),
+                        "badge_tier": "gold",
+                        "last_updated": "2026-03-30T00:00:00Z",
+                        "profiles": {"display_name": f"User {i}", "username": f"user{i}"},
+                    }
+                    for i in range(50)
+                ]
+                m.select.return_value.eq.return_value.not_.is_.return_value.order.return_value.limit.return_value.execute = AsyncMock(
+                    return_value=main_result
+                )
+            else:
+                # ── Second call: count query ─────────────────────────────────
+                count_result = MagicMock()
+                count_result.count = 200  # 200 total in DB, only 50 on this page
+                m.select.return_value.eq.return_value.not_.is_.return_value.execute = AsyncMock(
+                    return_value=count_result
+                )
+
+            return m
+
+        admin_mock.table.side_effect = mock_table
+
+        async def override_admin():
+            yield admin_mock
+
+        app.dependency_overrides[get_supabase_admin] = override_admin
+        try:
+            async with make_client() as client:
+                response = await client.get(
+                    "/api/leaderboard?limit=50",
+                    headers={"X-Forwarded-For": "10.1.0.1"},
+                )
+            assert response.status_code == 200, f"Expected 200, got {response.status_code}"
+            body = response.json()
+            assert len(body["entries"]) == 50, "Page should have 50 entries"
+            assert body["total_count"] == 200, (
+                f"total_count must reflect DB total (200), not page size (50). "
+                f"Got: {body['total_count']}"
+            )
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
+
+    @pytest.mark.asyncio
+    async def test_total_count_fallback_when_count_query_fails(self):
+        """When count query raises, total_count falls back to len(entries).
+
+        Graceful degradation: page still loads, total_count is conservative,
+        error does not propagate to the user.
+        """
+        admin_mock = MagicMock()
+        call_n = {"v": 0}
+
+        def mock_table(table_name):
+            call_n["v"] += 1
+            m = MagicMock()
+
+            if call_n["v"] == 1:
+                # ── First call: main query returns 3 entries ─────────────────
+                main_result = MagicMock()
+                main_result.data = [
+                    {
+                        "volunteer_id": str(uuid4()),
+                        "total_score": float(90 - i * 10),
+                        "badge_tier": "gold",
+                        "last_updated": "2026-03-30T00:00:00Z",
+                        "profiles": {"display_name": f"Fallback User {i}", "username": f"fb{i}"},
+                    }
+                    for i in range(3)
+                ]
+                m.select.return_value.eq.return_value.not_.is_.return_value.order.return_value.limit.return_value.execute = AsyncMock(
+                    return_value=main_result
+                )
+            else:
+                # ── Second call: count query raises ──────────────────────────
+                m.select.return_value.eq.return_value.not_.is_.return_value.execute = AsyncMock(
+                    side_effect=Exception("DB count query unavailable in test isolation")
+                )
+
+            return m
+
+        admin_mock.table.side_effect = mock_table
+
+        async def override_admin():
+            yield admin_mock
+
+        app.dependency_overrides[get_supabase_admin] = override_admin
+        try:
+            async with make_client() as client:
+                response = await client.get(
+                    "/api/leaderboard",
+                    headers={"X-Forwarded-For": "10.1.0.2"},
+                )
+            assert response.status_code == 200, (
+                f"Leaderboard must not 500 when count fails, got {response.status_code}"
+            )
+            body = response.json()
+            assert body["total_count"] == 3, (
+                f"Fallback must set total_count=len(entries)=3, got {body['total_count']}"
+            )
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
+
+
+# ── CLASS 6: TestVerificationEndpoint ──────────────────────────────────────────
+
+
+class TestVerificationEndpoint:
+    """QA-M03 — POST /api/verify/{token} marks token used and blends AURA.
+
+    Covers:
+    - Happy path: valid token → 201 SubmitVerificationResponse
+    - Already-used token → 409 TOKEN_ALREADY_USED
+    - Expired token → 410 TOKEN_EXPIRED
+    - Missing token → 404 TOKEN_INVALID
+    - AURA blend math: rating=4 on existing 75.0 → blended 77.0
+    """
+
+    def _make_admin_mock(
+        self,
+        *,
+        token_used: bool = False,
+        expires_delta_days: int = 1,
+        existing_aura_score: float | None = 75.0,
+    ) -> tuple[MagicMock, str, str]:
+        """Build admin mock for the full verification flow.
+
+        Returns (admin_mock, token_str, volunteer_id).
+        """
+        from datetime import datetime, timedelta, timezone
+
+        token_str = "test_token_abc123"
+        volunteer_id = str(uuid4())
+        competency_id = "communication"
+
+        expires_at = (
+            datetime.now(timezone.utc) + timedelta(days=expires_delta_days)
+        ).isoformat()
+
+        token_row = {
+            "id": str(uuid4()),
+            "token_used": token_used,
+            "token_expires_at": expires_at,
+            "competency_id": competency_id,
+            "verifier_name": "Expert Jane",
+            "verifier_org": "TechCorp AZ",
+            "volunteer_id": volunteer_id,
+            "profiles": {
+                "display_name": "Test Volunteer",
+                "username": "testvolunteer",
+                "avatar_url": None,
+            },
+        }
+
+        admin_mock = MagicMock()
+
+        # expert_verifications table mock
+        verif_mock = MagicMock()
+        get_result = MagicMock()
+        get_result.data = token_row
+        verif_mock.select.return_value.eq.return_value.single.return_value.execute = AsyncMock(
+            return_value=get_result
+        )
+        update_result = MagicMock()
+        update_result.data = [token_row]
+        verif_mock.update.return_value.eq.return_value.eq.return_value.execute = AsyncMock(
+            return_value=update_result
+        )
+
+        # aura_scores table mock
+        aura_mock = MagicMock()
+        aura_result = MagicMock()
+        if existing_aura_score is not None:
+            aura_result.data = {"competency_scores": {competency_id: existing_aura_score}}
+        else:
+            aura_result.data = None
+        aura_mock.select.return_value.eq.return_value.single.return_value.execute = AsyncMock(
+            return_value=aura_result
+        )
+
+        def mock_table(table_name: str) -> MagicMock:
+            if table_name == "expert_verifications":
+                return verif_mock
+            if table_name == "aura_scores":
+                return aura_mock
+            return MagicMock()
+
+        admin_mock.table.side_effect = mock_table
+
+        rpc_result = MagicMock()
+        rpc_result.data = {"success": True}
+        rpc_mock = MagicMock()
+        rpc_mock.execute = AsyncMock(return_value=rpc_result)
+        admin_mock.rpc = MagicMock(return_value=rpc_mock)
+
+        return admin_mock, token_str, volunteer_id
+
+    @pytest.mark.asyncio
+    async def test_submit_verification_returns_201(self):
+        """Happy path: valid token + rating=4 → 201 with status='verified'."""
+        admin_mock, token, _ = self._make_admin_mock()
+
+        async def override_admin():
+            yield admin_mock
+
+        app.dependency_overrides[get_supabase_admin] = override_admin
+        try:
+            async with make_client() as client:
+                response = await client.post(
+                    f"/api/verify/{token}",
+                    json={"rating": 4, "comment": "Great communicator"},
+                    headers={"X-Forwarded-For": "10.2.0.1"},
+                )
+            assert response.status_code == 201, (
+                f"Expected 201, got {response.status_code}: {response.text}"
+            )
+            body = response.json()
+            assert body["status"] == "verified"
+            assert body["rating"] == 4
+            assert body["competency_id"] == "communication"
+            assert "volunteer_display_name" in body
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
+
+    @pytest.mark.asyncio
+    async def test_submit_verification_already_used_returns_409(self):
+        """Token that was already used → 409 TOKEN_ALREADY_USED."""
+        admin_mock, token, _ = self._make_admin_mock(token_used=True)
+
+        async def override_admin():
+            yield admin_mock
+
+        app.dependency_overrides[get_supabase_admin] = override_admin
+        try:
+            async with make_client() as client:
+                response = await client.post(
+                    f"/api/verify/{token}",
+                    json={"rating": 3},
+                    headers={"X-Forwarded-For": "10.2.0.2"},
+                )
+            assert response.status_code == 409, (
+                f"Used token must return 409, got {response.status_code}"
+            )
+            body = response.json()
+            assert body["detail"]["code"] == "TOKEN_ALREADY_USED"
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
+
+    @pytest.mark.asyncio
+    async def test_submit_verification_expired_returns_410(self):
+        """Expired token (expires_delta_days=-1) → 410 TOKEN_EXPIRED."""
+        admin_mock, token, _ = self._make_admin_mock(expires_delta_days=-1)
+
+        async def override_admin():
+            yield admin_mock
+
+        app.dependency_overrides[get_supabase_admin] = override_admin
+        try:
+            async with make_client() as client:
+                response = await client.post(
+                    f"/api/verify/{token}",
+                    json={"rating": 5},
+                    headers={"X-Forwarded-For": "10.2.0.3"},
+                )
+            assert response.status_code == 410, (
+                f"Expired token must return 410, got {response.status_code}"
+            )
+            body = response.json()
+            assert body["detail"]["code"] == "TOKEN_EXPIRED"
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
+
+    @pytest.mark.asyncio
+    async def test_submit_verification_invalid_token_returns_404(self):
+        """Unknown token → 404 TOKEN_INVALID."""
+        admin_mock = MagicMock()
+
+        get_result = MagicMock()
+        get_result.data = None
+        verif_mock = MagicMock()
+        verif_mock.select.return_value.eq.return_value.single.return_value.execute = AsyncMock(
+            return_value=get_result
+        )
+        admin_mock.table.side_effect = lambda t: verif_mock if t == "expert_verifications" else MagicMock()
+
+        async def override_admin():
+            yield admin_mock
+
+        app.dependency_overrides[get_supabase_admin] = override_admin
+        try:
+            async with make_client() as client:
+                response = await client.post(
+                    "/api/verify/does_not_exist_xyz",
+                    json={"rating": 3},
+                    headers={"X-Forwarded-For": "10.2.0.4"},
+                )
+            assert response.status_code == 404, (
+                f"Invalid token must return 404, got {response.status_code}"
+            )
+            body = response.json()
+            assert body["detail"]["code"] == "TOKEN_INVALID"
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
+
+    @pytest.mark.asyncio
+    async def test_submit_verification_blends_aura_score(self):
+        """Verify rating=4 blends into existing communication score of 75.0.
+
+        Blend formula: existing * 0.6 + verification_score * 0.4
+        rating=4 → verification_score = (4/5) * 100 = 80.0
+        blended = 75.0 * 0.6 + 80.0 * 0.4 = 45.0 + 32.0 = 77.0
+
+        Confirms upsert_aura_score RPC is called with the correct blended value.
+        """
+        admin_mock, token, volunteer_id = self._make_admin_mock(existing_aura_score=75.0)
+
+        async def override_admin():
+            yield admin_mock
+
+        app.dependency_overrides[get_supabase_admin] = override_admin
+        try:
+            async with make_client() as client:
+                response = await client.post(
+                    f"/api/verify/{token}",
+                    json={"rating": 4},
+                    headers={"X-Forwarded-For": "10.2.0.5"},
+                )
+            assert response.status_code == 201, f"Expected 201, got {response.status_code}: {response.text}"
+
+            admin_mock.rpc.assert_called_once()
+            rpc_name = admin_mock.rpc.call_args[0][0]
+            rpc_params = admin_mock.rpc.call_args[0][1]
+
+            assert rpc_name == "upsert_aura_score", f"Wrong RPC: {rpc_name}"
+            assert rpc_params["p_volunteer_id"] == volunteer_id
+
+            blended_scores = rpc_params["p_competency_scores"]
+            assert "communication" in blended_scores
+            expected = round(75.0 * 0.6 + 80.0 * 0.4, 2)  # 77.0
+            assert blended_scores["communication"] == expected, (
+                f"Blend wrong: expected {expected}, got {blended_scores['communication']}"
+            )
         finally:
             app.dependency_overrides.pop(get_supabase_admin, None)

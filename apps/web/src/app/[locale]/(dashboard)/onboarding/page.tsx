@@ -45,6 +45,8 @@ const LANGUAGE_OPTIONS = [
   { key: "Russian",     labelKey: "onboarding.languageRussian" },
   { key: "Turkish",     labelKey: "onboarding.languageTurkish" },
   { key: "Arabic",      labelKey: "onboarding.languageArabic" },
+  { key: "Georgian",    labelKey: "onboarding.languageGeorgian" },
+  { key: "Uzbek",       labelKey: "onboarding.languageUzbek" },
 ] as const;
 
 // ── Slide variants ─────────────────────────────────────────────────────────────
@@ -134,8 +136,8 @@ export default function OnboardingPage() {
     username: "",
     location: "",
     languages: [],
-    selectedCompetency: "",
-    visible_to_orgs: false,
+    selectedCompetency: "communication",  // BATCH-O ON1: pre-select highest-weight competency so Finish is immediately active
+    visible_to_orgs: true,
   });
 
   // Pre-fill username and account_type from signup user_metadata
@@ -208,25 +210,41 @@ export default function OnboardingPage() {
         if (orgType) payload.org_type = orgType;
       }
 
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (token) headers.Authorization = `Bearer ${token}`;
+
       const res = await fetch(`${API_BASE}/api/profiles/me`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
+        headers,
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok && res.status !== 404) {
+      if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         throw new Error((body as { detail?: string }).detail ?? "Failed to save profile");
       }
 
+      // For org accounts: auto-create the organizations row so search/intro works immediately
+      if (accountType === "organization") {
+        const orgName = formData.display_name.trim() || formData.username.trim() || "My Organization";
+        const orgRes = await fetch(`${API_BASE}/api/organizations`, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({ name: orgName }),
+        });
+        if (!orgRes.ok && orgRes.status !== 409) {
+          // 409 = already exists (safe to ignore), other errors are not fatal — profile was saved
+          const body = await orgRes.json().catch(() => ({}));
+          console.warn("org row creation failed", body);
+        }
+      }
+
       if (isMounted.current) {
-        const dest = formData.selectedCompetency
-          ? `/${locale}/welcome?competency=${formData.selectedCompetency}`
-          : `/${locale}/welcome`;
-        router.push(dest);
+        // Redirect to assessment — carry selected competency so user starts immediately
+        const competencyParam = formData.selectedCompetency
+          ? `?competency=${encodeURIComponent(formData.selectedCompetency)}`
+          : "";
+        router.push(`/${locale}/assessment${competencyParam}`);
       }
     } catch {
       if (isMounted.current) {
@@ -236,7 +254,7 @@ export default function OnboardingPage() {
     }
   }
 
-  const step1Valid = formData.username.trim().length >= 3;
+  const step1Valid = formData.username.trim().length >= 3 && formData.display_name.trim().length >= 1;
   const step3Valid = formData.selectedCompetency.length > 0;
 
   return (
@@ -258,7 +276,7 @@ export default function OnboardingPage() {
               {t("onboarding.whyTitle", { defaultValue: "Prove your skills. Get discovered." })}
             </p>
             <p className="text-xs text-muted-foreground">
-              {t("onboarding.whyDesc", { defaultValue: "One assessment earns your AURA badge. Organizations actively search for verified professionals like you." })}
+              {t("onboarding.whyDesc", { defaultValue: "Complete one assessment (~15 min) → get your verified AURA score → get found by organizations actively searching." })}
             </p>
           </div>
         )}
@@ -344,7 +362,7 @@ export default function OnboardingPage() {
                         key={key}
                         type="button"
                         onClick={() => toggleLanguage(key)}
-                        className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all border ${
+                        className={`px-3 py-2 min-h-[44px] rounded-full text-sm font-medium transition-all border ${
                           formData.languages.includes(key)
                             ? "bg-primary text-primary-foreground border-primary"
                             : "bg-card text-foreground border-border hover:bg-accent"
@@ -356,19 +374,12 @@ export default function OnboardingPage() {
                   </div>
                 </div>
 
-                {/* Org-search visibility — volunteers only */}
+                {/* BATCH-O ON3: get-found is a feature, not a settings checkbox. Show as positive reinforcement. */}
                 {accountType === "volunteer" && (
-                  <label className="flex items-start gap-3 cursor-pointer pt-1">
-                    <input
-                      type="checkbox"
-                      checked={formData.visible_to_orgs}
-                      onChange={(e) => setField("visible_to_orgs", e.target.checked)}
-                      className="mt-0.5 h-4 w-4 rounded border-border accent-primary flex-shrink-0"
-                    />
-                    <span className="text-sm text-muted-foreground">
-                      {t("onboarding.visibleToOrgs")}
-                    </span>
-                  </label>
+                  <p className="text-sm text-muted-foreground flex items-start gap-2 pt-1">
+                    <span aria-hidden="true">✓</span>
+                    <span>{t("onboarding.visibleToOrgsInfo")}</span>
+                  </p>
                 )}
               </div>
 
@@ -426,7 +437,7 @@ export default function OnboardingPage() {
                     key={slug}
                     type="button"
                     onClick={() => setField("selectedCompetency", slug === formData.selectedCompetency ? "" : slug)}
-                    className={`p-4 rounded-2xl text-left transition-all border-2 ${
+                    className={`p-4 min-h-[80px] rounded-2xl text-left transition-all border-2 ${
                       formData.selectedCompetency === slug
                         ? "border-primary bg-primary/10"
                         : "border-transparent bg-card hover:bg-accent"

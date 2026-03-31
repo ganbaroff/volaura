@@ -1,0 +1,716 @@
+{
+  "devops-cybersecurity": [
+    {
+      "id": "prof-devops-s2-001",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 0.9,
+      "irt_b": -1.8,
+      "competency": "tech_literacy",
+      "london_fails": null,
+      "scenario_80": "You are onboarding at AzTelecom as a junior DevOps engineer. Your team runs a Ku"
+    },
+    {
+      "id": "prof-devops-s2-002",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 1.1,
+      "irt_b": -0.9,
+      "competency": "tech_literacy",
+      "london_fails": null,
+      "scenario_80": "You are setting up monitoring for ABB (AtaBank) online banking platform's API ga"
+    },
+    {
+      "id": "prof-devops-s2-003",
+      "difficulty": "hard",
+      "type": "mcq",
+      "irt_a": 2.1,
+      "irt_b": 1.9,
+      "competency": "tech_literacy",
+      "london_fails": null,
+      "scenario_80": "You are the security lead at AzərGold's IT operations center. In 2016, a state-l"
+    },
+    {
+      "id": "prof-devops-s2-004",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 1.0,
+      "irt_b": -1.2,
+      "competency": "reliability",
+      "london_fails": null,
+      "scenario_80": "You are on-call for SOCAR IT's internal ERP system at 02:30. A P1 alert fires: d"
+    },
+    {
+      "id": "prof-devops-s2-005",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.7,
+      "irt_b": 0.4,
+      "competency": "reliability",
+      "london_fails": null,
+      "scenario_80": "You are the DevOps lead at a digital services company contracted with the Minist"
+    },
+    {
+      "id": "prof-devops-s2-006",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 2.2,
+      "irt_b": 2.1,
+      "competency": "reliability",
+      "london_fails": null,
+      "scenario_80": "In 2020, the ASAN xidmət system in Azerbaijan received an unprecedented surge — "
+    },
+    {
+      "id": "prof-devops-s2-007",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.6,
+      "irt_b": 0.3,
+      "competency": "adaptability",
+      "london_fails": null,
+      "scenario_80": "You are a DevOps engineer at a fintech startup that has just won a contract to p"
+    },
+    {
+      "id": "prof-devops-s2-008",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 2.3,
+      "irt_b": 2.4,
+      "competency": "adaptability",
+      "london_fails": null,
+      "scenario_80": "You are mid-release: a zero-downtime blue-green deployment of the E-GOV Azerbaij"
+    },
+    {
+      "id": "prof-devops-s2-009",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.5,
+      "irt_b": 0.2,
+      "competency": "communication",
+      "london_fails": null,
+      "scenario_80": "You are the DevOps lead at a company that operates a payroll processing system f"
+    },
+    {
+      "id": "prof-devops-s2-010",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.4,
+      "irt_b": 0.1,
+      "competency": "leadership",
+      "london_fails": null,
+      "scenario_80": "You are the senior DevOps engineer at a company deploying infrastructure for SOC"
+    }
+  ],
+  "financial-analyst": [
+    {
+      "id": "prof-fin-s2-001",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 1.3,
+      "irt_b": -1.0,
+      "competency": "reliability",
+      "london_fails": true,
+      "scenario_80": ""
+    },
+    {
+      "id": "prof-fin-s2-002",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.4,
+      "irt_b": 0.6,
+      "competency": "reliability",
+      "london_fails": true,
+      "scenario_80": ""
+    },
+    {
+      "id": "prof-fin-s2-003",
+      "difficulty": "hard",
+      "type": "sjt",
+      "irt_a": 1.6,
+      "irt_b": 1.7,
+      "competency": "reliability",
+      "london_fails": true,
+      "scenario_80": ""
+    },
+    {
+      "id": "prof-fin-s2-004",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 1.5,
+      "irt_b": 1.8,
+      "competency": "communication",
+      "london_fails": true,
+      "scenario_80": ""
+    },
+    {
+      "id": "prof-fin-s2-005",
+      "difficulty": "medium",
+      "type": "mcq",
+      "irt_a": 1.3,
+      "irt_b": 0.5,
+      "competency": "communication",
+      "london_fails": true,
+      "scenario_80": ""
+    },
+    {
+      "id": "prof-fin-s2-006",
+      "difficulty": "hard",
+      "type": "sjt",
+      "irt_a": 1.7,
+      "irt_b": 1.9,
+      "competency": "adaptability",
+      "london_fails": true,
+      "scenario_80": ""
+    },
+    {
+      "id": "prof-fin-s2-007",
+      "difficulty": "medium",
+      "type": "mcq",
+      "irt_a": 1.2,
+      "irt_b": 0.7,
+      "competency": "adaptability",
+      "london_fails": true,
+      "scenario_80": ""
+    },
+    {
+      "id": "prof-fin-s2-008",
+      "difficulty": "medium",
+      "type": "mcq",
+      "irt_a": 1.4,
+      "irt_b": 0.8,
+      "competency": "tech_literacy",
+      "london_fails": true,
+      "scenario_80": ""
+    },
+    {
+      "id": "prof-fin-s2-009",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 1.5,
+      "irt_b": 1.6,
+      "competency": "tech_literacy",
+      "london_fails": true,
+      "scenario_80": ""
+    },
+    {
+      "id": "prof-fin-s2-010",
+      "difficulty": "easy",
+      "type": "sjt",
+      "irt_a": 1.2,
+      "irt_b": -0.8,
+      "competency": "leadership",
+      "london_fails": false,
+      "scenario_80": ""
+    }
+  ],
+  "hr-manager": [
+    {
+      "id": "prof-hr-s2-001",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 1.5,
+      "irt_b": -0.7,
+      "competency": "empathy_safeguarding",
+      "london_fails": null,
+      "scenario_80": "An employee at Kapital Bank HR department discloses to you (the HR manager) that"
+    },
+    {
+      "id": "prof-hr-s2-002",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.8,
+      "irt_b": 0.5,
+      "competency": "empathy_safeguarding",
+      "london_fails": null,
+      "scenario_80": "Ramadan 2020 coincided with COVID-19 remote work at a 60-person SOCAR contractor"
+    },
+    {
+      "id": "prof-hr-s2-003",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 2.1,
+      "irt_b": 1.6,
+      "competency": "empathy_safeguarding",
+      "london_fails": null,
+      "scenario_80": "A junior female employee at an AMEA Park Baku startup reports to you that her te"
+    },
+    {
+      "id": "prof-hr-s2-004",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.7,
+      "irt_b": 0.4,
+      "competency": "communication",
+      "london_fails": null,
+      "scenario_80": "You are conducting a mid-year performance review with Ramiz, a 52-year-old senio"
+    },
+    {
+      "id": "prof-hr-s2-005",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 2.0,
+      "irt_b": 1.7,
+      "competency": "communication",
+      "london_fails": null,
+      "scenario_80": "Following the AZ banking sector crisis of 2015, you are the HR manager at a mid-"
+    },
+    {
+      "id": "prof-hr-s2-006",
+      "difficulty": "medium",
+      "type": "mcq",
+      "irt_a": 1.6,
+      "irt_b": 0.3,
+      "competency": "adaptability",
+      "london_fails": null,
+      "scenario_80": "During the 2015 AZ banking sector crisis, your company begins mass layoffs. As H"
+    },
+    {
+      "id": "prof-hr-s2-007",
+      "difficulty": "hard",
+      "type": "sjt",
+      "irt_a": 2.0,
+      "irt_b": 1.5,
+      "competency": "adaptability",
+      "london_fails": null,
+      "scenario_80": "In 2022, AZ Labor Code amendments introduced formal remote work provisions for t"
+    },
+    {
+      "id": "prof-hr-s2-008",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 2.2,
+      "irt_b": 1.8,
+      "competency": "leadership",
+      "london_fails": null,
+      "scenario_80": "The General Director of a 120-person Baku retail chain instructs you (HR Directo"
+    },
+    {
+      "id": "prof-hr-s2-009",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 1.4,
+      "irt_b": -0.6,
+      "competency": "leadership",
+      "london_fails": null,
+      "scenario_80": "You are the new HR manager at a 70-person Baku logistics company. The previous H"
+    },
+    {
+      "id": "prof-hr-s2-010",
+      "difficulty": "medium",
+      "type": "mcq",
+      "irt_a": 1.7,
+      "irt_b": 0.6,
+      "competency": "tech_literacy",
+      "london_fails": null,
+      "scenario_80": "You are running end-of-month payroll for 85 employees using 1C:Salary and HR for"
+    }
+  ],
+  "marketing-manager": [
+    {
+      "id": "prof-mkt-s2-001",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.8,
+      "irt_b": 0.3,
+      "competency": "",
+      "london_fails": null,
+      "scenario_80": "You are the brand communications manager at Azercell. A SIM card activation camp"
+    },
+    {
+      "id": "prof-mkt-s2-002",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 2.1,
+      "irt_b": 1.2,
+      "competency": "",
+      "london_fails": null,
+      "scenario_80": "PASHA Holding has asked you to lead the rebrand of one of its subsidiaries for i"
+    },
+    {
+      "id": "prof-mkt-s2-003",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 2.0,
+      "irt_b": 1.0,
+      "competency": "",
+      "london_fails": null,
+      "scenario_80": "You are the marketing lead at a mid-size Baku retail brand preparing a Novruz ca"
+    },
+    {
+      "id": "prof-mkt-s2-004",
+      "difficulty": "hard",
+      "type": "sjt",
+      "irt_a": 1.9,
+      "irt_b": 0.8,
+      "competency": "",
+      "london_fails": null,
+      "scenario_80": "You are the marketing manager at an FMCG brand in Baku. In February 2016, after "
+    },
+    {
+      "id": "prof-mkt-s2-005",
+      "difficulty": "medium",
+      "type": "mcq",
+      "irt_a": 1.7,
+      "irt_b": 0.2,
+      "competency": "",
+      "london_fails": null,
+      "scenario_80": "You manage digital growth for a B2C marketplace. Lalafo.az has just entered your"
+    },
+    {
+      "id": "prof-mkt-s2-006",
+      "difficulty": "medium",
+      "type": "mcq",
+      "irt_a": 1.8,
+      "irt_b": 0.5,
+      "competency": "",
+      "london_fails": null,
+      "scenario_80": "You are the SEO lead for a Baku-based e-commerce brand selling home goods. Googl"
+    },
+    {
+      "id": "prof-mkt-s2-007",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 1.5,
+      "irt_b": -0.3,
+      "competency": "",
+      "london_fails": null,
+      "scenario_80": "You are planning a product launch campaign for a new energy drink targeting 18-3"
+    },
+    {
+      "id": "prof-mkt-s2-008",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.7,
+      "irt_b": 0.3,
+      "competency": "",
+      "london_fails": null,
+      "scenario_80": "You lead a 5-person creative team at a Baku marketing agency. For the third cons"
+    },
+    {
+      "id": "prof-mkt-s2-009",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 1.6,
+      "irt_b": -0.2,
+      "competency": "",
+      "london_fails": null,
+      "scenario_80": "You are a marketing manager at a Baku-based brand. Your CMO consistently makes c"
+    },
+    {
+      "id": "prof-mkt-s2-010",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.8,
+      "irt_b": 0.4,
+      "competency": "",
+      "london_fails": null,
+      "scenario_80": "You are a marketing consultant hired by a Baku SME to run a 3-month brand awaren"
+    }
+  ],
+  "product-manager": [
+    {
+      "id": "prof-pm-s2-001",
+      "difficulty": "medium",
+      "type": "mcq",
+      "irt_a": 1.6,
+      "irt_b": 0.2,
+      "competency": "",
+      "london_fails": null,
+      "scenario_80": "You are the Product Manager at ASAN xidmət's digital portal team. The Ministry o"
+    },
+    {
+      "id": "prof-pm-s2-002",
+      "difficulty": "hard",
+      "type": "sjt",
+      "irt_a": 1.8,
+      "irt_b": 0.9,
+      "competency": "",
+      "london_fails": null,
+      "scenario_80": "You are PM at a B2B SaaS company selling to Azerbaijani enterprises. SOCAR (the "
+    },
+    {
+      "id": "prof-pm-s2-003",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 1.4,
+      "irt_b": -0.9,
+      "competency": "",
+      "london_fails": null,
+      "scenario_80": "You are the PM at a Baku startup with an engineering team of 6. Your CTO (who is"
+    },
+    {
+      "id": "prof-pm-s2-004",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.5,
+      "irt_b": 0.1,
+      "competency": "",
+      "london_fails": null,
+      "scenario_80": "You are PM at a Baku digital agency delivering a product roadmap presentation to"
+    },
+    {
+      "id": "prof-pm-s2-005",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 1.7,
+      "irt_b": 1.1,
+      "competency": "",
+      "london_fails": null,
+      "scenario_80": "You are PM at a startup building a developer platform in Azerbaijan. Your engine"
+    },
+    {
+      "id": "prof-pm-s2-006",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 1.9,
+      "irt_b": 1.3,
+      "competency": "",
+      "london_fails": null,
+      "scenario_80": "You are PM at a consumer app in Azerbaijan with 80,000 MAU. You planned to valid"
+    },
+    {
+      "id": "prof-pm-s2-007",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.6,
+      "irt_b": 0.3,
+      "competency": "",
+      "london_fails": null,
+      "scenario_80": "You are PM for a government e-portal product in Azerbaijan. Six months into deve"
+    },
+    {
+      "id": "prof-pm-s2-008",
+      "difficulty": "medium",
+      "type": "mcq",
+      "irt_a": 1.5,
+      "irt_b": 0.2,
+      "competency": "",
+      "london_fails": null,
+      "scenario_80": "You are setting up Google Analytics 4 for the ASAN xidmət mobile app, which serv"
+    },
+    {
+      "id": "prof-pm-s2-009",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 1.3,
+      "irt_b": -0.8,
+      "competency": "",
+      "london_fails": null,
+      "scenario_80": "Your Baku startup is using Notion for product management. Your team of 5 (3 deve"
+    },
+    {
+      "id": "prof-pm-s2-010",
+      "difficulty": "hard",
+      "type": "mcq",
+      "irt_a": 1.7,
+      "irt_b": 0.8,
+      "competency": "",
+      "london_fails": null,
+      "scenario_80": "You are PM for a civic engagement app in Azerbaijan. A senior official from the "
+    }
+  ],
+  "project-manager-scrum": [
+    {
+      "id": "prof-pm-scrum-s2-001",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 0.8,
+      "irt_b": -1.2,
+      "competency": "reliability",
+      "london_fails": null,
+      "scenario_80": ""
+    },
+    {
+      "id": "prof-pm-scrum-s2-002",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.2,
+      "irt_b": 0.3,
+      "competency": "reliability",
+      "london_fails": null,
+      "scenario_80": ""
+    },
+    {
+      "id": "prof-pm-scrum-s2-003",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 1.6,
+      "irt_b": 1.4,
+      "competency": "reliability",
+      "london_fails": null,
+      "scenario_80": ""
+    },
+    {
+      "id": "prof-pm-scrum-s2-004",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 0.9,
+      "irt_b": -1.0,
+      "competency": "leadership",
+      "london_fails": null,
+      "scenario_80": ""
+    },
+    {
+      "id": "prof-pm-scrum-s2-005",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.3,
+      "irt_b": 0.5,
+      "competency": "leadership",
+      "london_fails": null,
+      "scenario_80": ""
+    },
+    {
+      "id": "prof-pm-scrum-s2-006",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 1.7,
+      "irt_b": 1.6,
+      "competency": "leadership",
+      "london_fails": null,
+      "scenario_80": ""
+    },
+    {
+      "id": "prof-pm-scrum-s2-007",
+      "difficulty": "medium",
+      "type": "mcq",
+      "irt_a": 1.1,
+      "irt_b": 0.2,
+      "competency": "communication",
+      "london_fails": null,
+      "scenario_80": ""
+    },
+    {
+      "id": "prof-pm-scrum-s2-008",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.2,
+      "irt_b": 0.4,
+      "competency": "communication",
+      "london_fails": null,
+      "scenario_80": ""
+    },
+    {
+      "id": "prof-pm-scrum-s2-009",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 1.5,
+      "irt_b": 1.5,
+      "competency": "adaptability",
+      "london_fails": null,
+      "scenario_80": ""
+    },
+    {
+      "id": "prof-pm-scrum-s2-010",
+      "difficulty": "hard",
+      "type": "mcq",
+      "irt_a": 1.5,
+      "irt_b": 1.3,
+      "competency": "tech_literacy",
+      "london_fails": null,
+      "scenario_80": ""
+    }
+  ],
+  "qa-engineer": [
+    {
+      "id": "prof-qa-s2-001",
+      "difficulty": "medium",
+      "type": "mcq",
+      "irt_a": 1.7,
+      "irt_b": 0.4,
+      "competency": "tech_literacy",
+      "london_fails": null,
+      "scenario_80": "You are a QA engineer on the ABB Bankın mobile team. A new ASAN xidmət biometric"
+    },
+    {
+      "id": "prof-qa-s2-002",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 2.2,
+      "irt_b": 1.9,
+      "competency": "tech_literacy",
+      "london_fails": null,
+      "scenario_80": "You are a senior QA engineer tasked with security testing the E-GOV portal's new"
+    },
+    {
+      "id": "prof-qa-s2-003",
+      "difficulty": "hard",
+      "type": "mcq",
+      "irt_a": 2.1,
+      "irt_b": 1.6,
+      "competency": "tech_literacy",
+      "london_fails": null,
+      "scenario_80": "You are testing the Kapital Bank mobile app's AZN transfer endpoint. The API acc"
+    },
+    {
+      "id": "prof-qa-s2-004",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.8,
+      "irt_b": 0.5,
+      "competency": "reliability",
+      "london_fails": null,
+      "scenario_80": "You are the QA sign-off authority for ABB Bank's new online banking feature. The"
+    },
+    {
+      "id": "prof-qa-s2-005",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 2.3,
+      "irt_b": 2.1,
+      "competency": "reliability",
+      "london_fails": null,
+      "scenario_80": "You are the QA lead for ASAN xidmət's citizen portal. Load test results from las"
+    },
+    {
+      "id": "prof-qa-s2-006",
+      "difficulty": "medium",
+      "type": "mcq",
+      "irt_a": 1.6,
+      "irt_b": 0.3,
+      "competency": "reliability",
+      "london_fails": null,
+      "scenario_80": "You are the QA lead for Kapital Bank's mobile app. A P1 bug has been filed: 'AZN"
+    },
+    {
+      "id": "prof-qa-s2-007",
+      "difficulty": "hard",
+      "type": "mcq",
+      "irt_a": 2.0,
+      "irt_b": 1.7,
+      "competency": "adaptability",
+      "london_fails": null,
+      "scenario_80": "You are a QA engineer on the E-GOV portal team. It is Tuesday evening. The Minis"
+    },
+    {
+      "id": "prof-qa-s2-008",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.7,
+      "irt_b": 0.5,
+      "competency": "adaptability",
+      "london_fails": null,
+      "scenario_80": "You are a QA engineer at a team building a biometric enrollment flow for AzərGol"
+    },
+    {
+      "id": "prof-qa-s2-009",
+      "difficulty": "hard",
+      "type": "sjt",
+      "irt_a": 1.9,
+      "irt_b": 1.1,
+      "competency": "communication",
+      "london_fails": null,
+      "scenario_80": "You are a QA engineer at a team that has delivered the E-GOV portal's new citize"
+    },
+    {
+      "id": "prof-qa-s2-010",
+      "difficulty": "hard",
+      "type": "sjt",
+      "irt_a": 2.2,
+      "irt_b": 2.0,
+      "competency": "leadership",
+      "london_fails": null,
+      "scenario_80": "You are hired as the first QA lead at a Baku-based fintech startup that has 18 d"
+    }
+  ]
+}

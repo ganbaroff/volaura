@@ -1,0 +1,32 @@
+Wednesday rituals), Limart competitor. Score: **8**
+- IRT Quality: irt_a 1.8–2.1, b 0.3–1.2, irt_c 0.0–0.15. All ≥1.0. Score: **7**
+- London Test: Q1 (Azercell AZ telecom crisis) = answer differs (Bakcell/Nar switch threat = AZ-specific). Q2 (PASHA rebrand for investors) = cannot answer without Caspian corridor narrative, EBRD AZ portfolio. Q3 (Novruz khoncha, semeni, mahalle WhatsApp) = cannot answer without AZ cultural knowledge. Score: **8**
+- Diversity: sjt×1, open_ended×2 (from 3 questions). Limited range. Score: **5**
+- Competency Coverage: Only communication visible — very narrow from 3 questions. Score: **3**
+- **Total: 31**
+
+**5. Product Manager** (7 questions visible)
+- AZ Anchoring: ASAN xidmet Ministry directive + rural digital divide, SOCAR enterprise leverage (concentrated market = different answer than UK), AZ startup CTO hierarchy, Deputy Minister presentation, multilingual team (AZ/RU/PL/IN), AzərGold SOAP payment gateway mandate, AZ small market Bayesian A/B testing. Score: **8**
+- IRT Quality: irt_a 1.4–1.9, b -0.9 to 1.3. All ≥1.0. Score: **8**
+- London Test: Q1 (ASAN + Ministry directive = AZ context changes answer). Q2 (SOCAR leverage in concentrated market = answer explicitly differs from London). Q3 (AZ startup CTO social hierarchy). Q4 (Deputy Minister Word-doc communication style). Q5 (multilingual AZ/RU team). Q6 (AZ small market A/B test = Novruz/Ramazan seasonality). Q7 (AzərGold SOAP regulation). Feedback explicitly says "A London PM would more readily say no" — Score: **8**
+- Diversity: mcq×3, sjt×2, open_ended×2; easy×1, medium×3, hard×3. Score: **7**
+- Competency Coverage: leadership×3, communication×3, adaptability×1. Only 3 competencies from 7 visible questions. Score: **5**
+- **Total: 36**
+
+**6. Project Manager (Scrum)** (8+ questions visible)
+- AZ Anchoring: Kapital Bank regulatory compliance, E-GOV State Registry API rate limit, SOCAR offshore safety + Ministry of Energy commitment, PASHA Technology senior developer, ASAN xidmet Deputy Director scope creep, SOCAR 11-year waterfall VP ("Soviet-style"), ASAN xidmet velocity communication to Deputy Minister. Score: **8**
+- IRT Quality: Q1 irt_a=0.8 (below 1.0!), rest 1.1–1.7. b range: -1.2 to 1.6. One violation. Score: **6**
+- London Test: Q1 (Kapital Bank compliance) = london_test_fail=false (generic). Q2 (E-GOV API) = true. Q3 (SOCAR veteran + Ministry commitment) = true. Q4 (PASHA retrospective) = false. Q5 (ASAN Deputy Director scope) = true. Q6 (SOCAR waterfall VP + "Soviet-style") = true. Q7 (Deputy Minister communication) = true. Q8 = TBD. ~5/8 seen are London-proof. Score: **6**
+- Diversity: mcq×3, sjt×3, open_ended×2 (from 8). Good mix. Score: **7**
+- Competency Coverage: reliability×3, leadership×3, communication×2. 3 competencies — concentrated on reliability/leadership. Score: **5**
+- **Total: 32**
+
+**7. QA Engineer** (6 questions visible)
+- AZ Anchoring: ASAN xidmet biometric API approval chain (director approval = AZ institutional constraint), E-GOV ZAP with AZ ISMSN certification, Kapital Bank CBA AZN rounding (CBA regulatory non-compliance), ABB Bank CBA audit window (6-week window = AZ-specific), ASAN xidmet Novruz 3.8× traffic (historical data), Kapital Bank comma-separator locale bug. Score: **8**
+- IRT Quality: irt_a 1.6–2.3, b 0.3–2.1, irt_c 0.08–0.15. All ≥1.0. Excellent range. Score: **8**
+- London Test: Q1 (ASAN director approval = AZ institutional constraint changes test approach). Q2 (E-GOV ISMSN certification = AZ-specific). Q3 (CBA AZN rounding = regulatory P1 = AZ-specific). Q4 (CBA audit window = AZ-specific). Q5 (ASAN Novruz 684k = AZ historical data). Q6 (AZ locale comma separator = AZ-specific). All 6 are genuinely London-proof. Score: **8**
+- Diversity: mcq×3, sjt×1, open_ended×2; medium×3, hard×3. Missing easy questions. Score: **6**
+- Competency Coverage: tech_literacy×3, reliability×3. Only 2 competencies — very narrow. Score: **3**
+- **Total: 33**
+
+Now let me compile the final rankings and write the JSON.

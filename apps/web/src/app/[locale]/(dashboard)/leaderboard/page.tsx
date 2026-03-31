@@ -88,10 +88,10 @@ function LeaderboardSkeleton() {
   return (
     <div className="space-y-3">
       {/* Podium skeleton */}
-      <div className="flex items-end justify-center gap-2 min-h-[300px] pt-12 mb-12">
-        <Skeleton className="w-[120px] h-[180px] rounded-t-2xl" />
-        <Skeleton className="w-[140px] h-[240px] rounded-t-3xl" />
-        <Skeleton className="w-[120px] h-[160px] rounded-t-2xl" />
+      <div className="flex items-end justify-center gap-2 min-h-[260px] sm:min-h-[300px] pt-10 sm:pt-12 mb-12">
+        <Skeleton className="w-[90px] sm:w-[120px] h-[140px] sm:h-[180px] rounded-t-2xl" />
+        <Skeleton className="w-[110px] sm:w-[140px] h-[190px] sm:h-[240px] rounded-t-3xl" />
+        <Skeleton className="w-[90px] sm:w-[120px] h-[120px] sm:h-[160px] rounded-t-2xl" />
       </div>
       {/* Row skeletons */}
       {[1, 2, 3, 4].map((i) => (
@@ -120,7 +120,7 @@ function PodiumEntry({ entry, size, delay }: PodiumEntryProps) {
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: delay / 1000, duration: 0.6, type: "spring", stiffness: 100 }}
-      className={`flex flex-col items-center ${isLg ? "flex-1 max-w-[140px] z-10 -mb-2" : "flex-1 max-w-[120px]"}`}
+      className={`flex flex-col items-center ${isLg ? "flex-1 max-w-[110px] sm:max-w-[140px] z-10 -mb-2" : "flex-1 max-w-[90px] sm:max-w-[120px]"}`}
     >
       {/* Avatar */}
       <div
@@ -132,7 +132,7 @@ function PodiumEntry({ entry, size, delay }: PodiumEntryProps) {
           </div>
         )}
         <div
-          className={`${isLg ? "w-24 h-24" : "w-16 h-16"} rounded-full border-4 overflow-hidden bg-surface-container-high p-1 ${tier.glowClass}`}
+          className={`${isLg ? "w-16 h-16 sm:w-24 sm:h-24" : "w-12 h-12 sm:w-16 sm:h-16"} rounded-full border-4 overflow-hidden bg-surface-container-high p-1 ${tier.glowClass}`}
           style={{ borderColor: `${tier.borderColor}60` }}
         >
           <div
@@ -152,7 +152,7 @@ function PodiumEntry({ entry, size, delay }: PodiumEntryProps) {
 
       {/* Score block */}
       <div
-        className={`${isLg ? "h-32" : "h-20"} w-full bg-surface-container-${isLg ? "high" : "low"} ${isLg ? "rounded-t-3xl" : "rounded-t-2xl"} flex flex-col items-center justify-start pt-4 px-2 text-center`}
+        className={`${isLg ? "h-24 sm:h-32" : "h-16 sm:h-20"} w-full bg-surface-container-${isLg ? "high" : "low"} ${isLg ? "rounded-t-3xl" : "rounded-t-2xl"} flex flex-col items-center justify-start pt-3 sm:pt-4 px-1 sm:px-2 text-center`}
       >
         <span className={`${isLg ? "text-sm font-bold" : "text-xs font-semibold"} text-on-surface truncate w-full`}>
           {entry.name}
@@ -195,7 +195,7 @@ function RankRow({ entry }: { entry: LeaderEntry }) {
         {entry.avatarInitial}
       </div>
       <div className="flex-grow">
-        <p className={`font-semibold text-on-surface ${entry.isCurrentUser ? "font-bold" : ""}`}>
+        <p className={`font-semibold text-on-surface break-words ${entry.isCurrentUser ? "font-bold" : ""}`}>
           {entry.name}
         </p>
         <span
@@ -250,7 +250,7 @@ export default function LeaderboardPage() {
             <button
               key={p}
               onClick={() => setUiPeriod(p)}
-              className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${
+              className={`flex-1 py-2 min-h-[44px] text-xs sm:text-sm font-medium rounded-lg transition-colors ${
                 uiPeriod === p
                   ? "bg-surface-container-high text-primary shadow-sm"
                   : "text-on-surface-variant hover:text-on-surface"
@@ -295,7 +295,7 @@ export default function LeaderboardPage() {
 
         {/* Podium — only if we have at least 3 entries */}
         {!isLoading && !error && top3.length >= 3 && (
-          <section className="relative flex items-end justify-center gap-2 md:gap-6 mb-12 min-h-[300px] podium-gradient pt-12 rounded-3xl overflow-hidden">
+          <section className="relative flex items-end justify-center gap-1 sm:gap-3 md:gap-6 mb-12 min-h-[260px] sm:min-h-[300px] podium-gradient pt-10 sm:pt-12 rounded-3xl overflow-hidden">
             {/* Order: 2nd, 1st, 3rd */}
             <PodiumEntry entry={top3[1]} size="sm" delay={300} />
             <PodiumEntry entry={top3[0]} size="lg" delay={0} />

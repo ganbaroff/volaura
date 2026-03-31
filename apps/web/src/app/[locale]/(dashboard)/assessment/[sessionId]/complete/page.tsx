@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,11 +19,13 @@ import {
   ChevronDown,
   ChevronUp,
   ListChecks,
+  Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { createClient } from "@/lib/supabase/client";
 import { apiFetch } from "@/lib/api/client";
 import { CoachingTips } from "@/components/assessment/coaching-tips";
+import { triggerHaptic } from "@/lib/haptics";
 
 // ── Types ──────────────────────────────────────────────────────────────
 
@@ -160,6 +162,7 @@ export default function AssessmentResultsPage() {
   const { locale, sessionId } = useParams<{ locale: string; sessionId: string }>();
   const { t } = useTranslation();
   const router = useRouter();
+  const prefersReducedMotion = useReducedMotion();
   const queryClient = useQueryClient();
   const isMounted = useRef(true);
 
@@ -220,7 +223,10 @@ export default function AssessmentResultsPage() {
       if (isMounted.current) {
         // Small delay for suspense effect, then reveal
         setTimeout(() => {
-          if (isMounted.current) setPhase("reveal");
+          if (isMounted.current) {
+            setPhase("reveal");
+            triggerHaptic("badge_reveal");
+          }
         }, 800);
       }
     } catch (err: unknown) {
@@ -307,10 +313,20 @@ export default function AssessmentResultsPage() {
         className="flex flex-col items-center text-center space-y-4"
       >
         <div className={cn(
-          "size-28 rounded-full flex items-center justify-center ring-4",
+          "relative size-28 rounded-full flex items-center justify-center ring-4",
           badge.bg,
         )}>
           <BadgeIcon className={cn("size-14", badge.color)} />
+          {/* ISSUE-Q4: Celebration pulse ring for high scores (score ≥75). Respects reduced motion. */}
+          {score >= 75 && !prefersReducedMotion && (
+            <motion.div
+              initial={{ scale: 1, opacity: 0.7 }}
+              animate={{ scale: 1.6, opacity: 0 }}
+              transition={{ duration: 1.0, delay: 0.4, ease: "easeOut" }}
+              className={cn("absolute inset-0 rounded-full ring-4 pointer-events-none", badge.bg)}
+              aria-hidden="true"
+            />
+          )}
         </div>
 
         <motion.div
@@ -334,6 +350,12 @@ export default function AssessmentResultsPage() {
               {t("aura.effectiveScore", { defaultValue: "Effective (with inactivity decay):" })} {effectiveScore.toFixed(1)}
             </p>
           )}
+          {/* Discoverability context line */}
+          <p className="text-xs text-muted-foreground text-center mt-2">
+            {score >= 60 && result?.aura_updated === true
+              ? t("assessment.scoreUnlocksDiscovery")
+              : t("assessment.scoreUnlocksMore")}
+          </p>
         </motion.div>
       </motion.div>
 
@@ -356,7 +378,7 @@ export default function AssessmentResultsPage() {
           {percentile !== null ? (
             <>
               <p className="text-2xl font-bold tabular-nums text-primary">
-                top {Math.max(1, Math.round(100 - percentile))}%
+                {t("profile.topPercent", { percent: Math.max(1, Math.round(100 - percentile)) })}
               </p>
               <p className="text-xs text-muted-foreground">{t("aura.percentile", { defaultValue: "percentile" })}</p>
             </>
@@ -371,6 +393,23 @@ export default function AssessmentResultsPage() {
           )}
         </div>
       </motion.div>
+
+      {/* AURA Sync Pending Banner */}
+      {result?.aura_updated === false && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="flex items-start gap-3 rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3"
+          role="status"
+          aria-live="polite"
+        >
+          <Clock className="size-4 mt-0.5 shrink-0 text-amber-700 dark:text-amber-400" aria-hidden="true" />
+          <p className="text-sm text-amber-700 dark:text-amber-400">
+            {t("assessment.auraSyncPending")}
+          </p>
+        </motion.div>
+      )}
 
       {/* Gaming Warning */}
       <AnimatePresence>
@@ -420,7 +459,7 @@ export default function AssessmentResultsPage() {
         </motion.div>
       )}
 
-      {/* Next Steps */}
+      {/* ISSUE-Q4: Next Steps — actionable cards with narrative closure */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -430,15 +469,47 @@ export default function AssessmentResultsPage() {
         <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
           {t("assessment.nextSteps", { defaultValue: "What's Next" })}
         </h2>
-        <div className="space-y-2 text-sm text-muted-foreground">
+        <div className="space-y-2">
+          {/* Card 1: Add another competency */}
+          <button
+            type="button"
+            onClick={() => router.push(`/${locale}/assessment`)}
+            className="w-full flex items-center gap-3 rounded-xl bg-surface-container-low p-3 text-left hover:bg-muted/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <span className="text-2xl shrink-0" aria-hidden="true">🎯</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-foreground">{t("assessment.nextStepAssess")}</p>
+              <p className="text-xs text-muted-foreground">{t("assessment.nextStepAssessDesc")}</p>
+            </div>
+            <ArrowRight className="size-4 text-muted-foreground shrink-0" aria-hidden="true" />
+          </button>
+          {/* Card 2: View AURA score */}
+          <button
+            type="button"
+            onClick={() => router.push(`/${locale}/aura`)}
+            className="w-full flex items-center gap-3 rounded-xl bg-surface-container-low p-3 text-left hover:bg-muted/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <span className="text-2xl shrink-0" aria-hidden="true">✨</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-foreground">{t("assessment.nextStepAura")}</p>
+              <p className="text-xs text-muted-foreground">
+                {aura
+                  ? t("assessment.nextStepAuraScore", { score: overallAura.toFixed(1) })
+                  : t("assessment.nextStepAuraDesc")}
+              </p>
+            </div>
+            <ArrowRight className="size-4 text-muted-foreground shrink-0" aria-hidden="true" />
+          </button>
+          {/* Context-sensitive tip line (no duplicate buttons) */}
           {score < 60 && (
-            <p>💡 {t("assessment.tipImprove", { defaultValue: "Practice more in this area and retake the assessment to improve your score." })}</p>
-          )}
-          {score >= 60 && score < 90 && (
-            <p>🎯 {t("assessment.tipGood", { defaultValue: "Great score! Try other competencies to build your full AURA profile." })}</p>
+            <p className="text-xs text-muted-foreground px-1">
+              💡 {t("assessment.tipImprove", { defaultValue: "Practice more and retake to improve your score." })}
+            </p>
           )}
           {score >= 90 && (
-            <p>🏆 {t("assessment.tipExcellent", { defaultValue: "Outstanding! You're in the top tier. Share your achievement with organizations." })}</p>
+            <p className="text-xs text-primary px-1">
+              🏆 {t("assessment.tipExcellent", { defaultValue: "Outstanding! Organizations can now find you in search." })}
+            </p>
           )}
         </div>
       </motion.div>
@@ -478,8 +549,8 @@ export default function AssessmentResultsPage() {
         </motion.div>
       )}
 
-      {/* Share nudge — prominent for Gold+ */}
-      {score >= 75 && (
+      {/* Share nudge — prominent for Silver+ (GROW-M01: was Gold+ only, Silver tier now included) */}
+      {score >= 60 && (
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -487,26 +558,37 @@ export default function AssessmentResultsPage() {
           className="rounded-xl border border-primary/30 bg-primary/5 p-4 flex flex-col items-center gap-3 text-center"
         >
           <p className="text-sm font-semibold text-foreground">
-            {t("assessment.shareNudge", { defaultValue: "You're in the top tier — let organizations find you." })}
+            {/* GROW-N01: Silver tier gets "building momentum" copy, not "top tier" */}
+            {tier === "silver" ? t("assessment.shareNudgeSilver") : t("assessment.shareNudge")}
           </p>
           <Button
             onClick={() => {
-              const cardUrl = username
-                ? `https://volaura.app/u/${username}/card`
-                : "https://volaura.app";
+              if (!username) return;
+              const cardUrl = `https://volaura.app/u/${username}?utm_source=assessment_complete&utm_medium=share`;
               const tierEmoji = tier === "platinum" ? "💎" : "🥇";
-              const percentileText = percentile !== null ? ` · top ${Math.max(1, Math.round(100 - percentile))}%` : "";
-              const text = `${tierEmoji} ${badge.label} in ${competencyLabel}${percentileText} — AURA ${(aura?.total_score ?? score).toFixed(1)}\nVerified on Volaura: ${cardUrl}`;
+              // BATCH-O CULT #4: locale-aware share text — no more hardcoded English going to Telegram/WhatsApp
+              const percentileText = percentile !== null ? ` · ${t("profile.topPercent", { percent: Math.max(1, Math.round(100 - percentile)) })}` : "";
+              const text = t("assessment.shareBody", {
+                emoji: tierEmoji,
+                competency: competencyLabel,
+                percentile: percentileText,
+                score: (aura?.total_score ?? score).toFixed(1),
+              }) + ` ${cardUrl}`;
               if (navigator.share) {
-                navigator.share({ title: "My Volaura AURA Score", text, url: cardUrl }).catch(() => {});
+                navigator.share({ title: t("assessment.shareTitle"), text, url: cardUrl }).catch(() => {});
               } else {
                 navigator.clipboard.writeText(text).catch(() => {});
               }
             }}
             size="sm"
-            className="gap-2"
+            className="gap-2 w-full sm:w-auto min-h-[44px] sm:min-h-0"
+            disabled={!username}
+            aria-busy={phase === "reveal" && !username}
           >
-            <Share2 className="size-4" />
+            {phase === "reveal" && !username
+              ? <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+              : <Share2 className="size-4" />
+            }
             {t("aura.share")}
           </Button>
         </motion.div>
@@ -538,22 +620,33 @@ export default function AssessmentResultsPage() {
           {t("aura.retake")}
         </Button>
 
-        {score < 75 && (
+        {score < 60 && (
           <Button
             onClick={() => {
-              const cardUrl = username ? `https://volaura.app/u/${username}/card` : "https://volaura.app";
-              const percentileTextLow = percentile !== null ? ` (top ${Math.max(1, Math.round(100 - percentile))}%)` : "";
-              const text = `I scored ${score.toFixed(1)}${percentileTextLow} in ${competencyLabel} on Volaura — working on my AURA score 📈\n${cardUrl}`;
+              if (!username) return;
+              const cardUrl = `https://volaura.app/u/${username}?utm_source=assessment_complete&utm_medium=share`;
+              // BATCH-O CULT #4: locale-aware low-score share text
+              const percentileTextLow = percentile !== null ? ` (${t("profile.topPercent", { percent: Math.max(1, Math.round(100 - percentile)) })})` : "";
+              const text = t("assessment.shareBodyLow", {
+                score: score.toFixed(1),
+                percentile: percentileTextLow,
+                competency: competencyLabel,
+              }) + `\n${cardUrl}`;
               if (navigator.share) {
-                navigator.share({ title: "My Volaura Score", text, url: cardUrl }).catch(() => {});
+                navigator.share({ title: t("assessment.shareTitleLow"), text, url: cardUrl }).catch(() => {});
               }
             }}
             variant="ghost"
             size="sm"
-            className="text-muted-foreground"
+            className="text-muted-foreground w-full min-h-[44px] sm:min-h-0"
+            disabled={!username}
+            title={!username ? t("assessment.shareNudgeLow") : undefined}
           >
-            <Share2 className="size-4 mr-2" />
-            {t("aura.share")}
+            {phase === "reveal" && !username
+              ? <Loader2 className="size-4 mr-2 animate-spin" aria-hidden="true" />
+              : <Share2 className="size-4 mr-2" />
+            }
+            {t("assessment.shareNudgeLow")}
           </Button>
         )}
       </motion.div>

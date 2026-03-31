@@ -1,0 +1,126 @@
+{
+  "sprint": 4,
+  "voting_date": "2026-03-31",
+  "winner": "hr-manager",
+  "winner_score": 36,
+  "scores": {
+    "devops-cybersecurity": {
+      "irt": 4,
+      "london_delta": 8,
+      "az_anchoring": 8,
+      "competency": 6,
+      "rubric": 8,
+      "total": 34,
+      "rank": 2,
+      "irt_notes": "3 hard questions have irt_b <= 1.0 (0.7, 0.9, 0.8) — full hard-tier b-distribution failure. No irt_a violations.",
+      "london_delta_notes": "8/10 strong. Weak: 006 (GDPR cited but AZ consequence not named as institution), 009 (DPA/ICO cited but AZ enforcement body not named explicitly).",
+      "az_anchoring_notes": "10/10 — every question has a named AZ institution (CBA, ASAN, DƏIM, SOCAR, AzərGold, ISMSN) that structurally determines the correct answer.",
+      "rubric_notes": "1 open_ended (s4-009) has 5-level evaluation_rubric. Level 4-5 explicitly require Ministry of Digital Development knowledge and AZ privacy law specifics."
+    },
+    "financial-analyst": {
+      "irt": 4,
+      "london_delta": 8,
+      "az_anchoring": 8,
+      "competency": 6,
+      "rubric": 8,
+      "total": 34,
+      "rank": 2,
+      "irt_notes": "1 hard b=1.0 violation (s4-008, must be >1.0). 2 irt_c violations: s4-006 (sjt, c=0.0) and s4-009 (sjt, c=0.0) — SJT is not open_ended so must have c=0.05-0.20.",
+      "london_delta_notes": "8/10 strong. Weak: s4-004 (no named UK/EU framework listed — 'Bloomberg BVAL' is vendor tool, not regulatory framework) and s4-010 (Bloomberg/Reuters cited as tools not frameworks).",
+      "az_anchoring_notes": "10/10 — every question anchored to named AZ institutions (CBA, Kapital Bank, SOFAZ, IBA, ABB, AzərGold, AccessBank, PASHA Bank, Baku Stock Exchange, AZ Securities Market Commission).",
+      "rubric_notes": "2 open_ended (s4-007, s4-010) both have 5-level evaluation_rubric. Level 4-5 require CBA Regulation No. 8 knowledge, ABB-specific 38% NPL context, AZN yield curve construction — outstanding AZ specificity."
+    },
+    "hr-manager": {
+      "irt": 8,
+      "london_delta": 6,
+      "az_anchoring": 8,
+      "competency": 6,
+      "rubric": 8,
+      "total": 36,
+      "rank": 1,
+      "irt_notes": "ZERO violations. All hard questions b > 1.0 (1.1, 1.4, 1.2, 1.3). All easy b < -0.5. All medium in range. All irt_a >= 1.2. All irt_c in 0.05-0.20 for MCQ/SJT. Perfect IRT discipline.",
+      "london_delta_notes": "6/10 strong. Weak: s4-002 (no named UK framework — just 'UK statutory redundancy model'), s4-005 (no AZ institution named in london_delta), s4-006 (no named UK framework — just 'UK employment contracts'), s4-009 (no AZ institution named). HR london_deltas are weaker on framework specificity.",
+      "az_anchoring_notes": "10/10 — SSPF, Ministry of Labor Inspection, Ministry of Labor, Baku City Court, PASHA Holding, Kapital Bank, SOCAR, ABB Bank, Personal Data Protection Commission all determine correct answers even when not in scenario opening (verified via feedback).",
+      "rubric_notes": "1 open_ended (s4-008) has 5-level evaluation_rubric. LEVEL 5 explicitly requires knowing SOCAR's integration risk landscape, SSPF audit protocols, and proactive Ministry of Labor engagement strategy."
+    },
+    "marketing-manager": {
+      "irt": 4,
+      "london_delta": 8,
+      "az_anchoring": 6,
+      "competency": 6,
+      "rubric": 2,
+      "total": 26,
+      "rank": 6,
+      "irt_notes": "3 hard b violations: s4-007 (b=0.7), s4-008 (b=0.8), s4-010 (b=1.0). Hard tier systematically under-calibrated.",
+      "london_delta_notes": "9/10 strong. Weak: s4-010 (Interbrand/BrandZ methodology cited but not named as a UK/EU regulatory framework — brand equity tools, not compliance frameworks).",
+      "az_anchoring_notes": "8/10. Weak: s4-006 uses 'AZ Muslim cultural norm' (not a named institution — removing it doesn't change who enforces the rule), s4-007 lists Lalafo.az in az_institutions but Lalafo is not in the scenario text and feedback doesn't reference it as determining the answer.",
+      "rubric_notes": "2 open_ended (s4-009, s4-010) — MISSING evaluation_rubric entirely. No 5-level rubric present. This is the critical gap for marketing."
+    },
+    "product-manager": {
+      "irt": 4,
+      "london_delta": 10,
+      "az_anchoring": 8,
+      "competency": 6,
+      "rubric": 2,
+      "total": 30,
+      "rank": 5,
+      "irt_notes": "3 hard b violations: s4-008 (b=0.8), s4-009 (b=0.9), s4-010 (b=1.0). Consistent pattern across all sprint 4 files — hard questions are systematically set at medium difficulty.",
+      "london_delta_notes": "10/10 — perfect. Every london_delta names a specific UK framework (FCA Principle 11, GDS Content Design Standards, PSD2/OBIE, ICO, DSDM, PRINCE2, FCA Consumer Duty) + states the wrong decision + names AZ enforcement consequence.",
+      "az_anchoring_notes": "10/10 — all scenarios anchored to CBA, ASAN, AzərGold, Ministry of Finance, Lalafo.az, Ministry of Internal Affairs, AZ Personal Data Law 2010, ABB, SOCAR. Removing institutions changes correct answers.",
+      "rubric_notes": "2 open_ended (s4-008, s4-010) — MISSING evaluation_rubric entirely. No 5-level rubric. Critical gap that drops product-manager from potential top-3 contender."
+    },
+    "qa-engineer": {
+      "irt": 4,
+      "london_delta": 10,
+      "az_anchoring": 6,
+      "competency": 6,
+      "rubric": 8,
+      "total": 34,
+      "rank": 2,
+      "irt_notes": "3 hard b violations: s4-007 (b=0.8), s4-008 (b=0.9), s4-009 (b=1.0). Hard tier calibration issue shared by most sprint 4 files.",
+      "london_delta_notes": "10/10 — excellent. Consistent structural format: 'A London QA engineer following [ISO/NCSC/OWASP/FCA standard] [does wrong thing]. AZ consequence: [named institution + specific enforcement outcome].' This is the model london_delta format for Sprint 5.",
+      "az_anchoring_notes": "8/10. Weak: s4-004 (no named AZ institution in scenario — 'Azerbaijani government portal' is generic; DOST/e-GOV/ASAN listed in az_institutions but none appear in scenario or feedback as answer-determining), s4-006 (AZ corporate culture cited but no named institution determines the answer).",
+      "rubric_notes": "2 open_ended (s4-007, s4-010) both have 5-level evaluation_rubric with AZ institutional knowledge requirements at Level 5. s4-007 requires CBA audit cycle knowledge; s4-010 requires DEIM blacklisting knowledge. Strong Level 5 AZ specificity."
+    },
+    "scrum-master": {
+      "irt": 4,
+      "london_delta": 8,
+      "az_anchoring": 8,
+      "competency": 6,
+      "rubric": 2,
+      "total": 28,
+      "rank": 4,
+      "irt_notes": "3 hard b violations: s4-008 (b=0.7), s4-009 (b=0.8), s4-010 (b=0.9). The most severe hard-tier undercalibration among all files.",
+      "london_delta_notes": "9/10 strong. Weak: s4-008 (PRINCE2 Agile cited without naming it as a named framework — 'Prince2 Agile framework's change control process' is present but the question identifies it as 'PRINCE2 Agile' not a named regulation).",
+      "az_anchoring_notes": "10/10 — ASAN xidmət, Kapital Bank, CBA, SOCAR, Sangachal terminal, PASHA Technology, Ministry of Energy, Baku Metro IT, Ministry of Transport all appear in scenarios and structurally determine correct answers.",
+      "rubric_notes": "2 open_ended (s4-009, s4-010) — MISSING evaluation_rubric entirely. No 5-level rubric. Critical gap shared with marketing-manager and product-manager."
+    }
+  },
+  "strongest_questions": {
+    "devops-cybersecurity": "prof-devops-s4-001 (CBA Circular 14/2023 data residency mandate) — strongest london_delta: NCSC Cloud Security Principles cited by name, wrong decision clearly stated (ISO 27001 as sufficient residency proof), AZ consequence explicitly named (operating license revocation). Scenario forces distinction between security posture and geographic compliance.",
+    "financial-analyst": "prof-fin-s4-010 (Kapital Bank AZN corporate bond pricing with missing yield curve) — best open_ended rubric in all Sprint 4: Level 5 requires 5-step AZN discount rate construction with actual CBA repo rate (7.25%), T-bill bootstrapping, and AZN NDF market knowledge. Multiple AZ institutions: Kapital Bank, AzərGold, SOFAZ, CBA, AZ Securities Market Commission.",
+    "hr-manager": "prof-hr-s4-008 (SOCAR subsidiary M&A HR integration — 200-person workforce with three simultaneous violations) — strongest AZ anchoring: SSPF, Ministry of Labor, Ministry of Taxes, and SOCAR all structurally determine the correct sequence. 5-level rubric with Level 5 requiring proactive Ministry of Labor engagement before audit. Best IRT params: a=1.9, b=1.4.",
+    "marketing-manager": "prof-mkt-s4-005 (Kapital Bank CBA financial advertising regulation — team incentivized to approve non-compliant campaign) — best london_delta cites FCA Section 21 Financial Services and Markets Act 2000 by name, wrong decision clearly (UK compliance cycles vs AZ 72-hour CBA response), AZ consequence explicitly named (CBA sanction + Kapital Bank brand risk).",
+    "product-manager": "prof-pm-s4-002 (ASAN portal language — Azerbaijani-only UI mandate) — perfect london_delta cites UK GDS Content Design Standards + Welsh Language Act 1993 by name, states wrong decision (English as default), AZ consequence explicitly names AZ State Language Law enforcement. Scenario forces recognition that AZ is the only official language.",
+    "qa-engineer": "prof-qa-s4-010 (DEIM 24-hour reporting obligation for government contract QA) — best structural london_delta: NCSC coordinated disclosure policy (90 days) vs DEIM 24-hour mandate, AZ consequence = 12-month procurement blacklisting. Level 5 rubric requires knowing that blacklisting applies to the contracting organisation, not individual engineer.",
+    "scrum-master": "prof-pm-scrum-s4-001 (Kapital Bank CBA regulatory sprint cancellation) — strongest scenario: Scrum Guide 2020 Sprint Goal protection vs CBA regulatory compliance requirement that overrides sprint boundaries. AZ consequence: CBA reporting deadline is non-negotiable even mid-sprint. Named institutions: Kapital Bank, CBA."
+  },
+  "weakest_questions": {
+    "devops-cybersecurity": "prof-devops-s4-007 (AzərGold/ISMSN zero-trust leadership) — irt_b=0.7 for a hard question (should be >1.0). SJT type, which is appropriate, but b-value places it firmly in medium difficulty range.",
+    "financial-analyst": "prof-fin-s4-006 (Pasha Bank internal credit risk model — SJT) — irt_c=0.0 for an SJT question (should be 0.05-0.20). The london_delta is also missing an explicit UK framework name, referencing FCA PRIN 6 only partially.",
+    "hr-manager": "prof-hr-s4-006 (salary reduction notification procedures) — london_delta missing a named UK framework ('UK employment contracts' is generic). No specific Act or Code cited.",
+    "marketing-manager": "prof-mkt-s4-009 (Kapital Bank influencer marketing trust crisis) — MISSING evaluation_rubric for an open_ended question. Scenario and london_delta are strong but rubric absence disqualifies Level 4-5 AZ specificity.",
+    "product-manager": "prof-pm-s4-008 (CBA fintech open banking compliance) — MISSING evaluation_rubric for an open_ended question. irt_b=0.8 for a hard question (should be >1.0).",
+    "qa-engineer": "prof-qa-s4-004 (AZ dual-script testing matrix) — AZ institutional anchoring is weak: DOST/e-GOV/ASAN listed in az_institutions but none appear in scenario or feedback as answer-determining. The AZ specificity is about the dual-script requirement itself, not a named institution.",
+    "scrum-master": "prof-pm-scrum-s4-008 (Baku Metro IT regulatory sprint change) — irt_b=0.7 for a hard question (should be >1.0). Also london_delta references 'PRINCE2 Agile framework' without naming the named certification framework explicitly."
+  },
+  "winner_patterns": [
+    "PERFECT IRT DISCIPLINE: HR Manager is the only file with zero IRT violations. All hard questions b > 1.0 (1.1, 1.2, 1.3, 1.4). Sprint 5 agents must enforce b > 1.0 strictly for hard questions — 6 of 7 files failed this in Sprint 4.",
+    "NAMED REGULATORY FRAMEWORK IN LONDON_DELTA: Product Manager and QA Engineer both scored 10/10 on london_delta by naming specific Acts by section number (FCA PRIN 11, ICO AI Guidance 2023, NCSC Vulnerability Disclosure Policy). HR's 6/10 shows the floor — generic 'UK employment law' without section numbers = weak.",
+    "EVALUATION_RUBRIC PRESENCE: HR Manager, DevOps, Financial Analyst, and QA Engineer all provided 5-level evaluation_rubric for open_ended questions. Marketing, Product Manager, and Scrum Master completely omitted rubrics — this alone cost 6 points each. Sprint 5 agents must treat evaluation_rubric as mandatory for every open_ended question.",
+    "LEVEL 5 REQUIRES AZ INSTITUTIONAL SPECIFICITY: The best rubrics (financial-analyst s4-010, qa-engineer s4-010) explicitly gate Level 5 on knowledge that cannot be inferred from the scenario — specific AZN interest rates, DEIM blacklisting scope, CBA audit cycle timing. Level 5 must require named institutional knowledge.",
+    "AZ INSTITUTION IN SCENARIO TEXT: DevOps, Financial Analyst, HR, Product Manager, and Scrum Master all named institutions in scenario_en that structurally force different correct answers. Marketing and QA had 2 questions each where institutions were listed in az_institutions but not in scenario — these feel anchored but are structurally weaker.",
+    "QA LONDON_DELTA FORMAT IS THE MODEL: QA Engineer's structural format — 'A London X following [NAMED FRAMEWORK] [does wrong thing]. AZ consequence: [named institution + enforcement outcome].' — scored 10/10. This explicit 'AZ consequence:' structural marker should be mandated for all Sprint 5 questions."
+  ],
+  "sprint5_evolution_notes": "Sprint 5 agents must address three systemic failures from Sprint 4: (1) HARD QUESTION IRT_B: 6 of 7 files had all hard questions with b <= 1.0. Sprint 5 agents must generate hard questions with irt_b 1.2-2.0, not 0.7-1.0. Consider having agents generate hard question b-values first and verify before writing scenario. (2) EVALUATION_RUBRIC: 3 files (marketing, product-manager, scrum-master) shipped open_ended questions with no evaluation_rubric at all. Sprint 5 spec must declare evaluation_rubric as a required field for type=open_ended, with Level 4-5 explicitly requiring named AZ institution knowledge that cannot be inferred from the scenario text. (3) LONDON_DELTA FORMAT: Propagate QA Engineer's 'AZ consequence:' structural marker across all files. The format — [named UK/EU framework + section] + [wrong decision London professional makes] + 'AZ consequence: [named institution] + [enforcement outcome]' — is the proven v2.0 template. SJT questions (not open_ended) must have irt_c = 0.05-0.20, not 0.0. The financial analyst made this error on 2 SJT questions."
+}

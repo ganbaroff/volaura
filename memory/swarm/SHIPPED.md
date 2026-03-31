@@ -6,6 +6,328 @@
 
 ---
 
+## Session 77 (2026-03-31) — BATCH-S: Vertex LLM + Invite UX + Smoke Test + Sprint 5 Q-Bank
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| S-01: Startup guard ALL envs | `apps/api/app/config.py` → `assert_production_ready()` | RISK-011 check (old Supabase URL) now fires BEFORE `if app_env != "production": return` — was silently bypassed on staging/dev. | ✅ S-01 |
+| S-02: supabase_project_ref in /health | `apps/api/app/routers/health.py` | `HealthResponse` gains `supabase_project_ref: str`. CEO can `curl /health` to verify Railway points to correct DB (`dwdgzfusjsobnixgyzjk`). `_extract_project_ref()` parses URL. `llm_ok` now checks Gemini OR Vertex key. | ✅ S-02 |
+| S-03+S-08: Invite pre-fill + flicker fix | `apps/web/src/app/[locale]/(auth)/signup/page.tsx` | `inviteCode` state initialized from `searchParams.get("invite")`. `openSignup` state initialized to `false` when `?invite=` present (avoids 200-400ms async fetch flicker). | ✅ S-03+S-08 |
+| S-04: Vertex + Groq LLM chain | `apps/api/app/services/llm.py` | Full rewrite. Singleton clients (`_vertex_client`, `_gemini_client`). `reset_llm_clients()` for test teardown. Fallback chain: Vertex Express → Gemini → Groq → OpenAI. `_call_vertex()`: `genai.Client(vertexai=True, api_key=...)`. `_call_groq()`: `AsyncGroq`, `llama-3.3-70b-versatile`. `generate_embedding` tries Vertex first. | ✅ S-04 |
+| S-04: vertex_api_key in config | `apps/api/app/config.py` | `vertex_api_key: str = ""` added with Vertex Express comment. `VERTEX_API_KEY=AQ.Ab8...` in `.env`. | ✅ S-04 |
+| S-07: Invalid invite Telegram CTA | `apps/web/src/app/[locale]/(public)/invite/page.tsx` | Invalid code state: Telegram primary CTA (`t.me/yusifganbarov`, #2AABEE button), LinkedIn secondary, manual code entry link. 4 new i18n keys. `invite.invalidBody` updated to mention Telegram. | ✅ S-07 |
+| S-09: Production smoke test | `scripts/prod_smoke_test.py` | NEW. Hits real Railway URL. Steps: health→supabase_project_ref, signup-status, validate-invite, auth gate (401), public profile, leaderboard. Exit code 1 on failure. Mistake #52 prevention. | ✅ S-09 |
+| S-10: Sprint 5 question bank | `scripts/question-evolution/sprint-5/*.json` | 7 profession JSON files (70 questions total). All pass: irt_a≥1.2 ✅, hard irt_b 1.2-2.0 ✅, evaluation_rubric on all open_ended ✅, empathy_safeguarding≥2 per set ✅. | ✅ S-10 |
+| S-10: Sprint 5 voting results | `scripts/question-evolution/sprint-5/voting-results.json` | Winner: financial-analyst (96/100). Full scoring + sprint-6 recommendations. | ✅ S-10 |
+
+## Session 76 continued (2026-03-30) — BATCH-Q fixes: 661/661 tests — ALL GREEN
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Fix test_org_b2b.py mock chain | `apps/api/tests/test_org_b2b.py` → `_build_dashboard_mock` + `_build_volunteers_mock` | Added `t.limit.return_value = t` to both `assessment_sessions` mock branches. SEC-Q4 added `.limit()` caps to org queries, breaking the chainable mock. 4 tests were failing → all 7 passing. | ✅ |
+| Fix test_smoke_assessment.py pre-existing failure | `apps/api/tests/test_smoke_assessment.py` → `test_submit_open_ended_uses_keyword_fallback` | Root cause: module-level `_COMPETENCY_SLUG_CACHE` warm from previous tests shifted iterator; ALSO missed daily LLM cap check DB call (line 462 in assessment.py) in mock sequence. Fix: `clear_question_cache()` at test start + added `[]` response for cap check at position 2 in mock list. 1 pre-existing failure → now passing. | ✅ |
+| New Supabase project keys | `apps/api/.env`, `apps/web/.env.local`, `apps/api/app/config.py` | New paid project `dwdgzfusjsobnixgyzjk` (Sydney). SUPABASE_URL, SUPABASE_SERVICE_KEY, SUPABASE_ANON_KEY, SUPABASE_PUBLISHABLE_KEY all updated. RISK-011 startup guard blocks boot if old project URL still present. | ✅ |
+| SEC-Q2: Percentile visibility filter | `apps/api/app/routers/profiles.py` → `get_public_profile` | Both COUNT queries for percentile_rank now filter `.eq("visibility", "public")`. Previously counted private/badge_only scores → leaked aggregate platform stats. | ✅ SEC-Q2 |
+| SEC-Q2: Username enumeration rate | `apps/api/app/routers/profiles.py` → `get_public_profile` | Rate limit changed from `RATE_DEFAULT` (60/min) to `RATE_DISCOVERY` (10/min). Prevents brute-force username enumeration. | ✅ SEC-Q2 |
+| SEC-Q3: beta-funnel org-only guard | `apps/api/app/routers/stats.py` → `get_beta_funnel_stats` | Volunteers get 403 FORBIDDEN. Previously all authenticated users could access platform health metrics (completion rates, abandonment rates, user counts). | ✅ SEC-Q3 |
+| SEC-Q4/BUG-005: ORM cap on org queries | `apps/api/app/routers/organizations.py` → `get_org_dashboard` + `list_org_volunteers` | `.limit(2000)` cap on dashboard sessions, `.limit(10_000)` on volunteer list. Both log WARNING at cap. Prevents OOM at 10k users. | ✅ SEC-Q4 |
+| SEC-Q5: PII removed from logs | `apps/api/app/main.py`, `apps/api/app/routers/subscription.py`, `apps/api/app/routers/organizations.py` | 3 log statements fixed: `str(e)` → `type(e).__name__` in Stripe log; `query=payload.query[:50]` → `query_len=len(payload.query)` in search log; global exception handler truncated to `[:120]`. | ✅ SEC-Q5 |
+| Migrations to new project | `supabase/migrations/` → Supabase project `dwdgzfusjsobnixgyzjk` | Agent applying all 57 migrations via Supabase MCP. In progress (~26/57 at last check). | 🔄 IN PROGRESS |
+
+## Session 76 continued (2026-03-30) — BATCH-P: Security + UX + E2E Tests — 657/658 tests passing
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| SEC-ANSWER-01: Subscription gate on /answer | `apps/api/app/routers/assessment.py` → `submit_answer` | Fail-closed paywall check on POST /assessment/answer when `payment_enabled=True`. Returns 402 SUBSCRIPTION_REQUIRED for expired/cancelled status. Mirrors /start gate pattern. | ✅ SEC-ANSWER-01 |
+| P0 paywall tests | `apps/api/tests/test_paywall_enforcement.py` | 2 new tests: `test_submit_answer_blocked_when_expired` + `test_submit_answer_blocked_when_cancelled`. Both verify 402 response. Total: 8/8 passing. | ✅ |
+| ISSUE-Q4: Celebration pulse ring | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/complete/page.tsx` | Framer Motion pulse ring on badge circle for scores ≥75. Respects `useReducedMotion()` — ring suppressed for accessibility. `aria-hidden="true"`. | ✅ ISSUE-Q4a |
+| ISSUE-Q4: Next-action cards | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/complete/page.tsx` + EN/AZ locales | Replaced text-only bullets with 2 tappable nav cards: "Assess more competencies" → /assessment; "See your AURA score" → /aura. WCAG focus-visible ring. Score-contextual tip lines. | ✅ ISSUE-Q4b |
+| ISSUE-AU3: NextStepCard on AURA page | `apps/web/src/app/[locale]/(dashboard)/aura/page.tsx` + EN/AZ locales | 2 nav cards at bottom of AURA page: "Assess another competency" + "Leaderboard". Animate in with `revealed` state (0.75s delay). | ✅ ISSUE-AU3 |
+| i18n: complete page keys | `apps/web/src/locales/en/common.json` + `apps/web/src/locales/az/common.json` | New keys: `nextStepAssess`, `nextStepAssessDesc`, `nextStepAura`, `nextStepAuraDesc`, `nextStepAuraScore`, `tipImprove`, `tipExcellent`. AZ uses formal Siz, collective framing. | ✅ |
+| i18n: AURA page keys | `apps/web/src/locales/en/common.json` + `apps/web/src/locales/az/common.json` | New keys: `aura.nextSteps`, `aura.nextStepAssess`, `aura.nextStepAssessDesc`, `aura.nextStepLeaderboard`, `aura.nextStepLeaderboardDesc`. | ✅ |
+| test_beta_user_journey.py (E2E chain) | `apps/api/tests/test_beta_user_journey.py` | 7 integrated E2E tests covering full beta user path: create profile → start assessment → submit answer → complete → AURA score → public profile → journey smoke. All 7 passing. Key contracts validated: db_admin for session UPDATE, raw_score not in response (CRIT-03), PublicProfileResponse schema. | ✅ QA-E2E |
+
+## Session 76 continued (2026-03-30) — BATCH-O: Cultural Intelligence + Behavioral UX + Accessibility Polish — 648/649 tests passing
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| CI-ON1: Formal "Siz" throughout onboarding | `apps/web/src/locales/az/common.json` — onboarding section | 14 instances of informal `sən` replaced with formal `Siz` across all onboarding copy. AZ cultural standard: formal address for professional platform. | ✅ CI-ON1 |
+| CI-ON2: ISO trust context | `apps/web/src/locales/az/common.json` → `onboarding.next2` | Added "ISO 10667-2 standartına uyğun" framing. Replaces "AI" with trust signal recognized in AZ market. | ✅ CI-ON2 |
+| CI-ON3: Collective non-competitive reframe | `apps/web/src/locales/az/common.json` + `apps/web/src/locales/en/common.json` | `hiddenStrengthDesc`, `feature3Desc`, `shareText`, `leaderboard.emptyTitle/emptyDesc`, `nav.leaderboard`, `sharePrompt.title/desc` reframed from competitive to collective achievement framing. | ✅ CI-ON3 |
+| CI-ON4: nav.leaderboard rename | `apps/web/src/locales/az/common.json` | "Liderlər Lövhəsi" (competitive) → "Ən Yaxşılar" (aspirational). Reduces competitive anxiety in collective culture. | ✅ CI-ON4 |
+| CI-ON5: shareText formal + inclusive | `apps/web/src/locales/az/common.json` | "Sən də sına" → "Siz də yoxlayın". Formal address + active verb = professional tone. | ✅ CI-ON5 |
+| CI-ON6: topPercent collective framing | `apps/web/src/locales/az/common.json` → `profile.topPercent` | "Ən yaxşı {{percent}}%" → "Ən yaxşıların {{percent}}% arasında". Membership framing not ranking. | ✅ CI-ON6 |
+| CI-ON7: AI → alqoritm trust signal | `apps/web/src/locales/az/common.json` → `assessment.stillWorking` | "AI cavabınızı yoxlayır" → "qiymətləndirmə alqoritmi cavabınızı analiz edir". "AI" raises suspicion; "alqoritm" reads as systematic/fair. | ✅ CI-ON7 |
+| CI-PUB1: 3 hardcoded EN strings on public profile | `apps/web/src/app/[locale]/(public)/u/[username]/page.tsx` + both locales | `getAuraScore`, `foundingMember`, `founding1000`, `getStarted` — all hardcoded English replaced with `t()` calls. Critical: public profile is viral share target — was always showing EN to AZ users. | ✅ CI-PUB1 |
+| BATCH-O A1: Pre-select communication | `apps/web/src/app/[locale]/(dashboard)/assessment/page.tsx` | Default selection `new Set(["communication"])` when no `?competency=` param. Eliminates 8-way decision paralysis on first load. | ✅ BATCH-O A1 |
+| BATCH-O A3: Cooldown 429 with minutes | `apps/web/src/app/[locale]/(dashboard)/assessment/page.tsx` + both locales | 429 response now reads `Retry-After` header, shows exact wait time: `t("assessment.cooldownError", { minutes: waitMin })`. Turns dead 429 into re-engagement message. `cooldownError` key added to both locales. | ✅ BATCH-O A3 |
+| BATCH-O ON1: Pre-select onboarding competency | `apps/web/src/app/[locale]/(dashboard)/onboarding/page.tsx` | `selectedCompetency` state defaults to `"communication"`. Reduces first-time user decision burden. | ✅ BATCH-O ON1 |
+| BATCH-O ON3: positive visible_to_orgs | `apps/web/src/app/[locale]/(dashboard)/onboarding/page.tsx` + both locales | Replaced checkbox with positive confirmation text: "✓ Profiliniz təşkilatlara görünəcək". Checkbox was causing voluntary opt-outs before users understood the value. `visibleToOrgsInfo` key added. | ✅ BATCH-O ON3 |
+| BATCH-O Q-counter cap | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/page.tsx` | `Math.min(answeredCount + 1, ESTIMATED_QUESTIONS)` — counter never shows "9 of 8". Off-by-one UX confusion fixed. | ✅ BATCH-O Q |
+| BATCH-O SHARE: navigator.share() i18n | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/complete/page.tsx` + both locales | `shareBody`, `shareBodyLow`, `shareTitle`, `shareTitleLow` keys added to both locales. Was hardcoded English template literals — every share from Baku users went to Telegram in English. Critical viral path fix. | ✅ BATCH-O SHARE |
+| BATCH-O SHARE2: topPercent on complete page | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/complete/page.tsx` | Hardcoded "top X%" replaced with `t("profile.topPercent", { percent })`. | ✅ BATCH-O SHARE2 |
+| BATCH-O AURA1: useReducedMotion | `apps/web/src/app/[locale]/(dashboard)/aura/page.tsx` | Counter animation duration: `prefersReducedMotion ? 0 : 2000`. Share modal timer: 3000 → 5000ms. WCAG 2.2 motion preference compliance. | ✅ BATCH-O AURA1 |
+| BATCH-O AURA2: skeleton loading state | `apps/web/src/app/[locale]/(dashboard)/aura/page.tsx` | Full skeleton with animated pulse cards replaces bare spinner. Removed unused `Loader2` import. | ✅ BATCH-O AURA2 |
+| BATCH-O AURA3: Continue routes to active session | `apps/web/src/app/[locale]/(dashboard)/aura/page.tsx` | Added `useAssessmentStore` → reads `sessionId`. Continue button: `/${locale}/assessment/${activeSessionId}` when session active, else `/assessment`. Prevents routing to selection screen mid-assessment. | ✅ BATCH-O AURA3 |
+| BATCH-O DASH1: useReducedMotion on dashboard | `apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx` | `pageVariantsReduced` + `sectionVariantsReduced` — disables translate/opacity animation for reduced-motion users. | ✅ BATCH-O DASH1 |
+| BATCH-O DASH2: 44px dismiss buttons | `apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx` | Trial/share banner dismiss buttons: `size-5` → `size-11` (44px WCAG tap target). Color: `opacity-60` → `text-amber-600/700` for visibility. | ✅ BATCH-O DASH2 |
+| BATCH-O DASH3: share prompt gate | `apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx` | Share prompt gated: `showSharePrompt = hasScore && !sharePromptDismissed && !!profile?.username && !(!bannerDismissed && (isTrial \|\| isExpired))`. Prevents two competing banners. | ✅ BATCH-O DASH3 |
+| BATCH-O WCAG: sr-only table in radar chart | `apps/web/src/components/aura/radar-chart.tsx` + both locales | Added `<table className="sr-only">` with competency/score data. SVG `aria-hidden="true"`. Screen readers now get full chart data. `aura.competency` + `aura.score` keys added. | ✅ BATCH-O WCAG |
+
+## Session 76 continued (2026-03-30) — BATCH-N: Growth + Safety Wave — 648/649 tests passing
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| RISK-N01: Telegram hard fail | `apps/api/app/config.py` → `assert_production_ready()` | Hard-errors if `TELEGRAM_WEBHOOK_SECRET` empty in prod — bot can't be silently dead at launch. | ✅ RISK-N01 |
+| RISK-N02: Stripe hard fail | `apps/api/app/config.py` → `assert_production_ready()` | Hard-errors if `PAYMENT_ENABLED=True` + `STRIPE_WEBHOOK_SECRET` empty — blocks unsigned webhook spoofing before payments activate. | ✅ RISK-N02 |
+| GROW-N01: Silver share copy | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/complete/page.tsx` + EN/AZ locales | Silver tier (60-74) now sees "Building momentum — share your progress and challenge a peer" instead of "You're in the top tier" (factually wrong for Silver). | ✅ GROW-N01 |
+| GROW-M02: Cooldown notification | `apps/api/app/routers/assessment.py` + EN/AZ locales | Fire-and-forget `notify()` call when cooldown is hit — tells user exactly how many minutes until retake is ready. Turns dead-end 429 into re-engagement nudge. | ✅ GROW-M02 |
+| PROD-M03: Share buttons mobile | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/complete/page.tsx` | Both share buttons: `w-full sm:w-auto min-h-[44px]` — full-width on mobile, 44px tap targets, no overflow at 375px. | ✅ PROD-M03 |
+| GROW-M03: Public profile peer benchmark | `apps/api/app/schemas/profile.py`, `apps/api/app/routers/profiles.py`, `apps/web/src/app/[locale]/(public)/u/[username]/page.tsx`, new `apps/web/src/components/profile/challenge-button.tsx`, EN/AZ locales | `percentile_rank` added to PublicProfileResponse. Profile shows "Top X%" stat. "Challenge a peer" button copies `volaura.app/?ref=[username]` to clipboard. 3 i18n keys added. | ✅ GROW-M03 |
+| ARCH-M03: pending_aura_sync banner | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/complete/page.tsx` + EN/AZ locales | Amber banner shows when `result.aura_updated === false` — "Your AURA score is being recalculated — check back in a few minutes." Invisible on happy path. | ✅ ARCH-M03 |
+
+## Session 76 continued (2026-03-30) — BATCH-M: Launch Readiness Wave — 648/649 tests passing
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| RISK-M01: LLM cost spiral guard | `apps/api/app/config.py` → `assert_production_ready()` | Hard error if Gemini configured without Groq on Railway. Prevents $240/day cost spiral when Gemini rate-limits and OpenAI paid fallback activates. | ✅ RISK-M01 |
+| ARCH-M02: Leaderboard period index | `supabase/migrations/20260330180000_add_leaderboard_period_index.sql` | Composite index `(visibility, last_updated DESC, total_score DESC)` on aura_scores. Applied to prod via MCP. Leaderboard period queries (weekly/monthly) no longer full-scan. | ✅ ARCH-M02 |
+| QA-M01: Leaderboard auth tests | `apps/api/tests/test_new_endpoints.py` → `TestLeaderboard` | 2 tests: `is_current_user=True` when auth token matches entry, `is_current_user=False` for all when no auth. Covers LEADERBOARD-01 implementation. | ✅ QA-M01 |
+| GROW-M01: Silver share box | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/complete/page.tsx` | Share box now shown for score ≥60 (Silver), not ≥75 (Gold). Ghost button only for <60. Wider share funnel. | ✅ GROW-M01 |
+| PROD-M01: Answer saved indicator | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/page.tsx` | 600ms "Saved ✓" state on submit button after successful answer save. `answerSaved` state + `isMounted` guard. EN+AZ keys added. | ✅ PROD-M01 |
+| QA-M02: total_count tests | `apps/api/tests/test_new_endpoints.py` → `TestLeaderboardTotalCount` | 2 tests: (1) `total_count=200` when DB has 200 rows but page limit=50. (2) graceful fallback to `len(entries)` when count query raises. Both passing. | ✅ QA-M02 |
+| QA-M03: Verification endpoint tests | `apps/api/tests/test_new_endpoints.py` → `TestVerificationEndpoint` | 5 tests: happy path 201, token_used→409, expired→410, not_found→404, AURA blend math (rating=4 + existing=75 → blended=77.0). All passing. | ✅ QA-M03 |
+
+## Session 76 continued (2026-03-30) — BATCH-L: Security + UX + Leaderboard — 638/640 tests passing
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| SEC-03: display_name anonymization | `apps/api/app/routers/profiles.py` | Added `_anonymize_name()` at module level. Applied in `list_public_volunteers` loop — `display_name=_anonymize_name(row.get("display_name"))`. Closes org→discovery cross-reference deanonymization attack. | ✅ SEC-03 |
+| OptionalCurrentUserId dep | `apps/api/app/deps.py` | New `get_optional_user_id()` async function + `OptionalCurrentUserId` Annotated type alias. Returns `str | None` — user id if valid JWT present, None otherwise. Used for public-but-personalizable endpoints. | ✅ LEADERBOARD-01 |
+| Leaderboard is_current_user | `apps/api/app/routers/leaderboard.py` | Added `user_id: OptionalCurrentUserId` to `get_leaderboard()`. `is_current_user=bool(user_id and volunteer_id and user_id == volunteer_id)` in entry loop. Was always False. | ✅ LEADERBOARD-01 |
+| Leaderboard total_count fix | `apps/api/app/routers/leaderboard.py` | Added post-loop count query with try/except fallback. `total_count` now reflects full DB count, not `len(entries)` (page size). Falls back gracefully if count query fails. | ✅ LEADERBOARD-02 |
+| I18N-01: Missing locale keys | `apps/web/src/locales/en/common.json`, `apps/web/src/locales/az/common.json` | Added `aura.sharePromptTitle`, `aura.sharePromptBody`, `aura.coach.title`, `common.dismiss`. Both EN and AZ. Fixes AZ users seeing English on share modal and coach section. | ✅ I18N-01 |
+| AURA-02: Zero-state split | `apps/web/src/app/[locale]/(dashboard)/aura/page.tsx` | Split `if (!aura \|\| aura.total_score == null)` into two branches: `!aura` = "never started" (start button), `aura.total_score == null` = "in progress" (Clock icon + continue button). Added `Clock` import from lucide-react. | ✅ AURA-02 |
+| I18N: assessmentInProgress keys | `apps/web/src/locales/en/common.json`, `apps/web/src/locales/az/common.json` | Added `aura.assessmentInProgress` and `aura.assessmentInProgressDesc` to both locales. Used by AURA-02 in-progress state. | ✅ AURA-02 |
+
+## Session 76 continued (2026-03-30) — BATCH-K: Launch Readiness Sprint — 632/633 tests passing
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Remove dead Subscribe CTA | `apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx` | Replaced disabled "Subscribe" button with static "coming soon" text. Removed subscribeButton i18n key from both locales. | ✅ K-01 |
+| AuraExplanationResponse schema | `apps/api/app/schemas/aura.py`, `apps/api/app/routers/aura.py` | Added AuraEvaluationItem, AuraCompetencyExplanation, AuraExplanationResponse Pydantic v2 schemas. response_model now on /aura/me/explanation. pnpm generate:api produces typed response. | ✅ K-02 |
+| Fix share flow UTM + null username | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/complete/page.tsx` | Share button disabled until username loads. UTM params added (utm_source=assessment_complete). Both locale files: shareNudge + shareNudgeLow keys added. | ✅ K-03+09 |
+| answer_version conflict test | `apps/api/tests/test_smoke_assessment.py` | New test: submit_answer returns 409 CONCURRENT_SUBMIT when optimistic lock fires (data=[]). | ✅ K-04 |
+| Onboarding competency redirect | `apps/web/src/app/[locale]/(dashboard)/onboarding/page.tsx` | handleFinish() now passes selectedCompetency as ?competency= param. Assessment page already reads and pre-selects it. | ✅ K-05 |
+| Org auth + owner_id removal | `apps/api/app/routers/organizations.py`, `apps/api/app/schemas/organization.py` | GET /api/organizations and /{org_id} now require CurrentUserId (was unauthenticated). owner_id removed from OrganizationResponse. Generated TS types updated. | ✅ K-06 |
+| Session expiry tests | `apps/api/tests/test_smoke_assessment.py` | 2 new tests: submit_answer → 410 SESSION_EXPIRED, complete_assessment → 410 SESSION_EXPIRED. | ✅ K-07 |
+| upsert_aura_score error handling | `apps/api/app/routers/assessment.py`, `supabase/migrations/20260330150000_add_pending_aura_sync.sql` | try/except around RPC call. On failure: logs error + sets pending_aura_sync=True on session row. HTTP 200 still returned. Migration adds pending_aura_sync BOOLEAN column + partial index. | ✅ K-08 |
+| AURA endpoint rate limit | `apps/api/app/routers/aura.py` | GET /api/aura/{volunteer_id} rate limit changed from RATE_DEFAULT (60/min) to RATE_DISCOVERY (10/min). Prevents enumeration. Kept public for OG card fetches. | ✅ K-10 |
+| Public profile zero-AURA state | `apps/web/src/app/[locale]/(public)/u/[username]/page.tsx` | Clock icon + "Assessment in progress" + description replaces single dim text. i18n keys added to both locales. | ✅ K-11 |
+| SENTRY_DSN warning | `apps/api/app/config.py` | validate_production_settings() warns if sentry_dsn is empty. | ✅ K-12a |
+| keyword_fallback spike alert | `apps/api/app/core/assessment/bars.py` | Module-level hourly counter. Fires Telegram alert + logger.warning when 10th fallback occurs in current hour. | ✅ K-12b |
+| /health uses Depends() | `apps/api/app/routers/health.py` | Replaced inline acreate_client() with SupabaseAdmin dependency. Test updated to mock admin dep. test_security.py updated too. | ✅ K-13 |
+| Dashboard share prompt | `apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx` | One-time dismissible banner: "Your AURA profile is live!" shown after first score. Copy link + Telegram share. localStorage-persisted dismiss. i18n in both locales. | ✅ K-14 |
+| Per-user daily LLM cap | `apps/api/app/core/assessment/bars.py`, `apps/api/app/routers/assessment.py` | force_degraded param on evaluate_answer(). Cap: 20 open-ended LLM calls/user/day. Over cap → keyword_fallback + reeval queue. Prevents budget drain from adversarial users. | ✅ K-15 |
+| Test fixes | `apps/api/tests/test_profiles.py`, `apps/api/tests/test_security.py`, `apps/api/tests/test_subscription.py`, `apps/api/tests/test_health.py` | Mock SupabaseAdmin dep in tests that need it. profile create tests (3) + security headers + subscription unauthenticated (2) + health endpoint. | ✅ fixes |
+
+## Session 76 continued (2026-03-30) — BATCH-C: Paywall + Subscription E2E — 623/623 tests passing
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Paywall gate | `apps/api/app/routers/assessment.py` | HTTP 402 SUBSCRIPTION_REQUIRED if subscription_status in ('expired', 'cancelled') on POST /api/assessment/start. Before any session creation. | ✅ SHIPPED |
+| `/subscription/success` page | `apps/web/src/app/[locale]/(dashboard)/subscription/success/page.tsx` | Post-Stripe-checkout success page. Invalidates ['subscription'] + ['profile'] TanStack caches. Shows session_id reference (truncated). | ✅ NEW |
+| `/subscription/cancelled` page | `apps/web/src/app/[locale]/(dashboard)/subscription/cancelled/page.tsx` | Post-Stripe-checkout cancel page. XCircle icon. CTAs: dashboard + settings. | ✅ NEW |
+| Leaderboard → aura_scores_public | `apps/api/app/routers/leaderboard.py` | Switched from base aura_scores table to aura_scores_public view (security_barrier=TRUE). Period filter column: updated_at → last_updated. | ✅ FIXED |
+| events_no_show removed | `apps/api/app/schemas/discovery.py`, `apps/api/app/routers/discovery.py` | Removed events_no_show from DiscoveryVolunteer. Field excluded from aura_scores_public — keeping it was a latent data-leak vector. | ✅ FIXED |
+| stripe_customer_id excluded | `apps/api/app/routers/profiles.py` | GET /profiles/me now uses explicit column list. Excludes stripe_customer_id + stripe_subscription_id. Includes registration_number, registration_tier, subscription_status, trial_ends_at. | ✅ FIXED |
+| Webhook race condition fix | `apps/api/app/routers/subscription.py` | _update_profile_subscription returns False on no-match → _handle_subscription_created returns bool → main dispatch raises HTTP 500 → Stripe retries. | ✅ FIXED |
+| getattr antipattern removed | `apps/api/app/routers/subscription.py` | Replaced getattr(settings, "stripe_price_id", ...) with direct settings.stripe_price_id access. | ✅ FIXED |
+| ESTIMATED_QUESTIONS = 8 | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/page.tsx` | Fixed: was 10, actual communication pool size is 8. Progress bar now accurate. | ✅ FIXED |
+| Public profile registration badge | `apps/web/src/app/[locale]/(public)/u/[username]/page.tsx` | PublicProfile interface + JSX: shows #0001 · Founding Member (founding_100) or #0342 · Early Member (founding_1000) badge. | ✅ NEW |
+| Risk Manager + Readiness Manager | `packages/swarm/autonomous_run.py`, `memory/swarm/skills/risk-manager.md`, `memory/swarm/skills/readiness-manager.md`, `memory/swarm/agent-roster.md` | Two new permanent agents in PERSPECTIVES. ISO 31000 + Google SRE standards. Their first run found the paywall enforcement gap. | ✅ NEW |
+| SESSION-DIFFS.jsonl bootstrap | `memory/swarm/SESSION-DIFFS.jsonl` | Bootstrap entry with all migrations + routes from previous sessions. Agents now have a baseline of shipped work. | ✅ NEW |
+| TASK-PROTOCOL v5.1 Step 4.0.5 | `docs/TASK-PROTOCOL.md` | Completion Consensus step now has concrete output format: AGENT/TASKS COMPLETED/TESTS RAN/JOURNEY VERIFIED/MEMORY UPDATED/BLOCKERS/SIGN-OFF per agent. | ✅ UPDATED |
+| test_paywall_enforcement.py | `apps/api/tests/test_paywall_enforcement.py` | 6 tests: blocked when expired, blocked when cancelled, allowed when trial, allowed when active, allowed when no profile row, error shape contract. | ✅ NEW |
+| test_subscription_status_boundary.py | `apps/api/tests/test_subscription_status_boundary.py` | 5 tests: trial auto-expiry, future trial stays trial, 1-second boundary, no end date, Z-suffix ISO parsing. | ✅ NEW |
+| Mock sequence updates | `tests/test_assessment_api_e2e.py`, `tests/test_security_hardening.py`, `tests/test_smoke_assessment.py` | Added {"subscription_status": "trial"} as first user mock entry in all tests that call POST /api/assessment/start. Rate limiter reset fixture added. | ✅ FIXED |
+
+## Session 76 (2026-03-30) — Swarm Optimization Batch — 612/612 tests passing
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| `session_end_hook.py` | `packages/swarm/session_end_hook.py` | On every push to main: captures git diff → `SESSION-DIFFS.jsonl`, injects RECENTLY SHIPPED block into `shared-context.md`. Closes 42% already-done proposals gap. | ✅ NEW |
+| `skills_loader.py` | `packages/swarm/skills_loader.py` | Auto-matches task description against CLAUDE.md Skills Matrix using regex. Returns skill file content for injection into agent prompts. CLI: `--task "description"`. | ✅ NEW |
+| `.github/workflows/session-end.yml` | `.github/workflows/session-end.yml` | Two jobs: (1) session-end-hook (captures diff on push), (2) session-mini-swarm (runs code-review mode swarm on changed files). Triggers on push to main for backend/migration/swarm code. | ✅ NEW |
+| `autonomous_run.py` — SESSION-DIFFS.jsonl reader | `packages/swarm/autonomous_run.py` | `_read_project_state()` now reads last 3 SESSION-DIFFS.jsonl entries → injects RECENTLY SHIPPED section at top of agent context. Agents see git-level changes, not just static memory files. | ✅ UPDATED |
+| `docs/TASK-PROTOCOL.md` v5.1 | `docs/TASK-PROTOCOL.md` | Added: Phase 0.7 (Sprint Gate DSP), Step 4.1.5 (Session-End Mini-Swarm), Step 4.2.5 (Retro Sim), 3 DSP auto-trigger modes (Session Hook/Code Gate/Retro Sim). Version bumped 5.0 → 5.1. | ✅ UPDATED |
+| Trial subscription banner + settings section | `apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx`, `settings/page.tsx` | Amber/red trial countdown banner on dashboard (dismissible). Subscription section in settings with plan badge + days remaining. useSubscription hook. 16 i18n keys. | ✅ SHIPPED (BATCH-A) |
+| Security hardening tests | `apps/api/tests/test_security_hardening.py` | 15 tests: rapid-restart cooldown (5) + prompt injection detection (8) + false-positive checks (2). All passing. | ✅ SHIPPED (BATCH-A) |
+| Subscription router integration tests | `apps/api/tests/test_subscription.py` | 10 tests: GET status×4, checkout×3, webhook×3. All passing. | ✅ SHIPPED (BATCH-A) |
+| `supabase/migrations/20260330000001_security_fixes_p0.sql` | Supabase | Crystal ledger idempotency UNIQUE INDEX; rapid-restart cooldown index; revoke avg_aura_score from anon+authenticated. | ✅ MIGRATION READY |
+| `supabase/migrations/20260330100000_security_fixes_grants.sql` | Supabase | BrandedBy: REVOKE from authenticated; Notifications: DROP open INSERT policy; CEO inbox: documented intentional default-deny. | ✅ MIGRATION READY |
+| `supabase/migrations/20260330110000_seed_questions_remaining_competencies.sql` | Supabase | 5 new MCQ questions for communication competency, IRT b-values -1.1 to 1.3. | ✅ MIGRATION READY |
+| `apps/web/src/lib/api/configure-client.ts` | Frontend | SDK auth interceptor: Supabase Bearer token injected via @hey-api/client-fetch interceptors. Fixes unauthenticated generated SDK calls (HIGH security finding). | ✅ SHIPPED |
+
+## Session 75 continued (2026-03-29) — Test suite: 574/574 passing
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| BARS fallback chain — add `_try_groq` patches | `tests/test_sprint8_fixes.py`, `tests/test_smoke_assessment.py` | Added `_try_groq` mock to all 3 BARS timeout tests. Groq sits between Gemini and OpenAI in the fallback chain; unpatched it called the real API and prevented OpenAI from being reached. | ✅ FIXED |
+| assessment router — `status="in_progress"` for full pipeline | `tests/test_assessment_router.py` | Changed session fixture `status` from `"completed"` to `"in_progress"`. `completed` triggers early-return path (no RPC). Tests asserting `aura_updated=True` require `in_progress`. Admin mock call order corrected: call 1 = gaming UPDATE, call 2 = slug lookup. | ✅ FIXED |
+| e2e tests — `app.dependency_overrides` pattern | `tests/test_assessment_api_e2e.py` | Converted all 3 tests from `patch()` to `app.dependency_overrides`. FastAPI captures dep references at import time; `patch()` doesn't intercept them. Fixed `MOCK_QUESTIONS.options` from `list[str]` to `list[dict]` (`{key, text_en, text_az}`). Removed `response=` kwarg from `submit_response()` (param doesn't exist). | ✅ FIXED |
+| stats endpoint — RPC mock + rounding | `tests/test_new_endpoints.py`, `app/routers/stats.py` | Stats endpoint uses `db.rpc("avg_aura_score")` not table scan. Mock fixed to return RPC mock. Endpoint now calls `round(float(result.data), 1)`. | ✅ FIXED |
+| smoke tests — LLM mocks return `(None, None)` tuples | `tests/test_smoke_assessment.py` | `_try_gemini`/`_try_groq` return `(scores, concept_details)` tuples. Mocking `return_value=None` caused unpacking errors. Fixed to `return_value=(None, None)`. | ✅ FIXED |
+| RLS — UPDATE policy for `assessment_sessions` | `supabase/migrations/20260324000015_rls_audit_fixes.sql` | Added missing UPDATE policy "Users can only abandon own sessions" — `USING (auth.uid() = volunteer_id AND status = 'in_progress')`. Test `test_rls_session_update_policy_exists` was checking for this. | ✅ MIGRATION READY |
+
+## Session 75 continued (2026-03-29) — QA Chaos Agent batch: 6 bugs
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| BUG-013: visibility filter in search | `apps/api/app/routers/organizations.py` | Added `.eq("visibility","public")` to rule-based aura_scores query + post-filter for semantic RPC path. Hidden/badge_only profiles no longer appear in org volunteer search. | ✅ FIXED |
+| BUG-015: complete_assessment early return | `apps/api/app/routers/assessment.py` | Added early return when session status == "completed" — returns stored values without re-running pipeline. Prevents double aura_history append on race condition. | ✅ FIXED |
+| BUG-009: retest cooldown .days → total_seconds | `apps/api/app/routers/assessment.py` | 3 locations: cooldown check (line ~124), info endpoint cooldown (line ~740), theta decay (line ~180). `.days` truncated fractional days; now uses `total_seconds() // 86400`. | ✅ FIXED |
+| BUG-017: UNIQUE constraint on org owner | `supabase/migrations/20260329120000_organizations_owner_unique.sql` | `ALTER TABLE organizations ADD CONSTRAINT organizations_owner_id_unique UNIQUE (owner_id)`. Prevents duplicate orgs from race condition on simultaneous POST /api/organizations. | ✅ MIGRATION READY |
+| BUG-003+014: intro_requests RLS hardening | `supabase/migrations/20260329120001_intro_requests_rls_hardening.sql` | Drops overly broad INSERT (TRUE) and unified UPDATE policies. Replaces with: org INSERT requires uid()=org_id; org UPDATE = withdraw only; volunteer UPDATE = accept/reject from pending only. | ✅ MIGRATION READY |
+
+## Session 75 continued (2026-03-29) — BATCH E tail: Leyla P1 fixes
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| `<a>` → `<Link>` in aura empty state | `apps/web/src/app/[locale]/(dashboard)/aura/page.tsx` | Start assessment button in empty state was `<a>` (full-page reload on mobile). Changed to Next.js `<Link>` for client navigation. | ✅ FIXED |
+| Null username guard | `apps/web/src/components/aura/share-buttons.tsx` | `username` prop changed to `string \| null \| undefined`. If null, renders "Set username in Settings to unlock sharing" instead of broken `/u/null` URLs. | ✅ FIXED |
+| Assessment infinite spinner recovery | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/page.tsx` | Added `isStuck` state + 6s timeout. When `currentQuestion` is null after 6s on the question screen (refresh mid-session), shows recovery button → competency selection instead of infinite spinner. | ✅ FIXED |
+
+## Session 75 (2026-03-29) — BATCH 2026-03-29-E: Simulation + Bug Fix Sprint
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Org row auto-creation | `apps/web/src/app/[locale]/(dashboard)/onboarding/page.tsx` | After profile creation for org accounts, auto-calls `POST /api/organizations` with display_name as org name. 409 silently ignored (idempotent). Fixes B2B launch blocker. | ✅ FIXED |
+| .maybe_single() fix | `apps/api/app/routers/organizations.py` | 4 locations changed from `.single()` → `.maybe_single()`: get_my_organization, get_organization, get_org_dashboard, list_org_volunteers, assign_assessments. Prevents 500 errors. | ✅ FIXED |
+| Discovery private field fix | `apps/api/app/routers/discovery.py` | Changed from `aura_scores` base table to `aura_scores_public` safe view. Removed `events_no_show` from select. Added `.gt("total_score", 0)` to exclude ghost profiles. | ✅ FIXED |
+| AURA badge_only leak fix | `apps/api/app/routers/aura.py` | badge_only path now strips ALL private fields explicitly (last_updated, events_*, reliability_*) before constructing response. | ✅ FIXED |
+| MCQ scoring fix | `apps/api/app/routers/assessment.py` | Case-insensitive comparison (.strip().lower() on both sides). Logger.warning when MCQ has no correct_answer. | ✅ FIXED |
+| Double UPDATE fix | `apps/api/app/routers/assessment.py` | complete_assessment: merged gaming columns into single UPDATE for in_progress sessions. Eliminates race condition. | ✅ FIXED |
+| Session expiry enforcement | `apps/api/app/routers/assessment.py` | expires_at checked in submit_answer AND complete_assessment. Returns 410 SESSION_EXPIRED. | ✅ FIXED |
+| Signup org pre-select | `apps/web/src/app/[locale]/(auth)/signup/page.tsx` | `?type=organization` query param pre-selects org account type. useSearchParams added. | ✅ FIXED |
+| Privacy consent error text | `apps/web/src/app/[locale]/(auth)/signup/page.tsx` | Separate i18n key `auth.privacyConsentRequired` for validation error vs consent label. | ✅ FIXED |
+| Password hint inline | `apps/web/src/app/[locale]/(auth)/signup/page.tsx` | Inline hint below password field: "8+ characters, uppercase, lowercase, and a number." | ✅ FIXED |
+| display_name required | `apps/web/src/app/[locale]/(dashboard)/onboarding/page.tsx` | step1Valid now requires display_name.trim().length >= 1. | ✅ FIXED |
+| POST 404 fix | `apps/web/src/app/[locale]/(dashboard)/onboarding/page.tsx` | Removed `&& res.status !== 404` — POST 404 is now treated as a real error. | ✅ FIXED |
+| Org CTA routing fix | `apps/web/src/components/landing/hero-section.tsx` | "Find talent" button routes to `signup?type=organization` instead of generic signup. | ✅ FIXED |
+| Post-AURA share prompt | `apps/web/src/app/[locale]/(dashboard)/aura/page.tsx` | Modal fires 3s after first AURA reveal. sessionStorage prevents repeat fires. Uses AnimatePresence + spring animation. | ✅ SHIPPED |
+| Invite page | `apps/web/src/app/[locale]/(public)/invite/page.tsx` | Beta invite landing page with code allowlist (BETA_01-30, ORG_01-05, OPEN). Pre-selects org/volunteer type. 3s countdown auto-redirect to signup. Replaces waitlist mechanic. | ✅ SHIPPED |
+| LinkedIn DAY 7 CTA | `docs/content/LINKEDIN-SERIES-CLAUDE-CTO.md` | "If you want to be in the first 50 → volaura.app/invite" added before P.S. UTM URL noted for Yusif. | ✅ UPDATED |
+
+## Session 74 (2026-03-29) — BATCH 2026-03-29-J: Pre-existing Test Fixes
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| test_profiles.py fix | `apps/api/tests/test_profiles.py` | Added `db.maybe_single = MagicMock(return_value=db)` to circular mock. Fixes 2 pre-existing failures (`TypeError: MagicMock can't be awaited`). | ✅ FIXED |
+| test_aura.py fix | `apps/api/tests/test_aura.py` | Same `maybe_single` fix + updated AURA_ROW fixture: `overall_score` → `total_score`, added `visibility/percentile_rank/effective_score/last_updated` fields, updated assertion. Fixes 2 pre-existing failures. | ✅ FIXED |
+
+## Session 74 (2026-03-29) — BATCH 2026-03-29-I: Verification Flow Tests
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Verification tests | `apps/api/tests/test_verification.py` | 9 tests: valid token→200, token not found→404, already used→409, expired→410, submit→201+rpc, submit expired→410, TOCTOU race→409, rating=6→422, rating=0→422. AURA blend math verified (70*0.6+80*0.4=74). All 9 passing. | ✅ SHIPPED |
+
+## Session 74 (2026-03-29) — BATCH 2026-03-29-H: Intro Request Tests
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Intro request tests | `apps/api/tests/test_intro_request.py` | 8 integration tests: success→201+notification, non-org→403, volunteer missing→404, not discoverable→403, org target→422, duplicate→409, auth required, schema validation. Rate limiter reset fixture (autouse). All 8 passing. | ✅ SHIPPED |
+
+## Session 74 (2026-03-29) — BATCH 2026-03-29-G: Notifications Bug Fix + Tests
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Notifications router bug fix | `apps/api/app/routers/notifications.py` | Fixed `request: object` → `request: Request` on all 4 endpoints. All endpoints were returning 422 in production (FastAPI couldn't inject the limiter's Request object). | ✅ FIXED |
+| Profile view tests | `apps/api/tests/test_profile_view.py` | 6 integration tests: org sends notification, non-org silent 204, 24h dedup, self-view suppressed, volunteer not found, unauthenticated 401. All 6 passing. | ✅ SHIPPED |
+| Notifications tests | `apps/api/tests/test_notifications.py` | 10 integration tests: unread-count (count + zero), list (items + empty + pagination + limit-max), mark-all-read, mark-single-read, 404 on not-found, auth required. All 10 passing. | ✅ SHIPPED |
+
+## Session 74 (2026-03-29) — BATCH 2026-03-29-F: org_view Notification (S5-02)
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Profile view endpoint | `apps/api/app/routers/profiles.py` | POST /api/profiles/{username}/view — org-only, sends `org_view` notification to volunteer, deduped 1/24h per (org, volunteer) pair. 204 for non-org callers. | ✅ SHIPPED |
+| ProfileViewTracker | `apps/web/src/components/profile/profile-view-tracker.tsx` | Client component fires POST on mount if viewer is logged in. Swallows all errors. Rendered in u/[username]/page.tsx. | ✅ SHIPPED |
+
+## Session 74 (2026-03-29) — BATCH 2026-03-29-E: Sprint A1 Acceptance Tests
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Sprint A1 acceptance tests | `apps/api/tests/test_sprint_a1_acceptance.py` | 6 tests: emit_assessment_rewards (crystal write, below-bronze guard, idempotency) + GET /character/state (after assessment, new user, multiple skills). All 6 passing. | ✅ SHIPPED |
+
+## Session 74 (2026-03-29) — BATCH 2026-03-29-D: Remaining 100-user blockers
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Assessment retry fix | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/page.tsx` | nextCompetency() moved after successful fetch (was eager — caused stuck state on error). Transition screen now shows error Alert + loading state on Continue button (BLOCKER-14) | ✅ SHIPPED |
+| k6 load test script | `scripts/load_test.js` | 100 concurrent user test: health + assessment flow. Pass criteria: p(95)<3s, 0×504, error rate <1%. CEO runs: `k6 run scripts/load_test.js` (BLOCKER-11 script ready) | ✅ SHIPPED |
+| Disaster recovery runbook | `docs/DISASTER-RECOVERY-RUNBOOK.md` | 7 incident scenarios: API down, 504, auth, DB, LLM degraded, bad deploy, Telegram alert. Env var table, RTO/RPO targets, post-incident checklist (BLOCKER-19) | ✅ SHIPPED |
+| LAUNCH-BLOCKERS.md | `docs/LAUNCH-BLOCKERS.md` | BLOCKERs 12, 14, 19 marked resolved. BLOCKER-11 script ready. BLOCKER-15, 13 already marked in Batch B. | ✅ UPDATED |
+
+## Session 74 (2026-03-29) — BATCH 2026-03-29-C: Mobile 375px Polish
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Skeleton grid fix | `apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx` | `grid-cols-3` → `grid-cols-1 sm:grid-cols-3` — skeleton cards no longer cramped on mobile | ✅ SHIPPED |
+| Hide competencies column mobile | `apps/web/src/app/[locale]/(dashboard)/org-volunteers/page.tsx` | `w-16 text-right` span → `hidden sm:inline` — volunteer row doesn't overflow at 375px | ✅ SHIPPED |
+| Filter buttons flex-wrap | `apps/web/src/app/[locale]/(dashboard)/org-volunteers/page.tsx` | `flex gap-1.5 shrink-0` → `flex flex-wrap gap-1.5` — status filter buttons wrap on small screens | ✅ SHIPPED |
+
+## Session 73 (2026-03-29) — TASK-PROTOCOL v5.0 + Agent Improvement Proposals
+
+| File | Location | What it does | Status |
+|------|----------|-------------|--------|
+| TASK-PROTOCOL v5.0 | `docs/TASK-PROTOCOL.md` | 14 changes from 6 agent proposals: Step 0.5 flow detection, parallel proposals with EFFORT, routing lock (1.0.5), MICRO fastpath, schema gate in 3.1, test execution gate 3.2.5, cross-QA gate 3.4, C3 verification teeth, C3.5 brief re-approval, C5.5 cultural copy sign-off, completion consensus 4.0.5, "What's next" in batch close | ✅ UPDATED |
+| patterns.md | `memory/context/patterns.md` | 8 new patterns P-049→P-056: flow detection, MICRO fastpath, proactive "what's next", parallel proposals, EFFORT estimates, cross-QA, test execution = "verified", brief re-approval | ✅ UPDATED |
+| sprint-state.md | `memory/context/sprint-state.md` | Session 73 entry added | ✅ UPDATED |
+
+## Sessions 71-72 (2026-03-29) — PR Agency structure + TASK-PROTOCOL v4.1
+
+| File | Location | What it does | Status |
+|------|----------|-------------|--------|
+| SESSION-FINDINGS.md | `docs/SESSION-FINDINGS.md` | Living intelligence document — 18 findings logged. Added to startup read protocol. | ✅ NEW |
+| Communications Strategist skill | `memory/swarm/skills/communications-strategist.md` | Sits above copywriters. Owns narrative arc, fills CONTENT-BRIEF-TEMPLATE before copywriters write. | ✅ NEW |
+| AZ LinkedIn Audience Profile | `docs/AZ-LINKEDIN-AUDIENCE.md` | Cultural intelligence baseline — WHY TONE-OF-VOICE rules exist. Required reading before any post. | ✅ NEW |
+| CONTENT-BRIEF-TEMPLATE.md | `docs/CONTENT-BRIEF-TEMPLATE.md` | Fill-in brief with P1-P7 constraints baked in, hook constraint, management risk scan, PS instruction. | ✅ NEW |
+| CULTURAL-AUDIT-CHECKLIST.md | `docs/CULTURAL-AUDIT-CHECKLIST.md` | 9-check pre-publish audit (2 min). APPROVE/REVISE/BLOCK before CEO sees post. | ✅ NEW |
+| copywriter-team.md | `memory/swarm/skills/copywriter-team.md` | Rule 0 added: READ real files. Brief template requires 5 mandatory source files. | ✅ UPDATED |
+| TASK-PROTOCOL v4.1 | `docs/TASK-PROTOCOL.md` | 5 Content Batch Gates C1-C5. CTO plan→council critique flow documented. | ✅ UPDATED |
+| ADR-007 | `docs/DECISIONS.md` | Swarm architecture decision: keep current architecture (PATH A), borrow MiroFish methodology only. | ✅ LOGGED |
+| CLAUDE.md | `CLAUDE.md` | SESSION-FINDINGS.md in startup read list. Skills Matrix updated for content batches. | ✅ UPDATED |
+| agent-roster.md | `memory/swarm/agent-roster.md` | Communications Strategist + Cultural Intelligence routing added. | ✅ UPDATED |
+| LinkedIn series DAY 2-7 | `docs/content/LINKEDIN-SERIES-CLAUDE-CTO.md` | All posts rewritten by SPARK/CORTEX/PRISM competition. Winners assembled. "My name is Claude" opener. | ✅ UPDATED |
+
+## Session 70 (2026-03-29) — BATCH 2026-03-29-B: beta UX fixes + GIN index + docs
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Signup loading spinner | `apps/web/src/app/[locale]/(auth)/signup/page.tsx` | Added Loader2 icon to submit button during loading state (BLOCKER-13) | ✅ SHIPPED |
+| "Still working…" message | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/page.tsx` | isSlowFetch state + useEffect: shows "Still working — AI is reviewing…" after 4s of submit wait | ✅ SHIPPED |
+| stillWorking i18n key | `apps/web/src/locales/en/common.json`, `az/common.json` | "assessment.stillWorking" key added in EN + AZ | ✅ SHIPPED |
+| GIN index migration | `supabase/migrations/20260329060000_character_events_gin_index.sql` | idx_character_events_payload_gin (GIN on payload) + idx_character_events_user_type (user_id, event_type) | ✅ READY TO APPLY |
+| LAUNCH-BLOCKERS.md updated | `docs/LAUNCH-BLOCKERS.md` | Blockers 1,2,8,9,17 marked resolved. Accurate readiness signal for CEO. | ✅ UPDATED |
+
+Discovered: BLOCKER-14 (retry button) already done. BLOCKER-8 already documented in rate_limit.py. All 10 must-fix blockers now resolved or CEO-actions-only.
+
+---
+
+## Session 70 (2026-03-29) — BATCH 2026-03-29-A: cultural fixes + RU wiring + i18n fix
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| CIS-001: tier labels reframed | `apps/web/src/locales/en/common.json`, `az/common.json` | "Top 5%/20%/45%" → "Expert/Advanced/Proficient"; "Where do you rank?" → "Your professional level" / "Peşəkar səviyyəniz" | ✅ SHIPPED |
+| CIS-002: patronymic hint | `apps/web/src/locales/az/common.json` | namePlaceholder: "Tam adınız" → "Adınız Soyadınız (məs. Yusif Eldar oğlu)" | ✅ SHIPPED |
+| scenario_ru in question delivery | `apps/api/app/schemas/assessment.py`, `services/assessment/helpers.py`, `routers/assessment.py` | question_ru added to QuestionOut + QuestionResultOut; SELECT includes scenario_ru; wired from helpers.py | ✅ SHIPPED |
+| translate_ru.py script | `scripts/translate_ru.py` | Batch-translates scenario_en → scenario_ru via Gemini 2.0 Flash. Dry-run by default. Run: `python scripts/translate_ru.py --apply` | ✅ NEW |
+| MindShift i18n.ts circular import fix | `src/i18n.ts` | Removed static useStore import. Deferred subscription via setTimeout(0) + dynamic import. Eliminates ReferenceError on boot. | ✅ SHIPPED |
+
+Verified: Welcome page complete (no work needed). UTM capture complete (utm-capture.tsx already wired). Badge share complete (ShareButtons component already wired). Sprint A1 rewards already built in Session 68.
+
+---
+
 ## Session 69 (2026-03-29) — Production blockers + Sentry + strategic simulation
 
 | Code | Location | What it does | Status |

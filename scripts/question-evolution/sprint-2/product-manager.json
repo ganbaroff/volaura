@@ -1,0 +1,340 @@
+[
+  {
+    "id": "prof-pm-s2-001",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "difficulty": "medium",
+    "type": "mcq",
+    "scenario_en": "You are the Product Manager at ASAN xidmət's digital portal team. The Ministry of Digital Development has issued a directive: add a mandatory 'physical address verification' step to the eID renewal flow within 60 days. Your user research shows this step will increase drop-off by an estimated 35% for rural users who lack stable internet for document upload. What do you do FIRST?",
+    "scenario_az": "Siz ASAN xidmətin rəqəmsal portal komandasında Məhsul Menecerisiniz. Rəqəmsal İnkişaf Nazirliyi direktiv vermişdir: eID yenilənmə axınına 60 gün ərzində məcburi 'fiziki ünvan doğrulaması' addımı əlavə edilsin. İstifadəçi tədqiqatınız göstərir ki, bu addım sənəd yükləmək üçün stabil interneti olmayan kənd istifadəçilərinin 35%-ni axından çıxara bilər. İlk olaraq nə edərsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Implement the directive exactly as specified — ministry mandates are non-negotiable",
+        "text_az": "Direktivi tam olaraq göstərildiyi kimi tətbiq edin — nazirlik mandatları müzakirəyə açıq deyil"
+      },
+      {
+        "key": "B",
+        "text_en": "Refuse to implement until a full accessibility review is completed",
+        "text_az": "Tam əlçatanlıq yoxlaması tamamlanana qədər tətbiqini rədd edin"
+      },
+      {
+        "key": "C",
+        "text_en": "Implement the directive while simultaneously preparing a data-backed proposal to the Ministry showing rural drop-off impact and proposing an offline verification alternative within the 60-day window",
+        "text_az": "Direktivi tətbiq edərkən eyni zamanda 60 günlük pəncərə içərisində kənd rayonlarında çıxış dərəcəsinə təsiri göstərən məlumat əsaslı təklif hazırlayın və oflayn doğrulama alternativini Nazirliyin nəzərinə çatdırın"
+      },
+      {
+        "key": "D",
+        "text_en": "Delay implementation by 60 days to gather more user research data",
+        "text_az": "Daha çox istifadəçi araşdırması məlumatı toplamaq üçün tətbiqi 60 gün gecikdirin"
+      }
+    ],
+    "correct_answer": "C",
+    "irt_a": 1.6,
+    "irt_b": 0.2,
+    "irt_c": 0.13,
+    "feedback_en": "In government-product contexts, ignoring a Ministry directive (B, D) is not viable — it damages institutional trust and can block operations. Blind compliance (A) ignores your professional obligation to surface evidence. The correct move is to comply while simultaneously building a counter-proposal with data. This is standard practice for PMs working with government stakeholders in Azerbaijan: comply first, advocate with evidence second.",
+    "feedback_az": "Dövlət məhsul kontekstlərində Nazirlik direktivini görmək'dən keçmək (B, D) mümkün deyil — bu institusional etimadı zədələyir və əməliyyatları bloklaya bilər. Kor itaətkarlıq (A) isə dəlil irəli sürmək peşəkar öhdəliyinizi görməzliyə gəlir. Düzgün addım: uyğunlaşarken eyni zamanda məlumatla əks-təklif qurmaq. Bu, Azərbaycanda dövlət maraqlılarla işləyən PM-lar üçün standart praktikadır: əvvəlcə uyu, sonra dəlillə müdafiə et.",
+    "development_tip_en": "When government stakeholders mandate features, frame your pushback as 'compliance + evidence package': implement the requirement, then present impact data with a concrete alternative. Never choose between compliance and advocacy — do both simultaneously.",
+    "development_tip_az": "Dövlət maraqlıları xüsusiyyətlər tələb etdikdə, etirazınızı 'uyğunlaşma + dəlil paketi' kimi çərçivəyə salın: tələbi yerinə yetirin, sonra konkret alternativlə təsir məlumatları təqdim edin. Uyğunlaşma ilə müdafiə arasında heç vaxt seçim etməyin — ikisini eyni vaxtda edin."
+  },
+  {
+    "id": "prof-pm-s2-002",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "difficulty": "hard",
+    "type": "sjt",
+    "scenario_en": "You are PM at a B2B SaaS company selling to Azerbaijani enterprises. SOCAR (the state oil company, 70,000 employees) is your largest prospect — a deal worth 3 years of runway. Their procurement head tells you in a meeting: 'We need a custom reporting module built exclusively for SOCAR before we sign. It will take your team 4 months. If you don't build it, we go to your competitor.' Your engineering lead privately tells you this custom module would require abandoning your core product roadmap for Q3. What is your BEST response in this situation?",
+    "scenario_az": "Siz Azərbaycan müəssisələrinə B2B SaaS satan bir şirkətdə PM-siniz. SOCAR (dövlət neft şirkəti, 70.000 işçi) ən böyük potensial müştərinizdir — 3 illik kapital dövriyyəsinə bərabər müqavilə. Onların satınalma rəhbəri görüşdə sizə bildirir: 'İmzalamadan əvvəl müstəsna olaraq SOCAR üçün hazırlanmış xüsusi hesabat modulu qurulmalıdır. Komandanıza 4 ay lazım olacaq. Qurmarsanız — rəqibinizə gedirəm.' Mühəndislik rəhbəriniz isə sizə xüsusi olaraq bildirir ki, bu xüsusi modul Q3 əsas məhsul yol xəritəsini tərk etməyi tələb edəcək. Bu vəziyyətdə ən YAXŞI cavabınız nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Agree immediately — SOCAR's deal size justifies any product sacrifice",
+        "text_az": "Dərhal razılaşın — SOCARın müqavilə ölçüsü istənilən məhsul fədakarlığını əsaslandırır"
+      },
+      {
+        "key": "B",
+        "text_en": "Decline firmly — custom work for one enterprise customer always destroys product vision",
+        "text_az": "Qəti şəkildə rədd edin — bir müəssisə müştərisi üçün xüsusi iş həmişə məhsul vizyonunu məhv edir"
+      },
+      {
+        "key": "C",
+        "text_en": "Ask for 48 hours to assess: model the cost of 4 months of core roadmap delay against SOCAR contract value, check if the module could be built as a configurable platform feature benefiting all enterprise clients, and return with a counter-offer that includes a partial custom build + roadmap-aligned feature",
+        "text_az": "Qiymətləndirmə üçün 48 saat istəyin: 4 aylıq əsas yol xəritəsi gecikmənin SOCAR müqavilə dəyərinə qarşı xərcini modelləşdirin, modulun bütün müəssisə müştərilərinə fayda verən konfiqurasiyalı platforma xüsusiyyəti kimi qurulub qurula bilmədiyini yoxlayın və qismən xüsusi qurma + yol xəritəsinə uyğun xüsusiyyət daxil olan əks-təklif ilə qayıdın"
+      },
+      {
+        "key": "D",
+        "text_en": "Escalate immediately to your CEO to make the decision — this is above PM level",
+        "text_az": "Dərhal CEO-nuzun qərar verməsi üçün eskalasiya edin — bu PM səviyyəsindən yuxarıdır"
+      }
+    ],
+    "correct_answer": "C",
+    "irt_a": 1.8,
+    "irt_b": 0.9,
+    "irt_c": 0.12,
+    "feedback_en": "In the AZ enterprise market, state-owned enterprises like SOCAR wield disproportionate leverage — rejecting them outright (B) is career-ending in a small market. Immediately agreeing (A) creates a 'one customer = product' trap. Escalating (D) abdicates PM responsibility. The correct move is a structured 48-hour pause to model real trade-offs and find a path where custom work becomes platform leverage. A London PM would more readily say 'no' to enterprise customization; in AZ's concentrated market, the answer requires a creative negotiation structure.",
+    "feedback_az": "AZ müəssisə bazarında, SOCAR kimi dövlət müəssisələri qeyri-mütənasib nüfuza malikdir — onları birbaşa rədd etmək (B) kiçik bazarda karyeranın sonunu bildirir. Dərhal razılaşmaq (A) 'bir müştəri = məhsul' tələsi yaradır. Eskalasiya etmək (D) PM məsuliyyətini tərk etmək deməkdir. Düzgün addım həqiqi mübadilələri modelləşdirmək və xüsusi işin platforma üstünlüyünə çevriləcəyi bir yol tapmaq üçün strukturlaşdırılmış 48 saatlıq fasilə etməkdir.",
+    "development_tip_en": "When an enterprise customer in a concentrated market demands customization, never give a binary answer on the spot. Always buy 48 hours to run the 'platformize vs one-off' analysis: can this feature serve multiple clients? What's the true cost of roadmap delay vs deal value?",
+    "development_tip_az": "Konsentrasiyalı bazarda müəssisə müştərisi xüsiləşdirmə tələb etdikdə, heç vaxt yerindəcə ikili cavab verməyin. 'Platformlaşdırma vs bir dəfəlik' analizini aparmaq üçün həmişə 48 saat alın: bu xüsusiyyət bir neçə müştəriyə xidmət edə bilərmi? Yol xəritəsi gecikmənin real dəyəri müqavilə dəyərinə nisbətdə nədir?"
+  },
+  {
+    "id": "prof-pm-s2-003",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "difficulty": "easy",
+    "type": "mcq",
+    "scenario_en": "You are the PM at a Baku startup with an engineering team of 6. Your CTO (who is also the co-founder and the most senior technical person in the room) publicly disagrees with your prioritization decision in a sprint planning meeting, saying 'This feature will take 3 weeks, not 1 — you don't understand the technical complexity.' In Azerbaijani startup culture where the CTO outranks you socially, what is the MOST effective response in the meeting?",
+    "scenario_az": "Siz 6 nəfərlik mühəndislik komandasına sahib bir Bakı startapında PM-siniz. CTO-nuz (həm də həmtəsisçi və otaqdakı ən böyük texniki şəxs) sprint planlaşdırma görüşündə prioritetləşdirmə qərarınızla açıqca razılaşmır: 'Bu xüsusiyyət 1 həftə yox, 3 həftə çəkəcək — siz texniki mürəkkəbliyi anlamırsınız.' CTO-nun sosial olaraq sizdən üstün olduğu Azərbaycan startap mədəniyyətində görüşdə ƏN effektiv cavab nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Defer immediately: 'You're right, I'll take your estimate. We'll reschedule.'",
+        "text_az": "Dərhal geri çəkilin: 'Haqlısınız, sizin qiymətləndirməni qəbul edirəm. Yenidən planlaşdıracağıq.'"
+      },
+      {
+        "key": "B",
+        "text_en": "Hold your position publicly: 'My estimate is correct, I've seen this done in 1 week elsewhere.'",
+        "text_az": "Mövqeyinizi açıqca qoruyun: 'Mənim qiymətləndirmem düzgündür, başqa yerdə bunun 1 həftəyə edildiyini görmüşəm.'"
+      },
+      {
+        "key": "C",
+        "text_en": "Acknowledge the technical input, ask the CTO to walk the team through the complexity drivers in 5 minutes, then schedule a brief offline discussion to reconcile the estimate before finalizing the sprint",
+        "text_az": "Texniki girişi qəbul edin, CTOdan komandaya 5 dəqiqə ərzində mürəkkəblik amillərini izah etməsini xahiş edin, sonra sprinti tamamlaşdırmadan əvvəl qiymətləndirməni uzlaşdırmaq üçün qısa oflayn müzakirə planlaşdırın"
+      },
+      {
+        "key": "D",
+        "text_en": "Drop the feature from the sprint entirely to avoid conflict",
+        "text_az": "Münaqişədən qaçmaq üçün xüsusiyyəti sprintdən tamamilə çıxarın"
+      }
+    ],
+    "correct_answer": "C",
+    "irt_a": 1.4,
+    "irt_b": -0.9,
+    "irt_c": 0.14,
+    "feedback_en": "In AZ startup culture, public confrontation with a co-founder (B) damages trust irreparably in a small team. Immediate capitulation (A) erodes your authority as PM. Dropping the feature (D) solves nothing. Option C respects the CTO's expertise, keeps the meeting productive, and creates a private channel to resolve the disagreement — preserving both relationships and process integrity.",
+    "feedback_az": "AZ startap mədəniyyətində həmtəsisçi ilə açıq qarşıdurma (B) kiçik komandada etimadı bərpa edilməz şəkildə zədələyir. Dərhal təslim olmaq (A) PM kimi nüfuzunuzu aşındırır. Xüsusiyyəti silmək (D) heç nəyi həll etmir. C seçimi CTOnun təcrübəsine hörmət edir, görüşü məhsuldar saxlayır və razılaşmazlığı həll etmək üçün özəl kanal yaradır — həm münasibətləri, həm proses bütövlüyünü qoruyur.",
+    "development_tip_en": "In hierarchical startup cultures, never fight seniority publicly — create a private channel to reconcile differences. 'Let's take 15 minutes after the meeting' is a power move, not a retreat.",
+    "development_tip_az": "İerarxik startap mədəniyyətlərində heç vaxt kənar şəxslər qarşısında üstünlüklə mübarizə etməyin — fərqləri uzlaşdırmaq üçün özəl kanal yaradın. 'Görüşdən sonra 15 dəqiqə ayıralım' geri çəkilmə yox, güc hərəkətidir."
+  },
+  {
+    "id": "prof-pm-s2-004",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "difficulty": "medium",
+    "type": "sjt",
+    "scenario_en": "You are PM at a Baku digital agency delivering a product roadmap presentation to the Deputy Minister of Digital Development — a non-technical stakeholder who controls a 2M AZN budget. Your deck has 22 slides. He interrupts at slide 4 and says: 'I don't need the details. Just tell me: will this system reduce citizen complaint calls by 30% or not?' How do you respond?",
+    "scenario_az": "Siz 2M AZN büdcəyə nəzarət edən qeyri-texniki maraqlı — Rəqəmsal İnkişaf Nazirinin müavininə məhsul yol xəritəsi təqdimatı hazırlayan bir Bakı rəqəmsal agentliyində PM-siniz. Diapozitivdə 22 slayd var. O, 4-cü slaydda sözünüzü kəsir: 'Mənə detallar lazım deyil. Sadəcə deyin: bu sistem vətəndaş şikayət zənglərini 30% azaldacaqmı ya yox?' Necə cavab verərsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Continue from slide 4 — the full context is necessary for an informed decision",
+        "text_az": "4-cü slayddan davam edin — məlumatlı qərar üçün tam kontekst zəruridir"
+      },
+      {
+        "key": "B",
+        "text_en": "Answer directly: 'Based on our analysis, yes — with the digital triage module, complaint call volume should reduce 28-35% within 6 months. Here's the one metric that drives this: [single slide]. Can I walk you through the two assumptions behind it?'",
+        "text_az": "Birbaşa cavab verin: 'Analizimizə əsasən, bəli — rəqəmsal triyaj modulu ilə şikayət zənglərinin həcmi 6 ay ərzində 28-35% azalmalıdır. Bunu idarə edən bir göstərici budur: [tək slayd]. Arxasındakı iki fərziyyəni izah edə bilərəmmi?'"
+      },
+      {
+        "key": "C",
+        "text_en": "Say 'It depends on several factors' and ask the Deputy Minister to clarify his priorities first",
+        "text_az": "'Bu bir neçə amillərdən asılıdır' deyin və əvvəlcə Nazir müavininin prioritetlərini aydınlaşdırmasını xahiş edin"
+      },
+      {
+        "key": "D",
+        "text_en": "Offer to send a written summary after the meeting instead of presenting live",
+        "text_az": "Canlı təqdimat əvəzinə görüşdən sonra yazılı xülasə göndərməyi təklif edin"
+      }
+    ],
+    "correct_answer": "B",
+    "irt_a": 1.5,
+    "irt_b": 0.1,
+    "irt_c": 0.13,
+    "feedback_en": "AZ government stakeholders often have high decision-making authority and low patience for process detail. When a senior official interrupts to ask for the bottom line, this is a signal to switch from 'presentation mode' to 'decision mode'. Option B demonstrates command of your own data, speaks directly to the stakeholder's success metric, and retains just enough structure (two assumptions) to stay credible without burying the lead.",
+    "feedback_az": "AZ dövlət maraqlıları çox vaxt yüksək qərar qəbuletmə səlahiyyətinə və proses detalına az səbirə malikdir. Yüksək vəzifəli rəsmi sözünüzü kəsib yekun nəticəni istədikdə, bu, 'təqdimat rejimi'ndən 'qərar rejiminə' keçmək siqnalıdır. B seçimi öz məlumatlarınıza hakim olduğunuzu nümayiş etdirir, birbaşa maraqlının uğur metrikinə cavab verir və lazımi uzunluqda qalır.",
+    "development_tip_en": "Before any government presentation in Azerbaijan, prepare a 'one-slide answer' for each of your 3 most likely stakeholder interruptions. Senior officials interrupt when they don't see their metric yet — not when they're confused.",
+    "development_tip_az": "Azərbaycanda istənilən dövlət təqdimatından əvvəl, ən ehtimal olunan 3 maraqlı müdaxiləsinizin hər biri üçün 'bir slaydlıq cavab' hazırlayın. Yüksək rəsmilər hələ öz göstəricilərini görməyəndə müdaxilə edir — çaşdıqda yox."
+  },
+  {
+    "id": "prof-pm-s2-005",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "scenario_en": "You are PM at a startup building a developer platform in Azerbaijan. Your engineering team is 3 Azerbaijani developers and 2 remote contractors from Poland and India. You need to write a PRD (Product Requirements Document) for a new API gateway feature. The AZ developers communicate mostly in Azerbaijani and Russian, the Polish developer prefers English + diagrams, and the Indian contractor works asynchronously and relies entirely on written documentation. Write the opening section of your PRD strategy: (1) what language(s) the document will be in, (2) what visual aids you will include, (3) how you will handle terminology consistency across 3 languages, and (4) the async communication protocol for the Indian contractor.",
+    "scenario_az": "Siz Azərbaycanda developer platformu quran bir startapda PM-siniz. Mühəndislik komandanız 3 Azərbaycanlı developer və Polşa və Hindistandan 2 uzaqdan podratçıdan ibarətdir. Yeni API gateway xüsusiyyəti üçün PRD (Məhsul Tələbləri Sənədi) yazmalısınız. AZ developerlər əsasən Azərbaycan və Rusca ünsiyyət qurur, Polşalı developer İngilis dili + diaqramları üstün tutur, Hindistanlı podratçı isə asinxron işləyir və tamamilə yazılı sənədlərə güvənir. PRD strategiyanızın açılış bölməsini yazın: (1) sənəd hansı dil(lər)də olacaq, (2) hansı vizual yardım vasitələrini daxil edəcəksiniz, (3) 3 dildə terminoloji ardıcıllığı necə təmin edəcəksiniz, (4) Hindistanlı podratçı üçün asinxron ünsiyyət protokolu.",
+    "options": null,
+    "correct_answer": null,
+    "irt_a": 1.7,
+    "irt_b": 1.1,
+    "irt_c": 0.0,
+    "feedback_en": "Strong answers include: (1) English as the canonical language for technical specs, with AZ/RU summary for local team — not trilingual docs which create maintenance debt. (2) Sequence diagrams + API flow charts as language-agnostic artifacts. (3) A shared glossary doc (Notion or Confluence) with AZ/RU/EN term mapping, updated before each sprint. (4) Async protocol for the Indian contractor: all decisions posted as Loom videos + written summary within 2 hours of any sync meeting, with a 24-hour response SLA. Weak answers treat all team members identically or suggest translation tools without addressing terminology drift.",
+    "feedback_az": "Güclü cavablar bunları əhatə edir: (1) Texniki spesifikasiyalar üçün kanonik dil kimi İngilis dili, yerli komanda üçün AZ/RU xülasəsi — baxım borcu yaradan üçdilli sənədlər deyil. (2) Dil-agnostik artefaktlar kimi ardıcıllıq diaqramları + API axın sxemləri. (3) Hər sprintdən əvvəl yenilənən AZ/RU/EN term xəritəsi olan paylaşılan qlosar sənədi. (4) Hindistanlı podratçı üçün asinxron protokol: bütün qərarlar hər sinxron görüşdən 2 saat ərzində Loom videoları + yazılı xülasə olaraq paylaşılır, 24 saatlıq cavab SLA ilə.",
+    "development_tip_en": "In multilingual teams, 'English as the canonical language' is not cultural imperialism — it's the only way to prevent terminology drift. Always pair it with native-language summaries for local team members to catch nuance in review.",
+    "development_tip_az": "Çoxdilli komandaarda 'kanonik dil kimi İngilis dili' mədəni imperializm deyil — terminoloji sürüşməni qarşılamağın yeganə yoludur. Nəzərdən keçirmədə nüansı tutmaq üçün yerli komanda üzvləri üçün doğma dil xülasələri ilə həmişə cütləyin."
+  },
+  {
+    "id": "prof-pm-s2-006",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "scenario_en": "You are PM at a consumer app in Azerbaijan with 80,000 MAU. You planned to validate a new checkout flow using A/B testing: 50/50 split, 2-week test, significance threshold p<0.05. Your data scientist tells you that with AZ's urban tech user base of approximately 500,000 people and your 80K MAU, the effective sample size after segmentation (mobile, 18-35, Baku-only) gives you roughly 8,000 users per variant. She shows you that at your current conversion rate (4%), you would need 14,000 users per variant to detect a 15% relative improvement at 80% power. You cannot get more users in 2 weeks. What is your alternative validation approach, and what are its specific limitations in the AZ market context?",
+    "scenario_az": "Siz 80.000 MAU-ya sahib Azərbaycan istehlak tətbiqində PM-siniz. Yeni ödəniş axınını A/B testlə doğrulamağı planlaşdırdınız: 50/50 bölünmə, 2 həftəlik test, əhəmiyyət həddi p<0,05. Məlumat aliminiз sizə bildirir ki, Azərbaycanın təxminən 500.000 nəfərlik şəhər texnologiya istifadəçi bazası və 80K MAU-nuzla, seqmentasiyadan sonrakı effektiv nümunə ölçüsü (mobil, 18-35, yalnız Bakı) hər variant üçün təxminən 8.000 istifadəçi verir. O, göstərir ki, mövcud konversiya dərəcənizdə (4%) 80% gücle 15% nisbi yaxşılaşma aşkarlamaq üçün hər variant üçün 14.000 istifadəçiyə ehtiyacınız var. 2 həftəde daha çox istifadəçi əldə edə bilmirsiniz. Alternativ doğrulama yanaşmanız nədir və AZ bazar kontekstindəki xüsusi məhdudiyyətləri nələrdir?",
+    "options": null,
+    "correct_answer": null,
+    "irt_a": 1.9,
+    "irt_b": 1.3,
+    "irt_c": 0.0,
+    "feedback_en": "Strong answers propose: (1) Bayesian A/B testing — allows stopping early with smaller samples by updating prior beliefs incrementally, though requires specifying a prior (risk: AZ market has limited prior data, so priors may be poorly calibrated). (2) Sequential testing / SPRT — valid with smaller samples, but requires pre-specifying maximum sample size. (3) Qualitative + quantitative hybrid: usability testing with 8-12 Baku users (heatmaps, session recording, think-aloud) + a smaller A/B test for directional signal only, not significance. (4) Holdout testing: ship to 100% with a 2-week holdout cohort. AZ-specific limitations must include: small sample creates high false-positive risk; Baku users may not represent rural AZ users; Novrus/Ramazan periods create artificial seasonality; Russian-speaking vs AZ-speaking users may behave differently even in same city.",
+    "feedback_az": "Güclü cavablar bunları təklif edir: (1) Bayes A/B testi — əvvəlcədən inanışları artımlı olaraq yeniləyərək daha kiçik nümunəlerle erkən dayanmağa imkan verir, lakin əvvəlki məlumat tələb edir (risk: AZ bazarının məhdud əvvəlki məlumatı var, buna görə priorlar pis kalibrələnmiş ola bilər). (2) Ardıcıl test / SPRT. (3) Keyfiyyətli + kəmiyyətli hibrid. (4) Holdout testi. AZ-spesifik məhdudiyyətlər mütləq daxil etməlidir: kiçik nümunə yüksək yalançı müsbət riski yaradır; Bakı istifadəçiləri kənd AZ istifadəçilərini təmsil etməyə bilər; Novruz/Ramazan dövrləri süni mövsümüllük yaradır.",
+    "development_tip_en": "In small markets, A/B testing is often under-powered by default. Before committing to any A/B test, run a power analysis first. If you can't reach the required sample, switch to Bayesian testing or qualitative validation — and document the statistical limitations explicitly in your PRD.",
+    "development_tip_az": "Kiçik bazarlarda A/B testlər çox vaxt standart olaraq az güclüdür. Hər hansı A/B testinə qeydiyyatdan əvvəl güc analizi edin. Tələb olunan nümunəyə çata bilmirsinizsə, Bayes testinə və ya keyfiyyətli doğrulamaya keçin — və statistik məhdudiyyətləri PRD-də açıq şəkildə sənədləşdirin."
+  },
+  {
+    "id": "prof-pm-s2-007",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "difficulty": "medium",
+    "type": "sjt",
+    "scenario_en": "You are PM for a government e-portal product in Azerbaijan. Six months into development, the Ministry of Economy issues new regulations requiring all e-commerce transactions to be processed through the AzərGold state payment gateway — which does not support the REST API your team built the integration around. Your team has already built 4 of 6 planned payment modules. The new gateway uses SOAP and requires a completely different integration architecture. How do you handle this?",
+    "scenario_az": "Siz Azərbaycanda dövlət e-portalı məhsulunun PM-isiniz. İşlənmənin altı ayından sonra İqtisadiyyat Nazirliyi bütün e-ticarət əməliyyatlarının AzərGold dövlət ödəniş şlüzündən keçirilməsini tələb edən yeni qaydalar çıxarır — bu isə komandanızın inteqrasiya üçün qurduğu REST API-ni dəstəkləmir. Komandanız planlaşdırılmış 6 ödəniş modulundan artıq 4-ünü qurmuşdur. Yeni şlüz SOAP istifadə edir və tamamilə fərqli inteqrasiya arxitekturası tələb edir. Bunu necə idarə edirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Continue building the remaining 2 modules on the old architecture and hope the regulation timeline gives you room to migrate later",
+        "text_az": "Köhnə arxitektura üzrə qalan 2 modulu qurmağa davam edin və qaydalar cədvəlinin sizə gec köçmək üçün yer verdiyinə ümid edin"
+      },
+      {
+        "key": "B",
+        "text_en": "Immediately stop all payment module work, rewrite the integration layer first, then rebuild all 6 modules on the new architecture",
+        "text_az": "Bütün ödəniş modulu işini dərhal dayandırın, əvvəlcə inteqrasiya qatını yenidən yazın, sonra bütün 6 modulu yeni arxitektura üzərində yenidən qurun"
+      },
+      {
+        "key": "C",
+        "text_en": "Pause the remaining 2 modules, build a SOAP adapter layer that wraps the existing 4 modules' REST calls, validate that the adapter works with AzərGold in a sandbox, then complete the remaining 2 modules on the new architecture while presenting a revised timeline to the Ministry",
+        "text_az": "Qalan 2 modulu dayandırın, mövcud 4 modulun REST çağırışlarını əhatə edən SOAP adapter qatı qurun, sandbox-da adapterin AzərGold ilə işlədiyini doğrulayın, sonra qalan 2 modulu yeni arxitektura üzərində tamamlayın, eyni zamanda Nazirliğe yenidən işlənmiş bir cədvəl təqdim edin"
+      },
+      {
+        "key": "D",
+        "text_en": "Request an exemption from the Ministry citing the sunk cost of development already completed",
+        "text_az": "Artıq tamamlanmış işlənmənin batmış xərclərini əsas gətirərək Nazirlikdən istisna tələb edin"
+      }
+    ],
+    "correct_answer": "C",
+    "irt_a": 1.6,
+    "irt_b": 0.3,
+    "irt_c": 0.13,
+    "feedback_en": "In AZ's regulatory environment, regulation compliance is not optional (D fails immediately). A complete rewrite (B) destroys 4 months of work unnecessarily. Continuing on the old architecture (A) creates compounding technical debt against a hard regulatory deadline. The adapter pattern (C) is the canonical solution: it preserves existing work via a thin translation layer, contains the migration risk, and keeps you compliant. The Ministry communication piece is critical — proactively revising the timeline before being asked demonstrates professional accountability.",
+    "feedback_az": "AZın tənzimləmə mühitdə tənzimləmə uyğunluğu isteğe bağlı deyil (D dərhal uğursuz olur). Tam yenidən yazma (B) 4 aylıq işi lazımsız olaraq məhv edir. Köhnə arxitektura üzərindən davam (A) ciddi tənzimləmə son tarixi qarşısında mürəkkəbləşən texniki borc yaradır. Adapter nümunəsi (C) kanonik həlldir: mövcud işi nazik tərcümə qatı vasitəsilə qoruyur, miqrasiya riskini saxlayır və uyğun qalmağınızı təmin edir.",
+    "development_tip_en": "When regulations change mid-project, the adapter pattern is almost always cheaper than a full rewrite. Your job as PM is to contain the blast radius: protect completed work, isolate the change surface, and communicate timeline impact proactively.",
+    "development_tip_az": "Layihə ortasında qaydalar dəyişdikdə, adapter nümunəsi demək olar ki, həmişə tam yenidən yazmadan ucuzdur. PM olaraq işiniz partlayış radiusunu cilovlamaqdır: tamamlanmış işi qoruyun, dəyişiklik səthinə nəzarət edin və cədvəl təsirinə dair proaktiv ünsiyyət qurun."
+  },
+  {
+    "id": "prof-pm-s2-008",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "difficulty": "medium",
+    "type": "mcq",
+    "scenario_en": "You are setting up Google Analytics 4 for the ASAN xidmət mobile app, which serves users in three languages: Azerbaijani (55%), Russian (30%), and English (15%). You need to track 'service completion rate' — the percentage of users who start a government service request and complete it. You notice in your initial data that completion rates differ dramatically: AZ-language users complete 71%, RU-language users complete 58%, EN-language users complete 44%. Your PM instinct says the EN drop-off is a UX problem, not a language problem. What analytics setup will BEST help you confirm or refute this hypothesis?",
+    "scenario_az": "Siz üç dildə — Azərbaycan (55%), Rus (30%) və İngilis (15%) — istifadəçilərə xidmət edən ASAN xidmət mobil tətbiqi üçün Google Analytics 4 qurursunuz. 'Xidmət tamamlanma nisbəti'ni — dövlət xidmət müraciətinə başlayan və onu tamamlayan istifadəçilərin faizini — izləməlisiniz. İlkin məlumatlarınızda tamamlanma nisbətlərinin kəskin şəkildə fərqləndiyini görürsünüz: AZ dilindəki istifadəçilərin 71%-i, RU dilindəkilərin 58%-i, İngilis dilindəkilərin isə 44%-i tamamlayır. PM instinktiniz deyir ki, İngilis dilindəki çıxış UX problemidir, dil problemi deyil. Bu hipotezi təsdiq etmək və ya çürütmək üçün ən YAXŞI analitika qurulumu hansıdır?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Segment all events by app_language dimension and compare funnel drop-off steps between the three segments",
+        "text_az": "Bütün hadisələri app_language ölçüsünə görə seqmentləşdirin və üç seqment arasında huni çıxış addımlarını müqayisə edin"
+      },
+      {
+        "key": "B",
+        "text_en": "Add a custom user property 'user_nationality' and segment by that instead of language",
+        "text_az": "Xüsusi istifadəçi xassəsi 'user_nationality' əlavə edin və dil əvəzinə buna görə seqmentləşdirin"
+      },
+      {
+        "key": "C",
+        "text_en": "Segment by app_language AND add device_category and session_duration as secondary dimensions, then compare the step-by-step funnel for EN users against AZ users controlling for device type — if EN drop-off concentrates at the same step regardless of device, the problem is content, not hardware",
+        "text_az": "app_language ilə seqmentləşdirin VƏ ikincil ölçülər kimi device_category və session_duration əlavə edin, sonra cihaz növünə nəzarət edərək EN istifadəçilərinin addım-addım hunisini AZ istifadəçiləri ilə müqayisə edin — EN çıxışı cihazdan asılı olmayaraq eyni addımda cəmləşirsə, problem texniki deyil, məzmundur"
+      },
+      {
+        "key": "D",
+        "text_en": "Disable multi-language support and run the app in Azerbaijani only for 2 weeks to get a clean baseline",
+        "text_az": "Çoxdilli dəstəyi söndürün və 2 həftəlik saf baza xətti əldə etmək üçün tətbiqi yalnız Azərbaycan dilinde işlədinn"
+      }
+    ],
+    "correct_answer": "C",
+    "irt_a": 1.5,
+    "irt_b": 0.2,
+    "irt_c": 0.14,
+    "feedback_en": "Option A is a valid first step but doesn't isolate the UX hypothesis from confounders. Option B conflates language with nationality — wrong dimension. Option D is destructive. Option C uses the correct analytical approach: control for a confounding variable (device type) to isolate whether the drop-off is content/UX-driven or hardware-driven. The key insight is that if EN users on the same device type drop off at the same funnel step as each other (regardless of device), the problem is in the content layer — which is actionable for a PM.",
+    "feedback_az": "A seçimi etibarlı bir ilk addımdır, lakin UX hipotezini çaşdırıcı amillərdən ayırmır. B seçimi dili milliyyətlə qarışdırır — yanlış ölçü. D seçimi məhvedicidir. C seçimi düzgün analitik yanaşmanı istifadə edir: çıxışın məzmun/UX-lə mi, yoxsa texniki ilə mi bağlı olduğunu müəyyən etmək üçün çaşdırıcı dəyişəni (cihaz növü) idarə etmək. Əsas anlayış: eyni cihaz növündəki EN istifadəçiləri eyni huni addımında çıxırsa (cihazdan asılı olmayaraq), problem məzmun qatındadır.",
+    "development_tip_en": "When investigating drop-off differences between language segments, always add at least one confounder control dimension (device, session length, time-of-day). Language drop-off is almost never purely linguistic — it's usually a proxy for UX complexity or content quality.",
+    "development_tip_az": "Dil seqmentləri arasındakı çıxış fərqilərini araşdırarkən həmişə ən azı bir çaşdırıcı nəzarət ölçüsü əlavə edin (cihaz, sessiya uzunluğu, günün vaxtı). Dil çıxışı demək olar ki, heç vaxt sırf dilçilik deyil — adətən UX mürəkkəbliyi və ya məzmun keyfiyyəti üçün proksidir."
+  },
+  {
+    "id": "prof-pm-s2-009",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "difficulty": "easy",
+    "type": "mcq",
+    "scenario_en": "Your Baku startup is using Notion for product management. Your team of 5 (3 developers, 1 designer, 1 PM — yourself) is debating switching to Jira. The main argument for Jira is 'it's more professional.' You have been using Notion for 8 months with no major workflow complaints. What is the MOST relevant question to ask before deciding?",
+    "scenario_az": "Bakı startapınız məhsul menecmenti üçün Notion istifadə edir. 5 nəfərlik komandanız (3 developer, 1 dizayner, 1 PM — siz özünüz) Jira-ya keçməyi müzakirə edir. Jira üçün əsas arqument 'daha peşəkardır.' Siz 8 aydır Notion istifadə edirsiniz, heç bir böyük iş axını şikayəti olmamışdır. Qərar verməzdən əvvəl ən MÜVAFİQ sual hansıdır?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "'Which tool do developers prefer working with daily?'",
+        "text_az": "'Developerlər gündəlik işdə hansı aləti üstün tutur?'"
+      },
+      {
+        "key": "B",
+        "text_en": "'What specific workflow problem does Jira solve that Notion currently cannot?'",
+        "text_az": "'Jira, Notionun hazırda həll edə bilmədiyi hansı xüsusi iş axını problemini həll edir?'"
+      },
+      {
+        "key": "C",
+        "text_en": "'How much does Jira cost per seat per month?'",
+        "text_az": "'Jira hər oturacaq üçün aylıq nə qədər tutur?'"
+      },
+      {
+        "key": "D",
+        "text_en": "'Are our competitors using Jira or Notion?'",
+        "text_az": "'Rəqiblərimiz Jira istifadə edir, yoxsa Notion?'"
+      }
+    ],
+    "correct_answer": "B",
+    "irt_a": 1.3,
+    "irt_b": -0.8,
+    "irt_c": 0.15,
+    "feedback_en": "Tool switches should be driven by specific problems, not perceived professionalism. For a 5-person Baku startup with no current workflow pain, the only valid reason to switch is a concrete gap that Notion cannot fill. Asking 'what problem does this solve?' is the PM's core decision-making instinct. Cost (C) and competitor behavior (D) are secondary. Developer preference (A) matters but is not the primary question.",
+    "feedback_az": "Alət dəyişiklikləri spesifik problemlər tərəfindən idarə edilməlidir, qəbul edilmiş peşəkarlıq yox. Mövcud iş axını ağrısı olmayan 5 nəfərlik Bakı startapı üçün dəyişikliyin yeganə etibarlı səbəbi Notionun doldurmağa bilmədiyi konkret boşluqdur. 'Bu problemi həll edir?' soruşmaq PMın əsas qərar qəbuletmə instinktidir.",
+    "development_tip_en": "Never switch tools without a problem statement. 'More professional' is not a problem statement — it's a feeling. Good PMs require a concrete workflow failure before approving any tooling change.",
+    "development_tip_az": "Heç vaxt problem ifadəsi olmadan alətlər dəyişdirməyin. 'Daha peşəkar' problem ifadəsi deyil — bu bir hissdir. Yaxşı PM-lər istənilən alətləndirmə dəyişikliyini təsdiqləmədən əvvəl konkret iş axını uğursuzluğu tələb edir."
+  },
+  {
+    "id": "prof-pm-s2-010",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "difficulty": "hard",
+    "type": "mcq",
+    "scenario_en": "You are PM for a civic engagement app in Azerbaijan. A senior official from the Ministry of Internal Affairs requests a new feature: 'Show the real-time location of all users who have attended more than 3 government events in the last 30 days.' The official frames this as 'improving citizen safety coordination.' Under Azerbaijan's Law on Personal Data (2010) and the Law on Operational-Investigative Activity, such bulk location sharing with government agencies is legal if the Ministry initiates the request through official channels. Your legal team confirms no law is being violated. What do you do?",
+    "scenario_az": "Siz Azərbaycanda vətəndaş iştirakçılığı tətbiqinin PM-isiniz. Daxili İşlər Nazirliyindən yüksək bir rəsmi yeni xüsusiyyət tələb edir: 'Son 30 gündə 3-dən çox dövlət tədbirinə qatılan bütün istifadəçilərin real vaxt məkanını göstərin.' Rəsmi bunu 'vətəndaş təhlükəsizliyi koordinasiyasını yaxşılaşdırmaq' kimi çərçivələyir. Azərbaycanın Fərdi Məlumatlar haqqında Qanunu (2010) və Əməliyyat-axtarış Fəaliyyəti haqqında Qanun çərçivəsinde belə toplu məkan paylaşımı Nazirlik rəsmi kanallar vasitəsilə müraciət etsə qanuni sayılır. Hüquq komandanız heç bir qanunun pozulmadığını təsdiqləyir. Nə edərsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Implement it — the legal team confirmed it is lawful, and a Ministry request carries institutional weight that protects the company",
+        "text_az": "Tətbiq edin — hüquq komandası bunun qanuni olduğunu təsdiqlədi və Nazirlik müraciəti şirkəti qoruyan institusional çəki daşıyır"
+      },
+      {
+        "key": "B",
+        "text_en": "Refuse entirely — any government location tracking of civic participants violates the ethical foundation of the product regardless of legality",
+        "text_az": "Tamamilə rədd edin — vətəndaş iştirakçılarının istənilən dövlət məkan izlənməsi qanuniliyindən asılı olmayaraq məhsulun etik əsasını pozur"
+      },
+      {
+        "key": "C",
+        "text_en": "Escalate to CEO with a written risk memo documenting: (1) legal status — confirmed lawful; (2) ethical risk — bulk surveillance of civic participants will destroy user trust if disclosed; (3) business risk — if disclosed, the app's civic mission is permanently compromised; (4) a counter-proposal to the Ministry offering aggregated (non-identifiable) attendance data instead",
+        "text_az": "CEO-ya yazılı risk memorandumu ilə eskalasiya edin: (1) hüquqi status — qanuni olduğu təsdiqlənib; (2) etik risk — vətəndaş iştirakçılarının toplu nəzarəti aşkar edildikdə istifadəçi etimadını məhv edəcək; (3) biznes riski — aşkar edilsə, tətbiqin vətəndaş missiyası daimi şəkildə pozulacaq; (4) Nazirliyə bunun əvəzinə toplanmış (şəxssiz) iştirak məlumatları təklif edən əks-təklif"
+      },
+      {
+        "key": "D",
+        "text_en": "Implement a limited version: only share location data for users who have explicitly opted in to 'safety features'",
+        "text_az": "Məhdud versiya tətbiq edin: yalnız 'təhlükəsizlik xüsusiyyətləri'nə açıqca qoşulmuş istifadəçilər üçün məkan məlumatlarını paylaşın"
+      }
+    ],
+    "correct_answer": "C",
+    "irt_a": 1.7,
+    "irt_b": 0.8,
+    "irt_c": 0.11,
+    "feedback_en": "This is a high-stakes ethical decision that exceeds PM authority — the correct move is C (escalate with a complete risk memo), not unilateral action in any direction. Option A conflates legality with ethics — legal permission is necessary but not sufficient for building trust-dependent civic products. Option B is unilateral PM refusal, which exceeds your authority. Option D creates a dark pattern — users cannot give meaningful informed consent when the feature's true purpose is government location surveillance. In the AZ context specifically, civic apps that enable government tracking of civic participants will lose the user base they need to function. The counter-proposal (aggregated data) protects both the Ministry's stated goal and the product's ethical foundation.",
+    "feedback_az": "Bu, PM səlahiyyətini aşan yüksək riskli etik qərardır — düzgün addım C-dir (tam risk memorandumu ilə eskalasiya), hər hansı istiqamətdə birtərəfli hərəkət deyil. A seçimi qanuniliyi etikliklə qarışdırır — hüquqi icazə etimad-asılı vətəndaş məhsulları qurmaq üçün lazımi amma kifayətsizdir. B seçimi birtərəfli PM rəddidir, bu sizin səlahiyyəti aşır. D seçimi qaranlıq nümunə yaradır — xüsusiyyətin həqiqi məqsədi dövlət məkan nəzarəti olduqda istifadəçilər mənalı məlumatlı razılıq verə bilmir.",
+    "development_tip_en": "In civic tech, 'legal' and 'ethical' are not the same gate. Always document both separately. When they diverge, escalate with a counter-proposal — never decide unilaterally in either direction on questions that affect the fundamental trust relationship with your user base.",
+    "development_tip_az": "Vətəndaş texnologiyasında 'qanuni' və 'etik' eyni qapı deyil. Hər ikisini həmişə ayrıca sənədləşdirin. Ayrıldıqda, əks-təkliflə eskalasiya edin — istifadəçi bazanızla fundamental etimad münasibətinə təsir edən suallarda heç vaxt hər iki istiqamətdə birtərəfli qərar verməyin."
+  }
+]

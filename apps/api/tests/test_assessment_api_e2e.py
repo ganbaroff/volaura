@@ -13,6 +13,8 @@ import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
+from app.main import app
+from app.deps import get_supabase_admin, get_supabase_user, get_current_user_id
 from app.core.assessment.engine import CATState, submit_response, select_next_item
 
 
@@ -22,13 +24,18 @@ MOCK_USER_ID = str(uuid4())
 MOCK_COMPETENCY_ID = str(uuid4())
 MOCK_SESSION_ID = str(uuid4())
 
+def _opt(key: int, text: str) -> dict:
+    """Build an MCQ option dict matching the QuestionOut schema (list[dict])."""
+    return {"key": key, "text_en": text, "text_az": text}
+
+
 MOCK_QUESTIONS = [
     {
         "id": str(uuid4()),
         "type": "mcq",
         "scenario_en": "How do you communicate project updates?",
         "scenario_az": "Layihə yeniliklərini necə çatdırırsınız?",
-        "options": ["Email", "Meeting", "Slack", "All of the above"],
+        "options": [_opt(0, "Email"), _opt(1, "Meeting"), _opt(2, "Slack"), _opt(3, "All of the above")],
         "irt_a": 1.0,
         "irt_b": 0.0,
         "irt_c": 0.25,
@@ -41,7 +48,7 @@ MOCK_QUESTIONS = [
         "type": "mcq",
         "scenario_en": "When a team member disagrees with your approach, what do you do?",
         "scenario_az": "Komanda üzvü sizin yanaşmanızla razılaşmadıqda nə edirsiniz?",
-        "options": ["Ignore", "Listen", "Argue", "Compromise"],
+        "options": [_opt(0, "Ignore"), _opt(1, "Listen"), _opt(2, "Argue"), _opt(3, "Compromise")],
         "irt_a": 1.2,
         "irt_b": 0.5,
         "irt_c": 0.2,
@@ -54,7 +61,7 @@ MOCK_QUESTIONS = [
         "type": "mcq",
         "scenario_en": "Best way to give feedback to a colleague?",
         "scenario_az": "Həmkarınıza rəy verməyin ən yaxşı yolu?",
-        "options": ["Public criticism", "Private constructive", "Email only", "Avoid it"],
+        "options": [_opt(0, "Public criticism"), _opt(1, "Private constructive"), _opt(2, "Email only"), _opt(3, "Avoid it")],
         "irt_a": 0.8,
         "irt_b": -0.5,
         "irt_c": 0.25,
@@ -114,20 +121,26 @@ async def test_start_assessment_returns_session_and_first_question(client):
     # Mock: session insert
     session_inserted = _mock_chain(_mock_execute(data={"id": MOCK_SESSION_ID}))
 
+    # Mock: profile row for paywall check
+    trial_profile = _mock_chain(_mock_execute(data={"subscription_status": "trial"}))
+
     call_count = {"user": 0, "admin": 0}
 
     def user_table_side_effect(name):
         call_count["user"] += 1
-        # Call order: 1=existing session, 2=recent cooldown, 3=abuse count, 4=carry-over, 5=insert
+        # Call order (PAYMENT_ENABLED=False — paywall check skipped):
+        # 1=existing session, 2=rapid-restart cooldown, 3=retest cooldown, 4=abuse count, 5=carry-over, 6=insert
         if call_count["user"] == 1:
             return no_session
         elif call_count["user"] == 2:
             return no_recent
         elif call_count["user"] == 3:
-            return starts_count
+            return no_session  # retest cooldown (no completed sessions)
         elif call_count["user"] == 4:
-            return no_prev
+            return starts_count
         elif call_count["user"] == 5:
+            return no_prev
+        elif call_count["user"] == 6:
             return session_inserted
         return no_session
 
@@ -145,16 +158,26 @@ async def test_start_assessment_returns_session_and_first_question(client):
     mock_admin_db = MagicMock()
     mock_admin_db.table = MagicMock(side_effect=admin_table_side_effect)
 
-    with (
-        patch("app.routers.assessment.SupabaseUser", return_value=mock_user_db),
-        patch("app.routers.assessment.SupabaseAdmin", return_value=mock_admin_db),
-        patch("app.routers.assessment.CurrentUserId", return_value=MOCK_USER_ID),
-    ):
+    async def _user_dep():
+        yield mock_user_db
+
+    async def _admin_dep():
+        yield mock_admin_db
+
+    async def _uid_dep():
+        return MOCK_USER_ID
+
+    app.dependency_overrides[get_supabase_user] = _user_dep
+    app.dependency_overrides[get_supabase_admin] = _admin_dep
+    app.dependency_overrides[get_current_user_id] = _uid_dep
+    try:
         response = await client.post(
             "/api/assessment/start",
             json={"competency_slug": "communication"},
             headers={"Authorization": "Bearer test-token"},
         )
+    finally:
+        app.dependency_overrides.clear()
 
     # Note: This test validates the endpoint structure, not full integration.
     # Full integration requires real Supabase with seeded data.
@@ -179,14 +202,21 @@ async def test_retest_cooldown_returns_429(client):
     two_days_ago = (datetime.now(timezone.utc) - timedelta(days=2)).isoformat()
     recent_session = _mock_chain(_mock_execute(data=[{"completed_at": two_days_ago}]))
 
+    # Mock: profile row for paywall check (trial user — should not be blocked)
+    trial_profile = _mock_chain(_mock_execute(data={"subscription_status": "trial"}))
+
     call_count = {"user": 0}
 
     def user_table_side_effect(name):
         call_count["user"] += 1
+        # Call order (PAYMENT_ENABLED=False — paywall check skipped):
+        # 1=existing session, 2=rapid-restart cooldown, 3=retest cooldown
         if call_count["user"] == 1:
             return no_session  # existing active session check
         elif call_count["user"] == 2:
-            return recent_session  # cooldown check
+            return no_session  # rapid-restart check (no abandoned sessions)
+        elif call_count["user"] == 3:
+            return recent_session  # retest cooldown check
         return no_session
 
     def admin_table_side_effect(name):
@@ -200,16 +230,26 @@ async def test_retest_cooldown_returns_429(client):
     mock_admin_db = MagicMock()
     mock_admin_db.table = MagicMock(side_effect=admin_table_side_effect)
 
-    with (
-        patch("app.routers.assessment.SupabaseUser", return_value=mock_user_db),
-        patch("app.routers.assessment.SupabaseAdmin", return_value=mock_admin_db),
-        patch("app.routers.assessment.CurrentUserId", return_value=MOCK_USER_ID),
-    ):
+    async def _user_dep():
+        yield mock_user_db
+
+    async def _admin_dep():
+        yield mock_admin_db
+
+    async def _uid_dep():
+        return MOCK_USER_ID
+
+    app.dependency_overrides[get_supabase_user] = _user_dep
+    app.dependency_overrides[get_supabase_admin] = _admin_dep
+    app.dependency_overrides[get_current_user_id] = _uid_dep
+    try:
         response = await client.post(
             "/api/assessment/start",
             json={"competency_slug": "communication"},
             headers={"Authorization": "Bearer test-token"},
         )
+    finally:
+        app.dependency_overrides.clear()
 
     assert response.status_code in (429, 422, 500), f"Expected 429 cooldown, got: {response.status_code}"
     if response.status_code == 429:
@@ -234,7 +274,6 @@ async def test_question_breakdown_returns_mapped_difficulty(client):
             irt_a=q["irt_a"],
             irt_b=q["irt_b"],
             irt_c=q["irt_c"],
-            response=q["correct_answer"],
             raw_score=0.85,
             response_time_ms=5000,
         )
@@ -274,15 +313,25 @@ async def test_question_breakdown_returns_mapped_difficulty(client):
     mock_admin_db = MagicMock()
     mock_admin_db.table = MagicMock(side_effect=admin_table_side_effect)
 
-    with (
-        patch("app.routers.assessment.SupabaseUser", return_value=mock_user_db),
-        patch("app.routers.assessment.SupabaseAdmin", return_value=mock_admin_db),
-        patch("app.routers.assessment.CurrentUserId", return_value=MOCK_USER_ID),
-    ):
+    async def _user_dep():
+        yield mock_user_db
+
+    async def _admin_dep():
+        yield mock_admin_db
+
+    async def _uid_dep():
+        return MOCK_USER_ID
+
+    app.dependency_overrides[get_supabase_user] = _user_dep
+    app.dependency_overrides[get_supabase_admin] = _admin_dep
+    app.dependency_overrides[get_current_user_id] = _uid_dep
+    try:
         response = await client.get(
             f"/api/assessment/results/{MOCK_SESSION_ID}/questions",
             headers={"Authorization": "Bearer test-token"},
         )
+    finally:
+        app.dependency_overrides.clear()
 
     # Validate response shape and security (no IRT params leaked)
     if response.status_code == 200:

@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/auth-store";
+import { API_BASE } from "@/lib/api/client";
+import type { SignupStatusResponse, ValidateInviteResponse } from "@/lib/api/generated/types.gen";
 
 type AccountType = "volunteer" | "organization";
 type OrgType = "ngo" | "corporate" | "government" | "startup" | "academic" | "other";
@@ -15,27 +18,66 @@ export default function SignupPage() {
   const router = useRouter();
   const { t } = useTranslation();
   const setSession = useAuthStore((s) => s.setSession);
+  const searchParams = useSearchParams();
 
-  const [accountType, setAccountType] = useState<AccountType>("volunteer");
+  // Pre-select org type if coming from "Find talent" hero CTA
+  const initialType: AccountType = searchParams.get("type") === "organization" ? "organization" : "volunteer";
+  const [accountType, setAccountType] = useState<AccountType>(initialType);
   const [orgType, setOrgType] = useState<OrgType | "">("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  // Pre-fill from ?invite= URL param — warm invite link recipients skip manual entry
+  const [inviteCode, setInviteCode] = useState(searchParams.get("invite") ?? "");
   const [privacyConsented, setPrivacyConsented] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [celebrationNumber, setCelebrationNumber] = useState<number | null>(null);
+  // If ?invite= param present, treat as invite-only immediately (avoids 200-400ms flicker)
+  const [openSignup, setOpenSignup] = useState<boolean | null>(
+    searchParams.get("invite") ? false : null
+  );
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    isMounted.current = true;
+    // Check whether signup requires an invite code
+    fetch(`${API_BASE}/api/auth/signup-status`)
+      .then((r) => r.json() as Promise<SignupStatusResponse>)
+      .then((data) => { if (isMounted.current) setOpenSignup(data.open_signup ?? true); })
+      .catch(() => { if (isMounted.current) setOpenSignup(true); }); // fail open on network error
+    return () => { isMounted.current = false; };
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!privacyConsented) {
-      setError(t("auth.privacyConsent"));
+      setError(t("auth.privacyConsentRequired", { defaultValue: "Please accept the privacy policy to continue." }));
       return;
     }
     setError(null);
     setLoading(true);
 
     try {
+      // Invite gate: validate code before creating Supabase account
+      if (openSignup === false) {
+        const validateRes = await fetch(`${API_BASE}/api/auth/validate-invite`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ invite_code: inviteCode }),
+        });
+        if (!validateRes.ok) {
+          setError(t("auth.inviteCodeInvalid", { defaultValue: "Invalid invite code. Please try again." }));
+          return;
+        }
+        const validateData = (await validateRes.json()) as ValidateInviteResponse;
+        if (!validateData.valid) {
+          setError(t("auth.inviteCodeInvalid", { defaultValue: "Invalid invite code. Please try again." }));
+          return;
+        }
+      }
+
       const supabase = createClient();
       const { data, error: authError } = await supabase.auth.signUp({
         email,
@@ -60,7 +102,27 @@ export default function SignupPage() {
       }
 
       setSession(data.session);
-      router.push(`/${locale}/onboarding`);
+
+      // Fetch profile to get registration_number for celebration message
+      try {
+        const profileRes = await fetch(`${API_BASE}/api/profiles/me`, {
+          headers: { Authorization: `Bearer ${data.session.access_token}` },
+        });
+        if (profileRes.ok) {
+          const profileData = await profileRes.json();
+          const regNum: number | null = profileData?.registration_number ?? null;
+          if (regNum != null && isMounted.current) {
+            setCelebrationNumber(regNum);
+            await new Promise((resolve) => setTimeout(resolve, 2200));
+          }
+        }
+      } catch {
+        // Non-blocking — proceed to onboarding even if profile fetch fails
+      }
+
+      if (isMounted.current) {
+        router.push(`/${locale}/onboarding`);
+      }
     } catch {
       setError(t("auth.unexpectedError"));
     } finally {
@@ -68,11 +130,54 @@ export default function SignupPage() {
     }
   }
 
+  if (celebrationNumber != null) {
+    return (
+      <div className="space-y-6 text-center">
+        <div className="text-4xl">🚀</div>
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold text-foreground">
+            {t("auth.welcomeAboard", { defaultValue: "Welcome aboard!" })}
+          </h2>
+          <p className="text-lg font-mono font-semibold text-primary">
+            #{String(celebrationNumber).padStart(4, "0")}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            {t("auth.foundingMemberMessage", {
+              defaultValue: "You're a Founding Member. Your number is reserved forever.",
+            })}
+          </p>
+        </div>
+        <div className="flex justify-center">
+          <Loader2 className="size-5 animate-spin text-muted-foreground" aria-hidden="true" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="space-y-1 text-center">
         <h1 className="text-2xl font-semibold">{t("auth.signupTitle")}</h1>
         <p className="text-sm text-muted-foreground">{t("auth.signupSubtitle")}</p>
+      </div>
+
+      {/* Trust signal pills — reduces friction for GDPR-adjacent markets */}
+      <div className="flex flex-wrap justify-center gap-2">
+        {[
+          t("auth.trustNoCv", { defaultValue: "No CV required" }),
+          t("auth.trustDataPrivate", { defaultValue: "Data stays private" }),
+          t("auth.trustNoSpam", { defaultValue: "No spam, ever" }),
+        ].map((label) => (
+          <span
+            key={label}
+            className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-muted-foreground"
+          >
+            <svg className="h-3 w-3 text-primary" fill="none" viewBox="0 0 12 12" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2 6l3 3 5-5" />
+            </svg>
+            {label}
+          </span>
+        ))}
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -184,7 +289,33 @@ export default function SignupPage() {
               {showPassword ? "👁" : "👁‍🗨"}
             </button>
           </div>
+          {/* Password requirements — inline hint (Security agent: conversion killer without this) */}
+          <p className="text-xs text-muted-foreground">
+            {t("auth.passwordHint", { defaultValue: "8+ characters, uppercase, lowercase, and a number." })}
+          </p>
         </div>
+
+        {/* Invite code — only shown when signup is invite-only */}
+        {openSignup === false && (
+          <div className="space-y-1.5">
+            <label htmlFor="invite-code" className="text-sm font-medium">
+              {t("auth.inviteCodeLabel", { defaultValue: "Invite code" })}
+            </label>
+            <input
+              id="invite-code"
+              type="text"
+              required
+              autoComplete="off"
+              value={inviteCode}
+              onChange={(e) => setInviteCode(e.target.value)}
+              placeholder={t("auth.inviteCodePlaceholder", { defaultValue: "Enter your invite code" })}
+              className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+            />
+            <p className="text-xs text-muted-foreground">
+              {t("auth.inviteCodeHint", { defaultValue: "Volaura is currently invite-only. Ask a friend or contact us to get a code." })}
+            </p>
+          </div>
+        )}
 
         {/* Privacy consent — AZ-native framing */}
         <label className="flex items-start gap-2.5 cursor-pointer">
@@ -205,10 +336,17 @@ export default function SignupPage() {
 
         <button
           type="submit"
-          disabled={loading || !privacyConsented}
+          disabled={loading || !privacyConsented || (openSignup === false && !inviteCode.trim())}
           className="h-10 w-full rounded-md bg-primary font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
         >
-          {loading ? t("auth.creatingAccount") : t("auth.signupAction")}
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 inline size-4 animate-spin" aria-hidden="true" />
+              {t("auth.creatingAccount")}
+            </>
+          ) : (
+            t("auth.signupAction")
+          )}
         </button>
       </form>
 

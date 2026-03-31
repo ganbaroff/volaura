@@ -86,7 +86,7 @@ export function HeroSection({ locale }: HeroSectionProps) {
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <Link
-              href={`/${locale}/signup`}
+              href={`/${locale}/signup?type=organization`}
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-background px-7 py-3.5 text-base font-semibold text-foreground transition-all hover:bg-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               {t("landing.heroCtaOrg")}

@@ -30,8 +30,11 @@ def mock_db():
     db.auth = MagicMock()
     db.table = MagicMock(return_value=db)
     db.select = MagicMock(return_value=db)
+    db.insert = MagicMock(return_value=db)
+    db.update = MagicMock(return_value=db)
     db.eq = MagicMock(return_value=db)
     db.single = MagicMock(return_value=db)
+    db.maybe_single = MagicMock(return_value=db)
     db.execute = AsyncMock()
     return db
 
@@ -48,12 +51,32 @@ async def client():
 @pytest.mark.asyncio
 async def test_security_headers_present(client: AsyncClient):
     """All responses must include security headers (dev-mode safe)."""
-    resp = await client.get("/health")
-    assert resp.headers.get("x-content-type-options") == "nosniff"
-    assert resp.headers.get("x-frame-options") == "DENY"
-    # HSTS and CSP only set in production (is_dev=False)
-    # In dev mode, verify the base headers are present
-    assert resp.headers.get("referrer-policy") == "strict-origin-when-cross-origin"
+    from app.main import app as _app
+    from app.deps import get_supabase_admin as _get_admin
+
+    # /health now uses SupabaseAdmin via Depends() — mock it for this test
+    _mock = MagicMock()
+    table_mock = MagicMock()
+    select_mock = MagicMock()
+    limit_mock = AsyncMock()
+    limit_mock.execute = AsyncMock(return_value=MagicMock(count=0))
+    select_mock.limit = MagicMock(return_value=limit_mock)
+    table_mock.select = MagicMock(return_value=select_mock)
+    _mock.table = MagicMock(return_value=table_mock)
+
+    async def _admin_dep():
+        yield _mock
+
+    _app.dependency_overrides[_get_admin] = _admin_dep
+    try:
+        resp = await client.get("/health")
+        assert resp.headers.get("x-content-type-options") == "nosniff"
+        assert resp.headers.get("x-frame-options") == "DENY"
+        # HSTS and CSP only set in production (is_dev=False)
+        # In dev mode, verify the base headers are present
+        assert resp.headers.get("referrer-policy") == "strict-origin-when-cross-origin"
+    finally:
+        _app.dependency_overrides.pop(_get_admin, None)
 
 
 @pytest.mark.asyncio
@@ -213,7 +236,7 @@ async def test_crit02_cannot_create_verification_link_for_other_user(client: Asy
         json={
             "verifier_name": "Attacker",
             "verifier_org": "Evil Corp",
-            "competency_id": "comm-123",
+            "competency_id": "communication",
         },
         headers={"Authorization": "Bearer fake"},
     )
@@ -228,8 +251,17 @@ async def test_crit02_can_create_verification_link_for_self(client: AsyncClient,
     """CRIT-02: User CAN create verification links for their own profile."""
     user_id = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
 
-    # Mock DB to return volunteer exists + insert success
-    mock_db.execute = AsyncMock(return_value=MagicMock(data={"id": user_id}))
+    # Mock DB: call 1 = volunteer exists check (single row dict), call 2 = insert result (list)
+    verif_row = {
+        "id": "new-verif-uuid", "volunteer_id": user_id, "created_by": user_id,
+        "verifier_name": "Prof. Aliyev", "verifier_org": "ADA University",
+        "competency_id": "communication", "token": "tok_abc123",
+        "token_expires_at": "2099-01-01T00:00:00+00:00", "token_used": False,
+    }
+    mock_db.execute = AsyncMock(side_effect=[
+        MagicMock(data={"id": user_id}),    # volunteer exists
+        MagicMock(data=[verif_row]),         # insert result (list)
+    ])
 
     app.dependency_overrides[get_supabase_admin] = _make_admin_override(mock_db)
     app.dependency_overrides[get_current_user_id] = _make_user_id_override(user_id)
@@ -239,7 +271,7 @@ async def test_crit02_can_create_verification_link_for_self(client: AsyncClient,
         json={
             "verifier_name": "Prof. Aliyev",
             "verifier_org": "ADA University",
-            "competency_id": "comm-123",
+            "competency_id": "communication",
         },
         headers={"Authorization": "Bearer fake"},
     )

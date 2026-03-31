@@ -1,0 +1,472 @@
+[
+  {
+    "id": "prof-pm-scrum-s3-001",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.2,
+    "irt_b": -0.7,
+    "irt_c": 0.12,
+    "scenario_en": "You are Scrum Master at Kapital Bank. Mid-sprint, Day 6 of 10, the Compliance Department issues a mandatory directive: all internet banking transaction logging must be upgraded to meet Central Bank of Azerbaijan (CBA) Regulation 14/2024 by month-end. The work is estimated at 13 story points — roughly 40% of the sprint capacity. The Development Team has already completed 18 of 32 committed story points. Your Product Owner says: 'CBA regulation is not negotiable. We cannot be fined. Add it to this sprint.' The Development Team lead warns that adding 13 points will mean dropping 2 user stories already in progress. What is the correct Scrum Master action?",
+    "scenario_az": "Siz Kapital Bankda Scrum Mastersiniz. Sprintin 10 günündən 6-cısında Uyğunluq Departamenti məcburi direktiv verir: bütün internet bankçılıq əməliyyat qeydiyyatı ay sonuna qədər Azərbaycan Mərkəzi Bankının (AMB) 14/2024 Qaydalarına uyğun yüksəltilməlidir. İş 13 story point olaraq qiymətləndirilir — sprint tutumunun təxminən 40%-i. İşçi Qrup artıq 32 öhdəçiliyin 18-ni tamamlayıb. Məhsul Sahibi deyir: 'AMB qaydası müzakirə edilə bilməz. Cərimə ala bilmərik. Bunu bu sprintə əlavə edin.' İşçi Qrup rəhbəri xəbərdar edir ki, 13 point əlavə etmək artıq davam edən 2 user story-nin atılmasına səbəb olacaq. Scrum Master kimi düzgün hərəkət nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Accept the compliance work immediately and add all 13 points to the sprint backlog without adjustment.",
+        "text_az": "Uyğunluq işini dərhal qəbul edin və heç bir düzəliş etmədən bütün 13 point-i sprint backlog-una əlavə edin."
+      },
+      {
+        "key": "B",
+        "text_en": "Facilitate an emergency sprint scope negotiation: formally acknowledge the CBA mandate as a non-negotiable constraint, cancel the 2 lowest-priority in-progress stories with Product Owner agreement, re-baseline the sprint goal to include compliance work, and document the scope change with stakeholder sign-off.",
+        "text_az": "Fövqəladə sprint həcmi danışıqlarını asanlaşdırın: AMB mandatını qeyri-müzakirəli məhdudiyyət kimi rəsmi qəbul edin, Məhsul Sahibinin razılığı ilə ən az prioritetli 2 davam edən story-ni ləğv edin, sprint məqsədini yenidən uyğunluq işini əhatə edəcək şəkildə müəyyənləşdirin və maraqlı tərəflərin imzası ilə əhatə dəyişikliyini sənədləşdirin."
+      },
+      {
+        "key": "C",
+        "text_en": "Protect the sprint commitment entirely. Tell the Product Owner the compliance work must go into the next sprint backlog regardless of the regulatory deadline.",
+        "text_az": "Sprint öhdəçiliyini tamamilə qoruyun. Məhsul Sahibinə bildirin ki, tənzimləyici son tarixdən asılı olmayaraq uyğunluq işi növbəti sprint backlog-una daxil edilməlidir."
+      },
+      {
+        "key": "D",
+        "text_en": "Ask the Development Team to work overtime to complete both the original commitment and the compliance work within the same sprint.",
+        "text_az": "İşçi Qrupdan həm orijinal öhdəçiliyi, həm də uyğunluq işini eyni sprint daxilində tamamlamaq üçün əlavə saat işləməsini xahiş edin."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. In AZ financial institutions, CBA regulatory directives carry legal force and cannot be deferred — treating them as 'just another backlog item' creates compliance risk. The Scrum Master's role is to protect the process, not a fixed list of stories. The correct action is a structured scope renegotiation: acknowledge the constraint formally, make explicit trade-offs with Product Owner authority, re-baseline the sprint goal, and document the change. A is wrong — adding 40% capacity without removing anything destroys sprint integrity and burns the team. C is wrong — regulatory deadlines at AZ banks are not negotiable; the Scrum Master who 'protects the sprint' here will be overridden by Legal and loses credibility. D is wrong — overtime as the first response signals poor planning and violates sustainable pace, a Scrum core value.",
+    "feedback_az": "B düzgündür. Azərbaycan maliyyə institutlarında AMB tənzimləyici direktivləri hüquqi qüvvəyə malikdir və təxirə salına bilməz — onlara 'sadəcə başqa bir backlog maddəsi' kimi yanaşmaq uyğunluq riski yaradır. Scrum Masterin rolu sabit story siyahısını deyil, prosesi qorumaq. Düzgün hərəkət strukturlu həcm yenidən müzakirəsidir: məhdudiyyəti rəsmi qəbul edin, Məhsul Sahibinin səlahiyyəti ilə açıq müqayisəli seçim edin, sprint məqsədini yenidən müəyyənləşdirin və dəyişikliyi sənədləşdirin.",
+    "development_tip_en": "In AZ banking and fintech, build a 'regulatory buffer' practice: maintain a standing agreement with your Product Owner that CBA/regulatory directives automatically trigger an emergency scope review protocol, not a sprint restart. Pre-negotiate a 10-15% capacity buffer in every sprint specifically for compliance surprises. Document this agreement at program inception — not after the first crisis.",
+    "development_tip_az": "Azərbaycan bank və fintech-də 'tənzimləyici bufer' təcrübəsi qurun: Məhsul Sahibinizlə əvvəlcədən razılaşın ki, AMB/tənzimləyici direktivlər avtomatik olaraq fövqəladə həcm nəzərdən keçirmə protokolunu işə salır, sprint yenidən başlanğıcını deyil. Hər sprintdə xüsusi olaraq uyğunluq sürprizləri üçün 10-15% tutum buferi əvvəlcədən danışın.",
+    "london_delta": "A London Scrum Master would typically defend sprint commitment as a near-sacred boundary and ask the Product Owner to prioritize the compliance work for the next sprint, treating the regulatory directive like any other backlog item entering through proper channels. In AZ banking, this response would be overridden by Legal within hours, the Scrum Master would lose credibility with the CTO, and the team would receive the change anyway — but now without structured trade-offs or documentation. The AZ-correct approach treats CBA directives as a distinct category of constraint requiring immediate structured negotiation, not queue management.",
+    "az_institutions": [
+      "Kapital Bank",
+      "AMB"
+    ],
+    "tags": [
+      "scrum",
+      "sprint-scope",
+      "regulatory-compliance",
+      "az-banking",
+      "az-specific"
+    ]
+  },
+  {
+    "id": "prof-pm-scrum-s3-002",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency_slug": "communication",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.1,
+    "irt_b": -0.6,
+    "irt_c": 0.1,
+    "scenario_en": "You are Scrum Master at ASAN xidmət. The Deputy Minister of Digital Development has requested a monthly progress report on the e-Government portal project. He sends a Word document template with columns: 'Planned Tasks', 'Completed Tasks', 'Completion %', 'Next Month Plan'. Your team uses Jira, tracks velocity in story points, and runs 2-week sprints. Your Product Owner, who formally reports to the Deputy Minister, asks you to prepare the report. How do you translate your team's sprint metrics into the Deputy Minister's required format?",
+    "scenario_az": "Siz ASAN xidmətdə Scrum Mastersiniz. Rəqəmsal İnkişaf Naib Naziri elektron hökumət portal layihəsi üzrə aylıq irəliləyiş hesabatı tələb edib. O, sütunları olan Word sənədi şablonu göndərir: 'Planlanmış Tapşırıqlar', 'Tamamlanmış Tapşırıqlar', 'Tamamlanma %', 'Növbəti Ay Planı'. Komandanız Jira istifadə edir, story point-lərlə sürət izləyir və 2 həftəlik sprintlər keçirir. Rəsmi olaraq Naib Nazirə hesabat verən Məhsul Sahibiniz sizi hesabatı hazırlamağı xahiş edir. Komandanızın sprint göstəricilərini Naib Nazirin tələb etdiyi formata necə tərcümə edirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Send a link to the Jira dashboard and explain story points and velocity in the cover email, asking the Deputy Minister to review sprint burndown charts directly.",
+        "text_az": "Jira idarəetmə paneline link göndərin və üst yazıda story point-ləri və sürəti izah edin, Naib Nazirdən birbaşa sprint burndown qrafiklərini nəzərdən keçirməsini xahiş edin."
+      },
+      {
+        "key": "B",
+        "text_en": "Fill the Word template exactly as requested: map completed user stories to named deliverables (e.g., 'Citizen login module — complete'), express completion as milestone percentage (not story point %), and list next sprint's planned features as concrete system capabilities — never mention story points, velocity, or Scrum terminology.",
+        "text_az": "Word şablonunu tam tələb olunduğu kimi doldurun: tamamlanmış user story-ləri adlandırılmış çatdırılabilən məhsullara çevirin, tamamlanmanı milestone faizi kimi ifadə edin və növbəti sprintin planlaşdırılan xüsusiyyətlərini konkret sistem imkanları kimi sadalayın."
+      },
+      {
+        "key": "C",
+        "text_en": "Educate the Deputy Minister's office about agile metrics by attaching a glossary of Scrum terms and explaining why story points are more accurate than task counts.",
+        "text_az": "Scrum terminlərinin lüğətini əlavə edərək və story point-lərin nə üçün tapşırıq sayından daha dəqiq olduğunu izah edərək Naib Nazirin ofisini çevik göstəricilər haqqında maarifləndirin."
+      },
+      {
+        "key": "D",
+        "text_en": "Request that the Product Owner escalate to the Deputy Minister's office to change the reporting format to an agile-compatible dashboard before submitting anything.",
+        "text_az": "Məhsul Sahibindən heç nə təqdim etməzdən əvvəl hesabat formatını çevik uyğun idarəetmə panelinə dəyişdirmək üçün Naib Nazirin ofisinə müraciət etməsini xahiş edin."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. In AZ government contexts, a Deputy Minister's Word-document reporting format is not a bureaucratic inconvenience — it is the communication protocol of the institution and carries implicit authority expectations. The Scrum Master's job is to make agile work within institutional constraints, not to export Scrum vocabulary upward. Translating sprint output into milestone language (named deliverables, system capabilities, milestone %) gives the Deputy Minister exactly what he needs to fulfill his own reporting obligations without requiring him to learn a new system. A is wrong — sending a Jira link to a Deputy Minister signals disrespect for his communication norms and will not be used. C is wrong — unsolicited education of a government official is perceived as condescending and damages the project relationship. D is wrong — requesting format changes from a Deputy Minister via escalation is a political misstep that the Product Owner will resist.",
+    "feedback_az": "B düzgündür. Azərbaycan dövlət kontekstlərində Naib Nazirin Word sənədi hesabat formatı bürokratik narahatlıq deyil — institusional ünsiyyət protokoludur. Scrum Masterin işi Scrum lüğətini yuxarıya ixrac etmək deyil, çevikliyi institusional məhdudiyyətlər daxilində işlətməkdir.",
+    "development_tip_en": "In AZ public sector projects, create a permanent 'translation layer' document at project start: map every Scrum artifact to its government-report equivalent. Sprint Review = 'Monthly Milestone Review'. Velocity = 'Delivery Capacity (features/month)'. Definition of Done = 'Acceptance Criteria per Ministry Standards'. Update this once per sprint so reporting takes 30 minutes, not 3 hours.",
+    "development_tip_az": "Azərbaycan dövlət sektoru layihələrində layihənin başında daimi 'tərcümə qatı' sənədi yaradın: hər Scrum artefaktını hökumət hesabatı ekvivalentinə çevirin. Sprint Review = 'Aylıq Milestone Baxışı'. Velocity = 'Çatdırılma Tutumu (xüsusiyyət/ay)'. Tamamlanma Tərifi = 'Nazirlik Standartlarına görə Qəbul Meyarları'.",
+    "london_delta": "A London Scrum Master would either push to educate the stakeholder about agile metrics or negotiate a Jira dashboard as the reporting medium — both reasonable in a UK digital agency context where agile fluency is assumed at senior levels. In AZ government, a Deputy Minister who has governed through Word documents for 20 years sees a Jira link as either incompetence or disrespect. The AZ-correct Scrum Master understands that institutional authority in Azerbaijan is partly expressed through adherence to established communication formats, and that violating the format signals you are not serious about the relationship.",
+    "az_institutions": [
+      "ASAN xidmət",
+      "Rəqəmsal İnkişaf Nazirliyi"
+    ],
+    "tags": [
+      "scrum",
+      "stakeholder-communication",
+      "government-reporting",
+      "az-public-sector",
+      "az-specific"
+    ]
+  },
+  {
+    "id": "prof-pm-scrum-s3-003",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.4,
+    "irt_b": 0.1,
+    "irt_c": 0.1,
+    "scenario_en": "You are Scrum Master at PASHA Technology. In today's Sprint Retrospective, you use a standard 'What went well / What didn't / What to improve' format. Eldar, a senior backend developer with 12 years at the company, has been silent for 15 minutes. When you call on him directly, he says: 'Everything is fine from my side. The sprint went normally.' You know from a private conversation that Eldar is frustrated with constant context switching caused by the team's task assignment process — he told you this informally over tea last week, but said he 'doesn't want to make it a big issue.' Two junior developers glance at Eldar before they answer, visibly waiting for his signal. What is the most effective Scrum Master response?",
+    "scenario_az": "Siz PASHA Texnologiyada Scrum Mastersiniz. Bu günün Sprint Retrospektivasında standart 'Nə yaxşı getdi / Nə getmədi / Nə yaxşılaşdırılsın' formatından istifadə edirsiniz. 12 illik şirkət təcrübəsinə malik baş backend developer Eldar 15 dəqiqədir susur. Birbaşa müraciət etdikdinizdə deyir: 'Mənim tərəfimdən hər şey yaxşıdır. Sprint normal getdi.' Özəl söhbətdən bilirsiniz ki, Eldar komandanın tapşırıq təyinat prosesinin yaratdığı daimi kontekst dəyişikliyindən narahatdır — bunu keçən həftə çay üstündə qeyri-rəsmi olaraq sizə söylədi, lakin 'böyük məsələ etmək istəmədiyini' bildirdi. İki gənc developer cavab verməzdən əvvəl Eldara baxır, açıq şəkildə onun siqnalını gözləyir. Ən effektiv Scrum Master cavabı nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Directly tell the team: 'I know context switching has been an issue this sprint. Eldar, can you share what you mentioned to me last week so we can address it as a team?'",
+        "text_az": "Komandaya birbaşa deyin: 'Bilirəm ki, bu sprintdə kontekst dəyişikliyi problem olub. Eldar, keçən həftə mənə söylədiklərinizi paylaşa bilərsinizmi ki, komanda olaraq həll edək?'"
+      },
+      {
+        "key": "B",
+        "text_en": "Close the retrospective and schedule a private 1:1 with Eldar to help him articulate his concern, then bring it to the next retrospective as an anonymized team observation — giving Eldar the choice to claim it or not.",
+        "text_az": "Retrospektivanı bağlayın və Eldarla özəl 1:1 planlaşdırın ki, narahatlığını ifadə etməsinə kömək edəsiniz, sonra bunu anonim komanda müşahidəsi kimi növbəti retrospektivaya gətirin — Eldarın onu tələb edib-etməməyi seçimini ona buraxın."
+      },
+      {
+        "key": "C",
+        "text_en": "Acknowledge Eldar's response and move on. Restructure the retrospective format for next sprint to use anonymous written input (e.g., sticky notes or a digital tool) so senior colleagues feel safer raising concerns without public attribution.",
+        "text_az": "Eldarın cavabını qəbul edin və davam edin. Növbəti sprint üçün retrospektiva formatını anonim yazılı girişi əhatə edəcək şəkildə yenidən qurun."
+      },
+      {
+        "key": "D",
+        "text_en": "Ask the team a general open question: 'Has anyone noticed patterns in how we assign tasks that might be creating unnecessary interruptions?' and observe whether Eldar or others respond.",
+        "text_az": "Komandaya ümumi açıq sual verin: 'Kiminsə tapşırıq təyinatı üsulumuzda lazımsız fasilələr yaradan nümunələr müşahidə edib-etmədiyini soruşun' və Eldar ya digərlərinin cavab verib-vermədiyini müşahidə edin."
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct. In AZ corporate culture, particularly at firms like PASHA Technology where seniority structures are strong, a 12-year senior developer admitting a problem in a public group setting carries significant face risk. Eldar already signaled in a private channel that he doesn't want to escalate — honoring that boundary is empathy, not avoidance. The Scrum Master's systemic response is to redesign the retrospective format so that raising concerns does not require public vulnerability from the most senior person in the room. The junior developers' mirroring behavior confirms that Eldar's comfort level sets the tone for the entire team. A is wrong — weaponizing a private conversation in a public setting is a trust violation that would permanently damage the Scrum Master's relationship with Eldar and make future private disclosures impossible. B is partially right but delays action unnecessarily; the systemic format fix in C addresses the structural root cause. D is better than A but still puts Eldar on the spot indirectly.",
+    "feedback_az": "C düzgündür. Azərbaycan korporativ mədəniyyətində, xüsusilə PASHA Texnologiya kimi güclü kıdem strukturlarına malik şirkətlərdə, 12 illik baş developerin ictimai qrup mühitində problem etiraf etməsi ciddi üz riski daşıyır. Eldar özəl kanalda artıq eskalasiya etmək istəmədiyini bildirdi — bu sərhədi hörmətlə qəbul etmək empatiya, qaçmaq deyil.",
+    "development_tip_en": "In AZ teams with strong seniority hierarchies, redesign retrospectives to decouple 'seniority' from 'speaking first/last'. Use asynchronous pre-retrospective surveys (Google Forms / Miro) sent 24 hours before the session — this gives senior colleagues time to articulate concerns in writing without real-time performance pressure. Collate themes before the session and present them as team patterns, not individual attributions.",
+    "development_tip_az": "Güclü kıdem iyerarxiyasına malik Azərbaycan komandalarında retrospektivaları 'kıdem'dən 'ilk/son danışmaq'ı ayırmaq üçün yenidən dizayn edin. Sessiyadan 24 saat əvvəl asinxron ön-retrospektiva sorğuları (Google Forms / Miro) göndərin — bu, baş həmkarlara real vaxt performans təzyiqi olmadan yazılı narahatlıqlarını ifadə etmək üçün vaxt verir.",
+    "london_delta": "A London Scrum Master operating in a flat-hierarchy UK tech company would likely use direct facilitation: naming the elephant in the room, inviting Eldar to share publicly, and treating the reluctance as psychological safety work to do openly. In AZ, this approach would backfire: Eldar would feel ambushed (his private confidence was violated), the junior developers would see that speaking privately to the Scrum Master carries risk, and Eldar's public discomfort would signal to the whole team that retrospectives are unsafe. The AZ-correct Scrum Master understands that psychological safety in high-seniority cultures is built through structural anonymity, not public vulnerability modeling.",
+    "az_institutions": [
+      "PASHA Technology"
+    ],
+    "tags": [
+      "scrum",
+      "retrospective",
+      "seniority-culture",
+      "psychological-safety",
+      "az-specific"
+    ]
+  },
+  {
+    "id": "prof-pm-scrum-s3-004",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.3,
+    "irt_b": 0.2,
+    "irt_c": 0.12,
+    "scenario_en": "You are Scrum Master on the E-GOV State Registry portal project. Sprint 3, Day 4 of 10. During integration testing, your team discovers that the State Registry API — a government system with no public documentation — has undocumented rate limits: 50 requests per minute per IP. Your system design assumed 500 requests per minute. The team estimates that implementing a caching and request queuing solution will require 8 story points (40% of remaining sprint capacity). The Product Owner wants to keep the sprint goal unchanged: 'Complete citizen address verification feature.' The integration is the final acceptance criterion for this feature. What is the most appropriate Scrum Master response?",
+    "scenario_az": "Siz E-GOV Dövlət Reyestri portal layihəsinin Scrum Mastersiniz. Sprint 3, 10 günün 4-cü günü. İnteqrasiya testləri zamanı komandanız Dövlət Reyestri API-sinin — ictimai sənədləşməsi olmayan hökumət sistemi — sənədlənməmiş sürət limitlərinin olduğunu kəşf edir: IP başına dəqiqədə 50 sorğu. Sistem dizaynınız dəqiqədə 500 sorğu ehtimal edirdi. Komanda keşləmə və sorğu növbəsi həllinin tətbiqinin 8 story point tələb etdiyini hesablayır (qalan sprint tutumunun 40%-i). Məhsul Sahibi sprint məqsədini dəyişməz saxlamaq istəyir: 'Vətəndaş ünvan doğrulama xüsusiyyətini tamamlayın.' İnteqrasiya bu xüsusiyyətin son qəbul meyarıdır. Ən uyğun Scrum Master cavabı nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Ask the team to work extra hours to deliver both the original stories and the caching solution within the sprint.",
+        "text_az": "Komandadan həm orijinal story-ləri, həm də keşləmə həllini sprint daxilində çatdırmaq üçün əlavə saat işləməsini xahiş edin."
+      },
+      {
+        "key": "B",
+        "text_en": "Immediately escalate to the State Registry authority to request documentation and a higher rate limit, and pause sprint work pending their response.",
+        "text_az": "Sənədləşmə və daha yüksək sürət limiti tələb etmək üçün dərhal Dövlət Reyestri səlahiyyətinə eskalasiya edin və onların cavabını gözləyərək sprint işini dayandırın."
+      },
+      {
+        "key": "C",
+        "text_en": "Facilitate a sprint scope adjustment: treat the undocumented rate limit as a discovered impediment, add the caching/queuing solution as the technical prerequisite for the sprint goal, drop the lowest-priority story to maintain capacity balance, update the sprint goal to 'Complete citizen address verification with State Registry integration constraints', and document the discovered API behavior as a project risk.",
+        "text_az": "Sprint həcmi düzəlişini asanlaşdırın: sənədlənməmiş sürət limitini aşkar edilmiş maneə kimi qəbul edin, keşləmə/növbə həllini sprint məqsədi üçün texniki ön şərt kimi əlavə edin, tutum balansını saxlamaq üçün ən az prioritetli story-ni atın, sprint məqsədini 'Dövlət Reyestri inteqrasiya məhdudiyyətləri ilə vətəndaş ünvan doğrulamasını tamamlayın' olaraq yeniləyin və kəşf edilmiş API davranışını layihə riski kimi sənədləşdirin."
+      },
+      {
+        "key": "D",
+        "text_en": "Complete the sprint without integration, deliver the UI and business logic only, and plan API integration as a separate story for Sprint 4.",
+        "text_az": "İnteqrasiya olmadan sprinti tamamlayın, yalnız UI və biznes məntiqini çatdırın və API inteqrasiyasını Sprint 4 üçün ayrıca story kimi planlaşdırın."
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct. Undocumented government API constraints in Azerbaijan are a known systemic reality — State Registry, ASAN APIs, and similar systems routinely have undocumented rate limits, authentication quirks, and behavioral changes without notice. The Scrum Master's adaptability skill here is recognizing this as a discovered technical impediment (not a failure of planning) and responding with a structured scope adjustment rather than heroics or paralysis. The sprint goal can be preserved in spirit ('address verification feature complete') while accommodating the technical reality. Documenting the API behavior creates institutional knowledge that protects future sprints. A is wrong — overtime as first response is a sustainable pace violation. B is wrong — escalating to a government authority and pausing work creates multi-week delays; AZ government API teams rarely respond to external rate-limit requests quickly. D is wrong — delivering unintegrated features creates technical debt and fails the acceptance criterion explicitly.",
+    "feedback_az": "C düzgündür. Azərbaycanda sənədlənməmiş hökumət API məhdudiyyətləri məlum sistemik reallıqdır. Scrum Masterin adaptasiya bacarığı bunu planlamanın uğursuzluğu kimi deyil, kəşf edilmiş texniki maneə kimi tanımaq və qəhrəmanlıq ya iflic əvəzinə strukturlu həcm düzəlişi ilə cavab verməkdir.",
+    "development_tip_en": "For AZ government API integrations, build a standard 'API Discovery Sprint 0 Checklist': rate limits, authentication token expiry, error response formats, maintenance windows, and contact person at the government authority. Run this checklist in the first sprint before assuming API behavior. For E-GOV, ASAN, and State Registry integrations specifically, budget 15-20% extra capacity for undocumented constraint discovery in every sprint that touches these systems.",
+    "development_tip_az": "Azərbaycan hökumət API inteqrasiyaları üçün standart 'API Kəşf Sprint 0 Yoxlama Siyahısı' qurun: sürət limitləri, autentifikasiya token bitmə müddəti, xəta cavab formatları, texniki xidmət pəncərələri və hökumət səlahiyyətindəki əlaqə şəxsi. Bu siyahını API davranışını fərz etməzdən əvvəl ilk sprintdə işlədin.",
+    "london_delta": "A London Scrum Master would treat undocumented API behavior as unusual and worth escalating — in UK government digital projects (GDS standards), APIs are documented and rate limits are published. The instinct to 'escalate and get documentation' is correct in that context. In AZ, escalating to the State Registry authority for API documentation would likely produce a weeks-long bureaucratic response (or no response), and the team would be paralyzed waiting. The AZ-correct Scrum Master treats undocumented government API constraints as a baseline risk, not an anomaly, and adapts the sprint immediately rather than waiting for the system to conform to international standards it was never built to meet.",
+    "az_institutions": [
+      "E-GOV",
+      "Dövlət Reyestri"
+    ],
+    "tags": [
+      "scrum",
+      "api-integration",
+      "government-systems",
+      "impediment-removal",
+      "az-specific"
+    ]
+  },
+  {
+    "id": "prof-pm-scrum-s3-005",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.3,
+    "irt_b": 0.0,
+    "irt_c": 0.1,
+    "scenario_en": "You are Scrum Master coordinating a SAFe Program Increment (PI) Planning event for SOCAR's digital transformation program: 8 teams across Baku HQ (6 teams), Sangachal terminal (1 team, offshore, satellite internet), and a London vendor team (1 team). Sangachal's satellite connection drops for 30-90 minutes unpredictably 2-3 times per day. PI Planning runs for 2 days. The London vendor uses MIRO for digital planning boards. Sangachal has a physical board. Baku HQ uses Jira + MIRO. During Day 1 afternoon, the satellite connection drops for 75 minutes exactly when Sangachal's team is supposed to present their Team PI Objectives for cross-team dependency identification. 47 people are waiting. What is the most effective Scrum Master response for this specific moment?",
+    "scenario_az": "Siz SOCARın rəqəmsal çevrilmə proqramı üçün SAFe Proqram İnkrementinin (PI) Planlaşdırma tədbirini koordinasiya edirsiniz: Bakı Qərargahında (6 komanda), Sanqaçal terminalında (1 komanda, offshore, peyk interneti) və London vendor komandasında (1 komanda) 8 komanda var. Sanqaçalın peyk əlaqəsi gündə 2-3 dəfə 30-90 dəqiqə müddətinə gözlənilmədən kəsilir. PI Planlaşdırması 2 gün davam edir. London vendor MIRO-dan istifadə edir. Sanqaçalda fiziki lövhə var. Bakı Qərargahı Jira + MIRO istifadə edir. Birinci günün axşamında peyk əlaqəsi tam 75 dəqiqə kəsilir — Sanqaçal komandasının çarpaz-komanda asılılıq identifikasiyası üçün Komanda PI Məqsədlərini təqdim etməsi lazım olan vaxt. 47 nəfər gözləyir. Bu konkret an üçün ən effektiv Scrum Master cavabı nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Pause all PI Planning activities and wait for Sangachal's connection to be restored before proceeding.",
+        "text_az": "Bütün PI Planlaşdırma fəaliyyətlərini dayandırın və davam etməzdən əvvəl Sanqaçalın əlaqəsinin bərpa edilməsini gözləyin."
+      },
+      {
+        "key": "B",
+        "text_en": "Ask Sangachal's Scrum Master to photograph their physical board and send it via WhatsApp or Telegram to Baku HQ so a proxy can present their Team PI Objectives on their behalf, while other teams continue sequentially.",
+        "text_az": "Sanqaçalın Scrum Masterindən fiziki lövhələrinin fotoşəklini çəkərək WhatsApp və ya Telegram vasitəsilə Bakı Qərargahına göndərməsini xahiş edin ki, bir nümayəndə onların adından Komanda PI Məqsədlərini təqdim edə bilsin, digər komandalar isə ardıcıl davam etsin."
+      },
+      {
+        "key": "C",
+        "text_en": "Reschedule Sangachal's presentation to the end of Day 2 and continue with other teams, hoping the connection recovers.",
+        "text_az": "Sanqaçalın təqdimatını 2-ci günün sonuna keçirin və əlaqənin bərpa olunacağını ümid edərək digər komandalarla davam edin."
+      },
+      {
+        "key": "D",
+        "text_en": "Declare the PI Planning event a failure due to infrastructure constraints and reschedule for a date when reliable connectivity can be guaranteed.",
+        "text_az": "İnfrastruktur məhdudiyyətləri səbəbindən PI Planlaşdırma tədbirini uğursuz elan edin və etibarlı bağlantının təmin edilə biləcəyi tarixə yenidən planlaşdırın."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. A tech-literate Scrum Master running a multi-site PI Planning event in Azerbaijan's energy sector understands that satellite connectivity at offshore terminals like Sangachal is not a bug — it is a structural operational constraint. The correct response is a pre-designed failover protocol: physical board + mobile photo + messaging app proxy presentation. WhatsApp and Telegram have near-universal penetration in AZ professional contexts and work on low-bandwidth connections. The proxy presentation model keeps the 47-person event moving, captures Sangachal's objectives accurately, and allows dependency identification to proceed. This requires tech literacy in both the SAFe framework and the practical connectivity landscape of AZ offshore operations. A is wrong — pausing for up to 90 minutes burns 2 hours of a 2-day event and signals poor contingency planning. C is wrong — deferring to Day 2 end creates cascading dependency identification failures. D is wrong — rescheduling a 47-person, multi-site PI Planning event due to a known connectivity pattern is a disproportionate and professionally damaging response.",
+    "feedback_az": "B düzgündür. Azərbaycanın enerji sektorunda çox məkanlı PI Planlaşdırma tədbirini idarə edən texniki savadlı Scrum Master bilir ki, Sanqaçal kimi offshore terminallarında peyk bağlantısı xəta deyil — struktural əməliyyat məhdudiyyətidir. Düzgün cavab əvvəlcədən hazırlanmış ehtiyat protokoldur: fiziki lövhə + mobil foto + mesajlaşma proqramı vasitəsilə nümayəndə təqdimatı.",
+    "development_tip_en": "For any multi-site Scrum/SAFe event in Azerbaijan involving offshore locations (Sangachal, Gunashli, Chirag platforms), build a mandatory 'Connectivity Contingency Protocol' into your event facilitation plan: (1) Pre-event: each remote site prepares physical backup boards mirroring their digital tools. (2) During event: designate an on-site proxy at HQ for each remote team. (3) Connectivity drop: proxy activates immediately using photos/WhatsApp — never waits. Document the protocol in the PI Planning agenda itself so all participants know the drill before Day 1 begins.",
+    "development_tip_az": "Offshore lokasiyaları (Sanqaçal, Günəşli, Çıraq platformaları) əhatə edən Azərbaycanda hər hansı çox məkanlı Scrum/SAFe tədbirləri üçün tədbir facilitasiya planınıza məcburi 'Bağlantı Fövqəladə Protokolu' qurun: (1) Tədbirdən əvvəl: hər uzaq məkan rəqəmsal alətlərini əks etdirən fiziki ehtiyat lövhələr hazırlayır. (2) Tədbir zamanı: hər uzaq komanda üçün Qərargahda yerli nümayəndə təyin edin.",
+    "london_delta": "A London Agile Coach running a multi-site PI Planning event would typically rely on a digital-first toolchain (MIRO, Zoom breakouts, Confluence) and treat connectivity failure as a rare edge case warranting a pause or reschedule. In AZ's offshore energy operations, treating satellite connectivity as reliable is a fundamental miscalibration — Sangachal's intermittent satellite is a documented constraint that every SOCAR project manager knows. The AZ-correct Scrum Master builds the offline contingency into the event design before Day 1, not as a reactive scramble when 47 people are waiting. Tech literacy here means knowing the physical infrastructure of your delivery environment, not just the agile toolchain.",
+    "az_institutions": [
+      "SOCAR",
+      "Sanqaçal terminal"
+    ],
+    "tags": [
+      "scrum",
+      "safe",
+      "pi-planning",
+      "offshore-operations",
+      "connectivity",
+      "az-specific"
+    ]
+  },
+  {
+    "id": "prof-pm-scrum-s3-006",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "hard",
+    "type": "sjt",
+    "irt_a": 1.5,
+    "irt_b": 0.8,
+    "irt_c": 0.08,
+    "scenario_en": "You are Scrum Master on SOCAR's offshore platform monitoring system. In Sprint 9 of 12, the Ministry of Energy of Azerbaijan formally commits to a public announcement that the platform will go live on a specific date — 6 weeks from today. This commitment was made at a governmental level without consulting the development team. Your current sprint velocity is 34 points. The remaining backlog has 89 story points of must-have features. At current velocity, delivery requires 2.6 more sprints — approximately 26 days. The announced date is 42 days away. You have capacity for exactly 3 more sprints at current velocity, giving you 102 potential points — enough on paper. However, your VP of Engineering (11 years at SOCAR, direct report to the Deputy CEO) tells you privately: 'The team's been pushing hard. Quality is slipping. We should not promise this date.' Your Product Owner, who arranged the Ministry meeting, tells you: 'This date is now political. It cannot move.' What is your action as Scrum Master?",
+    "scenario_az": "Siz SOCARın offshore platforma monitoring sistemi üzrə Scrum Mastersiniz. 12-nin 9-cu sprintindəsiniz. Azərbaycan Enerji Nazirliyi rəsmi olaraq platformanın bugündən 6 həftə sonra — müəyyən bir tarixdə işə başlayacağını açıq elan etməyə öhdəçilik götürür. Bu öhdəçilik komandaya məsləhət edilmədən hökumət səviyyəsində qəbul edildi. Cari sprint sürətiniz 34 pointdir. Qalan backlog 89 story point məcburi xüsusiyyətə malikdir. Cari sürətlə çatdırılma daha 2,6 sprint — təxminən 26 gün tələb edir. Elan edilmiş tarix 42 gün uzaqdadır. Cari sürətlə tam olaraq 3 sprint daha üçün tutumunuz var, bu sizə potensial 102 point verir — kağız üzərində kifayətdir. Lakin Mühəndislik Vitse-Prezidentiniz (SOCAR-da 11 il, CEO müavininin birbaşa hesabatı) sizə özəl olaraq deyir: 'Komanda çox çalışıb. Keyfiyyət aşağı düşür. Bu tarixi vəd etməməliyik.' Nazirlik görüşünü təşkil edən Məhsul Sahibiniz deyir: 'Bu tarix artıq siyasidir. Dəyişə bilməz.' Scrum Master kimi hərəkətiniz nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Accept the political reality. Tell the VP's concern is noted but the date stands. Focus the team on delivering maximum velocity for 3 sprints.",
+        "text_az": "Siyasi reallığı qəbul edin. VR-ın narahatlığının qeyd olunduğunu, lakin tarixin sabit qaldığını bildirin. Komandanı 3 sprint üçün maksimum sürəti çatdırmağa yönəldin."
+      },
+      {
+        "key": "B",
+        "text_en": "Prepare a formal risk report with three delivery scenarios (optimistic/realistic/pessimistic) showing story-point projections, quality risk indicators, and a proposed scope reduction to a viable MVP that meets the announced date — present this to both the VP and Product Owner jointly, giving them data to make an informed decision about whether to negotiate the scope, negotiate a quiet date adjustment, or proceed with known risk.",
+        "text_az": "Story point proqnozlarını, keyfiyyət riski göstəricilərini və elan edilmiş tarixi qarşılayan həyatqabiliyyətli MVP üçün təklif olunan həcm azalmasını göstərən üç çatdırılma ssenarisi (optimist/realist/pessimist) ilə rəsmi risk hesabatı hazırlayın — bunu həm VR-a, həm də Məhsul Sahibinə birgə təqdim edin, həcmi danışmaq, sakit tarix düzəlişi danışmaq və ya məlum riskle davam etmək barədə məlumatlı qərar üçün onlara məlumat verin."
+      },
+      {
+        "key": "C",
+        "text_en": "Side with the VP privately. Reduce the team's sprint commitment to sustainable pace to protect quality, and let the Product Owner discover the delivery gap at Sprint Review.",
+        "text_az": "VR ilə özəl olaraq tərəf tutun. Keyfiyyəti qorumaq üçün komandanın sprint öhdəçiliyini davamlı tempə azaldın və Məhsul Sahibinin Sprint Review-da çatdırılma boşluğunu kəşf etməsinə icazə verin."
+      },
+      {
+        "key": "D",
+        "text_en": "Tell the Product Owner that Scrum mandates the Development Team sets sprint commitments, and that the Ministry date is incompatible with the team's current capacity. Refuse to increase sprint commitments beyond what the team agrees to.",
+        "text_az": "Məhsul Sahibinə bildirin ki, Scrum İşçi Qrupun sprint öhdəçiliklərini müəyyənləşdirməsini tələb edir və Nazirliyin tarixi komandanın cari tutumu ilə uyğun deyil. Komandanın razılaşdığından artıq sprint öhdəçiliklərini artırmaqdan imtina edin."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. This is a high-stakes scenario where the Scrum Master's reliability function is to surface the risk with data — not to pick a political side or hide behind process. The VP's private warning is a credibility signal from someone with deep institutional knowledge (11 years, direct Deputy CEO line). The Product Owner's political framing is real but does not override engineering reality. The Scrum Master's job is to create the conditions for an informed decision by the people with authority to make it: present scenarios, show the math, quantify the quality risk, and propose an MVP scope that is actually deliverable. This respects the VP's expertise, gives the Product Owner ammunition to negotiate quietly with the Ministry if needed, and keeps the Scrum Master's role as a trusted data source rather than a political actor. A is wrong — agreeing to an at-risk date without surfacing the data is a reliability failure. C is wrong — unilaterally reducing commitments without stakeholder visibility is deceptive and will destroy trust when discovered. D is wrong — in AZ government-adjacent projects, citing Scrum process rules to a VP reporting to the Deputy CEO is a relationship-ending move that will result in the Scrum Master being sidelined.",
+    "feedback_az": "B düzgündür. Bu yüksək riskli ssenaridə Scrum Masterin etibarlılıq funksiyası riski məlumatla üzə çıxarmaqdır — siyasi tərəf seçmək ya proses arxasına gizlənmək deyil. VR-ın özəl xəbərdarlığı dərin institusional bilikdən gələn (11 il, Deputy CEO birbaşa xətti) etibarlılıq siqnalıdır. Scrum Masterin işi onu etmək üçün səlahiyyəti olan insanlara məlumatlı qərar üçün şərait yaratmaqdır.",
+    "development_tip_en": "In AZ energy and government-adjacent projects, develop a 'Delivery Confidence Report' template that translates sprint data into executive language: (1) Committed scope vs. velocity projection (2) Quality indicators (defect rate trend, technical debt accumulation) (3) Three scenarios with named trade-offs (4) Scrum Master recommendation with reasoning. Never present this as 'the team can't do it' — frame it as 'here are three ways to succeed, here are their costs.' Senior AZ executives respect data-backed options, not process arguments.",
+    "development_tip_az": "Azərbaycan enerji və hökumətə bitişik layihələrdə sprint məlumatlarını icraçı dilinə çevirən 'Çatdırılma Güvən Hesabatı' şablonu hazırlayın: (1) Öhdəçilik götürülmüş həcm vs. sürət proqnozu (2) Keyfiyyət göstəriciləri (3) Adlandırılmış kompromislə üç ssenairi (4) Əsaslandırılmış Scrum Master tövsiyəsi.",
+    "london_delta": "A London Scrum Master in a similar situation would likely invoke Scrum values directly — transparency, inspect-and-adapt — and present the capacity data to the Product Owner expecting the system to self-correct through proper channels. In AZ's SOCAR context, a Ministry commitment made at governmental level is not 'just a stakeholder constraint to manage through the Product Owner' — it is a political reality with career consequences for the people in the room. The AZ-correct Scrum Master understands that reliability here means providing decision-grade data to the people with actual authority (VP + Product Owner jointly), not educating them about Scrum's commitment model.",
+    "az_institutions": [
+      "SOCAR",
+      "Enerji Nazirliyi"
+    ],
+    "tags": [
+      "scrum",
+      "delivery-commitment",
+      "government-constraint",
+      "risk-reporting",
+      "az-specific"
+    ]
+  },
+  {
+    "id": "prof-pm-scrum-s3-007",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.3,
+    "irt_b": 0.1,
+    "irt_c": 0.1,
+    "scenario_en": "You are Scrum Master at an AZ fintech company (90-person team, 4 Scrum teams). Sprint 7 of 10. You notice the following pattern over the last 3 sprints: (1) Two developers on Team Orion have submitted medical leave requests (separate, unrelated illnesses). (2) Team Orion's velocity dropped from 42 to 31 points. (3) In the last Sprint Retrospective, all 5 Team Orion members said 'everything is fine' and 'the sprint went normally' with minimal elaboration. (4) The team's lead developer, Rauf (8 years at the company), consistently stays 45-60 minutes late — but when you mention it, he says 'I just like finishing things properly.' (5) In AZ professional culture, admitting to being overwhelmed or burned out is associated with weakness and is rarely done publicly. You suspect the team is showing early burnout indicators. What is the most appropriate Scrum Master action?",
+    "scenario_az": "Siz Azərbaycan fintech şirkətinin Scrum Mastersiniz (90 nəfərlik komanda, 4 Scrum komandası). 10-nun 7-ci sprinti. Son 3 sprintdə aşağıdakı nümunəni fərq edirsiniz: (1) Orion Komandasından iki developer ayrı, əlaqəsiz xəstəliklər üzrə tibbi icazə müraciəti etdi. (2) Orion Komandasının sürəti 42-dən 31 pointə düşdü. (3) Son Sprint Retrospektivasında Orion Komandasının bütün 5 üzvü minimal izahatla 'hər şey yaxşıdır' və 'sprint normal getdi' dedi. (4) Komandanın aparıcı developeri Rauf (şirkətdə 8 il), ardıcıl olaraq 45-60 dəqiqə gec qalır — lakin bunu qeyd etdikdinizdə 'sadəcə işləri düzgün bitirməyi sevirəm' deyir. (5) Azərbaycan peşəkar mədəniyyətində həddindən artıq yüklənmə və ya tükənmişliyi etiraf etmək zəiflikle əlaqəlidir və nadir hallarda açıq şəkildə edilir. Siz komandaq erkən tükənmişlik göstəriciləri nümayiş etdirdiyindən şübhələnirsiniz. Ən uyğun Scrum Master hərəkəti nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "In the next Sprint Retrospective, directly ask: 'Is anyone feeling burned out or overwhelmed? Please be honest.' and create space for the team to speak.",
+        "text_az": "Növbəti Sprint Retrospektivasında birbaşa soruşun: 'Kiminsə özünü tükənmiş ya həddindən artıq yüklənmiş hiss edib-etmədiyini soruşun. Zəhmət olmasa dürüst olun' və komandanın danışması üçün yer yaradın."
+      },
+      {
+        "key": "B",
+        "text_en": "Escalate your concern about potential burnout to the HR department and ask them to conduct wellness interviews with Team Orion members.",
+        "text_az": "Potensial tükənmişlik narahatlığınızı İnsan Resursları departamentinə eskalasiya edin və onlardan Orion Komandasının üzvləriylə rifah müsahibələri aparmasını xahiş edin."
+      },
+      {
+        "key": "C",
+        "text_en": "Take three parallel actions: (1) Schedule individual 15-minute informal 1:1s with each team member framed as 'sprint support check-ins' — not wellness interviews — creating a low-stakes private channel; (2) Propose a workload review at the next Sprint Planning to examine task distribution and whether WIP limits are being respected; (3) Present the velocity trend and medical leave data (anonymized) to the Engineering Manager as a team health indicator requiring their attention — without diagnosing burnout.",
+        "text_az": "Üç paralel addım atın: sprint dəstəyi yoxlaması kimi çərçivəyə salınmış fərdi 1:1-lər planlaşdırın; Sprint Planlaşdırmasında iş yükü nəzərdən keçirilməsini təklif edin; anonimləşdirilmiş məlumatları Mühəndislik Menecerinə komanda sağlamlıq göstəricisi kimi təqdim edin."
+      },
+      {
+        "key": "D",
+        "text_en": "Reduce the next sprint's capacity allocation by 20% unilaterally to give the team breathing room, and explain to the Product Owner that this is a standard velocity recalibration.",
+        "text_az": "Komandaya nəfəs alma sahəsi vermək üçün növbəti sprintin tutum tahsisatını birtərəfli olaraq 20% azaldın və Məhsul Sahibinə bunun standart sürət yenidən kalibrasiyası olduğunu izah edin."
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct. In AZ professional culture, burnout admission is associated with weakness — asking 'is anyone burned out?' in a group retrospective setting will produce unanimous denial regardless of actual state. The Scrum Master's empathy skill here is recognizing that the signals are real (velocity drop, medical leaves, retrospective silence, late-staying lead), while understanding that the intervention must match the cultural context. The three-pronged approach in C works because: (1) Individual 1:1s create private space where the 'weakness' framing doesn't apply — people can be more honest one-on-one without audience. (2) A workload review in Sprint Planning addresses the structural causes without requiring anyone to self-disclose. (3) Escalating the objective data (velocity + medical leaves) to the Engineering Manager ensures someone with organizational authority is aware and can act — the Scrum Master alone cannot fix a burnout situation. A is wrong — public burnout admission in AZ teams will produce silence or performance. B is wrong — involving HR signals a formal problem and may increase the team's anxiety. D is wrong — unilateral capacity reduction without transparency is deceptive and the Product Owner will investigate.",
+    "feedback_az": "C düzgündür. Azərbaycan peşəkar mədəniyyətində tükənmişliyi etiraf etmək zəifliklə əlaqəlidir — qrup retrospektiva mühitində 'kiminsə tükənib-tükənmədiyini' soruşmaq real vəziyyətdən asılı olmayaraq yekdil inkar doğuracaq. Scrum Masterin empatiya bacarığı burada siqnalların real olduğunu qəbul etmək, müdaxilənin isə mədəni kontekstə uyğun olmasını təmin etməkdir.",
+    "development_tip_en": "For AZ teams, build sustainable pace signals into your sprint metrics dashboard — not just velocity. Track: (1) Unplanned overtime hours (team-reported, anonymous) (2) Story spillover rate (3) Bug rate trend (4) Sick day frequency. Present these as 'team health metrics' in Sprint Reviews alongside velocity. In AZ professional culture, objective data ('the metrics show X') creates permission to discuss workload without anyone having to self-identify as struggling. Make it structural, not personal.",
+    "development_tip_az": "Azərbaycan komandaları üçün sprint göstəriciləri idarəetmə panelinizə yalnız sürət deyil, davamlı temp siqnalları qurun. İzləyin: (1) Planlanmamış əlavə saat saatları (anonim komanda hesabatı) (2) Story daşma nisbəti (3) Xəta nisbəti trendi (4) Xəstəlik günü tezliyi. Bunları Sprint Review-larda sürətlə yanaşı 'komanda sağlamlığı göstəriciləri' kimi təqdim edin.",
+    "london_delta": "A London Agile Coach would typically address burnout signals through direct team discussion — creating psychological safety space in retrospectives, running team health checks (Spotify squad health model), or inviting the team to self-assess energy levels on a scale. These approaches work in UK tech culture where discussing workload and stress is normalized and expected. In AZ professional settings, especially where a senior lead (Rauf, 8 years) is publicly modeling 'I'm fine, I just like finishing things', direct burnout discussion will produce performance compliance, not honest disclosure. The AZ-correct Scrum Master reads the structural signals and creates structural solutions — private channels, anonymized data, workload mechanics — rather than asking for cultural vulnerability the team is not positioned to give.",
+    "az_institutions": [
+      "AZ fintech"
+    ],
+    "tags": [
+      "scrum",
+      "team-health",
+      "burnout",
+      "sustainable-pace",
+      "az-culture",
+      "az-specific"
+    ]
+  },
+  {
+    "id": "prof-pm-scrum-s3-008",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 1.6,
+    "irt_b": 1.0,
+    "irt_c": 0.0,
+    "scenario_en": "You are Scrum Master on the Baku Metro IT modernization project. The project is a 3-year fixed-price government contract (Year 2, Month 7). The contract specifies: 'All passenger-facing systems must comply with current technical standards of the State Committee for Urban Transport (SCUT) at time of delivery.' Mid-sprint, a government gazette publishes SCUT Regulation 18/2026, effective immediately: all public transport payment systems must support biometric authentication (fingerprint + face recognition) as an alternative to card-only payment. This was not in the original contract scope. The Baku Metro Director (client signatory) calls your Product Owner and says: 'This is a government regulation. We need it in the system. The contract says we comply with current standards.' Your architecture team estimates 4-6 months of additional work. The original delivery date is 5 months away. Legal says the contract language is ambiguous — 'current standards at time of delivery' could mean at contract signing OR at go-live. Describe your response as Scrum Master: what specific actions do you take, in what order, and why?",
+    "scenario_az": "Siz Bakı Metro İT modernizasiya layihəsinin Scrum Mastersiniz. Layihə 3 illik sabit qiymətli dövlət müqaviləsidir (2-ci il, 7-ci ay). Müqavilədə göstərilir: 'Bütün sərnişinlərə yönəlik sistemlər çatdırılma zamanı Şəhər Nəqliyyatı üzrə Dövlət Komitəsinin (ŞNDK) cari texniki standartlarına uyğun olmalıdır.' Sprint ortasında hökumət qəzeti ŞNDK 18/2026 Qaydalarını dərc edir, dərhal qüvvəyə girir: bütün ictimai nəqliyyat ödəniş sistemləri yalnız kart ödənişinə alternativ olaraq biometrik autentifikasiyanı (barmaq izi + üz tanıma) dəstəkləməlidir. Bu orijinal müqavilə həcmində yox idi. Bakı Metro Direktoru (müştəri imzalayanı) Məhsul Sahibinizi arayıb deyir: 'Bu dövlət qaydalarıdır. Sistemdə olmasına ehtiyacımız var. Müqavilədə cari standartlara uyğunluq yazılıb.' Arxitektura komandanız 4-6 aylıq əlavə iş hesablayır. Orijinal çatdırılma tarixi 5 ay uzaqdadır. Hüquqi şöbə müqavilə dilinin qeyri-müəyyən olduğunu deyir — 'çatdırılma zamanı cari standartlar' müqavilə imzalanarkən VƏ YA istifadəyə verilərkən mənasına gələ bilər. Scrum Master kimi cavabınızı təsvir edin: hansı konkret addımları, hansı ardıcıllıqla atırsınız və niyə?",
+    "options": [],
+    "correct_answer": "open_ended",
+    "feedback_en": "A high-scoring response demonstrates: (1) IMMEDIATE TRIAGE — Sprint work does not stop; the Scrum Master separates 'legal/contractual question' from 'sprint execution question' immediately. The team continues the current sprint while the contract issue is resolved in parallel. (2) CONTRACT ANALYSIS BEFORE ACTION — The legal ambiguity is the pivot point. The Scrum Master facilitates getting Legal, the Product Owner, and the Baku Metro Director's team aligned on contract interpretation before any scope commitment is made. The answer to 'what do we build?' depends entirely on the contract reading. (3) THREE-TRACK PARALLEL RESPONSE — Track A: Legal/Commercial (contract interpretation + change order process). Track B: Architecture (biometric integration feasibility analysis, not implementation). Track C: Sprint (protect current sprint commitment, don't add scope mid-sprint). (4) CHANGE ORDER AS THE PRIMARY INSTRUMENT — If 'current standards at go-live' is the interpretation, this is a legitimate scope change requiring a formal change order with budget and timeline adjustment. The Scrum Master facilitates this process, not the lawyer. (5) MVP SCOPING — Even if biometric auth is required, 'support biometric authentication' has a spectrum: minimal compliance (integration with existing SCUT-approved biometric terminal providers) vs. full proprietary implementation. The Scrum Master ensures this scoping decision happens with business decision-makers, not the dev team. (6) COMMUNICATION PROTOCOL — The Baku Metro Director called the Product Owner directly. The Scrum Master's job is to ensure the Product Owner does not make scope commitments verbally to the Director without formal change order backing — a common AZ project failure mode where verbal agreement overrides written process.",
+    "feedback_az": "Yüksək ballı cavab nümayiş etdirir: (1) Dərhal triaj — Sprint işi dayanmır; Scrum Master 'hüquqi/müqavilə sualı'nı 'sprint icra sualı'ndan dərhal ayırır. (2) Hərəkətdən əvvəl müqavilə təhlili — Hüquqi qeyri-müəyyənlik əsas nöqtədir. (3) Üç trekli paralel cavab — Trек А: Hüquqi/Kommersiya. Trek B: Arxitektura. Trek C: Sprint. (4) Dəyişiklik sifariş əsas alət kimi. (5) MVP həcmi müəyyənləşdirməsi. (6) Kommunikasiya protokolu — Direktor Məhsul Sahibinə birbaşa zəng etdi; rəsmi dəyişiklik sifarişi olmadan şifahi öhdəçilik verilməməlidir.",
+    "development_tip_en": "In AZ fixed-price government contracts, insert a 'Regulatory Change Protocol' clause at contract inception: any new regulation published after contract signing that affects technical scope triggers an automatic 30-day change order evaluation period. This converts regulatory ambiguity from a crisis into a defined process. If the contract is already signed without this clause (as in this scenario), the Scrum Master's most valuable skill is knowing which conversations to facilitate and in what order — Legal first, then Commercial, then Technical, never the reverse.",
+    "development_tip_az": "Azərbaycan sabit qiymətli dövlət müqavilələrində müqavilə başlanğıcında 'Tənzimləyici Dəyişiklik Protokolu' bəndi əlavə edin: müqavilə imzalandıqdan sonra texniki həcmə təsir edən hər hansı yeni qayda avtomatik 30 günlük dəyişiklik sifarişi qiymətləndirmə dövrünü işə salır.",
+    "london_delta": "A London Agile Coach would likely frame this as a Product Owner decision and facilitate a backlog refinement session to estimate the biometric work, then surface the trade-off to the Product Owner: add scope and extend timeline, or descope something else. This is the correct framework in a commercial context where contracts are negotiated between parties with roughly equal legal sophistication. In AZ government contracts, a phone call from the Baku Metro Director to the Product Owner carries institutional authority that can override written process in practice — the Scrum Master who doesn't recognize this will find that 'the team agreed to the scope verbally' becomes the de facto contract. The AZ-correct response makes the legal/commercial resolution the prerequisite for any technical decision.",
+    "az_institutions": [
+      "Bakı Metro",
+      "ŞNDK"
+    ],
+    "tags": [
+      "scrum",
+      "government-contract",
+      "regulatory-change",
+      "scope-management",
+      "fixed-price",
+      "az-specific"
+    ]
+  },
+  {
+    "id": "prof-pm-scrum-s3-009",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 1.5,
+    "irt_b": 0.9,
+    "irt_c": 0.0,
+    "scenario_en": "You have just been appointed Scrum Master for SOCAR's largest digital transformation: migrating the legacy Enterprise Asset Management (EAM) system (built over 11 years, 340,000 lines of COBOL and Oracle Forms) to a modern microservices architecture. The program has 6 teams, 52 people, 18-month timeline. The VP of Engineering, Ramiz Muradov, has 30 years at SOCAR — starting as an offshore engineer, becoming EAM's original architect. He has publicly called agile 'a methodology for startups that don't know what they want' and waterfall 'the only responsible approach for safety-critical systems.' He is the technical authority whose approval is required for every architecture decision. He has the Deputy CEO's ear. You have been hired by the CISO and the CDO (Chief Digital Officer) who want agile transformation — but Ramiz reports to neither of them. Describe your leadership approach for the first 90 days as Scrum Master. What specific actions do you take, what relationships do you build, what do you not do, and why?",
+    "scenario_az": "Siz SOCARın ən böyük rəqəmsal çevrilmə üçün Scrum Master təyin edildiniz: köhnə Müəssisə Aktivlərinin İdarəsi (MAİ) sistemini (11 il ərzində qurulmuş, 340.000 sətir COBOL və Oracle Forms) müasir mikro-xidmət arxitekturasına köçürmək. Proqramda 6 komanda, 52 nəfər, 18 aylıq müddət var. Mühəndislik Vitse-Prezidenti Ramiz Muradov SOCAR-da 30 ildir — offshore mühəndisi kimi başlayıb, MAİ-nin orijinal arxitektinə çevrilib. O, agilı 'nə istədiklərini bilməyən startaplar üçün metodologiya' adlandırdı və waterfall'u 'təhlükəsizlikə kritik sistemlər üçün yeganə məsuliyyətli yanaşma' kimi ictimaiyyətə elan etdi. O, hər arxitektura qərarı üçün təsdiqi tələb olunan texniki nüfuzdur. Deputy CEO-nun qulağındadır. Siz çevik transformasiya istəyən CISO və CDO (Baş Rəqəmsal Direktor) tərəfindən işə götürüldünüz — lakin Ramiz nə onlara hesabat verir. Scrum Master kimi ilk 90 günün liderlik yanaşmasını təsvir edin. Hansı konkret addımları atırsınız, hansı münasibətlər qurursunuz, nə etmirsiniz və niyə?",
+    "options": [],
+    "correct_answer": "open_ended",
+    "feedback_en": "A high-scoring response demonstrates: (1) FRAMING DISCIPLINE — Never call it 'agile transformation' internally. Ramiz's public framing of agile as 'startup methodology' is a political position, not ignorance. The Scrum Master reframes the program as 'engineering rigor with iterative delivery checkpoints' — preserving Ramiz's waterfall vocabulary while introducing sprint mechanics under different names. (2) RAMIZ AS ALLY, NOT OBSTACLE — The 90-day plan prioritizes a private relationship with Ramiz above all stakeholder management. Goal: understand his specific fears (safety criticality, documentation, offshore dependency, team capability). His 11-year EAM architecture knowledge is irreplaceable. Make him a design authority, not a gatekeeper. (3) FIRST 30 DAYS: LISTEN, DON'T TEACH — No agile workshops, no Scrum introductions, no methodology presentations to Ramiz or his team. Instead: (a) Request a 'system knowledge transfer' with Ramiz as teacher — interview him about EAM's architecture decisions, failure modes, safety-critical paths. (b) Shadow the existing engineering ceremonies (whatever they are) to understand the team's current rhythm. (c) Map the informal authority structure — who does the team actually go to for decisions when Ramiz is unavailable? (4) DAYS 31-60: INTRODUCE MECHANICS WITHOUT LABELS — Propose 'monthly delivery checkpoint reviews' (Sprint Reviews without the name). Propose 'engineering stand-ups for cross-team dependency tracking' (Daily Scrums without the name). Frame all as extensions of SOCAR's existing engineering governance, not replacements. (5) DAYS 61-90: FIRST SPRINT FRAMED AS PILOT — Propose a 'controlled technical pilot': one team, one 4-week delivery cycle, full documentation, safety checklist. Invite Ramiz to define the acceptance criteria. Success of the pilot is Ramiz's credibility win, not the Scrum Master's. (6) WHAT NOT TO DO — Never challenge Ramiz publicly. Never cite Scrum literature to him. Never go around him to the CDO/CISO for decisions in his domain. Never promise outcomes — only process commitments. (7) AZ-SPECIFIC LEADERSHIP INSIGHT — In AZ corporate culture, a 30-year veteran's public position is a commitment that cannot be reversed without face loss. The Scrum Master's job is to create conditions where Ramiz can evolve his position privately (by experiencing successful sprint mechanics) before any public acknowledgment is expected.",
+    "feedback_az": "Yüksək ballı cavab nümayiş etdirir: (1) Çərçivə intizamı — 'Çevik transformasiya'nı daxili olaraq heç vaxt belə adlandırmayın. (2) Ramiz müttəfiq kimi — 90 günlük plan bütün maraqlı tərəf idarəsindən üstün olan Ramizlə özəl münasibəti prioritetləşdirir. (3) İlk 30 gün: öyrənin, öyrətməyin. (4) 31-60-cı günlər: etiketlər olmadan mexanikalar tətbiq edin. (5) 61-90-cı günlər: pilot kimi çərçivəyə salınmış ilk sprint. (6) Nə etməməli — Ramizi heç vaxt açıq şəkildə çağırışa salmayın. (7) Azərbaycana xas liderlik anlayışı — 30 illik veteranın açıq mövqeyi üz itkisi olmadan geri götürülə bilməyən öhdəçilikdir.",
+    "development_tip_en": "When leading agile transformation in AZ organizations with long-tenured technical authorities, study the 'Judo approach': use the existing system's weight to move in the direction you want. Ramiz's waterfall strength — rigorous documentation, formal acceptance criteria, stage gates — can be preserved inside sprint mechanics. A sprint with a signed technical acceptance document is more 'waterfall-compatible' than most AZ engineering managers expect. Your first 90 days as Scrum Master in this context is primarily a relationship-building and trust-earning mandate, not a methodology introduction mandate.",
+    "development_tip_az": "Uzun müddətli texniki nüfuzları olan Azərbaycan təşkilatlarında çevik transformasiyaya rəhbərlik edərkən 'Cüdo yanaşmasını' öyrənin: mövcud sistemin ağırlığından istifadə edərək istədiyiniz istiqamətə hərəkət edin. Ramizin waterfall gücü — ciddi sənədləşmə, rəsmi qəbul meyarları, mərhələ qapıları — sprint mexanizmaları daxilində qorunub saxlanıla bilər.",
+    "london_delta": "A London Agile Coach entering a legacy-system transformation would typically run a series of agile awareness workshops, present the business case for iterative delivery to senior leadership, and build a coalition by starting with willing teams. In a UK technology company, 'agile transformation' is a recognized strategic initiative that senior leaders are expected to engage with on its own terms. In SOCAR's context, Ramiz Muradov's 30-year tenure and Deputy CEO relationship means he has survived multiple 'transformation' initiatives — he knows that methodology advocates usually leave before the consequences of their decisions become visible. The AZ-correct Scrum Master understands that Ramiz's resistance is not ignorance but institutional memory, and that the fastest path to agile delivery is making Ramiz the author of the first successful sprint — not its opponent.",
+    "az_institutions": [
+      "SOCAR"
+    ],
+    "tags": [
+      "scrum",
+      "agile-transformation",
+      "change-management",
+      "seniority-culture",
+      "legacy-systems",
+      "az-specific"
+    ]
+  },
+  {
+    "id": "prof-pm-scrum-s3-010",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency_slug": "communication",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.3,
+    "irt_b": 0.15,
+    "irt_c": 0.1,
+    "scenario_en": "You are Scrum Master at an AZ fintech company preparing for a board presentation. The CTO tells you: 'The board meets in 3 weeks. They want to see our delivery roadmap. They're bankers — they don't speak agile. Half are 55+ and expect a Gantt chart.' Your team runs 2-week sprints, uses Jira, and your roadmap is a prioritized backlog with quarterly themes. The Product Owner's backlog has 6 epics across Q2-Q3. The board expects: feature names, delivery dates, dependencies, and a visual timeline. You have 3 days to prepare the communication artifact. What is the most effective approach?",
+    "scenario_az": "Siz lövhə prezentasiyasına hazırlanan Azərbaycan fintech şirkətinin Scrum Mastersiniz. CTO deyir: 'Direktorlar şurası 3 həftədən sonra toplanır. Çatdırılma yol xəritəmizi görmək istəyirlər. Onlar bankçılar — çevik dil bilmirlər. Yarısı 55+ yaşındadır və Gantt diaqramı gözləyir.' Komandanız 2 həftəlik sprintlər keçirir, Jira istifadə edir və yol xəritəniz rüblük mövzularla prioritetləşdirilmiş backlogdur. Məhsul Sahibinin backlog'unda Q2-Q3-də 6 epik var. Direktorlar şurası gözləyir: xüsusiyyət adları, çatdırılma tarixləri, asılılıqlar və vizual zaman çizelgesi. Kommunikasiya artefaktını hazırlamaq üçün 3 gününüz var. Ən effektiv yanaşma nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Build an actual Gantt chart in Microsoft Project with sprint-level task breakdowns, assigning specific dates to each user story based on current velocity.",
+        "text_az": "Microsoft Project-də sprint səviyyəli tapşırıq parçalanması ilə həqiqi Gantt diaqramı qurun, cari sürətə əsaslanaraq hər user story-yə konkret tarixlər təyin edin."
+      },
+      {
+        "key": "B",
+        "text_en": "Present the Jira roadmap directly on screen during the board meeting, explaining that in agile, dates are estimates and the backlog is the source of truth. Offer to walk the board through the sprint structure.",
+        "text_az": "Lövhə iclası zamanı Jira yol xəritəsini birbaşa ekranda göstərin, çeviklikdə tarixlərin təxmini olduğunu və backlogun həqiqətin mənbəyi olduğunu izah edin. Direktorlar şurasına sprint strukturu vasitəsilə rəhbərlik etməyi təklif edin."
+      },
+      {
+        "key": "C",
+        "text_en": "Create a 'Delivery Timeline' slide in PowerPoint: horizontal swimlane layout with Q2/Q3 columns, 6 epic names as rows, shaded bands showing delivery windows (not exact dates), dependency arrows between epics, and a confidence indicator (High/Medium/Low) per epic — with a one-line footnote: 'Delivery windows based on current sprint velocity; dates confirmed at quarterly review.'",
+        "text_az": "PowerPoint-də 'Çatdırılma Zaman Çizelgesi' slayd yaradın: Q2/Q3 sütunları ilə üfüqi swim lane düzeni, sətir kimi 6 epik adı, çatdırılma pəncərələrini göstərən kölgəli zolaqlar (dəqiq tarixlər deyil), epiklər arasında asılılıq oxları və hər epik üçün güvən göstəricisi (Yüksək/Orta/Aşağı) — bir sətirlik qeydlə: 'Çatdırılma pəncərələri cari sprint sürətinə əsaslanır; tarixlər rüblük baxışda təsdiqlənir.'"
+      },
+      {
+        "key": "D",
+        "text_en": "Tell the CTO that generating a Gantt chart misrepresents agile delivery and creates false commitment. Propose that the board receives a 'Product Strategy Update' with themes and outcomes instead of a timeline.",
+        "text_az": "CTO-ya bildirin ki, Gantt diaqramı yaratmaq çevik çatdırılmanı yanlış təmsil edir və yanlış öhdəçilik yaradır. Direktorlar şurasının zaman çizelgesi əvəzinə mövzular və nəticələrlə 'Məhsul Strategiyası Yeniləmə'si almasını təklif edin."
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct. The Scrum Master's communication leadership here is creating a bridge artifact — one that satisfies the board's mental model (visual timeline, named deliverables, dependencies) without creating false date commitments that the team cannot honor. The swimlane PowerPoint with delivery windows (not exact dates) and a confidence indicator is precisely this bridge: it looks like a Gantt to a banker but doesn't commit the team to sprint-level date precision. The footnote about 'quarterly review confirmation' manages expectations professionally. This is a common and valuable professional competency — translating agile delivery visibility into executive-compatible formats. A is wrong — building a real Gantt with story-level dates from velocity creates commitments the team never made and will be held to. B is wrong — presenting Jira to a board of 55+ bankers and explaining story points will be perceived as disrespectful of their time and mental model. D is wrong — telling the CTO that the board's request is methodologically wrong is a category error; the CTO is asking for communication design help, not a Scrum education. The 'product outcomes' framing, while theoretically sound, will not satisfy a board expecting a timeline.",
+    "feedback_az": "C düzgündür. Burada Scrum Masterin kommunikasiya liderliyi körpü artefakt yaratmaqdır — direktorlar şurasının mental modelini (vizual zaman çizelgesi, adlandırılmış çatdırılabilənlər, asılılıqlar) komandanın yerinə yetirə bilməyəcəyi yanlış tarix öhdəçilikləri yaratmadan ödəyən. Çatdırılma pəncərələri (dəqiq tarixlər deyil) və güvən göstəricisi ilə swim lane PowerPoint məhz bu körpüdür.",
+    "development_tip_en": "Build a permanent 'Board Communication Kit' for your agile program: (1) A swimlane delivery timeline template (PowerPoint) updatable in 30 minutes before any board meeting. (2) A standard 'velocity-to-milestone' translation formula: current velocity → epic size → delivery window. (3) A confidence calibration guide: High = committed sprint content, Medium = planned but not refined, Low = theme-level only. In AZ fintech and banking contexts, boards operate on quarterly governance cycles — your communication artifacts should mirror this cadence, not your sprint cadence.",
+    "development_tip_az": "Çevik proqramınız üçün daimi 'Direktorlar Şurası Kommunikasiya Dəsti' qurun: (1) Hər direktorlar şurası iclasından əvvəl 30 dəqiqəyə yenilənə bilən swim lane çatdırılma zaman çizelgesi şablonu (PowerPoint). (2) Standart 'sürət-milestone' tərcümə formulası. (3) Güvən kalibrasiya bələdçisi. Azərbaycan fintech və bank kontekstlərində direktorlar şuraları rüblük idarəetmə dövrləri ilə işləyir.",
+    "london_delta": "A London Scrum Master in a digital-native fintech would likely push back on the Gantt request and successfully negotiate an OKR or outcome-based roadmap with the board — because UK fintech boards increasingly include digital-fluent members who understand iterative delivery. In AZ, the board composition described (55+, banking background, Gantt expectations) reflects a generation of executives whose governance framework was built on project management standards from the 1990s-2000s. Refusing to produce a timeline-compatible artifact because it's 'not agile' would be perceived as the Scrum Master prioritizing methodology purity over business communication — a career-limiting position. The AZ-correct Scrum Master code-switches fluently between sprint reality and board-compatible presentation language.",
+    "az_institutions": [
+      "AZ fintech",
+      "Kapital Bank"
+    ],
+    "tags": [
+      "scrum",
+      "board-communication",
+      "roadmap",
+      "executive-reporting",
+      "az-corporate",
+      "az-specific"
+    ]
+  }
+]

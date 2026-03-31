@@ -53,20 +53,20 @@ export function ImpactMetrics({ data }: ImpactMetricsProps) {
       variants={stagger}
       initial="hidden"
       animate="visible"
-      className="grid grid-cols-3 gap-3"
+      className="grid grid-cols-3 gap-2 sm:gap-3"
     >
       {metrics.map(({ icon: Icon, value, label, color }) => (
         <motion.div
           key={label}
           variants={item}
-          className="rounded-xl border border-border bg-card p-3 text-center"
+          className="rounded-xl border border-border bg-card p-2 sm:p-3 text-center"
         >
           <Icon
             className={cn("size-5 mx-auto mb-1.5", color)}
             aria-hidden="true"
           />
-          <p className="text-xl font-bold tabular-nums text-foreground">{value}</p>
-          <p className="text-xs text-muted-foreground mt-0.5 leading-tight">{label}</p>
+          <p className="text-lg sm:text-xl font-bold tabular-nums text-foreground">{value}</p>
+          <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 leading-tight">{label}</p>
         </motion.div>
       ))}
     </motion.div>

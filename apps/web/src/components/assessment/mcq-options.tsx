@@ -38,7 +38,7 @@ export function McqOptions({
             aria-pressed={isSelected}
             onClick={() => onSelect(option.key)}
             className={cn(
-              "w-full flex items-center gap-3 rounded-xl border-2 p-4 text-left",
+              "w-full flex items-center gap-3 rounded-xl border-2 p-4 text-left min-h-[52px]",
               "transition-all duration-150",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               "disabled:opacity-50 disabled:cursor-not-allowed",

@@ -86,9 +86,9 @@ class RegistrationResponse(BaseModel):
     registered_at: datetime
     checked_in_at: datetime | None = None
     check_in_code: str | None = None
-    coordinator_rating: int | None = None
+    coordinator_rating: float | None = None
     coordinator_feedback: str | None = None
-    volunteer_rating: int | None = None
+    volunteer_rating: float | None = None
     volunteer_feedback: str | None = None
 
 
@@ -113,24 +113,24 @@ class EventAttendeeRow(BaseModel):
 
 class CoordinatorRatingRequest(BaseModel):
     registration_id: str
-    rating: int
+    rating: float
     feedback: str | None = None
 
     @field_validator("rating")
     @classmethod
-    def validate_rating(cls, v: int) -> int:
-        if not 1 <= v <= 5:
+    def validate_rating(cls, v: float) -> float:
+        if not 1.0 <= v <= 5.0:
             raise ValueError("rating must be between 1 and 5")
         return v
 
 
 class VolunteerRatingRequest(BaseModel):
-    rating: int
+    rating: float
     feedback: str | None = None
 
     @field_validator("rating")
     @classmethod
-    def validate_rating(cls, v: int) -> int:
-        if not 1 <= v <= 5:
+    def validate_rating(cls, v: float) -> float:
+        if not 1.0 <= v <= 5.0:
             raise ValueError("rating must be between 1 and 5")
         return v

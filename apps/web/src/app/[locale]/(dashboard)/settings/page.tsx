@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { TopBar } from "@/components/layout/top-bar";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
-import { useProfile, useUpdateProfile } from "@/hooks/queries";
+import { useProfile, useUpdateProfile, useSubscription } from "@/hooks/queries";
 import { useAuthToken } from "@/hooks/queries";
 import { apiFetch } from "@/lib/api/client";
 import { createClient } from "@/lib/supabase/client";
@@ -18,6 +18,11 @@ export default function SettingsPage() {
   const { t } = useTranslation();
   const getToken = useAuthToken();
 
+  // Subscription
+  const { status: subStatus, daysRemaining, isTrial, isExpired, trialEndsAt, subscriptionEndsAt, isLoading: subLoading } = useSubscription();
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+
   // Profile section state
   const { data: profile, isLoading: profileLoading } = useProfile();
   const updateProfile = useUpdateProfile();
@@ -26,11 +31,18 @@ export default function SettingsPage() {
   const [profileSaved, setProfileSaved] = useState(false);
   const [profileError, setProfileError] = useState<string | null>(null);
 
-  // AURA visibility state
+  // AURA visibility state — seeded from API, not hardcoded to "public"
   const [visibility, setVisibility] = useState<VisibilityOption>("public");
+  const [visibilityFetched, setVisibilityFetched] = useState(false);
   const [visibilitySaved, setVisibilitySaved] = useState(false);
   const [visibilityError, setVisibilityError] = useState<string | null>(null);
   const [visibilityLoading, setVisibilityLoading] = useState(false);
+
+  // Talent search opt-in state (visible_to_orgs)
+  const [visibleToOrgs, setVisibleToOrgs] = useState(false);
+  const [orgVisibilitySaved, setOrgVisibilitySaved] = useState(false);
+  const [orgVisibilityError, setOrgVisibilityError] = useState<string | null>(null);
+  const [orgVisibilityLoading, setOrgVisibilityLoading] = useState(false);
 
   // Sign out state
   const [signingOut, setSigningOut] = useState(false);
@@ -41,13 +53,57 @@ export default function SettingsPage() {
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
-  // Seed form fields when profile loads
+  // Seed form fields when profile loads (including visible_to_orgs)
   useEffect(() => {
     if (profile) {
       setDisplayName(profile.display_name ?? "");
       setLocation(profile.location ?? "");
+      setVisibleToOrgs((profile as Record<string, unknown>).visible_to_orgs as boolean ?? false);
     }
   }, [profile]);
+
+  // Fetch current AURA visibility from API — prevents silent override (Leyla simulation P0)
+  useEffect(() => {
+    if (visibilityFetched) return;
+    getToken().then(async (token) => {
+      if (!token) return;
+      try {
+        const res = await apiFetch<{ visibility: VisibilityOption }>("/api/aura/me/visibility", { token });
+        if (res?.visibility) {
+          setVisibility(res.visibility);
+        }
+      } catch {
+        // Not critical — defaults to "public" if fetch fails (user can still save)
+      } finally {
+        setVisibilityFetched(true);
+      }
+    });
+  }, [getToken, visibilityFetched]);
+
+  async function handleSubscribeClick() {
+    setCheckoutError(null);
+    setCheckoutLoading(true);
+    try {
+      const token = await getToken();
+      if (!token) { setCheckoutError(t("error.unauthorized")); return; }
+      const res = await apiFetch<{ checkout_url: string }>("/api/subscription/create-checkout", {
+        method: "POST",
+        token,
+      });
+      if (res?.checkout_url) {
+        window.location.href = res.checkout_url;
+      }
+    } catch (err: unknown) {
+      const status = (err as { status?: number })?.status;
+      if (status === 503) {
+        setCheckoutError(t("subscription.setupInProgress", "Subscription setup in progress — contact us to upgrade early."));
+      } else {
+        setCheckoutError(t("subscription.checkoutError", "Could not start checkout — please try again."));
+      }
+    } finally {
+      setCheckoutLoading(false);
+    }
+  }
 
   async function handleSaveProfile(e: React.FormEvent) {
     e.preventDefault();
@@ -89,6 +145,22 @@ export default function SettingsPage() {
       setVisibilityError(err instanceof Error ? err.message : t("error.generic"));
     } finally {
       setVisibilityLoading(false);
+    }
+  }
+
+  async function handleSaveOrgVisibility(e: React.FormEvent) {
+    e.preventDefault();
+    setOrgVisibilityError(null);
+    setOrgVisibilitySaved(false);
+    setOrgVisibilityLoading(true);
+    try {
+      await updateProfile.mutateAsync({ visible_to_orgs: visibleToOrgs } as Parameters<typeof updateProfile.mutateAsync>[0]);
+      setOrgVisibilitySaved(true);
+      setTimeout(() => setOrgVisibilitySaved(false), 3000);
+    } catch (err) {
+      setOrgVisibilityError(err instanceof Error ? err.message : t("error.generic"));
+    } finally {
+      setOrgVisibilityLoading(false);
     }
   }
 
@@ -242,6 +314,53 @@ export default function SettingsPage() {
           </form>
         </section>
 
+        {/* Talent Search Visibility (visible_to_orgs) — Leyla simulation P0: was only settable at onboarding */}
+        <section className="rounded-xl border border-border bg-card p-5">
+          <h2 className="mb-1 text-base font-semibold">
+            {t("settings.talentSearch", { defaultValue: "Talent Search" })}
+          </h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            {t("settings.talentSearchDesc", { defaultValue: "Control whether organizations can find you in their talent search." })}
+          </p>
+          <form onSubmit={handleSaveOrgVisibility} className="space-y-3">
+            <label className={`flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition-colors ${visibleToOrgs ? "border-primary bg-primary/5" : "border-border"}`}>
+              <input
+                type="checkbox"
+                checked={visibleToOrgs}
+                onChange={(e) => setVisibleToOrgs(e.target.checked)}
+                className="accent-primary h-4 w-4"
+              />
+              <div>
+                <span className="text-sm font-medium">
+                  {t("settings.visibleToOrgs", { defaultValue: "Appear in organization talent search" })}
+                </span>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {t("settings.visibleToOrgsDesc", { defaultValue: "Organizations can find your profile and send introduction requests." })}
+                </p>
+              </div>
+            </label>
+
+            {orgVisibilityError && (
+              <p className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                {orgVisibilityError}
+              </p>
+            )}
+
+            <div className="flex items-center gap-3 pt-1">
+              <button
+                type="submit"
+                disabled={orgVisibilityLoading}
+                className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+              >
+                {orgVisibilityLoading ? t("loading.saving") : t("settings.saveChanges")}
+              </button>
+              {orgVisibilitySaved && (
+                <span className="text-sm text-green-500">{t("settings.saved")}</span>
+              )}
+            </div>
+          </form>
+        </section>
+
         {/* Language Section */}
         <section className="rounded-xl border border-border bg-card p-5">
           <h2 className="mb-4 text-base font-semibold">{t("settings.language")}</h2>
@@ -249,6 +368,95 @@ export default function SettingsPage() {
             <p className="text-sm text-muted-foreground">{t("settings.interfaceLanguage")}</p>
             <LanguageSwitcher />
           </div>
+        </section>
+
+        {/* Subscription Section */}
+        <section className="rounded-xl border border-border bg-card p-5 space-y-4">
+          <h2 className="text-base font-semibold">{t("subscription.currentPlan")}</h2>
+
+          {subLoading ? (
+            <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
+          ) : (
+            <div className="space-y-3">
+              {/* Plan badge */}
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">{t("subscription.currentPlan")}</span>
+                <span
+                  className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                    isExpired
+                      ? "bg-destructive/10 text-destructive"
+                      : isTrial
+                      ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200"
+                      : "bg-primary/10 text-primary"
+                  }`}
+                >
+                  {subStatus ? t(`subscription.${subStatus}`) : "—"}
+                </span>
+              </div>
+
+              {/* Days remaining */}
+              {(isTrial || subStatus === "active") && daysRemaining !== undefined && (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    {isTrial ? t("subscription.trialEndDate") : t("subscription.renewsOn")}
+                  </span>
+                  <span className="text-sm font-medium">
+                    {daysRemaining === 1
+                      ? t("subscription.daysRemaining", { count: daysRemaining })
+                      : t("subscription.daysRemainingPlural", { count: daysRemaining })}
+                  </span>
+                </div>
+              )}
+
+              {/* End date */}
+              {isTrial && trialEndsAt && (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">{t("subscription.expiresOn")}</span>
+                  <span className="text-sm font-medium">
+                    {new Date(trialEndsAt).toLocaleDateString()}
+                  </span>
+                </div>
+              )}
+              {subStatus === "active" && subscriptionEndsAt && (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">{t("subscription.renewsOn")}</span>
+                  <span className="text-sm font-medium">
+                    {new Date(subscriptionEndsAt).toLocaleDateString()}
+                  </span>
+                </div>
+              )}
+
+              {/* Subscribe / Manage button */}
+              <div className="pt-1 space-y-2">
+                {(isTrial || isExpired) ? (
+                  <button
+                    type="button"
+                    onClick={handleSubscribeClick}
+                    disabled={checkoutLoading}
+                    className="h-10 w-full rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {checkoutLoading
+                      ? t("subscription.redirecting", "Redirecting to checkout…")
+                      : isExpired
+                        ? t("subscription.resubscribe", "Resubscribe")
+                        : t("subscription.upgradeNow", "Upgrade to Pro")}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    disabled
+                    title={t("subscription.comingSoon")}
+                    className="h-10 w-full rounded-md border border-border bg-muted px-4 text-sm font-medium text-muted-foreground disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {t("subscription.managePlan")} — {t("subscription.comingSoon")}
+                  </button>
+                )}
+                {checkoutError && (
+                  <p className="text-xs text-destructive">{checkoutError}</p>
+                )}
+              </div>
+            </div>
+          )}
         </section>
 
         {/* Account Actions / Danger Zone */}
@@ -266,7 +474,7 @@ export default function SettingsPage() {
               disabled={signingOut}
               className="h-9 rounded-md border border-destructive px-3 text-sm font-medium text-destructive transition-colors hover:bg-destructive hover:text-destructive-foreground disabled:opacity-50"
             >
-              {signingOut ? t("loading.saving") : t("settings.signOut")}
+              {signingOut ? t("settings.signingOut", { defaultValue: "Signing out..." }) : t("settings.signOut")}
             </button>
           </div>
 

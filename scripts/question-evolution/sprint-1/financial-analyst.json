@@ -1,0 +1,99 @@
+{
+  "profession": "Financial Analyst / Risk Officer",
+  "agent_id": "a997746fb958aab30",
+  "sprint": 1,
+  "question_count": 10,
+  "generation_strategy": "```\n\n---\n\nGeneration Strategy (3 lines):\n\n1. **Azerbaijan-first anchoring**: Every scenario is grounded in the local context — SOCAR subsidiaries, CBA regulations, manat devaluation history (2015 reference), local bank structures — making the questions immediately recognizable and relevant to AZ-based financial professionals rather than generic Western finance cases.\n\n2. **Ethical load balanced across difficulty**: The three hardest questions (prof-fin-003, prof-fin-005, prof-fin-007) combine technical depth with professional integrity pressure — DCF model errors under FX exposure, CFO pressure to shade board reporting, and the 2015 devaluation response — testing whether candidates can reason under real-world constraints, not just recall formulas.\n\n3. **IRT calibration logic**: Easy questions test procedural competence (what to do when you find a data error, how to inherit a model) with discriminating but forgiving parameters (irt_a 0.8–1.0, irt_b −1.5 to −1.2); hard open-ended questions use high discrimination and high difficulty (irt_a 2.1–2.3, irt_b 1.8–2.2) to separate analysts who understand risk frameworks from those who can only name them.",
+  "questions": [
+    {
+      "id": "prof-fin-001",
+      "competency_slug": "reliability",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 1.0,
+      "irt_b": -1.5,
+      "scenario_key": "You are a financial analyst at a SOCAR subsidiary preparing the monthly variance report. The deadlin"
+    },
+    {
+      "id": "prof-fin-002",
+      "competency_slug": "reliability",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.4,
+      "irt_b": 0.3,
+      "scenario_key": "You are a risk officer at a local Azerbaijani bank. During your quarterly loan portfolio review, you"
+    },
+    {
+      "id": "prof-fin-003",
+      "competency_slug": "reliability",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 2.1,
+      "irt_b": 1.8,
+      "scenario_key": "You are building a DCF model for a 5-year oil revenue forecast for an ABSHERON field development pro"
+    },
+    {
+      "id": "prof-fin-004",
+      "competency_slug": "communication",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 0.9,
+      "irt_b": -1.2,
+      "scenario_key": "You have completed a credit risk assessment showing that a proposed corporate loan carries a probabi"
+    },
+    {
+      "id": "prof-fin-005",
+      "competency_slug": "communication",
+      "difficulty": "hard",
+      "type": "sjt",
+      "irt_a": 1.8,
+      "irt_b": 1.2,
+      "scenario_key": "You are presenting Q3 budget variance analysis to the board of a mid-sized Baku-based manufacturing "
+    },
+    {
+      "id": "prof-fin-006",
+      "competency_slug": "adaptability",
+      "difficulty": "medium",
+      "type": "mcq",
+      "irt_a": 1.3,
+      "irt_b": 0.1,
+      "scenario_key": "You are a risk officer at an Azerbaijani commercial bank. On a Monday morning, the Central Bank of A"
+    },
+    {
+      "id": "prof-fin-007",
+      "competency_slug": "adaptability",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 2.3,
+      "irt_b": 2.2,
+      "scenario_key": "In January 2015, the Azerbaijani manat was devalued by approximately 34% against the USD in a single"
+    },
+    {
+      "id": "prof-fin-008",
+      "competency_slug": "tech_literacy",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 0.8,
+      "irt_b": -1.8,
+      "scenario_key": "You have inherited a 12-tab Excel financial model from a colleague who left the company. The model c"
+    },
+    {
+      "id": "prof-fin-009",
+      "competency_slug": "tech_literacy",
+      "difficulty": "medium",
+      "type": "mcq",
+      "irt_a": 1.2,
+      "irt_b": 0.4,
+      "scenario_key": "Your manager asks you to build a sensitivity analysis showing how a SOCAR project's NPV changes when"
+    },
+    {
+      "id": "prof-fin-010",
+      "competency_slug": "leadership",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.5,
+      "irt_b": 0.5,
+      "scenario_key": "You are a junior risk analyst at a Baku investment firm. During routine model validation, you discov"
+    }
+  ]
+}

@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Sparkles, ChevronRight, ClipboardList, RefreshCw } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -16,16 +16,27 @@ import { useAuraScore } from "@/hooks/queries/use-aura";
 import { useActivity, useDashboardStats } from "@/hooks/queries/use-dashboard";
 import { useMyLeaderboardRank } from "@/hooks/queries/use-leaderboard";
 import { useSkill } from "@/hooks/queries/use-skill";
+import { useSubscription } from "@/hooks/queries/use-subscription";
+import { useProfile } from "@/hooks/queries/use-profile";
 import { FeedCards, type FeedCard } from "@/components/dashboard/feed-cards";
 import { ApiError } from "@/lib/api/client";
 
+// BATCH-O A11Y #3: motion variants — reduced-motion override applied per component via useDashboardMotion hook
 const pageVariants = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.1 } },
 };
+const pageVariantsReduced = {
+  hidden: {},
+  visible: {},  // no stagger
+};
 const sectionVariants = {
   hidden: { opacity: 0, y: 16 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" as const } },
+};
+const sectionVariantsReduced = {
+  hidden: { opacity: 1, y: 0 },
+  visible: { opacity: 1, y: 0 },
 };
 
 // ── Neuroscience helper: relative time (Conscious → Unconscious friction reduction)
@@ -60,6 +71,9 @@ export default function DashboardPage() {
   const { t } = useTranslation();
   const router = useRouter();
   const isMounted = useRef(true);
+  const prefersReducedMotion = useReducedMotion(); // BATCH-O A11Y: respect system motion preference
+  const pVariants = prefersReducedMotion ? pageVariantsReduced : pageVariants;
+  const sVariants = prefersReducedMotion ? sectionVariantsReduced : sectionVariants;
 
   useEffect(() => {
     isMounted.current = true;
@@ -96,6 +110,46 @@ export default function DashboardPage() {
   }, []);
 
   const { data: aura, isLoading: auraLoading, error: auraError, refetch: refetchAura } = useAuraScore();
+  const { isTrial, isExpired, daysRemaining } = useSubscription();
+  const { data: profile } = useProfile();
+
+  // Trial banner dismissed per-session
+  const [bannerDismissed, setBannerDismissed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return sessionStorage.getItem("trial_banner_dismissed") === "1";
+  });
+
+  function dismissBanner() {
+    sessionStorage.setItem("trial_banner_dismissed", "1");
+    setBannerDismissed(true);
+  }
+
+  // Share prompt — one-time, localStorage-persisted (survives tab close)
+  const [sharePromptDismissed, setSharePromptDismissed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("share_prompt_dismissed") === "true";
+  });
+
+  function handleDismissSharePrompt() {
+    localStorage.setItem("share_prompt_dismissed", "true");
+    setSharePromptDismissed(true);
+  }
+
+  function handleShare() {
+    const username = profile?.username;
+    if (!username) return;
+    const url = `https://volaura.app/u/${username}?utm_source=dashboard_share&utm_medium=banner`;
+    // Copy to clipboard
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(url).catch(() => {/* silent */});
+    }
+    // Open Telegram share
+    const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent("My AURA profile — verified skills on Volaura")}`;
+    window.open(telegramUrl, "_blank", "noopener,noreferrer");
+    // Dismiss after sharing
+    localStorage.setItem("share_prompt_dismissed", "true");
+    setSharePromptDismissed(true);
+  }
   const { data: rawActivity = [], isLoading: activityLoading } = useActivity();
   const { data: stats } = useDashboardStats();
   const { data: myRank } = useMyLeaderboardRank();
@@ -132,6 +186,8 @@ export default function DashboardPage() {
 
   const loading = auraLoading;
   const hasScore = aura != null && aura.total_score > 0;
+  // BATCH-O D1: never show share prompt when trial/expired banner is active — competing signals kill both
+  const showSharePrompt = hasScore && !sharePromptDismissed && !!profile?.username && !(!bannerDismissed && (isTrial || isExpired));
 
   // Handle 401 — redirect to login
   useEffect(() => {
@@ -144,21 +200,65 @@ export default function DashboardPage() {
     <>
       <TopBar title={t("nav.dashboard")} />
 
+      {/* ── Trial / Expired Banner ── */}
+      {!bannerDismissed && (isTrial || isExpired) && (
+        <TrialBanner
+          isTrial={isTrial}
+          daysRemaining={daysRemaining ?? 0}
+          onDismiss={dismissBanner}
+          t={t}
+        />
+      )}
+
+      {/* ── Share Profile Prompt — one-time viral loop trigger (AZ market: Telegram groups) ── */}
+      {showSharePrompt && (
+        <div className="mx-4 mt-3 rounded-xl border border-border bg-card p-4 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="text-xl shrink-0" aria-hidden="true">🎉</span>
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-foreground truncate">
+                {t("dashboard.sharePrompt.title")}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {t("dashboard.sharePrompt.desc")}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={handleShare}
+              className="text-xs font-medium px-3 py-1.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            >
+              {t("dashboard.sharePrompt.cta")}
+            </button>
+            <button
+              type="button"
+              onClick={handleDismissSharePrompt}
+              aria-label="Dismiss"
+              className="min-h-[44px] min-w-[44px] flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors -mr-2"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
       <motion.div
-        variants={pageVariants}
+        variants={pVariants}
         initial="hidden"
         animate="visible"
         className="p-4 space-y-5 pb-8"
       >
         {/* ── Welcome — time-aware greeting (Brain Constructs Reality principle) ── */}
-        <motion.div variants={sectionVariants}>
+        <motion.div variants={sVariants}>
           <h2 className="text-xl font-bold text-foreground">
             {t(getGreetingKey())}{displayName ? `, ${displayName}` : ""}! 👋
           </h2>
         </motion.div>
 
         {/* ── AURA Score Widget ── */}
-        <motion.div variants={sectionVariants}>
+        <motion.div variants={sVariants}>
           {loading ? (
             <Skeleton className="h-28 w-full rounded-2xl" />
           ) : auraError ? (
@@ -179,28 +279,28 @@ export default function DashboardPage() {
           )}
         </motion.div>
 
-        {/* ── Stats Row ── */}
-        {/* TODO Sprint A2: replace leaguePosition (always null) with real league rank
-            once the leagues feature ships. For now StatsRow shows "—" via its own null guard. */}
-        <motion.div variants={sectionVariants}>
-          {loading ? (
-            <div className="grid grid-cols-3 gap-3">
-              {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-24 rounded-xl" />
-              ))}
-            </div>
-          ) : (
-            <StatsRow
-              streak={stats?.streak_days ?? 0}
-              eventsCount={stats?.events_attended ?? 0}
-              leaguePosition={myRank?.rank != null ? `#${myRank.rank}` : null}
-            />
-          )}
-        </motion.div>
+        {/* ── Stats Row — only shown when user has score; zeros before first assessment are meaningless (BATCH-O D2) ── */}
+        {hasScore && (
+          <motion.div variants={sVariants}>
+            {loading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-24 rounded-xl" />
+                ))}
+              </div>
+            ) : (
+              <StatsRow
+                streak={stats?.streak_days ?? 0}
+                eventsCount={stats?.events_attended ?? 0}
+                leaguePosition={myRank?.rank != null ? `#${myRank.rank}` : null}
+              />
+            )}
+          </motion.div>
+        )}
 
         {/* ── Personalized Feed (feed-curator skill) ── */}
         {hasScore && (
-          <motion.div variants={sectionVariants} className="space-y-2">
+          <motion.div variants={sVariants} className="space-y-2">
             <SectionHeader label={t("dashboard.feed.title", { defaultValue: "Recommended for you" })} />
             <FeedCards
               cards={feedCards}
@@ -217,7 +317,7 @@ export default function DashboardPage() {
         )}
 
         {/* ── Recent Activity ── */}
-        <motion.div variants={sectionVariants} className="space-y-2">
+        <motion.div variants={sVariants} className="space-y-2">
           <SectionHeader label={t("dashboard.recentActivity")} />
           <div className="rounded-xl border border-border bg-card p-4">
             <ActivityFeed
@@ -232,7 +332,7 @@ export default function DashboardPage() {
         {/* hasScore: full-width "See your AURA" (dominant) + smaller secondary below.
             !hasScore: NoScoreBanner replaces the AURA widget above; QuickActions
             only shows the assessment link as the single dominant action. */}
-        <motion.div variants={sectionVariants} className="space-y-2">
+        <motion.div variants={sVariants} className="space-y-2">
           <SectionHeader label={t("dashboard.quickActions")} />
           {hasScore ? (
             <div className="flex flex-col gap-3">
@@ -347,7 +447,7 @@ function NoScoreBanner({
   accountType: "volunteer" | "organization";
 }) {
   const isOrg = accountType === "organization";
-  const href = isOrg ? `/${locale}/leaderboard` : `/${locale}/assessment`;
+  const href = isOrg ? `/${locale}/org-volunteers` : `/${locale}/assessment`;
 
   return (
     <Link
@@ -369,6 +469,49 @@ function NoScoreBanner({
         </div>
       </div>
     </Link>
+  );
+}
+
+function TrialBanner({
+  isTrial,
+  daysRemaining,
+  onDismiss,
+  t,
+}: {
+  isTrial: boolean;
+  daysRemaining: number;
+  onDismiss: () => void;
+  t: (k: string, opts?: Record<string, unknown>) => string;
+}) {
+  const isExpiredBanner = !isTrial;
+  return (
+    <div
+      role="alert"
+      className={`flex items-center justify-between gap-3 px-4 py-3 text-sm font-medium ${
+        isExpiredBanner
+          ? "bg-destructive/10 border-b border-destructive/20 text-destructive"
+          : "bg-amber-50 border-b border-amber-200 text-amber-900 dark:bg-amber-900/20 dark:border-amber-700/40 dark:text-amber-200"
+      }`}
+    >
+      <span className="flex-1 leading-snug">
+        {isExpiredBanner
+          ? t("subscription.trialExpiredBanner")
+          : t("subscription.trialBanner", { count: daysRemaining })}
+      </span>
+      <div className="flex items-center gap-2 shrink-0">
+        <span className="text-xs font-medium text-amber-700">
+          {t("subscription.comingSoon")}
+        </span>
+        <button
+          type="button"
+          onClick={onDismiss}
+          aria-label="Dismiss"
+          className="size-11 flex items-center justify-center rounded-full text-amber-600 hover:text-amber-900 transition-colors -mr-2"
+        >
+          ×
+        </button>
+      </div>
+    </div>
   );
 }
 

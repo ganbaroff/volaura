@@ -254,6 +254,14 @@ CREATE POLICY "Users can delete own abandoned sessions"
     ON public.assessment_sessions FOR DELETE
     USING (auth.uid() = volunteer_id AND status IN ('abandoned', 'in_progress'));
 
+-- Restrict UPDATE: users may only abandon their own in-progress sessions.
+-- Prevents User B from modifying User A's session (e.g. marking it completed or
+-- injecting fake answers). Backend writes use service_role which bypasses RLS.
+CREATE POLICY "Users can only abandon own sessions"
+    ON public.assessment_sessions FOR UPDATE
+    USING (auth.uid() = volunteer_id AND status = 'in_progress')
+    WITH CHECK (auth.uid() = volunteer_id AND status IN ('abandoned', 'in_progress'));
+
 -- Completed/flagged sessions must be preserved; only service_role can delete them
 
 

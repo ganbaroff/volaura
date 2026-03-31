@@ -63,6 +63,8 @@ async def discover_volunteers(
     badge_tier: str | None = Query(default=None),
     sort_by: str = Query(default="score", pattern="^(score|events|recent)$"),
     after_score: float | None = Query(default=None, ge=0.0, le=100.0),
+    after_events: int | None = Query(default=None, ge=0),
+    after_updated: str | None = Query(default=None, description="ISO datetime cursor for sort_by=recent"),
     after_id: str | None = Query(default=None),
     limit: int = Query(default=20, ge=1, le=50),
 ) -> DiscoveryResponse:
@@ -104,10 +106,13 @@ async def discover_volunteers(
     # SupabaseUser client: RLS policy allows visibility='public' OR own record.
     # Unauthenticated callers blocked at FastAPI auth layer (CurrentUserId).
 
+    # Use aura_scores_public view — never the base table (avoids leaking private columns per ADR).
+    # The view strips: events_no_show, reliability_score, reliability_status, aura_history.
     aura_query = (
-        db.table("aura_scores")
-        .select("volunteer_id,total_score,badge_tier,competency_scores,events_attended,events_no_show,last_updated")
+        db.table("aura_scores_public")
+        .select("volunteer_id,total_score,badge_tier,competency_scores,events_attended,last_updated")
         .eq("visibility", "public")
+        .gt("total_score", 0)  # BUG-008: exclude zero-score ghost profiles
     )
 
     # badge_tier filter
@@ -115,22 +120,20 @@ async def discover_volunteers(
         aura_query = aura_query.eq("badge_tier", badge_tier)
 
     # Cursor-based pagination — prevents enumeration attack.
-    # Cursor: (total_score DESC, volunteer_id ASC) — stable keyset.
-    # For sort_by=score: cursor on (total_score, volunteer_id).
-    # For sort_by=events: cursor on (events_attended, volunteer_id) — TODO v2.
-    # For sort_by=recent: cursor on (last_updated, volunteer_id) — TODO v2.
-    # v1: cursor only implemented for sort_by=score.
+    # Cursor: stable keyset (sort_field DESC, volunteer_id ASC).
+    # SDK doesn't support complex OR — filter with lte on sort field, tiebreaker in Python.
     if sort_by == "score":
         aura_query = aura_query.order("total_score", desc=True).order("volunteer_id", desc=False)
         if after_score is not None and after_id is not None:
-            # Keyset: WHERE (total_score < after_score) OR (total_score = after_score AND volunteer_id > after_id)
-            # Supabase SDK doesn't support complex OR in single call — fetch with total_score <= after_score
-            # and filter in Python. Small page sizes make this efficient.
             aura_query = aura_query.lte("total_score", after_score)
     elif sort_by == "events":
         aura_query = aura_query.order("events_attended", desc=True).order("volunteer_id", desc=False)
+        if after_events is not None and after_id is not None:
+            aura_query = aura_query.lte("events_attended", after_events)
     else:  # recent
         aura_query = aura_query.order("last_updated", desc=True).order("volunteer_id", desc=False)
+        if after_updated is not None and after_id is not None:
+            aura_query = aura_query.lte("last_updated", after_updated)
 
     # Fetch limit+1 to detect has_more
     aura_query = aura_query.limit(limit + 1)
@@ -147,34 +150,29 @@ async def discover_volunteers(
             if float((row.get("competency_scores") or {}).get(competency, 0.0)) >= score_min
         ]
 
-    # ── Step 3: Filter by role_level (via assessment_sessions) ───────────────
-    # role_level filtering: volunteers who have ANY completed assessment at this role.
-    if role_level:
-        # Get set of volunteer_ids that have completed at least one session at this role_level
-        role_result = await (
-            db_admin.table("assessment_sessions")
-            .select("volunteer_id")
-            .eq("role_level", role_level)
-            .eq("status", "completed")
-            .execute()
-        )
-        eligible_ids = {row["volunteer_id"] for row in (role_result.data or [])}
-        aura_rows = [row for row in aura_rows if row["volunteer_id"] in eligible_ids]
-
-    # ── Step 4: Cursor tiebreaker for sort_by=score ───────────────────────────
+    # ── Step 3: Cursor tiebreaker (all sort types) ───────────────────────────
+    # Removes rows where (sort_field == cursor_value AND volunteer_id <= after_id)
     if sort_by == "score" and after_score is not None and after_id is not None:
-        # Remove items where (score == after_score AND volunteer_id <= after_id)
-        # This handles the exact-score tiebreaker correctly
         aura_rows = [
             row for row in aura_rows
             if not (row["total_score"] == after_score and row["volunteer_id"] <= after_id)
         ]
+    elif sort_by == "events" and after_events is not None and after_id is not None:
+        aura_rows = [
+            row for row in aura_rows
+            if not (int(row.get("events_attended", 0)) == after_events and row["volunteer_id"] <= after_id)
+        ]
+    elif sort_by == "recent" and after_updated is not None and after_id is not None:
+        aura_rows = [
+            row for row in aura_rows
+            if not (row.get("last_updated") == after_updated and row["volunteer_id"] <= after_id)
+        ]
 
-    # ── Step 5: Detect has_more, trim to limit ────────────────────────────────
+    # ── Step 4: Detect has_more, trim to limit ────────────────────────────────
     has_more = len(aura_rows) > limit
     aura_rows = aura_rows[:limit]
 
-    # ── Step 6: Get display_names from profiles (batch lookup) ───────────────
+    # ── Step 5: Get display_names from profiles (batch lookup) ───────────────
     volunteer_ids = [row["volunteer_id"] for row in aura_rows]
     profile_map: dict[str, str | None] = {}
 
@@ -188,7 +186,11 @@ async def discover_volunteers(
         for p in (profiles_result.data or []):
             profile_map[p["id"]] = p.get("display_name")
 
-    # ── Step 7: Get role_levels for result set (most recent session per volunteer) ──
+    # ── Step 6: Sessions query — single bounded call for role_level filter + role_map ──
+    # Merged from two separate calls (Steps 3+7 pre-refactor):
+    # Old: Step 3 = unbounded global query (ALL sessions) → Python intersection
+    #      Step 7 = second bounded query on result IDs
+    # New: one bounded query on result IDs only. Eliminates 1 DB round-trip.
     role_map: dict[str, str | None] = {}
     if volunteer_ids:
         sessions_result = await (
@@ -199,11 +201,18 @@ async def discover_volunteers(
             .order("completed_at", desc=True)
             .execute()
         )
-        # Take most recent role_level per volunteer
         for s in (sessions_result.data or []):
             vid = s["volunteer_id"]
             if vid not in role_map:  # first = most recent (ordered desc)
                 role_map[vid] = s.get("role_level")
+
+    # Apply role_level filter using already-fetched role_map (no extra DB call)
+    if role_level:
+        aura_rows = [
+            row for row in aura_rows
+            if role_map.get(row["volunteer_id"]) == role_level
+        ]
+        volunteer_ids = [row["volunteer_id"] for row in aura_rows]
 
     # ── Step 8: Build response ────────────────────────────────────────────────
     results: list[DiscoveryVolunteer] = []
@@ -221,18 +230,23 @@ async def discover_volunteers(
             competency_score=round(c_score, 3) if c_score is not None else None,
             role_level=role_map.get(vid),
             events_attended=int(row.get("events_attended", 0)),
-            events_no_show=int(row.get("events_no_show", 0)),
             last_updated=row.get("last_updated"),
         ))
 
-    # Build next-page cursor from last item
+    # Build next-page cursor from last item (sort-type aware)
     next_after_score: float | None = None
+    next_after_events: int | None = None
+    next_after_updated: str | None = None
     next_after_id: str | None = None
     if has_more and results:
         last = results[-1]
+        next_after_id = last.volunteer_id
         if sort_by == "score":
             next_after_score = last.total_score
-            next_after_id = last.volunteer_id
+        elif sort_by == "events":
+            next_after_events = last.events_attended
+        else:  # recent
+            next_after_updated = last.last_updated.isoformat() if last.last_updated else None
 
     return DiscoveryResponse(
         data=results,
@@ -241,6 +255,8 @@ async def discover_volunteers(
             limit=limit,
             has_more=has_more,
             next_after_score=next_after_score,
+            next_after_events=next_after_events,
+            next_after_updated=next_after_updated,
             next_after_id=next_after_id,
         ),
     )

@@ -32,6 +32,7 @@ STEP 0 → CONTEXT RECOVERY
          Read: CLAUDE.md → current section
          Read: memory/context/sprint-state.md → WHERE ARE WE RIGHT NOW (30-second read)
          Read: memory/context/mistakes.md → what NOT to repeat this session
+         Read: docs/SESSION-FINDINGS.md → last 20 entries (fresh discoveries not yet in patterns.md — added 2026-03-29)
          Read: EXECUTION-PLAN.md → last 30 lines (current sprint checkboxes)
          Read: docs/DECISIONS.md → last entry (last retrospective)
          Then declare:
@@ -220,15 +221,20 @@ This feedback loop makes each simulation more accurate than the last.
 | Test strategy, coverage gaps | `engineering:testing-strategy` + `docs/engineering/skills/TDD-WORKFLOW.md` |
 | Bug fix | `docs/engineering/skills/TDD-WORKFLOW.md` (write failing test FIRST) |
 | Growth features, referrals, email | `growth-strategy` |
-| Writing LinkedIn posts (any series) | `docs/TONE-OF-VOICE.md` (7 principles, pre-publish checklist, series guides) |
+| Writing LinkedIn posts (any series) | `docs/TONE-OF-VOICE.md` + `memory/swarm/skills/communications-strategist.md` + `docs/AZ-LINKEDIN-AUDIENCE.md` |
+| Any content batch (LinkedIn, PR, email) | `memory/swarm/skills/communications-strategist.md` (reads brief template, owns narrative arc) — load BEFORE copywriters |
 | Launching any MiroFish swarm | `docs/MODEL-ROSTER.md` (who to call for what domain, dead weight list) |
 | Social media simulation before publish | `packages/swarm/social_reaction.py` → `simulate_reactions()` — MANDATORY before any LinkedIn post |
 | Technical debt cleanup | `engineering:tech-debt` |
 | ANY sprint start (always) | `docs/MANDATORY-RULES.md` (7 non-negotiable rules, read FIRST) |
 | Sprint end / retrospective | `docs/SPRINT-REVIEW-TEMPLATE.md` (copy template, fill ALL sections) |
 | Research tasks (market, pricing, benchmarks) | NotebookLM skill → create notebook with sources BEFORE analysis |
+| Accelerator / grant / funding search | `memory/swarm/skills/accelerator-grant-searcher.md` — GITA deadline May 27, 2026 |
+| LinkedIn content, personal branding, promotion | `memory/swarm/skills/promotion-agency.md` (3×/week cadence, carousel-first) |
+| Startup jurisdiction, registration, tax efficiency | `memory/swarm/skills/startup-registration-finder.md` (Georgia recommended) |
+| Multi-agent orchestration, swarm coordination | `memory/swarm/skills/claude-mythos-universal.md` (5 patterns + communication protocols) |
 | API deployment | `docs/MANDATORY-RULES.md` Rule 3 (test PRODUCTION URL) + Rule 4 (schema verification) |
-| Session end (always) | `docs/engineering/skills/CONTINUOUS-LEARNING.md` (Step 0.5 protocol) |
+| Session end (always) | `docs/engineering/skills/CONTINUOUS-LEARNING.md` (Step 0.5 protocol) + append discoveries to `docs/SESSION-FINDINGS.md` |
 | B2B features, org dashboard, pricing | `memory/swarm/skills/sales-deal-strategist.md` + `memory/swarm/skills/sales-discovery-coach.md` |
 | Org onboarding, intro request, search flow | `memory/swarm/skills/sales-discovery-coach.md` |
 | AURA sharing, professional profile, external visibility | `memory/swarm/skills/linkedin-content-creator.md` |

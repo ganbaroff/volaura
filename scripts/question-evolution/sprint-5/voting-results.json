@@ -1,0 +1,108 @@
+{
+  "scores": {
+    "devops-cybersecurity": {
+      "az_authenticity": 24,
+      "london_delta_quality": 19,
+      "irt_quality": 14,
+      "type_variety": 9,
+      "rubric_quality": 14,
+      "scenario_realism": 9,
+      "competency_coverage": 5,
+      "total": 94,
+      "notes": "Exemplary AZ authenticity: CBA Circular 14/2023, ISMSN/DƏIM, ASAN 2020 outage postmortem, AzərGold 2016 supply chain, SOCAR, Ministry of Digital Development all named with correct enforcement specificity. london_delta format is structurally perfect on every question. IRT: irt_a all ≥1.2, b-values well spread (-0.7 to 1.9). Two evaluation rubrics are excellent with 5 levels each, AZ-specific at level 5. empathy_safeguarding at Q5 and Q9."
+    },
+    "financial-analyst": {
+      "az_authenticity": 24,
+      "london_delta_quality": 19,
+      "irt_quality": 14,
+      "type_variety": 9,
+      "rubric_quality": 15,
+      "scenario_realism": 10,
+      "competency_coverage": 5,
+      "total": 96,
+      "notes": "Best-in-class AZ institution depth: IBA default (USD 3.3B, May 2015), SOFAZ, CBA Decree No.8 with exact stress parameters (40% real estate haircut, 3x NPL, 200bps), CBA CAMELS, Regulation No.13, Kapital Bank, PASHA Bank, ABB. IBA restructuring open_ended (Q8) is the deepest scenario in the corpus — 5-level rubric with specific provisioning percentages, AZN devaluation path (0.78→1.05→1.60). london_delta names exact regulatory articles. empathy_safeguarding at Q7 (PASHA AML) and Q9 (AccessBank fraud). rubric_quality 15/15 — every rubric has AZ-specific criteria at level 5."
+    },
+    "hr-manager": {
+      "az_authenticity": 23,
+      "london_delta_quality": 18,
+      "irt_quality": 13,
+      "type_variety": 9,
+      "rubric_quality": 14,
+      "scenario_realism": 9,
+      "competency_coverage": 5,
+      "total": 91,
+      "notes": "Strong AZ authenticity: DSMF e-portal, AZ Labour Code Art.73/77/78, Personal Data Protection Commission (998-IIIQ), Cabinet Decision No.430, SOCAR/AHIK, Kapital Bank mass redundancy, Baku City Court. Q8 rubric hits Art.77 threshold analysis (68/4200=1.6%). Minor: Q9 SJT hard missing london_delta field — only question in all files with this omission (-2). IRT irt_b clusters at 1.4-1.5 on hard questions."
+    },
+    "marketing-manager": {
+      "az_authenticity": 20,
+      "london_delta_quality": 17,
+      "irt_quality": 13,
+      "type_variety": 9,
+      "rubric_quality": 13,
+      "scenario_realism": 9,
+      "competency_coverage": 5,
+      "total": 86,
+      "notes": "Good AZ authenticity: Azercell, PASHA Holding, Kapital Bank, Şirvanşah Foods, Lalafo.az, JCDecaux Azerbaijan, TechMart, BirBank. Mahalle WhatsApp groups insight is genuine AZ-specific. Penalty: Q7 has empty az_institutions — only omission of this type. Q9 hard open_ended missing evaluation_rubric — the only hard open_ended without rubric across all 7 files."
+    },
+    "product-manager": {
+      "az_authenticity": 22,
+      "london_delta_quality": 18,
+      "irt_quality": 14,
+      "type_variety": 9,
+      "rubric_quality": 14,
+      "scenario_realism": 10,
+      "competency_coverage": 5,
+      "total": 92,
+      "notes": "Strong: AzərGold SOAP gateway (10-day IP whitelist SLA documented), ASAN xidmét rate limits (100 req/hour, 3-5 day increase), ABB Bank SLA penalty (0.1%/hour). Bayesian A/B testing for 500k-user market is best 'why AZ is different' question. Q10 SOCAR scope creep (1.2M AZN contract) is best leadership scenario. empathy_safeguarding: Q7 (MIA surveillance) and Q9 (AI name bias, AZ naming as protected class)."
+    },
+    "qa-engineer": {
+      "az_authenticity": 22,
+      "london_delta_quality": 18,
+      "irt_quality": 13,
+      "type_variety": 9,
+      "rubric_quality": 14,
+      "scenario_realism": 9,
+      "competency_coverage": 5,
+      "total": 90,
+      "notes": "Strong: DƏIM 24-hour disclosure, ASAN xidmét single-auth backbone regression scope, CBA fintech pre-launch requirements, Baku Metro AZS 4512-2026, Ministry of Digital Development. Q8 (ASAN 2020 outage test strategy) excellent. Q9 medical data empathy scenario is most ethically rich empathy question in corpus. Minor: Q3 uses 'AMB' in AZ text but 'CBA' in institution list."
+    },
+    "scrum-master": {
+      "az_authenticity": 21,
+      "london_delta_quality": 18,
+      "irt_quality": 14,
+      "type_variety": 9,
+      "rubric_quality": 14,
+      "scenario_realism": 10,
+      "competency_coverage": 5,
+      "total": 91,
+      "notes": "Strong cultural intelligence: AZ face-saving patterns, hierarchical deference, soviet-style control mental model all backed by institutional examples (Kapital Bank, ASAN, PASHA Technology, SOCAR SAFe). Q10 SOCAR transformation open_ended has deepest rubric in file. SOCAR-heavy (4 questions) but justified. Minor: Q1 irt_c=0.18 is highest in corpus but defensible for easy 4-option MCQ."
+    }
+  },
+  "ranking": [
+    "financial-analyst",
+    "devops-cybersecurity",
+    "product-manager",
+    "scrum-master",
+    "hr-manager",
+    "qa-engineer",
+    "marketing-manager"
+  ],
+  "winner": "financial-analyst",
+  "winner_total": 96,
+  "winner_top_patterns": [
+    "Exact regulation article numbers + quantified parameters in london_delta: 'CBA Decree No.8: 40% real estate haircut, 3x NPL, 200bps rate shock' — every consequence names the article AND the number",
+    "5-level evaluation rubrics gated on AZ-specific knowledge: level 5 requires naming CBA Regulation No.13 provisioning floors by category (substandard 20%, doubtful 50%, loss 100%) and SOFAZ two-instrument bailout structure — impossible to answer with global finance knowledge alone",
+    "Institutional depth: IBA default dated (May 2015, USD 3.3B), AZN devaluation path (0.78→1.05→1.60) cited as specific historical record, not just 'AZ had a devaluation' — judges real knowledge vs surface recall"
+  ],
+  "lowest_performer": "marketing-manager",
+  "lowest_total": 86,
+  "lowest_failure_modes": [
+    "Q7 tech_literacy MCQ has empty az_institutions array — only question across all 7 files with this structural omission",
+    "Q9 hard open_ended missing evaluation_rubric entirely — only hard open_ended without a rubric in the corpus, breaking the structural contract"
+  ],
+  "sprint6_recommendations": [
+    "Carry forward the financial-analyst pattern: london_delta consequence must name regulation article number AND quantified threshold (e.g., 'CBA Decree No.8 Article 7: 40% real estate haircut, 200bps rate shock') — not just the regulation name",
+    "Hard open_ended rubric template: level 5 must explicitly require naming AZ-specific institution + article number + quantified threshold — use IBA restructuring rubric (financial-analyst Q8) as canonical template for all Sprint 6 agents",
+    "Pre-generation validation: fail any question where az_institutions is empty without justification, or where hard open_ended lacks evaluation_rubric — these are structural errors, not quality issues"
+  ]
+}

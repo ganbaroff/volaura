@@ -1,0 +1,497 @@
+[
+  {
+    "id": "prof-hr-s3-001",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.2,
+    "irt_b": -0.8,
+    "irt_c": 0.1,
+    "scenario_en": "A production supervisor at AzərGold informs you that he wants to dismiss Günel, a 28-year-old quality inspector, because she has been 'underperforming' since announcing her pregnancy three months ago. He presents documented performance warnings from the past two months. As HR Manager, what is your immediate response?",
+    "scenario_az": "AzərGold şirkətinin istehsalat rəhbəri sizə bildiriri ki, hamiləliyini elan etdikdən bu yana 'iş performansı aşağı düşmüş' 28 yaşlı keyfiyyət müfəttişi Günəli işdən çıxarmaq istəyir. O, son iki aydan bəri sənədləşdirilmiş performans xəbərdarlıqları təqdim edir. HR meneceri kimi sizin dərhal reaksiyanız nə olacaq?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Review the performance documentation and proceed with dismissal if the evidence is strong enough",
+        "text_az": "Performans sənədlərini nəzərdən keçirin və sübutlar kifayət qədər güclüdürsə, işdən çıxarmağa davam edin"
+      },
+      {
+        "key": "B",
+        "text_en": "Inform the supervisor that dismissal of a pregnant employee is absolutely prohibited under AZ Labor Code Art.109-1 regardless of performance grounds, and redirect to a performance support plan",
+        "text_az": "Rəhbərə bildirin ki, hamilə işçinin işdən çıxarılması AZ Əmək Məcəlləsinin 109-1-ci maddəsinə əsasən performans əsaslarından asılı olmayaraq qətiyyən qadağandır və performans dəstəyi planına yönləndirin"
+      },
+      {
+        "key": "C",
+        "text_en": "Escalate to legal counsel and wait for their guidance before taking any position",
+        "text_az": "Hüquq müşavirinə müraciət edin və hər hansı mövqe tutmadan əvvəl onların rəhbərliyini gözləyin"
+      },
+      {
+        "key": "D",
+        "text_en": "Offer the employee a mutual separation agreement with enhanced severance to avoid legal risk",
+        "text_az": "Hüquqi riski azaltmaq üçün işçiyə artırılmış işdən çıxma müavinəti ilə qarşılıqlı ayrılma müqaviləsi təklif edin"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. AZ Labor Code Art.109-1 establishes an absolute prohibition on dismissing pregnant employees — no performance documentation, however thorough, overrides this bar. The prohibition extends through pregnancy and 3 years after birth. Option A ignores the absolute legal bar and exposes AzərGold to mandatory reinstatement plus damages. Option C causes dangerous delay — an HR manager must know this rule without referral. Option D constitutes constructive dismissal pressure on a protected employee and compounds legal exposure.",
+    "feedback_az": "B düzgündür. AZ Əmək Məcəlləsinin 109-1-ci maddəsi hamilə işçilərin işdən çıxarılmasına mütləq qadağa müəyyən edir — heç bir performans sənədi, nə qədər ətraflı olursa olsun, bu maneəni aradan qaldıra bilməz. Qadağa hamiləlik dövründə və doğuşdan sonra 3 il ərzində qüvvədədir. A variantı mütləq hüquqi maneəni nəzərə almır. C variantı təhlükəli gecikmə yaradır. D variantı qorunan işçiyə konstruktiv işdən çıxarma təzyiqi göstərir.",
+    "development_tip_en": "Memorize Art.109-1 as an unconditional rule. In AZ, unlike most EU jurisdictions, there is no 'proportionality test' for pregnant employee dismissal — the bar is absolute. Build a standing instruction for all supervisors: any performance concern involving a pregnant employee must route to HR before any documentation is issued.",
+    "development_tip_az": "109-1-ci maddəni şərtsiz qayda kimi yadda saxlayın. Azərbaycanda, əksər AB yurisdiksiyalarından fərqli olaraq, hamilə işçinin işdən çıxarılması üçün 'mütənasiblik testi' yoxdur — maneə mütləqdir. Bütün rəhbərlər üçün daimi göstəriş hazırlayın: hamilə işçiylə bağlı hər hansı performans narahatlığı hər hansı sənədləşmə hazırlanmadan əvvəl HR-ə yönləndirilməlidir.",
+    "london_delta": "A London HR manager trained on UK employment law would know that even pregnant employees can be dismissed for genuine performance reasons, provided a fair process is followed under the Equality Act 2010 and Employment Rights Act 1996 (unfair dismissal protections). They would focus on whether the performance process was robust and non-discriminatory. In AZ, Art.109-1 removes this entire analysis — the correct answer is not 'was the process fair?' but 'does the protection apply?' The answer is always yes during pregnancy, making the London instinct to evaluate evidence fundamentally wrong in the AZ context.",
+    "az_institutions": [
+      "Ministry of Labor and Social Protection"
+    ],
+    "tags": [
+      "hr",
+      "az-labor-code",
+      "art-109-1",
+      "maternity-protection",
+      "dismissal"
+    ]
+  },
+  {
+    "id": "prof-hr-s3-002",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency_slug": "communication",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.3,
+    "irt_b": -0.6,
+    "irt_c": 0.12,
+    "scenario_en": "Kapital Bank is onboarding 40 new customer service representatives. Your team has prepared employment contracts entirely in English, as the bank's internal working language is English. The Legal department has reviewed them and found no substantive issues. An employee asks whether the English-only contract is legally binding. What is the correct HR position?",
+    "scenario_az": "Kapital Bank 40 yeni müştəri xidmətləri nümayəndəsi işə götürür. Komandanız bankın daxili iş dili ingilis dili olduğundan tamamilə ingilis dilində işə qəbul müqavilələri hazırlamışdır. Hüquq şöbəsi onları nəzərdən keçirmiş və əsaslı problemlər tapmamışdır. Bir işçi ingilis dilindəki müqavilənin hüquqi əsaslı olub olmadığını soruşur. Düzgün HR mövqeyi nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "The contract is fully valid — language is a business choice and AZ law does not specify contract language for private employers",
+        "text_az": "Müqavilə tamamilə etibarlıdır — dil biznes seçimidir və AZ qanunu xüsusi işəgötürənlər üçün müqavilə dilini müəyyən etmir"
+      },
+      {
+        "key": "B",
+        "text_en": "The contract is valid but should include an Azerbaijani translation appended as an official annex, since AZ Language Law requires Azerbaijani as the official language of documentation for entities operating in Azerbaijan",
+        "text_az": "Müqavilə etibarlıdır, lakin Azərbaycan dilini Azərbaycanda fəaliyyət göstərən qurumlar üçün rəsmi sənədləşmə dili kimi tələb edən AZ Dil Qanununa uyğun olaraq rəsmi əlavə kimi əlavə edilmiş Azərbaycan dilində tərcümə daxil etməlidir"
+      },
+      {
+        "key": "C",
+        "text_en": "Reissue all contracts in Azerbaijani only — English versions are not permitted for employment documentation",
+        "text_az": "Bütün müqavilələri yalnız Azərbaycan dilində yenidən verin — ingilis dilli versiyalar işə qəbul sənədlərində icazə verilmir"
+      },
+      {
+        "key": "D",
+        "text_en": "The English contract is sufficient for a foreign-owned bank operating under international standards; local language requirements apply only to government entities",
+        "text_az": "İngilis dilindəki müqavilə beynəlxalq standartlar əsasında fəaliyyət göstərən xarici mülkiyyətli bank üçün kifayətdir; yerli dil tələbləri yalnız dövlət qurumlarına aiddir"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. Azerbaijan's State Language Law (Law on the State Language of the Republic of Azerbaijan, 2002) establishes Azerbaijani as the official language for documentation of entities operating in AZ, including private companies. Employment contracts are legal documents subject to this requirement. Best practice — and the defensible HR position — is bilingual documentation with Azerbaijani as the primary language of record. Option A is incorrect because language is not purely a business choice for legal documents. Option C is overly restrictive; bilingual is standard practice. Option D is wrong — private and foreign-owned entities are not exempt.",
+    "feedback_az": "B düzgündür. Azərbaycanın Dövlət Dili Qanunu (2002) Azərbaycan dilini xüsusi şirkətlər daxil olmaqla Azərbaycanda fəaliyyət göstərən qurumların sənədləşməsi üçün rəsmi dil kimi müəyyən edir. A variantı yanlışdır, çünki hüquqi sənədlər üçün dil yalnız biznes seçimi deyil. C variantı həddən artıq məhdudlaşdırıcıdır. D variantı yanlışdır — özəl və xarici mülkiyyətli qurumlar azad deyil.",
+    "development_tip_en": "Establish a bilingual documentation standard for all AZ employment contracts: Azerbaijani as primary, English as operational reference. When discrepancies arise between versions, the Azerbaijani version governs. Brief all new HR team members on the Language Law as part of their onboarding — it affects job postings, internal policies, and disciplinary notices, not just contracts.",
+    "development_tip_az": "Bütün AZ işə qəbul müqavilələri üçün ikidilli sənədləşmə standartı yaradın: Azərbaycan dili əsas, ingilis dili əməliyyat istinadı kimi. Versiyalar arasında uyğunsuzluq yarandıqda Azərbaycan dilindəki versiya tətbiq olunur. Bütün yeni HR komanda üzvlərini onboarding zamanı Dil Qanunu ilə tanış edin.",
+    "london_delta": "A London HR manager would have no instinct to require Azerbaijani documentation. UK employment law has no national language requirement for contracts — a contract in English, Polish, or any mutually understood language is equally valid under the Employment Rights Act 1996. The London reflex is to ask 'did both parties understand the terms?' not 'is the language compliant?' In AZ, the Language Law adds a compliance layer entirely absent from UK practice, making Option A — the London-trained instinct — a legal exposure rather than a reasonable position.",
+    "az_institutions": [
+      "Ministry of Labor and Social Protection",
+      "State Language Commission"
+    ],
+    "tags": [
+      "hr",
+      "az-language-law",
+      "employment-contracts",
+      "documentation",
+      "compliance"
+    ]
+  },
+  {
+    "id": "prof-hr-s3-003",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.5,
+    "irt_b": 0.1,
+    "irt_c": 0.1,
+    "scenario_en": "During a monthly payroll review at Bakcell, you discover that for the past 6 months, SSPF contributions were calculated at 20% employer + 2% employee instead of the correct 22% + 3% rates. The underpayment affects 850 employees. The Finance Director suggests quietly correcting future payrolls without notifying SSPF, arguing the discrepancy is small and an audit is unlikely. What is your recommended course of action?",
+    "scenario_az": "Bakcell-də aylıq əmək haqqı yoxlaması zamanı siz son 6 ay ərzində DSMF töhfələrinin düzgün 22% + 3% əvəzinə 20% işəgötürən + 2% işçi ilə hesablandığını aşkar edirsiniz. Az ödəmə 850 işçiyə təsir edir. Maliyyə direktoru DSMF-ə bildirmədən gələcək əmək haqqılarını səssizcə düzəltməyi təklif edir, iddia edərək ki, fərq kiçikdir və audit ehtimalı azdır. Sizin tövsiyə etdiyiniz fəaliyyət planı nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Agree with Finance — correct going forward, monitor for any SSPF audit contact, and address retroactively only if required",
+        "text_az": "Maliyyə ilə razılaşın — irəlidə düzəldin, hər hansı DSMF audit əlaqəsini izləyin və yalnız tələb olunarsa retroaktiv olaraq həll edin"
+      },
+      {
+        "key": "B",
+        "text_en": "Proactively disclose the underpayment to SSPF, calculate the 6-month shortfall for all 850 employees at the correct 22%+3% rates, submit a corrected declaration, and pay the outstanding amount with applicable late penalties",
+        "text_az": "DSMF-ə az ödənişi proaktiv şəkildə açıqlayın, 850 işçi üçün 6 aylıq çatışmazlığı düzgün 22%+3% dərəcələrə əsasən hesablayın, düzəldilmiş bəyannamə təqdim edin və tətbiq olunan gecikdirmə cərimələri ilə birlikdə ödənilməmiş məbləği ödəyin"
+      },
+      {
+        "key": "C",
+        "text_en": "Correct the rates going forward and increase employee contributions by the missed 3% from next month to recover the shortfall without involving SSPF",
+        "text_az": "Dərəcələri irəlidə düzəldin və DSMF-i cəlb etmədən çatışmazlığı bərpa etmək üçün növbəti aydan etibarən işçi töhfələrini qaçırılmış 3% qədər artırın"
+      },
+      {
+        "key": "D",
+        "text_en": "Escalate to the CEO to authorize a legal opinion before taking any action, as the decision involves regulatory risk above HR's authority",
+        "text_az": "Hər hansı bir addım atmadan əvvəl hüquqi rəy almağa icazə vermək üçün CEO-ya müraciət edin, çünki qərar HR-in səlahiyyətindən yuxarı tənzimləmə riski ehtiva edir"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. SSPF operates as a mandatory social insurance system under AZ law; underpayment of the 22% employer + 3% employee statutory rates constitutes a compliance breach with defined penalty structures for late payment and non-disclosure. Voluntary disclosure (Option B) typically results in lower penalties than discovery during audit. Option A exposes the company to compounded penalties if discovered. Option C is illegal — employers cannot unilaterally increase employee deductions to cover employer compliance failures. Option D delays action on a known breach and shifts accountability inappropriately — HR owns payroll compliance and should drive the corrective process.",
+    "feedback_az": "B düzgündür. DSMF AZ qanunu çərçivəsində məcburi sosial sığorta sistemi kimi fəaliyyət göstərir; 22% işəgötürən + 3% işçi qanuni dərəcələrinin az ödənilməsi gecikdirilmiş ödəniş və açıqlamamaq üçün müəyyən edilmiş cərimə strukturları ilə uyğunluq pozuntusunu təşkil edir. A variantı tapılarsa yığılmış cərimələrə məruz qoyur. C variantı qeyri-qanunidir. D variantı məsuliyyəti uyğun olmayan şəkildə köçürür.",
+    "development_tip_en": "Maintain a SSPF compliance calendar with monthly rate verification checkpoints. Current rates: 22% employer on gross salary, 3% employee on gross salary up to 8,000 AZN; above 8,000 AZN the employee rate drops to 0.5%. Build this tiered structure into payroll system validation rules, not just manual review. When errors are found, voluntary disclosure to SSPF consistently results in better outcomes than audit discovery.",
+    "development_tip_az": "Aylıq dərəcə yoxlama məntəqələri ilə DSMF uyğunluq təqvimi saxlayın. Cari dərəcələr: ümumi əmək haqqına işəgötürəndən 22%, 8.000 AZN-ə qədər ümumi əmək haqqına işçidən 3%; 8.000 AZN-dən yuxarıda işçi dərəcəsi 0.5%-ə düşür. Bu pilleli strukturu yalnız manual yoxlamayla deyil, əmək haqqı sistemi doğrulama qaydalarına daxil edin.",
+    "london_delta": "A London HR manager would calculate National Insurance contributions at different rates (currently 13.8% employer above the secondary threshold) and would have no knowledge of AZ's 22%+3% structure or the 8,000 AZN salary ceiling where rates change. More critically, UK voluntary disclosure to HMRC follows a well-established process (Statutory Payment Returns), whereas the AZ SSPF disclosure process requires navigating a different institutional relationship. The London instinct to 'quietly correct' is also higher-risk in AZ because SSPF audit powers include retroactive penalty compounding that UK HMRC applies only in cases of deliberate concealment.",
+    "az_institutions": [
+      "SSPF (State Social Protection Fund)",
+      "Ministry of Taxes"
+    ],
+    "tags": [
+      "hr",
+      "sspf",
+      "payroll-compliance",
+      "social-insurance",
+      "az-tax-law"
+    ]
+  },
+  {
+    "id": "prof-hr-s3-004",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.4,
+    "irt_b": 0.0,
+    "irt_c": 0.11,
+    "scenario_en": "PASHA Holding's IT division has requested a permanent remote work arrangement for 60 software engineers who moved to other cities during COVID-19. Management wants to formalize this but is uncertain about legal requirements. The engineers have been working informally remote since 2021. What framework should HR implement under AZ Labor Code Art.175-1?",
+    "scenario_az": "PASHA Holdinqin İT bölməsi COVID-19 zamanı digər şəhərlərə köçmüş 60 proqram mühəndisi üçün daimi uzaqdan iş rejimi tələb etmişdir. Rəhbərlik bunu rəsmiləşdirmək istəyir, lakin qanuni tələblərdən əmin deyil. Mühəndislər 2021-ci ildən bəri qeyri-rəsmi uzaqdan işləyirlər. HR AZ Əmək Məcəlləsinin 175-1-ci maddəsinə uyğun hansı çərçivəni tətbiq etməlidir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Continue the informal arrangement — AZ labor law does not require remote work to be formalized as long as the employment contract remains valid",
+        "text_az": "Qeyri-rəsmi düzənişi davam etdirin — işə qəbul müqaviləsi qüvvədə qaldıqca AZ əmək qanunu uzaqdan işin rəsmiləşdirilməsini tələb etmir"
+      },
+      {
+        "key": "B",
+        "text_en": "Issue addenda to employment contracts specifying remote work location, equipment provision responsibilities, data security obligations, and applicable working hours under Art.175-1; update SSPF registration to reflect new work locations if in different cities",
+        "text_az": "175-1-ci maddəyə uyğun olaraq uzaqdan iş yerini, avadanlıq təminatı məsuliyyətlərini, məlumat təhlükəsizliyi öhdəliklərini və tətbiq olunan iş saatlarını müəyyən edən müqavilə əlavələri verin"
+      },
+      {
+        "key": "C",
+        "text_en": "Classify the engineers as freelance contractors to simplify remote work compliance — this removes the need for Art.175-1 contracts entirely",
+        "text_az": "Uzaqdan iş uyğunluğunu sadələşdirmək üçün mühəndisləri sərbəst podratçılar kimi təsnif edin — bu, 175-1-ci maddə müqavilələrinə ehtiyacı tamamilə aradan qaldırır"
+      },
+      {
+        "key": "D",
+        "text_en": "Implement a hybrid policy requiring engineers to report to Baku offices at least 2 days per week, as Art.175-1 does not permit fully remote work for full-time employees",
+        "text_az": "Mühəndislərin həftədə ən azı 2 gün Bakı ofislərinə gəlməsini tələb edən hibrid siyasət tətbiq edin, çünki 175-1-ci maddə tam zamanlı işçilər üçün tam uzaqdan işi icazə vermir"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. Art.175-1 (added to the AZ Labor Code in 2021) specifically provides a framework for remote work (uzaqdan iş), requiring formal written agreement specifying: the remote work location, employer and employee responsibilities for equipment and connectivity, working hour arrangements, and data protection obligations. Critically, because some engineers moved to different cities, their SSPF registration location may need updating to reflect where contributions are attributed regionally. Option A is non-compliant — Art.175-1 requires formalization. Option C misclassifies employees as contractors, creating significant labor law exposure. Option D is incorrect — Art.175-1 permits fully remote arrangements without a mandatory office attendance requirement.",
+    "feedback_az": "B düzgündür. 175-1-ci maddə (2021-ci ildə AZ Əmək Məcəlləsinə əlavə edilmişdir) xüsusi olaraq uzaqdan iş üçün çərçivə təmin edir: uzaqdan iş yeri, avadanlıq üçün işəgötürən və işçi məsuliyyətləri, iş saatı düzənişləri və məlumat mühafizəsi öhdəlikləri. A variantı uyğun deyil. C variantı işçiləri podratçı kimi yanlış təsnif edir. D variantı yanlışdır — 175-1-ci maddə məcburi ofis davamiyyəti tələbi olmadan tam uzaqdan düzənişlərə icazə verir.",
+    "development_tip_en": "Build a remote work contract addendum template based on Art.175-1's four required elements: (1) designated remote location, (2) equipment and connectivity responsibilities with cost reimbursement provisions, (3) core hours and availability expectations, (4) data security and device management obligations. Review SSPF implications when employees relocate to different regions — regional contribution attribution may affect both the employee record and employer reporting obligations.",
+    "development_tip_az": "175-1-ci maddənin dörd tələb olunan elementinə əsaslanaraq uzaqdan iş müqaviləsi əlavəsi şablonu hazırlayın: (1) təyin edilmiş uzaqdan yer, (2) xərclərin ödənilməsi müddəaları ilə avadanlıq və əlaqə məsuliyyətləri, (3) əsas saatlar və mövcudluq gözləntiləri, (4) məlumat təhlükəsizliyi və cihaz idarəetmə öhdəlikləri.",
+    "london_delta": "A London HR manager would apply the UK's Flexible Working Regulations (recently strengthened in 2023, allowing requests from day one of employment) and would focus on the 'reasonableness' of refusing remote work rather than on formal documentation requirements. UK law does not require a separate written addendum for remote work — it is typically handled through the flexible working request process or a variation to the written statement of particulars. Art.175-1 is structurally different: it mandates specific written formalization elements that have no UK equivalent, making the London reflex to 'just approve the arrangement informally' a compliance failure in AZ.",
+    "az_institutions": [
+      "Ministry of Labor and Social Protection",
+      "SSPF (State Social Protection Fund)"
+    ],
+    "tags": [
+      "hr",
+      "az-labor-code",
+      "art-175-1",
+      "remote-work",
+      "covid-era-policy"
+    ]
+  },
+  {
+    "id": "prof-hr-s3-005",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.6,
+    "irt_b": 0.2,
+    "irt_c": 0.09,
+    "scenario_en": "You are HR Director at PASHA Holding. You have introduced a new performance management system with quarterly OKRs. Rovshan bəy, the Head of Corporate Finance with 24 years at the company, openly tells his team in a departmental meeting that the new system is 'a foreign import that doesn't reflect how real work gets done here' and that he will 'continue running his team as always.' Several younger managers have heard this and are privately asking whether they still need to comply with OKRs. How do you handle this?",
+    "scenario_az": "Siz PASHA Holdinqdə HR Direktorusunuz. Rüblük OKR-lərlə yeni performans idarəetmə sistemi tətbiq etdiniz. Şirkətdə 24 illik təcrübəsi olan Korporativ Maliyyə rəhbəri Rövşan bəy şöbə iclasında açıqca öz komandasına deyir ki, yeni sistem 'burada işin həqiqətən necə görüldüyünü əks etdirməyən xarici idxaldır' və o 'komandasını həmişəki kimi idarə etməyə davam edəcək.' Bir neçə gənc menecer bunu eşidib və özəl olaraq OKR-lərə uyğun olub olmamalarının hələ də lazım olub olmadığını soruşurlar. Bunu necə idarə edirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Send a company-wide email reaffirming that OKR compliance is mandatory for all departments, naming no individuals but making the consequence of non-compliance clear",
+        "text_az": "Heç bir fərd adını çəkmədən OKR uyğunluğunun bütün şöbələr üçün məcburi olduğunu yenidən təsdiqləyən şirkət miqyaslı e-poçt göndərin, lakin uyğunsuzluğun nəticəsini aydın şəkildə bildirib"
+      },
+      {
+        "key": "B",
+        "text_en": "Request a private meeting with Rovshan bəy — acknowledge his experience and institutional knowledge, understand his specific objections, and negotiate how his team's OKR format can reflect operational realities while maintaining the system's integrity; follow up with a formal written agreement on implementation",
+        "text_az": "Rövşan bəylə özəl görüş tələb edin — onun təcrübəsini və institusional biliyini tanıyın, spesifik etirazlarını anlayın və sistemin bütövlüyünü qoruyarkən onun komandasının OKR formatının əməliyyat reallıqlarını necə əks etdirə biləcəyini müzakirə edin; tətbiq ilə bağlı rəsmi yazılı razılaşma ilə davam edin"
+      },
+      {
+        "key": "C",
+        "text_en": "Escalate to the CEO immediately, documenting Rovshan bəy's public resistance as a change management failure requiring executive intervention",
+        "text_az": "Dərhal CEO-ya müraciət edin, Rövşan bəyin ictimai müqavimətini icraedici müdaxilə tələb edən dəyişikliklər idarəetmə uğursuzluğu kimi sənədləşdirin"
+      },
+      {
+        "key": "D",
+        "text_en": "Allow Rovshan bəy's team to operate outside the OKR system for one cycle as a 'pilot exception,' then assess whether to enforce compliance",
+        "text_az": "Rövşan bəyin komandasının 'pilot istisna' kimi bir dövr üçün OKR sistemindən kənarda işləməsinə icazə verin, sonra uyğunluğu tətbiq edib-etməməyi qiymətləndirin"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. In AZ corporate culture, a senior colleague with 24 years of institutional standing cannot be publicly contradicted or overridden without serious damage to his authority and your credibility. Option A (a broadcast email) will be read by Rovshan bəy as a public rebuke and will harden resistance. The effective approach in AZ hierarchy is to engage privately, honor the seniority with genuine recognition (not performative), identify specific objections that may have merit, and negotiate a compliant path that allows him to save face while still implementing the system. A written agreement then creates accountability without confrontation. Option C bypasses the HR leadership role and signals inability to manage change independently. Option D creates a visible two-tier system that will undermine compliance across all departments.",
+    "feedback_az": "B düzgündür. AZ korporativ mədəniyyətində 24 illik institusional nüfuzu olan senior bir həmkara ictimai olaraq etiraz etmək və ya onu əsas götürməmək onun nüfuzuna və sizin etibarlılığınıza ciddi ziyan vurur. A variantı (yayım e-poçtu) Rövşan bəy tərəfindən ictimai töhmət kimi qəbul ediləcək. C variantı HR liderlik rolunu keçir. D variantı bütün şöbələrdə uyğunluğu zəiflədəcək görünən iki pilləli sistem yaradır.",
+    "development_tip_en": "In AZ organizations, change management for senior tenured staff requires a 'honor then align' approach: explicitly acknowledge their institutional contribution, create space for their objections to be heard (some may be genuinely valid), then co-create a modified implementation path they can endorse. The goal is behavioral alignment, not symbolic compliance. Document the agreed approach in writing — this protects both parties and creates a precedent for the broader rollout.",
+    "development_tip_az": "AZ təşkilatlarında uzun müddətli senior işçilər üçün dəyişiklik idarəetməsi 'tanı, sonra uyğunlaşdır' yanaşması tələb edir: onların institusional töhfəsini açıqca tanıyın, etirazlarının eşidilməsi üçün yer yaradın, sonra onların dəstəkləyə biləcəyi dəyişdirilmiş tətbiq yolu birlikdə yaradın.",
+    "london_delta": "A London HR Director would likely approach this as a standard change management problem — using cascade communications, mandatory training attendance, and if necessary, a formal performance improvement plan for non-compliance. UK employment law supports enforceable performance management directives, and senior tenure does not create a different legal or cultural expectation. In AZ, Rovshan bəy's 24 years creates an implicit social contract that a direct enforcement approach will rupture — triggering not just his non-compliance but passive resistance from mid-level managers who defer to his signal. The London toolkit (email, escalation, PIPs) applied directly produces the opposite of its intended effect in this context.",
+    "az_institutions": [
+      "PASHA Holding (internal)"
+    ],
+    "tags": [
+      "hr",
+      "az-corporate-culture",
+      "change-management",
+      "senior-stakeholder",
+      "hierarchy"
+    ]
+  },
+  {
+    "id": "prof-hr-s3-006",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "hard",
+    "type": "sjt",
+    "irt_a": 1.8,
+    "irt_b": 0.8,
+    "irt_c": 0.08,
+    "scenario_en": "You are HR Manager at SOCAR's administrative headquarters in Baku. It is mid-Ramadan. A team leader has complained that three Muslim employees are leaving their workstations repeatedly for prayers, that one employee is visibly fatigued and made an error on a report, and that the department's productivity metrics have dropped 12% compared to the previous month. He asks you to issue formal warnings to the three employees for 'unprofessional conduct.' There is no formal Ramadan accommodation policy at SOCAR. What is your response?",
+    "scenario_az": "Siz Bakıdakı SOCAR-ın inzibati qərargahında HR Menecersiniz. Ramazanın ortasıdır. Bir komanda rəhbəri şikayət edib ki, üç müsəlman işçi namaz üçün iş yerlərini dəfələrlə tərk edir, bir işçi açıq şəkildə yorğundur və hesabatda səhv etmişdir, şöbənin məhsuldarlıq göstəriciləri bir əvvəlki aya nisbətən 12% azalmışdır. O, üç işçiyə 'qeyri-peşəkar davranış' üçün rəsmi xəbərdarlıq verilməsini xahiş edir. SOCAR-da rəsmi Ramazan uyğunlaşma siyasəti yoxdur. Reaksiyanız nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Issue the warnings as requested — religious observance does not override contractual working hour obligations, and the productivity data supports the team leader's position",
+        "text_az": "Tələb olunduğu kimi xəbərdarlıqları verin — dini ibadət müqavilə iş saatı öhdəliklərini əvəz etmir və məhsuldarlıq məlumatları komanda rəhbərinin mövqeyini dəstəkləyir"
+      },
+      {
+        "key": "B",
+        "text_en": "Decline to issue warnings; instead meet with the team leader to explain AZ Labor Code Art.73-1 (religious discrimination prohibition), investigate whether prayer breaks can be accommodated within existing break structures, and propose a temporary Ramadan flexibility protocol that protects productivity while respecting observance",
+        "text_az": "Xəbərdarlıq verməkdən imtina edin; bunun əvəzinə komanda rəhbəri ilə görüşün, AZ Əmək Məcəlləsinin 73-1-ci maddəsini (dini ayrı-seçkilik qadağası) izah edin, mövcud fasilə strukturları çərçivəsində namaz fasilələrinin yerləşdirilə bilib-bilinmədiyini araşdırın və ibadəti hörmətlə qarşılayan məhsuldarlığı qoruyan müvəqqəti Ramazan çeviklik protokolu təklif edin"
+      },
+      {
+        "key": "C",
+        "text_en": "Escalate to the Legal department to determine whether issuing the warnings creates discrimination liability before taking any action",
+        "text_az": "Hər hansı bir addım atmadan əvvəl xəbərdarlıqların ayrı-seçkilik məsuliyyəti yaradıb-yaratmadığını müəyyən etmək üçün Hüquq şöbəsinə yönləndirin"
+      },
+      {
+        "key": "D",
+        "text_en": "Tell the team leader that without a formal policy, this is a management discretion matter — he may handle it as he sees fit within the limits of the employment contract",
+        "text_az": "Komanda rəhbərinə deyin ki, rəsmi siyasət olmadan bu, idarəetmə mülahizəsi məsələsidir — o, işə qəbul müqaviləsinin hüdudları daxilində münasib gördüyü kimi idarə edə bilər"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. AZ Labor Code Art.73-1 explicitly prohibits discrimination on grounds of religion, added in 2014. Issuing formal warnings to employees specifically during Ramadan for prayer-related absences constitutes prima facie religious discrimination regardless of the absence of a formal accommodation policy. The absence of a policy is itself an HR gap — the correct response is to create one, not to use its absence as grounds for adverse action. B achieves this by: refusing adverse action, educating the manager on the legal exposure, and constructively resolving the productivity concern through flexible accommodation. Option A creates significant Art.73-1 liability. Option C delays necessary action without adding value. Option D abandons HR's safeguarding role and delegates discrimination risk to a line manager.",
+    "feedback_az": "B düzgündür. AZ Əmək Məcəlləsinin 73-1-ci maddəsi 2014-cü ildə əlavə edilərək açıqca dini əsaslarla ayrı-seçkiliyi qadağan edir. Ramazan zamanı namaz ilə əlaqəli qayıblarına görə işçilərə rəsmi xəbərdarlıq verilməsi rəsmi uyğunlaşma siyasəti olmadan da prima facie dini ayrı-seçkilik təşkil edir. A variantı əhəmiyyətli 73-1-ci maddə məsuliyyəti yaradır. C variantı lazımi tədbirləri gecikdirir. D variantı HR-in mühafizə rolundan imtina edir.",
+    "development_tip_en": "Proactively develop a Ramadan Accommodation Policy before each Ramadan period. Best practice for AZ companies: offer flexible break scheduling that allows prayer times within the existing break budget, provide a quiet space for prayers, avoid scheduling all-hands events during iftar hours, and brief managers on Art.73-1 obligations. A documented policy is both a compliance tool and a signal of organizational cultural intelligence — particularly important in AZ where religious observance rates are significant.",
+    "development_tip_az": "Hər Ramazan dövründən əvvəl proaktiv şəkildə Ramazan Uyğunlaşma Siyasəti hazırlayın. AZ şirkətləri üçün ən yaxşı təcrübə: mövcud fasilə büdcəsi çərçivəsində namaz vaxtlarına imkan verən çevik fasilə cədvəli, namazlar üçün sakit yer, iftar saatlarında ümumi tədbirlərin planlaşdırılmasından qaçınma və menecerlərə 73-1-ci maddə öhdəliklərini izah etmə.",
+    "london_delta": "A London HR manager would approach this under the Equality Act 2010 (religion or belief as a protected characteristic) and would instinctively know that issuing warnings for religious observance is high-risk. However, the London framework focuses on 'reasonable adjustments' — a balancing test — and a UK HR manager might still believe a formal warning is defensible if productivity impact is documented. In AZ, Art.73-1 provides a harder prohibition with less scope for proportionality arguments, especially in the social context of Ramadan in a majority-Muslim country where issuing warnings during this specific period carries significant reputational and workforce morale risk beyond the legal liability. The London HR instinct to 'balance productivity vs religious rights' understates the AZ context where religious observance during Ramadan has strong social legitimacy.",
+    "az_institutions": [
+      "Ministry of Labor and Social Protection",
+      "SOCAR (internal)"
+    ],
+    "tags": [
+      "hr",
+      "az-labor-code",
+      "art-73-1",
+      "religious-discrimination",
+      "ramadan",
+      "accommodation"
+    ]
+  },
+  {
+    "id": "prof-hr-s3-007",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.5,
+    "irt_b": 0.15,
+    "irt_c": 0.1,
+    "scenario_en": "Azərenerji is implementing a new HRIS (Human Resources Information System). The project team proposes integrating the HRIS directly with SSPF's e-government portal for automated monthly payroll reporting. During the design review, you notice the proposed integration will transmit employee salary data, national ID numbers, and bank account details to SSPF via an unencrypted HTTP connection to reduce development costs. The vendor says 'SSPF's portal accepts both HTTP and HTTPS.' What is your position as HR Manager?",
+    "scenario_az": "Azərenerji yeni HRIS (İnsan Resursları İnformasiya Sistemi) tətbiq edir. Layihə qrupu HRIS-i avtomatik aylıq əmək haqqı hesabatı üçün DSMF-in e-dövlət portalı ilə birbaşa inteqrasiya etməyi təklif edir. Dizayn nəzərdən keçirmə zamanı siz təklif edilən inteqrasiyanın inkişaf xərclərini azaltmaq üçün şifrəsiz HTTP bağlantısı vasitəsilə işçilərin əmək haqqı məlumatlarını, şəxsiyyət vəsiqəsi nömrələrini və bank hesabı detallarını DSMF-ə ötürəcəyini görürsünüz. Vendor deyir ki, 'DSMF portalı həm HTTP, həm də HTTPS qəbul edir.' HR meneceri kimi mövqeyiniz nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Accept the HTTP connection since SSPF's portal technically supports it — cost reduction is valid and the responsibility for data security lies with SSPF once data reaches their portal",
+        "text_az": "DSMF-nin portalı texniki cəhətdən dəstəklədiyinə görə HTTP bağlantısını qəbul edin — xərclərini azaltmaq əsaslıdır və məsuliyyəti DSMF məlumatları portala çatdıqdan sonra onlara aiddir"
+      },
+      {
+        "key": "B",
+        "text_en": "Reject the HTTP option and require HTTPS encryption for all SSPF data transmissions — AZ Personal Data Law 2010 places data security obligations on the data controller (Azərenerji), not just the recipient, and transmitting employee PII over unencrypted channels is a breach regardless of SSPF portal capabilities",
+        "text_az": "HTTP seçimini rədd edin və bütün DSMF məlumatlarının ötürülməsi üçün HTTPS şifrələməsini tələb edin — AZ Fərdi Məlumatlar Qanunu 2010 məlumat təhlükəsizliyi öhdəliklərini yalnız alıcıya deyil, məlumat nəzarətçisinə (Azərenerji) qoyur"
+      },
+      {
+        "key": "C",
+        "text_en": "Approve the HTTP connection for the pilot phase and require HTTPS for the full rollout — the risk during a limited pilot is manageable",
+        "text_az": "Pilot mərhələ üçün HTTP bağlantısını təsdiqləyin və tam tətbiq üçün HTTPS tələb edin — məhdud pilot zamanı risk idarə olunandır"
+      },
+      {
+        "key": "D",
+        "text_en": "Refer the decision entirely to the IT Security team — data transmission protocols are outside HR's scope of authority and competence",
+        "text_az": "Qərarı tamamilə İT Təhlükəsizlik komandasına həvalə edin — məlumat ötürmə protokolları HR-in səlahiyyət və səriştəsindən kənardadır"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. The AZ Personal Data Law (Law on Personal Data, 2010) establishes that the data controller — the organization collecting and processing data — bears primary responsibility for data security throughout the entire processing chain, including transmission. Azərenerji as data controller cannot transfer this responsibility by pointing to the recipient's technical capabilities. Transmitting national ID numbers, salary figures, and bank account details over unencrypted HTTP exposes employees to man-in-the-middle interception and constitutes a breach of data security obligations under the 2010 Law. Option A wrongly attributes responsibility to SSPF. Option C treats PII security as a scalable risk — it is not; a breach during 'pilot' affects real employees. Option D abdicates HR's role as organizational advocate for employee data rights.",
+    "feedback_az": "B düzgündür. AZ Fərdi Məlumatlar Qanunu (2010) məlumat nəzarətçisinin — məlumatları toplayan və emal edən təşkilatın — ötürmə daxil olmaqla bütün emal zənciri boyunca məlumat təhlükəsizliyinə görə əsas məsuliyyət daşıdığını müəyyən edir. A variantı məsuliyyəti yanlış olaraq DSMF-ə aid edir. C variantı PII təhlükəsizliyini miqyaslana bilən risk kimi qəbul edir. D variantı HR-in işçi məlumat hüquqları üçün təşkilati vəkil rolundan imtina edir.",
+    "development_tip_en": "HR managers overseeing HRIS implementations must understand data controller obligations under the AZ Personal Data Law 2010 — this is not exclusively an IT responsibility. Key rule: any transmission of employee PII (salary, national ID, health data, bank details) must use encryption in transit (HTTPS/TLS minimum). Build this as a non-negotiable requirement in any HRIS vendor RFP. Also understand that SSPF integration for AZ payroll reporting requires specific report formats (Form 4-DSMF) — verify vendor compliance with current SSPF technical specifications, not just their claim of portal compatibility.",
+    "development_tip_az": "HRIS tətbiqlərini nəzarət edən HR menecerləri AZ Fərdi Məlumatlar Qanunu 2010 əsasında məlumat nəzarətçisi öhdəliklərini başa düşməlidirlər — bu yalnız İT məsuliyyəti deyil. Əsas qayda: işçi PII-nin (əmək haqqı, şəxsiyyət vəsiqəsi nömrəsi, bank detalları) hər hansı ötürmə şifrələmə (minimum HTTPS/TLS) istifadə etməlidir. Bunu hər hansı HRIS vendor RFP-ə dəyişdirilə bilməyən tələb kimi əlavə edin.",
+    "london_delta": "A London HR manager would be familiar with GDPR Article 5(1)(f) requiring 'appropriate security' for personal data, but GDPR's risk-based approach allows some flexibility in weighing encryption requirements against context. In AZ, the 2010 Personal Data Law has less detailed technical guidance than GDPR but equally clear controller responsibility — the practical difference is that a London HR professional might engage in a 'proportionality' discussion about whether HTTP is acceptable for a pilot. In AZ, there is no equivalent regulatory nuance supporting that position, and the social and reputational stakes of an employee data breach in a relatively small, interconnected professional community like Baku are disproportionately high.",
+    "az_institutions": [
+      "SSPF (State Social Protection Fund)",
+      "Ministry of Transport, Communications and High Technologies"
+    ],
+    "tags": [
+      "hr",
+      "hris",
+      "az-personal-data-law",
+      "sspf-integration",
+      "data-security",
+      "tech-literacy"
+    ]
+  },
+  {
+    "id": "prof-hr-s3-008",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 1.7,
+    "irt_b": 0.9,
+    "irt_c": 0.0,
+    "scenario_en": "You are HR Director at a 200-person manufacturing company in Sumqayıt. On a Tuesday morning you receive an official notification from the Ministry of Labor Inspection that a labor compliance audit will begin in 10 working days. The notification lists 7 audit areas: employment contracts, SSPF contributions, working hour records, safety training documentation, disciplinary procedures, foreign worker permits, and parental leave compliance. You have 10 days. Describe your prioritization framework and the specific actions you would take in each of the 10 days.",
+    "scenario_az": "Siz Sumqayıtda 200 nəfərlik istehsal şirkətinin HR Direktorusunuz. Çərşənbə axşamı səhər Əmək Müfəttişliyi Nazirliyindən 10 iş günü sonra əmək uyğunluğu auditi başlayacağına dair rəsmi bildiriş alırsınız. Bildirişdə 7 audit sahəsi sadalanır: işə qəbul müqavilələri, DSMF töhfələri, iş saatı qeydlərı, təhlükəsizlik təlimi sənədləri, intizam prosedurları, xarici işçi icazələri və valideynlik məzuniyyəti uyğunluğu. Sizin 10 günüz var. Prioritetləşdirmə çərçivənizdən və hər 10 gündə görəcəyiniz xüsusi tədbirlərdən bəhs edin.",
+    "options": null,
+    "correct_answer": null,
+    "feedback_en": "A strong response demonstrates: (1) Risk-severity triage: SSPF underpayments and foreign worker permit lapses carry the highest financial penalties under AZ law and should be addressed first (Days 1-2). Employment contracts for all 200 employees must be verified for Art.175-1 compliance if any remote workers exist (Days 1-3). (2) Day-by-day structure: Days 1-2 = emergency audit of SSPF records and foreign worker status. Days 3-4 = employment contract review for mandatory clauses. Days 5-6 = working hour record reconstruction and safety training log verification. Days 7-8 = disciplinary procedure documentation review and parental leave compliance check against Art.109-1. Day 9 = mock internal audit with findings log. Day 10 = final documentation packaging and legal counsel briefing. (3) AZ-specific knowledge: the 10-day notice is a feature of AZ Ministry of Labor Inspection protocol — unlike surprise inspections in some jurisdictions. This window must be used actively, not defensively. Inspectors will review original documents, so physical file organization matters. (4) Immediate escalation items: any discovered non-compliance should be proactively disclosed to the inspection team on Day 1 of the audit, as voluntary disclosure mitigates penalties under AZ administrative law.",
+    "feedback_az": "Güclü cavab bunları nümayiş etdirir: (1) Risk-ciddilik triajı: DSMF az ödənişləri və xarici işçi icazəsinin sona çatması AZ qanunu çərçivəsində ən yüksək maliyyə cərimələrini daşıyır (1-2-ci günlər). (2) Günlük struktur: 1-2-ci günlər = DSMF qeydlərinin fövqəladə auditi. 3-4-cü günlər = məcburi bəndlər üçün müqavilənin nəzərdən keçirilməsi. 5-6-cı günlər = iş saatı qeydlərinin yenidən qurulması. (3) AZ-spesifik biliklər: 10 günlük bildiriş AZ Əmək Müfəttişliyi protokolunun xüsusiyyətidir. (4) Dərhal eskalasiya maddələri: aşkar edilmiş hər hansı uyğunsuzluq auditin 1-ci günündə müfəttişliyə proaktiv şəkildə açıqlanmalıdır.",
+    "development_tip_en": "Maintain a 'Audit Ready' binder updated quarterly: employment contracts indexed by employee, SSPF payment receipts for 24 months, working hour records for all shifts, safety training attendance sheets with signatures, foreign worker permit copies with expiry dates flagged, disciplinary records with dual signatures, and parental leave tracking log. The 10-day Ministry of Labor Inspection notice is a legal obligation on their side — use every day of it. Companies that arrive at Day 1 of inspection with organized documentation and a pre-identified disclosure log of minor issues consistently receive lower penalty assessments than companies that appear unprepared.",
+    "development_tip_az": "Rüblük yenilənən 'Audit Hazır' qovluğu saxlayın: işçilər üzrə indeksləşdirilmiş işə qəbul müqavilələri, 24 aylıq DSMF ödəniş qəbzləri, bütün növbələr üçün iş saatı qeydlərı, imzalı işçi sağlamlığı və təhlükəsizliyi təlim davamiyyəti cədvəlləri, son istifadə tarixi işarələnmiş xarici işçi icazəsi surətləri, ikili imzalı intizam qeydlərı.",
+    "london_delta": "A London HR Director would have no equivalent preparation framework because UK employment tribunals and HMRC operate differently from AZ's Ministry of Labor Inspection. In the UK, there is no standard 10-day pre-audit notice requirement — HMRC compliance checks can be unannounced or have short notice periods, and employment tribunal claims are reactive rather than proactive inspections. The AZ inspection model is closer to a continental European 'labor inspection visit' model (like France's Inspection du Travail) than the UK model, meaning the London HR professional would likely under-prepare and treat the notice period as administrative formality rather than an active compliance remediation window.",
+    "az_institutions": [
+      "Ministry of Labor and Social Protection Inspection",
+      "SSPF (State Social Protection Fund)",
+      "State Migration Service (foreign worker permits)"
+    ],
+    "tags": [
+      "hr",
+      "az-labor-inspection",
+      "audit-preparation",
+      "compliance",
+      "sspf",
+      "adaptability"
+    ]
+  },
+  {
+    "id": "prof-hr-s3-009",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "hard",
+    "type": "mcq",
+    "irt_a": 1.9,
+    "irt_b": 1.0,
+    "irt_c": 0.07,
+    "scenario_en": "SOCAR is restructuring its IT Services division, eliminating 45 positions as part of a digitalization program. As HR Director you must manage the redundancy process. The affected employees have tenures ranging from 3 to 18 years. You discover that two of the 45 employees are pregnant (protected under Art.109-1) and one employee is currently on sick leave. The operations team wants all notifications sent simultaneously by email next Monday to minimize 'information leakage.' What is your leadership position on the notification approach?",
+    "scenario_az": "SOCAR rəqəmsallaşdırma proqramının bir hissəsi kimi İT Xidmətləri bölməsini yenidən strukturlaşdırır, 45 vəzifəni ləğv edir. HR Direktoru kimi siz artıqlığı idarə etməlisiniz. Təsirlənən işçilərin stajı 3-dən 18 ilə qədər dəyişir. Siz 45 işçidən ikisinin hamilə olduğunu (109-1-ci maddə ilə qorunan) və bir işçinin hazırda xəstəlik məzuniyyətində olduğunu müəyyən edirsiniz. Əməliyyat qrupu 'məlumat sızmасını' minimuma endirmək üçün bütün bildirişlərin gələn bazar ertəsi e-poçtla eyni vaxtda göndərilməsini istəyir. Bildiriş yanaşmasına dair liderlik mövqeyiniz nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Agree with the simultaneous email approach — it ensures all employees receive the same information at the same time, which is the fairest method and limits speculation",
+        "text_az": "Eyni vaxtda e-poçt yanaşması ilə razılaşın — bütün işçilər eyni vaxtda eyni məlumat alır ki, bu ən ədalətli metoddur və spekulyasiyanı məhdudlaşdırır"
+      },
+      {
+        "key": "B",
+        "text_en": "Reject the simultaneous email approach; require face-to-face individual notifications with HR and line manager present; remove the two pregnant employees and the employee on sick leave from the redundancy list as they cannot be lawfully dismissed; calculate Art.146 severance for all remaining 42 employees (minimum 1 month per year of service) and confirm figures before any notification",
+        "text_az": "Eyni vaxtda e-poçt yanaşmasını rədd edin; HR və bölmə müdiri iştirakıyla üz-üzə fərdi bildirişlər tələb edin; iki hamilə işçini və xəstəlik məzuniyyətindəki işçini qanuni olaraq işdən çıxarılamayacağı üçün artıqlıq siyahısından çıxarın; qalan 42 işçi üçün 146-cı maddə üzrə işdən çıxma müavinətini (stajın hər ili üçün minimum 1 aylıq maaş) hesablayın və hər hansı bildirişdən əvvəl rəqəmləri təsdiqləyin"
+      },
+      {
+        "key": "C",
+        "text_en": "Proceed with simultaneous notifications for all 45 employees, but include a note that pregnant employees and the employee on sick leave are 'under review' and will receive separate communication",
+        "text_az": "Bütün 45 işçi üçün eyni vaxtda bildirişlə davam edin, lakin hamilə işçilərin və xəstəlik məzuniyyətindəki işçinin 'nəzərdən keçirilmə altında olduğunu' göstərən qeyd əlavə edin"
+      },
+      {
+        "key": "D",
+        "text_en": "Notify the 42 unprotected employees by email simultaneously; handle the 2 pregnant employees and sick leave employee separately with a private meeting, informing them they are retained for now pending review",
+        "text_az": "42 qorunmayan işçiyə eyni vaxtda e-poçtla bildirin; 2 hamilə işçi və xəstəlik məzuniyyəti işçisini ayrıca özəl görüşlə idarə edin, onlara hazırda nəzərdən keçirilmə gözlənildiyi üçün saxlanıldıqlarını bildirin"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct, and it is the only option that addresses all three legal constraints simultaneously. First, the two pregnant employees are absolutely protected under Art.109-1 — they cannot be included in redundancy at all, not placed 'under review.' Second, the employee on sick leave has temporary protection against dismissal during the illness period. Third, Art.146 requires severance calculation at minimum 1 month per year of service — sending termination notifications before confirming severance amounts exposes SOCAR to disputes about quantum. Fourth, email notification of redundancy is legally and humanistically inadequate for employees with up to 18 years of service; AZ cultural norms strongly expect face-to-face communication for significant employment decisions. Option A ignores all three legal constraints. Option C creates confusion and may constitute discriminatory singling-out of the pregnant employees. Option D handles protection correctly but still uses email notification for the 42, which is inadequate for a company of SOCAR's stature.",
+    "feedback_az": "B düzgündür və üç hüquqi məhdudiyyətin hamısını eyni vaxtda həll edən yeganə seçimdir. Birincisi, iki hamilə işçi 109-1-ci maddə ilə mütləq qorunur — ümumiyyətlə artıqlığa daxil edilə bilməzlər. İkincisi, xəstəlik məzuniyyətindəki işçi xəstəlik dövrü ərzində müvəqqəti qorunmaya malikdir. Üçüncüsü, 146-cı maddə minimum stajın hər ili üçün 1 aylıq maaş tələb edir. A variantı üç hüquqi məhdudiyyətin hamısını nəzərə almır. C variantı çaşqınlıq yaradır. D variantı qorunmanı düzgün idarə edir, lakin hələ 42 üçün e-poçt bildirişindən istifadə edir.",
+    "development_tip_en": "For any SOCAR-scale redundancy process, build a pre-notification checklist: (1) Screen all affected employees against protected categories (pregnancy, parental leave, sick leave, union status if applicable). (2) Calculate Art.146 severance for each individual before any communication. (3) Prepare individual notification letters, not group emails. (4) Brief line managers on the notification conversation protocol — they are not to deliver news unilaterally. (5) Prepare an employee support resources document (State Employment Agency registration, retraining programs). In AZ, redundancy notifications are a significant cultural event — how SOCAR treats departing employees is observed by every remaining employee and directly affects the company's ability to recruit for the next 3-5 years.",
+    "development_tip_az": "Hər hansı SOCAR miqyaslı artıqlıq prosesi üçün bildiriş öncəsi yoxlama siyahısı hazırlayın: (1) Bütün təsirlənən işçiləri qorunan kateqoriyalara qarşı yoxlayın (hamiləlik, valideynlik məzuniyyəti, xəstəlik məzuniyyəti). (2) Hər hansı əlaqədan əvvəl hər bir fərd üçün 146-cı maddə üzrə işdən çıxma müavinəti hesablayın. (3) Qrup e-poçtları deyil, fərdi bildiriş məktubları hazırlayın.",
+    "london_delta": "A London HR Director managing a large-scale redundancy would follow a detailed ACAS Code of Practice process — collective redundancy consultation requirements (HR1 form to the Insolvency Service if 20+ roles), minimum 30/45 day consultation periods, and individual at-risk meetings. The email notification approach would be rejected in the UK too, but for different reasons (consultation obligations, not just cultural norms). The critical London blind spot is on the protected employees: UK HR would know that pregnant employees in redundancy require 'suitable alternative employment' to be offered first (Maternity and Parental Leave Regulations 1999) — a process-based protection. AZ's Art.109-1 absolute prohibition is stricter: there is no 'offer alternatives first' pathway — they simply cannot be selected for redundancy at all.",
+    "az_institutions": [
+      "SOCAR (internal)",
+      "Ministry of Labor and Social Protection",
+      "State Employment Agency"
+    ],
+    "tags": [
+      "hr",
+      "az-labor-code",
+      "art-109-1",
+      "art-146",
+      "redundancy",
+      "restructuring",
+      "leadership"
+    ]
+  },
+  {
+    "id": "prof-hr-s3-010",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "hard",
+    "type": "sjt",
+    "irt_a": 1.8,
+    "irt_b": 0.85,
+    "irt_c": 0.08,
+    "scenario_en": "You are HR Director at a 300-person fintech company in Baku. On Friday at 17:30, your IT Security team informs you that a misconfigured cloud storage bucket has exposed salary data, national ID numbers, home addresses, and performance review scores for all 300 employees publicly online for an estimated 72 hours. The data has been secured. No external reports of misuse have been received yet. Your CEO asks: 'Do we need to notify employees and authorities? Can we wait until Monday to assess further?' What is your immediate response and action plan?",
+    "scenario_az": "Siz Bakıda 300 nəfərlik fintech şirkətinin HR Direktorusunuz. Cümə günü 17:30-da İT Təhlükəsizlik komandasınız bildiriri ki, yanlış konfiqurasiya edilmiş bulud yaddaş qabı təxminən 72 saat ərzində bütün 300 işçi üçün əmək haqqı məlumatlarını, şəxsiyyət vəsiqəsi nömrələrini, ev ünvanlarını və performans rəy xallarını ictimai şəkildə onlayn açıqlamışdır. Məlumatlar təmin edilmişdir. Hələ heç bir xarici sui-istifadə xəbəri alınmamışdır. CEO-nuz soruşur: 'İşçilərə və orqanlara bildiriş verməliyikmi? Daha çox qiymətləndirmək üçün bazar ertəsinə qədər gözləyə bilərikmi?' Dərhal reaksiyanız və fəaliyyət planınız nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Advise the CEO to wait until Monday — no misuse has been confirmed, the data is now secured, and a weekend response may cause unnecessary panic among employees before the full scope is understood",
+        "text_az": "CEO-ya bazar ertəsinə qədər gözləməyi məsləhət görün — heç bir sui-istifadə təsdiqlənməmişdir, məlumatlar indi təmin edilmişdir və həftəsonu cavabı tam əhatə anlaşılmadan işçilər arasında lazımsız panikaya səbəb ola bilər"
+      },
+      {
+        "key": "B",
+        "text_en": "Advise the CEO that waiting until Monday is not acceptable; initiate employee notification this weekend with factual disclosure of what data was exposed and for how long; notify the relevant AZ data protection authority; engage legal counsel tonight to assess the AZ Personal Data Law 2010 obligations; and prepare an employee support protocol including fraud monitoring guidance",
+        "text_az": "CEO-ya bazar ertəsinə qədər gözləməyin qəbul edilə bilmədiyini bildirin; hansı məlumatların nə qədər müddət üçün açıqlandığının faktiki açıqlaması ilə bu həftəsonu işçilərə bildiriş başladın; müvafiq AZ məlumatların mühafizəsi orqanına bildirin; bu gecə AZ Fərdi Məlumatlar Qanunu 2010 öhdəliklərini qiymətləndirmək üçün hüquq müşavirini cəlb edin; saxta izləmə təlimatı daxil olmaqla işçi dəstəyi protokolu hazırlayın"
+      },
+      {
+        "key": "C",
+        "text_en": "Advise the CEO to notify only the employees whose data poses the highest risk (e.g., those with senior roles whose salary data is most sensitive) and delay notifying others until Monday",
+        "text_az": "CEO-ya yalnız məlumatları ən yüksək risk yaradan işçilərə (məsələn, əmək haqqı məlumatları ən həssas olan senior vəzifəli şəxslər) bildiriş verməyi məsləhət görün və digərlərinə bildirişi bazar ertəsinə qədər gecikdirin"
+      },
+      {
+        "key": "D",
+        "text_en": "Advise monitoring dark web and social media over the weekend for signs of data misuse, and only notify employees and authorities if evidence of misuse emerges before Monday",
+        "text_az": "Həftəsonu məlumatların sui-istifadəsinə dair əlamətlər üçün qaranlıq veb və sosial mediaya nəzarət etməyi məsləhət görün, yalnız bazar ertəsindən əvvəl sui-istifadə sübutu ortaya çıxarsa işçilərə və orqanlara bildirin"
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. The AZ Personal Data Law 2010 establishes data controller obligations including the requirement to protect personal data and take measures in response to breaches. While the Law does not specify an explicit 72-hour notification window (unlike GDPR Article 33), it does require the data controller to act to protect affected individuals' interests — which includes timely notification to allow them to take protective measures (fraud monitoring, credit alerts, etc.). The exposure included national ID numbers and home addresses — categories of data whose misuse (identity fraud, physical security risk) can begin before any visible incident is reported. Option A creates a window for harm crystallization and may constitute negligence. Option C creates unlawful differential treatment of employees based on seniority — all affected employees have equal data rights. Option D uses misuse evidence as the notification trigger — but harm from national ID exposure often materializes weeks later, making this an unreliable threshold.",
+    "feedback_az": "B düzgündür. AZ Fərdi Məlumatlar Qanunu 2010 pozuntulara cavab olaraq fərdi məlumatları qorumaq və tədbirlər görmək tələbi daxil olmaqla məlumat nəzarətçisi öhdəliklərini müəyyən edir. GDPR 33-cü maddəsindən fərqli olaraq Qanun açıq 72 saatlıq bildiriş pəncərəsini müəyyən etməsə də, məlumat nəzarətçisinin təsirlənmiş şəxslərin maraqlarını qorumaq üçün hərəkət etməsini tələb edir. A variantı zərərin kristallaşması üçün pəncərə yaradır. C variantı rütbə əsasında işçilərin qeyri-qanuni fərqli müamələ edilməsini yaradır. D variantı sui-istifadə sübutunu bildiriş tetikleyicisi kimi istifadə edir — lakin şəxsiyyət vəsiqəsi nömrəsinin açıqlanmasından zərər çox sonra ortaya çıxa bilər.",
+    "development_tip_en": "Build a Data Breach Response Plan before an incident occurs. For AZ companies, include: (1) Immediate containment and evidence preservation checklist (first 2 hours). (2) Data classification matrix — national ID numbers and bank details trigger immediate notification protocols regardless of confirmed misuse. (3) Legal counsel contact list available 24/7. (4) Employee notification template pre-approved by legal (factual, no admission of negligence, protective action guidance). (5) Authority notification procedure — identify in advance which AZ body handles personal data breach reports. The AZ Personal Data Law 2010 has no explicit breach notification timeline, making documented proactive protocols essential for demonstrating good faith compliance. Note: the EU-inspired notification window debate is ongoing in AZ regulatory development — anticipate stricter requirements.",
+    "development_tip_az": "Hadisə baş vermədən əvvəl Məlumat Pozuntusu Cavab Planı hazırlayın. AZ şirkətlər üçün daxil edin: (1) Dərhal məhdudlaşdırma və sübut qoruma yoxlama siyahısı (ilk 2 saat). (2) Məlumat təsnifatı matrisi — şəxsiyyət vəsiqəsi nömrələri və bank detalları təsdiqlənmiş sui-istifadədən asılı olmayaraq dərhal bildiriş protokollarını tetikler. (3) 24/7 əlçatımlı hüquq müşaviri əlaqə siyahısı. (4) Hüquqi tərəfindən əvvəlcədən təsdiqlənmiş işçi bildiriş şablonu.",
+    "london_delta": "A London HR Director would operate under GDPR Article 33 (72-hour supervisory authority notification requirement) and Article 34 (notification to affected individuals when high risk to their rights and freedoms). The UK GDPR maintained these obligations post-Brexit. The London reflex is clear and well-drilled: national ID numbers + home addresses + salary = high risk = mandatory notification. In AZ, the 2010 Personal Data Law has no explicit 72-hour rule, which creates a dangerous ambiguity — some AZ companies interpret this as permission to delay. The correct interpretation is the opposite: the absence of a safe-harbor timeline means controllers bear the full burden of demonstrating they acted with reasonable speed. A London HR professional might actually be better prepared for this scenario than their AZ counterpart precisely because GDPR training has created explicit breach response muscle memory that AZ training has not yet institutionalized.",
+    "az_institutions": [
+      "Ministry of Transport, Communications and High Technologies",
+      "Legal counsel (external)"
+    ],
+    "tags": [
+      "hr",
+      "az-personal-data-law",
+      "data-breach",
+      "incident-response",
+      "reliability",
+      "compliance"
+    ]
+  }
+]

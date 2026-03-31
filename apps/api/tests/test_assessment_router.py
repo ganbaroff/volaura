@@ -60,12 +60,15 @@ async def test_complete_assessment_calls_rpc_with_jsonb_scores():
     mock_admin = _build_chainable_mock()
     mock_user = _build_chainable_mock()
 
-    # Session lookup returns a completed session with some answers
+    # Session lookup returns an in_progress session (not yet completed).
+    # Using status="in_progress" so the endpoint runs the full path:
+    # gaming update → competency slug lookup → upsert_aura_score RPC.
+    # A "completed" session would trigger the early-return path (no RPC call).
     completed_session = {
         "id": SESSION_ID,
         "volunteer_id": USER_ID,
         "competency_id": COMPETENCY_ID,
-        "status": "completed",
+        "status": "in_progress",
         "theta_estimate": 0.5,
         "theta_se": 0.3,
         "answers": {
@@ -85,7 +88,7 @@ async def test_complete_assessment_calls_rpc_with_jsonb_scores():
                 }
             ],
         },
-        "completed_at": "2026-03-23T10:00:00Z",
+        "completed_at": None,
     }
 
     # Configure mock_user for session lookup (.table("assessment_sessions").select().eq().eq().single().execute())
@@ -98,12 +101,14 @@ async def test_complete_assessment_calls_rpc_with_jsonb_scores():
     rpc_mock.execute = AsyncMock(return_value=MagicMock(data=True))
 
     call_count = {"n": 0}
-    original_execute = mock_admin.execute
 
     async def admin_execute_side_effect(*args, **kwargs):
         call_count["n"] += 1
-        # First admin execute = competency slug lookup
+        # First admin execute = gaming columns UPDATE (assessment_sessions.update)
+        # Second admin execute = competency slug lookup (competencies.select)
         if call_count["n"] == 1:
+            return MagicMock(data=[{"id": SESSION_ID}])  # update result
+        elif call_count["n"] == 2:
             return MagicMock(data={"slug": "communication"})
         return MagicMock(data=True)
 

@@ -107,7 +107,6 @@ class DiscoveryVolunteer(BaseModel):
     competency_score: float | None = None   # score for queried competency; null if no filter
     role_level: str | None = None           # most recent assessed role
     events_attended: int = 0
-    events_no_show: int = 0
     last_updated: datetime | None = None
 
 
@@ -116,8 +115,13 @@ class DiscoveryMeta(BaseModel):
     returned: int           # items in this page
     limit: int
     has_more: bool          # True if there are more pages
-    # Cursor for next page — pass as after_score + after_id in next request
+    # Cursors for next page — which fields are populated depends on sort_by:
+    #   sort_by=score  → next_after_score + next_after_id
+    #   sort_by=events → next_after_events + next_after_id
+    #   sort_by=recent → next_after_updated + next_after_id
     next_after_score: float | None = None
+    next_after_events: int | None = None
+    next_after_updated: str | None = None   # ISO datetime string
     next_after_id: str | None = None
 
 

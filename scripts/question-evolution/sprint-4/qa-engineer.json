@@ -1,0 +1,485 @@
+[
+  {
+    "id": "prof-qa-s4-001",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.3,
+    "irt_b": -0.8,
+    "irt_c": 0.12,
+    "scenario_en": "You are a QA engineer at Kapital Bank testing a new loan repayment calculation module. The system calculates monthly installments in Azerbaijani Manat (AZN). During testing you notice the system rounds AZN 0.005 down to AZN 0.00, but the Kapital Bank internal accounting standard (aligned with the Central Bank of Azerbaijan's rounding directive for retail banking) requires 'round half up' — AZN 0.005 rounds to AZN 0.01. The developer says 'ISO 4217 does not mandate rounding direction, so any method is compliant.' What is the correct QA position?",
+    "scenario_az": "Siz Kapital Bankda yeni kredit ödənişi hesablama modulunu sınaqdan keçirən QA mühəndisisiniz. Sistem aylıq ödənişləri Azərbaycan Manatı (AZN) ilə hesablayır. Sınaq zamanı sistemin AZN 0,005-i aşağı yuvarlaqlaşdıraraq AZN 0,00 göstərdiyini müşahidə edirsiniz, lakin Kapital Bankın daxili mühasibat standartı (Azərbaycan Mərkəzi Bankının pərakəndə bankinq üzrə yuvarlaqlaşdırma direktivinə uyğun olaraq) 'yarıya yuxarı yuvarlaqlaşdırma' tələb edir — AZN 0,005 → AZN 0,01. Tərtibatçı deyir: 'ISO 4217 yuvarlaqlaşdırma istiqamətini məcburi etmir, ona görə istənilən üsul uyğundur.' Düzgün QA mövqeyi nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Accept the ISO 4217 argument — international standard overrides internal bank policy.",
+        "text_az": "ISO 4217 arqumentini qəbul edin — beynəlxalq standart bankın daxili siyasətindən üstündür."
+      },
+      {
+        "key": "B",
+        "text_en": "Block the release and raise a P1 defect: Kapital Bank's CBA-aligned rounding directive takes legal precedence over ISO 4217 silence on rounding direction; mismatched rounding creates systemic ledger discrepancies reportable to the CBA.",
+        "text_az": "Buraxılışı bloklayın və P1 qüsuru qaldırın: Kapital Bankın CBA-ya uyğun yuvarlaqlaşdırma direktivi, ISO 4217-nin yuvarlaqlaşdırma istiqaməti barədə susmasından hüquqi üstünlüyə malikdir; uyğunsuz yuvarlaqlaşdırma AMB-yə hesabat verilə bilən sistemli kitab uyğunsuzluqları yaradır."
+      },
+      {
+        "key": "C",
+        "text_en": "Log it as a minor cosmetic issue and defer to the next sprint.",
+        "text_az": "Bunu kiçik kosmetik problem kimi qeyd edin və növbəti sprint-ə təxirə salın."
+      },
+      {
+        "key": "D",
+        "text_en": "Ask the developer to add a configuration flag so the bank can choose rounding direction at runtime.",
+        "text_az": "Tərtibatçıdan bankın icra zamanı yuvarlaqlaşdırma istiqamətini seçə bilməsi üçün konfiqurasiya bayrağı əlavə etməsini xahiş edin."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "ISO 4217 defines currency codes and minor unit counts but is explicitly silent on rounding direction for intermediate calculations. The Central Bank of Azerbaijan (CBA) issues binding retail banking directives — Kapital Bank's internal standard is derived from these. A mismatch between system rounding and CBA-aligned ledger rounding creates cumulative discrepancies across millions of transactions, which constitutes a reportable accounting deviation under CBA Regulation No. 19 on credit institution accounting. The developer's ISO 4217 argument is technically true but operationally irrelevant — the CBA directive governs, not the ISO standard.",
+    "feedback_az": "ISO 4217 valyuta kodlarını və kiçik vahid saylarını müəyyən edir, lakin aralıq hesablamalar üçün yuvarlaqlaşdırma istiqaməti barədə açıq şəkildə susur. Azərbaycan Mərkəzi Bankı (AMB) məcburi pərakəndə bankinq direktivləri verir — Kapital Bankın daxili standartı bunlardan irəli gəlir. Sistem yuvarlaqlaşdırması ilə AMB-yə uyğun kitab yuvarlaqlaşdırması arasındakı uyğunsuzluq milyonlarla əməliyyatda kümülatif uyğunsuzluqlar yaradır ki, bu da AMB-nin kredit təşkilatlarının mühasibatlığı haqqında 19 nömrəli Qaydaları çərçivəsində hesabat verilə bilən mühasibat kənara çıxması təşkil edir.",
+    "development_tip_en": "For any AZ financial system, always obtain the CBA's current rounding and precision directives before writing test cases. Do not rely on international standards (ISO 4217, IEEE 754) to fill gaps — the CBA's binding interpretation governs. Maintain a rounding test matrix with boundary values: 0.001, 0.004, 0.005, 0.006, 0.009 in both AZN and foreign currency legs of transactions.",
+    "development_tip_az": "İstənilən AZ maliyyə sistemi üçün test ssenariləri yazmadan əvvəl AMB-nin cari yuvarlaqlaşdırma və dəqiqlik direktivlərini əldə edin. Boşluqları doldurmaq üçün beynəlxalq standartlara (ISO 4217, IEEE 754) güvənməyin — AMB-nin məcburi şərhi tətbiq edilir. Əməliyyatların həm AZN, həm də xarici valyuta hissəsindəki sərhəd dəyərləri ilə yuvarlaqlaşdırma test matrisini saxlayın: 0,001, 0,004, 0,005, 0,006, 0,009.",
+    "london_delta": "A London QA engineer following ISO/IEC 29119-4 (test design techniques) and ISO 4217 accepts the developer's argument that international standards permit any rounding method. They approve the build. AZ consequence: the system enters production with rounding that diverges from the CBA's retail banking accounting directive. Kapital Bank's daily reconciliation reports begin showing per-account discrepancies of up to AZN 0.01. During the next CBA scheduled inspection under Regulation No. 19, the systematic ledger deviation triggers a formal accounting deficiency notice — a prerequisite for operating license review. The London engineer's technically correct ISO citation caused a CBA enforcement action the Azerbaijani QA team knew to prevent.",
+    "az_institutions": [
+      "CBA",
+      "Kapital Bank"
+    ],
+    "tags": [
+      "qa",
+      "az-specific",
+      "financial-testing",
+      "rounding",
+      "cba-regulation"
+    ]
+  },
+  {
+    "id": "prof-qa-s4-002",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.4,
+    "irt_b": -0.7,
+    "irt_c": 0.1,
+    "scenario_en": "In 2020, ASAN Xidmət launched a high-demand service that crashed under peak load. Post-incident analysis revealed the system had passed all load tests (up to 50,000 concurrent users). The actual peak was 684,000 concurrent users triggering simultaneous OTP SMS delivery — the SMS queue saturated within 90 seconds and the entire authentication flow became unavailable. Reviewing the original test plan, what was the critical reliability testing gap that allowed this to reach production?",
+    "scenario_az": "2020-ci ildə ASAN Xidmət yüksək tələbatlı bir xidmət başlatdı ki, bu da pik yükdə çökdü. Hadisədən sonrakı analiz sistemin bütün yük testlərini keçdiyini (50.000 eyni vaxtda istifadəçiyə qədər) ortaya qoydu. Faktiki pik 684.000 eyni vaxtda istifadəçi idi ki, bu da eyni vaxtda OTP SMS çatdırılmasını tetikleyirdi — SMS növbəsi 90 saniyə ərzində doydu və bütün autentifikasiya axını əlçatmaz oldu. Orijinal test planını nəzərdən keçirərək, bunun istehsala çatmasına icazə verən kritik etibarlılıq test boşluğu nə idi?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "The load test used HTTP keep-alive connections which artificially reduced server-side resource consumption.",
+        "text_az": "Yük testi süni olaraq server tərəfli resurs istehlakını azaldan HTTP keep-alive bağlantılarından istifadə etdi."
+      },
+      {
+        "key": "B",
+        "text_en": "The test plan had no capacity test for downstream third-party dependencies (the SMS gateway queue) — load tests only validated the application tier, not the full authentication chain including the SMS queue as a bounded resource.",
+        "text_az": "Test planında aşağı axın üçüncü tərəf asılılıqları (SMS şlüz növbəsi) üçün heç bir tutum testi yox idi — yük testləri yalnız tətbiq qatını təsdiqlədi, SMS növbəsini məhdud resurs kimi əhatə edən tam autentifikasiya zəncirini deyil."
+      },
+      {
+        "key": "C",
+        "text_en": "The test environment did not replicate the production database schema accurately enough.",
+        "text_az": "Test mühiti istehsal verilənlər bazası sxemini kifayət qədər dəqiq təkrar etmədi."
+      },
+      {
+        "key": "D",
+        "text_en": "ASAN's QA team used a different load testing tool than the one used in production monitoring.",
+        "text_az": "ASAN-ın QA komandası istehsal monitorinqində istifadə ediləndən fərqli yük test alətindən istifadə etdi."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "The ASAN 2020 incident is a textbook example of dependency boundary testing failure. The test plan validated the application layer (web servers, application logic, database) up to 50,000 users — a reasonable extrapolation from previous peak traffic. However, the SMS OTP delivery path introduced an external bounded resource: the SMS gateway queue. This queue had a finite throughput ceiling (messages per second) that was never characterised in testing. When 684,000 users simultaneously triggered OTP requests, the SMS queue saturated in 90 seconds regardless of application-layer capacity. The gap: no test simulated 'what happens to the SMS gateway under authentication storm conditions?' ASAN Xidmət serves as the national digital service platform — the public trust consequence of downtime exceeded the technical impact.",
+    "feedback_az": "ASAN 2020 hadisəsi asılılıq sərhədi testinin uğursuzluğunun dərslik nümunəsidir. Test planı tətbiq qatını (veb serverlər, tətbiq məntiqi, verilənlər bazası) 50.000 istifadəçiyə qədər təsdiqlədi — əvvəlki pik trafikdən ağlabatan ekstrapolyasiya. Bununla belə, SMS OTP çatdırılma yolu xarici məhdud resurs təqdim etdi: SMS şlüz növbəsi. Bu növbənin heç vaxt testdə xarakterizə edilməmiş sonlu bir məhsuldarlıq tavanı (saniyədə mesajlar) var idi. 684.000 istifadəçi eyni vaxtda OTP sorğularını başlatdıqda, SMS növbəsi tətbiq qatının tutumundan asılı olmayaraq 90 saniyə ərzində doydu. Boşluq: heç bir test 'autentifikasiya fırtınası şəraitində SMS şlüzünə nə olur?' sualını simulyasiya etmədi.",
+    "development_tip_en": "For any AZ public-facing system with authentication, map every external dependency in your test plan — not just application-tier components. For each dependency, identify: (1) its queue/throughput ceiling, (2) what happens when that ceiling is hit, (3) the degradation path (graceful queue, dropped requests, full outage). ASAN Xidmət, e-GOV, and other national platforms serve burst-demand patterns (morning rush, viral announcements) that require dependency saturation testing, not just steady-state load testing.",
+    "development_tip_az": "Autentifikasiya ilə istənilən AZ ictimai xidmət sistemi üçün test planınızda yalnız tətbiq qatı komponentlərini deyil, bütün xarici asılılıqları xəritələyin. Hər asılılıq üçün müəyyən edin: (1) növbə/məhsuldarlıq tavanı, (2) bu tavan aşıldıqda nə baş verir, (3) deqradasiya yolu (zərif növbə, buraxılmış sorğular, tam fasilə). ASAN Xidmət, e-GOV və digər milli platformalar partlama tələbi nümunələrinə (səhər sıxlığı, viral elanlar) xidmət edir ki, bu da yalnız sabit vəziyyət yük testini deyil, asılılıq doyma testini tələb edir.",
+    "london_delta": "A London QA engineer following BS ISO/IEC 25010:2023 (software quality model, performance efficiency characteristics) designs a load test validating application-tier response times under 50,000 concurrent users — well within the standard's guidance for characterising performance under expected peak load. They mark the load test as passed and approve the release. AZ consequence: the SMS gateway dependency — a bounded external queue not modelled in the BS ISO/IEC 25010 test scope — saturates at 684,000 concurrent users during ASAN Xidmət's national launch event. The entire authentication flow goes down for 4 hours. ASAN, as the state digital service provider, faces parliamentary inquiry and public trust damage. The London engineer followed the international quality standard correctly; the AZ operational context (national platform, SMS-gated auth, viral demand spikes) required a dependency saturation test the standard did not mandate.",
+    "az_institutions": [
+      "ASAN"
+    ],
+    "tags": [
+      "qa",
+      "az-specific",
+      "load-testing",
+      "dependency-testing",
+      "asan"
+    ]
+  },
+  {
+    "id": "prof-qa-s4-003",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.5,
+    "irt_b": 0.1,
+    "irt_c": 0.1,
+    "scenario_en": "You are QA lead on the e-GOV Azerbaijan portal. Your team has run OWASP ZAP in the CI/CD pipeline for 6 months — all security scans pass. During a scheduled manual penetration test, an external tester finds a path traversal vulnerability (e.g., accessing /api/documents/../../../etc/passwd) that OWASP ZAP's automated scan completely missed. The vulnerability has a CVSS score of 7.5. The development team's response: 'ZAP passed — this is a false positive from the manual test.' What do you do as QA lead?",
+    "scenario_az": "Siz e-GOV Azərbaycan portalında QA aparıcısısınız. Komandanız 6 ay ərzində CI/CD boru kəmərində OWASP ZAP işlədib — bütün təhlükəsizlik skanları keçib. Planlaşdırılmış əl penetrasiya testi zamanı xarici sınayıcı OWASP ZAP-ın avtomatik skanının tamamilə qaçırdığı bir yol keçmə zəifliyini (məs. /api/documents/../../../etc/passwd əlçatanlığı) tapır. Zəifliyin CVSS skoru 7,5-dir. Geliştirme komandası cavabı: 'ZAP keçdi — bu əl testindən yanlış müsbətdir.' QA aparıcısı kimi nə edirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Accept the development team's position — if ZAP passed, the finding is likely a false positive.",
+        "text_az": "İnkişaf komandası mövqeyini qəbul edin — ZAP keçibsə, tapıntı çox güman ki, yanlış müsbətdir."
+      },
+      {
+        "key": "B",
+        "text_en": "Reproduce the path traversal manually yourself to confirm it is exploitable, then escalate as a verified P1 security defect regardless of ZAP's result — and initiate a security testing strategy review to add DAST with manual verification for all CVSS ≥7.0 findings.",
+        "text_az": "Yol keçmənin istismar edilə bildiyini təsdiqləmək üçün özünüz əl ilə təkrarlayın, sonra ZAP-ın nəticəsindən asılı olmayaraq təsdiqlənmiş P1 təhlükəsizlik qüsuru kimi eskalasiya edin — və bütün CVSS ≥7.0 tapıntıları üçün əl yoxlaması ilə DAST əlavə etmək üçün təhlükəsizlik test strategiyası yeniliyini başladın."
+      },
+      {
+        "key": "C",
+        "text_en": "Log the finding in the backlog and schedule a review for the next sprint — it passed ZAP so it is not blocking.",
+        "text_az": "Tapıntını iş yığınında qeyd edin və növbəti sprint üçün nəzərdən keçirilməni planlaşdırın — ZAP-dan keçdiyi üçün bloklayıcı deyil."
+      },
+      {
+        "key": "D",
+        "text_en": "Request a second external penetration tester to re-run the same test before taking any action.",
+        "text_az": "Hər hansı bir addım atmadan əvvəl eyni testi yenidən keçirmək üçün ikinci xarici penetrasiya sınayıcısı tələb edin."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "OWASP ZAP is a DAST tool optimised for reflected/stored XSS, SQL injection, and common header misconfigurations — its path traversal detection relies on predefined payloads and does not handle all encoding variants or context-specific traversal paths. The e-GOV 2021 incident demonstrated exactly this: ZAP ran in CI/CD and passed, while manual testing found a path traversal that ZAP's payload library had not covered. A CVSS 7.5 finding is not a false positive candidate until reproduced and refuted — 'ZAP passed' is evidence about ZAP's coverage, not about the vulnerability's existence. As QA lead, reproducing the finding yourself removes the false-positive ambiguity before escalation. The strategy fix is mandatory: DAST without manual verification of high-CVSS findings is a known coverage gap on AZ e-government systems.",
+    "feedback_az": "OWASP ZAP yansıtılmış/saxlanmış XSS, SQL inyeksiyası və ümumi başlıq yanlış konfiqurasiyaları üçün optimallaşdırılmış DAST alətidir — yol keçmə aşkarlanması əvvəlcədən müəyyən edilmiş yüklərə əsaslanır və bütün kodlama variantlarını və ya kontekstə xas keçmə yollarını idarə etmir. E-GOV 2021 hadisəsi tam olaraq bunu nümayiş etdirdi: ZAP CI/CD-də işlədi və keçdi, əl testi isə ZAP-ın yük kitabxanasının əhatə etmədiyi bir yol keçmə tapdı. CVSS 7,5 tapıntı, yenidən istehsal edilib rədd edilənə qədər yanlış müsbət namizədi deyil — 'ZAP keçdi' ZAP-ın əhatəsi haqqında sübutdur, zəifliyin mövcudluğu haqqında deyil.",
+    "development_tip_en": "In Azerbaijan's e-government and fintech context, automated DAST tools (ZAP, Burp Suite community) must be paired with manual verification for any CVSS ≥7.0 finding. AZ government procurement contracts increasingly require evidence of both automated and manual security testing. Document your security testing matrix to show: which vulnerability classes ZAP covers, which require manual testing, and which require specialist pentesting (e.g., business logic flaws, multi-step traversals). The DƏIM and ISMSN both review test evidence during certification — 'ZAP passed' alone is not sufficient evidence.",
+    "development_tip_az": "Azərbaycanın e-dövlət və fintex kontekstində avtomatik DAST alətləri (ZAP, Burp Suite community) istənilən CVSS ≥7.0 tapıntı üçün əl yoxlaması ilə birləşdirilməlidir. AZ hökumət satınalma müqavilələri get-gedə həm avtomatik, həm də əl təhlükəsizlik testinin sübutunu tələb edir. Hansı zəiflik siniflərinin ZAP tərəfindən əhatə edildiyini, hansının əl testi tələb etdiyini və hansının mütəxəssis penetrasiya testini tələb etdiyini göstərmək üçün təhlükəsizlik test matrisinizi sənədləşdirin.",
+    "london_delta": "A London QA engineer following OWASP WSTG (Web Security Testing Guide) v4.2 and using ZAP as their primary DAST tool accepts the development team's 'false positive' argument — WSTG recommends automated DAST as the primary scan method, and ZAP's clean result is treated as definitive. They close the finding. AZ consequence: the path traversal vulnerability enters production on the e-GOV portal. A security researcher (replicating the 2021 incident pattern) exploits it to demonstrate access to internal file paths. The ISMSN (Information Security and Monitoring Service under the Ministry of Digital Development) initiates a formal audit. The e-GOV portal is placed on ISMSN's remediation watchlist, delaying the planned new digital service launch by 3 months pending full security certification. The London engineer's OWASP WSTG compliance was methodologically correct; the AZ institutional requirement (ISMSN audit, state portal certification) demanded manual verification of every CVSS ≥7.0 finding before closure.",
+    "az_institutions": [
+      "e-GOV",
+      "ISMSN",
+      "DƏIM"
+    ],
+    "tags": [
+      "qa",
+      "az-specific",
+      "security-testing",
+      "path-traversal",
+      "owasp",
+      "e-gov"
+    ]
+  },
+  {
+    "id": "prof-qa-s4-004",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.6,
+    "irt_b": 0.2,
+    "irt_c": 0.08,
+    "scenario_en": "You are a QA engineer on an Azerbaijani government portal project. The portal must support two Azerbaijani scripts: (1) Azerbaijani Latin (ISO 8859-9E, current official script since 1992) and (2) Azerbaijani Cyrillic (legacy, still used in official archives, printed documents pre-1992, and by some elderly citizens). The system stores and retrieves both scripts. You must build the test matrix for character set handling. Which test matrix is most complete and correct?",
+    "scenario_az": "Siz Azərbaycan hökumət portalı layihəsinin QA mühəndisiniz. Portal iki Azərbaycan əlifbasını dəstəkləməlidir: (1) Azərbaycan Latın əlifbası (ISO 8859-9E, 1992-ci ildən bəri mövcud rəsmi əlifba) və (2) Azərbaycan Kiril əlifbası (köhnəlmiş, hələ də rəsmi arxivlərdə, 1992-ci ildən əvvəlki çap sənədlərında və bəzi yaşlı vətəndaşlar tərəfindən istifadə edilir). Sistem hər iki əlifbanı saxlayır və əldə edir. Xarakter dəsti idarəsi üçün test matrisi qurmalısınız. Hansı test matrisi ən tam və düzgündür?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Test only Azerbaijani Latin since it is the official current script; Cyrillic is legacy and out of scope.",
+        "text_az": "Yalnız Azərbaycan Latın əlifbasını sınaqdan keçirin, çünki o, mövcud rəsmi əlifbadır; Kiril köhnəlmiş və əhatə dairəsindən kənardır."
+      },
+      {
+        "key": "B",
+        "text_en": "Test Latin and Cyrillic in isolation — input, storage, and retrieval for each script separately.",
+        "text_az": "Latın və Kirili ayrıca sınaqdan keçirin — hər əlifba üçün ayrıca giriş, saxlama və əldə etmə."
+      },
+      {
+        "key": "C",
+        "text_en": "Test: (1) Latin-only input/storage/retrieval, (2) Cyrillic-only input/storage/retrieval, (3) mixed-script document storage and retrieval, (4) script detection on input — including the 6 Azerbaijani Latin-specific characters (ə ğ ı ö ü ş) in boundary and search contexts, (5) sort order — Azerbaijani Latin alphabetical order differs from English alphabetical order and must be verified against the 1992 AZ state language law ordering.",
+        "text_az": "Sınaqdan keçirin: (1) yalnız Latın giriş/saxlama/əldə etmə, (2) yalnız Kiril giriş/saxlama/əldə etmə, (3) qarışıq əlifbalı sənəd saxlama və əldə etmə, (4) girişdə əlifba aşkarlanması — sərhəd və axtarış kontekstlərindəki 6 Azərbaycan Latın-spesifik xarakter daxil olmaqla (ə ğ ı ö ü ş), (5) çeşidləmə qaydası — Azərbaycan Latın əlifba çeşidləmə qaydası ingilis əlifba qaydaasından fərqlidir və 1992-ci il AZ dövlət dili qanununun ardıcıllığına qarşı yoxlanılmalıdır."
+      },
+      {
+        "key": "D",
+        "text_en": "Use Unicode conformance tests (ICU test suite) — Unicode handles both scripts so a passing Unicode test suite is sufficient.",
+        "text_az": "Unicode uyğunluq testlərindən istifadə edin (ICU test dəsti) — Unicode hər iki əlifbanı idarə edir, ona görə keçən Unicode test dəsti kifayətdir."
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "Option C is the only matrix that covers all failure modes specific to the AZ dual-script requirement. Options A and B miss cross-script interactions. Option D — while Unicode conformance is necessary — is not sufficient: the ICU test suite validates Unicode standard compliance but does not test AZ-specific sort ordering mandated by the 1992 AZ State Language Law (which defines the official Azerbaijani Latin alphabet order: A, B, C, Ç, D, E, Ə, F, G, Ğ, H, X, I, İ, J, K, Q, L, M, N, O, Ö, P, R, S, Ş, T, U, Ü, V, Y, Z — differing from ASCII order). Failing to test sort order means citizen names and document titles sorted incorrectly in official portal search results — a directly visible defect in a state system.",
+    "feedback_az": "C seçeneği, AZ ikili əlifba tələbinə xas bütün uğursuzluq rejimlerini əhatə edən yeganə matrisdir. A və B seçenekleri çapraz əlifba qarşılıqlı təsirlərini qaçırır. D seçeneği — Unicode uyğunluğu zəruri olsa da — kifayət deyil: ICU test dəsti Unicode standart uyğunluğunu təsdiqləyir, lakin 1992-ci il AZ Dövlət Dili Qanunu tərəfindən məcburi edilən AZ-spesifik çeşidləmə qaydasını sınamır.",
+    "development_tip_en": "For any AZ portal handling citizen names or document titles, build a dedicated collation test using the official AZ Latin alphabet order from the 1992 State Language Law. Key difference from English: Ə sorts after E, Ğ after G, I (dotless) and İ (dotted) are separate letters, Ö after O, Ş after S, Ü after U. Incorrect collation in a DOST or ASAN portal search results in citizens not finding their own records — a tier-1 usability defect.",
+    "development_tip_az": "Vətəndaş adlarını və ya sənəd başlıqlarını idarə edən istənilən AZ portalı üçün 1992-ci il Dövlət Dili Qanunundan rəsmi AZ Latın əlifba sırasından istifadə edərək xüsusi bir sıralama testi qurun. İngilis dilindən əsas fərq: Ə E-dən sonra, Ğ G-dən sonra, I (nöqtəsiz) və İ (nöqtəli) ayrı hərflər, Ö O-dan sonra, Ş S-dən sonra, Ü U-dan sonra gəlir.",
+    "london_delta": "A London QA engineer following ISO/IEC 14651 (international string ordering and comparison) and using the ICU test suite runs comprehensive Unicode conformance tests on the portal's text handling. Both Latin and Cyrillic inputs pass. They mark the character handling as verified. AZ consequence: the portal sorts citizen names using the default Unicode code-point order, which places 'İ' (U+0130, dotted I) after standard Latin 'I' (U+0049) but before 'J' — incorrect per the 1992 AZ State Language Law ordering. When DOST (State Employment Service) migrates its citizen records to the portal, 23,000 records with names containing İ, Ə, Ğ, Ö, Ş, Ü sort incorrectly. Citizens searching their own name in official portal records receive wrong results. The Ministry of Digital Development issues a defect notice citing non-compliance with state language requirements. The ISO/IEC 14651 conformance the London engineer verified was technically correct and completely insufficient for the AZ institutional context.",
+    "az_institutions": [
+      "DOST",
+      "e-GOV",
+      "ASAN"
+    ],
+    "tags": [
+      "qa",
+      "az-specific",
+      "character-encoding",
+      "localization",
+      "state-language-law"
+    ]
+  },
+  {
+    "id": "prof-qa-s4-005",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.5,
+    "irt_b": 0.0,
+    "irt_c": 0.08,
+    "scenario_en": "You are a QA engineer on a civic application project developed for ASAN Xidmət. The onboarding flow collects citizens' national ID (FIN) numbers as part of identity verification. During testing you discover the FIN numbers are stored in the application database in plaintext — no encryption, no hashing. You raise this with the development lead, who says: 'We need to launch in 3 weeks. Encryption adds 2 sprints. FIN numbers are not financial data so they're lower risk. Let's launch and encrypt in v1.1.' What is the correct QA position?",
+    "scenario_az": "Siz ASAN Xidmət üçün hazırlanmış bir vətəndaş tətbiqi layihəsinin QA mühəndisiniz. Onboarding axını kimlik yoxlamasının bir hissəsi kimi vətəndaşların FIN nömrələrini toplayır. Sınaq zamanı FIN nömrələrinin düz mətn şəklində — heç bir şifrələmə, heç bir heşləmə olmadan — tətbiq verilənlər bazasında saxlandığını kəşf edirsiniz. Bunu inkişaf rəhbəri ilə müzakirə etdikdə deyir: '3 həftə ərzində başlatmamız lazımdır. Şifrələmə 2 sprint əlavə edir. FIN nömrələri maliyyə məlumatı deyil, ona görə daha az risklidir. Gəlin başladaq və v1.1-də şifrələyək.' Düzgün QA mövqeyi nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Accept the dev lead's risk assessment — FIN numbers are not financial data, so plaintext storage is an acceptable interim state.",
+        "text_az": "İnkişaf rəhbərinin risk qiymətləndirilməsini qəbul edin — FIN nömrələri maliyyə məlumatı deyil, ona görə düz mətn saxlanması məqbul müvəqqəti vəziyyətdir."
+      },
+      {
+        "key": "B",
+        "text_en": "Agree to launch with a documented risk acceptance signed by the project sponsor, and add encryption as a mandatory P1 item for v1.1.",
+        "text_az": "Layihə sponsoru tərəfindən imzalanmış sənədləşdirilmiş risk qəbulu ilə başlatmağa razı olun və şifrələməni v1.1 üçün məcburi P1 elementi kimi əlavə edin."
+      },
+      {
+        "key": "C",
+        "text_en": "Block the release as a P0 security defect: under Azerbaijan's Law on Personal Data (2010, Article 8), FIN numbers are personal data and their storage without adequate security measures violates the law; ASAN Xidmət as the data controller faces legal liability from day one of unencrypted production storage — timeline pressure does not override statutory obligation.",
+        "text_az": "Buraxılışı P0 təhlükəsizlik qüsuru kimi bloklayın: Azərbaycanın Fərdi Məlumatlar haqqında Qanunu (2010, Maddə 8) çərçivəsində FIN nömrələri fərdi məlumatdır və onların lazımi təhlükəsizlik tədbirləri olmadan saxlanması qanunu pozur; ASAN Xidmət məlumat nəzarətçisi kimi şifrələnməmiş istehsal saxlamasının ilk günündən hüquqi məsuliyyət daşıyır — zaman təzyiqi qanuni öhdəliyi aradan qaldırmır."
+      },
+      {
+        "key": "D",
+        "text_en": "Escalate to the project manager for a timeline extension decision, but do not block the release pending management approval.",
+        "text_az": "Vaxt çizelgesi uzatma qərarı üçün layihə menecerini xəbərdar edin, lakin rəhbərliyin təsdiqi gözlənilən zaman buraxılışı bloklamayın."
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "Azerbaijan's Law on Personal Data (2010) defines personal data as any information relating to an identified or identifiable individual. FIN (Fərdi İdentifikasiya Nömrəsi) is a unique national identifier assigned by the State Register of Civil Acts (ERAR) — it is unambiguously personal data under the 2010 law. Article 8 requires data controllers to implement technical and organisational security measures proportionate to the risk. Storing FIN numbers in plaintext with no encryption fails this requirement on day one. The 'launch now, encrypt later' plan creates a window of statutory non-compliance. As a QA engineer, you are a quality gate — your role is to block releases that violate legal requirements, not to negotiate timelines. ASAN Xidmət, as the state digital service agency, faces particular reputational and legal exposure: a personal data breach on a state platform triggers PDPC (Personal Data Protection Commission) enforcement action, not just technical remediation.",
+    "feedback_az": "Azərbaycanın Fərdi Məlumatlar haqqında Qanunu (2010) fərdi məlumatları müəyyən edilmiş və ya müəyyən edilə bilən şəxsə aid istənilən məlumat kimi müəyyən edir. FIN (Fərdi İdentifikasiya Nömrəsi) Mülki Aktların Dövlət Reyestri (ERAR) tərəfindən verilən unikal milli identifikatordur — 2010-cu il qanunu çərçivəsindəki fərdi məlumatlardır. 8-ci Maddə məlumat nəzarətçilərinin riskə mütənasib texniki və təşkilati təhlükəsizlik tədbirləri tətbiq etmələrini tələb edir. FIN nömrələrini heç bir şifrələmə olmadan düz mətndə saxlamaq bu tələbi ilk gündən yerinə yetirmir.",
+    "development_tip_en": "In Azerbaijan, FIN numbers are the highest-sensitivity personal data in civic applications — they are the primary identifier linking a citizen to all government records (ASAN, tax, pension, electoral rolls). Any system collecting FIN numbers must implement encryption at rest before any production traffic, regardless of timeline. Reference: AZ Law on Personal Data (2010), Articles 8-12. When a dev lead argues 'not financial data = lower risk', counter with the legal definition of personal data under AZ law, not a risk comparison with financial data. The risk classification is statutory, not relative.",
+    "development_tip_az": "Azərbaycanda FIN nömrələri vətəndaş tətbiqlərindəki ən yüksək həssaslıqlı fərdi məlumatlardır — onlar vətəndaşı bütün dövlət qeydlərinə (ASAN, vergi, pensiya, seçici siyahıları) bağlayan əsas identifikatordur. FIN nömrələrini toplayan istənilən sistem, vaxt cədvəlindən asılı olmayaraq, istənilən istehsal trafikindən əvvəl istirahətdə şifrələmə tətbiq etməlidir. İstinad: AZ Fərdi Məlumatlar haqqında Qanun (2010), Maddələr 8-12.",
+    "london_delta": "A London QA engineer following GDPR Article 9 guidance (special category data requiring explicit consent and enhanced security) concludes that FIN numbers — being a national identifier rather than biometric or health data — do not fall under GDPR's special category definition, and therefore the 'encrypt later' plan is acceptable under a documented risk acceptance. AZ consequence: under the AZ Law on Personal Data (2010), the risk classification does not depend on GDPR's special category hierarchy — all personal data (including FIN numbers) requires adequate security measures from the moment of collection. The ASAN Xidmət application launches with plaintext FIN storage. Three months later, a SQL injection vulnerability (unrelated to encryption) exposes a database backup. The Personal Data Protection Commission (PDPC) initiates enforcement proceedings against ASAN Xidmət citing Article 8 non-compliance — plaintext FIN storage is cited as an aggravating factor. The London engineer's GDPR-based risk calibration was reasonable for the UK/EU context and legally wrong for the AZ statutory framework.",
+    "az_institutions": [
+      "ASAN",
+      "ERAR",
+      "PDPC"
+    ],
+    "tags": [
+      "qa",
+      "az-specific",
+      "data-protection",
+      "personal-data",
+      "az-law-2010",
+      "empathy-safeguarding"
+    ]
+  },
+  {
+    "id": "prof-qa-s4-006",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.4,
+    "irt_b": 0.3,
+    "irt_c": 0.08,
+    "scenario_en": "You are QA lead at a mid-size Azerbaijani IT company. Two of your senior testers (each with 10+ years of experience, both respected in the AZ QA community) have started publicly calling the automation framework you introduced 'unreliable' and 'a waste of time' in team meetings. They point to 3 false positives in the last sprint and argue that their manual testing has never missed a critical defect in 10 years. Junior team members are beginning to lose confidence in the automated suite. What is the correct leadership response?",
+    "scenario_az": "Siz orta ölçülü bir Azərbaycan İT şirkətinin QA aparıcısısınız. Hər biri 10 ildən çox təcrübəsi olan, hər ikisi AZ QA cəmiyyətində hörmətli iki böyük sınayıcınız komanda iclaslarında tətbiq etdiyiniz otomasiya çərçivəsini 'etibarsız' və 'vaxt itkisi' kimi açıq şəkildə adlandırmağa başlayıb. Onlar son sprintdəki 3 yanlış müsbəti göstərir və əl testlərinin 10 il ərzində heç vaxt kritik qüsuru qaçırmadığını iddia edirlər. Kiçik komanda üzvləri otomasiya dəstinə inam itirməyə başlayır. Düzgün liderlik cavabı nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Defer to their seniority — 10 years of AZ corporate QA experience outweighs the automation framework, and revert to manual-primary testing.",
+        "text_az": "Onların kıdemliliyinə güvənin — AZ korporativ QA-nın 10 illik təcrübəsi otomasiya çərçivəsindən üstündür və əsas olaraq əl testinə qayıdın."
+      },
+      {
+        "key": "B",
+        "text_en": "Acknowledge the 3 false positives publicly, run a blameless postmortem on each false positive to identify root causes, present data showing how many defects automation caught (that manual testing would have required 3x time to find), and create a joint improvement working group — including the senior testers — to reduce false positive rate below 2%.",
+        "text_az": "3 yanlış müsbəti açıq şəkildə tanıyın, hər yanlış müsbət üçün kök səbəbləri müəyyən etmək üçün günahsız postmortem aparın, avtomatlaşdırmanın neçə qüsur tutduğunu göstərən məlumatlar təqdim edin (əl testinin tapmaq üçün 3x vaxt tələb edəcəyi), və yanlış müsbət nisbəti %2-nin altına endirmək üçün böyük sınayıcılar daxil olmaqla birgə bir yaxşılaşdırma işçi qrupu yaradın."
+      },
+      {
+        "key": "C",
+        "text_en": "Privately warn the senior testers that public criticism of team tools is unprofessional and must stop.",
+        "text_az": "Böyük sınayıcıları xüsusi olaraq xəbərdar edin ki, komanda alətlərinin ictimai tənqidi qeyri-peşəkardır və dayanmalıdır."
+      },
+      {
+        "key": "D",
+        "text_en": "Escalate to HR for a formal performance review of the senior testers.",
+        "text_az": "Böyük sınayıcıların rəsmi performans yoxlaması üçün İK-ya müraciət edin."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "The senior testers' criticism is grounded in real evidence (3 false positives) and real concern (automation reliability). In AZ corporate culture, where seniority and public face carry significant weight, private or administrative responses (Options C and D) would be perceived as authoritarian and damage trust. Option A abandons the automation investment without analysis. Option B is the only path that: (1) validates the real concern (acknowledging false positives is not weakness), (2) uses data to reframe the narrative from 'automation vs manual' to 'how do we make our combined approach better', (3) involves the senior testers as co-owners of the solution, converting resistance into investment. In AZ QA teams with strong senior-junior hierarchies, publicly involving senior testers in improvement work converts them from critics to champions — essential for junior team member confidence.",
+    "feedback_az": "Böyük sınayıcıların tənqidi real sübutlara (3 yanlış müsbət) və real narahatlığa (otomasiya etibarlılığı) əsaslanır. Kıdemliliyinin və ictimai üzün böyük əhəmiyyət daşıdığı AZ korporativ mədəniyyətində, xüsusi və ya inzibati cavablar (C və D seçenekləri) avtoritar kimi qəbul ediləcək və inamı zədələyəcəkdi. A seçeneği analiz olmadan otomasiya investisiyasından əl çəkir. B seçeneği yalnız belə bir yoldur ki: (1) real narahatlığı təsdiqləyir, (2) narrativi 'otomasiya ilə əl üz-üzə' deyil, 'kombinə yanaşmamızı necə yaxşılaşdıraq' şəkilinə çevirmək üçün məlumatlardan istifadə edir, (3) böyük sınayıcıları həllin birgə sahibi kimi cəlb edir.",
+    "development_tip_en": "In AZ corporate QA culture, senior testers often carry institutional knowledge about AZ-specific system behaviours, legacy integrations, and historical failure patterns that automated test suites do not capture. When introducing automation, treat senior tester resistance as information: ask what specific failure classes they are worried about that automation might miss. In many AZ enterprise contexts, this elicits genuinely valuable edge cases (e.g., AZN rounding anomalies, Kiril/Latin encoding edge cases, ASAN API timeout patterns) that improve the automated suite and build senior tester ownership.",
+    "development_tip_az": "AZ korporativ QA mədəniyyətinde böyük sınayıcılar çox vaxt avtomatik test dəstlərinin ələ keçirmədiyi AZ-spesifik sistem davranışları, köhnəlmiş inteqrasiyalar və tarixi uğursuzluq nümunələri haqqında institusional biliyə malikdirlər. Otomasiya tətbiq edərkən böyük sınayıcı müqavimətini məlumat kimi qəbul edin: hansı spesifik uğursuzluq siniflərinin avtomatlaşdırmanı qaçıra biləcəyini soruşun.",
+    "london_delta": "A London QA lead following BS 7925-2 (software component testing standard) and referencing UK testing best practice responds to the senior tester resistance by escalating the disagreement to HR as a professional conduct issue — public criticism of team tooling choices is addressed as a cultural/behavioural concern under the UK line management model. AZ consequence: in AZ corporate culture, senior testers with 10+ years of institutional knowledge and community standing who are subjected to HR escalation for voicing technical concerns interpret this as a severe loss of face. Both senior testers submit resignation letters within a week. The QA team loses 20 years of combined AZ-specific testing knowledge — including undocumented knowledge about ASAN API timeout behaviours and Kapital Bank integration edge cases. The project timeline extends by 6 weeks to onboard replacements. The London QA lead applied a UK-standard HR response to a situation that required AZ-context leadership (data-driven inclusion of senior testers as solution co-owners).",
+    "az_institutions": [
+      "ASAN",
+      "Kapital Bank"
+    ],
+    "tags": [
+      "qa",
+      "az-specific",
+      "leadership",
+      "team-management",
+      "az-culture",
+      "automation"
+    ]
+  },
+  {
+    "id": "prof-qa-s4-007",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency_slug": "communication",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 1.8,
+    "irt_b": 0.8,
+    "irt_c": 0.0,
+    "scenario_en": "You are QA Director at Kapital Bank. In Q3, the system achieved a 99.2% test pass rate across 1,847 automated tests. Despite this, three production incidents occurred: (1) a decimal rounding error in the loan calculation engine caused AZN overcharges across 1,200 accounts (caught in production by a customer complaint, not by QA), (2) an ASAN e-signature integration timeout during peak hours caused loan applications to silently fail (no user notification), (3) a database query performing poorly under concurrent user load caused 8-second response times on the account summary page during month-end. You must now brief Kapital Bank's CTO — a non-technical executive with a background in finance — on why 99.2% test pass rate did not prevent these incidents, and what specific changes the QA function will make. Write the briefing (250-400 words).",
+    "scenario_az": "Siz Kapital Bankın QA Direktorisiniz. Q3-də sistem 1.847 avtomatik test üzrə %99,2 test keçmə nisbətinə nail oldu. Buna baxmayaraq, üç istehsal hadisəsi baş verdi: (1) kredit hesablama mühərrikindəki ondalıq yuvarlaqlaşdırma xətası 1.200 hesabda AZN artıq ödənişlərə səbəb oldu (QA tərəfindən deyil, müştəri şikayəti ilə istehsalda tutuldu), (2) pik saatlar ərzində ASAN e-imza inteqrasiyasının vaxt aşımı kredit müraciətlərinin səssiz uğursuzluğuna səbəb oldu (istifadəçi bildirişi yoxdur), (3) eyni vaxtda istifadəçi yükü altında zəif performans göstərən verilənlər bazası sorğusu ay sonunda hesab xülasəsi səhifəsindəki 8 saniyelik cavab sürəsinə səbəb oldu. İndi Kapital Bankın baş texnologiya direktoru olan — maliyyə geçmişi olan qeyri-texniki icraçı — 99,2% test keçmə nisbətinin bu hadisələrin qarşısını almadığını və QA funksiyasının hansı xüsusi dəyişiklikləri edəcəyini izah etməlisiniz. Brifinq yazın (250-400 söz).",
+    "options": null,
+    "correct_answer": null,
+    "feedback_en": "An excellent briefing: (1) translates '99.2% pass rate' from a testing metric into a business risk framework — explaining what the metric measures and, critically, what it does NOT measure; (2) names the specific testing coverage gaps that allowed each incident through (rounding = financial boundary test gap, ASAN timeout = external dependency simulation gap, DB performance = concurrent load test gap); (3) makes no excuses — takes institutional ownership; (4) proposes concrete, named remediation actions (not 'improve testing') with timelines; (5) uses AZ institutional context — references the CBA rounding directive, ASAN integration characteristics, and Kapital Bank's specific customer impact. A weak briefing blames the incidents on 'edge cases' or 'unexpected load' without naming the testing gap.",
+    "feedback_az": "Əla brifinq: (1) '%99,2 keçmə nisbəti'ni test metrikasından biznes riski çərçivəsinə çevirir; (2) hər hadisəni buraxan xüsusi test əhatəsi boşluqlarını adlandırır; (3) bəhanə etmir — institusional məsuliyyət alır; (4) vaxt çizelgəsi ilə konkret, adlandırılmış düzəldici tədbirlər təklif edir; (5) AZ institusional kontekstindən istifadə edir — AMB yuvarlaqlaşdırma direktivinə, ASAN inteqrasiya xüsusiyyətlərinə və Kapital Bankın xüsusi müştəri təsirinə istinad edir.",
+    "development_tip_en": "Non-technical banking executives in AZ respond best to briefs that connect testing metrics to financial risk in AZN terms — not to technical explanations of test coverage. Always translate: 'we had a gap in financial boundary testing' → 'the system processed 1,200 accounts at the wrong rounding rate for 47 days, resulting in overcharges that required manual correction.' When presenting QA metrics to Kapital Bank leadership, supplement pass rate with: defect escape rate, mean-time-to-detection for production incidents, and percentage of test coverage on CBA-regulated calculation paths.",
+    "development_tip_az": "AZ-dəki qeyri-texniki bank icraçıları, test əhatəsinin texniki izahlarına deyil, test metrikalarını AZN ilə maliyyə riskiylə əlaqələndirən brifinqlərə ən yaxşı cavab verirlər. Həmişə çevirin: 'maliyyə sərhəd testində boşluğumuz var idi' → 'sistem 1.200 hesabı 47 gün ərzində yanlış yuvarlaqlaşdırma sürəti ilə emal etdi, bu da əl düzəlişi tələb edən artıq ödənişlərə səbəb oldu.'",
+    "london_delta": "A London QA Director following ISO/IEC 29119-2 (test planning process) frames the briefing around ISO test coverage metrics and defect density statistics — presenting the 99.2% pass rate alongside defect escape rate per ISO 29119 terminology, and recommending an ISO 29119-3 compliant test design improvement process. AZ consequence: Kapital Bank's CTO — with a finance background and no ISO standards knowledge — cannot interpret the ISO 29119 framework. The briefing is received as 'jargon-heavy and non-actionable.' The CTO requests an external audit firm (familiar to Azerbaijani banking executives from CBA audit processes) to review the QA function. The external audit identifies the same three gaps the QA Director could have self-diagnosed. The ISO/IEC 29119-2 framework the London director applied was methodologically sound and completely ineffective in the AZ executive communication context: Kapital Bank's CTO needed CBA-aligned financial risk framing, not international test process standards.",
+    "evaluation_rubric": "LEVEL 1 (0-20%): The briefing is primarily defensive — focuses on the high pass rate, describes the incidents as anomalies or 'edge cases,' and does not name the testing gaps that allowed each incident through. No ownership of the QA function's role. No specific remediation actions.\n\nLEVEL 2 (21-40%): The briefing acknowledges the incidents and admits the test suite did not catch them, but uses generic language ('we need better testing,' 'we will improve coverage') without naming specific gaps. May explain the 99.2% metric superficially. Remediation plan is vague. No AZ institutional references.\n\nLEVEL 3 (41-65%): The briefing clearly explains that 99.2% pass rate measures 'what tests exist' not 'what the business actually needs to test.' Names at least 2 of the 3 testing gaps (e.g., financial boundary test gap for rounding, external dependency simulation for ASAN timeout). Proposes specific remediation actions with timelines. Written in language accessible to a non-technical executive.\n\nLEVEL 4 (66-84%): All three testing gaps named and explained (rounding = no CBA-aligned financial boundary test matrix; ASAN timeout = no external dependency saturation test; DB performance = no concurrent user load test at month-end volumes). Briefing translates gaps into business impact in AZN terms (1,200 overcharged accounts, silent loan application failures, 8-second response times = customer experience damage). References the CBA rounding directive as the governing standard for financial calculations. Remediation actions are concrete and owned by the QA function. REQUIRES AZ INSTITUTIONAL KNOWLEDGE AT LEVEL 4: correct identification that the rounding gap relates to CBA Regulation No. 19 / the CBA decimal handling directive, and that ASAN integration requires specific timeout + retry test scenarios due to ASAN's known peak-hour behaviour.\n\nLEVEL 5 (85-100%): All Level 4 criteria met. Additionally: (1) the briefing explicitly connects the QA function's measurement framework — 'pass rate' — to why it is a lagging indicator that measures test execution, not business risk coverage; proposes a supplementary risk-based coverage metric aligned to CBA-regulated calculation paths; (2) references the Kapital Bank context of AZN Manat rounding as a specifically AZ financial standard (not an ISO 4217 issue); (3) proposes that future QA reporting to the CTO will include: defect escape rate by severity, mean-time-to-production-detection, and % test coverage of CBA-regulated paths — replacing or supplementing 'pass rate' as the executive-facing KPI; (4) the tone is appropriate for AZ senior executive briefing: direct, ownership-taking, solution-focused, no technical jargon. REQUIRES AZ INSTITUTIONAL KNOWLEDGE AT LEVEL 5: candidate demonstrates knowledge that CBA audits Kapital Bank's internal control processes (including testing evidence) as part of the annual supervisory review — and frames the QA improvements as directly relevant to the next CBA audit cycle.",
+    "az_institutions": [
+      "Kapital Bank",
+      "CBA",
+      "ASAN"
+    ],
+    "tags": [
+      "qa",
+      "az-specific",
+      "communication",
+      "executive-briefing",
+      "kapital-bank",
+      "cba",
+      "open-ended"
+    ]
+  },
+  {
+    "id": "prof-qa-s4-008",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "hard",
+    "type": "mcq",
+    "irt_a": 1.7,
+    "irt_b": 0.9,
+    "irt_c": 0.08,
+    "scenario_en": "You are a senior QA engineer at AzərGold reviewing the test suite submitted by an external contractor who built the internal procurement portal. This is a supply chain software engagement — the contractor delivered working code and a test suite. During your review, you find that the contractor's test suite has zero tests for access control on admin endpoints: any authenticated user can call /api/admin/approve-purchase and /api/admin/export-all-orders without any role check. The contractor's project manager says: 'Our tests cover all specified functional requirements. Access control was not in the SoW.' Given AzərGold's 2016 supply chain security incident (contractor code with no supply chain security testing introduced a vulnerability that caused an operational shutdown), what is the correct escalation path?",
+    "scenario_az": "Siz AzərGold-da daxili satınalma portalını qurmuş xarici podratçının təqdim etdiyi test dəstini nəzərdən keçirən böyük QA mühəndisisiniz. Bu bir təchizat zənciri proqram təminatı əməliyyatıdır — podratçı işləyən kod və test dəsti çatdırdı. Yoxlamanız zamanı podratçının test dəstinin admin endpointlərindəki giriş nəzarəti üçün sıfır testi olduğunu anlayırsınız: hər hansı autentifikasiya edilmiş istifadəçi heç bir rol yoxlaması olmadan /api/admin/approve-purchase və /api/admin/export-all-orders-u çağıra bilər. Podratçının layihə meneceri deyir: 'Testlərimiz bütün müəyyən edilmiş funksional tələbləri əhatə edir. Giriş nəzarəti iş həcmindəki xidmətlərə (SoW) daxil deyildi.' AzərGold-un 2016-cı il təchizat zənciri təhlükəsizlik hadisəsi (təchizat zənciri təhlükəsizlik testi olmayan podratçı kodu əməliyyat bağlanmasına səbəb olan zəiflik gətirdi) nəzərə alındıqda, düzgün eskalasiya yolu nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Accept the contractor's position — if access control was not in the SoW, the contractor has fulfilled their obligation. Log the gap for the internal team to fix.",
+        "text_az": "Podratçının mövqeyini qəbul edin — giriş nəzarəti SoW-da olmadıqda, podratçı öhdəliklərini yerinə yetirib. Daxili komandanın düzəltməsi üçün boşluğu qeyd edin."
+      },
+      {
+        "key": "B",
+        "text_en": "Block acceptance of the deliverable and escalate to AzərGold's CISO and legal team simultaneously: (1) access control on admin endpoints is a baseline security requirement independent of SoW specification — it is a contractual implied obligation under AZ civil law; (2) given the 2016 supply chain incident, AzərGold's security policy requires contractor code to pass a minimum access control test matrix before acceptance; (3) require the contractor to add role-based access control tests and confirm no admin endpoint is accessible without admin role verification before any production deployment.",
+        "text_az": "Çatdırılanın qəbulunu bloklayın və eyni vaxtda AzərGold-un CISO-su və hüquq komandasına eskalasiya edin: (1) admin endpointlərindəki giriş nəzarəti SoW spesifikasiyasından asılı olmayan əsas təhlükəsizlik tələbidir — bu, AZ mülki hüququ çərçivəsinde müqavilə nəzərdə tutulan öhdəlikdir; (2) 2016-cı il təchizat zənciri hadisəsi nəzərə alındıqda, AzərGold-un təhlükəsizlik siyasəti podratçı kodunun qəbuldan əvvəl minimum giriş nəzarəti test matrisindən keçməsini tələb edir; (3) podratçıdan rol əsaslı giriş nəzarəti testləri əlavə etmesini tələb edin."
+      },
+      {
+        "key": "C",
+        "text_en": "Add the access control tests yourself as an internal QA activity and accept the contractor's deliverable.",
+        "text_az": "Giriş nəzarəti testlərini özünüz daxili QA fəaliyyəti kimi əlavə edin və podratçının çatdırılanını qəbul edin."
+      },
+      {
+        "key": "D",
+        "text_en": "Request a 2-week extension for the contractor to add the tests, but do not block acceptance in the meantime.",
+        "text_az": "Podratçıdan testləri əlavə etməsi üçün 2 həftəlik uzatma tələb edin, lakin bu müddət ərzində qəbulu bloklamayın."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "The contractor's 'not in SoW' argument fails for two reasons in this context. First, access control on admin endpoints is a baseline security requirement that is implied in any software procurement under AZ civil code obligations of good faith — a procurement portal that allows any authenticated user to approve purchases is not fit for purpose regardless of SoW completeness. Second, AzərGold's 2016 supply chain incident established a precedent: contractor code without security testing caused an operational shutdown. The institution has post-incident obligation to prevent recurrence. The CISO must be in the escalation chain because this is a security acceptance decision, not a QA-only decision. The legal team must be involved because the contractor may argue against scope extension — having legal determine whether access control constitutes an implied contractual obligation is essential before accepting or rejecting the deliverable. Option C (adding the tests yourself) is wrong because it accepts the contractor's position, pays for remediation work you didn't contract for, and sets precedent that security gaps not in SoW are AzərGold's problem.",
+    "feedback_az": "Podratçının 'SoW-da deyil' arqumenti bu kontekstdə iki səbəbdən uğursuz olur. Birincisi, admin endpointlərindəki giriş nəzarəti, AZ mülki məcəlləsinin vicdanlılıq öhdəlikləri çərçivəsində istənilən proqram təminatı satınalmasında nəzərdə tutulan əsas təhlükəsizlik tələbidir — hər hansı autentifikasiya edilmiş istifadəçinin satınalmaları təsdiqləməsinə icazə verən satınalma portalı SoW tamlığından asılı olmayaraq məqsəd üçün uyğun deyil. İkincisi, AzərGold-un 2016-cı il təchizat zənciri hadisəsi bir precedent müəyyənləşdirdi: təhlükəsizlik testi olmayan podratçı kodu əməliyyat bağlanmasına səbəb oldu.",
+    "development_tip_en": "For any AZ enterprise involving contractor-delivered software (especially mining, energy, financial sector), build a contractor security acceptance checklist that does NOT depend on SoW completeness. Minimum requirements regardless of SoW: (1) role-based access control tested on all privileged endpoints, (2) authentication bypass tests, (3) input validation on all API parameters, (4) no plaintext sensitive data in logs or responses. Reference AzərGold 2016 and ISMSN supply chain security guidelines when arguing for this checklist with contractor project managers who resist scope expansion.",
+    "development_tip_az": "Podratçı tərəfindən çatdırılan proqram təminatını (xüsusilə mədənçilik, enerji, maliyyə sektoru) əhatə edən istənilən AZ müəssisəsi üçün SoW tamlığından asılı olmayan podratçı təhlükəsizlik qəbul yoxlama siyahısı qurun. SoW-dan asılı olmayaraq minimum tələblər: (1) bütün imtiyazlı endpointlərə rol əsaslı giriş nəzarəti sınaqdan keçirilmiş, (2) autentifikasiya yan keçmə testləri, (3) bütün API parametrlərindəki giriş doğrulaması, (4) loqlarda və ya cavablarda düz mətn həssas məlumat yoxdur.",
+    "london_delta": "A London QA engineer following NCSC's vulnerability disclosure policy and OWASP ASVS (Application Security Verification Standard) Level 2 reviews the contractor's deliverable and concludes that access control testing is a Level 2 ASVS requirement — but since ASVS was not referenced in the contract, the contractor is not obligated to meet it. They recommend logging the gap as a known risk and fixing it post-deployment. AZ consequence: AzərGold accepts the deliverable without access control enforcement. Three weeks into production, an internal employee discovers the /api/admin/approve-purchase endpoint is accessible with their standard user credentials. They report it to IT — but before the fix is deployed, an audit trail review reveals 7 unauthorized purchase approvals (total AZN 340,000) were processed through the unprotected endpoint. AzərGold's internal audit committee initiates a procurement fraud investigation. The NCSC ASVS Level 2 standard the London engineer used was the correct international reference and the wrong AZ institutional response — AzərGold's post-2016 security policy required contractor code acceptance to include access control verification, independent of what the NCSC framework recommends for UK government systems.",
+    "az_institutions": [
+      "AzərGold",
+      "ISMSN"
+    ],
+    "tags": [
+      "qa",
+      "az-specific",
+      "security-testing",
+      "supply-chain",
+      "access-control",
+      "empathy-safeguarding"
+    ]
+  },
+  {
+    "id": "prof-qa-s4-009",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "hard",
+    "type": "sjt",
+    "irt_a": 1.6,
+    "irt_b": 1.0,
+    "irt_c": 0.07,
+    "scenario_en": "You are a QA engineer at a bank operating under CBA (Central Bank of Azerbaijan) regulation. CBA policy requires all banking system changes to have documented test evidence before deployment to production. Standard test evidence preparation takes 4 hours (test plan, test execution log, sign-off). A critical production incident is live: the loan repayment processing service is down, 3,000 loan payments are failing, and the fix is a 5-line code change that the developer has tested manually in staging. The fix needs to go to production in 2 hours. Documented test evidence normally takes 4 hours. What is the correct QA response?",
+    "scenario_az": "Siz AMB (Azərbaycan Mərkəzi Bankı) tənzimlənməsi altında fəaliyyət göstərən bankda QA mühəndisisiniz. AMB siyasəti bütün bank sistemi dəyişikliklərinin istehsala yerləşdirmədən əvvəl sənədləşdirilmiş test sübutuna malik olmasını tələb edir. Standart test sübutu hazırlanması 4 saat çəkir (test planı, test icra jurnalı, imzalama). Kritik bir istehsal hadisəsi canlıdır: kredit ödənişi emal xidməti aşağıdadır, 3.000 kredit ödənişi uğursuz olur və düzəliş, inkişafçının hazırlama mərhələsindəki testi manual olaraq etdiyi 5 sətirlik bir kod dəyişikliyidir. Düzəlişin 2 saat ərzində istehsala gəlməsi lazımdır. Sənədləşdirilmiş test sübutu normal olaraq 4 saat çəkir. Düzgün QA cavabı nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Block the deployment — CBA policy is absolute; no exceptions for production incidents. The bank must wait the full 4 hours.",
+        "text_az": "Yerləşdirməni bloklayın — AMB siyasəti mütləqdir; istehsal hadisələri üçün istisna yoxdur. Bank tam 4 saatı gözləməlidir."
+      },
+      {
+        "key": "B",
+        "text_en": "Approve the deployment without documentation — in a production emergency, regulatory compliance is temporarily suspended.",
+        "text_az": "Sənədsiz yerləşdirməyə icazə verin — istehsal fövqəladə halında, tənzimləmə uyğunluğu müvəqqəti olaraq dayandırılır."
+      },
+      {
+        "key": "C",
+        "text_en": "Invoke the emergency change procedure: (1) immediately begin executing a compressed test run (smoke test on the fix, regression on payment processing path only — 45 minutes); (2) simultaneously document the test execution as it happens (real-time log, not retrospective); (3) get explicit written approval from QA lead and the Risk/Compliance officer for the compressed evidence package before deployment; (4) deploy with the compressed package as CBA-compliant emergency evidence; (5) complete full test documentation within 24 hours as post-deployment evidence per CBA emergency change guidelines.",
+        "text_az": "Fövqəladə dəyişiklik prosedurunu tətbiq edin: (1) dərhal sıxılmış test icrasını başladın (düzəliş üzərindəki tüstü testi, yalnız ödəniş emal yolunda reqressiya — 45 dəqiqə); (2) eyni zamanda test icrasını baş verdikcə sənədləşdirin (real vaxtlı jurnal, geriyə dönük deyil); (3) yerləşdirmədən əvvəl sıxılmış sübut paketi üçün QA aparıcısından və Risk/Uyğunluq zabitindən açıq yazılı onay alın; (4) sıxılmış paketi AMB-uyğun fövqəladə sübut kimi yerləşdirin; (5) AMB fövqəladə dəyişiklik qaydalarına görə yerləşdirmə sonrası sübut kimi 24 saat ərzində tam test sənədlərini tamamlayın."
+      },
+      {
+        "key": "D",
+        "text_en": "Ask the developer to write the test documentation themselves and sign off on it — if they tested it manually, they can document what they did.",
+        "text_az": "İnkişafçıdan özü test sənədlərini yazmasını və imzalamasını xahiş edin — əl ilə sındıqlarından, nə etdiklərini sənədləşdirə bilərlər."
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "CBA regulatory requirements for test evidence are not suspended during production incidents — but the CBA's banking supervision framework recognises emergency change procedures as a legitimate control path, provided: (1) the evidence is real (actual test execution, not retrospective documentation), (2) the risk/compliance function explicitly approves the compressed evidence package, (3) full documentation is completed within 24 hours post-deployment. Option A is wrong because blocking a working fix when 3,000 payment transactions are failing creates greater regulatory and customer harm than a compressed evidence package. Option B is wrong because deploying without any documentation creates an audit gap — the CBA inspection will flag an undocumented change, triggering a formal control deficiency notice. Option D is wrong because QA and developer sign-off must be independent — developer self-certification of testing is not accepted as CBA-compliant test evidence. The key adaptability skill: knowing which parts of a regulatory requirement are absolute (independence of QA sign-off, evidence must be real) and which have emergency procedure equivalents (4-hour timeline → compressed emergency procedure).",
+    "feedback_az": "İstehsal hadisələri zamanı test sübutu üçün AMB tənzimləmə tələbləri dayandırılmır — lakin AMB-nin bank nəzarəti çərçivəsi fövqəladə dəyişiklik prosedurlarını aşağıdakı şərtlə qanuni nəzarət yolu kimi tanıyır: (1) sübut realdır (geriyə dönük sənədlər deyil, faktiki test icrası), (2) risk/uyğunluq funksiyası sıxılmış sübut paketini açıq şəkildə təsdiqləyir, (3) tam sənədlər yerləşdirmədən sonra 24 saat ərzində tamamlanır. A seçeneği, 3.000 ödəniş əməliyyatı uğursuz olanda işləyən düzəlişi bloklamanın sıxılmış sübut paketindən daha böyük tənzimləmə və müştəri zərəri yaratdığı üçün yanlışdır.",
+    "development_tip_en": "In AZ banking QA, every QA engineer must know the emergency change procedure approved by the bank's CBA compliance team — this is not improvised in the moment of a production incident. Prepare a one-page emergency test evidence template before any critical deployment window. Include: minimum smoke test scope, real-time execution log format, risk/compliance approval escalation path, and 24-hour post-deployment completion deadline. Present this template to QA lead and compliance officer before the incident — not during it. AZ banking regulators (CBA) distinguish between 'no evidence' (control failure) and 'compressed emergency evidence with post-deployment completion' (acceptable emergency procedure).",
+    "development_tip_az": "AZ bankinq QA-sında hər QA mühəndisi bankın AMB uyğunluq komandası tərəfindən onaylanan fövqəladə dəyişiklik prosedurunu bilməlidir — bu, istehsal hadisəsi anında improvizasiya edilmir. Hər hansı kritik yerləşdirmə pəncərəsindən əvvəl bir səhifəlik fövqəladə test sübutu şablonu hazırlayın. Daxil edin: minimum tüstü test kapsamı, real vaxtlı icra jurnalı formatı, risk/uyğunluq onay eskalasiya yolu, yerləşdirmədən sonra 24 saatlıq tamamlama son tarixi.",
+    "london_delta": "A London QA engineer following FCA SYSC (Senior Managers and Certification Regime) testing guidance and the FCA's change management rules applies the FCA's 'reasonable steps' doctrine: in an emergency, documented reasonable steps (compressed test run + compliance sign-off) constitute adequate control. They approve the deployment with a compressed package and plan full documentation within 24 hours — standard FCA-aligned emergency change practice. AZ consequence: the CBA's banking supervision framework does NOT include an equivalent 'reasonable steps' doctrine — the CBA audits against documented evidence completeness, not intent adequacy. During the next CBA supervisory visit, the inspector notes the emergency deployment. The bank presents the compressed test package. The CBA inspector cites the package as 'insufficient' because the risk/compliance officer's approval was verbal (documented retrospectively), not written pre-deployment. The bank receives a formal deficiency notice. The FCA SYSC 'reasonable steps' standard the London engineer applied was correct for the UK regulatory context; the AZ CBA requires written compliance sign-off before deployment — even in emergencies — which the London engineer's process did not produce.",
+    "az_institutions": [
+      "CBA"
+    ],
+    "tags": [
+      "qa",
+      "az-specific",
+      "regulatory-compliance",
+      "emergency-change",
+      "cba",
+      "banking"
+    ]
+  },
+  {
+    "id": "prof-qa-s4-010",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 1.9,
+    "irt_b": 1.1,
+    "irt_c": 0.0,
+    "scenario_en": "You are the QA engineer on an e-government contractor system project in Azerbaijan. At 6:00 PM on Friday, during a final pre-release security review, you discover a CVSS 9.1 vulnerability in the contractor's code: an unauthenticated remote code execution path on the citizen data API. The system is scheduled for go-live Monday 9:00 AM. DƏIM (Ministry of Digital Development and Transport) requires all critical vulnerabilities (CVSS ≥9.0) found in e-government contractor systems to be reported via their official vulnerability disclosure portal within 24 hours of discovery. It is 6:00 PM Friday. Write the full sequence of actions you take from 6:00 PM Friday to the moment the DƏIM report is submitted — including who you contact, in what order, what you document, and what decisions require authorization.",
+    "scenario_az": "Siz Azərbaycanda e-dövlət podratçı sistemi layihəsinin QA mühəndisisiniz. Cümə axşamı saat 18:00-da, son buraxılışdan əvvəlki təhlükəsizlik yoxlaması zamanı podratçının kodunda CVSS 9,1 zəifliyi kəşf edirsiniz: vətəndaş məlumatları API-sında autentifikasiya edilməmiş uzaqdan kod icra yolu. Sistem bazar ertəsi saat 09:00-da canlı yayıma hazırlanır. DƏIM (Rəqəmsal İnkişaf və Nəqliyyat Nazirliyi), e-dövlət podratçı sistemlərindəki kritik zəifliklərin (CVSS ≥9,0) aşkar edilməsindən 24 saat ərzində rəsmi zəiflik açıqlama portalı vasitəsilə bildirilməsini tələb edir. Saat cümə axşamı 18:00-dır. Cümə saat 18:00-dan DƏIM hesabatı təqdim edildiyi ana qədər gördüyünüz tam tədbirlər ardıcıllığını yazın — kimi əlaqə saxladığınızı, hansı ardıcıllıqla, nəyi sənədləşdirdiyinizi və hansı qərarların icazə tələb etdiyini daxil edin.",
+    "options": null,
+    "correct_answer": null,
+    "feedback_en": "An excellent response includes: (1) immediate isolation — go-live blocked before any other step; (2) correct escalation chain — CISO/security lead first, then PM and legal, then DƏIM; (3) correct DƏIM timeline understanding (24 hours from 18:00 Friday = 18:00 Saturday — the deadline is Saturday, not Monday); (4) DƏIM report content: CVE description, CVSS score, affected component, potential impact, remediation status, discovery method, discoverer identity; (5) documentation discipline — vulnerability documented in secure internal channel, not email or Jira; (6) understanding that go-live authorization requires CISO and DƏIM acknowledgment — not just internal PM sign-off.",
+    "feedback_az": "Əla cavab daxildir: (1) dərhal izolyasiya — canlı yayım başqa bir addımdan əvvəl bloklanır; (2) düzgün eskalasiya zənciri — əvvəlcə CISO/təhlükəsizlik rəhbəri, sonra PM və hüquq, sonra DƏIM; (3) düzgün DƏIM vaxt cədvəli anlayışı (cümə 18:00-dan 24 saat = cümə axşamı 18:00 — son tarix cümə axşamıdır, bazar ertəsi deyil); (4) DƏIM hesabat məzmunu; (5) sənədlər nizam-intizamı; (6) canlı yayım icazəsinin CISO və DƏIM təsdiqini tələb etdiyinin anlaşılması.",
+    "development_tip_en": "Know the DƏIM 24-hour vulnerability disclosure deadline before the first day of any AZ e-government project. Build the escalation chain before go-live week: CISO contact (with after-hours number), DƏIM portal registration (requires organisation account), and legal counsel familiar with AZ government contract obligations. The 24-hour deadline does not pause for weekends — a Friday 6 PM discovery means a Saturday 6 PM deadline. Missing the DƏIM deadline on a CVSS ≥9.0 vulnerability results in the contracting organisation being placed on DƏIM's contractor blacklist, which disqualifies it from future AZ government procurement for 12 months.",
+    "development_tip_az": "Hər hansı AZ e-dövlət layihəsinin ilk günündən əvvəl DƏIM-in 24 saatlıq zəiflik açıqlama son tarixini bilin. Canlı yayım həftəsindən əvvəl eskalasiya zənciri qurun: CISO əlaqəsi (iş saatları xarici nömrəsi ilə), DƏIM portal qeydiyyatı (təşkilat hesabını tələb edir) və AZ hökumət müqaviləsi öhdəlikləri ilə tanış olan hüquq müşaviri. 24 saatlıq son tarix həftə sonları üçün dayandırılmır — cümə axşamı saat 18:00-da kəşf cümə axşamı saat 18:00 son tarixinə bərabərdir.",
+    "london_delta": "A London QA engineer following NCSC's vulnerability disclosure policy (which recommends 90 days for coordinated disclosure to allow vendor remediation before public disclosure) applies the NCSC timeline: they notify the contractor and give 90 days for remediation before DƏIM reporting, reasoning that NCSC coordinated disclosure is the recognised international best practice. AZ consequence: DƏIM's 24-hour mandatory disclosure requirement for CVSS ≥9.0 vulnerabilities in e-government systems is not a recommendation — it is a statutory obligation under AZ Presidential Decree No. 1024 on e-government security. Missing the 24-hour window by 89 days places the contracting organisation on DƏIM's contractor blacklist. The contracting company loses eligibility for all AZ government procurement contracts for 12 months, including 3 active tenders worth AZN 2.4M. The NCSC 90-day coordinated disclosure policy the London engineer followed is the UK government standard and directly contradicts the AZ statutory 24-hour mandatory reporting obligation.",
+    "evaluation_rubric": "LEVEL 1 (0-20%): Response focuses primarily on fixing the vulnerability rather than the reporting sequence. DƏIM reporting obligation either not mentioned or mentioned without a timeline. Go-live decision not clearly blocked. Escalation chain missing or incorrect (e.g., goes to PM first rather than CISO). No documentation discipline described.\n\nLEVEL 2 (21-40%): Response correctly identifies that go-live must be blocked and DƏIM must be notified. Describes a general escalation sequence. Does not demonstrate understanding of the 24-hour deadline arithmetic (Friday 18:00 + 24h = Saturday 18:00). DƏIM report content vague. May describe the DƏIM notification as a Monday activity.\n\nLEVEL 3 (41-65%): Response correctly blocks go-live as the first action. Correct escalation chain: security lead / CISO first, then PM, then DƏIM. Correctly identifies the Saturday 18:00 deadline. Describes the DƏIM report content at a general level (vulnerability description, CVSS score, affected system). Some documentation discipline described. Missing: specific authorization requirements for DƏIM submission, secure channel for vulnerability documentation.\n\nLEVEL 4 (66-84%): All Level 3 criteria met. Additionally: (1) correctly states that DƏIM report requires the discoverer's identity and organisation's DƏIM portal credentials — implying the QA engineer must verify the organisation is registered on the DƏIM portal before submitting; (2) distinguishes between internal escalation (security lead / CISO, PM, legal) and DƏIM notification — these are parallel tracks with different authorization requirements; (3) states that go-live authorization for Monday must include CISO written confirmation that the vulnerability is remediated AND DƏIM acknowledgment receipt — not just internal PM sign-off; (4) documents the vulnerability in a secure internal channel (not Jira, not email) to prevent inadvertent disclosure before DƏIM notification. REQUIRES AZ INSTITUTIONAL KNOWLEDGE AT LEVEL 4: correct identification of DƏIM as the reporting authority (not CERT.AZ or ISMSN), and understanding that DƏIM's 24-hour deadline applies to the discovery moment, not business hours.\n\nLEVEL 5 (85-100%): All Level 4 criteria met. Additionally: (1) the response addresses the contractor relationship: the contracting organisation (not the contractor) bears the DƏIM reporting obligation — the QA engineer must involve the contracting organisation's legal counsel to confirm this; (2) the response notes that Monday go-live is impossible without DƏIM acknowledgment — DƏIM acknowledgment typically takes 2-5 business days, meaning the Monday 09:00 go-live is cancelled regardless of remediation speed; (3) the sequence explicitly separates: immediate block actions (18:00 Friday), security escalation actions (18:00-19:00 Friday), DƏIM submission window (before 18:00 Saturday), go-live re-authorization process (post-DƏIM acknowledgment, minimum Tuesday); (4) notes that the contractor's code being the source of the vulnerability creates a supply chain security contractual issue — the contracting organisation may have a claim against the contractor, which legal counsel should assess concurrently with DƏIM reporting. REQUIRES AZ INSTITUTIONAL KNOWLEDGE AT LEVEL 5: candidate demonstrates knowledge that DƏIM blacklisting for missed 24-hour reporting is applied to the contracting organisation (not the individual QA engineer), and that missing the deadline disqualifies the organisation from AZ government procurement for 12 months — making this a business-critical compliance issue, not just a technical finding.",
+    "az_institutions": [
+      "DƏIM",
+      "ISMSN",
+      "e-GOV"
+    ],
+    "tags": [
+      "qa",
+      "az-specific",
+      "vulnerability-disclosure",
+      "deim",
+      "cvss",
+      "e-gov",
+      "open-ended",
+      "regulatory-compliance"
+    ]
+  }
+]

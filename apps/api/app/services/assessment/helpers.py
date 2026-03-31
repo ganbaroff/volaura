@@ -5,6 +5,7 @@ Rule: This module NEVER imports from app.routers.*
 
 from __future__ import annotations
 
+import time
 from fastapi import HTTPException
 
 from app.core.assessment.engine import CATState
@@ -29,16 +30,69 @@ async def get_competency_id(db: SupabaseAdmin, slug: str) -> str:
     return result.data["id"]
 
 
+# Module-level question cache: {competency_id: (fetched_at, questions)}
+# TTL: 5 minutes — questions are effectively static (new questions added by admin, not users)
+_QUESTION_CACHE: dict[str, tuple[float, list[dict]]] = {}
+_QUESTION_CACHE_TTL: float = 300.0  # seconds
+
+
+def clear_question_cache() -> None:
+    """Clear the question cache. Used by tests to prevent cross-test pollution."""
+    _QUESTION_CACHE.clear()
+    _COMPETENCY_SLUG_CACHE.clear()
+
+
+# Module-level competency slug cache: {competency_id: slug}
+# Competencies are static (never renamed in production) — no TTL needed.
+_COMPETENCY_SLUG_CACHE: dict[str, str] = {}
+
+
+async def get_competency_slug(db: SupabaseAdmin, competency_id: str) -> str:
+    """Return the slug for a competency UUID, using an in-process cache.
+
+    Competencies table has 8 rows and is effectively static.
+    Caching eliminates 2 round trips per answer in the submit_answer hot path.
+    """
+    cached = _COMPETENCY_SLUG_CACHE.get(competency_id)
+    if cached is not None:
+        return cached
+
+    result = (
+        await db.table("competencies")
+        .select("slug")
+        .eq("id", competency_id)
+        .single()
+        .execute()
+    )
+    slug = result.data["slug"] if result.data else ""
+    if slug:
+        _COMPETENCY_SLUG_CACHE[competency_id] = slug
+    return slug
+
+
 async def fetch_questions(db: SupabaseAdmin, competency_id: str) -> list[dict]:
-    """Fetch all active questions for a competency."""
+    """Fetch all active questions for a competency.
+
+    Results are cached in memory for 5 minutes — questions are static and this
+    is the hottest DB read in the submit_answer path (called on every answer).
+    """
+    now = time.monotonic()
+    cached = _QUESTION_CACHE.get(competency_id)
+    if cached is not None:
+        fetched_at, questions = cached
+        if now - fetched_at < _QUESTION_CACHE_TTL:
+            return questions
+
     result = (
         await db.table("questions")
-        .select("id, type, scenario_en, scenario_az, options, irt_a, irt_b, irt_c, expected_concepts, correct_answer, competency_id")
+        .select("id, type, scenario_en, scenario_az, scenario_ru, options, irt_a, irt_b, irt_c, expected_concepts, correct_answer, competency_id")
         .eq("competency_id", competency_id)
         .eq("is_active", True)
         .execute()
     )
-    return result.data or []
+    questions = result.data or []
+    _QUESTION_CACHE[competency_id] = (now, questions)
+    return questions
 
 
 def make_session_out(
@@ -56,6 +110,7 @@ def make_session_out(
             question_type=next_q["type"],
             question_en=next_q["scenario_en"],
             question_az=next_q["scenario_az"],
+            question_ru=next_q.get("scenario_ru"),
             options=next_q.get("options"),
             competency_id=next_q["competency_id"],
         )

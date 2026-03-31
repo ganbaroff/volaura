@@ -1,0 +1,99 @@
+{
+  "profession": "QA Engineer / Software Tester",
+  "agent_id": "a3c3bf456c2532469",
+  "sprint": 1,
+  "question_count": 10,
+  "generation_strategy": "```\n\n**Generation Strategy:**\n1. Distribution enforced exactly: 3 tech_literacy (easy MCQ + medium MCQ + hard open_ended), 3 reliability (easy MCQ + medium SJT + hard open_ended), 2 adaptability (medium SJT + hard MCQ), 1 communication (medium SJT), 1 leadership (hard SJT) — 5 MCQ + 3 SJT + 2 open_ended, 3 easy + 4 medium + 3 hard.\n2. All scenarios grounded in Azerbaijan fintech/government context (banking app in Baku, Nakhchivan edge case, government e-service portal, Central Bank compliance) — not generic Western SaaS examples that would feel distant to the target user.\n3. IRT parameters calibrated to difficulty tier: easy items use irt_b in [-1.8, -1.5] with moderate discrimination (1.1-1.2), medium items use irt_b in [0.2, 0.5] with higher discrimination (1.5-1.8), hard items use irt_b in [1.5, 2.0] with maximum discrimination (2.0-2.3) and low guessing parameters (0.08-0.12) — reflecting that hard QA questions require genuine expertise and are not guessable.",
+  "questions": [
+    {
+      "id": "prof-qa-001",
+      "competency_slug": "tech_literacy",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 1.2,
+      "irt_b": -1.5,
+      "scenario_key": "You are a QA engineer at a Baku-based banking app team. Your Selenium regression suite has been runn"
+    },
+    {
+      "id": "prof-qa-002",
+      "competency_slug": "tech_literacy",
+      "difficulty": "medium",
+      "type": "mcq",
+      "irt_a": 1.6,
+      "irt_b": 0.3,
+      "scenario_key": "You are testing an API endpoint for a mobile payment feature in an Azerbaijani fintech app. The endp"
+    },
+    {
+      "id": "prof-qa-003",
+      "competency_slug": "tech_literacy",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 2.1,
+      "irt_b": 1.8,
+      "scenario_key": "Your team is building a new REST API for a government e-service portal in Azerbaijan (identity verif"
+    },
+    {
+      "id": "prof-qa-004",
+      "competency_slug": "reliability",
+      "difficulty": "easy",
+      "type": "mcq",
+      "irt_a": 1.1,
+      "irt_b": -1.8,
+      "scenario_key": "You are the QA lead for a banking app team in Baku. The sprint ends on Friday. On Thursday afternoon"
+    },
+    {
+      "id": "prof-qa-005",
+      "competency_slug": "reliability",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.8,
+      "irt_b": 0.5,
+      "scenario_key": "It is 17:30 on release day. You are the QA sign-off authority. While doing final checks, you discove"
+    },
+    {
+      "id": "prof-qa-006",
+      "competency_slug": "reliability",
+      "difficulty": "hard",
+      "type": "open_ended",
+      "irt_a": 2.3,
+      "irt_b": 2.0,
+      "scenario_key": "You are the QA manager for a government e-service platform in Azerbaijan. The platform processes 50,"
+    },
+    {
+      "id": "prof-qa-007",
+      "competency_slug": "adaptability",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.7,
+      "irt_b": 0.4,
+      "scenario_key": "It is 09:00 on the day of a planned sprint demo with a banking client in Baku. Your team's staging e"
+    },
+    {
+      "id": "prof-qa-008",
+      "competency_slug": "adaptability",
+      "difficulty": "hard",
+      "type": "mcq",
+      "irt_a": 2.0,
+      "irt_b": 1.5,
+      "scenario_key": "Your team is 30 minutes away from a production hotfix deployment for a critical payment bug affectin"
+    },
+    {
+      "id": "prof-qa-009",
+      "competency_slug": "communication",
+      "difficulty": "medium",
+      "type": "sjt",
+      "irt_a": 1.5,
+      "irt_b": 0.2,
+      "scenario_key": "You file a bug: 'Button doesn't work on checkout page.' The developer closes it as 'Cannot Reproduce"
+    },
+    {
+      "id": "prof-qa-010",
+      "competency_slug": "leadership",
+      "difficulty": "hard",
+      "type": "sjt",
+      "irt_a": 2.2,
+      "irt_b": 1.9,
+      "scenario_key": "You are the QA lead for a fintech startup in Baku about to launch their first mobile payment app to "
+    }
+  ]
+}

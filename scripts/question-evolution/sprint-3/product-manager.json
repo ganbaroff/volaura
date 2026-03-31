@@ -1,0 +1,469 @@
+[
+  {
+    "id": "prof-pm-s3-001",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.2,
+    "irt_b": -1.2,
+    "irt_c": 0.1,
+    "scenario_en": "You are PM at a Baku fintech startup. You committed to delivering a new payment dashboard to your CTO and two co-founders by Friday. It is Wednesday evening and you have discovered a critical integration bug with AzərGold's SOAP gateway that will take at least 4 more days to resolve. The co-founders have already told three enterprise clients the feature will be ready this week. What do you do?",
+    "scenario_az": "Siz Bakı fintech startapında PM-siniz. CTO-nıza və iki həmtəsisçiyə cümə gününə qədər yeni ödəniş panelini çatdırmağı öhdənizdə götürmüsünüz. Çərşənbə axşamı AzərGold-un SOAP şlüzü ilə kritik inteqrasiya xətası aşkar etdiniz — həlli ən azı 4 gün aparacaq. Həmtəsisçilər artıq üç korporativ müştəriyə bu həftə hazır olacağını söyləyiblər. Nə edirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Say nothing until Friday, then report the delay publicly in the all-hands meeting.",
+        "text_az": "Cümə gününə kimi heç nə söyləməyin, sonra gecikmə haqqında ümumi görüşdə açıq bildirin."
+      },
+      {
+        "key": "B",
+        "text_en": "Immediately tell the co-founders privately, give a revised date with a root cause summary, and offer to be on the client calls to re-set expectations personally.",
+        "text_az": "Dərhal həmtəsisçiləri özəl şəkildə məlumatlandırın, kök səbəb xülasəsi ilə yenidən baxılmış tarix verin və müştəri zənglərinə şəxsən gözləntiləri yenidən qurmaq üçün iştirak etməyi təklif edin."
+      },
+      {
+        "key": "C",
+        "text_en": "Ask the engineering lead to work overnight to try to meet the deadline regardless of quality.",
+        "text_az": "Mühəndislik rəhbərindən keyfiyyətdən asılı olmayaraq son tarixi tutmaq üçün gecəni çalışmasını xahiş edin."
+      },
+      {
+        "key": "D",
+        "text_en": "Ship a partial build on Friday without the AzərGold integration and describe it as 'phase one' without informing stakeholders of the scope change.",
+        "text_az": "Cümə günü AzərGold inteqrasiyası olmadan qismən versiya göndərin və maraqlı tərəfləri əhatə dəyişikliyindən xəbərdar etmədən bunu 'birinci mərhələ' kimi təqdim edin."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. In AZ professional culture, proactive private disclosure to co-founders before clients are surprised preserves trust more than silence does. Offering to join client calls signals ownership. A is a public ambush — damaging in a culture where face-saving matters. C creates a quality debt and burnout risk. D is deceptive re-framing that clients will eventually discover, destroying credibility permanently. The key AZ insight: co-founders in Baku startups expect early private warning, not a Friday surprise.",
+    "feedback_az": "B düzgündür. Azərbaycan peşəkar mədəniyyətində müştərilər sürprizlə qarşılaşmadan əvvəl həmtəsisçiləri özəl şəkildə məlumatlandırmaq etibarı qoruyur. Müştəri zənglərinə qatılmağı təklif etmək məsuliyyəti göstərir. A ictimai sürprizdir — üzü xilas etmənin vacib olduğu mədəniyyətdə zərərlidir. C keyfiyyət borcu və tükənmə riski yaradır. D müştərilərin nəticədə kəşf edəcəyi aldadıcı yenidən çərçivələmədir.",
+    "development_tip_en": "In AZ startup culture, co-founders often have personal relationships with enterprise clients built over months. A surprise miss damages that personal bond, not just the business relationship. Your job as PM is to give co-founders enough lead time to manage their personal credibility with clients — typically 48-72 hours minimum.",
+    "development_tip_az": "Azərbaycan startap mədəniyyətində həmtəsisçilər çox vaxt korporativ müştərilərlə aylarca qurulmuş şəxsi əlaqələrə malikdir. Gözlənilməz uğursuzluq bu şəxsi bağı zədələyir. PM kimi vəzifəniz həmtəsisçilərə müştərilər qarşısında şəxsi inam idarəetmə üçün kifayət qədər vaxt verməkdir — adətən minimum 48-72 saat.",
+    "london_delta": "A London PM treats this as a process problem: update the JIRA ticket, post in Slack, let stakeholders self-serve the information. In AZ, enterprise client relationships are personal — the co-founder staked their personal reputation when they made the promise. The PM must go to the co-founder directly, not post a status update. Skipping the personal channel is read as disrespect, not efficiency.",
+    "az_institutions": [
+      "AzərGold"
+    ],
+    "tags": [
+      "product-management",
+      "reliability",
+      "az-startup-culture",
+      "stakeholder-management"
+    ]
+  },
+  {
+    "id": "prof-pm-s3-002",
+    "competency_id": "11111111-1111-1111-1111-111111111111",
+    "competency_slug": "communication",
+    "difficulty": "easy",
+    "type": "mcq",
+    "irt_a": 1.3,
+    "irt_b": -1.0,
+    "irt_c": 0.1,
+    "scenario_en": "You are the product manager at a new SaaS HR tool being deployed to PASHA Holding's internal teams. The team writing the PRD includes: 3 Azerbaijani engineers (AZ native speakers), 2 Russian-speaking senior developers brought from Moscow, and 1 English-speaking UX designer from Georgia. You need to release the PRD in a way that avoids ambiguity and ensures all six contributors can give precise feedback. What language strategy do you use?",
+    "scenario_az": "Siz PASHA Holdinqin daxili komandalarına tətbiq edilən yeni SaaS HR alətinin məhsul menecerisiniz. PRD yazan komandaya daxildir: 3 azərbaycanlı mühəndis (ana dili AZ), Moskvadan gətirilmiş 2 rus dilli senior developer, Gürcüstandan 1 ingilis dilli UX dizayner. Bütün altı iştirakçının dəqiq rəy verə bilməsi üçün PRD-ni hansı dil strategiyası ilə yayımlayırsınız?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Write the PRD only in Azerbaijani since it is the official state language of the deployment country.",
+        "text_az": "PRD-ni yalnız azərbaycan dilində yazın, çünki bu, tətbiq ölkəsinin rəsmi dövlət dilidir."
+      },
+      {
+        "key": "B",
+        "text_en": "Write the PRD in English only — it is the universal language of tech and everyone on the team should be able to read it.",
+        "text_az": "PRD-ni yalnız ingilis dilində yazın — bu, texnologiyanın universal dilidir və komandadakı hər kəs onu oxuya bilməlidir."
+      },
+      {
+        "key": "C",
+        "text_en": "Write the master PRD in English for precision and version control, then produce a Russian summary for the senior developers and an Azerbaijani executive summary for PASHA Holding stakeholders — and confirm comprehension explicitly in the kickoff meeting.",
+        "text_az": "Dəqiqlik və versiya nəzarəti üçün əsas PRD-ni ingilis dilində yazın, sonra senior developerlər üçün rus dilində xülasə, PASHA Holdinq maraqlı tərəfləri üçün azərbaycan dilində icraiyyə xülasəsi hazırlayın — başlama görüşündə anlayışı açıq şəkildə təsdiqləyin."
+      },
+      {
+        "key": "D",
+        "text_en": "Ask each team member to read the PRD in whichever language they prefer and flag any parts they do not understand.",
+        "text_az": "Hər komanda üzvündən PRD-ni üstünlük verdiyi dildə oxumasını və başa düşmədiklərini bildirməsini xahiş edin."
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct. English as the master language ensures one source of truth for version control and avoids translation drift in requirements. Russian summaries respect the senior developers' professional comfort (reading dense requirements in a second language creates errors). AZ executive summaries meet PASHA Holding's expectation for formal AZ-language documentation. D creates a passive gap — people rarely flag what they don't understand when they're unsure what they're missing. A excludes the Russian and English speakers from precise technical feedback. B creates a hidden comprehension risk with the Russian senior devs.",
+    "feedback_az": "C düzgündür. İngilis dili əsas dil kimi versiya nəzarəti üçün vahid həqiqət mənbəyini təmin edir. Rus dili xülasələri senior developerlərin peşəkar rahatlığına hörmət edir. AZ icraiyyə xülasələri PASHA Holdinqin rəsmi AZ dilli sənədlər üzrə gözləntisini qarşılayır. D passiv boşluq yaradır. A rus və ingilis dilli iştirakçıları dəqiq texniki rəydən kənar edir.",
+    "development_tip_en": "PASHA Holding, like most major AZ enterprises, expects formal communications in Azerbaijani for documentation that will be archived or shown to senior leadership. However, technical specs that go to engineers should be in the language the engineers think in. A trilingual PM in AZ is not just a nice-to-have — it is often the difference between a PRD that gets precise feedback and one that ships with silent misunderstandings.",
+    "development_tip_az": "PASHA Holdinq, əksər böyük AZ müəssisələri kimi, arxivlənəcək və ya rəhbərliyə göstəriləcək sənədlər üçün azərbaycan dilini gözləyir. Lakin mühəndislərə gedən texniki spesifikasiyalar mühəndislərin düşündüyü dildə olmalıdır. AZ-da üçdilli PM sadəcə üstünlük deyil — tez-tez dəqiq rəy alan PRD ilə susqun yanlış anlaşmalarla göndərilən arasındakı fərqdir.",
+    "london_delta": "A London PM defaults to English-only and expects everyone to flag confusion. In AZ, senior Russian-speaking contractors often will not publicly admit they misread a requirement — doing so implies incompetence in front of colleagues. The hidden comprehension risk is real and silent. AZ PM must proactively remove the language barrier rather than waiting for people to raise their hand.",
+    "az_institutions": [
+      "PASHA Holding"
+    ],
+    "tags": [
+      "product-management",
+      "communication",
+      "trilingual",
+      "az-enterprise",
+      "pasha-holding"
+    ]
+  },
+  {
+    "id": "prof-pm-s3-003",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.6,
+    "irt_b": 0.1,
+    "irt_c": 0.08,
+    "scenario_en": "You are PM at a 12-person Baku startup. The CTO and co-founder (who controls 40% equity and has final say on technical direction) insists on building a native iOS app first. Your user research shows 78% of your target users are on Android. You believe this will delay market entry by 4 months and burn 30% of remaining runway on the wrong platform. You have already raised this concern once in a team meeting — the CTO dismissed it publicly and moved on. How do you proceed?",
+    "scenario_az": "Siz 12 nəfərlik Bakı startapında PM-siniz. CTO və həmtəsisçi (40% kapital sahibi, texniki istiqamətdə son söz hüququ) əvvəlcə doğma iOS tətbiqi qurmaqda israr edir. İstifadəçi araşdırmanız göstərir ki, hədəf istifadəçilərinizin 78%-i Android-dədir. Hesab edirsiniz ki, bu, bazar girişini 4 ay gecikdirəcək və qalan ehtiyatın 30%-ini yanlış platformaya xərcləyəcək. Bu narahatlığı bir komanda görüşündə artıq bir dəfə qaldırmışsınız — CTO onu ictimaiyyət qarşısında rədd edib irəliləyib. Necə davam edirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Raise the concern again in the next all-hands meeting with updated data, making the case publicly to pressure the CTO to change course.",
+        "text_az": "Növbəti ümumi görüşdə yenilənmiş məlumatla narahatlığı yenidən qaldırın, CTO-nu marşrutu dəyişməyə məcbur etmək üçün ictimaiyyət qarşısında mövqeyinizi bildirin."
+      },
+      {
+        "key": "B",
+        "text_en": "Accept the decision and execute the iOS roadmap without further challenge — the CTO has final say.",
+        "text_az": "Qərarı qəbul edin və iOS yol xəritəsini daha çox etiraz etmədən icra edin — CTO-nun son sözü var."
+      },
+      {
+        "key": "C",
+        "text_en": "Request a private 30-minute meeting with the CTO, bring a one-page brief with the user data, runway impact, and a proposed hybrid path (React Native cross-platform), and frame it as protecting their equity stake, not challenging their decision.",
+        "text_az": "CTO ilə 30 dəqiqəlik özəl görüş tələb edin, istifadəçi məlumatları, ehtiyat təsiri və təklif olunan hibrid yol (React Native çarpaz platforma) ilə bir səhifəlik qısa sənəd gətirin və bunu qərarlarını müzakirə etmək kimi deyil, kapital paylarını qorumaq kimi çərçivəyə salın."
+      },
+      {
+        "key": "D",
+        "text_en": "Escalate to the CEO or board to override the CTO's technical decision.",
+        "text_az": "CTO-nun texniki qərarını ləğv etmək üçün CEO-ya və ya idarə heyətinə müraciət edin."
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct. In AZ startup culture, publicly challenging a co-founder after they have already ruled — especially one with 40% equity — causes irreparable relationship damage. The second public challenge will be read as insubordination, not diligence. The private meeting approach preserves their face while giving the data another chance to land. Framing it as 'protecting your equity stake' activates the co-founder's self-interest rather than their defensiveness. A is the fastest way to become the PM who gets removed. B abandons your core PM responsibility — you own the product outcome, not just execution. D is a nuclear option that destroys the working relationship permanently.",
+    "feedback_az": "C düzgündür. Azərbaycan startap mədəniyyətində, xüsusilə 40% kapital sahibi olan biri artıq qərar verdikdən sonra həmtəsisçiyə ictimaiyyət qarşısında meydan oxumaq geri dönməz əlaqə zərərinə yol açır. İkinci ictimai etiraz səylililik kimi deyil, itaətsizlik kimi oxunacaq. Özəl görüş üsulu onların itibarını qoruyur. 'Kapitalınızı qorumaq' kimi çərçivələmə müdafiəciliyini deyil, öz maraqlarını aktivləşdirir.",
+    "development_tip_en": "AZ co-founder relationships are often built on personal loyalty as much as business logic. When you need to change a decision, your job is to make the co-founder feel like the change was their idea, or at minimum, that you are protecting what they care about (their equity, their vision). The data is a tool, not a weapon. Bring it privately, frame it as risk mitigation, and let them announce the pivot.",
+    "development_tip_az": "Azərbaycan həmtəsisçi münasibətləri çox vaxt biznes məntiqindən az olmayaraq şəxsi sədaqət üzərində qurulur. Qərar dəyişdirmək lazım olduqda, vəzifəniz həmtəsisçinin dəyişikliyin onların ideyası olduğunu hiss etməsini təmin etməkdir. Məlumatı özəl gətirin, risk azaltma kimi çərçivəyə salın və dönüşü elan etmələrinə icazə verin.",
+    "london_delta": "A London PM treats this as a decision quality problem: get the data in front of the room, let the best argument win. In AZ, co-founder authority is tied to personal status — publicly overruling a co-founder's decision is not just a professional disagreement, it is a status challenge in front of the team. The co-founder will defend the wrong decision to preserve their standing, making the outcome worse. The AZ PM works through private channels and makes the co-founder the hero of the correct decision.",
+    "az_institutions": [],
+    "tags": [
+      "product-management",
+      "leadership",
+      "co-founder-dynamics",
+      "az-startup-culture",
+      "conflict-resolution"
+    ]
+  },
+  {
+    "id": "prof-pm-s3-004",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.7,
+    "irt_b": 0.2,
+    "irt_c": 0.08,
+    "scenario_en": "Your team is 3 weeks into a 6-week sprint to build a payment feature for an AZ e-commerce platform. The feature was designed around a REST API. Mid-sprint, you learn that the required payment processor — AzərGold — only supports SOAP protocol, and there is no REST wrapper or third-party bridge available in Azerbaijan. Rewriting to SOAP will take 2 additional weeks. The launch date is tied to a Novruz promotional campaign that cannot move. What is the correct PM response?",
+    "scenario_az": "Komandanız AZ e-ticarət platforması üçün ödəniş xüsusiyyəti qurmaq üçün 6 həftəlik sprintin 3. həftəsindədir. Xüsusiyyət REST API ətrafında dizayn edilmişdi. Sprintin ortasında öyrənirsiniz ki, tələb olunan ödəniş prosessoru — AzərGold — yalnız SOAP protokolunu dəstəkləyir. Yazışmanın yenidən SOAP-a aparılması əlavə 2 həftə alacaq. Buraxılış tarixi hərəkət edə bilməyən Novruz tanıtım kampaniyasına bağlıdır. Düzgün PM cavabı nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Push the launch date by 2 weeks — technical integrity cannot be compromised.",
+        "text_az": "Buraxılış tarixini 2 həftə irəliyə aparın — texniki bütövlük güzəştə gedilə bilməz."
+      },
+      {
+        "key": "B",
+        "text_en": "Immediately re-scope: cut the AzərGold integration from sprint 3, ship the Novruz campaign without real-time payment (use bank transfer or cash-on-delivery as interim), and plan the SOAP integration as sprint 4 with a hard deadline. Communicate the scope change to stakeholders within 24 hours.",
+        "text_az": "Dərhal yenidən həcm müəyyənləşdirin: AzərGold inteqrasiyasını sprint 3-dən çıxarın, real vaxt ödənişi olmadan Novruz kampaniyasını göndərin (aralıq kimi bank köçürməsi və ya nağd çatdırılma istifadə edin) və SOAP inteqrasiyasını ciddi son tarixlə sprint 4 kimi planlayın. 24 saat ərzində maraqlı tərəflərə həcm dəyişikliyini bildirin."
+      },
+      {
+        "key": "C",
+        "text_en": "Ask the engineering team to work overtime to complete both the SOAP rewrite and the original sprint scope.",
+        "text_az": "Mühəndislik komandасından həm SOAP yenidən yazımını, həm də orijinal sprint həcmini tamamlamaq üçün fazla mesai etmələrini xahiş edin."
+      },
+      {
+        "key": "D",
+        "text_en": "Find a freelance developer in Baku to build a quick REST-to-SOAP bridge independently so the team does not have to change the sprint.",
+        "text_az": "Komandanın sprinti dəyişməsinə ehtiyac olmadan sürətli REST-dən SOAP körpüsü qurmaq üçün Bakıda frilanser developer tapın."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. The Novruz campaign window is a hard business constraint — missing it means losing the highest-traffic period of the AZ calendar year (15-25% traffic spike). Bank transfer and cash-on-delivery are widely accepted fallback methods in AZ e-commerce and will not kill conversion for the campaign. Re-scoping to sprint 4 with a hard deadline preserves team capacity and quality. A treats technical completeness as more important than business timing — wrong priority in a constrained market. C is a burnout path that typically produces bugs, not speed. D introduces unreviewed code and a new dependency with no quality gate — dangerous for a payment feature.",
+    "feedback_az": "B düzgündür. Novruz kampaniya pəncərəsi sərt biznes məhduddiyyətidir — onu qaçırmaq AZ təqvim ilinin ən yüksək trafik dövründən imtina deməkdir (15-25% trafik artımı). Bank köçürməsi və nağd çatdırılma AZ e-ticarətdə geniş qəbul edilən ehtiyat üsullardır. Sprint 4-ə yenidən həcm müəyyənləşdirmək komanda kapasitəsini qoruyur. A biznes zamanlamasından daha vacib texniki tamlığı qoyur — yanlış prioritet.",
+    "development_tip_en": "Novruz (late March) is the single most important commercial period in Azerbaijan — comparable to Christmas in Western markets. E-commerce traffic spikes 15-25%, gift purchases dominate, and campaigns planned for this window cannot simply be rescheduled. An AZ PM must internalize this calendar constraint the same way a UK PM internalizes Black Friday. Cash-on-delivery remains a significant payment method in AZ (roughly 40% of e-commerce transactions) — use this knowledge to de-risk launches when payment gateway integrations fail.",
+    "development_tip_az": "Novruz (mart sonu) Azərbaycanda ən vacib ticarət dövrüdür — Qərb bazarlarında Milad bayramına bənzər. E-ticarət trafiki 15-25% artır. AZ PM bu təqvim məhduddiyyətini daxilindən mənimsəməlidir. Nağd çatdırılma AZ e-ticarətdə əhəmiyyətli ödəniş üsulu olaraq qalır (təxminən 40%) — ödəniş şlüz inteqrasiyaları uğursuz olduqda buraxılışları az riskli etmək üçün bu bilikdən istifadə edin.",
+    "london_delta": "A London PM would never ship without the payment integration — it feels incomplete and unprofessional. In AZ, bank transfer is a culturally familiar and trusted fallback that customers actually prefer for high-value purchases. The London PM's insistence on technical completeness would cause them to miss the Novruz window entirely, which is a far worse business outcome than shipping with a fallback payment method.",
+    "az_institutions": [
+      "AzərGold"
+    ],
+    "tags": [
+      "product-management",
+      "adaptability",
+      "novruz",
+      "azerqold",
+      "payment-integration",
+      "az-ecommerce"
+    ]
+  },
+  {
+    "id": "prof-pm-s3-005",
+    "competency_id": "22222222-2222-2222-2222-222222222222",
+    "competency_slug": "reliability",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.8,
+    "irt_b": 0.3,
+    "irt_c": 0.08,
+    "scenario_en": "You are PM for a digital identity verification product used by ASAN Xidmət. The Ministry of Digital Transformation issues a directive requiring all citizen-facing digital services to add a mandatory SMS OTP step for every login — effective in 14 days. Your UX research shows this will increase login abandonment by an estimated 22%. Your roadmap has a critical feature launch in 10 days that this directive will delay. What is your correct course of action?",
+    "scenario_az": "Siz ASAN Xidmət tərəfindən istifadə edilən rəqəmsal şəxsiyyətin yoxlanılması məhsulunun PM-isiniz. Rəqəmsal Transformasiya Nazirliyi hər giriş üçün məcburi SMS OTP addımı əlavə etməyi tələb edən direktiv verir — 14 gündə qüvvəyə minir. UX araşdırmanız bunun giriş imtinasını təxminən 22% artıracağını göstərir. Yol xəritənizin 10 gündə kritik funksiya buraxılışı var ki, bu direktiv onu gecikdirəcək. Doğru hərəkət planınız nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Launch your critical feature on schedule and implement the OTP requirement after, accepting a short period of non-compliance.",
+        "text_az": "Kritik xüsusiyyəti planlandığı kimi buraxın və OTP tələbini sonra tətbiq edin, qısa müddətli uyğunsuzluq dövrünü qəbul edin."
+      },
+      {
+        "key": "B",
+        "text_en": "Immediately re-prioritize: pause the feature launch, implement OTP compliance first within the 14-day window, then document the UX impact data and submit a formal evidence-based feedback letter to the Ministry proposing an improvement (e.g., risk-based OTP that skips trusted devices).",
+        "text_az": "Dərhal yenidən prioritetləşdirin: funksiya buraxılışını dayandırın, 14 günlük pəncərədə OTP uyğunluğunu həyata keçirin, sonra UX təsir məlumatlarını sənədləşdirin və Nazirliyə rəsmi dəlillərə əsaslanan rəy məktubu göndərin."
+      },
+      {
+        "key": "C",
+        "text_en": "Ignore the directive until the feature launches, then negotiate an extension with the Ministry.",
+        "text_az": "Funksiya buraxılana qədər direktivi nəzərə almayın, sonra Nazirliklə uzatma barədə danışıqlar aparın."
+      },
+      {
+        "key": "D",
+        "text_en": "Write a public blog post about the UX harm of the OTP requirement to generate public pressure on the Ministry to revise the directive.",
+        "text_az": "Nazirliyə direktivi nəzərdən keçirməyə ictimai təzyiq göstərmək üçün OTP tələbinin UX zərəri haqqında ictimai blog yazısı yazın."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. In AZ's regulatory environment, government ministry directives are not negotiable timelines — non-compliance with a Ministry of Digital Transformation directive for a product used by ASAN Xidmət carries operational and reputational risk that dwarfs a 10-day feature delay. Comply first, advocate with evidence second. The formal feedback letter approach is the correct channel for influencing government digital policy in AZ — evidence-based submissions are taken seriously when routed through proper channels. A risks license or contract termination. C is wishful thinking — Ministries do not negotiate retroactively on compliance. D is career-ending in AZ government product context; public criticism of Ministry decisions damages the relationship irreparably.",
+    "feedback_az": "B düzgündür. Azərbaycanın tənzimləyici mühitində hökumət nazirliyi direktivləri danışıqlara açıq vaxt cədvəlləri deyil. Əvvəlcə uyğun gəlin, sonra dəlillərlə müdafiə edin. Rəsmi rəy məktubu üsulu AZ-da hökumət rəqəmsal siyasətinə təsir etmək üçün düzgün kanaldır. D hökumət məhsul kontekstində karyeraya son verən addımdır; Nazirlik qərarlarının ictimai tənqidi əlaqəni geri dönməz şəkildə zədələyir.",
+    "development_tip_en": "AZ PMs working with government-adjacent products must internalize the 'comply first, advocate second' rule. The correct sequence is: (1) comply within the window, (2) document the user impact with data, (3) submit formal feedback through the Ministry's official channels (typically a written letter to the Deputy Minister with supporting data). This approach has influenced policy revisions — informal or public pressure never does.",
+    "development_tip_az": "Hökumətlə əlaqəli məhsullar üzərində işləyən AZ PM-lər 'əvvəlcə uyğun gəl, sonra müdafiə et' qaydasını mənimsəməlidir. Doğru ardıcıllıq: (1) müddət ərzində uyğun gəlin, (2) istifadəçi təsirini məlumatlarla sənədləşdirin, (3) Nazirliyin rəsmi kanalları vasitəsilə rəsmi rəy göndərin. Bu yanaşma siyasət islahatlarına təsir etmişdir.",
+    "london_delta": "A London PM would evaluate the directive on its merits, calculate the UX cost, and potentially push back through meetings or public discourse. In AZ, government clients like ASAN Xidmət represent relationship contracts that took years to build — non-compliance, even short-term, signals unreliability to the Ministry and can result in contract review. The London PM's cost-benefit logic doesn't account for the relationship capital at stake.",
+    "az_institutions": [
+      "ASAN Xidmət",
+      "Rəqəmsal Transformasiya Nazirliyi"
+    ],
+    "tags": [
+      "product-management",
+      "reliability",
+      "government-compliance",
+      "asan",
+      "ministry-directive"
+    ]
+  },
+  {
+    "id": "prof-pm-s3-006",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "medium",
+    "type": "sjt",
+    "irt_a": 1.9,
+    "irt_b": 0.4,
+    "irt_c": 0.07,
+    "scenario_en": "You are PM at a civic tech company in Baku. The Ministry of Internal Affairs (Daxili İşlər Nazirliyi) requests that your platform — a community reporting app used by 80,000 citizens — add a feature that passively transmits the real-time GPS location of any user who submits a report. The Ministry frames this as 'improving response accuracy.' Your legal counsel confirms the request is technically legal under current AZ law. Your CTO says it can be built in one sprint. What is your recommendation?",
+    "scenario_az": "Siz Bakıda vətəndaş texnologiyası şirkətinin PM-isiniz. Daxili İşlər Nazirliyi 80.000 vətəndaş tərəfindən istifadə olunan icma hesabat tətbiqinizə hesabat göndərən istifadəçinin real vaxt GPS məkanını passiv şəkildə ötürən xüsusiyyət əlavə etməyi tələb edir. Nazirlik bunu 'cavab dəqiqliyini yaxşılaşdırmaq' kimi çərçivəyə salır. Hüquq müşaviriniz tələbin hazırkı AZ qanunu altında texniki cəhətdən qanuni olduğunu təsdiqləyir. CTO-nuz deyir ki, bir sprintdə qurula bilər. Tövsiyəniz nədir?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Implement the feature as requested — it is legal, the government has asked for it, and refusing may damage the operating license.",
+        "text_az": "Xüsusiyyəti tələb olunduğu kimi tətbiq edin — qanunidir, hökumət tələb edib və imtina əməliyyat lisenziyasına zərər verə bilər."
+      },
+      {
+        "key": "B",
+        "text_en": "Propose a privacy-preserving alternative: transmit location only at the moment of report submission (not passively), with an explicit in-app disclosure to the user, and only for the duration of the active incident. Document the proposal formally and send it to the Ministry with a rationale focused on long-term public trust in government digital services.",
+        "text_az": "Məxfiliyi qoruyan alternativ təklif edin: məkanı yalnız hesabat göndərildiyi anda ötürün (passiv deyil), istifadəçiyə açıq açıqlama ilə, yalnız aktiv hadisə müddətində."
+      },
+      {
+        "key": "C",
+        "text_en": "Refuse entirely and publicly announce that you will not comply, framing it as a privacy rights stance.",
+        "text_az": "Tamamilə imtina edin və ictimaiyyətə uyğun gəlməyəcəyinizi elan edin, bunu məxfilik hüquqları mövqeyi kimi çərçivəyə salın."
+      },
+      {
+        "key": "D",
+        "text_en": "Implement the feature but do not tell users about it — they agreed to the terms of service which cover location data.",
+        "text_az": "Xüsusiyyəti tətbiq edin, lakin istifadəçilərə bunun haqqında söyləməyin — onlar məkan məlumatlarını əhatə edən xidmət şərtlərini qəbul ediblər."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. Legality is the floor, not the ceiling — a PM's safeguarding responsibility extends to designing for trust and user dignity even when the law permits otherwise. Passive real-time location tracking of 80,000 citizens would fundamentally change the nature of the product from a reporting tool into a surveillance instrument, eroding the user trust that makes the platform work. The privacy-preserving alternative achieves the Ministry's stated goal (response accuracy) without the surveillance architecture. Formally proposing it through proper channels respects the Ministry relationship while protecting users. A treats legality as sufficient justification — this is how citizen trust in civic tech is destroyed. D is deceptive and a violation of PM's fundamental user protection duty. C is appropriate in principle but executed wrongly — public refusal in AZ government context will terminate the operating license.",
+    "feedback_az": "B düzgündür. Qanunlıq tavan deyil, döşəmədir — PM-in qoruma məsuliyyəti qanunun başqa cür icazə verdiyi hallarda belə etibar üçün dizayn etməyə qədər uzanır. 80.000 vətəndaşın passiv real vaxt məkan izlənilməsi platformanı hesabat alətindən gözetləmə aləti halına gətirər. Məxfiliyi qoruyan alternativ Nazirliyin bəyan edilmiş məqsədinə gözetləmə arxitekturası olmadan çatır. D aldadıcıdır və PM-in əsas istifadəçi qoruma vəzifəsinin pozulmasıdır.",
+    "development_tip_en": "AZ civic tech PMs face a unique tension: government clients provide operating licenses and revenue, but citizen users provide the trust that makes the product valuable. When a government request would convert a trust-based civic tool into a surveillance instrument — even legally — the PM's job is to find the path that serves both. The 'consent + minimal disclosure' principle is the standard: collect only what is needed, disclose it explicitly, and give users agency where possible. This is not idealism — civic apps that lose user trust lose users, which makes them worthless to the government too.",
+    "development_tip_az": "AZ vətəndaş texnologiyası PM-ləri unikal gərginliklərlə üzləşir: hökumət müştəriləri əməliyyat lisenziyası və gəlir verir, lakin vətəndaş istifadəçilər məhsulu dəyərli edən etibarı təmin edir. Hökumət tələbi etibar əsaslı vətəndaş alətini gözetləmə alətinə çevirəcəkdə — qanuni olsa belə — PM-in vəzifəsi hər ikisini xidmət edən yol tapmaqdir.",
+    "london_delta": "A London PM either refuses outright (citing GDPR-adjacent principles) or implements with full user consent flows, but rarely thinks about the government relationship cost of refusal. In AZ, outright public refusal of a Ministry request is not a principled stance — it is an operational termination event. The AZ PM must find a technically satisfying alternative that lets the Ministry say yes to a different proposal, preserving the relationship while protecting users.",
+    "az_institutions": [
+      "Daxili İşlər Nazirliyi"
+    ],
+    "tags": [
+      "product-management",
+      "empathy-safeguarding",
+      "privacy",
+      "government-request",
+      "civic-tech",
+      "surveillance"
+    ]
+  },
+  {
+    "id": "prof-pm-s3-007",
+    "competency_id": "66666666-6666-6666-6666-666666666666",
+    "competency_slug": "tech_literacy",
+    "difficulty": "medium",
+    "type": "mcq",
+    "irt_a": 1.7,
+    "irt_b": 0.3,
+    "irt_c": 0.09,
+    "scenario_en": "You are PM at a Baku digital media company targeting professionals aged 35-55 in Azerbaijan. Your SEO budget for Q3 is $8,000. Analytics shows that 28% of your target demographic uses Yandex.az as their primary search engine, while 68% uses Google. Your current SEO strategy allocates 100% of budget to Google optimization. A junior analyst recommends splitting the budget 70/30 between Google and Yandex. Your lead engineer says Yandex and Google require fundamentally different technical SEO approaches. How do you allocate the Q3 SEO budget?",
+    "scenario_az": "Siz Azərbaycanda 35-55 yaş arası peşəkarlara yönəlmiş Bakı rəqəmsal media şirkətinin PM-isiniz. Q3 üçün SEO büdcəniz $8.000-dir. Analitika göstərir ki, hədəf demografiyanızın 28%-i Yandex.az-ı əsas axtarış mühərriki kimi istifadə edir, 68%-i isə Google istifadə edir. Hazırkı SEO strategiyanız büdcənin 100%-ini Google optimizasiyasına ayırır. Kiçik analitik büdcəni Google ilə Yandex arasında 70/30 bölüşdürməyi tövsiyə edir. Baş mühəndisiniz Yandex və Google-un köklü şəkildə fərqli texniki SEO yanaşmaları tələb etdiyini bildirir. Q3 SEO büdcəsini necə bölüşdürürsünüz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Keep 100% on Google — it has the majority share and SEO resources should concentrate where returns are highest.",
+        "text_az": "100%-i Google-da saxlayın — çoxluq payı onda var və SEO resursları ən yüksək gəlir olan yerdə cəmləşməlidir."
+      },
+      {
+        "key": "B",
+        "text_en": "Allocate 72% Google / 28% Yandex exactly matching the demographic usage split, and require separate technical SEO work streams for each platform.",
+        "text_az": "Demografik istifadə bölgüsünə tam uyğun olaraq 72% Google / 28% Yandex ayırın və hər platform üçün ayrı texniki SEO iş axınları tələb edin."
+      },
+      {
+        "key": "C",
+        "text_en": "Allocate 80% Google / 20% Yandex, but treat the 20% as a 6-week pilot: define specific KPIs for Yandex-driven traffic, test whether Yandex optimization produces disproportionate gains in the 35-55 segment, and make Q4 budget decisions based on measured ROI not demographic share.",
+        "text_az": "80% Google / 20% Yandex ayırın, lakin 20%-i 6 həftəlik pilot kimi müalicə edin: Yandex trafiki üçün KPI-lar müəyyənləşdirin, 35-55 seqmentdə qeyri-mütənasib qazancları sınaqdan keçirin."
+      },
+      {
+        "key": "D",
+        "text_en": "Do not invest in Yandex SEO — Yandex market share is declining globally and the investment will not be worthwhile.",
+        "text_az": "Yandex SEO-ya investisiya etməyin — Yandex bazar payı qlobal səviyyədə azalır və investisiya səmərəli olmayacaq."
+      }
+    ],
+    "correct_answer": "C",
+    "feedback_en": "C is correct. The 28% Yandex share among 35-55 AZ professionals is not a global statistic — it is a structural feature of the specific demographic being targeted. Google-only allocation means deliberately ignoring 28% of the target audience. However, proportional split (B) treats demographic share as equivalent to expected ROI, which it is not — Yandex optimization may produce higher ROI per dollar if competitor SEO spend on Yandex is lower. The pilot approach (C) provides data to make an evidence-based Q4 decision rather than assuming demographic share = channel efficiency. A and D both ignore a significant real-world audience share with no data justification. D's 'declining globally' argument is irrelevant — Yandex.az's position in AZ's 35-55 demographic is locally determined.",
+    "feedback_az": "C düzgündür. 35-55 yaş AZ peşəkarları arasında 28% Yandex payı qlobal statistika deyil — hədəflənən xüsusi demografiyanın struktur xüsusiyyətidir. Yalnız Google ayırması hədəf auditoriyasının 28%-ini qəsdən nəzərə almamaq deməkdir. Pilot yanaşma (C) Q4 üçün dəlillərə əsaslanan qərar vermək üçün məlumat təqdim edir. D-nin 'qlobal azalır' arqumenti irrelevantdır — Yandex.az-ın AZ-ın 35-55 demografisindəki mövqeyi yerli olaraq müəyyən edilir.",
+    "development_tip_en": "Yandex.az maintains roughly 28% search share among AZ users aged 35-55, primarily because this cohort formed their digital habits during the period when Yandex was dominant in the post-Soviet internet. This is not a temporary anomaly — it reflects deeply ingrained behavior. AZ PMs must resist the temptation to build SEO strategies on global benchmarks. The Yandex technical SEO stack (Yandex Webmaster, Yandex Metrica) is genuinely different from Google's and requires dedicated investment to do correctly.",
+    "development_tip_az": "Yandex.az 35-55 yaş AZ istifadəçiləri arasında təxminən 28% axtarış payını qoruyur, əsasən bu kohort öz rəqəmsal vərdişlərini Yandex-in dominant olduğu dövrdə formalaşdırdığı üçün. AZ PM-lər SEO strategiyalarını qlobal meyarlar üzərində qurmaq cəhdindən imtina etməlidir.",
+    "london_delta": "A London PM looks at Yandex's global market share decline and dismisses it immediately. In AZ, Yandex's hold on the 35-55 demographic is a locally persistent behavior pattern tied to post-Soviet internet habits — not a signal of platform quality. The London PM's global-data reasoning leads them to systematically under-serve a 28% audience segment that happens to be the highest-purchasing-power demographic.",
+    "az_institutions": [],
+    "tags": [
+      "product-management",
+      "tech-literacy",
+      "yandex",
+      "seo",
+      "az-demographics",
+      "search-engine"
+    ]
+  },
+  {
+    "id": "prof-pm-s3-008",
+    "competency_id": "77777777-7777-7777-7777-777777777777",
+    "competency_slug": "adaptability",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 2.1,
+    "irt_b": 1.0,
+    "irt_c": 0.0,
+    "scenario_en": "You are PM at a Baku-based property listing platform with 45,000 monthly active users and $12,000 MRR. Three weeks ago, Lalafo.az — one of Azerbaijan's most-used classifieds platforms with 2M monthly users — announced a 6-month promotion: free listings for all property sellers, zero commission, and a $500,000 marketing spend to push adoption. Your platform charges sellers 2% commission plus a ₼15/month premium listing fee. In the first 3 weeks since Lalafo's announcement, your new seller registrations dropped 65% and two of your top 10 enterprise real estate agencies (each contributing ₼800/month) have paused their contracts pending review. You have 8 months of runway remaining. Describe your full strategic response as PM. Your answer will be evaluated on: (1) immediate triage actions within 72 hours, (2) 30-day stabilization plan, (3) product differentiation strategy that Lalafo cannot easily replicate, and (4) how you communicate to the team and stakeholders without triggering panic.",
+    "scenario_az": "Siz 45.000 aylıq aktiv istifadəçisi və $12.000 MRR-i olan Bakı əmlak elan platformasının PM-isiniz. Üç həftə əvvəl Lalafo.az — 2 milyon aylıq istifadəçisi olan Azərbaycanın ən çox istifadə olunan elan platformalarından biri — 6 aylıq kampaniya elan etdi: bütün mülk satıcıları üçün pulsuz elanlar, sıfır komissiya və tətbiqi gücləndirmək üçün $500.000 marketinq xərci. Platformanız satıcılardan 2% komissiya plus aylıq ₼15 premium elan haqqı alır. Lalafo-nun elanından sonrakı ilk 3 həftədə yeni satıcı qeydiyyatları 65% düşdü və ən yaxşı 10 korporativ əmlak agentliyinizdən ikisi (hər biri aylıq ₼800 gəlir) müqavilələrini baxış gözləməklə dayandırıb. 8 ay uçuş müddətiniz var. PM kimi tam strateji cavabınızı təsvir edin.",
+    "options": null,
+    "correct_answer": null,
+    "feedback_en": "A strong answer demonstrates four capabilities: (1) TRIAGE: Within 72 hours — personal calls to the two paused enterprise agencies (not email, not Slack — voice call from CEO/PM), offer a 3-month rate lock with no commitment increase, get verbal re-commitment before the end of the week. Freeze non-essential spend. Identify the 20% of sellers generating 80% of GMV — protect them first. (2) STABILIZATION: The 6-month Lalafo promotion is a cash burn exercise — they cannot sustain free listings indefinitely. Your job is to survive 6 months, not beat them on their terms. Introduce a 'Verified Seller' badge (background check via ASAN integration) that Lalafo cannot replicate without government partnership. Shift value prop from volume to trust. (3) DIFFERENTIATION: Lalafo is a horizontal classifieds platform — they cannot build vertical real estate features (mortgage pre-qualification integration with ABB Bank, legal document checking, neighborhood price history from MIDA data). These are defensible moats. (4) COMMUNICATION: Tell the team the truth about the threat with a specific 6-month survival plan — uncertainty is more damaging to retention than bad news. Tell enterprise agencies you are investing in features that Lalafo's model structurally cannot build. Do not frame this as 'we are fine' — frame it as 'here is exactly what we are building and why Lalafo can't follow.'",
+    "feedback_az": "Güclü cavab dörd qabiliyyəti nümayiş etdirir: (1) TRİAJ: 72 saat ərzində dayandırılmış korporativ agentliklərə şəxsi zənglər (e-poçt yox, Slack yox — CEO/PM-dən səs zəngi), 3 aylıq qiymət kilidi təklifi, həftənin sonuna qədər şifahi yenidən öhdəlik. (2) STABİLLƏŞDİRMƏ: Lalafo-nun 6 aylıq kampaniyası nağd pul yanması məşğuliyyətidir. Vəzifəniz onlarla rəqabət etmək deyil, 6 ay sağ qalmaqdır. ASAN inteqrasiyası vasitəsilə 'Təsdiqlənmiş Satıcı' nişanı tətbiq edin. (3) FƏRQLƏNDİRMƏ: Lalafo üfüqi elan platformasıdır — onlar şaquli əmlak xüsusiyyətləri qura bilmirlər. (4) KOMMUNİKASİYA: Komandaya konkret 6 aylıq sağ qalma planı ilə həqiqəti söyləyin.",
+    "development_tip_en": "When a horizontal platform (Lalafo, Tap.az) enters your vertical with a funded promotion, the worst response is to compete on price — you will lose. The correct response is to go deeper into your vertical than the horizontal player can follow. In AZ, government data partnerships (ASAN, MIDA, State Registry) are a structural moat that horizontal platforms cannot access without multi-year relationship building. A PM who understands this can build defensibility in 30 days that a well-funded competitor cannot replicate in 18 months.",
+    "development_tip_az": "Üfüqi platform (Lalafo, Tap.az) maliyyəli kampaniya ilə vertikalınıza girəndə ən pis cavab qiymətdə rəqabət etməkdir — uduzsunuz. Doğru cavab üfüqi oyunçunun izləyə bilməyəcəyindən daha dərinin vertikalınıza getməkdir. AZ-da hökumət məlumat tərəfdaşlıqları (ASAN, MIDA, Dövlət Reyestri) üfüqi platformaların çox illik əlaqə qurma olmadan əldə edə bilmədikləri struktur müdafiə xəttidir.",
+    "london_delta": "A London PM's first instinct is to model the competitive response using Porter's Five Forces or a pricing strategy matrix. In AZ, the single most powerful competitive moat is a government data or verification partnership — because it requires personal relationships with ministry officials that take years to build and cannot be acquired with money alone. Lalafo's $500k cannot buy an ASAN Xidmət integration. The AZ PM who recognizes this will build for it immediately; the London-trained PM will spend 30 days on a pricing model.",
+    "az_institutions": [
+      "ASAN Xidmət",
+      "MIDA",
+      "ABB Bank",
+      "Lalafo.az"
+    ],
+    "tags": [
+      "product-management",
+      "adaptability",
+      "competitive-response",
+      "lalafo",
+      "az-market",
+      "crisis-management"
+    ]
+  },
+  {
+    "id": "prof-pm-s3-009",
+    "competency_id": "88888888-8888-8888-8888-888888888888",
+    "competency_slug": "empathy_safeguarding",
+    "difficulty": "hard",
+    "type": "mcq",
+    "irt_a": 2.2,
+    "irt_b": 1.1,
+    "irt_c": 0.06,
+    "scenario_en": "You are PM at an AZ HR tech startup. Your AI-powered CV screening tool has been deployed by a PASHA Holding subsidiary for 4 months. The data science team runs a routine audit and finds a statistically significant pattern: candidates with Azerbaijani-origin names (e.g., Aynur, Fərid, Nigar) are being scored 11-15% lower than demographically equivalent candidates with Russian-origin names (e.g., Dmitri, Olga, Natasha) for the same objective qualifications. The bias was introduced by the training data — historical hiring decisions made by Russian-speaking managers at the company in the 2000s-2010s. PASHA Holding has not yet been notified. The tool has been used to screen approximately 4,200 applications over 4 months. What do you do?",
+    "scenario_az": "Siz AZ HR texnologiya startapının PM-isiniz. AI əsaslı CV sınaq aləti 4 aydır PASHA Holdinqin törəmə şirkəti tərəfindən tətbiq olunub. Məlumat elmi komandası rutin audit aparır və statistik cəhətdən əhəmiyyətli bir model tapır: azərbaycanlı mənşəli adlara malik namizədlər (məsələn, Aynur, Fərid, Nigar) eyni obyektiv ixtisaslara görə rus mənşəli adlara malik demografik cəhətdən bərabər namizədlərə (məsələn, Dmitri, Olqa, Nataşa) nisbətən 11-15% daha aşağı qiymətləndirilir. Yanlılıq öyrəniş məlumatlarından gəldi — şirkətdə 2000-2010-cu illərdə rus dilli menecerlər tərəfindən edilmiş tarixi işə götürmə qərarları. PASHA Holdinq hələ xəbərdar edilməyib. Alət 4 ay ərzində təxminən 4.200 müraciəti sınaqdan keçirmək üçün istifadə olunub. Nə edirsiniz?",
+    "options": [
+      {
+        "key": "A",
+        "text_en": "Fix the bias in the model first, then tell PASHA Holding once the corrected version is deployed — no need to disclose the historical impact before you have a fix ready.",
+        "text_az": "Əvvəlcə modeldəki yanlılığı düzeldin, sonra düzəldilmiş versiya tətbiq edildikdən sonra PASHA Holdinqə bildirin — düzəliş hazır olmadan tarixi təsiri açıqlamağa ehtiyac yoxdur."
+      },
+      {
+        "key": "B",
+        "text_en": "Immediately suspend the AI screening tool, notify PASHA Holding within 24 hours with a full disclosure (bias nature, affected applications count, root cause), propose a remediation plan that includes manual re-review of the 4,200 flagged applications, and document the incident in your internal audit log.",
+        "text_az": "Dərhal AI sınaq alətini dayandırın, 24 saat ərzində PASHA Holdinqə tam açıqlama ilə bildirin, 4.200 müraciətin əl ilə yenidən nəzərdən keçirilməsini əhatə edən remediasiya planı təklif edin."
+      },
+      {
+        "key": "C",
+        "text_en": "Tell PASHA Holding there is a 'calibration issue' being resolved, without specifying it is a name-based ethnicity bias, to avoid triggering a political or reputational reaction.",
+        "text_az": "PASHA Holdinqə bunun ad əsaslı etnik yanlılıq olduğunu bildirmədən 'kalibrə məsələsi' həll edildiyi söyləyin."
+      },
+      {
+        "key": "D",
+        "text_en": "Commission an external audit firm to validate the finding before telling anyone — you need independent verification before making a serious allegation about your own tool.",
+        "text_az": "Birini xəbərdar etmədən əvvəl tapıntını doğrulamaq üçün xarici audit şirkəti tapşırın — öz alətiniz haqqında ciddi iddia irəli sürmədən əvvəl müstəqil təsdiqə ehtiyacınız var."
+      }
+    ],
+    "correct_answer": "B",
+    "feedback_en": "B is correct. When a deployed AI system has demonstrably harmed a protected class (ethnic/name-based discrimination), the PM's safeguarding obligation overrides commercial relationship management. Immediate suspension prevents further harm. 24-hour disclosure is the ethical and legally defensible timeline — PASHA Holding has an independent duty to their own candidates and cannot exercise that duty without being told. The 4,200 application re-review is not optional — these are real people whose career opportunities may have been affected. A delays harm disclosure to protect the company image — this is a fundamental ethical violation. C is deception — framing ethnic discrimination as a 'calibration issue' is dishonest and will be discovered, making the breach of trust catastrophic. D uses process to delay — every day the tool runs after bias discovery causes additional harm.",
+    "feedback_az": "B düzgündür. Tərəqqi etmiş AI sistemi müəyyən edilə bilən şəkildə qorunan sinifə (etnik/ad əsaslı ayrı-seçkilik) zərər verdikdə, PM-in qoruma öhdəliyi kommersiya əlaqə idarəetməsini üstələyir. Dərhal dayandırma əlavə zərəri qarşılayır. 24 saatlıq açıqlama etik və hüquqi cəhətdən müdafiə olunan vaxt cədvəlidir. C aldatmadır — etnik ayrı-seçkiliyi 'kalibrə məsələsi' kimi çərçivəyə salmaq dürüst deyil.",
+    "development_tip_en": "AZ workplace culture has a complex history with Russian-Azerbaijani name dynamics — the bias found in this scenario is not hypothetical. Historical hiring data from large AZ enterprises often encodes the preferences of Russian-speaking management layers from the 2000s. AZ PMs building AI hiring tools must proactively audit for this specific bias pattern before deployment. Reactive disclosure after bias discovery is the floor, not the ceiling — the ceiling is building auditing into the launch checklist.",
+    "development_tip_az": "AZ iş yeri mədəniyyəti rus-azərbaycanlı ad dinamikası ilə mürəkkəb tarixi əlaqəyə malikdir. Böyük AZ müəssisələrinin tarixi işə götürmə məlumatları çox vaxt 2000-ci illərdən rus dilli idarəetmə qatlarının üstünlüklərini kodlaşdırır. AI işə götürmə alətləri quran AZ PM-lər tətbiqdən əvvəl bu xüsusi yanlılıq modelini proaktiv şəkildə yoxlamalıdır.",
+    "london_delta": "A London PM treats bias discovery as a technical QA issue — file a ticket, fix the model, document in the release notes. In AZ, name-based ethnic bias touches a politically and socially sensitive dimension of post-Soviet identity that has real implications for the affected individuals and for the enterprise client's legal and reputational exposure. The London PM's 'fix it quietly' instinct is not just ethically wrong — it is strategically wrong because PASHA Holding's own legal risk increases with every day they are not informed.",
+    "az_institutions": [
+      "PASHA Holding"
+    ],
+    "tags": [
+      "product-management",
+      "empathy-safeguarding",
+      "ai-bias",
+      "ethnic-discrimination",
+      "pasha-holding",
+      "responsible-ai"
+    ]
+  },
+  {
+    "id": "prof-pm-s3-010",
+    "competency_id": "44444444-4444-4444-4444-444444444444",
+    "competency_slug": "leadership",
+    "difficulty": "hard",
+    "type": "open_ended",
+    "irt_a": 2.3,
+    "irt_b": 1.2,
+    "irt_c": 0.0,
+    "scenario_en": "You are PM at a B2B SaaS platform selling enterprise resource planning tools to AZ companies. SOCAR — Azerbaijan's state oil company and your largest potential client — has offered a 3-year contract worth ₼2.4M total (₼800k/year). The contract contains three conditions that concern you: (1) SOCAR requires 18 months of exclusive customization work that will consume 70% of your engineering team's capacity and effectively freeze your product roadmap for standard customers; (2) the contract requires that two of your five core engineers be permanently embedded at SOCAR's offices, making them unavailable for product work; (3) SOCAR requires data residency within their private network, meaning your SaaS architecture must be fundamentally redesigned for a single-tenant deployment. Your current ARR from standard customers is ₼320k, growing 40% YoY. Your product vision is to become the dominant multi-tenant SaaS ERP for AZ SMEs. Describe how you lead this decision as PM — your role in the analysis, the stakeholder conversations you must have, what you recommend, and how you defend that recommendation to a board that will be tempted by the ₼2.4M number.",
+    "scenario_az": "Siz AZ şirkətlərinə müəssisə resurs planlaması alətləri satan B2B SaaS platformasının PM-isiniz. SOCAR — Azərbaycanın dövlət neft şirkəti və ən böyük potensial müştəriniz — cəmi ₼2.4M (ildə ₼800k) dəyərində 3 illik müqavilə təklif edib. Müqavilə sizi narahat edən üç şərt ehtiva edir: (1) SOCAR mühəndislik komandanızın kapasitəsinin 70%-ni tükədəcək və standart müştərilər üçün məhsul yol xəritənizi faktiki olaraq donduracaq 18 aylıq eksklüziv fərdiləşdirmə işi tələb edir; (2) müqavilə beş əsas mühəndisinizden ikisinin daimi olaraq SOCAR-ın ofislərində yerləşdirilməsini tələb edir; (3) SOCAR məlumatların onların şəxsi şəbəkəsi daxilində yerləşdirilməsini tələb edir, yəni SaaS arxitekturanız tək kiracılı tətbiq üçün köklü şəkildə yenidən dizayn edilməlidir. Standart müştərilərdən hazırkı ARR-ınız YoY 40% böyüyərək ₼320k-dır. Məhsul vizyonunuz AZ KOB-ları üçün dominant çox kiracılı SaaS ERP olmaqdir. PM kimi bu qərarı necə rəhbərlik edirsiniz?",
+    "options": null,
+    "correct_answer": null,
+    "feedback_en": "A strong answer demonstrates PM leadership across four dimensions: (1) ANALYSIS ROLE: The PM's job is not to say yes or no to the contract — it is to make the trade-offs legible to decision-makers. Build a 3-year financial model: SOCAR ₼2.4M vs. standard customer trajectory (₼320k × 1.4^3 = ₼875k by year 3, vs. ₼2.4M total). But model the opportunity cost: 18 months of frozen roadmap means 18 months of competitor catch-up, potential churn of growth customers who needed features you couldn't build, and the architectural cost of undoing single-tenant design. (2) STAKEHOLDER CONVERSATIONS: Engineering lead (capacity and morale impact of losing 2 of 5 engineers for 18 months). Sales team (what deals are being lost because roadmap is frozen). Existing top 5 customers (would they churn if roadmap paused?). Legal (single-tenant data residency = permanent support obligation, not a one-time cost). (3) RECOMMENDATION STRUCTURE: Do not recommend yes or no — recommend a counter-proposal. SOCAR gets: 12-month customization pilot (not 18), 1 embedded engineer (not 2), data export to their network via certified API (not full single-tenant redesign). If SOCAR rejects all three modifications, recommend declining and document why. (4) BOARD DEFENSE: The ₼2.4M number looks like 7.5 years of current ARR. The correct frame is: 'At 40% YoY growth, we reach ₼2.4M cumulative ARR in 3.2 years with our standard customers, without architectural debt, without team morale damage, and without losing our product vision. The SOCAR contract is not a revenue opportunity — it is a pivot decision. If we take it as written, we become a consulting firm, not a SaaS company. I recommend a counter-proposal with three specific modifications.'",
+    "feedback_az": "Güclü cavab dörd ölçü üzrə PM liderliyi nümayiş etdirir: (1) ANALİZ ROLU: PM-in vəzifəsi müqaviləyə bəli və ya xeyr demək deyil — mübadilə şərtlərini qərar qəbul edənlər üçün aydın etməkdir. 3 illik maliyyə modeli qurun. (2) MARAQLIQLARLA SÖHBƏTLƏR: Mühəndislik rəhbəri, satış komandası, mövcud ən yaxşı 5 müştəri, hüquq. (3) TÖVSİYƏ STRUKTURU: Bəli və ya xeyr tövsiyə etməyin — əks-təklif tövsiyə edin. (4) İDARƏ HEYƏTİ MÜDAFİƏSİ: ₼2.4M rəqəmi cari ARR-ın 7.5 ili kimi görünür. Düzgün çərçivə: 'SOCAR müqaviləsi gəlir imkanı deyil — pivot qərarıdır. Əgər yazıldığı kimi qəbul etsək, SaaS şirkəti deyil, konsaltinq şirkəti oluruq.'",
+    "development_tip_en": "SOCAR contracts in AZ carry enormous prestige — being a SOCAR vendor opens doors to SOCAR Oil Academy, SOCAR subsidiaries, and signals to other large AZ enterprises (PASHA, ABB, AzərGold) that your product is enterprise-grade. But SOCAR's procurement culture is designed to extract maximum customization — they have the budget to absorb any vendor, and many AZ SaaS companies have dissolved into SOCAR IT projects. The PM who understands this will counter-propose a structured pilot with clear scope limits rather than accepting the full contract. The prestige of 'SOCAR vendor' is valuable only if your company survives the engagement.",
+    "development_tip_az": "Azərbaycanda SOCAR müqavilələri böyük prestij daşıyır — SOCAR satıcısı olmaq SOCAR Oil Academy-yə, SOCAR törəmə şirkətlərinə qapılar açır. Lakin SOCAR-ın satınalma mədəniyyəti maksimum fərdiləşdirməni çıxarmaq üçün dizayn edilmişdir. Çox AZ SaaS şirkəti SOCAR İT layihələrə həll olunub. PM bu anlayışla aydın həcm məhdudiyyətləri olan strukturlaşdırılmış pilot əks-təklif edəcək. 'SOCAR satıcısı' prestiji yalnız şirkətin məşğulluqdan sağ qalması halında dəyərlidir.",
+    "london_delta": "A London PM models this as a standard enterprise anchor client decision: high contract value, some customization risk, weigh against roadmap delay. In AZ, SOCAR is not just a large enterprise client — it is a state entity whose procurement decisions carry political weight, whose embedded engineers become quasi-employees in a relationship-based culture, and whose single-tenant architecture requirement has killed three AZ SaaS companies that accepted it. The London PM's financial model will be correct. Their risk model will miss the specific SOCAR cultural dynamics: once your engineers are embedded at SOCAR, the relationship pressure to keep them there is social and political, not just contractual.",
+    "az_institutions": [
+      "SOCAR",
+      "PASHA Holding",
+      "ABB",
+      "AzərGold",
+      "SOCAR Oil Academy"
+    ],
+    "tags": [
+      "product-management",
+      "leadership",
+      "socar",
+      "enterprise-contract",
+      "product-vision",
+      "board-communication"
+    ]
+  }
+]

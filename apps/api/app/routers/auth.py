@@ -3,11 +3,13 @@
 Rate limited: 5 requests/minute per IP (brute force prevention).
 """
 
+import hmac
 import re
 
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
 
+from app.config import settings
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseAnon
 from app.middleware.rate_limit import limiter, RATE_AUTH, RATE_DEFAULT
 from app.schemas.profile import ProfileResponse
@@ -76,6 +78,51 @@ class MeResponse(BaseModel):
 
 class MessageResponse(BaseModel):
     message: str
+
+
+class SignupStatusResponse(BaseModel):
+    open_signup: bool
+
+
+class ValidateInviteRequest(BaseModel):
+    invite_code: str
+
+
+class ValidateInviteResponse(BaseModel):
+    valid: bool
+
+
+@router.get("/signup-status", response_model=SignupStatusResponse)
+async def signup_status() -> SignupStatusResponse:
+    """Return whether signup is open. Public — no auth required.
+
+    open_signup=True  → anyone can register (dev mode, or fully launched)
+    open_signup=False → invite code required (controlled beta)
+    """
+    return SignupStatusResponse(open_signup=settings.open_signup)
+
+
+@router.post("/validate-invite", response_model=ValidateInviteResponse)
+@limiter.limit(RATE_AUTH)
+async def validate_invite(
+    request: Request,
+    payload: ValidateInviteRequest,
+) -> ValidateInviteResponse:
+    """Validate a beta invite code. Returns {valid: bool}.
+
+    Uses constant-time comparison (hmac.compare_digest) to prevent timing attacks.
+    If BETA_INVITE_CODE is empty, always returns valid=False (gate is armed but
+    misconfigured — prevents silent bypass when code is not yet set on Railway).
+    """
+    code = settings.beta_invite_code
+    if not code:
+        # Code not configured — gate armed but no valid code exists
+        return ValidateInviteResponse(valid=False)
+    is_valid = hmac.compare_digest(
+        payload.invite_code.strip().lower(),
+        code.strip().lower(),
+    )
+    return ValidateInviteResponse(valid=is_valid)
 
 
 @router.post("/register", response_model=AuthResponse, status_code=201)
@@ -199,13 +246,26 @@ async def delete_account(
 async def logout(
     request: Request,
     user_id: CurrentUserId,
+    db_admin: SupabaseAdmin,
 ) -> MessageResponse:
-    """Logout — audit log entry for session termination (OWASP A07 compliance).
+    """Logout — revoke token server-side (BUG-016 fix).
 
-    JWT invalidation happens client-side via supabase.auth.signOut().
-    This endpoint serves as an audit trail so session endings are recorded.
+    Calls Supabase admin sign_out with the current JWT. Because auth validation
+    uses admin.auth.get_user(token), any subsequent request with this token will
+    fail with 401 immediately — no need for a local blacklist table.
+
+    Scope: "global" — invalidates ALL sessions for this user (all devices).
     """
     from loguru import logger
 
-    logger.info("User logout", user_id=str(user_id))
+    auth_header = request.headers.get("authorization", "")
+    token = auth_header.removeprefix("Bearer ").strip()
+
+    try:
+        await db_admin.auth.admin.sign_out(token)
+        logger.info("User logout — token revoked", user_id=str(user_id))
+    except Exception as e:
+        # sign_out failure is non-fatal — token expires naturally; log and proceed
+        logger.warning("Token revocation failed (non-fatal)", user_id=str(user_id), error=str(e)[:200])
+
     return MessageResponse(message="Logged out")

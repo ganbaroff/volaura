@@ -9,6 +9,7 @@ import { ProfileViewTracker } from "@/components/profile/profile-view-tracker";
 import { ChallengeButton } from "@/components/profile/challenge-button";
 import initTranslations from "@/app/i18n";
 import { API_BASE } from "@/lib/api/client";
+import { getAchievementLevelKey } from "@/lib/utils/achievement-level";
 
 const API_URL = API_BASE;
 
@@ -161,7 +162,8 @@ export default async function PublicProfilePage({ params }: Props) {
                   </p>
                   {profile.percentile_rank !== null && profile.percentile_rank !== undefined && (
                     <p className="mt-1.5 text-xs font-medium text-primary">
-                      {t("profile.topPercent", { percent: Math.round(100 - profile.percentile_rank) })}
+                      {/* CIS-001: Achievement level replaces "Top X%" — non-competitive framing for AZ/CIS users */}
+                      {t(getAchievementLevelKey(profile.percentile_rank))}
                     </p>
                   )}
                 </div>

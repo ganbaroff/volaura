@@ -6,6 +6,270 @@
 
 ---
 
+## CURRENT POSITION — SESSION 81 (continued), 2026-04-02 — BATCH 2026-04-02-D
+
+**Last Updated:** 2026-04-02 (Session 81 — BATCH D: Admin Panel MVP)
+
+**BATCH 2026-04-02-D delivered:**
+- Admin panel MVP: migration + FastAPI router (6 endpoints, fail-closed gate) + Next.js (admin)/route group
+- 7 admin tests: 3 security gate tests (non-admin → 403) + 4 happy path
+- 668/668 tests passing (excluding 1 pre-existing flaky IRT test)
+- Architecture fix: `packages/swarm/types.py` → `swarm_types.py` (stdlib shadow eliminated)
+- Root cleanup: removed 8 sources of clutter
+
+**1-click required to activate admin panel:**
+1. Apply migration `20260402130000_add_platform_admin.sql` in Supabase dashboard
+2. In Supabase Table Editor → profiles → set `is_platform_admin=true` for Yusif's row
+3. Visit `/az/admin` — AdminGuard will let you through
+
+**Next session priorities:**
+1. Apply migration + activate admin (1-click Yusif action)
+2. Collective AURA Ladders: `pnpm generate:api` refresh
+3. shadcn `table` component via CLI (admin tables would benefit from proper shadcn table)
+4. Tribe Streaks: 7-checklist pre-code review
+5. Supabase Realtime: enable notifications table publication (1-click)
+
+---
+
+## CURRENT POSITION — SESSION 81 (continued), 2026-04-02 — BATCH 2026-04-02-C
+
+**Last Updated:** 2026-04-02 (Session 81 continued — BATCH 2026-04-02-C)
+
+**BATCH 2026-04-02-C delivered:**
+- `match_checker.py` — renamed `_TELEGRAM_CB_THRESHOLD` → `_CB_THRESHOLD` (name mismatch with test import)
+- Result: 687 passed, 0 failed — full test suite green
+- Route shadowing fix (BATCH B) + constant rename (BATCH C) = all 27 test_saved_searches tests pass
+
+**Next session priorities (updated):**
+1. Supabase Realtime: enable notifications table publication in Supabase dashboard (1-click)
+2. Collective AURA Ladders: `pnpm generate:api` refresh to include new endpoint in SDK
+3. Tribe Streaks: 7-checklist review before code — Cultural Intelligence + Security + Architecture agents
+
+---
+
+## CURRENT POSITION — SESSION 81 (continued), 2026-04-02
+
+**Last Updated:** 2026-04-02 (Session 81 continued — BATCH 2026-04-02-B)
+
+**BATCH 2026-04-02-B delivered:**
+- `pnpm generate:api` — TypeScript SDK regenerated from live 76-route schema. +209 lines: SavedSearch types + SDK functions now generated. Zero TS errors.
+- CIS-002 — patronymic name hint added. EN: "Full name (e.g. Yusif Eldar oglu)" / AZ: "Adınız Soyadınız (məs. Yusif Eldar oğlu)". MICRO fix, onboarding page.
+- `docs/TRIBE-STREAKS-DESIGN.md` — Full design spec with anti-harassment safeguards, DB schema, matching algorithm, 7-item checklist REQUIRED before any code starts.
+
+**Next session priorities (updated):**
+1. Supabase Realtime: enable notifications table publication in Supabase dashboard (user action — 1 click)
+2. Tribe Streaks: 7-checklist review before code — Cultural Intelligence + Security + Architecture agents
+3. CEO sign-off on tribe visibility model (what exactly can tribe members see about each other?)
+
+---
+
+## CURRENT POSITION — SESSION 81 COMPLETE, 2026-04-02
+
+**Last Updated:** 2026-04-02 (Session 81 — Growth D.2 sprint)
+
+**Status:** Session 81 shipped: Growth Trajectory Widget (animated tier progress bar) + Milestone Banner (Gold/Platinum celebration) on assessment complete page. Board heavy models (nemotron-ultra-253b) ran — voted Tribe Streaks + Collective AURA Ladders, killed Leaderboard unanimously.
+
+**Session 81 delivered:**
+- Growth Trajectory widget — animated progress bar toward next badge tier (D.2-B)
+- Milestone Banner — Gold/Platinum celebration with spring animation (D.2-A)
+- i18n keys EN + AZ: progressToNextTier, tierMaxReached, milestonePlatinum, milestoneGold, milestoneDiscoverable
+- board_heavy_run.py — heavy model runner (nemotron-ultra-253b × 2 + deepseek-r1)
+- board-heavy-results.json — Board analysis artifact
+
+**Board intelligence (Session 81 — nemotron-ultra-253b):**
+- Strategic Board Director → Tribe Streaks & Kudos (winner)
+- CPO Board → Collective AURA Ladders (winner)
+- BOTH unanimously killed AURA Leaderboard
+- NEW RISK: Anti-harassment safeguards for tribe formation (unmitigated)
+- NEW RISK: Exclusionary cliques if group membership is static
+
+**Next session priorities:**
+1. `pnpm generate:api` — TypeScript SDK sync (saved-search + character endpoints)
+2. Tribe Streaks / Collective AURA Ladders — MEDIUM sprint, requires new DB tables + anti-harassment safeguards design FIRST
+3. CIS-002 — patronymic name field hint (P1 AZ UX)
+4. Supabase Realtime: enable notifications table publication in dashboard (1-click)
+5. Kill AURA Leaderboard framing anywhere it appears (unanimous Board + 5 agent vote)
+
+---
+
+## CURRENT POSITION — SESSION 80 COMPLETE, 2026-04-01
+
+**Last Updated:** 2026-04-01 (Session 80 — context resumed after compaction)
+
+**Status:** Session 80 shipped: CIS-001 fix (achievement levels), profile view throttle index, notify_profile_viewed() helper. Open: pnpm generate:api (needs live server), Supabase Realtime enable on notifications table (1-click dashboard), CIS-002 (patronymic name hint — P1), BNE-001 (assessment cognitive overload — open).
+
+**Session 80 delivered:**
+- `supabase/migrations/20260401180000_profile_view_notification_index.sql` — partial index for org_view throttle dedup query
+- `apps/api/app/services/notification_service.py` — `notify_profile_viewed()` helper (24h throttle, never raises)
+- `apps/web/src/lib/utils/achievement-level.ts` — `getAchievementLevelKey()` utility — CIS-001 fix
+- i18n EN + AZ: `profile.achievementLabel` + 6 tier keys (achievementExpert → achievementStarting)
+- `apps/web/src/app/[locale]/(public)/u/[username]/page.tsx` — CIS-001 fix: "Top 5%" → "Expert" / achievement level
+- `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/complete/page.tsx` — CIS-001 fix: stat box shows achievement level instead of percentile number
+
+**Discovery this session (already existed — confirmed live):**
+- `POST /api/profiles/{username}/view` — throttled profile view notification endpoint (profiles.py)
+- `ProfileViewTracker` component — frontend fires POST on mount (profile-view-tracker.tsx)
+- `test_profile_view.py` — 6 tests for the endpoint (already existed)
+
+**Next session priorities:**
+1. `pnpm generate:api` — regenerate TypeScript SDK (saved-search + character endpoints need sync). Requires running FastAPI dev server.
+2. CIS-002 — patronymic name field hint ("Adınız Soyadınız (məs. Yusif Eldar oğlu)") — P1 AZ UX fix
+3. BNE-001 — assessment cognitive overload: single-path feedback, save messaging, time estimates
+4. Supabase Realtime: enable notifications table publication in Supabase dashboard (1-click)
+
+---
+
+## CURRENT POSITION — SPRINTS 7 + 8 COMPLETE, 2026-04-01
+
+**Status:** Sprint 8 (Org Saved Search + Match Notifications) SHIPPED. All 8 roadmap sprints DONE.
+
+**Sprint 8 delivered:**
+- `supabase/migrations/20260401171324_org_saved_searches.sql` — table + RLS + partial index
+- `apps/api/app/schemas/organization.py` — 6 new schemas: SavedSearchFilters, SavedSearchCreate, SavedSearchOut, etc.
+- `apps/api/app/routers/organizations.py` — 4 new endpoints + `_assert_search_ownership()` security helper
+- `apps/api/app/services/match_checker.py` — daily match checker, Telegram notifications, circuit breaker
+- `.github/workflows/match-checker.yml` — daily cron at 07:00 UTC, dry-run mode
+- `apps/web/src/hooks/queries/use-organizations.ts` — useSavedSearches, useCreateSavedSearch, useDeleteSavedSearch
+- `apps/web/src/app/[locale]/(dashboard)/org-volunteers/page.tsx` — save search button + modal + pills
+- i18n: EN + AZ orgDash.* saved search keys
+
+**QA NOTE (for next session):** Sprint 8 tests needed before prod deploy:
+- Privilege escalation: org A cannot read/delete org B's saved searches
+- Duplicate name → 409 | Cap > 20 → 422 | Delete foreign → 404
+
+**What's next (first time all 8 roadmap sprints are done):**
+- Write test suite for Sprint 8 (privilege escalation + cap enforcement)
+- `pnpm generate:api` to sync TypeScript SDK with new saved-search + character endpoints
+- Decide on ANUS/WebSocket (5+ convergent swarm proposals — highest-signal pending item)
+
+---
+
+## CURRENT POSITION — SPRINT 7 COMPLETE, 2026-04-01
+
+**Status:** Sprint 7 (MindShift + Life Sim Integration) SHIPPED. Cross-product bridge live.
+
+**Sprint 7 delivered:**
+- `apps/api/app/services/cross_product_bridge.py` — fire-and-forget Volaura→MindShift event push. Circuit breaker (3 failures / 5-min window → 60s silence). httpx async, 3s/8s timeouts. Never blocks main request.
+- `rewards.py` updated — `emit_assessment_rewards()` now accepts `user_jwt` and calls `push_crystal_earned()` + `push_skill_verified()` after local events persist.
+- `assessment.py` router updated — extracts JWT from Authorization header, passes to `emit_assessment_rewards()`.
+- `apps/web/src/hooks/queries/use-character.ts` — `useCrystalBalance()` + `useCharacterState()` TanStack Query hooks.
+- `apps/web/src/components/dashboard/crystal-balance-widget.tsx` — Crystal balance widget (hides when balance=0, never breaks dashboard on error).
+- Dashboard page updated — `CrystalBalanceWidget` wired between StatsRow and Feed.
+- i18n: `character.*` keys added to EN + AZ locales.
+
+**What was already live (confirmed in discovery):**
+- `character.py` router — 4 endpoints including `GET /api/character/crystals`
+- `rewards.py` — `emit_assessment_rewards()` already wired into `complete_assessment`
+- `character_events` table + 3 migrations already deployed
+
+**Next sprint per IMPLEMENTATION-ROADMAP.md:**
+- Sprint 8: Org Saved Search + Match Notifications
+
+---
+
+## CURRENT POSITION — SPRINTS 1-6 COMPLETE, 2026-04-01
+
+**Status:** All 6 swarm infrastructure sprints SHIPPED. 11 new files total this session.
+
+**Sprint 5 (Skill Evolution):** `skill_applier.py` + `skill_ab_tester.py` wired into `session_end_hook.py`. After every push, HIGH-priority skill improvements auto-applied + A/B tested. Winners kept, losers reverted.
+
+**Sprint 6 (Social Delivery):** `report_generator.py` wired into `autonomous_run.py`. CEO now gets: structured markdown in ceo-inbox.md + Telegram message with health indicator (GREEN/YELLOW/RED) + GitHub Actions stdout with actionable summary.
+
+**Full swarm pipeline now:**
+```
+push to main
+  → session_end_hook.py: capture diff → SESSION-DIFFS.jsonl → rebuild code-index.json
+  → skill_applier.py: apply HIGH-priority skill improvements → A/B test → keep winner
+
+09:00 Baku daily
+  → heartbeat_gate.py: SKIP if no activity + no urgent proposals + stale floor not reached
+  → code_index.py: load 530-file index
+  → task_binder.py: bind each perspective lens to verified files
+  → 7 agents: generate proposals (with bound files in context)
+  → proposal_verifier.py: tag ungrounded proposals [UNGROUNDED]
+  → cross-model judge: score all proposals
+  → suggestion_engine.py: generate 2-3 predicted next actions
+  → report_generator.py: write to ceo-inbox.md + Telegram + stdout
+  → memory_consolidation.py: distill feedback → neocortex
+  → skill_evolution.py: scan skills → suggest improvements → log
+```
+
+**Next sprints per IMPLEMENTATION-ROADMAP.md:**
+- Sprint 7: MindShift + Life Sim Integration (wire `rewards.py` → `character_events` → Life Sim polling)
+- Sprint 8: Org Saved Search + Match Notifications
+
+---
+
+## CURRENT POSITION — SPRINTS 1-4 COMPLETE, 2026-04-01
+
+**Status:** Sprint 1 (Infra P0) + Sprint 2 (Predictive Suggestions) + Sprint 3 (Adaptive Execution) + Sprint 4 (Context Intelligence) ALL SHIPPED.
+
+**8 new files this session:**
+- `heartbeat_gate.py` — KAIROS gate (swarm-daily.yml wired)
+- `proposal_verifier.py` — groundedness check (96.7% on existing)
+- `outcome_verifier.py` — Tier 1+2 verification + self-check
+- `suggestion_engine.py` — predictive next actions (CEO inbox)
+- `execution_state.py` — ExecutionState enum + tracker
+- `recovery_strategies.py` — retry/simplify/decompose/escalate
+- `code_index.py` — 530 files indexed, searchable
+- `task_binder.py` — task → verified file bindings (100% confidence tested)
+
+**autonomous_run.py now:**
+1. Runs heartbeat gate → skip if no activity
+2. Loads code index → binds each perspective to files before launch
+3. Tags ungrounded proposals [UNGROUNDED]
+4. After batch: generates predictive suggestions → CEO inbox
+
+**Next sprints per IMPLEMENTATION-ROADMAP.md:**
+- Sprint 5: Skill Evolution Completion (add applier + A/B tester to `skill_evolution.py`)
+- Sprint 6: Social Delivery Pipeline (richer Telegram reports from `report_generator.py`)
+- Sprint 7: MindShift + Life Sim Integration (wire `rewards.py` → `character_events`)
+
+---
+
+## CURRENT POSITION — SPRINT 1+2 COMPLETE, 2026-04-01
+
+**Status:** Sprint 1 (Swarm Infrastructure P0) + Sprint 2 (Predictive Suggestions) SHIPPED.
+
+**What was built:**
+- `packages/swarm/heartbeat_gate.py` — KAIROS gate, wired into swarm-daily.yml
+- `packages/swarm/proposal_verifier.py` — groundedness check (96.7% on existing proposals)
+- `packages/swarm/outcome_verifier.py` — Tier 1+2 verification, self-verification built in
+- `packages/swarm/suggestion_engine.py` — predictive next actions (Sprint 2 winner)
+- `autonomous_run.py` updated — both engines wired in at batch close
+- `swarm-daily.yml` updated — heartbeat gate step added
+
+**Verification results:**
+- All 4 new files: syntax OK, importable
+- Heartbeat gate: correctly identified 10 urgent proposals → EXIT 0 (RUN)
+- Proposal verifier: 29/30 grounded (96.7%), 1 caught invalid path
+- Suggestion engine: generated 2 predictions, appended to ceo-inbox.md
+
+**Next sprints per IMPLEMENTATION-ROADMAP.md:**
+- Sprint 3: Adaptive Execution Loop (`packages/swarm/execution_state.py` + `recovery_strategies.py`)
+- Sprint 4: Context Intelligence Engine (`packages/swarm/code_index.py` + `task_binder.py`)
+- Sprint 5: Skill Evolution Completion (add applier + A/B tester to existing `skill_evolution.py`)
+
+---
+
+## CURRENT POSITION — IMPLEMENTATION ROADMAP WRITTEN, 2026-04-01
+
+**Status:** `docs/IMPLEMENTATION-ROADMAP.md` created. 8 sprints, ~21.5h total. `docs/TASK-PROTOCOL.md` updated to v6.0. Awaiting CEO review + Sprint 1 execution start.
+
+**Summary of what was analyzed this session:**
+- ZEUS repo (`C:\Users\user\OneDrive\Documents\GitHub\ANUS\`) — 143 Python files, 4 patterns identified
+- MindShift (`C:\Users\user\Downloads\mindshift`) — 95% complete, volaura-bridge.ts already built
+- Claude Code architecture patterns (heartbeat gate, MEMORY-INDEX, outcome verification)
+
+**Sprint 1 (next session):** Swarm Infrastructure P0 — heartbeat gate + proposal verifier + outcome verifier + 3-layer MEMORY-INDEX
+
+**CEO decision needed:** Sprint 7 auth sync strategy — Option C recommended (emit events first, migrate auth later)
+
+**GitHub OAuth:** Configured end-to-end. GitHub → Supabase callback → frontend.
+**Vercel:** Auto-deploy fixed. First successful build after weeks. volaura.app live.
+
+---
+
 ## CURRENT POSITION — BATCH-S COMPLETE + S-05 SHIPPED, 2026-03-31
 
 **Status:** S-05 (pnpm generate:api) ✅ SHIPPED. TypeScript SDK now in sync with 2 new FastAPI endpoints: `GET /api/auth/signup-status` + `POST /api/auth/validate-invite`. Signup page uses type-safe response types. **Unblocks CEO E2E walk.**

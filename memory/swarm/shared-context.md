@@ -1,16 +1,74 @@
-# Swarm Shared Context — REBUILT 2026-03-30
+# Swarm Shared Context — UPDATED 2026-04-01
 
-**By:** CTO (Claude) | **Replaces:** 2026-03-27 stale version (was showing "Sprint 3 is next" and deprecated skill-library architecture)
+**By:** CTO (Claude) | **Replaces:** 2026-03-30 version (missing ecosystem context — ZEUS/Life Sim were invisible to agents)
 
 ---
 
 ## ⚠️ CRITICAL: Read this before proposing anything
 
 1. The "skill library replaces all products" architecture (Sessions 51-58) was REVERSED. Volaura, MindShift, Life Simulator, BrandedBy, ZEUS are separate products. Do NOT propose features as "skills within Volaura."
-2. Sprint state is E2 (2026-03-30), NOT Sprint 3. BATCH K is the most recent shipped batch.
-3. 57 migrations are applied. Do NOT re-propose already-fixed bugs from the open bugs list below.
+2. Sprint state is E2 (2026-04-01). BATCH S is the most recent shipped batch (Session 77).
+3. 57+ migrations are applied. Do NOT re-propose already-fixed bugs.
 4. PAYMENT_ENABLED=False kill switch is active. Stripe code exists but paywall is disabled for beta.
 5. Route ordering in aura.py is intentional — static routes before parameterized (P0 bug fixed Sprint 42).
+6. **ECOSYSTEM RULE:** Every proposal must consider cross-product impact. Volaura events → character_events → Life Simulator crystals. Never propose Volaura features in isolation.
+
+---
+
+## 🌍 ECOSYSTEM — 5 Products, 1 User
+
+This is NOT a single product. Every agent must know all 5 and their integration points.
+
+### Product Map
+
+| Product | Status | What it does | Key tech |
+|---------|--------|-------------|----------|
+| **VOLAURA** | ✅ Live (volaura.app) | Verified talent platform. Assessment → AURA score → badges. Orgs search talent. | Next.js + FastAPI + Supabase |
+| **ZEUS** | ✅ Running (GitHub Actions) | Autonomous content engine. Generates + publishes content to Telegram channels every 4h. Also: video generation via FAL/SadTalker. | `packages/swarm/zeus_content_run.py`, `zeus_video_skill.py` |
+| **MindShift** | ✅ 92% built | Daily habits: focus sessions, streaks, psychotype tracking. Separate Supabase project (`awfoqycoltvhamtrsvxk`). | Separate repo |
+| **Life Simulator** | 🔄 65% built | Godot 4 game. User has a character with stats/crystals/progression. VOLAURA assessments → crystal_earned events → visible in game. | Godot 4 + character_events bus |
+| **BrandedBy** | 🔄 15% built | AI Twin: portrait + script → Kokoro TTS → SadTalker → MP4. Professional video presence. | FAL API + `zeus_video_skill.py` |
+
+### Cross-Product Event Bus
+
+All products write to `character_events` table (Supabase):
+```sql
+character_events: id, user_id, event_type, source_product, payload JSONB
+game_crystal_ledger: id, user_id, amount, source, reference_id, created_at
+```
+
+**VOLAURA → Life Simulator flow:**
+```
+User completes assessment → AURA score calculated
+→ emit crystal_earned + skill_verified to character_events
+→ Life Simulator reads events → character gains crystals/XP
+```
+
+**ZEUS triggers:**
+```
+character_events INSERT (skill_verified, milestone_reached)
+→ Supabase webhook → FastAPI /telegram/webhook
+→ zeus_content_run.py generates content
+→ Posts to Telegram channels (Volaura Community, BrandedBy, etc.)
+```
+
+### ZEUS — What It Does Today
+
+- **Runs:** Every 4 hours via `.github/workflows/zeus-content.yml`
+- **Channels:** Volaura Community Telegram, BrandedBy Telegram, MindShift Telegram
+- **Content:** Skill tips, AURA milestones, motivational posts, product updates
+- **Event-driven:** Fires on `skill_verified` + `milestone_reached` events
+- **Video:** `zeus_video_skill.py` → portrait + script → FAL (MuseTalk/Kling) → MP4
+- **Status:** Running. Last 5 GitHub Actions runs = SUCCESS
+
+### What ZEUS Needs (Swarm Requested)
+
+- **Orchestrator** — ZEUS currently runs as cron, not as always-on daemon
+- **Railway worker** — planned: always-on process instead of GitHub Actions cron
+- **Self-upgrade** — BLOCKED: needs staging branch + test gate (security review done, CVSS 8.1)
+- **Code-aware agents** — agents currently BLIND to actual code files
+
+---
 
 ---
 

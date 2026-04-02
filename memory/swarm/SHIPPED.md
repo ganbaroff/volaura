@@ -6,6 +6,160 @@
 
 ---
 
+## Session 81 BATCH-D (2026-04-02) — Admin Panel MVP
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Migration | `supabase/migrations/20260402130000_add_platform_admin.sql` | Adds `is_platform_admin BOOLEAN DEFAULT FALSE` to profiles. Apply in Supabase dashboard + set `true` for Yusif. | ✅ NEW |
+| `require_platform_admin` dep | `apps/api/app/deps.py` | Fail-closed gate. Checks `is_platform_admin` via service-role. Returns 403 if not admin. `PlatformAdminId` type alias. | ✅ NEW |
+| Admin schemas | `apps/api/app/schemas/admin.py` | `AdminUserRow`, `AdminOrgRow`, `AdminStatsResponse`, `OrgApproveResponse` | ✅ NEW |
+| Admin router | `apps/api/app/routers/admin.py` | 6 endpoints: ping, stats, users list, pending orgs, approve/reject org. 30/min rate limit. 102 routes total. | ✅ NEW |
+| Admin tests | `apps/api/tests/test_admin.py` | 7 tests: 3 gate (non-admin → 403), 4 happy path (ping, pending orgs, approve, reject) | ✅ NEW |
+| `use-admin.ts` | `apps/web/src/hooks/queries/use-admin.ts` | `useAdminPing`, `useAdminStats`, `useAdminUsers`, `usePendingOrganizations`, `useApproveOrganization`, `useRejectOrganization` | ✅ NEW |
+| `admin-guard.tsx` | `apps/web/src/components/layout/admin-guard.tsx` | Client guard: checks session + /api/admin/ping. Redirects to /dashboard if not admin. | ✅ NEW |
+| `admin-sidebar.tsx` | `apps/web/src/components/layout/admin-sidebar.tsx` | Nav: Overview / Users / Organizations / AURA Scores + Back to app | ✅ NEW |
+| Admin layout | `apps/web/src/app/[locale]/(admin)/layout.tsx` | Route group layout wrapping AdminGuard + AdminSidebar | ✅ NEW |
+| Admin pages | `(admin)/page.tsx`, `users/page.tsx`, `organizations/page.tsx`, `aura/page.tsx` | Overview stats, users table, org approval queue, AURA list | ✅ NEW |
+
+**Access URL:** `/az/admin` (or `/en/admin`)
+**1-click required:** Apply migration in Supabase + set `is_platform_admin=true` for Yusif's profile row
+
+---
+
+## Session 81 BATCH-C (2026-04-02) — Circuit Breaker Constant Fix
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| `_CB_THRESHOLD` rename | `apps/api/app/services/match_checker.py` | Renamed `_TELEGRAM_CB_THRESHOLD` → `_CB_THRESHOLD` to match test import. 687 passed, 0 failed. | ✅ FIXED |
+
+---
+
+## Session 81 (2026-04-02) — Growth Trajectory Widget + Milestone Animation (D.2-A + D.2-B)
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Growth Trajectory Widget | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/complete/page.tsx` | Animated progress bar showing "X pts to [next tier]". Uses `aura.total_score` + tier thresholds. Framer Motion bar animates from 0 to pct on reveal (delay 0.75s). Shows Platinum max state. No new backend. | ✅ NEW |
+| Milestone Banner | Same file | Gold/Platinum celebration banner — shows when `aura_updated && badge_tier in [gold,platinum]`. Gradient background (yellow/cyan), spring animation. Appears between Badge Reveal and Stats Row. | ✅ NEW |
+| i18n growth keys EN | `apps/web/src/locales/en/common.json` | `progressToNextTier`, `tierMaxReached`, `milestonePlatinum`, `milestoneGold`, `milestoneDiscoverable` | ✅ NEW |
+| i18n growth keys AZ | `apps/web/src/locales/az/common.json` | AZ translations for all 5 growth keys | ✅ NEW |
+| Board heavy run script | `board_heavy_run.py` (project root) | nemotron-ultra-253b × 2 + deepseek-r1 on growth topic. Both Board agents voted: Tribe Streaks (Strategic Dir) + Collective AURA Ladders (CPO). BOTH killed AURA Leaderboard unanimously. | ✅ UTILITY |
+| board-heavy-results.json | `memory/swarm/board-heavy-results.json` | Raw Board analysis results from heavy models | ✅ ARTIFACT |
+
+**Board unanimous findings (both nemotron-ultra-253b agents):**
+- KILL: AURA Score Leaderboard — "direct cultural mismatch, anxiety from public rankings will suppress usage in AZ/CIS"
+- NEW RISK: Anti-harassment safeguards needed for Tribe formation (nobody else mentioned this)
+- NEW RISK: Exclusionary cliques if group membership is static (Collective AURA Ladders)
+
+---
+
+## Session 80 (2026-04-01) — CIS-001 Fix + Profile View Infra
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Discovery: Sprint D.1 already shipped | `apps/api/app/routers/profiles.py` + `apps/web/src/components/profile/profile-view-tracker.tsx` + `apps/api/tests/test_profile_view.py` | `POST /api/profiles/{username}/view` endpoint existed, frontend ProfileViewTracker existed, 6 tests existed. Session confirmed these are live — not re-implemented. | ✅ CONFIRMED |
+| `notify_profile_viewed()` | `apps/api/app/services/notification_service.py` | New helper function: throttled `org_view` notification emit. Checks 24h window via partial index. Never raises. Returns bool (sent/throttled). Uses `org_id` as reference_id. | ✅ NEW |
+| Org view throttle index | `supabase/migrations/20260401180000_profile_view_notification_index.sql` | Partial index on `notifications(user_id, reference_id, created_at) WHERE type='org_view'`. Serves the 24h dedup query in `record_profile_view` endpoint. Prevents seq scan as notifications table grows. | ✅ NEW |
+| Achievement level utility | `apps/web/src/lib/utils/achievement-level.ts` | `getAchievementLevelKey(percentileRank)` — maps 0-100 percentile to i18n key (Expert/Advanced/Proficient/Growing/Building/Starting). CIS-001 fix. | ✅ NEW |
+| i18n achievement keys | `apps/web/src/locales/en/common.json` + `az/common.json` | `profile.achievementLabel` + 6 tier keys (achievementExpert → achievementStarting). AZ: Ekspert/Peşəkar/Bilikli/İnkişaf Edir/Hazırlanır/Başlanır. | ✅ UPDATED |
+| CIS-001 fix: public profile | `apps/web/src/app/[locale]/(public)/u/[username]/page.tsx` | Replaced `t("profile.topPercent", ...)` with `t(getAchievementLevelKey(percentileRank))`. "Top 5%" → "Expert". Non-competitive framing for AZ/CIS users. | ✅ UPDATED |
+| CIS-001 fix: assessment complete | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/complete/page.tsx` | Achievement level replaces percentile stat box display. Label changes from "percentile" to `profile.achievementLabel`. Share text keeps `topPercent` (opt-in competitive context). | ✅ UPDATED |
+
+---
+
+## Session 79 (2026-04-01) — BATCH C: Sprint 8 Tests + Realtime Notifications
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Sprint 8 Tests | `apps/api/tests/test_saved_searches.py` | 13 tests: happy path (create/list/delete/update), privilege escalation (org A ≠ org B), validation (cap/dupe/badge_tier/UUID/empty), match checker service (no searches, DB error, circuit breaker). | ✅ NEW |
+| Realtime Notifications Hook | `apps/web/src/hooks/queries/use-notifications.ts` | `useRealtimeNotifications(userId)` — Supabase Realtime subscription to `notifications` table INSERT. On INSERT → invalidates unread count + list queries instantly. Falls back silently. Cleans up on unmount. | ✅ UPDATED |
+| Realtime Provider | `apps/web/src/components/layout/realtime-notifications.tsx` | `RealtimeNotificationsProvider` — client component. Reads userId from auth session, calls `useRealtimeNotifications()`. Renders nothing (side-effect only). | ✅ NEW |
+| Dashboard Layout | `apps/web/src/app/[locale]/(dashboard)/layout.tsx` | Added `<RealtimeNotificationsProvider />` — persists subscription across all dashboard pages. | ✅ UPDATED |
+| DSP Decision logged | `memory/swarm/agent-feedback-log.md` | Explicit defer: FastAPI WebSocket / ANUS = do NOT propose before 2026-07-01 or 500 active users. Alternative: Supabase Realtime (implemented). Stops 5+ convergent proposals from recurring. | ✅ UPDATED |
+
+---
+
+## Session 79 (2026-04-01) — SPRINT 8: Org Saved Search + Match Notifications
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Migration | `supabase/migrations/20260401171324_org_saved_searches.sql` | `org_saved_searches` table. JSONB filters (mirrors VolunteerSearchRequest). RLS: owner reads own only (via org FK chain). Partial index for notify_on_match. 20-search cap enforced at API layer. | ✅ NEW |
+| Schemas | `apps/api/app/schemas/organization.py` | `SavedSearchFilters`, `SavedSearchCreate`, `SavedSearchUpdate`, `SavedSearchOut`, `SavedSearchMatchPreview`, `SavedSearchMatchNotification`. Validators: badge_tier enum, languages cap. | ✅ UPDATED |
+| API endpoints | `apps/api/app/routers/organizations.py` | `POST /saved-searches`, `GET /saved-searches`, `PATCH /saved-searches/{id}`, `DELETE /saved-searches/{id}`. `_assert_search_ownership()` prevents cross-org access. 20-search cap. | ✅ UPDATED |
+| Match Checker | `apps/api/app/services/match_checker.py` | Runs daily (GitHub Actions). Queries `aura_scores WHERE updated_at > last_checked_at`. Telegram notification via bot. Circuit breaker (3 failures → stop). Privacy: `visibility='public'` filter. CLI entry point for GitHub Actions. | ✅ NEW |
+| GitHub Actions | `.github/workflows/match-checker.yml` | Cron: 07:00 UTC (11:00 Baku). Dry-run input for testing without Telegram. | ✅ NEW |
+| Saved Search hooks | `apps/web/src/hooks/queries/use-organizations.ts` | `useSavedSearches()`, `useCreateSavedSearch()`, `useDeleteSavedSearch()` TanStack Query hooks. | ✅ UPDATED |
+| Save Search UI | `apps/web/src/app/[locale]/(dashboard)/org-volunteers/page.tsx` | "Save search" button appears when search input is active. Modal: name + notify toggle. Saved search pills list with delete button. | ✅ UPDATED |
+| i18n | `apps/web/src/locales/*/common.json` | orgDash.saveSearch, saveSearchHint, saveSearchModal, saveSearchName, saveSearchCta, saveSearchSaved, notifyOn, notifyOff — EN + AZ. | ✅ UPDATED |
+
+---
+
+## Session 79 (2026-04-01) — SPRINT 7: MindShift + Life Sim Integration
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Cross-Product Bridge | `apps/api/app/services/cross_product_bridge.py` | Fire-and-forget Volaura→MindShift event push. 3 public async functions: `push_crystal_earned()`, `push_skill_verified()`, `push_xp_earned()`. Circuit breaker: 3 failures/5min → 60s silence. httpx async client, 3s connect / 8s read timeouts. Never raises. `reset_circuit_breaker()` for tests. | ✅ NEW |
+| rewards.py updated | `apps/api/app/services/assessment/rewards.py` | Added `user_jwt: str \| None = None` param. After persisting local events, calls `push_crystal_earned()` + `push_skill_verified()` on the bridge (fire-and-forget). | ✅ UPDATED |
+| assessment.py updated | `apps/api/app/routers/assessment.py` | Extracts JWT from `Authorization: Bearer ...` header in `complete_assessment`. Passes it to `emit_assessment_rewards()` so bridge can authenticate with MindShift. | ✅ UPDATED |
+| use-character.ts | `apps/web/src/hooks/queries/use-character.ts` | `useCrystalBalance()` — fetches `GET /api/character/crystals` (30s stale). `useCharacterState()` — fetches full state (1min stale). Both return null on 404 (no events yet). | ✅ NEW |
+| CrystalBalanceWidget | `apps/web/src/components/dashboard/crystal-balance-widget.tsx` | Renders crystal balance on dashboard. Hides if balance=0 (no noise for new users). Silent on API error — never breaks dashboard. i18n-ready. | ✅ NEW |
+| Dashboard page updated | `apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx` | Added `CrystalBalanceWidget` between StatsRow and Feed sections. Only shows for users with score. | ✅ UPDATED |
+| i18n updated | `apps/web/src/locales/*/common.json` | Added `character.*` keys: crystalBalance, crystals, crystalLabel, earnOnVolaura — EN + AZ. | ✅ UPDATED |
+
+---
+
+## Session 78 (2026-04-01) — SPRINT 5+6: Skill Evolution Completion + Social Delivery Pipeline
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Skill Applier | `packages/swarm/skill_applier.py` | Applies improvement suggestions to skill .md files. 6 edit types: add_example, sharpen_rule, add_antipattern, add_trigger, remove_obsolete, generic. Creates .bak before every edit. `apply_from_evolution_log()` reads HIGH-priority items from skill-evolution-log.md and applies them. | ✅ NEW |
+| Skill A/B Tester | `packages/swarm/skill_ab_tester.py` | Compares old vs new skill on a domain-specific test task. LLM self-scoring + cross-model judge. `apply_and_validate()` full pipeline: apply → test → keep or revert. Domain task library (10 domains). Logs to skill-ab-test-log.jsonl. | ✅ NEW |
+| Report Generator | `packages/swarm/report_generator.py` | Structured batch-close reports. 3 formats: markdown (ceo-inbox.md), Telegram Markdown, stdout. `BatchReport` dataclass with health indicator (GREEN/YELLOW/RED). `write_to_ceo_inbox()` prepends most-recent-first. | ✅ NEW |
+| autonomous_run.py updated | `packages/swarm/autonomous_run.py` | Replaced ad-hoc print block with `generate_batch_report()` + `write_to_ceo_inbox()`. Groundedness score now tracked per batch. Suggestion engine now feeds into report. | ✅ UPDATED |
+| session_end_hook.py updated | `packages/swarm/session_end_hook.py` | Added skill evolution check at session end. Calls `apply_from_evolution_log()` — applies HIGH-priority skill improvements automatically after every push. | ✅ UPDATED |
+
+---
+
+## Session 78 (2026-04-01) — SPRINT 3+4: Adaptive Execution Loop + Context Intelligence Engine
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Execution State | `packages/swarm/execution_state.py` | `ExecutionState` enum (IDLE/RUNNING/RETRYING/RECOVERING/FAILED/SUCCESS) + `AgentExecutionTracker`. Validated state transitions. JSON-serializable. `handle_failure()` returns strategy. | ✅ NEW |
+| Recovery Strategies | `packages/swarm/recovery_strategies.py` | 4 strategies: retry (exponential backoff), simplify (reduce scope), decompose (split into subtasks), escalate (write to escalations.md). `apply_recovery_strategy()` dispatcher. `decomposed-tasks.jsonl` log. | ✅ NEW |
+| Code Index | `packages/swarm/code_index.py` | Scans 530 files across `apps/api/app`, `apps/web/src`, `packages/swarm`, etc. Extracts: Python functions/classes/imports, TS exports, SQL tables. Keyword scoring. Written to `memory/swarm/code-index.json`. Rebuilt on every push via `session-end.yml`. | ✅ NEW |
+| Task Binder | `packages/swarm/task_binder.py` | Maps task description → primary/secondary files. Domain mapping table (14 domains). Code index search. `BoundTask.to_briefing_section()` injects BOUND FILES into agent briefing. Tested: "crystal reward" → `assessment.py` + `rewards.py` (100% confidence). | ✅ NEW |
+| autonomous_run.py updated | `packages/swarm/autonomous_run.py` | Loads code index before agents launch. Binds each perspective's lens to files. Injects `bound_files` into agent prompt. All wiring non-blocking (exceptions caught). | ✅ UPDATED |
+| session-end.yml updated | `.github/workflows/session-end.yml` | Added "Rebuild code index" step after session-end hook. `code-index.json` committed to repo → always fresh for next swarm run. | ✅ UPDATED |
+| code-index.json created | `memory/swarm/code-index.json` | 530 files indexed. Built 2026-04-01. | ✅ CREATED |
+
+---
+
+## Session 78 (2026-04-01) — SPRINT 1+2: Swarm Infrastructure P0 + Predictive Suggestions
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Heartbeat Gate | `packages/swarm/heartbeat_gate.py` | KAIROS binary gate: should swarm run? Checks 3 conditions (urgent proposals → active git → stale floor). Exit 0=RUN, Exit 1=SKIP. Wired into `swarm-daily.yml`. | ✅ NEW |
+| Proposal Verifier | `packages/swarm/proposal_verifier.py` | Extracts file paths from proposals, checks existence, scores groundedness (0-100%). Ungrounded proposals tagged [UNGROUNDED]. Audited existing proposals: 29/30 grounded (96.7%). 1 caught: `apps/api/app/routes.py` doesn't exist. | ✅ NEW |
+| Outcome Verifier | `packages/swarm/outcome_verifier.py` | Two-tier verification: T1 (deterministic: file checks + test delta + AST parse) + T2 (LLM judge when T1 <0.9). `verify_outcome()` + `record_outcome()`. Self-verification built in (`SPRINT_1_TASKS`). | ✅ NEW |
+| Suggestion Engine | `packages/swarm/suggestion_engine.py` | Predictive next actions (Sprint 2 winner). After batch close, generates 2-3 CEO predictions with `trigger_reason`. Appends to `ceo-inbox.md`. Rule-based + LLM fallback. | ✅ NEW |
+| autonomous_run.py updated | `packages/swarm/autonomous_run.py` | Two new hooks after batch: (1) proposal_verifier tags ungrounded proposals, (2) suggestion_engine generates predictions → ceo-inbox.md. | ✅ UPDATED |
+| swarm-daily.yml updated | `.github/workflows/swarm-daily.yml` | Heartbeat gate step added. `should_run` output gates the main swarm step. Skip notice if gate=false. Manual dispatch always bypasses gate. Heartbeat log committed even on skip. | ✅ UPDATED |
+| heartbeat-log.jsonl created | `memory/swarm/heartbeat-log.jsonl` | First entry written by gate test run: RUN reason=urgent_pending_proposals (10 HIGH/CRITICAL). | ✅ CREATED |
+| ceo-inbox.md predictions | `memory/swarm/ceo-inbox.md` | First predictions appended: (1) Act on HIGH security proposal, (2) Run Sprint 1 verification. | ✅ UPDATED |
+
+**All files syntax-verified. All imports clean.**
+
+---
+
+## Session 78 (2026-04-01) — ROADMAP + PROTOCOL: Implementation Roadmap + TASK-PROTOCOL v6.0
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| IMPLEMENTATION-ROADMAP.md | `docs/IMPLEMENTATION-ROADMAP.md` | 8-sprint unified plan from cross-repo analysis (ZEUS + MindShift + Claude Code patterns). ~21.5h total. Sprint 1: Swarm Infrastructure P0. Sprint 2: Predictive Suggestions. Sprint 3: Adaptive Execution Loop. Sprint 4: Context Intelligence. Sprint 5: Skill Evolution. Sprint 6: Social Delivery. Sprint 7: MindShift+LifeSim Integration. Sprint 8: Org Saved Search. | ✅ NEW |
+| TASK-PROTOCOL v6.0 | `docs/TASK-PROTOCOL.md` | v5.3 → v6.0: +Detect+Read step (SESSION-DIFFS + code-index), +trigger_reason on proposals, +Round-2 debate gate, +outcome verification gate, +session-end skill evolution check. | ✅ UPDATED |
+| sprint-state.md updated | `memory/context/sprint-state.md` | Current position → roadmap written, Sprint 1 next. | ✅ UPDATED |
+
+---
+
 ## Session 77 (2026-03-31) — BATCH-S: Vertex LLM + Invite UX + Smoke Test + Sprint 5 Q-Bank + S-05 generate:api
 
 | Code | Location | What it does | Status |

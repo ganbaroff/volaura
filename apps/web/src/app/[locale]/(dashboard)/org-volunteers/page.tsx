@@ -6,9 +6,9 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import {
   Users, TrendingUp, Award, CheckCircle2, Clock,
-  ChevronRight, Loader2, BarChart3, Search,
+  ChevronRight, Loader2, BarChart3, Search, Bookmark, BookmarkCheck, X, Bell, BellOff,
 } from "lucide-react";
-import { useOrgDashboard, useOrgVolunteers } from "@/hooks/queries/use-organizations";
+import { useOrgDashboard, useOrgVolunteers, useCreateSavedSearch, useSavedSearches, useDeleteSavedSearch } from "@/hooks/queries/use-organizations";
 import { cn } from "@/lib/utils/cn";
 import type { OrgVolunteerRow } from "@/lib/api/types";
 
@@ -154,6 +154,35 @@ export default function OrgVolunteersPage() {
 
   const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
   const [search, setSearch] = useState("");
+
+  // ── Saved searches ──────────────────────────────────────────────────────────
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [saveName, setSaveName] = useState("");
+  const [saveNotify, setSaveNotify] = useState(true);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
+  const { data: savedSearches } = useSavedSearches();
+  const createSavedSearch = useCreateSavedSearch();
+  const deleteSavedSearch = useDeleteSavedSearch();
+
+  async function handleSaveSearch() {
+    if (!saveName.trim()) return;
+    try {
+      await createSavedSearch.mutateAsync({
+        name: saveName.trim(),
+        filters: { query: search || undefined },
+        notify_on_match: saveNotify,
+      });
+      setSaveSuccess(true);
+      setTimeout(() => {
+        setSaveSuccess(false);
+        setShowSaveModal(false);
+        setSaveName("");
+      }, 1500);
+    } catch {
+      // Error handled by mutation state
+    }
+  }
 
   const { data: stats, isLoading: statsLoading } = useOrgDashboard();
   const { data: volunteers, isLoading: volsLoading } = useOrgVolunteers({ status: statusFilter, limit: 50 });
@@ -307,6 +336,141 @@ export default function OrgVolunteersPage() {
               ))}
             </div>
           </div>
+
+          {/* Save Search — only show when a search term is active */}
+          {search && (
+            <div className="flex items-center justify-between rounded-xl border border-primary/20 bg-primary/5 px-4 py-2.5">
+              <p className="text-xs text-on-surface-variant">
+                {t("orgDash.saveSearchHint", { defaultValue: "Save this search to get notified of new matches" })}
+              </p>
+              <button
+                type="button"
+                onClick={() => { setSaveName(search); setShowSaveModal(true); }}
+                className="ml-3 shrink-0 flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                <Bookmark className="size-3.5" aria-hidden="true" />
+                {t("orgDash.saveSearch", { defaultValue: "Save search" })}
+              </button>
+            </div>
+          )}
+
+          {/* Saved searches list — compact pills */}
+          {savedSearches && savedSearches.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {savedSearches.map((s) => (
+                <div
+                  key={s.id}
+                  className="flex items-center gap-1.5 rounded-full border border-border bg-surface-container px-3 py-1 text-xs text-on-surface-variant"
+                >
+                  <BookmarkCheck className="size-3 text-primary shrink-0" aria-hidden="true" />
+                  <span className="max-w-[120px] truncate">{s.name}</span>
+                  {s.notify_on_match
+                    ? <Bell className="size-3 text-primary shrink-0" aria-label="Notifications on" />
+                    : <BellOff className="size-3 shrink-0" aria-label="Notifications off" />
+                  }
+                  <button
+                    type="button"
+                    onClick={() => deleteSavedSearch.mutate(s.id)}
+                    aria-label={`Delete saved search ${s.name}`}
+                    className="ml-0.5 size-4 flex items-center justify-center rounded-full hover:bg-border transition-colors"
+                  >
+                    <X className="size-2.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Save Search Modal */}
+          {showSaveModal && (
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label={t("orgDash.saveSearchModal", { defaultValue: "Save search" })}
+              className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+              onClick={(e) => { if (e.target === e.currentTarget) setShowSaveModal(false); }}
+            >
+              <div className="w-full max-w-sm rounded-2xl border border-border bg-surface-container p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-sm font-semibold text-on-surface">
+                    {t("orgDash.saveSearchModal", { defaultValue: "Save this search" })}
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={() => setShowSaveModal(false)}
+                    aria-label="Close"
+                    className="size-8 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-border transition-colors"
+                  >
+                    <X className="size-4" />
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  <div>
+                    <label htmlFor="save-name" className="text-xs text-on-surface-variant">
+                      {t("orgDash.saveSearchName", { defaultValue: "Search name" })}
+                    </label>
+                    <input
+                      id="save-name"
+                      type="text"
+                      value={saveName}
+                      onChange={(e) => setSaveName(e.target.value)}
+                      maxLength={100}
+                      placeholder={t("orgDash.saveSearchPlaceholder", { defaultValue: "e.g. Senior communicators" })}
+                      className="mt-1 w-full rounded-xl border border-outline-variant bg-background px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+                      // eslint-disable-next-line jsx-a11y/no-autofocus
+                      autoFocus
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setSaveNotify(!saveNotify)}
+                    className={cn(
+                      "w-full flex items-center gap-2 rounded-xl border px-3 py-2.5 text-xs transition-all",
+                      saveNotify
+                        ? "border-primary/40 bg-primary/5 text-primary"
+                        : "border-border bg-transparent text-on-surface-variant"
+                    )}
+                  >
+                    {saveNotify
+                      ? <Bell className="size-3.5" aria-hidden="true" />
+                      : <BellOff className="size-3.5" aria-hidden="true" />
+                    }
+                    {saveNotify
+                      ? t("orgDash.notifyOn", { defaultValue: "Notify me when new talent matches" })
+                      : t("orgDash.notifyOff", { defaultValue: "No notifications" })
+                    }
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleSaveSearch}
+                  disabled={!saveName.trim() || createSavedSearch.isPending || saveSuccess}
+                  className={cn(
+                    "w-full rounded-xl py-2.5 text-sm font-semibold transition-all",
+                    saveSuccess
+                      ? "bg-green-500/10 text-green-600 border border-green-500/30"
+                      : "bg-primary text-on-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                  )}
+                >
+                  {createSavedSearch.isPending
+                    ? t("common.saving", { defaultValue: "Saving…" })
+                    : saveSuccess
+                    ? t("orgDash.saveSearchSaved", { defaultValue: "Saved!" })
+                    : t("orgDash.saveSearchCta", { defaultValue: "Save search" })
+                  }
+                </button>
+
+                {createSavedSearch.isError && (
+                  <p className="text-xs text-destructive text-center">
+                    {t("error.generic", { defaultValue: "Something went wrong. Please try again." })}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* List */}
           {volsLoading && (

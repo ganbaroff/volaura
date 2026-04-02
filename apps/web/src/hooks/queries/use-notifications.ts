@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuthToken } from "./use-auth-token";
 import { apiFetch, ApiError } from "@/lib/api/client";
+import { createClient } from "@/lib/supabase/client";
 
 export interface NotificationItem {
   id: string;
@@ -29,7 +31,19 @@ const QK = {
   unread: () => ["notifications", "unread"],
 } as const;
 
-/** Unread count — used for sidebar badge. Polls every 2 min. */
+/** Unread count — used for sidebar badge. Polls every 2 min as baseline.
+ *
+ * Sprint C DSP winner: Supabase Realtime subscription fires alongside the poll
+ * so the count badge updates instantly when a new notification arrives (e.g.
+ * assessment complete, badge earned, profile viewed by org).
+ *
+ * Architecture: useRealtimeNotifications() subscribes to INSERT on the
+ * notifications table for the current user. On INSERT → invalidate both
+ * unread count and list queries → React re-renders within ~200ms.
+ *
+ * Full WebSocket / ANUS deferred until 2026-07-01 (DSP decision 2026-04-01).
+ * See docs/DECISIONS.md Sprint C entry.
+ */
 export function useUnreadCount() {
   const getToken = useAuthToken();
 
@@ -45,6 +59,56 @@ export function useUnreadCount() {
     retry: 1,
     throwOnError: false,
   });
+}
+
+/**
+ * Supabase Realtime subscription — invalidates notification queries on INSERT.
+ *
+ * Usage: call this once near the root of the authenticated layout so the
+ * subscription persists across page navigation.
+ *
+ *   // in apps/web/src/app/[locale]/(dashboard)/layout.tsx
+ *   useRealtimeNotifications(userId);
+ *
+ * The subscription:
+ *   - Listens to INSERT on `notifications` WHERE user_id = currentUserId
+ *   - On INSERT: invalidates ["notifications", "unread"] and ["notifications", "list"]
+ *   - Falls back silently if Supabase Realtime is unavailable (no user-facing error)
+ *   - Cleans up channel on unmount (prevents subscription leak across auth sessions)
+ *
+ * RLS on `notifications` table ensures users only receive their own rows.
+ * The Realtime filter `user_id=eq.{userId}` is a belt-and-suspenders
+ * client-side guard on top of RLS.
+ */
+export function useRealtimeNotifications(userId: string | null) {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const supabase = createClient();
+    const channel = supabase
+      .channel(`notifications:user:${userId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "notifications",
+          filter: `user_id=eq.${userId}`,
+        },
+        () => {
+          // New notification arrived — refresh count badge and list immediately
+          queryClient.invalidateQueries({ queryKey: QK.unread() });
+          queryClient.invalidateQueries({ queryKey: ["notifications", "list"] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [userId, queryClient]);
 }
 
 /** Full notification list for the notifications page. */

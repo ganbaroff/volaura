@@ -26,6 +26,7 @@ import { createClient } from "@/lib/supabase/client";
 import { apiFetch } from "@/lib/api/client";
 import { CoachingTips } from "@/components/assessment/coaching-tips";
 import { triggerHaptic } from "@/lib/haptics";
+import { getAchievementLevelKey } from "@/lib/utils/achievement-level";
 
 // ── Types ──────────────────────────────────────────────────────────────
 
@@ -359,6 +360,32 @@ export default function AssessmentResultsPage() {
         </motion.div>
       </motion.div>
 
+      {/* Milestone Banner — Gold/Platinum celebration (D.2-A) */}
+      {result?.aura_updated && (aura?.badge_tier === "gold" || aura?.badge_tier === "platinum") && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: -6 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ delay: 0.38, type: "spring", stiffness: 200, damping: 22 }}
+          className={cn(
+            "rounded-xl border-2 p-4 text-center space-y-1",
+            aura.badge_tier === "platinum"
+              ? "border-cyan-400/40 bg-gradient-to-br from-cyan-500/10 to-sky-500/5"
+              : "border-yellow-500/40 bg-gradient-to-br from-yellow-500/10 to-amber-500/5"
+          )}
+          role="status"
+          aria-live="polite"
+        >
+          <p className={cn("text-base font-bold", aura.badge_tier === "platinum" ? "text-cyan-500" : "text-yellow-600 dark:text-yellow-400")}>
+            {aura.badge_tier === "platinum"
+              ? t("assessment.milestonePlatinum", { defaultValue: "🏆 Platinum Tier Achieved!" })
+              : t("assessment.milestoneGold",     { defaultValue: "🥇 Gold Tier!" })}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {t("assessment.milestoneDiscoverable", { defaultValue: "You're now discoverable to organizations on Volaura." })}
+          </p>
+        </motion.div>
+      )}
+
       {/* Stats Row */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
@@ -377,10 +404,11 @@ export default function AssessmentResultsPage() {
         <div className="rounded-xl bg-surface-container-low p-3 text-center">
           {percentile !== null ? (
             <>
-              <p className="text-2xl font-bold tabular-nums text-primary">
-                {t("profile.topPercent", { percent: Math.max(1, Math.round(100 - percentile)) })}
+              {/* CIS-001: Achievement level replaces "Top X%" — non-competitive framing for AZ/CIS users */}
+              <p className="text-xl font-bold text-primary leading-tight">
+                {t(getAchievementLevelKey(percentile))}
               </p>
-              <p className="text-xs text-muted-foreground">{t("aura.percentile", { defaultValue: "percentile" })}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{t("profile.achievementLabel")}</p>
             </>
           ) : (
             <>
@@ -393,6 +421,48 @@ export default function AssessmentResultsPage() {
           )}
         </div>
       </motion.div>
+
+      {/* Growth Trajectory — "X points to next tier" (D.2-B) */}
+      {aura && (() => {
+        const s = aura.total_score;
+        const TIERS = [
+          { key: "bronze",   min: 40, label: t("aura.bronze",   { defaultValue: "Bronze"   }), bar: "bg-amber-600"  },
+          { key: "silver",   min: 60, label: t("aura.silver",   { defaultValue: "Silver"   }), bar: "bg-slate-400"  },
+          { key: "gold",     min: 75, label: t("aura.gold",     { defaultValue: "Gold"     }), bar: "bg-yellow-500" },
+          { key: "platinum", min: 90, label: t("aura.platinum", { defaultValue: "Platinum" }), bar: "bg-cyan-400"   },
+        ];
+        const nextIdx = TIERS.findIndex(tier => s < tier.min);
+        const isMax = nextIdx === -1;
+        const next = isMax ? null : TIERS[nextIdx];
+        const prevMin = nextIdx <= 0 ? 0 : TIERS[nextIdx - 1].min;
+        const pct = isMax ? 100 : Math.min(100, Math.round(((s - prevMin) / (next!.min - prevMin)) * 100));
+        const ptsLeft = isMax ? 0 : Math.ceil(next!.min - s);
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.55 }}
+            className="rounded-xl bg-surface-container-low px-4 py-3 space-y-2"
+          >
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <span className="font-medium">
+                {isMax
+                  ? t("assessment.tierMaxReached", { defaultValue: "Platinum tier reached! 🏆" })
+                  : t("assessment.progressToNextTier", { pts: ptsLeft, tier: next!.label, defaultValue: `${ptsLeft} pts to ${next!.label}` })}
+              </span>
+              <span>{pct}%</span>
+            </div>
+            <div className="h-1.5 rounded-full bg-border overflow-hidden">
+              <motion.div
+                className={cn("h-full rounded-full", isMax ? "bg-cyan-400" : next!.bar)}
+                initial={{ width: 0 }}
+                animate={{ width: `${pct}%` }}
+                transition={{ delay: 0.75, duration: 0.9, ease: "easeOut" }}
+              />
+            </div>
+          </motion.div>
+        );
+      })()}
 
       {/* AURA Sync Pending Banner */}
       {result?.aura_updated === false && (

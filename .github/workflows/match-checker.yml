@@ -1,0 +1,62 @@
+name: Org Match Checker
+
+# Checks every org's saved talent searches daily.
+# Sends Telegram notification to org owners when new talent matches appear.
+# Sprint 8: https://volaura.app
+
+on:
+  schedule:
+    # Run daily at 07:00 UTC (11:00 Baku time — after morning review)
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (no Telegram notifications)'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  match-check:
+    name: Run Match Checker
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        working-directory: apps/api
+        run: pip install -r requirements.txt
+
+      - name: Run match checker
+        working-directory: apps/api
+        env:
+          SUPABASE_URL:          ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY:  ${{ secrets.SUPABASE_SERVICE_KEY }}
+          TELEGRAM_BOT_TOKEN:    ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CEO_CHAT_ID:  ${{ secrets.TELEGRAM_CEO_CHAT_ID }}
+          APP_URL:               ${{ vars.APP_URL || 'https://volaura.app' }}
+          DRY_RUN:               ${{ inputs.dry_run || 'false' }}
+        run: |
+          python -c "
+          import asyncio, os, sys
+          sys.path.insert(0, '.')
+          from app.services.match_checker import run_match_check, _main
+
+          if os.environ.get('DRY_RUN') == 'true':
+              print('DRY RUN: skipping Telegram notifications (TELEGRAM_BOT_TOKEN cleared)')
+              os.environ['TELEGRAM_BOT_TOKEN'] = ''
+
+          asyncio.run(_main())
+          "
+
+      - name: Report summary
+        if: always()
+        run: echo "Match checker completed. Check logs above for results."

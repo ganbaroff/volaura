@@ -169,6 +169,9 @@ async def get_aura_by_id(
     Security (CRIT-04): Identical 404 response for hidden vs nonexistent profiles
     to prevent volunteer existence enumeration attacks.
 
+    Profile view notifications are emitted via the dedicated endpoint:
+    POST /api/profiles/{username}/view — called explicitly by the frontend.
+
     Route ordering: MUST come AFTER /me and /me/explanation — wildcard captures anything.
     """
     result = (

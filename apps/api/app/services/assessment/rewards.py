@@ -13,6 +13,7 @@ from loguru import logger
 from app.core.assessment.aura_calc import BADGE_TIERS
 from app.deps import SupabaseAdmin
 from app.services.notification_service import notify
+from app.services.cross_product_bridge import push_crystal_earned, push_skill_verified
 
 # Crystal reward per competency completion (completion-based, NOT score-based)
 CRYSTAL_REWARD = 50
@@ -31,12 +32,22 @@ async def emit_assessment_rewards(
     user_id: str,
     skill_slug: str,
     competency_score: float,
+    user_jwt: str | None = None,
 ) -> None:
     """Emit crystal_earned + skill_verified character events after assessment completion.
 
     Best-effort: logs errors but never raises — must not fail the complete_assessment response.
     Idempotency: game_character_rewards PRIMARY KEY (user_id, skill_slug) ensures one claim per user
     per competency. Anti-farming: idempotency check happens BEFORE any write.
+
+    Args:
+        db:               Admin Supabase client (service-role)
+        user_id:          Supabase user UUID
+        skill_slug:       Competency slug (e.g. "communication")
+        competency_score: Raw score 0-100
+        user_jwt:         Optional user JWT — forwarded to cross-product bridge for
+                          authenticated event push to MindShift. Omit in background tasks
+                          that don't have access to the request token.
     """
     # ── Idempotency check: already rewarded for this competency? ─────────────
     reward_check = (
@@ -90,6 +101,13 @@ async def emit_assessment_rewards(
                 body=f"You earned {CRYSTAL_REWARD} crystals!",
                 reference_id=skill_slug,
             )
+            # ── Cross-product push: notify MindShift (fire-and-forget) ────────
+            await push_crystal_earned(
+                user_id=user_id,
+                amount=CRYSTAL_REWARD,
+                skill_slug=skill_slug,
+                user_jwt=user_jwt,
+            )
         except Exception as exc:
             logger.error(
                 "Failed to emit crystal reward — manual reconciliation needed",
@@ -126,6 +144,14 @@ async def emit_assessment_rewards(
                 f"{badge_tier} badge earned!",
                 body=f"{skill_slug.replace('_', ' ').title()}: {badge_tier} ({competency_score:.0f}/100)",
                 reference_id=skill_slug,
+            )
+            # ── Cross-product push: notify MindShift (fire-and-forget) ────────
+            await push_skill_verified(
+                user_id=user_id,
+                skill_slug=skill_slug,
+                badge_tier=badge_tier,
+                aura_score=competency_score,
+                user_jwt=user_jwt,
             )
         except Exception as exc:
             logger.error(

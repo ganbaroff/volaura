@@ -55,6 +55,7 @@ These types of proposals waste time. Avoid repeating:
 3. **ORM (SQLAlchemy, Prisma)** — Supabase SDK only. Non-negotiable.
 4. **Privacy by default (hidden scores)** — CEO reviewed and chose public by default. Don't re-litigate.
 5. **OpenAI as primary LLM** — Gemini is primary. OpenAI is fallback. This is cost decision.
+6. **FastAPI WebSocket / ANUS real-time layer** — DSP ran 2026-04-01 (Score 28/50 — too low). EXPLICIT DEFER: do NOT propose this before 2026-07-01 OR 500 active users (whichever comes first). Alternative chosen: Supabase Realtime (already implemented Sprint C). If re-proposing, bring: connection count data, Railway cost impact, specific user workflow that polling can't serve.
 
 ---
 
@@ -117,7 +118,7 @@ These types of proposals waste time. Avoid repeating:
 | Session | Agent/Skill | Proposal ID | Short Title | Status | Outcome | Note |
 |---------|-------------|-------------|-------------|--------|---------|------|
 | 69 | Behavioral Nudge | BNE-001 | Assessment 8-select cognitive overload | open | 4 findings: single-path violation, no save messaging, time estimates missing | **FIRST ACTIVATION. HIGH impact.** |
-| 69 | Cultural Intelligence | CIS-001 | Percentile framing = competitive, not collectivist | open | P0: "Top 5%" framing alienates AZ users. Reframe as achievement levels. | **FIRST ACTIVATION. P0 launch blocker.** |
+| 69 | Cultural Intelligence | CIS-001 | Percentile framing = competitive, not collectivist | implemented | Session 80: "Top 5%" → achievement level labels (Expert/Advanced/Proficient/Growing/Building/Starting). Fixed in /u/[username] + assessment/complete pages. AZ translations: Ekspert/Peşəkar/Bilikli/İnkişaf Edir. | **FIXED Session 80.** |
 | 69 | Cultural Intelligence | CIS-002 | Name field lacks patronymic hint | open | P1: "Adınız Soyadınız (məs. Yusif Eldar oğlu)" | **AZ UX friction.** |
 | 69 | Firuza (v2.0) | FIR-v2-001 | Proactive scan protocol activated | implemented | Upgrade: reactive → proactive, influence 1.1 | **V2.0 shipped.** |
 | 69 | Security | SEC-S69-001 | Route shadowing vindication | acknowledged | Score: 8.5 → 9.0 (Expert ⭐) | **CTO was wrong, agent was right.** |

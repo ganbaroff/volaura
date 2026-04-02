@@ -233,6 +233,11 @@
     "infoRetakeCooldown": "{{gün}} günə əlçatan olacaq",
     "infoNoDescription": "Bacarıqlarınızı sınaqdan keçirin və bu səriştə üzrə təsdiqlənmiş bal əldə edin.",
     "infoContinueButton": "Qiymətləndirməyə keçin",
+    "progressToNextTier": "{{tier}} üçün {{pts}} xal çatışmır",
+    "tierMaxReached": "Platinum pilləsinə çatdınız! 🏆",
+    "milestonePlatinum": "🏆 Platinum Pilləsi Əldə Edildi!",
+    "milestoneGold": "🥇 Qızıl Pillə!",
+    "milestoneDiscoverable": "Siz artıq Volaura-da təşkilatlar tərəfindən kəşf edilə bilərsiniz.",
     "shareNudge": "Siz ən yüksək pillədəsiniz — qoy təşkilatlar sizi tapsınlar.",
     "shareNudgeSilver": "Sürət qazanırıq — irəliləyişinizi bölüşün və həmkarınıza meydan oxuyun.",
     "shareNudgeLow": "Tərəqqinizi paylaşın — hər bir nəticə bir hekayə söyləyir.",
@@ -350,7 +355,7 @@
     "saving": "Saxlanılır...",
     "whyTitle": "Bacarıqlarınızı sübut edin. Kəşf edilin.",
     "whyDesc": "Bir qiymətləndirmə sizə AURA nişanı qazandırır. Təşkilatlar sizin kimi təsdiqlənmiş peşəkarları fəal şəkildə axtarır.",
-    "namePlaceholder": "Sizin tam adınız",
+    "namePlaceholder": "Adınız Soyadınız (məs. Yusif Eldar oğlu)",
     "usernamePlaceholder": "sizin istifadəçi adınız",
     "locationPlaceholder": "Sizin şəhəriniz",
     "step1Title": "Xoş gəlmisiniz, {{name}}! 👋",
@@ -449,6 +454,13 @@
     "founding1000": "Təsisçi 1000",
     "earlyAdopter": "Erkən Mənimsəyən",
     "topPercent": "Ən yaxşı {{percent}}%",
+    "achievementLabel": "Nailiyyət Səviyyəsi",
+    "achievementExpert": "Ekspert",
+    "achievementAdvanced": "Peşəkar",
+    "achievementProficient": "Bilikli",
+    "achievementGrowing": "İnkişaf Edir",
+    "achievementBuilding": "Hazırlanır",
+    "achievementStarting": "Başlanır",
     "challengePeer": "Həmkara meydan oxuyun",
     "challengeLink": "Dəvət linki köçürüldü."
   },
@@ -596,7 +608,8 @@
     "submit": "Təqdim et",
     "search": "Axtarış",
     "noResults": "Nəticə tapılmadı",
-    "viewAll": "Hamısını görüntüləmək"
+    "viewAll": "Hamısını görüntüləmək",
+    "saving": "Saxlanılır..."
   },
   "publicProfile": {
     "auraScore": "AURA Balı",
@@ -674,6 +687,10 @@
     "totalEvents": "Cəmi hadisələr",
     "openEvents": "Açın",
     "completedEvents": "Tamamlanmış",
+    "collectiveAuraTitle": "İstedad Hovuzu AURA",
+    "professionals": "mütəxəssis",
+    "avgAuraLabel": "ort. AURA",
+    "collectiveAuraEmpty": "İstedad hovuzu balını formalaşdırmaq üçün mütəxəssisləri dəvət edin.",
     "myEvents": "Mənim tədbirlərim",
     "noEventsYet": "Hələlik heç bir tədbir yoxdur. İlk tədbirinizi yaradın.",
     "discoveryTitle": "Tərəfdaş Təşkilatlar",
@@ -724,6 +741,21 @@
     "noSearchResults": "Axtarışınıza uyğun peşəkarlar yoxdur.",
     "goToOrg": "Təşkilatın İdarəetmə Panelinə keçin →",
     "pendingTitle": "Qiymətləndirmələr gözləmədə",
-    "pendingDesc": "Mütəxəssislər təyin ediliblər, lakin hələ qiymətləndirmələrini tamamlamayıblar."
+    "pendingDesc": "Mütəxəssislər təyin ediliblər, lakin hələ qiymətləndirmələrini tamamlamayıblar.",
+    "saveSearch": "Axtarışı saxla",
+    "saveSearchHint": "Yeni uyğunluqlar haqqında bildiriş almaq üçün axtarışı saxla",
+    "saveSearchModal": "Bu axtarışı saxla",
+    "saveSearchName": "Axtarış adı",
+    "saveSearchPlaceholder": "məs. Ünsiyyət üzrə mütəxəssislər",
+    "saveSearchCta": "Saxla",
+    "saveSearchSaved": "Saxlanıldı!",
+    "notifyOn": "Yeni uyğunluq tapıldıqda bildiriş al",
+    "notifyOff": "Bildirişsiz"
+  },
+  "character": {
+    "crystalBalance": "Kristal Balansı",
+    "crystals": "kristal",
+    "crystalLabel": "Kristal ikonu",
+    "earnOnVolaura": "Qiymətləndirmələri tamamlayaraq qazan"
   }
 }

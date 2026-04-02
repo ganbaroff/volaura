@@ -1,10 +1,16 @@
-# TASK PROTOCOL v5.3 — Swarm-First Batch Execution
+# TASK PROTOCOL v6.0 — Swarm-First Batch Execution
 
-**Version:** 5.3 | **Updated:** 2026-03-30
-**Previous:** v5.2 (Risk Manager + Readiness Manager integrated throughout)
-**Change:** Agent Briefing Requirements — every agent launch MUST include the VOLAURA CONTEXT BLOCK. Agents launched without project context = CLASS 3 mistake. Full template: `docs/AGENT-BRIEFING-TEMPLATE.md`.
+**Version:** 6.0 | **Updated:** 2026-04-01
+**Previous:** v5.3 (Agent Briefing Requirements)
+**Change v6.0:** Five additions from cross-repo analysis (ZEUS + MindShift + Claude Code patterns):
+1. Step 0 → "Detect + Read": read SESSION-DIFFS.jsonl + code-index.json before proposing
+2. Proposals include trigger-reason (WHY NOW, not just WHAT)
+3. Round-2 debate gate: if top proposal <35/50 AND delta to #2 <5 pts → mandatory Round 2
+4. Outcome verification: agent cannot mark DONE without running verify_outcome() or explicit manual check steps
+5. Session-end skill evolution check: ≥5 trajectories per skill → auto-suggest improvements
 
 **Why v5.0 exists:** Session 73 — All 6 agents proposed improvements after CEO directive "fix routing, rules, speed, efficiency." Proposals reviewed, voted, and implemented in one batch.
+**Why v6.0 exists:** 2026-04-01 — Cross-repo analysis of ZEUS (adaptive executor, context intelligence), MindShift (v6.0 protocol), and Claude Code patterns (heartbeat gate, outcome verification). See `docs/IMPLEMENTATION-ROADMAP.md` for full sprint plan.
 
 ---
 
@@ -12,11 +18,17 @@
 
 ```
 0. FLOW DETECTION  → CTO reads CEO signal → declares which flow: Team Proposes / CTO Plan / HOTFIX
+0b. DETECT + READ  → Read SESSION-DIFFS.jsonl (what changed?) + code-index.json (what exists?)
+                     Declare: "N changes since last run. Relevant to this sprint: [list]."
 1. TEAM PROPOSES   → All agents read SIMULTANEOUSLY (15 min) → propose in parallel (10 min)
+                     Each proposal MUST include: trigger_reason (WHY NOW, what recent event makes this timely)
 2. BATCH ASSEMBLES → Proposals triaged → 12-20 tasks batched by size + effort
 3. TEAM DEBATES    → Agents argue priorities. 3+ votes override CTO.
+                     Round-2 gate: top proposal <35/50 AND delta to #2 <5 pts → mandatory Round 2
 4. PARALLEL EXECUTE → Tasks run simultaneously. Agents own their domain.
+                      Agent cannot mark DONE without: verify_outcome() OR explicit manual verification steps
 5. BATCH CLOSES   → One report to CEO. "What's next" declared. Memory updated.
+                    Skill evolution check: any skill with ≥5 trajectories → suggest improvements
 ```
 
 **Core principle:** Protocol is OPT-OUT, not OPT-IN. Skipping a step requires documenting WHY.
@@ -417,7 +429,8 @@ COMPLETED: [count] tasks — [1-line each]
 DEFERRED: [count] — [why each]
 DISCOVERED: [gaps found during execution]
 BUSINESS IMPACT: [what users can now do that they couldn't before]
-QUESTION: [one question if needed, or NONE]
+QUESTION: NONE  ← default is NONE. A CEO question requires written proof team couldn't answer it.
+                   CEO mandate 2026-04-02: "если ты сам можешь это решить то ко мне не обращайся."
 
 WHAT'S NEXT (NEW — Product P0):
   1. [highest priority unblocked task — ready to start immediately]
@@ -567,6 +580,7 @@ fires → DSP fires. No CTO intervention required.
 | Assumed field names | CLASS 4 | No schema read before coding (now blocked in 3.1) |
 | Invented metrics | CLASS 5 | No source file for claimed number |
 | Built features when basics broken | CEO feedback | P0 issues exist but team builds P3 features |
+| Asked CEO something team could answer | CEO mandate 2026-04-02 | "если ты сам можешь это решить то ко мне не обращайся" — team answers first, CEO only for genuine blockers |
 | Wrong flow type (team-proposes when CTO-plan needed) | CLASS 3 | No Step 0.5 Flow Detection declared |
 | QA self-validates own tests | CLASS 5 | No Cross-QA sign-off (Gate 3.4) |
 | Copywriter fakes READ declaration | CLASS 5 | No C3 verification spot-check |

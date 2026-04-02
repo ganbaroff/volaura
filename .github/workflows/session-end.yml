@@ -36,11 +36,17 @@ jobs:
           cd "${{ github.workspace }}"
           python -m packages.swarm.session_end_hook
 
+      - name: Rebuild code index (Sprint 4 — Context Intelligence)
+        run: |
+          cd "${{ github.workspace }}"
+          python -m packages.swarm.code_index build
+          echo "Code index rebuilt: $(python -c \"import json; d=json.load(open('memory/swarm/code-index.json')); print(d['total_files'], 'files')\")"
+
       - name: Commit session diff and updated context
         run: |
           git config user.name "MiroFish Swarm"
           git config user.email "swarm@volaura.app"
-          git add memory/swarm/SESSION-DIFFS.jsonl memory/swarm/shared-context.md
+          git add memory/swarm/SESSION-DIFFS.jsonl memory/swarm/shared-context.md memory/swarm/code-index.json
           if git diff --staged --quiet; then
             echo "No session diff changes to commit."
           else

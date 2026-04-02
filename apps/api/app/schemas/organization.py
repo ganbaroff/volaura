@@ -8,6 +8,16 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
+class CollectiveAuraResponse(BaseModel):
+    """Aggregated AURA talent pool metrics for an org. Used by Collective AURA Ladders."""
+    model_config = ConfigDict(from_attributes=True)
+
+    org_id: str
+    count: int
+    avg_aura: float | None = None   # None when count == 0
+    trend: float | None = None      # delta vs 30 days ago; None when insufficient data
+
+
 class OrganizationCreate(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -176,6 +186,86 @@ class IntroRequestCreate(BaseModel):
         except ValueError:
             raise ValueError("volunteer_id must be a valid UUID")
         return v
+
+
+# ── Saved Searches (Sprint 8) ─────────────────────────────────────────────────
+
+class SavedSearchFilters(BaseModel):
+    """Mirrors VolunteerSearchRequest — the JSONB payload stored in org_saved_searches.filters.
+
+    Keeping this as a dedicated model (not reusing VolunteerSearchRequest) prevents drift:
+    saved filters never include pagination (limit/offset) and must be stable across versions.
+    """
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    query: str = Field(default="", max_length=500)
+    min_aura: float = Field(default=0.0, ge=0.0, le=100.0)
+    badge_tier: str | None = None
+    languages: list[str] = Field(default_factory=list)
+    location: str | None = Field(default=None, max_length=200)
+
+    @field_validator("badge_tier")
+    @classmethod
+    def validate_badge_tier(cls, v: str | None) -> str | None:
+        if v is not None and v not in ("platinum", "gold", "silver", "bronze"):
+            raise ValueError("badge_tier must be platinum, gold, silver, or bronze")
+        return v
+
+    @field_validator("languages")
+    @classmethod
+    def cap_languages(cls, v: list[str]) -> list[str]:
+        """Prevent unbounded language arrays."""
+        return [lang[:50] for lang in v[:10]]
+
+
+class SavedSearchCreate(BaseModel):
+    """Payload for POST /organizations/{org_id}/saved-searches."""
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    name: str = Field(..., min_length=1, max_length=100)
+    filters: SavedSearchFilters
+    notify_on_match: bool = True
+
+
+class SavedSearchUpdate(BaseModel):
+    """Payload for PATCH /organizations/{org_id}/saved-searches/{search_id}."""
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    name: str | None = Field(default=None, min_length=1, max_length=100)
+    notify_on_match: bool | None = None
+
+
+class SavedSearchOut(BaseModel):
+    """Response for a saved search row."""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    org_id: str
+    name: str
+    filters: dict  # JSONB returned as-is from DB
+    notify_on_match: bool
+    last_checked_at: datetime
+    created_at: datetime
+
+
+class SavedSearchMatchPreview(BaseModel):
+    """Match result returned in CEO Telegram notification — lightweight volunteer summary."""
+    volunteer_id: str
+    display_name: str | None = None
+    overall_score: float
+    badge_tier: str
+    top_competency: str | None = None   # highest-scoring competency slug
+
+
+class SavedSearchMatchNotification(BaseModel):
+    """Structured payload for match notifications — Telegram + ceo-inbox.md."""
+    search_id: str
+    search_name: str
+    org_id: str
+    org_name: str
+    new_match_count: int
+    matches: list[SavedSearchMatchPreview]
+    checked_at: datetime
 
 
 class IntroRequestResponse(BaseModel):

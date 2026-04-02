@@ -1,5 +1,21 @@
 # Architecture Decisions Log
 
+## Session 78 — 2026-04-01 — ROADMAP Retrospective (Swarm 2.0 Planning)
+
+✓ **What went as simulated:** Cross-repo analysis of ZEUS + MindShift + Claude Code patterns yielded concrete, file-level sprint plan. Four previously-missed patterns from ZEUS: Context Intelligence Engine (semantic → code binding), Adaptive Execution Loop (ExecutionState + auto-recovery), Skill Evolution (60% built, missing applier + A/B tester), Social Delivery Pipeline (40% built, not connected). MindShift analysis confirmed volaura-bridge.ts already built + TASK-PROTOCOL v6.0 patterns validated.
+✗ **DSP did not predict:** ZEUS's `context_intelligence_test.py` uses `win32gui` (Windows-only). Context Intelligence Engine needs portability layer before it works on Railway Linux. Sprint 4 updated to acknowledge this.
+→ **Feed into next simulation:** Before adopting ZEUS patterns, check OS dependencies. win32gui, ctypes window handle, etc. = Linux blockers. Abstract at the "semantic mapping" layer (portable) vs "UI binding" layer (platform-specific).
+
+**ADR-007 (new): Ecosystem auth sync strategy — Option C selected**
+Decision: Sprint 7 will emit character_events without cross-project auth sync. MindShift reads Volaura events by user_id. Auth migration deferred until both products have real users.
+Reason: Option A (migrate to shared Supabase) = production migration, can't undo without downtime. Option C = additive, reversible. Standard event-bus pattern.
+
+**TASK-PROTOCOL v5.3 → v6.0 upgrade:**
+Added 5 gates: Detect+Read step, trigger_reason on proposals, Round-2 debate gate, outcome verification, session-end skill evolution.
+Source: MindShift v6.0 protocol + Claude Code patterns + ZEUS adaptive executor.
+
+---
+
 ## Session 76 — 2026-03-30 — BATCH P Retrospective (Security + UX + E2E)
 
 ✓ **What went as simulated:** DSP Path A won (41/50) — P0 security + P1 UX + E2E chain in one batch. SEC-ANSWER-01 subscription gate applied cleanly to submit_answer, mirroring the existing start_assessment pattern. 8/8 paywall tests pass. Celebration ring + next-step nav cards on completion page replaced text-only bullets (WCAG-compliant, useReducedMotion respected). AURA page NextStepCard wired cleanly after EvaluationLog section.

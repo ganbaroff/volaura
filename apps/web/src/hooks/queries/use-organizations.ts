@@ -91,6 +91,31 @@ export function useOrgDashboard() {
   });
 }
 
+/** Collective AURA Ladders — org talent pool aggregate */
+export interface CollectiveAuraData {
+  org_id: string;
+  count: number;
+  avg_aura: number | null;
+  trend: number | null;
+}
+
+export function useCollectiveAura(orgId: string | undefined) {
+  const getToken = useAuthToken();
+
+  return useQuery<CollectiveAuraData, ApiError>({
+    queryKey: ["organizations", orgId, "collective-aura"],
+    enabled: !!orgId,
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      return apiFetch<CollectiveAuraData>(`/api/organizations/${orgId}/collective-aura`, { token });
+    },
+    staleTime: 10 * 60 * 1000, // 10 min — aggregate is not real-time sensitive
+    retry: 1,
+    throwOnError: false,
+  });
+}
+
 export interface IntroRequestPayload {
   volunteer_id: string;
   project_name: string;
@@ -161,6 +186,90 @@ export function useVolunteerSearch() {
         method: "POST",
         body: JSON.stringify({ limit: 20, ...payload }),
       });
+    },
+  });
+}
+
+// ── Saved Searches (Sprint 8) ──────────────────────────────────────────────
+
+export interface SavedSearchFilters {
+  query?: string;
+  min_aura?: number;
+  badge_tier?: "platinum" | "gold" | "silver" | "bronze" | null;
+  languages?: string[];
+  location?: string;
+}
+
+export interface SavedSearchItem {
+  id: string;
+  org_id: string;
+  name: string;
+  filters: SavedSearchFilters;
+  notify_on_match: boolean;
+  last_checked_at: string;
+  created_at: string;
+}
+
+export interface SaveSearchPayload {
+  name: string;
+  filters: SavedSearchFilters;
+  notify_on_match?: boolean;
+}
+
+/** List all saved searches for the current user's org */
+export function useSavedSearches() {
+  const getToken = useAuthToken();
+
+  return useQuery<SavedSearchItem[], ApiError>({
+    queryKey: ["organizations", "saved-searches"],
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      return apiFetch<SavedSearchItem[]>("/api/organizations/saved-searches", { token });
+    },
+    staleTime: 60 * 1000,
+    retry: 1,
+    throwOnError: false,
+  });
+}
+
+/** Save the current search filters under a name */
+export function useCreateSavedSearch() {
+  const getToken = useAuthToken();
+  const queryClient = useQueryClient();
+
+  return useMutation<SavedSearchItem, ApiError, SaveSearchPayload>({
+    mutationFn: async (payload) => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      return apiFetch<SavedSearchItem>("/api/organizations/saved-searches", {
+        token,
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["organizations", "saved-searches"] });
+    },
+  });
+}
+
+/** Delete a saved search */
+export function useDeleteSavedSearch() {
+  const getToken = useAuthToken();
+  const queryClient = useQueryClient();
+
+  return useMutation<void, ApiError, string>({
+    mutationFn: async (searchId) => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      await apiFetch<void>(`/api/organizations/saved-searches/${searchId}`, {
+        token,
+        method: "DELETE",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["organizations", "saved-searches"] });
     },
   });
 }

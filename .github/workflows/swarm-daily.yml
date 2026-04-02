@@ -37,7 +37,25 @@ jobs:
         run: |
           pip install pydantic loguru groq google-genai python-dotenv python-telegram-bot
 
+      - name: Heartbeat gate (KAIROS — should swarm run?)
+        id: gate
+        run: |
+          cd "${{ github.workspace }}"
+          # Exit 0 = RUN, Exit 1 = SKIP
+          # On manual dispatch (workflow_dispatch), always run regardless of gate
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should_run=true" >> $GITHUB_OUTPUT
+            echo "[heartbeat_gate] BYPASS: manual dispatch — always run"
+          else
+            if python -m packages.swarm.heartbeat_gate; then
+              echo "should_run=true" >> $GITHUB_OUTPUT
+            else
+              echo "should_run=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+
       - name: Run autonomous swarm
+        if: steps.gate.outputs.should_run == 'true'
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -51,16 +69,27 @@ jobs:
           cd "${{ github.workspace }}"
           python -m packages.swarm.autonomous_run --mode=${{ github.event.inputs.mode || 'daily-ideation' }}
 
+      - name: Skip notice
+        if: steps.gate.outputs.should_run != 'true'
+        run: |
+          echo "⏭ Swarm skipped by heartbeat gate: no recent git activity, no urgent proposals, stale floor not reached."
+          echo "To force a run: use workflow_dispatch."
+
       - name: Commit proposals and memory
         run: |
           git config user.name "MiroFish Swarm"
           git config user.email "swarm@volaura.app"
+          # Include heartbeat log even if swarm was skipped (gate decision is worth recording)
           git add memory/swarm/
           if git diff --staged --quiet; then
             echo "No new proposals or memory updates to commit."
           else
             # Pull --rebase to prevent conflict if concurrent workflow runs both push
             git pull --rebase origin main
-            git commit -m "swarm: daily autonomous run — $(date -u +%Y-%m-%d)"
+            if [ "${{ steps.gate.outputs.should_run }}" = "true" ]; then
+              git commit -m "swarm: daily autonomous run — $(date -u +%Y-%m-%d)"
+            else
+              git commit -m "swarm: heartbeat gate skip — $(date -u +%Y-%m-%d)"
+            fi
             git push
           fi

@@ -246,6 +246,24 @@ def main() -> None:
     append_session_diff(entry)
     update_shared_context_recently_shipped(entry["new_migrations"], entry["new_routes"])
 
+    # ── Sprint 5: Session-end skill evolution check ───────────────────────────
+    # TASK-PROTOCOL v6.0 Step 5: after every batch, check if any skill has
+    # improvements pending from skill-evolution-log.md. Apply HIGH-priority only.
+    try:
+        from swarm.skill_applier import apply_from_evolution_log
+        evolution_log = project_root / "memory" / "swarm" / "skill-evolution-log.md"
+        if evolution_log.exists():
+            results = apply_from_evolution_log(evolution_log, dry_run=False)
+            if results:
+                applied = sum(1 for r in results if r.success)
+                logger.info(f"Skill evolution: {applied}/{len(results)} improvements applied")
+            else:
+                logger.info("Skill evolution: no HIGH-priority improvements pending")
+        else:
+            logger.info("Skill evolution: skill-evolution-log.md not found — skipping")
+    except Exception as e:
+        logger.warning(f"Skill evolution check failed (non-blocking): {e}")
+
     logger.info(
         "Session hook complete",
         commits=len(entry["commits"]),

@@ -19,6 +19,7 @@ import { useSkill } from "@/hooks/queries/use-skill";
 import { useSubscription } from "@/hooks/queries/use-subscription";
 import { useProfile } from "@/hooks/queries/use-profile";
 import { FeedCards, type FeedCard } from "@/components/dashboard/feed-cards";
+import { CrystalBalanceWidget } from "@/components/dashboard/crystal-balance-widget";
 import { ApiError } from "@/lib/api/client";
 
 // BATCH-O A11Y #3: motion variants — reduced-motion override applied per component via useDashboardMotion hook
@@ -295,6 +296,14 @@ export default function DashboardPage() {
                 leaguePosition={myRank?.rank != null ? `#${myRank.rank}` : null}
               />
             )}
+          </motion.div>
+        )}
+
+        {/* ── Crystal Balance — ecosystem link (Volaura→MindShift→Life Sim) ── */}
+        {/* Only renders when balance > 0; invisible for new users until first assessment */}
+        {hasScore && (
+          <motion.div variants={sVariants}>
+            <CrystalBalanceWidget />
           </motion.div>
         )}
 

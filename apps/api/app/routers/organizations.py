@@ -15,6 +15,7 @@ from app.schemas.organization import (
     AssignAssessmentRequest,
     AssignmentResponse,
     BadgeDistribution,
+    CollectiveAuraResponse,
     IntroRequestCreate,
     IntroRequestResponse,
     OrgDashboardStats,
@@ -22,6 +23,9 @@ from app.schemas.organization import (
     OrganizationCreate,
     OrganizationResponse,
     OrganizationUpdate,
+    SavedSearchCreate,
+    SavedSearchOut,
+    SavedSearchUpdate,
     VolunteerSearchRequest,
     VolunteerSearchResult,
 )
@@ -100,6 +104,29 @@ async def update_my_organization(
     return OrganizationResponse(**result.data[0])
 
 
+# NOTE: /saved-searches GET placed here (before /{org_id}) to prevent route shadowing.
+# FastAPI matches routes in declaration order — static paths must precede parameterized.
+# Same fix class as Mistake #P0-ROUTE (Session 42).
+@router.get(
+    "/saved-searches",
+    response_model=list[SavedSearchOut],
+    summary="List saved searches",
+)
+@limiter.limit(RATE_DEFAULT)
+async def list_saved_searches_early(
+    request: Request,
+    db_admin: SupabaseAdmin,
+    user_id: CurrentUserId,
+) -> list[SavedSearchOut]:
+    """List all saved searches for the current user's organization.
+
+    Defined before /{org_id} to prevent route shadowing.
+    """
+    org_id = await _get_org_id_for_user(db_admin, user_id)
+    result = await db_admin.table("org_saved_searches").select("*").eq("org_id", org_id).order("created_at", desc=True).execute()
+    return [SavedSearchOut(**row) for row in (result.data or [])]
+
+
 @router.get("/{org_id}", response_model=OrganizationResponse)
 @limiter.limit(RATE_DEFAULT)
 async def get_organization(request: Request, org_id: str, db: SupabaseAdmin, user_id: CurrentUserId) -> OrganizationResponse:
@@ -108,6 +135,55 @@ async def get_organization(request: Request, org_id: str, db: SupabaseAdmin, use
     if not result.data:
         raise HTTPException(status_code=404, detail={"code": "ORG_NOT_FOUND", "message": "Organization not found"})
     return OrganizationResponse(**result.data)
+
+
+# ── Collective AURA Ladders ───────────────────────────────────────────────────
+
+@router.get("/{org_id}/collective-aura", response_model=CollectiveAuraResponse)
+@limiter.limit(RATE_DEFAULT)
+async def get_collective_aura(
+    request: Request,
+    org_id: str,
+    db_admin: SupabaseAdmin,
+    user_id: CurrentUserId,
+) -> CollectiveAuraResponse:
+    """Aggregated AURA talent pool metrics for an org's verified professionals.
+
+    Ownership-gated (403 for non-owners). Supports Collective AURA Ladders feature.
+    AURA is a global credential — a volunteer's score appears in all org pools they
+    engaged with (this is intentional, matching the platform's open credential model).
+    """
+    # Fail-closed: verify ownership FIRST (Security Agent mandate — prevent Mistake #57)
+    org_check = await db_admin.table("organizations").select("id").eq("id", org_id).eq("owner_id", user_id).maybe_single().execute()
+    if not org_check.data:
+        raise HTTPException(status_code=403, detail={"code": "NOT_ORG_OWNER", "message": "Access denied"})
+
+    # Get distinct volunteers who completed assessments for this org
+    sessions = await db_admin.table("assessment_sessions").select("volunteer_id").eq("organization_id", org_id).eq("status", "completed").execute()
+    volunteer_ids = list({row["volunteer_id"] for row in (sessions.data or [])})
+
+    if not volunteer_ids:
+        return CollectiveAuraResponse(org_id=org_id, count=0)
+
+    # Fetch AURA scores for these volunteers
+    aura_rows = await db_admin.table("aura_scores").select("volunteer_id, total_score").in_("volunteer_id", volunteer_ids).execute()
+    scores = [row["total_score"] for row in (aura_rows.data or []) if row.get("total_score") is not None]
+
+    if not scores:
+        return CollectiveAuraResponse(org_id=org_id, count=len(volunteer_ids))
+
+    avg_aura = sum(scores) / len(scores)
+
+    # Trend: compare to snapshot 30 days ago (use reward_logs or skip if unavailable)
+    # Simplified: trend is None until historical snapshots are implemented
+    trend: float | None = None
+
+    return CollectiveAuraResponse(
+        org_id=org_id,
+        count=len(volunteer_ids),
+        avg_aura=round(avg_aura, 1),
+        trend=trend,
+    )
 
 
 # ── Org dashboard ─────────────────────────────────────────────────────────────
@@ -668,3 +744,164 @@ async def create_intro_request(
         intro_id=intro["id"],
     )
     return IntroRequestResponse(**intro)
+
+
+# ── Saved Searches (Sprint 8) ─────────────────────────────────────────────────
+
+_MAX_SAVED_SEARCHES_PER_ORG = 20  # Anti-spam cap. Error message beats DB constraint.
+
+
+async def _get_org_id_for_user(db_admin: SupabaseAdmin, user_id: str) -> str:
+    """Returns org.id for the authenticated user. Raises 404 if user has no org."""
+    result = await db_admin.table("organizations").select("id").eq("owner_id", user_id).maybe_single().execute()
+    if not result.data:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "ORG_NOT_FOUND", "message": "You do not have an organization"},
+        )
+    return result.data["id"]
+
+
+async def _assert_search_ownership(
+    db_admin: SupabaseAdmin, search_id: str, org_id: str
+) -> dict:
+    """Returns the search row if it belongs to this org. Raises 404 otherwise.
+
+    Security: prevents org A from reading/deleting org B's saved searches by
+    checking both search_id AND org_id in the same query.
+    """
+    result = await db_admin.table("org_saved_searches").select("*").eq("id", search_id).eq("org_id", org_id).maybe_single().execute()
+    if not result.data:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "SEARCH_NOT_FOUND", "message": "Saved search not found"},
+        )
+    return result.data
+
+
+@router.post(
+    "/saved-searches",
+    response_model=SavedSearchOut,
+    status_code=201,
+    summary="Save a talent search",
+)
+@limiter.limit(RATE_PROFILE_WRITE)
+async def create_saved_search(
+    request: Request,
+    payload: SavedSearchCreate,
+    db_admin: SupabaseAdmin,
+    user_id: CurrentUserId,
+) -> SavedSearchOut:
+    """Save the current search filters under a name for later recall and match notifications.
+
+    Security:
+    - User must own an organization (org_id derived from JWT, never from body)
+    - Cap: max 20 saved searches per org
+    - Duplicate names rejected with 409
+    """
+    org_id = await _get_org_id_for_user(db_admin, user_id)
+
+    # Enforce cap before insert
+    count_res = await db_admin.table("org_saved_searches").select("id", count="exact").eq("org_id", org_id).execute()
+    current_count = count_res.count or 0
+    if current_count >= _MAX_SAVED_SEARCHES_PER_ORG:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "code": "SAVED_SEARCH_LIMIT",
+                "message": f"Maximum {_MAX_SAVED_SEARCHES_PER_ORG} saved searches per organization",
+            },
+        )
+
+    insert_data = {
+        "org_id": org_id,
+        "name": payload.name,
+        "filters": payload.filters.model_dump(exclude_none=True),
+        "notify_on_match": payload.notify_on_match,
+    }
+
+    try:
+        result = await db_admin.table("org_saved_searches").insert(insert_data).execute()
+    except Exception as exc:
+        err_str = str(exc)
+        if "unique" in err_str.lower() or "duplicate" in err_str.lower():
+            raise HTTPException(
+                status_code=409,
+                detail={"code": "DUPLICATE_NAME", "message": "A saved search with this name already exists"},
+            )
+        logger.error("Failed to create saved search", org_id=org_id, error=err_str)
+        raise HTTPException(status_code=500, detail={"code": "CREATE_FAILED", "message": "Failed to save search"})
+
+    if not result.data:
+        raise HTTPException(status_code=500, detail={"code": "CREATE_FAILED", "message": "Failed to save search"})
+
+    logger.info("Saved search created", org_id=org_id, name=payload.name)
+    return SavedSearchOut(**result.data[0])
+
+
+# list_saved_searches moved before /{org_id} — see list_saved_searches_early above.
+
+
+@router.patch(
+    "/saved-searches/{search_id}",
+    response_model=SavedSearchOut,
+    summary="Update a saved search",
+)
+@limiter.limit(RATE_PROFILE_WRITE)
+async def update_saved_search(
+    request: Request,
+    search_id: str,
+    payload: SavedSearchUpdate,
+    db_admin: SupabaseAdmin,
+    user_id: CurrentUserId,
+) -> SavedSearchOut:
+    """Update the name or notify_on_match setting for a saved search.
+
+    Security: verifies the search belongs to the caller's org before updating.
+    """
+    # Validate UUID
+    try:
+        uuid.UUID(search_id)
+    except ValueError:
+        raise HTTPException(status_code=422, detail={"code": "INVALID_ID", "message": "search_id must be a valid UUID"})
+
+    org_id = await _get_org_id_for_user(db_admin, user_id)
+    await _assert_search_ownership(db_admin, search_id, org_id)
+
+    update_data = payload.model_dump(exclude_none=True)
+    if not update_data:
+        raise HTTPException(status_code=422, detail={"code": "NO_FIELDS", "message": "No fields to update"})
+
+    result = await db_admin.table("org_saved_searches").update(update_data).eq("id", search_id).execute()
+    if not result.data:
+        raise HTTPException(status_code=500, detail={"code": "UPDATE_FAILED", "message": "Failed to update search"})
+    return SavedSearchOut(**result.data[0])
+
+
+@router.delete(
+    "/saved-searches/{search_id}",
+    status_code=204,
+    summary="Delete a saved search",
+)
+@limiter.limit(RATE_PROFILE_WRITE)
+async def delete_saved_search(
+    request: Request,
+    search_id: str,
+    db_admin: SupabaseAdmin,
+    user_id: CurrentUserId,
+) -> None:
+    """Delete a saved search. Ownership verified before delete.
+
+    Security: double-check org ownership (search_id alone is not enough).
+    Returns 204 No Content on success.
+    """
+    try:
+        uuid.UUID(search_id)
+    except ValueError:
+        raise HTTPException(status_code=422, detail={"code": "INVALID_ID", "message": "search_id must be a valid UUID"})
+
+    org_id = await _get_org_id_for_user(db_admin, user_id)
+    await _assert_search_ownership(db_admin, search_id, org_id)
+
+    await db_admin.table("org_saved_searches").delete().eq("id", search_id).execute()
+    logger.info("Saved search deleted", org_id=org_id, search_id=search_id)

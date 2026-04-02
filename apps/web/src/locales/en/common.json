@@ -233,6 +233,11 @@
     "infoRetakeCooldown": "Available in {{days}} days",
     "infoNoDescription": "Test your skills and get a verified score for this competency.",
     "infoContinueButton": "Continue to Assessment",
+    "progressToNextTier": "{{pts}} pts to {{tier}}",
+    "tierMaxReached": "Platinum tier reached! 🏆",
+    "milestonePlatinum": "🏆 Platinum Tier Achieved!",
+    "milestoneGold": "🥇 Gold Tier!",
+    "milestoneDiscoverable": "You're now discoverable to organizations on Volaura.",
     "shareNudge": "You're in the top tier — let organizations find you.",
     "shareNudgeSilver": "Building momentum — share your progress and challenge a peer.",
     "shareNudgeLow": "Share your progress — every score tells a story.",
@@ -350,7 +355,7 @@
     "saving": "Saving...",
     "whyTitle": "Prove your skills. Get discovered.",
     "whyDesc": "One assessment earns your AURA badge. Organizations actively search for verified professionals like you.",
-    "namePlaceholder": "Your full name",
+    "namePlaceholder": "Full name (e.g. Yusif Eldar oglu)",
     "usernamePlaceholder": "your_username",
     "locationPlaceholder": "Your city",
     "step1Title": "Welcome, {{name}}! 👋",
@@ -449,6 +454,13 @@
     "founding1000": "Founding 1000",
     "earlyAdopter": "Early Adopter",
     "topPercent": "Top {{percent}}%",
+    "achievementLabel": "Achievement Level",
+    "achievementExpert": "Expert",
+    "achievementAdvanced": "Advanced",
+    "achievementProficient": "Proficient",
+    "achievementGrowing": "Growing",
+    "achievementBuilding": "Building",
+    "achievementStarting": "Starting Out",
     "challengePeer": "Challenge a peer",
     "challengeLink": "Invite link copied!"
   },
@@ -596,7 +608,8 @@
     "submit": "Submit",
     "search": "Search",
     "noResults": "No results found",
-    "viewAll": "View All"
+    "viewAll": "View All",
+    "saving": "Saving…"
   },
   "publicProfile": {
     "auraScore": "AURA Score",
@@ -674,6 +687,10 @@
     "totalEvents": "Total events",
     "openEvents": "Open",
     "completedEvents": "Completed",
+    "collectiveAuraTitle": "Talent Pool AURA",
+    "professionals": "professionals",
+    "avgAuraLabel": "avg AURA",
+    "collectiveAuraEmpty": "Invite professionals to start building your talent pool score.",
     "myEvents": "My events",
     "noEventsYet": "No events yet. Create your first event.",
     "discoveryTitle": "Partner Organizations",
@@ -724,6 +741,21 @@
     "noSearchResults": "No professionals match your search",
     "goToOrg": "Go to Organization Dashboard →",
     "pendingTitle": "assessments pending",
-    "pendingDesc": "Professionals have been assigned but haven't completed their assessment yet."
+    "pendingDesc": "Professionals have been assigned but haven't completed their assessment yet.",
+    "saveSearch": "Save search",
+    "saveSearchHint": "Save this search to get notified of new matches",
+    "saveSearchModal": "Save this search",
+    "saveSearchName": "Search name",
+    "saveSearchPlaceholder": "e.g. Senior communicators",
+    "saveSearchCta": "Save search",
+    "saveSearchSaved": "Saved!",
+    "notifyOn": "Notify me when new talent matches",
+    "notifyOff": "No notifications"
+  },
+  "character": {
+    "crystalBalance": "Crystal Balance",
+    "crystals": "crystals",
+    "crystalLabel": "Crystal gem icon",
+    "earnOnVolaura": "Earn by completing assessments"
   }
 }

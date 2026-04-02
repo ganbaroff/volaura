@@ -286,11 +286,12 @@ Tag [ESCALATE] if you find process violations."""
 
     weight_line = f"\nYOUR CALIBRATION: {perspective.get('weight_context', '')}" if perspective.get('weight_context') else ""
     skills_line = f"\nROUTED SKILLS: {', '.join(perspective.get('routed_skills', []))}" if perspective.get('routed_skills') else ""
+    bound_files_line = f"\n\n{perspective.get('bound_files', '')}" if perspective.get('bound_files') else ""
 
     return f"""{team_context}
 
 YOUR PERSPECTIVE: {perspective['name']}
-YOUR LENS: {perspective['lens']}{weight_line}{skills_line}
+YOUR LENS: {perspective['lens']}{weight_line}{skills_line}{bound_files_line}
 
 {task}
 
@@ -315,55 +316,104 @@ async def _call_agent(
     perspective_name: str,
     env: dict[str, str],
 ) -> dict | None:
-    """Call a single LLM agent and parse response."""
-    try:
-        # Try Groq first (fastest, free)
-        groq_key = env.get("GROQ_API_KEY", "")
-        if groq_key:
-            from groq import AsyncGroq
-            client = AsyncGroq(api_key=groq_key)
+    """Call a single LLM agent and parse response.
+
+    Model routing — NVIDIA NIM primary (added 2026-04-02):
+      Heavy reasoning agents → nvidia/llama-3.1-nemotron-ultra-253b-v1
+      Speed agents           → meta/llama-3.3-70b-instruct
+      Fallback 1             → Groq llama-3.3-70b-versatile
+      Fallback 2             → Gemini 2.5 Flash
+
+    Asymmetric judging preserved: _judge_proposal() always uses Gemini
+    regardless of generator — avoids self-favor inflation (Zheng et al. 2023).
+    """
+    import re
+
+    # Agents that benefit most from deep reasoning
+    _HEAVY = {"CTO Watchdog", "Risk Manager", "Readiness Manager"}
+    _NVIDIA_BASE = "https://integrate.api.nvidia.com/v1"
+
+    raw = ""
+
+    # ── Primary: NVIDIA NIM ───────────────────────────────────────────────────
+    nvidia_key = env.get("NVIDIA_API_KEY", "")
+    if nvidia_key and not raw:
+        try:
+            from openai import AsyncOpenAI
+            model = (
+                "nvidia/llama-3.1-nemotron-ultra-253b-v1"
+                if perspective_name in _HEAVY
+                else "meta/llama-3.3-70b-instruct"
+            )
             resp = await asyncio.wait_for(
-                client.chat.completions.create(
+                AsyncOpenAI(base_url=_NVIDIA_BASE, api_key=nvidia_key)
+                .chat.completions.create(
+                    model=model,
+                    messages=[{"role": "user", "content": prompt}],
+                    temperature=1.0,
+                    max_tokens=1000,
+                ),
+                timeout=45.0,  # heavy models need more time
+            )
+            raw = resp.choices[0].message.content or ""
+            logger.debug(f"Agent {perspective_name} → NVIDIA {model.split('/')[-1]}")
+        except Exception as e:
+            logger.warning(f"NVIDIA NIM failed for {perspective_name}, falling back: {e}")
+
+    # ── Fallback 1: Groq ──────────────────────────────────────────────────────
+    groq_key = env.get("GROQ_API_KEY", "")
+    if groq_key and not raw:
+        try:
+            from groq import AsyncGroq
+            resp = await asyncio.wait_for(
+                AsyncGroq(api_key=groq_key).chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=[{"role": "user", "content": prompt}],
-                    temperature=1.0,  # Session 51: CEO mandated full honesty. 1.0 > 0.7 for strategic decisions.
+                    temperature=1.0,
                     max_tokens=1000,
                     response_format={"type": "json_object"},
                 ),
                 timeout=15.0,
             )
             raw = resp.choices[0].message.content or ""
-        else:
-            # Fallback to Gemini
-            gemini_key = env.get("GEMINI_API_KEY", "")
-            if not gemini_key:
-                logger.warning(f"No API keys for agent {perspective_name}")
-                return None
+            logger.debug(f"Agent {perspective_name} → Groq fallback")
+        except Exception as e:
+            logger.warning(f"Groq fallback failed for {perspective_name}: {e}")
+
+    # ── Fallback 2: Gemini ────────────────────────────────────────────────────
+    gemini_key = env.get("GEMINI_API_KEY", "")
+    if gemini_key and not raw:
+        try:
             from google import genai
-            client = genai.Client(api_key=gemini_key)
             resp = await asyncio.wait_for(
                 asyncio.to_thread(
-                    client.models.generate_content,
+                    genai.Client(api_key=gemini_key).models.generate_content,
                     model="gemini-2.5-flash",
                     contents=prompt,
                 ),
                 timeout=20.0,
             )
             raw = resp.text or ""
+            logger.debug(f"Agent {perspective_name} → Gemini fallback")
+        except Exception as e:
+            logger.error(f"All LLM providers failed for {perspective_name}: {e}")
 
-        # Parse JSON
-        import re
+    if not raw:
+        logger.warning(f"No API keys or all providers failed for agent {perspective_name}")
+        return None
+
+    # ── Parse JSON ────────────────────────────────────────────────────────────
+    try:
         text = re.sub(r"```(?:json)?", "", raw).strip().rstrip("`")
-        if text.startswith("{"):
-            data = json.loads(text)
-            data["agent"] = perspective_name
-            return data
-        else:
-            logger.warning(f"Agent {perspective_name} returned non-JSON: {raw[:100]}")
-            return None
-
-    except Exception as e:
-        logger.error(f"Agent {perspective_name} failed: {e}")
+        # NVIDIA models sometimes wrap JSON in prose — extract first {...} block
+        match = re.search(r"\{.*\}", text, re.DOTALL)
+        if match:
+            text = match.group(0)
+        data = json.loads(text)
+        data["agent"] = perspective_name
+        return data
+    except Exception:
+        logger.warning(f"Agent {perspective_name} returned non-JSON: {raw[:150]}")
         return None
 
 
@@ -458,15 +508,39 @@ async def run_autonomous(mode: str = "daily-ideation") -> list[Proposal]:
     registry = PerspectiveRegistry(project_root)
     skills_dir = project_root / "memory" / "swarm" / "skills"
 
+    # ── Sprint 4: Pre-bind tasks to files using code index ───────────────────
+    # Each perspective has a lens (a task description). Bind that lens to files
+    # so agents know WHERE to look before they guess.
+    try:
+        from swarm.task_binder import bind_task_to_files
+        from swarm.code_index import load_index
+        _code_index = load_index(project_root)
+        logger.info(f"Code index loaded: {_code_index.get('total_files', 0)} files")
+    except Exception as e:
+        logger.warning(f"Code index unavailable (non-blocking): {e}")
+        _code_index = None
+
     # Launch all agents in parallel (weight context injected per perspective)
     tasks = []
     for perspective in PERSPECTIVES:
         weight_ctx = registry.inject_weight_context(perspective["name"])
         routed_skills = _route_skills_for_perspective(perspective["name"], skills_dir)
+
+        # Bind lens to files (Sprint 4 — Context Intelligence)
+        bound_files_section = ""
+        if _code_index is not None:
+            try:
+                bound = bind_task_to_files(perspective["lens"], _code_index, project_root)
+                if bound.primary_files:
+                    bound_files_section = bound.to_briefing_section()
+            except Exception:
+                pass  # non-blocking
+
         enriched_perspective = {
             **perspective,
             "weight_context": weight_ctx,
             "routed_skills": routed_skills,
+            "bound_files": bound_files_section,
         }
         prompt = _build_agent_prompt(enriched_perspective, project_state, mode)
         tasks.append(_call_agent(prompt, perspective["name"], env))
@@ -660,20 +734,87 @@ async def main():
 
     proposals = await run_autonomous(args.mode)
 
+    # ── Sprint 1: Proposal Groundedness Check ─────────────────────────────────
+    # Verify that file paths cited in proposals actually exist.
+    # Ungrounded proposals are tagged [UNGROUNDED] — never silently dropped.
+    try:
+        from swarm.proposal_verifier import tag_proposal_if_ungrounded
+        proposal_dicts = [
+            {
+                "title": p.title,
+                "content": p.content,
+                "agent": p.agent,
+            }
+            for p in proposals
+        ]
+        ungrounded_count = 0
+        for i, p_dict in enumerate(proposal_dicts):
+            verified = tag_proposal_if_ungrounded(p_dict, project_root)
+            if "[UNGROUNDED]" in verified.get("title", ""):
+                ungrounded_count += 1
+                proposals[i].title = verified["title"]  # propagate tag to Proposal object
+        if ungrounded_count:
+            logger.warning(
+                f"Groundedness check: {ungrounded_count}/{len(proposals)} proposals have invalid file references. "
+                "Tagged [UNGROUNDED]. See memory/swarm/ungrounded-proposals.jsonl"
+            )
+        else:
+            logger.info(f"Groundedness check: all {len(proposals)} proposals cite valid files (or no files)")
+    except Exception as e:
+        logger.warning(f"Proposal verifier failed (non-blocking): {e}")
+
     # Send Telegram notifications for HIGH/CRITICAL
     await send_telegram_notifications(proposals)
 
-    # Print summary to stdout (for GitHub Actions logs)
-    print(f"\n{'='*60}")
-    print(f"SWARM AUTONOMOUS RUN — {args.mode}")
-    print(f"{'='*60}")
-    print(f"Agents: {len(PERSPECTIVES)}")
-    print(f"Proposals: {len(proposals)}")
-    print(f"Escalations: {sum(1 for p in proposals if p.escalate_to_ceo)}")
-    for p in proposals:
-        emoji = {"critical": "[CRIT]", "high": "[HIGH]", "medium": "[MED]", "low": "[LOW]"}
-        print(f"  {emoji.get(p.severity.value, '[?]')} {p.title}")
-    print(f"{'='*60}\n")
+    # ── Sprint 6: Report Generator — structured batch close ──────────────────
+    suggestions = []
+    groundedness_score = 1.0
+    ungrounded_count = 0
+
+    # Gather groundedness from proposals (tagged by verifier above)
+    ungrounded = sum(1 for p in proposals if "[UNGROUNDED]" in p.title)
+    ungrounded_count = ungrounded
+    groundedness_score = 1.0 - (ungrounded / max(len(proposals), 1))
+
+    # Sprint 2: Predictive Next Actions
+    try:
+        from swarm.suggestion_engine import generate_suggestions
+        proposal_list = [{"title": p.title, "content": p.content, "severity": p.severity.value} for p in proposals]
+        suggestions = generate_suggestions(
+            completed_proposals=proposal_list,
+            project_root_override=project_root,
+            env=dict(os.environ),
+        )
+        logger.info(f"Suggestion engine: {len(suggestions)} predicted next actions generated")
+    except Exception as e:
+        logger.warning(f"Suggestion engine failed (non-blocking): {e}")
+
+    # Build structured report
+    try:
+        from swarm.report_generator import generate_batch_report, write_to_ceo_inbox, format_for_stdout
+        report = generate_batch_report(
+            proposals=proposals,
+            groundedness_score=groundedness_score,
+            ungrounded_count=ungrounded_count,
+            predictions=suggestions,
+            mode=args.mode,
+        )
+        # Write to ceo-inbox.md (replaces simple suggestion append)
+        write_to_ceo_inbox(report)
+        # Print structured stdout summary
+        print(format_for_stdout(report))
+        logger.info(f"Batch report written to ceo-inbox.md | Health: {report.health_indicator}")
+    except Exception as e:
+        # Fallback to plain print if report generator fails
+        logger.warning(f"Report generator failed (non-blocking): {e}")
+        print(f"\n{'='*60}")
+        print(f"SWARM AUTONOMOUS RUN — {args.mode}")
+        print(f"{'='*60}")
+        print(f"Proposals: {len(proposals)}")
+        for p in proposals:
+            emoji = {"critical": "[CRIT]", "high": "[HIGH]", "medium": "[MED]", "low": "[LOW]"}
+            print(f"  {emoji.get(p.severity.value, '[?]')} {p.title}")
+        print(f"{'='*60}\n")
 
     # ── Memory consolidation (SWS sleep cycle) ─────────────────────────────────
     # Runs after every autonomous session — synthesizes feedback log → distilled rules

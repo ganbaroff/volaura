@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { API_BASE } from "@/lib/api/client";
+import { useTrackEvent } from "@/hooks/use-analytics";
 
 // Static competency metadata — labels fetched from i18n, weights from CLAUDE.md
 const COMPETENCIES = [
@@ -33,6 +34,7 @@ function AssessmentContent() {
   const searchParams = useSearchParams();
   const locale = i18n.language;
   const { setCompetencies, setSession, setQuestion } = useAssessmentStore();
+  const track = useTrackEvent();
   const isMounted = useRef(true);
 
   const [selected, setSelected] = useState<Set<CompetencyId>>(new Set());
@@ -122,6 +124,17 @@ function AssessmentContent() {
           }
           return;
         }
+        // 409 = active session already exists — resume it instead of showing error
+        if (res.status === 409) {
+          const body = await res.json().catch(() => ({})) as { session_id?: string };
+          if (body.session_id && isMounted.current) {
+            setSession(body.session_id);
+            router.push(`/${locale}/assessment/${body.session_id}`);
+          } else if (isMounted.current) {
+            setIsStarting(false);
+          }
+          return;
+        }
         throw new Error("start_failed");
       }
 
@@ -133,6 +146,7 @@ function AssessmentContent() {
       if (data.next_question) {
         setQuestion(data.next_question);
       }
+      track("assessment_started", { competency_slug: competencyList[0] }, data.session_id);
       router.push(`/${locale}/assessment/${data.session_id}`);
     } catch {
       if (isMounted.current) {

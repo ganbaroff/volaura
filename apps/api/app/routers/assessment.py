@@ -58,7 +58,9 @@ from app.schemas.assessment import (
 from app.services.assessment.coaching_service import generate_coaching_tips
 from app.services.assessment.helpers import get_competency_id, fetch_questions, make_session_out, get_competency_slug
 from app.services.assessment.rewards import emit_assessment_rewards
+from app.services.analytics import track_event
 from app.services.notification_service import notify
+from app.services.tribe_streak_tracker import record_assessment_activity
 
 router = APIRouter(prefix="/assessment", tags=["Assessment"])
 
@@ -480,9 +482,12 @@ async def submit_answer(
                     cap=_DAILY_LLM_CAP,
                 )
         except Exception as _cap_err:
-            # Cap check failure must never block the answer path — proceed normally
+            # Cap check failure → fail-closed: degrade to keyword fallback rather than
+            # allowing unlimited LLM calls. Supabase timeout/network error must not
+            # defeat the anti-saturation guard (RISK-013).
+            _force_degraded = True
             logger.warning(
-                "daily_llm_cap_check_failed — proceeding without cap",
+                "daily_llm_cap_check_failed — degrading to keyword fallback",
                 user_id=user_id,
                 error=str(_cap_err)[:120],
             )
@@ -747,6 +752,32 @@ async def complete_assessment(
             competency_score=competency_score,
             user_jwt=_user_jwt,
         ) or 0)
+
+    # Tribe streak: record activity for current week (fire-and-forget, never blocks response)
+    try:
+        await record_assessment_activity(db=db_admin, user_id=str(user_id))
+    except Exception:
+        pass  # tribe streak failure must never fail assessment completion
+
+    # Analytics: assessment_completed event (fire-and-forget, never blocks response)
+    try:
+        await track_event(
+            db=db_admin,
+            user_id=str(user_id),
+            event_name="assessment_completed",
+            session_id=session_id,
+            properties={
+                "competency_slug": slug,
+                "competency_score": competency_score,
+                "questions_answered": len(state.items),
+                "stop_reason": state.stop_reason,
+                "aura_updated": aura_updated,
+                "crystals_earned": crystals_earned,
+                "gaming_flags": gaming.flags,
+            },
+        )
+    except Exception:
+        pass  # analytics failure must never fail assessment completion
 
     return AssessmentResultOut(
         session_id=session_id,

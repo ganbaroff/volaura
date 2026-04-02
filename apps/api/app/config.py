@@ -76,10 +76,10 @@ class Settings(BaseSettings):
     stripe_price_id: str = ""  # Monthly subscription price ID (e.g. price_xxx from Stripe dashboard)
 
     # Invite gate — controlled beta access (RISK-014)
-    # open_signup=True  → anyone can register (dev default)
-    # open_signup=False → invite code required (set on Railway for production)
+    # open_signup=True  → anyone can register
+    # open_signup=False → invite code required (SAFE DEFAULT — must explicitly set OPEN_SIGNUP=true on Railway to open)
     # beta_invite_code  → set BETA_INVITE_CODE env var on Railway (empty = gate disabled even if open_signup=False)
-    open_signup: bool = True
+    open_signup: bool = False
     beta_invite_code: str = ""
 
     # Google Cloud — Translation LLM for AZ language quality (research 2026-03-31)
@@ -88,6 +88,11 @@ class Settings(BaseSettings):
     # Free tier: 500k chars/month — covers all Volaura content at current scale
     # If not set, falls back to Gemini direct translation with AZ-specialized prompt
     gcp_project_id: str = ""  # GCP project with Translation API enabled
+
+    # Cron jobs — internal endpoints called by GitHub Actions (not user-facing)
+    # Set CRON_SECRET on Railway; same value must be in GitHub Actions secrets.
+    # Empty = cron endpoints return 403 (safe default).
+    cron_secret: str = ""
 
     # MindShift — companion ADHD app (cross-product crystal/XP events)
     mindshift_url: str = ""  # e.g. https://mindshift.app — added to CORS in production

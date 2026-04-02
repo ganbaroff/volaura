@@ -240,11 +240,16 @@ export default function OnboardingPage() {
       }
 
       if (isMounted.current) {
-        // Redirect to assessment — carry selected competency so user starts immediately
-        const competencyParam = formData.selectedCompetency
-          ? `?competency=${encodeURIComponent(formData.selectedCompetency)}`
-          : "";
-        router.push(`/${locale}/assessment${competencyParam}`);
+        if (accountType === "organization") {
+          // Org accounts go to their dashboard, not assessment
+          router.push(`/${locale}/my-organization`);
+        } else {
+          // Volunteers: redirect to assessment — carry selected competency so user starts immediately
+          const competencyParam = formData.selectedCompetency
+            ? `?competency=${encodeURIComponent(formData.selectedCompetency)}`
+            : "";
+          router.push(`/${locale}/assessment${competencyParam}`);
+        }
       }
     } catch {
       if (isMounted.current) {

@@ -493,7 +493,7 @@ class AutonomousUpgradeProtocol:
 
     async def _benchmark(self, questions: list[str]) -> BenchmarkResult:
         """Run N quick decisions and collect performance metrics."""
-        from .types import SwarmConfig, StakesLevel
+        from .swarm_types import SwarmConfig, StakesLevel
 
         successes = 0
         scores: list[float] = []

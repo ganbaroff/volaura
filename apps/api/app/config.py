@@ -60,6 +60,11 @@ class Settings(BaseSettings):
     # Monitoring — V-EYE: error tracking + performance
     sentry_dsn: str = ""         # Org: volaura, Project: volaura-api (created 2026-03-29)
 
+    # NVIDIA NIM — 160+ open-source models, OpenAI-compatible, free tier — added 2026-04-02
+    # Base URL: https://integrate.api.nvidia.com/v1 — drop-in OpenAI SDK replacement
+    # Swarm routing: nemotron-ultra-253b (reasoning agents) + llama-3.3-70b (speed agents)
+    nvidia_api_key: str = ""
+
     # Stripe (MVP-1)
     # ── KILL SWITCH ──────────────────────────────────────────────────────────────
     # payment_enabled=False (default): paywall bypassed, checkout returns 503.

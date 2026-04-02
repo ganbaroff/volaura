@@ -46,6 +46,9 @@ Thumbs.db
 supabase/.temp/
 supabase/.branches/
 
+# Generated API schema — regenerated at build time, never committed
+apps/api/openapi.json
+
 # Testing
 coverage/
 htmlcov/

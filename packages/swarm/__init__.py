@@ -67,7 +67,7 @@ from .structured_memory import (
     StructuredMemory,
     WorldFact,
 )
-from .types import (
+from .swarm_types import (
     AgentResult,
     CalibrationEntry,
     DimensionScores,

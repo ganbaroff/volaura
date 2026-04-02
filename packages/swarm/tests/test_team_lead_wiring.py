@@ -21,7 +21,7 @@ from packages.swarm.team_leads import (
     SpeedTeamLead,
     get_tilead_for_domain,
 )
-from packages.swarm.types import DomainTag, SwarmConfig
+from packages.swarm.swarm_types import DomainTag, SwarmConfig
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────

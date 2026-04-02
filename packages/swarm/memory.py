@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 
 from loguru import logger
 
-from .types import (
+from .swarm_types import (
     CalibrationEntry,
     DomainTag,
     ModelProfile,

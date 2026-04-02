@@ -19,7 +19,7 @@ from __future__ import annotations
 import random
 from pathlib import Path
 
-from .types import SwarmConfig
+from .swarm_types import SwarmConfig
 
 
 # ── Modular prompt loading ──────────────────────────

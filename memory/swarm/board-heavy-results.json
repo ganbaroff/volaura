@@ -1,0 +1,30 @@
+[
+  {
+    "title": "Bet on Tribe Streaks for Cultural Moats",
+    "winning_mechanic": "Tribe Streaks & Kudos",
+    "why_it_works": "Leverages collectivist psychology by anchoring progress to small-group accountability. Social commitment (not competition) drives retention. Fading tokens create urgency without individual shame, aligning with 'rising together' cultural values.",
+    "critical_risk": "Toxicity if tribe formation isn't curated (e.g., mismatched peers cause guilt spirals). Team hasn't planned for anti-harassment safeguards in streak breaking.",
+    "implementation_sketch": "1) Supabase functions for 3-person cohort matching (1 day). 2) Streak counter + decay logic in FastAPI (2 days). 3) Kudos notification UI in Tailwind/Next.js (2 days). 4) Test streak reset scenarios (1 day).",
+    "kill_this": "AURA Score Leaderboard (mechanic 1) — direct cultural mismatch. Anxiety from public rankings will suppress usage in Azerbaijan/CIS.",
+    "severity": "high",
+    "type": "idea",
+    "content": "Tribe Streaks creates a viral coefficient through peer invites and shared accountability, which competitors can't easily replicate without deep cultural insight. Leaderboards are a trap, but the team's focus on 'group visibility' in mechanic 4 is a weaker alternative. The real moat is combining streaks with crystal economy decay — users must engage to preserve group status, not just earn points. Critical to launch before any individual-focused features.",
+    "confidence": 0.85,
+    "agent": "Strategic Board Director",
+    "model": "llama-3.1-nemotron-ultra-253b-v1"
+  },
+  {
+    "title": "Adopt Collective AURA Ladders for Cultural Fit",
+    "winning_mechanic": "Collective AURA Ladders",
+    "why_it_works": "Activates shared achievement and social identity by lifting group visibility, aligning with collectivist values of 'rising together'. Avoids individual rankings, reducing anxiety. Crystal Pools create a tangible goal for collaborative effort, reinforcing psychological safety through mutual progress.",
+    "critical_risk": "Groups may form exclusionary 'cliques' if pool membership isn't fluid, creating in-group/out-group dynamics. Requires automated, rotating group assignments to prevent fragmentation.",
+    "implementation_sketch": "1) Group Profile Component (Tailwind UI), 2) Collective Rank Algorithm (FastAPI), 3) Crystal Pool Progress Bars (realtime Supabase updates). 1-week effort: 3 days backend logic, 2 days UI/UX, 1 day testing.",
+    "kill_this": "Proposal 1 (AURA Leaderboard) — directly undermines cultural norms by framing success as zero-sum competition, triggering anxiety and disengagement in CIS users.",
+    "severity": "high",
+    "type": "idea",
+    "content": "Collective AURA Ladders align with Azerbaijan/CIS collectivism by prioritizing group success. Psychological safety is maintained through shared goals, while Crystal Pools incentivize collaboration. Avoid Leaderboards (trap) and focus on rotating groups to prevent cliques. Implement via Supabase-driven group profiles and FastAPI rank calculations.",
+    "confidence": 0.85,
+    "agent": "Chief People Officer",
+    "model": "llama-3.1-nemotron-ultra-253b-v1"
+  }
+]

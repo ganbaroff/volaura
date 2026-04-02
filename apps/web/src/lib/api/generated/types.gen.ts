@@ -802,6 +802,52 @@ export type RegistrationResponse = {
 };
 
 /**
+ * Payload for POST /organizations/{org_id}/saved-searches.
+ */
+export type SavedSearchCreate = {
+    name: string;
+    filters: SavedSearchFilters;
+    notify_on_match?: boolean;
+};
+
+/**
+ * Mirrors VolunteerSearchRequest — the JSONB payload stored in org_saved_searches.filters.
+ *
+ * Keeping this as a dedicated model (not reusing VolunteerSearchRequest) prevents drift:
+ * saved filters never include pagination (limit/offset) and must be stable across versions.
+ */
+export type SavedSearchFilters = {
+    query?: string;
+    min_aura?: number;
+    badge_tier?: string | null;
+    languages?: Array<string>;
+    location?: string | null;
+};
+
+/**
+ * Response for a saved search row.
+ */
+export type SavedSearchOut = {
+    id: string;
+    org_id: string;
+    name: string;
+    filters: {
+        [key: string]: unknown;
+    };
+    notify_on_match: boolean;
+    last_checked_at: string;
+    created_at: string;
+};
+
+/**
+ * Payload for PATCH /organizations/{org_id}/saved-searches/{search_id}.
+ */
+export type SavedSearchUpdate = {
+    name?: string | null;
+    notify_on_match?: boolean | null;
+};
+
+/**
  * Lightweight session state returned after start/answer.
  *
  * NOTE: theta and theta_se are intentionally NOT exposed to the client.
@@ -2158,6 +2204,101 @@ export type CreateIntroRequestApiOrganizationsIntroRequestsPostResponses = {
 
 export type CreateIntroRequestApiOrganizationsIntroRequestsPostResponse = CreateIntroRequestApiOrganizationsIntroRequestsPostResponses[keyof CreateIntroRequestApiOrganizationsIntroRequestsPostResponses];
 
+export type ListSavedSearchesApiOrganizationsSavedSearchesGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/organizations/saved-searches';
+};
+
+export type ListSavedSearchesApiOrganizationsSavedSearchesGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: Array<SavedSearchOut>;
+};
+
+export type ListSavedSearchesApiOrganizationsSavedSearchesGetResponse = ListSavedSearchesApiOrganizationsSavedSearchesGetResponses[keyof ListSavedSearchesApiOrganizationsSavedSearchesGetResponses];
+
+export type CreateSavedSearchApiOrganizationsSavedSearchesPostData = {
+    body: SavedSearchCreate;
+    path?: never;
+    query?: never;
+    url: '/api/organizations/saved-searches';
+};
+
+export type CreateSavedSearchApiOrganizationsSavedSearchesPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateSavedSearchApiOrganizationsSavedSearchesPostError = CreateSavedSearchApiOrganizationsSavedSearchesPostErrors[keyof CreateSavedSearchApiOrganizationsSavedSearchesPostErrors];
+
+export type CreateSavedSearchApiOrganizationsSavedSearchesPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: SavedSearchOut;
+};
+
+export type CreateSavedSearchApiOrganizationsSavedSearchesPostResponse = CreateSavedSearchApiOrganizationsSavedSearchesPostResponses[keyof CreateSavedSearchApiOrganizationsSavedSearchesPostResponses];
+
+export type DeleteSavedSearchApiOrganizationsSavedSearchesSearchIdDeleteData = {
+    body?: never;
+    path: {
+        search_id: string;
+    };
+    query?: never;
+    url: '/api/organizations/saved-searches/{search_id}';
+};
+
+export type DeleteSavedSearchApiOrganizationsSavedSearchesSearchIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DeleteSavedSearchApiOrganizationsSavedSearchesSearchIdDeleteError = DeleteSavedSearchApiOrganizationsSavedSearchesSearchIdDeleteErrors[keyof DeleteSavedSearchApiOrganizationsSavedSearchesSearchIdDeleteErrors];
+
+export type DeleteSavedSearchApiOrganizationsSavedSearchesSearchIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteSavedSearchApiOrganizationsSavedSearchesSearchIdDeleteResponse = DeleteSavedSearchApiOrganizationsSavedSearchesSearchIdDeleteResponses[keyof DeleteSavedSearchApiOrganizationsSavedSearchesSearchIdDeleteResponses];
+
+export type UpdateSavedSearchApiOrganizationsSavedSearchesSearchIdPatchData = {
+    body: SavedSearchUpdate;
+    path: {
+        search_id: string;
+    };
+    query?: never;
+    url: '/api/organizations/saved-searches/{search_id}';
+};
+
+export type UpdateSavedSearchApiOrganizationsSavedSearchesSearchIdPatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateSavedSearchApiOrganizationsSavedSearchesSearchIdPatchError = UpdateSavedSearchApiOrganizationsSavedSearchesSearchIdPatchErrors[keyof UpdateSavedSearchApiOrganizationsSavedSearchesSearchIdPatchErrors];
+
+export type UpdateSavedSearchApiOrganizationsSavedSearchesSearchIdPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: SavedSearchOut;
+};
+
+export type UpdateSavedSearchApiOrganizationsSavedSearchesSearchIdPatchResponse = UpdateSavedSearchApiOrganizationsSavedSearchesSearchIdPatchResponses[keyof UpdateSavedSearchApiOrganizationsSavedSearchesSearchIdPatchResponses];
+
 export type BulkInviteVolunteersApiOrganizationsOrgIdInvitesBulkPostData = {
     body: BodyBulkInviteVolunteersApiOrganizationsOrgIdInvitesBulkPost;
     path: {
@@ -2991,5 +3132,5 @@ export type StripeWebhookApiSubscriptionWebhookPostResponses = {
 export type StripeWebhookApiSubscriptionWebhookPostResponse = StripeWebhookApiSubscriptionWebhookPostResponses[keyof StripeWebhookApiSubscriptionWebhookPostResponses];
 
 export type ClientOptions = {
-    baseUrl: 'http://localhost:8000' | (string & {});
+    baseUrl: `${string}://${string}` | (string & {});
 };

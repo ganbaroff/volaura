@@ -31,7 +31,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from .types import AgentResult, DimensionScores
+from .swarm_types import AgentResult, DimensionScores
 
 
 class ReasoningNode(BaseModel):

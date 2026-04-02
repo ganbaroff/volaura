@@ -23,7 +23,7 @@ if env_path.exists():
             os.environ.setdefault(key.strip(), val.strip())
 
 from packages.swarm import SwarmEngine, SwarmConfig, StakesLevel
-from packages.swarm.types import DomainTag, PathDefinition
+from packages.swarm.swarm_types import DomainTag, PathDefinition
 
 AUDIENCE_SEGMENTS = """
 AUDIENCE SEGMENTS TO SIMULATE (evaluate the post from each perspective):

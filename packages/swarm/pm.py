@@ -32,7 +32,7 @@ from .prompts import (
 from .providers import ProviderRegistry
 from .providers.base import LLMProvider
 from .skills import SkillLibrary
-from .types import (
+from .swarm_types import (
     AgentResult,
     DimensionScores,
     DivergenceReport,
@@ -558,7 +558,7 @@ class PMAgent:
                 )
 
         # Parse optional research request (v7)
-        from .types import ResearchRequest
+        from .swarm_types import ResearchRequest
         research_request: ResearchRequest | None = None
         raw_research = raw.get("research_request")
         if isinstance(raw_research, dict):

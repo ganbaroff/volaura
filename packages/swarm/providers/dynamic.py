@@ -9,7 +9,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from ..types import ProviderInfo
+from ..swarm_types import ProviderInfo
 from .base import LLMProvider
 
 

@@ -47,7 +47,7 @@ from .providers.dynamic import load_discovered_providers
 from .research import WebResearcher, inject_findings_into_memory
 from .skills import SkillLibrary
 from .structured_memory import StructuredMemory
-from .types import (
+from .swarm_types import (
     CalibrationEntry,
     DomainTag,
     StakesLevel,

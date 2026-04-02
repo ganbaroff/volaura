@@ -10,7 +10,7 @@ import os
 
 from loguru import logger
 
-from ..types import StakesLevel, DomainTag, ModelProfile
+from ..swarm_types import StakesLevel, DomainTag, ModelProfile
 from .base import LLMProvider
 
 # Provider discovery order: free first, then cheap paid, then expensive

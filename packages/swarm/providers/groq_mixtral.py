@@ -7,7 +7,7 @@ from typing import Any
 
 from groq import AsyncGroq
 
-from ..types import ProviderInfo
+from ..swarm_types import ProviderInfo
 from .base import LLMProvider
 
 

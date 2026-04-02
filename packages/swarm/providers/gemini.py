@@ -8,7 +8,7 @@ from typing import Any
 from google import genai
 from google.genai import types
 
-from ..types import ProviderInfo
+from ..swarm_types import ProviderInfo
 from .base import LLMProvider
 
 GEMINI_MODEL = "gemini-2.0-flash"

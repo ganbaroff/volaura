@@ -7,7 +7,7 @@ from typing import Any
 
 from openai import AsyncOpenAI
 
-from ..types import ProviderInfo
+from ..swarm_types import ProviderInfo
 from .base import LLMProvider
 
 DEEPSEEK_MODEL = "deepseek-chat"

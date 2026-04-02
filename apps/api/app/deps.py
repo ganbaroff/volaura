@@ -175,9 +175,28 @@ async def get_optional_user_id(
         return None
 
 
+async def require_platform_admin(
+    user_id: str = Depends(get_current_user_id),
+    admin: AsyncClient = Depends(get_supabase_admin),
+) -> str:
+    """Verify caller is a platform admin. Fail-closed (Mistake #57 pattern).
+
+    Checks the service-role client so users cannot spoof is_platform_admin
+    via a crafted JWT or user-scoped Supabase request.
+    """
+    result = await admin.table("profiles").select("is_platform_admin").eq("id", user_id).maybe_single().execute()
+    if not result.data or not result.data.get("is_platform_admin"):
+        raise HTTPException(
+            status_code=403,
+            detail={"code": "NOT_PLATFORM_ADMIN", "message": "Platform admin access required"},
+        )
+    return user_id
+
+
 # Type aliases for cleaner route signatures
 SupabaseAdmin = Annotated[AsyncClient, Depends(get_supabase_admin)]
 SupabaseUser = Annotated[AsyncClient, Depends(get_supabase_user)]
 SupabaseAnon = Annotated[AsyncClient, Depends(get_supabase_anon)]
 CurrentUserId = Annotated[str, Depends(get_current_user_id)]
 OptionalCurrentUserId = Annotated[str | None, Depends(get_optional_user_id)]
+PlatformAdminId = Annotated[str, Depends(require_platform_admin)]

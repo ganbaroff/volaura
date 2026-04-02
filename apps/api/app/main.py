@@ -37,7 +37,7 @@ if settings.sentry_dsn:
 
 from app.middleware.request_id import RequestIdMiddleware
 from app.middleware.security_headers import SecurityHeadersMiddleware
-from app.routers import activity, assessment, auth, aura, badges, brandedby, character, discovery, events, health, invites, leaderboard, notifications, organizations, profiles, skills, stats, subscription, telegram_webhook, verification
+from app.routers import activity, admin, assessment, auth, aura, badges, brandedby, character, discovery, events, health, invites, leaderboard, notifications, organizations, profiles, skills, stats, subscription, telegram_webhook, verification
 from app.services.reeval_worker import run_reeval_worker
 from app.services.video_generation_worker import run_video_generation_worker
 
@@ -148,3 +148,4 @@ app.include_router(character.router, prefix="/api")
 app.include_router(brandedby.router, prefix="/api")
 app.include_router(skills.router, prefix="/api")
 app.include_router(subscription.router, prefix="/api")
+app.include_router(admin.router)  # prefix already set in router (/api/admin)

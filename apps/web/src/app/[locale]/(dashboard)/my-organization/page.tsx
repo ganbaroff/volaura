@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Building2, Calendar, Users, Plus, ExternalLink, CheckCircle2, Loader2, Globe, UserCheck, Upload } from "lucide-react";
-import { useMyOrganization, useCreateOrganization } from "@/hooks/queries/use-organizations";
+import { useMyOrganization, useCreateOrganization, useCollectiveAura } from "@/hooks/queries/use-organizations";
 import { useMyEvents } from "@/hooks/queries/use-events";
 import { cn } from "@/lib/utils/cn";
 
@@ -96,6 +96,7 @@ export default function OrganizationsPage() {
 
   const { data: org, isLoading: orgLoading, error: orgError } = useMyOrganization();
   const { data: events, isLoading: eventsLoading } = useMyEvents();
+  const { data: collective } = useCollectiveAura(org?.id);
 
   const hasOrg = !!org && !orgError;
 
@@ -193,6 +194,41 @@ export default function OrganizationsPage() {
               <StatCard icon={<Globe className="size-5" />} value={openEvents} label={t("orgs.openEvents")} highlight />
               <StatCard icon={<CheckCircle2 className="size-5" />} value={completedEvents} label={t("orgs.completedEvents")} />
             </motion.div>
+
+            {/* Collective AURA Ladders widget */}
+            {collective && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="rounded-xl border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent p-4 space-y-2"
+              >
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-on-surface">
+                    {t("orgs.collectiveAuraTitle", { defaultValue: "Talent Pool AURA" })}
+                  </p>
+                  <div className="flex items-center gap-1.5">
+                    <Users className="size-3.5 text-primary" aria-hidden="true" />
+                    <span className="text-xs text-muted-foreground">{collective.count} {t("orgs.professionals", { defaultValue: "professionals" })}</span>
+                  </div>
+                </div>
+                {collective.avg_aura !== null ? (
+                  <div className="flex items-end gap-2">
+                    <span className="text-3xl font-bold tabular-nums text-primary">{collective.avg_aura.toFixed(1)}</span>
+                    {collective.trend !== null && (
+                      <span className={cn("text-sm font-medium mb-0.5", collective.trend >= 0 ? "text-green-500" : "text-red-400")}>
+                        {collective.trend >= 0 ? "↑" : "↓"} {Math.abs(collective.trend).toFixed(1)}
+                      </span>
+                    )}
+                    <span className="text-xs text-muted-foreground mb-0.5">{t("orgs.avgAuraLabel", { defaultValue: "avg AURA" })}</span>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    {t("orgs.collectiveAuraEmpty", { defaultValue: "Invite professionals to start building your talent pool score." })}
+                  </p>
+                )}
+              </motion.div>
+            )}
 
             {/* My events list */}
             <div className="space-y-3">

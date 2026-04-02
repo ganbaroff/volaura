@@ -37,7 +37,7 @@ from typing import TYPE_CHECKING
 
 from loguru import logger
 
-from .types import ResearchRequest
+from .swarm_types import ResearchRequest
 
 if TYPE_CHECKING:
     from .structured_memory import StructuredMemory

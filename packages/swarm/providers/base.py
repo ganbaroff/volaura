@@ -13,7 +13,7 @@ from typing import Any
 
 from loguru import logger
 
-from ..types import ProviderInfo
+from ..swarm_types import ProviderInfo
 
 MAX_RETRIES = 2
 RETRY_DELAY_S = 1.0

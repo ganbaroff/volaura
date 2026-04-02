@@ -21,7 +21,7 @@ from typing import Any
 
 from loguru import logger
 
-from .types import AgentResult, SwarmConfig, SwarmReport
+from .swarm_types import AgentResult, SwarmConfig, SwarmReport
 
 
 @dataclass

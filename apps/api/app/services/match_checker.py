@@ -240,9 +240,19 @@ async def run_match_check(db_admin: Any) -> RunSummary:
     logger.info("Match checker: starting run")
 
     # Fetch all notification-enabled saved searches (partial index makes this fast)
-    searches_res = await db_admin.table("org_saved_searches").select(
-        "id, org_id, name, filters, last_checked_at"
-    ).eq("notify_on_match", True).order("last_checked_at").limit(_MAX_SEARCHES_PER_RUN).execute()
+    # Graceful fallback: if migration not yet applied in this environment, log and exit cleanly.
+    try:
+        searches_res = await db_admin.table("org_saved_searches").select(
+            "id, org_id, name, filters, last_checked_at"
+        ).eq("notify_on_match", True).order("last_checked_at").limit(_MAX_SEARCHES_PER_RUN).execute()
+    except Exception as exc:
+        if "org_saved_searches" in str(exc) or "does not exist" in str(exc):
+            logger.warning(
+                "Match checker: org_saved_searches table not found — "
+                "apply migration 20260401171324_org_saved_searches.sql first. Skipping run."
+            )
+            return summary
+        raise
 
     searches = searches_res.data or []
     logger.info("Match checker: {} searches to process", len(searches))

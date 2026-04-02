@@ -1,8 +1,9 @@
-# Tribe Streaks — Design Spec v1.0
+# Tribe Streaks — Design Spec v2.0
 
-**Status:** Design only. NOT ready to implement.
+**Status:** Design only. CHECKLIST COMPLETE. Awaiting CEO sign-off on 3 questions before code.
 **Prerequisite:** Anti-harassment safeguards must be implemented BEFORE any tribe matching code.
 **Board mandate:** Strategic Board Director (nemotron-ultra-253b) flagged toxicity risk as CRITICAL.
+**Checklist run:** 2026-04-02 — 4-agent review. 7/7 items addressed. 13 approved changes incorporated below. 3 CEO decisions pending.
 
 ---
 
@@ -171,12 +172,86 @@ def match_tribe(user_id: str, pool: list[User]) -> list[str]:
 
 ---
 
+## Team Review Findings (2026-04-02 — 4-agent checklist)
+
+### 13 Approved Changes (must incorporate before first migration commit)
+
+1. **[Cultural] Zero kudos count hidden** — Never show "0 kudos this week." Hide count until ≥1 received. Zero-count display is a cultural harm in AZ (passive ostracism signal). PENDING CEO Q1.
+2. **[Security] Matching service must use service_role** — Matching algorithm runs exclusively in admin Supabase client context. Never exposed via user JWT or PostgREST.
+3. **[Security] Add `tribe_member_history` table** — Stores previous co-member IDs per user. Service-role only. No user-readable RLS. Required for "no repeat tribes" filter.
+4. **[Security] Opted-out members invisible in API** — `GET /api/tribes/me` filters `WHERE opt_out_at IS NULL`. Departed members do not appear as "inactive" — they simply don't exist in the response.
+5. **[Architecture] `grace_periods_used` resets per cycle** — Add `cycle_started_at TIMESTAMPTZ` to `tribe_streaks`. Grace periods are per-tribe-cycle, not lifetime. PENDING CEO Q2 for grace model choice.
+6. **[Architecture] Add renewal tracking** — Add `tribe_renewal_requests (tribe_id UUID, user_id UUID, requested_at TIMESTAMPTZ)` table. Matching service reads this to decide whether to renew or re-match.
+7. **[Architecture] CHECK constraint on `last_activity_week`** — `CHECK (last_activity_week ~ '^\d{4}-W\d{2}$')` on `tribe_streaks`.
+8. **[RLS] Full RLS policies** — See "RLS Policies" section below. Kudos readable only via service_role (SECURITY DEFINER RPC), not directly by users.
+9. **[UX] Opt-out in 1 tap from tribe card** — Overflow menu ("...") on tribe card, first item: "Leave this tribe." No confirmation dialog. One-tap = immediate silent soft-delete.
+10. **[UX] Opt-out DOES NOT reset streak** — `POST /api/tribes/opt-out` must not touch `tribe_streaks`. Streak is personal, tribe-independent.
+11. **[UX] Post-opt-out forward path** — After opt-out, user sees "Find a new tribe?" prompt. No blank state. Blank tribe state = abandonment cliff.
+12. **[Grace] Grace counter resets at new cycle** — Implement via `cycle_started_at` check in streak service. When new tribe assigned → reset `grace_periods_used = 0`.
+13. **[Grace] No numeric grace counter in UI** — Do NOT show "You have 1 grace period left." Use fading crystal animation only. Numeric counter = gameable budget.
+
+### CEO Decisions Required (3 questions — no code until answered)
+
+**Q1 — Kudos zero-count display:**
+- Option A: Show "0 kudos" (honest, risks passive ostracism in AZ culture)
+- Option B: Hide count when 0, show "Be the first to send kudos" prompt (Cultural Intelligence recommendation)
+
+**Q2 — Grace period model:**
+- Option A: 2 free misses in any order, resets each cycle (simple, gameable)
+- Option B: Fading-crystal model — miss 1 = dims, miss 2 = dimmer, miss 3 consecutive = resets (more forgiving, consistent with visual design, harder to game)
+
+**Q3 — Opted-out member replacement:**
+- Option A: 2-person tribe continues until cycle end, then re-matched (less disruptive)
+- Option B: Tribe dissolves immediately on any opt-out, all members re-matched (cleaner, more disruptive)
+
+---
+
+## RLS Policies (complete SQL — copy into migration)
+
+```sql
+-- tribes
+ALTER TABLE public.tribes ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Members can read their tribe" ON public.tribes FOR SELECT
+  USING (id IN (SELECT tribe_id FROM public.tribe_members WHERE user_id = auth.uid() AND opt_out_at IS NULL));
+CREATE POLICY "No direct insert by users" ON public.tribes FOR INSERT TO authenticated WITH CHECK (FALSE);
+CREATE POLICY "No direct update by users" ON public.tribes FOR UPDATE TO authenticated USING (FALSE);
+CREATE POLICY "No direct delete by users" ON public.tribes FOR DELETE TO authenticated USING (FALSE);
+
+-- tribe_members
+ALTER TABLE public.tribe_members ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Members can read their tribe members" ON public.tribe_members FOR SELECT
+  USING (tribe_id IN (SELECT tribe_id FROM public.tribe_members AS tm WHERE tm.user_id = auth.uid() AND tm.opt_out_at IS NULL));
+CREATE POLICY "Users can soft opt-out of own membership" ON public.tribe_members FOR UPDATE
+  USING (user_id = auth.uid() AND opt_out_at IS NULL) WITH CHECK (user_id = auth.uid());
+CREATE POLICY "No direct membership insert" ON public.tribe_members FOR INSERT TO authenticated WITH CHECK (FALSE);
+CREATE POLICY "No hard delete by users" ON public.tribe_members FOR DELETE TO authenticated USING (FALSE);
+
+-- tribe_streaks
+ALTER TABLE public.tribe_streaks ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users read own streak only" ON public.tribe_streaks FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "No direct streak insert" ON public.tribe_streaks FOR INSERT TO authenticated WITH CHECK (FALSE);
+CREATE POLICY "No direct streak update" ON public.tribe_streaks FOR UPDATE TO authenticated USING (FALSE);
+CREATE POLICY "No direct streak delete" ON public.tribe_streaks FOR DELETE TO authenticated USING (FALSE);
+
+-- tribe_kudos: INSERT allowed for active members; SELECT blocked (use SECURITY DEFINER RPC for count)
+ALTER TABLE public.tribe_kudos ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Active members can send kudos" ON public.tribe_kudos FOR INSERT TO authenticated
+  WITH CHECK (tribe_id IN (SELECT tribe_id FROM public.tribe_members WHERE user_id = auth.uid() AND opt_out_at IS NULL));
+CREATE POLICY "Kudos not directly readable" ON public.tribe_kudos FOR SELECT TO authenticated USING (FALSE);
+CREATE POLICY "Kudos immutable" ON public.tribe_kudos FOR UPDATE TO authenticated USING (FALSE);
+CREATE POLICY "Kudos not deleteable by users" ON public.tribe_kudos FOR DELETE TO authenticated USING (FALSE);
+```
+
+---
+
 ## Decision Log
 
 | Decision | Rationale | Risk if wrong |
 |----------|-----------|---------------|
 | Score matching ±15 points | Prevents Platinum/Bronze pairing | Too narrow = small pool → bad matches |
 | 4-week rotation | Prevents clique lock-in | Too short = no attachment formed |
-| Anonymous kudos | Prevents weaponization | Too anonymous = no meaning |
+| Anonymous kudos (tribe-level, not member-level) | Prevents weaponization. Kudos count is per tribe, not per person | "Send kudos to [name]" framing is wrong — always "send to your tribe" |
 | Streak visible only to self | Prevents peer pressure | Too private = no social motivation |
-| 2 grace periods | Forgiveness without enabling laziness | Might need tuning |
+| 2 grace periods per cycle (CEO Q2 pending) | Forgiveness without enabling laziness | If lifetime (not per-cycle), feels unfair after bad month |
+| Opted-out members invisible (not shown as inactive) | Face-saving: no public "X left" | Remaining 2-person tribe needs a path (CEO Q3 pending) |
+| Matching uses service_role only | Prevents cross-user activity data leakage via user JWT | Must be enforced in FastAPI service layer |

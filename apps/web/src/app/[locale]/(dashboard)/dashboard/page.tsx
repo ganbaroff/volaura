@@ -42,7 +42,7 @@ const sectionVariantsReduced = {
 
 // ── Neuroscience helper: relative time (Conscious → Unconscious friction reduction)
 // "2 hours ago" is processed faster than "3/27/2026" — no date parsing required.
-function getRelativeTime(dateStr: string): string {
+function getRelativeTime(dateStr: string, t: (key: string, opts?: Record<string, unknown>) => string): string {
   const now = Date.now();
   const then = new Date(dateStr).getTime();
   const diffMs = now - then;
@@ -50,10 +50,10 @@ function getRelativeTime(dateStr: string): string {
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
 
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays === 1) return "yesterday";
-  if (diffDays < 7) return `${diffDays}d ago`;
+  if (diffMins < 60) return t("common.timeAgo.minutes", { count: diffMins, defaultValue: `${diffMins}m ago` });
+  if (diffHours < 24) return t("common.timeAgo.hours", { count: diffHours, defaultValue: `${diffHours}h ago` });
+  if (diffDays === 1) return t("common.timeAgo.yesterday", { defaultValue: "Yesterday" });
+  if (diffDays < 7) return t("common.timeAgo.days", { count: diffDays, defaultValue: `${diffDays}d ago` });
   return new Date(dateStr).toLocaleDateString();
 }
 
@@ -182,7 +182,7 @@ export default function DashboardPage() {
     id: item.id,
     type: item.type as FeedActivityItem["type"],
     text: item.description,
-    timeAgo: item.created_at ? getRelativeTime(item.created_at) : "",
+    timeAgo: item.created_at ? getRelativeTime(item.created_at, t) : "",
   }));
 
   const loading = auraLoading;

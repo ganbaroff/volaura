@@ -248,7 +248,9 @@
     "answerSaved": "Saxlanılıb",
     "auraSyncPending": "Sizin AURA skorunuz yenidən hesablanmaqdadır — bir neçə dəqiqədən sonra təkrar yoxlayın.",
     "scoreUnlocksDiscovery": "AURA-nız artıq aktivdir — təşkilatlar sizi axtarıb tapa bilərlər.",
-    "scoreUnlocksMore": "Təşkilatlar tərəfindən kəşf edilməyinizə imkan yaratmaq üçün iki və daha çox kompetensiyanı tamamlayın."
+    "scoreUnlocksMore": "Təşkilatlar tərəfindən kəşf edilməyinizə imkan yaratmaq üçün iki və daha çox kompetensiyanı tamamlayın.",
+    "crystalsEarned": "+{{count}} Kristal",
+    "crystalsEarnedDesc": "Life Simulator balansınıza əlavə edildi"
   },
   "aura": {
     "title": "AURA balınız",
@@ -595,6 +597,12 @@
     "errorUsedBody": "Bu təsdiqləmə artıq təqdim edilib. Vaxtınız üçün təşəkkür edirik!"
   },
   "common": {
+    "timeAgo": {
+      "minutes": "{{count}} dəq əvvəl",
+      "hours": "{{count}} saat əvvəl",
+      "yesterday": "Dünən",
+      "days": "{{count}} gün əvvəl"
+    },
     "loading": "Yüklənir...",
     "error": "Səhv baş verdi.",
     "tryAgain": "Yenidən cəhd edin",

@@ -33,7 +33,7 @@ async def emit_assessment_rewards(
     skill_slug: str,
     competency_score: float,
     user_jwt: str | None = None,
-) -> None:
+) -> int:
     """Emit crystal_earned + skill_verified character events after assessment completion.
 
     Best-effort: logs errors but never raises — must not fail the complete_assessment response.
@@ -48,6 +48,9 @@ async def emit_assessment_rewards(
         user_jwt:         Optional user JWT — forwarded to cross-product bridge for
                           authenticated event push to MindShift. Omit in background tasks
                           that don't have access to the request token.
+
+    Returns:
+        Crystals actually earned this call: CRYSTAL_REWARD if newly awarded, 0 if already claimed.
     """
     # ── Idempotency check: already rewarded for this competency? ─────────────
     reward_check = (
@@ -160,3 +163,5 @@ async def emit_assessment_rewards(
                 skill_slug=skill_slug,
                 error=str(exc),
             )
+
+    return 0 if crystals_already_claimed else CRYSTAL_REWARD

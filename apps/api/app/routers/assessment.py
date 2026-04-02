@@ -734,18 +734,19 @@ async def complete_assessment(
     # ── Sprint A1: Emit crystal_earned + skill_verified to character_state ───
     # Best-effort: never blocks the response. Idempotency via game_character_rewards.
     # Sprint 7: pass user JWT so cross_product_bridge can authenticate with MindShift.
+    crystals_earned = 0
     if slug:
         _auth_header = request.headers.get("Authorization", "")
         _user_jwt: str | None = (
             _auth_header.removeprefix("Bearer ").strip() or None
         )
-        await emit_assessment_rewards(
+        crystals_earned = int(await emit_assessment_rewards(
             db=db_admin,
             user_id=str(user_id),
             skill_slug=slug,
             competency_score=competency_score,
             user_jwt=_user_jwt,
-        )
+        ) or 0)
 
     return AssessmentResultOut(
         session_id=session_id,
@@ -757,6 +758,7 @@ async def complete_assessment(
         aura_updated=aura_updated,
         gaming_flags=gaming.flags,
         completed_at=datetime.now(timezone.utc),
+        crystals_earned=crystals_earned,
     )
 
 

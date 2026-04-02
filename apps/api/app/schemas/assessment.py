@@ -180,6 +180,8 @@ class AssessmentResultOut(BaseModel):
     aura_updated: bool = False
     gaming_flags: list[str] = []
     completed_at: datetime | None = None
+    # Crystal reward: 0 if already claimed for this competency (idempotent), else CRYSTAL_REWARD
+    crystals_earned: int = 0
 
 
 class CoachingTip(BaseModel):

@@ -248,7 +248,9 @@
     "answerSaved": "Saved",
     "auraSyncPending": "Your AURA score is being recalculated — check back in a few minutes.",
     "scoreUnlocksDiscovery": "Your AURA is now live — organizations can search and find you.",
-    "scoreUnlocksMore": "Complete 2+ competencies to unlock discovery by organizations."
+    "scoreUnlocksMore": "Complete 2+ competencies to unlock discovery by organizations.",
+    "crystalsEarned": "+{{count}} Crystals",
+    "crystalsEarnedDesc": "Added to your Life Simulator balance"
   },
   "aura": {
     "title": "Your AURA Score",
@@ -595,6 +597,12 @@
     "errorUsedBody": "This verification has already been submitted. Thank you for your time!"
   },
   "common": {
+    "timeAgo": {
+      "minutes": "{{count}}m ago",
+      "hours": "{{count}}h ago",
+      "yesterday": "Yesterday",
+      "days": "{{count}}d ago"
+    },
     "loading": "Loading...",
     "error": "Something went wrong",
     "tryAgain": "Try Again",

@@ -39,6 +39,7 @@ interface AssessmentResult {
   aura_updated: boolean;
   gaming_flags: string[];
   completed_at: string | null;
+  crystals_earned?: number;
 }
 
 interface AuraScore {
@@ -383,6 +384,28 @@ export default function AssessmentResultsPage() {
           <p className="text-xs text-muted-foreground">
             {t("assessment.milestoneDiscoverable", { defaultValue: "You're now discoverable to organizations on Volaura." })}
           </p>
+        </motion.div>
+      )}
+
+      {/* Crystal Reward — peak behavioral moment */}
+      {(result?.crystals_earned ?? 0) > 0 && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: -8 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ delay: 0.42, type: "spring", stiffness: 220, damping: 20 }}
+          className="rounded-xl border border-sky-400/30 bg-gradient-to-br from-sky-500/10 to-indigo-500/5 px-4 py-3 flex items-center gap-3"
+          role="status"
+          aria-live="polite"
+        >
+          <span className="text-3xl shrink-0" aria-hidden="true">💎</span>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold text-sky-400">
+              {t("assessment.crystalsEarned", { count: result!.crystals_earned, defaultValue: `+${result!.crystals_earned} Crystals` })}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {t("assessment.crystalsEarnedDesc", { defaultValue: "Added to your Life Simulator balance" })}
+            </p>
+          </div>
         </motion.div>
       )}
 

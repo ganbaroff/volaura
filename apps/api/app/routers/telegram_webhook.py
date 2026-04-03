@@ -371,6 +371,64 @@ Stats: {stats}
     await _send_message(chat_id, reply)
 
 
+async def _handle_ask_proposal(db, chat_id: int | str, proposal_id: str, question: str) -> None:
+    """CEO asks a follow-up question about a specific swarm proposal."""
+    import json as _json
+    proposals_path = Path(__file__).parent.parent.parent.parent.parent / "memory" / "swarm" / "proposals.json"
+
+    try:
+        with open(proposals_path, "r", encoding="utf-8") as f:
+            data = _json.load(f)
+    except Exception:
+        await _send_message(chat_id, "⚠️ Не удалось прочитать proposals.")
+        return
+
+    found = None
+    for p in data.get("proposals", []):
+        if p.get("id", "").startswith(proposal_id):
+            found = p
+            break
+
+    if not found:
+        await _send_message(chat_id, f"⚠️ Proposal `{proposal_id}` не найден. Используйте /proposals.")
+        return
+
+    if not settings.gemini_api_key:
+        await _send_message(chat_id, "⚠️ GEMINI_API_KEY не настроен.")
+        return
+
+    try:
+        from google import genai
+        client = genai.Client(api_key=settings.gemini_api_key)
+        context = (
+            f"Agent: {found.get('agent', '?')}\n"
+            f"Severity: {found.get('severity', '?')}\n"
+            f"Title: {found.get('title', '?')}\n"
+            f"Content: {found.get('content', '')[:800]}"
+        )
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=question,
+            config=genai.types.GenerateContentConfig(
+                system_instruction=f"""Ты — CTO-бот. CEO задаёт уточняющий вопрос по конкретному proposal от swarm.
+
+PROPOSAL:
+{context}
+
+Отвечай строго по контексту proposal. Коротко (макс 200 слов). На русском.
+Если вопрос требует кода или файлов — скажи CEO что нужно запустить сессию CTO.""",
+                max_output_tokens=350,
+                temperature=0.4,
+            ),
+        )
+        reply = f"🔍 *По proposal `{proposal_id}`:*\n\n{response.text.strip()}"
+    except Exception as e:
+        reply = f"⚠️ Не смог ответить по proposal: {str(e)[:100]}"
+
+    await _save_message(db, "bot_to_ceo", reply[:500], "proposal_followup")
+    await _send_message(chat_id, reply)
+
+
 async def _handle_ecosystem(chat_id: int | str) -> None:
     """Show full ecosystem state — honest snapshot."""
     msg = (
@@ -423,7 +481,8 @@ async def _handle_help(chat_id: int | str) -> None:
         "*Proposal actions:*\n"
         "`act {id}` — одобрить\n"
         "`dismiss {id}` — отклонить\n"
-        "`defer {id}` — отложить\n\n"
+        "`defer {id}` — отложить\n"
+        "`ask {id} {вопрос}` — уточнить по proposal\n\n"
         "*Или просто напишите:*\n"
         "• Идею → бэклог\n"
         "• Задачу → команде\n"
@@ -507,6 +566,21 @@ async def telegram_webhook(
                 await _handle_proposal_action(db, chat_id, action, pid)
             else:
                 await _send_message(chat_id, "⚠️ Формат: `act {proposal_id}` / `dismiss {id}` / `defer {id}`")
+        elif text.lower().startswith("ask "):
+            # Two forms:
+            #   ask {agent_name} {question}  → route to agent perspective
+            #   ask {proposal_id} {question} → ask follow-up about specific proposal
+            parts = text[4:].strip().split(" ", 1)
+            first_token = parts[0].lower() if parts else ""
+            question = parts[1] if len(parts) > 1 else ""
+            known_agents = {"security", "scaling", "product", "quality", "watchdog", "risk", "readiness"}
+            if first_token in known_agents and question:
+                await _handle_ask_agent(db, chat_id, first_token, question)
+            elif first_token and question:
+                # Treat as proposal-specific follow-up
+                await _handle_ask_proposal(db, chat_id, first_token, question)
+            else:
+                await _send_message(chat_id, "⚠️ Формат:\n`ask {agent} {вопрос}` — агенту\n`ask {proposal_id} {вопрос}` — по конкретному proposal")
         else:
             # Free-text → classify + respond + save
             await _classify_and_respond(db, text, chat_id)

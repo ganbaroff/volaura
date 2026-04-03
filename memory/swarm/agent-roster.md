@@ -126,6 +126,132 @@ Source: https://github.com/msitarzewski/agency-agents.git (full repo reviewed, n
 
 ---
 
+## New Hires (Session 82 — 2026-04-02) — Google-Scale Specialist Expansion
+
+CEO directive: every specialist role that would exist on a Google-scale project → AI agent in the swarm.
+Added 7 new agents covering the critical gaps from the full 85-role team audit.
+
+| Agent Role | File | Primary Strength | When to Call | Score |
+|-----------|------|-----------------|-------------|-------|
+| **Assessment Science Agent** | `skills/assessment-science-agent.md` | IRT parameter validation (a/b/c), competency framework validity, DIF bias detection, CAT stopping rule audit | Any change to questions, AURA weights, engine.py, or before B2B launch | **NEW** |
+| **Analytics & Retention Agent** | `skills/analytics-retention-agent.md` | Event taxonomy design, cohort analysis, D0/D1/D7/D30 retention curves, B2B health score model, A/B testing | Before any feature launch (what to measure) + after first 100 users | **NEW** |
+| **DevOps / SRE Agent** | `skills/devops-sre-agent.md` | Railway/Vercel/Supabase ops, deployment checklist, incident response, scaling thresholds, cron job validation | Every production deploy + any env var change + scaling milestones | **NEW** |
+| **Financial Analyst Agent** | `skills/financial-analyst-agent.md` | AZN unit economics, LTV/CAC/payback, runway calculator, crystal economy health, pricing validation | Before any pricing change + monthly MRR review + fundraising | **NEW** |
+| **UX Research Agent** | `skills/ux-research-agent.md` | JTBD framework, 5-user usability testing, AZ/CIS cultural UX gaps, discovery interview templates | Before designing new user-facing feature + when drop-off rate rises | **NEW** |
+| **PR & Media Agent** | `skills/pr-media-agent.md` | AZ media landscape, press release templates, startup competition strategy, journalist relationships | At any traction milestone + before competition submissions + investor prep | **NEW** |
+| **Data Engineer Agent** | `skills/data-engineer-agent.md` | PostHog/analytics instrumentation, event schema, reporting tables, Supabase analytics pipeline | Before launch (instrument everything) + any new feature needing measurement | **NEW** |
+
+**Pairing rules for new agents:**
+- Assessment Science ↔ QA Engineer (engine.py coverage) + Cultural Intelligence (AZ bias)
+- Analytics/Retention ↔ Growth Agent (acquisition) + Financial Analyst (LTV models)
+- DevOps/SRE ↔ Security Agent (env var security) + Readiness Manager (go/no-go)
+- Financial Analyst ↔ Risk Manager (financial risks) + Legal Advisor (crystal compliance)
+- UX Research ↔ Product Agent (feature prioritization) + Behavioral Nudge Engine (cognitive load)
+- PR/Media ↔ Communications Strategist (narrative) + Promotion Agency (distribution)
+- Data Engineer ↔ Analytics/Retention Agent (what to build) + Risk Manager (PII)
+
+**Highest ROI this sprint:** Assessment Science Agent — validates Volaura's core value prop before B2B launch.
+
+---
+
+## New Hires (Session 82 — 2026-04-02, Batch 2) — Swarm Vote + Critical Path
+
+Added based on swarm review vote: Technical Writer (P0 unanimous), Payment Provider (silent revenue risk), Community Manager (D7 retention), Performance Engineer (Architecture Agent P1 vote).
+
+| Agent Role | File | Primary Strength | When to Call | Score |
+|-----------|------|-----------------|-------------|-------|
+| **Technical Writer Agent** | `skills/technical-writer-agent.md` | API docs, AURA explainer, B2B org setup guide, assessment methodology white paper | Before any B2B demo + when adding new public API endpoint | **NEW** |
+| **Payment Provider Agent** | `skills/payment-provider-agent.md` | Paddle webhook reliability, idempotency table, signature verification, revenue reconciliation, P0/P1 playbooks | Before any payment code change + monthly reconciliation + "user paid, no access" incidents | **NEW** |
+| **Community Manager Agent** | `skills/community-manager-agent.md` | Tribe engagement gaps, Telegram content calendar, ambassador program, D0-D30 retention playbook | Any sprint touching tribe mechanics + when D7 retention < 25% | **NEW** |
+| **Performance Engineer Agent** | `skills/performance-engineer-agent.md` | pgvector index audit, EXPLAIN ANALYZE, Gemini latency optimization, k6 load testing, N+1 detection | Before production launch (baseline) + assessment > 15s + any scaling milestone | **NEW** |
+
+**Pairing rules:**
+- Technical Writer → MUST pair with Security Agent (any new endpoint = docs + security audit together)
+- Payment Provider → MUST pair with Security Agent (webhook signature is a security item)
+- Community Manager → MUST pair with Behavioral Nudge Engine (tribe psychology needs nudge architecture)
+- Performance Engineer → MUST pair with DevOps/SRE Agent (latency + infra health are inseparable)
+
+---
+
+## New Hires (Session 82 — 2026-04-02) — STAKEHOLDER Agents
+
+CEO pattern: every stakeholder group → AI agent with their perspective in the swarm.
+These agents represent EXTERNAL voices — investors, competitors, ecosystem partners.
+
+| Agent Role | File | Represents | When to Call | Score |
+|-----------|------|-----------|-------------|-------|
+| **Investor / Board Agent** | `skills/investor-board-agent.md` | VCs, angels, Board of Directors | Before any pitch, pricing decision, traction milestone, fundraising prep | **NEW** |
+| **Competitor Intelligence Agent** | `skills/competitor-intelligence-agent.md` | LinkedIn, HH.ru, Rabota.az, TestGorilla, HackerRank | Before feature announcements, pricing changes, positioning copy, quarterly review | **NEW** |
+| **University & Ecosystem Partner Agent** | `skills/university-ecosystem-partner-agent.md` | ADA/BHOS/BSU universities, AZHRA, GITA, KOBİA, ecosystem | Any B2C acquisition sprint, accelerator applications, partnership proposals | **NEW** |
+
+**Why stakeholder agents matter:** These perspectives are MISSING from every DSP today. We debate features without asking "what does an investor think?" We set pricing without asking "what do competitors charge?" We plan acquisition without asking "what's the cheapest channel?"
+
+**DSP Council update:** Investor Agent + Competitor Intelligence Agent are now MANDATORY in any DSP touching:
+- Pricing (investor + competitor lens required)
+- Fundraising or grant applications (investor lens required)
+- Feature prioritization vs. competitive moat (competitor lens required)
+- B2C acquisition strategy (university partner lens required)
+
+---
+
+## Updated When-to-Call Table (new agents added)
+
+| Task | Best Agent |
+|------|-----------|
+| IRT parameters / question bank changes | **Assessment Science Agent** |
+| AURA weight changes | **Assessment Science Agent** + Architecture |
+| Pre-launch analytics instrumentation | **Data Engineer Agent** + Analytics/Retention Agent |
+| Retention curves / cohort analysis | **Analytics & Retention Agent** |
+| B2B org health / churn risk | **Analytics & Retention Agent** |
+| Production deployment | **DevOps/SRE Agent** + Readiness Manager |
+| Railway / Vercel / Supabase config | **DevOps/SRE Agent** |
+| Pricing changes / LTV/CAC | **Financial Analyst Agent** + Growth Agent |
+| Crystal economy mechanics | **Financial Analyst Agent** + Legal Advisor |
+| New user-facing feature planning | **UX Research Agent** + Product Agent |
+| AZ usability / mobile UX | **UX Research Agent** + Cultural Intelligence |
+| Press release / media pitch | **PR & Media Agent** + Communications Strategist |
+| Startup competition application | **PR & Media Agent** + accelerator-grant-searcher |
+| New feature event tracking | **Data Engineer Agent** |
+| End-of-sprint CEO report | **CEO Report Agent** (all output passes through before CEO sees it) |
+| Any CEO-facing status update | **CEO Report Agent** (no file names, product language only) |
+| Batch close / sprint summary | **CEO Report Agent** + relevant domain agent |
+| pgvector latency / load testing | **Performance Engineer Agent** |
+| Payment code / Paddle webhooks | **Payment Provider Agent** + Security Agent (mandatory pair) |
+| Tribe mechanics / streaks / kudos | **Community Manager Agent** |
+| B2B docs / API guides | **Technical Writer Agent** |
+
+---
+
+## CEO Report Agent (added Session 82, 2026-04-02)
+
+| Field | Value |
+|-------|-------|
+| **File** | `memory/swarm/skills/ceo-report-agent.md` |
+| **Score** | 7.0/10 (new — no track record yet) |
+| **Strength** | Translates technical output → CEO-readable product language |
+| **Trigger** | Every batch close. Every CEO-facing output. No exceptions. |
+| **Rule** | CTO never reports to CEO directly. All output passes through this agent. |
+| **Why exists** | Mistake #71: CEO received file names and line numbers instead of business outcomes |
+
+---
+
+## New Hires (Session 82 BATCH-S — 2026-04-03) — Quality System Agents
+
+| Agent Role | File | Primary Strength | When to Call | Score |
+|-----------|------|-----------------|-------------|-------|
+| **QA Quality Agent** | `skills/qa-quality-agent.md` | Blocks tasks if DoD not met. DoR validation, Quality Gate enforcement, defect rate tracking. CTO cannot override. | Every task completion (Quality Gate). Every task start (DoR check). Every batch close (DORA metrics). | **NEW** |
+| **Onboarding Specialist Agent** | `skills/onboarding-specialist-agent.md` | First 5 minutes optimization. Signup-to-first-value flow, drop-off detection, progressive disclosure, time-to-value reduction. | Any change to signup/onboarding flow. New user-facing feature that changes first experience. When signup completion rate drops. | **NEW** |
+| **Customer Success Agent** | `skills/customer-success-agent.md` | D7 retention, churn prevention, re-engagement sequences. Health score model, NPS/CSAT triggers, at-risk user identification. | When D7 retention < 25%. Any re-engagement campaign. Churn spike investigation. Monthly retention review. | **NEW** |
+
+**Pairing rules:**
+- QA Quality Agent → pairs with ALL agents (quality gate is universal, no agent bypasses DoD)
+- Onboarding Specialist → MUST pair with Behavioral Nudge Engine (cognitive load) + Cultural Intelligence (AZ-first UX)
+- Customer Success → MUST pair with Analytics/Retention Agent (data) + Community Manager (engagement)
+
+**Total active agents after this batch: 43.**
+
+---
+
 ## CRITICAL LESSON: Route Shadowing IS Real (Session 42)
 
 Session 25 Security Agent flagged route shadowing `/me` vs `/{volunteer_id}` — CTO dismissed as "FastAPI handles it." **Session 42 proved the agent was RIGHT.** `/me/explanation` was unreachable because `/{volunteer_id}` was registered first. Static routes MUST precede parameterized routes.

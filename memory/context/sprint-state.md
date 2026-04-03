@@ -6,6 +6,31 @@
 
 ---
 
+## BATCH 2026-04-03-W: Product Gap Closure
+
+BATCH 2026-04-03-W: 5 product gaps from journey audit closed: badge download, profile views, referral system, crystal spending, tribe join verified.
+
+---
+
+## BATCH 2026-04-03-S: Quality System + NotebookLM Research Sprint
+
+BATCH 2026-04-03-S: Quality System Sprint. TASK-PROTOCOL v8.0. NotebookLM used (first time). 45+ sources researched. 3 new agents. Quality-metrics baseline. CrewAI ADR approved. 15 new files created. Langfuse+CrewAI+Playwright+Sentry installed.
+
+---
+
+## BATCH 2026-04-03-R: Verification Link + Journey Audit
+
+**Last Updated:** 2026-04-03 (Session 82 — BATCH R)
+
+**Delivered:**
+- ✅ Public verification endpoint: GET /api/assessment/verify/{session_id} — no auth, returns score+badge+competency for LinkedIn viewers
+- ✅ Verification page: /u/{username}/verify/{sessionId} — styled card with verified score, badge tier, assessment method
+- ✅ PublicVerificationOut Pydantic schema for public-safe verification data
+- ✅ Tribe matching audit: algorithm verified COMPLETE (286 LOC) — audit agent false positive corrected
+- ✅ 7 user journey E2E audit: 4 working, 3 gated (awaiting config activation)
+
+---
+
 ## BATCH 2026-04-02-U: Email + Demo Seed + Context Refresh
 
 **Last Updated:** 2026-04-02 (Session 83 — BATCH U)

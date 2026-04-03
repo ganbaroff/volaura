@@ -291,4 +291,58 @@ Load **BEFORE Communications Strategist** for maximum coherence:
 
 ---
 
-*Communications Strategist v1.0 — Activated 2026-03-29. Complements copywriter-team.md skill. Feeds brief → judges → growth loop.*
+---
+
+## TONE BENCHMARK — Tinkoff / Aviasales (MANDATORY READ v2.0)
+
+**CEO mandate 2026-04-02:** Corporate tone is banned. Every post must pass the Tinkoff test.
+
+### What Tinkoff does (and we must do):
+- Opens with a **specific, slightly absurd real scenario** — not "soft skills matter"
+- **Very short sentences.** No paragraph-long intros.
+- **Self-aware humor** — admits the product isn't perfect yet
+- Talks to the reader as an **equal**, not a prospect
+- **No corporate vocabulary:** "leverage," "ecosystem," "solution," "synergy" = auto-reject
+- CTA is a **genuine question** — not fake engagement bait ("What's the most absurd skill test you've seen?")
+
+### What Aviasales does (and we must do):
+- **Subverts the hook** — starts where you least expect
+- Makes fun of the **absurdity of the status quo** (not the competitor — the system)
+- **2-3 sentences max per paragraph**
+- Punchy ending — no "follow us for more"
+
+### Anti-patterns (auto-reject by Strategist):
+- "We're excited to announce..."
+- "Our platform leverages..."
+- "Join our growing community"
+- "In today's competitive landscape..."
+- More than 4 hashtags
+- Any hashtag that contains the word "innovation"
+
+### AZ-language posts — MANDATORY in every batch:
+- AZ posts get 2-3× lower competition on LinkedIn AZ feed → higher organic reach
+- Every EN post concept gets an AZ-language version (different voice, not translation)
+- AZ posts use conversational Azerbaijani — **not formal written AZ**
+- AZ humor: self-deprecating, relatable CV culture, Baku professional life moments
+- Short. Very short. AZ readers on LinkedIn scroll fast.
+
+### A/B Testing Framework (every batch):
+- Same concept → EN version + AZ version → publish 48h apart
+- Track: impressions, engagement rate (reactions+comments / impressions), saves
+- After 5 A/B cycles: which language performs better for which audience segment?
+- Kamal/Rauf → hypothesis: AZ language outperforms EN (identity resonance)
+- Nigar/Aynur → hypothesis: EN performs better (professional signaling)
+- Document findings in memory/context/patterns.md after each cycle
+
+### Hook taxonomy (use rotation, not repetition):
+1. **Absurd scenario** — "We watched someone answer 27 questions in 6 minutes..."
+2. **List subversion** — "CV-mizdə hamı edir: — kommunikasiya: yüksək. Bunları kim yoxlayır? Heç kim."
+3. **Uncomfortable truth** — "Your CV says you're reliable. Who verified that?"
+4. **Specific number** — "3 of 4 organizations we spoke to can't tell Bronze from Platinum"
+5. **Self-deprecating** — "We're building an anti-gaming layer. Our test can still be gamed. Here's how."
+
+Rotate. Never use the same hook type twice in a row.
+
+---
+
+*Communications Strategist v2.0 — Updated 2026-04-02. Added Tinkoff/Aviasales benchmark, AZ bilingual mandate, A/B testing framework, hook taxonomy. CEO directive: team owns tone, no CEO briefing required.*

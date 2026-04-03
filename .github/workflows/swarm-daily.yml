@@ -2,8 +2,12 @@ name: Swarm Daily Autonomy
 
 on:
   schedule:
-    # Run every day at 05:00 UTC (09:00 Baku time, AZT = UTC+4)
+    # Daily ideation: every day at 05:00 UTC (09:00 Baku time, AZT = UTC+4)
     - cron: '0 5 * * *'
+    # Weekly audit: every Monday at 06:00 UTC — systemic patterns, not individual issues
+    - cron: '0 6 * * 1'
+    # Monthly review: 1st of month at 07:00 UTC — strategic, CEO-facing
+    - cron: '0 7 1 * *'
   workflow_dispatch:
     inputs:
       mode:
@@ -15,6 +19,9 @@ on:
           - daily-ideation
           - code-review
           - cto-audit
+          - weekly-audit
+          - monthly-review
+          - post-deploy
 
 jobs:
   swarm-run:
@@ -54,20 +61,42 @@ jobs:
             fi
           fi
 
+      - name: Resolve run mode from schedule or manual dispatch
+        id: mode
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "mode=${{ github.event.inputs.mode }}" >> $GITHUB_OUTPUT
+          else
+            # Detect which cron fired by UTC hour
+            HOUR=$(date -u +%H)
+            DAY=$(date -u +%d)
+            WEEKDAY=$(date -u +%u)  # 1=Monday
+            if [ "$DAY" = "01" ] && [ "$HOUR" = "07" ]; then
+              echo "mode=monthly-review" >> $GITHUB_OUTPUT
+            elif [ "$WEEKDAY" = "1" ] && [ "$HOUR" = "06" ]; then
+              echo "mode=weekly-audit" >> $GITHUB_OUTPUT
+            else
+              echo "mode=daily-ideation" >> $GITHUB_OUTPUT
+            fi
+          fi
+
       - name: Run autonomous swarm
         if: steps.gate.outputs.should_run == 'true'
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CEO_CHAT_ID: ${{ secrets.TELEGRAM_CEO_CHAT_ID }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           # Persist StructuredMemory (4-network: World/Experience/Opinion/Failure) in the repo
           # instead of ~/.swarm/ (lost after each runner). See packages/swarm/structured_memory.py.
           SWARM_DATA_DIR: memory/swarm/structured
         run: |
           cd "${{ github.workspace }}"
-          python -m packages.swarm.autonomous_run --mode=${{ github.event.inputs.mode || 'daily-ideation' }}
+          python -m packages.swarm.autonomous_run --mode=${{ steps.mode.outputs.mode }}
 
       - name: Skip notice
         if: steps.gate.outputs.should_run != 'true'

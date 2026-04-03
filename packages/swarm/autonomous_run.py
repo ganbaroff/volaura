@@ -281,6 +281,42 @@ Audit the CTO's (Claude's) work process. Check:
 3. Are mistakes being repeated? (check mistakes.md for patterns)
 4. Is protocol v4.0 being followed?
 Tag [ESCALATE] if you find process violations."""
+    elif mode == "weekly-audit":
+        task = """YOUR TASK:
+Weekly systemic audit. Look for PATTERNS, not individual issues.
+1. What category of problems repeats most? (check mistakes.md CLASS frequencies)
+2. What DORA metric is worst right now? (check quality-metrics.md)
+3. What is the one systemic change that would prevent 50%+ of recurring issues?
+4. Are any skill files becoming stale (not updated in 30+ days)?
+5. Is the swarm itself working? (check if proposals are being acted on or ignored)
+
+Output a SYSTEMIC recommendation — not "fix this file", but "change this process".
+The CTO should implement this in the next batch.
+Tag [ESCALATE] if a pattern is severe enough to require CEO awareness."""
+    elif mode == "monthly-review":
+        task = """YOUR TASK:
+Monthly strategic review. Think at the product/business level.
+1. What is VOLAURA's biggest strategic risk for the next 30 days?
+2. Which feature produced the most real user/business value this month?
+3. What should be REMOVED from the roadmap (over-engineered, unused, 0 users)?
+4. Are we on track for first revenue? What is the single blocking item?
+5. What would make the CEO's life 10x easier without requiring more of his time?
+
+This report goes directly to CEO. Be strategic, not tactical.
+Tag [ESCALATE] for any item requiring CEO strategic decision."""
+    elif mode == "post-deploy":
+        task = """YOUR TASK:
+A new deployment just landed. Rapid security and health assessment.
+You have 3 minutes. Focus only on CRITICAL and HIGH severity issues.
+
+1. Did any new API endpoints land without security review? (check SESSION-DIFFS.jsonl for new routes)
+2. Did any migration run? If yes, does it have RLS policies?
+3. Are there new endpoints without rate limiting?
+4. Did schema change without openapi.json update? (check pre-commit hook warning pattern)
+5. Any CRITICAL risk that should block traffic right now?
+
+Output a Go/No-Go verdict with specific blockers if No-Go.
+Tag [ESCALATE] if this deploy should be rolled back immediately."""
     else:
         task = f"YOUR TASK: {mode}"
 
@@ -706,12 +742,71 @@ async def send_telegram_notifications(proposals: list[Proposal]) -> None:
         logger.error(f"Telegram send failed: {e}")
 
 
+async def _write_run_log(
+    proposals: list[Proposal],
+    mode: str,
+    duration_ms: int,
+    trigger_meta: dict | None = None,
+) -> None:
+    """Write run summary to agent_run_log Supabase table (ADR-011).
+
+    Non-blocking: if Supabase env vars are missing or write fails, log and continue.
+    Uses service role key — never user JWT.
+    """
+    supabase_url = os.environ.get("SUPABASE_URL", "")
+    service_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
+    if not supabase_url or not service_key:
+        logger.debug("Supabase env vars not set — skipping agent_run_log write (non-blocking).")
+        return
+
+    from datetime import datetime, timezone
+    import uuid
+    run_id = f"{mode}-{datetime.now(timezone.utc).strftime('%Y-%m-%d')}"
+
+    rows = []
+    for p in proposals:
+        rows.append({
+            "run_id": run_id,
+            "agent_id": p.agent,
+            "trigger_type": "deploy" if mode == "post-deploy" else "scheduled",
+            "trigger_meta": trigger_meta or {},
+            "proposal_ids": [str(p.id)] if p.id else [],
+            "duration_ms": duration_ms,
+            "status": "completed",
+        })
+
+    # One summary row if no proposals (e.g. all agents returned None)
+    if not rows:
+        rows.append({
+            "run_id": run_id,
+            "agent_id": "swarm",
+            "trigger_type": "deploy" if mode == "post-deploy" else "scheduled",
+            "trigger_meta": trigger_meta or {},
+            "proposal_ids": [],
+            "duration_ms": duration_ms,
+            "status": "partial",
+            "error_message": "No proposals generated this run",
+        })
+
+    try:
+        from supabase import create_client
+        client = create_client(supabase_url, service_key)
+        client.table("agent_run_log").insert(rows).execute()
+        logger.info(f"agent_run_log: {len(rows)} rows written for run_id={run_id}")
+    except Exception as e:
+        logger.warning(f"agent_run_log write failed (non-blocking): {e}")
+
+
 async def main():
+    import time as _time
     parser = argparse.ArgumentParser(description="Autonomous Swarm Run")
     parser.add_argument("--mode", default="daily-ideation",
-                        choices=["daily-ideation", "code-review", "cto-audit", "self-upgrade"])
+                        choices=["daily-ideation", "code-review", "cto-audit", "self-upgrade",
+                                 "weekly-audit", "monthly-review", "post-deploy"])
     parser.add_argument("--skip-consolidation", action="store_true",
                         help="Skip memory consolidation (useful for quick runs)")
+    parser.add_argument("--trigger-meta", default="{}",
+                        help="JSON string with trigger metadata (e.g. deploy SHA)")
     args = parser.parse_args()
 
     if args.mode == "self-upgrade":
@@ -732,7 +827,15 @@ async def main():
         )
         return
 
+    # Parse trigger metadata (for post-deploy and other event-driven runs)
+    try:
+        trigger_meta = json.loads(args.trigger_meta)
+    except Exception:
+        trigger_meta = {}
+
+    _run_start = _time.monotonic()
     proposals = await run_autonomous(args.mode)
+    _run_duration_ms = int((_time.monotonic() - _run_start) * 1000)
 
     # ── Sprint 1: Proposal Groundedness Check ─────────────────────────────────
     # Verify that file paths cited in proposals actually exist.
@@ -849,6 +952,12 @@ async def main():
         except Exception as e:
             logger.error(f"Skill evolution failed: {e}")
             print(f"✗ Skill evolution failed: {e}")
+
+
+    # ── ADR-011: Write run audit log to Supabase ────────────────────────────────
+    # Non-blocking. Requires SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY in env.
+    # GitHub Actions sets these via secrets. Local runs skip gracefully if missing.
+    await _write_run_log(proposals, args.mode, _run_duration_ms, trigger_meta)
 
 
 if __name__ == "__main__":

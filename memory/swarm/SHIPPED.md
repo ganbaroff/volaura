@@ -6,6 +6,20 @@
 
 ---
 
+## Session 83 BATCH-W (2026-04-03) — Product Gap Closure
+
+| Item | What it does | Status |
+|------|-------------|--------|
+| Badge download button | Share buttons: Download → saves PNG with AURA score for LinkedIn | Fixed |
+| Profile views endpoint | GET /api/profiles/me/views — total, this week, recent viewer names | Created |
+| useProfileViews hook | Frontend hook for profile view analytics | Created |
+| Referral code on registration | auth.py RegisterRequest + stored in auth metadata | Added |
+| Referral crystal reward | First assessment → referrer gets 10 crystals + notification | Added |
+| Crystal spending UI | BrandedBy skip queue checkbox (25 crystals) | Wired |
+| Tribe join audit | TribeCard confirmed COMPLETE (327 LOC) — audit false positive corrected | Verified |
+
+---
+
 ## Session 83 BATCH-V (2026-04-03) — Quality System + Missing Agents + Deep Research
 
 | Item | Location | What it does | Status |
@@ -33,6 +47,32 @@
 2. **LANGFUSE** — Sign up at cloud.langfuse.com (free). Set LANGFUSE_PUBLIC_KEY + LANGFUSE_SECRET_KEY on Railway. Wire via LiteLLM. (2 hour effort)
 3. **HARD AC GATE** — Add pre-batch check: batch cannot proceed without AC.md file. (30 min effort)
 4. **3-ITEM DOD** — From defect autopsy results, replace 15-item DoD with enforced 3 items. (after autopsy)
+
+---
+
+## Session 82 BATCH-S (2026-04-03) — Quality System + NotebookLM Research Sprint
+
+| Item | What it does | Status |
+|------|-------------|--------|
+| QUALITY-STANDARDS.md | Toyota+Apple+DORA quality system. DoR, Jidoka, Quality Gate, DORA metrics, Poka-yoke. | Created |
+| TASK-PROTOCOL v8.0 | +Step 1.5 AC, +Step 4.5 Quality Gate, +Step 5.5 DORA. Protocol now structural prevention. | Updated |
+| QA Quality Agent | Blocks tasks if DoD not met. CTO cannot override. | Created |
+| Onboarding Specialist Agent | First 5 minutes of user's life. Signup-to-first-value optimization. | Created |
+| Customer Success Agent | D7 retention, churn prevention, re-engagement. | Created |
+| AC Template | Copy-paste template for every task. PASS/FAIL conditions. | Created |
+| CUSTOMER-JOURNEY-MAP.md | 4 persona journeys (Leyla, Nigar, Kamal, Rauf) with friction points. | Created |
+| API-REFERENCE.md | All 115 endpoints documented for external developers. | Created |
+| ADR-009 CrewAI | APPROVED for Sprint Gate DSP. Structural fix for CLASS 3. | Created |
+| NotebookLM notebook | 45+ sources on Toyota/Apple/DORA. First proper deep research. | Created |
+| Langfuse | Added to requirements.txt. Optional LLM observability. | Installed |
+| CrewAI | Added to requirements.txt. ADR-009 Phase 1. | Installed |
+| Playwright MCP | Visual E2E testing. Added to .mcp.json. | Installed |
+| Sentry MCP | Production errors in context. Added to .mcp.json. | Installed |
+| quality-metrics.md | DORA tracking with baseline (34.8% defect rate). First batch recorded. | Created |
+| CLAUDE.md 10-step algorithm | Execution algorithm replaces 3-line gate. Tools table mandatory. | Rewritten |
+| Mistakes #74, #75 | ROOT CAUSE: no quality system + lazy path optimization. CLASS 9 created. | Logged |
+
+Total new agents: 3 (QA, Onboarding, Customer Success). Total agents: 43.
 
 ---
 

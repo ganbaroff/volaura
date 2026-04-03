@@ -6,6 +6,48 @@
 
 ---
 
+## Session 83 BATCH-V (2026-04-03) — Quality System + Missing Agents + Deep Research
+
+| Item | Location | What it does | Status |
+|------|----------|-------------|--------|
+| `docs/QUALITY-SYSTEM.md` | New | Toyota TPS→software mapping, 15-item DoD, DORA 90-day roadmap, Langfuse plan, CrewAI architecture, missing infra priority list | ✅ NEW |
+| `docs/ACCEPTANCE-CRITERIA-TEMPLATES.md` | New | Gherkin templates for all VOLAURA domains: assessment, AURA score, org search, auth/invite gate, email, Stripe | ✅ NEW |
+| `memory/swarm/skills/acceptance-criteria-agent.md` | New | Writes Gherkin AC before coding. INVEST checker. Refuses to start without testable conditions. | ✅ NEW |
+| `memory/swarm/skills/quality-assurance-agent.md` | New | Verifies 15-item DoD after coding. Binary PASS/FAIL per item. Blocks DONE if any item fails. | ✅ NEW |
+| `memory/swarm/skills/dora-metrics-agent.md` | New | Tracks DORA metrics per batch. CFR, Lead Time, Deploy Freq. Appends to quality-metrics.md. | ✅ NEW |
+| `memory/swarm/skills/langfuse-integration-agent.md` | New | LiteLLM proxy integration plan. Per-agent cost/quality monitoring. Migration path for all 6 edge functions. | ✅ NEW |
+| `memory/context/mistakes.md` | Updated | CLASS 9 (no quality system) + CLASS 10 (process theater) added. Mistake #76: swarm found elaborate system without hard gates. Defect autopsy prescribed. | ✅ UPDATED |
+| `memory/swarm/shared-context.md` | Updated | New agents added to routing table. Quality rule added. | ✅ UPDATED |
+| `CLAUDE.md` | Updated | Tools table: Langfuse, AC agent, QA agent, DORA agent added as mandatory tools. | ✅ UPDATED |
+
+**NotebookLM Research (notebook 888d43e4):** 9 sources loaded. 6 deep questions answered on: Toyota TPS→software, DORA Elite 90-day roadmap, INVEST+Gherkin AC, 15-item DoD, CrewAI architecture, Langfuse integration.
+
+**Swarm Retrospective (Groq Llama-3.3-70b):**
+- Finding 1: New quality system is "process-as-performance" — no hard gates, manual invocation means 0 invocations (proven by history)
+- Finding 2: Root cause unaddressed — CTO starts coding before writing what "done" looks like. New agents don't change this habit.
+- Finding 3: Cut DoD to 3 items (most common defect types). Implement HARD GATE (pre-commit hook). Do defect autopsy on 73 bugs FIRST.
+- New Mistake #76 + CLASS 10 (process theater) documented.
+
+**Pending CEO / CTO actions (from research → implementation):**
+1. **DEFECT AUTOPSY** — Categorize all 73 historical bugs by type. Find the 3 most common. Build only those 3 into hard gates. (1 day effort, highest leverage)
+2. **LANGFUSE** — Sign up at cloud.langfuse.com (free). Set LANGFUSE_PUBLIC_KEY + LANGFUSE_SECRET_KEY on Railway. Wire via LiteLLM. (2 hour effort)
+3. **HARD AC GATE** — Add pre-batch check: batch cannot proceed without AC.md file. (30 min effort)
+4. **3-ITEM DOD** — From defect autopsy results, replace 15-item DoD with enforced 3 items. (after autopsy)
+
+---
+
+## Session 82 BATCH-R (2026-04-03) — Verification link + journey audit
+
+| Item | What it does | Status |
+|------|-------------|--------|
+| Public verification endpoint | GET /api/assessment/verify/{session_id} — no auth, shows score+badge+competency to LinkedIn viewers | Created |
+| Verification page | /u/{username}/verify/{sessionId} — beautiful card showing verified score, badge tier, assessment method | Created |
+| PublicVerificationOut schema | Pydantic model for public-safe verification data | Created |
+| Tribe matching audit | Algorithm verified COMPLETE (286 LOC) — audit agent false positive corrected | Confirmed |
+| 7 user journey audit | Full E2E audit: 4 working, 3 gated (awaiting config activation) | Documented |
+
+---
+
 ## Session 83 BATCH-U (2026-04-02) — Transactional email + demo seed + context refresh
 
 | Code | Location | What it does | Status |

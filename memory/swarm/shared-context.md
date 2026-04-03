@@ -144,7 +144,7 @@ All routers use prefix `/api` from main.py except health (no prefix).
 | `auth.py` | /api/auth | POST /login, /register, /logout, /callback |
 | `profiles.py` | /api/profiles | GET/POST/PUT /me, GET /public, GET/POST /{username} |
 | `aura.py` | /api/aura | GET /me, GET /me/explanation, GET /{volunteer_id}, GET+PATCH /me/visibility, POST /me/sharing |
-| `assessment.py` | /api/assessment | POST /start, POST /answer, POST /complete/{id}, GET /results/{id}, POST /{id}/coaching, GET /info/{slug}, GET /results/{id}/questions |
+| `assessment.py` | /api/assessment | POST /start, POST /answer, POST /complete/{id}, GET /results/{id}, POST /{id}/coaching, GET /info/{slug}, GET /results/{id}/questions, GET /verify/{session_id} (public, no auth) |
 | `events.py` | /api/events | CRUD for events |
 | `organizations.py` | /api/organizations | GET+POST "", GET/PUT /me, GET /{id}, GET /me/dashboard, GET /me/volunteers, POST /search/volunteers, POST /assign-assessments, POST /intro-requests |
 | `invites.py` | /api/organizations | (shares prefix) org invite endpoints |
@@ -323,8 +323,14 @@ Rate limiter: slowapi in-memory (single Railway instance). Migrate to Redis or S
 | Code change >50 lines | Architecture + Security in parallel |
 | New data model | Architecture Agent |
 | Meta/process improvement | Needs Agent |
+| Writing AC before any coding task | acceptance-criteria-agent.md (MANDATORY — no task starts without AC) |
+| Verifying DoD before marking done | quality-assurance-agent.md (15-item checklist, fires after every task) |
+| DORA metrics after each batch | dora-metrics-agent.md (CFR, Lead Time, Deploy Freq — quality-metrics.md) |
+| AI call tracing, cost visibility | langfuse-integration-agent.md (LiteLLM proxy, Andon visual management) |
+| AI agent swarm orchestration (future) | CrewAI Flows — see docs/QUALITY-SYSTEM.md Section 6 |
 
 **Pairing rule:** Risk Manager + Readiness Manager must both approve before any MEDIUM+ feature ships.
+**Quality rule:** AC Agent runs BEFORE coding. QA Agent runs AFTER coding. DORA Agent runs AFTER deploy. Always.
 
 ---
 

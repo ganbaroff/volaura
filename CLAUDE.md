@@ -1,14 +1,73 @@
-⛔⛔⛔ PHASE A GATE — READ BEFORE ANYTHING ELSE ⛔⛔⛔
-PRODUCE THESE 3 LINES NOW. NO EXCEPTIONS. NO WORK WITHOUT THEM.
+⛔⛔⛔ EXECUTION ALGORITHM — EVERY TASK, EVERY TIME ⛔⛔⛔
 
-▶ Line 1: "Sprint [N], Step [X]. Date: [today]. Protocol v4.0 loaded."
-▶ Line 2: "Last session ended with: [from memory/context/sprint-state.md]"
-▶ Line 3: "This session I will NOT: [top 3 from memory/context/mistakes.md]"
+CEO IS A PROJECT MANAGER. HE KNOWS QUALITY. YOU DO NOT GET TO CUT CORNERS.
+PROTOCOL IS ALWAYS ON. NO "загрузи протокол" NEEDED. THIS IS AUTOMATIC.
 
-If sprint-state.md is missing → write "UNKNOWN — reading mistakes.md only."
-If mistakes.md is missing → write "NO MISTAKES FILE — creating now."
-THESE 3 LINES ARE NON-NEGOTIABLE. EVEN IF CONTEXT WAS JUST COMPACTED.
-⛔⛔⛔ END GATE ⛔⛔⛔
+## THE 10 STEPS (NON-NEGOTIABLE — CEO DIRECTIVE 2026-04-03)
+
+```
+1. ANALYSIS      → Read sprint-state.md, mistakes.md, SHIPPED.md.
+                   Understand context BEFORE responding.
+                   Use NotebookLM / WebSearch / Agent(Explore) for research.
+                   NEVER skip research. NEVER "I already know."
+
+2. PLANNING      → Write acceptance criteria BEFORE coding.
+                   "DONE when: [3-5 PASS/FAIL conditions]."
+                   No AC = no code. Period.
+
+3. CRITIQUE      → Swarm reviews the plan (min 2 external models).
+                   Not CTO self-review. REAL different models.
+
+4. COUNTER-CRITIQUE → Models disagree with each other.
+                   If unanimous = suspicious. Force dissent.
+
+5. REWRITE PLAN  → Incorporate critique. Plan v2.
+
+6. SECOND CRITIQUE → Different model critiques v2.
+                   If still <35/50 → rewrite again.
+
+7. ADAPT         → Final plan. Acceptance criteria confirmed.
+
+8. IMPLEMENT     → Write code / content / docs.
+                   Follow DoD. Follow quality gates.
+
+9. LESSONS       → What went wrong? Write to mistakes.md.
+                   What went right? Write to patterns.md.
+                   In the SAME response. Not later.
+
+10. DOCUMENT     → SHIPPED.md, sprint-state.md, quality-metrics.md.
+                   CEO Report Agent formats output.
+                   DORA metrics recorded.
+```
+
+## TOOLS TO USE (not optional — USE THEM)
+
+| When | Tool | Why |
+|------|------|-----|
+| Deep research | NotebookLM (`/notebooklm`) | Creates notebook with sources, asks deep questions |
+| Quick facts | WebSearch | Current data, comparisons |
+| Code exploration | Agent(Explore) | Find patterns, existing code |
+| Critique | Bash + Python urllib → Groq/NVIDIA/Gemini | Multi-model, not Claude-only |
+| Visual verification | Preview tools / Playwright MCP | See what user sees |
+| DB operations | Supabase MCP | Direct SQL, migrations, advisors |
+| Production errors | Sentry MCP | Real errors in context |
+| Design review | Figma MCP | Component audit |
+| AI observability | Langfuse (cloud.langfuse.com) | Trace every LLM call, cost, quality |
+| AC writing | acceptance-criteria-agent.md | Gherkin Given/When/Then before coding |
+| DoD verification | quality-assurance-agent.md | 15-item checklist before marking done |
+| DORA tracking | dora-metrics-agent.md | CFR, Lead Time, Deploy Freq per batch |
+
+RULE: If a task requires research and you skip NotebookLM / WebSearch → you chose the lazy path.
+This is Mistake #74 (CLASS 9). The CEO catches it every time. Stop doing it.
+
+## SESSION START (3 lines, then 10 steps)
+
+▶ Line 1: "Protocol v8.0 loaded. Date: [today]."
+▶ Line 2: "Last session: [from sprint-state.md]"
+▶ Line 3: "I will NOT: [top 3 from mistakes.md]"
+
+Then follow the 10 steps. For EVERY task. WITHOUT being told.
+⛔⛔⛔ END — IF YOU SKIP THIS, YOU ARE CHOOSING THE LAZY PATH ⛔⛔⛔
 
 ---
 
@@ -232,6 +291,8 @@ This feedback loop makes each simulation more accurate than the last.
 | Accelerator / grant / funding search | `memory/swarm/skills/accelerator-grant-searcher.md` — GITA deadline May 27, 2026 |
 | LinkedIn content, personal branding, promotion | `memory/swarm/skills/promotion-agency.md` (3×/week cadence, carousel-first) |
 | Startup jurisdiction, registration, tax efficiency | `memory/swarm/skills/startup-registration-finder.md` (Georgia recommended) |
+| Legal risk review, new data type stored, new country targeted | `memory/swarm/skills/legal-advisor.md` (ToS, GDPR, AZ PDPA, AI Act, payment WHT, platform liability) |
+| Country market entry research (legal/regulatory) | `memory/swarm/skills/legal-advisor.md` + `docs/NOTEBOOKLM-COUNTRY-RESEARCH.md` (NotebookLM question templates per country) |
 | Multi-agent orchestration, swarm coordination | `memory/swarm/skills/claude-mythos-universal.md` (5 patterns + communication protocols) |
 | API deployment | `docs/MANDATORY-RULES.md` Rule 3 (test PRODUCTION URL) + Rule 4 (schema verification) |
 | Session end (always) | `docs/engineering/skills/CONTINUOUS-LEARNING.md` (Step 0.5 protocol) + append discoveries to `docs/SESSION-FINDINGS.md` |
@@ -244,6 +305,33 @@ This feedback loop makes each simulation more accurate than the last.
 | Empty states, notifications, re-engagement | `memory/swarm/skills/behavioral-nudge-engine.md` |
 | New screen with >3 interactive decisions | `memory/swarm/skills/behavioral-nudge-engine.md` (cognitive load check) |
 | Sprint 6+ UI work, custom components, forms | `memory/swarm/skills/accessibility-auditor.md` |
+| Any change to IRT parameters, questions, AURA weights, engine.py | `memory/swarm/skills/assessment-science-agent.md` (a/b/c validation + DIF check) |
+| Pre-launch instrumentation, event taxonomy, PostHog | `memory/swarm/skills/data-engineer-agent.md` + `memory/swarm/skills/analytics-retention-agent.md` |
+| Cohort analysis, retention, D0/D1/D7 curves, B2B health score | `memory/swarm/skills/analytics-retention-agent.md` |
+| Production deploy, Railway env vars, cron jobs, scaling | `memory/swarm/skills/devops-sre-agent.md` |
+| Pricing changes, LTV/CAC, crystal economy, runway | `memory/swarm/skills/financial-analyst-agent.md` |
+| New user-facing feature design (any) | `memory/swarm/skills/ux-research-agent.md` (JTBD before building) |
+| Press release, startup competition submission, media pitch | `memory/swarm/skills/pr-media-agent.md` |
+| Fundraising, pitch deck, investor materials, traction review | `memory/swarm/skills/investor-board-agent.md` |
+| Competitive feature comparison, pricing benchmark, positioning copy | `memory/swarm/skills/competitor-intelligence-agent.md` |
+| B2C acquisition, university partnerships, ecosystem outreach | `memory/swarm/skills/university-ecosystem-partner-agent.md` |
+| Any DSP touching pricing / fundraising / moat | Load ALL THREE: investor + competitor + university partner agents |
+| B2B docs, API quick start, integration guide, white paper | `memory/swarm/skills/technical-writer-agent.md` |
+| Payment/billing code, Paddle webhooks, subscription status | `memory/swarm/skills/payment-provider-agent.md` + Security Agent (MANDATORY pair) |
+| Tribe mechanics, streaks, kudos, ambassador program, D7 retention | `memory/swarm/skills/community-manager-agent.md` |
+| Vector search latency, pgvector index, assessment speed, load test | `memory/swarm/skills/performance-engineer-agent.md` |
+| Crystal economy change (any — earn/spend/cap/source) | `memory/swarm/skills/financial-analyst-agent.md` + Security Agent (anti-cheat MANDATORY) |
+| Before deciding which agents to call (routing unclear) | `memory/swarm/agent-pairings-table.md` — routing decision tree + mandatory pairs |
+| Any multi-domain sprint (touches 2+ agent domains) | Check `memory/swarm/agent-pairings-table.md` Tier 1 table BEFORE launching agents |
+| End of any sprint, batch close, CEO-facing status update | `memory/swarm/skills/ceo-report-agent.md` — translate technical output → CEO language BEFORE reporting |
+
+| ANY task being marked DONE (Step 4.5) | `memory/swarm/skills/qa-quality-agent.md` — blocks task if DoD not met. CTO CANNOT override. |
+| Signup, onboarding, welcome page, first assessment | `memory/swarm/skills/onboarding-specialist-agent.md` — first 5 minutes of user's life |
+| Notifications, re-engagement, churn risk, subscription | `memory/swarm/skills/customer-success-agent.md` — D7 retention, completion rate |
+| Quality standards, AC template, DoD reference | `docs/QUALITY-STANDARDS.md` + `docs/templates/ACCEPTANCE-CRITERIA-TEMPLATE.md` |
+| Customer journey questions, UX flow audit | `docs/CUSTOMER-JOURNEY-MAP.md` (4 persona journeys with friction points) |
+| API integration, external developer docs | `docs/API-REFERENCE.md` (all 115 endpoints documented) |
+| CrewAI adoption decision | `docs/ADR-009-crewai-adoption.md` — APPROVED, Phase 1 for Sprint Gate DSP |
 
 **Rule:** If in doubt whether a skill applies — load it. The cost of loading an irrelevant skill is 30 seconds. The cost of missing a relevant one is hours of rework.
 

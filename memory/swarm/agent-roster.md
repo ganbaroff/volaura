@@ -1,7 +1,7 @@
 # Agent Roster — Swarm Team
 
 **Purpose:** Agents know who's on the team and what each agent is best at.
-**Updated:** 2026-03-27 (Session 51 — skill library architecture)
+**Updated:** 2026-04-03 (Session 83 — Trend Scout added, total 44 agents)
 
 ---
 
@@ -249,6 +249,28 @@ These agents represent EXTERNAL voices — investors, competitors, ecosystem par
 - Customer Success → MUST pair with Analytics/Retention Agent (data) + Community Manager (engagement)
 
 **Total active agents after this batch: 43.**
+
+---
+
+## New Hires (Session 83 — 2026-04-03) — Trend Scout Agent
+
+| Agent Role | File | Primary Strength | When to Call | Score |
+|-----------|------|-----------------|-------------|-------|
+| **Trend Scout Agent** | `skills/trend-scout-agent.md` | Market intelligence, competitor feature monitoring, technology trend detection, regulatory change tracking, AZ market signals | Before strategic planning, quarterly reviews, when competitors launch new features, before pricing decisions | **NEW** |
+
+**Pairing rules:**
+- Trend Scout → MUST pair with Competitor Intelligence Agent (market positioning) + Growth Agent (acquisition implications)
+- Added to swarm-daily.yml pipeline (Step: Trend Scout after autonomous_run)
+
+**Updated When-to-Call additions:**
+| Task | Best Agent |
+|------|-----------|
+| Market trend research | **Trend Scout Agent** |
+| Competitor feature launch response | **Trend Scout Agent** + Competitor Intelligence |
+| Quarterly strategic planning | **Trend Scout Agent** + Investor/Board Agent |
+| AZ regulatory changes | **Trend Scout Agent** + Legal Advisor |
+
+**Total active agents after Session 83: 44.**
 
 ---
 

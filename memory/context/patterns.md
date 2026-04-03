@@ -3,6 +3,46 @@
 Purpose: Reusable knowledge about what works in this project. Read at session start.
 
 ---
+## New Patterns (Session 83, 2026-04-03 — Biggest Session)
+
+### Pattern: NotebookLM + 45 sources > CTO knowledge for quality system design — PROVEN
+**Context:** CTO built quality agents without researching what Toyota TPS, Apple, or DORA Elite actually look like. NotebookLM with 45+ sources produced the framework that became QUALITY-STANDARDS.md.
+**Rule:** For any architectural or process decision that has established industry practice (quality systems, CI/CD, testing strategies), use NotebookLM with 10+ authoritative sources BEFORE designing. CTO intuition alone produces CLASS 9 (no quality system) and CLASS 10 (process theater).
+**Why it works:** 45 sources from Toyota, Apple, Google, DORA covers edge cases that no single person's experience does. The NotebookLM synthesis found: hard gates > soft checklists, 3-item DoD > 15-item DoD, defect autopsy BEFORE building new gates.
+
+### Pattern: Defect autopsy before building quality gates — PROVEN
+**Context:** CTO built elaborate 15-item DoD without analyzing the 76 historical bugs first. Swarm (Llama-3.3-70b) found: 3 bug classes cover 76.4% of all defects. 15-item checklist covers everything and enforces nothing.
+**Rule:** Before building any quality gate, categorize ALL historical defects. Find the 3 most common types. Build ONLY those into hard gates. Comprehensive checklists that cover everything enforce nothing.
+**Why it works:** Pareto principle applied to defect prevention. 3 targeted gates > 15 aspirational gates.
+
+### Pattern: Process theater = elaborate system without hard gates — PROVEN (CLASS 10)
+**Context:** QUALITY-STANDARDS.md had Toyota TPS mapping, DORA metrics, 15-item DoD — but zero enforcement mechanism. CTO would invoke agents manually = 0 invocations (proven by history of 82 sessions).
+**Rule:** Any quality process must have a hard gate (blocks code without compliance). Manual invocation = 0% compliance. Pre-commit hooks, CI checks, required AC files = structural prevention.
+**Why it works:** Humans (and AI) optimize for speed. Manual checkpoints are the first thing skipped. Hard gates cannot be skipped.
+
+### Pattern: Self-confirmation bias in tool/library recommendations — PROVEN (CLASS 11)
+**Context:** CTO proposed Langfuse, then confirmed Langfuse was the best choice. Circular reasoning: "I recommend X → I verify X is best → X confirmed."
+**Rule:** If you propose a tool, you CANNOT confirm it yourself. External research (WebSearch, NotebookLM, 2+ independent sources) must validate OR invalidate the proposal. The research may confirm it — that is fine. But the research MUST happen.
+**Why it works:** Prevents the "first tool I thought of" pattern. Different sources have different biases. If 3 independent sources agree, confidence is earned, not assumed.
+
+### Pattern: Analytics events need GDPR retention from day 1 — PROVEN
+**Context:** analytics_events table created with 390-day retention workflow built into the migration. Not added later as an afterthought.
+**Rule:** Every new table that stores user behavior data must have a retention policy in the same migration. PostgreSQL: `pg_cron` + `DELETE WHERE created_at < NOW() - INTERVAL '390 days'`. Never create analytics tables without retention.
+
+### Pattern: Stakeholder critique (6 perspectives) catches what team misses — PROVEN
+**Context:** 6 external perspectives (VC, HR, SOC2, User, LinkedIn PM, Lawyer) found issues the internal team missed: SOC2 readiness gaps, legal compliance gaps, user onboarding friction, competitive positioning weaknesses.
+**Rule:** Before any major milestone (B2B launch, fundraise, public launch), run 6-stakeholder critique. Each stakeholder has different success criteria. The intersection of all 6 = actually ready.
+
+### Pattern: 10-step execution algorithm > ad-hoc protocol gates — PROVEN
+**Context:** CLAUDE.md rewritten with explicit 10-step algorithm (Analysis → Planning → Critique → Counter-Critique → Rewrite → Second Critique → Adapt → Implement → Lessons → Document). Each step is non-negotiable, each produces visible output.
+**Rule:** Execution algorithms with numbered steps and visible output per step > informal "follow the protocol" instructions. Each step checks that the previous step produced output.
+
+### Pattern: Telegram setMyCommands registers bot menu — PROVEN
+**Context:** Telegram bot had 6 commands but no menu (users had to guess /proposals, /ask, etc.). `setMyCommands` API call registers the command list in Telegram's UI.
+**Rule:** After adding any new Telegram bot command, call `setMyCommands` to update the menu. Users should never need to guess command names.
+
+---
+
 ## New Patterns (Session 82, 2026-04-02 — BATCH Q: Assessment correction)
 
 ### Pattern: Assessment must separate individual from team — PROVEN

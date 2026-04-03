@@ -1,5 +1,87 @@
 # Architecture Decisions Log
 
+## Session 83 — 2026-04-03 — MEGA SESSION Retrospective (10 Batches: R through X)
+
+**Largest session in project history.** 10 batches shipped. Code, docs, agents, tools, quality infrastructure.
+
+✓ **What went as simulated / right:**
+- NotebookLM research (first time used properly) produced QUALITY-STANDARDS.md based on 45+ authoritative sources (Toyota TPS, Apple, DORA Elite). This is categorically better than CTO intuition.
+- TASK-PROTOCOL v8.0 adds structural prevention: Step 1.5 (AC before code), Step 4.5 (Quality Gate blocks DONE), Step 0c (3-question DoD). Hard gates, not soft suggestions.
+- Analytics pipeline shipped end-to-end in one batch: migration with GDPR retention → service → router → 6 frontend events. Complete vertical slice.
+- Verification page (/u/{username}/verify/{sessionId}) enables LinkedIn badge sharing — critical viral loop.
+- External model critiques (Llama 405B, Gemini, Groq) found what 7 haiku agents missed: startup guard gaps, Realtime RLS bypass, cold-start fallback missing.
+- Defect autopsy methodology (categorize 76 bugs → find 3 root cause classes → build only those into gates) accepted by team. 76.4% coverage from 3 classes vs. 15-item DoD covering everything but enforcing nothing.
+- 5 new agents fill critical gaps: QA Quality (blocks DONE), Onboarding Specialist (first 5 min), Customer Success (D7 retention), Trend Scout (market intelligence), CEO Report (translates tech → business).
+- GDPR consent columns (age_confirmed, terms_version, terms_accepted_at) added proactively before B2B launch, not reactively after a complaint.
+
+✗ **What DSP did not predict / went wrong:**
+- CLASS 10 (process theater): CTO built an elaborate quality system (15-item DoD, DORA metrics, Toyota mapping) that had ZERO enforcement mechanism. Swarm (Llama-3.3-70b) caught it: "no hard gates, manual invocation means 0 invocations." Entire quality system had to be redesigned around 3-item enforced DoD.
+- CLASS 11 (self-confirmation bias): CTO proposed Langfuse, then confirmed Langfuse was best. Circular reasoning. New rule: proposals CANNOT be self-confirmed. External research must validate.
+- 10 new mistakes logged (#68-#77) — highest single-session count. Root cause: sessions 1-82 accumulated process debt that only became visible with systematic audit.
+- DeepSeek R1 unavailable (CUDA OOM on NVIDIA NIM) — had to fall back to Groq for external critiques.
+- CTO audit grade D+/D- from external models — honest but painful assessment of quality system maturity.
+
+→ **Feed into next simulation:**
+- DEFECT AUTOPSY must happen before any new quality gates are built. 76 bugs → 3 classes → 3 hard gates.
+- NotebookLM should be default research tool for any architecture/process decision. Not optional.
+- Self-confirmation bias check: for every tool/library proposal, require 2+ external sources before proceeding.
+- External model critique should run at least once per session for HIGH+ stakes decisions.
+- Trend Scout agent should be tested on next market intelligence task to validate its patterns.
+
+**ADR-009: CrewAI Adoption — APPROVED**
+Decision: CrewAI adopted for Sprint Gate DSP (Phase 1). Structural fix for CLASS 3 (solo execution without diverse critique).
+Reason: Multi-agent orchestration with role separation > single-model pseudo-debate. CrewAI provides: agent memory, task delegation, tool integration, structured output.
+Phase 1 scope: Sprint Gate DSP only. Phase 2 (daily swarm) deferred until Phase 1 proves value.
+
+**Mistakes summary this session:**
+| # | Class | Description |
+|---|-------|-------------|
+| #68 | 6 | Docs 6-30 sessions stale |
+| #69 | 6 | Agent feedback log abandoned |
+| #70 | 8 | Admin panel false positive security claims |
+| #71 | 7 | CEO received technical output instead of business language |
+| #72 | 8 | Crystal reward silent (no UI feedback) |
+| #73 | 5 | Hardcoded English timestamps in AZ UI |
+| #74 | 9 | No quality system (82 sessions without DoR/DoD/gates) |
+| #75 | 9 | Lazy path optimization (skip research, build first) |
+| #76 | 10 | Process theater (elaborate system, zero enforcement) |
+| #77 | 11 | Self-confirmation bias (propose tool, confirm own proposal) |
+
+**DSP Calibration:**
+| Predicted | Actual | Delta |
+|-----------|--------|-------|
+| Quality system from NotebookLM research: ~42/50 | System built but enforcement missing (CLASS 10 caught by swarm) | -8 (enforcement gap unpredicted) |
+| Analytics pipeline: ~40/50 | Clean vertical slice, no rework needed | +5 (faster than expected) |
+
+---
+
+## Session 82 — 2026-04-02 — BATCH-G + BATCH-H Retrospective (Tribe Streaks Full Sprint)
+
+✓ **What went as simulated:**
+- Tribe Streaks full stack shipped in one session: 6-table migration, matching service, streak tracker, 6-endpoint router, frontend hooks + card, 19 i18n keys, 14 tests, cron workflow. All layers complete without rework.
+- Q1/Q2/Q3 decisions (DSP 47/50) encoded directly into code comments and schema — future readers can see the rationale without hunting for docs.
+- BUG-012 (reeval SLA) fixed cleanly: `SLA_HOURS` constant + per-item warning in one method. No side effects.
+- Legal P0 agent (async) produced ToS + PP drafts with explicit Tribe privacy section and flagged items — exactly what was needed for counsel review.
+
+✗ **DSP did not predict:**
+- TribeCard built but not wired into dashboard — entire feature was invisible to users until caught in next batch's proposal phase. Missed because "frontend done" checklist didn't include "import verified in consuming page."
+- `join-pool` endpoint has no persistent "pending match" state — user refreshes and loses the "you're in the pool" confirmation (React state only). Not a P0 but a UX gap.
+
+→ **Feed into next simulation:** After any new component is built, IMMEDIATELY check: is it imported anywhere? Add to pre-completion checklist: `grep -rn "ComponentName" src/` must return ≥2 results (the file itself + at least one consumer).
+
+**ADR-009: Tribe Streaks Design Decisions — LOCKED**
+Three decisions made with full DSP (47/50, unanimous team):
+- **Q1 (kudos display):** Show "Be the first to send kudos" CTA when count=0. Never show "0 kudos." Reason: zero-state framing eliminates the emptiness penalty and creates a prosocial nudge.
+- **Q2 (streak reset):** 3 consecutive inactive weeks reset streak (not 2 in any order). `consecutive_misses_count` column tracks this. Any active week resets to 0. Reason: single miss forgiveness reduces anxiety; 3 consecutive is genuine disengagement.
+- **Q3 (2-person tribe):** Tribe continues if one member opts out. Re-matched at expiry. No "X left the tribe" notification — departed members simply invisible. Reason: anti-harassment, reduces social pressure, prevents guilt-trip dynamics.
+
+These decisions are FINAL. Do not re-debate without new user research data.
+
+**Test count:** +14 tribes + 11 match_checker = +25 new tests this session.
+**LRL estimate:** ~87/100 — Tribe Streaks complete, Legal drafts exist, dashboard feature-complete. Remaining gap: CEO 1-clicks (migration + CRON_SECRET), E2E walk on real email.
+
+---
+
 ## Session 78 — 2026-04-01 — ROADMAP Retrospective (Swarm 2.0 Planning)
 
 ✓ **What went as simulated:** Cross-repo analysis of ZEUS + MindShift + Claude Code patterns yielded concrete, file-level sprint plan. Four previously-missed patterns from ZEUS: Context Intelligence Engine (semantic → code binding), Adaptive Execution Loop (ExecutionState + auto-recovery), Skill Evolution (60% built, missing applier + A/B tester), Social Delivery Pipeline (40% built, not connected). MindShift analysis confirmed volaura-bridge.ts already built + TASK-PROTOCOL v6.0 patterns validated.

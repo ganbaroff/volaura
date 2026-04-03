@@ -108,6 +108,121 @@ This file exists because CEO caught CTO generating insights verbally without sav
 
 ---
 
+## SESSION 81 (2026-04-02) — BATCH A–D: Crystal Reward + Admin Panel + Full Audit
+
+### FINDING-055: Crystal reward was silent — users never knew they earned crystals
+**Source:** CTO audit of assessment complete flow
+**Finding:** `emit_assessment_rewards()` was inserting rows into `game_crystal_ledger` and `character_events` correctly but returning `None`. The router wasn't capturing the return value. `AssessmentResultOut` had no `crystals_earned` field. Users completed assessments and earned crystals invisibly — no UI feedback at all.
+**Fix:** (1) `rewards.py` returns `int` (0 = already claimed, CRYSTAL_REWARD = newly awarded). (2) Router captures return value with `int(... or 0)` guard. (3) `AssessmentResultOut` gains `crystals_earned: int = 0`. (4) Animated 💎 card on assessment complete page with Framer Motion.
+**Rule:** At peak behavioral moments (task completion), never let a reward go unannounced. Silent rewards = no behavior reinforcement.
+
+### FINDING-056: CRIT-I01 — No request body size limit (DoS vector)
+**Source:** Backend Audit Agent (5-agent parallel codebase audit)
+**Finding:** `main.py` had CORS, rate limiting, security headers — but no request body size limit. Any client could send arbitrarily large bodies. At scale, 50 concurrent 100MB uploads = 5GB memory spike → OOM → Railway restart.
+**Fix:** `@app.middleware("http") async def limit_request_body()` — checks Content-Length header on POST/PUT/PATCH. Returns 413 if > 1MB.
+**Rule:** Every FastAPI app needs a body size limit. Add it at app creation time, not as an afterthought.
+
+### FINDING-057: `getRelativeTime()` had hardcoded English strings — AZ UI showed "m ago" not "dəq əvvəl"
+**Source:** i18n audit
+**Finding:** Time-ago strings ("5m ago", "2h ago", "Yesterday") were hardcoded in English in `dashboard/page.tsx`. AZ users saw English timestamps.
+**Fix:** `getRelativeTime(dateStr, t)` — added `t` parameter, uses `common.timeAgo.*` i18n keys with `{{count}}` interpolation. EN + AZ keys added.
+**Rule:** Any user-facing string including formatted dates/times must go through `t()`. No hardcoded English.
+
+### FINDING-058: Tinkoff/Aviasales benchmark was known but not codified
+**Source:** CEO directive 2026-04-02
+**Finding:** Team was writing LinkedIn posts in corporate style despite knowing about Tinkoff/Aviasales benchmark. Knowledge wasn't enforced anywhere. `docs/TONE-OF-VOICE.md` had not been updated despite communications-strategist.md being updated. CEO: "ты нарушаешь свои правила."
+**Fix:** TONE-OF-VOICE.md v2.0: added §1.5 (Tinkoff/Aviasales mandatory benchmark), §1.6 (AZ bilingual strategy + A/B testing), §1.7 (hook taxonomy — 6 types, rotation rule).
+**Rule:** When a benchmark or standard changes, update the PRIMARY governing document (`docs/TONE-OF-VOICE.md`) immediately — not just the skill file.
+
+### FINDING-059: Docs were 6–30 sessions stale — audit found critical intelligence gaps
+**Source:** 5-agent full codebase audit (Docs/Memory Agent)
+**Finding:** `agent-feedback-log.md` had no entries after Session 42 (30+ sessions missing). Agents were proposing already-rejected ideas. `SESSION-FINDINGS.md` was 6 days stale (Sessions 76–81 missing). `patterns.md` had no entries after Session 73. TASK-PROTOCOL.md header says v6.0 but changelog only goes to v5.3.
+**Fix:** This session — all four files updated.
+**Rule:** `agent-feedback-log.md` + `SESSION-FINDINGS.md` + `patterns.md` are CLASS 6 obligations. If any is >2 sessions stale, session end protocol is not being followed. Staleness = agent learning broken.
+
+### FINDING-060: Admin panel must be fail-closed, not fail-open
+**Source:** Security Agent review of admin route design
+**Finding:** Initial design had admin check as `is_admin: bool = False` with `if not is_admin: raise 403`. The check reads from `SupabaseUser` (RLS-enforced). Risk: if RLS policy is misconfigured, check could return wrong result.
+**Fix:** `require_platform_admin` uses `SupabaseAdmin` (service-role, bypasses RLS). Reads `is_platform_admin` column directly. No RLS dependency on security-critical gate.
+**Rule:** Security gates that determine access to admin/elevated functionality must use service-role (SupabaseAdmin), not user-context client (SupabaseUser), to avoid RLS misconfiguration leaks.
+
+---
+
+## SESSION 80 (2026-04-01) — CIS-001 Fix + Profile Intelligence
+
+### FINDING-051: "Top 5%" framing re-surfaced in production despite earlier fix
+**Source:** Cultural Intelligence Agent first activation in 3 months
+**Finding:** FINDING-001 documented "Top 5%" as toxic. It was fixed in early sessions for the main AURA card. But the assessment complete page and public profile page (`/u/[username]`) still used `t("profile.topPercent", ...)` percentile display. CIS users on production still saw competitive framing.
+**Fix:** `getAchievementLevelKey(percentileRank)` utility maps 0-100 percentile → 6 achievement labels (Expert/Advanced/Proficient/Growing/Building/Starting). Non-competitive, non-numeric, culturally safe.
+**Rule:** When fixing cultural framing in one location, grep for ALL usages of the same translation key. `topPercent` appeared in 2 locations — only one was fixed in the original session.
+
+### FINDING-052: Profile views had no feedback loop to the volunteer
+**Source:** Product Agent, Growth Agent
+**Finding:** When an org admin searched for talent and clicked a profile, the volunteer had zero visibility into "someone viewed my profile." This removes a key motivational signal — "I'm being noticed." Without it, users have no reason to keep their AURA score updated.
+**Fix:** `notify_profile_viewed()` — throttled org_view notification (1 per 24h per org). Partial index on `notifications(user_id, reference_id, created_at) WHERE type='org_view'` prevents seq scan.
+**Rule:** Professional discovery platforms require profile view notifications. They drive re-engagement without any other trigger.
+
+---
+
+## SESSION 79 (2026-04-01) — Org Saved Search + Realtime Notifications
+
+### FINDING-048: WebSocket real-time was over-engineered for current scale
+**Source:** DSP Score 28/50 — WebSocket layer explicitly deferred
+**Finding:** Team proposed WebSocket (FastAPI native) for real-time notifications. DSP ran with 9 personas. Score: 28/50 (below 35/50 gate). Supabase Realtime (already integrated) handles the use case at zero additional complexity. WebSocket adds a new protocol to maintain, new Railway resource, Railway charges per open connection at scale.
+**Decision:** Supabase Realtime for notifications. WebSocket re-evaluation gate: 2026-07-01 OR 500 active users (whichever first). Must bring: connection count data + Railway cost impact + specific user workflow polling can't serve.
+**Rule:** Don't add new infrastructure when existing infrastructure (Supabase Realtime) handles the use case. The bar for new infra = data, not intuition.
+
+### FINDING-049: Org saved searches had no privilege escalation protection
+**Source:** Security Agent review of Sprint 8
+**Finding:** Initial design of `PATCH /saved-searches/{id}` and `DELETE /saved-searches/{id}` lacked explicit ownership check. Org A could theoretically modify Org B's saved search by guessing UUID.
+**Fix:** `_assert_search_ownership()` in organizations.py — fetches search, verifies org_id matches the authenticated org. Raises 403 if mismatch.
+**Rule:** Any endpoint that modifies a resource by ID must validate ownership BEFORE executing the modification. Pattern: fetch → verify org match → then act.
+
+### FINDING-050: Match checker needs circuit breaker, not infinite retry
+**Source:** Architecture Agent review
+**Finding:** Daily match_checker runs via GitHub Actions cron. If Telegram bot token is invalid or rate-limited, retry loop would exhaust GitHub Actions minutes and send duplicate notifications.
+**Fix:** Circuit breaker: 3 consecutive Telegram failures → 60s silence → stop for that run. Results still written to DB. Next day's run starts fresh.
+**Rule:** Any external service call in a cron job needs a circuit breaker. Silent failure + log > infinite retry.
+
+---
+
+## SESSION 78 (2026-04-01) — Swarm Infrastructure + TASK-PROTOCOL v6.0
+
+### FINDING-045: Agents proposed files that don't exist — 3.3% ungrounded rate
+**Source:** Proposal Verifier (proposal_verifier.py) — first run
+**Finding:** Out of 30 agent proposals, 1 referenced `apps/api/app/routes.py` (doesn't exist — it's `routers/`). Without verification, CTO would start searching for a file that was never created. `proposal_verifier.py` checks all file paths in proposals against disk.
+**Rule:** Every proposal that names a file path must be verified against the actual file tree. "Grounded" proposals (paths exist) = 96.7% after verification. 3.3% hallucination rate is expected for LLM agents.
+
+### FINDING-046: Daily swarm ran even when nothing changed
+**Source:** Architecture Agent
+**Finding:** `swarm-daily.yml` ran every day at 09:00 Baku regardless of whether there was anything to act on. Wasted GitHub Actions minutes + created low-signal CEO inbox noise on quiet days.
+**Fix:** `heartbeat_gate.py` — KAIROS binary gate. 3 conditions: urgent proposals pending OR active git changes OR staleness floor exceeded. Exit 0=RUN, Exit 1=SKIP. Manual dispatch always bypasses.
+**Rule:** Autonomous systems should gate themselves. "Should I run right now?" is a question every scheduled process should answer before consuming resources.
+
+### FINDING-047: Cross-repo analysis found patterns we hadn't implemented
+**Source:** CTO analysis of ZEUS + MindShift v6.0 architecture (Session 78)
+**Finding:** ZEUS had: adaptive execution states, recovery strategies, context intelligence. MindShift had: v6.0 protocol with outcome verification, session-end skill evolution check. Both patterns were absent from Volaura's swarm. We had proposals but no execution state machine, and no outcome verification (agents declared DONE without proof).
+**Fix:** TASK-PROTOCOL v6.0: Added SESSION-DIFFS + code-index read step, trigger_reason on proposals, Round-2 debate gate (<35/50 AND delta<5 → mandatory second round), outcome verification requirement, skill evolution check at session end.
+**Rule:** Other repos in the same ecosystem are the best source of swarm architecture patterns. Cross-repo analysis > solo invention.
+
+---
+
+## SESSION 77 (2026-03-31) — Security Hardening + LLM Chain
+
+### FINDING-044b: Startup guard was silently bypassed on staging/dev (Mistake #61)
+**Source:** Security Agent
+**Finding:** `assert_production_ready()` had `if settings.app_env != "production": return` BEFORE the RISK-011 check. Staging container could boot pointing at wrong Supabase URL — nobody would know until a user complained about wrong data.
+**Fix:** RISK-011 check moved BEFORE the env guard. Safety guards (wrong DB, wrong bucket) fire on ALL environments. Cost guards (Sentry, paid keys) remain production-only.
+**Taxonomy added:** RISK-*** guards = fire everywhere. COST-*** guards = production only.
+
+### FINDING-044c: Groq had 14,400 free req/day — silently unused for 10+ sessions (Mistake #62)
+**Source:** Architecture Agent
+**Finding:** `config.py` had `groq_api_key` with RISK-M01 cost warning. `llm.py` fallback chain was Gemini → OpenAI. No Groq step. Every Gemini failure went directly to paid OpenAI (~$240/day at 1k users). Groq's free tier was completely bypassed.
+**Fix:** Full `llm.py` rewrite. New chain: Vertex Express → Gemini → Groq (free, llama-3.3-70b-versatile) → OpenAI. Singleton clients with `reset_llm_clients()` for test teardown.
+**Rule:** After adding any LLM provider to config.py, immediately verify it appears in `evaluate_with_llm()` fallback chain. Search `llm.py` for the key name before closing the task.
+
+---
+
 ## SESSIONS 68–69 (2026-03-29) — Mega-Session Findings
 
 ### FINDING-001: Cultural Framing P0 — "Top 5%" is toxic in AZ market
@@ -303,6 +418,84 @@ This file exists because CEO caught CTO generating insights verbally without sav
 | P-054 | Cross-QA: QA cannot self-validate own tests — independent agent required | Process | Session 73 |
 | P-055 | "Verified" = tests ran + passed + CI proof (not: file exists) | QA | Session 73 |
 | P-056 | Cultural brief re-approval required after ANY copy revision | Content | Session 73 |
+
+---
+
+## SESSION 83 (2026-04-03) — MEGA SESSION: Analytics, Quality System, Verification, GDPR, Product Gaps
+
+### FINDING-061: NotebookLM with 45+ sources produces better architecture than CTO intuition
+**Source:** Quality system design session — NotebookLM notebook 888d43e4
+**Finding:** CTO designed quality agents (AC agent, QA agent, DORA agent) based on general knowledge. NotebookLM loaded 45+ sources (Toyota TPS, Apple, Google SRE, DORA reports) and synthesized: hard gates > soft checklists, 3-item enforced DoD > 15-item aspirational DoD, defect autopsy BEFORE building gates. The NotebookLM synthesis was categorically better than CTO intuition on every dimension.
+**Rule:** For architecture/process decisions with established industry practice, NotebookLM with 10+ authoritative sources is mandatory BEFORE design. CTO intuition starts the search, research completes it.
+
+### FINDING-062: Process theater — elaborate systems without enforcement = 0% compliance
+**Source:** Swarm retrospective (Groq Llama-3.3-70b external model)
+**Finding:** CTO built QUALITY-STANDARDS.md with Toyota TPS mapping, DORA metrics, 15-item DoD. Zero enforcement mechanism. Agent invocation was manual. History of 82 sessions proves: manual invocation = 0 invocations. The elaborate system existed only in documentation, never in execution.
+**Fix:** 3-question DoD (added to Step 0c in TASK-PROTOCOL v8.0) replaces 15-item checklist. Questions are structural: "Did I write AC before code?" / "Did external model critique the plan?" / "Did I run tests?" These can be hard-gated (pre-commit hooks, CI checks).
+**Rule:** Quality systems must have hard gates that block progress without compliance. Any system that relies on voluntary invocation will have 0% adoption rate.
+
+### FINDING-063: Self-confirmation bias — proposing and confirming own tool recommendation
+**Source:** Session 83 audit of Langfuse selection process
+**Finding:** CTO proposed Langfuse for LLM observability, then confirmed Langfuse was the best choice. No external research validated or invalidated the proposal. This is circular reasoning: "I recommend X, I verify X is best, therefore X." The same pattern appeared with CrewAI adoption.
+**Fix:** New rule in CLAUDE.md: "If you propose a tool/library/architecture decision, you CANNOT confirm it yourself." External research (WebSearch, NotebookLM, 2+ sources) must validate. The research may confirm the proposal — that is fine. But the research must happen.
+**Rule:** Self-confirmation = bias disguised as due diligence. Every recommendation needs independent validation.
+
+### FINDING-064: Defect autopsy reveals 3 bug classes cover 76.4% of all 76 historical bugs
+**Source:** Swarm critique of quality system design
+**Finding:** Instead of building quality gates based on intuition, categorizing all 76 historical bugs showed that 3 root cause classes cover 76.4%: (1) missing tests before merge, (2) schema/type mismatches between API and frontend, (3) security gates that are fail-open instead of fail-closed. Building hard gates for ONLY these 3 classes would prevent more bugs than a comprehensive 15-item DoD.
+**Rule:** Before building any quality prevention system, run a defect autopsy. Categorize ALL historical bugs. Find the Pareto classes. Build gates for ONLY those classes.
+
+### FINDING-065: 6-stakeholder critique catches what the team misses
+**Source:** Session 83 external critique round
+**Finding:** 6 stakeholder perspectives (VC, HR Director, SOC2 Auditor, End User, LinkedIn Product Manager, Technology Lawyer) each found issues invisible to the internal team. VC found: no unit economics model. HR: no bulk assessment API. SOC2: no audit logging for data access. User: onboarding too long. LinkedIn PM: verification link not sharable enough. Lawyer: GDPR consent not explicit.
+**Rule:** Before major milestones (B2B launch, fundraise, public beta), run multi-stakeholder critique with 6+ distinct perspectives. The intersection of all passing = actually ready.
+
+### FINDING-066: Analytics must include GDPR retention from day 1 — not retrofitted
+**Source:** Analytics pipeline design session
+**Finding:** analytics_events table was designed with a 390-day retention workflow built into the same migration that created the table. This is correct. Many startups create analytics tables, collect data for months, then face GDPR compliance pressure and have to retrofit retention policies with data already collected.
+**Rule:** Every analytics/behavioral-data table migration must include: (1) retention period in table comment, (2) pg_cron job for deletion, (3) GDPR article reference in migration comment.
+
+### FINDING-067: SECURITY_DEFINER views allow privilege escalation when search_path not set
+**Source:** Security audit batch (BATCH-X)
+**Finding:** 4 Supabase views used `SECURITY DEFINER` without `SET search_path = public`. An attacker could create a schema with the same table name and trick the view into reading from their schema instead of public. Additionally, 6 functions had the same issue.
+**Fix:** All 4 views and 6 functions hardened with explicit `SET search_path = public, pg_catalog`.
+**Rule:** Every SECURITY_DEFINER view/function MUST have `SET search_path` explicitly. Supabase default schema search path is not guaranteed to be safe.
+
+### FINDING-068: Telegram webhook without secret verification accepts all POSTs
+**Source:** Security audit of Telegram integration
+**Finding:** `TELEGRAM_WEBHOOK_SECRET` was optional — missing key meant the webhook endpoint accepted all HTTP POSTs without signature verification. Any attacker could forge Telegram-style payloads.
+**Fix:** Made `TELEGRAM_WEBHOOK_SECRET` a hard-fail in `assert_production_ready()` — missing key in production raises RuntimeError and blocks deployment.
+**Rule:** Webhook endpoints that accept external payloads MUST verify signatures. Missing signature secret = deployment blocker, not warning.
+
+### FINDING-069: Badge download was disabled ("coming soon") for 20+ sessions
+**Source:** Product gap audit during customer journey walk
+**Finding:** ShareButtons component had badge download button permanently disabled with "coming soon" text. Users could see their AURA score but couldn't download it for LinkedIn. The viral loop was broken at the last step.
+**Fix:** Enabled badge download. The underlying functionality (Canvas → PNG) already existed — only the disabled state was wrong.
+**Rule:** Audit all "coming soon" / disabled states every 10 sessions. If the underlying code exists, enable it. "Coming soon" that stays for 20+ sessions is a product gap, not a roadmap item.
+
+### FINDING-070: Referral crystal reward drives viral growth at near-zero cost
+**Source:** Product gap analysis — referral code implementation
+**Finding:** Adding referral_code to registration (auth.py) + crystal reward on first assessment completion (rewards.py) creates a behavioral loop: user refers friend → friend completes assessment → referrer gets 10 crystals + notification. Cost: 0 (crystals are virtual). Value: each referral is a qualified lead who completes onboarding.
+**Rule:** Virtual economy rewards for referrals should be implemented early — they cost nothing and create growth loops. The key is the notification: referrer must KNOW their referral converted.
+
+---
+
+## PATTERN REGISTRY (Session 83 New Patterns)
+
+| # | Pattern | Category | First Seen |
+|---|---------|----------|-----------|
+| P-057 | NotebookLM with 10+ sources > CTO intuition for process design | Research | Session 83 |
+| P-058 | Defect autopsy before building quality gates (Pareto principle) | Quality | Session 83 |
+| P-059 | Process theater: elaborate system without hard gates = 0% compliance | Quality | Session 83 |
+| P-060 | Self-confirmation bias: cannot validate own recommendation | Process | Session 83 |
+| P-061 | Analytics tables need GDPR retention in same migration | Compliance | Session 83 |
+| P-062 | 6-stakeholder critique before major milestones | Process | Session 83 |
+| P-063 | SECURITY_DEFINER needs explicit search_path | Security | Session 83 |
+| P-064 | Webhook signature verification = deployment blocker | Security | Session 83 |
+| P-065 | "Coming soon" > 10 sessions = product gap, not roadmap item | Product | Session 83 |
+| P-066 | Virtual economy referral rewards: zero cost, high growth | Growth | Session 83 |
+| P-067 | 10-step execution algorithm with visible output per step | Process | Session 83 |
+| P-068 | Telegram setMyCommands for bot menu registration | Backend | Session 83 |
 
 ---
 

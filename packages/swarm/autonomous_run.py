@@ -959,6 +959,29 @@ async def main():
     # GitHub Actions sets these via secrets. Local runs skip gracefully if missing.
     await _write_run_log(proposals, args.mode, _run_duration_ms, trigger_meta)
 
+    # ── Pulse Emotional Core: update agent emotional states ───────────────────
+    try:
+        from swarm.emotional_core import PulseCognitiveLoop
+        state_path = project_root / "memory" / "swarm" / "agent-state.json"
+        pulse = PulseCognitiveLoop(state_path)
+        pulse.load_emotions()
+        for p in proposals:
+            agent_name = p.get("agent", "unknown").lower().replace(" ", "-") + "-agent"
+            severity = p.get("severity", "medium")
+            event_type = "security" if severity == "critical" else "code_change"
+            pulse.process_event(
+                agent_name=agent_name,
+                actor="agent",
+                event_type=event_type,
+                expected="no issues",
+                actual=f"found: {p.get('title', '')}",
+                confidence=0.7,
+            )
+        pulse.save_emotions()
+        logger.info(f"Pulse: emotional states updated for {len(proposals)} proposals")
+    except Exception as e:
+        logger.warning(f"Pulse emotional core update failed (non-fatal): {e}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

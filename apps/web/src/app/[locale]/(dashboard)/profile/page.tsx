@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
@@ -69,6 +69,54 @@ function ProfileSkeleton() {
       </div>
       <Skeleton className="h-32 rounded-xl" />
       <Skeleton className="h-32 rounded-xl" />
+    </div>
+  );
+}
+
+/* ─── Referral Section ─── */
+function ReferralSection({ username }: { username: string }) {
+  const { t } = useTranslation();
+  const [copied, setCopied] = useState(false);
+  const link = typeof window !== "undefined"
+    ? `${window.location.origin}/invite?ref=${username}`
+    : `volaura.app/invite?ref=${username}`;
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(link);
+    } catch {
+      const el = document.createElement("textarea");
+      el.value = link;
+      el.style.position = "fixed";
+      el.style.opacity = "0";
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand("copy");
+      document.body.removeChild(el);
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  return (
+    <div className="space-y-2">
+      <p className="text-xs text-muted-foreground">
+        {t("profile.referralDesc", { defaultValue: "Share this link. When someone signs up and completes their first assessment, you both earn crystals." })}
+      </p>
+      <div className="flex items-center gap-2">
+        <input
+          readOnly
+          value={link}
+          className="flex-1 rounded-lg border border-input bg-surface-dim px-3 py-2 text-xs text-foreground"
+          onClick={(e) => (e.target as HTMLInputElement).select()}
+        />
+        <button
+          onClick={copy}
+          className="rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground hover:bg-primary/90 min-w-[60px]"
+        >
+          {copied ? "Copied!" : "Copy"}
+        </button>
+      </div>
     </div>
   );
 }
@@ -202,6 +250,13 @@ export default function ProfilePage() {
         <Section title={t("profile.skills")} delay={0.2}>
           <SkillChips competencies={competencies} />
         </Section>
+
+        {/* Referral Link */}
+        {profile?.username && (
+          <Section title={t("profile.referral", { defaultValue: "Invite Friends" })} delay={0.25}>
+            <ReferralSection username={profile.username} />
+          </Section>
+        )}
 
         {/* Expert Verifications */}
         <Section title={t("profile.expertVerifications")} delay={0.3}>

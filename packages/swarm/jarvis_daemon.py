@@ -437,7 +437,23 @@ class JarvisDaemon:
             new = [n for n, s in agents.items() if s.get("status") == "new"]
             total_tasks = sum(s.get("performance", {}).get("tasks_completed", 0) for s in agents.values())
 
-            parts = [f"Команда: {len(agents)} агентов отслеживаются."]
+            # Pulse Emotional Core — team mood
+        try:
+            from swarm.emotional_core import PulseCognitiveLoop
+            pulse = PulseCognitiveLoop(state_path)
+            pulse.load_emotions()
+            avg_curiosity = sum(e.curiosity for e in pulse.emotions.values()) / max(len(pulse.emotions), 1)
+            avg_concern = sum(e.concern for e in pulse.emotions.values()) / max(len(pulse.emotions), 1)
+            if avg_concern > 0.5:
+                mood = "обеспокоена"
+            elif avg_curiosity > 0.6:
+                mood = "в исследовательском режиме"
+            else:
+                mood = "спокойна"
+        except Exception:
+            mood = "стабильна"
+
+        parts = [f"Команда: {len(agents)} агентов, настроение: {mood}."]
             if active:
                 parts.append(f"{len(active)} активных: {', '.join(a.replace('-agent', '').replace('-', ' ') for a in active[:4])}.")
             if blocked:

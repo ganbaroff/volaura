@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "cd apps/web && rm -rf .next/cache .next/server && pnpm build",
+  "buildCommand": "cd apps/web && rm -rf .next && pnpm build && mkdir -p .next/server/app/\\[locale\\]/\\(admin\\) && echo 'globalThis.__RSC_MANIFEST={}' > .next/server/app/\\[locale\\]/\\(admin\\)/page_client-reference-manifest.js",
   "outputDirectory": "apps/web/.next",
   "installCommand": "pnpm install",
   "framework": "nextjs"

@@ -107,7 +107,7 @@ Return ONLY valid JSON, no extra text.
 
 Schema:
 {
-  "action": "open_app|type_text|open_url|search|screenshot|zeus_content|zeus_swarm|lock|unknown",
+  "action": "open_app|type_text|open_url|search|screenshot|zeus_content|zeus_swarm|lock|team_status|unknown",
   "params": {
     "app":     "<executable name, if open_app>",
     "text":    "<text to type, if type_text>",
@@ -120,7 +120,8 @@ Schema:
 }
 
 Russian shortcuts: открой=open_app, напиши=type_text, найди=search,
-опубликуй/telegram=zeus_content, рой/агент/swarm=zeus_swarm, скриншот=screenshot"""
+опубликуй/telegram=zeus_content, рой/агент/swarm=zeus_swarm, скриншот=screenshot,
+статус/команда/team=team_status"""
 
 APP_MAP: dict[str, str] = {
     "chrome":          "chrome",
@@ -316,6 +317,8 @@ class JarvisDaemon:
             return {"action": "zeus_swarm", "params": {"mode": "daily-ideation"}, "response": "Launching swarm"}
         if any(w in t for w in ("lock", "заблокируй", "блокировка")):
             return {"action": "lock", "params": {}, "response": "Locking screen"}
+        if any(w in t for w in ("статус", "status", "команда", "team", "кто работает", "как дела")):
+            return {"action": "team_status", "params": {}, "response": "Reading team status"}
         return {"action": "unknown", "params": {}, "response": "Command not understood"}
 
     # ─────────────────────────────────────────────────────────
@@ -363,8 +366,79 @@ class JarvisDaemon:
         elif action == "lock":
             subprocess.Popen("rundll32.exe user32.dll,LockWorkStation", shell=True)
 
+        elif action == "team_status":
+            status_text = self._get_team_status()
+            await self._speak(status_text)
+            return  # skip default speak — already spoke
+
         else:
             logger.info("Unrecognized command — try 'Hey Jarvis, open Chrome'")
+
+        # Speak response for all non-status actions
+        if response:
+            await self._speak(response)
+
+    # ─────────────────────────────────────────────────────────
+    # TTS — edge-tts (Microsoft, free, real-time)
+    # ─────────────────────────────────────────────────────────
+
+    async def _speak(self, text: str) -> None:
+        """Speak text aloud using edge-tts (Microsoft free TTS)."""
+        try:
+            import edge_tts
+            tts_file = project_root / "assets" / "jarvis_tts.mp3"
+            tts_file.parent.mkdir(parents=True, exist_ok=True)
+
+            communicate = edge_tts.Communicate(text, "ru-RU-DmitryNeural")
+            await communicate.save(str(tts_file))
+
+            # Play audio (Windows)
+            subprocess.Popen(
+                ["powershell", "-Command", f'(New-Object Media.SoundPlayer "{tts_file}").PlaySync()'],
+                shell=False,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            logger.info(f"Spoke: {text[:80]}")
+        except ImportError:
+            logger.warning("edge-tts not installed. Run: pip install edge-tts")
+        except Exception as e:
+            logger.warning(f"TTS failed: {e}")
+
+    # ─────────────────────────────────────────────────────────
+    # Team status from agent-state.json
+    # ─────────────────────────────────────────────────────────
+
+    def _get_team_status(self) -> str:
+        """Read agent-state.json and build spoken summary."""
+        state_path = project_root / "memory" / "swarm" / "agent-state.json"
+        try:
+            with open(state_path, encoding="utf-8") as f:
+                data = json.load(f)
+
+            agents = data.get("agents", {})
+            active = [n for n, s in agents.items() if s.get("status") == "idle" and s.get("last_run")]
+            blocked = [n for n, s in agents.items() if s.get("blockers")]
+            new = [n for n, s in agents.items() if s.get("status") == "new"]
+            total_tasks = sum(s.get("performance", {}).get("tasks_completed", 0) for s in agents.values())
+
+            parts = [f"Команда: {len(agents)} агентов отслеживаются."]
+            if active:
+                parts.append(f"{len(active)} активных: {', '.join(a.replace('-agent', '').replace('-', ' ') for a in active[:4])}.")
+            if blocked:
+                parts.append(f"{len(blocked)} заблокированы.")
+            if new:
+                parts.append(f"{len(new)} новых, ещё не запускались.")
+            parts.append(f"Всего задач выполнено: {total_tasks}.")
+
+            untracked = data.get("_uninitialized_count", 0)
+            if untracked:
+                parts.append(f"Ещё {untracked} агентов без статуса.")
+
+            return " ".join(parts)
+        except Exception as e:
+            logger.error(f"Failed to read agent state: {e}")
+            return "Не удалось прочитать состояние команды."
 
     # ─────────────────────────────────────────────────────────
     # ZEUS integration

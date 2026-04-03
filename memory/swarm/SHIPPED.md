@@ -6,6 +6,231 @@
 
 ---
 
+## Session 83 BATCH-U (2026-04-02) — Transactional email + demo seed + context refresh
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| `email.py` | `apps/api/app/services/email.py` | `send_aura_ready_email()` — Resend API. Gold-styled HTML email: AURA score, badge tier, crystals, CTA → `/assessment`. Never raises. Kill switch: `EMAIL_ENABLED` (default False). | ✅ NEW |
+| `email_enabled` + `resend_api_key` | `apps/api/app/config.py` | Kill switch fields. Activate: RESEND_API_KEY + EMAIL_ENABLED=true on Railway + verify noreply@volaura.app in Resend. | ✅ NEW |
+| Email hook in `complete_assessment()` | `apps/api/app/routers/assessment.py` | After analytics event: fetches user email + badge_tier + display_name → fire-and-forget `send_aura_ready_email()`. | ✅ WIRED |
+| `seed_demo_volunteer.py` | `scripts/seed_demo_volunteer.py` | One-shot script: creates demo@volaura.app (UUID 00000000-...-0001), Gold badge 82/100 across 3 competencies, visible_to_orgs=True. Run once: `python scripts/seed_demo_volunteer.py`. | ✅ NEW |
+| shared-context.md refresh | `memory/swarm/shared-context.md` | Synced from 2026-03-30 → 2026-04-02. BATCH-R/S/T/U logged. CEO actions listed. Current sprint goal updated. | ✅ UPDATED |
+
+**Swarm retrospective findings (applied this batch):**
+- External models (Llama 405B + Groq 70B): CTO building code while Phase 0 (first real user) stays CEO-blocked. Email + demo seed directly serve Phase 0 unblock.
+- DeepSeek R1 unavailable (CUDA OOM on NVIDIA NIM) — fell back to Groq. Documented.
+
+**CEO actions to activate email:**
+1. Create Resend account → resend.com → verify `noreply@volaura.app` domain
+2. `RESEND_API_KEY=re_xxx` → set on Railway
+3. `EMAIL_ENABLED=true` → set on Railway
+
+**CEO action to activate demo:**
+1. `python scripts/seed_demo_volunteer.py` (runs against Railway DB via env vars)
+
+---
+
+## Session 83 BATCH-T (2026-04-02) — Test mock fix
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| `test_tribes.py` mock fix | `apps/api/tests/test_tribes.py` | Added `tribe_matching_pool` table to `make_user_db_not_in_tribe()` mock with `AsyncMock` for both `upsert().execute()` and `select().eq().maybe_single().execute()`. Fixes `TypeError: MagicMock can't be awaited` in join-pool test. | ✅ Fixed |
+
+**Test count after:** 742 passing, 1 pre-existing failure (`test_no_matches_updates_last_checked` in test_match_checker.py)
+
+---
+
+## Session 83 BATCH-S (2026-04-02) — Analytics events + Telegram hardening
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| `answer_submitted` event | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/page.tsx` | Fires on every answer submission: competency_slug, question_id, question_type, answer_number, response_time_ms. Uses `useTrackEvent` hook. | ✅ Wired |
+| `assessment_completed_view` event | `apps/web/src/app/[locale]/(dashboard)/assessment/[sessionId]/complete/page.tsx` | Fires after fetchResults succeeds: competency_slug, competency_score, questions_answered, aura_updated, has_gaming_flags, crystals_earned. | ✅ Wired |
+| Telegram webhook hard-fail | `apps/api/app/config.py` → `assert_production_ready()` | `TELEGRAM_WEBHOOK_SECRET` missing in production now raises RuntimeError (blocks deployment). Was WARNING only — endpoint accepted all POSTs without signature verification. | ✅ Fixed |
+
+**Swarm finding applied:** `currentQuestion.question_type` (not `.type`) — TS field name corrected before commit.
+
+---
+
+## Session 83 BATCH-R (2026-04-02) — Security + flow fixes (commit 9d17a58)
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| `open_signup` default → `False` | `apps/api/app/config.py` | Was `True` — anyone could register if `OPEN_SIGNUP` Railway env var not set. Now closed by default; must explicitly set `OPEN_SIGNUP=true` on Railway to open beta. | ✅ Fixed |
+| LLM daily cap fail-closed | `apps/api/app/routers/assessment.py` | DB exception during cap check now sets `_force_degraded = True` (keyword fallback). Was fail-open — exception silently bypassed RISK-013, unlimited paid LLM calls possible. | ✅ Fixed |
+| 409 SESSION_IN_PROGRESS resume | `apps/web/src/app/[locale]/(dashboard)/assessment/page.tsx` | 409 response now reads `session_id` from body and redirects to existing session. Was showing generic error, stranding users mid-assessment. | ✅ Fixed |
+| Org routing fix | `apps/web/src/app/[locale]/(dashboard)/onboarding/page.tsx` | `accountType === "organization"` now routes to `/my-organization`. Was routing all account types to `/assessment`. | ✅ Fixed |
+| `500-HOUR-PLAN.md` | `docs/500-HOUR-PLAN.md` | 8-phase execution plan. Phase 0 (10h, first real user) gates all other phases. CEO vs CTO ownership separated. | ✅ Created |
+
+**Phase 2 cross-critique result:** Security audit misclassified 2/4 P0s. Supabase anon key = by design public (no fix). `config.toml` `enable_confirmations=false` = local dev only (no fix).
+
+---
+
+## Session 82 BATCH-Q (2026-04-02) — CEO AURA Assessment v3.0 FINAL
+
+| Item | What it does | Status |
+|------|-------------|--------|
+| AURA Assessment v3.0 FINAL | CEO competency assessment corrected: 91.35/100 Platinum. Separated CEO/CTO responsibility. Full ecosystem + business evidence. | ✅ Shipped |
+| Mistake #72 | Attribution error: CTO code bugs scored against CEO leadership. CLASS 1. Caught 3 times by CEO. | ✅ Logged |
+| CEO Report Agent | Used for batch-close output translation. | ✅ Used |
+| 3 external models consulted | Gemini 2.0 Flash + Llama 3.1 405B (temp=1) for council quotes. DeepSeek R1 dropped (v1/v2 only). | ✅ Consulted |
+
+---
+
+## Session 82 BATCH-P (2026-04-02) — Lessons extraction + protocol hardening
+
+| Item | What it does | Status |
+|------|-------------|--------|
+| TASK-PROTOCOL always-on | Protocol runs on every CEO message. No activation phrase needed. | ✅ Updated |
+| LLM fallback chain | Groq → Gemini → NVIDIA → Claude. Auto-fallback when provider returns 403/500. | ✅ Added to Step 5.4 |
+| CEO Report Agent | All batch-close output passes through product-language filter before CEO sees it. | ✅ Created |
+| Mistakes #70, #71 | Protocol opt-in + raw technical output to CEO. CLASS 1 now at 10 instances. | ✅ Logged |
+| 4 new proven patterns | Multi-model, CEO reports, always-on, write-now. | ✅ Added |
+| AGENT-LESSONS broadcast | 7 lessons file + mandatory briefing template section for all future agents. | ✅ Created |
+| YUSIF AURA Assessment | Professional CEO competency assessment. Gold badge, 83.54/100. For Firuza. | ✅ Created |
+
+---
+
+## Session 82 BATCH-N (2026-04-02) — Analytics P0: table + GDPR retention + event hook
+
+| Item | Location | What it does | Status |
+|------|----------|-------------|--------|
+| `analytics_events` table | Supabase `dwdgzfusjsobnixgyzjk` | Behavioral event store. user_id FK, session_id FK, event_name, properties JSONB, locale, platform, created_at. RLS: SELECT own; INSERT service-role only. | ✅ Live |
+| analytics-retention workflow | `.github/workflows/analytics-retention.yml` | Monthly GDPR DELETE — rows older than 390 days. Runs 1st of month 03:00 UTC. Dry-run mode. Needs GitHub secrets: SUPABASE_PROJECT_ID + SUPABASE_SERVICE_KEY | ✅ Created (secrets needed) |
+| `analytics.py` service | `apps/api/app/services/analytics.py` | `track_event()` — fire-and-forget, never raises, uses service-role db | ✅ Created |
+| `assessment_completed` event | `apps/api/app/routers/assessment.py` line 759 | Fires after tribe streak hook on every completed assessment. Properties: slug, score, q_count, stop_reason, aura_updated, crystals_earned, gaming_flags | ✅ Wired |
+| Mistake #68 | `memory/context/mistakes.md` | Same-model swarm = monologue (CLASS 3, 13th instance) | ✅ Saved |
+| Mistake #69 | `memory/context/mistakes.md` | Findings declared not persisted (CLASS 2, 9th instance) | ✅ Saved |
+| Step 5.4 | `docs/TASK-PROTOCOL.md` | LLM PROVIDER CHECK — fires before every swarm ≥3 agents | ✅ Saved |
+
+**P0.3 pgvector HNSW:** Already exists — `idx_volunteer_embeddings_hnsw` (m=16, ef=64). No action needed.
+
+---
+
+## Session 82 BATCH-L (2026-04-02) — Infrastructure fixes + 7 new agents
+
+| Item | Location | What it does | Status |
+|------|----------|-------------|--------|
+| CRON_SECRET | GitHub secrets + Railway `modest-happiness` | Tribe matching cron now validates correctly. Value: `748968d6...` | ✅ Set |
+| Supabase Realtime | `notifications` table, project `dwdgzfusjsobnixgyzjk` | `supabase_realtime` publication now includes notifications → live push to frontend | ✅ Enabled |
+| Assessment Science Agent | `memory/swarm/skills/assessment-science-agent.md` | IRT a/b/c validation, DIF bias detection, competency framework validity, CAT audit | ✅ Created |
+| Analytics & Retention Agent | `memory/swarm/skills/analytics-retention-agent.md` | Event taxonomy, D0/D1/D7/D30 cohorts, B2B health score, A/B testing framework | ✅ Created |
+| DevOps/SRE Agent | `memory/swarm/skills/devops-sre-agent.md` | Deployment checklist, Railway/Vercel/Supabase ops, incident playbook, scaling thresholds | ✅ Created |
+| Financial Analyst Agent | `memory/swarm/skills/financial-analyst-agent.md` | AZN unit economics, LTV/CAC, runway calc, crystal economy health, pricing validation | ✅ Created |
+| UX Research Agent | `memory/swarm/skills/ux-research-agent.md` | JTBD framework, 5-user usability protocol, AZ/CIS UX gaps, discovery interview templates | ✅ Created |
+| PR & Media Agent | `memory/swarm/skills/pr-media-agent.md` | AZ media landscape, press release templates, startup competition strategy | ✅ Created |
+| Data Engineer Agent | `memory/swarm/skills/data-engineer-agent.md` | PostHog instrumentation, event schema, reporting tables, analytics pipeline | ✅ Created |
+| agent-roster.md | `memory/swarm/agent-roster.md` | Added 7 new agents section + updated When-to-Call routing table | ✅ Updated |
+| CLAUDE.md Skills Matrix | `CLAUDE.md` | 8 new routing rows for new agents | ✅ Updated |
+
+**LRL after BATCH L (full): ~95/100** (CRON_SECRET ✅, Realtime ✅, +7 specialist agents + 3 stakeholder agents)
+
+**Stakeholder agents added (second wave — session 82):**
+| Agent | File | Represents |
+|-------|------|-----------|
+| Investor / Board Agent | `skills/investor-board-agent.md` | VCs, angels, board — fundraising lens |
+| Competitor Intelligence Agent | `skills/competitor-intelligence-agent.md` | LinkedIn, HH.ru, Rabota.az, TestGorilla |
+| University & Ecosystem Partner Agent | `skills/university-ecosystem-partner-agent.md` | ADA, BHOS, AZHRA, GITA, KOBİA |
+
+---
+
+## Session 82 BATCH-M (2026-04-02) — Swarm review fixes + 4 new agents + pairings table
+
+| Item | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Financial Analyst Agent — crystal anti-cheat | `memory/swarm/skills/financial-analyst-agent.md` | Added 4 specific attack vectors (assessment farming, referral fraud, kudos farming, cash arbitrage) with detection SQL + mitigations. Security Agent added as MANDATORY co-owner. | ✅ Fixed |
+| PR & Media Agent — Comms Strategist pairing | `memory/swarm/skills/pr-media-agent.md` | Added mandatory pairing rule section: Communications Strategist owns narrative → PR Agent owns placement. Hard boundary on narrative conflicts. Example workflow added. | ✅ Fixed |
+| Analytics Agent — tribe event fixes | `memory/swarm/skills/analytics-retention-agent.md` | `tribe_matched` event now includes `session_id`. `tribe_pool_wait_exceeded` clarified as daily cron batch output (NOT real-time). DevOps/SRE Agent flagged as cron owner. | ✅ Fixed |
+| Technical Writer Agent | `memory/swarm/skills/technical-writer-agent.md` | Priority 1-3 docs framework, quality checklist, B2B docs before first demo rule | ✅ Created |
+| Payment Provider Agent | `memory/swarm/skills/payment-provider-agent.md` | Paddle webhook flow, 5 failure points, idempotency table, HMAC-SHA256 verification, retry schedule, P0/P1 playbooks | ✅ Created |
+| Community Manager Agent | `memory/swarm/skills/community-manager-agent.md` | Tribe engagement gaps, D0-D30 retention playbook, Telegram content calendar, ambassador program | ✅ Created |
+| Performance Engineer Agent | `memory/swarm/skills/performance-engineer-agent.md` | pgvector index strategy, EXPLAIN ANALYZE patterns, Gemini latency optimization, k6 load testing baseline | ✅ Created |
+| agent-pairings-table.md | `memory/swarm/agent-pairings-table.md` | Tier 1/2/3 mandatory agent pairs, feature launch chain (10 steps), routing decision tree, anti-pattern log | ✅ Created |
+| agent-roster.md | `memory/swarm/agent-roster.md` | New Hires Batch 2 section added (4 agents + pairing rules) | ✅ Updated |
+| CLAUDE.md Skills Matrix | `CLAUDE.md` | 7 new routing rows (Technical Writer, Payment Provider, Community Manager, Performance Engineer, crystal anti-cheat, agent-pairings-table reference) | ✅ Updated |
+
+**Swarm fixes applied from prior review: 3/3 complete ✅**
+**New agents created from swarm vote: 4/4 complete ✅**
+**Structural files created: agent-pairings-table.md ✅**
+
+---
+
+## Session 82 BATCH-K (2026-04-02) — TASK-PROTOCOL v7.1 + QuickRef
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| TASK-PROTOCOL.md v7.1 | `docs/TASK-PROTOCOL.md` | 15 structural fixes from 5-agent audit: Phase 0.7 moved, classifications merged, EXPEDITED mode, HOTFIX minimum, FASTPATH capped, 3-tier Required Reads, named roles at Batch Lock, auto-routing catch-all, R2 format, Step 0b fallback, Mid-Batch Change protocol | ✅ Updated |
+| TASK-PROTOCOL-QUICKREF.md | `docs/TASK-PROTOCOL-QUICKREF.md` | 1-page quick reference: 5-step flow, level table, agent launch checklist, HOTFIX 4-box, top failure modes | ✅ Created |
+| mistakes.md #65 | `memory/context/mistakes.md` | Fixed duplicate #58 numbering — Session 82 "Step 5.5 skipped" renumbered to #65 | ✅ Fixed |
+
+---
+
+## Session 82 BATCH-J (2026-04-02) — join-pool persistent state + test_embeddings
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Migration | `supabase/migrations/20260402210000_tribe_matching_pool.sql` | New table: user_id PK, joined_at TIMESTAMPTZ. RLS: user SELECT+INSERT+DELETE own row. Service_role deletes on match. | ✅ NEW |
+| PoolStatusOut schema | `apps/api/app/schemas/tribes.py` | New Pydantic schema: `in_pool: bool`, `joined_at: str|None` | ✅ UPDATED |
+| GET /me/pool-status | `apps/api/app/routers/tribes.py` | Returns PoolStatusOut. Frontend polls on dashboard load to show "Finding your tribe..." state. | ✅ NEW |
+| POST /join-pool upsert | `apps/api/app/routers/tribes.py` | Now upserts into `tribe_matching_pool` (idempotent). State persists across refreshes. | ✅ FIXED |
+| Pool cleanup | `apps/api/app/services/tribe_matching.py` | `_create_tribe()` deletes matched user IDs from `tribe_matching_pool` after tribe formation. | ✅ UPDATED |
+| useMyPoolStatus | `apps/web/src/hooks/queries/use-tribes.ts` | New TanStack Query hook. PoolStatusOut type. staleTime 30s. | ✅ NEW |
+| useJoinTribePool updated | `apps/web/src/hooks/queries/use-tribes.ts` | Now invalidates `["tribe","pool-status"]` on success → card immediately shows waiting state. | ✅ UPDATED |
+| TribeCard waiting state | `apps/web/src/components/dashboard/tribe-card.tsx` | Spinning 🌀 + "Finding your tribe..." shown when `!tribe && poolStatus.in_pool`. Join CTA hidden. Persists across refreshes. | ✅ UPDATED |
+| i18n | `locales/en/common.json` + `az/common.json` | `tribe.findingTitle` added | ✅ UPDATED |
+| test_embeddings.py | `apps/api/tests/test_embeddings.py` | 11 tests: build_profile_text (5), generate_embedding (4), upsert_volunteer_embedding (2). Covers empty string, API fail, 8000-char truncation, zero-score exclusion. | ✅ NEW |
+
+**Activate (requires CEO 1-clicks):**
+1. Apply migration `20260402210000_tribe_matching_pool.sql` in Supabase dashboard
+2. The rest (CRON_SECRET, Realtime on notifications) still pending from prior batches
+
+---
+
+## Session 82 BATCH-I (2026-04-02) — ADR-009 + test_skills.py
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| ADR-009 + retro | `docs/DECISIONS.md` | BATCH-G+H retrospective + ADR-009 LOCKED: Q1 kudos CTA, Q2 3-miss reset, Q3 2-person tribe continues. Formally documented, won't be re-debated. | ✅ NEW |
+| test_skills.py | `apps/api/tests/test_skills.py` | 9 tests: allowlist gate, assessment-generator excluded, disk-missing 404, LLM failure 502 (no leak), happy path, question context, ALLOWED_SKILLS contract | ✅ NEW |
+
+---
+
+## Session 82 BATCH-H (2026-04-02) — TribeCard Visible + Test Coverage + BUG-012
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| TribeCard wired | `apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx` | `import { TribeCard }` + `<TribeCard />` in dashboard. "Your Tribe" section header. **Now visible to users.** | ✅ NEW |
+| i18n | `locales/en/common.json` + `az/common.json` | `tribe.sectionHeader` added | ✅ UPDATED |
+| test_match_checker | `apps/api/tests/test_match_checker.py` | 11 tests: circuit breaker (3 variants), table fallback, error isolation, constants, RunSummary | ✅ NEW |
+| BUG-012 fixed | `apps/api/app/services/reeval_worker.py` | `SLA_HOURS=24.0` constant + per-item SLA breach logging in `_fetch_pending_batch()` | ✅ FIXED |
+| Legal P0 | `docs/legal/ToS-draft.md` + `Privacy-Policy-draft.md` | ToS + PP drafts. Human tone, GDPR + AZ PDPA bases, Tribe privacy section explicit (anonymous kudos, activity-status-only). 7-9 flagged items per doc for counsel review. | ✅ DRAFT DONE |
+
+---
+
+## Session 82 BATCH-G (2026-04-02) — Tribe Streaks (Full Feature)
+
+| Code | Location | What it does | Status |
+|------|----------|-------------|--------|
+| Migration | `supabase/migrations/20260402200000_tribe_streaks.sql` | 6 tables: tribes, tribe_members, tribe_streaks, tribe_kudos (no sender_id), tribe_renewal_requests, tribe_member_history. Full RLS. `get_tribe_kudos_count()` SECURITY DEFINER RPC. | ✅ NEW |
+| Schemas | `apps/api/app/schemas/tribes.py` | TribeOut, TribeStreakOut, TribeMemberStatus, KudosResponse, OptOutResponse, RenewalResponse, TribeMatchPreview | ✅ NEW |
+| Matching service | `apps/api/app/services/tribe_matching.py` | Daily matching: greedy ±15 AURA proximity, excludes prior co-members via tribe_member_history, creates triplets/pairs | ✅ NEW |
+| Streak tracker | `apps/api/app/services/tribe_streak_tracker.py` | Q2 fading crystal: consecutive_misses_count → 3 misses = streak reset. record_assessment_activity() called from assessment complete. | ✅ NEW |
+| Tribes router | `apps/api/app/routers/tribes.py` | 6 user endpoints + 2 CRON_SECRET-gated cron endpoints (POST /cron/run-matching + /cron/run-streak-update) | ✅ NEW |
+| Config | `apps/api/app/config.py` | `cron_secret` field added — set CRON_SECRET on Railway | ✅ UPDATED |
+| TanStack hooks | `apps/web/src/hooks/queries/use-tribes.ts` | useMyTribe, useMyStreak, useSendKudos, useOptOutOfTribe, useRequestTribeRenewal, useJoinTribePool | ✅ NEW |
+| Tribe Card | `apps/web/src/components/dashboard/tribe-card.tsx` | Full UI: fading crystal (opacity-100/60/30), Q1 kudos CTA ("Be the first"), join pool state, opt-out inline confirm | ✅ NEW |
+| i18n | `apps/web/src/locales/en/common.json` + `az/common.json` | tribe.* group: 19 keys. AZ: "tayfa", "uğur" (kudos), "kristal" | ✅ UPDATED |
+| Tests | `apps/api/tests/test_tribes.py` | 14 tests: security gates (NOT_IN_TRIBE ×3, ALREADY_IN_TRIBE, PROFILE_NOT_VISIBLE, no sender_id leak) + happy path + Q2 crystal fade parametrize (5 cases) | ✅ NEW |
+| Cron workflow | `.github/workflows/tribe-matching.yml` | Daily 07:00 UTC matching + Sunday 23:50 UTC streak update. Calls Railway cron endpoints. | ✅ NEW |
+
+**Activate with 4 steps:**
+1. Apply migration `20260402200000_tribe_streaks.sql` in Supabase dashboard (1-click)
+2. `CRON_SECRET=<openssl rand -hex 32>` → set on Railway env vars
+3. `gh secret set CRON_SECRET --body "<same value>" --repo ganbaroff/volaura`
+4. Push to main → Railway deploys
+
+---
+
 ## Session 81 BATCH-D (2026-04-02) — Admin Panel MVP
 
 | Code | Location | What it does | Status |

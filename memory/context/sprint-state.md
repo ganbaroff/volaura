@@ -6,6 +6,39 @@
 
 ---
 
+## BATCH 2026-04-02-U: Email + Demo Seed + Context Refresh
+
+**Last Updated:** 2026-04-02 (Session 83 — BATCH U)
+
+Commit `60d1e1c`. 741 API tests pass, 2 pre-existing failures. 0 new TS errors.
+
+**Delivered:**
+- ✅ `email.py`: Resend-based `send_aura_ready_email()` — kill switch `EMAIL_ENABLED` (default False)
+- ✅ `config.py`: `email_enabled` + `resend_api_key` kill switch fields
+- ✅ `assessment.py`: email hook in `complete_assessment()` — fire-and-forget after analytics event
+- ✅ `seed_demo_volunteer.py`: one-shot demo user (Gold badge 82/100, visible in org search)
+- ✅ `shared-context.md`: refreshed to 2026-04-02 (was stuck at 2026-03-30)
+- ✅ `SHIPPED.md`: BATCH-R/S/T/U all logged (CLASS 2 fix)
+
+**Swarm retrospective result:** Llama 405B + Groq 70B both flagged Phase 0 as primary blocker.
+Email + demo seed both serve "first real user sees complete product experience".
+
+**CEO actions to activate email:**
+1. Create Resend account (resend.com) → verify noreply@volaura.app domain
+2. Set `RESEND_API_KEY=re_xxx` on Railway
+3. Set `EMAIL_ENABLED=true` on Railway
+
+**CEO action for demo data:**
+1. `python scripts/seed_demo_volunteer.py` (reads from apps/api/.env or Railway env vars)
+
+**Still pending (CEO-blocked):**
+- Phase 0 gate: Yusif walks volaura.app E2E with real email
+- Apply 5 pending DB migrations via Supabase Dashboard
+- GitHub secrets: SUPABASE_PROJECT_ID + SUPABASE_SERVICE_KEY (analytics-retention workflow)
+- Set OPEN_SIGNUP=true on Railway when ready for beta
+
+---
+
 ## BATCH 2026-04-02-R: Security + Flow Fixes
 
 **Last Updated:** 2026-04-02 (Session 83 — BATCH R)

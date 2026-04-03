@@ -39,4 +39,43 @@ if [ $FOUND -eq 1 ]; then
 fi
 
 echo "✅ No secrets detected."
+
+# ─── AC Gate (ADR-010 DoD enforcement) ──────────────────────────────────────
+# AC.md must exist on feature branches when code is staged.
+# Skip on: main, master, hotfix/*, chore/*, docs/*, memory/* branches.
+BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
+CODE_STAGED=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(py|ts|tsx|js|jsx|sql)$' | head -1)
+
+if [[ "$BRANCH" != "main" && "$BRANCH" != "master" && \
+      ! "$BRANCH" =~ ^(chore|docs|memory|hotfix)/ && \
+      -n "$CODE_STAGED" ]]; then
+    if [[ ! -f "AC.md" ]]; then
+        echo ""
+        echo "⛔ AC GATE: AC.md not found."
+        echo "   Create AC.md with acceptance criteria before committing code."
+        echo "   Minimum: ## Acceptance Criteria / - [ ] testable condition"
+        echo "   See: docs/ACCEPTANCE-CRITERIA-TEMPLATES.md"
+        echo "   Hotfix bypass: git commit --no-verify (log reason in commit msg)"
+        exit 1
+    fi
+    AC_LINES=$(grep -cE '^\s*-\s*\[' AC.md 2>/dev/null || echo "0")
+    if [[ "$AC_LINES" -lt 1 ]]; then
+        echo ""
+        echo "⛔ AC GATE: AC.md has no criteria. Add at least 1 '- [ ] ...' line."
+        exit 1
+    fi
+    echo "✅ AC gate: $AC_LINES criteria found in AC.md."
+fi
+
+# ─── Schema sync warning (ADR-010 DoD Item 3) ────────────────────────────────
+# If Pydantic schemas or routers changed, warn if openapi.json not regenerated.
+SCHEMA_CHANGED=$(git diff --cached --name-only | grep -E 'schemas/.*\.py$|routers/.*\.py$' | head -1)
+OPENAPI_STAGED=$(git diff --cached --name-only | grep 'openapi.json' | head -1)
+if [[ -n "$SCHEMA_CHANGED" && -z "$OPENAPI_STAGED" ]]; then
+    echo ""
+    echo "⚠️  SCHEMA SYNC: $SCHEMA_CHANGED changed but openapi.json not staged."
+    echo "   Run: pnpm generate:api (from apps/web) to sync TypeScript SDK."
+    echo "   ADR-010 DoD Item 3. Warning only — commit not blocked."
+fi
+
 exit 0

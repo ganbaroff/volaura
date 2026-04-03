@@ -1,0 +1,98 @@
+name: Tribe Matching & Streak Update
+
+# ── Schedule ──────────────────────────────────────────────────────────────────
+# Matching:       Daily 07:00 UTC → matches waiting users into tribes
+# Streak update:  Sunday 23:50 UTC → processes the week's activity, updates crystals
+#
+# Railway API URL: set RAILWAY_API_URL in GitHub secrets
+# CRON_SECRET:     set same value in Railway env vars and here
+
+on:
+  schedule:
+    - cron: '0 7 * * *'       # daily matching — 07:00 UTC (11:00 Baku)
+    - cron: '50 23 * * 0'     # weekly streak update — Sunday 23:50 UTC
+  workflow_dispatch:
+    inputs:
+      job:
+        description: 'Which job to run'
+        required: true
+        default: 'matching'
+        type: choice
+        options:
+          - matching
+          - streak-update
+          - both
+
+jobs:
+  # ── Daily tribe matching ────────────────────────────────────────────────────
+  tribe-matching:
+    name: Run tribe matching
+    runs-on: ubuntu-latest
+    # Run on: daily schedule OR manual dispatch requesting matching/both
+    if: |
+      github.event_name == 'schedule' && github.event.schedule == '0 7 * * *' ||
+      github.event_name == 'workflow_dispatch' && (github.event.inputs.job == 'matching' || github.event.inputs.job == 'both')
+
+    steps:
+      - name: Trigger tribe matching via Railway API
+        env:
+          RAILWAY_API_URL: ${{ secrets.RAILWAY_API_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          echo "→ Triggering tribe matching: $RAILWAY_API_URL/api/tribes/cron/run-matching"
+          RESPONSE=$(curl --silent --show-error --fail \
+            --max-time 120 \
+            --retry 2 \
+            --retry-delay 10 \
+            -X POST "$RAILWAY_API_URL/api/tribes/cron/run-matching" \
+            -H "X-Cron-Secret: $CRON_SECRET" \
+            -H "Content-Type: application/json")
+
+          echo "Response: $RESPONSE"
+          # Fail if ok is not true
+          echo "$RESPONSE" | python3 -c "
+          import sys, json
+          data = json.load(sys.stdin)
+          if not data.get('ok'):
+              print('ERROR: matching endpoint returned ok=false')
+              sys.exit(1)
+          tribes_created = data.get('tribes_created', 0)
+          users_matched = data.get('users_matched', 0)
+          print(f'✓ Matching complete: {tribes_created} tribes created, {users_matched} users matched')
+          "
+
+  # ── Weekly streak update ────────────────────────────────────────────────────
+  tribe-streak-update:
+    name: Update weekly tribe streaks
+    runs-on: ubuntu-latest
+    # Run on: weekly schedule OR manual dispatch requesting streak-update/both
+    if: |
+      github.event_name == 'schedule' && github.event.schedule == '50 23 * * 0' ||
+      github.event_name == 'workflow_dispatch' && (github.event.inputs.job == 'streak-update' || github.event.inputs.job == 'both')
+
+    steps:
+      - name: Trigger streak update via Railway API
+        env:
+          RAILWAY_API_URL: ${{ secrets.RAILWAY_API_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          echo "→ Triggering streak update: $RAILWAY_API_URL/api/tribes/cron/run-streak-update"
+          RESPONSE=$(curl --silent --show-error --fail \
+            --max-time 180 \
+            --retry 2 \
+            --retry-delay 10 \
+            -X POST "$RAILWAY_API_URL/api/tribes/cron/run-streak-update" \
+            -H "X-Cron-Secret: $CRON_SECRET" \
+            -H "Content-Type: application/json")
+
+          echo "Response: $RESPONSE"
+          echo "$RESPONSE" | python3 -c "
+          import sys, json
+          data = json.load(sys.stdin)
+          if not data.get('ok'):
+              print('ERROR: streak endpoint returned ok=false')
+              sys.exit(1)
+          processed = data.get('processed', 0)
+          resets = data.get('streaks_reset', 0)
+          print(f'✓ Streak update complete: {processed} users processed, {resets} streaks reset')
+          "

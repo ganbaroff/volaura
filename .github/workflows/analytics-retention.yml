@@ -1,0 +1,84 @@
+name: Analytics GDPR Retention
+
+# ── Schedule ──────────────────────────────────────────────────────────────────
+# Runs monthly on the 1st at 03:00 UTC.
+# Deletes analytics_events rows older than 390 days (GDPR Art. 5(1)(e)).
+# pg_cron is NOT installed on this Supabase project — this is the retention mechanism.
+#
+# Required GitHub secrets:
+#   SUPABASE_PROJECT_ID   — project ref (dwdgzfusjsobnixgyzjk)
+#   SUPABASE_SERVICE_KEY  — service-role key (bypasses RLS for DELETE)
+
+on:
+  schedule:
+    - cron: '0 3 1 * *'   # monthly — 1st of every month, 03:00 UTC
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (count rows to delete without deleting)'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  gdpr-retention:
+    name: Delete analytics events older than 390 days
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run GDPR retention DELETE via Supabase REST
+        env:
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+        run: |
+          python3 - <<'EOF'
+          import urllib.request
+          import urllib.error
+          import json
+          import os
+          import sys
+          from datetime import datetime, timezone, timedelta
+
+          project_id = os.environ["SUPABASE_PROJECT_ID"]
+          service_key = os.environ["SUPABASE_SERVICE_KEY"]
+          dry_run = os.environ.get("DRY_RUN", "false").lower() == "true"
+
+          cutoff = (datetime.now(timezone.utc) - timedelta(days=390)).isoformat()
+          base_url = f"https://{project_id}.supabase.co/rest/v1"
+          headers = {
+              "apikey": service_key,
+              "Authorization": f"Bearer {service_key}",
+              "Content-Type": "application/json",
+              "Prefer": "return=representation,count=exact",
+          }
+
+          if dry_run:
+              # COUNT only — no delete
+              url = f"{base_url}/analytics_events?created_at=lt.{cutoff}&select=id"
+              headers["Prefer"] = "count=exact"
+              req = urllib.request.Request(url, headers={**headers, "Range-Unit": "items", "Range": "0-0"})
+              try:
+                  with urllib.request.urlopen(req) as resp:
+                      count = resp.headers.get("Content-Range", "0/0").split("/")[-1]
+                      print(f"[DRY RUN] Would delete {count} rows older than {cutoff}")
+              except urllib.error.HTTPError as e:
+                  print(f"ERROR counting: {e.code} {e.read().decode()}")
+                  sys.exit(1)
+          else:
+              # Hard DELETE
+              url = f"{base_url}/analytics_events?created_at=lt.{cutoff}"
+              req = urllib.request.Request(
+                  url,
+                  headers=headers,
+                  method="DELETE",
+              )
+              try:
+                  with urllib.request.urlopen(req) as resp:
+                      content_range = resp.headers.get("Content-Range", "")
+                      print(f"✓ GDPR retention complete. Deleted rows (Content-Range: {content_range}). Cutoff: {cutoff}")
+              except urllib.error.HTTPError as e:
+                  body = e.read().decode()
+                  print(f"ERROR during delete: {e.code} {body}")
+                  sys.exit(1)
+          EOF

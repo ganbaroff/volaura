@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import initTranslations from "@/app/i18n";
 
-export const dynamic = "force-dynamic";
+// Removed force-dynamic — was causing 500 on Vercel cold start
 import { HeroSection } from "@/components/landing/hero-section";
 import { ImpactTicker } from "@/components/landing/impact-ticker";
 import { FeaturesGrid } from "@/components/landing/features-grid";

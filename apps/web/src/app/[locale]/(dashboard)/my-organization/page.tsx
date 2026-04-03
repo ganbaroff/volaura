@@ -4,7 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { Building2, Calendar, Users, Plus, ExternalLink, CheckCircle2, Loader2, Globe, UserCheck, Upload } from "lucide-react";
+import { Building2, Calendar, Users, Plus, ExternalLink, CheckCircle2, Loader2, Globe, UserCheck, Upload, Search, ArrowRight } from "lucide-react";
 import { useMyOrganization, useCreateOrganization, useCollectiveAura } from "@/hooks/queries/use-organizations";
 import { useMyEvents } from "@/hooks/queries/use-events";
 import { cn } from "@/lib/utils/cn";
@@ -227,6 +227,47 @@ export default function OrganizationsPage() {
                     {t("orgs.collectiveAuraEmpty", { defaultValue: "Invite professionals to start building your talent pool score." })}
                   </p>
                 )}
+              </motion.div>
+            )}
+
+            {/* First-action onboarding banner — shown when org exists but no events yet */}
+            {totalEvents === 0 && !eventsLoading && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.15 }}
+                className="rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/8 to-transparent p-5 space-y-3"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="size-9 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
+                    <Search className="size-4 text-primary" aria-hidden="true" />
+                  </span>
+                  <div>
+                    <p className="font-semibold text-on-surface text-sm">
+                      {t("orgs.firstActionTitle", { defaultValue: "Start by finding talent" })}
+                    </p>
+                    <p className="text-xs text-on-surface-variant mt-0.5">
+                      {t("orgs.firstActionDesc", { defaultValue: "Browse verified professionals with real AURA scores. Filter by skill, language, and score." })}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2 pt-1">
+                  <button
+                    onClick={() => router.push(`/${locale}/discover`)}
+                    className="flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-on-primary hover:opacity-90 transition-opacity"
+                  >
+                    <Search className="size-3.5" aria-hidden="true" />
+                    {t("orgs.browseVolunteers", { defaultValue: "Browse professionals" })}
+                    <ArrowRight className="size-3.5" aria-hidden="true" />
+                  </button>
+                  <button
+                    onClick={() => router.push(`/${locale}/my-organization/invite`)}
+                    className="flex items-center gap-1.5 rounded-xl border border-border bg-surface-container px-4 py-2 text-xs font-semibold text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors"
+                  >
+                    <Upload className="size-3.5" aria-hidden="true" />
+                    {t("orgs.inviteProfessionals", { defaultValue: "Invite by email" })}
+                  </button>
+                </div>
               </motion.div>
             )}
 

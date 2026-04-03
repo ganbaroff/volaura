@@ -36,6 +36,46 @@ export type AiTwinUpdate = {
 };
 
 /**
+ * Organization row for the admin approval queue.
+ */
+export type AdminOrgRow = {
+    id: string;
+    name: string;
+    description?: string | null;
+    website?: string | null;
+    owner_id: string;
+    owner_username?: string | null;
+    trust_score?: number | null;
+    verified_at?: string | null;
+    is_active: boolean;
+    created_at: string;
+};
+
+/**
+ * Platform health stats for the admin dashboard.
+ */
+export type AdminStatsResponse = {
+    total_users: number;
+    total_organizations: number;
+    pending_org_approvals: number;
+    assessments_today: number;
+    avg_aura_score?: number | null;
+};
+
+/**
+ * Minimal user row for the admin users table.
+ */
+export type AdminUserRow = {
+    id: string;
+    username: string;
+    display_name?: string | null;
+    account_type: string;
+    subscription_status: string;
+    is_platform_admin?: boolean;
+    created_at: string;
+};
+
+/**
  * Immediate feedback after submitting an answer.
  *
  * NOTE: raw_score intentionally NOT exposed to client (security audit CRIT-03).
@@ -76,6 +116,7 @@ export type AssessmentResultOut = {
     aura_updated?: boolean;
     gaming_flags?: Array<string>;
     completed_at?: string | null;
+    crystals_earned?: number;
 };
 
 /**
@@ -281,6 +322,16 @@ export type CoachingTip = {
     title: string;
     description: string;
     action: string;
+};
+
+/**
+ * Aggregated AURA talent pool metrics for an org. Used by Collective AURA Ladders.
+ */
+export type CollectiveAuraResponse = {
+    org_id: string;
+    count: number;
+    avg_aura?: number | null;
+    trend?: number | null;
 };
 
 export type CoordinatorRatingRequest = {
@@ -543,6 +594,11 @@ export type InviteRowResult = {
     error?: string | null;
 };
 
+export type KudosResponse = {
+    sent?: boolean;
+    message?: string;
+};
+
 export type LeaderboardEntry = {
     rank: number;
     display_name: string;
@@ -593,6 +649,20 @@ export type NotificationOut = {
     is_read: boolean;
     reference_id: string | null;
     created_at: string;
+};
+
+export type OptOutResponse = {
+    success?: boolean;
+    message?: string;
+};
+
+/**
+ * Result of approving or rejecting an organization.
+ */
+export type OrgApproveResponse = {
+    org_id: string;
+    action: string;
+    verified_at?: string | null;
 };
 
 /**
@@ -657,6 +727,17 @@ export type OrganizationUpdate = {
     contact_email?: string | null;
 };
 
+/**
+ * Whether the user is currently waiting in the matching pool.
+ *
+ * Used by GET /api/tribes/me/pool-status so the frontend can show
+ * 'Finding your tribe...' across page refreshes instead of the join CTA.
+ */
+export type PoolStatusOut = {
+    in_pool: boolean;
+    joined_at?: string | null;
+};
+
 export type ProfileCreate = {
     username: string;
     display_name?: string | null;
@@ -671,6 +752,8 @@ export type ProfileCreate = {
     visible_to_orgs?: boolean;
     org_type?: string | null;
     invited_by_org_id?: string | null;
+    age_confirmed?: boolean;
+    terms_version?: string;
 };
 
 export type ProfileResponse = {
@@ -692,6 +775,9 @@ export type ProfileResponse = {
     badge_open_badges_url?: string | null;
     created_at: string;
     updated_at: string;
+    age_confirmed?: boolean;
+    terms_version?: string | null;
+    terms_accepted_at?: string | null;
     registration_number?: number | null;
     registration_tier?: string | null;
     subscription_status?: string;
@@ -736,6 +822,26 @@ export type PublicStatsResponse = {
     total_assessments: number;
     total_events: number;
     avg_aura_score: number;
+};
+
+/**
+ * Public-facing assessment verification — shown when external viewer clicks shared badge link.
+ *
+ * Intentionally minimal: proves the assessment happened, shows score + competency,
+ * does NOT expose questions, answers, or IRT parameters.
+ */
+export type PublicVerificationOut = {
+    verified?: boolean;
+    platform?: string;
+    session_id: string;
+    competency_slug: string;
+    competency_name?: string | null;
+    competency_score: number;
+    badge_tier: string;
+    questions_answered: number;
+    completed_at?: string | null;
+    display_name?: string | null;
+    username?: string | null;
 };
 
 /**
@@ -785,6 +891,7 @@ export type RegisterRequest = {
     password: string;
     username: string;
     display_name?: string | null;
+    referral_code?: string | null;
 };
 
 export type RegistrationResponse = {
@@ -799,6 +906,12 @@ export type RegistrationResponse = {
     coordinator_feedback?: string | null;
     volunteer_rating?: number | null;
     volunteer_feedback?: string | null;
+};
+
+export type RenewalResponse = {
+    renewal_requested?: boolean;
+    message: string;
+    all_members_requested?: boolean;
 };
 
 /**
@@ -939,6 +1052,57 @@ export type SubscriptionStatus = {
     subscription_ends_at: string | null;
     days_remaining: number;
     is_active: boolean;
+};
+
+export type TrackEventRequest = {
+    event_name: string;
+    properties?: {
+        [key: string]: unknown;
+    } | null;
+    session_id?: string | null;
+    locale?: string | null;
+    platform?: string;
+};
+
+/**
+ * Returned to user when they join the matching pool.
+ */
+export type TribeMatchPreview = {
+    in_pool?: boolean;
+    estimated_wait?: string;
+};
+
+/**
+ * Public view of a tribe member — activity only, no scores.
+ */
+export type TribeMemberStatus = {
+    user_id: string;
+    display_name: string;
+    avatar_url?: string | null;
+    active_this_week: boolean;
+};
+
+/**
+ * A user's current tribe.
+ */
+export type TribeOut = {
+    tribe_id: string;
+    expires_at: string;
+    status: 'active' | 'expired' | 'dissolved';
+    members: Array<TribeMemberStatus>;
+    kudos_count_this_week: number;
+    renewal_requested: boolean;
+};
+
+/**
+ * A user's personal tribe streak — visible only to themselves.
+ */
+export type TribeStreakOut = {
+    current_streak: number;
+    longest_streak: number;
+    last_activity_week: string | null;
+    consecutive_misses_count: number;
+    crystal_fade_level: 0 | 1 | 2;
 };
 
 export type UnreadCountOut = {
@@ -1355,6 +1519,42 @@ export type RecordProfileViewApiProfilesUsernameViewPostResponses = {
 
 export type RecordProfileViewApiProfilesUsernameViewPostResponse = RecordProfileViewApiProfilesUsernameViewPostResponses[keyof RecordProfileViewApiProfilesUsernameViewPostResponses];
 
+export type GetMyProfileViewsApiProfilesMeViewsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/profiles/me/views';
+};
+
+export type GetMyProfileViewsApiProfilesMeViewsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type GetMyProfileViewsApiProfilesMeViewsGetResponse = GetMyProfileViewsApiProfilesMeViewsGetResponses[keyof GetMyProfileViewsApiProfilesMeViewsGetResponses];
+
+export type GetMyVerificationsApiProfilesMeVerificationsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/profiles/me/verifications';
+};
+
+export type GetMyVerificationsApiProfilesMeVerificationsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type GetMyVerificationsApiProfilesMeVerificationsGetResponse = GetMyVerificationsApiProfilesMeVerificationsGetResponses[keyof GetMyVerificationsApiProfilesMeVerificationsGetResponses];
+
 export type GetMyAuraApiAuraMeGetData = {
     body?: never;
     path?: never;
@@ -1658,6 +1858,33 @@ export type GetQuestionBreakdownApiAssessmentResultsSessionIdQuestionsGetRespons
 };
 
 export type GetQuestionBreakdownApiAssessmentResultsSessionIdQuestionsGetResponse = GetQuestionBreakdownApiAssessmentResultsSessionIdQuestionsGetResponses[keyof GetQuestionBreakdownApiAssessmentResultsSessionIdQuestionsGetResponses];
+
+export type VerifyAssessmentApiAssessmentVerifySessionIdGetData = {
+    body?: never;
+    path: {
+        session_id: string;
+    };
+    query?: never;
+    url: '/api/assessment/verify/{session_id}';
+};
+
+export type VerifyAssessmentApiAssessmentVerifySessionIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type VerifyAssessmentApiAssessmentVerifySessionIdGetError = VerifyAssessmentApiAssessmentVerifySessionIdGetErrors[keyof VerifyAssessmentApiAssessmentVerifySessionIdGetErrors];
+
+export type VerifyAssessmentApiAssessmentVerifySessionIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PublicVerificationOut;
+};
+
+export type VerifyAssessmentApiAssessmentVerifySessionIdGetResponse = VerifyAssessmentApiAssessmentVerifySessionIdGetResponses[keyof VerifyAssessmentApiAssessmentVerifySessionIdGetResponses];
 
 export type ListEventsApiEventsGetData = {
     body?: never;
@@ -2054,6 +2281,47 @@ export type UpdateMyOrganizationApiOrganizationsMePutResponses = {
 
 export type UpdateMyOrganizationApiOrganizationsMePutResponse = UpdateMyOrganizationApiOrganizationsMePutResponses[keyof UpdateMyOrganizationApiOrganizationsMePutResponses];
 
+export type ListSavedSearchesEarlyApiOrganizationsSavedSearchesGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/organizations/saved-searches';
+};
+
+export type ListSavedSearchesEarlyApiOrganizationsSavedSearchesGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: Array<SavedSearchOut>;
+};
+
+export type ListSavedSearchesEarlyApiOrganizationsSavedSearchesGetResponse = ListSavedSearchesEarlyApiOrganizationsSavedSearchesGetResponses[keyof ListSavedSearchesEarlyApiOrganizationsSavedSearchesGetResponses];
+
+export type CreateSavedSearchApiOrganizationsSavedSearchesPostData = {
+    body: SavedSearchCreate;
+    path?: never;
+    query?: never;
+    url: '/api/organizations/saved-searches';
+};
+
+export type CreateSavedSearchApiOrganizationsSavedSearchesPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateSavedSearchApiOrganizationsSavedSearchesPostError = CreateSavedSearchApiOrganizationsSavedSearchesPostErrors[keyof CreateSavedSearchApiOrganizationsSavedSearchesPostErrors];
+
+export type CreateSavedSearchApiOrganizationsSavedSearchesPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: SavedSearchOut;
+};
+
+export type CreateSavedSearchApiOrganizationsSavedSearchesPostResponse = CreateSavedSearchApiOrganizationsSavedSearchesPostResponses[keyof CreateSavedSearchApiOrganizationsSavedSearchesPostResponses];
+
 export type GetOrganizationApiOrganizationsOrgIdGetData = {
     body?: never;
     path: {
@@ -2080,6 +2348,33 @@ export type GetOrganizationApiOrganizationsOrgIdGetResponses = {
 };
 
 export type GetOrganizationApiOrganizationsOrgIdGetResponse = GetOrganizationApiOrganizationsOrgIdGetResponses[keyof GetOrganizationApiOrganizationsOrgIdGetResponses];
+
+export type GetCollectiveAuraApiOrganizationsOrgIdCollectiveAuraGetData = {
+    body?: never;
+    path: {
+        org_id: string;
+    };
+    query?: never;
+    url: '/api/organizations/{org_id}/collective-aura';
+};
+
+export type GetCollectiveAuraApiOrganizationsOrgIdCollectiveAuraGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetCollectiveAuraApiOrganizationsOrgIdCollectiveAuraGetError = GetCollectiveAuraApiOrganizationsOrgIdCollectiveAuraGetErrors[keyof GetCollectiveAuraApiOrganizationsOrgIdCollectiveAuraGetErrors];
+
+export type GetCollectiveAuraApiOrganizationsOrgIdCollectiveAuraGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: CollectiveAuraResponse;
+};
+
+export type GetCollectiveAuraApiOrganizationsOrgIdCollectiveAuraGetResponse = GetCollectiveAuraApiOrganizationsOrgIdCollectiveAuraGetResponses[keyof GetCollectiveAuraApiOrganizationsOrgIdCollectiveAuraGetResponses];
 
 export type GetOrgDashboardApiOrganizationsMeDashboardGetData = {
     body?: never;
@@ -2203,47 +2498,6 @@ export type CreateIntroRequestApiOrganizationsIntroRequestsPostResponses = {
 };
 
 export type CreateIntroRequestApiOrganizationsIntroRequestsPostResponse = CreateIntroRequestApiOrganizationsIntroRequestsPostResponses[keyof CreateIntroRequestApiOrganizationsIntroRequestsPostResponses];
-
-export type ListSavedSearchesApiOrganizationsSavedSearchesGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/organizations/saved-searches';
-};
-
-export type ListSavedSearchesApiOrganizationsSavedSearchesGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: Array<SavedSearchOut>;
-};
-
-export type ListSavedSearchesApiOrganizationsSavedSearchesGetResponse = ListSavedSearchesApiOrganizationsSavedSearchesGetResponses[keyof ListSavedSearchesApiOrganizationsSavedSearchesGetResponses];
-
-export type CreateSavedSearchApiOrganizationsSavedSearchesPostData = {
-    body: SavedSearchCreate;
-    path?: never;
-    query?: never;
-    url: '/api/organizations/saved-searches';
-};
-
-export type CreateSavedSearchApiOrganizationsSavedSearchesPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type CreateSavedSearchApiOrganizationsSavedSearchesPostError = CreateSavedSearchApiOrganizationsSavedSearchesPostErrors[keyof CreateSavedSearchApiOrganizationsSavedSearchesPostErrors];
-
-export type CreateSavedSearchApiOrganizationsSavedSearchesPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: SavedSearchOut;
-};
-
-export type CreateSavedSearchApiOrganizationsSavedSearchesPostResponse = CreateSavedSearchApiOrganizationsSavedSearchesPostResponses[keyof CreateSavedSearchApiOrganizationsSavedSearchesPostResponses];
 
 export type DeleteSavedSearchApiOrganizationsSavedSearchesSearchIdDeleteData = {
     body?: never;
@@ -2524,6 +2778,31 @@ export type GetMyStatsApiActivityStatsMeGetResponses = {
 };
 
 export type GetMyStatsApiActivityStatsMeGetResponse = GetMyStatsApiActivityStatsMeGetResponses[keyof GetMyStatsApiActivityStatsMeGetResponses];
+
+export type IngestEventApiAnalyticsEventPostData = {
+    body: TrackEventRequest;
+    path?: never;
+    query?: never;
+    url: '/api/analytics/event';
+};
+
+export type IngestEventApiAnalyticsEventPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type IngestEventApiAnalyticsEventPostError = IngestEventApiAnalyticsEventPostErrors[keyof IngestEventApiAnalyticsEventPostErrors];
+
+export type IngestEventApiAnalyticsEventPostResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type IngestEventApiAnalyticsEventPostResponse = IngestEventApiAnalyticsEventPostResponses[keyof IngestEventApiAnalyticsEventPostResponses];
 
 export type DiscoverVolunteersApiVolunteersDiscoveryGetData = {
     body?: never;
@@ -3131,6 +3410,263 @@ export type StripeWebhookApiSubscriptionWebhookPostResponses = {
 
 export type StripeWebhookApiSubscriptionWebhookPostResponse = StripeWebhookApiSubscriptionWebhookPostResponses[keyof StripeWebhookApiSubscriptionWebhookPostResponses];
 
+export type GetMyTribeApiTribesMeGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/tribes/me';
+};
+
+export type GetMyTribeApiTribesMeGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: TribeOut | null;
+};
+
+export type GetMyTribeApiTribesMeGetResponse = GetMyTribeApiTribesMeGetResponses[keyof GetMyTribeApiTribesMeGetResponses];
+
+export type GetMyStreakApiTribesMeStreakGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/tribes/me/streak';
+};
+
+export type GetMyStreakApiTribesMeStreakGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: TribeStreakOut | null;
+};
+
+export type GetMyStreakApiTribesMeStreakGetResponse = GetMyStreakApiTribesMeStreakGetResponses[keyof GetMyStreakApiTribesMeStreakGetResponses];
+
+export type SendKudosApiTribesMeKudosPostData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/tribes/me/kudos';
+};
+
+export type SendKudosApiTribesMeKudosPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: KudosResponse;
+};
+
+export type SendKudosApiTribesMeKudosPostResponse = SendKudosApiTribesMeKudosPostResponses[keyof SendKudosApiTribesMeKudosPostResponses];
+
+export type OptOutOfTribeApiTribesOptOutPostData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/tribes/opt-out';
+};
+
+export type OptOutOfTribeApiTribesOptOutPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: OptOutResponse;
+};
+
+export type OptOutOfTribeApiTribesOptOutPostResponse = OptOutOfTribeApiTribesOptOutPostResponses[keyof OptOutOfTribeApiTribesOptOutPostResponses];
+
+export type RequestTribeRenewalApiTribesRenewPostData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/tribes/renew';
+};
+
+export type RequestTribeRenewalApiTribesRenewPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: RenewalResponse;
+};
+
+export type RequestTribeRenewalApiTribesRenewPostResponse = RequestTribeRenewalApiTribesRenewPostResponses[keyof RequestTribeRenewalApiTribesRenewPostResponses];
+
+export type JoinMatchingPoolApiTribesJoinPoolPostData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/tribes/join-pool';
+};
+
+export type JoinMatchingPoolApiTribesJoinPoolPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: TribeMatchPreview;
+};
+
+export type JoinMatchingPoolApiTribesJoinPoolPostResponse = JoinMatchingPoolApiTribesJoinPoolPostResponses[keyof JoinMatchingPoolApiTribesJoinPoolPostResponses];
+
+export type GetPoolStatusApiTribesMePoolStatusGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/tribes/me/pool-status';
+};
+
+export type GetPoolStatusApiTribesMePoolStatusGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PoolStatusOut;
+};
+
+export type GetPoolStatusApiTribesMePoolStatusGetResponse = GetPoolStatusApiTribesMePoolStatusGetResponses[keyof GetPoolStatusApiTribesMePoolStatusGetResponses];
+
+export type AdminPingApiAdminPingGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/admin/ping';
+};
+
+export type AdminPingApiAdminPingGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type AdminPingApiAdminPingGetResponse = AdminPingApiAdminPingGetResponses[keyof AdminPingApiAdminPingGetResponses];
+
+export type GetAdminStatsApiAdminStatsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/admin/stats';
+};
+
+export type GetAdminStatsApiAdminStatsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: AdminStatsResponse;
+};
+
+export type GetAdminStatsApiAdminStatsGetResponse = GetAdminStatsApiAdminStatsGetResponses[keyof GetAdminStatsApiAdminStatsGetResponses];
+
+export type ListAdminUsersApiAdminUsersGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+        offset?: number;
+        account_type?: string | null;
+    };
+    url: '/api/admin/users';
+};
+
+export type ListAdminUsersApiAdminUsersGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListAdminUsersApiAdminUsersGetError = ListAdminUsersApiAdminUsersGetErrors[keyof ListAdminUsersApiAdminUsersGetErrors];
+
+export type ListAdminUsersApiAdminUsersGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: Array<AdminUserRow>;
+};
+
+export type ListAdminUsersApiAdminUsersGetResponse = ListAdminUsersApiAdminUsersGetResponses[keyof ListAdminUsersApiAdminUsersGetResponses];
+
+export type ListPendingOrganizationsApiAdminOrganizationsPendingGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+        offset?: number;
+    };
+    url: '/api/admin/organizations/pending';
+};
+
+export type ListPendingOrganizationsApiAdminOrganizationsPendingGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListPendingOrganizationsApiAdminOrganizationsPendingGetError = ListPendingOrganizationsApiAdminOrganizationsPendingGetErrors[keyof ListPendingOrganizationsApiAdminOrganizationsPendingGetErrors];
+
+export type ListPendingOrganizationsApiAdminOrganizationsPendingGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: Array<AdminOrgRow>;
+};
+
+export type ListPendingOrganizationsApiAdminOrganizationsPendingGetResponse = ListPendingOrganizationsApiAdminOrganizationsPendingGetResponses[keyof ListPendingOrganizationsApiAdminOrganizationsPendingGetResponses];
+
+export type ApproveOrganizationApiAdminOrganizationsOrgIdApprovePostData = {
+    body?: never;
+    path: {
+        org_id: string;
+    };
+    query?: never;
+    url: '/api/admin/organizations/{org_id}/approve';
+};
+
+export type ApproveOrganizationApiAdminOrganizationsOrgIdApprovePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ApproveOrganizationApiAdminOrganizationsOrgIdApprovePostError = ApproveOrganizationApiAdminOrganizationsOrgIdApprovePostErrors[keyof ApproveOrganizationApiAdminOrganizationsOrgIdApprovePostErrors];
+
+export type ApproveOrganizationApiAdminOrganizationsOrgIdApprovePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: OrgApproveResponse;
+};
+
+export type ApproveOrganizationApiAdminOrganizationsOrgIdApprovePostResponse = ApproveOrganizationApiAdminOrganizationsOrgIdApprovePostResponses[keyof ApproveOrganizationApiAdminOrganizationsOrgIdApprovePostResponses];
+
+export type RejectOrganizationApiAdminOrganizationsOrgIdRejectPostData = {
+    body?: never;
+    path: {
+        org_id: string;
+    };
+    query?: never;
+    url: '/api/admin/organizations/{org_id}/reject';
+};
+
+export type RejectOrganizationApiAdminOrganizationsOrgIdRejectPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RejectOrganizationApiAdminOrganizationsOrgIdRejectPostError = RejectOrganizationApiAdminOrganizationsOrgIdRejectPostErrors[keyof RejectOrganizationApiAdminOrganizationsOrgIdRejectPostErrors];
+
+export type RejectOrganizationApiAdminOrganizationsOrgIdRejectPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: OrgApproveResponse;
+};
+
+export type RejectOrganizationApiAdminOrganizationsOrgIdRejectPostResponse = RejectOrganizationApiAdminOrganizationsOrgIdRejectPostResponses[keyof RejectOrganizationApiAdminOrganizationsOrgIdRejectPostResponses];
+
 export type ClientOptions = {
-    baseUrl: `${string}://${string}` | (string & {});
+    baseUrl: 'http://localhost:8000' | (string & {});
 };

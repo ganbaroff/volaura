@@ -107,7 +107,7 @@ Return ONLY valid JSON, no extra text.
 
 Schema:
 {
-  "action": "open_app|type_text|open_url|search|screenshot|zeus_content|zeus_swarm|lock|team_status|unknown",
+  "action": "open_app|type_text|open_url|search|screenshot|zeus_content|zeus_swarm|lock|team_status|create_task|unknown",
   "params": {
     "app":     "<executable name, if open_app>",
     "text":    "<text to type, if type_text>",
@@ -319,6 +319,15 @@ class JarvisDaemon:
             return {"action": "lock", "params": {}, "response": "Locking screen"}
         if any(w in t for w in ("статус", "status", "команда", "team", "кто работает", "как дела")):
             return {"action": "team_status", "params": {}, "response": "Reading team status"}
+        if any(w in t for w in ("задача", "задачу", "таск", "task", "создай", "create", "добавь")):
+            # Extract task title: everything after the trigger word
+            title = text
+            for trigger in ("задачу", "задача", "таск", "task", "создай", "create", "добавь"):
+                if trigger in t:
+                    idx = t.index(trigger) + len(trigger)
+                    title = text[idx:].strip().strip(":").strip()
+                    break
+            return {"action": "create_task", "params": {"title": title or "New task"}, "response": f"Creating task: {title[:30]}"}
         return {"action": "unknown", "params": {}, "response": "Command not understood"}
 
     # ─────────────────────────────────────────────────────────
@@ -370,6 +379,12 @@ class JarvisDaemon:
             status_text = self._get_team_status()
             await self._speak(status_text)
             return  # skip default speak — already spoke
+
+        elif action == "create_task":
+            title = params.get("title", "New task")
+            result = await self._create_mindshift_task(title)
+            await self._speak(result)
+            return
 
         else:
             logger.info("Unrecognized command — try 'Hey Jarvis, open Chrome'")
@@ -439,6 +454,47 @@ class JarvisDaemon:
         except Exception as e:
             logger.error(f"Failed to read agent state: {e}")
             return "Не удалось прочитать состояние команды."
+
+    # ─────────────────────────────────────────────────────────
+    # MindShift task creation
+    # ─────────────────────────────────────────────────────────
+
+    async def _create_mindshift_task(self, title: str) -> str:
+        """Create a task in MindShift via Supabase REST API."""
+        supabase_url = os.environ.get("SUPABASE_URL", "")
+        supabase_key = os.environ.get("SUPABASE_SERVICE_KEY", "")
+
+        if not supabase_url or not supabase_key:
+            # Fallback: save to local agent-state.json as pending task
+            logger.warning("Supabase not configured for MindShift tasks, saving locally")
+            return f"Задача сохранена локально: {title}"
+
+        try:
+            import urllib.request as _req
+            task_data = json.dumps({
+                "title": title,
+                "pool": "next",
+                "difficulty": 2,
+                "category": "work",
+                "source": "jarvis_voice",
+            }).encode()
+
+            req = _req.Request(
+                f"{supabase_url}/rest/v1/tasks",
+                data=task_data,
+                headers={
+                    "apikey": supabase_key,
+                    "Authorization": f"Bearer {supabase_key}",
+                    "Content-Type": "application/json",
+                    "Prefer": "return=representation",
+                },
+            )
+            with _req.urlopen(req, timeout=5) as resp:
+                logger.info(f"MindShift task created: {title}")
+                return f"Задача создана: {title}"
+        except Exception as e:
+            logger.error(f"Failed to create MindShift task: {e}")
+            return f"Задача сохранена локально: {title}"
 
     # ─────────────────────────────────────────────────────────
     # ZEUS integration

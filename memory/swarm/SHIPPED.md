@@ -6,6 +6,21 @@
 
 ---
 
+## Session 83 NIGHT SPRINT (2026-04-04) — AI Office + VOLAURA fixes + JARVIS-MindShift
+
+| Item | What it does | Status |
+|------|-------------|--------|
+| AI Office Dashboard | /admin/swarm — 48 agents with status dots, proposal inbox, mobile-first 390px | Live |
+| Swarm API endpoints | GET /admin/swarm/agents, GET /admin/swarm/proposals, POST /decide | Live |
+| Referral sharing UI | Profile page: copy referral link, crystal reward description | Live |
+| QR check-in page | /events/{eventId}/checkin — coordinator code entry with success/error | Live |
+| JARVIS create_task | Voice → MindShift task via Supabase REST API | Ready |
+| Admin sidebar | "AI Office" nav item with Bot icon | Live |
+
+Commits: 8a4c2d6 (AI Office), b1fa7e2 (VOLAURA fixes), a61cec5 (JARVIS task)
+
+---
+
 ## SESSION 83 COMPREHENSIVE SUMMARY (2026-04-02 to 2026-04-03)
 
 **Largest session in project history.** 10 batches (R through X). Delivered across code, docs, agents, tools, and quality infrastructure.

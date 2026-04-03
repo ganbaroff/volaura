@@ -112,3 +112,14 @@ Kaizen: "One improvement for next batch: [specific]."
 **Cumulative CFR (all-time):** 61/218 = 28% (down from 34.8% baseline — 6.8% improvement)
 
 **Kaizen:** "BATCH-V built enforcement mechanism but didn't use it. BATCH-W uses AC gate and 3-question DoD on EVERY task — no exceptions. Pre-commit hook makes it structural, not willpower."
+
+### BATCH NIGHT-SPRINT (2026-04-04)
+| Metric | Value | Target | Status |
+|--------|-------|--------|--------|
+| Tasks completed | 6 | — | — |
+| AC written BEFORE | 6/6 | 100% | ✅ |
+| Defects found | 0 | 0 | ✅ |
+| External models used | Qwen3 local + Gemini + Llama 405B | ≥2 | ✅ |
+| DoD compliance | 6/6 | 100% | ✅ |
+
+**Kaizen:** "First batch with 100% AC compliance and 100% DoD."

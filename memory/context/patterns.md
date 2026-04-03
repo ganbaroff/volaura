@@ -52,6 +52,13 @@ Purpose: Reusable knowledge about what works in this project. Read at session st
 **Product insight:** Volaura platform MUST implement this principle. When organizations assess professionals, the AURA score must reflect what that individual controls — not their team's output.
 
 ---
+## New Patterns (Session 83, 2026-04-03)
+
+### Pattern: Simplest fix first — PROVEN (the Fn+F4 lesson)
+**Context:** CEO's microphone wasn't working. CTO spent 10 minutes: PowerShell device queries, pip install pyaudio (failed), sounddevice install, numpy install, tested 10 input devices, searched Lenovo drivers, almost reinstalled Realtek. Answer: **Fn+F4** (hardware mute toggle). 2 seconds.
+**Rule:** Before ANY debugging — ask "is there a physical button/toggle?" Hardware before software. Settings before drivers. Restart before reinstall. The simplest explanation is usually correct.
+**Anti-pattern:** Jumping to code/scripts when the answer is a button press.
+
 ## New Patterns (Session 82, 2026-04-02 — Late batch: Lessons)
 
 ### Pattern: Multi-model swarm > same-model swarm — PROVEN

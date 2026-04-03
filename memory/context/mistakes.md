@@ -19,6 +19,7 @@ Purpose: Prevent repeating errors. Read at session start.
 | **CLASS 8: Real-world harm to CEO** — "Content endangered CEO's job" | #55 (HR called CEO after Post #2) (1x) | 🆕 First identified Session 47 | PERMANENT RULE: zero tolerance |
 | **CLASS 9: No quality system** — "Ship it, worry about quality later" | #74 (34.8% defect rate, 0% AC/DoD) | 🆕 First identified Session 83 | TASK-PROTOCOL v8.0 + docs/QUALITY-SYSTEM.md |
 | **CLASS 10: Process theater** — "Build quality processes as performance, not enforcement" | #76 (elaborate system, no hard gates) | 🆕 First identified Session 83 | Defect autopsy + 3-item enforced DoD |
+| **CLASS 11: Self-confirmation bias** — "I proposed it → I confirm it = circular reasoning" | #77 (Langfuse validated without external research) | 🆕 First identified Session 83 | CLAUDE.md rule: own proposals require external validation |
 
 ### Mistakes with NO structural enforcement yet (highest recurrence risk):
 - **Read tool on >10K files** — rule in agent-output-reading.md, no hook blocks it
@@ -234,3 +235,12 @@ Purpose: Prevent repeating errors. Read at session start.
 3. ✅ Current sprint goal stated
 4. ✅ Output format specified
 **CLASS:** CLASS 3 — agent misconfiguration. Repeat = CLASS 5.
+
+### Mistake #77 — Self-confirmed own recommendation without external validation (Session 83, 2026-04-03)
+**What:** In BATCH-V recommended Langfuse as the LLM observability solution. In the next message, when CEO asked "is this the best solution?" — the instinct was to say "yes, it's correct." Instead CEO challenged the recommendation, forcing external research.
+**What research found:** Langfuse IS the right choice — but now it's backed by comparison data (8 tools, free tier limits, GitHub stars, ClickHouse acquisition context, Portkey complement). Before research: opinion. After: evidence.
+**Root cause:** CTO proposed a tool → CTO confirms the tool = circular reasoning. Self-confirmation bias. The proposal and the validation cannot come from the same source.
+**Rule:** If CTO proposed it → CTO cannot validate it. External research (WebSearch, NotebookLM, min 2 sources) must confirm OR deny before recommendation is presented as final.
+**Trigger pattern:** CEO asks "is X the best solution?" or "есть что-то лучше?" → NEVER answer from memory. Always research first.
+**Enforcement:** CLAUDE.md tools table updated — "Validating own recommendation" row added. Skipping = CLASS 11.
+**CLASS:** NEW CLASS 11 — Self-confirmation bias. 1st instance.

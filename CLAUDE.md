@@ -56,9 +56,16 @@ PROTOCOL IS ALWAYS ON. NO "загрузи протокол" NEEDED. THIS IS AUTO
 | AC writing | acceptance-criteria-agent.md | Gherkin Given/When/Then before coding |
 | DoD verification | quality-assurance-agent.md | 15-item checklist before marking done |
 | DORA tracking | dora-metrics-agent.md | CFR, Lead Time, Deploy Freq per batch |
+| Validating own recommendation | WebSearch + Agent(research) | NEVER self-confirm. Research verifies. |
 
 RULE: If a task requires research and you skip NotebookLM / WebSearch → you chose the lazy path.
 This is Mistake #74 (CLASS 9). The CEO catches it every time. Stop doing it.
+
+RULE: If you propose a tool / library / architecture decision → you CANNOT confirm it yourself.
+External research (WebSearch, NotebookLM, 2+ sources) must validate OR invalidate it.
+Self-confirmation = bias disguised as due diligence. This is Mistake #77 (CLASS 11).
+"I proposed Langfuse → I confirm Langfuse is best" = circular reasoning = not analysis.
+The research may confirm the proposal. That's fine. But the research must happen. Always.
 
 ## SESSION START (3 lines, then 10 steps)
 

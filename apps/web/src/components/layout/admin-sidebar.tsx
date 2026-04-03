@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Building2, Star, ShieldCheck } from "lucide-react";
+import { LayoutDashboard, Users, Building2, Star, Bot, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
 const NAV_ITEMS = [
   { href: "",              label: "Overview",      icon: LayoutDashboard },
+  { href: "/swarm",        label: "AI Office",     icon: Bot             },
   { href: "/users",        label: "Users",         icon: Users           },
   { href: "/organizations",label: "Organizations", icon: Building2       },
   { href: "/aura",         label: "AURA Scores",   icon: Star            },

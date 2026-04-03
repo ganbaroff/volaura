@@ -151,3 +151,81 @@ export function useRejectOrganization() {
     },
   });
 }
+
+// ── Swarm Office ──────────────────────────────────────────────────────────────
+
+export interface SwarmAgent {
+  name: string;
+  display_name: string;
+  status: string;
+  last_task: string;
+  last_run: string | null;
+  next_scheduled: string | null;
+  blockers: string[];
+  tasks_completed: number;
+  tasks_failed: number;
+}
+
+export interface SwarmProposal {
+  id: string;
+  timestamp: string;
+  agent: string;
+  severity: string;
+  type: string;
+  status: string;
+  title: string;
+  content?: string;
+  ceo_decision?: string;
+}
+
+export function useSwarmAgents() {
+  const getToken = useAuthToken();
+
+  return useQuery<{ agents: SwarmAgent[]; total_tracked: number; total_untracked: number }, ApiError>({
+    queryKey: ["admin", "swarm", "agents"],
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      return apiFetch("/api/admin/swarm/agents", { token });
+    },
+    staleTime: 30_000,
+    refetchInterval: 60_000,
+    retry: 1,
+  });
+}
+
+export function useSwarmProposals(status?: string) {
+  const getToken = useAuthToken();
+
+  return useQuery<{ proposals: SwarmProposal[]; summary: { pending: number; approved: number; rejected: number } }, ApiError>({
+    queryKey: ["admin", "swarm", "proposals", status],
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      const qs = status ? `?status=${status}` : "";
+      return apiFetch(`/api/admin/swarm/proposals${qs}`, { token });
+    },
+    staleTime: 30_000,
+    retry: 1,
+  });
+}
+
+export function useDecideProposal() {
+  const getToken = useAuthToken();
+  const queryClient = useQueryClient();
+
+  return useMutation<unknown, ApiError, { proposalId: string; action: string }>({
+    mutationFn: async ({ proposalId, action }) => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      return apiFetch(`/api/admin/swarm/proposals/${proposalId}/decide`, {
+        method: "POST",
+        body: JSON.stringify({ action }),
+        token,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "swarm", "proposals"] });
+    },
+  });
+}

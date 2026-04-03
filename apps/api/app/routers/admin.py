@@ -186,3 +186,147 @@ async def reject_organization(
 
     logger.info("Admin rejected organization", org_id=org_id, admin_id=admin_id)
     return OrgApproveResponse(org_id=org_id, action="rejected", verified_at=None)
+
+
+# ── Swarm Office ─────────────────────────────────────────────────────────────
+
+
+@router.get("/swarm/agents")
+@limiter.limit(RATE_ADMIN)
+async def get_swarm_agents(
+    request: Request,
+    admin_id: PlatformAdminId,
+) -> dict:
+    """Return all tracked agents from agent-state.json for the AI Office dashboard."""
+    import json as _json
+    from pathlib import Path
+
+    state_path = Path(__file__).parent.parent.parent.parent / "memory" / "swarm" / "agent-state.json"
+    try:
+        with open(state_path, encoding="utf-8") as f:
+            data = _json.load(f)
+
+        agents = []
+        for name, state in data.get("agents", {}).items():
+            agents.append({
+                "name": name,
+                "display_name": name.replace("-agent", "").replace("-", " ").title(),
+                "status": state.get("status", "unknown"),
+                "last_task": state.get("last_task", ""),
+                "last_run": state.get("last_run"),
+                "next_scheduled": state.get("next_scheduled"),
+                "blockers": state.get("blockers", []),
+                "tasks_completed": state.get("performance", {}).get("tasks_completed", 0),
+                "tasks_failed": state.get("performance", {}).get("tasks_failed", 0),
+            })
+
+        # Sort: active first, then by last_run descending
+        agents.sort(key=lambda a: (a["status"] != "idle", a["last_run"] or ""), reverse=True)
+
+        return {
+            "data": {
+                "agents": agents,
+                "total_tracked": len(agents),
+                "total_untracked": data.get("_uninitialized_count", 0),
+            }
+        }
+    except FileNotFoundError:
+        return {"data": {"agents": [], "total_tracked": 0, "total_untracked": 48}}
+    except Exception as e:
+        logger.error("Failed to read agent state", error=str(e))
+        return {"data": {"agents": [], "total_tracked": 0, "total_untracked": 48}}
+
+
+@router.get("/swarm/proposals")
+@limiter.limit(RATE_ADMIN)
+async def get_swarm_proposals(
+    request: Request,
+    admin_id: PlatformAdminId,
+    status_filter: str | None = Query(None, alias="status"),
+) -> dict:
+    """Return swarm proposals from proposals.json for CEO review."""
+    import json as _json
+    from pathlib import Path
+
+    proposals_path = Path(__file__).parent.parent.parent.parent / "memory" / "swarm" / "proposals.json"
+    try:
+        with open(proposals_path, encoding="utf-8") as f:
+            data = _json.load(f)
+
+        proposals = data.get("proposals", [])
+
+        if status_filter:
+            proposals = [p for p in proposals if p.get("status") == status_filter]
+
+        # Most recent first
+        proposals.sort(key=lambda p: p.get("timestamp", ""), reverse=True)
+
+        # Limit to last 50
+        proposals = proposals[:50]
+
+        summary = {
+            "pending": sum(1 for p in data.get("proposals", []) if p.get("status") == "pending"),
+            "approved": sum(1 for p in data.get("proposals", []) if p.get("status") == "approved"),
+            "rejected": sum(1 for p in data.get("proposals", []) if p.get("status") == "rejected"),
+        }
+
+        return {"data": {"proposals": proposals, "summary": summary}}
+    except FileNotFoundError:
+        return {"data": {"proposals": [], "summary": {"pending": 0, "approved": 0, "rejected": 0}}}
+    except Exception as e:
+        logger.error("Failed to read proposals", error=str(e))
+        return {"data": {"proposals": [], "summary": {"pending": 0, "approved": 0, "rejected": 0}}}
+
+
+@router.post("/swarm/proposals/{proposal_id}/decide")
+@limiter.limit(RATE_ADMIN)
+async def decide_proposal(
+    request: Request,
+    proposal_id: str,
+    admin_id: PlatformAdminId,
+) -> dict:
+    """CEO approves/dismisses/defers a swarm proposal."""
+    import json as _json
+    from pathlib import Path
+
+    body = await request.json()
+    action = body.get("action", "")  # "approve" | "dismiss" | "defer"
+    if action not in ("approve", "dismiss", "defer"):
+        raise HTTPException(status_code=400, detail={"code": "INVALID_ACTION", "message": "Action must be: approve, dismiss, defer"})
+
+    proposals_path = Path(__file__).parent.parent.parent.parent / "memory" / "swarm" / "proposals.json"
+    try:
+        with open(proposals_path, encoding="utf-8") as f:
+            data = _json.load(f)
+
+        status_map = {"approve": "approved", "dismiss": "rejected", "defer": "deferred"}
+        found = False
+        for p in data.get("proposals", []):
+            if p.get("id", "").startswith(proposal_id):
+                p["status"] = status_map[action]
+                p["ceo_decision_at"] = datetime.now(timezone.utc).isoformat()
+                p["ceo_decision"] = f"Admin {admin_id}: {action}"
+                found = True
+                break
+
+        if not found:
+            raise HTTPException(status_code=404, detail={"code": "PROPOSAL_NOT_FOUND", "message": f"Proposal {proposal_id} not found"})
+
+        import tempfile, os
+        tmp_fd, tmp_path = tempfile.mkstemp(dir=proposals_path.parent, suffix=".json")
+        try:
+            with os.fdopen(tmp_fd, "w", encoding="utf-8") as tmp_f:
+                _json.dump(data, tmp_f, indent=2, ensure_ascii=False)
+            os.replace(tmp_path, proposals_path)
+        except Exception:
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
+            raise
+
+        logger.info("Proposal decided", proposal_id=proposal_id, action=action, admin_id=admin_id)
+        return {"data": {"proposal_id": proposal_id, "action": action, "status": status_map[action]}}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("Failed to decide proposal", error=str(e))
+        raise HTTPException(status_code=500, detail={"code": "INTERNAL", "message": "Failed to process decision"})

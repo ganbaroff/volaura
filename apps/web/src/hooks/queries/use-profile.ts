@@ -90,3 +90,51 @@ export function useUpdateProfile() {
     },
   });
 }
+
+export interface ExpertVerificationData {
+  id: string;
+  verifier_name: string;
+  verifier_org: string | null;
+  competency_id: string;
+  rating: number;
+  comment: string | null;
+  verified_at: string;
+}
+
+export function useMyVerifications() {
+  const getToken = useAuthToken();
+
+  return useQuery<ExpertVerificationData[], ApiError>({
+    queryKey: ["profile", "verifications"],
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) return [];
+      return apiFetch<ExpertVerificationData[]>("/api/profiles/me/verifications", { token });
+    },
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+    throwOnError: false,
+  });
+}
+
+export interface ProfileViewsData {
+  total_views: number;
+  week_views: number;
+  recent_viewers: { name: string; at: string }[];
+}
+
+export function useProfileViews() {
+  const getToken = useAuthToken();
+
+  return useQuery<ProfileViewsData, ApiError>({
+    queryKey: ["profile", "views"],
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) return { total_views: 0, week_views: 0, recent_viewers: [] };
+      return apiFetch<ProfileViewsData>("/api/profiles/me/views", { token });
+    },
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+    throwOnError: false,
+  });
+}

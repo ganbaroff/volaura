@@ -119,9 +119,23 @@ export function ShareButtons({ username, overallScore, badgeTier, settingsUrl }:
     }
   }
 
-  function downloadCard() {
-    const cardUrl = `/u/${username}/card?format=linkedin`;
-    window.open(cardUrl, "_blank", "noopener");
+  async function downloadCard() {
+    try {
+      const cardUrl = `/u/${username}/card?format=linkedin`;
+      const res = await fetch(cardUrl);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `volaura-${username}-${badgeTier}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch {
+      // Fallback: open in new tab
+      window.open(`/u/${username}/card?format=linkedin`, "_blank", "noopener");
+    }
   }
 
   return (
@@ -174,13 +188,11 @@ export function ShareButtons({ username, overallScore, badgeTier, settingsUrl }:
         )}
       </Button>
 
-      {/* Download Card — backend route not yet implemented; shown as coming soon */}
       <Button
+        variant="outline"
         size="sm"
-        disabled
-        title={t("aura.downloadCardSoon", { defaultValue: "Card download coming soon" })}
-        className="gap-1.5 opacity-50 cursor-not-allowed"
-        aria-disabled="true"
+        onClick={downloadCard}
+        className="gap-1.5 min-h-[44px] sm:min-h-0"
       >
         <Download className="size-3.5" aria-hidden="true" />
         {t("aura.downloadCard")}

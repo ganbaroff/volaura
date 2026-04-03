@@ -229,6 +229,27 @@ class QuestionBreakdownOut(BaseModel):
     questions: list[QuestionResultOut]
 
 
+class PublicVerificationOut(BaseModel):
+    """Public-facing assessment verification — shown when external viewer clicks shared badge link.
+
+    Intentionally minimal: proves the assessment happened, shows score + competency,
+    does NOT expose questions, answers, or IRT parameters.
+    """
+    model_config = ConfigDict(from_attributes=True)
+
+    verified: bool = True
+    platform: str = "Volaura"
+    session_id: str
+    competency_slug: str
+    competency_name: str | None = None
+    competency_score: float
+    badge_tier: str
+    questions_answered: int
+    completed_at: str | None = None
+    display_name: str | None = None
+    username: str | None = None
+
+
 class AssessmentInfoOut(BaseModel):
     """Pre-assessment info shown before starting a competency assessment."""
     model_config = ConfigDict(from_attributes=True)

@@ -15,6 +15,10 @@ from collections.abc import AsyncGenerator
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+
+# CRIT-I01: Reject oversized request bodies before routing (DoS hardening)
+# 1MB covers all assessment payloads; video/file upload endpoints not present.
+_MAX_REQUEST_BODY_BYTES = 1_048_576  # 1 MB
 from loguru import logger
 try:
     from starlette.middleware.proxy_headers import ProxyHeadersMiddleware
@@ -37,7 +41,7 @@ if settings.sentry_dsn:
 
 from app.middleware.request_id import RequestIdMiddleware
 from app.middleware.security_headers import SecurityHeadersMiddleware
-from app.routers import activity, admin, assessment, auth, aura, badges, brandedby, character, discovery, events, health, invites, leaderboard, notifications, organizations, profiles, skills, stats, subscription, telegram_webhook, verification
+from app.routers import activity, admin, analytics, assessment, auth, aura, badges, brandedby, character, discovery, events, health, invites, leaderboard, notifications, organizations, profiles, skills, stats, subscription, telegram_webhook, tribes, verification
 from app.services.reeval_worker import run_reeval_worker
 from app.services.video_generation_worker import run_video_generation_worker
 
@@ -110,6 +114,21 @@ app.add_middleware(ErrorAlertingMiddleware)
 # Outermost middleware: correlation ID on every request/response (including errors)
 app.add_middleware(RequestIdMiddleware)
 
+# CRIT-I01: Enforce request body size limit — reject before routing
+@app.middleware("http")
+async def limit_request_body(request: Request, call_next):
+    """Block requests with bodies exceeding 1 MB (Content-Length header check).
+    Covers all mutating methods. Protects against trivial DoS via large payloads."""
+    if request.method in ("POST", "PUT", "PATCH"):
+        content_length = request.headers.get("content-length")
+        if content_length and int(content_length) > _MAX_REQUEST_BODY_BYTES:
+            return JSONResponse(
+                status_code=413,
+                content={"detail": {"code": "PAYLOAD_TOO_LARGE", "message": "Request body exceeds 1 MB limit"}},
+            )
+    return await call_next(request)
+
+
 # CRIT-01 fix: catch unhandled exceptions — never leak DB/internal errors to client
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
@@ -139,6 +158,7 @@ app.include_router(invites.router, prefix="/api")
 app.include_router(badges.router, prefix="/api")
 app.include_router(verification.router, prefix="/api")
 app.include_router(activity.router, prefix="/api")
+app.include_router(analytics.router, prefix="/api")
 app.include_router(discovery.router, prefix="/api")
 app.include_router(leaderboard.router, prefix="/api")
 app.include_router(notifications.router, prefix="/api")
@@ -148,4 +168,5 @@ app.include_router(character.router, prefix="/api")
 app.include_router(brandedby.router, prefix="/api")
 app.include_router(skills.router, prefix="/api")
 app.include_router(subscription.router, prefix="/api")
+app.include_router(tribes.router, prefix="/api")
 app.include_router(admin.router)  # prefix already set in router (/api/admin)

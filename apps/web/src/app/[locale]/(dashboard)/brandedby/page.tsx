@@ -96,13 +96,20 @@ function GenerationCard({ gen, locale }: { gen: Generation; locale: string }) {
 function NewGenerationForm({ twinId }: { twinId: string }) {
   const { t } = useTranslation();
   const [script, setScript] = useState("");
+  const [skipQueue, setSkipQueue] = useState(false);
   const { mutate: createGeneration, isPending, error } = useCreateGeneration();
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
     if (script.trim().length < 10) return;
-    createGeneration({ twin_id: twinId, gen_type: "video", input_text: script.trim() });
+    createGeneration({
+      twin_id: twinId,
+      gen_type: "video",
+      input_text: script.trim(),
+      skip_queue: skipQueue,
+    });
     setScript("");
+    setSkipQueue(false);
   }
 
   return (
@@ -122,8 +129,16 @@ function NewGenerationForm({ twinId }: { twinId: string }) {
         )}
         aria-label={t("brandedby.scriptLabel", { defaultValue: "AI Twin script" })}
       />
-      <div className="flex items-center justify-between">
-        <span className="text-xs text-muted-foreground">{script.length}/2000</span>
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
+          <input
+            type="checkbox"
+            checked={skipQueue}
+            onChange={(e) => setSkipQueue(e.target.checked)}
+            className="rounded border-input"
+          />
+          {t("brandedby.skipQueue", { defaultValue: "Skip queue (25 crystals)" })}
+        </label>
         <Button
           type="submit"
           disabled={isPending || script.trim().length < 10}

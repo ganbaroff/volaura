@@ -60,6 +60,13 @@ class Settings(BaseSettings):
     # Monitoring — V-EYE: error tracking + performance
     sentry_dsn: str = ""         # Org: volaura, Project: volaura-api (created 2026-03-29)
 
+    # Observability — Langfuse: LLM tracing, cost tracking, latency monitoring
+    # Free tier: 50k events/month. If keys not set, tracing is silently disabled.
+    # Get keys from https://cloud.langfuse.com → Settings → API Keys
+    langfuse_public_key: str = ""   # pk-lf-... (from Langfuse dashboard)
+    langfuse_secret_key: str = ""   # sk-lf-... (from Langfuse dashboard)
+    langfuse_host: str = "https://cloud.langfuse.com"  # EU cloud default; US = us.cloud.langfuse.com
+
     # NVIDIA NIM — 160+ open-source models, OpenAI-compatible, free tier — added 2026-04-02
     # Base URL: https://integrate.api.nvidia.com/v1 — drop-in OpenAI SDK replacement
     # Swarm routing: nemotron-ultra-253b (reasoning agents) + llama-3.3-70b (speed agents)

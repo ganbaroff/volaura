@@ -25,6 +25,7 @@ class RegisterRequest(BaseModel):
     password: str
     username: str
     display_name: str | None = None
+    referral_code: str | None = None  # username of the person who referred this user
 
     @field_validator("password")
     @classmethod
@@ -141,6 +142,7 @@ async def register(
                 "data": {
                     "username": payload.username,
                     "display_name": payload.display_name or payload.username,
+                    "referral_code": payload.referral_code or "",
                 }
             },
         })

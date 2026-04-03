@@ -47,6 +47,7 @@ from app.schemas.assessment import (
     AnswerFeedback,
     AssessmentInfoOut,
     AssessmentResultOut,
+    PublicVerificationOut,
     CoachingResponse,
     CoachingTip,
     QuestionBreakdownOut,
@@ -1157,4 +1158,94 @@ async def get_question_breakdown(
         competency_slug=comp_slug,
         competency_score=competency_score,
         questions=questions_out,
+    )
+
+
+# ── Public verification (no auth — for LinkedIn badge click-through) ─────────
+
+
+@router.get("/verify/{session_id}", response_model=PublicVerificationOut)
+@limiter.limit(RATE_DISCOVERY)
+async def verify_assessment(
+    request: Request,
+    session_id: str,
+    db_admin: SupabaseAdmin,
+) -> PublicVerificationOut:
+    """Public verification endpoint — no auth required.
+
+    When someone clicks a shared badge link on LinkedIn, they land on a page
+    that calls this endpoint to prove the assessment is real.
+
+    Returns: competency, score, badge tier, questions answered, completion date.
+    Does NOT return: questions, answers, IRT parameters, theta.
+    """
+    try:
+        uuid.UUID(session_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=422,
+            detail={"code": "INVALID_SESSION_ID", "message": "Invalid session ID"},
+        )
+
+    # Fetch completed session (service-role — no RLS, but only completed sessions)
+    session_result = (
+        await db_admin.table("assessment_sessions")
+        .select("id, volunteer_id, competency_id, status, answers, completed_at, gaming_penalty_multiplier")
+        .eq("id", session_id)
+        .eq("status", "completed")
+        .maybe_single()
+        .execute()
+    )
+    if not session_result.data:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "SESSION_NOT_FOUND", "message": "Completed assessment not found"},
+        )
+
+    session = session_result.data
+    state = CATState.from_dict(session["answers"] or {})
+    competency_score = round(
+        theta_to_score(state.theta) * (session.get("gaming_penalty_multiplier") or 1.0), 2
+    )
+
+    # Competency name
+    comp_result = (
+        await db_admin.table("competencies")
+        .select("slug, name_en")
+        .eq("id", session["competency_id"])
+        .maybe_single()
+        .execute()
+    )
+    comp_data = comp_result.data or {}
+
+    # Badge tier from aura_scores
+    aura_result = (
+        await db_admin.table("aura_scores")
+        .select("badge_tier")
+        .eq("volunteer_id", session["volunteer_id"])
+        .maybe_single()
+        .execute()
+    )
+    badge_tier = (aura_result.data or {}).get("badge_tier", "none")
+
+    # User display info (public-safe)
+    profile_result = (
+        await db_admin.table("profiles")
+        .select("display_name, username")
+        .eq("id", session["volunteer_id"])
+        .maybe_single()
+        .execute()
+    )
+    profile = profile_result.data or {}
+
+    return PublicVerificationOut(
+        session_id=session_id,
+        competency_slug=comp_data.get("slug", ""),
+        competency_name=comp_data.get("name_en"),
+        competency_score=competency_score,
+        badge_tier=badge_tier,
+        questions_answered=len(state.items),
+        completed_at=session.get("completed_at"),
+        display_name=profile.get("display_name"),
+        username=profile.get("username"),
     )

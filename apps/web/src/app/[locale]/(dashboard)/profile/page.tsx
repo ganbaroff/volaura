@@ -12,10 +12,12 @@ import { ImpactMetrics } from "@/components/profile-view/impact-metrics";
 import { SkillChips } from "@/components/profile-view/skill-chips";
 import { ExpertVerifications } from "@/components/profile-view/expert-verifications";
 import { ActivityTimeline } from "@/components/profile-view/activity-timeline";
-import { useProfile } from "@/hooks/queries/use-profile";
+import { useProfile, useMyVerifications } from "@/hooks/queries/use-profile";
 import { useAuraScore } from "@/hooks/queries/use-aura";
 import { useDashboardStats } from "@/hooks/queries/use-dashboard";
+import { useMyEvents } from "@/hooks/queries/use-events";
 import { ApiError } from "@/lib/api/client";
+import type { TimelineEvent } from "@/components/profile-view/activity-timeline";
 
 /* ─── Section wrapper ─── */
 const sectionVariants = {
@@ -96,6 +98,17 @@ export default function ProfilePage() {
   } = useAuraScore();
 
   const { data: dashboardStats } = useDashboardStats();
+  const { data: verifications } = useMyVerifications();
+  const { data: myEvents } = useMyEvents();
+
+  // Transform events into timeline format
+  const timelineEvents: TimelineEvent[] = (myEvents || []).map((ev) => ({
+    id: ev.id,
+    event_name: ev.title ?? ev.name ?? "Event",
+    event_date: ev.date ?? ev.start_date ?? ev.created_at ?? "",
+    role: ev.role ?? null,
+    participated: ev.status === "attended" || ev.checked_in === true,
+  }));
 
   const loading = profileLoading || auraLoading;
 
@@ -192,12 +205,12 @@ export default function ProfilePage() {
 
         {/* Expert Verifications */}
         <Section title={t("profile.expertVerifications")} delay={0.3}>
-          <ExpertVerifications verifications={[]} />
+          <ExpertVerifications verifications={verifications ?? []} />
         </Section>
 
         {/* Activity Timeline */}
         <Section title={t("profile.timeline")} delay={0.4}>
-          <ActivityTimeline events={[]} />
+          <ActivityTimeline events={timelineEvents} />
         </Section>
       </div>
     </>

@@ -20,6 +20,7 @@ import { useSkill } from "@/hooks/queries/use-skill";
 import { ApiError } from "@/lib/api/client";
 import { EvaluationLog } from "@/components/aura/evaluation-log";
 import { triggerHaptic } from "@/lib/haptics";
+import { useTrackEvent } from "@/hooks/use-analytics";
 
 // ── Animated counter hook ────────────────────────────────────────────────
 
@@ -179,6 +180,7 @@ export default function AuraPage() {
   const isMounted = useRef(true);
   const prefersReducedMotion = useReducedMotion(); // BATCH-O A11Y: respect user motion preference
   const activeSessionId = useAssessmentStore((s) => s.sessionId); // BATCH-O AU2: route Continue to active session
+  const track = useTrackEvent();
 
   // Reveal sequence — fires exactly once per mount
   const revealFiredRef = useRef(false);
@@ -213,6 +215,10 @@ export default function AuraPage() {
     if (!aura || aura.total_score == null) return;
     if (revealFiredRef.current) return;
     revealFiredRef.current = true;
+    track("aura_page_viewed", {
+      total_score: aura.total_score,
+      badge_tier: aura.badge_tier,
+    });
 
     if (!isMounted.current) return;
 

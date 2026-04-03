@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { apiFetch } from "@/lib/api/client";
+import { apiFetch, API_BASE } from "@/lib/api/client";
 
 /**
  * ProfileViewTracker — fires POST /api/profiles/{username}/view on mount.
@@ -30,6 +30,20 @@ export function ProfileViewTracker({ username }: { username: string }) {
           method: "POST",
           token: session.access_token,
         });
+
+        // Analytics: profile_viewed (fire-and-forget)
+        fetch(`${API_BASE}/api/analytics/event`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            event_name: "profile_viewed",
+            properties: { viewed_username: username },
+            platform: "web",
+          }),
+        }).catch(() => {});
       } catch {
         // fire-and-forget — swallow all errors
       }

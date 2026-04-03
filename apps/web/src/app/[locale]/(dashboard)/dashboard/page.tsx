@@ -20,7 +20,9 @@ import { useSubscription } from "@/hooks/queries/use-subscription";
 import { useProfile } from "@/hooks/queries/use-profile";
 import { FeedCards, type FeedCard } from "@/components/dashboard/feed-cards";
 import { CrystalBalanceWidget } from "@/components/dashboard/crystal-balance-widget";
+import { TribeCard } from "@/components/dashboard/tribe-card";
 import { ApiError } from "@/lib/api/client";
+import { useTrackEvent } from "@/hooks/use-analytics";
 
 // BATCH-O A11Y #3: motion variants — reduced-motion override applied per component via useDashboardMotion hook
 const pageVariants = {
@@ -75,11 +77,13 @@ export default function DashboardPage() {
   const prefersReducedMotion = useReducedMotion(); // BATCH-O A11Y: respect system motion preference
   const pVariants = prefersReducedMotion ? pageVariantsReduced : pageVariants;
   const sVariants = prefersReducedMotion ? sectionVariantsReduced : sectionVariants;
+  const track = useTrackEvent();
 
   useEffect(() => {
     isMounted.current = true;
+    track("dashboard_viewed");
     return () => { isMounted.current = false; };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Check auth — redirect if not logged in
   useEffect(() => {
@@ -306,6 +310,12 @@ export default function DashboardPage() {
             <CrystalBalanceWidget />
           </motion.div>
         )}
+
+        {/* ── Tribe Card — accountability circle (visible to all; join CTA for non-members) ── */}
+        <motion.div variants={sVariants} className="space-y-2">
+          <SectionHeader label={t("tribe.sectionHeader", { defaultValue: "Your Tribe" })} />
+          <TribeCard />
+        </motion.div>
 
         {/* ── Personalized Feed (feed-curator skill) ── */}
         {hasScore && (

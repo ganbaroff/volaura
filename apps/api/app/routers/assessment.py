@@ -59,6 +59,7 @@ from app.services.assessment.coaching_service import generate_coaching_tips
 from app.services.assessment.helpers import get_competency_id, fetch_questions, make_session_out, get_competency_slug
 from app.services.assessment.rewards import emit_assessment_rewards
 from app.services.analytics import track_event
+from app.services.email import send_aura_ready_email
 from app.services.notification_service import notify
 from app.services.tribe_streak_tracker import record_assessment_activity
 
@@ -778,6 +779,34 @@ async def complete_assessment(
         )
     except Exception:
         pass  # analytics failure must never fail assessment completion
+
+    # Transactional email: AURA score ready (fire-and-forget, kill switch: EMAIL_ENABLED)
+    try:
+        user_resp = await db_admin.auth.admin.get_user_by_id(str(user_id))
+        user_email = user_resp.user.email if user_resp and user_resp.user else None
+        if user_email:
+            # Resolve badge tier from aura_scores (best-effort; defaults to "bronze" if missing)
+            badge_resp = await db_admin.table("aura_scores").select(
+                "badge_tier"
+            ).eq("volunteer_id", str(user_id)).maybe_single().execute()
+            badge_tier = (badge_resp.data or {}).get("badge_tier", "bronze")
+
+            # display_name from profiles (best-effort; falls back to "there")
+            prof_resp = await db_admin.table("profiles").select(
+                "display_name"
+            ).eq("id", str(user_id)).maybe_single().execute()
+            display_name = (prof_resp.data or {}).get("display_name") or ""
+
+            await send_aura_ready_email(
+                to_email=user_email,
+                display_name=display_name,
+                competency_slug=slug,
+                competency_score=competency_score,
+                badge_tier=badge_tier,
+                crystals_earned=crystals_earned,
+            )
+    except Exception:
+        pass  # email failure must never fail assessment completion
 
     return AssessmentResultOut(
         session_id=session_id,

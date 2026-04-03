@@ -75,6 +75,15 @@ class Settings(BaseSettings):
     stripe_webhook_secret: str = ""
     stripe_price_id: str = ""  # Monthly subscription price ID (e.g. price_xxx from Stripe dashboard)
 
+    # Transactional email via Resend
+    # ── KILL SWITCH ──────────────────────────────────────────────────────────────
+    # email_enabled=False (default): no emails sent, silently skipped.
+    # Flow: user completes assessment → POST /api/assessment/complete → AURA ready email.
+    # Activate: 1) Create Resend account at resend.com  2) Set RESEND_API_KEY on Railway
+    #            3) Set EMAIL_ENABLED=true on Railway  4) Verify "noreply@volaura.app" in Resend
+    email_enabled: bool = False
+    resend_api_key: str = ""  # Set RESEND_API_KEY on Railway
+
     # Invite gate — controlled beta access (RISK-014)
     # open_signup=True  → anyone can register
     # open_signup=False → invite code required (SAFE DEFAULT — must explicitly set OPEN_SIGNUP=true on Railway to open)

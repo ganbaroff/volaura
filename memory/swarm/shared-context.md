@@ -1,6 +1,6 @@
 # Swarm Shared Context — UPDATED 2026-04-01
 
-**By:** CTO (Claude) | **Replaces:** 2026-03-30 version (missing ecosystem context — ZEUS/Life Sim were invisible to agents)
+**By:** CTO (Claude) | **Updated:** 2026-04-02 (Session 83 BATCH-U — sprint state synced, 3 new batches logged)
 
 ---
 
@@ -74,18 +74,40 @@ character_events INSERT (skill_verified, milestone_reached)
 
 ## Current Sprint Goal
 
-**Sprint E2, BATCH L (next to execute, 2026-03-30)**
+**Session 83, BATCH-U (executing 2026-04-02)**
 
-- QA-03: Org B2B test coverage (org dashboard + search + volunteers) — 4h
-- ARCH-03: Rebuild shared-context.md — THIS TASK (done)
-- SEC-03: display_name anonymization consistency (profiles/public vs discovery) — 20min
-- Pending migration to apply: `supabase/migrations/20260330150000_add_pending_aura_sync.sql`
-- CEO action required: Walk prod E2E on volaura.app before GO decision
-- Readiness: 72/100 CONDITIONAL GO (was 61/100 before BATCH K)
+- U1: shared-context.md refresh — THIS TASK
+- U2: Transactional email skeleton with `email_enabled` kill switch (Resend API) — CEO sets RESEND_API_KEY when ready
+- U3: Demo volunteer seed migration — visible profile for org cold search visits
+
+**CEO actions required (blocking Phase 0):**
+- Walk volaura.app E2E with real email (Phase 0 gate — nothing else unblocks until done)
+- Apply pending DB migrations via Supabase Dashboard or `supabase db push`
+- Set RESEND_API_KEY on Railway when Resend account is created
+- Set `OPEN_SIGNUP=true` on Railway when ready to open beta (currently closed by default)
+- Set GitHub secrets: SUPABASE_PROJECT_ID + SUPABASE_SERVICE_KEY (for analytics-retention workflow)
 
 ---
 
-## What Was Built (BATCH K — most recent, 2026-03-30)
+## What Was Built (Sessions 83 — most recent, 2026-04-02)
+
+| BATCH | Code | What it does |
+|-------|------|-------------|
+| BATCH-T | `test_tribes.py` mock fix | tribe_matching_pool AsyncMock — fixes join-pool test TypeError |
+| BATCH-S | `answer_submitted` event | Frontend assessment page fires on every answer (useTrackEvent) |
+| BATCH-S | `assessment_completed_view` event | Completion page fires on fetchResults success |
+| BATCH-S | Telegram webhook hard-fail | TELEGRAM_WEBHOOK_SECRET missing → RuntimeError in production startup |
+| BATCH-R | `open_signup` default → False | Was True; now closed by default, Railway must set OPEN_SIGNUP=true |
+| BATCH-R | LLM cap fail-closed | Exception during cap check → _force_degraded=True (was fail-open) |
+| BATCH-R | 409 resume flow | Assessment start 409 → reads session_id → redirects to existing session |
+| BATCH-R | Org routing fix | accountType===organization → /my-organization (was routing to /assessment) |
+| BATCH-R | 500-HOUR-PLAN.md | 8-phase plan, Phase 0 gates all. CEO vs CTO ownership separated. |
+
+**Test count (2026-04-02):** 742 passing, 1 pre-existing failure (test_match_checker.py::test_no_matches_updates_last_checked)
+
+---
+
+## What Was Built (Session 82 — 2026-04-02)
 
 | Code | Location | What it does |
 |------|----------|-------------|
@@ -138,6 +160,13 @@ All routers use prefix `/api` from main.py except health (no prefix).
 | `brandedby.py` | /api/brandedby | AI Twin + video generation |
 | `skills.py` | /api/skills | Skills endpoints |
 | `subscription.py` | /api/subscription | GET /status, POST /create-checkout, POST /webhook |
+| `tribes.py` | /api/tribes | POST /join-pool, GET /me/pool-status, GET /me/tribe, cron endpoints. Added 2026-04-02. |
+| `admin.py` | /api/admin | Admin panel MVP. Added 2026-04-02. |
+
+**Services (non-router):**
+| `analytics.py` | `app/services/analytics.py` | `track_event()` fire-and-forget. Never raises. Added 2026-04-02. |
+| `tribe_matching.py` | `app/services/tribe_matching.py` | Greedy tribe matching algorithm. Daily cron. |
+| `tribe_streak_tracker.py` | `app/services/tribe_streak_tracker.py` | Weekly streak tracking. |
 
 **CRITICAL route order rule (aura.py):** Static routes MUST precede parameterized:
 ```
@@ -160,8 +189,11 @@ GET /{volunteer_id}  # LAST (wildcard)
 | `organizations` | id, owner_id, name, org_type, registration_number | owner_id UNIQUE constraint prevents duplicate orgs |
 | `organization_invites` | id, org_id, email, invite_code, status | invited_by_org_id on profiles tracks attribution |
 | `stripe_webhook_events` | id, stripe_event_id, event_type, processed_at | Idempotency table for Stripe webhooks |
+| `analytics_events` | id, user_id FK, session_id FK, event_name, properties JSONB, locale, platform, created_at | Behavioral events. RLS: SELECT own, INSERT service-role only. GDPR 390-day retention via GitHub Actions. Added 2026-04-02. |
+| `tribe_matching_pool` | user_id PK, joined_at | Persistent pool membership. RLS: user SELECT+INSERT+DELETE own. Added 2026-04-02. |
+| `notifications` | id, user_id, type, title, body, is_read, reference_id, created_at | In supabase_realtime publication. RLS verified clean. |
 
-**57 migration files applied** as of 2026-03-30. Latest: `20260330200000_stripe_webhook_idempotency.sql`, `20260330150000_add_pending_aura_sync.sql`.
+**59+ migration files applied** as of 2026-04-02. Latest: `analytics_events`, `fix_security_definer_views`, `fix_search_path_and_ceo_inbox`.
 
 ### Assessment Pipeline
 

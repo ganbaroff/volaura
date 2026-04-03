@@ -209,6 +209,11 @@ export default function OnboardingPage() {
         const orgType = session?.user?.user_metadata?.org_type;
         if (orgType) payload.org_type = orgType;
       }
+      // GDPR consent — read from user_metadata captured at signup.
+      // age_confirmed=true means the user checked the "I am 16+" checkbox before creating their account.
+      const meta = session?.user?.user_metadata ?? {};
+      payload.age_confirmed = meta.age_confirmed === true;
+      if (meta.terms_version) payload.terms_version = meta.terms_version;
 
       const headers: Record<string, string> = { "Content-Type": "application/json" };
       if (token) headers.Authorization = `Bearer ${token}`;

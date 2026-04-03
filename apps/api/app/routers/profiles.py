@@ -63,7 +63,8 @@ async def get_my_profile(
             "id, username, display_name, bio, avatar_url, location, languages, "
             "account_type, is_public, visible_to_orgs, org_type, registration_number, "
             "registration_tier, subscription_status, trial_started_at, trial_ends_at, "
-            "subscription_started_at, subscription_ends_at, created_at, updated_at"
+            "subscription_started_at, subscription_ends_at, created_at, updated_at, "
+            "age_confirmed, terms_version, terms_accepted_at"
         )
         .eq("id", user_id)
         .maybe_single()
@@ -100,9 +101,23 @@ async def create_my_profile(
             detail={"code": "USERNAME_TAKEN", "message": "Username already taken"},
         )
 
+    # GDPR consent capture — write terms_accepted_at at profile creation time.
+    # The user already accepted terms at signup; profile creation happens immediately
+    # after (onboarding flow). This timestamp is the audit trail required by GDPR Art. 7.
+    insert_data = {"id": user_id, **payload.model_dump()}
+    if payload.age_confirmed:
+        insert_data["terms_accepted_at"] = datetime.now(UTC).isoformat()
+    else:
+        # age_confirmed=False at profile creation = non-compliant state.
+        # Log for audit so we can identify accounts to follow up with.
+        logger.warning(
+            "Profile created without age confirmation — GDPR Art. 8 gap",
+            user_id=user_id,
+        )
+
     result = (
         await db.table("profiles")
-        .insert({"id": user_id, **payload.model_dump()})
+        .insert(insert_data)
         .execute()
     )
     if not result.data:
@@ -466,3 +481,119 @@ async def record_profile_view(
         org_id=user_id,
         volunteer_id=volunteer_id,
     )
+
+
+@router.get("/me/views")
+@limiter.limit(RATE_PROFILE_WRITE)
+async def get_my_profile_views(
+    request: Request,
+    db: SupabaseAdmin,
+    user_id: CurrentUserId,
+) -> dict:
+    """Count how many orgs viewed my profile (based on org_view notifications).
+
+    Returns: total views, views this week, list of org names who viewed (last 10).
+    Volunteer-only — orgs see their own dashboard stats elsewhere.
+    """
+    now = datetime.now(tz=timezone.utc)
+    week_ago = (now - timedelta(days=7)).isoformat()
+
+    # Total org_view notifications (= unique org views after dedup)
+    total_result = (
+        await db.table("notifications")
+        .select("id", count="exact")
+        .eq("user_id", str(user_id))
+        .eq("type", "org_view")
+        .execute()
+    )
+    total_views = total_result.count or 0
+
+    # This week
+    week_result = (
+        await db.table("notifications")
+        .select("id", count="exact")
+        .eq("user_id", str(user_id))
+        .eq("type", "org_view")
+        .gte("created_at", week_ago)
+        .execute()
+    )
+    week_views = week_result.count or 0
+
+    # Recent viewers (last 10 — show org names)
+    recent_result = (
+        await db.table("notifications")
+        .select("title, created_at")
+        .eq("user_id", str(user_id))
+        .eq("type", "org_view")
+        .order("created_at", desc=True)
+        .limit(10)
+        .execute()
+    )
+    recent_viewers = [
+        {"name": n.get("title", "").replace(" viewed your profile", ""), "at": n.get("created_at")}
+        for n in (recent_result.data or [])
+    ]
+
+    return {"data": {"total_views": total_views, "week_views": week_views, "recent_viewers": recent_viewers}}
+
+
+@router.get("/me/verifications")
+@limiter.limit(RATE_PROFILE_WRITE)
+async def get_my_verifications(
+    request: Request,
+    db: SupabaseAdmin,
+    user_id: CurrentUserId,
+) -> dict:
+    """Return coordinator ratings for this volunteer — these are expert verifications.
+
+    Data source: event_registrations where coordinator_rating is not null.
+    Joins with events (for event name) and profiles (for coordinator name/org).
+    """
+    # Get all event registrations where this volunteer was rated by a coordinator
+    regs_result = (
+        await db.table("event_registrations")
+        .select("id, event_id, coordinator_rating, coordinator_feedback, created_at")
+        .eq("volunteer_id", str(user_id))
+        .not_.is_("coordinator_rating", "null")
+        .order("created_at", desc=True)
+        .limit(20)
+        .execute()
+    )
+
+    verifications = []
+    for reg in (regs_result.data or []):
+        # Get event details
+        event_result = (
+            await db.table("events")
+            .select("title, organizer_id")
+            .eq("id", reg["event_id"])
+            .maybe_single()
+            .execute()
+        )
+        event = event_result.data or {}
+
+        # Get organizer profile
+        organizer_name = "Coordinator"
+        organizer_org = None
+        if event.get("organizer_id"):
+            org_result = (
+                await db.table("profiles")
+                .select("display_name, username")
+                .eq("id", event["organizer_id"])
+                .maybe_single()
+                .execute()
+            )
+            if org_result.data:
+                organizer_name = org_result.data.get("display_name") or org_result.data.get("username") or "Coordinator"
+
+        verifications.append({
+            "id": reg["id"],
+            "verifier_name": organizer_name,
+            "verifier_org": organizer_org,
+            "competency_id": "event_performance",
+            "rating": reg.get("coordinator_rating", 0),
+            "comment": reg.get("coordinator_feedback"),
+            "verified_at": reg.get("created_at", ""),
+        })
+
+    return {"data": verifications}

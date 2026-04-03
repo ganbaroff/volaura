@@ -21,6 +21,10 @@ class ProfileCreate(ProfileBase):
     visible_to_orgs: bool = False
     org_type: str | None = None
     invited_by_org_id: str | None = None  # GROWTH-2: org attribution from invite link
+    # GDPR consent fields — required for Art. 7 + Art. 8 audit trail.
+    # Frontend must pass age_confirmed=True; backend writes terms_accepted_at=now().
+    age_confirmed: bool = False
+    terms_version: str = "1.0"
 
     @field_validator("username")
     @classmethod
@@ -73,6 +77,10 @@ class ProfileResponse(ProfileBase):
     badge_open_badges_url: str | None = None
     created_at: datetime
     updated_at: datetime
+    # GDPR consent fields — exposed so DSAR export can include them
+    age_confirmed: bool = False
+    terms_version: str | None = None
+    terms_accepted_at: datetime | None = None
     registration_number: int | None = None
     registration_tier: str | None = None  # founding_100 | founding_1000 | early_adopter | standard
     # Subscription fields — present on all profile reads so frontend can gate features

@@ -31,6 +31,7 @@ export default function SignupPage() {
   // Pre-fill from ?invite= URL param — warm invite link recipients skip manual entry
   const [inviteCode, setInviteCode] = useState(searchParams.get("invite") ?? "");
   const [privacyConsented, setPrivacyConsented] = useState(false);
+  const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -55,6 +56,10 @@ export default function SignupPage() {
     e.preventDefault();
     if (!privacyConsented) {
       setError(t("auth.privacyConsentRequired", { defaultValue: "Please accept the privacy policy to continue." }));
+      return;
+    }
+    if (!ageConfirmed) {
+      setError(t("auth.ageConfirmRequired", { defaultValue: "Please confirm you are 16 or older to continue." }));
       return;
     }
     setError(null);
@@ -88,6 +93,11 @@ export default function SignupPage() {
             username: username.trim().toLowerCase(),
             account_type: accountType,
             org_type: accountType === "organization" ? orgType || null : null,
+            // GDPR consent capture — stored in user metadata for audit trail.
+            // terms_accepted_at is written to profiles table during onboarding.
+            age_confirmed: true,
+            terms_version: "1.0",
+            terms_accepted_at: new Date().toISOString(),
           },
         },
       });
@@ -339,13 +349,26 @@ export default function SignupPage() {
           </span>
         </label>
 
+        {/* Age confirmation — GDPR Art. 8 (16+ threshold) */}
+        <label className="flex items-start gap-2.5 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={ageConfirmed}
+            onChange={(e) => setAgeConfirmed(e.target.checked)}
+            className="mt-0.5 h-4 w-4 rounded border-border accent-primary flex-shrink-0"
+          />
+          <span className="text-sm text-muted-foreground">
+            {t("auth.ageConfirm", { defaultValue: "I confirm I am 16 years of age or older." })}
+          </span>
+        </label>
+
         {error && (
           <p className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</p>
         )}
 
         <button
           type="submit"
-          disabled={loading || !privacyConsented || (openSignup === false && !inviteCode.trim())}
+          disabled={loading || !privacyConsented || !ageConfirmed || (openSignup === false && !inviteCode.trim())}
           className="h-10 w-full rounded-md bg-primary font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
         >
           {loading ? (

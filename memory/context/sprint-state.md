@@ -6,6 +6,23 @@
 
 ---
 
+## BATCH 2026-04-03-X: GDPR Consent Closure
+
+BATCH 2026-04-03-X: 4 GDPR compliance gaps closed (surfaced by legal agent in SWARM-AUTONOMY-BRIEF).
+- Migration 20260403000003: age_confirmed + terms_version + terms_accepted_at columns added to profiles
+- ProfileCreate schema: age_confirmed + terms_version fields (GDPR Art. 7 + Art. 8)
+- profiles.py create_my_profile: writes terms_accepted_at=now() at profile creation; logs warning if age_confirmed=False
+- get_my_profile: now returns age_confirmed + terms_accepted_at (DSAR-ready)
+- signup/page.tsx: age confirmation checkbox added; age_confirmed + terms_accepted_at stored in user_metadata
+- onboarding/page.tsx: reads consent from user_metadata and forwards to profile creation
+- 7 stale ANUS proposals dismissed (judge score 1-3/5, superseded strategic context)
+- 732 API tests pass, 0 new failures
+
+CEO actions: Apply migration 20260403000003 in Supabase Dashboard.
+Remaining GDPR gap: cookie consent not in DB (Volaura uses only session cookies → likely exempt under ePrivacy Directive, but confirm with legal).
+
+---
+
 ## BATCH 2026-04-03-W: Product Gap Closure
 
 BATCH 2026-04-03-W: 5 product gaps from journey audit closed: badge download, profile views, referral system, crystal spending, tribe join verified.

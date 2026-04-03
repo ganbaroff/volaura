@@ -150,12 +150,12 @@ export default function ProfilePage() {
   const { data: myEvents } = useMyEvents();
 
   // Transform events into timeline format
-  const timelineEvents: TimelineEvent[] = (myEvents || []).map((ev) => ({
-    id: ev.id,
-    event_name: ev.title ?? ev.name ?? "Event",
-    event_date: ev.date ?? ev.start_date ?? ev.created_at ?? "",
-    role: ev.role ?? null,
-    participated: ev.status === "attended" || ev.checked_in === true,
+  const timelineEvents: TimelineEvent[] = (myEvents || []).map((ev: Record<string, unknown>) => ({
+    id: String(ev.id ?? ""),
+    event_name: String(ev.title ?? "Event"),
+    event_date: String(ev.date ?? ev.created_at ?? ""),
+    role: ev.role ? String(ev.role) : null,
+    participated: ev.status === "attended",
   }));
 
   const loading = profileLoading || auraLoading;

@@ -75,6 +75,32 @@ These types of proposals waste time. Avoid repeating:
 | 42 | swe-agent | VERB-REGEX | Expanded verb regex from 45 to 100+ verbs | implemented | Added assessment-domain verbs (explain, recognize, escalate, verify, protect). Fixed false positive: expert answer dropped 0.881 -> 0.485, restored to 0.65 ratio. | Correct diagnosis and fix |
 | 42 | qa-agent | GRS-GATE | Generated 95 tests for decay + DeCE, 24 tests for quality gate | implemented | All tests passing (512 total, +220 new) | High quality output — tests caught real edge cases |
 
+**— Sessions 43–74: See git history. Summary below captures class-level outcomes. —**
+
+| 52–55 | security-agent | PAYWALL-FAILOPEN | Fail-open paywall gate: missing profile row = free unlimited access | implemented | Fixed to fail-closed: `if not sub_result.data OR status in blocked_states: RAISE 402` | Correct. Classic fail-open. Added to Mistake #57 — new security pattern. |
+| 52–55 | qa-agent | MOCK-SHIFT | Adding new DB call before existing mocks shifted all call indexes | implemented | Fixed 9 tests in 3 files. Rule: search for mock sequences when adding new first DB call. | Mistake #58 — mock sequences are implicit schemas |
+| 52–55 | security-agent | I18N-BRACE | Single-brace {var} silently fails in i18next (requires double {{var}}) | implemented | Audited all new keys. Rule: ALWAYS double-brace syntax. | Mistake #59 — CLASS 4 |
+| 60 | security-agent | RISK-011 | assert_production_ready() RISK-011 guard bypassed on dev/staging | implemented | Guard moved BEFORE env check. Safety guards fire on ALL envs. Cost guards production-only. | Mistake #61 — CRITICAL env safety bug |
+| 60 | arch-agent | GROQ-CHAIN | Groq wired in config but absent from LLM fallback chain | implemented | Added `_call_groq()` to llm.py chain (Vertex→Gemini→Groq→OpenAI). 14,400 free req/day recovered. | Mistake #62 — config update ≠ service update. Always grep service file. |
+| 70–73 | needs-agent | TASK-PROTO-V5 | Team Proposes protocol formalised — CEO directive compliance | implemented | TASK-PROTOCOL v5.0. Flow detection added (v5.3). Session 72 wrong flow triggered v5.0. | Prevents Mistake #49 class recurrence. |
+| 73 | arch-agent | TRIBE-STREAKS | Board (nemotron-ultra-253b ×2) killed AURA Leaderboard unanimously | implemented | ADR-008 locked: Leaderboard removed. Tribe Streaks + Collective AURA Ladders approved. Cultural mismatch in AZ/CIS confirmed. | Board agents carry authority over DSP for cultural decisions |
+| 75 | nigar-agent | ORG-ONBOARD-BUG | org onboarding never creates organizations row — B2B launch blocker | implemented | Auto-create orgs row after profile creation. 409 silently ignored. | FINDING-026 — always create both rows on org signup |
+| 75 | qa-agent | SINGLE-MAYBESINGLE | `.single()` throws 500 instead of 404 on 0 rows | implemented | Changed 5 calls to `.maybe_single()` in organizations.py | FINDING-027 — NEVER .single() unless row is guaranteed |
+| 75 | qa-agent | DISCOVERY-LEAK | discovery.py used base aura_scores table (leaked private columns) | implemented | Changed to aura_scores_public view | FINDING-028 — ADR mandate: always use public view in multi-user endpoints |
+| 75 | security-agent | SESSION-EXPIRY | expires_at never checked — sessions ran indefinitely | implemented | Added expiry check in submit_answer + complete_assessment → 410 SESSION_EXPIRED | FINDING-033 |
+| 77 | arch-agent | VERTEX-LLM | Vertex Express added as primary LLM (before Gemini) | implemented | llm.py rewrite: Vertex→Gemini→Groq→OpenAI. Singleton clients with reset for tests. | LLM fallback chain now has 4 levels. |
+| 77 | security-agent | HEALTH-SUPABASE-REF | /health leaks no project ref — wrong DB invisible until outage | implemented | supabase_project_ref added to HealthResponse. CEO can verify Railway→DB link. | S-02: "curl /health to see which DB is live" |
+| 78 | arch-agent | SWARM-HEARTBEAT | Daily swarm always ran even with nothing to do | implemented | heartbeat_gate.py: 3-condition KAIROS gate. Exit 0=RUN, Exit 1=SKIP. | Stops noisy CI/CD waste. Rule: idle = skip. |
+| 78 | arch-agent | CODE-INDEX | Agents launched blind — no file awareness | implemented | code_index.py indexes 530 files. task_binder.py maps task→files. Injected into every agent brief. | Mistake #60 class prevention. |
+| 78 | arch-agent | PROPOSAL-VERIFIER | Agents propose files that don't exist | implemented | proposal_verifier.py: checks file paths. 96.7% grounded. Caught 1 hallucinated route path. | Prevents wasted sprint cycles |
+| 79 | arch-agent | REALTIME-POLLING | Notification polling adds RTT on every dashboard visit | implemented | Supabase Realtime subscription. RealtimeNotificationsProvider in layout. WebSocket deferred to 2026-07-01 / 500 users. | DSP Score 28/50 for WebSocket — explicitly deferred |
+| 79 | nigar-agent | SAVED-SEARCH-B2B | Orgs had no way to save talent search criteria | implemented | org_saved_searches table + 4 endpoints + match_checker.py daily cron + Telegram notifications | Sprint 8 — full B2B saved search stack |
+| 79 | security-agent | SEARCH-CROSSORG | Cross-org saved search access not validated | implemented | `_assert_search_ownership()` in organizations.py. Org A cannot touch Org B's searches. | B2B privilege escalation blocked |
+| 80 | cultural-agent | CIS-COMPETITIVE | "Top 5%" framing causes anxiety in AZ/CIS users | implemented | Replaced percentile with achievement level (Expert/Advanced/Proficient/Growing/Building/Starting). `getAchievementLevelKey()` utility. | CIS-001 fix. Cultural framing > competitive framing for AZ. |
+| 80 | arch-agent | PROFILE-VIEW-NOTIFY | Orgs viewing profiles triggered no notification to volunteer | implemented | notify_profile_viewed() + partial index for 24h throttle. Org view → push notification. | Sprint D.1 — professional profile intelligence |
+| 81 | security-agent | ADMIN-FAILCLOSED | Admin panel must fail-closed (non-admin → 403) | implemented | require_platform_admin dep. Checked service-role (bypasses RLS). Returns 403 if not admin. | 3 gate tests: non-admin, unauth, missing profile all → 403 |
+| 81 | qa-agent | FULL-AUDIT | 5-agent parallel codebase audit: backend+frontend+infra+docs+arch | completed | Architecture health 72/100. CRIT-I01 (no body size limit) found. Docs CRITICALLY stale. All 20 migrations solid. | Audit-2026-04-02. See ARCHITECTURE.md (pending) for full synthesis. |
+
 ---
 
 ## Rejected Patterns (learn from these)

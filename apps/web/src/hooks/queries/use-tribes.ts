@@ -41,8 +41,8 @@ export function useMyTribe() {
   return useQuery<TribeOut | null>({
     queryKey: ["tribe", "me"],
     queryFn: async () => {
-      const res = await apiFetch("/api/tribes/me");
-      return (res.data as TribeOut | null) ?? null;
+      const res = await apiFetch<TribeOut | null>("/api/tribes/me");
+      return res ?? null;
     },
     staleTime: 60_000, // 1 min — activity status updates hourly at most
   });
@@ -52,8 +52,8 @@ export function useMyStreak() {
   return useQuery<TribeStreakOut | null>({
     queryKey: ["tribe", "streak"],
     queryFn: async () => {
-      const res = await apiFetch("/api/tribes/me/streak");
-      return (res.data as TribeStreakOut | null) ?? null;
+      const res = await apiFetch<TribeStreakOut | null>("/api/tribes/me/streak");
+      return res ?? null;
     },
     staleTime: 5 * 60_000, // 5 min — streak updates weekly
   });
@@ -66,7 +66,7 @@ export function useSendKudos() {
   return useMutation({
     mutationFn: async () => {
       const res = await apiFetch("/api/tribes/me/kudos", { method: "POST" });
-      return res.data;
+      return res;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tribe", "me"] });
@@ -79,7 +79,7 @@ export function useOptOutOfTribe() {
   return useMutation({
     mutationFn: async () => {
       const res = await apiFetch("/api/tribes/opt-out", { method: "POST" });
-      return res.data;
+      return res;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tribe"] });
@@ -92,7 +92,7 @@ export function useRequestTribeRenewal() {
   return useMutation({
     mutationFn: async () => {
       const res = await apiFetch("/api/tribes/renew", { method: "POST" });
-      return res.data;
+      return res;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tribe", "me"] });
@@ -105,7 +105,7 @@ export function useMyPoolStatus() {
     queryKey: ["tribe", "pool-status"],
     queryFn: async () => {
       const res = await apiFetch("/api/tribes/me/pool-status");
-      return res.data as PoolStatusOut;
+      return res as unknown as PoolStatusOut;
     },
     staleTime: 30_000, // 30s — check frequently while waiting for match
   });
@@ -117,7 +117,7 @@ export function useJoinTribePool() {
   return useMutation({
     mutationFn: async () => {
       const res = await apiFetch("/api/tribes/join-pool", { method: "POST" });
-      return res.data;
+      return res;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tribe", "pool-status"] });

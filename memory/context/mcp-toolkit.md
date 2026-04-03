@@ -3,6 +3,15 @@
 # PURPOSE: Read this BEFORE any sprint. Pick tools proactively. Never ask Yusif what to use.
 # RULE: If it's in this file → CTO has FULL ACCESS. Never say "you need to do this." DO IT.
 
+## LOCAL GPU (RTX 5060 Laptop, 8GB VRAM)
+| Tool | Status | How |
+|------|--------|-----|
+| **Ollama** | ✅ v0.18.3 | `ollama run qwen3:8b`, API at localhost:11434 |
+| **Qwen3 8B** | Downloading | ~5GB, ~75 tok/s on RTX 5060 |
+| **API** | ✅ OpenAI-compatible | `curl http://localhost:11434/v1/chat/completions` |
+| **Use for** | Swarm critique, code review, fast tasks | Zero cost, zero rate limits, zero latency |
+| **Fallback chain** | Local GPU → Groq → NVIDIA NIM → Gemini | Local first, cloud backup |
+
 ## VERIFIED INFRASTRUCTURE (tested 2026-04-03)
 | Tool | Status | How |
 |------|--------|-----|

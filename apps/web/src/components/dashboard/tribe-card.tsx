@@ -196,7 +196,7 @@ export function TribeCard() {
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
-function MemberRow({ member, t }: { member: TribeMemberStatus; t: (k: string, o?: object) => string }) {
+function MemberRow({ member, t }: { member: TribeMemberStatus; t: (k: string, o?: Record<string, unknown>) => string }) {
   return (
     <div className="flex items-center gap-2.5">
       {/* Avatar */}
@@ -244,7 +244,7 @@ function KudosSection({
   onSend: () => void;
   isSending: boolean;
   isSent: boolean;
-  t: (k: string, o?: object) => string;
+  t: (k: string, o?: Record<string, unknown>) => string;
 }) {
   // Q1: if count = 0, show CTA — NEVER show "0 kudos"
   return (
@@ -287,7 +287,7 @@ function OverflowMenu({
   onRenew: () => void;
   renewalRequested: boolean;
   renewPending: boolean;
-  t: (k: string, o?: object) => string;
+  t: (k: string, o?: Record<string, unknown>) => string;
 }) {
   const [open, setOpen] = useState(false);
   return (

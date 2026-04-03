@@ -765,5 +765,30 @@
     "crystals": "crystals",
     "crystalLabel": "Crystal gem icon",
     "earnOnVolaura": "Earn by completing assessments"
+  },
+  "tribe": {
+    "sectionHeader": "Your Tribe",
+    "joinTitle": "Join a Tribe",
+    "joinDesc": "3-person accountability circle. Stay consistent together.",
+    "joinCta": "Find my tribe",
+    "findingTitle": "Finding your tribe...",
+    "joinedPool": "You're in the pool! Matched within 24h.",
+    "streakWeeks_one": "{{count}} week streak",
+    "streakWeeks_other": "{{count}} week streak",
+    "streakCrystal": "Streak crystal",
+    "crystalFading": "Keep your streak alive this week",
+    "memberActive": "Active this week",
+    "memberInactive": "Not active yet this week",
+    "memberActiveLabel": "✓ active",
+    "kudosCount_one": "{{count}} kudos this week",
+    "kudosCount_other": "{{count}} kudos this week",
+    "kudosBeFirst": "Be the first to send kudos",
+    "kudosSend": "Send kudos",
+    "kudosSent": "Sent ✓",
+    "optOut": "Leave this tribe",
+    "optOutConfirm": "Leave this tribe? Your streak is safe — you can join a new tribe later.",
+    "optOutConfirmYes": "Leave tribe",
+    "requestRenewal": "Request renewal",
+    "renewalRequested": "Renewal requested ✓"
   }
 }

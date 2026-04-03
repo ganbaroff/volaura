@@ -1,6 +1,5 @@
-# Volaura — Tone of Voice Standard v1.0
-*Consolidated from 6 content files + MiroFish team research. Updated: 2026-03-24.*
-*Run through: docs/linkedin-daily-series.md, linkedin-post-draft.md, linkedin-post-final.md, linkedin-founding-story.md, linkedin-new-hooks.md, linkedin-seriyasi-ana-ucun.md*
+# Volaura — Tone of Voice Standard v2.0
+*v1.0 consolidated 2026-03-24. v2.0 updated 2026-04-02 — CEO directive: Tinkoff/Aviasales benchmark, AZ bilingual mandate, A/B testing.*
 
 ---
 
@@ -11,6 +10,86 @@ Volaura sounds like a founder who has been inside the room where the problems ha
 We are **earned, honest, specific, and systemic**. We name the broken pattern without naming the broken person. We show the AI involvement because hiding it would be dishonest. We include criticism of ourselves because confidence without self-awareness is not credibility.
 
 **We do NOT sound like:** a startup pitch deck, a LinkedIn influencer, a generic HR tech company, or someone trying to look impressive. We sound like someone who has already done the work and is now explaining why it matters.
+
+---
+
+## 1.5. Tone Benchmark — Tinkoff / Aviasales (CEO mandate 2026-04-02)
+
+**This is the new mandatory standard. Not optional. Not aspirational. Mandatory.**
+
+Study these brands before writing any content:
+- **Tinkoff Journal** — sharp, self-aware, admits product imperfections, reader as equal
+- **Aviasales social** — irreverent, subverts expectations in the hook, 2-3 sentences per paragraph max
+
+### What they do that we must do:
+
+**1. Open with a specific, slightly absurd real scenario — not a thesis:**
+❌ "Soft skills are increasingly important in today's workplace."
+✅ "We watched someone answer 27 questions in 6 minutes. Selected every C option. Got a 71."
+
+**2. Very short sentences. One idea per line. Never a paragraph of setup before the point:**
+❌ "When we were building the assessment engine, we realized that traditional fixed-length tests have fundamental flaws that prevent accurate measurement of actual ability."
+✅ "Fixed-length tests are broken by design. They measure quiz-taking, not skill."
+
+**3. Self-aware humor — admit the limitation, don't hide it:**
+❌ "Our advanced AI ensures accurate results."
+✅ "It's not magic. It's just math that doesn't let you cheat your way to a 71."
+
+**4. Talk to the reader as an equal — never as a prospect:**
+❌ "Discover how Volaura can help your organization find top talent."
+✅ "What's the most absurd skill assessment you've seen in an interview?"
+
+**5. Genuine CTA — real question, not engagement bait:**
+❌ "What do you think? Share your thoughts below!"
+✅ "Sizin CV-nizdə hansı bacarıq ən çox 'şişirdilmiş' görünür? 🙂"
+
+### Auto-reject phrases (any of these = rewrite the paragraph):
+"We're excited to announce" · "leverage" · "our ecosystem" · "innovative solution" · "join our growing community" · "in today's landscape" · "synergy" · "excited to share" · "thought leadership" · more than 3 hashtags · any hashtag containing "innovation"
+
+---
+
+## 1.6. Bilingual Strategy — AZ + EN (mandatory from 2026-04-02)
+
+**Every content batch must include both EN and AZ versions.**
+
+### Why AZ posts work:
+- 10× less competition on the AZ LinkedIn feed → organic reach multiplier
+- AZ-language content signals authenticity to Baku professional market
+- Kamal/Rauf segments respond better to AZ (identity resonance)
+
+### Rules for AZ posts:
+- **Not a translation.** Different opening, different angle, same concept.
+- **Conversational AZ, not formal written AZ.** How a 30-year-old Baku professional talks.
+- **Short.** Even shorter than EN posts. 8-12 lines max.
+- **Humor:** self-deprecating, CV culture moments, Baku workplace realism
+- **No mid-post EN switching** (except approved loanwords: Senior Manager, platform, AI CTO)
+
+### AZ post formula:
+1. Relatable Baku workplace situation (2-3 lines, very specific)
+2. The absurdity named bluntly (1 line)
+3. What AURA/Volaura changes (2-3 lines — HOW, not "we fix it")
+4. Question with response cost (1 line in AZ, emoji ok)
+
+### A/B Testing Protocol:
+- Same concept: EN version Monday, AZ version Wednesday (or vice versa)
+- Track: impressions, engagement rate (reactions+comments ÷ impressions), saves, comments
+- After 5 cycles: document which language wins which segment in `memory/context/patterns.md`
+- Hypothesis: Kamal/Rauf → AZ wins. Nigar/Aynur → EN wins.
+
+---
+
+## 1.7. Hook Taxonomy (rotate — never repeat same type twice in a row)
+
+| # | Type | Example |
+|---|------|---------|
+| 1 | **Absurd scenario** | "We watched someone answer 27 questions in 6 minutes. Selected every C option. Got a 71." |
+| 2 | **List subversion** | "CV-mizdə hamı edir: — kommunikasiya: yüksək. Bunları kim yoxlayır? Heç kim." |
+| 3 | **Uncomfortable truth** | "Your CV says you're reliable. But who verified that?" |
+| 4 | **Specific number with twist** | "3 of 4 org admins we spoke to said they can't distinguish Bronze from Platinum candidates." |
+| 5 | **Self-deprecating** | "Our anti-gaming system can still be gamed. Here's exactly how." |
+| 6 | **False premise** | "We built an algorithm that predicts volunteering potential. It kept predicting the wrong people. So we changed what it measures." |
+
+**Rule:** Track which hook type was used last. Never repeat consecutively. Log in `memory/context/patterns.md`.
 
 ---
 
@@ -237,5 +316,4 @@ These are content types that comparable AI-first B2B founders use effectively bu
 
 ---
 
-*This document consolidates all existing Volaura content guidelines. It supersedes scattered rules in individual docs.*
-*Next review: when Post #10 publishes or when a new series is started.*
+*v1.0 consolidated 2026-03-24. v2.0 updated 2026-04-02: Tinkoff/Aviasales benchmark (§1.5), AZ bilingual mandate + A/B testing (§1.6), hook taxonomy (§1.7). CEO directive — team owns tone without CEO briefing.*

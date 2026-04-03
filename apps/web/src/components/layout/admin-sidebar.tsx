@@ -9,8 +9,8 @@ const NAV_ITEMS = [
   { href: "",              label: "Overview",      icon: LayoutDashboard },
   { href: "/swarm",        label: "AI Office",     icon: Bot             },
   { href: "/users",        label: "Users",         icon: Users           },
-  { href: "/organizations",label: "Organizations", icon: Building2       },
-  { href: "/aura",         label: "AURA Scores",   icon: Star            },
+  { href: "/orgs-manage",  label: "Organizations", icon: Building2       },
+  { href: "/aura-manage",  label: "AURA Scores",   icon: Star            },
 ];
 
 export function AdminSidebar() {

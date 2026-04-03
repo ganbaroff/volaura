@@ -765,5 +765,30 @@
     "crystals": "kristal",
     "crystalLabel": "Kristal ikonu",
     "earnOnVolaura": "Qiymətləndirmələri tamamlayaraq qazan"
+  },
+  "tribe": {
+    "sectionHeader": "Sizin Tayfanız",
+    "joinTitle": "Tayfaya qoşul",
+    "joinDesc": "3 nəfərlik məsuliyyət dairəsi. Birlikdə ardıcıl olun.",
+    "joinCta": "Tayfamı tap",
+    "findingTitle": "Tayfanız axtarılır...",
+    "joinedPool": "Hovuzdasınız! 24 saat ərzində uyğunlaşdırılacaqsınız.",
+    "streakWeeks_one": "{{count}} həftəlik ardıcıllıq",
+    "streakWeeks_other": "{{count}} həftəlik ardıcıllıq",
+    "streakCrystal": "Ardıcıllıq kristalı",
+    "crystalFading": "Bu həftə ardıcıllığınızı qoruyun",
+    "memberActive": "Bu həftə aktivdir",
+    "memberInactive": "Bu həftə hələ aktiv deyil",
+    "memberActiveLabel": "✓ aktiv",
+    "kudosCount_one": "Bu həftə {{count}} uğur",
+    "kudosCount_other": "Bu həftə {{count}} uğur",
+    "kudosBeFirst": "İlk uğur göndərən siz olun",
+    "kudosSend": "Uğur göndər",
+    "kudosSent": "Göndərildi ✓",
+    "optOut": "Bu tayfadan çıx",
+    "optOutConfirm": "Bu tayfadan çıxırsınız? Ardıcıllığınız qalır — sonra yeni tayfaya qoşula bilərsiniz.",
+    "optOutConfirmYes": "Tayfadan çıx",
+    "requestRenewal": "Yeniləmə tələb et",
+    "renewalRequested": "Yeniləmə tələb edildi ✓"
   }
 }

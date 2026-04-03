@@ -54,6 +54,11 @@ Purpose: Reusable knowledge about what works in this project. Read at session st
 ---
 ## New Patterns (Session 83, 2026-04-03)
 
+### Pattern: CTO overestimates time 2.5x — PROVEN (night sprint measurement)
+**Context:** Night sprint planned for 10 hours. Delivered in 3.9 hours. Phase 1 (AI Office) planned 3h, took 57min. Phase 2+3 planned 6h, took 5 min.
+**Rule:** When estimating time, divide by 2.5. If plan says 10h → expect 4h. Use remaining time for QUALITY not more features.
+**Why:** Infrastructure is already built. New pages/endpoints reuse existing patterns. The hard part was done in sessions 1-82.
+
 ### Pattern: Simplest fix first — PROVEN (the Fn+F4 lesson)
 **Context:** CEO's microphone wasn't working. CTO spent 10 minutes: PowerShell device queries, pip install pyaudio (failed), sounddevice install, numpy install, tested 10 input devices, searched Lenovo drivers, almost reinstalled Realtek. Answer: **Fn+F4** (hardware mute toggle). 2 seconds.
 **Rule:** Before ANY debugging — ask "is there a physical button/toggle?" Hardware before software. Settings before drivers. Restart before reinstall. The simplest explanation is usually correct.

@@ -1,9 +1,17 @@
 # Tribe Streaks — Design Spec v2.0
 
-**Status:** Design only. CHECKLIST COMPLETE. Awaiting CEO sign-off on 3 questions before code.
+**Status:** ✅ READY TO CODE — All decisions locked. Full CEO delegation 2026-04-02.
 **Prerequisite:** Anti-harassment safeguards must be implemented BEFORE any tribe matching code.
 **Board mandate:** Strategic Board Director (nemotron-ultra-253b) flagged toxicity risk as CRITICAL.
-**Checklist run:** 2026-04-02 — 4-agent review. 7/7 items addressed. 13 approved changes incorporated below. 3 CEO decisions pending.
+**Checklist run:** 2026-04-02 — 4-agent review. 7/7 items addressed. 13 approved changes incorporated. All 3 CEO questions answered by team (DSP 47/50, unanimous).
+
+### Locked Decisions (2026-04-02 — Team with CEO full delegation)
+
+| Q | Decision | Rationale |
+|---|----------|-----------|
+| Q1 — Kudos zero-count | **Option B: Hide 0, show "Be the first to send kudos"** | Cultural Intelligence: "0 kudos" = passive ostracism in AZ. Behavioral Nudge: "Be the first" is a CTA. Hides at 0 like CrystalBalanceWidget pattern. |
+| Q2 — Grace period model | **Option B: Fading crystal — 3 CONSECUTIVE misses = streak reset** | 3 consecutive > 2 total = more forgiving. `consecutive_misses_count` resets on ANY active week. Syncs with koi/crystal visual. No numeric counter in UI. |
+| Q3 — Opted-out replacement | **Option A: 2-person tribe continues until cycle end, then re-matched** | Honors existing commitment to remaining members (AZ social weight). Simpler architecture. Opted-out user gets immediate "Find a new tribe?" prompt (no blank state). |
 
 ---
 
@@ -94,14 +102,20 @@ CREATE TABLE tribe_members (
 -- RLS: user can only read their own tribe
 
 -- Tribe streaks (per-user, not per-tribe)
+-- Q2 decision: consecutive_misses_count (not total grace_periods_used)
+-- Logic: any active week → consecutive_misses_count = 0
+--        inactive week → consecutive_misses_count++
+--        consecutive_misses_count >= 3 → streak resets (NOT 2 in any order)
 CREATE TABLE tribe_streaks (
     user_id UUID PRIMARY KEY REFERENCES profiles(id) ON DELETE CASCADE,
     current_streak INT NOT NULL DEFAULT 0,
     longest_streak INT NOT NULL DEFAULT 0,
     last_activity_week TEXT,  -- YYYY-Www format (ISO week)
-    grace_periods_used INT NOT NULL DEFAULT 0  -- max 2 before streak resets
+    consecutive_misses_count INT NOT NULL DEFAULT 0,  -- 3 consecutive = reset; resets to 0 on active week
+    cycle_started_at TIMESTAMPTZ NOT NULL DEFAULT NOW()  -- grace resets per cycle (approved change #5)
 );
 -- RLS: user can only read their own streak
+-- UI: show fading crystal animation at consecutive_misses_count=1,2 — NO numeric counter shown
 
 -- Kudos ledger (anonymous, no sender visible to recipient)
 CREATE TABLE tribe_kudos (
@@ -190,19 +204,18 @@ def match_tribe(user_id: str, pool: list[User]) -> list[str]:
 12. **[Grace] Grace counter resets at new cycle** — Implement via `cycle_started_at` check in streak service. When new tribe assigned → reset `grace_periods_used = 0`.
 13. **[Grace] No numeric grace counter in UI** — Do NOT show "You have 1 grace period left." Use fading crystal animation only. Numeric counter = gameable budget.
 
-### CEO Decisions Required (3 questions — no code until answered)
+### CEO Decisions — ✅ ALL LOCKED (2026-04-02, team with full CEO delegation)
 
-**Q1 — Kudos zero-count display:**
-- Option A: Show "0 kudos" (honest, risks passive ostracism in AZ culture)
-- Option B: Hide count when 0, show "Be the first to send kudos" prompt (Cultural Intelligence recommendation)
+**Q1 — Kudos zero-count display: ✅ Option B**
+Hide count when 0. Show "Be the first to send kudos" CTA. Never display "0 kudos."
 
-**Q2 — Grace period model:**
-- Option A: 2 free misses in any order, resets each cycle (simple, gameable)
-- Option B: Fading-crystal model — miss 1 = dims, miss 2 = dimmer, miss 3 consecutive = resets (more forgiving, consistent with visual design, harder to game)
+**Q2 — Grace period model: ✅ Option B — Fading crystal (3 consecutive)**
+3 consecutive inactive weeks = streak reset. Any active week resets counter to 0.
+Column: `consecutive_misses_count`. No numeric counter in UI — fading crystal animation only.
 
-**Q3 — Opted-out member replacement:**
-- Option A: 2-person tribe continues until cycle end, then re-matched (less disruptive)
-- Option B: Tribe dissolves immediately on any opt-out, all members re-matched (cleaner, more disruptive)
+**Q3 — Opted-out member replacement: ✅ Option A**
+2-person tribe continues until cycle end, then re-matched with fresh pool.
+Opted-out user gets immediate "Find a new tribe?" prompt (no blank state).
 
 ---
 

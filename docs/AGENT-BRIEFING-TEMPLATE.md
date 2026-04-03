@@ -1,6 +1,6 @@
 # Agent Briefing Template — Volaura
 
-**Version:** v1.0 — 2026-03-30
+**Version:** v2.0 — 2026-04-02
 **Trigger:** Added after Mistake #60: agents launched without project context → produced research without understanding what product we're building, who Yusif is, or what decision was being made.
 
 ---
@@ -19,12 +19,48 @@ Analogy: Asking a consultant "what payment processor should I use?" without tell
 
 ---
 
+## MANDATORY: Lessons Block — Include in EVERY Agent Prompt ≥3 agents
+
+```
+### TEAM LESSONS (read before starting — non-negotiable)
+Read: memory/swarm/AGENT-LESSONS-2026-04-02.md
+Key rules you MUST follow:
+1. If all agents in this swarm are the same model → FLAG IT (Mistake #68)
+2. Write findings immediately, don't defer (Mistake #69)
+3. CEO reports = product language, no file names (Mistake #71)
+4. Build for users who exist, not hypothetical ones (Lesson 6)
+5. Force uncomfortable perspectives: "What would a user who REJECTED Volaura say?" (Lesson 7)
+```
+
+---
+
 ## MANDATORY: Context Block — Include in EVERY Agent Prompt
 
-Copy-paste this block at the TOP of every agent prompt. Update `[CURRENT SPRINT]` per session.
+Copy-paste this block at the TOP of every agent prompt. Fill BOTH sections — static AND dynamic.
+
+**WHY TWO SECTIONS:** Static context tells the agent what Volaura is. Dynamic context tells the agent what happened TODAY. Without dynamic context, the agent is blind to 80% of what was decided, discussed, and built this session. Result: 50% correct output.
 
 ```
 ## VOLAURA PROJECT CONTEXT (read before doing anything)
+
+### ⚡ SESSION CONTEXT — DYNAMIC (fill this EVERY time, do not skip)
+[CTO fills this before each agent launch. 5-10 lines. Includes:]
+- What the CEO and CTO discussed today (key decisions, directions)
+- What tasks were already completed this session (agent sees what's DONE)
+- What the previous agent produced (so this agent doesn't repeat it)
+- What the CEO explicitly approved or rejected this session
+- Current mood/priority ("CEO wants fast delivery" vs "CEO wants thoroughness")
+
+Example:
+"Today we: (1) applied 3 Supabase migrations via MCP, (2) wrote startup.az application
+in AZ language, (3) grammar agents found 29 errors — corrected version is final.
+CEO approved the final text. Current priority: protocol improvement.
+CEO's explicit directive this session: 'agents need full session context, not just last task.'
+DO NOT re-do the startup.az application — it is complete."
+
+[LEAVE THIS BLANK = agent is flying blind = CLASS 3 mistake]
+
+---
 
 ### What Volaura is
 Volaura is a VERIFIED PROFESSIONAL TALENT PLATFORM. Not a volunteer platform. Not LinkedIn.

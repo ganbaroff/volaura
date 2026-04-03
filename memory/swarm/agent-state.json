@@ -1,0 +1,75 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "purpose": "Persistent state per agent. Read at session start. Updated after every task.",
+    "rule": "Agent without state entry = never ran. Agent with stale last_run = possibly stuck."
+  },
+  "agents": {
+    "ceo-report-agent": {
+      "last_task": "Session 83 sprint report",
+      "last_run": "2026-04-03T16:00:00Z",
+      "status": "idle",
+      "next_scheduled": null,
+      "blockers": [],
+      "performance": { "tasks_completed": 3, "tasks_failed": 0 }
+    },
+    "qa-quality-agent": {
+      "last_task": "DoD verification for product gaps batch",
+      "last_run": "2026-04-03T15:00:00Z",
+      "status": "idle",
+      "next_scheduled": null,
+      "blockers": [],
+      "performance": { "tasks_completed": 1, "tasks_failed": 0 }
+    },
+    "trend-scout-agent": {
+      "last_task": "Created — never ran",
+      "last_run": null,
+      "status": "new",
+      "next_scheduled": "2026-04-04T05:00:00Z",
+      "blockers": ["needs GitHub Actions workflow"],
+      "performance": { "tasks_completed": 0, "tasks_failed": 0 }
+    },
+    "assessment-science-agent": {
+      "last_task": "IRT parameter review — pending",
+      "last_run": null,
+      "status": "new",
+      "next_scheduled": null,
+      "blockers": ["needs 24 questions audit"],
+      "performance": { "tasks_completed": 0, "tasks_failed": 0 }
+    },
+    "analytics-retention-agent": {
+      "last_task": "Event taxonomy defined, analytics_events table created",
+      "last_run": "2026-04-02T22:00:00Z",
+      "status": "idle",
+      "next_scheduled": null,
+      "blockers": [],
+      "performance": { "tasks_completed": 2, "tasks_failed": 0 }
+    },
+    "financial-analyst-agent": {
+      "last_task": "Dodo Payments research + AZN analysis",
+      "last_run": "2026-04-03T14:00:00Z",
+      "status": "idle",
+      "next_scheduled": null,
+      "blockers": ["Dodo company verification pending"],
+      "performance": { "tasks_completed": 1, "tasks_failed": 0 }
+    },
+    "devops-sre-agent": {
+      "last_task": "Railway redeploy + Langfuse keys + NVIDIA key",
+      "last_run": "2026-04-03T16:30:00Z",
+      "status": "idle",
+      "next_scheduled": null,
+      "blockers": [],
+      "performance": { "tasks_completed": 3, "tasks_failed": 0 }
+    },
+    "security-agent": {
+      "last_task": "Supabase security audit — 4 SECURITY_DEFINER views fixed, 6 search_path hardened",
+      "last_run": "2026-04-03T12:00:00Z",
+      "status": "idle",
+      "next_scheduled": null,
+      "blockers": [],
+      "performance": { "tasks_completed": 2, "tasks_failed": 0 }
+    }
+  },
+  "_uninitialized_count": 40,
+  "_note": "40 agents not yet tracked. Add as they first run. Don't pre-fill — state is earned, not assumed."
+}

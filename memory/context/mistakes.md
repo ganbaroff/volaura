@@ -121,6 +121,10 @@ Purpose: Prevent repeating errors. Read at session start.
 **Fix:** Build quality system: DoD template, acceptance criteria per task, velocity tracking, defect rate dashboard, requirement traceability. BEFORE next sprint, not after.
 **CLASS:** NEW CLASS 9 — No quality system. 1st instance. But it caused all other instances.
 
+### NOT A CTO MISTAKE — Dodo Payments code not written (2026-04-03)
+**What:** CTO proposed Dodo integration, CEO redirected to agent improvement discussion first. Correct prioritization by CEO — not a CTO failure. Code will be written when CEO says go.
+**Rule:** Don't list CEO's strategic decisions as CTO mistakes. CEO controls priority order.
+
 ### Mistake #76 — Process-as-performance: elaborate quality system that will not be used (Session 83, 2026-04-03)
 **What:** Swarm retrospective (Groq Llama-3.3-70b) identified that the new quality system (Toyota TPS mapping, 15-item DoD, Gherkin AC templates, 3 new agents) has the same structural flaw as all previous quality improvements: it is designed to be impressive rather than to change behavior at the point of work. Key finding: "Process-as-performance — you design a more sophisticated quality system instead of changing the habit of starting code before writing what 'done' looks like."
 **Root pattern (Groq critique):** "Design elaborate system → feel productive → ship without using it → defects → design even more elaborate system. The quality system becomes the deliverable instead of the software."

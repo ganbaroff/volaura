@@ -3,6 +3,120 @@
 Purpose: Reusable knowledge about what works in this project. Read at session start.
 
 ---
+## New Patterns (Session 82, 2026-04-02 — BATCH Q: Assessment correction)
+
+### Pattern: Assessment must separate individual from team — PROVEN
+**Context:** CTO wrote CEO assessment and attributed CTO code bugs to CEO leadership score. CEO caught it 3 times (v1: 83.54, v2: 84.17, v3: 89.53 — all wrong). Only when CTO scored ONLY what CEO personally controls (vision, direction, team management, business execution) did the score reflect reality: 91.35 Platinum.
+**Rule:** When evaluating a person, ONLY score what they CONTROL. Team failures go to team. Individual evaluation = individual actions only. Code bugs = CTO fault, not CEO fault. Business development = CEO credit, not CTO credit.
+**Why it works:** Mixing team failures into individual scores punishes leaders for delegating. The entire point of leadership is that others execute. Scoring a leader on their team's code quality is like scoring a coach on whether a player missed a free throw.
+**Product insight:** Volaura platform MUST implement this principle. When organizations assess professionals, the AURA score must reflect what that individual controls — not their team's output.
+
+---
+## New Patterns (Session 82, 2026-04-02 — Late batch: Lessons)
+
+### Pattern: Multi-model swarm > same-model swarm — PROVEN
+**Context:** 7 haiku agents missed 4 critical findings. 3 external models (DeepSeek R1, Llama 405B, Gemini) found them in 60 seconds: CRON_SECRET startup guard, Realtime RLS bypass, cold-start fallback, AURA clustering.
+**Rule:** For any swarm ≥3 agents: minimum 2 different LLM providers. Fallback chain: Groq → Gemini → NVIDIA NIM → Claude. Document which provider was unavailable and what fallback was used.
+**Why it works:** Different training data = different blind spots. DeepSeek R1 finds what Claude misses on security. Llama 405B brings different architecture intuitions. Gemini has different product sensibilities.
+
+### Pattern: CEO Report Agent — all output passes through filter
+**Context:** CEO received file names, line numbers, migration details. Response: "не хочу такого технической дребедени."
+**Rule:** CTO never reports to CEO directly. All batch-close output passes through `memory/swarm/skills/ceo-report-agent.md` format: SHIPPED (product language) → LRL → CEO action → external models used → what's next.
+**Why it works:** CEO needs business context, not engineering log. The same information exists, just translated to the right audience.
+
+### Pattern: Protocol is always on — no activation phrase needed
+**Context:** CTO waited for "загрузи протокол" before running any structure. CEO: "я никогда не буду писать без текста запусти протокол."
+**Rule:** Every CEO message = protocol running. The phrase "загрузи протокол" is a reminder, not a switch.
+**Why it works:** Removes the gap between "CEO sent a message" and "protocol is active." Zero unstructured interactions.
+
+### Pattern: Write findings in the SAME response — never defer
+**Context:** CTO said "I learned X" and stopped. CEO had to ask: "ты сохранил эти уроки?" Answer: no.
+**Rule:** If a response produces a finding that deserves a rule → write to mistakes.md + protocol in the SAME response. Not next response. Not end of session.
+**Why it works:** A finding that isn't written immediately gets compacted, forgotten, or overtaken by the next task. Write-on-discovery = 100% persistence rate.
+
+### Pattern: AZ formal document = L4 complexity, 2 grammar agents mandatory
+**Context:** startup.az government application delivered with 29 grammar errors because grammar check was skipped.
+**Rule:** Any AZ-language output for external audience (government, B2B, public) → complexity L4 → 2 grammar agents (cross-check with different models) → minimum confidence 85% before delivery. CTO confidence in AZ grammar starts at 50% — never higher without verification.
+
+### Pattern: Dynamic vs. static agent context — both are required
+**Context:** Agents consistently produced 50% correct output because briefings contained only static project info, not session-specific context.
+**Rule:** Every agent prompt requires TWO context sections:
+1. **Static** (what Volaura is, founder, tech stack) — copy from AGENT-BRIEFING-TEMPLATE.md
+2. **Dynamic** (what was decided today, what's done, what CEO said) — fill fresh every launch
+Leaving dynamic section blank = agent is blind to the session = CLASS 3 mistake.
+
+### Pattern: Confidence Gate before L3+ output delivery
+**Context:** CTO delivered startup.az application at ~65% quality without knowing it. No mechanism existed to ask "how confident am I?"
+**Rule:** Before delivering any L3+ output, declare: task complexity level, confidence %, which agents verified it. If confidence <85% → do not deliver, run verification first.
+**Trigger question:** "What would need to be wrong for this output to embarrass the CEO or harm the project?" Answering this surfaces weak points that need verification.
+
+### Pattern: Efficiency Gate scope — applies ONLY to DSP, never to agent routing
+**Context:** CTO invoked Efficiency Gate 3 times in Session 82 to skip Step 5.5 (agent routing). Efficiency Gate only covers skipping DSP for obvious decisions.
+**Rule:** Efficiency Gate = "skip DSP if decision is obvious." It NEVER applies to: Step 5.5 (agent routing check), Step 1.0.3 (agent briefing), Step 1.0.3b (session context injection). These steps have zero exceptions.
+
+## New Patterns (Sessions 76–81, 2026-04-01 to 2026-04-02)
+
+### Pattern: Security gates must use SupabaseAdmin, not SupabaseUser
+**Context:** Admin panel access gate — need to check `is_platform_admin` column
+**Problem:** `SupabaseUser` client is RLS-enforced. If RLS policy is misconfigured, the security gate can return wrong data.
+**Solution:** `require_platform_admin` dep uses `SupabaseAdmin` (service-role). Reads the column directly, bypasses RLS entirely. No dependency on RLS for security-critical decisions.
+**Rule:** Security gates (admin access, elevated privilege) = SupabaseAdmin. Business logic = SupabaseUser.
+
+### Pattern: Request body size limit is mandatory in FastAPI
+**Context:** CRIT-I01 found in audit — no body size limit = DoS vector
+**Solution:** `@app.middleware("http")` checks Content-Length on POST/PUT/PATCH. Returns 413 if > 1MB (configurable). Added at app creation time, not as afterthought.
+**Rule:** Every FastAPI app needs this. 1 MB covers all assessment payloads. Video/file upload = separate endpoint with higher limit.
+
+### Pattern: i18n interpolation variables use DOUBLE braces
+**Context:** i18next requires `{{varName}}` not `{varName}`. Single brace = literal string. Silently shows `{count}m ago` to user.
+**Rule:** ALL i18n interpolation: `{{varName}}`. Check every new key before committing. (Mistake #59)
+
+### Pattern: Peak behavioral moment → announce the reward
+**Context:** Crystal reward was silent — users earned crystals but never knew
+**Solution:** (1) Service returns the reward amount (int, not None). (2) Router captures it. (3) Schema exposes it. (4) Frontend shows animated celebration UI.
+**Rule:** At task completion (assessment done, badge earned), always surface the reward. Silent rewards = zero behavior reinforcement.
+
+### Pattern: Content benchmark must be codified in primary governing document
+**Context:** Tinkoff/Aviasales benchmark was known but not enforced. Team kept writing corporate tone.
+**Solution:** Update `docs/TONE-OF-VOICE.md` FIRST (primary doc), then skill files. Primary doc is the gate. Skill files are elaborations.
+**Rule:** Verbal acknowledgment ≠ rule enforced. Write it in the governing document or it will be forgotten.
+
+### Pattern: AZ LinkedIn posts get 2-3× lower competition → use it
+**Context:** CEO directive 2026-04-02 — AZ posts outperform EN on Azerbaijani LinkedIn feed
+**Solution:** Every LinkedIn batch = EN version + AZ version. Not translation — different voice. AZ = conversational, self-deprecating, relatable Baku professional life moments. A/B test same concept 48h apart.
+**Hypothesis:** Kamal/Rauf = AZ outperforms EN (identity resonance). Nigar/Aynur = EN performs better (professional signaling). Track after 5 cycles.
+
+### Pattern: Cross-repo analysis > solo invention for swarm patterns
+**Context:** ZEUS + MindShift had patterns absent from Volaura swarm (execution states, outcome verification)
+**Solution:** Session 78 — read ZEUS + MindShift source. Found and ported: adaptive execution states, recovery strategies, outcome verification gate, session-end skill evolution check.
+**Rule:** Other repos in the same ecosystem are the best source of architectural improvements. Check them before inventing from scratch.
+
+### Pattern: Scheduled jobs need heartbeat gate (should-I-run check)
+**Context:** Daily swarm ran even when nothing changed — wasted GitHub Actions minutes
+**Solution:** `heartbeat_gate.py` — checks 3 conditions (urgent proposals OR active git changes OR staleness floor). Exit 0=RUN, Exit 1=SKIP. Manual dispatch always bypasses.
+**Rule:** Any cron job that costs compute should gate itself. "Nothing to do" = skip cleanly.
+
+### Pattern: External service cron calls need circuit breaker, not retry
+**Context:** match_checker.py sends Telegram notifications daily — rate limit risk
+**Solution:** 3 consecutive failures → 60s silence → stop for that run. Log results to DB regardless. Next day's run starts fresh.
+**Rule:** Infinite retry in cron = duplicate notifications + exhausted minutes. Circuit breaker = single run, bounded failure.
+
+### Pattern: Achievement labels > percentile rank in AZ/CIS culture
+**Context:** CIS-001 — "Top 5%" triggers anxiety in collectivist cultures
+**Solution:** `getAchievementLevelKey(percentileRank)` maps 0-100 → Expert/Advanced/Proficient/Growing/Building/Starting. Non-competitive, non-numeric.
+**Rule:** Never expose raw percentile as primary display. Use achievement tier. Percentile can be in secondary/share context (opt-in competitive framing).
+
+### Pattern: Profile view notifications drive re-engagement
+**Context:** Volunteers had no feedback that orgs were viewing their profiles
+**Solution:** `notify_profile_viewed()` — throttled (1/24h per org). Uses partial index on `notifications WHERE type='org_view'` for dedup check.
+**Rule:** Professional platforms need "who viewed me" signals. They drive passive re-engagement with zero marketing cost.
+
+### Pattern: Fail-open security bug on missing DB row
+**Context:** Paywall gate `if sub_result.data:` skipped enforcement when profile row missing
+**Solution:** All security gates = fail-closed: `if not sub_result.data OR status in blocked_states: raise 402/403`
+**Rule:** Missing data = most exploitable path. New users + missing profile row = free unlimited access. ALWAYS check for absence explicitly. (Mistake #57)
+
+---
 ## New Patterns (Session 47-50, 2026-03-27)
 
 ### Pattern: LLM Fallback Chain for Scale Events

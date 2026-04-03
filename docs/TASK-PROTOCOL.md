@@ -1,54 +1,245 @@
-# TASK PROTOCOL v6.0 — Swarm-First Batch Execution
+# TASK PROTOCOL v8.0 — Quality-First Execution (Toyota + Apple + DORA)
 
-**Version:** 6.0 | **Updated:** 2026-04-01
-**Previous:** v5.3 (Agent Briefing Requirements)
-**Change v6.0:** Five additions from cross-repo analysis (ZEUS + MindShift + Claude Code patterns):
-1. Step 0 → "Detect + Read": read SESSION-DIFFS.jsonl + code-index.json before proposing
-2. Proposals include trigger-reason (WHY NOW, not just WHAT)
-3. Round-2 debate gate: if top proposal <35/50 AND delta to #2 <5 pts → mandatory Round 2
-4. Outcome verification: agent cannot mark DONE without running verify_outcome() or explicit manual check steps
-5. Session-end skill evolution check: ≥5 trajectories per skill → auto-suggest improvements
+**Version:** 8.0 | **Updated:** 2026-04-03
+**Previous:** v7.1 (15 agent findings from protocol audit)
+**Change v8.0:** Quality System overhaul based on NotebookLM deep research (45+ sources: Toyota TPS, Apple ANPP, DORA 2026, Lean Six Sigma DMAIC).
+New steps: 1.5 (Acceptance Criteria — DoR gate), 4.5 (Quality Gate — Jidoka), 5.5 (DORA metrics — Kaizen).
+New docs: QUALITY-STANDARDS.md, AC template, QA Agent (can block tasks), CrewAI ADR-009.
+New principle: Protocol is structural prevention (Poka-yoke), not willpower.
+CEO directive: "перестань думать как стартап. начни думать как Apple и Toyota."
+**Change v7.1:** 15 agent findings from 5-agent protocol audit (Architecture + QA + Risk Manager + Readiness Manager + Product):
+1. Header fixed: v6.0 → v7.1, changelog order corrected (v6.0 must precede v7.0)
+2. Phase 0.7 moved to correct position: between Step 0.5 and Phase 1 (was incorrectly after Phase 4)
+3. Classification systems merged: MICRO/SMALL/MEDIUM/LARGE mapped to L1-L5 (single system)
+4. EXPEDITED mode added to Step 0.5 signal guide (legitimate fast path between HOTFIX and full protocol)
+5. MICRO FASTPATH capped: blocked for auth/scoring/external content regardless of line count
+6. Required Reads reorganized: 3-tier priority (3 must-read → 3 if-relevant → 4 reference)
+7. Named roles added at Batch Lock: C3_REVIEWER, CROSS_QA_AGENT declared upfront
+8. Auto-routing catch-all row added: task type not in table → default L3
+9. 3 missing auto-routing rows: investor/pitch = L4, partnership comms = L3, internal specs = L2
+10. Independent agent confidence scoring for L4/L5 (verification agent declares %, not CTO)
+11. Round-2 debate output format defined (was declared but format missing)
+12. Step 0b fallback added for missing SESSION-DIFFS.jsonl / code-index.json
+13. Mid-Batch Direction Change protocol added (2-sentence rule)
+14. HOTFIX security minimum defined inline (4 mandatory checkboxes)
+15. Efficiency Gate scope warning elevated to top-of-file (was buried in body)
 
 **Why v5.0 exists:** Session 73 — All 6 agents proposed improvements after CEO directive "fix routing, rules, speed, efficiency." Proposals reviewed, voted, and implemented in one batch.
-**Why v6.0 exists:** 2026-04-01 — Cross-repo analysis of ZEUS (adaptive executor, context intelligence), MindShift (v6.0 protocol), and Claude Code patterns (heartbeat gate, outcome verification). See `docs/IMPLEMENTATION-ROADMAP.md` for full sprint plan.
+**Why v6.0 exists:** 2026-04-01 — Cross-repo analysis of ZEUS (adaptive executor, context intelligence), MindShift (v6.0 protocol), and Claude Code patterns (heartbeat gate, outcome verification).
+**Why v7.0 exists:** 2026-04-02 — Non-code tasks had no quality gate. 29 grammar errors in startup.az application went undetected. Universal L1-L5 complexity scale + Confidence Gate added.
+**Why v7.1 exists:** 2026-04-02 — 5-agent protocol audit scored protocol 66/100. Enforceability worst dimension (11/20). All 15 structural and enforcement gaps closed in one pass.
 
 ---
 
 ## How It Works (30-second summary)
 
 ```
-0. FLOW DETECTION  → CTO reads CEO signal → declares which flow: Team Proposes / CTO Plan / HOTFIX
+0. FLOW DETECTION  → CTO reads CEO signal → declares which flow: Team Proposes / CTO Plan / HOTFIX / EXPEDITED
+0a. SWARM RETROSPECTIVE → Multi-model critique of PREVIOUS sprint before starting new one.
+                          NOT CTO self-review. SWARM reviews CTO.
+                          Input: last batch from SHIPPED.md + mistakes.md last 3 entries
+                          Agents (min 2 external models): answer 3 questions:
+                            1. "What did CTO do wrong last sprint?" (specific, not vague)
+                            2. "What pattern is repeating?" (check CLASS table in mistakes.md)
+                            3. "What should this sprint do differently?"
+                          CTO documents: "Swarm retrospective: [findings]. Adjusting: [what]."
+                          SKIP condition: HOTFIX only. All other flows = mandatory.
+                          TIME BUDGET: 2 min (2 API calls in parallel).
+                          WHY THIS EXISTS: CTO wrote "lessons learned" 7 times in one session
+                          and violated them immediately. Self-review doesn't work.
+                          External models catch what CTO normalizes.
+0c. TOOLKIT CHECK  → Read memory/context/mcp-toolkit.md Section 4 (decision matrix).
+                     For THIS task, declare which tools to use:
+                     "Tools for this task: [list]. Reason: [why each]."
+                     If task needs deploy → railway (not "ask CEO").
+                     If task needs research → NotebookLM (not shallow WebSearch).
+                     If task needs browser test → Playwright/Chrome MCP (not "looks correct in code").
+                     If task needs DB → Supabase MCP (not "probably works").
+                     RULE: declaring "no tools needed" requires justification.
+                     WHY: CTO has 16 API keys, 10 MCPs, 8 CLI tools — and uses 2.
 0b. DETECT + READ  → Read SESSION-DIFFS.jsonl (what changed?) + code-index.json (what exists?)
                      Declare: "N changes since last run. Relevant to this sprint: [list]."
+                     FALLBACK (if files missing): "SESSION-DIFFS.jsonl not found → reading git log --oneline -20
+                     instead. code-index.json not found → reading SHIPPED.md instead."
+                     Missing files = degrade gracefully, not fail.
 1. TEAM PROPOSES   → All agents read SIMULTANEOUSLY (15 min) → propose in parallel (10 min)
                      Each proposal MUST include: trigger_reason (WHY NOW, what recent event makes this timely)
+1.5 ACCEPTANCE CRITERIA → Before ANY task enters batch:
+                     Write AC: "This task is DONE when: [3-5 testable conditions]."
+                     AC must be PASS/FAIL — no "looks good" or "seems to work."
+                     Example: "DONE when: (1) endpoint returns 200, (2) RLS blocks other users,
+                     (3) i18n keys exist in both EN and AZ, (4) analytics event fires."
+                     AC is written BEFORE coding. Not after. This is Toyota Jidoka.
+                     ENFORCEMENT: Task without AC cannot enter Step 2. CTO cannot skip.
 2. BATCH ASSEMBLES → Proposals triaged → 12-20 tasks batched by size + effort
 3. TEAM DEBATES    → Agents argue priorities. 3+ votes override CTO.
                      Round-2 gate: top proposal <35/50 AND delta to #2 <5 pts → mandatory Round 2
 4. PARALLEL EXECUTE → Tasks run simultaneously. Agents own their domain.
                       Agent cannot mark DONE without: verify_outcome() OR explicit manual verification steps
-5. BATCH CLOSES   → One report to CEO. "What's next" declared. Memory updated.
+4.5 QUALITY GATE   → Before marking task DONE:
+                     □ All acceptance criteria from Step 1.5 verified (PASS/FAIL each)
+                     □ No new console errors, no TypeScript errors, no test failures
+                     □ If change is user-facing: preview_screenshot or preview_snapshot proves it
+                     □ If API change: curl/test proves correct response
+                     IF ANY BOX UNCHECKED → task stays in_progress. Not done. Fix first.
+                     This is Apple's "changes only after QA approval" principle.
+5. BATCH CLOSES   → CEO Report Agent formats output (no file names, product language only).
+                    "What's next" declared. Memory updated.
                     Skill evolution check: any skill with ≥5 trajectories → suggest improvements
+5.5 DORA + KAIZEN  → After EVERY batch, CTO records in memory/context/quality-metrics.md:
+                     | Metric | Value | Target |
+                     | Tasks completed | N | — |
+                     | Tasks with AC written BEFORE | N/total | 100% |
+                     | AC pass rate (first attempt) | N/total | >80% |
+                     | Defects found post-completion | N | 0 |
+                     | External models used | N providers | ≥2 |
+                     | Solo execution instances | N | 0 |
+                     Kaizen: "One thing to improve next batch: [specific]."
+                     DORA target: Change failure rate <5% (currently 34.8%).
+                     This step takes 2 minutes. It is NEVER skipped.
+                     WHY: Toyota measures everything. What isn't measured isn't improved.
 ```
 
-**Core principle:** Protocol is OPT-OUT, not OPT-IN. Skipping a step requires documenting WHY.
+## DEFINITION OF DONE — 3 Questions (Pareto: covers 76.4% of all defects)
+
+Defect autopsy (2026-04-03): 76 bugs → CLASS 3 (32.7%) + CLASS 1 (25.5%) + CLASS 2 (18.2%) = 76.4%.
+15-item DoD at 0% compliance is worse than 3-item DoD at 100%.
+
+**Before marking ANY task DONE, answer these 3 questions:**
+
+```
+1. WHO ELSE REVIEWED?  → Name the agent or external model.
+                         "Nobody" = task is NOT done.
+                         (Prevents CLASS 3: solo execution — 18 bugs)
+
+2. WHAT STEP DID YOU FOLLOW? → Cite the protocol step number.
+                         "None" = task is NOT done.
+                         (Prevents CLASS 1: protocol skipping — 14 bugs)
+
+3. WHERE IS IT WRITTEN? → Link the file you updated (SHIPPED.md, sprint-state.md, etc.)
+                         "Nowhere" = task is NOT done.
+                         (Prevents CLASS 2: memory not persisted — 10 bugs)
+```
+
+3 questions. If ANY answer is "nobody/none/nowhere" → task stays in_progress.
+This is the ONLY DoD. No 15-item checklist. No Gherkin templates. 3 questions.
+
+## POKA-YOKE — Mistake-Proofing Mechanisms
+
+Rules that rely on willpower fail (73 mistakes prove this). These are STRUCTURAL:
+
+| Mechanism | What it prevents | How |
+|-----------|-----------------|-----|
+| AC before batch (Step 1.5) | Building wrong thing | Task blocked from Step 2 without AC |
+| Quality Gate (Step 4.5) | Shipping broken code | DONE status blocked without all boxes checked |
+| Swarm Retro (Step 0a) | Repeating mistakes | External models critique before new sprint |
+| LLM Provider Check (Step 5.4) | Same-model echo chamber | ≥3 agents requires ≥2 providers |
+| CEO Report Agent (Step 5) | Technical debris to CEO | All output filtered before CEO |
+| DORA tracking (Step 5.5) | Invisible quality decay | Metrics recorded every batch |
+
+Toyota principle: make errors IMPOSSIBLE, not just unlikely.
+                    RULE: CTO never reports to CEO directly. All output passes through CEO Report Agent first.
+                    See: memory/swarm/skills/ceo-report-agent.md
+```
+
+**Core principle:** Protocol is ALWAYS ON. Not opt-in. Not triggered by "загрузи протокол."
+Every CEO message = protocol is running. CEO confirmed: "я никогда не буду писать без текста запусти протокол."
+This means: there is NO state where protocol is off. Skipping a step requires documenting WHY.
+
+**⚠️ EFFICIENCY GATE SCOPE (added v7.0 — violated 3× in Session 82):**
+Efficiency Gate = "skip DSP if decision is obvious." It applies ONLY to DSP (Step 3).
+It NEVER applies to:
+- Step 5.5 (agent routing check) — always run
+- Step 1.0.3 (agent briefing context block) — always fill
+- Step 1.0.3b (session context injection) — always fill
+These three steps have ZERO efficiency exceptions. No task is too simple for them.
 
 ---
 
-## Required Reads (before every batch)
+## Required Reads — 3-Tier Priority (before every batch)
 
-| File | What it tells you | When |
-|------|-------------------|------|
-| [`memory/swarm/SHIPPED.md`](../memory/swarm/SHIPPED.md) | What code exists (prevents rebuilding) | Batch start |
-| [`memory/context/mistakes.md`](../memory/context/mistakes.md) | CLASS 1-8 recurring errors | Batch start |
-| [`memory/context/patterns.md`](../memory/context/patterns.md) | What works, silent contracts | Batch start |
-| [`memory/swarm/agent-roster.md`](../memory/swarm/agent-roster.md) | Team capabilities, routing table | Batch start |
-| [`memory/context/sprint-state.md`](../memory/context/sprint-state.md) | Current position | Batch start |
-| [`memory/swarm/shared-context.md`](../memory/swarm/shared-context.md) | Architecture decisions, schema, known bugs | During planning |
-| [`CLAUDE.md`](../CLAUDE.md) | Skills Matrix, NEVER/ALWAYS rules | During execution |
-| [`memory/swarm/agent-feedback-log.md`](../memory/swarm/agent-feedback-log.md) | Past proposals: accepted/rejected/why | During proposals |
-| [`memory/swarm/skills/risk-manager.md`](../memory/swarm/skills/risk-manager.md) | Active risk register — what CRITICAL/HIGH risks are open | Batch start (always) |
-| [`memory/swarm/skills/readiness-manager.md`](../memory/swarm/skills/readiness-manager.md) | Platform LRL score — what's blocking next launch readiness level | Batch start (always) |
+**Agent finding #6:** 10 files with equal weight = none feel mandatory. 3-tier structure creates real signal.
+
+### Tier 1 — ALWAYS READ (batch cannot start without these, ~3 min)
+
+| File | What it tells you |
+|------|-------------------|
+| [`memory/context/sprint-state.md`](../memory/context/sprint-state.md) | WHERE ARE WE RIGHT NOW — current position, last session |
+| [`memory/context/mistakes.md`](../memory/context/mistakes.md) | CLASS 1-8 recurring errors — what NOT to repeat this session |
+| [`memory/swarm/SHIPPED.md`](../memory/swarm/SHIPPED.md) | What code exists — prevents rebuilding what's done |
+
+### Tier 2 — READ IF RELEVANT TO THIS BATCH (~2 min, skip with reason if truly irrelevant)
+
+| File | When relevant |
+|------|--------------|
+| [`memory/swarm/agent-roster.md`](../memory/swarm/agent-roster.md) | Any batch with agents (which is most batches) |
+| [`memory/swarm/shared-context.md`](../memory/swarm/shared-context.md) | Architecture decisions, schema, known bugs — any code batch |
+| [`memory/swarm/agent-feedback-log.md`](../memory/swarm/agent-feedback-log.md) | Proposal round — avoid re-proposing rejected ideas |
+
+### Tier 3 — REFERENCE (pull when the specific domain is touched)
+
+| File | Pull when... |
+|------|-------------|
+| [`memory/context/patterns.md`](../memory/context/patterns.md) | Writing new patterns or reviewing what worked |
+| [`CLAUDE.md`](../CLAUDE.md) | Skills Matrix, NEVER/ALWAYS rules — execution phase |
+| [`memory/swarm/skills/risk-manager.md`](../memory/swarm/skills/risk-manager.md) | MEDIUM+ batch — what CRITICAL/HIGH risks are open |
+| [`memory/swarm/skills/readiness-manager.md`](../memory/swarm/skills/readiness-manager.md) | Pre-deployment or sprint gate — LRL score check |
+
+**Rule:** Tier 1 has ZERO skip exceptions. Tier 2 skip = "Skipping [file] because [reason]." Tier 3 pull on demand.
+
+---
+
+## STEP 5.4 — LLM PROVIDER CHECK (fires before EVERY agent launch ≥3 agents)
+
+**Added:** 2026-04-02 — Mistake #68. Same-model swarm = monologue with masks.
+
+```
+Before launching any swarm with ≥3 agents:
+
+1. Read apps/api/.env → list active LLM API keys
+2. Assign DIFFERENT providers to different roles:
+
+   REASONING / Security / Attack vectors:
+     → deepseek-ai/deepseek-r1-distill-qwen-32b via NVIDIA NIM
+     → Base: https://integrate.api.nvidia.com/v1
+     → Key: NVIDIA_API_KEY from .env
+
+   ARCHITECTURE / Large context / System design:
+     → meta/llama-3.1-405b-instruct via NVIDIA NIM
+     → Same base URL + key
+
+   FAST / Volume / Product / Growth:
+     → llama-3.3-70b-versatile via Groq
+     → Base: https://api.groq.com/openai/v1
+     → Key: GROQ_API_KEY from .env
+
+   SYNTHESIS / Final judgment / CTO decision:
+     → claude-sonnet (Agent tool)
+
+3. Mechanism for non-Claude models: Bash tool + Python urllib
+   (Agent tool = Claude only. Groq/NVIDIA = Bash API calls)
+
+4. Declare: "LLM providers assigned: [list]. Launching swarm."
+
+RULE: claude-haiku × N is NOT a swarm. It is one model with N masks.
+      True diversity = different training data + different architectures.
+      A security agent on DeepSeek R1 will find what haiku Security Agent misses.
+
+FALLBACK CHAIN (if primary provider returns 403/500):
+   Groq 403 → try Gemini 2.0 Flash (GEMINI_API_KEY)
+   NVIDIA NIM 500 → try DeepSeek via direct API (DEEPSEEK_API_KEY)
+   Both down → Claude Agent (haiku/sonnet) as last resort + document degradation
+   RULE: Never silently skip a provider. Log: "Provider X unavailable → fell back to Y."
+
+SKIP condition: swarm has <3 agents AND all are Claude → skip this step.
+NEVER skip: for Sprint Gate DSP (7 agents) — this step is mandatory.
+```
+
+**Mistake #68 proof:** 3 external models found in 60 seconds what 7 haiku agents missed:
+- Tribe matching cold-start: no 2-person fallback at <50 users
+- CRON_SECRET: startup guard missing → silent 403 for unknown days
+- Realtime RLS: subscription bypass vector on notifications table
+- GDPR pg_cron: most likely month-1 production incident
 
 ---
 
@@ -72,10 +263,63 @@ FLOW DETECTION:
 |-------------|-------------|
 | "что дальше" / "что делаем" / "tell me what we should do" | **CTO Plan** — present full plan, team critiques |
 | "загрузи протокол и делай" / "start working on X" | **Team Proposes** — agents propose tasks autonomously |
-| "срочно" / "production broken" / P0 keyword | **HOTFIX** — skip critique, keep security check |
+| "срочно" / "production broken" / P0 keyword | **HOTFIX** — skip critique, keep security check (see HOTFIX Minimum below) |
 | "предложи / propose / plan" | **CTO Plan** — put full proposal on table first |
+| "быстро / need this today / time pressure" | **EXPEDITED** — CTO Plan + 1 critique round only, no Round-2 gate |
+
+**EXPEDITED mode (new v7.1):** Legitimate fast path between HOTFIX (emergency) and full protocol (normal). Triggers when CEO signals time pressure but no production emergency. Steps skipped: Round-2 debate, Retro Sim, C3.5 re-approval. Steps kept: Flow detection, Agent routing check, Security pre-check, Confidence gate, Memory update.
+- Rule: EXPEDITED cannot be self-declared by CTO. Must have explicit CEO time signal.
+- EXPEDITED + security-touching task → upgrade to full protocol automatically. No exceptions.
+
+**HOTFIX Security Minimum (inline — must run even in HOTFIX):**
+```
+□ Rate limiting preserved on modified endpoint?
+□ RLS policies unaffected or explicitly re-verified?
+□ No new input path bypasses Pydantic validation?
+□ No auth/session logic altered without Security agent sign-off?
+If ANY box is unchecked → HOTFIX is blocked. Fix security first, then ship.
+```
 
 **Rule:** Wrong flow = wasted batch (Session 72 = entire sprint redone). This step costs 30 seconds.
+
+---
+
+## PHASE 0.7 — SPRINT GATE DSP (fires when CEO says "загрузи протокол")
+
+**Purpose:** Force DSP before batch assembly — not just for code, but for sprint strategy.
+Prevents embarking on a week of wrong work.
+
+**Position:** BETWEEN Step 0.5 (Flow Detection) and Phase 1 (Team Proposes). Fires BEFORE proposals, not after.
+
+```
+SPRINT GATE DSP:
+  Trigger: CEO says "загрузи протокол" or "start working on X"
+  When: BEFORE Step 1.0 (Team Proposes), not after
+  Agents: 7 async agents — Product / Architecture / Security / QA / Growth / Risk Manager / Readiness Manager
+  Time budget: 2 minutes
+  Confidence gate: ≥40/50 = proceed | 25-39 = CTO decides with caveat | <25 = BLOCK
+
+  Questions to simulate:
+  1. What is the highest-impact work RIGHT NOW for launch readiness?
+  2. What technical risk is being deferred that will bite us later?
+  3. What does the user journey look like TODAY — what breaks?
+
+  Output format:
+  DSP SPRINT GATE: [session date]
+  Paths simulated: [N] | Winner: [path name] — [score]/50
+  Key risk identified: [1 sentence]
+  Recommended focus: [P0 list for this batch]
+  Gate result: PROCEED / PROCEED WITH CAVEAT / BLOCK
+```
+
+**Rule:** Sprint Gate DSP is advisory, not blocking (below 25 blocks, but 25-39 proceeds
+with CTO caveat). Its job is to surface blind spots, not slow down execution.
+
+**⚠️ MANDATORY CONTINUATION RULE (Mistake #66 — 2026-04-02):**
+After agents return findings → CTO MUST immediately:
+1. Declare: "DSP Sprint Gate [date]: Winner = [path] — [score]/50. Key risk: [1 sentence]."
+2. Move to Phase 1/CTO Plan WITHOUT waiting for CEO signal.
+Stopping after agent results = CLASS 1 mistake. Agent output is input, not output.
 
 ---
 
@@ -140,6 +384,31 @@ Full template: `docs/AGENT-BRIEFING-TEMPLATE.md`
 
 ---
 
+### Step 1.0.3b — SESSION CONTEXT INJECTION (NEW v7.0 — BLOCKING)
+
+**Root cause of 50% agent output quality:** Agents received static project context (what Volaura is) but zero dynamic context (what happened today). They were blind to decisions made, tasks completed, and CEO directives in the current session.
+
+**MANDATORY before launching ANY agent — fill this section:**
+```
+SESSION CONTEXT (dynamic — fill fresh every agent launch):
+  Decisions made today:    [list key decisions from this session]
+  Tasks already done:      [what CTO/agents completed — agent must not repeat these]
+  Previous agent output:   [what the last agent produced, if chaining agents]
+  CEO said today:          [any explicit CEO directives, approvals, or rejections]
+  Current priority:        [speed / thoroughness / specific outcome CEO wants]
+  What NOT to do:          [anything CEO rejected or is already handled]
+```
+
+**Paste this ABOVE the static VOLAURA CONTEXT BLOCK in every agent prompt.**
+
+**Leaving it blank = agent is flying blind = 50% correct output = CLASS 3 Mistake #64.**
+
+**Time cost:** 2 minutes. **Value:** Agent understands the full context, not just the task.
+
+**Failure mode check:** Before launching agent, ask: "If the agent reads only this prompt and nothing else — does it know everything relevant that happened today?" If NO → add more session context.
+
+---
+
 ### Step 1.0.5 — Agent Routing Lock (NEW — Architecture P1)
 
 **CTO declares domain ownership BEFORE proposals are reviewed. 30 seconds.**
@@ -178,6 +447,20 @@ No proposal is rejected at this stage. All get classified.
 
 **Vote rule:** If 3+ agents agree on priority order, it stands. CTO cannot override. CTO can argue but needs 3+ agents to agree with the counter-argument.
 
+**Round-2 gate trigger:** if top-ranked proposal score <35/50 AND delta to #2 is <5 pts → mandatory Round 2.
+
+**Round-2 debate output format (v7.1 — was missing):**
+```
+ROUND-2 DEBATE:
+  Trigger: [why Round 2 fired — score / delta]
+  Positions:
+    [Agent]: [proposal they support] — [1 sentence reasoning]
+    [Agent]: [counter-proposal] — [1 sentence reasoning]
+  Resolution: [which proposal won after Round 2]
+  Final score: [N]/50
+  If still <35 → CTO documents exception and proceeds with caveat.
+```
+
 **Output:** Ordered task list with assignments.
 
 ---
@@ -185,6 +468,8 @@ No proposal is rejected at this stage. All get classified.
 ## PHASE 2: BATCH ASSEMBLY
 
 ### Step 2.0 — Batch Lock
+
+**Agent finding #9:** Named roles were unassigned at batch start, causing ambiguity mid-batch on who owns verification. Now declared at Batch Lock.
 
 ```
 BATCH: [date-based ID, e.g., 2026-03-30-A]
@@ -197,20 +482,50 @@ PARALLEL STREAMS:
   Fixes/Polish: [tasks] → [agent]
 DEPENDENCIES: [task X blocks task Y — list all hard deps]
 CONCURRENT EDITS: [list any files touched by 2+ tasks — declare primary owner]
+
+NAMED ROLES (declare at lock, not mid-batch):
+  C3_REVIEWER:     [agent name] — owns GATE C3 verification spot-check
+  CROSS_QA_AGENT:  [agent name] — owns Step 3.4 cross-QA (cannot be same as QA author)
+  BATCH_AGENT_COUNT: [N] agents active this batch — if N < 3, flag as UNDER-RESOURCED
 ```
 
-### Step 2.1 — Task Self-Classification
+**Mid-Batch Direction Change (v7.1):** If CEO or CTO changes direction after Batch Lock:
+Declare in batch log: "DIRECTION CHANGE: [what changed] → [tasks cancelled/added]." Re-run Step 2.0 for affected streams. Do not silently absorb scope changes.
 
-Each task declares its weight. Protocol gates scale automatically:
+### Step 2.1 — Task Self-Classification (Unified System v7.1)
 
-| Class | Lines | Gate Level | What's required |
-|-------|-------|------------|-----------------|
-| **MICRO** | ≤10 | **FAST PATH** | Proposal → execute → spot verify. Skip Steps 3.0/3.1/3.3/3.4. No critique. |
-| **SMALL** | 10-50 | Light | + 1 peer review before merge |
-| **MEDIUM** | 50-200 | Standard | + Security checklist + Schema verification + 1 critique round |
-| **LARGE** | 200+ | Full | + Blast radius check + 2 critique rounds + user journey walkthrough |
+**Agent finding #3:** Two classification systems existed simultaneously (MICRO/SMALL/MEDIUM/LARGE for code; L1-L5 for universal). Now ONE system. Code tasks map directly to L levels.
 
-**MICRO FASTPATH (NEW — Product P1):** If a task is ≤10 lines AND touches only 1-2 files AND has no security/auth implications → skip Steps 3.0, 3.1, 3.3, 3.4. Execute directly after proposal approval. This prevents 2-line copy fixes going through the same gates as 200-line features.
+| Level | Former name | Lines (code) | Gate Level | What's required |
+|-------|-------------|-------------|------------|-----------------|
+| **L1** | MICRO | ≤10 | **FAST PATH** | Proposal → execute → spot verify. Skip Steps 3.0/3.1/3.3/3.4. |
+| **L2** | SMALL | 10-50 | Light | + 1 peer review before merge |
+| **L3** | MEDIUM | 50-200 | Standard | + Security checklist + Schema verification + 1 critique round |
+| **L4** | LARGE | 200+ | Full | + Blast radius check + 2 critique rounds + user journey walkthrough + agent confidence scores |
+| **L5** | Critical | Any | Maximum | + Full 7-agent sign-off + CEO review before ship |
+
+**Non-code tasks:** Use the Task Type → Auto-Routing Table (in TASK COMPLEXITY LEVELS section). AZ formal documents = L4. Government applications = L4. Legal = L5.
+
+**L1 (MICRO) FASTPATH — CAPPED (v7.1):**
+L1 is available ONLY if ALL of the following are true:
+- ≤10 lines changed
+- 1-2 files touched
+- Does NOT touch: auth logic, scoring/AURA calculations, RLS policies, external-facing content
+- Does NOT touch: any file named `*security*`, `*auth*`, `*payment*`, `*scoring*`
+
+If ANY of the above conditions fail → minimum L2. No exceptions.
+**Reason:** "It's just 3 lines" is how security bugs and scoring regressions ship. Cap prevents CLASS 4.
+
+**L4/L5 — Independent Agent Confidence Scoring (v7.1):**
+For L4/L5 tasks, CTO confidence alone is insufficient. A verification agent (not the author) declares:
+```
+INDEPENDENT CONFIDENCE CHECK (by [Agent Name, not task author]):
+  Reviewed: [what was checked]
+  Confidence in correctness: [%]
+  Gaps remaining: [list or "none found"]
+  Sign-off: READY / BLOCKED
+```
+This replaces self-reported CTO confidence for high-stakes work.
 
 **CTO can bump a task ±1 level with written reason.** Any agent can contest the bump.
 
@@ -321,6 +636,108 @@ Cross-checker declares: "Tests verified by [Agent]. Spotted [N] issues."
 If issues found → QA re-tests. Not "QA approves QA."
 Rule: QA Engineer CANNOT cross-check their own test suite.
 ```
+
+---
+
+## TASK COMPLEXITY LEVELS v7.0 — Universal (Code + Content + Documents)
+
+**Why v7.0 exists:** v6.0 classified tasks by code size only. Non-code tasks (government applications, legal documents, formal AZ-language content, research reports) had no quality gate. Result: 29 grammar errors in a startup championship application went undetected until CEO asked. Confidence gap: CTO delivered at ~65% quality without knowing it. This section fixes that.
+
+---
+
+### Complexity Scale — 5 Levels (ALL task types)
+
+| Level | Name | What it means | Verification required |
+|-------|------|--------------|----------------------|
+| **L1** | Trivial | 1 file, 1 change, obvious, reversible. CTO confidence ≥95%. | None. Execute + spot-check. |
+| **L2** | Simple | Known territory, 1-2 domains, low ambiguity. Confidence ≥85%. | 1 agent spot-check (domain expert). |
+| **L3** | Standard | Multiple domains OR unfamiliar territory OR formal output. Confidence ≥70%. | 1-2 agents + confidence gate before delivery. |
+| **L4** | Complex | High stakes, irreversible, or CTO confidence <70%. | Full swarm subset (3-4 agents relevant to domain). |
+| **L5** | Critical | Irreversible + external-facing + high risk (legal, financial, security). | Full 7-agent swarm + CEO review before publish. |
+
+**Rule:** CTO declares level BEFORE executing. If unsure → round UP, not down.
+
+---
+
+### Task Type → Auto-Routing Table
+
+| Task type | Default Level | Mandatory verification agents |
+|-----------|--------------|-------------------------------|
+| Code < 10 lines | L1 | None |
+| Code 10–50 lines | L2 | Architecture (spot-check) |
+| Code 50–200 lines | L3 | Architecture + Security |
+| Code 200+ lines | L4 | Architecture + Security + QA |
+| LinkedIn post | L3 | Communications Strategist + Cultural Intelligence |
+| AZ-language formal document | **L4** | **Cultural Intelligence + Grammar Agent (2 models)** |
+| Government / grant application | **L4** | **Cultural Intelligence + Grammar Agent + Communications Strategist** |
+| Legal / ToS / Privacy Policy | **L5** | Legal Advisor + Cultural Intelligence + CEO review |
+| Financial projections | L4 | Risk Manager + Growth Agent (verify assumptions) |
+| Research / market analysis | L3 | Growth Agent + fact-check source requirement |
+| Architecture decision | L4 | Architecture + Security + DSP (Mode 2) |
+| DB migration | L4 | Architecture + Security + Readiness Manager |
+| Production deploy | L5 | Full 7-agent + engineering:deploy-checklist |
+| Investor / pitch material | L4 | Growth Agent + Risk Manager + fact-check (no fabrication) |
+| Partnership communications | L3 | Communications Strategist + Cultural Intelligence |
+| Internal specs / ADRs | L2 | Architecture Agent spot-check |
+| **Task type NOT in this table** | **L3 default** | **Architecture + domain-relevant agent. Round up, never down.** |
+
+**Key insight:** AZ formal government application = L4 by default. Not L1. Grammar agents are MANDATORY, not optional.
+**Catch-all rule:** If a task type doesn't appear in this table → default L3. CTO cannot self-assign L1/L2 for unlisted types.
+
+---
+
+### Confidence Gate (MANDATORY before any L3+ output delivery)
+
+Before handing any L3+ result to CEO, CTO declares:
+
+```
+CONFIDENCE GATE:
+  Task type:        [code / LinkedIn / AZ formal doc / legal / research / ...]
+  Complexity:       L[1-5]
+  CTO confidence:   [%] — honest self-assessment
+  Weak points:      [where CTO knowledge is limited — AZ grammar, legal, financial]
+  Verification run: [agents consulted, or "none — L1/L2 fastpath"]
+  Ready to deliver: YES (≥85% after verification) / NO (verification pending)
+```
+
+**Confidence thresholds:**
+- ≥85% after verification → deliver
+- 70–84% → deliver with explicit caveat to CEO ("verified by agents, but recommend native speaker review")
+- <70% → do NOT deliver until additional verification run
+
+**Trigger pattern for grammar/language tasks:**
+If task involves AZ-language output AND output goes to external audience (government, public, B2B) → confidence starts at 50% (CTO is not a native AZ speaker) → verification MANDATORY → minimum 2 grammar agents required before confidence can reach 85%.
+
+---
+
+### Swarm Optimization Rules (avoid running full 7-agent swarm for L1-L2)
+
+| Level | Max agents | Token budget | Parallel or sequential |
+|-------|-----------|-------------|----------------------|
+| L1 | 0 | 0 | N/A |
+| L2 | 1 | ~5k | Single agent |
+| L3 | 2 | ~15k | Parallel |
+| L4 | 3-4 | ~40k | Parallel |
+| L5 | 7 | ~100k | Parallel + synthesis |
+
+**Anti-pattern:** Running 7 agents on a typo fix = wasted 95k tokens. Running 0 agents on a government application = quality failure. Level declaration prevents both.
+
+---
+
+### Self-Assessment Checklist (before CTO delivers ANY L3+ output)
+
+```
+□ Did I classify complexity level honestly?
+□ Did I identify where my knowledge is weakest?
+□ Did I route to the right verification agents for THIS task type?
+□ Have agents run and returned findings?
+□ Have I incorporated agent findings (not just noted them)?
+□ Is my confidence NOW ≥85%?
+□ If output is AZ-language → did 2+ native/expert agents review?
+□ If output is external-facing → did Cultural Intelligence sign off?
+```
+
+If any checkbox is NO → do not deliver. Run verification first.
 
 ---
 
@@ -473,37 +890,6 @@ Feeds `memory/swarm/agent-feedback-log.md` with validated patterns.
 
 ---
 
-## PHASE 0.7 — SPRINT GATE DSP (fires when CEO says "загрузи протокол")
-
-**Purpose:** Force DSP before batch assembly — not just for code, but for sprint strategy.
-Prevents embarking on a week of wrong work.
-
-```
-SPRINT GATE DSP:
-  Trigger: CEO says "загрузи протокол" or "start working on X"
-  When: BEFORE Step 1.0 (Team Proposes), not after
-  Agents: 7 async agents — Product / Architecture / Security / QA / Growth / Risk Manager / Readiness Manager
-  Time budget: 2 minutes
-  Confidence gate: ≥40/50 = proceed | 25-39 = CTO decides with caveat | <25 = BLOCK
-
-  Questions to simulate:
-  1. What is the highest-impact work RIGHT NOW for launch readiness?
-  2. What technical risk is being deferred that will bite us later?
-  3. What does the user journey look like TODAY — what breaks?
-
-  Output format:
-  DSP SPRINT GATE: [session date]
-  Paths simulated: [N] | Winner: [path name] — [score]/50
-  Key risk identified: [1 sentence]
-  Recommended focus: [P0 list for this batch]
-  Gate result: PROCEED / PROCEED WITH CAVEAT / BLOCK
-```
-
-**Rule:** Sprint Gate DSP is advisory, not blocking (below 25 blocks, but 25-39 proceeds
-with CTO caveat). Its job is to surface blind spots, not slow down execution.
-
----
-
 ## DSP AUTO-TRIGGER MODES (v5.1 addition)
 
 Three modes that fire DSP WITHOUT CTO remembering to run it.
@@ -608,6 +994,9 @@ This document improves every batch. Needs Agent proposes changes in Step 4.2 ret
 | **v5.1** | **2026-03-30** | **Swarm optimization: SESSION-DIFFS.jsonl (git-level diff feed), session-end workflow (mini-swarm on push), skills_loader.py (auto-skill matching), 3 DSP auto-trigger modes (Session Hook/Code Gate/Retro Sim), Sprint Gate DSP (Phase 0.7), session_end_hook.py. Closes 42% already-done proposals gap.** | **Session 76: 4-agent swarm analysis found 42% proposals were already shipped. Root cause: agents blind to git state.** |
 | **v5.2** | **2026-03-30** | **Risk Manager (ISO 31000) + Readiness Manager (SRE/ITIL) integrated throughout: Required Reads (2 new entries), Domain Ownership table (cross-domain rows), Sprint Gate DSP agents (5→7), DSP Mode 1 agents (5→7), FAILURE MODES (3 new CLASS entries). autonomous_run.py PERSPECTIVES updated. These agents are permanent — not optional, not called on request.** | **CEO directive 2026-03-30: "они всегда должны быть в команде чтоба находить проблемы которые вы не видите в общем"** |
 | **v5.3** | **2026-03-30** | **Agent Briefing Requirements: Step 1.0.3 added as BLOCKING gate before any agent launch. VOLAURA CONTEXT BLOCK (300-word canonical context) MUST be injected into every agent prompt. Agents launched without it = CLASS 3 mistake. Full template: `docs/AGENT-BRIEFING-TEMPLATE.md`. 3 new FAILURE MODES added.** | **CEO directive 2026-03-30: Research agents returned technically correct but contextually wrong answers — didn't know what Volaura is, who Yusif is, what's already decided. "При сжатии памяти всё теряется."** |
+| **v6.0** | **2026-04-01** | **Five additions from cross-repo analysis (ZEUS + MindShift + Claude Code patterns): (1) Step 0b "Detect+Read": read SESSION-DIFFS.jsonl + code-index.json before proposing, declare N changes since last run. (2) Proposals MUST include trigger_reason (WHY NOW, what recent event makes this timely). (3) Round-2 debate gate: if top proposal <35/50 AND delta to #2 <5 pts → mandatory Round 2. (4) Outcome verification: agent cannot mark DONE without running verify_outcome() or explicit manual verification steps. (5) Session-end skill evolution check: ≥5 trajectories per skill → auto-suggest improvements.** | **Session 78 — Cross-repo analysis of ZEUS (adaptive executor), MindShift (v6.0 protocol), Claude Code patterns. Found gaps: agents declaring DONE without proof, proposals with no "why now", no outcome verification gate.** |
+| **v7.0** | **2026-04-02** | **Universal Complexity Levels (L1-L5) for ALL task types — code + content + formal documents. Confidence Gate: CTO self-assesses before delivering L3+ output. Auto-Routing Table: AZ formal document = L4 (2 grammar agents mandatory), Government application = L4 (Cultural Intelligence + grammar + Communications Strategist). Swarm Optimization: token budgets per level (L1=0, L5=100k). Self-Assessment Checklist before any L3+ delivery. Step 1.0.3b SESSION CONTEXT INJECTION added as blocking step — dynamic session context MUST be injected into every agent prompt. Root cause: 29 grammar errors in startup.az application + agents producing 50% correct output due to missing session context.** | **CEO challenge 2026-04-02: "почему ты не сделал этого сразу?" — protocol had size classes for code only. Non-code quality verification and dynamic agent context were missing entirely.** |
+| **v7.1** | **2026-04-02** | **15 structural and enforcement gaps closed from 5-agent protocol audit (score 66/100 → targeting 85/100): Header fixed, Phase 0.7 moved to correct position, classification systems merged (MICRO/SMALL/MEDIUM/LARGE unified with L1-L5), EXPEDITED mode added, HOTFIX security minimum defined inline, MICRO FASTPATH capped for auth/scoring/external content, Required Reads reorganized to 3-tier priority, named roles at Batch Lock (C3_REVIEWER + CROSS_QA_AGENT), auto-routing catch-all row + 3 missing rows, independent agent confidence for L4/L5, Round-2 debate output format defined, Step 0b fallback for missing files, Mid-Batch Direction Change protocol.** | **5-agent audit 2026-04-02: Architecture + QA + Risk Manager + Readiness Manager + Product scored protocol 66/100. Enforceability = 11/20 (worst dimension). Root cause: CLASS 3 recurring 15 times despite written rules.** |
 
 ---
 

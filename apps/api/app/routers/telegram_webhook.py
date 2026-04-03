@@ -99,29 +99,33 @@ async def _get_project_stats(db) -> str:
 def _get_ecosystem_context() -> str:
     """Return hardcoded ecosystem state for bot context. Update this when platform state changes."""
     return """
-=== ECOSYSTEM STATE (2026-03-30 BATCH N) ===
-Volaura: DEPLOYED. Railway + Vercel + Supabase. LRL ~78/100 CONDITIONAL GO. 648 tests passing. Beta-ready ≤200 users.
-MindShift: DEPLOYED. 92% PWA. React 19+Vite. 132 Playwright tests. Missing Stripe.
-Life Simulator: 2 crash bugs FIXED (check_requirements→can_trigger, full_name property added). game_over.tscn and EventModal already worked. Still needs Supabase CloudSave (CLOUD_ENABLED=false) and Volaura crystal bridge.
-ZEUS: 70% desktop. Plan→Execute→Reflect loop works. Telegram interface works. 0% Godot bridge. Cloud unreachable without ngrok tunnel.
-BrandedBy: 15%. UI exists, Stripe card never tokenized, AI video = 0% real.
-Crystal bridge: NOT BUILT. character_events table exists. Volaura→Life Sim bridge = 0%.
-Integration Layer: 0%. character_state API does not exist yet.
+=== ECOSYSTEM STATE (2026-04-03 Session 83) ===
+Volaura: DEPLOYED. Railway + Vercel + Supabase. LRL 97/100. 115 API endpoints. 43 AI agents. Assessment→AURA→Badge→Share WORKS.
+MindShift: DEPLOYED. 92% PWA. React 19+Vite. 330+ Playwright tests. Stripe integrated.
+Life Simulator: Event bus exists (character_events). Needs CloudSave + Volaura crystal bridge UI.
+ZEUS: 70% desktop. Plan→Execute→Reflect loop works. No cloud API yet.
+BrandedBy: Video worker wired (fal.ai). Needs FAL_API_KEY activation (~$5-50/mo).
+Crystal bridge: character_events + game_crystal_ledger LIVE. Crystal spending via BrandedBy queue skip (25 crystals).
+Integration Layer: Cross-product bridge wired (MindShift). Needs MINDSHIFT_URL on Railway.
 
-=== CURRENT SPRINT ===
-Sprint E2, BATCH N complete. 648/649 tests.
-BATCH N shipped: RISK-N01/N02 (hard fail guards), GROW-N01 (Silver copy), GROW-M02 (cooldown notify), PROD-M03 (mobile share), GROW-M03 (public profile benchmark+invite), ARCH-M03 (pending AURA banner).
-Blocking CEO actions: E2E walk on volaura.app with real email, Polar.sh sign-up (24h approval), k6 load test (set VOLAURA_TEST_JWT on Railway).
+=== CURRENT STATE ===
+Session 83 complete. TASK-PROTOCOL v8.0 (Toyota+Apple+DORA quality system).
+Quality: 3-question DoD, defect autopsy (76 bugs → 3 classes = 76.4%), Langfuse LLM monitoring wired.
+Tools: Playwright MCP, Sentry MCP, NotebookLM (45+ sources), Dodo Payments API key saved.
+Payments: Dodo Payments (MoR, 220+ countries, native AZN). Company verification pending.
+Analytics: 6 frontend events + backend ingestion + GDPR 390-day retention.
+Security: 0 errors (4 SECURITY_DEFINER views fixed, 6 search_path functions hardened).
 
 === TEAM ===
-Agents: Security, Architecture, Product, QA, Growth, Risk Manager (ISO 31000), Readiness Manager (SRE/ITIL).
-LLM chain: Gemini → Groq → OpenAI → keyword fallback.
+43 agents. Key: Security, Architecture, Product, QA, Growth, Risk, Readiness, CEO Report, Onboarding, Customer Success.
+Multi-model: DeepSeek R1 (NVIDIA NIM), Llama 405B (NVIDIA NIM), Gemini 2.0 Flash, Claude Opus.
 Budget: $50/mo. Stack: FastAPI + Next.js 14 + Supabase + Railway + Vercel.
 
-=== LAUNCH STATUS ===
-Volaura beta: CONDITIONAL GO — CEO E2E walk required for FULL GO.
-Revenue: Set up Polar.sh (no company needed, 24h approval, Stripe Connect).
-Ecosystem: NOT READY — 60+ sprints of integration work remaining.
+=== NEXT STEPS ===
+1. Dodo Payments integration (when company verified)
+2. Closed testing: 10 people (Tural, Turan, Firuza + 7)
+3. CrewAI Phase 1 (structural fix for solo execution)
+4. Launch to 12,000 (end of April)
 """
 
 

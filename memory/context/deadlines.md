@@ -2,23 +2,23 @@
 
 Purpose: Give Claude a sense of time pressure. Update at session start/end.
 
-## Current Sprint
-- **Volaura: Sprint 10 IN PROGRESS** (org dashboard done, activation wave pending)
-- **BrandedBy: Sprint B1-B2-B3 COMPLETE ✅** — E2E verified, LIVE on volaura.app
-- **Ecosystem: Sprint A0 COMPLETE ✅ | Sprint A1 NEXT**
-- **Weeks remaining:** ~1 week (of 6 total, started 2026-03-23)
-- **Budget remaining:** ~$50/mo + fal.ai (pay-per-video ~$0.05-0.10 each)
+## Current Sprint (updated 2026-04-03, Session 82+)
+- **Volaura: Session 82 — security audit complete, analytics live, protocol v7.1**
+- **BrandedBy: Sprint B1-B2-B3 COMPLETE ✅** — E2E verified
+- **Ecosystem: 5 products (VOLAURA prod, MindShift 92%, Life Sim 65%, BrandedBy research, ZEUS 70%)**
+- **CEO target:** End of April 2026 = platform at 100%
+- **Budget remaining:** ~$50/mo
+- **LRL: 96/100** (after security fixes 2026-04-02)
 
 ## Blocked By (Yusif must do)
-- ~~`supabase db push`~~ ✅ All 35 migrations applied via MCP (Sessions 43-50)
-- ~~Disable email confirmation~~ ✅ Already OFF (confirmed Session 43)
-- **GoDaddy A record for brandedby.xyz** → `@ 76.76.21.21` (5 min action)
-- Post 003 angle decision ("Antigravity" rejected as Mistake #40)
-- Legal entity jurisdiction — Georgia, Turkey, or AZ?
-- Pasha Bank meeting date
-- Monetization pricing confirmation: 4.99 AZN/month for Pro confirmed?
-- Payment processor: Stripe or Kapital Bank first?
-- ~10 HR coordinator names for activation wave referral codes
+- ~~`supabase db push`~~ ✅ All migrations applied via MCP
+- ~~Disable email confirmation~~ ✅ Already OFF
+- ~~Legal entity jurisdiction~~ → Georgia chosen (CEO-QUESTIONS-RESOLVED.md)
+- ~~Payment processor~~ → Paddle chosen, CEO starts in 2 days (2026-04-05)
+- **Register on volaura.app as User #1** (profiles table empty)
+- **GitHub secrets:** SUPABASE_PROJECT_ID + SUPABASE_SERVICE_KEY (for GDPR retention workflow)
+- **startup.az:** Tech Lead name from Slavyan (still missing)
+- **Legal:** ToS + PP review by AZ counsel (~$300-500)
 
 ## Milestone Status
 - Week 1 end: ✅ Backend + DB complete (74 tests)
@@ -35,20 +35,20 @@ Purpose: Give Claude a sense of time pressure. Update at session start/end.
 - Week 6 (current): ⏳ Sprint A1 (crystal bridge) + activation wave + beta launch
   - Remaining: UTM capture, welcome page, badge share, RU translations
 
-## Infrastructure Status (as of 2026-03-27 Session 50)
+## Infrastructure Status (updated 2026-04-02 Session 82)
 | System | Status | Notes |
 |--------|--------|-------|
-| Railway API | ✅ LIVE | FAL_API_KEY + GROQ_API_KEY now set. Video worker running. |
-| Vercel Frontend | ✅ LIVE | volaura.app → latest deploy with BrandedBy |
-| Supabase DB | ✅ LIVE | 35 migrations applied |
-| fal.ai | ✅ LIVE | Balance topped up. SadTalker + Kokoro E2E verified. |
-| GitHub Actions | ✅ LIVE | swarm daily run at 09:00 Baku |
+| Railway API | ✅ LIVE | All API keys set. CRON_SECRET configured. |
+| Vercel Frontend | ✅ LIVE | volaura.app deployed |
+| Supabase DB | ✅ LIVE | 59+ migrations. Security audit clean (0 ERRORS). |
+| Supabase Realtime | ✅ LIVE | notifications table in publication, RLS verified |
+| GitHub Actions | ✅ LIVE | tribe-matching + analytics-retention workflows |
 | Sentry | ✅ LIVE | error monitoring on backend |
-| brandedby.xyz | ⏳ PENDING | Added to Vercel, needs GoDaddy A record @ 76.76.21.21 |
-| Telegram Bot | ⚠️ UNVERIFIED | CEO hasn't confirmed receipt |
+| Telegram Bot | ✅ LIVE | bidirectional swarm communication |
 
 ## Key Dates
-- Beta launch target: End of Week 6 (~2026-04-03)
-- Anthropic application deadline: TBD (Yusif's timeline)
-- Pasha Bank meeting: TBD (CEO relationship)
-- First 100 volunteers: Free tier (business decision, no paywall on assessment)
+- CEO target: End of April 2026 = platform at 100%
+- Paddle integration: CEO starts ~2026-04-05 (2 days)
+- startup.az: filed, pending Tech Lead name
+- GITA (Georgia): May 27, 2026 deadline
+- First users: 12,000 volunteers ready on CEO's signal

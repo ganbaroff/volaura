@@ -179,6 +179,16 @@ def assert_production_ready() -> None:
     # With secret: Telegram adds X-Telegram-Bot-Api-Secret-Token header to every update.
     # Security risk without secret is LOW (CEO_CHAT_ID filter is still enforced).
     # Hard fail removed: app must start even without Telegram fully configured.
+    # RISK-N01: Telegram webhook secret guard — fail-closed in production.
+    # Without secret: webhook accepts all POST requests (no Telegram signature verification).
+    # CEO_CHAT_ID filter still limits who can trigger bot actions, but any attacker can spam
+    # the endpoint and exhaust Gemini quota or flood ceo_inbox.
+    if not settings.telegram_webhook_secret:
+        errors.append(
+            "TELEGRAM_WEBHOOK_SECRET is not set — Telegram webhook endpoint accepts all "
+            "incoming requests without signature verification. Set TELEGRAM_WEBHOOK_SECRET "
+            "on Railway to harden against spam and quota exhaustion."
+        )
     # RISK-N02: Stripe webhook signature guard when payment is active.
     # If payment_enabled=True but webhook secret is missing, unsigned webhook events are
     # accepted — an attacker can POST fake subscription.created and get free Pro access.

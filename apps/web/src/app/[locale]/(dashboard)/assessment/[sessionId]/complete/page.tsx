@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { useTrackEvent } from "@/hooks/use-analytics";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -168,6 +169,8 @@ export default function AssessmentResultsPage() {
   const queryClient = useQueryClient();
   const isMounted = useRef(true);
 
+  const track = useTrackEvent();
+
   const [phase, setPhase] = useState<"loading" | "reveal" | "error">("loading");
   const [result, setResult] = useState<AssessmentResult | null>(null);
   const [aura, setAura] = useState<AuraScore | null>(null);
@@ -221,6 +224,16 @@ export default function AssessmentResultsPage() {
 
       // 3. Invalidate cached AURA score so dashboard refreshes
       queryClient.invalidateQueries({ queryKey: ["aura-score"] });
+
+      // Track frontend assessment_completed (backend already tracks via analytics service)
+      track("assessment_completed_view", {
+        competency_slug: assessmentResult.competency_slug,
+        competency_score: Math.round(assessmentResult.competency_score),
+        questions_answered: assessmentResult.questions_answered,
+        aura_updated: assessmentResult.aura_updated,
+        has_gaming_flags: assessmentResult.gaming_flags.length > 0,
+        crystals_earned: assessmentResult.crystals_earned ?? 0,
+      }, sessionId);
 
       if (isMounted.current) {
         // Small delay for suspense effect, then reveal

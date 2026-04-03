@@ -13,6 +13,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Loader2, ChevronLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { API_BASE } from "@/lib/api/client";
+import { useTrackEvent } from "@/hooks/use-analytics";
 
 type ScreenState = "question" | "transition" | "error";
 
@@ -40,6 +41,8 @@ export default function QuestionPage() {
     nextCompetency,
     reset,
   } = useAssessmentStore();
+
+  const track = useTrackEvent();
 
   const [answer, setAnswer] = useState("");
   const [screen, setScreen] = useState<ScreenState>("question");
@@ -190,6 +193,14 @@ export default function QuestionPage() {
       // PROD-M01: Brief "Saved ✓" visual confirmation before next question renders
       setAnswerSaved(true);
       setTimeout(() => { if (isMounted.current) setAnswerSaved(false); }, 600);
+
+      track("answer_submitted", {
+        competency_slug: currentCompetency,
+        question_id: currentQuestion.id,
+        question_type: currentQuestion.question_type,
+        answer_number: answeredCount + 1,
+        response_time_ms: Date.now() - questionStartTime.current,
+      }, sessionId);
 
       incrementAnswered();
       handleSessionUpdate(feedback.session);

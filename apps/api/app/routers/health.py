@@ -55,3 +55,16 @@ async def health_check(db: SupabaseAdmin) -> HealthResponse:
 
 # CRIT-01 FIXED (Session 51 OWASP audit): /health/env-debug DELETED.
 # Was exposing partial Supabase keys + URL in production. Unauthenticated.
+
+
+@router.get("/health/anon-key-check")
+async def anon_key_check() -> dict:
+    """Diagnostic: check which anon key is active (prefix only, safe)."""
+    key = settings.effective_anon_key
+    return {
+        "key_prefix": key[:20] + "..." if key else "EMPTY",
+        "key_length": len(key),
+        "is_jwt_format": key.startswith("eyJ") if key else False,
+        "using_hardcoded": settings.using_hardcoded_anon_key,
+        "supabase_url_prefix": settings.supabase_url[:40],
+    }

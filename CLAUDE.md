@@ -567,6 +567,13 @@ Events are dynamic data (any event, any org) — NEVER hardcode specific event n
 - Use `getattr(settings, "field", default)` — use `settings.field` directly
 - Hand-write API types/hooks that `pnpm generate:api` can generate (unless backend unreachable)
 - Ignore API response envelope — always unwrap `.data` from `{ data, meta }` responses
+- Use Haiku as subagent — CEO BANNED. Use free external models (Gemini Flash, Llama 3.3 NVIDIA, DeepSeek R1)
+- Use Claude to review Claude's own output — self-confirmation bias (CLASS 11). Use DIFFERENT provider models.
+- Change integration config before reading existing state — READ both sides FIRST → match → done (Mistake #82)
+- Debug >5 min without asking "Did I create this?" — replace before repair (CLASS 12, 6 instances Session 84)
+- Expand scope without CEO permission — ask "Does this help one real user complete the path?" first
+- Count "done" by typecheck/test pass — only user reality counts (CLASS 7)
+- Build new protocols/governance/meta-layers — process theater (CLASS 10, 9 protocol versions, 0% adoption)
 
 ### ALWAYS DO
 - UTF-8 encoding everywhere (explicit `encoding='utf-8'`)
@@ -581,6 +588,14 @@ Events are dynamic data (any event, any org) — NEVER hardcode specific event n
 - Absolute routing: `/${locale}/path` (never relative)
 - Unwrap API response envelope: response.data (not raw response)
 - i18n AZ strings: account for 20-30% longer text, special chars (ə ğ ı ö ü ş ç), date DD.MM.YYYY, number 1.234,56
+- READ docs/config BEFORE implementing (Supabase SSR docs, GCP console, Railway env)
+- READ integration config on BOTH sides before changing either side
+- Use DIVERSE external models for agent work (Gemini Flash + NVIDIA Llama + DeepSeek R1)
+- Delegate to agents for ANY non-trivial task — CTO is brain, models are hands
+- Track ALL CEO directives as explicit task list — never silently drop
+- Update ALL documentation (mistakes.md, patterns.md, CLAUDE.md, HANDOVER, Mem0) when CEO catches error
+- Check Telegram after every git push for agent complaints
+- Ask "Does this help one real user?" before any new work
 
 ## Architecture
 - Monorepo: Turborepo + pnpm

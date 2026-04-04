@@ -1,12 +1,20 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { CheckCircle } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function SubscriptionSuccessPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center"><CheckCircle className="h-8 w-8 text-green-500 animate-pulse" /></div>}>
+      <SubscriptionSuccessContent />
+    </Suspense>
+  );
+}
+
+function SubscriptionSuccessContent() {
   const { locale } = useParams<{ locale: string }>();
   const router = useRouter();
   const searchParams = useSearchParams();

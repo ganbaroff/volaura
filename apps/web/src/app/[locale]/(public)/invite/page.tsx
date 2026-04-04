@@ -14,12 +14,20 @@
  * Warm contacts expect instant access — a waitlist queue kills conversion.
  */
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle, XCircle } from "lucide-react";
+
+export default function InvitePage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center"><p className="text-muted-foreground">Loading...</p></div>}>
+      <InviteContent />
+    </Suspense>
+  );
+}
 
 // Simple beta allowlist — replace with DB lookup post-beta
 const VALID_BETA_CODES = new Set([
@@ -34,7 +42,7 @@ const VALID_BETA_CODES = new Set([
   "OPEN",
 ]);
 
-export default function InvitePage() {
+function InviteContent() {
   const { locale } = useParams<{ locale: string }>();
   const router = useRouter();
   const searchParams = useSearchParams();

@@ -30,11 +30,8 @@ loguru>=0.7.0
 # File uploads
 python-multipart>=0.0.20
 
-# BrandedBy — fal.ai video generation (MuseTalk + PlayAI TTS)
-fal-client>=0.5.0
-
 # Observability — LLM tracing (optional, graceful degradation if keys not set)
 langfuse>=2.0.0
 
-# Swarm orchestration — structural enforcement of delegation (ADR-009)
-crewai>=0.100.0
+# NOTE: crewai and fal-client removed — not imported in app/ code.
+# Re-add when actually used. They added ~200MB+ to Docker build.

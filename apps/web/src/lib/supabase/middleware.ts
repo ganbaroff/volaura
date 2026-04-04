@@ -30,14 +30,18 @@ export async function updateSession(request: NextRequest, response: NextResponse
     }
   );
 
+  const { pathname } = request.nextUrl;
+
+  // Skip auth check on callback route — code hasn't been exchanged yet
+  if (pathname.includes("/callback")) {
+    return response;
+  }
+
   // Refresh the auth token — this is the critical call.
   // Without it, server components get stale/expired sessions.
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  // If user is NOT logged in and tries to access protected routes → redirect to login
-  const { pathname } = request.nextUrl;
   const isProtectedRoute =
     pathname.includes("/dashboard") ||
     pathname.includes("/aura") ||

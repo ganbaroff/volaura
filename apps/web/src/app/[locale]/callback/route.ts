@@ -1,0 +1,51 @@
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { cookies } from "next/headers";
+import { NextResponse, type NextRequest } from "next/server";
+
+export async function GET(request: NextRequest) {
+  const { searchParams, origin } = new URL(request.url);
+  const code = searchParams.get("code");
+  const next = searchParams.get("next") ?? "";
+
+  // Extract locale from the URL path: /az/callback or /en/callback
+  const segments = request.nextUrl.pathname.split("/").filter(Boolean);
+  const locale = segments[0] === "az" || segments[0] === "en" ? segments[0] : "az";
+
+  if (code) {
+    const cookieStore = await cookies();
+
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return cookieStore.getAll();
+          },
+          setAll(cookiesToSet: { name: string; value: string; options?: CookieOptions }[]) {
+            try {
+              cookiesToSet.forEach(({ name, value, options }) =>
+                cookieStore.set(name, value, options)
+              );
+            } catch {
+              // Route handler — cookies are writable here
+            }
+          },
+        },
+      }
+    );
+
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+    if (!error) {
+      // Successful auth — redirect to next or dashboard
+      const redirectPath = next.startsWith("/") && !next.startsWith("//")
+        ? next
+        : `/${locale}/dashboard`;
+      return NextResponse.redirect(`${origin}${redirectPath}`);
+    }
+  }
+
+  // Auth error or no code — redirect to login
+  return NextResponse.redirect(`${origin}/${locale}/login?message=oauth-error`);
+}

@@ -8,7 +8,10 @@
 
 import { createClient as createSupabaseClient } from "@/lib/supabase/client";
 
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// Relative path — Vercel rewrites to NEXT_PUBLIC_API_URL (or localhost in dev)
+// Production: volaura.app/api → modest-happiness-production.up.railway.app/api
+// Dev: localhost:3000/api → localhost:8000/api
+export const API_BASE = "/api";
 
 export class ApiError extends Error {
   constructor(

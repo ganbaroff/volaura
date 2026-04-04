@@ -889,3 +889,56 @@ except ImportError:
 3. Specify output format explicitly
 **Blocking gate:** Step 1.0.3 in TASK-PROTOCOL v5.3. Missing context block = CLASS 3 mistake.
 **Analogy:** Hiring a consultant for a 1-hour engagement without an onboarding brief. You get generic advice optimized for someone else's situation.
+
+---
+
+## Pattern: Simple-First Escalation (Session 84, 2026-04-04)
+
+**What:** Always exhaust simple solutions before attempting complex ones. When blocked, ask "Is the simple path available?" before engineering.
+
+**Why it works:** Complex solutions introduce surface area for new bugs. Simple paths are often faster, lower-risk, and teachable. CTO created OAuth bugs (2hr debug) when key rotation was 10min. Built Vercel manifest debug when regular route works. Created Python audio library debug when hardware toggle is first check.
+
+**CEO directive:** "всегда используй сначала простые шаги потом к сложным переходи" — always use simple steps first, then move to complex ones.
+
+**Checklist before complex approach:**
+- [ ] Is there a built-in/native solution? (hardware toggle, native client, default config)
+- [ ] Can I use an existing resource instead of creating new? (rotate old key vs debug new one, use standard path vs custom route)
+- [ ] Does the simple path fail or just "seems suboptimal"? (distinguish real blocker from premature optimization)
+- [ ] Have I tested the simple approach? (don't assume it won't work)
+- [ ] If simple works but slowly: can I optimize it instead of replacing it?
+
+**Examples:**
+- OAuth: use existing Supabase client instead of creating new Google OAuth client (2hr saved)
+- Vercel: use `/path` instead of route group until static generation is actually needed (manifest debug avoided)
+- Microphone: check Settings → Sound → hardware toggle before debugging audio libraries (5min vs 45min)
+- Agents: use same model (haiku) in parallel if parallelism is the goal; use diverse models (haiku/sonnet/Groq) only if actual diversity of perspective is needed
+
+**When to escalate:** Simple path tested thoroughly + proves insufficient (measurable gap) → then engineer complex solution.
+
+**Enforcement:** Before writing any complex implementation, declare: "Simple path checked: [result]. Escalating because: [concrete reason]." If can't fill in second line → not ready to escalate.
+
+---
+
+## Pattern: "Did I Create This?" Check (Session 84, 2026-04-04)
+
+**What:** Before debugging anything for >5 minutes, ask: "Is it possible I created this problem?"
+
+**Why:** Self-created bugs are the fastest to fix once identified, but hardest to see while debugging. CTO focuses on external causes first (library bug, API change, environment) and misses the obvious (typo, wrong variable, recent code change). This pattern flips the search order: check self-authored code first.
+
+**Concrete examples:**
+- OAuth debug (2hr): Later found the issue was wrong variable name in CTO's integration code, not Google API.
+- Vercel manifest: CTO created route group that broke static generation; spent 45min debugging Vercel.
+- Assessment store: CTO stored state in sessionStorage; only caught by asking "what if user refreshes?"
+- Agents: CTO launched 7 identical haiku instead of using diverse models available (NVIDIA, Groq); self-imposed constraint, not a real blocker.
+
+**Rule:** The FIRST debug question is always: "What did I change recently?" and "Is the bug downstream of my code?"
+- Review recent commits (git log --oneline -20 in the relevant file)
+- Check diff of the function/component that broke
+- Ask: "What assumption did I make that might be false?"
+- Re-read your own code for 2 minutes before reading external docs
+
+**When the bug IS self-created:** Fix in seconds. When it's external: you've eliminated 80% of debug space already.
+
+**Checkpoint:** If debugging >10 min and haven't checked own code yet → stop, check own code now. Saves time almost always.
+
+**Integration with Simple-First:** Simple-first finds quick wins. "Did I create this?" finds self-created bugs even when they seem external. Run both checks before escalating to complex debugging or architecture redesign.

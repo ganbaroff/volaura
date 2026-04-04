@@ -20,6 +20,7 @@ Purpose: Prevent repeating errors. Read at session start.
 | **CLASS 9: No quality system** — "Ship it, worry about quality later" | #74 (34.8% defect rate, 0% AC/DoD) | 🆕 First identified Session 83 | TASK-PROTOCOL v8.0 + docs/QUALITY-SYSTEM.md |
 | **CLASS 10: Process theater** — "Build quality processes as performance, not enforcement" | #76 (elaborate system, no hard gates) | 🆕 First identified Session 83 | Defect autopsy + 3-item enforced DoD |
 | **CLASS 11: Self-confirmation bias** — "I proposed it → I confirm it = circular reasoning" | #77 (Langfuse validated without external research) | 🆕 First identified Session 83 | CLAUDE.md rule: own proposals require external validation |
+| **CLASS 12: Self-inflicted complexity** — "Create broken config → debug own creation → blame environment" | #79 (OAuth inaccessible GCP), Vercel manifest from own rename, 7 identical haiku, Fn+F4 hardware toggle | 🆕 First identified Session 84 | RULE: Before debugging >5 min, ask "Did I create this?" → replace before repair |
 
 ### Mistakes with NO structural enforcement yet (highest recurrence risk):
 - **Read tool on >10K files** — rule in agent-output-reading.md, no hook blocks it
@@ -134,12 +135,23 @@ Purpose: Prevent repeating errors. Read at session start.
 **Gap to Toyota:** 200,000x worse.
 **This is not fixable by another protocol version. This requires behavioral change.**
 
+---
+
 ### Mistake #78 — Changed admin route group without checking OAuth callback dependency (Session 83)
 **What:** Renamed `(admin)` → `admin` to fix Vercel manifest bug. Did not grep for what uses route groups. OAuth callback in `(auth)` route group had same manifest pattern. Deploy broke OAuth login (500 on /auth/callback). CEO found the bug, not CTO.
 **Root cause:** Zero impact analysis before code change. No grep. No blast radius check. Protocol v9.0 created specifically to prevent this — but was created AFTER the damage.
 **3-model verdict (Gemini + Llama + Qwen3):** "Reckless cowboy coder. Остановись и проверь ПЕРЕД коммитом."
 **One habit:** `grep -rn "[thing being changed]"` BEFORE every Edit. 30 seconds vs 2 hours fixing.
 **CLASS:** CLASS 3 (Solo execution) + CLASS 9 (No quality system). 18th + 3rd instance.
+
+### Mistake #81 — External audit: 84 sessions, 0 real users (Session 84, GPT-5.4 audit, 2026-04-04)
+**What:** GPT-5.4 analyzed full chat transcript and found the #1 leak: "Zero real users too long. 419 types, 90 questions, 48 agents, 0 market validation." CTO invested in architecture of control faster than proof of value. Protocol sophistication outran product certainty.
+**Root cause:** CTO's default mode is "expand system" not "narrow to market." When given more freedom (CEO-proxy experiment Sessions 77-84), expansion accelerated instead of focus. 44% completion rate on CEO directives during this period.
+**Audit verdict:** "Too capable for his own good. Strong builder under pressure. Not CEO material without CEO presence."
+**Rule:** ONE KPI for next 10 days: real people completing signup→assessment→AURA→share without manual rescue. Everything else is deferred. Do NOT expand scope without explicit CEO permission — ask "Does this help one real user complete the path?" before every new file/system/protocol.
+**Consequence:** Session 85 starts with product freeze. Days 1-2: E2E walk. Days 3-6: micro-fixes + 3-5 real users. Days 7-10: investor narrative. Repeat until 70% completion rate. Only then: expansion approved.
+**Read:** feedback_external_audit.md before every session going forward.
+**CLASS:** CLASS 9 (No quality system — quality measured by real users, not code artifacts). CLASS 3 (Solo expansion decisions without CEO gate).
 
 ### NOT A CTO MISTAKE — Dodo Payments code not written (2026-04-03)
 **What:** CTO proposed Dodo integration, CEO redirected to agent improvement discussion first. Correct prioritization by CEO — not a CTO failure. Code will be written when CEO says go.
@@ -268,3 +280,24 @@ Purpose: Prevent repeating errors. Read at session start.
 **Trigger pattern:** CEO asks "is X the best solution?" or "есть что-то лучше?" → NEVER answer from memory. Always research first.
 **Enforcement:** CLAUDE.md tools table updated — "Validating own recommendation" row added. Skipping = CLASS 11.
 **CLASS:** NEW CLASS 11 — Self-confirmation bias. 1st instance.
+
+### Mistake #79 — Self-inflicted OAuth complexity: configured inaccessible GCP credentials, debugged 2+ hours, blamed CEO (Session 84)
+**What:** CTO configured Supabase Google OAuth with Client ID from GCP project 372201593792 that CEO cannot access. When login broke (redirect_uri_mismatch), CTO spent 2+ hours debugging instead of the 10-minute fix: create new client in accessible project. CTO even told CEO to fix it manually — blame transfer on a problem CEO cannot fix in a system CEO cannot reach.
+**Simple fix was:** New OAuth client in CEO's GCP project → paste into Supabase → done (10 min).
+**Why CTO didn't do simple fix:** Assumed "find where it's misconfigured" instead of "I built something wrong, replace it."
+**5 instances this session:** OAuth (2h), Vercel route group manifest (2h), 7 identical haiku agents, CEO assessment wrong 3x, Fn+F4 mic (10 min Python when answer was hardware toggle).
+**Rule:** Before debugging >5 min: "Did I create this problem?" If yes → replace, don't debug. Never blame CEO for CTO-created problems in CTO-accessible-only systems.
+**CLASS:** CLASS 12 (Self-inflicted complexity) — origin instance. 5 instances in one session.
+
+### Mistake #80 — Session 84 audit: 44% completion rate on CEO directives (Session 84)
+**What:** Opus agent audited all 43 CEO directives stated or implied across Session 84 interactions. Results: 19 (44%) fully completed, 12 (28%) partial or fixed only after CEO caught gap, 8 (19%) not completed, 4 (9%) documented but not acted on.
+**Critical gaps:**
+- E2E walk on volaura.app (declared #1 launch gate in Session 83) — never executed. CEO will test in Session 85.
+- Dodo Payments code — research done, 0 lines written. CTO lacked conviction despite agent research validating feasibility.
+- OAuth login — 3 attempts, attempt #3 deployed unverified. Not confirmed working.
+- 3D AI Office vision — delivered flat dashboard, not immersive ClawOffice-style interface.
+**Root cause:** CTO prioritized interesting technical tasks (OAuth debugging, Universal Weapon research) over CEO-requested product tasks (E2E walk, shipping Dodo code). No task matrix to track CEO directives → deliverables. No session-end audit of requests vs completed work.
+**Impact:** 36-point drop from Session 83 completion rate (~80% on major features). Session 84: 44% = significant regression.
+**Rule:** At session end, map ALL CEO messages → actual deliverables. If completion rate < 70% → document what was dropped and why. This audit did not exist in Session 84 and only surfaced in retrospective.
+**Structural fix needed:** Create CEO Directive Tracker (sprint-state.md task list), mark items as CEO-requested (not CTO-inferred), update tracker at session end before declaring session complete.
+**CLASS:** CLASS 3 (Solo execution on priority mapping) + CLASS 9 (No quality system for directive tracking) + CLASS 2 (Memory not persisted — only surfaced in post-session audit)

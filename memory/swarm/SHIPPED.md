@@ -6,18 +6,75 @@
 
 ---
 
-## Session 83 NIGHT SPRINT (2026-04-04) — AI Office + VOLAURA fixes + JARVIS-MindShift
+## Session 84 (2026-04-04) — OAuth Fix + Universal Weapon Research + Mem0 MCP
 
+### Code / Config Changed
+| Item | What it does | Status |
+|------|-------------|--------|
+| OAuth callback (onAuthStateChange) | apps/web/app/[locale]/auth/callback/page.tsx — 3rd attempt: listens for SIGNED_IN event, no manual exchange | Deployed, awaiting CEO test |
+| Google OAuth credentials | Supabase Google provider: new Client ID + Secret from "My First Project" GCP | Live in Supabase dashboard |
+| Mem0 MCP | .mcp.json updated with mem0 HTTP endpoint; MEM0_API_KEY saved to apps/api/.env + Windows env var | Needs Claude Code restart |
+| CV corrected | docs/Yusif_Ganbarov_CV_2026_v2.docx — MindShift: "Co-creator" → "Founder" | Done |
+
+### Research / Docs
+| Item | Detail |
+|------|--------|
+| UNIVERSAL-WEAPON-RESEARCH-2026-04-04.md | Full report: LibreChat + OpenHands + Letta (top 3 platforms), LangGraph winner (47/50), Mem0 Rank 1 memory, CEO-proxy feasibility confirmed, $10B→$70B market gap |
+| Mistake #79 + CLASS 12 | Self-inflicted complexity — saved to mistakes.md |
+| Pattern: Simple-First Escalation | Saved to patterns.md |
+| Pattern: "Did I Create This?" Check | Saved to patterns.md |
+| MindShift audit | 9 patterns identified for VOLAURA adoption |
+
+### CEO Directives Locked
+| Directive | Status |
+|-----------|--------|
+| "ТЫ это я. Ты мозги, не руки" — CEO-proxy role | Locked |
+| "80% VOLAURA / 20% Universal Weapon" | Locked |
+| "Простые шаги сначала" | Locked |
+| MindShift = CEO's product (Founder) | Locked |
+| BrandedBy = Co-founder (left bad team) | Locked |
+
+---
+
+## Session 83 NIGHT SPRINT (2026-04-04) — AI Office + Pulse + JARVIS + Ollama + VOLAURA fixes
+
+### Code Delivered
 | Item | What it does | Status |
 |------|-------------|--------|
 | AI Office Dashboard | /admin/swarm — 48 agents with status dots, proposal inbox, mobile-first 390px | Live |
 | Swarm API endpoints | GET /admin/swarm/agents, GET /admin/swarm/proposals, POST /decide | Live |
+| Pulse Emotional Core | emotional_core.py — 370 lines, 5 dimensions (joy, stress, curiosity, frustration, flow) | Ready |
+| JARVIS TTS | edge-tts integration, team_status voice command | Ready |
+| JARVIS create_task | Voice → MindShift task via Supabase REST API | Ready |
+| JARVIS mood reporting | Mood state capture and reporting | Ready |
+| Ollama local models | Qwen3 8B + GLM-OCR on local RTX 5060 GPU | Running |
 | Referral sharing UI | Profile page: copy referral link, crystal reward description | Live |
 | QR check-in page | /events/{eventId}/checkin — coordinator code entry with success/error | Live |
-| JARVIS create_task | Voice → MindShift task via Supabase REST API | Ready |
+| Language switcher | Landing page AZ/EN toggle | Live |
+| Dev banner | All pages: development environment banner (AZ+EN) | Live |
 | Admin sidebar | "AI Office" nav item with Bot icon | Live |
+| Fake stats zeroed | Removed hardcoded placeholder statistics | Live |
 
-Commits: 8a4c2d6 (AI Office), b1fa7e2 (VOLAURA fixes), a61cec5 (JARVIS task)
+### Infrastructure / Ops
+| Item | Detail |
+|------|--------|
+| Vercel project | Recreated (route group bug fixed), build passes |
+| Telegram bot | 6 commands registered, webhook secret fixed |
+| Langfuse keys | Deployed to Railway |
+| NVIDIA + Dodo keys | Deployed to Railway |
+| Supabase + Railway | GitHub secrets set |
+| Trend Scout | Added to GitHub Actions daily workflow |
+| agent-state.json | Persistent state for 8 agents |
+
+### Docs / Process
+| Item | Detail |
+|------|--------|
+| TASK-PROTOCOL v9.0 FINAL | Zero simulation, grep-before-edit |
+| 3-model CTO evaluation | Gemini D-, Llama D+ |
+| Neurocognitive Architecture | Research saved |
+| Mistakes #68-#78 | 11 new mistakes, CLASS 9 (no quality system), CLASS 10 (process theater) |
+
+Commits: 8a4c2d6 (AI Office), b1fa7e2 (VOLAURA fixes), a61cec5 (JARVIS task), dbe5990 (Vercel cache fix)
 
 ---
 

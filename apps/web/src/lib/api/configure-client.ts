@@ -28,10 +28,11 @@ export function configureApiClient(): void {
   if (configured) return;
   configured = true;
 
-  // Direct to Railway — CORS is configured to accept volaura.app origin.
-  // Generated client paths already include /api/ prefix (e.g., /api/profiles/me).
+  // Generated client paths include /api/ prefix (e.g., /api/profiles/me).
+  // baseUrl="" → browser calls volaura.app/api/... → Vercel rewrite → Railway.
+  // Same-origin = no CORS. Simple.
   client.setConfig({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
+    baseUrl: "",
   });
 
   // Inject Supabase Bearer token on every request

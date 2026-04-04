@@ -38,7 +38,7 @@ export function useMyLeaderboardRank() {
     queryFn: async () => {
       const token = await getToken();
       if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
-      return apiFetch<MyRankResponse>("/api/leaderboard/me", { token });
+      return apiFetch<MyRankResponse>("/leaderboard/me", { token });
     },
     staleTime: 5 * 60 * 1000,
     retry: 1,

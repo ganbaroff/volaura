@@ -52,7 +52,7 @@ export function useUnreadCount() {
     queryFn: async () => {
       const token = await getToken();
       if (!token) return { unread_count: 0 };
-      return apiFetch<UnreadCount>("/api/notifications/unread-count", { token });
+      return apiFetch<UnreadCount>("/notifications/unread-count", { token });
     },
     staleTime: 2 * 60 * 1000,
     refetchInterval: 2 * 60 * 1000,

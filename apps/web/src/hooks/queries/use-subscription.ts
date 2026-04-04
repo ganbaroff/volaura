@@ -36,7 +36,7 @@ export function useSubscription(): UseSubscriptionResult {
     queryFn: async () => {
       const token = await getToken();
       if (!token) return null;
-      return apiFetch<SubscriptionStatus>("/api/subscription/status", { token });
+      return apiFetch<SubscriptionStatus>("/subscription/status", { token });
     },
     staleTime: 5 * 60 * 1000,
     retry: 1,

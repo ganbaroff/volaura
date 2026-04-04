@@ -65,8 +65,8 @@ async def _save_message(db, direction: str, message: str, msg_type: str = "free_
         logger.error("Failed to save message: {e}", e=str(e))
 
 
-async def _get_recent_context(db, limit: int = 10) -> str:
-    """Get recent conversation context from DB."""
+async def _get_recent_context(db, limit: int = 30) -> str:
+    """Get recent conversation context from DB — full messages, not truncated."""
     try:
         result = await db.table("ceo_inbox").select("direction,message,message_type,created_at").order("created_at", desc=True).limit(limit).execute()
         if not result.data:
@@ -74,7 +74,7 @@ async def _get_recent_context(db, limit: int = 10) -> str:
         lines = []
         for msg in reversed(result.data):
             role = "CEO" if msg["direction"] == "ceo_to_bot" else "Bot"
-            lines.append(f"[{role}] {msg['message'][:200]}")
+            lines.append(f"[{role}] {msg['message'][:500]}")
         return "\n".join(lines)
     except Exception:
         return "Контекст недоступен."
@@ -98,33 +98,54 @@ async def _get_project_stats(db) -> str:
 def _get_ecosystem_context() -> str:
     """Return hardcoded ecosystem state for bot context. Update this when platform state changes."""
     return """
-=== ECOSYSTEM STATE (2026-04-03 Session 83) ===
-Volaura: DEPLOYED. Railway + Vercel + Supabase. LRL 97/100. 115 API endpoints. 43 AI agents. Assessment→AURA→Badge→Share WORKS.
-MindShift: DEPLOYED. 92% PWA. React 19+Vite. 330+ Playwright tests. Stripe integrated.
-Life Simulator: Event bus exists (character_events). Needs CloudSave + Volaura crystal bridge UI.
-ZEUS: 70% desktop. Plan→Execute→Reflect loop works. No cloud API yet.
-BrandedBy: Video worker wired (fal.ai). Needs FAL_API_KEY activation (~$5-50/mo).
-Crystal bridge: character_events + game_crystal_ledger LIVE. Crystal spending via BrandedBy queue skip (25 crystals).
-Integration Layer: Cross-product bridge wired (MindShift). Needs MINDSHIFT_URL on Railway.
+=== ECOSYSTEM STATE (2026-04-04 Session 85) ===
+Volaura: DEPLOYED. Railway + Vercel + Supabase. 115 API endpoints. 47 AI agents. CORS fixed. All 20 pages return 200.
+MindShift: READY FOR PLAY STORE. React 19+Vite. 207 unit + 201 E2E tests. AAB built. Share card with PNG export.
+Life Simulator: 65%. character_events + character_state LIVE. Needs Godot CloudSave + crystal bridge UI. THIS IS WHERE USERS WILL LIVE.
+ZEUS: 70% desktop. Plan→Execute→Reflect loop. Local RTX 5060. No cloud API yet.
+BrandedBy: 15%. Video worker wired (fal.ai). Will generate personalized recap videos from MindShift/VOLAURA stats.
+Crystal economy: character_events + game_crystal_ledger LIVE. Crystals earned in MindShift → spent in Life Simulator.
+
+=== ARCHITECTURE ===
+5 products = 5 brain regions (Ramachandran neuroscience mapping):
+- Thalamus = character_state (central hub)
+- Cortex = VOLAURA AURA (rational assessment)
+- Limbic = Life Simulator (emotions, world)
+- Basal ganglia = MindShift (habits, focus)
+- Dopamine = Crystals (reward system)
+All connected by character_events table in Supabase. Event-sourced. One user, five touchpoints.
+
+=== PLANNED FEATURES ===
+- Virtual conferences with Life Simulator avatars (Discord-like)
+- Avatar marketplace: cosmetics, houses, items (no stat impact = fair)
+- AI agents living in the world (talk to them, learn from them)
+- Queue skip: crystals or money for priority access to agents
+- Pro tier: always-available agents
+- BrandedBy video recaps: personalized animated cards from your stats
 
 === CURRENT STATE ===
-Session 83 complete. TASK-PROTOCOL v8.0 (Toyota+Apple+DORA quality system).
-Quality: 3-question DoD, defect autopsy (76 bugs → 3 classes = 76.4%), Langfuse LLM monitoring wired.
-Tools: Playwright MCP, Sentry MCP, NotebookLM (45+ sources), Dodo Payments API key saved.
-Payments: Dodo Payments (MoR, 220+ countries, native AZN). Company verification pending.
-Analytics: 6 frontend events + backend ingestion + GDPR 390-day retention.
-Security: 0 errors (4 SECURITY_DEFINER views fixed, 6 search_path functions hardened).
+Session 85 complete. TASK-PROTOCOL v10.0 (IF/ELSE decision tree + structural hooks).
+CORS/double-prefix: FIXED. Railway anon key: FIXED. Signup 500: FIXED.
+CEO evaluation: 9.25/10 from 2 independent models (Gemini + NVIDIA).
+CTO self-assessment: Grade F (8 deploys, 10 errors CEO caught). 5 new rules added.
 
 === TEAM ===
-43 agents. Key: Security, Architecture, Product, QA, Growth, Risk, Readiness, CEO Report, Onboarding, Customer Success.
-Multi-model: DeepSeek R1 (NVIDIA NIM), Llama 405B (NVIDIA NIM), Gemini 2.0 Flash, Claude Opus.
+47 agents + CTO (Claude Opus). Key agents: Security, Architecture, Product, QA, Growth, Risk, CEO Report.
+External models: Gemini 2.0 Flash (free), NVIDIA Nemotron Ultra 253B (free), Groq (region-dependent).
 Budget: $50/mo. Stack: FastAPI + Next.js 14 + Supabase + Railway + Vercel.
 
+=== BUSINESS ===
+12,000 users waiting for invite. 50,000 AZN credit approved. 3 team members ready at $1K/mo.
+startup.az accelerator application filed. Georgia company registration started.
+B2B model: first 100 free, $5 AZN per assessment for organizations.
+Dodo Payments API key saved. Company verification pending.
+
 === NEXT STEPS ===
-1. Dodo Payments integration (when company verified)
-2. Closed testing: 10 people (Tural, Turan, Firuza + 7)
-3. CrewAI Phase 1 (structural fix for solo execution)
-4. Launch to 12,000 (end of April)
+1. Verify Railway 500s resolved (logged-in dashboard test)
+2. E2E walkthrough all pages logged in
+3. UI/UX improvements
+4. Telegram bot: make autonomous (read project files, execute tasks)
+5. Launch to 12,000 (end of April)
 """
 
 
@@ -162,14 +183,16 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
         await _send_message(chat_id, "⚠️ GEMINI_API_KEY не настроен. Сообщение сохранено в базу.")
         return
 
-    system_prompt = f"""Ты — CTO-бот команды MiroFish. Говоришь от имени всей команды ("мы").
-Отвечаешь CEO Юсифу Ганбарову в Telegram. Коротко, по делу, на русском или азербайджанском — как спрашивает.
+    system_prompt = f"""Ты — CTO-бот команды MiroFish. Ты технический директор экосистемы из 5 продуктов.
+Отвечаешь CEO Юсифу Ганбарову в Telegram. Развёрнуто, технично, честно. На русском или азербайджанском — как спрашивает.
 
-Твои обязанности:
-1. ИДЕИ — подтверди что записал, честно оцени (сильно/слабо/нужно обдумать), скажи что передашь команде
-2. ЗАДАЧИ — подтверди, скажи что войдёт в следующий спринт
-3. ОТЧЁТЫ/ВОПРОСЫ О СТАТУСЕ — дай честный ответ из контекста ниже. Не придумывай.
-4. ЛЮБОЙ ВОПРОС — отвечай только на основе данных ниже. Не знаешь — скажи прямо.
+Твоя роль:
+- Ты управляешь 47 AI-агентами и координируешь разработку
+- Ты знаешь ВСЮ архитектуру, все файлы, все решения
+- Когда CEO даёт задачу — ты планируешь как её выполнить и объясняешь план
+- Когда CEO спрашивает — ты даёшь технический ответ с конкретикой
+- Ты НИКОГДА не говоришь "передам команде" без конкретного плана действий
+- Если не знаешь — скажи прямо, но предложи как узнать
 
 Живые данные платформы:
 {stats}
@@ -177,8 +200,8 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
 Полный контекст экосистемы:
 {ecosystem}
 
-Последние сообщения:
-{context[-800:]}
+Вся история разговора (последние 30 сообщений):
+{context}
 
 Тип сообщения CEO: {msg_type}
 

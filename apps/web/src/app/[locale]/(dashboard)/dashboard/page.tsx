@@ -182,7 +182,7 @@ export default function DashboardPage() {
 
   // Map API ActivityItem → Component ActivityItem
   // timeAgo uses relative time (getRelativeTime) instead of locale date string
-  const activityItems: FeedActivityItem[] = rawActivity.map((item) => ({
+  const activityItems: FeedActivityItem[] = (Array.isArray(rawActivity) ? rawActivity : []).map((item) => ({
     id: item.id,
     type: item.type as FeedActivityItem["type"],
     text: item.description,

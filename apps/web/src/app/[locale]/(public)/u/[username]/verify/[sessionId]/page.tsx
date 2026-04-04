@@ -41,7 +41,7 @@ const BADGE_BG: Record<string, string> = {
 
 async function fetchVerification(sessionId: string): Promise<VerificationData | null> {
   try {
-    const res = await fetch(`${API_BASE}/api/assessment/verify/${sessionId}`, {
+    const res = await fetch(`${API_BASE}/assessment/verify/${sessionId}`, {
       next: { revalidate: 3600 },
     });
     if (!res.ok) return null;

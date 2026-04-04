@@ -83,7 +83,7 @@ export default function BulkInvitePage() {
       formData.append("file", file);
 
       const response = await fetch(
-        `${API_BASE}/api/organizations/${org.id}/invites/bulk`,
+        `${API_BASE}/organizations/${org.id}/invites/bulk`,
         {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },

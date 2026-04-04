@@ -155,7 +155,7 @@ export default function QuestionPage() {
       if (!auth) return;
 
       const res = await fetch(
-        `${API_BASE}/api/assessment/answer`,
+        `${API_BASE}/assessment/answer`,
         {
           method: "POST",
           headers: {
@@ -237,7 +237,7 @@ export default function QuestionPage() {
       if (!auth) return;
 
       const res = await fetch(
-        `${API_BASE}/api/assessment/answer`,
+        `${API_BASE}/assessment/answer`,
         {
           method: "POST",
           headers: {
@@ -281,7 +281,7 @@ export default function QuestionPage() {
       if (!auth) return;
 
       const res = await fetch(
-        `${API_BASE}/api/assessment/start`,
+        `${API_BASE}/assessment/start`,
         {
           method: "POST",
           headers: {

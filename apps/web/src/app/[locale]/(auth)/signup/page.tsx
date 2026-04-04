@@ -45,7 +45,7 @@ export default function SignupPage() {
   useEffect(() => {
     isMounted.current = true;
     // Check whether signup requires an invite code
-    fetch(`${API_BASE}/api/auth/signup-status`)
+    fetch(`${API_BASE}/auth/signup-status`)
       .then((r) => r.json() as Promise<SignupStatusResponse>)
       .then((data) => { if (isMounted.current) setOpenSignup(data.open_signup ?? true); })
       .catch(() => { if (isMounted.current) setOpenSignup(true); }); // fail open on network error
@@ -68,7 +68,7 @@ export default function SignupPage() {
     try {
       // Invite gate: validate code before creating Supabase account
       if (openSignup === false) {
-        const validateRes = await fetch(`${API_BASE}/api/auth/validate-invite`, {
+        const validateRes = await fetch(`${API_BASE}/auth/validate-invite`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ invite_code: inviteCode }),
@@ -116,7 +116,7 @@ export default function SignupPage() {
 
       // Fetch profile to get registration_number for celebration message
       try {
-        const profileRes = await fetch(`${API_BASE}/api/profiles/me`, {
+        const profileRes = await fetch(`${API_BASE}/profiles/me`, {
           headers: { Authorization: `Bearer ${data.session.access_token}` },
         });
         if (profileRes.ok) {

@@ -28,9 +28,11 @@ export function configureApiClient(): void {
   if (configured) return;
   configured = true;
 
-  // Set the correct base URL from environment
+  // Use relative /api path — Vercel rewrites to NEXT_PUBLIC_API_URL.
+  // NEVER use the raw env var here; it causes cross-origin requests → CORS errors.
+  // Production: volaura.app/api → Railway backend (same-origin via rewrite)
   client.setConfig({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
+    baseUrl: "/api",
   });
 
   // Inject Supabase Bearer token on every request

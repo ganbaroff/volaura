@@ -31,7 +31,7 @@ export function useTrackEvent() {
             ? window.location.pathname.split("/")[1] || "en"
             : "en";
 
-        await fetch(`${API_BASE}/api/analytics/event`, {
+        await fetch(`${API_BASE}/analytics/event`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

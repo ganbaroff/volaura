@@ -90,7 +90,7 @@ function AuthCallbackContent() {
         const oauthMeta = readAndClearFromStorage(OAUTH_META_KEY);
         const payload = { ...attribution, ...oauthMeta };
         if (Object.keys(payload).length > 0) {
-          fetch(`${API_BASE}/api/profiles/me`, {
+          fetch(`${API_BASE}/profiles/me`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
@@ -111,7 +111,7 @@ function AuthCallbackContent() {
 
         // Route new users (no profile yet) to onboarding, returning users to dashboard
         try {
-          const res = await fetch(`${API_BASE}/api/profiles/me`, {
+          const res = await fetch(`${API_BASE}/profiles/me`, {
             headers: { Authorization: `Bearer ${session.access_token}` },
           });
           if (!isMounted.current) return;

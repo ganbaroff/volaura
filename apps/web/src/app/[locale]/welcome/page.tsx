@@ -82,7 +82,7 @@ function WelcomeContent() {
       }
       // Fetch display name from profile
       if (session) {
-        fetch(`${API_BASE}/api/profiles/me`, {
+        fetch(`${API_BASE}/profiles/me`, {
           headers: { Authorization: `Bearer ${session.access_token}` },
         })
           .then((r) => r.json())

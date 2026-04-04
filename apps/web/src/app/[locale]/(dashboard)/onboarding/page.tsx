@@ -218,7 +218,7 @@ export default function OnboardingPage() {
       const headers: Record<string, string> = { "Content-Type": "application/json" };
       if (token) headers.Authorization = `Bearer ${token}`;
 
-      const res = await fetch(`${API_BASE}/api/profiles/me`, {
+      const res = await fetch(`${API_BASE}/profiles/me`, {
         method: "POST",
         headers,
         body: JSON.stringify(payload),
@@ -232,7 +232,7 @@ export default function OnboardingPage() {
       // For org accounts: auto-create the organizations row so search/intro works immediately
       if (accountType === "organization") {
         const orgName = formData.display_name.trim() || formData.username.trim() || "My Organization";
-        const orgRes = await fetch(`${API_BASE}/api/organizations`, {
+        const orgRes = await fetch(`${API_BASE}/organizations`, {
           method: "POST",
           headers,
           body: JSON.stringify({ name: orgName }),

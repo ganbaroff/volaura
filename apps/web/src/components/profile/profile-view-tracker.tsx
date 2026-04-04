@@ -32,7 +32,7 @@ export function ProfileViewTracker({ username }: { username: string }) {
         });
 
         // Analytics: profile_viewed (fire-and-forget)
-        fetch(`${API_BASE}/api/analytics/event`, {
+        fetch(`${API_BASE}/analytics/event`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

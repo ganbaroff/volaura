@@ -104,7 +104,7 @@ function AssessmentContent() {
         return;
       }
 
-      const res = await fetch(`${API_BASE}/api/assessment/start`, {
+      const res = await fetch(`${API_BASE}/assessment/start`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

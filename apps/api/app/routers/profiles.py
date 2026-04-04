@@ -57,19 +57,22 @@ async def get_my_profile(
     # Same fix as auth.py — .single() crashes for new users who haven't completed onboarding.
     # Explicit column list — excludes stripe_customer_id, stripe_subscription_id
     # (internal payment references that have no client-side use and must not leak).
-    result = (
-        await db.table("profiles")
-        .select(
-            "id, username, display_name, bio, avatar_url, location, languages, "
-            "account_type, is_public, visible_to_orgs, org_type, registration_number, "
-            "registration_tier, subscription_status, trial_started_at, trial_ends_at, "
-            "subscription_started_at, subscription_ends_at, created_at, updated_at, "
-            "age_confirmed, terms_version, terms_accepted_at"
+    try:
+        result = (
+            await db.table("profiles")
+            .select(
+                "id, username, display_name, bio, avatar_url, location, languages, "
+                "account_type, is_public, visible_to_orgs, org_type, registration_number, "
+                "registration_tier, subscription_status, trial_started_at, trial_ends_at, "
+                "subscription_started_at, subscription_ends_at, created_at, updated_at, "
+                "age_confirmed, terms_version, terms_accepted_at"
+            )
+            .eq("id", user_id)
+            .maybe_single()
+            .execute()
         )
-        .eq("id", user_id)
-        .maybe_single()
-        .execute()
-    )
+    except Exception:
+        result = None
     if not result or not result.data:
         raise HTTPException(
             status_code=404,

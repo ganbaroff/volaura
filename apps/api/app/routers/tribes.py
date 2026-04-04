@@ -55,11 +55,14 @@ async def get_my_tribe(
     Opted-out members are invisible.
     """
     # Find user's active tribe membership
-    membership_result = await db.table("tribe_members").select(
-        "tribe_id, tribes(id, expires_at, status)"
-    ).eq("user_id", str(user_id)).is_("opt_out_at", None).maybe_single().execute()
+    try:
+        membership_result = await db.table("tribe_members").select(
+            "tribe_id, tribes(id, expires_at, status)"
+        ).eq("user_id", str(user_id)).is_("opt_out_at", None).maybe_single().execute()
+    except Exception:
+        membership_result = None
 
-    if not membership_result.data:
+    if not membership_result or not membership_result.data:
         return None
 
     tribe_data = membership_result.data
@@ -136,9 +139,12 @@ async def get_my_streak(
     Visible only to the user themselves (RLS: auth.uid() = user_id).
     consecutive_misses_count is used by frontend for crystal fade animation.
     """
-    streak_result = await db.table("tribe_streaks").select("*").eq("user_id", str(user_id)).maybe_single().execute()
+    try:
+        streak_result = await db.table("tribe_streaks").select("*").eq("user_id", str(user_id)).maybe_single().execute()
+    except Exception:
+        streak_result = None
 
-    if not streak_result.data:
+    if not streak_result or not streak_result.data:
         return None
 
     data = streak_result.data

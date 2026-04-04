@@ -216,12 +216,12 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
         from google import genai
         client = genai.Client(api_key=settings.gemini_api_key)
         response = client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-2.5-flash-preview-05-20",
             contents=text,
             config=genai.types.GenerateContentConfig(
                 system_instruction=system_prompt,
-                max_output_tokens=2000,
-                temperature=0.5,
+                max_output_tokens=4000,
+                temperature=0.7,
             ),
         )
         reply = response.text.strip()
@@ -374,7 +374,7 @@ async def _handle_ask_agent(db, chat_id: int | str, agent_name: str, question: s
         from google import genai
         client = genai.Client(api_key=settings.gemini_api_key)
         response = client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-2.5-flash-preview-05-20",
             contents=question,
             config=genai.types.GenerateContentConfig(
                 system_instruction=f"""Ты — {perspective} в swarm команде Volaura.
@@ -433,7 +433,7 @@ async def _handle_ask_proposal(db, chat_id: int | str, proposal_id: str, questio
             f"Content: {found.get('content', '')[:800]}"
         )
         response = client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-2.5-flash-preview-05-20",
             contents=question,
             config=genai.types.GenerateContentConfig(
                 system_instruction=f"""Ты — CTO-бот. CEO задаёт уточняющий вопрос по конкретному proposal от swarm.

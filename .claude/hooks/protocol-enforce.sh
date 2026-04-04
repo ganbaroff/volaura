@@ -74,6 +74,35 @@ EOF
   exit 2
 fi
 
+# ── Staleness check: state older than 4 hours = expired ────────
+STATE_AGE_SECONDS=$(python3 -c "
+import json, os, time
+f = os.path.join(os.getcwd(), '.claude', 'protocol-state.json')
+try:
+    with open(f) as fh:
+        s = json.load(fh)
+    e = s.get('started_at_epoch', 0)
+    print(int(time.time() - e) if e else 999999)
+except:
+    print(999999)
+" 2>/dev/null)
+
+IS_EXPIRED=$(python3 -c "print('yes' if int('${STATE_AGE_SECONDS}') > 14400 else 'no')" 2>/dev/null)
+if [ "$IS_EXPIRED" = "yes" ]; then
+  cat <<'EOF'
+════════════════════════════════════════════════════════
+⚠️ PROTOCOL STATE EXPIRED (>4 hours old)
+════════════════════════════════════════════════════════
+
+State file is stale. Deleting and blocking.
+Follow TASK-PROTOCOL.md from Step 0 (Flow Detection).
+
+════════════════════════════════════════════════════════
+EOF
+  rm -f "$STATE_FILE"
+  exit 2
+fi
+
 # ── Read state ──────────────────────────────────────────────────
 CURRENT_STEP=$(python3 -c "
 import json, os

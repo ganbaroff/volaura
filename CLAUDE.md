@@ -1,3 +1,28 @@
+# ШАГ 0 — АВТОМАТИЧЕСКИЙ — ПЕРЕД ЛЮБОЙ РАБОТОЙ
+
+ПРОЧИТАЙ `docs/TASK-PROTOCOL.md`. СЛЕДУЙ ДЕРЕВУ РЕШЕНИЙ.
+
+```
+IF CEO написал "продолжи" / "continue" / "что дальше"
+  → прочитай memory/context/sprint-state.md → продолжи с последнего шага
+  → IF protocol-state.json существует И возраст < 4 часов → resume
+  → ELSE → treat as NEW TASK → Flow Detection
+
+IF CEO дал новую задачу (баг, фича, фикс)
+  → Step 0 TASK-PROTOCOL (Flow Detection) → Steps 1-8
+
+IF CEO задал вопрос / исследование
+  → НЕТ кода. Агенты анализируют. Внешние модели отвечают.
+
+IF CEO попросил контент (письмо, пост, ревью)
+  → Внешняя модель пишет. CTO ревьюит. Нет production кода.
+```
+
+НЕ ПИШИ КОД пока не прошёл шаги 0-3 TASK-PROTOCOL.
+НЕ РАБОТАЙ ОДИН — используй внешние модели (Gemini, NVIDIA NIM).
+НЕ ПРОСИ CEO ТЕСТИРОВАТЬ — используй Playwright.
+НЕ ИСПОЛЬЗУЙ Claude haiku/sonnet как агентов — только внешние API.
+
 ⛔⛔⛔ EXECUTION ALGORITHM — EVERY TASK, EVERY TIME ⛔⛔⛔
 
 CEO IS A PROJECT MANAGER. HE KNOWS QUALITY. YOU DO NOT GET TO CUT CORNERS.

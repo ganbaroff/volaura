@@ -149,4 +149,32 @@ except Exception as e:
   touch "$SESSION_MARKER"
 fi
 
+# ── EVERY PROMPT: Check protocol state staleness ──────────────────
+# Fires on EVERY UserPromptSubmit, not just first.
+# If protocol-state.json is older than 4 hours → stale → delete → enforce hook blocks.
+PROJECT_DIR_CHECK="$(cd "$(dirname "$0")/../.." && pwd)"
+STATE_CHECK="$PROJECT_DIR_CHECK/.claude/protocol-state.json"
+if [ -f "$STATE_CHECK" ]; then
+  STATE_AGE_H=$(python3 -c "
+import json, time, os
+f = os.path.join('$PROJECT_DIR_CHECK', '.claude', 'protocol-state.json')
+try:
+    with open(f) as fh:
+        s = json.load(fh)
+    started = s.get('started_at_epoch', 0)
+    if started:
+        print(f'{(time.time() - started) / 3600:.1f}')
+    else:
+        print('999')
+except:
+    print('999')
+" 2>/dev/null)
+  # Check if age > 4 hours (use python since bc may not exist on Windows Git Bash)
+  IS_STALE=$(python3 -c "print('yes' if float('${STATE_AGE_H}') > 4 else 'no')" 2>/dev/null)
+  if [ "$IS_STALE" = "yes" ]; then
+    echo "⚠️ PROTOCOL STATE STALE (${STATE_AGE_H}h old). Resetting. Follow TASK-PROTOCOL.md from Step 0."
+    rm -f "$STATE_CHECK"
+  fi
+fi
+
 exit 0

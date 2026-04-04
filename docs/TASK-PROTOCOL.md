@@ -31,60 +31,108 @@ CEO directive: "перестань думать как стартап. начн�
 
 ---
 
-## How It Works — ZERO SIMULATION (v9.0)
+## How It Works — IF/ELSE Decision Tree (v10.0)
 
 **RULE: Every step produces a CONCRETE ARTIFACT. No artifact = step did not happen.**
 **CTO writing "agent confirmed" without pasting agent response = FABRICATION (CLASS 5).**
-**"I'm confident" is NOT proof. grep output IS proof. tsc -b output IS proof.**
+**CTO = ORCHESTRATOR. External models (Gemini, NVIDIA NIM) = workers. No Claude sub-agents.**
 
 ```
-0. FLOW DETECTION  → Paste CEO's exact words. Declare flow type.
-
-1. PRE-FLIGHT      → BEFORE touching ANY file:
-                     a) Run: pnpm --filter web exec tsc -b (paste output)
-                     b) Run: grep -rn "[function/component being changed]" (paste output)
-                     c) Count affected files. If >1 file → BLAST RADIUS analysis required.
-                     ARTIFACT: tsc output + grep output visible in response.
-                     WHY: CTO changed 1 file, broke 10. Every time.
-
-2. BLAST RADIUS    → For EACH file that will change:
-                     Run: grep -rn "import.*[filename]" across project (paste output)
-                     List every file that imports/uses the thing being changed.
-                     Send list to external model: "I will change [X]. These files use it: [list]. What breaks?"
-                     ARTIFACT: grep output + model response verbatim.
-                     SKIP: only if Step 1b grep shows exactly 1 file and 0 imports.
-
-3. ACCEPTANCE CRITERIA → Write BEFORE coding:
-                     "DONE when: [3-5 PASS/FAIL conditions]."
-                     MUST include: "tsc -b passes. pnpm build passes. Production URL returns 200."
-                     ARTIFACT: AC visible before any Edit/Write tool call.
-
-4. IMPLEMENT       → Write code. After EACH file edit:
-                     Run: pnpm --filter web exec tsc -b (paste last 3 lines)
-                     If error → fix BEFORE editing next file.
-                     ARTIFACT: tsc output after every edit.
-
-5. POST-EDIT CHECK → After ALL edits done:
-                     a) Run: pnpm build (paste last 5 lines)
-                     b) For each changed file: grep to verify no broken imports
-                     c) If UI change: preview_screenshot or curl production URL
-                     d) If API change: curl endpoint (paste response)
-                     ARTIFACT: build log + verification output.
-
-6. CROSS-REVIEW    → Send completed change to external model (different from Step 2).
-                     Prompt: "Review this diff. What did CTO miss? What will break in production?"
-                     ARTIFACT: model's full response pasted.
-                     If model finds issue → fix and repeat from Step 5.
-                     CTO reviewing own work = not review. Different model = review.
-
-7. COMMIT + DEPLOY → Only after Steps 1-6 have VISIBLE artifacts.
-                     git push (paste output)
-                     Vercel/Railway deploy (paste status)
-                     curl production URL (paste HTTP status + first line of body)
-                     ARTIFACT: all three outputs shown.
-
-8. DOCUMENT        → SHIPPED.md + sprint-state.md + quality-metrics.md.
-                     3-question DoD: WHO (paste their output) / WHAT step / WHERE written.
+CEO MESSAGE RECEIVED
+│
+├─ IF "продолжи" / "continue" / "что дальше"
+│    → Read sprint-state.md (last 20 lines)
+│    → IF .claude/protocol-state.json exists AND age < 4 hours:
+│         Resume from recorded step. Write state with updated timestamp.
+│    → ELSE:
+│         Treat as NEW TASK → go to Step 0 (Flow Detection)
+│
+├─ IF code task (bug, feature, fix, deploy, error)
+│    │
+│    → Step 0: FLOW DETECTION
+│    │   Paste CEO's exact words. Classify:
+│    │   ├─ HOTFIX (prod down, users blocked)
+│    │   │    → write state {step:6, exception:"hotfix", started_at_epoch:NOW}
+│    │   │    → code immediately, skip to Step 4
+│    │   ├─ TYPO (<5 lines, 1 file, no imports)
+│    │   │    → write state {step:6, exception:"typo", started_at_epoch:NOW}
+│    │   │    → code immediately, skip to Step 4
+│    │   └─ NORMAL → continue to Step 1
+│    │   ARTIFACT: CEO words pasted + flow type declared
+│    │   METRIC: protocol-state.json created with step=0
+│    │
+│    → Step 1: PRE-FLIGHT
+│    │   a) Run: grep -rn "[thing being changed]" apps/ (paste output)
+│    │   b) Count affected files
+│    │   IF 0 errors AND 1 file AND 0 imports → skip Step 2, go to Step 3
+│    │   IF >1 file → Step 2 (blast radius)
+│    │   ARTIFACT: grep output visible in response
+│    │   METRIC: protocol-state.json step=1
+│    │
+│    → Step 2: BLAST RADIUS
+│    │   grep -rn "import.*[filename]" across project (paste output)
+│    │   Send to Gemini/NVIDIA: "I will change [X]. These files use it: [list]. What breaks?"
+│    │   ARTIFACT: grep output + external model response pasted verbatim
+│    │   METRIC: protocol-state.json step=2
+│    │   SKIP: only if Step 1 grep shows exactly 1 file and 0 imports
+│    │
+│    → Step 3: ACCEPTANCE CRITERIA
+│    │   Write BEFORE coding: "DONE when: [3-5 PASS/FAIL conditions]"
+│    │   MUST include: "grep shows 0 remaining instances. Playwright shows 0 console errors."
+│    │   ARTIFACT: AC visible before any Edit/Write tool call
+│    │   METRIC: protocol-state.json step=3
+│    │
+│    → Step 4: IMPLEMENT
+│    │   Write code. After EACH file edit:
+│    │   Run grep to verify pattern is gone from that file
+│    │   IF error → fix BEFORE editing next file
+│    │   ARTIFACT: grep output after every edit
+│    │   METRIC: protocol-state.json step=4
+│    │
+│    → Step 5: VERIFY (CTO does this — NEVER CEO)
+│    │   a) Playwright: navigate to page, check console errors
+│    │   b) OR curl production URL (paste response)
+│    │   c) Run: grep -rn "[old pattern]" apps/ → must show 0 matches
+│    │   IF any fail → back to Step 4
+│    │   ARTIFACT: Playwright console output OR curl response
+│    │   METRIC: protocol-state.json step=5
+│    │
+│    → Step 6: CROSS-REVIEW
+│    │   Send diff to external model (Gemini OR NVIDIA — different from Step 2)
+│    │   Prompt: "Review this diff. What did CTO miss? What will break?"
+│    │   IF model finds issues → back to Step 4
+│    │   ARTIFACT: external model's full response pasted
+│    │   METRIC: protocol-state.json step=6
+│    │
+│    → Step 7: DEPLOY
+│    │   git push (paste output)
+│    │   vercel deploy --prod OR railway up (paste status)
+│    │   curl production URL (paste HTTP status)
+│    │   MAX 2 deploys per issue. 2nd fail → STOP → back to Step 1
+│    │   ARTIFACT: all three outputs shown
+│    │   METRIC: protocol-state.json step=7
+│    │
+│    → Step 8: DOCUMENT
+│         Update: SHIPPED.md + sprint-state.md + mistakes.md
+│         DoD: WHO reviewed (paste name)? WHAT step followed? WHERE written (file paths)?
+│         IF any answer is "nobody/none/nowhere" → task NOT done
+│         ARTIFACT: file paths of updated docs listed
+│         METRIC: protocol-state.json step=8
+│
+├─ IF research / question / "что думаешь"
+│    → No code. No protocol-state needed.
+│    → External model analysis only.
+│    → CTO synthesizes, does NOT fabricate.
+│
+├─ IF content (letter, post, review, evaluation)
+│    → External model drafts. CTO reviews.
+│    → No production code changes.
+│    → No protocol-state needed.
+│
+└─ IF session end / "на сегодня всё"
+     → MANDATORY updates: sprint-state.md, mistakes.md, SHIPPED.md, patterns.md
+     → Delete /tmp/volaura_session_active
+     → Delete .claude/protocol-state.json
 ```
 
 ## ARTIFACT EXAMPLES (what REAL proof looks like)

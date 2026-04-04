@@ -32,7 +32,7 @@ export function configureApiClient(): void {
   // NEVER use the raw env var here; it causes cross-origin requests → CORS errors.
   // Production: volaura.app/api → Railway backend (same-origin via rewrite)
   client.setConfig({
-    baseUrl: "/api",
+    baseUrl: "",
   });
 
   // Inject Supabase Bearer token on every request

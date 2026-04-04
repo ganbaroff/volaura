@@ -155,7 +155,7 @@ async def get_my_rank(
         .maybe_single()
         .execute()
     )
-    if not my_result.data:
+    if not my_result or not my_result.data:
         return MyRankResponse(rank=None, total_users=0)
 
     my_score = float(my_result.data.get("total_score") or 0)

@@ -61,7 +61,7 @@ async def get_my_aura(
         .maybe_single()
         .execute()
     )
-    if not result.data:
+    if not result or not result.data:
         raise HTTPException(
             status_code=404,
             detail={"code": "AURA_NOT_FOUND", "message": "No AURA score yet — complete an assessment first"},
@@ -181,7 +181,7 @@ async def get_aura_by_id(
         .maybe_single()
         .execute()
     )
-    if not result.data:
+    if not result or not result.data:
         raise HTTPException(
             status_code=404,
             detail={"code": "AURA_NOT_FOUND", "message": "AURA score not found"},
@@ -229,7 +229,7 @@ async def get_visibility(
         .maybe_single()
         .execute()
     )
-    if not result.data:
+    if not result or not result.data:
         # No score yet — return default so frontend can still render the setting
         return {"visibility": "public"}
     return {"visibility": result.data.get("visibility", "public")}
@@ -250,7 +250,7 @@ async def update_visibility(
         .eq("volunteer_id", user_id)
         .execute()
     )
-    if not result.data:
+    if not result or not result.data:
         raise HTTPException(
             status_code=404,
             detail={"code": "AURA_NOT_FOUND", "message": "No AURA score to update"},

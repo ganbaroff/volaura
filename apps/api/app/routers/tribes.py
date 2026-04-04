@@ -338,7 +338,7 @@ async def get_pool_status(
         "user_id", str(user_id)
     ).maybe_single().execute()
 
-    if not result.data:
+    if not result or not result.data:
         return PoolStatusOut(in_pool=False)
 
     return PoolStatusOut(in_pool=True, joined_at=result.data["joined_at"])

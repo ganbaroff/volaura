@@ -95,11 +95,11 @@ async def get_subscription_status(
             "subscription_status, trial_ends_at, subscription_ends_at, stripe_customer_id"
         )
         .eq("id", user_id)
-        .single()
+        .maybe_single()
         .execute()
     )
 
-    if not result.data:
+    if not result or not result.data:
         raise HTTPException(
             status_code=404,
             detail={"code": "PROFILE_NOT_FOUND", "message": "Profile not found"},

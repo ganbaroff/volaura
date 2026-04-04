@@ -70,7 +70,7 @@ async def get_my_profile(
         .maybe_single()
         .execute()
     )
-    if not result.data:
+    if not result or not result.data:
         raise HTTPException(
             status_code=404,
             detail={"code": "PROFILE_NOT_FOUND", "message": "Profile not found"},
@@ -120,7 +120,7 @@ async def create_my_profile(
         .insert(insert_data)
         .execute()
     )
-    if not result.data:
+    if not result or not result.data:
         raise HTTPException(status_code=500, detail={"code": "CREATE_FAILED", "message": "Failed to create profile"})
 
     # GROWTH-2: If invited by an org, mark matching invite as accepted
@@ -169,7 +169,7 @@ async def update_my_profile(
         .eq("id", user_id)
         .execute()
     )
-    if not result.data:
+    if not result or not result.data:
         raise HTTPException(
             status_code=404,
             detail={"code": "PROFILE_NOT_FOUND", "message": "Profile not found"},
@@ -251,7 +251,7 @@ async def create_verification_link(
         .execute()
     )
 
-    if not result.data:
+    if not result or not result.data:
         logger.error("Failed to create verification link", volunteer_id=volunteer_id)
         raise HTTPException(
             status_code=500,
@@ -361,7 +361,7 @@ async def get_public_profile(
         .maybe_single()
         .execute()
     )
-    if not result.data:
+    if not result or not result.data:
         raise HTTPException(
             status_code=404,
             detail={"code": "PROFILE_NOT_FOUND", "message": "Profile not found"},

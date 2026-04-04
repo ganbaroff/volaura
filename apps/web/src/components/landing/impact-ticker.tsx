@@ -7,9 +7,9 @@ import { usePublicStats } from "@/hooks/queries/use-public-stats";
 
 // Fallback numbers shown while loading or if API fails
 const FALLBACK_STATS = {
-  totalVolunteers: 1000,
-  totalEvents: 50,
-  totalHours: 10000,
+  totalVolunteers: 0,
+  totalEvents: 0,
+  totalHours: 0,
 };
 
 function useCountUp(target: number, duration = 2000): number {

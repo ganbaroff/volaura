@@ -3,6 +3,7 @@
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
 import { cn } from "@/lib/utils/cn";
+import { LanguageSwitcher } from "@/components/layout/language-switcher";
 
 interface LandingNavProps {
   locale: string;
@@ -33,8 +34,9 @@ export function LandingNav({ locale }: LandingNavProps) {
           </Link>
         </nav>
 
-        {/* Auth buttons */}
+        {/* Auth + Language */}
         <div className="flex items-center gap-3">
+          <LanguageSwitcher />
           <Link
             href={`/${locale}/login`}
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"

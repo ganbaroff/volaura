@@ -60,7 +60,20 @@
 - BrandedBy: **"Co-founder"** — CEO co-founded with a team, then left due to poor team dynamics
 - File: `docs/Yusif_Ganbarov_CV_2026_v2.docx`
 
-### 5. Universal Weapon Research — COMPLETE
+### 5. Groq API Key — BLOCKED
+- Old key `gsk_Tv2x...` returned 403 on all endpoints
+- CEO provided new key `gsk_AyTL...` — also returned 403
+- **Status:** Groq unavailable. Use Gemini Flash + NVIDIA (Llama 3.3) as free model alternatives.
+- **CEO action if needed:** Generate fresh key at https://console.groq.com/keys
+
+### 6. 4-Model Consensus on Memory Problem
+- GPT-5.4, Gemini 2.0 Flash, Llama 3.3 70B all agree: **task-dropping is an architectural LLM limitation, not a management problem**
+- CEO was right, initial models (who said "just manage better") were wrong
+- Minimum fix: external task tracker with heartbeat (periodic check: tasks assigned vs tasks still active)
+- Quality oscillates because of context window saturation + drift from instructions
+- Full analysis saved in Mem0 and in this handover
+
+### 7. Universal Weapon Research — COMPLETE
 
 - Report: `docs/research/UNIVERSAL-WEAPON-RESEARCH-2026-04-04.md`
 - Winners: LibreChat + OpenHands + Letta (top 3 platforms)

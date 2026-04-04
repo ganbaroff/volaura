@@ -121,6 +121,13 @@ Purpose: Prevent repeating errors. Read at session start.
 **Fix:** Build quality system: DoD template, acceptance criteria per task, velocity tracking, defect rate dashboard, requirement traceability. BEFORE next sprint, not after.
 **CLASS:** NEW CLASS 9 — No quality system. 1st instance. But it caused all other instances.
 
+### Mistake #78 — Changed admin route group without checking OAuth callback dependency (Session 83)
+**What:** Renamed `(admin)` → `admin` to fix Vercel manifest bug. Did not grep for what uses route groups. OAuth callback in `(auth)` route group had same manifest pattern. Deploy broke OAuth login (500 on /auth/callback). CEO found the bug, not CTO.
+**Root cause:** Zero impact analysis before code change. No grep. No blast radius check. Protocol v9.0 created specifically to prevent this — but was created AFTER the damage.
+**3-model verdict (Gemini + Llama + Qwen3):** "Reckless cowboy coder. Остановись и проверь ПЕРЕД коммитом."
+**One habit:** `grep -rn "[thing being changed]"` BEFORE every Edit. 30 seconds vs 2 hours fixing.
+**CLASS:** CLASS 3 (Solo execution) + CLASS 9 (No quality system). 18th + 3rd instance.
+
 ### NOT A CTO MISTAKE — Dodo Payments code not written (2026-04-03)
 **What:** CTO proposed Dodo integration, CEO redirected to agent improvement discussion first. Correct prioritization by CEO — not a CTO failure. Code will be written when CEO says go.
 **Rule:** Don't list CEO's strategic decisions as CTO mistakes. CEO controls priority order.

@@ -54,6 +54,11 @@ Purpose: Reusable knowledge about what works in this project. Read at session st
 ---
 ## New Patterns (Session 83, 2026-04-03)
 
+### Pattern: grep BEFORE edit — THE habit that fixes 80% (3-model consensus)
+**Context:** 3 external models (Gemini, Llama 405B, Qwen3) independently evaluated CTO's 77 mistakes. All said the same thing: "остановись и проверь ПЕРЕД коммитом." grep takes 30 seconds. Fixing broken deploy takes 2 hours.
+**Rule:** Before EVERY Edit/Write tool call: `grep -rn "[thing being changed]" apps/` — paste output. Count files. If >1 → blast radius analysis. This is protocol v9.0 Step 1.
+**Anti-pattern:** "Should be fine" / "Only affects this file" / "I'm confident" — without grep evidence.
+
 ### Pattern: CTO overestimates time 2.5x — PROVEN (night sprint measurement)
 **Context:** Night sprint planned for 10 hours. Delivered in 3.9 hours. Phase 1 (AI Office) planned 3h, took 57min. Phase 2+3 planned 6h, took 5 min.
 **Rule:** When estimating time, divide by 2.5. If plan says 10h → expect 4h. Use remaining time for QUALITY not more features.

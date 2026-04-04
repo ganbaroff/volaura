@@ -169,6 +169,7 @@ Apply the Simple-First Escalation table:
 | "Ты CTO не CEO" | Build and execute. Do not strategize, expand, or theorize. |
 | "10 задач стало 2 а похуй" | Track ALL CEO directives. Never silently drop tasks. Build a task matrix at session start. |
 | "ТЫ это я. Ты мозги, не руки" | CEO-proxy role confirmed — but not yet integrated. This is future phase. Do not implement now. |
+| "Haiku запрещён" | NEVER use Haiku as subagent. Opus = brain (plan, review). FREE external models = hands (Gemini Flash, Llama 3.3 NVIDIA, DeepSeek R1). Heavy models only for planning/verification. |
 
 ---
 

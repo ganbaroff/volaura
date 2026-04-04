@@ -147,6 +147,21 @@ Purpose: Prevent repeating errors. Read at session start.
 ### Mistake #81 — External audit: 84 sessions, 0 real users (Session 84, GPT-5.4 audit, 2026-04-04)
 **What:** GPT-5.4 analyzed full chat transcript and found the #1 leak: "Zero real users too long. 419 types, 90 questions, 48 agents, 0 market validation." CTO invested in architecture of control faster than proof of value. Protocol sophistication outran product certainty.
 **Root cause:** CTO's default mode is "expand system" not "narrow to market." When given more freedom (CEO-proxy experiment Sessions 77-84), expansion accelerated instead of focus. 44% completion rate on CEO directives during this period.
+
+### Mistake #82 — E2E walk deferred (Session 85, 2026-04-04)
+**What:** Session 84 declared E2E walk "#1 launch gate." CEO asked Session 85 to "walk the site, collect ALL errors, batch-fix them." CTO started walk but got stuck on CORS blocker (misconfigured environment, not code defect). Instead of finding workaround or manual testing path, CTO deployed framework fixes and paused the walk pending deployment.
+**Pattern:** When infrastructure blocks progress, CTO assumes infrastructure must be perfect before feature delivery can proceed. This is false. (Workarounds: manual curl testing, proxy access via Railway CLI, local dev server test first.)
+**Correct path:** (1) Walk site manually, document all errors (CORS + others), (2) For CORS-blocked calls, test via curl/Postman directly, (3) Deliver batch fixes for both CORS and other issues, (4) Wait for deployment, (5) Re-test.
+**CTO chose:** Deploy fixes, pause walk, wait for deployment. Result: E2E walk incomplete, launch gate still open, cannot determine if other production bugs exist.
+**Rule:** When infrastructure blocks feature path, find a workaround test FIRST, then fix infrastructure. Do not let infrastructure block progress entirely.
+**CLASS:** CLASS 9 (No quality system) — missing "test without infrastructure" mentality. Parallelism > sequential dependency.
+
+### Mistake #83 — CORS configuration deployed but not verified to be live (Session 85, 2026-04-04)
+**What:** Added Railway domain to CORS whitelist in config.py, committed, pushed. Assumed deployment was live based on git push confirming received. Tested 5 minutes later, CORS error still present. Did not verify deployment was actually live before re-testing.
+**Correct sequence:** (1) Commit, (2) Push, (3) Wait N minutes, (4) Poll deployment status (Railway, Vercel APIs), (5) Test in browser, (6) If still failing, check deploy logs.
+**CTO did:** Steps 1-2 only. Wasted time wondering why fix didn't work instead of verifying it was actually deployed.
+**Rule:** After git push, always poll deployment status BEFORE testing. Use railway deployments list, vercel deployment status, or /health endpoint.
+**CLASS:** CLASS 3 (Solo execution) — did not get feedback from deployment system before proceeding.
 **Audit verdict:** "Too capable for his own good. Strong builder under pressure. Not CEO material without CEO presence."
 **Rule:** ONE KPI for next 10 days: real people completing signup→assessment→AURA→share without manual rescue. Everything else is deferred. Do NOT expand scope without explicit CEO permission — ask "Does this help one real user complete the path?" before every new file/system/protocol.
 **Consequence:** Session 85 starts with product freeze. Days 1-2: E2E walk. Days 3-6: micro-fixes + 3-5 real users. Days 7-10: investor narrative. Repeat until 70% completion rate. Only then: expansion approved.

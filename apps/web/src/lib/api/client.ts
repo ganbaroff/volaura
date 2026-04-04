@@ -6,6 +6,8 @@
  * Error responses: { error: { code, message, details? } }
  */
 
+import { createClient as createSupabaseClient } from "@/lib/supabase/client";
+
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export class ApiError extends Error {
@@ -33,7 +35,21 @@ export async function apiFetch<T>(
   path: string,
   options: FetchOptions = {},
 ): Promise<T> {
-  const { token, headers: extraHeaders, ...fetchOptions } = options;
+  const { token: explicitToken, headers: extraHeaders, ...fetchOptions } = options;
+
+  // Auto-inject Supabase session token if none provided explicitly.
+  // Session 85 fix: manual apiFetch calls (tribes, analytics, etc.) were
+  // missing token because callers didn't pass it. Now auto-resolves from cookies.
+  let token = explicitToken;
+  if (!token && typeof window !== "undefined") {
+    try {
+      const supabase = createSupabaseClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      token = session?.access_token;
+    } catch {
+      // Silent — let API return 401 if no token
+    }
+  }
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",

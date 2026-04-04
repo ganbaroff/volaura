@@ -31,85 +31,107 @@ CEO directive: "перестань думать как стартап. начн�
 
 ---
 
-## How It Works — ZERO SIMULATION VERSION (v9.0)
+## How It Works — ZERO SIMULATION (v9.0)
 
-**RULE: Every step that says "agent reviews" MUST show the agent's ACTUAL OUTPUT.**
+**RULE: Every step produces a CONCRETE ARTIFACT. No artifact = step did not happen.**
 **CTO writing "agent confirmed" without pasting agent response = FABRICATION (CLASS 5).**
-**If external API is down → document the error. Don't pretend the review happened.**
+**"I'm confident" is NOT proof. grep output IS proof. tsc -b output IS proof.**
 
 ```
-0. FLOW DETECTION  → CTO reads CEO signal → declares flow type.
-                     PROOF: paste CEO's exact words.
+0. FLOW DETECTION  → Paste CEO's exact words. Declare flow type.
 
-1. IMPACT ANALYSIS → BEFORE touching ANY code:
-                     CTO sends proposed change to external model (Gemini/Llama/Qwen3).
-                     Prompt: "I will change [FILE]. What else in the project could break?"
-                     PROOF: paste the model's response verbatim.
-                     If model says "X, Y, Z could break" → check X, Y, Z BEFORE coding.
-                     This step exists because CTO changed admin route and broke OAuth,
-                     changed middleware and broke deploy, changed types and broke build.
-                     EVERY. SINGLE. TIME.
+1. PRE-FLIGHT      → BEFORE touching ANY file:
+                     a) Run: pnpm --filter web exec tsc -b (paste output)
+                     b) Run: grep -rn "[function/component being changed]" (paste output)
+                     c) Count affected files. If >1 file → BLAST RADIUS analysis required.
+                     ARTIFACT: tsc output + grep output visible in response.
+                     WHY: CTO changed 1 file, broke 10. Every time.
 
-2. ACCEPTANCE CRITERIA → Write BEFORE coding:
+2. BLAST RADIUS    → For EACH file that will change:
+                     Run: grep -rn "import.*[filename]" across project (paste output)
+                     List every file that imports/uses the thing being changed.
+                     Send list to external model: "I will change [X]. These files use it: [list]. What breaks?"
+                     ARTIFACT: grep output + model response verbatim.
+                     SKIP: only if Step 1b grep shows exactly 1 file and 0 imports.
+
+3. ACCEPTANCE CRITERIA → Write BEFORE coding:
                      "DONE when: [3-5 PASS/FAIL conditions]."
-                     MUST include: "Build passes. Deploy succeeds. Affected pages load."
-                     PROOF: AC visible in response before any code edit.
+                     MUST include: "tsc -b passes. pnpm build passes. Production URL returns 200."
+                     ARTIFACT: AC visible before any Edit/Write tool call.
 
-3. IMPLEMENT → Write code.
-              After EACH file edit: check if build still passes.
-              NOT at the end. After EACH edit.
-              If build breaks → fix BEFORE next edit.
+4. IMPLEMENT       → Write code. After EACH file edit:
+                     Run: pnpm --filter web exec tsc -b (paste last 3 lines)
+                     If error → fix BEFORE editing next file.
+                     ARTIFACT: tsc output after every edit.
 
-4. VERIFY → Run the actual check. Not "it should work."
-           Code change → `pnpm build` (show output)
-           API change → `curl` the endpoint (show response)
-           UI change → preview_screenshot (show image)
-           Deploy → check production URL (show HTTP status)
-           PROOF: tool output pasted in response.
+5. POST-EDIT CHECK → After ALL edits done:
+                     a) Run: pnpm build (paste last 5 lines)
+                     b) For each changed file: grep to verify no broken imports
+                     c) If UI change: preview_screenshot or curl production URL
+                     d) If API change: curl endpoint (paste response)
+                     ARTIFACT: build log + verification output.
 
-5. EXTERNAL REVIEW → Send completed work to external model.
-                    Prompt: "Review this change. What did I miss? What could break?"
-                    PROOF: paste model's response.
-                    If model finds issue → fix BEFORE committing.
+6. CROSS-REVIEW    → Send completed change to external model (different from Step 2).
+                     Prompt: "Review this diff. What did CTO miss? What will break in production?"
+                     ARTIFACT: model's full response pasted.
+                     If model finds issue → fix and repeat from Step 5.
+                     CTO reviewing own work = not review. Different model = review.
 
-6. COMMIT + DEPLOY → Only after steps 1-5 have VISIBLE proof.
-                    `pnpm build` passes (shown).
-                    `git push` succeeds (shown).
-                    Production URL returns 200 (shown).
+7. COMMIT + DEPLOY → Only after Steps 1-6 have VISIBLE artifacts.
+                     git push (paste output)
+                     Vercel/Railway deploy (paste status)
+                     curl production URL (paste HTTP status + first line of body)
+                     ARTIFACT: all three outputs shown.
 
-7. DOCUMENT → Update SHIPPED.md + sprint-state.md.
-             Record in quality-metrics.md.
-             3-question DoD: WHO reviewed (with output) / WHAT step / WHERE written.
+8. DOCUMENT        → SHIPPED.md + sprint-state.md + quality-metrics.md.
+                     3-question DoD: WHO (paste their output) / WHAT step / WHERE written.
 ```
 
-## WHAT "PROOF" MEANS
+## ARTIFACT EXAMPLES (what REAL proof looks like)
 
-CTO CANNOT write any of these:
-- "Agent confirmed" (WHERE is the agent's output?)
-- "Build passes" (WHERE is the build log?)
-- "Tested and works" (WHERE is the test output?)
-- "Reviewed by swarm" (WHERE are their responses?)
-- "No issues found" (WHO looked? SHOW their analysis.)
+GOOD (Step 1 — pre-flight):
+```
+$ pnpm --filter web exec tsc -b
+✓ no errors
+$ grep -rn "LanguageSwitcher" apps/web/src/
+apps/web/src/components/layout/language-switcher.tsx:6:export function LanguageSwitcher
+apps/web/src/components/layout/top-bar.tsx:4:import { LanguageSwitcher }
+apps/web/src/app/[locale]/(dashboard)/settings/page.tsx:12:import { LanguageSwitcher }
+→ 3 files use LanguageSwitcher. Blast radius: top-bar + settings.
+```
 
-CTO MUST paste:
-- Actual Bash output of `pnpm build`
-- Actual curl response
-- Actual external model critique (full text, not summary)
-- Actual screenshot or preview_snapshot
+BAD (what CTO used to write):
+```
+"LanguageSwitcher is used in a few places. Should be fine."
+→ CLASS 5 FABRICATION. No grep. No count. No proof.
+```
 
-If CTO cannot show proof → step did not happen → task is not done.
+## BANNED PHRASES (instant CLASS 5 if CTO writes these without artifact)
+
+- "Agent confirmed" → WHERE is agent's response?
+- "Build passes" → WHERE is build log?
+- "Tested and works" → WHERE is test output?
+- "Blast radius is small" → WHERE is grep showing file count?
+- "Should be fine" → WHAT is the evidence?
+- "No issues found" → WHO looked? With WHAT command?
+- "I checked" → SHOW the check output.
+- "Reviewed by swarm" → PASTE their responses.
 
 ## WHY v9.0 EXISTS
 
-v8.0 had 15-item DoD, Toyota quality system, DORA metrics, Poka-yoke table.
-CTO followed NONE of it. Changed routes → broke deploy. Changed types → broke build.
-Changed middleware → broke auth. Every time WITHOUT checking impact first.
+v8.0 said "use Toyota quality." CTO wrote 15-item DoD and followed 0 items.
+v8.0 said "agents must review." CTO wrote "agent confirmed" and never asked agents.
+v8.0 said "measure DORA." CTO measured once, then stopped.
 
-v9.0 removes everything that CTO can fake:
-- No "agent says X" without pasting X
-- No "build passes" without showing log
-- No "tested" without showing output
-- No "reviewed" without showing review
+v9.0 makes lying structurally impossible:
+- Can't claim tsc passes without running tsc.
+- Can't claim grep shows 1 file without running grep.
+- Can't claim agent reviewed without pasting agent's words.
+- Can't claim deploy works without showing production HTTP status.
+
+CTO broke: admin routes (OAuth), middleware (500), types (build fail), deploy (manifest).
+Each time, a 30-second grep would have caught it BEFORE the commit.
+grep is 30 seconds. Fixing a broken deploy is 2 hours.
 
 The protocol is now EVIDENCE-BASED. Not trust-based. Trust failed 77 times.
 4.5 QUALITY GATE   → Before marking task DONE:

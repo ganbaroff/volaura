@@ -47,35 +47,42 @@ function AuthCallbackContent() {
     if (didRun.current) return;
     didRun.current = true;
 
+    const errorParam = searchParams.get("error");
+    const errorDescription = searchParams.get("error_description");
+
+    // OAuth provider returned an explicit error before even reaching Supabase
+    if (errorParam) {
+      console.error("[callback] OAuth error:", errorParam, errorDescription);
+      router.replace(`/${locale}/login?message=oauth-error`);
+      return;
+    }
+
     const supabase = createClient();
 
-    async function handleCallback() {
-      const code = searchParams.get("code");
-      const errorParam = searchParams.get("error");
-      const errorDescription = searchParams.get("error_description");
+    // WHY: createBrowserClient is a singleton with detectSessionInUrl: true.
+    // When the singleton was first created (on the login page), it stored the
+    // code_verifier in document.cookie. On this callback page, detectSessionInUrl
+    // causes the singleton to auto-initiate exchangeCodeForSession internally the
+    // moment it sees ?code= in the URL. Calling exchangeCodeForSession() manually
+    // a second time would attempt to reuse a single-use code → 401 from Supabase.
+    //
+    // SOLUTION: Do NOT call exchangeCodeForSession manually. Instead, listen via
+    // onAuthStateChange which fires once the auto-exchange completes successfully.
+    // A 5-second timeout guards against silent failures.
 
-      // OAuth provider returned an explicit error
-      if (errorParam) {
-        console.error("[callback] OAuth error:", errorParam, errorDescription);
-        router.replace(`/${locale}/login?message=oauth-error`);
-        return;
-      }
+    const timeoutId = setTimeout(() => {
+      if (!isMounted.current) return;
+      console.error("[callback] Timed out waiting for SIGNED_IN event");
+      router.replace(`/${locale}/login?message=oauth-error`);
+    }, 5000);
 
-      // PKCE flow: exchange the authorization code for a session.
-      // createClient() is the BROWSER client — it has access to the
-      // code_verifier that signInWithOAuth stored in browser storage.
-      if (code) {
-        const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event !== "SIGNED_IN" || !session) return;
 
+        clearTimeout(timeoutId);
         if (!isMounted.current) return;
 
-        if (error || !data.session) {
-          console.error("[callback] exchangeCodeForSession failed:", error?.message);
-          router.replace(`/${locale}/login?message=oauth-error`);
-          return;
-        }
-
-        const session = data.session;
         setSession(session);
 
         // Attribution + OAuth metadata capture (fire-and-forget, non-blocking)
@@ -117,15 +124,15 @@ function AuthCallbackContent() {
         }
 
         router.replace(`/${locale}/dashboard`);
-        return;
       }
+    );
 
-      // No code, no error — unexpected state
-      router.replace(`/${locale}/login`);
-    }
-
-    handleCallback();
-  }, [locale, router, searchParams, setSession]);
+    return () => {
+      clearTimeout(timeoutId);
+      subscription.unsubscribe();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="flex min-h-screen items-center justify-center">

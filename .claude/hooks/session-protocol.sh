@@ -149,6 +149,34 @@ except Exception as e:
   touch "$SESSION_MARKER"
 fi
 
+# ── EVERY PROMPT: Frustration handler ──────────────────────────────
+# If CEO uses profanity/frustration markers → CTO must STOP current approach
+CEO_MSG=$(echo "$INPUT" | python3 -c "
+import json, sys
+try:
+    d = json.load(sys.stdin)
+    print(d.get('message','') or d.get('content','') or '')
+except:
+    print('')
+" 2>/dev/null)
+
+if echo "$CEO_MSG" | grep -qiE "блять|бля|херн|долбо|издева|ебан|хуйн|устал|сколько можно|неясно говорю"; then
+  echo ""
+  echo "════════════════════════════════════════════════════════"
+  echo "⚠️  FRUSTRATION DETECTED — CEO IS CORRECTING YOU"
+  echo "════════════════════════════════════════════════════════"
+  echo ""
+  echo "STOP what you are doing. You are on the wrong path."
+  echo "1. Re-read CEO's last 3 messages"
+  echo "2. Identify what CEO ACTUALLY asked vs what you did"
+  echo "3. Change approach — do NOT continue the same way"
+  echo "4. If unsure — ask ONE specific question, not a list"
+  echo ""
+  echo "CEO is right 90% of the time. Listen."
+  echo "════════════════════════════════════════════════════════"
+  echo ""
+fi
+
 # ── EVERY PROMPT: Check protocol state staleness ──────────────────
 # Fires on EVERY UserPromptSubmit, not just first.
 # If protocol-state.json is older than 4 hours → stale → delete → enforce hook blocks.

@@ -55,9 +55,31 @@
 
 ## SESSION 85 IN PROGRESS — 2026-04-04
 
-**Last Updated:** 2026-04-04 (Session 85 — E2E audit resumed)
+**Last Updated:** 2026-04-04 22:30 (Session 85 — END)
 
-**Status:** Continuing E2E walk from Session 84. Auth fixes deployed (apiFetch token injection + configureApiClient module scope + JWT keys). CORS blocker discovered: all API endpoints in production environment returning CORS errors. Two fixes deployed (Railway whitelist + Vercel rewrites) awaiting deployment.
+**Status:** CORS + double /api/api/ prefix FIXED. Railway anon key FIXED (was wrong key → 500 on all auth endpoints). Signup 500 FIXED (Suspense). PWA SW disabled (cached stale JS). TASK-PROTOCOL v10.0 deployed (IF/ELSE tree + hooks + frustration handler). CEO evaluation done (9.25/10 from 2 external models). Grade F self-assessment from 2 external models. 5 new rules. Vyusala letter written.
+
+**Session 85 delivered:**
+- CORS eliminated (Vercel rewrites, middleware exclusion for /api/)
+- Double /api/api/ prefix eliminated (15+ files fixed)
+- Railway Supabase anon key corrected (was wrong project key)
+- Signup 500 fixed (useSearchParams Suspense wrapper)
+- PWA service worker disabled + purge script
+- TASK-PROTOCOL v10.0 (IF/ELSE decision tree replaces linear steps)
+- CLAUDE.md Step 0 bootstrap (auto-loaded, impossible to skip)
+- session-protocol.sh: staleness check every prompt + frustration handler
+- protocol-enforce.sh: 4-hour TTL on state + timestamp validation
+- CEO-EVALUATION.md created (9.25/10, 2 external models, counter-critique)
+- Vyusala letter (storytelling, no IT terms)
+- Mistake #83 documented (Grade F, 5 new rules)
+- feedback_session85_grade_f.md memory file created
+
+**Next session:**
+1. Verify Railway 500s resolved (user must test logged-in dashboard)
+2. E2E walkthrough ALL pages through Playwright (logged in)
+3. Fix any remaining errors found
+4. Then UI/UX improvements (CEO: "потом возьмёмся за UI UX")
+5. Telegram bot investigation (CEO: "тьелега тупит")
 
 **Session 85 work so far:**
 

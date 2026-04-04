@@ -91,6 +91,18 @@ Purpose: Prevent repeating errors. Read at session start.
 **Rule:** Every agent prompt MUST include SESSION CONTEXT with: decisions made today, tasks completed this session, what previous agents produced, CEO's explicit directives. Static context alone = 50% correct output.
 **CLASS:** CLASS 3 (Solo execution) — 15th instance. Structural gap in briefing template enabled the pattern.
 
+### Mistake #83 — Session 85: 8 deploys, 0 pre-analysis, CEO caught every miss (2026-04-04)
+**What:** CORS + double /api/api/ prefix on production. CTO changed baseUrl 4 times (Railway → /api → "" → Railway → "") without first understanding the URL structure. Missed files 3 times — CEO caught each round. Spent 30 min on CDN propagation when `vercel deploy --prod` was the answer. Asked CEO to test 5 times instead of using Playwright. Evaluated CEO solo and attributed CTO mistakes to CEO score.
+**Root cause:** CLASS 3 (solo, no agents, no protocol). CTO jumped to fixing without analyzing. Never ran grep across ALL files first. Never consulted agents. Never followed TASK-PROTOCOL despite it being loaded.
+**External audit:** Gemini: 10 errors, 3 HIGH. NVIDIA: Grade F. Both: "systematic failure to follow process."
+**Rules added:**
+1. BEFORE changing ANY config: grep ALL files that reference it. Count. Fix ALL in one pass.
+2. NEVER deploy more than twice for the same issue. If 2nd deploy fails → stop, analyze, grep.
+3. NEVER ask CEO to test. Use Playwright. CEO is not QA.
+4. NEVER evaluate CEO solo. External models required. CTO mistakes ≠ CEO score.
+5. baseUrl changes: read generated client paths FIRST (`grep url.*api apps/web/src/lib/api/generated/`).
+**CLASS:** CLASS 3 (16th instance) + CLASS 12 (self-inflicted) + CLASS 1 (protocol skip) + CLASS 5 (misattribution)
+
 ### Mistake #67 — Completed half a task, stopped before the second half (Session 82, 2026-04-02)
 **What:** CEO asked to create agents for the full list of 85 roles INCLUDING stakeholders. CTO created 7 agents for team roles and stopped — completely skipped the stakeholders section. CEO had to point it out: "я спросил какие стейкхолдеры. ты сказал что понимаешь что должен делать дальше. начал работу и остановился."
 **Result:** 3 stakeholder agents (Investor, Competitor Intelligence, University Partner) not created until CEO asked again. Lost 1 interaction cycle.

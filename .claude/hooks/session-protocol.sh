@@ -15,6 +15,12 @@ if [ ! -f "$SESSION_MARKER" ]; then
   SPRINT_STATE="$PROJECT_DIR/memory/context/sprint-state.md"
   MISTAKES="$PROJECT_DIR/memory/context/mistakes.md"
 
+  # HARD GATE: Reset protocol state so enforce hook blocks until new protocol cycle
+  PROTOCOL_STATE="$PROJECT_DIR/.claude/protocol-state.json"
+  if [ -f "$PROTOCOL_STATE" ]; then
+    rm -f "$PROTOCOL_STATE"
+  fi
+
   echo "══════════════════════════════════════════════════════════════"
   echo "PHASE A GATE — SESSION START — PROTOCOL v4.0"
   echo "══════════════════════════════════════════════════════════════"

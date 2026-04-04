@@ -134,7 +134,7 @@ export default function SettingsPage() {
         setVisibilityError(t("error.unauthorized"));
         return;
       }
-      await apiFetch("/api/aura/me/visibility", {
+      await apiFetch("/aura/me/visibility", {
         method: "PATCH",
         token,
         body: JSON.stringify({ visibility }),
@@ -182,7 +182,7 @@ export default function SettingsPage() {
     try {
       const token = await getToken();
       if (!token) throw new Error(t("error.unauthorized"));
-      await apiFetch("/api/auth/me", { method: "DELETE", token });
+      await apiFetch("/auth/me", { method: "DELETE", token });
       const supabase = createClient();
       await supabase.auth.signOut();
       router.push(`/${locale}/login`);

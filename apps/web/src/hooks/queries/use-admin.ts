@@ -186,7 +186,7 @@ export function useSwarmAgents() {
     queryFn: async () => {
       const token = await getToken();
       if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
-      return apiFetch("/api/admin/swarm/agents", { token });
+      return apiFetch("/admin/swarm/agents", { token });
     },
     staleTime: 30_000,
     refetchInterval: 60_000,

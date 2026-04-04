@@ -20,7 +20,7 @@ export function usePublicStats() {
   return useQuery<PublicStats, ApiError>({
     queryKey: ["stats", "public"],
     queryFn: async () => {
-      return apiFetch<PublicStats>("/api/stats/public");
+      return apiFetch<PublicStats>("/stats/public");
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,

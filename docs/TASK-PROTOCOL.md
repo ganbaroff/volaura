@@ -31,51 +31,87 @@ CEO directive: "перестань думать как стартап. начн�
 
 ---
 
-## How It Works (30-second summary)
+## How It Works — ZERO SIMULATION VERSION (v9.0)
+
+**RULE: Every step that says "agent reviews" MUST show the agent's ACTUAL OUTPUT.**
+**CTO writing "agent confirmed" without pasting agent response = FABRICATION (CLASS 5).**
+**If external API is down → document the error. Don't pretend the review happened.**
 
 ```
-0. FLOW DETECTION  → CTO reads CEO signal → declares which flow: Team Proposes / CTO Plan / HOTFIX / EXPEDITED
-0a. SWARM RETROSPECTIVE → Multi-model critique of PREVIOUS sprint before starting new one.
-                          NOT CTO self-review. SWARM reviews CTO.
-                          Input: last batch from SHIPPED.md + mistakes.md last 3 entries
-                          Agents (min 2 external models): answer 3 questions:
-                            1. "What did CTO do wrong last sprint?" (specific, not vague)
-                            2. "What pattern is repeating?" (check CLASS table in mistakes.md)
-                            3. "What should this sprint do differently?"
-                          CTO documents: "Swarm retrospective: [findings]. Adjusting: [what]."
-                          SKIP condition: HOTFIX only. All other flows = mandatory.
-                          TIME BUDGET: 2 min (2 API calls in parallel).
-                          WHY THIS EXISTS: CTO wrote "lessons learned" 7 times in one session
-                          and violated them immediately. Self-review doesn't work.
-                          External models catch what CTO normalizes.
-0c. TOOLKIT CHECK  → Read memory/context/mcp-toolkit.md Section 4 (decision matrix).
-                     For THIS task, declare which tools to use:
-                     "Tools for this task: [list]. Reason: [why each]."
-                     If task needs deploy → railway (not "ask CEO").
-                     If task needs research → NotebookLM (not shallow WebSearch).
-                     If task needs browser test → Playwright/Chrome MCP (not "looks correct in code").
-                     If task needs DB → Supabase MCP (not "probably works").
-                     RULE: declaring "no tools needed" requires justification.
-                     WHY: CTO has 16 API keys, 10 MCPs, 8 CLI tools — and uses 2.
-0b. DETECT + READ  → Read SESSION-DIFFS.jsonl (what changed?) + code-index.json (what exists?)
-                     Declare: "N changes since last run. Relevant to this sprint: [list]."
-                     FALLBACK (if files missing): "SESSION-DIFFS.jsonl not found → reading git log --oneline -20
-                     instead. code-index.json not found → reading SHIPPED.md instead."
-                     Missing files = degrade gracefully, not fail.
-1. TEAM PROPOSES   → All agents read SIMULTANEOUSLY (15 min) → propose in parallel (10 min)
-                     Each proposal MUST include: trigger_reason (WHY NOW, what recent event makes this timely)
-1.5 ACCEPTANCE CRITERIA → Before ANY task enters batch:
-                     Write AC: "This task is DONE when: [3-5 testable conditions]."
-                     AC must be PASS/FAIL — no "looks good" or "seems to work."
-                     Example: "DONE when: (1) endpoint returns 200, (2) RLS blocks other users,
-                     (3) i18n keys exist in both EN and AZ, (4) analytics event fires."
-                     AC is written BEFORE coding. Not after. This is Toyota Jidoka.
-                     ENFORCEMENT: Task without AC cannot enter Step 2. CTO cannot skip.
-2. BATCH ASSEMBLES → Proposals triaged → 12-20 tasks batched by size + effort
-3. TEAM DEBATES    → Agents argue priorities. 3+ votes override CTO.
-                     Round-2 gate: top proposal <35/50 AND delta to #2 <5 pts → mandatory Round 2
-4. PARALLEL EXECUTE → Tasks run simultaneously. Agents own their domain.
-                      Agent cannot mark DONE without: verify_outcome() OR explicit manual verification steps
+0. FLOW DETECTION  → CTO reads CEO signal → declares flow type.
+                     PROOF: paste CEO's exact words.
+
+1. IMPACT ANALYSIS → BEFORE touching ANY code:
+                     CTO sends proposed change to external model (Gemini/Llama/Qwen3).
+                     Prompt: "I will change [FILE]. What else in the project could break?"
+                     PROOF: paste the model's response verbatim.
+                     If model says "X, Y, Z could break" → check X, Y, Z BEFORE coding.
+                     This step exists because CTO changed admin route and broke OAuth,
+                     changed middleware and broke deploy, changed types and broke build.
+                     EVERY. SINGLE. TIME.
+
+2. ACCEPTANCE CRITERIA → Write BEFORE coding:
+                     "DONE when: [3-5 PASS/FAIL conditions]."
+                     MUST include: "Build passes. Deploy succeeds. Affected pages load."
+                     PROOF: AC visible in response before any code edit.
+
+3. IMPLEMENT → Write code.
+              After EACH file edit: check if build still passes.
+              NOT at the end. After EACH edit.
+              If build breaks → fix BEFORE next edit.
+
+4. VERIFY → Run the actual check. Not "it should work."
+           Code change → `pnpm build` (show output)
+           API change → `curl` the endpoint (show response)
+           UI change → preview_screenshot (show image)
+           Deploy → check production URL (show HTTP status)
+           PROOF: tool output pasted in response.
+
+5. EXTERNAL REVIEW → Send completed work to external model.
+                    Prompt: "Review this change. What did I miss? What could break?"
+                    PROOF: paste model's response.
+                    If model finds issue → fix BEFORE committing.
+
+6. COMMIT + DEPLOY → Only after steps 1-5 have VISIBLE proof.
+                    `pnpm build` passes (shown).
+                    `git push` succeeds (shown).
+                    Production URL returns 200 (shown).
+
+7. DOCUMENT → Update SHIPPED.md + sprint-state.md.
+             Record in quality-metrics.md.
+             3-question DoD: WHO reviewed (with output) / WHAT step / WHERE written.
+```
+
+## WHAT "PROOF" MEANS
+
+CTO CANNOT write any of these:
+- "Agent confirmed" (WHERE is the agent's output?)
+- "Build passes" (WHERE is the build log?)
+- "Tested and works" (WHERE is the test output?)
+- "Reviewed by swarm" (WHERE are their responses?)
+- "No issues found" (WHO looked? SHOW their analysis.)
+
+CTO MUST paste:
+- Actual Bash output of `pnpm build`
+- Actual curl response
+- Actual external model critique (full text, not summary)
+- Actual screenshot or preview_snapshot
+
+If CTO cannot show proof → step did not happen → task is not done.
+
+## WHY v9.0 EXISTS
+
+v8.0 had 15-item DoD, Toyota quality system, DORA metrics, Poka-yoke table.
+CTO followed NONE of it. Changed routes → broke deploy. Changed types → broke build.
+Changed middleware → broke auth. Every time WITHOUT checking impact first.
+
+v9.0 removes everything that CTO can fake:
+- No "agent says X" without pasting X
+- No "build passes" without showing log
+- No "tested" without showing output
+- No "reviewed" without showing review
+
+The protocol is now EVIDENCE-BASED. Not trust-based. Trust failed 77 times.
 4.5 QUALITY GATE   → Before marking task DONE:
                      □ All acceptance criteria from Step 1.5 verified (PASS/FAIL each)
                      □ No new console errors, no TypeScript errors, no test failures

@@ -41,7 +41,7 @@ export function useMyTribe() {
   return useQuery<TribeOut | null>({
     queryKey: ["tribe", "me"],
     queryFn: async () => {
-      const res = await apiFetch<TribeOut | null>("/api/tribes/me");
+      const res = await apiFetch<TribeOut | null>("/tribes/me");
       return res ?? null;
     },
     staleTime: 60_000, // 1 min — activity status updates hourly at most
@@ -52,7 +52,7 @@ export function useMyStreak() {
   return useQuery<TribeStreakOut | null>({
     queryKey: ["tribe", "streak"],
     queryFn: async () => {
-      const res = await apiFetch<TribeStreakOut | null>("/api/tribes/me/streak");
+      const res = await apiFetch<TribeStreakOut | null>("/tribes/me/streak");
       return res ?? null;
     },
     staleTime: 5 * 60_000, // 5 min — streak updates weekly

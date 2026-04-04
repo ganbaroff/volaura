@@ -31,22 +31,21 @@ async def _send_message(chat_id: int | str, text: str) -> bool:
     """Send a Telegram message via Bot API. Returns True on success."""
     import httpx
     url = f"https://api.telegram.org/bot{settings.telegram_bot_token}/sendMessage"
-    # Telegram max message length is 4096
-    if len(text) > 4000:
-        text = text[:4000] + "\n\n... (обрезано)"
+    # Telegram max message length is 4096 — split into chunks, never truncate
+    chunks = [text[i:i+4000] for i in range(0, len(text), 4000)]
     try:
         async with httpx.AsyncClient(timeout=10) as client:
-            resp = await client.post(url, json={
-                "chat_id": chat_id,
-                "text": text,
-                "parse_mode": "Markdown",
-            })
-            if not resp.json().get("ok"):
-                # Retry without markdown if parse fails
-                await client.post(url, json={
+            for chunk in chunks:
+                resp = await client.post(url, json={
                     "chat_id": chat_id,
-                    "text": text,
+                    "text": chunk,
+                    "parse_mode": "Markdown",
                 })
+                if not resp.json().get("ok"):
+                    await client.post(url, json={
+                        "chat_id": chat_id,
+                        "text": chunk,
+                    })
             return True
     except Exception as e:
         logger.error("Telegram send failed: {e}", e=str(e))
@@ -184,7 +183,7 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
 Тип сообщения CEO: {msg_type}
 
 ПРАВИЛА:
-- Максимум 500 символов в ответе (Telegram)
+- Отвечай развёрнуто, подробно, столько сколько нужно. Без искусственных лимитов.
 - Не льсти. "Отличная идея" — запрещено. Говори честно.
 - Если ZEUS/Life Sim/Crystal спрашивает — отвечай точно из контекста выше (не готово)
 - Если задача непонятная — спроси уточнение одним вопросом
@@ -198,7 +197,7 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
             contents=text,
             config=genai.types.GenerateContentConfig(
                 system_instruction=system_prompt,
-                max_output_tokens=400,
+                max_output_tokens=2000,
                 temperature=0.5,
             ),
         )
@@ -361,9 +360,9 @@ CEO (Юсиф) задаёт тебе прямой вопрос через Telegr
 Проект: verified professional platform, 51 API route, 512 tests, $50/mo budget.
 Stats: {stats}
 
-Отвечай от своей роли. Коротко (макс 200 слов). На русском. Честно — если не знаешь, скажи.
+Отвечай от своей роли. Развёрнуто и подробно. На русском. Честно — если не знаешь, скажи.
 Если вопрос вне твоей экспертизы — скажи какого агента спросить.""",
-                max_output_tokens=300,
+                max_output_tokens=1500,
                 temperature=0.5,
             ),
         )
@@ -371,7 +370,7 @@ Stats: {stats}
     except Exception as e:
         reply = f"⚠️ Agent `{agent_name}` не смог ответить: {str(e)[:100]}"
 
-    await _save_message(db, "bot_to_ceo", f"[{agent_name}] {reply[:500]}", "agent_response")
+    await _save_message(db, "bot_to_ceo", f"[{agent_name}] {reply}", "agent_response")
     await _send_message(chat_id, reply)
 
 
@@ -419,9 +418,9 @@ async def _handle_ask_proposal(db, chat_id: int | str, proposal_id: str, questio
 PROPOSAL:
 {context}
 
-Отвечай строго по контексту proposal. Коротко (макс 200 слов). На русском.
+Отвечай строго по контексту proposal. Развёрнуто. На русском.
 Если вопрос требует кода или файлов — скажи CEO что нужно запустить сессию CTO.""",
-                max_output_tokens=350,
+                max_output_tokens=1500,
                 temperature=0.4,
             ),
         )
@@ -429,7 +428,7 @@ PROPOSAL:
     except Exception as e:
         reply = f"⚠️ Не смог ответить по proposal: {str(e)[:100]}"
 
-    await _save_message(db, "bot_to_ceo", reply[:500], "proposal_followup")
+    await _save_message(db, "bot_to_ceo", reply, "proposal_followup")
     await _send_message(chat_id, reply)
 
 
@@ -614,7 +613,7 @@ async def setup_webhook(request: Request) -> JSONResponse:
     if not settings.telegram_webhook_secret or admin_secret != settings.telegram_webhook_secret:
         return JSONResponse({"ok": False, "error": "Unauthorized"}, status_code=403)
 
-    webhook_url = "https://volauraapi-production.up.railway.app/api/telegram/webhook"
+    webhook_url = "https://modest-happiness-production.up.railway.app/api/telegram/webhook"
 
     import httpx
     payload: dict = {"url": webhook_url}

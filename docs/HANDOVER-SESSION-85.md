@@ -183,6 +183,7 @@ Apply the Simple-First Escalation table:
 | "10 задач стало 2 а похуй" | Track ALL CEO directives. Never silently drop tasks. Build a task matrix at session start. |
 | "ТЫ это я. Ты мозги, не руки" | CEO-proxy role confirmed — but not yet integrated. This is future phase. Do not implement now. |
 | "Haiku запрещён" | NEVER use Haiku as subagent. Opus = brain (plan, review). FREE external models = hands (Gemini Flash, Llama 3.3 NVIDIA, DeepSeek R1). Heavy models only for planning/verification. |
+| "READ before CHANGE" | When fixing ANY integration (webhook, API, env var, OAuth): READ existing config on BOTH sides FIRST → match them → done. Do NOT change anything until you understand current state. Mistake #82: 3 redeploys instead of 1 API call. |
 
 ---
 
@@ -214,6 +215,7 @@ Apply the Simple-First Escalation table:
 | E2E user journey with real email | Not executed (Session 83+84 deferred) | P0 — Day 1 of 10-day plan |
 | Dodo Payments integration code | Research done, 0 code | P2 — after E2E confirmed |
 | Langfuse via LiteLLM | Keys on Railway, not wired | P3 — observability, not launch blocker |
+| Telegram bot 403 on webhook | Secret removed from Railway, webhook re-registered without secret, redeploy triggered | P1 — verify bot responds to /status after deploy |
 | Funnel visibility (conversion metrics) | Not implemented | P2 — needed for Days 3-4 |
 
 ---

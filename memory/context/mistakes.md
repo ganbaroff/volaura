@@ -153,6 +153,12 @@ Purpose: Prevent repeating errors. Read at session start.
 **Read:** feedback_external_audit.md before every session going forward.
 **CLASS:** CLASS 9 (No quality system — quality measured by real users, not code artifacts). CLASS 3 (Solo expansion decisions without CEO gate).
 
+### Mistake #82 — Telegram webhook: changed config instead of reading it (Session 84, CLASS 12)
+**What:** Telegram webhook returned 403. Root cause: `TELEGRAM_WEBHOOK_SECRET` set on Railway, webhook registered without `secret_token`. Simple fix: read Railway's secret → register webhook with that value. 1 API call, 0 redeploys. What CTO did: generated new secret → set on Railway → deleted secret → re-registered → 3 redeploys → 10 min wasted. CEO: "сам создал проблему сам мучаешься."
+**Root cause:** CTO changed config before reading it. Did not check what both sides (Railway + Telegram) currently have.
+**Rule:** When fixing ANY integration (webhook, API, env var, OAuth): **READ existing config on BOTH sides FIRST** → match them → done. Do NOT change anything until you understand current state. This is the "Did I Create This?" check applied to integrations.
+**CLASS:** CLASS 12 (Self-inflicted complexity) — 6th instance this session.
+
 ### NOT A CTO MISTAKE — Dodo Payments code not written (2026-04-03)
 **What:** CTO proposed Dodo integration, CEO redirected to agent improvement discussion first. Correct prioritization by CEO — not a CTO failure. Code will be written when CEO says go.
 **Rule:** Don't list CEO's strategic decisions as CTO mistakes. CEO controls priority order.

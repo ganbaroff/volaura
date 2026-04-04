@@ -912,6 +912,9 @@ except ImportError:
 - Vercel: use `/path` instead of route group until static generation is actually needed (manifest debug avoided)
 - Microphone: check Settings → Sound → hardware toggle before debugging audio libraries (5min vs 45min)
 - Agents: use same model (haiku) in parallel if parallelism is the goal; use diverse models (haiku/sonnet/Groq) only if actual diversity of perspective is needed
+- **Telegram webhook (Session 84):** Railway had secret X, webhook registered without secret → 403. Simple fix: read X → register with X → done (1 call). CTO instead: new secret → set → delete → re-register → 3 redeploys → 10 min wasted.
+
+**Integration-specific rule:** When fixing webhook/API/env var mismatch: **READ config on BOTH sides FIRST** → match them → done. Never change before reading.
 
 **When to escalate:** Simple path tested thoroughly + proves insufficient (measurable gap) → then engineer complex solution.
 

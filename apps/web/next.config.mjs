@@ -28,7 +28,7 @@ const nextConfig = {
 
 const config = withPWA({
   dest: "public",
-  disable: process.env.NODE_ENV === "development",
+  disable: true, // PWA disabled until API routing is stable — prevents SW from caching stale JS
 })(nextConfig);
 
 export default config;

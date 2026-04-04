@@ -259,7 +259,7 @@ export default function SignupPage() {
             required
             minLength={3}
             maxLength={30}
-            pattern="[-a-zA-Z0-9_əğıöüşçƏĞİÖÜŞÇ]+"
+            pattern="[\-a-zA-Z0-9_\u0259\u011F\u0131\u00F6\u00FC\u015F\u00E7\u018F\u011E\u0130\u00D6\u00DC\u015E\u00C7]+"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
@@ -15,6 +15,14 @@ type AccountType = "volunteer" | "organization";
 type OrgType = "ngo" | "corporate" | "government" | "startup" | "academic" | "other";
 
 export default function SignupPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>}>
+      <SignupForm />
+    </Suspense>
+  );
+}
+
+function SignupForm() {
   const { locale } = useParams<{ locale: string }>();
   const router = useRouter();
   const { t } = useTranslation();

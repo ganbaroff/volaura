@@ -216,7 +216,7 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
         from google import genai
         client = genai.Client(api_key=settings.gemini_api_key)
         response = client.models.generate_content(
-            model="gemini-2.5-flash-preview-05-20",
+            model="gemini-2.0-flash",
             contents=text,
             config=genai.types.GenerateContentConfig(
                 system_instruction=system_prompt,
@@ -226,27 +226,8 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
         )
         reply = response.text.strip()
     except Exception as e:
-        logger.error("Gemini Cloud error: {e}. Falling back to Gemma 4 local.", e=str(e))
-        # Fallback: Gemma 4 on local Ollama (CEO's RTX 5060)
-        try:
-            import httpx
-            async with httpx.AsyncClient(timeout=30) as ollama:
-                ollama_resp = await ollama.post(
-                    "http://localhost:11434/api/generate",
-                    json={
-                        "model": "gemma4:latest",
-                        "prompt": f"{system_prompt}\n\nCEO сообщение: {text}",
-                        "stream": False,
-                    },
-                )
-                reply = ollama_resp.json().get("response", "").strip()
-                if reply:
-                    reply = f"[via Gemma 4 local]\n\n{reply}"
-                else:
-                    reply = f"Сообщение сохранено ✅\nТип: {msg_type}\nОба LLM недоступны."
-        except Exception as e2:
-            logger.error("Gemma 4 local also failed: {e}", e=str(e2))
-            reply = f"Сообщение сохранено ✅\nТип: {msg_type}\nОба LLM недоступны (Cloud + Local)."
+        logger.error("Gemini error in bot: {e}", e=str(e))
+        reply = f"Сообщение сохранено ✅\nТип: {msg_type}\nGemini временно недоступен."
 
     # Add tag for saved items
     if msg_type == "idea":
@@ -393,7 +374,7 @@ async def _handle_ask_agent(db, chat_id: int | str, agent_name: str, question: s
         from google import genai
         client = genai.Client(api_key=settings.gemini_api_key)
         response = client.models.generate_content(
-            model="gemini-2.5-flash-preview-05-20",
+            model="gemini-2.0-flash",
             contents=question,
             config=genai.types.GenerateContentConfig(
                 system_instruction=f"""Ты — {perspective} в swarm команде Volaura.
@@ -452,7 +433,7 @@ async def _handle_ask_proposal(db, chat_id: int | str, proposal_id: str, questio
             f"Content: {found.get('content', '')[:800]}"
         )
         response = client.models.generate_content(
-            model="gemini-2.5-flash-preview-05-20",
+            model="gemini-2.0-flash",
             contents=question,
             config=genai.types.GenerateContentConfig(
                 system_instruction=f"""Ты — CTO-бот. CEO задаёт уточняющий вопрос по конкретному proposal от swarm.

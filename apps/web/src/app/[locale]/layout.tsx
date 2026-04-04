@@ -46,6 +46,11 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
         >
           <QueryProvider>
             <UTMCapture />
+            <div className="bg-primary/90 text-primary-foreground text-center text-xs py-1.5 px-4 font-medium sticky top-0 z-50">
+              {locale === "az"
+                ? "Bu platforma hazırda inkişaf mərhələsindədir. Bəzi funksiyalar hələ aktiv deyil."
+                : "This platform is currently under development. Some features may not be available yet."}
+            </div>
             {children}
           </QueryProvider>
         </TranslationsProvider>

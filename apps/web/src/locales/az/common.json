@@ -144,7 +144,8 @@
     "continueWithGoogle": "Google ilə davam et",
     "continueWithGitHub": "GitHub ilə davam et",
     "oauthError": "Giriş uğursuz oldu. Yenidən cəhd edin.",
-    "oauthInviteRequired": "Dəvət kodu tələb olunan beta dövründə sosial qeydiyyat mövcud deyil."
+    "oauthInviteRequired": "Dəvət kodu tələb olunan beta dövründə sosial qeydiyyat mövcud deyil.",
+    "checkboxesRequired": "Davam etmək üçün yuxarıdakı iki qeydi işarələyin"
   },
   "assessment": {
     "title": "Səriştə qiymətləndirməsi",
@@ -799,5 +800,42 @@
     "optOutConfirmYes": "Tayfadan çıx",
     "requestRenewal": "Yeniləmə tələb et",
     "renewalRequested": "Yeniləmə tələb edildi ✓"
+  },
+  "discover": {
+    "title": "İstedadları Kəşf Edin",
+    "subtitle": "İmkanlara açıq olan təsdiqlənmiş peşəkarları nəzərdən keçirin",
+    "modeToggle": "Kəşf rejimi",
+    "browse": "Göz gəzdirin",
+    "semanticSearch": "Ağıllı Axtarış",
+    "searchPlaceholder": "Ad və ya yer üzrə süzün...",
+    "accessError": "İstedadların kəşfi təşkilat hesabı tələb edir.",
+    "accessErrorDesc": "Hesabınızın təşkilat kimi qeydiyyatdan keçdiyinə əmin olun.",
+    "noResults": "Filtrənizə uyğun peşəkar tapılmadı",
+    "noVolunteers": "Hələ heç bir peşəkar kəşf üçün razılıq verməyib.",
+    "count": "{{count}} peşəkar mövcuddur",
+    "queryPlaceholder": "məs. gənclər tədbirləri üçün təcrübəli komanda lideri...",
+    "queryLabel": "Axtarış sorğusu",
+    "minAura": "Min. AURA balı",
+    "badgeTier": "Nişan dərəcəsi",
+    "searching": "Axtarılır...",
+    "search": "Axtar",
+    "searchError": "Axtarış uğursuz oldu. Yenidən cəhd edin.",
+    "searchNoResults": "Axtarışınıza uyğun peşəkar tapılmadı.",
+    "searchCount": "{{count}} nəticə",
+    "backToBrowse": "← Göz gəzdirməyə qayıt",
+    "clearSearch": "Sıfırla",
+    "aura": {
+      "AnyAura": "İstənilən AURA",
+      "BronzePlus": "Bürünc+",
+      "SilverPlus": "Gümüş+",
+      "GoldPlus": "Qızıl+"
+    },
+    "badge": {
+      "Anygrade": "İstənilən dərəcə",
+      "Bronze": "Bürünc",
+      "Silver": "Gümüş",
+      "Gold": "Qızıl",
+      "Platinum": "Platin"
+    }
   }
 }

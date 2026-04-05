@@ -97,7 +97,10 @@ async def fetch_questions(db: SupabaseAdmin, competency_id: str) -> list[dict]:
     for q in questions:
         if isinstance(q.get("options"), str):
             try:
-                q["options"] = json.loads(q["options"])
+                parsed = json.loads(q["options"])
+                # Guard: parsed value must be a list — valid JSON but wrong type
+                # (e.g. `{}` or `42`) would still fail Pydantic's list[dict] check.
+                q["options"] = parsed if isinstance(parsed, list) else None
             except (json.JSONDecodeError, TypeError):
                 q["options"] = None
     _QUESTION_CACHE[competency_id] = (now, questions)

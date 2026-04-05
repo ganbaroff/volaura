@@ -8,6 +8,7 @@ from __future__ import annotations
 import json
 import time
 from fastapi import HTTPException
+from loguru import logger
 
 from app.core.assessment.engine import CATState
 from app.deps import SupabaseAdmin
@@ -103,6 +104,15 @@ async def fetch_questions(db: SupabaseAdmin, competency_id: str) -> list[dict]:
                 q["options"] = parsed if isinstance(parsed, list) else None
             except (json.JSONDecodeError, TypeError):
                 q["options"] = None
+    # Validate: MCQ questions must have options after normalization.
+    # Silent None = corrupt session. Log as error so monitoring catches it.
+    for q in questions:
+        if q.get("type") == "mcq" and not q.get("options"):
+            logger.error(
+                "MCQ question has no options after decode — will be served broken",
+                question_id=q.get("id"),
+                competency_id=competency_id,
+            )
     _QUESTION_CACHE[competency_id] = (now, questions)
     return questions
 

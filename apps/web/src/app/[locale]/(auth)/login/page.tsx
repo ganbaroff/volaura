@@ -80,7 +80,7 @@ function LoginContent() {
       )}
 
       <SocialAuthButtons
-        redirectTo={`${window.location.origin}/${locale}/callback`}
+        redirectTo={`${typeof window !== "undefined" ? window.location.origin : ""}/${locale}/callback`}
       />
 
       <form onSubmit={handleSubmit} className="space-y-4">

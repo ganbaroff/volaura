@@ -202,7 +202,7 @@ function SignupForm() {
       {/* Social auth — only available when invite gate is off */}
       {openSignup !== false && (
         <SocialAuthButtons
-          redirectTo={`${window.location.origin}/${locale}/callback`}
+          redirectTo={`${typeof window !== "undefined" ? window.location.origin : ""}/${locale}/callback`}
           meta={{ account_type: accountType, ...(orgType ? { org_type: orgType } : {}) }}
         />
       )}

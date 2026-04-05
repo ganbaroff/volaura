@@ -474,7 +474,8 @@
     "achievementBuilding": "Hazırlanır",
     "achievementStarting": "Başlanır",
     "challengePeer": "Həmkara meydan oxuyun",
-    "challengeLink": "Dəvət linki köçürüldü."
+    "challengeLink": "Dəvət linki köçürüldü.",
+    "discoverable": "Təşkilatlar tərəfindən tapıla bilər"
   },
   "events": {
     "title": "Hadisələr",
@@ -836,6 +837,13 @@
       "Silver": "Gümüş",
       "Gold": "Qızıl",
       "Platinum": "Platin"
-    }
+    },
+    "filterBySkill": "Təsdiqlənmiş bacarığa görə axtar"
+  },
+  "badge": {
+    "platinum": "Platinum",
+    "gold": "Qızıl",
+    "silver": "Gümüş",
+    "bronze": "Bürünc"
   }
 }

@@ -169,6 +169,19 @@ const BADGE_FILTERS = [
 
 type BadgeTierFilter = "platinum" | "gold" | "silver" | "bronze" | null;
 
+// ── Competency filter chips ───────────────────────────────────────────────────
+
+const COMPETENCIES = [
+  "communication",
+  "leadership",
+  "english_proficiency",
+  "tech_literacy",
+  "reliability",
+  "adaptability",
+  "event_performance",
+  "empathy_safeguarding",
+] as const;
+
 // ── Page ───────────────────────────────────────────────────────────────────────
 
 export default function DiscoverPage() {
@@ -291,6 +304,29 @@ export default function DiscoverPage() {
                   placeholder={t("discover.searchPlaceholder", { defaultValue: "Filter by name or location…" })}
                   className="w-full rounded-xl border border-outline-variant bg-surface-container pl-9 pr-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
                 />
+              </div>
+
+              {/* Competency quick-search chips */}
+              <div className="space-y-1.5">
+                <p className="text-xs font-medium text-on-surface-variant">
+                  {t("discover.filterBySkill", { defaultValue: "Find by verified skill" })}
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {COMPETENCIES.map((comp) => (
+                    <button
+                      key={comp}
+                      type="button"
+                      onClick={() => {
+                        setMode("search");
+                        setQuery(t(`competency.${comp}`));
+                        setMinAura(60);
+                      }}
+                      className="rounded-full border border-outline-variant bg-surface-container px-3 py-1.5 text-xs font-medium text-on-surface-variant hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-colors"
+                    >
+                      {t(`competency.${comp}`)}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* List */}

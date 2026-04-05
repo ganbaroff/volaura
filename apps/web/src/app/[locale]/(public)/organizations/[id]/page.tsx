@@ -51,7 +51,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${org.name} — Volaura`,
     description:
       org.description ??
-      `${org.name} is a verified partner organization on Volaura. Browse their events and volunteer opportunities.`,
+      `${org.name} is a verified partner organization on Volaura. Browse their events and opportunities for professionals.`,
     openGraph: {
       title: `${org.name} on Volaura`,
       description: org.description ?? `Partner organization on Volaura`,

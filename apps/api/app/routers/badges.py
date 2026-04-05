@@ -99,10 +99,10 @@ async def get_open_badge_credential(
                 "name": f"AURA {tier} Badge",
                 "description": (
                     f"Awarded to {name} for achieving an AURA score of {score:.1f} "
-                    f"on the Volaura volunteer talent platform."
+                    f"on the Volaura verified talent platform."
                 ),
                 "criteria": {
-                    "narrative": f"Volunteer completed verified competency assessments and achieved AURA score ≥ {_tier_threshold(aura['badge_tier'])}."
+                    "narrative": f"Professional completed verified competency assessments and achieved AURA score ≥ {_tier_threshold(aura['badge_tier'])}."
                 },
                 "image": {
                     "id": f"{base_url}/u/{username}/card",
@@ -132,7 +132,7 @@ async def get_issuer_profile(request: Request) -> dict:
         "name": "Volaura",
         "url": "https://volaura.az",
         "email": "badges@volaura.az",
-        "description": "Elite Volunteer Talent Platform for Azerbaijan",
+        "description": "Verified Professional Talent Platform for Azerbaijan",
     }
 
 

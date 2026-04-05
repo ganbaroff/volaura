@@ -228,10 +228,10 @@ export default function DiscoverPage() {
         {/* Header */}
         <motion.div initial="hidden" animate="visible" variants={fadeUp}>
           <h1 className="font-headline text-2xl font-bold text-on-surface">
-            {t("discover.title", { defaultValue: "Discover Volunteers" })}
+            {t("discover.title", { defaultValue: "Discover Talent" })}
           </h1>
           <p className="mt-1 text-sm text-on-surface-variant">
-            {t("discover.subtitle", { defaultValue: "Browse verified volunteers who are open to opportunities" })}
+            {t("discover.subtitle", { defaultValue: "Browse verified professionals who are open to opportunities" })}
           </p>
         </motion.div>
 
@@ -312,8 +312,8 @@ export default function DiscoverPage() {
                   <Users className="mx-auto size-10 text-on-surface-variant" aria-hidden="true" />
                   <p className="text-sm text-on-surface-variant">
                     {browseSearch
-                      ? t("discover.noResults", { defaultValue: "No volunteers match your filter" })
-                      : t("discover.noVolunteers", { defaultValue: "No volunteers have opted in to discovery yet." })}
+                      ? t("discover.noResults", { defaultValue: "No professionals match your filter" })
+                      : t("discover.noVolunteers", { defaultValue: "No professionals have opted in to discovery yet." })}
                   </p>
                 </div>
               )}
@@ -323,7 +323,7 @@ export default function DiscoverPage() {
                   <p className="text-xs text-on-surface-variant">
                     {t("discover.count", {
                       count: filtered.length,
-                      defaultValue: `${filtered.length} volunteer${filtered.length !== 1 ? "s" : ""} available`,
+                      defaultValue: `${filtered.length} professional${filtered.length !== 1 ? "s" : ""} available`,
                     })}
                   </p>
                   <motion.div variants={stagger} initial="hidden" animate="visible" className="space-y-2">
@@ -446,7 +446,7 @@ export default function DiscoverPage() {
                 <div className="py-12 text-center space-y-3">
                   <Search className="mx-auto size-10 text-on-surface-variant" aria-hidden="true" />
                   <p className="text-sm text-on-surface-variant">
-                    {t("discover.searchNoResults", { defaultValue: "No volunteers matched your search." })}
+                    {t("discover.searchNoResults", { defaultValue: "No professionals matched your search." })}
                   </p>
                   <button
                     onClick={handleClearSearch}

@@ -64,7 +64,7 @@ function StarRating({
     <div
       className="flex items-center gap-0.5"
       role="group"
-      aria-label="Rate volunteer"
+      aria-label="Rate participant"
     >
       {[1, 2, 3, 4, 5].map((star) => (
         <button

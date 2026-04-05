@@ -175,7 +175,7 @@ export default function CreateEventPage() {
                 <h2 className="font-semibold text-on-surface">{t("events.stepDetailsTitle")}</h2>
 
                 <Field label={t("events.titleEn")} error={form1.formState.errors.title_en?.message}>
-                  <input {...form1.register("title_en")} className={inputClass} placeholder="Summer Tech Volunteer Summit" />
+                  <input {...form1.register("title_en")} className={inputClass} placeholder="Summer Tech Conference 2026" />
                 </Field>
 
                 <Field label={t("events.titleAz")} error={form1.formState.errors.title_az?.message}>
@@ -208,7 +208,7 @@ export default function CreateEventPage() {
                 </Field>
 
                 <Field label={t("events.descriptionEn")}>
-                  <textarea {...form1.register("description_en")} rows={3} className={cn(inputClass, "resize-none")} placeholder="Describe the event goals and volunteer tasks..." />
+                  <textarea {...form1.register("description_en")} rows={3} className={cn(inputClass, "resize-none")} placeholder="Describe the event goals and participant tasks..." />
                 </Field>
 
                 <Field label={t("events.descriptionAz")}>

@@ -22,7 +22,7 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, HTTPException, Request
 from loguru import logger
 
-from app.deps import CurrentUserId, SupabaseAdmin
+from app.deps import CurrentUserId, SupabaseUser
 from app.middleware.rate_limit import RATE_DEFAULT, limiter
 from app.schemas.character import (
     DAILY_CRYSTAL_CAP,
@@ -44,7 +44,7 @@ async def create_character_event(
     request: Request,
     body: CharacterEventCreate,
     user_id: CurrentUserId,
-    db: SupabaseAdmin,
+    db: SupabaseUser,
 ) -> CharacterEventOut:
     """Store a character event from any product.
 
@@ -216,7 +216,7 @@ async def create_character_event(
 async def get_character_state(
     request: Request,
     user_id: CurrentUserId,
-    db: SupabaseAdmin,
+    db: SupabaseUser,
 ) -> CharacterStateOut:
     """Compute and return current character state for the authenticated user.
 
@@ -251,7 +251,7 @@ async def get_character_state(
 async def get_crystal_balance(
     request: Request,
     user_id: CurrentUserId,
-    db: SupabaseAdmin,
+    db: SupabaseUser,
 ) -> CrystalBalanceOut:
     """Return crystal balance for the authenticated user.
 
@@ -296,7 +296,7 @@ async def get_crystal_balance(
 async def list_character_events(
     request: Request,
     user_id: CurrentUserId,
-    db: SupabaseAdmin,
+    db: SupabaseUser,
     limit: int = 50,
     offset: int = 0,
 ) -> list[CharacterEventOut]:

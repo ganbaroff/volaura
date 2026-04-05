@@ -204,7 +204,7 @@ async def create_verification_link(
     request: Request,
     volunteer_id: str,
     payload: CreateVerificationLinkRequest,
-    db: SupabaseAdmin,
+    db: SupabaseUser,
     user_id: CurrentUserId,
 ) -> CreateVerificationLinkResponse:
     """Create a one-use verification link for a volunteer.
@@ -490,7 +490,7 @@ async def record_profile_view(
 @limiter.limit(RATE_PROFILE_WRITE)
 async def get_my_profile_views(
     request: Request,
-    db: SupabaseAdmin,
+    db: SupabaseUser,
     user_id: CurrentUserId,
 ) -> dict:
     """Count how many orgs viewed my profile (based on org_view notifications).
@@ -544,7 +544,7 @@ async def get_my_profile_views(
 @limiter.limit(RATE_PROFILE_WRITE)
 async def get_my_verifications(
     request: Request,
-    db: SupabaseAdmin,
+    db: SupabaseUser,
     user_id: CurrentUserId,
 ) -> dict:
     """Return coordinator ratings for this volunteer — these are expert verifications.

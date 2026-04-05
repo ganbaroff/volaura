@@ -53,9 +53,33 @@
 
 ---
 
+## SESSION 87 — 2026-04-06
+
+**Last Updated:** 2026-04-06 (Session 87 — COMPLETE)
+
+**Focus:** Design System v2 foundation + Figma screens + PR merge + deploy
+
+**Session 87 delivered:**
+- PR #6 merged (12 commits: security + UX + i18n fixes)
+- Design tokens committed (purple errors, mesh gradients, reduced motion)
+- Design System v2 foundation in code
+- Figma screens built for new identity-framing approach
+
+**Deployed:** PR #6 merged and deployed to production.
+
+**Blockers:** None.
+
+**Next session:**
+- Apply identity framing to AuraScoreWidget
+- Create OG image route
+- Apply STITCH visual treatment to signup
+- Figma Variables + Code Connect setup
+
+---
+
 ## SESSION 86 — 2026-04-06
 
-**Last Updated:** 2026-04-06 (Session 86 — IN PROGRESS)
+**Last Updated:** 2026-04-06 (Session 86 — COMPLETE)
 
 **Focus:** E2E bug fixes + swarm restructure + agent activation
 

@@ -334,7 +334,15 @@
     "event_performance": "Tədbir Performansı",
     "tech_literacy": "Texnoloji savadlılıq",
     "adaptability": "Uyğunlaşma qabiliyyəti",
-    "empathy_safeguarding": "Empatiya və Mühafizə"
+    "empathy_safeguarding": "Empatiya və Mühafizə",
+    "communication_desc": "Fikirlərini yazılı və şifahi şəkildə nə qədər aydın ifadə etdiyini ölçür",
+    "reliability_desc": "Öhdəliklərinə sadiq qalıb-qalmadığını — başqalarının sənə etibar edib etməyəcəyini ölçür",
+    "english_proficiency_desc": "İngilis dilini başa düşmə və ünsiyyət qurma qabiliyyətin",
+    "leadership_desc": "Başqalarını necə motivasiya etdiyini və komandanı məqsədə yönəltdiyini ölçür",
+    "event_performance_desc": "Tədbir və layihə işlərindəki nəticə və effektivliyini ölçür",
+    "tech_literacy_desc": "Rəqəmsal alətlər və yeni texnologiyalarla nə qədər rahat işlədiyini ölçür",
+    "adaptability_desc": "Dəyişikliklər, qeyri-müəyyənlik və gözlənilməz çətinliklərə necə uyğunlaşdığını ölçür",
+    "empathy_safeguarding_desc": "Başqalarının rifahına diqqətin və təhlükəsiz mühit yaratma qabiliyyətin"
   },
   "onboarding": {
     "title": "Profilinizi tamamlayın",

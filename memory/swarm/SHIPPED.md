@@ -6,6 +6,47 @@
 
 ---
 
+## Session 86 (2026-04-06) — Agent Activation + Cultural/UX Fixes + Swarm Restructure
+
+### Code Changed
+| Item | What it does | Status |
+|------|-------------|--------|
+| PR #5 merged | fix: profile 404 (double /api/ prefix on events/my + verifications) + cache mutation guard + composite index | **Merged to main** |
+| feed-cards.tsx | Empty state: passive text → clickable Link to /assessment with ArrowRight icon | Committed |
+| assessment/complete/page.tsx | Strength-first framing for all score tiers (low=encouraging, high=celebratory) | Committed |
+| locales/az/common.json | 6 string fixes: shareBody/shareBodyLow (remove percentile), shareNudgeSilver (remove "challenge colleague"), hiddenStrengthDesc ("highest rated"→"uncommon strength"), nextStepLeaderboard ("compare"→"position"), assessment guidance (patronizing→goal-completion) | Committed |
+
+### Swarm Architecture
+| Item | What it does | Status |
+|------|-------------|--------|
+| memory/swarm/team-structure.md | 7 squads (Quality, Product, Engineering, Growth, Business, Content, Governance) + Coordinator | Created |
+| memory/swarm/skills/coordinator-agent.md | CTO's assistant — routes tasks to squads, restricted to Agent/SendMessage/TaskStop | Created |
+| memory/feedback_root_cause_solo_work.md | 5 structural reasons CTO ignores agents + remediation plan | Created |
+| memory/cto_session_checklist.md | 4 pre-work questions + persistent kanban board | Created |
+
+### Agent Activation Results
+| Agent | Findings | Applied | Notes |
+|-------|----------|---------|-------|
+| Behavioral Nudge Engine | 10 (2 P0, 5 P1, 3 P2) | 3 fixes | First run after 9 sessions dormant. Dashboard=6-8 decisions (P0), assessment competency=24 micro-decisions (P1) |
+| Cultural Intelligence Strategist | 10 (2 P0, 4 P1, 4 P2) | 6 fixes | First run after 9 sessions dormant. AZ percentile share (P0), competitive language in AZ copy (P1) |
+
+---
+
+## Session 85 (2026-04-04) — CORS + Auth + E2E Fixes
+
+### Code Changed
+| Item | What it does | Status |
+|------|-------------|--------|
+| CORS elimination | Vercel rewrites proxy /api/ → Railway (same-origin), middleware excludes /api/ | **Deployed** |
+| Double /api/api/ prefix | 15+ files: removed leading /api/ from apiFetch calls (apiFetch adds it) | **Deployed** |
+| Railway anon key | Corrected SUPABASE_ANON_KEY on Railway (was wrong project key → 500 all auth) | **Fixed** |
+| Signup 500 | useSearchParams wrapped in Suspense boundary (SSR error) | **Deployed** |
+| Login SSR fix | window.location.origin guard for SSR (typeof window check) | **Deployed** |
+| PWA service worker | Disabled + purge script (cached stale JS) | **Deployed** |
+| TASK-PROTOCOL v10.0 | IF/ELSE decision tree replaces linear steps | Documented |
+
+---
+
 ## Session 84 (2026-04-04) — OAuth Fix + Universal Weapon Research + Mem0 MCP
 
 ### Code / Config Changed

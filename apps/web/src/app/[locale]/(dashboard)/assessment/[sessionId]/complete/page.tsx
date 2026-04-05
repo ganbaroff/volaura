@@ -134,7 +134,7 @@ const BADGE_CONFIG: Record<string, { color: string; bg: string; icon: typeof Tro
 
 // ── Animated counter ───────────────────────────────────────────────────
 
-function useAnimatedCounter(target: number, duration = 1500) {
+function useAnimatedCounter(target: number, duration = 800) {
   const [value, setValue] = useState(0);
   const startTime = useRef<number | null>(null);
   const raf = useRef<number>(0);

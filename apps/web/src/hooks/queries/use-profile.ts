@@ -109,7 +109,7 @@ export function useMyVerifications() {
     queryFn: async () => {
       const token = await getToken();
       if (!token) return [];
-      return apiFetch<ExpertVerificationData[]>("/api/profiles/me/verifications", { token });
+      return apiFetch<ExpertVerificationData[]>("/profiles/me/verifications", { token });
     },
     staleTime: 5 * 60 * 1000,
     retry: 1,

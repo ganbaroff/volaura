@@ -56,7 +56,7 @@ export function useMyEvents() {
     queryFn: async () => {
       const token = await getToken();
       if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
-      return apiFetch<EventResponse[]>("/api/events/my", { token });
+      return apiFetch<EventResponse[]>("/events/my", { token });
     },
     staleTime: 2 * 60 * 1000,
     retry: 2,

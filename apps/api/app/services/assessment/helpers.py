@@ -83,7 +83,9 @@ async def fetch_questions(db: SupabaseAdmin, competency_id: str) -> list[dict]:
     if cached is not None:
         fetched_at, questions = cached
         if now - fetched_at < _QUESTION_CACHE_TTL:
-            return questions
+            # Return shallow copies — callers must not mutate the shared cache.
+            # deepcopy omitted for performance; options is already normalized at write time.
+            return [q.copy() for q in questions]
 
     result = (
         await db.table("questions")
@@ -114,7 +116,7 @@ async def fetch_questions(db: SupabaseAdmin, competency_id: str) -> list[dict]:
                 competency_id=competency_id,
             )
     _QUESTION_CACHE[competency_id] = (now, questions)
-    return questions
+    return [q.copy() for q in questions]
 
 
 def make_session_out(

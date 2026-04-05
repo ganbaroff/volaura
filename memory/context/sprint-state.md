@@ -53,7 +53,41 @@
 
 ---
 
-## SESSION 85 IN PROGRESS — 2026-04-04
+## SESSION 86 — 2026-04-06
+
+**Last Updated:** 2026-04-06 (Session 86 — IN PROGRESS)
+
+**Focus:** E2E bug fixes + swarm restructure + agent activation
+
+**Session 86 delivered:**
+- PR #5 merged (profile page double `/api/api/` prefix → 404 on events/my + verifications)
+- `fetch_questions()` cache mutation guard (shallow copy prevents callers corrupting shared cache)
+- `volunteer_badges` composite index (volunteer_id, earned_at DESC) applied to both Supabase projects
+- **First real agent activation:** BNE + Cultural Intelligence — dormant 9 sessions, both delivered 10 findings each
+- BNE fixes: feed-cards passive empty state → clickable CTA, assessment results strength-first framing
+- Cultural Intelligence fixes: 6 AZ locale strings (percentile share removed, competitive language → collective, patronizing ADHD guidance → goal-completion)
+- **Root cause analysis:** 5 structural reasons CTO doesn't use agents (CLASS 3 deepest analysis yet)
+- **Team structure v1.0:** 7 squads + Coordinator Agent designed
+- **Coordinator Agent skill file** created (ch10 pattern — restricted to Agent/SendMessage/TaskStop)
+- **Session checklist + kanban** created (persistent across sessions)
+- **Agent panel discussion** launched (BNE + CIS + Security give feedback on structure)
+
+**CEO corrections this session:**
+- "They're meta because of YOUR fault, not theirs" — agents weren't configured, not broken
+- "Think like a human not a bot" — 4 questions before any work
+- "CTO doesn't command 44 people directly — needs assistant/coordinator"
+- "Documentation бесит" — sprint-state.md 2 sessions behind (fixing now)
+
+**Next:**
+- Agent panel feedback → incorporate into development plan
+- PR for Session 86 code changes
+- Dashboard P0: 4-6 competing CTAs for new user → single next action
+- Assessment competency page: 24 micro-decisions → collapsed
+- Telegram bot investigation
+
+---
+
+## SESSION 85 COMPLETE — 2026-04-04
 
 **Last Updated:** 2026-04-04 22:30 (Session 85 — END)
 

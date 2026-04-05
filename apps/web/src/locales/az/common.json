@@ -144,12 +144,13 @@
     "continueWithGoogle": "Google ilə davam et",
     "continueWithGitHub": "GitHub ilə davam et",
     "oauthError": "Giriş uğursuz oldu. Yenidən cəhd edin.",
-    "oauthInviteRequired": "Dəvət kodu tələb olunan beta dövründə sosial qeydiyyat mövcud deyil."
+    "oauthInviteRequired": "Dəvət kodu tələb olunan beta dövründə sosial qeydiyyat mövcud deyil.",
+    "checkboxesRequired": "Davam etmək üçün yuxarıdakı iki qeydi işarələyin"
   },
   "assessment": {
     "title": "Səriştə qiymətləndirməsi",
     "selectCompetencies": "Qiymətləndiriləcək səriştələri seçin",
-    "guidance": "Yeni qoşulmusunuz? 1-2 səriştə ilə başlayın. Daha çoxu üçün hər zaman qayıda bilərsiniz.",
+    "guidance": "Məqsədiniz: tam profil qurmaq. Hər qiymətləndirmə AURA balınıza +1-2 xal əlavə edir.",
     "canSave": "İstənilən vaxt yadda saxlaya və davam edə bilərsiniz; bir dəfəyə tamamlamağa məcbur deyilsiniz.",
     "start": "Qiymətləndirməyə Başlayın",
     "question": "Sual",
@@ -173,7 +174,7 @@
     "leaveConfirm": "Bəli, çıxın.",
     "timerExpired": "Vaxt bitdi — növbəti suala keçilir",
     "takingBreak": "İrəliləyişiniz saxlanıldı. İstənilən vaxt qayıda bilərsiniz.",
-    "competencyComplete": "{name} tamamlanıb.",
+    "competencyComplete": "{{name}} tamamlanıb.",
     "continueToNext": "Növbətiyə keçin",
     "processingResults": "Nəticələriniz hesablanır...",
     "evaluating": "Cavabınız qiymətləndirilir...",
@@ -231,7 +232,7 @@
     "infoAbout": "Bu qiymətləndirmə haqqında",
     "infoTimeLabel": "Təxmini vaxt",
     "infoRetakeAvailable": "Hazırda mövcuddur",
-    "infoRetakeCooldown": "{{gün}} günə əlçatan olacaq",
+    "infoRetakeCooldown": "{{days}} günə əlçatan olacaq",
     "infoNoDescription": "Bacarıqlarınızı sınaqdan keçirin və bu səriştə üzrə təsdiqlənmiş bal əldə edin.",
     "infoContinueButton": "Qiymətləndirməyə keçin",
     "progressToNextTier": "{{tier}} üçün {{pts}} xal çatışmır",
@@ -240,10 +241,10 @@
     "milestoneGold": "🥇 Qızıl Pillə!",
     "milestoneDiscoverable": "Siz artıq Volaura-da təşkilatlar tərəfindən kəşf edilə bilərsiniz.",
     "shareNudge": "Siz ən yüksək pillədəsiniz — qoy təşkilatlar sizi tapsınlar.",
-    "shareNudgeSilver": "Sürət qazanırıq — irəliləyişinizi bölüşün və həmkarınıza meydan oxuyun.",
+    "shareNudgeSilver": "Sürət qazanırıq — irəliləyişinizi həmkarlarınızla bölüşün.",
     "shareNudgeLow": "Tərəqqinizi paylaşın — hər bir nəticə bir hekayə söyləyir.",
-    "shareBody": "{{emoji}} {{səriştə}} {{persentil}} — AURA {{nəticə}}\nVolaura-da təsdiqlənib:",
-    "shareBodyLow": "{{competency}} nəticəsi: Volaurada {{score}}{{percentile}} — AURA-mı təkmilləşdirirəm 📈",
+    "shareBody": "{{emoji}} {{competency}} — AURA {{score}}\nVolaura tərəfindən təsdiqlənib:",
+    "shareBodyLow": "{{competency}} sahəsini öyrənirəm — Volaura-da AURA balım: {{score}} 📈",
     "shareTitle": "Volaura AURA balım",
     "shareTitleLow": "Volaura balım",
     "answerSaved": "Saxlanılıb",
@@ -302,7 +303,7 @@
     "scoreMeaning_foundation": "Təsdiqlənmiş töhfəçi — sizin nüfuzunuzu formalaşdırır",
     "scoreMeaning_progress": "Qiymətləndirmə davam edir.",
     "hiddenStrengthLabel": "Gizli güc aşkar edildi.",
-    "hiddenStrengthDesc": "Bu səriştə Volaura platformasında ən yüksək qiymətləndirilənlər arasındadır.",
+    "hiddenStrengthDesc": "Bu səriştə Volaura platformasında az rast gəlinən gücdür.",
     "revealingAura": "AURA-nız açılır...",
     "rising": "Yüksələn Ulduz",
     "telegram": "Telegram",
@@ -323,7 +324,7 @@
     "nextSteps": "Davam edin",
     "nextStepAssess": "Başqa bir kompetensiyanı qiymətləndirin.",
     "nextStepAssessDesc": "Hər kompetensiya sizin AURA balınızı artırır.",
-    "nextStepLeaderboard": "Necə müqayisə olunduğunuzu görün.",
+    "nextStepLeaderboard": "Platformada mövqeyinizə baxın.",
     "nextStepLeaderboardDesc": "Platformada mövqeyinizə baxın."
   },
   "competency": {
@@ -334,7 +335,15 @@
     "event_performance": "Tədbir Performansı",
     "tech_literacy": "Texnoloji savadlılıq",
     "adaptability": "Uyğunlaşma qabiliyyəti",
-    "empathy_safeguarding": "Empatiya və Mühafizə"
+    "empathy_safeguarding": "Empatiya və Mühafizə",
+    "communication_desc": "Fikirlərini yazılı və şifahi şəkildə nə qədər aydın ifadə etdiyini ölçür",
+    "reliability_desc": "Öhdəliklərinə sadiq qalıb-qalmadığını — başqalarının sənə etibar edib etməyəcəyini ölçür",
+    "english_proficiency_desc": "İngilis dilini başa düşmə və ünsiyyət qurma qabiliyyətin",
+    "leadership_desc": "Başqalarını necə motivasiya etdiyini və komandanı məqsədə yönəltdiyini ölçür",
+    "event_performance_desc": "Tədbir və layihə işlərindəki nəticə və effektivliyini ölçür",
+    "tech_literacy_desc": "Rəqəmsal alətlər və yeni texnologiyalarla nə qədər rahat işlədiyini ölçür",
+    "adaptability_desc": "Dəyişikliklər, qeyri-müəyyənlik və gözlənilməz çətinliklərə necə uyğunlaşdığını ölçür",
+    "empathy_safeguarding_desc": "Başqalarının rifahına diqqətin və təhlükəsiz mühit yaratma qabiliyyətin"
   },
   "onboarding": {
     "title": "Profilinizi tamamlayın",
@@ -465,7 +474,8 @@
     "achievementBuilding": "Hazırlanır",
     "achievementStarting": "Başlanır",
     "challengePeer": "Həmkara meydan oxuyun",
-    "challengeLink": "Dəvət linki köçürüldü."
+    "challengeLink": "Dəvət linki köçürüldü.",
+    "discoverable": "Təşkilatlar tərəfindən tapıla bilər"
   },
   "events": {
     "title": "Hadisələr",
@@ -791,5 +801,49 @@
     "optOutConfirmYes": "Tayfadan çıx",
     "requestRenewal": "Yeniləmə tələb et",
     "renewalRequested": "Yeniləmə tələb edildi ✓"
+  },
+  "discover": {
+    "title": "İstedadları Kəşf Edin",
+    "subtitle": "İmkanlara açıq olan təsdiqlənmiş peşəkarları nəzərdən keçirin",
+    "modeToggle": "Kəşf rejimi",
+    "browse": "Göz gəzdirin",
+    "semanticSearch": "Ağıllı Axtarış",
+    "searchPlaceholder": "Ad və ya yer üzrə süzün...",
+    "accessError": "İstedadların kəşfi təşkilat hesabı tələb edir.",
+    "accessErrorDesc": "Hesabınızın təşkilat kimi qeydiyyatdan keçdiyinə əmin olun.",
+    "noResults": "Filtrənizə uyğun peşəkar tapılmadı",
+    "noVolunteers": "Hələ heç bir peşəkar kəşf üçün razılıq verməyib.",
+    "count": "{{count}} peşəkar mövcuddur",
+    "queryPlaceholder": "məs. gənclər tədbirləri üçün təcrübəli komanda lideri...",
+    "queryLabel": "Axtarış sorğusu",
+    "minAura": "Min. AURA balı",
+    "badgeTier": "Nişan dərəcəsi",
+    "searching": "Axtarılır...",
+    "search": "Axtar",
+    "searchError": "Axtarış uğursuz oldu. Yenidən cəhd edin.",
+    "searchNoResults": "Axtarışınıza uyğun peşəkar tapılmadı.",
+    "searchCount": "{{count}} nəticə",
+    "backToBrowse": "← Göz gəzdirməyə qayıt",
+    "clearSearch": "Sıfırla",
+    "aura": {
+      "AnyAura": "İstənilən AURA",
+      "BronzePlus": "Bürünc+",
+      "SilverPlus": "Gümüş+",
+      "GoldPlus": "Qızıl+"
+    },
+    "badge": {
+      "Anygrade": "İstənilən dərəcə",
+      "Bronze": "Bürünc",
+      "Silver": "Gümüş",
+      "Gold": "Qızıl",
+      "Platinum": "Platin"
+    },
+    "filterBySkill": "Təsdiqlənmiş bacarığa görə axtar"
+  },
+  "badge": {
+    "platinum": "Platinum",
+    "gold": "Qızıl",
+    "silver": "Gümüş",
+    "bronze": "Bürünc"
   }
 }

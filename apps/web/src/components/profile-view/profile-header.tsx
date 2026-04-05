@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { MapPin, Globe, Lock, Pencil } from "lucide-react";
+import { MapPin, Globe, Lock, Pencil, Eye } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils/cn";
 
@@ -15,6 +15,7 @@ export interface ProfileHeaderData {
   is_public: boolean;
   avatar_url: string | null;
   badge_tier?: "platinum" | "gold" | "silver" | "bronze" | "none";
+  total_score?: number | null;
   registration_number?: number | null;
   registration_tier?: string | null;
 }
@@ -112,6 +113,28 @@ export function ProfileHeader({ profile, locale, isOwnProfile }: ProfileHeaderPr
           )}
         </div>
 
+        {/* AURA score + badge + visibility */}
+        {(profile.total_score != null || tier !== "none") && (
+          <div className="mt-1.5 flex items-center gap-2">
+            {profile.total_score != null && (
+              <span className="text-lg font-bold text-foreground tabular-nums">
+                {Math.round(profile.total_score)}
+              </span>
+            )}
+            {tier !== "none" && (
+              <span className={cn(
+                "rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide",
+                tier === "platinum" && "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300",
+                tier === "gold" && "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300",
+                tier === "silver" && "bg-slate-100 text-slate-600 dark:bg-slate-800/40 dark:text-slate-300",
+                tier === "bronze" && "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+              )}>
+                {t(`badge.${tier}`, { defaultValue: tier })}
+              </span>
+            )}
+          </div>
+        )}
+
         {profile.bio && (
           <p className="mt-1.5 text-sm text-foreground leading-snug line-clamp-2">
             {profile.bio}
@@ -131,7 +154,12 @@ export function ProfileHeader({ profile, locale, isOwnProfile }: ProfileHeaderPr
               {profile.languages.join(", ")}
             </span>
           )}
-          {!profile.is_public && (
+          {profile.is_public ? (
+            <span className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400">
+              <Eye className="size-3" aria-hidden="true" />
+              {t("profile.discoverable", { defaultValue: "Discoverable by organizations" })}
+            </span>
+          ) : (
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
               <Lock className="size-3" aria-hidden="true" />
               {t("profile.private")}

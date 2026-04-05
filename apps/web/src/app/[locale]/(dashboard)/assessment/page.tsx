@@ -207,12 +207,14 @@ function AssessmentContent() {
       <div className="grid gap-3" role="group" aria-label={t("assessment.selectCompetencies")}>
         {COMPETENCIES.map((comp) => {
           const label = t(`competency.${comp.id}`, { defaultValue: comp.id });
+          const description = t(`competency.${comp.id}_desc`, { defaultValue: "" });
           const estimatedLabel = t("assessment.estimatedTime", { n: comp.estimatedMinutes });
           return (
             <CompetencyCard
               key={comp.id}
               id={comp.id}
               label={label}
+              description={description || undefined}
               estimatedMinutes={comp.estimatedMinutes}
               estimatedLabel={estimatedLabel}
               isSelected={selected.has(comp.id)}

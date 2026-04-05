@@ -455,6 +455,7 @@ export default function OnboardingPage() {
                   >
                     <div className="text-2xl mb-2">{icon}</div>
                     <p className="text-sm font-semibold text-foreground">{t(`competency.${slug}`)}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{t(`competency.${slug}_desc`, { defaultValue: "" })}</p>
                   </button>
                 ))}
               </div>

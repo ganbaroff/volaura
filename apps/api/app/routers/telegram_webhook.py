@@ -95,58 +95,109 @@ async def _get_project_stats(db) -> str:
         return "Статистика недоступна."
 
 
+_REPO_ROOT = Path(__file__).parent.parent.parent.parent.parent
+
+
 def _get_ecosystem_context() -> str:
-    """Return hardcoded ecosystem state for bot context. Update this when platform state changes."""
-    return """
-=== ECOSYSTEM STATE (2026-04-04 Session 85) ===
-Volaura: DEPLOYED. Railway + Vercel + Supabase. 115 API endpoints. 47 AI agents. CORS fixed. All 20 pages return 200.
-MindShift: READY FOR PLAY STORE. React 19+Vite. 207 unit + 201 E2E tests. AAB built. Share card with PNG export.
-Life Simulator: 65%. character_events + character_state LIVE. Needs Godot CloudSave + crystal bridge UI. THIS IS WHERE USERS WILL LIVE.
-ZEUS: 70% desktop. Plan→Execute→Reflect loop. Local RTX 5060. No cloud API yet.
-BrandedBy: 15%. Video worker wired (fal.ai). Will generate personalized recap videos from MindShift/VOLAURA stats.
-Crystal economy: character_events + game_crystal_ledger LIVE. Crystals earned in MindShift → spent in Life Simulator.
+    """Read live ecosystem state from heartbeat files. Falls back to hardcoded if unavailable."""
+    parts: list[str] = []
 
-=== ARCHITECTURE ===
-5 products = 5 brain regions (Ramachandran neuroscience mapping):
-- Thalamus = character_state (central hub)
-- Cortex = VOLAURA AURA (rational assessment)
-- Limbic = Life Simulator (emotions, world)
-- Basal ganglia = MindShift (habits, focus)
-- Dopamine = Crystals (reward system)
-All connected by character_events table in Supabase. Event-sourced. One user, five touchpoints.
+    # VOLAURA heartbeat
+    volaura_hb = _REPO_ROOT / "memory" / "context" / "heartbeat.md"
+    if volaura_hb.exists():
+        try:
+            parts.append("=== VOLAURA HEARTBEAT ===\n" + volaura_hb.read_text(encoding="utf-8")[:1200])
+        except Exception:
+            pass
 
-=== PLANNED FEATURES ===
-- Virtual conferences with Life Simulator avatars (Discord-like)
-- Avatar marketplace: cosmetics, houses, items (no stat impact = fair)
-- AI agents living in the world (talk to them, learn from them)
-- Queue skip: crystals or money for priority access to agents
-- Pro tier: always-available agents
-- BrandedBy video recaps: personalized animated cards from your stats
+    # MindShift heartbeat
+    mindshift_hb = Path("C:/Users/user/Downloads/mindshift/memory/heartbeat.md")
+    if mindshift_hb.exists():
+        try:
+            parts.append("=== MINDSHIFT HEARTBEAT ===\n" + mindshift_hb.read_text(encoding="utf-8")[:800])
+        except Exception:
+            pass
 
-=== CURRENT STATE ===
-Session 85 complete. TASK-PROTOCOL v10.0 (IF/ELSE decision tree + structural hooks).
-CORS/double-prefix: FIXED. Railway anon key: FIXED. Signup 500: FIXED.
-CEO evaluation: 9.25/10 from 2 independent models (Gemini + NVIDIA).
-CTO self-assessment: Grade F (8 deploys, 10 errors CEO caught). 5 new rules added.
+    # Ecosystem contract
+    contract = _REPO_ROOT / "memory" / "context" / "ecosystem-contract.md"
+    if contract.exists():
+        try:
+            parts.append("=== ECOSYSTEM CONTRACT ===\n" + contract.read_text(encoding="utf-8")[:600])
+        except Exception:
+            pass
 
-=== TEAM ===
-47 agents + CTO (Claude Opus). Key agents: Security, Architecture, Product, QA, Growth, Risk, CEO Report.
-External models: Gemini 2.0 Flash (free), NVIDIA Nemotron Ultra 253B (free), Groq (region-dependent).
-Budget: $50/mo. Stack: FastAPI + Next.js 14 + Supabase + Railway + Vercel.
+    if parts:
+        return "\n\n".join(parts)
 
-=== BUSINESS ===
-12,000 users waiting for invite. 50,000 AZN credit approved. 3 team members ready at $1K/mo.
-startup.az accelerator application filed. Georgia company registration started.
-B2B model: first 100 free, $5 AZN per assessment for organizations.
-Dodo Payments API key saved. Company verification pending.
+    # Fallback
+    return (
+        "=== ECOSYSTEM (fallback — heartbeat files not found) ===\n"
+        "Volaura: DEPLOYED. Railway + Vercel + Supabase. 115 API endpoints. 47 AI agents.\n"
+        "MindShift: READY FOR PLAY STORE. 207 unit + 201 E2E tests. AAB 4.3 MB built.\n"
+        "Life Simulator: 65%. 4 P0 bugs blocking API integration.\n"
+        "ZEUS: 70%. 47 agents daily autonomous runs.\n"
+        "BrandedBy: 15%. Early stage.\n"
+        "MISSING: POST /api/character/events, GET /api/character/state, GET /api/character/crystals"
+    )
 
-=== NEXT STEPS ===
-1. Verify Railway 500s resolved (logged-in dashboard test)
-2. E2E walkthrough all pages logged in
-3. UI/UX improvements
-4. Telegram bot: make autonomous (read project files, execute tasks)
-5. Launch to 12,000 (end of April)
-"""
+
+def _load_agent_state() -> dict:
+    """Load live agent state from agent-state.json."""
+    state_path = _REPO_ROOT / "memory" / "swarm" / "agent-state.json"
+    try:
+        import json as _json
+        with open(state_path, "r", encoding="utf-8") as f:
+            data = _json.load(f)
+        return data.get("agents", {})
+    except Exception:
+        return {}
+
+
+# Full 44-agent roster for /ask routing
+_FULL_AGENT_MAP = {
+    "security": "Security Agent (9.0/10) — CVSS scoring, attack vectors, RLS gaps, OWASP top 10",
+    "architecture": "Architecture Agent (8.5/10) — system design, storage math, CVSS 9.8 patterns",
+    "product": "Product Agent (8.0/10) — user journeys, personas, adoption, retention, 100% accuracy",
+    "needs": "Needs Agent (7.0/10) — schema snapshots, process analysis, highest-leverage findings",
+    "qa": "QA Engineer (6.5/10) — test coverage, DoD enforcement, anti-self-assessment",
+    "growth": "Growth Agent (5.0/10 ⚠️ SURVIVAL CLOCK) — CAC/LTV, competitive tracking, D0-D30 retention",
+    "risk": "Risk Manager — ISO 31000, Likelihood×Impact scoring, blocks CRITICAL risks",
+    "readiness": "Readiness Manager — SRE/ITIL v4, Go/No-Go decisions, LRL scoring",
+    "scaling": "Scaling Engineer — bottlenecks at 10x, database, API latency, infrastructure",
+    "watchdog": "CTO Watchdog — process compliance, memory updates, protocol enforcement",
+    "quality": "Code Quality Engineer — tech debt, patterns, maintainability, test coverage",
+    "assessment-science": "Assessment Science Agent — IRT parameters, DIF bias, CAT stopping criteria",
+    "analytics": "Analytics & Retention Agent — D0/D1/D7/D30 cohort analysis, B2B health score",
+    "devops": "DevOps/SRE Agent — Railway/Vercel/Supabase ops, incident response",
+    "finance": "Financial Analyst Agent — LTV/CAC, AZN unit economics, crystal economy pricing",
+    "ux": "UX Research Agent — JTBD framework, 5-user testing, AZ cultural gaps",
+    "pr": "PR & Media Agent — AZ media landscape, press releases, startup competitions",
+    "data": "Data Engineer Agent — PostHog, analytics pipeline, event schema",
+    "technical-writer": "Technical Writer Agent — API docs, B2B content, AURA explainer",
+    "payment": "Payment Provider Agent — Paddle webhooks, revenue reconciliation",
+    "community": "Community Manager Agent — tribe engagement, D7 retention playbook",
+    "performance": "Performance Engineer Agent — pgvector audit, k6 load testing, N+1 detection",
+    "investor": "Investor/Board Agent — VC perspective, fundraising, pricing",
+    "competitor": "Competitor Intelligence Agent — LinkedIn, HH.ru, TestGorilla analysis",
+    "university": "University & Ecosystem Partner Agent — ADA/BHOS/GITA partnerships",
+    "ceo-report": "CEO Report Agent (7.0/10) — translates technical output to business language",
+    "qa-quality": "QA Quality Agent — Definition of Done enforcer, CTO cannot override",
+    "onboarding": "Onboarding Specialist Agent — first 5-minute experience optimization",
+    "customer-success": "Customer Success Agent — churn prevention, D7 retention",
+    "trend-scout": "Trend Scout Agent — market intelligence, competitor features",
+    "firuza": "Firuza (Council) — execution micro-decisions (100% accuracy)",
+    "nigar": "Nigar (Council) — B2B feature decisions (100% accuracy)",
+    "comms": "Communications Strategist — narrative arc, content strategy",
+    "legal": "Legal Advisor — GDPR compliance, crystal economy ethics",
+    "fact-check": "Fact-Check Agent — CEO content verification before publishing",
+    "cultural": "Cultural Intelligence Strategist — AZ/CIS cultural audit 🔴 CRITICAL",
+    "accessibility": "Accessibility Auditor — WCAG 2.2 AA specialist",
+    "behavioral-nudge": "Behavioral Nudge Engine — ADHD-first UX validator 🔴 CRITICAL",
+    "sales-deal": "Sales Deal Strategist — B2B deal architecture",
+    "sales-discovery": "Sales Discovery Coach — B2B discovery flow",
+    "linkedin": "LinkedIn Content Creator — LinkedIn & professional brand",
+    "promotion": "Promotion Agency — distribution & content amplification",
+}
 
 
 async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
@@ -346,29 +397,217 @@ async def _handle_proposal_action(db, chat_id: int | str, action: str, proposal_
         await _send_message(chat_id, f"⚠️ Ошибка: {str(e)[:100]}")
 
 
-async def _handle_ask_agent(db, chat_id: int | str, agent_name: str, question: str) -> None:
-    """Route CEO's question to a specific agent perspective via LLM."""
-    agent_map = {
-        "security": "Security Auditor — CVSS scoring, attack vectors, RLS gaps, OWASP top 10",
-        "scaling": "Scaling Engineer — bottlenecks at 10x, database, API latency, infrastructure",
-        "product": "Product Strategist — user journeys, Leyla/Nigar personas, adoption, retention",
-        "quality": "Code Quality Engineer — tech debt, patterns, maintainability, test coverage",
-        "watchdog": "CTO Watchdog — process compliance, memory updates, protocol v4.0",
-        "risk": "Risk Manager (ISO 31000 + COSO ERM) — Likelihood×Impact scoring, risk register, blocks CRITICAL risks. Red lines: CVSS≥7, user data without auth, zero backup/restore tested.",
-        "readiness": "Readiness Manager (Google SRE + ITIL v4) — Go/No-Go decisions, LRL scoring (1-7), 5-dimension audit (Correctness/Ops/Security/UX/Rollback). Current platform: LRL-4, score 70/100. GO for ≤200 users.",
-    }
+async def _handle_agents(chat_id: int | str) -> None:
+    """Show all 44 ZEUS agents with live status from agent-state.json."""
+    live = _load_agent_state()
+    status_emoji = {"active": "⚡", "idle": "💤", "running": "🔄", "new": "🆕"}
 
-    if agent_name not in agent_map:
-        agents_list = ", ".join(agent_map.keys())
-        await _send_message(chat_id, f"⚠️ Agent `{agent_name}` не найден.\n\nДоступные: {agents_list}")
+    lines = ["🤖 *ZEUS Swarm — 44 агента*\n"]
+    lines.append("*Инициализированные:*")
+    initialized = [(aid, info) for aid, info in live.items() if info.get("status") != "uninitialized"]
+    for aid, info in sorted(initialized, key=lambda x: -(x[1].get("performance", {}).get("tasks_completed", 0))):
+        emoji = status_emoji.get(info.get("status", ""), "🤖")
+        tasks = info.get("performance", {}).get("tasks_completed", 0)
+        last = (info.get("last_task") or "—")[:60]
+        lines.append(f"{emoji} `{aid}` — {tasks} задач\n   _{last}_")
+
+    lines.append(f"\n*Все агенты* — /ask {{agent}} {{вопрос}}")
+    lines.append("*Дать задачу* — /agent {{id}} {{задача}}")
+    lines.append("*Весь рой* — /swarm {{задача}}")
+    lines.append(f"\nАгентов с данными: {len(initialized)}/44")
+    await _send_message(chat_id, "\n".join(lines))
+
+
+async def _handle_agent_task(db, chat_id: int | str, agent_id: str, task: str) -> None:
+    """Give a specific task to one agent and get their response via Gemini."""
+    # Normalize: allow short names and full IDs
+    normalized = agent_id.lower().replace(" ", "-")
+    perspective = _FULL_AGENT_MAP.get(normalized)
+    if not perspective:
+        # Try partial match
+        for key, desc in _FULL_AGENT_MAP.items():
+            if normalized in key or key in normalized:
+                perspective = desc
+                normalized = key
+                break
+
+    if not perspective:
+        keys = ", ".join(sorted(_FULL_AGENT_MAP.keys()))
+        await _send_message(chat_id, f"⚠️ Агент `{agent_id}` не найден.\n\nДоступные ID:\n{keys}")
         return
 
     if not settings.gemini_api_key:
         await _send_message(chat_id, "⚠️ GEMINI_API_KEY не настроен.")
         return
 
+    # Load agent's live state for context
+    live = _load_agent_state()
+    agent_state = live.get(normalized, {})
+    state_ctx = ""
+    if agent_state:
+        state_ctx = (
+            f"\nТвой текущий статус: {agent_state.get('status', 'unknown')}"
+            f"\nПоследняя задача: {agent_state.get('last_task', 'нет')}"
+            f"\nЗадач выполнено: {agent_state.get('performance', {}).get('tasks_completed', 0)}"
+        )
+
     stats = await _get_project_stats(db)
-    perspective = agent_map[agent_name]
+    ecosystem = _get_ecosystem_context()
+
+    try:
+        from google import genai
+        client = genai.Client(api_key=settings.gemini_api_key)
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=task,
+            config=genai.types.GenerateContentConfig(
+                system_instruction=f"""Ты — {perspective} в ZEUS swarm.
+CEO Юсиф даёт тебе конкретную задачу через Telegram.{state_ctx}
+
+Контекст проекта:
+{stats}
+
+Экосистема:
+{ecosystem[:800]}
+
+ПРАВИЛА:
+- Отвечай от своей роли и экспертизы
+- Конкретно: файлы, строки кода, числа, риски с оценкой
+- Если задача вне твоей экспертизы — скажи какому агенту передать
+- Заканчивай: что нужно сделать дальше и кто
+- На русском""",
+                max_output_tokens=2000,
+                temperature=0.7,
+            ),
+        )
+        reply = f"🤖 *{normalized.title()} Agent:*\n\n{response.text.strip()}"
+    except Exception as e:
+        reply = f"⚠️ Agent `{normalized}` не смог ответить: {str(e)[:100]}"
+
+    await _save_message(db, "bot_to_ceo", f"[task→{normalized}] {reply}", "agent_task")
+    await _send_message(chat_id, reply)
+
+
+async def _handle_queue(chat_id: int | str) -> None:
+    """Show autonomous queue — what agents can do without CEO approval."""
+    queue_path = _REPO_ROOT / "memory" / "swarm" / "autonomous-queue.md"
+    try:
+        content = queue_path.read_text(encoding="utf-8")
+        # Extract first 2000 chars (the actionable part)
+        msg = f"📋 *Autonomous Queue:*\n\n{content[:2000]}"
+        if len(content) > 2000:
+            msg += "\n\n_...показаны первые 2000 символов_"
+        await _send_message(chat_id, msg)
+    except Exception as e:
+        await _send_message(chat_id, f"⚠️ Не удалось прочитать очередь: {str(e)[:100]}")
+
+
+async def _handle_swarm(db, chat_id: int | str, task: str) -> None:
+    """Broadcast task to top 3 most relevant agents and synthesize their responses."""
+    if not settings.gemini_api_key:
+        await _send_message(chat_id, "⚠️ GEMINI_API_KEY не настроен.")
+        return
+
+    await _send_message(chat_id, f"🔄 Рою задача: _{task}_\n\nОпрашиваю агентов...")
+
+    stats = await _get_project_stats(db)
+    ecosystem = _get_ecosystem_context()[:600]
+
+    # Pick top 3 agents by relevance (simple keyword routing)
+    task_lower = task.lower()
+    selected: list[tuple[str, str]] = []
+
+    priority_map = [
+        (["безопасност", "security", "rls", "auth", "уязвим"], "security"),
+        (["архитектур", "architecture", "дизайн систем", "масштаб"], "architecture"),
+        (["продукт", "product", "юзер", "пользовател", "retention", "удержан"], "product"),
+        (["тест", "test", "qa", "качество", "баг", "bug"], "qa"),
+        (["рост", "growth", "cac", "ltv", "метрик"], "growth"),
+        (["риск", "risk", "блокер", "blocker"], "risk"),
+        (["готовност", "readiness", "deploy", "деплой", "запуск", "launch"], "readiness"),
+        (["финанс", "finance", "деньг", "цен", "pricing"], "finance"),
+        (["ux", "ui", "интерфейс", "дизайн", "adhd"], "behavioral-nudge"),
+        (["аналитик", "analytics", "данные", "данных", "data"], "analytics"),
+        (["devops", "railway", "vercel", "supabase", "инфра"], "devops"),
+        (["конкурент", "competitor", "рынок", "market"], "competitor"),
+    ]
+
+    for keywords, agent_id in priority_map:
+        if any(kw in task_lower for kw in keywords):
+            selected.append((agent_id, _FULL_AGENT_MAP[agent_id]))
+        if len(selected) >= 3:
+            break
+
+    # Default if no match: security + product + architecture
+    if not selected:
+        selected = [
+            ("security", _FULL_AGENT_MAP["security"]),
+            ("product", _FULL_AGENT_MAP["product"]),
+            ("architecture", _FULL_AGENT_MAP["architecture"]),
+        ]
+
+    responses: list[str] = []
+    from google import genai
+    client = genai.Client(api_key=settings.gemini_api_key)
+
+    for agent_id, perspective in selected:
+        try:
+            resp = client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=task,
+                config=genai.types.GenerateContentConfig(
+                    system_instruction=f"""Ты — {perspective}.
+CEO дал задачу всему рою. Дай ответ строго со своей перспективы.
+Проект: {stats}
+Экосистема: {ecosystem}
+Максимум 300 слов. Конкретно. На русском.""",
+                    max_output_tokens=600,
+                    temperature=0.7,
+                ),
+            )
+            responses.append(f"🤖 *{agent_id.title()}:*\n{resp.text.strip()}")
+        except Exception as e:
+            responses.append(f"⚠️ {agent_id}: {str(e)[:80]}")
+
+    # Synthesize
+    combined = "\n\n".join(responses)
+    try:
+        synthesis = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=f"Синтезируй эти 3 ответа агентов по задаче '{task}' в одно краткое решение:\n\n{combined}",
+            config=genai.types.GenerateContentConfig(
+                system_instruction="Ты CTO-синтезатор. Один абзац: что делаем, кто отвечает, риски. Без повторений.",
+                max_output_tokens=400,
+                temperature=0.4,
+            ),
+        )
+        synth_text = f"\n\n✅ *Синтез:*\n{synthesis.text.strip()}"
+    except Exception:
+        synth_text = ""
+
+    full_reply = combined + synth_text
+    await _save_message(db, "bot_to_ceo", f"[swarm] {full_reply[:500]}", "swarm_response")
+    await _send_message(chat_id, full_reply)
+
+
+async def _handle_ask_agent(db, chat_id: int | str, agent_name: str, question: str) -> None:
+    """Route CEO's question to a specific agent perspective via LLM."""
+    if agent_name not in _FULL_AGENT_MAP:
+        # Try partial match
+        matches = [k for k in _FULL_AGENT_MAP if agent_name in k]
+        if matches:
+            agent_name = matches[0]
+        else:
+            agents_list = ", ".join(sorted(_FULL_AGENT_MAP.keys()))
+            await _send_message(chat_id, f"⚠️ Agent `{agent_name}` не найден.\n\nДоступные:\n{agents_list}")
+            return
+
+    if not settings.gemini_api_key:
+        await _send_message(chat_id, "⚠️ GEMINI_API_KEY не настроен.")
+        return
+
+    stats = await _get_project_stats(db)
+    perspective = _FULL_AGENT_MAP[agent_name]
 
     try:
         from google import genai
@@ -494,16 +733,20 @@ async def _handle_skills(chat_id: int | str) -> None:
 
 async def _handle_help(chat_id: int | str) -> None:
     msg = (
-        "🤖 *Volaura Swarm Bot*\n\n"
-        "*Команды:*\n"
+        "🤖 *Volaura Swarm Bot — 44 агента*\n\n"
+        "*Статус и данные:*\n"
         "/status — live статистика (users, sessions, orgs)\n"
         "/ecosystem — состояние всех 5 продуктов\n"
         "/proposals — pending proposals от роя\n"
         "/backlog — идеи и задачи CEO\n"
-        "/skills — список product skills\n"
-        "/ask {agent} {вопрос} — спросить агента\n"
+        "/skills — список product skills\n\n"
+        "*Управление агентами:*\n"
+        "/agents — все 44 агента с live статусом\n"
+        "/agent {id} {задача} — задача конкретному агенту\n"
+        "/swarm {задача} — 3 лучших агента + синтез\n"
+        "/queue — очередь автономных задач роя\n"
+        "/ask {agent} {вопрос} — прямой вопрос агенту\n\n"
         "/help — эта справка\n\n"
-        "*Agents:* security, scaling, product, quality, watchdog, risk, readiness\n\n"
         "*Proposal actions:*\n"
         "`act {id}` — одобрить\n"
         "`dismiss {id}` — отклонить\n"
@@ -512,7 +755,8 @@ async def _handle_help(chat_id: int | str) -> None:
         "*Или просто напишите:*\n"
         "• Идею → бэклог\n"
         "• Задачу → команде\n"
-        "• Вопрос → ответ из контекста"
+        "• Вопрос → ответ из контекста\n\n"
+        "_Топ агенты: security (9.0), architecture (8.5), product (8.0), needs (7.0), ceo-report (7.0)_"
     )
     await _send_message(chat_id, msg)
 
@@ -572,6 +816,25 @@ async def telegram_webhook(
             await _handle_ecosystem(chat_id)
         elif text.startswith("/skills"):
             await _handle_skills(chat_id)
+        elif text.startswith("/agents"):
+            await _handle_agents(chat_id)
+        elif text.startswith("/agent "):
+            # /agent security What are our RLS gaps?
+            parts = text[7:].strip().split(" ", 1)
+            agent_id = parts[0].lower() if parts else ""
+            task = parts[1] if len(parts) > 1 else ""
+            if agent_id and task:
+                await _handle_agent_task(db, chat_id, agent_id, task)
+            else:
+                await _send_message(chat_id, "⚠️ Формат: /agent {id} {задача}\nПример: /agent security Проверь RLS политики\n\nИспользуй /agents чтобы увидеть все ID")
+        elif text.startswith("/queue"):
+            await _handle_queue(chat_id)
+        elif text.startswith("/swarm "):
+            task = text[7:].strip()
+            if task:
+                await _handle_swarm(db, chat_id, task)
+            else:
+                await _send_message(chat_id, "⚠️ Формат: /swarm {задача для всего роя}")
         elif text.startswith("/ask "):
             # /ask security What are our RLS gaps?
             parts = text[5:].strip().split(" ", 1)
@@ -580,7 +843,7 @@ async def telegram_webhook(
             if agent and question:
                 await _handle_ask_agent(db, chat_id, agent.lower(), question)
             else:
-                await _send_message(chat_id, "⚠️ Формат: /ask {agent} {вопрос}\nAgents: security, scaling, product, quality, watchdog")
+                await _send_message(chat_id, "⚠️ Формат: /ask {agent} {вопрос}\nИспользуй /agents чтобы увидеть все агенты")
         elif text.startswith("/help") or text.startswith("/start"):
             await _handle_help(chat_id)
         elif text.lower().startswith(("act ", "dismiss ", "defer ")):
@@ -599,12 +862,15 @@ async def telegram_webhook(
             parts = text[4:].strip().split(" ", 1)
             first_token = parts[0].lower() if parts else ""
             question = parts[1] if len(parts) > 1 else ""
-            known_agents = {"security", "scaling", "product", "quality", "watchdog", "risk", "readiness"}
-            if first_token in known_agents and question:
+            if first_token in _FULL_AGENT_MAP and question:
                 await _handle_ask_agent(db, chat_id, first_token, question)
             elif first_token and question:
-                # Treat as proposal-specific follow-up
-                await _handle_ask_proposal(db, chat_id, first_token, question)
+                # Try partial match first, then treat as proposal-specific follow-up
+                matches = [k for k in _FULL_AGENT_MAP if first_token in k]
+                if matches and question:
+                    await _handle_ask_agent(db, chat_id, matches[0], question)
+                else:
+                    await _handle_ask_proposal(db, chat_id, first_token, question)
             else:
                 await _send_message(chat_id, "⚠️ Формат:\n`ask {agent} {вопрос}` — агенту\n`ask {proposal_id} {вопрос}` — по конкретному proposal")
         else:

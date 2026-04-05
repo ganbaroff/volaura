@@ -118,7 +118,7 @@ function NewGenerationForm({ twinId }: { twinId: string }) {
         value={script}
         onChange={(e) => setScript(e.target.value)}
         placeholder={t("brandedby.scriptPlaceholder", {
-          defaultValue: "Write what your AI Twin will say… (e.g. 'Hi, I'm Yusif. I'm a volunteer leader from Baku…')",
+          defaultValue: "Write what your AI Twin will say… (e.g. 'Hi, I'm Yusif. I'm a professional from Baku…')",
         })}
         rows={4}
         maxLength={2000}

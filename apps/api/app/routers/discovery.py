@@ -36,7 +36,7 @@ def _anonymize_name(display_name: str | None) -> str:
     Security: prevents re-identification via full name in public search results.
     """
     if not display_name or not display_name.strip():
-        return "Volunteer"
+        return "Professional"
     parts = display_name.strip().split()
     first = parts[0][:20]  # cap first name at 20 chars
     if len(parts) == 1:

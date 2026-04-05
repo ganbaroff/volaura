@@ -146,9 +146,9 @@ export default function BulkInvitePage() {
 
       {/* Header */}
       <div>
-        <h1 className="text-xl font-bold">{t("orgs.bulkInvite", { defaultValue: "Bulk Invite Volunteers" })}</h1>
+        <h1 className="text-xl font-bold">{t("orgs.bulkInvite", { defaultValue: "Bulk Invite Professionals" })}</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          {t("orgs.bulkInviteDesc", { defaultValue: "Upload a CSV with email addresses to invite volunteers to Volaura." })}
+          {t("orgs.bulkInviteDesc", { defaultValue: "Upload a CSV with email addresses to invite professionals to Volaura." })}
         </p>
       </div>
 

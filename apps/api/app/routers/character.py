@@ -263,7 +263,7 @@ async def get_crystal_balance(
     """
     result = (
         await db.table("game_crystal_ledger")
-        .select("amount")
+        .select("amount, created_at")
         .eq("user_id", str(user_id))
         .execute()
     )
@@ -271,12 +271,22 @@ async def get_crystal_balance(
     rows = result.data or []
     raw_balance = sum(row["amount"] for row in rows)
     balance = max(0, raw_balance)  # floor at 0 — consistent with CharacterStateOut guarantee
+    lifetime_earned = sum(row["amount"] for row in rows if row["amount"] > 0)
+
+    # last_earned_at: most recent row where amount > 0
+    earned_rows = [row for row in rows if row["amount"] > 0]
+    last_earned_at: datetime | None = None
+    if earned_rows:
+        latest = max(earned_rows, key=lambda r: r["created_at"])
+        last_earned_at = datetime.fromisoformat(latest["created_at"].replace("Z", "+00:00"))
 
     logger.info("Crystal balance fetched", user_id=user_id, balance=balance)
 
     return CrystalBalanceOut(
         user_id=user_id,
         crystal_balance=balance,
+        last_earned_at=last_earned_at,
+        lifetime_earned=lifetime_earned,
         computed_at=datetime.now(timezone.utc),
     )
 

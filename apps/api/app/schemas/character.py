@@ -21,6 +21,8 @@ EventType = Literal[
     "stat_changed",       # Life Simulator character stat update
     "login_streak",
     "milestone_reached",
+    "buff_applied",       # MindShift: temporary stat/focus buff
+    "vital_logged",       # MindShift: sleep/water/mood vital log
 ]
 
 # Valid source products — enforced at both API and DB
@@ -106,4 +108,6 @@ class CrystalBalanceOut(BaseModel):
 
     user_id: UUID
     crystal_balance: int = Field(ge=0, description="Current crystal balance")
+    last_earned_at: datetime | None = Field(None, description="When the last crystal was earned")
+    lifetime_earned: int = Field(ge=0, description="Lifetime crystals earned (positive ledger entries only)")
     computed_at: datetime

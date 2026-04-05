@@ -210,10 +210,10 @@ export default function OrgVolunteersPage() {
         {/* Header */}
         <motion.div initial="hidden" animate="visible" variants={fadeUp}>
           <h1 className="font-headline text-2xl font-bold text-on-surface">
-            {t("orgDash.title", { defaultValue: "Volunteer Dashboard" })}
+            {t("orgDash.title", { defaultValue: "Talent Dashboard" })}
           </h1>
           <p className="mt-1 text-sm text-on-surface-variant">
-            {t("orgDash.subtitle", { defaultValue: "Track assessment completion and AURA scores across your volunteers" })}
+            {t("orgDash.subtitle", { defaultValue: "Track assessment completion and AURA scores across your professionals" })}
           </p>
         </motion.div>
 
@@ -275,7 +275,7 @@ export default function OrgVolunteersPage() {
             {stats.top_volunteers.length > 0 && (
               <motion.div variants={fadeUp} initial="hidden" animate="visible" className="rounded-xl border border-primary/20 bg-primary/5 p-5 space-y-3">
                 <h3 className="text-sm font-semibold text-primary">
-                  {t("orgDash.topVolunteers", { defaultValue: "⭐ Top Volunteers" })}
+                  {t("orgDash.topVolunteers", { defaultValue: "⭐ Top Talent" })}
                 </h3>
                 <div className="space-y-2">
                   {stats.top_volunteers.map((v) => {
@@ -314,7 +314,7 @@ export default function OrgVolunteersPage() {
                 type="search"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder={t("orgDash.searchVolunteers", { defaultValue: "Search volunteers…" })}
+                placeholder={t("orgDash.searchVolunteers", { defaultValue: "Search professionals…" })}
                 className="w-full rounded-xl border border-outline-variant bg-surface-container pl-9 pr-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
               />
             </div>
@@ -484,8 +484,8 @@ export default function OrgVolunteersPage() {
               <Users className="mx-auto size-10 text-on-surface-variant" aria-hidden="true" />
               <p className="text-sm text-on-surface-variant">
                 {search
-                  ? t("orgDash.noSearchResults", { defaultValue: "No volunteers match your search" })
-                  : t("orgDash.noVolunteers", { defaultValue: "No volunteers assigned yet. Use the search to find and assign assessments." })}
+                  ? t("orgDash.noSearchResults", { defaultValue: "No professionals match your search" })
+                  : t("orgDash.noVolunteers", { defaultValue: "No professionals assigned yet. Use the search to find and assign assessments." })}
               </p>
               {!search && (
                 <button
@@ -503,7 +503,7 @@ export default function OrgVolunteersPage() {
               <p className="text-xs text-on-surface-variant">
                 {t("orgDash.showing", {
                   count: filtered.length,
-                  defaultValue: `Showing ${filtered.length} volunteer${filtered.length !== 1 ? "s" : ""}`,
+                  defaultValue: `Showing ${filtered.length} professional${filtered.length !== 1 ? "s" : ""}`,
                 })}
               </p>
               <motion.div variants={stagger} initial="hidden" animate="visible" className="space-y-2">
@@ -530,7 +530,7 @@ export default function OrgVolunteersPage() {
                   {t("orgDash.pendingTitle", { defaultValue: "assessments pending" })}
                 </p>
                 <p className="mt-0.5 text-xs text-on-surface-variant">
-                  {t("orgDash.pendingDesc", { defaultValue: "Volunteers have been assigned but haven't completed their assessment yet." })}
+                  {t("orgDash.pendingDesc", { defaultValue: "Professionals have been assigned but haven't completed their assessment yet." })}
                 </p>
               </div>
             </div>

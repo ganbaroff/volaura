@@ -36,8 +36,8 @@ export default function PrivacyPolicyPage() {
 
           <Section title="1. Who We Are">
             <p>
-              Volaura is a verified competency platform for volunteers, operated in Azerbaijan.
-              We help volunteers prove their skills and help organizations find verified talent.
+              Volaura is a verified competency platform for professionals, operated in Azerbaijan.
+              We help professionals prove their skills and help organizations find verified talent.
             </p>
             <p className="text-muted-foreground mt-2">
               Contact:{" "}
@@ -69,7 +69,7 @@ export default function PrivacyPolicyPage() {
                 ["Badge tier", "Derived from AURA score (Bronze / Silver / Gold / Platinum)"],
                 ["Theta (IRT ability)", "Internal assessment calibration — never shown to organizations"],
                 ["Anti-gaming signals", "Timing patterns to detect spoofed responses — quality use only"],
-                ["Competency embeddings", "768-dim vector for semantic volunteer search — not identifiable alone"],
+                ["Competency embeddings", "768-dim vector for semantic talent search — not identifiable alone"],
               ]}
             />
 
@@ -86,7 +86,7 @@ export default function PrivacyPolicyPage() {
           <Section title="3. How We Use Your Data">
             <ol className="list-decimal list-inside space-y-2 text-muted-foreground">
               <li><strong className="text-foreground">Deliver the service</strong> — run assessments, compute AURA scores, issue badges</li>
-              <li><strong className="text-foreground">Volunteer–organization matching</strong> — orgs search by competency, location, languages</li>
+              <li><strong className="text-foreground">Professional–organization matching</strong> — orgs search by competency, location, languages</li>
               <li><strong className="text-foreground">Platform improvement</strong> — aggregate analytics (non-identifiable) to improve IRT calibration</li>
               <li><strong className="text-foreground">Security</strong> — rate limiting, anti-fraud, preventing score manipulation</li>
               <li><strong className="text-foreground">Communications</strong> — assessment results, badge notifications (opt-in)</li>

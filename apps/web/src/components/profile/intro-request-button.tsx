@@ -55,7 +55,7 @@ export function IntroRequestButton({ volunteerId, volunteerName }: Props) {
           const apiErr = err as ApiError;
           const msg =
             apiErr?.status === 409
-              ? t("intro.alreadySent", { defaultValue: "You already sent a request to this volunteer." })
+              ? t("intro.alreadySent", { defaultValue: "You already sent a request to this professional." })
               : t("intro.error", { defaultValue: "Failed to send request. Please try again." });
           setToast({ type: "error", msg });
           setTimeout(() => { if (isMounted.current) setToast(null); }, 5000);
@@ -127,7 +127,7 @@ export function IntroRequestButton({ volunteerId, volunteerName }: Props) {
                   maxLength={200}
                   value={projectName}
                   onChange={(e) => setProjectName(e.target.value)}
-                  placeholder={t("intro.projectPlaceholder", { defaultValue: "e.g. COP30 Youth Volunteer Programme" })}
+                  placeholder={t("intro.projectPlaceholder", { defaultValue: "e.g. COP30 Youth Leadership Programme" })}
                   className="w-full rounded-xl border border-outline-variant bg-surface px-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/40"
                 />
               </div>

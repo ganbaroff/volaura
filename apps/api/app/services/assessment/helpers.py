@@ -5,6 +5,7 @@ Rule: This module NEVER imports from app.routers.*
 
 from __future__ import annotations
 
+import json
 import time
 from fastapi import HTTPException
 
@@ -91,6 +92,14 @@ async def fetch_questions(db: SupabaseAdmin, competency_id: str) -> list[dict]:
         .execute()
     )
     questions = result.data or []
+    # Normalize: options may be stored as a JSON string in the JSONB column
+    # (double-encoded). Parse to list so QuestionOut(options=...) doesn't fail.
+    for q in questions:
+        if isinstance(q.get("options"), str):
+            try:
+                q["options"] = json.loads(q["options"])
+            except (json.JSONDecodeError, TypeError):
+                q["options"] = None
     _QUESTION_CACHE[competency_id] = (now, questions)
     return questions
 

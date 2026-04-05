@@ -59,25 +59,28 @@ async def get_my_activity(
     except Exception as e:
         logger.warning("Failed to fetch assessment activity: {err}", err=str(e)[:200])
 
-    # 2. Earned badges
+    # 2. Earned badges — volunteer_badges is the earned-badges table;
+    #    badges is the catalog (no volunteer_id / tier columns on it).
     try:
         badges = (
-            await db.table("badges")
-            .select("id, badge_type, tier, earned_at, metadata")
+            await db.table("volunteer_badges")
+            .select("id, badge_id, earned_at, metadata, badges(badge_type, name_en)")
             .eq("volunteer_id", user_id)
             .order("earned_at", desc=True)
             .limit(limit)
             .execute()
         )
         for row in badges.data or []:
+            badge_def = row.get("badges") or {}
+            badge_type = badge_def.get("badge_type") or "achievement"
             items.append({
                 "id": row["id"],
                 "type": "badge",
-                "description": f"Earned {row['tier']} {row['badge_type']} badge",
+                "description": f"Earned {badge_type} badge",
                 "created_at": row["earned_at"],
                 "metadata": {
-                    "badge_type": row["badge_type"],
-                    "tier": row["tier"],
+                    "badge_type": badge_type,
+                    "badge_id": row["badge_id"],
                 },
             })
     except Exception as e:

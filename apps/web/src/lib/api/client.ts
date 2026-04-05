@@ -60,7 +60,9 @@ export async function apiFetch<T>(
     ...extraHeaders,
   };
 
-  const response = await fetch(`${API_BASE}${path}`, {
+  // Normalize: strip leading /api if caller already includes it (prevents /api/api/... double prefix)
+  const normalizedPath = path.startsWith("/api/") ? path.slice(4) : path;
+  const response = await fetch(`${API_BASE}${normalizedPath}`, {
     ...fetchOptions,
     headers,
   });

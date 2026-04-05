@@ -50,11 +50,16 @@
   --color-on-tertiary-fixed:          #221b00;
   --color-on-tertiary-fixed-variant:  #544600;
 
-  /* ── Error ── */
-  --color-error:                      #ffb4ab;
-  --color-error-container:            #93000a;
-  --color-on-error:                   #690005;
-  --color-on-error-container:         #ffdad6;
+  /* ── Error → Gentle Alert (purple, NOT red — Research #2/#6 RSD) ── */
+  --color-error:                      #d4b4ff;
+  --color-error-container:            #3d1a6e;
+  --color-on-error:                   #1a0040;
+  --color-on-error-container:         #edd6ff;
+
+  /* ── Warning (amber — soft alerts) ── */
+  --color-warning:                    #e9c400;
+  --color-warning-container:          #3a3000;
+  --color-on-warning-container:       #ffe16d;
 
   /* ── On-colors ── */
   --color-on-background:              #e4e1ed;
@@ -218,3 +223,35 @@
 .animate-float             { animation: float 4s ease-in-out infinite; }
 .animate-float-delayed     { animation: float 4s ease-in-out infinite 1s; }
 .animate-float-more-delayed { animation: float 4s ease-in-out infinite 2s; }
+
+/* ─── Reduced Motion (Research #6: clinical requirement) ─── */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-float-delayed,
+  .animate-float-more-delayed {
+    animation: none;
+  }
+}
+
+/* ─── Mesh Gradient Hero (STITCH aesthetic, 0KB JS) ─── */
+.mesh-gradient-hero {
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(128, 131, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(189, 194, 255, 0.10) 0%, transparent 40%),
+    radial-gradient(ellipse at 60% 80%, rgba(99, 102, 241, 0.08) 0%, transparent 45%),
+    var(--color-surface);
+}
+
+/* ─── Badge Glow Effects (CSS box-shadow, 0KB JS) ─── */
+.badge-glow-platinum {
+  box-shadow: 0 0 8px rgba(229, 228, 226, 0.3), 0 0 20px rgba(229, 228, 226, 0.15);
+}
+.badge-glow-gold {
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.3), 0 0 20px rgba(255, 215, 0, 0.15);
+}
+.badge-glow-silver {
+  box-shadow: 0 0 8px rgba(192, 192, 192, 0.2), 0 0 20px rgba(192, 192, 192, 0.1);
+}
+.badge-glow-bronze {
+  box-shadow: 0 0 8px rgba(205, 127, 50, 0.25), 0 0 20px rgba(205, 127, 50, 0.12);
+}

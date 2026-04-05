@@ -359,6 +359,16 @@ export default function AssessmentResultsPage() {
           <p className="text-lg font-semibold">
             {t(`aura.${tier}`, { defaultValue: badge.label })}
           </p>
+          {/* BNE: strength-first framing — lead with what went well, regardless of score */}
+          <p className="text-sm text-muted-foreground text-center mt-1">
+            {score >= 75
+              ? t("assessment.strengthExcellent", { competency: competencyLabel, defaultValue: `Strong ${competencyLabel} skills demonstrated` })
+              : score >= 60
+              ? t("assessment.strengthSolid", { competency: competencyLabel, defaultValue: `Solid ${competencyLabel} foundation` })
+              : score >= 40
+              ? t("assessment.strengthGrowing", { defaultValue: "You have a foundation to build on" })
+              : t("assessment.strengthStart", { defaultValue: "This is your starting point — scores only go up from here" })}
+          </p>
           {/* Effective score — shown only when decay reduces score by 2+ points */}
           {effectiveScore !== null && (aura?.total_score ?? 0) - effectiveScore >= 2 && (
             <p className="text-xs text-muted-foreground mt-1">

@@ -54,7 +54,7 @@ export default function PrivacyPolicyPage() {
               rows={[
                 ["Name, email, username", "Account creation and identity", "Contract (GDPR Art. 6(1)(b))"],
                 ["Password (hashed)", "Authentication", "Contract"],
-                ["Location (city/region)", "Matching volunteers to local opportunities", "Legitimate interest"],
+                ["Location (city/region)", "Matching professionals to local opportunities", "Legitimate interest"],
                 ["Languages spoken", "Matching quality", "Legitimate interest"],
                 ["Assessment answers", "Computing your AURA score", "Contract"],
                 ["Bio / self-description", "Profile completeness, org matching", "Contract"],

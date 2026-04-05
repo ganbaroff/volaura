@@ -333,7 +333,15 @@
     "event_performance": "Event Performance",
     "tech_literacy": "Tech Literacy",
     "adaptability": "Adaptability",
-    "empathy_safeguarding": "Empathy & Safeguarding"
+    "empathy_safeguarding": "Empathy & Safeguarding",
+    "communication_desc": "How clearly you express ideas in writing and speaking",
+    "reliability_desc": "Whether people can count on you to follow through on commitments",
+    "english_proficiency_desc": "Your ability to understand and communicate in English",
+    "leadership_desc": "How you motivate others and guide a team toward a goal",
+    "event_performance_desc": "Your track record of delivering results in event and project work",
+    "tech_literacy_desc": "How comfortably you work with digital tools and new tech",
+    "adaptability_desc": "How well you handle change, ambiguity, and unexpected challenges",
+    "empathy_safeguarding_desc": "Your awareness of others wellbeing and creating safe environments"
   },
   "onboarding": {
     "title": "Complete your profile",
@@ -464,7 +472,8 @@
     "achievementBuilding": "Building",
     "achievementStarting": "Starting Out",
     "challengePeer": "Challenge a peer",
-    "challengeLink": "Invite link copied!"
+    "challengeLink": "Invite link copied!",
+    "discoverable": "Discoverable by organizations"
   },
   "events": {
     "title": "Events",
@@ -790,5 +799,14 @@
     "optOutConfirmYes": "Leave tribe",
     "requestRenewal": "Request renewal",
     "renewalRequested": "Renewal requested ✓"
+  },
+  "badge": {
+    "platinum": "Platinum",
+    "gold": "Gold",
+    "silver": "Silver",
+    "bronze": "Bronze"
+  },
+  "discover": {
+    "filterBySkill": "Find by verified skill"
   }
 }

@@ -374,6 +374,11 @@ function SignupForm() {
           <p className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</p>
         )}
 
+        {(!privacyConsented || !ageConfirmed) && !loading && (
+          <p className="text-xs text-muted-foreground text-center -mb-1">
+            {t("auth.checkboxesRequired", { defaultValue: "Please tick both checkboxes above to continue" })}
+          </p>
+        )}
         <button
           type="submit"
           disabled={loading || !privacyConsented || !ageConfirmed || (openSignup === false && !inviteCode.trim())}

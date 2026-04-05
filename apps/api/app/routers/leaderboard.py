@@ -148,7 +148,7 @@ async def get_my_rank(
     """
     # Get this user's score
     my_result = (
-        await db.table("aura_scores")
+        await db.table("aura_scores_public")
         .select("total_score")
         .eq("volunteer_id", str(user_id))
         .eq("visibility", "public")
@@ -162,7 +162,7 @@ async def get_my_rank(
 
     # Count public users with strictly higher score → rank = that count + 1
     higher_result = (
-        await db.table("aura_scores")
+        await db.table("aura_scores_public")
         .select("volunteer_id", count="exact")
         .eq("visibility", "public")
         .not_.is_("total_score", "null")
@@ -173,7 +173,7 @@ async def get_my_rank(
 
     # Total public users on leaderboard
     total_result = (
-        await db.table("aura_scores")
+        await db.table("aura_scores_public")
         .select("volunteer_id", count="exact")
         .eq("visibility", "public")
         .not_.is_("total_score", "null")

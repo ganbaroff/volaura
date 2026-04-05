@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import {
@@ -75,11 +76,18 @@ export function FeedCards({ cards, loading, locale, onCardAction }: FeedCardsPro
 
   if (!cards || cards.length === 0) {
     return (
-      <div className="py-4 text-center">
-        <Lightbulb className="mx-auto size-8 text-muted-foreground/50 mb-2" />
+      <div className="py-4 text-center space-y-3">
+        <Lightbulb className="mx-auto size-8 text-muted-foreground/50" />
         <p className="text-sm text-muted-foreground">
           {t("dashboard.feed.empty", { defaultValue: "Complete an assessment to unlock personalized recommendations" })}
         </p>
+        <Link
+          href={`/${locale}/assessment`}
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+        >
+          {t("dashboard.feed.emptyAction", { defaultValue: "Take your first assessment" })}
+          <ArrowRight className="size-3.5" />
+        </Link>
       </div>
     );
   }

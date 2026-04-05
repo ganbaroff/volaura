@@ -32,6 +32,18 @@ Purpose: Prevent repeating errors. Read at session start.
 
 ## Most Recent Mistakes (Active Rules)
 
+### Mistake #84 — 44 agents created, 0 activated for 9 sessions (Session 86) ← STRUCTURAL
+**What:** CTO created 44 agents across Sessions 53-83. Wrote skill files, routing tables, pairing rules. Then did all work solo. Cultural Intelligence and Behavioral Nudge Engine marked "CRITICAL GAP — should be active" in Session 57. Both had 0 runs until CEO forced the issue in Session 86.
+**Root causes:** (1) Created ≠ used (file = illusion of work), (2) Path of least resistance = solo, (3) No coordinator to intercept tasks, (4) Don't verify what I "know", (5) No persistent kanban.
+**Rule:** After writing ANY agent file → immediately run its first task. Before ANY implementation → ask "who on the team does this?" Four questions checklist mandatory.
+**CLASS:** CLASS 3 (Solo execution) — deepest instance.
+**Enforcement:** `memory/cto_session_checklist.md` — 4 questions before any work. `memory/swarm/team-structure.md` — Coordinator Agent routes tasks. Cannot be skipped.
+
+### Mistake #85 — Documentation 2 sessions behind (Session 86)
+**What:** sprint-state.md last updated Session 85. SHIPPED.md last updated Session 84. Session 86 work not documented until CEO said "документация бесит."
+**Rule:** Update ALL docs in SAME response as completing work. Not "I'll do it at session end." Not "after this next task."
+**CLASS:** CLASS 2 (Memory not persisted) + CLASS 6 (Team neglect)
+
 ### Mistake #49 — Wrong TASK-PROTOCOL phase for content tasks (Session 72)
 **What:** CEO said "load TASK-PROTOCOL and do what team suggests." CTO ran PHASE 1 (Team Proposes) instead of CTO plan → team critiques.
 **Rule:** "загрузи протокол и делай" + known code tasks → Team Proposes. "предложи/propose/plan" → CTO plan first.

@@ -223,6 +223,7 @@ export default function ProfilePage() {
               is_public: profile.is_public ?? false,
               avatar_url: profile.avatar_url ?? null,
               badge_tier: aura?.badge_tier ?? "none",
+              total_score: aura?.total_score ?? null,
               registration_number: profile.registration_number,
               registration_tier: profile.registration_tier,
             }}

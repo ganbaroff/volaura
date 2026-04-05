@@ -22,7 +22,7 @@ const BADGE_STYLES: Record<string, { pill: string; glow: string }> = {
   none:     { pill: "bg-muted text-muted-foreground border-border",          glow: ""                     },
 };
 
-function useCountUp(target: number, duration = 1200) {
+function useCountUp(target: number, duration = 800) {
   const [value, setValue] = useState(0);
   const rafRef = useRef<number>(0);
   const startRef = useRef<number | null>(null);
@@ -66,14 +66,19 @@ export function AuraScoreWidget({ score, badgeTier, isElite, locale }: AuraScore
     >
       <Link href={`/${locale}/aura`} className="flex items-center justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
-            {t("dashboard.yourScore")}
+          {/* Identity headline first, score as context (Research #10: Overjustification) */}
+          <p className="text-lg font-bold text-foreground">
+            {t(`aura.identity_${badgeTier}`, {
+              defaultValue: badgeTier !== "none"
+                ? `${badgeTier.charAt(0).toUpperCase() + badgeTier.slice(1)}-level Professional`
+                : t("dashboard.yourScore"),
+            })}
           </p>
           <p
-            className="text-5xl font-black tabular-nums text-foreground"
+            className="text-2xl font-bold tabular-nums text-muted-foreground mt-0.5"
             aria-label={`${t("aura.overallScore")}: ${score.toFixed(1)}`}
           >
-            {displayScore.toFixed(1)}
+            AURA {displayScore.toFixed(1)}
           </p>
 
           {/* Progress bar */}

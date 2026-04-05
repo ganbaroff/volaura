@@ -199,7 +199,7 @@ async def check_in(
     if not org.data or org.data["owner_id"] != user_id:
         raise HTTPException(
             status_code=403,
-            detail={"code": "NOT_COORDINATOR", "message": "Only the event coordinator can check in volunteers"},
+            detail={"code": "NOT_COORDINATOR", "message": "Only the event coordinator can check in participants"},
         )
 
     result = await db.table("registrations").select("*").eq("event_id", event_id).eq("check_in_code", payload.check_in_code).single().execute()
@@ -236,7 +236,7 @@ async def coordinator_rate_volunteer(
 
     org = await db_admin.table("organizations").select("owner_id").eq("id", event.data["organization_id"]).single().execute()
     if not org.data or org.data["owner_id"] != user_id:
-        raise HTTPException(status_code=403, detail={"code": "NOT_AUTHORIZED", "message": "Only the org owner can rate volunteers"})
+        raise HTTPException(status_code=403, detail={"code": "NOT_AUTHORIZED", "message": "Only the org owner can rate participants"})
 
     result = await db_admin.table("registrations").update({
         "coordinator_rating": payload.rating,

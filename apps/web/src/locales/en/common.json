@@ -472,7 +472,8 @@
     "achievementBuilding": "Building",
     "achievementStarting": "Starting Out",
     "challengePeer": "Challenge a peer",
-    "challengeLink": "Invite link copied!"
+    "challengeLink": "Invite link copied!",
+    "discoverable": "Discoverable by organizations"
   },
   "events": {
     "title": "Events",
@@ -798,5 +799,14 @@
     "optOutConfirmYes": "Leave tribe",
     "requestRenewal": "Request renewal",
     "renewalRequested": "Renewal requested ✓"
+  },
+  "badge": {
+    "platinum": "Platinum",
+    "gold": "Gold",
+    "silver": "Silver",
+    "bronze": "Bronze"
+  },
+  "discover": {
+    "filterBySkill": "Find by verified skill"
   }
 }

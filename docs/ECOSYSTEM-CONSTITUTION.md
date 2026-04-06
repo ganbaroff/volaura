@@ -223,6 +223,8 @@ A crystal earned with nowhere to go is a promise broken. Broken promises with AD
 
 **Approved for adoption:**
 - Sunk Cost Registration: deliver value BEFORE login (Quick Start, skill preview)
+  **VOLAURA implementation (user journey agent finding — currently MISSING):** The VOLAURA landing has no zero-commitment entry point. Landing hero must include a "See a sample AURA profile" link (no login required) showing: a fictional profile, a communication score of 74, a Silver badge, the DeCE quote "Your responses showed active listening in 3 scenarios." This is the concrete VOLAURA equivalent of MindShift's Quick Start. Without it, a skeptical Gen Z user sees pure marketing copy and exits.
+  **Fourth trust pill required:** Current pills are "No CV," "Data stays private," "No spam." For an assessment platform, the actual fear is judgment. Add: "Your score is only shared if you choose to." This directly addresses the vulnerability surge (78% abandonment from Research #1).
 - Three C's Framework (Community Impact + Connections + Careers) — VOLAURA landing framing
 - Mentor pairing: Gold badge holders mentor Bronze (VOLAURA feature)
 - Group quests for social proof (MindShift Focus Rooms + VOLAURA cohort challenges)
@@ -727,6 +729,26 @@ G9 (no leaderboards) is correct for ADHD/psychological safety. But it leaves a g
 18. ASR Fairness Rule: language-detected routing (langdetect on first 3s or profile locale as prior). Scores under Whisper before routing ships are flagged and queued for re-evaluation.
 19. Onboarding Screen 1 must include AI processing disclosure (ISO 10667-2 G18) — one sentence, non-dismissable.
 20. Ghosting Grace for professionals: 30 min before event start with no check-in → single warm Telegram/push ("Ready to check in? Tap here"). Auto-ping next-ranked backup volunteer if cancellation within 2 hours of start.
+28. **Pre-Assessment Commitment Layer** (user journey agent finding — consolidates 3 unimplemented P0 rules):
+    Before the FIRST QUESTION in any VOLAURA assessment, a single non-dismissable screen must show ALL of:
+    - (1) One-sentence AI disclosure: "Your answers will be evaluated by an AI system." (G18 / ISO 10667-2) — currently missing from assessment start page
+    - (2) Scenario framing choice: 3 options (ecology / sports / social) — SDT Autonomy lever per VOLAURA rule 12 — currently missing
+    - (3) Energy check with gentle exit: "How are you feeling today? (1-5)" with "Not ready? Save this for later →" option (Law 2) — currently missing
+    This screen is NOT the assessment start page (that shows competency selection). This is the screen between "Start assessment" click and question 1.
+29. **Vulnerability Window Positive Specification** (user journey agent finding — G21 prohibits but never specifies what IS shown):
+    G21 defines the 5-minute post-assessment vulnerability window. This rule specifies the CONTENT of that window. During the window, the complete screen MUST show:
+    - (1) DeCE behavioral evidence: "Your [competency] reflects [specific behavioral evidence from DeCE quote]" — the identity statement, not the number
+    - (2) One-sentence competency reflection: e.g., "Your communication reflects consistent active listening across 4 responses"
+    - (3) Single CTA: "See your full AURA →" (navigates to AURA page on next interaction after window expires, OR after user explicitly taps)
+    - NOTHING ELSE during the window: no score number prominently displayed, no badge icon, no crystal count, no progress bar toward next tier
+    Badge tier and crystal earnings are shown on the AURA page at the user's NEXT visit (Crystal Law 6 Amendment), not the complete screen.
+30. **Ghosting Grace for Pre-Activation Users** (user journey agent finding):
+    Any user who signed up and visited the dashboard but never completed a first assessment receives a warm re-entry card on their next dashboard visit (triggers after 48h of inactivity):
+    - Copy: "Still thinking about it? Start when you're ready — there's no deadline." (NOT "You haven't completed your first assessment")
+    - Single CTA: "Start when ready →"
+    - Replaces the standard NewUserWelcomeCard content for these users
+    - Never shows count of days absent, never shows what's "missing"
+    - Governed by Law 3 (no guilt) and G4 (one warm action)
 
 **Color system:**
 ```
@@ -1002,6 +1024,8 @@ These 17 guardrails apply to all 5 products. No exceptions.
 | G42 | AZ B2B requires human-first sales: "Request Demo" flow must route to human meeting before any automated onboarding. No self-serve freemium conversion attempts for AZ/CIS enterprise accounts | Cultural agent finding | VOLAURA (B2B) |
 | G43 | Credential display split: public profile shows score number first (credibility for viewer), private dashboard shows identity title first (motivation for holder). Shareable card includes institutional marker: "[Tier] · Assessed by VOLAURA · [Date]" | Cultural agent finding | VOLAURA |
 | G44 | Community Signal widget: must exist before AZ launch. Shows aggregated anonymized stats by city/sector ("843 Baku professionals assessed · 62 in Finance"). No names, no rankings. Fills trust vacuum from G9 no-leaderboard rule without triggering social comparison | Cultural agent finding | VOLAURA |
+| G45 | Pre-Assessment Commitment Layer required (VOLAURA rule 28): before question 1, user must see AI disclosure + scenario framing choice + energy check with exit option. These are currently unimplemented P0 requirements. No assessment may begin without this screen. | User journey agent finding | VOLAURA |
+| G46 | Leaderboard pages are prohibited in production. Any `/leaderboard` route must be deleted or permanently redirected before launch. Leaderboard page currently exists in codebase (`/app/[locale]/(dashboard)/leaderboard/page.tsx`) — this is an active G9 violation. | User journey agent finding, G9 | VOLAURA |
 
 ---
 
@@ -1036,6 +1060,12 @@ These 17 guardrails apply to all 5 products. No exceptions.
 11. **AZ PDPA SADPP registration + DPA assessment** (G36) — required before AZ users' data is processed
 12. **Soniox/Deepgram DPA verification** — voice = biometric; DPAs must be verified before voice assessments begin
 13. **DIF bias audit** (Research #15) — Mantel-Haenszel bias test required BEFORE launch, not post-launch (labor law exposure)
+14. **Leaderboard page removal** (G9, G46) — `/app/[locale]/(dashboard)/leaderboard/page.tsx` exists in production and violates G9 + Crystal Law 5. Must be deleted/redirected before launch.
+15. **Assessment complete page: defer badge + crystals** (Crystal Law 6 Amendment, G21) — current code shows `badge_tier` and `crystals_earned` immediately post-assessment. Must be deferred to next AURA page visit (vulnerability window rule).
+16. **AURA page score counter: 2000ms → 800ms** (G15) — `aura/page.tsx` uses `duration=2000` in `useAnimatedCounter`. G15 limit is 800ms max.
+17. **text-destructive CSS class audit** (Law 1) — signup page uses `text-destructive` which may resolve to red via shadcn defaults. Must verify resolves to `#D4B4FF` (purple) before launch.
+18. **Pre-Assessment Commitment Layer** (VOLAURA rules 28 + G45) — currently no screen exists between "Start assessment" click and question 1. Must be built.
+19. **Landing: sample AURA profile** (Research #1 Sunk Cost Registration) — no zero-commitment entry point on landing. Must add "See a sample AURA profile" link before launch.
 
 ### Months 1-3 (with real user data)
 1. Bayesian IRT calibration pipeline (Research #15, P0) — first 200 real assessments
@@ -1113,6 +1143,7 @@ These are measured monthly:
 | v1.3 | 2026-04-06 | **Python swarm audit, 14 models (Gemini/Groq/DeepSeek), 2 rounds.** Added: Legal & Compliance Framework (GDPR Art.13/17/20, EU AI Act Annex III high-risk classification, Age gate 16+/13+, Data Retention Schedule, AZ Labor Code framing). Added: Cultural Localization (AZ/CIS trust timing, wasita framing, shame-free AZ copy, Siz-form mandate, 25-40% text length budget). New Guardrails G24-G32 (legal, trust, WCAG, offline, portability, purple ambiguity rule). Conflict resolution: purple ambiguity resolved via G32 (copy layer required alongside color change). Memory logger Windows bug fixed (colon in model IDs). |
 | v1.4 | 2026-04-06 | **Legal agent deep-audit, 9 findings.** Critical additions: GDPR Art. 22 automated employment decision-making (explicit consent + human review — G33), GDPR Art. 9 health data for energy/burnout tracking (G34), AZ PDPA SADPP registration + cross-border transfer assessment for US hosting (G36), Open Badges 3.0 VC technical compliance spec (cryptographic proof, issuer DID, revocation endpoint connected to decay — G37), formal AURA score grievance mechanism (ISO 10667-2 Section 7 — G35), labor law liability allocation (B2B contracts must name org as decision-maker). **Pre-launch P0 reclassification:** DIF bias audit moved from Months 1-3 (labor law exposure), voice data DPA verification moved from Months 1-3 (biometric = GDPR Art. 9). Total guardrails: G1-G37. |
 | v1.5 | 2026-04-06 | **Competitive intelligence agent, 7 findings.** New Crystal Law 8: Never Launch Earn Without Spend Path (historical precedent from Roblox/Yahoo Answers failure modes). VOLAURA Rules 21-23: Moment of Truth (DeCE evidence in same view as score — G38), Org Outcome Flywheel (performance ratings → IRT validity — G39), Crystal Economy Launch Sequencing. Conflict resolution: Credly + LinkedIn response (complement, not compete; DeCE evidence = the differentiator), LinkedIn scale asymmetry acknowledged. GTM gaps noted (ICP, pricing, chicken-and-egg) — flagged as CEO strategic decisions, not constitution rules. Total guardrails: G1-G39. |
+| v1.7 | 2026-04-06 | **First user journey agent, 20 findings. Actual code read.** Critical code violations found: leaderboard page exists (G9/G46 violation — must delete), badge+crystals shown immediately post-assessment (Crystal Law 6 Amendment + G21 violation), 2000ms counter on AURA page (G15 violation — max 800ms), no energy picker in onboarding (P0 blocker), no AI disclosure before first question (G18 not implemented), no scenario framing choice (VOLAURA rule 12 missing). New spec rules: VOLAURA Rule 28 (Pre-Assessment Commitment Layer — consolidates G18 + rule 12 + Law 2 energy check into one screen), Rule 29 (Vulnerability Window Positive Specification — what IS shown during 5-min window), Rule 30 (Ghosting Grace for pre-activation users — 48h warm re-entry). Landing: Sunk Cost Registration now specced (sample AURA profile, no login, fictional Leyla 74 Communication Silver). Fourth trust pill required: "Your score is only shared if you choose to." Pre-launch VOLAURA P0 blockers: 13 → 19 items. Guardrails G45-G46 added. Total guardrails: G1-G46. |
 | v1.6 | 2026-04-06 | **Cultural intelligence agent, 7 findings.** P0 additions: ADHD clinical language ban in AZ/CIS copy — "ADHD"/"neurodivergent" never in AZ-facing user or B2B copy, applied silently as UX science (G40). AZ B2B requires human-first sales (demo-first, no self-serve enterprise — G42). Extended language rules: Russian as first-class locale (G41), AZ date format for certificates (DD [month_AZ] YYYY-cı/ci/cu/cü il), button text max 22 AZ chars, number decimal comma. Extended trust architecture: referral-first onboarding, employer visibility guarantee on assessment start screen, AZ org logos on landing. Credential display split (public: number-first; private: identity-first — G43). Community Signal widget (843 Baku professionals, aggregate by sector, no names — G44, must exist before AZ launch). Org Hall page (VOLAURA Rule 27). Law 3 extended with collectivist shame mechanics (face/ar/həya): sharing as honor claim vs privacy decision — both Western and AZ contexts must be satisfied simultaneously. New VOLAURA Rules 24-27. Total guardrails: G1-G44. |
 
 **Next scheduled review:** 2026-07-06 (quarterly)

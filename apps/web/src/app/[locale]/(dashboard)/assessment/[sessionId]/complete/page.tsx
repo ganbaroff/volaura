@@ -353,11 +353,16 @@ export default function AssessmentResultsPage() {
           <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
             {competencyLabel}
           </p>
-          <h1 className={cn("text-5xl font-bold tabular-nums", badge.color)}>
-            {animatedScore.toFixed(1)}
+          {/* Identity framing — Research #10: identity headline first, score as context */}
+          <h1 className={cn("text-2xl font-bold", badge.color)}>
+            {t(`aura.identity_${tier}`, {
+              defaultValue: tier !== "none"
+                ? `${tier.charAt(0).toUpperCase() + tier.slice(1)}-level Professional`
+                : "Volaura Professional",
+            })}
           </h1>
-          <p className="text-lg font-semibold">
-            {t(`aura.${tier}`, { defaultValue: badge.label })}
+          <p className="text-4xl font-bold tabular-nums text-muted-foreground mt-0.5">
+            {animatedScore.toFixed(1)}
           </p>
           {/* BNE: strength-first framing — lead with what went well, regardless of score */}
           <p className="text-sm text-muted-foreground text-center mt-1">
@@ -575,6 +580,22 @@ export default function AssessmentResultsPage() {
         </motion.div>
       )}
 
+      {/* Coaching Tips — moved UP per Leyla feedback (was buried below scroll) */}
+      {result && (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.65 }}
+          className="rounded-xl border border-border bg-card p-4"
+        >
+          <CoachingTips
+            sessionId={sessionId}
+            competencyId={result.competency_slug}
+            score={score}
+          />
+        </motion.div>
+      )}
+
       {/* ISSUE-Q4: Next Steps — actionable cards with narrative closure */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
@@ -629,22 +650,6 @@ export default function AssessmentResultsPage() {
           )}
         </div>
       </motion.div>
-
-      {/* Coaching Tips */}
-      {result && (
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.1 }}
-          className="rounded-xl border border-border bg-card p-4"
-        >
-          <CoachingTips
-            sessionId={sessionId}
-            competencyId={result.competency_slug}
-            score={score}
-          />
-        </motion.div>
-      )}
 
       {/* Question breakdown link */}
       {result && (

@@ -452,6 +452,128 @@ Implementation Intentions ("If-Then" plans):
 
 ---
 
+### Research: Legal & Compliance Framework
+
+**Source:** GDPR, EU AI Act (Annex III), ISO 10667-2, COPPA, Azerbaijan Labor Code
+**Added in v1.3 — swarm audit finding (P0): legal layer was completely absent from constitution**
+
+#### GDPR (applies to all EU users — and Azerbaijan users once VOLAURA enters EU market)
+
+**Article 5 — Data Minimization:**
+- Collect ONLY what assessment requires. No ambient behavioral tracking without consent.
+- Assessment audio: process, then delete within 48h unless user explicitly opts in to retention.
+
+**Article 13 — Transparency (mandatory at onboarding):**
+- Before any data is collected, user must see: what data is collected, why, how long retained, who has access.
+- This is not optional marketing copy — it is a legal requirement. Onboarding Screen 1 must include it (non-dismissable).
+- Already partially covered by G18 (AI processing disclosure). G18 must also cover data categories and retention.
+
+**Article 17 — Right to Erasure:**
+- 30-day processing window for deletion requests.
+- Anonymized aggregate statistics (ecosystem-level AURA distributions) may be retained.
+- Individual assessment logs, audio, AURA score, badge metadata — fully erased on request.
+- Erasure must cascade across all 5 products that share auth.
+
+**Article 20 — Data Portability:**
+- AURA score + full badge history + assessment summaries: exportable as PDF and JSON on demand.
+- Response time: 30 days. Format must be machine-readable (JSON) not just human-readable.
+
+#### EU AI Act — VOLAURA is a High-Risk AI System
+
+VOLAURA's assessment pipeline qualifies under **Annex III, Category 4** ("AI systems used in employment, workers management and access to self-employment") — specifically: AI-assisted evaluation of competency for professional purposes.
+
+**Obligations:**
+1. **Conformity assessment**: document training data sources, evaluation methodology, and IRT parameters.
+2. **Human oversight**: explicitly stated at onboarding ("Your AURA score is assessed by AI and reviewed by our methodology team. Scores are not used as sole employment criteria.").
+3. **Transparency to individuals**: assessed persons must be able to request explanation of their score (already covered by DeCE `/aura/me/explanation` endpoint — this is legally required, not just a nice-to-have).
+4. **Non-discrimination monitoring**: DIF test (Mantel-Haenszel) when N>500 per demographic group is a legal requirement, not just good practice.
+5. **Registration**: When VOLAURA enters EU market — register in EU AI Act database before deployment.
+
+#### Age Protection
+
+- **EU (GDPR Article 8):** 16+ required for AI-processed personal data. Under 16 = parental consent required.
+- **Global minimum:** 13+ (COPPA equivalent). VOLAURA is a professional platform — soft-enforce 16+ globally, hard-enforce via age confirmation at signup.
+- **Technical enforcement:** checkbox at signup is insufficient. Date of birth field required. Server-side gate: block assessment access if `age_at_signup < 16`.
+- **If minor detected:** redirect to parent-consent flow or waitlist. Never silent drop.
+
+#### Data Retention Schedule (authoritative)
+
+| Data Type | Retention | Basis |
+|-----------|-----------|-------|
+| Assessment audio | 48h after processing, then delete | Data minimization |
+| Assessment responses + scores | 3 years | ISO 10667-2 audit trail |
+| AURA score + badge history | Until deletion request | User-controlled |
+| User profile (name, email, org) | Until deletion request | User-controlled |
+| Analytics events (PostHog) | 90 days raw → anonymized indefinitely | Research validity |
+| Agent conversation logs (ZEUS) | 30 days rolling | Security audit |
+| Episodic swarm memory | 6h → consolidated; raw pruned | Research #13 |
+
+#### Azerbaijan Labor Law Context
+
+**Azerbaijan Labor Code, Articles 17-19:** prohibit discriminatory employment decisions based on personal characteristics not directly relevant to job performance.
+
+**VOLAURA's legal position:** AURA score is a verified professional signal, not a discriminatory classifier. Must be explicitly framed everywhere:
+- Onboarding for org users (B2B): "AURA is one verified input. It does not replace interviews, references, or HR judgment."
+- Discovery results for orgs: score shown with "one of many signals" framing.
+- VOLAURA cannot guarantee and should not imply that high AURA = employment eligibility.
+
+---
+
+### Research: Cultural Localization (Azerbaijan & CIS)
+
+**Source:** AZ cultural research, CIS market analysis, language consulting
+**Added in v1.3 — swarm audit finding (P1): AZ/CIS market rules were absent**
+
+#### Trust Patterns (AZ/CIS)
+
+AZ/CIS users form trust decisions after the **3rd interaction**, not the 1st. Western "cold form" UX (show a form, ask for data immediately) will fail in this market.
+
+**Rule: Deliver visible value BEFORE requesting profile data.**
+
+| Step | What to show | What NOT to ask |
+|------|-------------|-----------------|
+| 1st screen | Quick skill preview / sample insight / peer result | Name, job, email |
+| 2nd interaction | Personalized takeaway from partial input | GDPR consent, LinkedIn import |
+| 3rd interaction | Show value derived from their specific context | Full profile form |
+
+Trust signals that work in AZ context (validated by local market):
+- "Heç bir CV lazım deyil" — "No CV required" (cultural resonance: CVs are often falsified in AZ market)
+- "Heç bir əlaqə lazım deyil" — "No connections/wasita required" (wasita = influence through connections; this is THE key trust barrier in AZ professional market)
+- University/institution references: ADA University, Baku State University, AzPetroChemical partnerships signal legitimacy
+- Phone number verification > email verification (mobile-first trust signal in AZ)
+
+#### Shame-Free Language — AZ-Specific Additions
+
+Azerbaijani culture has **higher professional shame sensitivity** than EU average. Standard shame-free rules (Law 3) must be amplified:
+
+**Banned AZ copy (expand Law 3's banned list):**
+| Banned (AZ) | Translation | Replace with |
+|-------------|-------------|--------------|
+| "nöqsan" | deficiency/flaw | Remove entirely |
+| "səhv" | mistake/error | "başqa perspektiv" (different perspective) |
+| "cəza" | penalty | Remove entirely |
+| "uğursuz" | failed/unsuccessful | Remove entirely |
+| "rədd" | rejection | Remove entirely |
+| "Sənin xətan" | Your fault | Never appear |
+
+**Professional failure is NEVER shown publicly.** An AURA score below a threshold is NOT surfaced in org discovery, NOT shown on public profile, NOT communicated to any third party. The user owns their score data entirely.
+
+#### Language Rules (AZ)
+
+- **Formal "you" ("Siz") is mandatory** in all professional AZ copy. Never "Sən" (informal). Violation = immediate trust loss.
+- **AZ copy length:** Azerbaijani text runs 25-40% longer than EN equivalent. All UI components must accommodate this (no truncation allowed in achievement names, assessment titles, error messages).
+- **Special characters (mandatory UTF-8):** ə ğ ı ö ü ş ç — use correct Azerbaijani characters, not Latin substitutes (e.g., "əla" not "ela", "şirkət" not "sirket"). Substitution = perceived as disrespectful/foreign.
+- **Date format:** DD.MM.YYYY in AZ locale (not MM/DD or ISO 8601 in user-facing strings).
+- **"Xahiş" (please) overuse:** excessive use = perceived as weak. Use direct but warm register instead: "Məlumatınızı daxil edin" not "Zəhmət olmasa məlumatınızı daxil etməyinizi xahiş edirik."
+
+#### AZ/CIS Accessibility Specifics
+
+- **Right-to-left support:** NOT required (Azerbaijani is Latin-script since 1991) but **Cyrillic rendering** must work for CIS users who switch between locales.
+- **Mobile-first is mandatory**, not optional: AZ internet usage is 78% mobile. Desktop secondary.
+- **Low-bandwidth mode:** Baku connection quality varies significantly outside city center. Core flows must work on 3G.
+
+---
+
 ## PART 4: PRODUCT-SPECIFIC IMPLICATIONS
 
 ### VOLAURA — Verified Competency Platform
@@ -736,6 +858,15 @@ These 17 guardrails apply to all 5 products. No exceptions.
 | G21 | Vulnerability window = 5 minutes after session end. No crystals, XP numbers, or badge reveals during this window. Only reflection prompts, breathwork, PostSessionFlow | Research #10 | MindShift, VOLAURA |
 | G22 | Org discovery results must show score freshness: "Leadership: 82 · Assessed 3 months ago · v2.1" — never raw number only | Research #15, Research #9 | VOLAURA |
 | G23 | Comorbidity safety on all screens: font size user-adjustable, contrast between 4.5:1–12:1 (never >14:1), no all-caps text | Research #6, Research #2 | ALL |
+| G24 | GDPR Article 13 onboarding notice: before ANY data is collected, user sees (non-dismissable): what data, why, how long retained, who has access. Must cover AI processing (expands G18) | GDPR Art. 13, EU AI Act | VOLAURA, MindShift, BrandedBy |
+| G25 | EU AI Act conformity statement at onboarding: "Your AURA score is assessed by AI and reviewed by our methodology team. Scores are not used as sole employment criteria." One sentence, non-dismissable, before first assessment question | EU AI Act Annex III | VOLAURA |
+| G26 | Age gate: EU users 16+, global minimum 13+. Server-side enforcement — date of birth field required. Checkbox alone is insufficient. Block assessment access if age < 16 | GDPR Art. 8, COPPA | VOLAURA, MindShift |
+| G27 | AZ/CIS trust timing: deliver visible value (skill preview, sample insight) BEFORE requesting profile data. Never cold-form-first in AZ/CIS locale | AZ cultural research | VOLAURA, MindShift |
+| G28 | AZ shame-free copy: "nöqsan", "səhv", "cəza", "uğursuz", "rədd" banned in all AZ locale strings. Professional failure never shown publicly or to employers. All AZ copy uses formal "Siz" form | AZ cultural research, Law 3 | VOLAURA, BrandedBy |
+| G29 | WCAG 2.1 AA minimum (2.2 target) across all 5 products. Automated a11y scan (axe-core or equivalent) on every CI run | Research #6, legal compliance | ALL |
+| G30 | Offline mode declaration: MindShift core features (timer, task list) work offline with sync-on-reconnect. VOLAURA assessments require connection — clear offline message shown, not silent failure | Research #7 | MindShift, VOLAURA |
+| G31 | Data portability: AURA score + full badge history + assessment summaries exportable as PDF and JSON on demand, within 30 days of request | GDPR Art. 20 | VOLAURA |
+| G32 | Purple ambiguity rule: changing error color to purple (Law 1) does NOT reduce copy urgency. Purple errors MUST use copy that communicates action needed. "Something didn't connect — tap to retry" not just a purple icon. Color removes shame trigger; copy still communicates the required action | Swarm audit finding (dsp-474aa609) | ALL |
 
 ---
 
@@ -806,6 +937,8 @@ When a product decision conflicts with this Constitution:
 | R#8 (Gen X prefers red errors) | Age-based recommendation conflicts with Law 1 | REJECTED — NEVER RED applies to all age groups. |
 | R#3 (AI auto-hides dashboards) | Paternalistic feature | REJECTED — user controls visibility, not AI. Autonomy = SDT core. |
 | R#5 (VR variable ratio XP) | Praised by market but conflicts with R#10 | RESOLVED — keep math, hide formula. Display identity not currency. |
+| Swarm dsp-474aa609 (purple ambiguity) | "Absolute red prohibition creates ambiguity — users may not recognize purple as danger signal" | RESOLVED via G32 — purple color change is visual. Copy must still communicate action urgency. Both layers required. |
+| Legal compliance vs. data minimization | GDPR right to erasure vs. ISO 10667-2 3-year audit trail requirement | RESOLVED — anonymize after 3 years. Individual PII erased; aggregate scoring distribution retained for audit validity. |
 
 ---
 
@@ -833,6 +966,7 @@ These are measured monthly:
 | v1.0 | 2026-04-06 | Initial document — synthesized from 17 CEO research documents (~140,000 words) |
 | v1.1 | 2026-04-06 | Merged MindShift/ZEUS handoff: Node.js gateway architecture, 10-state Life Simulator model, provider hierarchy, P0 task list |
 | v1.2 | 2026-04-06 | **3-agent audit, 34 findings.** Critical fixes: Life Simulator #ef4444→purple/orange (Law 1 self-contradiction), "Red day"→"Low" naming, vulnerability window defined (5 min), ZEUS two-swarm split documented honestly. New: 6 Guardrails (G18-G23), MIRT spec, B2B tier architecture, Crystal Law 6 amendment (badge not immediate), proactive shame contract, 90-min warning protocol, ASR Fairness Rule, two-swarm bridge spec, ZEUS product API requirement. |
+| v1.3 | 2026-04-06 | **Python swarm audit, 14 models (Gemini/Groq/DeepSeek), 2 rounds.** Added: Legal & Compliance Framework (GDPR Art.13/17/20, EU AI Act Annex III high-risk classification, Age gate 16+/13+, Data Retention Schedule, AZ Labor Code framing). Added: Cultural Localization (AZ/CIS trust timing, wasita framing, shame-free AZ copy, Siz-form mandate, 25-40% text length budget). New Guardrails G24-G32 (legal, trust, WCAG, offline, portability, purple ambiguity rule). Conflict resolution: purple ambiguity resolved via G32 (copy layer required alongside color change). Memory logger Windows bug fixed (colon in model IDs). |
 
 **Next scheduled review:** 2026-07-06 (quarterly)
 **Trigger for unscheduled review:** New research added to CEO corpus, or metric violation found.

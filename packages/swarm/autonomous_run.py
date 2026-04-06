@@ -415,6 +415,11 @@ Tag [ESCALATE] if this deploy should be rolled back immediately."""
     except Exception:
         pass  # non-blocking
 
+    # ── FindingContract schema injection (Week 2, item 3) ────────────────────
+    # All agents now receive the typed contract format.
+    # Coordinator reads this to aggregate findings without free-text parsing.
+    from swarm.contracts import FINDING_SCHEMA_FOR_PROMPT
+
     return f"""{team_context}
 
 YOUR PERSPECTIVE: {perspective['name']}
@@ -425,17 +430,15 @@ YOUR LENS: {perspective['lens']}{weight_line}{skills_line}{bound_files_line}{ref
 CURRENT PROJECT STATE:
 {project_state}
 
-RESPONSE FORMAT (JSON only):
-{{
-    "title": "one-line summary of your proposal",
-    "severity": "critical|high|medium|low",
-    "type": "idea|escalation|complaint|code_review|security",
-    "content": "IMPORTANT: this must be a plain STRING (not an object). Full proposal with specific details, file references, math — written as prose text.",
-    "escalate_to_ceo": true,
-    "confidence": 0.0-1.0
-}}
+{FINDING_SCHEMA_FOR_PROMPT}
 
-CRITICAL: "content" field MUST be a string, NOT a JSON object or nested dict. Write it as plain text."""
+LEGACY FORMAT ALSO ACCEPTED (for backward compatibility with inbox pipeline):
+You MAY additionally include these fields outside the JSON if needed:
+- "title": one-line summary (used by CEO inbox display)
+- "type": "idea|escalation|complaint|code_review|security"
+- "escalate_to_ceo": true/false
+
+But the FindingContract fields above are REQUIRED and take priority."""
 
 
 async def _call_agent(
@@ -968,12 +971,49 @@ async def main():
     parser = argparse.ArgumentParser(description="Autonomous Swarm Run")
     parser.add_argument("--mode", default="daily-ideation",
                         choices=["daily-ideation", "code-review", "cto-audit", "self-upgrade",
-                                 "weekly-audit", "monthly-review", "post-deploy"])
+                                 "weekly-audit", "monthly-review", "post-deploy", "coordinator"])
+    parser.add_argument("--task", default="",
+                        help="Task description for coordinator mode")
     parser.add_argument("--skip-consolidation", action="store_true",
                         help="Skip memory consolidation (useful for quick runs)")
     parser.add_argument("--trigger-meta", default="{}",
                         help="JSON string with trigger metadata (e.g. deploy SHA)")
     args = parser.parse_args()
+
+    if args.mode == "coordinator":
+        # Coordinator mode: single task → squad routing → asyncio.gather → CoordinatorResult
+        task_desc = args.task or "daily audit: security, UX, and code quality review"
+        env = dict(os.environ)
+
+        async def _coordinator_runner(agent_id: str, input_data: dict) -> dict | None:
+            """Wrap _call_agent for use with Coordinator."""
+            instruction = input_data.get("instruction", "")
+            squad_name = input_data.get("squad_name", agent_id)
+            perspective = {
+                "name": agent_id,
+                "lens": f"[{squad_name}] {instruction}",
+                "routed_skills": [],
+                "bound_files": "",
+            }
+            project_state = _read_project_state(project_root)
+            prompt = _build_agent_prompt(perspective, project_state, "coordinator", project_root=project_root)
+            return await _call_agent(prompt, agent_id, env)
+
+        from swarm.coordinator import Coordinator
+        coord = Coordinator(runner=_coordinator_runner)
+        result = await coord.run(task_desc)
+
+        print(f"\n=== COORDINATOR RESULT ===")
+        print(f"Task:     {task_desc}")
+        print(f"Agents:   {result.total_agents} total ({result.succeeded} ok, {result.failed} failed)")
+        print(f"Findings: {len(result.findings)}")
+        print(f"Synthesis: {result.synthesis}")
+        if result.priority_action:
+            print(f"PRIORITY: {result.priority_action}")
+        print()
+        for f in result.findings:
+            print(f"  [{f.severity.value}] {f.agent_id}: {f.summary[:100]}")
+        return
 
     if args.mode == "self-upgrade":
         # Self-upgrade execution requires: staging branch target, test gate before merge,

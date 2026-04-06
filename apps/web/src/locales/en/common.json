@@ -444,6 +444,21 @@
     "orgZeroHeadline": "Verified talent is waiting for you",
     "orgZeroSub": "Professionals are assessed on real skills. Browse opted-in profiles.",
     "orgZeroCta": "Explore Talent →",
+    "newUser": {
+      "headline": "Prove your skills. Earn your AURA.",
+      "sub": "Companies search by AURA score — not résumés.",
+      "cta": "Start my first assessment →",
+      "step1": "Take a 5-min adaptive assessment",
+      "step2": "Earn your badge (Bronze → Platinum)",
+      "step3": "Get found by organizations automatically",
+      "stepsLabel": "Your journey",
+      "orgHeadline": "Verified talent is waiting.",
+      "orgSub": "Browse professionals verified by adaptive assessment.",
+      "orgCta": "Explore verified talent →",
+      "orgStep1": "Complete your organization profile",
+      "orgStep2": "Search talent by AURA score",
+      "orgStep3": "Invite the best to your events"
+    },
     "sharePrompt": {
       "title": "Your AURA profile is live!",
       "desc": "Share it with your network and let organizations find you.",

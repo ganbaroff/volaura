@@ -280,7 +280,7 @@ export default function DashboardPage() {
               locale={locale}
             />
           ) : (
-            <NoScoreBanner locale={locale} t={t} accountType={accountType} />
+            <NewUserWelcomeCard locale={locale} t={t} accountType={accountType} />
           )}
         </motion.div>
 
@@ -335,34 +335,31 @@ export default function DashboardPage() {
           </motion.div>
         )}
 
-        {/* ── Recent Activity ── */}
-        <motion.div variants={sVariants} className="space-y-2">
-          <SectionHeader label={t("dashboard.recentActivity")} />
-          <div className="rounded-xl border border-border bg-card p-4">
-            <ActivityFeed
-              items={activityItems}
-              loading={activityLoading}
-              locale={locale}
-            />
-          </div>
-        </motion.div>
+        {/* ── Recent Activity — hidden for new users with no data (reduces noise) ── */}
+        {(hasScore || activityItems.length > 0) && (
+          <motion.div variants={sVariants} className="space-y-2">
+            <SectionHeader label={t("dashboard.recentActivity")} />
+            <div className="rounded-xl border border-border bg-card p-4">
+              <ActivityFeed
+                items={activityItems}
+                loading={activityLoading}
+                locale={locale}
+              />
+            </div>
+          </motion.div>
+        )}
 
-        {/* ── Quick Actions — Peak Shift: dominant primary CTA ── */}
-        {/* hasScore: full-width "See your AURA" (dominant) + smaller secondary below.
-            !hasScore: NoScoreBanner replaces the AURA widget above; QuickActions
-            only shows the assessment link as the single dominant action. */}
-        <motion.div variants={sVariants} className="space-y-2">
-          <SectionHeader label={t("dashboard.quickActions")} />
-          {hasScore ? (
+        {/* ── Quick Actions — only shown once user has score (NewUserWelcomeCard handles !hasScore CTA) ── */}
+        {hasScore && (
+          <motion.div variants={sVariants} className="space-y-2">
+            <SectionHeader label={t("dashboard.quickActions")} />
             <div className="flex flex-col gap-3">
-              {/* Primary — full-width dominant CTA */}
               <QuickActionPrimary
                 href={`/${locale}/aura`}
                 icon={<Sparkles className="size-5 text-yellow-400" aria-hidden="true" />}
                 label={t("nav.aura")}
                 sub={t("aura.overallScore")}
               />
-              {/* Secondary — smaller, visually subordinate */}
               <QuickAction
                 href={`/${locale}/assessment`}
                 icon={<ClipboardList className="size-5 text-primary" aria-hidden="true" />}
@@ -370,16 +367,8 @@ export default function DashboardPage() {
                 sub={t("assessment.title")}
               />
             </div>
-          ) : (
-            /* No score: single full-width dominant action */
-            <QuickActionPrimary
-              href={`/${locale}/assessment`}
-              icon={<ClipboardList className="size-5 text-primary" aria-hidden="true" />}
-              label={t("dashboard.startAssessment")}
-              sub={t("assessment.title")}
-            />
-          )}
-        </motion.div>
+          </motion.div>
+        )}
       </motion.div>
     </>
   );
@@ -453,41 +442,79 @@ function QuickActionPrimary({
   );
 }
 
-// NoScoreBanner — professional value prop framing.
-// Volunteer: "Companies are searching for you — not a résumé"
-// Org:       "Verified talent is waiting for you"
-function NoScoreBanner({
+// NewUserWelcomeCard — 3-step journey framing for users without an AURA score yet.
+// Shows the full path: assess → badge → get found. Step 1 is highlighted (you are here).
+// Replaces NoScoreBanner — single CTA, no duplication with QuickActions.
+function NewUserWelcomeCard({
   locale,
   t,
   accountType,
 }: {
   locale: string;
-  t: (k: string) => string;
+  t: (k: string, opts?: Record<string, unknown>) => string;
   accountType: "volunteer" | "organization";
 }) {
   const isOrg = accountType === "organization";
   const href = isOrg ? `/${locale}/org-volunteers` : `/${locale}/assessment`;
 
+  const steps = isOrg
+    ? [
+        t("dashboard.newUser.orgStep1", { defaultValue: "Complete your organization profile" }),
+        t("dashboard.newUser.orgStep2", { defaultValue: "Search talent by AURA score" }),
+        t("dashboard.newUser.orgStep3", { defaultValue: "Invite the best to your events" }),
+      ]
+    : [
+        t("dashboard.newUser.step1", { defaultValue: "Take a 5-min adaptive assessment" }),
+        t("dashboard.newUser.step2", { defaultValue: "Earn your badge (Bronze → Platinum)" }),
+        t("dashboard.newUser.step3", { defaultValue: "Get found by organizations automatically" }),
+      ];
+
   return (
-    <Link
-      href={href}
-      className="block rounded-2xl border-2 border-primary/40 bg-primary/5 p-6 transition-all hover:border-primary/70 hover:bg-primary/10 active:scale-[0.99]"
-    >
-      <div className="flex flex-col gap-3">
+    <div className="rounded-2xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-secondary/5 p-6 space-y-5">
+      {/* Headline */}
+      <div className="space-y-1.5">
         <div className="text-3xl" aria-hidden="true">{isOrg ? "🏢" : "🎯"}</div>
-        <div>
-          <p className="font-bold text-foreground text-lg leading-snug">
-            {isOrg ? t("dashboard.orgZeroHeadline") : t("dashboard.noScoreHeadline")}
-          </p>
-          <p className="text-sm text-muted-foreground mt-1">
-            {isOrg ? t("dashboard.orgZeroSub") : t("dashboard.noScoreSub")}
-          </p>
-        </div>
-        <div className="flex items-center gap-1.5 text-primary font-semibold text-sm">
-          {isOrg ? t("dashboard.orgZeroCta") : t("dashboard.noScoreCta")}
-        </div>
+        <p className="text-lg font-bold text-foreground leading-snug">
+          {isOrg
+            ? t("dashboard.newUser.orgHeadline", { defaultValue: "Verified talent is waiting." })
+            : t("dashboard.newUser.headline", { defaultValue: "Prove your skills. Earn your AURA." })}
+        </p>
+        <p className="text-sm text-muted-foreground">
+          {isOrg
+            ? t("dashboard.newUser.orgSub", { defaultValue: "Browse professionals verified by adaptive assessment." })
+            : t("dashboard.newUser.sub", { defaultValue: "Companies search by AURA score — not résumés." })}
+        </p>
       </div>
-    </Link>
+
+      {/* 3-step journey — step 1 highlighted (you are here) */}
+      <ol className="space-y-3" aria-label={t("dashboard.newUser.stepsLabel", { defaultValue: "Your journey" })}>
+        {steps.map((step, i) => (
+          <li key={i} className="flex items-center gap-3">
+            <span
+              className={`shrink-0 size-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                i === 0 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+              }`}
+              aria-current={i === 0 ? "step" : undefined}
+            >
+              {i + 1}
+            </span>
+            <span className={`text-sm ${i === 0 ? "font-medium text-foreground" : "text-muted-foreground"}`}>
+              {step}
+            </span>
+          </li>
+        ))}
+      </ol>
+
+      {/* Single CTA */}
+      <Link
+        href={href}
+        className="flex items-center justify-center gap-2 w-full rounded-xl bg-primary text-primary-foreground font-semibold py-3 px-4 text-sm transition-all hover:bg-primary/90 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        {isOrg
+          ? t("dashboard.newUser.orgCta", { defaultValue: "Explore verified talent →" })
+          : t("dashboard.newUser.cta", { defaultValue: "Start my first assessment →" })}
+      </Link>
+    </div>
   );
 }
 

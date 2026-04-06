@@ -9,6 +9,7 @@ on:
       - 'apps/web/src/**'
       - 'supabase/migrations/**'
       - 'packages/swarm/**'
+      - 'docs/**'
 
 jobs:
   session-end-hook:

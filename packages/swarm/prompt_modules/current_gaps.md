@@ -1,6 +1,33 @@
-# MiroFish — Current Gaps (v8 Targets)
+# VOLAURA Swarm — Current Gaps (v9 Targets)
 # UPDATE this file when gaps are filled or new ones discovered.
-# Last updated: 2026-03-24
+# Last updated: 2026-04-06
+# See also: prompt_modules/ecosystem-map.md for 5-product context
+
+## ECOSYSTEM GAPS (cross-product, HIGH priority)
+
+### E-1. Code Index Staleness
+`memory/swarm/code-index.json` was last rebuilt 2026-03-24 (12+ days stale).
+Agents read this to understand project structure — stale index = simulated knowledge.
+Need: GitHub Action that rebuilds on every push to main.
+Priority: **CRITICAL** — agents are guessing about current code structure.
+
+### E-2. Foundation Law 2 (Energy Adaptation) Missing in 3 Products
+Only MindShift implements Energy Adaptation (UI simplifies at low energy).
+VOLAURA, Life Simulator, BrandedBy do not. This violates ECOSYSTEM-CONSTITUTION.md.
+Need: define what "Energy Adaptation" means for each product + implement.
+Priority: **HIGH** — Foundation Law violation.
+
+### E-3. Constitution Not in Main Branch
+`docs/ECOSYSTEM-CONSTITUTION.md` v1.7 lives on `claude/blissful-lichterman` branch.
+PR ganbaroff/volaura#12 exists but not merged to main.
+Agents reading main branch don't see the Constitution.
+Priority: **HIGH** — source of truth not accessible from default branch.
+
+### E-4. Ollama/Gemma4 Not Running
+ZEUS Gateway hierarchy: Cerebras → Gemma4/Ollama → NVIDIA → Anthropic.
+Ollama is not started. Local GPU unused. Fallback chain broken at step 2.
+Need: systemd service or startup script for Ollama.
+Priority: **MEDIUM** — Cerebras works, but no local fallback.
 
 ## Open Gaps
 
@@ -73,3 +100,5 @@ Priority: HIGH — differentiator for Pasha Bank pitch.
 - ~~Dead weight agents (v7: auto-removal)~~
 - ~~Freerider responses (v7: ResponseQualityMiddleware)~~
 - ~~One-size-fits-all prompts (v7: per-model adaptive)~~
+- ~~Agents don't know ecosystem (v8: ecosystem-map.md + Ecosystem Auditor in autonomous_run.py)~~
+- ~~architecture_state.md doesn't mention ZEUS (v8: added ZEUS section, scope clarification)~~

@@ -105,16 +105,55 @@ class DeepSeekDynamicProvider(LLMProvider):
         return json.loads(r.choices[0].message.content.strip())
 
 
+class OllamaDynamicProvider(LLMProvider):
+    """Local Ollama model — zero rate limit, zero cost, local GPU.
+
+    Constitution provider hierarchy: Cerebras → Gemma4/Ollama → NVIDIA → Anthropic.
+    Ollama runs at OLLAMA_URL (default http://localhost:11434).
+    Uses OpenAI-compatible API (Ollama v0.1.29+).
+    No API key required — controlled by OLLAMA_URL env var.
+    """
+
+    def __init__(self, base_url: str, model_id: str, family: str):
+        from openai import AsyncOpenAI
+        # Ollama OpenAI-compatible endpoint
+        self._client = AsyncOpenAI(api_key="ollama", base_url=f"{base_url.rstrip('/')}/v1")
+        self._model = model_id
+        self._family = family
+        self._base_url = base_url
+
+    def info(self) -> ProviderInfo:
+        return ProviderInfo(
+            name=f"ollama:{self._model[:20]}",
+            model=self._model,
+            is_free=True,
+            rate_limit_rpm=999,  # local — effectively unlimited
+            priority=0,          # highest priority: local GPU, zero cost, zero latency tax
+        )
+
+    async def evaluate(self, prompt: str, temperature: float = 0.7) -> dict[str, Any]:
+        r = await self._client.chat.completions.create(
+            model=self._model,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=temperature,
+            max_tokens=2048,
+            response_format={"type": "json_object"},
+        )
+        return json.loads(r.choices[0].message.content.strip())
+
+
 _FACTORY = {
     "groq": GroqDynamicProvider,
     "gemini": GeminiDynamicProvider,
     "deepseek": DeepSeekDynamicProvider,
+    "ollama": OllamaDynamicProvider,
 }
 
 _KEY_MAP = {
     "groq": "GROQ_API_KEY",
     "gemini": "GEMINI_API_KEY",
     "deepseek": "DEEPSEEK_API_KEY",
+    # ollama: no API key — uses OLLAMA_URL env var
 }
 
 
@@ -134,7 +173,13 @@ def guess_family(model: str) -> str:
 
 
 def load_discovered_providers(env: dict[str, str]) -> list[LLMProvider]:
-    """Load all working providers from discovered_models.json."""
+    """Load all working providers from discovered_models.json.
+
+    Special handling:
+    - Ollama: no API key needed. Uses OLLAMA_URL env var (default http://localhost:11434).
+      Skipped silently if OLLAMA_URL not set or Ollama not reachable.
+    - All other providers: require matching API key in env.
+    """
     discovered_path = Path(__file__).parent.parent / "discovered_models.json"
     if not discovered_path.exists():
         return []
@@ -146,13 +191,23 @@ def load_discovered_providers(env: dict[str, str]) -> list[LLMProvider]:
     for m in models:
         model_id = m["model"]
         provider_type = m["provider"]
-        api_key = env.get(_KEY_MAP.get(provider_type, ""), "").strip()
-
-        if not api_key:
-            continue
 
         factory = _FACTORY.get(provider_type)
         if not factory:
+            continue
+
+        # Ollama: local GPU — no API key, uses OLLAMA_URL
+        if provider_type == "ollama":
+            ollama_url = env.get("OLLAMA_URL", "http://localhost:11434").strip()
+            family = guess_family(model_id)
+            try:
+                providers.append(OllamaDynamicProvider(ollama_url, model_id, family))
+            except Exception:
+                continue
+            continue
+
+        api_key = env.get(_KEY_MAP.get(provider_type, ""), "").strip()
+        if not api_key:
             continue
 
         family = guess_family(model_id)

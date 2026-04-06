@@ -1,13 +1,26 @@
-# Swarm Shared Context — UPDATED 2026-04-01
+# Swarm Shared Context — UPDATED 2026-04-06
 
-**By:** CTO (Claude) | **Updated:** 2026-04-02 (Session 83 BATCH-U — sprint state synced, 3 new batches logged)
+**By:** CTO (Claude) | **Updated:** 2026-04-06 (Session 87 — Constitution v1.7, Design System v2, 3 active violations patched)
+
+---
+
+## ⚠️ ZERO: Read ECOSYSTEM-MAP.md FIRST
+
+Full ecosystem map with all 5 products, Constitution laws, what NOT to propose:
+`packages/swarm/memory/ECOSYSTEM-MAP.md`
+
+The **ECOSYSTEM CONSTITUTION v1.7** governs everything:
+`docs/ECOSYSTEM-CONSTITUTION.md` (branch `claude/blissful-lichterman`)
 
 ---
 
 ## ⚠️ CRITICAL: Read this before proposing anything
 
 1. The "skill library replaces all products" architecture (Sessions 51-58) was REVERSED. Volaura, MindShift, Life Simulator, BrandedBy, ZEUS are separate products. Do NOT propose features as "skills within Volaura."
-2. Sprint state is E2 (2026-04-01). BATCH S is the most recent shipped batch (Session 77).
+2. Sprint state is Design System + UX Polish (2026-04-06). Session 87 is most recent. PRs #7, #8 merged today.
+3. **G9 FIXED:** Leaderboard page deleted today — redirect to dashboard. Do not re-propose leaderboard.
+4. **G15 FIXED:** Score counter durations 800ms max. Do not propose duration > 800ms.
+5. **G21 + Crystal Law 6 FIXED:** Badge/crystals removed from assessment complete page.
 3. 57+ migrations are applied. Do NOT re-propose already-fixed bugs.
 4. PAYMENT_ENABLED=False kill switch is active. Stripe code exists but paywall is disabled for beta.
 5. Route ordering in aura.py is intentional — static routes before parameterized (P0 bug fixed Sprint 42).

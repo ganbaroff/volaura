@@ -276,7 +276,7 @@ export default function AuraPage() {
   // Counter only runs once reveal is complete; skip animation if user prefers reduced motion
   const animatedScore = useAnimatedCounter(
     displayScore,
-    prefersReducedMotion ? 0 : 2000,
+    prefersReducedMotion ? 0 : 800,
     revealed
   );
 

@@ -1,3 +1,37 @@
+# ARTICLE 0 — ECOSYSTEM CONSTITUTION IS SUPREME LAW
+
+**Before any code, plan, or protocol: the ECOSYSTEM CONSTITUTION supersedes this file.**
+
+```
+CONSTITUTION PATH: docs/ECOSYSTEM-CONSTITUTION.md
+CURRENT VERSION:   v1.7 (2026-04-06)
+SCOPE:             ALL 5 products — VOLAURA · MindShift · Life Simulator · BrandedBy · ZEUS
+AUTHORITY:         If CLAUDE.md contradicts Constitution → Constitution wins. Fix CLAUDE.md.
+```
+
+**5 Foundation Laws (memorize — zero exceptions):**
+1. NEVER RED — errors = purple `#D4B4FF`, warnings = amber `#E9C400`
+2. Energy Adaptation — every product needs Full/Mid/Low energy modes
+3. Shame-Free Language — no "you haven't done X", no profile % complete
+4. Animation Safety — max 800ms non-decorative, prefers-reduced-motion mandatory
+5. One Primary Action — one primary CTA per screen
+
+**Constitution pre-launch blockers (19 total):** Energy picker, Pre-Assessment Layer, DIF audit, SADPP registration — all P0.
+
+**Ecosystem Map:** `packages/swarm/memory/ECOSYSTEM-MAP.md` — read before any cross-product proposal.
+
+**LLM provider hierarchy (AUTHORITATIVE — Constitution Research #12):**
+```
+Cerebras Qwen3-235B    (primary — 2000+ tokens/sec)
+  → Ollama/local GPU   (zero cost, zero rate limit — ALWAYS try before external APIs)
+  → NVIDIA NIM         (backup)
+  → Anthropic Haiku    (last resort ONLY)
+```
+**Rule:** Never use Claude models as swarm agents. Never use only one provider. Always diverse.
+**Ollama:** `OLLAMA_URL=http://localhost:11434`, model `qwen3:8b`. Now in Python swarm (added 2026-04-06).
+
+---
+
 # ШАГ 0 — АВТОМАТИЧЕСКИЙ — ПЕРЕД ЛЮБОЙ РАБОТОЙ
 
 ПРОЧИТАЙ `docs/TASK-PROTOCOL.md`. СЛЕДУЙ ДЕРЕВУ РЕШЕНИЙ.

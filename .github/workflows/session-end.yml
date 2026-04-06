@@ -43,6 +43,25 @@ jobs:
           python -m packages.swarm.code_index build
           echo "Code index rebuilt: $(python -c \"import json; d=json.load(open('memory/swarm/code-index.json')); print(d['total_files'], 'files')\")"
 
+      - name: Notify ZEUS Gateway — VOLAURA changed
+        if: ${{ vars.ZEUS_GATEWAY_URL != '' }}
+        run: |
+          COMMITS=$(git log --oneline -3 --format="%h %s")
+          curl -s -X POST "${{ vars.ZEUS_GATEWAY_URL }}/event" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.GATEWAY_SECRET }}" \
+            -d "{
+              \"source\": \"github-volaura\",
+              \"event\": \"push.main\",
+              \"severity\": \"P2\",
+              \"payload\": {
+                \"repo\": \"VOLAURA\",
+                \"actor\": \"${{ github.actor }}\",
+                \"sha\": \"${{ github.sha }}\",
+                \"summary\": \"VOLAURA session-end: ${COMMITS:0:300}\"
+              }
+            }" || echo "ZEUS unreachable — non-blocking"
+
       - name: Commit session diff and updated context
         run: |
           git config user.name "MiroFish Swarm"

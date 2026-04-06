@@ -9,9 +9,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import {
   Loader2,
-  Trophy,
-  Award,
-  Star,
   Share2,
   ArrowRight,
   CheckCircle2,
@@ -122,14 +119,14 @@ function GamingFlagsWarning({ flags }: { flags: string[] }) {
   );
 }
 
-// ── Badge Config ───────────────────────────────────────────────────────
+// ── Tier → identity label mapping (for screen reader copy only) ────────
 
-const BADGE_CONFIG: Record<string, { color: string; bg: string; icon: typeof Trophy; label: string }> = {
-  platinum: { color: "text-violet-300", bg: "bg-violet-500/20 ring-violet-400/50", icon: Star, label: "Platinum" },
-  gold: { color: "text-amber-300", bg: "bg-amber-500/20 ring-amber-400/50", icon: Trophy, label: "Gold" },
-  silver: { color: "text-slate-300", bg: "bg-slate-400/20 ring-slate-300/50", icon: Award, label: "Silver" },
-  bronze: { color: "text-orange-400", bg: "bg-orange-500/20 ring-orange-400/50", icon: Award, label: "Bronze" },
-  none: { color: "text-muted-foreground", bg: "bg-muted/20 ring-muted/50", icon: Award, label: "—" },
+const TIER_IDENTITY_KEYS: Record<string, string> = {
+  platinum: "aura.identity_platinum",
+  gold: "aura.identity_gold",
+  silver: "aura.identity_silver",
+  bronze: "aura.identity_bronze",
+  none: "aura.identity_none",
 };
 
 // ── Animated counter ───────────────────────────────────────────────────
@@ -260,12 +257,10 @@ export default function AssessmentResultsPage() {
 
   const score = result?.competency_score ?? 0;
   const animatedScore = useAnimatedCounter(phase === "reveal" ? score : 0);
-  const overallAura = useAnimatedCounter(phase === "reveal" ? (aura?.total_score ?? 0) : 0, 2000);
+  const overallAura = useAnimatedCounter(phase === "reveal" ? (aura?.total_score ?? 0) : 0, 800);
   const percentile = aura?.percentile_rank ?? null;
   const effectiveScore = aura?.effective_score ?? null;
-  const tier = aura?.badge_tier ?? (score >= 90 ? "platinum" : score >= 75 ? "gold" : score >= 60 ? "silver" : score >= 40 ? "bronze" : "none");
-  const badge = BADGE_CONFIG[tier] || BADGE_CONFIG.none;
-  const BadgeIcon = badge.icon;
+  const tier = score >= 90 ? "platinum" : score >= 75 ? "gold" : score >= 60 ? "silver" : score >= 40 ? "bronze" : "none";
   const hasGamingFlags = (result?.gaming_flags?.length ?? 0) > 0;
 
   const competencyLabel = result?.competency_slug
@@ -320,25 +315,21 @@ export default function AssessmentResultsPage() {
 
   return (
     <div className="mx-auto max-w-lg px-4 py-8 space-y-8">
-      {/* Badge Reveal */}
+      {/* Assessment Complete */}
       <motion.div
         initial={{ scale: 0, rotate: -20 }}
         animate={{ scale: 1, rotate: 0 }}
         transition={{ type: "spring", stiffness: 180, damping: 16, delay: 0.1 }}
         className="flex flex-col items-center text-center space-y-4"
       >
-        <div className={cn(
-          "relative size-28 rounded-full flex items-center justify-center ring-4",
-          badge.bg,
-        )}>
-          <BadgeIcon className={cn("size-14", badge.color)} />
-          {/* ISSUE-Q4: Celebration pulse ring for high scores (score ≥75). Respects reduced motion. */}
+        <div className="relative size-28 rounded-full flex items-center justify-center ring-4 bg-primary/10 ring-primary/20">
+          <CheckCircle2 className="size-14 text-primary" />
           {score >= 75 && !prefersReducedMotion && (
             <motion.div
               initial={{ scale: 1, opacity: 0.7 }}
               animate={{ scale: 1.6, opacity: 0 }}
               transition={{ duration: 1.0, delay: 0.4, ease: "easeOut" }}
-              className={cn("absolute inset-0 rounded-full ring-4 pointer-events-none", badge.bg)}
+              className="absolute inset-0 rounded-full ring-4 bg-primary/10 pointer-events-none"
               aria-hidden="true"
             />
           )}
@@ -354,8 +345,8 @@ export default function AssessmentResultsPage() {
             {competencyLabel}
           </p>
           {/* Identity framing — Research #10: identity headline first, score as context */}
-          <h1 className={cn("text-2xl font-bold", badge.color)}>
-            {t(`aura.identity_${tier}`, {
+          <h1 className="text-2xl font-bold text-foreground">
+            {t(TIER_IDENTITY_KEYS[tier] ?? "aura.identity_none", {
               defaultValue: tier !== "none"
                 ? `${tier.charAt(0).toUpperCase() + tier.slice(1)}-level Professional`
                 : "Volaura Professional",
@@ -389,51 +380,22 @@ export default function AssessmentResultsPage() {
         </motion.div>
       </motion.div>
 
-      {/* Milestone Banner — Gold/Platinum celebration (D.2-A) */}
-      {result?.aura_updated && (aura?.badge_tier === "gold" || aura?.badge_tier === "platinum") && (
+      {/* Discoverability milestone — shown only if score unlocks org search, no badge tier revealed */}
+      {result?.aura_updated && (aura?.total_score ?? 0) >= 60 && (
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: -6 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ delay: 0.38, type: "spring", stiffness: 200, damping: 22 }}
-          className={cn(
-            "rounded-xl border-2 p-4 text-center space-y-1",
-            aura.badge_tier === "platinum"
-              ? "border-cyan-400/40 bg-gradient-to-br from-cyan-500/10 to-sky-500/5"
-              : "border-yellow-500/40 bg-gradient-to-br from-yellow-500/10 to-amber-500/5"
-          )}
+          className="rounded-xl border border-primary/30 bg-primary/5 p-4 text-center space-y-1"
           role="status"
           aria-live="polite"
         >
-          <p className={cn("text-base font-bold", aura.badge_tier === "platinum" ? "text-cyan-500" : "text-yellow-600 dark:text-yellow-400")}>
-            {aura.badge_tier === "platinum"
-              ? t("assessment.milestonePlatinum", { defaultValue: "🏆 Platinum Tier Achieved!" })
-              : t("assessment.milestoneGold",     { defaultValue: "🥇 Gold Tier!" })}
-          </p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-base font-bold text-primary">
             {t("assessment.milestoneDiscoverable", { defaultValue: "You're now discoverable to organizations on Volaura." })}
           </p>
-        </motion.div>
-      )}
-
-      {/* Crystal Reward — peak behavioral moment */}
-      {(result?.crystals_earned ?? 0) > 0 && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: -8 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ delay: 0.42, type: "spring", stiffness: 220, damping: 20 }}
-          className="rounded-xl border border-sky-400/30 bg-gradient-to-br from-sky-500/10 to-indigo-500/5 px-4 py-3 flex items-center gap-3"
-          role="status"
-          aria-live="polite"
-        >
-          <span className="text-3xl shrink-0" aria-hidden="true">💎</span>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-sky-400">
-              {t("assessment.crystalsEarned", { count: result!.crystals_earned, defaultValue: `+${result!.crystals_earned} Crystals` })}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {t("assessment.crystalsEarnedDesc", { defaultValue: "Added to your Life Simulator balance" })}
-            </p>
-          </div>
+          <p className="text-xs text-muted-foreground">
+            {t("assessment.visitAuraForDetails", { defaultValue: "Visit your AURA page to see what you've unlocked." })}
+          </p>
         </motion.div>
       )}
 

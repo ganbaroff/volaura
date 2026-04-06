@@ -34,7 +34,7 @@ def _get_router():
         model_list.append({
             "model_name": "swarm-llm",
             "litellm_params": {
-                "model": "cerebras/qwen3-235b",
+                "model": "cerebras/llama3.1-8b",
                 "api_key": os.environ["CEREBRAS_API_KEY"],
             },
         })

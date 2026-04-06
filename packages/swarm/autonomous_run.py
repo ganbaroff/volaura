@@ -228,6 +228,27 @@ def _read_project_state(project_root: Path) -> str:
             "## ALREADY PROPOSED (don't repeat)\n" + "\n".join(f"- {t}" for t in titles)
         )
 
+    # ── Swarm Tools: inject real codebase data (not just documents) ──────
+    # Constitution checker gives agents REAL violation data, not assumptions.
+    # Code index summary gives agents awareness of what files exist.
+    try:
+        from swarm.tools.constitution_checker import run_full_audit
+        constitution_report = run_full_audit()
+        if constitution_report:
+            state_parts.append(
+                "## CONSTITUTION COMPLIANCE (live scan)\n" + constitution_report[:2000]
+            )
+    except Exception as e:
+        logger.debug("Constitution checker failed (non-blocking): {e}", e=str(e)[:100])
+
+    try:
+        from swarm.tools.deploy_tools import check_git_status
+        git_state = check_git_status()
+        if git_state:
+            state_parts.append("## GIT STATUS\n" + git_state[:500])
+    except Exception as e:
+        logger.debug("Git status check failed (non-blocking): {e}", e=str(e)[:100])
+
     return "\n\n".join(state_parts) if state_parts else "No project state files found."
 
 

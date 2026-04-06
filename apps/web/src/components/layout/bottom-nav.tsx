@@ -11,7 +11,6 @@ const BOTTOM_NAV_ITEMS = [
   { href: "/aura",       labelKey: "nav.aura",       icon: "◈" },
   { href: "/assessment", labelKey: "nav.assessment", icon: "◑" },
   { href: "/profile",    labelKey: "nav.profile",    icon: "◉" },
-  { href: "/leaderboard", labelKey: "nav.leaderboard", icon: "🏆" },
 ] as const;
 
 export function BottomNav() {

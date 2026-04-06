@@ -22,7 +22,6 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/my-organization", labelKey: "nav.myOrganization", icon: "🏢", orgOnly: true },
   { href: "/org-volunteers",  labelKey: "nav.orgVolunteers",  icon: "👥", orgOnly: true },
   { href: "/discover",        labelKey: "nav.discover",       icon: "🔍", orgOnly: true },
-  { href: "/leaderboard",    labelKey: "nav.leaderboard",    icon: "🏆" },
   { href: "/notifications",  labelKey: "nav.notifications",  icon: "🔔" },
   { href: "/settings",       labelKey: "nav.settings",       icon: "◧" },
 ];

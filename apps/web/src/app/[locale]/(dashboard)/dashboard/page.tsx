@@ -14,7 +14,7 @@ import { ActivityFeed, type ActivityItem as FeedActivityItem } from "@/component
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuraScore } from "@/hooks/queries/use-aura";
 import { useActivity, useDashboardStats } from "@/hooks/queries/use-dashboard";
-import { useMyLeaderboardRank } from "@/hooks/queries/use-leaderboard";
+// Leaderboard removed — G9/Crystal Law 5
 import { useSkill } from "@/hooks/queries/use-skill";
 import { useSubscription } from "@/hooks/queries/use-subscription";
 import { useProfile } from "@/hooks/queries/use-profile";
@@ -157,7 +157,7 @@ export default function DashboardPage() {
   }
   const { data: rawActivity = [], isLoading: activityLoading } = useActivity();
   const { data: stats } = useDashboardStats();
-  const { data: myRank } = useMyLeaderboardRank();
+  const myRank = null; // Leaderboard removed — G9/Crystal Law 5
 
   // Feed curator — personalized recommendations (only when user has AURA score)
   const { data: feedData, isLoading: feedLoading } = useSkill(
@@ -297,7 +297,7 @@ export default function DashboardPage() {
               <StatsRow
                 streak={stats?.streak_days ?? 0}
                 eventsCount={stats?.events_attended ?? 0}
-                leaguePosition={myRank?.rank != null ? `#${myRank.rank}` : null}
+                leaguePosition={null}
               />
             )}
           </motion.div>
@@ -328,7 +328,7 @@ export default function DashboardPage() {
               onCardAction={(card) => {
                 if (card.type === "challenge") router.push(`/${locale}/assessment`);
                 else if (card.type === "event") router.push(`/${locale}/events`);
-                else if (card.type === "people") router.push(`/${locale}/leaderboard`);
+                else if (card.type === "people") router.push(`/${locale}/discover`);
                 else if (card.type === "achievement") router.push(`/${locale}/aura`);
               }}
             />

@@ -8,7 +8,8 @@ Security:
 - Status + checkout endpoints require valid Supabase JWT (CurrentUserId)
 - Webhook endpoint validates Stripe-Signature header — rejects all unsigned requests
 - stripe_customer_id / stripe_subscription_id are NEVER logged in plain text
-- SupabaseAdmin used for all subscription writes (RLS bypass needed for service writes)
+- SupabaseAdmin used for checkout/webhook (auth.admin calls + service-level payment writes)
+- SupabaseUser used for status reads (user reads own profile via RLS)
 - Webhook excluded from rate limiter (Stripe needs reliable delivery)
 
 Graceful degradation:
@@ -24,7 +25,7 @@ from fastapi import APIRouter, HTTPException, Request
 from loguru import logger
 
 from app.config import settings
-from app.deps import CurrentUserId, SupabaseAdmin
+from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
 from app.middleware.rate_limit import RATE_DEFAULT, limiter
 from app.schemas.subscription import (
     CheckoutSessionResponse,
@@ -82,7 +83,7 @@ def _get_stripe_client():
 async def get_subscription_status(
     request: Request,
     user_id: CurrentUserId,
-    db: SupabaseAdmin,
+    db: SupabaseUser,
 ) -> SubscriptionStatus:
     """Return current subscription status for the authenticated user.
 

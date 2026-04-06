@@ -330,3 +330,89 @@ async def decide_proposal(
     except Exception as e:
         logger.error("Failed to decide proposal", error=str(e))
         raise HTTPException(status_code=500, detail={"code": "INTERNAL", "message": "Failed to process decision"})
+
+
+@router.get("/swarm/findings")
+@limiter.limit(RATE_ADMIN)
+async def get_swarm_findings(
+    request: Request,
+    admin_id: PlatformAdminId,
+    limit: int = 50,
+    category: str = "",
+    min_importance: int = 1,
+) -> dict:
+    """Return typed FindingContract results from shared memory (SQLite blackboard).
+
+    These are findings from coordinator runs, simulate_users friction points,
+    and any agent that posted a result via post_result().
+    """
+    import sys
+    from pathlib import Path as _Path
+
+    # Ensure swarm package importable from API context
+    _packages_path = str(_Path(__file__).parent.parent.parent.parent.parent / "packages")
+    if _packages_path not in sys.path:
+        sys.path.insert(0, _packages_path)
+
+    try:
+        from swarm.shared_memory import get_all_recent, _DB_PATH
+        import sqlite3 as _sqlite3
+        import json as _json
+
+        if not _DB_PATH.exists():
+            return {"data": {"findings": [], "total": 0, "db_exists": False}}
+
+        conn = _sqlite3.connect(str(_DB_PATH), timeout=5)
+        try:
+            params: list = []
+            where_parts = ["(expires_at=0 OR expires_at>?)", "importance>=?"]
+            params.extend([__import__("time").time(), min_importance])
+
+            if category:
+                where_parts.append("category=?")
+                params.append(category)
+
+            where_clause = " AND ".join(where_parts)
+            rows = conn.execute(
+                f"SELECT agent_id, task_id, result, ts, importance, category FROM memory "
+                f"WHERE {where_clause} ORDER BY importance DESC, ts DESC LIMIT ?",
+                params + [limit],
+            ).fetchall()
+        finally:
+            conn.close()
+
+        findings = []
+        for r in rows:
+            try:
+                data = _json.loads(r[2])
+            except Exception:
+                data = {"raw": r[2][:200]}
+            findings.append({
+                "agent_id": r[0],
+                "task_id": r[1],
+                "data": data,
+                "ts": r[3],
+                "importance": r[4],
+                "category": r[5],
+                # Normalize to FindingContract fields if present
+                "severity": data.get("severity", "INFO"),
+                "summary": data.get("summary") or data.get("title") or "",
+                "recommendation": data.get("recommendation", ""),
+                "files": data.get("files", []),
+                "confidence": data.get("confidence", 0.5),
+            })
+
+        return {
+            "data": {
+                "findings": findings,
+                "total": len(findings),
+                "db_exists": True,
+                "db_path": str(_DB_PATH),
+            }
+        }
+
+    except ImportError:
+        return {"data": {"findings": [], "total": 0, "error": "shared_memory module not available"}}
+    except Exception as e:
+        logger.error("Failed to read swarm findings", error=str(e))
+        return {"data": {"findings": [], "total": 0, "error": str(e)[:200]}}

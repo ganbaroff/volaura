@@ -1,7 +1,9 @@
 ## Acceptance Criteria
 
-- [ ] analytics.py /event uses SupabaseUser (not SupabaseAdmin) — RLS enforced
-- [ ] subscription.py GET /status uses SupabaseUser — user reads own profile via RLS
-- [ ] subscription.py POST /create-checkout retains SupabaseAdmin — auth.admin + payment writes
-- [ ] Webhook handlers retain raw acreate_client — no JWT context
-- [ ] pnpm build (frontend) passes — no regressions
+- [ ] New user (no AURA score) sees NewUserWelcomeCard with 3-step journey
+- [ ] Step 1 is highlighted (primary color, "you are here" framing)
+- [ ] Single CTA button at bottom of card — no duplicate QuickActions section
+- [ ] Recent Activity section hidden when user has no score AND no activity items
+- [ ] Org account type shows org-specific copy and journey
+- [ ] EN + AZ i18n keys present for all new strings
+- [ ] `pnpm build` passes clean

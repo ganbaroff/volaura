@@ -26,7 +26,7 @@ function confidenceColor(confidence: string): string {
   switch (confidence) {
     case "high":   return "text-green-400";
     case "medium": return "text-amber-400";
-    case "low":    return "text-red-400";
+    case "low":    return "text-purple-400";
     default:       return "text-muted-foreground";
   }
 }

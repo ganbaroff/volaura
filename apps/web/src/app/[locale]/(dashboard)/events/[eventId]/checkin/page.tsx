@@ -86,7 +86,7 @@ export default function CheckinPage() {
         )}
 
         {status === "error" && (
-          <div className="flex items-center gap-2 rounded-lg bg-red-500/10 border border-red-500/20 p-3 text-red-400">
+          <div className="flex items-center gap-2 rounded-lg bg-purple-500/10 border border-purple-500/20 p-3 text-purple-400">
             <XCircle className="size-5 shrink-0" />
             <span className="text-sm font-medium">{message}</span>
           </div>

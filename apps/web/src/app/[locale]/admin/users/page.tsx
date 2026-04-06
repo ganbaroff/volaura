@@ -13,7 +13,7 @@ const ACCOUNT_TYPE_BADGE: Record<string, string> = {
 const SUB_BADGE: Record<string, string> = {
   trial:     "bg-yellow-500/15 text-yellow-400",
   active:    "bg-green-500/15 text-green-400",
-  expired:   "bg-red-500/15 text-red-400",
+  expired:   "bg-purple-500/15 text-purple-400",
   cancelled: "bg-slate-400/15 text-slate-300",
 };
 

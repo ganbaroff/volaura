@@ -42,7 +42,7 @@ function StatusBadge({ status }: { status: Generation["status"] }) {
     },
     failed: {
       label: t("brandedby.status.failed", { defaultValue: "Failed" }),
-      className: "bg-red-500/10 text-red-600 border-red-500/20",
+      className: "bg-purple-500/10 text-purple-400 border-purple-500/20",
       icon: <XCircle className="size-3" aria-hidden="true" />,
     },
   };

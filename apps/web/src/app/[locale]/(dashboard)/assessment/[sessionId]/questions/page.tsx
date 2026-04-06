@@ -17,7 +17,7 @@ const DIFFICULTY_COLORS: Record<string, string> = {
   easy:   "bg-green-500/15 text-green-400 ring-green-500/25",
   medium: "bg-amber-500/15 text-amber-400 ring-amber-500/25",
   hard:   "bg-orange-500/15 text-orange-400 ring-orange-500/25",
-  expert: "bg-red-500/15 text-red-400 ring-red-500/25",
+  expert: "bg-purple-500/15 text-purple-400 ring-purple-500/25",
 };
 
 function DifficultyBadge({ label }: { label: string }) {
@@ -55,7 +55,7 @@ function QuestionRow({ q, locale, index }: { q: QuestionResult; locale: string; 
         "rounded-xl border p-4 space-y-2",
         q.is_correct
           ? "border-green-500/20 bg-green-500/5"
-          : "border-red-500/20 bg-red-500/5",
+          : "border-purple-500/20 bg-purple-500/5",
       )}
     >
       {/* Header row: result icon + difficulty + time */}
@@ -63,11 +63,11 @@ function QuestionRow({ q, locale, index }: { q: QuestionResult; locale: string; 
         {q.is_correct ? (
           <CheckCircle2 className="size-4 shrink-0 text-green-400" aria-label={t("assessment.correct")} />
         ) : (
-          <XCircle className="size-4 shrink-0 text-red-400" aria-label={t("assessment.incorrect")} />
+          <XCircle className="size-4 shrink-0 text-purple-400" aria-label={t("assessment.incorrect")} />
         )}
         <span className={cn(
           "text-xs font-medium",
-          q.is_correct ? "text-green-400" : "text-red-400",
+          q.is_correct ? "text-green-400" : "text-purple-400",
         )}>
           {q.is_correct ? t("assessment.correct") : t("assessment.incorrect")}
         </span>
@@ -184,7 +184,7 @@ export default function QuestionBreakdownPage() {
       {/* Incorrect section */}
       {incorrectQuestions.length > 0 && (
         <section className="space-y-3" aria-label={t("assessment.incorrect")}>
-          <h2 className="text-sm font-semibold text-red-400 uppercase tracking-wider flex items-center gap-2">
+          <h2 className="text-sm font-semibold text-purple-400 uppercase tracking-wider flex items-center gap-2">
             <XCircle className="size-4" aria-hidden="true" />
             {t("assessment.incorrect")} ({incorrectQuestions.length})
           </h2>

@@ -65,7 +65,7 @@ function ErrorScreen({
   const configs = {
     invalid: {
       icon: AlertCircle,
-      iconClass: "text-red-400",
+      iconClass: "text-purple-400",
       title: t("verify.errorInvalidTitle"),
       body: t("verify.errorInvalidBody"),
     },

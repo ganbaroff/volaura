@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import NumberFlow from "@number-flow/react";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/cn";
 import { ChevronRight, Star } from "lucide-react";
@@ -22,32 +22,8 @@ const BADGE_STYLES: Record<string, { pill: string; glow: string }> = {
   none:     { pill: "bg-muted text-muted-foreground border-border",          glow: ""                     },
 };
 
-function useCountUp(target: number, duration = 1200) {
-  const [value, setValue] = useState(0);
-  const rafRef = useRef<number>(0);
-  const startRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    if (target <= 0) return;
-    startRef.current = null;
-    const animate = (ts: number) => {
-      if (!startRef.current) startRef.current = ts;
-      const p = Math.min((ts - startRef.current) / duration, 1);
-      const eased = 1 - Math.pow(1 - p, 3);
-      setValue(Math.round(eased * target * 10) / 10);
-      if (p < 1) rafRef.current = requestAnimationFrame(animate);
-      else setValue(target);
-    };
-    rafRef.current = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [target, duration]);
-
-  return value;
-}
-
 export function AuraScoreWidget({ score, badgeTier, isElite, locale }: AuraScoreWidgetProps) {
   const { t } = useTranslation();
-  const displayScore = useCountUp(score);
   const style = BADGE_STYLES[badgeTier] ?? BADGE_STYLES.none;
   const tierLabel = t(`aura.${badgeTier}`, { defaultValue: badgeTier });
   const pct = Math.min(100, score);
@@ -66,14 +42,19 @@ export function AuraScoreWidget({ score, badgeTier, isElite, locale }: AuraScore
     >
       <Link href={`/${locale}/aura`} className="flex items-center justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
-            {t("dashboard.yourScore")}
+          {/* Identity headline first, score as context (Research #10: Overjustification) */}
+          <p className="text-lg font-bold text-foreground">
+            {t(`aura.identity_${badgeTier}`, {
+              defaultValue: badgeTier !== "none"
+                ? `${badgeTier.charAt(0).toUpperCase() + badgeTier.slice(1)}-level Professional`
+                : t("dashboard.yourScore"),
+            })}
           </p>
           <p
-            className="text-5xl font-black tabular-nums text-foreground"
+            className="text-2xl font-bold tabular-nums text-muted-foreground mt-0.5"
             aria-label={`${t("aura.overallScore")}: ${score.toFixed(1)}`}
           >
-            {displayScore.toFixed(1)}
+            AURA <NumberFlow value={score} format={{ minimumFractionDigits: 1, maximumFractionDigits: 1 }} />
           </p>
 
           {/* Progress bar */}

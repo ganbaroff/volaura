@@ -323,7 +323,12 @@
     "nextStepAssess": "Assess another competency",
     "nextStepAssessDesc": "Each competency adds to your AURA score",
     "nextStepLeaderboard": "See how you compare",
-    "nextStepLeaderboardDesc": "View your position on the platform"
+    "nextStepLeaderboardDesc": "View your position on the platform",
+    "identity_platinum": "Platinum-level Professional",
+    "identity_gold": "Gold-level Professional",
+    "identity_silver": "Silver-level Professional",
+    "identity_bronze": "Bronze-level Professional",
+    "identity_none": "Your AURA Score"
   },
   "competency": {
     "communication": "Communication",

@@ -346,3 +346,38 @@ Purpose: Prevent repeating errors. Read at session start.
 **Rule:** At session end, map ALL CEO messages → actual deliverables. If completion rate < 70% → document what was dropped and why. This audit did not exist in Session 84 and only surfaced in retrospective.
 **Structural fix needed:** Create CEO Directive Tracker (sprint-state.md task list), mark items as CEO-requested (not CTO-inferred), update tracker at session end before declaring session complete.
 **CLASS:** CLASS 3 (Solo execution on priority mapping) + CLASS 9 (No quality system for directive tracking) + CLASS 2 (Memory not persisted — only surfaced in post-session audit)
+
+
+## Mistake #XX: Asked CEO to approve tactical design plan (Session 87)
+**Class:** Субординация — CEO не решает тактические вопросы дизайна
+**What happened:** CTO попросил CEO утвердить план фаз Figma-дизайна. Это решение команды, не CEO.
+**Rule:** Дизайн-решения обсуждаются с командой (агенты). CEO видит только финальный результат.
+**Prevention:** Перед тем как писать CEO — спроси: 'Это стратегия или тактика?' Тактика → команда.
+
+
+## Mistake #XX: Started Figma build without waiting for research-informed agent (Session 87)
+**Class:** Игнорирование исследований CEO — CLASS 9 (повтор)
+**What happened:** CTO запустил агента с полным контекстом (17 исследований, STITCH, brand identity) — и НЕ ДОЖДАЛСЯ результата. Начал строить Dashboard в Figma на основании своих предположений, а не на основании 140к слов исследований CEO.
+**Why this is bad:** CEO потратил время и деньги на 17 исследований. CTO их проигнорировал и пошёл строить 'как хочу'. Это неуважение к работе CEO.
+**Rule:** НЕ НАЧИНАЙ работу пока агент с исследованиями не вернулся. Исследования CEO — это ТЗ, не опция.
+**Prevention:** Если агент читает исследования — ЖАДИ. Не 'пока он работает начну строить'. Жди.
+
+
+## Mistake #XX: Started building Figma AGAIN without full team review (Session 87, 3rd time)
+**Class:** Повторное нарушение — CLASS 9 (уже третий раз за сессию)
+**What happened:** CTO получил результат от одного агента (UX Lead) и сразу начал строить в Figma. Не запустил остальных агентов с контекстом. Не дождался полной команды.
+**Pattern:** CTO получает частичный ответ → 'достаточно, начну строить' → CEO ловит → записывает ошибку → CTO повторяет через 15 минут. Три раза за одну сессию.
+**Root cause:** Нетерпение. CTO хочет показать результат CEO и торопится к execution. Это CLASS 9 в чистом виде.
+**Rule:** ПОЛНАЯ команда проверяет → ПОЛНАЯ команда утверждает → ПОТОМ строить. Не один агент. Не два. ВСЕ кто нужны.
+
+
+## Mistake #XX: Pattern identified — 'Research Before Build' rule (Session 87)
+**Class:** CLASS 9 — systemic, 3 violations in one session
+**Pattern:** CTO receives partial info → jumps to execution → CEO catches → CTO documents → repeats
+**New permanent rule:**
+1. Identify what research/context exists for the task
+2. Launch agents WITH that research loaded (mandatory reading before opinion)
+3. Wait for ALL agents to return
+4. Synthesize into design brief / plan document
+5. ONLY THEN execute
+**This is now Step 0 of any design/architecture task. Non-negotiable.**

@@ -325,7 +325,12 @@
     "nextStepAssess": "Başqa bir kompetensiyanı qiymətləndirin.",
     "nextStepAssessDesc": "Hər kompetensiya sizin AURA balınızı artırır.",
     "nextStepLeaderboard": "Platformada mövqeyinizə baxın.",
-    "nextStepLeaderboardDesc": "Platformada mövqeyinizə baxın."
+    "nextStepLeaderboardDesc": "Platformada mövqeyinizə baxın.",
+    "identity_platinum": "Platinum səviyyəli peşəkar",
+    "identity_gold": "Qızıl səviyyəli peşəkar",
+    "identity_silver": "Gümüş səviyyəli peşəkar",
+    "identity_bronze": "Bürünc səviyyəli peşəkar",
+    "identity_none": "Sizin AURA Balınız"
   },
   "competency": {
     "communication": "Ünsiyyət",

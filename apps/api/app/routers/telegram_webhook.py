@@ -27,7 +27,7 @@ router = APIRouter(prefix="/telegram", tags=["Telegram"])
 SupabaseAdmin = AsyncClient
 
 
-async def _send_message(chat_id: int | str, text: str) -> bool:
+async def _send_message(chat_id: int | str, text: str, reply_markup: dict | None = None) -> bool:
     """Send a Telegram message via Bot API. Returns True on success."""
     import httpx
     url = f"https://api.telegram.org/bot{settings.telegram_bot_token}/sendMessage"
@@ -35,17 +35,19 @@ async def _send_message(chat_id: int | str, text: str) -> bool:
     chunks = [text[i:i+4000] for i in range(0, len(text), 4000)]
     try:
         async with httpx.AsyncClient(timeout=10) as client:
-            for chunk in chunks:
-                resp = await client.post(url, json={
+            for i, chunk in enumerate(chunks):
+                payload: dict = {
                     "chat_id": chat_id,
                     "text": chunk,
                     "parse_mode": "Markdown",
-                })
+                }
+                # Attach buttons only to last chunk
+                if reply_markup and i == len(chunks) - 1:
+                    payload["reply_markup"] = reply_markup
+                resp = await client.post(url, json=payload)
                 if not resp.json().get("ok"):
-                    await client.post(url, json={
-                        "chat_id": chat_id,
-                        "text": chunk,
-                    })
+                    payload.pop("parse_mode", None)
+                    await client.post(url, json=payload)
             return True
     except Exception as e:
         logger.error("Telegram send failed: {e}", e=str(e))
@@ -345,8 +347,17 @@ async def _handle_proposals(db, chat_id: int | str) -> None:
             msg += f"{sev} `{pid}` {p.get('title', '?')}\n"
             msg += f"   Agent: {p.get('agent', '?')} | Votes: +{p.get('votes_for', 0)}/-{p.get('votes_against', 0)}\n\n"
 
-        msg += "Ответьте: `act {id}` / `dismiss {id}` / `defer {id}`"
-        await _send_message(chat_id, msg)
+        # Inline keyboard buttons for each proposal
+        buttons = []
+        for p in pending[:5]:
+            pid = p.get("id", "?")[:8]
+            buttons.append([
+                {"text": f"✅ {pid}", "callback_data": f"act:{pid}"},
+                {"text": f"❌ {pid}", "callback_data": f"dismiss:{pid}"},
+                {"text": f"⏸️ {pid}", "callback_data": f"defer:{pid}"},
+            ])
+        keyboard = {"inline_keyboard": buttons}
+        await _send_message(chat_id, msg, reply_markup=keyboard)
     except Exception as e:
         await _send_message(chat_id, f"⚠️ Ошибка чтения proposals: {str(e)[:100]}")
 
@@ -883,6 +894,35 @@ async def telegram_webhook(
         update = await request.json()
     except Exception:
         return JSONResponse({"ok": False})
+
+    # ── Handle callback queries (inline keyboard button presses) ──────────────
+    callback = update.get("callback_query")
+    if callback:
+        cb_chat_id = callback.get("message", {}).get("chat", {}).get("id")
+        cb_user_id = callback.get("from", {}).get("id")
+        cb_data = callback.get("data", "")
+        ceo_id_check = settings.telegram_ceo_chat_id
+        if ceo_id_check and str(cb_user_id) != str(ceo_id_check):
+            return JSONResponse({"ok": True})
+
+        # Answer callback to remove loading spinner
+        import httpx
+        try:
+            async with httpx.AsyncClient(timeout=5) as client:
+                await client.post(
+                    f"https://api.telegram.org/bot{settings.telegram_bot_token}/answerCallbackQuery",
+                    json={"callback_query_id": callback.get("id"), "text": "Processing..."},
+                )
+        except Exception:
+            pass
+
+        # Parse: "act:abc123" / "dismiss:abc123" / "defer:abc123"
+        if ":" in cb_data:
+            action, pid = cb_data.split(":", 1)
+            if action in ("act", "dismiss", "defer"):
+                await _handle_proposal_action(db, cb_chat_id, action, pid)
+
+        return JSONResponse({"ok": True})
 
     message = update.get("message")
     if not message:

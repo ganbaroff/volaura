@@ -19,6 +19,7 @@ import asyncio
 import json
 import os
 import sys
+import time
 from pathlib import Path
 
 # Ensure packages/ is importable
@@ -231,6 +232,22 @@ def _read_project_state(project_root: Path) -> str:
     # ── Swarm Tools: inject real codebase data (not just documents) ──────
     # Constitution checker gives agents REAL violation data, not assumptions.
     # Code index summary gives agents awareness of what files exist.
+    # ── Shared Memory: inject previous agent findings ───────────────
+    try:
+        from swarm.shared_memory import get_all_recent
+        recent = get_all_recent(limit=10)
+        if recent:
+            findings = []
+            for r in recent:
+                agent = r["agent"]
+                title = r["data"].get("title", "")[:80] if isinstance(r["data"], dict) else ""
+                findings.append(f"- [{agent}] {title}")
+            state_parts.append(
+                "## RECENT SWARM FINDINGS (shared memory)\n" + "\n".join(findings)
+            )
+    except Exception:
+        pass  # shared memory not yet initialized — non-blocking
+
     try:
         from swarm.tools.constitution_checker import run_full_audit
         constitution_report = run_full_audit()
@@ -645,6 +662,14 @@ async def run_autonomous(mode: str = "daily-ideation") -> list[Proposal]:
 
     results = await asyncio.gather(*tasks, return_exceptions=True)
 
+    # ── Shared Memory: agents post results so others can see ──────────
+    run_task_id = f"{mode}-{int(time.time())}"
+    try:
+        from swarm.shared_memory import post_result as sm_post, get_context as sm_context
+        _shared_memory_available = True
+    except Exception:
+        _shared_memory_available = False
+
     # Process results into proposals
     proposals: list[Proposal] = []
     raw_results = []
@@ -657,6 +682,18 @@ async def run_autonomous(mode: str = "daily-ideation") -> list[Proposal]:
             continue
 
         raw_results.append(result)
+
+        # Post to shared memory — other agents see this in future runs
+        if _shared_memory_available:
+            try:
+                sm_post(
+                    agent_id=PERSPECTIVES[i]["name"],
+                    task_id=run_task_id,
+                    result=result,
+                    run_id=run_task_id,
+                )
+            except Exception:
+                pass  # non-blocking
 
         try:
             severity_map = {

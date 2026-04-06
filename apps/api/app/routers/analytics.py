@@ -10,7 +10,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Request
 from pydantic import BaseModel, ConfigDict
 
-from app.deps import CurrentUserId, SupabaseAdmin
+from app.deps import CurrentUserId, SupabaseUser
 from app.middleware.rate_limit import limiter
 from app.services.analytics import track_event
 
@@ -32,12 +32,12 @@ class TrackEventRequest(BaseModel):
 async def ingest_event(
     request: Request,
     body: TrackEventRequest,
-    db_admin: SupabaseAdmin,
+    db: SupabaseUser,
     user_id: CurrentUserId,
 ) -> None:
     """Ingest a frontend analytics event. Fire-and-forget."""
     await track_event(
-        db=db_admin,
+        db=db,
         user_id=str(user_id),
         event_name=body.event_name,
         properties=body.properties,

@@ -1,6 +1,7 @@
 ## Acceptance Criteria
 
-- [ ] Assessment complete page shows identity label ("Gold-level Professional") as h1 before the numeric score
-- [ ] AuraScoreWidget AURA score animates via NumberFlow (no manual RAF loop)
-- [ ] Coaching tips appear above "What's Next" section
-- [ ] `pnpm build` passes with zero errors
+- [ ] analytics.py /event uses SupabaseUser (not SupabaseAdmin) — RLS enforced
+- [ ] subscription.py GET /status uses SupabaseUser — user reads own profile via RLS
+- [ ] subscription.py POST /create-checkout retains SupabaseAdmin — auth.admin + payment writes
+- [ ] Webhook handlers retain raw acreate_client — no JWT context
+- [ ] pnpm build (frontend) passes — no regressions

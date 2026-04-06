@@ -44,11 +44,10 @@ $UNTRACKED
 ## Active Tasks
 $TODO_STATE
 
-## IMPORTANT: After reading this, immediately:
-1. Read docs/ROADMAP.md for current priorities
-2. Read docs/MANDATORY-RULES.md for 7 rules
-3. Check memory/MEMORY.md for full context index
-4. Continue work from where it was interrupted — do NOT start over
+## After compaction, read:
+1. .claude/breadcrumb.md — current state (most important)
+2. memory/context/sprint-state.md — where we are in the sprint
+3. Continue from where interrupted — do NOT start over
 CHECKPOINT
 
 echo "Pre-compact checkpoint saved to $STATE_FILE" >&2

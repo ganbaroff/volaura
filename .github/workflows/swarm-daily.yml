@@ -185,8 +185,10 @@ jobs:
           if git diff --staged --quiet; then
             echo "No new proposals or memory updates to commit."
           else
-            # Pull --rebase to prevent conflict if concurrent workflow runs both push
-            git pull --rebase origin main
+            # Stash staged, pull, unstash, then commit
+            git stash --keep-index
+            git pull --rebase origin main || true
+            git stash pop || true
             if [ "${{ steps.gate.outputs.should_run }}" = "true" ]; then
               git commit -m "swarm: daily autonomous run — $(date -u +%Y-%m-%d)"
             else

@@ -197,6 +197,19 @@ When metrics improve but underlying behavior degrades = overjustification.
 Track: speed↑ but quality↓, completion↑ but depth↓, logins↑ but engagement↓
 If distortion detected → remove the reward mechanic immediately.
 
+### CRYSTAL LAW 8: Never Launch Earn Without a Spend Path
+
+A crystal earned with nowhere to go is a promise broken. Broken promises with ADHD users = lost trust permanently.
+
+**Rule:**
+- Do not activate crystal earning in any product until that product OR another active ecosystem product has a meaningful crystal spend mechanic.
+- "Meaningful" = user can achieve something they value with crystals. Cosmetics, character upgrades, and feature unlocks all qualify. "Coming soon" does not.
+- If the spend path does not yet exist: hold crystals in a transparent deferred queue with no expiry. Show the queue. Never hide it.
+
+**Historical precedent for getting this right:** Roblox launched with both earn AND spend (game access, avatar items) simultaneously. Every currency that launched earn-first without spend died within 18 months (example: dozens of early social point systems).
+
+**Products:** ALL (crystal economy is cross-ecosystem)
+
 ---
 
 ## PART 3: RESEARCH-BY-RESEARCH DESIGN RULES
@@ -661,6 +674,9 @@ Azerbaijani culture has **higher professional shame sensitivity** than EU averag
     - **DIF monitoring as B2B obligation:** if VOLAURA detects that its scoring systematically underscores a protected group (disability, gender, ethnicity) that results in discriminatory hiring patterns, VOLAURA bears contributory liability. DIF audit (Mantel-Haenszel) is moved from Months 1-3 to **pre-launch P0** — not because of psychometric quality alone, but because of labor law exposure.
     - If ADHD-adaptive design fails to prevent ADHD-related score depression → a candidate with ADHD who is rejected on AURA score basis has an Article 16 AZ Labor Code claim against the using organization AND a GDPR Art. 22 claim against VOLAURA.
 17. DeCE "Show Your Work" endpoint (`/aura/me/explanation`) is a primary B2B differentiator — must be surfaced in org volunteer profiles as a 2-sentence competency evidence summary.
+21. **Moment of Truth Rule (competitive agent finding):** The DeCE 2-sentence behavioral evidence summary is the ONLY product feature that makes "verified, not claimed" viscerally true to a B2B buyer in 30 seconds. It must appear in the **same view** as the AURA score in org discovery — not behind a click, not on a separate page. Every B2B feature that ships should either (a) funnel toward this evidence moment or (b) have a documented reason why it doesn't. If the evidence summary is not showing for a candidate, their profile must visually communicate this absence (not silently omit it).
+22. **Org Outcome Flywheel:** When an org engages or hires a VOLAURA user (tracked with explicit user consent via a post-event feedback prompt), the outcome is fed back into AURA score validity calibration. This is the most defensible long-term network effect in the platform. Must be an explicit product requirement tracked as a metric, not a future feature. Even a simple "Did [Name] perform as expected at [Event]? 1-5" rating from org coordinator, stored in `character_events`, makes scores more accurate over time.
+23. **Crystal Economy Launch Sequencing:** Crystals must not launch without at least one active spend path. If fewer than 2 products are shipping crystal spends simultaneously: (a) communicate transparently to users that spend features are coming, (b) hold crystals in a deferred queue with no expiry, (c) provide at least one temporary local spend mechanic within the active product. Never create a "earn crystals with no place to spend them" state — it is a trust break, not a deferred reward.
 18. ASR Fairness Rule: language-detected routing (langdetect on first 3s or profile locale as prior). Scores under Whisper before routing ships are flagged and queued for re-evaluation.
 19. Onboarding Screen 1 must include AI processing disclosure (ISO 10667-2 G18) — one sentence, non-dismissable.
 20. Ghosting Grace for professionals: 30 min before event start with no check-in → single warm Telegram/push ("Ready to check in? Tap here"). Auto-ping next-ranked backup volunteer if cancellation within 2 hours of start.
@@ -932,6 +948,8 @@ These 17 guardrails apply to all 5 products. No exceptions.
 | G35 | Formal AURA score grievance mechanism: users must have a documented pathway to formally dispute their AURA score result. This is an ISO 10667-2 Section 7 legal obligation, not a UX feature. Must exist before Tier 3 "ISO 10667-2 compliant" is marketed to B2B customers | ISO 10667-2 Section 7 | VOLAURA |
 | G36 | AZ PDPA pre-launch: SADPP registration and cross-border transfer assessment (for Supabase/Railway/Vercel US hosting) must be completed before AZ users' data is processed. AZ-language legally reviewed consent text required | AZ PDPA Art. 15 | VOLAURA, MindShift |
 | G37 | Open Badges 3.0 VC compliance before B2B Tier 3: badges must include W3C VC data model fields, cryptographic proof (issuer DID or equivalent), machine-readable Achievement objects, and a credentialStatus revocation endpoint connected to the AURA decay mechanism | Open Badges 3.0, W3C VC | VOLAURA |
+| G38 | Moment of Truth placement: DeCE 2-sentence behavioral evidence summary must appear in the SAME VIEW as the AURA score in org discovery — not behind a click, not on a separate page. This is the primary B2B differentiator. If evidence is missing for a candidate, the UI must show "Evidence pending" rather than silently omitting | Competitive agent finding | VOLAURA |
+| G39 | Org outcome feedback loop: when an org rates a VOLAURA user's performance post-event (explicit opt-in), the outcome is stored in character_events and fed into AURA validity calibration. This is a product requirement, not a future feature. Simple 1-5 rating from org coordinator is sufficient. | Competitive agent finding | VOLAURA |
 
 ---
 
@@ -1011,6 +1029,8 @@ When a product decision conflicts with this Constitution:
 | R#5 (VR variable ratio XP) | Praised by market but conflicts with R#10 | RESOLVED — keep math, hide formula. Display identity not currency. |
 | Swarm dsp-474aa609 (purple ambiguity) | "Absolute red prohibition creates ambiguity — users may not recognize purple as danger signal" | RESOLVED via G32 — purple color change is visual. Copy must still communicate action urgency. Both layers required. |
 | Legal compliance vs. data minimization | GDPR right to erasure vs. ISO 10667-2 3-year audit trail requirement | RESOLVED — anonymize after 3 years. Individual PII erased; aggregate scoring distribution retained for audit validity. |
+| Credly + LinkedIn integration (competitive agent finding) | Credly has 50M+ badge earners + LinkedIn native integration. VOLAURA is building toward the same position. Risk: AZ/CIS orgs adopt Credly because of LinkedIn reach before VOLAURA achieves critical mass. | RESPONSE: Credly has no IRT-based adaptive assessment, no ADHD design, no AZ/CIS market presence, no behavioral evidence quotes. The DeCE evidence summary (G38) is the response. Credly verifies that a badge was issued; VOLAURA explains WHY the score is what it is. If AZ/CIS market is secured before Credly localizes, the moat is the local calibration data and org relationships, not the badge format. Open Badges 3.0 compliance (G37) enables coexistence — VOLAURA badges can be imported INTO LinkedIn. This is the correct strategic response: complement, not compete with, LinkedIn's infrastructure. |
+| LinkedIn Skills Assessments at 60M+ scale | LinkedIn's data volume means they have item difficulty estimates at a scale VOLAURA won't reach in 2-3 years. Static MCQ, not adaptive — but volume partially compensates. | ACKNOWLEDGED — the moat is the quality of the evidence, not the volume of data points. LinkedIn assessments produce a binary pass/fail. VOLAURA produces a dimensional score with behavioral evidence and decay-aware freshness. These are not the same product. Do not compete on scale; compete on evidence quality. |
 
 ---
 
@@ -1040,6 +1060,7 @@ These are measured monthly:
 | v1.2 | 2026-04-06 | **3-agent audit, 34 findings.** Critical fixes: Life Simulator #ef4444→purple/orange (Law 1 self-contradiction), "Red day"→"Low" naming, vulnerability window defined (5 min), ZEUS two-swarm split documented honestly. New: 6 Guardrails (G18-G23), MIRT spec, B2B tier architecture, Crystal Law 6 amendment (badge not immediate), proactive shame contract, 90-min warning protocol, ASR Fairness Rule, two-swarm bridge spec, ZEUS product API requirement. |
 | v1.3 | 2026-04-06 | **Python swarm audit, 14 models (Gemini/Groq/DeepSeek), 2 rounds.** Added: Legal & Compliance Framework (GDPR Art.13/17/20, EU AI Act Annex III high-risk classification, Age gate 16+/13+, Data Retention Schedule, AZ Labor Code framing). Added: Cultural Localization (AZ/CIS trust timing, wasita framing, shame-free AZ copy, Siz-form mandate, 25-40% text length budget). New Guardrails G24-G32 (legal, trust, WCAG, offline, portability, purple ambiguity rule). Conflict resolution: purple ambiguity resolved via G32 (copy layer required alongside color change). Memory logger Windows bug fixed (colon in model IDs). |
 | v1.4 | 2026-04-06 | **Legal agent deep-audit, 9 findings.** Critical additions: GDPR Art. 22 automated employment decision-making (explicit consent + human review — G33), GDPR Art. 9 health data for energy/burnout tracking (G34), AZ PDPA SADPP registration + cross-border transfer assessment for US hosting (G36), Open Badges 3.0 VC technical compliance spec (cryptographic proof, issuer DID, revocation endpoint connected to decay — G37), formal AURA score grievance mechanism (ISO 10667-2 Section 7 — G35), labor law liability allocation (B2B contracts must name org as decision-maker). **Pre-launch P0 reclassification:** DIF bias audit moved from Months 1-3 (labor law exposure), voice data DPA verification moved from Months 1-3 (biometric = GDPR Art. 9). Total guardrails: G1-G37. |
+| v1.5 | 2026-04-06 | **Competitive intelligence agent, 7 findings.** New Crystal Law 8: Never Launch Earn Without Spend Path (historical precedent from Roblox/Yahoo Answers failure modes). VOLAURA Rules 21-23: Moment of Truth (DeCE evidence in same view as score — G38), Org Outcome Flywheel (performance ratings → IRT validity — G39), Crystal Economy Launch Sequencing. Conflict resolution: Credly + LinkedIn response (complement, not compete; DeCE evidence = the differentiator), LinkedIn scale asymmetry acknowledged. GTM gaps noted (ICP, pricing, chicken-and-egg) — flagged as CEO strategic decisions, not constitution rules. Total guardrails: G1-G39. |
 
 **Next scheduled review:** 2026-07-06 (quarterly)
 **Trigger for unscheduled review:** New research added to CEO corpus, or metric violation found.

@@ -1,8 +1,9 @@
-# ECOSYSTEM CONSTITUTION v1.0
+# ECOSYSTEM CONSTITUTION v1.2
 ## The Governing Bible of the 5-Product Ecosystem
 
 **Status:** LOCKED — Evidence-based. Built from 17 CEO research documents (~140,000 words), 258+ scientific articles.
 **Date:** 2026-04-06
+**v1.2 audit:** 3 specialist agents, 34 findings integrated. See REVISION HISTORY.
 **Authority:** This document supersedes any design, code, or product decision that contradicts it.
 **Scope:** VOLAURA · MindShift · Life Simulator · BrandedBy · ZEUS
 
@@ -51,10 +52,13 @@ These are non-negotiable. They cannot be overridden by feature requests, market 
 
 **Implementation:**
 ```
-Green (4-5 energy): Full UI, all animations, all widgets
-Yellow (3 energy):  Reduced widgets, entrance-only animations, "Ready?" gate for assessments
-Red (1-2 energy):   Single action card, fade-in only, assessments hidden
+Full  (4-5 energy): Full UI, all animations, all widgets
+Mid   (3 energy):   Reduced widgets, entrance-only animations, "Ready?" gate for assessments
+Low   (1-2 energy): Single action card, fade-in only, assessments hidden
 ```
+⚠️ User-facing labels MUST use Full/Mid/Low (or equivalent). NEVER show "Red day" to users —
+this violates Law 1. Internal code constants may use green/yellow/red semantics only.
+Visual representation of a low-energy state uses purple or amber, never red.
 
 **Trigger:** User self-reports via EnergyPicker (1-5 scale). Never infer without consent.
 
@@ -176,6 +180,16 @@ Gamification of intrinsically rewarding tasks (deep work, genuine skill) corrupt
 Gamification of boring admin tasks (filling profile, setting availability) is safe.
 - ✅ Crystals for completing profile (admin task)
 - ❌ Crystals visible during or immediately after an assessment (mastery task)
+
+### CRYSTAL LAW 6 AMENDMENT: Badge Is Not An Immediate Contingent Reward
+
+The original Crystal Law 6 bans gamifying mastery tasks. Agent audit found an internal contradiction: the badge tier display shown immediately after assessment completion IS a contingent reward for a mastery task — violating the law.
+
+**Correct pattern:**
+- Assessment ends → show competence explanation only ("Your communication reflects active listening in response 3")
+- Badge tier update shown on Profile page at NEXT visit — as a surprise discovery
+- Telegram notification 4 hours later: "Your AURA updated — see what changed." NEVER "You completed the assessment — here is your Gold badge"
+- Badge tiers are never shown as a goal during or immediately after assessment
 
 ### CRYSTAL LAW 7: Monitor Metric Distortion
 
@@ -449,12 +463,25 @@ Implementation Intentions ("If-Then" plans):
 2. Assessment UX: one question per screen, ≤4 answers without scroll, no timer visible
 3. Break every 5 questions (ADHD cognitive load limit)
 4. Interim scores HIDDEN (shown only on final results screen)
-5. Badge tiers as surprises — hidden until earned, NO lock icons
+5. Badge tiers as surprises — hidden until earned, NO lock icons. NEVER shown immediately post-assessment (Crystal Law 6 Amendment).
 6. Low energy → assessment HIDDEN or shown with "Ready when you are" card
 7. Profile discovery toggle = visible in edit profile, default OFF (user chooses)
 8. Org search = data firewall — ADHD/health data NEVER reaches employer side
-9. AURA score decay = differential by competency (Research #15 table)
-10. Voice assessment: Soniox for Azerbaijani, Deepgram for English (NOT Whisper)
+9. AURA score decay = differential by competency (Research #15 half-life table)
+10. Voice assessment: Soniox for Azerbaijani, Deepgram for English (NOT Whisper). Existing Whisper sessions tagged `evaluation_mode: whisper_legacy` and queued for re-evaluation.
+11. MIRT architecture: engine must maintain `theta_vector: list[float]` (8 dimensions) + `sigma_matrix: 8×8` covariance. Item bank schema requires `mirt_a_vector: list[float]`. Prior Sigma estimates: communication↔leadership≈0.6, tech↔event_performance≈0.4, communication↔empathy≈0.55.
+12. Assessment onboarding must offer scenario framing choice (3 domains: ecology/sports/social) before first question — SDT Autonomy lever, IRT validity unchanged.
+13. Score explanation must produce: "Your [competency] reflects [specific behavioral evidence from DeCE quote]" — never a number alone.
+14. VR multiplier (self=1.00, org=1.15, peer=1.25): disclose in general terms to users ("Scores verified by your org carry additional weight") but never the exact formula. Satisfies ISO 10667-2 without transactional framing.
+15. Org discovery results show: "Leadership: 82 · Assessed 3 months ago · v2.1" — score + date + assessment version always together.
+16. B2B Tier Architecture:
+    - Tier 1 (Verify): basic discovery, AURA search, intro requests — free/freemium
+    - Tier 2 (Manage): QR check-in (5-sec vs 30-sec manual), roster management, Telegram bulk messaging — per-event pricing
+    - Tier 3 (Certify): ISO 10667-2 package, DIF audit reports, SLA, audit trail export — annual per-seat
+17. DeCE "Show Your Work" endpoint (`/aura/me/explanation`) is a primary B2B differentiator — must be surfaced in org volunteer profiles as a 2-sentence competency evidence summary.
+18. ASR Fairness Rule: language-detected routing (langdetect on first 3s or profile locale as prior). Scores under Whisper before routing ships are flagged and queued for re-evaluation.
+19. Onboarding Screen 1 must include AI processing disclosure (ISO 10667-2 G18) — one sentence, non-dismissable.
+20. Ghosting Grace for professionals: 30 min before event start with no check-in → single warm Telegram/push ("Ready to check in? Tap here"). Auto-ping next-ranked backup volunteer if cancellation within 2 hours of start.
 
 **Color system:**
 ```
@@ -480,16 +507,21 @@ Gold:            #FFD700
 **Core promise:** "Focus tools designed for ADHD brains."
 
 **Design rules specific to MindShift:**
-1. Hard stop at 90-120 minutes (adenosine debt prevention)
+1. Hard stop at 90 minutes — with 3-stage graceful warning: 80min subtle progress shift → 85min Mochi "let's start wrapping up" → 90min session ends. NO sudden cutoffs.
 2. 66% capacity guardrail: NOW≤3 tasks, NEXT≤6 tasks
 3. Streaks: invisible when 0 or 1. Show cumulatively, not as current streak
 4. Season system: Launch/Maintain/Recover/Sandbox modes
 5. Recovery Protocol: archive overdue, micro-win, never shame
 6. AI companion Mochi: observer not evaluator, peer not authority
-7. Audio defaults: pink noise (not brown/white) — highest ADHD effect size
+7. Audio defaults: pink noise (not brown/white) — highest ADHD effect size (g=0.249)
 8. Crystal chip: show on Progress page ONLY, never in NatureBuffer or post-session screen
 9. XP display: "Level 3 · Grower" not "2,450 XP"
 10. Focus Rooms: collaborative presence, anonymous, never ranked
+11. Onboarding Screen 1 must include a proactive shame-free contract: "No streaks lost, no red badges, no penalties — ever." (clinical trust signal, not marketing copy)
+12. Onboarding must ask: "What usually breaks your flow?" — 3-4 options (Burnout / Too many tasks / Blank page fear / Distractions). Seeds Mochi's initial tone and SpicinessPicker default.
+13. If-Then Implementation Intentions: prompt appears BEFORE session start (not on dashboard). Mochi reads back the rule at session confirmation. If user exits early, Mochi references it once, non-judgmentally.
+14. Hyperfocus pattern detection: track skipped transition buffers across sessions. Flag after 3 consecutive skips → offer Recovery Week prompt (never force).
+15. Tab churn monitoring via Page Visibility API: after 3 tab switches within 10 minutes → Mochi offers 2-min micro-intervention (never a lecture).
 
 ---
 
@@ -510,12 +542,13 @@ type OfficeAgentState =
   | "working"    // actively processing         → #22c55e, fast green ring
   | "waiting"    // awaiting input/approval     → #eab308, medium yellow ring
   | "blocked"    // dependency unresolved       → #f97316, fast orange ring
-  | "overloaded" // too many tasks              → #ef4444, very fast ring
+  | "overloaded" // too many tasks              → #c084fc, very fast PURPLE ring  ← Law 1: no red
   | "recovering" // after error                 → #a855f7, slow purple ring
   | "degraded"   // partial functionality      → #6b7280, very slow ring
   | "meeting"    // in standup                  → #3b82f6, steady blue ring
-  | "error";     // critical error             → #ef4444, fast ring
+  | "error";     // critical error             → #f97316, fast orange ring        ← Law 1: no red
 ```
+**Law 1 applies here.** `#ef4444` is prohibited. Purple (`#c084fc`) = overloaded. Orange (`#f97316`) = error.
 
 **Phase 2 open tasks (P1):**
 - Ready Player Me avatars via `useGLTF`
@@ -552,10 +585,19 @@ type OfficeAgentState =
 
 **Core promise:** "The autonomous backbone of the ecosystem."
 
-**Architecture (as of 2026-04-06):**
-- Runtime: Node.js WebSocket server (`claw3d-fork/server/zeus-gateway-adapter.js`)
+**Architecture (as of 2026-04-06) — TWO DISCONNECTED SYSTEMS:**
+
+⚠️ The Python swarm and Node.js gateway share ONLY the filesystem. Zero WebSocket connections, zero HTTP calls between them. This is the current reality — not the target architecture.
+
+| System | Location | Agents | Trigger | Memory |
+|--------|----------|--------|---------|--------|
+| Node.js Gateway | `claw3d-fork/server/` | 39 (static) | Real-time events (Railway/GitHub/Sentry webhooks) | `claw3d-fork/memory/session-context.md` |
+| Python Swarm | `packages/swarm/` | 44 (hive lifecycle) | GitHub Actions cron (09:00 Baku daily) | `memory/swarm/shared-context.md` |
+
+**Planned bridge (20 lines Python):** Python swarm sends HIGH/CRITICAL findings to Node.js `/event` endpoint → unified real-time visibility.
+
+**Node.js Gateway:**
 - Deployed: Railway `wss://zeus-gateway-production.up.railway.app` + pm2 locally
-- 39 agents (Node.js) + 44 Python swarm agents (`packages/swarm/` in VOLAURA repo)
 - WebSocket protocol: `chat.send` / `swarm.run` / `swarm.auto`
 
 **Provider hierarchy (authoritative — Research #12):**
@@ -590,9 +632,24 @@ Cron replaced by events — agents idle until real signal arrives.
 8. Hard ban: agent must NEVER say "как языковая модель" or "я не могу" (instant fail)
 9. pm2 manages gateway — `pm2 restart zeus-gateway --update-env` (never kill)
 
+**ZEUS Product API (missing — must be defined before calling ZEUS "a product"):**
+Until these exist, ZEUS is a batch pipeline, not a product:
+- Authenticated API endpoint per ecosystem product (MindShift, VOLAURA, Life Sim)
+- Request/response protocol (not fire-and-forget)
+- SLA definition (response time per request type)
+- Fallback behavior when ZEUS unavailable
+
+**Two-swarm bridge (P1, ~20 lines Python):**
+Python `autonomous_run.py` → POST HIGH/CRITICAL findings to Node.js `/event` endpoint (authenticated with `GATEWAY_SECRET`). Makes Python findings visible in 3D office in real-time.
+
+**Python swarm also needs:**
+- `initialize_agent_with_memory()`: inject last 3 entries from `agent-feedback-distilled.md` into each agent's system prompt (~15 lines in `_build_agent_prompt()`)
+- Extract model routing table from gateway into `server/zeus-config.js` (SKELETON file)
+
 **P0 open tasks:**
 - JWT auth in WebSocket handshake (code ready in `memory/agent-findings/`, needs deploy)
 - WEBHOOK_SECRET setup in Railway for GitHub/Sentry/Railway webhooks
+- GTG-1002 defense: define which agents can write to which files, sanitize agent responses before writing to shared-context.md (this is a P0 security requirement, not just a guardrail)
 
 ---
 
@@ -672,7 +729,13 @@ These 17 guardrails apply to all 5 products. No exceptions.
 | G14 | Particle count ≤12 (celebrations) | Research #1 | ALL |
 | G15 | Score counter: max 800ms, never 2s count-up | Research #10 | VOLAURA, MindShift |
 | G16 | Data firewall: ADHD/health data never reaches B2B | Research #2, #9 | VOLAURA |
-| G17 | Agent shared memory safety boundary | Research #13 | ZEUS |
+| G17 | Agent shared memory safety boundary — sanitize before writing to shared-context.md | Research #13 | ZEUS |
+| G18 | Every assessment session start must include a one-sentence AI processing disclosure (non-dismissable, before first question) | ISO 10667-2, Research #15 | VOLAURA |
+| G19 | Every AURA badge payload must include: `model_version`, `irt_parameters_version`, `theta_se`, `confidence_interval_95` | ISO 10667-2, Research #15 | VOLAURA |
+| G20 | No score stored without complete `evaluation_log` (DeCE: concept + quote + confidence). Keyword-fallback scores tagged `evaluation_mode: degraded` — excluded from badge issuance | ISO 10667-2, Research #15 | VOLAURA |
+| G21 | Vulnerability window = 5 minutes after session end. No crystals, XP numbers, or badge reveals during this window. Only reflection prompts, breathwork, PostSessionFlow | Research #10 | MindShift, VOLAURA |
+| G22 | Org discovery results must show score freshness: "Leadership: 82 · Assessed 3 months ago · v2.1" — never raw number only | Research #15, Research #9 | VOLAURA |
+| G23 | Comorbidity safety on all screens: font size user-adjustable, contrast between 4.5:1–12:1 (never >14:1), no all-caps text | Research #6, Research #2 | ALL |
 
 ---
 
@@ -769,6 +832,7 @@ These are measured monthly:
 |---------|------|---------|
 | v1.0 | 2026-04-06 | Initial document — synthesized from 17 CEO research documents (~140,000 words) |
 | v1.1 | 2026-04-06 | Merged MindShift/ZEUS handoff: Node.js gateway architecture, 10-state Life Simulator model, provider hierarchy, P0 task list |
+| v1.2 | 2026-04-06 | **3-agent audit, 34 findings.** Critical fixes: Life Simulator #ef4444→purple/orange (Law 1 self-contradiction), "Red day"→"Low" naming, vulnerability window defined (5 min), ZEUS two-swarm split documented honestly. New: 6 Guardrails (G18-G23), MIRT spec, B2B tier architecture, Crystal Law 6 amendment (badge not immediate), proactive shame contract, 90-min warning protocol, ASR Fairness Rule, two-swarm bridge spec, ZEUS product API requirement. |
 
 **Next scheduled review:** 2026-07-06 (quarterly)
 **Trigger for unscheduled review:** New research added to CEO corpus, or metric violation found.

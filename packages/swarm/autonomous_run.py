@@ -252,7 +252,7 @@ def _read_project_state(project_root: Path) -> str:
     return "\n\n".join(state_parts) if state_parts else "No project state files found."
 
 
-def _build_agent_prompt(perspective: dict, project_state: str, mode: str) -> str:
+def _build_agent_prompt(perspective: dict, project_state: str, mode: str, project_root: Path | None = None) -> str:
     """Build prompt for a single autonomous agent."""
 
     team_context = """TEAM CONTEXT:
@@ -362,7 +362,28 @@ Tag [ESCALATE] if this deploy should be rolled back immediately."""
         task = f"YOUR TASK: {mode}"
 
     weight_line = f"\nYOUR CALIBRATION: {perspective.get('weight_context', '')}" if perspective.get('weight_context') else ""
-    skills_line = f"\nROUTED SKILLS: {', '.join(perspective.get('routed_skills', []))}" if perspective.get('routed_skills') else ""
+
+    # Inject ACTUAL skill file content — not just names (fixed Session 88)
+    # Before: agents saw "ROUTED SKILLS: security-agent" but never the file content
+    # After: agents see the full skill definition (capped at 500 chars per skill)
+    routed = perspective.get('routed_skills', [])
+    skills_line = ""
+    _pr = project_root or Path(__file__).parent.parent.parent
+    if routed:
+        skills_dir = _pr / "memory" / "swarm" / "skills"
+        skill_contents = []
+        for skill_name in routed[:3]:  # max 3 skills to not blow prompt budget
+            skill_path = skills_dir / f"{skill_name}.md"
+            if skill_path.exists():
+                try:
+                    content = skill_path.read_text(encoding="utf-8").strip()[:500]
+                    skill_contents.append(f"### SKILL: {skill_name}\n{content}")
+                except Exception:
+                    skill_contents.append(f"### SKILL: {skill_name}\n(read error)")
+            else:
+                skill_contents.append(f"### SKILL: {skill_name}\n(file not found)")
+        skills_line = "\n\nYOUR LOADED SKILLS:\n" + "\n\n".join(skill_contents)
+
     bound_files_line = f"\n\n{perspective.get('bound_files', '')}" if perspective.get('bound_files') else ""
 
     return f"""{team_context}
@@ -619,7 +640,7 @@ async def run_autonomous(mode: str = "daily-ideation") -> list[Proposal]:
             "routed_skills": routed_skills,
             "bound_files": bound_files_section,
         }
-        prompt = _build_agent_prompt(enriched_perspective, project_state, mode)
+        prompt = _build_agent_prompt(enriched_perspective, project_state, mode, project_root=project_root)
         tasks.append(_call_agent(prompt, perspective["name"], env))
 
     results = await asyncio.gather(*tasks, return_exceptions=True)

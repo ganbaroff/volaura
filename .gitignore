@@ -70,3 +70,5 @@ volaura-preview.jsx
 
 # Per-session protocol state (not committed)
 .claude/protocol-state.json
+apps/tg-mini/node_modules/
+apps/tg-mini/dist/

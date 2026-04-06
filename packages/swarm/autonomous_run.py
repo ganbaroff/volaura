@@ -762,6 +762,61 @@ async def send_telegram_notifications(proposals: list[Proposal]) -> None:
         logger.error(f"Telegram send failed: {e}")
 
 
+async def _notify_zeus_gateway(proposals: list[Proposal]) -> None:
+    """Send HIGH/CRITICAL findings to ZEUS Gateway via POST /event.
+
+    This is the bridge between Python swarm (44 agents, GitHub Actions cron)
+    and Node.js gateway (39 agents, real-time WebSocket). Findings become
+    visible in the claw3d 3D office and to all Node.js agents.
+
+    Non-blocking: if gateway is unreachable, log and continue silently.
+    Requires GATEWAY_SECRET env var for auth.
+    """
+    gateway_url = os.environ.get("ZEUS_GATEWAY_URL", "http://localhost:18789")
+    gateway_secret = os.environ.get("GATEWAY_SECRET", "")
+
+    if not gateway_secret:
+        logger.debug("GATEWAY_SECRET not set — skipping ZEUS bridge (non-blocking).")
+        return
+
+    high_proposals = [p for p in proposals if p.severity in (Severity.HIGH, Severity.CRITICAL)]
+    if not high_proposals:
+        return
+
+    import aiohttp
+
+    for p in high_proposals:
+        payload = {
+            "source": "python-swarm",
+            "type": "agent.finding",
+            "agent": p.agent,
+            "severity": p.severity.value,
+            "title": p.title,
+            "content": p.content[:500],  # cap to prevent oversized payloads
+        }
+
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post(
+                    f"{gateway_url}/event",
+                    json=payload,
+                    headers={"Authorization": f"Bearer {gateway_secret}"},
+                    timeout=aiohttp.ClientTimeout(total=5),
+                ) as resp:
+                    if resp.status == 200:
+                        logger.info(
+                            "ZEUS bridge: sent {sev} finding from {agent}",
+                            sev=p.severity.value, agent=p.agent,
+                        )
+                    else:
+                        logger.debug(
+                            "ZEUS bridge: {status} from gateway", status=resp.status
+                        )
+        except Exception as e:
+            logger.debug("ZEUS bridge: gateway unreachable ({e})", e=str(e)[:100])
+            break  # don't retry all if gateway is down
+
+
 async def _write_run_log(
     proposals: list[Proposal],
     mode: str,
@@ -888,6 +943,12 @@ async def main():
 
     # Send Telegram notifications for HIGH/CRITICAL
     await send_telegram_notifications(proposals)
+
+    # ── Python↔Node.js Bridge — send HIGH/CRITICAL to ZEUS Gateway ────────
+    # This unifies the two swarms: Python findings appear in Node.js gateway's
+    # event stream, visible in claw3d 3D office and to all 39 Node.js agents.
+    # Constitution: "Two disconnected systems share ONLY filesystem" — this closes the gap.
+    await _notify_zeus_gateway(proposals)
 
     # ── Sprint 6: Report Generator — structured batch close ──────────────────
     suggestions = []

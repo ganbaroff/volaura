@@ -6,7 +6,7 @@
 
 ---
 
-## 1. Design System Amendments (STITCH conflicts resolved)
+## 1. Design System Amendments (Stitch ABANDONED — build from scratch per Constitution)
 
 ### Error Colors: Red → Purple/Amber
 **Source:** Research #2 (RSD), #6 (Sensory UX), #8 (Age-based)
@@ -65,7 +65,7 @@ DON'T: "Profile 40% complete" + 6 empty widget slots
 ## 2. Screen Priority Order (by conversion funnel)
 
 1. **Dashboard Empty State** — first thing new user sees after onboarding
-2. **Signup** — merge best of STITCH (visual hero, glass) + live (trust pills, role selection, GDPR)
+2. **Signup** — build from Constitution rules: glass hero, trust pills, role selection, GDPR (no Stitch reference)
 3. **Assessment Flow** — core product, ADHD-optimized (break every 5 Qs, no timer, no interim scores)
 4. **Results Celebration** — identity framing, NOT number-as-headline
 5. **Profile** — credential display, discoverable indicator
@@ -159,7 +159,7 @@ Returns: transition, entrance, hoverScale, tapScale, shouldReduceMotion
 
 ---
 
-## 5. What Live Signup Has That STITCH Drops (DO NOT LOSE)
+## 5. Signup Must-Keeps (validated by research — DO NOT LOSE)
 
 - Trust signal pills ("No CV", "Data private", "No spam") — Research #1 validated
 - Volunteer/Organization role selection — Research #9 validated

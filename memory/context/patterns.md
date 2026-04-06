@@ -565,10 +565,10 @@ Never elaborate. Never discuss feasibility. Just record and redirect.
 **Rule:** Empty states for new users must have exactly one clear call-to-action. No competing widgets, no multiple paths. One warm, inviting action that starts their journey.
 **Why it works:** Choice paralysis kills conversion. New users need a single obvious next step, not a dashboard of empty boxes. "Take your first assessment" > 6 empty widget placeholders.
 
-### Figma Trails Code — PROVEN
-**Context:** STITCH designs exist in code already. Figma used for NEW screens and documentation, not as intermediary for existing designs.
-**Rule:** Use Figma for designing new screens and documenting the design system. Do NOT use Figma as an intermediary step for screens that already have STITCH-generated code. Code is the source of truth for existing screens.
-**Why it works:** Avoids double work. STITCH outputs production-ready code. Recreating it in Figma first just to hand it back to code is wasted effort. Figma adds value for NEW designs and for design system documentation (Variables, Code Connect).
+### Design From Constitution, Not Stitch — CURRENT (2026-04-06)
+**Context:** Stitch designs ABANDONED. All new screens built from scratch based on Ecosystem Constitution (17 research documents). Stitch files archived to `docs/archive/stitch/`.
+**Rule:** Design source of truth = `docs/ECOSYSTEM-CONSTITUTION.md` + Figma Design System v2 (fileKey: B30q4nqVq5VjdqAVVYRh3t). Zero reference to old Stitch designs.
+**Why it works:** Stitch did not account for ADHD-first principles, never-red rule, overjustification effect, or energy adaptation. Research-based design is clinically validated.
 
 ### Correct agent launch pattern (Session 32, agent-launch-template.md)
 → OLD (wrong): agent gets text summary of files

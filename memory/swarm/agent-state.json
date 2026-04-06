@@ -11,7 +11,23 @@
       "status": "idle",
       "next_scheduled": null,
       "blockers": [],
-      "performance": { "tasks_completed": 3, "tasks_failed": 0 }
+      "performance": {
+        "tasks_completed": 3,
+        "tasks_failed": 0
+      },
+      "emotional_state": {
+        "significance": 0.0,
+        "curiosity": 0.4999999531126706,
+        "discomfort": 0.0,
+        "surprise": 0.0,
+        "concern": 0.0,
+        "significance_decay": 0.1,
+        "curiosity_decay": 0.05,
+        "discomfort_decay": 0.2,
+        "surprise_decay": 0.15,
+        "concern_decay": 0.08,
+        "last_updated": 1775505814.387644
+      }
     },
     "qa-quality-agent": {
       "last_task": "DoD verification for product gaps batch",
@@ -19,23 +35,75 @@
       "status": "idle",
       "next_scheduled": null,
       "blockers": [],
-      "performance": { "tasks_completed": 1, "tasks_failed": 0 }
+      "performance": {
+        "tasks_completed": 1,
+        "tasks_failed": 0
+      },
+      "emotional_state": {
+        "significance": 0.0,
+        "curiosity": 0.49999995298849426,
+        "discomfort": 0.0,
+        "surprise": 0.0,
+        "concern": 0.0,
+        "significance_decay": 0.1,
+        "curiosity_decay": 0.05,
+        "discomfort_decay": 0.2,
+        "surprise_decay": 0.15,
+        "concern_decay": 0.08,
+        "last_updated": 1775505814.387664
+      }
     },
     "trend-scout-agent": {
       "last_task": "Created — never ran",
       "last_run": null,
       "status": "new",
       "next_scheduled": "2026-04-04T05:00:00Z",
-      "blockers": ["needs GitHub Actions workflow"],
-      "performance": { "tasks_completed": 0, "tasks_failed": 0 }
+      "blockers": [
+        "needs GitHub Actions workflow"
+      ],
+      "performance": {
+        "tasks_completed": 0,
+        "tasks_failed": 0
+      },
+      "emotional_state": {
+        "significance": 0.0,
+        "curiosity": 0.4999999528957759,
+        "discomfort": 0.0,
+        "surprise": 0.0,
+        "concern": 0.0,
+        "significance_decay": 0.1,
+        "curiosity_decay": 0.05,
+        "discomfort_decay": 0.2,
+        "surprise_decay": 0.15,
+        "concern_decay": 0.08,
+        "last_updated": 1775505814.3876784
+      }
     },
     "assessment-science-agent": {
       "last_task": "IRT parameter review — pending",
       "last_run": null,
       "status": "new",
       "next_scheduled": null,
-      "blockers": ["needs 24 questions audit"],
-      "performance": { "tasks_completed": 0, "tasks_failed": 0 }
+      "blockers": [
+        "needs 24 questions audit"
+      ],
+      "performance": {
+        "tasks_completed": 0,
+        "tasks_failed": 0
+      },
+      "emotional_state": {
+        "significance": 0.0,
+        "curiosity": 0.4999999528096804,
+        "discomfort": 0.0,
+        "surprise": 0.0,
+        "concern": 0.0,
+        "significance_decay": 0.1,
+        "curiosity_decay": 0.05,
+        "discomfort_decay": 0.2,
+        "surprise_decay": 0.15,
+        "concern_decay": 0.08,
+        "last_updated": 1775505814.3876917
+      }
     },
     "analytics-retention-agent": {
       "last_task": "Event taxonomy defined, analytics_events table created",
@@ -43,15 +111,49 @@
       "status": "idle",
       "next_scheduled": null,
       "blockers": [],
-      "performance": { "tasks_completed": 2, "tasks_failed": 0 }
+      "performance": {
+        "tasks_completed": 2,
+        "tasks_failed": 0
+      },
+      "emotional_state": {
+        "significance": 0.0,
+        "curiosity": 0.4999999527235848,
+        "discomfort": 0.0,
+        "surprise": 0.0,
+        "concern": 0.0,
+        "significance_decay": 0.1,
+        "curiosity_decay": 0.05,
+        "discomfort_decay": 0.2,
+        "surprise_decay": 0.15,
+        "concern_decay": 0.08,
+        "last_updated": 1775505814.3877048
+      }
     },
     "financial-analyst-agent": {
       "last_task": "Dodo Payments research + AZN analysis",
       "last_run": "2026-04-03T14:00:00Z",
       "status": "idle",
       "next_scheduled": null,
-      "blockers": ["Dodo company verification pending"],
-      "performance": { "tasks_completed": 1, "tasks_failed": 0 }
+      "blockers": [
+        "Dodo company verification pending"
+      ],
+      "performance": {
+        "tasks_completed": 1,
+        "tasks_failed": 0
+      },
+      "emotional_state": {
+        "significance": 0.0,
+        "curiosity": 0.4999999526374892,
+        "discomfort": 0.0,
+        "surprise": 0.0,
+        "concern": 0.0,
+        "significance_decay": 0.1,
+        "curiosity_decay": 0.05,
+        "discomfort_decay": 0.2,
+        "surprise_decay": 0.15,
+        "concern_decay": 0.08,
+        "last_updated": 1775505814.3877177
+      }
     },
     "devops-sre-agent": {
       "last_task": "Railway redeploy + Langfuse keys + NVIDIA key",
@@ -59,7 +161,23 @@
       "status": "idle",
       "next_scheduled": null,
       "blockers": [],
-      "performance": { "tasks_completed": 3, "tasks_failed": 0 }
+      "performance": {
+        "tasks_completed": 3,
+        "tasks_failed": 0
+      },
+      "emotional_state": {
+        "significance": 0.0,
+        "curiosity": 0.4999999525530494,
+        "discomfort": 0.0,
+        "surprise": 0.0,
+        "concern": 0.0,
+        "significance_decay": 0.1,
+        "curiosity_decay": 0.05,
+        "discomfort_decay": 0.2,
+        "surprise_decay": 0.15,
+        "concern_decay": 0.08,
+        "last_updated": 1775505814.3877306
+      }
     },
     "security-agent": {
       "last_task": "Supabase security audit — 4 SECURITY_DEFINER views fixed, 6 search_path hardened",
@@ -67,7 +185,23 @@
       "status": "idle",
       "next_scheduled": null,
       "blockers": [],
-      "performance": { "tasks_completed": 2, "tasks_failed": 0 }
+      "performance": {
+        "tasks_completed": 2,
+        "tasks_failed": 0
+      },
+      "emotional_state": {
+        "significance": 0.0,
+        "curiosity": 0.4999999524818549,
+        "discomfort": 0.0,
+        "surprise": 0.0,
+        "concern": 0.0,
+        "significance_decay": 0.1,
+        "curiosity_decay": 0.05,
+        "discomfort_decay": 0.2,
+        "surprise_decay": 0.15,
+        "concern_decay": 0.08,
+        "last_updated": 1775505814.3877437
+      }
     }
   },
   "_uninitialized_count": 40,

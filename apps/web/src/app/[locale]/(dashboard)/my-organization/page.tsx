@@ -216,7 +216,7 @@ export default function OrganizationsPage() {
                   <div className="flex items-end gap-2">
                     <span className="text-3xl font-bold tabular-nums text-primary">{collective.avg_aura.toFixed(1)}</span>
                     {collective.trend !== null && (
-                      <span className={cn("text-sm font-medium mb-0.5", collective.trend >= 0 ? "text-green-500" : "text-red-400")}>
+                      <span className={cn("text-sm font-medium mb-0.5", collective.trend >= 0 ? "text-green-500" : "text-purple-400")}>
                         {collective.trend >= 0 ? "↑" : "↓"} {Math.abs(collective.trend).toFixed(1)}
                       </span>
                     )}

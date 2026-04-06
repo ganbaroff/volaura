@@ -118,7 +118,7 @@ export default function EventDetailPage() {
               className={cn(
                 "inline-flex rounded-full px-3 py-1 text-xs font-semibold",
                 displayStatus === "live"
-                  ? "bg-red-500/10 text-red-600"
+                  ? "bg-purple-500/10 text-purple-400"
                   : displayStatus === "upcoming"
                     ? "bg-emerald-500/10 text-emerald-700"
                     : "bg-muted text-muted-foreground"

@@ -29,7 +29,7 @@ function getDisplayStatus(status: string): "live" | "upcoming" | "past" {
 }
 
 const STATUS_STYLES = {
-  live:     "bg-red-500/10 text-red-600 border-red-200",
+  live:     "bg-purple-500/10 text-purple-400 border-purple-200",
   upcoming: "bg-emerald-500/10 text-emerald-700 border-emerald-200",
   past:     "bg-muted text-muted-foreground border-border",
 } as const;

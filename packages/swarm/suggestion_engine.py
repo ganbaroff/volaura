@@ -274,6 +274,12 @@ KEY PATTERNS:
 {patterns[:500]}"""
 
     # Try LLM first, fall back to rule-based
+    # nest_asyncio: suggestion_engine is sync but called from async main()
+    try:
+        import nest_asyncio
+        nest_asyncio.apply()
+    except ImportError:
+        pass
     llm_results = asyncio.run(_generate_via_llm(context, _env))
 
     if llm_results:

@@ -46,7 +46,7 @@ jobs:
 
       - name: Install swarm dependencies
         run: |
-          pip install pydantic loguru groq google-genai python-dotenv python-telegram-bot aiohttp supabase
+          pip install pydantic loguru groq google-genai python-dotenv python-telegram-bot aiohttp supabase tavily-python litellm openai nest-asyncio
 
       - name: Heartbeat gate (KAIROS — should swarm run?)
         id: gate
@@ -93,6 +93,8 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CEO_CHAT_ID: ${{ secrets.TELEGRAM_CEO_CHAT_ID }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}

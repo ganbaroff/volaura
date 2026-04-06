@@ -971,7 +971,7 @@ async def main():
     parser = argparse.ArgumentParser(description="Autonomous Swarm Run")
     parser.add_argument("--mode", default="daily-ideation",
                         choices=["daily-ideation", "code-review", "cto-audit", "self-upgrade",
-                                 "weekly-audit", "monthly-review", "post-deploy", "coordinator"])
+                                 "weekly-audit", "monthly-review", "post-deploy", "coordinator", "simulate"])
     parser.add_argument("--task", default="",
                         help="Task description for coordinator mode")
     parser.add_argument("--skip-consolidation", action="store_true",
@@ -1013,6 +1013,45 @@ async def main():
         print()
         for f in result.findings:
             print(f"  [{f.severity.value}] {f.agent_id}: {f.summary[:100]}")
+        return
+
+    if args.mode == "simulate":
+        # Simulate all 10 personas, post friction to shared memory, report via Telegram
+        try:
+            from swarm.simulate_users import simulate, _friction_report
+            results = await simulate(dry_run=False)  # real Supabase writes if keys set
+            total_events = sum(r["events_written"] for r in results)
+            total_friction = sum(
+                sum(1 for s in r.get("steps", []) if s.get("friction"))
+                for r in results
+            )
+            report = _friction_report(results)
+            logger.info("Simulation complete: {e} events, {f} friction points", e=total_events, f=total_friction)
+
+            # Send to Telegram CEO
+            bot_token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+            chat_id = os.environ.get("TELEGRAM_CEO_CHAT_ID", "")
+            if bot_token and chat_id:
+                import urllib.request as _urllib
+                msg = f"🎭 Swarm simulation: {len(results)} personas, {total_events} events, {total_friction} UX issues\n\n"
+                all_friction = []
+                for r in results:
+                    for s in r.get("steps", []):
+                        if s.get("friction"):
+                            all_friction.append(f"[{r['persona']}] {s['friction']}")
+                if all_friction[:5]:
+                    msg += "Top friction:\n" + "\n".join(f"• {f[:90]}" for f in all_friction[:5])
+                payload = json.dumps({"chat_id": chat_id, "text": msg}).encode()
+                req = _urllib.Request(
+                    f"https://api.telegram.org/bot{bot_token}/sendMessage",
+                    data=payload, headers={"Content-Type": "application/json"},
+                )
+                try:
+                    _urllib.urlopen(req, timeout=10)
+                except Exception:
+                    pass
+        except Exception as e:
+            logger.error("simulate mode failed: {e}", e=str(e))
         return
 
     if args.mode == "self-upgrade":

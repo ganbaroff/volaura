@@ -8,6 +8,8 @@ on:
     - cron: '0 6 * * 1'
     # Monthly review: 1st of month at 07:00 UTC — strategic, CEO-facing
     - cron: '0 7 1 * *'
+    # Weekly simulation: every Wednesday at 08:00 UTC — 10 personas, UX friction report
+    - cron: '0 8 * * 3'
   workflow_dispatch:
     inputs:
       mode:
@@ -22,6 +24,8 @@ on:
           - weekly-audit
           - monthly-review
           - post-deploy
+          - coordinator
+          - simulate
 
 jobs:
   swarm-run:
@@ -42,7 +46,7 @@ jobs:
 
       - name: Install swarm dependencies
         run: |
-          pip install pydantic loguru groq google-genai python-dotenv python-telegram-bot
+          pip install pydantic loguru groq google-genai python-dotenv python-telegram-bot aiohttp supabase
 
       - name: Heartbeat gate (KAIROS — should swarm run?)
         id: gate
@@ -75,6 +79,8 @@ jobs:
               echo "mode=monthly-review" >> $GITHUB_OUTPUT
             elif [ "$WEEKDAY" = "1" ] && [ "$HOUR" = "06" ]; then
               echo "mode=weekly-audit" >> $GITHUB_OUTPUT
+            elif [ "$WEEKDAY" = "3" ] && [ "$HOUR" = "08" ]; then
+              echo "mode=simulate" >> $GITHUB_OUTPUT
             else
               echo "mode=daily-ideation" >> $GITHUB_OUTPUT
             fi

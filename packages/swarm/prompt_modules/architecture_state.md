@@ -1,8 +1,21 @@
-# MiroFish Architecture State
+# VOLAURA Swarm Architecture State
 # AUTO-UPDATED — this file reflects the CURRENT state of the system.
-# Last updated: 2026-03-24 v7 "Research Autonomy"
+# Last updated: 2026-04-06 v8 "Ecosystem Sync"
+# ⚠️ You are ONE part of a 5-product ecosystem. See: prompt_modules/ecosystem-map.md
 
-## Active Providers (13)
+## ⚠️ THIS SWARM'S SCOPE
+This Python swarm (44 agents) powers the VOLAURA assessment platform.
+ZEUS Gateway (39 Node.js agents) powers Life Simulator + claw3d + all real-time chat.
+They are DIFFERENT systems. Do NOT confuse them. Read ecosystem-map.md for full picture.
+
+## ZEUS Gateway (separate system — Node.js)
+- Local: `ws://localhost:18789`, Production: `wss://zeus-gateway-production.up.railway.app`
+- 39 agents in `C:/Users/user/Downloads/claw3d-fork/server/zeus-gateway-adapter.js`
+- LLM stack: Cerebras Qwen3-235B → Gemma4/Ollama → NVIDIA NIM → Anthropic
+- Manages: Life Simulator 3D state, user memory, event-driven webhooks
+- pm2 process: `zeus-gateway` — never kill, use `pm2 restart zeus-gateway --update-env`
+
+## VOLAURA Swarm Active Providers (13)
 Groq: llama-3.1-8b, llama-3.3-70b, llama-4-scout-17b, gpt-oss-120b, kimi-k2 x2, compound-mini
 Gemini: 2.0-flash, 2.5-flash-lite, 2.5-pro, flash-lite, 3.1-flash-lite-preview
 DeepSeek: deepseek-chat

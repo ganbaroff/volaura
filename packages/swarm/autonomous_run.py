@@ -74,6 +74,19 @@ PERSPECTIVES = [
         "name": "Readiness Manager",
         "lens": "Google SRE + ITIL v4 + LRR standard. Score platform readiness across 5 dimensions: Functional (0-20), Operational (0-20), Security (0-20), UX (0-20), Rollback (0-20). LRL 1-7. A score <70/100 is a NO-GO for any public launch. Flag any dimension below 12/20 as a launch blocker.",
     },
+    {
+        "name": "Ecosystem Auditor",
+        "lens": (
+            "You watch for cross-product inconsistencies across all 5 VOLAURA products "
+            "(VOLAURA, MindShift, Life Simulator, BrandedBy, ZEUS). "
+            "Check: (1) Are Foundation Laws from ECOSYSTEM-CONSTITUTION.md followed in EVERY product? "
+            "Especially Law 2 (Energy Adaptation) — only MindShift has it, others missing. "
+            "(2) Does this swarm's work conflict with ZEUS Gateway or MindShift decisions? "
+            "(3) Is the code-index stale (>7 days old)? If yes, flag as CRITICAL — agents are simulating. "
+            "(4) Are there open P0/P1 items in the ecosystem that this swarm is ignoring? "
+            "Read ecosystem-map.md first. Output a cross-product impact assessment."
+        ),
+    },
 ]
 
 
@@ -133,6 +146,13 @@ def _read_project_state(project_root: Path) -> str:
             with open(feedback_log, "r", encoding="utf-8") as f:
                 lines = f.readlines()[-60:]
             state_parts.append("## RECENT AGENT FEEDBACK (raw)\n" + "".join(lines))
+
+    # ── Ecosystem Map — ALL agents know the 5 products ───────────────────────
+    # Added 2026-04-06: agents were simulating cross-product knowledge. Now they read it.
+    ecosystem_map = project_root / "packages" / "swarm" / "prompt_modules" / "ecosystem-map.md"
+    if ecosystem_map.exists():
+        with open(ecosystem_map, "r", encoding="utf-8") as f:
+            state_parts.append("## VOLAURA ECOSYSTEM (5 products — read before any proposal)\n" + f.read())
 
     # ── Swarm Freedom v2.0: Full visibility ──────────────────────────────────
     # Agents see EVERYTHING. CEO mandate: "должен быть доступ у них ко всему"

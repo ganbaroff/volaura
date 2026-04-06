@@ -1,6 +1,18 @@
 [
   {
     "ok": true,
+    "model": "qwen3:8b",
+    "provider": "ollama",
+    "ms": 0,
+    "note": "Local GPU — zero cost, zero rate limit. Constitution hierarchy: highest priority after Cerebras.",
+    "response": {
+      "status": "ok",
+      "model_works": true,
+      "can_json": true
+    }
+  },
+  {
+    "ok": true,
     "model": "llama-3.1-8b-instant",
     "provider": "groq",
     "ms": 295,

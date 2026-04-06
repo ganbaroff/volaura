@@ -298,7 +298,7 @@ Critical rules for all products:
 - AI i18n = inject locale into LLM prompt (exact match)
 
 **Known gaps to address:**
-- Voice data privacy: disclose routing to Google/Apple in privacy policy
+- Voice data privacy: ~~disclose routing to Google/Apple in privacy policy~~ **MOVED TO PRE-LAUNCH P0** (voice = biometric data under GDPR Art. 9 — Soniox/Deepgram DPAs must be verified before any voice processing begins)
 - PostHog: upgrade to Bayesian A/B testing (< 1000 users = Bayesian > frequentist)
 - CSS Container Queries: tablet readiness quick win
 - WHISK context hygiene: CLAUDE.md pruning schedule needed
@@ -422,6 +422,18 @@ Critical rules for all products:
 - Informed consent must disclose AI processing explicitly
 - Open Badges 3.0 payload needs: model version, IRT params, SE, confidence intervals
 - DeCE scoring: every score needs extracted_concept + quote + confidence
+- **Section 5.3 (legal agent finding):** pre-assessment disclosure must name: specific competencies being measured, how they map to organizational needs, and interpretive framework. One sentence (G18) is legally insufficient — a disclosure document spec is needed.
+- **Formal Grievance Mechanism (legal agent finding):** ISO 10667-2 Section 7 requires a documented pathway for users to formally dispute their AURA score. This is a product requirement, not a UX consideration. Must exist before ISO 10667-2 compliance can be claimed in B2B Tier 3 marketing.
+- **Peer Assessor Competence (Section 5.4):** VR multiplier assumes peers are qualified assessors (peer=1.25). The standard requires assessors to be qualified. Constitution must specify what qualifies a peer assessor — or reduce the peer multiplier with a note that full Section 5.4 compliance is Phase 2.
+
+**Open Badges 3.0 — Technical Compliance (legal agent finding, pre-launch for B2B Tier 3):**
+G19 adds custom extension fields to badge payloads. Open Badges 3.0 requires specific W3C Verifiable Credentials fields that are not yet in the spec:
+- **VC Data Model:** badge must include `@context` (W3C VC + OB 3.0 contexts), `type: ["VerifiableCredential", "OpenBadgeCredential"]`, `issuer` as verified Profile object with stable HTTPS identifier.
+- **Cryptographic proof:** badges must be cryptographically signed. VOLAURA needs an issuer DID or public/private key infrastructure for badge signing. This is an architecture decision that must be made before B2B Tier 3 is marketed.
+- **Achievement objects:** each badge tier must have a machine-readable `Achievement` object with `achievementType`, `criteria`, `description`.
+- **Revocation endpoint (credentialStatus):** when AURA score decays and badge tier drops, the old badge must be revoked via a `credentialStatus` endpoint. The decay half-life mechanism (Research #15) must be connected to this revocation event.
+- **Recipient privacy:** use hashed recipient identification — do not embed raw user identifiers in badge payloads.
+- **Issuer decision (pre-launch):** decide whether VOLAURA operates as a VC issuer with its own DID, or uses a third-party badge platform. Must be decided before any badge is issued to B2B organizations.
 
 ---
 
@@ -454,8 +466,9 @@ Implementation Intentions ("If-Then" plans):
 
 ### Research: Legal & Compliance Framework
 
-**Source:** GDPR, EU AI Act (Annex III), ISO 10667-2, COPPA, Azerbaijan Labor Code
-**Added in v1.3 — swarm audit finding (P0): legal layer was completely absent from constitution**
+**Source:** GDPR, EU AI Act (Annex III), ISO 10667-2, COPPA, Azerbaijan PDPA, Azerbaijan Labor Code, Open Badges 3.0 (W3C VC)
+**Added in v1.3 — swarm audit finding (P0): legal layer was completely absent**
+**Updated in v1.4 — legal agent audit, 9 findings. Several moved to pre-launch P0.**
 
 #### GDPR (applies to all EU users — and Azerbaijan users once VOLAURA enters EU market)
 
@@ -467,6 +480,20 @@ Implementation Intentions ("If-Then" plans):
 - Before any data is collected, user must see: what data is collected, why, how long retained, who has access.
 - This is not optional marketing copy — it is a legal requirement. Onboarding Screen 1 must include it (non-dismissable).
 - Already partially covered by G18 (AI processing disclosure). G18 must also cover data categories and retention.
+
+**Article 22 — Automated Employment Decision-Making (P0 pre-launch — legal agent finding):**
+VOLAURA is an Article 22 trigger. When an org searches by AURA score and shortlists/filters candidates, that is automated processing with an employment consequence. The constitution explicitly names this use case ("helped 2 organizations shortlist you"). This is textbook Article 22.
+- **Explicit consent required (Art. 22(2)(c)):** before any user profile becomes discoverable to employers, they must give explicit, informed consent that organizations may use their AURA score as an automated pre-screening signal. This is separate from general ToS acceptance.
+- **Human Review Request mechanism required:** any user who believes they were rejected based on an automated AURA search must have a documented pathway to request human review.
+- **B2B transparency:** VOLAURA's ToS must disclose that employer search constitutes automated profiling for employment purposes under Article 22.
+- **Legal basis declaration:** explicit consent (22(2)(c)) is the viable basis. Contract necessity and Union law bases do not clearly apply to a voluntary platform.
+
+**Article 9 — Special Category Health Data (P0 pre-launch — legal agent finding):**
+Energy state (EnergyPicker 1-5), burnout indicators (Research #3/#11), and hyperfocus pattern detection (MindShift rule 14) constitute "data concerning health" under GDPR Article 9 + Recital 35. This is a higher legal standard than standard personal data.
+- **Current G16 is insufficient:** it addresses secondary disclosure (data not reaching B2B) but not primary collection basis.
+- **Explicit consent under Art. 9(2)(a) required:** must be specific to health data, separately from general ToS, freely withdrawable.
+- **Separate data store:** health data must be in a logically separate table with separate RLS policy and an explicit deletion pathway faster than general account deletion (72-hour response target vs. 30-day general).
+- **Same obligation applies under AZ PDPA Article 8** (sensitive data), which has parallel requirements.
 
 **Article 17 — Right to Erasure:**
 - 30-day processing window for deletion requests.
@@ -488,6 +515,33 @@ VOLAURA's assessment pipeline qualifies under **Annex III, Category 4** ("AI sys
 3. **Transparency to individuals**: assessed persons must be able to request explanation of their score (already covered by DeCE `/aura/me/explanation` endpoint — this is legally required, not just a nice-to-have).
 4. **Non-discrimination monitoring**: DIF test (Mantel-Haenszel) when N>500 per demographic group is a legal requirement, not just good practice.
 5. **Registration**: When VOLAURA enters EU market — register in EU AI Act database before deployment.
+
+#### Azerbaijan PDPA — Primary Market (P0 pre-launch — legal agent finding)
+
+The AZ Law on Personal Data (amended 2022, GDPR-aligned but distinct) applies now — AZ is VOLAURA's primary market.
+
+**Data Localization (PDPA Article 15):**
+- Personal data of AZ citizens may require storage within Azerbaijan or notification to SADPP (State Agency for Personal Data Protection) for cross-border transfers.
+- Current hosting: Supabase (US), Railway (US), Vercel (US). All three require cross-border transfer assessment before AZ user data is processed.
+- **Pre-launch blocker:** Commission a data transfer impact assessment. Either establish AZ-region hosting or file cross-border transfer notification with SADPP.
+
+**SADPP Registration:**
+- Unlike GDPR (which abolished registration), AZ PDPA requires operators to register with SADPP before commencing data processing.
+- **Pre-launch blocker:** VOLAURA must register with SADPP before onboarding AZ users.
+
+**Consent Language:**
+- AZ PDPA requires consent in Azerbaijani (or verifiable electronic equivalent). Translations are not sufficient — legally reviewed consent text in Azerbaijani is required.
+- Consent must be separately obtained for each processing purpose.
+
+**Responsible Person:**
+- AZ PDPA requires designation of a responsible person for personal data within the organization.
+- **Action:** Designate CEO or legal representative as responsible person. Document this in organization records.
+
+**Voice Data — Biometric + Cross-Border (P0 pre-launch, moved from Months 1-3):**
+- Assessment voice recordings are biometric data under GDPR Article 9(1) and AZ PDPA Article 8. This is a higher legal class than personal data.
+- Soniox (AZ ASR) and Deepgram (EN ASR) are US-based. Their DPA (Data Processing Agreement) compliance with GDPR and AZ PDPA must be verified before launch — not after.
+- **Pre-launch blocker:** Obtain and review Soniox and Deepgram DPAs. If adequate protection not confirmed → do not process voice in the EU/AZ markets.
+- Voice data routing disclosure (previously in Research #7 as Months 1-3) is moved to **pre-launch P0**.
 
 #### Age Protection
 
@@ -600,6 +654,12 @@ Azerbaijani culture has **higher professional shame sensitivity** than EU averag
     - Tier 1 (Verify): basic discovery, AURA search, intro requests — free/freemium
     - Tier 2 (Manage): QR check-in (5-sec vs 30-sec manual), roster management, Telegram bulk messaging — per-event pricing
     - Tier 3 (Certify): ISO 10667-2 package, DIF audit reports, SLA, audit trail export — annual per-seat
+17. B2B Liability Allocation (legal agent finding — must be in all B2B contracts):
+    - VOLAURA = "information service provider" (analogous to psychometric test publishers). Organizations = "decision-makers."
+    - **Mandatory Appropriate Use Policy at B2B onboarding:** organizations must agree that AURA scores are one input among several and MAY NOT be used as the sole basis for rejection.
+    - **GDPR Art. 22 org obligations:** organizations using AURA scores for automated employment pre-screening are themselves data controllers for that processing. B2B contract must define this responsibility split.
+    - **DIF monitoring as B2B obligation:** if VOLAURA detects that its scoring systematically underscores a protected group (disability, gender, ethnicity) that results in discriminatory hiring patterns, VOLAURA bears contributory liability. DIF audit (Mantel-Haenszel) is moved from Months 1-3 to **pre-launch P0** — not because of psychometric quality alone, but because of labor law exposure.
+    - If ADHD-adaptive design fails to prevent ADHD-related score depression → a candidate with ADHD who is rejected on AURA score basis has an Article 16 AZ Labor Code claim against the using organization AND a GDPR Art. 22 claim against VOLAURA.
 17. DeCE "Show Your Work" endpoint (`/aura/me/explanation`) is a primary B2B differentiator — must be surfaced in org volunteer profiles as a 2-sentence competency evidence summary.
 18. ASR Fairness Rule: language-detected routing (langdetect on first 3s or profile locale as prior). Scores under Whisper before routing ships are flagged and queued for re-evaluation.
 19. Onboarding Screen 1 must include AI processing disclosure (ISO 10667-2 G18) — one sentence, non-dismissable.
@@ -867,6 +927,11 @@ These 17 guardrails apply to all 5 products. No exceptions.
 | G30 | Offline mode declaration: MindShift core features (timer, task list) work offline with sync-on-reconnect. VOLAURA assessments require connection — clear offline message shown, not silent failure | Research #7 | MindShift, VOLAURA |
 | G31 | Data portability: AURA score + full badge history + assessment summaries exportable as PDF and JSON on demand, within 30 days of request | GDPR Art. 20 | VOLAURA |
 | G32 | Purple ambiguity rule: changing error color to purple (Law 1) does NOT reduce copy urgency. Purple errors MUST use copy that communicates action needed. "Something didn't connect — tap to retry" not just a purple icon. Color removes shame trigger; copy still communicates the required action | Swarm audit finding (dsp-474aa609) | ALL |
+| G33 | GDPR Art. 22 explicit consent: before profile becomes org-discoverable, user must give explicit informed consent that orgs may use AURA as automated pre-screening signal. Separate from ToS. Must include: right to human review, right to contest, right to opt out of employer discovery | GDPR Art. 22(2)(c) | VOLAURA |
+| G34 | GDPR Art. 9 health data consent: energy state, burnout indicators, and inferred attention patterns require explicit Art. 9(2)(a) consent — separate from general consent. Must be specific to health data, freely withdrawable. Stored in separate table with faster deletion pathway (72h vs 30d) | GDPR Art. 9, AZ PDPA Art. 8 | MindShift, VOLAURA |
+| G35 | Formal AURA score grievance mechanism: users must have a documented pathway to formally dispute their AURA score result. This is an ISO 10667-2 Section 7 legal obligation, not a UX feature. Must exist before Tier 3 "ISO 10667-2 compliant" is marketed to B2B customers | ISO 10667-2 Section 7 | VOLAURA |
+| G36 | AZ PDPA pre-launch: SADPP registration and cross-border transfer assessment (for Supabase/Railway/Vercel US hosting) must be completed before AZ users' data is processed. AZ-language legally reviewed consent text required | AZ PDPA Art. 15 | VOLAURA, MindShift |
+| G37 | Open Badges 3.0 VC compliance before B2B Tier 3: badges must include W3C VC data model fields, cryptographic proof (issuer DID or equivalent), machine-readable Achievement objects, and a credentialStatus revocation endpoint connected to the AURA decay mechanism | Open Badges 3.0, W3C VC | VOLAURA |
 
 ---
 
@@ -895,15 +960,22 @@ These 17 guardrails apply to all 5 products. No exceptions.
 5. **Purple error system** (Research #2, #6) — zero red, error = `#D4B4FF`
 6. **ADHD checklist audit on every live screen** (all research) — 37 items
 7. **Energy picker in onboarding** (Research #2) — gate assessments on low-energy
+8. **GDPR Art. 22 consent mechanism** (G33) — explicit consent before profile becomes org-discoverable
+9. **GDPR Art. 9 health data consent** (G34) — separate consent + separate DB table for energy/burnout data
+10. **Formal AURA score grievance mechanism** (G35) — required before ISO 10667-2 Tier 3 can be marketed
+11. **AZ PDPA SADPP registration + DPA assessment** (G36) — required before AZ users' data is processed
+12. **Soniox/Deepgram DPA verification** — voice = biometric; DPAs must be verified before voice assessments begin
+13. **DIF bias audit** (Research #15) — Mantel-Haenszel bias test required BEFORE launch, not post-launch (labor law exposure)
 
 ### Months 1-3 (with real user data)
 1. Bayesian IRT calibration pipeline (Research #15, P0) — first 200 real assessments
 2. Differential skill decay (Research #15, P1) — per half-life table
 3. If-Then Implementation Intentions (Research #16) — pre-session behavioral rules
-4. DIF monitoring setup (Research #15) — run Mantel-Haenszel when N>500
+4. ~~DIF monitoring setup~~ → **moved to pre-launch P0** (see blockers #13 above)
 5. Memory consolidation daemons for ZEUS (Research #13) — 3 Python functions
-6. Voice data privacy policy update (Research #7) — disclose Google/Apple routing
+6. ~~Voice data privacy policy update~~ → **moved to pre-launch P0** (see blockers #12 above)
 7. PostHog upgrade to Bayesian A/B (Research #7) — needed for <1000 user insights
+8. Open Badges 3.0 VC technical compliance — issuer DID + cryptographic proof + Achievement objects + revocation endpoint (required before B2B Tier 3 launch)
 
 ### Months 4-6 (at scale)
 1. ZEUS model routing matrix (Research #12) — replace all-haiku with specialist models
@@ -967,6 +1039,7 @@ These are measured monthly:
 | v1.1 | 2026-04-06 | Merged MindShift/ZEUS handoff: Node.js gateway architecture, 10-state Life Simulator model, provider hierarchy, P0 task list |
 | v1.2 | 2026-04-06 | **3-agent audit, 34 findings.** Critical fixes: Life Simulator #ef4444→purple/orange (Law 1 self-contradiction), "Red day"→"Low" naming, vulnerability window defined (5 min), ZEUS two-swarm split documented honestly. New: 6 Guardrails (G18-G23), MIRT spec, B2B tier architecture, Crystal Law 6 amendment (badge not immediate), proactive shame contract, 90-min warning protocol, ASR Fairness Rule, two-swarm bridge spec, ZEUS product API requirement. |
 | v1.3 | 2026-04-06 | **Python swarm audit, 14 models (Gemini/Groq/DeepSeek), 2 rounds.** Added: Legal & Compliance Framework (GDPR Art.13/17/20, EU AI Act Annex III high-risk classification, Age gate 16+/13+, Data Retention Schedule, AZ Labor Code framing). Added: Cultural Localization (AZ/CIS trust timing, wasita framing, shame-free AZ copy, Siz-form mandate, 25-40% text length budget). New Guardrails G24-G32 (legal, trust, WCAG, offline, portability, purple ambiguity rule). Conflict resolution: purple ambiguity resolved via G32 (copy layer required alongside color change). Memory logger Windows bug fixed (colon in model IDs). |
+| v1.4 | 2026-04-06 | **Legal agent deep-audit, 9 findings.** Critical additions: GDPR Art. 22 automated employment decision-making (explicit consent + human review — G33), GDPR Art. 9 health data for energy/burnout tracking (G34), AZ PDPA SADPP registration + cross-border transfer assessment for US hosting (G36), Open Badges 3.0 VC technical compliance spec (cryptographic proof, issuer DID, revocation endpoint connected to decay — G37), formal AURA score grievance mechanism (ISO 10667-2 Section 7 — G35), labor law liability allocation (B2B contracts must name org as decision-maker). **Pre-launch P0 reclassification:** DIF bias audit moved from Months 1-3 (labor law exposure), voice data DPA verification moved from Months 1-3 (biometric = GDPR Art. 9). Total guardrails: G1-G37. |
 
 **Next scheduled review:** 2026-07-06 (quarterly)
 **Trigger for unscheduled review:** New research added to CEO corpus, or metric violation found.

@@ -43,9 +43,25 @@ def _ensure_db() -> sqlite3.Connection:
             result     TEXT NOT NULL,
             ts         REAL NOT NULL,
             run_id     TEXT DEFAULT '',
+            importance INTEGER DEFAULT 5,
+            expires_at REAL DEFAULT 0,
+            category   TEXT DEFAULT '',
             PRIMARY KEY (agent_id, task_id)
         )
     """)
+    # Migration: add columns if table already exists without them
+    try:
+        conn.execute("ALTER TABLE memory ADD COLUMN importance INTEGER DEFAULT 5")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        conn.execute("ALTER TABLE memory ADD COLUMN expires_at REAL DEFAULT 0")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        conn.execute("ALTER TABLE memory ADD COLUMN category TEXT DEFAULT ''")
+    except sqlite3.OperationalError:
+        pass
     conn.execute("""
         CREATE INDEX IF NOT EXISTS idx_memory_task ON memory(task_id, ts)
     """)
@@ -72,30 +88,51 @@ def _ensure_db() -> sqlite3.Connection:
     return conn
 
 
-def post_result(agent_id: str, task_id: str, result: dict, run_id: str = "") -> None:
-    """Agent posts its result to shared memory. Other agents can read it."""
+def post_result(
+    agent_id: str,
+    task_id: str,
+    result: dict,
+    run_id: str = "",
+    importance: int = 5,
+    ttl_hours: float = 168,  # default 7 days
+    category: str = "",
+) -> None:
+    """Agent posts its result to shared memory. Other agents can read it.
+
+    importance: 1-10 (10 = critical finding, 1 = noise)
+    ttl_hours: how long this fact stays relevant (default 7 days)
+    category: security|ux|perf|growth|infra|product|qa|legal|ecosystem
+    """
     conn = _ensure_db()
+    expires_at = time.time() + (ttl_hours * 3600) if ttl_hours > 0 else 0
     try:
         conn.execute(
-            "INSERT OR REPLACE INTO memory (agent_id, task_id, result, ts, run_id) VALUES (?, ?, ?, ?, ?)",
-            (agent_id, task_id, json.dumps(result, ensure_ascii=False), time.time(), run_id),
+            "INSERT OR REPLACE INTO memory (agent_id, task_id, result, ts, run_id, importance, expires_at, category) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (agent_id, task_id, json.dumps(result, ensure_ascii=False), time.time(), run_id, importance, expires_at, category),
         )
         conn.commit()
-        logger.debug("Shared memory: {agent} posted to task {task}", agent=agent_id, task=task_id)
+        logger.debug("Shared memory: {agent} posted to task {task} (importance={imp})", agent=agent_id, task=task_id, imp=importance)
     finally:
         conn.close()
 
 
-def get_context(task_id: str) -> list[dict[str, Any]]:
-    """Get all agent results for a task. Returns chain of work done so far."""
+def get_context(task_id: str, include_expired: bool = False) -> list[dict[str, Any]]:
+    """Get all agent results for a task. Filters out expired facts by default."""
     conn = _ensure_db()
+    now = time.time()
     try:
-        rows = conn.execute(
-            "SELECT agent_id, result, ts FROM memory WHERE task_id=? ORDER BY ts",
-            (task_id,),
-        ).fetchall()
+        if include_expired:
+            rows = conn.execute(
+                "SELECT agent_id, result, ts, importance, category FROM memory WHERE task_id=? ORDER BY importance DESC, ts",
+                (task_id,),
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                "SELECT agent_id, result, ts, importance, category FROM memory WHERE task_id=? AND (expires_at=0 OR expires_at>?) ORDER BY importance DESC, ts",
+                (task_id, now),
+            ).fetchall()
         return [
-            {"agent": r[0], "data": json.loads(r[1]), "ts": r[2]}
+            {"agent": r[0], "data": json.loads(r[1]), "ts": r[2], "importance": r[3], "category": r[4]}
             for r in rows
         ]
     finally:

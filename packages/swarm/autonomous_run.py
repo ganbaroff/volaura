@@ -403,10 +403,22 @@ Tag [ESCALATE] if this deploy should be rolled back immediately."""
 
     bound_files_line = f"\n\n{perspective.get('bound_files', '')}" if perspective.get('bound_files') else ""
 
+    # ── Reflexion injection: agents learn from past mistakes (CEO plan 5.1) ──
+    reflexion_line = ""
+    try:
+        from swarm.reflexion import get_reflexions_for_task, get_decision_history_context
+        task_reflexions = get_reflexions_for_task(perspective.get("lens", ""), max_entries=3)
+        decision_ctx = get_decision_history_context(max_entries=2)
+        parts = [p for p in [task_reflexions, decision_ctx] if p]
+        if parts:
+            reflexion_line = "\n\n" + "\n\n".join(parts)
+    except Exception:
+        pass  # non-blocking
+
     return f"""{team_context}
 
 YOUR PERSPECTIVE: {perspective['name']}
-YOUR LENS: {perspective['lens']}{weight_line}{skills_line}{bound_files_line}
+YOUR LENS: {perspective['lens']}{weight_line}{skills_line}{bound_files_line}{reflexion_line}
 
 {task}
 

@@ -15,12 +15,12 @@ import {
 const STATUS_DOT: Record<string, string> = {
   idle: "bg-emerald-400",
   new: "bg-slate-400",
-  blocked: "bg-red-400",
+  blocked: "bg-purple-400",
   unknown: "bg-slate-600",
 };
 
 const SEVERITY_BADGE: Record<string, string> = {
-  critical: "bg-red-500/20 text-red-400 border-red-500/30",
+  critical: "bg-purple-500/20 text-purple-400 border-purple-500/30",
   high: "bg-orange-500/20 text-orange-400 border-orange-500/30",
   medium: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
   low: "bg-slate-500/20 text-slate-400 border-slate-500/30",
@@ -48,14 +48,14 @@ function AgentCard({ agent }: { agent: SwarmAgent }) {
       </div>
       <p className="text-xs text-muted-foreground line-clamp-1">{agent.last_task || "No tasks yet"}</p>
       {agent.blockers.length > 0 && (
-        <div className="flex items-center gap-1 text-xs text-red-400">
+        <div className="flex items-center gap-1 text-xs text-purple-400">
           <AlertTriangle className="size-3" />
           <span className="truncate">{agent.blockers[0]}</span>
         </div>
       )}
       <div className="flex items-center gap-3 text-xs text-muted-foreground">
         <span>{agent.tasks_completed} done</span>
-        {agent.tasks_failed > 0 && <span className="text-red-400">{agent.tasks_failed} failed</span>}
+        {agent.tasks_failed > 0 && <span className="text-purple-400">{agent.tasks_failed} failed</span>}
       </div>
     </div>
   );
@@ -139,8 +139,8 @@ export default function SwarmPage() {
           <div className="text-2xl font-bold text-emerald-400">{activeCount}</div>
           <div className="text-xs text-muted-foreground">Active</div>
         </div>
-        <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-3 text-center">
-          <div className="text-2xl font-bold text-red-400">{blockedCount}</div>
+        <div className="rounded-lg border border-purple-500/20 bg-purple-500/5 p-3 text-center">
+          <div className="text-2xl font-bold text-purple-400">{blockedCount}</div>
           <div className="text-xs text-muted-foreground">Blocked</div>
         </div>
         <div className="rounded-lg border border-slate-500/20 bg-slate-500/5 p-3 text-center">

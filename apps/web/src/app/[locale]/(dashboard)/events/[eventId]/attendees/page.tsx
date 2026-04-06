@@ -36,7 +36,7 @@ function BadgeChip({ tier }: { tier: string | null }) {
 const STATUS_COLORS: Record<string, string> = {
   approved: "text-green-400",
   pending:  "text-amber-400",
-  cancelled: "text-red-400",
+  cancelled: "text-purple-400",
   checked_in: "text-primary",
 };
 

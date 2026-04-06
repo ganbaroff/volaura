@@ -34,7 +34,7 @@ interface BulkInviteResponse {
 function StatusIcon({ status }: { status: InviteRowResult["status"] }) {
   if (status === "created") return <CheckCircle2 className="size-4 text-green-400 shrink-0" />;
   if (status === "duplicate") return <AlertCircle className="size-4 text-amber-400 shrink-0" />;
-  return <XCircle className="size-4 text-red-400 shrink-0" />;
+  return <XCircle className="size-4 text-purple-400 shrink-0" />;
 }
 
 // ── Page ───────────────────────────────────────────────────────────────────────
@@ -253,8 +253,8 @@ export default function BulkInvitePage() {
               <p className="text-2xl font-bold tabular-nums text-amber-400">{result.duplicates}</p>
               <p className="text-xs text-muted-foreground">{t("orgs.inviteDuplicate", { defaultValue: "Skipped" })}</p>
             </div>
-            <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-3 text-center">
-              <p className="text-2xl font-bold tabular-nums text-red-400">{result.errors}</p>
+            <div className="rounded-xl border border-purple-500/20 bg-purple-500/5 p-3 text-center">
+              <p className="text-2xl font-bold tabular-nums text-purple-400">{result.errors}</p>
               <p className="text-xs text-muted-foreground">{t("orgs.inviteError", { defaultValue: "Errors" })}</p>
             </div>
           </div>
@@ -271,7 +271,7 @@ export default function BulkInvitePage() {
                 <span className={cn(
                   "text-xs font-medium shrink-0",
                   row.status === "created" ? "text-green-400" :
-                  row.status === "duplicate" ? "text-amber-400" : "text-red-400"
+                  row.status === "duplicate" ? "text-amber-400" : "text-purple-400"
                 )}>
                   {row.status}
                 </span>

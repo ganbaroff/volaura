@@ -133,7 +133,7 @@ function RevealCurtain() {
       transition={{ duration: prefersReducedMotion ? 0 : 0.3 }}
       className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/95 backdrop-blur-sm"
       aria-live="polite"
-      aria-label="Revealing your AURA score"
+      aria-label={t("aura.revealingAura")}
     >
       <motion.div
         animate={prefersReducedMotion ? {} : { scale: [1, 1.08, 1], opacity: [0.6, 1, 0.6] }}
@@ -290,6 +290,16 @@ export default function AuraPage() {
       router.replace(`/${locale}/login`);
     }
   }, [auraError, locale, router]);
+
+  // Close share prompt on Escape key (accessibility: keyboard dismiss)
+  useEffect(() => {
+    if (!showSharePrompt) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setShowSharePrompt(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [showSharePrompt]);
 
   // ── Loading ──
 
@@ -481,6 +491,9 @@ export default function AuraPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              role="dialog"
+              aria-modal="true"
+              aria-label={t("aura.sharePromptTitle", { defaultValue: "Share your AURA score" })}
               className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
               onClick={() => setShowSharePrompt(false)}
             >

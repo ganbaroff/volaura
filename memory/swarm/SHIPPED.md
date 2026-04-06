@@ -1383,3 +1383,19 @@ Add to the correct session section. Never delete old entries — archive to SHIP
 | i18n keys EN + AZ | `apps/web/src/locales/*/common.json` | Move difficulty_expert adjacent to sibling keys (was orphaned). Add 6 info page keys: infoAbout, infoTimeLabel, infoRetakeAvailable, infoRetakeCooldown ({{days}}), infoNoDescription, infoContinueButton. | ✅ LIVE |
 | `assessment/info/[slug]/page.tsx` | `apps/web/src/app/[locale]/(dashboard)/assessment/info/[slug]/` | NEW: Pre-assessment info page. Fetches GET /api/assessment/info/{slug}. Shows competency label (t()), description (null-safe), time estimate, retake status. Auth redirect with returnTo. 404/429/5xx error states. isMounted on all router.replace. retakeBlocked checks both can_retake and days_until_retake. | ✅ LIVE |
 | "About" link in assessment callout | `apps/web/src/app/[locale]/(dashboard)/assessment/page.tsx` | Added inside preselectedComp && block — links to /assessment/info/{slug}. | ✅ LIVE |
+
+---
+
+## Session 87 Continuation (2026-04-06)
+
+| What | Where | Does what | Status |
+|------|-------|-----------|--------|
+| `NewUserWelcomeCard` | `dashboard/page.tsx` | 3-step journey card (assess→badge→found). Replaces NoScoreBanner. Step 1 highlighted. Single CTA, no duplicate QuickActions. | ✅ PR #9 |
+| QuickActions hidden for new users | `dashboard/page.tsx` | `hasScore && (...)` gate — removes duplicate CTA for Day 0 users | ✅ PR #9 |
+| Recent Activity section gated | `dashboard/page.tsx` | Only shown when `hasScore OR activityItems.length > 0` | ✅ PR #9 |
+| EN+AZ `dashboard.newUser.*` i18n | `locales/*/common.json` | 14 new keys for welcome card (volunteer + org variants) | ✅ PR #9 |
+| Security: analytics.py SupabaseUser | `routers/analytics.py` | POST /event no longer bypasses RLS | ✅ PR #8 merged |
+| Security: subscription GET /status SupabaseUser | `routers/subscription.py` | Read own profile via RLS, not service key | ✅ PR #8 merged |
+| Figma Variables collection | Figma `B30q4nqVq5VjdqAVVYRh3t` | 57 color tokens from globals.css synced as Figma Variables, Dark mode | ✅ live |
+| `@number-flow/react` ^0.6.0 | `apps/web/package.json` | Replaces manual RAF count-up in AuraScoreWidget | ✅ PR #7 merged |
+| `@formkit/auto-animate` ^0.9.0 | `apps/web/package.json` | Available for list animations | ✅ PR #7 merged |

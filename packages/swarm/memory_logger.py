@@ -59,7 +59,8 @@ def log_episodic_run(
         "score": score,
     }
 
-    filename = _INBOX_DIR / f"run_{int(time.time())}_{agent_id}.json"
+    safe_agent_id = agent_id.replace(":", "_").replace("/", "_").replace("\\", "_")
+    filename = _INBOX_DIR / f"run_{int(time.time())}_{safe_agent_id}.json"
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(record, f, ensure_ascii=False, indent=2)
 

@@ -90,6 +90,11 @@ Visual representation of a low-energy state uses purple or amber, never red.
 - Empty states = one warm invitation, not a list of what's missing
 - Return after absence = warm welcome, never guilt
 
+**AZ/CIS extension (cultural agent finding):** Law 3 was written from Western ADHD clinical psychology — shame of individual failure and personal inadequacy. AZ/CIS operates on collectivist shame (face/ar/həya — what will others think). The mechanics differ:
+- **Individual shame:** hide the score, treat achievement as private reflection → wrong for AZ (scores only have value when shown to someone who matters)
+- **Collective face:** showing a verified score is a legitimate honor claim, not boasting — IF the credentialing body is respected
+- **Rule:** sharing mechanics must be framed as honor claims, not privacy decisions. "Show [org] what you've earned" is shame-free in AZ context; hiding sharing as a secondary feature is shame-free in Western ADHD context. Both must be satisfied simultaneously.
+
 **Products:** ALL FIVE — every user-facing string
 
 ---
@@ -627,11 +632,46 @@ Azerbaijani culture has **higher professional shame sensitivity** than EU averag
 
 #### Language Rules (AZ)
 
-- **Formal "you" ("Siz") is mandatory** in all professional AZ copy. Never "Sən" (informal). Violation = immediate trust loss.
+- **Formal "you" ("Siz") is mandatory** in all professional AZ copy. Never "Sən" (informal). Violation = immediate trust loss. Applies to: all UI strings, error messages, push notifications, AI-generated explanations, email copy.
 - **AZ copy length:** Azerbaijani text runs 25-40% longer than EN equivalent. All UI components must accommodate this (no truncation allowed in achievement names, assessment titles, error messages).
+- **Button text max 22 characters in AZ** (cultural agent finding) — "Begin Assessment" = 16 EN chars; "Qiymətləndirməyə başla" = 21 AZ chars. Design all button containers to handle 22-char AZ labels. The ADHD checklist "≤5 tappable elements" rule applies to rendered width, not EN character count.
 - **Special characters (mandatory UTF-8):** ə ğ ı ö ü ş ç — use correct Azerbaijani characters, not Latin substitutes (e.g., "əla" not "ela", "şirkət" not "sirket"). Substitution = perceived as disrespectful/foreign.
-- **Date format:** DD.MM.YYYY in AZ locale (not MM/DD or ISO 8601 in user-facing strings).
-- **"Xahiş" (please) overuse:** excessive use = perceived as weak. Use direct but warm register instead: "Məlumatınızı daxil edin" not "Zəhmət olmasa məlumatınızı daxil etməyinizi xahiş edirik."
+- **Date format (UI):** DD.MM.YYYY in compact contexts. **Date format (certificates/badges):** `DD [month_name_AZ] YYYY-cı/ci/cu/cü il` with correct vowel harmony suffix — "06 aprel 2026-cı il." The `-cı/-ci/-cu/-cü` suffix is mandatory; omitting it reads as grammatically incorrect to native speakers and signals a foreign/automated origin.
+- **Number format (AZ locale):** use comma as decimal separator — score displays must show "78,4" not "78.4" in AZ locale. AURA scores, percentages, and all numeric displays subject to this.
+- **"Xahiş" (please) overuse:** excessive use = perceived as weak. Use direct but warm register.
+- **Russian as first-class language** (cultural agent finding): a significant AZ professional segment — particularly those educated before 1991 or working in Russian-language business contexts — prefers Russian. Russian is NOT a fallback; it is a primary locale. Language selector must be accessible at signup (not buried in settings) and must offer AZ, RU, and EN as equal options.
+
+#### ADHD Language Ban in AZ/CIS Copy (P0 — cultural agent finding)
+
+**Never use "ADHD," "neurodivergent," "cognitive load," or clinical psychology framing in any AZ-facing or CIS-facing user or B2B copy.** This is a P0 pre-launch requirement.
+
+- In Azerbaijan, ADHD is underdiagnosed (2-4x lower than Western Europe), clinically stigmatized, and associated with childhood behavioral problems rather than adult professional identity. "Designed for ADHD brains" reads as "designed for people with a problem" to the AZ professional audience.
+- The ADHD design principles (all 5 Laws, the 37-item checklist, the energy adaptation system) are the RIGHT UX science — apply them silently.
+- **B2B framing:** translate checklist benefits to business metrics only. "Reduces assessment abandonment by 40%, increases completion quality" — never "ADHD-optimized."
+- **User-facing framing:** "Designed to respect your time and energy. No pressure, no judgment, just your actual skills." Productivity/efficiency framing, NOT clinical accommodation.
+- **Energy adaptation system:** present as "Focus Mode" or "Adaptive Assessment" — a precision tool for any user, not an accommodation for a condition.
+- This rule does NOT mean hiding the design principles from internal documents, the Constitution, or English-language markets where ADHD self-identification is a positive professional identity. It applies specifically to AZ/CIS-facing copy.
+
+#### AZ/CIS Trust Architecture (cultural agent finding)
+
+AZ is a high-context, relationship-trust culture. The default assumption about an unknown platform is suspicion. Trust flows through chains: known org endorsement → network presence → then individual experience.
+
+**Three mandatory trust signals before any data collection:**
+1. **Visible AZ org logos** — show 3-5 recognizable Azerbaijani organizations on landing page before trust pill strip. Logo-based, not text testimonials.
+2. **Referral-first onboarding** — "Invited by [Person's Name]?" as default opening option for new users. Arriving via trusted person's invitation immediately elevates platform credibility.
+3. **Employer visibility guarantee** on assessment START screen (not privacy policy): "Your employer cannot see your scores unless you share them." One prominent sentence, not buried in settings.
+
+**AI processing disclosure reframe for AZ:** The G18/G24 disclosures currently read as legal checkboxes. For AZ context: "Who evaluates you: an independent AI system, not a person you know." This removes the fear of personal bias — which is a live concern in relationship-heavy professional culture where scoring by known people carries favoritism risk.
+
+#### AZ/CIS Social Proof Without Leaderboards (cultural agent finding)
+
+G9 (no leaderboards) is correct for ADHD/psychological safety. But it leaves a gap: AZ professional culture requires visible community proof of real users before individuals trust the platform.
+
+**Replacement mechanics (no names, no rankings, still ADHD-safe):**
+- **Community Signal widget** (VOLAURA Rule 25): aggregate anonymized stats by city/sector — "843 Baku professionals assessed · 62 in Finance." No names, no ranks, but visible platform presence proof. Must exist before AZ launch.
+- **Org Hall page**: publicly visible page showing which organizations have used VOLAURA for talent assessment. Org logos only, no user data, no scores. Stat: "X assessments conducted with [Org]." Serves as B2B social proof for other organizations considering adoption.
+- **Opt-in named testimonials** for early B2B customers — allow them to be publicly credited. AZ decision-makers trust "This is what Nigar from Kapital Bank said" over any AI-generated copy. Named testimonials (with explicit consent) are a first-class trust asset, not a privacy risk.
+- **Honor mechanism for sharing:** the "Share with organization" button should be prominently placed and framed as an honor claim — "Show [org name] what you've earned" — not as a privacy decision. In face-culture AZ, sharing credentials publicly is a legitimate status action when the credentialing body is respected.
 
 #### AZ/CIS Accessibility Specifics
 
@@ -674,7 +714,14 @@ Azerbaijani culture has **higher professional shame sensitivity** than EU averag
     - **DIF monitoring as B2B obligation:** if VOLAURA detects that its scoring systematically underscores a protected group (disability, gender, ethnicity) that results in discriminatory hiring patterns, VOLAURA bears contributory liability. DIF audit (Mantel-Haenszel) is moved from Months 1-3 to **pre-launch P0** — not because of psychometric quality alone, but because of labor law exposure.
     - If ADHD-adaptive design fails to prevent ADHD-related score depression → a candidate with ADHD who is rejected on AURA score basis has an Article 16 AZ Labor Code claim against the using organization AND a GDPR Art. 22 claim against VOLAURA.
 17. DeCE "Show Your Work" endpoint (`/aura/me/explanation`) is a primary B2B differentiator — must be surfaced in org volunteer profiles as a 2-sentence competency evidence summary.
-21. **Moment of Truth Rule (competitive agent finding):** The DeCE 2-sentence behavioral evidence summary is the ONLY product feature that makes "verified, not claimed" viscerally true to a B2B buyer in 30 seconds. It must appear in the **same view** as the AURA score in org discovery — not behind a click, not on a separate page. Every B2B feature that ships should either (a) funnel toward this evidence moment or (b) have a documented reason why it doesn't. If the evidence summary is not showing for a candidate, their profile must visually communicate this absence (not silently omit it).
+21. **Moment of Truth Rule (competitive agent finding):** The DeCE 2-sentence behavioral evidence summary is the ONLY product feature that makes "verified, not claimed" viscerally true to a B2B buyer in 30 seconds.
+24. **Credential Display Split (cultural agent finding):** The SAME score is displayed differently depending on the viewer context:
+    - **Public profile (what orgs and others see):** score number FIRST ("78.4 Communication"), then tier name ("Gold-level"). Orgs need a credible number to anchor trust — descriptive titles alone sound self-assigned in AZ professional culture.
+    - **Private dashboard (what the user sees):** identity title FIRST ("Gold-level Communicator"), score as subtitle ("AURA 78.4"). This is the Crystal Law 4 / overjustification principle for internal motivation.
+    - **Credential sharing card / PDF export:** include institutional authority marker — "Gold-level Communicator · Assessed by VOLAURA · [Date AZ format]". The platform name acts as the credentialing institution. This is what makes it shareable without feeling self-promotional.
+25. **Community Signal (cultural agent finding):** A city/sector aggregate widget must exist before AZ launch. Shows: "843 Baku professionals assessed · 62 in Finance." No names, no individual scores, no rankings. Purely aggregate social legitimacy signal. ADHD-safe (no comparison) but fills the trust vacuum that G9's no-leaderboard rule creates.
+26. **AZ B2B Demo-First (cultural agent finding):** In AZ/CIS markets, the B2B sale begins with a human conversation, not a product trial. The platform must have a "Request a Demo" flow that routes to a personal meeting. Do NOT attempt self-serve freemium conversion for AZ enterprise accounts. The DeCE explanation should be positioned as: "If a candidate asks why they weren't selected, you can show them the specific skill evidence — documented, dated, AI-assessed." This is a risk management argument for AZ HR managers, not an algorithm detail.
+27. **Org Hall page (cultural agent finding):** A publicly visible page showing which organizations have conducted VOLAURA assessments. Org logos only, no user data, "X assessments conducted." Primary B2B social proof mechanism for AZ market where reference selling dominates. It must appear in the **same view** as the AURA score in org discovery — not behind a click, not on a separate page. Every B2B feature that ships should either (a) funnel toward this evidence moment or (b) have a documented reason why it doesn't. If the evidence summary is not showing for a candidate, their profile must visually communicate this absence (not silently omit it).
 22. **Org Outcome Flywheel:** When an org engages or hires a VOLAURA user (tracked with explicit user consent via a post-event feedback prompt), the outcome is fed back into AURA score validity calibration. This is the most defensible long-term network effect in the platform. Must be an explicit product requirement tracked as a metric, not a future feature. Even a simple "Did [Name] perform as expected at [Event]? 1-5" rating from org coordinator, stored in `character_events`, makes scores more accurate over time.
 23. **Crystal Economy Launch Sequencing:** Crystals must not launch without at least one active spend path. If fewer than 2 products are shipping crystal spends simultaneously: (a) communicate transparently to users that spend features are coming, (b) hold crystals in a deferred queue with no expiry, (c) provide at least one temporary local spend mechanic within the active product. Never create a "earn crystals with no place to spend them" state — it is a trust break, not a deferred reward.
 18. ASR Fairness Rule: language-detected routing (langdetect on first 3s or profile locale as prior). Scores under Whisper before routing ships are flagged and queued for re-evaluation.
@@ -950,6 +997,11 @@ These 17 guardrails apply to all 5 products. No exceptions.
 | G37 | Open Badges 3.0 VC compliance before B2B Tier 3: badges must include W3C VC data model fields, cryptographic proof (issuer DID or equivalent), machine-readable Achievement objects, and a credentialStatus revocation endpoint connected to the AURA decay mechanism | Open Badges 3.0, W3C VC | VOLAURA |
 | G38 | Moment of Truth placement: DeCE 2-sentence behavioral evidence summary must appear in the SAME VIEW as the AURA score in org discovery — not behind a click, not on a separate page. This is the primary B2B differentiator. If evidence is missing for a candidate, the UI must show "Evidence pending" rather than silently omitting | Competitive agent finding | VOLAURA |
 | G39 | Org outcome feedback loop: when an org rates a VOLAURA user's performance post-event (explicit opt-in), the outcome is stored in character_events and fed into AURA validity calibration. This is a product requirement, not a future feature. Simple 1-5 rating from org coordinator is sufficient. | Competitive agent finding | VOLAURA |
+| G40 | ADHD clinical language ban in AZ/CIS copy: never use "ADHD," "neurodivergent," "cognitive load," or clinical psychology framing in any AZ/CIS-facing user or B2B copy. The ADHD design principles are applied silently. B2B framing = business metrics ("40% lower abandonment"). User framing = "Focus Mode," "designed to respect your energy" | Cultural agent finding | VOLAURA, MindShift (AZ/CIS markets) |
+| G41 | Russian as first-class locale: language selector accessible at signup with AZ, RU, EN as equal options. Russian is not a fallback. Significant AZ professional segment is Russian-preferring — particularly educated pre-1991 or working in Russian-language B2B contexts | Cultural agent finding | VOLAURA, MindShift |
+| G42 | AZ B2B requires human-first sales: "Request Demo" flow must route to human meeting before any automated onboarding. No self-serve freemium conversion attempts for AZ/CIS enterprise accounts | Cultural agent finding | VOLAURA (B2B) |
+| G43 | Credential display split: public profile shows score number first (credibility for viewer), private dashboard shows identity title first (motivation for holder). Shareable card includes institutional marker: "[Tier] · Assessed by VOLAURA · [Date]" | Cultural agent finding | VOLAURA |
+| G44 | Community Signal widget: must exist before AZ launch. Shows aggregated anonymized stats by city/sector ("843 Baku professionals assessed · 62 in Finance"). No names, no rankings. Fills trust vacuum from G9 no-leaderboard rule without triggering social comparison | Cultural agent finding | VOLAURA |
 
 ---
 
@@ -1061,6 +1113,7 @@ These are measured monthly:
 | v1.3 | 2026-04-06 | **Python swarm audit, 14 models (Gemini/Groq/DeepSeek), 2 rounds.** Added: Legal & Compliance Framework (GDPR Art.13/17/20, EU AI Act Annex III high-risk classification, Age gate 16+/13+, Data Retention Schedule, AZ Labor Code framing). Added: Cultural Localization (AZ/CIS trust timing, wasita framing, shame-free AZ copy, Siz-form mandate, 25-40% text length budget). New Guardrails G24-G32 (legal, trust, WCAG, offline, portability, purple ambiguity rule). Conflict resolution: purple ambiguity resolved via G32 (copy layer required alongside color change). Memory logger Windows bug fixed (colon in model IDs). |
 | v1.4 | 2026-04-06 | **Legal agent deep-audit, 9 findings.** Critical additions: GDPR Art. 22 automated employment decision-making (explicit consent + human review — G33), GDPR Art. 9 health data for energy/burnout tracking (G34), AZ PDPA SADPP registration + cross-border transfer assessment for US hosting (G36), Open Badges 3.0 VC technical compliance spec (cryptographic proof, issuer DID, revocation endpoint connected to decay — G37), formal AURA score grievance mechanism (ISO 10667-2 Section 7 — G35), labor law liability allocation (B2B contracts must name org as decision-maker). **Pre-launch P0 reclassification:** DIF bias audit moved from Months 1-3 (labor law exposure), voice data DPA verification moved from Months 1-3 (biometric = GDPR Art. 9). Total guardrails: G1-G37. |
 | v1.5 | 2026-04-06 | **Competitive intelligence agent, 7 findings.** New Crystal Law 8: Never Launch Earn Without Spend Path (historical precedent from Roblox/Yahoo Answers failure modes). VOLAURA Rules 21-23: Moment of Truth (DeCE evidence in same view as score — G38), Org Outcome Flywheel (performance ratings → IRT validity — G39), Crystal Economy Launch Sequencing. Conflict resolution: Credly + LinkedIn response (complement, not compete; DeCE evidence = the differentiator), LinkedIn scale asymmetry acknowledged. GTM gaps noted (ICP, pricing, chicken-and-egg) — flagged as CEO strategic decisions, not constitution rules. Total guardrails: G1-G39. |
+| v1.6 | 2026-04-06 | **Cultural intelligence agent, 7 findings.** P0 additions: ADHD clinical language ban in AZ/CIS copy — "ADHD"/"neurodivergent" never in AZ-facing user or B2B copy, applied silently as UX science (G40). AZ B2B requires human-first sales (demo-first, no self-serve enterprise — G42). Extended language rules: Russian as first-class locale (G41), AZ date format for certificates (DD [month_AZ] YYYY-cı/ci/cu/cü il), button text max 22 AZ chars, number decimal comma. Extended trust architecture: referral-first onboarding, employer visibility guarantee on assessment start screen, AZ org logos on landing. Credential display split (public: number-first; private: identity-first — G43). Community Signal widget (843 Baku professionals, aggregate by sector, no names — G44, must exist before AZ launch). Org Hall page (VOLAURA Rule 27). Law 3 extended with collectivist shame mechanics (face/ar/həya): sharing as honor claim vs privacy decision — both Western and AZ contexts must be satisfied simultaneously. New VOLAURA Rules 24-27. Total guardrails: G1-G44. |
 
 **Next scheduled review:** 2026-07-06 (quarterly)
 **Trigger for unscheduled review:** New research added to CEO corpus, or metric violation found.

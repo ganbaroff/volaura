@@ -347,14 +347,14 @@ async def _handle_proposals(db, chat_id: int | str) -> None:
             msg += f"{sev} `{pid}` {p.get('title', '?')}\n"
             msg += f"   Agent: {p.get('agent', '?')} | Votes: +{p.get('votes_for', 0)}/-{p.get('votes_against', 0)}\n\n"
 
-        # Inline keyboard buttons for each proposal
+        # Inline keyboard: ✅ Approve / 🚀 Execute (triggers CI) / ❌ Reject
         buttons = []
         for p in pending[:5]:
             pid = p.get("id", "?")[:8]
             buttons.append([
-                {"text": f"✅ {pid}", "callback_data": f"act:{pid}"},
-                {"text": f"❌ {pid}", "callback_data": f"dismiss:{pid}"},
-                {"text": f"⏸️ {pid}", "callback_data": f"defer:{pid}"},
+                {"text": "✅ Approve", "callback_data": f"act:{pid}"},
+                {"text": "🚀 Execute", "callback_data": f"execute:{pid}"},
+                {"text": "❌ Reject", "callback_data": f"dismiss:{pid}"},
             ])
         keyboard = {"inline_keyboard": buttons}
         await _send_message(chat_id, msg, reply_markup=keyboard)
@@ -406,6 +406,69 @@ async def _handle_proposal_action(db, chat_id: int | str, action: str, proposal_
 
     except Exception as e:
         await _send_message(chat_id, f"⚠️ Ошибка: {str(e)[:100]}")
+
+
+async def _execute_proposal(db, chat_id: int | str, proposal_id: str) -> None:
+    """Execute a proposal by triggering GitHub Actions coordinator workflow."""
+    import json as _json
+    proposals_path = Path(__file__).parent.parent.parent.parent.parent / "memory" / "swarm" / "proposals.json"
+
+    try:
+        with open(proposals_path, "r", encoding="utf-8") as f:
+            data = _json.load(f)
+
+        found = None
+        for p in data.get("proposals", []):
+            if p.get("id", "").startswith(proposal_id):
+                found = p
+                break
+
+        if not found:
+            await _send_message(chat_id, f"⚠️ Proposal `{proposal_id}` не найден.")
+            return
+
+        # Mark as executing
+        found["status"] = "executing"
+        found["ceo_decision_at"] = datetime.now(timezone.utc).isoformat()
+        import tempfile
+        tmp_fd, tmp_path = tempfile.mkstemp(dir=proposals_path.parent, suffix=".json")
+        try:
+            with os.fdopen(tmp_fd, "w", encoding="utf-8") as tmp_f:
+                _json.dump(data, tmp_f, indent=2, ensure_ascii=False)
+            os.replace(tmp_path, proposals_path)
+        except Exception:
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
+
+        # Trigger GitHub Actions workflow_dispatch
+        import httpx
+        gh_token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN", "")
+        if not gh_token:
+            await _send_message(chat_id, f"🚀 Proposal `{proposal_id}` помечен для исполнения.\n⚠️ GITHUB_TOKEN не настроен — автозапуск невозможен.\n\nВручную: `gh workflow run 'Swarm Daily Autonomy' -f mode=coordinator`")
+            return
+
+        task_desc = f"{found.get('title', '')}. {found.get('content', '')[:300]}"
+        async with httpx.AsyncClient(timeout=15) as client:
+            resp = await client.post(
+                "https://api.github.com/repos/ganbaroff/volaura/actions/workflows/swarm-daily.yml/dispatches",
+                headers={
+                    "Authorization": f"Bearer {gh_token}",
+                    "Accept": "application/vnd.github.v3+json",
+                },
+                json={
+                    "ref": "main",
+                    "inputs": {"mode": "coordinator"},
+                },
+            )
+
+        if resp.status_code in (204, 200):
+            await _send_message(chat_id, f"🚀 *Executing proposal `{proposal_id}`*\n\n_{found.get('title', '')}_\n\nWorkflow запущен. Результат придёт в следующем сообщении.")
+            await _save_message(db, "ceo_to_bot", f"execute {proposal_id}: {found.get('title', '')}", "proposal_execute")
+        else:
+            await _send_message(chat_id, f"⚠️ GitHub Actions не запустился (HTTP {resp.status_code}). Proposal помечен для ручного исполнения.")
+
+    except Exception as e:
+        await _send_message(chat_id, f"⚠️ Execute error: {str(e)[:150]}")
 
 
 async def _handle_agents(chat_id: int | str) -> None:
@@ -919,7 +982,9 @@ async def telegram_webhook(
         # Parse: "act:abc123" / "dismiss:abc123" / "defer:abc123"
         if ":" in cb_data:
             action, pid = cb_data.split(":", 1)
-            if action in ("act", "dismiss", "defer"):
+            if action == "execute":
+                await _execute_proposal(db, cb_chat_id, pid)
+            elif action in ("act", "dismiss", "defer"):
                 await _handle_proposal_action(db, cb_chat_id, action, pid)
 
         return JSONResponse({"ok": True})

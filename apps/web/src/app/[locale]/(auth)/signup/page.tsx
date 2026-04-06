@@ -216,6 +216,7 @@ function SignupForm() {
               <button
                 key={type}
                 type="button"
+                aria-pressed={accountType === type}
                 onClick={() => setAccountType(type)}
                 className={`rounded-lg border-2 p-3 text-left transition-colors ${
                   accountType === type
@@ -237,8 +238,9 @@ function SignupForm() {
         {/* Org type (only for organizations) */}
         {accountType === "organization" && (
           <div className="space-y-1.5">
-            <label className="text-sm font-medium">{t("auth.orgTypeLabel")}</label>
+            <label htmlFor="org-type" className="text-sm font-medium">{t("auth.orgTypeLabel")}</label>
             <select
+              id="org-type"
               value={orgType}
               onChange={(e) => setOrgType(e.target.value as OrgType)}
               required
@@ -371,7 +373,7 @@ function SignupForm() {
         </label>
 
         {error && (
-          <p className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</p>
+          <p role="alert" className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</p>
         )}
 
         {(!privacyConsented || !ageConfirmed) && !loading && (

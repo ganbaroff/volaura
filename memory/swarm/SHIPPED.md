@@ -6,6 +6,56 @@
 
 ---
 
+## Session 87 (2026-04-06) — Persona Audit + Design System v2
+
+### Security Fixes
+| Item | What it does | Status |
+|------|-------------|--------|
+| character.py | All 4 endpoints SupabaseAdmin → SupabaseUser (crystal economy RLS enforced) | Committed |
+| leaderboard.py /me | aura_scores → aura_scores_public view (RLS-safe) | Committed |
+| profiles.py | get_my_profile_views, get_my_verifications, create_verification_link → SupabaseUser | Committed |
+
+### UX Fixes (from 10 persona agents)
+| Item | What it does | Status |
+|------|-------------|--------|
+| Profile page | Added numeric AURA score + badge tier pill + "Discoverable" indicator | Committed |
+| Discover page | Complete AZ translations (was 100% English), competency filter chips | Committed |
+| Signup page | Disabled-button UX hint when checkboxes unchecked | Committed |
+| Assessment selection | Competency descriptions on selection + onboarding (AZ+EN) | Committed |
+| Assessment results | Counter animation 1500→800ms | Committed |
+| AZ i18n | Fixed broken template vars ({{gün}}→{{days}}, {name}→{{name}}) | Committed |
+
+### Design System v2
+| Item | What it does | Status |
+|------|-------------|--------|
+| Error tokens | red → purple (#d4b4ff/#3d1a6e) — Research #2/#6 RSD safe | Committed |
+| Warning tokens | Added amber (#e9c400) | Committed |
+| CSS utilities | mesh-gradient-hero, badge-glow-*, reduced motion media query | Committed |
+| useMotionPreference | New hook — Framer Motion reduced motion wrapper | Committed |
+| REDESIGN-BRIEF-v2.md | Design brief with 37-item ADHD checklist | Created |
+
+### Figma
+| Item | What it does | Status |
+|------|-------------|--------|
+| "Volaura Design System — Redesign v2" | Created in Figma (Pro plan) | Created |
+| 6 screens | Design System, Dashboard Empty, Dashboard Populated, Signup, Assessment Results, AURA Score Card | Created |
+| Research-corrected | Identity framing, purple errors, empty states — all per agent research | Applied |
+
+### Documentation
+| Item | What it does | Status |
+|------|-------------|--------|
+| feedback_adhd_communication.md | Russian storytelling, ADHD rules | Created |
+| feedback_research_before_build.md | research → agents → synthesis → build | Created |
+| feedback_proactive_cto.md | CTO proposes, not just executes | Created |
+| handoff_prompt_for_other_chats.md | Cross-chat communication rules | Created |
+| reference_figma_features_2026.md | Figma new features adoption list | Created |
+| REDESIGN-BRIEF-v2.md | Full design brief from 3 specialist agents | Created |
+
+### Agents Used (13 total)
+Leyla, Nigar×2, Kamal×2, Cheater, Security×2, Accessibility×2, UX Lead, Frontend Engineer, ADHD Specialist, Visual Researcher, Figma Researcher
+
+---
+
 ## Session 86 (2026-04-06) — Agent Activation + Cultural/UX Fixes + Swarm Restructure
 
 ### Code Changed

@@ -542,6 +542,34 @@ Never elaborate. Never discuss feasibility. Just record and redirect.
 → Каждый раз когда CEO добавляет )))) к вопросу — он уже проверил и знает ответ.
 → Не оправдывайся. Не объясняй. Открой файл. Запиши. Покажи diff.
 
+---
+## Session 87 Patterns (2026-04-06 — Design System v2)
+
+### Research Before Build — PROVEN
+**Context:** Session 87 loaded agents with CEO research context before any design/architecture work.
+**Rule:** Always load relevant agents and feed them CEO's research findings before starting design or architecture decisions. Research informs design, not the other way around.
+**Why it works:** Prevents building based on assumptions. CEO's research contains user insights and market context that agents need to produce relevant recommendations.
+
+### Identity Framing — PROVEN
+**Context:** User identity as headline ("Gold-level Communicator"), score as supporting context ("AURA 78.4"). Not score-first.
+**Rule:** Always lead with identity/achievement label, then provide the numeric score as context. Users identify with titles, not numbers.
+**Why it works:** "Gold-level Communicator" is memorable and shareable. "78.4" is not. Identity framing drives engagement and word-of-mouth. Score validates the identity, not the other way around.
+
+### Purple not Red — PROVEN (Accessibility)
+**Context:** Error states use purple/amber palette, never red. Red triggers Rejection Sensitive Dysphoria (RSD) in ADHD users.
+**Rule:** All error, warning, and failure states must use purple or amber tones. Red is banned from error UI. This is a design system token decision, not a per-component choice.
+**Why it works:** ADHD users (significant portion of target audience) experience RSD — red error states trigger emotional shutdown. Purple/amber communicates "needs attention" without triggering threat response.
+
+### One CTA per Empty State — PROVEN
+**Context:** New users landing on dashboard saw multiple widget slots competing for attention. Replaced with single warm action.
+**Rule:** Empty states for new users must have exactly one clear call-to-action. No competing widgets, no multiple paths. One warm, inviting action that starts their journey.
+**Why it works:** Choice paralysis kills conversion. New users need a single obvious next step, not a dashboard of empty boxes. "Take your first assessment" > 6 empty widget placeholders.
+
+### Figma Trails Code — PROVEN
+**Context:** STITCH designs exist in code already. Figma used for NEW screens and documentation, not as intermediary for existing designs.
+**Rule:** Use Figma for designing new screens and documenting the design system. Do NOT use Figma as an intermediary step for screens that already have STITCH-generated code. Code is the source of truth for existing screens.
+**Why it works:** Avoids double work. STITCH outputs production-ready code. Recreating it in Figma first just to hand it back to code is wasted effort. Figma adds value for NEW designs and for design system documentation (Variables, Code Connect).
+
 ### Correct agent launch pattern (Session 32, agent-launch-template.md)
 → OLD (wrong): agent gets text summary of files
 → NEW (correct): agent reads ACTUAL files via Read/Grep/Glob tools

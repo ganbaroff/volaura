@@ -446,6 +446,21 @@
     "orgZeroHeadline": "Təsdiqlənmiş kadrlar sizi gözləyirlər.",
     "orgZeroSub": "Peşəkarlar real bacarıqları əsasında dəyərləndirilir. İştirakçı profillərini nəzərdən keçirin.",
     "orgZeroCta": "İstedadları araşdırın →",
+    "newUser": {
+      "headline": "Bacarıqlarını sübut et. AURA-nı qazan.",
+      "sub": "Şirkətlər CV deyil, AURA balına görə axtarış aparır.",
+      "cta": "İlk qiymətləndirməni başla →",
+      "step1": "5 dəqiqəlik adaptiv qiymətləndirmə keç",
+      "step2": "Nişanını qazan (Bürünc → Platin)",
+      "step3": "Təşkilatlar seni avtomatik tapsın",
+      "stepsLabel": "Sənin yolun",
+      "orgHeadline": "Sertifikatlaşdırılmış istedad gözləyir.",
+      "orgSub": "Adaptiv qiymətləndirmə ilə yoxlanılmış peşəkarları araşdırın.",
+      "orgCta": "Sertifikatlaşdırılmış istedadları araşdırın →",
+      "orgStep1": "Təşkilat profilinizi tamamlayın",
+      "orgStep2": "AURA balına görə istedad axtarın",
+      "orgStep3": "Ən yaxşıları tədbirlərinizə dəvət edin"
+    },
     "sharePrompt": {
       "title": "Sizin AURA profiliniz yayımdadır!",
       "desc": "Onu şəbəkənizlə paylaşın və təşkilatlar sizi tapa bilsin.",

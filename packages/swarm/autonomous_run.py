@@ -603,6 +603,9 @@ JSON format:
         )
         raw = resp.text or ""
         data = json.loads(raw)
+        # Gemini sometimes returns [{}] instead of {} — unwrap
+        if isinstance(data, list):
+            data = data[0] if data else {}
 
         criteria = {
             "specificity": bool(data.get("specificity")),
@@ -1217,15 +1220,16 @@ async def main():
         pulse = PulseCognitiveLoop(state_path)
         pulse.load_emotions()
         for p in proposals:
-            agent_name = p.get("agent", "unknown").lower().replace(" ", "-") + "-agent"
-            severity = p.get("severity", "medium")
-            event_type = "security" if severity == "critical" else "code_change"
+            agent_name = (p.agent if hasattr(p, 'agent') else p.get("agent", "unknown") if isinstance(p, dict) else "unknown").lower().replace(" ", "-") + "-agent"
+            sev = p.severity.value if hasattr(p, 'severity') and hasattr(p.severity, 'value') else (p.get("severity", "medium") if isinstance(p, dict) else "medium")
+            event_type = "security" if sev == "critical" else "code_change"
+            title = p.title if hasattr(p, 'title') else (p.get("title", "") if isinstance(p, dict) else "")
             pulse.process_event(
                 agent_name=agent_name,
                 actor="agent",
                 event_type=event_type,
                 expected="no issues",
-                actual=f"found: {p.get('title', '')}",
+                actual=f"found: {title}",
                 confidence=0.7,
             )
         pulse.save_emotions()

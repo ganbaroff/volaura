@@ -12,7 +12,7 @@ const FALLBACK_STATS = {
   totalHours: 0,
 };
 
-function useCountUp(target: number, duration = 2000): number {
+function useCountUp(target: number, duration = 800): number {
   const [count, setCount] = useState(0);
   const startRef = useRef<number | null>(null);
   const rafRef = useRef<number | null>(null);

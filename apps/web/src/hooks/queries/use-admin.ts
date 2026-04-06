@@ -229,3 +229,36 @@ export function useDecideProposal() {
     },
   });
 }
+
+export type SwarmFinding = {
+  agent_id: string;
+  task_id: string;
+  ts: number;
+  importance: number;
+  category: string;
+  severity: string;
+  summary: string;
+  recommendation: string;
+  files: string[];
+  confidence: number;
+};
+
+export function useSwarmFindings(category?: string, minImportance?: number) {
+  const getToken = useAuthToken();
+
+  return useQuery<{ findings: SwarmFinding[]; total: number; db_exists: boolean }, ApiError>({
+    queryKey: ["admin", "swarm", "findings", category, minImportance],
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      const params = new URLSearchParams();
+      if (category) params.set("category", category);
+      if (minImportance !== undefined) params.set("min_importance", String(minImportance));
+      const qs = params.toString() ? `?${params}` : "";
+      return apiFetch(`/api/admin/swarm/findings${qs}`, { token });
+    },
+    staleTime: 30_000,
+    refetchInterval: 60_000,
+    retry: 1,
+  });
+}

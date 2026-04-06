@@ -38,7 +38,7 @@ from loguru import logger
 from .agent_hive import AgentStatus, HiveExaminer
 from .agent_memory import AgentMemory
 from .memory import DecisionMemory
-from .memory_logger import log_episodic_run
+from .memory_logger import inject_global_memory, log_episodic_run
 from .middleware import MiddlewareChain
 from .pm import PMAgent
 from .providers import ProviderRegistry
@@ -186,11 +186,97 @@ class SwarmEngine:
             kept.append(prov)
         return kept
 
+    def _maybe_consolidate_memory(self) -> None:
+        """Auto-trigger sleep_cycle_consolidation when inbox is full enough.
+
+        Checks episodic inbox — if 10+ entries, runs consolidation with Gemini.
+        This is the "sleep daemon" that turns raw agent logs into Global_Context.md.
+        Without this, agents never learn from past runs.
+        """
+        from .memory_logger import _INBOX_DIR
+
+        try:
+            inbox_files = list(_INBOX_DIR.glob("*.json"))
+        except Exception:
+            return
+
+        if len(inbox_files) < 10:
+            return
+
+        logger.info(
+            "Auto-consolidation: {n} inbox entries — running sleep cycle",
+            n=len(inbox_files),
+        )
+
+        # Use Gemini client for consolidation if available
+        gemini_key = os.environ.get("GEMINI_API_KEY", "")
+        if not gemini_key:
+            logger.warning("Auto-consolidation skipped: GEMINI_API_KEY not set")
+            return
+
+        try:
+            from google import genai
+            from .memory_logger import sleep_cycle_consolidation
+
+            client = genai.Client(api_key=gemini_key)
+            insights = sleep_cycle_consolidation(client)
+            if insights:
+                logger.info("Auto-consolidation: {n} insight blocks written to Global_Context.md", n=insights)
+        except Exception as e:
+            logger.warning("Auto-consolidation failed: {e}", e=str(e)[:200])
+
+    def _load_ecosystem_context(self) -> str:
+        """Load ecosystem map + accumulated global memory for agent prompt injection.
+
+        This closes the broken chain: agents now read accumulated knowledge from
+        Global_Context.md (consolidated from episodic runs) and ECOSYSTEM-MAP.md
+        (the living map of all 5 products). Without this, agents work blind.
+
+        Fixed 2026-04-06: CEO caught that inject_global_memory() existed but was
+        never called. This method is now wired into decide() before every run.
+        """
+        context_parts: list[str] = []
+
+        # 1. Ecosystem map — what agents MUST know about all 5 products
+        ecosystem_map = Path(__file__).parent / "memory" / "ECOSYSTEM-MAP.md"
+        if ecosystem_map.exists():
+            try:
+                text = ecosystem_map.read_text(encoding="utf-8").strip()
+                # Truncate to ~3000 chars to not blow up prompt budget
+                if len(text) > 3000:
+                    text = text[:3000] + "\n[... truncated — read full ECOSYSTEM-MAP.md for details]"
+                context_parts.append(f"--- ECOSYSTEM MAP ---\n{text}")
+            except Exception:
+                pass
+
+        # 2. Global Context — consolidated knowledge from past swarm runs
+        global_ctx = inject_global_memory("")
+        if global_ctx.strip():
+            context_parts.append(global_ctx)
+
+        return "\n\n".join(context_parts) if context_parts else ""
+
     async def decide(self, config: SwarmConfig) -> SwarmReport:
         """Make a decision. Returns the full SwarmReport."""
         if not self.providers:
             logger.error("No providers available.")
             return SwarmReport(config=config)
+
+        # v9: Inject ecosystem context + accumulated memory into agent prompts.
+        # This ensures every agent sees: ECOSYSTEM-MAP (5 products, Constitution laws),
+        # Global_Context (consolidated findings from past runs).
+        eco_context = self._load_ecosystem_context()
+        if eco_context:
+            existing = config.context or ""
+            config = SwarmConfig(
+                question=config.question,
+                context=f"{existing}\n\n{eco_context}" if existing else eco_context,
+                constraints=config.constraints,
+                domain=config.domain,
+                stakes=config.stakes,
+                paths=config.paths,
+            )
+            logger.info("Ecosystem context injected ({n} chars)", n=len(eco_context))
 
         # v8: Domain-aware provider selection via TeamLead.
         # GENERAL → full pool (round-robin, no domain bias).
@@ -325,6 +411,11 @@ class SwarmEngine:
                 "ResearchLoop: {n} topics proposed (call engine.research(report) to execute)",
                 n=len(report.research_requests),
             )
+
+        # v9: Auto-consolidate episodic memory after significant runs.
+        # If inbox has 10+ entries, run sleep_cycle_consolidation to update Global_Context.md.
+        # This keeps the knowledge loop alive: agents write → consolidate → inject into next run.
+        self._maybe_consolidate_memory()
 
         return report
 

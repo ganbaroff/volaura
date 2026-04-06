@@ -403,6 +403,19 @@ Tag [ESCALATE] if this deploy should be rolled back immediately."""
 
     bound_files_line = f"\n\n{perspective.get('bound_files', '')}" if perspective.get('bound_files') else ""
 
+    # ── Web search results injection (Tavily — agents can Google) ───────────
+    web_search_line = ""
+    tavily_key = os.environ.get("TAVILY_API_KEY", "")
+    search_query = perspective.get("web_search_query")
+    if tavily_key and search_query:
+        try:
+            from swarm.tools.web_search import web_search_sync
+            results = web_search_sync(search_query, max_results=3)
+            if results:
+                web_search_line = f"\n\nWEB SEARCH RESULTS for '{search_query}':\n{results}"
+        except Exception as e:
+            logger.debug(f"Web search skipped for {perspective.get('name', '?')}: {e}")
+
     # ── Reflexion injection: agents learn from past mistakes (CEO plan 5.1) ──
     reflexion_line = ""
     try:
@@ -526,10 +539,20 @@ async def _call_agent(
             raw = resp.text or ""
             logger.debug(f"Agent {perspective_name} → Gemini fallback")
         except Exception as e:
-            logger.error(f"All LLM providers failed for {perspective_name}: {e}")
+            logger.warning(f"Gemini fallback failed for {perspective_name}: {e}")
+
+    # ── Fallback 3: LiteLLM Router (Cerebras → Groq → Gemini unified) ────────
+    if not raw:
+        try:
+            from swarm.tools.llm_router import complete
+            raw = await complete(prompt)
+            if raw:
+                logger.debug(f"Agent {perspective_name} → LiteLLM router")
+        except Exception as e:
+            logger.warning(f"LiteLLM router failed for {perspective_name}: {e}")
 
     if not raw:
-        logger.warning(f"No API keys or all providers failed for agent {perspective_name}")
+        logger.error(f"All LLM providers failed for agent {perspective_name}")
         return None
 
     # ── Parse JSON ────────────────────────────────────────────────────────────

@@ -731,6 +731,102 @@ async def _handle_skills(chat_id: int | str) -> None:
     await _send_message(chat_id, msg)
 
 
+async def _handle_findings(chat_id: int | str, limit: int = 5) -> None:
+    """Show recent typed findings from shared memory blackboard."""
+    import sys
+    from pathlib import Path as _Path
+
+    _packages_path = str(_Path(__file__).parent.parent.parent.parent.parent / "packages")
+    if _packages_path not in sys.path:
+        sys.path.insert(0, _packages_path)
+
+    try:
+        from swarm.shared_memory import _DB_PATH
+        import sqlite3 as _sqlite3, json as _json, time as _time
+
+        if not _DB_PATH.exists():
+            await _send_message(chat_id, "📭 Blackboard пустой. Запусти: `python -m swarm.autonomous_run --mode=coordinator`")
+            return
+
+        conn = _sqlite3.connect(str(_DB_PATH), timeout=5)
+        now = _time.time()
+        rows = conn.execute(
+            "SELECT agent_id, task_id, result, ts, importance, category FROM memory "
+            "WHERE (expires_at=0 OR expires_at>?) ORDER BY importance DESC, ts DESC LIMIT ?",
+            (now, limit),
+        ).fetchall()
+        conn.close()
+
+        if not rows:
+            await _send_message(chat_id, "📭 Нет активных findings в blackboard.")
+            return
+
+        _sev_emoji = {"P0": "🔴", "P1": "🟠", "P2": "🟡", "INFO": "⚪"}
+        lines = [f"📋 *Findings blackboard* (топ {len(rows)}):\n"]
+        for r in rows:
+            try:
+                data = _json.loads(r[2])
+            except Exception:
+                data = {}
+            sev = data.get("severity", "INFO")
+            summary = data.get("summary") or data.get("title") or r[1]
+            emoji = _sev_emoji.get(sev, "⚪")
+            lines.append(f"{emoji} *[{r[0]}]* {summary[:120]}")
+            rec = data.get("recommendation", "")
+            if rec:
+                lines.append(f"   ↳ {rec[:80]}")
+
+        await _send_message(chat_id, "\n".join(lines))
+
+    except Exception as e:
+        await _send_message(chat_id, f"⚠️ Ошибка чтения findings: {str(e)[:100]}")
+
+
+async def _handle_simulate(chat_id: int | str) -> None:
+    """Trigger synthetic user simulation (dry-run) and report friction."""
+    await _send_message(chat_id, "🎭 Запускаю симуляцию 10 персон (dry-run)...")
+
+    import sys
+    from pathlib import Path as _Path
+
+    _packages_path = str(_Path(__file__).parent.parent.parent.parent.parent / "packages")
+    if _packages_path not in sys.path:
+        sys.path.insert(0, _packages_path)
+
+    try:
+        from swarm.simulate_users import simulate, _friction_report
+        results = await simulate(dry_run=True)
+
+        total_events = sum(r["events_written"] for r in results)
+        total_friction = sum(
+            sum(1 for s in r.get("steps", []) if s.get("friction"))
+            for r in results
+        )
+
+        # Top 3 friction points
+        all_friction = []
+        for r in results:
+            for s in r.get("steps", []):
+                if s.get("friction"):
+                    all_friction.append(f"[{r['persona']}] {s['friction']}")
+
+        lines = [
+            f"✅ *Симуляция завершена*\n",
+            f"👤 Персон: {len(results)}",
+            f"📨 Событий: {total_events}",
+            f"⚠️ UX friction: {total_friction}\n",
+        ]
+        if all_friction[:3]:
+            lines.append("*Топ проблемы:*")
+            for f in all_friction[:3]:
+                lines.append(f"• {f[:100]}")
+
+        await _send_message(chat_id, "\n".join(lines))
+
+    except Exception as e:
+        await _send_message(chat_id, f"⚠️ Симуляция не удалась: {str(e)[:150]}")
+
+
 async def _handle_help(chat_id: int | str) -> None:
     msg = (
         "🤖 *Volaura Swarm Bot — 44 агента*\n\n"
@@ -738,12 +834,14 @@ async def _handle_help(chat_id: int | str) -> None:
         "/status — live статистика (users, sessions, orgs)\n"
         "/ecosystem — состояние всех 5 продуктов\n"
         "/proposals — pending proposals от роя\n"
+        "/findings — typed findings из blackboard\n"
+        "/simulate — симуляция 10 персон + UX friction\n"
         "/backlog — идеи и задачи CEO\n"
         "/skills — список product skills\n\n"
         "*Управление агентами:*\n"
         "/agents — все 44 агента с live статусом\n"
         "/agent {id} {задача} — задача конкретному агенту\n"
-        "/swarm {задача} — 3 лучших агента + синтез\n"
+        "/swarm {задача} — координатор: squads + синтез\n"
         "/queue — очередь автономных задач роя\n"
         "/ask {agent} {вопрос} — прямой вопрос агенту\n\n"
         "/help — эта справка\n\n"
@@ -829,6 +927,14 @@ async def telegram_webhook(
                 await _send_message(chat_id, "⚠️ Формат: /agent {id} {задача}\nПример: /agent security Проверь RLS политики\n\nИспользуй /agents чтобы увидеть все ID")
         elif text.startswith("/queue"):
             await _handle_queue(chat_id)
+        elif text.startswith("/findings"):
+            limit = 5
+            parts = text.split()
+            if len(parts) > 1 and parts[1].isdigit():
+                limit = min(int(parts[1]), 20)
+            await _handle_findings(chat_id, limit=limit)
+        elif text.startswith("/simulate"):
+            await _handle_simulate(chat_id)
         elif text.startswith("/swarm "):
             task = text[7:].strip()
             if task:

@@ -820,7 +820,7 @@ async def send_telegram_notifications(proposals: list[Proposal]) -> None:
         logger.info("Telegram not configured (TELEGRAM_BOT_TOKEN / TELEGRAM_CEO_CHAT_ID missing)")
         return
 
-    # Send: HIGH/CRITICAL + any convergent proposals (independent emergence = high signal)
+    # Send: ONE digest message, not one per proposal. CEO is not a log viewer.
     high_proposals = [
         p for p in proposals
         if p.severity in (Severity.CRITICAL, Severity.HIGH) or p.escalate_to_ceo or p.convergent
@@ -834,26 +834,33 @@ async def send_telegram_notifications(proposals: list[Proposal]) -> None:
         from telegram import Bot
         bot = Bot(token=bot_token)
 
-        for p in high_proposals:
-            if p.convergent:
-                emoji = "🎯"  # convergent = multiple agents independently reached same idea
-            elif p.severity == Severity.CRITICAL:
-                emoji = "🔴"
-            else:
-                emoji = "🟠"
-            convergent_tag = " [CONVERGENT — emerged independently]" if p.convergent else ""
-            escalate_tag = " [ESCALATE TO CEO]" if p.escalate_to_ceo else ""
-            judge_tag = f" [Quality: {p.judge_score}/5]" if p.judge_score is not None else ""
-            msg = (
-                f"{emoji} **Swarm {p.type.value.upper()}**{convergent_tag}{escalate_tag}{judge_tag}\n\n"
-                f"**{p.title}**\n"
-                f"Agent: {p.agent}\n"
-                f"Votes: +{p.votes_for}/-{p.votes_against}\n\n"
-                f"{p.content[:500]}\n\n"
-                f"Reply: `act {p.id}` / `dismiss {p.id}` / `defer {p.id}`"
-            )
-            await bot.send_message(chat_id=chat_id, text=msg, parse_mode="Markdown")
-            logger.info(f"Telegram sent: {p.title}")
+        # Build ONE digest message
+        critical = [p for p in high_proposals if p.severity == Severity.CRITICAL]
+        high = [p for p in high_proposals if p.severity == Severity.HIGH and not p.convergent]
+        convergent = [p for p in high_proposals if p.convergent]
+
+        lines = [f"📋 *Swarm Digest* — {len(high_proposals)} findings\n"]
+
+        if critical:
+            lines.append(f"🔴 *CRITICAL ({len(critical)}):*")
+            for p in critical[:3]:
+                lines.append(f"  • {p.title[:80]} ({p.agent})")
+
+        if convergent:
+            lines.append(f"\n🎯 *Convergent ({len(convergent)}):*")
+            for p in convergent[:3]:
+                lines.append(f"  • {p.title[:80]}")
+
+        if high:
+            lines.append(f"\n🟠 *High ({len(high)}):*")
+            for p in high[:5]:
+                lines.append(f"  • {p.title[:80]}")
+
+        lines.append(f"\n/proposals — review and act")
+
+        msg = "\n".join(lines)
+        await bot.send_message(chat_id=chat_id, text=msg, parse_mode="Markdown")
+        logger.info(f"Telegram digest sent: {len(high_proposals)} proposals")
 
     except Exception as e:
         logger.error(f"Telegram send failed: {e}")

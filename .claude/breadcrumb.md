@@ -1,47 +1,48 @@
-# CTO BREADCRUMB — Session 88 Final State
+# CTO BREADCRUMB — Session 89 (ACTIVE)
 
 ## NOW
-**Session 88 complete. Massive refactoring done. Waiting for CEO.**
+**Session 89: Core rebuild — CLAUDE.md 750→85 lines, security hooks, Tavily+LiteLLM for agents.**
+**Next: Get Tavily+Cerebras API keys from CEO → first real user journey (Energy Picker + Pre-Assessment).**
 
-## COMMITS THIS SESSION (all pushed)
+## WHAT'S DONE (Sessions 88-89)
+- Law 1 ZERO RED (12 files fixed)
+- All leaderboard refs removed (nav, sidebar, aura, dashboard)
+- Animation defaults ≤800ms
+- Ollama in Python swarm
+- inject_global_memory wired
+- SQLite shared memory (shared_memory.py)
+- DAG orchestrator (orchestrator.py)
+- Watcher Agent (watcher_agent.py)
+- Squad Leaders (squad_leaders.py)
+- Typed contracts (contracts.py)
+- Skill content injection (autonomous_run.py)
+- swarm/tools/ (code_tools, constitution_checker, deploy_tools)
+- 5 Claude Code agents (.claude/agents/)
+- 15 Figma screens
+- ECOSYSTEM-MAP.md, Global_Context.md
+- Full 4-repo audit
+- SWOT from Gemma 4 local GPU
+- Handoff document
 
-### Branch: claude/blissful-lichterman
-- `8a4cedf` — G9 leaderboard deleted, G15 counters 800ms, G21+CL6 badge removed
-- `3b3ce9f` — CLAUDE.md Article 0 (Constitution supreme)
-- `bcf69a0` — sprint-state session 88
-- `d89fac6` — Full 4-repo ecosystem audit
-- `017d6ff` — **swarm-as-core + Law 1 ZERO red** (12 files, 30+ instances → 0)
-- `a34ba32` — 4-repo audit doc (MindShift + claw3d + VidVow)
-- `ef7b0f2` — 5 Claude Code agents bridging 48 skills to Agent Teams
+## WEEK 1 (DONE ✅ — commit 33e9b10)
+1. [x] Reflexion traces → agent prompts (section 5.1) — reflexion.py
+2. [ ] swarm_blackboard Supabase table (section 4.3) — migrate from SQLite (DEFERRED)
+3. [x] TTL + importance on facts (section 5.3) — shared_memory.py
 
-### Branch: main
-- `5c940a4` — Ollama local GPU + ECOSYSTEM-MAP.md
-- `4c2e612` — inject_global_memory wired + auto-consolidation
-- `9683324` — Python→Node.js bridge
-- `8ff7bcf` — swarm/tools/ (code_tools, constitution_checker, deploy_tools)
-- `1cc668c` — **skill content injection** (48 skills now READ, not just named)
-- `e069351` — **SQLite shared memory** (agents see each other's work)
-- `c895e97` — **DAG orchestrator** (completion callbacks, depends_on chains)
-- `7a365a2` — **Watcher Agent + Squad Leaders** (self-healing + hierarchy)
+## WEEK 2 (DONE ✅ — commit 08bba5f)
+4. [x] coordinator.py supervisor (section 4.1) — make_plan + route + run_parallel + synthesize
+5. [x] asyncio.gather fan-out connected to coordinator (section 4.4) — via Orchestrator
+6. [x] All agents use FindingContract output (section 4.2) — FINDING_SCHEMA_FOR_PROMPT injected
 
-### Other repos
-- claw3d-fork: `ccc0ef5` — Law 1 colors fixed (red→purple/orange)
+## WEEK 3 (DONE ✅ — commits 40b8652, 48641aa, 6138f46)
+7. [x] simulate_users.py — 10 personas, 50 events, 13 UX friction points
+8. [x] /findings dashboard — tabbed admin UI + GET /swarm/findings API endpoint
+9. [x] Telegram commands — /findings + /simulate wired to bot
 
-## WHAT CHANGED ABOUT THE SWARM (before → after)
-
-| Before | After |
-|--------|-------|
-| Agents isolated (flat asyncio.gather) | SQLite shared memory, agents see each other |
-| No dependencies between agents | DAG orchestrator with depends_on |
-| 48 skill files never read | Skill content injected into prompts |
-| inject_global_memory never called | Wired into engine.decide() |
-| No tools (agents guessed) | code_tools + constitution_checker + deploy_tools |
-| Ollama not in Python swarm | Priority 0, registered in hive |
-| No error reaction | Watcher Agent: error → grep → propose fix |
-| 87 agents flat pool | 5 Squad Leaders (QUALITY/PRODUCT/ENG/GROWTH/ECOSYSTEM) |
-| 30+ Law 1 red violations | ZERO red in entire codebase |
-| No ecosystem awareness | ECOSYSTEM-MAP.md + full 4-repo audit |
-
-## KEY LESSON
-CEO's 5-minute Perplexity search (SQLite shared memory) beat 88 sessions of CTO engineering.
-Saved as: feedback_simple_sqlite_over_files.md
+## KEY FILES
+- contracts.py — FindingContract, SubtaskContract, CoordinatorResult
+- shared_memory.py — SQLite blackboard (local, works now)
+- orchestrator.py — DAG runner with depends_on
+- squad_leaders.py — 5 squads with routing
+- watcher_agent.py — error → grep → propose fix
+- tools/ — code_tools, constitution_checker, deploy_tools

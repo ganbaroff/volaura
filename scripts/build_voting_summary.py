@@ -1,3 +1,7 @@
+"""
+This script reads JSON files from the sprint-2 directory
+and aggregates them into a single voting-input.json file.
+"""
 import json, os, sys
 
 sprint2_dir = r'C:\Projects\VOLAURA\scripts\question-evolution\sprint-2'

@@ -1213,12 +1213,12 @@ async def main():
             groq_key = os.environ.get("GROQ_API_KEY", "")
             success = await consolidate(groq_key=groq_key or None)
             if success:
-                print("✓ Memory consolidated — agent-feedback-distilled.md updated")
+                print("[OK] Memory consolidated - agent-feedback-distilled.md updated")
             else:
-                print("⚠ Memory consolidation used fallback (LLM unavailable)")
+                print("[WARN] Memory consolidation used fallback (LLM unavailable)")
         except Exception as e:
             logger.error(f"Memory consolidation failed: {e}")
-            print(f"✗ Memory consolidation failed: {e}")
+            print(f"[FAIL] Memory consolidation failed: {e}")
 
     # ── Skill evolution (neuroplasticity) ─────────────────────────────────────
     # Scans all product skills → checks quality → suggests improvements
@@ -1230,12 +1230,12 @@ async def main():
             groq_key = os.environ.get("GROQ_API_KEY", "")
             summary = await evolve(groq_key=groq_key or None)
             health = summary.get("health", "?")
-            print(f"✓ Skill evolution complete — {summary['skills']} skills, health={health}/100")
+            print(f"[OK] Skill evolution complete - {summary['skills']} skills, health={health}/100")
             if summary.get("issues", 0) > 0:
-                print(f"  ⚠ {summary['issues']} issues found — see skill-evolution-log.md")
+                print(f"  [WARN] {summary['issues']} issues found - see skill-evolution-log.md")
         except Exception as e:
             logger.error(f"Skill evolution failed: {e}")
-            print(f"✗ Skill evolution failed: {e}")
+            print(f"[FAIL] Skill evolution failed: {e}")
 
 
     # ── ADR-011: Write run audit log to Supabase ────────────────────────────────

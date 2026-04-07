@@ -17,7 +17,7 @@
       },
       "emotional_state": {
         "significance": 0.0,
-        "curiosity": 0.4999999531126706,
+        "curiosity": 0.30064555290988665,
         "discomfort": 0.0,
         "surprise": 0.0,
         "concern": 0.0,
@@ -26,7 +26,7 @@
         "discomfort_decay": 0.2,
         "surprise_decay": 0.15,
         "concern_decay": 0.08,
-        "last_updated": 1775505814.387644
+        "last_updated": 1775542439.0595617
       }
     },
     "qa-quality-agent": {
@@ -41,7 +41,7 @@
       },
       "emotional_state": {
         "significance": 0.0,
-        "curiosity": 0.49999995298849426,
+        "curiosity": 0.3006455527366611,
         "discomfort": 0.0,
         "surprise": 0.0,
         "concern": 0.0,
@@ -50,7 +50,7 @@
         "discomfort_decay": 0.2,
         "surprise_decay": 0.15,
         "concern_decay": 0.08,
-        "last_updated": 1775505814.387664
+        "last_updated": 1775542439.0596054
       }
     },
     "trend-scout-agent": {
@@ -67,7 +67,7 @@
       },
       "emotional_state": {
         "significance": 0.0,
-        "curiosity": 0.4999999528957759,
+        "curiosity": 0.3006455526679684,
         "discomfort": 0.0,
         "surprise": 0.0,
         "concern": 0.0,
@@ -76,7 +76,7 @@
         "discomfort_decay": 0.2,
         "surprise_decay": 0.15,
         "concern_decay": 0.08,
-        "last_updated": 1775505814.3876784
+        "last_updated": 1775542439.0596228
       }
     },
     "assessment-science-agent": {
@@ -93,7 +93,7 @@
       },
       "emotional_state": {
         "significance": 0.0,
-        "curiosity": 0.4999999528096804,
+        "curiosity": 0.30064555261221765,
         "discomfort": 0.0,
         "surprise": 0.0,
         "concern": 0.0,
@@ -102,7 +102,7 @@
         "discomfort_decay": 0.2,
         "surprise_decay": 0.15,
         "concern_decay": 0.08,
-        "last_updated": 1775505814.3876917
+        "last_updated": 1775542439.059637
       }
     },
     "analytics-retention-agent": {
@@ -117,7 +117,7 @@
       },
       "emotional_state": {
         "significance": 0.0,
-        "curiosity": 0.4999999527235848,
+        "curiosity": 0.300645552558458,
         "discomfort": 0.0,
         "surprise": 0.0,
         "concern": 0.0,
@@ -126,7 +126,7 @@
         "discomfort_decay": 0.2,
         "surprise_decay": 0.15,
         "concern_decay": 0.08,
-        "last_updated": 1775505814.3877048
+        "last_updated": 1775542439.0596507
       }
     },
     "financial-analyst-agent": {
@@ -143,7 +143,7 @@
       },
       "emotional_state": {
         "significance": 0.0,
-        "curiosity": 0.4999999526374892,
+        "curiosity": 0.3006455525086806,
         "discomfort": 0.0,
         "surprise": 0.0,
         "concern": 0.0,
@@ -152,7 +152,7 @@
         "discomfort_decay": 0.2,
         "surprise_decay": 0.15,
         "concern_decay": 0.08,
-        "last_updated": 1775505814.3877177
+        "last_updated": 1775542439.059663
       }
     },
     "devops-sre-agent": {
@@ -167,7 +167,7 @@
       },
       "emotional_state": {
         "significance": 0.0,
-        "curiosity": 0.4999999525530494,
+        "curiosity": 0.30064555245790764,
         "discomfort": 0.0,
         "surprise": 0.0,
         "concern": 0.0,
@@ -176,7 +176,7 @@
         "discomfort_decay": 0.2,
         "surprise_decay": 0.15,
         "concern_decay": 0.08,
-        "last_updated": 1775505814.3877306
+        "last_updated": 1775542439.059676
       }
     },
     "security-agent": {
@@ -191,7 +191,7 @@
       },
       "emotional_state": {
         "significance": 0.0,
-        "curiosity": 0.4999999524818549,
+        "curiosity": 0.3006455524160947,
         "discomfort": 0.0,
         "surprise": 0.0,
         "concern": 0.0,
@@ -200,7 +200,7 @@
         "discomfort_decay": 0.2,
         "surprise_decay": 0.15,
         "concern_decay": 0.08,
-        "last_updated": 1775505814.3877437
+        "last_updated": 1775542439.0596888
       }
     }
   },

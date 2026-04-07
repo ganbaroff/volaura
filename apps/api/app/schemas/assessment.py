@@ -60,6 +60,7 @@ class StartAssessmentRequest(BaseModel):
     competency_slug: str  # e.g. "communication"
     language: Literal["en", "az"] = "en"
     role_level: Literal["volunteer", "coordinator", "specialist", "manager", "senior_manager"] = "volunteer"
+    energy_level: Literal["full", "mid", "low"] = "full"  # Constitution Law 2: Energy Adaptation
 
     @field_validator("competency_slug")
     @classmethod

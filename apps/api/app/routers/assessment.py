@@ -283,7 +283,7 @@ async def start_assessment(
     first_q = select_next_item(state, questions)
 
     session_id = str(uuid.uuid4())
-    await db_user.table("assessment_sessions").insert({
+    session_data: dict = {
         "id": session_id,
         "volunteer_id": user_id,
         "competency_id": competency_id,
@@ -295,7 +295,11 @@ async def start_assessment(
         "current_question_id": first_q["id"] if first_q else None,
         "question_delivered_at": datetime.now(timezone.utc).isoformat(),  # HIGH-03: server-side timing
         "started_at": datetime.now(timezone.utc).isoformat(),
-    }).execute()
+    }
+    # Constitution Law 2: Energy Adaptation — store energy_level in session metadata
+    if payload.energy_level != "full":
+        session_data["metadata"] = {"energy_level": payload.energy_level}
+    await db_user.table("assessment_sessions").insert(session_data).execute()
 
     return make_session_out(session_id, payload.competency_slug, state, first_q, payload.role_level)
 

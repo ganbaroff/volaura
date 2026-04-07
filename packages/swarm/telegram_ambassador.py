@@ -399,6 +399,63 @@ def run_bot() -> None:
         else:
             await update.message.reply_text(f"Proposal {args[0]} not found.")
 
+    async def cmd_auto(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """/auto on|off|status — toggle background swarm_daemon.
+
+        on  -> enables daemon (it must already be running as a separate process)
+        off -> disables daemon (current iteration finishes, then it skips)
+        status -> shows current state + last few processed proposals
+        """
+        if not is_ceo(update):
+            return
+        args = context.args or []
+        action = (args[0].lower() if args else "status")
+
+        daemon_state_file = project_root / "memory" / "swarm" / "daemon_state.json"
+        try:
+            if action == "on":
+                state = json.loads(daemon_state_file.read_text(encoding="utf-8")) if daemon_state_file.exists() else {}
+                state["enabled"] = True
+                if not state.get("started_at"):
+                    import time as _t
+                    state["started_at"] = _t.time()
+                daemon_state_file.parent.mkdir(parents=True, exist_ok=True)
+                daemon_state_file.write_text(json.dumps(state, indent=2), encoding="utf-8")
+                await update.message.reply_text(
+                    "[AUTO ON] Daemon enabled.\n\n"
+                    "Daemon will pick up approved low/medium proposals every 5 min and run them through swarm_coder.\n\n"
+                    "IMPORTANT: daemon is a separate process. If it's not already running, start it on the host:\n"
+                    "  python3 scripts/swarm_daemon.py\n\n"
+                    "Limits: 5 commits/hour, 20 commits/session total. Use /auto off to stop."
+                )
+            elif action == "off":
+                state = json.loads(daemon_state_file.read_text(encoding="utf-8")) if daemon_state_file.exists() else {}
+                state["enabled"] = False
+                daemon_state_file.write_text(json.dumps(state, indent=2), encoding="utf-8")
+                await update.message.reply_text("[AUTO OFF] Daemon disabled. Current iteration finishes, then no new ones.")
+            elif action == "status":
+                if not daemon_state_file.exists():
+                    await update.message.reply_text("[AUTO] no state file yet — daemon never enabled")
+                    return
+                state = json.loads(daemon_state_file.read_text(encoding="utf-8"))
+                processed = state.get("processed_ids", [])
+                msg = (
+                    f"[AUTO STATUS]\n"
+                    f"enabled:        {state.get('enabled', False)}\n"
+                    f"total_commits:  {state.get('total_commits', 0)}\n"
+                    f"processed:      {len(processed)} proposals\n"
+                    f"recent_commits: {len(state.get('commit_timestamps', []))} in last 24h\n"
+                )
+                if processed:
+                    msg += f"\nLast 3 processed:\n"
+                    for pid in processed[-3:]:
+                        msg += f"  {pid[:16]}\n"
+                await update.message.reply_text(msg)
+            else:
+                await update.message.reply_text("Usage: /auto on | off | status")
+        except Exception as e:
+            await update.message.reply_text(f"[AUTO ERROR] {e}")
+
     async def cmd_implement(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Sprint S2: trigger swarm_coder.py on a proposal — autonomous coding loop."""
         if not is_ceo(update):
@@ -460,8 +517,10 @@ def run_bot() -> None:
             "/run — trigger swarm autonomous_run (~30s)\n"
             "/approve <id> — approve proposal (mark for implementation)\n"
             "/dismiss <id> — dismiss proposal\n"
-            "/implement <id> — Sprint S2: autonomous coding loop\n"
-            "                 (project_qa -> safety_gate -> aider -> post-check)\n"
+            "/implement <id> — Sprint S2: autonomous coding loop on one proposal\n"
+            "                 (discover -> safety_gate -> aider -> post-check -> tests)\n"
+            "/auto on|off|status — Sprint S3: toggle background daemon\n"
+            "                     (auto-runs approved low/medium proposals)\n"
             "/help — this message\n\n"
             "Free text -> Gemini/Groq answers with full project context."
         )
@@ -505,6 +564,7 @@ def run_bot() -> None:
     application.add_handler(CommandHandler("approve", cmd_approve))
     application.add_handler(CommandHandler("dismiss", cmd_dismiss))
     application.add_handler(CommandHandler("implement", cmd_implement))
+    application.add_handler(CommandHandler("auto", cmd_auto))
     application.add_handler(CommandHandler("help", cmd_help))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     application.add_error_handler(global_error_handler)

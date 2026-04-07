@@ -283,7 +283,7 @@ async def start_assessment(
     first_q = select_next_item(state, questions)
 
     session_id = str(uuid.uuid4())
-    await db_user.table("assessment_sessions").insert({
+    session_data: dict = {
         "id": session_id,
         "volunteer_id": user_id,
         "competency_id": competency_id,
@@ -295,7 +295,11 @@ async def start_assessment(
         "current_question_id": first_q["id"] if first_q else None,
         "question_delivered_at": datetime.now(timezone.utc).isoformat(),  # HIGH-03: server-side timing
         "started_at": datetime.now(timezone.utc).isoformat(),
-    }).execute()
+    }
+    # Constitution Law 2: Energy Adaptation — store energy_level in session metadata
+    if payload.energy_level != "full":
+        session_data["metadata"] = {"energy_level": payload.energy_level}
+    await db_user.table("assessment_sessions").insert(session_data).execute()
 
     return make_session_out(session_id, payload.competency_slug, state, first_q, payload.role_level)
 
@@ -944,12 +948,12 @@ async def get_coaching(
     # Get competency name and slug
     comp_result = (
         await db_admin.table("competencies")
-        .select("name, slug")
+        .select("name_en, slug")
         .eq("id", competency_id)
         .maybe_single()
         .execute()
     )
-    comp_name = comp_result.data.get("name", "this competency") if comp_result.data else "this competency"
+    comp_name = comp_result.data.get("name_en", "this competency") if comp_result.data else "this competency"
     comp_slug = comp_result.data.get("slug", "") if comp_result.data else ""
 
     score = round(theta_to_score(session.get("theta_estimate", 0.0)), 2)
@@ -1001,7 +1005,7 @@ async def get_assessment_info(
     # Fetch competency metadata (name, description, time_estimate_minutes, can_retake)
     comp_result = (
         await db_user.table("competencies")
-        .select("id, name, description, slug, time_estimate_minutes, can_retake")
+        .select("id, name_en, description_en, slug, time_estimate_minutes, can_retake")
         .eq("slug", competency_slug)
         .eq("is_active", True)
         .maybe_single()
@@ -1040,8 +1044,8 @@ async def get_assessment_info(
 
     return AssessmentInfoOut(
         competency_slug=competency_slug,
-        name=comp["name"],
-        description=comp.get("description"),
+        name=comp["name_en"],
+        description=comp.get("description_en"),
         time_estimate_minutes=comp.get("time_estimate_minutes", 15),
         can_retake=can_retake,
         days_until_retake=days_until_retake,

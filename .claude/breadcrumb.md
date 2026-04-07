@@ -52,6 +52,17 @@
 ### Pending деплой:
 - 🔄 `vercel --prod` запущен из `apps/web` (должен задеплоить Energy Picker + PreAssessmentSummary)
 - 🔄 Fix coaching `name_en` надо закоммитить и задеплоить на Railway
+- 🔄 NEW (19b36b4): Energy adaptation wired into should_stop — нужен Railway deploy для эффекта
+
+### Session 90 parallel work (Opus 4.6 CTO из MindShift worktree):
+- ✅ Honesty hooks built + tested (UserPromptSubmit works, Stop disabled due to transcript timing)
+- ✅ ESLint Law 1 rule shipped in MindShift (4300f9d) — mechanical red color enforcement
+- ✅ Energy adaptation CLOSED the loop (19b36b4) — should_stop() now honors energy_level:
+  - full: 20 items / SE 0.3 (was default)
+  - mid: 12 items / SE 0.4 (NEW)
+  - low: 5 items / SE 0.5 (NEW)
+- ✅ 39 assessment engine tests pass (was 33, added 6 for energy profiles)
+- Found: EnergyPicker UI was already shipped by Session 90 agent but behavior layer missing — closed.
 
 ### Следующий приоритет:
 1. Figma MCP + Code Connect setup (Вариант C — CEO выбрал)

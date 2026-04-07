@@ -19,10 +19,20 @@ from dataclasses import dataclass, field
 from typing import Any
 
 
-# Stopping criteria constants
+# Stopping criteria constants (Full energy defaults)
 MAX_ITEMS = 20
 SE_THRESHOLD = 0.3
 MIN_ITEMS_BEFORE_SE_STOP = 5  # Need at least 3 answers before SE stop
+
+# Constitution Law 2: Energy Adaptation — per-energy stopping profiles
+# Full: full precision, normal cognitive load
+# Mid:  shorter, acceptable precision, entrance-only animations
+# Low:  minimal, hard cap at 5 items, lax SE threshold
+ENERGY_STOPPING: dict[str, dict[str, float]] = {
+    "full": {"max_items": 20, "se_threshold": 0.3, "min_before_se": 5},
+    "mid":  {"max_items": 12, "se_threshold": 0.4, "min_before_se": 4},
+    "low":  {"max_items": 5,  "se_threshold": 0.5, "min_before_se": 3},
+}
 ABILITY_SCALE_MIN = -4.0
 ABILITY_SCALE_MAX = 4.0
 
@@ -308,18 +318,28 @@ def submit_response(
     return state
 
 
-def should_stop(state: CATState) -> tuple[bool, str | None]:
+def should_stop(state: CATState, energy_level: str = "full") -> tuple[bool, str | None]:
     """Check whether the CAT session should terminate.
+
+    Constitution Law 2: Energy Adaptation
+    - Full energy: 20 items max, SE < 0.3 (precise assessment)
+    - Mid energy:  12 items max, SE < 0.4 (balanced, shorter)
+    - Low energy:  5 items max, SE < 0.5 (minimal, respect user state)
+
+    Args:
+        state: Current CAT state
+        energy_level: User self-reported energy ("full" | "mid" | "low")
 
     Returns:
         (stop: bool, reason: str | None)
     """
+    profile = ENERGY_STOPPING.get(energy_level, ENERGY_STOPPING["full"])
     n = len(state.items)
 
-    if n >= MAX_ITEMS:
+    if n >= profile["max_items"]:
         return True, "max_items"
 
-    if n >= MIN_ITEMS_BEFORE_SE_STOP and state.theta_se <= SE_THRESHOLD:
+    if n >= profile["min_before_se"] and state.theta_se <= profile["se_threshold"]:
         return True, "se_threshold"
 
     return False, None

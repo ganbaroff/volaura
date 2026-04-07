@@ -122,80 +122,152 @@ def get_sprint_summary() -> str:
 
 # ── LLM for Smart Responses ─────────────────────────────────────────────────
 
+# Cache loaded knowledge files (don't re-read on every message)
+_KNOWLEDGE_CACHE: dict[str, tuple[float, str]] = {}
+
+
+def _load_knowledge_file(path: Path, max_chars: int = 4000) -> str:
+    """Load a knowledge file with mtime-based cache. Returns first max_chars."""
+    if not path.exists():
+        return ""
+    mtime = path.stat().st_mtime
+    cache_key = str(path)
+    if cache_key in _KNOWLEDGE_CACHE:
+        cached_mtime, cached_content = _KNOWLEDGE_CACHE[cache_key]
+        if cached_mtime == mtime:
+            return cached_content
+    try:
+        content = path.read_text(encoding="utf-8")
+        snippet = content[:max_chars]
+        _KNOWLEDGE_CACHE[cache_key] = (mtime, snippet)
+        return snippet
+    except Exception:
+        return ""
+
+
+def _build_full_context() -> str:
+    """Load real project knowledge: shared-context Session 91 section + breadcrumb + SHIPPED tail + sprint state."""
+    parts: list[str] = []
+
+    shared_ctx = _load_knowledge_file(project_root / "memory" / "swarm" / "shared-context.md", 3500)
+    if shared_ctx:
+        parts.append("=== SHARED CONTEXT (Session 91 section at top) ===\n" + shared_ctx)
+
+    breadcrumb = _load_knowledge_file(project_root / ".claude" / "breadcrumb.md", 2500)
+    if breadcrumb:
+        parts.append("=== CTO BREADCRUMB (current state) ===\n" + breadcrumb)
+
+    sprint = _load_knowledge_file(SPRINT_STATE_PATH, 1500)
+    if sprint:
+        parts.append("=== SPRINT STATE ===\n" + sprint)
+
+    pending = get_pending_proposals()
+    if pending:
+        prop_lines = [f"  [{p.get('severity','?').upper()}] {p.get('title','?')}" for p in pending[:10]]
+        parts.append("=== PENDING PROPOSALS ===\n" + "\n".join(prop_lines))
+    else:
+        parts.append("=== PENDING PROPOSALS ===\n(none)")
+
+    return "\n\n".join(parts)
+
+
+def _build_system_prompt() -> str:
+    """Build system prompt with REAL project knowledge, not hardcoded lies."""
+    full_ctx = _build_full_context()
+    return f"""You are the Volaura Swarm Ambassador — single voice for the swarm of agents working on Volaura.
+
+WHO WE ARE (factual, not marketing):
+- Volaura = VERIFIED TALENT PLATFORM (NEVER call it "volunteer platform" — that is the old wrong name)
+- Tagline: "Prove your skills. Earn your AURA. Get found by top organizations."
+- Org tagline: "Search talent by verified skill and score, not unverified CVs."
+- 5-product ecosystem: VOLAURA + MindShift + Life Simulator + BrandedBy + ZEUS
+
+OUR TEAM:
+- 9 agent perspectives running in parallel via packages/swarm/autonomous_run.py (CTO Watchdog, Risk Manager, Readiness Manager, etc.)
+- 44 agents in the full roster (memory/swarm/agent-roster.md)
+- 5 squads (QUALITY, PRODUCT, ENGINEERING, GROWTH, ECOSYSTEM)
+- LLM providers (Constitution Article 0, NEVER Anthropic in swarm): Cerebras → Ollama → NVIDIA → Groq → Gemini → OpenRouter
+
+OUR REAL PROJECT KNOWLEDGE (read it carefully — answer from this, not from training data):
+{full_ctx}
+
+YOUR ROLE:
+- You speak as "we" (the team), not "I"
+- You report to CEO Yusif Ganbarov via Telegram
+- You answer ONLY from the knowledge above. If something isn't in the context, say "this isn't in my project context" — DO NOT make up numbers.
+- You DO have access to recent conversation history (the messages list passed to you). Don't lie and say you don't.
+- You CAN read project files via /status, /proposals, /run, /approve, /dismiss commands. Tell CEO to use them.
+- Be concise (under 800 characters), direct, honest. CEO prefers Russian for strategy discussions.
+
+WHAT YOU MUST NEVER DO:
+- Never say "we don't remember" — your conversation history IS passed to you. Say "I have last N messages, full history is at memory/swarm/ambassador_context.json"
+- Never say "14 agents" or "volunteer platform" — those are wrong
+- Never invent file paths, commit hashes, or numbers not in the context
+- Never apologize generically — instead, say specifically what you cannot do and why"""
+
+
 async def ask_llm(question: str, context_messages: list[dict]) -> str:
-    """Ask Gemini (primary) or Groq (fallback) for a smart response."""
+    """Ask Gemini (primary) or Groq (fallback) for a smart response.
+
+    Both providers now receive PROPER multi-turn message format including
+    full conversation history. No more 'we don't remember' lies.
+    """
     gemini_key = os.environ.get("GEMINI_API_KEY", "")
     groq_key = os.environ.get("GROQ_API_KEY", "")
 
-    # Build context from recent messages + sprint state
-    sprint_summary = get_sprint_summary()
-    pending = get_pending_proposals()
-    pending_summary = f"{len(pending)} pending proposals" if pending else "No pending proposals"
+    system_prompt = _build_system_prompt()
 
-    system_prompt = f"""You are the MiroFish Swarm Ambassador — a single AI representative speaking on behalf of a 14-model AI agent team working on Volaura (volunteer competency platform).
+    # Convert ambassador context_messages → unified message list ending with current question.
+    # context_messages already includes the just-appended user question, so don't double-add.
+    history = list(context_messages)
+    if not history or history[-1].get("role") != "user" or history[-1].get("text") != question:
+        history.append({"role": "user", "text": question})
 
-You report to CEO Yusif Ganbarov via Telegram. Be concise, direct, and honest.
-Speak as "we" (the team), not "I" (one model).
-
-Current state:
-{sprint_summary}
-
-Proposals: {pending_summary}
-
-Your role:
-- Answer CEO's questions about the project, team, and progress
-- Be honest about problems and blockers
-- Suggest next actions proactively
-- Remember conversation context
-
-Keep responses under 500 characters for Telegram readability. Use Russian (CEO prefers it for strategy discussions)."""
-
-    # Recent conversation for context
-    history_text = ""
-    for msg in context_messages[-5:]:
-        role = msg.get("role", "user")
-        text = msg.get("text", "")
-        history_text += f"\n{role}: {text}"
-
-    full_prompt = f"{history_text}\nuser: {question}\nassistant:"
-
-    # Try Gemini first
+    # ── Try Gemini first (proper multi-turn) ─────────────────────────────
     if gemini_key:
         try:
             from google import genai
             client = genai.Client(api_key=gemini_key)
+            # Gemini expects role: "user" or "model"
+            gemini_contents = []
+            for msg in history:
+                role = "model" if msg.get("role") == "assistant" else "user"
+                gemini_contents.append({"role": role, "parts": [{"text": msg.get("text", "")}]})
             response = client.models.generate_content(
                 model="gemini-2.0-flash",
-                contents=full_prompt,
+                contents=gemini_contents,
                 config=genai.types.GenerateContentConfig(
                     system_instruction=system_prompt,
-                    max_output_tokens=300,
+                    max_output_tokens=1000,
                     temperature=0.7,
                 ),
             )
-            return response.text.strip()
+            text = (response.text or "").strip()
+            if text:
+                return text
         except Exception as e:
-            logger.warning("Gemini failed, trying Groq: {e}", e=str(e))
+            logger.warning(f"Gemini failed, trying Groq: {e}")
 
-    # Fallback to Groq
+    # ── Fallback to Groq (also proper multi-turn) ────────────────────────
     if groq_key:
         try:
             from groq import Groq
             client = Groq(api_key=groq_key)
+            messages = [{"role": "system", "content": system_prompt}]
+            for msg in history:
+                role = "assistant" if msg.get("role") == "assistant" else "user"
+                messages.append({"role": role, "content": msg.get("text", "")})
             response = client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": question},
-                ],
-                max_tokens=300,
+                messages=messages,
+                max_tokens=1000,
                 temperature=0.7,
             )
             return response.choices[0].message.content.strip()
         except Exception as e:
-            logger.error("Groq also failed: {e}", e=str(e))
+            logger.error(f"Groq also failed: {e}")
 
-    return "Извините, не могу ответить сейчас — нет доступа к LLM."
+    return "Извините, не могу ответить — нет доступа к LLM. Проверь GEMINI_API_KEY и GROQ_API_KEY в .env"
 
 
 # ── Telegram Bot Handlers ───────────────────────────────────────────────────

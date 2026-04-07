@@ -1,3 +1,7 @@
+"""
+This script extracts JSON files from temporary task directories produced by Claude Code background agents
+and copies them into the question-evolution/sprint-2 directory.
+"""
 import json, re, sys
 
 TASK_DIR = r"C:\Users\user\AppData\Local\Temp\claude\C--Projects-VOLAURA\a0e32fd4-9284-4cbc-89bb-56dd21b0bcf4\tasks"

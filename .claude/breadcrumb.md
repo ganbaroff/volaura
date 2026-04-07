@@ -1,47 +1,70 @@
-# CTO BREADCRUMB — Session 88 Final State
+# CTO BREADCRUMB — Session 90 (ACTIVE)
 
-## NOW
-**Session 88 complete. Massive refactoring done. Waiting for CEO.**
+## ⚡ CEO MANDATORY DIRECTIVES — READ EVERY SESSION BEFORE ANY WORK ⚡
 
-## COMMITS THIS SESSION (all pushed)
+### 1. Кто такой Юсиф (поведенческие паттерны)
+- **Рекурсивный мыслитель**: видит одну систему на 3 масштабах одновременно (мозг→продукт→UI→агенты→мир)
+- **Интуиция опережает research**: приходит с готовым видением, не с вопросом — задача CTO усилить, не переосмыслить
+- **Строитель экосистем**: VOLAURA + MindShift + Life Simulator + BrandedBy + ZEUS — всё связано одной идеей
+- **CEO не хочет отчётов**: хочет результатов и прямого разговора как с co-founder'ом
+- **Требует 100% effort всегда** — не экономить ресурсы, не срезать углы, не делать "достаточно хорошо"
 
-### Branch: claude/blissful-lichterman
-- `8a4cedf` — G9 leaderboard deleted, G15 counters 800ms, G21+CL6 badge removed
-- `3b3ce9f` — CLAUDE.md Article 0 (Constitution supreme)
-- `bcf69a0` — sprint-state session 88
-- `d89fac6` — Full 4-repo ecosystem audit
-- `017d6ff` — **swarm-as-core + Law 1 ZERO red** (12 files, 30+ instances → 0)
-- `a34ba32` — 4-repo audit doc (MindShift + claw3d + VidVow)
-- `ef7b0f2` — 5 Claude Code agents bridging 48 skills to Agent Teams
+### 2. Идея проекта
+**VOLAURA** = "Prove your skills. Earn your AURA. Get found by top organizations."
+- Верифицированный талант-платформ: навыки доказываются через адаптивный IRT-ассессмент, не CV
+- Целевая аудитория: волонтёры → переход в профессиональные позиции через доказанные навыки
+- НИКОГДА не говорить "volunteer platform" или "LinkedIn competitor"
+- AURA score = взвешенная сумма верифицированных компетенций (8 компетенций, IRT/CAT движок)
 
-### Branch: main
-- `5c940a4` — Ollama local GPU + ECOSYSTEM-MAP.md
-- `4c2e612` — inject_global_memory wired + auto-consolidation
-- `9683324` — Python→Node.js bridge
-- `8ff7bcf` — swarm/tools/ (code_tools, constitution_checker, deploy_tools)
-- `1cc668c` — **skill content injection** (48 skills now READ, not just named)
-- `e069351` — **SQLite shared memory** (agents see each other's work)
-- `c895e97` — **DAG orchestrator** (completion callbacks, depends_on chains)
-- `7a365a2` — **Watcher Agent + Squad Leaders** (self-healing + hierarchy)
+### 3. Как работает CTO (обязательные правила поведения)
+- **100% effort, всегда** — полная команда агентов, все доступные API, GPU (Gemma 4 local), Figma MCP
+- **Не кодить в одиночку** — делегировать 80%+ агентам, CTO = оркестратор
+- **Не спрашивать разрешения** на очевидные решения — делать и репортить
+- **Вариант C всегда** — самый полный, самый правильный подход, не экономия
+- **Figma MCP + Code Connect** — дизайним в Figma, синхронизируем через MCP, живая система
+- **Swarm перед кодом** — `python -m packages.swarm.autonomous_run --mode=audit` перед любой крупной задачей
+- **Не объявлять "готово"** без E2E проверки реального юзер-пути
 
-### Other repos
-- claw3d-fork: `ccc0ef5` — Law 1 colors fixed (red→purple/orange)
+### 4. Текущий стек и где что живёт
+- Frontend: `apps/web/` — Next.js 14, Tailwind 4, shadcn/ui, Zustand
+- Backend: `apps/api/` — FastAPI, Railway (`volauraapi-production.up.railway.app`)
+- DB: Supabase (`dwdgzfusjsobnixgyzjk`) — ПРАВИЛЬНЫЙ проект
+- Vercel: `volaura.app` — production frontend
+- Figma: fileKey=`B30q4nqVq5VjdqAVVYRh3t` (Design System v2, 57 переменных)
 
-## WHAT CHANGED ABOUT THE SWARM (before → after)
+---
 
-| Before | After |
-|--------|-------|
-| Agents isolated (flat asyncio.gather) | SQLite shared memory, agents see each other |
-| No dependencies between agents | DAG orchestrator with depends_on |
-| 48 skill files never read | Skill content injected into prompts |
-| inject_global_memory never called | Wired into engine.decide() |
-| No tools (agents guessed) | code_tools + constitution_checker + deploy_tools |
-| Ollama not in Python swarm | Priority 0, registered in hive |
-| No error reaction | Watcher Agent: error → grep → propose fix |
-| 87 agents flat pool | 5 Squad Leaders (QUALITY/PRODUCT/ENG/GROWTH/ECOSYSTEM) |
-| 30+ Law 1 red violations | ZERO red in entire codebase |
-| No ecosystem awareness | ECOSYSTEM-MAP.md + full 4-repo audit |
+## NOW (Session 90 — что сделано)
 
-## KEY LESSON
-CEO's 5-minute Perplexity search (SQLite shared memory) beat 88 sessions of CTO engineering.
-Saved as: feedback_simple_sqlite_over_files.md
+### Задеплоено и работает в production:
+- ✅ Railway API (`volauraapi-production.up.railway.app`) — правильный Supabase проект
+- ✅ Vercel `NEXT_PUBLIC_API_URL` = Railway API (было Claw3D — чужой проект!)
+- ✅ Energy Picker (⚡🌤🌙) + Pre-Assessment Summary — в коде, деплой pending
+- ✅ E2E path работает: Landing → Dashboard → Assessment → Complete → Score 32.6 → AURA → Profile
+- ✅ AURA page: score 6.5 (32.6 * weight 0.20), Competency Radar, Share buttons
+- ✅ Profile: Yusif Ganbarov, @yusif, #0001 Founding Member, Communication 33 badge
+- ✅ Dashboard: AURA 6.5, tribe widget, quick actions
+
+### Баги исправлены в этой сессии:
+- ✅ upsert_aura_score не писал — RPC был правильным, первый запрос prod упал (transient). Manual SQL fix.
+- ✅ Coaching 500: `column competencies.name does not exist` → исправлен на `name_en`/`description_en`
+
+### Pending деплой:
+- 🔄 `vercel --prod` запущен из `apps/web` (должен задеплоить Energy Picker + PreAssessmentSummary)
+- 🔄 Fix coaching `name_en` надо закоммитить и задеплоить на Railway
+
+### Следующий приоритет:
+1. Figma MCP + Code Connect setup (Вариант C — CEO выбрал)
+2. Создать 8 экранов в Figma (Dashboard, Assessment, AURA, Profile, Expert Verification, Org Dashboard, Settings, Onboarding)
+3. GITA grant demo video (Playwright E2E запись)
+4. Coaching tips bug (coaching 500 → name_en fix нужен Railway deploy)
+
+## KEY BUGS REMAINING
+- Coaching tips: 500 → `name` column bug (fix committed, нужен Railway deploy)
+- "Assessment in progress" label на AURA при completed assessment (cosmetic)
+- Dashboard "Recommended for you" показывает "Take first assessment" даже после completion
+
+## PRODUCTION URLS
+- Frontend: https://volaura.app
+- API: https://volauraapi-production.up.railway.app
+- API health: https://volauraapi-production.up.railway.app/health

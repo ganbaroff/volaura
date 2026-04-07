@@ -366,13 +366,13 @@ def verify_commit_safe(
     # Normalize expected files
     expected_norm = {f.replace("\\", "/").lower() for f in expected_files}
 
-    # Step 2: check every changed file was expected OR matches AUTO_SAFE patterns
+    # Step 2: STRICT — every changed file MUST be in expected_files.
+    # We do NOT allow AUTO_SAFE bypass here. AUTO_SAFE is for pre-execution
+    # categorical safety; post-execution must match exactly what we told
+    # aider to touch. Otherwise scope escape goes undetected.
     for f in files_changed:
-        f_norm = f.lower()
+        f_norm = f.replace("\\", "/").lower()
         if f_norm in expected_norm:
-            continue
-        # Allow auto-safe paths even if not explicitly listed
-        if _path_matches(f, AUTO_SAFE_PATTERNS):
             continue
         files_unexpected.append(f)
         violations.append(f"Touched unexpected file: {f}")

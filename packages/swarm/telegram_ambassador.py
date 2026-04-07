@@ -395,9 +395,77 @@ def run_bot() -> None:
             return
         title = update_proposal_status(args[0], "dismissed")
         if title:
-            await update.message.reply_text(f"🗑 Dismissed: {title}")
+            await update.message.reply_text(f"Dismissed: {title}")
         else:
-            await update.message.reply_text(f"❌ Proposal {args[0]} not found.")
+            await update.message.reply_text(f"Proposal {args[0]} not found.")
+
+    async def cmd_implement(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """Sprint S2: trigger swarm_coder.py on a proposal — autonomous coding loop."""
+        if not is_ceo(update):
+            return
+        args = context.args
+        if not args:
+            await update.message.reply_text(
+                "Usage: /implement <proposal_id_prefix>\n"
+                "Calls swarm_coder.py: project_qa discovery -> safety_gate -> aider -> post-check -> commit/revert.\n"
+                "Default model: gemini/gemini-2.0-flash (1M context, free)."
+            )
+            return
+        proposal_id = args[0]
+        await update.message.reply_text(
+            f"[swarm_coder] Запускаю автономный coding loop для {proposal_id}...\n"
+            f"Pipeline: discover -> safety_gate -> aider -> post-check -> commit/revert\n"
+            f"Жди 30-90 секунд."
+        )
+        import subprocess
+        try:
+            result = subprocess.run(
+                [sys.executable, str(project_root / "scripts" / "swarm_coder.py"),
+                 "--id", proposal_id, "--execute"],
+                cwd=str(project_root),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=300,
+                env={**os.environ, "PYTHONIOENCODING": "utf-8"},
+            )
+            out = (result.stdout or "")
+            err = (result.stderr or "")
+            tail = (out + "\n" + err)[-1500:]
+            # Tag clearly
+            if "[SAFE]" in out and "implemented" in out.lower():
+                marker = "[SUCCESS]"
+            elif "[REVERTED]" in out or "[UNSAFE]" in out:
+                marker = "[REVERTED — unsafe diff]"
+            elif "blocked_by_gate" in out or "safety gate level" in out.lower():
+                marker = "[BLOCKED by safety gate]"
+            elif "aider_failed" in out or "[FAIL]" in out:
+                marker = "[AIDER FAILED]"
+            else:
+                marker = "[DONE]"
+            await update.message.reply_text(f"{marker}\n\n{tail}")
+        except subprocess.TimeoutExpired:
+            await update.message.reply_text("[TIMEOUT] swarm_coder >300s. Check logs.")
+        except Exception as e:
+            await update.message.reply_text(f"[ERROR] {str(e)[:300]}")
+
+    async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        if not is_ceo(update):
+            return
+        help_text = (
+            "Volaura Swarm Ambassador commands:\n\n"
+            "/status — current swarm state + pending proposals\n"
+            "/proposals — list pending proposals\n"
+            "/run — trigger swarm autonomous_run (~30s)\n"
+            "/approve <id> — approve proposal (mark for implementation)\n"
+            "/dismiss <id> — dismiss proposal\n"
+            "/implement <id> — Sprint S2: autonomous coding loop\n"
+            "                 (project_qa -> safety_gate -> aider -> post-check)\n"
+            "/help — this message\n\n"
+            "Free text -> Gemini/Groq answers with full project context."
+        )
+        await update.message.reply_text(help_text)
 
     async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle free-text messages — route to LLM for smart response."""
@@ -436,6 +504,8 @@ def run_bot() -> None:
     application.add_handler(CommandHandler("run", cmd_run))
     application.add_handler(CommandHandler("approve", cmd_approve))
     application.add_handler(CommandHandler("dismiss", cmd_dismiss))
+    application.add_handler(CommandHandler("implement", cmd_implement))
+    application.add_handler(CommandHandler("help", cmd_help))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     application.add_error_handler(global_error_handler)
 

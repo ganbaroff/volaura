@@ -53,6 +53,58 @@
 
 ---
 
+## ⚠️ FACT-CHECK CORRECTIONS (Session 91 final, after CEO challenged "проверь что реально")
+
+CTO almost handed off WRONG status. After live verification via Bash/grep/curl/find, these items in #1-#37 are CORRECTED:
+
+| # | Original status | CORRECTED reality (verified Session 91 final) |
+|---|----------------|-----------------------------------------------|
+| #4 | "Content factory discussed, no LinkedIn API" | **PARTIAL EXISTS** — `packages/swarm/skills_loader.py:85` has linkedin/post/publish keywords; multiple linkedin draft .md files in `docs/archive/`; auto-publish itself NOT verified |
+| #6 | "MindShift REST API bridge — architecture only" | **PARTIAL EXISTS** — `apps/api/app/routers/telegram_webhook.py:116-119` literally reads `C:/Users/user/Downloads/mindshift/memory/heartbeat.md` — heartbeat-file bridge works; full bidirectional REST API still missing |
+| #11 | "k6 load testing — zero" | **FILE EXISTS** — `scripts/load_test.js` exists; whether it runs properly NOT verified |
+| #16 | "Push notifications mobile — zero" | **PARTIAL EXISTS** — `apps/web/public/sw.js` (service worker) exists; FCM/push subscription logic NOT verified |
+| #17 | "Email lifecycle — zero" | **FILE EXISTS** — `apps/api/app/services/email.py` exists; whether welcome/digest sequences wired NOT verified |
+| #19 | "Langfuse keys set, not verified" | **WORSE THAN STATED** — keys in `.env` lines 85-90 BUT `python3 -c "import langfuse"` → Traceback. Package NOT installed. Zero traces possible. |
+| #32 | "Per-project Q&A agent for other 4 — not yet copied" | **PARTIAL EXISTS** — `/c/APP ANTIGRAVITY ADHD/mindshift/scripts/project_qa.py` ALREADY exists (MindShift-Claude copied during this session!). Other 3 projects (Life Sim, BrandedBy, ZEUS) NOT verified |
+
+### Items still confirmed BROKEN (real, verified)
+- #1 Dodo Payments — 0 files via `find apps/api -name "*dodo*"`
+- #2 CrewAI — `import crewai` Traceback (NOT installed)
+- #3 ClawOffice 3D — 0 files via `find -iname "*claw*"`
+- #5 Piper TTS — `import piper` Traceback (NOT installed)
+- #10 Trend Scout cron — `gh run list --workflow=trend-scout.yml` HTTP 404 workflow not found
+- #12 Playwright E2E — `find apps/web/playwright.config.*` 0 results, 0 .spec.ts files
+- #19 Langfuse package — Traceback (despite keys present)
+- #21 Telegram digest CEO receipt — bot `has_main_web_app: false`, sendMessage ok:True but CEO never /start'ed
+- #22 Telegram Mini App deployed — apps/tg-mini/.vercel/ has only README + project.json (linked but not deployed)
+- #23 scripts/execute_proposal.py — `ls` No such file or directory
+- #26 AURA scoreMeaning fix — `git status` worktree shows 3 modified files uncommitted
+- #28 CLAUDE.md size — `wc -l` confirms 750 lines (not 150)
+- #29 Agent-first check in protocol-enforce.sh — `grep -c "agent"` returns 0
+- #34 agent-feedback-distilled.md — 61 lines, 3244 bytes (small, readable in 2 minutes by next CTO — was unread)
+- #35 ECOSYSTEM-CONSTITUTION.md — 1154 lines, 87KB (huge, never read cover-to-cover)
+- #36 176 commits since 2026-04-01 main branch — never reviewed commit-by-commit
+
+### Items where verification was INCOMPLETE (next CTO must verify)
+- #7 14 uncategorized agents cleanup — not counted
+- #13 Staging environment — not checked
+- #14 Community/Discord — not checked (unlikely exists)
+- #15 Variable rewards / mystery drops — not checked
+- #18 Dynamic OG image in share flow — not checked
+- #20 Telegram bot E2E test — partial (sendMessage tested, full bot interaction not)
+- #24 Full squad_leaders.py keywords — only saw QUALITY name + description, not full keyword list
+- #25 asyncio.run() bug — found call site at line 1170, not yet read suggestion_engine internal code
+- #27 Vertex judge fallback — not yet read _judge_proposal function
+- #30 Delegation rate metric — not yet checked session-end-check.sh
+- #31 External evaluation cron — not yet checked workflows
+- #33 mem0 retry — assumed (server-side error, not blocked by my code)
+- #37 Театр vs механика 4 instances — only 1/4 verified (coordinator wiring fixed)
+
+### Items I claimed were SHIPPED — verified true
+- #S1-#S13 — all 13 verified via real artifacts (commits f05637a, e004533, 35cfc04 in `git log main`; scripts/swarm_agent.py and scripts/dsp_debate.py and scripts/project_qa.py exist in scripts/; jarvis-wake.sh exists in .claude/hooks/; etc.)
+
+---
+
 ## Sprint S1 SHIPPED (Session 91 — these are NOT broken promises, they're DONE)
 
 | # | What | Verification |

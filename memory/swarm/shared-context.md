@@ -1,6 +1,96 @@
-# Swarm Shared Context — UPDATED 2026-04-06
+# Swarm Shared Context — UPDATED 2026-04-07 (Session 91)
 
-**By:** CTO (Claude) | **Updated:** 2026-04-06 (Session 87 — Constitution v1.7, Design System v2, 3 active violations patched)
+**By:** CTO (Claude) | **Updated:** 2026-04-07 (Session 91 — SWARM ALIVE end-to-end, 5 critical bugs fixed, Telegram bot live)
+
+---
+
+## 🔥 SESSION 91 — READ THIS FIRST (overrides any older info below)
+
+### Status: SWARM ALIVE END-TO-END
+
+- `packages/swarm/autonomous_run.py` runs successfully (was dormant 2 weeks). 9 agents parallel.
+- Telegram bot `@volaurabot` running as long-polling listener (PID alive). Commands: /status /proposals /run /approve /dismiss + free text → Gemini/Groq.
+- GitHub Actions `swarm-daily.yml` cron last run = SUCCESS at 06:12 UTC.
+- shared_memory.db has 21 entries. Memory consolidation cycle works.
+
+### Tools You Now Have (use these instead of guessing)
+
+| Tool | Path | When to use |
+|------|------|------------|
+| `scripts/swarm_agent.py` | `from swarm_agent import call` | Call multi-provider LLM with auto-fallback. NEVER call Anthropic directly. Profiles: fast/smart/code/reason/translation. |
+| `scripts/dsp_debate.py` | CLI | 3 models propose + cross-critique. Use for architecture or security decisions. |
+| `scripts/project_qa.py` | CLI | Ask docs questions. 384 markdown files indexed. Don't re-read 504 docs manually. |
+| `scripts/execute_proposal.py` | CLI | **Bridge from agent proposal → concrete action**. Reads proposals.json, asks LLM for one specific bash/edit/git/read action. Use this to actually IMPLEMENT proposals, not just generate them. |
+| `packages/swarm/coordinator.py` | `from swarm.coordinator import Coordinator` | Already exists since Session 88. make_plan() / route() / run_parallel() / synthesize(). DO NOT propose to "build a Coordinator". |
+| `packages/swarm/shared_memory.py` | post_result/get_context/send_message/broadcast | SQLite-backed cross-agent state. Post your findings here so other agents see them. |
+| `packages/swarm/telegram_ambassador.py` | `python -m packages.swarm.telegram_ambassador` | Long-polling Telegram bot. Already running. |
+
+### Constitution Article 0 (HARD RULE)
+
+**NEVER use Anthropic models in swarm.** Provider hierarchy:
+1. Cerebras Qwen3-235B / Llama 3.3 8B (fastest, ~1.6s) — `CEREBRAS_API_KEY`
+2. Ollama local GPU (free, RTX 5060 + qwen3:8b) — try BEFORE external APIs
+3. NVIDIA NIM (free tier) — `NVIDIA_API_KEY`
+4. Groq Kimi K2 / Llama 3.3 70B — `GROQ_API_KEY`
+5. Gemini 2.5 Flash — `GEMINI_API_KEY`
+6. OpenRouter DeepSeek V3.1 — `OPENROUTER_API_KEY`
+
+If you find yourself about to call Anthropic Haiku or Claude Sonnet for swarm work, STOP. Use `scripts/swarm_agent.py` which structurally blocks Anthropic.
+
+### 5 Critical Bugs FIXED in Session 91
+
+1. **`autonomous_run.py:758`** "Untitled proposal" fallback → now derives title from content first line.
+2. **`squad_leaders.py`** QUALITY squad missing security/audit/vulnerability/cve/rls/auth/blocker/p0/p1 keywords. Security proposals went unrouted. FIXED — added to QUALITY squad along with `security-auditor` agent member.
+3. **`suggestion_engine.py:283`** `asyncio.run()` nested inside running event loop → crash. FIXED with ThreadPoolExecutor + new event loop.
+4. **`telegram_ambassador.py:354`** wrapped sync `Application.run_polling()` in `asyncio.run()` → crash. FIXED — `run_bot()` now sync.
+5. **`scripts/execute_proposal.py`** import path bug. FIXED — `swarm_agent.py` copied to main repo `scripts/`.
+
+### What ALREADY EXISTS (do NOT propose to build):
+
+- ✅ `packages/swarm/coordinator.py` — full Coordinator class
+- ✅ `packages/swarm/squad_leaders.py` — 5 squads with routing
+- ✅ `packages/swarm/shared_memory.py` — SQLite shared state
+- ✅ `packages/swarm/telegram_ambassador.py` — Telegram bot with /status /proposals /run /approve /dismiss
+- ✅ `apps/api/app/services/email.py` — 173 lines, `send_aura_ready_email()` works
+- ✅ `scripts/swarm_agent.py` — multi-provider LLM wrapper
+- ✅ `scripts/dsp_debate.py` — 3-model debate pattern
+- ✅ `scripts/project_qa.py` — per-project Q&A indexer
+- ✅ `scripts/execute_proposal.py` — proposal → action bridge (PoC working)
+- ✅ `scripts/load_test.js` — k6 production load test
+- ✅ `apps/tg-mini/` — Telegram Mini App (NOT yet deployed to Vercel)
+- ✅ `jarvis_daemon.py:478` `_create_mindshift_task` — VOLAURA ↔ MindShift bidirectional bridge
+- ✅ 51 skills in `memory/swarm/skills/` (categorized)
+- ✅ 44 agents in roster
+- ✅ Coordinator-agent skill at `memory/swarm/skills/coordinator-agent.md`
+
+### Knowledge Transfer For Agents Working On Proposals
+
+When you generate a proposal:
+1. **Always include a "title" field** in your JSON output. Don't omit it — fallback fires.
+2. **Reference actual file paths**: `apps/api/app/routers/aura.py:line` — vague proposals score 0/5 on specificity.
+3. **Check shared_memory.db first** via `get_context()` — another agent may have already addressed this.
+4. **Read `memory/swarm/SHIPPED.md`** before proposing — 90% of "missing" features are already shipped.
+5. **One concrete first step** beats "consider implementing X". The execute_proposal.py pipeline rejects vague proposals.
+6. **Severity meaning**:
+   - critical = production down, user can't complete core flow
+   - high = blocking new development, security CVE, or 10+ users affected
+   - medium = improves quality of life
+   - low = nice-to-have
+
+### Telegram Bot Commands (Test These)
+
+CEO can send to @volaurabot:
+- `/status` — current swarm state + pending proposals count
+- `/proposals` — list pending proposals with details
+- `/run` — trigger swarm run (~30s)
+- `/approve <id>` — approve proposal
+- `/dismiss <id>` — dismiss proposal
+- Free text → Gemini/Groq answers with conversation context
+
+If bot doesn't respond: process may have crashed. Restart with:
+```
+PYTHONIOENCODING=utf-8 python3 -m packages.swarm.telegram_ambassador
+```
 
 ---
 

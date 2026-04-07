@@ -273,14 +273,23 @@ CURRENT STATE:
 KEY PATTERNS:
 {patterns[:500]}"""
 
-    # Try LLM first, fall back to rule-based
-    # nest_asyncio: suggestion_engine is sync but called from async main()
+    # Try LLM first, fall back to rule-based.
+    # generate_suggestions() is sync but called from an async context (autonomous_run.py).
+    # asyncio.run() crashes inside a running loop. Run in a fresh thread with its own loop.
+    import concurrent.futures
+
+    def _run_in_new_loop():
+        loop = asyncio.new_event_loop()
+        try:
+            return loop.run_until_complete(_generate_via_llm(context, _env))
+        finally:
+            loop.close()
+
     try:
-        import nest_asyncio
-        nest_asyncio.apply()
-    except ImportError:
-        pass
-    llm_results = asyncio.run(_generate_via_llm(context, _env))
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as _ex:
+            llm_results = _ex.submit(_run_in_new_loop).result(timeout=30)
+    except Exception:
+        llm_results = []
 
     if llm_results:
         suggestions = []

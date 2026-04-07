@@ -45,8 +45,14 @@ SQUADS: list[Squad] = [
             "risk-manager",
             "readiness-manager",
             "assessment-science-agent",
+            "security-auditor",
         ],
-        keywords=["quality", "test", "bug", "block", "gate", "dod", "acceptance", "deploy", "launch"],
+        keywords=[
+            "quality", "test", "bug", "block", "gate", "dod", "acceptance", "deploy", "launch",
+            # Added Session 91: security routing was missing — proposals labelled "security" never matched
+            "security", "audit", "vulnerability", "cve", "exploit", "rls", "auth", "secret",
+            "regression", "incident", "p0", "p1", "blocker", "hotfix",
+        ],
     ),
     Squad(
         name="PRODUCT",

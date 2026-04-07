@@ -751,11 +751,23 @@ async def run_autonomous(mode: str = "daily-ideation") -> list[Proposal]:
                 "security": ProposalType.SECURITY,
             }
 
+            # Title fallback: if LLM omitted "title", derive from content first line
+            # instead of the useless "Untitled proposal" string that ends up in Telegram.
+            _raw_title = result.get("title", "").strip() if isinstance(result.get("title"), str) else ""
+            if not _raw_title:
+                _content_str = str(result.get("content", "") or result.get("description", "") or "").strip()
+                if _content_str:
+                    # Take first 80 chars of first meaningful line
+                    _first_line = next((ln.strip() for ln in _content_str.split("\n") if ln.strip()), "")
+                    _raw_title = (_first_line[:80] + "...") if len(_first_line) > 80 else _first_line
+                if not _raw_title:
+                    _raw_title = f"Proposal from {result.get('agent', f'agent-{i}')}"
+
             proposal = Proposal(
                 agent=result.get("agent", f"agent-{i}"),
                 severity=severity_map.get(result.get("severity", "medium"), Severity.MEDIUM),
                 type=type_map.get(result.get("type", "idea"), ProposalType.IDEA),
-                title=result.get("title", "Untitled proposal"),
+                title=_raw_title,
                 content=result.get("content", ""),
                 escalate_to_ceo=result.get("escalate_to_ceo", False),
             )

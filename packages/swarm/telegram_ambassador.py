@@ -200,8 +200,13 @@ Keep responses under 500 characters for Telegram readability. Use Russian (CEO p
 
 # ── Telegram Bot Handlers ───────────────────────────────────────────────────
 
-async def run_bot() -> None:
-    """Run the Telegram bot with long polling."""
+def run_bot() -> None:
+    """Run the Telegram bot with long polling.
+
+    NOTE: synchronous! python-telegram-bot v20+ Application.run_polling() manages
+    its own asyncio loop. Wrapping in asyncio.run() crashes with
+    'RuntimeError: This event loop is already running'.
+    """
     bot_token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
     ceo_chat_id = os.environ.get("TELEGRAM_CEO_CHAT_ID", "")
 
@@ -238,41 +243,43 @@ async def run_bot() -> None:
         pending = get_pending_proposals()
         sprint = get_sprint_summary()
 
-        # Trim sprint to first meaningful lines
+        # Trim sprint to first meaningful lines, strip markdown to avoid Telegram parse errors
         sprint_lines = [l.strip() for l in sprint.split("\n") if l.strip()][:5]
         sprint_short = "\n".join(sprint_lines)
 
-        msg = f"🔮 *Swarm Status*\n\n"
-        msg += f"📋 Pending proposals: {len(pending)}\n"
+        # NO parse_mode — sprint-state.md content has unbalanced * _ [ ] chars that
+        # crash Telegram Markdown parser. Plain text only.
+        msg = "[STATUS] Swarm Status\n\n"
+        msg += f"Pending proposals: {len(pending)}\n"
         if pending:
             for p in pending[:3]:
                 sev = p.get("severity", "medium").upper()
                 msg += f"  [{sev}] {p.get('title', '?')}\n"
-        msg += f"\n📍 Sprint:\n{sprint_short}"
+        msg += f"\nSprint:\n{sprint_short}"
 
-        await update.message.reply_text(msg, parse_mode="Markdown")
+        await update.message.reply_text(msg)
 
     async def cmd_proposals(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if not is_ceo(update):
             return
         pending = get_pending_proposals()
         if not pending:
-            await update.message.reply_text("✅ Нет pending proposals.")
+            await update.message.reply_text("Нет pending proposals.")
             return
 
         for p in pending[:5]:
-            msg = f"📌 *{p.get('title', '?')}*\n"
+            # Plain text — no parse_mode. Description content is untrusted user data.
+            msg = f"[{p.get('severity', '?').upper()}] {p.get('title', '?')}\n"
             msg += f"Agent: {p.get('agent', '?')}\n"
-            msg += f"Severity: {p.get('severity', '?').upper()}\n"
             msg += f"Type: {p.get('type', '?')}\n"
-            msg += f"\n{p.get('description', '')[:300]}\n"
+            msg += f"\n{(p.get('description') or p.get('content') or '')[:300]}\n"
             msg += f"\n/approve {p.get('id', '?')} | /dismiss {p.get('id', '?')}"
-            await update.message.reply_text(msg, parse_mode="Markdown")
+            await update.message.reply_text(msg)
 
     async def cmd_run(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if not is_ceo(update):
             return
-        await update.message.reply_text("🚀 Запускаю swarm run... (это займёт ~30 секунд)")
+        await update.message.reply_text("Запускаю swarm run... (это займёт ~30 секунд)")
         # Trigger the autonomous run in a subprocess
         import subprocess
         try:
@@ -284,14 +291,15 @@ async def run_bot() -> None:
                 timeout=120,
             )
             if result.returncode == 0:
-                await update.message.reply_text("✅ Swarm run complete. /proposals для результатов.")
+                await update.message.reply_text("[OK] Swarm run complete. /proposals для результатов.")
             else:
                 error_short = result.stderr[-300:] if result.stderr else "Unknown error"
-                await update.message.reply_text(f"❌ Swarm run failed:\n```\n{error_short}\n```", parse_mode="Markdown")
+                # Plain text — stderr can contain stack traces with markdown-breaking chars
+                await update.message.reply_text(f"[FAIL] Swarm run failed:\n{error_short}")
         except subprocess.TimeoutExpired:
-            await update.message.reply_text("⏰ Swarm run timed out (>120s). Check logs.")
+            await update.message.reply_text("[TIMEOUT] Swarm run timed out (>120s). Check logs.")
         except Exception as e:
-            await update.message.reply_text(f"❌ Error: {str(e)[:200]}")
+            await update.message.reply_text(f"[ERROR] {str(e)[:200]}")
 
     async def cmd_approve(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if not is_ceo(update):
@@ -334,6 +342,20 @@ async def run_bot() -> None:
 
         await update.message.reply_text(response)
 
+    async def global_error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """Catch ALL exceptions so bot never dies silently on bad messages."""
+        err = context.error
+        logger.error(f"[BOT ERROR] {type(err).__name__}: {err}")
+        # Try to notify CEO that something went wrong — plain text, no formatting
+        try:
+            if isinstance(update, Update) and update.effective_chat:
+                await context.bot.send_message(
+                    chat_id=update.effective_chat.id,
+                    text=f"[BOT ERROR] {type(err).__name__}: {str(err)[:200]}",
+                )
+        except Exception as notify_err:
+            logger.error(f"[BOT ERROR] Could not notify CEO: {notify_err}")
+
     # Build and run the bot
     application = Application.builder().token(bot_token).build()
 
@@ -343,15 +365,17 @@ async def run_bot() -> None:
     application.add_handler(CommandHandler("approve", cmd_approve))
     application.add_handler(CommandHandler("dismiss", cmd_dismiss))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    application.add_error_handler(global_error_handler)
 
-    logger.info("🤖 MiroFish Ambassador Bot starting... (CEO chat: {id})", id=ceo_id)
-    await application.run_polling(drop_pending_updates=True)
+    logger.info("[BOT] MiroFish Ambassador Bot starting... (CEO chat: {id})", id=ceo_id)
+    # drop_pending_updates=False so any messages CEO sent while bot was offline get processed
+    application.run_polling(drop_pending_updates=False)
 
 
 # ── Entry Point ─────────────────────────────────────────────────────────────
 
 def main():
-    asyncio.run(run_bot())
+    run_bot()
 
 
 if __name__ == "__main__":

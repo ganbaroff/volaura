@@ -554,8 +554,11 @@ async def submit_answer(
         evaluation_log=evaluation_log,
     )
 
-    # Check stopping criteria
-    stopped, stop_reason = should_stop(state)
+    # Check stopping criteria (Constitution Law 2: Energy Adaptation)
+    # Read energy_level from session metadata; defaults to "full" if not set
+    session_metadata = session.get("metadata") or {}
+    energy_level = session_metadata.get("energy_level", "full") if isinstance(session_metadata, dict) else "full"
+    stopped, stop_reason = should_stop(state, energy_level=energy_level)
     state.stopped = stopped
     state.stop_reason = stop_reason
 

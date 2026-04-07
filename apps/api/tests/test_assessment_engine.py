@@ -147,6 +147,66 @@ def test_should_not_stop_early():
     assert stopped is False
 
 
+# ── Energy-adaptive stopping (Constitution Law 2) ─────────────────────────────
+
+def test_should_stop_low_energy_max_5_items():
+    """Low energy caps assessment at 5 items (vs 20 for full)."""
+    state = CATState(theta=0.5, theta_se=0.6)  # high SE so only max_items can stop
+    for i in range(5):
+        state.items.append(ItemRecord(f"q{i}", 1.0, 0.0, 0.0, 1, 1.0, 5000))
+    stopped, reason = should_stop(state, energy_level="low")
+    assert stopped is True
+    assert reason == "max_items"
+
+
+def test_should_stop_mid_energy_max_12_items():
+    """Mid energy caps at 12 items."""
+    state = CATState(theta=0.5, theta_se=0.6)
+    for i in range(12):
+        state.items.append(ItemRecord(f"q{i}", 1.0, 0.0, 0.0, 1, 1.0, 5000))
+    stopped, reason = should_stop(state, energy_level="mid")
+    assert stopped is True
+    assert reason == "max_items"
+
+
+def test_should_not_stop_low_energy_at_4_items():
+    """Low energy: still running at 4 items if SE high."""
+    state = CATState(theta=0.5, theta_se=0.7)
+    for i in range(4):
+        state.items.append(ItemRecord(f"q{i}", 1.0, 0.0, 0.0, 1, 1.0, 5000))
+    stopped, _ = should_stop(state, energy_level="low")
+    assert stopped is False
+
+
+def test_low_energy_lax_se_threshold():
+    """Low energy: SE < 0.5 triggers stop after 3 items (vs 0.3 after 5 for full)."""
+    state = CATState(theta=0.5, theta_se=0.45)
+    for i in range(3):
+        state.items.append(ItemRecord(f"q{i}", 1.0, 0.0, 0.0, 1, 1.0, 5000))
+    stopped, reason = should_stop(state, energy_level="low")
+    assert stopped is True
+    assert reason == "se_threshold"
+
+
+def test_full_energy_requires_tighter_se():
+    """Full energy: SE 0.45 is NOT enough to stop (needs < 0.3)."""
+    state = CATState(theta=0.5, theta_se=0.45)
+    for i in range(5):
+        state.items.append(ItemRecord(f"q{i}", 1.0, 0.0, 0.0, 1, 1.0, 5000))
+    stopped, _ = should_stop(state, energy_level="full")
+    assert stopped is False
+
+
+def test_unknown_energy_defaults_to_full():
+    """Safety: invalid energy_level falls back to full profile."""
+    state = CATState(theta=0.5, theta_se=0.35)
+    for i in range(5):
+        state.items.append(ItemRecord(f"q{i}", 1.0, 0.0, 0.0, 1, 1.0, 5000))
+    stopped_unknown, _ = should_stop(state, energy_level="ultra_mega")
+    stopped_full, _ = should_stop(state, energy_level="full")
+    assert stopped_unknown == stopped_full  # Both should be False (SE 0.35 > 0.3)
+
+
 # ── Anti-gaming ───────────────────────────────────────────────────────────────
 
 def test_no_flags_for_clean_answers():

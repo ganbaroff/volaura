@@ -63,7 +63,8 @@ function ScoreMeaning({ score }: { score: number }) {
   if (score >= 90) key = "aura.scoreMeaning_top5";
   else if (score >= 75) key = "aura.scoreMeaning_above";
   else if (score >= 60) key = "aura.scoreMeaning_foundation";
-  else key = "aura.scoreMeaning_progress";
+  else if (score > 0) key = "aura.scoreMeaning_justStarting"; // completed assessment, low score
+  else key = "aura.scoreMeaning_progress"; // score === 0 → no assessment yet
 
   return (
     <p className="text-sm text-muted-foreground mt-1 font-medium">{t(key)}</p>

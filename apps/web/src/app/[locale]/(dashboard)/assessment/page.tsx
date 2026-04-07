@@ -11,6 +11,8 @@ import { AlertCircle, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { API_BASE } from "@/lib/api/client";
 import { useTrackEvent } from "@/hooks/use-analytics";
+import { EnergyPicker, type EnergyLevel } from "@/components/assessment/energy-picker";
+import { PreAssessmentSummary } from "@/components/assessment/pre-assessment-summary";
 
 // Static competency metadata — labels fetched from i18n, weights from CLAUDE.md
 const COMPETENCIES = [
@@ -38,6 +40,7 @@ function AssessmentContent() {
   const isMounted = useRef(true);
 
   const [selected, setSelected] = useState<Set<CompetencyId>>(new Set());
+  const [energyLevel, setEnergyLevel] = useState<EnergyLevel>("full");
   const [isStarting, setIsStarting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -110,7 +113,7 @@ function AssessmentContent() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ competency_slug: competencyList[0] }),
+        body: JSON.stringify({ competency_slug: competencyList[0], energy_level: energyLevel }),
       });
 
       if (!res.ok) {
@@ -224,18 +227,17 @@ function AssessmentContent() {
         })}
       </div>
 
+      {/* Pre-assessment layer: what user gets before they commit */}
       {selected.size > 0 && (
-        <div className="text-center space-y-1">
-          <p className="text-sm text-muted-foreground" aria-live="polite">
-            {t("assessment.totalTime", {
-              n: totalMinutes,
-              defaultValue: `~${totalMinutes} min total`,
-            })}
-          </p>
-          <p className="text-xs text-muted-foreground">
-            💾 {t("assessment.canSave", { defaultValue: "You can save and resume anytime — no pressure to finish in one go" })}
-          </p>
-        </div>
+        <PreAssessmentSummary
+          totalMinutes={totalMinutes}
+          competencyCount={selected.size}
+        />
+      )}
+
+      {/* Constitution Law 2: Energy Adaptation — user picks energy level before assessment */}
+      {selected.size > 0 && (
+        <EnergyPicker value={energyLevel} onChange={setEnergyLevel} />
       )}
 
       <Button

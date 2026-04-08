@@ -114,10 +114,10 @@ jobs:
           SWARM_AUTO_FIX: "1"
           SWARM_AUTO_FIX_MAX: "3"
           # Aider model for autonomous code edits.
-          # cerebras/qwen-3-235b-a22b-instruct-2507 was tried but not in aider's model registry
-          # → every call hit the 300s subprocess timeout. Switching to gemini-2.0-flash:
-          # single aider call per proposal (not bulk), so free-tier 429 is not a concern.
-          SWARM_CODER_MODEL: "gemini/gemini-2.0-flash"
+          # cerebras/qwen-3-235b: not in aider's model registry → 300s timeout every call.
+          # gemini/gemini-2.0-flash: deprecated for this API key ("no longer available to new").
+          # groq/llama-3.3-70b-versatile: in aider's registry, 131K ctx (enough for .md edits).
+          SWARM_CODER_MODEL: "groq/llama-3.3-70b-versatile"
         run: |
           cd "${{ github.workspace }}"
           # Build keyword index of docs/*.md so swarm_coder's discover_target_files()

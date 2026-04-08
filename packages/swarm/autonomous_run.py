@@ -1037,13 +1037,28 @@ async def _run_auto_fix(
 
         logger.info(f"Auto-fix: trying [{prop.severity.value}] {prop.title[:60]}")
         try:
-            r = await asyncio.to_thread(
-                sc.implement_proposal,
-                prop_dict,
-                True,   # execute
-                False,  # plan_only
-                None,   # files_override
+            # 420s outer timeout: aider subprocess timeout is 300s, +120s for startup/test gate
+            r = await asyncio.wait_for(
+                asyncio.to_thread(
+                    sc.implement_proposal,
+                    prop_dict,
+                    True,   # execute
+                    False,  # plan_only
+                    None,   # files_override
+                ),
+                timeout=420,
             )
+        except asyncio.TimeoutError:
+            logger.warning(f"Auto-fix timeout (420s) on '{prop.title[:50]}'")
+            results.append({
+                "proposal_id": prop_dict["id"],
+                "proposal_title": prop.title,
+                "ok": False,
+                "stage": "timeout",
+                "commit_hash": "",
+                "error": "implement_proposal exceeded 420s outer timeout",
+            })
+            continue
         except Exception as e:
             logger.warning(f"Auto-fix crashed on '{prop.title[:50]}': {e}")
             results.append({

@@ -118,6 +118,10 @@ jobs:
           SWARM_CODER_MODEL: "cerebras/qwen-3-235b-a22b-instruct-2507"
         run: |
           cd "${{ github.workspace }}"
+          # Build keyword index of docs/*.md so swarm_coder's discover_target_files()
+          # can find relevant files. Without this, target_files=[] and safety_gate
+          # returns LOW for every proposal, blocking all auto-fixes.
+          python scripts/project_qa.py --rebuild-index || echo "[warn] project_qa index build failed (non-blocking)"
           python -m packages.swarm.autonomous_run --mode=${{ steps.mode.outputs.mode }}
 
       - name: Skip notice

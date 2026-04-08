@@ -871,7 +871,9 @@ async def send_telegram_notifications(
 
     fix_results = fix_results or []
     fixed = [r for r in fix_results if r.get("ok")]
-    failed_fixes = [r for r in fix_results if not r.get("ok")]
+    # Separate "blocked by safety gate" (expected) from real errors (unexpected)
+    skipped_fixes = [r for r in fix_results if not r.get("ok") and r.get("stage") in ("blocked_by_gate", "no_files")]
+    failed_fixes = [r for r in fix_results if not r.get("ok") and r.get("stage") not in ("blocked_by_gate", "no_files")]
 
     # Digest always sends — even on an empty/quiet run — so CEO knows the cron
     # actually fired and nothing is silently broken. "No red screens" means the
@@ -889,10 +891,18 @@ async def send_telegram_notifications(
         convergent = [p for p in high_proposals if p.convergent]
         high = [p for p in high_proposals if p.severity == Severity.HIGH and not p.convergent]
 
+        summary_parts = [
+            f"Найдено: *{len(proposals)}*",
+            f"Исправлено: *{len(fixed)}*",
+        ]
+        if skipped_fixes:
+            summary_parts.append(f"Пропущено gate: *{len(skipped_fixes)}*")
+        if failed_fixes:
+            summary_parts.append(f"Ошибок: *{len(failed_fixes)}*")
+
         lines = [
             "📋 *Swarm Digest*",
-            f"Найдено: *{len(proposals)}*  |  Исправлено: *{len(fixed)}*"
-            f"  |  Ошибок фикса: *{len(failed_fixes)}*",
+            "  |  ".join(summary_parts),
             "",
         ]
 
@@ -905,7 +915,7 @@ async def send_telegram_notifications(
             lines.append("")
 
         if failed_fixes:
-            lines.append(f"⚠️ *Не удалось исправить ({len(failed_fixes)}):*")
+            lines.append(f"⚠️ *Ошибки авто-фикса ({len(failed_fixes)}):*")
             for r in failed_fixes[:3]:
                 stage = r.get("stage", "?")
                 title = (r.get("proposal_title") or "")[:60]
@@ -946,7 +956,7 @@ async def send_telegram_notifications(
             await bot.send_message(chat_id=chat_id, text=plain)
 
         logger.info(
-            f"Telegram digest sent: found={len(proposals)} fixed={len(fixed)} failed={len(failed_fixes)}"
+            f"Telegram digest sent: found={len(proposals)} fixed={len(fixed)} skipped={len(skipped_fixes)} errors={len(failed_fixes)}"
         )
 
     except Exception as e:

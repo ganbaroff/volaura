@@ -9,6 +9,67 @@
 
 ## 0. What is verified (before plan starts)
 
+### ⚠️ v3 REALITY CHECK — 2026-04-08 late
+
+After the v2 critique round, CEO pushed back: "проверь и обнови". I opened the
+actual MindShift repo (found at `C:/Users/user/Downloads/mindshift/`) and
+verified current state. Several v2 assumptions were wrong — ecosystem_audit was
+12 days old and undercounting. Real state below.
+
+### MindShift actual state (verified 2026-04-08 by reading MindShift repo directly)
+
+| Thing | v2 megaplan assumed | v3 verified reality |
+|-------|--------------------|--------------------|
+| **Completion** | "92% PWA / 30% native" | **Production v1.0 LIVE**. Deployed at `mind-shift-git-main-yusifg27-3093s-projects.vercel.app`. Auto-deploys on `git push origin main`. |
+| **Capacitor** | "need to set up in S8" | **Already installed**. `@capacitor/android` 8.3, `@capacitor/cli`, `@capacitor/core`. `capacitor.config.ts` fully wired (appId `com.mindshift.app`, SplashScreen, StatusBar, Keyboard, LocalNotifications, PushNotifications, Haptics plugins). |
+| **Android platform** | "need S8 native build" | **Already exists** at `android/` with full gradle (build.gradle, gradlew, capacitor-cordova-android-plugins). Ready to `cap sync && cap open android`. |
+| **iOS platform** | not addressed | `ios/` directory not present. Can be added via `npx cap add ios` when needed (post-Android launch). |
+| **Sentry** | "extend from VOLAURA (S6 add)" | **Already installed**: `@sentry/react` 10.42 + `@sentry/cli` 2.42 in package.json. Need to verify DSN is set, not add the package. |
+| **Stripe** | "schema exists, processor unclear" | **Fully wired via Supabase edge function `create-checkout`**. PlanSection.tsx calls `supabase.functions.invoke('create-checkout', {plan: 'pro_monthly'})` → returns `https://checkout.stripe.com/...` URL → redirect → webhook syncs `subscription_tier` column. |
+| **Subscription states** | "need to build" | **Already exists**: `'free' \| 'pro_trial' \| 'pro'` in Zustand store. Trial system is live. |
+| **volaura-bridge.ts** | "needs D.4 frontend work" | **Already exists — 211 lines**, uses `VITE_VOLAURA_API_URL`, 5-minute cache, fire-and-forget pattern, CharacterState/CrystalBalance/CharacterEvent types. Calls `/api/character/state`, `/api/character/events`, `/api/character/crystals`. Per MindShift-Claude's earlier audit, bridge code is READY — just needs auth working (= Sprint E2.D) to function end-to-end. |
+| **Mochi mascot** | "use existing" | **Exists**: `src/features/mochi/mochiChatHelpers.ts` (84 LOC), `src/features/home/mochiMessages.ts` (36 LOC), `src/shared/lib/mochiDiscoveries.ts`. The humor+adaptive-personality work in S7 will extend these files, not build from scratch. |
+| **Feature flags** | not addressed | **Not present**. `grep -r "feature_flag\|featureFlag"` in src returned zero. S6 remote config flag IS new work. |
+| **Offline timer** | "verify works" | PWA via `vite-plugin-pwa` + IndexedDB via `idb-keyval`. Likely works but S6 includes explicit verification test. |
+| **Focus timer framework** | "need to extend for learning" | FocusScreen + FocusSetup + PostSessionFlow already exist. Struggle→Release→Flow phases per Law 2. NO learning-goal concept — `grep learning` in `src/features/focus` returned zero. S6 learning mode IS new work, but integrates with existing FocusSetup. |
+| **Constitution Laws** | referenced from VOLAURA | **Already enforced in MindShift**: Law 1 (NEVER RED palette — ESLint rule in commit `4300f9d`), Law 2 (energy adaptation: `isLowEnergy = energyLevel <= 2 || burnoutScore > 60`), Law 3 (invisible streaks, warm amber carry-over), Law 4 (`useMotion()` hook), Law 5 (one CTA per screen). |
+| **Crystal economy** | "bridge via character_events" | Rules defined in `.claude/rules/crystal-shop-ethics.md` (8 rules). Transparent formula: 1 min focus = 5 crystals. 24h refund policy. No timers. |
+| **Test infrastructure** | not addressed | Vitest unit + Playwright E2E. Per MindShift CLAUDE.md sprint history: **207/207 unit + 201/201 E2E passing** as of BATCH-2026-04-04-Q. E2E runs in CI after every Vercel deploy. |
+| **Analytics** | not addressed | `@vercel/analytics` + `web-vitals` + custom `logEvent` system. Events like `app_first_open`, `burnout_alert_shown`, `room_created`, `social_session_feedback` already fire. First-day uninstall can be measured via Vercel + Sentry session data. |
+| **Localization** | "6 locales" | `i18next` 25.1 + `react-i18next` 15.5, 6 locales confirmed, all messages keyed. |
+| **Google Play** | "apply to store" | Per MindShift CLAUDE.md: "Google Play launch pending account verification". So CEO has NOT yet completed Developer account. Confirms my S5 Day 0 action item. |
+| **Supabase project** | `awfoqycoltvhamtrsvxk` standalone | Confirmed via `.env` references in volaura-bridge.ts + migrations 001-015. |
+| **MindShift git branch** | not tracked | On `main`, latest commits: `9d24e52 docs(shipped)`, `4300f9d feat(lint) Constitution Law 1 ESLint`, `bf33ca4 fix(ci) google auth`, `b54ec4b lint 30 errors unblock CI` |
+
+### Impact on sprint scope (v2 → v3)
+
+**S6 — scope REDUCED**:
+- Sentry install → already done. New: verify DSN, decide whether to share VOLAURA DSN or separate project.
+- Offline timer verification → existing PWA likely handles it. Test one flight-mode session.
+- Crash reporting analytics → already wired via Vercel + Sentry.
+- Subscription tier infra → already done.
+- Remote config flag → still new work (no feature_flag system present).
+- Learning mode UI + catalog + course picker → still new work (confirmed zero learning code in src/features/focus).
+
+**S7 — scope CLARIFIED**:
+- Mochi extension for crystal click humor → builds on existing 120+ LOC mochi infrastructure. Less "new code" more "new call sites + new prompt templates".
+- Voice player + disclosure UI → new component.
+- Voice recording + ElevenLabs clone → still CEO-blocked.
+- Adaptive vs standard onboarding toggle → new user setting.
+
+**S8 — scope MAJORLY REDUCED**:
+- Capacitor setup → **DONE**. Skip entire setup phase.
+- Android platform add → **DONE**.
+- What remains:
+  1. Native in-app billing plugin integration (Stripe web flow must be disabled on Android build path)
+  2. Build signed AAB for Play Console
+  3. Play Console listing (description, screenshots, feature graphic — some already captured per BATCH-2026-04-04-R "feature graphic 1024×500")
+  4. Data safety form
+  5. Closed beta testers
+  6. Review wait
+- **Feature graphic already captured** (BATCH-2026-04-04-R commit `d20591c`). Screenshots captured (BATCH-2026-04-04-P refreshed 8 Play Store screenshots).
+- Google Play Developer Account verification is the ONLY hard blocker left (CEO ops action). Start Day 0 of S5 as planned.
+
 ### Verified via tool calls this session
 
 | Claim | Proof |

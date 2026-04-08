@@ -41,7 +41,7 @@ if settings.sentry_dsn:
 
 from app.middleware.request_id import RequestIdMiddleware
 from app.middleware.security_headers import SecurityHeadersMiddleware
-from app.routers import activity, admin, analytics, assessment, auth, aura, badges, brandedby, character, discovery, events, health, invites, leaderboard, notifications, organizations, profiles, skills, stats, subscription, telegram_webhook, tribes, verification
+from app.routers import activity, admin, analytics, assessment, auth, auth_bridge, aura, badges, brandedby, character, discovery, events, health, invites, leaderboard, notifications, organizations, profiles, skills, stats, subscription, telegram_webhook, tribes, verification
 from app.services.reeval_worker import run_reeval_worker
 from app.services.video_generation_worker import run_video_generation_worker
 
@@ -149,6 +149,8 @@ async def global_exception_handler(request: Request, exc: Exception) -> JSONResp
 # Routers
 app.include_router(health.router, tags=["Health"])
 app.include_router(auth.router, prefix="/api")
+# Sprint E2.D.2 — cross-project identity bridge (MindShift ↔ VOLAURA)
+app.include_router(auth_bridge.router, prefix="/api")
 app.include_router(profiles.router, prefix="/api")
 app.include_router(aura.router, prefix="/api")
 app.include_router(assessment.router, prefix="/api")

@@ -123,35 +123,56 @@ def _mint_shared_jwt(shared_user_id: str, email: str) -> tuple[str, datetime]:
 
 
 async def _find_user_by_email(admin, email: str) -> str | None:
-    """Look up auth.users by email using admin SDK. Returns UUID or None."""
-    try:
-        # Supabase admin SDK — list users filtered by email. API is slightly
-        # awkward: list_users returns a paginated list, so we filter locally.
-        # For small-to-medium projects (<10k users) this is fine. If VOLAURA
-        # grows past that, swap to a direct SQL lookup via rpc.
-        result = await admin.auth.admin.list_users()
-        users = getattr(result, "users", None) or result
-        for u in users:
-            u_email = getattr(u, "email", None)
-            if u_email and u_email.lower() == email.lower():
-                return str(u.id)
+    """Look up auth.users by email via service-role RPC. Returns UUID or None.
+
+    Uses the find_shared_user_id_by_email() SQL function (defined in migration
+    20260408000001_user_identity_map.sql). That function runs SECURITY DEFINER
+    and does a single indexed lookup — O(1), no pagination, no user count
+    ceiling. Agents (Qwen 235B, Kimi K2, Nemotron 120B, Gemma 4) all flagged
+    the previous list_users() pagination approach as failing at scale.
+    """
+    target = (email or "").strip().lower()
+    if not target:
         return None
+    try:
+        result = await admin.rpc(
+            "find_shared_user_id_by_email",
+            {"p_email": target},
+        ).execute()
+        data = result.data
+        # RPC returns UUID or None. Supabase wraps scalar in a list sometimes.
+        if isinstance(data, list):
+            data = data[0] if data else None
+        if not data:
+            return None
+        return str(data)
     except Exception as e:
-        logger.warning("admin.auth.admin.list_users failed during bridge lookup", error=str(e))
+        logger.warning(
+            "find_shared_user_id_by_email RPC failed during bridge lookup",
+            error=str(e),
+        )
         return None
 
 
 async def _create_shadow_user(admin, email: str) -> str:
     """Create a shadow auth.users row in shared project for an external user.
 
-    Password is random and never stored — the user can always recover access
-    via magic link or password reset at volaura.app if they want a direct
-    VOLAURA account later. For now they use MindShift → bridge pattern.
+    Race-tolerant: two concurrent bridge calls for the same new email can
+    both pass the _find_user_by_email check and both reach create_user. The
+    second call catches the "email already exists" error from GoTrue and
+    falls back to a fresh _find_user_by_email lookup, returning the UUID
+    created by the winner of the race. This prevents duplicate shadow users
+    for the same email (per-email idempotency).
+
+    Password is random and never stored — the user recovers access via
+    magic link / password reset at volaura.app if they ever need direct
+    VOLAURA access. For now they use MindShift → bridge pattern.
     """
+    email_norm = email.strip().lower()
     random_password = secrets.token_urlsafe(32)
     try:
         result = await admin.auth.admin.create_user({
-            "email": email,
+            "email": email_norm,
             "password": random_password,
             "email_confirm": True,
             "user_metadata": {"origin": "external_bridge"},
@@ -160,15 +181,36 @@ async def _create_shadow_user(admin, email: str) -> str:
         user_id = str(getattr(user, "id", None))
         if not user_id or user_id == "None":
             raise RuntimeError("create_user returned no user id")
-        logger.info("Shadow user created via bridge", email=email, shared_user_id=user_id)
+        logger.info("Shadow user created via bridge", email=email_norm, shared_user_id=user_id)
         return user_id
     except Exception as e:
-        logger.error("Failed to create shadow user", email=email, error=str(e))
+        # Race-condition fallback: GoTrue raises "User already registered" or
+        # "email_exists" when a concurrent request created the user between
+        # our _find_user_by_email and this create_user call. Re-lookup and
+        # return the existing UUID.
+        err_text = str(e).lower()
+        if any(marker in err_text for marker in ("already registered", "email_exists", "already exists", "duplicate key", "unique constraint")):
+            logger.info(
+                "Shadow user create hit race — re-looking up existing user",
+                email=email_norm,
+                error=str(e)[:200],
+            )
+            existing_id = await _find_user_by_email(admin, email_norm)
+            if existing_id:
+                return existing_id
+            # Race winner hasn't committed yet — give it a moment and retry once
+            import asyncio as _a
+            await _a.sleep(0.25)
+            existing_id = await _find_user_by_email(admin, email_norm)
+            if existing_id:
+                return existing_id
+            # Still nothing — treat as real error
+        logger.error("Failed to create shadow user", email=email_norm, error=str(e))
         raise HTTPException(
             status_code=500,
             detail={
                 "code": "SHADOW_USER_CREATE_FAILED",
-                "message": f"Could not create shadow user for {email}",
+                "message": f"Could not create shadow user for {email_norm}",
             },
         )
 
@@ -215,10 +257,17 @@ async def bridge_from_external(
             detail={"code": "INVALID_BRIDGE_SECRET", "message": "Invalid or missing bridge secret"},
         )
 
-    # ── Step 1: look up existing mapping ──────────────────────────────────
+    # ── Normalize email once — used for all lookups, create, and upsert ──
+    email_norm = body.email.strip().lower()
+
+    # ── Step 1: look up existing mapping by (standalone_user_id, project_ref) ──
+    # Keyed on standalone_user_id (not email) so that email drift in MindShift
+    # does NOT split user identity. If the MindShift user later changes email,
+    # we find them by their stable standalone UUID and only the email column
+    # on the mapping row drifts forward.
     mapping_result = (
         await admin.table("user_identity_map")
-        .select("shared_user_id")
+        .select("shared_user_id, email")
         .eq("standalone_user_id", body.standalone_user_id)
         .eq("standalone_project_ref", body.standalone_project_ref)
         .execute()
@@ -229,10 +278,18 @@ async def bridge_from_external(
 
     if mapping_result.data:
         shared_user_id = str(mapping_result.data[0]["shared_user_id"])
-        # Touch last_seen_at
+        # Touch last_seen_at + update stored email on every bridge call so
+        # email drift in MindShift is reflected in our mapping. Does NOT
+        # update auth.users.email — that's a separate admin action the user
+        # must do via volaura.app or a future reconciliation job.
         await (
             admin.table("user_identity_map")
-            .update({"last_seen_at": datetime.now(timezone.utc).isoformat()})
+            .update(
+                {
+                    "last_seen_at": datetime.now(timezone.utc).isoformat(),
+                    "email": email_norm,
+                }
+            )
             .eq("standalone_user_id", body.standalone_user_id)
             .eq("standalone_project_ref", body.standalone_project_ref)
             .execute()
@@ -244,52 +301,57 @@ async def bridge_from_external(
         )
     else:
         # ── Step 2: look up auth.users by email (direct VOLAURA signup case) ──
-        shared_user_id = await _find_user_by_email(admin, body.email)
+        shared_user_id = await _find_user_by_email(admin, email_norm)
 
         # ── Step 3: no existing user — create shadow ──────────────────────
         if not shared_user_id:
-            shared_user_id = await _create_shadow_user(admin, body.email)
+            shared_user_id = await _create_shadow_user(admin, email_norm)
             created_new_user = True
 
-        # ── Step 4: insert mapping row ────────────────────────────────────
+        # ── Step 4: UPSERT mapping row ────────────────────────────────────
+        # Upsert on PK (standalone_user_id, standalone_project_ref) prevents
+        # the race where two concurrent bridge calls both reach this step
+        # and the second INSERT would 500 on PK conflict. Idempotent.
         try:
             await (
                 admin.table("user_identity_map")
-                .insert(
+                .upsert(
                     {
                         "standalone_user_id": body.standalone_user_id,
                         "standalone_project_ref": body.standalone_project_ref,
                         "shared_user_id": shared_user_id,
-                        "email": body.email,
+                        "email": email_norm,
                         "source_product": body.source_product,
-                    }
+                        "last_seen_at": datetime.now(timezone.utc).isoformat(),
+                    },
+                    on_conflict="standalone_user_id,standalone_project_ref",
                 )
                 .execute()
             )
             logger.info(
-                "Bridge created new mapping",
-                email=body.email,
+                "Bridge upserted mapping",
+                email=email_norm,
                 standalone=body.standalone_user_id[:8],
                 shared_user_id=shared_user_id[:8],
                 created_new_user=created_new_user,
             )
         except Exception as e:
             logger.error(
-                "Failed to insert identity mapping",
+                "Failed to upsert identity mapping",
                 error=str(e),
-                email=body.email,
+                email=email_norm,
             )
             raise HTTPException(
                 status_code=500,
                 detail={
-                    "code": "MAPPING_INSERT_FAILED",
+                    "code": "MAPPING_UPSERT_FAILED",
                     "message": "Could not persist identity mapping",
                 },
             )
 
     # ── Step 5: mint the shared JWT ───────────────────────────────────────
     try:
-        token, expires_at = _mint_shared_jwt(shared_user_id, body.email)
+        token, expires_at = _mint_shared_jwt(shared_user_id, email_norm)
     except Exception as e:
         logger.error("JWT mint failed", error=str(e), shared_user_id=shared_user_id[:8])
         raise HTTPException(

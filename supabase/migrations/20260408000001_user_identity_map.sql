@@ -80,3 +80,45 @@ ALTER TABLE public.user_identity_map ENABLE ROW LEVEL SECURITY;
 --     FOR SELECT USING (shared_user_id = auth.uid());
 -- But for now, no client needs this — MindShift edge function goes through
 -- the bridge endpoint which returns only the shared_user_id, nothing else.
+
+-- ============================================================
+-- RPC: find_shared_user_id_by_email
+-- ============================================================
+-- Used by auth_bridge.py to look up an existing auth.users row by email
+-- WITHOUT paginating through list_users() (which has a 4k-user ceiling in
+-- the Python SDK). This function does a single indexed lookup on
+-- auth.users.email (Supabase creates that index by default).
+--
+-- SECURITY DEFINER required because auth schema is not exposed via PostgREST
+-- to service_role by default. Function runs as the owner (postgres) which
+-- can read auth.users. REVOKE from public/anon/authenticated — only
+-- service_role can call this RPC.
+--
+-- Case-insensitive match because emails are effectively case-insensitive
+-- per RFC 5321 local-part is technically case-sensitive but every sane
+-- provider treats them equivalently, and Supabase GoTrue lowercases on
+-- sign-up. Using lower() ensures mapping/lookup never diverges.
+CREATE OR REPLACE FUNCTION public.find_shared_user_id_by_email(p_email TEXT)
+RETURNS UUID
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path = auth, public
+AS $$
+DECLARE
+    v_user_id UUID;
+BEGIN
+    SELECT id
+      INTO v_user_id
+      FROM auth.users
+     WHERE lower(email) = lower(p_email)
+     LIMIT 1;
+    RETURN v_user_id;
+END;
+$$;
+
+REVOKE EXECUTE ON FUNCTION public.find_shared_user_id_by_email(TEXT) FROM public, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.find_shared_user_id_by_email(TEXT) TO service_role;
+
+COMMENT ON FUNCTION public.find_shared_user_id_by_email(TEXT) IS
+    'Returns auth.users.id for an email, or NULL. Used by /api/auth/from_external bridge. Case-insensitive. service_role only.';

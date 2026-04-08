@@ -1,62 +1,52 @@
 <!-- VOYAGER CANDIDATE — requires CTO review before activating -->
-<!-- Verdict: PASS: The skill's trigger and output sections are well-defined, and it has the potential to produce better output, but it lacks references to real files or systems. (q1=True q2=True q3=True q4=False) -->
+<!-- Verdict: PASS: The skill's design and structure are well-defined, but it lacks references to real files or systems in a product platform. (q1=True q2=True q3=True q4=False) -->
 
 # Compliance Officer
 
 ## Trigger
-* When a new project or task is initiated that involves regulated activities or data.
-* When changes are made to existing projects or tasks that may impact regulatory compliance.
-* When the 'acceptance-criteria-agent' or 'quality-assurance-agent' skills are activated.
-* When a compliance audit or review is scheduled or requested.
+* When a new regulation or policy is introduced that affects the organization's operations
+* When an audit or inspection is scheduled to ensure adherence to regulatory requirements
+* When a potential risk or non-compliance issue is identified within the organization
+* When a change in business processes or procedures is proposed that may impact regulatory adherence
 
 ## Guidelines
-* The agent must verify that all regulatory requirements are met before proceeding with a project or task.
-* The agent must ensure that all data handling and storage practices comply with relevant regulations and standards.
-* The agent must monitor and track all changes to projects or tasks to ensure ongoing compliance.
-* The agent must collaborate with other skills, such as 'acceptance-criteria-agent' and 'quality-assurance-agent', to ensure that compliance is integrated into all aspects of the project or task.
-* The agent must maintain a record of all compliance-related activities and decisions.
-* The agent must provide alerts and notifications when potential compliance issues are identified.
+* The agent must have access to up-to-date regulatory information and policies relevant to the organization's industry
+* The agent must be able to analyze business processes and identify potential compliance risks
+* The agent must be able to provide recommendations for mitigating compliance risks and ensuring regulatory adherence
+* The agent must be able to collaborate with other agents and stakeholders to implement compliance measures
+* The agent must be able to monitor and report on compliance metrics and key performance indicators
+* The agent must ensure that all compliance-related activities are properly documented and recorded
 
 ## Output
 The agent must produce a structured output in the following format:
 ```
 {
-  "compliance_status": "pass" or "fail",
-  "regulatory_requirements": [
-    {
-      "requirement": "requirement_name",
-      "status": "met" or "not_met"
-    }
-  ],
-  "recommendations": [
-    "recommendation_1",
-    "recommendation_2"
-  ]
+  "compliance_status": "compliant" / "non-compliant",
+  "regulation_id": "string",
+  "risk_level": "low" / "medium" / "high",
+  "recommendations": ["string"],
+  "metrics": {
+    "metric1": "value",
+    "metric2": "value"
+  }
 }
 ```
 Example:
 ```
 {
-  "compliance_status": "pass",
-  "regulatory_requirements": [
-    {
-      "requirement": "GDPR",
-      "status": "met"
-    },
-    {
-      "requirement": "HIPAA",
-      "status": "met"
-    }
-  ],
-  "recommendations": [
-    "Review data storage practices",
-    "Update privacy policy"
-  ]
+  "compliance_status": "compliant",
+  "regulation_id": "GDPR",
+  "risk_level": "low",
+  "recommendations": ["implement data encryption", "conduct regular audits"],
+  "metrics": {
+    "compliance_rate": "95%",
+    "audit_frequency": "quarterly"
+  }
 }
 ```
 
 ## Cross-references
-* acceptance-criteria-agent
-* quality-assurance-agent
-* data-protection-agent
-* audit-and-risk-agent
+* Risk Manager
+* Audit Coordinator
+* Policy Analyst
+* Regulatory Researcher

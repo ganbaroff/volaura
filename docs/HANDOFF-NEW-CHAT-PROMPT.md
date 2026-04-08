@@ -11,7 +11,8 @@
 
 Прочитай эти файлы В ЭТОМ ПОРЯДКЕ. Не пропускай. Не "посмотри потом" — сейчас.
 
-1. **`C:/Projects/VOLAURA/docs/MEGAPLAN-MINDSHIFT-LAUNCH-2026-04-08.md`** — 4-sprint megaplan v2 (peer-review hardened, 5-model critique applied). Твой roadmap на 6-8 недель.
+1. **`C:/Projects/VOLAURA/docs/ECOSYSTEM-MEGAPLAN-2026-04-08.md`** — 22-sprint FULL ecosystem megaplan (Phase A-F, Sprints 0-22). Это supreme roadmap на 5-7 месяцев. Включает Sprint 0 (VOLAURA smoke test), Phase A (MindShift launch 1-4), Sprint 10 decision point, Phase C deferred (Life Sim post-revenue), runway tracking. Peer-critique-hardened 2026-04-08.
+2. **`C:/Projects/VOLAURA/docs/MEGAPLAN-MINDSHIFT-LAUNCH-2026-04-08.md`** — detailed spec для Phase A (Sprints 1-4) с v3 reality check таблицей. Читать ПОСЛЕ ecosystem megaplan.
 2. **`C:/Users/user/.claude/projects/C--Projects-VOLAURA/memory/mindshift-sprint-e2-plan.md`** — Sprint E2.D current state. UPDATE 4 + UPDATE 5 содержат последний handoff статус `E2_D_BACKEND_HARDENED_9F7C173`.
 3. **`C:/Projects/VOLAURA/.claude/breadcrumb.md`** — текущее состояние, что закоммичено, что висит, Sprint S2/S3 status
 4. **`C:/Projects/VOLAURA/memory/swarm/shared-context.md`** — Session 91 секция наверху, что уже существует (НЕ строй заново)
@@ -197,9 +198,14 @@
 
 ## ПЕРВАЯ ЗАДАЧА В НОВОМ ЧАТЕ
 
-После mandatory reading list (особенно MEGAPLAN), скажи "прочитал megaplan, готов к S5". Твой путь: **Sprint S5 — Ecosystem bridge end-to-end**.
+После mandatory reading list (ECOSYSTEM-MEGAPLAN + MindShift megaplan + handoff), скажи "прочитал megaplan, готов к Sprint 0". Твой путь: **Sprint 0 — VOLAURA production smoke test** (добавлено после peer critique — Kimi K2 + DeepSeek V3.1 сказали что VOLAURA должен быть prod-ready ДО MindShift bridge).
 
-**Конкретные первые 5 действий в Sprint S5:**
+**Sprint 0 — first 3 actions:**
+1. Verify current HEAD matches expected: `git log --oneline -10` — expected commits end at `63dc930` (megaplan v3 reality check) or newer
+2. Run `scripts/prod_smoke_test.py` against Railway prod → note any 5xx, slow queries, RLS issues
+3. CEO walks VOLAURA E2E manually: signup → email verify → assessment → AURA score → badge → share. Document blockers. Fix before Sprint 1.
+
+**После Sprint 0 blocker-free → Sprint 1** (MindShift bridge):
 
 1. **Verify prerequisites** (не начинать S5 код пока не done):
    - Проверить `git log --oneline | grep -E "56d3337|9f7c173"` — оба commit должны быть

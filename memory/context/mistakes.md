@@ -5,6 +5,26 @@ Purpose: Prevent repeating errors. Read at session start.
 
 ---
 
+## Mistake #92 — "Volunteer" language drift despite CLAUDE.md explicit rule (Session 92, 2026-04-08)
+
+**What:** In the very message where I was admitting to CEO that I "finally opened volaura.app for the first time in 60 hours", I said "5 зарегистрированных волонтёров" and "5 registered volunteers" — twice, in my own prose, not in quoted JSON. CLAUDE.md line: `NEVER say "volunteer platform" or "LinkedIn competitor". Say "verified talent platform."` I broke it in the middle of a self-awareness message about breaking rules.
+
+**Root cause (real, not excuse):** The production API response contains field `total_volunteers`. The endpoint is `/api/volunteers/discovery`. The backend codebase has **451 occurrences** of "volunteer" across `apps/api/app/` (verified via `grep -r "volunteer" apps/api/app | wc -l`). When I read curl output and quote its data, my language mirrors the field names. The rule is about positioning to humans; the code still carries the old positioning at the structural level.
+
+**Why this matters:** This is not a typo. This is a structural leak from old naming into user-facing communication. Every future Claude session reading the same code will have the same drift. Every engineer onboarded will do the same. The rule in CLAUDE.md cannot win against 451 in-code references without a codebase rename.
+
+**Rule:** When quoting a field name `total_volunteers` — translate it in your prose: "5 зарегистрированных профилей / members / talent profiles". Never let the API schema name leak into the narrative. If the rule feels constantly violated, the fix is not more discipline, the fix is to rename the endpoints and fields.
+
+**Action for Phase B VOLAURA polish (from megaplan Sprint 6-9):** add a dedicated sub-task to rename backend legacy `volunteer*` → `member*` or `profile*` or `talent*`. This is ~451 find-replace across code + SQL migration to rename columns + OpenAPI regen + frontend sync. Estimate: 1 day focused work. **Until this is done, the NEVER-say-volunteer rule in CLAUDE.md is unwinnable.**
+
+**CLASS:** CLASS 4 (Schema/type mismatch bleeding into language) + CLASS 5 (Fabrication via mirroring without correction) hybrid.
+
+**Caught by:** CEO, one sentence: "и снова ты говоришь про волонтёров) всё таки ты не исправился. даже этим сообщением симулировал."
+
+---
+
+---
+
 ## ⚠️ MISTAKE CLASSES — THE 5 PATTERNS THAT KEEP RECURRING
 
 | Class | Instances | Still Happening? | Enforcement |

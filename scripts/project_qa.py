@@ -68,6 +68,10 @@ sys.stderr = _ensure_utf8_stream(sys.stderr)
 # ── Path resolution (supports main repo + worktree) ────────────────────
 def resolve_project_root() -> Path:
     """Find VOLAURA project root regardless of cwd."""
+    # CI: GITHUB_WORKSPACE is always the checked-out repo root
+    gw = os.environ.get("GITHUB_WORKSPACE")
+    if gw:
+        return Path(gw)
     cwd = Path.cwd()
     # Walk up looking for apps/api/.env
     for candidate in [cwd, *cwd.parents]:

@@ -3,7 +3,19 @@
 **Author:** VOLAURA-Claude (worktree blissful-lichterman) · **Date:** 2026-04-08
 **Scope:** All 5 products (VOLAURA + MindShift + Life Simulator + BrandedBy + ZEUS) + swarm + integration layer
 **Horizon:** 22 sprints (including 2 validation sprints) · **Realistic calendar:** 5-7 months
-**Status:** DRAFT v1 — pending peer critique
+**Status:** **v3 FINAL** — 2 rounds of peer critique applied (Sprint 22 validation cycle complete)
+
+## Glossary (read this BEFORE Sprint 0) — added v3
+
+The git history mentions "Sprint E2.D.1" and "Sprint E2.D.2" — these do NOT appear in the 22-sprint list below. They were numbered under the old MindShift `mindshift-sprint-e2-plan.md` convention (ADR-006 Option D). Mapping:
+
+- **Sprint E2.D.1** = migration `20260408000001_user_identity_map.sql` (committed `56d3337`) → now a **prerequisite deliverable for Sprint 1** in this megaplan
+- **Sprint E2.D.2** = `apps/api/app/routers/auth_bridge.py` + config additions (committed `56d3337` + `9f7c173` hardened) → same, **prerequisite deliverable for Sprint 1**
+- **Sprint E2.D.3-D.5** = MindShift-Claude's edge function + frontend bridge + e2e test → these are what Sprint 1 in THIS megaplan executes
+
+So when you see "E2.D" in commit messages or MindShift-Claude handoff docs, read it as "work that happened before Sprint 1 and is consumed by Sprint 1". Sprint 1 itself is the integration + verification sprint that makes E2.D.1 through D.5 actually run end-to-end in production. No new "E2.D" identifier exists going forward.
+
+Similarly: "Sprint S1 / S2 / S3 / S4" in older docs referred to the Session 91 VOLAURA swarm work (swarm_coder, safety_gate, daemon, decision debate). That work is **already committed** (`c1508de`, `8b71164`, `39b23d7`, `fb3b014`, `63dc930`) and is now referenced only as context. The "S4 Hybrid architecture decision" is implemented in **Sprint 17** of this megaplan.
 **Supersedes:** `docs/MEGAPLAN-MINDSHIFT-LAUNCH-2026-04-08.md` is now Phase A (Sprints 1-4) of THIS plan
 
 **CEO directive 2026-04-08:** "Мне нужен план общего развития всего проекта. Даже если 20 спринтов. Это же мегаплан. Все включено. Ключевые файлы залинкованы. Следующий чат не будет тупить."
@@ -143,6 +155,16 @@ c1508de feat(swarm): Sprint S2 — autonomous coding loop via Aider + safety gat
 
 **Why moved here**: Phase A Sprint 1 bridge writes to `character_events` table in VOLAURA shared project. If VOLAURA backend rejects those writes (because assessment router is broken, or RLS is misconfigured, or cron hasn't run), MindShift-Claude's D.5 test will fail in a confusing way. Smoke-testing VOLAURA first surfaces "is the core platform alive?" as a single yes/no gate.
 
+**Expanded scope per v3 peer critique (Cerebras Qwen 235B):** the smoke test must ALSO include cross-project surface:
+
+7. **Shared-project RLS verification** — write a mock `character_event` row to `dwdgzfusjsobnixgyzjk.character_events` via service role. If insert fails, migration is broken or RLS is mis-configured → surface BEFORE Sprint 1 rather than during MindShift-Claude's D.5.
+8. **Verify `find_shared_user_id_by_email` RPC callable via service role** — `admin.rpc("find_shared_user_id_by_email", {"p_email": "test@example.com"}).execute()` — expect None (no user), not an error about missing function.
+9. **Verify `user_identity_map` table readable via service role** — simple SELECT, confirms migration applied and grants are correct.
+
+If any of 7-9 fails, Sprint 1 cannot start — the bridge's preconditions aren't met.
+
+**⚠️ Sprint 1 explicit blocker**: Sprint 1 is blocked 🔴 on Sprint 0 completion, not just 🟡 on CEO ops. Do NOT start Sprint 1 until Sprint 0 steps 1-9 all pass. This is a v3 fix — v2 marked Sprint 1 only as 🟡 (CEO ops) and omitted the dependency on Sprint 0.
+
 ---
 
 ### Phase A — MindShift launch (Sprints 1-4)
@@ -241,6 +263,22 @@ These 4 sprints map 1:1 to the v3 MindShift megaplan (`MEGAPLAN-MINDSHIFT-LAUNCH
 - **Sprint 13 (was Life Sim closed beta)** → Rolled into Phase D BrandedBy work
 
 **Life Simulator work is postponed to a post-megaplan "Phase G" after MindShift and VOLAURA reach revenue.** The Godot game audit (12 days old) still needs verification at some point — assign to an agent in background daemon mode (Sprint 17 Hybrid swarm) so it can do bug triage while humans focus on revenue-generating products.
+
+### Life Sim resurrection path (added v3 per Qwen 235B critique)
+
+Qwen 235B flagged that "Phase C deferred" without a resumption path **hides Life Sim forever** — Sprint 10 decision is product-led, but Life Sim needs tech-led resurrection (Godot integration, Cogito cleanup, event bug fixes).
+
+**Explicit resumption trigger:** if Sprint 10 decision point concludes Scenario A (MindShift retaining users) OR Scenario D (VOLAURA traction), AND runway math allows, then **insert "Phase G-Prequel" = Sprint 11-lifesim** as a 1-sprint exploration:
+- Open Life Sim repo, verify ecosystem_audit bug list still accurate
+- Fix the 4 critical bugs (check_requirements, EventModal, game_over.tscn, character.full_name)
+- Delete ~80 unused Cogito FPS files
+- Wire Godot CloudSaveManager to shared Supabase (flip CLOUD_ENABLED=true, add URL)
+- PoC: one focus session in MindShift emits event, Life Sim character sees crystal update
+- Exit: playable 5-minute demo OR decision to delete Life Sim entirely and kill the sub-product
+
+If Sprint 10 concludes Scenarios B or C (middling or dead), Life Sim stays deferred. No resumption unless revenue explicitly justifies it.
+
+**Alternative kill path:** if by Sprint 16 (BrandedBy first paying user) no one has touched Life Sim, officially delete the `lifesim` project from ecosystem docs, update Constitution to list 4 products not 5, archive the Godot repo. Don't let it rot forever.
 
 ### Sprint 10 — Post-MindShift-launch decision point (REDEFINED)
 
@@ -411,8 +449,25 @@ These 4 sprints map 1:1 to the v3 MindShift megaplan (`MEGAPLAN-MINDSHIFT-LAUNCH
 | Google Play Developer | One-time | $25 |
 | Stripe | Per-transaction | 2.9% + $0.30 |
 | Domain renewals | Annual | ~$2/mo amortized |
-| **Total pre-launch** | — | **$60-200/mo** |
-| **Total post-launch (all products live)** | — | **$100-300/mo** |
+| Apple Developer (iOS future) | Annual | $99/yr ≈ $8.25/mo |
+| Swarm runtime (Aider loops, LLM calls in `/auto on`) | Variable | $30-50 |
+| Legal/privacy setup (initial) | One-time | ~$100 amortized $10/mo first year |
+| **Total pre-launch (real floor per Qwen 235B)** | — | **$180-260/mo** |
+| **Total post-launch (all products live)** | — | **$250-400/mo** |
+
+**Cost attribution by product (per Qwen 235B critique — missing in v2):**
+
+| Product | Direct monthly cost |
+|---------|---------------------|
+| VOLAURA | Supabase shared $25 + Railway $5-10 + Sentry share + Gemini API 50% ≈ **$45-65/mo** |
+| MindShift | Supabase standalone $0 (free) + Vercel share + ElevenLabs $22 + 50% Gemini ≈ **$35-60/mo** |
+| Life Sim | $0 direct (deferred) |
+| BrandedBy | Cloudflare $0 + Stripe per-txn + D-ID/HeyGen $5-30 ≈ **$10-35/mo** |
+| ZEUS | $0 direct (local only until Sprint 19) |
+| Swarm/infra | $30-50/mo (LLM autonomous cycles) |
+| **Total attributed** | **$120-210/mo + one-time fees** |
+
+The attribution reveals that MindShift + VOLAURA account for ~70% of burn, so revenue from Sprint 4 (MindShift Pro) and Sprint 9 (VOLAURA Pro) must cover at least $80/mo combined by Sprint 10 decision point, or we're in trouble.
 
 ### Revenue milestones
 

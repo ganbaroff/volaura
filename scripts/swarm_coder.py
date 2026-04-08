@@ -82,8 +82,17 @@ sys.stderr = _ensure_utf8(sys.stderr)
 # ── Paths ───────────────────────────────────────────────────────
 def resolve_root() -> Path:
     cwd = Path.cwd()
+    # Local dev: walk up looking for apps/api/.env
     for c in [cwd, *cwd.parents]:
         if (c / "apps" / "api" / ".env").exists():
+            return c
+    # CI: no .env file, but GITHUB_WORKSPACE points at checkout root
+    gh_ws = os.environ.get("GITHUB_WORKSPACE", "")
+    if gh_ws and Path(gh_ws).exists():
+        return Path(gh_ws)
+    # Fallback: walk up looking for packages/swarm (works in any checkout)
+    for c in [cwd, *cwd.parents]:
+        if (c / "packages" / "swarm").exists():
             return c
     return Path("C:/Projects/VOLAURA")
 
@@ -94,11 +103,18 @@ LOG_FILE = PROJECT_ROOT / "memory" / "swarm" / "swarm_coder_log.jsonl"
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
 ENV_FILE = PROJECT_ROOT / "apps" / "api" / ".env"
 
-# Aider lives on Python 3.12 because Aider's deps don't build on Python 3.14
-AIDER_PYTHON = "C:/Users/user/AppData/Local/Programs/Python/Python312/python.exe"
+# Aider lives on Python 3.12 because Aider's deps don't build on Python 3.14.
+# In CI (GitHub Actions, etc.) the hardcoded Windows path won't exist — fall back
+# to the current interpreter. Workflow provisions Python 3.11 which aider supports.
+_LOCAL_AIDER_PYTHON = "C:/Users/user/AppData/Local/Programs/Python/Python312/python.exe"
+if os.environ.get("CI") or not Path(_LOCAL_AIDER_PYTHON).exists():
+    AIDER_PYTHON = sys.executable
+else:
+    AIDER_PYTHON = _LOCAL_AIDER_PYTHON
 # Gemini 2.0 Flash: 1M context window, free tier, fast.
 # Groq Llama 3.3 70B fails with context_length_exceeded on multi-file edits (8K limit).
-AIDER_DEFAULT_MODEL = "gemini/gemini-2.0-flash"
+# Env override SWARM_CODER_MODEL lets CI or callers swap providers without editing this file.
+AIDER_DEFAULT_MODEL = os.environ.get("SWARM_CODER_MODEL", "gemini/gemini-2.0-flash")
 
 
 # ── Env loader ──────────────────────────────────────────────────

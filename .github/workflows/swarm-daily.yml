@@ -46,7 +46,14 @@ jobs:
 
       - name: Install swarm dependencies
         run: |
-          pip install pydantic loguru groq google-genai python-dotenv python-telegram-bot aiohttp supabase tavily-python litellm openai nest-asyncio
+          # aider-chat: required by scripts/swarm_coder.py for autonomous code edits
+          # pytest: swarm_coder's test_runner_gate runs targeted tests on changed modules
+          pip install pydantic loguru groq google-genai python-dotenv python-telegram-bot aiohttp supabase tavily-python litellm openai nest-asyncio aider-chat pytest
+
+      - name: Configure git for autonomous commits
+        run: |
+          git config --global user.name "MiroFish Swarm"
+          git config --global user.email "swarm@volaura.app"
 
       - name: Heartbeat gate (KAIROS — should swarm run?)
         id: gate
@@ -102,6 +109,13 @@ jobs:
           # Persist StructuredMemory (4-network: World/Experience/Opinion/Failure) in the repo
           # instead of ~/.swarm/ (lost after each runner). See packages/swarm/structured_memory.py.
           SWARM_DATA_DIR: memory/swarm/structured
+          # Auto-fix loop: swarm_coder implements top-N AUTO-safe proposals via Aider.
+          # Cap of 3 keeps the morning commit list reviewable; set SWARM_AUTO_FIX=0 to disable.
+          SWARM_AUTO_FIX: "1"
+          SWARM_AUTO_FIX_MAX: "3"
+          # Force aider + swarm_coder onto Cerebras (Constitution primary provider).
+          # Gemini free tier 429s on bulk runs; Groq has 8K ctx limit for multi-file edits.
+          SWARM_CODER_MODEL: "cerebras/qwen-3-235b-a22b-instruct-2507"
         run: |
           cd "${{ github.workspace }}"
           python -m packages.swarm.autonomous_run --mode=${{ steps.mode.outputs.mode }}
@@ -178,21 +192,46 @@ jobs:
 
       - name: Commit proposals and memory
         run: |
-          git config user.name "MiroFish Swarm"
-          git config user.email "swarm@volaura.app"
+          # git user/email already configured globally in the "Configure git" step above.
+          # Aider's auto-commits during the swarm run may have already created commits
+          # on HEAD — we only need to wrap any REMAINING uncommitted memory changes.
+
           # Include heartbeat log even if swarm was skipped (gate decision is worth recording)
           git add memory/swarm/
-          if git diff --staged --quiet; then
-            echo "No new proposals or memory updates to commit."
-          else
-            # Stash staged, pull, unstash, then commit
-            git stash --keep-index
-            git pull --rebase origin main || true
-            git stash pop || true
+
+          have_staged=0
+          if ! git diff --staged --quiet; then have_staged=1; fi
+
+          have_aider_commits=0
+          if [ "$(git rev-list --count origin/main..HEAD 2>/dev/null || echo 0)" -gt 0 ]; then
+            have_aider_commits=1
+          fi
+
+          if [ "$have_staged" = "0" ] && [ "$have_aider_commits" = "0" ]; then
+            echo "No new proposals, memory updates, or aider commits to push."
+            exit 0
+          fi
+
+          if [ "$have_staged" = "1" ]; then
             if [ "${{ steps.gate.outputs.should_run }}" = "true" ]; then
               git commit -m "swarm: daily autonomous run — $(date -u +%Y-%m-%d)"
             else
               git commit -m "swarm: heartbeat gate skip — $(date -u +%Y-%m-%d)"
             fi
-            git push
           fi
+
+          # Rebase on top of origin/main. Stash -u includes untracked (.swarm/) to
+          # avoid the "index contains uncommitted changes" error the old flow hit.
+          git stash push -u -m "swarm-run-untracked" || true
+          git pull --rebase origin main || {
+            echo "::warning::rebase failed — aborting and pushing anyway"
+            git rebase --abort || true
+          }
+          git stash pop || true
+
+          git push || {
+            echo "::warning::push failed — likely raced with another writer; trying fetch+rebase+push once"
+            git fetch origin main
+            git rebase origin/main || git rebase --abort || true
+            git push
+          }

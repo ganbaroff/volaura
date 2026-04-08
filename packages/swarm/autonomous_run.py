@@ -846,8 +846,22 @@ async def run_autonomous(mode: str = "daily-ideation") -> list[Proposal]:
     return proposals
 
 
-async def send_telegram_notifications(proposals: list[Proposal]) -> None:
-    """Send HIGH/CRITICAL proposals to Telegram via MindShift bot."""
+async def send_telegram_notifications(
+    proposals: list[Proposal],
+    fix_results: list[dict] | None = None,
+) -> None:
+    """Send digest with Found + Fixed counts to CEO via Telegram.
+
+    fix_results is a list of dicts from _run_auto_fix(), each shaped:
+        {
+          "proposal_id": str,
+          "proposal_title": str,
+          "ok": bool,
+          "stage": str,                 # "executed" | "blocked_by_gate" | "aider_failed" | ...
+          "commit_hash": str,            # "" if no commit
+          "error": str,                  # non-empty iff ok=False
+        }
+    """
     bot_token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
     chat_id = os.environ.get("TELEGRAM_CEO_CHAT_ID", "")
 
@@ -855,50 +869,208 @@ async def send_telegram_notifications(proposals: list[Proposal]) -> None:
         logger.info("Telegram not configured (TELEGRAM_BOT_TOKEN / TELEGRAM_CEO_CHAT_ID missing)")
         return
 
-    # Send: ONE digest message, not one per proposal. CEO is not a log viewer.
+    fix_results = fix_results or []
+    fixed = [r for r in fix_results if r.get("ok")]
+    failed_fixes = [r for r in fix_results if not r.get("ok")]
+
+    # Digest always sends — even on an empty/quiet run — so CEO knows the cron
+    # actually fired and nothing is silently broken. "No red screens" means the
+    # absence of a message is also a red flag.
     high_proposals = [
         p for p in proposals
         if p.severity in (Severity.CRITICAL, Severity.HIGH) or p.escalate_to_ceo or p.convergent
     ]
 
-    if not high_proposals:
-        logger.info("No HIGH/CRITICAL/convergent proposals to send to Telegram")
-        return
-
     try:
         from telegram import Bot
         bot = Bot(token=bot_token)
 
-        # Build ONE digest message
         critical = [p for p in high_proposals if p.severity == Severity.CRITICAL]
-        high = [p for p in high_proposals if p.severity == Severity.HIGH and not p.convergent]
         convergent = [p for p in high_proposals if p.convergent]
+        high = [p for p in high_proposals if p.severity == Severity.HIGH and not p.convergent]
 
-        lines = [f"📋 *Swarm Digest* — {len(high_proposals)} findings\n"]
+        lines = [
+            "📋 *Swarm Digest*",
+            f"Найдено: *{len(proposals)}*  |  Исправлено: *{len(fixed)}*"
+            f"  |  Ошибок фикса: *{len(failed_fixes)}*",
+            "",
+        ]
+
+        if fixed:
+            lines.append(f"✅ *Исправлено ({len(fixed)}):*")
+            for r in fixed[:5]:
+                commit = r.get("commit_hash", "")[:12] or "-"
+                title = (r.get("proposal_title") or "")[:70]
+                lines.append(f"  • `{commit}` {title}")
+            lines.append("")
+
+        if failed_fixes:
+            lines.append(f"⚠️ *Не удалось исправить ({len(failed_fixes)}):*")
+            for r in failed_fixes[:3]:
+                stage = r.get("stage", "?")
+                title = (r.get("proposal_title") or "")[:60]
+                lines.append(f"  • [{stage}] {title}")
+            lines.append("")
 
         if critical:
             lines.append(f"🔴 *CRITICAL ({len(critical)}):*")
             for p in critical[:3]:
                 lines.append(f"  • {p.title[:80]} ({p.agent})")
+            lines.append("")
 
         if convergent:
-            lines.append(f"\n🎯 *Convergent ({len(convergent)}):*")
+            lines.append(f"🎯 *Convergent ({len(convergent)}):*")
             for p in convergent[:3]:
                 lines.append(f"  • {p.title[:80]}")
+            lines.append("")
 
         if high:
-            lines.append(f"\n🟠 *High ({len(high)}):*")
+            lines.append(f"🟠 *High ({len(high)}):*")
             for p in high[:5]:
                 lines.append(f"  • {p.title[:80]}")
+            lines.append("")
 
-        lines.append(f"\n/proposals — review and act")
+        if not proposals and not fix_results:
+            lines.append("_Тихий прогон: рой ничего нового не нашёл._")
 
+        lines.append("/proposals — посмотреть всё")
+
+        # Telegram Markdown is finicky with backticks + brackets; if parse fails
+        # we retry as plain text so the digest still lands.
         msg = "\n".join(lines)
-        await bot.send_message(chat_id=chat_id, text=msg, parse_mode="Markdown")
-        logger.info(f"Telegram digest sent: {len(high_proposals)} proposals")
+        try:
+            await bot.send_message(chat_id=chat_id, text=msg, parse_mode="Markdown")
+        except Exception as md_err:
+            logger.warning(f"Telegram Markdown parse failed, retrying plain: {md_err}")
+            plain = msg.replace("*", "").replace("`", "").replace("_", "")
+            await bot.send_message(chat_id=chat_id, text=plain)
+
+        logger.info(
+            f"Telegram digest sent: found={len(proposals)} fixed={len(fixed)} failed={len(failed_fixes)}"
+        )
 
     except Exception as e:
         logger.error(f"Telegram send failed: {e}")
+
+
+async def _run_auto_fix(
+    proposals: list[Proposal],
+    max_fixes: int = 3,
+) -> list[dict]:
+    """Try to auto-implement the safest proposals via swarm_coder + Aider.
+
+    Contract:
+    - Never raises. Any failure becomes a dict in the result list so the
+      Telegram digest can still report "не удалось исправить: X".
+    - Only touches proposals classified AUTO by safety_gate (docs, comments,
+      type hints, locale JSON, test files). Everything else is skipped.
+    - Capped at max_fixes per run to protect API quota and keep the morning
+      commit list reviewable at a glance.
+
+    Returns list of dicts (see send_telegram_notifications docstring).
+    """
+    results: list[dict] = []
+
+    # swarm_coder lives in scripts/ (not a package). Inject into sys.path.
+    scripts_dir = project_root / "scripts"
+    if str(scripts_dir) not in sys.path:
+        sys.path.insert(0, str(scripts_dir))
+
+    try:
+        import swarm_coder as sc  # type: ignore
+    except Exception as e:
+        logger.warning(f"Auto-fix disabled: swarm_coder import failed: {e}")
+        return results
+
+    # Rebase swarm_coder's module-level paths onto the actual project root.
+    # swarm_coder.resolve_root() walks for apps/api/.env which is absent in CI —
+    # without this patch it falls back to C:/Projects/VOLAURA and file ops break.
+    try:
+        sc.PROJECT_ROOT = project_root
+        sc.PROPOSALS_FILE = project_root / "memory" / "swarm" / "proposals.json"
+        sc.LOG_FILE = project_root / "memory" / "swarm" / "swarm_coder_log.jsonl"
+        sc.SCRIPTS_DIR = scripts_dir
+        sc.ENV_FILE = project_root / "apps" / "api" / ".env"
+    except Exception as e:
+        logger.warning(f"Auto-fix disabled: could not rebase swarm_coder paths: {e}")
+        return results
+
+    # Candidates: lowest-risk severities first, skip UNGROUNDED (invalid file refs)
+    # and anything escalated (CEO wants eyes on those).
+    candidates = [
+        p for p in proposals
+        if p.severity in (Severity.LOW, Severity.MEDIUM)
+        and "[UNGROUNDED]" not in p.title
+        and not p.escalate_to_ceo
+    ]
+    # If we have judge scores, prefer proposals that scored well
+    candidates.sort(
+        key=lambda p: (-(p.judge_score or 0), p.severity.value),
+    )
+    candidates = candidates[: max(max_fixes * 3, 6)]  # overshoot, gate will filter
+
+    logger.info(f"Auto-fix: evaluating {len(candidates)} low/medium proposals (cap={max_fixes})")
+
+    executed = 0
+    for prop in candidates:
+        if executed >= max_fixes:
+            break
+
+        # Convert Proposal → dict shape swarm_coder.implement_proposal expects
+        prop_dict = {
+            "id": getattr(prop, "id", "") or f"run-{int(time.time())}-{prop.agent}",
+            "title": prop.title,
+            "content": prop.content,
+            "agent": prop.agent,
+            "severity": prop.severity.value,
+        }
+
+        logger.info(f"Auto-fix: trying [{prop.severity.value}] {prop.title[:60]}")
+        try:
+            r = await asyncio.to_thread(
+                sc.implement_proposal,
+                prop_dict,
+                True,   # execute
+                False,  # plan_only
+                None,   # files_override
+            )
+        except Exception as e:
+            logger.warning(f"Auto-fix crashed on '{prop.title[:50]}': {e}")
+            results.append({
+                "proposal_id": prop_dict["id"],
+                "proposal_title": prop.title,
+                "ok": False,
+                "stage": "crash",
+                "commit_hash": "",
+                "error": str(e)[:200],
+            })
+            continue
+
+        stage = r.get("stage", "unknown")
+        aider = r.get("aider") or {}
+        commit_hash = aider.get("commit_hash", "") if isinstance(aider, dict) else ""
+        ok = bool(r.get("ok")) and stage == "executed" and bool(commit_hash)
+
+        results.append({
+            "proposal_id": prop_dict["id"],
+            "proposal_title": prop.title,
+            "ok": ok,
+            "stage": stage,
+            "commit_hash": commit_hash,
+            "error": "" if ok else stage,
+        })
+
+        if ok:
+            executed += 1
+            logger.info(f"Auto-fix: ✅ {commit_hash[:12]} {prop.title[:60]}")
+        else:
+            logger.info(f"Auto-fix: ⏭ skipped ({stage}) {prop.title[:60]}")
+
+    logger.info(
+        f"Auto-fix complete: {executed}/{len(candidates)} implemented, "
+        f"{len(results) - executed} skipped/failed"
+    )
+    return results
 
 
 async def _notify_zeus_gateway(proposals: list[Proposal]) -> None:
@@ -1156,8 +1328,25 @@ async def main():
     except Exception as e:
         logger.warning(f"Proposal verifier failed (non-blocking): {e}")
 
-    # Send Telegram notifications for HIGH/CRITICAL
-    await send_telegram_notifications(proposals)
+    # Auto-fix loop: try swarm_coder on the safest low/medium proposals.
+    # Runs BEFORE the digest so the Telegram message can report "Исправлено: Y".
+    # Capped + sandboxed — never raises, worst case returns [].
+    # Disable by setting SWARM_AUTO_FIX=0 in env.
+    fix_results: list[dict] = []
+    if os.environ.get("SWARM_AUTO_FIX", "1") != "0":
+        try:
+            max_fixes = int(os.environ.get("SWARM_AUTO_FIX_MAX", "3"))
+        except ValueError:
+            max_fixes = 3
+        try:
+            fix_results = await _run_auto_fix(proposals, max_fixes=max_fixes)
+        except Exception as e:
+            logger.error(f"Auto-fix outer crash (non-blocking): {e}")
+    else:
+        logger.info("Auto-fix disabled via SWARM_AUTO_FIX=0")
+
+    # Send Telegram digest: found + fixed counts + commit hashes
+    await send_telegram_notifications(proposals, fix_results)
 
     # ── Python↔Node.js Bridge — send HIGH/CRITICAL to ZEUS Gateway ────────
     # This unifies the two swarms: Python findings appear in Node.js gateway's

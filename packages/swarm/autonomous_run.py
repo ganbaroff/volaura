@@ -1005,6 +1005,25 @@ async def _run_auto_fix(
         logger.warning(f"Auto-fix disabled: could not rebase swarm_coder paths: {e}")
         return results
 
+    # CI portability: swarm_coder.load_env() reads apps/api/.env which doesn't exist on
+    # CI runners. call_aider() does an early return if the key isn't in the .env dict.
+    # Monkey-patch load_env to merge os.environ API keys so aider gets credentials.
+    _original_load_env = getattr(sc, "load_env", None)
+    if _original_load_env is not None:
+        _ENV_KEY_NAMES = (
+            "GEMINI_API_KEY", "GROQ_API_KEY", "OPENROUTER_API_KEY",
+            "CEREBRAS_API_KEY", "NVIDIA_API_KEY", "OPENAI_API_KEY",
+        )
+        def _ci_aware_load_env() -> dict:
+            result = _original_load_env()
+            for k in _ENV_KEY_NAMES:
+                if not result.get(k):
+                    v = os.environ.get(k, "")
+                    if v:
+                        result[k] = v
+            return result
+        sc.load_env = _ci_aware_load_env
+
     # Candidates: lowest-risk severities first, skip UNGROUNDED (invalid file refs)
     # and anything escalated (CEO wants eyes on those).
     candidates = [

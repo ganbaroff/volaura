@@ -113,6 +113,27 @@ class Settings(BaseSettings):
     # MindShift — companion ADHD app (cross-product crystal/XP events)
     mindshift_url: str = ""  # e.g. https://mindshift.app — added to CORS in production
 
+    # Sprint E2.D (ADR-006 Option D) — cross-project identity bridge
+    # ── supabase_jwt_secret ────────────────────────────────────────────────
+    # The JWT signing secret of THIS (shared) Supabase project. Used to mint
+    # shared JWTs for users bridged from standalone projects (e.g. MindShift
+    # user → shadow user in shared → minted shared JWT → used for /api/character/*).
+    # Get from Supabase dashboard → Project Settings → API → JWT Secret.
+    # NEVER commit this. Set SUPABASE_JWT_SECRET on Railway.
+    # If empty, /api/auth/from_external returns 503 (feature disabled).
+    supabase_jwt_secret: str = ""
+
+    # ── external_bridge_secret ─────────────────────────────────────────────
+    # Pre-shared secret between VOLAURA backend and MindShift edge function
+    # (volaura-bridge-proxy). MindShift edge function passes this as
+    # X-Bridge-Secret header when calling /api/auth/from_external. Only the
+    # edge function knows this value — protects against unauthenticated
+    # clients calling the bridge endpoint to mint JWTs for arbitrary emails.
+    # Generate with: python -c "import secrets; print(secrets.token_urlsafe(48))"
+    # Set EXTERNAL_BRIDGE_SECRET on both Railway (VOLAURA) and MindShift edge
+    # function environment. Rotate together if either side is compromised.
+    external_bridge_secret: str = ""
+
     # BrandedBy — AI video generation
     did_api_key: str = ""  # D-ID API key (Phase 1: Lite plan $5.90/mo)
     fal_api_key: str = ""  # fal.ai API key — MuseTalk + Kling LipSync (DSP winner)

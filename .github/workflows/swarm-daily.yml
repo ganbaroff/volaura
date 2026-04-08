@@ -113,9 +113,11 @@ jobs:
           # Cap of 3 keeps the morning commit list reviewable; set SWARM_AUTO_FIX=0 to disable.
           SWARM_AUTO_FIX: "1"
           SWARM_AUTO_FIX_MAX: "3"
-          # Force aider + swarm_coder onto Cerebras (Constitution primary provider).
-          # Gemini free tier 429s on bulk runs; Groq has 8K ctx limit for multi-file edits.
-          SWARM_CODER_MODEL: "cerebras/qwen-3-235b-a22b-instruct-2507"
+          # Aider model for autonomous code edits.
+          # cerebras/qwen-3-235b-a22b-instruct-2507 was tried but not in aider's model registry
+          # → every call hit the 300s subprocess timeout. Switching to gemini-2.0-flash:
+          # single aider call per proposal (not bulk), so free-tier 429 is not a concern.
+          SWARM_CODER_MODEL: "gemini/gemini-2.0-flash"
         run: |
           cd "${{ github.workspace }}"
           # Build keyword index of docs/*.md so swarm_coder's discover_target_files()

@@ -111,7 +111,7 @@ class WebResearcher:
     """
 
     RESEARCH_MODEL = "gemini-2.5-pro"
-    FALLBACK_MODEL = "gemini-2.0-flash"
+    FALLBACK_MODEL = "gemini-2.5-flash-preview-04-17"
 
     def __init__(
         self,

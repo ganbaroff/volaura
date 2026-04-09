@@ -618,7 +618,7 @@ JSON format:
         resp = await asyncio.wait_for(
             asyncio.to_thread(
                 client.models.generate_content,
-                model="gemini-2.0-flash",
+                model="gemini-2.5-flash-preview-04-17",
                 contents=judge_prompt,
                 config={"response_mime_type": "application/json"},
             ),
@@ -640,7 +640,7 @@ JSON format:
         score = sum(1 for v in criteria.values() if v)
 
         proposal.judge_score = score
-        proposal.judge_model = "gemini-2.0-flash"
+        proposal.judge_model = "gemini-2.5-flash-preview-04-17"
         proposal.judge_reasoning = data.get("reasoning", "")[:300]
         proposal.judge_criteria = criteria
 

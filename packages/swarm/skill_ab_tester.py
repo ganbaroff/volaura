@@ -138,13 +138,13 @@ SELF_SCORE: [0-10] — [one sentence reason]"""
             resp = await asyncio.wait_for(
                 asyncio.to_thread(
                     gclient.models.generate_content,
-                    model="gemini-2.0-flash",
+                    model="gemini-2.5-flash-preview-04-17",
                     contents=prompt,
                 ),
                 timeout=15.0,
             )
             raw = resp.text or ""
-            model = "gemini-2.0-flash"
+            model = "gemini-2.5-flash-preview-04-17"
         else:
             return 0.5, "no LLM available — neutral score"
 
@@ -210,7 +210,7 @@ Reply with JSON only:
             resp = await asyncio.wait_for(
                 asyncio.to_thread(
                     gclient.models.generate_content,
-                    model="gemini-2.0-flash",
+                    model="gemini-2.5-flash-preview-04-17",
                     contents=judge_prompt,
                     config={"response_mime_type": "application/json"},
                 ),
@@ -298,7 +298,7 @@ def compare_skill_versions(
             )
             winner = judge_winner
 
-        model = "groq/llama-3.3-70b" if _env.get("GROQ_API_KEY") else "gemini-2.0-flash"
+        model = "groq/llama-3.3-70b" if _env.get("GROQ_API_KEY") else "gemini-2.5-flash-preview-04-17"
 
         return ABTestResult(
             skill_file=str(skill_file),

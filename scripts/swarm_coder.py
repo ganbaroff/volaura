@@ -111,10 +111,10 @@ if os.environ.get("CI") or not Path(_LOCAL_AIDER_PYTHON).exists():
     AIDER_PYTHON = sys.executable
 else:
     AIDER_PYTHON = _LOCAL_AIDER_PYTHON
-# Gemini 2.0 Flash: 1M context window, free tier, fast.
-# Groq Llama 3.3 70B fails with context_length_exceeded on multi-file edits (8K limit).
-# Env override SWARM_CODER_MODEL lets CI or callers swap providers without editing this file.
-AIDER_DEFAULT_MODEL = os.environ.get("SWARM_CODER_MODEL", "gemini/gemini-2.0-flash")
+# gemini/gemini-2.0-flash deprecated for new API keys (404 NOT_FOUND since ~Apr 2026).
+# Default: groq/llama-3.3-70b-versatile (131K ctx, in aider registry, free).
+# For multi-file edits needing 1M ctx: override SWARM_CODER_MODEL=gemini/gemini-2.5-flash-preview-04-17
+AIDER_DEFAULT_MODEL = os.environ.get("SWARM_CODER_MODEL", "groq/llama-3.3-70b-versatile")
 
 
 # ── Env loader ──────────────────────────────────────────────────

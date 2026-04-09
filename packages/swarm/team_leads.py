@@ -77,7 +77,7 @@ class ContentTeamLead(TeamLead):
             description="Content, LinkedIn, ToV, brand voice — creative and editorial tasks",
             preferred_models=[
                 "gemini-2.5-flash-lite",
-                "gemini-2.0-flash",
+                "gemini-2.5-flash-preview-04-17",
                 "gemini-flash-lite-latest",
                 "gemini-3.1-flash-lite-preview",
             ],
@@ -97,7 +97,7 @@ class BusinessTeamLead(TeamLead):
             domain="business",
             description="Business strategy, pricing, market analysis, grant decisions",
             preferred_models=[
-                "gemini-2.0-flash",
+                "gemini-2.5-flash-preview-04-17",
                 "gemini-2.5-flash-lite",
                 "gemini-2.5-pro",
                 "deepseek-chat",
@@ -120,7 +120,7 @@ class SecurityTeamLead(TeamLead):
             preferred_models=[
                 "deepseek-chat",      # Best: identifies THE specific risk, not a list
                 "gemini-2.5-pro",     # Best: deep reasoning on implications
-                "gemini-2.0-flash",   # Support: balanced perspective
+                "gemini-2.5-flash-preview-04-17",   # Support: balanced perspective
             ],
             avoid_models=["gemini-flash-lite-latest"],  # Weak in security (hive exam)
             contrarian_models=["deepseek-chat"],
@@ -140,7 +140,7 @@ class ArchitectureTeamLead(TeamLead):
             preferred_models=[
                 "gemini-2.5-pro",    # Slowest but deepest reasoning
                 "deepseek-chat",     # Finds specific code flaws
-                "gemini-2.0-flash",  # Support
+                "gemini-2.5-flash-preview-04-17",  # Support
             ],
             avoid_models=["gemini-flash-lite-latest"],  # Failed architecture hive exam
             contrarian_models=["deepseek-chat"],
@@ -161,7 +161,7 @@ class SpeedTeamLead(TeamLead):
             preferred_models=[
                 "gemini-flash-lite-latest",   # ~590ms — fastest
                 "gemini-2.5-flash-lite",      # ~795ms — fast with quality
-                "gemini-2.0-flash",           # ~852ms — reliable fallback
+                "gemini-2.5-flash-preview-04-17",           # ~852ms — reliable fallback
             ],
             avoid_models=[
                 "gemini-2.5-pro",    # ~2760ms — too slow

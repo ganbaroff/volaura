@@ -11,7 +11,7 @@ from google.genai import types
 from ..swarm_types import ProviderInfo
 from .base import LLMProvider
 
-GEMINI_MODEL = "gemini-2.0-flash"
+GEMINI_MODEL = "gemini-2.5-flash-preview-04-17"
 
 
 class GeminiProvider(LLMProvider):

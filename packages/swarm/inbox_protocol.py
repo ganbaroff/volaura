@@ -64,7 +64,7 @@ class Proposal(BaseModel):
     # Cross-model judge scores (B7 — Approach 1, LLM-as-judge, arXiv 2306.05685)
     # Judge model is ALWAYS different family from generator (asymmetric — avoids 10-25% self-favor bias)
     judge_score: int | None = None        # 0-5: number of criteria passed (binary per criterion)
-    judge_model: str | None = None        # which model judged this (e.g. "gemini-2.0-flash")
+    judge_model: str | None = None        # which model judged this (e.g. "gemini-2.5-flash-preview-04-17")
     judge_reasoning: str | None = None    # brief explanation of score
     judge_criteria: dict | None = None    # {criterion: pass/fail} for each of 5 criteria
 

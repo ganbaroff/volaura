@@ -21,12 +21,13 @@
 - [ ] `apps/api/.env` and `apps/web/.env.local` both git-ignored
 
 ### 2. Input Validation ✓
-- [ ] All user inputs validated with Pydantic v2 `field_validator`
-- [ ] HTML stripped from text inputs (prevent XSS + LLM prompt injection)
-- [ ] UUID validation on all ID params
-- [ ] Max length enforced on all text fields (5000 chars for answers, 500 for names)
-- [ ] Path params bounded: `TokenParam = Annotated[str, Path(max_length=100)]`
-- [ ] File uploads: size limit (5MB), type whitelist (if applicable)
+- [x] All user inputs validated with Pydantic v2 `field_validator`
+- [x] HTML stripped from text inputs (prevent XSS + LLM prompt injection)
+- [x] UUID validation on all ID params
+- [x] Max length enforced on all text fields (5000 chars for answers, 500 for names)
+- [x] Path params bounded: `TokenParam = Annotated[str, Path(max_length=100)]`
+- [x] File uploads: size limit (5MB), type whitelist (if applicable)
+- [x] Input validation implemented for all API endpoints
 
 ### 3. SQL / DB ✓
 - [ ] ONLY Supabase SDK query builder — no raw SQL string concatenation
@@ -54,11 +55,12 @@
 - [ ] State-changing operations require authenticated session
 
 ### 7. Rate Limiting ✓
-- [ ] Auth endpoints: 5/min (already implemented via slowapi)
-- [ ] Assessment start: 3/hour
-- [ ] Assessment answer: 60/hour
-- [ ] Verification token generation: add limit if not present
-- [ ] LLM endpoints: rate limit to prevent cost abuse
+- [x] Auth endpoints: 5/min (already implemented via slowapi)
+- [x] Assessment start: 3/hour
+- [x] Assessment answer: 60/hour
+- [x] Verification token generation: add limit if not present
+- [x] LLM endpoints: rate limit to prevent cost abuse
+- [x] Rate limiting implemented for all API endpoints
 
 ### 8. Sensitive Data ✓
 - [ ] Never log passwords, tokens, or PII

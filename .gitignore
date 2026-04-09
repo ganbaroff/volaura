@@ -74,3 +74,7 @@ apps/tg-mini/node_modules/
 apps/tg-mini/dist/
 .aider*
 .claude/worktrees/
+
+# Swarm runtime artifacts
+.swarm/
+null

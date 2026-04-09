@@ -36,7 +36,7 @@ These types of proposals consistently get implemented or praised.
 
 ---
 
-## 🔍 OPEN FINDINGS (unresolved — check before proposing)
+## 🔍 OPEN SECURITY FINDINGS (unresolved — check before proposing)
 
 These findings are open, deferred, or dismissed but potentially still valid.
 **CRITICAL LESSON:** Session 25 Security Agent found route shadowing, CTO dismissed it.

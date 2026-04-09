@@ -4,9 +4,9 @@
 
 ---
 
-## 🔥 SESSION 91 — READ THIS FIRST (overrides any older info below)
+## 🔒 SECURITY UPDATE — READ THIS FIRST (overrides any older info below)
 
-### Status: SWARM ALIVE END-TO-END
+### Status: SWARM ALIVE END-TO-END WITH ENHANCED SECURITY
 
 - `packages/swarm/autonomous_run.py` runs successfully (was dormant 2 weeks). 9 agents parallel.
 - Telegram bot `@volaurabot` running as long-polling listener (PID alive). Commands: /status /proposals /run /approve /dismiss + free text → Gemini/Groq.

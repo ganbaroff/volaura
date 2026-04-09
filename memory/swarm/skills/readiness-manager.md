@@ -46,17 +46,17 @@ TOTAL: [0-100]
 
 | Score | Criteria |
 |-------|----------|
-| 20 | All tests pass. Happy path + 3+ edge cases covered. No P0/P1 bugs open. |
-| 15 | Tests pass. Happy path covered. 1-2 edge cases missing. No P0 bugs. |
-| 10 | Tests pass. Happy path covered. Known edge cases not tested. |
-| 5 | Some tests pass. Happy path untested in prod-like environment. |
-| 0 | Tests failing OR happy path broken in staging. |
+| 20 | All automated tests pass. Happy path + 3+ edge cases covered. No P0/P1 bugs open. |
+| 15 | Automated tests pass. Happy path covered. 1-2 edge cases missing. No P0 bugs. |
+| 10 | Automated tests pass. Happy path covered. Known edge cases not tested. |
+| 5 | Some automated tests pass. Happy path untested in prod-like environment. |
+| 0 | Automated tests failing OR happy path broken in staging. |
 
 ### 2. Operational Readiness (0-20)
 
 | Score | Criteria |
 |-------|----------|
-| 20 | Sentry DSN active. Alert fires on 5xx. Runbook written + reviewed. Health check green. |
+| 20 | Monitoring active. Alert fires on 5xx. Runbook written + reviewed. Health check green. |
 | 15 | Monitoring active. Alert fires. Runbook exists but not reviewed. |
 | 10 | Monitoring active. No alert. Runbook not written. |
 | 5 | No monitoring. Will notice outage from user reports only. |
@@ -66,7 +66,7 @@ TOTAL: [0-100]
 
 | Score | Criteria |
 |-------|----------|
-| 20 | Security Agent reviewed. RLS policies verified. Input validation tested. No CVSS≥7. |
+| 20 | Security review done. RLS policies verified. Input validation tested. No CVSS≥7. |
 | 15 | Security review done. 1-2 LOW/MEDIUM findings accepted with reasoning. |
 | 10 | Basic security review. RLS not explicitly tested. |
 | 5 | No security review. Known vulnerability accepted without mitigation. |
@@ -76,8 +76,8 @@ TOTAL: [0-100]
 
 | Score | Criteria |
 |-------|----------|
-| 20 | CTO walked full Leyla journey. Mobile tested at 375px. AZ locale tested. No dead ends. |
-| 15 | Happy path tested by CTO. Mobile not verified. AZ not verified. |
+| 20 | Real user journey walked end-to-end. Mobile tested at 375px. AZ locale tested. No dead ends. |
+| 15 | Happy path tested. Mobile not verified. AZ not verified. |
 | 10 | Happy path tested. Real user (not mocked) journey not walked. |
 | 5 | Developer-only testing. No real user journey walked. |
 | 0 | UI not tested at all. Only unit/API tests passed. |

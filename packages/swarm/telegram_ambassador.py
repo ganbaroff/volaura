@@ -234,7 +234,7 @@ async def ask_llm(question: str, context_messages: list[dict]) -> str:
                 role = "model" if msg.get("role") == "assistant" else "user"
                 gemini_contents.append({"role": role, "parts": [{"text": msg.get("text", "")}]})
             response = client.models.generate_content(
-                model="gemini-2.5-flash-preview-04-17",
+                model="gemini-1.5-flash",
                 contents=gemini_contents,
                 config=genai.types.GenerateContentConfig(
                     system_instruction=system_prompt,
@@ -465,7 +465,7 @@ def run_bot() -> None:
             await update.message.reply_text(
                 "Usage: /implement <proposal_id_prefix>\n"
                 "Calls swarm_coder.py: project_qa discovery -> safety_gate -> aider -> post-check -> commit/revert.\n"
-                "Default model: gemini/gemini-2.5-flash-preview-04-17 (1M context, free)."
+                "Default model: gemini/gemini-1.5-flash (1M context, free)."
             )
             return
         proposal_id = args[0]

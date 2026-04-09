@@ -175,7 +175,7 @@ def _call_llm(llm_client: object, prompt: str) -> str:
     # google-genai client
     if hasattr(llm_client, "models"):
         response = llm_client.models.generate_content(
-            model="gemini-2.5-flash-preview-04-17",
+            model="gemini-1.5-flash",
             contents=prompt,
         )
         return response.text

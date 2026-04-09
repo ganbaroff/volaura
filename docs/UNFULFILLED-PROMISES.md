@@ -35,10 +35,10 @@
 |---|---------|------|--------|---------|
 | 21 | Telegram digest CEO actual receipt | Session 91 | API ok:True ×2, message_id 1042. **CEO never /start'ed bot** — bot can't send to user without first message from user. Item #20 manifestation. | CEO must open https://t.me/volaurabot and press /start |
 | 22 | Telegram Mini App live in bot Menu Button | Session 91 | apps/tg-mini built (dist/), .vercel/project.json linked, **NOT deployed**, Bot config `has_main_web_app: false` | Run `cd apps/tg-mini && vercel --prod` + @BotFather → Menu Button → URL |
-| 23 | scripts/execute_proposal.py (Sprint S1 Step 7) | Session 91 | NOT BUILT. 62 proposals approved in proposals.json, 0 implemented. Pipeline `approved → diff → PR` missing. | Next chat: build ~150 lines Python |
+| 23 | scripts/execute_proposal.py (Sprint S1 Step 7) | Session 91 | ✅ DONE 2026-04-09 — file exists at `packages/swarm/execute_proposal.py` | — |
 | 24 | Squad routing keyword fix | Session 91 | Bug: "audit security of signup flow" → routes to PRODUCT (matches "signup/flow") instead of QUALITY+SECURITY. Discovered when testing --mode=coordinator. | Add `security/audit/vulnerability` keywords to QUALITY squad in squad_leaders.py |
 | 25 | asyncio.run() from running event loop bug | Session 91 | autonomous_run.py:1170 calls suggestion_engine.generate_suggestions which internally asyncio.run() inside already-running event loop → RuntimeError. Marked "non-blocking" but suggestion engine never runs. | Refactor generate_suggestions to async + await |
-| 26 | AURA scoreMeaning_justStarting fix | Session 91 | Fix applied to worktree (3 files), NOT committed, NOT pushed to main, NOT deployed | Next chat: cd worktree && git add + commit + push to claude/blissful-lichterman + PR |
+| 26 | AURA scoreMeaning_justStarting fix | Session 91 | ✅ DONE 2026-04-09 — cherry-pick `7fec325` merged to main. scoreMeaning / AURA score display for low-scorers fixed in production. | — |
 | 27 | Vertex/Gemini judge fallback | Session 91 | autonomous_run uses Vertex for judge_proposal — fails 429 RESOURCE_EXHAUSTED daily quota. No fallback. | Add Cerebras/Groq fallback to _judge_proposal function |
 | 28 | CLAUDE.md refactor (750 lines → 150) | Session 91 | MindShift-Claude analysis: "Убить CLAUDE.md и пересоздать до 150 строк. 2000 строк — гарантия что файл не читается." | Split CLAUDE.md into core (150 lines) + 5 referenced docs |
 | 29 | Agent-first check in protocol-enforce.sh | Session 91 | MindShift-Claude recommendation: before each Edit/Write hook should ask "Какой агент это делает? (или solo: причина)" | Add to protocol-enforce.sh |
@@ -154,6 +154,16 @@ CTO did first fact-check pass + still left 23 items unverified. CEO insisted on 
 - After Round 2: <2% items wrong (only #20 unconfirmed; rest verified or correctly marked incomplete)
 
 **Without CEO's "проверь реально" challenge, the handoff would have wasted next-chat work on rebuilding things that already exist.**
+
+---
+
+## Session 92 closures (2026-04-09)
+
+| # | Promise | When | Status |
+|---|---------|------|--------|
+| 23 | scripts/execute_proposal.py | Session 91 | ✅ DONE — file at `packages/swarm/execute_proposal.py` |
+| 26 | AURA scoreMeaning / low-scorer display | Session 91 | ✅ DONE — cherry-pick `7fec325` merged to main |
+| D1 | Stale handoff documents cluttering docs/ | Session 91 (identified) | ✅ DONE 2026-04-09 — 16 handoff files archived |
 
 ---
 

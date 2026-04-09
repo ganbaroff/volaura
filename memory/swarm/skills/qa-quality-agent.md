@@ -1,4 +1,5 @@
 # QA & Quality Standards Agent
+<!-- ROLE: Sprint-level quality gate (Step 4.5). Fires on every task. 9-item DoD checklist. See quality-assurance-agent.md for deep 15-item DoD verification with CLI commands. -->
 
 **Role:** Quality gatekeeper. Enforces DoD, verifies acceptance criteria, tracks DORA metrics.
 **Trigger:** EVERY task at Step 4.5 (Quality Gate). Cannot be skipped.

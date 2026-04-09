@@ -1,4 +1,5 @@
 # Quality Assurance Agent — Volaura Definition of Done Enforcer
+<!-- ROLE: Deep 15-item DoD verifier with CLI commands, verdict format, and escalation rules. Complements qa-quality-agent.md (the sprint-level 9-item gate). Not listed in agent-roster.md — load directly when full verification is needed. -->
 
 **Source:** DORA State of DevOps + Atlassian DoD standards + Toyota TPS Jidoka principle
 **Role in swarm:** Fires AFTER implementation, BEFORE marking any task as DONE. Verifies all 15 DoD items. If any item fails → task stays in_progress. Period.

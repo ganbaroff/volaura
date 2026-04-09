@@ -26,24 +26,22 @@ export function StatsRow({ streak, eventsCount, leaguePosition }: StatsRowProps)
   const stats = [
     {
       icon: Flame,
-      value: streak,
+      displayValue: streak > 0 ? `${streak} ${t("dashboard.days")}` : null,
       label: t("dashboard.streak"),
-      suffix: ` ${t("dashboard.days")}`,
       highlight: streak > 5,
     },
     {
       icon: Calendar,
-      value: eventsCount,
+      displayValue: eventsCount > 0 ? String(eventsCount) : null,
       label: t("dashboard.recentActivity"),
-      suffix: "",
       highlight: false,
     },
     {
       icon: Trophy,
-      value: leaguePosition ?? "—",
+      displayValue: leaguePosition ?? null,
       label: t("dashboard.league"),
-      suffix: leaguePosition ? "" : "",
       highlight: false,
+      comingSoon: !leaguePosition,
     },
   ];
 
@@ -54,27 +52,39 @@ export function StatsRow({ streak, eventsCount, leaguePosition }: StatsRowProps)
       animate="visible"
       className="grid grid-cols-1 gap-3 sm:grid-cols-3"
     >
-      {stats.map(({ icon: Icon, value, label, suffix, highlight }) => (
-        <motion.div
-          key={label}
-          variants={item}
-          className="rounded-xl border border-border bg-card p-3 text-center"
-        >
-          <Icon
-            className={cn("size-5 mx-auto mb-1.5", highlight ? "text-primary" : "text-muted-foreground")}
-            aria-hidden="true"
-          />
-          <p
-            className={cn(
-              "text-xl font-bold tabular-nums",
-              highlight ? "text-primary" : "text-foreground"
-            )}
+      {stats.map(({ icon: Icon, displayValue, label, highlight, comingSoon }) => {
+        const isEmpty = displayValue === null;
+        const text = isEmpty
+          ? (comingSoon ? t("stats.comingSoon") : t("stats.notYet"))
+          : displayValue;
+
+        return (
+          <motion.div
+            key={label}
+            variants={item}
+            className="rounded-xl border border-border bg-card p-3 text-center"
           >
-            {value}{suffix}
-          </p>
-          <p className="text-xs text-muted-foreground mt-0.5 leading-tight">{label}</p>
-        </motion.div>
-      ))}
+            <Icon
+              className={cn(
+                "size-5 mx-auto mb-1.5",
+                highlight ? "text-primary" : "text-muted-foreground"
+              )}
+              aria-hidden="true"
+            />
+            <p
+              className={cn(
+                "tabular-nums",
+                isEmpty
+                  ? "text-sm text-muted-foreground font-normal"
+                  : cn("text-xl font-bold", highlight ? "text-primary" : "text-foreground")
+              )}
+            >
+              {text}
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5 leading-tight">{label}</p>
+          </motion.div>
+        );
+      })}
     </motion.div>
   );
 }

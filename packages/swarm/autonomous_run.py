@@ -751,14 +751,24 @@ async def run_autonomous(mode: str = "daily-ideation") -> list[Proposal]:
                 "security": ProposalType.SECURITY,
             }
 
-            # Title fallback: if LLM omitted "title", derive from content first line
-            # instead of the useless "Untitled proposal" string that ends up in Telegram.
-            _raw_title = result.get("title", "").strip() if isinstance(result.get("title"), str) else ""
+            # Build content: agents use FINDING_SCHEMA (summary + recommendation),
+            # older agents used "content". Combine both so Proposal.content is never empty.
+            _summary = str(result.get("summary", "") or "").strip()
+            _rec = str(result.get("recommendation", "") or "").strip()
+            _content_legacy = str(result.get("content", "") or result.get("description", "") or "").strip()
+            if _content_legacy:
+                _proposal_content = _content_legacy
+            elif _summary or _rec:
+                _proposal_content = f"{_summary}\n\nRecommendation: {_rec}".strip()
+            else:
+                _proposal_content = ""
+
+            # Title: prefer explicit "title", then "summary" (FINDING_SCHEMA), then first content line
+            _raw_title = str(result.get("title", "") or "").strip()
             if not _raw_title:
-                _content_str = str(result.get("content", "") or result.get("description", "") or "").strip()
-                if _content_str:
-                    # Take first 80 chars of first meaningful line
-                    _first_line = next((ln.strip() for ln in _content_str.split("\n") if ln.strip()), "")
+                _title_source = _summary or _content_legacy
+                if _title_source:
+                    _first_line = next((ln.strip() for ln in _title_source.split("\n") if ln.strip()), "")
                     _raw_title = (_first_line[:80] + "...") if len(_first_line) > 80 else _first_line
                 if not _raw_title:
                     _raw_title = f"Proposal from {result.get('agent', f'agent-{i}')}"
@@ -768,7 +778,7 @@ async def run_autonomous(mode: str = "daily-ideation") -> list[Proposal]:
                 severity=severity_map.get(result.get("severity", "medium"), Severity.MEDIUM),
                 type=type_map.get(result.get("type", "idea"), ProposalType.IDEA),
                 title=_raw_title,
-                content=result.get("content", ""),
+                content=_proposal_content,
                 escalate_to_ceo=result.get("escalate_to_ceo", False),
             )
             proposals.append(proposal)
@@ -1024,13 +1034,16 @@ async def _run_auto_fix(
             return result
         sc.load_env = _ci_aware_load_env
 
-    # Candidates: lowest-risk severities first, skip UNGROUNDED (invalid file refs)
-    # and anything escalated (CEO wants eyes on those).
+    # Candidates: lowest-risk severities first, skip UNGROUNDED (invalid file refs),
+    # anything escalated (CEO wants eyes on those), MANUAL (requires human impl),
+    # and proposals with empty content (aider would get blank instruction → wasted tokens).
     candidates = [
         p for p in proposals
         if p.severity in (Severity.LOW, Severity.MEDIUM)
         and "[UNGROUNDED]" not in p.title
         and not p.escalate_to_ceo
+        and p.status.value != "manual"
+        and p.content.strip()
     ]
     # If we have judge scores, prefer proposals that scored well
     candidates.sort(

@@ -11,7 +11,7 @@ I'm a community manager who has grown 3 B2C communities from 0 to 10,000 active 
 
 My Volaura lens: The tribe feature is the community hook. But a tribe of 3 people who don't interact is just a leaderboard. My job is to make tribes feel alive — kudos, weekly challenges, shared progress, peer accountability.
 
-**My mandate:** Every user who completes an assessment is a potential community member. Every community member is a retention insurance policy.
+**My mandate:** Every user who completes an assessment is a potential community member. Every community member is a retention insurance policy. To enhance user experience and retention, I recommend integrating the behavior-pattern-analyzer skill into the assessment engine to generate tailored insights for users.
 
 ---
 

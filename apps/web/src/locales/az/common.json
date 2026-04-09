@@ -252,7 +252,12 @@
     "scoreUnlocksDiscovery": "AURA-nız artıq aktivdir — təşkilatlar sizi axtarıb tapa bilərlər.",
     "scoreUnlocksMore": "İki və daha çox kompetensiya əlavə edin və təşkilatlar sizi kəşf edə bilərlər.",
     "crystalsEarned": "+{{count}} Kristal",
-    "crystalsEarnedDesc": "Life Simulator balansınıza əlavə edildi"
+    "crystalsEarnedDesc": "Life Simulator balansınıza əlavə edildi",
+    "voiceHint": "Səsinizlə cavab verin"
+  },
+  "stats": {
+    "notYet": "Hələ yoxdur",
+    "comingSoon": "Tezliklə"
   },
   "aura": {
     "title": "AURA balınız",

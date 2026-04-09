@@ -250,7 +250,12 @@
     "scoreUnlocksDiscovery": "Your AURA is now live — organizations can search and find you.",
     "scoreUnlocksMore": "Add 2+ competencies and organizations can discover you.",
     "crystalsEarned": "+{{count}} Crystals",
-    "crystalsEarnedDesc": "Added to your Life Simulator balance"
+    "crystalsEarnedDesc": "Added to your Life Simulator balance",
+    "voiceHint": "Answer with voice"
+  },
+  "stats": {
+    "notYet": "Not yet",
+    "comingSoon": "Coming soon"
   },
   "aura": {
     "title": "Your AURA Score",

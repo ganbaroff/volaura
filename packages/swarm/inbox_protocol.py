@@ -42,6 +42,7 @@ class ProposalStatus(str, Enum):
     ACTED = "acted"
     DISMISSED = "dismissed"
     DEFERRED = "deferred"
+    MANUAL = "manual"  # requires human implementation, skip auto-fix and digest
 
 
 class Proposal(BaseModel):

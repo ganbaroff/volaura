@@ -73,3 +73,4 @@ volaura-preview.jsx
 apps/tg-mini/node_modules/
 apps/tg-mini/dist/
 .aider*
+.claude/worktrees/

@@ -164,7 +164,7 @@ jobs:
               'systemInstruction': {'parts': [{'text': 'Innovation researcher. Russian. Concise.'}]},
               'generationConfig': {'maxOutputTokens': 400, 'temperature': 1.0}
           }).encode()
-          url = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-04-17:generateContent?key={GEMINI_KEY}'
+          url = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_KEY}'
           req = urllib.request.Request(url, data=payload, headers={'Content-Type': 'application/json'})
           try:
               with urllib.request.urlopen(req, timeout=30) as r:

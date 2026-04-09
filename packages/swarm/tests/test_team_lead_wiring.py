@@ -39,7 +39,7 @@ def _make_provider(model_name: str) -> MagicMock:
 # Pool that mirrors the real discovered_models.json contents roughly
 MOCK_PROVIDERS = [
     _make_provider("gemini-flash-lite-latest"),
-    _make_provider("gemini-2.5-flash-preview-04-17"),
+    _make_provider("gemini-1.5-flash"),
     _make_provider("gemini-2.5-flash-lite"),
     _make_provider("gemini-2.5-pro"),
     _make_provider("deepseek-chat"),
@@ -55,7 +55,7 @@ class TestTeamLeadFilterProviders:
     """TeamLead.filter_providers() contract."""
 
     def test_security_tilead_prefers_deepseek_and_gemini_pro(self):
-        """SecurityTeamLead should select deepseek-chat + gemini-2.5-pro + gemini-2.5-flash-preview-04-17."""
+        """SecurityTeamLead should select deepseek-chat + gemini-2.5-pro + gemini-1.5-flash."""
         tilead = SecurityTeamLead()
         selected = tilead.filter_providers(MOCK_PROVIDERS)
         names = [p.get_model_name() for p in selected]
@@ -75,7 +75,7 @@ class TestTeamLeadFilterProviders:
         selected = tilead.filter_providers(MOCK_PROVIDERS)
         names = [p.get_model_name() for p in selected]
         assert "gemini-flash-lite-latest" in names
-        assert "gemini-2.5-flash-preview-04-17" in names
+        assert "gemini-1.5-flash" in names
 
     def test_speed_tilead_excludes_slow_models(self):
         """SpeedTeamLead should exclude gemini-2.5-pro and deepseek."""
@@ -185,7 +185,7 @@ class TestEngineDecideDomainAware:
         await engine.decide(config)
 
         names = [p.get_model_name() for p in captured_providers]
-        # Security pool: deepseek, gemini-2.5-pro, gemini-2.5-flash-preview-04-17 — NOT flash-lite
+        # Security pool: deepseek, gemini-2.5-pro, gemini-1.5-flash — NOT flash-lite
         assert "gemini-flash-lite-latest" not in names, (
             "flash-lite is in avoid_models for security — must be excluded"
         )

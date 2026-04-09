@@ -19,41 +19,53 @@ const IDENTITY_LABELS: Record<string, string> = {
   none: "Volaura Professional",
 };
 
+const ALLOWED_TIERS = new Set(["platinum", "gold", "silver", "bronze", "none"]);
+
+const COMP_LABELS: Record<string, string> = {
+  comm: "Communication",
+  lead: "Leadership",
+  eng: "English Proficiency",
+  tech: "Tech Literacy",
+  rel: "Reliability",
+  adapt: "Adaptability",
+  event: "Event Performance",
+  emp: "Empathy & Safety",
+};
+
+const BAR_COLORS = ["#34d399", "#c0c1ff", "#bdc2ff", "#e9c400", "#34d399", "#c0c1ff", "#bdc2ff", "#d4b4ff"];
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const name = searchParams.get("name") || "Professional";
-  const score = searchParams.get("score") || "0";
-  const tier = searchParams.get("tier") || "none";
-  const username = searchParams.get("username") || "";
-  const regNum = searchParams.get("reg") || "";
 
-  const tierColor = BADGE_COLORS[tier] || BADGE_COLORS.none;
-  const identity = IDENTITY_LABELS[tier] || IDENTITY_LABELS.none;
+  // --- Input validation & sanitization ---
+  const name = (searchParams.get("name") || "Professional").slice(0, 60);
+  // score: only digits and one decimal point, max 6 chars
+  const rawScore = searchParams.get("score") || "0";
+  const score = /^\d{1,3}(\.\d{1,2})?$/.test(rawScore) ? rawScore : "0";
+  // tier: must be in the allowed set
+  const rawTier = searchParams.get("tier") || "none";
+  const tier = ALLOWED_TIERS.has(rawTier) ? rawTier : "none";
+  const username = (searchParams.get("username") || "").replace(/[^\w.-]/g, "").slice(0, 50);
+  const regNum = (searchParams.get("reg") || "").replace(/[^\d]/g, "").slice(0, 10);
 
-  // Competency scores (comma-separated: "comm:92,lead:78,eng:71,tech:65,rel:88,adapt:82,event:74,emp:69")
+  const tierColor = BADGE_COLORS[tier];
+  const identity = IDENTITY_LABELS[tier];
+
+  // comps: limit to 8 entries, validate slug (alphanumeric) and score (numeric)
   const compsRaw = searchParams.get("comps") || "";
   const comps = compsRaw
     .split(",")
     .filter(Boolean)
+    .slice(0, 8)
     .map((c) => {
-      const [slug, val] = c.split(":");
-      return { slug, score: Number(val) || 0 };
-    });
+      const [slug = "", val = "0"] = c.split(":");
+      const safeSlug = slug.replace(/[^\w]/g, "").slice(0, 20);
+      const safeScore = Math.min(100, Math.max(0, Number(val) || 0));
+      return { slug: safeSlug, score: safeScore };
+    })
+    .filter((c) => c.slug);
 
-  const COMP_LABELS: Record<string, string> = {
-    comm: "Communication",
-    lead: "Leadership",
-    eng: "English Proficiency",
-    tech: "Tech Literacy",
-    rel: "Reliability",
-    adapt: "Adaptability",
-    event: "Event Performance",
-    emp: "Empathy & Safety",
-  };
-
-  const BAR_COLORS = ["#34d399", "#c0c1ff", "#bdc2ff", "#e9c400", "#34d399", "#c0c1ff", "#bdc2ff", "#d4b4ff"];
-
-  return new ImageResponse(
+  const response = new ImageResponse(
     (
       <div
         style={{
@@ -210,4 +222,8 @@ export async function GET(req: NextRequest) {
       height: 630,
     },
   );
+
+  // Cache at CDN for 1 hour; allow stale serving for 24h
+  response.headers.set("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400");
+  return response;
 }

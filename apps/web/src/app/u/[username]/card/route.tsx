@@ -12,6 +12,9 @@ export const runtime = "edge";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+// Username: alphanumeric, underscore, hyphen, dot — max 50 chars
+const USERNAME_RE = /^[\w.-]{1,50}$/;
+
 interface PublicProfile {
   id: string;
   username: string;
@@ -51,26 +54,38 @@ export async function GET(
 ) {
   const { username } = await params;
 
+  // Validate username before using it in a fetch URL
+  if (!USERNAME_RE.test(username)) {
+    return new Response("Invalid username", { status: 400 });
+  }
+
   const format = request.nextUrl.searchParams.get("format") ?? "linkedin";
   const [width, height] =
     format === "story" ? [1080, 1920] : format === "square" ? [1080, 1080] : [1200, 630];
 
-  // Fetch data
+  // Fetch profile + AURA with a 5s timeout
   let profile: PublicProfile | null = null;
   let aura: AuraScore | null = null;
 
   try {
-    const [pRes, aRes] = await Promise.all([
-      fetch(`${API_URL}/api/profiles/${username}`),
-      fetch(`${API_URL}/api/aura/${username}`).then(() => null).catch(() => null), // placeholder; will fix after profile fetch
-    ]);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+    const pRes = await fetch(`${API_URL}/api/profiles/${username}`, {
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
 
     if (pRes.ok) {
       profile = await pRes.json();
-      // Now fetch aura by volunteer_id
       if (profile) {
-        const aRes2 = await fetch(`${API_URL}/api/aura/${profile.id}`);
-        if (aRes2.ok) aura = await aRes2.json();
+        const controller2 = new AbortController();
+        const timeoutId2 = setTimeout(() => controller2.abort(), 5000);
+        const aRes = await fetch(`${API_URL}/api/aura/${profile.id}`, {
+          signal: controller2.signal,
+        });
+        clearTimeout(timeoutId2);
+        if (aRes.ok) aura = await aRes.json();
       }
     }
   } catch {
@@ -84,7 +99,7 @@ export async function GET(
   const isElite = aura?.elite_status ?? false;
   const competencyScores = aura?.competency_scores ?? {};
 
-  return new ImageResponse(
+  const response = new ImageResponse(
     (
       <div
         style={{
@@ -163,4 +178,8 @@ export async function GET(
     ),
     { width, height }
   );
+
+  // Cache at CDN for 1 hour; allow stale serving for 24h
+  response.headers.set("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400");
+  return response;
 }

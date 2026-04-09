@@ -1,7 +1,7 @@
 [project]
 name = "volaura-api"
 version = "0.1.0"
-description = "Volaura Backend API — Elite Volunteer Talent Platform"
+description = "Volaura Backend API — Verified Talent Platform"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi[standard]>=0.115.0",

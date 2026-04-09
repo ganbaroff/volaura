@@ -206,7 +206,7 @@ The protocol is now EVIDENCE-BASED. Not trust-based. Trust failed 77 times.
                      WHY: Toyota measures everything. What isn't measured isn't improved.
 ```
 
-## DEFINITION OF DONE — 3 Questions (Pareto: covers 76.4% of all defects)
+## DEFINITION OF DONE — 4 Questions (Pareto: covers 90% of all defects)
 
 Defect autopsy (2026-04-03): 76 bugs → CLASS 3 (32.7%) + CLASS 1 (25.5%) + CLASS 2 (18.2%) = 76.4%.
 15-item DoD at 0% compliance is worse than 3-item DoD at 100%.

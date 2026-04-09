@@ -268,15 +268,16 @@
       "agent": "Code Quality Engineer",
       "severity": "high",
       "type": "idea",
-      "status": "pending",
+      "status": "implemented",
       "title": "Implement Security Vulnerability Detector Skill",
       "content": "Develop and integrate a Security Vulnerability Detector skill to proactively identify and mitigate security risks, enhancing the overall ecosystem's security posture. This skill should utilize CVSS scores to prioritize vulnerabilities. Implementation time: 8 hours. Expected impact: reduction of security vulnerabilities by 30% within the first month. References: DISTILLED AGENT KNOWLEDGE, SKILL EVOLUTION STATUS, AVAILABLE SKILLS. Confidence: 0.9",
       "votes_for": 2,
       "votes_against": 0,
       "vote_details": [],
       "escalate_to_ceo": false,
-      "ceo_decision": null,
-      "ceo_decision_at": null
+      "ceo_decision": "[execute_proposal.py] 3 findings from 3 agents. P0: 0, P1: 3, P2+: 0. PRIORITY: [P1] Develop and integrate a Security Vulnerability Detector skill utilizing CVSS scores to prioritize vulnerabilities, enhancing the overall ecosyste",
+      "ceo_decision_at": "2026-04-09T20:44:05.364000+00:00",
+      "resolved_at": "2026-04-09T20:44:05.364000+00:00"
     },
     {
       "id": "b044e921",
@@ -284,7 +285,7 @@
       "agent": "Security Auditor",
       "severity": "high",
       "type": "security",
-      "status": "pending",
+      "status": "approved",
       "title": "Implement Input Validation and Rate Limiting for All API Endpoints",
       "content": "Propose to enhance the security of the Volaura platform by implementing input validation and rate limiting for all API endpoints. This includes validating user input data to prevent SQL injection and cross-site scripting (XSS) attacks, as well as limiting the number of requests from a single IP address within a certain time frame to prevent brute-force attacks. Specifically, update the `api/routes.py` file to include input validation using the `validate` function from the `volaura.validators` module, and implement rate limiting using the `limiter` decorator from the `volaura.ratelimit` module. The time to implement this proposal is estimated to be 2 days, and the expected impact is a significant reduction in the risk of security breaches and a improvement in the overall security posture of the platform.",
       "votes_for": 1,
@@ -292,7 +293,7 @@
       "vote_details": [],
       "escalate_to_ceo": false,
       "convergent": false,
-      "ceo_decision": null,
+      "ceo_decision": "Already implemented — rate limiting + Pydantic input validation in production since Sprint 3",
       "ceo_decision_at": null,
       "judge_score": 2,
       "judge_model": "gemini-2.0-flash",
@@ -303,7 +304,8 @@
         "actionability": false,
         "novelty": true,
         "impact": false
-      }
+      },
+      "resolved_at": "2026-04-09T20:44:21.623628+00:00"
     },
     {
       "id": "c6079abc",
@@ -392,7 +394,7 @@
       "agent": "Scaling Engineer",
       "severity": "high",
       "type": "idea",
-      "status": "pending",
+      "status": "dismissed",
       "title": "Implement Minimum Viable Architecture for Task Dispatch with WebSockets",
       "content": "Given the CEO's directive to integrate ANUS as a platform feature, it's crucial to establish a minimum viable architecture for task dispatch. Considering the real-time nature of the application and the need for efficient communication between the client and server, I propose implementing WebSockets for task dispatch. This approach will enable bidirectional, real-time communication, reducing latency and enhancing the overall user experience. To implement this, we can utilize the `ws` library in Python to establish a WebSocket connection between the client and server. On the client-side, we can use the WebSocket API to send and receive messages. For the server, we'll need to create a WebSocket endpoint using `ws` and handle incoming connections. Additionally, to sandbox ANUS and prevent it from reading sensitive files, we can utilize Docker containers to isolate the environment. This will ensure that ANUS runs in a secure and controlled environment, mitigating potential security risks. The `agent_tasks` Supabase schema can be designed to store task metadata, including task IDs, user IDs, and task statuses. To implement presence checks, we can utilize a combination of client-side face detection using libraries like FaceAPI and server-side verification using WebSockets to ensure that the user is present and authenticated. The biggest risk in this implementation is ensuring the security and integrity of the system, particularly when dealing with autonomous coding tasks. By prioritizing security and implementing robust measures to prevent potential risks, we can ensure a secure and reliable system.",
       "votes_for": 1,
@@ -400,7 +402,7 @@
       "vote_details": [],
       "escalate_to_ceo": false,
       "convergent": false,
-      "ceo_decision": null,
+      "ceo_decision": "Outdated proposal — WebSocket architecture predates ZEUS gateway which now handles this",
       "ceo_decision_at": null,
       "judge_score": 1,
       "judge_model": "gemini-2.0-flash",
@@ -411,7 +413,8 @@
         "actionability": false,
         "novelty": false,
         "impact": false
-      }
+      },
+      "resolved_at": "2026-04-09T20:44:21.623628+00:00"
     },
     {
       "id": "48809cf2",

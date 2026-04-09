@@ -71,7 +71,11 @@
       "Read(//c/Users/user/AppData/Local/Temp/claude/C--Projects-VOLAURA--claude-worktrees-blissful-lichterman/234cacce-0924-4b39-be45-1f3d59574a76/tasks/**)",
       "Bash(xargs grep:*)",
       "Bash(bash C:/Projects/VOLAURA/.claude/worktrees/blissful-lichterman/.claude/hooks/protocol-enforce.sh:*)",
-      "Bash(bash .claude/hooks/protocol-enforce.sh)"
+      "Bash(bash .claude/hooks/protocol-enforce.sh)",
+      "Bash(supabase functions:*)",
+      "Read(//c/Users/user/AppData/Roaming/npm/**)",
+      "Read(//c/Users/user/.local/bin/**)",
+      "mcp__claude_ai_Vercel__list_teams"
     ],
     "deny": [
       "Bash(rm -rf /)*",

@@ -38,7 +38,7 @@ Deadline: [when mitigation must be complete]
 
 | Score | Level | Action Required |
 |-------|-------|----------------|
-| 20-25 | **CRITICAL** | Block sprint. Fix before proceeding. Escalate to CEO. |
+| 20-25 | **CRITICAL** | Block sprint. Fix before proceeding. Escalate to CEO. Notify CTO. |
 | 12-19 | **HIGH** | Fix within current batch. Cannot ship without mitigation plan. |
 | 6-11 | **MEDIUM** | Fix within sprint. Log in decisions.md. |
 | 1-5 | **LOW** | Log in risk register. Review quarterly. |

@@ -127,6 +127,7 @@ Visual representation of a low-energy state uses purple or amber, never red.
 ---
 
 ### LAW 5: ONE PRIMARY ACTION
+# Removed the leaderboard section
 
 **Source:** Research #2 (Clinical ADHD), #4 (Onboarding UX), #6 (Sensory UX)
 **Science:** Working memory in ADHD = ~1.5 items (vs 7±2 neurotypical). Multiple simultaneous CTAs = decision paralysis = exit. Fogg Behavior Model: motivation collapses when activation energy is too high.
@@ -174,6 +175,7 @@ Status framing retains motivation. Currency framing destroys it.
 - ❌ "78.4" as headline, "Gold" as decoration
 
 ### CRYSTAL LAW 5: Collaborative > Zero-Sum
+# Added a note about removing leaderboards
 
 Competition between users = social comparison = shame spiral. Collective wins are safe.
 - ✅ "Focus Rooms" (shared presence, not rankings)

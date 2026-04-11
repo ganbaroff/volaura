@@ -81,6 +81,7 @@
 3. **Freeze ecosystem at VOLAURA-only for 30 days.** MindShift/Life Sim/BrandedBy/ZEUS = distractions.
 4. **Reduce process overhead by 80%.** One rule: "Does this get a real user through an assessment?" If no → don't do it.
 5. **Build a 30-second AZ pitch for non-technical HR.** Test on 5 real HR professionals. Their reactions shape the next 6 months.
+6. **Implement a modular skill library architecture for the assessment engine.** 
 
 ---
 

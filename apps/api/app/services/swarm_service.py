@@ -17,6 +17,7 @@ from typing import Any
 from loguru import logger
 
 from app.config import settings
+from docker import Docker
 
 
 async def evaluate_answer(
@@ -52,6 +53,8 @@ async def evaluate_answer(
         from app.core.assessment.bars import evaluate_answer as bars_evaluate
         return await bars_evaluate(question_en, answer, expected_concepts, return_details=return_details)
 
+
+import docker
 
 async def _swarm_evaluate_scores(
     question_en: str,
@@ -94,7 +97,11 @@ async def _swarm_evaluate_scores(
     if settings.groq_api_key:
         env["GROQ_API_KEY"] = settings.groq_api_key
 
-    engine = SwarmEngine(env=env)
+    # Create a new Docker container for the ANUS agent
+    client = docker.from_env()
+    container = client.containers.run("anus-agent", detach=True)
+
+    engine = SwarmEngine(env=env, container=container)
 
     config = SwarmConfig(
         question=swarm_prompt,

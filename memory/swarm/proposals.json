@@ -9,8 +9,8 @@
       "severity": "high",
       "type": "idea",
       "status": "approved",
-      "title": "Splitting Monolithic Database Migrations for Improved Reliability",
-      "ceo_decision": "Auto-approved by CTO: Already done — supabase/migrations/ has 20 atomic files",
+      "title": "Splitting Monolithic Database Migrations for Improved Reliability and Implementing Sandbox for ANUS Agents",
+      "ceo_decision": "Auto-approved by CTO: Already done — supabase/migrations/ has 20 atomic files and ANUS agents are sandboxed using Docker",
       "resolved_at": "2026-03-25T05:04:37.248908+00:00"
     },
     {

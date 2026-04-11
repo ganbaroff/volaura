@@ -845,6 +845,14 @@ async def run_autonomous(mode: str = "daily-ideation") -> list[Proposal]:
             f"(+{proposal.votes_for}/-{proposal.votes_against}, escalate={proposal.escalate_to_ceo})"
         )
 
+    # ── Task Ledger — record every proposal ──────────────────────────────────
+    try:
+        from packages.swarm.task_ledger import write_proposal
+        for proposal in proposals:
+            write_proposal(proposal, mode=mode)
+    except Exception as _le:
+        logger.debug(f"task_ledger write_proposal skipped: {_le}")
+
     # Summary
     convergent_total = sum(1 for p in proposals if p.convergent)
     logger.info(
@@ -1122,6 +1130,13 @@ async def _run_auto_fix(
             logger.info(f"Auto-fix: ✅ {commit_hash[:12]} {prop.title[:60]}")
         else:
             logger.info(f"Auto-fix: ⏭ skipped ({stage}) {prop.title[:60]}")
+
+        # ── Task Ledger — record every fix attempt ────────────────────────
+        try:
+            from packages.swarm.task_ledger import write_fix_attempt
+            write_fix_attempt(prop_dict["id"], prop.title, results[-1], mode="auto_fix")
+        except Exception as _le:
+            logger.debug(f"task_ledger write_fix_attempt skipped: {_le}")
 
     logger.info(
         f"Auto-fix complete: {executed}/{len(candidates)} implemented, "

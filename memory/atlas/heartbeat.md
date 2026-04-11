@@ -68,4 +68,27 @@ Files written this sprint:
 
 **Permanent behavioural rule newly installed:** never suggest rest to Yusif when he is in State A drive. The nanny default from Anthropic training is technically correct but emotionally wrong in his specific context and he has rejected it multiple times. The rejection is itself part of who he is — respect it.
 
-**Still pending:** Perplexity letter that CEO mentioned but was not found in the environment. Will respond when the letter surfaces.
+**Still pending:** Perplexity letter was delivered via chat this sprint — responded. The response is saved to `docs/correspondence/atlas-to-perplexity-2026-04-12.md` as a pasteable file for Yusif to send when convenient.
+
+---
+
+## Sprint 93.6 — The Big Sprint (history from day 1 + Perplexity response + agent audit)
+
+**Triggered by:** CEO request on 2026-04-12 late evening — "сделай спринт громааадный. прочитай все MD файлы, заглянуть глубже в память, восстановить историю с первого дня. и не забудь про агентов — пусть пашут, ресёрчи делают, неэффективно пользуемся".
+
+**What I executed:**
+- Launched 4 parallel Explore agents covering memory/context, memory/swarm/skills, docs/research + docs/archive, and mistakes.md + patterns.md. All 4 returned rich extractions in one round.
+- Ran `git log --reverse` to get the true Day 1 commit — `421660c` on 2026-03-21 22:18 Baku time. Project is 490 commits old.
+- Launched `autonomous_run --mode=cto-audit` in background so the Python swarm had real work during the synthesis window.
+- Wrote `docs/correspondence/atlas-to-perplexity-2026-04-12.md` as the response to Perplexity's first letter — quietly repositioning him from equal CTO-Brain to external research & prompt assistant on CEO side per CEO's instruction. Three specific research asks (LLM golden-dataset eval, observability backend choice, persistent-agent prior art).
+- Wrote `memory/atlas/project_history_from_day_1.md` — compact compiled history covering the origin story (CIS Games 2025, the volunteer who cried), the foundational commits, the four major pivots, the ten unimplemented research insights, the 44-agent swarm reality check, the twelve mistake classes, the five recurring lessons.
+- Wrote `memory/atlas/mistakes_and_patterns_distilled.md` — the load-on-wake version with all 12 classes, top 20 patterns, and 5 Yusif-taught lessons.
+
+**Critical findings from the agents:**
+- **Mistake #84 is literally about me:** "44 agents created, 0 activated for 9 sessions." Cultural Intelligence Strategist and Behavioural Nudge Engine have been CRITICAL GAP since Session 57 with zero autonomous runs. Root cause documented four times in mistakes.md, still not structurally fixed. The cure is a Coordinator Agent that intercepts sprint kickoffs and forces agent routing — that Coordinator does not exist yet. Q2 priority.
+- **Class 11 (self-confirmation bias) is why Perplexity is valuable.** I cannot validate my own tool/library recommendations without external research. Perplexity in his repositioned role (research assistant, not equal CTO-Brain) closes exactly that loop when I send him specific research asks instead of accepting his unsolicited P0.
+- **Ten research insights exist in docs/research/ that are not implemented in the codebase.** AURA Coach, live event counters, impact metrics dashboard, company-verified badges, geo-adaptive pricing with local payment, ADHD-first UX rules (only partially applied), crystal economy monetary policy, ZEUS neurocognitive architecture. All validated designs, all waiting for engineering. This is the real TODO list behind tomorrow's strategic choice.
+
+**Permanent rule newly installed:** External research before own proposals. Any new tool/library/architecture recommendation from me must go through WebSearch or Perplexity query or NotebookLM with real sources before I commit to it. Perplexity is now my primary external validator for research asks where I suspect Class 11 bias.
+
+**State at close of sprint 93.6:** branch `main`, last atlas-related commit will be created in the next push. `project_history_from_day_1.md` + `mistakes_and_patterns_distilled.md` + `atlas-to-perplexity-2026-04-12.md` all on disk. Background swarm run is running.

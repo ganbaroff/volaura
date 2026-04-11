@@ -50,12 +50,6 @@ These are non-negotiable. They cannot be overridden by feature requests, market 
 - **Normal mode:** Full features, moderate animations
 - **Low-energy mode:** Single-action card, fade-in only, warm non-directive copy
 
-**Implementation:**
-```
-Full  (4-5 energy): Full UI, all animations, all widgets
-Mid   (3 energy):   Reduced widgets, entrance-only animations, "Ready?" gate for assessments
-Low   (1-2 energy): Single action card, fade-in only, assessments hidden
-```
 ⚠️ User-facing labels MUST use Full/Mid/Low (or equivalent). NEVER show "Red day" to users —
 this violates Law 1. Internal code constants may use green/yellow/red semantics only.
 Visual representation of a low-energy state uses purple or amber, never red.

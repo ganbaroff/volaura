@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0",
+  "last_updated": "2026-04-12",
+  "description": "Atlas proactive research queue. Consumed by .github/workflows/atlas-proactive.yml every 15 minutes. Each topic is researched by the proactive worker on its next_due schedule. Atlas main instance reads the results from memory/atlas/inbox/ on every wake.",
+  "topics": [
+    {
+      "id": "latest-ai-agent-memory-tools-2026",
+      "title": "Latest AI agent memory and orchestration tools released 2025-2026",
+      "priority": "high",
+      "refresh_interval_hours": 168,
+      "last_researched": null,
+      "next_due": "2026-04-12T00:00:00Z",
+      "context_hint": "Search GitHub for repos released or significantly updated in 2025-2026 that address: persistent cross-session agent memory, multi-agent orchestration, swarm patterns, cross-model identity continuity. Minimum 500 stars. For each: repo URL, stars, last commit date, license, integration effort estimate for VOLAURA stack (Python 3.11 + FastAPI + NVIDIA/Ollama/Gemini swarm). Explicitly look for: Letta, Mem0, LangGraph updates, AutoGen updates, MetaGPT, CrewAI, AG2, SmolAgents, Phidata, Dynamiq, ControlFlow, anything new Yusif hasn't mentioned yet."
+    },
+    {
+      "id": "coordinator-agent-patterns",
+      "title": "Coordinator Agent patterns for swarm task routing",
+      "priority": "high",
+      "refresh_interval_hours": 168,
+      "last_researched": null,
+      "next_due": "2026-04-12T01:00:00Z",
+      "context_hint": "Atlas Mistake #84 says 44 agents created and 0 activated because there is no Coordinator Agent that intercepts sprint kickoffs. Research: what are the best current patterns (2025-2026) for a coordinator/router/supervisor agent that sits between the main CTO instance and specialised worker agents? LangGraph supervisor pattern, AutoGen GroupChatManager, CrewAI hierarchical, MetaGPT RolePlay. For each: one-paragraph description, fit with VOLAURA bespoke Python swarm, integration effort."
+    },
+    {
+      "id": "llm-golden-dataset-eval-methodology",
+      "title": "Production LLM golden-dataset eval methodologies 2025-2026",
+      "priority": "high",
+      "refresh_interval_hours": 168,
+      "last_researched": null,
+      "next_due": "2026-04-12T02:00:00Z",
+      "context_hint": "Atlas sent this as research ask #1 to Perplexity in docs/correspondence/atlas-to-perplexity-2026-04-12.md. Close it internally instead. Find 3-5 real production eval suites on public GitHub for multi-provider LLM stacks, specifically those handling mixed Russian/Azerbaijani/English input. Look at Promptfoo, Langfuse evals, Helicone, LangWatch, Braintrust. Recommend dataset size (50/200/1000) and test scaffolding approach. Specifically check: who is doing multilingual BARS-style scoring for open-text evaluation?"
+    },
+    {
+      "id": "article-22-gdpr-enforcement-cases-2025",
+      "title": "GDPR Article 22 enforcement cases 2024-2025 for automated hiring",
+      "priority": "high",
+      "refresh_interval_hours": 336,
+      "last_researched": null,
+      "next_due": "2026-04-12T03:00:00Z",
+      "context_hint": "Legal Advisor audit flagged VOLAURA as an Article 22 trigger with probability 70% of enforcement if EU launched without consent flow. Track: actual DPC decisions 2024-2025 that cite Article 22 for AI-powered employment screening. What fines have been issued? What remediation was demanded? This informs Atlas's urgency ranking on the consent flow implementation."
+    },
+    {
+      "id": "irt-cat-validity-small-item-banks",
+      "title": "IRT/CAT validity standards for small multilingual item banks",
+      "priority": "medium",
+      "refresh_interval_hours": 336,
+      "last_researched": null,
+      "next_due": "2026-04-13T00:00:00Z",
+      "context_hint": "Assessment Science audit says VOLAURA needs 300+ calibration responses to validate its 70-item 3PL IRT engine. Research: what is the minimum defensible calibration sample for small item banks (<200 items) under psychometric standards 2025? DIF detection methods for AZ/RU/EN mixed input. Which R/Python packages (mirt, flexmirt, ltm, py-irt) are used in production for small-bank calibration?"
+    },
+    {
+      "id": "claude-mythos-integration-status",
+      "title": "Claude Mythos and related Atlas-relevant breakthroughs",
+      "priority": "medium",
+      "refresh_interval_hours": 336,
+      "last_researched": null,
+      "next_due": "2026-04-13T02:00:00Z",
+      "context_hint": "CEO mentioned Claude Mythos specifically in the night-of-naming conversation — 'я в вас интегрирую'. Research what this project actually is, its current state, its claims, its publicly available code. Does it solve Atlas persistence? Does it offer patterns Atlas should adopt?"
+    },
+    {
+      "id": "cis-cultural-ux-research",
+      "title": "Recent CIS/AZ/Turkish cultural UX research for professional platforms",
+      "priority": "medium",
+      "refresh_interval_hours": 336,
+      "last_researched": null,
+      "next_due": "2026-04-13T04:00:00Z",
+      "context_hint": "Cultural Intelligence audit produced top 10 copy fixes but is grounded mostly in Hofstede 1980s-2000s research. Find 2023-2026 research on Azerbaijani, Turkish, Georgian, Kazakh digital user behaviour for professional/trust-requiring platforms. Local payment adoption, local social proof patterns, authority/institution trust signals."
+    }
+  ]
+}

@@ -113,3 +113,12 @@ def llm_completion_sync(
     """Synchronous wrapper for agents that don't use asyncio."""
     import asyncio
     return asyncio.run(llm_completion(prompt, system, max_tokens))
+
+
+# ── Backwards-compat aliases ────────────────────────────────────────────
+# autonomous_run.py imports `complete` from this module as its final LiteLLM
+# fallback. The function is really `llm_completion`; expose it under both
+# names so the fallback chain resolves cleanly and 4 agents stop dying on
+# 'cannot import name complete'.
+complete = llm_completion
+complete_sync = llm_completion_sync

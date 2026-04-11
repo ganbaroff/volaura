@@ -30,7 +30,11 @@ jobs:
           cache: pip
 
       - name: Install dependencies
-        run: pip install loguru
+        # session_end_hook → packages/swarm/__init__.py transitively imports
+        # pydantic via prompts.py → swarm_types.py. loguru alone is not enough
+        # (caught Session 93 — 3 consecutive workflow failures on all commits
+        # after ModuleNotFoundError: No module named 'pydantic').
+        run: pip install loguru pydantic
 
       - name: Run session-end hook (capture diff → SESSION-DIFFS.jsonl)
         run: |

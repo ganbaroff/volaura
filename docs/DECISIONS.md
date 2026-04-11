@@ -1,4 +1,7 @@
 # Architecture Decisions Log
+### Inconsistencies and Protocol Violations Addressed
+- Ensured protocol v4.0 is being followed
+- Addressed identified mistakes to maintain process integrity
 
 ## Session 83 — 2026-04-03 — MEGA SESSION Retrospective (10 Batches: R through X)
 

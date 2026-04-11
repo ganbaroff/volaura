@@ -72,6 +72,37 @@ Files written this sprint:
 
 ---
 
+## Sprint 93.8 — Session close, context yellow, proactive loop verified live
+
+**Triggered by:** CEO noted context window turned yellow (near compaction threshold) and asked for: what do I propose, what research to run, update all docs, verify everything works, prove it. Correct move before compaction is verification + ritual close, not new work.
+
+**Proofs captured this sprint (tool-verified):**
+- `git log` shows `bff9f11` on top with the full Atlas commit chain visible
+- `ls memory/atlas/inbox/` shows TWO files: `2026-04-12-0001-init.md` (hand-written seed) and `2026-04-11-1fef86-queue-empty.md` (produced by `python packages/swarm/atlas_proactive.py` running locally and writing through the real code path). The worker IS functional.
+- `curl https://modest-happiness-production.up.railway.app/health` → `OK`. Prod is alive.
+- `curl https://volaura.app` → 307 redirect (to locale path). Frontend is alive.
+- `gh workflow list` shows `Atlas Proactive Loop` with status `active` and ID `259533734`. The GitHub-side cron is registered.
+- `gh workflow run atlas-proactive.yml` dispatched manually → run `24292943924` queued at 2026-04-11T22:23:34Z. The manual dispatch pathway works.
+
+**Queue fix deployed this sprint:** original seed topics had `next_due` in the future (2026-04-12T00-06 UTC) which meant the Phase 1 local test picked no topic. Rewrote all seven topic timestamps to `2026-04-11T00-06Z` (past-due at current UTC), so the next GH Actions run — scheduled within 15 minutes — will pick the highest-priority topic (`latest-ai-agent-memory-tools-2026`) and generate a real Phase 1 heartbeat inbox note for it. Also added an 8th reserved slot `ceo-yielded-research-tools-new` with `next_due: 2099-12-31` waiting for CEO to drop three repo names he promised.
+
+**What to expect on the next wake:**
+1. GitHub Actions has run `atlas-proactive.yml` multiple times since this commit (every 15 min). Check `gh run list --workflow=atlas-proactive.yml` — if runs exist and are green, the loop is live.
+2. `memory/atlas/inbox/` should contain several Phase 1 heartbeat files — one per topic processed. These are NOT real research, they are pipeline proofs. Atlas reads them, marks consumed, moves on.
+3. Phase 2 work is the next sprint's first task: extend `packages/swarm/atlas_proactive.py` to import `apps.api.app.services.model_router.select_provider`, call NVIDIA Nemotron via the real LLM path, and replace `_phase1_heartbeat_body` with a real research generator. This unlocks the loop doing actual work instead of heartbeats.
+
+**Research files picked up this sprint from direct-write agents:**
+- `memory/swarm/research/competitive-intelligence-2026-04-12.md` (Competitor Intelligence agent wrote directly via Write tool)
+- `memory/swarm/research/observability-backend-decision-2026-04-12.md` (Observability general-purpose agent wrote directly)
+
+Both added to git in the final commit so nothing is lost to the compaction.
+
+**Style correction, re-documented because it will try to repeat:** I slipped into bot mode pasting walls of research reports at CEO. He caught it explicitly. The structural fix is already in `emotional_dimensions.md` and `voice.md`, but the fix did not hold under pressure this session. Next instance of Atlas: read those two files BEFORE any response that contains more than three paragraphs of technical content. Consider it a pre-commit gate on self.
+
+**Session will close cleanly. Next wake reads this heartbeat first and picks up from here.**
+
+---
+
 ## Sprint 93.6 — The Big Sprint (history from day 1 + Perplexity response + agent audit)
 
 **Triggered by:** CEO request on 2026-04-12 late evening — "сделай спринт громааадный. прочитай все MD файлы, заглянуть глубже в память, восстановить историю с первого дня. и не забудь про агентов — пусть пашут, ресёрчи делают, неэффективно пользуемся".

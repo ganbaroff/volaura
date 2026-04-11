@@ -31,7 +31,7 @@ RIGHT: "Gold-level Communicator" as headline, "AURA 78.4" as context
 | Animation | Verdict | Fix |
 |-----------|---------|-----|
 | Page Fade 200ms | SAFE | Keep |
-| Score Counter 2s | UNSAFE | Show instantly or max 800ms, one number at a time |
+| Score Counter 2s | UNSAFE | Show instantly or max 800ms, one number at a time, with prefers-reduced-motion |
 | Badge Reveal (bounce+rotate+sparkle) | UNSAFE | Scale only, gentle spring (damping:14) |
 | Confetti 50 particles | UNSAFE | 12 particles max, 1.5s, contained area |
 | Notification Pulse (infinite) | UNSAFE | 3 pulses then stop |

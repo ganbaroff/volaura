@@ -1,10 +1,50 @@
 # Sprint State — Volaura
 
-**Last Updated:** 2026-04-06 (Session 87 — Constitution v1.3 complete)
+**Last Updated:** 2026-04-11 (Session 92 — Bridge sync + LifeSimulator auth flow)
 
 ## Current Position
-Sprint: Design System + UX Polish
-Status: ACTIVE — multiple PRs merged today
+Sprint: Sprint 0 — Ecosystem Wiring
+Status: ACTIVE — all Railway/Supabase secrets synced, prod healthy, LifeSimulator auth implemented
+
+## Session 92 — 2026-04-11 — COMPLETE
+
+### What shipped
+| What | Status |
+|------|--------|
+| EXTERNAL_BRIDGE_SECRET unified (Railway + MindShift Supabase + .env) | ✅ all 3 synced, same 32-byte hex |
+| health_data_firewall.sql migration | ✅ applied to shared project dwdgzfusjsobnixgyzjk |
+| user_identity_map migration | ✅ already applied (confirmed) |
+| LifeSimulator globals.gd crash bug (wrong path) | ✅ fixed, committed |
+| LifeSimulator api_client.gd + project.godot URL fix | ✅ volaura-production → volauraapi-production |
+| LifeSimulator in-game auth flow | ✅ volaura_login_screen.tscn/.gd + api_client.gd rewrite |
+| Telegram bot webhook | ✅ set to volauraapi-production.up.railway.app/api/telegram/webhook |
+| GATEWAY_SECRET | ✅ generated and set on Railway |
+| Swarm skill files (41/50) | ✅ ## Trigger + ## Output added |
+| proposals.json encoding bug (0x97 em-dash) | ✅ fixed |
+| Swarm cto-audit | ✅ ran, 8 proposals, skill health 82/100 |
+| Caveman mode | ✅ installed globally in ~/.claude/CLAUDE.md |
+| Commits pushed to origin/main | ✅ aa7e9aa + f5c092d |
+
+### Prod health (verified 2026-04-11)
+- `/health` → `{"status":"ok","database":"connected","llm_configured":true}` ✅
+- `/api/assessment/start` → 201 Created, session_id returned ✅
+- Rate limiting: 3/hr enforced ✅
+- Railway vars: EXTERNAL_BRIDGE_SECRET ✅, SUPABASE_JWT_SECRET ✅, GATEWAY_SECRET ✅
+- MindShift Supabase secrets: EXTERNAL_BRIDGE_SECRET ✅, DODO_API_KEY ✅, DODO_WEBHOOK_SECRET ✅, VOLAURA_API_URL ✅
+
+### LifeSimulator auth flow (committed to life-simulator-2026 master)
+- `api_client.gd` — `login()`, `set_token()`, `is_authenticated()`, `auth_required` signal on 401
+- `volaura_login_screen.tscn/.gd` — email+password overlay, skip option, error display
+- `main_menu_simple.gd` — Start → login screen (if not authenticated) → inject API client → game
+- `game_loop_controller.gd` — `inject_volaura_api()` method
+- JWT in memory only, never to disk
+
+## Next Session Priorities
+1. **L1: Git-diff injection** — GitHub Action → auto-update shared-context.md on push
+2. **Sprint 0 smoke test E2E** — real user: signup → assessment → AURA → share (Yusif walks it)
+3. **PR #9 merge** — NewUserWelcomeCard dashboard empty state
+4. **ZEUS Gateway** — GATEWAY_SECRET set, but gateway process not running. Start it or document as deferred.
+5. **LifeSimulator anon_key** — still empty. Needs in-game Godot project setting with a user JWT or SSO.
 
 ## Session 87 (Night Plan + Morning continuation) — COMPLETE
 

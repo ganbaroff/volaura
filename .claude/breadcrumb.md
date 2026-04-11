@@ -1,8 +1,36 @@
-# CTO BREADCRUMB — SESSION 2026-04-11 (continued from context compression)
+# CTO BREADCRUMB — SESSION 92 END (2026-04-11) — READY FOR NEXT SESSION
 
-> **STATUS:** Active session (2026-04-11). Context was compressed. Resumed from summary.
-> **Branch:** main. 2 commits ahead of origin/main (unpushed).
-> **Bot:** `@volaurabot` status unknown — check before relying.
+> **STATUS:** Session 92 CLOSED. All docs updated. Next session can start fresh.
+> **Branch:** main. Synced with origin. Last commit: f5c092d (VOLAURA), 11e7f56 (LifeSimulator).
+> **Bot:** @volaurabot webhook set → volauraapi-production.up.railway.app/api/telegram/webhook ✅
+
+## Quick context for next session
+
+**Prod:** HEALTHY. `/health` 200, assessment 201, rate-limit working.
+
+**Secrets all synced:**
+- EXTERNAL_BRIDGE_SECRET: same on Railway + MindShift Supabase + .env (dc925868...)
+- SUPABASE_JWT_SECRET: iX46tMf... on Railway ✅
+- GATEWAY_SECRET: 423622ab... on Railway (ZEUS bridge, gateway not running yet)
+- Dodo: DODO_API_KEY + DODO_WEBHOOK_SECRET on MindShift Supabase ✅
+- volaura-bridge-proxy edge function: deployed and using correct secrets ✅
+
+**LifeSimulator (life-simulator-2026 master):**
+- Auth flow: DONE (login screen overlay, JWT in memory, 401 re-triggers login)
+- URL fixed: volauraapi-production.up.railway.app
+- globals.gd crash: FIXED
+- Remaining: `volaura/anon_key` still empty in project.godot — needs user JWT from in-game login flow (done at runtime, not hardcoded)
+
+**Swarm:**
+- 50 skill files, all have ## Trigger + ## Output
+- cto-audit ran: 8 proposals, health 82/100
+- proposals.json: encoding fixed
+
+**Next priorities (in order):**
+1. L1: Git-diff injection (GitHub Action → auto-update shared-context.md on push)
+2. Sprint 0 smoke test E2E — real user walk: signup → assessment → AURA → share
+3. PR #9 merge — NewUserWelcomeCard
+4. ZEUS Gateway — decide: run locally or deferred
 
 ## Session 2026-04-11 progress (post-compression)
 

@@ -71,6 +71,10 @@
 ### Feed Into Next Simulation
 - [1-2 concrete improvements for next DSP]
 
+### CEO Directive Tracker
+- **Directives:** [list of CEO directives]
+- **Status:** [status of each directive]
+
 ---
 
 *Template version: 1.0 | Created: 2026-03-25 | Source: Mega-retrospective Agent #2*

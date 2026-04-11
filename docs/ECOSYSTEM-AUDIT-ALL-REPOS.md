@@ -34,6 +34,7 @@
   - No heartbeat — WebSocket clients hang silently
   - Hardcoded Windows paths (`C:/Projects/VOLAURA/...`)
   - AGENT_FILE_MAPPING points to non-existent MindShift files
+  - Unauthenticated WebSocket access — missing JWT auth
 
 ## CLAW3D-FORK — Life Simulator 3D (C:\Users\user\Downloads\claw3d-fork\src)
 **Status:** 40% integrated
@@ -41,6 +42,7 @@
 - 3D office: agents walk, sit, use rooms, show emoji status
 - Interaction zones: SMS booth, server room, QA lab, gym
 - **Not connected:** Ready Player Me avatars, RemoteAgentChatPanel, per-session memory, autonomous coordinator
+- **Unauthenticated access:** missing JWT auth for office state updates
 
 ## VIDVOW (C:\Users\user\Downloads\vidvow)
 **Status:** Standalone | **Not part of ecosystem**

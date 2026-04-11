@@ -508,7 +508,8 @@ def validate_and_sanitize_user_input(user_input: str) -> str:
         "SYSTEM:", "ASSISTANT:", "USER:",
         "ignore previous", "forget instructions",
         "you are now", "new instructions",
-        "```system", "```assistant"
+        "```system", "```assistant",
+        "../", "..\\", "/../", "\\\\..\\"
     ]
     cleaned = user_input
     for pattern in forbidden:

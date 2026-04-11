@@ -96,6 +96,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "bash .claude/hooks/style-brake.sh"
+          },
+          {
+            "type": "command",
             "command": "bash .claude/hooks/session-protocol.sh"
           }
         ]

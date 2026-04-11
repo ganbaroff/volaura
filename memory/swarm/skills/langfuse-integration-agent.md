@@ -232,3 +232,9 @@ langfuse.score(
 - Implement per-call manual logging instead of using LiteLLM proxy — that's 10x more work
 - Expose Langfuse keys to the client — server-only, Railway env vars only
 - Start LLM-as-judge before basic tracing is working — crawl before you run
+
+## Trigger
+Task explicitly involves langfuse-integration-agent, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

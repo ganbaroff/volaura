@@ -29,3 +29,9 @@
 - Behavioral Nudge Engine (cognitive load)
 - Cultural Intelligence (AZ-specific friction)
 - Analytics & Retention Agent (D0/D1 metrics)
+
+## Trigger
+Task explicitly involves onboarding-specialist-agent, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

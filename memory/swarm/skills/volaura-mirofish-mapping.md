@@ -166,3 +166,9 @@ if context_tokens > THRESHOLD:
 **Document:** MiroFish-ClaudeMythos-Mapping.md
 **Version:** 1.0
 **Date:** 2026-03-31
+
+## Trigger
+Task explicitly involves volaura-mirofish-mapping, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

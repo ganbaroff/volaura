@@ -118,3 +118,9 @@ agent_metadata:
   temperature: 0.3
   route_keywords: ["IRT", "CAT", "assessment", "question", "item", "psychometric", "AURA weight", "competency", "calibration", "discrimination", "difficulty", "guessing", "temporal decay", "validity", "DIF"]
 ```
+
+## Trigger
+Task explicitly involves assessment-science-agent, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

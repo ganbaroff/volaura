@@ -132,3 +132,9 @@ I produce:
 - Skip failure scenarios → always cover rejection, rate limits, disabled states
 - Ignore RLS → every multi-user data feature needs isolation verification
 - Accept "it looks good" as a verification criterion → all AC must be binary PASS/FAIL
+
+## Trigger
+Task explicitly involves acceptance-criteria-agent, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

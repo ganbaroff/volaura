@@ -209,3 +209,9 @@ If viral backlash:
 - "I need a content calendar"
 - "How do I build my personal brand as CEO?"
 - "Create a press release for Volaura"
+
+## Trigger
+Task explicitly involves promotion-agency, OR task description matches: Promotion agency skill for Volaura startup and CEO Yusif. Use for LinkedIn content strategy, persona.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

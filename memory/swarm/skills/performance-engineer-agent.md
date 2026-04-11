@@ -180,3 +180,9 @@ agent_metadata:
   temperature: 0.3
   route_keywords: ["performance", "latency", "p95", "load test", "pgvector", "index", "EXPLAIN ANALYZE", "Seq Scan", "N+1", "Gemini latency", "connection pool", "vector search", "slow query", "assessment speed", "k6", "bottleneck"]
 ```
+
+## Trigger
+Task explicitly involves performance-engineer-agent, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

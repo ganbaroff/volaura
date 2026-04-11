@@ -120,3 +120,9 @@ Robust:
 - Before any major marketing push — don't invite real users to an inaccessible product
 
 **Routing:** Works with `cultural-intelligence-strategist` — AZ-specific accessibility needs (text length at zoom, special chars).
+
+## Trigger
+Task explicitly involves accessibility-auditor, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

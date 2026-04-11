@@ -133,3 +133,9 @@ agent_metadata:
   temperature: 0.6
   route_keywords: ["user research", "JTBD", "usability", "interview", "journey", "onboarding", "drop-off", "confusion", "task completion", "discovery", "assumption", "evidence", "AZ user", "mobile", "trust"]
 ```
+
+## Trigger
+Task explicitly involves ux-research-agent, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

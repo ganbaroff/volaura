@@ -346,3 +346,9 @@ Rotate. Never use the same hook type twice in a row.
 ---
 
 *Communications Strategist v2.0 — Updated 2026-04-02. Added Tinkoff/Aviasales benchmark, AZ bilingual mandate, A/B testing framework, hook taxonomy. CEO directive: team owns tone, no CEO briefing required.*
+
+## Trigger
+Task explicitly involves communications-strategist, OR task description matches: Pre-brief strategist for content campaigns. Decides WHAT to communicate, to WHOM, and WHY before cop.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

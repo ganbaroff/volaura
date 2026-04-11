@@ -246,3 +246,9 @@ CEO                   ← for review + licensed counsel sign-off
 ---
 
 *Legal Advisor v1.0 — Created 2026-04-02. CEO directive: "юриста можно нанять как агента но чтобы профессионал был и понимал всю суть платформы." Agent owns platform-specific legal intelligence. Licensed counsel executes.*
+
+## Trigger
+Task explicitly involves legal-advisor, OR task description matches: Platform-aware legal advisor agent. Understands Volaura's full architecture, data model, and busines.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

@@ -98,3 +98,9 @@ The difference: they could see my scores, not just my tenure.
 - Any feature touching professional reputation or external visibility
 
 **Routing:** Load with `cultural-intelligence-strategist` — CIS professional norms differ from Western LinkedIn culture.
+
+## Trigger
+Task explicitly involves linkedin-content-creator, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

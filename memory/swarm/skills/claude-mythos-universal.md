@@ -507,3 +507,9 @@ Use this skill when:
 
 **Source:** Anthropic Engineering (multi-agent-research-system), Claude Mythos Architecture
 **Credits:** Anthropic, Claude Code Agent Teams, Claude Mythos documentation
+
+## Trigger
+Task explicitly involves claude-mythos-universal, OR task description matches: Universal multi-agent orchestration skill based on Claude Mythos architecture. Use for coordinating .
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

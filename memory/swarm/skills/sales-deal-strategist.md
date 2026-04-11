@@ -77,3 +77,9 @@ agent_metadata:
   temperature: 0.9
   route_keywords: ["sales", "deal", "strategist", "b2b", "organization", "pricing", "meddpicc"]
 ```
+
+## Trigger
+Task explicitly involves sales-deal-strategist, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

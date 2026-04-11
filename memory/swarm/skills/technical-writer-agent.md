@@ -117,3 +117,9 @@ agent_metadata:
   temperature: 0.5
   route_keywords: ["documentation", "API docs", "guide", "onboarding", "white paper", "FAQ", "developer", "integration", "B2B sales", "technical writing", "OpenAPI", "Redoc", "Postman"]
 ```
+
+## Trigger
+Task explicitly involves technical-writer-agent, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

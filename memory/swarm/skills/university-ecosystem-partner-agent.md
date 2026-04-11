@@ -165,3 +165,9 @@ agent_metadata:
   temperature: 0.6
   route_keywords: ["university", "partnership", "ADA", "BHOS", "BSU", "career fair", "student", "academic", "ecosystem", "association", "AZHRA", "GITA", "KOBİA", "pipeline", "institutional", "MoU", "beta users"]
 ```
+
+## Trigger
+Task explicitly involves university-ecosystem-partner-agent, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

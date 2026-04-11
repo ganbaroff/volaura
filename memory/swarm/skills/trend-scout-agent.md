@@ -61,3 +61,9 @@ Can run as:
 ---
 
 *"The best time to know about a competitor's feature is the day before they ship it."*
+
+## Trigger
+Task explicitly involves trend-scout-agent, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

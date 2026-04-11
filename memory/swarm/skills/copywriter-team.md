@@ -98,3 +98,9 @@ POST BRIEF:
   AZ context: [any cultural considerations]
   Length: [5-15 lines for text, 8-12 slides for carousel]
 ```
+
+## Trigger
+Task explicitly involves copywriter-team, OR task description matches: Multi-model copywriting competition. 3 models write the same post → swarm judges → best wins. Tracks.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

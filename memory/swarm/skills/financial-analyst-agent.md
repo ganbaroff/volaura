@@ -164,3 +164,9 @@ agent_metadata:
   temperature: 0.3
   route_keywords: ["pricing", "revenue", "LTV", "CAC", "runway", "MRR", "unit economics", "subscription", "crystal economy", "break-even", "B2B pricing", "Paddle", "contribution margin", "AZN", "financial model"]
 ```
+
+## Trigger
+Task explicitly involves financial-analyst-agent, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

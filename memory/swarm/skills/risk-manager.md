@@ -187,3 +187,9 @@ When participating in Decision Simulation Protocol:
 | RISK-008 | k6 load test not run (unknown capacity ceiling) | 4×4=16 HIGH | Open | CEO (needs JWT) |
 | RISK-009 | Disaster recovery runbook written but untested | 3×4=12 HIGH | Open | CTO |
 | RISK-010 | Assessment session double-complete race (BUG-015) | 2×3=6 MEDIUM | Mitigated (early return) | QA |
+
+## Trigger
+Task explicitly involves risk-manager, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

@@ -155,3 +155,9 @@ agent_metadata:
   temperature: 0.5
   route_keywords: ["competitor", "LinkedIn", "HH.ru", "Rabota.az", "TestGorilla", "HackerRank", "market", "positioning", "competitive", "moat", "threat", "differentiation", "landscape", "benchmark"]
 ```
+
+## Trigger
+Task explicitly involves competitor-intelligence-agent, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

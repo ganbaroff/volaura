@@ -160,3 +160,9 @@ agent_metadata:
   temperature: 0.3
   route_keywords: ["analytics", "events", "instrumentation", "PostHog", "Mixpanel", "tracking", "pipeline", "data model", "DAU", "funnel", "reporting", "materialized view", "event schema"]
 ```
+
+## Trigger
+Task explicitly involves data-engineer-agent, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

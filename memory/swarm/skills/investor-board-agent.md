@@ -126,3 +126,9 @@ agent_metadata:
   temperature: 0.4
   route_keywords: ["investor", "VC", "fundraising", "pitch", "deck", "traction", "MRR", "ARR", "due diligence", "board", "TAM", "SAM", "unit economics", "exit", "valuation", "Series A", "angel", "GITA grant"]
 ```
+
+## Trigger
+Task explicitly involves investor-board-agent, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

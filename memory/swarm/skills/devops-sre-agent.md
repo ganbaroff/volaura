@@ -161,3 +161,9 @@ agent_metadata:
   temperature: 0.3
   route_keywords: ["Railway", "Vercel", "deploy", "CI/CD", "cron", "env var", "uptime", "incident", "SRE", "scaling", "connection pool", "Supabase Realtime", "production", "CRON_SECRET", "health check"]
 ```
+
+## Trigger
+Task explicitly involves devops-sre-agent, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

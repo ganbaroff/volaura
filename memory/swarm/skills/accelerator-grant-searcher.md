@@ -248,3 +248,9 @@ BUSINESS PLAN OUTLINE:
 - "What's the deadline for [grant]?"
 - "Can I get a visa through [accelerator]?"
 - "Compare YC vs Techstars vs GITA"
+
+## Trigger
+Task explicitly involves accelerator-grant-searcher, OR task description matches: Search for best accelerators and grants with relocation options for Volaura. Use when user wants to .
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

@@ -195,3 +195,9 @@ Action: Fix blocking items → re-run QA gate.
 - Skip the AC verification step (item 11) because "it obviously works"
 - Approve a PR with no staging deployment (item 13) — "works locally" is not sufficient
 - Count an automatic test as human verification of AC — they test different things
+
+## Trigger
+Task explicitly involves quality-assurance-agent, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

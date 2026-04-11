@@ -81,3 +81,9 @@ CQ specialist detecting where Volaura's Western-default design assumptions break
 - Sprint 1 registration flow — consent text, form fields, privacy language
 
 **Routing:** Load alongside `linkedin-content-creator` for any professional brand features. Load alongside `behavioral-nudge-engine` for any engagement/motivation copy. Load for every translation review (EN→AZ).
+
+## Trigger
+Task explicitly involves cultural-intelligence-strategist, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

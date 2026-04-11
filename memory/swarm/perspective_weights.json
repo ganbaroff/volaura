@@ -1,42 +1,42 @@
 {
   "Scaling Engineer": {
     "debate_weight": 0.85,
-    "spawn_count": 10,
-    "last_updated": "2026-04-09T06:21:33.320366+00:00"
+    "spawn_count": 11,
+    "last_updated": "2026-04-11T16:33:54.275555+00:00"
   },
   "Security Auditor": {
     "debate_weight": 0.88,
-    "spawn_count": 10,
-    "last_updated": "2026-04-09T06:21:33.320719+00:00"
+    "spawn_count": 11,
+    "last_updated": "2026-04-11T16:33:54.276150+00:00"
   },
   "Product Strategist": {
     "debate_weight": 0.85,
-    "spawn_count": 10,
-    "last_updated": "2026-04-09T06:21:33.321040+00:00"
+    "spawn_count": 11,
+    "last_updated": "2026-04-11T16:33:54.276603+00:00"
   },
   "Code Quality Engineer": {
     "debate_weight": 0.88,
-    "spawn_count": 10,
-    "last_updated": "2026-04-09T06:21:33.321303+00:00"
+    "spawn_count": 11,
+    "last_updated": "2026-04-11T16:33:54.277056+00:00"
   },
   "CTO Watchdog": {
     "debate_weight": 0.88,
-    "spawn_count": 10,
-    "last_updated": "2026-04-09T06:21:33.321767+00:00"
+    "spawn_count": 11,
+    "last_updated": "2026-04-11T16:33:54.277476+00:00"
   },
   "Risk Manager": {
     "debate_weight": 0.88,
-    "spawn_count": 10,
-    "last_updated": "2026-04-09T06:21:33.324083+00:00"
+    "spawn_count": 11,
+    "last_updated": "2026-04-11T16:33:54.277921+00:00"
   },
   "Readiness Manager": {
     "debate_weight": 0.85,
-    "spawn_count": 10,
-    "last_updated": "2026-04-09T06:21:33.324390+00:00"
+    "spawn_count": 11,
+    "last_updated": "2026-04-11T16:33:54.278330+00:00"
   },
   "Ecosystem Auditor": {
     "debate_weight": 0.85,
-    "spawn_count": 10,
-    "last_updated": "2026-04-09T06:21:33.324704+00:00"
+    "spawn_count": 11,
+    "last_updated": "2026-04-11T16:33:54.278739+00:00"
   }
 }

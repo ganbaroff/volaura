@@ -97,3 +97,9 @@ THE GAP = 3 weeks × average salary cost = ROI argument
 - Sprint 5 org dashboard: every empty state is a discovery opportunity
 
 **Routing:** Always load alongside `sales-deal-strategist`. These two travel together.
+
+## Trigger
+Task explicitly involves sales-discovery-coach, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

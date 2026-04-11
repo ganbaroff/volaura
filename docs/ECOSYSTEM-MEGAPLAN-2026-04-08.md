@@ -221,6 +221,7 @@ These 4 sprints map 1:1 to the v3 MindShift megaplan (`MEGAPLAN-MINDSHIFT-LAUNCH
 - This is Phase 0 gate from HANDOFF-SESSION-91. Until done, nothing else VOLAURA matters.
 - Output: one real user profile with a real AURA score viewable publicly
 - **Kill condition**: if 3+ blockers found, pause all other VOLAURA work until fixed
+- Implement Energy Adaptation: add a low-energy mode that simplifies the UI and reduces the number of questions, and ensure that the mode is triggered by the user's energy level
 
 **Sprint 6** 🔴 (needs S5) — VOLAURA assessment flow optimization + error recovery UX
 - Resume flow (409 Conflict on re-start) already exists per Session 83 — verify works
@@ -342,6 +343,7 @@ If Sprint 10 concludes Scenarios B or C (middling or dead), Life Sim stays defer
 - Remove client-side "payment confirmed" shortcut (security hole)
 - Protect `/api/projects/create` with proper auth guard
 - Add order status tracking UI (`pending → paid → processing → ready → delivered`)
+- Implement Energy Adaptation: add a low-energy mode that simplifies the content generation process and reduces the number of AI-generated videos, and ensure that the mode is triggered by the user's energy level
 
 **Sprint 15** 🔴 (needs S14) — BrandedBy real AI video generation
 - Choose provider: HeyGen (established, $30/mo starter) or Runway Gen-2 (better quality, higher cost) or D-ID (cheapest, $5.90/mo Lite)

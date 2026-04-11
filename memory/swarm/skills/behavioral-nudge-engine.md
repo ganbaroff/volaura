@@ -137,3 +137,9 @@ agent_metadata:
   temperature: 1.0
   route_keywords: ["behavioral", "nudge", "engine", "ux", "engagement", "onboarding", "adhd"]
 ```
+
+## Trigger
+Task explicitly involves behavioral-nudge-engine, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

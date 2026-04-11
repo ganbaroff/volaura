@@ -30,3 +30,9 @@
 - Behavioral Nudge Engine (nudge design)
 - Community Manager (tribe engagement)
 - Onboarding Specialist (first-week experience)
+
+## Trigger
+Task explicitly involves customer-success-agent, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

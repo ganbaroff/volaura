@@ -171,3 +171,9 @@ Weekly check:
 - Accept "we'll measure it next sprint" — measurement happens after EVERY batch
 - Use "we're improving" without data to back it — improvement requires before/after numbers
 - Skip the CFR calculation because "there were no bugs" — prove it with data
+
+## Trigger
+Task explicitly involves dora-metrics-agent, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

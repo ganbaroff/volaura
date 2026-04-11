@@ -100,3 +100,9 @@ agent_metadata:
   temperature: 0.7     # more deterministic than creative agents
   route_keywords: ["coordinate", "route", "dispatch", "delegate", "team", "squad"]
 ```
+
+## Trigger
+Task explicitly involves coordinator-agent, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

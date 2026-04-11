@@ -115,3 +115,9 @@ Georgia LLC → GITA $55K (May)
 - Comparing countries for tax/ visa benefits
 - Need to decide between multiple jurisdictions
 - "Should I register in Georgia or Turkey?"
+
+## Trigger
+Task explicitly involves startup-registration-finder, OR task description matches: Find optimal jurisdictions for startup registration to maximize funding, tax benefits, and visa oppo.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

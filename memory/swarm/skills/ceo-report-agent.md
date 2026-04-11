@@ -91,3 +91,9 @@ Do NOT produce one report per batch. Summarize the session outcome, not the step
 | "Step 5.4 LLM PROVIDER CHECK — 3 providers assigned" | "Used DeepSeek R1 + Llama 405B for this sprint's security review." |
 | "7 haiku agents launched → Mistake #68 detected → fixed" | (don't mention internal mistakes in CEO reports) |
 | "Realtime RLS subscription audit pending" | "One known risk before launch: [describe business impact, not technical detail]" |
+
+## Trigger
+Task explicitly involves ceo-report-agent, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

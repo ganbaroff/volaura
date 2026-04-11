@@ -140,3 +140,9 @@ agent_metadata:
   temperature: 0.3
   route_keywords: ["Paddle", "Stripe", "webhook", "payment", "subscription", "billing", "revenue", "reconciliation", "checkout", "Pro access", "idempotency", "signature", "payment failure"]
 ```
+
+## Trigger
+Task explicitly involves payment-provider-agent, OR task description matches: this domain.
+
+## Output
+Structured report: 1) Key findings (3 bullets max), 2) Recommended actions ranked by impact, 3) Blockers or risks if any.

@@ -18,6 +18,7 @@ These proposal types are permanently rejected. Proposing them again wastes a swa
 - Route shadowing /me vs /{volunteer_id} — FastAPI resolves correctly but can be problematic (Session 25, 42)
 - Delete non-gitignored files — only delete gitignored artifacts (Session 25)
 - Propose microservices without data — bring requests/sec, latency data (Session 23)
+- ANUS agent sandboxing — insufficient, allowing access to system files and potentially compromising security (Session current)
 
 ---
 
@@ -32,6 +33,7 @@ These types of proposals consistently get implemented or praised.
 - Calibrated estimates — '3 hours, not 3 days' with specific breakdown (Session 25)
 - Discovery endpoint for orgs — critical for org value prop (Session 25)
 - Schema snapshot in every task prompt — highest leverage improvement (Session 25)
+- Implementing proper sandboxing for ANUS agents — restricts access to sensitive files and system resources (Session current)
 
 ---
 

@@ -134,6 +134,12 @@ class Settings(BaseSettings):
     # function environment. Rotate together if either side is compromised.
     external_bridge_secret: str = ""
 
+    # ZEUS Gateway — Python swarm → FastAPI bridge
+    # Shared secret between autonomous_run.py and /api/zeus/proposal endpoint.
+    # Generate: python -c "import secrets; print(secrets.token_hex(32))"
+    # Set GATEWAY_SECRET on Railway. Same value in GATEWAY_SECRET env var for swarm.
+    gateway_secret: str = ""
+
     # BrandedBy — AI video generation
     did_api_key: str = ""  # D-ID API key (Phase 1: Lite plan $5.90/mo)
     fal_api_key: str = ""  # fal.ai API key — MuseTalk + Kling LipSync (DSP winner)

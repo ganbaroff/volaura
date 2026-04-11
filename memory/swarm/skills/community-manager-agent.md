@@ -24,6 +24,7 @@ Current state:
   - Streak system (weekly assessment activity)
   - Kudos (1 per week per member)
   - Crystal rewards for streak maintenance
+  - Detailed AURA score breakdown and explanations for users
 
 Engagement gaps to close:
   □ No tribe "milestone" celebrations (first week together, first all-streak week)
@@ -31,7 +32,7 @@ Engagement gaps to close:
   □ No tribe "challenge" feature (tribe picks a shared competency focus for the week)
   □ Tribe dissolution: if member goes inactive 3 weeks → replacement system unclear
   □ No "tribe leaderboard" on profile — peer visibility is a retention driver
-```
+  □ Provide users with actionable tips and recommendations for improvement based on their assessment results
 
 ### Layer 2 — Telegram Community (ambient engagement)
 ```

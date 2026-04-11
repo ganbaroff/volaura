@@ -1,5 +1,9 @@
 # Session Breadcrumb — 2026-04-11 (Session 93)
 
+## 🔴 READ FIRST (каждую сессию, особенно после /compact)
+`C:\Users\user\.claude\projects\C--Projects-VOLAURA\memory\reference_file_map.md` — полная карта проекта. 14 разделов, все критичные пути. 2 минуты чтения = полная ориентация без grep. CEO directive Session 93.
+
+
 ## Где мы
 Sprint: Sprint 0 (Ecosystem Wiring) — **bridge → assessment → AURA flow UNBLOCKED**
 Last commit: 5c0b006 — submit_answer no longer pre-marks session completed

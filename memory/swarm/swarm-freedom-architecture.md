@@ -127,6 +127,7 @@ ZEUS v2.0 capabilities needed:
 - Data analysis: agent requests user metrics → ZEUS queries Supabase (aggregated) → returns stats
 - Content generation: agent requests content → ZEUS runs content-formatter skill → returns multi-format
 - Skill editing: agent proposes skill improvement → ZEUS writes updated skill file → CTO reviews
+- ANUS agent sandboxing: implement Linux containers to prevent access to sensitive files and system resources
 
 ---
 

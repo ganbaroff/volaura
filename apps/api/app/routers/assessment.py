@@ -580,9 +580,15 @@ async def submit_answer(
         "question_delivered_at": now_utc.isoformat() if next_q else None,
         "answer_version": current_version + 1,  # HIGH-01: increment version
     }
-    if state.stopped:
-        update_payload["status"] = "completed"
-        update_payload["completed_at"] = now_utc.isoformat()
+    # NOTE: we intentionally do NOT mark status="completed" here, even when the
+    # CAT engine signals state.stopped. The `/complete/{session_id}` endpoint
+    # owns the full finalisation pipeline (anti-gaming recompute, upsert_aura_score,
+    # emit_rewards, analytics). If we marked status=completed here, /complete would
+    # hit its BUG-015 idempotency branch and skip the RPC, leaving the user with a
+    # completed session but no AURA row. E2E smoke (2026-04-11) caught this: every
+    # naturally-completed assessment returned aura_updated=False and /aura/me 404.
+    # The client still sees is_complete=true in the returned SessionOut and should
+    # call POST /api/assessment/complete/{session_id} next.
 
     # HIGH-01: Optimistic locking — only update if version hasn't changed
     # BLOCKER-1 FIX: Use db_admin (service_role) for updates — user-level UPDATE policy removed

@@ -28,18 +28,19 @@ GRANT EXECUTE ON FUNCTION public.log_governance_event(TEXT, TEXT, TEXT, TEXT, TE
 
 -- ── 3. Idempotent reconciliation seed ───────────────────────────────────
 -- Ensure the Session 93 reconciliation event is present exactly once, even
--- if either migration is re-run. Delete any duplicate reconciliation rows
--- that slipped in (there should be at most one, but this is defensive).
-WITH keep AS (
-    SELECT MIN(id) AS id
-    FROM zeus.governance_events
-    WHERE event_type = 'reconciliation'
-      AND subject = 'perplexity_proposal_2026-04-11'
-)
+-- if either migration is re-run. Keep the earliest row by created_at, drop
+-- any later duplicates. Uses ORDER BY + LIMIT 1 because Postgres has no
+-- MIN() aggregate over uuid type (first attempt: ERROR 42883 min(uuid)).
 DELETE FROM zeus.governance_events
 WHERE event_type = 'reconciliation'
   AND subject = 'perplexity_proposal_2026-04-11'
-  AND id NOT IN (SELECT id FROM keep WHERE id IS NOT NULL);
+  AND id NOT IN (
+      SELECT id FROM zeus.governance_events
+      WHERE event_type = 'reconciliation'
+        AND subject = 'perplexity_proposal_2026-04-11'
+      ORDER BY created_at ASC
+      LIMIT 1
+  );
 
 -- Unique partial index to prevent future duplicates of the reconciliation
 -- row across migration re-runs. Other event types are free to repeat.

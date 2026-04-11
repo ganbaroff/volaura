@@ -154,6 +154,39 @@ async def _find_user_by_email(admin, email: str) -> str | None:
         return None
 
 
+async def _ensure_profile_row(admin, shared_user_id: str) -> None:
+    """Ensure a profiles row exists for a bridged user.
+
+    Fix for E2E smoke finding (2026-04-11): bridged users had an auth.users
+    row but no public.profiles row, so every FK to profiles (assessment_sessions,
+    aura_scores, badges, events, embeddings, ...) broke on first write. The
+    /api/auth/register flow creates profiles as part of signup; the bridge
+    path bypassed that and left users unable to complete assessments.
+
+    Idempotent: uses UPSERT with on_conflict=id so repeated bridge calls for
+    the same user are safe. Username is derived from the UUID (hex, 16 chars)
+    which guarantees uniqueness without consulting the DB.
+    """
+    # Derive a stable, unique, format-safe username from the user's UUID.
+    # 16 hex chars of a UUID = 64 bits of entropy → collision probability ~0.
+    username = f"u{shared_user_id.replace('-', '')[:16]}"
+    try:
+        await (
+            admin.table("profiles")
+            .upsert(
+                {"id": shared_user_id, "username": username},
+                on_conflict="id",
+            )
+            .execute()
+        )
+    except Exception as e:
+        logger.warning(
+            "profiles upsert failed during bridge — user may hit FK errors later",
+            shared_user_id=shared_user_id[:8],
+            error=str(e)[:200],
+        )
+
+
 async def _create_shadow_user(admin, email: str) -> str:
     """Create a shadow auth.users row in shared project for an external user.
 
@@ -348,6 +381,14 @@ async def bridge_from_external(
                     "message": "Could not persist identity mapping",
                 },
             )
+
+    # ── Step 4.5: ensure profiles row exists (bridged users need this for
+    # assessment/AURA/badge flows — the register endpoint creates profiles
+    # explicitly, but the bridge path bypassed that until the E2E smoke caught
+    # it). Idempotent upsert; safe for both new shadow users and existing ones
+    # that predate this fix. Failures are logged but non-fatal — the JWT mint
+    # still proceeds so the caller can at least read-only features work.
+    await _ensure_profile_row(admin, shared_user_id)
 
     # ── Step 5: mint the shared JWT ───────────────────────────────────────
     try:

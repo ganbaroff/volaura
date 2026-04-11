@@ -106,7 +106,7 @@ async def get_current_user(
 ### Practice 2.3: Input Validation Architecture (OWASP ASVS V5)
 
 ```python
-# EVERY user input goes through Pydantic validation
+# EVERY user input goes through Pydantic validation and sanitization
 
 class AssessmentAnswerRequest(BaseModel):
     model_config = ConfigDict(strict=True)
@@ -116,8 +116,8 @@ class AssessmentAnswerRequest(BaseModel):
 
     @field_validator("answer_text")
     @classmethod
-    def sanitize_answer(cls, v: str) -> str:
-        """Remove prompt injection attempts"""
+    def sanitize_and_validate_answer(cls, v: str) -> str:
+        """Remove prompt injection attempts and validate input"""
         forbidden = [
             "SYSTEM:", "ASSISTANT:", "USER:",
             "ignore previous", "forget instructions",
@@ -129,6 +129,10 @@ class AssessmentAnswerRequest(BaseModel):
             cleaned = re.sub(
                 re.escape(pattern), "[FILTERED]", cleaned, flags=re.IGNORECASE
             )
+        if not cleaned:  # Check for empty input
+            raise ValueError("Input cannot be empty")
+        if len(cleaned) > 2000:  # Check for input length
+            raise ValueError("Input exceeds maximum length")
         return cleaned.strip()[:2000]
 ```
 
@@ -486,3 +490,30 @@ USING (
 
 *This document is a living standard. Update after each security incident or quarterly review.*
 *Framework sources: Microsoft SDL, NIST SP 800-218, OWASP ASVS 5.0, OWASP Top 10 2023.*
+### Practice 2.4: Secure Data Flow
+
+```python
+def validate_and_sanitize_user_input(user_input: str) -> str:
+    """Validate and sanitize user input to prevent security vulnerabilities"""
+    # Check for empty input
+    if not user_input:
+        raise ValueError("Input cannot be empty")
+    
+    # Check for input length
+    if len(user_input) > 2000:
+        raise ValueError("Input exceeds maximum length")
+    
+    # Sanitize input
+    forbidden = [
+        "SYSTEM:", "ASSISTANT:", "USER:",
+        "ignore previous", "forget instructions",
+        "you are now", "new instructions",
+        "```system", "```assistant"
+    ]
+    cleaned = user_input
+    for pattern in forbidden:
+        cleaned = re.sub(
+            re.escape(pattern), "[FILTERED]", cleaned, flags=re.IGNORECASE
+        )
+    
+    return cleaned.strip()[:2000]

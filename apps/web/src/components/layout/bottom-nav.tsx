@@ -11,7 +11,7 @@ const BOTTOM_NAV_ITEMS = [
   { href: "/aura",       labelKey: "nav.aura",       icon: "◈" },
   { href: "/assessment", labelKey: "nav.assessment", icon: "◑" },
   { href: "/profile",    labelKey: "nav.profile",    icon: "◉" },
-  { href: "/leaderboard", labelKey: "nav.leaderboard", icon: "🏆" },
+  // Leaderboard bottom-nav removed 2026-04-12 — Constitution v1.7 G9/G46.
 ] as const;
 
 export function BottomNav() {

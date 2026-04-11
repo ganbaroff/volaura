@@ -1257,3 +1257,14 @@ CREATE TABLE public.questions (
 3. Deploy assessment flow to staging; test with 50 volunteers at internal event
 4. Gather feedback on question clarity, time-per-question, LLM eval quality
 5. Plan Phase 2 IRT calibration using initial cohort data (min 500 responses)
+# Four Question Types
+
+#### 1. BARS (Behaviorally Anchored Rating Scale)
+
+#### 2. MCQ (Multiple Choice Questions)
+
+#### 3. Open Text (LLM-Evaluated)
+
+#### 4. Scenario-Based Questions
+    # Add scenario-based question type
+    # This will allow for more diverse and realistic question formats

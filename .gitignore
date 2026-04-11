@@ -78,3 +78,12 @@ apps/tg-mini/dist/
 # Swarm runtime artifacts
 .swarm/
 null
+
+# Swarm runtime state — auto-generated, not for version control
+memory/swarm/proposals.json
+memory/swarm/ceo-inbox.md
+memory/swarm/heartbeat-log.md
+memory/swarm/*.jsonl
+
+# Obsidian workspace state
+docs/.obsidian/

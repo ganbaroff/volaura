@@ -760,8 +760,8 @@ CREATE TABLE public.questions (
 
     -- Content
     competency TEXT NOT NULL,  -- e.g., "communication"
-    question_type question_type NOT NULL,  -- bars, mcq, open_text
-    difficulty difficulty_level NOT NULL,  -- easy, medium, hard
+    question_type question_type NOT NULL,  -- bars, mcq, open_text, true_false
+    difficulty_level difficulty_level NOT NULL,  -- easy, medium, hard
     content TEXT NOT NULL,  -- Scenario or question text
     rubric TEXT,  -- For open_text; scoring guidance
 
@@ -1265,6 +1265,6 @@ CREATE TABLE public.questions (
 
 #### 3. Open Text (LLM-Evaluated)
 
-#### 4. Scenario-Based Questions
-    # Add scenario-based question type
-    # This will allow for more diverse and realistic question formats
+#### 4. True/False Questions
+    # Add true/false question type
+    # This will allow for more diverse question formats

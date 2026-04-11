@@ -1,0 +1,90 @@
+name: Atlas Proactive Loop
+
+on:
+  schedule:
+    # Every 15 minutes. Atlas clone wakes, picks next-due topic from proactive queue,
+    # writes research note to memory/atlas/inbox/, commits to main. Main Atlas reads
+    # inbox on every wake per memory/atlas/wake.md read order.
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+    # Allow manual trigger for testing and for CEO-initiated on-demand wakes.
+
+permissions:
+  contents: write
+
+concurrency:
+  group: atlas-proactive
+  cancel-in-progress: false
+
+jobs:
+  proactive-wake:
+    name: Atlas Proactive Wake
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 2
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install dependencies
+        # Phase 1 needs no deps beyond stdlib. Phase 2 will add: pydantic, loguru,
+        # and the real llm provider libs (google-genai, groq, or litellm).
+        run: |
+          python --version
+
+      - name: Run Atlas proactive worker
+        env:
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          cd "${{ github.workspace }}"
+          python -m packages.swarm.atlas_proactive
+
+      - name: Write-scope guard
+        # Enforce that atlas-proactive only ever touches:
+        #   memory/atlas/inbox/
+        #   memory/atlas/proactive_queue.json
+        #   memory/atlas/.wake-counter
+        # If anything outside those paths changed, fail the workflow so CEO can
+        # investigate. This is the security boundary — proactive loop must never
+        # touch identity.md, wake.md, CLAUDE.md, ADRs, production code.
+        run: |
+          cd "${{ github.workspace }}"
+          CHANGED=$(git status --porcelain | awk '{print $2}')
+          if [ -z "$CHANGED" ]; then
+            echo "No changes, skipping scope check."
+            exit 0
+          fi
+          echo "Changed files:"
+          echo "$CHANGED"
+          OUTSIDE_SCOPE=$(echo "$CHANGED" | grep -v '^memory/atlas/inbox/' | grep -v '^memory/atlas/proactive_queue.json$' | grep -v '^memory/atlas/\.wake-counter$' || true)
+          if [ -n "$OUTSIDE_SCOPE" ]; then
+            echo "::error::Atlas proactive loop touched files outside allowed scope:"
+            echo "$OUTSIDE_SCOPE"
+            exit 1
+          fi
+          echo "All changes within allowed scope."
+
+      - name: Commit and push
+        run: |
+          cd "${{ github.workspace }}"
+          git config user.name "Atlas Proactive"
+          git config user.email "atlas-proactive@volaura.app"
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git add memory/atlas/inbox/ memory/atlas/proactive_queue.json memory/atlas/.wake-counter
+          # Extract topic for commit message
+          NEWEST_NOTE=$(ls -t memory/atlas/inbox/ 2>/dev/null | head -n 1 || echo "heartbeat")
+          git commit -m "atlas-proactive: wake — ${NEWEST_NOTE}"
+          git pull --rebase origin main || true
+          git push

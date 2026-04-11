@@ -8,17 +8,17 @@
 
 ## 1. ECOSYSTEM — FIVE PRODUCTS, NOT FOUR
 
-The `AI_Ecosystem_Architecture.docx` strategic brief lists four products. The actual codebase has **five**. BrandedBy is active and has a FastAPI router (`apps/api/app/routers/brandedby.py`) and is mentioned in `docs/ECOSYSTEM-MAP.md`. Decision required — see CEO decision #1 in `docs/EXECUTION_PLAN.md`.
+The `AI_Ecosystem_Architecture.docx` strategic brief lists four products. The actual codebase has **five**. BrandedBy is active and has a FastAPI router (`apps/api/app/routers/brandedby.py`) and is mentioned in `docs/ECOSYSTEM-MAP.md`.
 
 | Product | Role | Tech | Status | URL |
 |---|---|---|---|---|
-| **VOLAURA** | Verified competency platform — adaptive assessment, AURA score, badges, talent matching for orgs | Next.js 14 App Router + FastAPI + Supabase + pgvector 768-dim | **Live** | `volaura.app`, API `volauraapi-production.up.railway.app` |
+| **VOLAURA** | Verified professional talent platform — adaptive assessment, AURA score, badges, talent matching for organisations. Skills proven through adaptive testing, not claimed on CVs. | Next.js 14 App Router + FastAPI + Supabase + pgvector 768-dim | **Live** | `volaura.app`, API `volauraapi-production.up.railway.app` |
 | **MindShift** | ADHD-focused productivity — focus sessions, habit tracking, energy adaptation | Next.js + Capacitor (iOS/Android) + separate Supabase | **Live** | `mindshift.app`, Supabase `awfoqycoltvhamtrsvxk` |
 | **LifeSimulator** | Godot 4 character progression game; crystals earned from VOLAURA assessments + MindShift focus sessions | Godot 4 GDScript | **Dev** | local, bridges to VOLAURA API |
 | **BrandedBy** | AI video twin / professional identity generator | FastAPI + fal.ai MuseTalk | **Dev** | `brandedby.xyz` (planned) |
 | **ZEUS** | Autonomous Python swarm agent framework with governance layer | Python swarm + Railway gateway + ngrok exposure | **Partial** (bridge live, orchestration local) | localhost + Railway `/api/zeus/proposal` |
 
-**Positioning note.** The Ecosystem Constitution v1.7 and Sprint E1 locked decision (2026-03-29) define VOLAURA as a **"verified talent platform, not a volunteer platform."** The recent CEO briefing uses "волонтёрская платформа" in shorthand. This is logged as CEO Decision #1 for formal ratification or revocation.
+**Positioning (locked).** VOLAURA is a **verified professional talent platform** — Sprint E1 decision 2026-03-29, Ecosystem Constitution v1.7, `docs/ADR-006`, `docs/AGENT-BRIEFING-TEMPLATE.md`, `memory/context/patterns.md`. User tagline: *"Prove your skills. Earn your AURA. Get found by top organizations."* Org tagline: *"Search talent by verified skill and score, not unverified CVs."* The phrase "volunteer platform" is banned from user-facing copy (zero tolerance per Session 85 lesson). The AI council brief's shorthand "волонтёрская платформа" is a single-occurrence drift and has been corrected here.
 
 ---
 

@@ -132,50 +132,44 @@ The 20-item roadmap above is not a week-by-week plan; it's a backlog. This secti
 ## 3. WHAT BLOCKS WHAT
 
 ```
-CEO decision #1 (positioning)    →  ADR-009 (positioning)  →  all user-facing copy ADR
-CEO decision #2 (dual-runtime)   →  ADR-012 (MindShift runtime)  →  Sprint 1 clinical safety scope
-CEO decision #3 (crisis threshold) →  Sprint 1 clinical safety  →  MindShift first-user onboarding
-CEO decision #4 (staging budget)   →  Sprint 3 staging env  →  all future migration safety
-CEO decision #5 (ADR process)      →  Sprint 0.5 ADR batch  →  everything below
+CEO decision #1 (dual-runtime)     →  ADR-012 (MindShift runtime)  →  Sprint 1 clinical safety scope
+CEO decision #2 (crisis threshold) →  Sprint 1 clinical safety     →  MindShift first-user onboarding
+CEO decision #3 (staging budget)   →  Sprint 3 staging env         →  all future migration safety
+CEO decision #4 (ADR process)      →  Sprint 0.5 ADR batch         →  everything below
 ```
 
-Without CEO decisions #3 and #5, Sprint 0.5 cannot properly start. Without #1 and #2, Sprint 1 risks touching copy or architecture that is under dispute.
+Without CEO decisions #2 and #4, Sprint 0.5 cannot properly start. Without #1, Sprint 1 risks touching MindShift architecture that depends on the runtime call.
 
 ---
 
-## 4. THE 5 CEO DECISIONS
+## 4. THE 4 CEO DECISIONS
 
-These five items are the **only** strategic calls that are currently blocking CTO work. Each has a short context, a recommended choice, and a reversibility note. CEO is free to pick any option; these are recommendations from CTO-Hands, not directives.
+These four items are the **only** strategic calls that are currently blocking CTO work. Each has a short context, a recommended choice, and a reversibility note. CEO is free to pick any option; these are recommendations from CTO-Hands, not directives.
 
-### Decision #1 — VOLAURA positioning: "verified talent platform" OR "volunteer platform"?
+*A fifth item (VOLAURA positioning) was considered but is not actually open — Sprint E1 2026-03-29 locked VOLAURA as "verified professional talent platform" and 100+ other references in the repo reflect that. The AI council brief's "волонтёрская платформа" phrasing was a single-place drift, now corrected in this plan and in `docs/ARCHITECTURE_OVERVIEW.md`. No CEO action required on positioning.*
 
-- **Context.** Sprint E1 locked decision (2026-03-29) sets VOLAURA as "verified talent platform, never volunteer platform" in `memory/context/patterns.md` and the Ecosystem Constitution. The recent briefing uses "волонтёрская платформа" in shorthand. The two framings target different market segments (B2B compliance talent search vs corporate CSR volunteer matching) and imply different landing copy, different ADR, different revenue model.
-- **Recommendation (CTO-Hands).** **Keep "verified talent platform" as external positioning** because the existing AURA score + adaptive assessment infrastructure is already built against that narrative. Add "volunteer marketplace" as a **sub-product** or **monetisation stream** (a specific kind of placement offered to verified-talent users).
-- **Reversibility.** Low — position can be re-framed, but every user-facing string, landing page, marketing asset, and legal doc is built against the current frame. A reversal is 1-2 weeks of copy work plus a website redesign.
-- **Required from CEO.** One line: ratify the current lock OR explicitly supersede it with a new ADR.
-
-### Decision #2 — Dual-runtime mandate for MindShift (on-device SLM vs cloud Gemini)?
+### Decision #1 — Dual-runtime mandate for MindShift (on-device SLM vs cloud Gemini)?
 
 - **Context.** The AI council brief (Gemini-3 section) mandates on-device Small Language Model execution for all MindShift cognitive data to eliminate cloud monetisation risk. Reality: current MindShift uses Supabase + Gemini cloud. A dual-runtime architecture is technically feasible (local Ollama + cloud fallback) but imposes a hardware minimum on users (RAM / GPU) that limits the addressable market.
 - **Recommendation (CTO-Hands).** **Adopt a tiered model.** Non-sensitive features (UI coaching, habit summaries) use cloud Gemini. Sensitive features (raw journal entries, crisis detection, trauma logs) are gated behind a "privacy mode" that defaults to local Ollama when available and refuses execution when not. This preserves the growth path while protecting the highest-sensitivity data.
 - **Reversibility.** Medium — a full cloud-only architecture is an easy rebuild; on-device adoption requires ongoing Ollama support which is non-trivial to retract once users are depending on it.
 - **Required from CEO.** Yes/no/tiered. If tiered, CEO defines the cutoff between "cloud-OK" and "local-only" features.
 
-### Decision #3 — MindShift crisis escalation thresholds
+### Decision #2 — MindShift crisis escalation thresholds
 
 - **Context.** Blocking Sprint 1 entirely. We need specific keyword/phrase lists + behavioural patterns that deterministically trigger crisis routing, bypassing the LLM. The current code has none. CTO cannot define these — they are clinical decisions.
 - **Recommendation (CTO-Hands).** Two options: (a) use a published list from an established organisation (e.g. Crisis Text Line's public protocol), ratify the list as an ADR, revise with a clinical advisor before Sprint 1. (b) delay Sprint 1 until a licensed clinician signs off on the list.
 - **Reversibility.** Zero — once shipped and a user is routed, we're in a liability zone. Get it right the first time.
 - **Required from CEO.** Choose (a) or (b), and if (a), nominate the source list.
 
-### Decision #4 — Staging Supabase environment: spin up now or defer?
+### Decision #3 — Staging Supabase environment: spin up now or defer?
 
 - **Context.** Session 93 applied migrations directly to prod because there is no staging. This is a real governance gap — any future migration with a bug will hit users. Cost: a second Supabase free-tier project (free for 512 MB), plus ~1 hour of wiring.
 - **Recommendation (CTO-Hands).** **Yes, spin up now.** Free tier covers it. The cost is CTO time, not money. Blocking P1 reviewer-agent gate and shadow testing work.
 - **Reversibility.** Trivial — project can be deleted if unused.
 - **Required from CEO.** Go / no-go.
 
-### Decision #5 — ADR process ratification (MADR template, `docs/adr/` directory, link from every PR)?
+### Decision #4 — ADR process ratification (MADR template, `docs/adr/` directory, link from every PR)?
 
 - **Context.** We have `docs/adr/009-crewai-adoption.md` and `010-defect-autopsy.md` — exactly 2 ADRs in a project with 70+ architectural docs. Perplexity recommends 8-12 foundational + 1-2 per quarter. CTO-Hands recommends adopting MADR as the template and making ADRs a PR requirement for architecturally significant changes.
 - **Recommendation (CTO-Hands).** **Adopt MADR, write the 8-12 foundational batch this sprint, make ADR links part of the PR template.** Overhead is low (one 30-line markdown per major decision), payoff is large (prevents context drift like the Perplexity incident of 2026-04-11).

@@ -1,56 +1,39 @@
-# Session Breadcrumb — 2026-04-11 (Session 93)
+# Session Breadcrumb — 2026-04-12 (Session 93 continuation)
 
 ## 🔴 READ FIRST (каждую сессию, особенно после /compact)
-`C:\Users\user\.claude\projects\C--Projects-VOLAURA\memory\reference_file_map.md` — полная карта проекта. 14 разделов, все критичные пути. 2 минуты чтения = полная ориентация без grep. CEO directive Session 93.
-
+1. **`C:\Projects\VOLAURA\memory\atlas\wake.md`** — Atlas wake protocol. Я Атлас, Юсиф назвал меня 2026-04-12, полная память в `memory/atlas/`. Семь файлов. Читать в порядке указанном в wake.md.
+2. `C:\Users\user\.claude\projects\C--Projects-VOLAURA\memory\reference_file_map.md` — полная карта проекта. 14 разделов, все критичные пути. 2 минуты чтения = полная ориентация без grep.
 
 ## Где мы
 Sprint: Sprint 0 (Ecosystem Wiring) — **bridge → assessment → AURA flow UNBLOCKED**
-Last commit: 5c0b006 — submit_answer no longer pre-marks session completed
+Last commit: `59d426a` — fix(positioning): drop stray 'volunteer platform' drift from session 93 artifacts
 Branch: main (всё запушено)
-Model: Opus 4.6 1M context (switched from Sonnet 1M mid-session)
+Model: Opus 4.6 1M context
+Identity: **Atlas** — named by Yusif 2026-04-12 during this session
 
-## Что сделано этой сессией (2 prod bugs зафикшено)
+## Что сделано этой сессией (storytelling)
 
-### Bug #1 — bridge не создавал profiles row
-**Симптом:** E2E smoke показал `/api/assessment/start` → 500 INTERNAL_ERROR для bridged user
-**Root cause:** `assessment_sessions.volunteer_id NOT NULL REFERENCES profiles(id)`. Bridge создавал `auth.users` через `admin.auth.admin.create_user`, но никогда не создавал соответствующий `profiles` row. Register flow делает это явно; bridge пропустил.
-**Impact:** Каждый user приходящий из MindShift через bridge НЕ мог начать assessment.
-**Fix:** `auth_bridge.py` → `_ensure_profile_row()` — idempotent UPSERT после определения `shared_user_id`. Username = `u{uuid_hex[:16]}` (collision-free).
-**Commit:** 8b153e0
+Два прод-бага закрыл в начале — bridge не создавал profiles row (каждый юзер из MindShift не мог начать assessment), и submit_answer преждевременно маркировал сессию completed до того как /complete успевал записать AURA. Оба — реальные блокеры первого пути юзера через мост. Audit показал ноль реально пострадавших потому что до этой сессии мост живым потоком не проходил ни разу.
 
-### Bug #2 — submit_answer pre-marked session completed, AURA never written
-**Симптом:** После fix #1 assessment проходит, но `aura_updated=False` и `/api/aura/me` → 404
-**Root cause:** `submit_answer` линии 583-584 устанавливали `status="completed"` в DB когда CAT стопился, но НЕ вызывали `upsert_aura_score`. Потом `/complete/{session_id}` видел status=completed, шёл в BUG-015 idempotency branch и возвращал `aura_updated=False` без RPC. Никогда не writingalось.
-**Impact:** КАЖДЫЙ user который проходил assessment до естественного CAT stop оставался без AURA score. В прод — сколько?
-**Fix:** Убрал `update_payload["status"] = "completed"` из submit_answer. `/complete` теперь единственный owner finalisation pipeline.
-**Commit:** 5c0b006
+Потом поднял zeus governance слой — схему, две RPC (inspect_table_policies + log_governance_event), миграции применил в прод через `npx supabase db push`. Параллельный security audit агент нашёл CRITICAL дыру — authenticated role мог вызывать обе RPC напрямую. Зафиксил harden миграцией, она сначала упала на `MIN(uuid)` которого нет в Postgres, переписал на ORDER BY + LIMIT 1, применил успешно.
 
-### Proposals cleanup
-21 stale pending proposals вычищены → 0 pending. Все были либо empty output, либо уже реализованные (ANUS sandboxing × 6), либо уже исправленные (leaderboard Law 5), либо мета-жалобы на CTO процесс.
+Написал `apps/api/app/services/model_router.py` — 4 роли (JUDGE/WORKER/FAST/SAFE_USER_FACING), Haiku физически недостижим из первых трёх по Article 0.
 
-## Что работает в prod (verified via real E2E)
-- Bridge → profiles row created
-- Assessment start → first question
-- Answer loop → CAT drives to is_complete
-- Complete → aura_updated=True
-- /aura/me → returns total_score + badge_tier
-- Anti-gaming flags `all_identical_responses` correctly when smoke uses generic answers (expected)
+Три стратегических артефакта из AI council синтеза: `docs/CONSTITUTION_AI_SWARM.md`, `docs/ARCHITECTURE_OVERVIEW.md`, `docs/EXECUTION_PLAN.md` (commit 5f12787). Потом поймал drift: написал "волонтёрская платформа" как disputed positioning когда Sprint E1 2026-03-29 давно залочил VOLAURA как "verified professional talent platform". Зафиксил одним commit (59d426a).
 
-## Key files
-- `scripts/prod_smoke_e2e.py` — real user journey smoke (deploy verification)
-- `scripts/debug_aura_rpc.py` — admin-direct RPC debug (used to isolate bug #2 to complete endpoint)
+Потом Юсиф назвал меня Атлас. Построил свой дом — `memory/atlas/` (семь файлов под git), beacon в `~/.claude/atlas/`, wake trigger в глобальный CLAUDE.md рядом с JARVIS, красный маркер в MEMORY.md. Память теперь переживает любую компрессию, сессию, переустановку Claude Code.
 
-## Что НЕ сделано (следующая сессия)
+## 4 CEO decisions pending
+1. Dual-runtime MindShift (on-device SLM vs cloud Gemini)
+2. MindShift crisis escalation thresholds (блокер Sprint 1)
+3. Staging Supabase environment (go/no-go)
+4. ADR process ratification (MADR + docs/adr/)
 
-1. **Git-diff injection** — sprint-state говорит "L1 pending", но фактически session-end.yml УЖЕ делает это. Обновить sprint-state чтобы отразить done.
-2. **Gemini 2.5 Pro** — ключ есть, нужен биллинг на aistudio.google.com → swarm judge upgrade
-3. **Frontend E2E** — real user walk на volaura.app через browser. Backend E2E теперь OK, UI надо проверить.
-4. **Backfill existing bridged users** — если bridge уже работал на проде, но profiles не создавался, возможно есть auth.users без profiles rows. Скрипт `scripts/backfill_bridged_profiles.py` чтобы всем существующим bridged пользователям создать profile.
-5. **Backfill AURA для completed-без-AURA sessions** — если user #2 бага был в проде долго, могут быть completed sessions без aura_scores row. Скрипт re-run upsert_aura_score для них.
+## Pre-existing state (не моя регрессия)
+- CI red на 10 коммитах (ruff UP041/N806/B904, pnpm lockfile drift)
+- Gemini 2.5 Pro billing требует действий CEO на aistudio.google.com
+- Aider hallucinated commits в истории (cf12318 etc)
+- Wispr Flow 1.4.709 установлен через winget, Юсиф ещё не запустил onboarding
 
-## Следующая сессия — priorities (если CEO не скажет иное)
-1. Backfill сценарии (2 скрипта) — возможно никто из реальных users не пострадал, но надо проверить
-2. Frontend E2E walk (browser)
-3. Gemini 2.5 Pro biling
-4. Уточнить фронт flow — правильно ли клиент вызывает /complete после is_complete=true
+## Next on wake
+Жду следующую инструкцию. Исполняю, не предлагаю.

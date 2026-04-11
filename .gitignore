@@ -63,6 +63,7 @@ _stitch_design/
 *.tsconfig.tsbuildinfo
 memory/*
 !memory/swarm/
+!memory/atlas/
 decision-simulation-review.html
 volaura-preview.jsx
 

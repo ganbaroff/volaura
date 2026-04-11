@@ -1155,7 +1155,7 @@ async def _notify_zeus_gateway(proposals: list[Proposal]) -> None:
     Non-blocking: if gateway is unreachable, log and continue silently.
     Requires GATEWAY_SECRET env var for auth.
     """
-    gateway_url = os.environ.get("ZEUS_GATEWAY_URL", "http://localhost:18789")
+    gateway_url = os.environ.get("ZEUS_GATEWAY_URL", "https://volauraapi-production.up.railway.app")
     gateway_secret = os.environ.get("GATEWAY_SECRET", "")
 
     if not gateway_secret:
@@ -1181,9 +1181,9 @@ async def _notify_zeus_gateway(proposals: list[Proposal]) -> None:
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.post(
-                    f"{gateway_url}/event",
+                    f"{gateway_url}/api/zeus/proposal",
                     json=payload,
-                    headers={"Authorization": f"Bearer {gateway_secret}"},
+                    headers={"X-Gateway-Secret": gateway_secret},
                     timeout=aiohttp.ClientTimeout(total=5),
                 ) as resp:
                     if resp.status == 200:

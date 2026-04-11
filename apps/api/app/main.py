@@ -41,7 +41,7 @@ if settings.sentry_dsn:
 
 from app.middleware.request_id import RequestIdMiddleware
 from app.middleware.security_headers import SecurityHeadersMiddleware
-from app.routers import activity, admin, analytics, assessment, auth, auth_bridge, aura, badges, brandedby, character, discovery, events, health, invites, leaderboard, notifications, organizations, profiles, skills, stats, subscription, telegram_webhook, tribes, verification
+from app.routers import activity, admin, analytics, assessment, auth, auth_bridge, aura, badges, brandedby, character, discovery, events, health, invites, leaderboard, notifications, organizations, profiles, skills, stats, subscription, telegram_webhook, tribes, verification, zeus_gateway
 from app.services.reeval_worker import run_reeval_worker
 from app.services.video_generation_worker import run_video_generation_worker
 
@@ -172,3 +172,4 @@ app.include_router(skills.router, prefix="/api")
 app.include_router(subscription.router, prefix="/api")
 app.include_router(tribes.router, prefix="/api")
 app.include_router(admin.router)  # prefix already set in router (/api/admin)
+app.include_router(zeus_gateway.router)  # ZEUS bridge — Python swarm → FastAPI

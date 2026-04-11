@@ -6,6 +6,7 @@ Items marked [ESCALATE] by agents. These bypass CTO and go directly to Yusif.
 
 ### New Proposal from Security Auditor
 * [PROPOSAL] Implement input validation using a library like Joi or express-validator to prevent SQL injection attacks
+* [PROPOSAL] Implement a modular skill library architecture for the assessment engine
 
 ---
 

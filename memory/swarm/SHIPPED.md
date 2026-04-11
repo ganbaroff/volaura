@@ -6,6 +6,37 @@
 
 ---
 
+## Session 92 (2026-04-11) — Bridge Sync + LifeSimulator Auth
+
+### VOLAURA (packages/swarm/, apps/api/)
+| Item | What it does | Status |
+|------|-------------|--------|
+| `proposals.json` | Fixed Windows-1252 em-dash encoding bug (0x97) | ✅ committed |
+| `memory/swarm/skills/*.md` (41 files) | Added ## Trigger + ## Output to all skill files | ✅ committed |
+| `health_data_firewall.sql` | Migration applied to shared Supabase dwdgzfusjsobnixgyzjk | ✅ live |
+| `user_identity_map.sql` | Confirmed applied (was already live) | ✅ live |
+| `~/.claude/CLAUDE.md` | Caveman mode installed globally | ✅ global |
+
+### Infrastructure
+| Item | Value | Status |
+|------|-------|--------|
+| EXTERNAL_BRIDGE_SECRET | dc925868...e (64 chars, 32 bytes) | ✅ Railway + MindShift Supabase + .env |
+| GATEWAY_SECRET | 423622ab... | ✅ Railway (ZEUS bridge, gateway not yet running) |
+| Telegram webhook | volauraapi-production.up.railway.app/api/telegram/webhook | ✅ set |
+
+### LifeSimulator (life-simulator-2026 repo, master branch, commit 11e7f56)
+| File | Change | Status |
+|------|--------|--------|
+| `scripts/managers/api_client.gd` | Full rewrite: login(), auth_required signal, 401 handling, JWT in memory | ✅ committed |
+| `scenes/menus/volaura_login_screen.gd` | NEW: login overlay controller | ✅ committed |
+| `scenes/menus/volaura_login_screen.tscn` | NEW: email+password UI, skip button, CanvasLayer=10 | ✅ committed |
+| `scenes/menus/main_menu_simple.gd` | Start → login screen → inject API → game | ✅ committed |
+| `scripts/controllers/game_loop_controller.gd` | inject_volaura_api() method | ✅ committed |
+| `scripts/managers/globals.gd` | Fix crash: wrong path res://Menus/ → res://templates/bacon/Menus/ | ✅ committed |
+| `project.godot` | Fix API URL: volaura-production → volauraapi-production | ✅ committed |
+
+---
+
 ## Session 87 (2026-04-06) — Persona Audit + Design System v2
 
 ### Security Fixes

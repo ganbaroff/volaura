@@ -2507,7 +2507,7 @@
       "agent": "Code Quality Engineer",
       "severity": "medium",
       "type": "idea",
-      "status": "pending",
+      "status": "implemented",
       "title": "The current implementation of the ZEUS gateway does not properly sanitize user i...",
       "content": "The current implementation of the ZEUS gateway does not properly sanitize user input, allowing potential SQL injection attacks and access to sensitive system files.\n\nRecommendation: Implement input sanitization and validation for all user-provided data, and ensure that the ANUS agent is properly sandboxed to prevent access to system files and resources.",
       "votes_for": 2,
@@ -2520,7 +2520,9 @@
       "judge_score": null,
       "judge_model": null,
       "judge_reasoning": null,
-      "judge_criteria": null
+      "judge_criteria": null,
+      "resolved_at": "2026-04-11T18:03:05Z",
+      "implementation_commit": "acb6d1b"
     },
     {
       "id": "252f4e1f",
@@ -2528,7 +2530,7 @@
       "agent": "CTO Watchdog",
       "severity": "medium",
       "type": "idea",
-      "status": "pending",
+      "status": "implemented",
       "title": "ANUS agent sandboxing is crucial for security. Current implementation may allow ...",
       "content": "ANUS agent sandboxing is crucial for security. Current implementation may allow access to system files.\n\nRecommendation: Implement sandboxing for ANUS agents using Linux containers or similar isolation mechanisms to prevent access to sensitive files and system resources.",
       "votes_for": 2,
@@ -2541,7 +2543,9 @@
       "judge_score": null,
       "judge_model": null,
       "judge_reasoning": null,
-      "judge_criteria": null
+      "judge_criteria": null,
+      "resolved_at": "2026-04-11T18:03:24Z",
+      "implementation_commit": "2e41e69"
     },
     {
       "id": "a13ef31c",

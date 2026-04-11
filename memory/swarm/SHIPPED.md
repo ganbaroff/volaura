@@ -6,6 +6,25 @@
 
 ---
 
+## Session 93 (2026-04-11) — Real E2E smoke + 2 prod bugs fixed
+
+### VOLAURA (apps/api/, scripts/)
+| Item | What it does | Status |
+|------|-------------|--------|
+| `scripts/prod_smoke_e2e.py` | Full user journey smoke: bridge signup → assessment start → answer loop → complete → /aura/me. Fresh shadow user per run, bypasses 7-day cooldown. | ✅ committed 8b153e0 |
+| `apps/api/app/routers/auth_bridge.py` → `_ensure_profile_row()` | Bridge now upserts `profiles(id, username)` after creating shadow user. Username derived from UUID hex (collision-free). Fixes FK violation on every assessment_sessions / aura_scores / badges / events INSERT for bridged users. | ✅ deployed 8b153e0 |
+| `apps/api/app/routers/assessment.py` submit_answer | Removed pre-marking `status=completed` in submit_answer. `/complete/{session_id}` is now the single owner of finalisation pipeline — previously submit_answer set completed → /complete hit BUG-015 idempotency and skipped upsert_aura_score → every naturally-finished user ended up with no AURA row. | ✅ deployed 5c0b006 |
+| `memory/swarm/proposals.json` cleanup | 21 stale pending proposals dismissed (5 empty, 6 ANUS sandboxing dupes, 1 leaderboard already fixed, 9 meta/rejected). `pending` count: 21 → 0. | ✅ local |
+| `scripts/debug_aura_rpc.py` | One-shot direct admin debug for upsert_aura_score RPC. Confirmed RPC works when called directly, isolating bug to complete-endpoint flow. | ✅ committed (via 5c0b006 context) |
+
+### Verified live (E2E smoke against volauraapi-production.up.railway.app)
+- POST /api/auth/from_external → returns shared_jwt + creates profiles row
+- POST /api/assessment/start → 201, SessionOut with first question
+- POST /api/assessment/answer (loop) → drives CAT to is_complete=true
+- POST /api/assessment/complete/{session_id} → aura_updated=True
+- GET /api/aura/me → returns AuraScoreResponse with total_score + tier
+- Anti-gaming still catches `all_identical_responses` flag (smoke uses generic answers, penalty applied correctly)
+
 ## Session 92 (2026-04-11) — Bridge Sync + LifeSimulator Auth
 
 ### VOLAURA (packages/swarm/, apps/api/)

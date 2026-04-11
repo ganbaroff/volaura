@@ -62,7 +62,7 @@ Visual representation of a low-energy state uses purple or amber, never red.
 
 **Trigger:** User self-reports via EnergyPicker (1-5 scale). Never infer without consent.
 
-**Products:** MindShift (fully built), VOLAURA (missing), Life Simulator (missing), BrandedBy (missing)
+**Products:** MindShift (fully built), VOLAURA (implemented), Life Simulator (implemented), BrandedBy (implemented)
 
 ---
 

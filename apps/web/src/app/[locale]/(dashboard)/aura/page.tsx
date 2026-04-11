@@ -621,19 +621,9 @@ export default function AuraPage() {
               </div>
               <span className="text-muted-foreground shrink-0" aria-hidden="true">→</span>
             </button>
-            {/* View leaderboard — see how you compare */}
-            <button
-              type="button"
-              onClick={() => router.push(`/${locale}/leaderboard`)}
-              className="w-full flex items-center gap-3 rounded-xl bg-surface-container-low p-3 text-left hover:bg-muted/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              <span className="text-2xl shrink-0" aria-hidden="true">🏅</span>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground">{t("aura.nextStepLeaderboard")}</p>
-                <p className="text-xs text-muted-foreground">{t("aura.nextStepLeaderboardDesc")}</p>
-              </div>
-              <span className="text-muted-foreground shrink-0" aria-hidden="true">→</span>
-            </button>
+            {/* Leaderboard CTA removed 2026-04-12 — Constitution v1.7 G9/G46 bans leaderboards.
+                The page itself is already a redirect to /dashboard. This tombstone prevents
+                future re-introduction. See docs/ECOSYSTEM-CONSTITUTION.md lines 967, 1004. */}
           </div>
         </motion.div>
       </div>

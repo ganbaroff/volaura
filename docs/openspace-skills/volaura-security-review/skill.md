@@ -19,5 +19,6 @@ When reviewing a new FastAPI endpoint for Volaura, check ALL 10 points:
 8. **Supabase Client** — Uses per-request `SupabaseAdmin` or `SupabaseUser` via `Depends()`, never a global client.
 9. **Sensitive Data** — No passwords, tokens, or PII in log output or error messages.
 10. **Crystal/Financial Operations** — Any crystal spend uses `deduct_crystals_atomic()` RPC, not direct ledger INSERT.
+11. **Data Loss Prevention** — Implement Data Loss Prevention Agent skill to detect and prevent potential data leaks.
 
 Severity: P0 = auth bypass, P1 = data leak, P2 = rate limit missing, P3 = logging gap.

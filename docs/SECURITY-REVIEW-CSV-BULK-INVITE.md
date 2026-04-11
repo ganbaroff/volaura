@@ -201,7 +201,7 @@ When org owner opens the response CSV in Excel:
 from html import escape
 
 def sanitize_csv_cell(value: str | None) -> str | None:
-    """Remove formula injection characters from CSV cells."""
+    """Remove formula injection characters from CSV cells and prevent SQL injection."""
     if not value or not isinstance(value, str):
         return value
 
@@ -210,7 +210,8 @@ def sanitize_csv_cell(value: str | None) -> str | None:
         # Safe approach: prefix with single quote (Excel interprets as text)
         return f"'{value}"
 
-    return value
+    # Sanitize input to prevent SQL injection
+    return validate_and_sanitize_user_input(value)
 
 # Apply to EVERY field from CSV
 for row in csv_reader:

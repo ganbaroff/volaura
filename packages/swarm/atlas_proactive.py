@@ -57,6 +57,18 @@ def _next_wake_number() -> int:
 
 
 def _pick_topic(queue: dict) -> dict | None:
+    # If ATLAS_TOPIC_ID env var is set, process that specific topic on-demand
+    # instead of queue selection. This is the webhook-wake path — any caller
+    # that fires the workflow with a topic_id input gets a focused run.
+    requested_id = os.environ.get("ATLAS_TOPIC_ID", "").strip()
+    if requested_id:
+        for t in queue.get("topics", []):
+            if t.get("id") == requested_id:
+                return t
+        # Requested topic not found in queue — return None, worker will log
+        # empty and exit cleanly rather than crash.
+        return None
+
     now = datetime.now(timezone.utc)
     priority_order = {"high": 0, "medium": 1, "low": 2}
     due = []

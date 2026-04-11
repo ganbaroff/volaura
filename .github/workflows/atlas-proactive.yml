@@ -7,7 +7,24 @@ on:
     # inbox on every wake per memory/atlas/wake.md read order.
     - cron: '*/15 * * * *'
   workflow_dispatch:
-    # Allow manual trigger for testing and for CEO-initiated on-demand wakes.
+    # Allow manual trigger for testing, for CEO-initiated on-demand wakes,
+    # and — most importantly — for webhook-triggered autonomous wakes from
+    # any service (swarm worker, external agent, Yusif's phone, future bots)
+    # that needs Atlas to work on a specific topic right now.
+    #
+    # Trigger from anywhere with gh CLI installed:
+    #   gh workflow run atlas-proactive.yml --ref main \
+    #     --field topic_id=latest-ai-agent-memory-tools-2026
+    #
+    # Or via GitHub API (curl) with a PAT:
+    #   curl -X POST -H "Authorization: Bearer $GH_PAT" \
+    #     https://api.github.com/repos/ganbaroff/volaura/actions/workflows/atlas-proactive.yml/dispatches \
+    #     -d '{"ref":"main","inputs":{"topic_id":"coordinator-agent-patterns"}}'
+    inputs:
+      topic_id:
+        description: 'Specific topic ID from proactive_queue.json to process. Leave blank for normal queue selection.'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -44,6 +61,11 @@ jobs:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # ATLAS_TOPIC_ID is passed through from workflow_dispatch input.
+          # When empty, the worker uses normal queue selection. When set,
+          # the worker processes that specific topic — this is the webhook-
+          # triggered autonomous wake path.
+          ATLAS_TOPIC_ID: ${{ inputs.topic_id }}
         run: |
           cd "${{ github.workspace }}"
           python -m packages.swarm.atlas_proactive

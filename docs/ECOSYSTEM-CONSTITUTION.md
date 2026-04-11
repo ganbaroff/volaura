@@ -41,22 +41,6 @@ These are non-negotiable. They cannot be overridden by feature requests, market 
 
 ---
 
-### LAW 2: ENERGY ADAPTATION
-
-**Source:** Research #2 (Clinical ADHD), #3 (Burnout Prevention), #6 (Sensory UX)
-**Science:** ADHD users have highly variable energy states. Forcing full-complexity UI on a "red day" triggers executive dysfunction cascade. Energy-adaptive design = 40% higher retention.
-
-**Rule:** Every product must have at minimum 2 UI modes:
-- **Normal mode:** Full features, moderate animations
-- **Low-energy mode:** Single-action card, fade-in only, warm non-directive copy
-
-⚠️ User-facing labels MUST use Full/Mid/Low (or equivalent). NEVER show "Red day" to users —
-this violates Law 1. Internal code constants may use green/yellow/red semantics only.
-Visual representation of a low-energy state uses purple or amber, never red.
-
-**Trigger:** User self-reports via EnergyPicker (1-5 scale). Never infer without consent.
-
-**Products:** MindShift (fully built), VOLAURA (implemented), Life Simulator (implemented), BrandedBy (implemented)
 
 ---
 
@@ -137,10 +121,6 @@ Visual representation of a low-energy state uses purple or amber, never red.
 
 ---
 
-## PART 2: THE 7 CRYSTAL ECONOMY LAWS
-
-**Source:** Research #10 (Overjustification Effect) — The most important research for all reward mechanics
-**Science:** Aggressive gamification switches brain from empathy network (ACCg) to self-reward network (VTA). For intrinsically motivated users, this DESTROYS the original motivation. Examples of failures: Yahoo Answers (quality destroyed by points), Google News Badges (ignored), Strava deaths (performance pressure overrode safety).
 
 ---
 

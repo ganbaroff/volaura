@@ -1321,8 +1321,8 @@ async def telegram_webhook(
                     "⚠️ Формат:\n`ask {agent} {вопрос}` — агенту\n`ask {proposal_id} {вопрос}` — по конкретному proposal",
                 )
         else:
-            # Free-text → classify + respond + save
-            await _classify_and_respond(db, text, chat_id)
+            # All free-text goes through Atlas persona — the default CTO voice
+            await _handle_atlas(db, chat_id, text)
 
     except Exception as e:
         logger.error("Telegram handler error: {e}", e=str(e))

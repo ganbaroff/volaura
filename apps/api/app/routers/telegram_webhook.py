@@ -311,8 +311,26 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
         )
         reply = response.text.strip()
     except Exception as e:
-        logger.error("Gemini error in bot: {e}", e=str(e))
-        reply = f"Сообщение сохранено ✅\nТип: {msg_type}\nGemini временно недоступен."
+        logger.warning("Gemini bot error, trying Groq fallback: {e}", e=str(e)[:100])
+        groq_key = os.environ.get("GROQ_API_KEY", "")
+        if groq_key:
+            try:
+                import httpx
+                async with httpx.AsyncClient(timeout=15) as hc:
+                    groq_resp = await hc.post(
+                        "https://api.groq.com/openai/v1/chat/completions",
+                        headers={"Authorization": f"Bearer {groq_key}", "User-Agent": "volaura-bot/1.0"},
+                        json={"model": "llama-3.3-70b-versatile", "messages": [
+                            {"role": "system", "content": system_prompt[:2000]},
+                            {"role": "user", "content": text},
+                        ], "max_tokens": 2000, "temperature": 0.7},
+                    )
+                    reply = groq_resp.json()["choices"][0]["message"]["content"].strip()
+            except Exception as e2:
+                logger.error("Groq fallback also failed: {e}", e=str(e2)[:100])
+                reply = f"Сообщение сохранено ✅\nТип: {msg_type}\nLLM временно недоступен."
+        else:
+            reply = f"Сообщение сохранено ✅\nТип: {msg_type}\nGemini и Groq недоступны."
 
     # Add tag for saved items
     if msg_type == "idea":

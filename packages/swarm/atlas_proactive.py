@@ -127,16 +127,22 @@ def _call_llm(prompt: str) -> tuple[str, str]:
     """
     providers = [
         {
+            "name": "nvidia/llama-3.1-8b",
+            "url": "https://integrate.api.nvidia.com/v1/chat/completions",
+            "key_env": "NVIDIA_API_KEY",
+            "model": "meta/llama-3.1-8b-instruct",
+        },
+        {
+            "name": "deepseek/chat",
+            "url": "https://api.deepseek.com/chat/completions",
+            "key_env": "DEEPSEEK_API_KEY",
+            "model": "deepseek-chat",
+        },
+        {
             "name": "groq/llama-3.3-70b",
             "url": "https://api.groq.com/openai/v1/chat/completions",
             "key_env": "GROQ_API_KEY",
             "model": "llama-3.3-70b-versatile",
-        },
-        {
-            "name": "nvidia/nemotron",
-            "url": "https://integrate.api.nvidia.com/v1/chat/completions",
-            "key_env": "NVIDIA_API_KEY",
-            "model": "nvidia/llama-3.1-nemotron-70b-instruct",
         },
     ]
 

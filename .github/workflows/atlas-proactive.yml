@@ -49,10 +49,9 @@ jobs:
           cache: pip
 
       - name: Install dependencies
-        # Phase 1 needs no deps beyond stdlib. Phase 2 will add: pydantic, loguru,
-        # and the real llm provider libs (google-genai, groq, or litellm).
         run: |
           python --version
+          pip install loguru
 
       - name: Run Atlas proactive worker
         env:

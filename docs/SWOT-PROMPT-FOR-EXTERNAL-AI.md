@@ -17,7 +17,7 @@
 - **Revenue model:** Freemium (Free/Pro 4.99 AZN/mo) + B2B org subscriptions (49-199 AZN/mo)
 - **Target market:** Azerbaijan (6 locales supported: AZ, EN, RU, TR, DE, ES)
 - **Code:** 43 pages, 24 API routers, 67 DB migrations, 742 tests
-- **AI:** Gemini 2.5 Flash primary evaluation, Groq fallback, keyword_fallback degraded mode
+- **AI infrastructure:** Claude Max $200/mo + Gemini 2.5 Flash primary evaluation, Groq fallback, keyword_fallback degraded mode
 - **Swarm:** 48 skill files for AI agents, daily autonomous runs via GitHub Actions
 - **Unique:** Constitution v1.7 (1154 lines) — evidence-based governing document from 17 research docs
 
@@ -75,7 +75,7 @@
 - **Real users:** 0
 - **Tests:** 742 (VOLAURA) + 207+201 (MindShift)
 - **Agents:** 48 Python + 39 Node.js = 87
-- **Budget:** ~$50/month
+- **Budget:** $200+/month (Claude Max + Gemini API + infrastructure)
 - **Deadline:** End of April 2026 = platform at 100%
 - **Grant deadlines:** YC S26 (May 4), GITA Georgia (TBD)
 - **Revenue projection:** $995/month at 1000 MAU (Month 6)

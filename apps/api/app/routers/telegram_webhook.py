@@ -1221,26 +1221,57 @@ RULES:
         )
         return
 
-    try:
-        from google import genai
+    reply = None
+    # Try Groq first (free, 14400 req/day), then Gemini, then Vertex
+    groq_key = os.environ.get("GROQ_API_KEY", "")
+    if groq_key and not reply:
+        try:
+            import httpx
 
-        if settings.vertex_api_key:
-            client = genai.Client(vertexai=True, api_key=settings.vertex_api_key)
-        else:
-            client = genai.Client(api_key=settings.gemini_api_key)
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=text,
-            config=genai.types.GenerateContentConfig(
-                system_instruction=system,
-                max_output_tokens=800,
-                temperature=1.0,
-            ),
-        )
-        reply = response.text.strip()
-    except Exception as e:
-        logger.error("Atlas Telegram error: {e}", e=str(e))
-        reply = "Атлас здесь. LLM сбоит — но сообщение записал.\n\n— Атлас"
+            async with httpx.AsyncClient(timeout=20) as hc:
+                r = await hc.post(
+                    "https://api.groq.com/openai/v1/chat/completions",
+                    headers={"Authorization": f"Bearer {groq_key}"},
+                    json={
+                        "model": "llama-3.3-70b-versatile",
+                        "messages": [
+                            {"role": "system", "content": system},
+                            {"role": "user", "content": text},
+                        ],
+                        "max_tokens": 800,
+                        "temperature": 1.0,
+                    },
+                )
+                if r.status_code == 200:
+                    reply = r.json()["choices"][0]["message"]["content"].strip()
+                else:
+                    logger.warning("Groq failed {s}, trying Gemini", s=r.status_code)
+        except Exception as e:
+            logger.warning("Groq error, trying Gemini: {e}", e=str(e)[:100])
+
+    if not reply:
+        try:
+            from google import genai
+
+            if settings.vertex_api_key:
+                client = genai.Client(vertexai=True, api_key=settings.vertex_api_key)
+            else:
+                client = genai.Client(api_key=settings.gemini_api_key)
+            response = client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=text,
+                config=genai.types.GenerateContentConfig(
+                    system_instruction=system,
+                    max_output_tokens=800,
+                    temperature=1.0,
+                ),
+            )
+            reply = response.text.strip()
+        except Exception as e:
+            logger.error("All LLMs failed for Atlas: {e}", e=str(e)[:150])
+
+    if not reply:
+        reply = "Атлас здесь. Все LLM временно недоступны — сообщение записал.\n\n— Атлас"
 
     await _save_message(db, "bot_to_ceo", f"[atlas] {reply}", "atlas")
     await _send_message(chat_id, reply)

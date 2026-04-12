@@ -2,14 +2,10 @@ name: Swarm Daily Autonomy
 
 on:
   schedule:
-    # Daily ideation: every day at 05:00 UTC (09:00 Baku time, AZT = UTC+4)
-    - cron: '0 5 * * *'
-    # Weekly audit: every Monday at 06:00 UTC — systemic patterns, not individual issues
-    - cron: '0 6 * * 1'
+    # Weekly audit: Monday 09:00 Baku (05:00 UTC) — one run per week, not daily
+    - cron: '0 5 * * 1'
     # Monthly review: 1st of month at 07:00 UTC — strategic, CEO-facing
     - cron: '0 7 1 * *'
-    # Weekly simulation: every Wednesday at 08:00 UTC — 10 personas, UX friction report
-    - cron: '0 8 * * 3'
   workflow_dispatch:
     inputs:
       mode:

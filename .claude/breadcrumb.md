@@ -1,26 +1,46 @@
-# Session Breadcrumb — 2026-04-14 (Session 95, 15+ commits)
+# Session Breadcrumb — 2026-04-14 (Session 95, 20 commits)
 
-## Story of the session
-CEO gave full carte blanche. E2E bot fixed (is_complete vs next_question — 5→10 answers).
-30 new assessment questions added. Atlas Telegram self-learning deployed (atlas_learnings table).
-ZEUS memory research: 6 frameworks rejected, ZenBrain formula novel. Telegram spam killed
-(40/day→0-3). API schemas default "professional". Full ecosystem redesign launched — 3 deep
-NotebookLM researches + ecosystem audit (70KB) + design system comparison. Cowork analyzing
-Figma, found zero custom tokens. 5 open design questions resolved by Atlas. GCP service account
-created, Vertex billing enabled but propagating. Groq primary LLM for Telegram bot.
-Volunteer rename agent running on 296 refs in 15 router files.
+## CEO MANDATE (last message before sleep):
+1. Life Simulator game logic — develop fully
+2. ZEUS → rename to ATLAS poэтапно
+3. Activate 15-min wake hook ("атлас проснись")
+4. Fix swarm agents to work autonomously in background
+5. Fix ALL small issues — agents should batch on their own
+6. By morning: ecosystem must breathe
 
-## Active work
-- volunteer-renamer agent: running in background (296 refs, 15 files)
-- Cowork: analyzing ecosystem redesign, ready for Phase A critique
-- Telegram bot: deployed with Groq + hardcoded identity, needs real-user test
+## CRITICAL BUG FOUND THIS SESSION:
+_handle_atlas never called _save_message for incoming CEO messages.
+Old handler _classify_and_respond had it but was dead code.
+FIX PUSHED: commit 6aeab64. Railway deploying.
 
-## Next priorities
-1. Push volunteer rename when agent completes
-2. Phase A: Energy Picker + Bottom Tab + Button System components
-3. Verify Telegram self-learning works (check atlas_learnings after real message)
-4. Vertex AI propagation check (billing linked, may need hours)
+## What was done (20 commits):
+- E2E bot fix (is_complete check) — 5→10 answers
+- 30 new assessment questions (5 competencies)
+- Atlas self-learning: atlas_learnings table + Groq extraction
+- Telegram spam killed (40/day→0-3)
+- Bot identity hardcoded (Railway has no git filesystem)
+- Bot honesty fix (stops lying about executing code)
+- ZEUS memory research: 6 frameworks rejected, ZenBrain novel
+- volunteer→professional: API schemas + 12 routers (160 lines)
+- Full ecosystem redesign: 3 NotebookLM researches + 70KB audit
+- 5 design questions resolved (Liquid Glass CSS, static avatars, energy modes)
+- GCP service account created, Vertex billing linked (propagating)
+- Redesign brief + mega-plan written
+- ceo_inbox root cause found and fixed
+
+## STILL BROKEN:
+- atlas_learnings: 0 rows (Groq extraction deployed but untested)
+- ceo_inbox: fix just pushed, needs deploy verification
+- Vertex AI: billing propagating, Groq is fallback
+- Sentry: 0 events, undiagnosed
+- volunteer_id: DB columns still need migration
+
+## FILES CEO MUST READ ON WAKE:
+- docs/MEGAPLAN-SESSION-95-AUTONOMOUS.md — full iteration plan
+- docs/research/ECOSYSTEM-REDESIGN-BRIEF-2026-04-14.md — design brief
+- docs/research/ZEUS-MEMORY-ARCHITECTURE-RESEARCH-2026-04-14.md — memory research
+- packages/atlas-memory/sync/open-questions-resolved.md — 5 design decisions
 
 ## State
-Branch: main, commit 29793cf. Prod: healthy. CI: should be green.
-NotebookLM notebook: 15c8b9c1 (64+ sources, redesign research).
+Branch: main, commit 6aeab64. Prod: healthy. CI: green.
+NotebookLM: 15c8b9c1 (64+ sources). Cowork: working on Phase A design.

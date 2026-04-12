@@ -121,6 +121,8 @@ jobs:
           # returns LOW for every proposal, blocking all auto-fixes.
           python scripts/project_qa.py --rebuild-index || echo "[warn] project_qa index build failed (non-blocking)"
           python -m packages.swarm.autonomous_run --mode=${{ steps.mode.outputs.mode }}
+          # Auto-promote high-scoring proposals to backlog (score >= 4/5)
+          python -m packages.swarm.promote_proposals || echo "[warn] proposal promotion failed (non-blocking)"
 
       - name: Skip notice
         if: steps.gate.outputs.should_run != 'true'

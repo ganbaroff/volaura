@@ -118,6 +118,28 @@ if todo:
     fi
   fi
 
+  # ── COWORK HANDOFF DETECTOR (auto-pick pending handoffs — no CEO relay needed) ──
+  STATE_FILE="$PROJECT_DIR/packages/atlas-memory/STATE.md"
+  if [ -f "$STATE_FILE" ]; then
+    HANDOFF_INFO=$(python3 -c "
+import re
+with open('$STATE_FILE', encoding='utf-8') as f:
+    content = f.read()
+# Find READY handoffs in the queue table
+ready = re.findall(r'\|\s*(\d+)\s*\|([^|]+)\|([^|]+)\|[^|]*READY[^|]*\|([^|]+)\|', content)
+if ready:
+    print('== PENDING HANDOFFS FROM COWORK ==')
+    for num, task, prio, path in ready:
+        print(f'  >> Handoff {num.strip()}: {task.strip()} [{prio.strip()}] — {path.strip()}')
+    print('READ the handoff file and execute. No CEO relay needed.')
+" 2>/dev/null)
+    if [ -n "$HANDOFF_INFO" ]; then
+      echo ""
+      echo "$HANDOFF_INFO"
+      echo ""
+    fi
+  fi
+
   # ── STALENESS DETECTOR (added 2026-03-26, Lesson from Session 42) ──
   # If any memory/swarm file is older than 3 days → warn CTO
   echo ""

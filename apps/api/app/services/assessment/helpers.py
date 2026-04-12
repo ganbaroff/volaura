@@ -115,7 +115,7 @@ def make_session_out(
     competency_slug: str,
     state: CATState,
     next_q: dict | None,
-    role_level: str = "volunteer",
+    role_level: str = "professional",
 ) -> SessionOut:
     """Build SessionOut from CAT state + next question dict."""
     nq = None

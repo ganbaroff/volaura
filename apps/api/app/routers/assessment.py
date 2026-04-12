@@ -619,7 +619,7 @@ async def submit_answer(
     # Get competency slug for response (cached — 8-row static table)
     slug = await get_competency_slug(db_admin, competency_id)
 
-    session_out = make_session_out(payload.session_id, slug, state, next_q, session.get("role_level", "volunteer"))
+    session_out = make_session_out(payload.session_id, slug, state, next_q, session.get("role_level", "professional"))
 
     return AnswerFeedback(
         session_id=payload.session_id,

@@ -1,4 +1,4 @@
-"""Organization management and volunteer search endpoints."""
+"""Organization management and talent search endpoints."""
 
 from __future__ import annotations
 
@@ -175,7 +175,7 @@ async def get_collective_aura(
     """Aggregated AURA talent pool metrics for an org's verified professionals.
 
     Ownership-gated (403 for non-owners). Supports Collective AURA Ladders feature.
-    AURA is a global credential — a volunteer's score appears in all org pools they
+    AURA is a global credential — a professional's score appears in all org pools they
     engaged with (this is intentional, matching the platform's open credential model).
     """
     # Fail-closed: verify ownership FIRST (Security Agent mandate — prevent Mistake #57)
@@ -190,7 +190,7 @@ async def get_collective_aura(
     if not org_check.data:
         raise HTTPException(status_code=403, detail={"code": "NOT_ORG_OWNER", "message": "Access denied"})
 
-    # Get distinct volunteers who completed assessments for this org
+    # Get distinct professionals who completed assessments for this org
     sessions = (
         await db_admin.table("assessment_sessions")
         .select("volunteer_id")
@@ -198,22 +198,22 @@ async def get_collective_aura(
         .eq("status", "completed")
         .execute()
     )
-    volunteer_ids = list({row["volunteer_id"] for row in (sessions.data or [])})
+    professional_ids = list({row["volunteer_id"] for row in (sessions.data or [])})
 
-    if not volunteer_ids:
+    if not professional_ids:
         return CollectiveAuraResponse(org_id=org_id, count=0)
 
-    # Fetch AURA scores for these volunteers
+    # Fetch AURA scores for these professionals
     aura_rows = (
         await db_admin.table("aura_scores")
         .select("volunteer_id, total_score")
-        .in_("volunteer_id", volunteer_ids)
+        .in_("volunteer_id", professional_ids)
         .execute()
     )
     scores = [row["total_score"] for row in (aura_rows.data or []) if row.get("total_score") is not None]
 
     if not scores:
-        return CollectiveAuraResponse(org_id=org_id, count=len(volunteer_ids))
+        return CollectiveAuraResponse(org_id=org_id, count=len(professional_ids))
 
     avg_aura = sum(scores) / len(scores)
 
@@ -223,7 +223,7 @@ async def get_collective_aura(
 
     return CollectiveAuraResponse(
         org_id=org_id,
-        count=len(volunteer_ids),
+        count=len(professional_ids),
         avg_aura=round(avg_aura, 1),
         trend=trend,
     )
@@ -242,7 +242,7 @@ async def get_org_dashboard(
     """Aggregate stats for the B2B org management dashboard.
 
     Returns assignment completion rates, avg AURA, badge distribution,
-    and top 5 volunteers for the org owner's dashboard.
+    and top 5 professionals for the org owner's dashboard.
     """
     # Get org
     org_result = (
@@ -273,20 +273,20 @@ async def get_org_dashboard(
         )
 
     total_assigned = len(sessions)
-    completed_vols = {s["volunteer_id"] for s in sessions if s["status"] == "completed"}
-    total_completed = len(completed_vols)
+    completed_ids = {s["volunteer_id"] for s in sessions if s["status"] == "completed"}
+    total_completed = len(completed_ids)
     completion_rate = round(total_completed / total_assigned, 3) if total_assigned > 0 else 0.0
 
-    # AURA scores for completed volunteers
+    # AURA scores for completed professionals
     badge_dist = BadgeDistribution()
     avg_aura: float | None = None
-    top_volunteers: list[OrgVolunteerRow] = []
+    top_professionals: list[OrgVolunteerRow] = []
 
-    if completed_vols:
+    if completed_ids:
         aura_result = (
             await db_admin.table("aura_scores")
             .select("volunteer_id, total_score, badge_tier")
-            .in_("volunteer_id", list(completed_vols))
+            .in_("volunteer_id", list(completed_ids))
             .execute()
         )
         aura_rows = aura_result.data or []
@@ -308,7 +308,7 @@ async def get_org_dashboard(
                 else:
                     badge_dist.none += 1
 
-            # Top 5 by AURA
+            # Top 5 professionals by AURA
             top_ids = [
                 r["volunteer_id"]
                 for r in sorted(aura_rows, key=lambda x: float(x.get("total_score") or 0), reverse=True)[:5]
@@ -319,7 +319,7 @@ async def get_org_dashboard(
             profile_map = {p["id"]: p for p in (profiles_result.data or [])}
             aura_map = {r["volunteer_id"]: r for r in aura_rows}
 
-            # Count competencies completed per volunteer for this org
+            # Count competencies completed per professional for this org
             comp_sessions = (
                 await db_admin.table("assessment_sessions")
                 .select("volunteer_id")
@@ -334,7 +334,7 @@ async def get_org_dashboard(
             for vid in top_ids:
                 p = profile_map.get(vid, {})
                 a = aura_map.get(vid, {})
-                top_volunteers.append(
+                top_professionals.append(
                     OrgVolunteerRow(
                         volunteer_id=vid,
                         username=p.get("username", vid[:8]),
@@ -354,13 +354,13 @@ async def get_org_dashboard(
         completion_rate=completion_rate,
         avg_aura_score=avg_aura,
         badge_distribution=badge_dist,
-        top_volunteers=top_volunteers,
+        top_volunteers=top_professionals,
     )
 
 
 @router.get("/me/volunteers", response_model=list[OrgVolunteerRow])
 @limiter.limit(RATE_DISCOVERY)
-async def list_org_volunteers(
+async def list_org_talent(
     request: Request,
     db_admin: SupabaseAdmin,
     user_id: CurrentUserId,
@@ -368,9 +368,9 @@ async def list_org_volunteers(
     limit: int = Query(default=20, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
 ) -> list[OrgVolunteerRow]:
-    """List all volunteers assigned assessments by this org.
+    """List all professionals assigned assessments by this org.
 
-    Returns profile + AURA data for each volunteer.
+    Returns profile + AURA data for each professional.
     Supports filtering by session status (assigned/completed/in_progress).
     """
     org_result = await db_admin.table("organizations").select("id").eq("owner_id", user_id).maybe_single().execute()
@@ -381,9 +381,9 @@ async def list_org_volunteers(
         )
     org_id = org_result.data["id"]
 
-    # Get distinct volunteer IDs assigned by this org
+    # Get distinct professional IDs assigned by this org
     # SEC-Q4 / BUG-005: cap at 10k sessions to prevent OOM on large orgs.
-    # Pagination is applied at volunteer level after dedup — this cap bounds memory usage.
+    # Pagination is applied at professional level after dedup — this cap bounds memory usage.
     _LIST_SESSION_CAP = 10_000
     q = db_admin.table("assessment_sessions").select("volunteer_id, status").eq("assigned_by_org_id", org_id)
     if status:
@@ -399,27 +399,27 @@ async def list_org_volunteers(
     sessions = sessions_result.data or []
     if len(sessions) == _LIST_SESSION_CAP:
         logger.warning(
-            "list_org_volunteers: session cap reached — pagination may be incomplete",
+            "list_org_talent: session cap reached — pagination may be incomplete",
             org_id=org_id,
             cap=_LIST_SESSION_CAP,
         )
 
-    # Distinct volunteers with completion counts
-    vol_data: dict[str, dict] = {}
+    # Distinct professionals with completion counts
+    prof_data: dict[str, dict] = {}
     for s in sessions:
         vid = s["volunteer_id"]
-        if vid not in vol_data:
-            vol_data[vid] = {"completed": 0, "total": 0}
-        vol_data[vid]["total"] += 1
+        if vid not in prof_data:
+            prof_data[vid] = {"completed": 0, "total": 0}
+        prof_data[vid]["total"] += 1
         if s["status"] == "completed":
-            vol_data[vid]["completed"] += 1
+            prof_data[vid]["completed"] += 1
 
-    if not vol_data:
+    if not prof_data:
         return []
 
-    all_vol_ids = list(vol_data.keys())
-    # Pagination on volunteer level
-    paginated_ids = all_vol_ids[offset : offset + limit]
+    all_prof_ids = list(prof_data.keys())
+    # Pagination on professional level
+    paginated_ids = all_prof_ids[offset : offset + limit]
 
     # Fetch profiles + AURA in parallel
     profiles_result = (
@@ -439,7 +439,7 @@ async def list_org_volunteers(
     for vid in paginated_ids:
         p = profile_map.get(vid, {})
         a = aura_map.get(vid, {})
-        d = vol_data[vid]
+        d = prof_data[vid]
         rows.append(
             OrgVolunteerRow(
                 volunteer_id=vid,
@@ -457,18 +457,18 @@ async def list_org_volunteers(
     return rows
 
 
-# ── Volunteer search ──────────────────────────────────────────────────────────
+# ── Talent search ────────────────────────────────────────────────────────────
 
 
 @router.post("/search/volunteers", response_model=list[VolunteerSearchResult])
 @limiter.limit(RATE_DISCOVERY)
-async def search_volunteers(
+async def search_talent(
     request: Request,
     payload: VolunteerSearchRequest,
     db_admin: SupabaseAdmin,
     user_id: CurrentUserId,
 ) -> list[VolunteerSearchResult]:
-    """Semantic volunteer search using pgvector + rule-based fallback.
+    """Semantic talent search using pgvector + rule-based fallback.
 
     Requires organization account. Uses Gemini embeddings for semantic search;
     falls back to rule-based filter if embedding unavailable or slow.
@@ -478,7 +478,7 @@ async def search_volunteers(
     if not caller.data or caller.data.get("account_type") != "organization":
         raise HTTPException(
             status_code=403,
-            detail={"code": "ORG_REQUIRED", "message": "Only organization accounts can search volunteers"},
+            detail={"code": "ORG_REQUIRED", "message": "Only organization accounts can search talent"},
         )
     org_row = await db_admin.table("organizations").select("id").eq("owner_id", str(user_id)).maybe_single().execute()
     if not org_row.data:
@@ -500,10 +500,10 @@ async def search_volunteers(
         query_embedding = await asyncio.wait_for(generate_embedding(payload.query), timeout=0.8)
     except TimeoutError:
         logger.warning(
-            "Embedding timeout on volunteer search — using rule-based fallback", query_len=len(payload.query)
+            "Embedding timeout on talent search — using rule-based fallback", query_len=len(payload.query)
         )  # SEC-Q5: no raw query — may contain PII (names, emails)
     except Exception as e:
-        logger.warning("Embedding error on volunteer search — using rule-based fallback", error=str(e)[:100])
+        logger.warning("Embedding error on talent search — using rule-based fallback", error=str(e)[:100])
 
     if query_embedding:
         rpc_result = await db_admin.rpc(
@@ -583,7 +583,7 @@ async def search_volunteers(
         p = profile_map.get(vid)
         if not p:
             # Profile missing — skip stale score row
-            logger.warning("Volunteer in aura_scores but no profile found", volunteer_id=vid)
+            logger.warning("Professional in aura_scores but no profile found", professional_id=vid)
             continue
 
         sim_raw = row.get("similarity")
@@ -615,11 +615,11 @@ async def assign_assessments(
     db_admin: SupabaseAdmin,
     user_id: CurrentUserId,
 ) -> AssignmentResponse:
-    """Assign competency assessments to specific volunteers.
+    """Assign competency assessments to specific professionals.
 
     Security checks:
     1. Caller must own an organization
-    2. Max 100 volunteers per request (rate limit on endpoint too)
+    2. Max 100 professionals per request (rate limit on endpoint too)
     3. Competency slugs validated against DB
     4. Duplicate assignments skipped (not error)
     """
@@ -645,9 +645,9 @@ async def assign_assessments(
             detail={"code": "INVALID_COMPETENCY", "message": f"Unknown competencies: {', '.join(invalid_slugs)}"},
         )
 
-    # Validate volunteer IDs exist
-    vol_result = await db_admin.table("profiles").select("id").in_("id", payload.volunteer_ids).execute()
-    existing_ids = {p["id"] for p in (vol_result.data or [])}
+    # Validate professional IDs exist
+    prof_result = await db_admin.table("profiles").select("id").in_("id", payload.volunteer_ids).execute()
+    existing_ids = {p["id"] for p in (prof_result.data or [])}
     missing_ids = [vid for vid in payload.volunteer_ids if vid not in existing_ids]
 
     deadline = datetime.now(UTC) + timedelta(days=payload.deadline_days)
@@ -658,7 +658,7 @@ async def assign_assessments(
 
     for vid in payload.volunteer_ids:
         if vid in missing_ids:
-            errors.append(f"Volunteer {vid[:8]}... not found")
+            errors.append(f"Professional {vid[:8]}... not found")
             skipped += 1
             continue
 
@@ -739,13 +739,13 @@ async def create_intro_request(
     db: SupabaseAdmin,
     user_id: CurrentUserId,
 ) -> IntroRequestResponse:
-    """Send an introduction request from an org to a volunteer.
+    """Send an introduction request from an org to a professional.
 
     Requirements:
     - Caller must be account_type='organization' (dual-checked: this endpoint + DB)
-    - Volunteer must have visible_to_orgs=True
-    - Only one pending request per org-volunteer pair (DB unique constraint)
-    Creates a notification for the volunteer.
+    - Professional must have visible_to_orgs=True
+    - Only one pending request per org-professional pair (DB unique constraint)
+    Creates a notification for the professional.
     """
     # Dual org-role check: DB lookup on caller's account_type
     caller_result = (
@@ -762,26 +762,26 @@ async def create_intro_request(
         )
     org_name = caller_result.data.get("display_name") or caller_result.data.get("username") or "An organization"
 
-    # Verify volunteer is opted in and exists
-    volunteer_result = (
+    # Verify professional is opted in and exists
+    target_result = (
         await db.table("profiles")
         .select("id, display_name, username, visible_to_orgs, account_type")
         .eq("id", payload.volunteer_id)
         .maybe_single()
         .execute()
     )
-    if not volunteer_result.data:
+    if not target_result.data:
         raise HTTPException(
             status_code=404,
-            detail={"code": "VOLUNTEER_NOT_FOUND", "message": "Volunteer not found"},
+            detail={"code": "PROFILE_NOT_FOUND", "message": "Professional not found"},
         )
-    vol = volunteer_result.data
-    if not vol.get("visible_to_orgs"):
+    target = target_result.data
+    if not target.get("visible_to_orgs"):
         raise HTTPException(
             status_code=403,
-            detail={"code": "NOT_DISCOVERABLE", "message": "This volunteer has not opted in to org discovery"},
+            detail={"code": "NOT_DISCOVERABLE", "message": "This professional has not opted in to org discovery"},
         )
-    if vol.get("account_type") == "organization":
+    if target.get("account_type") == "organization":
         raise HTTPException(
             status_code=422,
             detail={"code": "INVALID_TARGET", "message": "Cannot send introduction request to an organization account"},
@@ -810,7 +810,7 @@ async def create_intro_request(
                 status_code=409,
                 detail={
                     "code": "REQUEST_ALREADY_PENDING",
-                    "message": "You already have a pending introduction request for this volunteer",
+                    "message": "You already have a pending introduction request for this professional",
                 },
             ) from e
         logger.error("Failed to create intro request", error=err_str[:300])
@@ -825,7 +825,7 @@ async def create_intro_request(
 
     intro = intro_result.data[0]
 
-    # Create notification for the volunteer (fire-and-forget)
+    # Create notification for the professional (fire-and-forget)
     from app.services.notification_service import notify
 
     await notify(

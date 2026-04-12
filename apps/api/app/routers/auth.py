@@ -132,7 +132,7 @@ async def register(
     payload: RegisterRequest,
     db: SupabaseAnon,
 ) -> AuthResponse:
-    """Register a new volunteer via Supabase Auth (anon key — OWASP HIGH-05 fix)."""
+    """Register a new user via Supabase Auth (anon key — OWASP HIGH-05 fix)."""
     try:
         auth_response = await db.auth.sign_up(
             {

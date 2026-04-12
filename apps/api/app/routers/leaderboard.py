@@ -1,7 +1,7 @@
-"""Leaderboard endpoint — top volunteers by AURA score.
+"""Leaderboard endpoint — top professionals by AURA score.
 
 Public endpoint (no auth required).
-Rank > 10: display_name anonymized to protect volunteer privacy.
+Rank > 10: display_name anonymized to protect user privacy.
 """
 
 from datetime import UTC
@@ -53,10 +53,10 @@ async def get_leaderboard(
     period: str = Query(default="all_time", pattern="^(weekly|monthly|all_time)$"),
     limit: int = Query(default=50, ge=1, le=100),
 ) -> LeaderboardResponse:
-    """Get top volunteers ranked by AURA score.
+    """Get top professionals ranked by AURA score.
 
     Public endpoint — no auth required.
-    Volunteers ranked > 10 have their display_name anonymized to protect privacy.
+    Professionals ranked > 10 have their display_name anonymized to protect privacy.
     """
     try:
         # Build query: aura_scores JOIN profiles

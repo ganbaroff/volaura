@@ -1,14 +1,14 @@
 """Expert verification endpoints.
 
 Public flow (no auth required):
-  GET  /api/verify/{token}  → validate token, return volunteer + competency info
+  GET  /api/verify/{token}  → validate token, return professional + competency info
   POST /api/verify/{token}  → submit rating + comment, mark token as used
 
 Authenticated flow:
   POST /api/profiles/{volunteer_id}/verification-link  (in profiles.py)
 
 AURA integration:
-  On successful submission, blends the verification rating into the volunteer's
+  On successful submission, blends the verification rating into the professional's
   competency scores and calls upsert_aura_score() to refresh the AURA total.
   Blend formula: existing_score * 0.6 + verification_score * 0.4
   If no prior assessment: verification_score * 0.85 (slight discount)
@@ -79,7 +79,7 @@ async def _get_valid_token_row(token: str, db: SupabaseAdmin) -> dict:
             status_code=410,
             detail={
                 "code": "TOKEN_EXPIRED",
-                "message": "This link has expired. Links are valid for 7 days. Contact the volunteer for a new link.",
+                "message": "This link has expired. Links are valid for 7 days. Contact the professional for a new link.",
             },
         )
 
@@ -91,7 +91,7 @@ def _rating_to_score(rating: int) -> float:
 
     Linear scale: 1→20, 2→40, 3→60, 4→80, 5→100.
     Not starting at 0 because even a "Poor" rating still indicates
-    the expert knows the volunteer and chose to verify them.
+    the expert knows the professional and chose to verify them.
     """
     return round((rating / 5.0) * 100, 2)
 
@@ -130,7 +130,7 @@ async def _update_aura_after_verification(
             existing_scores[competency_id] = blended
             updated_scores = existing_scores
         else:
-            # Volunteer has no AURA record yet — create one from this verification
+            # Professional has no AURA record yet — create one from this verification
             updated_scores = {competency_id: round(verification_score * 0.85, 2)}
 
         await db.rpc(
@@ -167,17 +167,17 @@ async def get_verification_info(
     token: TokenParam,
     db: SupabaseAdmin,
 ) -> VerificationTokenInfo:
-    """Validate token and return volunteer + competency info for the rating UI.
+    """Validate token and return professional + competency info for the rating UI.
 
     Public endpoint — no auth header required.
-    Attacker note: only non-sensitive volunteer info is returned (display_name, username, avatar).
+    Attacker note: only non-sensitive professional info is returned (display_name, username, avatar).
     The token is single-use and time-limited — no brute-force risk beyond rate limiting.
     """
     row = await _get_valid_token_row(token, db)
 
     profile = row.get("profiles") or {}
     return VerificationTokenInfo(
-        volunteer_display_name=profile.get("display_name") or profile.get("username", "Volunteer"),
+        volunteer_display_name=profile.get("display_name") or profile.get("username", "Professional"),
         volunteer_username=profile.get("username", ""),
         volunteer_avatar_url=profile.get("avatar_url"),
         verifier_name=row["verifier_name"],
@@ -194,7 +194,7 @@ async def submit_verification(
     payload: SubmitVerificationRequest,
     db: SupabaseAdmin,
 ) -> SubmitVerificationResponse:
-    """Submit a rating for a volunteer and mark the token as used.
+    """Submit a rating for a professional and mark the token as used.
 
     This is atomic: we update token_used=TRUE in the same row as the rating.
     If two concurrent requests hit this endpoint with the same token, the second
@@ -232,7 +232,7 @@ async def submit_verification(
         )
 
     profile = row.get("profiles") or {}
-    volunteer_name = profile.get("display_name") or profile.get("username", "Volunteer")
+    professional_name = profile.get("display_name") or profile.get("username", "Professional")
 
     logger.info(
         "Verification submitted",
@@ -251,7 +251,7 @@ async def submit_verification(
 
     return SubmitVerificationResponse(
         status="verified",
-        volunteer_display_name=volunteer_name,
+        volunteer_display_name=professional_name,
         competency_id=row["competency_id"],
         rating=payload.rating,
     )

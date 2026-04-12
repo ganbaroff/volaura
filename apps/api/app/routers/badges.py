@@ -26,10 +26,10 @@ async def get_open_badge_credential(
     request: Request,
     db: SupabaseAdmin,
 ) -> dict:
-    """Return an Open Badges 3.0 Verifiable Credential for a volunteer's AURA badge.
+    """Return an Open Badges 3.0 Verifiable Credential for a professional's AURA badge.
 
     The credential is publicly accessible — no auth required.
-    Rate limited (RATE_DISCOVERY) to prevent volunteer enumeration.
+    Rate limited (RATE_DISCOVERY) to prevent profile enumeration.
     """
     # Validate UUID format before any DB call (SECURITY-REVIEW.md Point 2)
     try:

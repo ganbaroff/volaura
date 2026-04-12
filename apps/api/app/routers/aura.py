@@ -148,7 +148,7 @@ async def get_aura_explanation(
             explanations.append(
                 {
                     "competency_id": session.get("competency_id"),
-                    "role_level": session.get("role_level", "volunteer"),
+                    "role_level": session.get("role_level", "professional"),
                     "completed_at": session.get("completed_at"),
                     "items_evaluated": len(item_explanations),
                     "evaluations": item_explanations,
@@ -172,7 +172,7 @@ async def get_aura_by_id(
     volunteer_id: str,
     db: SupabaseAdmin,
 ) -> AuraScoreResponse:
-    """Get any volunteer's AURA score (public profiles only, respects visibility).
+    """Get any professional's AURA score (public profiles only, respects visibility).
 
     Public endpoint — no auth required. Called by /u/[username] for anonymous visitors.
     Rate limited to RATE_DISCOVERY (10/min) to prevent bulk enumeration scraping.
@@ -181,7 +181,7 @@ async def get_aura_by_id(
     visibility — intentional for public discovery of non-hidden profiles.
 
     Security (CRIT-04): Identical 404 response for hidden vs nonexistent profiles
-    to prevent volunteer existence enumeration attacks.
+    to prevent profile existence enumeration attacks.
 
     Profile view notifications are emitted via the dedicated endpoint:
     POST /api/profiles/{username}/view — called explicitly by the frontend.

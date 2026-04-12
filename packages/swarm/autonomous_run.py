@@ -43,6 +43,90 @@ from swarm.inbox_protocol import (
 from swarm.perspective_registry import PerspectiveRegistry
 
 # ──────────────────────────────────────────────────────────────
+# Settled decisions — injected into ALL agent prompts
+# ──────────────────────────────────────────────────────────────
+
+SETTLED_DECISIONS = """
+## Settled Decisions (DO NOT contradict or re-open)
+1. Ecosystem = only moat. Not IRT, not LLM grading, not AURA score.
+2. ADHD-first UX. 26 rules. No punishment. One action per screen.
+3. TAM = 500-700K in AZ. Not millions.
+4. B2B before B2C. LTV/CAC broken at $3/mo B2C.
+5. Birbank/m10 before Stripe. AZ users don't know Stripe.
+6. IRT calibration blocks B2B. Need 1000+ real responses.
+7. 5->10 minimum questions. 5q mode not defensible.
+8. Langfuse + Phoenix for observability.
+9. Position on ecosystem, not rigor. SHL beats us on rigor.
+10. Communication Law: radical truth, no hedging, caveman (300 words max).
+"""
+
+# ──────────────────────────────────────────────────────────────
+# Research context — maps agent names to research files they MUST read
+# ──────────────────────────────────────────────────────────────
+
+RESEARCH_CONTEXT_MAP = {
+    "Scaling Engineer": [
+        "docs/research/blind-spots-analysis.md",
+        "docs/ARCHITECTURE.md",
+    ],
+    "Security Auditor": [
+        "docs/ATTACK-VECTORS-EXECUTIVE.md",
+    ],
+    "Product Strategist": [
+        "memory/swarm/research/competitive-intelligence-2026-04-12.md",
+        "docs/research/adhd-first-ux-research.md",
+        "docs/product/COMPETITIVE-ANALYSIS.md",
+    ],
+    "Cultural Intelligence": [
+        "docs/research/adhd-first-ux-research.md",
+        "docs/research/ecosystem-design-research.md",
+        "docs/product/USER-PERSONAS.md",
+    ],
+    "Communications Strategist": [
+        "docs/design/BRAND-IDENTITY.md",
+        "docs/design/UX-COPY-AZ-EN.md",
+    ],
+    "Assessment Science": [
+        "memory/swarm/research/assessment-science-audit-2026-04-12.md",
+        "docs/research/gemini-research-all.md",
+    ],
+    "Legal Advisor": [
+        "docs/research/blind-spots-analysis.md",
+        "docs/research/geo-pricing-research.md",
+    ],
+    "PR & Media": [
+        "docs/product/COMPETITIVE-ANALYSIS.md",
+        "docs/research/blind-spots-analysis.md",
+    ],
+    "Risk Manager": [
+        "docs/research/blind-spots-analysis.md",
+    ],
+}
+
+MAX_RESEARCH_LINES = 100
+MAX_RESEARCH_FILES = 3
+
+
+def _load_research_context(agent_name: str, root: Path) -> str:
+    """Load relevant research files for an agent, truncated to fit context."""
+    files = RESEARCH_CONTEXT_MAP.get(agent_name, [])
+    if not files:
+        return ""
+    chunks = []
+    for fpath in files[:MAX_RESEARCH_FILES]:
+        full = root / fpath
+        if full.exists():
+            try:
+                lines = full.read_text(encoding="utf-8").splitlines()[:MAX_RESEARCH_LINES]
+                chunks.append(f"### {fpath}\n" + "\n".join(lines))
+            except Exception:
+                pass
+    if not chunks:
+        return ""
+    return "\n\n## Research Context (DO NOT re-research these topics)\n\n" + "\n\n".join(chunks)
+
+
+# ──────────────────────────────────────────────────────────────
 # Agent perspectives — each gets a unique lens
 # ──────────────────────────────────────────────────────────────
 
@@ -516,10 +600,14 @@ Tag [ESCALATE] if this deploy should be rolled back immediately."""
 
     prior_findings_line = perspective.get("prior_findings", "")
 
+    research_context = _load_research_context(perspective["name"], _pr)
+
     return f"""{team_context}
 
+{SETTLED_DECISIONS}
+
 YOUR PERSPECTIVE: {perspective['name']}
-YOUR LENS: {perspective['lens']}{weight_line}{skills_line}{bound_files_line}{reflexion_line}{prior_findings_line}
+YOUR LENS: {perspective['lens']}{weight_line}{skills_line}{bound_files_line}{reflexion_line}{prior_findings_line}{research_context}
 
 {task}
 

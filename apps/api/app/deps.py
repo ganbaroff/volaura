@@ -95,7 +95,7 @@ async def get_supabase_user(request: Request) -> AsyncGenerator[AsyncClient, Non
         raise HTTPException(
             status_code=500,
             detail={"code": "DB_CLIENT_ERROR", "message": "Internal server error"},
-        )
+        ) from e
 
     yield client
 

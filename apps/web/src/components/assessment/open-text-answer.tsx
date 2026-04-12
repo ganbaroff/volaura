@@ -5,10 +5,27 @@ import { useTranslation } from "react-i18next";
 import { Mic, MicOff } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
-// Extend Window for webkit-prefixed SpeechRecognition (Safari/older Chrome)
-type SpeechRecognitionCtor = typeof SpeechRecognition;
+// Web Speech API types (not in all TS lib configs)
+interface SpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultList;
+}
+interface SpeechRecognitionCtor {
+  new (): SpeechRecognitionInstance;
+}
+interface SpeechRecognitionInstance extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: ((ev: SpeechRecognitionEvent) => void) | null;
+  onerror: ((ev: Event) => void) | null;
+  onend: (() => void) | null;
+  start(): void;
+  stop(): void;
+  abort(): void;
+}
 declare global {
   interface Window {
+    SpeechRecognition?: SpeechRecognitionCtor;
     webkitSpeechRecognition?: SpeechRecognitionCtor;
   }
 }
@@ -31,7 +48,7 @@ export function OpenTextAnswer({
   const { t } = useTranslation();
   const resolvedPlaceholder = placeholder ?? t("assessment.answerPlaceholder");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
   const [isListening, setIsListening] = useState(false);
   const [supported, setSupported] = useState(false);
 

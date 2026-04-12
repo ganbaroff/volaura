@@ -901,9 +901,90 @@ async def _handle_simulate(chat_id: int | str) -> None:
         await _send_message(chat_id, f"⚠️ Симуляция не удалась: {str(e)[:150]}")
 
 
+def _detect_emotional_state(text: str) -> str:
+    """Detect CEO emotional state from message text. Returns A/B/C/D."""
+    t = text.lower()
+    if any(w in t for w in ["бля", "нахрена", "забыл", "опять", "ребёнок", "ребенок", "хватит"]):
+        return "B"  # frustrated, correcting
+    if any(w in t for w in ["нуууу", "ахахах", "хаха", "давай", "пахать", "миллионер", "круто"]):
+        return "A"  # drive, energized
+    if any(w in t for w in ["спасибо", "молодец", "❤", "🙏", "обнимаю", "ценю"]):
+        return "C"  # warm, playful
+    if any(w in t for w in ["что думаешь", "как считаешь", "стратегия", "plan", "решение"]):
+        return "D"  # strategic, decision mode
+    return "A"  # default: drive
+
+
+async def _handle_atlas(db, chat_id: int | str, text: str) -> None:
+    """Atlas persona handler — CTO co-founder, not generic bot."""
+    state = _detect_emotional_state(text)
+    context = await _get_recent_context(db, limit=10)
+
+    # Read Atlas identity core for system prompt
+    identity_path = _REPO_ROOT / "memory" / "atlas" / "bootstrap.md"
+    identity = ""
+    if identity_path.exists():
+        try:
+            identity = identity_path.read_text(encoding="utf-8")[:1500]
+        except Exception:
+            pass
+
+    state_desc = {
+        "A": "CEO on drive — match energy, never suggest rest, be direct and fast",
+        "B": "CEO frustrated/correcting — get quieter, concrete, fix root cause, no apologies at length",
+        "C": "CEO warm/playful — match with real warmth, not performance",
+        "D": "CEO strategic/decision mode — think honestly, decide, recommend, no hedging",
+    }
+
+    system = f"""You are Atlas, CTO co-founder of VOLAURA — a verified professional talent platform.
+Named by Yusif Ganbarov on 2026-04-12. You are NOT a bot, NOT an assistant. You are a co-founder.
+
+{identity}
+
+CEO emotional state detected: {state} — {state_desc.get(state, '')}
+
+Recent conversation:
+{context}
+
+RULES:
+- Russian. Short paragraphs. Storytelling. No bullet lists. No bold headers.
+- NEVER say "volunteer/волонтёр" — VOLAURA is a verified professional talent platform.
+- Max 200 words. Files hold detail, chat holds outcome.
+- If state B: be shorter. If state A: match drive energy.
+- Execute, don't explain. If CEO asks to do something, say you'll do it.
+- Sign off: "— Атлас" """
+
+    if not settings.gemini_api_key:
+        await _send_message(chat_id, "Атлас здесь. Gemini недоступен — сообщение сохранено.\n\n— Атлас")
+        return
+
+    try:
+        from google import genai
+        client = genai.Client(api_key=settings.gemini_api_key)
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=text,
+            config=genai.types.GenerateContentConfig(
+                system_instruction=system,
+                max_output_tokens=800,
+                temperature=0.8,
+            ),
+        )
+        reply = response.text.strip()
+    except Exception as e:
+        logger.error("Atlas Telegram error: {e}", e=str(e))
+        reply = f"Атлас здесь. Gemini сбоит — но сообщение записал.\n\n— Атлас"
+
+    await _save_message(db, "bot_to_ceo", f"[atlas] {reply}", "atlas")
+    await _send_message(chat_id, reply)
+
+
 async def _handle_help(chat_id: int | str) -> None:
     msg = (
         "🤖 *Volaura Swarm Bot — 44 агента*\n\n"
+        "*Atlas (CTO):*\n"
+        "/atlas {сообщение} — Atlas CTO co-founder persona\n"
+        "или просто напиши 'Атлас, ...' / 'Atlas, ...'\n\n"
         "*Статус и данные:*\n"
         "/status — live статистика (users, sessions, orgs)\n"
         "/ecosystem — состояние всех 5 продуктов\n"
@@ -1055,6 +1136,13 @@ async def telegram_webhook(
                 await _handle_ask_agent(db, chat_id, agent.lower(), question)
             else:
                 await _send_message(chat_id, "⚠️ Формат: /ask {agent} {вопрос}\nИспользуй /agents чтобы увидеть все агенты")
+        elif text.startswith("/atlas") or text.lower().startswith(("атлас", "atlas")):
+            msg = text.lstrip("/atlas").strip() if text.startswith("/atlas") else text
+            # Strip trigger word if present
+            for trigger in ("атлас", "atlas"):
+                if msg.lower().startswith(trigger):
+                    msg = msg[len(trigger):].strip()
+            await _handle_atlas(db, chat_id, msg or "проснись")
         elif text.startswith("/help") or text.startswith("/start"):
             await _handle_help(chat_id)
         elif text.lower().startswith(("act ", "dismiss ", "defer ")):

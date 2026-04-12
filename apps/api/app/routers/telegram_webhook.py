@@ -1161,6 +1161,9 @@ If nothing meaningful, return: []"""
 
 async def _handle_atlas(db, chat_id: int | str, text: str) -> None:
     """Atlas personal assistant — self-learning, emotionally aware, self-positioning."""
+    # Save incoming CEO message FIRST
+    await _save_message(db, "ceo_to_bot", text, "atlas")
+
     state = _detect_emotional_state(text)
     context = await _get_recent_context(db, limit=10)
 

@@ -1,36 +1,30 @@
 # Atlas — Heartbeat
 
-**Session:** 94
-**Timestamp:** 2026-04-13, late night
+**Session:** 95
+**Timestamp:** 2026-04-14, evening
 **Branch:** main
-**Last commit:** `32c435e` — session 94 final sync
-**Commits this session:** 30
+**Last commit:** `b7dbba0` — professional replaces volunteer in API schemas
+**Commits this session:** 7
 
 **Production:** volauraapi-production.up.railway.app → OK
-**CI:** green (832 tests — 749 backend + 83 frontend)
-**Swarm:** 13 agents, 4 waves, 25 active files, research injected
+**CI:** green (ruff fix pushed)
+**Swarm:** 13 agents, 4 waves, spam silenced (40/day → 0-3)
 **Protocol:** v2.0 — Atlas leads, Cowork advises
 
 **What changed this session:**
-- Theater cleanup: 51 dead skills archived, 4 broken hooks deleted, 3 dead protocols archived
-- Prod URL fixed everywhere (modest-happiness dead → volauraapi-production)
-- CI: 38→0 failures (missing secrets + wrong mocks + consent + formatting)
-- Swarm: 8→13 agents with DAG waves + research injection + settled decisions
-- Swarm refactor: 58→25 active files
-- Telegram: MiroFish→Atlas persona, emotional memory loaded, temperature 1.0
-- Volunteer purged from prod DB via migration
-- Reflexion system: dynamic context sampling + self-written lessons
-- Backlog module: CLI, DAG ordering, session-protocol hook, proposal promotion
-- Langfuse 3 keys added to Railway
-- Sentry DSN added to Railway
-- E2E bot ran full assessment — bot bug found (not engine bug)
-- Voice/storytelling mode activated — CEO approved
-- Protocol v2.0: Atlas CTO lead, Cowork research advisor
+- E2E bot fix: is_complete check instead of next_question (5→10 answers)
+- 30 new MCQ questions across 5 competencies (IRT convergence improved)
+- Atlas Telegram self-learning: atlas_learnings table + extraction after each conversation
+- ZEUS memory architecture research: 6 frameworks evaluated, all rejected, ZenBrain formula confirmed novel
+- Telegram spam killed: quiet runs silent, proactive loop 15min→2h, Trend Scout file-only
+- API schemas: "professional" default instead of "volunteer"
+- tg-mini dead URL fixed (modest-happiness → volauraapi-production)
+- CEO reflexion: don't dump technical details on CEO, he's the courier
 
 **Next session priorities:**
-1. Fix E2E bot loop (check is_complete not next_question)
-2. Add questions to DB (all 8 competencies below 15)
-3. Handoff 004: Swarm Phase 2
-4. 579 volunteer refs in code (DB done)
+1. Verify Railway deployed self-learning code
+2. volunteer_id rename (296 refs in routers + DB migration)
+3. Test self-learning with real Telegram conversation
+4. Add questions for reliability/english/leadership
 
 **Pending CEO decisions:** None. Full autonomy granted.

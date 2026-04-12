@@ -61,6 +61,7 @@ class StartAssessmentRequest(BaseModel):
     language: Literal["en", "az"] = "en"
     role_level: Literal["volunteer", "coordinator", "specialist", "manager", "senior_manager"] = "volunteer"
     energy_level: Literal["full", "mid", "low"] = "full"  # Constitution Law 2: Energy Adaptation
+    automated_decision_consent: bool = False  # GDPR Article 22: user acknowledges automated scoring
 
     @field_validator("competency_slug")
     @classmethod

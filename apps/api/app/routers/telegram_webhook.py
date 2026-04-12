@@ -1050,9 +1050,9 @@ def _detect_emotional_state(text: str) -> str:
 async def _load_atlas_learnings(db: SupabaseAdmin) -> str:
     """Load self-learned observations about CEO, sorted by ZenBrain decay score."""
     try:
-        result = await db.table("atlas_learnings").select("*").order(
-            "emotional_intensity", desc=True
-        ).limit(30).execute()
+        result = (
+            await db.table("atlas_learnings").select("*").order("emotional_intensity", desc=True).limit(30).execute()
+        )
         if not result.data:
             return ""
         lines = []
@@ -1068,9 +1068,7 @@ async def _load_atlas_learnings(db: SupabaseAdmin) -> str:
         return ""
 
 
-async def _atlas_extract_learnings(
-    db: SupabaseAdmin, user_msg: str, bot_reply: str, state: str
-) -> None:
+async def _atlas_extract_learnings(db: SupabaseAdmin, user_msg: str, bot_reply: str, state: str) -> None:
     """After responding, extract observations about CEO and save to DB."""
     if not settings.gemini_api_key:
         return
@@ -1120,12 +1118,18 @@ If nothing meaningful, return: []"""
         for item in learnings[:3]:
             if not isinstance(item, dict) or "content" not in item:
                 continue
-            await db.table("atlas_learnings").insert({
-                "category": item.get("category", "insight"),
-                "content": item["content"][:500],
-                "emotional_intensity": min(float(item.get("emotional_intensity", 1)), 5.0),
-                "source_message": user_msg[:200],
-            }).execute()
+            await (
+                db.table("atlas_learnings")
+                .insert(
+                    {
+                        "category": item.get("category", "insight"),
+                        "content": item["content"][:500],
+                        "emotional_intensity": min(float(item.get("emotional_intensity", 1)), 5.0),
+                        "source_message": user_msg[:200],
+                    }
+                )
+                .execute()
+            )
         if learnings:
             logger.info("Atlas learned {n} observations from CEO message", n=len(learnings))
     except Exception as e:

@@ -10,7 +10,7 @@ See memory/atlas/ceo-feed/backlog-unfulfilled-2026-04-12.md — 6 broken promise
 
 ## Where we are
 Branch: main, commit e86c334
-Prod: healthy. CI: still red (frontend lint). Telegram: webhook fixed, Groq fallback deployed.
+Prod: volauraapi-production.up.railway.app (NOT modest-happiness — that's dead). CI: still red. Telegram: webhook fixed, Groq fallback deployed.
 
 ## Memory loss analysis
 See ~/.claude/projects/.../memory/feedback_memory_loss_analysis.md — 5 structural failure points

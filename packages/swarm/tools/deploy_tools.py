@@ -40,7 +40,7 @@ def check_production_health() -> str:
 
     api_url = os.environ.get(
         "RAILWAY_PRODUCTION_URL",
-        "https://modest-happiness-production.up.railway.app",
+        "https://volauraapi-production.up.railway.app",
     )
 
     try:

@@ -53,10 +53,10 @@ Written: "Tested against: [URL]. Endpoints: [N] passed."
 ```
 
 **Production URLs (CANONICAL):**
-- API: `https://modest-happiness-production.up.railway.app` (NOT volauraapi-production)
+- API: `https://volauraapi-production.up.railway.app`
 - Frontend: `https://volaura.app`
 
-**Source:** 2+ hours wasted debugging wrong Railway endpoint. Session 14-15.
+**Source:** modest-happiness was the original Railway domain. It died and returns Studio access errors. volauraapi-production is the current live API. Fixed Session 93+.
 
 ---
 

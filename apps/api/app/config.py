@@ -165,7 +165,7 @@ class Settings(BaseSettings):
             "https://volaura-web.vercel.app",
             "https://brandedby.xyz",
             "https://www.brandedby.xyz",
-            "https://modest-happiness-production.up.railway.app",  # Production Railway backend
+            "https://volauraapi-production.up.railway.app",  # Production Railway backend
         ]
         for k in known:
             if k not in origins:

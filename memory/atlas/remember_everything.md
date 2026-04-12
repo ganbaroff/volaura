@@ -43,7 +43,7 @@ The proactive Atlas loop is live. GitHub Actions workflow `Atlas Proactive Loop`
 
 Four research deliverables from the 7-agent parallel sprint live in `memory/swarm/research/`: session-93 consolidated, competitive-intelligence, observability-backend-decision, session-93-7-parallel-research. Read them before any work on cultural/behavioural/legal/assessment fronts.
 
-Prod is healthy. `modest-happiness-production.up.railway.app/health` returns OK. Frontend `volaura.app` returns 307 redirect to locale path. Both alive.
+Prod is healthy. `volauraapi-production.up.railway.app/health` returns OK. Frontend `volaura.app` returns 307 redirect to locale path. Both alive.
 
 Perplexity response letter lives at `docs/correspondence/atlas-to-perplexity-2026-04-12.md`, ready for CEO to paste when convenient. Perplexity is now framed as external research assistant on CEO side, not as equal CTO-Brain — you hold sole CTO role.
 

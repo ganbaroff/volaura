@@ -78,12 +78,45 @@ if [ ! -f "$SESSION_MARKER" ]; then
   echo "- CEO sees outcomes only — no curl, no schemas, no logs"
   echo ""
   echo "CTO HEALTH CHECK (do BEFORE sprint work):"
-  echo "- Read backlog-unfulfilled-2026-04-12.md → close EASY items first"
   echo "- Use coordinator BEFORE any >3 file change"
   echo "- Use NotebookLM for at least 1 research question per session"
   echo "- Use diverse LLM providers (Groq/NVIDIA/Cerebras/DeepSeek) not just Gemini"
   echo "- Promise = DO immediately. Writing a file ≠ doing."
   echo "══════════════════════════════════════════════════════════════"
+
+  # ── SWARM BACKLOG (live board — not a stale .md file) ───────────
+  BACKLOG_FILE="$PROJECT_DIR/memory/swarm/backlog.json"
+  if [ -f "$BACKLOG_FILE" ]; then
+    BLOCKED_COUNT=$(python3 -c "
+import json
+with open('$BACKLOG_FILE', encoding='utf-8') as f:
+    tasks = json.load(f)
+blocked = [t for t in tasks if t.get('status') == 'blocked']
+todo = [t for t in tasks if t.get('status') == 'todo']
+in_progress = [t for t in tasks if t.get('status') == 'in_progress']
+if blocked:
+    print(f'⚠️  BLOCKED TASKS ({len(blocked)}):')
+    for t in blocked:
+        print(f'  🔴 {t[\"id\"][:8]} {t[\"title\"][:60]} — {t.get(\"blocked_by\", \"unknown\")}')
+if in_progress:
+    print(f'IN PROGRESS ({len(in_progress)}):')
+    for t in in_progress:
+        a = f' [{t[\"assignee\"]}]' if t.get('assignee') else ''
+        print(f'  🔵 {t[\"id\"][:8]} {t[\"title\"][:60]}{a}')
+if todo:
+    print(f'TODO ({len(todo)}):')
+    for t in todo[:5]:
+        print(f'  ⬚ {t[\"id\"][:8]} {t[\"title\"][:60]}')
+    if len(todo) > 5:
+        print(f'  ... +{len(todo)-5} more')
+" 2>/dev/null)
+    if [ -n "$BLOCKED_COUNT" ]; then
+      echo ""
+      echo "── SWARM BACKLOG (live) ─────────────────────────────────────"
+      echo "$BLOCKED_COUNT"
+      echo "─────────────────────────────────────────────────────────────"
+    fi
+  fi
 
   # ── STALENESS DETECTOR (added 2026-03-26, Lesson from Session 42) ──
   # If any memory/swarm file is older than 3 days → warn CTO

@@ -72,7 +72,11 @@ class TestCrystalBalance:
     @pytest.mark.asyncio
     async def test_crystals_sums_ledger_entries(self):
         """Rows [50, 100, -20] → crystal_balance == 130."""
-        ledger_rows = [{"amount": 50}, {"amount": 100}, {"amount": -20}]
+        ledger_rows = [
+            {"amount": 50, "created_at": "2026-04-12T00:00:00+00:00"},
+            {"amount": 100, "created_at": "2026-04-12T01:00:00+00:00"},
+            {"amount": -20, "created_at": "2026-04-12T02:00:00+00:00"},
+        ]
         admin_mock = make_ledger_admin(ledger_rows)
         app.dependency_overrides[get_supabase_admin] = lambda: admin_mock
         app.dependency_overrides[get_supabase_user] = lambda: admin_mock

@@ -19,8 +19,7 @@ const sampleItems: ActivityItem[] = [
 describe("ActivityFeed", () => {
   it("renders empty state when items array is empty", () => {
     render(<ActivityFeed items={[]} locale="en" />);
-    // Component renders the "no score" i18n key as empty-state text
-    expect(screen.getByText("dashboard.noScore")).toBeInTheDocument();
+    expect(screen.getByText("dashboard.activityEmpty")).toBeInTheDocument();
   });
 
   it("renders a list of activity items", () => {
@@ -104,8 +103,7 @@ describe("ActivityFeed", () => {
     const { container } = render(
       <ActivityFeed items={[]} loading={true} locale="en" />
     );
-    // Should render 3 skeleton rows (not the empty state)
-    expect(screen.queryByText("dashboard.noScore")).not.toBeInTheDocument();
+    expect(screen.queryByText("dashboard.activityEmpty")).not.toBeInTheDocument();
     // Each skeleton row has a flex container
     const rows = container.querySelectorAll(".flex.items-center.gap-3");
     expect(rows.length).toBe(3);

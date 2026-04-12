@@ -28,6 +28,44 @@ router = APIRouter(prefix="/telegram", tags=["Telegram"])
 SupabaseAdmin = AsyncClient
 
 
+async def _transcribe_voice(file_id: str, chat_id: int | str) -> str | None:
+    """Download Telegram voice → transcribe via Groq Whisper. Returns text or None."""
+    if not settings.telegram_bot_token or not file_id:
+        return None
+    groq_key = os.environ.get("GROQ_API_KEY", "")
+    if not groq_key:
+        await _send_message(chat_id, "Voice: GROQ_API_KEY not set.")
+        return None
+    try:
+        import httpx
+        async with httpx.AsyncClient(timeout=15) as client:
+            file_info = await client.get(
+                f"https://api.telegram.org/bot{settings.telegram_bot_token}/getFile",
+                params={"file_id": file_id},
+            )
+            file_path = file_info.json().get("result", {}).get("file_path", "")
+            if not file_path:
+                return None
+            audio_resp = await client.get(
+                f"https://api.telegram.org/file/bot{settings.telegram_bot_token}/{file_path}"
+            )
+            audio_bytes = audio_resp.content
+
+            resp = await client.post(
+                "https://api.groq.com/openai/v1/audio/transcriptions",
+                headers={"Authorization": f"Bearer {groq_key}"},
+                data={"model": "whisper-large-v3-turbo", "language": "ru"},
+                files={"file": ("voice.ogg", audio_bytes, "audio/ogg")},
+            )
+            text = resp.json().get("text", "").strip()
+            if text:
+                logger.info("Voice transcribed: {chars} chars", chars=len(text))
+            return text or None
+    except Exception as e:
+        logger.error("Voice transcription failed: {e}", e=str(e))
+        return None
+
+
 async def _send_message(chat_id: int | str, text: str, reply_markup: dict | None = None) -> bool:
     """Send a Telegram message via Bot API. Returns True on success."""
     import httpx
@@ -1077,6 +1115,13 @@ async def telegram_webhook(
     ceo_id = settings.telegram_ceo_chat_id
     if ceo_id and str(user_id) != str(ceo_id):
         return JSONResponse({"ok": True})
+
+    # Voice message → Groq Whisper transcription
+    voice = message.get("voice") or message.get("audio")
+    if voice and not text:
+        text = await _transcribe_voice(voice.get("file_id", ""), chat_id)
+        if not text:
+            return JSONResponse({"ok": True})
 
     if not text:
         return JSONResponse({"ok": True})

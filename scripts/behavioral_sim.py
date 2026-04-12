@@ -295,7 +295,7 @@ async def run_assessment_session(
         # (the loop below updates start_resp with each answer response)
         current_session = start_resp
 
-        if current_session.get("is_complete") or current_session.get("next_question") is None:
+        if current_session.get("is_complete"):
             break
 
         question = current_session.get("next_question")
@@ -344,9 +344,6 @@ async def run_assessment_session(
         start_resp = inner_session  # update loop variable
 
         if inner_session.get("is_complete"):
-            break
-
-        if inner_session.get("next_question") is None:
             break
 
     # Complete session

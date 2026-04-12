@@ -91,6 +91,7 @@ async def _start_assessment(client: httpx.AsyncClient, jwt: str) -> dict[str, An
             "language": "en",
             "role_level": "volunteer",
             "energy_level": "full",
+            "automated_decision_consent": True,
         },
     )
     if r.status_code not in (200, 201):

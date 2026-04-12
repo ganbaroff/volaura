@@ -103,9 +103,10 @@ function WelcomeContent() {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-background">
-      {/* Ambient glows */}
-      <div className="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] ambient-glow-primary pointer-events-none z-0 opacity-50" />
-      <div className="fixed bottom-[-5%] right-[-5%] w-[35%] h-[35%] ambient-glow-secondary pointer-events-none z-0 opacity-50" />
+      {/* Ambient glows removed 2026-04-12 — Constitution Law 4 (Animation Safety) / Foundation
+          Law 6 "motion only on achievement". Welcome is an action screen, not an achievement
+          moment. Behavioural Nudge audit flagged this as continuous decorative motion. Kept in
+          globals.css for use on AURA reveal (valid achievement context). */}
 
       <div className="relative z-10 w-full max-w-md space-y-8">
 

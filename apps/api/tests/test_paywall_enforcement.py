@@ -100,7 +100,7 @@ async def test_start_assessment_blocked_when_expired(client):
     try:
         response = await client.post(
             "/api/assessment/start",
-            json={"competency_slug": "communication"},
+            json={"competency_slug": "communication", "automated_decision_consent": True},
             headers={"Authorization": "Bearer test-token"},
         )
     finally:
@@ -131,7 +131,7 @@ async def test_start_assessment_blocked_when_cancelled(client):
     try:
         response = await client.post(
             "/api/assessment/start",
-            json={"competency_slug": "communication"},
+            json={"competency_slug": "communication", "automated_decision_consent": True},
             headers={"Authorization": "Bearer test-token"},
         )
     finally:
@@ -174,7 +174,7 @@ async def test_start_assessment_allowed_when_trial():
         async for c in _permissive_client():
             response = await c.post(
                 "/api/assessment/start",
-                json={"competency_slug": "communication"},
+                json={"competency_slug": "communication", "automated_decision_consent": True},
                 headers={"Authorization": "Bearer test-token"},
             )
     finally:
@@ -213,7 +213,7 @@ async def test_start_assessment_allowed_when_active():
         async for c in _permissive_client():
             response = await c.post(
                 "/api/assessment/start",
-                json={"competency_slug": "communication"},
+                json={"competency_slug": "communication", "automated_decision_consent": True},
                 headers={"Authorization": "Bearer test-token"},
             )
     finally:
@@ -247,7 +247,7 @@ async def test_start_assessment_blocked_when_no_profile_row(client):
     try:
         response = await client.post(
             "/api/assessment/start",
-            json={"competency_slug": "communication"},
+            json={"competency_slug": "communication", "automated_decision_consent": True},
             headers={"Authorization": "Bearer test-token"},
         )
     finally:
@@ -279,7 +279,7 @@ async def test_subscription_required_error_shape(client):
     try:
         response = await client.post(
             "/api/assessment/start",
-            json={"competency_slug": "communication"},
+            json={"competency_slug": "communication", "automated_decision_consent": True},
             headers={"Authorization": "Bearer test-token"},
         )
     finally:

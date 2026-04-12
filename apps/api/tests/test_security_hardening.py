@@ -146,7 +146,7 @@ async def test_rapid_restart_blocked_at_25_minutes():
         async with AsyncClient(transport=transport, base_url="http://test") as ac:
             resp = await ac.post(
                 "/api/assessment/start",
-                json={"competency_slug": COMP_SLUG_A},
+                json={"competency_slug": COMP_SLUG_A, "automated_decision_consent": True},
                 headers={"Authorization": "Bearer fake-token"},
             )
 
@@ -183,7 +183,7 @@ async def test_rapid_restart_allowed_at_35_minutes():
         async with AsyncClient(transport=transport, base_url="http://test") as ac:
             resp = await ac.post(
                 "/api/assessment/start",
-                json={"competency_slug": COMP_SLUG_A},
+                json={"competency_slug": COMP_SLUG_A, "automated_decision_consent": True},
                 headers={"Authorization": "Bearer fake-token"},
             )
 
@@ -218,7 +218,7 @@ async def test_rapid_restart_only_applies_to_non_completed():
         async with AsyncClient(transport=transport, base_url="http://test") as ac:
             resp = await ac.post(
                 "/api/assessment/start",
-                json={"competency_slug": COMP_SLUG_A},
+                json={"competency_slug": COMP_SLUG_A, "automated_decision_consent": True},
                 headers={"Authorization": "Bearer fake-token"},
             )
 
@@ -249,7 +249,7 @@ async def test_rapid_restart_returns_retry_after_minutes():
         async with AsyncClient(transport=transport, base_url="http://test") as ac:
             resp = await ac.post(
                 "/api/assessment/start",
-                json={"competency_slug": COMP_SLUG_A},
+                json={"competency_slug": COMP_SLUG_A, "automated_decision_consent": True},
                 headers={"Authorization": "Bearer fake-token"},
             )
 
@@ -291,7 +291,7 @@ async def test_rapid_restart_allows_different_competency():
         async with AsyncClient(transport=transport, base_url="http://test") as ac:
             resp = await ac.post(
                 "/api/assessment/start",
-                json={"competency_slug": COMP_SLUG_B},
+                json={"competency_slug": COMP_SLUG_B, "automated_decision_consent": True},
                 headers={"Authorization": "Bearer fake-token"},
             )
 

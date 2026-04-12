@@ -260,7 +260,7 @@ async def test_step2_start_assessment():
         async with AsyncClient(transport=transport, base_url="http://test") as ac:
             resp = await ac.post(
                 "/api/assessment/start",
-                json={"competency_slug": COMP_SLUG},
+                json={"competency_slug": COMP_SLUG, "automated_decision_consent": True},
                 headers={"Authorization": "Bearer test-token"},
             )
     finally:
@@ -475,7 +475,7 @@ async def test_full_journey_no_500s():
         async with AsyncClient(transport=transport, base_url="http://test") as ac:
             r = await ac.post(
                 "/api/assessment/start",
-                json={"competency_slug": COMP_SLUG},
+                json={"competency_slug": COMP_SLUG, "automated_decision_consent": True},
                 headers={"Authorization": "Bearer test-token"},
             )
             results["start"] = r.status_code

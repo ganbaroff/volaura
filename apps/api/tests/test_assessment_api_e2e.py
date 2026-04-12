@@ -173,7 +173,7 @@ async def test_start_assessment_returns_session_and_first_question(client):
     try:
         response = await client.post(
             "/api/assessment/start",
-            json={"competency_slug": "communication"},
+            json={"competency_slug": "communication", "automated_decision_consent": True},
             headers={"Authorization": "Bearer test-token"},
         )
     finally:
@@ -245,7 +245,7 @@ async def test_retest_cooldown_returns_429(client):
     try:
         response = await client.post(
             "/api/assessment/start",
-            json={"competency_slug": "communication"},
+            json={"competency_slug": "communication", "automated_decision_consent": True},
             headers={"Authorization": "Bearer test-token"},
         )
     finally:

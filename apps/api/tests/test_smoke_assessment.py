@@ -150,7 +150,7 @@ async def test_start_assessment_returns_first_question():
         async with AsyncClient(transport=transport, base_url="http://test") as ac:
             resp = await ac.post(
                 "/api/assessment/start",
-                json={"competency_slug": COMP_SLUG},
+                json={"competency_slug": COMP_SLUG, "automated_decision_consent": True},
                 headers={"Authorization": "Bearer fake-token"},
             )
 
@@ -536,7 +536,7 @@ async def test_cannot_start_duplicate_session():
         async with AsyncClient(transport=transport, base_url="http://test") as ac:
             resp = await ac.post(
                 "/api/assessment/start",
-                json={"competency_slug": COMP_SLUG},
+                json={"competency_slug": COMP_SLUG, "automated_decision_consent": True},
                 headers={"Authorization": "Bearer fake-token"},
             )
 

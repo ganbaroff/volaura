@@ -41,14 +41,31 @@
   {
     "id": "46608784",
     "title": "Wire DAG into autonomous_run.py",
-    "status": "todo",
+    "status": "done",
     "assignee": null,
     "depends_on": [],
     "blocked_by": null,
     "acceptance_criteria": [],
     "created_at": "2026-04-12T11:53:03.596876+00:00",
-    "updated_at": "2026-04-12T11:53:03.596886+00:00",
+    "updated_at": "2026-04-12T11:59:27.688609+00:00",
     "source": null,
+    "findings": "DAG waves implemented — 3 waves with prior_findings injection"
+  },
+  {
+    "id": "359253b5",
+    "title": "Add 10+ questions per competency (all 8 below 15)",
+    "status": "todo",
+    "assignee": null,
+    "depends_on": [],
+    "blocked_by": null,
+    "acceptance_criteria": [
+      "communication >= 15 questions (currently 5)",
+      "empathy_safeguarding >= 15 questions (currently 6)",
+      "all other competencies >= 15 questions (currently 10 each)"
+    ],
+    "created_at": "2026-04-12T12:19:49.249755+00:00",
+    "updated_at": "2026-04-12T12:19:49.249761+00:00",
+    "source": "Handoff 002 — question pool audit",
     "findings": null
   }
 ]

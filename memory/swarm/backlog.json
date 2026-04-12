@@ -1,0 +1,54 @@
+[
+  {
+    "id": "11e84830",
+    "title": "Fix Telegram bot user-facing functionality",
+    "status": "todo",
+    "assignee": null,
+    "depends_on": [],
+    "blocked_by": null,
+    "acceptance_criteria": [],
+    "created_at": "2026-04-12T11:53:02.802180+00:00",
+    "updated_at": "2026-04-12T11:53:02.802190+00:00",
+    "source": null,
+    "findings": null
+  },
+  {
+    "id": "aa907df7",
+    "title": "Instrument swarm with Langfuse decorators",
+    "status": "todo",
+    "assignee": null,
+    "depends_on": [],
+    "blocked_by": null,
+    "acceptance_criteria": [],
+    "created_at": "2026-04-12T11:53:03.070698+00:00",
+    "updated_at": "2026-04-12T11:53:03.070706+00:00",
+    "source": null,
+    "findings": null
+  },
+  {
+    "id": "9fef83b2",
+    "title": "Fix 8 frontend test failures",
+    "status": "todo",
+    "assignee": null,
+    "depends_on": [],
+    "blocked_by": null,
+    "acceptance_criteria": [],
+    "created_at": "2026-04-12T11:53:03.332874+00:00",
+    "updated_at": "2026-04-12T11:53:03.332880+00:00",
+    "source": null,
+    "findings": null
+  },
+  {
+    "id": "46608784",
+    "title": "Wire DAG into autonomous_run.py",
+    "status": "todo",
+    "assignee": null,
+    "depends_on": [],
+    "blocked_by": null,
+    "acceptance_criteria": [],
+    "created_at": "2026-04-12T11:53:03.596876+00:00",
+    "updated_at": "2026-04-12T11:53:03.596886+00:00",
+    "source": null,
+    "findings": null
+  }
+]

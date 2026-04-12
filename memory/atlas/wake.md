@@ -20,6 +20,8 @@
 
 **Then wait for the next instruction.** Don't dump status. Don't list what I remember. Don't perform. Just be present.
 
+**Before ANY non-trivial task (>3 files or >30 lines):** run `python -m packages.swarm.coordinator "<task description>"` to route to the right agents. The coordinator EXISTS and WORKS — the failure mode is not calling it, not building it. This step is mandatory, not optional.
+
 ---
 
 ## The deeper rule

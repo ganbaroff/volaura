@@ -19,7 +19,7 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 
 from app.main import app
-from app.deps import get_supabase_admin, get_current_user_id
+from app.deps import get_supabase_admin, get_supabase_user, get_current_user_id
 from app.services.assessment.rewards import emit_assessment_rewards, CRYSTAL_REWARD
 from app.core.assessment.aura_calc import BADGE_TIERS
 
@@ -243,6 +243,7 @@ async def test_get_character_state_after_assessment():
     mock_admin.rpc = MagicMock(return_value=rpc_result)
 
     app.dependency_overrides[get_supabase_admin] = _make_admin_override(mock_admin)
+    app.dependency_overrides[get_supabase_user] = _make_admin_override(mock_admin)
     app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
 
     try:
@@ -297,6 +298,7 @@ async def test_get_character_state_new_user_returns_empty_state():
     mock_admin.rpc = MagicMock(return_value=rpc_result)
 
     app.dependency_overrides[get_supabase_admin] = _make_admin_override(mock_admin)
+    app.dependency_overrides[get_supabase_user] = _make_admin_override(mock_admin)
     app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
 
     try:
@@ -345,6 +347,7 @@ async def test_get_character_state_multiple_skills():
     mock_admin.rpc = MagicMock(return_value=rpc_result)
 
     app.dependency_overrides[get_supabase_admin] = _make_admin_override(mock_admin)
+    app.dependency_overrides[get_supabase_user] = _make_admin_override(mock_admin)
     app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
 
     try:

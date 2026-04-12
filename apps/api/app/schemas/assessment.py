@@ -52,13 +52,13 @@ def _validate_uuid(value: str, field_name: str) -> str:
 
 # ── Request schemas ───────────────────────────────────────────────────────────
 
-VALID_ROLE_LEVELS = ("volunteer", "coordinator", "specialist", "manager", "senior_manager")
+VALID_ROLE_LEVELS = ("professional", "volunteer", "coordinator", "specialist", "manager", "senior_manager")
 
 
 class StartAssessmentRequest(BaseModel):
     competency_slug: str  # e.g. "communication"
     language: Literal["en", "az"] = "en"
-    role_level: Literal["volunteer", "coordinator", "specialist", "manager", "senior_manager"] = "volunteer"
+    role_level: Literal["professional", "volunteer", "coordinator", "specialist", "manager", "senior_manager"] = "professional"
     energy_level: Literal["full", "mid", "low"] = "full"  # Constitution Law 2: Energy Adaptation
     automated_decision_consent: bool = False  # GDPR Article 22: user acknowledges automated scoring
 
@@ -147,7 +147,7 @@ class SessionOut(BaseModel):
 
     session_id: str
     competency_slug: str
-    role_level: str = "volunteer"
+    role_level: str = "professional"
     questions_answered: int
     is_complete: bool
     stop_reason: str | None = None

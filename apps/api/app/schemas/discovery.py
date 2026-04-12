@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 # ── Request ────────────────────────────────────────────────────────────────────
 
 VALID_SORT_BY = Literal["score", "events", "recent"]
-VALID_ROLE_LEVELS = Literal["volunteer", "coordinator", "specialist", "manager", "senior_manager"]
+VALID_ROLE_LEVELS = Literal["professional", "volunteer", "coordinator", "specialist", "manager", "senior_manager"]
 VALID_BADGE_TIERS = Literal["Bronze", "Silver", "Gold", "Platinum"]
 
 COMPETENCY_SLUGS = {

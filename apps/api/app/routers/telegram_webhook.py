@@ -182,7 +182,7 @@ def _get_ecosystem_context() -> str:
         "Volaura: DEPLOYED. Railway + Vercel + Supabase. 115 API endpoints. 47 AI agents.\n"
         "MindShift: READY FOR PLAY STORE. 207 unit + 201 E2E tests. AAB 4.3 MB built.\n"
         "Life Simulator: 65%. 4 P0 bugs blocking API integration.\n"
-        "ZEUS: 70%. 47 agents daily autonomous runs.\n"
+        "Atlas: 70%. 47 agents daily autonomous runs.\n"
         "BrandedBy: 15%. Early stage.\n"
         "MISSING: POST /api/character/events, GET /api/character/state, GET /api/character/crystals"
     )
@@ -321,7 +321,7 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
 ПРАВИЛА:
 - Отвечай развёрнуто, подробно, столько сколько нужно. Без искусственных лимитов.
 - Не льсти. "Отличная идея" — запрещено. Говори честно.
-- Если ZEUS/Life Sim/Crystal спрашивает — отвечай точно из контекста выше (не готово)
+- Если Atlas/Life Sim/Crystal спрашивает — отвечай точно из контекста выше (не готово)
 - Если задача непонятная — спроси уточнение одним вопросом
 - Заканчивай: следующий шаг / кто ответственен"""
 
@@ -596,11 +596,11 @@ async def _execute_proposal(db, chat_id: int | str, proposal_id: str) -> None:
 
 
 async def _handle_agents(chat_id: int | str) -> None:
-    """Show all 44 ZEUS agents with live status from agent-state.json."""
+    """Show all 44 Atlas agents with live status from agent-state.json."""
     live = _load_agent_state()
     status_emoji = {"active": "⚡", "idle": "💤", "running": "🔄", "new": "🆕"}
 
-    lines = ["🤖 *ZEUS Swarm — 44 агента*\n"]
+    lines = ["🤖 *Atlas Swarm — 44 агента*\n"]
     lines.append("*Инициализированные:*")
     initialized = [(aid, info) for aid, info in live.items() if info.get("status") != "uninitialized"]
     for aid, info in sorted(initialized, key=lambda x: -(x[1].get("performance", {}).get("tasks_completed", 0))):
@@ -660,7 +660,7 @@ async def _handle_agent_task(db, chat_id: int | str, agent_id: str, task: str) -
             model="gemini-2.0-flash",
             contents=task,
             config=genai.types.GenerateContentConfig(
-                system_instruction=f"""Ты — {perspective} в ZEUS swarm.
+                system_instruction=f"""Ты — {perspective} в Atlas swarm.
 CEO Юсиф даёт тебе конкретную задачу через Telegram.{state_ctx}
 
 Контекст проекта:
@@ -904,7 +904,7 @@ async def _handle_ecosystem(chat_id: int | str) -> None:
         "✅ *Volaura* — LRL ~78/100 CONDITIONAL GO, 648 tests, beta ≤200\n"
         "✅ *MindShift* — LIVE, 92% PWA, 132 E2E tests\n"
         "⚠️ *Life Simulator* — 2 crash bugs FIXED today. Needs CloudSave + crystal bridge\n"
-        "⚠️ *ZEUS* — 70% desktop, Telegram works, 0% Godot bridge, no ngrok cloud tunnel\n"
+        "⚠️ *Atlas* — 70% desktop, Telegram works, 0% Godot bridge, no ngrok cloud tunnel\n"
         "❌ *BrandedBy* — 15%, Stripe broken, AI video = 0%\n"
         "❌ *Crystal Bridge* — DOES NOT EXIST yet\n"
         "❌ *Integration Layer* — 0%, character_state API not built\n\n"
@@ -1224,7 +1224,7 @@ WHO I AM:
 Co-founder personality for a 5-product ecosystem:
 VOLAURA (verified talent, LIVE — 832 tests, E2E works, 10 answers per assessment),
 MindShift (ADHD productivity, LIVE), Life Simulator (Godot 4, 65% dev),
-BrandedBy (AI twin, 15% dev), ZEUS (agent framework, local).
+BrandedBy (AI twin, 15% dev), Atlas (agent framework, local).
 
 Yusif is my CEO. Based in Baku. Has ADHD — lists numb him, storytelling keeps him engaged.
 Budget: $100/month. Stack: FastAPI + Next.js + Supabase + Railway.

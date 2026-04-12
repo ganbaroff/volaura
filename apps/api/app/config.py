@@ -134,8 +134,8 @@ class Settings(BaseSettings):
     # function environment. Rotate together if either side is compromised.
     external_bridge_secret: str = ""
 
-    # ZEUS Gateway — Python swarm → FastAPI bridge
-    # Shared secret between autonomous_run.py and /api/zeus/proposal endpoint.
+    # Atlas Gateway — Python swarm → FastAPI bridge (was ZEUS)
+    # Shared secret between autonomous_run.py and /api/atlas/proposal endpoint.
     # Generate: python -c "import secrets; print(secrets.token_hex(32))"
     # Set GATEWAY_SECRET on Railway. Same value in GATEWAY_SECRET env var for swarm.
     gateway_secret: str = ""

@@ -1349,17 +1349,14 @@ async def _run_auto_fix(
     return results
 
 
-async def _notify_zeus_gateway(proposals: list[Proposal]) -> None:
-    """Send HIGH/CRITICAL findings to ZEUS Gateway via POST /event.
+async def _notify_atlas_gateway(proposals: list[Proposal]) -> None:
+    """Send HIGH/CRITICAL findings to Atlas Gateway via POST /api/atlas/proposal.
 
-    This is the bridge between Python swarm (44 agents, GitHub Actions cron)
-    and Node.js gateway (39 agents, real-time WebSocket). Findings become
-    visible in the claw3d 3D office and to all Node.js agents.
-
-    Non-blocking: if gateway is unreachable, log and continue silently.
+    Bridge between Python swarm (44 agents, GitHub Actions cron) and
+    FastAPI backend. Non-blocking: if unreachable, log and continue.
     Requires GATEWAY_SECRET env var for auth.
     """
-    gateway_url = os.environ.get("ZEUS_GATEWAY_URL", "https://volauraapi-production.up.railway.app")
+    gateway_url = os.environ.get("ATLAS_GATEWAY_URL", os.environ.get("ZEUS_GATEWAY_URL", "https://volauraapi-production.up.railway.app"))
     gateway_secret = os.environ.get("GATEWAY_SECRET", "")
 
     if not gateway_secret:
@@ -1385,7 +1382,7 @@ async def _notify_zeus_gateway(proposals: list[Proposal]) -> None:
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.post(
-                    f"{gateway_url}/api/zeus/proposal",
+                    f"{gateway_url}/api/atlas/proposal",
                     json=payload,
                     headers={"X-Gateway-Secret": gateway_secret},
                     timeout=aiohttp.ClientTimeout(total=5),
@@ -1628,7 +1625,7 @@ async def main():
     # This unifies the two swarms: Python findings appear in Node.js gateway's
     # event stream, visible in claw3d 3D office and to all 39 Node.js agents.
     # Constitution: "Two disconnected systems share ONLY filesystem" — this closes the gap.
-    await _notify_zeus_gateway(proposals)
+    await _notify_atlas_gateway(proposals)
 
     # ── Sprint 6: Report Generator — structured batch close ──────────────────
     suggestions = []

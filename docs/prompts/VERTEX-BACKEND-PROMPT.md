@@ -739,6 +739,13 @@ async def generate_embedding(text: str, user_id: Optional[UUID] = None) -> list:
         embedding = result.embedding
         logger.info(f"Embedding generated for user {user_id}: {len(embedding)} dimensions")
 
+        # Use pgvector to store the embedding
+        await db.table("volunteer_embeddings").insert({
+            "user_id": str(user_id),
+            "embedding": embedding,
+            "updated_at": datetime.utcnow().isoformat() + "Z"
+        }).execute()
+
         return embedding
 
     except Exception as e:

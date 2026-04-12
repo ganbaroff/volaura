@@ -94,12 +94,12 @@ ON CONFLICT (id) DO NOTHING;
 -- 2. BADGES (tier badges)
 -- =============================================================================
 INSERT INTO public.badges (slug, name_en, name_az, description_en, description_az, badge_type) VALUES
-('bronze', 'Bronze Volunteer', 'Bürünc Könüllü', 'Completed initial assessment with AURA score 40-59.', 'AURA balı 40-59 olan ilkin qiymətləndirməni tamamladı.', 'tier'),
-('silver', 'Silver Volunteer', 'Gümüş Könüllü', 'Proven volunteer with AURA score 60-74.', 'AURA balı 60-74 olan sübut edilmiş könüllü.', 'tier'),
-('gold', 'Gold Volunteer', 'Qızıl Könüllü', 'Elite volunteer with AURA score 75-89.', 'AURA balı 75-89 olan elit könüllü.', 'tier'),
-('platinum', 'Platinum Volunteer', 'Platin Könüllü', 'Top-tier volunteer with AURA score 90+.', 'AURA balı 90+ olan ən yüksək səviyyəli könüllü.', 'tier'),
-('first_event', 'First Event', 'İlk Tədbir', 'Completed first volunteer event successfully.', 'İlk könüllü tədbirini uğurla tamamladı.', 'achievement'),
-('elite', 'Elite Volunteer ⭐', 'Elit Könüllü ⭐', 'AURA 75+ with 2 or more competencies above 75.', 'AURA 75+ və 2 və ya daha çox kompetensiya 75 üzərindədir.', 'special')
+('bronze', 'Bronze Professional', 'Bürünc Peşəkar', 'Completed initial assessment with AURA score 40-59.', 'AURA balı 40-59 olan ilkin qiymətləndirməni tamamladı.', 'tier'),
+('silver', 'Silver Professional', 'Gümüş Peşəkar', 'Proven professional with AURA score 60-74.', 'AURA balı 60-74 olan sübut edilmiş peşəkar.', 'tier'),
+('gold', 'Gold Professional', 'Qızıl Peşəkar', 'Elite professional with AURA score 75-89.', 'AURA balı 75-89 olan elit peşəkar.', 'tier'),
+('platinum', 'Platinum Professional', 'Platin Peşəkar', 'Top-tier professional with AURA score 90+.', 'AURA balı 90+ olan ən yüksək səviyyəli peşəkar.', 'tier'),
+('first_event', 'First Event', 'İlk Tədbir', 'Completed first professional event successfully.', 'İlk peşəkar tədbirini uğurla tamamladı.', 'achievement'),
+('elite', 'Elite Professional', 'Elit Peşəkar', 'AURA 75+ with 2 or more competencies above 75.', 'AURA 75+ və 2 və ya daha çox kompetensiya 75 üzərindədir.', 'special')
 ON CONFLICT (slug) DO NOTHING;
 
 
@@ -152,8 +152,8 @@ INSERT INTO public.questions (
     'c0000001-0000-0000-0000-000000000002',
     '11111111-1111-1111-1111-111111111111',
     'medium', 'mcq',
-    'Two attendees at an event are having a heated argument that is disturbing others. You are the nearest volunteer. What do you do FIRST?',
-    'Tədbirde iki iştirakçı başqalarını narahat edən qızğın mübahisə aparır. Siz ən yaxın könüllüsünüz. İlk olaraq nə edərdiniz?',
+    'Two attendees at an event are having a heated argument that is disturbing others. You are the nearest team member. What do you do FIRST?',
+    'Tədbirde iki iştirakçı başqalarını narahat edən qızğın mübahisə aparır. Siz ən yaxın komanda üzvüsünüz. İlk olaraq nə edərdiniz?',
     '[
         {"key": "A", "text_en": "Call security immediately without approaching", "text_az": "Yaxınlaşmadan dərhal təhlükəsizlik xidmətini çağır"},
         {"key": "B", "text_en": "Approach calmly, introduce yourself, and acknowledge both parties before de-escalating", "text_az": "Sakit şəkildə yaxınlaş, özünü tanıt və sakinləşdirməzdən əvvəl hər iki tərəfi tanı"},
@@ -214,9 +214,9 @@ INSERT INTO public.questions (
     'Komanda koordinatorunuz yazı yazdı: "Sessiya otağı B-14-ə dəyişdirildi, bütün iştirakçıları dərhal xəbərdar edin." Binanın hər yerinə səpələnmiş 50 iştirakçı üçün 10 dəqiqəniz var. Kommunikasiya planınızı təsvir edin.',
     '[
         {"name": "prioritize_channels", "weight": 0.25, "keywords": ["sent a group message to all attendees", "used the event app to broadcast", "made an announcement over the public address system", "contacted attendees simultaneously through multiple channels", "reached everyone at once via messaging platform", "bütün iştirakçılara qrup mesajı göndərdim", "ictimai elan sistemi ilə xəbər verdim"]},
-        {"name": "delegate", "weight": 0.20, "keywords": ["split the venue into sections and assigned each volunteer a zone", "sent a different volunteer to each floor", "divided the team to cover the whole building", "each team member took responsibility for a different area", "coordinated with my team to cover all areas simultaneously", "binayı bölgələrə bölüb hər könüllüyə sahə təyin etdim", "komandanı müxtəlif əraziləri əhatə etmək üçün böldüm"]},
+        {"name": "delegate", "weight": 0.20, "keywords": ["split the venue into sections and assigned each team member a zone", "sent a different team member to each floor", "divided the team to cover the whole building", "each team member took responsibility for a different area", "coordinated with my team to cover all areas simultaneously", "binayı bölgələrə bölüb hər komanda üzvünə sahə təyin etdim", "komandanı müxtəlif əraziləri əhatə etmək üçün böldüm"]},
         {"name": "clear_message", "weight": 0.25, "keywords": ["clearly stated the new room is B-14", "gave exact directions to room B-14", "specified the floor and building of the new location", "included the room number in every message", "made sure the message had the room number and timing", "yeni otağın B-14 olduğunu bildirdim", "hər mesajda otaq nömrəsini göstərdim"]},
-        {"name": "confirm_coverage", "weight": 0.15, "keywords": ["each volunteer reported back once their area was covered", "confirmed all 50 attendees were reached", "collected confirmation from each zone volunteer", "verified no one was missed before the session started", "did a headcount at the new room to verify everyone arrived", "hər könüllü öz ərazisini əhatə etdikdən sonra bildirdi", "50 iştirakçının hamısına çatdığımı təsdiqlədi"]},
+        {"name": "confirm_coverage", "weight": 0.15, "keywords": ["each team member reported back once their area was covered", "confirmed all 50 attendees were reached", "collected confirmation from each zone member", "verified no one was missed before the session started", "did a headcount at the new room to verify everyone arrived", "hər komanda üzvü öz ərazisini əhatə etdikdən sonra bildirdi", "50 iştirakçının hamısına çatdığımı təsdiqlədi"]},
         {"name": "stay_calm", "weight": 0.15, "keywords": ["maintained composure despite the time pressure", "stayed focused and worked systematically through each zone", "kept the team calm while moving quickly", "communicated urgency without causing panic", "worked through the problem in an organized manner", "vaxt təzyiqi altında özünü itirmədi", "panikaya yol vermədən təcililik hissini çatdırdım"]}
     ]',
     2.2, 0.8, 0.0,
@@ -238,8 +238,8 @@ INSERT INTO public.questions (
     'c0000001-0000-0000-0000-000000000005',
     '11111111-1111-1111-1111-111111111111',
     'easy', 'mcq',
-    'You confirmed your volunteer shift 3 days ago. The morning of the event you realize you have a personal commitment conflict. What do you do?',
-    'Siz 3 gün əvvəl könüllü növbənizi təsdiqlədiz. Tədbir günü səhər şəxsi bir öhdəlik münaqişəsi olduğunu başa düşürsünüz. Nə edərdiniz?',
+    'You confirmed your shift 3 days ago. The morning of the event you realize you have a personal commitment conflict. What do you do?',
+    'Siz 3 gün əvvəl növbənizi təsdiqlədiz. Tədbir günü səhər şəxsi bir öhdəlik münaqişəsi olduğunu başa düşürsünüz. Nə edərdiniz?',
     '[
         {"key": "A", "text_en": "Simply don''t show up — they''ll manage without you", "text_az": "Sadəcə gəlmə — onsuz da idarə edərlər"},
         {"key": "B", "text_en": "Text a friend to cover for you without informing the coordinator", "text_az": "Koordinatora xəbər vermədən onu örtmək üçün bir dostuna yazın"},

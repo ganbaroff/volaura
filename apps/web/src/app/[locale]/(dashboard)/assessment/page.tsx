@@ -41,6 +41,7 @@ function AssessmentContent() {
 
   const [selected, setSelected] = useState<Set<CompetencyId>>(new Set());
   const [energyLevel, setEnergyLevel] = useState<EnergyLevel>("full");
+  const [consentGiven, setConsentGiven] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -113,7 +114,7 @@ function AssessmentContent() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ competency_slug: competencyList[0], energy_level: energyLevel }),
+        body: JSON.stringify({ competency_slug: competencyList[0], energy_level: energyLevel, automated_decision_consent: consentGiven }),
       });
 
       if (!res.ok) {
@@ -240,9 +241,22 @@ function AssessmentContent() {
         <EnergyPicker value={energyLevel} onChange={setEnergyLevel} />
       )}
 
+      {/* GDPR Article 22: consent for automated decision-making */}
+      {selected.size > 0 && (
+        <label className="flex items-start gap-3 text-sm text-muted-foreground cursor-pointer">
+          <input
+            type="checkbox"
+            checked={consentGiven}
+            onChange={(e) => setConsentGiven(e.target.checked)}
+            className="mt-0.5 size-4 rounded border-border accent-primary"
+          />
+          <span>{t("assessment.automatedScoringConsent")}</span>
+        </label>
+      )}
+
       <Button
         onClick={handleStart}
-        disabled={isStarting || selected.size === 0}
+        disabled={isStarting || selected.size === 0 || !consentGiven}
         size="lg"
         className="w-full"
         aria-busy={isStarting}

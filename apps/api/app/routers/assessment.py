@@ -121,6 +121,18 @@ async def start_assessment(
                 },
             )
 
+    # GDPR Article 22: require explicit consent for automated decision-making.
+    # The AURA score is computed by an automated system (IRT/CAT + LLM evaluation)
+    # and affects discoverability by organizations — a "significant effect" under Art. 22.
+    if not payload.automated_decision_consent:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "code": "CONSENT_REQUIRED",
+                "message": "You must acknowledge that this assessment uses automated scoring before starting.",
+            },
+        )
+
     # Check for in-progress session
     existing = (
         await db_user.table("assessment_sessions")
@@ -296,9 +308,12 @@ async def start_assessment(
         "question_delivered_at": datetime.now(timezone.utc).isoformat(),  # HIGH-03: server-side timing
         "started_at": datetime.now(timezone.utc).isoformat(),
     }
-    # Constitution Law 2: Energy Adaptation — store energy_level in session metadata
+    # Session metadata: energy level + GDPR Article 22 consent timestamp
+    metadata: dict = {}
     if payload.energy_level != "full":
-        session_data["metadata"] = {"energy_level": payload.energy_level}
+        metadata["energy_level"] = payload.energy_level
+    metadata["article22_consent_at"] = datetime.now(timezone.utc).isoformat()
+    session_data["metadata"] = metadata
     await db_user.table("assessment_sessions").insert(session_data).execute()
 
     return make_session_out(session_id, payload.competency_slug, state, first_q, payload.role_level)

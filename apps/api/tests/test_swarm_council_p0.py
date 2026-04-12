@@ -242,9 +242,9 @@ class TestAdaptiveSelectionDeterminism:
             {"id": "medium", "irt_a": 1.0, "irt_b": 0.0, "irt_c": 0.0},
             {"id": "hard", "irt_a": 1.0, "irt_b": 2.0, "irt_c": 0.0},
         ]
-        # At theta=0, b=0 should give max info
+        # At theta=0, b=0 should give max info (epsilon=0 disables random exploration)
         state = CATState(theta=0.0)
-        q = select_next_item(state, questions)
+        q = select_next_item(state, questions, epsilon=0.0)
         assert q["id"] == "medium"
 
     def test_mfi_adapts_after_correct_answers(self):

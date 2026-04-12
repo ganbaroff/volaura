@@ -29,7 +29,7 @@
 
 ## What's still pending from CEO's asks across session
 
-**Product / user-facing (the things real volunteers see):**
+**Product / user-facing (the things real users see):**
 - Article 22 consent checkpoint in assessment completion flow (legal risk, 70% enforcement probability)
 - Energy Adaptation (Foundation Law 2) missing in VOLAURA and LifeSimulator (only MindShift implements)
 - Ten unimplemented research insights: AURA Coach, live event counters, impact metrics dashboard, company-verified badges, geo-adaptive pricing + Birbank/m10, ADHD-first UX rules systematic pass, crystal economy monetary policy, ZEUS neurocognitive architecture, Duolingo-style gamification with CIS calibration, cultural copy fixes from the Cultural Intelligence audit

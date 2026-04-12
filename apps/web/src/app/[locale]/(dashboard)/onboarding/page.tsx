@@ -269,9 +269,9 @@ export default function OnboardingPage() {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center px-4 py-12">
-      {/* Ambient glows */}
-      <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] ambient-glow-primary pointer-events-none z-0" />
-      <div className="fixed bottom-[-5%] right-[-5%] w-[30%] h-[30%] ambient-glow-secondary pointer-events-none z-0" />
+      {/* Ambient glows removed 2026-04-12 — Constitution Law 4 (Animation Safety) / Foundation
+          Law 6 "motion only on achievement". Onboarding is an action screen — continuous
+          decorative motion raises cognitive load for ADHD users per Behavioural Nudge audit. */}
 
       <div className="relative z-10 w-full max-w-lg">
         {/* Header */}

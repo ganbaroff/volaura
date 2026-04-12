@@ -16,7 +16,7 @@ from fastapi import APIRouter, Header, HTTPException, Request
 
 from app.config import settings
 
-router = APIRouter(prefix="/api/zeus", tags=["zeus-gateway"])
+router = APIRouter(prefix="/api/atlas", tags=["atlas-gateway"])
 
 # Resolve relative to repo root (works on Railway — cwd is /app)
 _PROPOSALS_PATH = pathlib.Path("memory/swarm/proposals.json")
@@ -24,7 +24,7 @@ _PROPOSALS_PATH = pathlib.Path("memory/swarm/proposals.json")
 
 @router.get("/health")
 async def gateway_health() -> dict:
-    return {"status": "ok", "service": "zeus-gateway"}
+    return {"status": "ok", "service": "atlas-gateway"}
 
 
 @router.post("/proposal")

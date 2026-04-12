@@ -208,4 +208,4 @@ app.include_router(skills.router, prefix="/api")
 app.include_router(subscription.router, prefix="/api")
 app.include_router(tribes.router, prefix="/api")
 app.include_router(admin.router)  # prefix already set in router (/api/admin)
-app.include_router(zeus_gateway.router)  # ZEUS bridge — Python swarm → FastAPI
+app.include_router(zeus_gateway.router)  # Atlas gateway — Python swarm → FastAPI (was ZEUS)

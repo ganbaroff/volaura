@@ -754,7 +754,7 @@ return StreamingResponse(
 
 ---
 
-## Finding #7: CSRF Protection on File Upload
+## Finding #7: CSRF Protection and Authentication on File Upload and WebSocket
 **Category:** Cross-Site Request Forgery
 **CVSS:** 3.5 (Low)
 **Severity in Plan:** 🟢 **LOW** (rating: 0.5/3)

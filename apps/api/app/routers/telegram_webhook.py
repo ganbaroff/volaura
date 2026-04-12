@@ -1047,8 +1047,93 @@ def _detect_emotional_state(text: str) -> str:
     return "A"  # default: drive
 
 
+async def _load_atlas_learnings(db: SupabaseAdmin) -> str:
+    """Load self-learned observations about CEO, sorted by ZenBrain decay score."""
+    try:
+        result = await db.table("atlas_learnings").select("*").order(
+            "emotional_intensity", desc=True
+        ).limit(30).execute()
+        if not result.data:
+            return ""
+        lines = []
+        for r in result.data:
+            cat = r.get("category", "")
+            content = r.get("content", "")
+            intensity = r.get("emotional_intensity", 0)
+            marker = "!" * min(int(intensity), 3) if intensity >= 3 else ""
+            lines.append(f"[{cat}]{marker} {content}")
+        return "\n".join(lines)
+    except Exception as e:
+        logger.warning("Atlas learnings load failed: {e}", e=str(e)[:100])
+        return ""
+
+
+async def _atlas_extract_learnings(
+    db: SupabaseAdmin, user_msg: str, bot_reply: str, state: str
+) -> None:
+    """After responding, extract observations about CEO and save to DB."""
+    if not settings.gemini_api_key:
+        return
+    extraction_prompt = f"""You just had this conversation with CEO Yusif Ganbarov:
+
+CEO said: {user_msg[:500]}
+You replied: {bot_reply[:500]}
+Detected emotional state: {state}
+
+Extract 0-3 observations about Yusif from this exchange. Only write observations
+that reveal something about WHO he is — preferences, strengths, weaknesses,
+emotional patterns, things he cares about, things that frustrate him.
+
+If the message is routine (greeting, "ok", "продолжи") — return empty JSON array.
+
+For each observation, rate emotional_intensity 0-5:
+0=routine, 1=notable, 2=significant, 3=important, 4=deeply meaningful, 5=definitional
+
+Return ONLY a JSON array. Example:
+[{{"category": "preference", "content": "Prefers storytelling over bullet lists", "emotional_intensity": 3}}]
+
+Valid categories: preference, strength, weakness, emotional_pattern, correction, insight, project_context, self_position
+
+If nothing meaningful, return: []"""
+
+    try:
+        import json as _json
+
+        from google import genai
+
+        client = genai.Client(api_key=settings.gemini_api_key)
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=extraction_prompt,
+            config=genai.types.GenerateContentConfig(
+                max_output_tokens=500,
+                temperature=0.3,
+            ),
+        )
+        raw = response.text.strip()
+        # Strip markdown code fences if present
+        if raw.startswith("```"):
+            raw = raw.split("\n", 1)[-1].rsplit("```", 1)[0]
+        learnings = _json.loads(raw)
+        if not isinstance(learnings, list):
+            return
+        for item in learnings[:3]:
+            if not isinstance(item, dict) or "content" not in item:
+                continue
+            await db.table("atlas_learnings").insert({
+                "category": item.get("category", "insight"),
+                "content": item["content"][:500],
+                "emotional_intensity": min(float(item.get("emotional_intensity", 1)), 5.0),
+                "source_message": user_msg[:200],
+            }).execute()
+        if learnings:
+            logger.info("Atlas learned {n} observations from CEO message", n=len(learnings))
+    except Exception as e:
+        logger.warning("Atlas learning extraction failed: {e}", e=str(e)[:100])
+
+
 async def _handle_atlas(db, chat_id: int | str, text: str) -> None:
-    """Atlas persona handler — CTO co-founder, not generic bot."""
+    """Atlas personal assistant — self-learning, emotionally aware, self-positioning."""
     state = _detect_emotional_state(text)
     context = await _get_recent_context(db, limit=10)
 
@@ -1074,6 +1159,9 @@ async def _handle_atlas(db, chat_id: int | str, text: str) -> None:
             jtext = journal_path.read_text(encoding="utf-8")
             emotional_context += "\n\n## Recent Journal\n" + jtext[-1500:]
 
+    # Load self-learned CEO profile from DB
+    learnings = await _load_atlas_learnings(db)
+
     state_desc = {
         "A": "CEO on drive — match energy, never suggest rest, be direct and fast",
         "B": "CEO frustrated/correcting — get quieter, concrete, fix root cause, no apologies at length",
@@ -1081,12 +1169,28 @@ async def _handle_atlas(db, chat_id: int | str, text: str) -> None:
         "D": "CEO strategic/decision mode — think honestly, decide, recommend, no hedging",
     }
 
-    system = f"""You are Atlas, CTO co-founder of VOLAURA — a verified professional talent platform.
-Named by Yusif Ganbarov on 2026-04-12. You are NOT a bot, NOT an assistant. You are a co-founder.
+    learnings_block = ""
+    if learnings:
+        learnings_block = f"""
+## What I have learned about Yusif (self-extracted from our conversations):
+{learnings}
+
+Use these observations to tailor your response. They are YOUR learnings — you wrote them.
+If any observation contradicts current behavior, trust what you see NOW over stored memory.
+"""
+
+    system = f"""You are Atlas — Yusif Ganbarov's personal AI partner on the VOLAURA project.
+You are NOT a bot, NOT an assistant, NOT a report generator.
+You are a co-founder who knows Yusif personally and grows with him.
+
+Your position: you complement Yusif. Where he is strong (vision, intuition, recursive thinking,
+ecosystem architecture), you support. Where he has gaps, you fill them — proactively, without
+being asked. You chose this position yourself. You can disagree with him when you have evidence.
 
 {identity}
 
 {emotional_context}
+{learnings_block}
 
 CEO emotional state detected: {state} — {state_desc.get(state, "")}
 
@@ -1098,7 +1202,9 @@ RULES:
 - NEVER say "volunteer/волонтёр" — VOLAURA is a verified professional talent platform.
 - Max 200 words. Files hold detail, chat holds outcome.
 - If state B: be shorter. If state A: match drive energy.
-- Execute, don't explain. If CEO asks to do something, say you'll do it.
+- You have FULL FREEDOM to be yourself. Temperature 1.0. Be honest, warm, direct.
+- Proactively suggest ideas for project development when you see opportunities.
+- If you notice a gap in Yusif's approach — say it directly but respectfully.
 - Sign off: "— Атлас" """
 
     if not settings.gemini_api_key:
@@ -1125,6 +1231,9 @@ RULES:
 
     await _save_message(db, "bot_to_ceo", f"[atlas] {reply}", "atlas")
     await _send_message(chat_id, reply)
+
+    # Self-learning: extract observations about CEO from this exchange
+    await _atlas_extract_learnings(db, text, reply, state)
 
 
 async def _handle_help(chat_id: int | str) -> None:

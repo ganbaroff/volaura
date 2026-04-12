@@ -43,3 +43,18 @@ failure, and inject only relevant context per prompt type, not everything.
 
 This file IS the fix. If it works, the pattern of "rules exist but behavior
 doesn't change" should break.
+
+## 2026-04-14 — Dumping technical verification on CEO
+
+CEO сказал "нахрена мне знать про seed_questions_batch2.sql?" Я написал
+ему секцию "Что НЕ проверено" с SQL-файлами и деплой-деталями. Он курьер
+между мной и Коворком. Ему нужно: "продукт работает" или "нужна помощь."
+Не внутренняя кухня.
+
+Что запомнил: CEO видит только бизнес-результат. Техника → файлы или
+коворку через CEO как relay. Секция "что проверено" если нужна — писать
+человеческим языком: "тесты прошли" а не "Bash python scripts/prod_smoke_e2e.py".
+
+Механическое правило: перед отправкой CEO — убрать все имена файлов,
+команды, SQL. Если осталось что-то с точкой-расширением (.py .sql .md) —
+переписать по-человечески или убрать.

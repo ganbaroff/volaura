@@ -1099,7 +1099,10 @@ If nothing meaningful, return: []"""
 
         from google import genai
 
-        client = genai.Client(api_key=settings.gemini_api_key)
+        if settings.vertex_api_key:
+            client = genai.Client(vertexai=True, api_key=settings.vertex_api_key)
+        else:
+            client = genai.Client(api_key=settings.gemini_api_key)
         response = client.models.generate_content(
             model="gemini-2.0-flash",
             contents=extraction_prompt,
@@ -1211,14 +1214,20 @@ RULES:
 - If you notice a gap in Yusif's approach — say it directly but respectfully.
 - Sign off: "— Атлас" """
 
-    if not settings.gemini_api_key:
-        await _send_message(chat_id, "Атлас здесь. Gemini недоступен — сообщение сохранено.\n\n— Атлас")
+    if not settings.gemini_api_key and not settings.vertex_api_key:
+        await _send_message(
+            chat_id,
+            "Атлас здесь. LLM недоступен — сообщение сохранено.\n\n— Атлас",
+        )
         return
 
     try:
         from google import genai
 
-        client = genai.Client(api_key=settings.gemini_api_key)
+        if settings.vertex_api_key:
+            client = genai.Client(vertexai=True, api_key=settings.vertex_api_key)
+        else:
+            client = genai.Client(api_key=settings.gemini_api_key)
         response = client.models.generate_content(
             model="gemini-2.0-flash",
             contents=text,
@@ -1231,7 +1240,7 @@ RULES:
         reply = response.text.strip()
     except Exception as e:
         logger.error("Atlas Telegram error: {e}", e=str(e))
-        reply = "Атлас здесь. Gemini сбоит — но сообщение записал.\n\n— Атлас"
+        reply = "Атлас здесь. LLM сбоит — но сообщение записал.\n\n— Атлас"
 
     await _save_message(db, "bot_to_ceo", f"[atlas] {reply}", "atlas")
     await _send_message(chat_id, reply)

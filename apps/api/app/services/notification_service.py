@@ -8,10 +8,10 @@ Usage:
     await notify_profile_viewed(db_admin, volunteer_id, org_id, org_name)
 """
 
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 
-from supabase._async.client import AsyncClient as AsyncSupabaseClient
 from loguru import logger
+from supabase._async.client import AsyncClient as AsyncSupabaseClient
 
 # Throttle: at most 1 org_view notification per (org, volunteer) pair per window
 _PROFILE_VIEW_THROTTLE_HOURS = 24
@@ -63,7 +63,7 @@ async def notify_profile_viewed(
     """
     try:
         cutoff = (
-            datetime.now(timezone.utc) - timedelta(hours=_PROFILE_VIEW_THROTTLE_HOURS)
+            datetime.now(UTC) - timedelta(hours=_PROFILE_VIEW_THROTTLE_HOURS)
         ).isoformat()
 
         # Throttle check — uses idx_notifications_org_view_throttle partial index

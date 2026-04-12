@@ -4,12 +4,14 @@ Public endpoint (no auth required).
 Rank > 10: display_name anonymized to protect volunteer privacy.
 """
 
-from fastapi import APIRouter, HTTPException, Query, Request
+from datetime import UTC
+
+from fastapi import APIRouter, Query, Request
 from loguru import logger
 from pydantic import BaseModel, ConfigDict
 
-from app.deps import CurrentUserId, OptionalCurrentUserId, SupabaseAdmin, SupabaseUser
-from app.middleware.rate_limit import limiter, RATE_DISCOVERY, RATE_DEFAULT
+from app.deps import CurrentUserId, OptionalCurrentUserId, SupabaseAdmin
+from app.middleware.rate_limit import RATE_DEFAULT, RATE_DISCOVERY, limiter
 
 router = APIRouter(prefix="/leaderboard", tags=["Leaderboard"])
 
@@ -71,9 +73,9 @@ async def get_leaderboard(
 
         # Period filter on aura_scores_public.last_updated
         if period in ("weekly", "monthly"):
-            from datetime import datetime, timedelta, timezone
+            from datetime import datetime, timedelta
             days = 7 if period == "weekly" else 30
-            cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+            cutoff = (datetime.now(UTC) - timedelta(days=days)).isoformat()
             query = query.gte("last_updated", cutoff)
 
         result = await query.order("total_score", desc=True).limit(limit).execute()

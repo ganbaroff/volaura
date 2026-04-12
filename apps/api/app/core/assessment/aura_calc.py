@@ -9,7 +9,7 @@ Weights are FIXED per the spec — do not change without product sign-off.
 from __future__ import annotations
 
 import math
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 COMPETENCY_WEIGHTS: dict[str, float] = {
     "communication": 0.20,
@@ -143,10 +143,10 @@ def calculate_effective_score(
     if last_updated is None:
         return raw_score
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     # Normalise naive timestamps
     if last_updated.tzinfo is None:
-        last_updated = last_updated.replace(tzinfo=timezone.utc)
+        last_updated = last_updated.replace(tzinfo=UTC)
 
     days_inactive = max(0.0, (now - last_updated).total_seconds() / 86400.0)
 

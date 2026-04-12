@@ -39,15 +39,14 @@ CTO can audit when production is running on a degraded provider chain.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import Enum
-from typing import Optional
+from enum import StrEnum
 
 from loguru import logger
 
 from app.config import settings
 
 
-class ProviderRole(str, Enum):
+class ProviderRole(StrEnum):
     """Semantic role in the swarm / runtime — not a model name."""
     JUDGE = "judge"
     WORKER = "worker"
@@ -60,7 +59,7 @@ class ProviderSpec:
     """Resolved provider — ready to hand to an SDK client."""
     provider: str           # 'cerebras' | 'ollama' | 'nvidia' | 'gemini' | 'groq' | 'anthropic'
     model: str              # exact model id
-    base_url: Optional[str] # for OpenAI-compatible endpoints
+    base_url: str | None # for OpenAI-compatible endpoints
     api_key: str            # resolved from settings; "" means zero-auth (Ollama)
     rationale: str          # human-readable reason this was picked
     is_fallback: bool       # True if we did NOT get the first-choice provider
@@ -72,7 +71,7 @@ class ProviderSpec:
 # the first non-None wins.
 
 
-def _cerebras_qwen() -> Optional[ProviderSpec]:
+def _cerebras_qwen() -> ProviderSpec | None:
     key = getattr(settings, "cerebras_api_key", "") or ""
     if not key:
         return None
@@ -86,7 +85,7 @@ def _cerebras_qwen() -> Optional[ProviderSpec]:
     )
 
 
-def _ollama_local() -> Optional[ProviderSpec]:
+def _ollama_local() -> ProviderSpec | None:
     url = getattr(settings, "ollama_url", "") or "http://localhost:11434"
     # We cannot probe availability synchronously here without I/O. The caller
     # of this router is responsible for handling connection failures and
@@ -104,7 +103,7 @@ def _ollama_local() -> Optional[ProviderSpec]:
     )
 
 
-def _nvidia_nemotron_ultra() -> Optional[ProviderSpec]:
+def _nvidia_nemotron_ultra() -> ProviderSpec | None:
     if not settings.nvidia_api_key:
         return None
     return ProviderSpec(
@@ -117,7 +116,7 @@ def _nvidia_nemotron_ultra() -> Optional[ProviderSpec]:
     )
 
 
-def _nvidia_llama_70b() -> Optional[ProviderSpec]:
+def _nvidia_llama_70b() -> ProviderSpec | None:
     if not settings.nvidia_api_key:
         return None
     return ProviderSpec(
@@ -130,7 +129,7 @@ def _nvidia_llama_70b() -> Optional[ProviderSpec]:
     )
 
 
-def _gemini_pro() -> Optional[ProviderSpec]:
+def _gemini_pro() -> ProviderSpec | None:
     if not settings.gemini_api_key:
         return None
     return ProviderSpec(
@@ -143,7 +142,7 @@ def _gemini_pro() -> Optional[ProviderSpec]:
     )
 
 
-def _gemini_flash() -> Optional[ProviderSpec]:
+def _gemini_flash() -> ProviderSpec | None:
     if not settings.gemini_api_key:
         return None
     return ProviderSpec(
@@ -156,7 +155,7 @@ def _gemini_flash() -> Optional[ProviderSpec]:
     )
 
 
-def _groq_llama_70b() -> Optional[ProviderSpec]:
+def _groq_llama_70b() -> ProviderSpec | None:
     if not settings.groq_api_key:
         return None
     return ProviderSpec(
@@ -169,7 +168,7 @@ def _groq_llama_70b() -> Optional[ProviderSpec]:
     )
 
 
-def _groq_llama_8b() -> Optional[ProviderSpec]:
+def _groq_llama_8b() -> ProviderSpec | None:
     if not settings.groq_api_key:
         return None
     return ProviderSpec(
@@ -182,7 +181,7 @@ def _groq_llama_8b() -> Optional[ProviderSpec]:
     )
 
 
-def _haiku_last_resort() -> Optional[ProviderSpec]:
+def _haiku_last_resort() -> ProviderSpec | None:
     """Anthropic Haiku — LAST RESORT per Article 0.
 
     Explicitly gated: only returned for SAFE_USER_FACING role. Never for
@@ -232,7 +231,7 @@ _CHAINS: dict[ProviderRole, list] = {
 }
 
 
-def select_provider(role: ProviderRole) -> Optional[ProviderSpec]:
+def select_provider(role: ProviderRole) -> ProviderSpec | None:
     """Return the first available provider for the given role.
 
     Returns None if the entire chain is empty (no keys at all). In practice

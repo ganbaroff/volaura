@@ -20,7 +20,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-
 # ── Weights ───────────────────────────────────────────────────────────────────
 
 SIGNAL_WEIGHTS: dict[str, float] = {

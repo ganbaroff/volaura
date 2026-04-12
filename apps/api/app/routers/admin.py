@@ -15,7 +15,7 @@ Endpoints:
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, HTTPException, Query, Request
 from loguru import logger
@@ -61,7 +61,7 @@ async def get_admin_stats(
     db_admin: SupabaseAdmin,
 ) -> AdminStatsResponse:
     """Platform health stats for the admin dashboard home page."""
-    today_start = datetime.now(timezone.utc).replace(
+    today_start = datetime.now(UTC).replace(
         hour=0, minute=0, second=0, microsecond=0
     ).isoformat()
 
@@ -162,11 +162,11 @@ async def approve_organization(
     if not org_check.data:
         raise HTTPException(status_code=404, detail={"code": "ORG_NOT_FOUND", "message": "Organization not found"})
 
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(UTC).isoformat()
     await db_admin.table("organizations").update({"verified_at": now}).eq("id", org_id).execute()
 
     logger.info("Admin approved organization", org_id=org_id, admin_id=admin_id)
-    return OrgApproveResponse(org_id=org_id, action="approved", verified_at=datetime.now(timezone.utc))
+    return OrgApproveResponse(org_id=org_id, action="approved", verified_at=datetime.now(UTC))
 
 
 @router.post("/organizations/{org_id}/reject", response_model=OrgApproveResponse)
@@ -304,7 +304,7 @@ async def decide_proposal(
         for p in data.get("proposals", []):
             if p.get("id", "").startswith(proposal_id):
                 p["status"] = status_map[action]
-                p["ceo_decision_at"] = datetime.now(timezone.utc).isoformat()
+                p["ceo_decision_at"] = datetime.now(UTC).isoformat()
                 p["ceo_decision"] = f"Admin {admin_id}: {action}"
                 found = True
                 break
@@ -312,7 +312,8 @@ async def decide_proposal(
         if not found:
             raise HTTPException(status_code=404, detail={"code": "PROPOSAL_NOT_FOUND", "message": f"Proposal {proposal_id} not found"})
 
-        import tempfile, os
+        import os
+        import tempfile
         tmp_fd, tmp_path = tempfile.mkstemp(dir=proposals_path.parent, suffix=".json")
         try:
             with os.fdopen(tmp_fd, "w", encoding="utf-8") as tmp_f:
@@ -355,9 +356,10 @@ async def get_swarm_findings(
         sys.path.insert(0, _packages_path)
 
     try:
-        from swarm.shared_memory import get_all_recent, _DB_PATH
-        import sqlite3 as _sqlite3
         import json as _json
+        import sqlite3 as _sqlite3
+
+        from swarm.shared_memory import _DB_PATH, get_all_recent  # noqa: F401
 
         if not _DB_PATH.exists():
             return {"data": {"findings": [], "total": 0, "db_exists": False}}

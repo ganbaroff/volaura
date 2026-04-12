@@ -19,7 +19,7 @@ Graceful degradation:
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, HTTPException, Request
 from loguru import logger
@@ -119,9 +119,9 @@ async def get_subscription_status(
                 else datetime.fromisoformat(str(trial_ends_at_raw).replace("Z", "+00:00"))
             )
             if trial_ends_at.tzinfo is None:
-                trial_ends_at = trial_ends_at.replace(tzinfo=timezone.utc)
+                trial_ends_at = trial_ends_at.replace(tzinfo=UTC)
 
-            if trial_ends_at < datetime.now(timezone.utc):
+            if trial_ends_at < datetime.now(UTC):
                 await db.table("profiles").update(
                     {"subscription_status": "expired"}
                 ).eq("id", user_id).execute()
@@ -436,14 +436,14 @@ async def _handle_subscription_created(sub: dict) -> bool:
 
     ends_at: str | None = None
     if current_period_end:
-        ends_at = datetime.fromtimestamp(current_period_end, tz=timezone.utc).isoformat()
+        ends_at = datetime.fromtimestamp(current_period_end, tz=UTC).isoformat()
 
     return await _update_profile_subscription(
         customer_id,
         {
             "subscription_status": "active",
             "stripe_subscription_id": subscription_id,
-            "subscription_started_at": datetime.now(timezone.utc).isoformat(),
+            "subscription_started_at": datetime.now(UTC).isoformat(),
             "subscription_ends_at": ends_at,
         },
     ) is not False
@@ -471,7 +471,7 @@ async def _handle_subscription_updated(sub: dict) -> None:
 
     ends_at: str | None = None
     if current_period_end:
-        ends_at = datetime.fromtimestamp(current_period_end, tz=timezone.utc).isoformat()
+        ends_at = datetime.fromtimestamp(current_period_end, tz=UTC).isoformat()
 
     await _update_profile_subscription(
         customer_id,
@@ -490,6 +490,6 @@ async def _handle_subscription_deleted(sub: dict) -> None:
         customer_id,
         {
             "subscription_status": "cancelled",
-            "subscription_ends_at": datetime.now(timezone.utc).isoformat(),
+            "subscription_ends_at": datetime.now(UTC).isoformat(),
         },
     )

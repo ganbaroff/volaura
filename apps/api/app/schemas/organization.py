@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -146,7 +145,7 @@ class OrgDashboardStats(BaseModel):
     completion_rate: float       # completed / assigned (0.0–1.0)
     avg_aura_score: float | None # average AURA total_score across completed volunteers
     badge_distribution: BadgeDistribution
-    top_volunteers: list["OrgVolunteerRow"]  # top 5 by AURA score
+    top_volunteers: list[OrgVolunteerRow]  # top 5 by AURA score
 
 
 class OrgVolunteerRow(BaseModel):

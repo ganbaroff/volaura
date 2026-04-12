@@ -13,8 +13,6 @@ Architecture:
 """
 
 import asyncio
-import re
-from typing import Optional
 
 from loguru import logger
 
@@ -38,7 +36,7 @@ def _has_az_characters(text: str) -> bool:
 
 async def translate_en_to_az(
     text: str,
-    context: Optional[str] = None,
+    context: str | None = None,
     max_retries: int = 2,
 ) -> str:
     """Translate English text to Azerbaijani.
@@ -108,7 +106,7 @@ async def _google_translation_llm(text: str) -> str:
     return response.translations[0].translated_text
 
 
-async def _gemini_az_translation(text: str, context: Optional[str]) -> str:
+async def _gemini_az_translation(text: str, context: str | None) -> str:
     """Translate via Gemini 2.5 Flash with AZ-specialized prompt."""
     from google import genai  # type: ignore[import]
 
@@ -146,7 +144,7 @@ Azerbaijani translation:"""
 
 async def batch_translate_en_to_az(
     texts: list[str],
-    context: Optional[str] = None,
+    context: str | None = None,
     concurrency: int = 5,
 ) -> list[str]:
     """Translate multiple texts concurrently with rate-limiting.

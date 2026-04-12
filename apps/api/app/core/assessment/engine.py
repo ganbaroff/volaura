@@ -18,7 +18,6 @@ import random
 from dataclasses import dataclass, field
 from typing import Any
 
-
 # Stopping criteria constants (Full energy defaults)
 MAX_ITEMS = 20
 SE_THRESHOLD = 0.3
@@ -98,7 +97,7 @@ class CATState:
         }
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "CATState":
+    def from_dict(cls, data: dict[str, Any]) -> CATState:
         items = [
             ItemRecord(
                 question_id=r["question_id"],
@@ -202,10 +201,10 @@ def _estimate_eap(
     weights = [p / total for p in posteriors]
 
     # EAP estimate
-    theta_hat = sum(w * t for w, t in zip(weights, thetas))
+    theta_hat = sum(w * t for w, t in zip(weights, thetas, strict=False))
 
     # SE = sqrt(posterior variance)
-    variance = sum(w * (t - theta_hat) ** 2 for w, t in zip(weights, thetas))
+    variance = sum(w * (t - theta_hat) ** 2 for w, t in zip(weights, thetas, strict=False))
     se = math.sqrt(max(0.0, variance))
 
     return theta_hat, se

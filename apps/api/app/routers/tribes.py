@@ -14,26 +14,26 @@ Security Agent checklist (approved before code):
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Header, HTTPException, Request
 from loguru import logger
 
 from app.config import settings
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
-from app.middleware.rate_limit import limiter, RATE_DEFAULT, RATE_PROFILE_WRITE
+from app.middleware.rate_limit import RATE_DEFAULT, RATE_PROFILE_WRITE, limiter
 from app.schemas.tribes import (
     KudosResponse,
     OptOutResponse,
     PoolStatusOut,
     RenewalResponse,
     TribeMatchPreview,
-    TribeOut,
     TribeMemberStatus,
+    TribeOut,
     TribeStreakOut,
 )
 from app.services.tribe_matching import run_tribe_matching
-from app.services.tribe_streak_tracker import record_assessment_activity, update_weekly_streaks
+from app.services.tribe_streak_tracker import update_weekly_streaks
 
 router = APIRouter(prefix="/tribes", tags=["Tribes"])
 
@@ -78,7 +78,7 @@ async def get_my_tribe(
     ).eq("tribe_id", tribe_id).is_("opt_out_at", None).execute()
 
     # Determine who was active this ISO week
-    current_week = _iso_week(datetime.now(timezone.utc))
+    current_week = _iso_week(datetime.now(UTC))
     members: list[TribeMemberStatus] = []
 
     for m in (members_result.data or []):
@@ -212,7 +212,7 @@ async def opt_out_of_tribe(
     if not membership.data:
         raise HTTPException(status_code=400, detail={"code": "NOT_IN_TRIBE", "message": "You are not in an active tribe."})
 
-    now_iso = datetime.now(timezone.utc).isoformat()
+    now_iso = datetime.now(UTC).isoformat()
 
     # Soft opt-out: set opt_out_at (RLS policy allows user to update own row)
     await db.table("tribe_members").update({"opt_out_at": now_iso}).eq(

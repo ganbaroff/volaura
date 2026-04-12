@@ -14,8 +14,7 @@ Algorithm:
 
 from __future__ import annotations
 
-import math
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from loguru import logger
 
@@ -39,7 +38,7 @@ async def run_tribe_matching(db) -> dict:
         Dict with tribes_created, users_matched, users_renewed, users_skipped
     """
     logger.info("Tribe matching run started")
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     # Step 1: Expire tribes whose time is up
     expired_count = await _expire_old_tribes(db, now)

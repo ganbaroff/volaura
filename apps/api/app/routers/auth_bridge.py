@@ -42,7 +42,7 @@ from __future__ import annotations
 
 import hmac
 import secrets
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
 from fastapi import APIRouter, Header, HTTPException, Request
@@ -53,7 +53,6 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from app.config import settings
 from app.deps import SupabaseAdmin
 from app.middleware.rate_limit import limiter
-
 
 router = APIRouter(prefix="/auth", tags=["Auth Bridge"])
 
@@ -99,7 +98,7 @@ def _mint_shared_jwt(shared_user_id: str, email: str) -> tuple[str, datetime]:
     admin.auth.get_user() — that call hits Supabase's auth service which
     verifies signature with the same secret.
     """
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     exp = now + timedelta(seconds=_JWT_LIFETIME_SECONDS)
 
     payload = {
@@ -319,7 +318,7 @@ async def bridge_from_external(
             admin.table("user_identity_map")
             .update(
                 {
-                    "last_seen_at": datetime.now(timezone.utc).isoformat(),
+                    "last_seen_at": datetime.now(UTC).isoformat(),
                     "email": email_norm,
                 }
             )
@@ -355,7 +354,7 @@ async def bridge_from_external(
                         "shared_user_id": shared_user_id,
                         "email": email_norm,
                         "source_product": body.source_product,
-                        "last_seen_at": datetime.now(timezone.utc).isoformat(),
+                        "last_seen_at": datetime.now(UTC).isoformat(),
                     },
                     on_conflict="standalone_user_id,standalone_project_ref",
                 )

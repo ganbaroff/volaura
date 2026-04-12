@@ -5,9 +5,9 @@ Stripe IDs are present in SubscriptionStatus only for admin-level
 callers — never included in public-facing responses.
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-from pydantic import BaseModel, ConfigDict, computed_field
+from pydantic import BaseModel, ConfigDict
 
 
 class SubscriptionStatus(BaseModel):
@@ -47,7 +47,7 @@ def compute_days_remaining(
     - 'active' → days until subscription_ends_at
     - anything else → 0
     """
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     if status == "trial" and trial_ends_at:
         delta = trial_ends_at - now
         return max(0, delta.days)
@@ -69,7 +69,7 @@ def build_subscription_status(profile_row: dict) -> SubscriptionStatus:
             return None
         if isinstance(val, datetime):
             if val.tzinfo is None:
-                return val.replace(tzinfo=timezone.utc)
+                return val.replace(tzinfo=UTC)
             return val
         # ISO string from Supabase
         dt = datetime.fromisoformat(str(val).replace("Z", "+00:00"))

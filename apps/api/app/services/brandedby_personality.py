@@ -152,10 +152,7 @@ def _build_fallback_personality(display_name: str, character_state: dict) -> str
         for s in top_skills
     ]
 
-    if len(skill_names) > 1:
-        skill_str = ", ".join(skill_names[:-1]) + f" and {skill_names[-1]}"
-    else:
-        skill_str = skill_names[0]
+    skill_str = ", ".join(skill_names[:-1]) + f" and {skill_names[-1]}" if len(skill_names) > 1 else skill_names[0]
     level = "experienced" if xp >= 500 else "active" if xp >= 100 else "emerging"
 
     return (

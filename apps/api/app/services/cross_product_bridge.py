@@ -58,9 +58,7 @@ def _is_circuit_open() -> bool:
     """True if circuit breaker is currently suppressing calls."""
     global _cb_silenced_until
     now = time.monotonic()
-    if now < _cb_silenced_until:
-        return True
-    return False
+    return now < _cb_silenced_until
 
 
 def _record_failure() -> None:

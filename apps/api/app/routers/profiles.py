@@ -1,20 +1,20 @@
 """Profile endpoints."""
 
 import secrets
-from datetime import UTC, datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, HTTPException, Query, Request
 from loguru import logger
 
 from app.config import settings
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
-from app.middleware.rate_limit import limiter, RATE_PROFILE_WRITE, RATE_DEFAULT, RATE_DISCOVERY
+from app.middleware.rate_limit import RATE_DEFAULT, RATE_DISCOVERY, RATE_PROFILE_WRITE, limiter
 from app.schemas.profile import (
+    DiscoverableVolunteer,
     ProfileCreate,
     ProfileResponse,
     ProfileUpdate,
     PublicProfileResponse,
-    DiscoverableVolunteer,
 )
 from app.schemas.verification import (
     CreateVerificationLinkRequest,
@@ -456,7 +456,7 @@ async def record_profile_view(
         return
 
     # Dedup: skip if this org already sent an org_view notification for this volunteer in last 24h
-    since = (datetime.now(tz=timezone.utc) - timedelta(hours=24)).isoformat()
+    since = (datetime.now(tz=UTC) - timedelta(hours=24)).isoformat()
     existing = (
         await db.table("notifications")
         .select("id")
@@ -498,7 +498,7 @@ async def get_my_profile_views(
     Returns: total views, views this week, list of org names who viewed (last 10).
     Volunteer-only — orgs see their own dashboard stats elsewhere.
     """
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=UTC)
     week_ago = (now - timedelta(days=7)).isoformat()
 
     # Total org_view notifications (= unique org views after dedup)

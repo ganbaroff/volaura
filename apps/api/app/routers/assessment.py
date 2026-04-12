@@ -15,26 +15,13 @@ Business logic lives in app/services/assessment/:
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, HTTPException, Request
 from loguru import logger
 
 from app.config import settings
 from app.core.assessment import antigaming, bars
-from app.middleware.rate_limit import (
-    limiter,
-    RATE_ASSESSMENT_START,
-    RATE_ASSESSMENT_ANSWER,
-    RATE_ASSESSMENT_COMPLETE,
-    RATE_LLM,
-    RATE_DISCOVERY,
-)
-from app.core.assessment.aura_calc import (
-    calculate_overall,
-    get_badge_tier,
-    is_elite,
-)
 from app.core.assessment.engine import (
     CATState,
     select_next_item,
@@ -43,23 +30,36 @@ from app.core.assessment.engine import (
     theta_to_score,
 )
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
+from app.middleware.rate_limit import (
+    RATE_ASSESSMENT_ANSWER,
+    RATE_ASSESSMENT_COMPLETE,
+    RATE_ASSESSMENT_START,
+    RATE_DISCOVERY,
+    RATE_LLM,
+    limiter,
+)
 from app.schemas.assessment import (
     AnswerFeedback,
     AssessmentInfoOut,
     AssessmentResultOut,
-    PublicVerificationOut,
     CoachingResponse,
     CoachingTip,
+    PublicVerificationOut,
     QuestionBreakdownOut,
     QuestionResultOut,
     SessionOut,
     StartAssessmentRequest,
     SubmitAnswerRequest,
 )
-from app.services.assessment.coaching_service import generate_coaching_tips
-from app.services.assessment.helpers import get_competency_id, fetch_questions, make_session_out, get_competency_slug
-from app.services.assessment.rewards import emit_assessment_rewards
 from app.services.analytics import track_event
+from app.services.assessment.coaching_service import generate_coaching_tips
+from app.services.assessment.helpers import (
+    fetch_questions,
+    get_competency_id,
+    get_competency_slug,
+    make_session_out,
+)
+from app.services.assessment.rewards import emit_assessment_rewards
 from app.services.email import send_aura_ready_email
 from app.services.notification_service import notify
 from app.services.tribe_streak_tracker import record_assessment_activity
@@ -173,8 +173,8 @@ async def start_assessment(
             last_start = None
         if last_start is not None:
             if last_start.tzinfo is None:
-                last_start = last_start.replace(tzinfo=timezone.utc)
-            minutes_since = (datetime.now(timezone.utc) - last_start).total_seconds() / 60
+                last_start = last_start.replace(tzinfo=UTC)
+            minutes_since = (datetime.now(UTC) - last_start).total_seconds() / 60
             if minutes_since < RAPID_RESTART_COOLDOWN_MINUTES:
                 retry_in = int(RAPID_RESTART_COOLDOWN_MINUTES - minutes_since) + 1
                 logger.warning(
@@ -216,9 +216,9 @@ async def start_assessment(
     if recent.data and recent.data[0].get("completed_at"):
         last_completed = datetime.fromisoformat(recent.data[0]["completed_at"])
         if last_completed.tzinfo is None:
-            last_completed = last_completed.replace(tzinfo=timezone.utc)
+            last_completed = last_completed.replace(tzinfo=UTC)
         # BUG-009 FIX: use total_seconds() not .days — .days truncates (1d 23h = 1, not 2)
-        days_since = int((datetime.now(timezone.utc) - last_completed).total_seconds() // 86400)
+        days_since = int((datetime.now(UTC) - last_completed).total_seconds() // 86400)
         if days_since < RETEST_COOLDOWN_DAYS:
             retry_after = RETEST_COOLDOWN_DAYS - days_since
             raise HTTPException(
@@ -235,7 +235,7 @@ async def start_assessment(
         await db_user.table("assessment_sessions")
         .select("id", count="exact")
         .eq("volunteer_id", user_id)
-        .gte("started_at", (datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)).isoformat())
+        .gte("started_at", (datetime.now(UTC).replace(hour=0, minute=0, second=0, microsecond=0)).isoformat())
         .execute()
     )
     daily_count = starts_today.count or 0
@@ -273,8 +273,8 @@ async def start_assessment(
             if prev.get("theta_estimate") is not None and prev.get("completed_at"):
                 completed_dt = datetime.fromisoformat(prev["completed_at"])
                 if completed_dt.tzinfo is None:
-                    completed_dt = completed_dt.replace(tzinfo=timezone.utc)
-                days_elapsed = max(0.0, (datetime.now(timezone.utc) - completed_dt).total_seconds() / 86400)
+                    completed_dt = completed_dt.replace(tzinfo=UTC)
+                days_elapsed = max(0.0, (datetime.now(UTC) - completed_dt).total_seconds() / 86400)
                 # Widen SE by 1.5× per 90 days — the further in the past, the less we trust it
                 decay_factor = 1.5 ** (days_elapsed / 90.0)
                 prior_mean = float(prev["theta_estimate"])
@@ -305,14 +305,14 @@ async def start_assessment(
         "theta_se": state.theta_se,
         "answers": state.to_dict(),
         "current_question_id": first_q["id"] if first_q else None,
-        "question_delivered_at": datetime.now(timezone.utc).isoformat(),  # HIGH-03: server-side timing
-        "started_at": datetime.now(timezone.utc).isoformat(),
+        "question_delivered_at": datetime.now(UTC).isoformat(),  # HIGH-03: server-side timing
+        "started_at": datetime.now(UTC).isoformat(),
     }
     # Session metadata: energy level + GDPR Article 22 consent timestamp
     metadata: dict = {}
     if payload.energy_level != "full":
         metadata["energy_level"] = payload.energy_level
-    metadata["article22_consent_at"] = datetime.now(timezone.utc).isoformat()
+    metadata["article22_consent_at"] = datetime.now(UTC).isoformat()
     session_data["metadata"] = metadata
     await db_user.table("assessment_sessions").insert(session_data).execute()
 
@@ -330,7 +330,7 @@ async def submit_answer(
 ) -> AnswerFeedback:
     """Submit an answer to the current question and get the next item."""
     # Capture now_utc once — used for expiry check, timing, and session update timestamps
-    now_utc = datetime.now(timezone.utc)
+    now_utc = datetime.now(UTC)
     # Load session
     session_result = (
         await db_user.table("assessment_sessions")
@@ -430,7 +430,7 @@ async def submit_answer(
         try:
             delivered_dt = datetime.fromisoformat(question_delivered_at.replace("Z", "+00:00"))
             if delivered_dt.tzinfo is None:
-                delivered_dt = delivered_dt.replace(tzinfo=timezone.utc)
+                delivered_dt = delivered_dt.replace(tzinfo=UTC)
             if delivered_dt > now_utc:
                 # Future timestamp = tampered session — log and treat as 0ms elapsed
                 logger.warning(
@@ -478,7 +478,7 @@ async def submit_answer(
         _force_degraded = False
         try:
             today_start = (
-                datetime.now(timezone.utc)
+                datetime.now(UTC)
                 .replace(hour=0, minute=0, second=0, microsecond=0)
                 .isoformat()
             )
@@ -681,14 +681,14 @@ async def complete_assessment(
             stop_reason=state_early.stop_reason,
             aura_updated=False,  # already updated in the original complete call
             gaming_flags=stored_flags,
-            completed_at=session.get("completed_at") or datetime.now(timezone.utc),
+            completed_at=session.get("completed_at") or datetime.now(UTC),
         )
 
     # BUG-010 FIX: reject completion of expired sessions (expired but in_progress sessions)
     expires_at_str = session.get("expires_at")
     if expires_at_str and session.get("status") == "in_progress":
         expires_at = datetime.fromisoformat(expires_at_str.replace("Z", "+00:00"))
-        if datetime.now(timezone.utc) > expires_at:
+        if datetime.now(UTC) > expires_at:
             raise HTTPException(
                 status_code=410,
                 detail={"code": "SESSION_EXPIRED", "message": "This assessment session has expired. Please start a new one."},
@@ -712,7 +712,7 @@ async def complete_assessment(
             "theta_estimate": state.theta,
             "theta_se": state.theta_se,
             "answers": state.to_dict(),
-            "completed_at": datetime.now(timezone.utc).isoformat(),
+            "completed_at": datetime.now(UTC).isoformat(),
             "gaming_penalty_multiplier": gaming.penalty_multiplier,
             "gaming_flags": gaming.flags,
         }).eq("id", session_id).execute()
@@ -846,7 +846,7 @@ async def complete_assessment(
         stop_reason=state.stop_reason,
         aura_updated=aura_updated,
         gaming_flags=gaming.flags,
-        completed_at=datetime.now(timezone.utc),
+        completed_at=datetime.now(UTC),
         crystals_earned=crystals_earned,
     )
 
@@ -1060,9 +1060,9 @@ async def get_assessment_info(
     if recent.data and recent.data[0].get("completed_at"):
         last_completed = datetime.fromisoformat(recent.data[0]["completed_at"])
         if last_completed.tzinfo is None:
-            last_completed = last_completed.replace(tzinfo=timezone.utc)
+            last_completed = last_completed.replace(tzinfo=UTC)
         # BUG-009 FIX: use total_seconds() not .days — .days truncates (1d 23h = 1, not 2)
-        days_since = int((datetime.now(timezone.utc) - last_completed).total_seconds() // 86400)
+        days_since = int((datetime.now(UTC) - last_completed).total_seconds() // 86400)
         if days_since < RETEST_COOLDOWN_DAYS:
             days_until_retake = RETEST_COOLDOWN_DAYS - days_since
 

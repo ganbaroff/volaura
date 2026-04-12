@@ -17,9 +17,8 @@ from __future__ import annotations
 import csv
 import io
 import uuid
-from datetime import datetime, timezone
 
-from fastapi import APIRouter, HTTPException, Request, UploadFile, File
+from fastapi import APIRouter, File, HTTPException, Request, UploadFile
 from fastapi.responses import JSONResponse
 from loguru import logger
 
@@ -184,7 +183,7 @@ async def bulk_invite_volunteers(
     for batch_start in range(0, len(new_rows), BATCH_SIZE):
         batch = new_rows[batch_start:batch_start + BATCH_SIZE]
         insert_data = []
-        for row_num, row in batch:
+        for _row_num, row in batch:
             insert_data.append({
                 "id": str(uuid.uuid4()),
                 "org_id": org_id,

@@ -11,7 +11,6 @@ This router reads them, injects user data, calls LLM, returns output.
 from __future__ import annotations
 
 import asyncio
-import re
 from pathlib import Path
 from typing import Any
 
@@ -19,8 +18,8 @@ from fastapi import APIRouter, HTTPException, Request
 from loguru import logger
 from pydantic import BaseModel, ConfigDict
 
-from app.deps import SupabaseAdmin, SupabaseUser, CurrentUserId
-from app.middleware.rate_limit import limiter, RATE_DEFAULT, RATE_LLM
+from app.deps import CurrentUserId, SupabaseUser
+from app.middleware.rate_limit import RATE_DEFAULT, RATE_LLM, limiter
 from app.services.llm import evaluate_with_llm
 
 router = APIRouter(prefix="/skills", tags=["skills"])
@@ -71,7 +70,7 @@ def _load_skill(skill_name: str) -> str:
             status_code=404,
             detail={"code": "SKILL_NOT_FOUND", "message": f"Skill '{skill_name}' not found"},
         )
-    with open(skill_path, "r", encoding="utf-8") as f:
+    with open(skill_path, encoding="utf-8") as f:
         return f.read()
 
 
@@ -192,7 +191,7 @@ async def list_skills(request: Request):
             name = f.stem
             if name in ALLOWED_SKILLS:
                 # Read first line as title
-                with open(f, "r", encoding="utf-8") as fh:
+                with open(f, encoding="utf-8") as fh:
                     title = fh.readline().replace("#", "").strip()
                 skills.append({"name": name, "title": title, "endpoint": f"/api/skills/{name}"})
 

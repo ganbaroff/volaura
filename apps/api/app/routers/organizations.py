@@ -4,13 +4,13 @@ from __future__ import annotations
 
 import asyncio
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, HTTPException, Query, Request
 from loguru import logger
 
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
-from app.middleware.rate_limit import limiter, RATE_PROFILE_WRITE, RATE_DEFAULT, RATE_DISCOVERY
+from app.middleware.rate_limit import RATE_DEFAULT, RATE_DISCOVERY, RATE_PROFILE_WRITE, limiter
 from app.schemas.organization import (
     AssignAssessmentRequest,
     AssignmentResponse,
@@ -18,11 +18,11 @@ from app.schemas.organization import (
     CollectiveAuraResponse,
     IntroRequestCreate,
     IntroRequestResponse,
-    OrgDashboardStats,
-    OrgVolunteerRow,
     OrganizationCreate,
     OrganizationResponse,
     OrganizationUpdate,
+    OrgDashboardStats,
+    OrgVolunteerRow,
     SavedSearchCreate,
     SavedSearchOut,
     SavedSearchUpdate,
@@ -576,7 +576,7 @@ async def assign_assessments(
     existing_ids = {p["id"] for p in (vol_result.data or [])}
     missing_ids = [vid for vid in payload.volunteer_ids if vid not in existing_ids]
 
-    deadline = datetime.now(timezone.utc) + timedelta(days=payload.deadline_days)
+    deadline = datetime.now(UTC) + timedelta(days=payload.deadline_days)
     assigned = 0
     skipped = 0
     errors: list[str] = []
@@ -608,7 +608,7 @@ async def assign_assessments(
                 "competency_id": comp_id,
                 "status": "assigned",
                 "assigned_by_org_id": org_id,
-                "assigned_at": datetime.now(timezone.utc).isoformat(),
+                "assigned_at": datetime.now(UTC).isoformat(),
                 "deadline": deadline.isoformat(),
                 "assignment_message": payload.message,
                 "theta_estimate": 0.0,

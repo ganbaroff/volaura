@@ -12,7 +12,7 @@ import json
 
 from loguru import logger
 
-from app.schemas.assessment import CoachingResponse, CoachingTip
+from app.schemas.assessment import CoachingTip
 
 # ── Per-competency fallback tips ───────────────────────────────────────────────
 # Used when Gemini is unavailable or times out.

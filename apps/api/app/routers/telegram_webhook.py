@@ -9,8 +9,9 @@ Setup: POST /api/telegram/setup-webhook to register with Telegram API.
 
 from __future__ import annotations
 
+import contextlib
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, Request
@@ -107,26 +108,20 @@ def _get_ecosystem_context() -> str:
     # VOLAURA heartbeat
     volaura_hb = _REPO_ROOT / "memory" / "context" / "heartbeat.md"
     if volaura_hb.exists():
-        try:
+        with contextlib.suppress(Exception):
             parts.append("=== VOLAURA HEARTBEAT ===\n" + volaura_hb.read_text(encoding="utf-8")[:1200])
-        except Exception:
-            pass
 
     # MindShift heartbeat
     mindshift_hb = Path("C:/Users/user/Downloads/mindshift/memory/heartbeat.md")
     if mindshift_hb.exists():
-        try:
+        with contextlib.suppress(Exception):
             parts.append("=== MINDSHIFT HEARTBEAT ===\n" + mindshift_hb.read_text(encoding="utf-8")[:800])
-        except Exception:
-            pass
 
     # Ecosystem contract
     contract = _REPO_ROOT / "memory" / "context" / "ecosystem-contract.md"
     if contract.exists():
-        try:
+        with contextlib.suppress(Exception):
             parts.append("=== ECOSYSTEM CONTRACT ===\n" + contract.read_text(encoding="utf-8")[:600])
-        except Exception:
-            pass
 
     if parts:
         return "\n\n".join(parts)
@@ -148,7 +143,7 @@ def _load_agent_state() -> dict:
     state_path = _REPO_ROOT / "memory" / "swarm" / "agent-state.json"
     try:
         import json as _json
-        with open(state_path, "r", encoding="utf-8") as f:
+        with open(state_path, encoding="utf-8") as f:
             data = _json.load(f)
         return data.get("agents", {})
     except Exception:
@@ -212,7 +207,6 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
     text_lower = text.lower()
     is_idea = any(w in text_lower for w in ["идея", "idea", "можно сделать", "а что если", "предлагаю", "надо бы"])
     is_task = any(w in text_lower for w in ["сделай", "задача", "task", "нужно", "исправь", "fix", "добавь", "add"])
-    is_question = "?" in text
     is_report = any(w in text_lower for w in [
         "отчёт", "report", "статус", "status", "что сделано", "прогресс",
         "готов", "работает", "zeus", "life sim", "crystal", "кристал",
@@ -332,7 +326,7 @@ async def _handle_proposals(db, chat_id: int | str) -> None:
         if not proposals_path.exists():
             await _send_message(chat_id, "📭 Нет активных proposals.")
             return
-        with open(proposals_path, "r", encoding="utf-8") as f:
+        with open(proposals_path, encoding="utf-8") as f:
             data = _json.load(f)
 
         pending = [p for p in data.get("proposals", []) if p.get("status") == "pending"]
@@ -367,7 +361,7 @@ async def _handle_proposal_action(db, chat_id: int | str, action: str, proposal_
     import json as _json
     proposals_path = Path(__file__).parent.parent.parent.parent.parent / "memory" / "swarm" / "proposals.json"
     try:
-        with open(proposals_path, "r", encoding="utf-8") as f:
+        with open(proposals_path, encoding="utf-8") as f:
             data = _json.load(f)
 
         found = False
@@ -380,7 +374,7 @@ async def _handle_proposal_action(db, chat_id: int | str, action: str, proposal_
                     p["status"] = "rejected"
                 elif action == "defer":
                     p["status"] = "deferred"
-                p["ceo_decision_at"] = datetime.now(timezone.utc).isoformat()
+                p["ceo_decision_at"] = datetime.now(UTC).isoformat()
                 found = True
 
                 # Atomic write: temp file + rename prevents TOCTOU race (P1-02)
@@ -414,7 +408,7 @@ async def _execute_proposal(db, chat_id: int | str, proposal_id: str) -> None:
     proposals_path = Path(__file__).parent.parent.parent.parent.parent / "memory" / "swarm" / "proposals.json"
 
     try:
-        with open(proposals_path, "r", encoding="utf-8") as f:
+        with open(proposals_path, encoding="utf-8") as f:
             data = _json.load(f)
 
         found = None
@@ -429,7 +423,7 @@ async def _execute_proposal(db, chat_id: int | str, proposal_id: str) -> None:
 
         # Mark as executing
         found["status"] = "executing"
-        found["ceo_decision_at"] = datetime.now(timezone.utc).isoformat()
+        found["ceo_decision_at"] = datetime.now(UTC).isoformat()
         import tempfile
         tmp_fd, tmp_path = tempfile.mkstemp(dir=proposals_path.parent, suffix=".json")
         try:
@@ -447,7 +441,7 @@ async def _execute_proposal(db, chat_id: int | str, proposal_id: str) -> None:
             await _send_message(chat_id, f"🚀 Proposal `{proposal_id}` помечен для исполнения.\n⚠️ GITHUB_TOKEN не настроен — автозапуск невозможен.\n\nВручную: `gh workflow run 'Swarm Daily Autonomy' -f mode=coordinator`")
             return
 
-        task_desc = f"{found.get('title', '')}. {found.get('content', '')[:300]}"
+        f"{found.get('title', '')}. {found.get('content', '')[:300]}"
         async with httpx.AsyncClient(timeout=15) as client:
             resp = await client.post(
                 "https://api.github.com/repos/ganbaroff/volaura/actions/workflows/swarm-daily.yml/dispatches",
@@ -485,7 +479,7 @@ async def _handle_agents(chat_id: int | str) -> None:
         last = (info.get("last_task") or "—")[:60]
         lines.append(f"{emoji} `{aid}` — {tasks} задач\n   _{last}_")
 
-    lines.append(f"\n*Все агенты* — /ask {{agent}} {{вопрос}}")
+    lines.append("\n*Все агенты* — /ask {agent} {вопрос}")
     lines.append("*Дать задачу* — /agent {{id}} {{задача}}")
     lines.append("*Весь рой* — /swarm {{задача}}")
     lines.append(f"\nАгентов с данными: {len(initialized)}/44")
@@ -716,7 +710,7 @@ async def _handle_ask_proposal(db, chat_id: int | str, proposal_id: str, questio
     proposals_path = Path(__file__).parent.parent.parent.parent.parent / "memory" / "swarm" / "proposals.json"
 
     try:
-        with open(proposals_path, "r", encoding="utf-8") as f:
+        with open(proposals_path, encoding="utf-8") as f:
             data = _json.load(f)
     except Exception:
         await _send_message(chat_id, "⚠️ Не удалось прочитать proposals.")
@@ -797,7 +791,7 @@ async def _handle_skills(chat_id: int | str) -> None:
 
     msg = "🧠 *Product Skills:*\n\n"
     for f in sorted(skills_dir.glob("*.md")):
-        with open(f, "r", encoding="utf-8") as fh:
+        with open(f, encoding="utf-8") as fh:
             title = fh.readline().replace("#", "").strip()
         msg += f"• `{f.stem}` — {title[:60]}\n"
 
@@ -815,8 +809,11 @@ async def _handle_findings(chat_id: int | str, limit: int = 5) -> None:
         sys.path.insert(0, _packages_path)
 
     try:
+        import json as _json
+        import sqlite3 as _sqlite3
+        import time as _time
+
         from swarm.shared_memory import _DB_PATH
-        import sqlite3 as _sqlite3, json as _json, time as _time
 
         if not _DB_PATH.exists():
             await _send_message(chat_id, "📭 Blackboard пустой. Запусти: `python -m swarm.autonomous_run --mode=coordinator`")
@@ -868,7 +865,7 @@ async def _handle_simulate(chat_id: int | str) -> None:
         sys.path.insert(0, _packages_path)
 
     try:
-        from swarm.simulate_users import simulate, _friction_report
+        from swarm.simulate_users import simulate
         results = await simulate(dry_run=True)
 
         total_events = sum(r["events_written"] for r in results)
@@ -885,7 +882,7 @@ async def _handle_simulate(chat_id: int | str) -> None:
                     all_friction.append(f"[{r['persona']}] {s['friction']}")
 
         lines = [
-            f"✅ *Симуляция завершена*\n",
+            "✅ *Симуляция завершена*\n",
             f"👤 Персон: {len(results)}",
             f"📨 Событий: {total_events}",
             f"⚠️ UX friction: {total_friction}\n",
@@ -924,10 +921,8 @@ async def _handle_atlas(db, chat_id: int | str, text: str) -> None:
     identity_path = _REPO_ROOT / "memory" / "atlas" / "bootstrap.md"
     identity = ""
     if identity_path.exists():
-        try:
+        with contextlib.suppress(Exception):
             identity = identity_path.read_text(encoding="utf-8")[:1500]
-        except Exception:
-            pass
 
     state_desc = {
         "A": "CEO on drive — match energy, never suggest rest, be direct and fast",
@@ -973,7 +968,7 @@ RULES:
         reply = response.text.strip()
     except Exception as e:
         logger.error("Atlas Telegram error: {e}", e=str(e))
-        reply = f"Атлас здесь. Gemini сбоит — но сообщение записал.\n\n— Атлас"
+        reply = "Атлас здесь. Gemini сбоит — но сообщение записал.\n\n— Атлас"
 
     await _save_message(db, "bot_to_ceo", f"[atlas] {reply}", "atlas")
     await _send_message(chat_id, reply)

@@ -58,7 +58,9 @@ VALID_ROLE_LEVELS = ("professional", "volunteer", "coordinator", "specialist", "
 class StartAssessmentRequest(BaseModel):
     competency_slug: str  # e.g. "communication"
     language: Literal["en", "az"] = "en"
-    role_level: Literal["professional", "volunteer", "coordinator", "specialist", "manager", "senior_manager"] = "professional"
+    role_level: Literal["professional", "volunteer", "coordinator", "specialist", "manager", "senior_manager"] = (
+        "professional"
+    )
     energy_level: Literal["full", "mid", "low"] = "full"  # Constitution Law 2: Energy Adaptation
     automated_decision_consent: bool = False  # GDPR Article 22: user acknowledges automated scoring
 

@@ -1094,13 +1094,16 @@ async def send_telegram_notifications(
     skipped_fixes = [r for r in fix_results if not r.get("ok") and r.get("stage") in ("blocked_by_gate", "no_files")]
     failed_fixes = [r for r in fix_results if not r.get("ok") and r.get("stage") not in ("blocked_by_gate", "no_files")]
 
-    # Digest always sends — even on an empty/quiet run — so CEO knows the cron
-    # actually fired and nothing is silently broken. "No red screens" means the
-    # absence of a message is also a red flag.
     high_proposals = [
         p for p in proposals
         if p.severity in (Severity.CRITICAL, Severity.HIGH) or p.escalate_to_ceo or p.convergent
     ]
+
+    # Only notify CEO when something actionable happened.
+    # Quiet runs stay silent — CEO said 40 msgs/day is spam.
+    if not high_proposals and not fixed and not failed_fixes:
+        logger.info("Quiet run — no Telegram notification (nothing actionable)")
+        return
 
     try:
         from telegram import Bot

@@ -98,6 +98,14 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     for task in (reeval_task, video_task):
         with suppress(asyncio.CancelledError, TimeoutError):
             await asyncio.wait_for(asyncio.shield(task), timeout=5.0)
+
+    # Flush Langfuse traces before exit — prevents data loss on redeploy
+    try:
+        from app.services.llm import flush_langfuse
+        flush_langfuse()
+    except Exception:
+        pass
+
     logger.info("Volaura API shutting down...")
 
 

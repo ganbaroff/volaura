@@ -1115,7 +1115,7 @@ RULES:
             config=genai.types.GenerateContentConfig(
                 system_instruction=system,
                 max_output_tokens=800,
-                temperature=0.8,
+                temperature=1.0,
             ),
         )
         reply = response.text.strip()

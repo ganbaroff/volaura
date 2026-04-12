@@ -18,7 +18,7 @@ from uuid import uuid4
 from httpx import ASGITransport, AsyncClient
 
 from app.main import app
-from app.deps import get_supabase_admin, get_current_user_id
+from app.deps import get_supabase_admin, get_supabase_user, get_current_user_id
 from app.middleware.rate_limit import limiter
 
 
@@ -75,6 +75,7 @@ class TestCrystalBalance:
         ledger_rows = [{"amount": 50}, {"amount": 100}, {"amount": -20}]
         admin_mock = make_ledger_admin(ledger_rows)
         app.dependency_overrides[get_supabase_admin] = lambda: admin_mock
+        app.dependency_overrides[get_supabase_user] = lambda: admin_mock
         app.dependency_overrides[get_current_user_id] = lambda: USER_ID
 
         try:
@@ -94,6 +95,7 @@ class TestCrystalBalance:
         """Empty ledger → crystal_balance == 0 (not null, not negative)."""
         admin_mock = make_ledger_admin([])
         app.dependency_overrides[get_supabase_admin] = lambda: admin_mock
+        app.dependency_overrides[get_supabase_user] = lambda: admin_mock
         app.dependency_overrides[get_current_user_id] = lambda: USER_ID
 
         try:
@@ -113,6 +115,7 @@ class TestCrystalBalance:
         """Net negative ledger (defensive case) → crystal_balance == 0, never -50."""
         admin_mock = make_ledger_admin([{"amount": -50}])
         app.dependency_overrides[get_supabase_admin] = lambda: admin_mock
+        app.dependency_overrides[get_supabase_user] = lambda: admin_mock
         app.dependency_overrides[get_current_user_id] = lambda: USER_ID
 
         try:
@@ -140,6 +143,7 @@ class TestCrystalBalance:
             yield admin_mock
 
         app.dependency_overrides[get_supabase_admin] = override_admin
+        app.dependency_overrides[get_supabase_user] = override_admin
         # Intentionally do NOT override get_current_user_id — let auth fail.
 
         try:
@@ -177,6 +181,7 @@ class TestCharacterState:
         }
         admin_mock = make_state_admin([state_row])
         app.dependency_overrides[get_supabase_admin] = lambda: admin_mock
+        app.dependency_overrides[get_supabase_user] = lambda: admin_mock
         app.dependency_overrides[get_current_user_id] = lambda: USER_ID
 
         try:
@@ -201,6 +206,7 @@ class TestCharacterState:
         """RPC returns [] (new user with no events) → default zero state returned."""
         admin_mock = make_state_admin([])
         app.dependency_overrides[get_supabase_admin] = lambda: admin_mock
+        app.dependency_overrides[get_supabase_user] = lambda: admin_mock
         app.dependency_overrides[get_current_user_id] = lambda: USER_ID
 
         try:
@@ -334,6 +340,7 @@ class TestCharacterEventWrite:
         """payload.amount == 0 → 422 INVALID_CRYSTAL_AMOUNT (zero is not positive)."""
         admin_mock = make_post_mock()
         app.dependency_overrides[get_supabase_admin] = lambda: admin_mock
+        app.dependency_overrides[get_supabase_user] = lambda: admin_mock
         app.dependency_overrides[get_current_user_id] = lambda: USER_ID
 
         try:
@@ -359,6 +366,7 @@ class TestCharacterEventWrite:
         """payload.amount == -10 → 422 INVALID_CRYSTAL_AMOUNT (negative is not positive)."""
         admin_mock = make_post_mock()
         app.dependency_overrides[get_supabase_admin] = lambda: admin_mock
+        app.dependency_overrides[get_supabase_user] = lambda: admin_mock
         app.dependency_overrides[get_current_user_id] = lambda: USER_ID
 
         try:
@@ -384,6 +392,7 @@ class TestCharacterEventWrite:
         """payload.amount == "fifty" → 422 INVALID_CRYSTAL_AMOUNT (string is not int)."""
         admin_mock = make_post_mock()
         app.dependency_overrides[get_supabase_admin] = lambda: admin_mock
+        app.dependency_overrides[get_supabase_user] = lambda: admin_mock
         app.dependency_overrides[get_current_user_id] = lambda: USER_ID
 
         try:
@@ -411,6 +420,7 @@ class TestCharacterEventWrite:
         """Valid crystal_earned with skill_slug → 201, event_type matches."""
         admin_mock = make_post_mock()
         app.dependency_overrides[get_supabase_admin] = lambda: admin_mock
+        app.dependency_overrides[get_supabase_user] = lambda: admin_mock
         app.dependency_overrides[get_current_user_id] = lambda: USER_ID
 
         try:
@@ -451,6 +461,7 @@ class TestCharacterEventWrite:
             ]
         )
         app.dependency_overrides[get_supabase_admin] = lambda: admin_mock
+        app.dependency_overrides[get_supabase_user] = lambda: admin_mock
         app.dependency_overrides[get_current_user_id] = lambda: USER_ID
 
         try:
@@ -480,6 +491,7 @@ class TestCharacterEventWrite:
             rewards_rows=[{"claimed": True}]
         )
         app.dependency_overrides[get_supabase_admin] = lambda: admin_mock
+        app.dependency_overrides[get_supabase_user] = lambda: admin_mock
         app.dependency_overrides[get_current_user_id] = lambda: USER_ID
 
         try:
@@ -514,6 +526,7 @@ class TestCharacterEventWrite:
             ledger_today_rows=[{"amount": 15}]
         )
         app.dependency_overrides[get_supabase_admin] = lambda: admin_mock
+        app.dependency_overrides[get_supabase_user] = lambda: admin_mock
         app.dependency_overrides[get_current_user_id] = lambda: USER_ID
 
         try:

@@ -98,6 +98,7 @@ async def test_get_status_trial_active():
     admin = _build_chainable([profile_row])
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
+    app.dependency_overrides[get_supabase_user] = _make_dep_override(admin)
     app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
 
     try:
@@ -133,6 +134,7 @@ async def test_get_status_trial_expired():
     admin = _build_chainable([profile_row, {"id": USER_ID}])
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
+    app.dependency_overrides[get_supabase_user] = _make_dep_override(admin)
     app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
 
     try:
@@ -166,6 +168,7 @@ async def test_get_status_active_subscription():
     admin = _build_chainable([profile_row])
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
+    app.dependency_overrides[get_supabase_user] = _make_dep_override(admin)
     app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
 
     try:
@@ -215,6 +218,7 @@ async def test_create_checkout_no_stripe_configured():
     admin = _build_chainable([])
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
+    app.dependency_overrides[get_supabase_user] = _make_dep_override(admin)
     app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
 
     # Patch settings so stripe_secret_key is empty
@@ -263,6 +267,7 @@ async def test_create_checkout_with_stripe_mock():
     admin.auth.admin.get_user_by_id = AsyncMock(return_value=mock_user)
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
+    app.dependency_overrides[get_supabase_user] = _make_dep_override(admin)
     app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
 
     # Build a fake Stripe checkout session response

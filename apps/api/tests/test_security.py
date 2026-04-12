@@ -9,7 +9,7 @@ from httpx import ASGITransport, AsyncClient
 from unittest.mock import AsyncMock, MagicMock
 
 from app.main import app
-from app.deps import get_supabase_admin, get_current_user_id
+from app.deps import get_supabase_admin, get_supabase_user, get_current_user_id
 
 
 def _make_admin_override(mock_db):
@@ -124,6 +124,7 @@ async def test_login_rejects_missing_fields(client: AsyncClient):
 async def test_assessment_start_rejects_invalid_slug(client: AsyncClient, mock_db):
     """Competency slug must not contain path traversal or SQL injection."""
     app.dependency_overrides[get_supabase_admin] = _make_admin_override(mock_db)
+    app.dependency_overrides[get_supabase_user] = _make_admin_override(mock_db)
     app.dependency_overrides[get_current_user_id] = _make_user_id_override("uuid-test")
 
     # Path traversal attempt
@@ -142,6 +143,7 @@ async def test_assessment_start_rejects_invalid_slug(client: AsyncClient, mock_d
 async def test_assessment_answer_rejects_negative_timing(client: AsyncClient, mock_db):
     """Negative or zero timing should be treated as suspicious."""
     app.dependency_overrides[get_supabase_admin] = _make_admin_override(mock_db)
+    app.dependency_overrides[get_supabase_user] = _make_admin_override(mock_db)
     app.dependency_overrides[get_current_user_id] = _make_user_id_override("uuid-test")
 
     resp = await client.post(
@@ -229,6 +231,7 @@ async def test_crit02_cannot_create_verification_link_for_other_user(client: Asy
     user_b_id = "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"
 
     app.dependency_overrides[get_supabase_admin] = _make_admin_override(mock_db)
+    app.dependency_overrides[get_supabase_user] = _make_admin_override(mock_db)
     app.dependency_overrides[get_current_user_id] = _make_user_id_override(user_a_id)
 
     resp = await client.post(
@@ -264,6 +267,7 @@ async def test_crit02_can_create_verification_link_for_self(client: AsyncClient,
     ])
 
     app.dependency_overrides[get_supabase_admin] = _make_admin_override(mock_db)
+    app.dependency_overrides[get_supabase_user] = _make_admin_override(mock_db)
     app.dependency_overrides[get_current_user_id] = _make_user_id_override(user_id)
 
     resp = await client.post(

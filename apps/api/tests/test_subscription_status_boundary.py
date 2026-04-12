@@ -69,6 +69,7 @@ async def test_trial_expired_when_past_trial_end(client):
         return MOCK_USER_ID
 
     app.dependency_overrides[get_supabase_admin] = _admin
+    app.dependency_overrides[get_supabase_user] = _admin
     app.dependency_overrides[get_current_user_id] = _uid
     try:
         response = await client.get(
@@ -100,6 +101,7 @@ async def test_trial_not_expired_when_future_trial_end(client):
         return MOCK_USER_ID
 
     app.dependency_overrides[get_supabase_admin] = _admin
+    app.dependency_overrides[get_supabase_user] = _admin
     app.dependency_overrides[get_current_user_id] = _uid
     try:
         response = await client.get(
@@ -140,6 +142,7 @@ async def test_trial_exactly_at_boundary_is_expired(client):
         return MOCK_USER_ID
 
     app.dependency_overrides[get_supabase_admin] = _admin
+    app.dependency_overrides[get_supabase_user] = _admin
     app.dependency_overrides[get_current_user_id] = _uid
     try:
         response = await client.get(
@@ -170,6 +173,7 @@ async def test_trial_without_end_date_stays_trial(client):
         return MOCK_USER_ID
 
     app.dependency_overrides[get_supabase_admin] = _admin
+    app.dependency_overrides[get_supabase_user] = _admin
     app.dependency_overrides[get_current_user_id] = _uid
     try:
         response = await client.get(
@@ -210,6 +214,7 @@ async def test_trial_z_suffix_iso_string_parsed_correctly(client):
         return MOCK_USER_ID
 
     app.dependency_overrides[get_supabase_admin] = _admin
+    app.dependency_overrides[get_supabase_user] = _admin
     app.dependency_overrides[get_current_user_id] = _uid
     try:
         # Must not raise TypeError: can't compare offset-naive and offset-aware datetimes

@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import React from "react";
 
 // Mock next/navigation with usePathname
 vi.mock("next/navigation", () => ({
@@ -56,23 +58,48 @@ vi.mock("@/stores/auth-store", () => ({
     selector({ clear: vi.fn(), user: null, token: null }),
 }));
 
+// Mock Supabase client (needed for handleLogout)
+vi.mock("@/lib/supabase/client", () => ({
+  createClient: () => ({
+    auth: { signOut: vi.fn().mockResolvedValue({}) },
+  }),
+}));
+
+// Mock TanStack Query hooks used by Sidebar
+vi.mock("@/hooks/queries/use-notifications", () => ({
+  useUnreadCount: () => ({ data: { unread_count: 0 } }),
+}));
+
+vi.mock("@/hooks/queries/use-profile", () => ({
+  useProfile: () => ({ data: null }),
+}));
+
 import { Sidebar } from "./sidebar";
+
+function renderWithQueryClient(ui: React.ReactElement) {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return render(
+    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+  );
+}
 
 describe("Sidebar", () => {
   it("renders at least one navigation element", () => {
-    render(<Sidebar />);
+    renderWithQueryClient(<Sidebar />);
     const navs = screen.getAllByRole("navigation");
     expect(navs.length).toBeGreaterThan(0);
   });
 
   it("renders navigation links", () => {
-    render(<Sidebar />);
+    renderWithQueryClient(<Sidebar />);
     const links = screen.getAllByRole("link");
     expect(links.length).toBeGreaterThan(0);
   });
 
   it("has aria-label on at least one navigation element", () => {
-    render(<Sidebar />);
+    renderWithQueryClient(<Sidebar />);
     const navs = screen.getAllByRole("navigation");
     const withLabel = navs.filter(nav => nav.hasAttribute("aria-label"));
     expect(withLabel.length).toBeGreaterThan(0);

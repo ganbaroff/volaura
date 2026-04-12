@@ -1,6 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { mockRouter, mockSupabaseAuth } from "@/test/mocks.js";
+
+// Mock SocialAuthButtons to avoid needing signInWithOAuth in supabase mock
+vi.mock("@/components/ui/social-auth-buttons", () => ({
+  SocialAuthButtons: () => null,
+}));
+
 import LoginPage from "./page";
 
 // Need to mock Suspense for tests
@@ -46,8 +52,8 @@ describe("LoginPage", () => {
     fireEvent.click(screen.getByRole("button", { name: "auth.loginAction" }));
 
     await waitFor(() => {
-      expect(screen.getByRole("button")).toHaveTextContent("auth.loggingIn");
-      expect(screen.getByRole("button")).toBeDisabled();
+      const submitBtn = screen.getByRole("button", { name: "auth.loggingIn" });
+      expect(submitBtn).toBeDisabled();
     });
   });
 

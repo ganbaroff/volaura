@@ -16,9 +16,9 @@ describe("StatsRow", () => {
     expect(screen.getByText(/7/)).toBeInTheDocument();
   });
 
-  it("renders dash when leaguePosition is null", () => {
+  it("renders 'coming soon' when leaguePosition is null", () => {
     render(<StatsRow streak={1} eventsCount={0} leaguePosition={null} />);
-    expect(screen.getByText("—")).toBeInTheDocument();
+    expect(screen.getByText("stats.comingSoon")).toBeInTheDocument();
   });
 
   it("renders events count", () => {

@@ -98,6 +98,11 @@ vi.mock("@/lib/supabase/client", () => ({
   }),
 }));
 
+// ── SocialAuthButtons mock (avoids signInWithOAuth dependency) ───────────
+vi.mock("@/components/ui/social-auth-buttons", () => ({
+  SocialAuthButtons: () => null,
+}));
+
 // ── Auth store mock (needed by SignupPage) ────────────────────────────────
 vi.mock("@/stores/auth-store", () => ({
   useAuthStore: (selector: (s: Record<string, unknown>) => unknown) =>
@@ -272,6 +277,9 @@ describe("Signup", () => {
     // Find password input by id
     const passwordInput = document.getElementById("password")!;
     fireEvent.change(passwordInput, { target: { value: "password123" } });
+    // Must tick consent checkboxes to enable submit
+    const checkboxes = screen.getAllByRole("checkbox");
+    checkboxes.forEach((cb) => fireEvent.click(cb));
     fireEvent.click(screen.getByRole("button", { name: "auth.signupAction" }));
 
     await waitFor(() => {
@@ -292,6 +300,9 @@ describe("Signup", () => {
     });
     const passwordInput = document.getElementById("password")!;
     fireEvent.change(passwordInput, { target: { value: "password123" } });
+    // Must tick consent checkboxes to enable submit
+    const checkboxes = screen.getAllByRole("checkbox");
+    checkboxes.forEach((cb) => fireEvent.click(cb));
     fireEvent.click(screen.getByRole("button", { name: "auth.signupAction" }));
 
     await waitFor(() => {

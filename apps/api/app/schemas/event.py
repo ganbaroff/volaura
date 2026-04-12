@@ -9,6 +9,7 @@ from pydantic import BaseModel, ConfigDict, field_validator
 
 # ── Events ────────────────────────────────────────────────────────────────────
 
+
 class EventCreate(BaseModel):
     title_en: str
     title_az: str
@@ -75,6 +76,7 @@ class EventResponse(BaseModel):
 
 # ── Registrations ─────────────────────────────────────────────────────────────
 
+
 class RegistrationResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -97,6 +99,7 @@ class CheckInRequest(BaseModel):
 
 class EventAttendeeRow(BaseModel):
     """Enriched attendee for org dashboard — joins profile + AURA."""
+
     model_config = ConfigDict(from_attributes=True)
 
     registration_id: str

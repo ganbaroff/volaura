@@ -17,40 +17,41 @@ from typing import Any
 
 # ── Thresholds ────────────────────────────────────────────────────────────────
 
-TOO_FAST_MS = 3_000       # < 3 s → almost certainly not reading
+TOO_FAST_MS = 3_000  # < 3 s → almost certainly not reading
 TOO_SLOW_MS = 5 * 60_000  # > 5 min → likely abandoned / distracted
 MIN_ITEMS_FOR_PATTERN_CHECK = 5  # Need at least 5 answers to detect patterns
 ALTERNATING_RATIO_THRESHOLD = 0.8  # 80%+ alternations → suspicious
-IDENTICAL_RATIO_THRESHOLD = 0.9   # 90%+ identical → suspicious
+IDENTICAL_RATIO_THRESHOLD = 0.9  # 90%+ identical → suspicious
 
 # S8.2: Grouped alternating bypass detection (e.g. [1,1,0,0,1,1,0,0])
-MIN_RUNS_FOR_GROUP_CHECK = 4     # need ≥4 runs to establish grouped pattern
-MIN_RUN_LENGTH_FOR_GROUP = 2     # all runs must be ≥2 items to qualify as "grouped"
+MIN_RUNS_FOR_GROUP_CHECK = 4  # need ≥4 runs to establish grouped pattern
+MIN_RUN_LENGTH_FOR_GROUP = 2  # all runs must be ≥2 items to qualify as "grouped"
 
 # S8.2: Time clustering detection — robotic uniform timing
-MIN_ITEMS_FOR_TIME_CHECK = 6     # insufficient data below this threshold
+MIN_ITEMS_FOR_TIME_CHECK = 6  # insufficient data below this threshold
 TIME_CLUSTERING_CV_THRESHOLD = 0.15  # CV (std/mean) < 0.15 → suspiciously uniform
 
 # RT-IRT: Rapid guessing detection (van der Linden 2006, Gemini research 2026-03-26)
 # Flags: correct answer on hard item (b >> theta) answered too fast
 # Threshold: response < 40% of expected time for that difficulty gap
-RAPID_GUESS_TIME_RATIO = 0.40    # answered in < 40% of expected time
+RAPID_GUESS_TIME_RATIO = 0.40  # answered in < 40% of expected time
 RAPID_GUESS_DIFFICULTY_GAP = 1.0  # item difficulty (b) must exceed theta by ≥ 1.0 logits
-MIN_RAPID_GUESS_COUNT = 2        # need ≥2 such events to flag (single could be luck)
+MIN_RAPID_GUESS_COUNT = 2  # need ≥2 such events to flag (single could be luck)
 
 
 @dataclass
 class GamingSignal:
     """Summary of anti-gaming analysis for a session."""
-    rushed_count: int = 0             # answers submitted < TOO_FAST_MS
-    slow_count: int = 0               # answers that took > TOO_SLOW_MS
-    is_alternating: bool = False      # 101010 or 010101 pattern
-    is_all_identical: bool = False    # all same binary response
+
+    rushed_count: int = 0  # answers submitted < TOO_FAST_MS
+    slow_count: int = 0  # answers that took > TOO_SLOW_MS
+    is_alternating: bool = False  # 101010 or 010101 pattern
+    is_all_identical: bool = False  # all same binary response
     is_group_alternating: bool = False  # S8.2: grouped bypass [1,1,0,0,1,1,0,0]
-    is_time_clustered: bool = False     # S8.2: robotic uniform timing (CV < 0.15)
-    rapid_guess_count: int = 0          # RT-IRT: correct on hard item answered too fast
-    overall_flag: bool = False        # True if any serious flag raised
-    penalty_multiplier: float = 1.0   # 1.0 = no penalty, 0.0 = zero score
+    is_time_clustered: bool = False  # S8.2: robotic uniform timing (CV < 0.15)
+    rapid_guess_count: int = 0  # RT-IRT: correct on hard item answered too fast
+    overall_flag: bool = False  # True if any serious flag raised
+    penalty_multiplier: float = 1.0  # 1.0 = no penalty, 0.0 = zero score
 
     @property
     def flags(self) -> list[str]:
@@ -103,9 +104,7 @@ def analyse(answers: list[dict[str, Any]]) -> GamingSignal:
 
     if n >= MIN_ITEMS_FOR_PATTERN_CHECK:
         # Alternating pattern: count adjacent pairs that differ
-        alternations = sum(
-            1 for i in range(n - 1) if responses[i] != responses[i + 1]
-        )
+        alternations = sum(1 for i in range(n - 1) if responses[i] != responses[i + 1])
         alternation_ratio = alternations / (n - 1)
         if alternation_ratio >= ALTERNATING_RATIO_THRESHOLD:
             signal.is_alternating = True
@@ -134,9 +133,7 @@ def analyse(answers: list[dict[str, Any]]) -> GamingSignal:
         runs.append((cur_val, cur_len))
 
         if len(runs) >= MIN_RUNS_FOR_GROUP_CHECK:
-            run_values_alternate = all(
-                runs[i][0] != runs[i + 1][0] for i in range(len(runs) - 1)
-            )
+            run_values_alternate = all(runs[i][0] != runs[i + 1][0] for i in range(len(runs) - 1))
             all_runs_grouped = all(length >= MIN_RUN_LENGTH_FOR_GROUP for _, length in runs)
             if run_values_alternate and all_runs_grouped:
                 signal.is_group_alternating = True
@@ -148,7 +145,7 @@ def analyse(answers: list[dict[str, Any]]) -> GamingSignal:
         mean_time = sum(times) / len(times)
         if mean_time > 0:
             variance = sum((t - mean_time) ** 2 for t in times) / len(times)
-            std_dev = variance ** 0.5
+            std_dev = variance**0.5
             cv = std_dev / mean_time
             if cv < TIME_CLUSTERING_CV_THRESHOLD:
                 signal.is_time_clustered = True

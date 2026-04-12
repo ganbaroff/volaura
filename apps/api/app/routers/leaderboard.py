@@ -74,6 +74,7 @@ async def get_leaderboard(
         # Period filter on aura_scores_public.last_updated
         if period in ("weekly", "monthly"):
             from datetime import datetime, timedelta
+
             days = 7 if period == "weekly" else 30
             cutoff = (datetime.now(UTC) - timedelta(days=days)).isoformat()
             query = query.gte("last_updated", cutoff)
@@ -91,15 +92,17 @@ async def get_leaderboard(
             display_name = raw_name if rank <= 10 else _anonymize_name(raw_name)
             visible_username = username if rank <= 10 else None
 
-            entries.append(LeaderboardEntry(
-                rank=rank,
-                display_name=display_name,
-                total_score=float(row.get("total_score", 0)),
-                badge_tier=row.get("badge_tier") or "none",
-                username=visible_username,
-                # LEADERBOARD-01: highlight current user's row when optional auth provided
-                is_current_user=bool(user_id and volunteer_id and user_id == volunteer_id),
-            ))
+            entries.append(
+                LeaderboardEntry(
+                    rank=rank,
+                    display_name=display_name,
+                    total_score=float(row.get("total_score", 0)),
+                    badge_tier=row.get("badge_tier") or "none",
+                    username=visible_username,
+                    # LEADERBOARD-01: highlight current user's row when optional auth provided
+                    is_current_user=bool(user_id and volunteer_id and user_id == volunteer_id),
+                )
+            )
 
         # LEADERBOARD-02: total_count must reflect full DB count, not just page size.
         # Separate count query with graceful fallback if the mock/DB call fails.

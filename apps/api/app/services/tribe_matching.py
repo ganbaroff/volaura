@@ -20,13 +20,14 @@ from loguru import logger
 
 # ── Constants ──────────────────────────────────────────────────────────────────
 TRIBE_SIZE = 3
-SCORE_PROXIMITY = 15.0       # max AURA score difference within a tribe
-TRIBE_DURATION_WEEKS = 4     # 4-week cycle
-MATCHING_POOL_DAYS = 30      # user must have an assessment in last 30 days to be eligible
-RENEWAL_THRESHOLD = 3        # all 3 members must request renewal to extend
+SCORE_PROXIMITY = 15.0  # max AURA score difference within a tribe
+TRIBE_DURATION_WEEKS = 4  # 4-week cycle
+MATCHING_POOL_DAYS = 30  # user must have an assessment in last 30 days to be eligible
+RENEWAL_THRESHOLD = 3  # all 3 members must request renewal to extend
 
 
 # ── Public entry points ────────────────────────────────────────────────────────
+
 
 async def run_tribe_matching(db) -> dict:
     """Main entry point for GitHub Actions cron.
@@ -54,7 +55,12 @@ async def run_tribe_matching(db) -> dict:
 
     if len(candidates) < 2:
         logger.info("Not enough candidates for matching (need ≥2)")
-        return {"tribes_created": 0, "users_matched": 0, "users_renewed": renewed_count, "users_skipped": len(candidates)}
+        return {
+            "tribes_created": 0,
+            "users_matched": 0,
+            "users_renewed": renewed_count,
+            "users_skipped": len(candidates),
+        }
 
     # Step 4: Match into triplets (or pairs if odd remainder)
     groups = _cluster_and_match(candidates)
@@ -84,9 +90,16 @@ async def run_tribe_matching(db) -> dict:
 
 # ── Internal helpers ───────────────────────────────────────────────────────────
 
+
 async def _expire_old_tribes(db, now: datetime) -> int:
     """Mark tribes past their expiry as 'expired'. Record co-member history."""
-    result = await db.table("tribes").select("id, tribe_members(user_id)").eq("status", "active").lt("expires_at", now.isoformat()).execute()
+    result = (
+        await db.table("tribes")
+        .select("id, tribe_members(user_id)")
+        .eq("status", "active")
+        .lt("expires_at", now.isoformat())
+        .execute()
+    )
     expired = result.data or []
 
     for tribe in expired:
@@ -124,7 +137,9 @@ async def _renew_requesting_tribes(db, now: datetime) -> int:
         tribe_id = tribe["id"]
 
         # Count active members
-        members_result = await db.table("tribe_members").select("user_id").eq("tribe_id", tribe_id).is_("opt_out_at", None).execute()
+        members_result = (
+            await db.table("tribe_members").select("user_id").eq("tribe_id", tribe_id).is_("opt_out_at", None).execute()
+        )
         active_member_ids = {m["user_id"] for m in (members_result.data or [])}
 
         if len(active_member_ids) < 2:
@@ -161,18 +176,24 @@ async def _get_matching_candidates(db, now: datetime) -> list[dict]:
     excluded_user_ids = {m["user_id"] for m in (active_tribes_result.data or [])}
 
     # Get candidates: has AURA score + recently active + visible
-    candidates_result = await db.table("aura_scores").select(
-        "volunteer_id, total_score, last_updated"
-    ).gt("total_score", 0).gt("last_updated", cutoff).execute()
+    candidates_result = (
+        await db.table("aura_scores")
+        .select("volunteer_id, total_score, last_updated")
+        .gt("total_score", 0)
+        .gt("last_updated", cutoff)
+        .execute()
+    )
 
     candidates = []
-    for row in (candidates_result.data or []):
+    for row in candidates_result.data or []:
         uid = row["volunteer_id"]
         if uid in excluded_user_ids:
             continue
 
         # Check visible_to_orgs
-        profile_result = await db.table("profiles").select("id").eq("id", uid).eq("visible_to_orgs", True).maybe_single().execute()
+        profile_result = (
+            await db.table("profiles").select("id").eq("id", uid).eq("visible_to_orgs", True).maybe_single().execute()
+        )
         if not profile_result.data:
             continue
 
@@ -180,11 +201,13 @@ async def _get_matching_candidates(db, now: datetime) -> list[dict]:
         history_result = await db.table("tribe_member_history").select("co_member_id").eq("user_id", uid).execute()
         previous_ids = [h["co_member_id"] for h in (history_result.data or [])]
 
-        candidates.append({
-            "user_id": uid,
-            "aura_score": float(row["total_score"]),
-            "previous_co_member_ids": previous_ids,
-        })
+        candidates.append(
+            {
+                "user_id": uid,
+                "aura_score": float(row["total_score"]),
+                "previous_co_member_ids": previous_ids,
+            }
+        )
 
     return candidates
 
@@ -211,9 +234,9 @@ def _cluster_and_match(candidates: list[dict]) -> list[list[dict]]:
 
         # Find compatible candidates within score range, not previously co-members
         compatible = [
-            u for u in remaining[1:]
-            if abs(u["aura_score"] - anchor_score) <= SCORE_PROXIMITY
-            and u["user_id"] not in anchor_excluded
+            u
+            for u in remaining[1:]
+            if abs(u["aura_score"] - anchor_score) <= SCORE_PROXIMITY and u["user_id"] not in anchor_excluded
         ]
 
         if not compatible:
@@ -242,18 +265,21 @@ async def _create_tribe(db, group: list[dict], now: datetime) -> str:
     expires_at = (now + timedelta(weeks=TRIBE_DURATION_WEEKS)).isoformat()
 
     # Create tribe
-    tribe_result = await db.table("tribes").insert({
-        "expires_at": expires_at,
-        "status": "active",
-    }).execute()
+    tribe_result = (
+        await db.table("tribes")
+        .insert(
+            {
+                "expires_at": expires_at,
+                "status": "active",
+            }
+        )
+        .execute()
+    )
 
     tribe_id = tribe_result.data[0]["id"]
 
     # Create tribe_members rows
-    member_rows = [
-        {"tribe_id": tribe_id, "user_id": u["user_id"]}
-        for u in group
-    ]
+    member_rows = [{"tribe_id": tribe_id, "user_id": u["user_id"]} for u in group]
     await db.table("tribe_members").insert(member_rows).execute()
 
     # Upsert tribe_streaks (preserve existing streak; reset consecutive_misses on new cycle)
@@ -261,19 +287,32 @@ async def _create_tribe(db, group: list[dict], now: datetime) -> str:
         existing = await db.table("tribe_streaks").select("*").eq("user_id", u["user_id"]).maybe_single().execute()
         if existing.data:
             # New cycle: reset consecutive_misses, update cycle_started_at
-            await db.table("tribe_streaks").update({
-                "consecutive_misses_count": 0,
-                "cycle_started_at": now.isoformat(),
-            }).eq("user_id", u["user_id"]).execute()
+            await (
+                db.table("tribe_streaks")
+                .update(
+                    {
+                        "consecutive_misses_count": 0,
+                        "cycle_started_at": now.isoformat(),
+                    }
+                )
+                .eq("user_id", u["user_id"])
+                .execute()
+            )
         else:
             # First ever tribe — create streak row
-            await db.table("tribe_streaks").insert({
-                "user_id": u["user_id"],
-                "current_streak": 0,
-                "longest_streak": 0,
-                "consecutive_misses_count": 0,
-                "cycle_started_at": now.isoformat(),
-            }).execute()
+            await (
+                db.table("tribe_streaks")
+                .insert(
+                    {
+                        "user_id": u["user_id"],
+                        "current_streak": 0,
+                        "longest_streak": 0,
+                        "consecutive_misses_count": 0,
+                        "cycle_started_at": now.isoformat(),
+                    }
+                )
+                .execute()
+            )
 
     # Clear matched users from the matching pool (they're now in a tribe)
     matched_user_ids = [u["user_id"] for u in group]

@@ -19,6 +19,7 @@ router = APIRouter(prefix="/notifications", tags=["Notifications"])
 
 # ── Schemas ────────────────────────────────────────────────────────────────
 
+
 class NotificationOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -47,6 +48,7 @@ class UnreadCountOut(BaseModel):
 
 # ── Endpoints ──────────────────────────────────────────────────────────────
 
+
 @router.get("/unread-count", response_model=UnreadCountOut)
 @limiter.limit(RATE_DEFAULT)
 async def get_unread_count(
@@ -55,11 +57,13 @@ async def get_unread_count(
     user_id: CurrentUserId,
 ) -> UnreadCountOut:
     """Unread notification count — used for sidebar badge."""
-    result = await db.table("notifications") \
-        .select("id", count="exact") \
-        .eq("user_id", user_id) \
-        .eq("is_read", False) \
+    result = (
+        await db.table("notifications")
+        .select("id", count="exact")
+        .eq("user_id", user_id)
+        .eq("is_read", False)
         .execute()
+    )
 
     return UnreadCountOut(unread_count=result.count or 0)
 
@@ -74,12 +78,14 @@ async def list_notifications(
     offset: int = Query(default=0, ge=0),
 ) -> NotificationListOut:
     """List user notifications, newest first."""
-    result = await db.table("notifications") \
-        .select("id, type, title, body, is_read, reference_id, created_at", count="exact") \
-        .eq("user_id", user_id) \
-        .order("created_at", desc=True) \
-        .range(offset, offset + limit - 1) \
+    result = (
+        await db.table("notifications")
+        .select("id, type, title, body, is_read, reference_id, created_at", count="exact")
+        .eq("user_id", user_id)
+        .order("created_at", desc=True)
+        .range(offset, offset + limit - 1)
         .execute()
+    )
 
     notifications = [NotificationOut(**row) for row in (result.data or [])]
 
@@ -102,11 +108,7 @@ async def mark_all_read(
     user_id: CurrentUserId,
 ) -> UnreadCountOut:
     """Mark all unread notifications as read."""
-    await db.table("notifications") \
-        .update({"is_read": True}) \
-        .eq("user_id", user_id) \
-        .eq("is_read", False) \
-        .execute()
+    await db.table("notifications").update({"is_read": True}).eq("user_id", user_id).eq("is_read", False).execute()
 
     logger.info("Marked all notifications read", user_id=user_id)
     return UnreadCountOut(unread_count=0)
@@ -121,11 +123,13 @@ async def mark_notification_read(
     user_id: CurrentUserId,
 ) -> NotificationOut:
     """Mark a single notification as read. Returns updated notification."""
-    result = await db.table("notifications") \
-        .update({"is_read": True}) \
-        .eq("id", notification_id) \
-        .eq("user_id", user_id) \
+    result = (
+        await db.table("notifications")
+        .update({"is_read": True})
+        .eq("id", notification_id)
+        .eq("user_id", user_id)
         .execute()
+    )
 
     if not result.data:
         raise HTTPException(

@@ -39,9 +39,9 @@ from app.config import settings
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 
-_MAX_SEARCHES_PER_RUN = 50    # Protect DB from runaway queries
-_MAX_MATCHES_PER_NOTIF = 5    # Telegram notification preview limit
-_CB_THRESHOLD = 3    # Telegram circuit breaker: 3 failures → stop sending
+_MAX_SEARCHES_PER_RUN = 50  # Protect DB from runaway queries
+_MAX_MATCHES_PER_NOTIF = 5  # Telegram notification preview limit
+_CB_THRESHOLD = 3  # Telegram circuit breaker: 3 failures → stop sending
 
 
 # ── Data structures ───────────────────────────────────────────────────────────
@@ -52,6 +52,7 @@ from dataclasses import dataclass, field
 @dataclass
 class MatchCheckResult:
     """Outcome for one saved search check."""
+
     search_id: str
     search_name: str
     org_id: str
@@ -63,6 +64,7 @@ class MatchCheckResult:
 @dataclass
 class RunSummary:
     """Summary of a full match-checker run."""
+
     searches_checked: int = 0
     searches_with_matches: int = 0
     notifications_sent: int = 0
@@ -71,6 +73,7 @@ class RunSummary:
 
 
 # ── Core logic ────────────────────────────────────────────────────────────────
+
 
 async def _find_new_matches(
     db_admin: Any,
@@ -113,9 +116,7 @@ async def _find_new_matches(
 
     # Load display names — batch fetch to avoid N+1
     vol_ids = [r["volunteer_id"] for r in rows]
-    profiles_res = await db_admin.table("profiles").select(
-        "id, display_name, username"
-    ).in_("id", vol_ids).execute()
+    profiles_res = await db_admin.table("profiles").select("id, display_name, username").in_("id", vol_ids).execute()
     profiles_by_id = {p["id"]: p for p in (profiles_res.data or [])}
 
     # Optionally filter by location (string equality — not geo-aware in MVP)
@@ -135,15 +136,27 @@ async def _find_new_matches(
         # Find top competency slug for the notification preview
         top_competency = None
         try:
-            comp_res = await db_admin.table("aura_scores").select(
-                "communication, reliability, english_proficiency, leadership, "
-                "event_performance, tech_literacy, adaptability, empathy_safeguarding"
-            ).eq("volunteer_id", vol_id).maybe_single().execute()
+            comp_res = (
+                await db_admin.table("aura_scores")
+                .select(
+                    "communication, reliability, english_proficiency, leadership, "
+                    "event_performance, tech_literacy, adaptability, empathy_safeguarding"
+                )
+                .eq("volunteer_id", vol_id)
+                .maybe_single()
+                .execute()
+            )
             if comp_res.data:
                 comp_data = comp_res.data
                 competency_keys = [
-                    "communication", "reliability", "english_proficiency", "leadership",
-                    "event_performance", "tech_literacy", "adaptability", "empathy_safeguarding",
+                    "communication",
+                    "reliability",
+                    "english_proficiency",
+                    "leadership",
+                    "event_performance",
+                    "tech_literacy",
+                    "adaptability",
+                    "empathy_safeguarding",
                 ]
                 scores = {k: comp_data.get(k, 0.0) or 0.0 for k in competency_keys}
                 if scores:
@@ -151,13 +164,15 @@ async def _find_new_matches(
         except Exception:
             pass  # Top competency is just for notification preview — non-fatal
 
-        enriched.append({
-            "volunteer_id": vol_id,
-            "display_name": profile.get("display_name") or profile.get("username"),
-            "overall_score": float(row["total_score"] or 0),
-            "badge_tier": row.get("badge_tier") or "none",
-            "top_competency": top_competency,
-        })
+        enriched.append(
+            {
+                "volunteer_id": vol_id,
+                "display_name": profile.get("display_name") or profile.get("username"),
+                "overall_score": float(row["total_score"] or 0),
+                "badge_tier": row.get("badge_tier") or "none",
+                "top_competency": top_competency,
+            }
+        )
 
     return enriched[:limit]
 
@@ -242,9 +257,14 @@ async def run_match_check(db_admin: Any) -> RunSummary:
     # Fetch all notification-enabled saved searches (partial index makes this fast)
     # Graceful fallback: if migration not yet applied in this environment, log and exit cleanly.
     try:
-        searches_res = await db_admin.table("org_saved_searches").select(
-            "id, org_id, name, filters, last_checked_at"
-        ).eq("notify_on_match", True).order("last_checked_at").limit(_MAX_SEARCHES_PER_RUN).execute()
+        searches_res = (
+            await db_admin.table("org_saved_searches")
+            .select("id, org_id, name, filters, last_checked_at")
+            .eq("notify_on_match", True)
+            .order("last_checked_at")
+            .limit(_MAX_SEARCHES_PER_RUN)
+            .execute()
+        )
     except Exception as exc:
         if "org_saved_searches" in str(exc) or "does not exist" in str(exc):
             logger.warning(
@@ -283,9 +303,9 @@ async def run_match_check(db_admin: Any) -> RunSummary:
 
             # Always update last_checked_at — even if zero matches (prevents re-checking same window)
             now_iso = datetime.now(UTC).isoformat()
-            await db_admin.table("org_saved_searches").update(
-                {"last_checked_at": now_iso}
-            ).eq("id", search_id).execute()
+            await (
+                db_admin.table("org_saved_searches").update({"last_checked_at": now_iso}).eq("id", search_id).execute()
+            )
 
             notified = False
             if new_count > 0 and telegram_failures < _CB_THRESHOLD:
@@ -328,14 +348,16 @@ async def run_match_check(db_admin: Any) -> RunSummary:
                 error=str(exc),
             )
             summary.errors += 1
-            summary.results.append(MatchCheckResult(
-                search_id=search_id,
-                search_name=search_name,
-                org_id=org_id,
-                new_match_count=0,
-                notified=False,
-                error=str(exc),
-            ))
+            summary.results.append(
+                MatchCheckResult(
+                    search_id=search_id,
+                    search_name=search_name,
+                    org_id=org_id,
+                    new_match_count=0,
+                    notified=False,
+                    error=str(exc),
+                )
+            )
 
     logger.info(
         "Match checker: run complete",
@@ -348,6 +370,7 @@ async def run_match_check(db_admin: Any) -> RunSummary:
 
 
 # ── CLI entry point (GitHub Actions) ─────────────────────────────────────────
+
 
 async def _main() -> None:
     """CLI runner: creates its own Supabase admin client and runs the check."""

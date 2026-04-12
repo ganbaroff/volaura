@@ -17,6 +17,7 @@ from loguru import logger
 
 # ── Public entry point ─────────────────────────────────────────────────────────
 
+
 async def update_weekly_streaks(db) -> dict:
     """Update tribe streaks for the completed ISO week.
 
@@ -70,17 +71,25 @@ async def record_assessment_activity(db, user_id: str) -> None:
     new_streak = existing["current_streak"] + 1
     new_longest = max(new_streak, existing["longest_streak"])
 
-    await db.table("tribe_streaks").update({
-        "current_streak": new_streak,
-        "longest_streak": new_longest,
-        "last_activity_week": current_week,
-        "consecutive_misses_count": 0,
-    }).eq("user_id", user_id).execute()
+    await (
+        db.table("tribe_streaks")
+        .update(
+            {
+                "current_streak": new_streak,
+                "longest_streak": new_longest,
+                "last_activity_week": current_week,
+                "consecutive_misses_count": 0,
+            }
+        )
+        .eq("user_id", user_id)
+        .execute()
+    )
 
     logger.info("Streak extended for user {uid}: {s} weeks", uid=user_id, s=new_streak)
 
 
 # ── Internal helpers ───────────────────────────────────────────────────────────
+
 
 async def _update_user_streak(db, user_id: str, current_week: str) -> str:
     """Update a single user's streak for the current week.
@@ -107,18 +116,32 @@ async def _update_user_streak(db, user_id: str, current_week: str) -> str:
 
     if new_misses >= 3:
         # Q2: 3 consecutive misses = streak resets to 0
-        await db.table("tribe_streaks").update({
-            "current_streak": 0,
-            "consecutive_misses_count": 0,
-            "last_activity_week": current_week,  # mark as processed
-        }).eq("user_id", user_id).execute()
+        await (
+            db.table("tribe_streaks")
+            .update(
+                {
+                    "current_streak": 0,
+                    "consecutive_misses_count": 0,
+                    "last_activity_week": current_week,  # mark as processed
+                }
+            )
+            .eq("user_id", user_id)
+            .execute()
+        )
         logger.info("Streak reset for user {uid} after 3 consecutive misses", uid=user_id)
         return "reset"
     else:
         # Crystal fades but streak survives
-        await db.table("tribe_streaks").update({
-            "consecutive_misses_count": new_misses,
-        }).eq("user_id", user_id).execute()
+        await (
+            db.table("tribe_streaks")
+            .update(
+                {
+                    "consecutive_misses_count": new_misses,
+                }
+            )
+            .eq("user_id", user_id)
+            .execute()
+        )
         return "missed"
 
 

@@ -12,6 +12,7 @@ from pydantic import BaseModel, ConfigDict
 
 class AdminUserRow(BaseModel):
     """Minimal user row for the admin users table."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -25,6 +26,7 @@ class AdminUserRow(BaseModel):
 
 class AdminOrgRow(BaseModel):
     """Organization row for the admin approval queue."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -41,6 +43,7 @@ class AdminOrgRow(BaseModel):
 
 class AdminStatsResponse(BaseModel):
     """Platform health stats for the admin dashboard."""
+
     total_users: int
     total_organizations: int
     pending_org_approvals: int
@@ -50,6 +53,7 @@ class AdminStatsResponse(BaseModel):
 
 class OrgApproveResponse(BaseModel):
     """Result of approving or rejecting an organization."""
+
     org_id: str
     action: str  # "approved" | "rejected"
     verified_at: datetime | None = None

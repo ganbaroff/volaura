@@ -92,12 +92,7 @@ async def create_my_profile(
 ) -> ProfileResponse:
     """Create a profile for the current user (called after registration)."""
     # Check username not taken
-    existing = (
-        await db.table("profiles")
-        .select("id")
-        .eq("username", payload.username)
-        .execute()
-    )
+    existing = await db.table("profiles").select("id").eq("username", payload.username).execute()
     if existing.data:
         raise HTTPException(
             status_code=409,
@@ -118,11 +113,7 @@ async def create_my_profile(
             user_id=user_id,
         )
 
-    result = (
-        await db.table("profiles")
-        .insert(insert_data)
-        .execute()
-    )
+    result = await db.table("profiles").insert(insert_data).execute()
     if not result or not result.data:
         raise HTTPException(status_code=500, detail={"code": "CREATE_FAILED", "message": "Failed to create profile"})
 
@@ -132,10 +123,19 @@ async def create_my_profile(
             user_resp = await db_admin.auth.admin.get_user_by_id(user_id)
             user_email = user_resp.user.email if user_resp and user_resp.user else None
             if user_email:
-                await db_admin.table("organization_invites").update({
-                    "status": "accepted",
-                    "accepted_at": datetime.now(UTC).isoformat(),
-                }).eq("org_id", payload.invited_by_org_id).eq("email", user_email).eq("status", "pending").execute()
+                await (
+                    db_admin.table("organization_invites")
+                    .update(
+                        {
+                            "status": "accepted",
+                            "accepted_at": datetime.now(UTC).isoformat(),
+                        }
+                    )
+                    .eq("org_id", payload.invited_by_org_id)
+                    .eq("email", user_email)
+                    .eq("status", "pending")
+                    .execute()
+                )
         except Exception as e:
             logger.warning("Invite status update failed (non-fatal)", user_id=user_id, error=str(e)[:200])
 
@@ -166,12 +166,7 @@ async def update_my_profile(
             detail={"code": "NO_FIELDS", "message": "No fields to update"},
         )
 
-    result = (
-        await db.table("profiles")
-        .update(update_data)
-        .eq("id", user_id)
-        .execute()
-    )
+    result = await db.table("profiles").update(update_data).eq("id", user_id).execute()
     if not result or not result.data:
         raise HTTPException(
             status_code=404,
@@ -221,13 +216,7 @@ async def create_verification_link(
         )
 
     # Ensure target volunteer exists (.maybe_single() returns None instead of raising 406)
-    volunteer = (
-        await db.table("profiles")
-        .select("id")
-        .eq("id", volunteer_id)
-        .maybe_single()
-        .execute()
-    )
+    volunteer = await db.table("profiles").select("id").eq("id", volunteer_id).maybe_single().execute()
     if not volunteer.data:
         raise HTTPException(
             status_code=404,
@@ -297,13 +286,7 @@ async def list_public_volunteers(
     Ordered by AURA score descending. Paginated.
     """
     # Dual org-role check: JWT (account_type in profile) + DB verification
-    caller = (
-        await db.table("profiles")
-        .select("account_type")
-        .eq("id", str(user_id))
-        .maybe_single()
-        .execute()
-    )
+    caller = await db.table("profiles").select("account_type").eq("id", str(user_id)).maybe_single().execute()
     if not caller.data or caller.data.get("account_type") != "organization":
         raise HTTPException(
             status_code=403,
@@ -314,8 +297,7 @@ async def list_public_volunteers(
     result = (
         await db.table("profiles")
         .select(
-            "id, username, display_name, avatar_url, bio, location, languages, "
-            "aura_scores(total_score, badge_tier)"
+            "id, username, display_name, avatar_url, bio, location, languages, aura_scores(total_score, badge_tier)"
         )
         .eq("visible_to_orgs", True)
         .eq("is_public", True)
@@ -330,17 +312,21 @@ async def list_public_volunteers(
         aura = row.get("aura_scores")
         # aura_scores is a list (one-to-many join result) — take first visible entry
         aura_row = aura[0] if isinstance(aura, list) and aura else aura if isinstance(aura, dict) else None
-        volunteers.append(DiscoverableVolunteer(
-            id=row["id"],
-            username=row["username"],
-            display_name=_anonymize_name(row.get("display_name")),  # SEC-03: never leak full name
-            avatar_url=row.get("avatar_url"),
-            bio=row.get("bio"),
-            location=row.get("location"),
-            languages=row.get("languages") or [],
-            total_score=float(aura_row["total_score"]) if aura_row and aura_row.get("total_score") is not None else None,
-            badge_tier=aura_row.get("badge_tier") if aura_row else None,
-        ))
+        volunteers.append(
+            DiscoverableVolunteer(
+                id=row["id"],
+                username=row["username"],
+                display_name=_anonymize_name(row.get("display_name")),  # SEC-03: never leak full name
+                avatar_url=row.get("avatar_url"),
+                bio=row.get("bio"),
+                location=row.get("location"),
+                languages=row.get("languages") or [],
+                total_score=float(aura_row["total_score"])
+                if aura_row and aura_row.get("total_score") is not None
+                else None,
+                badge_tier=aura_row.get("badge_tier") if aura_row else None,
+            )
+        )
 
     return volunteers
 
@@ -395,10 +381,7 @@ async def get_public_profile(
                 .execute()
             )
             total_resp = (
-                await db.table("aura_scores")
-                .select("volunteer_id", count="exact")
-                .eq("visibility", "public")
-                .execute()
+                await db.table("aura_scores").select("volunteer_id", count="exact").eq("visibility", "public").execute()
             )
             lower_count: int = lower_resp.count or 0
             total_count: int = total_resp.count or 0
@@ -564,14 +547,10 @@ async def get_my_verifications(
     )
 
     verifications = []
-    for reg in (regs_result.data or []):
+    for reg in regs_result.data or []:
         # Get event details
         event_result = (
-            await db.table("events")
-            .select("title, organizer_id")
-            .eq("id", reg["event_id"])
-            .maybe_single()
-            .execute()
+            await db.table("events").select("title, organizer_id").eq("id", reg["event_id"]).maybe_single().execute()
         )
         event = event_result.data or {}
 
@@ -589,14 +568,16 @@ async def get_my_verifications(
             if org_result.data:
                 organizer_name = org_result.data.get("display_name") or org_result.data.get("username") or "Coordinator"
 
-        verifications.append({
-            "id": reg["id"],
-            "verifier_name": organizer_name,
-            "verifier_org": organizer_org,
-            "competency_id": "event_performance",
-            "rating": reg.get("coordinator_rating", 0),
-            "comment": reg.get("coordinator_feedback"),
-            "verified_at": reg.get("created_at", ""),
-        })
+        verifications.append(
+            {
+                "id": reg["id"],
+                "verifier_name": organizer_name,
+                "verifier_org": organizer_org,
+                "competency_id": "event_performance",
+                "rating": reg.get("coordinator_rating", 0),
+                "comment": reg.get("coordinator_feedback"),
+                "verified_at": reg.get("created_at", ""),
+            }
+        )
 
     return {"data": verifications}

@@ -18,13 +18,7 @@ from app.schemas.assessment import QuestionOut, SessionOut
 
 async def get_competency_id(db: SupabaseAdmin, slug: str) -> str:
     """Fetch competency UUID by slug. Raises 404 if not found."""
-    result = (
-        await db.table("competencies")
-        .select("id")
-        .eq("slug", slug)
-        .single()
-        .execute()
-    )
+    result = await db.table("competencies").select("id").eq("slug", slug).single().execute()
     if not result.data:
         raise HTTPException(
             status_code=404,
@@ -60,13 +54,7 @@ async def get_competency_slug(db: SupabaseAdmin, competency_id: str) -> str:
     if cached is not None:
         return cached
 
-    result = (
-        await db.table("competencies")
-        .select("slug")
-        .eq("id", competency_id)
-        .single()
-        .execute()
-    )
+    result = await db.table("competencies").select("slug").eq("id", competency_id).single().execute()
     slug = result.data["slug"] if result.data else ""
     if slug:
         _COMPETENCY_SLUG_CACHE[competency_id] = slug
@@ -90,7 +78,9 @@ async def fetch_questions(db: SupabaseAdmin, competency_id: str) -> list[dict]:
 
     result = (
         await db.table("questions")
-        .select("id, type, scenario_en, scenario_az, scenario_ru, options, irt_a, irt_b, irt_c, expected_concepts, correct_answer, competency_id")
+        .select(
+            "id, type, scenario_en, scenario_az, scenario_ru, options, irt_a, irt_b, irt_c, expected_concepts, correct_answer, competency_id"
+        )
         .eq("competency_id", competency_id)
         .eq("is_active", True)
         .execute()

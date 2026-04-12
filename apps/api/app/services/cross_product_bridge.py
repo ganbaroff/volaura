@@ -40,9 +40,9 @@ from app.config import settings
 _cb_failures: int = 0
 _cb_window_start: float = 0.0
 _cb_silenced_until: float = 0.0
-_CB_THRESHOLD = 3          # failures before silence
-_CB_WINDOW_SEC = 300       # 5-minute sliding window
-_CB_SILENCE_SEC = 60       # 60-second backoff
+_CB_THRESHOLD = 3  # failures before silence
+_CB_WINDOW_SEC = 300  # 5-minute sliding window
+_CB_SILENCE_SEC = 60  # 60-second backoff
 
 # ── HTTP timeouts ─────────────────────────────────────────────────────────────
 _TIMEOUT = httpx.Timeout(connect=3.0, read=8.0, write=5.0, pool=2.0)
@@ -73,9 +73,10 @@ def _record_failure() -> None:
     if _cb_failures >= _CB_THRESHOLD:
         _cb_silenced_until = now + _CB_SILENCE_SEC
         logger.warning(
-            "CrossProductBridge: circuit breaker tripped — silencing for {}s "
-            "after {} failures in {}s window",
-            _CB_SILENCE_SEC, _cb_failures, _CB_WINDOW_SEC,
+            "CrossProductBridge: circuit breaker tripped — silencing for {}s after {} failures in {}s window",
+            _CB_SILENCE_SEC,
+            _cb_failures,
+            _CB_WINDOW_SEC,
         )
 
 
@@ -113,14 +114,17 @@ async def _post_event(
             _record_success()
             logger.debug(
                 "CrossProductBridge: pushed to {} — {}",
-                endpoint, resp.status_code,
+                endpoint,
+                resp.status_code,
             )
             return True
         else:
             _record_failure()
             logger.warning(
                 "CrossProductBridge: {} returned {} — {}",
-                endpoint, resp.status_code, resp.text[:200],
+                endpoint,
+                resp.status_code,
+                resp.text[:200],
             )
             return False
     except httpx.TimeoutException:
@@ -134,6 +138,7 @@ async def _post_event(
 
 
 # ── Public API ────────────────────────────────────────────────────────────────
+
 
 async def push_crystal_earned(
     user_id: str,
@@ -165,12 +170,12 @@ async def push_crystal_earned(
         },
     }
     # Fire-and-forget — caller never awaits a result
-    asyncio.ensure_future(
-        _post_event("/api/character/events", payload, user_jwt)
-    )
+    asyncio.ensure_future(_post_event("/api/character/events", payload, user_jwt))
     logger.debug(
         "CrossProductBridge: queued crystal_earned push — user={} amount={} skill={}",
-        user_id, amount, skill_slug,
+        user_id,
+        amount,
+        skill_slug,
     )
 
 
@@ -205,12 +210,12 @@ async def push_skill_verified(
             "_schema_version": 1,
         },
     }
-    asyncio.ensure_future(
-        _post_event("/api/character/events", payload, user_jwt)
-    )
+    asyncio.ensure_future(_post_event("/api/character/events", payload, user_jwt))
     logger.debug(
         "CrossProductBridge: queued skill_verified push — user={} skill={} tier={}",
-        user_id, skill_slug, badge_tier,
+        user_id,
+        skill_slug,
+        badge_tier,
     )
 
 
@@ -240,12 +245,12 @@ async def push_xp_earned(
             "_schema_version": 1,
         },
     }
-    asyncio.ensure_future(
-        _post_event("/api/character/events", payload, user_jwt)
-    )
+    asyncio.ensure_future(_post_event("/api/character/events", payload, user_jwt))
     logger.debug(
         "CrossProductBridge: queued xp_earned push — user={} amount={} reason={}",
-        user_id, amount, reason,
+        user_id,
+        amount,
+        reason,
     )
 
 

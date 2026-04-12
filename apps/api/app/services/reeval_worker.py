@@ -44,9 +44,9 @@ from app.core.assessment.bars import EvaluationResult, evaluate_answer
 
 # ── Tuning constants ──────────────────────────────────────────────────────────
 
-POLL_INTERVAL_S: float = 60.0       # seconds between queue drain cycles
-BATCH_SIZE: int = 10                 # max items processed per cycle
-STALE_TIMEOUT_S: float = 300.0      # 5 min — reset 'processing' items this old
+POLL_INTERVAL_S: float = 60.0  # seconds between queue drain cycles
+BATCH_SIZE: int = 10  # max items processed per cycle
+STALE_TIMEOUT_S: float = 300.0  # 5 min — reset 'processing' items this old
 MAX_RETRIES: int = 3
 
 
@@ -94,17 +94,23 @@ async def enqueue_degraded_answer(
     is still returned to the user.
     """
     try:
-        result = await db.table("evaluation_queue").insert({
-            "session_id": session_id,
-            "volunteer_id": volunteer_id,
-            "question_id": question_id,
-            "competency_slug": competency_slug,
-            "question_en": question_en,
-            "answer_text": answer_text,
-            "expected_concepts": expected_concepts,  # Supabase auto-serialises list→jsonb
-            "degraded_score": degraded_score,
-            "status": "pending",
-        }).execute()
+        result = (
+            await db.table("evaluation_queue")
+            .insert(
+                {
+                    "session_id": session_id,
+                    "volunteer_id": volunteer_id,
+                    "question_id": question_id,
+                    "competency_slug": competency_slug,
+                    "question_en": question_en,
+                    "answer_text": answer_text,
+                    "expected_concepts": expected_concepts,  # Supabase auto-serialises list→jsonb
+                    "degraded_score": degraded_score,
+                    "status": "pending",
+                }
+            )
+            .execute()
+        )
         item_id: str | None = result.data[0]["id"] if result.data else None
         logger.info(
             "Degraded answer queued for re-evaluation",
@@ -132,13 +138,15 @@ async def _recover_stale_items(db: AsyncClient) -> None:
     Handles Railway restarts: if the process crashed mid-evaluation, the item
     stays in 'processing' forever without this recovery step.
     """
-    stale_cutoff = (
-        datetime.now(UTC) - timedelta(seconds=STALE_TIMEOUT_S)
-    ).isoformat()
+    stale_cutoff = (datetime.now(UTC) - timedelta(seconds=STALE_TIMEOUT_S)).isoformat()
     try:
-        result = await db.table("evaluation_queue").update(
-            {"status": "pending", "started_at": None}
-        ).eq("status", "processing").lt("started_at", stale_cutoff).execute()
+        result = (
+            await db.table("evaluation_queue")
+            .update({"status": "pending", "started_at": None})
+            .eq("status", "processing")
+            .lt("started_at", stale_cutoff)
+            .execute()
+        )
         count = len(result.data) if result.data else 0
         if count:
             logger.info("Recovered stale evaluation_queue items", count=count)
@@ -165,10 +173,18 @@ async def _fetch_pending_batch(db: AsyncClient) -> list[dict[str, Any]]:
 
 
 async def _mark_processing(db: AsyncClient, item_id: str) -> None:
-    await db.table("evaluation_queue").update({
-        "status": "processing",
-        "started_at": datetime.now(UTC).isoformat(),
-    }).eq("id", item_id).eq("status", "pending").execute()
+    await (
+        db.table("evaluation_queue")
+        .update(
+            {
+                "status": "processing",
+                "started_at": datetime.now(UTC).isoformat(),
+            }
+        )
+        .eq("id", item_id)
+        .eq("status", "pending")
+        .execute()
+    )
 
 
 async def _process_item(db: AsyncClient, item: dict[str, Any]) -> None:
@@ -222,13 +238,20 @@ async def _process_item(db: AsyncClient, item: dict[str, Any]) -> None:
         )
 
         # ── Mark done ─────────────────────────────────────────────────────────
-        await db.table("evaluation_queue").update({
-            "status": "done",
-            "completed_at": datetime.now(UTC).isoformat(),
-            "llm_score": llm_score,
-            "llm_model": llm_model,
-            "score_delta": score_delta,
-        }).eq("id", item_id).execute()
+        await (
+            db.table("evaluation_queue")
+            .update(
+                {
+                    "status": "done",
+                    "completed_at": datetime.now(UTC).isoformat(),
+                    "llm_score": llm_score,
+                    "llm_model": llm_model,
+                    "score_delta": score_delta,
+                }
+            )
+            .eq("id", item_id)
+            .execute()
+        )
 
         logger.info(
             "Re-evaluation complete",
@@ -246,12 +269,19 @@ async def _process_item(db: AsyncClient, item: dict[str, Any]) -> None:
         new_retry = int(item.get("retry_count", 0)) + 1
         new_status = "failed" if new_retry >= MAX_RETRIES else "pending"
         try:
-            await db.table("evaluation_queue").update({
-                "status": new_status,
-                "retry_count": new_retry,
-                "started_at": None,
-                "error_detail": str(e)[:500],
-            }).eq("id", item_id).execute()
+            await (
+                db.table("evaluation_queue")
+                .update(
+                    {
+                        "status": new_status,
+                        "retry_count": new_retry,
+                        "started_at": None,
+                        "error_detail": str(e)[:500],
+                    }
+                )
+                .eq("id", item_id)
+                .execute()
+            )
         except Exception as inner_e:
             logger.error("Failed to update queue item after error", item_id=item_id, error=str(inner_e)[:200])
 
@@ -314,9 +344,7 @@ async def _reconcile_session(
             )
             return
 
-        await db.table("assessment_sessions").update(
-            {"answers": answers}
-        ).eq("id", session_id).execute()
+        await db.table("assessment_sessions").update({"answers": answers}).eq("id", session_id).execute()
 
     except Exception as e:
         logger.error("reconcile_session failed", session_id=session_id, error=str(e)[:300])
@@ -343,9 +371,13 @@ async def _reconcile_aura(
     """
     try:
         # Read current aura_scores to get the full competency_scores JSONB
-        aura_result = await db.table("aura_scores").select(
-            "competency_scores"
-        ).eq("volunteer_id", volunteer_id).maybe_single().execute()
+        aura_result = (
+            await db.table("aura_scores")
+            .select("competency_scores")
+            .eq("volunteer_id", volunteer_id)
+            .maybe_single()
+            .execute()
+        )
 
         if not aura_result.data:
             # No AURA row yet — nothing to reconcile

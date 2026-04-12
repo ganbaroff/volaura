@@ -46,6 +46,7 @@ def _cache_key(question_en: str, answer: str, concepts_json: str) -> str:
     raw = f"{question_en}|{answer.strip()[:2000]}|{concepts_json}"
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()
 
+
 # Timeout for individual LLM calls (seconds).
 # bars.py calls Gemini/OpenAI directly — NOT via services/llm.py —
 # so we enforce our own timeout here.  (Security audit 2026-03-25, CVSS 7.5)
@@ -152,6 +153,7 @@ Example:
 
 
 # ── Main entry point ─────────────────────────────────────────────────────────
+
 
 class EvaluationResult:
     """Structured evaluation result with per-concept scores and DeCE detail.
@@ -452,21 +454,21 @@ async def _try_openai(prompt: str, concept_names: list[str]) -> _DeCE_RESULT:
 
 # Anti-gaming thresholds for keyword_fallback (team review 2026-03-26)
 # Short answers with high keyword density = keyword stuffing attempt.
-_KW_MIN_WORDS_FOR_FULL_SCORE = 30   # answers < 30 words capped at 0.4
+_KW_MIN_WORDS_FOR_FULL_SCORE = 30  # answers < 30 words capped at 0.4
 _KW_STUFFING_DENSITY_THRESHOLD = 0.6  # > 60% of ALL keywords hit + < 50 words = penalty
 _KW_STUFFING_MAX_WORDS = 50
-_KW_STUFFING_MULTIPLIER = 0.3        # score × 0.3 when stuffing detected
+_KW_STUFFING_MULTIPLIER = 0.3  # score × 0.3 when stuffing detected
 
 # Anti-gaming gate 3: coherence heuristic (2026-03-26)
 # Keyword hits without supporting action verbs = incoherent buzzword dump.
-_KW_COHERENCE_VERB_RATIO = 0.4       # verb_count / keyword_hits must be >= 0.4
-_KW_COHERENCE_MIN_HITS = 3           # only activate when >= 3 keyword hits
-_KW_COHERENCE_MULTIPLIER = 0.55      # score × 0.55 when incoherent dump detected
+_KW_COHERENCE_VERB_RATIO = 0.4  # verb_count / keyword_hits must be >= 0.4
+_KW_COHERENCE_MIN_HITS = 3  # only activate when >= 3 keyword hits
+_KW_COHERENCE_MULTIPLIER = 0.55  # score × 0.55 when incoherent dump detected
 
 # Anti-gaming gate 4: scenario relevance (2026-03-26)
 # Answer that doesn't use the question's vocabulary scores lower.
-_KW_RELEVANCE_MIN_OVERLAP = 0.15     # < 15% overlap with question tokens → penalty
-_KW_RELEVANCE_MULTIPLIER = 0.65      # score × 0.65 when off-topic answer detected
+_KW_RELEVANCE_MIN_OVERLAP = 0.15  # < 15% overlap with question tokens → penalty
+_KW_RELEVANCE_MULTIPLIER = 0.65  # score × 0.65 when off-topic answer detected
 _KW_RELEVANCE_MIN_QUESTION_TOKENS = 3  # need at least 3 content tokens in question
 
 # Action verbs indicative of coherent, practical answers.
@@ -511,18 +513,107 @@ _ACTION_VERBS = re.compile(
 )
 
 # Common English stopwords for relevance token extraction
-_STOPWORDS = frozenset({
-    "a", "an", "the", "and", "or", "but", "in", "on", "at", "to", "for", "of",
-    "with", "by", "from", "up", "as", "into", "through", "is", "are", "was",
-    "were", "be", "been", "being", "have", "has", "had", "do", "does", "did",
-    "will", "would", "could", "should", "may", "might", "shall", "can", "not",
-    "no", "nor", "so", "yet", "both", "either", "neither", "each", "few", "more",
-    "most", "other", "some", "such", "than", "too", "very", "just", "about",
-    "if", "then", "that", "this", "these", "those", "what", "which", "who",
-    "when", "where", "how", "why", "i", "you", "he", "she", "we", "they",
-    "me", "him", "her", "us", "them", "my", "your", "his", "its", "our", "their",
-    "it", "any", "all", "also", "only", "there", "here",
-})
+_STOPWORDS = frozenset(
+    {
+        "a",
+        "an",
+        "the",
+        "and",
+        "or",
+        "but",
+        "in",
+        "on",
+        "at",
+        "to",
+        "for",
+        "of",
+        "with",
+        "by",
+        "from",
+        "up",
+        "as",
+        "into",
+        "through",
+        "is",
+        "are",
+        "was",
+        "were",
+        "be",
+        "been",
+        "being",
+        "have",
+        "has",
+        "had",
+        "do",
+        "does",
+        "did",
+        "will",
+        "would",
+        "could",
+        "should",
+        "may",
+        "might",
+        "shall",
+        "can",
+        "not",
+        "no",
+        "nor",
+        "so",
+        "yet",
+        "both",
+        "either",
+        "neither",
+        "each",
+        "few",
+        "more",
+        "most",
+        "other",
+        "some",
+        "such",
+        "than",
+        "too",
+        "very",
+        "just",
+        "about",
+        "if",
+        "then",
+        "that",
+        "this",
+        "these",
+        "those",
+        "what",
+        "which",
+        "who",
+        "when",
+        "where",
+        "how",
+        "why",
+        "i",
+        "you",
+        "he",
+        "she",
+        "we",
+        "they",
+        "me",
+        "him",
+        "her",
+        "us",
+        "them",
+        "my",
+        "your",
+        "his",
+        "its",
+        "our",
+        "their",
+        "it",
+        "any",
+        "all",
+        "also",
+        "only",
+        "there",
+        "here",
+    }
+)
 
 
 def _is_negated(answer_lower: str, keyword: str) -> bool:
@@ -541,10 +632,34 @@ def _is_negated(answer_lower: str, keyword: str) -> bool:
         within a 3-word window.  False if no occurrence is negated.
     """
     _NEGATION_WORDS = (
-        "never", "not", "don't", "dont", "avoid", "without", "no", "neither",
-        "nor", "cannot", "can't", "cant", "won't", "wont", "shouldn't", "shouldnt",
-        "wouldn't", "wouldnt", "couldn't", "couldnt", "isn't", "isnt", "aren't",
-        "arent", "wasn't", "wasnt", "weren't", "werent",
+        "never",
+        "not",
+        "don't",
+        "dont",
+        "avoid",
+        "without",
+        "no",
+        "neither",
+        "nor",
+        "cannot",
+        "can't",
+        "cant",
+        "won't",
+        "wont",
+        "shouldn't",
+        "shouldnt",
+        "wouldn't",
+        "wouldnt",
+        "couldn't",
+        "couldnt",
+        "isn't",
+        "isnt",
+        "aren't",
+        "arent",
+        "wasn't",
+        "wasnt",
+        "weren't",
+        "werent",
     )
     # Anchor on the first token of multi-word keywords for pattern purposes
     re.escape(keyword.lower().split()[0])
@@ -664,7 +779,8 @@ def _keyword_fallback(
     # Gate 2: use negation-aware hit counting for stuffing too
     total_kw_hits = (
         sum(1 for kw in all_keywords if kw.lower() in answer_lower and not _is_negated(answer_lower, kw))
-        if all_keywords else 0
+        if all_keywords
+        else 0
     )
     overall_density = total_kw_hits / max(len(all_keywords), 1)
     is_stuffing = (
@@ -708,10 +824,7 @@ def _keyword_fallback(
             continue
 
         # Gate 1 contribution + negation-aware hit counting
-        hits = sum(
-            1 for kw in keywords
-            if kw.lower() in answer_lower and not _is_negated(answer_lower, kw)
-        )
+        hits = sum(1 for kw in keywords if kw.lower() in answer_lower and not _is_negated(answer_lower, kw))
         raw_score = min(1.0, hits / len(keywords))
 
         # Anti-gaming gate 1: short answer cap
@@ -736,6 +849,7 @@ def _keyword_fallback(
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
+
 
 def _parse_dece_scores(raw: str) -> tuple[dict[str, float] | None, list[dict[str, Any]] | None]:
     """Parse DeCE-format LLM output into (concept_scores, concept_details).
@@ -774,12 +888,14 @@ def _parse_dece_scores(raw: str) -> tuple[dict[str, float] | None, list[dict[str
                     quote = html_mod.escape(str(raw_quote)[:200])
                 confidence = max(0.0, min(1.0, float(value.get("confidence", 0.5))))
                 concept_scores[concept_id] = score
-                concept_details.append({
-                    "concept_id": concept_id,
-                    "score": round(score, 3),
-                    "quote": quote,
-                    "confidence": round(confidence, 3),
-                })
+                concept_details.append(
+                    {
+                        "concept_id": concept_id,
+                        "score": round(score, 3),
+                        "quote": quote,
+                        "confidence": round(confidence, 3),
+                    }
+                )
             else:
                 # Legacy float format — no DeCE detail, convert to score only
                 score = max(0.0, min(1.0, float(value)))

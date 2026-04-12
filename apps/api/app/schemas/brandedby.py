@@ -61,6 +61,7 @@ class AITwinOut(BaseModel):
 
 # --- Generation ---
 
+
 class GenerationCreate(BaseModel):
     """POST /api/brandedby/generations — request a new generation."""
 

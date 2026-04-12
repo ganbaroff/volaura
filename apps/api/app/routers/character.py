@@ -117,9 +117,7 @@ async def create_character_event(
     source = body.payload.get("source", body.source_product)
     if body.event_type == "crystal_earned" and source in DAILY_CRYSTAL_CAP:
         cap = DAILY_CRYSTAL_CAP[source]
-        today_start = datetime.now(UTC).replace(
-            hour=0, minute=0, second=0, microsecond=0
-        )
+        today_start = datetime.now(UTC).replace(hour=0, minute=0, second=0, microsecond=0)
         daily_result = (
             await db.table("game_crystal_ledger")
             .select("amount")
@@ -185,13 +183,19 @@ async def create_character_event(
             and body.payload.get("source") == "volaura_assessment"
             and body.payload.get("skill_slug")
         ):
-            await db.table("game_character_rewards").upsert({
-                "user_id": str(user_id),
-                "skill_slug": body.payload["skill_slug"],
-                "crystals": amount,
-                "claimed": True,
-                "claimed_at": datetime.now(UTC).isoformat(),
-            }).execute()
+            await (
+                db.table("game_character_rewards")
+                .upsert(
+                    {
+                        "user_id": str(user_id),
+                        "skill_slug": body.payload["skill_slug"],
+                        "crystals": amount,
+                        "claimed": True,
+                        "claimed_at": datetime.now(UTC).isoformat(),
+                    }
+                )
+                .execute()
+            )
 
         logger.info(
             "Crystal ledger updated",
@@ -261,12 +265,7 @@ async def get_crystal_balance(
 
     Implementation: single SUM over game_crystal_ledger (indexed on user_id).
     """
-    result = (
-        await db.table("game_crystal_ledger")
-        .select("amount, created_at")
-        .eq("user_id", str(user_id))
-        .execute()
-    )
+    result = await db.table("game_crystal_ledger").select("amount, created_at").eq("user_id", str(user_id)).execute()
 
     rows = result.data or []
     raw_balance = sum(row["amount"] for row in rows)

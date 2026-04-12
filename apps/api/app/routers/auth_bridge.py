@@ -203,12 +203,14 @@ async def _create_shadow_user(admin, email: str) -> str:
     email_norm = email.strip().lower()
     random_password = secrets.token_urlsafe(32)
     try:
-        result = await admin.auth.admin.create_user({
-            "email": email_norm,
-            "password": random_password,
-            "email_confirm": True,
-            "user_metadata": {"origin": "external_bridge"},
-        })
+        result = await admin.auth.admin.create_user(
+            {
+                "email": email_norm,
+                "password": random_password,
+                "email_confirm": True,
+                "user_metadata": {"origin": "external_bridge"},
+            }
+        )
         user = getattr(result, "user", None) or result
         user_id = str(getattr(user, "id", None))
         if not user_id or user_id == "None":
@@ -221,7 +223,10 @@ async def _create_shadow_user(admin, email: str) -> str:
         # our _find_user_by_email and this create_user call. Re-lookup and
         # return the existing UUID.
         err_text = str(e).lower()
-        if any(marker in err_text for marker in ("already registered", "email_exists", "already exists", "duplicate key", "unique constraint")):
+        if any(
+            marker in err_text
+            for marker in ("already registered", "email_exists", "already exists", "duplicate key", "unique constraint")
+        ):
             logger.info(
                 "Shadow user create hit race — re-looking up existing user",
                 email=email_norm,
@@ -232,6 +237,7 @@ async def _create_shadow_user(admin, email: str) -> str:
                 return existing_id
             # Race winner hasn't committed yet — give it a moment and retry once
             import asyncio as _a
+
             await _a.sleep(0.25)
             existing_id = await _find_user_by_email(admin, email_norm)
             if existing_id:
@@ -274,9 +280,7 @@ async def bridge_from_external(
         )
 
     # ── Auth: constant-time compare of bridge secret ─────────────────────
-    if not x_bridge_secret or not hmac.compare_digest(
-        x_bridge_secret, settings.external_bridge_secret
-    ):
+    if not x_bridge_secret or not hmac.compare_digest(x_bridge_secret, settings.external_bridge_secret):
         # Log without revealing whether the header was missing or wrong
         logger.warning(
             "Bridge secret mismatch",

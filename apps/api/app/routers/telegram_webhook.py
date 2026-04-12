@@ -38,6 +38,7 @@ async def _transcribe_voice(file_id: str, chat_id: int | str) -> str | None:
         return None
     try:
         import httpx
+
         async with httpx.AsyncClient(timeout=15) as client:
             file_info = await client.get(
                 f"https://api.telegram.org/bot{settings.telegram_bot_token}/getFile",
@@ -46,9 +47,7 @@ async def _transcribe_voice(file_id: str, chat_id: int | str) -> str | None:
             file_path = file_info.json().get("result", {}).get("file_path", "")
             if not file_path:
                 return None
-            audio_resp = await client.get(
-                f"https://api.telegram.org/file/bot{settings.telegram_bot_token}/{file_path}"
-            )
+            audio_resp = await client.get(f"https://api.telegram.org/file/bot{settings.telegram_bot_token}/{file_path}")
             audio_bytes = audio_resp.content
 
             resp = await client.post(
@@ -69,9 +68,10 @@ async def _transcribe_voice(file_id: str, chat_id: int | str) -> str | None:
 async def _send_message(chat_id: int | str, text: str, reply_markup: dict | None = None) -> bool:
     """Send a Telegram message via Bot API. Returns True on success."""
     import httpx
+
     url = f"https://api.telegram.org/bot{settings.telegram_bot_token}/sendMessage"
     # Telegram max message length is 4096 — split into chunks, never truncate
-    chunks = [text[i:i+4000] for i in range(0, len(text), 4000)]
+    chunks = [text[i : i + 4000] for i in range(0, len(text), 4000)]
     try:
         async with httpx.AsyncClient(timeout=10) as client:
             for i, chunk in enumerate(chunks):
@@ -96,12 +96,18 @@ async def _send_message(chat_id: int | str, text: str, reply_markup: dict | None
 async def _save_message(db, direction: str, message: str, msg_type: str = "free_text", metadata: dict | None = None):
     """Save message to ceo_inbox table."""
     try:
-        await db.table("ceo_inbox").insert({
-            "direction": direction,
-            "message": message[:5000],
-            "message_type": msg_type,
-            "metadata": metadata or {},
-        }).execute()
+        await (
+            db.table("ceo_inbox")
+            .insert(
+                {
+                    "direction": direction,
+                    "message": message[:5000],
+                    "message_type": msg_type,
+                    "metadata": metadata or {},
+                }
+            )
+            .execute()
+        )
     except Exception as e:
         logger.error("Failed to save message: {e}", e=str(e))
 
@@ -109,7 +115,13 @@ async def _save_message(db, direction: str, message: str, msg_type: str = "free_
 async def _get_recent_context(db, limit: int = 30) -> str:
     """Get recent conversation context from DB — full messages, not truncated."""
     try:
-        result = await db.table("ceo_inbox").select("direction,message,message_type,created_at").order("created_at", desc=True).limit(limit).execute()
+        result = (
+            await db.table("ceo_inbox")
+            .select("direction,message,message_type,created_at")
+            .order("created_at", desc=True)
+            .limit(limit)
+            .execute()
+        )
         if not result.data:
             return "Нет предыдущих сообщений."
         lines = []
@@ -181,6 +193,7 @@ def _load_agent_state() -> dict:
     state_path = _REPO_ROOT / "memory" / "swarm" / "agent-state.json"
     try:
         import json as _json
+
         with open(state_path, encoding="utf-8") as f:
             data = _json.load(f)
         return data.get("agents", {})
@@ -245,11 +258,26 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
     text_lower = text.lower()
     is_idea = any(w in text_lower for w in ["идея", "idea", "можно сделать", "а что если", "предлагаю", "надо бы"])
     is_task = any(w in text_lower for w in ["сделай", "задача", "task", "нужно", "исправь", "fix", "добавь", "add"])
-    is_report = any(w in text_lower for w in [
-        "отчёт", "report", "статус", "status", "что сделано", "прогресс",
-        "готов", "работает", "zeus", "life sim", "crystal", "кристал",
-        "mindshift", "интеграция", "ecosystem"
-    ])
+    is_report = any(
+        w in text_lower
+        for w in [
+            "отчёт",
+            "report",
+            "статус",
+            "status",
+            "что сделано",
+            "прогресс",
+            "готов",
+            "работает",
+            "zeus",
+            "life sim",
+            "crystal",
+            "кристал",
+            "mindshift",
+            "интеграция",
+            "ecosystem",
+        ]
+    )
 
     if is_idea:
         msg_type = "idea"
@@ -299,6 +327,7 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
 
     try:
         from google import genai
+
         client = genai.Client(api_key=settings.gemini_api_key)
         response = client.models.generate_content(
             model="gemini-2.0-flash",
@@ -316,14 +345,20 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
         if groq_key:
             try:
                 import httpx
+
                 async with httpx.AsyncClient(timeout=15) as hc:
                     groq_resp = await hc.post(
                         "https://api.groq.com/openai/v1/chat/completions",
                         headers={"Authorization": f"Bearer {groq_key}", "User-Agent": "volaura-bot/1.0"},
-                        json={"model": "llama-3.3-70b-versatile", "messages": [
-                            {"role": "system", "content": system_prompt[:2000]},
-                            {"role": "user", "content": text},
-                        ], "max_tokens": 2000, "temperature": 0.7},
+                        json={
+                            "model": "llama-3.3-70b-versatile",
+                            "messages": [
+                                {"role": "system", "content": system_prompt[:2000]},
+                                {"role": "user", "content": text},
+                            ],
+                            "max_tokens": 2000,
+                            "temperature": 0.7,
+                        },
                     )
                     reply = groq_resp.json()["choices"][0]["message"]["content"].strip()
             except Exception as e2:
@@ -345,11 +380,18 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
 
 # ── Commands ─────────────────────────────────────────────────────────────────
 
+
 async def _handle_status(db, chat_id: int | str) -> None:
     stats = await _get_project_stats(db)
     # Count unprocessed messages
     try:
-        unprocessed = await db.table("ceo_inbox").select("*", count="exact").eq("direction", "ceo_to_bot").eq("processed", False).execute()
+        unprocessed = (
+            await db.table("ceo_inbox")
+            .select("*", count="exact")
+            .eq("direction", "ceo_to_bot")
+            .eq("processed", False)
+            .execute()
+        )
         pending_count = unprocessed.count or 0
     except Exception:
         pending_count = 0
@@ -361,7 +403,15 @@ async def _handle_status(db, chat_id: int | str) -> None:
 async def _handle_backlog(db, chat_id: int | str) -> None:
     """Show recent ideas and tasks from CEO."""
     try:
-        ideas = await db.table("ceo_inbox").select("message,created_at").eq("direction", "ceo_to_bot").in_("message_type", ["idea", "task"]).order("created_at", desc=True).limit(5).execute()
+        ideas = (
+            await db.table("ceo_inbox")
+            .select("message,created_at")
+            .eq("direction", "ceo_to_bot")
+            .in_("message_type", ["idea", "task"])
+            .order("created_at", desc=True)
+            .limit(5)
+            .execute()
+        )
         if not ideas.data:
             await _send_message(chat_id, "📋 Бэклог пуст.")
             return
@@ -377,6 +427,7 @@ async def _handle_backlog(db, chat_id: int | str) -> None:
 async def _handle_proposals(db, chat_id: int | str) -> None:
     """Show latest swarm proposals for CEO to act on."""
     import json as _json
+
     proposals_path = Path(__file__).parent.parent.parent.parent.parent / "memory" / "swarm" / "proposals.json"
     try:
         if not proposals_path.exists():
@@ -401,11 +452,13 @@ async def _handle_proposals(db, chat_id: int | str) -> None:
         buttons = []
         for p in pending[:5]:
             pid = p.get("id", "?")[:8]
-            buttons.append([
-                {"text": "✅ Approve", "callback_data": f"act:{pid}"},
-                {"text": "🚀 Execute", "callback_data": f"execute:{pid}"},
-                {"text": "❌ Reject", "callback_data": f"dismiss:{pid}"},
-            ])
+            buttons.append(
+                [
+                    {"text": "✅ Approve", "callback_data": f"act:{pid}"},
+                    {"text": "🚀 Execute", "callback_data": f"execute:{pid}"},
+                    {"text": "❌ Reject", "callback_data": f"dismiss:{pid}"},
+                ]
+            )
         keyboard = {"inline_keyboard": buttons}
         await _send_message(chat_id, msg, reply_markup=keyboard)
     except Exception as e:
@@ -415,6 +468,7 @@ async def _handle_proposals(db, chat_id: int | str) -> None:
 async def _handle_proposal_action(db, chat_id: int | str, action: str, proposal_id: str) -> None:
     """Process CEO's decision on a proposal: act, dismiss, or defer."""
     import json as _json
+
     proposals_path = Path(__file__).parent.parent.parent.parent.parent / "memory" / "swarm" / "proposals.json"
     try:
         with open(proposals_path, encoding="utf-8") as f:
@@ -435,6 +489,7 @@ async def _handle_proposal_action(db, chat_id: int | str, action: str, proposal_
 
                 # Atomic write: temp file + rename prevents TOCTOU race (P1-02)
                 import tempfile
+
                 tmp_fd, tmp_path = tempfile.mkstemp(dir=proposals_path.parent, suffix=".json")
                 try:
                     with os.fdopen(tmp_fd, "w", encoding="utf-8") as tmp_f:
@@ -446,9 +501,14 @@ async def _handle_proposal_action(db, chat_id: int | str, action: str, proposal_
                     raise
 
                 emoji = {"act": "✅", "dismiss": "❌", "defer": "⏸️"}.get(action, "")
-                await _send_message(chat_id, f"{emoji} Proposal `{proposal_id}`: {old_status} → {p['status']}\n\n*{p.get('title', '')}*\n\nCTO получит решение при следующей сессии.")
+                await _send_message(
+                    chat_id,
+                    f"{emoji} Proposal `{proposal_id}`: {old_status} → {p['status']}\n\n*{p.get('title', '')}*\n\nCTO получит решение при следующей сессии.",
+                )
                 # Save to inbox for tracking
-                await _save_message(db, "ceo_to_bot", f"{action} {proposal_id}: {p.get('title', '')}", "proposal_decision")
+                await _save_message(
+                    db, "ceo_to_bot", f"{action} {proposal_id}: {p.get('title', '')}", "proposal_decision"
+                )
                 break
 
         if not found:
@@ -461,6 +521,7 @@ async def _handle_proposal_action(db, chat_id: int | str, action: str, proposal_
 async def _execute_proposal(db, chat_id: int | str, proposal_id: str) -> None:
     """Execute a proposal by triggering GitHub Actions coordinator workflow."""
     import json as _json
+
     proposals_path = Path(__file__).parent.parent.parent.parent.parent / "memory" / "swarm" / "proposals.json"
 
     try:
@@ -481,6 +542,7 @@ async def _execute_proposal(db, chat_id: int | str, proposal_id: str) -> None:
         found["status"] = "executing"
         found["ceo_decision_at"] = datetime.now(UTC).isoformat()
         import tempfile
+
         tmp_fd, tmp_path = tempfile.mkstemp(dir=proposals_path.parent, suffix=".json")
         try:
             with os.fdopen(tmp_fd, "w", encoding="utf-8") as tmp_f:
@@ -492,9 +554,13 @@ async def _execute_proposal(db, chat_id: int | str, proposal_id: str) -> None:
 
         # Trigger GitHub Actions workflow_dispatch
         import httpx
+
         gh_token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN", "")
         if not gh_token:
-            await _send_message(chat_id, f"🚀 Proposal `{proposal_id}` помечен для исполнения.\n⚠️ GITHUB_TOKEN не настроен — автозапуск невозможен.\n\nВручную: `gh workflow run 'Swarm Daily Autonomy' -f mode=coordinator`")
+            await _send_message(
+                chat_id,
+                f"🚀 Proposal `{proposal_id}` помечен для исполнения.\n⚠️ GITHUB_TOKEN не настроен — автозапуск невозможен.\n\nВручную: `gh workflow run 'Swarm Daily Autonomy' -f mode=coordinator`",
+            )
             return
 
         f"{found.get('title', '')}. {found.get('content', '')[:300]}"
@@ -512,10 +578,18 @@ async def _execute_proposal(db, chat_id: int | str, proposal_id: str) -> None:
             )
 
         if resp.status_code in (204, 200):
-            await _send_message(chat_id, f"🚀 *Executing proposal `{proposal_id}`*\n\n_{found.get('title', '')}_\n\nWorkflow запущен. Результат придёт в следующем сообщении.")
-            await _save_message(db, "ceo_to_bot", f"execute {proposal_id}: {found.get('title', '')}", "proposal_execute")
+            await _send_message(
+                chat_id,
+                f"🚀 *Executing proposal `{proposal_id}`*\n\n_{found.get('title', '')}_\n\nWorkflow запущен. Результат придёт в следующем сообщении.",
+            )
+            await _save_message(
+                db, "ceo_to_bot", f"execute {proposal_id}: {found.get('title', '')}", "proposal_execute"
+            )
         else:
-            await _send_message(chat_id, f"⚠️ GitHub Actions не запустился (HTTP {resp.status_code}). Proposal помечен для ручного исполнения.")
+            await _send_message(
+                chat_id,
+                f"⚠️ GitHub Actions не запустился (HTTP {resp.status_code}). Proposal помечен для ручного исполнения.",
+            )
 
     except Exception as e:
         await _send_message(chat_id, f"⚠️ Execute error: {str(e)[:150]}")
@@ -580,6 +654,7 @@ async def _handle_agent_task(db, chat_id: int | str, agent_id: str, task: str) -
 
     try:
         from google import genai
+
         client = genai.Client(api_key=settings.gemini_api_key)
         response = client.models.generate_content(
             model="gemini-2.0-flash",
@@ -672,6 +747,7 @@ async def _handle_swarm(db, chat_id: int | str, task: str) -> None:
 
     responses: list[str] = []
     from google import genai
+
     client = genai.Client(api_key=settings.gemini_api_key)
 
     for agent_id, perspective in selected:
@@ -735,6 +811,7 @@ async def _handle_ask_agent(db, chat_id: int | str, agent_name: str, question: s
 
     try:
         from google import genai
+
         client = genai.Client(api_key=settings.gemini_api_key)
         response = client.models.generate_content(
             model="gemini-2.0-flash",
@@ -763,6 +840,7 @@ Stats: {stats}
 async def _handle_ask_proposal(db, chat_id: int | str, proposal_id: str, question: str) -> None:
     """CEO asks a follow-up question about a specific swarm proposal."""
     import json as _json
+
     proposals_path = Path(__file__).parent.parent.parent.parent.parent / "memory" / "swarm" / "proposals.json"
 
     try:
@@ -788,6 +866,7 @@ async def _handle_ask_proposal(db, chat_id: int | str, proposal_id: str, questio
 
     try:
         from google import genai
+
         client = genai.Client(api_key=settings.gemini_api_key)
         context = (
             f"Agent: {found.get('agent', '?')}\n"
@@ -872,7 +951,9 @@ async def _handle_findings(chat_id: int | str, limit: int = 5) -> None:
         from swarm.shared_memory import _DB_PATH
 
         if not _DB_PATH.exists():
-            await _send_message(chat_id, "📭 Blackboard пустой. Запусти: `python -m swarm.autonomous_run --mode=coordinator`")
+            await _send_message(
+                chat_id, "📭 Blackboard пустой. Запусти: `python -m swarm.autonomous_run --mode=coordinator`"
+            )
             return
 
         conn = _sqlite3.connect(str(_DB_PATH), timeout=5)
@@ -922,13 +1003,11 @@ async def _handle_simulate(chat_id: int | str) -> None:
 
     try:
         from swarm.simulate_users import simulate
+
         results = await simulate(dry_run=True)
 
         total_events = sum(r["events_written"] for r in results)
-        total_friction = sum(
-            sum(1 for s in r.get("steps", []) if s.get("friction"))
-            for r in results
-        )
+        total_friction = sum(sum(1 for s in r.get("steps", []) if s.get("friction")) for r in results)
 
         # Top 3 friction points
         all_friction = []
@@ -992,7 +1071,7 @@ Named by Yusif Ganbarov on 2026-04-12. You are NOT a bot, NOT an assistant. You 
 
 {identity}
 
-CEO emotional state detected: {state} — {state_desc.get(state, '')}
+CEO emotional state detected: {state} — {state_desc.get(state, "")}
 
 Recent conversation:
 {context}
@@ -1011,6 +1090,7 @@ RULES:
 
     try:
         from google import genai
+
         client = genai.Client(api_key=settings.gemini_api_key)
         response = client.models.generate_content(
             model="gemini-2.0-flash",
@@ -1067,6 +1147,7 @@ async def _handle_help(chat_id: int | str) -> None:
 
 # ── Webhook Endpoint ─────────────────────────────────────────────────────────
 
+
 @router.post("/webhook")
 async def telegram_webhook(
     request: Request,
@@ -1102,6 +1183,7 @@ async def telegram_webhook(
 
         # Answer callback to remove loading spinner
         import httpx
+
         try:
             async with httpx.AsyncClient(timeout=5) as client:
                 await client.post(
@@ -1168,7 +1250,10 @@ async def telegram_webhook(
             if agent_id and task:
                 await _handle_agent_task(db, chat_id, agent_id, task)
             else:
-                await _send_message(chat_id, "⚠️ Формат: /agent {id} {задача}\nПример: /agent security Проверь RLS политики\n\nИспользуй /agents чтобы увидеть все ID")
+                await _send_message(
+                    chat_id,
+                    "⚠️ Формат: /agent {id} {задача}\nПример: /agent security Проверь RLS политики\n\nИспользуй /agents чтобы увидеть все ID",
+                )
         elif text.startswith("/queue"):
             await _handle_queue(chat_id)
         elif text.startswith("/findings"):
@@ -1193,13 +1278,15 @@ async def telegram_webhook(
             if agent and question:
                 await _handle_ask_agent(db, chat_id, agent.lower(), question)
             else:
-                await _send_message(chat_id, "⚠️ Формат: /ask {agent} {вопрос}\nИспользуй /agents чтобы увидеть все агенты")
+                await _send_message(
+                    chat_id, "⚠️ Формат: /ask {agent} {вопрос}\nИспользуй /agents чтобы увидеть все агенты"
+                )
         elif text.startswith("/atlas") or text.lower().startswith(("атлас", "atlas")):
             msg = text.lstrip("/atlas").strip() if text.startswith("/atlas") else text
             # Strip trigger word if present
             for trigger in ("атлас", "atlas"):
                 if msg.lower().startswith(trigger):
-                    msg = msg[len(trigger):].strip()
+                    msg = msg[len(trigger) :].strip()
             await _handle_atlas(db, chat_id, msg or "проснись")
         elif text.startswith("/help") or text.startswith("/start"):
             await _handle_help(chat_id)
@@ -1229,7 +1316,10 @@ async def telegram_webhook(
                 else:
                     await _handle_ask_proposal(db, chat_id, first_token, question)
             else:
-                await _send_message(chat_id, "⚠️ Формат:\n`ask {agent} {вопрос}` — агенту\n`ask {proposal_id} {вопрос}` — по конкретному proposal")
+                await _send_message(
+                    chat_id,
+                    "⚠️ Формат:\n`ask {agent} {вопрос}` — агенту\n`ask {proposal_id} {вопрос}` — по конкретному proposal",
+                )
         else:
             # Free-text → classify + respond + save
             await _classify_and_respond(db, text, chat_id)
@@ -1243,6 +1333,7 @@ async def telegram_webhook(
 
 
 # ── Setup Webhook ────────────────────────────────────────────────────────────
+
 
 @router.post("/setup-webhook")
 async def setup_webhook(request: Request) -> JSONResponse:
@@ -1262,6 +1353,7 @@ async def setup_webhook(request: Request) -> JSONResponse:
     webhook_url = "https://volauraapi-production.up.railway.app/api/telegram/webhook"
 
     import httpx
+
     payload: dict = {"url": webhook_url}
     if settings.telegram_webhook_secret:
         payload["secret_token"] = settings.telegram_webhook_secret

@@ -36,17 +36,25 @@ router = APIRouter(prefix="/organizations", tags=["Organizations"])
 
 # ── Org CRUD ──────────────────────────────────────────────────────────────────
 
+
 @router.get("", response_model=list[OrganizationResponse])
 @limiter.limit(RATE_DEFAULT)
 async def list_organizations(request: Request, db: SupabaseAdmin, user_id: CurrentUserId) -> list[OrganizationResponse]:
     """List all public organizations. Requires authentication to prevent unauthenticated enumeration."""
-    result = await db.table("organizations").select("id, name, description, logo_url, type, website, is_active").order("name").execute()
+    result = (
+        await db.table("organizations")
+        .select("id, name, description, logo_url, type, website, is_active")
+        .order("name")
+        .execute()
+    )
     return [OrganizationResponse(**row) for row in (result.data or [])]
 
 
 @router.get("/me", response_model=OrganizationResponse)
 @limiter.limit(RATE_DEFAULT)
-async def get_my_organization(request: Request, db_admin: SupabaseAdmin, user_id: CurrentUserId) -> OrganizationResponse:
+async def get_my_organization(
+    request: Request, db_admin: SupabaseAdmin, user_id: CurrentUserId
+) -> OrganizationResponse:
     """Get the organization owned by the current user."""
     result = await db_admin.table("organizations").select("*").eq("owner_id", user_id).maybe_single().execute()
     if not result.data:
@@ -75,13 +83,21 @@ async def create_organization(
             detail={"code": "ORG_EXISTS", "message": "You already have an organization"},
         )
 
-    result = await db.table("organizations").insert({
-        "owner_id": user_id,
-        **payload.model_dump(),
-    }).execute()
+    result = (
+        await db.table("organizations")
+        .insert(
+            {
+                "owner_id": user_id,
+                **payload.model_dump(),
+            }
+        )
+        .execute()
+    )
 
     if not result.data:
-        raise HTTPException(status_code=500, detail={"code": "CREATE_FAILED", "message": "Failed to create organization"})
+        raise HTTPException(
+            status_code=500, detail={"code": "CREATE_FAILED", "message": "Failed to create organization"}
+        )
     return OrganizationResponse(**result.data[0])
 
 
@@ -123,13 +139,21 @@ async def list_saved_searches_early(
     Defined before /{org_id} to prevent route shadowing.
     """
     org_id = await _get_org_id_for_user(db_admin, user_id)
-    result = await db_admin.table("org_saved_searches").select("*").eq("org_id", org_id).order("created_at", desc=True).execute()
+    result = (
+        await db_admin.table("org_saved_searches")
+        .select("*")
+        .eq("org_id", org_id)
+        .order("created_at", desc=True)
+        .execute()
+    )
     return [SavedSearchOut(**row) for row in (result.data or [])]
 
 
 @router.get("/{org_id}", response_model=OrganizationResponse)
 @limiter.limit(RATE_DEFAULT)
-async def get_organization(request: Request, org_id: str, db: SupabaseAdmin, user_id: CurrentUserId) -> OrganizationResponse:
+async def get_organization(
+    request: Request, org_id: str, db: SupabaseAdmin, user_id: CurrentUserId
+) -> OrganizationResponse:
     """Get a public organization by ID. Requires authentication to prevent unauthenticated UUID enumeration."""
     result = await db.table("organizations").select("*").eq("id", org_id).maybe_single().execute()
     if not result.data:
@@ -138,6 +162,7 @@ async def get_organization(request: Request, org_id: str, db: SupabaseAdmin, use
 
 
 # ── Collective AURA Ladders ───────────────────────────────────────────────────
+
 
 @router.get("/{org_id}/collective-aura", response_model=CollectiveAuraResponse)
 @limiter.limit(RATE_DEFAULT)
@@ -154,19 +179,37 @@ async def get_collective_aura(
     engaged with (this is intentional, matching the platform's open credential model).
     """
     # Fail-closed: verify ownership FIRST (Security Agent mandate — prevent Mistake #57)
-    org_check = await db_admin.table("organizations").select("id").eq("id", org_id).eq("owner_id", user_id).maybe_single().execute()
+    org_check = (
+        await db_admin.table("organizations")
+        .select("id")
+        .eq("id", org_id)
+        .eq("owner_id", user_id)
+        .maybe_single()
+        .execute()
+    )
     if not org_check.data:
         raise HTTPException(status_code=403, detail={"code": "NOT_ORG_OWNER", "message": "Access denied"})
 
     # Get distinct volunteers who completed assessments for this org
-    sessions = await db_admin.table("assessment_sessions").select("volunteer_id").eq("organization_id", org_id).eq("status", "completed").execute()
+    sessions = (
+        await db_admin.table("assessment_sessions")
+        .select("volunteer_id")
+        .eq("organization_id", org_id)
+        .eq("status", "completed")
+        .execute()
+    )
     volunteer_ids = list({row["volunteer_id"] for row in (sessions.data or [])})
 
     if not volunteer_ids:
         return CollectiveAuraResponse(org_id=org_id, count=0)
 
     # Fetch AURA scores for these volunteers
-    aura_rows = await db_admin.table("aura_scores").select("volunteer_id, total_score").in_("volunteer_id", volunteer_ids).execute()
+    aura_rows = (
+        await db_admin.table("aura_scores")
+        .select("volunteer_id, total_score")
+        .in_("volunteer_id", volunteer_ids)
+        .execute()
+    )
     scores = [row["total_score"] for row in (aura_rows.data or []) if row.get("total_score") is not None]
 
     if not scores:
@@ -188,6 +231,7 @@ async def get_collective_aura(
 
 # ── Org dashboard ─────────────────────────────────────────────────────────────
 
+
 @router.get("/me/dashboard", response_model=OrgDashboardStats)
 @limiter.limit(RATE_DEFAULT)
 async def get_org_dashboard(
@@ -201,7 +245,9 @@ async def get_org_dashboard(
     and top 5 volunteers for the org owner's dashboard.
     """
     # Get org
-    org_result = await db_admin.table("organizations").select("id, name").eq("owner_id", user_id).maybe_single().execute()
+    org_result = (
+        await db_admin.table("organizations").select("id, name").eq("owner_id", user_id).maybe_single().execute()
+    )
     if not org_result.data:
         raise HTTPException(
             status_code=404,
@@ -213,12 +259,18 @@ async def get_org_dashboard(
     # All sessions assigned by this org — SEC-Q4 / BUG-005: capped at 2000 to prevent OOM.
     # Dashboard stats are approximations; full accuracy requires async aggregation (post-launch).
     _DASHBOARD_SESSION_CAP = 2000
-    sessions_result = await db_admin.table("assessment_sessions").select(
-        "volunteer_id, status"
-    ).eq("assigned_by_org_id", org_id).limit(_DASHBOARD_SESSION_CAP).execute()
+    sessions_result = (
+        await db_admin.table("assessment_sessions")
+        .select("volunteer_id, status")
+        .eq("assigned_by_org_id", org_id)
+        .limit(_DASHBOARD_SESSION_CAP)
+        .execute()
+    )
     sessions = sessions_result.data or []
     if len(sessions) == _DASHBOARD_SESSION_CAP:
-        logger.warning("get_org_dashboard: session cap reached — stats are approximate", org_id=org_id, cap=_DASHBOARD_SESSION_CAP)
+        logger.warning(
+            "get_org_dashboard: session cap reached — stats are approximate", org_id=org_id, cap=_DASHBOARD_SESSION_CAP
+        )
 
     total_assigned = len(sessions)
     completed_vols = {s["volunteer_id"] for s in sessions if s["status"] == "completed"}
@@ -231,9 +283,12 @@ async def get_org_dashboard(
     top_volunteers: list[OrgVolunteerRow] = []
 
     if completed_vols:
-        aura_result = await db_admin.table("aura_scores").select(
-            "volunteer_id, total_score, badge_tier"
-        ).in_("volunteer_id", list(completed_vols)).execute()
+        aura_result = (
+            await db_admin.table("aura_scores")
+            .select("volunteer_id, total_score, badge_tier")
+            .in_("volunteer_id", list(completed_vols))
+            .execute()
+        )
         aura_rows = aura_result.data or []
 
         if aura_rows:
@@ -254,33 +309,42 @@ async def get_org_dashboard(
                     badge_dist.none += 1
 
             # Top 5 by AURA
-            top_ids = [r["volunteer_id"] for r in sorted(aura_rows, key=lambda x: float(x.get("total_score") or 0), reverse=True)[:5]]
-            profiles_result = await db_admin.table("profiles").select(
-                "id, username, display_name"
-            ).in_("id", top_ids).execute()
+            top_ids = [
+                r["volunteer_id"]
+                for r in sorted(aura_rows, key=lambda x: float(x.get("total_score") or 0), reverse=True)[:5]
+            ]
+            profiles_result = (
+                await db_admin.table("profiles").select("id, username, display_name").in_("id", top_ids).execute()
+            )
             profile_map = {p["id"]: p for p in (profiles_result.data or [])}
             aura_map = {r["volunteer_id"]: r for r in aura_rows}
 
             # Count competencies completed per volunteer for this org
-            comp_sessions = await db_admin.table("assessment_sessions").select(
-                "volunteer_id"
-            ).eq("assigned_by_org_id", org_id).eq("status", "completed").execute()
+            comp_sessions = (
+                await db_admin.table("assessment_sessions")
+                .select("volunteer_id")
+                .eq("assigned_by_org_id", org_id)
+                .eq("status", "completed")
+                .execute()
+            )
             comp_count: dict[str, int] = {}
-            for s in (comp_sessions.data or []):
+            for s in comp_sessions.data or []:
                 comp_count[s["volunteer_id"]] = comp_count.get(s["volunteer_id"], 0) + 1
 
             for vid in top_ids:
                 p = profile_map.get(vid, {})
                 a = aura_map.get(vid, {})
-                top_volunteers.append(OrgVolunteerRow(
-                    volunteer_id=vid,
-                    username=p.get("username", vid[:8]),
-                    display_name=p.get("display_name"),
-                    overall_score=float(a.get("total_score", 0)),
-                    badge_tier=a.get("badge_tier"),
-                    competencies_completed=comp_count.get(vid, 0),
-                    last_activity=None,  # TODO: add completed_at to sessions
-                ))
+                top_volunteers.append(
+                    OrgVolunteerRow(
+                        volunteer_id=vid,
+                        username=p.get("username", vid[:8]),
+                        display_name=p.get("display_name"),
+                        overall_score=float(a.get("total_score", 0)),
+                        badge_tier=a.get("badge_tier"),
+                        competencies_completed=comp_count.get(vid, 0),
+                        last_activity=None,  # TODO: add completed_at to sessions
+                    )
+                )
 
     return OrgDashboardStats(
         org_id=org_id,
@@ -334,7 +398,11 @@ async def list_org_volunteers(
     sessions_result = await q.limit(_LIST_SESSION_CAP).execute()
     sessions = sessions_result.data or []
     if len(sessions) == _LIST_SESSION_CAP:
-        logger.warning("list_org_volunteers: session cap reached — pagination may be incomplete", org_id=org_id, cap=_LIST_SESSION_CAP)
+        logger.warning(
+            "list_org_volunteers: session cap reached — pagination may be incomplete",
+            org_id=org_id,
+            cap=_LIST_SESSION_CAP,
+        )
 
     # Distinct volunteers with completion counts
     vol_data: dict[str, dict] = {}
@@ -351,15 +419,18 @@ async def list_org_volunteers(
 
     all_vol_ids = list(vol_data.keys())
     # Pagination on volunteer level
-    paginated_ids = all_vol_ids[offset: offset + limit]
+    paginated_ids = all_vol_ids[offset : offset + limit]
 
     # Fetch profiles + AURA in parallel
-    profiles_result = await db_admin.table("profiles").select(
-        "id, username, display_name"
-    ).in_("id", paginated_ids).execute()
-    aura_result = await db_admin.table("aura_scores").select(
-        "volunteer_id, total_score, badge_tier"
-    ).in_("volunteer_id", paginated_ids).execute()
+    profiles_result = (
+        await db_admin.table("profiles").select("id, username, display_name").in_("id", paginated_ids).execute()
+    )
+    aura_result = (
+        await db_admin.table("aura_scores")
+        .select("volunteer_id, total_score, badge_tier")
+        .in_("volunteer_id", paginated_ids)
+        .execute()
+    )
 
     profile_map = {p["id"]: p for p in (profiles_result.data or [])}
     aura_map = {r["volunteer_id"]: r for r in (aura_result.data or [])}
@@ -369,15 +440,17 @@ async def list_org_volunteers(
         p = profile_map.get(vid, {})
         a = aura_map.get(vid, {})
         d = vol_data[vid]
-        rows.append(OrgVolunteerRow(
-            volunteer_id=vid,
-            username=p.get("username", vid[:8]),
-            display_name=p.get("display_name"),
-            overall_score=float(a["total_score"]) if a.get("total_score") is not None else None,
-            badge_tier=a.get("badge_tier"),
-            competencies_completed=d["completed"],
-            last_activity=None,
-        ))
+        rows.append(
+            OrgVolunteerRow(
+                volunteer_id=vid,
+                username=p.get("username", vid[:8]),
+                display_name=p.get("display_name"),
+                overall_score=float(a["total_score"]) if a.get("total_score") is not None else None,
+                badge_tier=a.get("badge_tier"),
+                competencies_completed=d["completed"],
+                last_activity=None,
+            )
+        )
 
     # Sort: completed first, then by score desc
     rows.sort(key=lambda r: (-(r.overall_score or 0), -r.competencies_completed))
@@ -385,6 +458,7 @@ async def list_org_volunteers(
 
 
 # ── Volunteer search ──────────────────────────────────────────────────────────
+
 
 @router.post("/search/volunteers", response_model=list[VolunteerSearchResult])
 @limiter.limit(RATE_DISCOVERY)
@@ -400,25 +474,13 @@ async def search_volunteers(
     falls back to rule-based filter if embedding unavailable or slow.
     """
     # Dual org-role check: account_type in profiles + owns an organization row
-    caller = (
-        await db_admin.table("profiles")
-        .select("account_type")
-        .eq("id", str(user_id))
-        .maybe_single()
-        .execute()
-    )
+    caller = await db_admin.table("profiles").select("account_type").eq("id", str(user_id)).maybe_single().execute()
     if not caller.data or caller.data.get("account_type") != "organization":
         raise HTTPException(
             status_code=403,
             detail={"code": "ORG_REQUIRED", "message": "Only organization accounts can search volunteers"},
         )
-    org_row = (
-        await db_admin.table("organizations")
-        .select("id")
-        .eq("owner_id", str(user_id))
-        .maybe_single()
-        .execute()
-    )
+    org_row = await db_admin.table("organizations").select("id").eq("owner_id", str(user_id)).maybe_single().execute()
     if not org_row.data:
         raise HTTPException(
             status_code=403,
@@ -437,7 +499,9 @@ async def search_volunteers(
     try:
         query_embedding = await asyncio.wait_for(generate_embedding(payload.query), timeout=0.8)
     except TimeoutError:
-        logger.warning("Embedding timeout on volunteer search — using rule-based fallback", query_len=len(payload.query))  # SEC-Q5: no raw query — may contain PII (names, emails)
+        logger.warning(
+            "Embedding timeout on volunteer search — using rule-based fallback", query_len=len(payload.query)
+        )  # SEC-Q5: no raw query — may contain PII (names, emails)
     except Exception as e:
         logger.warning("Embedding error on volunteer search — using rule-based fallback", error=str(e)[:100])
 
@@ -450,7 +514,7 @@ async def search_volunteers(
                 "min_aura": payload.min_aura,
             },
         ).execute()
-        rows = (rpc_result.data or [])[payload.offset: payload.offset + payload.limit]
+        rows = (rpc_result.data or [])[payload.offset : payload.offset + payload.limit]
     else:
         # Rule-based fallback: fetch generously (5× limit), apply filters, then slice
         fetch_count = min(payload.limit * 5, 100)
@@ -469,9 +533,7 @@ async def search_volunteers(
         # Enrich with profile data to apply language/location pre-filter
         if all_rows and (payload.languages or payload.location):
             pids = [r["volunteer_id"] for r in all_rows]
-            p_result = await db_admin.table("profiles").select(
-                "id, languages, location"
-            ).in_("id", pids).execute()
+            p_result = await db_admin.table("profiles").select("id, languages, location").in_("id", pids).execute()
             p_map = {p["id"]: p for p in (p_result.data or [])}
             filtered: list[dict] = []
             for row in all_rows:
@@ -485,16 +547,20 @@ async def search_volunteers(
                 filtered.append(row)
             all_rows = filtered
 
-        rows = all_rows[payload.offset: payload.offset + payload.limit]
+        rows = all_rows[payload.offset : payload.offset + payload.limit]
 
     if not rows:
         return []
 
     # BUG-013 FIX: post-filter by visibility=public (covers semantic/RPC path which can't filter in-query).
     # Rule-based path already has .eq("visibility","public") above — this is defense-in-depth.
-    vis_result = await db_admin.table("aura_scores").select("volunteer_id").eq("visibility", "public").in_(
-        "volunteer_id", [r["volunteer_id"] for r in rows]
-    ).execute()
+    vis_result = (
+        await db_admin.table("aura_scores")
+        .select("volunteer_id")
+        .eq("visibility", "public")
+        .in_("volunteer_id", [r["volunteer_id"] for r in rows])
+        .execute()
+    )
     public_ids = {r["volunteer_id"] for r in (vis_result.data or [])}
     rows = [r for r in rows if r["volunteer_id"] in public_ids]
 
@@ -503,9 +569,12 @@ async def search_volunteers(
 
     # Enrich with full profile data
     volunteer_ids = [r["volunteer_id"] for r in rows]
-    profiles_result = await db_admin.table("profiles").select(
-        "id, username, display_name, location, languages"
-    ).in_("id", volunteer_ids).execute()
+    profiles_result = (
+        await db_admin.table("profiles")
+        .select("id, username, display_name, location, languages")
+        .in_("id", volunteer_ids)
+        .execute()
+    )
     profile_map = {p["id"]: p for p in (profiles_result.data or [])}
 
     results = []
@@ -518,22 +587,25 @@ async def search_volunteers(
             continue
 
         sim_raw = row.get("similarity")
-        results.append(VolunteerSearchResult(
-            volunteer_id=vid,
-            username=p["username"],
-            display_name=p.get("display_name"),
-            overall_score=float(row.get("total_score") or 0),
-            badge_tier=row.get("badge_tier") or "none",
-            elite_status=bool(row.get("elite_status", False)),
-            location=p.get("location"),
-            languages=p.get("languages") or [],
-            similarity=float(sim_raw) if sim_raw is not None else None,
-        ))
+        results.append(
+            VolunteerSearchResult(
+                volunteer_id=vid,
+                username=p["username"],
+                display_name=p.get("display_name"),
+                overall_score=float(row.get("total_score") or 0),
+                badge_tier=row.get("badge_tier") or "none",
+                elite_status=bool(row.get("elite_status", False)),
+                location=p.get("location"),
+                languages=p.get("languages") or [],
+                similarity=float(sim_raw) if sim_raw is not None else None,
+            )
+        )
 
     return results
 
 
 # ── Assessment Assignment ────────────────────────────────────────────────────
+
 
 @router.post("/assign-assessments", response_model=AssignmentResponse)
 @limiter.limit(RATE_PROFILE_WRITE)
@@ -552,7 +624,9 @@ async def assign_assessments(
     4. Duplicate assignments skipped (not error)
     """
     # Verify caller owns an org
-    org_result = await db_admin.table("organizations").select("id, name").eq("owner_id", user_id).maybe_single().execute()
+    org_result = (
+        await db_admin.table("organizations").select("id, name").eq("owner_id", user_id).maybe_single().execute()
+    )
     if not org_result.data:
         raise HTTPException(
             status_code=403,
@@ -592,9 +666,14 @@ async def assign_assessments(
             comp_id = valid_slugs[slug]
 
             # Check for existing in-progress session (skip duplicate)
-            existing = await db_admin.table("assessment_sessions").select("id").eq(
-                "volunteer_id", vid
-            ).eq("competency_id", comp_id).eq("status", "assigned").execute()
+            existing = (
+                await db_admin.table("assessment_sessions")
+                .select("id")
+                .eq("volunteer_id", vid)
+                .eq("competency_id", comp_id)
+                .eq("status", "assigned")
+                .execute()
+            )
 
             if existing.data:
                 skipped += 1
@@ -602,26 +681,34 @@ async def assign_assessments(
 
             # Create assigned session
             session_id = str(uuid.uuid4())
-            await db_admin.table("assessment_sessions").insert({
-                "id": session_id,
-                "volunteer_id": vid,
-                "competency_id": comp_id,
-                "status": "assigned",
-                "assigned_by_org_id": org_id,
-                "assigned_at": datetime.now(UTC).isoformat(),
-                "deadline": deadline.isoformat(),
-                "assignment_message": payload.message,
-                "theta_estimate": 0.0,
-                "theta_se": 1.5,
-                "answers": {},
-            }).execute()
+            await (
+                db_admin.table("assessment_sessions")
+                .insert(
+                    {
+                        "id": session_id,
+                        "volunteer_id": vid,
+                        "competency_id": comp_id,
+                        "status": "assigned",
+                        "assigned_by_org_id": org_id,
+                        "assigned_at": datetime.now(UTC).isoformat(),
+                        "deadline": deadline.isoformat(),
+                        "assignment_message": payload.message,
+                        "theta_estimate": 0.0,
+                        "theta_se": 1.5,
+                        "answers": {},
+                    }
+                )
+                .execute()
+            )
 
-            assignments.append({
-                "session_id": session_id,
-                "volunteer_id": vid,
-                "competency_slug": slug,
-                "deadline": deadline.isoformat(),
-            })
+            assignments.append(
+                {
+                    "session_id": session_id,
+                    "volunteer_id": vid,
+                    "competency_slug": slug,
+                    "deadline": deadline.isoformat(),
+                }
+            )
             assigned += 1
 
     logger.info(
@@ -642,6 +729,7 @@ async def assign_assessments(
 
 
 # ── Intro Requests ─────────────────────────────────────────────────────────────
+
 
 @router.post("/intro-requests", response_model=IntroRequestResponse, status_code=201)
 @limiter.limit("5/hour")
@@ -703,14 +791,16 @@ async def create_intro_request(
     try:
         intro_result = (
             await db.table("intro_requests")
-            .insert({
-                "org_id": str(user_id),
-                "volunteer_id": payload.volunteer_id,
-                "project_name": payload.project_name,
-                "timeline": payload.timeline,
-                "message": payload.message,
-                "status": "pending",
-            })
+            .insert(
+                {
+                    "org_id": str(user_id),
+                    "volunteer_id": payload.volunteer_id,
+                    "project_name": payload.project_name,
+                    "timeline": payload.timeline,
+                    "message": payload.message,
+                    "status": "pending",
+                }
+            )
             .execute()
         )
     except Exception as e:
@@ -718,20 +808,30 @@ async def create_intro_request(
         if "unique" in err_str.lower() or "duplicate" in err_str.lower():
             raise HTTPException(
                 status_code=409,
-                detail={"code": "REQUEST_ALREADY_PENDING", "message": "You already have a pending introduction request for this volunteer"},
+                detail={
+                    "code": "REQUEST_ALREADY_PENDING",
+                    "message": "You already have a pending introduction request for this volunteer",
+                },
             ) from e
         logger.error("Failed to create intro request", error=err_str[:300])
-        raise HTTPException(status_code=500, detail={"code": "CREATE_FAILED", "message": "Failed to create introduction request"}) from e
+        raise HTTPException(
+            status_code=500, detail={"code": "CREATE_FAILED", "message": "Failed to create introduction request"}
+        ) from e
 
     if not intro_result.data:
-        raise HTTPException(status_code=500, detail={"code": "CREATE_FAILED", "message": "Failed to create introduction request"})
+        raise HTTPException(
+            status_code=500, detail={"code": "CREATE_FAILED", "message": "Failed to create introduction request"}
+        )
 
     intro = intro_result.data[0]
 
     # Create notification for the volunteer (fire-and-forget)
     from app.services.notification_service import notify
+
     await notify(
-        db, payload.volunteer_id, "intro_request",
+        db,
+        payload.volunteer_id,
+        "intro_request",
         f"{org_name} wants to connect",
         body=f"Introduction request for: {payload.project_name}",
         reference_id=intro["id"],
@@ -762,15 +862,20 @@ async def _get_org_id_for_user(db_admin: SupabaseAdmin, user_id: str) -> str:
     return result.data["id"]
 
 
-async def _assert_search_ownership(
-    db_admin: SupabaseAdmin, search_id: str, org_id: str
-) -> dict:
+async def _assert_search_ownership(db_admin: SupabaseAdmin, search_id: str, org_id: str) -> dict:
     """Returns the search row if it belongs to this org. Raises 404 otherwise.
 
     Security: prevents org A from reading/deleting org B's saved searches by
     checking both search_id AND org_id in the same query.
     """
-    result = await db_admin.table("org_saved_searches").select("*").eq("id", search_id).eq("org_id", org_id).maybe_single().execute()
+    result = (
+        await db_admin.table("org_saved_searches")
+        .select("*")
+        .eq("id", search_id)
+        .eq("org_id", org_id)
+        .maybe_single()
+        .execute()
+    )
     if not result.data:
         raise HTTPException(
             status_code=404,

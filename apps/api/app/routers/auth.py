@@ -134,20 +134,23 @@ async def register(
 ) -> AuthResponse:
     """Register a new volunteer via Supabase Auth (anon key — OWASP HIGH-05 fix)."""
     try:
-        auth_response = await db.auth.sign_up({
-            "email": payload.email,
-            "password": payload.password,
-            "options": {
-                "data": {
-                    "username": payload.username,
-                    "display_name": payload.display_name or payload.username,
-                    "referral_code": payload.referral_code or "",
-                }
-            },
-        })
+        auth_response = await db.auth.sign_up(
+            {
+                "email": payload.email,
+                "password": payload.password,
+                "options": {
+                    "data": {
+                        "username": payload.username,
+                        "display_name": payload.display_name or payload.username,
+                        "referral_code": payload.referral_code or "",
+                    }
+                },
+            }
+        )
     except Exception as e:
         # Security: don't leak internal error details to client
         from loguru import logger
+
         logger.warning("Registration failed", email_domain=payload.email.split("@")[-1], error=str(e)[:200])
         raise HTTPException(
             status_code=400,
@@ -176,10 +179,12 @@ async def login(
 ) -> AuthResponse:
     """Login with email + password (anon key — OWASP HIGH-05 fix)."""
     try:
-        auth_response = await db.auth.sign_in_with_password({
-            "email": payload.email,
-            "password": payload.password,
-        })
+        auth_response = await db.auth.sign_in_with_password(
+            {
+                "email": payload.email,
+                "password": payload.password,
+            }
+        )
     except Exception:
         raise HTTPException(
             status_code=401,

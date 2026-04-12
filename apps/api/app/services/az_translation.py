@@ -72,7 +72,8 @@ async def translate_en_to_az(
                     return result
                 logger.warning(
                     "Gemini AZ translation failed language check (attempt %d/%d)",
-                    attempt + 1, max_retries,
+                    attempt + 1,
+                    max_retries,
                     text_preview=text[:50],
                 )
             except Exception as e:

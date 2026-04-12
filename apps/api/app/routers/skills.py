@@ -43,8 +43,10 @@ ALLOWED_SKILLS = {
 
 # ── Schemas ───────────────────────────────────────────────────────────────────
 
+
 class SkillRequest(BaseModel):
     """Input for skill execution."""
+
     model_config = ConfigDict(extra="allow")
 
     # Optional overrides — skill determines what it needs
@@ -55,12 +57,14 @@ class SkillRequest(BaseModel):
 
 class SkillResponse(BaseModel):
     """Output from skill execution."""
+
     skill: str
     output: dict[str, Any] | str
     model_used: str = "gemini"
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
+
 
 def _load_skill(skill_name: str) -> str:
     """Load skill markdown content."""
@@ -102,7 +106,9 @@ async def _get_user_context(db: Any, user_id: str) -> dict[str, Any]:
     try:
         # Competency scores — stored as JSONB in aura_scores.competency_scores, NOT a separate table.
         # Old code queried db.table("competency_scores") which doesn't exist → always empty.
-        aura_row = await db.table("aura_scores").select("competency_scores").eq("volunteer_id", user_id).single().execute()
+        aura_row = (
+            await db.table("aura_scores").select("competency_scores").eq("volunteer_id", user_id).single().execute()
+        )
         if aura_row.data:
             raw = aura_row.data.get("competency_scores")
             if isinstance(raw, dict) and raw:
@@ -146,7 +152,7 @@ USER CONTEXT:
 {_format_context(user_context)}
 
 USER REQUEST:
-{request.question or request.context or 'Generate default output for this user'}
+{request.question or request.context or "Generate default output for this user"}
 
 Language: {request.language}
 
@@ -180,6 +186,7 @@ def _format_context(ctx: dict) -> str:
 
 
 # ── Routes ────────────────────────────────────────────────────────────────────
+
 
 @router.get("/")
 @limiter.limit(RATE_DEFAULT)

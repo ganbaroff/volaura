@@ -38,9 +38,9 @@ if _packages_path not in sys.path:
 
 # ── Tuning constants ─────────────────────────────────────────────────────────
 
-POLL_INTERVAL_S: float = 15.0       # seconds between queue drain cycles
-STALE_TIMEOUT_S: float = 600.0      # 10 min — video gen can take up to 3 min
-MAX_RETRIES: int = 2                 # fal.ai sometimes has transient failures
+POLL_INTERVAL_S: float = 15.0  # seconds between queue drain cycles
+STALE_TIMEOUT_S: float = 600.0  # 10 min — video gen can take up to 3 min
+MAX_RETRIES: int = 2  # fal.ai sometimes has transient failures
 
 
 # ── Admin client singleton (background task can't use FastAPI Depends()) ──────
@@ -63,9 +63,7 @@ async def _get_admin() -> AsyncClient:
 
 async def _recover_stale_jobs(db: AsyncClient) -> None:
     """Reset jobs stuck in 'processing' older than STALE_TIMEOUT_S → 'queued'."""
-    stale_cutoff = (
-        datetime.now(UTC) - timedelta(seconds=STALE_TIMEOUT_S)
-    ).isoformat()
+    stale_cutoff = (datetime.now(UTC) - timedelta(seconds=STALE_TIMEOUT_S)).isoformat()
     try:
         result = (
             await db.schema("brandedby")
@@ -119,10 +117,12 @@ async def _lock_job(db: AsyncClient, gen_id: str) -> bool:
         result = (
             await db.schema("brandedby")
             .table("generations")
-            .update({
-                "status": "processing",
-                "processing_started_at": datetime.now(UTC).isoformat(),
-            })
+            .update(
+                {
+                    "status": "processing",
+                    "processing_started_at": datetime.now(UTC).isoformat(),
+                }
+            )
             .eq("id", gen_id)
             .eq("status", "queued")  # only lock if still queued (optimistic)
             .execute()
@@ -141,11 +141,13 @@ async def _mark_completed(db: AsyncClient, gen_id: str, video_url: str) -> None:
         await (
             db.schema("brandedby")
             .table("generations")
-            .update({
-                "status": "completed",
-                "output_url": video_url,
-                "completed_at": datetime.now(UTC).isoformat(),
-            })
+            .update(
+                {
+                    "status": "completed",
+                    "output_url": video_url,
+                    "completed_at": datetime.now(UTC).isoformat(),
+                }
+            )
             .eq("id", gen_id)
             .execute()
         )
@@ -153,9 +155,7 @@ async def _mark_completed(db: AsyncClient, gen_id: str, video_url: str) -> None:
         logger.error("Failed to mark generation completed", gen_id=gen_id, error=str(e))
 
 
-async def _mark_failed(
-    db: AsyncClient, gen_id: str, error: str, retry_count: int
-) -> None:
+async def _mark_failed(db: AsyncClient, gen_id: str, error: str, retry_count: int) -> None:
     """Mark as failed. If retry_count < MAX_RETRIES - 1, requeue instead."""
     new_retry = retry_count + 1
     if new_retry < MAX_RETRIES:
@@ -179,11 +179,13 @@ async def _mark_failed(
         await (
             db.schema("brandedby")
             .table("generations")
-            .update({
-                "status": new_status,
-                "error_message": error[:500],
-                "retry_count": new_retry,
-            })
+            .update(
+                {
+                    "status": new_status,
+                    "error_message": error[:500],
+                    "retry_count": new_retry,
+                }
+            )
             .eq("id", gen_id)
             .execute()
         )

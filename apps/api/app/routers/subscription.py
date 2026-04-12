@@ -37,6 +37,7 @@ from app.schemas.subscription import (
 # ── Optional Stripe import — graceful if not installed ────────────────────────
 try:
     import stripe as _stripe  # type: ignore[import-untyped]
+
     _STRIPE_AVAILABLE = True
 except ImportError:
     _stripe = None  # type: ignore[assignment]
@@ -78,6 +79,7 @@ def _get_stripe_client():
 
 # ── GET /api/subscription/status ─────────────────────────────────────────────
 
+
 @router.get("/status", response_model=SubscriptionStatus)
 @limiter.limit(RATE_DEFAULT)
 async def get_subscription_status(
@@ -92,9 +94,7 @@ async def get_subscription_status(
     """
     result = (
         await db.table("profiles")
-        .select(
-            "subscription_status, trial_ends_at, subscription_ends_at, stripe_customer_id"
-        )
+        .select("subscription_status, trial_ends_at, subscription_ends_at, stripe_customer_id")
         .eq("id", user_id)
         .maybe_single()
         .execute()
@@ -122,9 +122,7 @@ async def get_subscription_status(
                 trial_ends_at = trial_ends_at.replace(tzinfo=UTC)
 
             if trial_ends_at < datetime.now(UTC):
-                await db.table("profiles").update(
-                    {"subscription_status": "expired"}
-                ).eq("id", user_id).execute()
+                await db.table("profiles").update({"subscription_status": "expired"}).eq("id", user_id).execute()
                 row["subscription_status"] = "expired"
                 logger.info("Trial auto-expired", user_id=user_id)
 
@@ -132,6 +130,7 @@ async def get_subscription_status(
 
 
 # ── POST /api/subscription/create-checkout ───────────────────────────────────
+
 
 @router.post("/create-checkout", response_model=CheckoutSessionResponse, status_code=201)
 @limiter.limit(RATE_DEFAULT)
@@ -174,7 +173,9 @@ async def create_checkout_session(
         auth_response = await db.auth.admin.get_user_by_id(user_id)
         user_email: str | None = auth_response.user.email if auth_response.user else None
     except Exception as e:
-        logger.warning("Could not retrieve user email for Stripe customer", user_id=user_id, error=type(e).__name__)  # SEC-Q5: no str(e) — exception may contain email
+        logger.warning(
+            "Could not retrieve user email for Stripe customer", user_id=user_id, error=type(e).__name__
+        )  # SEC-Q5: no str(e) — exception may contain email
         user_email = None
 
     # ── Create Stripe Customer if not linked ──────────────────────────────────
@@ -188,9 +189,7 @@ async def create_checkout_session(
 
             # Persist immediately — if checkout creation fails below, the customer
             # record is still linked so we don't create a duplicate on retry.
-            await db.table("profiles").update(
-                {"stripe_customer_id": stripe_customer_id}
-            ).eq("id", user_id).execute()
+            await db.table("profiles").update({"stripe_customer_id": stripe_customer_id}).eq("id", user_id).execute()
 
             logger.info("Stripe customer created and persisted", user_id=user_id)
         except Exception as e:
@@ -244,6 +243,7 @@ async def create_checkout_session(
 # Rate limit is lenient (100/minute per IP) to block DoS while allowing Stripe bursts.
 # Stripe's legitimate delivery rate never exceeds ~20/minute from a single IP.
 # Signature verification is the PRIMARY security gate — rate limit is defense-in-depth.
+
 
 @router.post("/webhook", response_model=WebhookAck)
 @limiter.limit("100/minute")
@@ -308,7 +308,10 @@ async def stripe_webhook(request: Request) -> WebhookAck:
         success = await _handle_subscription_created(data_object)
         if not success:
             # Profile not found — return 500 so Stripe retries (signup race condition)
-            raise HTTPException(status_code=500, detail={"code": "PROFILE_NOT_FOUND", "message": "Profile not yet created — Stripe will retry"})
+            raise HTTPException(
+                status_code=500,
+                detail={"code": "PROFILE_NOT_FOUND", "message": "Profile not yet created — Stripe will retry"},
+            )
 
     # ── customer.subscription.updated ────────────────────────────────────────
     elif event_type == "customer.subscription.updated":
@@ -330,6 +333,7 @@ async def stripe_webhook(request: Request) -> WebhookAck:
 
 # ── Webhook sub-handlers ──────────────────────────────────────────────────────
 
+
 async def _is_stripe_event_processed(event_id: str) -> bool:
     """Return True if this Stripe event_id was already processed (idempotency check)."""
     from supabase._async.client import create_client as acreate_client
@@ -338,13 +342,7 @@ async def _is_stripe_event_processed(event_id: str) -> bool:
         supabase_url=settings.supabase_url,
         supabase_key=settings.supabase_service_key,
     )
-    result = (
-        await admin.table("processed_stripe_events")
-        .select("event_id")
-        .eq("event_id", event_id)
-        .limit(1)
-        .execute()
-    )
+    result = await admin.table("processed_stripe_events").select("event_id").eq("event_id", event_id).limit(1).execute()
     return bool(result.data)
 
 
@@ -357,10 +355,14 @@ async def _mark_stripe_event_processed(event_id: str, event_type: str) -> None:
         supabase_key=settings.supabase_service_key,
     )
     try:
-        await admin.table("processed_stripe_events").insert(
-            {"event_id": event_id, "event_type": event_type},
-            upsert=False,
-        ).execute()
+        await (
+            admin.table("processed_stripe_events")
+            .insert(
+                {"event_id": event_id, "event_type": event_type},
+                upsert=False,
+            )
+            .execute()
+        )
     except Exception as e:
         # Log but don't fail — event was processed; idempotency insert is best-effort
         logger.warning("Could not record processed Stripe event", event_id=event_id, error=str(e)[:200])
@@ -380,13 +382,7 @@ async def _resolve_user_id_by_stripe_customer(
         supabase_url=settings.supabase_url,
         supabase_key=settings.supabase_service_key,
     )
-    result = (
-        await admin.table("profiles")
-        .select("id")
-        .eq("stripe_customer_id", customer_id)
-        .limit(1)
-        .execute()
-    )
+    result = await admin.table("profiles").select("id").eq("stripe_customer_id", customer_id).limit(1).execute()
     if result.data:
         return result.data[0]["id"]
     return None
@@ -404,12 +400,7 @@ async def _update_profile_subscription(
         supabase_key=settings.supabase_service_key,
     )
 
-    result = (
-        await admin.table("profiles")
-        .update(updates)
-        .eq("stripe_customer_id", customer_id)
-        .execute()
-    )
+    result = await admin.table("profiles").update(updates).eq("stripe_customer_id", customer_id).execute()
 
     if not result.data:
         # No profile matched — profile row may not yet exist (signup race condition).
@@ -438,15 +429,18 @@ async def _handle_subscription_created(sub: dict) -> bool:
     if current_period_end:
         ends_at = datetime.fromtimestamp(current_period_end, tz=UTC).isoformat()
 
-    return await _update_profile_subscription(
-        customer_id,
-        {
-            "subscription_status": "active",
-            "stripe_subscription_id": subscription_id,
-            "subscription_started_at": datetime.now(UTC).isoformat(),
-            "subscription_ends_at": ends_at,
-        },
-    ) is not False
+    return (
+        await _update_profile_subscription(
+            customer_id,
+            {
+                "subscription_status": "active",
+                "stripe_subscription_id": subscription_id,
+                "subscription_started_at": datetime.now(UTC).isoformat(),
+                "subscription_ends_at": ends_at,
+            },
+        )
+        is not False
+    )
 
 
 async def _handle_subscription_updated(sub: dict) -> None:
@@ -460,7 +454,7 @@ async def _handle_subscription_updated(sub: dict) -> None:
     status_map = {
         "active": "active",
         "trialing": "trial",
-        "past_due": "active",   # keep active — payment may recover
+        "past_due": "active",  # keep active — payment may recover
         "unpaid": "expired",
         "canceled": "cancelled",
         "incomplete": "trial",

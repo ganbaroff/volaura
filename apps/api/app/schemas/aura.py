@@ -65,18 +65,20 @@ class AuraExplanationResponse(BaseModel):
     volunteer_id: str
     explanation_count: int
     has_pending_evaluations: bool  # BUG-012: True when degraded answers are queued for LLM re-eval
-    pending_reeval_count: int      # BUG-012: number of answers awaiting re-evaluation
+    pending_reeval_count: int  # BUG-012: number of answers awaiting re-evaluation
     methodology_reference: str
     explanations: list[AuraCompetencyExplanation]
 
 
 class UpdateVisibilityRequest(BaseModel):
     """Allow user to change their score visibility."""
+
     visibility: Literal["public", "badge_only", "hidden"]
 
 
 class SharingPermissionRequest(BaseModel):
     """Grant/revoke sharing permission to an organization."""
+
     org_id: str
     permission_type: Literal["read_score", "read_full_eval", "export_report"]
     action: Literal["grant", "revoke"]

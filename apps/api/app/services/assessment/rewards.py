@@ -65,32 +65,50 @@ async def emit_assessment_rewards(
     # ── crystal_earned event (50 per competency, once only) ──────────────────
     if not crystals_already_claimed:
         try:
-            await db.table("character_events").insert({
-                "user_id": user_id,
-                "event_type": "crystal_earned",
-                "payload": {
-                    "amount": CRYSTAL_REWARD,
-                    "source": "volaura_assessment",
-                    "skill_slug": skill_slug,
-                    "_schema_version": 1,
-                },
-                "source_product": "volaura",
-            }).execute()
+            await (
+                db.table("character_events")
+                .insert(
+                    {
+                        "user_id": user_id,
+                        "event_type": "crystal_earned",
+                        "payload": {
+                            "amount": CRYSTAL_REWARD,
+                            "source": "volaura_assessment",
+                            "skill_slug": skill_slug,
+                            "_schema_version": 1,
+                        },
+                        "source_product": "volaura",
+                    }
+                )
+                .execute()
+            )
 
-            await db.table("game_crystal_ledger").insert({
-                "user_id": user_id,
-                "amount": CRYSTAL_REWARD,
-                "source": "volaura_assessment",
-                "reference_id": skill_slug,
-            }).execute()
+            await (
+                db.table("game_crystal_ledger")
+                .insert(
+                    {
+                        "user_id": user_id,
+                        "amount": CRYSTAL_REWARD,
+                        "source": "volaura_assessment",
+                        "reference_id": skill_slug,
+                    }
+                )
+                .execute()
+            )
 
-            await db.table("game_character_rewards").upsert({
-                "user_id": user_id,
-                "skill_slug": skill_slug,
-                "crystals": CRYSTAL_REWARD,
-                "claimed": True,
-                "claimed_at": datetime.now(UTC).isoformat(),
-            }).execute()
+            await (
+                db.table("game_character_rewards")
+                .upsert(
+                    {
+                        "user_id": user_id,
+                        "skill_slug": skill_slug,
+                        "crystals": CRYSTAL_REWARD,
+                        "claimed": True,
+                        "claimed_at": datetime.now(UTC).isoformat(),
+                    }
+                )
+                .execute()
+            )
 
             logger.info(
                 "Crystal reward emitted",
@@ -99,7 +117,9 @@ async def emit_assessment_rewards(
                 crystals=CRYSTAL_REWARD,
             )
             await notify(
-                db, user_id, "assessment_complete",
+                db,
+                user_id,
+                "assessment_complete",
                 f"Assessment complete: {skill_slug.replace('_', ' ').title()}",
                 body=f"You earned {CRYSTAL_REWARD} crystals!",
                 reference_id=skill_slug,
@@ -123,17 +143,23 @@ async def emit_assessment_rewards(
     badge_tier = competency_badge_tier(competency_score)
     if badge_tier is not None:
         try:
-            await db.table("character_events").insert({
-                "user_id": user_id,
-                "event_type": "skill_verified",
-                "payload": {
-                    "skill_slug": skill_slug,
-                    "aura_score": round(competency_score, 2),
-                    "badge_tier": badge_tier,
-                    "_schema_version": 1,
-                },
-                "source_product": "volaura",
-            }).execute()
+            await (
+                db.table("character_events")
+                .insert(
+                    {
+                        "user_id": user_id,
+                        "event_type": "skill_verified",
+                        "payload": {
+                            "skill_slug": skill_slug,
+                            "aura_score": round(competency_score, 2),
+                            "badge_tier": badge_tier,
+                            "_schema_version": 1,
+                        },
+                        "source_product": "volaura",
+                    }
+                )
+                .execute()
+            )
 
             logger.info(
                 "Skill verified event emitted",
@@ -143,7 +169,9 @@ async def emit_assessment_rewards(
                 badge_tier=badge_tier,
             )
             await notify(
-                db, user_id, "badge_earned",
+                db,
+                user_id,
+                "badge_earned",
                 f"{badge_tier} badge earned!",
                 body=f"{skill_slug.replace('_', ' ').title()}: {badge_tier} ({competency_score:.0f}/100)",
                 reference_id=skill_slug,

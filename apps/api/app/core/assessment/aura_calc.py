@@ -39,8 +39,8 @@ ELITE_COMPETENCY_COUNT = 2
 # Phase 1 (0-30 days): rapid initial decay matching forgetting curve steepness
 # Phase 2 (30+ days): slower long-term decay for consolidated knowledge
 # Floor at 60% — inactivity cannot erase earned competency.
-_DECAY_PHASE1_DAYS: float = 30.0    # boundary between fast and slow decay
-_DECAY_PHASE1_RATE: float = 0.70    # retain 70% after 30 days (sharp Ebbinghaus drop)
+_DECAY_PHASE1_DAYS: float = 30.0  # boundary between fast and slow decay
+_DECAY_PHASE1_RATE: float = 0.70  # retain 70% after 30 days (sharp Ebbinghaus drop)
 _DECAY_FLOOR: float = 0.60
 
 # Per-competency Phase 2 half-lives (days) — differentiated by skill decay research
@@ -48,24 +48,21 @@ _DECAY_FLOOR: float = 0.60
 # tech/event skills decay faster (practise-dependent), soft skills very durable.
 # Formula: score retains 80% per HALF_LIFE days beyond day 30.
 _COMPETENCY_HALF_LIVES: dict[str, float] = {
-    "tech_literacy":       730.0,   # 2 yr — practice-dependent, but core knowledge durable
-    "event_performance":   730.0,   # 2 yr — event-tied; resets naturally with participation
+    "tech_literacy": 730.0,  # 2 yr — practice-dependent, but core knowledge durable
+    "event_performance": 730.0,  # 2 yr — event-tied; resets naturally with participation
     "english_proficiency": 1095.0,  # 3 yr — language retention high once acquired
-    "communication":       1460.0,  # 4 yr — core soft skill, very durable
-    "reliability":         1460.0,  # 4 yr — behavioural trait, not easily forgotten
-    "adaptability":        1460.0,  # 4 yr — dispositional, stable over time
-    "leadership":          1640.0,  # 4.5 yr — identity-level competency, most durable
-    "empathy_safeguarding": 1640.0, # 4.5 yr — values-based, extremely stable
+    "communication": 1460.0,  # 4 yr — core soft skill, very durable
+    "reliability": 1460.0,  # 4 yr — behavioural trait, not easily forgotten
+    "adaptability": 1460.0,  # 4 yr — dispositional, stable over time
+    "leadership": 1640.0,  # 4.5 yr — identity-level competency, most durable
+    "empathy_safeguarding": 1640.0,  # 4.5 yr — values-based, extremely stable
 }
 
 # Weighted-average half-life for overall total_score decay
 # = sum(COMPETENCY_WEIGHTS[c] * _COMPETENCY_HALF_LIVES[c]) for all competencies
 # Pre-computed: ~1295 days (~3.5 yr) — used when no specific competency slug given.
 _DECAY_PHASE2_HALF_LIFE_DEFAULT: float = round(
-    sum(
-        COMPETENCY_WEIGHTS[c] * _COMPETENCY_HALF_LIVES[c]
-        for c in COMPETENCY_WEIGHTS
-    ),
+    sum(COMPETENCY_WEIGHTS[c] * _COMPETENCY_HALF_LIVES[c] for c in COMPETENCY_WEIGHTS),
     1,
 )
 
@@ -108,10 +105,7 @@ def is_elite(overall: float, competency_scores: dict[str, float]) -> bool:
     """Return True if the volunteer qualifies for elite status."""
     if overall < ELITE_AURA_THRESHOLD:
         return False
-    high_count = sum(
-        1 for score in competency_scores.values()
-        if score >= ELITE_COMPETENCY_THRESHOLD
-    )
+    high_count = sum(1 for score in competency_scores.values() if score >= ELITE_COMPETENCY_THRESHOLD)
     return high_count >= ELITE_COMPETENCY_COUNT
 
 
@@ -153,6 +147,7 @@ def calculate_effective_score(
     # Select half-life: per-competency if slug given and known, else weighted average
     if competency_slug and competency_slug not in _COMPETENCY_HALF_LIVES:
         from loguru import logger
+
         logger.warning("Unknown competency_slug for decay — using default", slug=competency_slug)
     half_life = _COMPETENCY_HALF_LIVES.get(competency_slug or "", _DECAY_PHASE2_HALF_LIFE_DEFAULT)
 

@@ -95,11 +95,7 @@ async def start_assessment(
     # Gated by PAYMENT_ENABLED kill switch — False during beta, True when billing is live.
     if settings.payment_enabled:
         sub_result = (
-            await db_user.table("profiles")
-            .select("subscription_status")
-            .eq("id", user_id)
-            .maybe_single()
-            .execute()
+            await db_user.table("profiles").select("subscription_status").eq("id", user_id).maybe_single().execute()
         )
         # Fail-closed: if no profile row exists (shouldn't happen post-onboarding),
         # block by default. A missing profile is not a free pass to unlimited assessments.
@@ -359,11 +355,7 @@ async def submit_answer(
     # Pattern mirrors start_assessment paywall (lines ~90-117). Both must stay in sync.
     if settings.payment_enabled:
         sub_result = (
-            await db_user.table("profiles")
-            .select("subscription_status")
-            .eq("id", user_id)
-            .maybe_single()
-            .execute()
+            await db_user.table("profiles").select("subscription_status").eq("id", user_id).maybe_single().execute()
         )
         if not sub_result.data:
             raise HTTPException(
@@ -390,12 +382,19 @@ async def submit_answer(
         try:
             expires_at = datetime.fromisoformat(expires_at_str.replace("Z", "+00:00"))
         except (ValueError, TypeError):
-            logger.warning("Malformed expires_at in session — skipping expiry check", session_id=session.get("id"), expires_at_raw=expires_at_str)
+            logger.warning(
+                "Malformed expires_at in session — skipping expiry check",
+                session_id=session.get("id"),
+                expires_at_raw=expires_at_str,
+            )
             expires_at = None
         if expires_at and now_utc > expires_at:
             raise HTTPException(
                 status_code=410,
-                detail={"code": "SESSION_EXPIRED", "message": "This assessment session has expired. Please start a new one."},
+                detail={
+                    "code": "SESSION_EXPIRED",
+                    "message": "This assessment session has expired. Please start a new one.",
+                },
             )
 
     if session.get("current_question_id") != payload.question_id:
@@ -408,13 +407,7 @@ async def submit_answer(
     current_version = session.get("answer_version", 0)
 
     # Load question details
-    q_result = (
-        await db_admin.table("questions")
-        .select("*")
-        .eq("id", payload.question_id)
-        .single()
-        .execute()
-    )
+    q_result = await db_admin.table("questions").select("*").eq("id", payload.question_id).single().execute()
     if not q_result.data:
         raise HTTPException(status_code=404, detail={"code": "QUESTION_NOT_FOUND", "message": "Question not found"})
 
@@ -459,7 +452,9 @@ async def submit_answer(
         correct_answer: str | None = question.get("correct_answer")
         if not correct_answer:
             logger.warning("MCQ question has no correct_answer", question_id=question.get("id"))
-        raw_score = 1.0 if (correct_answer and payload.answer.strip().lower() == correct_answer.strip().lower()) else 0.0
+        raw_score = (
+            1.0 if (correct_answer and payload.answer.strip().lower() == correct_answer.strip().lower()) else 0.0
+        )
     else:
         # Open-ended → LLM evaluation (multi-model swarm or single-model BARS)
         expected_concepts: list[dict] = question.get("expected_concepts") or []
@@ -477,11 +472,7 @@ async def submit_answer(
         _DAILY_LLM_CAP = 20
         _force_degraded = False
         try:
-            today_start = (
-                datetime.now(UTC)
-                .replace(hour=0, minute=0, second=0, microsecond=0)
-                .isoformat()
-            )
+            today_start = datetime.now(UTC).replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
             today_sessions_result = (
                 await db_admin.table("assessment_sessions")
                 .select("answers")
@@ -490,7 +481,7 @@ async def submit_answer(
                 .execute()
             )
             daily_llm_count = 0
-            for _sess in (today_sessions_result.data or []):
+            for _sess in today_sessions_result.data or []:
                 _answers_blob = _sess.get("answers") or {}
                 daily_llm_count += len(_answers_blob.get("items", []))
 
@@ -518,6 +509,7 @@ async def submit_answer(
             # produces evaluation_log for Phase 2 Transparent Logs.
             # Daily cap (_force_degraded=True) bypasses swarm — bars keyword_fallback used instead.
             from app.services.swarm_service import evaluate_answer as swarm_evaluate
+
             eval_result = await swarm_evaluate(
                 question_en=question["scenario_en"],
                 answer=payload.answer,
@@ -544,6 +536,7 @@ async def submit_answer(
             comp_slug_for_queue = await get_competency_slug(db_admin, session["competency_id"])
             if comp_slug_for_queue:
                 from app.services.reeval_worker import enqueue_degraded_answer
+
                 await enqueue_degraded_answer(
                     db_admin,
                     session_id=payload.session_id,
@@ -608,9 +601,14 @@ async def submit_answer(
     # HIGH-01: Optimistic locking — only update if version hasn't changed
     # BLOCKER-1 FIX: Use db_admin (service_role) for updates — user-level UPDATE policy removed
     # to prevent direct PostgREST theta manipulation
-    update_result = await db_admin.table("assessment_sessions").update(
-        update_payload
-    ).eq("id", payload.session_id).eq("volunteer_id", user_id).eq("answer_version", current_version).execute()
+    update_result = (
+        await db_admin.table("assessment_sessions")
+        .update(update_payload)
+        .eq("id", payload.session_id)
+        .eq("volunteer_id", user_id)
+        .eq("answer_version", current_version)
+        .execute()
+    )
 
     if not update_result.data:
         raise HTTPException(
@@ -646,7 +644,9 @@ async def complete_assessment(
     try:
         uuid.UUID(session_id)
     except ValueError:
-        raise HTTPException(status_code=422, detail={"code": "INVALID_SESSION_ID", "message": "session_id must be a valid UUID"})
+        raise HTTPException(
+            status_code=422, detail={"code": "INVALID_SESSION_ID", "message": "session_id must be a valid UUID"}
+        )
 
     session_result = (
         await db_user.table("assessment_sessions")
@@ -691,7 +691,10 @@ async def complete_assessment(
         if datetime.now(UTC) > expires_at:
             raise HTTPException(
                 status_code=410,
-                detail={"code": "SESSION_EXPIRED", "message": "This assessment session has expired. Please start a new one."},
+                detail={
+                    "code": "SESSION_EXPIRED",
+                    "message": "This assessment session has expired. Please start a new one.",
+                },
             )
 
     state = CATState.from_dict(session["answers"] or {})
@@ -707,21 +710,35 @@ async def complete_assessment(
         state.stop_reason = "manual_complete"
         # BLOCKER-1 FIX: Use db_admin for updates (user-level UPDATE policy removed)
         # BUG-001 FIX: merged gaming columns into single UPDATE — eliminates double-write race
-        await db_admin.table("assessment_sessions").update({
-            "status": "completed",
-            "theta_estimate": state.theta,
-            "theta_se": state.theta_se,
-            "answers": state.to_dict(),
-            "completed_at": datetime.now(UTC).isoformat(),
-            "gaming_penalty_multiplier": gaming.penalty_multiplier,
-            "gaming_flags": gaming.flags,
-        }).eq("id", session_id).execute()
+        await (
+            db_admin.table("assessment_sessions")
+            .update(
+                {
+                    "status": "completed",
+                    "theta_estimate": state.theta,
+                    "theta_se": state.theta_se,
+                    "answers": state.to_dict(),
+                    "completed_at": datetime.now(UTC).isoformat(),
+                    "gaming_penalty_multiplier": gaming.penalty_multiplier,
+                    "gaming_flags": gaming.flags,
+                }
+            )
+            .eq("id", session_id)
+            .execute()
+        )
     else:
         # Session was already completed — still sync final gaming analysis in one update
-        await db_admin.table("assessment_sessions").update({
-            "gaming_penalty_multiplier": gaming.penalty_multiplier,
-            "gaming_flags": gaming.flags,
-        }).eq("id", session_id).execute()
+        await (
+            db_admin.table("assessment_sessions")
+            .update(
+                {
+                    "gaming_penalty_multiplier": gaming.penalty_multiplier,
+                    "gaming_flags": gaming.flags,
+                }
+            )
+            .eq("id", session_id)
+            .execute()
+        )
 
     # Get competency slug
     comp_result = (
@@ -760,9 +777,12 @@ async def complete_assessment(
             # Best-effort: mark session as needing AURA sync so CTO can query
             # SELECT id FROM assessment_sessions WHERE pending_aura_sync = true
             try:
-                await db_admin.table("assessment_sessions").update(
-                    {"pending_aura_sync": True}
-                ).eq("id", session_id).execute()
+                await (
+                    db_admin.table("assessment_sessions")
+                    .update({"pending_aura_sync": True})
+                    .eq("id", session_id)
+                    .execute()
+                )
             except Exception:
                 pass  # non-fatal — primary error is already logged above
 
@@ -772,16 +792,17 @@ async def complete_assessment(
     crystals_earned = 0
     if slug:
         _auth_header = request.headers.get("Authorization", "")
-        _user_jwt: str | None = (
-            _auth_header.removeprefix("Bearer ").strip() or None
+        _user_jwt: str | None = _auth_header.removeprefix("Bearer ").strip() or None
+        crystals_earned = int(
+            await emit_assessment_rewards(
+                db=db_admin,
+                user_id=str(user_id),
+                skill_slug=slug,
+                competency_score=competency_score,
+                user_jwt=_user_jwt,
+            )
+            or 0
         )
-        crystals_earned = int(await emit_assessment_rewards(
-            db=db_admin,
-            user_id=str(user_id),
-            skill_slug=slug,
-            competency_score=competency_score,
-            user_jwt=_user_jwt,
-        ) or 0)
 
     # Tribe streak: record activity for current week (fire-and-forget, never blocks response)
     try:
@@ -815,15 +836,19 @@ async def complete_assessment(
         user_email = user_resp.user.email if user_resp and user_resp.user else None
         if user_email:
             # Resolve badge tier from aura_scores (best-effort; defaults to "bronze" if missing)
-            badge_resp = await db_admin.table("aura_scores").select(
-                "badge_tier"
-            ).eq("volunteer_id", str(user_id)).maybe_single().execute()
+            badge_resp = (
+                await db_admin.table("aura_scores")
+                .select("badge_tier")
+                .eq("volunteer_id", str(user_id))
+                .maybe_single()
+                .execute()
+            )
             badge_tier = (badge_resp.data or {}).get("badge_tier", "bronze")
 
             # display_name from profiles (best-effort; falls back to "there")
-            prof_resp = await db_admin.table("profiles").select(
-                "display_name"
-            ).eq("id", str(user_id)).maybe_single().execute()
+            prof_resp = (
+                await db_admin.table("profiles").select("display_name").eq("id", str(user_id)).maybe_single().execute()
+            )
             display_name = (prof_resp.data or {}).get("display_name") or ""
 
             await send_aura_ready_email(
@@ -864,7 +889,9 @@ async def get_results(
     try:
         uuid.UUID(session_id)
     except ValueError:
-        raise HTTPException(status_code=422, detail={"code": "INVALID_SESSION_ID", "message": "session_id must be a valid UUID"})
+        raise HTTPException(
+            status_code=422, detail={"code": "INVALID_SESSION_ID", "message": "session_id must be a valid UUID"}
+        )
 
     session_result = (
         await db_user.table("assessment_sessions")
@@ -971,11 +998,7 @@ async def get_coaching(
 
     # Get competency name and slug
     comp_result = (
-        await db_admin.table("competencies")
-        .select("name_en, slug")
-        .eq("id", competency_id)
-        .maybe_single()
-        .execute()
+        await db_admin.table("competencies").select("name_en, slug").eq("id", competency_id).maybe_single().execute()
     )
     comp_name = comp_result.data.get("name_en", "this competency") if comp_result.data else "this competency"
     comp_slug = comp_result.data.get("slug", "") if comp_result.data else ""
@@ -994,9 +1017,7 @@ async def get_coaching(
     # Cache result in assessment_sessions.coaching_note (graceful if column missing)
     tips_json = [t.model_dump() for t in tips]
     try:
-        await db_admin.table("assessment_sessions").update(
-            {"coaching_note": tips_json}
-        ).eq("id", session_id).execute()
+        await db_admin.table("assessment_sessions").update({"coaching_note": tips_json}).eq("id", session_id).execute()
     except Exception as e:
         logger.warning("Could not cache coaching_note (column may not exist yet): {err}", err=str(e)[:200])
 
@@ -1081,8 +1102,8 @@ async def get_assessment_info(
 # IRT difficulty mapping: irt_b → human-readable label
 # Thresholds chosen to map the standard normal range to 4 buckets.
 _DIFFICULTY_THRESHOLDS: list[tuple[float, str]] = [
-    (1.5, "expert"),   # irt_b >= 1.5
-    (0.5, "hard"),     # 0.5 <= irt_b < 1.5
+    (1.5, "expert"),  # irt_b >= 1.5
+    (0.5, "hard"),  # 0.5 <= irt_b < 1.5
     (-0.5, "medium"),  # -0.5 <= irt_b < 0.5
 ]
 _DIFFICULTY_DEFAULT = "easy"  # irt_b < -0.5
@@ -1155,11 +1176,7 @@ async def get_question_breakdown(
 
     # Get competency slug for response
     comp_result = (
-        await db_admin.table("competencies")
-        .select("slug")
-        .eq("id", session["competency_id"])
-        .maybe_single()
-        .execute()
+        await db_admin.table("competencies").select("slug").eq("id", session["competency_id"]).maybe_single().execute()
     )
     comp_slug = comp_result.data["slug"] if comp_result.data else "unknown"
 
@@ -1167,19 +1184,19 @@ async def get_question_breakdown(
     questions_out: list[QuestionResultOut] = []
     for item in state.items:
         q_data = q_map.get(item.question_id, {})
-        questions_out.append(QuestionResultOut(
-            question_id=item.question_id,
-            question_en=q_data.get("scenario_en"),
-            question_az=q_data.get("scenario_az"),
-            question_ru=q_data.get("scenario_ru"),
-            difficulty_label=_irt_b_to_label(item.irt_b),
-            is_correct=item.raw_score > 0,
-            response_time_ms=item.response_time_ms,
-        ))
+        questions_out.append(
+            QuestionResultOut(
+                question_id=item.question_id,
+                question_en=q_data.get("scenario_en"),
+                question_az=q_data.get("scenario_az"),
+                question_ru=q_data.get("scenario_ru"),
+                difficulty_label=_irt_b_to_label(item.irt_b),
+                is_correct=item.raw_score > 0,
+                response_time_ms=item.response_time_ms,
+            )
+        )
 
-    competency_score = round(
-        theta_to_score(state.theta) * (session.get("gaming_penalty_multiplier") or 1.0), 2
-    )
+    competency_score = round(theta_to_score(state.theta) * (session.get("gaming_penalty_multiplier") or 1.0), 2)
 
     return QuestionBreakdownOut(
         session_id=session_id,
@@ -1232,9 +1249,7 @@ async def verify_assessment(
 
     session = session_result.data
     state = CATState.from_dict(session["answers"] or {})
-    competency_score = round(
-        theta_to_score(state.theta) * (session.get("gaming_penalty_multiplier") or 1.0), 2
-    )
+    competency_score = round(theta_to_score(state.theta) * (session.get("gaming_penalty_multiplier") or 1.0), 2)
 
     # Competency name
     comp_result = (

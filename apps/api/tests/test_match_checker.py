@@ -85,7 +85,7 @@ def make_db(
     _table_cache: dict[str, MagicMock] = {}
 
     def table(name: str) -> MagicMock:
-        if name in _table_cache:
+        if name == "org_saved_searches" and name in _table_cache:
             return _table_cache[name]
 
         m = MagicMock()

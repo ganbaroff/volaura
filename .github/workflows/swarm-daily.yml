@@ -180,16 +180,9 @@ jobs:
                   f.write(existing.split('##')[0] + header + result + '\n\n---\n\n' + '##'.join(existing.split('##')[1:]) if '##' in existing else existing + header + result + '\n')
               print(f'Trend Scout: saved to {log_path}')
 
-              # Send to CEO via Telegram
-              BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', '')
-              CHAT_ID = os.environ.get('TELEGRAM_CEO_CHAT_ID', '')
-              if BOT_TOKEN and CHAT_ID:
-                  msg = f'🔭 TREND SCOUT — {datetime.date.today().isoformat()}\n\n{result[:3500]}'
-                  tg_payload = json.dumps({'chat_id': CHAT_ID, 'text': msg}).encode()
-                  tg_req = urllib.request.Request(f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage',
-                      data=tg_payload, headers={'Content-Type': 'application/json'})
-                  urllib.request.urlopen(tg_req, timeout=10)
-                  print('Sent to CEO via Telegram')
+              # Trend Scout results saved to file only — no Telegram spam.
+              # CEO reads trends when he wants via /status or memory files.
+              print('Trend Scout: saved to file (Telegram notifications disabled)')
           except Exception as e:
               print(f'Trend Scout error: {e}')
           "

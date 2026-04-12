@@ -5,7 +5,7 @@ on:
     # Every 15 minutes. Atlas clone wakes, picks next-due topic from proactive queue,
     # writes research note to memory/atlas/inbox/, commits to main. Main Atlas reads
     # inbox on every wake per memory/atlas/wake.md read order.
-    - cron: '*/15 * * * *'
+    - cron: '0 */2 * * *'
   workflow_dispatch:
     # Allow manual trigger for testing, for CEO-initiated on-demand wakes,
     # and — most importantly — for webhook-triggered autonomous wakes from

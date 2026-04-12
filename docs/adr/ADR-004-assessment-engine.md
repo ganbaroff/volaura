@@ -1259,11 +1259,6 @@ CREATE TABLE public.questions (
 5. Plan Phase 2 IRT calibration using initial cohort data (min 500 responses)
 # Four Question Types
 
-#### 1. BARS (Behaviorally Anchored Rating Scale)
-
-#### 2. MCQ (Multiple Choice Questions)
-
-#### 3. Open Text (LLM-Evaluated)
 
 #### 4. True/False Questions
     # Add true/false question type

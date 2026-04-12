@@ -142,7 +142,7 @@ class Backlog:
 
         blocked = self.blocked()
         if blocked:
-            lines.append(f"\n⚠ {len(blocked)} task(s) BLOCKED")
+            lines.append(f"\n!! {len(blocked)} task(s) BLOCKED")
 
         return "\n".join(lines)
 

@@ -177,6 +177,7 @@ Bad assessment questions = wrong AURA scores = users don't trust the platform.
 
 ---
 
+
 ## Phase 4: AURA Quality (80 hours)
 **"Done" definition: Users trust their score. Repeat assessors see improvement. Score explains itself.**
 
@@ -187,6 +188,7 @@ Current: user sees AURA score + radar chart. No explanation of what it means or 
 - Per-competency breakdown: "Communication 82 — Strong. Leadership 61 — Room to grow."
 - Improvement tips per competency (3 bullet points, ADHD-friendly, no fluff)
 - Show percentile vs similar volunteers (privacy: only show if ≥50 users in category)
+- Incorporate regional labor market data to provide more relevant and actionable insights
 
 ### Hour 21-40: IRT Calibration
 - After 100+ assessments: run IRT parameter estimation on response data

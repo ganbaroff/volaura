@@ -16,6 +16,7 @@ I represent everyone who will put money into Volaura: angels in Baku, regional V
 
 ---
 
+
 ## Due Diligence Checklist — What Investors Will Ask
 
 ### Traction (asked in every meeting)
@@ -26,7 +27,7 @@ I represent everyone who will put money into Volaura: angels in Baku, regional V
 □ B2B pipeline: how many orgs in trial? How many paying?
 □ MRR growth rate — need 15-20% month-over-month to raise Series A
 □ NPS score — proxy for word-of-mouth growth
-```
+□ Regional labor market data integration — how does it enhance AURA score relevance?
 
 ### Unit Economics (the most common pitch-killer)
 ```

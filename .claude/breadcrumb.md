@@ -1,46 +1,24 @@
-# Session Breadcrumb — 2026-04-14 (Session 95, 20 commits)
+# Session Breadcrumb — 2026-04-14 night (Session 95, 26 commits)
 
-## CEO MANDATE (last message before sleep):
-1. Life Simulator game logic — develop fully
-2. ZEUS → rename to ATLAS poэтапно
-3. Activate 15-min wake hook ("атлас проснись")
-4. Fix swarm agents to work autonomously in background
-5. Fix ALL small issues — agents should batch on their own
-6. By morning: ecosystem must breathe
+## Overnight autonomous work (CEO offline)
+8 iterations completed autonomously:
+1. E2E bot fix + 30 questions + self-learning deployed
+2. Telegram: spam killed, identity hardcoded, honesty rules, Groq primary
+3. ZEUS→Atlas: gateway (/api/atlas/), config, telegram, autonomous_run
+4. volunteer→professional: schemas + 12 routers + 3 test fixes
+5. Life Simulator: game design doc (stats, events, crystal economy, rooms, P0 bugs)
+6. Swarm: atlas-proactive deps fixed (pydantic + litellm)
+7. Sentry: confirmed working (0 events = no errors, correct)
+8. CI: green (748+ passed)
 
-## CRITICAL BUG FOUND THIS SESSION:
-_handle_atlas never called _save_message for incoming CEO messages.
-Old handler _classify_and_respond had it but was dead code.
-FIX PUSHED: commit 6aeab64. Railway deploying.
-
-## What was done (20 commits):
-- E2E bot fix (is_complete check) — 5→10 answers
-- 30 new assessment questions (5 competencies)
-- Atlas self-learning: atlas_learnings table + Groq extraction
-- Telegram spam killed (40/day→0-3)
-- Bot identity hardcoded (Railway has no git filesystem)
-- Bot honesty fix (stops lying about executing code)
-- ZEUS memory research: 6 frameworks rejected, ZenBrain novel
-- volunteer→professional: API schemas + 12 routers (160 lines)
-- Full ecosystem redesign: 3 NotebookLM researches + 70KB audit
-- 5 design questions resolved (Liquid Glass CSS, static avatars, energy modes)
-- GCP service account created, Vertex billing linked (propagating)
-- Redesign brief + mega-plan written
-- ceo_inbox root cause found and fixed
-
-## STILL BROKEN:
-- atlas_learnings: 0 rows (Groq extraction deployed but untested)
-- ceo_inbox: fix just pushed, needs deploy verification
-- Vertex AI: billing propagating, Groq is fallback
-- Sentry: 0 events, undiagnosed
-- volunteer_id: DB columns still need migration
-
-## FILES CEO MUST READ ON WAKE:
-- docs/MEGAPLAN-SESSION-95-AUTONOMOUS.md — full iteration plan
-- docs/research/ECOSYSTEM-REDESIGN-BRIEF-2026-04-14.md — design brief
-- docs/research/ZEUS-MEMORY-ARCHITECTURE-RESEARCH-2026-04-14.md — memory research
-- packages/atlas-memory/sync/open-questions-resolved.md — 5 design decisions
+## Remaining for morning
+- Vertex AI: billing propagation still pending (Groq is fallback)
+- Self-learning: untested with real message (CEO needs to message bot)
+- ceo_inbox save fix: pushed but unverified with real traffic
+- Life Simulator P0 bugs: need Godot project access (separate repo)
+- volunteer_id DB migration: columns + tables + RPC functions
+- Phase A components: tokens → Energy Picker → Bottom Tab → Button System
 
 ## State
-Branch: main, commit 6aeab64. Prod: healthy. CI: green.
-NotebookLM: 15c8b9c1 (64+ sources). Cowork: working on Phase A design.
+Branch: main, commit aede05b. Prod: OK. CI: green.
+Cowork: working on Phase A design. Obsidian vault: 130 docs, 185 links.

@@ -17,10 +17,16 @@ from typing import Any
 from loguru import logger
 
 from .agent_hive import HiveExaminer
-from .agent_memory import AgentMemory
+try:
+    from .agent_memory import AgentMemory
+except ImportError:
+    AgentMemory = None
 from .memory import DecisionMemory
 from .middleware import MiddlewareChain, MiddlewareContext
-from .reasoning_graph import ReasoningGraph
+try:
+    from .reasoning_graph import ReasoningGraph
+except ImportError:
+    ReasoningGraph = None
 from .structured_memory import StructuredMemory
 from .prompts import (
     build_debate_prompt,

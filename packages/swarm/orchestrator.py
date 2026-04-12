@@ -22,7 +22,11 @@ from typing import Any, Callable, Awaitable
 
 from loguru import logger
 
-from .shared_memory import post_result, get_context
+try:
+    from .shared_memory import post_result, get_context
+except ImportError:
+    post_result = lambda *a, **kw: None
+    get_context = lambda *a, **kw: []
 
 
 @dataclass

@@ -42,8 +42,18 @@ from .contracts import (
     SubtaskContract,
 )
 from .orchestrator import AgentTask, Orchestrator
-from .shared_memory import get_context, post_result
-from .squad_leaders import SQUADS, Squad, route_to_squad, select_agents
+try:
+    from .shared_memory import get_context, post_result
+except ImportError:
+    get_context = lambda *a, **kw: []
+    post_result = lambda *a, **kw: None
+try:
+    from .squad_leaders import SQUADS, Squad, route_to_squad, select_agents
+except ImportError:
+    SQUADS = {}
+    Squad = None
+    route_to_squad = lambda *a, **kw: []
+    select_agents = lambda *a, **kw: []
 
 
 # ── Subtask planning ──────────────────────────────────────────────────────────

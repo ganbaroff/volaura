@@ -36,7 +36,10 @@ from typing import Any
 from loguru import logger
 
 from .agent_hive import AgentStatus, HiveExaminer
-from .agent_memory import AgentMemory
+try:
+    from .agent_memory import AgentMemory
+except ImportError:
+    AgentMemory = None
 from .memory import DecisionMemory
 from .memory_logger import inject_global_memory, log_episodic_run
 from .middleware import MiddlewareChain
@@ -284,11 +287,14 @@ class SwarmEngine:
         # Fallback: if filtering would empty the pool, use full pool minus avoided models.
         active_providers = self.providers
         if config.domain != DomainTag.GENERAL:
-            from .team_leads import get_tilead_for_domain
-            tilead = get_tilead_for_domain(config.domain)
-            filtered = tilead.filter_providers(self.providers)
-            if filtered:
-                active_providers = filtered
+            try:
+                from .team_leads import get_tilead_for_domain
+                tilead = get_tilead_for_domain(config.domain)
+                filtered = tilead.filter_providers(self.providers)
+                if filtered:
+                    active_providers = filtered
+            except ImportError:
+                pass  # team_leads archived — use full pool
                 logger.info(
                     "TeamLead({domain}): {n}/{total} providers active",
                     domain=config.domain.value,

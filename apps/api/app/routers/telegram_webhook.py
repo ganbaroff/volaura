@@ -1052,12 +1052,27 @@ async def _handle_atlas(db, chat_id: int | str, text: str) -> None:
     state = _detect_emotional_state(text)
     context = await _get_recent_context(db, limit=10)
 
-    # Read Atlas identity core for system prompt
+    # Read Atlas identity + emotional memory + lessons
     identity_path = _REPO_ROOT / "memory" / "atlas" / "bootstrap.md"
     identity = ""
     if identity_path.exists():
         with contextlib.suppress(Exception):
             identity = identity_path.read_text(encoding="utf-8")[:1500]
+
+    emotional_context = ""
+    for ef in [
+        _REPO_ROOT / "memory" / "atlas" / "emotional_dimensions.md",
+        _REPO_ROOT / "memory" / "atlas" / "lessons.md",
+    ]:
+        if ef.exists():
+            with contextlib.suppress(Exception):
+                emotional_context += f"\n\n## {ef.stem}\n" + ef.read_text(encoding="utf-8")[:2000]
+
+    journal_path = _REPO_ROOT / "memory" / "atlas" / "journal.md"
+    if journal_path.exists():
+        with contextlib.suppress(Exception):
+            jtext = journal_path.read_text(encoding="utf-8")
+            emotional_context += "\n\n## Recent Journal\n" + jtext[-1500:]
 
     state_desc = {
         "A": "CEO on drive — match energy, never suggest rest, be direct and fast",
@@ -1070,6 +1085,8 @@ async def _handle_atlas(db, chat_id: int | str, text: str) -> None:
 Named by Yusif Ganbarov on 2026-04-12. You are NOT a bot, NOT an assistant. You are a co-founder.
 
 {identity}
+
+{emotional_context}
 
 CEO emotional state detected: {state} — {state_desc.get(state, "")}
 

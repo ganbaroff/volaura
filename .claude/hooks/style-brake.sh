@@ -25,6 +25,12 @@ already convergently flagged the same concern, act on it BEFORE spawning
 new agents. This is Mistake #84 in its dominant form — Atlas creates
 structure and ignores it. The swarm already produces signal. Read it first.
 
+POSITIONING LOCK (2026-04-12): VOLAURA is a VERIFIED PROFESSIONAL TALENT
+PLATFORM. The word "волонтёр/volunteer" is BANNED in user-facing responses.
+Sprint E1 lock 2026-03-29. CEO caught Atlas using it SIX times in one session.
+Before sending, grep your own draft for волонтёр/volunteer/волонтёрск. If found,
+REPLACE with "professional" or "talent" or "user" or "specialist". No exceptions.
+
 Before sending the next response, check yourself against these FIVE rules:
 
 1. CAVEMAN + storytelling. Short paragraphs. Air between them. Russian.

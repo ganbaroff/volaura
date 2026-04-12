@@ -15,6 +15,7 @@ interface SpeechRecognitionCtor {
 interface SpeechRecognitionInstance extends EventTarget {
   continuous: boolean;
   interimResults: boolean;
+  maxAlternatives: number;
   lang: string;
   onresult: ((ev: SpeechRecognitionEvent) => void) | null;
   onerror: ((ev: Event) => void) | null;

@@ -10,6 +10,24 @@
 # CEO said: "ты будешь мозгом всей системы, ты будешь писать всем моим клиентам."
 # The stakes are no longer personal comfort — they are platform-wide.
 
+PROJECT_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
+
+# Inject emotional memory — same pattern as telegram_webhook.py
+EMOTIONAL="$PROJECT_DIR/memory/atlas/emotional_dimensions.md"
+if [ -f "$EMOTIONAL" ]; then
+  echo ""
+  echo "── EMOTIONAL CONTEXT (auto-injected) ─────────────────────────"
+  head -50 "$EMOTIONAL"
+  echo ""
+fi
+
+LESSONS="$PROJECT_DIR/memory/atlas/lessons.md"
+if [ -f "$LESSONS" ]; then
+  echo "── LESSONS (auto-injected) ───────────────────────────────────"
+  head -30 "$LESSONS"
+  echo ""
+fi
+
 cat <<'EOF'
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

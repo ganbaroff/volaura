@@ -6,7 +6,7 @@
 New steps: 1.5 (Acceptance Criteria — DoR gate), 4.5 (Quality Gate — Jidoka), 5.5 (DORA metrics — Kaizen).
 New docs: QUALITY-STANDARDS.md, AC template, QA Agent (can block tasks), CrewAI ADR-009.
 New principle: Protocol is structural prevention (Poka-yoke), not willpower.
-CEO directive: "перестань думать как стартап. начни думать как Apple и Toyota."
+CEO directive: "перестань думать как стартап. начни думать как Apple и Toyota. И бюджет реальный, не $50."
 **Change v7.1:** 15 agent findings from 5-agent protocol audit (Architecture + QA + Risk Manager + Readiness Manager + Product):
 1. Header fixed: v6.0 → v7.1, changelog order corrected (v6.0 must precede v7.0)
 2. Phase 0.7 moved to correct position: between Step 0.5 and Phase 1 (was incorrectly after Phase 4)

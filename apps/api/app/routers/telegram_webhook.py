@@ -1097,21 +1097,41 @@ If nothing meaningful, return: []"""
     try:
         import json as _json
 
-        from google import genai
+        raw = None
+        groq_key = os.environ.get("GROQ_API_KEY", "")
+        if groq_key:
+            import httpx
 
-        if settings.vertex_api_key:
-            client = genai.Client(vertexai=True, api_key=settings.vertex_api_key)
-        else:
-            client = genai.Client(api_key=settings.gemini_api_key)
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=extraction_prompt,
-            config=genai.types.GenerateContentConfig(
-                max_output_tokens=500,
-                temperature=0.3,
-            ),
-        )
-        raw = response.text.strip()
+            async with httpx.AsyncClient(timeout=15) as hc:
+                r = await hc.post(
+                    "https://api.groq.com/openai/v1/chat/completions",
+                    headers={"Authorization": f"Bearer {groq_key}"},
+                    json={
+                        "model": "llama-3.3-70b-versatile",
+                        "messages": [{"role": "user", "content": extraction_prompt}],
+                        "max_tokens": 500,
+                        "temperature": 0.3,
+                    },
+                )
+                if r.status_code == 200:
+                    raw = r.json()["choices"][0]["message"]["content"].strip()
+
+        if not raw:
+            from google import genai
+
+            if settings.vertex_api_key:
+                client = genai.Client(vertexai=True, api_key=settings.vertex_api_key)
+            else:
+                client = genai.Client(api_key=settings.gemini_api_key)
+            response = client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=extraction_prompt,
+                config=genai.types.GenerateContentConfig(
+                    max_output_tokens=500,
+                    temperature=0.3,
+                ),
+            )
+            raw = response.text.strip()
         # Strip markdown code fences if present
         if raw.startswith("```"):
             raw = raw.split("\n", 1)[-1].rsplit("```", 1)[0]

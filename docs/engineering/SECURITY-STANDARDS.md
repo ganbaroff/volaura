@@ -251,6 +251,7 @@ app.add_middleware(
 ```python
 from slowapi import Limiter
 from slowapi.util import get_remote_address
+from slowapi import RateLimitExceeded
 
 limiter = Limiter(key_func=get_remote_address)
 
@@ -266,6 +267,12 @@ RATE_LIMITS = {
     "coach": "20/hour",            # AURA Coach messages
     "default": "60/minute",        # Everything else
 }
+
+def get_rate_limit(ip_address: str) -> int:
+    # Implement IP-based rate limiting using Redis
+    # For demonstration purposes, a simple counter is used
+    rate_limit_counter = 0
+    return rate_limit_counter
 ```
 
 ---
@@ -493,7 +500,7 @@ USING (
 ### Practice 2.4: Secure Data Flow
 
 ```python
-def validate_and_sanitize_user_input(user_input: str) -> str:
+def validate_and_sanitize_user_input(user_input: str, ip_address: str) -> str:
     """Validate and sanitize user input to prevent security vulnerabilities"""
     # Check for empty input
     if not user_input:
@@ -516,5 +523,9 @@ def validate_and_sanitize_user_input(user_input: str) -> str:
         cleaned = re.sub(
             re.escape(pattern), "[FILTERED]", cleaned, flags=re.IGNORECASE
         )
+    
+    # Implement IP-based rate limiting
+    if get_rate_limit(ip_address) >= 10:
+        raise RateLimitExceeded("Rate limit exceeded for IP address")
     
     return cleaned.strip()[:2000]

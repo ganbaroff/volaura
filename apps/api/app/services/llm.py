@@ -19,6 +19,8 @@ import asyncio
 import json
 from typing import Any
 
+from app.utils.pii_redactor import redact as redact_pii
+
 from loguru import logger
 
 from app.config import settings
@@ -101,7 +103,7 @@ def _update_trace_metadata(*, model: str, provider: str, input_text: str | None 
     try:
         update_kwargs: dict[str, Any] = {"model": model, "metadata": {"provider": provider}}
         if input_text is not None:
-            update_kwargs["input"] = input_text
+            update_kwargs["input"] = redact_pii(input_text)
         langfuse_context.update_current_observation(**update_kwargs)
     except Exception:
         pass  # Never let tracing break LLM calls

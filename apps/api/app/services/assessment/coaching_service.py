@@ -120,7 +120,7 @@ async def generate_coaching_tips(
             tips = [CoachingTip(**t) for t in raw_tips[:3]]
             gemini_succeeded = True
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.warning("Gemini coaching timed out for session {sid}", sid=session_id)
         except Exception as e:
             logger.warning("Gemini coaching failed for session {sid}: {err}", sid=session_id, err=str(e)[:300])

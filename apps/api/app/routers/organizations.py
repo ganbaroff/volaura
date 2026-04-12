@@ -436,7 +436,7 @@ async def search_volunteers(
     query_embedding = None
     try:
         query_embedding = await asyncio.wait_for(generate_embedding(payload.query), timeout=0.8)
-    except asyncio.TimeoutError:
+    except TimeoutError:
         logger.warning("Embedding timeout on volunteer search — using rule-based fallback", query_len=len(payload.query))  # SEC-Q5: no raw query — may contain PII (names, emails)
     except Exception as e:
         logger.warning("Embedding error on volunteer search — using rule-based fallback", error=str(e)[:100])

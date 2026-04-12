@@ -153,7 +153,7 @@ async def evaluate_with_llm(
                 _call_vertex(prompt, response_format),
                 timeout=timeout,
             )
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.warning("Vertex call timed out, falling back to Gemini", timeout=timeout)
         except Exception as e:
             logger.warning("Vertex call failed, falling back to Gemini", error=str(e)[:200])
@@ -165,7 +165,7 @@ async def evaluate_with_llm(
                 _call_gemini(prompt, response_format),
                 timeout=timeout,
             )
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.warning("Gemini call timed out, falling back to Groq", timeout=timeout)
         except Exception as e:
             logger.warning("Gemini call failed, falling back to Groq", error=str(e)[:200])
@@ -177,7 +177,7 @@ async def evaluate_with_llm(
                 _call_groq(prompt, response_format),
                 timeout=timeout,
             )
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.error(f"Groq fallback timed out after {timeout}s")
         except Exception as e:
             logger.error(f"Groq fallback failed: {e}")
@@ -189,7 +189,7 @@ async def evaluate_with_llm(
                 _call_openai(prompt, response_format),
                 timeout=timeout,
             )
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.error(f"OpenAI fallback timed out after {timeout}s")
         except Exception as e:
             logger.error(f"OpenAI fallback also failed: {e}")

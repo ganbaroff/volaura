@@ -359,7 +359,7 @@ async def _try_gemini(prompt: str) -> _DeCE_RESULT:
         )
         raw = response.text
         return _parse_dece_scores(raw)
-    except asyncio.TimeoutError:
+    except TimeoutError:
         logger.warning(f"Gemini BARS evaluation timed out after {_LLM_TIMEOUT_S}s")
         return None, None
     except Exception as e:
@@ -402,7 +402,7 @@ async def _try_groq(prompt: str) -> _DeCE_RESULT:
         # Groq may not produce concept_details — that's OK, scores are sufficient
         scores, concept_details = _parse_dece_scores(raw)
         return scores, concept_details
-    except asyncio.TimeoutError:
+    except TimeoutError:
         logger.warning(f"Groq BARS evaluation timed out after {_LLM_TIMEOUT_S}s")
         return None, None
     except Exception as e:
@@ -438,7 +438,7 @@ async def _try_openai(prompt: str, concept_names: list[str]) -> _DeCE_RESULT:
         )
         raw = response.choices[0].message.content or ""
         return _parse_dece_scores(raw)
-    except asyncio.TimeoutError:
+    except TimeoutError:
         logger.warning(f"OpenAI BARS evaluation timed out after {_LLM_TIMEOUT_S}s")
         return None, None
     except Exception as e:

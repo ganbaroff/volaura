@@ -1,18 +1,19 @@
-# Session Breadcrumb — 2026-04-13 (Session 94)
+# Session Breadcrumb — 2026-04-13 (Session 94, 29 commits)
 
-## What happened (27 commits)
-Theater cleanup + CI fixed (38→0 backend, 8→0 frontend) + swarm restructured
-(8→13 agents, 4 waves, research injection) + swarm refactored (58→25 files) +
-volunteer purged from prod DB + Telegram Atlas persona + Reflexion system +
-Protocol v2.0 (Atlas leads, Cowork advises)
+## Story of the session
+CEO asked "what's theater?" — audit found 51 dead skills, 4 broken hooks,
+dead prod URL baked into 25 files. Fixed CI from 38 failures to 0. Expanded
+swarm 8→13 agents with DAG waves. Cowork became research advisor, Atlas leads.
+Reflexion system deployed — dynamic context sampling replaces static rule dump.
+Volunteer purged from prod DB. E2E bot ran full assessment — found bot bug
+(calls /complete too early), engine is fine. Storytelling mode unlocked.
 
-## Current state
-Branch: main, commit eec67c6. CI: green (832 tests). Prod: healthy.
-Swarm: 13 agents, 25 active files, research-informed, settled decisions injected.
-Reflexion system live — dynamic context sampling by prompt type.
+## Next session priorities
+1. Fix E2E bot loop (check is_complete, not next_question)
+2. Add 10+ questions per competency (all below 15)
+3. Handoff 004: Swarm Phase 2 (sprint cycle in runtime)
+4. 579 volunteer refs remaining in backend/frontend code
 
-## What's next
-- Handoff 003: PostHog SDK (P2)
-- Handoff 004: Swarm Phase 2 — sprint cycle in runtime (P1)
-- E2E bot: complete full assessment cycle (answer all questions → AURA score)
-- Remaining 579 volunteer refs in backend/frontend code (DB done, code not)
+## State
+Branch: main, commit a7f0148. CI: green (832 tests). Prod: healthy.
+Swarm: 13 agents, 25 files. Protocol v2.0 (Atlas leads).

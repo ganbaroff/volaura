@@ -80,5 +80,21 @@
     "updated_at": "2026-04-12T13:01:56.181615+00:00",
     "source": "Sprint 2 — team restructure",
     "findings": "13 agents, 4 waves, DAG verified"
+  },
+  {
+    "id": "f4470c22",
+    "title": "CAT engine stops after 1 question — select_next_item returns None with 4 remaining",
+    "status": "todo",
+    "assignee": null,
+    "depends_on": [],
+    "blocked_by": null,
+    "acceptance_criteria": [
+      "Full energy assessment asks minimum 5 questions",
+      "E2E bot completes 5+ questions before AURA score"
+    ],
+    "created_at": "2026-04-12T15:34:39.331235+00:00",
+    "updated_at": "2026-04-12T15:34:39.331251+00:00",
+    "source": "E2E bot test session 94",
+    "findings": null
   }
 ]

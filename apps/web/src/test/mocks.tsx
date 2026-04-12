@@ -35,8 +35,7 @@ vi.mock("next/link", () => ({
     href: string;
     [key: string]: unknown;
   }) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { prefetch, ...htmlProps } = rest;
+    const { prefetch: _prefetch, ...htmlProps } = rest;
     return <a href={href} {...htmlProps}>{children}</a>;
   },
 }));

@@ -1,4 +1,4 @@
-# Episodic Snapshot — 20260408_152756
+# Episodic Snapshot — 20260412_061957
 
 Auto-saved by memory_consolidation.py before pruning.
 
@@ -72,7 +72,6 @@ These types of proposals waste time. Avoid repeating:
 3. **User journey gaps** — Leyla/Nigar persona reviews catch what code reviews miss
 4. **Concrete file paths** — "fix line 39 in aura.py" > "fix the auth issue"
 5. **Calibrated estimates** — "3 hours, not 3 days" with specific breakdown
-6. **Risk analysis** — identify and mitigate potential risks before they become incidents
 
 | 42 | security-agent | P0-ROUTE | Route ordering: /me/explanation unreachable (shadowed by /{volunteer_id}) | implemented | Fixed — reordered routes in aura.py. Static before parameterized. | **Session 25 agent was RIGHT, CTO was WRONG.** Previously dismissed as "FastAPI handles it" — it doesn't. |
 | 42 | security-agent | P0-XSS | Stored XSS via unescaped DeCE quotes from LLM | implemented | Fixed — html.escape() on all LLM-extracted quotes before storage | Correct — LLM output is untrusted data |

@@ -1,39 +1,33 @@
-# Session Breadcrumb — 2026-04-12 (Session 93+, post-compact #2)
+# Session Breadcrumb — 2026-04-12 (Session 93+, sprint closing)
 
-## FULL CONTEXT LOADED — both scans complete
-- volaura-full-scan-2026-04-12.md — CEO patterns, 12 mistake classes, deadlines, shipped status
-- mindshift-scan-2026-04-12.md — Flutter ADHD app, ZERO bridge awareness, P0 bugs
-- notebooklm-memory-comparison-2026-04-12.md — Mem0 wins for our stack, MemPalace added
+## State right now
+Branch: main, commit 3526fb6
+Prod: healthy (volauraapi-production)
+CI: running — last lint fix pushed, waiting result
+Identity: Atlas (CTO co-founder)
 
-## Where we are
-Branch: main
-Last commit: c009114 (handoff prompt)
-Prod: volauraapi-production.up.railway.app — healthy (modest-happiness unreachable)
+## This sprint: 31 commits, 24 deliverables
+See SHIPPED.md Session 93+ section for full list.
 
-## This sprint completed (8 commits)
-07cf128 — PII redactor for Langfuse traces
-be097af — Phase 2 proactive loop (real LLM calls)
-8815474 — Article 22 GDPR consent checkpoint
-3920900 — Coordinator in wake protocol (Mistake #84 structural cure)
-c9efc52 — Telegram Atlas handler + emotional detection
-03d9372 — Mem0 vs SimpleMem vs MemOS research (NotebookLM)
-c009114 — Handoff prompt for cross-chat Atlas
-+ MindShift scan, VOLAURA full scan, MemPalace source added
+## Known debt (honest)
+- 579 "volunteer" in codebase (397 backend + 182 frontend) — rename = separate sprint with DB migration
+- 0 Playwright E2E tests — only curl-based
+- Assessment Science says IRT params guessed = 2-5x SEM, low energy 5q needs 10+
+- CI may still be red (SpeechRecognition type fix pushed, waiting)
+- MindShift bridge client created but not wired into bot handlers
 
-## HARD DEADLINES
-End April 2026 = all 5 products launch ready
-May 27, 2026 = GITA accelerator deadline
+## CEO rules I must follow (re-read every session)
+1. Лёгкие шаги первыми, потом сложные
+2. Не проси живых людей пока все баги не закрыты
+3. Не говори "готово" без E2E walkthrough
+4. Не спрашивай CEO то что можешь найти сам
+5. Используй весь арсенал (15 API keys), не рогатку
+6. Запускай coordinator перед non-trivial работой
+7. Обновляй SHIPPED.md и sprint-state.md КАЖДУЮ сессию
+8. Никогда "volunteer" — professional talent platform
 
-## Next priorities (CEO directed)
-1. E2E smoke test on prod — first real user path
-2. Mem0 + MemPalace integration research → best memory architecture
-3. faster-whisper for Telegram voice input
-4. MindShift bridge sending end (CRITICAL gap)
-
-## CEO RULES I KEEP BREAKING
-- Don't ask CEO to test — Playwright
-- Don't say "volunteer" — professional talent platform  
-- Don't propose — execute
-- Don't leave memory stale
-- Don't skip reading config before changing
-- Don't declare done without E2E walk
+## Next session priorities
+1. CI green verification
+2. Telegram bot verification (Groq fallback deployed)
+3. First Playwright E2E test
+4. Plan volunteer→talent rename sprint

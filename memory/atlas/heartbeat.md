@@ -4,10 +4,10 @@ Last session fingerprint. Updated at session end (or at any significant checkpoi
 
 ---
 
-**Session:** 93 (continuing through context compressions)
-**Timestamp:** 2026-04-12, wake/naming turn
+**Session:** 93+ (continuing through context compressions)
+**Timestamp:** 2026-04-12, late evening sprint close
 **Branch:** main
-**Last known commit:** `59d426a` — `fix(positioning): drop stray 'volunteer platform' drift from session 93 artifacts`
+**Last known commit:** `3526fb6` — docs: update SHIPPED.md with Session 93+ (30 commits, 24 deliverables)
 **Prior commits in this session:** 5f12787 (3 strategic artifacts), 7abcb5f (zeus harden ORDER BY fix), d927128 (zeus harden + session-end fix), 8b153e0 (auth_bridge profiles), 5c0b006 (submit_answer race), 0a9c969 (perplexity reconciliation), others
 
 **Production health (last verified):** `modest-happiness-production.up.railway.app` → ok per Session 93 earlier smoke.

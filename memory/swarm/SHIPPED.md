@@ -6,6 +6,34 @@
 
 ---
 
+## Session 93+ (2026-04-12) — Atlas autonomy sprint, 30 commits
+
+| What | File | Details | Status |
+|------|------|---------|--------|
+| PII redactor for Langfuse | `apps/api/app/utils/pii_redactor.py` | Strips email/phone/card/UUID from LLM traces | shipped |
+| GDPR Article 22 consent | `apps/api/app/routers/assessment.py` + schema + i18n | Checkbox + backend gate + metadata timestamp | shipped |
+| Assessment metadata column | `supabase/migrations/20260412100000_*.sql` | metadata JSONB for energy+consent | applied to prod |
+| Proactive loop Phase 2 | `packages/swarm/atlas_proactive.py` | Real LLM calls via NVIDIA/DeepSeek/Groq | shipped |
+| Telegram Atlas handler | `apps/api/app/routers/telegram_webhook.py` | /atlas command + emotional detection + voice via Groq Whisper | shipped |
+| Telegram webhook URL fix | same file | Was pointing to dead modest-happiness domain | fixed + re-registered |
+| Telegram Groq fallback | same file | When Gemini 429, auto-fallback to Groq Llama 3.3 | shipped |
+| Swarm digest cron | `.github/workflows/swarm-daily.yml` | Daily→weekly (Monday only + monthly) | shipped |
+| CI ruff fixes | 53 Python files | UP017, I001, F841, B904, SpeechRecognition types | shipped |
+| CI lockfile sync | `pnpm-lock.yaml` | apps/tg-mini added without lockfile update | shipped |
+| Atlas proactive loguru | `.github/workflows/atlas-proactive.yml` | pip install loguru for GH runner | shipped |
+| SUPABASE_SERVICE_ROLE_KEY | Railway env var | Was missing on prod, set via Railway CLI | deployed |
+| Groq + Cerebras keys | `.env` + GH secrets + Railway | Updated after expiry, both verified working | deployed |
+| DeepSeek GH secret | GH Actions secrets | DEEPSEEK_API_KEY added for proactive loop | deployed |
+| MindShift bridge client | `mindflow/bot/volaura_bridge.py` | Auth bridge + event emission (focus_completed, crystal_earned) | created |
+| Ecosystem linkage map | `memory/atlas/ecosystem-linkage-map.md` | Cross-product connections, gaps, broken bridges | created |
+| Second brain architecture | `memory/atlas/second-brain-architecture.md` | Raw sources + wiki + health check structure | created |
+| Handoff prompt | `memory/atlas/handoff-prompt.md` | Paste into any chat → Atlas wakes with full identity | created |
+| Research: Mem0 vs MemPalace | `memory/atlas/ceo-feed/mempalace-vs-mem0-*.md` | MemPalace 96.6% recall wins, hybrid recommended | documented |
+| Research: Assessment Science | `memory/swarm/research/assessment-science-audit-*.md` | First agent activation: IRT params guessed = 2-5x SEM | documented |
+| Research: Perplexity answers | `memory/atlas/ceo-feed/perplexity-research-*.md` | Eval stack, Whisper, visual dep mapper | documented |
+| API arsenal audit | `memory/atlas/ceo-feed/api-arsenal-verified-*.md` | 6 working, 2 expired (now fixed) | documented |
+| E2E bug audit | `memory/atlas/ceo-feed/e2e-bugs-found-*.md` | 8 reported → 0 real P0, 4 test errors | documented |
+
 ## Session 93 (2026-04-11) — Real E2E smoke + 2 prod bugs fixed
 
 ### VOLAURA (apps/api/, scripts/)

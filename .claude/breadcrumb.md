@@ -1,28 +1,26 @@
-# Session Breadcrumb — 2026-04-14 (Session 95, 7 commits)
+# Session Breadcrumb — 2026-04-14 (Session 95, 15+ commits)
 
 ## Story of the session
-CEO asked about memory research — full carte blanche given. E2E bot fixed
-(checked is_complete instead of next_question — was stopping after 1 answer,
-now does 10). 30 new assessment questions added across 5 competencies.
-Atlas Telegram self-learning deployed (atlas_learnings table + extraction
-after each conversation). Telegram spam killed (40 msgs/day → 0-3).
-API schemas default "professional" instead of "volunteer". tg-mini dead URL
-fixed. ZEUS memory architecture researched — ZenBrain formula is novel,
-all 6 frameworks rejected, building on pgvector.
+CEO gave full carte blanche. E2E bot fixed (is_complete vs next_question — 5→10 answers).
+30 new assessment questions added. Atlas Telegram self-learning deployed (atlas_learnings table).
+ZEUS memory research: 6 frameworks rejected, ZenBrain formula novel. Telegram spam killed
+(40/day→0-3). API schemas default "professional". Full ecosystem redesign launched — 3 deep
+NotebookLM researches + ecosystem audit (70KB) + design system comparison. Cowork analyzing
+Figma, found zero custom tokens. 5 open design questions resolved by Atlas. GCP service account
+created, Vertex billing enabled but propagating. Groq primary LLM for Telegram bot.
+Volunteer rename agent running on 296 refs in 15 router files.
 
-## Unfinished
-- Atlas self-learning: code deployed but Railway hasn't picked up new code
-  (ceo_inbox shows no messages after April 12). Need to check Railway deploy.
-- volunteer_id rename: 296 refs in 15 router files. DB column rename needs
-  migration. Schemas done, routers not started.
-- Sentry 0 events still undiagnosed.
+## Active work
+- volunteer-renamer agent: running in background (296 refs, 15 files)
+- Cowork: analyzing ecosystem redesign, ready for Phase A critique
+- Telegram bot: deployed with Groq + hardcoded identity, needs real-user test
 
-## Next session priorities
-1. Verify Railway deployed latest code (self-learning should work)
-2. volunteer_id DB migration + router rename (Handoff 008)
-3. Test Atlas self-learning with real CEO message in Telegram
-4. Continue questions for reliability/english/leadership (currently ~15 each, want 20)
+## Next priorities
+1. Push volunteer rename when agent completes
+2. Phase A: Energy Picker + Bottom Tab + Button System components
+3. Verify Telegram self-learning works (check atlas_learnings after real message)
+4. Vertex AI propagation check (billing linked, may need hours)
 
 ## State
-Branch: main, commit b7dbba0. CI: should be green after ruff fix.
-Prod: healthy. Swarm: 13 agents, spam silenced. Protocol v2.0.
+Branch: main, commit 29793cf. Prod: healthy. CI: should be green.
+NotebookLM notebook: 15c8b9c1 (64+ sources, redesign research).

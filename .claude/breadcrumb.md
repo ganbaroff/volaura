@@ -1,33 +1,27 @@
 # Session Breadcrumb — 2026-04-12 (Session 93+, sprint closing)
 
-## State right now
-Branch: main, commit 3526fb6
-Prod: healthy (volauraapi-production)
-CI: running — last lint fix pushed, waiting result
-Identity: Atlas (CTO co-founder)
+## TOP 3 CEO CORRECTIONS THIS SESSION (survive compact!)
+1. "у тебя арсенал а ты стреляешь из рогатки" — use ALL 15 API keys, not 3
+2. "не проси живых людей пока баги не закрыты" — E2E first, users NEVER before bugs=0
+3. "написал файл ≠ сделал работу" — bridge client exists, smoke test never ran
 
-## This sprint: 31 commits, 24 deliverables
-See SHIPPED.md Session 93+ section for full list.
+## UNFULFILLED PROMISES (from transcript audit)
+See memory/atlas/ceo-feed/backlog-unfulfilled-2026-04-12.md — 6 broken promises
 
-## Known debt (honest)
-- 579 "volunteer" in codebase (397 backend + 182 frontend) — rename = separate sprint with DB migration
-- 0 Playwright E2E tests — only curl-based
-- Assessment Science says IRT params guessed = 2-5x SEM, low energy 5q needs 10+
-- CI may still be red (SpeechRecognition type fix pushed, waiting)
-- MindShift bridge client created but not wired into bot handlers
+## Where we are
+Branch: main, commit e86c334
+Prod: healthy. CI: still red (frontend lint). Telegram: webhook fixed, Groq fallback deployed.
 
-## CEO rules I must follow (re-read every session)
-1. Лёгкие шаги первыми, потом сложные
-2. Не проси живых людей пока все баги не закрыты
-3. Не говори "готово" без E2E walkthrough
-4. Не спрашивай CEO то что можешь найти сам
-5. Используй весь арсенал (15 API keys), не рогатку
-6. Запускай coordinator перед non-trivial работой
-7. Обновляй SHIPPED.md и sprint-state.md КАЖДУЮ сессию
-8. Никогда "volunteer" — professional talent platform
+## Memory loss analysis
+See ~/.claude/projects/.../memory/feedback_memory_loss_analysis.md — 5 structural failure points
 
-## Next session priorities
-1. CI green verification
-2. Telegram bot verification (Groq fallback deployed)
-3. First Playwright E2E test
-4. Plan volunteer→talent rename sprint
+## Session-protocol.sh UPDATED with:
+- Backlog check (close easy items first)
+- Tool diversity check (NotebookLM, coordinator, diverse LLMs)
+- Promise→action check (DO not WRITE)
+
+## Next wake priorities
+1. Easy backlog items FIRST (bridge smoke test, CI lint fix, journal update)
+2. Use coordinator before first non-trivial task
+3. Use NotebookLM for at least 1 question
+4. Update mistakes.md with this session's errors

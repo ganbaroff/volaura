@@ -78,10 +78,11 @@ if [ ! -f "$SESSION_MARKER" ]; then
   echo "- CEO sees outcomes only — no curl, no schemas, no logs"
   echo ""
   echo "CTO HEALTH CHECK (do BEFORE sprint work):"
-  echo "- Update daily-log.md with today's standup"
-  echo "- Check agent-roster.md scores (last updated?)"
-  echo "- Check EXECUTION-PLAN.md is current"
-  echo "- If sprint ended since last session → fill SPRINT-REVIEW-TEMPLATE.md"
+  echo "- Read backlog-unfulfilled-2026-04-12.md → close EASY items first"
+  echo "- Use coordinator BEFORE any >3 file change"
+  echo "- Use NotebookLM for at least 1 research question per session"
+  echo "- Use diverse LLM providers (Groq/NVIDIA/Cerebras/DeepSeek) not just Gemini"
+  echo "- Promise = DO immediately. Writing a file ≠ doing."
   echo "══════════════════════════════════════════════════════════════"
 
   # ── STALENESS DETECTOR (added 2026-03-26, Lesson from Session 42) ──

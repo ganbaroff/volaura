@@ -7,7 +7,6 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, field_validator
 
-
 # ── Events ────────────────────────────────────────────────────────────────────
 
 class EventCreate(BaseModel):

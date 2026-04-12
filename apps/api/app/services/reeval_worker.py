@@ -32,14 +32,15 @@ from __future__ import annotations
 
 import asyncio
 import json
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from loguru import logger
-from supabase._async.client import AsyncClient, create_client as acreate_client
+from supabase._async.client import AsyncClient
+from supabase._async.client import create_client as acreate_client
 
 from app.config import settings
-from app.core.assessment.bars import evaluate_answer, EvaluationResult
+from app.core.assessment.bars import EvaluationResult, evaluate_answer
 
 # ── Tuning constants ──────────────────────────────────────────────────────────
 
@@ -132,7 +133,7 @@ async def _recover_stale_items(db: AsyncClient) -> None:
     stays in 'processing' forever without this recovery step.
     """
     stale_cutoff = (
-        datetime.now(timezone.utc) - timedelta(seconds=STALE_TIMEOUT_S)
+        datetime.now(UTC) - timedelta(seconds=STALE_TIMEOUT_S)
     ).isoformat()
     try:
         result = await db.table("evaluation_queue").update(
@@ -166,7 +167,7 @@ async def _fetch_pending_batch(db: AsyncClient) -> list[dict[str, Any]]:
 async def _mark_processing(db: AsyncClient, item_id: str) -> None:
     await db.table("evaluation_queue").update({
         "status": "processing",
-        "started_at": datetime.now(timezone.utc).isoformat(),
+        "started_at": datetime.now(UTC).isoformat(),
     }).eq("id", item_id).eq("status", "pending").execute()
 
 
@@ -223,7 +224,7 @@ async def _process_item(db: AsyncClient, item: dict[str, Any]) -> None:
         # ── Mark done ─────────────────────────────────────────────────────────
         await db.table("evaluation_queue").update({
             "status": "done",
-            "completed_at": datetime.now(timezone.utc).isoformat(),
+            "completed_at": datetime.now(UTC).isoformat(),
             "llm_score": llm_score,
             "llm_model": llm_model,
             "score_delta": score_delta,

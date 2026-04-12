@@ -11,14 +11,13 @@ Security hardening (post agent review 2026-03-25):
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, HTTPException, Query, Request
 
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
-from app.middleware.rate_limit import limiter, RATE_DISCOVERY
+from app.middleware.rate_limit import RATE_DISCOVERY, limiter
 from app.schemas.discovery import (
     COMPETENCY_SLUGS,
     DiscoveryMeta,
-    DiscoveryRequest,
     DiscoveryResponse,
     DiscoveryVolunteer,
 )

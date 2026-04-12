@@ -11,10 +11,9 @@ Q2 decision (fading crystal model):
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime
 
 from loguru import logger
-
 
 # ── Public entry point ─────────────────────────────────────────────────────────
 
@@ -27,7 +26,7 @@ async def update_weekly_streaks(db) -> dict:
     Returns:
         Dict with streaks_extended, streaks_missed, streaks_reset, users_processed
     """
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     # Get the just-completed ISO week (this week ends tonight)
     current_week = _iso_week(now)
     logger.info("Updating streaks for week {w}", w=current_week)
@@ -56,7 +55,7 @@ async def record_assessment_activity(db, user_id: str) -> None:
     Called from assessment complete endpoint — ensures streak credit happens
     immediately when assessment finishes, not just on Sunday cron.
     """
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     current_week = _iso_week(now)
 
     streak_result = await db.table("tribe_streaks").select("*").eq("user_id", user_id).maybe_single().execute()

@@ -10,12 +10,12 @@ import asyncio
 from collections.abc import AsyncGenerator
 from typing import Annotated
 
-from fastapi import Depends, Header, HTTPException, Request
-from supabase._async.client import AsyncClient, create_client as acreate_client
+from fastapi import Depends, HTTPException, Request
 from loguru import logger
+from supabase._async.client import AsyncClient
+from supabase._async.client import create_client as acreate_client
 
 from app.config import settings
-
 
 # --- Admin client singleton ---------------------------------------------------
 # httpx.AsyncClient (underlying transport) is coroutine-safe and designed for

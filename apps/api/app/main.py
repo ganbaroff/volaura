@@ -9,8 +9,8 @@ Security hardening applied:
 """
 
 import asyncio
-from contextlib import asynccontextmanager
 from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager, suppress
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -20,6 +20,7 @@ from fastapi.responses import JSONResponse
 # 1MB covers all assessment payloads; video/file upload endpoints not present.
 _MAX_REQUEST_BODY_BYTES = 1_048_576  # 1 MB
 from loguru import logger
+
 try:
     from starlette.middleware.proxy_headers import ProxyHeadersMiddleware
 except ImportError:
@@ -27,7 +28,7 @@ except ImportError:
 
 import sentry_sdk
 
-from app.config import settings, assert_production_ready, validate_production_settings
+from app.config import assert_production_ready, settings, validate_production_settings
 from app.middleware.rate_limit import setup_rate_limiting
 
 # Sentry error monitoring — silent if DSN not set
@@ -41,7 +42,33 @@ if settings.sentry_dsn:
 
 from app.middleware.request_id import RequestIdMiddleware
 from app.middleware.security_headers import SecurityHeadersMiddleware
-from app.routers import activity, admin, analytics, assessment, auth, auth_bridge, aura, badges, brandedby, character, discovery, events, health, invites, leaderboard, notifications, organizations, profiles, skills, stats, subscription, telegram_webhook, tribes, verification, zeus_gateway
+from app.routers import (
+    activity,
+    admin,
+    analytics,
+    assessment,
+    aura,
+    auth,
+    auth_bridge,
+    badges,
+    brandedby,
+    character,
+    discovery,
+    events,
+    health,
+    invites,
+    leaderboard,
+    notifications,
+    organizations,
+    profiles,
+    skills,
+    stats,
+    subscription,
+    telegram_webhook,
+    tribes,
+    verification,
+    zeus_gateway,
+)
 from app.services.reeval_worker import run_reeval_worker
 from app.services.video_generation_worker import run_video_generation_worker
 
@@ -69,10 +96,8 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     reeval_task.cancel()
     video_task.cancel()
     for task in (reeval_task, video_task):
-        try:
+        with suppress(asyncio.CancelledError, TimeoutError):
             await asyncio.wait_for(asyncio.shield(task), timeout=5.0)
-        except (asyncio.CancelledError, TimeoutError):
-            pass
     logger.info("Volaura API shutting down...")
 
 
@@ -109,6 +134,7 @@ app.add_middleware(
 
 # Error alerting: send 5xx to CEO Telegram (rate-limited, 1 per 5 min)
 from app.middleware.error_alerting import ErrorAlertingMiddleware
+
 app.add_middleware(ErrorAlertingMiddleware)
 
 # Outermost middleware: correlation ID on every request/response (including errors)

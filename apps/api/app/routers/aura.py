@@ -1,11 +1,19 @@
 """AURA score endpoints."""
 
+from datetime import UTC
+
 from fastapi import APIRouter, HTTPException, Request
 from loguru import logger
 
-from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
-from app.middleware.rate_limit import limiter, RATE_DEFAULT, RATE_DISCOVERY, RATE_LLM, RATE_PROFILE_WRITE
 from app.core.assessment.aura_calc import apply_activity_boost, calculate_effective_score
+from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
+from app.middleware.rate_limit import (
+    RATE_DEFAULT,
+    RATE_DISCOVERY,
+    RATE_LLM,
+    RATE_PROFILE_WRITE,
+    limiter,
+)
 from app.schemas.aura import (
     AuraExplanationResponse,
     AuraScoreResponse,
@@ -302,10 +310,10 @@ async def manage_sharing_permission(
         return {"status": "granted", "org_id": body.org_id, "permission_type": body.permission_type}
     else:
         # Revoke: set revoked_at
-        from datetime import datetime, timezone
+        from datetime import datetime
         await (
             db.table("sharing_permissions")
-            .update({"revoked_at": datetime.now(timezone.utc).isoformat()})
+            .update({"revoked_at": datetime.now(UTC).isoformat()})
             .eq("user_id", user_id)
             .eq("org_id", body.org_id)
             .eq("permission_type", body.permission_type)

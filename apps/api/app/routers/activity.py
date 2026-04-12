@@ -9,11 +9,13 @@ No dedicated activity table needed. We query:
 Returns a unified, time-sorted feed of recent activity.
 """
 
+from datetime import UTC
+
 from fastapi import APIRouter, Query, Request
 from loguru import logger
 
 from app.deps import CurrentUserId, SupabaseUser
-from app.middleware.rate_limit import limiter, RATE_DEFAULT
+from app.middleware.rate_limit import RATE_DEFAULT, limiter
 
 router = APIRouter(prefix="/activity", tags=["Activity"])
 
@@ -100,7 +102,7 @@ async def get_my_activity(
             items.append({
                 "id": row["id"],
                 "type": "event",
-                "description": f"Registered for event",
+                "description": "Registered for event",
                 "created_at": row["registered_at"],
                 "metadata": {
                     "event_id": row["event_id"],
@@ -197,8 +199,8 @@ async def get_my_stats(
     # Calculate streak (consecutive days with any activity)
     # Simplified: count badges + assessments in last 7 days as proxy
     try:
-        from datetime import datetime, timedelta, timezone
-        seven_days_ago = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
+        from datetime import datetime, timedelta
+        seven_days_ago = (datetime.now(UTC) - timedelta(days=7)).isoformat()
         result = (
             await db.table("assessment_sessions")
             .select("completed_at")

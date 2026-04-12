@@ -17,7 +17,7 @@ from typing import Any
 from loguru import logger
 
 from app.config import settings
-from docker import Docker
+from app.core.assessment.bars import EvaluationResult
 
 
 async def evaluate_answer(
@@ -25,7 +25,7 @@ async def evaluate_answer(
     answer: str,
     expected_concepts: list[dict[str, Any]],
     return_details: bool = False,
-) -> "float | EvaluationResult":
+) -> float | EvaluationResult:
     """Score an open-ended answer using multi-model swarm consensus.
 
     Same interface as bars.evaluate_answer() — drop-in replacement.
@@ -56,14 +56,15 @@ async def evaluate_answer(
 
 import docker
 
+
 async def _swarm_evaluate_scores(
     question_en: str,
     answer: str,
     expected_concepts: list[dict[str, Any]],
 ) -> dict[str, float]:
     """Run SwarmEngine to get multi-model concept scores. Returns raw concept scores dict."""
-    import sys
     import os
+    import sys
 
     # Add packages/ to path so swarm package is importable
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(
@@ -73,7 +74,7 @@ async def _swarm_evaluate_scores(
     if packages_path not in sys.path:
         sys.path.insert(0, packages_path)
 
-    from swarm import SwarmEngine, SwarmConfig, StakesLevel, DomainTag
+    from swarm import DomainTag, StakesLevel, SwarmConfig, SwarmEngine
 
     concept_names = [c["name"] for c in expected_concepts]
     concepts_json = json.dumps(concept_names)

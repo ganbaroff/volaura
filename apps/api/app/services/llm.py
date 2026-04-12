@@ -19,11 +19,10 @@ import asyncio
 import json
 from typing import Any
 
-from app.utils.pii_redactor import redact as redact_pii
-
 from loguru import logger
 
 from app.config import settings
+from app.utils.pii_redactor import redact as redact_pii
 
 # ---------------------------------------------------------------------------
 # Langfuse observability — optional, graceful degradation
@@ -327,7 +326,6 @@ async def generate_embedding(text: str) -> list[float]:
         except Exception as e:
             logger.warning(f"Vertex embedding failed, falling back to Gemini: {e}")
 
-    from google import genai
     client = _get_gemini_client()
     response = await client.aio.models.embed_content(
         model="text-embedding-004",

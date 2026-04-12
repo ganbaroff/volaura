@@ -12,7 +12,7 @@ from loguru import logger
 from pydantic import BaseModel, ConfigDict
 
 from app.deps import CurrentUserId, SupabaseUser
-from app.middleware.rate_limit import limiter, RATE_DEFAULT
+from app.middleware.rate_limit import RATE_DEFAULT, limiter
 
 router = APIRouter(prefix="/notifications", tags=["Notifications"])
 

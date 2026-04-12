@@ -7,12 +7,11 @@ import hmac
 import re
 
 from fastapi import APIRouter, HTTPException, Request
-from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
+from pydantic import BaseModel, EmailStr, field_validator
 
 from app.config import settings
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseAnon
-from app.middleware.rate_limit import limiter, RATE_AUTH, RATE_DEFAULT
-from app.schemas.profile import ProfileResponse
+from app.middleware.rate_limit import RATE_AUTH, RATE_DEFAULT, limiter
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -181,7 +180,7 @@ async def login(
             "email": payload.email,
             "password": payload.password,
         })
-    except Exception as e:
+    except Exception:
         raise HTTPException(
             status_code=401,
             detail={"code": "INVALID_CREDENTIALS", "message": "Invalid email or password"},

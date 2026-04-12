@@ -21,6 +21,7 @@ Stored in evaluation_log for the /aura/me/explanation "Show Your Work" endpoint.
 from __future__ import annotations
 
 import asyncio
+import datetime
 import hashlib
 import html as html_mod
 import json
@@ -38,7 +39,7 @@ from app.config import settings
 # Size-capped at 500 entries (LRU eviction) to prevent memory growth.
 # Saves ~$0.002 per cache hit at Gemini Flash rates; meaningful at beta scale.
 _MAX_CACHE_SIZE = 500
-_evaluation_cache: "OrderedDict[str, Any]" = OrderedDict()
+_evaluation_cache: OrderedDict[str, Any] = OrderedDict()
 
 
 def _cache_key(question_en: str, answer: str, concepts_json: str) -> str:
@@ -58,7 +59,7 @@ _LLM_TIMEOUT_S = 15.0
 # sustained degradation within a single running instance.
 _FALLBACK_SPIKE_THRESHOLD = 10
 _fallback_count: int = 0
-_fallback_hour: "datetime | None" = None
+_fallback_hour: datetime | None = None
 
 
 async def _maybe_alert_fallback_spike() -> None:
@@ -85,6 +86,7 @@ async def _maybe_alert_fallback_spike() -> None:
         # Fire-and-forget: alert failure must never block the evaluation path.
         try:
             import httpx
+
             from app.config import settings as _settings
 
             token = _settings.telegram_bot_token
@@ -545,7 +547,7 @@ def _is_negated(answer_lower: str, keyword: str) -> bool:
         "arent", "wasn't", "wasnt", "weren't", "werent",
     )
     # Anchor on the first token of multi-word keywords for pattern purposes
-    first_token = re.escape(keyword.lower().split()[0])
+    re.escape(keyword.lower().split()[0])
     # Full keyword pattern (word-boundary wrapped)
     keyword_pattern = re.compile(r"\b" + re.escape(keyword.lower()) + r"\b")
 

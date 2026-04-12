@@ -17,7 +17,7 @@ Security:
 - RLS on all three tables (user-scoped reads)
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, HTTPException, Request
 from loguru import logger
@@ -117,7 +117,7 @@ async def create_character_event(
     source = body.payload.get("source", body.source_product)
     if body.event_type == "crystal_earned" and source in DAILY_CRYSTAL_CAP:
         cap = DAILY_CRYSTAL_CAP[source]
-        today_start = datetime.now(timezone.utc).replace(
+        today_start = datetime.now(UTC).replace(
             hour=0, minute=0, second=0, microsecond=0
         )
         daily_result = (
@@ -190,7 +190,7 @@ async def create_character_event(
                 "skill_slug": body.payload["skill_slug"],
                 "crystals": amount,
                 "claimed": True,
-                "claimed_at": datetime.now(timezone.utc).isoformat(),
+                "claimed_at": datetime.now(UTC).isoformat(),
             }).execute()
 
         logger.info(
@@ -236,7 +236,7 @@ async def get_character_state(
             login_streak=0,
             event_count=0,
             last_event_at=None,
-            computed_at=datetime.now(timezone.utc),
+            computed_at=datetime.now(UTC),
         )
 
     state_data = result.data
@@ -287,7 +287,7 @@ async def get_crystal_balance(
         crystal_balance=balance,
         last_earned_at=last_earned_at,
         lifetime_earned=lifetime_earned,
-        computed_at=datetime.now(timezone.utc),
+        computed_at=datetime.now(UTC),
     )
 
 

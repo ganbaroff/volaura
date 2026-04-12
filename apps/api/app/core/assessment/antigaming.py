@@ -15,7 +15,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-
 # ── Thresholds ────────────────────────────────────────────────────────────────
 
 TOO_FAST_MS = 3_000       # < 3 s → almost certainly not reading

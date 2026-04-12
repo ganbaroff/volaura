@@ -4,13 +4,13 @@ from __future__ import annotations
 
 import secrets
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, HTTPException, Query, Request
 from loguru import logger
 
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
-from app.middleware.rate_limit import limiter, RATE_PROFILE_WRITE, RATE_DISCOVERY, RATE_DEFAULT
+from app.middleware.rate_limit import RATE_DEFAULT, RATE_DISCOVERY, RATE_PROFILE_WRITE, limiter
 from app.schemas.event import (
     CheckInRequest,
     CoordinatorRatingRequest,
@@ -212,7 +212,7 @@ async def check_in(
 
     updated = await db.table("registrations").update({
         "status": "approved",
-        "checked_in_at": datetime.now(timezone.utc).isoformat(),
+        "checked_in_at": datetime.now(UTC).isoformat(),
     }).eq("id", reg["id"]).execute()
     return RegistrationResponse(**updated.data[0])
 
@@ -241,7 +241,7 @@ async def coordinator_rate_volunteer(
     result = await db_admin.table("registrations").update({
         "coordinator_rating": payload.rating,
         "coordinator_feedback": payload.feedback,
-        "coordinator_rated_at": datetime.now(timezone.utc).isoformat(),
+        "coordinator_rated_at": datetime.now(UTC).isoformat(),
     }).eq("id", payload.registration_id).execute()
 
     if not result.data:
@@ -306,7 +306,7 @@ async def volunteer_rate_event(
     result = await db.table("registrations").update({
         "volunteer_rating": payload.rating,
         "volunteer_feedback": payload.feedback,
-        "volunteer_rated_at": datetime.now(timezone.utc).isoformat(),
+        "volunteer_rated_at": datetime.now(UTC).isoformat(),
     }).eq("id", reg.data["id"]).execute()
 
     return RegistrationResponse(**result.data[0])

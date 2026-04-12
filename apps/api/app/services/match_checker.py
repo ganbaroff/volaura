@@ -30,7 +30,7 @@ Usage:
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from loguru import logger
@@ -271,7 +271,7 @@ async def run_match_check(db_admin: Any) -> RunSummary:
             elif isinstance(last_checked_raw, datetime):
                 since = last_checked_raw
             else:
-                since = datetime(2020, 1, 1, tzinfo=timezone.utc)
+                since = datetime(2020, 1, 1, tzinfo=UTC)
 
             # Load org info (for notification message and name)
             org_res = await db_admin.table("organizations").select("name").eq("id", org_id).maybe_single().execute()
@@ -282,7 +282,7 @@ async def run_match_check(db_admin: Any) -> RunSummary:
             new_count = len(matches)
 
             # Always update last_checked_at — even if zero matches (prevents re-checking same window)
-            now_iso = datetime.now(timezone.utc).isoformat()
+            now_iso = datetime.now(UTC).isoformat()
             await db_admin.table("org_saved_searches").update(
                 {"last_checked_at": now_iso}
             ).eq("id", search_id).execute()
@@ -351,8 +351,8 @@ async def run_match_check(db_admin: Any) -> RunSummary:
 
 async def _main() -> None:
     """CLI runner: creates its own Supabase admin client and runs the check."""
-    from supabase._async.client import AsyncClient
     from supabase import acreate_client
+    from supabase._async.client import AsyncClient
 
     if not settings.supabase_url or not settings.supabase_service_key:
         logger.error("Match checker: SUPABASE_URL or SUPABASE_SERVICE_KEY not set — aborting")

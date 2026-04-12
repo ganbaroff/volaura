@@ -6,14 +6,14 @@ All types come from app.schemas.*, app.deps, app.core.*, or stdlib.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from loguru import logger
 
 from app.core.assessment.aura_calc import BADGE_TIERS
 from app.deps import SupabaseAdmin
-from app.services.notification_service import notify
 from app.services.cross_product_bridge import push_crystal_earned, push_skill_verified
+from app.services.notification_service import notify
 
 # Crystal reward per competency completion (completion-based, NOT score-based)
 CRYSTAL_REWARD = 50
@@ -89,7 +89,7 @@ async def emit_assessment_rewards(
                 "skill_slug": skill_slug,
                 "crystals": CRYSTAL_REWARD,
                 "claimed": True,
-                "claimed_at": datetime.now(timezone.utc).isoformat(),
+                "claimed_at": datetime.now(UTC).isoformat(),
             }).execute()
 
             logger.info(

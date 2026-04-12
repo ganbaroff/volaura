@@ -4,13 +4,14 @@ No auth required — used for landing page social proof.
 Queries are COUNT aggregates only — fast and safe on free-tier Supabase.
 """
 
-from datetime import datetime, timedelta, timezone
-from fastapi import APIRouter, Request
+from datetime import UTC, datetime, timedelta
+
+from fastapi import APIRouter, HTTPException, Request
 from loguru import logger
 from pydantic import BaseModel, ConfigDict
 
 from app.deps import CurrentUserId, SupabaseAdmin
-from app.middleware.rate_limit import limiter, RATE_DEFAULT
+from app.middleware.rate_limit import RATE_DEFAULT, limiter
 
 router = APIRouter(prefix="/stats", tags=["Stats"])
 
@@ -136,7 +137,7 @@ async def get_beta_funnel_stats(
             detail={"code": "FORBIDDEN", "message": "This endpoint is restricted to organization accounts"},
         )
 
-    cutoff = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
+    cutoff = (datetime.now(UTC) - timedelta(hours=24)).isoformat()
 
     started = completed = abandoned = registrations = aura_generated = 0
 

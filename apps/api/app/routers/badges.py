@@ -6,13 +6,13 @@ Compatible with LinkedIn's digital credential import.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Request
 
 from app.deps import SupabaseAdmin
-from app.middleware.rate_limit import limiter, RATE_DISCOVERY
+from app.middleware.rate_limit import RATE_DISCOVERY, limiter
 
 router = APIRouter(prefix="/badges", tags=["Badges"])
 
@@ -70,7 +70,7 @@ async def get_open_badge_credential(
     name = profile["display_name"] or username
     tier = aura["badge_tier"].capitalize()
     score = float(aura["total_score"])
-    issued_at = aura.get("last_updated") or datetime.now(timezone.utc).isoformat()
+    issued_at = aura.get("last_updated") or datetime.now(UTC).isoformat()
 
     # Open Badges 3.0 / W3C Verifiable Credential
     return {

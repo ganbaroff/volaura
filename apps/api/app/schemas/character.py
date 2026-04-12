@@ -10,7 +10,6 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-
 # Valid event types — enforced at both API (here) and DB (CHECK constraint)
 EventType = Literal[
     "crystal_earned",

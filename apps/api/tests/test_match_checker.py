@@ -82,7 +82,12 @@ def make_db(
     if profiles is None:
         profiles = [_profile_row()]
 
+    _table_cache: dict[str, MagicMock] = {}
+
     def table(name: str) -> MagicMock:
+        if name in _table_cache:
+            return _table_cache[name]
+
         m = MagicMock()
 
         if name == "org_saved_searches":
@@ -102,16 +107,12 @@ def make_db(
             )
 
         elif name == "aura_scores":
-            # Main filtered query chain: .select().gte().eq().gt().order().limit()
             m.select.return_value.gte.return_value.eq.return_value.gt.return_value.order.return_value.limit.return_value.execute = AsyncMock(
                 return_value=MockResult(data=aura_rows)
             )
-            # badge_tier filter chain: .select().gte().eq().gt().order().limit().eq() [not possible in one chain, handled below]
-            # Also: .select().gte().eq().gt().eq().order().limit() for badge_tier filtering
             m.select.return_value.gte.return_value.eq.return_value.gt.return_value.eq.return_value.order.return_value.limit.return_value.execute = AsyncMock(
                 return_value=MockResult(data=aura_rows)
             )
-            # Top competency query: .select().eq().maybe_single()
             comp_data = {
                 "communication": 80.0,
                 "reliability": 70.0,
@@ -131,6 +132,7 @@ def make_db(
                 return_value=MockResult(data=profiles)
             )
 
+        _table_cache[name] = m
         return m
 
     db.table = table

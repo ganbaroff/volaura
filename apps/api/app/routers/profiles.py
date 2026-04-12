@@ -27,16 +27,16 @@ router = APIRouter(prefix="/profiles", tags=["Profiles"])
 
 
 def _anonymize_name(display_name: str | None) -> str:
-    """Server-side name anonymization for public volunteer listings.
+    """Server-side name anonymization for public talent listings.
 
     SEC-03: /profiles/public was returning raw display_name, letting orgs
     cross-reference with the anonymized /volunteers/discovery endpoint to
-    deanonymize all volunteers. Fixed by applying the same anonymization.
+    deanonymize all professionals. Fixed by applying the same anonymization.
 
     Result: "Leyla A." (first name + last initial).
     """
     if not display_name or not display_name.strip():
-        return "Volunteer"
+        return "Professional"
     parts = display_name.strip().split()
     first = parts[0][:20]  # cap at 20 chars
     if len(parts) == 1:
@@ -202,10 +202,10 @@ async def create_verification_link(
     db: SupabaseUser,
     user_id: CurrentUserId,
 ) -> CreateVerificationLinkResponse:
-    """Create a one-use verification link for a volunteer.
+    """Create a one-use verification link for a professional.
 
-    Only the volunteer themselves can request verification links.
-    The link is sent to an expert who rates the volunteer's competency.
+    Only the professional themselves can request verification links.
+    The link is sent to an expert who rates the professional's competency.
     Token is valid for 7 days, single-use.
     """
     # CRIT-02 fix: only allow self-verification requests
@@ -215,12 +215,12 @@ async def create_verification_link(
             detail={"code": "FORBIDDEN", "message": "You can only request verification for your own profile"},
         )
 
-    # Ensure target volunteer exists (.maybe_single() returns None instead of raising 406)
-    volunteer = await db.table("profiles").select("id").eq("id", volunteer_id).maybe_single().execute()
-    if not volunteer.data:
+    # Ensure target professional exists (.maybe_single() returns None instead of raising 406)
+    profile = await db.table("profiles").select("id").eq("id", volunteer_id).maybe_single().execute()
+    if not profile.data:
         raise HTTPException(
             status_code=404,
-            detail={"code": "VOLUNTEER_NOT_FOUND", "message": "Volunteer not found"},
+            detail={"code": "PROFILE_NOT_FOUND", "message": "Professional not found"},
         )
 
     token = secrets.token_urlsafe(32)
@@ -244,7 +244,7 @@ async def create_verification_link(
     )
 
     if not result or not result.data:
-        logger.error("Failed to create verification link", volunteer_id=volunteer_id)
+        logger.error("Failed to create verification link", professional_id=volunteer_id)
         raise HTTPException(
             status_code=500,
             detail={"code": "CREATE_FAILED", "message": "Failed to create verification link"},
@@ -255,7 +255,7 @@ async def create_verification_link(
 
     logger.info(
         "Verification link created",
-        volunteer_id=volunteer_id,
+        professional_id=volunteer_id,
         created_by=user_id,
         competency=payload.competency_id,
     )
@@ -273,14 +273,14 @@ async def create_verification_link(
 
 @router.get("/public", response_model=list[DiscoverableVolunteer])
 @limiter.limit(RATE_DISCOVERY)
-async def list_public_volunteers(
+async def list_public_professionals(
     request: Request,
     db: SupabaseAdmin,
     user_id: CurrentUserId,
     limit: int = Query(default=20, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
 ) -> list[DiscoverableVolunteer]:
-    """List volunteers who have opted in to org discovery (visible_to_orgs=True).
+    """List professionals who have opted in to org discovery (visible_to_orgs=True).
 
     Requires authentication as an organization account (account_type='organization').
     Ordered by AURA score descending. Paginated.
@@ -290,10 +290,10 @@ async def list_public_volunteers(
     if not caller.data or caller.data.get("account_type") != "organization":
         raise HTTPException(
             status_code=403,
-            detail={"code": "ORG_REQUIRED", "message": "Only organization accounts can browse volunteers"},
+            detail={"code": "ORG_REQUIRED", "message": "Only organization accounts can browse talent"},
         )
 
-    # Fetch opted-in volunteers joined with AURA score, ordered by score
+    # Fetch opted-in professionals joined with AURA score, ordered by score
     result = (
         await db.table("profiles")
         .select(
@@ -307,12 +307,12 @@ async def list_public_volunteers(
         .execute()
     )
 
-    volunteers: list[DiscoverableVolunteer] = []
+    professionals: list[DiscoverableVolunteer] = []
     for row in result.data or []:
         aura = row.get("aura_scores")
         # aura_scores is a list (one-to-many join result) — take first visible entry
         aura_row = aura[0] if isinstance(aura, list) and aura else aura if isinstance(aura, dict) else None
-        volunteers.append(
+        professionals.append(
             DiscoverableVolunteer(
                 id=row["id"],
                 username=row["username"],
@@ -328,7 +328,7 @@ async def list_public_volunteers(
             )
         )
 
-    return volunteers
+    return professionals
 
 
 @router.get("/{username}", response_model=PublicProfileResponse)
@@ -370,7 +370,7 @@ async def get_public_profile(
         )
         if score_row.data and score_row.data.get("total_score") is not None:
             user_score: float = float(score_row.data["total_score"])
-            # Count users with a lower score (public volunteers only)
+            # Count users with a lower score (public professionals only)
             # SEC-Q2: filter by visibility="public" so private/badge_only scores
             # don't leak aggregate platform stats via percentile_rank.
             lower_resp = (
@@ -401,10 +401,10 @@ async def record_profile_view(
     db: SupabaseAdmin,
     user_id: CurrentUserId,
 ) -> None:
-    """Record that an authenticated org viewed a volunteer's profile.
+    """Record that an authenticated org viewed a professional's profile.
 
-    Sends an `org_view` notification to the volunteer — deduped: at most 1 notification
-    per (org, volunteer) pair per 24 hours. Silently returns 204 for non-org callers
+    Sends an `org_view` notification to the professional — deduped: at most 1 notification
+    per (org, professional) pair per 24 hours. Silently returns 204 for non-org callers
     (no error, no notification — safe to call from any authenticated user).
 
     Security: org identity comes from JWT, never from request body.
@@ -418,10 +418,10 @@ async def record_profile_view(
         .execute()
     )
     if not caller.data or caller.data.get("account_type") != "organization":
-        return  # silently succeed — no error for volunteer-to-volunteer page views
+        return  # silently succeed — no error for professional-to-professional page views
 
-    # Look up the volunteer being viewed
-    volunteer = (
+    # Look up the professional being viewed
+    target_profile = (
         await db.table("profiles")
         .select("id, display_name")
         .eq("username", username)
@@ -429,21 +429,21 @@ async def record_profile_view(
         .maybe_single()
         .execute()
     )
-    if not volunteer.data:
-        return  # volunteer deleted or set private — no notification
+    if not target_profile.data:
+        return  # professional deleted or set private — no notification
 
-    volunteer_id = volunteer.data["id"]
+    professional_id = target_profile.data["id"]
 
     # Don't notify orgs viewing themselves
-    if str(user_id) == volunteer_id:
+    if str(user_id) == professional_id:
         return
 
-    # Dedup: skip if this org already sent an org_view notification for this volunteer in last 24h
+    # Dedup: skip if this org already sent an org_view notification for this professional in last 24h
     since = (datetime.now(tz=UTC) - timedelta(hours=24)).isoformat()
     existing = (
         await db.table("notifications")
         .select("id")
-        .eq("user_id", volunteer_id)
+        .eq("user_id", professional_id)
         .eq("type", "org_view")
         .eq("reference_id", str(user_id))
         .gte("created_at", since)
@@ -456,7 +456,7 @@ async def record_profile_view(
     org_name = caller.data.get("display_name") or caller.data.get("username") or "An organization"
     await notify(
         db,
-        user_id=volunteer_id,
+        user_id=professional_id,
         notification_type="org_view",
         title=f"{org_name} viewed your profile",
         body="Organizations can request introductions if they're interested.",
@@ -465,7 +465,7 @@ async def record_profile_view(
     logger.info(
         "org_view notification sent",
         org_id=user_id,
-        volunteer_id=volunteer_id,
+        professional_id=professional_id,
     )
 
 
@@ -479,7 +479,7 @@ async def get_my_profile_views(
     """Count how many orgs viewed my profile (based on org_view notifications).
 
     Returns: total views, views this week, list of org names who viewed (last 10).
-    Volunteer-only — orgs see their own dashboard stats elsewhere.
+    Professional-only — orgs see their own dashboard stats elsewhere.
     """
     now = datetime.now(tz=UTC)
     week_ago = (now - timedelta(days=7)).isoformat()
@@ -530,12 +530,12 @@ async def get_my_verifications(
     db: SupabaseUser,
     user_id: CurrentUserId,
 ) -> dict:
-    """Return coordinator ratings for this volunteer — these are expert verifications.
+    """Return coordinator ratings for this professional — these are expert verifications.
 
     Data source: event_registrations where coordinator_rating is not null.
     Joins with events (for event name) and profiles (for coordinator name/org).
     """
-    # Get all event registrations where this volunteer was rated by a coordinator
+    # Get all event registrations where this professional was rated by a coordinator
     regs_result = (
         await db.table("event_registrations")
         .select("id, event_id, coordinator_rating, coordinator_feedback, created_at")

@@ -1,6 +1,6 @@
 """Bulk invite endpoints for organizations.
 
-Allows org owners to upload a CSV of volunteer emails to invite.
+Allows org owners to upload a CSV of professional emails to invite.
 Max 500 rows per upload, processed in batches of 50.
 Returns per-row audit log with created/duplicate/error status.
 
@@ -44,14 +44,14 @@ BATCH_SIZE = 50
 
 @router.post("/{org_id}/invites/bulk", response_model=BulkInviteResponse, status_code=207)
 @limiter.limit(RATE_BULK_INVITE)
-async def bulk_invite_volunteers(
+async def bulk_invite_professionals(
     request: Request,
     org_id: str,
     db_admin: SupabaseAdmin,
     user_id: CurrentUserId,
     file: UploadFile = File(...),
 ) -> JSONResponse:
-    """Upload a CSV of volunteers to invite to the platform.
+    """Upload a CSV of professionals to invite to the platform.
 
     CSV format: email (required), display_name, phone, skills (pipe-delimited)
     Max 500 rows. Duplicates within file and against existing invites are skipped.

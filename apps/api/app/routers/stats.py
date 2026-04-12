@@ -19,7 +19,7 @@ router = APIRouter(prefix="/stats", tags=["Stats"])
 class PublicStatsResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    total_volunteers: int
+    total_professionals: int
     total_assessments: int
     total_events: int
     avg_aura_score: float
@@ -33,20 +33,20 @@ async def get_public_stats(
 ) -> PublicStatsResponse:
     """Get platform-wide public statistics.
 
-    Returns volunteer count, completed assessments, active events, and average AURA score.
+    Returns professional count, completed assessments, active events, and average AURA score.
     All counts use exact=True for accurate results. Designed to remain fast on free-tier.
     """
-    total_volunteers = 0
+    total_professionals = 0
     total_assessments = 0
     total_events = 0
     avg_aura_score = 0.0
 
-    # Count total volunteers (profiles table)
+    # Count total professionals (profiles table)
     try:
         result = await db.table("profiles").select("id", count="exact").execute()
-        total_volunteers = result.count or 0
+        total_professionals = result.count or 0
     except Exception as e:
-        logger.warning("Failed to count volunteers: {err}", err=str(e)[:200])
+        logger.warning("Failed to count professionals: {err}", err=str(e)[:200])
 
     # Count completed assessments
     try:
@@ -73,7 +73,7 @@ async def get_public_stats(
         logger.warning("Failed to compute avg AURA via RPC: {err}", err=str(e)[:200])
 
     return PublicStatsResponse(
-        total_volunteers=total_volunteers,
+        total_professionals=total_professionals,
         total_assessments=total_assessments,
         total_events=total_events,
         avg_aura_score=avg_aura_score,
@@ -101,17 +101,17 @@ async def get_beta_funnel_stats(
 ) -> BetaFunnelStats:
     """Beta funnel health metrics — for the failure protocol.
 
-    SEC-Q3: Restricted to organization accounts only. Volunteers have no use for
+    SEC-Q3: Restricted to organization accounts only. Non-org users have no use for
     this data, and exposing completion/abandonment rates to all users leaks operational
     intelligence (platform health, abuse detection timing, user count signals).
 
     Abandonment proxy: sessions with status='in_progress' AND updated_at < 24h ago.
     This is not perfect (some users may still be in progress) but is a good signal.
     """
-    # SEC-Q3: org-only guard — volunteers get 403
+    # SEC-Q3: org-only guard — non-org users get 403
     caller_row = await db.table("profiles").select("account_type").eq("id", user_id).maybe_single().execute()
-    account_type = (caller_row.data or {}).get("account_type", "volunteer")
-    if account_type == "volunteer":
+    account_type = (caller_row.data or {}).get("account_type", "professional")
+    if account_type != "organization":
         raise HTTPException(
             status_code=403,
             detail={"code": "FORBIDDEN", "message": "This endpoint is restricted to organization accounts"},

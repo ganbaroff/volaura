@@ -1,7 +1,7 @@
-"""Volunteer discovery endpoint — Phase 3 org talent search.
+"""Talent discovery endpoint — Phase 3 org talent search.
 
 Security hardening (post agent review 2026-03-25):
-- Cursor-based pagination (not offset) → prevents volunteer enumeration attack
+- Cursor-based pagination (not offset) → prevents talent enumeration attack
 - Rate limit: 10/minute (RATE_DISCOVERY, not RATE_DEFAULT=60)
 - display_name: server-side anonymized ("First L.") — never trust user-controlled field
 - Returns only queried competency score, not full competency_scores JSONB
@@ -49,7 +49,7 @@ def _anonymize_name(display_name: str | None) -> str:
 
 @router.get("/discovery", response_model=DiscoveryResponse)
 @limiter.limit(RATE_DISCOVERY)
-async def discover_volunteers(
+async def discover_talent(
     request: Request,
     db: SupabaseUser,
     db_admin: SupabaseAdmin,
@@ -67,12 +67,12 @@ async def discover_volunteers(
     after_id: str | None = Query(default=None),
     limit: int = Query(default=20, ge=1, le=50),
 ) -> DiscoveryResponse:
-    """Search public volunteer profiles by competency, score, role, and badge.
+    """Search public professional profiles by competency, score, role, and badge.
 
     Returns cursor-paginated results. Use `next_after_score` + `next_after_id`
     from meta to get the next page.
 
-    **Contact volunteers:** Use the returned `volunteer_id` with
+    **Contact professionals:** Use the returned `volunteer_id` with
     `POST /api/organizations/{org_id}/assign-assessments`.
     """
     # Validate competency slug (422 if invalid — agent recommendation)
@@ -172,11 +172,11 @@ async def discover_volunteers(
     aura_rows = aura_rows[:limit]
 
     # ── Step 5: Get display_names from profiles (batch lookup) ───────────────
-    volunteer_ids = [row["volunteer_id"] for row in aura_rows]
+    talent_ids = [row["volunteer_id"] for row in aura_rows]
     profile_map: dict[str, str | None] = {}
 
-    if volunteer_ids:
-        profiles_result = await db_admin.table("profiles").select("id,display_name").in_("id", volunteer_ids).execute()
+    if talent_ids:
+        profiles_result = await db_admin.table("profiles").select("id,display_name").in_("id", talent_ids).execute()
         for p in profiles_result.data or []:
             profile_map[p["id"]] = p.get("display_name")
 
@@ -186,11 +186,11 @@ async def discover_volunteers(
     #      Step 7 = second bounded query on result IDs
     # New: one bounded query on result IDs only. Eliminates 1 DB round-trip.
     role_map: dict[str, str | None] = {}
-    if volunteer_ids:
+    if talent_ids:
         sessions_result = await (
             db_admin.table("assessment_sessions")
             .select("volunteer_id,role_level,completed_at")
-            .in_("volunteer_id", volunteer_ids)
+            .in_("volunteer_id", talent_ids)
             .eq("status", "completed")
             .order("completed_at", desc=True)
             .execute()
@@ -203,7 +203,7 @@ async def discover_volunteers(
     # Apply role_level filter using already-fetched role_map (no extra DB call)
     if role_level:
         aura_rows = [row for row in aura_rows if role_map.get(row["volunteer_id"]) == role_level]
-        volunteer_ids = [row["volunteer_id"] for row in aura_rows]
+        talent_ids = [row["volunteer_id"] for row in aura_rows]
 
     # ── Step 8: Build response ────────────────────────────────────────────────
     results: list[DiscoveryVolunteer] = []

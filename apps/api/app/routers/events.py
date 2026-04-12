@@ -149,7 +149,7 @@ async def register_for_event(
     user_id: CurrentUserId,
     db_admin: SupabaseAdmin,
 ) -> RegistrationResponse:
-    """Volunteer registers for an event."""
+    """Register the current user for an event."""
     _validate_uuid(event_id, "event_id")
     # Check event is open
     event = await db_admin.table("events").select("status, capacity").eq("id", event_id).single().execute()
@@ -223,11 +223,11 @@ async def check_in(
     db: SupabaseAdmin,
     user_id: CurrentUserId,
 ) -> RegistrationResponse:
-    """Check in a volunteer via their QR code value.
+    """Check in a participant via their QR code value.
 
     SECURITY: Verifies caller is the org owner (event coordinator) before
     allowing check-in. Without this, any authenticated user with a leaked
-    check-in code could check in volunteers.
+    check-in code could check in participants.
     """
     _validate_uuid(event_id, "event_id")
     # Verify caller is event coordinator (org owner)
@@ -273,7 +273,7 @@ async def check_in(
 
 @router.post("/{event_id}/rate/coordinator", response_model=RegistrationResponse)
 @limiter.limit(RATE_PROFILE_WRITE)
-async def coordinator_rate_volunteer(
+async def coordinator_rate_participant(
     request: Request,
     event_id: str,
     payload: CoordinatorRatingRequest,
@@ -281,7 +281,7 @@ async def coordinator_rate_volunteer(
     db_admin: SupabaseAdmin,
     user_id: CurrentUserId,
 ) -> RegistrationResponse:
-    """Coordinator rates a volunteer after the event."""
+    """Coordinator rates a participant after the event."""
     _validate_uuid(event_id, "event_id")
     # Verify caller owns the event's organization
     event = await db_admin.table("events").select("organization_id").eq("id", event_id).single().execute()
@@ -323,7 +323,7 @@ async def coordinator_rate_volunteer(
     volunteer_id = reg_data.get("volunteer_id")
     if volunteer_id:
         try:
-            # Average all coordinator ratings for this volunteer (across all events)
+            # Average all coordinator ratings for this professional (across all events)
             rated_regs = (
                 await db_admin.table("registrations")
                 .select("coordinator_rating")
@@ -357,14 +357,14 @@ async def coordinator_rate_volunteer(
 
 @router.post("/{event_id}/rate/volunteer", response_model=RegistrationResponse)
 @limiter.limit(RATE_PROFILE_WRITE)
-async def volunteer_rate_event(
+async def participant_rate_event(
     request: Request,
     event_id: str,
     payload: VolunteerRatingRequest,
     db: SupabaseUser,
     user_id: CurrentUserId,
 ) -> RegistrationResponse:
-    """Volunteer rates an event after attending."""
+    """Participant rates an event after attending."""
     _validate_uuid(event_id, "event_id")
     reg = (
         await db.table("registrations")
@@ -476,15 +476,15 @@ async def list_attendees(
     if not regs.data:
         return []
 
-    volunteer_ids = [r["volunteer_id"] for r in regs.data]
+    participant_ids = [r["volunteer_id"] for r in regs.data]
 
     profiles_result = (
-        await db_admin.table("profiles").select("id, display_name, username").in_("id", volunteer_ids).execute()
+        await db_admin.table("profiles").select("id, display_name, username").in_("id", participant_ids).execute()
     )
     aura_result = (
         await db_admin.table("aura_scores")
         .select("volunteer_id, total_score, badge_tier")
-        .in_("volunteer_id", volunteer_ids)
+        .in_("volunteer_id", participant_ids)
         .execute()
     )
 
@@ -519,7 +519,7 @@ async def my_registrations(
     db: SupabaseUser,
     user_id: CurrentUserId,
 ) -> list[RegistrationResponse]:
-    """List the current volunteer's registrations."""
+    """List the current user's event registrations."""
     result = (
         await db.table("registrations")
         .select("*")

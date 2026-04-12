@@ -3,7 +3,7 @@
 No dedicated activity table needed. We query:
 - assessment_sessions (completed assessments)
 - badges (earned badges)
-- volunteer_behavior_signals (reliability events)
+- volunteer_behavior_signals (reliability events) [DB table name preserved]
 - event_registrations (event participation)
 
 Returns a unified, time-sorted feed of recent activity.

@@ -1241,7 +1241,7 @@ async def setup_webhook(request: Request) -> JSONResponse:
     if not settings.telegram_webhook_secret or admin_secret != settings.telegram_webhook_secret:
         return JSONResponse({"ok": False, "error": "Unauthorized"}, status_code=403)
 
-    webhook_url = "https://modest-happiness-production.up.railway.app/api/telegram/webhook"
+    webhook_url = "https://volauraapi-production.up.railway.app/api/telegram/webhook"
 
     import httpx
     payload: dict = {"url": webhook_url}

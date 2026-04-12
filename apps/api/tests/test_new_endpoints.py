@@ -501,7 +501,7 @@ class TestPublicStats:
 
     @pytest.mark.asyncio
     async def test_stats_has_required_fields(self):
-        """Response must have total_volunteers, total_assessments, total_events, avg_aura_score."""
+        """Response must have total_professionals, total_assessments, total_events, avg_aura_score."""
         admin_mock = self._make_stats_admin_mock()
 
         async def override_admin():
@@ -512,7 +512,7 @@ class TestPublicStats:
             async with make_client() as client:
                 response = await client.get("/api/stats/public")
             body = response.json()
-            assert "total_volunteers" in body, "'total_volunteers' missing from stats response"
+            assert "total_professionals" in body, "'total_professionals' missing from stats response"
             assert "total_assessments" in body, "'total_assessments' missing from stats response"
             assert "total_events" in body, "'total_events' missing from stats response"
             assert "avg_aura_score" in body, "'avg_aura_score' missing from stats response"
@@ -555,7 +555,7 @@ class TestPublicStats:
             async with make_client() as client:
                 response = await client.get("/api/stats/public")
             body = response.json()
-            assert isinstance(body["total_volunteers"], int) and body["total_volunteers"] >= 0
+            assert isinstance(body["total_professionals"], int) and body["total_professionals"] >= 0
             assert isinstance(body["total_assessments"], int) and body["total_assessments"] >= 0
             assert isinstance(body["total_events"], int) and body["total_events"] >= 0
             assert isinstance(body["avg_aura_score"], (int, float)) and body["avg_aura_score"] >= 0

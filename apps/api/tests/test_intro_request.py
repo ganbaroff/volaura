@@ -228,7 +228,7 @@ async def test_intro_request_volunteer_not_found():
     app.dependency_overrides.clear()
 
     assert resp.status_code == 404
-    assert resp.json()["detail"]["code"] == "VOLUNTEER_NOT_FOUND"
+    assert resp.json()["detail"]["code"] == "PROFILE_NOT_FOUND"
 
 
 @pytest.mark.asyncio

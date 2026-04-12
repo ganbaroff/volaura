@@ -1,0 +1,109 @@
+[
+  {
+    "id": "life_health_scare_01",
+    "title": "Health Scare",
+    "description": "Routine checkup reveals something concerning. Doctor says it's manageable if you act now.",
+    "min_age": 30,
+    "max_age": 70,
+    "requirements": {},
+    "priority": 9,
+    "choices": [
+      {
+        "text": "Follow every recommendation — diet, exercise, medication",
+        "consequences": {"health": 15, "money": -15, "energy": -10, "happiness": 5}
+      },
+      {
+        "text": "Make some changes but don't overreact",
+        "consequences": {"health": 5, "money": -5, "happiness": -5}
+      },
+      {
+        "text": "Ignore it — you feel fine",
+        "consequences": {"health": -25, "happiness": -10}
+      }
+    ]
+  },
+  {
+    "id": "life_education_01",
+    "title": "Online Course Discovery",
+    "description": "A friend shares a course that could seriously upgrade your skills. It costs money and time.",
+    "min_age": 18,
+    "max_age": 55,
+    "requirements": {},
+    "priority": 5,
+    "choices": [
+      {
+        "text": "Enroll and commit to finishing it",
+        "consequences": {"intelligence": 15, "money": -10, "energy": -10, "happiness": 8}
+      },
+      {
+        "text": "Bookmark it for later",
+        "consequences": {"intelligence": 1}
+      },
+      {
+        "text": "Use crystals to unlock premium content",
+        "consequences": {"intelligence": 20, "money": -5, "happiness": 10}
+      }
+    ]
+  },
+  {
+    "id": "life_travel_01",
+    "title": "Travel Opportunity",
+    "description": "Cheap flights to a country you've always wanted to visit. Two weeks off work.",
+    "min_age": 20,
+    "max_age": 65,
+    "requirements": {"money": 20},
+    "priority": 6,
+    "choices": [
+      {
+        "text": "Book it — life is short",
+        "consequences": {"happiness": 25, "social": 10, "money": -20, "energy": -5, "intelligence": 5}
+      },
+      {
+        "text": "Plan a budget trip — hostel and street food",
+        "consequences": {"happiness": 18, "social": 8, "money": -8, "intelligence": 5}
+      },
+      {
+        "text": "Save the money — responsibilities first",
+        "consequences": {"money": 5, "happiness": -8}
+      }
+    ]
+  },
+  {
+    "id": "life_milestone_marriage_01",
+    "title": "Marriage Proposal",
+    "description": "Your partner of 3 years pops the question. Or maybe it's time you did.",
+    "min_age": 24,
+    "max_age": 45,
+    "requirements": {"social": 40, "happiness": 30},
+    "priority": 10,
+    "choices": [
+      {
+        "text": "Say yes — build a life together",
+        "consequences": {"happiness": 30, "social": 20, "money": -15, "energy": -5}
+      },
+      {
+        "text": "Not yet — need more time",
+        "consequences": {"happiness": -10, "social": -10, "energy": 5}
+      }
+    ]
+  },
+  {
+    "id": "life_milestone_child_01",
+    "title": "Parenthood",
+    "description": "The test is positive. Everything is about to change.",
+    "min_age": 25,
+    "max_age": 45,
+    "requirements": {"social": 35, "money": 25},
+    "priority": 10,
+    "choices": [
+      {
+        "text": "Embrace it fully — rearrange everything",
+        "consequences": {"happiness": 25, "social": 15, "money": -25, "energy": -20, "health": -5}
+      },
+      {
+        "text": "Prepare carefully — save money, read books, ask parents",
+        "consequences": {"happiness": 20, "social": 10, "money": -15, "energy": -10, "intelligence": 5}
+      }
+    ]
+  }
+]

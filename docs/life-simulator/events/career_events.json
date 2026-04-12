@@ -1,0 +1,90 @@
+[
+  {
+    "id": "career_first_job_01",
+    "title": "First Job Interview",
+    "description": "A local company invites you for an interview. Your palms are sweaty, but you prepared well.",
+    "min_age": 18,
+    "max_age": 25,
+    "requirements": {"intelligence": 20},
+    "priority": 8,
+    "choices": [
+      {
+        "text": "Go prepared — research the company, practice answers",
+        "consequences": {"money": 15, "intelligence": 3, "social": 5, "happiness": 10}
+      },
+      {
+        "text": "Wing it — you're naturally charming",
+        "consequences": {"social": 2, "happiness": -5, "money": 5}
+      },
+      {
+        "text": "Skip it — not ready yet",
+        "consequences": {"happiness": -10, "energy": 5}
+      }
+    ]
+  },
+  {
+    "id": "career_promotion_01",
+    "title": "Promotion Opportunity",
+    "description": "Your manager says there's an opening for team lead. More money, more responsibility, more stress.",
+    "min_age": 25,
+    "max_age": 55,
+    "requirements": {"intelligence": 40, "social": 30},
+    "priority": 7,
+    "choices": [
+      {
+        "text": "Accept — you've earned this",
+        "consequences": {"money": 25, "energy": -15, "happiness": 15, "social": 10}
+      },
+      {
+        "text": "Decline — personal life matters more right now",
+        "consequences": {"happiness": 10, "social": 5, "energy": 10, "money": -5}
+      }
+    ]
+  },
+  {
+    "id": "career_startup_01",
+    "title": "Startup Idea",
+    "description": "You wake up at 3 AM with an idea. A platform that verifies professional skills. Sound familiar?",
+    "min_age": 22,
+    "max_age": 40,
+    "requirements": {"intelligence": 50, "money": 30},
+    "priority": 6,
+    "choices": [
+      {
+        "text": "Quit your job and go all in",
+        "consequences": {"money": -40, "happiness": 20, "intelligence": 10, "energy": -20}
+      },
+      {
+        "text": "Work on it nights and weekends",
+        "consequences": {"money": -10, "energy": -15, "intelligence": 8, "happiness": 10}
+      },
+      {
+        "text": "Write it in your notes and forget about it",
+        "consequences": {"happiness": -5}
+      }
+    ]
+  },
+  {
+    "id": "career_burnout_01",
+    "title": "Burnout Warning",
+    "description": "Three months of overtime. Your body aches, your mind is foggy. Something has to change.",
+    "min_age": 23,
+    "max_age": 60,
+    "requirements": {"energy": -1},
+    "priority": 9,
+    "choices": [
+      {
+        "text": "Take a sabbatical — reset completely",
+        "consequences": {"energy": 30, "happiness": 20, "money": -20, "health": 10}
+      },
+      {
+        "text": "Set strict boundaries — no more overtime",
+        "consequences": {"energy": 15, "happiness": 10, "money": -5}
+      },
+      {
+        "text": "Push through — it'll pass",
+        "consequences": {"energy": -20, "health": -15, "money": 10, "happiness": -15}
+      }
+    ]
+  }
+]

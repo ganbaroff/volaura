@@ -48,16 +48,18 @@ async def get_my_activity(
             .execute()
         )
         for row in assessments.data or []:
-            items.append({
-                "id": row["id"],
-                "type": "assessment",
-                "description": "Completed competency assessment",
-                "created_at": row["completed_at"],
-                "metadata": {
-                    "competency_id": row["competency_id"],
-                    "theta_estimate": row.get("theta_estimate"),
-                },
-            })
+            items.append(
+                {
+                    "id": row["id"],
+                    "type": "assessment",
+                    "description": "Completed competency assessment",
+                    "created_at": row["completed_at"],
+                    "metadata": {
+                        "competency_id": row["competency_id"],
+                        "theta_estimate": row.get("theta_estimate"),
+                    },
+                }
+            )
     except Exception as e:
         logger.warning("Failed to fetch assessment activity: {err}", err=str(e)[:200])
 
@@ -75,16 +77,18 @@ async def get_my_activity(
         for row in badges.data or []:
             badge_def = row.get("badges") or {}
             badge_type = badge_def.get("badge_type") or "achievement"
-            items.append({
-                "id": row["id"],
-                "type": "badge",
-                "description": f"Earned {badge_type} badge",
-                "created_at": row["earned_at"],
-                "metadata": {
-                    "badge_type": badge_type,
-                    "badge_id": row["badge_id"],
-                },
-            })
+            items.append(
+                {
+                    "id": row["id"],
+                    "type": "badge",
+                    "description": f"Earned {badge_type} badge",
+                    "created_at": row["earned_at"],
+                    "metadata": {
+                        "badge_type": badge_type,
+                        "badge_id": row["badge_id"],
+                    },
+                }
+            )
     except Exception as e:
         logger.warning("Failed to fetch badge activity: {err}", err=str(e)[:200])
 
@@ -99,16 +103,18 @@ async def get_my_activity(
             .execute()
         )
         for row in registrations.data or []:
-            items.append({
-                "id": row["id"],
-                "type": "event",
-                "description": "Registered for event",
-                "created_at": row["registered_at"],
-                "metadata": {
-                    "event_id": row["event_id"],
-                    "status": row["status"],
-                },
-            })
+            items.append(
+                {
+                    "id": row["id"],
+                    "type": "event",
+                    "description": "Registered for event",
+                    "created_at": row["registered_at"],
+                    "metadata": {
+                        "event_id": row["event_id"],
+                        "status": row["status"],
+                    },
+                }
+            )
     except Exception as e:
         logger.warning("Failed to fetch event activity: {err}", err=str(e)[:200])
 
@@ -123,23 +129,25 @@ async def get_my_activity(
             .execute()
         )
         for row in signals.data or []:
-            items.append({
-                "id": row["id"],
-                "type": "verification",
-                "description": f"Behavior signal: {row['signal_type']}",
-                "created_at": row["measured_at"],
-                "metadata": {
-                    "signal_type": row["signal_type"],
-                    "signal_value": row["signal_value"],
-                    "source": row["source"],
-                },
-            })
+            items.append(
+                {
+                    "id": row["id"],
+                    "type": "verification",
+                    "description": f"Behavior signal: {row['signal_type']}",
+                    "created_at": row["measured_at"],
+                    "metadata": {
+                        "signal_type": row["signal_type"],
+                        "signal_value": row["signal_value"],
+                        "source": row["source"],
+                    },
+                }
+            )
     except Exception as e:
         logger.warning("Failed to fetch behavior signal activity: {err}", err=str(e)[:200])
 
     # Sort all items by created_at descending, apply pagination
     items.sort(key=lambda x: x.get("created_at", ""), reverse=True)
-    paginated = items[offset:offset + limit]
+    paginated = items[offset : offset + limit]
 
     return {
         "data": paginated,
@@ -200,6 +208,7 @@ async def get_my_stats(
     # Simplified: count badges + assessments in last 7 days as proxy
     try:
         from datetime import datetime, timedelta
+
         seven_days_ago = (datetime.now(UTC) - timedelta(days=7)).isoformat()
         result = (
             await db.table("assessment_sessions")

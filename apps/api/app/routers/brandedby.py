@@ -51,13 +51,7 @@ async def create_twin(
 ) -> AITwinOut:
     """Create the user's AI Twin. One per user (MVP)."""
     # Check if user already has a twin
-    existing = (
-        await db.schema("brandedby")
-        .table("ai_twins")
-        .select("id")
-        .eq("user_id", user_id)
-        .execute()
-    )
+    existing = await db.schema("brandedby").table("ai_twins").select("id").eq("user_id", user_id).execute()
     if existing.data:
         raise HTTPException(
             status_code=409,
@@ -92,14 +86,7 @@ async def get_my_twin(
     db: SupabaseAdmin,
 ) -> AITwinOut | None:
     """Get the current user's AI Twin (or null if none)."""
-    result = (
-        await db.schema("brandedby")
-        .table("ai_twins")
-        .select("*")
-        .eq("user_id", user_id)
-        .maybe_single()
-        .execute()
-    )
+    result = await db.schema("brandedby").table("ai_twins").select("*").eq("user_id", user_id).maybe_single().execute()
     if not result.data:
         return None
     return AITwinOut(**result.data)
@@ -117,12 +104,7 @@ async def update_twin(
     """Update the user's AI Twin. Only owner can update."""
     # Verify ownership
     existing = (
-        await db.schema("brandedby")
-        .table("ai_twins")
-        .select("id, user_id")
-        .eq("id", twin_id)
-        .maybe_single()
-        .execute()
+        await db.schema("brandedby").table("ai_twins").select("id, user_id").eq("id", twin_id).maybe_single().execute()
     )
     if not existing.data:
         raise HTTPException(
@@ -142,13 +124,7 @@ async def update_twin(
             detail={"code": "NO_CHANGES", "message": "No fields to update"},
         )
 
-    result = (
-        await db.schema("brandedby")
-        .table("ai_twins")
-        .update(updates)
-        .eq("id", twin_id)
-        .execute()
-    )
+    result = await db.schema("brandedby").table("ai_twins").update(updates).eq("id", twin_id).execute()
 
     if not result.data:
         raise HTTPException(
@@ -284,13 +260,7 @@ async def activate_twin(
             },
         )
 
-    result = (
-        await db.schema("brandedby")
-        .table("ai_twins")
-        .update({"status": "active"})
-        .eq("id", twin_id)
-        .execute()
-    )
+    result = await db.schema("brandedby").table("ai_twins").update({"status": "active"}).eq("id", twin_id).execute()
 
     logger.info("AI Twin activated", twin_id=twin_id, user_id=user_id)
     return AITwinOut(**result.data[0])
@@ -380,20 +350,28 @@ async def create_generation(
         # handled by the RPC — do NOT insert manually). Wrap in try/except: crystal already
         # spent, so a failed audit insert must not rollback the deduction.
         try:
-            await db.table("character_events").insert({
-                "user_id": user_id,
-                "event_type": "crystal_spent",
-                "payload": {
-                    "_schema_version": 1,
-                    "amount": QUEUE_SKIP_CRYSTAL_COST,
-                    "reason": "brandedby_queue_skip",
-                    "generation_type": body.gen_type,
-                    "reference_id": reference_id,
-                },
-                "source_product": "brandedby",
-            }).execute()
+            await (
+                db.table("character_events")
+                .insert(
+                    {
+                        "user_id": user_id,
+                        "event_type": "crystal_spent",
+                        "payload": {
+                            "_schema_version": 1,
+                            "amount": QUEUE_SKIP_CRYSTAL_COST,
+                            "reason": "brandedby_queue_skip",
+                            "generation_type": body.gen_type,
+                            "reference_id": reference_id,
+                        },
+                        "source_product": "brandedby",
+                    }
+                )
+                .execute()
+            )
         except Exception as e:
-            logger.error("character_events audit insert failed (crystal already deducted)", user_id=user_id, error=str(e))
+            logger.error(
+                "character_events audit insert failed (crystal already deducted)", user_id=user_id, error=str(e)
+            )
 
         crystal_cost = QUEUE_SKIP_CRYSTAL_COST
         logger.info("Queue skip: crystals deducted atomically", user_id=user_id, cost=crystal_cost)

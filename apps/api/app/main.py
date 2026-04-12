@@ -140,6 +140,7 @@ app.add_middleware(ErrorAlertingMiddleware)
 # Outermost middleware: correlation ID on every request/response (including errors)
 app.add_middleware(RequestIdMiddleware)
 
+
 # CRIT-I01: Enforce request body size limit — reject before routing
 @app.middleware("http")
 async def limit_request_body(request: Request, call_next):

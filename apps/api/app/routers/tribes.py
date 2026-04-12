@@ -40,6 +40,7 @@ router = APIRouter(prefix="/tribes", tags=["Tribes"])
 
 # ── GET /tribes/me ─────────────────────────────────────────────────────────────
 
+
 @router.get("/me", response_model=TribeOut | None)
 @limiter.limit(RATE_DEFAULT)
 async def get_my_tribe(
@@ -56,9 +57,14 @@ async def get_my_tribe(
     """
     # Find user's active tribe membership
     try:
-        membership_result = await db.table("tribe_members").select(
-            "tribe_id, tribes(id, expires_at, status)"
-        ).eq("user_id", str(user_id)).is_("opt_out_at", None).maybe_single().execute()
+        membership_result = (
+            await db.table("tribe_members")
+            .select("tribe_id, tribes(id, expires_at, status)")
+            .eq("user_id", str(user_id))
+            .is_("opt_out_at", None)
+            .maybe_single()
+            .execute()
+        )
     except Exception:
         membership_result = None
 
@@ -73,34 +79,43 @@ async def get_my_tribe(
         return None
 
     # Get all active members (excluding opted-out)
-    members_result = await db_admin.table("tribe_members").select(
-        "user_id, profiles(display_name, avatar_url)"
-    ).eq("tribe_id", tribe_id).is_("opt_out_at", None).execute()
+    members_result = (
+        await db_admin.table("tribe_members")
+        .select("user_id, profiles(display_name, avatar_url)")
+        .eq("tribe_id", tribe_id)
+        .is_("opt_out_at", None)
+        .execute()
+    )
 
     # Determine who was active this ISO week
     current_week = _iso_week(datetime.now(UTC))
     members: list[TribeMemberStatus] = []
 
-    for m in (members_result.data or []):
+    for m in members_result.data or []:
         member_uid = m["user_id"]
         profile = m.get("profiles") or {}
 
         # Check activity for this week via tribe_streaks
-        streak_result = await db_admin.table("tribe_streaks").select(
-            "last_activity_week"
-        ).eq("user_id", member_uid).maybe_single().execute()
-
-        active_this_week = (
-            streak_result.data is not None
-            and streak_result.data.get("last_activity_week") == current_week
+        streak_result = (
+            await db_admin.table("tribe_streaks")
+            .select("last_activity_week")
+            .eq("user_id", member_uid)
+            .maybe_single()
+            .execute()
         )
 
-        members.append(TribeMemberStatus(
-            user_id=member_uid,
-            display_name=profile.get("display_name") or "Member",
-            avatar_url=profile.get("avatar_url"),
-            active_this_week=active_this_week,
-        ))
+        active_this_week = (
+            streak_result.data is not None and streak_result.data.get("last_activity_week") == current_week
+        )
+
+        members.append(
+            TribeMemberStatus(
+                user_id=member_uid,
+                display_name=profile.get("display_name") or "Member",
+                avatar_url=profile.get("avatar_url"),
+                active_this_week=active_this_week,
+            )
+        )
 
     # Get kudos count via SECURITY DEFINER RPC (anti-harassment: no direct kudos SELECT)
     try:
@@ -110,9 +125,14 @@ async def get_my_tribe(
         kudos_count = 0  # fail silently — kudos are optional
 
     # Check if user already requested renewal
-    renewal_result = await db.table("tribe_renewal_requests").select("tribe_id").eq(
-        "tribe_id", tribe_id
-    ).eq("user_id", str(user_id)).maybe_single().execute()
+    renewal_result = (
+        await db.table("tribe_renewal_requests")
+        .select("tribe_id")
+        .eq("tribe_id", tribe_id)
+        .eq("user_id", str(user_id))
+        .maybe_single()
+        .execute()
+    )
     renewal_requested = renewal_result.data is not None
 
     return TribeOut(
@@ -126,6 +146,7 @@ async def get_my_tribe(
 
 
 # ── GET /tribes/me/streak ──────────────────────────────────────────────────────
+
 
 @router.get("/me/streak", response_model=TribeStreakOut | None)
 @limiter.limit(RATE_DEFAULT)
@@ -161,6 +182,7 @@ async def get_my_streak(
 
 # ── POST /tribes/me/kudos ──────────────────────────────────────────────────────
 
+
 @router.post("/me/kudos", response_model=KudosResponse)
 @limiter.limit("5/minute")  # anti-spam: 5 kudos/minute max
 async def send_kudos(
@@ -175,12 +197,19 @@ async def send_kudos(
     Q1: count=0 → frontend shows "Be the first to send kudos" (handled in GET /me).
     """
     # Get the user's current tribe_id (from their membership, not request body)
-    membership = await db.table("tribe_members").select("tribe_id").eq(
-        "user_id", str(user_id)
-    ).is_("opt_out_at", None).maybe_single().execute()
+    membership = (
+        await db.table("tribe_members")
+        .select("tribe_id")
+        .eq("user_id", str(user_id))
+        .is_("opt_out_at", None)
+        .maybe_single()
+        .execute()
+    )
 
     if not membership.data:
-        raise HTTPException(status_code=400, detail={"code": "NOT_IN_TRIBE", "message": "You are not in an active tribe."})
+        raise HTTPException(
+            status_code=400, detail={"code": "NOT_IN_TRIBE", "message": "You are not in an active tribe."}
+        )
 
     tribe_id = membership.data["tribe_id"]
 
@@ -191,6 +220,7 @@ async def send_kudos(
 
 
 # ── POST /tribes/opt-out ───────────────────────────────────────────────────────
+
 
 @router.post("/opt-out", response_model=OptOutResponse)
 @limiter.limit(RATE_PROFILE_WRITE)
@@ -205,24 +235,39 @@ async def opt_out_of_tribe(
     Opted-out member's streak is NOT reset (streak is personal, tribe-independent).
     No "X left the tribe" notification. Departed members are simply invisible in GET /me.
     """
-    membership = await db.table("tribe_members").select("tribe_id").eq(
-        "user_id", str(user_id)
-    ).is_("opt_out_at", None).maybe_single().execute()
+    membership = (
+        await db.table("tribe_members")
+        .select("tribe_id")
+        .eq("user_id", str(user_id))
+        .is_("opt_out_at", None)
+        .maybe_single()
+        .execute()
+    )
 
     if not membership.data:
-        raise HTTPException(status_code=400, detail={"code": "NOT_IN_TRIBE", "message": "You are not in an active tribe."})
+        raise HTTPException(
+            status_code=400, detail={"code": "NOT_IN_TRIBE", "message": "You are not in an active tribe."}
+        )
 
     now_iso = datetime.now(UTC).isoformat()
 
     # Soft opt-out: set opt_out_at (RLS policy allows user to update own row)
-    await db.table("tribe_members").update({"opt_out_at": now_iso}).eq(
-        "tribe_id", membership.data["tribe_id"]
-    ).eq("user_id", str(user_id)).execute()
+    await (
+        db.table("tribe_members")
+        .update({"opt_out_at": now_iso})
+        .eq("tribe_id", membership.data["tribe_id"])
+        .eq("user_id", str(user_id))
+        .execute()
+    )
 
     # Clean up any pending renewal request from this user
-    await db.table("tribe_renewal_requests").delete().eq(
-        "tribe_id", membership.data["tribe_id"]
-    ).eq("user_id", str(user_id)).execute()
+    await (
+        db.table("tribe_renewal_requests")
+        .delete()
+        .eq("tribe_id", membership.data["tribe_id"])
+        .eq("user_id", str(user_id))
+        .execute()
+    )
 
     logger.info("User {uid} opted out of tribe {tid}", uid=str(user_id), tid=membership.data["tribe_id"])
 
@@ -231,6 +276,7 @@ async def opt_out_of_tribe(
 
 
 # ── POST /tribes/renew ────────────────────────────────────────────────────────
+
 
 @router.post("/renew", response_model=RenewalResponse)
 @limiter.limit(RATE_PROFILE_WRITE)
@@ -244,28 +290,47 @@ async def request_tribe_renewal(
 
     If all active members request renewal → matching service will extend tribe on next run.
     """
-    membership = await db.table("tribe_members").select("tribe_id").eq(
-        "user_id", str(user_id)
-    ).is_("opt_out_at", None).maybe_single().execute()
+    membership = (
+        await db.table("tribe_members")
+        .select("tribe_id")
+        .eq("user_id", str(user_id))
+        .is_("opt_out_at", None)
+        .maybe_single()
+        .execute()
+    )
 
     if not membership.data:
-        raise HTTPException(status_code=400, detail={"code": "NOT_IN_TRIBE", "message": "You are not in an active tribe."})
+        raise HTTPException(
+            status_code=400, detail={"code": "NOT_IN_TRIBE", "message": "You are not in an active tribe."}
+        )
 
     tribe_id = membership.data["tribe_id"]
 
     # Upsert renewal request (idempotent — safe to call multiple times)
-    await db.table("tribe_renewal_requests").upsert({
-        "tribe_id": tribe_id,
-        "user_id": str(user_id),
-    }).execute()
+    await (
+        db.table("tribe_renewal_requests")
+        .upsert(
+            {
+                "tribe_id": tribe_id,
+                "user_id": str(user_id),
+            }
+        )
+        .execute()
+    )
 
     # Check if all active members have now requested
-    active_members_result = await db_admin.table("tribe_members").select("user_id").eq(
-        "tribe_id", tribe_id
-    ).is_("opt_out_at", None).execute()
+    active_members_result = (
+        await db_admin.table("tribe_members")
+        .select("user_id")
+        .eq("tribe_id", tribe_id)
+        .is_("opt_out_at", None)
+        .execute()
+    )
     active_count = len(active_members_result.data or [])
 
-    renewals_result = await db_admin.table("tribe_renewal_requests").select("user_id").eq("tribe_id", tribe_id).execute()
+    renewals_result = (
+        await db_admin.table("tribe_renewal_requests").select("user_id").eq("tribe_id", tribe_id).execute()
+    )
     renewal_count = len(renewals_result.data or [])
 
     all_requested = renewal_count >= active_count
@@ -285,6 +350,7 @@ async def request_tribe_renewal(
 
 # ── POST /tribes/join-pool ────────────────────────────────────────────────────
 
+
 @router.post("/join-pool", response_model=TribeMatchPreview)
 @limiter.limit(RATE_PROFILE_WRITE)
 async def join_matching_pool(
@@ -299,9 +365,14 @@ async def join_matching_pool(
     If already in a tribe, returns current tribe info direction.
     """
     # Check already in tribe
-    membership = await db.table("tribe_members").select("tribe_id").eq(
-        "user_id", str(user_id)
-    ).is_("opt_out_at", None).maybe_single().execute()
+    membership = (
+        await db.table("tribe_members")
+        .select("tribe_id")
+        .eq("user_id", str(user_id))
+        .is_("opt_out_at", None)
+        .maybe_single()
+        .execute()
+    )
 
     if membership.data:
         raise HTTPException(
@@ -318,15 +389,22 @@ async def join_matching_pool(
         )
 
     # Upsert into tribe_matching_pool (idempotent — safe to call twice)
-    await db.table("tribe_matching_pool").upsert({
-        "user_id": str(user_id),
-    }).execute()
+    await (
+        db.table("tribe_matching_pool")
+        .upsert(
+            {
+                "user_id": str(user_id),
+            }
+        )
+        .execute()
+    )
 
     logger.info("User {uid} joined matching pool", uid=str(user_id))
     return TribeMatchPreview()
 
 
 # ── GET /tribes/me/pool-status ─────────────────────────────────────────────────
+
 
 @router.get("/me/pool-status", response_model=PoolStatusOut)
 @limiter.limit(RATE_DEFAULT)
@@ -340,9 +418,9 @@ async def get_pool_status(
     Frontend uses this to show 'Finding your tribe...' across page refreshes
     instead of re-showing the join CTA after the user already clicked it.
     """
-    result = await db.table("tribe_matching_pool").select("joined_at").eq(
-        "user_id", str(user_id)
-    ).maybe_single().execute()
+    result = (
+        await db.table("tribe_matching_pool").select("joined_at").eq("user_id", str(user_id)).maybe_single().execute()
+    )
 
     if not result or not result.data:
         return PoolStatusOut(in_pool=False)
@@ -351,6 +429,7 @@ async def get_pool_status(
 
 
 # ── Cron endpoints (GitHub Actions — internal, secret-gated) ──────────────────
+
 
 def _verify_cron_secret(x_cron_secret: str | None) -> None:
     """Raise 403 if CRON_SECRET env var is unset or header doesn't match."""
@@ -391,6 +470,7 @@ async def cron_run_streak_update(
 
 
 # ── Internal helper ────────────────────────────────────────────────────────────
+
 
 def _iso_week(dt: datetime) -> str:
     iso = dt.isocalendar()

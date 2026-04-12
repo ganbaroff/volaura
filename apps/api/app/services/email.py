@@ -57,11 +57,7 @@ def _build_html(
 ) -> str:
     score_int = round(competency_score)
     badge_label = _BADGE_LABELS.get(badge_tier.lower(), badge_tier)
-    crystal_line = (
-        f"<p style='color:#a855f7;'>+{crystals_earned} crystals earned 💎</p>"
-        if crystals_earned > 0
-        else ""
-    )
+    crystal_line = f"<p style='color:#a855f7;'>+{crystals_earned} crystals earned 💎</p>" if crystals_earned > 0 else ""
     return f"""<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head>

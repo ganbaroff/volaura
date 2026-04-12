@@ -36,6 +36,7 @@ class WebhookAck(BaseModel):
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
+
 def compute_days_remaining(
     status: str,
     trial_ends_at: datetime | None,

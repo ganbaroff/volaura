@@ -18,6 +18,7 @@ router = APIRouter(prefix="/badges", tags=["Badges"])
 
 # ── Open Badges 3.0 JSON-LD ───────────────────────────────────────────────────
 
+
 @router.get("/{volunteer_id}/credential")
 @limiter.limit(RATE_DISCOVERY)
 async def get_open_badge_credential(
@@ -40,18 +41,27 @@ async def get_open_badge_credential(
         )
 
     # Fetch profile
-    profile_result = await db.table("profiles").select(
-        "id, username, display_name, badge_issued_at"
-    ).eq("id", volunteer_id).eq("is_public", True).maybe_single().execute()
+    profile_result = (
+        await db.table("profiles")
+        .select("id, username, display_name, badge_issued_at")
+        .eq("id", volunteer_id)
+        .eq("is_public", True)
+        .maybe_single()
+        .execute()
+    )
 
     if not profile_result.data:
         raise HTTPException(status_code=404, detail={"code": "PROFILE_NOT_FOUND", "message": "Profile not found"})
 
     profile = profile_result.data
 
-    aura_result = await db.table("aura_scores").select(
-        "total_score, badge_tier, elite_status, last_updated, visibility"
-    ).eq("volunteer_id", volunteer_id).maybe_single().execute()
+    aura_result = (
+        await db.table("aura_scores")
+        .select("total_score, badge_tier, elite_status, last_updated, visibility")
+        .eq("volunteer_id", volunteer_id)
+        .maybe_single()
+        .execute()
+    )
 
     if not aura_result.data:
         raise HTTPException(status_code=404, detail={"code": "AURA_NOT_FOUND", "message": "No AURA score found"})

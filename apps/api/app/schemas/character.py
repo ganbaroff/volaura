@@ -15,13 +15,13 @@ EventType = Literal[
     "crystal_earned",
     "crystal_spent",
     "skill_verified",
-    "skill_unverified",   # revokes a previously verified skill
+    "skill_unverified",  # revokes a previously verified skill
     "xp_earned",
-    "stat_changed",       # Life Simulator character stat update
+    "stat_changed",  # Life Simulator character stat update
     "login_streak",
     "milestone_reached",
-    "buff_applied",       # MindShift: temporary stat/focus buff
-    "vital_logged",       # MindShift: sleep/water/mood vital log
+    "buff_applied",  # MindShift: temporary stat/focus buff
+    "vital_logged",  # MindShift: sleep/water/mood vital log
 ]
 
 # Valid source products — enforced at both API and DB

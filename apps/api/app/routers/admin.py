@@ -37,6 +37,7 @@ RATE_ADMIN = "30/minute"
 
 # ── Ping ──────────────────────────────────────────────────────────────────────
 
+
 @router.get("/ping")
 @limiter.limit(RATE_ADMIN)
 async def admin_ping(
@@ -53,6 +54,7 @@ async def admin_ping(
 
 # ── Stats dashboard ───────────────────────────────────────────────────────────
 
+
 @router.get("/stats", response_model=AdminStatsResponse)
 @limiter.limit(RATE_ADMIN)
 async def get_admin_stats(
@@ -61,19 +63,24 @@ async def get_admin_stats(
     db_admin: SupabaseAdmin,
 ) -> AdminStatsResponse:
     """Platform health stats for the admin dashboard home page."""
-    today_start = datetime.now(UTC).replace(
-        hour=0, minute=0, second=0, microsecond=0
-    ).isoformat()
+    today_start = datetime.now(UTC).replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
 
     # Run counts concurrently
     import asyncio
+
     users_res, orgs_res, pending_res, assessments_res, aura_res = await asyncio.gather(
         db_admin.table("profiles").select("id", count="exact").execute(),
         db_admin.table("organizations").select("id", count="exact").eq("is_active", True).execute(),
-        db_admin.table("organizations").select("id", count="exact")
-            .is_("verified_at", "null").eq("is_active", True).execute(),
-        db_admin.table("assessment_sessions").select("id", count="exact")
-            .eq("status", "completed").gte("completed_at", today_start).execute(),
+        db_admin.table("organizations")
+        .select("id", count="exact")
+        .is_("verified_at", "null")
+        .eq("is_active", True)
+        .execute(),
+        db_admin.table("assessment_sessions")
+        .select("id", count="exact")
+        .eq("status", "completed")
+        .gte("completed_at", today_start)
+        .execute(),
         db_admin.table("aura_scores").select("total_score").execute(),
     )
 
@@ -91,6 +98,7 @@ async def get_admin_stats(
 
 # ── Users ─────────────────────────────────────────────────────────────────────
 
+
 @router.get("/users", response_model=list[AdminUserRow])
 @limiter.limit(RATE_ADMIN)
 async def list_admin_users(
@@ -102,10 +110,12 @@ async def list_admin_users(
     account_type: str | None = Query(default=None),
 ) -> list[AdminUserRow]:
     """Paginated list of all platform users for the admin users page."""
-    query = db_admin.table("profiles").select(
-        "id, username, display_name, account_type, subscription_status, "
-        "is_platform_admin, created_at"
-    ).order("created_at", desc=True).range(offset, offset + limit - 1)
+    query = (
+        db_admin.table("profiles")
+        .select("id, username, display_name, account_type, subscription_status, is_platform_admin, created_at")
+        .order("created_at", desc=True)
+        .range(offset, offset + limit - 1)
+    )
 
     if account_type:
         query = query.eq("account_type", account_type)
@@ -115,6 +125,7 @@ async def list_admin_users(
 
 
 # ── Organizations ─────────────────────────────────────────────────────────────
+
 
 @router.get("/organizations/pending", response_model=list[AdminOrgRow])
 @limiter.limit(RATE_ADMIN)
@@ -129,9 +140,15 @@ async def list_pending_organizations(
 
     Pending = is_active=True AND verified_at IS NULL.
     """
-    orgs_res = await db_admin.table("organizations").select(
-        "id, name, description, website, owner_id, trust_score, verified_at, is_active, created_at"
-    ).is_("verified_at", "null").eq("is_active", True).order("created_at").range(offset, offset + limit - 1).execute()
+    orgs_res = (
+        await db_admin.table("organizations")
+        .select("id, name, description, website, owner_id, trust_score, verified_at, is_active, created_at")
+        .is_("verified_at", "null")
+        .eq("is_active", True)
+        .order("created_at")
+        .range(offset, offset + limit - 1)
+        .execute()
+    )
 
     orgs = orgs_res.data or []
     if not orgs:
@@ -142,10 +159,7 @@ async def list_pending_organizations(
     profiles_res = await db_admin.table("profiles").select("id, username").in_("id", owner_ids).execute()
     username_map = {p["id"]: p["username"] for p in (profiles_res.data or [])}
 
-    return [
-        AdminOrgRow(**org, owner_username=username_map.get(org["owner_id"]))
-        for org in orgs
-    ]
+    return [AdminOrgRow(**org, owner_username=username_map.get(org["owner_id"])) for org in orgs]
 
 
 @router.post("/organizations/{org_id}/approve", response_model=OrgApproveResponse)
@@ -158,7 +172,9 @@ async def approve_organization(
 ) -> OrgApproveResponse:
     """Set verified_at = NOW() on an organization, granting it verified status."""
     # Verify org exists and is pending (fail-closed — Mistake #57)
-    org_check = await db_admin.table("organizations").select("id, verified_at").eq("id", org_id).maybe_single().execute()
+    org_check = (
+        await db_admin.table("organizations").select("id, verified_at").eq("id", org_id).maybe_single().execute()
+    )
     if not org_check.data:
         raise HTTPException(status_code=404, detail={"code": "ORG_NOT_FOUND", "message": "Organization not found"})
 
@@ -208,17 +224,19 @@ async def get_swarm_agents(
 
         agents = []
         for name, state in data.get("agents", {}).items():
-            agents.append({
-                "name": name,
-                "display_name": name.replace("-agent", "").replace("-", " ").title(),
-                "status": state.get("status", "unknown"),
-                "last_task": state.get("last_task", ""),
-                "last_run": state.get("last_run"),
-                "next_scheduled": state.get("next_scheduled"),
-                "blockers": state.get("blockers", []),
-                "tasks_completed": state.get("performance", {}).get("tasks_completed", 0),
-                "tasks_failed": state.get("performance", {}).get("tasks_failed", 0),
-            })
+            agents.append(
+                {
+                    "name": name,
+                    "display_name": name.replace("-agent", "").replace("-", " ").title(),
+                    "status": state.get("status", "unknown"),
+                    "last_task": state.get("last_task", ""),
+                    "last_run": state.get("last_run"),
+                    "next_scheduled": state.get("next_scheduled"),
+                    "blockers": state.get("blockers", []),
+                    "tasks_completed": state.get("performance", {}).get("tasks_completed", 0),
+                    "tasks_failed": state.get("performance", {}).get("tasks_failed", 0),
+                }
+            )
 
         # Sort: active first, then by last_run descending
         agents.sort(key=lambda a: (a["status"] != "idle", a["last_run"] or ""), reverse=True)
@@ -292,7 +310,9 @@ async def decide_proposal(
     body = await request.json()
     action = body.get("action", "")  # "approve" | "dismiss" | "defer"
     if action not in ("approve", "dismiss", "defer"):
-        raise HTTPException(status_code=400, detail={"code": "INVALID_ACTION", "message": "Action must be: approve, dismiss, defer"})
+        raise HTTPException(
+            status_code=400, detail={"code": "INVALID_ACTION", "message": "Action must be: approve, dismiss, defer"}
+        )
 
     proposals_path = Path(__file__).parent.parent.parent.parent / "memory" / "swarm" / "proposals.json"
     try:
@@ -310,10 +330,13 @@ async def decide_proposal(
                 break
 
         if not found:
-            raise HTTPException(status_code=404, detail={"code": "PROPOSAL_NOT_FOUND", "message": f"Proposal {proposal_id} not found"})
+            raise HTTPException(
+                status_code=404, detail={"code": "PROPOSAL_NOT_FOUND", "message": f"Proposal {proposal_id} not found"}
+            )
 
         import os
         import tempfile
+
         tmp_fd, tmp_path = tempfile.mkstemp(dir=proposals_path.parent, suffix=".json")
         try:
             with os.fdopen(tmp_fd, "w", encoding="utf-8") as tmp_f:
@@ -389,20 +412,22 @@ async def get_swarm_findings(
                 data = _json.loads(r[2])
             except Exception:
                 data = {"raw": r[2][:200]}
-            findings.append({
-                "agent_id": r[0],
-                "task_id": r[1],
-                "data": data,
-                "ts": r[3],
-                "importance": r[4],
-                "category": r[5],
-                # Normalize to FindingContract fields if present
-                "severity": data.get("severity", "INFO"),
-                "summary": data.get("summary") or data.get("title") or "",
-                "recommendation": data.get("recommendation", ""),
-                "files": data.get("files", []),
-                "confidence": data.get("confidence", 0.5),
-            })
+            findings.append(
+                {
+                    "agent_id": r[0],
+                    "task_id": r[1],
+                    "data": data,
+                    "ts": r[3],
+                    "importance": r[4],
+                    "category": r[5],
+                    # Normalize to FindingContract fields if present
+                    "severity": data.get("severity", "INFO"),
+                    "summary": data.get("summary") or data.get("title") or "",
+                    "recommendation": data.get("recommendation", ""),
+                    "files": data.get("files", []),
+                    "confidence": data.get("confidence", 0.5),
+                }
+            )
 
         return {
             "data": {

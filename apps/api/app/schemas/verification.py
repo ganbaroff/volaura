@@ -5,16 +5,18 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-VALID_COMPETENCY_IDS = frozenset({
-    "communication",
-    "reliability",
-    "english_proficiency",
-    "leadership",
-    "event_performance",
-    "tech_literacy",
-    "adaptability",
-    "empathy_safeguarding",
-})
+VALID_COMPETENCY_IDS = frozenset(
+    {
+        "communication",
+        "reliability",
+        "english_proficiency",
+        "leadership",
+        "event_performance",
+        "tech_literacy",
+        "adaptability",
+        "empathy_safeguarding",
+    }
+)
 
 
 class CreateVerificationLinkRequest(BaseModel):
@@ -44,11 +46,12 @@ class CreateVerificationLinkRequest(BaseModel):
 
 class CreateVerificationLinkResponse(BaseModel):
     """Returned when a verification link is created."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
     token: str
-    verify_url: str          # Full URL to share: https://volaura.az/{locale}/verify/{token}
+    verify_url: str  # Full URL to share: https://volaura.az/{locale}/verify/{token}
     expires_at: datetime
     verifier_name: str
     verifier_org: str | None
@@ -57,6 +60,7 @@ class CreateVerificationLinkResponse(BaseModel):
 
 class VerificationTokenInfo(BaseModel):
     """Returned by GET /api/verify/{token} — public, no auth required."""
+
     model_config = ConfigDict(from_attributes=True)
 
     volunteer_display_name: str

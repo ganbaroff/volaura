@@ -42,6 +42,7 @@ def _with_effective_score(data: dict) -> dict:
         if isinstance(last_updated, str):
             try:
                 from datetime import datetime
+
                 last_updated = datetime.fromisoformat(last_updated)
             except (ValueError, TypeError):
                 last_updated = None
@@ -64,7 +65,9 @@ async def get_my_aura(
     """Get the current user's AURA score."""
     result = (
         await db.table("aura_scores")
-        .select("volunteer_id,total_score,badge_tier,elite_status,competency_scores,visibility,reliability_score,reliability_status,events_attended,events_no_show,percentile_rank,aura_history,last_updated")
+        .select(
+            "volunteer_id,total_score,badge_tier,elite_status,competency_scores,visibility,reliability_score,reliability_status,events_attended,events_no_show,percentile_rank,aura_history,last_updated"
+        )
         .eq("volunteer_id", user_id)
         .maybe_single()
         .execute()
@@ -128,7 +131,8 @@ async def get_aura_explanation(
                 explanation_entry: dict = {
                     "question_id": item.get("question_id"),
                     "concept_scores": {
-                        k: v for k, v in eval_log.get("concept_scores", {}).items()
+                        k: v
+                        for k, v in eval_log.get("concept_scores", {}).items()
                         if isinstance(k, str) and isinstance(v, (int, float))
                     },
                     "evaluation_confidence": confidence,  # high | pattern_matched | unknown
@@ -141,19 +145,21 @@ async def get_aura_explanation(
                 item_explanations.append(explanation_entry)
 
         if item_explanations:
-            explanations.append({
-                "competency_id": session.get("competency_id"),
-                "role_level": session.get("role_level", "volunteer"),
-                "completed_at": session.get("completed_at"),
-                "items_evaluated": len(item_explanations),
-                "evaluations": item_explanations,
-            })
+            explanations.append(
+                {
+                    "competency_id": session.get("competency_id"),
+                    "role_level": session.get("role_level", "volunteer"),
+                    "completed_at": session.get("completed_at"),
+                    "items_evaluated": len(item_explanations),
+                    "evaluations": item_explanations,
+                }
+            )
 
     return {
         "volunteer_id": user_id,
         "explanation_count": len(explanations),
         "has_pending_evaluations": pending_reeval_count > 0,  # BUG-012: LLM re-eval queued, scores will improve
-        "pending_reeval_count": pending_reeval_count,         # BUG-012: how many answers are being re-evaluated
+        "pending_reeval_count": pending_reeval_count,  # BUG-012: how many answers are being re-evaluated
         "methodology_reference": "BARS (Behaviourally Anchored Rating Scale) aligned with ISO 10667-2",
         "explanations": explanations,
     }
@@ -182,13 +188,7 @@ async def get_aura_by_id(
 
     Route ordering: MUST come AFTER /me and /me/explanation — wildcard captures anything.
     """
-    result = (
-        await db.table("aura_scores")
-        .select("*")
-        .eq("volunteer_id", volunteer_id)
-        .maybe_single()
-        .execute()
-    )
+    result = await db.table("aura_scores").select("*").eq("volunteer_id", volunteer_id).maybe_single().execute()
     if not result or not result.data:
         raise HTTPException(
             status_code=404,
@@ -204,9 +204,16 @@ async def get_aura_by_id(
         )
     if visibility == "badge_only":
         # Return only badge tier + total score — strip ALL private fields
-        _PRIVATE_FIELDS = {"competency_scores", "aura_history", "last_updated",
-                           "events_attended", "events_no_show", "events_late",
-                           "reliability_score", "reliability_status"}
+        _PRIVATE_FIELDS = {
+            "competency_scores",
+            "aura_history",
+            "last_updated",
+            "events_attended",
+            "events_no_show",
+            "events_late",
+            "reliability_score",
+            "reliability_status",
+        }
         badge_data = {k: v for k, v in result.data.items() if k not in _PRIVATE_FIELDS}
         badge_data["competency_scores"] = {}
         badge_data["aura_history"] = []
@@ -230,13 +237,7 @@ async def get_visibility(
     silently overriding the user's saved preference (Leyla simulation P0 fix).
     Returns {"visibility": "public"|"badge_only"|"hidden"} or 404 if no score yet.
     """
-    result = (
-        await db.table("aura_scores")
-        .select("visibility")
-        .eq("volunteer_id", user_id)
-        .maybe_single()
-        .execute()
-    )
+    result = await db.table("aura_scores").select("visibility").eq("volunteer_id", user_id).maybe_single().execute()
     if not result or not result.data:
         # No score yet — return default so frontend can still render the setting
         return {"visibility": "public"}
@@ -252,12 +253,7 @@ async def update_visibility(
     user_id: CurrentUserId,
 ):
     """Update own AURA score visibility (public/badge_only/hidden)."""
-    result = (
-        await db.table("aura_scores")
-        .update({"visibility": body.visibility})
-        .eq("volunteer_id", user_id)
-        .execute()
-    )
+    result = await db.table("aura_scores").update({"visibility": body.visibility}).eq("volunteer_id", user_id).execute()
     if not result or not result.data:
         raise HTTPException(
             status_code=404,
@@ -280,13 +276,7 @@ async def manage_sharing_permission(
     """Grant or revoke sharing permission to an organization."""
     # HIGH-05: Validate org exists before creating permission record.
     # Prevents phantom permissions to nonexistent orgs.
-    org_check = (
-        await db_admin.table("organizations")
-        .select("id")
-        .eq("id", body.org_id)
-        .maybe_single()
-        .execute()
-    )
+    org_check = await db_admin.table("organizations").select("id").eq("id", body.org_id).maybe_single().execute()
     if not org_check.data:
         raise HTTPException(
             status_code=404,
@@ -311,6 +301,7 @@ async def manage_sharing_permission(
     else:
         # Revoke: set revoked_at
         from datetime import datetime
+
         await (
             db.table("sharing_permissions")
             .update({"revoked_at": datetime.now(UTC).isoformat()})

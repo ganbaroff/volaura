@@ -67,10 +67,7 @@ def _build_character_context(character_state: dict) -> str:
             label = AURA_SKILL_LABELS.get(slug, slug.replace("_", " ").title())
             if aura is not None:
                 tier_info = BADGE_TIERS.get(badge or "", ("", ""))[1] if badge else ""
-                lines.append(
-                    f"  • {label}: AURA {aura:.1f}/100"
-                    + (f" ({tier_info})" if tier_info else "")
-                )
+                lines.append(f"  • {label}: AURA {aura:.1f}/100" + (f" ({tier_info})" if tier_info else ""))
             else:
                 lines.append(f"  • {label}: verified")
     else:
@@ -95,7 +92,7 @@ async def generate_twin_personality(
     context = _build_character_context(character_state)
 
     prompt = (
-        f'You are generating an AI Twin personality profile for a verified volunteer'
+        f"You are generating an AI Twin personality profile for a verified volunteer"
         f' named "{display_name}".\n\n'
         f"This person's verified data from the Volaura platform:\n{context}\n\n"
         f"Generate a first-person personality profile for their AI Twin. This profile\n"
@@ -113,7 +110,7 @@ async def generate_twin_personality(
         f"- Output ONLY the personality profile text, nothing else\n\n"
         f"Example tone: \"I'm a reliability-focused volunteer with a Gold badge in\n"
         f"Communication. My AURA score of 81 reflects consistent performance across"
-        f" 12+ events...\"\n\n"
+        f' 12+ events..."\n\n'
         f"Write the personality profile now:"
     )
 
@@ -147,10 +144,7 @@ def _build_fallback_personality(display_name: str, character_state: dict) -> str
         )
 
     top_skills = sorted(skills, key=lambda s: s.get("aura_score") or 0, reverse=True)[:3]
-    skill_names = [
-        AURA_SKILL_LABELS.get(s["slug"], s["slug"].replace("_", " ").title())
-        for s in top_skills
-    ]
+    skill_names = [AURA_SKILL_LABELS.get(s["slug"], s["slug"].replace("_", " ").title()) for s in top_skills]
 
     skill_str = ", ".join(skill_names[:-1]) + f" and {skill_names[-1]}" if len(skill_names) > 1 else skill_names[0]
     level = "experienced" if xp >= 500 else "active" if xp >= 100 else "emerging"

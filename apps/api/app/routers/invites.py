@@ -61,7 +61,9 @@ async def bulk_invite_volunteers(
     _validate_uuid(org_id, "org_id")
 
     # BUG-SEC-025 FIX: .single() raises APIError(406) when org not found; .maybe_single() returns None
-    org_result = await db_admin.table("organizations").select("id, owner_id, name").eq("id", org_id).maybe_single().execute()
+    org_result = (
+        await db_admin.table("organizations").select("id, owner_id, name").eq("id", org_id).maybe_single().execute()
+    )
     if not org_result.data:
         raise HTTPException(
             status_code=404,
@@ -108,10 +110,14 @@ async def bulk_invite_volunteers(
 
     for i, raw_row in enumerate(reader, start=2):  # row 1 = header
         if i - 1 > MAX_ROWS:
-            results.append(InviteRowResult(
-                row=i, email=raw_row.get("email", "?"), status="error",
-                error=f"Exceeds max {MAX_ROWS} rows",
-            ))
+            results.append(
+                InviteRowResult(
+                    row=i,
+                    email=raw_row.get("email", "?"),
+                    status="error",
+                    error=f"Exceeds max {MAX_ROWS} rows",
+                )
+            )
             break
 
         # Normalize column names (strip whitespace, lowercase)
@@ -125,18 +131,26 @@ async def bulk_invite_volunteers(
                 skills=normalized.get("skills"),
             )
         except Exception as e:
-            results.append(InviteRowResult(
-                row=i, email=normalized.get("email", "?"), status="error",
-                error=str(e).split("\n")[0][:200],  # Truncate, don't leak internals
-            ))
+            results.append(
+                InviteRowResult(
+                    row=i,
+                    email=normalized.get("email", "?"),
+                    status="error",
+                    error=str(e).split("\n")[0][:200],  # Truncate, don't leak internals
+                )
+            )
             continue
 
         # In-file duplicate check
         if row.email in seen_emails:
-            results.append(InviteRowResult(
-                row=i, email=row.email, status="duplicate",
-                error="Duplicate within this file",
-            ))
+            results.append(
+                InviteRowResult(
+                    row=i,
+                    email=row.email,
+                    status="duplicate",
+                    error="Duplicate within this file",
+                )
+            )
             continue
 
         seen_emails.add(row.email)
@@ -154,11 +168,16 @@ async def bulk_invite_volunteers(
     existing_invites: set[str] = set()
     # Query in chunks to avoid URL length limits
     for chunk_start in range(0, len(emails_to_check), BATCH_SIZE):
-        chunk = emails_to_check[chunk_start:chunk_start + BATCH_SIZE]
-        existing_result = await db_admin.table("organization_invites").select("email").eq(
-            "org_id", org_id
-        ).neq("status", "expired").in_("email", chunk).execute()
-        for inv in (existing_result.data or []):
+        chunk = emails_to_check[chunk_start : chunk_start + BATCH_SIZE]
+        existing_result = (
+            await db_admin.table("organization_invites")
+            .select("email")
+            .eq("org_id", org_id)
+            .neq("status", "expired")
+            .in_("email", chunk)
+            .execute()
+        )
+        for inv in existing_result.data or []:
             existing_invites.add(inv["email"])
 
     # ── Batch insert new invites ──
@@ -171,37 +190,47 @@ async def bulk_invite_volunteers(
     new_rows: list[tuple[int, InviteRowInput]] = []
     for row_num, row in rows:
         if row.email in existing_invites:
-            results.append(InviteRowResult(
-                row=row_num, email=row.email, status="duplicate",
-                error="Already invited by this organization",
-            ))
+            results.append(
+                InviteRowResult(
+                    row=row_num,
+                    email=row.email,
+                    status="duplicate",
+                    error="Already invited by this organization",
+                )
+            )
             duplicate_count += 1
         else:
             new_rows.append((row_num, row))
 
     # Insert in batches of BATCH_SIZE
     for batch_start in range(0, len(new_rows), BATCH_SIZE):
-        batch = new_rows[batch_start:batch_start + BATCH_SIZE]
+        batch = new_rows[batch_start : batch_start + BATCH_SIZE]
         insert_data = []
         for _row_num, row in batch:
-            insert_data.append({
-                "id": str(uuid.uuid4()),
-                "org_id": org_id,
-                "invited_by": user_id,
-                "email": row.email,
-                "display_name": row.display_name,
-                "phone": row.phone,
-                "skills": row.to_skills_list(),
-                "status": "pending",
-                "batch_id": batch_id,
-            })
+            insert_data.append(
+                {
+                    "id": str(uuid.uuid4()),
+                    "org_id": org_id,
+                    "invited_by": user_id,
+                    "email": row.email,
+                    "display_name": row.display_name,
+                    "phone": row.phone,
+                    "skills": row.to_skills_list(),
+                    "status": "pending",
+                    "batch_id": batch_id,
+                }
+            )
 
         try:
             await db_admin.table("organization_invites").insert(insert_data).execute()
             for row_num, row in batch:
-                results.append(InviteRowResult(
-                    row=row_num, email=row.email, status="created",
-                ))
+                results.append(
+                    InviteRowResult(
+                        row=row_num,
+                        email=row.email,
+                        status="created",
+                    )
+                )
                 created_count += 1
         except Exception as e:
             logger.error(
@@ -213,10 +242,14 @@ async def bulk_invite_volunteers(
             )
             # If batch fails, mark all rows in batch as error
             for row_num, row in batch:
-                results.append(InviteRowResult(
-                    row=row_num, email=row.email, status="error",
-                    error="Database insert failed",
-                ))
+                results.append(
+                    InviteRowResult(
+                        row=row_num,
+                        email=row.email,
+                        status="error",
+                        error="Database insert failed",
+                    )
+                )
                 error_count += 1
 
     # Sort results by row number for readability
@@ -276,7 +309,13 @@ async def list_invites(
             detail={"code": "NOT_ORG_OWNER", "message": "Only the organization owner can view invites"},
         )
 
-    query = db_admin.table("organization_invites").select("*").eq("org_id", org_id).order("created_at", desc=True).limit(200)
+    query = (
+        db_admin.table("organization_invites")
+        .select("*")
+        .eq("org_id", org_id)
+        .order("created_at", desc=True)
+        .limit(200)
+    )
 
     if status:
         if status not in ("pending", "accepted", "declined", "expired"):

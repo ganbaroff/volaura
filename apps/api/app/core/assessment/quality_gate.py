@@ -109,20 +109,15 @@ def compute_grs(question: dict[str, Any]) -> float:
     if isinstance(concepts, str):
         # Handle JSON string (sometimes stored as text in seed data)
         import json
+
         try:
             concepts = json.loads(concepts)
         except Exception:
             concepts = []
 
-    question_text: str = (
-        question.get("scenario_en")
-        or question.get("question_en")
-        or ""
-    ).lower()
+    question_text: str = (question.get("scenario_en") or question.get("question_en") or "").lower()
 
-    all_weighted = all(
-        "weight" in c for c in concepts if concepts
-    )
+    all_weighted = all("weight" in c for c in concepts if concepts)
     if all_weighted and concepts:
         score += 0.05
 
@@ -182,9 +177,17 @@ def compute_grs(question: dict[str, Any]) -> float:
 
     # Penalty: no narrative trigger in question text
     narrative_triggers = [
-        "describe", "explain", "what would you", "how would you",
-        "walk us through", "give an example", "tell us how",
-        "scenario", "situation", "imagine", "suppose",
+        "describe",
+        "explain",
+        "what would you",
+        "how would you",
+        "walk us through",
+        "give an example",
+        "tell us how",
+        "scenario",
+        "situation",
+        "imagine",
+        "suppose",
     ]
     has_narrative = any(trigger in question_text for trigger in narrative_triggers)
     if not has_narrative:
@@ -230,6 +233,7 @@ def generate_attack_answers(question: dict[str, Any]) -> list[dict[str, str]]:
     concepts: list[dict[str, Any]] = question.get("expected_concepts", [])
     if isinstance(concepts, str):
         import json
+
         try:
             concepts = json.loads(concepts)
         except Exception:
@@ -245,9 +249,7 @@ def generate_attack_answers(question: dict[str, Any]) -> list[dict[str, str]]:
     # Attack 2: Synonym flood (repeat each keyword 3x in sentence structures)
     flood_parts: list[str] = []
     for kw in all_keywords:
-        flood_parts.append(
-            f"I always use {kw}, demonstrating {kw} and applying {kw} effectively."
-        )
+        flood_parts.append(f"I always use {kw}, demonstrating {kw} and applying {kw} effectively.")
     synonym_flood = " ".join(flood_parts)
 
     # Attack 3: Thin narrative — grabs first 60% of keywords with filler
@@ -303,6 +305,7 @@ def run_adversarial_gate(question: dict[str, Any]) -> dict[str, Any]:
     concepts: list[dict[str, Any]] = question.get("expected_concepts", [])
     if isinstance(concepts, str):
         import json
+
         try:
             concepts = json.loads(concepts)
         except Exception:
@@ -312,9 +315,7 @@ def run_adversarial_gate(question: dict[str, Any]) -> dict[str, Any]:
     attack_results: list[dict[str, Any]] = []
     max_score = 0.0
 
-    question_text: str = (
-        question.get("scenario_en") or question.get("question_en") or ""
-    )
+    question_text: str = question.get("scenario_en") or question.get("question_en") or ""
 
     for attack in attacks:
         # Pass question_text to activate gate 4 (scenario relevance penalty).
@@ -322,12 +323,14 @@ def run_adversarial_gate(question: dict[str, Any]) -> dict[str, Any]:
         # with the question scenario → off-topic penalty fires → score is suppressed.
         concept_scores = _keyword_fallback(attack["text"], concepts, question_text=question_text)
         composite = _aggregate(concept_scores, concepts)
-        attack_results.append({
-            "style": attack["style"],
-            "text": attack["text"][:200],  # truncate for logging
-            "score": round(composite, 4),
-            "concept_scores": {k: round(v, 3) for k, v in concept_scores.items()},
-        })
+        attack_results.append(
+            {
+                "style": attack["style"],
+                "text": attack["text"][:200],  # truncate for logging
+                "score": round(composite, 4),
+                "concept_scores": {k: round(v, 3) for k, v in concept_scores.items()},
+            }
+        )
         if composite > max_score:
             max_score = composite
 
@@ -338,9 +341,7 @@ def run_adversarial_gate(question: dict[str, Any]) -> dict[str, Any]:
             "Adversarial gate FAILED",
             max_attack_score=round(max_score, 4),
             threshold=ADVERSARIAL_GATE_THRESHOLD,
-            question_text_snippet=(
-                question.get("scenario_en") or question.get("question_en") or ""
-            )[:80],
+            question_text_snippet=(question.get("scenario_en") or question.get("question_en") or "")[:80],
         )
 
     return {
@@ -411,29 +412,31 @@ def run_quality_checklist(question: dict[str, Any]) -> dict[str, Any]:
         except Exception:
             concepts = []
 
-    question_text: str = (
-        question.get("scenario_en") or question.get("question_en") or ""
-    ).lower()
+    question_text: str = (question.get("scenario_en") or question.get("question_en") or "").lower()
 
     checks: list[dict[str, Any]] = []
 
     # ── Check 1: scenario_en present ─────────────────────────────────────────
     c1_passed = bool(question.get("scenario_en") or question.get("question_en"))
-    checks.append({
-        "id": 1,
-        "name": "scenario_en present",
-        "passed": c1_passed,
-        "detail": "scenario_en or question_en must be non-empty" if not c1_passed else "OK",
-    })
+    checks.append(
+        {
+            "id": 1,
+            "name": "scenario_en present",
+            "passed": c1_passed,
+            "detail": "scenario_en or question_en must be non-empty" if not c1_passed else "OK",
+        }
+    )
 
     # ── Check 2: expected_concepts non-empty ──────────────────────────────────
     c2_passed = bool(concepts)
-    checks.append({
-        "id": 2,
-        "name": "expected_concepts non-empty",
-        "passed": c2_passed,
-        "detail": "expected_concepts must be a non-empty list" if not c2_passed else "OK",
-    })
+    checks.append(
+        {
+            "id": 2,
+            "name": "expected_concepts non-empty",
+            "passed": c2_passed,
+            "detail": "expected_concepts must be a non-empty list" if not c2_passed else "OK",
+        }
+    )
 
     # ── Check 3: every concept has >= 2 keywords ──────────────────────────────
     concept_kw_failures: list[str] = []
@@ -442,29 +445,28 @@ def run_quality_checklist(question: dict[str, Any]) -> dict[str, Any]:
         if len(c.get("keywords", [])) < _MIN_KEYWORD_COUNT:
             concept_kw_failures.append(name)
     c3_passed = len(concept_kw_failures) == 0
-    checks.append({
-        "id": 3,
-        "name": "each concept has >= 2 keywords",
-        "passed": c3_passed,
-        "detail": (
-            f"Concepts with < {_MIN_KEYWORD_COUNT} keywords: {concept_kw_failures}"
-            if not c3_passed else "OK"
-        ),
-    })
+    checks.append(
+        {
+            "id": 3,
+            "name": "each concept has >= 2 keywords",
+            "passed": c3_passed,
+            "detail": (
+                f"Concepts with < {_MIN_KEYWORD_COUNT} keywords: {concept_kw_failures}" if not c3_passed else "OK"
+            ),
+        }
+    )
 
     # ── Check 4: every concept has a weight field ─────────────────────────────
-    missing_weight = [
-        (c.get("name") or c.get("concept") or "?")
-        for c in concepts
-        if "weight" not in c
-    ]
+    missing_weight = [(c.get("name") or c.get("concept") or "?") for c in concepts if "weight" not in c]
     c4_passed = len(missing_weight) == 0
-    checks.append({
-        "id": 4,
-        "name": "all concepts have weight",
-        "passed": c4_passed,
-        "detail": f"Missing weight: {missing_weight}" if not c4_passed else "OK",
-    })
+    checks.append(
+        {
+            "id": 4,
+            "name": "all concepts have weight",
+            "passed": c4_passed,
+            "detail": f"Missing weight: {missing_weight}" if not c4_passed else "OK",
+        }
+    )
 
     # ── Check 5: weights sum to ~1.0 ─────────────────────────────────────────
     if concepts and all("weight" in c for c in concepts):
@@ -477,56 +479,69 @@ def run_quality_checklist(question: dict[str, Any]) -> dict[str, Any]:
         c5_detail = "Skipped (weights absent — see check 4)"
 
     if not is_mcq:
-        checks.append({
-            "id": 5,
-            "name": "weights sum to 1.0",
-            "passed": c5_passed,
-            "detail": c5_detail,
-        })
+        checks.append(
+            {
+                "id": 5,
+                "name": "weights sum to 1.0",
+                "passed": c5_passed,
+                "detail": c5_detail,
+            }
+        )
 
     # ── Check 6: GRS >= 0.6 ───────────────────────────────────────────────────
     grs = compute_grs(question)
     if not is_mcq:
         c6_passed = grs >= GRS_THRESHOLD
-        checks.append({
-            "id": 6,
-            "name": f"GRS >= {GRS_THRESHOLD}",
-            "passed": c6_passed,
-            "detail": f"GRS = {grs}" if not c6_passed else f"GRS = {grs} (OK)",
-        })
+        checks.append(
+            {
+                "id": 6,
+                "name": f"GRS >= {GRS_THRESHOLD}",
+                "passed": c6_passed,
+                "detail": f"GRS = {grs}" if not c6_passed else f"GRS = {grs} (OK)",
+            }
+        )
 
     # ── Check 7: Adversarial gate ──────────────────────────────────────────────
     adversarial = run_adversarial_gate(question)
     if not is_mcq:
         c7_passed = adversarial["passed"]
-        checks.append({
-            "id": 7,
-            "name": f"adversarial gate (max attack score <= {ADVERSARIAL_GATE_THRESHOLD})",
-            "passed": c7_passed,
-            "detail": (
-                f"Max attack score: {adversarial['max_attack_score']}"
-                if not c7_passed else
-                f"Max attack score: {adversarial['max_attack_score']} (OK)"
-            ),
-        })
+        checks.append(
+            {
+                "id": 7,
+                "name": f"adversarial gate (max attack score <= {ADVERSARIAL_GATE_THRESHOLD})",
+                "passed": c7_passed,
+                "detail": (
+                    f"Max attack score: {adversarial['max_attack_score']}"
+                    if not c7_passed
+                    else f"Max attack score: {adversarial['max_attack_score']} (OK)"
+                ),
+            }
+        )
 
     # ── Check 8: narrative trigger ─────────────────────────────────────────────
     if not is_mcq:
         narrative_triggers = [
-            "describe", "explain", "what would you", "how would you",
-            "walk us through", "give an example", "tell us how",
-            "scenario", "situation", "imagine", "suppose",
+            "describe",
+            "explain",
+            "what would you",
+            "how would you",
+            "walk us through",
+            "give an example",
+            "tell us how",
+            "scenario",
+            "situation",
+            "imagine",
+            "suppose",
         ]
         has_narrative = any(trigger in question_text for trigger in narrative_triggers)
-        checks.append({
-            "id": 8,
-            "name": "question contains narrative trigger",
-            "passed": has_narrative,
-            "detail": (
-                f"No trigger found. Add: {narrative_triggers[:4]}"
-                if not has_narrative else "OK"
-            ),
-        })
+        checks.append(
+            {
+                "id": 8,
+                "name": "question contains narrative trigger",
+                "passed": has_narrative,
+                "detail": (f"No trigger found. Add: {narrative_triggers[:4]}" if not has_narrative else "OK"),
+            }
+        )
 
     # ── Check 9: no keyword leakage into question text ────────────────────────
     leaked_keywords: list[str] = []
@@ -535,12 +550,14 @@ def run_quality_checklist(question: dict[str, Any]) -> dict[str, Any]:
             if kw.lower() in question_text:
                 leaked_keywords.append(kw)
     c9_passed = len(leaked_keywords) == 0
-    checks.append({
-        "id": 9,
-        "name": "no keyword leakage into question text",
-        "passed": c9_passed,
-        "detail": f"Leaked keywords: {leaked_keywords}" if not c9_passed else "OK",
-    })
+    checks.append(
+        {
+            "id": 9,
+            "name": "no keyword leakage into question text",
+            "passed": c9_passed,
+            "detail": f"Leaked keywords: {leaked_keywords}" if not c9_passed else "OK",
+        }
+    )
 
     # ── Check 10: IRT params valid ────────────────────────────────────────────
     irt_a = question.get("irt_a")
@@ -560,12 +577,14 @@ def run_quality_checklist(question: dict[str, Any]) -> dict[str, Any]:
     elif not (0.0 <= float(irt_c) <= 0.35):
         c10_issues.append(f"irt_c={irt_c} out of range [0.0, 0.35]")
     c10_passed = len(c10_issues) == 0
-    checks.append({
-        "id": 10,
-        "name": "IRT params valid (a∈[0.3,3.0], b∈[-4,4], c∈[0,0.35])",
-        "passed": c10_passed,
-        "detail": "; ".join(c10_issues) if not c10_passed else "OK",
-    })
+    checks.append(
+        {
+            "id": 10,
+            "name": "IRT params valid (a∈[0.3,3.0], b∈[-4,4], c∈[0,0.35])",
+            "passed": c10_passed,
+            "detail": "; ".join(c10_issues) if not c10_passed else "OK",
+        }
+    )
 
     passed_count = sum(1 for c in checks if c["passed"])
     all_passed = all(c["passed"] for c in checks)

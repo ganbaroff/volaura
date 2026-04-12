@@ -27,13 +27,19 @@ async def notify(
 ) -> None:
     """Insert a notification row. Fire-and-forget — never raises."""
     try:
-        await db_admin.table("notifications").insert({
-            "user_id": user_id,
-            "type": notification_type,
-            "title": title,
-            "body": body,
-            "reference_id": reference_id,
-        }).execute()
+        await (
+            db_admin.table("notifications")
+            .insert(
+                {
+                    "user_id": user_id,
+                    "type": notification_type,
+                    "title": title,
+                    "body": body,
+                    "reference_id": reference_id,
+                }
+            )
+            .execute()
+        )
     except Exception as e:
         logger.warning("Failed to create notification", user_id=user_id, type=notification_type, error=str(e))
 
@@ -62,9 +68,7 @@ async def notify_profile_viewed(
     Never raises — safe to use with asyncio.create_task().
     """
     try:
-        cutoff = (
-            datetime.now(UTC) - timedelta(hours=_PROFILE_VIEW_THROTTLE_HOURS)
-        ).isoformat()
+        cutoff = (datetime.now(UTC) - timedelta(hours=_PROFILE_VIEW_THROTTLE_HOURS)).isoformat()
 
         # Throttle check — uses idx_notifications_org_view_throttle partial index
         existing = (
@@ -85,13 +89,19 @@ async def notify_profile_viewed(
             )
             return False
 
-        await db_admin.table("notifications").insert({
-            "user_id": volunteer_id,
-            "type": "org_view",
-            "title": f"{org_name} viewed your AURA profile",
-            "body": None,
-            "reference_id": org_id,
-        }).execute()
+        await (
+            db_admin.table("notifications")
+            .insert(
+                {
+                    "user_id": volunteer_id,
+                    "type": "org_view",
+                    "title": f"{org_name} viewed your AURA profile",
+                    "body": None,
+                    "reference_id": org_id,
+                }
+            )
+            .execute()
+        )
 
         logger.info(
             "Profile view notification sent",

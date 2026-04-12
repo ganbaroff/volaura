@@ -44,6 +44,7 @@ async def evaluate_answer(
     try:
         concept_scores = await _swarm_evaluate_scores(question_en, answer, expected_concepts)
         from app.core.assessment.bars import _aggregate
+
         composite = _aggregate(concept_scores, expected_concepts)
         if return_details:
             return EvaluationResult(composite, concept_scores, "swarm")
@@ -51,6 +52,7 @@ async def evaluate_answer(
     except Exception as e:
         logger.warning(f"Swarm evaluation failed, falling back to BARS: {e}")
         from app.core.assessment.bars import evaluate_answer as bars_evaluate
+
         return await bars_evaluate(question_en, answer, expected_concepts, return_details=return_details)
 
 
@@ -67,9 +69,9 @@ async def _swarm_evaluate_scores(
     import sys
 
     # Add packages/ to path so swarm package is importable
-    project_root = os.path.dirname(os.path.dirname(os.path.dirname(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    )))
+    project_root = os.path.dirname(
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    )
     packages_path = os.path.join(project_root, "packages")
     if packages_path not in sys.path:
         sys.path.insert(0, packages_path)
@@ -148,6 +150,7 @@ def _extract_consensus_scores(
         try:
             # Try to parse JSON from agent response
             import re
+
             text = re.sub(r"```(?:json)?", "", raw).strip()
             if text.startswith("{"):
                 data = json.loads(text)

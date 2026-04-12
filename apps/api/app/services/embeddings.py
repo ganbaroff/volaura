@@ -85,10 +85,16 @@ async def upsert_volunteer_embedding(
     if embedding is None:
         return False
 
-    result = await db_admin.table("volunteer_embeddings").upsert({
-        "volunteer_id": volunteer_id,
-        "embedding": embedding,
-        "model_version": "text-embedding-004",
-    }).execute()
+    result = (
+        await db_admin.table("volunteer_embeddings")
+        .upsert(
+            {
+                "volunteer_id": volunteer_id,
+                "embedding": embedding,
+                "model_version": "text-embedding-004",
+            }
+        )
+        .execute()
+    )
 
     return bool(result.data)

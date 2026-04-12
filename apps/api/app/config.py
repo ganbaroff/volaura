@@ -44,10 +44,10 @@ class Settings(BaseSettings):
 
     # LLM — V-BRAIN chain: primary→fallback→fallback→keyword
     # GEM=aura-eyes, GRQ=quick-pulse, OAI=deep-cortex, DSK=shadow-mind
-    gemini_api_key: str = ""     # GEM: primary evaluator (15 RPM free, unlimited paid)
-    openai_api_key: str = ""     # OAI: tertiary fallback
-    groq_api_key: str = ""       # GRQ: secondary fallback (paid tier active 2026-03-29)
-    deepseek_api_key: str = ""   # DSK: experimental (swarm candidate)
+    gemini_api_key: str = ""  # GEM: primary evaluator (15 RPM free, unlimited paid)
+    openai_api_key: str = ""  # OAI: tertiary fallback
+    groq_api_key: str = ""  # GRQ: secondary fallback (paid tier active 2026-03-29)
+    deepseek_api_key: str = ""  # DSK: experimental (swarm candidate)
 
     # Swarm (multi-model BARS evaluation)
     swarm_enabled: bool = False
@@ -58,13 +58,13 @@ class Settings(BaseSettings):
     telegram_webhook_secret: str = ""
 
     # Monitoring — V-EYE: error tracking + performance
-    sentry_dsn: str = ""         # Org: volaura, Project: volaura-api (created 2026-03-29)
+    sentry_dsn: str = ""  # Org: volaura, Project: volaura-api (created 2026-03-29)
 
     # Observability — Langfuse: LLM tracing, cost tracking, latency monitoring
     # Free tier: 50k events/month. If keys not set, tracing is silently disabled.
     # Get keys from https://cloud.langfuse.com → Settings → API Keys
-    langfuse_public_key: str = ""   # pk-lf-... (from Langfuse dashboard)
-    langfuse_secret_key: str = ""   # sk-lf-... (from Langfuse dashboard)
+    langfuse_public_key: str = ""  # pk-lf-... (from Langfuse dashboard)
+    langfuse_secret_key: str = ""  # sk-lf-... (from Langfuse dashboard)
     langfuse_host: str = "https://cloud.langfuse.com"  # EU cloud default; US = us.cloud.langfuse.com
 
     # NVIDIA NIM — 160+ open-source models, OpenAI-compatible, free tier — added 2026-04-02
@@ -203,13 +203,9 @@ def assert_production_ready() -> None:
         return
     errors: list[str] = []
     if not settings.supabase_service_key:
-        errors.append(
-            "SUPABASE_SERVICE_KEY is not set — API cannot perform admin DB operations."
-        )
+        errors.append("SUPABASE_SERVICE_KEY is not set — API cannot perform admin DB operations.")
     if settings.app_url == "http://localhost:3000":
-        errors.append(
-            "APP_URL is still http://localhost:3000 — CORS will block all frontend requests."
-        )
+        errors.append("APP_URL is still http://localhost:3000 — CORS will block all frontend requests.")
     # RISK-M01: LLM cost spiral guard — Gemini without Groq falls to paid OpenAI.
     # At activation wave (110 users/hr × 8 questions), Gemini 15 RPM free tier saturates
     # in 5 minutes. Without Groq (14,400 req/day free), cost falls to OpenAI at ~$240/day.
@@ -248,8 +244,7 @@ def assert_production_ready() -> None:
     # New project ref: dwdgzfusjsobnixgyzjk (paid plan, active since 2026-03-28).
     if errors:
         raise RuntimeError(
-            "Production startup failed — fix these settings before deploying:\n"
-            + "\n".join(f"  • {e}" for e in errors)
+            "Production startup failed — fix these settings before deploying:\n" + "\n".join(f"  • {e}" for e in errors)
         )
 
 
@@ -274,16 +269,12 @@ def validate_production_settings() -> list[str]:
                 "Set GROQ_API_KEY on Railway before activation wave."
             )
         if settings.app_url == "http://localhost:3000":
-            warnings.append(
-                "WARNING: APP_URL is still localhost — CORS will block frontend requests."
-            )
+            warnings.append("WARNING: APP_URL is still localhost — CORS will block frontend requests.")
         if not settings.telegram_webhook_secret:
             warnings.append(
                 "WARNING: TELEGRAM_WEBHOOK_SECRET is not set — Telegram webhook endpoint "
                 "will reject all incoming updates (no secret = 403 on every call)."
             )
         if not settings.sentry_dsn:
-            warnings.append(
-                "WARNING: SENTRY_DSN not set — production errors will not be tracked in Sentry."
-            )
+            warnings.append("WARNING: SENTRY_DSN not set — production errors will not be tracked in Sentry.")
     return warnings

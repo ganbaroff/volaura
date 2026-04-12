@@ -91,6 +91,7 @@ class ProfileResponse(ProfileBase):
 
 class PublicProfileResponse(BaseModel):
     """Minimal public profile for sharing — no sensitive fields."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -112,6 +113,7 @@ class DiscoverableVolunteer(BaseModel):
     Only includes volunteers who have opted in (visible_to_orgs=True).
     AURA score joined from aura_scores table.
     """
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str

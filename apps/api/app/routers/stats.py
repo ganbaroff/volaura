@@ -43,35 +43,21 @@ async def get_public_stats(
 
     # Count total volunteers (profiles table)
     try:
-        result = (
-            await db.table("profiles")
-            .select("id", count="exact")
-            .execute()
-        )
+        result = await db.table("profiles").select("id", count="exact").execute()
         total_volunteers = result.count or 0
     except Exception as e:
         logger.warning("Failed to count volunteers: {err}", err=str(e)[:200])
 
     # Count completed assessments
     try:
-        result = (
-            await db.table("assessment_sessions")
-            .select("id", count="exact")
-            .eq("status", "completed")
-            .execute()
-        )
+        result = await db.table("assessment_sessions").select("id", count="exact").eq("status", "completed").execute()
         total_assessments = result.count or 0
     except Exception as e:
         logger.warning("Failed to count assessments: {err}", err=str(e)[:200])
 
     # Count non-cancelled events
     try:
-        result = (
-            await db.table("events")
-            .select("id", count="exact")
-            .neq("status", "cancelled")
-            .execute()
-        )
+        result = await db.table("events").select("id", count="exact").neq("status", "cancelled").execute()
         total_events = result.count or 0
     except Exception as e:
         logger.warning("Failed to count events: {err}", err=str(e)[:200])
@@ -99,10 +85,10 @@ class BetaFunnelStats(BaseModel):
 
     sessions_started: int
     sessions_completed: int
-    sessions_abandoned: int   # in_progress AND updated_at < 24h ago (proxy metric)
-    completion_rate: float    # completed / started (0.0–1.0)
-    abandonment_rate: float   # abandoned / started
-    registrations: int        # total profiles created
+    sessions_abandoned: int  # in_progress AND updated_at < 24h ago (proxy metric)
+    completion_rate: float  # completed / started (0.0–1.0)
+    abandonment_rate: float  # abandoned / started
+    registrations: int  # total profiles created
     aura_scores_generated: int
 
 
@@ -123,13 +109,7 @@ async def get_beta_funnel_stats(
     This is not perfect (some users may still be in progress) but is a good signal.
     """
     # SEC-Q3: org-only guard — volunteers get 403
-    caller_row = (
-        await db.table("profiles")
-        .select("account_type")
-        .eq("id", user_id)
-        .maybe_single()
-        .execute()
-    )
+    caller_row = await db.table("profiles").select("account_type").eq("id", user_id).maybe_single().execute()
     account_type = (caller_row.data or {}).get("account_type", "volunteer")
     if account_type == "volunteer":
         raise HTTPException(

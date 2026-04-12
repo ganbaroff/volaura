@@ -27,6 +27,7 @@ router = APIRouter(prefix="/events", tags=["Events"])
 
 # ── List & create ─────────────────────────────────────────────────────────────
 
+
 @router.get("", response_model=list[EventResponse])
 @limiter.limit(RATE_DISCOVERY)
 async def list_events(
@@ -49,7 +50,15 @@ async def list_events(
 async def get_event(request: Request, event_id: str, db: SupabaseAdmin) -> EventResponse:
     """Get a single event by ID."""
     _validate_uuid(event_id, "event_id")
-    result = await db.table("events").select("*").eq("id", event_id).eq("is_public", True).neq("status", "draft").single().execute()
+    result = (
+        await db.table("events")
+        .select("*")
+        .eq("id", event_id)
+        .eq("is_public", True)
+        .neq("status", "draft")
+        .single()
+        .execute()
+    )
     if not result.data:
         raise HTTPException(status_code=404, detail={"code": "EVENT_NOT_FOUND", "message": "Event not found"})
     return EventResponse(**result.data)
@@ -103,7 +112,9 @@ async def update_event(
     # Verify ownership via RLS (SupabaseUser) — the policy handles it
     result = await db.table("events").update(update_data).eq("id", event_id).execute()
     if not result.data:
-        raise HTTPException(status_code=404, detail={"code": "EVENT_NOT_FOUND", "message": "Event not found or not authorized"})
+        raise HTTPException(
+            status_code=404, detail={"code": "EVENT_NOT_FOUND", "message": "Event not found or not authorized"}
+        )
     return EventResponse(**result.data[0])
 
 
@@ -120,11 +131,14 @@ async def delete_event(
     result = await db.table("events").update({"status": "cancelled"}).eq("id", event_id).execute()
     # HIGH-04 + HIGH-06 FIX: verify update succeeded + audit log
     if not result.data:
-        raise HTTPException(status_code=404, detail={"code": "EVENT_NOT_FOUND", "message": "Event not found or not owned"})
+        raise HTTPException(
+            status_code=404, detail={"code": "EVENT_NOT_FOUND", "message": "Event not found or not owned"}
+        )
     logger.info("Event cancelled", user_id=user_id, event_id=event_id)
 
 
 # ── Registrations ─────────────────────────────────────────────────────────────
+
 
 @router.post("/{event_id}/register", response_model=RegistrationResponse, status_code=201)
 @limiter.limit(RATE_PROFILE_WRITE)
@@ -142,33 +156,59 @@ async def register_for_event(
     if not event.data:
         raise HTTPException(status_code=404, detail={"code": "EVENT_NOT_FOUND", "message": "Event not found"})
     if event.data["status"] != "open":
-        raise HTTPException(status_code=409, detail={"code": "EVENT_NOT_OPEN", "message": "Event is not accepting registrations"})
+        raise HTTPException(
+            status_code=409, detail={"code": "EVENT_NOT_OPEN", "message": "Event is not accepting registrations"}
+        )
 
     # Check capacity
     if event.data.get("capacity"):
-        count = await db_admin.table("registrations").select("id", count="exact").eq("event_id", event_id).in_("status", ["approved", "pending"]).execute()
+        count = (
+            await db_admin.table("registrations")
+            .select("id", count="exact")
+            .eq("event_id", event_id)
+            .in_("status", ["approved", "pending"])
+            .execute()
+        )
         if (count.count or 0) >= event.data["capacity"]:
             # BUG-SEC-022 FIX: old message said "waitlisted" but waitlisting is not implemented
-            raise HTTPException(status_code=409, detail={"code": "EVENT_FULL", "message": "Event is at capacity. Waitlisting is not yet available."})
+            raise HTTPException(
+                status_code=409,
+                detail={"code": "EVENT_FULL", "message": "Event is at capacity. Waitlisting is not yet available."},
+            )
 
     # Check duplicate
-    existing = await db.table("registrations").select("id, status").eq("event_id", event_id).eq("volunteer_id", user_id).execute()
+    existing = (
+        await db.table("registrations")
+        .select("id, status")
+        .eq("event_id", event_id)
+        .eq("volunteer_id", user_id)
+        .execute()
+    )
     if existing.data:
         reg = existing.data[0]
         if reg["status"] not in ("cancelled",):
-            raise HTTPException(status_code=409, detail={"code": "ALREADY_REGISTERED", "message": "You are already registered for this event"})
+            raise HTTPException(
+                status_code=409,
+                detail={"code": "ALREADY_REGISTERED", "message": "You are already registered for this event"},
+            )
         # Re-activate cancelled registration
         result = await db.table("registrations").update({"status": "pending"}).eq("id", reg["id"]).execute()
         return RegistrationResponse(**result.data[0])
 
     # New registration
     check_in_code = secrets.token_urlsafe(12)
-    result = await db.table("registrations").insert({
-        "event_id": event_id,
-        "volunteer_id": user_id,
-        "status": "pending",
-        "check_in_code": check_in_code,
-    }).execute()
+    result = (
+        await db.table("registrations")
+        .insert(
+            {
+                "event_id": event_id,
+                "volunteer_id": user_id,
+                "status": "pending",
+                "check_in_code": check_in_code,
+            }
+        )
+        .execute()
+    )
     if not result.data:
         raise HTTPException(status_code=500, detail={"code": "REGISTER_FAILED", "message": "Failed to register"})
     return RegistrationResponse(**result.data[0])
@@ -202,7 +242,14 @@ async def check_in(
             detail={"code": "NOT_COORDINATOR", "message": "Only the event coordinator can check in participants"},
         )
 
-    result = await db.table("registrations").select("*").eq("event_id", event_id).eq("check_in_code", payload.check_in_code).single().execute()
+    result = (
+        await db.table("registrations")
+        .select("*")
+        .eq("event_id", event_id)
+        .eq("check_in_code", payload.check_in_code)
+        .single()
+        .execute()
+    )
     if not result.data:
         raise HTTPException(status_code=404, detail={"code": "INVALID_CODE", "message": "Check-in code not found"})
 
@@ -210,10 +257,17 @@ async def check_in(
     if reg["checked_in_at"]:
         raise HTTPException(status_code=409, detail={"code": "ALREADY_CHECKED_IN", "message": "Already checked in"})
 
-    updated = await db.table("registrations").update({
-        "status": "approved",
-        "checked_in_at": datetime.now(UTC).isoformat(),
-    }).eq("id", reg["id"]).execute()
+    updated = (
+        await db.table("registrations")
+        .update(
+            {
+                "status": "approved",
+                "checked_in_at": datetime.now(UTC).isoformat(),
+            }
+        )
+        .eq("id", reg["id"])
+        .execute()
+    )
     return RegistrationResponse(**updated.data[0])
 
 
@@ -234,18 +288,35 @@ async def coordinator_rate_volunteer(
     if not event.data:
         raise HTTPException(status_code=404, detail={"code": "EVENT_NOT_FOUND", "message": "Event not found"})
 
-    org = await db_admin.table("organizations").select("owner_id").eq("id", event.data["organization_id"]).single().execute()
+    org = (
+        await db_admin.table("organizations")
+        .select("owner_id")
+        .eq("id", event.data["organization_id"])
+        .single()
+        .execute()
+    )
     if not org.data or org.data["owner_id"] != user_id:
-        raise HTTPException(status_code=403, detail={"code": "NOT_AUTHORIZED", "message": "Only the org owner can rate participants"})
+        raise HTTPException(
+            status_code=403, detail={"code": "NOT_AUTHORIZED", "message": "Only the org owner can rate participants"}
+        )
 
-    result = await db_admin.table("registrations").update({
-        "coordinator_rating": payload.rating,
-        "coordinator_feedback": payload.feedback,
-        "coordinator_rated_at": datetime.now(UTC).isoformat(),
-    }).eq("id", payload.registration_id).execute()
+    result = (
+        await db_admin.table("registrations")
+        .update(
+            {
+                "coordinator_rating": payload.rating,
+                "coordinator_feedback": payload.feedback,
+                "coordinator_rated_at": datetime.now(UTC).isoformat(),
+            }
+        )
+        .eq("id", payload.registration_id)
+        .execute()
+    )
 
     if not result.data:
-        raise HTTPException(status_code=404, detail={"code": "REGISTRATION_NOT_FOUND", "message": "Registration not found"})
+        raise HTTPException(
+            status_code=404, detail={"code": "REGISTRATION_NOT_FOUND", "message": "Registration not found"}
+        )
 
     # Propagate to AURA event_performance — best effort (never blocks response)
     reg_data = result.data[0]
@@ -253,11 +324,13 @@ async def coordinator_rate_volunteer(
     if volunteer_id:
         try:
             # Average all coordinator ratings for this volunteer (across all events)
-            rated_regs = await db_admin.table("registrations") \
-                .select("coordinator_rating") \
-                .eq("volunteer_id", volunteer_id) \
-                .not_.is_("coordinator_rating", "null") \
+            rated_regs = (
+                await db_admin.table("registrations")
+                .select("coordinator_rating")
+                .eq("volunteer_id", volunteer_id)
+                .not_.is_("coordinator_rating", "null")
                 .execute()
+            )
             ratings = [r["coordinator_rating"] for r in (rated_regs.data or []) if r.get("coordinator_rating")]
             if ratings:
                 avg_rating = sum(ratings) / len(ratings)
@@ -293,21 +366,42 @@ async def volunteer_rate_event(
 ) -> RegistrationResponse:
     """Volunteer rates an event after attending."""
     _validate_uuid(event_id, "event_id")
-    reg = await db.table("registrations").select("*").eq("event_id", event_id).eq("volunteer_id", user_id).single().execute()
+    reg = (
+        await db.table("registrations")
+        .select("*")
+        .eq("event_id", event_id)
+        .eq("volunteer_id", user_id)
+        .single()
+        .execute()
+    )
     if not reg.data:
-        raise HTTPException(status_code=404, detail={"code": "REGISTRATION_NOT_FOUND", "message": "You are not registered for this event"})
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "REGISTRATION_NOT_FOUND", "message": "You are not registered for this event"},
+        )
 
     if reg.data["status"] not in ("approved",):
-        raise HTTPException(status_code=409, detail={"code": "NOT_ATTENDED", "message": "You can only rate events you attended"})
+        raise HTTPException(
+            status_code=409, detail={"code": "NOT_ATTENDED", "message": "You can only rate events you attended"}
+        )
 
     if reg.data.get("volunteer_rated_at"):
-        raise HTTPException(status_code=409, detail={"code": "ALREADY_RATED", "message": "You have already rated this event"})
+        raise HTTPException(
+            status_code=409, detail={"code": "ALREADY_RATED", "message": "You have already rated this event"}
+        )
 
-    result = await db.table("registrations").update({
-        "volunteer_rating": payload.rating,
-        "volunteer_feedback": payload.feedback,
-        "volunteer_rated_at": datetime.now(UTC).isoformat(),
-    }).eq("id", reg.data["id"]).execute()
+    result = (
+        await db.table("registrations")
+        .update(
+            {
+                "volunteer_rating": payload.rating,
+                "volunteer_feedback": payload.feedback,
+                "volunteer_rated_at": datetime.now(UTC).isoformat(),
+            }
+        )
+        .eq("id", reg.data["id"])
+        .execute()
+    )
 
     return RegistrationResponse(**result.data[0])
 
@@ -327,9 +421,18 @@ async def list_registrations(
     if not event_result.data:
         raise HTTPException(status_code=404, detail={"code": "EVENT_NOT_FOUND", "message": "Event not found"})
 
-    org_result = await db_admin.table("organizations").select("owner_id").eq("id", event_result.data["organization_id"]).single().execute()
+    org_result = (
+        await db_admin.table("organizations")
+        .select("owner_id")
+        .eq("id", event_result.data["organization_id"])
+        .single()
+        .execute()
+    )
     if not org_result.data or org_result.data["owner_id"] != str(user_id):
-        raise HTTPException(status_code=403, detail={"code": "NOT_ORG_OWNER", "message": "Only the organization owner can view registrations"})
+        raise HTTPException(
+            status_code=403,
+            detail={"code": "NOT_ORG_OWNER", "message": "Only the organization owner can view registrations"},
+        )
 
     result = await db_admin.table("registrations").select("*").eq("event_id", event_id).execute()
     return [RegistrationResponse(**row) for row in (result.data or [])]
@@ -350,18 +453,40 @@ async def list_attendees(
     if not event_result.data:
         raise HTTPException(status_code=404, detail={"code": "EVENT_NOT_FOUND", "message": "Event not found"})
 
-    org_result = await db_admin.table("organizations").select("owner_id").eq("id", event_result.data["organization_id"]).single().execute()
+    org_result = (
+        await db_admin.table("organizations")
+        .select("owner_id")
+        .eq("id", event_result.data["organization_id"])
+        .single()
+        .execute()
+    )
     if not org_result.data or org_result.data["owner_id"] != str(user_id):
-        raise HTTPException(status_code=403, detail={"code": "NOT_ORG_OWNER", "message": "Only the organization owner can view attendees"})
+        raise HTTPException(
+            status_code=403,
+            detail={"code": "NOT_ORG_OWNER", "message": "Only the organization owner can view attendees"},
+        )
 
-    regs = await db_admin.table("registrations").select("id, volunteer_id, status, registered_at, checked_in_at").eq("event_id", event_id).order("registered_at", desc=True).execute()
+    regs = (
+        await db_admin.table("registrations")
+        .select("id, volunteer_id, status, registered_at, checked_in_at")
+        .eq("event_id", event_id)
+        .order("registered_at", desc=True)
+        .execute()
+    )
     if not regs.data:
         return []
 
     volunteer_ids = [r["volunteer_id"] for r in regs.data]
 
-    profiles_result = await db_admin.table("profiles").select("id, display_name, username").in_("id", volunteer_ids).execute()
-    aura_result = await db_admin.table("aura_scores").select("volunteer_id, total_score, badge_tier").in_("volunteer_id", volunteer_ids).execute()
+    profiles_result = (
+        await db_admin.table("profiles").select("id, display_name, username").in_("id", volunteer_ids).execute()
+    )
+    aura_result = (
+        await db_admin.table("aura_scores")
+        .select("volunteer_id, total_score, badge_tier")
+        .in_("volunteer_id", volunteer_ids)
+        .execute()
+    )
 
     profile_map = {p["id"]: p for p in (profiles_result.data or [])}
     aura_map = {a["volunteer_id"]: a for a in (aura_result.data or [])}
@@ -371,17 +496,19 @@ async def list_attendees(
         vid = reg["volunteer_id"]
         p = profile_map.get(vid, {})
         a = aura_map.get(vid, {})
-        rows.append(EventAttendeeRow(
-            registration_id=reg["id"],
-            volunteer_id=vid,
-            status=reg["status"],
-            registered_at=reg["registered_at"],
-            checked_in_at=reg.get("checked_in_at"),
-            display_name=p.get("display_name"),
-            username=p.get("username"),
-            total_score=a.get("total_score"),
-            badge_tier=a.get("badge_tier"),
-        ))
+        rows.append(
+            EventAttendeeRow(
+                registration_id=reg["id"],
+                volunteer_id=vid,
+                status=reg["status"],
+                registered_at=reg["registered_at"],
+                checked_in_at=reg.get("checked_in_at"),
+                display_name=p.get("display_name"),
+                username=p.get("username"),
+                total_score=a.get("total_score"),
+                badge_tier=a.get("badge_tier"),
+            )
+        )
     return rows
 
 
@@ -393,7 +520,14 @@ async def my_registrations(
     user_id: CurrentUserId,
 ) -> list[RegistrationResponse]:
     """List the current volunteer's registrations."""
-    result = await db.table("registrations").select("*").eq("volunteer_id", user_id).order("registered_at", desc=True).limit(50).execute()
+    result = (
+        await db.table("registrations")
+        .select("*")
+        .eq("volunteer_id", user_id)
+        .order("registered_at", desc=True)
+        .limit(50)
+        .execute()
+    )
     return [RegistrationResponse(**row) for row in (result.data or [])]
 
 

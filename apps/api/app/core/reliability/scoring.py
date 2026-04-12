@@ -36,16 +36,16 @@ BEHAVIORAL_MIN = 30.0
 BEHAVIORAL_MAX = 70.0
 
 # Phase transition thresholds
-PHASE_FULL_PROVEN = 5      # 5+ events → 100% proven
-PHASE_BLEND_START = 1      # 1 event → start blending
+PHASE_FULL_PROVEN = 5  # 5+ events → 100% proven
+PHASE_BLEND_START = 1  # 1 event → start blending
 
 # No-show penalties (subtracted from proven score)
 NO_SHOW_PENALTIES: dict[str, float] = {
-    "ghost": -15.0,           # no contact at all
-    "same_day": -10.0,        # cancelled same day
-    "within_24h": -5.0,       # cancelled < 24 h before
-    "within_48h": -2.0,       # cancelled 24–48 h before
-    "advance": 0.0,           # cancelled 48 h+ before (no penalty)
+    "ghost": -15.0,  # no contact at all
+    "same_day": -10.0,  # cancelled same day
+    "within_24h": -5.0,  # cancelled < 24 h before
+    "within_48h": -2.0,  # cancelled 24–48 h before
+    "advance": 0.0,  # cancelled 48 h+ before (no penalty)
 }
 
 # Recovery bonuses
@@ -55,21 +55,24 @@ SUCCESSFUL_ATTENDANCE_BONUS = 5.0
 
 # ── Input models ──────────────────────────────────────────────────────────────
 
+
 @dataclass
 class BehavioralSignals:
     """Raw input signals collected during onboarding and assessment."""
+
     # Each in 0.0–1.0 range (fraction of completion / verification)
-    onboarding_velocity: float = 0.5      # how quickly completed onboarding
-    assessment_completion: float = 0.0   # fraction of competencies assessed
-    profile_completeness: float = 0.0    # fraction of profile fields filled
-    sjt_reliability: float = 0.5         # SJT masked question score
-    contact_verification: float = 0.0    # email+phone verified = 1.0
-    availability_specificity: float = 0.0 # how specific availability hours are
+    onboarding_velocity: float = 0.5  # how quickly completed onboarding
+    assessment_completion: float = 0.0  # fraction of competencies assessed
+    profile_completeness: float = 0.0  # fraction of profile fields filled
+    sjt_reliability: float = 0.5  # SJT masked question score
+    contact_verification: float = 0.0  # email+phone verified = 1.0
+    availability_specificity: float = 0.0  # how specific availability hours are
 
 
 @dataclass
 class EventHistory:
     """Aggregated event attendance record for proven scoring."""
+
     total_registered: int = 0
     total_attended: int = 0
     total_no_shows: int = 0
@@ -80,15 +83,13 @@ class EventHistory:
 
 # ── Core functions ────────────────────────────────────────────────────────────
 
+
 def behavioral_score(signals: BehavioralSignals) -> float:
     """Compute the behavioral reliability score (0–100) from input signals.
 
     Clamps to [BEHAVIORAL_MIN, BEHAVIORAL_MAX] to represent uncertainty.
     """
-    raw = sum(
-        getattr(signals, sig) * weight
-        for sig, weight in SIGNAL_WEIGHTS.items()
-    )
+    raw = sum(getattr(signals, sig) * weight for sig, weight in SIGNAL_WEIGHTS.items())
     # Scale 0-1 → BEHAVIORAL_MIN to BEHAVIORAL_MAX
     scaled = BEHAVIORAL_MIN + raw * (BEHAVIORAL_MAX - BEHAVIORAL_MIN)
     return round(max(BEHAVIORAL_MIN, min(BEHAVIORAL_MAX, scaled)), 2)

@@ -29,8 +29,8 @@ MIN_ITEMS_BEFORE_SE_STOP = 5  # Need at least 3 answers before SE stop
 # Low:  minimal, hard cap at 5 items, lax SE threshold
 ENERGY_STOPPING: dict[str, dict[str, float]] = {
     "full": {"max_items": 20, "se_threshold": 0.3, "min_before_se": 5},
-    "mid":  {"max_items": 12, "se_threshold": 0.4, "min_before_se": 4},
-    "low":  {"max_items": 5,  "se_threshold": 0.5, "min_before_se": 3},
+    "mid": {"max_items": 12, "se_threshold": 0.4, "min_before_se": 4},
+    "low": {"max_items": 5, "se_threshold": 0.5, "min_before_se": 3},
 }
 ABILITY_SCALE_MIN = -4.0
 ABILITY_SCALE_MAX = 4.0
@@ -42,6 +42,7 @@ NUM_QUADRATURE_POINTS = 49  # Odd number for symmetric grid
 @dataclass
 class ItemRecord:
     """One administered item with the volunteer's response."""
+
     question_id: str
     irt_a: float
     irt_b: float
@@ -49,7 +50,7 @@ class ItemRecord:
     response: int  # 0 or 1 (for open-ended: binarised via BARS threshold)
     raw_score: float  # 0.0-1.0 continuous score (BARS output)
     response_time_ms: int
-    theta_at_answer: float = 0.0   # RT-IRT: theta snapshot BEFORE this item was administered
+    theta_at_answer: float = 0.0  # RT-IRT: theta snapshot BEFORE this item was administered
     evaluation_log: dict | None = None  # Phase 2: BARS per-concept breakdown
 
 
@@ -60,14 +61,15 @@ class CATState:
     This is serialised/deserialised from the Supabase `assessment_sessions.answers`
     JSONB column so we can resume across HTTP requests.
     """
-    theta: float = 0.0          # current ability estimate (logit scale)
-    theta_se: float = 1.0       # standard error of estimate
+
+    theta: float = 0.0  # current ability estimate (logit scale)
+    theta_se: float = 1.0  # standard error of estimate
     items: list[ItemRecord] = field(default_factory=list)
     stopped: bool = False
     stop_reason: str | None = None  # "se_threshold" | "max_items" | "no_items_left" | "eap_degraded"
-    eap_failures: int = 0       # S8.1: count of EAP estimation failures across requests
-    prior_mean: float = 0.0   # stored for EAP re-estimation across session
-    prior_sd: float = 1.0     # stored for EAP re-estimation across session
+    eap_failures: int = 0  # S8.1: count of EAP estimation failures across requests
+    prior_mean: float = 0.0  # stored for EAP re-estimation across session
+    prior_sd: float = 1.0  # stored for EAP re-estimation across session
 
     # --- serialisation helpers ----------------------------------------
 
@@ -145,7 +147,7 @@ def _fisher_information(theta: float, a: float, b: float, c: float) -> float:
     q = 1.0 - p
     if p < 1e-10 or q < 1e-10:
         return 0.0
-    numerator = (a ** 2) * ((p - c) ** 2) * q
+    numerator = (a**2) * ((p - c) ** 2) * q
     denominator = ((1.0 - c) ** 2) * p
     if denominator < 1e-10:
         return 0.0
@@ -301,18 +303,14 @@ def submit_response(
         # across HTTP requests. Dynamic _eap_failures attribute was lost on every
         # deserialization, allowing silent score corruption to accumulate indefinitely.
         from loguru import logger
+
         state.eap_failures += 1
-        logger.warning(
-            f"EAP estimation failed (attempt #{state.eap_failures}), "
-            f"keeping theta={state.theta:.4f}: {e}"
-        )
+        logger.warning(f"EAP estimation failed (attempt #{state.eap_failures}), keeping theta={state.theta:.4f}: {e}")
         # Abort session after 3 cumulative EAP failures (prevents bogus scores)
         if state.eap_failures >= 3:
             state.stopped = True
             state.stop_reason = "eap_degraded"
-            logger.error(
-                f"EAP failed {state.eap_failures} times — stopping session (eap_degraded)"
-            )
+            logger.error(f"EAP failed {state.eap_failures} times — stopping session (eap_degraded)")
 
     return state
 

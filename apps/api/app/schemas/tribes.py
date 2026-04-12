@@ -10,6 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 class TribeMemberStatus(BaseModel):
     """Public view of a tribe member — activity only, no scores."""
+
     model_config = ConfigDict(from_attributes=True)
 
     user_id: str
@@ -21,6 +22,7 @@ class TribeMemberStatus(BaseModel):
 
 class TribeOut(BaseModel):
     """A user's current tribe."""
+
     model_config = ConfigDict(from_attributes=True)
 
     tribe_id: str
@@ -33,6 +35,7 @@ class TribeOut(BaseModel):
 
 class TribeStreakOut(BaseModel):
     """A user's personal tribe streak — visible only to themselves."""
+
     model_config = ConfigDict(from_attributes=True)
 
     current_streak: int
@@ -62,6 +65,7 @@ class RenewalResponse(BaseModel):
 
 class TribeMatchPreview(BaseModel):
     """Returned to user when they join the matching pool."""
+
     in_pool: bool = True
     estimated_wait: str = "Your tribe will be matched within 24 hours."
 
@@ -72,14 +76,17 @@ class PoolStatusOut(BaseModel):
     Used by GET /api/tribes/me/pool-status so the frontend can show
     'Finding your tribe...' across page refreshes instead of the join CTA.
     """
+
     in_pool: bool
     joined_at: str | None = None  # ISO 8601 — None when not in pool
 
 
 # ── Internal (service-level, not API responses) ───────────────────────────────
 
+
 class TribeMatchCandidate(BaseModel):
     """Used internally by matching service."""
+
     user_id: str
     aura_score: float
     assessments_last_30d: int

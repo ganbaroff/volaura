@@ -48,6 +48,7 @@ from app.config import settings
 
 class ProviderRole(StrEnum):
     """Semantic role in the swarm / runtime — not a model name."""
+
     JUDGE = "judge"
     WORKER = "worker"
     FAST = "fast"
@@ -57,12 +58,13 @@ class ProviderRole(StrEnum):
 @dataclass(frozen=True)
 class ProviderSpec:
     """Resolved provider — ready to hand to an SDK client."""
-    provider: str           # 'cerebras' | 'ollama' | 'nvidia' | 'gemini' | 'groq' | 'anthropic'
-    model: str              # exact model id
-    base_url: str | None # for OpenAI-compatible endpoints
-    api_key: str            # resolved from settings; "" means zero-auth (Ollama)
-    rationale: str          # human-readable reason this was picked
-    is_fallback: bool       # True if we did NOT get the first-choice provider
+
+    provider: str  # 'cerebras' | 'ollama' | 'nvidia' | 'gemini' | 'groq' | 'anthropic'
+    model: str  # exact model id
+    base_url: str | None  # for OpenAI-compatible endpoints
+    api_key: str  # resolved from settings; "" means zero-auth (Ollama)
+    rationale: str  # human-readable reason this was picked
+    is_fallback: bool  # True if we did NOT get the first-choice provider
 
 
 # ── Preference chains per role ──────────────────────────────────────────

@@ -9,12 +9,13 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 class CollectiveAuraResponse(BaseModel):
     """Aggregated AURA talent pool metrics for an org. Used by Collective AURA Ladders."""
+
     model_config = ConfigDict(from_attributes=True)
 
     org_id: str
     count: int
-    avg_aura: float | None = None   # None when count == 0
-    trend: float | None = None      # delta vs 30 days ago; None when insufficient data
+    avg_aura: float | None = None  # None when count == 0
+    trend: float | None = None  # delta vs 30 days ago; None when insufficient data
 
 
 class OrganizationCreate(BaseModel):
@@ -39,6 +40,7 @@ class OrganizationUpdate(BaseModel):
 
 class OrganizationResponse(BaseModel):
     """Public organization response — owner_id intentionally excluded to prevent UUID enumeration."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -77,6 +79,7 @@ class VolunteerSearchRequest(BaseModel):
 
 class AssignAssessmentRequest(BaseModel):
     """Assign one or more competency assessments to specific volunteers."""
+
     model_config = ConfigDict(from_attributes=True)
 
     volunteer_ids: list[str] = Field(..., min_length=1, max_length=100)
@@ -88,6 +91,7 @@ class AssignAssessmentRequest(BaseModel):
     @classmethod
     def validate_volunteer_ids(cls, v: list[str]) -> list[str]:
         import uuid as _uuid
+
         for vid in v:
             try:
                 _uuid.UUID(vid)
@@ -99,6 +103,7 @@ class AssignAssessmentRequest(BaseModel):
     @classmethod
     def validate_competency_slugs(cls, v: list[str]) -> list[str]:
         import re
+
         slug_re = re.compile(r"^[a-z][a-z0-9_]{1,49}$")
         for slug in v:
             if not slug_re.match(slug):
@@ -108,6 +113,7 @@ class AssignAssessmentRequest(BaseModel):
 
 class AssignmentResponse(BaseModel):
     """Result of assignment operation."""
+
     assigned_count: int
     skipped_count: int
     errors: list[str] = []
@@ -118,15 +124,16 @@ class VolunteerSearchResult(BaseModel):
     volunteer_id: str
     username: str
     display_name: str | None = None
-    overall_score: float               # renamed from total_score for API consistency
+    overall_score: float  # renamed from total_score for API consistency
     badge_tier: str
     elite_status: bool
     location: str | None = None
     languages: list[str] = []
-    similarity: float | None = None     # cosine similarity from pgvector
+    similarity: float | None = None  # cosine similarity from pgvector
 
 
 # ── Org dashboard schemas ──────────────────────────────────────────────────────
+
 
 class BadgeDistribution(BaseModel):
     platinum: int = 0
@@ -138,29 +145,31 @@ class BadgeDistribution(BaseModel):
 
 class OrgDashboardStats(BaseModel):
     """Aggregate stats for the org management dashboard."""
+
     org_id: str
     org_name: str
-    total_assigned: int          # total assessment sessions created by this org
-    total_completed: int         # sessions with status='completed'
-    completion_rate: float       # completed / assigned (0.0–1.0)
-    avg_aura_score: float | None # average AURA total_score across completed volunteers
+    total_assigned: int  # total assessment sessions created by this org
+    total_completed: int  # sessions with status='completed'
+    completion_rate: float  # completed / assigned (0.0–1.0)
+    avg_aura_score: float | None  # average AURA total_score across completed volunteers
     badge_distribution: BadgeDistribution
     top_volunteers: list[OrgVolunteerRow]  # top 5 by AURA score
 
 
 class OrgVolunteerRow(BaseModel):
     """One volunteer row in the org dashboard table."""
+
     volunteer_id: str
     username: str
     display_name: str | None = None
     overall_score: float | None = None
     badge_tier: str | None = None
-    competencies_completed: int    # how many competencies this user completed for this org
-    last_activity: str | None = None   # ISO datetime of last completed session
-
+    competencies_completed: int  # how many competencies this user completed for this org
+    last_activity: str | None = None  # ISO datetime of last completed session
 
 
 # ── Intro Requests ─────────────────────────────────────────────────────────────
+
 
 class IntroRequestCreate(BaseModel):
     volunteer_id: str
@@ -180,6 +189,7 @@ class IntroRequestCreate(BaseModel):
     @classmethod
     def validate_volunteer_uuid(cls, v: str) -> str:
         import uuid as _uuid
+
         try:
             _uuid.UUID(v)
         except ValueError:
@@ -189,12 +199,14 @@ class IntroRequestCreate(BaseModel):
 
 # ── Saved Searches (Sprint 8) ─────────────────────────────────────────────────
 
+
 class SavedSearchFilters(BaseModel):
     """Mirrors VolunteerSearchRequest — the JSONB payload stored in org_saved_searches.filters.
 
     Keeping this as a dedicated model (not reusing VolunteerSearchRequest) prevents drift:
     saved filters never include pagination (limit/offset) and must be stable across versions.
     """
+
     model_config = ConfigDict(str_strip_whitespace=True)
 
     query: str = Field(default="", max_length=500)
@@ -219,6 +231,7 @@ class SavedSearchFilters(BaseModel):
 
 class SavedSearchCreate(BaseModel):
     """Payload for POST /organizations/{org_id}/saved-searches."""
+
     model_config = ConfigDict(str_strip_whitespace=True)
 
     name: str = Field(..., min_length=1, max_length=100)
@@ -228,6 +241,7 @@ class SavedSearchCreate(BaseModel):
 
 class SavedSearchUpdate(BaseModel):
     """Payload for PATCH /organizations/{org_id}/saved-searches/{search_id}."""
+
     model_config = ConfigDict(str_strip_whitespace=True)
 
     name: str | None = Field(default=None, min_length=1, max_length=100)
@@ -236,6 +250,7 @@ class SavedSearchUpdate(BaseModel):
 
 class SavedSearchOut(BaseModel):
     """Response for a saved search row."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
@@ -249,15 +264,17 @@ class SavedSearchOut(BaseModel):
 
 class SavedSearchMatchPreview(BaseModel):
     """Match result returned in CEO Telegram notification — lightweight volunteer summary."""
+
     volunteer_id: str
     display_name: str | None = None
     overall_score: float
     badge_tier: str
-    top_competency: str | None = None   # highest-scoring competency slug
+    top_competency: str | None = None  # highest-scoring competency slug
 
 
 class SavedSearchMatchNotification(BaseModel):
     """Structured payload for match notifications — Telegram + ceo-inbox.md."""
+
     search_id: str
     search_name: str
     org_id: str

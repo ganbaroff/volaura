@@ -145,25 +145,25 @@ async def discover_volunteers(
     # filter competency score in Python. Avoids cast errors at DB level.
     if competency and score_min > 0.0:
         aura_rows = [
-            row for row in aura_rows
-            if float((row.get("competency_scores") or {}).get(competency, 0.0)) >= score_min
+            row for row in aura_rows if float((row.get("competency_scores") or {}).get(competency, 0.0)) >= score_min
         ]
 
     # ── Step 3: Cursor tiebreaker (all sort types) ───────────────────────────
     # Removes rows where (sort_field == cursor_value AND volunteer_id <= after_id)
     if sort_by == "score" and after_score is not None and after_id is not None:
         aura_rows = [
-            row for row in aura_rows
-            if not (row["total_score"] == after_score and row["volunteer_id"] <= after_id)
+            row for row in aura_rows if not (row["total_score"] == after_score and row["volunteer_id"] <= after_id)
         ]
     elif sort_by == "events" and after_events is not None and after_id is not None:
         aura_rows = [
-            row for row in aura_rows
+            row
+            for row in aura_rows
             if not (int(row.get("events_attended", 0)) == after_events and row["volunteer_id"] <= after_id)
         ]
     elif sort_by == "recent" and after_updated is not None and after_id is not None:
         aura_rows = [
-            row for row in aura_rows
+            row
+            for row in aura_rows
             if not (row.get("last_updated") == after_updated and row["volunteer_id"] <= after_id)
         ]
 
@@ -176,13 +176,8 @@ async def discover_volunteers(
     profile_map: dict[str, str | None] = {}
 
     if volunteer_ids:
-        profiles_result = await (
-            db_admin.table("profiles")
-            .select("id,display_name")
-            .in_("id", volunteer_ids)
-            .execute()
-        )
-        for p in (profiles_result.data or []):
+        profiles_result = await db_admin.table("profiles").select("id,display_name").in_("id", volunteer_ids).execute()
+        for p in profiles_result.data or []:
             profile_map[p["id"]] = p.get("display_name")
 
     # ── Step 6: Sessions query — single bounded call for role_level filter + role_map ──
@@ -200,17 +195,14 @@ async def discover_volunteers(
             .order("completed_at", desc=True)
             .execute()
         )
-        for s in (sessions_result.data or []):
+        for s in sessions_result.data or []:
             vid = s["volunteer_id"]
             if vid not in role_map:  # first = most recent (ordered desc)
                 role_map[vid] = s.get("role_level")
 
     # Apply role_level filter using already-fetched role_map (no extra DB call)
     if role_level:
-        aura_rows = [
-            row for row in aura_rows
-            if role_map.get(row["volunteer_id"]) == role_level
-        ]
+        aura_rows = [row for row in aura_rows if role_map.get(row["volunteer_id"]) == role_level]
         volunteer_ids = [row["volunteer_id"] for row in aura_rows]
 
     # ── Step 8: Build response ────────────────────────────────────────────────
@@ -221,16 +213,18 @@ async def discover_volunteers(
         comp_scores = row.get("competency_scores") or {}
         c_score = float(comp_scores.get(competency, 0.0)) if competency else None
 
-        results.append(DiscoveryVolunteer(
-            volunteer_id=vid,
-            display_name=_anonymize_name(raw_name),
-            badge_tier=row.get("badge_tier", "None"),
-            total_score=round(float(row.get("total_score", 0.0)), 1),
-            competency_score=round(c_score, 3) if c_score is not None else None,
-            role_level=role_map.get(vid),
-            events_attended=int(row.get("events_attended", 0)),
-            last_updated=row.get("last_updated"),
-        ))
+        results.append(
+            DiscoveryVolunteer(
+                volunteer_id=vid,
+                display_name=_anonymize_name(raw_name),
+                badge_tier=row.get("badge_tier", "None"),
+                total_score=round(float(row.get("total_score", 0.0)), 1),
+                competency_score=round(c_score, 3) if c_score is not None else None,
+                role_level=role_map.get(vid),
+                events_attended=int(row.get("events_attended", 0)),
+                last_updated=row.get("last_updated"),
+            )
+        )
 
     # Build next-page cursor from last item (sort-type aware)
     next_after_score: float | None = None

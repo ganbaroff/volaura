@@ -19,12 +19,14 @@ from app.config import settings
 
 # CSP for API: JSON responses only, no scripts/styles/images needed.
 # This blocks any XSS payload that might leak through LLM-evaluated content.
-_CSP_PRODUCTION = "; ".join([
-    "default-src 'none'",
-    "frame-ancestors 'none'",
-    "base-uri 'none'",
-    "form-action 'none'",
-])
+_CSP_PRODUCTION = "; ".join(
+    [
+        "default-src 'none'",
+        "frame-ancestors 'none'",
+        "base-uri 'none'",
+        "form-action 'none'",
+    ]
+)
 
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
@@ -37,9 +39,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
 
         if not settings.is_dev:
-            response.headers["Strict-Transport-Security"] = (
-                "max-age=31536000; includeSubDomains; preload"
-            )
+            response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
             response.headers["Content-Security-Policy"] = _CSP_PRODUCTION
 
         return response

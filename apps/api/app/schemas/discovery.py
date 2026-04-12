@@ -27,6 +27,7 @@ COMPETENCY_SLUGS = {
 
 class DiscoveryRequest(BaseModel):
     """Query parameters for volunteer discovery."""
+
     model_config = ConfigDict(from_attributes=True)
 
     competency: str | None = Field(
@@ -70,9 +71,7 @@ class DiscoveryRequest(BaseModel):
     @classmethod
     def validate_competency(cls, v: str | None) -> str | None:
         if v is not None and v not in COMPETENCY_SLUGS:
-            raise ValueError(
-                f"Invalid competency slug '{v}'. Valid: {sorted(COMPETENCY_SLUGS)}"
-            )
+            raise ValueError(f"Invalid competency slug '{v}'. Valid: {sorted(COMPETENCY_SLUGS)}")
         return v
 
     @field_validator("after_id")
@@ -80,6 +79,7 @@ class DiscoveryRequest(BaseModel):
     def validate_after_id(cls, v: str | None) -> str | None:
         if v is not None:
             import uuid as _uuid
+
             try:
                 _uuid.UUID(v)
             except ValueError:
@@ -89,6 +89,7 @@ class DiscoveryRequest(BaseModel):
 
 # ── Response ───────────────────────────────────────────────────────────────────
 
+
 class DiscoveryVolunteer(BaseModel):
     """Single volunteer in discovery results.
 
@@ -97,34 +98,37 @@ class DiscoveryVolunteer(BaseModel):
     - competency_score: only the REQUESTED competency — not full competency_scores JSONB
     - volunteer_id: exposed intentionally — used by POST /organizations/{id}/assign-assessments
     """
+
     model_config = ConfigDict(from_attributes=True)
 
     volunteer_id: str
-    display_name: str                       # server-anonymized: "Leyla A."
+    display_name: str  # server-anonymized: "Leyla A."
     badge_tier: str
     total_score: float
-    competency_score: float | None = None   # score for queried competency; null if no filter
-    role_level: str | None = None           # most recent assessed role
+    competency_score: float | None = None  # score for queried competency; null if no filter
+    role_level: str | None = None  # most recent assessed role
     events_attended: int = 0
     last_updated: datetime | None = None
 
 
 class DiscoveryMeta(BaseModel):
     """Pagination metadata for discovery results."""
-    returned: int           # items in this page
+
+    returned: int  # items in this page
     limit: int
-    has_more: bool          # True if there are more pages
+    has_more: bool  # True if there are more pages
     # Cursors for next page — which fields are populated depends on sort_by:
     #   sort_by=score  → next_after_score + next_after_id
     #   sort_by=events → next_after_events + next_after_id
     #   sort_by=recent → next_after_updated + next_after_id
     next_after_score: float | None = None
     next_after_events: int | None = None
-    next_after_updated: str | None = None   # ISO datetime string
+    next_after_updated: str | None = None  # ISO datetime string
     next_after_id: str | None = None
 
 
 class DiscoveryResponse(BaseModel):
     """Wrapped discovery response following {data, meta} envelope."""
+
     data: list[DiscoveryVolunteer]
     meta: DiscoveryMeta

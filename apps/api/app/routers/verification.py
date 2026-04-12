@@ -216,7 +216,7 @@ async def submit_verification(
             }
         )
         .eq("token", token)
-        .eq("token_used", False)   # extra guard against TOCTOU
+        .eq("token_used", False)  # extra guard against TOCTOU
         .execute()
     )
 

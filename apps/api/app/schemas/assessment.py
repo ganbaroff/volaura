@@ -74,7 +74,7 @@ class StartAssessmentRequest(BaseModel):
 class SubmitAnswerRequest(BaseModel):
     session_id: str
     question_id: str
-    answer: str           # text for open-ended; option key for MCQ
+    answer: str  # text for open-ended; option key for MCQ
     response_time_ms: int
 
     @field_validator("session_id")
@@ -105,8 +105,7 @@ class SubmitAnswerRequest(BaseModel):
         for pattern in _INJECTION_PATTERNS:
             if pattern.search(v):
                 raise ValueError(
-                    "Answer contains disallowed content. "
-                    "Please provide a genuine response to the assessment question."
+                    "Answer contains disallowed content. Please provide a genuine response to the assessment question."
                 )
         return v
 
@@ -122,12 +121,14 @@ class SubmitAnswerRequest(BaseModel):
 
 # ── Response schemas ──────────────────────────────────────────────────────────
 
+
 class QuestionOut(BaseModel):
     """A single question as served to the frontend."""
+
     model_config = ConfigDict(from_attributes=True)
 
     id: str
-    question_type: str        # "mcq" | "open_ended" | "sjt"
+    question_type: str  # "mcq" | "open_ended" | "sjt"
     question_en: str
     question_az: str
     question_ru: str | None = None
@@ -143,6 +144,7 @@ class SessionOut(BaseModel):
     Exposing IRT ability estimates enables reverse-engineering the CAT algorithm
     and predicting upcoming questions. (Security audit P1, 2026-03-24)
     """
+
     session_id: str
     competency_slug: str
     role_level: str = "volunteer"
@@ -159,6 +161,7 @@ class AnswerFeedback(BaseModel):
     Exposing BARS scores enables calibration attacks — users can reverse-engineer
     what answer patterns score highest by submitting variations.
     """
+
     session_id: str
     question_id: str
     # raw_score REMOVED — security audit CRIT-03 (2026-03-25)
@@ -172,10 +175,11 @@ class AssessmentResultOut(BaseModel):
     NOTE: theta/theta_se intentionally NOT exposed to client (security audit P1).
     Exposing IRT ability estimates enables reverse-engineering the CAT algorithm.
     """
+
     session_id: str
     competency_slug: str
     # theta/theta_se REMOVED — security audit P1 (2026-03-24)
-    competency_score: float   # 0–100 (theta mapped via sigmoid)
+    competency_score: float  # 0–100 (theta mapped via sigmoid)
     questions_answered: int
     stop_reason: str | None = None
     aura_updated: bool = False
@@ -209,6 +213,7 @@ class QuestionResultOut(BaseModel):
     difficulty_label is a mapped human-readable label from irt_b thresholds.
     is_correct is derived from raw_score > 0 (binary, no numeric leak).
     """
+
     model_config = ConfigDict(from_attributes=True)
 
     question_id: str
@@ -222,6 +227,7 @@ class QuestionResultOut(BaseModel):
 
 class QuestionBreakdownOut(BaseModel):
     """Full per-question breakdown for a completed session."""
+
     model_config = ConfigDict(from_attributes=True)
 
     session_id: str
@@ -236,6 +242,7 @@ class PublicVerificationOut(BaseModel):
     Intentionally minimal: proves the assessment happened, shows score + competency,
     does NOT expose questions, answers, or IRT parameters.
     """
+
     model_config = ConfigDict(from_attributes=True)
 
     verified: bool = True
@@ -253,6 +260,7 @@ class PublicVerificationOut(BaseModel):
 
 class AssessmentInfoOut(BaseModel):
     """Pre-assessment info shown before starting a competency assessment."""
+
     model_config = ConfigDict(from_attributes=True)
 
     competency_slug: str

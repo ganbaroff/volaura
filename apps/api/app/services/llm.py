@@ -37,8 +37,7 @@ if settings.langfuse_public_key and settings.langfuse_secret_key:
         logger.info("Langfuse tracing enabled")
     except ImportError:
         logger.warning(
-            "Langfuse keys are set but 'langfuse' package is not installed. "
-            "Tracing disabled. Run: pip install langfuse"
+            "Langfuse keys are set but 'langfuse' package is not installed. Tracing disabled. Run: pip install langfuse"
         )
 else:
     logger.debug("Langfuse keys not set — LLM tracing disabled")
@@ -54,6 +53,7 @@ def _trace(*, name: str | None = None, as_type: str | None = None):
         name: Span name in Langfuse (e.g. "evaluate_with_llm").
         as_type: Langfuse span type — "generation" for LLM calls, None for generic spans.
     """
+
     def decorator(func):
         if not _langfuse_available:
             return func
@@ -63,7 +63,9 @@ def _trace(*, name: str | None = None, as_type: str | None = None):
         if as_type:
             kwargs["as_type"] = as_type
         return observe(**kwargs)(func)
+
     return decorator
+
 
 # Singleton clients — initialized once on first call, reused for connection pool efficiency.
 # Architecture agent note: 880 RPM at activation wave = 880 client object creations/min
@@ -113,6 +115,7 @@ def _get_vertex_client() -> Any:
     global _vertex_client
     if _vertex_client is None:
         from google import genai
+
         # Vertex Express mode: vertexai=True + api_key — do NOT pass project/location
         # (that's the ADC path, mutually exclusive with Express key auth)
         _vertex_client = genai.Client(vertexai=True, api_key=settings.vertex_api_key)
@@ -124,6 +127,7 @@ def _get_gemini_client() -> Any:
     global _gemini_client
     if _gemini_client is None:
         from google import genai
+
         _gemini_client = genai.Client(api_key=settings.gemini_api_key)
     return _gemini_client
 

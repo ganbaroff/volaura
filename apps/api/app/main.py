@@ -102,6 +102,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # Flush Langfuse traces before exit — prevents data loss on redeploy
     try:
         from app.services.llm import flush_langfuse
+
         flush_langfuse()
     except Exception:
         pass

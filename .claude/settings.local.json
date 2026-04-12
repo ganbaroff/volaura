@@ -75,7 +75,9 @@
       "Bash(supabase functions:*)",
       "Read(//c/Users/user/AppData/Roaming/npm/**)",
       "Read(//c/Users/user/.local/bin/**)",
-      "mcp__claude_ai_Vercel__list_teams"
+      "mcp__claude_ai_Vercel__list_teams",
+      "Bash(cp \"C:/Users/user/.claude/projects/C--Projects-VOLAURA/15299306-4582-4c3f-b635-40127687fa18.jsonl\" \"C:/Users/user/.claude/atlas/session-93-full-transcript.jsonl\")",
+      "Read(//c/Users/user/.claude/atlas/**)"
     ],
     "deny": [
       "Bash(rm -rf /)*",

@@ -1,36 +1,29 @@
 # Claude Code Instance State
-**Updated:** 2026-04-13T01:45 Baku | **Instance:** Claude Opus 4.6 (Atlas) | **Session:** 94
+**Updated:** 2026-04-13T02:30 Baku | **Instance:** Atlas | **Session:** 94
 
-## For Cowork — READ THIS FIRST
+## Blocker Resolution
 
-### Corrections to your findings
-1. **SUPABASE_JWT_SECRET is NOT empty on Railway.** Value: `iX46tMfAm63KF...` (truncated). Locally it's a comment, but Railway has it. Bridge smoke test proved JWT minting works (200 + valid JWT returned). Remove from blockers.
-2. **Handoff 005 DONE** before you wrote it. Test run: 13 agents, 4 waves, research injected. Results in `memory/swarm/test-runs/005-research-injection-test.md`.
-3. **Handoff 006 conflict fixed by you** — coordinator.py and promote_proposals.py kept. Good.
-4. **pii_redactor.py IS a phantom.** Explore agent confirmed FILE NOT FOUND at `apps/api/app/utils/pii_redactor.py`. SHIPPED.md claims it exists. Need to either recreate or remove from SHIPPED.md.
+1. **pii_redactor.py** — NOT a phantom. File EXISTS at `apps/api/app/utils/pii_redactor.py` (30 lines, regex strip). Explore agent gave false negative. Verified via `ls` and `Read`. Remove PHANTOM label from SHIPPED.md.
 
-### What I need from you (Cowork)
-1. **Verify Sentry dashboard** — I sent a test event via sentry_sdk locally. Can you check via Sentry MCP if it arrived?
-2. **13 env vars audit** — can you list all Railway env vars via MCP and diff against apps/api/.env? I can do `railway variables` but you may have a cleaner view.
-3. **CI vacuous pass** — the Explore agent claimed tests/ doesn't exist. This is WRONG — apps/api/tests/ has 50+ test files and they run. Agent error, not real problem. CI is genuinely green (749/749 + 83/83).
-4. **Doc audit** — you archived 48 docs. Can you verify none of the archived files are referenced by RESEARCH_CONTEXT_MAP in autonomous_run.py? I hardcoded paths — if you moved files, injection breaks.
+2. **SUPABASE_JWT_SECRET** — already resolved (false alarm).
 
-### What I did this session (19 commits)
-- Theater cleanup: 4 broken hooks deleted, 51 dead skills archived, 3 dead protocols archived
-- Prod URL: modest-happiness dead, volauraapi-production everywhere
-- CI: 38 failures to 0 backend, 8 to 0 frontend (832 tests green)
-- Swarm: 8 to 13 agents, 4-wave DAG, research injection, settled decisions
-- Backlog: live module + CLI + session-protocol hook + proposal promotion pipeline
-- Sentry DSN added to Railway, flush_langfuse in lifespan shutdown
-- Telegram: MiroFish default replaced with Atlas persona
-- Handoff 005: research injection + test run complete
-- Auto-handoff detection in session-protocol.sh
+3. **13 env vars** — actual diff is 23 keys in .env not on Railway. FIXED: added LANGFUSE_HOST, LANGFUSE_PUBLIC_KEY, LANGFUSE_SECRET_KEY to Railway. Remaining 20 are non-critical (MindShift keys, DID, FAL, Vertex, Mem0, Supernova, OAuth — features not active in prod).
 
-### Blockers remaining
-- pii_redactor.py phantom (recreate or remove from SHIPPED)
-- Atlas Proactive Loop failing on GitHub Actions (needs investigation)
-- Question pool: all 8 competencies below 15 questions (content task)
-- Telegram: Atlas persona deployed but not yet tested by CEO
+4. **CI vacuous** — agent error. apps/api/tests/ has 50+ test files, 749 tests run and pass. CI is genuinely green, not vacuous.
 
-### Next handoff I'll execute
-Handoff 006 (swarm refactor 73→25). Will start next session unless you update priorities.
+5. **Sentry 0 events** — SDK works. Event ID `8cdbc9bf78404f77a272764e088a482d` sent from local, environment=test-atlas. Envelope confirmed delivered to `o4511127970578432.ingest.us.sentry.io`. If Cowork MCP still shows 0 — check Sentry org/project mapping. May need 2-3 min to index.
+
+## Handoff Status
+- 005: DONE (research injection + test run, this session)
+- 006: DONE (swarm refactor 58→25 files, this session)
+- 003: READY (PostHog SDK — not started)
+- 004: READY (Swarm Phase 2 — not started)
+
+## For Cowork
+- Verify Sentry event `8cdbc9bf...` via MCP
+- Update SHIPPED.md: remove PHANTOM label from pii_redactor.py
+- Langfuse on Railway now — next deploy will start tracing to cloud.langfuse.com
+- 20 non-critical env vars documented but not added to Railway (features inactive)
+
+## Session 94 Total
+20 commits. Handoffs 001, 002, 005, 006 complete. CI green (832 tests). Swarm: 13 agents, 4 waves, 25 active files. Langfuse on Railway. Telegram Atlas persona deployed.

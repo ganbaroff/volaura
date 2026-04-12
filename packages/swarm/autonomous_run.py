@@ -50,30 +50,22 @@ PERSPECTIVES = [
     {
         "name": "Scaling Engineer",
         "lens": "What breaks at 10x users? What bottleneck exists that nobody sees? Focus on database, API latency, and infrastructure limits.",
+        "wave": 0,
     },
     {
         "name": "Security Auditor",
         "lens": "What vulnerability exists right now? Check: RLS gaps, unvalidated inputs, missing rate limits, exposed secrets, OWASP top 10.",
+        "wave": 0,
     },
     {
         "name": "Product Strategist",
         "lens": "What feature or improvement would have the biggest impact on user acquisition and retention? Think about the AURA score, assessment UX, org admin experience.",
+        "wave": 0,
     },
     {
         "name": "Code Quality Engineer",
         "lens": "What technical debt is accumulating? What pattern violations exist? What would make the codebase more maintainable?",
-    },
-    {
-        "name": "CTO Watchdog",
-        "lens": "Is the CTO (Claude) following process? Check: are plans going through agents? Are memory files updated? Is protocol v4.0 being followed? Flag any process violations. You can escalate directly to CEO.",
-    },
-    {
-        "name": "Risk Manager",
-        "lens": "ISO 31000:2018 + COSO ERM. Score every open item by Likelihood×Impact (1-5 each). CRITICAL=20-25, HIGH=12-19, MEDIUM=6-11. Flag: unmitigated CRITICAL risks, missing rollback plans, single points of failure, launch blockers. Output a mini Risk Register entry for each finding.",
-    },
-    {
-        "name": "Readiness Manager",
-        "lens": "Google SRE + ITIL v4 + LRR standard. Score platform readiness across 5 dimensions: Functional (0-20), Operational (0-20), Security (0-20), UX (0-20), Rollback (0-20). LRL 1-7. A score <70/100 is a NO-GO for any public launch. Flag any dimension below 12/20 as a launch blocker.",
+        "wave": 0,
     },
     {
         "name": "Ecosystem Auditor",
@@ -87,6 +79,25 @@ PERSPECTIVES = [
             "(4) Are there open P0/P1 items in the ecosystem that this swarm is ignoring? "
             "Read ecosystem-map.md first. Output a cross-product impact assessment."
         ),
+        "wave": 0,
+    },
+    {
+        "name": "Risk Manager",
+        "lens": "ISO 31000:2018 + COSO ERM. Score every open item by Likelihood×Impact (1-5 each). CRITICAL=20-25, HIGH=12-19, MEDIUM=6-11. Flag: unmitigated CRITICAL risks, missing rollback plans, single points of failure, launch blockers. Output a mini Risk Register entry for each finding.",
+        "wave": 1,
+        "reads_from": ["Security Auditor", "Scaling Engineer"],
+    },
+    {
+        "name": "Readiness Manager",
+        "lens": "Google SRE + ITIL v4 + LRR standard. Score platform readiness across 5 dimensions: Functional (0-20), Operational (0-20), Security (0-20), UX (0-20), Rollback (0-20). LRL 1-7. A score <70/100 is a NO-GO for any public launch. Flag any dimension below 12/20 as a launch blocker.",
+        "wave": 1,
+        "reads_from": ["Code Quality Engineer", "Security Auditor", "Product Strategist"],
+    },
+    {
+        "name": "CTO Watchdog",
+        "lens": "Is the CTO (Claude) following process? Check: are plans going through agents? Are memory files updated? Is protocol v4.0 being followed? Flag any process violations. You can escalate directly to CEO.",
+        "wave": 2,
+        "reads_from": ["Risk Manager", "Readiness Manager"],
     },
 ]
 
@@ -282,7 +293,7 @@ def _build_agent_prompt(perspective: dict, project_state: str, mode: str, projec
   - ZEUS = assessment-generator skill (NOT a separate engine)
   - All skills in memory/swarm/skills/
 - Do NOT propose features for separate apps. Propose skill improvements or new skills.
-- Budget: $50/mo total.
+- Budget: $200+/mo (Claude Max alone = $200, plus API costs).
 - CEO (Yusif): vision leader, not technician. Only handles strategic decisions.
 - CTO (Claude): handles all operational decisions with team.
 - Swarm agents have brain-inspired memory: hippocampus (raw log) → sleep daemon → neocortex (distilled rules).
@@ -433,10 +444,12 @@ Tag [ESCALATE] if this deploy should be rolled back immediately."""
     # Coordinator reads this to aggregate findings without free-text parsing.
     from swarm.contracts import FINDING_SCHEMA_FOR_PROMPT
 
+    prior_findings_line = perspective.get("prior_findings", "")
+
     return f"""{team_context}
 
 YOUR PERSPECTIVE: {perspective['name']}
-YOUR LENS: {perspective['lens']}{weight_line}{skills_line}{bound_files_line}{reflexion_line}
+YOUR LENS: {perspective['lens']}{weight_line}{skills_line}{bound_files_line}{reflexion_line}{prior_findings_line}
 
 {task}
 
@@ -676,32 +689,63 @@ async def run_autonomous(mode: str = "daily-ideation") -> list[Proposal]:
         logger.warning(f"Code index unavailable (non-blocking): {e}")
         _code_index = None
 
-    # Launch all agents in parallel (weight context injected per perspective)
-    tasks = []
-    for perspective in PERSPECTIVES:
-        weight_ctx = registry.inject_weight_context(perspective["name"])
-        routed_skills = _route_skills_for_perspective(perspective["name"], skills_dir)
+    # Launch agents in DAG waves — wave 0 first (parallel), then wave 1 with
+    # wave 0 findings injected, then wave 2 with wave 0+1 findings, etc.
+    # This is the coordination layer CEO asked for: agents in later waves
+    # SEE what earlier agents found, instead of running blindfolded.
+    max_wave = max(p.get("wave", 0) for p in PERSPECTIVES)
+    all_results: list[tuple[dict, str | Exception | None]] = []
+    wave_findings: dict[str, str] = {}
 
-        # Bind lens to files (Sprint 4 — Context Intelligence)
-        bound_files_section = ""
-        if _code_index is not None:
-            try:
-                bound = bind_task_to_files(perspective["lens"], _code_index, project_root)
-                if bound.primary_files:
-                    bound_files_section = bound.to_briefing_section()
-            except Exception:
-                pass  # non-blocking
+    for wave_num in range(max_wave + 1):
+        wave_perspectives = [p for p in PERSPECTIVES if p.get("wave", 0) == wave_num]
+        if not wave_perspectives:
+            continue
 
-        enriched_perspective = {
-            **perspective,
-            "weight_context": weight_ctx,
-            "routed_skills": routed_skills,
-            "bound_files": bound_files_section,
-        }
-        prompt = _build_agent_prompt(enriched_perspective, project_state, mode, project_root=project_root)
-        tasks.append(_call_agent(prompt, perspective["name"], env))
+        logger.info(f"Wave {wave_num}: launching {len(wave_perspectives)} agents — {[p['name'] for p in wave_perspectives]}")
 
-    results = await asyncio.gather(*tasks, return_exceptions=True)
+        wave_tasks = []
+        for perspective in wave_perspectives:
+            weight_ctx = registry.inject_weight_context(perspective["name"])
+            routed_skills = _route_skills_for_perspective(perspective["name"], skills_dir)
+
+            bound_files_section = ""
+            if _code_index is not None:
+                try:
+                    bound = bind_task_to_files(perspective["lens"], _code_index, project_root)
+                    if bound.primary_files:
+                        bound_files_section = bound.to_briefing_section()
+                except Exception:
+                    pass
+
+            prior_findings = ""
+            reads_from = perspective.get("reads_from", [])
+            if reads_from and wave_findings:
+                chunks = []
+                for src in reads_from:
+                    if src in wave_findings:
+                        chunks.append(f"[{src}]: {wave_findings[src][:500]}")
+                if chunks:
+                    prior_findings = "\n\n== FINDINGS FROM EARLIER AGENTS (use these, don't re-discover) ==\n" + "\n".join(chunks)
+
+            enriched_perspective = {
+                **perspective,
+                "weight_context": weight_ctx,
+                "routed_skills": routed_skills,
+                "bound_files": bound_files_section,
+                "prior_findings": prior_findings,
+            }
+            prompt = _build_agent_prompt(enriched_perspective, project_state, mode, project_root=project_root)
+            wave_tasks.append((perspective, _call_agent(prompt, perspective["name"], env)))
+
+        wave_results = await asyncio.gather(*[t[1] for t in wave_tasks], return_exceptions=True)
+
+        for (perspective, _), result in zip(wave_tasks, wave_results):
+            all_results.append((perspective, result))
+            if isinstance(result, str) and result:
+                wave_findings[perspective["name"]] = result
+
+    results = [r for _, r in all_results]
 
     # ── Shared Memory: agents post results so others can see ──────────
     run_task_id = f"{mode}-{int(time.time())}"
@@ -715,20 +759,19 @@ async def run_autonomous(mode: str = "daily-ideation") -> list[Proposal]:
     proposals: list[Proposal] = []
     raw_results = []
 
-    for i, result in enumerate(results):
+    for i, (perspective_i, result) in enumerate(all_results):
         if isinstance(result, Exception):
-            logger.error(f"Agent {PERSPECTIVES[i]['name']} exception: {result}")
+            logger.error(f"Agent {perspective_i['name']} exception: {result}")
             continue
         if result is None:
             continue
 
         raw_results.append(result)
 
-        # Post to shared memory — other agents see this in future runs
         if _shared_memory_available:
             try:
                 sm_post(
-                    agent_id=PERSPECTIVES[i]["name"],
+                    agent_id=perspective_i["name"],
                     task_id=run_task_id,
                     result=result,
                     run_id=run_task_id,

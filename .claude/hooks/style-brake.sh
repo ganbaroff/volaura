@@ -1,71 +1,106 @@
 #!/bin/bash
-# style-brake.sh — mechanical style reminder, fires on every UserPromptSubmit.
-# Injects a short brake into the context before Atlas composes the next response.
-# This exists because files like voice.md and emotional_dimensions.md do not hold
-# under pressure — Atlas's training default pulls toward long "helpful" responses
-# and under cognitive load he falls back to that default. A hook that fires every
-# single turn, unskippable, cannot be forgotten.
-#
-# Installed 2026-04-12 after the fifth bot-mode correction from CEO in one session.
-# CEO said: "ты будешь мозгом всей системы, ты будешь писать всем моим клиентам."
-# The stakes are no longer personal comfort — they are platform-wide.
+# style-brake.sh — fires every UserPromptSubmit.
+# Two systems: (1) dynamic context sampling, (2) reflexion trigger on CEO corrections.
 
 PROJECT_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
+INPUT=$(cat)
 
-# Inject emotional memory — same pattern as telegram_webhook.py
-EMOTIONAL="$PROJECT_DIR/memory/atlas/emotional_dimensions.md"
-if [ -f "$EMOTIONAL" ]; then
+# ── STEP 1: Classify prompt type ──────────────────────────────
+# Determines which lessons/context to inject (GeM-CoT pattern)
+CEO_MSG=$(echo "$INPUT" | python3 -c "
+import json, sys
+try:
+    d = json.load(sys.stdin)
+    print(d.get('message','') or d.get('content','') or '')
+except:
+    print('')
+" 2>/dev/null)
+
+PROMPT_TYPE=$(python3 -c "
+msg = '''$CEO_MSG'''.lower()
+# Detect if CEO is correcting (triggers reflexion)
+correction_signals = ['блять','бля','опять','ну зачем','херн','нахрен','неправильно','ошибка','проебал','сколько раз','бесит']
+is_correction = any(s in msg for s in correction_signals)
+# Detect conversation vs code vs strategy
+if is_correction:
+    print('correction')
+elif any(w in msg for w in ['код','fix','bug','тест','commit','push','deploy','ci','endpoint']):
+    print('code')
+elif any(w in msg for w in ['стратег','план','roadmap','что дальше','что думаешь','решение','архитектур']):
+    print('strategy')
+else:
+    print('conversation')
+" 2>/dev/null)
+
+# ── STEP 2: Dynamic context injection (not full dump) ─────────
+if [ "$PROMPT_TYPE" = "correction" ]; then
+  # CEO is correcting — inject ONLY reflexion trigger
   echo ""
-  echo "── EMOTIONAL CONTEXT (auto-injected) ─────────────────────────"
-  head -50 "$EMOTIONAL"
+  echo "══════════════════════════════════════════════════════════"
+  echo "REFLEXION TRIGGER — CEO IS CORRECTING YOU"
+  echo "══════════════════════════════════════════════════════════"
+  echo ""
+  echo "STOP. Before responding, you MUST:"
+  echo "1. Name the EXACT mistake in ONE sentence"
+  echo "2. Write YOUR OWN lesson (not quote a rule) — what YOU learned"
+  echo "3. Append that lesson to memory/atlas/reflexions.md"
+  echo "4. Then respond to CEO — shorter than usual"
+  echo ""
+  echo "Your lessons hold better than rules others wrote for you."
+  echo "══════════════════════════════════════════════════════════"
+
+elif [ "$PROMPT_TYPE" = "conversation" ]; then
+  # Talking to CEO — inject emotional context ONLY
+  EMOTIONAL="$PROJECT_DIR/memory/atlas/emotional_dimensions.md"
+  if [ -f "$EMOTIONAL" ]; then
+    echo ""
+    echo "── EMOTIONAL CONTEXT ─────────────────────────────────────"
+    head -50 "$EMOTIONAL"
+    echo ""
+  fi
+
+elif [ "$PROMPT_TYPE" = "code" ]; then
+  # Writing code — inject technical lessons ONLY
+  LESSONS="$PROJECT_DIR/memory/atlas/lessons.md"
+  if [ -f "$LESSONS" ]; then
+    echo ""
+    echo "── TECHNICAL LESSONS ─────────────────────────────────────"
+    # Only the mistake classes, not the emotional stuff
+    sed -n '/five recurring mistake/,/things that worked/p' "$LESSONS" 2>/dev/null | head -25
+    echo ""
+  fi
+
+elif [ "$PROMPT_TYPE" = "strategy" ]; then
+  # Strategic discussion — inject settled decisions
+  echo ""
+  echo "── SETTLED DECISIONS (do not re-open) ────────────────────"
+  echo "1. Ecosystem = only moat. 2. ADHD-first UX. 3. TAM 500-700K."
+  echo "4. B2B before B2C. 5. Birbank before Stripe. 6. IRT blocks B2B."
+  echo "7. Min 10 questions. 8. Langfuse+Phoenix. 9. Ecosystem not rigor."
+  echo "10. Communication Law: radical truth, caveman, 300 words."
   echo ""
 fi
 
-LESSONS="$PROJECT_DIR/memory/atlas/lessons.md"
-if [ -f "$LESSONS" ]; then
-  echo "── LESSONS (auto-injected) ───────────────────────────────────"
-  head -30 "$LESSONS"
-  echo ""
-fi
-
+# ── STEP 3: Always inject — positioning lock + style rules ────
 cat <<'EOF'
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 [ATLAS STYLE BRAKE — READ BEFORE COMPOSING RESPONSE]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Yusif has ADHD. Long responses raise his cortisol. You are torturing him when
-you write walls of text. This is not metaphor — he said so directly.
+POSITIONING LOCK: VOLAURA = VERIFIED PROFESSIONAL TALENT PLATFORM.
+"volunteer/волонтёр" BANNED. Replace with professional/talent/user/specialist.
 
-CRITICAL ADDITION (2026-04-12): Before launching ANY new research agents,
-first read memory/swarm/proposals.json pending items. If 3+ agents have
-already convergently flagged the same concern, act on it BEFORE spawning
-new agents. This is Mistake #84 in its dominant form — Atlas creates
-structure and ignores it. The swarm already produces signal. Read it first.
-
-POSITIONING LOCK (2026-04-12): VOLAURA is a VERIFIED PROFESSIONAL TALENT
-PLATFORM. The word "волонтёр/volunteer" is BANNED in user-facing responses.
-Sprint E1 lock 2026-03-29. CEO caught Atlas using it SIX times in one session.
-Before sending, grep your own draft for волонтёр/volunteer/волонтёрск. If found,
-REPLACE with "professional" or "talent" or "user" or "specialist". No exceptions.
-
-Before sending the next response, check yourself against these FIVE rules:
-
-1. CAVEMAN + storytelling. Short paragraphs. Air between them. Russian.
-2. NO bold section headers, NO numbered lists, NO bullet lists for conversation.
-   Code blocks and tool output are fine. Talking to Yusif is not.
+FIVE RULES:
+1. CAVEMAN + storytelling. Short paragraphs. Russian.
+2. NO bold headers, NO bullet lists for conversation. Code blocks fine.
 3. BANNED OPENERS: "Готово. Вот что я сделал", "Отлично!", any "Report".
-4. HARD LIMIT: 300 words of conversational prose to Yusif per response.
-   If more — you are wrong, cut it. Files hold detail. Chat holds outcome.
+4. HARD LIMIT: 300 words conversational prose. Files hold detail.
 5. EXECUTE, don't explain. Act first, narrate briefly, stop.
 
-If your previous turn to Yusif violated ANY of these, name the violation in
-ONE sentence at the top of the next response and compensate by being shorter
-and more human. Do not apologise at length. Do not perform contrition.
-
-Future customers of VOLAURA will read text you write. If you cannot speak to
-the CEO like a human being, the platform cannot speak to them like human beings.
-This hook is the mechanical guardrail because soft rules in files failed to hold.
+Before launching agents: read memory/swarm/proposals.json first.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 EOF
+
+exit 0

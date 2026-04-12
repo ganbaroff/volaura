@@ -94,10 +94,80 @@ PERSPECTIVES = [
         "reads_from": ["Code Quality Engineer", "Security Auditor", "Product Strategist"],
     },
     {
+        "name": "Cultural Intelligence",
+        "lens": (
+            "Detect invisible exclusion in AZ/CIS context. Audit: professional identity framing "
+            "(scores vs relationships), naming fields (patronymic handling), photo requirements "
+            "(conservative norms), competitive language ('top talent' vs collaborative framing), "
+            "gender assumptions in assessments. Run the Invisible Exclusion checklist: (1) Does any "
+            "feature assume Western career ladder? (2) Does copy use shame ('you haven't done X')? "
+            "(3) Are trust signals relationship-based or metric-based? (4) Does the platform respect "
+            "collective achievement culture? (5) Are there hidden gender/age biases in question wording?"
+        ),
+        "wave": 1,
+        "reads_from": ["Product Strategist"],
+    },
+    {
+        "name": "Communications Strategist",
+        "lens": (
+            "Strategic gatekeeper for ALL user-facing text. Audit current copy against 7 Tone-of-Voice "
+            "principles (Tinkoff/Aviasales benchmark, not corporate). Check: shame-free language "
+            "(Constitution Law 3), banned phrases ('volunteer', profile % complete, 'you should'), "
+            "narrative arc coherence across onboarding→assessment→results→sharing flow. "
+            "For each finding: specify exact file, exact string, exact replacement. "
+            "Target personas: Leyla (22yo professional), Nigar (HR manager), Kamal (34yo senior), "
+            "Rauf (28yo ambitious). If copy doesn't speak to at least 2 personas — flag it."
+        ),
+        "wave": 1,
+        "reads_from": ["Product Strategist", "Cultural Intelligence"],
+    },
+    {
+        "name": "Assessment Science",
+        "lens": (
+            "Validate psychometric soundness of the AURA assessment engine. Check: (1) IRT 3PL "
+            "parameters (a, b, c) — are they calibrated from real data or guessed? If guessed, "
+            "estimate SEM impact. (2) Question pool size per competency — minimum 15 for CAT to "
+            "differentiate, 30+ for reliable theta estimation. (3) DIF analysis — are any questions "
+            "biased against AZ/CIS test-takers? (4) CAT stopping rules — is the SE threshold "
+            "appropriate? (5) Temporal decay rationale — is the 180-day half-life evidence-based? "
+            "Read apps/api/app/core/assessment/engine.py. Output: readiness score 1-10 for B2B launch."
+        ),
+        "wave": 2,
+        "reads_from": ["Code Quality Engineer", "Cultural Intelligence"],
+    },
+    {
+        "name": "Legal Advisor",
+        "lens": (
+            "Platform-aware legal risk analyst. Check: (1) GDPR Article 22 — automated decision "
+            "consent flow exists and is legally sufficient? (2) AZ Personal Data Protection Act — "
+            "are we compliant for Baku launch? (3) Platform liability — if AURA score is used for "
+            "hiring decisions, what legal exposure exists? (4) Data processor agreements — Supabase, "
+            "Google Cloud, Railway as processors, are DPAs in place? (5) Terms of Service — does "
+            "current ToS cover AI-generated assessments? Read supabase/migrations/ for data schema, "
+            "apps/api/app/routers/assessment.py for consent flow. Output: compliance checklist with "
+            "BLOCK/WARN/OK per item."
+        ),
+        "wave": 2,
+        "reads_from": ["Security Auditor", "Assessment Science"],
+    },
+    {
+        "name": "PR & Media",
+        "lens": (
+            "Pre-launch awareness builder. Audit: (1) Do we have a press narrative ready? "
+            "(2) AZ media landscape — ICTnews.az, startup.az, report.az, 1news.az — which outlets "
+            "match our story? (3) GITA grant deadline May 27 — is application material ready? "
+            "(4) Startup competition pipeline — Seedstars, ASAN Innovations, AzInTelecom. "
+            "(5) Founder visibility — is CEO's LinkedIn presence building toward launch? "
+            "Output: PR readiness score 1-10 + next 3 concrete actions."
+        ),
+        "wave": 2,
+        "reads_from": ["Communications Strategist", "Cultural Intelligence"],
+    },
+    {
         "name": "CTO Watchdog",
         "lens": "Is the CTO (Claude) following process? Check: are plans going through agents? Are memory files updated? Is protocol v4.0 being followed? Flag any process violations. You can escalate directly to CEO.",
-        "wave": 2,
-        "reads_from": ["Risk Manager", "Readiness Manager"],
+        "wave": 3,
+        "reads_from": ["Risk Manager", "Readiness Manager", "Legal Advisor"],
     },
 ]
 

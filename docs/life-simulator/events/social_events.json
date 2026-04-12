@@ -1,0 +1,90 @@
+[
+  {
+    "id": "social_new_friend_01",
+    "title": "New Neighbor",
+    "description": "Someone moved in next door. They seem friendly but you're not sure if you have the energy for socializing.",
+    "min_age": 18,
+    "max_age": 80,
+    "requirements": {},
+    "priority": 5,
+    "choices": [
+      {
+        "text": "Bring over food and introduce yourself",
+        "consequences": {"social": 10, "happiness": 8, "energy": -5}
+      },
+      {
+        "text": "Wave from the window — keep it casual",
+        "consequences": {"social": 3, "happiness": 2}
+      },
+      {
+        "text": "Pretend you didn't notice",
+        "consequences": {"social": -3, "energy": 5}
+      }
+    ]
+  },
+  {
+    "id": "social_conference_01",
+    "title": "Industry Conference",
+    "description": "An invitation to speak at a professional conference. 500 people in the audience.",
+    "min_age": 25,
+    "max_age": 60,
+    "requirements": {"social": 40, "intelligence": 35},
+    "priority": 7,
+    "choices": [
+      {
+        "text": "Accept and prepare a killer presentation",
+        "consequences": {"social": 20, "intelligence": 5, "happiness": 15, "energy": -15}
+      },
+      {
+        "text": "Attend but don't speak — network from the audience",
+        "consequences": {"social": 10, "intelligence": 3, "energy": -5}
+      },
+      {
+        "text": "Decline — public speaking isn't your thing",
+        "consequences": {"energy": 5, "social": -5}
+      }
+    ]
+  },
+  {
+    "id": "social_volaura_recruit_01",
+    "title": "Organization Finds Your Profile",
+    "description": "A top company found your VOLAURA profile. Your Gold-level Communication badge caught their attention.",
+    "min_age": 20,
+    "max_age": 50,
+    "requirements": {"social": 30, "intelligence": 30},
+    "priority": 8,
+    "choices": [
+      {
+        "text": "Accept the interview — this could change everything",
+        "consequences": {"money": 30, "social": 15, "happiness": 20, "intelligence": 5}
+      },
+      {
+        "text": "Negotiate for better terms first",
+        "consequences": {"money": 20, "social": 10, "intelligence": 3, "happiness": 10}
+      },
+      {
+        "text": "Not interested — happy where you are",
+        "consequences": {"happiness": 5, "social": -5}
+      }
+    ]
+  },
+  {
+    "id": "social_mentor_01",
+    "title": "Mentorship Opportunity",
+    "description": "A junior colleague asks you to be their mentor. Teaching takes time but builds leadership.",
+    "min_age": 28,
+    "max_age": 65,
+    "requirements": {"social": 35, "intelligence": 40},
+    "priority": 6,
+    "choices": [
+      {
+        "text": "Accept — helping others grow is the real reward",
+        "consequences": {"social": 15, "happiness": 12, "intelligence": 5, "energy": -10}
+      },
+      {
+        "text": "Suggest they find someone more experienced",
+        "consequences": {"social": -3, "energy": 5}
+      }
+    ]
+  }
+]

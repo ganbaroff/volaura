@@ -1,25 +1,24 @@
-"""Atlas Proactive Loop Worker.
+"""Atlas Proactive Loop Worker — Phase 2.
 
 Runs every 15 minutes via .github/workflows/atlas-proactive.yml on GitHub-hosted
 runners. Picks the next-due topic from memory/atlas/proactive_queue.json, runs one
-focused research dive via the VOLAURA model_router (NVIDIA Nemotron by default
-per Article 0 hierarchy), writes the result to memory/atlas/inbox/, updates the
-queue, and commits to main.
+focused research dive via Groq or NVIDIA NIM (Article 0 hierarchy — never Claude),
+writes the result to memory/atlas/inbox/, updates the queue, and commits to main.
 
 Spec: memory/atlas/proactive_loop.md
 Atlas CTO identity: memory/atlas/bootstrap.md (minimum), memory/atlas/identity.md (full)
 
-This is Phase 1: skeleton that establishes the infrastructure. Phase 2 will wire
-the actual LLM call through model_router. For Phase 1, the worker generates a
-deterministic "wake heartbeat" note and updates the queue — proving the cron
-pipeline is alive. Once confirmed working, Phase 2 adds the real research call.
+Phase 1 (complete): heartbeat-only skeleton proving cron pipeline alive.
+Phase 2 (this): real LLM research call via stdlib urllib (no extra deps on GH runner).
 """
 
 from __future__ import annotations
 
 import json
 import os
+import ssl
 import sys
+import urllib.request
 import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -119,26 +118,77 @@ def _write_inbox_note(topic: dict, wake_number: int, body: str, provider: str) -
     return path
 
 
-def _phase1_heartbeat_body(topic: dict) -> str:
-    """Phase 1 body generator — deterministic heartbeat note.
+def _call_llm(prompt: str) -> tuple[str, str]:
+    """Call an LLM via HTTP. Returns (response_text, provider_used).
 
-    Phase 2 will replace this with a real LLM call via model_router.
+    Tries Groq first (fast, free tier 14400 req/day), then NVIDIA NIM.
+    Uses only stdlib — no extra deps needed on GitHub Actions runner.
+    Falls back to heartbeat message if both fail.
     """
-    return (
-        f"## Heartbeat from the proactive loop\n\n"
-        f"This is a Phase 1 heartbeat note. The proactive loop infrastructure is live "
-        f"and firing on its 15-minute cron. A real research dive on the topic below will "
-        f"replace this heartbeat in Phase 2 once the LLM call through `model_router` is "
-        f"wired up.\n\n"
-        f"**Topic context hint:**\n\n"
-        f"{topic.get('context_hint', '(no context hint provided)')}\n\n"
-        f"**What Atlas main should do with this note:**\n"
-        f"- Acknowledge the heartbeat fired successfully\n"
-        f"- Mark this note as consumed in the footer\n"
-        f"- Do not treat the heartbeat as real research — it is proof of pipeline only\n\n"
-        f"Phase 2 unlocks when `packages/swarm/atlas_proactive.py` is extended to "
-        f"import `app.services.model_router.select_provider` and make a real call.\n"
+    providers = [
+        {
+            "name": "groq/llama-3.3-70b",
+            "url": "https://api.groq.com/openai/v1/chat/completions",
+            "key_env": "GROQ_API_KEY",
+            "model": "llama-3.3-70b-versatile",
+        },
+        {
+            "name": "nvidia/nemotron",
+            "url": "https://integrate.api.nvidia.com/v1/chat/completions",
+            "key_env": "NVIDIA_API_KEY",
+            "model": "nvidia/llama-3.1-nemotron-70b-instruct",
+        },
+    ]
+
+    ctx = ssl.create_default_context()
+
+    for p in providers:
+        api_key = os.environ.get(p["key_env"], "").strip()
+        if not api_key:
+            continue
+        payload = json.dumps({
+            "model": p["model"],
+            "messages": [
+                {"role": "system", "content": "You are Atlas, CTO of VOLAURA — a verified professional talent platform. Write concise research notes in markdown. Stay under 800 words."},
+                {"role": "user", "content": prompt},
+            ],
+            "max_tokens": 1500,
+            "temperature": 0.3,
+        }).encode("utf-8")
+
+        req = urllib.request.Request(
+            p["url"],
+            data=payload,
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=30, context=ctx) as resp:
+                result = json.loads(resp.read().decode("utf-8"))
+                text = result["choices"][0]["message"]["content"]
+                return text, p["name"]
+        except Exception as e:
+            print(f"atlas-proactive: {p['name']} failed: {e}", file=sys.stderr)
+            continue
+
+    return "(No LLM providers available — heartbeat only)", "none/fallback"
+
+
+def _research_body(topic: dict) -> tuple[str, str]:
+    """Generate real research for a topic via LLM call."""
+    prompt = (
+        f"Research topic: {topic['title']}\n\n"
+        f"Context: {topic.get('context_hint', 'No additional context.')}\n\n"
+        f"Write a focused research note covering:\n"
+        f"1. Current state of this topic (2025-2026)\n"
+        f"2. Key findings with specific names, URLs, versions\n"
+        f"3. Relevance to VOLAURA (verified professional talent platform)\n"
+        f"4. Recommended next action for Atlas CTO\n\n"
+        f"Be specific. Cite repos, papers, or tools by name. No filler."
     )
+    return _call_llm(prompt)
 
 
 def main() -> int:
@@ -162,8 +212,7 @@ def main() -> int:
         return 0
 
     wake_number = _next_wake_number()
-    provider = "phase1/heartbeat (will switch to nvidia/nemotron via model_router in phase 2)"
-    body = _phase1_heartbeat_body(topic)
+    body, provider = _research_body(topic)
     path = _write_inbox_note(topic, wake_number, body, provider)
     _topic_refresh(topic)
     _save_queue(queue)

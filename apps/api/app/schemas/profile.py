@@ -17,7 +17,7 @@ class ProfileBase(BaseModel):
 
 
 class ProfileCreate(ProfileBase):
-    account_type: str = "volunteer"
+    account_type: str = "professional"
     visible_to_orgs: bool = False
     org_type: str | None = None
     invited_by_org_id: str | None = None  # GROWTH-2: org attribution from invite link
@@ -39,8 +39,8 @@ class ProfileCreate(ProfileBase):
     @field_validator("account_type")
     @classmethod
     def validate_account_type(cls, v: str) -> str:
-        if v not in ("volunteer", "organization"):
-            raise ValueError("account_type must be 'volunteer' or 'organization'")
+        if v not in ("professional", "volunteer", "organization"):
+            raise ValueError("account_type must be 'professional', 'volunteer', or 'organization'")
         return v
 
     @field_validator("org_type")
@@ -70,7 +70,7 @@ class ProfileResponse(ProfileBase):
 
     id: str
     avatar_url: str | None = None
-    account_type: str = "volunteer"
+    account_type: str = "professional"
     visible_to_orgs: bool = False
     org_type: str | None = None
     badge_issued_at: datetime | None = None

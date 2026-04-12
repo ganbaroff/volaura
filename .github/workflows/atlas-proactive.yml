@@ -51,7 +51,7 @@ jobs:
       - name: Install dependencies
         run: |
           python --version
-          pip install loguru
+          pip install loguru pydantic litellm google-genai groq aiohttp
 
       - name: Run Atlas proactive worker
         env:

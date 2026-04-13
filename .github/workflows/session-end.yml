@@ -128,7 +128,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "No mini-swarm proposals to commit."
           else
-            git pull --rebase origin main
             git commit -m "swarm: session mini-swarm review — $(date -u +%Y-%m-%d %H:%M UTC)"
-            git push
+            git pull --rebase --autostash origin main || true
+            git push || echo "Push failed — non-blocking"
           fi

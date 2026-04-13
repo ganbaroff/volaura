@@ -1,11 +1,12 @@
 name: Atlas Proactive Loop
 
 on:
-  schedule:
-    # Every 15 minutes. Atlas clone wakes, picks next-due topic from proactive queue,
-    # writes research note to memory/atlas/inbox/, commits to main. Main Atlas reads
-    # inbox on every wake per memory/atlas/wake.md read order.
-    - cron: '0 */2 * * *'
+  # DISABLED 2026-04-16: packages.swarm.atlas_proactive was archived per
+  # packages/atlas-memory/knowledge/swarm-engine-decision-2026-04-13.md
+  # (superseded by atlas_memory). Cron was firing every 2h and failing every time —
+  # wasted CI minutes. Re-enable once atlas_memory equivalent lands.
+  # schedule:
+  #   - cron: '0 */2 * * *'
   workflow_dispatch:
     # Allow manual trigger for testing, for CEO-initiated on-demand wakes,
     # and — most importantly — for webhook-triggered autonomous wakes from

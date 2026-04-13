@@ -885,6 +885,8 @@ async def complete_assessment(
 
     # ── Ecosystem events: assessment → character_events bus → all 5 products ──
     # Fire-and-forget: NEVER blocks /complete response. Errors logged, not raised.
+    _session_meta = session.get("metadata") or {}
+    _energy = _session_meta.get("energy_level", "full") if isinstance(_session_meta, dict) else "full"
     try:
         await emit_assessment_completed(
             db=db_admin,
@@ -892,7 +894,7 @@ async def complete_assessment(
             competency_slug=slug,
             competency_score=competency_score,
             items_answered=len(state.items),
-            energy_level=energy_level,
+            energy_level=_energy,
             stop_reason=state.stop_reason,
             gaming_flags=gaming.flags,
         )

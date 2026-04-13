@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getMyAuraApiAuraMeGet, getAuraByIdApiAuraVolunteerIdGet } from "@/lib/api/generated";
+import { getMyAuraApiAuraMeGet, getAuraByIdApiAuraProfessionalIdGet } from "@/lib/api/generated";
 import type { AuraScore } from "@/lib/api/types";
 import type { AuraScoreResponse } from "@/lib/api/generated/types.gen";
 import { toAuraScore } from "@/lib/api/types";
@@ -30,12 +30,12 @@ export function useAuraScore() {
   });
 }
 
-export function useAuraScoreByVolunteer(volunteerId: string | undefined) {
+export function useAuraScoreByProfessional(professionalId: string | undefined) {
   return useQuery<AuraScore | null>({
-    queryKey: ["aura-score", volunteerId],
+    queryKey: ["aura-score", professionalId],
     queryFn: async () => {
-      const { data, error } = await getAuraByIdApiAuraVolunteerIdGet({
-        path: { volunteer_id: volunteerId! },
+      const { data, error } = await getAuraByIdApiAuraProfessionalIdGet({
+        path: { professional_id: professionalId! },
       });
       if (error) {
         const errBody = error as unknown as Record<string, unknown>;
@@ -46,7 +46,7 @@ export function useAuraScoreByVolunteer(volunteerId: string | undefined) {
       if (!data) return null;
       return toAuraScore(data as unknown as AuraScoreResponse);
     },
-    enabled: !!volunteerId,
+    enabled: !!professionalId,
     staleTime: 5 * 60 * 1000,
     retry: 2,
   });

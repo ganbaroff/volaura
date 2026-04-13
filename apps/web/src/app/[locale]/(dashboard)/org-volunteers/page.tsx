@@ -8,9 +8,9 @@ import {
   Users, TrendingUp, Award, CheckCircle2, Clock,
   ChevronRight, Loader2, BarChart3, Search, Bookmark, BookmarkCheck, X, Bell, BellOff,
 } from "lucide-react";
-import { useOrgDashboard, useOrgVolunteers, useCreateSavedSearch, useSavedSearches, useDeleteSavedSearch } from "@/hooks/queries/use-organizations";
+import { useOrgDashboard, useOrgProfessionals, useCreateSavedSearch, useSavedSearches, useDeleteSavedSearch } from "@/hooks/queries/use-organizations";
 import { cn } from "@/lib/utils/cn";
-import type { OrgVolunteerRow } from "@/lib/api/types";
+import type { OrgProfessionalRow } from "@/lib/api/types";
 
 // ── Animations ─────────────────────────────────────────────────────────────────
 
@@ -60,7 +60,7 @@ function StatCard({
 
 // ── Volunteer row ──────────────────────────────────────────────────────────────
 
-function VolunteerRow({ row, onClick }: { row: OrgVolunteerRow; onClick: () => void }) {
+function ProfessionalRow({ row, onClick }: { row: OrgProfessionalRow; onClick: () => void }) {
   const tier = TIER_STYLES[row.badge_tier?.toLowerCase() ?? "none"] ?? TIER_STYLES.none;
   const score = row.overall_score != null ? row.overall_score.toFixed(1) : "—";
 
@@ -185,7 +185,7 @@ export default function OrgVolunteersPage() {
   }
 
   const { data: stats, isLoading: statsLoading } = useOrgDashboard();
-  const { data: volunteers, isLoading: volsLoading } = useOrgVolunteers({ status: statusFilter, limit: 50 });
+  const { data: volunteers, isLoading: volsLoading } = useOrgProfessionals({ status: statusFilter, limit: 50 });
 
   const filtered = (volunteers ?? []).filter((v) => {
     if (!search) return true;
@@ -272,17 +272,17 @@ export default function OrgVolunteersPage() {
             )}
 
             {/* Top volunteers highlight */}
-            {stats.top_volunteers.length > 0 && (
+            {stats.top_professionals.length > 0 && (
               <motion.div variants={fadeUp} initial="hidden" animate="visible" className="rounded-xl border border-primary/20 bg-primary/5 p-5 space-y-3">
                 <h3 className="text-sm font-semibold text-primary">
                   {t("orgDash.topVolunteers", { defaultValue: "⭐ Top Talent" })}
                 </h3>
                 <div className="space-y-2">
-                  {stats.top_volunteers.map((v) => {
+                  {stats.top_professionals.map((v) => {
                     const tier = TIER_STYLES[v.badge_tier?.toLowerCase() ?? "none"] ?? TIER_STYLES.none;
                     return (
                       <div
-                        key={v.volunteer_id}
+                        key={v.professional_id}
                         className="flex items-center gap-3 text-sm"
                       >
                         <span className="size-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary shrink-0">
@@ -508,8 +508,8 @@ export default function OrgVolunteersPage() {
               </p>
               <motion.div variants={stagger} initial="hidden" animate="visible" className="space-y-2">
                 {filtered.map((v) => (
-                  <VolunteerRow
-                    key={v.volunteer_id}
+                  <ProfessionalRow
+                    key={v.professional_id}
                     row={v}
                     onClick={() => router.push(`/${locale}/u/${v.username}`)}
                   />

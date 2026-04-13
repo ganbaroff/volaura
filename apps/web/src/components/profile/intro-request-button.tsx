@@ -6,13 +6,13 @@ import { useMyOrganization, useCreateIntroRequest } from "@/hooks/queries/use-or
 import type { ApiError } from "@/lib/api/client";
 
 interface Props {
-  volunteerId: string;
-  volunteerName: string;
+  professionalId: string;
+  professionalName: string;
 }
 
 type Timeline = "urgent" | "normal" | "flexible";
 
-export function IntroRequestButton({ volunteerId, volunteerName }: Props) {
+export function IntroRequestButton({ professionalId, professionalName }: Props) {
   const { t } = useTranslation();
   const { data: org } = useMyOrganization();
   const mutation = useCreateIntroRequest();
@@ -42,7 +42,7 @@ export function IntroRequestButton({ volunteerId, volunteerName }: Props) {
     if (!projectName.trim()) return;
 
     mutation.mutate(
-      { volunteer_id: volunteerId, project_name: projectName.trim(), timeline, message: message.trim() || undefined },
+      { professional_id: professionalId, project_name: projectName.trim(), timeline, message: message.trim() || undefined },
       {
         onSuccess: () => {
           if (!isMounted.current) return;
@@ -107,8 +107,8 @@ export function IntroRequestButton({ volunteerId, volunteerName }: Props) {
               </h2>
               <p className="mt-1 text-sm text-on-surface-variant">
                 {t("intro.modalSubtitle", {
-                  name: volunteerName,
-                  defaultValue: `Send a project intro to ${volunteerName}`,
+                  name: professionalName,
+                  defaultValue: `Send a project intro to ${professionalName}`,
                 })}
               </p>
             </div>

@@ -195,7 +195,7 @@ export default async function PublicProfilePage({ params }: Props) {
         )}
 
         {/* Org-only: Request Introduction */}
-        <IntroRequestButton volunteerId={profile.id} volunteerName={name} />
+        <IntroRequestButton professionalId={profile.id} professionalName={name} />
 
         {/* CTA */}
         <div className="liquid-glass p-5 text-center space-y-3">

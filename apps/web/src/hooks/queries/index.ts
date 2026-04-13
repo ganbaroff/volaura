@@ -1,6 +1,6 @@
 // Hook barrel — generated SDK handles auth via client interceptor (ADR-003)
 // Hooks not yet migrated to SDK: leaderboard, brandedby, public-stats, aura-explanation (endpoints not in OpenAPI spec)
-export { useAuraScore, useAuraScoreByVolunteer } from "./use-aura";
+export { useAuraScore, useAuraScoreByProfessional } from "./use-aura";
 export { useAuraExplanation } from "./use-aura-explanation";
 export type { AuraExplanationResponse, CompetencyExplanation, EvaluationItem, ConceptScore } from "./use-aura-explanation";
 export { useProfile, usePublicProfile, useUpdateProfile } from "./use-profile";

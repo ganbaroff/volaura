@@ -1,4 +1,4 @@
-# Episodic Snapshot — 20260409_060946
+# Episodic Snapshot — 20260413_230228
 
 Auto-saved by memory_consolidation.py before pruning.
 
@@ -27,7 +27,7 @@ Auto-saved by memory_consolidation.py before pruning.
 | 48 | DSP-ScalingEngineer | B3-001 | D-ID video provider | rejected | D-ID Lite $5.90/mo = 20 vid/mo cap. Not scalable. CEO rejected: "серьёзно?" | Swarm correctly identified unit economics problem |
 | 48 | DSP-Attacker | B3-002 | fal.ai R2 egress uncompressed | deferred | H.264 480p compression before R2 upload — to implement in video worker | Valid risk, not yet implemented |
 | 48 | DSP-CTO | B3-003 | Modal GPU self-hosted | rejected | 29/50 — Docker environment hell for solo founder. Not the time. | Correct rejection |
-| 48 | DSP-Hybrid | B3-004 | ZEUS + fal.ai MuseTalk with JWT auth and rate limiting | implemented (corrected) | Won 40/50 after correction: MuseTalk→SadTalker (portrait input), PlayAI→Kokoro (deprecated) | Final: fal.ai SadTalker + Kokoro with secure ZEUS gateway |
+| 48 | DSP-Hybrid | B3-004 | ZEUS + fal.ai MuseTalk | implemented (corrected) | Won 40/50 after correction: MuseTalk→SadTalker (portrait input), PlayAI→Kokoro (deprecated) | Final: fal.ai SadTalker + Kokoro |
 | 49 | E2E-test | B3-005 | fal-ai/playai/tts wrong | fixed | Model deprecated. Switched to fal-ai/kokoro/american-english ($0.02/1k chars) | Only found during E2E — pre-validate next time |
 | 49 | E2E-test | B3-006 | fal-ai/musetalk wrong input | fixed | MuseTalk needs MP4 video not portrait. Switched to fal-ai/sadtalker (source_image_url) | Only found during E2E — pre-validate next time |
 | 23 | swarm | 00b8e290 | E2E testing framework | deferred | Added to Sprint 10 backlog | Good proposal, wrong timing — ship trust arch first |

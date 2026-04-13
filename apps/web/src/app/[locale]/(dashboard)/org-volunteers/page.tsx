@@ -530,7 +530,7 @@ export default function OrgVolunteersPage() {
                   {t("orgDash.pendingTitle", { defaultValue: "assessments pending" })}
                 </p>
                 <p className="mt-0.5 text-xs text-on-surface-variant">
-                  {t("orgDash.pendingDesc", { defaultValue: "Professionals have been assigned but haven't completed their assessment yet." })}
+                  {t("orgDash.pendingDesc", { defaultValue: "Professionals have been assigned — assessment in progress." })}
                 </p>
               </div>
             </div>

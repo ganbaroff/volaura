@@ -106,9 +106,7 @@ async def emit_aura_updated(
                     "payload": {
                         "total_score": round(total_score, 2),
                         "badge_tier": badge_tier,
-                        "competency_scores": {
-                            k: round(v, 2) for k, v in competency_scores.items()
-                        },
+                        "competency_scores": {k: round(v, 2) for k, v in competency_scores.items()},
                         "elite_status": elite_status,
                         "percentile_rank": round(percentile_rank, 1) if percentile_rank else None,
                         "_schema_version": 1,

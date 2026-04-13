@@ -794,6 +794,7 @@ async def complete_assessment(
                 )
                 if attempt == 0:
                     import asyncio
+
                     await asyncio.sleep(2)
                     continue
                 aura_updated = False

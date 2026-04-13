@@ -1,8 +1,7 @@
 <!-- RECENTLY_SHIPPED_START -->
-## ⚡ RECENTLY SHIPPED (last push — 2026-04-13 20:38 UTC)
+## ⚡ RECENTLY SHIPPED (last push — 2026-04-13 20:52 UTC)
 **Read this FIRST — prevents proposing already-shipped work.**
-
-New migrations: 20260415140000_zeus_to_atlas_rename.sql
+New/updated routers: aura, discovery, events, organizations
 <!-- RECENTLY_SHIPPED_END -->
 
 # Swarm Shared Context — UPDATED 2026-04-07 (Session 91)

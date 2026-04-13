@@ -37,6 +37,9 @@ if settings.sentry_dsn:
         dsn=settings.sentry_dsn,
         environment=settings.app_env,
         traces_sample_rate=0.1,
+        send_default_pii=False,
+        attach_stacktrace=True,
+        release="volaura-api@0.1.0",
     )
     logger.info("Sentry monitoring enabled")
 

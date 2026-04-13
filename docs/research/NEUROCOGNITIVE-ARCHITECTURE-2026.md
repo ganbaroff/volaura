@@ -4,7 +4,7 @@
 **Status:** FOUNDATIONAL IP — basis for ZEUS product architecture
 **Classification:** Confidential
 
-**Cross-references:** [[ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[gemini-research-all]] | [[ZEUS-MEMORY-ARCHITECTURE-RESEARCH-2026-04-14]] | [[../ECOSYSTEM-CONSTITUTION]] | [[../adr/ADR-008-zeus-governance-layer]] | [[../CONSTITUTION_AI_SWARM]]
+**Cross-references:** [[ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[gemini-research-all]] | [[ZEUS-MEMORY-ARCHITECTURE-RESEARCH-2026-04-14]] | [[adhd-first-ux-research]] | [[swarm-innovation-research]] | [[UNIVERSAL-WEAPON-RESEARCH-2026-04-04]] | [[../ECOSYSTEM-CONSTITUTION]] | [[../VISION-FULL]] | [[../adr/ADR-008-zeus-governance-layer]] | [[../CONSTITUTION_AI_SWARM]] | [[../ECOSYSTEM-MAP]]
 
 ## Summary
 Comprehensive analysis of biologically-inspired cognitive architectures (BICA) integrating:

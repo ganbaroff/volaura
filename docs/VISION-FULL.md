@@ -3,7 +3,7 @@
 > This is the REAL vision, not the elevator pitch. Written from Yusif's own words.
 > Every document, pitch, and post should trace back to this.
 
-**Cross-references:** [[ECOSYSTEM-CONSTITUTION]] | [[MASTER-STRATEGY]] | [[ECOSYSTEM-MAP]] | [[research/blind-spots-analysis]] | [[CUSTOMER-JOURNEY-MAP]] | [[adr/ADR-004-assessment-engine]] | [[adr/ADR-005-aura-scoring]]
+**Cross-references:** [[ECOSYSTEM-CONSTITUTION]] | [[MASTER-STRATEGY]] | [[ECOSYSTEM-MAP]] | [[research/blind-spots-analysis]] | [[research/ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[CUSTOMER-JOURNEY-MAP]] | [[TONE-OF-VOICE]] | [[AI-TWIN-CONCEPT]] | [[LIFE-SIMULATOR-GAME-DESIGN]] | [[MINDSHIFT-INTEGRATION-SPEC]] | [[MONETIZATION-ROADMAP]] | [[adr/ADR-004-assessment-engine]] | [[adr/ADR-005-aura-scoring]] | [[adr/ADR-006-ecosystem-architecture]]
 
 ## Origin (the TRUTH)
 
@@ -20,8 +20,8 @@ Yusif saw that the volunteer evaluation system was **broken and outdated**:
 **Yusif's thought:** "Why not create a platform where volunteers can take a test, prove their skills, compete with each other, and say: 'Here are my verified competencies. Hire me.'?"
 
 ## Phase 1: Volunteer Assessment Platform (NOW)
-- Adaptive competency testing (IRT/CAT — same math as GRE/GMAT)
-- AURA Score across 8 dimensions
+- Adaptive competency testing (IRT/CAT — same math as GRE/GMAT, see [[adr/ADR-004-assessment-engine]])
+- [[adr/ADR-005-aura-scoring|AURA Score]] across 8 dimensions
 - Verified badges (Bronze → Platinum)
 - Organizations search by verified skills, not resumes
 
@@ -43,7 +43,7 @@ A hybrid of:
 | **HR Platform** | Recruitment, screening, assessment | Integrated — test within the platform, hire within the platform |
 | **Event Management** | Event creation, volunteer assignment | Competency-matched assignment, not random |
 
-## Design Philosophy: ADHD-First, Honest-First
+## Design Philosophy: ADHD-First, Honest-First (see [[ECOSYSTEM-CONSTITUTION]] Laws 1-5 and [[research/adhd-first-ux-research]])
 
 > "ADHD дизайна нет нигде. Всё меня грузит. Дофаминовая игла словно везде."
 

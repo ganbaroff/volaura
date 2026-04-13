@@ -5,6 +5,8 @@
 **Budget constraint:** $100/mo total LLM costs
 **Existing stack:** Supabase pgvector (768-dim), Python 3.11, FastAPI, Ollama local
 
+**Cross-references:** [[NEUROCOGNITIVE-ARCHITECTURE-2026]] | [[gemini-research-all]] | [[ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[swarm-innovation-research]] | [[../ECOSYSTEM-CONSTITUTION]] | [[../CONSTITUTION_AI_SWARM]] | [[../adr/ADR-008-zeus-governance-layer]] | [[../ECOSYSTEM-MAP]] | [[../adr/ADR-002-database-schema]]
+
 ---
 
 ## Executive Summary

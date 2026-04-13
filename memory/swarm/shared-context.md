@@ -1,7 +1,8 @@
 <!-- RECENTLY_SHIPPED_START -->
-## ⚡ RECENTLY SHIPPED (last push — 2026-04-13 19:42 UTC)
+## ⚡ RECENTLY SHIPPED (last push — 2026-04-13 20:07 UTC)
 **Read this FIRST — prevents proposing already-shipped work.**
-New/updated routers: leaderboard
+
+New migrations: 20260415120000_rpc_accept_professional_id.sql
 <!-- RECENTLY_SHIPPED_END -->
 
 # Swarm Shared Context — UPDATED 2026-04-07 (Session 91)

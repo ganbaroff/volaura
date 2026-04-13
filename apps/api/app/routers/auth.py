@@ -325,9 +325,7 @@ async def e2e_create_user(
             .execute()
         )
 
-        auth_response = await db_anon.auth.sign_in_with_password(
-            {"email": payload.email, "password": payload.password}
-        )
+        auth_response = await db_anon.auth.sign_in_with_password({"email": payload.email, "password": payload.password})
 
         return AuthResponse(
             access_token=auth_response.session.access_token,

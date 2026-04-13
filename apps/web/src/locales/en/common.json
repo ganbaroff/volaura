@@ -368,7 +368,7 @@
     "empathy_safeguarding_desc": "Your awareness of others wellbeing and creating safe environments"
   },
   "onboarding": {
-    "title": "Complete your profile",
+    "title": "Set up your profile",
     "step": "Step",
     "step1": {
       "title": "Your identity"
@@ -474,7 +474,7 @@
       "orgHeadline": "Verified talent is waiting.",
       "orgSub": "Browse professionals verified by adaptive assessment.",
       "orgCta": "Explore verified talent →",
-      "orgStep1": "Complete your organization profile",
+      "orgStep1": "Set up your organization profile",
       "orgStep2": "Search talent by AURA score",
       "orgStep3": "Invite the best to your events"
     },

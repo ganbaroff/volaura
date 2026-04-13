@@ -43,9 +43,8 @@ vi.mock("framer-motion", () => ({
             htmlProps[key] = value;
           }
         }
-        const Tag = prop as keyof React.JSX.IntrinsicElements;
-        // @ts-ignore
-        return <Tag {...htmlProps}>{children}</Tag>;
+        const Component = prop as React.ElementType;
+        return <Component {...htmlProps}>{children}</Component>;
       };
     },
   }),

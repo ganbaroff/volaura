@@ -11,9 +11,10 @@ import { AlertCircle, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { API_BASE } from "@/lib/api/client";
 import { useTrackEvent } from "@/hooks/use-analytics";
-import { EnergyPicker, type EnergyLevel } from "@/components/assessment/energy-picker";
+import { EnergyPicker } from "@/components/assessment/energy-picker";
 import { PreAssessmentSummary } from "@/components/assessment/pre-assessment-summary";
 import { TopBar } from "@/components/layout/top-bar";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 // Static competency metadata — labels fetched from i18n, weights from CLAUDE.md
 const COMPETENCIES = [
@@ -41,7 +42,9 @@ function AssessmentContent() {
   const isMounted = useRef(true);
 
   const [selected, setSelected] = useState<Set<CompetencyId>>(new Set());
-  const [energyLevel, setEnergyLevel] = useState<EnergyLevel>("full");
+  // Global energy state so the TopBar picker and the assessment picker stay in sync
+  // (Constitution Law 2 compliance — was previously local, drift-prone)
+  const { energy: energyLevel, setEnergy: setEnergyLevel } = useEnergyMode();
   const [consentGiven, setConsentGiven] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -163,7 +166,7 @@ function AssessmentContent() {
 
   return (
     <>
-    <TopBar title={t("assessment.title")} showEnergyPicker={false} />
+    <TopBar title={t("assessment.title")} />
     <div className="mx-auto max-w-lg px-4 py-8 space-y-6">
       <div>
         <h1 className="text-2xl font-bold font-headline text-foreground">

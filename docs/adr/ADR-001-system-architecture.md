@@ -3,7 +3,8 @@
 **Status:** Accepted
 **Date:** 2026-03-22
 **Deciders:** Yusif (product owner), Claude (architecture)
-**Related:** [[ADR-002-database-schema]], [[ADR-003-auth-verification]]
+**Related:** [[ADR-002-database-schema]], [[ADR-003-auth-verification]], [[ADR-004-assessment-engine]], [[ADR-005-aura-scoring]], [[ADR-006-ecosystem-architecture]]
+**Governed by:** [[../ECOSYSTEM-CONSTITUTION]]
 
 ## Context
 

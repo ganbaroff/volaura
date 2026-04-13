@@ -1,5 +1,7 @@
 # VOLAURA Assessment Security — Executive Summary
 
+**Cross-references:** [[SECURITY-AUDIT-INDEX]] | [[adr/ADR-004-assessment-engine]] | [[adr/ADR-005-aura-scoring]] | [[ECOSYSTEM-CONSTITUTION]]
+
 ## Top 3 Critical Findings
 
 ### 🔴 CRITICAL #1: Role Self-Selection Gaming (95% success probability)

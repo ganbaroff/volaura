@@ -3,6 +3,8 @@
 **Mandate:** CEO goes offline. Atlas + Cowork work without stopping until ecosystem is solid.
 **Rule:** Do NOT ask CEO. Solve problems. Only report when done.
 
+**Cross-references:** [[research/ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[LIFE-SIMULATOR-GAME-DESIGN]] | [[ECOSYSTEM-CONSTITUTION]] | [[CONSTITUTION_AI_SWARM]] | [[ECOSYSTEM-MAP]] | [[SPRINT-ATLAS-AUTONOMY-2026-04-12]]
+
 ---
 
 ## TRACK 1: ATLAS (Code + Infrastructure)

@@ -1,5 +1,7 @@
 # Geo-Adaptive Pricing Research — 2026-03-28
 
+**Cross-references:** [[blind-spots-analysis]] | [[../MASTER-STRATEGY]] | [[../MONETIZATION-ROADMAP]] | [[ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[../ECOSYSTEM-CONSTITUTION]]
+
 ## Key Finding
 Nobody uses pure PPP. Hybrid: PPP baseline + manual tier override + local currency decision.
 

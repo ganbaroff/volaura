@@ -3,6 +3,8 @@
 **Last Updated:** 2026-04-03
 **Source of Truth:** Actual routes from `apps/web/src/app/[locale]/`, persona definitions from `ux-research-agent.md`, AURA weights and badge tiers from `CLAUDE.md`.
 
+**Cross-references:** [[VISION-FULL]] | [[ECOSYSTEM-CONSTITUTION]] | [[TONE-OF-VOICE]] | [[research/adhd-first-ux-research]] | [[adr/ADR-005-aura-scoring]] | [[API-REFERENCE]] | [[MASTER-STRATEGY]]
+
 ---
 
 ## How to Read This Document

@@ -1,6 +1,8 @@
 # Volaura — Tone of Voice Standard v2.0
 *v1.0 consolidated 2026-03-24. v2.0 updated 2026-04-02 — CEO directive: Tinkoff/Aviasales benchmark, AZ bilingual mandate, A/B testing.*
 
+**Cross-references:** [[VISION-FULL]] | [[ECOSYSTEM-CONSTITUTION]] | [[MASTER-STRATEGY]] | [[research/ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[AZ-LINKEDIN-AUDIENCE]] | [[CONTENT-BRIEF-TEMPLATE]] | [[CUSTOMER-JOURNEY-MAP]] | [[design/BRAND-IDENTITY]]
+
 ---
 
 ## 1. Brand Voice Summary

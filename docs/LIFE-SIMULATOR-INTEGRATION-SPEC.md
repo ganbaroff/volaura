@@ -5,6 +5,8 @@
 **Repo:** `C:\Users\user\OneDrive\Desktop\BestGame\life-simulator-2026`
 **Status:** READY FOR E3 IMPLEMENTATION
 
+**Cross-references:** [[LIFE-SIMULATOR-GAME-DESIGN]] | [[ECOSYSTEM-CONSTITUTION]] | [[MINDSHIFT-INTEGRATION-SPEC]] | [[ECOSYSTEM-MAP]] | [[VISION-FULL]] | [[adr/ADR-006-ecosystem-architecture]] | [[adr/ADR-005-aura-scoring]] | [[API-REFERENCE]] | [[research/ecosystem-design-research]]
+
 > Written after code audit of the Godot 4.4 codebase.
 > All file paths and line numbers are verified against current code.
 

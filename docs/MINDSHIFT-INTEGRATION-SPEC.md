@@ -4,6 +4,8 @@
 **Status:** READY FOR E2 IMPLEMENTATION
 **Owner:** CTO
 
+**Cross-references:** [[ECOSYSTEM-CONSTITUTION]] | [[ECOSYSTEM-MAP]] | [[LIFE-SIMULATOR-INTEGRATION-SPEC]] | [[LIFE-SIMULATOR-GAME-DESIGN]] | [[VISION-FULL]] | [[adr/ADR-006-ecosystem-architecture]] | [[adr/ADR-005-aura-scoring]] | [[research/ecosystem-design-research]] | [[research/adhd-first-ux-research]] | [[API-REFERENCE]]
+
 > This document defines the exact API contract between MindShift and VOLAURA.
 > MindShift team implements calls. VOLAURA team provides the endpoints.
 > Both teams use this as the source of truth.

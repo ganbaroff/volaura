@@ -1,6 +1,6 @@
 # Business Model Blind Spots — 2026-03-28
 
-**Cross-references:** [[ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[../MASTER-STRATEGY]] | [[../VISION-FULL]] | [[../MONETIZATION-ROADMAP]] | [[../growth/LAUNCH-ACTIVATION-PLAN]] | [[geo-pricing-research]]
+**Cross-references:** [[ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[adhd-first-ux-research]] | [[ecosystem-design-research]] | [[gemini-research-all]] | [[geo-pricing-research]] | [[../MASTER-STRATEGY]] | [[../VISION-FULL]] | [[../ECOSYSTEM-CONSTITUTION]] | [[../MONETIZATION-ROADMAP]] | [[../ECOSYSTEM-MAP]] | [[../LIFE-SIMULATOR-GAME-DESIGN]] | [[../AI-TWIN-CONCEPT]] | [[../growth/LAUNCH-ACTIVATION-PLAN]] | [[../financial-model]]
 
 ## 10 Critical Findings (severity-ranked)
 

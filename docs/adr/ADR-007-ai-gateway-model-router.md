@@ -4,7 +4,7 @@
 **Status:** ACCEPTED
 **Sprint:** Session 93
 **Deciders:** CTO-Hands (Atlas, Claude Opus 4.6), CEO (Yusif Ganbarov)
-**Related:** Article 0 of `CLAUDE.md`, `docs/CONSTITUTION_AI_SWARM.md` Part 2, AI Council brief (Grok provider strategy)
+**Related:** [[ADR-008-zeus-governance-layer]] | [[ADR-009-crewai-adoption]] | [[../CONSTITUTION_AI_SWARM]] | [[../ECOSYSTEM-CONSTITUTION]] | [[../research/NEUROCOGNITIVE-ARCHITECTURE-2026]]
 
 ---
 

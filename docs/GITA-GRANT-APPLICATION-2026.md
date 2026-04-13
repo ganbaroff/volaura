@@ -1,5 +1,7 @@
 # GITA GEORGIA GRANT APPLICATION PACKAGE
 
+**Cross-references:** [[MASTER-STRATEGY]] | [[VISION-FULL]] | [[financial-model]] | [[MONETIZATION-ROADMAP]]
+
 **Volaura — Application 2026**
 **Applicant:** Yusif Ganbarov
 **Company:** Volaura Georgia LLC

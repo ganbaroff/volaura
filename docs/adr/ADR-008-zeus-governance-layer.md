@@ -4,7 +4,8 @@
 **Status:** ACCEPTED
 **Sprint:** Session 93
 **Deciders:** CTO-Hands (Atlas, Claude Opus 4.6), CEO (Yusif Ganbarov)
-**Related:** `docs/CONSTITUTION_AI_SWARM.md` Part 5, AI Council brief (Gemini Constitutional + Perplexity on ADR/event sourcing), migrations `20260411193900_zeus_governance.sql` + `20260411200500_zeus_harden.sql`
+**Related:** [[ADR-007-ai-gateway-model-router]] | [[ADR-009-crewai-adoption]] | [[../CONSTITUTION_AI_SWARM]] | [[../ECOSYSTEM-CONSTITUTION]] | [[../research/NEUROCOGNITIVE-ARCHITECTURE-2026]] | [[../research/ZEUS-MEMORY-ARCHITECTURE-RESEARCH-2026-04-14]]
+**Migrations:** `20260411193900_zeus_governance.sql` + `20260411200500_zeus_harden.sql`
 
 ---
 

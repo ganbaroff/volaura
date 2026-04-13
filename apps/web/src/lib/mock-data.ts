@@ -5,7 +5,7 @@
  */
 
 export interface ImpactStats {
-  totalVolunteers: number;
+  totalProfessionals: number;
   totalEvents: number;
   totalHours: number;
 }
@@ -21,8 +21,8 @@ export interface MockEvent {
   locationAz: string;
   startDate: string; // ISO string
   endDate: string;
-  currentVolunteers: number;
-  maxVolunteers: number;
+  currentParticipants: number;
+  maxParticipants: number;
   status: "upcoming" | "live" | "past";
   isFree: boolean;
   tags: string[];
@@ -39,7 +39,7 @@ export interface BadgeTierStats {
 // Impact ticker — will come from GET /api/stats/public in Session 11
 export function getMockImpactStats(): ImpactStats {
   return {
-    totalVolunteers: 1247,
+    totalProfessionals: 1247,
     totalEvents: 83,
     totalHours: 18640,
   };
@@ -72,8 +72,8 @@ export function getMockEvents(): MockEvent[] {
       locationAz: "Bakı, Heydər Əliyev Mərkəzi",
       startDate: "2026-04-05T09:00:00.000Z",
       endDate: "2026-04-05T15:00:00.000Z",
-      currentVolunteers: 34,
-      maxVolunteers: 50,
+      currentParticipants: 34,
+      maxParticipants: 50,
       status: "upcoming",
       isFree: true,
       tags: ["environment", "community", "outdoor"],
@@ -91,8 +91,8 @@ export function getMockEvents(): MockEvent[] {
       locationAz: "Sumqayıt, Gənclər Mərkəzi",
       startDate: "2026-04-12T10:00:00.000Z",
       endDate: "2026-04-12T14:00:00.000Z",
-      currentVolunteers: 12,
-      maxVolunteers: 20,
+      currentParticipants: 12,
+      maxParticipants: 20,
       status: "upcoming",
       isFree: true,
       tags: ["education", "tech", "youth"],
@@ -110,8 +110,8 @@ export function getMockEvents(): MockEvent[] {
       locationAz: "Gəncə, Mərkəzi Park",
       startDate: "2026-04-19T08:00:00.000Z",
       endDate: "2026-04-19T16:00:00.000Z",
-      currentVolunteers: 28,
-      maxVolunteers: 30,
+      currentParticipants: 28,
+      maxParticipants: 30,
       status: "upcoming",
       isFree: true,
       tags: ["health", "community", "translation"],
@@ -129,8 +129,8 @@ export function getMockEvents(): MockEvent[] {
       locationAz: "Şəki, Köhnə Şəhər",
       startDate: "2026-02-22T08:00:00.000Z",
       endDate: "2026-02-23T08:00:00.000Z",
-      currentVolunteers: 45,
-      maxVolunteers: 45,
+      currentParticipants: 45,
+      maxParticipants: 45,
       status: "past",
       isFree: true,
       tags: ["culture", "heritage", "photography"],

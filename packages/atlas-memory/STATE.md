@@ -50,7 +50,7 @@ Atlas Session 94 final: 29 commits, 362 files touched. CI: 38 failures → 0 (83
 
 ## Handoff 009 — IN PROGRESS (Session 96)
 **Bug 1 (pipeline leak):** Recovery script written (`scripts/recover_lost_aura.py`). Needs Supabase SDK to run. Code already has `pending_aura_sync=True` fallback for future failures.
-**Bug 2 (single-competency):** BY DESIGN. `/start` takes `competency_slug` from client. Each session = one competency. User takes 8 sessions for full AURA. Not a bug.
+**Bug 2 (single-competency):** BY DESIGN. `/start` takes `competency_slug` from client. Each session = one competency. Cowork's "5 questions" data was stale — batch3 migration (2026-04-14) added 10 more communication + 5 empathy. Current counts: communication=18, empathy=18. Sufficient for CAT convergence.
 **Bug 3 (Sentry):** DSN verified in .env. Config enhanced (stacktrace, no PII, release tag). Needs test event from prod Railway.
 **Remaining:** Run recovery script on prod. Send Sentry test event from Railway.
 

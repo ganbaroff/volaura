@@ -1,3 +1,9 @@
+<!-- RECENTLY_SHIPPED_START -->
+## ⚡ RECENTLY SHIPPED (last push — 2026-04-13 18:22 UTC)
+**Read this FIRST — prevents proposing already-shipped work.**
+New/updated routers: assessment
+<!-- RECENTLY_SHIPPED_END -->
+
 # Swarm Shared Context — UPDATED 2026-04-07 (Session 91)
 
 **By:** CTO (Claude) | **Updated:** 2026-04-07 (Session 91 — SWARM ALIVE end-to-end, 5 critical bugs fixed, Telegram bot live)

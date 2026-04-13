@@ -24,7 +24,7 @@ async def main():
     from supabase import acreate_client
 
     url = os.environ["SUPABASE_URL"]
-    key = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
+    key = os.environ.get("SUPABASE_SERVICE_KEY") or os.environ["SUPABASE_SERVICE_ROLE_KEY"]
     dry_run = os.environ.get("DRY_RUN", "0") == "1"
 
     db = await acreate_client(url, key)

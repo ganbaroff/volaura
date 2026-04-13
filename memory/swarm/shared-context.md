@@ -1,8 +1,7 @@
 <!-- RECENTLY_SHIPPED_START -->
-## ⚡ RECENTLY SHIPPED (last push — 2026-04-13 22:29 UTC)
+## ⚡ RECENTLY SHIPPED (last push — 2026-04-13 22:47 UTC)
 **Read this FIRST — prevents proposing already-shipped work.**
-
-New migrations: 20260416000000_role_level_add_professional.sql
+New/updated routers: discovery, events, organizations
 <!-- RECENTLY_SHIPPED_END -->
 
 # Swarm Shared Context — UPDATED 2026-04-07 (Session 91)

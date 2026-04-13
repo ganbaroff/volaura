@@ -45,22 +45,16 @@ Character Creation → Year Cycle → Events → Choices → Consequences → St
 
 ---
 
-## P0 Bugs (block ALL gameplay)
+## P0 Bugs (FIXED — 2026-04-13)
 
-### P0-1: check_requirements() doesn't exist
-**File:** `scripts/controllers/event_queue_controller.gd:202`
-**Fix:** Change `event.check_requirements(character)` → `event.can_trigger(character)`
-**Impact:** Events don't generate, game hangs
+### P0-1: check_requirements() doesn't exist ✅
+**Fixed in:** Session 95 audit — already corrected to `can_trigger(character)`
 
-### P0-2: EventModal auto-selects choice 0
-**File:** `scripts/controllers/event_queue_controller.gd:128`
-**Fix:** Remove auto `_make_choice(0)`, connect modal to wait for user input
-**Impact:** Player can't make choices
+### P0-2: EventModal auto-selects choice 0 ✅
+**Fixed:** Removed `_make_choice(0)` from `process_next_event()`. Added `resolve_current_event()` public method. Connected `event_started` signal to `gameplay_controller._on_event_started()` which shows EventModal. Milestone events converted from raw dicts to EventChoice objects.
 
-### P0-3: GameOver scene empty
-**File:** `scenes/ui/game_over.tscn`
-**Fix:** Add stats display (age, money, social, intelligence, happiness), death reason, restart/menu buttons
-**Impact:** Game ends with blank screen
+### P0-3: GameOver scene empty ✅
+**Fixed:** Full game_over.gd script + rebuilt game_over.tscn with stats grid (age, money, health, happiness, intelligence, social), death reason text, restart + menu buttons. Stats passed via `Globals.game_over_data`.
 
 ---
 

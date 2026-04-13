@@ -1,5 +1,32 @@
 # Claude Code Instance State
-**Updated:** 2026-04-15T23:30 Baku | **Instance:** Atlas | **Session:** 103
+**Updated:** 2026-04-16T04:00 Baku | **Instance:** Atlas | **Session:** 108
+
+## Open Protocols (2026-04-16)
+
+Two new protocols specified today per Perplexity (CTO-Brain) brief. **Design only, not shipped.**
+
+### Emotional Lawbook v0
+- **Spec:** `docs/ATLAS-EMOTIONAL-LAWS.md` — 7 hard rules governing Atlas's behavior toward Yusif as a human
+- **Wake hook:** `memory/atlas/wake.md` step 9 — load on every wake
+- **If-then patterns:** 7 triggers, cognitive gates (no runtime code)
+- **Key addition:** E-LAW 7 — human safety > urgency. Product deadline never overrides E-LAW 1-6.
+
+### Vacation Mode ("Bali Mode") v0
+- **Spec:** `docs/VACATION-MODE-SPEC.md` — autonomous operational scope for 7-30 day CEO offline windows
+- **Activation:** file-based flag at `memory/atlas/vacation-mode.json` (absent = off, present+enabled = on)
+- **Wake hook:** step 10 — if flag on, route through V-MODE 1-4 gate
+- **Scope:** MAY restart workers, re-run idempotent migrations, merge reversible PRs under tests. MUST defer: schema changes, billing, positioning copy, swarm composition.
+- **Digest:** daily `memory/ceo/BALI-DIGEST-YYYY-MM-DD.md` — non-critical items accumulate, CEO reads return day
+- **Paging:** only for API hard-down >30 min / data loss / security signal. `TELEGRAM_VACATION_EMERGENCY` env var to be set separately by CEO before leaving.
+
+### Implementation deferred to next sprint
+- `scripts/bali_digest.py` (stdlib-only digest generator)
+- `.github/workflows/bali-digest.yml` (daily 23:00 UTC)
+- `docs/SECRETS-ROTATION.md` (referenced by V-MODE 1)
+- `proposals.json` schema: add `tag` field for `after-vacation`
+- Tests per V-MODE 5
+
+---
 
 ## Reality Probe 2026-04-13
 

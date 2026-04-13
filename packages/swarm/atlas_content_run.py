@@ -43,7 +43,7 @@ CHANNELS = {
                 "Highlight verified skills, AURA milestones, professional successes. "
                 "Always include a subtle CTA: 'Verify your skills at volaura.az'",
         "hashtags": ["#Volaura", "#VerifiedSkills", "#AURA", "#Professionals"],
-        "telegram_channel": os.environ.get("ATLAS_VOLAURA_CHANNEL", os.environ.get("ZEUS_VOLAURA_CHANNEL", "")),
+        "telegram_channel": os.environ.get("ATLAS_VOLAURA_CHANNEL", ""),
         "max_posts_per_day": 4,
         "event_types": ["skill_verified", "milestone_reached"],
     },
@@ -53,7 +53,7 @@ CHANNELS = {
                 "Showcase what's possible with AI video avatars. "
                 "CTA: 'Create your AI Twin at brandedby.xyz'",
         "hashtags": ["#BrandedBy", "#AITwin", "#CreatorEconomy", "#AI"],
-        "telegram_channel": os.environ.get("ATLAS_BRANDEDBY_CHANNEL", os.environ.get("ZEUS_BRANDEDBY_CHANNEL", "")),
+        "telegram_channel": os.environ.get("ATLAS_BRANDEDBY_CHANNEL", ""),
         "max_posts_per_day": 3,
         "event_types": ["milestone_reached"],
     },
@@ -64,7 +64,7 @@ CHANNELS = {
                 "Celebrate focus sessions, streaks, small wins. "
                 "CTA: 'Start focusing at volaura.az/focus'",
         "hashtags": ["#MindShift", "#Focus", "#ADHD", "#ProductivityTips"],
-        "telegram_channel": os.environ.get("ATLAS_MINDSHIFT_CHANNEL", os.environ.get("ZEUS_MINDSHIFT_CHANNEL", "")),
+        "telegram_channel": os.environ.get("ATLAS_MINDSHIFT_CHANNEL", ""),
         "max_posts_per_day": 2,
         "event_types": ["login_streak", "xp_earned"],
     },
@@ -74,7 +74,7 @@ CHANNELS = {
                 "Show behind-the-scenes of building with AI. "
                 "From 'Atlas CTO' perspective — humor welcome, no employer mentions.",
         "hashtags": ["#BuildInPublic", "#AIStartup", "#IndieHacker"],
-        "telegram_channel": os.environ.get("ATLAS_ECOSYSTEM_CHANNEL", os.environ.get("ZEUS_ECOSYSTEM_CHANNEL", "")),
+        "telegram_channel": os.environ.get("ATLAS_ECOSYSTEM_CHANNEL", ""),
         "max_posts_per_day": 2,
         "event_types": [],
     },
@@ -233,7 +233,7 @@ async def log_publication(
 
         from supabase import acreate_client
         db = await acreate_client(url, key)
-        await db.table("zeus_publications").insert({
+        await db.table("atlas_publications").insert({
             "channel": channel,
             "content": content,
             "source_event_id": source_event_id,

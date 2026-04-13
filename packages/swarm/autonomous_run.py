@@ -1356,7 +1356,7 @@ async def _notify_atlas_gateway(proposals: list[Proposal]) -> None:
     FastAPI backend. Non-blocking: if unreachable, log and continue.
     Requires GATEWAY_SECRET env var for auth.
     """
-    gateway_url = os.environ.get("ATLAS_GATEWAY_URL", os.environ.get("ZEUS_GATEWAY_URL", "https://volauraapi-production.up.railway.app"))
+    gateway_url = os.environ.get("ATLAS_GATEWAY_URL", "https://volauraapi-production.up.railway.app")
     gateway_secret = os.environ.get("GATEWAY_SECRET", "")
 
     if not gateway_secret:

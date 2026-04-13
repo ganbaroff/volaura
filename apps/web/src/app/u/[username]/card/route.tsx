@@ -30,11 +30,11 @@ interface AuraScore {
 }
 
 const BADGE_COLORS: Record<string, string> = {
-  platinum: "#a78bfa",
-  gold: "#facc15",
-  silver: "#94a3b8",
-  bronze: "#d97706",
-  none: "#6366f1",
+  platinum: "#e5e4e2",
+  gold: "#ffd700",
+  silver: "#c0c0c0",
+  bronze: "#cd7f32",
+  none: "#c0c1ff",
 };
 
 const COMPETENCY_LABELS: Record<string, string> = {
@@ -105,7 +105,7 @@ export async function GET(
         style={{
           width: "100%",
           height: "100%",
-          background: "linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 60%, #16213e 100%)",
+          background: "linear-gradient(135deg, #13131b 0%, #1b1b23 60%, #1f1f27 100%)",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -116,7 +116,7 @@ export async function GET(
         }}
       >
         {/* Brand */}
-        <div style={{ position: "absolute", top: 36, left: 48, fontSize: 22, fontWeight: 700, color: "#818cf8", display: "flex" }}>
+        <div style={{ position: "absolute", top: 36, left: 48, fontSize: 22, fontWeight: 700, color: "#c0c1ff", display: "flex" }}>
           VOLAURA
         </div>
 

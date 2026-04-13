@@ -21,7 +21,7 @@ import urllib.request
 from datetime import UTC, datetime
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+REPO_ROOT = Path(__file__).resolve().parents[1]
 INBOX_DIR = REPO_ROOT / "memory" / "atlas" / "inbox"
 WAKE_COUNTER = REPO_ROOT / "memory" / "atlas" / ".wake-counter"
 

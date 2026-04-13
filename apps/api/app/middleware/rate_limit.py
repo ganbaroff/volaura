@@ -50,7 +50,7 @@ RATE_ASSESSMENT_COMPLETE = "10/hour"
 RATE_LLM = "30/hour"
 RATE_PROFILE_WRITE = "10/minute"
 RATE_DEFAULT = "60/minute"
-# Discovery: tighter limit — prevents volunteer enumeration via pagination loop
+# Discovery: tighter limit — prevents profile enumeration via pagination loop
 # Agent review (2026-03-25): 60/min → 10/min (60 reqs @ limit=50 = all 3K users exposed)
 RATE_DISCOVERY = "10/minute"
 

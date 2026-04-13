@@ -32,7 +32,7 @@ Usage:
         raise RuntimeError("No provider available for judge role")
     client = make_client(spec)
 
-Every fallback is logged to zeus.governance_events (non-blocking) so the
+Every fallback is logged to atlas.governance_events (non-blocking) so the
 CTO can audit when production is running on a degraded provider chain.
 """
 

@@ -1,6 +1,6 @@
 """Async video generation worker for BrandedBy AI Twin videos.
 
-Polls brandedby.generations for queued jobs, calls ZeusVideoSkill (fal.ai
+Polls brandedby.generations for queued jobs, calls AtlasVideoSkill (fal.ai
 MuseTalk), and writes video_url back to the row on completion.
 
 DESIGN (same constraints as reeval_worker.py):
@@ -30,7 +30,7 @@ from supabase._async.client import create_client as acreate_client
 
 from app.config import settings
 
-# Ensure packages/ is importable (monorepo: packages/swarm/zeus_video_skill.py)
+# Ensure packages/ is importable (monorepo: packages/swarm/atlas_video_skill.py)
 _project_root = Path(__file__).parent.parent.parent.parent.parent  # apps/api/.. → root
 _packages_path = str(_project_root / "packages")
 if _packages_path not in sys.path:
@@ -198,7 +198,7 @@ async def _mark_failed(db: AsyncClient, gen_id: str, error: str, retry_count: in
 
 async def _process_job(db: AsyncClient, job: dict[str, Any]) -> None:
     """Generate video for one queued job. Updates Supabase on completion/failure."""
-    from swarm.zeus_video_skill import ZeusVideoSkill
+    from swarm.atlas_video_skill import AtlasVideoSkill
 
     gen_id: str = job["id"]
     twin_id: str = job["twin_id"]
@@ -243,9 +243,9 @@ async def _process_job(db: AsyncClient, job: dict[str, Any]) -> None:
         await _mark_failed(db, gen_id, "No script or personality prompt available", retry_count)
         return
 
-    # Call ZeusVideoSkill
+    # Call AtlasVideoSkill
     try:
-        skill = ZeusVideoSkill(fal_api_key=settings.fal_api_key)
+        skill = AtlasVideoSkill(fal_api_key=settings.fal_api_key)
         video_url = await skill.generate(
             photo_url=photo_url,
             script=script,

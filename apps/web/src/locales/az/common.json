@@ -370,7 +370,7 @@
     "empathy_safeguarding_desc": "Başqalarının rifahına diqqətin və təhlükəsiz mühit yaratma qabiliyyətin"
   },
   "onboarding": {
-    "title": "Profilinizi tamamlayın",
+    "title": "Profilinizi qurun",
     "step": "Addım",
     "step1": {
       "title": "Şəxsiyyətiniz"
@@ -476,7 +476,7 @@
       "orgHeadline": "Sertifikatlaşdırılmış istedad gözləyir.",
       "orgSub": "Adaptiv qiymətləndirmə ilə yoxlanılmış peşəkarları araşdırın.",
       "orgCta": "Sertifikatlaşdırılmış istedadları araşdırın →",
-      "orgStep1": "Təşkilat profilinizi tamamlayın",
+      "orgStep1": "Təşkilat profilinizi qurun",
       "orgStep2": "AURA balına görə istedad axtarın",
       "orgStep3": "Ən yaxşıları tədbirlərinizə dəvət edin"
     },

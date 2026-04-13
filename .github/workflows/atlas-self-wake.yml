@@ -17,6 +17,7 @@ concurrency:
 
 permissions:
   contents: write
+  actions: read   # heartbeat reads latest CI run on main via the API
 
 jobs:
   heartbeat:

@@ -103,7 +103,7 @@ export function AuraRadarChart({
             fill={stroke}
             fillOpacity={0.18}
             strokeWidth={2}
-            animationDuration={1200}
+            animationDuration={800}
             animationEasing="ease-out"
           />
           <Tooltip

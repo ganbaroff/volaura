@@ -25,7 +25,7 @@ import { useTrackEvent } from "@/hooks/use-analytics";
 
 // ── Animated counter hook ────────────────────────────────────────────────
 
-function useAnimatedCounter(target: number, duration = 1200, enabled = true) {
+function useAnimatedCounter(target: number, duration = 800, enabled = true) {
   const [value, setValue] = useState(0);
   const startTime = useRef<number | null>(null);
   const animFrameRef = useRef<number>(0);

@@ -31,7 +31,7 @@ const TIER_LABELS: Record<string, { labelKey: string; default: string }> = {
   gold: { labelKey: "aura.tierGold", default: "Gold" },
   silver: { labelKey: "aura.tierSilver", default: "Silver" },
   bronze: { labelKey: "aura.tierBronze", default: "Bronze" },
-  none: { labelKey: "aura.tierNone", default: "Unranked" },
+  none: { labelKey: "aura.tierNone", default: "Not yet assessed" },
 };
 
 interface LiquidGlassRadarProps {

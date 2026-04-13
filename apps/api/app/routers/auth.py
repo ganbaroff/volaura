@@ -5,8 +5,10 @@ Rate limited: 5 requests/minute per IP (brute force prevention).
 
 import hmac
 import re
+from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Header, HTTPException, Request
+from loguru import logger
 from pydantic import BaseModel, EmailStr, field_validator
 
 from app.config import settings
@@ -275,3 +277,68 @@ async def logout(
         logger.warning("Token revocation failed (non-fatal)", user_id=str(user_id), error=str(e)[:200])
 
     return MessageResponse(message="Logged out")
+
+
+@router.post("/e2e-setup", response_model=AuthResponse, status_code=201)
+async def e2e_create_user(
+    request: Request,
+    payload: RegisterRequest,
+    db_admin: SupabaseAdmin,
+    db_anon: SupabaseAnon,
+    x_e2e_secret: Annotated[str | None, Header(alias="X-E2E-Secret")] = None,
+) -> AuthResponse:
+    """Create a confirmed test user and return a real session token.
+
+    Protected by E2E_TEST_SECRET — returns 404 when not configured (safe default).
+    Uses admin API to bypass email confirmation, then signs in for a real session.
+    """
+    if not settings.e2e_test_secret or not x_e2e_secret:
+        raise HTTPException(status_code=404, detail="Not found")
+    if not hmac.compare_digest(x_e2e_secret, settings.e2e_test_secret):
+        raise HTTPException(status_code=404, detail="Not found")
+
+    try:
+        result = await db_admin.auth.admin.create_user(
+            {
+                "email": payload.email,
+                "password": payload.password,
+                "email_confirm": True,
+                "user_metadata": {
+                    "username": payload.username,
+                    "display_name": payload.display_name or payload.username,
+                },
+            }
+        )
+        user = getattr(result, "user", None) or result
+        user_id = str(getattr(user, "id", None))
+
+        await (
+            db_admin.table("profiles")
+            .upsert(
+                {
+                    "id": user_id,
+                    "username": payload.username,
+                    "display_name": payload.display_name or payload.username,
+                },
+                on_conflict="id",
+            )
+            .execute()
+        )
+
+        auth_response = await db_anon.auth.sign_in_with_password(
+            {"email": payload.email, "password": payload.password}
+        )
+
+        return AuthResponse(
+            access_token=auth_response.session.access_token,
+            expires_in=auth_response.session.expires_in or 3600,
+            user_id=user_id,
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("E2E setup failed", error=str(e)[:200])
+        raise HTTPException(
+            status_code=500,
+            detail={"code": "E2E_SETUP_FAILED", "message": str(e)[:200]},
+        )

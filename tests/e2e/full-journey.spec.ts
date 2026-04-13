@@ -4,8 +4,10 @@ const BASE_URL = process.env.VOLAURA_URL || "https://volaura.app";
 const API_URL =
   process.env.VOLAURA_API_URL ||
   "https://volauraapi-production.up.railway.app";
+const E2E_SECRET = process.env.E2E_TEST_SECRET || "";
 const TEST_EMAIL = process.env.E2E_TEST_EMAIL || `e2e_${Date.now()}@test.volaura.app`;
 const TEST_PASSWORD = process.env.E2E_TEST_PASSWORD || "Test1234!@#$";
+const TEST_USERNAME = `e2e_user_${Date.now()}`;
 
 test.describe("Full Assessment Journey", () => {
   let authToken: string;
@@ -18,17 +20,19 @@ test.describe("Full Assessment Journey", () => {
     expect(body.database).toBe("connected");
   });
 
-  test("2. Sign up via bridge endpoint", async ({ request }) => {
-    const res = await request.post(`${API_URL}/api/auth/from_external`, {
+  test("2. Create test user via e2e-setup", async ({ request }) => {
+    const res = await request.post(`${API_URL}/api/auth/e2e-setup`, {
+      headers: { "X-E2E-Secret": E2E_SECRET },
       data: {
         email: TEST_EMAIL,
-        source: "e2e_test",
+        password: TEST_PASSWORD,
+        username: TEST_USERNAME,
         display_name: "E2E Test User",
       },
     });
-    expect(res.status()).toBe(200);
+    expect(res.status()).toBe(201);
     const body = await res.json();
-    authToken = body.access_token || body.shared_jwt;
+    authToken = body.access_token;
     expect(authToken).toBeTruthy();
   });
 

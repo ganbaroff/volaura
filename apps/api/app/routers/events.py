@@ -18,8 +18,8 @@ from app.schemas.event import (
     EventCreate,
     EventResponse,
     EventUpdate,
-    RegistrationResponse,
     ProfessionalRatingRequest,
+    RegistrationResponse,
 )
 
 router = APIRouter(prefix="/events", tags=["Events"])

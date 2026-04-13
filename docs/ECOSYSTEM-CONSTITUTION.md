@@ -305,7 +305,7 @@ Critical rules for all products:
 
 ### Research #9 — B2B Volunteer/Professional Framework
 
-**VOLAURA B2B rules:**
+**VOLAURA B2B rules (pricing detail in [[MASTER-STRATEGY]] and [[research/geo-pricing-research]]):**
 - AURA Score = portable skill Fast Pass (not just credential, not just badge)
 - Adaptive UI per user type: volunteer sees events, HR sees dashboard, ADHD user sees focus
 - Ghosting Grace in VOLAURA context: 41% industry ghosting solved by warm re-engagement
@@ -393,7 +393,7 @@ Critical rules for all products:
 
 ---
 
-### Research #15 — VOLAURA Assessment Architecture (Critical)
+### Research #15 — VOLAURA Assessment Architecture (Critical — see [[adr/ADR-004-assessment-engine]] and [[adr/ADR-005-aura-scoring]])
 
 **8 critical fixes before beta:**
 

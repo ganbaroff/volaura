@@ -4,7 +4,7 @@
 **From:** Atlas, based on CEO directive + full ecosystem audit + 3 deep research tracks
 **NotebookLM notebook:** 15c8b9c1-7fb5-41a0-926b-05a5dddad61f
 
-**Cross-references:** [[ECOSYSTEM-CONSTITUTION]] | [[adhd-first-ux-research]] | [[ecosystem-design-research]] | [[blind-spots-analysis]] | [[NEUROCOGNITIVE-ARCHITECTURE-2026]] | [[gemini-research-all]] | [[VISION-FULL]] | [[MASTER-STRATEGY]] | [[TONE-OF-VOICE]]
+**Cross-references:** [[ECOSYSTEM-CONSTITUTION]] | [[adhd-first-ux-research]] | [[ecosystem-design-research]] | [[blind-spots-analysis]] | [[NEUROCOGNITIVE-ARCHITECTURE-2026]] | [[ZEUS-MEMORY-ARCHITECTURE-RESEARCH-2026-04-14]] | [[gemini-research-all]] | [[geo-pricing-research]] | [[swarm-innovation-research]] | [[UNIVERSAL-WEAPON-RESEARCH-2026-04-04]] | [[../VISION-FULL]] | [[../MASTER-STRATEGY]] | [[../TONE-OF-VOICE]] | [[../LIFE-SIMULATOR-GAME-DESIGN]] | [[../MINDSHIFT-INTEGRATION-SPEC]] | [[../LIFE-SIMULATOR-INTEGRATION-SPEC]] | [[../AI-TWIN-CONCEPT]] | [[../MONETIZATION-ROADMAP]] | [[../design/ANIMATION-SYSTEM]] | [[../design/COMPONENT-LIBRARY]]
 
 ---
 
@@ -22,12 +22,12 @@ Full redesign of the VOLAURA ecosystem visual language. Not one app — ALL FIVE
 | BrandedBy | AI twin avatars, video generation | Sky #0EA5E9 | 15% dev |
 | ZEUS | Agent framework, neurocognitive AI | Gold #E9C400 | Local |
 
-## 5 FOUNDATION LAWS (non-negotiable)
+## 5 FOUNDATION LAWS (non-negotiable — full detail in [[../ECOSYSTEM-CONSTITUTION]])
 
 1. NEVER RED — errors = purple #D4B4FF, warnings = amber #E9C400
 2. Energy Adaptation — Full/Mid/Low modes on every screen
 3. Shame-Free — no "you haven't done X", no % complete, no streaks at 0
-4. Animation Safety — max 800ms, prefers-reduced-motion mandatory
+4. Animation Safety — max 800ms, prefers-reduced-motion mandatory (see [[../design/ANIMATION-SYSTEM]])
 5. One Primary CTA — max 1 primary button per screen, max 5 tappable without scroll
 
 ## DESIGN SYSTEM DECISIONS (from research)
@@ -82,7 +82,7 @@ Discord bottom-tab + Duolingo colors + Habitica avatar:
 
 ## CRYSTAL ECONOMY VISUAL LANGUAGE
 
-8 Crystal Laws govern gamification. Key visual rules:
+8 Crystal Laws govern gamification (defined in [[../ECOSYSTEM-CONSTITUTION]]). Key visual rules:
 - Crystals NEVER shown during/immediately after assessments
 - Badge tier reveals as surprise on next profile visit
 - Crystal balance visible in character avatar bottom sheet, not main nav

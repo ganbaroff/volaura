@@ -2,7 +2,7 @@
 # Created: 2026-03-24
 # Owner: Yusif Ganbarov + Claude (CTO)
 
-**Cross-references:** [[VISION-FULL]] | [[ECOSYSTEM-CONSTITUTION]] | [[GITA-GRANT-APPLICATION-2026]] | [[growth/LAUNCH-ACTIVATION-PLAN]] | [[growth/ORG-ACQUISITION]] | [[MONETIZATION-ROADMAP]] | [[research/blind-spots-analysis]] | [[research/geo-pricing-research]]
+**Cross-references:** [[VISION-FULL]] | [[ECOSYSTEM-CONSTITUTION]] | [[GITA-GRANT-APPLICATION-2026]] | [[growth/LAUNCH-ACTIVATION-PLAN]] | [[growth/ORG-ACQUISITION]] | [[MONETIZATION-ROADMAP]] | [[ECOSYSTEM-MAP]] | [[CUSTOMER-JOURNEY-MAP]] | [[research/blind-spots-analysis]] | [[research/geo-pricing-research]] | [[research/ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[adr/ADR-006-ecosystem-architecture]] | [[TONE-OF-VOICE]] | [[financial-model]]
 
 ---
 
@@ -87,7 +87,7 @@ Volunteers join (free, for AURA badge + opportunities)
               → REPEAT
 ```
 
-### Revenue Model (calibrated for Azerbaijan, 2026-03-24)
+### Revenue Model (calibrated for Azerbaijan, 2026-03-24 — see also [[MONETIZATION-ROADMAP]] and [[research/geo-pricing-research]])
 
 **Market data:** Humanique.az = 10-15% annual salary per hire (~$500-1,400).
 Boss.az = 20-50 AZN ($12-30) per posting. Median Baku income: 310 AZN ($185).
@@ -150,7 +150,7 @@ Free volunteers stay free. Fee is for matching + verification service.
 Azerbaijan-only. Adding Turkey + Kazakhstan = 2-3x minimum.
 With GITA grant ($240K): covers 3+ years runway regardless of revenue.
 
-### Realistic Conversion
+### Realistic Conversion (see [[research/blind-spots-analysis]] Finding #6 on LTV/CAC)
 - Global SaaS benchmark: 5-15% trial → paid
 - Azerbaijan-specific: 5-8% (SaaS awareness lower, spreadsheets dominate)
 - NOT 30% — that's 3-6x above best-in-class globally

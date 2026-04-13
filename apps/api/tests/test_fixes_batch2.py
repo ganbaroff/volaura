@@ -248,14 +248,14 @@ def test_aura_me_has_rate_limit_decorator():
     """GET /me must have @limiter.limit() decorator applied."""
     from app.routers.aura import get_my_aura
     # slowapi stores limit info on the function via _rate_limit_metadata attribute
-    has_limit = (
+    (
         hasattr(get_my_aura, "_rate_limit_metadata")
         or hasattr(get_my_aura, "__wrapped__")
         or hasattr(get_my_aura, "_is_rate_limited")
     )
     # Also check via the router decorator chain
     from app.routers.aura import router
-    route = next(
+    next(
         (r for r in router.routes if hasattr(r, "endpoint") and r.endpoint == get_my_aura),
         None,
     )

@@ -144,9 +144,9 @@ Premium multiplayer rooms where verified professionals gather:
 
 ## Implementation Priority
 
-1. Fix 3 P0 bugs (50 minutes total)
-2. Add 20 event JSONs (diverse life events)
-3. Verify VOLAURA API integration (crystal sync)
-4. Add crystal spend options in-game
+1. ~~Fix 3 P0 bugs~~ ✅ (all 3 fixed 2026-04-15)
+2. ~~Add 20 event JSONs~~ ✅ (53 events: 47 base + 6 VOLAURA integration)
+3. ~~VOLAURA API integration~~ ✅ (VolauraAPIClient + Character.apply_volaura_boosts)
+4. Add crystal spend options in-game (in progress — 6 VOLAURA events added)
 5. GameOver → "Take assessment" CTA
 6. Rooms feature (Phase 3)

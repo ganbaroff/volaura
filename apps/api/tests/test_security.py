@@ -9,7 +9,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from app.deps import get_current_user_id, get_supabase_admin, get_supabase_user
+from app.deps import get_current_user_id, get_supabase_admin, get_supabase_anon, get_supabase_user
 from app.main import app
 
 
@@ -94,29 +94,35 @@ async def test_csp_header_present_in_production():
 # ── Auth Input Validation ────────────────────────────────────────────────────
 
 @pytest.mark.asyncio
-async def test_register_rejects_empty_email(client: AsyncClient):
+async def test_register_rejects_empty_email(client: AsyncClient, mock_db):
+    app.dependency_overrides[get_supabase_anon] = _make_admin_override(mock_db)
     resp = await client.post("/api/auth/register", json={
         "email": "",
         "password": "secret123",
         "username": "test",
     })
     assert resp.status_code == 422
+    app.dependency_overrides.pop(get_supabase_anon, None)
 
 
 @pytest.mark.asyncio
-async def test_register_rejects_empty_password(client: AsyncClient):
+async def test_register_rejects_empty_password(client: AsyncClient, mock_db):
+    app.dependency_overrides[get_supabase_anon] = _make_admin_override(mock_db)
     resp = await client.post("/api/auth/register", json={
         "email": "test@example.com",
         "password": "",
         "username": "test",
     })
     assert resp.status_code == 422
+    app.dependency_overrides.pop(get_supabase_anon, None)
 
 
 @pytest.mark.asyncio
-async def test_login_rejects_missing_fields(client: AsyncClient):
+async def test_login_rejects_missing_fields(client: AsyncClient, mock_db):
+    app.dependency_overrides[get_supabase_anon] = _make_admin_override(mock_db)
     resp = await client.post("/api/auth/login", json={})
     assert resp.status_code == 422
+    app.dependency_overrides.pop(get_supabase_anon, None)
 
 
 # ── Assessment Input Validation ──────────────────────────────────────────────

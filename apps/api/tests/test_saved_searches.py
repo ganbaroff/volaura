@@ -541,7 +541,6 @@ class TestMatchCheckerService:
 
         # Build admin with 5 searches (more than threshold)
         admin = MagicMock()
-        now_iso = "2026-04-01T00:00:00+00:00"
 
         searches = [
             {

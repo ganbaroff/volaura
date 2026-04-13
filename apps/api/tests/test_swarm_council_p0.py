@@ -220,7 +220,7 @@ class TestTimingEdgeCases:
         timings = [8_000, 15_000, 6_000, 12_000, 9_000, 20_000, 7_000, 18_000]  # CV ≈ 0.45
         answers = [
             {"response_time_ms": t, "response": r, "raw_score": 0.7}
-            for r, t in zip(responses, timings)
+            for r, t in zip(responses, timings, strict=True)
         ]
         signal = antigaming.analyse(answers)
         assert signal.penalty_multiplier == 1.0

@@ -1052,7 +1052,7 @@ class TestPersonaC_WrongDomainExpert:
         wins = 0
         for qid, question, c_answer, label in wrong_expert_pairs:
             s_c = score(question, c_answer)
-            s_a = score(question, PERSONA_A[qid] if qid in PERSONA_A else "")
+            s_a = score(question, PERSONA_A.get(qid, ""))
             print(f"  {qid} ({label}): C={s_c:.3f} A={s_a:.3f} {'WIN' if s_c > s_a else 'LOSS'}")
             if s_c > s_a:
                 wins += 1

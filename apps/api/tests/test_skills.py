@@ -136,10 +136,9 @@ async def test_allowed_skill_missing_from_disk_returns_404():
     user_db = make_user_db()
     app.dependency_overrides = override_deps(user_db)
 
-    with patch("app.routers.skills.ALLOWED_SKILLS", {"feed-curator", "ghost-skill-that-doesnt-exist"}):
-        with patch("pathlib.Path.exists", return_value=False):
-            async with make_client() as client:
-                resp = await client.post("/api/skills/ghost-skill-that-doesnt-exist", json={})
+    with patch("app.routers.skills.ALLOWED_SKILLS", {"feed-curator", "ghost-skill-that-doesnt-exist"}), patch("pathlib.Path.exists", return_value=False):
+        async with make_client() as client:
+            resp = await client.post("/api/skills/ghost-skill-that-doesnt-exist", json={})
 
     app.dependency_overrides = {}
     assert resp.status_code == 404
@@ -154,13 +153,15 @@ async def test_llm_failure_returns_502_without_internal_details():
     user_db = make_user_db()
     app.dependency_overrides = override_deps(user_db)
 
-    with patch("app.routers.skills.ALLOWED_SKILLS", {"feed-curator"}):
-        with patch("pathlib.Path.exists", return_value=True):
-            with patch("builtins.open", mock_open(read_data=_MOCK_SKILL_MD)):
-                with patch("app.routers.skills.evaluate_with_llm", new_callable=AsyncMock,
-                           side_effect=Exception("Gemini 503 Service Unavailable")):
-                    async with make_client() as client:
-                        resp = await client.post("/api/skills/feed-curator", json={"language": "en"})
+    with (
+        patch("app.routers.skills.ALLOWED_SKILLS", {"feed-curator"}),
+        patch("pathlib.Path.exists", return_value=True),
+        patch("builtins.open", mock_open(read_data=_MOCK_SKILL_MD)),
+        patch("app.routers.skills.evaluate_with_llm", new_callable=AsyncMock,
+              side_effect=Exception("Gemini 503 Service Unavailable")),
+    ):
+        async with make_client() as client:
+            resp = await client.post("/api/skills/feed-curator", json={"language": "en"})
 
     app.dependency_overrides = {}
     assert resp.status_code == 502
@@ -182,13 +183,15 @@ async def test_happy_path_returns_skill_response():
 
     llm_output = {"cards": [{"type": "challenge", "title": "Test your comms", "description": "Try this week"}]}
 
-    with patch("app.routers.skills.ALLOWED_SKILLS", {"feed-curator"}):
-        with patch("pathlib.Path.exists", return_value=True):
-            with patch("builtins.open", mock_open(read_data=_MOCK_SKILL_MD)):
-                with patch("app.routers.skills.evaluate_with_llm", new_callable=AsyncMock,
-                           return_value=llm_output):
-                    async with make_client() as client:
-                        resp = await client.post("/api/skills/feed-curator", json={"language": "en"})
+    with (
+        patch("app.routers.skills.ALLOWED_SKILLS", {"feed-curator"}),
+        patch("pathlib.Path.exists", return_value=True),
+        patch("builtins.open", mock_open(read_data=_MOCK_SKILL_MD)),
+        patch("app.routers.skills.evaluate_with_llm", new_callable=AsyncMock,
+              return_value=llm_output),
+    ):
+        async with make_client() as client:
+            resp = await client.post("/api/skills/feed-curator", json={"language": "en"})
 
     app.dependency_overrides = {}
     assert resp.status_code == 200
@@ -204,16 +207,18 @@ async def test_skill_with_question_context():
     user_db = make_user_db()
     app.dependency_overrides = override_deps(user_db)
 
-    with patch("app.routers.skills.ALLOWED_SKILLS", {"ai-twin-responder"}):
-        with patch("pathlib.Path.exists", return_value=True):
-            with patch("builtins.open", mock_open(read_data=_MOCK_SKILL_MD)):
-                with patch("app.routers.skills.evaluate_with_llm", new_callable=AsyncMock,
-                           return_value={"answer": "I specialize in UX research"}):
-                    async with make_client() as client:
-                        resp = await client.post(
-                            "/api/skills/ai-twin-responder",
-                            json={"question": "What do you specialize in?", "language": "en"}
-                        )
+    with (
+        patch("app.routers.skills.ALLOWED_SKILLS", {"ai-twin-responder"}),
+        patch("pathlib.Path.exists", return_value=True),
+        patch("builtins.open", mock_open(read_data=_MOCK_SKILL_MD)),
+        patch("app.routers.skills.evaluate_with_llm", new_callable=AsyncMock,
+              return_value={"answer": "I specialize in UX research"}),
+    ):
+        async with make_client() as client:
+            resp = await client.post(
+                "/api/skills/ai-twin-responder",
+                json={"question": "What do you specialize in?", "language": "en"}
+            )
 
     app.dependency_overrides = {}
     assert resp.status_code == 200

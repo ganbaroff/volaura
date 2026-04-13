@@ -6,7 +6,7 @@
  *   pnpm --filter @volaura/remotion render -- LinkedInCarousel out/carousel.mp4
  *
  * Stitches nicely into the swarm content pipeline:
- *   step 7 (Video Render) calls this script with the composition id and output path.
+ *   step 6 (Video Render) calls this script with the composition id and output path.
  */
 
 import { bundle } from "@remotion/bundler";
@@ -64,6 +64,6 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error("[remotion] render failed:", err);
+  console.error("[remotion] fatal:", err);
   process.exit(1);
 });

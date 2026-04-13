@@ -7,7 +7,12 @@
  * Product accent: MindShift emerald (focus theme)
  */
 
+import type { Caption } from "@remotion/captions";
 import type { TikTokAZProps } from "../compositions/TikTokAZ";
+
+// If Atlas generates captions via `pnpm --filter @volaura/remotion transcribe`,
+// replace this with: `import captionsJson from "./tiktok-2026-04-13.captions.json";`
+const captions: Caption[] | undefined = undefined;
 
 export const tiktokAZ20260413Post2: TikTokAZProps["data"] = {
   brandHandle: "@volaura.io",
@@ -54,8 +59,10 @@ export const tiktokAZ20260413Post2: TikTokAZProps["data"] = {
     "I18n Inspector",
     "ADHD Advocate",
     "Constitution Checker",
-    "Telemetry Lead",
-    "Brand Voice",
-    "Data Steward",
+    "Telemetry Sentinel",
+    "Quality Gate",
+    "Release Shepherd",
   ],
+  audio: undefined, // set to "tiktok-2026-04-13.wav" once TTS renders it into public/
+  captions,
 };

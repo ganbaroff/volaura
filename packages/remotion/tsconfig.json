@@ -19,5 +19,5 @@
     }
   },
   "include": ["src/**/*", "scripts/**/*", "remotion.config.ts"],
-  "exclude": ["node_modules", "out"]
+  "exclude": ["node_modules", "out", ".whisper"]
 }

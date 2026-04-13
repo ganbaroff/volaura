@@ -16,7 +16,7 @@ from app.core.reliability.scoring import (
 # ── behavioral_score ──────────────────────────────────────────────────────────
 
 def test_behavioral_all_zero_signals():
-    s = BehavioralSignals()  # all 0.5 default for onboarding/sjt, 0 others
+    BehavioralSignals()  # all 0.5 default for onboarding/sjt, 0 others
     score = behavioral_score(BehavioralSignals(
         onboarding_velocity=0, assessment_completion=0, profile_completeness=0,
         sjt_reliability=0, contact_verification=0, availability_specificity=0,

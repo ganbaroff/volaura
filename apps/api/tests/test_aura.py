@@ -248,7 +248,7 @@ async def test_explanation_no_pending_when_llm_eval():
     body = resp.json()
     assert body["has_pending_evaluations"] is False
     assert body["pending_reeval_count"] == 0
-    assert body["evaluation_confidence"] if "evaluation_confidence" in body else True  # no assertion on nested
+    assert body.get("evaluation_confidence", True)
 
 
 @pytest.mark.asyncio

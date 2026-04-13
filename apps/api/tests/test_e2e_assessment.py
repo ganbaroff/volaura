@@ -95,7 +95,7 @@ async def run_e2e():
     # Step 4: Test with poor answers
     print("\nStep 4: Testing with poor answers...")
     state_bad = CATState(theta=0.0, theta_se=1.0, items=[])
-    for i in range(min(5, len(items))):
+    for _i in range(min(5, len(items))):
         next_item = select_next_item(state_bad, items)
         if next_item is None:
             break
@@ -145,7 +145,7 @@ async def run_e2e():
     print("\nStep 7: Anti-gaming smoke test...")
     from app.core.assessment.antigaming import GamingSignal
 
-    signal = GamingSignal()
+    GamingSignal()
     from app.core.assessment.antigaming import check_answer_timing
 
     # Normal timing

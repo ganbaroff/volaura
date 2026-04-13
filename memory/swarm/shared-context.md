@@ -1,5 +1,5 @@
 <!-- RECENTLY_SHIPPED_START -->
-## ⚡ RECENTLY SHIPPED (last push — 2026-04-13 20:36 UTC)
+## ⚡ RECENTLY SHIPPED (last push — 2026-04-13 20:38 UTC)
 **Read this FIRST — prevents proposing already-shipped work.**
 
 New migrations: 20260415140000_zeus_to_atlas_rename.sql

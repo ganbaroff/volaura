@@ -92,7 +92,7 @@ async def generate_twin_personality(
     context = _build_character_context(character_state)
 
     prompt = (
-        f"You are generating an AI Twin personality profile for a verified volunteer"
+        f"You are generating an AI Twin personality profile for a verified professional"
         f' named "{display_name}".\n\n'
         f"This person's verified data from the Volaura platform:\n{context}\n\n"
         f"Generate a first-person personality profile for their AI Twin. This profile\n"
@@ -104,13 +104,13 @@ async def generate_twin_personality(
         f"- Professional but warm and human\n"
         f"- Ground every claim in the verified data (don't invent achievements)\n"
         f"- Highlight top 2-3 verified skills by name with context\n"
-        f'- Mention XP level to show activity level (e.g. "actively volunteering")\n'
+        f'- Mention XP level to show activity level (e.g. "actively building my profile")\n'
         f"- End with 1 sentence about what opportunities they are open to\n"
         f"- NO hashtags, NO emojis, NO marketing speak\n"
         f"- Output ONLY the personality profile text, nothing else\n\n"
-        f"Example tone: \"I'm a reliability-focused volunteer with a Gold badge in\n"
+        f"Example tone: \"I'm a reliability-focused professional with a Gold badge in\n"
         f"Communication. My AURA score of 81 reflects consistent performance across"
-        f' 12+ events..."\n\n'
+        f' 12+ verified assessments..."\n\n'
         f"Write the personality profile now:"
     )
 
@@ -137,9 +137,9 @@ def _build_fallback_personality(display_name: str, character_state: dict) -> str
 
     if not skills:
         return (
-            f"I'm {display_name}, an active volunteer building my verified skill"
-            f" profile on Volaura. I've earned {xp} XP through volunteer activities"
-            f" and I'm focused on growing my competencies. I'm open to volunteer"
+            f"I'm {display_name}, an active professional building my verified skill"
+            f" profile on Volaura. I've earned {xp} XP through assessed activities"
+            f" and I'm focused on growing my competencies. I'm open to"
             f" opportunities where I can contribute and learn."
         )
 
@@ -150,8 +150,8 @@ def _build_fallback_personality(display_name: str, character_state: dict) -> str
     level = "experienced" if xp >= 500 else "active" if xp >= 100 else "emerging"
 
     return (
-        f"I'm {display_name}, an {level} volunteer with verified competencies"
+        f"I'm {display_name}, an {level} professional with verified competencies"
         f" in {skill_str}. My skills are backed by Volaura's assessment platform"
-        f" with {xp} XP earned through real volunteer work. I'm open to opportunities"
+        f" with {xp} XP earned through real assessments. I'm open to opportunities"
         f" where I can apply my verified skills and make a meaningful impact."
     )

@@ -1,33 +1,23 @@
 # Atlas — Heartbeat
 
-**Session:** 100 (autonomous)
+**Session:** 103 (reality probe)
 **Timestamp:** 2026-04-15
 **Branch:** main
-**Last commit:** `ebae2dc`
-**Commits this session:** 2
+**Last commit:** `80e19ad`
 
-**Production:** volauraapi-production.up.railway.app → OK (200)
-**Tests:** 749 passed, 0 failed (full pytest run confirmed)
-**Sentry:** 0 issues
-**Swarm:** 13 agents, 0 pending proposals
+**Production:** volauraapi-production.up.railway.app → HTTP 200, db connected, LLM configured
+**Sentry:** 81 issues historical, 0 new events last 9 days (clean since session 94 fixes)
+**Tests:** 749 backend pass, 0 fail. Frontend tsc clean after session 102 fix.
+**CI:** Unblocked (stuck runs cancelled, ruff clean, TS clean)
 
-**Session 100 — what shipped:**
-1. Fix: deprecated datetime.utcnow() → timezone-aware in bars.py
-2. Fix: 3 @ts-ignore removed from frontend test mocks (React.ElementType)
+**Reality Probe (Handoff 012) — COMPLETE (8/9 probes, 1 partial)**
+Full results in `packages/atlas-memory/sync/claudecode-state.md`
 
-**Cumulative sessions 97-100 (14 commits):**
-- Critical: migration fix (org_volunteer_records), atlas_content_run.py created, CI workflow fixed
-- ZEUS→Atlas: rename complete in all active code + workflows with fallback
-- Ecosystem: events bus wired to assessment /complete
-- Professional: volunteer→professional in 3 API files, discovery roles aligned
-- Quality: 749 tests green, 0 @ts-ignore in tests, no deprecated API calls
-- UX: public profile design refresh, org dashboard last_activity
-- Ops: recovery script env var fix, Sentry confirmed clean
+Key corrections to prior beliefs:
+1. Prod was NEVER down — Cowork sandbox egress block
+2. Sentry had 81 issues / 5400+ events — not "0" as reported
+3. ZEUS is not a standalone repo — it's a module inside VOLAURA
+4. BrandedBy has 0 VOLAURA integration code
+5. LifeSimulator has 129 uncommitted files
 
-**All megaplan items now blocked on external dependencies:**
-- CEO: test Life Simulator, test Telegram bot, create ATLAS_ secrets, Sentry alerts UI
-- CEO: apply Phase 1 migration, run recovery script on prod
-- External: Vertex AI billing propagation
-- Cowork: Phase A design components
-
-**Test suite health:** 749 passed, 120 warnings (supabase deprecation + unawaited coroutines in mocks)
+Honest readiness: VOLAURA 55%, LifeSim 60%, BrandedBy 65%, MindShift ~50%, ZEUS N/A

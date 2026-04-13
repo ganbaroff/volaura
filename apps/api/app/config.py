@@ -92,6 +92,10 @@ class Settings(BaseSettings):
     # If not set, falls back to Gemini direct translation with AZ-specialized prompt
     gcp_project_id: str = ""  # GCP project with Translation API enabled
 
+    # E2E test setup — creates confirmed users bypassing email verification.
+    # Only enabled when E2E_TEST_SECRET is set. Returns 404 when empty (safe default).
+    e2e_test_secret: str = ""
+
     # Cron jobs — internal endpoints called by GitHub Actions (not user-facing)
     # Set CRON_SECRET on Railway; same value must be in GitHub Actions secrets.
     # Empty = cron endpoints return 403 (safe default).

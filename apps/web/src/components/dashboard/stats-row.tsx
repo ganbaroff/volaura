@@ -2,13 +2,17 @@
 
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { Flame, Calendar, Trophy } from "lucide-react";
+import { Flame, Calendar, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+
+// Crystal Law 5 (2026-04-14): Removed leaguePosition / competitive rank (#X).
+// Third stat now shows AURA tier (non-competitive — user's own growth tier).
+// Reference: docs/ECOSYSTEM-CONSTITUTION.md G9/G46
 
 interface StatsRowProps {
   streak: number;
   eventsCount: number;
-  leaguePosition: string | null; // e.g. "8%" or null
+  auraTier: string | null; // e.g. "Silver" | "Gold" | "Platinum" — from badge_tier
 }
 
 const stagger = {
@@ -20,7 +24,7 @@ const item = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" as const } },
 };
 
-export function StatsRow({ streak, eventsCount, leaguePosition }: StatsRowProps) {
+export function StatsRow({ streak, eventsCount, auraTier }: StatsRowProps) {
   const { t } = useTranslation();
 
   const stats = [
@@ -37,11 +41,11 @@ export function StatsRow({ streak, eventsCount, leaguePosition }: StatsRowProps)
       highlight: false,
     },
     {
-      icon: Trophy,
-      displayValue: leaguePosition ?? null,
-      label: t("dashboard.league"),
-      highlight: false,
-      comingSoon: !leaguePosition,
+      icon: Sparkles,
+      displayValue: auraTier ?? null,
+      label: t("dashboard.auraTier", { defaultValue: "AURA Tier" }),
+      highlight: auraTier != null,
+      comingSoon: !auraTier,
     },
   ];
 

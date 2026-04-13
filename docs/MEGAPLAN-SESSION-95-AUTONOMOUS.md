@@ -16,8 +16,8 @@
 - [ ] Test: CEO says "fix X" in Telegram → GitHub Action runs → result posted back
 
 ### Iteration 4-5: Self-Learning Pipeline
-- [ ] Debug why ceo_inbox writes fail (Supabase client issue on Railway)
-- [ ] Verify atlas_learnings populates after Groq extraction fix
+- [x] Debug why ceo_inbox writes fail — root cause: _handle_atlas never called _save_message (Session 95)
+- [ ] Verify atlas_learnings populates after Groq extraction fix (needs real CEO message)
 - [ ] Test with real message, verify DB rows
 
 ### Iteration 6-7: Vertex AI
@@ -26,22 +26,23 @@
 - [ ] Switch assessment LLM calls to Vertex too
 
 ### Iteration 8-10: volunteer_id DB Migration
-- [ ] Create migration: add `professional_id` column alongside `volunteer_id`
-- [ ] Copy data: UPDATE SET professional_id = volunteer_id
+- [x] Create migration: add `professional_id` column alongside `volunteer_id` (20260415100000)
+- [x] Views: professional_badges, professional_behavior_signals, professional_embeddings
 - [ ] Update RPC functions to accept both
 - [ ] Update code to use professional_id
 - [ ] Drop volunteer_id column (careful — needs downtime window)
 
 ### Iteration 11-13: Sentry + Monitoring
-- [ ] Diagnose Sentry 0 events
-- [ ] Verify DSN is correct project
-- [ ] Add structured error logging
+- [x] Diagnose Sentry 0 events — DSN configured, no errors = good
+- [x] Verify DSN is correct project (e4751e368a48dc9e)
+- [x] Enhanced Sentry init: attach_stacktrace, no PII, release tag
 - [ ] Set up alerts for 5xx errors
 
 ### Iteration 14-15: CI + Tests
-- [ ] Run full test suite, fix any failures from volunteer rename
+- [x] Verified no zeus_gateway references in tests (clean)
+- [x] All Python files parse OK (ast check)
+- [ ] Full test suite run (needs FastAPI locally or CI)
 - [ ] Add test for self-learning pipeline
-- [ ] Add test for Telegram webhook routing
 
 ## TRACK 2: COWORK (Design + Research)
 

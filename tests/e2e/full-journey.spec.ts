@@ -49,18 +49,16 @@ test.describe("Full Assessment Journey", () => {
       },
     });
     expect(res.status()).toBe(201);
-    const session = await res.json();
-    expect(session.data?.id || session.id).toBeTruthy();
-    expect(session.data?.next_question || session.next_question).toBeTruthy();
+    let session = await res.json();
+    expect(session.session_id).toBeTruthy();
+    expect(session.next_question).toBeTruthy();
 
-    const sessionId = session.data?.id || session.id;
-    let isComplete = false;
+    const sessionId = session.session_id;
+    let isComplete = session.is_complete === true;
     let answersCount = 0;
 
     while (!isComplete && answersCount < 30) {
-      const currentSession = session.data || session;
-      const question =
-        currentSession.next_question || currentSession.current_question;
+      const question = session.next_question;
       if (!question) break;
 
       const answerRes = await request.post(
@@ -76,14 +74,10 @@ test.describe("Full Assessment Journey", () => {
         }
       );
       expect(answerRes.ok()).toBeTruthy();
-      const answerBody = await answerRes.json();
-      const inner = answerBody.data || answerBody;
-      isComplete = inner.is_complete === true;
+      const feedback = await answerRes.json();
+      session = feedback.session;
+      isComplete = session.is_complete === true;
       answersCount++;
-
-      if (!isComplete) {
-        Object.assign(session, { data: inner });
-      }
     }
 
     expect(answersCount).toBeGreaterThan(0);
@@ -96,9 +90,8 @@ test.describe("Full Assessment Journey", () => {
     );
     expect(completeRes.ok()).toBeTruthy();
     const result = await completeRes.json();
-    const resultData = result.data || result;
-    expect(resultData.aura_updated).toBe(true);
-    expect(resultData.competency_score).toBeGreaterThan(0);
+    expect(result.aura_updated).toBe(true);
+    expect(result.competency_score).toBeGreaterThan(0);
   });
 
   test("4. AURA score exists after completion", async ({ request }) => {

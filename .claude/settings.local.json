@@ -77,7 +77,9 @@
       "Read(//c/Users/user/.local/bin/**)",
       "mcp__claude_ai_Vercel__list_teams",
       "Bash(cp \"C:/Users/user/.claude/projects/C--Projects-VOLAURA/15299306-4582-4c3f-b635-40127687fa18.jsonl\" \"C:/Users/user/.claude/atlas/session-93-full-transcript.jsonl\")",
-      "Read(//c/Users/user/.claude/atlas/**)"
+      "Read(//c/Users/user/.claude/atlas/**)",
+      "mcp__claude_ai_Sentry__find_projects",
+      "mcp__claude_ai_Sentry__search_issues"
     ],
     "deny": [
       "Bash(rm -rf /)*",

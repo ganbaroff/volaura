@@ -1,25 +1,15 @@
-# Session Breadcrumb — 2026-04-15 (Session 97, 4 commits)
+# Session Breadcrumb — 2026-04-15 (Session 98, 3 commits)
 
 ## What was done this session:
-1. Migration fix: removed non-existent org_volunteer_records from Phase 1 migration
-2. volunteer→professional: discovery.py valid_roles + profiles.py account_type filter expanded
-3. ZEUS→Atlas: workflows (with fallback), ecosystem_events.py, check_rls_live.py
-4. Ecosystem events bus wired into assessment /complete endpoint
-5. Public profile design refresh committed (liquid glass, mesh gradient, AURA tokens)
-6. Org dashboard last_activity populated from completed_at
-7. Docs batch: audits, research, content drafts, handoffs, growth plan
+1. Created atlas_content_run.py — daily cron workflow was calling missing file
+2. Fixed recovery script env var name (SUPABASE_SERVICE_KEY)
+3. Sentry audit: confirmed 0 issues last 7 days
+4. Updated megaplan checkboxes
 
 ## Key files changed:
-- supabase/migrations/20260415100000_add_professional_id_columns.sql (fixed)
-- apps/api/app/routers/discovery.py (professional role added)
-- apps/api/app/routers/profiles.py (account_type filter expanded)
-- apps/api/app/routers/assessment.py (ecosystem events wired)
-- apps/api/app/routers/organizations.py (last_activity fix)
-- apps/api/app/services/ecosystem_events.py (ZEUS→Atlas in comments)
-- .github/workflows/atlas-content.yml (ATLAS_ env vars with ZEUS fallback)
-- .github/workflows/session-end.yml (ATLAS_GATEWAY_URL with fallback)
-- scripts/check_rls_live.py (zeus→Atlas in docstring)
-- apps/web/src/app/[locale]/(public)/u/[username]/page.tsx (design refresh)
+- packages/swarm/atlas_content_run.py (NEW — critical CI fix)
+- scripts/recover_lost_aura.py (env var fix)
+- docs/MEGAPLAN-SESSION-95-AUTONOMOUS.md (Sentry note)
 
 ## NOT DONE:
 - Vertex AI propagation
@@ -27,9 +17,9 @@
 - volunteer_id Phase 2 migration (needs downtime)
 - Phase A design components
 - Telegram bot as executor
-- ZEUS_ GitHub secrets rename (need CEO to create ATLAS_ versions)
-- Sentry 5xx alerts
-- Full test suite
+- ZEUS_ GitHub secrets rename
+- Sentry 5xx alerts (web UI)
+- Full test suite (needs venv)
 
 ## STATE
-Branch: main, commit 2814219. Prod: OK (200). 0 pending proposals.
+Branch: main, commit b62c9e2. Prod: OK (200). Working tree clean except settings.local.json (auto).

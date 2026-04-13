@@ -1,6 +1,6 @@
 # ECOSYSTEM MAP — VOLAURA 5-Product Network
 **Auto-read by all swarm agents at init. Updated by CTO after each sprint.**
-**Last Updated:** 2026-04-06 (Constitution v1.7, Session 87)
+**Last Updated:** 2026-04-15 (Constitution v1.7, ZEUS→Atlas rename)
 **Authority:** ECOSYSTEM-CONSTITUTION.md v1.7 supersedes everything in this file.
 
 ---
@@ -32,10 +32,10 @@ Or: `git show origin/claude/blissful-lichterman:docs/ECOSYSTEM-CONSTITUTION.md`
 | Product | Repo | Status | Port/URL |
 |---------|------|--------|----------|
 | **VOLAURA** | `C:\Projects\VOLAURA` | ✅ Live | `https://volaura.app` |
-| **ZEUS Gateway** | `C:\Users\user\Downloads\claw3d-fork\server\` | ✅ Running | `wss://zeus-gateway-production.up.railway.app` + `ws://localhost:18789` |
+| **Atlas Gateway** | `C:\Users\user\Downloads\claw3d-fork\server\` | ✅ Running | `wss://zeus-gateway-production.up.railway.app` + `ws://localhost:18789` |
 | **Life Simulator (claw3d)** | `C:\Users\user\Downloads\claw3d-fork\src\` | 🔄 65% | `http://localhost:3000` |
 | **MindShift** | `C:\Users\user\Downloads\mindshift\` | ✅ 92% | Vercel (separate Supabase: `awfoqycoltvhamtrsvxk`) |
-| **BrandedBy** | `packages/swarm/zeus_video_skill.py` | 🔄 15% | No UI yet |
+| **BrandedBy** | `packages/swarm/archive/zeus_video_skill.py` | 🔄 15% | No UI yet |
 
 ---
 
@@ -97,7 +97,7 @@ Critical path: Energy picker · Pre-Assessment Commitment Layer · DIF audit · 
 
 ---
 
-## ZEUS GATEWAY — Agent Infrastructure
+## ATLAS GATEWAY — Agent Infrastructure
 
 **Two disconnected systems (current reality):**
 
@@ -125,7 +125,7 @@ Ollama qwen3:8b (LOCAL GPU — priority 0, zero cost)  ← ADDED this session
   → DeepSeek (paid, deep reasoning)
 ```
 
-**P0 open items (ZEUS):**
+**P0 open items (Atlas Gateway):**
 - JWT WebSocket auth (code ready in `memory/agent-findings/Z-EV-MNMVBDDE`) — needs Railway deploy
 - WEBHOOK_SECRET_RAILWAY/GITHUB/SENTRY — set in Railway Dashboard
 - Python↔Node.js bridge — ~20 lines in autonomous_run.py
@@ -177,7 +177,7 @@ All products write to `character_events` table in VOLAURA Supabase:
 
 ```sql
 character_events (
-  source_product TEXT,  -- 'volaura' | 'mindshift' | 'life_simulator' | 'zeus'
+  source_product TEXT,  -- 'volaura' | 'mindshift' | 'life_simulator' | 'atlas'
   event_type TEXT,      -- 'crystal_earned' | 'skill_verified' | 'xp_gained'
   payload JSONB,
   user_id UUID

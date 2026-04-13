@@ -41,7 +41,7 @@ type Beat =
 export interface TikTokAZProps {
   data: {
     brandHandle: string;
-    accentProduct: "volaura" | "mindshift" | "lifeSim" | "brandedBy" | "zeus";
+    accentProduct: "volaura" | "mindshift" | "lifeSim" | "brandedBy" | "atlas";
     hook: { line1: string; line2: string };
     beats: Beat[];
     cta: { line: string; brand: string };

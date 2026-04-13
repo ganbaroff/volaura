@@ -10,18 +10,18 @@ from __future__ import annotations
 
 import json
 import math
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
 # ── Imports under test ────────────────────────────────────────────────────────
 from app.core.assessment.aura_calc import (
-    COMPETENCY_WEIGHTS,
     _COMPETENCY_HALF_LIVES,
     _DECAY_FLOOR,
     _DECAY_PHASE1_DAYS,
     _DECAY_PHASE1_RATE,
     _DECAY_PHASE2_HALF_LIFE_DEFAULT,
+    COMPETENCY_WEIGHTS,
     calculate_effective_score,
 )
 from app.core.assessment.bars import (
@@ -31,14 +31,13 @@ from app.core.assessment.bars import (
     _parse_json_scores,
 )
 
-
 # ─────────────────────────────────────────────────────────────────────────────
 # Helpers
 # ─────────────────────────────────────────────────────────────────────────────
 
 def _ts(days_ago: float) -> datetime:
     """Return a UTC-aware datetime `days_ago` days in the past."""
-    return datetime.now(timezone.utc) - timedelta(days=days_ago)
+    return datetime.now(UTC) - timedelta(days=days_ago)
 
 
 def _expected_decay_factor(days: float, half_life: float) -> float:
@@ -113,7 +112,7 @@ class TestDecayMathPerCompetency:
             COMPETENCY_WEIGHTS[c] * _COMPETENCY_HALF_LIVES[c]
             for c in COMPETENCY_WEIGHTS
         )
-        assert _DECAY_PHASE2_HALF_LIFE_DEFAULT == pytest.approx(round(manual, 1), abs=0.01)
+        assert pytest.approx(round(manual, 1), abs=0.01) == _DECAY_PHASE2_HALF_LIFE_DEFAULT
 
 
 class TestDecayFloor:
@@ -130,7 +129,7 @@ class TestDecayFloor:
         )
 
     def test_floor_value_is_60_percent(self) -> None:
-        assert _DECAY_FLOOR == pytest.approx(0.60)
+        assert pytest.approx(0.60) == _DECAY_FLOOR
 
     def test_floor_not_applied_in_phase1(self) -> None:
         """Phase 1 (≤30 days) should not hit the floor — factor stays above 0.70."""
@@ -240,14 +239,14 @@ class TestEdgeCases:
 
     def test_future_timestamp_no_decay(self) -> None:
         """A future last_updated means 0 inactive days → factor ≈ 1.0."""
-        future = datetime.now(timezone.utc) + timedelta(days=10)
+        future = datetime.now(UTC) + timedelta(days=10)
         result = calculate_effective_score(80.0, future, competency_slug="leadership")
         # days_inactive = max(0, negative) = 0 → factor = 1.0
         assert result == pytest.approx(80.0, abs=0.1)
 
     def test_naive_datetime_treated_as_utc(self) -> None:
         """Naive datetimes are coerced to UTC, not rejected."""
-        naive = datetime.utcnow() - timedelta(days=50)
+        naive = datetime.now(UTC).replace(tzinfo=None) - timedelta(days=50)
         assert naive.tzinfo is None
         result = calculate_effective_score(80.0, naive, competency_slug="tech_literacy")
         assert isinstance(result, float)

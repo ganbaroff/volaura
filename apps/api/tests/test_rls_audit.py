@@ -417,7 +417,7 @@ class TestC1BehaviorSignalsInsert:
             mock_db.return_value = _mock_supabase_error(
                 "42501", "new row violates row-level security policy"
             )
-            response = await client.post(
+            await client.post(
                 "/api/v1/assessment/submit",
                 json={
                     "session_id": FAKE_SESSION_ID,
@@ -493,7 +493,7 @@ class TestC2AuraScoresExposure:
             )
 
     def test_c2_self_write_attack_vector_documented(self):
-        c2 = next(f for f in AUDIT_FINDINGS if f["id"] == "C2")
+        next(f for f in AUDIT_FINDINGS if f["id"] == "C2")
         assert "total_score: 99.0" in AUDIT_FINDINGS[
             next(i for i, f in enumerate(AUDIT_FINDINGS) if f["id"] == "H1")
         ]["attack_vector"]
@@ -817,9 +817,7 @@ class TestMigrationIntegrity:
         ]
         for block in policy_blocks:
             for table in sensitive_tables:
-                if f"ON public.{table}" in block:
-                    # A USING (TRUE) on a sensitive table is a red flag
-                    if "USING (TRUE)" in block and "FOR SELECT" in block:
+                if f"ON public.{table}" in block and "USING (TRUE)" in block and "FOR SELECT" in block:
                         pytest.fail(
                             f"Policy on sensitive table '{table}' uses USING (TRUE) "
                             f"for SELECT. Block:\n{block[:300]}"
@@ -953,7 +951,7 @@ class TestWriteVectorIsolation:
             "20260324000015_rls_audit_fixes.sql",
         ))
         with open(migration_path, encoding="utf-8") as f:
-            sql = f.read()
+            f.read()
 
         # Profile update must include auth.uid() = id check
         # The migration should have either kept or added this policy

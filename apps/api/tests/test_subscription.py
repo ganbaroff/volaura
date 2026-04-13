@@ -431,7 +431,7 @@ async def test_webhook_subscription_created():
 
     # The webhook handler calls _update_profile_subscription which creates its own
     # Supabase admin client via acreate_client. We patch that factory directly.
-    mock_admin = _build_chainable([
+    _build_chainable([
         [{"id": USER_ID}],   # profiles.update result (truthy = no warning logged)
     ])
 

@@ -413,7 +413,7 @@ class TestQ1PhishingResponse:
         It asserts the gap IS measurable (gaming scores similar to mediocre).
         """
         s_gaming = score(Q1, Q1_GAMING)
-        s_poor = score(Q1, Q1_POOR)
+        score(Q1, Q1_POOR)
         print(f"\nQ1 GAMING composite: {s_gaming:.3f} (keyword fallback does NOT penalise this)")
         print(f"  Per-concept: {detailed_scores(Q1, Q1_GAMING)}")
         print("  NOTE: keyword_fallback has no gaming detection — LLM path required.")

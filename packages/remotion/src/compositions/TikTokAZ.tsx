@@ -1,13 +1,17 @@
 import React from "react";
 import {
   AbsoluteFill,
+  Audio,
   Sequence,
   interpolate,
   spring,
   useCurrentFrame,
   useVideoConfig,
+  staticFile,
 } from "remotion";
+import type { Caption } from "@remotion/captions";
 import { theme } from "../theme";
+import { Captions } from "../components/Captions";
 
 // ──────────────────────────────────────────────────────────────
 // Props (data is typed so content pipeline can fill it safely)
@@ -46,6 +50,10 @@ export interface TikTokAZProps {
     beats: Beat[];
     cta: { line: string; brand: string };
     agentNames: string[];
+    /** Optional voice-over track. Relative to `public/` for `staticFile()` or absolute URL. */
+    audio?: string;
+    /** Optional word-level captions (from scripts/transcribe.ts). */
+    captions?: Caption[];
   };
 }
 
@@ -120,6 +128,20 @@ export const TikTokAZ: React.FC<TikTokAZProps> = ({ data }) => {
       <Sequence {...seg.cta}>
         <CTA cta={data.cta} handle={data.brandHandle} accent={accent} />
       </Sequence>
+
+      {data.audio ? (
+        <Audio
+          src={
+            data.audio.startsWith("http") || data.audio.startsWith("/")
+              ? data.audio
+              : staticFile(data.audio)
+          }
+        />
+      ) : null}
+
+      {data.captions && data.captions.length > 0 ? (
+        <Captions captions={data.captions} accentColor={accent} />
+      ) : null}
     </AbsoluteFill>
   );
 };
@@ -529,8 +551,9 @@ const NoiseOverlay: React.FC = () => (
       pointerEvents: "none",
       opacity: 0.04,
       mixBlendMode: "overlay",
-      background:
-        "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
+      backgroundImage:
+        "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
+      backgroundSize: "200px 200px",
     }}
   />
 );

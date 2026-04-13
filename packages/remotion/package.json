@@ -9,28 +9,32 @@
     "render": "tsx scripts/render.ts",
     "render:tiktok-az": "remotion render TikTokAZ out/tiktok-az.mp4",
     "render:carousel": "remotion render LinkedInCarousel out/carousel.png --image-format=png",
+    "transcribe": "tsx scripts/transcribe.ts",
+    "install-whisper": "tsx scripts/install-whisper.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --ext .ts,.tsx --max-warnings=0"
   },
   "dependencies": {
-    "@remotion/cli": "4.0.448",
     "@remotion/bundler": "4.0.448",
+    "@remotion/captions": "4.0.448",
+    "@remotion/cli": "4.0.448",
+    "@remotion/google-fonts": "4.0.448",
+    "@remotion/install-whisper-cpp": "4.0.448",
     "@remotion/renderer": "4.0.448",
     "@remotion/shapes": "4.0.448",
     "@remotion/transitions": "4.0.448",
-    "@remotion/google-fonts": "4.0.448",
-    "remotion": "4.0.448",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "remotion": "4.0.448"
   },
   "devDependencies": {
+    "@types/node": "20.14.2",
     "@types/react": "18.3.12",
     "@types/react-dom": "18.3.1",
-    "@types/node": "20.14.2",
     "tsx": "4.16.2",
     "typescript": "5.5.3"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=20.10.0"
   }
 }

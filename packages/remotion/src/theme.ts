@@ -6,7 +6,7 @@
  *  - NEVER RED. Errors / alerts use purple #D4B4FF, warnings #E9C400.
  *  - Max 800ms non-decorative animation durations.
  *  - One primary CTA per frame.
- *  - Character / mascot animations: state-machine driven (see Rive when mascot added).
+ *  - Character / mascot animations: state-machine driven (Rive).
  */
 
 export const theme = {
@@ -48,13 +48,9 @@ export const theme = {
   },
 
   size: {
-    // Vertical TikTok / Reels
     tiktok: { width: 1080, height: 1920 },
-    // Horizontal YouTube
     youtube: { width: 1920, height: 1080 },
-    // Square post
     square: { width: 1080, height: 1080 },
-    // LinkedIn carousel slide (portrait 4:5)
     carousel: { width: 1080, height: 1350 },
   },
 
@@ -65,6 +61,20 @@ export const theme = {
     long: 600,
     max: 800,
   },
+
+  radius: {
+    sm: 8,
+    md: 16,
+    lg: 24,
+    xl: 32,
+    pill: 999,
+  },
 } as const;
 
-export type Theme = typeof theme;
+export type ThemeProductKey =
+  | "volaura"
+  | "mindshift"
+  | "lifeSim"
+  | "brandedBy"
+  | "atlas";
+

@@ -215,7 +215,7 @@ def test_no_flags_for_clean_answers():
     timings = [8_000, 15_000, 6_000, 12_000, 9_000, 20_000]  # natural variance, CV ≈ 0.43
     answers = [
         {"response_time_ms": t, "response": r, "raw_score": 0.7}
-        for r, t in zip(responses, timings)
+        for r, t in zip(responses, timings, strict=True)
     ]
     signal = antigaming.analyse(answers)
     assert signal.overall_flag is False

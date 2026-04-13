@@ -66,7 +66,8 @@ export const carouselData20260413: LinkedInCarouselProps["data"] = {
     {
       kind: "cta",
       headline: "Watch the full story →",
-      body: "Link in comments. Or follow for weekly AI-CTO posts.",
+      body: "Link in the first comment. Built with 44 agents and one human.",
+      handle: "volaura.io",
     },
   ],
 };

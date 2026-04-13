@@ -9,11 +9,10 @@ import { theme } from "./theme";
 /**
  * Composition registry.
  * Each composition = one video format. Data is injected via defaultProps.
- * New weekly batches → add new data file + register a new Composition (or reuse an existing one with new data).
+ * New weekly batches → add new data file + register a new Composition.
  *
  * Note: Remotion's <Composition> requires Props extend Record<string, unknown>.
- * Our compositions declare domain-specific interfaces (TikTokAZProps, etc.), which
- * are structurally compatible but not assignable without a widening cast.
+ * Our compositions declare domain-specific interfaces; casts widen them.
  */
 export const RemotionRoot: React.FC = () => {
   return (
@@ -32,7 +31,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="LinkedInCarousel"
         component={LinkedInCarousel as unknown as React.FC<Record<string, unknown>>}
-        durationInFrames={8 * 30 * 3} // 8 slides × 3s × 30fps
+        durationInFrames={8 * 30 * 3}
         fps={30}
         width={theme.size.carousel.width}
         height={theme.size.carousel.height}

@@ -18,7 +18,7 @@ export type Slide =
   | { kind: "stat"; value: string; label: string; footnote?: string }
   | { kind: "list"; eyebrow: string; items: string[] }
   | { kind: "quote"; body: string; attribution?: string }
-  | { kind: "cta"; headline: string; body: string };
+  | { kind: "cta"; headline: string; body: string; handle?: string };
 
 export interface LinkedInCarouselProps {
   data: {
@@ -348,6 +348,19 @@ const CtaSlide: React.FC<{
         >
           {slide.body}
         </p>
+        {slide.handle && (
+          <div
+            style={{
+              fontFamily: theme.font.body,
+              fontSize: 32,
+              color: theme.color.textDim,
+              marginTop: 32,
+              letterSpacing: 0.4,
+            }}
+          >
+            {slide.handle}
+          </div>
+        )}
       </div>
     </SlideShell>
   );
@@ -393,21 +406,33 @@ const Eyebrow: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div
     style={{
       fontFamily: theme.font.body,
-      fontSize: 26,
-      color: theme.color.volaura,
-      letterSpacing: 1.6,
+      fontSize: 24,
+      color: theme.color.textMuted,
+      letterSpacing: 1.4,
       textTransform: "uppercase",
-      marginBottom: 28,
-      fontWeight: 700,
+      marginBottom: 32,
     }}
   >
     {children}
   </div>
 );
 
-function useAppear() {
+// ──────────────────────────────────────────────────────────────
+// Hooks
+// ──────────────────────────────────────────────────────────────
+
+/**
+ * Standard "fade + lift" entry. Per Constitution Law 4, max 800ms.
+ * 24 frames @ 30fps = 800ms exactly.
+ */
+const useAppear = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const appear = spring({ frame, fps, config: { damping: 18 }, durationInFrames: 20 });
+  const appear = spring({
+    frame,
+    fps,
+    config: { damping: 18 },
+    durationInFrames: 24,
+  });
   return { appear };
-}
+};

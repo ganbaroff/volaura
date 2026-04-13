@@ -17,7 +17,7 @@ END $$;
 -- Update the log_governance_event function to reference atlas schema
 CREATE OR REPLACE FUNCTION public.log_governance_event(
     p_event_type TEXT,
-    p_severity TEXT DEFAULT 'INFO',
+    p_severity TEXT DEFAULT 'info',
     p_source TEXT DEFAULT 'system',
     p_actor TEXT DEFAULT 'atlas',
     p_subject TEXT DEFAULT NULL,
@@ -50,9 +50,9 @@ GRANT SELECT, INSERT ON atlas.governance_events TO service_role;
 INSERT INTO atlas.governance_events (event_type, severity, source, actor, subject, payload)
 VALUES (
     'schema_rename',
-    'INFO',
+    'info',
     'migration',
     'atlas',
     'zeus_to_atlas_rename',
-    '{"reason": "CEO directive: ZEUS→ATLAS rebrand", "migration": "20260415140000"}'::jsonb
+    '{"reason": "CEO directive: ZEUS to ATLAS rebrand", "migration": "20260415140000"}'::jsonb
 );

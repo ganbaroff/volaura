@@ -81,6 +81,7 @@ export default function DashboardPage() {
   const track = useTrackEvent();
   const { energy } = useEnergyMode();
   const isLowEnergy = energy === "low";
+  const isReducedEnergy = energy === "low" || energy === "mid";
 
   useEffect(() => {
     isMounted.current = true;
@@ -325,8 +326,9 @@ export default function DashboardPage() {
         )}
 
         {/* ── Personalized Feed (feed-curator skill) ── */}
-        {/* Constitution Law 2: hidden in low energy mode (essential-only dashboard) */}
-        {hasScore && !isLowEnergy && (
+        {/* Constitution Law 2: hidden in mid AND low energy (the feed is the densest
+            cognitive surface on dashboard — mid users keep AURA+Tribe, lose the feed) */}
+        {hasScore && !isReducedEnergy && (
           <motion.div variants={sVariants} className="space-y-2">
             <SectionHeader label={t("dashboard.feed.title", { defaultValue: "Recommended for you" })} />
             <FeedCards

@@ -3,129 +3,208 @@
 > Obsidian-compatible vault. Every document cross-references others.
 > Read this file first to navigate the entire project.
 >
-> **Last Updated:** 2026-03-22 | 49 documents indexed
+> **Last Updated:** 2026-04-12 | ~130 active documents indexed
+> **Vault Root:** `docs/`
 
 ---
 
-## Project Command Center
+## Supreme Law
 
-**Start here — these 4 documents define everything:**
-- [[MEGA-PROMPT]] — Full-stack generation prompt (1577 lines, 9 modules). THE primary source of truth.
-- [[../CLAUDE.md]] — Master instructions, tech stack, mandatory protocols, architecture patterns
-- [[MASTER-AUDIT-SYNTHESIS]] — 6-role audit results, vulnerabilities, action plan, priorities
-- [[ACCEPTANCE-CRITERIA]] — Definition of Done, per-module Given/When/Then, pre-launch checklist
+**The [[ECOSYSTEM-CONSTITUTION]] governs all 5 products. It supersedes everything.**
+- Law 1: Never Red — errors purple, warnings amber
+- Law 2: Energy Adaptation — Full/Mid/Low modes everywhere
+- Law 3: Shame-Free Language — no guilt mechanics
+- Law 4: Animation Safety — max 800ms, prefers-reduced-motion mandatory
+- Law 5: One Primary Action per screen
 
 ---
 
-## Generation Prompts (AI Handoff)
+## Vision & Strategy
 
-**These prompts are sent to AI code generators in this order:**
-- [[prompts/VERTEX-BACKEND-PROMPT]] — FastAPI backend generation (DB + Auth + API). Send to Vertex/Gemini.
-- [[prompts/V0-FRONTEND-PROMPT]] — Core UI generation (Assessment + Results + Dashboard). Send to V0.
-- [[V0_SPRINT3_PROMPT]] — Profile + Events + Sharing
-- [[V0_SPRINT4_PROMPT]] — Settings + Notifications + Advanced
-- [[V0_SPRINT5_PROMPT]] — Landing page + Polish
-- [[prompts/PERPLEXITY-REVIEW-PROMPT]] — Code review prompt for Perplexity
+- [[VISION-FULL]] — CEO's real vision: from WUF13 to the New LinkedIn
+- [[MASTER-STRATEGY]] — Business model, grants, expansion roadmap, unit economics
+- [[TONE-OF-VOICE]] — Tinkoff/Aviasales benchmark, shame-free voice
+- [[ECOSYSTEM-MAP]] — All 5 products and their relationships
+- [[ECOSYSTEM-ASSESSMENT]] — Cross-product dependencies
+- [[500-HOUR-PLAN]] — Time allocation plan
+- [[MONETIZATION-ROADMAP]] — Revenue timeline
+- [[GITA-GRANT-APPLICATION-2026]] — Georgia GITA grant ($240K target)
+
+---
+
+## Research (CEO Originals)
+
+- [[research/ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] — Redesign brief: 5 products, tokens, navigation, AURA radar
+- [[research/NEUROCOGNITIVE-ARCHITECTURE-2026]] — ZEUS cognitive architecture (GWT, ZenBrain, Curiosity Engine)
+- [[research/adhd-first-ux-research]] — 26 ADHD-first design rules
+- [[research/ecosystem-design-research]] — Discord + Duolingo + Habitica navigation patterns
+- [[research/blind-spots-analysis]] — 10 critical blind spots (TAM, debt bomb, LTV/CAC)
+- [[research/gemini-research-all]] — AI memory, agile methodology, handoff protocols (140K words)
+- [[research/geo-pricing-research]] — Regional pricing strategy
+- [[research/swarm-innovation-research]] — Swarm architecture research
+- [[research/ZEUS-MEMORY-ARCHITECTURE-RESEARCH-2026-04-14]] — ZEUS memory system design
+- [[research/UNIVERSAL-WEAPON-RESEARCH-2026-04-04]] — Universal assessment weapon concept
+- [[NOTEBOOKLM-COUNTRY-RESEARCH]] — Country expansion research via NotebookLM
 
 ---
 
 ## Architecture Decision Records (ADRs)
 
-- [[adr/ADR-001-system-architecture]] — Full stack, hosting, monorepo (Vercel, Railway, Turborepo)
-- [[adr/ADR-002-database-schema]] — Tables, RLS, pgvector (Supabase PostgreSQL)
-- [[adr/ADR-003-auth-verification]] — Auth strategy + 3-level verification (Supabase Auth)
-- [[adr/ADR-004-assessment-engine]] — Pseudo-IRT, question types, scoring (adaptivetesting, Gemini)
-- [[adr/ADR-005-aura-scoring]] — Composite score, weights, tiers, recalculation
+- [[adr/ADR-001-system-architecture]] — Full stack: Vercel + Railway + Turborepo
+- [[adr/ADR-002-database-schema]] — Tables, RLS, pgvector (Supabase)
+- [[adr/ADR-003-auth-verification]] — Auth + 3-level verification
+- [[adr/ADR-004-assessment-engine]] — IRT/CAT adaptive testing + Gemini evaluation
+- [[adr/ADR-005-aura-scoring]] — AURA composite score, weights, tiers
+- [[adr/ADR-006-ecosystem-architecture]] — Multi-product ecosystem structure
+- [[adr/ADR-007-ai-gateway-model-router]] — LLM routing: Cerebras → Ollama → NVIDIA → Haiku
+- [[adr/ADR-008-zeus-governance-layer]] — ZEUS agent governance
+- [[adr/ADR-009-crewai-adoption]] — CrewAI evaluation and adoption decision
+- [[adr/ADR-010-defect-autopsy]] — Defect analysis protocol
 
 ---
 
-## Product
+## Design System
 
-- [[product/BUSINESS-MODEL]] — Revenue model, pricing tiers, monetization
-- [[product/KPIs]] — North star metric, activation, engagement, retention
-- [[product/USER-PERSONAS]] — Volunteer, Organization, Event attendee profiles
-- [[product/COMPETITIVE-ANALYSIS]] — Competitive landscape (Credly, LinkedIn, local)
-- [[VISION-EVOLUTION]] — Conceptual shift from "volunteer platform" to "verified competency + community"
+- [[design/REDESIGN-BRIEF-v2]] — Current redesign brief (v2)
+- [[design/STITCH-DESIGN-SYSTEM]] — Stitch design system specification
+- [[design/DESIGN-SYSTEM-AUDIT]] — Token coverage, component gaps
+- [[design/COMPONENT-LIBRARY]] — All shadcn/ui components with states
+- [[design/ANIMATION-SYSTEM]] — Motion implementation specs (spring damping ≥14)
+- [[design/BRAND-IDENTITY]] — Logo, illustrations, voice & tone
+- [[design/UX-COPY-AZ-EN]] — Bilingual microcopy (AZ primary, EN secondary)
+- [[I18N-KEYS]] — 157+ bilingual i18n keys
 
----
-
-## Design
-
-- [[DESIGN_BLUEPRINT]] — Comprehensive design system specification for V0
-- [[DESIGN_HANDOFF_V0]] — V0 design handoff to engineering team
-- [[design/DESIGN-SYSTEM-AUDIT]] — Token coverage, component completeness, gaps
-- [[design/COMPONENT-LIBRARY]] — All shadcn/ui components with states and variants
-- [[design/UX-COPY-AZ-EN]] — Complete microcopy (AZ primary, EN secondary)
-- [[design/ANIMATION-SYSTEM]] — Framer Motion implementation specs
-- [[design/BRAND-IDENTITY]] — Logo, illustration system, voice & tone
-- [[I18N-KEYS]] — 157 bilingual i18n keys across 7 namespaces
+Related: [[research/adhd-first-ux-research]] | [[research/ecosystem-design-research]] | [[ECOSYSTEM-CONSTITUTION]]
 
 ---
 
 ## Engineering
 
 - [[engineering/API-CONTRACTS]] — FastAPI endpoints, request/response schemas
-- [[engineering/STATE-MANAGEMENT]] — Zustand stores, TanStack Query keys, RSC strategy
-- [[engineering/TESTING-STRATEGY]] — Test plan, Vitest, Playwright, coverage targets
-- [[engineering/SEO-TECHNICAL]] — Structured data, OG tags, sitemap, Next.js
-- [[engineering/DEPLOY-CHECKLIST]] — Pre-launch verification checklist
-- [[engineering/SECURITY-STANDARDS]] — Microsoft SDL + NIST SSDF + OWASP ASVS Level 2
-- [[AI-EVALUATION-QUESTION]] — LLM evaluation prompt design
+- [[engineering/STATE-MANAGEMENT]] — Zustand + TanStack Query + RSC
+- [[engineering/TESTING-STRATEGY]] — Vitest + Playwright + coverage
+- [[engineering/SECURITY-STANDARDS]] — Microsoft SDL + NIST SSDF + OWASP ASVS L2
+- [[engineering/DEPLOY-CHECKLIST]] — Pre-launch verification
+- [[engineering/SEO-TECHNICAL]] — Structured data, OG tags, sitemap
+- [[engineering/AI-ORCHESTRATION-GUIDE]] — Multi-model AI orchestration
+- [[engineering/DECISION-SIMULATION-PROTOCOL]] — Decision simulation for agents
+- [[API-REFERENCE]] — API reference documentation
+- [[ARCHITECTURE]] — System architecture overview
+- [[ARCHITECTURE_OVERVIEW]] — Architecture overview (alternative)
+
+Related: [[adr/ADR-001-system-architecture]] | [[adr/ADR-004-assessment-engine]]
 
 ---
 
-## Growth
+## Growth & Marketing
 
-- [[growth/VIRAL-LOOP]] — Share mechanics, referral system, invite flow
-- [[growth/EMAIL-STRATEGY]] — Transactional and lifecycle email sequences
-- [[growth/EVENT-ACTIVATION]] — Generic event activation template (parameterized)
-- [[growth/ORG-ACQUISITION]] — B2B onboarding, partnership outreach
 - [[growth/LAUNCH-ACTIVATION-PLAN]] — Real channels: HR/WhatsApp, LinkedIn, TikTok, STEP IT
+- [[growth/VIRAL-LOOP]] — Share mechanics, referral system, invite flow
+- [[growth/EMAIL-STRATEGY]] — Transactional and lifecycle emails
+- [[growth/EVENT-ACTIVATION]] — Event activation template
+- [[growth/ORG-ACQUISITION]] — B2B onboarding, partnership outreach
+- [[growth/WUF13-ACTIVATION]] — WUF13 event activation plan
+- [[growth/GROWTH-STRATEGY-DEEP-RESEARCH]] — Deep research on growth
+- [[growth/LINKEDIN-POST-AGENT-OS]] — LinkedIn content strategy
+- [[GROWTH-STRATEGY-PLAYBOOK]] — Growth playbook
+- [[MASS-ACTIVATION-PLAN]] — Mass user activation
+- [[AZ-LINKEDIN-AUDIENCE]] — Azerbaijan LinkedIn audience analysis
+- [[CUSTOMER-JOURNEY-MAP]] — User journey mapping
+
+Related: [[MASTER-STRATEGY]] | [[VISION-FULL]]
 
 ---
 
-## Audit & Reports
+## Product Specs
 
-- [[AUDIT-FULL-REPORT]] — First-round audit findings (Security 48, UX 23, Architecture 62)
-- [[MASTER-AUDIT-SYNTHESIS]] — Final 6-role agency audit, action plan, priorities
-- [[prompts/AUDIT-ARCHITECTURE]] — Architecture audit details
-- [[prompts/AUDIT-ACCESSIBILITY]] — Accessibility audit details
-- [[prompts/AUDIT-DESIGN-CRITIQUE]] — Design critique audit details
-- [[prompts/AUDIT-UX-COPY]] — UX copy audit details
+- [[MINDSHIFT-INTEGRATION-SPEC]] — MindShift product integration
+- [[LIFE-SIMULATOR-INTEGRATION-SPEC]] — Life Simulator integration
+- [[AI-TWIN-CONCEPT]] — AI twin concept design
+- [[CSV-BULK-INVITE-IMPLEMENTATION]] — Bulk invite feature
+- [[PLAN-product-trust-architecture]] — Product trust architecture
+
+Related: [[ECOSYSTEM-CONSTITUTION]] | [[ECOSYSTEM-MAP]]
 
 ---
 
-## Reference
+## Quality & Security
 
-- [[DECISIONS]] — Historic decision log and architectural choices
-- [[HANDOFF]] — Design-to-developer handoff guide
+- [[QUALITY-STANDARDS]] — Quality standards and metrics
+- [[QUALITY-SYSTEM]] — Quality assurance system
+- [[COMPREHENSIVE-TEST-PLAN]] — Full test plan
+- [[FUNCTIONAL-TEST-STRATEGY]] — Functional testing strategy
+- [[BETA-CHECKLIST]] — Beta launch checklist
+- [[LAUNCH-BLOCKERS]] — Pre-launch blockers (19 from Constitution)
+- [[PRODUCTION-READINESS-PLAN]] — Production readiness
+- [[ATTACK-VECTORS-EXECUTIVE]] — Security attack vectors
+- [[SECURITY-AUDIT-INDEX]] — Security audit index
+- [[DISASTER-RECOVERY-RUNBOOK]] — DR runbook
+
+---
+
+## Sprints & Execution
+
+- [[SPRINT-ATLAS-AUTONOMY-2026-04-12]] — Atlas autonomy sprint
+- [[SPRINT-AUDIT-CONSOLIDATED]] — Sprint audit results
+- [[SPRINT-S4-DEBATE-2026-04-08]] — Sprint S4 debate
+- [[MEGAPLAN-MINDSHIFT-LAUNCH-2026-04-08]] — MindShift launch megaplan
+- [[EXECUTION-PLAN]] — Execution plan
+- [[IMPLEMENTATION-ROADMAP]] — Implementation roadmap
+- [[BACKLOG]] — Product backlog
+
+---
+
+## AI & Swarm
+
+- [[CONSTITUTION_AI_SWARM]] — AI swarm constitution
+- [[MODEL-ROSTER]] — Active model roster
+- [[CEO-PERFORMANCE-REVIEW-SWARM]] — CEO review of swarm performance
+- [[EXTERNAL-AUDIT-GPT54-2026-04-04]] — External GPT-5.4 audit
+- [[PERPLEXITY-RECONCILIATION-2026-04-11]] — Perplexity reconciliation
+- [[SKILL-AUDIT-FINDINGS]] — Skill audit findings
+
+Related: [[research/NEUROCOGNITIVE-ARCHITECTURE-2026]] | [[adr/ADR-007-ai-gateway-model-router]]
+
+---
+
+## Content & Outreach
+
+- Content posts: `content/posts/draft/` | `content/posts/ready/` | `content/posts/published/`
+- [[CONTENT-BRIEF-TEMPLATE]] — Content brief template
+- [[BETA-INVITE-TEMPLATES]] — Beta invite templates
+- Correspondence: `correspondence/`
+
+---
+
+## Templates & Process
+
+- [[ACCEPTANCE-CRITERIA-TEMPLATES]] — AC templates
+- [[ACCEPTANCE-CRITERIA]] — Definition of Done
+- [[AGENT-BRIEFING-TEMPLATE]] — Agent briefing template
+- [[BEST-PRACTICES]] — Development best practices
+- [[CONTRIBUTING]] — Contribution guide
+- [[MANDATORY-RULES]] — Mandatory rules
+- [[TASK-PROTOCOL-QUICKREF]] — Task protocol quick reference
+- [[CULTURAL-AUDIT-CHECKLIST]] — Cultural audit checklist
+- [[DECISIONS]] — Historic decision log
 
 ---
 
 ## Navigation by Role
 
-**Founder / PM:** [[MASTER-AUDIT-SYNTHESIS]] → [[ACCEPTANCE-CRITERIA]] → [[product/KPIs]]
+**CEO:** [[ECOSYSTEM-CONSTITUTION]] → [[VISION-FULL]] → [[MASTER-STRATEGY]] → [[LAUNCH-BLOCKERS]]
 
-**AI Code Generator (Backend):** [[MEGA-PROMPT]] → [[prompts/VERTEX-BACKEND-PROMPT]] → [[engineering/SECURITY-STANDARDS]]
+**CTO (Atlas):** [[ECOSYSTEM-CONSTITUTION]] → [[ARCHITECTURE]] → [[adr/ADR-001-system-architecture]] → [[engineering/DEPLOY-CHECKLIST]]
 
-**AI Code Generator (Frontend):** [[MEGA-PROMPT]] → [[prompts/V0-FRONTEND-PROMPT]] → [[I18N-KEYS]] → [[DESIGN_BLUEPRINT]]
+**Research (Cowork):** [[research/ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] → [[research/adhd-first-ux-research]] → [[research/blind-spots-analysis]]
 
-**Growth / Marketing:** [[growth/LAUNCH-ACTIVATION-PLAN]] → [[growth/VIRAL-LOOP]] → [[growth/EMAIL-STRATEGY]]
+**Design:** [[design/REDESIGN-BRIEF-v2]] → [[design/COMPONENT-LIBRARY]] → [[design/ANIMATION-SYSTEM]] → [[ECOSYSTEM-CONSTITUTION]]
 
-**Security Review:** [[engineering/SECURITY-STANDARDS]] → [[MASTER-AUDIT-SYNTHESIS]] (V1-V5)
+**Growth:** [[growth/LAUNCH-ACTIVATION-PLAN]] → [[growth/VIRAL-LOOP]] → [[growth/EMAIL-STRATEGY]] → [[MASTER-STRATEGY]]
 
 ---
 
-## Verification Summary
+## Archive
 
-✓ 49 documents indexed:
-- 5 ADRs
-- 5 Product docs (incl. Vision Evolution)
-- 8 Design docs (incl. i18n keys)
-- 7 Engineering docs (incl. Security Standards)
-- 6 Growth docs (incl. Launch Activation Plan)
-- 6 Generation prompts
-- 6 Audit reports
-- 4 Core references + Mega-Prompt + Acceptance Criteria
-
-Knowledge base is **complete and audited**. Ready for code generation.
+Superseded documents moved to `archive/`. Not indexed here.
+Browse: `archive/root-superseded/` | `archive/handoffs/` | `archive/sprints/` | `archive/audits/`

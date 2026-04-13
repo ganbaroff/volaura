@@ -3,6 +3,8 @@
 > This is the REAL vision, not the elevator pitch. Written from Yusif's own words.
 > Every document, pitch, and post should trace back to this.
 
+**Cross-references:** [[ECOSYSTEM-CONSTITUTION]] | [[MASTER-STRATEGY]] | [[ECOSYSTEM-MAP]] | [[research/blind-spots-analysis]] | [[CUSTOMER-JOURNEY-MAP]] | [[adr/ADR-004-assessment-engine]] | [[adr/ADR-005-aura-scoring]]
+
 ## Origin (the TRUTH)
 
 It started at **WUF13** (UN World Urban Forum), not CIS Games.

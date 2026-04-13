@@ -13,6 +13,7 @@ import { API_BASE } from "@/lib/api/client";
 import { useTrackEvent } from "@/hooks/use-analytics";
 import { EnergyPicker, type EnergyLevel } from "@/components/assessment/energy-picker";
 import { PreAssessmentSummary } from "@/components/assessment/pre-assessment-summary";
+import { TopBar } from "@/components/layout/top-bar";
 
 // Static competency metadata — labels fetched from i18n, weights from CLAUDE.md
 const COMPETENCIES = [
@@ -161,9 +162,11 @@ function AssessmentContent() {
   };
 
   return (
+    <>
+    <TopBar title={t("assessment.title")} showEnergyPicker={false} />
     <div className="mx-auto max-w-lg px-4 py-8 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">
+        <h1 className="text-2xl font-bold font-headline text-foreground">
           {t("assessment.title")}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -257,6 +260,7 @@ function AssessmentContent() {
       <Button
         onClick={handleStart}
         disabled={isStarting || selected.size === 0 || !consentGiven}
+        variant="primary"
         size="lg"
         className="w-full"
         aria-busy={isStarting}
@@ -271,6 +275,7 @@ function AssessmentContent() {
         )}
       </Button>
     </div>
+    </>
   );
 }
 

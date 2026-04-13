@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOLAURA Ecosystem — Knowledge Graph</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0D0221; color: #E8E0F0; font-family: 'Inter', -apple-system, sans-serif; overflow: hidden; }
+#canvas { width: 100vw; height: 100vh; display: block; }
+#sidebar { position: fixed; right: 0; top: 0; width: 380px; height: 100vh; background: rgba(13,2,33,0.95); border-left: 1px solid #3D1A6E; padding: 24px; overflow-y: auto; transform: translateX(100%); transition: transform 0.3s; z-index: 10; }
+#sidebar.open { transform: translateX(0); }
+#sidebar h2 { color: #D4B4FF; font-size: 16px; margin-bottom: 8px; }
+#sidebar .type { color: #E9C400; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+#sidebar .refs { margin-top: 16px; }
+#sidebar .ref-item { padding: 6px 8px; margin: 4px 0; background: rgba(61,26,110,0.3); border-radius: 6px; font-size: 13px; cursor: pointer; }
+#sidebar .ref-item:hover { background: rgba(212,180,255,0.15); }
+#sidebar .stat { display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px; border-bottom: 1px solid rgba(212,180,255,0.1); }
+#sidebar .close-btn { position: absolute; top: 16px; right: 16px; background: none; border: none; color: #D4B4FF; font-size: 20px; cursor: pointer; }
+#controls { position: fixed; left: 24px; top: 24px; z-index: 5; }
+#controls h1 { font-size: 20px; color: #D4B4FF; margin-bottom: 4px; }
+#controls .subtitle { font-size: 12px; color: #8B7AAF; margin-bottom: 16px; }
+#legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #8B7AAF; cursor: pointer; padding: 4px 8px; border-radius: 12px; background: rgba(13,2,33,0.7); border: 1px solid transparent; }
+.legend-item:hover, .legend-item.active { border-color: #D4B4FF; color: #E8E0F0; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+#search { background: rgba(61,26,110,0.3); border: 1px solid #3D1A6E; color: #E8E0F0; padding: 8px 12px; border-radius: 8px; width: 260px; font-size: 13px; outline: none; }
+#search:focus { border-color: #D4B4FF; }
+#stats-bar { position: fixed; bottom: 24px; left: 24px; display: flex; gap: 24px; z-index: 5; }
+.stat-card { background: rgba(61,26,110,0.3); border: 1px solid #3D1A6E; border-radius: 12px; padding: 12px 16px; min-width: 100px; }
+.stat-card .num { font-size: 24px; font-weight: 700; color: #D4B4FF; }
+.stat-card .label { font-size: 11px; color: #8B7AAF; text-transform: uppercase; letter-spacing: 0.5px; }
+#tooltip { position: fixed; background: rgba(13,2,33,0.95); border: 1px solid #D4B4FF; border-radius: 8px; padding: 8px 12px; font-size: 12px; pointer-events: none; display: none; z-index: 20; max-width: 300px; }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<div id="controls">
+  <h1>VOLAURA Ecosystem Graph</h1>
+  <div class="subtitle">324 nodes · 5 products · 51 agents · 72 migrations</div>
+  <div id="legend"></div>
+  <input id="search" placeholder="Search nodes... (e.g. assessment, atlas)" />
+</div>
+
+<div id="stats-bar">
+  <div class="stat-card"><div class="num">5</div><div class="label">Products</div></div>
+  <div class="stat-card"><div class="num">51</div><div class="label">Agents</div></div>
+  <div class="stat-card"><div class="num">167</div><div class="label">Memory Files</div></div>
+  <div class="stat-card"><div class="num">86</div><div class="label">Docs</div></div>
+  <div class="stat-card"><div class="num">25</div><div class="label">API Routers</div></div>
+  <div class="stat-card"><div class="num">72</div><div class="label">Migrations</div></div>
+</div>
+
+<div id="sidebar">
+  <button class="close-btn" onclick="closeSidebar()">✕</button>
+  <div id="sidebar-content"></div>
+</div>
+
+<div id="tooltip"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────
+const CATEGORIES = {
+  product:    { color: '#D4B4FF', label: 'Product', radius: 22 },
+  agent:      { color: '#E9C400', label: 'Agent Skill', radius: 8 },
+  memory:     { color: '#06b6d4', label: 'Memory', radius: 10 },
+  doc:        { color: '#22c55e', label: 'Docs', radius: 9 },
+  code:       { color: '#f97316', label: 'Code', radius: 10 },
+  infra:      { color: '#3b82f6', label: 'Infrastructure', radius: 12 },
+  constitution: { color: '#ff6b9d', label: 'Constitution', radius: 16 },
+  person:     { color: '#ffffff', label: 'Person', radius: 14 },
+};
+
+const nodes = [
+  // ── PEOPLE ──
+  { id: 'yusif', label: 'Yusif (CEO)', cat: 'person', detail: 'Founder. Budget $50/mo. 12,000 volunteers ready.' },
+  { id: 'atlas', label: 'Atlas (CTO-Hands)', cat: 'person', detail: 'Persistent AI identity. Russian storytelling voice. 4 emotional states.' },
+
+  // ── CONSTITUTION ──
+  { id: 'constitution', label: 'Ecosystem Constitution v1.7', cat: 'constitution', detail: '5 Foundation Laws + 7 Crystal Laws. 17 CEO research docs (~140K words). Supreme authority.' },
+  { id: 'law1', label: 'Law 1: Never Red', cat: 'constitution', detail: 'Errors → purple #D4B4FF. Warnings → amber #E9C400. Zero red anywhere.' },
+  { id: 'law2', label: 'Law 2: Energy Adaptation', cat: 'constitution', detail: 'Full/Mid/Low energy modes. Every product.' },
+  { id: 'law3', label: 'Law 3: Shame-Free Language', cat: 'constitution', detail: 'No "you haven\'t done X". No profile % complete. Collectivist shame for AZ.' },
+  { id: 'law4', label: 'Law 4: Animation Safety', cat: 'constitution', detail: 'Max 800ms. prefers-reduced-motion mandatory. No screen shake ever.' },
+  { id: 'law5', label: 'Law 5: One Primary Action', cat: 'constitution', detail: 'One CTA per screen. ≤5 tappable on mobile.' },
+
+  // ── 5 PRODUCTS ──
+  { id: 'volaura', label: 'VOLAURA', cat: 'product', detail: 'Verified Talent Platform. LIVE at volaura.app. 25 routers, 72 migrations, IRT/CAT engine.' },
+  { id: 'mindshift', label: 'MindShift', cat: 'product', detail: 'Daily Focus Platform. 92% complete. Flutter + Telegram bot. Separate Supabase.' },
+  { id: 'lifesim', label: 'Life Simulator', cat: 'product', detail: '3D Agent Office. 65%. Godot 4 + React Three Fiber. 10-state model.' },
+  { id: 'brandedby', label: 'BrandedBy', cat: 'product', detail: 'AI Twin Video. 15%. Kokoro TTS + SadTalker. Schema ready, no UI.' },
+  { id: 'zeus', label: 'ZEUS Gateway', cat: 'product', detail: 'Agent Infrastructure. Node.js 39 agents + Python 44 agents. WebSocket.' },
+
+  // ── INFRASTRUCTURE ──
+  { id: 'supabase', label: 'Supabase', cat: 'infra', detail: 'PostgreSQL + RLS + pgvector(768). 72 migrations. Free tier.' },
+  { id: 'railway', label: 'Railway', cat: 'infra', detail: 'FastAPI backend. ~$8/mo. All API keys set.' },
+  { id: 'vercel', label: 'Vercel', cat: 'infra', detail: 'Next.js frontend. Free tier. volaura.app.' },
+  { id: 'telegram', label: 'Telegram Bot', cat: 'infra', detail: '@volaurabot. /status /proposals /run /approve. Groq fallback.' },
+  { id: 'github', label: 'GitHub Actions', cat: 'infra', detail: 'swarm-daily.yml. CI/CD. Secrets configured.' },
+  { id: 'sentry', label: 'Sentry', cat: 'infra', detail: 'Error monitoring on backend.' },
+  { id: 'character_events', label: 'character_events (Bus)', cat: 'infra', detail: 'Cross-product event bus. source_product + event_type + payload JSONB.' },
+
+  // ── CORE CODE ──
+  { id: 'assessment_engine', label: 'Assessment Engine', cat: 'code', detail: 'Pure Python IRT/CAT (3PL + EAP + MFI). engine.py + bars.py + quality_gate.py.' },
+  { id: 'aura_calc', label: 'AURA Calculator', cat: 'code', detail: '8 competencies. communication 0.20, reliability 0.15, english 0.15, leadership 0.15...' },
+  { id: 'antigaming', label: 'Anti-Gaming Gates', cat: 'code', detail: '4 gates: min_length, stuffing, coherence, relevance. Multiplicative penalties.' },
+  { id: 'llm_service', label: 'LLM Service', cat: 'code', detail: 'Gemini primary → OpenAI fallback → keyword_fallback. DeCE Framework.' },
+  { id: 'swarm_engine', label: 'Swarm Engine v7', cat: 'code', detail: '14+ models. Tournament mode. AgentHive lifecycle. ResearchLoop. StructuredMemory.' },
+  { id: 'orchestrator', label: 'DAG Orchestrator', cat: 'code', detail: 'orchestrator.py. AgentTask with depends_on. Shared memory injection.' },
+  { id: 'coordinator', label: 'Coordinator', cat: 'code', detail: 'coordinator.py. make_plan() / route() / run_parallel() / synthesize().' },
+  { id: 'content_pipeline', label: 'Content Pipeline', cat: 'code', detail: 'HANDOFF WRITTEN. 6-step DAG. Not yet implemented in Python.' },
+  { id: 'video_skill', label: 'ZEUS Video Skill', cat: 'code', detail: 'fal.ai Kokoro TTS + SadTalker. portrait → talking head. ~2 min.' },
+
+  // ── KEY MEMORY FILES ──
+  { id: 'sprint_state', label: 'sprint-state.md', cat: 'memory', detail: 'Sprint 0. Session 93+. 30 commits. Assessment E2E verified.' },
+  { id: 'mistakes', label: 'mistakes.md', cat: 'memory', detail: '12 mistake classes. 92+ mistakes logged. CLASS 3 (solo execution) = dominant.' },
+  { id: 'patterns', label: 'patterns.md', cat: 'memory', detail: '20+ proven patterns. NotebookLM, quality systems, agent routing.' },
+  { id: 'shipped', label: 'SHIPPED.md', cat: 'memory', detail: 'Source of truth for live code. Updated per session.' },
+  { id: 'deadlines', label: 'deadlines.md', cat: 'memory', detail: 'End of April = 100%. GITA May 27. 12,000 waiting.' },
+  { id: 'proposals', label: 'proposals.json', cat: 'memory', detail: 'Canonical proposal store. Was 21 pending → 0 after cleanup.' },
+  { id: 'agent_roster', label: 'agent-roster.md', cat: 'memory', detail: '44 agents. Security 9.0, Architecture 8.5, Product 8.0. Growth 5.0 unproven.' },
+  { id: 'shared_context', label: 'shared-context.md', cat: 'memory', detail: 'Swarm alive E2E. 5 bugs fixed Session 91. Provider hierarchy enforced.' },
+  { id: 'ecosystem_map', label: 'ECOSYSTEM-MAP.md', cat: 'memory', detail: 'All 5 products. Current state. Agent routing. Known bugs.' },
+  { id: 'working_style', label: 'working-style.md', cat: 'memory', detail: 'Yusif: 100x speed, v0.dev, no sprint thinking, direct.' },
+
+  // ── KEY DOCS ──
+  { id: 'task_protocol', label: 'TASK-PROTOCOL v10', cat: 'doc', detail: '1124 lines. CTO Execution Framework. 10 steps non-negotiable.' },
+  { id: 'decisions', label: 'DECISIONS.md', cat: 'doc', detail: '1195 lines. Master decision log. Every sprint retrospective.' },
+  { id: 'execution_plan', label: 'EXECUTION-PLAN.md', cat: 'doc', detail: '632 lines. Sprint plan. Last synced Session 42 (STALE).' },
+  { id: 'acceptance', label: 'ACCEPTANCE-CRITERIA.md', cat: 'doc', detail: '1593 lines. Feature requirements. 9 modules.' },
+  { id: 'architecture', label: 'ARCHITECTURE.md', cat: 'doc', detail: '463 lines. Health score 72/100. Conditional GO.' },
+  { id: 'tone_of_voice', label: 'TONE-OF-VOICE v2', cat: 'doc', detail: '319 lines. Tinkoff/Aviasales benchmark. 27 anti-AI filters.' },
+  { id: 'growth_playbook', label: 'Growth Playbook', cat: 'doc', detail: '789 lines. Mass activation plan. 200→1000 orgs.' },
+  { id: 'api_reference', label: 'API Reference', cat: 'doc', detail: '356 lines. All 115 endpoints documented.' },
+  { id: 'mandatory_rules', label: 'MANDATORY-RULES.md', cat: 'doc', detail: '148 lines. 7 non-negotiable rules.' },
+
+  // ── AGENTS (top 20 by relevance) ──
+  { id: 'a_comms', label: 'Communications Strategist', cat: 'agent', detail: 'Strategic brief gatekeeper. Content pipeline Step 1.' },
+  { id: 'a_cultural', label: 'Cultural Intelligence', cat: 'agent', detail: 'AZ/CIS exclusion auditor. Collectivist framing. Content Step 2.' },
+  { id: 'a_formatter', label: 'Content Formatter', cat: 'agent', detail: '5 output blocks. POST_CLEAN, TELEGRAM_HTML, EMAIL_HTML, CTA, IMAGE_PROMPT.' },
+  { id: 'a_linkedin', label: 'LinkedIn Creator', cat: 'agent', detail: 'Series 1 (Claude diary) + Series 2 (Yusif voice). Persona templates.' },
+  { id: 'a_security', label: 'Security Agent', cat: 'agent', detail: 'Score 9.0/10. CVSS scoring. Route ordering expert. Promoted to Expert.' },
+  { id: 'a_architect', label: 'Architecture Agent', cat: 'agent', detail: 'Score 8.5/10. System coherence. Storage math.' },
+  { id: 'a_product', label: 'Product Agent', cat: 'agent', detail: 'Score 8.0/10. 100% acceptance rate. ADHD-first UX.' },
+  { id: 'a_qa', label: 'QA Quality Agent', cat: 'agent', detail: 'DoD enforcement. Blocks tasks if quality gate fails.' },
+  { id: 'a_devops', label: 'DevOps SRE Agent', cat: 'agent', detail: 'Railway, deploy, cron, scaling.' },
+  { id: 'a_financial', label: 'Financial Analyst', cat: 'agent', detail: 'Crystal economy. LTV/CAC. Runway.' },
+  { id: 'a_legal', label: 'Legal Advisor', cat: 'agent', detail: 'ToS, GDPR, AZ PDPA, AI Act, payment WHT.' },
+  { id: 'a_assessment', label: 'Assessment Science', cat: 'agent', detail: 'IRT params audit. DIF check. a/b/c validation.' },
+  { id: 'a_nudge', label: 'Behavioral Nudge', cat: 'agent', detail: 'ADHD-first validation. Cognitive load audit. CRITICAL GAP.' },
+  { id: 'a_pr', label: 'PR Media Agent', cat: 'agent', detail: 'Press releases. Startup competitions. Media pitch.' },
+  { id: 'a_investor', label: 'Investor Board', cat: 'agent', detail: 'Pitch deck. Traction review. Fundraising.' },
+  { id: 'a_competitor', label: 'Competitor Intelligence', cat: 'agent', detail: 'Feature comparison. Pricing benchmark. Positioning.' },
+  { id: 'a_onboarding', label: 'Onboarding Specialist', cat: 'agent', detail: 'First 5 minutes. Welcome flow. First assessment.' },
+  { id: 'a_community', label: 'Community Manager', cat: 'agent', detail: 'Tribes. Streaks. Kudos. Ambassador program.' },
+  { id: 'a_risk', label: 'Risk Manager', cat: 'agent', detail: 'ISO 31000. Likelihood×Impact. Blocks CRITICAL shipping.' },
+  { id: 'a_readiness', label: 'Readiness Manager', cat: 'agent', detail: 'Go/No-Go. LRL scoring. Platform readiness audit.' },
+  { id: 'a_ceo_report', label: 'CEO Report Agent', cat: 'agent', detail: 'Translates technical → CEO language.' },
+];
+
+const edges = [
+  // Constitution governs everything
+  { from: 'constitution', to: 'law1' }, { from: 'constitution', to: 'law2' },
+  { from: 'constitution', to: 'law3' }, { from: 'constitution', to: 'law4' },
+  { from: 'constitution', to: 'law5' },
+  { from: 'constitution', to: 'volaura' }, { from: 'constitution', to: 'mindshift' },
+  { from: 'constitution', to: 'lifesim' }, { from: 'constitution', to: 'brandedby' },
+  { from: 'constitution', to: 'zeus' },
+
+  // People
+  { from: 'yusif', to: 'volaura' }, { from: 'yusif', to: 'atlas' },
+  { from: 'atlas', to: 'zeus' }, { from: 'atlas', to: 'swarm_engine' },
+
+  // Cross-product event bus
+  { from: 'volaura', to: 'character_events' }, { from: 'mindshift', to: 'character_events' },
+  { from: 'lifesim', to: 'character_events' }, { from: 'brandedby', to: 'character_events' },
+  { from: 'zeus', to: 'character_events' },
+
+  // Infrastructure links
+  { from: 'volaura', to: 'supabase' }, { from: 'volaura', to: 'railway' },
+  { from: 'volaura', to: 'vercel' }, { from: 'volaura', to: 'sentry' },
+  { from: 'mindshift', to: 'supabase' },
+  { from: 'zeus', to: 'telegram' }, { from: 'zeus', to: 'github' },
+  { from: 'brandedby', to: 'video_skill' },
+
+  // Code architecture
+  { from: 'volaura', to: 'assessment_engine' }, { from: 'assessment_engine', to: 'aura_calc' },
+  { from: 'assessment_engine', to: 'antigaming' }, { from: 'assessment_engine', to: 'llm_service' },
+  { from: 'zeus', to: 'swarm_engine' }, { from: 'swarm_engine', to: 'orchestrator' },
+  { from: 'swarm_engine', to: 'coordinator' },
+  { from: 'orchestrator', to: 'content_pipeline' },
+
+  // Memory connections
+  { from: 'sprint_state', to: 'volaura' }, { from: 'mistakes', to: 'atlas' },
+  { from: 'shipped', to: 'volaura' }, { from: 'deadlines', to: 'yusif' },
+  { from: 'proposals', to: 'telegram' }, { from: 'agent_roster', to: 'swarm_engine' },
+  { from: 'shared_context', to: 'swarm_engine' }, { from: 'ecosystem_map', to: 'constitution' },
+  { from: 'working_style', to: 'yusif' }, { from: 'patterns', to: 'atlas' },
+
+  // Doc connections
+  { from: 'task_protocol', to: 'atlas' }, { from: 'decisions', to: 'volaura' },
+  { from: 'execution_plan', to: 'volaura' }, { from: 'acceptance', to: 'volaura' },
+  { from: 'architecture', to: 'volaura' }, { from: 'tone_of_voice', to: 'a_comms' },
+  { from: 'growth_playbook', to: 'volaura' }, { from: 'api_reference', to: 'railway' },
+  { from: 'mandatory_rules', to: 'atlas' },
+
+  // Content pipeline chain
+  { from: 'a_comms', to: 'a_cultural' }, { from: 'a_cultural', to: 'a_formatter' },
+  { from: 'a_formatter', to: 'telegram' }, { from: 'content_pipeline', to: 'a_comms' },
+  { from: 'a_linkedin', to: 'a_comms' },
+
+  // Agent → Product connections
+  { from: 'a_security', to: 'volaura' }, { from: 'a_architect', to: 'volaura' },
+  { from: 'a_product', to: 'volaura' }, { from: 'a_qa', to: 'volaura' },
+  { from: 'a_devops', to: 'railway' }, { from: 'a_devops', to: 'github' },
+  { from: 'a_financial', to: 'volaura' }, { from: 'a_legal', to: 'volaura' },
+  { from: 'a_assessment', to: 'assessment_engine' },
+  { from: 'a_nudge', to: 'volaura' }, { from: 'a_pr', to: 'a_comms' },
+  { from: 'a_investor', to: 'yusif' }, { from: 'a_competitor', to: 'volaura' },
+  { from: 'a_onboarding', to: 'volaura' }, { from: 'a_community', to: 'volaura' },
+  { from: 'a_risk', to: 'a_readiness' }, { from: 'a_ceo_report', to: 'yusif' },
+];
+
+// ── SIMULATION ────────────────────────────────────────────
+const W = window.innerWidth, H = window.innerHeight;
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = W * devicePixelRatio;
+canvas.height = H * devicePixelRatio;
+ctx.scale(devicePixelRatio, devicePixelRatio);
+
+// Initialize positions with cluster layout
+const clusterCenters = {
+  product: { x: W*0.5, y: H*0.35 },
+  constitution: { x: W*0.5, y: H*0.15 },
+  person: { x: W*0.35, y: H*0.2 },
+  agent: { x: W*0.25, y: H*0.6 },
+  code: { x: W*0.7, y: H*0.5 },
+  memory: { x: W*0.65, y: H*0.75 },
+  doc: { x: W*0.35, y: H*0.85 },
+  infra: { x: W*0.75, y: H*0.3 },
+};
+
+nodes.forEach(n => {
+  const c = clusterCenters[n.cat] || { x: W/2, y: H/2 };
+  n.x = c.x + (Math.random() - 0.5) * 200;
+  n.y = c.y + (Math.random() - 0.5) * 200;
+  n.vx = 0; n.vy = 0;
+  n.r = CATEGORIES[n.cat].radius;
+});
+
+const nodeMap = {};
+nodes.forEach(n => nodeMap[n.id] = n);
+
+// Force simulation
+let hoveredNode = null;
+let selectedNode = null;
+let activeCategory = null;
+let searchTerm = '';
+let camX = 0, camY = 0, camZoom = 1;
+let isDragging = false, dragNode = null, lastMouse = {x:0,y:0};
+let isPanning = false;
+
+function applyForces() {
+  const k = 0.0004;
+  // Repulsion
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i+1; j < nodes.length; j++) {
+      let dx = nodes[j].x - nodes[i].x;
+      let dy = nodes[j].y - nodes[i].y;
+      let d = Math.sqrt(dx*dx + dy*dy) || 1;
+      let force = -800 / (d * d);
+      let fx = force * dx / d, fy = force * dy / d;
+      nodes[i].vx += fx; nodes[i].vy += fy;
+      nodes[j].vx -= fx; nodes[j].vy -= fy;
+    }
+  }
+  // Attraction (edges)
+  edges.forEach(e => {
+    let a = nodeMap[e.from], b = nodeMap[e.to];
+    if (!a || !b) return;
+    let dx = b.x - a.x, dy = b.y - a.y;
+    let d = Math.sqrt(dx*dx + dy*dy) || 1;
+    let force = d * k;
+    a.vx += force * dx / d; a.vy += force * dy / d;
+    b.vx -= force * dx / d; b.vy -= force * dy / d;
+  });
+  // Cluster gravity
+  nodes.forEach(n => {
+    let c = clusterCenters[n.cat];
+    if (c) {
+      n.vx += (c.x - n.x) * 0.001;
+      n.vy += (c.y - n.y) * 0.001;
+    }
+  });
+  // Damping + position update
+  nodes.forEach(n => {
+    if (n === dragNode) return;
+    n.vx *= 0.85; n.vy *= 0.85;
+    n.x += n.vx; n.y += n.vy;
+    n.x = Math.max(40, Math.min(W-40, n.x));
+    n.y = Math.max(40, Math.min(H-40, n.y));
+  });
+}
+
+function isVisible(n) {
+  if (activeCategory && n.cat !== activeCategory) return false;
+  if (searchTerm && !n.label.toLowerCase().includes(searchTerm) && !n.id.toLowerCase().includes(searchTerm)) return false;
+  return true;
+}
+
+function getConnectedIds(nodeId) {
+  const ids = new Set();
+  edges.forEach(e => {
+    if (e.from === nodeId) ids.add(e.to);
+    if (e.to === nodeId) ids.add(e.from);
+  });
+  return ids;
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  ctx.save();
+  ctx.translate(camX, camY);
+  ctx.scale(camZoom, camZoom);
+
+  const connected = (hoveredNode || selectedNode) ? getConnectedIds((hoveredNode||selectedNode).id) : null;
+
+  // Draw edges
+  edges.forEach(e => {
+    let a = nodeMap[e.from], b = nodeMap[e.to];
+    if (!a || !b) return;
+    let vis = isVisible(a) && isVisible(b);
+    let highlight = connected && (connected.has(e.from) || connected.has(e.to)) &&
+      ((hoveredNode||selectedNode).id === e.from || (hoveredNode||selectedNode).id === e.to);
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.strokeStyle = highlight ? 'rgba(212,180,255,0.6)' : vis ? 'rgba(212,180,255,0.08)' : 'rgba(212,180,255,0.02)';
+    ctx.lineWidth = highlight ? 2 : 0.5;
+    ctx.stroke();
+  });
+
+  // Draw nodes
+  nodes.forEach(n => {
+    let vis = isVisible(n);
+    let isHovered = hoveredNode === n;
+    let isSelected = selectedNode === n;
+    let isConnected = connected && connected.has(n.id);
+    let alpha = vis ? (isHovered || isSelected || isConnected ? 1 : (connected ? 0.2 : 0.85)) : 0.05;
+
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
+    let col = CATEGORIES[n.cat].color;
+    ctx.fillStyle = col.replace(')', `,${alpha})`).replace('rgb', 'rgba').replace('#', '');
+    // Hex to rgba
+    let r = parseInt(col.slice(1,3),16), g = parseInt(col.slice(3,5),16), b = parseInt(col.slice(5,7),16);
+    ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
+    ctx.fill();
+
+    if (isHovered || isSelected) {
+      ctx.strokeStyle = `rgba(${r},${g},${b},0.8)`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      // Glow
+      ctx.shadowColor = col;
+      ctx.shadowBlur = 20;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    // Label
+    if (vis && (n.r > 10 || isHovered || isSelected || isConnected || camZoom > 1.2)) {
+      ctx.fillStyle = `rgba(232,224,240,${alpha})`;
+      ctx.font = `${isHovered || isSelected ? 'bold ' : ''}${n.r > 14 ? 13 : 11}px Inter, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText(n.label, n.x, n.y + n.r + 14);
+    }
+  });
+
+  ctx.restore();
+
+  applyForces();
+  requestAnimationFrame(draw);
+}
+
+// ── LEGEND ────────────────────────────────────────────────
+const legend = document.getElementById('legend');
+Object.entries(CATEGORIES).forEach(([key, val]) => {
+  const el = document.createElement('div');
+  el.className = 'legend-item';
+  el.innerHTML = `<div class="legend-dot" style="background:${val.color}"></div>${val.label}`;
+  el.onclick = () => {
+    activeCategory = activeCategory === key ? null : key;
+    document.querySelectorAll('.legend-item').forEach(l => l.classList.remove('active'));
+    if (activeCategory) el.classList.add('active');
+  };
+  legend.appendChild(el);
+});
+
+// ── SEARCH ────────────────────────────────────────────────
+document.getElementById('search').addEventListener('input', e => {
+  searchTerm = e.target.value.toLowerCase();
+});
+
+// ── MOUSE ─────────────────────────────────────────────────
+function screenToWorld(sx, sy) {
+  return { x: (sx - camX) / camZoom, y: (sy - camY) / camZoom };
+}
+
+function findNode(mx, my) {
+  let wp = screenToWorld(mx, my);
+  for (let i = nodes.length-1; i >= 0; i--) {
+    let n = nodes[i];
+    let dx = wp.x - n.x, dy = wp.y - n.y;
+    if (dx*dx + dy*dy < (n.r+4)*(n.r+4)) return n;
+  }
+  return null;
+}
+
+canvas.addEventListener('mousemove', e => {
+  let mx = e.clientX, my = e.clientY;
+  if (dragNode) {
+    let wp = screenToWorld(mx, my);
+    dragNode.x = wp.x; dragNode.y = wp.y;
+    dragNode.vx = 0; dragNode.vy = 0;
+    return;
+  }
+  if (isPanning) {
+    camX += mx - lastMouse.x;
+    camY += my - lastMouse.y;
+    lastMouse = {x: mx, y: my};
+    return;
+  }
+  let n = findNode(mx, my);
+  hoveredNode = n;
+  canvas.style.cursor = n ? 'pointer' : 'grab';
+  let tooltip = document.getElementById('tooltip');
+  if (n) {
+    tooltip.style.display = 'block';
+    tooltip.style.left = (mx + 12) + 'px';
+    tooltip.style.top = (my - 10) + 'px';
+    tooltip.innerHTML = `<strong style="color:${CATEGORIES[n.cat].color}">${n.label}</strong><br><span style="color:#8B7AAF">${CATEGORIES[n.cat].label}</span>`;
+  } else {
+    tooltip.style.display = 'none';
+  }
+});
+
+canvas.addEventListener('mousedown', e => {
+  let n = findNode(e.clientX, e.clientY);
+  if (n) {
+    dragNode = n;
+    selectedNode = n;
+    openSidebar(n);
+  } else {
+    isPanning = true;
+    lastMouse = {x: e.clientX, y: e.clientY};
+    canvas.style.cursor = 'grabbing';
+  }
+});
+
+canvas.addEventListener('mouseup', () => {
+  dragNode = null;
+  isPanning = false;
+  canvas.style.cursor = hoveredNode ? 'pointer' : 'grab';
+});
+
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  let factor = e.deltaY > 0 ? 0.9 : 1.1;
+  let mx = e.clientX, my = e.clientY;
+  camX = mx - (mx - camX) * factor;
+  camY = my - (my - camY) * factor;
+  camZoom *= factor;
+  camZoom = Math.max(0.3, Math.min(3, camZoom));
+}, { passive: false });
+
+// ── SIDEBAR ───────────────────────────────────────────────
+function openSidebar(node) {
+  let sb = document.getElementById('sidebar');
+  let connected = getConnectedIds(node.id);
+  let connectedNodes = nodes.filter(n => connected.has(n.id));
+  let inEdges = edges.filter(e => e.to === node.id).length;
+  let outEdges = edges.filter(e => e.from === node.id).length;
+
+  document.getElementById('sidebar-content').innerHTML = `
+    <h2>${node.label}</h2>
+    <div class="type">${CATEGORIES[node.cat].label}</div>
+    <p style="font-size:13px;line-height:1.5;color:#C0B0D8;margin-bottom:16px">${node.detail}</p>
+    <div class="stat"><span>Connections</span><span style="color:#D4B4FF">${connected.size}</span></div>
+    <div class="stat"><span>Incoming</span><span style="color:#D4B4FF">${inEdges}</span></div>
+    <div class="stat"><span>Outgoing</span><span style="color:#D4B4FF">${outEdges}</span></div>
+    <div class="refs">
+      <h2 style="margin-top:16px">Connected To</h2>
+      ${connectedNodes.map(cn => `
+        <div class="ref-item" onclick="focusNode('${cn.id}')" style="border-left: 3px solid ${CATEGORIES[cn.cat].color}">
+          ${cn.label} <span style="color:#8B7AAF;font-size:11px">${CATEGORIES[cn.cat].label}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  sb.classList.add('open');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  selectedNode = null;
+}
+
+function focusNode(id) {
+  let n = nodeMap[id];
+  if (!n) return;
+  selectedNode = n;
+  openSidebar(n);
+  // Pan to node
+  camX = W/2 - n.x * camZoom;
+  camY = H/2 - n.y * camZoom;
+}
+
+// Start
+draw();
+</script>
+</body>
+</html>

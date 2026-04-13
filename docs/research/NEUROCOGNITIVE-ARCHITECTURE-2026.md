@@ -4,6 +4,8 @@
 **Status:** FOUNDATIONAL IP — basis for ZEUS product architecture
 **Classification:** Confidential
 
+**Cross-references:** [[ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[gemini-research-all]] | [[ZEUS-MEMORY-ARCHITECTURE-RESEARCH-2026-04-14]] | [[../ECOSYSTEM-CONSTITUTION]] | [[../adr/ADR-008-zeus-governance-layer]] | [[../CONSTITUTION_AI_SWARM]]
+
 ## Summary
 Comprehensive analysis of biologically-inspired cognitive architectures (BICA) integrating:
 - Global Workspace Theory (GWT) via BIGMAS framework

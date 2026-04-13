@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { MapPin, Globe, Lock, Pencil, Eye } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils/cn";
+import { Avatar } from "@/components/ui/avatar";
 
 export interface ProfileHeaderData {
   display_name: string | null;
@@ -26,22 +27,7 @@ interface ProfileHeaderProps {
   isOwnProfile?: boolean;
 }
 
-const TIER_RING: Record<string, string> = {
-  platinum: "ring-2 ring-violet-400",
-  gold:     "ring-2 ring-yellow-400",
-  silver:   "ring-2 ring-slate-300",
-  bronze:   "ring-2 ring-amber-600",
-  none:     "",
-};
-
-function Initials({ name }: { name: string }) {
-  const parts = name.trim().split(" ");
-  const letters =
-    parts.length >= 2
-      ? `${parts[0][0]}${parts[parts.length - 1][0]}`
-      : name.slice(0, 2);
-  return <>{letters.toUpperCase()}</>;
-}
+// TIER_RING moved to Avatar component (components/ui/avatar.tsx)
 
 export function ProfileHeader({ profile, locale, isOwnProfile }: ProfileHeaderProps) {
   const { t } = useTranslation();
@@ -55,24 +41,14 @@ export function ProfileHeader({ profile, locale, isOwnProfile }: ProfileHeaderPr
       transition={{ duration: 0.35, ease: "easeOut" }}
       className="flex items-start gap-4"
     >
-      {/* Avatar */}
-      <div
-        className={cn(
-          "shrink-0 size-16 rounded-full bg-primary flex items-center justify-center text-xl font-bold text-primary-foreground overflow-hidden",
-          TIER_RING[tier]
-        )}
-      >
-        {profile.avatar_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={profile.avatar_url}
-            alt={displayName}
-            className="size-full object-cover"
-          />
-        ) : (
-          <Initials name={displayName} />
-        )}
-      </div>
+      {/* Avatar — design system component with badge tier glows */}
+      <Avatar
+        name={displayName}
+        src={profile.avatar_url}
+        tier={tier as "platinum" | "gold" | "silver" | "bronze" | "none"}
+        size="lg"
+        className="shrink-0"
+      />
 
       {/* Info */}
       <div className="flex-1 min-w-0">

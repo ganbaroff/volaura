@@ -10,7 +10,7 @@
 
 | What | File | Details | Status |
 |------|------|---------|--------|
-| PII redactor for Langfuse | `apps/api/app/utils/pii_redactor.py` | Strips email/phone/card/UUID from LLM traces | shipped |
+| PII redactor for Langfuse | `apps/api/app/utils/pii_redactor.py` | Strips email/phone/card/UUID from LLM traces | **PHANTOM — file does not exist** (Atlas audit 2026-04-13). Needs recreation or removal. |
 | GDPR Article 22 consent | `apps/api/app/routers/assessment.py` + schema + i18n | Checkbox + backend gate + metadata timestamp | shipped |
 | Assessment metadata column | `supabase/migrations/20260412100000_*.sql` | metadata JSONB for energy+consent | applied to prod |
 | Proactive loop Phase 2 | `packages/swarm/atlas_proactive.py` | Real LLM calls via NVIDIA/DeepSeek/Groq | shipped |
@@ -1455,26 +1455,4 @@ Add to the correct session section. Never delete old entries — archive to SHIP
 
 | What | Where | Does what | Status |
 |------|-------|-----------|--------|
-| `TASK-PROTOCOL.md` v3.0 | `docs/` | +10 protocol steps from 5 swarm agents: Steps 0.1 (Mistakes Audit), 0.25 (Team Selection), 1.5 (Decision Type Gate), 3.5 (Ecosystem Blast Radius), 3.7 (User Journey Walkthrough), 6.5 (Security Pre-Commit Checklist), 9.5 (Work Verdict Gate), 10.5 (CEO Silence Timeout). OPT-OUT not OPT-IN principle. | ✅ DOC |
-| `TASK-PROTOCOL-CHECKLIST.md` v3.0 | `docs/` | Synced with protocol v3.0. All 10 new steps have fill-in templates. | ✅ DOC |
-| `use-assessment.ts` fixes | `apps/web/src/hooks/queries/` | Fix CLASS 4: difficulty_label type lowercase (was Title Case — API always lowercase). Add competency_score to QuestionBreakdown. Add AssessmentInfo interface + useAssessmentInfo hook (staleTime 10min). | ✅ LIVE |
-| `assessment/[sessionId]/questions/page.tsx` fixes | `apps/web/src/app/[locale]/(dashboard)/` | Fix DIFFICULTY_COLORS to lowercase keys. DifficultyBadge normalizes defensively. competencyLabel uses t() with fallback. | ✅ LIVE |
-| i18n keys EN + AZ | `apps/web/src/locales/*/common.json` | Move difficulty_expert adjacent to sibling keys (was orphaned). Add 6 info page keys: infoAbout, infoTimeLabel, infoRetakeAvailable, infoRetakeCooldown ({{days}}), infoNoDescription, infoContinueButton. | ✅ LIVE |
-| `assessment/info/[slug]/page.tsx` | `apps/web/src/app/[locale]/(dashboard)/assessment/info/[slug]/` | NEW: Pre-assessment info page. Fetches GET /api/assessment/info/{slug}. Shows competency label (t()), description (null-safe), time estimate, retake status. Auth redirect with returnTo. 404/429/5xx error states. isMounted on all router.replace. retakeBlocked checks both can_retake and days_until_retake. | ✅ LIVE |
-| "About" link in assessment callout | `apps/web/src/app/[locale]/(dashboard)/assessment/page.tsx` | Added inside preselectedComp && block — links to /assessment/info/{slug}. | ✅ LIVE |
-
----
-
-## Session 87 Continuation (2026-04-06)
-
-| What | Where | Does what | Status |
-|------|-------|-----------|--------|
-| `NewUserWelcomeCard` | `dashboard/page.tsx` | 3-step journey card (assess→badge→found). Replaces NoScoreBanner. Step 1 highlighted. Single CTA, no duplicate QuickActions. | ✅ PR #9 |
-| QuickActions hidden for new users | `dashboard/page.tsx` | `hasScore && (...)` gate — removes duplicate CTA for Day 0 users | ✅ PR #9 |
-| Recent Activity section gated | `dashboard/page.tsx` | Only shown when `hasScore OR activityItems.length > 0` | ✅ PR #9 |
-| EN+AZ `dashboard.newUser.*` i18n | `locales/*/common.json` | 14 new keys for welcome card (volunteer + org variants) | ✅ PR #9 |
-| Security: analytics.py SupabaseUser | `routers/analytics.py` | POST /event no longer bypasses RLS | ✅ PR #8 merged |
-| Security: subscription GET /status SupabaseUser | `routers/subscription.py` | Read own profile via RLS, not service key | ✅ PR #8 merged |
-| Figma Variables collection | Figma `B30q4nqVq5VjdqAVVYRh3t` | 57 color tokens from globals.css synced as Figma Variables, Dark mode | ✅ live |
-| `@number-flow/react` ^0.6.0 | `apps/web/package.json` | Replaces manual RAF count-up in AuraScoreWidget | ✅ PR #7 merged |
-| `@formkit/auto-animate` ^0.9.0 | `apps/web/package.json` | Available for list animations | ✅ PR #7 merged |
+| `TASK-PROTOCOL.md` v3.0 | `docs/` | +10 protocol steps from 5 swarm agents: Steps 0.1 (Mistakes Audit), 0.25 (Team Selection), 1.5 (Decision Type Gate), 3.5 (Ecosystem Blast Radius), 3.7 (User Journey Walkthrough), 6.5 (Security Pre-Commit Checklist), 9.5 (Work Verdict Gate), 10.5 (CEO Silenc

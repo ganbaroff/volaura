@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { TopBar } from "@/components/layout/top-bar";
 import { AuraRadarChart } from "@/components/aura/radar-chart";
+import { LiquidGlassRadar } from "@/components/aura/liquid-glass-radar";
 import { BadgeDisplay } from "@/components/aura/badge-display";
 import { CompetencyBreakdown } from "@/components/aura/competency-breakdown";
 import { ShareButtons } from "@/components/aura/share-buttons";
@@ -538,22 +539,17 @@ export default function AuraPage() {
           />
         )}
 
-        {/* Radar chart */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: revealed ? 1 : 0, y: revealed ? 0 : 16 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          className="rounded-xl border border-border bg-card p-4"
-        >
-          <h3 className="mb-3 text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-            {t("aura.competencyRadar")}
-          </h3>
-          <AuraRadarChart
+        {/* Liquid Glass Radar — identity-first hero (Constitution Law 3, 5) */}
+        {revealed && aura.competency_scores && (
+          <LiquidGlassRadar
             competencyScores={aura.competency_scores}
+            totalScore={displayScore}
             badgeTier={aura.badge_tier}
-            size="md"
+            displayName={profile?.display_name ?? profile?.username ?? ""}
+            ctaLabel={t("aura.retake", { defaultValue: "Retake Assessment" })}
+            onCtaClick={() => router.push(`/${locale}/assessment`)}
           />
-        </motion.div>
+        )}
 
         {/* Competency breakdown */}
         <motion.div

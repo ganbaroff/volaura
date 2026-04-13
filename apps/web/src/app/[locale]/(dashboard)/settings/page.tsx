@@ -9,6 +9,8 @@ import { useProfile, useUpdateProfile, useSubscription } from "@/hooks/queries";
 import { useAuthToken } from "@/hooks/queries";
 import { apiFetch } from "@/lib/api/client";
 import { createClient } from "@/lib/supabase/client";
+import { EnergyPicker } from "@/components/assessment/energy-picker";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 type VisibilityOption = "public" | "badge_only" | "hidden";
 
@@ -43,6 +45,9 @@ export default function SettingsPage() {
   const [orgVisibilitySaved, setOrgVisibilitySaved] = useState(false);
   const [orgVisibilityError, setOrgVisibilityError] = useState<string | null>(null);
   const [orgVisibilityLoading, setOrgVisibilityLoading] = useState(false);
+
+  // Energy mode (Constitution Law 2)
+  const { energy, setEnergy } = useEnergyMode();
 
   // Sign out state
   const [signingOut, setSigningOut] = useState(false);
@@ -240,7 +245,7 @@ export default function SettingsPage() {
               </div>
 
               {profileError && (
-                <p className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                <p className="rounded-md bg-error-container p-3 text-sm text-on-error-container">
                   {profileError}
                 </p>
               )}
@@ -294,7 +299,7 @@ export default function SettingsPage() {
             ))}
 
             {visibilityError && (
-              <p className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+              <p className="rounded-md bg-error-container p-3 text-sm text-on-error-container">
                 {visibilityError}
               </p>
             )}
@@ -341,7 +346,7 @@ export default function SettingsPage() {
             </label>
 
             {orgVisibilityError && (
-              <p className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+              <p className="rounded-md bg-error-container p-3 text-sm text-on-error-container">
                 {orgVisibilityError}
               </p>
             )}
@@ -361,9 +366,20 @@ export default function SettingsPage() {
           </form>
         </section>
 
+        {/* Energy Mode — Constitution Law 2 */}
+        <section className="rounded-xl border border-border bg-card p-5">
+          <h2 className="mb-1 text-base font-semibold font-headline">
+            {t("settings.energyMode", { defaultValue: "Energy Mode" })}
+          </h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            {t("settings.energyModeDesc", { defaultValue: "Adjust spacing, animations, and density to match your energy level." })}
+          </p>
+          <EnergyPicker value={energy} onChange={setEnergy} />
+        </section>
+
         {/* Language Section */}
         <section className="rounded-xl border border-border bg-card p-5">
-          <h2 className="mb-4 text-base font-semibold">{t("settings.language")}</h2>
+          <h2 className="mb-4 text-base font-semibold font-headline">{t("settings.language")}</h2>
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">{t("settings.interfaceLanguage")}</p>
             <LanguageSwitcher />

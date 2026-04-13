@@ -1,4 +1,7 @@
 # Business Model Blind Spots — 2026-03-28
+
+**Cross-references:** [[ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[../MASTER-STRATEGY]] | [[../VISION-FULL]] | [[../MONETIZATION-ROADMAP]] | [[../growth/LAUNCH-ACTIVATION-PLAN]] | [[geo-pricing-research]]
+
 ## 10 Critical Findings (severity-ranked)
 
 ### 1. TAM is 10-15x Smaller Than Assumed (9/10)

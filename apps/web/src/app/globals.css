@@ -1,12 +1,25 @@
 @import "tailwindcss";
 
 /* ─────────────────────────────────────────────────────────────────────────
-   VOLAURA DESIGN SYSTEM — "The Prestigious Path"
-   Source: Stitch design system (Material 3 dark-first)
-   Do NOT edit token values here. Update STITCH-DESIGN-SYSTEM.md first.
+   VOLAURA DESIGN SYSTEM — 3-Tier Token Architecture
+   Tier 1: Primitives (raw values)
+   Tier 2: Semantic (meaning-based, theme-switchable)
+   Tier 3: Product (per-product accent overlay)
+
+   Constitution compliance:
+   - Law 1: errors = purple #D4B4FF, warnings = amber #E9C400 — NEVER red
+   - Law 4: max 800ms non-decorative animation, prefers-reduced-motion mandatory
+   - Law 5: one primary CTA per screen
+
+   Source: ECOSYSTEM-REDESIGN-BRIEF-2026-04-14.md + open-questions-resolved.md
+   Do NOT edit token values here. Update ecosystem-redesign-analysis.md first.
 ───────────────────────────────────────────────────────────────────────── */
 
 @theme {
+  /* ══════════════════════════════════════════════════════════════════════
+     TIER 1 — PRIMITIVES (raw palette, never reference directly in components)
+     ══════════════════════════════════════════════════════════════════════ */
+
   /* ── Surface hierarchy (obsidian glass layers) ── */
   --color-surface:                    #13131b;
   --color-surface-dim:                #13131b;
@@ -50,16 +63,21 @@
   --color-on-tertiary-fixed:          #221b00;
   --color-on-tertiary-fixed-variant:  #544600;
 
-  /* ── Error → Gentle Alert (purple, NOT red — Research #2/#6 RSD) ── */
+  /* ── Error → Gentle Alert (CONSTITUTION LAW 1: purple, NEVER red) ── */
   --color-error:                      #d4b4ff;
   --color-error-container:            #3d1a6e;
   --color-on-error:                   #1a0040;
   --color-on-error-container:         #edd6ff;
 
-  /* ── Warning (amber — soft alerts) ── */
+  /* ── Warning (amber — soft alerts, CONSTITUTION LAW 1) ── */
   --color-warning:                    #e9c400;
   --color-warning-container:          #3a3000;
   --color-on-warning-container:       #ffe16d;
+
+  /* ── Success (green — NOT red/green binary, colorblind safe) ── */
+  --color-success:                    #6ee7b7;
+  --color-success-container:          #064e3b;
+  --color-on-success-container:       #a7f3d0;
 
   /* ── On-colors ── */
   --color-on-background:              #e4e1ed;
@@ -71,6 +89,10 @@
   /* ── Outline ── */
   --color-outline:                    #908fa0;
   --color-outline-variant:            #464554;
+
+  /* ══════════════════════════════════════════════════════════════════════
+     TIER 2 — SEMANTIC TOKENS (meaning-based aliases)
+     ══════════════════════════════════════════════════════════════════════ */
 
   /* ── AURA tier tokens ── */
   --color-aura-platinum:              #e5e4e2;
@@ -95,11 +117,29 @@
   --color-input:           var(--color-surface-container-high);
   --color-ring:            var(--color-primary);
 
+  /* ══════════════════════════════════════════════════════════════════════
+     TIER 3 — PRODUCT TOKENS (per-product accent, applied via data-product)
+     ══════════════════════════════════════════════════════════════════════ */
+
+  --color-product-volaura:            #7C5CFC;
+  --color-product-mindshift:          #3B82F6;
+  --color-product-lifesim:            #F59E0B;
+  --color-product-brandedby:          #EC4899;
+  --color-product-atlas:              #10B981;
+
   /* ── Typography ── */
   --font-sans:     "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-headline: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-body:     "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-label:    "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* ── Spacing scale ── */
+  --spacing-xs:  0.25rem;
+  --spacing-sm:  0.5rem;
+  --spacing-md:  1rem;
+  --spacing-lg:  1.5rem;
+  --spacing-xl:  2rem;
+  --spacing-2xl: 3rem;
 
   /* ── Radius ── */
   --radius-sm: 0.25rem;
@@ -107,6 +147,34 @@
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* ── Shadows / Elevation ── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px rgba(192, 193, 255, 0.15);
+
+  /* ── Z-index scale ── */
+  --z-base: 0;
+  --z-dropdown: 50;
+  --z-sticky: 100;
+  --z-overlay: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+  --z-bottomnav: 500;
+
+  /* ── Animation durations (CONSTITUTION LAW 4: max 800ms non-decorative) ── */
+  --duration-instant: 0ms;
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  --duration-max: 800ms;
+
+  /* ── Spring physics (CONSTITUTION LAW 4: damping ≥ 14) ── */
+  --spring-damping: 14;
+  --spring-stiffness: 100;
+  --spring-mass: 1;
 }
 
 /* ─── Base: dark-first (no .dark class needed — Volaura is always dark) ─── */
@@ -124,7 +192,7 @@
     background-color: #13131b;
     color: #e4e1ed;
     font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
-    overflow-x: hidden; /* Prevent horizontal scroll on mobile at 375px */
+    overflow-x: hidden;
   }
 
   /* Scrollbar: subtle, matches surface hierarchy */
@@ -150,8 +218,75 @@
   }
 }
 
+/* ══════════════════════════════════════════════════════════════════════
+   ENERGY MODE SYSTEM (CONSTITUTION LAW 2)
+   Applied via data-energy attribute on <html> or <body>
+   Three modes: full (default), mid, low
+   ══════════════════════════════════════════════════════════════════════ */
+
+[data-energy="full"] {
+  --energy-spacing: 1;
+  --energy-density: normal;
+  --energy-animation: 1;
+  --energy-min-target: 44px;
+}
+
+[data-energy="mid"] {
+  --energy-spacing: 1.15;
+  --energy-density: comfortable;
+  --energy-animation: 0.5;
+  --energy-min-target: 48px;
+}
+
+[data-energy="low"] {
+  --energy-spacing: 1.3;
+  --energy-density: spacious;
+  --energy-animation: 0;
+  --energy-min-target: 56px;
+}
+
+/* Default to full energy if no attribute set */
+:root {
+  --energy-spacing: 1;
+  --energy-density: normal;
+  --energy-animation: 1;
+  --energy-min-target: 44px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   PRODUCT ACCENT SYSTEM (TIER 3)
+   Applied via data-product attribute
+   ══════════════════════════════════════════════════════════════════════ */
+
+[data-product="volaura"]  { --color-product-accent: var(--color-product-volaura); }
+[data-product="mindshift"] { --color-product-accent: var(--color-product-mindshift); }
+[data-product="lifesim"]   { --color-product-accent: var(--color-product-lifesim); }
+[data-product="brandedby"] { --color-product-accent: var(--color-product-brandedby); }
+[data-product="atlas"]     { --color-product-accent: var(--color-product-atlas); }
+
+:root {
+  --color-product-accent: var(--color-product-volaura);
+}
+
 /* ─── Custom utilities ─── */
 @layer utilities {
+  /* Liquid Glass container (open-questions-resolved.md Q2: CSS-only) */
+  .liquid-glass {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: linear-gradient(135deg, rgba(192,193,255,0.08), rgba(192,193,255,0.02));
+    border: 1px solid rgba(192,193,255,0.12);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+    border-radius: 24px;
+  }
+
+  /* Liquid Glass fallback for browsers without backdrop-filter */
+  @supports not (backdrop-filter: blur(12px)) {
+    .liquid-glass {
+      background: rgba(31, 31, 39, 0.95);
+    }
+  }
+
   /* Glassmorphism header */
   .glass-header {
     background: rgba(19, 19, 27, 0.7);
@@ -175,6 +310,9 @@
   }
   .aura-glow-silver {
     box-shadow: 0 0 25px rgba(192, 192, 192, 0.2);
+  }
+  .aura-glow-bronze {
+    box-shadow: 0 0 20px rgba(205, 127, 50, 0.15);
   }
 
   /* Floating ambient glow blobs */
@@ -207,6 +345,20 @@
   .no-divider > * + * {
     border-top: none;
   }
+
+  /* Energy-responsive spacing utility */
+  .energy-gap {
+    gap: calc(var(--spacing-md) * var(--energy-spacing));
+  }
+  .energy-p {
+    padding: calc(var(--spacing-md) * var(--energy-spacing));
+  }
+
+  /* Energy-responsive touch targets */
+  .energy-target {
+    min-height: var(--energy-min-target);
+    min-width: var(--energy-min-target);
+  }
 }
 
 /* ─── Keyframes ─── */
@@ -219,18 +371,41 @@
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+@keyframes tab-slide {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
 .animate-float             { animation: float 4s ease-in-out infinite; }
 .animate-float-delayed     { animation: float 4s ease-in-out infinite 1s; }
 .animate-float-more-delayed { animation: float 4s ease-in-out infinite 2s; }
+.animate-tab-slide         { animation: tab-slide var(--duration-fast) ease-out; }
 
-/* ─── Reduced Motion (Research #6: clinical requirement) ─── */
+/* ─── Reduced Motion (CONSTITUTION LAW 4: clinical requirement) ─── */
 @media (prefers-reduced-motion: reduce) {
-  .animate-float,
-  .animate-float-delayed,
-  .animate-float-more-delayed {
-    animation: none;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
+
+  .liquid-glass {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(31, 31, 39, 0.95);
+  }
+}
+
+/* ─── Energy Low: disable all animations (equivalent to reduced motion) ─── */
+[data-energy="low"] *,
+[data-energy="low"] *::before,
+[data-energy="low"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
 }
 
 /* ─── Mesh Gradient Hero (STITCH aesthetic, 0KB JS) ─── */

@@ -8,7 +8,8 @@ describe("StatsRow", () => {
     render(<StatsRow streak={7} eventsCount={12} auraTier="Silver" />);
     expect(screen.getByText("dashboard.streak")).toBeInTheDocument();
     expect(screen.getByText("dashboard.recentActivity")).toBeInTheDocument();
-    expect(screen.getByText("AURA Tier")).toBeInTheDocument();
+    // i18n mock returns the key; the real app uses defaultValue "AURA Tier" via t() options
+    expect(screen.getByText("dashboard.auraTier")).toBeInTheDocument();
   });
 
   it("renders streak value with 'days' suffix", () => {

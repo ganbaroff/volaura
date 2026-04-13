@@ -391,16 +391,51 @@ async def _demo_runner(agent_id: str, input_data: dict) -> dict | None:
     }
 
 
+def _make_real_runner():
+    """Build a runner that calls real LLM APIs if keys are available, otherwise falls back to demo."""
+    import os
+    env = dict(os.environ)
+    has_nvidia = bool(env.get("NVIDIA_API_KEY"))
+    has_groq = bool(env.get("GROQ_API_KEY"))
+    has_gemini = bool(env.get("GEMINI_API_KEY"))
+
+    if not (has_nvidia or has_groq or has_gemini):
+        logger.info("No LLM keys found — using demo runner")
+        return _demo_runner
+
+    async def _llm_runner(agent_id: str, input_data: dict) -> dict | None:
+        instruction = input_data.get("instruction", "")
+        squad_name = input_data.get("squad_name", agent_id)
+        prompt = (
+            f"You are {agent_id}, a specialist in the {squad_name} domain.\n"
+            f"Task: {instruction}\n\n"
+            f"Respond with a JSON object containing: severity (P0/P1/P2/INFO), "
+            f"category (security/qa/product/growth/infra/ecosystem), "
+            f"summary (what you found), recommendation (what to do), "
+            f"confidence (0.0-1.0), files (list of affected files).\n"
+            f"If nothing notable, set severity=INFO."
+        )
+        try:
+            from .autonomous_run import _call_agent
+            return await _call_agent(prompt, agent_id, env)
+        except ImportError:
+            return await _demo_runner(agent_id, input_data)
+
+    logger.info("LLM runner ready (NVIDIA={n}, Groq={g}, Gemini={ge})", n=has_nvidia, g=has_groq, ge=has_gemini)
+    return _llm_runner
+
+
 if __name__ == "__main__":
     import sys
 
     task = " ".join(sys.argv[1:]) or "audit security and UX of the assessment flow"
-    print(f"Coordinator demo: '{task}'\n")
+    print(f"Coordinator: '{task}'\n")
 
     async def _main():
-        coord = Coordinator(runner=_demo_runner)
+        runner = _make_real_runner()
+        coord = Coordinator(runner=runner)
         result = await coord.run(task)
-        print(f"Synthesis: {result.synthesis}")
+        print(f"\nSynthesis: {result.synthesis}")
         print(f"Priority:  {result.priority_action}")
         print(f"Agents:    {result.total_agents} total, {result.succeeded} succeeded, {result.failed} failed")
         print(f"Findings:  {len(result.findings)}")

@@ -746,45 +746,46 @@ async def complete_assessment(
     )
     slug = comp_result.data["slug"] if comp_result.data else ""
 
-    # Upsert AURA score via DB RPC
+    # Upsert AURA score via DB RPC — retry once on failure (Gate 1: zero data loss)
     aura_updated = False
     if slug:
-        try:
-            rpc_result = await db_admin.rpc(
-                "upsert_aura_score",
-                {
-                    "p_volunteer_id": user_id,
-                    "p_competency_scores": {slug: competency_score},
-                },
-            ).execute()
-            aura_updated = rpc_result.data is not None
-            if not aura_updated:
+        rpc_params = {"p_volunteer_id": user_id, "p_competency_scores": {slug: competency_score}}
+        for attempt in range(2):
+            try:
+                rpc_result = await db_admin.rpc("upsert_aura_score", rpc_params).execute()
+                aura_updated = rpc_result.data is not None
+                if aura_updated:
+                    break
                 logger.warning(
                     "upsert_aura_score returned no data",
                     user_id=str(user_id),
                     competency_slug=slug,
                     session_id=session_id,
+                    attempt=attempt + 1,
                 )
-        except Exception as rpc_error:
-            logger.error(
-                "upsert_aura_score RPC failed — AURA score not updated",
-                user_id=str(user_id),
-                competency_slug=slug,
-                session_id=session_id,
-                error=str(rpc_error),
-            )
-            aura_updated = False
-            # Best-effort: mark session as needing AURA sync so CTO can query
-            # SELECT id FROM assessment_sessions WHERE pending_aura_sync = true
-            try:
-                await (
-                    db_admin.table("assessment_sessions")
-                    .update({"pending_aura_sync": True})
-                    .eq("id", session_id)
-                    .execute()
+            except Exception as rpc_error:
+                logger.error(
+                    "upsert_aura_score RPC failed",
+                    user_id=str(user_id),
+                    competency_slug=slug,
+                    session_id=session_id,
+                    error=str(rpc_error)[:300],
+                    attempt=attempt + 1,
                 )
-            except Exception:
-                pass  # non-fatal — primary error is already logged above
+                if attempt == 0:
+                    import asyncio
+                    await asyncio.sleep(2)
+                    continue
+                aura_updated = False
+                try:
+                    await (
+                        db_admin.table("assessment_sessions")
+                        .update({"pending_aura_sync": True})
+                        .eq("id", session_id)
+                        .execute()
+                    )
+                except Exception:
+                    pass
 
     # ── Sprint A1: Emit crystal_earned + skill_verified to character_state ───
     # Best-effort: never blocks the response. Idempotency via game_character_rewards.

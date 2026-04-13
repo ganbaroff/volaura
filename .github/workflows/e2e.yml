@@ -1,0 +1,45 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/api/app/**'
+      - 'tests/e2e/**'
+      - 'playwright.config.ts'
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    name: Full Journey E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install @playwright/test
+          npx playwright install chromium
+
+      - name: Run E2E tests
+        env:
+          VOLAURA_API_URL: https://volauraapi-production.up.railway.app
+          VOLAURA_URL: https://volaura.app
+          E2E_TEST_EMAIL: e2e_ci_${{ github.run_id }}@test.volaura.app
+          E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
+        run: npx playwright test --reporter=list
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results
+          path: playwright-report/
+          retention-days: 7

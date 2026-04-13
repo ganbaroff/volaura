@@ -522,10 +522,10 @@ def run_bot() -> None:
 
         task = " ".join(args)
         chat_id = str(update.effective_chat.id)
-        gh_token = os.environ.get("GITHUB_PAT_ACTIONS", "")
+        gh_token = os.environ.get("GH_PAT_ACTIONS", "")
 
         if not gh_token:
-            await update.message.reply_text("[ERROR] GITHUB_PAT_ACTIONS not set in .env")
+            await update.message.reply_text("[ERROR] GH_PAT_ACTIONS not set in .env")
             return
 
         await update.message.reply_text(f"[EXECUTE] Triggering workflow for: {task[:100]}...")

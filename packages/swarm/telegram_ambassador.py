@@ -507,6 +507,88 @@ def run_bot() -> None:
         except Exception as e:
             await update.message.reply_text(f"[ERROR] {str(e)[:300]}")
 
+    async def cmd_execute(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        """Trigger GitHub Actions workflow_dispatch with a task — real autonomous executor."""
+        if not is_ceo(update):
+            return
+        args = context.args
+        if not args:
+            await update.message.reply_text(
+                "Usage: /execute <task description>\n"
+                "Creates GitHub Issue + triggers swarm workflow.\n"
+                "Result posted back here when done."
+            )
+            return
+
+        task = " ".join(args)
+        chat_id = str(update.effective_chat.id)
+        gh_token = os.environ.get("GITHUB_PAT_ACTIONS", "")
+
+        if not gh_token:
+            await update.message.reply_text("[ERROR] GITHUB_PAT_ACTIONS not set in .env")
+            return
+
+        await update.message.reply_text(f"[EXECUTE] Triggering workflow for: {task[:100]}...")
+
+        try:
+            import httpx
+
+            repo = "ganbaroff/volaura"
+            headers = {
+                "Authorization": f"Bearer {gh_token}",
+                "Accept": "application/vnd.github+json",
+                "X-GitHub-Api-Version": "2022-11-28",
+            }
+
+            # Step 1: Create GitHub Issue for audit trail
+            issue_number = ""
+            try:
+                async with httpx.AsyncClient(timeout=15) as client:
+                    issue_resp = await client.post(
+                        f"https://api.github.com/repos/{repo}/issues",
+                        headers=headers,
+                        json={
+                            "title": f"[CEO Execute] {task[:80]}",
+                            "body": f"Triggered via Telegram /execute\n\nTask: {task}\n\nChat ID: {chat_id}",
+                            "labels": ["ceo-execute", "automated"],
+                        },
+                    )
+                    if issue_resp.status_code == 201:
+                        issue_number = str(issue_resp.json().get("number", ""))
+            except Exception as ie:
+                logger.warning(f"Issue creation failed (non-fatal): {ie}")
+
+            # Step 2: Trigger workflow_dispatch
+            async with httpx.AsyncClient(timeout=15) as client:
+                resp = await client.post(
+                    f"https://api.github.com/repos/{repo}/actions/workflows/telegram-execute.yml/dispatches",
+                    headers=headers,
+                    json={
+                        "ref": "main",
+                        "inputs": {
+                            "task": task[:500],
+                            "telegram_chat_id": chat_id,
+                            "issue_number": issue_number,
+                        },
+                    },
+                )
+
+            if resp.status_code == 204:
+                msg = f"[OK] Workflow triggered."
+                if issue_number:
+                    msg += f" Issue #{issue_number} created."
+                msg += "\nResult will be posted here when done (~1-3 min)."
+                await update.message.reply_text(msg)
+            else:
+                await update.message.reply_text(
+                    f"[FAIL] GitHub API returned {resp.status_code}: {resp.text[:200]}"
+                )
+
+        except ImportError:
+            await update.message.reply_text("[ERROR] httpx not installed. Run: pip install httpx")
+        except Exception as e:
+            await update.message.reply_text(f"[ERROR] {str(e)[:300]}")
+
     async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if not is_ceo(update):
             return
@@ -517,10 +599,9 @@ def run_bot() -> None:
             "/run — trigger swarm autonomous_run (~30s)\n"
             "/approve <id> — approve proposal (mark for implementation)\n"
             "/dismiss <id> — dismiss proposal\n"
-            "/implement <id> — Sprint S2: autonomous coding loop on one proposal\n"
-            "                 (discover -> safety_gate -> aider -> post-check -> tests)\n"
-            "/auto on|off|status — Sprint S3: toggle background daemon\n"
-            "                     (auto-runs approved low/medium proposals)\n"
+            "/implement <id> — autonomous coding loop on one proposal\n"
+            "/execute <task> — CEO task -> GitHub Issue -> Swarm workflow -> result\n"
+            "/auto on|off|status — toggle background daemon\n"
             "/help — this message\n\n"
             "Free text -> Gemini/Groq answers with full project context."
         )
@@ -564,6 +645,7 @@ def run_bot() -> None:
     application.add_handler(CommandHandler("approve", cmd_approve))
     application.add_handler(CommandHandler("dismiss", cmd_dismiss))
     application.add_handler(CommandHandler("implement", cmd_implement))
+    application.add_handler(CommandHandler("execute", cmd_execute))
     application.add_handler(CommandHandler("auto", cmd_auto))
     application.add_handler(CommandHandler("help", cmd_help))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))

@@ -1,0 +1,93 @@
+name: "Telegram Execute — CEO task pipeline"
+
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "Task description from CEO"
+        required: true
+      telegram_chat_id:
+        description: "Telegram chat ID for callback"
+        required: true
+      issue_number:
+        description: "GitHub issue number (if created)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install swarm dependencies
+        run: |
+          pip install -q httpx loguru pydantic
+
+      - name: Run swarm coordinator on task
+        id: swarm
+        env:
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          cd "${{ github.workspace }}"
+          TASK="${{ github.event.inputs.task }}"
+          echo "Task: $TASK"
+          # Run coordinator — captures output
+          python -m packages.swarm.coordinator "$TASK" 2>&1 | tee /tmp/swarm_output.txt || true
+          # Truncate to 3500 chars for Telegram (4096 limit minus overhead)
+          head -c 3500 /tmp/swarm_output.txt > /tmp/swarm_result.txt
+
+      - name: Report result to Telegram
+        if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        run: |
+          CHAT_ID="${{ github.event.inputs.telegram_chat_id }}"
+          TASK="${{ github.event.inputs.task }}"
+          ISSUE="${{ github.event.inputs.issue_number }}"
+          STATUS="${{ job.status }}"
+
+          if [ -f /tmp/swarm_result.txt ]; then
+            RESULT=$(cat /tmp/swarm_result.txt)
+          else
+            RESULT="No output captured"
+          fi
+
+          # Build message
+          MSG="[EXECUTE ${STATUS^^}]"
+          MSG="$MSG\nTask: $TASK"
+          if [ -n "$ISSUE" ]; then
+            MSG="$MSG\nIssue: #$ISSUE"
+          fi
+          MSG="$MSG\n\n$RESULT"
+
+          # Send to Telegram (plain text, no parse_mode to avoid formatting crashes)
+          curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d "chat_id=${CHAT_ID}" \
+            --data-urlencode "text=${MSG}" \
+            > /dev/null
+
+      - name: Comment on issue if exists
+        if: always() && github.event.inputs.issue_number != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ISSUE="${{ github.event.inputs.issue_number }}"
+          STATUS="${{ job.status }}"
+          if [ -f /tmp/swarm_result.txt ]; then
+            BODY="Swarm execution: **${STATUS}**\n\n\`\`\`\n$(head -c 2000 /tmp/swarm_result.txt)\n\`\`\`"
+          else
+            BODY="Swarm execution: **${STATUS}** — no output captured"
+          fi
+          gh issue comment "$ISSUE" --body "$BODY"

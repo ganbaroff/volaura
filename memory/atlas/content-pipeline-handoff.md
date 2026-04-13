@@ -59,12 +59,43 @@ CEO idea (text)
 └──────────┬──────────────────────┘
            ▼
 ┌─────────────────────────────────┐
-│ STEP 6: Telegram Delivery         │  ← packages/swarm/telegram_ambassador.py
-│         Send each piece to CEO     │     depends_on: ["quality_gate"]
+│ STEP 6: Video Render (NEW 04-13)  │  ← packages/remotion/ (@volaura/remotion)
+│         For pieces where          │     depends_on: ["quality_gate"]
+│         format ∈ {tiktok_az,       │     Writes MP4 / PNG to out/
+│         linkedin_carousel}         │     Sets piece.media_path
+└──────────┬──────────────────────┘
+           ▼
+┌─────────────────────────────────┐
+│ STEP 7: Telegram Delivery         │  ← packages/swarm/telegram_ambassador.py
+│         Send each piece to CEO     │     depends_on: ["video_render"]
 │         Text < 4096 chars          │
-│         Videos as file attachments │
+│         Videos as file attachments │     uses piece.media_path if present
 └─────────────────────────────────┘
 ```
+
+> **2026-04-13 UPDATE — Step 6 Video Render package is ready.**
+> Cowork scaffolded `packages/remotion/` (Remotion 4.0.448, React 18, typecheck green).
+> Two compositions ready with real content from `docs/content/weekly-plans/2026-04-13.md`:
+> - `TikTokAZ` — 1080×1920, 45s (Post #2 — "44 süni intellekt agentim var")
+> - `LinkedInCarousel` — 1080×1350, 24s / 8 PNG frames (Post #6 — "I gave AI full control of my startup")
+>
+> Theme tokens in `packages/remotion/src/theme.ts` enforce Constitution v1.7:
+> NEVER RED (errors = `#D4B4FF` purple), max 800ms spring animations, one primary CTA per frame.
+>
+> Atlas wiring task — add to `content_pipeline.py` between quality_gate and telegram:
+> ```python
+> # Step 6 — Video Render
+> if piece.format in {"tiktok_az", "linkedin_carousel"}:
+>     comp_id = "TikTokAZ" if piece.format == "tiktok_az" else "LinkedInCarousel"
+>     out = f"out/{piece.slug}.mp4"
+>     subprocess.run(
+>         ["pnpm", "--filter", "@volaura/remotion", "render", "--", comp_id, out],
+>         check=True,
+>     )
+>     piece.media_path = out
+> ```
+> Telegram Ambassador (Step 7) already handles file attachments — just needs to
+> prefer `piece.media_path` over text when present.
 
 ---
 
@@ -288,6 +319,9 @@ DONE when:
   5. PASS: `/content <idea>` in Telegram delivers pieces to CEO chat
   6. PASS: Full pipeline completes in < 120 seconds
   7. PASS: No Claude/Anthropic models used as agents
+  8. PASS (video, added 04-13): pieces with format ∈ {tiktok_az, linkedin_carousel}
+     render to MP4/PNG via `@volaura/remotion` and piece.media_path is set
+  9. PASS (video): Telegram delivery attaches media_path file when present instead of text
 ```
 
 ---
@@ -296,10 +330,11 @@ DONE when:
 
 | Action | File | What |
 |--------|------|------|
-| CREATE | `packages/swarm/content_pipeline.py` | Main pipeline (6-step DAG) |
-| MODIFY | `packages/swarm/telegram_ambassador.py` | Add `/content` command |
+| CREATE | `packages/swarm/content_pipeline.py` | Main pipeline (now 7-step DAG after 04-13 video render addition) |
+| MODIFY | `packages/swarm/telegram_ambassador.py` | Add `/content` command + prefer `piece.media_path` attachment when present |
 | MODIFY | `packages/swarm/autonomous_run.py` | Add `--mode=content-batch` mode |
 | CREATE | `packages/swarm/content_prompts.py` | Step-specific prompt templates (SPARK/CORTEX roles, quality gate criteria) |
+| DONE   | `packages/remotion/` | Video render package (scaffolded 2026-04-13 by Cowork — Remotion 4.0.448, 2 compositions, typecheck green) |
 
 ---
 

@@ -301,7 +301,7 @@ async def list_public_professionals(
         )
         .eq("visible_to_orgs", True)
         .eq("is_public", True)
-        .eq("account_type", "volunteer")
+        .in_("account_type", ["professional", "volunteer"])
         .order("aura_scores(total_score)", desc=True, nulls_last=True)
         .range(offset, offset + limit - 1)
         .execute()

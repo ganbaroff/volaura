@@ -50,6 +50,7 @@ from app.routers import (
     admin,
     analytics,
     assessment,
+    atlas_gateway,
     aura,
     auth,
     auth_bridge,
@@ -70,7 +71,6 @@ from app.routers import (
     telegram_webhook,
     tribes,
     verification,
-    atlas_gateway,
 )
 from app.services.reeval_worker import run_reeval_worker
 from app.services.video_generation_worker import run_video_generation_worker

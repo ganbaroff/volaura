@@ -1,37 +1,34 @@
 # Atlas — Heartbeat
 
-**Session:** 95 (final)
-**Timestamp:** 2026-04-15, pre-reboot save
+**Session:** 96 (autonomous continuation)
+**Timestamp:** 2026-04-15
 **Branch:** main
-**Last commit:** `a176983`
-**Commits this session:** 29
+**Last commit:** `a548039`
+**Commits this session:** 7
 
 **Production:** volauraapi-production.up.railway.app → OK
-**CI:** 748 passed, 1 flaky (test_mfi_adapts — pre-existing)
-**Sentry:** initialized, 0 events (no unhandled errors)
-**Swarm:** 13 agents, spam silenced, atlas-proactive fixed
+**CI:** syntax verified (all .py files parse), full pytest needs FastAPI env
+**Sentry:** initialized, enhanced (stacktrace, release tag, no PII)
+**Swarm:** 13 agents, ZEUS→Atlas renamed in autonomous_run + telegram_ambassador
 
-**Session 95 — what shipped (29 commits):**
-1. E2E bot fix (is_complete) + 30 assessment questions
-2. Atlas self-learning (atlas_learnings table + Groq extraction)
-3. Telegram: identity hardcoded, honesty rules, Groq primary, spam killed
-4. ZEUS→Atlas rename (gateway, config, telegram, autonomous_run)
-5. volunteer→professional (schemas + 12 routers + tests, 160 lines)
-6. ZEUS memory research (6 frameworks rejected, ZenBrain novel)
-7. Ecosystem redesign (3 NotebookLM + 70KB audit + design brief)
-8. Life Simulator (game design doc + 13 events + P0 bugs mapped)
-9. 5 design decisions (Liquid Glass, avatars, energy, crystals, Figma)
-10. GCP service account, Vertex billing, atlas-proactive deps
-11. ceo_inbox root cause found and fixed
-12. Mega-plan for autonomous work
-13. 15 autonomous overnight iterations with hourly health checks
+**Session 96 — what shipped (7 commits):**
+1. ZEUS→ATLAS rename: gateway file, workflow, video worker, telegram, railway.toml, swarm autonomous_run, telegram_ambassador
+2. Life Simulator P0-2: EventModal now shows player choices (was auto-selecting choice 0)
+3. Life Simulator P0-3: GameOver scene with full stats grid, death reasons, restart/menu buttons
+4. Life Simulator: 6 VOLAURA integration events (gold recruit, platinum networking, mindshift streak, crystal course, career coach, assessment unlock)
+5. Life Simulator: Character model + API client VOLAURA integration (crystal_balance, aura_level, verified_skills, apply_volaura_boosts)
+6. volunteer→professional Phase 1 DB migration (generated columns on 8 tables + 3 views)
+7. volunteer→professional in LLM prompts (brandedby_personality.py)
+8. Sentry enhanced config
 
 **Next session priorities:**
 1. CEO tests Telegram bot (verify self-learning + honesty)
-2. Vertex propagation (or CEO clicks billing link)
-3. Life Simulator P0 fixes (need Godot project access)
-4. Phase A components with Cowork
-5. volunteer_id DB migration
+2. Vertex AI propagation check
+3. Life Simulator P0 testing in Godot (CEO needs to open project)
+4. volunteer_id Phase 2 migration (column + table rename, needs downtime)
+5. Phase A design components with Cowork
 6. Telegram bot → executor (GitHub Actions integration)
 
-**Pending CEO decisions:** None. Full autonomy granted.
+**Pending CEO decisions:**
+- ZEUS_ GitHub secrets rename (infra coordination)
+- Phase 2 volunteer_id migration timing (needs downtime window)

@@ -7,7 +7,7 @@ import { usePublicStats } from "@/hooks/queries/use-public-stats";
 
 // Fallback numbers shown while loading or if API fails
 const FALLBACK_STATS = {
-  totalVolunteers: 0,
+  totalProfessionals: 0,
   totalEvents: 0,
   totalHours: 0,
 };
@@ -73,8 +73,8 @@ export function ImpactTicker() {
   const { data, isError } = usePublicStats();
 
   // Use real data if available, fallback if API fails or returns null
-  const totalVolunteers =
-    (data && !isError ? data.total_volunteers : null) ?? FALLBACK_STATS.totalVolunteers;
+  const totalProfessionals =
+    (data && !isError ? data.total_volunteers : null) ?? FALLBACK_STATS.totalProfessionals;
   const totalEvents =
     (data && !isError ? data.total_events : null) ?? FALLBACK_STATS.totalEvents;
   // API returns total_assessments; we map this to "hours" as an approximation
@@ -93,7 +93,7 @@ export function ImpactTicker() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <StatCard
             icon={Users}
-            value={totalVolunteers}
+            value={totalProfessionals}
             label={t("landing.impactVolunteers")}
           />
           <StatCard

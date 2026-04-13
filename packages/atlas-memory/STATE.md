@@ -48,9 +48,16 @@ Atlas Session 94 final: 29 commits, 362 files touched. CI: 38 failures → 0 (83
 - "Всё что хочешь то и делай." — Full autonomy granted.
 - Budget: $200+/mo (Claude Max alone = $200). Not $50.
 
+## Handoff 009 — IN PROGRESS (Session 96)
+**Bug 1 (pipeline leak):** Recovery script written (`scripts/recover_lost_aura.py`). Needs Supabase SDK to run. Code already has `pending_aura_sync=True` fallback for future failures.
+**Bug 2 (single-competency):** BY DESIGN. `/start` takes `competency_slug` from client. Each session = one competency. User takes 8 sessions for full AURA. Not a bug.
+**Bug 3 (Sentry):** DSN verified in .env. Config enhanced (stacktrace, no PII, release tag). Needs test event from prod Railway.
+**Remaining:** Run recovery script on prod. Send Sentry test event from Railway.
+
 ## Handoff Queue
 | # | Task | Priority | Status | Prompt |
 |---|------|----------|--------|--------|
+| **009** | **Fix Assessment→AURA Pipeline** | **P0** | **🔴 ACTIVE** | `handoffs/009-e2e-pipeline-fix.md` |
 | 001 | Swarm coordination (Phase 1) | P1 | ✅ DONE (5/6 AC) | `handoffs/001-swarm-coordination.md` |
 | 002 | Production health fixes | P1 | ✅ DONE (Sentry DSN set, CI green, bridge works) | `handoffs/002-prod-health.md` |
 | 003 | PostHog SDK integration | P2 | 📝 READY | `handoffs/003-posthog-integration.md` |

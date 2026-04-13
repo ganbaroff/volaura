@@ -75,9 +75,13 @@ def make_plan(task_description: str, run_id: str = "") -> list[SubtaskContract]:
     # Fallback: use top 2 squads by relevance, or quality+product if zero match
     if not scored:
         logger.debug("Coordinator: no keyword match — using QUALITY + PRODUCT as default squads")
-        from .squad_leaders import get_squad
-        defaults = [get_squad("QUALITY"), get_squad("PRODUCT")]
-        scored = [(1, s) for s in defaults if s]
+        try:
+            from .squad_leaders import get_squad
+            defaults = [get_squad("QUALITY"), get_squad("PRODUCT")]
+            scored = [(1, s) for s in defaults if s]
+        except ImportError:
+            logger.warning("squad_leaders not found — cannot route task")
+            return []
 
     # Sort descending by relevance, cap at 3 squads to avoid explosion
     scored.sort(key=lambda x: -x[0])

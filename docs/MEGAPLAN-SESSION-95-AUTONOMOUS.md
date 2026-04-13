@@ -10,10 +10,10 @@
 ## TRACK 1: ATLAS (Code + Infrastructure)
 
 ### Iteration 1-3: Telegram Bot → Real Executor
-- [ ] Research: can Telegram bot trigger GitHub Actions workflow_dispatch?
-- [ ] Implement: /execute command → fires `gh workflow run` with task payload
-- [ ] Bot receives CEO task → creates GitHub Issue → triggers Claude Code via webhook
-- [ ] Test: CEO says "fix X" in Telegram → GitHub Action runs → result posted back
+- [x] Research: can Telegram bot trigger GitHub Actions workflow_dispatch? (Session 105: YES, httpx POST to dispatches API)
+- [x] Implement: /execute command → fires `gh workflow run` with task payload (Session 105: telegram_ambassador.py + telegram-execute.yml)
+- [x] Bot receives CEO task → creates GitHub Issue → triggers Claude Code via webhook (Session 105: Issue creation + workflow_dispatch)
+- [ ] Test: CEO says "fix X" in Telegram → GitHub Action runs → result posted back (BLOCKED: needs GITHUB_PAT_ACTIONS secret from CEO)
 
 ### Iteration 4-5: Self-Learning Pipeline
 - [x] Debug why ceo_inbox writes fail — root cause: _handle_atlas never called _save_message (Session 95)
@@ -28,8 +28,8 @@
 ### Iteration 8-10: volunteer_id DB Migration
 - [x] Create migration: add `professional_id` column alongside `volunteer_id` (20260415100000)
 - [x] Views: professional_badges, professional_behavior_signals, professional_embeddings
-- [ ] Update RPC functions to accept both
-- [ ] Update code to use professional_id
+- [x] Update RPC functions to accept both (Session 105: 20260415120000_rpc_accept_professional_id.sql)
+- [ ] Update code to use professional_id (205 occurrences, 22 files — needs dedicated sprint)
 - [ ] Drop volunteer_id column (careful — needs downtime window)
 
 ### Iteration 11-13: Sentry + Monitoring
@@ -42,7 +42,7 @@
 - [x] Verified no zeus_gateway references in tests (clean)
 - [x] All Python files parse OK (ast check)
 - [x] Full test suite run — 749 passed, 0 fail (Session 105)
-- [ ] Add test for self-learning pipeline
+- [x] Add test for self-learning pipeline (Session 105: 9 tests in test_atlas_self_learning.py)
 
 ## TRACK 2: COWORK (Design + Research)
 

@@ -1,5 +1,7 @@
 # Gemini Deep Research — All Results
 
+**Cross-references:** [[NEUROCOGNITIVE-ARCHITECTURE-2026]] | [[ZEUS-MEMORY-ARCHITECTURE-RESEARCH-2026-04-14]] | [[ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[adhd-first-ux-research]] | [[ecosystem-design-research]] | [[../ECOSYSTEM-CONSTITUTION]] | [[../VISION-FULL]]
+
 Paste all 3 research outputs below. Separate each with a `---` line.
 
 ---

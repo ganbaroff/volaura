@@ -1,4 +1,7 @@
 # ECOSYSTEM ASSESSMENT — Full Analysis
+
+**Cross-references:** [[ECOSYSTEM-CONSTITUTION]] | [[VISION-FULL]] | [[ECOSYSTEM-MAP]] | [[research/blind-spots-analysis]]
+
 ### Version 1.0 | Date: 2026-03-27 | Author: CTO (Claude) + 3 Agent Team
 
 ---

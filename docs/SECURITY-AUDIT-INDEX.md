@@ -1,6 +1,8 @@
 # VOLAURA Security Audit — Complete Assessment
 ## Phase 1: Privacy-First Assessment System
 
+**Cross-references:** [[ATTACK-VECTORS-EXECUTIVE]] | [[ECOSYSTEM-CONSTITUTION]] | [[adr/ADR-010-defect-autopsy]] | [[adr/ADR-003-auth-verification]]
+
 **Completed:** 2026-03-25
 **Scope:** Role self-selection, evaluation transparency, AURA scoring, Telegram bot autonomy
 **Methodology:** Adversarial security research — finding 5+ attack vectors and gaming strategies

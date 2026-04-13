@@ -1,6 +1,6 @@
 # Multi-Product Ecosystem Design Research — 2026-03-28
 
-**Cross-references:** [[ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[adhd-first-ux-research]] | [[../ECOSYSTEM-CONSTITUTION]] | [[../design/COMPONENT-LIBRARY]] | [[../design/STITCH-DESIGN-SYSTEM]] | [[../LIFE-SIMULATOR-INTEGRATION-SPEC]]
+**Cross-references:** [[ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[adhd-first-ux-research]] | [[NEUROCOGNITIVE-ARCHITECTURE-2026]] | [[blind-spots-analysis]] | [[gemini-research-all]] | [[../ECOSYSTEM-CONSTITUTION]] | [[../VISION-FULL]] | [[../LIFE-SIMULATOR-GAME-DESIGN]] | [[../LIFE-SIMULATOR-INTEGRATION-SPEC]] | [[../MINDSHIFT-INTEGRATION-SPEC]] | [[../AI-TWIN-CONCEPT]] | [[../ECOSYSTEM-MAP]] | [[../design/COMPONENT-LIBRARY]] | [[../design/STITCH-DESIGN-SYSTEM]]
 
 ## Winner Pattern: Discord Three-Rail + Duolingo Semantic Colors + Character-Centric Identity
 

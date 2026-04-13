@@ -4,6 +4,8 @@
 
 **Applies to:** CTO (Claude) + all 40 AI agents. Every task. Every batch. No exceptions.
 
+**Cross-references:** [[ECOSYSTEM-CONSTITUTION]] | [[MANDATORY-RULES]] | [[adr/ADR-010-defect-autopsy]]
+
 ---
 
 ## 1. BEFORE CODING — Definition of Ready (DoR)

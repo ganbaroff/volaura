@@ -28,6 +28,7 @@
 - [[ECOSYSTEM-ASSESSMENT]] — Cross-product dependencies
 - [[500-HOUR-PLAN]] — Time allocation plan
 - [[MONETIZATION-ROADMAP]] — Revenue timeline
+- [[financial-model]] — Financial model with unit economics
 - [[GITA-GRANT-APPLICATION-2026]] — Georgia GITA grant ($240K target)
 
 ---
@@ -119,11 +120,13 @@ Related: [[MASTER-STRATEGY]] | [[VISION-FULL]]
 
 - [[MINDSHIFT-INTEGRATION-SPEC]] — MindShift product integration
 - [[LIFE-SIMULATOR-INTEGRATION-SPEC]] — Life Simulator integration
+- [[LIFE-SIMULATOR-GAME-DESIGN]] — Life Simulator game design document
 - [[AI-TWIN-CONCEPT]] — AI twin concept design
 - [[CSV-BULK-INVITE-IMPLEMENTATION]] — Bulk invite feature
 - [[PLAN-product-trust-architecture]] — Product trust architecture
+- [[MEGAPLAN-SESSION-95-AUTONOMOUS]] — Autonomous mega-plan (Atlas + Cowork)
 
-Related: [[ECOSYSTEM-CONSTITUTION]] | [[ECOSYSTEM-MAP]]
+Related: [[ECOSYSTEM-CONSTITUTION]] | [[ECOSYSTEM-MAP]] | [[adr/ADR-006-ecosystem-architecture]]
 
 ---
 

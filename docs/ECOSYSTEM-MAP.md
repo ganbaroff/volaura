@@ -1,5 +1,7 @@
 # ECOSYSTEM MAP — 5-Product Architecture
 
+**Cross-references:** [[ECOSYSTEM-CONSTITUTION]] | [[VISION-FULL]] | [[MASTER-STRATEGY]] | [[MINDSHIFT-INTEGRATION-SPEC]] | [[LIFE-SIMULATOR-INTEGRATION-SPEC]] | [[LIFE-SIMULATOR-GAME-DESIGN]] | [[AI-TWIN-CONCEPT]] | [[adr/ADR-006-ecosystem-architecture]] | [[CONSTITUTION_AI_SWARM]] | [[research/ecosystem-design-research]]
+
 ## Products
 
 | Product | Stack | Status | URL |

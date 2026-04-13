@@ -4,6 +4,7 @@
 **Status:** APPROVED (pending implementation)
 **Decision makers:** CTO + Gemini + Llama 405B + NotebookLM deep research
 **Stakeholders reviewed:** Growth Hacker (against), Lean Startup (against), Y Combinator (against), NotebookLM (for)
+**Related:** [[ADR-007-ai-gateway-model-router]] | [[ADR-008-zeus-governance-layer]] | [[../CONSTITUTION_AI_SWARM]] | [[../research/swarm-innovation-research]]
 
 ---
 

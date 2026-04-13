@@ -1,5 +1,7 @@
 # Volaura Financial Model — v1.0 (Skeleton)
 
+**Cross-references:** [[MASTER-STRATEGY]] | [[MONETIZATION-ROADMAP]] | [[research/blind-spots-analysis]] | [[research/geo-pricing-research]] | [[GITA-GRANT-APPLICATION-2026]]
+
 > Built by Claude (CTO) for Yusif's review.
 > Rule from Investor advisor: "You must OWN every number and defend it in 90 seconds without slides."
 > Yusif: review each assumption. Change what doesn't match your market knowledge.

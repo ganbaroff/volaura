@@ -1,5 +1,7 @@
 # Volaura API Reference
 
+**Cross-references:** [[adr/ADR-001-system-architecture]] | [[adr/ADR-003-auth-verification]] | [[adr/ADR-004-assessment-engine]] | [[adr/ADR-005-aura-scoring]] | [[MINDSHIFT-INTEGRATION-SPEC]] | [[LIFE-SIMULATOR-INTEGRATION-SPEC]]
+
 **Base URL:** `https://volauraapi-production.up.railway.app`
 
 **Authentication:** Bearer token in `Authorization` header. Obtain via `POST /api/auth/login` or `POST /api/auth/register`.

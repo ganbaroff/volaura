@@ -4,6 +4,8 @@
 **Status:** ACCEPTED
 **Sprint:** E1
 **Deciders:** CTO (Claude), CEO (Yusif)
+**Related:** [[ADR-001-system-architecture]], [[ADR-002-database-schema]], [[ADR-005-aura-scoring]]
+**Governed by:** [[../ECOSYSTEM-CONSTITUTION]] | **Products:** [[../MINDSHIFT-INTEGRATION-SPEC]] | [[../LIFE-SIMULATOR-INTEGRATION-SPEC]] | [[../AI-TWIN-CONCEPT]] | [[../ECOSYSTEM-MAP]]
 
 ---
 

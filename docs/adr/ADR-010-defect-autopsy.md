@@ -4,6 +4,7 @@
 **Status:** Accepted
 **Context:** 61 fix commits out of 218 total = 28% Change Failure Rate (DORA Elite target: <15%).
 **Prescription from:** Swarm retrospective (Groq Llama-3.3-70b, BATCH-V critique)
+**Related:** [[../QUALITY-STANDARDS]] | [[../MANDATORY-RULES]] | [[../ECOSYSTEM-CONSTITUTION]]
 
 ---
 

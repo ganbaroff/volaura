@@ -5,6 +5,8 @@
 **Health Score:** 72/100 — Conditional GO for public launch
 **Purpose:** Single reference for system architecture. Supersedes scattered notes in shared-context.md and HANDOFF.md.
 
+**Cross-references:** [[adr/ADR-001-system-architecture]] | [[adr/ADR-002-database-schema]] | [[adr/ADR-006-ecosystem-architecture]] | [[ECOSYSTEM-CONSTITUTION]] | [[ECOSYSTEM-MAP]] | [[API-REFERENCE]]
+
 ---
 
 ## 1. System Overview

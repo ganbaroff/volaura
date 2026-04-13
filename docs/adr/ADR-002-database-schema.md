@@ -2,7 +2,8 @@
 
 **Status:** Accepted
 **Date:** 2026-03-22
-**Related:** [[ADR-001-system-architecture]], [[ADR-003-auth-verification]], [[ADR-005-aura-scoring]]
+**Related:** [[ADR-001-system-architecture]], [[ADR-003-auth-verification]], [[ADR-004-assessment-engine]], [[ADR-005-aura-scoring]], [[ADR-006-ecosystem-architecture]]
+**Governed by:** [[../ECOSYSTEM-CONSTITUTION]]
 
 ## Context
 

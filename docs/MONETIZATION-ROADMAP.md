@@ -1,6 +1,8 @@
 # Volaura Ecosystem — Monetization Roadmap v1.0
 > Written: 2026-03-27 | Agent-validated (3 parallel agents) | CTO synthesis
 
+**Cross-references:** [[MASTER-STRATEGY]] | [[ECOSYSTEM-CONSTITUTION]] | [[VISION-FULL]] | [[research/blind-spots-analysis]] | [[research/geo-pricing-research]] | [[financial-model]] | [[LIFE-SIMULATOR-GAME-DESIGN]] | [[AI-TWIN-CONCEPT]]
+
 ## Summary
 
 **Path:** Hybrid — volunteer core free + org premium + crystal cosmetics/queue

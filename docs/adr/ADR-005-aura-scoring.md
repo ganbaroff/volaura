@@ -3,7 +3,8 @@
 **Status:** Accepted
 **Date:** 2026-03-22
 **Deciders:** Yusif (product owner), Claude (architecture)
-**Related:** [[ADR-001-system-architecture]], [[ADR-002-database-schema]], [[ADR-003-auth-verification]], [[ADR-004-assessment-engine]]
+**Related:** [[ADR-001-system-architecture]], [[ADR-002-database-schema]], [[ADR-003-auth-verification]], [[ADR-004-assessment-engine]], [[ADR-006-ecosystem-architecture]]
+**Governed by:** [[../ECOSYSTEM-CONSTITUTION]] | **Products:** [[../LIFE-SIMULATOR-GAME-DESIGN]] | [[../MINDSHIFT-INTEGRATION-SPEC]]
 
 ## Context
 

@@ -5,6 +5,8 @@
 **Location:** `C:\Users\user\OneDrive\Desktop\BestGame\life-simulator-2026`
 **Integration:** VOLAURA API (`/api/character/state`, `/api/character/events`, `/api/character/crystals`)
 
+**Cross-references:** [[LIFE-SIMULATOR-INTEGRATION-SPEC]] | [[ECOSYSTEM-CONSTITUTION]] | [[MINDSHIFT-INTEGRATION-SPEC]] | [[VISION-FULL]] | [[ECOSYSTEM-MAP]] | [[MONETIZATION-ROADMAP]] | [[adr/ADR-006-ecosystem-architecture]] | [[research/ecosystem-design-research]] | [[research/ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[adr/ADR-005-aura-scoring]]
+
 ---
 
 ## Core Game Loop
@@ -121,9 +123,9 @@ Character Creation → Year Cycle → Events → Choices → Consequences → St
 
 ---
 
-## Crystal Economy in Life Sim
+## Crystal Economy in Life Sim (governed by [[ECOSYSTEM-CONSTITUTION]] Crystal Laws 1-8)
 
-### Earn (from VOLAURA/MindShift)
+### Earn (from VOLAURA/[[MINDSHIFT-INTEGRATION-SPEC|MindShift]])
 - Assessment completion: +50-200 crystals
 - Focus session: +10-30 crystals
 - Badge earned: +100 crystals

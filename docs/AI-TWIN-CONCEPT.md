@@ -1,6 +1,8 @@
 # AI Twin — Concept Document v1.0
 > Yusif's design, 2026-03-27 | Agent-critiqued + revised
 
+**Cross-references:** [[ECOSYSTEM-CONSTITUTION]] | [[VISION-FULL]] | [[ECOSYSTEM-MAP]] | [[MONETIZATION-ROADMAP]] | [[adr/ADR-006-ecosystem-architecture]] | [[research/ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[research/blind-spots-analysis]] | [[research/ecosystem-design-research]]
+
 ## Core Concept
 
 A digital avatar powered by the user's own character_state JSON "brain."

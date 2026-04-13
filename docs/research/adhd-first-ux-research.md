@@ -1,6 +1,6 @@
 # ADHD-First UX + Gamification Research — 2026-03-28
 
-**Cross-references:** [[ECOSYSTEM-CONSTITUTION]] | [[ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[ecosystem-design-research]] | [[blind-spots-analysis]] | [[../TONE-OF-VOICE]] | [[../design/ANIMATION-SYSTEM]]
+**Cross-references:** [[ECOSYSTEM-CONSTITUTION]] | [[ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[ecosystem-design-research]] | [[blind-spots-analysis]] | [[NEUROCOGNITIVE-ARCHITECTURE-2026]] | [[gemini-research-all]] | [[../VISION-FULL]] | [[../TONE-OF-VOICE]] | [[../MINDSHIFT-INTEGRATION-SPEC]] | [[../CUSTOMER-JOURNEY-MAP]] | [[../design/ANIMATION-SYSTEM]]
 
 ## 26 Design Rules (implementable)
 

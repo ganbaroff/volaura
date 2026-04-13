@@ -4,6 +4,8 @@
 **Authority:** CEO-approved. These rules CANNOT be overridden by any session, sprint, or agent.
 **Violation:** Any violation must be logged in `docs/DECISIONS.md` with root cause.
 
+**Cross-references:** [[ECOSYSTEM-CONSTITUTION]] | [[QUALITY-STANDARDS]] | [[adr/ADR-010-defect-autopsy]]
+
 ---
 
 ## Rule 1: NO SOLO DECISIONS

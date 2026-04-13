@@ -1,5 +1,7 @@
 # Swarm Innovation Research — 2026-03-29
 
+**Cross-references:** [[NEUROCOGNITIVE-ARCHITECTURE-2026]] | [[ZEUS-MEMORY-ARCHITECTURE-RESEARCH-2026-04-14]] | [[../CONSTITUTION_AI_SWARM]] | [[../adr/ADR-009-crewai-adoption]] | [[../adr/ADR-007-ai-gateway-model-router]]
+
 **Session:** 63 | **Protocol:** TASK-PROTOCOL v2.0 | **Agents used:** 5 research + 1 adversarial
 
 ---

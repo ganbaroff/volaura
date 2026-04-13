@@ -3,7 +3,8 @@
 **Status:** Accepted
 **Date:** 2026-03-22
 **Deciders:** Yusif (product owner), Claude (architecture)
-**Related:** [[ADR-001-system-architecture]], [[ADR-002-database-schema]], [[ADR-005-aura-scoring]]
+**Related:** [[ADR-001-system-architecture]], [[ADR-002-database-schema]], [[ADR-005-aura-scoring]], [[ADR-003-auth-verification]]
+**Governed by:** [[../ECOSYSTEM-CONSTITUTION]] | **Research:** [[../research/adhd-first-ux-research]]
 
 ## Context
 

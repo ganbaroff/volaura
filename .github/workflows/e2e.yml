@@ -34,6 +34,7 @@ jobs:
           VOLAURA_URL: https://volaura.app
           E2E_TEST_EMAIL: e2e_ci_${{ github.run_id }}@test.volaura.app
           E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
+          E2E_TEST_SECRET: ${{ secrets.E2E_TEST_SECRET }}
         run: npx playwright test --reporter=list
 
       - name: Upload test results

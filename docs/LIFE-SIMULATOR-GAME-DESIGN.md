@@ -103,10 +103,11 @@ Character Creation → Year Cycle → Events → Choices → Consequences → St
 4. Add crystal_balance to character.money (capped 9999)
 ```
 
-### During Gameplay (every 5 game-years)
+### During Gameplay (every 5 game-years) ✅ Implemented
 ```
 1. POST /api/character/events → log game milestones
 2. GET /api/character/crystals → refresh crystal balance
+TimeController._advance_year() triggers api_client.load_crystals() every 5 years.
 ```
 
 ### On Game Over

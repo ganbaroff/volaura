@@ -36,7 +36,7 @@ jobs:
       - name: Run heartbeat
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python -m packages.swarm.atlas_heartbeat
+        run: python scripts/atlas_heartbeat.py
 
       - name: Scope guard
         # Heartbeat is only allowed to touch memory/atlas/inbox/ and the wake counter.

@@ -20,7 +20,7 @@ VALID_COMPETENCY_IDS = frozenset(
 
 
 class CreateVerificationLinkRequest(BaseModel):
-    """Request body for POST /api/profiles/{volunteer_id}/verification-link."""
+    """Request body for POST /api/profiles/{professional_id}/verification-link."""
 
     verifier_name: str = Field(..., min_length=2, max_length=100)
     verifier_org: str | None = Field(None, max_length=100)
@@ -63,9 +63,9 @@ class VerificationTokenInfo(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-    volunteer_display_name: str
-    volunteer_username: str
-    volunteer_avatar_url: str | None
+    professional_display_name: str
+    professional_username: str
+    professional_avatar_url: str | None
     verifier_name: str
     verifier_org: str | None
     competency_id: str
@@ -90,7 +90,7 @@ class SubmitVerificationResponse(BaseModel):
     """Returned after successful verification submission."""
 
     status: Literal["verified"] = "verified"
-    volunteer_display_name: str
+    professional_display_name: str
     competency_id: str
     rating: float
 

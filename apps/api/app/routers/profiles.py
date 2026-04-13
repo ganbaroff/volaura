@@ -10,7 +10,7 @@ from app.config import settings
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
 from app.middleware.rate_limit import RATE_DEFAULT, RATE_DISCOVERY, RATE_PROFILE_WRITE, limiter
 from app.schemas.profile import (
-    DiscoverableVolunteer,
+    DiscoverableProfessional,
     ProfileCreate,
     ProfileResponse,
     ProfileUpdate,
@@ -190,14 +190,14 @@ async def update_my_profile(
 
 
 @router.post(
-    "/{volunteer_id}/verification-link",
+    "/{professional_id}/verification-link",
     response_model=CreateVerificationLinkResponse,
     status_code=201,
 )
 @limiter.limit(RATE_PROFILE_WRITE)
 async def create_verification_link(
     request: Request,
-    volunteer_id: str,
+    professional_id: str,
     payload: CreateVerificationLinkRequest,
     db: SupabaseUser,
     user_id: CurrentUserId,
@@ -209,14 +209,14 @@ async def create_verification_link(
     Token is valid for 7 days, single-use.
     """
     # CRIT-02 fix: only allow self-verification requests
-    if volunteer_id != user_id:
+    if professional_id != user_id:
         raise HTTPException(
             status_code=403,
             detail={"code": "FORBIDDEN", "message": "You can only request verification for your own profile"},
         )
 
     # Ensure target professional exists (.maybe_single() returns None instead of raising 406)
-    profile = await db.table("profiles").select("id").eq("id", volunteer_id).maybe_single().execute()
+    profile = await db.table("profiles").select("id").eq("id", professional_id).maybe_single().execute()
     if not profile.data:
         raise HTTPException(
             status_code=404,
@@ -231,7 +231,7 @@ async def create_verification_link(
         await db.table("expert_verifications")
         .insert(
             {
-                "volunteer_id": volunteer_id,
+                "volunteer_id": professional_id,
                 "created_by": user_id,
                 "verifier_name": payload.verifier_name,
                 "verifier_org": payload.verifier_org,
@@ -244,7 +244,7 @@ async def create_verification_link(
     )
 
     if not result or not result.data:
-        logger.error("Failed to create verification link", professional_id=volunteer_id)
+        logger.error("Failed to create verification link", professional_id=professional_id)
         raise HTTPException(
             status_code=500,
             detail={"code": "CREATE_FAILED", "message": "Failed to create verification link"},
@@ -255,7 +255,7 @@ async def create_verification_link(
 
     logger.info(
         "Verification link created",
-        professional_id=volunteer_id,
+        professional_id=professional_id,
         created_by=user_id,
         competency=payload.competency_id,
     )
@@ -271,7 +271,7 @@ async def create_verification_link(
     )
 
 
-@router.get("/public", response_model=list[DiscoverableVolunteer])
+@router.get("/public", response_model=list[DiscoverableProfessional])
 @limiter.limit(RATE_DISCOVERY)
 async def list_public_professionals(
     request: Request,
@@ -279,7 +279,7 @@ async def list_public_professionals(
     user_id: CurrentUserId,
     limit: int = Query(default=20, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
-) -> list[DiscoverableVolunteer]:
+) -> list[DiscoverableProfessional]:
     """List professionals who have opted in to org discovery (visible_to_orgs=True).
 
     Requires authentication as an organization account (account_type='organization').
@@ -307,13 +307,13 @@ async def list_public_professionals(
         .execute()
     )
 
-    professionals: list[DiscoverableVolunteer] = []
+    professionals: list[DiscoverableProfessional] = []
     for row in result.data or []:
         aura = row.get("aura_scores")
         # aura_scores is a list (one-to-many join result) — take first visible entry
         aura_row = aura[0] if isinstance(aura, list) and aura else aura if isinstance(aura, dict) else None
         professionals.append(
-            DiscoverableVolunteer(
+            DiscoverableProfessional(
                 id=row["id"],
                 username=row["username"],
                 display_name=_anonymize_name(row.get("display_name")),  # SEC-03: never leak full name
@@ -360,11 +360,11 @@ async def get_public_profile(
     # Two cheap COUNT queries; skipped entirely if the user has no aura_scores row.
     percentile_rank: float | None = None
     try:
-        volunteer_id = result.data["id"]
+        professional_id = result.data["id"]
         score_row = (
             await db.table("aura_scores")
             .select("total_score")
-            .eq("volunteer_id", volunteer_id)
+            .eq("volunteer_id", professional_id)
             .maybe_single()
             .execute()
         )

@@ -107,10 +107,10 @@ class PublicProfileResponse(BaseModel):
     percentile_rank: float | None = None  # GROW-M03: % of public users with lower AURA score
 
 
-class DiscoverableVolunteer(BaseModel):
-    """Volunteer profile visible to org users on the discovery page.
+class DiscoverableProfessional(BaseModel):
+    """Professional profile visible to org users on the discovery page.
 
-    Only includes volunteers who have opted in (visible_to_orgs=True).
+    Only includes professionals who have opted in (visible_to_orgs=True).
     AURA score joined from aura_scores table.
     """
 

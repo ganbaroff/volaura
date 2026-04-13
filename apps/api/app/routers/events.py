@@ -499,7 +499,7 @@ async def list_attendees(
         rows.append(
             EventAttendeeRow(
                 registration_id=reg["id"],
-                volunteer_id=vid,
+                professional_id=vid,
                 status=reg["status"],
                 registered_at=reg["registered_at"],
                 checked_in_at=reg.get("checked_in_at"),

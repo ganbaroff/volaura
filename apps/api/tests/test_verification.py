@@ -165,8 +165,8 @@ async def test_get_verification_valid_token():
 
     assert resp.status_code == 200
     body = resp.json()
-    assert body["volunteer_display_name"] == "Alice Volunteer"
-    assert body["volunteer_username"] == "alice"
+    assert body["professional_display_name"] == "Alice Volunteer"
+    assert body["professional_username"] == "alice"
     assert body["competency_id"] == COMPETENCY_ID
     assert body["verifier_name"] == "Dr. Expert"
 
@@ -247,7 +247,7 @@ async def test_submit_verification_success():
     assert body["status"] == "verified"
     assert body["rating"] == 4
     assert body["competency_id"] == COMPETENCY_ID
-    assert body["volunteer_display_name"] == "Alice Volunteer"
+    assert body["professional_display_name"] == "Alice Volunteer"
     # AURA rpc must have been called
     # Blend formula: 70.0 * 0.6 + (4/5 * 100) * 0.4 = 42.0 + 32.0 = 74.0
     db.rpc.assert_called_once_with(

@@ -1359,7 +1359,7 @@ class TestVerificationEndpoint:
             assert body["status"] == "verified"
             assert body["rating"] == 4
             assert body["competency_id"] == "communication"
-            assert "volunteer_display_name" in body
+            assert "professional_display_name" in body
         finally:
             app.dependency_overrides.pop(get_supabase_admin, None)
 

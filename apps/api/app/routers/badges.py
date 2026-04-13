@@ -19,10 +19,10 @@ router = APIRouter(prefix="/badges", tags=["Badges"])
 # ── Open Badges 3.0 JSON-LD ───────────────────────────────────────────────────
 
 
-@router.get("/{volunteer_id}/credential")
+@router.get("/{professional_id}/credential")
 @limiter.limit(RATE_DISCOVERY)
 async def get_open_badge_credential(
-    volunteer_id: str,
+    professional_id: str,
     request: Request,
     db: SupabaseAdmin,
 ) -> dict:
@@ -33,18 +33,18 @@ async def get_open_badge_credential(
     """
     # Validate UUID format before any DB call (SECURITY-REVIEW.md Point 2)
     try:
-        UUID(volunteer_id)
+        UUID(professional_id)
     except ValueError:
         raise HTTPException(
             status_code=422,
-            detail={"code": "INVALID_UUID", "message": "volunteer_id must be a valid UUID"},
+            detail={"code": "INVALID_UUID", "message": "professional_id must be a valid UUID"},
         )
 
     # Fetch profile
     profile_result = (
         await db.table("profiles")
         .select("id, username, display_name, badge_issued_at")
-        .eq("id", volunteer_id)
+        .eq("id", professional_id)
         .eq("is_public", True)
         .maybe_single()
         .execute()
@@ -58,7 +58,7 @@ async def get_open_badge_credential(
     aura_result = (
         await db.table("aura_scores")
         .select("total_score, badge_tier, elite_status, last_updated, visibility")
-        .eq("volunteer_id", volunteer_id)
+        .eq("volunteer_id", professional_id)
         .maybe_single()
         .execute()
     )
@@ -88,7 +88,7 @@ async def get_open_badge_credential(
             "https://www.w3.org/2018/credentials/v1",
             "https://purl.imsglobal.org/spec/ob/v3p0/context-3.0.1.json",
         ],
-        "id": f"{base_url}/api/badges/{volunteer_id}/credential",
+        "id": f"{base_url}/api/badges/{professional_id}/credential",
         "type": ["VerifiableCredential", "OpenBadgeCredential"],
         "issuer": {
             "id": f"{base_url}/api/badges/issuer",

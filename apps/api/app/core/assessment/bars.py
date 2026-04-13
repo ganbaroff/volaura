@@ -65,11 +65,11 @@ _fallback_hour: datetime | None = None
 
 async def _maybe_alert_fallback_spike() -> None:
     """Increment the hourly keyword-fallback counter and alert on threshold breach."""
-    from datetime import datetime  # local import — avoids circular at module load
+    from datetime import datetime, timezone  # local import — avoids circular at module load
 
     global _fallback_count, _fallback_hour
 
-    current_hour = datetime.utcnow().replace(minute=0, second=0, microsecond=0)
+    current_hour = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
     if _fallback_hour != current_hour:
         _fallback_hour = current_hour
         _fallback_count = 0

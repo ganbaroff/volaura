@@ -1,0 +1,66 @@
+name: Atlas Self-Wake
+
+on:
+  # Every 30 minutes. CEO directive 2026-04-16 — "сделай своё время вызова через
+  # каждые 30 минут". Light probe, writes one heartbeat note to memory/atlas/inbox/.
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+# Interruption protection — CEO directive 2026-04-16:
+# "если пришёл вебхук а ты работаешь то поставь защиту. если работаю не прерывать и всё".
+# If a new tick fires while one is already running, the new tick WAITS (doesn't cancel).
+# Guarantees no two heartbeats write simultaneously and no half-written state.
+concurrency:
+  group: atlas-self-wake
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  heartbeat:
+    name: Heartbeat tick
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 2
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run heartbeat
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python -m packages.swarm.atlas_heartbeat
+
+      - name: Scope guard
+        # Heartbeat is only allowed to touch memory/atlas/inbox/ and the wake counter.
+        # Anything else → hard fail so a bug can't quietly drift into prod code.
+        run: |
+          CHANGED=$(git status --porcelain | awk '{print $2}')
+          if [ -z "$CHANGED" ]; then exit 0; fi
+          OUTSIDE=$(echo "$CHANGED" | grep -v '^memory/atlas/inbox/' | grep -v '^memory/atlas/\.wake-counter$' || true)
+          if [ -n "$OUTSIDE" ]; then
+            echo "::error::Heartbeat touched files outside allowed scope:"
+            echo "$OUTSIDE"
+            exit 1
+          fi
+
+      - name: Commit and push
+        run: |
+          git config user.name "Atlas Heartbeat"
+          git config user.email "atlas-heartbeat@volaura.app"
+          git add memory/atlas/inbox/ memory/atlas/.wake-counter
+          if git diff --staged --quiet; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+          NEWEST=$(ls -t memory/atlas/inbox/*.md 2>/dev/null | head -n 1 | xargs -n1 basename || echo heartbeat)
+          git commit -m "atlas-heartbeat: $NEWEST"
+          git pull --rebase --autostash origin main || true
+          git push || echo "Push failed — non-blocking, next tick will retry"

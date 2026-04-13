@@ -72,9 +72,10 @@ Key findings:
 
 #### MindShift
 - **Path:** `C:\Users\user\OneDrive\Desktop\mindflow`
-- **Status:** PARTIAL — OneDrive-hosted repo, git operations timeout on large find/grep
-- **Git confirmed accessible:** yes (log/status work, full search timeouts)
-- **Cross-product verdict:** BLOCKED — could not complete grep in time. Handoff says 0% integration with VOLAURA.
+- **Git:** `fatal: your current branch appears to be broken` — repo needs repair
+- **VOLAURA references:** 0 (grep returned 0 matches)
+- **Readiness:** 30% — git broken, 0 VOLAURA integration, standalone status unknown
+- **Cross-product verdict:** NONE — 0 references to character_events / volaura / aura_scores
 
 #### ZEUS (standalone repo)
 - **Status:** NOT FOUND at /c/Projects/zeus or /c/Projects/ZEUS
@@ -180,7 +181,7 @@ git log -5: clean linear history
 | VOLAURA | ✅ (3 emitters, session 97) | N/A (is VOLAURA) | ✅ | ✅ tested |
 | LifeSimulator | ❌ (no write code) | ✅ (52 refs, auth+API) | ✅ | ❓ (129 uncommitted) |
 | BrandedBy | ❌ | ❌ (0 refs) | ❌ | ❌ |
-| MindShift | ❌ | ❓ (scan blocked) | ❓ | ❌ (Cowork says 0%) |
+| MindShift | ❌ | ❌ (0 refs, git broken) | ❌ | ❌ |
 | ZEUS/Atlas | ❌ (module, not product) | N/A (is inside VOLAURA) | ✅ | ✅ swarm works |
 
 **Honest readiness ratings:**
@@ -190,7 +191,7 @@ git log -5: clean linear history
 | VOLAURA | 40% | 55% | Prod alive, 749 tests pass, Sentry clean last 9 days, design refresh shipped, ecosystem events wired. Missing: E2E verified, custom domain, real users |
 | LifeSimulator | 90% | 60% | 5/6 priorities done BUT 129 uncommitted files, Godot-side untested by CEO, no published build |
 | BrandedBy | 95% | 65% | 6,448 files, standalone works, but last commit "123" + revert suggests instability, zero VOLAURA integration |
-| MindShift | 80% standalone | 50% (estimate) | Scan incomplete. Cowork says 0% VOLAURA integration. Standalone may work but no verification possible |
+| MindShift | 80% standalone | 30% | Git broken (`fatal: current branch appears broken`), 0 VOLAURA refs, needs repo repair before anything else |
 | ZEUS | 75% | N/A | Not a standalone product. 13 agents inside VOLAURA, swarm works, content engine runs |
 
 ---

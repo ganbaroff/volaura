@@ -4,7 +4,7 @@
 --
 -- Tables affected:
 --   assessment_sessions, aura_scores, volunteer_badges,
---   org_volunteer_records, registrations, volunteer_behavior_signals,
+--   registrations, volunteer_behavior_signals,
 --   volunteer_embeddings, expert_verifications
 
 BEGIN;
@@ -19,10 +19,6 @@ ALTER TABLE public.aura_scores
 
 -- volunteer_badges: add professional_id as generated column
 ALTER TABLE public.volunteer_badges
-  ADD COLUMN IF NOT EXISTS professional_id UUID GENERATED ALWAYS AS (volunteer_id) STORED;
-
--- org_volunteer_records: add professional_id as generated column
-ALTER TABLE public.org_volunteer_records
   ADD COLUMN IF NOT EXISTS professional_id UUID GENERATED ALWAYS AS (volunteer_id) STORED;
 
 -- registrations: add professional_id as generated column

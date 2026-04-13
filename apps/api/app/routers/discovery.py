@@ -86,7 +86,7 @@ async def discover_talent(
         )
 
     # Validate role_level
-    valid_roles = {"volunteer", "coordinator", "specialist", "manager", "senior_manager"}
+    valid_roles = {"professional", "volunteer", "coordinator", "specialist", "manager", "senior_manager"}
     if role_level is not None and role_level not in valid_roles:
         raise HTTPException(
             status_code=422,

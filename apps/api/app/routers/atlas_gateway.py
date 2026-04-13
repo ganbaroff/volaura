@@ -1,12 +1,12 @@
-"""ZEUS Gateway router — inbound bridge for Python swarm proposals.
+"""Atlas Gateway router — inbound bridge for Python swarm proposals.
 
-Receives HIGH/CRITICAL findings from autonomous_run.py (_notify_zeus_gateway)
+Receives HIGH/CRITICAL findings from autonomous_run.py (_notify_atlas_gateway)
 and appends them to memory/swarm/proposals.json for CTO review.
 
 Auth: X-Gateway-Secret header must match settings.gateway_secret.
 Endpoints:
-  GET  /api/zeus/health   — healthcheck
-  POST /api/zeus/proposal — receive proposal from Python swarm
+  GET  /api/atlas/health   — healthcheck
+  POST /api/atlas/proposal — receive proposal from Python swarm
 """
 
 import json

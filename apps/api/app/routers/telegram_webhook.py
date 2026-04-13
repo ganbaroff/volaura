@@ -269,7 +269,7 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
             "прогресс",
             "готов",
             "работает",
-            "zeus",
+            "atlas",
             "life sim",
             "crystal",
             "кристал",

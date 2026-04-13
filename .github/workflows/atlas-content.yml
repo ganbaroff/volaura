@@ -1,4 +1,4 @@
-name: ZEUS Content Engine
+name: Atlas Content Engine
 
 on:
   schedule:
@@ -22,8 +22,8 @@ on:
         type: string
 
 jobs:
-  zeus-run:
-    name: ZEUS Content Generation
+  atlas-run:
+    name: Atlas Content Generation
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -38,11 +38,11 @@ jobs:
           python-version: '3.11'
           cache: pip
 
-      - name: Install ZEUS dependencies
+      - name: Install Atlas dependencies
         run: |
           pip install pydantic loguru groq google-genai python-dotenv python-telegram-bot supabase
 
-      - name: Run ZEUS content engine
+      - name: Run Atlas content engine
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -56,6 +56,6 @@ jobs:
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: |
           cd "${{ github.workspace }}"
-          python -m packages.swarm.zeus_content_run \
+          python -m packages.swarm.atlas_content_run \
             --mode=${{ github.event.inputs.mode || 'scheduled' }} \
             --event-json='${{ github.event.inputs.event_json || '{}' }}'

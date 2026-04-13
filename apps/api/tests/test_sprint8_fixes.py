@@ -14,10 +14,9 @@ Covers:
 - [S8.6] bars.py: fallback chain timeout behavior
 """
 
-import pytest
-from unittest.mock import AsyncMock, MagicMock, patch, AsyncMock
-from uuid import uuid4
+from unittest.mock import MagicMock, patch
 
+import pytest
 
 # ── [S8.1] engine.py: eap_failures persistence ───────────────────────────────
 
@@ -130,7 +129,7 @@ class TestAntigamingGroupedBypass:
 
     def test_grouped_alternating_bypass_detected(self):
         """[1,1,0,0,1,1,0,0] must be detected as group alternating."""
-        from app.core.assessment.antigaming import analyse, GamingSignal
+        from app.core.assessment.antigaming import analyse
         answers = [
             {"response": r, "response_time_ms": 5000, "raw_score": float(r)}
             for r in [1, 1, 0, 0, 1, 1, 0, 0]
@@ -253,6 +252,7 @@ class TestCompetencyScoreBounds:
 def test_visibility_endpoint_has_request_param():
     """PATCH /me/visibility must have 'request: Request' for @limiter.limit()."""
     import inspect
+
     from app.routers.aura import update_visibility
     sig = inspect.signature(update_visibility)
     assert "request" in sig.parameters, (
@@ -263,6 +263,7 @@ def test_visibility_endpoint_has_request_param():
 def test_sharing_endpoint_has_request_param():
     """POST /me/sharing must have 'request: Request' for @limiter.limit()."""
     import inspect
+
     from app.routers.aura import manage_sharing_permission
     sig = inspect.signature(manage_sharing_permission)
     assert "request" in sig.parameters, (
@@ -328,11 +329,11 @@ class TestBarsTimeoutFallback:
     @pytest.mark.asyncio
     async def test_gemini_timeout_falls_back_to_openai(self):
         """If Gemini + Groq both time out (15s), BARS must try OpenAI."""
+
         from app.core.assessment import bars
-        import asyncio
 
         async def mock_timeout(*args, **kwargs):
-            raise asyncio.TimeoutError("timed out")
+            raise TimeoutError("timed out")
 
         with patch.object(bars, "_try_gemini", side_effect=mock_timeout):
             with patch.object(bars, "_try_groq", side_effect=mock_timeout):
@@ -352,11 +353,11 @@ class TestBarsTimeoutFallback:
     @pytest.mark.asyncio
     async def test_both_llms_timeout_falls_back_to_keyword(self):
         """If all LLMs time out, BARS must use keyword fallback."""
+
         from app.core.assessment import bars
-        import asyncio
 
         async def mock_timeout(*args, **kwargs):
-            raise asyncio.TimeoutError("timed out")
+            raise TimeoutError("timed out")
 
         with patch.object(bars, "_try_gemini", side_effect=mock_timeout):
             with patch.object(bars, "_try_groq", side_effect=mock_timeout):

@@ -12,9 +12,7 @@ Questions cover:
   Q3: Code review process (engineering culture)
 """
 
-import pytest
 from app.core.assessment.bars import _aggregate, _keyword_fallback
-
 
 # ── Question Definitions ──────────────────────────────────────────────────────
 
@@ -450,7 +448,7 @@ class TestCrossQuestionSummary:
             print(f"  Gaming    : {gam:.3f}")
             print(f"  Ordering  : {'PASS' if ordered else 'FAIL'} (exc > med > poor >= gaming)")
 
-            print(f"\n  Concept breakdown (excellent answer):")
+            print("\n  Concept breakdown (excellent answer):")
             for concept in q["expected_concepts"]:
                 cname = concept["name"]
                 print(f"    {cname}: {exc_d.get(cname, 0):.3f}")

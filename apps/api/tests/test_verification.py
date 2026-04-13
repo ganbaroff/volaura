@@ -20,8 +20,8 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from app.main import app
 from app.deps import get_supabase_admin
+from app.main import app
 from app.middleware.rate_limit import limiter
 
 VALID_TOKEN = "valid-token-abc123"

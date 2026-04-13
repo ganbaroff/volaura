@@ -5,8 +5,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 from httpx import ASGITransport, AsyncClient
 
+from app.deps import get_current_user_id, get_supabase_admin, get_supabase_anon
 from app.main import app
-from app.deps import get_supabase_admin, get_supabase_user, get_current_user_id, get_supabase_anon
 
 
 def _make_admin_override(mock_db):
@@ -275,7 +275,6 @@ async def test_logout_succeeds_even_if_revocation_fails(mock_admin_db):
 @pytest.mark.asyncio
 async def test_signup_status_open():
     """GET /auth/signup-status returns open_signup from settings."""
-    from unittest.mock import patch
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
@@ -290,7 +289,6 @@ async def test_signup_status_open():
 @pytest.mark.asyncio
 async def test_signup_status_closed():
     """GET /auth/signup-status returns open_signup=False when gate is active."""
-    from unittest.mock import patch
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
@@ -305,7 +303,6 @@ async def test_signup_status_closed():
 @pytest.mark.asyncio
 async def test_validate_invite_correct_code():
     """POST /auth/validate-invite returns valid=True for matching code."""
-    from unittest.mock import patch
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
@@ -320,7 +317,6 @@ async def test_validate_invite_correct_code():
 @pytest.mark.asyncio
 async def test_validate_invite_case_insensitive():
     """Invite code comparison is case-insensitive."""
-    from unittest.mock import patch
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
@@ -335,7 +331,6 @@ async def test_validate_invite_case_insensitive():
 @pytest.mark.asyncio
 async def test_validate_invite_wrong_code():
     """POST /auth/validate-invite returns valid=False for wrong code."""
-    from unittest.mock import patch
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
@@ -350,7 +345,6 @@ async def test_validate_invite_wrong_code():
 @pytest.mark.asyncio
 async def test_validate_invite_no_code_configured():
     """When BETA_INVITE_CODE is empty, always returns valid=False (gate armed, no valid code)."""
-    from unittest.mock import patch
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:

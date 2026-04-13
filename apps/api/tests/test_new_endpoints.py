@@ -12,15 +12,15 @@ Dependency overrides are cleaned up in finally blocks to prevent test pollution.
 """
 
 import json
-import pytest
+from datetime import UTC
 from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
+import pytest
 from httpx import ASGITransport, AsyncClient
 
+from app.deps import get_current_user_id, get_supabase_admin, get_supabase_user
 from app.main import app
-from app.deps import get_supabase_admin, get_supabase_user, get_current_user_id
-
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
 
@@ -1054,12 +1054,12 @@ class TestSecurityEndpoints:
         This test verifies: if DB returns only public entries (as it should),
         the response is clean. It also verifies the router applies the filter.
         """
-        from app.routers.leaderboard import get_leaderboard
         import inspect
+
+        from app.routers.leaderboard import get_leaderboard
 
         # Check that the router calls .eq("visibility", "public")
         # by inspecting the source code of the function
-        import inspect
         source = inspect.getsource(get_leaderboard)
         assert '"visibility"' in source or "'visibility'" in source, (
             "get_leaderboard must filter by visibility column"
@@ -1268,14 +1268,14 @@ class TestVerificationEndpoint:
 
         Returns (admin_mock, token_str, volunteer_id).
         """
-        from datetime import datetime, timedelta, timezone
+        from datetime import datetime, timedelta
 
         token_str = "test_token_abc123"
         volunteer_id = str(uuid4())
         competency_id = "communication"
 
         expires_at = (
-            datetime.now(timezone.utc) + timedelta(days=expires_delta_days)
+            datetime.now(UTC) + timedelta(days=expires_delta_days)
         ).isoformat()
 
         token_row = {

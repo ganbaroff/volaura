@@ -20,7 +20,6 @@ from app.core.assessment.quality_gate import (
     run_quality_checklist,
 )
 
-
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 
 # Exact Q3 from seed.sql — cross-cultural communication

@@ -15,8 +15,8 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from httpx import ASGITransport, AsyncClient
 
+from app.deps import get_current_user_id, get_supabase_admin
 from app.main import app
-from app.deps import get_supabase_admin, get_current_user_id
 
 ORG_ID = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
 VOLUNTEER_ID = "11111111-2222-3333-4444-555555555555"
@@ -233,7 +233,7 @@ async def test_volunteer_not_found_silently_204():
 
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         resp = await ac.post(
-            f"/api/profiles/ghost_user/view",
+            "/api/profiles/ghost_user/view",
             headers={"Authorization": "Bearer fake"},
         )
 

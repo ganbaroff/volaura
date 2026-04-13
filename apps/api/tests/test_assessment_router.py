@@ -4,14 +4,13 @@ Validates that upsert_aura_score RPC is called with correct JSONB params
 (p_competency_scores), not the old broken individual params.
 """
 
-from unittest.mock import AsyncMock, MagicMock, call
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from httpx import ASGITransport, AsyncClient
 
+from app.deps import get_current_user_id, get_supabase_admin, get_supabase_user
 from app.main import app
-from app.deps import get_supabase_admin, get_supabase_user, get_current_user_id
-
 
 USER_ID = "00000000-1111-2222-3333-444444444444"
 SESSION_ID = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"

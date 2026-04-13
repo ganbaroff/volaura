@@ -12,13 +12,13 @@ Acceptance criteria:
 Security check: org identity always comes from JWT (user_id), never from request body.
 """
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from httpx import ASGITransport, AsyncClient
 
+from app.deps import get_current_user_id, get_supabase_admin
 from app.main import app
-from app.deps import get_supabase_admin, get_current_user_id
 from app.middleware.rate_limit import limiter
 
 

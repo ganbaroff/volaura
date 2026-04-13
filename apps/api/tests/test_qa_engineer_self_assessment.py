@@ -10,8 +10,6 @@ Key findings documented at bottom of file.
 
 from __future__ import annotations
 
-import pytest
-
 from app.core.assessment.bars import _aggregate, _keyword_fallback
 
 # -- Question definitions -------------------------------------------------------

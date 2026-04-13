@@ -9,14 +9,15 @@ to return realistic data shapes matching the real schema.
 Sprint 3, Task T5 — swarm-validated (2 rounds, 9 personas).
 """
 
-import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
+from datetime import UTC
+from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
-from app.main import app
-from app.deps import get_supabase_admin, get_supabase_user, get_current_user_id
-from app.core.assessment.engine import CATState, submit_response, select_next_item
+import pytest
 
+from app.core.assessment.engine import CATState, submit_response
+from app.deps import get_current_user_id, get_supabase_admin, get_supabase_user
+from app.main import app
 
 # ── Fixtures ─────────────────────────────────────────────────────────────────
 
@@ -121,8 +122,8 @@ async def test_start_assessment_returns_session_and_first_question(client):
     # Mock: session insert
     session_inserted = _mock_chain(_mock_execute(data={"id": MOCK_SESSION_ID}))
 
-    # Mock: profile row for paywall check
-    trial_profile = _mock_chain(_mock_execute(data={"subscription_status": "trial"}))
+    # Mock: profile row for paywall check (unused when PAYMENT_ENABLED=False)
+    _mock_chain(_mock_execute(data={"subscription_status": "trial"}))
 
     call_count = {"user": 0, "admin": 0}
 
@@ -192,18 +193,18 @@ async def test_start_assessment_returns_session_and_first_question(client):
 @pytest.mark.asyncio
 async def test_retest_cooldown_returns_429(client):
     """Business rule: user who completed an assessment < 7 days ago gets 429."""
-    from datetime import datetime, timezone, timedelta
+    from datetime import datetime, timedelta
 
     # Mock: no active session
     no_session = _mock_chain(_mock_execute(data=[]))
     # Mock: competency found
     comp_found = _mock_chain(_mock_execute(data={"id": MOCK_COMPETENCY_ID}))
     # Mock: recent completion (2 days ago)
-    two_days_ago = (datetime.now(timezone.utc) - timedelta(days=2)).isoformat()
+    two_days_ago = (datetime.now(UTC) - timedelta(days=2)).isoformat()
     recent_session = _mock_chain(_mock_execute(data=[{"completed_at": two_days_ago}]))
 
-    # Mock: profile row for paywall check (trial user — should not be blocked)
-    trial_profile = _mock_chain(_mock_execute(data={"subscription_status": "trial"}))
+    # Mock: profile row for paywall check (unused when PAYMENT_ENABLED=False)
+    _mock_chain(_mock_execute(data={"subscription_status": "trial"}))
 
     call_count = {"user": 0}
 

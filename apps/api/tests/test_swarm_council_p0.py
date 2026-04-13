@@ -4,9 +4,9 @@ These tests fill gaps found by 5-agent security/QA audit of the test plan.
 Each test references the agent who identified the gap.
 """
 
-import math
 import pytest
 
+from app.core.assessment import antigaming
 from app.core.assessment.engine import (
     CATState,
     ItemRecord,
@@ -15,11 +15,7 @@ from app.core.assessment.engine import (
     select_next_item,
     submit_response,
     theta_to_score,
-    MAX_ITEMS,
-    SE_THRESHOLD,
 )
-from app.core.assessment import antigaming
-
 
 # ── QA Engineer: EAP failure cascade ─────────────────────────────────────────
 

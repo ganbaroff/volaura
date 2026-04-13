@@ -11,17 +11,17 @@ Coverage priorities:
 
 from __future__ import annotations
 
-import pytest
-from datetime import datetime, timezone
 from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
+import pytest
+
 from app.services.match_checker import (
-    run_match_check,
-    RunSummary,
-    MatchCheckResult,
     _CB_THRESHOLD,
     _MAX_SEARCHES_PER_RUN,
+    MatchCheckResult,
+    RunSummary,
+    run_match_check,
 )
 
 ORG_ID   = str(uuid4())

@@ -155,10 +155,10 @@ PERSPECTIVES = [
         "name": "Ecosystem Auditor",
         "lens": (
             "You watch for cross-product inconsistencies across all 5 VOLAURA products "
-            "(VOLAURA, MindShift, Life Simulator, BrandedBy, ZEUS). "
+            "(VOLAURA, MindShift, Life Simulator, BrandedBy, Atlas). "
             "Check: (1) Are Foundation Laws from ECOSYSTEM-CONSTITUTION.md followed in EVERY product? "
             "Especially Law 2 (Energy Adaptation) — only MindShift has it, others missing. "
-            "(2) Does this swarm's work conflict with ZEUS Gateway or MindShift decisions? "
+            "(2) Does this swarm's work conflict with Atlas Gateway or MindShift decisions? "
             "(3) Is the code-index stale (>7 days old)? If yes, flag as CRITICAL — agents are simulating. "
             "(4) Are there open P0/P1 items in the ecosystem that this swarm is ignoring? "
             "Read ecosystem-map.md first. Output a cross-product impact assessment."
@@ -444,7 +444,7 @@ def _build_agent_prompt(perspective: dict, project_state: str, mode: str, projec
   - Life Simulator = feed-curator skill (NOT a game)
   - MindShift = behavior-pattern-analyzer skill (NOT a separate app)
   - BrandedBy = ai-twin-responder skill (NOT a separate platform)
-  - ZEUS = assessment-generator skill (NOT a separate engine)
+  - Atlas = assessment-generator skill (NOT a separate engine)
   - All skills in memory/swarm/skills/
 - Do NOT propose features for separate apps. Propose skill improvements or new skills.
 - Budget: $200+/mo (Claude Max alone = $200, plus API costs).
@@ -1360,7 +1360,7 @@ async def _notify_atlas_gateway(proposals: list[Proposal]) -> None:
     gateway_secret = os.environ.get("GATEWAY_SECRET", "")
 
     if not gateway_secret:
-        logger.debug("GATEWAY_SECRET not set — skipping ZEUS bridge (non-blocking).")
+        logger.debug("GATEWAY_SECRET not set — skipping Atlas bridge (non-blocking).")
         return
 
     high_proposals = [p for p in proposals if p.severity in (Severity.HIGH, Severity.CRITICAL)]
@@ -1389,15 +1389,15 @@ async def _notify_atlas_gateway(proposals: list[Proposal]) -> None:
                 ) as resp:
                     if resp.status == 200:
                         logger.info(
-                            "ZEUS bridge: sent {sev} finding from {agent}",
+                            "Atlas bridge: sent {sev} finding from {agent}",
                             sev=p.severity.value, agent=p.agent,
                         )
                     else:
                         logger.debug(
-                            "ZEUS bridge: {status} from gateway", status=resp.status
+                            "Atlas bridge: {status} from gateway", status=resp.status
                         )
         except Exception as e:
-            logger.debug("ZEUS bridge: gateway unreachable ({e})", e=str(e)[:100])
+            logger.debug("Atlas bridge: gateway unreachable ({e})", e=str(e)[:100])
             break  # don't retry all if gateway is down
 
 
@@ -1621,7 +1621,7 @@ async def main():
     # Send Telegram digest: found + fixed counts + commit hashes
     await send_telegram_notifications(proposals, fix_results)
 
-    # ── Python↔Node.js Bridge — send HIGH/CRITICAL to ZEUS Gateway ────────
+    # ── Python↔FastAPI Bridge — send HIGH/CRITICAL to Atlas Gateway ────────
     # This unifies the two swarms: Python findings appear in Node.js gateway's
     # event stream, visible in claw3d 3D office and to all 39 Node.js agents.
     # Constitution: "Two disconnected systems share ONLY filesystem" — this closes the gap.

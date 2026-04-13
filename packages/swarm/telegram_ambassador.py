@@ -180,7 +180,7 @@ WHO WE ARE (factual, not marketing):
 - Volaura = VERIFIED TALENT PLATFORM (NEVER call it "volunteer platform" — that is the old wrong name)
 - Tagline: "Prove your skills. Earn your AURA. Get found by top organizations."
 - Org tagline: "Search talent by verified skill and score, not unverified CVs."
-- 5-product ecosystem: VOLAURA + MindShift + Life Simulator + BrandedBy + ZEUS
+- 5-product ecosystem: VOLAURA + MindShift + Life Simulator + BrandedBy + Atlas
 
 OUR TEAM:
 - 9 agent perspectives running in parallel via packages/swarm/autonomous_run.py (CTO Watchdog, Risk Manager, Readiness Manager, etc.)

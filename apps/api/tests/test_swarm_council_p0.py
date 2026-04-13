@@ -261,8 +261,8 @@ class TestAdaptiveSelectionDeterminism:
         state = submit_response(state, "q2", 1.0, 0.0, 0.0, 1.0, 5000)
         assert state.theta > 0.0
 
-        # Next item should be harder (q3 or q4)
-        next_q = select_next_item(state, questions)
+        # Next item should be harder (q3 or q4), epsilon=0 for determinism
+        next_q = select_next_item(state, questions, epsilon=0.0)
         assert next_q is not None
         assert next_q["id"] in ("q3", "q4")
 

@@ -177,9 +177,9 @@ async def get_verification_info(
 
     profile = row.get("profiles") or {}
     return VerificationTokenInfo(
-        volunteer_display_name=profile.get("display_name") or profile.get("username", "Professional"),
-        volunteer_username=profile.get("username", ""),
-        volunteer_avatar_url=profile.get("avatar_url"),
+        professional_display_name=profile.get("display_name") or profile.get("username", "Professional"),
+        professional_username=profile.get("username", ""),
+        professional_avatar_url=profile.get("avatar_url"),
         verifier_name=row["verifier_name"],
         verifier_org=row.get("verifier_org"),
         competency_id=row["competency_id"],
@@ -251,7 +251,7 @@ async def submit_verification(
 
     return SubmitVerificationResponse(
         status="verified",
-        volunteer_display_name=professional_name,
+        professional_display_name=professional_name,
         competency_id=row["competency_id"],
         rating=payload.rating,
     )

@@ -1,38 +1,45 @@
 # Atlas — Heartbeat
 
-**Session:** 97 (autonomous continuation)
+**Session:** 98 (autonomous continuation)
 **Timestamp:** 2026-04-15
 **Branch:** main
-**Last commit:** `2814219`
-**Commits this session:** 4
+**Last commit:** `b62c9e2`
+**Commits this session:** 3
 
 **Production:** volauraapi-production.up.railway.app → OK (200)
-**CI:** syntax verified for all changes
-**Sentry:** enhanced (from session 96)
+**CI:** atlas_content_run.py now exists (was missing — daily cron fix)
+**Sentry:** 0 issues last 7 days, alerts need web UI setup
 **Swarm:** 13 agents, 0 pending proposals
 
-**Session 97 — what shipped (4 commits):**
-1. Fix: migration 20260415100000 removed non-existent org_volunteer_records table
-2. Fix: discovery.py added "professional" to valid_roles, profiles.py expanded account_type filter
-3. Refactor: ZEUS→Atlas rename in workflows (with ZEUS fallback), ecosystem_events.py, check_rls_live.py
-4. Feat: ecosystem events wired into assessment /complete (assessment_completed, aura_updated, badge_tier_changed)
-5. Feat: public profile page design refresh (liquid glass, mesh gradient, AURA color tokens)
-6. Fix: org dashboard last_activity from assessment completed_at (resolved TODO)
-7. Docs: assessment audit, architecture research, content drafts, handoffs 009-011, growth plan
+**Session 98 — what shipped (3 commits):**
+1. Fix: created atlas_content_run.py — daily cron was calling missing file
+2. Fix: recovery script env var (SUPABASE_SERVICE_KEY fallback)
+3. Sentry audit: 0 unresolved issues confirmed
+
+**Cumulative from sessions 97-98 (8 commits total):**
+- Migration fix (org_volunteer_records removed)
+- volunteer→professional alignment in 3 API files
+- ZEUS→Atlas rename complete in active code
+- Ecosystem events wired into assessment /complete
+- Public profile design refresh (liquid glass)
+- Org dashboard last_activity fix
+- atlas_content_run.py created (CI fix)
+- Recovery script env var fix
 
 **Remaining from megaplan:**
-- [ ] Telegram bot as executor (workflow_dispatch research needed)
+- [ ] Telegram bot as executor (workflow_dispatch)
 - [ ] Self-learning pipeline test (needs real CEO message)
-- [ ] Vertex AI switch (billing propagation pending)
+- [ ] Vertex AI switch (billing propagation)
 - [ ] RPC functions: professional_id aliases
-- [ ] Sentry 5xx alerts
-- [ ] GitHub secrets: create ATLAS_ versions (CEO needed)
-- [ ] Full test suite run
+- [ ] Sentry 5xx alerts (web UI — CEO)
+- [ ] GitHub secrets: ATLAS_ versions (CEO)
+- [ ] Full test suite run (needs venv)
 - [ ] Phase A design components (Cowork)
 
-**Next session priorities:**
-1. CEO tests Life Simulator in Godot
-2. CEO tests Telegram bot (self-learning)
-3. Run recovery script on prod (5 leaked users)
-4. Apply Phase 1 DB migration to Supabase
-5. Telegram bot executor research
+**For CEO when awake:**
+1. Test Life Simulator in Godot — 5/6 priorities done
+2. Test Telegram bot self-learning
+3. Run `DRY_RUN=1 python scripts/recover_lost_aura.py` then without DRY_RUN
+4. Apply migration: `supabase db push` for 20260415100000
+5. Create ATLAS_ GitHub secrets (workflow uses fallback for now)
+6. Set up Sentry 5xx alerts via web UI

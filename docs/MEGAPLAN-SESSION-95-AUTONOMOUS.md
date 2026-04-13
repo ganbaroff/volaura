@@ -36,7 +36,7 @@
 - [x] Diagnose Sentry 0 events — DSN configured, no errors = good
 - [x] Verify DSN is correct project (e4751e368a48dc9e)
 - [x] Enhanced Sentry init: attach_stacktrace, no PII, release tag
-- [ ] Set up alerts for 5xx errors
+- [ ] Set up alerts for 5xx errors (Sentry MCP lacks alert creation — use web UI)
 
 ### Iteration 14-15: CI + Tests
 - [x] Verified no zeus_gateway references in tests (clean)

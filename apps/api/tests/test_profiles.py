@@ -1,16 +1,16 @@
 """Tests for /api/profiles endpoints."""
 
-from datetime import datetime
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from httpx import ASGITransport, AsyncClient
 
+from app.deps import get_current_user_id, get_supabase_admin, get_supabase_user
 from app.main import app
-from app.deps import get_supabase_admin, get_supabase_user, get_current_user_id
 
 USER_ID = "uuid-profile-test"
-NOW = datetime.utcnow().isoformat()
+NOW = datetime.now(UTC).isoformat()
 
 PROFILE_ROW = {
     "id": USER_ID,

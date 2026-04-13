@@ -23,11 +23,11 @@ from app.schemas.organization import (
     OrganizationUpdate,
     OrgDashboardStats,
     OrgProfessionalRow,
+    ProfessionalSearchRequest,
+    ProfessionalSearchResult,
     SavedSearchCreate,
     SavedSearchOut,
     SavedSearchUpdate,
-    ProfessionalSearchRequest,
-    ProfessionalSearchResult,
 )
 from app.services.embeddings import generate_embedding
 

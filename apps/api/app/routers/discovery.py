@@ -18,8 +18,8 @@ from app.middleware.rate_limit import RATE_DISCOVERY, limiter
 from app.schemas.discovery import (
     COMPETENCY_SLUGS,
     DiscoveryMeta,
-    DiscoveryResponse,
     DiscoveryProfessional,
+    DiscoveryResponse,
 )
 
 router = APIRouter(prefix="/volunteers", tags=["Discovery"])

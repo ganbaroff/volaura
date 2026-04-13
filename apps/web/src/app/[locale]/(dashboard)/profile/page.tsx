@@ -22,7 +22,7 @@ import type { TimelineEvent } from "@/components/profile-view/activity-timeline"
 /* ─── Section wrapper ─── */
 const sectionVariants = {
   hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { type: "spring", damping: 14, stiffness: 100 } },
+  visible: { opacity: 1, y: 0, transition: { type: "spring" as const, damping: 14, stiffness: 100 } },
 };
 
 function Section({

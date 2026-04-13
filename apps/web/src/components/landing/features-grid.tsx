@@ -30,7 +30,7 @@ const containerVariants = {
 
 const cardVariants = {
   hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { type: "spring", damping: 14, stiffness: 100 } },
+  visible: { opacity: 1, y: 0, transition: { type: "spring" as const, damping: 14, stiffness: 100 } },
 };
 
 export function FeaturesGrid() {

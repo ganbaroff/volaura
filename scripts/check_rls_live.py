@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Live RLS policy inspection via the zeus governance RPC.
+"""Live RLS policy inspection via the Atlas governance RPC.
 
 PostgREST blocks direct access to pg_catalog (PGRST106 "Only public and
 graphql_public schemas are exposed"), which means a plain Supabase SDK

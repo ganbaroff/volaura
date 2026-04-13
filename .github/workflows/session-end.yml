@@ -51,11 +51,12 @@ jobs:
           # token '('" on the GitHub Actions runner.
           python -c 'import json; d=json.load(open("memory/swarm/code-index.json")); print("Code index rebuilt:", d["total_files"], "files")'
 
-      - name: Notify ZEUS Gateway — VOLAURA changed
-        if: ${{ vars.ZEUS_GATEWAY_URL != '' }}
+      - name: Notify Atlas Gateway — VOLAURA changed
+        if: ${{ vars.ATLAS_GATEWAY_URL != '' || vars.ZEUS_GATEWAY_URL != '' }}
         run: |
+          GW_URL="${{ vars.ATLAS_GATEWAY_URL || vars.ZEUS_GATEWAY_URL }}"
           COMMITS=$(git log --oneline -3 --format="%h %s")
-          curl -s -X POST "${{ vars.ZEUS_GATEWAY_URL }}/event" \
+          curl -s -X POST "${GW_URL}/event" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.GATEWAY_SECRET }}" \
             -d "{
@@ -68,7 +69,7 @@ jobs:
                 \"sha\": \"${{ github.sha }}\",
                 \"summary\": \"VOLAURA session-end: ${COMMITS:0:300}\"
               }
-            }" || echo "ZEUS unreachable — non-blocking"
+            }" || echo "Atlas gateway unreachable — non-blocking"
 
       - name: Commit session diff and updated context
         run: |

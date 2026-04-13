@@ -319,17 +319,22 @@ async def get_org_dashboard(
             profile_map = {p["id"]: p for p in (profiles_result.data or [])}
             aura_map = {r["volunteer_id"]: r for r in aura_rows}
 
-            # Count competencies completed per professional for this org
+            # Count competencies completed per professional for this org + last activity
             comp_sessions = (
                 await db_admin.table("assessment_sessions")
-                .select("volunteer_id")
+                .select("volunteer_id, completed_at")
                 .eq("assigned_by_org_id", org_id)
                 .eq("status", "completed")
                 .execute()
             )
             comp_count: dict[str, int] = {}
+            last_activity_map: dict[str, str] = {}
             for s in comp_sessions.data or []:
-                comp_count[s["volunteer_id"]] = comp_count.get(s["volunteer_id"], 0) + 1
+                vid = s["volunteer_id"]
+                comp_count[vid] = comp_count.get(vid, 0) + 1
+                ts = s.get("completed_at")
+                if ts and (vid not in last_activity_map or ts > last_activity_map[vid]):
+                    last_activity_map[vid] = ts
 
             for vid in top_ids:
                 p = profile_map.get(vid, {})
@@ -342,7 +347,7 @@ async def get_org_dashboard(
                         overall_score=float(a.get("total_score", 0)),
                         badge_tier=a.get("badge_tier"),
                         competencies_completed=comp_count.get(vid, 0),
-                        last_activity=None,  # TODO: add completed_at to sessions
+                        last_activity=last_activity_map.get(vid),
                     )
                 )
 

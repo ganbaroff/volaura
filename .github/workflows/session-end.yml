@@ -69,16 +69,20 @@ jobs:
             }" || echo "Atlas gateway unreachable — non-blocking"
 
       - name: Commit session diff and updated context
+        continue-on-error: true
         run: |
-          git config user.name "MiroFish Swarm"
+          git config user.name "Atlas Swarm"
           git config user.email "swarm@volaura.app"
-          git add memory/swarm/SESSION-DIFFS.jsonl memory/swarm/shared-context.md memory/swarm/code-index.json
+          git add memory/swarm/SESSION-DIFFS.jsonl memory/swarm/shared-context.md memory/swarm/code-index.json || true
           if git diff --staged --quiet; then
             echo "No session diff changes to commit."
           else
-            git pull --rebase origin main
+            git stash --include-untracked
+            git pull --rebase origin main || true
+            git stash pop || true
+            git add memory/swarm/SESSION-DIFFS.jsonl memory/swarm/shared-context.md memory/swarm/code-index.json || true
             git commit -m "swarm: session-end hook — $(date -u +%Y-%m-%d %H:%M UTC)"
-            git push
+            git push || echo "Push failed — non-blocking"
           fi
 
   session-mini-swarm:

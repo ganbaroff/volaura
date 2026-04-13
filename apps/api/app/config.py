@@ -152,7 +152,7 @@ class Settings(BaseSettings):
             "https://volaura-web.vercel.app",
             "https://brandedby.xyz",
             "https://www.brandedby.xyz",
-            "https://volauraapi-production.up.railway.app",  # Production Railway backend
+            # Railway backend URL removed from CORS — backend should not be its own origin (P2 audit fix)
         ]
         for k in known:
             if k not in origins:

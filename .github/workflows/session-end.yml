@@ -49,9 +49,9 @@ jobs:
           python -c 'import json; d=json.load(open("memory/swarm/code-index.json")); print("Code index:", d["total_files"], "files")' || true
 
       - name: Notify Atlas Gateway — VOLAURA changed
-        if: ${{ vars.ATLAS_GATEWAY_URL != '' || vars.ZEUS_GATEWAY_URL != '' }}
+        if: ${{ vars.ATLAS_GATEWAY_URL != '' }}
         run: |
-          GW_URL="${{ vars.ATLAS_GATEWAY_URL || vars.ZEUS_GATEWAY_URL }}"
+          GW_URL="${{ vars.ATLAS_GATEWAY_URL }}"
           COMMITS=$(git log --oneline -3 --format="%h %s")
           curl -s -X POST "${GW_URL}/event" \
             -H "Content-Type: application/json" \

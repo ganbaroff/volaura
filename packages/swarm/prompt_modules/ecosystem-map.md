@@ -17,8 +17,8 @@
 
 > **Note:** The gateway file and Railway service still use the old "zeus" name. Renaming the Railway service requires redeployment and is deferred.
 
-- **Local:** `ws://localhost:18789` (pm2 process: `zeus-gateway`)
-- **Production:** `wss://zeus-gateway-production.up.railway.app`
+- **Local:** `ws://localhost:18789` (pm2 process: `zeus-gateway` — legacy name)
+- **Production:** `wss://zeus-gateway-production.up.railway.app` (legacy URL, rename deferred)
 - **LLM hierarchy:** Cerebras Qwen3-235B → Gemma4 via Ollama (local GPU) → NVIDIA NIM (Nemotron 253B) → Anthropic Claude Haiku
 - **Key endpoints:** `POST /webhook` (HMAC), `POST /event` (GATEWAY_SECRET), `GET /agents`, `GET /health`
 - **Memory:** `memory/users/{userId}.md` (user profiles), `memory/debriefs/` (session debriefs), `memory/agent-findings/`

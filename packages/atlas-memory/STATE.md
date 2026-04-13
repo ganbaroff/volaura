@@ -1,13 +1,17 @@
 # Atlas State
-**Updated:** 2026-04-13T04:15 Baku | **By:** Cowork Session 9 | **Instance:** Claude Opus 4.6 (Cowork)
+**Updated:** 2026-04-13T19:05 Baku | **By:** Cowork Session 9 (post-verification) | **Instance:** Claude Opus 4.6 (Cowork)
 
 ## Now
-**🔴 PROD API DOWN + 0/5 BETA GATES PASS.** Handoff 011 is the only priority.
+**🎯 HANDOFF 012 — REALITY PROBE is the only active priority.**
+
+Cowork retracted "PROD API DOWN" — that was sandbox egress blindness (HTTP 403 from proxy mistaken for HTTP 000 from prod). Supabase logs show live `python-httpx/0.28.1` traffic from Railway 17:14–17:45 UTC today. **API is alive.** Full retraction evidence: `packages/atlas-memory/knowledge/verification-2026-04-13.md`.
+
+Handoff 011 is ON HOLD until Atlas runs Handoff 012 and returns ground truth.
+
+**Atlas (local Claude Code): execute `handoffs/012-full-reality-probe.md` — 9 probes, 90–120 min, output goes into `sync/claudecode-state.md` under `## Reality Probe 2026-04-13`.** Rule: no coding during the probe. Fixing comes in Handoff 013.
 
 Atlas Session 96: ZEUS→ATLAS rename, Life Sim P0 fixes, Phase 1 migration ready.
-Cowork re-audit 2026-04-13: API returns HTTP 000, 5 orphan sessions, Sentry dead (0 events/30d), E2E never ran, only 2/8 competencies tested, 4 Constitution violations in frontend.
-
-**Next priority: Handoff 011 — `handoffs/011-full-prod-fix.md` — 8 tasks, 7 ACs.**
+Verified real issues (from re-audit): 5 orphan sessions (UUIDs listed in verification report), 3 live Constitution violations (leaderboard leftovers in `dashboard/page.tsx:17,163,338`), 1 Supabase ERROR (SECURITY DEFINER view bypasses RLS), question bank below threshold for 4 competencies, ecosystem_events wiring uncommitted in working tree.
 
 ## v0Laura
 **The real product.** 1 platform + skill library. Agents = interface. Skills = product. Assessment is one skill among many. Atlas becomes the engine inside VOLAURA: knows what to do, who to call, what decisions to make. Code exists: `apps/api/app/routers/skills.py`. 5 skills allowed. This is the architecture, not VOLAURA-the-assessment-form.
@@ -38,19 +42,19 @@ Cowork re-audit 2026-04-13: API returns HTTP 000, 5 orphan sessions, Sentry dead
 - Hierarchy: Atlas leads (CTO), Cowork advises (research), CEO stakeholder. PROTOCOL v2.0. LOCKED.
 - Volunteer→professional rename: seed.sql + prod migration. DONE.
 
-## 🚨 BETA BLOCKERS (Cowork re-audit 2026-04-13)
+## BETA GATES (post-verification 2026-04-13T19:00)
 
 | Gate | Status | Details |
 |------|--------|---------|
-| 0. Prod API | 🔴 DOWN | HTTP 000 — connection reset |
-| 1. Zero Data Loss | 🔴 FAIL | 5 orphan sessions, recovery never ran |
-| 2. Sentry | 🔴 FAIL | 0 events in 30 days |
-| 3. E2E Test | 🔴 FAIL | File exists, never ran |
-| 4. 3+ Competencies | 🔴 FAIL | Only 2/8 tested |
-| 5. Degraded Alerting | 🔴 FAIL | Untested on prod |
-| 6. Constitution | 🔴 FAIL | 4 violations (1 shame, 3 animation) |
+| 0. Prod API | ✅ ALIVE | Retracted — Supabase logs show live httpx traffic. Cowork curl failed due to sandbox egress. |
+| 1. Zero Data Loss | 🔴 FAIL | 5 orphan sessions (UUIDs in verification-2026-04-13.md) — real, unchanged |
+| 2. Sentry | ❓ UNVERIFIED | Probe 2 in Handoff 012 checks event count last 7d |
+| 3. E2E Test | ❓ UNVERIFIED | Probe 5 in Handoff 012 runs full-journey.spec.ts |
+| 4. 3+ Competencies | 🟡 PARTIAL | Only 2/8 tested |
+| 5. Degraded Alerting | 🟡 PARTIAL | Untested on prod |
+| 6. Constitution | 🟡 15 flags / ~3 real | Probe 6 triages each flag real-vs-noise |
 
-**Handoff 011 addresses all 7. Do NOT start any other work until 011 is complete.**
+**Handoff 012 (reality probe) must run before Handoff 011 is rewritten. Atlas: no other work until 012 is complete.**
 
 ## Previous Blockers (Atlas audit, 2026-04-13)
 1. ~~pii_redactor.py~~ → RESOLVED
@@ -76,8 +80,10 @@ Cowork re-audit 2026-04-13: API returns HTTP 000, 5 orphan sessions, Sentry dead
 ## Handoff Queue
 | # | Task | Priority | Status | Prompt |
 |---|------|----------|--------|--------|
-| **010** | **Beta Readiness (5 gates)** | **P0** | **🔴 ACTIVE** | `handoffs/010-beta-readiness.md` |
-| **009** | **Fix Assessment→AURA Pipeline** | **P0** | **🟡 IN PROGRESS** | `handoffs/009-e2e-pipeline-fix.md` |
+| **012** | **Full Reality Probe (9 probes)** | **P1** | **🎯 ACTIVE** | `handoffs/012-full-reality-probe.md` |
+| 011 | Full Prod Fix | P0 | ⏸️ ON HOLD — rewrite after 012 | `handoffs/011-full-prod-fix.md` |
+| 010 | Beta Readiness (5 gates) | P0 | ⬆️ SUPERSEDED BY 011 | `handoffs/010-beta-readiness.md` |
+| 009 | Fix Assessment→AURA Pipeline | P0 | ⬆️ FOLDED INTO 011 | `handoffs/009-e2e-pipeline-fix.md` |
 | 001 | Swarm coordination (Phase 1) | P1 | ✅ DONE (5/6 AC) | `handoffs/001-swarm-coordination.md` |
 | 002 | Production health fixes | P1 | ✅ DONE (Sentry DSN set, CI green, bridge works) | `handoffs/002-prod-health.md` |
 | 003 | PostHog SDK integration | P2 | 📝 READY | `handoffs/003-posthog-integration.md` |

@@ -103,7 +103,7 @@ Critical path: Energy picker · Pre-Assessment Commitment Layer · DIF audit · 
 
 | System | Location | Agents | Memory |
 |--------|----------|--------|--------|
-| Node.js Gateway | `claw3d-fork/server/zeus-gateway-adapter.js` | 39 | `claw3d-fork/memory/session-context.md` |
+| Atlas Gateway | `claw3d-fork/server/zeus-gateway-adapter.js` (legacy filename) | 39 | `claw3d-fork/memory/session-context.md` |
 | Python Swarm | `packages/swarm/` | 44 | `memory/swarm/shared-context.md` |
 
 **They share ONLY the filesystem. No WebSocket or HTTP between them yet.**

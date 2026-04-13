@@ -60,6 +60,11 @@ from app.services.assessment.helpers import (
     make_session_out,
 )
 from app.services.assessment.rewards import emit_assessment_rewards
+from app.services.ecosystem_events import (
+    emit_assessment_completed,
+    emit_aura_updated,
+    emit_badge_tier_changed,
+)
 from app.services.email import send_aura_ready_email
 from app.services.notification_service import notify
 from app.services.tribe_streak_tracker import record_assessment_activity
@@ -746,6 +751,21 @@ async def complete_assessment(
     )
     slug = comp_result.data["slug"] if comp_result.data else ""
 
+    # Capture old badge tier BEFORE upsert — needed for badge_tier_changed event
+    _old_badge_tier: str | None = None
+    if slug:
+        try:
+            _old_aura = (
+                await db_admin.table("aura_scores")
+                .select("badge_tier")
+                .eq("volunteer_id", str(user_id))
+                .maybe_single()
+                .execute()
+            )
+            _old_badge_tier = (_old_aura.data or {}).get("badge_tier")
+        except Exception:
+            pass  # first assessment — no previous tier
+
     # Upsert AURA score via DB RPC — retry once on failure (Gate 1: zero data loss)
     aura_updated = False
     if slug:
@@ -862,6 +882,56 @@ async def complete_assessment(
             )
     except Exception:
         pass  # email failure must never fail assessment completion
+
+    # ── Ecosystem events: assessment → character_events bus → all 5 products ──
+    # Fire-and-forget: NEVER blocks /complete response. Errors logged, not raised.
+    try:
+        await emit_assessment_completed(
+            db=db_admin,
+            user_id=str(user_id),
+            competency_slug=slug,
+            competency_score=competency_score,
+            items_answered=len(state.items),
+            energy_level=energy_level,
+            stop_reason=state.stop_reason,
+            gaming_flags=gaming.flags,
+        )
+    except Exception:
+        pass
+
+    if aura_updated and slug:
+        try:
+            _fresh_aura = (
+                await db_admin.table("aura_scores")
+                .select("total_score, badge_tier, competency_scores, elite_status, percentile_rank")
+                .eq("volunteer_id", str(user_id))
+                .maybe_single()
+                .execute()
+            )
+            _aura_data = _fresh_aura.data or {}
+            if _aura_data:
+                _new_tier = _aura_data.get("badge_tier", "bronze")
+                _comp_scores = _aura_data.get("competency_scores") or {}
+
+                await emit_aura_updated(
+                    db=db_admin,
+                    user_id=str(user_id),
+                    total_score=float(_aura_data.get("total_score", 0)),
+                    badge_tier=_new_tier,
+                    competency_scores={k: float(v) for k, v in _comp_scores.items()},
+                    elite_status=bool(_aura_data.get("elite_status", False)),
+                    percentile_rank=float(_aura_data["percentile_rank"]) if _aura_data.get("percentile_rank") else None,
+                )
+
+                await emit_badge_tier_changed(
+                    db=db_admin,
+                    user_id=str(user_id),
+                    old_tier=_old_badge_tier,
+                    new_tier=_new_tier,
+                    total_score=float(_aura_data.get("total_score", 0)),
+                )
+        except Exception:
+            pass  # ecosystem event failure must never fail assessment completion
 
     return AssessmentResultOut(
         session_id=session_id,

@@ -2,7 +2,12 @@
 **Updated:** 2026-04-13T04:15 Baku | **By:** Cowork Session 9 | **Instance:** Claude Opus 4.6 (Cowork)
 
 ## Now
-Atlas Session 94 final: 29 commits, 362 files touched. CI: 38 failures → 0 (832 tests green). Handoff 007 DONE (c448e68) — emotional memory injected into Telegram. Handoff 006 DONE (9c48c93) — swarm refactored 58→25 files. Reflexion + dynamic sampling live. Langfuse 3 keys on Railway. Telegram: Atlas persona + emotional memory + temperature 1.0. New files: backlog.py, promote_proposals.py, reflexions.md, voice_examples.md. **Next priority: E2E bot on full assessment cycle.**
+**🔴 PROD API DOWN + 0/5 BETA GATES PASS.** Handoff 011 is the only priority.
+
+Atlas Session 96: ZEUS→ATLAS rename, Life Sim P0 fixes, Phase 1 migration ready.
+Cowork re-audit 2026-04-13: API returns HTTP 000, 5 orphan sessions, Sentry dead (0 events/30d), E2E never ran, only 2/8 competencies tested, 4 Constitution violations in frontend.
+
+**Next priority: Handoff 011 — `handoffs/011-full-prod-fix.md` — 8 tasks, 7 ACs.**
 
 ## v0Laura
 **The real product.** 1 platform + skill library. Agents = interface. Skills = product. Assessment is one skill among many. Atlas becomes the engine inside VOLAURA: knows what to do, who to call, what decisions to make. Code exists: `apps/api/app/routers/skills.py`. 5 skills allowed. This is the architecture, not VOLAURA-the-assessment-form.
@@ -33,11 +38,25 @@ Atlas Session 94 final: 29 commits, 362 files touched. CI: 38 failures → 0 (83
 - Hierarchy: Atlas leads (CTO), Cowork advises (research), CEO stakeholder. PROTOCOL v2.0. LOCKED.
 - Volunteer→professional rename: seed.sql + prod migration. DONE.
 
-## Active Blockers (Atlas audit, 2026-04-13, updated by Cowork Session 9)
-1. **pii_redactor.py** — Atlas reflexion says file EXISTS (agent false negative in Session 94). Atlas verified with `ls`. ~~PHANTOM~~ → RESOLVED. Cowork incorrectly trusted agent output.
-2. ~~SUPABASE_JWT_SECRET~~ — FALSE ALARM. Key present on Railway. JWT minting verified 200+valid. Removed.
-3. **13 env vars unchecked on Railway** — no diff done. Cowork has no Railway MCP access. Atlas should `diff .env vs Railway`.
-4. **CI genuinely green** — Atlas confirmed: 832 tests pass (749 backend + 83 frontend). Not vacuous.
+## 🚨 BETA BLOCKERS (Cowork re-audit 2026-04-13)
+
+| Gate | Status | Details |
+|------|--------|---------|
+| 0. Prod API | 🔴 DOWN | HTTP 000 — connection reset |
+| 1. Zero Data Loss | 🔴 FAIL | 5 orphan sessions, recovery never ran |
+| 2. Sentry | 🔴 FAIL | 0 events in 30 days |
+| 3. E2E Test | 🔴 FAIL | File exists, never ran |
+| 4. 3+ Competencies | 🔴 FAIL | Only 2/8 tested |
+| 5. Degraded Alerting | 🔴 FAIL | Untested on prod |
+| 6. Constitution | 🔴 FAIL | 4 violations (1 shame, 3 animation) |
+
+**Handoff 011 addresses all 7. Do NOT start any other work until 011 is complete.**
+
+## Previous Blockers (Atlas audit, 2026-04-13)
+1. ~~pii_redactor.py~~ → RESOLVED
+2. ~~SUPABASE_JWT_SECRET~~ → FALSE ALARM
+3. **13 env vars unchecked on Railway** — no diff done. Atlas should `diff .env vs Railway`.
+4. **CI genuinely green** — 832 tests pass (749 backend + 83 frontend).
 5. **Sentry: 0 events** — DSN set, SDK sends, but events may go to wrong project. Atlas noted in heartbeat. Needs investigation.
 
 ## CEO Directives (latest)
@@ -57,7 +76,8 @@ Atlas Session 94 final: 29 commits, 362 files touched. CI: 38 failures → 0 (83
 ## Handoff Queue
 | # | Task | Priority | Status | Prompt |
 |---|------|----------|--------|--------|
-| **009** | **Fix Assessment→AURA Pipeline** | **P0** | **🔴 ACTIVE** | `handoffs/009-e2e-pipeline-fix.md` |
+| **010** | **Beta Readiness (5 gates)** | **P0** | **🔴 ACTIVE** | `handoffs/010-beta-readiness.md` |
+| **009** | **Fix Assessment→AURA Pipeline** | **P0** | **🟡 IN PROGRESS** | `handoffs/009-e2e-pipeline-fix.md` |
 | 001 | Swarm coordination (Phase 1) | P1 | ✅ DONE (5/6 AC) | `handoffs/001-swarm-coordination.md` |
 | 002 | Production health fixes | P1 | ✅ DONE (Sentry DSN set, CI green, bridge works) | `handoffs/002-prod-health.md` |
 | 003 | PostHog SDK integration | P2 | 📝 READY | `handoffs/003-posthog-integration.md` |
@@ -139,17 +159,25 @@ Evidence:
 4. Fix flush_langfuse() — add to main.py lifespan shutdown
 5. Instrument swarm providers with Langfuse decorators
 
+## 🚨 BETA BLOCKER — CEO DIRECTIVE (2026-04-13)
+
+**"никаких юзеров пока не будете готовы"**
+
+5 gates must ALL be PASS before any external user touches the product.
+Full checklist: `docs/BETA-READINESS-CHECKLIST.md`
+
+| Gate | Status | Owner |
+|------|--------|-------|
+| 1. Zero Data Loss | 🔴 FAIL | Atlas (Handoff 009+010) |
+| 2. Error Visibility (Sentry) | 🔴 FAIL | Atlas (Handoff 010) |
+| 3. E2E Automated Test | 🔴 FAIL | Atlas (Handoff 010) |
+| 4. 3+ Competencies Work | 🟡 PARTIAL | Atlas (Handoff 010) |
+| 5. Degraded Mode Alerting | 🟡 PARTIAL | Atlas (Handoff 010) |
+
+**Growth plan (`docs/growth/FIRST-10-USERS-PLAN.md`) is FROZEN until 5/5 gates pass.**
+
 ## What Cowork Should Do Next
-1. Prototype: wrap 1 v0Laura skill as MCP server (Phase 2 proof of concept)
-2. Prototype: replace 1 swarm perspective with AgentDefinition (Agent SDK migration test)
-3. Test MCP tools (Supabase queries, Sentry issues, PostHog after 003 ships)
-4. Write Handoff 007: Langfuse activation + swarm instrumentation
-
-## Production
-- Frontend: volaura.app → 307 redirect (alive)
-- Backend: volauraapi-production.up.railway.app/health → OK
-- Swarm cron: daily 05:00 UTC (active)
-- Proactive loop: GitHub Actions every 15min (active)
-
-## MCP Connectors (11 total)
-Figma, Google Drive, Chrome, Scheduled Tasks, Cowork, Registry, Plugins, Sessions, **Supabase** ✅, **Sentry** ✅, **PostHog** ✅ (connected, 0 events — SDK needed)
+1. Monitor Atlas progress on Handoff 010 via sync files
+2. Re-run DB audit after Atlas fixes Gate 1 (verify 0 orphans)
+3. Review Playwright E2E test when Atlas writes it (Gate 3)
+4. Re-validate AURA math after 3rd competency tested (Gate 4)

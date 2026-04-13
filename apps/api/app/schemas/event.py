@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 # ── Events ────────────────────────────────────────────────────────────────────
 
@@ -52,7 +52,7 @@ class EventUpdate(BaseModel):
 
 
 class EventResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
     id: str
     organization_id: str
@@ -78,19 +78,19 @@ class EventResponse(BaseModel):
 
 
 class RegistrationResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
     id: str
     event_id: str
-    volunteer_id: str
+    professional_id: str = Field(validation_alias="volunteer_id")
     status: str
     registered_at: datetime
     checked_in_at: datetime | None = None
     check_in_code: str | None = None
     coordinator_rating: float | None = None
     coordinator_feedback: str | None = None
-    volunteer_rating: float | None = None
-    volunteer_feedback: str | None = None
+    professional_rating: float | None = Field(None, validation_alias="volunteer_rating")
+    professional_feedback: str | None = Field(None, validation_alias="volunteer_feedback")
 
 
 class CheckInRequest(BaseModel):
@@ -100,10 +100,10 @@ class CheckInRequest(BaseModel):
 class EventAttendeeRow(BaseModel):
     """Enriched attendee for org dashboard — joins profile + AURA."""
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
     registration_id: str
-    volunteer_id: str
+    professional_id: str = Field(validation_alias="volunteer_id")
     status: str
     registered_at: datetime
     checked_in_at: datetime | None = None
@@ -126,7 +126,7 @@ class CoordinatorRatingRequest(BaseModel):
         return v
 
 
-class VolunteerRatingRequest(BaseModel):
+class ProfessionalRatingRequest(BaseModel):
     rating: float
     feedback: str | None = None
 

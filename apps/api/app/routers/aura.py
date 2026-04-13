@@ -165,11 +165,11 @@ async def get_aura_explanation(
     }
 
 
-@router.get("/{volunteer_id}", response_model=AuraScoreResponse)
+@router.get("/{professional_id}", response_model=AuraScoreResponse)
 @limiter.limit(RATE_DISCOVERY)
 async def get_aura_by_id(
     request: Request,
-    volunteer_id: str,
+    professional_id: str,
     db: SupabaseAdmin,
 ) -> AuraScoreResponse:
     """Get any professional's AURA score (public profiles only, respects visibility).
@@ -188,7 +188,7 @@ async def get_aura_by_id(
 
     Route ordering: MUST come AFTER /me and /me/explanation — wildcard captures anything.
     """
-    result = await db.table("aura_scores").select("*").eq("volunteer_id", volunteer_id).maybe_single().execute()
+    result = await db.table("aura_scores").select("*").eq("volunteer_id", professional_id).maybe_single().execute()
     if not result or not result.data:
         raise HTTPException(
             status_code=404,

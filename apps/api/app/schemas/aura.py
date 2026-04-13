@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class CompetencyScore(BaseModel):
@@ -15,9 +15,9 @@ class CompetencyScore(BaseModel):
 
 
 class AuraScoreResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
-    volunteer_id: str
+    professional_id: str = Field(validation_alias="volunteer_id")
     total_score: float  # DB column name — was "overall_score" mismatch
     badge_tier: str
     elite_status: bool
@@ -36,7 +36,7 @@ class AuraScoreResponse(BaseModel):
 class AuraEvaluationItem(BaseModel):
     """Per-question evaluation log entry from a completed assessment session."""
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
     question_id: str | None = None
     concept_scores: dict[str, float]
@@ -48,7 +48,7 @@ class AuraEvaluationItem(BaseModel):
 class AuraCompetencyExplanation(BaseModel):
     """Aggregated evaluation data for one competency session."""
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
     competency_id: str | None = None
     role_level: str
@@ -60,9 +60,9 @@ class AuraCompetencyExplanation(BaseModel):
 class AuraExplanationResponse(BaseModel):
     """Response for GET /aura/me/explanation — transparent per-competency breakdown."""
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
-    volunteer_id: str
+    professional_id: str = Field(validation_alias="volunteer_id")
     explanation_count: int
     has_pending_evaluations: bool  # BUG-012: True when degraded answers are queued for LLM re-eval
     pending_reeval_count: int  # BUG-012: number of answers awaiting re-evaluation

@@ -2,8 +2,8 @@
 
 Covers the 3 endpoints with zero prior test coverage:
   1. GET /api/organizations/me/dashboard  → OrgDashboardStats
-  2. GET /api/organizations/me/volunteers → list[OrgVolunteerRow]
-  3. POST /api/organizations/search/volunteers → list[VolunteerSearchResult]
+  2. GET /api/organizations/me/professionals → list[OrgVolunteerRow]
+  3. POST /api/organizations/search/professionals → list[VolunteerSearchResult]
 
 All tests use dependency_overrides + AsyncMock (same pattern as test_intro_request.py).
 No real DB connections. Self-contained.
@@ -185,8 +185,8 @@ async def test_org_dashboard_returns_stats_for_active_org():
     assert bd["platinum"] == 0
 
     # Top volunteers populated
-    assert len(body["top_volunteers"]) == 2
-    top_usernames = {v["username"] for v in body["top_volunteers"]}
+    assert len(body["top_professionals"]) == 2
+    top_usernames = {v["username"] for v in body["top_professionals"]}
     assert "alice" in top_usernames
 
 
@@ -212,7 +212,7 @@ async def test_org_dashboard_empty_org():
     assert body["total_completed"] == 0
     assert body["completion_rate"] == 0.0
     assert body["avg_aura_score"] is None
-    assert body["top_volunteers"] == []
+    assert body["top_professionals"] == []
     assert body["badge_distribution"]["platinum"] == 0
 
 
@@ -245,7 +245,7 @@ def _build_volunteers_mock(
     aura_rows: list[dict] | None = None,
 ):
     """
-    Build a mock DB for GET /api/organizations/me/volunteers.
+    Build a mock DB for GET /api/organizations/me/professionals.
 
     DB call sequence in list_org_volunteers:
       1. organizations → owner org lookup (maybe_single)
@@ -337,7 +337,7 @@ async def test_list_org_volunteers_returns_paginated_results():
     try:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
             resp = await ac.get(
-                "/api/organizations/me/volunteers",
+                "/api/organizations/me/professionals",
                 headers={"Authorization": "Bearer fake"},
             )
     finally:
@@ -349,9 +349,9 @@ async def test_list_org_volunteers_returns_paginated_results():
     assert isinstance(body, list)
     assert len(body) == 3
 
-    # Verify OrgVolunteerRow schema fields present
+    # Verify OrgProfessionalRow schema fields present
     row = body[0]
-    assert "volunteer_id" in row
+    assert "professional_id" in row
     assert "username" in row
     assert "competencies_completed" in row
 
@@ -372,7 +372,7 @@ async def test_list_org_volunteers_empty():
     try:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
             resp = await ac.get(
-                "/api/organizations/me/volunteers",
+                "/api/organizations/me/professionals",
                 headers={"Authorization": "Bearer fake"},
             )
     finally:
@@ -393,7 +393,7 @@ def _build_search_mock(
     embedding_timeout: bool = False,
 ):
     """
-    Build a mock DB for POST /api/organizations/search/volunteers.
+    Build a mock DB for POST /api/organizations/search/professionals.
 
     DB call sequence (rule-based fallback path):
       1. profiles → caller account_type check (maybe_single)
@@ -499,7 +499,7 @@ async def test_search_volunteers_rule_based_fallback():
         ):
             async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
                 resp = await ac.post(
-                    "/api/organizations/search/volunteers",
+                    "/api/organizations/search/professionals",
                     json=SEARCH_PAYLOAD,
                     headers={"Authorization": "Bearer fake"},
                 )
@@ -512,8 +512,8 @@ async def test_search_volunteers_rule_based_fallback():
     # Rule-based fallback should return results (1 volunteer in mock)
     assert len(body) >= 1
     result = body[0]
-    # Verify VolunteerSearchResult schema fields
-    assert "volunteer_id" in result
+    # Verify ProfessionalSearchResult schema fields
+    assert "professional_id" in result
     assert "username" in result
     assert "overall_score" in result
     assert "badge_tier" in result
@@ -534,7 +534,7 @@ async def test_search_volunteers_requires_org():
         ):
             async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
                 resp = await ac.post(
-                    "/api/organizations/search/volunteers",
+                    "/api/organizations/search/professionals",
                     json=SEARCH_PAYLOAD,
                     headers={"Authorization": "Bearer fake"},
                 )

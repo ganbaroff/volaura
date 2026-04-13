@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 class CollectiveAuraResponse(BaseModel):
     """Aggregated AURA talent pool metrics for an org. Used by Collective AURA Ladders."""
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
     org_id: str
     count: int
@@ -19,7 +19,7 @@ class CollectiveAuraResponse(BaseModel):
 
 
 class OrganizationCreate(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
     name: str = Field(..., min_length=2, max_length=200)
     description: str | None = Field(default=None, max_length=2000)
@@ -29,7 +29,7 @@ class OrganizationCreate(BaseModel):
 
 
 class OrganizationUpdate(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
     name: str | None = Field(default=None, min_length=2, max_length=200)
     description: str | None = Field(default=None, max_length=2000)
@@ -41,7 +41,7 @@ class OrganizationUpdate(BaseModel):
 class OrganizationResponse(BaseModel):
     """Public organization response — owner_id intentionally excluded to prevent UUID enumeration."""
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
     id: str
     name: str
@@ -58,8 +58,8 @@ class OrganizationResponse(BaseModel):
     updated_at: datetime | None = None
 
 
-class VolunteerSearchRequest(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+class ProfessionalSearchRequest(BaseModel):
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
     query: str = Field(..., min_length=1, max_length=500)
     min_aura: float = 0.0
@@ -80,23 +80,23 @@ class VolunteerSearchRequest(BaseModel):
 class AssignAssessmentRequest(BaseModel):
     """Assign one or more competency assessments to specific volunteers."""
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
-    volunteer_ids: list[str] = Field(..., min_length=1, max_length=100)
+    professional_ids: list[str] = Field(..., min_length=1, max_length=100)
     competency_slugs: list[str] = Field(..., min_length=1, max_length=8)
     deadline_days: int = Field(default=14, ge=1, le=90)
     message: str | None = Field(default=None, max_length=500)
 
-    @field_validator("volunteer_ids")
+    @field_validator("professional_ids")
     @classmethod
-    def validate_volunteer_ids(cls, v: list[str]) -> list[str]:
+    def validate_professional_ids(cls, v: list[str]) -> list[str]:
         import uuid as _uuid
 
-        for vid in v:
+        for pid in v:
             try:
-                _uuid.UUID(vid)
+                _uuid.UUID(pid)
             except ValueError:
-                raise ValueError(f"Invalid volunteer ID: {vid}")
+                raise ValueError(f"Invalid professional ID: {pid}")
         return v
 
     @field_validator("competency_slugs")
@@ -120,8 +120,10 @@ class AssignmentResponse(BaseModel):
     assignments: list[dict] = []
 
 
-class VolunteerSearchResult(BaseModel):
-    volunteer_id: str
+class ProfessionalSearchResult(BaseModel):
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+    professional_id: str = Field(validation_alias="volunteer_id")
     username: str
     display_name: str | None = None
     overall_score: float  # renamed from total_score for API consistency
@@ -153,13 +155,15 @@ class OrgDashboardStats(BaseModel):
     completion_rate: float  # completed / assigned (0.0–1.0)
     avg_aura_score: float | None  # average AURA total_score across completed volunteers
     badge_distribution: BadgeDistribution
-    top_volunteers: list[OrgVolunteerRow]  # top 5 by AURA score
+    top_professionals: list[OrgProfessionalRow]  # top 5 by AURA score
 
 
-class OrgVolunteerRow(BaseModel):
-    """One volunteer row in the org dashboard table."""
+class OrgProfessionalRow(BaseModel):
+    """One professional row in the org dashboard table."""
 
-    volunteer_id: str
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+    professional_id: str = Field(validation_alias="volunteer_id")
     username: str
     display_name: str | None = None
     overall_score: float | None = None
@@ -172,7 +176,7 @@ class OrgVolunteerRow(BaseModel):
 
 
 class IntroRequestCreate(BaseModel):
-    volunteer_id: str
+    professional_id: str
     project_name: str = Field(..., min_length=2, max_length=200)
     timeline: str
     message: str | None = Field(default=None, max_length=500)
@@ -185,15 +189,15 @@ class IntroRequestCreate(BaseModel):
             raise ValueError(f"timeline must be one of {allowed}")
         return v
 
-    @field_validator("volunteer_id")
+    @field_validator("professional_id")
     @classmethod
-    def validate_volunteer_uuid(cls, v: str) -> str:
+    def validate_professional_uuid(cls, v: str) -> str:
         import uuid as _uuid
 
         try:
             _uuid.UUID(v)
         except ValueError:
-            raise ValueError("volunteer_id must be a valid UUID")
+            raise ValueError("professional_id must be a valid UUID")
         return v
 
 
@@ -201,7 +205,7 @@ class IntroRequestCreate(BaseModel):
 
 
 class SavedSearchFilters(BaseModel):
-    """Mirrors VolunteerSearchRequest — the JSONB payload stored in org_saved_searches.filters.
+    """Mirrors ProfessionalSearchRequest — the JSONB payload stored in org_saved_searches.filters.
 
     Keeping this as a dedicated model (not reusing VolunteerSearchRequest) prevents drift:
     saved filters never include pagination (limit/offset) and must be stable across versions.
@@ -251,7 +255,7 @@ class SavedSearchUpdate(BaseModel):
 class SavedSearchOut(BaseModel):
     """Response for a saved search row."""
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
     id: str
     org_id: str
@@ -263,9 +267,11 @@ class SavedSearchOut(BaseModel):
 
 
 class SavedSearchMatchPreview(BaseModel):
-    """Match result returned in CEO Telegram notification — lightweight volunteer summary."""
+    """Match result returned in CEO Telegram notification — lightweight professional summary."""
 
-    volunteer_id: str
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+
+    professional_id: str = Field(validation_alias="volunteer_id")
     display_name: str | None = None
     overall_score: float
     badge_tier: str
@@ -285,11 +291,11 @@ class SavedSearchMatchNotification(BaseModel):
 
 
 class IntroRequestResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
     id: str
     org_id: str
-    volunteer_id: str
+    professional_id: str = Field(validation_alias="volunteer_id")
     project_name: str
     timeline: str
     message: str | None = None

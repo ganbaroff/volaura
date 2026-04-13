@@ -19,7 +19,7 @@ from app.schemas.discovery import (
     COMPETENCY_SLUGS,
     DiscoveryMeta,
     DiscoveryResponse,
-    DiscoveryVolunteer,
+    DiscoveryProfessional,
 )
 
 router = APIRouter(prefix="/volunteers", tags=["Discovery"])
@@ -72,7 +72,7 @@ async def discover_talent(
     Returns cursor-paginated results. Use `next_after_score` + `next_after_id`
     from meta to get the next page.
 
-    **Contact professionals:** Use the returned `volunteer_id` with
+    **Contact professionals:** Use the returned `professional_id` with
     `POST /api/organizations/{org_id}/assign-assessments`.
     """
     # Validate competency slug (422 if invalid — agent recommendation)
@@ -206,7 +206,7 @@ async def discover_talent(
         talent_ids = [row["volunteer_id"] for row in aura_rows]
 
     # ── Step 8: Build response ────────────────────────────────────────────────
-    results: list[DiscoveryVolunteer] = []
+    results: list[DiscoveryProfessional] = []
     for row in aura_rows:
         vid = row["volunteer_id"]
         raw_name = profile_map.get(vid)
@@ -214,8 +214,8 @@ async def discover_talent(
         c_score = float(comp_scores.get(competency, 0.0)) if competency else None
 
         results.append(
-            DiscoveryVolunteer(
-                volunteer_id=vid,
+            DiscoveryProfessional(
+                professional_id=vid,
                 display_name=_anonymize_name(raw_name),
                 badge_tier=row.get("badge_tier", "None"),
                 total_score=round(float(row.get("total_score", 0.0)), 1),
@@ -233,7 +233,7 @@ async def discover_talent(
     next_after_id: str | None = None
     if has_more and results:
         last = results[-1]
-        next_after_id = last.volunteer_id
+        next_after_id = last.professional_id
         if sort_by == "score":
             next_after_score = last.total_score
         elif sort_by == "events":

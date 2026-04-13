@@ -1,19 +1,20 @@
 # VOLAURA Swarm Architecture State
 # AUTO-UPDATED — this file reflects the CURRENT state of the system.
-# Last updated: 2026-04-06 v8 "Ecosystem Sync"
+# Last updated: 2026-04-15 v9 "Atlas rename"
 # ⚠️ You are ONE part of a 5-product ecosystem. See: prompt_modules/ecosystem-map.md
 
 ## ⚠️ THIS SWARM'S SCOPE
 This Python swarm (44 agents) powers the VOLAURA assessment platform.
-ZEUS Gateway (39 Node.js agents) powers Life Simulator + claw3d + all real-time chat.
+The Node.js gateway (39 agents) powers Life Simulator + claw3d + all real-time chat.
 They are DIFFERENT systems. Do NOT confuse them. Read ecosystem-map.md for full picture.
 
-## ZEUS Gateway (separate system — Node.js)
+## Node.js Gateway (separate system — claw3d)
 - Local: `ws://localhost:18789`, Production: `wss://zeus-gateway-production.up.railway.app`
 - 39 agents in `C:/Users/user/Downloads/claw3d-fork/server/zeus-gateway-adapter.js`
 - LLM stack: Cerebras Qwen3-235B → Gemma4/Ollama → NVIDIA NIM → Anthropic
 - Manages: Life Simulator 3D state, user memory, event-driven webhooks
 - pm2 process: `zeus-gateway` — never kill, use `pm2 restart zeus-gateway --update-env`
+- NOTE: pm2 process and Railway URL still use old "zeus" name — rename deferred
 
 ## VOLAURA Swarm Active Providers (13)
 Groq: llama-3.1-8b, llama-3.3-70b, llama-4-scout-17b, gpt-oss-120b, kimi-k2 x2, compound-mini

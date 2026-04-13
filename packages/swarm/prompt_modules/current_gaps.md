@@ -24,7 +24,7 @@ Agents reading main branch don't see the Constitution.
 Priority: **HIGH** — source of truth not accessible from default branch.
 
 ### E-4. Ollama/Gemma4 Not Running
-ZEUS Gateway hierarchy: Cerebras → Gemma4/Ollama → NVIDIA → Anthropic.
+Node.js gateway hierarchy: Cerebras → Gemma4/Ollama → NVIDIA → Anthropic.
 Ollama is not started. Local GPU unused. Fallback chain broken at step 2.
 Need: systemd service or startup script for Ollama.
 Priority: **MEDIUM** — Cerebras works, but no local fallback.
@@ -101,4 +101,4 @@ Priority: HIGH — differentiator for Pasha Bank pitch.
 - ~~Freerider responses (v7: ResponseQualityMiddleware)~~
 - ~~One-size-fits-all prompts (v7: per-model adaptive)~~
 - ~~Agents don't know ecosystem (v8: ecosystem-map.md + Ecosystem Auditor in autonomous_run.py)~~
-- ~~architecture_state.md doesn't mention ZEUS (v8: added ZEUS section, scope clarification)~~
+- ~~architecture_state.md doesn't mention gateway (v8: added gateway section, scope clarification)~~

@@ -26,7 +26,7 @@ export const theme = {
     mindshift: "#10B981", // emerald
     lifeSim: "#7C3AED", // purple
     brandedBy: "#0EA5E9", // sky
-    zeus: "#E9C400", // gold
+    atlas: "#E9C400", // gold
 
     // Semantic
     error: "#D4B4FF", // purple — NEVER red

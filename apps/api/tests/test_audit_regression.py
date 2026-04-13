@@ -10,12 +10,13 @@ Verifies fixes for:
 - [H3] Organization schema alignment
 """
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
+import pytest
+
+from app.deps import get_current_user_id, get_supabase_admin, get_supabase_user
 from app.main import app
-from app.deps import get_supabase_admin, get_supabase_user, get_current_user_id
 
 # Mock data
 USER_ID = str(uuid4())

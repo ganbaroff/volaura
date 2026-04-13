@@ -11,16 +11,14 @@ No real DB connections. Self-contained.
 
 from __future__ import annotations
 
-import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from httpx import ASGITransport, AsyncClient
 
+from app.deps import get_current_user_id, get_supabase_admin
 from app.main import app
-from app.deps import get_supabase_admin, get_current_user_id
 from app.middleware.rate_limit import limiter
-
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -497,7 +495,7 @@ async def test_search_volunteers_rule_based_fallback():
     try:
         with patch(
             "app.routers.organizations.generate_embedding",
-            new=AsyncMock(side_effect=asyncio.TimeoutError()),
+            new=AsyncMock(side_effect=TimeoutError()),
         ):
             async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
                 resp = await ac.post(

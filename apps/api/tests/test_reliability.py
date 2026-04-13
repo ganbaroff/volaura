@@ -1,6 +1,5 @@
 """Unit tests for the reliability scoring engine."""
 
-import pytest
 
 from app.core.reliability.scoring import (
     BEHAVIORAL_MAX,
@@ -13,7 +12,6 @@ from app.core.reliability.scoring import (
     proven_score,
     reliability_status,
 )
-
 
 # ── behavioral_score ──────────────────────────────────────────────────────────
 

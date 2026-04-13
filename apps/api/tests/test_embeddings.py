@@ -16,11 +16,11 @@ Coverage:
 
 from __future__ import annotations
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from app.services.embeddings import build_profile_text, generate_embedding, upsert_volunteer_embedding
+import pytest
 
+from app.services.embeddings import build_profile_text, generate_embedding, upsert_volunteer_embedding
 
 # ── build_profile_text ────────────────────────────────────────────────────────
 

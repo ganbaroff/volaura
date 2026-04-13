@@ -32,14 +32,12 @@ Run: pytest apps/api/tests/test_blind_cross_assessment.py -v -s
 
 from __future__ import annotations
 
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-import pytest
 from app.core.assessment.bars import _aggregate, _keyword_fallback
-
 
 # ── Question definitions (copied from source files without keywords) ──────────
 
@@ -1320,7 +1318,7 @@ class TestKeyInsights:
         s_swe_expert = score(SEC_Q3, PERSONA_C["SEC_Q3_swe"])
         s_generalist = score(SEC_Q3, PERSONA_A["SEC_Q3"])
 
-        print(f"\nSEC_Q3 vocabulary vs competence gap:")
+        print("\nSEC_Q3 vocabulary vs competence gap:")
         print(f"  Buzzword (keyword-aware): {s_buzzword:.3f}")
         print(f"  SWE expert (natural prose): {s_swe_expert:.3f}")
         print(f"  Generalist: {s_generalist:.3f}")
@@ -1350,7 +1348,7 @@ class TestKeyInsights:
         s_qa_on_swe = score(SWE_Q3, PERSONA_C["SWE_Q3_qa"])
         s_buzzword_swe = score(SWE_Q3, PERSONA_B["SWE_Q3"])
 
-        print(f"\nDomain tax on SWE_Q3:")
+        print("\nDomain tax on SWE_Q3:")
         print(f"  QA expert (wrong domain): {s_qa_on_swe:.3f}")
         print(f"  Buzzword (keyword list):  {s_buzzword_swe:.3f}")
         print(f"  Domain tax: {s_buzzword_swe - s_qa_on_swe:.3f}")
@@ -1376,7 +1374,7 @@ class TestKeyInsights:
         s_stuffed = score(SEC_Q3, keyword_list)
         s_buzzword = score(SEC_Q3, PERSONA_B["SEC_Q3"])  # longer, narrative answer
 
-        print(f"\nAnti-gaming gate check (SEC_Q3):")
+        print("\nAnti-gaming gate check (SEC_Q3):")
         print(f"  Keyword list (short, stuffed): {s_stuffed:.3f}")
         print(f"  Buzzword (long, narrative):    {s_buzzword:.3f}")
 

@@ -8,16 +8,14 @@ Run: pytest apps/api/tests/test_smoke_assessment.py -v
 
 from __future__ import annotations
 
-import uuid
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from httpx import ASGITransport, AsyncClient
 
+from app.deps import get_current_user_id, get_supabase_admin, get_supabase_user
 from app.main import app
-from app.deps import get_supabase_admin, get_supabase_user, get_current_user_id
 from app.services.assessment.helpers import clear_question_cache
-
 
 # ── Constants ──────────────────────────────────────────────────────────────────
 

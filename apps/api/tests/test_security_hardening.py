@@ -9,18 +9,16 @@ Run: pytest tests/test_security_hardening.py -v
 
 from __future__ import annotations
 
-import uuid
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from httpx import ASGITransport, AsyncClient
 
+from app.deps import get_current_user_id, get_supabase_admin, get_supabase_user
 from app.main import app
-from app.deps import get_supabase_admin, get_supabase_user, get_current_user_id
 from app.middleware.rate_limit import limiter
 from app.schemas.assessment import SubmitAnswerRequest
-
 
 # ── Shared constants ───────────────────────────────────────────────────────────
 
@@ -119,7 +117,7 @@ def _build_chainable(execute_side_effects: list):
 
 def _iso_minutes_ago(minutes: float) -> str:
     """Return an ISO-8601 UTC timestamp N minutes in the past."""
-    dt = datetime.now(timezone.utc) - timedelta(minutes=minutes)
+    dt = datetime.now(UTC) - timedelta(minutes=minutes)
     return dt.strftime("%Y-%m-%dT%H:%M:%S.%f") + "Z"
 
 

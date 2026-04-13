@@ -20,9 +20,9 @@ Usage:
 
 from __future__ import annotations
 
-import pytest
 from unittest.mock import AsyncMock, patch
 
+import pytest
 
 # ── Default mock responses ─────────────────────────────────────────────────────
 

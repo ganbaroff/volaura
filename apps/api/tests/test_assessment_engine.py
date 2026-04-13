@@ -1,6 +1,5 @@
 """Unit tests for IRT/CAT engine, anti-gaming, BARS, and AURA calculation."""
 
-import pytest
 
 from app.core.assessment import antigaming
 from app.core.assessment.aura_calc import (
@@ -17,7 +16,6 @@ from app.core.assessment.engine import (
     submit_response,
     theta_to_score,
 )
-
 
 # ── CATState serialisation ────────────────────────────────────────────────────
 

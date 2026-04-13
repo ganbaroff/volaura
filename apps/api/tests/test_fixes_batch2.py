@@ -9,12 +9,13 @@ Verifies fixes for:
 - [C1] aura.py: /me and /me/explanation have rate limiting (Request param present)
 """
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
+import pytest
+
+from app.deps import get_current_user_id, get_supabase_admin, get_supabase_user
 from app.main import app
-from app.deps import get_supabase_admin, get_supabase_user, get_current_user_id
 
 USER_ID = str(uuid4())
 
@@ -222,6 +223,7 @@ def test_aura_me_endpoint_accepts_request_param():
     This checks the function signature directly — no HTTP call needed.
     """
     import inspect
+
     from app.routers.aura import get_my_aura
     sig = inspect.signature(get_my_aura)
     assert "request" in sig.parameters, (
@@ -233,6 +235,7 @@ def test_aura_me_endpoint_accepts_request_param():
 def test_aura_explanation_endpoint_accepts_request_param():
     """GET /me/explanation must accept a Request parameter for rate limiting."""
     import inspect
+
     from app.routers.aura import get_aura_explanation
     sig = inspect.signature(get_aura_explanation)
     assert "request" in sig.parameters, (

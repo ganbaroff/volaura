@@ -22,17 +22,15 @@ Run with: pytest apps/api/tests/test_security_engineer_self_assessment.py -v -s
 
 from __future__ import annotations
 
-import sys
 import os
+import sys
 
 # Ensure the app package is importable when running pytest from repo root
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-import pytest
 
 # Import only the pure-Python functions — no FastAPI, no Supabase, no LLM
-from app.core.assessment.bars import _keyword_fallback, _aggregate, EvaluationResult
-
+from app.core.assessment.bars import _aggregate, _keyword_fallback
 
 # ─── Question Definitions ─────────────────────────────────────────────────────
 

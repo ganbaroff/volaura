@@ -10,17 +10,15 @@ Tests for:
 Mock pattern: MagicMock for table() (sync), AsyncMock only for execute().
 """
 
-import io
-import pytest
 from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
+import pytest
 from httpx import ASGITransport, AsyncClient
 
+from app.deps import get_current_user_id, get_supabase_admin
 from app.main import app
-from app.deps import get_supabase_admin, get_current_user_id
 from app.middleware.rate_limit import limiter
-
 
 # Disable rate limiting for tests — prevents 429 across test suite
 limiter.enabled = False

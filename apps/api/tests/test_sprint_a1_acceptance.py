@@ -11,17 +11,16 @@ Tests:
   5. Reward not emitted when score is below Bronze threshold
 """
 
-from datetime import datetime, timezone
-from unittest.mock import AsyncMock, MagicMock, call
-from uuid import UUID
+from datetime import UTC, datetime
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from app.main import app
-from app.deps import get_supabase_admin, get_supabase_user, get_current_user_id
-from app.services.assessment.rewards import emit_assessment_rewards, CRYSTAL_REWARD
 from app.core.assessment.aura_calc import BADGE_TIERS
+from app.deps import get_current_user_id, get_supabase_admin, get_supabase_user
+from app.main import app
+from app.services.assessment.rewards import CRYSTAL_REWARD, emit_assessment_rewards
 
 USER_ID = "11111111-2222-3333-4444-555555555555"
 
@@ -234,8 +233,8 @@ async def test_get_character_state_after_assessment():
         "character_stats": {},
         "login_streak": 1,
         "event_count": 2,
-        "last_event_at": datetime.now(timezone.utc).isoformat(),
-        "computed_at": datetime.now(timezone.utc).isoformat(),
+        "last_event_at": datetime.now(UTC).isoformat(),
+        "computed_at": datetime.now(UTC).isoformat(),
     }
 
     rpc_result = MagicMock()
@@ -338,8 +337,8 @@ async def test_get_character_state_multiple_skills():
         "character_stats": {},
         "login_streak": 5,
         "event_count": 6,
-        "last_event_at": datetime.now(timezone.utc).isoformat(),
-        "computed_at": datetime.now(timezone.utc).isoformat(),
+        "last_event_at": datetime.now(UTC).isoformat(),
+        "computed_at": datetime.now(UTC).isoformat(),
     }
 
     rpc_result = MagicMock()

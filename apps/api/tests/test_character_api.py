@@ -11,16 +11,15 @@ No response envelope: character router returns Pydantic models directly.
 Auth 401 pattern: provide generator admin override (resolves before auth check in CI).
 """
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
+import pytest
 from httpx import ASGITransport, AsyncClient
 
+from app.deps import get_current_user_id, get_supabase_admin, get_supabase_user
 from app.main import app
-from app.deps import get_supabase_admin, get_supabase_user, get_current_user_id
 from app.middleware.rate_limit import limiter
-
 
 # Disable rate limiting for tests — prevents 429 across test suite
 limiter.enabled = False

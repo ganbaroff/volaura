@@ -19,9 +19,10 @@ theta -> score mapping (logistic centred at 0 -> 50):
 
 import math
 
-import pytest
-
 from app.core.assessment.engine import (
+    MAX_ITEMS,
+    MIN_ITEMS_BEFORE_SE_STOP,
+    SE_THRESHOLD,
     CATState,
     ItemRecord,
     _estimate_eap,
@@ -31,11 +32,7 @@ from app.core.assessment.engine import (
     should_stop,
     submit_response,
     theta_to_score,
-    MAX_ITEMS,
-    MIN_ITEMS_BEFORE_SE_STOP,
-    SE_THRESHOLD,
 )
-
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 

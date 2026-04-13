@@ -1,11 +1,12 @@
 """Health endpoint tests."""
 
-import pytest
-from httpx import AsyncClient
 from unittest.mock import AsyncMock, MagicMock
 
-from app.main import app
+import pytest
+from httpx import AsyncClient
+
 from app.deps import get_supabase_admin
+from app.main import app
 
 
 async def _mock_admin_for_health():

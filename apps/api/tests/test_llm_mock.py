@@ -12,19 +12,19 @@ the mocks themselves are working correctly.
 
 from __future__ import annotations
 
-import pytest
-from unittest.mock import AsyncMock
-from httpx import ASGITransport, AsyncClient
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
+import pytest
+from httpx import ASGITransport, AsyncClient
+
+from app.deps import get_current_user_id, get_supabase_admin
 from app.main import app
-from app.deps import get_supabase_admin, get_current_user_id
 from tests.mocks.llm_mock import (
-    mock_llm,
-    mock_embedding,
-    mock_llm_failure,
     MOCK_BARS_RESPONSE,
     MOCK_EMBEDDING,
+    mock_embedding,
+    mock_llm,
+    mock_llm_failure,
 )
 
 # Re-export fixtures for pytest discovery

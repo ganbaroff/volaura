@@ -4,12 +4,13 @@ Inspired by ruflo's @claude-flow/security patterns.
 Tests that protect against: injection, path traversal, suspicious inputs.
 """
 
-import pytest
-from httpx import ASGITransport, AsyncClient
 from unittest.mock import AsyncMock, MagicMock
 
+import pytest
+from httpx import ASGITransport, AsyncClient
+
+from app.deps import get_current_user_id, get_supabase_admin, get_supabase_user
 from app.main import app
-from app.deps import get_supabase_admin, get_supabase_user, get_current_user_id
 
 
 def _make_admin_override(mock_db):
@@ -51,8 +52,8 @@ async def client():
 @pytest.mark.asyncio
 async def test_security_headers_present(client: AsyncClient):
     """All responses must include security headers (dev-mode safe)."""
-    from app.main import app as _app
     from app.deps import get_supabase_admin as _get_admin
+    from app.main import app as _app
 
     # /health now uses SupabaseAdmin via Depends() — mock it for this test
     _mock = MagicMock()

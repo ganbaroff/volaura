@@ -13,8 +13,8 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from httpx import ASGITransport, AsyncClient
 
+from app.deps import get_current_user_id, get_supabase_user
 from app.main import app
-from app.deps import get_supabase_user, get_current_user_id
 
 USER_ID = "aaaaaaaa-bbbb-cccc-dddd-000000000001"
 NOTIF_ID = "notif-uuid-1111"

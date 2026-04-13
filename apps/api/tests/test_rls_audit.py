@@ -35,10 +35,10 @@ RUNNING
     pytest apps/api/tests/test_rls_audit.py -v -m "not service_role"
 """
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
+import pytest
 
 # ---------------------------------------------------------------------------
 # Helpers & constants
@@ -1020,7 +1020,8 @@ class TestWriteVectorIsolation:
         USING (TRUE) on INSERT/UPDATE/DELETE = anyone can write anything.
         Only acceptable on SELECT for truly public data (e.g., competency list).
         """
-        import os, re
+        import os
+        import re
         base_migration_dir = os.path.abspath(os.path.join(
             os.path.dirname(__file__),
             "..", "..", "..", "supabase", "migrations",

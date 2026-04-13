@@ -10,7 +10,7 @@ Patterns follow test_smoke_assessment.py — dependency_overrides + _build_chain
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -87,7 +87,7 @@ def _build_chainable(execute_side_effects: list):
 @pytest.mark.asyncio
 async def test_get_status_trial_active():
     """User has status='trial', trial_ends_at = future → is_active=True, days_remaining > 0."""
-    future = (datetime.now(timezone.utc) + timedelta(days=10)).isoformat()
+    future = (datetime.now(UTC) + timedelta(days=10)).isoformat()
     profile_row = {
         "subscription_status": "trial",
         "trial_ends_at": future,
@@ -121,7 +121,7 @@ async def test_get_status_trial_active():
 @pytest.mark.asyncio
 async def test_get_status_trial_expired():
     """User has status='trial', trial_ends_at = past → auto-expires to 'expired', is_active=False."""
-    past = (datetime.now(timezone.utc) - timedelta(days=5)).isoformat()
+    past = (datetime.now(UTC) - timedelta(days=5)).isoformat()
     profile_row = {
         "subscription_status": "trial",
         "trial_ends_at": past,
@@ -157,7 +157,7 @@ async def test_get_status_trial_expired():
 @pytest.mark.asyncio
 async def test_get_status_active_subscription():
     """User has status='active', subscription_ends_at = future → is_active=True."""
-    future = (datetime.now(timezone.utc) + timedelta(days=25)).isoformat()
+    future = (datetime.now(UTC) + timedelta(days=25)).isoformat()
     profile_row = {
         "subscription_status": "active",
         "trial_ends_at": None,

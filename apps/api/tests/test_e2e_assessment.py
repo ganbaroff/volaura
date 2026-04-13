@@ -12,6 +12,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
 from supabase import acreate_client
@@ -30,7 +31,7 @@ async def run_e2e():
     print("\nStep 1: Checking seed data...")
     comps = await admin.table("competencies").select("id, slug, name_en, weight").execute()
     assert len(comps.data) == 8, f"Expected 8 competencies, got {len(comps.data)}"
-    print(f"  OK: 8 competencies")
+    print("  OK: 8 competencies")
 
     weights = {c["slug"]: c.get("weight", 0) for c in comps.data}
     weight_sum = sum(weights.values())
@@ -58,7 +59,7 @@ async def run_e2e():
 
     # Step 3: Run IRT/CAT engine
     print("\nStep 3: Running IRT/CAT engine...")
-    from app.core.assessment.engine import CATState, select_next_item, submit_response, should_stop, theta_to_score
+    from app.core.assessment.engine import CATState, select_next_item, should_stop, submit_response, theta_to_score
 
     state = CATState(theta=0.0, theta_se=1.0, items=[])
     answers = 0
@@ -150,7 +151,7 @@ async def run_e2e():
     # Normal timing
     result = check_answer_timing(5000)
     assert result.get("rushed") is not True, "5s should not be rushed"
-    print(f"  5000ms: normal (OK)")
+    print("  5000ms: normal (OK)")
 
     # Rushed timing
     result = check_answer_timing(500)
@@ -160,7 +161,7 @@ async def run_e2e():
     result = check_answer_timing(-100)
     print(f"  -100ms: {result}")
 
-    print(f"  Anti-gaming function API: all checks passed")
+    print("  Anti-gaming function API: all checks passed")
 
     # Summary
     print("\n" + "=" * 60)
@@ -171,7 +172,7 @@ async def run_e2e():
     print(f"  Good score: {comm_score:.1f}/100")
     print(f"  Bad score: {bad_score:.1f}/100")
     print(f"  AURA overall: {overall:.1f}, tier: {tier}")
-    print(f"  Anti-gaming: timing checks passed")
+    print("  Anti-gaming: timing checks passed")
     print("=" * 60)
 
 

@@ -10,6 +10,7 @@ Setup: POST /api/telegram/setup-webhook to register with Telegram API.
 from __future__ import annotations
 
 import contextlib
+import hmac
 import os
 from datetime import UTC, datetime
 from pathlib import Path
@@ -1387,12 +1388,16 @@ async def telegram_webhook(
     if not settings.telegram_bot_token:
         return JSONResponse({"ok": False, "error": "Bot not configured"})
 
-    # Validate webhook origin
-    # If secret is configured: verify Telegram's X-Telegram-Bot-Api-Secret-Token header.
-    # If secret is NOT configured: allow all requests (no signature check).
-    # CEO_CHAT_ID filter below is still enforced — only CEO can trigger bot actions.
+    # Validate webhook origin — fail-closed.
+    # Require X-Telegram-Bot-Api-Secret-Token header matches settings.telegram_webhook_secret
+    # via constant-time compare (hmac.compare_digest). If the secret is not configured at all,
+    # the endpoint refuses every request — prevents silent bypass when secret is forgotten.
+    # CEO_CHAT_ID filter below is defence-in-depth, not the primary gate.
     secret_header = request.headers.get("X-Telegram-Bot-Api-Secret-Token", "")
-    if settings.telegram_webhook_secret and secret_header != settings.telegram_webhook_secret:
+    if not settings.telegram_webhook_secret:
+        logger.error("Telegram webhook called but TELEGRAM_WEBHOOK_SECRET is not set — rejecting")
+        return JSONResponse({"ok": False}, status_code=403)
+    if not hmac.compare_digest(secret_header, settings.telegram_webhook_secret):
         logger.warning("Telegram webhook: invalid secret from {ip}", ip=request.client.host if request.client else "?")
         return JSONResponse({"ok": False}, status_code=403)
 

@@ -45,8 +45,8 @@ import secrets
 from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
+import jwt
 from fastapi import APIRouter, Header, HTTPException, Request
-from jose import jwt
 from loguru import logger
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 

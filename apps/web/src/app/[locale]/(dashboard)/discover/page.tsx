@@ -5,10 +5,10 @@ import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Users, Star, MapPin, Loader2, ChevronRight, Sparkles } from "lucide-react";
-import { useDiscoverableVolunteers } from "@/hooks/queries/use-profile";
-import type { DiscoverableVolunteer } from "@/hooks/queries/use-profile";
-import { useVolunteerSearch } from "@/hooks/queries/use-organizations";
-import type { VolunteerSearchResultItem } from "@/hooks/queries/use-organizations";
+import { useDiscoverableProfessionals } from "@/hooks/queries/use-profile";
+import type { DiscoverableProfessional } from "@/hooks/queries/use-profile";
+import { useProfessionalSearch } from "@/hooks/queries/use-organizations";
+import type { ProfessionalSearchResultItem } from "@/hooks/queries/use-organizations";
 import { cn } from "@/lib/utils/cn";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -40,7 +40,7 @@ function similarityLabel(sim: number | null): { label: string; cls: string } | n
 
 // ── Browse volunteer card ──────────────────────────────────────────────────────
 
-function BrowseCard({ volunteer, onClick }: { volunteer: DiscoverableVolunteer; onClick: () => void }) {
+function BrowseCard({ volunteer, onClick }: { volunteer: DiscoverableProfessional; onClick: () => void }) {
   const badgeStyle = BADGE_STYLES[volunteer.badge_tier?.toLowerCase() ?? ""] ?? null;
   const score = volunteer.total_score != null ? volunteer.total_score.toFixed(1) : "—";
   const initials = (volunteer.display_name ?? volunteer.username)[0]?.toUpperCase() ?? "?";
@@ -84,7 +84,7 @@ function BrowseCard({ volunteer, onClick }: { volunteer: DiscoverableVolunteer; 
 
 // ── Search result card ─────────────────────────────────────────────────────────
 
-function SearchResultCard({ result, onClick }: { result: VolunteerSearchResultItem; onClick: () => void }) {
+function SearchResultCard({ result, onClick }: { result: ProfessionalSearchResultItem; onClick: () => void }) {
   const badgeStyle = BADGE_STYLES[result.badge_tier?.toLowerCase() ?? ""] ?? null;
   const score = result.overall_score != null ? result.overall_score.toFixed(1) : "—";
   const initials = (result.display_name ?? result.username)[0]?.toUpperCase() ?? "?";
@@ -132,7 +132,7 @@ function SearchResultCard({ result, onClick }: { result: VolunteerSearchResultIt
   );
 }
 
-function VolunteerSkeleton() {
+function ProfessionalSkeleton() {
   return (
     <div className="space-y-2">
       {Array.from({ length: 6 }).map((_, i) => (
@@ -196,7 +196,7 @@ export default function DiscoverPage() {
 
   // Browse state
   const [browseSearch, setBrowseSearch] = useState("");
-  const { data: volunteers, isLoading: browseLoading, isError: browseError } = useDiscoverableVolunteers({ limit: 50 });
+  const { data: volunteers, isLoading: browseLoading, isError: browseError } = useDiscoverableProfessionals({ limit: 50 });
 
   const filtered = (volunteers ?? []).filter((v) => {
     if (!browseSearch) return true;
@@ -212,7 +212,7 @@ export default function DiscoverPage() {
   const [query, setQuery] = useState("");
   const [minAura, setMinAura] = useState(0);
   const [badgeTier, setBadgeTier] = useState<BadgeTierFilter>(null);
-  const searchMutation = useVolunteerSearch();
+  const searchMutation = useProfessionalSearch();
 
   const canSearch = query.trim().length >= 2;
 
@@ -330,7 +330,7 @@ export default function DiscoverPage() {
               </div>
 
               {/* List */}
-              {browseLoading && <VolunteerSkeleton />}
+              {browseLoading && <ProfessionalSkeleton />}
 
               {browseError && (
                 <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-6 text-center space-y-2">
@@ -512,7 +512,7 @@ export default function DiscoverPage() {
                   <div className="space-y-2">
                     {searchMutation.data.map((r) => (
                       <SearchResultCard
-                        key={r.volunteer_id}
+                        key={r.professional_id}
                         result={r}
                         onClick={() => router.push(`/${locale}/u/${r.username}`)}
                       />

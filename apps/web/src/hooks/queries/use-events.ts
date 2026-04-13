@@ -65,7 +65,7 @@ export function useMyEvents() {
 
 export interface EventAttendeeRow {
   registration_id: string;
-  volunteer_id: string;
+  professional_id: string;
   status: string;
   registered_at: string;
   checked_in_at: string | null;
@@ -81,8 +81,8 @@ export interface CoordinatorRatingPayload {
   feedback?: string;
 }
 
-/** Rate a volunteer as coordinator — POST /events/{id}/rate/coordinator */
-export function useRateVolunteer(eventId: string) {
+/** Rate a professional as coordinator — POST /events/{id}/rate/coordinator */
+export function useRateProfessional(eventId: string) {
   const getToken = useAuthToken();
   const queryClient = useQueryClient();
 

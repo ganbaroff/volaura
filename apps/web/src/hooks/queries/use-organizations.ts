@@ -9,7 +9,7 @@ import {
 } from "@/lib/api/generated";
 import { apiFetch, ApiError } from "@/lib/api/client";
 import { useAuthToken } from "./use-auth-token";
-import type { OrganizationResponse, OrganizationCreate, OrgDashboardStats, OrgVolunteerRow } from "@/lib/api/types";
+import type { OrganizationResponse, OrganizationCreate, OrgDashboardStats, OrgProfessionalRow } from "@/lib/api/types";
 
 /** My organization — the one the current user owns */
 export function useMyOrganization() {
@@ -117,7 +117,7 @@ export function useCollectiveAura(orgId: string | undefined) {
 }
 
 export interface IntroRequestPayload {
-  volunteer_id: string;
+  professional_id: string;
   project_name: string;
   timeline: "urgent" | "normal" | "flexible";
   message?: string;
@@ -126,7 +126,7 @@ export interface IntroRequestPayload {
 export interface IntroRequestResult {
   id: string;
   org_id: string;
-  volunteer_id: string;
+  professional_id: string;
   project_name: string;
   timeline: string;
   message: string | null;
@@ -134,7 +134,7 @@ export interface IntroRequestResult {
   created_at: string;
 }
 
-/** Send a Request Introduction to a volunteer */
+/** Send a Request Introduction to a professional */
 export function useCreateIntroRequest() {
   const getToken = useAuthToken();
 
@@ -151,9 +151,9 @@ export function useCreateIntroRequest() {
   });
 }
 
-// ── Semantic volunteer search ──────────────────────────────────────────────
+// ── Semantic professional search ──────────────────────────────────────────
 
-export interface VolunteerSearchPayload {
+export interface ProfessionalSearchPayload {
   query: string;
   min_aura?: number;
   badge_tier?: "platinum" | "gold" | "silver" | "bronze" | null;
@@ -161,8 +161,8 @@ export interface VolunteerSearchPayload {
   offset?: number;
 }
 
-export interface VolunteerSearchResultItem {
-  volunteer_id: string;
+export interface ProfessionalSearchResultItem {
+  professional_id: string;
   username: string;
   display_name: string | null;
   overall_score: number;
@@ -173,15 +173,15 @@ export interface VolunteerSearchResultItem {
   similarity: number | null;
 }
 
-/** Semantic volunteer search — POST /api/organizations/search/volunteers */
-export function useVolunteerSearch() {
+/** Semantic professional search — POST /api/organizations/search/professionals */
+export function useProfessionalSearch() {
   const getToken = useAuthToken();
 
-  return useMutation<VolunteerSearchResultItem[], ApiError, VolunteerSearchPayload>({
+  return useMutation<ProfessionalSearchResultItem[], ApiError, ProfessionalSearchPayload>({
     mutationFn: async (payload) => {
       const token = await getToken();
       if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
-      return apiFetch<VolunteerSearchResultItem[]>("/api/organizations/search/volunteers", {
+      return apiFetch<ProfessionalSearchResultItem[]>("/api/organizations/search/professionals", {
         token,
         method: "POST",
         body: JSON.stringify({ limit: 20, ...payload }),
@@ -274,12 +274,12 @@ export function useDeleteSavedSearch() {
   });
 }
 
-/** List volunteers assigned assessments by this org */
-export function useOrgVolunteers(params?: { status?: string; limit?: number; offset?: number }) {
+/** List professionals assigned assessments by this org */
+export function useOrgProfessionals(params?: { status?: string; limit?: number; offset?: number }) {
   const getToken = useAuthToken();
 
-  return useQuery<OrgVolunteerRow[], ApiError>({
-    queryKey: ["organizations", "me", "volunteers", params],
+  return useQuery<OrgProfessionalRow[], ApiError>({
+    queryKey: ["organizations", "me", "professionals", params],
     queryFn: async () => {
       const token = await getToken();
       if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
@@ -288,7 +288,7 @@ export function useOrgVolunteers(params?: { status?: string; limit?: number; off
       if (params?.limit) search.set("limit", String(params.limit));
       if (params?.offset) search.set("offset", String(params.offset));
       const qs = search.toString();
-      return apiFetch<OrgVolunteerRow[]>(`/api/organizations/me/volunteers${qs ? `?${qs}` : ""}`, { token });
+      return apiFetch<OrgProfessionalRow[]>(`/api/organizations/me/professionals${qs ? `?${qs}` : ""}`, { token });
     },
     staleTime: 60 * 1000,
     retry: 1,

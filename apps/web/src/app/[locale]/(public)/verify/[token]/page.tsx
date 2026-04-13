@@ -13,10 +13,10 @@ import { API_BASE } from "@/lib/api/client";
 type TokenState = "loading" | "valid" | "invalid" | "expired" | "used";
 type FlowStep = "intro" | "rating" | "comment" | "submitting" | "success";
 
-interface VolunteerInfo {
-  volunteer_display_name: string;
-  volunteer_username: string;
-  volunteer_avatar_url: string | null;
+interface ProfessionalInfo {
+  professional_display_name: string;
+  professional_username: string;
+  professional_avatar_url: string | null;
   verifier_name: string;
   verifier_org: string | null;
   competency_id: string;
@@ -110,7 +110,7 @@ function IntroScreen({
   onStart,
   t,
 }: {
-  info: VolunteerInfo;
+  info: ProfessionalInfo;
   locale: string;
   onStart: () => void;
   t: (k: string, opts?: Record<string, string>) => string;
@@ -129,20 +129,20 @@ function IntroScreen({
       {/* Volunteer card */}
       <div className="flex flex-col items-center gap-3 py-4">
         <div className="size-20 rounded-full bg-primary/20 flex items-center justify-center text-2xl font-bold text-primary">
-          {info.volunteer_avatar_url ? (
+          {info.professional_avatar_url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={info.volunteer_avatar_url}
-              alt={info.volunteer_display_name}
+              src={info.professional_avatar_url}
+              alt={info.professional_display_name}
               className="size-full rounded-full object-cover"
             />
           ) : (
-            <Initials name={info.volunteer_display_name} />
+            <Initials name={info.professional_display_name} />
           )}
         </div>
         <div className="text-center">
-          <h2 className="text-xl font-bold text-foreground">{info.volunteer_display_name}</h2>
-          <p className="text-sm text-muted-foreground">@{info.volunteer_username}</p>
+          <h2 className="text-xl font-bold text-foreground">{info.professional_display_name}</h2>
+          <p className="text-sm text-muted-foreground">@{info.professional_username}</p>
         </div>
       </div>
 
@@ -181,7 +181,7 @@ function RatingScreen({
   onSelect,
   t,
 }: {
-  info: VolunteerInfo;
+  info: ProfessionalInfo;
   locale: string;
   onSelect: (rating: number) => void;
   t: (k: string) => string;
@@ -205,7 +205,7 @@ function RatingScreen({
         </h2>
         <p className="text-sm font-semibold text-primary">{competencyLabel}</p>
         <p className="text-sm text-muted-foreground">
-          {info.volunteer_display_name}
+          {info.professional_display_name}
         </p>
       </div>
 
@@ -337,7 +337,7 @@ function SuccessScreen({
   locale,
   t,
 }: {
-  info: VolunteerInfo;
+  info: ProfessionalInfo;
   rating: number;
   locale: string;
   t: (k: string, opts?: Record<string, string>) => string;
@@ -379,7 +379,7 @@ function SuccessScreen({
           transition={{ delay: 0.45 }}
           className="text-sm text-muted-foreground leading-relaxed max-w-xs mx-auto"
         >
-          {t("verify.successBody", { name: info.volunteer_display_name, competency: competencyLabel })}
+          {t("verify.successBody", { name: info.professional_display_name, competency: competencyLabel })}
         </motion.p>
       </div>
 
@@ -419,7 +419,7 @@ export default function VerifyPage() {
   const { t } = useTranslation();
 
   const [tokenState, setTokenState] = useState<TokenState>("loading");
-  const [info, setInfo] = useState<VolunteerInfo | null>(null);
+  const [info, setInfo] = useState<ProfessionalInfo | null>(null);
   const [step, setStep] = useState<FlowStep>("intro");
   const [selectedRating, setSelectedRating] = useState<number>(0);
   const [submitting, setSubmitting] = useState(false);
@@ -438,7 +438,7 @@ export default function VerifyPage() {
       .then(async (r) => {
         if (!isMounted.current) return;
         if (r.ok) {
-          const data: VolunteerInfo = await r.json();
+          const data: ProfessionalInfo = await r.json();
           setInfo(data);
           setTokenState("valid");
           return;

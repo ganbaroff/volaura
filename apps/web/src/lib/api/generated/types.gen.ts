@@ -123,7 +123,7 @@ export type AssessmentResultOut = {
  * Assign one or more competency assessments to specific volunteers.
  */
 export type AssignAssessmentRequest = {
-    volunteer_ids: Array<string>;
+    professional_ids: Array<string>;
     competency_slugs: Array<string>;
     deadline_days?: number;
     message?: string | null;
@@ -169,7 +169,7 @@ export type AuraEvaluationItem = {
  * Response for GET /aura/me/explanation — transparent per-competency breakdown.
  */
 export type AuraExplanationResponse = {
-    volunteer_id: string;
+    professional_id: string;
     explanation_count: number;
     has_pending_evaluations: boolean;
     pending_reeval_count: number;
@@ -178,7 +178,7 @@ export type AuraExplanationResponse = {
 };
 
 export type AuraScoreResponse = {
-    volunteer_id: string;
+    professional_id: string;
     total_score: number;
     badge_tier: string;
     elite_status: boolean;
@@ -221,7 +221,7 @@ export type BetaFunnelStats = {
     aura_scores_generated: number;
 };
 
-export type BodyBulkInviteVolunteersApiOrganizationsOrgIdInvitesBulkPost = {
+export type BodyBulkInviteProfessionalsApiOrganizationsOrgIdInvitesBulkPost = {
     file: string;
 };
 
@@ -241,7 +241,7 @@ export type BulkInviteResponse = {
  * Payload for POST /api/character/events.
  */
 export type CharacterEventCreate = {
-    event_type: 'crystal_earned' | 'crystal_spent' | 'skill_verified' | 'skill_unverified' | 'xp_earned' | 'stat_changed' | 'login_streak' | 'milestone_reached';
+    event_type: 'crystal_earned' | 'crystal_spent' | 'skill_verified' | 'skill_unverified' | 'xp_earned' | 'stat_changed' | 'login_streak' | 'milestone_reached' | 'buff_applied' | 'vital_logged';
     payload?: {
         [key: string]: unknown;
     };
@@ -341,7 +341,7 @@ export type CoordinatorRatingRequest = {
 };
 
 /**
- * Request body for POST /api/profiles/{volunteer_id}/verification-link.
+ * Request body for POST /api/profiles/{professional_id}/verification-link.
  */
 export type CreateVerificationLinkRequest = {
     verifier_name: string;
@@ -374,16 +374,24 @@ export type CrystalBalanceOut = {
      * Current crystal balance
      */
     crystal_balance: number;
+    /**
+     * When the last crystal was earned
+     */
+    last_earned_at?: string | null;
+    /**
+     * Lifetime crystals earned (positive ledger entries only)
+     */
+    lifetime_earned: number;
     computed_at: string;
 };
 
 /**
- * Volunteer profile visible to org users on the discovery page.
+ * Professional profile visible to org users on the discovery page.
  *
- * Only includes volunteers who have opted in (visible_to_orgs=True).
+ * Only includes professionals who have opted in (visible_to_orgs=True).
  * AURA score joined from aura_scores table.
  */
-export type DiscoverableVolunteer = {
+export type DiscoverableProfessional = {
     id: string;
     username: string;
     display_name?: string | null;
@@ -409,23 +417,15 @@ export type DiscoveryMeta = {
 };
 
 /**
- * Wrapped discovery response following {data, meta} envelope.
- */
-export type DiscoveryResponse = {
-    data: Array<DiscoveryVolunteer>;
-    meta: DiscoveryMeta;
-};
-
-/**
- * Single volunteer in discovery results.
+ * Single professional in discovery results.
  *
  * Security (agent review 2026-03-25):
  * - display_name: server-side anonymized to "First L." — never trust user-controlled field
  * - competency_score: only the REQUESTED competency — not full competency_scores JSONB
- * - volunteer_id: exposed intentionally — used by POST /organizations/{id}/assign-assessments
+ * - professional_id: exposed intentionally — used by POST /organizations/{id}/assign-assessments
  */
-export type DiscoveryVolunteer = {
-    volunteer_id: string;
+export type DiscoveryProfessional = {
+    professional_id: string;
     display_name: string;
     badge_tier: string;
     total_score: number;
@@ -436,11 +436,19 @@ export type DiscoveryVolunteer = {
 };
 
 /**
+ * Wrapped discovery response following {data, meta} envelope.
+ */
+export type DiscoveryResponse = {
+    data: Array<DiscoveryProfessional>;
+    meta: DiscoveryMeta;
+};
+
+/**
  * Enriched attendee for org dashboard — joins profile + AURA.
  */
 export type EventAttendeeRow = {
     registration_id: string;
-    volunteer_id: string;
+    professional_id: string;
     status: string;
     registered_at: string;
     checked_in_at?: string | null;
@@ -508,6 +516,20 @@ export type EventUpdate = {
     is_public?: boolean | null;
 };
 
+export type FromExternalRequest = {
+    standalone_user_id: string;
+    standalone_project_ref: string;
+    email: string;
+    source_product?: string;
+};
+
+export type FromExternalResponse = {
+    shared_user_id: string;
+    shared_jwt: string;
+    expires_at: string;
+    created_new_user: boolean;
+};
+
 /**
  * POST /api/brandedby/generations — request a new generation.
  */
@@ -555,7 +577,7 @@ export type HealthResponse = {
 };
 
 export type IntroRequestCreate = {
-    volunteer_id: string;
+    professional_id: string;
     project_name: string;
     timeline: string;
     message?: string | null;
@@ -564,7 +586,7 @@ export type IntroRequestCreate = {
 export type IntroRequestResponse = {
     id: string;
     org_id: string;
-    volunteer_id: string;
+    professional_id: string;
     project_name: string;
     timeline: string;
     message?: string | null;
@@ -676,14 +698,14 @@ export type OrgDashboardStats = {
     completion_rate: number;
     avg_aura_score: number | null;
     badge_distribution: BadgeDistribution;
-    top_volunteers: Array<OrgVolunteerRow>;
+    top_professionals: Array<OrgProfessionalRow>;
 };
 
 /**
- * One volunteer row in the org dashboard table.
+ * One professional row in the org dashboard table.
  */
-export type OrgVolunteerRow = {
-    volunteer_id: string;
+export type OrgProfessionalRow = {
+    professional_id: string;
     username: string;
     display_name?: string | null;
     overall_score?: number | null;
@@ -736,6 +758,33 @@ export type OrganizationUpdate = {
 export type PoolStatusOut = {
     in_pool: boolean;
     joined_at?: string | null;
+};
+
+export type ProfessionalRatingRequest = {
+    rating: number;
+    feedback?: string | null;
+};
+
+export type ProfessionalSearchRequest = {
+    query: string;
+    min_aura?: number;
+    badge_tier?: string | null;
+    languages?: Array<string>;
+    location?: string | null;
+    limit?: number;
+    offset?: number;
+};
+
+export type ProfessionalSearchResult = {
+    professional_id: string;
+    username: string;
+    display_name?: string | null;
+    overall_score: number;
+    badge_tier: string;
+    elite_status: boolean;
+    location?: string | null;
+    languages?: Array<string>;
+    similarity?: number | null;
 };
 
 export type ProfileCreate = {
@@ -818,7 +867,7 @@ export type PublicProfileResponse = {
 };
 
 export type PublicStatsResponse = {
-    total_volunteers: number;
+    total_professionals: number;
     total_assessments: number;
     total_events: number;
     avg_aura_score: number;
@@ -897,15 +946,15 @@ export type RegisterRequest = {
 export type RegistrationResponse = {
     id: string;
     event_id: string;
-    volunteer_id: string;
+    professional_id: string;
     status: string;
     registered_at: string;
     checked_in_at?: string | null;
     check_in_code?: string | null;
     coordinator_rating?: number | null;
     coordinator_feedback?: string | null;
-    volunteer_rating?: number | null;
-    volunteer_feedback?: string | null;
+    professional_rating?: number | null;
+    professional_feedback?: string | null;
 };
 
 export type RenewalResponse = {
@@ -924,7 +973,7 @@ export type SavedSearchCreate = {
 };
 
 /**
- * Mirrors VolunteerSearchRequest — the JSONB payload stored in org_saved_searches.filters.
+ * Mirrors ProfessionalSearchRequest — the JSONB payload stored in org_saved_searches.filters.
  *
  * Keeping this as a dedicated model (not reusing VolunteerSearchRequest) prevents drift:
  * saved filters never include pagination (limit/offset) and must be stable across versions.
@@ -1018,7 +1067,9 @@ export type SkillResponse = {
 export type StartAssessmentRequest = {
     competency_slug: string;
     language?: 'en' | 'az';
-    role_level?: 'volunteer' | 'coordinator' | 'specialist' | 'manager' | 'senior_manager';
+    role_level?: 'professional' | 'volunteer' | 'coordinator' | 'specialist' | 'manager' | 'senior_manager';
+    energy_level?: 'full' | 'mid' | 'low';
+    automated_decision_consent?: boolean;
 };
 
 export type SubmitAnswerRequest = {
@@ -1041,7 +1092,7 @@ export type SubmitVerificationRequest = {
  */
 export type SubmitVerificationResponse = {
     status?: 'verified';
-    volunteer_display_name: string;
+    professional_display_name: string;
     competency_id: string;
     rating: number;
 };
@@ -1138,9 +1189,9 @@ export type ValidationError = {
  * Returned by GET /api/verify/{token} — public, no auth required.
  */
 export type VerificationTokenInfo = {
-    volunteer_display_name: string;
-    volunteer_username: string;
-    volunteer_avatar_url: string | null;
+    professional_display_name: string;
+    professional_username: string;
+    professional_avatar_url: string | null;
     verifier_name: string;
     verifier_org: string | null;
     competency_id: string;
@@ -1153,33 +1204,6 @@ export type VerifiedSkillOut = {
     slug: string;
     aura_score?: number | null;
     badge_tier?: string | null;
-};
-
-export type VolunteerRatingRequest = {
-    rating: number;
-    feedback?: string | null;
-};
-
-export type VolunteerSearchRequest = {
-    query: string;
-    min_aura?: number;
-    badge_tier?: string | null;
-    languages?: Array<string>;
-    location?: string | null;
-    limit?: number;
-    offset?: number;
-};
-
-export type VolunteerSearchResult = {
-    volunteer_id: string;
-    username: string;
-    display_name?: string | null;
-    overall_score: number;
-    badge_tier: string;
-    elite_status: boolean;
-    location?: string | null;
-    languages?: Array<string>;
-    similarity?: number | null;
 };
 
 /**
@@ -1344,6 +1368,34 @@ export type LogoutApiAuthLogoutPostResponses = {
 
 export type LogoutApiAuthLogoutPostResponse = LogoutApiAuthLogoutPostResponses[keyof LogoutApiAuthLogoutPostResponses];
 
+export type BridgeFromExternalApiAuthFromExternalPostData = {
+    body: FromExternalRequest;
+    headers?: {
+        'X-Bridge-Secret'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/auth/from_external';
+};
+
+export type BridgeFromExternalApiAuthFromExternalPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type BridgeFromExternalApiAuthFromExternalPostError = BridgeFromExternalApiAuthFromExternalPostErrors[keyof BridgeFromExternalApiAuthFromExternalPostErrors];
+
+export type BridgeFromExternalApiAuthFromExternalPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: FromExternalResponse;
+};
+
+export type BridgeFromExternalApiAuthFromExternalPostResponse = BridgeFromExternalApiAuthFromExternalPostResponses[keyof BridgeFromExternalApiAuthFromExternalPostResponses];
+
 export type GetMyProfileApiProfilesMeGetData = {
     body?: never;
     path?: never;
@@ -1410,34 +1462,34 @@ export type UpdateMyProfileApiProfilesMePutResponses = {
 
 export type UpdateMyProfileApiProfilesMePutResponse = UpdateMyProfileApiProfilesMePutResponses[keyof UpdateMyProfileApiProfilesMePutResponses];
 
-export type CreateVerificationLinkApiProfilesVolunteerIdVerificationLinkPostData = {
+export type CreateVerificationLinkApiProfilesProfessionalIdVerificationLinkPostData = {
     body: CreateVerificationLinkRequest;
     path: {
-        volunteer_id: string;
+        professional_id: string;
     };
     query?: never;
-    url: '/api/profiles/{volunteer_id}/verification-link';
+    url: '/api/profiles/{professional_id}/verification-link';
 };
 
-export type CreateVerificationLinkApiProfilesVolunteerIdVerificationLinkPostErrors = {
+export type CreateVerificationLinkApiProfilesProfessionalIdVerificationLinkPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type CreateVerificationLinkApiProfilesVolunteerIdVerificationLinkPostError = CreateVerificationLinkApiProfilesVolunteerIdVerificationLinkPostErrors[keyof CreateVerificationLinkApiProfilesVolunteerIdVerificationLinkPostErrors];
+export type CreateVerificationLinkApiProfilesProfessionalIdVerificationLinkPostError = CreateVerificationLinkApiProfilesProfessionalIdVerificationLinkPostErrors[keyof CreateVerificationLinkApiProfilesProfessionalIdVerificationLinkPostErrors];
 
-export type CreateVerificationLinkApiProfilesVolunteerIdVerificationLinkPostResponses = {
+export type CreateVerificationLinkApiProfilesProfessionalIdVerificationLinkPostResponses = {
     /**
      * Successful Response
      */
     201: CreateVerificationLinkResponse;
 };
 
-export type CreateVerificationLinkApiProfilesVolunteerIdVerificationLinkPostResponse = CreateVerificationLinkApiProfilesVolunteerIdVerificationLinkPostResponses[keyof CreateVerificationLinkApiProfilesVolunteerIdVerificationLinkPostResponses];
+export type CreateVerificationLinkApiProfilesProfessionalIdVerificationLinkPostResponse = CreateVerificationLinkApiProfilesProfessionalIdVerificationLinkPostResponses[keyof CreateVerificationLinkApiProfilesProfessionalIdVerificationLinkPostResponses];
 
-export type ListPublicVolunteersApiProfilesPublicGetData = {
+export type ListPublicProfessionalsApiProfilesPublicGetData = {
     body?: never;
     path?: never;
     query?: {
@@ -1447,23 +1499,23 @@ export type ListPublicVolunteersApiProfilesPublicGetData = {
     url: '/api/profiles/public';
 };
 
-export type ListPublicVolunteersApiProfilesPublicGetErrors = {
+export type ListPublicProfessionalsApiProfilesPublicGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ListPublicVolunteersApiProfilesPublicGetError = ListPublicVolunteersApiProfilesPublicGetErrors[keyof ListPublicVolunteersApiProfilesPublicGetErrors];
+export type ListPublicProfessionalsApiProfilesPublicGetError = ListPublicProfessionalsApiProfilesPublicGetErrors[keyof ListPublicProfessionalsApiProfilesPublicGetErrors];
 
-export type ListPublicVolunteersApiProfilesPublicGetResponses = {
+export type ListPublicProfessionalsApiProfilesPublicGetResponses = {
     /**
      * Successful Response
      */
-    200: Array<DiscoverableVolunteer>;
+    200: Array<DiscoverableProfessional>;
 };
 
-export type ListPublicVolunteersApiProfilesPublicGetResponse = ListPublicVolunteersApiProfilesPublicGetResponses[keyof ListPublicVolunteersApiProfilesPublicGetResponses];
+export type ListPublicProfessionalsApiProfilesPublicGetResponse = ListPublicProfessionalsApiProfilesPublicGetResponses[keyof ListPublicProfessionalsApiProfilesPublicGetResponses];
 
 export type GetPublicProfileApiProfilesUsernameGetData = {
     body?: never;
@@ -1587,32 +1639,32 @@ export type GetAuraExplanationApiAuraMeExplanationGetResponses = {
 
 export type GetAuraExplanationApiAuraMeExplanationGetResponse = GetAuraExplanationApiAuraMeExplanationGetResponses[keyof GetAuraExplanationApiAuraMeExplanationGetResponses];
 
-export type GetAuraByIdApiAuraVolunteerIdGetData = {
+export type GetAuraByIdApiAuraProfessionalIdGetData = {
     body?: never;
     path: {
-        volunteer_id: string;
+        professional_id: string;
     };
     query?: never;
-    url: '/api/aura/{volunteer_id}';
+    url: '/api/aura/{professional_id}';
 };
 
-export type GetAuraByIdApiAuraVolunteerIdGetErrors = {
+export type GetAuraByIdApiAuraProfessionalIdGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type GetAuraByIdApiAuraVolunteerIdGetError = GetAuraByIdApiAuraVolunteerIdGetErrors[keyof GetAuraByIdApiAuraVolunteerIdGetErrors];
+export type GetAuraByIdApiAuraProfessionalIdGetError = GetAuraByIdApiAuraProfessionalIdGetErrors[keyof GetAuraByIdApiAuraProfessionalIdGetErrors];
 
-export type GetAuraByIdApiAuraVolunteerIdGetResponses = {
+export type GetAuraByIdApiAuraProfessionalIdGetResponses = {
     /**
      * Successful Response
      */
     200: AuraScoreResponse;
 };
 
-export type GetAuraByIdApiAuraVolunteerIdGetResponse = GetAuraByIdApiAuraVolunteerIdGetResponses[keyof GetAuraByIdApiAuraVolunteerIdGetResponses];
+export type GetAuraByIdApiAuraProfessionalIdGetResponse = GetAuraByIdApiAuraProfessionalIdGetResponses[keyof GetAuraByIdApiAuraProfessionalIdGetResponses];
 
 export type GetVisibilityApiAuraMeVisibilityGetData = {
     body?: never;
@@ -2075,7 +2127,7 @@ export type CheckInApiEventsEventIdCheckinPostResponses = {
 
 export type CheckInApiEventsEventIdCheckinPostResponse = CheckInApiEventsEventIdCheckinPostResponses[keyof CheckInApiEventsEventIdCheckinPostResponses];
 
-export type CoordinatorRateVolunteerApiEventsEventIdRateCoordinatorPostData = {
+export type CoordinatorRateParticipantApiEventsEventIdRateCoordinatorPostData = {
     body: CoordinatorRatingRequest;
     path: {
         event_id: string;
@@ -2084,26 +2136,26 @@ export type CoordinatorRateVolunteerApiEventsEventIdRateCoordinatorPostData = {
     url: '/api/events/{event_id}/rate/coordinator';
 };
 
-export type CoordinatorRateVolunteerApiEventsEventIdRateCoordinatorPostErrors = {
+export type CoordinatorRateParticipantApiEventsEventIdRateCoordinatorPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type CoordinatorRateVolunteerApiEventsEventIdRateCoordinatorPostError = CoordinatorRateVolunteerApiEventsEventIdRateCoordinatorPostErrors[keyof CoordinatorRateVolunteerApiEventsEventIdRateCoordinatorPostErrors];
+export type CoordinatorRateParticipantApiEventsEventIdRateCoordinatorPostError = CoordinatorRateParticipantApiEventsEventIdRateCoordinatorPostErrors[keyof CoordinatorRateParticipantApiEventsEventIdRateCoordinatorPostErrors];
 
-export type CoordinatorRateVolunteerApiEventsEventIdRateCoordinatorPostResponses = {
+export type CoordinatorRateParticipantApiEventsEventIdRateCoordinatorPostResponses = {
     /**
      * Successful Response
      */
     200: RegistrationResponse;
 };
 
-export type CoordinatorRateVolunteerApiEventsEventIdRateCoordinatorPostResponse = CoordinatorRateVolunteerApiEventsEventIdRateCoordinatorPostResponses[keyof CoordinatorRateVolunteerApiEventsEventIdRateCoordinatorPostResponses];
+export type CoordinatorRateParticipantApiEventsEventIdRateCoordinatorPostResponse = CoordinatorRateParticipantApiEventsEventIdRateCoordinatorPostResponses[keyof CoordinatorRateParticipantApiEventsEventIdRateCoordinatorPostResponses];
 
-export type VolunteerRateEventApiEventsEventIdRateVolunteerPostData = {
-    body: VolunteerRatingRequest;
+export type ParticipantRateEventApiEventsEventIdRateVolunteerPostData = {
+    body: ProfessionalRatingRequest;
     path: {
         event_id: string;
     };
@@ -2111,23 +2163,23 @@ export type VolunteerRateEventApiEventsEventIdRateVolunteerPostData = {
     url: '/api/events/{event_id}/rate/volunteer';
 };
 
-export type VolunteerRateEventApiEventsEventIdRateVolunteerPostErrors = {
+export type ParticipantRateEventApiEventsEventIdRateVolunteerPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type VolunteerRateEventApiEventsEventIdRateVolunteerPostError = VolunteerRateEventApiEventsEventIdRateVolunteerPostErrors[keyof VolunteerRateEventApiEventsEventIdRateVolunteerPostErrors];
+export type ParticipantRateEventApiEventsEventIdRateVolunteerPostError = ParticipantRateEventApiEventsEventIdRateVolunteerPostErrors[keyof ParticipantRateEventApiEventsEventIdRateVolunteerPostErrors];
 
-export type VolunteerRateEventApiEventsEventIdRateVolunteerPostResponses = {
+export type ParticipantRateEventApiEventsEventIdRateVolunteerPostResponses = {
     /**
      * Successful Response
      */
     200: RegistrationResponse;
 };
 
-export type VolunteerRateEventApiEventsEventIdRateVolunteerPostResponse = VolunteerRateEventApiEventsEventIdRateVolunteerPostResponses[keyof VolunteerRateEventApiEventsEventIdRateVolunteerPostResponses];
+export type ParticipantRateEventApiEventsEventIdRateVolunteerPostResponse = ParticipantRateEventApiEventsEventIdRateVolunteerPostResponses[keyof ParticipantRateEventApiEventsEventIdRateVolunteerPostResponses];
 
 export type ListRegistrationsApiEventsEventIdRegistrationsGetData = {
     body?: never;
@@ -2392,7 +2444,7 @@ export type GetOrgDashboardApiOrganizationsMeDashboardGetResponses = {
 
 export type GetOrgDashboardApiOrganizationsMeDashboardGetResponse = GetOrgDashboardApiOrganizationsMeDashboardGetResponses[keyof GetOrgDashboardApiOrganizationsMeDashboardGetResponses];
 
-export type ListOrgVolunteersApiOrganizationsMeVolunteersGetData = {
+export type ListOrgTalentApiOrganizationsMeProfessionalsGetData = {
     body?: never;
     path?: never;
     query?: {
@@ -2403,51 +2455,51 @@ export type ListOrgVolunteersApiOrganizationsMeVolunteersGetData = {
         limit?: number;
         offset?: number;
     };
-    url: '/api/organizations/me/volunteers';
+    url: '/api/organizations/me/professionals';
 };
 
-export type ListOrgVolunteersApiOrganizationsMeVolunteersGetErrors = {
+export type ListOrgTalentApiOrganizationsMeProfessionalsGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ListOrgVolunteersApiOrganizationsMeVolunteersGetError = ListOrgVolunteersApiOrganizationsMeVolunteersGetErrors[keyof ListOrgVolunteersApiOrganizationsMeVolunteersGetErrors];
+export type ListOrgTalentApiOrganizationsMeProfessionalsGetError = ListOrgTalentApiOrganizationsMeProfessionalsGetErrors[keyof ListOrgTalentApiOrganizationsMeProfessionalsGetErrors];
 
-export type ListOrgVolunteersApiOrganizationsMeVolunteersGetResponses = {
+export type ListOrgTalentApiOrganizationsMeProfessionalsGetResponses = {
     /**
      * Successful Response
      */
-    200: Array<OrgVolunteerRow>;
+    200: Array<OrgProfessionalRow>;
 };
 
-export type ListOrgVolunteersApiOrganizationsMeVolunteersGetResponse = ListOrgVolunteersApiOrganizationsMeVolunteersGetResponses[keyof ListOrgVolunteersApiOrganizationsMeVolunteersGetResponses];
+export type ListOrgTalentApiOrganizationsMeProfessionalsGetResponse = ListOrgTalentApiOrganizationsMeProfessionalsGetResponses[keyof ListOrgTalentApiOrganizationsMeProfessionalsGetResponses];
 
-export type SearchVolunteersApiOrganizationsSearchVolunteersPostData = {
-    body: VolunteerSearchRequest;
+export type SearchTalentApiOrganizationsSearchProfessionalsPostData = {
+    body: ProfessionalSearchRequest;
     path?: never;
     query?: never;
-    url: '/api/organizations/search/volunteers';
+    url: '/api/organizations/search/professionals';
 };
 
-export type SearchVolunteersApiOrganizationsSearchVolunteersPostErrors = {
+export type SearchTalentApiOrganizationsSearchProfessionalsPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type SearchVolunteersApiOrganizationsSearchVolunteersPostError = SearchVolunteersApiOrganizationsSearchVolunteersPostErrors[keyof SearchVolunteersApiOrganizationsSearchVolunteersPostErrors];
+export type SearchTalentApiOrganizationsSearchProfessionalsPostError = SearchTalentApiOrganizationsSearchProfessionalsPostErrors[keyof SearchTalentApiOrganizationsSearchProfessionalsPostErrors];
 
-export type SearchVolunteersApiOrganizationsSearchVolunteersPostResponses = {
+export type SearchTalentApiOrganizationsSearchProfessionalsPostResponses = {
     /**
      * Successful Response
      */
-    200: Array<VolunteerSearchResult>;
+    200: Array<ProfessionalSearchResult>;
 };
 
-export type SearchVolunteersApiOrganizationsSearchVolunteersPostResponse = SearchVolunteersApiOrganizationsSearchVolunteersPostResponses[keyof SearchVolunteersApiOrganizationsSearchVolunteersPostResponses];
+export type SearchTalentApiOrganizationsSearchProfessionalsPostResponse = SearchTalentApiOrganizationsSearchProfessionalsPostResponses[keyof SearchTalentApiOrganizationsSearchProfessionalsPostResponses];
 
 export type AssignAssessmentsApiOrganizationsAssignAssessmentsPostData = {
     body: AssignAssessmentRequest;
@@ -2553,8 +2605,8 @@ export type UpdateSavedSearchApiOrganizationsSavedSearchesSearchIdPatchResponses
 
 export type UpdateSavedSearchApiOrganizationsSavedSearchesSearchIdPatchResponse = UpdateSavedSearchApiOrganizationsSavedSearchesSearchIdPatchResponses[keyof UpdateSavedSearchApiOrganizationsSavedSearchesSearchIdPatchResponses];
 
-export type BulkInviteVolunteersApiOrganizationsOrgIdInvitesBulkPostData = {
-    body: BodyBulkInviteVolunteersApiOrganizationsOrgIdInvitesBulkPost;
+export type BulkInviteProfessionalsApiOrganizationsOrgIdInvitesBulkPostData = {
+    body: BodyBulkInviteProfessionalsApiOrganizationsOrgIdInvitesBulkPost;
     path: {
         org_id: string;
     };
@@ -2562,23 +2614,23 @@ export type BulkInviteVolunteersApiOrganizationsOrgIdInvitesBulkPostData = {
     url: '/api/organizations/{org_id}/invites/bulk';
 };
 
-export type BulkInviteVolunteersApiOrganizationsOrgIdInvitesBulkPostErrors = {
+export type BulkInviteProfessionalsApiOrganizationsOrgIdInvitesBulkPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type BulkInviteVolunteersApiOrganizationsOrgIdInvitesBulkPostError = BulkInviteVolunteersApiOrganizationsOrgIdInvitesBulkPostErrors[keyof BulkInviteVolunteersApiOrganizationsOrgIdInvitesBulkPostErrors];
+export type BulkInviteProfessionalsApiOrganizationsOrgIdInvitesBulkPostError = BulkInviteProfessionalsApiOrganizationsOrgIdInvitesBulkPostErrors[keyof BulkInviteProfessionalsApiOrganizationsOrgIdInvitesBulkPostErrors];
 
-export type BulkInviteVolunteersApiOrganizationsOrgIdInvitesBulkPostResponses = {
+export type BulkInviteProfessionalsApiOrganizationsOrgIdInvitesBulkPostResponses = {
     /**
      * Successful Response
      */
     207: BulkInviteResponse;
 };
 
-export type BulkInviteVolunteersApiOrganizationsOrgIdInvitesBulkPostResponse = BulkInviteVolunteersApiOrganizationsOrgIdInvitesBulkPostResponses[keyof BulkInviteVolunteersApiOrganizationsOrgIdInvitesBulkPostResponses];
+export type BulkInviteProfessionalsApiOrganizationsOrgIdInvitesBulkPostResponse = BulkInviteProfessionalsApiOrganizationsOrgIdInvitesBulkPostResponses[keyof BulkInviteProfessionalsApiOrganizationsOrgIdInvitesBulkPostResponses];
 
 export type ListInvitesApiOrganizationsOrgIdInvitesGetData = {
     body?: never;
@@ -2624,25 +2676,25 @@ export type DownloadInviteTemplateApiOrganizationsOrgIdInvitesTemplateGetRespons
     200: unknown;
 };
 
-export type GetOpenBadgeCredentialApiBadgesVolunteerIdCredentialGetData = {
+export type GetOpenBadgeCredentialApiBadgesProfessionalIdCredentialGetData = {
     body?: never;
     path: {
-        volunteer_id: string;
+        professional_id: string;
     };
     query?: never;
-    url: '/api/badges/{volunteer_id}/credential';
+    url: '/api/badges/{professional_id}/credential';
 };
 
-export type GetOpenBadgeCredentialApiBadgesVolunteerIdCredentialGetErrors = {
+export type GetOpenBadgeCredentialApiBadgesProfessionalIdCredentialGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type GetOpenBadgeCredentialApiBadgesVolunteerIdCredentialGetError = GetOpenBadgeCredentialApiBadgesVolunteerIdCredentialGetErrors[keyof GetOpenBadgeCredentialApiBadgesVolunteerIdCredentialGetErrors];
+export type GetOpenBadgeCredentialApiBadgesProfessionalIdCredentialGetError = GetOpenBadgeCredentialApiBadgesProfessionalIdCredentialGetErrors[keyof GetOpenBadgeCredentialApiBadgesProfessionalIdCredentialGetErrors];
 
-export type GetOpenBadgeCredentialApiBadgesVolunteerIdCredentialGetResponses = {
+export type GetOpenBadgeCredentialApiBadgesProfessionalIdCredentialGetResponses = {
     /**
      * Successful Response
      */
@@ -2651,7 +2703,7 @@ export type GetOpenBadgeCredentialApiBadgesVolunteerIdCredentialGetResponses = {
     };
 };
 
-export type GetOpenBadgeCredentialApiBadgesVolunteerIdCredentialGetResponse = GetOpenBadgeCredentialApiBadgesVolunteerIdCredentialGetResponses[keyof GetOpenBadgeCredentialApiBadgesVolunteerIdCredentialGetResponses];
+export type GetOpenBadgeCredentialApiBadgesProfessionalIdCredentialGetResponse = GetOpenBadgeCredentialApiBadgesProfessionalIdCredentialGetResponses[keyof GetOpenBadgeCredentialApiBadgesProfessionalIdCredentialGetResponses];
 
 export type GetIssuerProfileApiBadgesIssuerGetData = {
     body?: never;
@@ -2804,7 +2856,7 @@ export type IngestEventApiAnalyticsEventPostResponses = {
 
 export type IngestEventApiAnalyticsEventPostResponse = IngestEventApiAnalyticsEventPostResponses[keyof IngestEventApiAnalyticsEventPostResponses];
 
-export type DiscoverVolunteersApiVolunteersDiscoveryGetData = {
+export type DiscoverTalentApiVolunteersDiscoveryGetData = {
     body?: never;
     path?: never;
     query?: {
@@ -2825,23 +2877,23 @@ export type DiscoverVolunteersApiVolunteersDiscoveryGetData = {
     url: '/api/volunteers/discovery';
 };
 
-export type DiscoverVolunteersApiVolunteersDiscoveryGetErrors = {
+export type DiscoverTalentApiVolunteersDiscoveryGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type DiscoverVolunteersApiVolunteersDiscoveryGetError = DiscoverVolunteersApiVolunteersDiscoveryGetErrors[keyof DiscoverVolunteersApiVolunteersDiscoveryGetErrors];
+export type DiscoverTalentApiVolunteersDiscoveryGetError = DiscoverTalentApiVolunteersDiscoveryGetErrors[keyof DiscoverTalentApiVolunteersDiscoveryGetErrors];
 
-export type DiscoverVolunteersApiVolunteersDiscoveryGetResponses = {
+export type DiscoverTalentApiVolunteersDiscoveryGetResponses = {
     /**
      * Successful Response
      */
     200: DiscoveryResponse;
 };
 
-export type DiscoverVolunteersApiVolunteersDiscoveryGetResponse = DiscoverVolunteersApiVolunteersDiscoveryGetResponses[keyof DiscoverVolunteersApiVolunteersDiscoveryGetResponses];
+export type DiscoverTalentApiVolunteersDiscoveryGetResponse = DiscoverTalentApiVolunteersDiscoveryGetResponses[keyof DiscoverTalentApiVolunteersDiscoveryGetResponses];
 
 export type GetLeaderboardApiLeaderboardGetData = {
     body?: never;
@@ -3666,6 +3718,161 @@ export type RejectOrganizationApiAdminOrganizationsOrgIdRejectPostResponses = {
 };
 
 export type RejectOrganizationApiAdminOrganizationsOrgIdRejectPostResponse = RejectOrganizationApiAdminOrganizationsOrgIdRejectPostResponses[keyof RejectOrganizationApiAdminOrganizationsOrgIdRejectPostResponses];
+
+export type GetSwarmAgentsApiAdminSwarmAgentsGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/admin/swarm/agents';
+};
+
+export type GetSwarmAgentsApiAdminSwarmAgentsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type GetSwarmAgentsApiAdminSwarmAgentsGetResponse = GetSwarmAgentsApiAdminSwarmAgentsGetResponses[keyof GetSwarmAgentsApiAdminSwarmAgentsGetResponses];
+
+export type GetSwarmProposalsApiAdminSwarmProposalsGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        status?: string | null;
+    };
+    url: '/api/admin/swarm/proposals';
+};
+
+export type GetSwarmProposalsApiAdminSwarmProposalsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetSwarmProposalsApiAdminSwarmProposalsGetError = GetSwarmProposalsApiAdminSwarmProposalsGetErrors[keyof GetSwarmProposalsApiAdminSwarmProposalsGetErrors];
+
+export type GetSwarmProposalsApiAdminSwarmProposalsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type GetSwarmProposalsApiAdminSwarmProposalsGetResponse = GetSwarmProposalsApiAdminSwarmProposalsGetResponses[keyof GetSwarmProposalsApiAdminSwarmProposalsGetResponses];
+
+export type DecideProposalApiAdminSwarmProposalsProposalIdDecidePostData = {
+    body?: never;
+    path: {
+        proposal_id: string;
+    };
+    query?: never;
+    url: '/api/admin/swarm/proposals/{proposal_id}/decide';
+};
+
+export type DecideProposalApiAdminSwarmProposalsProposalIdDecidePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DecideProposalApiAdminSwarmProposalsProposalIdDecidePostError = DecideProposalApiAdminSwarmProposalsProposalIdDecidePostErrors[keyof DecideProposalApiAdminSwarmProposalsProposalIdDecidePostErrors];
+
+export type DecideProposalApiAdminSwarmProposalsProposalIdDecidePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type DecideProposalApiAdminSwarmProposalsProposalIdDecidePostResponse = DecideProposalApiAdminSwarmProposalsProposalIdDecidePostResponses[keyof DecideProposalApiAdminSwarmProposalsProposalIdDecidePostResponses];
+
+export type GetSwarmFindingsApiAdminSwarmFindingsGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+        category?: string;
+        min_importance?: number;
+    };
+    url: '/api/admin/swarm/findings';
+};
+
+export type GetSwarmFindingsApiAdminSwarmFindingsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetSwarmFindingsApiAdminSwarmFindingsGetError = GetSwarmFindingsApiAdminSwarmFindingsGetErrors[keyof GetSwarmFindingsApiAdminSwarmFindingsGetErrors];
+
+export type GetSwarmFindingsApiAdminSwarmFindingsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type GetSwarmFindingsApiAdminSwarmFindingsGetResponse = GetSwarmFindingsApiAdminSwarmFindingsGetResponses[keyof GetSwarmFindingsApiAdminSwarmFindingsGetResponses];
+
+export type GatewayHealthApiAtlasHealthGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/atlas/health';
+};
+
+export type GatewayHealthApiAtlasHealthGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type GatewayHealthApiAtlasHealthGetResponse = GatewayHealthApiAtlasHealthGetResponses[keyof GatewayHealthApiAtlasHealthGetResponses];
+
+export type ReceiveProposalApiAtlasProposalPostData = {
+    body?: never;
+    headers?: {
+        'x-gateway-secret'?: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/atlas/proposal';
+};
+
+export type ReceiveProposalApiAtlasProposalPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ReceiveProposalApiAtlasProposalPostError = ReceiveProposalApiAtlasProposalPostErrors[keyof ReceiveProposalApiAtlasProposalPostErrors];
+
+export type ReceiveProposalApiAtlasProposalPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type ReceiveProposalApiAtlasProposalPostResponse = ReceiveProposalApiAtlasProposalPostResponses[keyof ReceiveProposalApiAtlasProposalPostResponses];
 
 export type ClientOptions = {
     baseUrl: 'http://localhost:8000' | (string & {});

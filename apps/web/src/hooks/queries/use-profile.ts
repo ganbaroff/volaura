@@ -12,7 +12,7 @@ import { toProfile } from "@/lib/api/types";
 import { apiFetch, ApiError } from "@/lib/api/client";
 import { useAuthToken } from "./use-auth-token";
 
-export interface DiscoverableVolunteer {
+export interface DiscoverableProfessional {
   id: string;
   username: string;
   display_name: string | null;
@@ -53,11 +53,11 @@ export function usePublicProfile(username: string | undefined) {
   });
 }
 
-/** Org-only: list all opted-in volunteers ordered by AURA score */
-export function useDiscoverableVolunteers(params?: { limit?: number; offset?: number }) {
+/** Org-only: list all opted-in professionals ordered by AURA score */
+export function useDiscoverableProfessionals(params?: { limit?: number; offset?: number }) {
   const getToken = useAuthToken();
 
-  return useQuery<DiscoverableVolunteer[], ApiError>({
+  return useQuery<DiscoverableProfessional[], ApiError>({
     queryKey: ["profiles", "public", params],
     queryFn: async () => {
       const token = await getToken();
@@ -66,7 +66,7 @@ export function useDiscoverableVolunteers(params?: { limit?: number; offset?: nu
       if (params?.limit) search.set("limit", String(params.limit));
       if (params?.offset) search.set("offset", String(params.offset));
       const qs = search.toString();
-      return apiFetch<DiscoverableVolunteer[]>(`/api/profiles/public${qs ? `?${qs}` : ""}`, { token });
+      return apiFetch<DiscoverableProfessional[]>(`/api/profiles/public${qs ? `?${qs}` : ""}`, { token });
     },
     staleTime: 2 * 60 * 1000,
     retry: 1,

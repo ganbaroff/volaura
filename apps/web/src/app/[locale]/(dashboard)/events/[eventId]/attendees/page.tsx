@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { Loader2, ArrowLeft, Users, UserCheck, UserX, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
-import { useEventAttendees, useRateVolunteer } from "@/hooks/queries/use-events";
+import { useEventAttendees, useRateProfessional } from "@/hooks/queries/use-events";
 import { useEvent } from "@/hooks/queries/use-events";
 import type { EventAttendeeRow } from "@/hooks/queries/use-events";
 import { ApiError } from "@/lib/api/client";
@@ -108,7 +108,7 @@ function AttendeeRow({
 }) {
   const router = useRouter();
   const statusColor = STATUS_COLORS[a.status] ?? "text-muted-foreground";
-  const displayName = a.display_name ?? a.username ?? a.volunteer_id.slice(0, 8);
+  const displayName = a.display_name ?? a.username ?? a.professional_id.slice(0, 8);
   const checkedIn = a.status === "checked_in" || !!a.checked_in_at;
 
   return (
@@ -178,10 +178,10 @@ export default function EventAttendeesPage() {
 
   const { data: event } = useEvent(eventId);
   const { data: attendees, isLoading, error } = useEventAttendees(eventId);
-  const rateVolunteer = useRateVolunteer(eventId);
+  const rateProfessional = useRateProfessional(eventId);
 
   function handleRate(registrationId: string, rating: number) {
-    rateVolunteer.mutate({ registration_id: registrationId, rating });
+    rateProfessional.mutate({ registration_id: registrationId, rating });
   }
 
   const eventTitle = locale === "az"
@@ -260,7 +260,7 @@ export default function EventAttendeesPage() {
               locale={locale}
               index={i}
               onRate={handleRate}
-              isRatingPending={rateVolunteer.isPending}
+              isRatingPending={rateProfessional.isPending}
             />
           ))}
         </div>

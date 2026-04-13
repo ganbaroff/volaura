@@ -29,7 +29,7 @@ import type { AuraScoreResponse } from "./generated/types.gen";
 export type BadgeTier = "platinum" | "gold" | "silver" | "bronze" | "none";
 
 export type AuraScore = {
-  volunteer_id: string;
+  professional_id: string;
   total_score: number;
   effective_score?: number | null;
   badge_tier: BadgeTier;
@@ -47,7 +47,7 @@ export type AuraScore = {
 /** Transform API response to AuraScore used by hooks */
 export function toAuraScore(raw: AuraScoreResponse): AuraScore {
   return {
-    volunteer_id: raw.volunteer_id,
+    professional_id: raw.professional_id,
     total_score: raw.total_score,
     effective_score: raw.effective_score,
     badge_tier: (raw.badge_tier as BadgeTier) || "none",
@@ -134,5 +134,5 @@ export interface DashboardStats {
 export type {
   BadgeDistribution,
   OrgDashboardStats,
-  OrgVolunteerRow,
+  OrgProfessionalRow,
 } from "./generated/types.gen";

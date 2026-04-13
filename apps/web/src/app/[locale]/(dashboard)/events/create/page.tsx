@@ -97,9 +97,11 @@ export default function CreateEventPage() {
   const [step2Data, setStep2Data] = useState<Step2Data | null>(null);
 
   // ── Step 1 form ────────────────────────────────────────────────────────────
-  const form1 = useForm<Step1Data>({ resolver: zodResolver(step1Schema), defaultValues: step1Data ?? undefined });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Zod 3.25 type compat with @hookform/resolvers
+  const form1 = useForm<Step1Data>({ resolver: zodResolver(step1Schema as any), defaultValues: step1Data ?? undefined });
   const form2 = useForm<Step2Data>({
-    resolver: zodResolver(step2Schema),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Zod 3.25 type compat
+    resolver: zodResolver(step2Schema as any),
     defaultValues: step2Data ?? { is_public: true, required_min_aura: 0 },
   });
 

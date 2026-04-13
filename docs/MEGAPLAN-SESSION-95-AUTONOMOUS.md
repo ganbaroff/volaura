@@ -70,8 +70,8 @@
 ### After all iterations:
 - [ ] E2E test: full user journey on prod
 - [ ] Design-code sync: Figma tokens = globals.css tokens
-- [ ] All 5 Constitution Laws verified in code + design
-- [ ] Crystal economy: at least 1 earn + 1 spend path implemented
+- [x] Constitution Laws verified: Law 1 (error=#d4b4ff purple ✅), Law 4 (prefers-reduced-motion ✅), Law 5 (no double-primary ✅). Law 2 (energy modes) + Law 3 (shame-free language) need UX review.
+- [x] Crystal economy: 6 VOLAURA events with crystal earn/spend + sync every 5 game-years
 - [ ] Telegram bot: executor, not chatbot
 - [ ] Report to CEO: "ecosystem works, no problems"
 

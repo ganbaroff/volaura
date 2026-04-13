@@ -1,31 +1,35 @@
 # Sprint State — Volaura
 
-**Last Updated:** 2026-04-12 (Session 93+ — Atlas autonomy sprint, 30 commits)
+**Last Updated:** 2026-04-15 (Session 96 — autonomous mega-plan, 8 commits)
 
 ## Current Position
-Sprint: Sprint 0 — Ecosystem Wiring + Atlas Autonomy
-Status: ACTIVE — prod healthy, assessment flow verified E2E, all API keys working
+Sprint: Sprint 1 — Mega-plan autonomous execution
+Status: ACTIVE — prod healthy, ZEUS→ATLAS rename done, Life Sim P0s fixed, Phase 1 migration ready
 
-## Session 93+ — 2026-04-12 — IN PROGRESS
+## Session 96 — 2026-04-15 — IN PROGRESS
 
-### What shipped (30 commits)
-Platform: PII redactor, Article 22 consent, metadata migration (applied to prod), assessment flow verified E2E
-Infra: CI ruff fixes (53 files), lockfile sync, webhook URL fix, Groq/Cerebras keys renewed
-Atlas: Phase 2 proactive loop, Telegram handler + voice, second brain architecture, handoff prompt
-Research: Mem0/MemPalace comparison, Assessment Science audit, Perplexity research, full ecosystem scan
-Bridge: MindShift volaura_bridge.py created (sending end)
+### What shipped (8 commits)
+ZEUS→ATLAS: gateway file renamed, workflow, services (5 files), swarm autonomous_run + telegram_ambassador
+Life Sim: P0-2 (event modal player choice), P0-3 (game over stats), 6 VOLAURA events, Character model integration
+DB: Phase 1 volunteer→professional migration (generated columns on 8 tables, 3 views) — not yet applied
+Cleanup: "volunteer" removed from LLM prompts (brandedby_personality.py), Sentry enhanced
 
 ### Known debt
-- 397 "volunteer" in backend code, 182 in frontend — rename pending
-- 0 Playwright E2E tests — only curl-based testing
-- CI still failing (SpeechRecognition types — fix pushed, waiting)
-- Low energy mode 5q should be 10+ per Assessment Science audit
+- volunteer_id DB columns — Phase 1 migration created, not applied. Phase 2 (rename) needs downtime
+- DB column refs in match_checker.py, reeval_worker.py — blocked on Phase 2 migration
+- 0 Playwright E2E tests
+- Life Sim P0 fixes untested in Godot (CEO needs to open project)
+- Self-learning bot untested with real CEO Telegram message
+- Vertex AI billing propagation still pending (Groq fallback works)
+- ZEUS_ GitHub secrets not renamed (infra coordination)
+- Constitution Law 2 (Energy modes) not implemented in any product except MindShift
 
 ### Next session priorities
-1. Check CI status — should be green after lint fixes
-2. Volunteer→talent rename (397 backend + 182 frontend occurrences)
-3. Write first Playwright E2E test
-4. Verify Telegram bot responds (Groq fallback deployed)
+1. CEO tests Life Simulator in Godot (verify P0 fixes)
+2. CEO tests Telegram bot (verify self-learning)
+3. Apply Phase 1 DB migration to production Supabase
+4. Phase A design components with Cowork
+5. Telegram bot → executor (GitHub Actions integration)
 
 ## Session 92 — 2026-04-11 — COMPLETE
 

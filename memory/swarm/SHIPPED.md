@@ -6,6 +6,30 @@
 
 ---
 
+## Session 96 (2026-04-15) — Autonomous mega-plan continuation, 8 commits
+
+| What | File | Details | Status |
+|------|------|---------|--------|
+| ZEUS→ATLAS rename | `apps/api/app/routers/atlas_gateway.py` | zeus_gateway.py renamed, imports in main.py updated | shipped |
+| ZEUS→ATLAS workflow | `.github/workflows/atlas-content.yml` | zeus-content.yml renamed, job names updated | shipped |
+| ZEUS→ATLAS services | `video_generation_worker.py`, `model_router.py`, `telegram_webhook.py` | ZeusVideoSkill→AtlasVideoSkill, comments/keywords | shipped |
+| ZEUS→ATLAS swarm | `autonomous_run.py`, `telegram_ambassador.py` | Bridge logs, ecosystem auditor, product list | shipped |
+| Life Sim P0-2 fix | `event_queue_controller.gd` (external) | Removed auto _make_choice(0), added resolve_current_event() | shipped (Godot project) |
+| Life Sim P0-3 fix | `game_over.gd` + `game_over.tscn` (external) | Stats grid, death reasons, restart/menu buttons | shipped (Godot project) |
+| Life Sim signal wiring | `gameplay_controller.gd` (external) | Connected event_started/completed/queue_empty signals | shipped (Godot project) |
+| Life Sim milestone fix | `gameplay_controller.gd` (external) | Raw dict choices → EventChoice objects (crash fix) | shipped (Godot project) |
+| Life Sim VOLAURA events | `data/events/volaura_events.json` (external) | 6 events: gold recruit, platinum, mindshift, crystals, coach, assessment | shipped (Godot project) |
+| Life Sim Character model | `character.gd` (external) | crystal_balance, aura_level, verified_skills, apply_volaura_boosts() | shipped (Godot project) |
+| Life Sim API client | `api_client.gd` (external) | Updated to use Character methods | shipped (Godot project) |
+| volunteer→professional Phase 1 | `supabase/migrations/20260415100000_*.sql` | Generated columns on 8 tables + 3 views | committed (not yet applied) |
+| volunteer→professional prompts | `brandedby_personality.py` | "volunteer" → "professional" in LLM generation prompts | shipped |
+| Sentry enhanced | `apps/api/app/main.py` | attach_stacktrace, no PII, release tag | shipped |
+| railway.toml | `packages/swarm/railway.toml` | zeus_gateway.py → atlas_gateway.py start command | shipped |
+
+## Session 95 (2026-04-14/15) — Atlas autonomy sprint, 29 commits
+
+(See memory/atlas/journal.md Session 95 entry for full narrative)
+
 ## Session 93+ (2026-04-12) — Atlas autonomy sprint, 30 commits
 
 | What | File | Details | Status |

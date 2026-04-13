@@ -19,7 +19,7 @@ from app.schemas.event import (
     EventResponse,
     EventUpdate,
     RegistrationResponse,
-    VolunteerRatingRequest,
+    ProfessionalRatingRequest,
 )
 
 router = APIRouter(prefix="/events", tags=["Events"])
@@ -360,7 +360,7 @@ async def coordinator_rate_participant(
 async def participant_rate_event(
     request: Request,
     event_id: str,
-    payload: VolunteerRatingRequest,
+    payload: ProfessionalRatingRequest,
     db: SupabaseUser,
     user_id: CurrentUserId,
 ) -> RegistrationResponse:

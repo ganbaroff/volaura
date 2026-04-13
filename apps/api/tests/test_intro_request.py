@@ -38,7 +38,7 @@ VOLUNTEER_ID = "bbbbbbbb-0000-0000-0000-000000000002"
 INTRO_ID = "cccccccc-0000-0000-0000-000000000003"
 
 VALID_PAYLOAD = {
-    "volunteer_id": VOLUNTEER_ID,
+    "professional_id": VOLUNTEER_ID,
     "project_name": "Community Health Initiative",
     "timeline": "normal",
     "message": "We would love to have you on board.",
@@ -181,7 +181,7 @@ async def test_intro_request_success():
     body = resp.json()
     assert body["id"] == INTRO_ID
     assert body["status"] == "pending"
-    assert body["volunteer_id"] == VOLUNTEER_ID
+    assert body["professional_id"] == VOLUNTEER_ID
     # Notification must also be created
     assert len(inserted["notifications"]) == 1
 
@@ -343,7 +343,7 @@ async def test_intro_request_missing_project_name():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         resp = await ac.post(
             "/api/organizations/intro-requests",
-            json={"volunteer_id": VOLUNTEER_ID, "timeline": "normal"},  # missing project_name
+            json={"professional_id": VOLUNTEER_ID, "timeline": "normal"},  # missing project_name
             headers={"Authorization": "Bearer fake"},
         )
 

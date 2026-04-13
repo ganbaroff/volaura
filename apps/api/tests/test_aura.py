@@ -83,7 +83,7 @@ async def test_get_my_aura_found():
 
     assert resp.status_code == 200
     body = resp.json()
-    assert body["volunteer_id"] == USER_ID
+    assert body["professional_id"] == USER_ID
     assert body["total_score"] == 78.5
     assert body["badge_tier"] == "gold"
     assert body["elite_status"] is False
@@ -122,7 +122,7 @@ async def test_get_aura_by_id_found():
     app.dependency_overrides.clear()
 
     assert resp.status_code == 200
-    assert resp.json()["volunteer_id"] == target_id
+    assert resp.json()["professional_id"] == target_id
 
 
 @pytest.mark.asyncio

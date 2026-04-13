@@ -1,4 +1,4 @@
-"""Volunteer discovery schemas — Phase 3 org talent search."""
+"""Professional discovery schemas — Phase 3 org talent search."""
 
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ COMPETENCY_SLUGS = {
 class DiscoveryRequest(BaseModel):
     """Query parameters for volunteer discovery."""
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
     competency: str | None = Field(
         default=None,
@@ -63,7 +63,7 @@ class DiscoveryRequest(BaseModel):
     )
     after_id: str | None = Field(
         default=None,
-        description="Cursor: volunteer_id of last item (tiebreaker). Required if after_score provided.",
+        description="Cursor: professional_id of last item (tiebreaker). Required if after_score provided.",
     )
     limit: int = Field(default=20, ge=1, le=50)
 
@@ -90,18 +90,18 @@ class DiscoveryRequest(BaseModel):
 # ── Response ───────────────────────────────────────────────────────────────────
 
 
-class DiscoveryVolunteer(BaseModel):
-    """Single volunteer in discovery results.
+class DiscoveryProfessional(BaseModel):
+    """Single professional in discovery results.
 
     Security (agent review 2026-03-25):
     - display_name: server-side anonymized to "First L." — never trust user-controlled field
     - competency_score: only the REQUESTED competency — not full competency_scores JSONB
-    - volunteer_id: exposed intentionally — used by POST /organizations/{id}/assign-assessments
+    - professional_id: exposed intentionally — used by POST /organizations/{id}/assign-assessments
     """
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
-    volunteer_id: str
+    professional_id: str = Field(validation_alias="volunteer_id")
     display_name: str  # server-anonymized: "Leyla A."
     badge_tier: str
     total_score: float
@@ -130,5 +130,5 @@ class DiscoveryMeta(BaseModel):
 class DiscoveryResponse(BaseModel):
     """Wrapped discovery response following {data, meta} envelope."""
 
-    data: list[DiscoveryVolunteer]
+    data: list[DiscoveryProfessional]
     meta: DiscoveryMeta

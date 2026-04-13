@@ -22,12 +22,12 @@ from app.schemas.organization import (
     OrganizationResponse,
     OrganizationUpdate,
     OrgDashboardStats,
-    OrgVolunteerRow,
+    OrgProfessionalRow,
     SavedSearchCreate,
     SavedSearchOut,
     SavedSearchUpdate,
-    VolunteerSearchRequest,
-    VolunteerSearchResult,
+    ProfessionalSearchRequest,
+    ProfessionalSearchResult,
 )
 from app.services.embeddings import generate_embedding
 
@@ -280,7 +280,7 @@ async def get_org_dashboard(
     # AURA scores for completed professionals
     badge_dist = BadgeDistribution()
     avg_aura: float | None = None
-    top_professionals: list[OrgVolunteerRow] = []
+    top_professionals: list[OrgProfessionalRow] = []
 
     if completed_ids:
         aura_result = (
@@ -340,8 +340,8 @@ async def get_org_dashboard(
                 p = profile_map.get(vid, {})
                 a = aura_map.get(vid, {})
                 top_professionals.append(
-                    OrgVolunteerRow(
-                        volunteer_id=vid,
+                    OrgProfessionalRow(
+                        professional_id=vid,
                         username=p.get("username", vid[:8]),
                         display_name=p.get("display_name"),
                         overall_score=float(a.get("total_score", 0)),
@@ -359,11 +359,11 @@ async def get_org_dashboard(
         completion_rate=completion_rate,
         avg_aura_score=avg_aura,
         badge_distribution=badge_dist,
-        top_volunteers=top_professionals,
+        top_professionals=top_professionals,
     )
 
 
-@router.get("/me/volunteers", response_model=list[OrgVolunteerRow])
+@router.get("/me/professionals", response_model=list[OrgProfessionalRow])
 @limiter.limit(RATE_DISCOVERY)
 async def list_org_talent(
     request: Request,
@@ -372,7 +372,7 @@ async def list_org_talent(
     status: str | None = Query(default=None, description="Filter by session status: assigned|completed|in_progress"),
     limit: int = Query(default=20, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
-) -> list[OrgVolunteerRow]:
+) -> list[OrgProfessionalRow]:
     """List all professionals assigned assessments by this org.
 
     Returns profile + AURA data for each professional.
@@ -440,14 +440,14 @@ async def list_org_talent(
     profile_map = {p["id"]: p for p in (profiles_result.data or [])}
     aura_map = {r["volunteer_id"]: r for r in (aura_result.data or [])}
 
-    rows: list[OrgVolunteerRow] = []
+    rows: list[OrgProfessionalRow] = []
     for vid in paginated_ids:
         p = profile_map.get(vid, {})
         a = aura_map.get(vid, {})
         d = prof_data[vid]
         rows.append(
-            OrgVolunteerRow(
-                volunteer_id=vid,
+            OrgProfessionalRow(
+                professional_id=vid,
                 username=p.get("username", vid[:8]),
                 display_name=p.get("display_name"),
                 overall_score=float(a["total_score"]) if a.get("total_score") is not None else None,
@@ -465,14 +465,14 @@ async def list_org_talent(
 # ── Talent search ────────────────────────────────────────────────────────────
 
 
-@router.post("/search/volunteers", response_model=list[VolunteerSearchResult])
+@router.post("/search/professionals", response_model=list[ProfessionalSearchResult])
 @limiter.limit(RATE_DISCOVERY)
 async def search_talent(
     request: Request,
-    payload: VolunteerSearchRequest,
+    payload: ProfessionalSearchRequest,
     db_admin: SupabaseAdmin,
     user_id: CurrentUserId,
-) -> list[VolunteerSearchResult]:
+) -> list[ProfessionalSearchResult]:
     """Semantic talent search using pgvector + rule-based fallback.
 
     Requires organization account. Uses Gemini embeddings for semantic search;
@@ -573,11 +573,11 @@ async def search_talent(
         return []
 
     # Enrich with full profile data
-    volunteer_ids = [r["volunteer_id"] for r in rows]
+    professional_ids = [r["volunteer_id"] for r in rows]
     profiles_result = (
         await db_admin.table("profiles")
         .select("id, username, display_name, location, languages")
-        .in_("id", volunteer_ids)
+        .in_("id", professional_ids)
         .execute()
     )
     profile_map = {p["id"]: p for p in (profiles_result.data or [])}
@@ -593,8 +593,8 @@ async def search_talent(
 
         sim_raw = row.get("similarity")
         results.append(
-            VolunteerSearchResult(
-                volunteer_id=vid,
+            ProfessionalSearchResult(
+                professional_id=vid,
                 username=p["username"],
                 display_name=p.get("display_name"),
                 overall_score=float(row.get("total_score") or 0),
@@ -651,9 +651,9 @@ async def assign_assessments(
         )
 
     # Validate professional IDs exist
-    prof_result = await db_admin.table("profiles").select("id").in_("id", payload.volunteer_ids).execute()
+    prof_result = await db_admin.table("profiles").select("id").in_("id", payload.professional_ids).execute()
     existing_ids = {p["id"] for p in (prof_result.data or [])}
-    missing_ids = [vid for vid in payload.volunteer_ids if vid not in existing_ids]
+    missing_ids = [vid for vid in payload.professional_ids if vid not in existing_ids]
 
     deadline = datetime.now(UTC) + timedelta(days=payload.deadline_days)
     assigned = 0
@@ -661,7 +661,7 @@ async def assign_assessments(
     errors: list[str] = []
     assignments: list[dict] = []
 
-    for vid in payload.volunteer_ids:
+    for vid in payload.professional_ids:
         if vid in missing_ids:
             errors.append(f"Professional {vid[:8]}... not found")
             skipped += 1
@@ -771,7 +771,7 @@ async def create_intro_request(
     target_result = (
         await db.table("profiles")
         .select("id, display_name, username, visible_to_orgs, account_type")
-        .eq("id", payload.volunteer_id)
+        .eq("id", payload.professional_id)
         .maybe_single()
         .execute()
     )
@@ -799,7 +799,7 @@ async def create_intro_request(
             .insert(
                 {
                     "org_id": str(user_id),
-                    "volunteer_id": payload.volunteer_id,
+                    "volunteer_id": payload.professional_id,
                     "project_name": payload.project_name,
                     "timeline": payload.timeline,
                     "message": payload.message,
@@ -835,7 +835,7 @@ async def create_intro_request(
 
     await notify(
         db,
-        payload.volunteer_id,
+        payload.professional_id,
         "intro_request",
         f"{org_name} wants to connect",
         body=f"Introduction request for: {payload.project_name}",
@@ -845,7 +845,7 @@ async def create_intro_request(
     logger.info(
         "Intro request created",
         org_id=str(user_id),
-        volunteer_id=payload.volunteer_id,
+        professional_id=payload.professional_id,
         intro_id=intro["id"],
     )
     return IntroRequestResponse(**intro)

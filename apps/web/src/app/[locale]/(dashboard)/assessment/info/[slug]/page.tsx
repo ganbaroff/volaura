@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Loader2, Clock, ChevronLeft, RotateCcw, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
@@ -22,6 +22,26 @@ export default function AssessmentInfoPage() {
   const { t } = useTranslation();
   const router = useRouter();
   const isMounted = useRef(true);
+  const shouldReduceMotion = useReducedMotion();
+
+  // Law 4 — prefers-reduced-motion: skip translate/opacity animations when requested
+  const fadeUp = (delay = 0, yOffset = 10) =>
+    shouldReduceMotion
+      ? {}
+      : {
+          initial: { opacity: 0, y: yOffset },
+          animate: { opacity: 1, y: 0 },
+          transition: { delay, duration: 0.3 },
+        };
+
+  const fadeIn = (delay = 0) =>
+    shouldReduceMotion
+      ? {}
+      : {
+          initial: { opacity: 0 },
+          animate: { opacity: 1 },
+          transition: { delay, duration: 0.3 },
+        };
 
   const locale: SupportedLocale = isSupportedLocale(rawLocale) ? rawLocale : "en";
 
@@ -139,9 +159,7 @@ export default function AssessmentInfoPage() {
 
       {/* Header */}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
+        {...fadeUp(0, 10)}
         className="space-y-2"
       >
         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
@@ -152,9 +170,7 @@ export default function AssessmentInfoPage() {
 
       {/* Description */}
       <motion.p
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
+        {...fadeUp(0.1, 8)}
         className="text-sm text-muted-foreground leading-relaxed"
         lang={data.description ? "en" : undefined}
       >
@@ -163,9 +179,7 @@ export default function AssessmentInfoPage() {
 
       {/* Meta cards */}
       <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
+        {...fadeUp(0.2, 8)}
         className="grid grid-cols-2 gap-3"
       >
         <div className="rounded-xl bg-surface-container-low p-4 space-y-1">
@@ -201,9 +215,7 @@ export default function AssessmentInfoPage() {
       {/* Retake blocked warning */}
       {retakeBlocked && (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
+          {...fadeIn(0.3)}
           className="rounded-xl bg-amber-500/10 border border-amber-500/20 px-4 py-3"
         >
           <p className="text-sm text-amber-300">
@@ -214,9 +226,7 @@ export default function AssessmentInfoPage() {
 
       {/* CTA */}
       <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.35 }}
+        {...fadeUp(0.35, 8)}
       >
         <Button
           size="lg"

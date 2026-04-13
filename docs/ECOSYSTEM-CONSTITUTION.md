@@ -11,7 +11,7 @@
 > Всё должно быть предельно ясно и только улучшаться."
 > — CEO Directive, 2026-04-06
 
-**Cross-references:** [[VISION-FULL]] | [[ECOSYSTEM-MAP]] | [[research/ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[design/ANIMATION-SYSTEM]] | [[research/adhd-first-ux-research]] | [[TONE-OF-VOICE]] | [[LAUNCH-BLOCKERS]]
+**Cross-references:** [[VISION-FULL]] | [[MASTER-STRATEGY]] | [[ECOSYSTEM-MAP]] | [[research/ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[research/adhd-first-ux-research]] | [[research/ecosystem-design-research]] | [[research/NEUROCOGNITIVE-ARCHITECTURE-2026]] | [[research/blind-spots-analysis]] | [[research/ZEUS-MEMORY-ARCHITECTURE-RESEARCH-2026-04-14]] | [[TONE-OF-VOICE]] | [[LIFE-SIMULATOR-GAME-DESIGN]] | [[MINDSHIFT-INTEGRATION-SPEC]] | [[AI-TWIN-CONCEPT]] | [[CONSTITUTION_AI_SWARM]] | [[design/ANIMATION-SYSTEM]] | [[LAUNCH-BLOCKERS]] | [[adr/ADR-005-aura-scoring]] | [[adr/ADR-004-assessment-engine]] | [[MONETIZATION-ROADMAP]]
 
 ---
 
@@ -23,7 +23,7 @@ These are non-negotiable. They cannot be overridden by feature requests, market 
 
 ### LAW 1: NEVER RED
 
-**Source:** Research #2 (Clinical ADHD UX), #6 (Sensory UX), #8 (Age-Based UX)
+**Source:** Research #2 (Clinical ADHD UX — see [[research/adhd-first-ux-research]]), #6 (Sensory UX), #8 (Age-Based UX)
 **Science:** Red triggers RSD (Rejection Sensitive Dysphoria) responses in ADHD users. Age-independent — affects Gen Z, Millennials, Gen X equally when RSD is present.
 
 **Rule:**
@@ -48,7 +48,7 @@ These are non-negotiable. They cannot be overridden by feature requests, market 
 
 ### LAW 3: SHAME-FREE LANGUAGE
 
-**Source:** Research #2 (Clinical ADHD), #10 (Overjustification), #16 (Neurocognitive Architecture)
+**Source:** Research #2 (Clinical ADHD — see [[research/adhd-first-ux-research]]), #10 (Overjustification), #16 ([[research/NEUROCOGNITIVE-ARCHITECTURE-2026|Neurocognitive Architecture]])
 **Science:** Shame activates the same neural pathways as physical pain in ADHD brains. "You haven't done X" language causes measurable cortisol spikes and 78% abandonment.
 
 **Banned phrases across ALL products:**
@@ -335,7 +335,7 @@ Critical rules for all products:
 
 ### Research #12 — Multi-Model AI Routing
 
-**ZEUS model routing table (authoritative):**
+**ZEUS model routing table (authoritative — see also [[adr/ADR-007-ai-gateway-model-router]]):**
 
 | Task Type | Model | Rationale |
 |-----------|-------|-----------|
@@ -356,7 +356,7 @@ Critical rules for all products:
 
 ### Research #13 — Persistent Memory Architecture
 
-**ZEUS memory mapping (neuroscience → code):**
+**ZEUS memory mapping (neuroscience → code — see [[research/ZEUS-MEMORY-ARCHITECTURE-RESEARCH-2026-04-14]] and [[research/NEUROCOGNITIVE-ARCHITECTURE-2026]]):**
 
 | Brain | ZEUS Equivalent | Status |
 |-------|----------------|--------|

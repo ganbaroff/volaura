@@ -10,7 +10,7 @@ from fastapi import APIRouter, Query, Request
 from loguru import logger
 from pydantic import BaseModel, ConfigDict
 
-from app.deps import CurrentUserId, SupabaseAdmin
+from app.deps import CurrentUserId, OptionalCurrentUserId, SupabaseAdmin
 from app.middleware.rate_limit import RATE_DEFAULT, RATE_DISCOVERY, limiter
 
 router = APIRouter(prefix="/leaderboard", tags=["Leaderboard"])
@@ -49,7 +49,7 @@ def _anonymize_name(display_name: str) -> str:
 async def get_leaderboard(
     request: Request,
     db: SupabaseAdmin,
-    user_id: CurrentUserId,
+    user_id: OptionalCurrentUserId = None,
     period: str = Query(default="all_time", pattern="^(weekly|monthly|all_time)$"),
     limit: int = Query(default=50, ge=1, le=100),
 ) -> LeaderboardResponse:

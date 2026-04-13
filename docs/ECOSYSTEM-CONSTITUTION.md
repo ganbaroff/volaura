@@ -11,6 +11,8 @@
 > Всё должно быть предельно ясно и только улучшаться."
 > — CEO Directive, 2026-04-06
 
+**Cross-references:** [[VISION-FULL]] | [[ECOSYSTEM-MAP]] | [[research/ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[design/ANIMATION-SYSTEM]] | [[research/adhd-first-ux-research]] | [[TONE-OF-VOICE]] | [[LAUNCH-BLOCKERS]]
+
 ---
 
 ## PART 1: THE 5 FOUNDATION LAWS

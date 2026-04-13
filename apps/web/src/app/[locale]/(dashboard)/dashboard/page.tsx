@@ -23,6 +23,7 @@ import { CrystalBalanceWidget } from "@/components/dashboard/crystal-balance-wid
 import { TribeCard } from "@/components/dashboard/tribe-card";
 import { ApiError } from "@/lib/api/client";
 import { useTrackEvent } from "@/hooks/use-analytics";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 // BATCH-O A11Y #3: motion variants — reduced-motion override applied per component via useDashboardMotion hook
 const pageVariants = {
@@ -78,6 +79,8 @@ export default function DashboardPage() {
   const pVariants = prefersReducedMotion ? pageVariantsReduced : pageVariants;
   const sVariants = prefersReducedMotion ? sectionVariantsReduced : sectionVariants;
   const track = useTrackEvent();
+  const { energy } = useEnergyMode();
+  const isLowEnergy = energy === "low";
 
   useEffect(() => {
     isMounted.current = true;
@@ -312,13 +315,17 @@ export default function DashboardPage() {
         )}
 
         {/* ── Tribe Card — accountability circle (visible to all; join CTA for non-members) ── */}
-        <motion.div variants={sVariants} className="space-y-2">
-          <SectionHeader label={t("tribe.sectionHeader", { defaultValue: "Your Tribe" })} />
-          <TribeCard />
-        </motion.div>
+        {/* Constitution Law 2: hidden in low energy mode (reduce cognitive load) */}
+        {!isLowEnergy && (
+          <motion.div variants={sVariants} className="space-y-2">
+            <SectionHeader label={t("tribe.sectionHeader", { defaultValue: "Your Tribe" })} />
+            <TribeCard />
+          </motion.div>
+        )}
 
         {/* ── Personalized Feed (feed-curator skill) ── */}
-        {hasScore && (
+        {/* Constitution Law 2: hidden in low energy mode (essential-only dashboard) */}
+        {hasScore && !isLowEnergy && (
           <motion.div variants={sVariants} className="space-y-2">
             <SectionHeader label={t("dashboard.feed.title", { defaultValue: "Recommended for you" })} />
             <FeedCards
@@ -571,8 +578,8 @@ function ErrorCard({
   t: (k: string) => string;
 }) {
   return (
-    <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-5 text-center space-y-3">
-      <p className="text-sm text-destructive">{message}</p>
+    <div className="rounded-2xl border border-error/30 bg-error-container p-5 text-center space-y-3">
+      <p className="text-sm text-on-error-container">{message}</p>
       <button
         onClick={onRetry}
         className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"

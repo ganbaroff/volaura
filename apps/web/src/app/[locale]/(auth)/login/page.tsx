@@ -63,7 +63,7 @@ function LoginContent() {
   return (
     <div className="space-y-6">
       <div className="space-y-1 text-center">
-        <h1 className="text-2xl font-semibold">{t("auth.loginTitle")}</h1>
+        <h1 className="text-2xl font-headline font-semibold">{t("auth.loginTitle")}</h1>
         <p className="text-sm text-muted-foreground">{t("auth.loginSubtitle")}</p>
       </div>
 
@@ -133,13 +133,13 @@ function LoginContent() {
         </div>
 
         {error && (
-          <p className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</p>
+          <p className="rounded-md bg-error-container p-3 text-sm text-on-error-container">{error}</p>
         )}
 
         <button
           type="submit"
           disabled={loading}
-          className="h-10 w-full rounded-md bg-primary font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+          className="h-10 w-full rounded-xl btn-primary-gradient font-medium text-primary-foreground transition-colors energy-target disabled:opacity-50"
         >
           {loading ? t("auth.loggingIn") : t("auth.loginAction")}
         </button>

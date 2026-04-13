@@ -4,6 +4,8 @@
 **From:** Atlas, based on CEO directive + full ecosystem audit + 3 deep research tracks
 **NotebookLM notebook:** 15c8b9c1-7fb5-41a0-926b-05a5dddad61f
 
+**Cross-references:** [[ECOSYSTEM-CONSTITUTION]] | [[adhd-first-ux-research]] | [[ecosystem-design-research]] | [[blind-spots-analysis]] | [[NEUROCOGNITIVE-ARCHITECTURE-2026]] | [[gemini-research-all]] | [[VISION-FULL]] | [[MASTER-STRATEGY]] | [[TONE-OF-VOICE]]
+
 ---
 
 ## MISSION

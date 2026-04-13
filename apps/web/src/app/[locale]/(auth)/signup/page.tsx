@@ -373,7 +373,7 @@ function SignupForm() {
         </label>
 
         {error && (
-          <p role="alert" className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</p>
+          <p role="alert" className="rounded-md bg-error-container p-3 text-sm text-on-error-container">{error}</p>
         )}
 
         {(!privacyConsented || !ageConfirmed) && !loading && (

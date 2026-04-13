@@ -69,7 +69,12 @@
     "closeMenu": "Menyunu bağlayın",
     "mainNavigation": "Əsas naviqasiya",
     "orgVolunteers": "İstedad",
-    "brandedby": "Süni İntellekt Əkizi"
+    "brandedby": "Süni İntellekt Əkizi",
+    "volaura": "Ana Səhifə",
+    "mindshift": "MindShift",
+    "lifesim": "Həyat Sim",
+    "atlas": "ATLAS",
+    "productSwitcher": "Məhsul naviqasiyası"
   },
   "auth": {
     "login": "Daxil ol",
@@ -333,6 +338,13 @@
     "nextStepAssessDesc": "Hər kompetensiya sizin AURA balınızı artırır.",
     "nextStepLeaderboard": "Platformada mövqeyinizə baxın.",
     "nextStepLeaderboardDesc": "Platformada mövqeyinizə baxın.",
+    "radarSection": "AURA Profiliniz",
+    "growthHint": "Ən güclü tərəfləriniz burada parlayır. Kəşf etməyə davam edin.",
+    "tierPlatinum": "Platinum",
+    "tierGold": "Qızıl",
+    "tierSilver": "Gümüş",
+    "tierBronze": "Bürünc",
+    "tierNone": "Hələ dərəcələnməyib",
     "identity_platinum": "Platinum səviyyəli peşəkar",
     "identity_gold": "Qızıl səviyyəli peşəkar",
     "identity_silver": "Gümüş səviyyəli peşəkar",
@@ -601,7 +613,19 @@
     "saveChanges": "Dəyişiklikləri saxlamaq",
     "signOut": "Çıxış",
     "dangerZone": "Hesab Fəaliyyətləri",
-    "saved": "Saxlanılıb!"
+    "saved": "Saxlanılıb!",
+    "energyMode": "Enerji Rejimi",
+    "energyModeDesc": "Enerji səviyyənizə uyğun olaraq aralıq, animasiya və sıxlığı tənzimləyin.",
+    "talentSearch": "İstedad Axtarışı",
+    "talentSearchDesc": "Təşkilatların sizi istedad axtarışında tapıb-tapmayacağına nəzarət edin.",
+    "visibleToOrgs": "Təşkilatların istedad axtarışında görünün",
+    "visibleToOrgsDesc": "Təşkilatlar profilinizi tapıb tanışlıq sorğusu göndərə bilər.",
+    "signOutDesc": "Hesabınızdan çıxın",
+    "signingOut": "Çıxış edilir...",
+    "deleteAccountDesc": "Hesabınızı və bütün məlumatları həmişəlik silin. Bu geri qaytarıla bilməz.",
+    "deleteAccountConfirmTitle": "Hesab həmişəlik silinsin?",
+    "deleteAccountConfirmDesc": "AURA balınız, qiymətləndirmələriniz və profiliniz həmişəlik silinəcək. Təsdiq üçün \"DELETE\" yazın.",
+    "typeDelete": "Təsdiq üçün DELETE yazın"
   },
   "verify": {
     "pageSubtitle": "Ekspert Verifikasiyası",

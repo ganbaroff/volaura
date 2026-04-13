@@ -69,7 +69,12 @@
     "closeMenu": "Close menu",
     "mainNavigation": "Main navigation",
     "orgVolunteers": "Talent",
-    "brandedby": "AI Twin"
+    "brandedby": "AI Twin",
+    "volaura": "Home",
+    "mindshift": "MindShift",
+    "lifesim": "Life Sim",
+    "atlas": "ATLAS",
+    "productSwitcher": "Product navigation"
   },
   "auth": {
     "login": "Log In",
@@ -331,6 +336,13 @@
     "nextStepAssessDesc": "Each competency adds to your AURA score",
     "nextStepLeaderboard": "See how you compare",
     "nextStepLeaderboardDesc": "View your position on the platform",
+    "radarSection": "Your AURA Profile",
+    "growthHint": "Your strongest areas shine here. Keep exploring.",
+    "tierPlatinum": "Platinum",
+    "tierGold": "Gold",
+    "tierSilver": "Silver",
+    "tierBronze": "Bronze",
+    "tierNone": "Unranked",
     "identity_platinum": "Platinum-level Professional",
     "identity_gold": "Gold-level Professional",
     "identity_silver": "Silver-level Professional",
@@ -599,7 +611,19 @@
     "saveChanges": "Save changes",
     "signOut": "Sign out",
     "dangerZone": "Account Actions",
-    "saved": "Saved!"
+    "saved": "Saved!",
+    "energyMode": "Energy Mode",
+    "energyModeDesc": "Adjust spacing, animations, and density to match your energy level.",
+    "talentSearch": "Talent Search",
+    "talentSearchDesc": "Control whether organizations can find you in their talent search.",
+    "visibleToOrgs": "Appear in organization talent search",
+    "visibleToOrgsDesc": "Organizations can find your profile and send introduction requests.",
+    "signOutDesc": "Sign out of your account",
+    "signingOut": "Signing out...",
+    "deleteAccountDesc": "Permanently delete your account and all data. This cannot be undone.",
+    "deleteAccountConfirmTitle": "Delete account permanently?",
+    "deleteAccountConfirmDesc": "This will permanently delete your AURA score, assessments, and profile. Type \"DELETE\" to confirm.",
+    "typeDelete": "Type DELETE to confirm"
   },
   "verify": {
     "pageSubtitle": "Expert Verification",

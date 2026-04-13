@@ -53,10 +53,10 @@ export function HeroSection({ locale }: HeroSectionProps) {
 
           {/* Headline */}
           <motion.h1
-            className="mb-6 text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl"
+            className="mb-6 text-4xl font-headline font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            transition={{ type: "spring", damping: 14, stiffness: 100 }}
           >
             <span className="block">{t("landing.heroTitle")}</span>
           </motion.h1>
@@ -80,7 +80,7 @@ export function HeroSection({ locale }: HeroSectionProps) {
           >
             <Link
               href={`/${locale}/signup`}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-md transition-all hover:bg-primary/90 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="inline-flex items-center justify-center gap-2 rounded-xl btn-primary-gradient px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-md transition-all hover:shadow-lg energy-target focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               {t("landing.heroCta")}
               <ArrowRight className="h-4 w-4" aria-hidden="true" />

@@ -33,7 +33,7 @@ export function QuestionCard({
         initial={{ opacity: 0, x: 60 }}
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: -60 }}
-        transition={{ duration: 0.25, ease: "easeInOut" }}
+        transition={{ type: "spring", damping: 14, stiffness: 100 }}
         aria-live="polite"
         aria-atomic="true"
         role="form"
@@ -41,7 +41,7 @@ export function QuestionCard({
         className="space-y-6"
       >
         {/* Question text */}
-        <div className="rounded-2xl bg-card border border-border p-5">
+        <div className="rounded-2xl bg-card border border-border energy-p">
           <p className="text-base font-medium text-foreground leading-relaxed">
             {questionText}
           </p>

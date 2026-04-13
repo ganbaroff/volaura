@@ -24,6 +24,8 @@ build/
 .env
 .env.local
 .env.*.local
+gcp-service-account.json
+*-service-account*.json
 
 # IDE
 .vscode/
@@ -88,3 +90,4 @@ memory/swarm/*.jsonl
 
 # Obsidian workspace state
 docs/.obsidian/
+memory/atlas/session-93-full-transcript.jsonl

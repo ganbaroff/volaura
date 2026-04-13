@@ -1,5 +1,7 @@
 # Multi-Product Ecosystem Design Research — 2026-03-28
 
+**Cross-references:** [[ECOSYSTEM-REDESIGN-BRIEF-2026-04-14]] | [[adhd-first-ux-research]] | [[../ECOSYSTEM-CONSTITUTION]] | [[../design/COMPONENT-LIBRARY]] | [[../design/STITCH-DESIGN-SYSTEM]] | [[../LIFE-SIMULATOR-INTEGRATION-SPEC]]
+
 ## Winner Pattern: Discord Three-Rail + Duolingo Semantic Colors + Character-Centric Identity
 
 ## 10 Design Decisions

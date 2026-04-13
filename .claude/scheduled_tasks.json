@@ -1,8 +1,8 @@
 [
   {
-    "id": "atlas-wake-loop",
+    "id": "atlas-health-loop",
     "cron": "*/15 * * * *",
-    "prompt": "атлас проснись. Продолжай работу по мегаплану docs/MEGAPLAN-SESSION-95-AUTONOMOUS.md. CEO спит. Не спрашивай. Читай breadcrumb.md и heartbeat.md для контекста. Приоритеты: 1) Life Simulator game logic 2) ZEUS→ATLAS rename 3) Swarm agents autonomous work 4) Small fixes. Каждую итерацию: одна задача → коммит → push. Проверяй prod health между итерациями.",
+    "prompt": "Atlas hourly health check. Do these silently, report only problems:\n1. `curl -s https://volauraapi-production.up.railway.app/health` — prod alive?\n2. `gh run list --workflow=CI --limit 1 --json conclusion --jq '.[0].conclusion'` — CI green?\n3. `ls memory/atlas/inbox/` — any unconsumed proactive notes?\n4. Check if breadcrumb.md was updated today.\nReport ONLY failures. If all pass, say \"Health: all green\" in one line.",
     "recurring": true
   }
 ]

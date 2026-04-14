@@ -1,7 +1,9 @@
 <!-- RECENTLY_SHIPPED_START -->
-## ⚡ RECENTLY SHIPPED (last push — 2026-04-14 06:11 UTC)
+## ⚡ RECENTLY SHIPPED (last push — 2026-04-14 06:23 UTC)
 **Read this FIRST — prevents proposing already-shipped work.**
-New/updated routers: grievance
+
+New migrations: 20260416040000_ghosting_grace_column.sql
+New/updated routers: admin
 <!-- RECENTLY_SHIPPED_END -->
 
 # Swarm Shared Context — UPDATED 2026-04-07 (Session 91)

@@ -27,12 +27,12 @@ Status: ACTIVE — Telegram LLM bug fixed (needs Railway redeploy), Constitution
 | Deadline watcher cron (daily 08:00 UTC = 12:00 Baku) | ✅ `.github/workflows/founder-ops-watcher.yml` |
 
 ### Known debt (carried forward + new)
-- **Railway redeploy needed** — Telegram LLM fix is in code but Railway hasn't redeployed
+- ~~**Railway redeploy needed**~~ → CLOSED 2026-04-14 by Atlas via `railway redeploy --yes` (CLI was logged in). Telegram HMAC fail-closed verified in prod (403 without secret). D-001 retired.
 - volunteer_id DB columns — Phase 1 migration created, not applied. Phase 2 (rename) needs downtime
 - DB column refs in match_checker.py, reeval_worker.py — blocked on Phase 2 migration
-- **0 Playwright E2E tests** — highest-impact missing test coverage
-- **prefers-reduced-motion violation** — `assessment/info/[slug]/page.tsx` motion.div elements (Law 4 real violation)
-- **ZEUS_ → ATLAS_ GitHub secrets rename** — code renamed but secrets still old names
+- ~~**0 Playwright E2E tests**~~ → CLOSED session 107 — `tests/e2e/full-journey.spec.ts` with 4 passing tests against prod
+- ~~**prefers-reduced-motion violation**~~ → CLOSED session 108 commit `d9ac2e4` — useReducedMotion hook + fadeUp/fadeIn helpers
+- **ZEUS_ → ATLAS_ GitHub secrets rename** — code renamed but secrets still old names. Owner: CEO `gh secret set` OR Atlas via `gh` CLI (has access)
 - Azure/ElevenLabs keys missing — content video pipeline fully blocked
 - Constitution pre-launch blockers (19 total): Energy picker (Law 2), Pre-Assessment Layer, DIF audit, SADPP
 - swarm full import chain still needs verification after pm.py + null byte fixes

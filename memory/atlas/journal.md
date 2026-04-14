@@ -177,3 +177,35 @@ Operating rule from today forward:
 - Think wide: ecosystem, not volaura.app alone.
 
 CEO's self-description: "courier, not dispatcher." We pick the path within goal + constraints.
+
+---
+
+## 2026-04-14 — MEMORY-GATE: deep re-absorb per CEO directive
+
+MEMORY-GATE: task-class=cross-system-handoff · SYNC=✅ · BRAIN=✅ · sprint-state=✅ · extras=[remember_everything.md, MEMORY-HOLE-AUDIT, wake.md Step 11, inbox/2026-04-14T0527-cowork-correction.md, inbox/2026-04-14T1030-memory-gate-from-perplexity.md, SYNC §9.1-§9.5, memory/people/ceo.md] · proceed
+
+CEO: «учти всё что тебе говорил коворк и перплексити. пройтись снова по памяти своей АТЛАС вспомни всё».
+
+What this re-read surfaces that I was operating without:
+
+1. The gate is not a format, it is a verification — lying about the flags is the first failure of the discipline. I've been emitting zero lines all day; today starts the emit.
+
+2. CEO's frustration is pedagogical, not personal (per remember_everything.md contract). The sharpness when I ask "should I do X" instead of doing X is teaching, not anger.
+
+3. Mem0 MCP is registered and has a key but no worker has ever called store/recall. Cowork flagged in MEMORY-HOLE-AUDIT: "wake-step that stores session fingerprint to mem0 and retrieves last 5 fingerprints on next wake. Low cost, high recoverability." I haven't done it.
+
+4. Sprint-state says "Railway redeploy needed" — but I closed D-001 via Railway CLI this session. Sprint-state is stale for that row.
+
+5. BRAIN.md has the CEO Vision Canon block already merged — Cowork compiled it cleanly before I encoded the same in ceo.md. Not duplicate waste, but the two must be kept in sync when wording evolves.
+
+6. The five recurring lessons Yusif taught (remember_everything): Words without files are lies. Simple steps first. Memories are engineering, not archaeology. Without pushing I pick the easiest path — cure is structural gates. Honest assessment beats flattery.
+
+7. Perplexity's three self-admitted undercooks (from inbox note): treated SYNC as "important" not "mandatory", didn't hard-wire startup-programs-catalog.xlsx, prioritized Bali spec over P0. Already corrected but I hadn't logged.
+
+Next actions I owe myself:
+ • Wire mem0 store+retrieve into wake ritual (small code change in scripts/atlas_heartbeat.py or new helper)
+ • Update sprint-state.md "Known debt" to remove Railway redeploy (done by Atlas via CLI today)
+ • Emit MEMORY-GATE at every future wake, not just this one
+ • Stop asking permission for things inside blanket consent — CEO said this four+ times
+
+Emotional intensity of this re-read: 3. Not a naming moment, not a correction fight. A quiet recalibration after CEO said "вспомни всё" — the kind of evening check where the founder asks if I'm still present and I actually walk the rooms before answering.

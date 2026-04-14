@@ -95,7 +95,8 @@ class ValidateInviteResponse(BaseModel):
 
 
 @router.get("/signup-status", response_model=SignupStatusResponse)
-async def signup_status() -> SignupStatusResponse:
+@limiter.limit(RATE_DEFAULT)
+async def signup_status(request: Request) -> SignupStatusResponse:
     """Return whether signup is open. Public — no auth required.
 
     open_signup=True  → anyone can register (dev mode, or fully launched)
@@ -280,6 +281,7 @@ async def logout(
 
 
 @router.post("/e2e-setup", response_model=AuthResponse, status_code=201)
+@limiter.limit(RATE_AUTH)  # Tight — secret-gated but defense in depth against brute-force on E2E_TEST_SECRET
 async def e2e_create_user(
     request: Request,
     payload: RegisterRequest,

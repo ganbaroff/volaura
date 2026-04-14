@@ -460,7 +460,7 @@
     "activityEmpty": "Siz birinci fəsili yazırsınız.",
     "activityEmptyHint": "Qiymətləndirməni ilk tamamlayanlardan biri olun. Sizin fəaliyyətiniz hər bir gələcək üzvün görəcəklərinin bir hissəsinə çevrilir.",
     "noScoreHeadline": "Siz ilklərdən birisiniz. Bu, müəyyən bir məna kəsb edir.",
-    "noScoreSub": "Sizdən hələ heç kəs öndə deyil. Qiymətləndirmənizi tamamlayın və təsisçi dərəcənizi qazanın.",
+    "noScoreSub": "Təsdiqlənmiş peşəkar sənədiniz burada başlayır. Qiymətləndirmənizi tamamlayın — nəticə yalnız sizindir və bütün ekosistem boyunca sizinlə birgə hərəkət edir.",
     "noScoreCta": "Qiymətləndirməyə başlayın (5 dəqiqə)",
     "orgZeroHeadline": "Təsdiqlənmiş kadrlar sizi gözləyirlər.",
     "orgZeroSub": "Peşəkarlar real bacarıqları əsasında dəyərləndirilir. İştirakçı profillərini nəzərdən keçirin.",
@@ -705,8 +705,8 @@
     "saving": "Saxlanılır..."
   },
   "leaderboard": {
-    "emptyTitle": "Reytinq cədvəli sizdən başlayır.",
-    "emptyDesc": "1-ci yer boşdur. Qiymətləndirmənizi tamamlayın — balınız burada dərhal təsisçi üzvlər arasında sıralanmış şəkildə nümayiş olunur.",
+    "emptyTitle": "Təsdiqlənmiş profiliniz buradan başlayır.",
+    "emptyDesc": "Qiymətləndirmənizi tamamlayın — AURA sənədiniz təsisçi qruplaşmanın bir hissəsi kimi qeyd olunur. Bu reytinq deyil — bu təsdiqdir.",
     "periodWeekly": "Həftəlik",
     "periodMonthly": "Aylıq",
     "periodAllTime": "Bütün zamanlar"

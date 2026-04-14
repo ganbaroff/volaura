@@ -458,7 +458,7 @@
     "activityEmpty": "You're writing the first chapter",
     "activityEmptyHint": "Be one of the first to complete an assessment. Your activity becomes part of what every future member sees.",
     "noScoreHeadline": "You're one of the first. That means something.",
-    "noScoreSub": "No one is ahead of you yet. Complete your assessment and claim your founding rank.",
+    "noScoreSub": "Your verified credential starts here. Complete your assessment — the result is yours alone, and it travels across the ecosystem.",
     "noScoreCta": "Take assessment (5 min) →",
     "orgZeroHeadline": "Verified talent is waiting for you",
     "orgZeroSub": "Professionals are assessed on real skills. Browse opted-in profiles.",
@@ -703,8 +703,8 @@
     "saving": "Saving..."
   },
   "leaderboard": {
-    "emptyTitle": "The leaderboard starts with you.",
-    "emptyDesc": "#1 is unclaimed. Complete your assessment — your score appears here instantly, ranked among the founding members.",
+    "emptyTitle": "Your verified profile starts here.",
+    "emptyDesc": "Complete your assessment — your AURA credential is recorded as part of the founding cohort. Not a ranking, a verification.",
     "periodWeekly": "Weekly",
     "periodMonthly": "Monthly",
     "periodAllTime": "All time"

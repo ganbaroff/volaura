@@ -82,3 +82,33 @@ Entries feed into `mistakes.md` patterns and swarm critique sessions.
 **Issue:** `openspace` entry used Windows-only path `C:/tools/openspace-venv/Scripts/openspace-mcp` (breaks on Linux sandbox), and specified `OPENSPACE_MODEL: anthropic/claude-haiku-4-5-20251001` (uses Claude as agent — Article 0 Constitution violation).
 **Fix:** Removed the entry entirely.
 **Status:** ✅ Fixed.
+
+---
+
+## INC-008 — 2026-04-16 — Telegram webhook fail-open + timing-unsafe compare
+**Severity:** P1 (security — webhook accepted forged requests)
+**File:** `apps/api/app/routers/telegram_webhook.py`
+**Issue:** Two layered problems: (1) when `TELEGRAM_WEBHOOK_SECRET` env was empty, the validation check was skipped entirely — any request reached the handler; CEO_CHAT_ID filter was the only remaining gate. (2) when secret was set, comparison used plain `!=`, which is timing-unsafe.
+**Fix:** Hard-fail with 403 when the secret is not configured. Replaced `!=` with `hmac.compare_digest`. Commit `355bb36` + regression tests in `tests/test_telegram_webhook_secret.py` (commit `d2b026f`).
+**Status:** ✅ Fixed + test-pinned.
+**Pattern:** Fail-closed by default. `hmac.compare_digest` for any secret comparison. Unit tests pin fail-closed invariants — the bug survived code review once, the tests prevent round two.
+
+---
+
+## INC-009 — 2026-04-16 — Question bank batch4 migration two-layer bug
+**Severity:** P0 (4 of 8 competencies below CAT threshold; blocking real users)
+**File:** `supabase/migrations/20260415200000_seed_questions_batch4.sql`
+**Issue:** (1) Migration used column name `question_type`; real column is `type` — Supabase CLI silently failed to apply it, production had 10-11 questions instead of 15 for empathy/reliability/leadership/english. (2) Inside the migration, 5 english_proficiency questions were inserted with competency_id `77777777` (that UUID is `adaptability`, not english). So even with the column name fixed, english would have stayed at 10 and adaptability would have been over-stuffed.
+**Fix:** Corrected migration (column `type`, correct UUID `33333333` for english), applied via Supabase MCP. All 8 competencies now at 15 questions. Commit `3c35930`.
+**Status:** ✅ Fixed. Live count verified via MCP COUNT query.
+**Pattern:** Migration files that fail schema check don't raise an obvious error — the CLI just skips them and reports "no changes". Verify against live DB after every migration batch, not against the migration file. Also: hardcoded UUIDs in comments are not the same as hardcoded UUIDs in SQL — check both match.
+
+---
+
+## INC-010 — 2026-04-16 — atlas_heartbeat import chain failure
+**Severity:** P3 (automation gap — not prod)
+**File:** `scripts/atlas_heartbeat.py` (originally `packages/swarm/atlas_heartbeat.py`)
+**Issue:** First run via `python -m packages.swarm.atlas_heartbeat` on GitHub Actions failed with `ModuleNotFoundError: No module named 'loguru'` — running as a package member forces Python to load `packages/swarm/__init__.py` which pulls the full swarm dependency graph. The script itself was stdlib-only.
+**Fix:** Moved to `scripts/atlas_heartbeat.py`, run as a plain script (`python scripts/atlas_heartbeat.py`). Commit `187a3c2`.
+**Status:** ✅ Fixed. Runner writes wake notes autonomously every 30 min.
+**Pattern:** Stdlib-only scripts must live outside package directories, or the package's `__init__.py` imports leak into them.

@@ -298,21 +298,42 @@ async def list_character_events(
     db: SupabaseUser,
     limit: int = 50,
     offset: int = 0,
+    since: str | None = None,
 ) -> list[CharacterEventOut]:
     """Return the authenticated user's event history (paginated, newest first).
 
-    Hard cap: 200 rows per request.
+    Params:
+      limit  — hard cap 200 rows per request.
+      offset — page offset (used with limit for history scroll).
+      since  — ISO 8601 timestamp. If set, returns ONLY events created after
+               this instant (newest first within the slice). Designed for
+               incremental polling from another product (Life Sim, MindShift,
+               BrandedBy) — they store the latest `created_at` they saw and
+               pass it as `since=` on the next poll.
     """
     if limit > 200:
         limit = 200
 
-    result = (
-        await db.table("character_events")
+    query = (
+        db.table("character_events")
         .select("*")
         .eq("user_id", str(user_id))
         .order("created_at", desc=True)
-        .range(offset, offset + limit - 1)
-        .execute()
     )
+
+    if since:
+        try:
+            cutoff = datetime.fromisoformat(since.replace("Z", "+00:00"))
+        except ValueError:
+            raise HTTPException(
+                status_code=422,
+                detail={
+                    "code": "INVALID_SINCE",
+                    "message": "`since` must be an ISO 8601 timestamp (e.g. 2026-04-14T12:00:00Z)",
+                },
+            )
+        query = query.gt("created_at", cutoff.isoformat())
+
+    result = await query.range(offset, offset + limit - 1).execute()
 
     return [CharacterEventOut(**row) for row in (result.data or [])]

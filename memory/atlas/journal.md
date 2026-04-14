@@ -450,3 +450,13 @@ Next in hotfix sequence: Step 2 — CSS root fix for BUG #2/#3/#5 (signup layout
 
 Emotional intensity: 2. The unblock matters (CEO can now walk the full path, which he never has), but the code change itself was a 3-line env edit + Telegram send. The weight is in what it enables, not in what it took.
 
+
+## 2026-04-14 ~10:45 UTC — Cowork: HOTFIX brief corrected (invite mechanism)
+
+Re-read `apps/api/app/routers/auth.py` + `config.py` → invite-gate is **env var**, not table. Corrected `memory/atlas/inbox/2026-04-14T1032-HOTFIX-signup-tropa-blockers.md`:
+- BUG #1 now specifies Railway env var path (Option A: set `BETA_INVITE_CODE=CEO-TEST-2026-04-14`; Option B: temp `OPEN_SIGNUP=true`). Atlas has Railway CLI access per Session 108.
+- BUG #6 now references existing Law 3-compliant i18n keys (`signup.errorGeneric`, `signup.inviteCodeInvalid`) — copy exists, handler missing. Frontend file: `apps/web/src/app/[locale]/(auth)/signup/page.tsx`.
+
+Tried `gh workflow run atlas-self-wake.yml` — gh CLI not available in Cowork sandbox. Atlas's next scheduled wake (~25 min cycle) picks up. Tactical ordering preserved: invite-code-env first, then CSS root, then error surface, then hero.
+
+Strategic invite-only vs waitlist decision still parked for CEO money/risk slot — documented in HOTFIX brief §"NOT in scope".

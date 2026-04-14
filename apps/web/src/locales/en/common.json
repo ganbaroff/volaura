@@ -123,6 +123,7 @@
     "checkEmail": "Check your email to confirm your account.",
     "signingIn": "Signing you in…",
     "unexpectedError": "An unexpected error occurred",
+    "errorGeneric": "Something's off on our side — please try again in a moment.",
     "forgotPasswordTitle": "Reset your password",
     "forgotPasswordSubtitle": "Enter your email and we'll send you a reset link",
     "sendResetLink": "Send reset link",

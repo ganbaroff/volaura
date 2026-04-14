@@ -111,7 +111,14 @@ function SignupForm() {
       });
 
       if (authError) {
-        setError(authError.message);
+        // Shame-free (Law 3): no raw Supabase text to the user.
+        // We still log the real error for debugging.
+        console.error("[signup] supabase auth error:", authError);
+        setError(
+          t("auth.errorGeneric", {
+            defaultValue: "Something's off on our side — please try again in a moment.",
+          })
+        );
         return;
       }
 
@@ -142,8 +149,14 @@ function SignupForm() {
       if (isMounted.current) {
         router.push(`/${locale}/onboarding`);
       }
-    } catch {
-      setError(t("auth.unexpectedError"));
+    } catch (err) {
+      // Network failure, CORS, JSON parse — never silent.
+      console.error("[signup] unexpected error:", err);
+      setError(
+        t("auth.errorGeneric", {
+          defaultValue: "Something's off on our side — please try again in a moment.",
+        })
+      );
     } finally {
       setLoading(false);
     }

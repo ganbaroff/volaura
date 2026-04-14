@@ -124,6 +124,7 @@
     "checkEmail": "Hesabınızı təsdiqləmək üçün e-poçtunuzu yoxlayın.",
     "signingIn": "Daxil olunur…",
     "unexpectedError": "Gözlənilməyən xəta baş verdi.",
+    "errorGeneric": "Bizim tərəfdə nəsə düz getmədi — bir az sonra yenidən cəhd edin.",
     "forgotPasswordTitle": "Şifrənizi sıfırlayın.",
     "forgotPasswordSubtitle": "E-poçtunuzu daxil edin və biz sizə bərpa keçidi göndərəcəyik.",
     "sendResetLink": "Sıfırlama linkini göndərin",

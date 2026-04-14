@@ -132,6 +132,7 @@ async def test_rapid_restart_blocked_at_25_minutes():
     user = _build_chainable([
         # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
         [],                                                # no existing in-progress session
+        {"is_platform_admin": False},                      # admin lookup (commit 7789545)
         [{"started_at": _iso_minutes_ago(25), "status": "abandoned"}],  # rapid-restart hit
     ])
 
@@ -165,6 +166,7 @@ async def test_rapid_restart_allowed_at_35_minutes():
     user = _build_chainable([
         # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
         [],                                                        # no existing in-progress
+        {"is_platform_admin": False},                              # admin lookup (commit 7789545)
         [{"started_at": _iso_minutes_ago(35), "status": "abandoned"}],  # 35 min ago — OK
         [],                                                        # retest cooldown (no completed)
         MagicMock(data=[], count=0),                              # abuse monitoring count
@@ -199,12 +201,13 @@ async def test_rapid_restart_only_applies_to_non_completed():
     ])
     user = _build_chainable([
         # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
-        [],                          # no existing in-progress
-        [],                          # rapid-restart query returns empty (completed sessions excluded by neq)
-        [],                          # retest cooldown: no completed session within 7 days
-        MagicMock(data=[], count=0), # abuse monitoring count
-        [],                          # carry-over theta
-        {"id": SESSION_ID},          # insert session
+        [],                                # no existing in-progress
+        {"is_platform_admin": False},      # admin lookup (commit 7789545)
+        [],                                # rapid-restart query returns empty (completed sessions excluded by neq)
+        [],                                # retest cooldown: no completed session within 7 days
+        MagicMock(data=[], count=0),       # abuse monitoring count
+        [],                                # carry-over theta
+        {"id": SESSION_ID},                # insert session
     ])
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
@@ -235,6 +238,7 @@ async def test_rapid_restart_returns_retry_after_minutes():
     user = _build_chainable([
         # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
         [],
+        {"is_platform_admin": False},      # admin lookup (commit 7789545)
         [{"started_at": _iso_minutes_ago(10), "status": "abandoned"}],
     ])
 
@@ -272,12 +276,13 @@ async def test_rapid_restart_allows_different_competency():
     ])
     user = _build_chainable([
         # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
-        [],                          # no in-progress session for comp B
-        [],                          # no recent non-completed session for comp B
-        [],                          # no completed session within 7 days for comp B
-        MagicMock(data=[], count=0), # abuse monitoring
-        [],                          # carry-over theta
-        {"id": SESSION_ID},          # insert session
+        [],                                # no in-progress session for comp B
+        {"is_platform_admin": False},      # admin lookup (commit 7789545)
+        [],                                # no recent non-completed session for comp B
+        [],                                # no completed session within 7 days for comp B
+        MagicMock(data=[], count=0),       # abuse monitoring
+        [],                                # carry-over theta
+        {"id": SESSION_ID},                # insert session
     ])
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)

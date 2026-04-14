@@ -113,12 +113,15 @@ def check() -> int:
         return 0
 
     # Compose one message per workflow, route through notifier cooldown gate.
+    # Direct link skips the "open GH, find repo, find actions tab, find the workflow, find the run" chain.
     all_delivered = True
+    repo = "ganbaroff/volaura"
     for a in alerts:
+        run_url = f"https://github.com/{repo}/actions/runs/{a['latest_run_id']}"
         text = (
-            f"Watchdog: workflow {a['workflow']} has {a['fails']} consecutive "
-            f"scheduled failures (latest run {a['latest_run_id']}). "
-            f"'{a['latest_title']}'. Check /actions."
+            f"Watchdog: {a['workflow']} — {a['fails']} consecutive scheduled failures\n"
+            f"Latest: '{a['latest_title']}'\n"
+            f"{run_url}"
         )
         delivered = send_notification(category="error", text=text, severity="warning")
         if not delivered:

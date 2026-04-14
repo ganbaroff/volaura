@@ -60,6 +60,7 @@ export type AdminStatsResponse = {
     pending_org_approvals: number;
     assessments_today: number;
     avg_aura_score?: number | null;
+    pending_grievances?: number;
 };
 
 /**
@@ -120,7 +121,7 @@ export type AssessmentResultOut = {
 };
 
 /**
- * Assign one or more competency assessments to specific volunteers.
+ * Assign one or more competency assessments to specific professionals.
  */
 export type AssignAssessmentRequest = {
     professional_ids: Array<string>;
@@ -311,6 +312,25 @@ export type CheckoutSessionResponse = {
     checkout_url: string;
 };
 
+export type ChoicePayload = {
+    event_id: string;
+    choice_index: number;
+    stats_before?: {
+        [key: string]: number;
+    };
+};
+
+export type ChoiceResponse = {
+    event_id: string;
+    choice_index: number;
+    consequences: {
+        [key: string]: unknown;
+    };
+    stats_after: {
+        [key: string]: number;
+    };
+};
+
 export type CoachingResponse = {
     session_id: string;
     competency_id: string;
@@ -332,6 +352,15 @@ export type CollectiveAuraResponse = {
     count: number;
     avg_aura?: number | null;
     trend?: number | null;
+};
+
+/**
+ * Aggregate-only social proof counters.
+ */
+export type CommunitySignal = {
+    professionals_today: number;
+    professionals_this_week: number;
+    total_professionals: number;
 };
 
 export type CoordinatorRatingRequest = {
@@ -516,6 +545,19 @@ export type EventUpdate = {
     is_public?: boolean | null;
 };
 
+export type FeedItem = {
+    id: string;
+    event_type: string;
+    payload: {
+        [key: string]: unknown;
+    };
+    created_at: string;
+};
+
+export type FeedResponse = {
+    data: Array<FeedItem>;
+};
+
 export type FromExternalRequest = {
     standalone_user_id: string;
     standalone_project_ref: string;
@@ -562,6 +604,58 @@ export type GenerationOut = {
     processing_started_at?: string | null;
     completed_at?: string | null;
     created_at: string;
+};
+
+export type GrievanceAdminListResponse = {
+    data: Array<GrievanceAdminOut>;
+};
+
+/**
+ * Admin view includes user id + admin_notes + updated_at — fields intake
+ * response does not expose to the owner.
+ */
+export type GrievanceAdminOut = {
+    id: string;
+    subject: string;
+    description: string;
+    related_competency_slug: string | null;
+    related_session_id: string | null;
+    status: string;
+    resolution: string | null;
+    created_at: string;
+    resolved_at: string | null;
+    user_id: string;
+    admin_notes: string | null;
+    updated_at: string;
+};
+
+export type GrievanceCreate = {
+    subject: string;
+    description: string;
+    related_competency_slug?: string | null;
+    related_session_id?: string | null;
+};
+
+export type GrievanceListResponse = {
+    data: Array<GrievanceOut>;
+};
+
+export type GrievanceOut = {
+    id: string;
+    subject: string;
+    description: string;
+    related_competency_slug: string | null;
+    related_session_id: string | null;
+    status: string;
+    resolution: string | null;
+    created_at: string;
+    resolved_at: string | null;
+};
+
+export type GrievanceStatusUpdate = {
+    status: 'reviewing' | 'resolved' | 'rejected';
+    resolution?: string | null;
+    admin_notes?: string | null;
 };
 
 export type HttpValidationError = {
@@ -655,6 +749,13 @@ export type MessageResponse = {
 export type MyRankResponse = {
     rank: number | null;
     total_users: number;
+};
+
+export type NextChoiceResponse = {
+    event: {
+        [key: string]: unknown;
+    } | null;
+    pool_size: number;
 };
 
 export type NotificationListOut = {
@@ -893,6 +994,20 @@ export type PublicVerificationOut = {
     username?: string | null;
 };
 
+export type PurchasePayload = {
+    shop_item: string;
+    current_crystals: number;
+};
+
+export type PurchaseResponse = {
+    shop_item: string;
+    cost: number;
+    remaining_crystals: number;
+    stat_boost: {
+        [key: string]: number;
+    };
+};
+
 /**
  * Full per-question breakdown for a completed session.
  */
@@ -1067,7 +1182,7 @@ export type SkillResponse = {
 export type StartAssessmentRequest = {
     competency_slug: string;
     language?: 'en' | 'az';
-    role_level?: 'professional' | 'volunteer' | 'coordinator' | 'specialist' | 'manager' | 'senior_manager';
+    role_level?: 'professional' | 'volunteer';
     energy_level?: 'full' | 'mid' | 'low';
     automated_decision_consent?: boolean;
 };
@@ -1367,6 +1482,34 @@ export type LogoutApiAuthLogoutPostResponses = {
 };
 
 export type LogoutApiAuthLogoutPostResponse = LogoutApiAuthLogoutPostResponses[keyof LogoutApiAuthLogoutPostResponses];
+
+export type E2eCreateUserApiAuthE2eSetupPostData = {
+    body: RegisterRequest;
+    headers?: {
+        'X-E2E-Secret'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/auth/e2e-setup';
+};
+
+export type E2eCreateUserApiAuthE2eSetupPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type E2eCreateUserApiAuthE2eSetupPostError = E2eCreateUserApiAuthE2eSetupPostErrors[keyof E2eCreateUserApiAuthE2eSetupPostErrors];
+
+export type E2eCreateUserApiAuthE2eSetupPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: AuthResponse;
+};
+
+export type E2eCreateUserApiAuthE2eSetupPostResponse = E2eCreateUserApiAuthE2eSetupPostResponses[keyof E2eCreateUserApiAuthE2eSetupPostResponses];
 
 export type BridgeFromExternalApiAuthFromExternalPostData = {
     body: FromExternalRequest;
@@ -1725,6 +1868,117 @@ export type ManageSharingPermissionApiAuraMeSharingPostResponses = {
      */
     200: unknown;
 };
+
+export type ListOwnGrievancesApiAuraGrievanceGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/aura/grievance';
+};
+
+export type ListOwnGrievancesApiAuraGrievanceGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: GrievanceListResponse;
+};
+
+export type ListOwnGrievancesApiAuraGrievanceGetResponse = ListOwnGrievancesApiAuraGrievanceGetResponses[keyof ListOwnGrievancesApiAuraGrievanceGetResponses];
+
+export type FileGrievanceApiAuraGrievancePostData = {
+    body: GrievanceCreate;
+    path?: never;
+    query?: never;
+    url: '/api/aura/grievance';
+};
+
+export type FileGrievanceApiAuraGrievancePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type FileGrievanceApiAuraGrievancePostError = FileGrievanceApiAuraGrievancePostErrors[keyof FileGrievanceApiAuraGrievancePostErrors];
+
+export type FileGrievanceApiAuraGrievancePostResponses = {
+    /**
+     * Successful Response
+     */
+    201: GrievanceOut;
+};
+
+export type FileGrievanceApiAuraGrievancePostResponse = FileGrievanceApiAuraGrievancePostResponses[keyof FileGrievanceApiAuraGrievancePostResponses];
+
+export type AdminListPendingGrievancesApiAuraGrievanceAdminPendingGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/aura/grievance/admin/pending';
+};
+
+export type AdminListPendingGrievancesApiAuraGrievanceAdminPendingGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: GrievanceAdminListResponse;
+};
+
+export type AdminListPendingGrievancesApiAuraGrievanceAdminPendingGetResponse = AdminListPendingGrievancesApiAuraGrievanceAdminPendingGetResponses[keyof AdminListPendingGrievancesApiAuraGrievanceAdminPendingGetResponses];
+
+export type AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+    };
+    url: '/api/aura/grievance/admin/history';
+};
+
+export type AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetError = AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetErrors[keyof AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetErrors];
+
+export type AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: GrievanceAdminListResponse;
+};
+
+export type AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetResponse = AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetResponses[keyof AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetResponses];
+
+export type AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchData = {
+    body: GrievanceStatusUpdate;
+    path: {
+        grievance_id: string;
+    };
+    query?: never;
+    url: '/api/aura/grievance/admin/{grievance_id}';
+};
+
+export type AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchError = AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchErrors[keyof AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchErrors];
+
+export type AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: GrievanceAdminOut;
+};
+
+export type AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchResponse = AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchResponses[keyof AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchResponses];
 
 export type StartAssessmentApiAssessmentStartPostData = {
     body: StartAssessmentRequest;
@@ -2895,6 +3149,22 @@ export type DiscoverTalentApiVolunteersDiscoveryGetResponses = {
 
 export type DiscoverTalentApiVolunteersDiscoveryGetResponse = DiscoverTalentApiVolunteersDiscoveryGetResponses[keyof DiscoverTalentApiVolunteersDiscoveryGetResponses];
 
+export type GetCommunitySignalApiCommunitySignalGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/community/signal';
+};
+
+export type GetCommunitySignalApiCommunitySignalGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: CommunitySignal;
+};
+
+export type GetCommunitySignalApiCommunitySignalGetResponse = GetCommunitySignalApiCommunitySignalGetResponses[keyof GetCommunitySignalApiCommunitySignalGetResponses];
+
 export type GetLeaderboardApiLeaderboardGetData = {
     body?: never;
     path?: never;
@@ -2938,6 +3208,124 @@ export type GetMyRankApiLeaderboardMeGetResponses = {
 };
 
 export type GetMyRankApiLeaderboardMeGetResponse = GetMyRankApiLeaderboardMeGetResponses[keyof GetMyRankApiLeaderboardMeGetResponses];
+
+export type GetFeedApiLifesimFeedGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+    };
+    url: '/api/lifesim/feed';
+};
+
+export type GetFeedApiLifesimFeedGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetFeedApiLifesimFeedGetError = GetFeedApiLifesimFeedGetErrors[keyof GetFeedApiLifesimFeedGetErrors];
+
+export type GetFeedApiLifesimFeedGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: FeedResponse;
+};
+
+export type GetFeedApiLifesimFeedGetResponse = GetFeedApiLifesimFeedGetResponses[keyof GetFeedApiLifesimFeedGetResponses];
+
+export type GetNextChoiceApiLifesimNextChoiceGetData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Character age for pool filter
+         */
+        age: number;
+        category?: string | null;
+        intelligence?: number;
+        social?: number;
+        energy?: number;
+        happiness?: number;
+        health?: number;
+        /**
+         * Unbounded — may be negative for debt
+         */
+        money?: number;
+        work_experience?: number;
+    };
+    url: '/api/lifesim/next-choice';
+};
+
+export type GetNextChoiceApiLifesimNextChoiceGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetNextChoiceApiLifesimNextChoiceGetError = GetNextChoiceApiLifesimNextChoiceGetErrors[keyof GetNextChoiceApiLifesimNextChoiceGetErrors];
+
+export type GetNextChoiceApiLifesimNextChoiceGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: NextChoiceResponse;
+};
+
+export type GetNextChoiceApiLifesimNextChoiceGetResponse = GetNextChoiceApiLifesimNextChoiceGetResponses[keyof GetNextChoiceApiLifesimNextChoiceGetResponses];
+
+export type SubmitChoiceApiLifesimChoicePostData = {
+    body: ChoicePayload;
+    path?: never;
+    query?: never;
+    url: '/api/lifesim/choice';
+};
+
+export type SubmitChoiceApiLifesimChoicePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type SubmitChoiceApiLifesimChoicePostError = SubmitChoiceApiLifesimChoicePostErrors[keyof SubmitChoiceApiLifesimChoicePostErrors];
+
+export type SubmitChoiceApiLifesimChoicePostResponses = {
+    /**
+     * Successful Response
+     */
+    201: ChoiceResponse;
+};
+
+export type SubmitChoiceApiLifesimChoicePostResponse = SubmitChoiceApiLifesimChoicePostResponses[keyof SubmitChoiceApiLifesimChoicePostResponses];
+
+export type PurchaseShopItemApiLifesimPurchasePostData = {
+    body: PurchasePayload;
+    path?: never;
+    query?: never;
+    url: '/api/lifesim/purchase';
+};
+
+export type PurchaseShopItemApiLifesimPurchasePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type PurchaseShopItemApiLifesimPurchasePostError = PurchaseShopItemApiLifesimPurchasePostErrors[keyof PurchaseShopItemApiLifesimPurchasePostErrors];
+
+export type PurchaseShopItemApiLifesimPurchasePostResponses = {
+    /**
+     * Successful Response
+     */
+    201: PurchaseResponse;
+};
+
+export type PurchaseShopItemApiLifesimPurchasePostResponse = PurchaseShopItemApiLifesimPurchasePostResponses[keyof PurchaseShopItemApiLifesimPurchasePostResponses];
 
 export type GetUnreadCountApiNotificationsUnreadCountGetData = {
     body?: never;
@@ -3092,6 +3480,7 @@ export type ListCharacterEventsApiCharacterEventsGetData = {
     query?: {
         limit?: number;
         offset?: number;
+        since?: string | null;
     };
     url: '/api/character/events';
 };
@@ -3826,6 +4215,24 @@ export type GetSwarmFindingsApiAdminSwarmFindingsGetResponses = {
 
 export type GetSwarmFindingsApiAdminSwarmFindingsGetResponse = GetSwarmFindingsApiAdminSwarmFindingsGetResponses[keyof GetSwarmFindingsApiAdminSwarmFindingsGetResponses];
 
+export type RunGhostingGraceApiAdminGhostingGraceRunPostData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/admin/ghosting-grace/run';
+};
+
+export type RunGhostingGraceApiAdminGhostingGraceRunPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type RunGhostingGraceApiAdminGhostingGraceRunPostResponse = RunGhostingGraceApiAdminGhostingGraceRunPostResponses[keyof RunGhostingGraceApiAdminGhostingGraceRunPostResponses];
+
 export type GatewayHealthApiAtlasHealthGetData = {
     body?: never;
     path?: never;
@@ -3875,5 +4282,5 @@ export type ReceiveProposalApiAtlasProposalPostResponses = {
 export type ReceiveProposalApiAtlasProposalPostResponse = ReceiveProposalApiAtlasProposalPostResponses[keyof ReceiveProposalApiAtlasProposalPostResponses];
 
 export type ClientOptions = {
-    baseUrl: 'http://localhost:8000' | (string & {});
+    baseUrl: 'https://volauraapi-production.up.railway.app' | (string & {});
 };

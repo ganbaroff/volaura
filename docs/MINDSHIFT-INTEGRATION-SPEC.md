@@ -91,9 +91,9 @@ async function fetchAuraBadge(volauraToken: string) {
       }
     ],
     "character_stats": {
-      "CHA": 45,
-      "INT": 30,
-      "END": 25
+      "social": 45,
+      "intelligence": 30,
+      "energy": 25
     },
     "login_streak": 7,
     "event_count": 12,

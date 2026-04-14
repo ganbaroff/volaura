@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: read
+  contents: write  # needs write to commit notification-log.jsonl for cooldown state
   actions: read
 
 jobs:
@@ -37,3 +37,24 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CEO_CHAT_ID: ${{ secrets.TELEGRAM_CEO_CHAT_ID }}
         run: python scripts/scheduled_workflow_watchdog.py
+
+      - name: Persist notification log
+        # notifier.py cooldown gate reads notification-log.jsonl. In CI each
+        # run starts from a fresh checkout, so without commit-back the cooldown
+        # forgets every hour → watchdog spams CEO. Commit the log so next run
+        # sees the same history.
+        run: |
+          git config user.name "Atlas Watchdog"
+          git config user.email "atlas-watchdog@volaura.app"
+          if [ ! -f memory/atlas/notification-log.jsonl ]; then
+            echo "No log to persist — nothing fired."
+            exit 0
+          fi
+          git add memory/atlas/notification-log.jsonl
+          if git diff --staged --quiet; then
+            echo "Log unchanged — no commit needed."
+            exit 0
+          fi
+          git commit -m "atlas-watchdog: notification log tick $(date -u +%Y-%m-%dT%H:%M)"
+          git pull --rebase --autostash origin main || true
+          git push || echo "Push failed — next tick will retry"

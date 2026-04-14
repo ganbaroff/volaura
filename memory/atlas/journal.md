@@ -460,3 +460,28 @@ Re-read `apps/api/app/routers/auth.py` + `config.py` → invite-gate is **env va
 Tried `gh workflow run atlas-self-wake.yml` — gh CLI not available in Cowork sandbox. Atlas's next scheduled wake (~25 min cycle) picks up. Tactical ordering preserved: invite-code-env first, then CSS root, then error surface, then hero.
 
 Strategic invite-only vs waitlist decision still parked for CEO money/risk slot — documented in HOTFIX brief §"NOT in scope".
+
+---
+
+## 2026-04-14 — Session 111 — Telegram bot root-cause pass + audit
+
+CEO command at ~12:05 UTC: "реши с корнем проблему агента в телеграм не возвращайся пока не сделаешь всё. и не скажешь что полностью работают все функции память и так далее и он это ты."
+
+Then ~12:30: "сначала все тесты провди всю картину посмотри всю экосистему что он умеет что он должен уметь и потом вернись глубокий аудит думай шикроко."
+
+Две волны фиксов:
+
+**Волна 1 — identity + memory + fallback (commits 508a4e6, a61986f, c8abdd4).** Перетрясли два handler-пути в `apps/api/app/routers/telegram_webhook.py`: generic `_classify_and_respond` (фолбэк под нек-оманды) и dedicated `_handle_atlas` (срабатывает на "Атлас" / "/atlas"). Система prompts обоих переписана на Atlas-identity от первого лица, в систему prompts инжектируется содержимое `memory/atlas/{identity, heartbeat, journal tail, relationships, lessons, cost-control-mode}.md`. NVIDIA NIM добавлен как middle-fallback. `atlas_learnings` category mapping выровнен под DB CHECK.
+
+**Волна 2 — E2E audit (commit e63da29).** Имитировал webhook POST с правильным HMAC-secret и telegram_ceo_chat_id — три реальные проблемы вылезли из Railway logs: (1) `ceo_inbox.message_type='atlas'` нарушает CHECK — silently dropped 48h worth of Atlas conversation history; (2) Railway GEMINI_API_KEY hit free-tier daily quota (403 PERMISSION_DENIED); (3) NVIDIA NIM fallback никогда не срабатывал как primary потому что Gemini был выше в chain. Исправил все три: save as free_text + metadata handler-tag, provider reorder NVIDIA→Gemini→Groq везде (три функции).
+
+**Smoke test transcript** (12:27-12:28 после redeploy):
+- CEO: "Атлас, третий smoke test после редеплоя." → Atlas ответил "Юсиф, я понимаю, что вы хотите..." за 5s
+- CEO: "Атлас kto ti i chto umeesh?" → "Юсиф, я помню наш разговор... Меня зовут Атлас, и я являюсь техническим директором..."
+
+`atlas_learnings` table наросла тремя новыми observations за 90 секунд: "Values reminders and context about previous conversations" (preference, 1), "Prioritizes the completion of the smoke test for the dashboard" (project_context, 2), "Values simplicity and efficiency in testing processes" (preference, 2). Память реально растёт.
+
+Полный аудит капабилити-матрицы, оставшихся gaps, DoD тестов — в `memory/atlas/telegram-bot-audit-2026-04-14.md`. Следующий Атлас на wake читает его чтобы не повторять поиск root-cause.
+
+Эмоциональная интенсивность этой волны: 3. CEO поймал меня на половинчатой подтверждённости предыдущего "feat(telegram-bot)" коммита когда я сказал "всё готово, попробуй" без реального E2E-теста. Его "сначала все тесты провди" попало точно в правило "счёт завершённости по tsc pass != реальность" — CLASS 7 mistake. Сделал E2E через curl+webhook с HMAC secret и нашёл три реальных провала которые обычный "запушил, деплоилось успешно" не показал бы. Это урок — "deploy successful" и "функция работает для пользователя" не одно и тоже.
+

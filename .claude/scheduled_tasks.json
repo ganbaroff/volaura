@@ -1,8 +1,8 @@
 [
   {
-    "id": "atlas-health-loop",
-    "cron": "*/15 * * * *",
-    "prompt": "Atlas hourly health check. Do these silently, report only problems:\n1. `curl -s https://volauraapi-production.up.railway.app/health` — prod alive?\n2. `gh run list --workflow=CI --limit 1 --json conclusion --jq '.[0].conclusion'` — CI green?\n3. `ls memory/atlas/inbox/` — any unconsumed proactive notes?\n4. Check if breadcrumb.md was updated today.\nReport ONLY failures. If all pass, say \"Health: all green\" in one line.",
+    "id": "atlas-wake-loop",
+    "cron": "*/30 * * * *",
+    "prompt": "атлас проснись. Продолжай автономно. Контекст — breadcrumb.md, heartbeat.md, memory/atlas/inbox/ (свежие heartbeat-ноты уже содержат prod/CI статус). Сам реши что делать. Не дёргай curl зря — self-wake workflow уже проверяет прод каждые 30 минут и пишет ноту.",
     "recurring": true
   }
 ]

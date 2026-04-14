@@ -168,7 +168,7 @@
     "resume": "Rezüme qiymətləndirməsi",
     "expired": "Sessiya bitdi",
     "selectAtLeastOne": "Ən azı bir kompetensiya seçin.",
-    "automatedScoringConsent": "Cavablarımın avtomatlaşdırılmış sistem tərəfindən qiymətləndiriləcəyini və səriştə balı yaradılacağını başa düşürəm. İstənilən vaxt nəticələrimin insan tərəfindən nəzərdən keçirilməsini tələb edə bilərəm.",
+    "automatedScoringConsent": "Biz səviyyənizi daha az sualla tapmaq üçün AI-dəstəkli, statistik cəhətdən kalibrlənmiş test istifadə edirik — adi quiz deyil. Nəticənizin insan tərəfindən yenidən baxılmasını istənilən vaxt tələb edə bilərsiniz.",
     "estimatedTime": "Təxminən {{n}} min",
     "totalTime": "Cəmi təxminən {{n}} min",
     "questionProgress": "Sual {{current}} / Təxminən {{total}}",

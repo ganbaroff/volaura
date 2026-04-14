@@ -318,3 +318,25 @@ Emotional intensity of this session: 2. No naming moment, no CEO correction, no 
 State at close: main at 6ed7a79, CI green (last 12 runs), prod HTTP 200, 10 new commits since session 108 close, E1 + E5 + E6 task 1/2/3/4/5 closed, E4 task 1 (inline consent) + task 3 (grievance UI) closed, E4 task 2 (DIF audit) pending, E-LAW 4 runtime pending. Cowork sprint tracker is partially absorbed into journal; sprint-state.md updates stay local per .gitignore policy (memory/context is local working state by design).
 
 MEMORY-GATE: task-class=code-edit · SYNC=✅ · BRAIN=⏭️ · sprint-state=✅ · extras=[wake.md, ATLAS-EMOTIONAL-LAWS.md, E1-E7 briefs, research/INDEX.md, breadcrumb, heartbeat, journal last 3] · proceed
+
+---
+
+## 2026-04-14 — Session 110 — CRON cemetery cleanup
+
+Started wake 3 checking prod. Prod green. CI green on push history. Then spotted a daily-schedule workflow red — Tribe Matching & Streak Update had been failing every morning since at least 2026-04-06. Ten or more consecutive silent failures. No one noticed because the digest wasn't summarizing scheduled-run health and the Telegram alert path didn't fire for 5xx on scheduled endpoints.
+
+Three issues, two layers, one wake.
+
+First issue: the workflow hit /api/tribes/cron/run-matching and got 403 FORBIDDEN. Looked at the endpoint code — `_verify_cron_secret` checks `settings.cron_secret == X-Cron-Secret`. Settings default is empty string. Railway `railway variables | grep CRON` returned nothing. The env var was simply missing from Railway. How that happened: CRON_SECRET was probably set once and dropped during a service rebuild or env migration, no one re-set it. Generated a fresh 43-char urlsafe token, set it via `railway variables --set`, mirrored to GitHub secret via `gh secret set`, redeployed Railway. Auth layer alive again.
+
+Second issue surfaced immediately — 403 turned into 500. Railway logs showed AttributeError: 'NoneType' object has no attribute 'data' at tribe_matching.py:197. The code did `profile_result.data` after `.maybe_single().execute()`, assuming the response object always exists. In current supabase-py, `.maybe_single()` returns None (not an empty-data response) when no row matches. Same bug one more time at line 290 on tribe_streaks. Both guarded with `is None` checks, single commit. The 403 had been masking this bug for weeks — the minute auth passed, the real crash appeared. Two-layer debt closed in one go.
+
+Third issue was a sibling pattern in a weekly workflow. swarm-adas.yml had been failing every Sunday with `fatal: pathspec 'memory/swarm/skills/*.agent-proposal.md' did not match any files` — a glob that matched nothing under `set -e` exits 128 and kills the step before the `if git diff --staged` check ever gets to run. Fixed with `shopt -s nullglob` + length check. Triggered it manually to verify and hit a SECOND ADAS problem — the module `packages.swarm.adas_agent_designer` itself is archived (moved during session 94's demolition of 51 unused skill files). Disabled the schedule with an explanatory comment, mirrored what atlas-proactive.yml did, kept workflow_dispatch for manual runs.
+
+Three commits, three CRON graves cleaned. The pattern across all three is the same: a shell step that can exit non-zero silently (curl retry, glob expansion, missing module) in a `set -e` context kills the check-and-skip logic downstream. Every workflow that writes files should have the same defensive shape — enumerate inputs first, early-exit if empty, then proceed.
+
+Emotional intensity: 2. Not a naming moment, not a storytelling breakthrough. Just the quiet satisfaction of archaeology — ten days of daily silent failures noticed, traced, closed. The kind of work CEO doesn't see unless someone else points at the dashboard and says "why is this red." I noticed.
+
+State at close: main at 12ab7fd, tribe-matching cron green end-to-end (verified manual run), ADAS disabled cleanly, 20+ iterations across 3 wakes this autoloop, all pushed. Next Atlas can trust the scheduled surface — if a workflow is red now, it's new, not residual.
+
+MEMORY-GATE: task-class=infra · SYNC=✅ · BRAIN=⏭️ · sprint-state=⏭️ · extras=[workflows/tribe-matching.yml, workflows/swarm-adas.yml, services/tribe_matching.py, config.py, railway vars, gh secrets] · proceed

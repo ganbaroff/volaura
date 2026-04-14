@@ -10,7 +10,6 @@ CLI: python -m packages.swarm.backlog status
 from __future__ import annotations
 
 import json
-import os
 import uuid
 from datetime import datetime, timezone
 from enum import Enum

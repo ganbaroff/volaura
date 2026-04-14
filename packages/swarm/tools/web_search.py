@@ -5,7 +5,6 @@ Setup: pip install tavily-python
 """
 
 import os
-from typing import Optional
 
 _client = None
 

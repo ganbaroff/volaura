@@ -22,7 +22,6 @@ import json
 import os
 import random
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
 
 project_root = Path(__file__).parent.parent.parent

@@ -32,7 +32,6 @@ from __future__ import annotations
 import asyncio
 import os
 import time
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 from loguru import logger
@@ -245,7 +244,6 @@ Be specific. No vague summaries. Real facts, real numbers, real citations."""
         try:
             from openai import AsyncOpenAI
             import json
-            import re
 
             client = AsyncOpenAI(
                 api_key=self.deepseek_key,

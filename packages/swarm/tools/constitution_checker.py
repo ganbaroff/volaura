@@ -6,9 +6,8 @@ these checks to ground proposals in actual code violations.
 
 from __future__ import annotations
 
-from pathlib import Path
 
-from .code_tools import grep_codebase, read_file
+from .code_tools import grep_codebase
 
 
 def check_all_laws() -> dict[str, list[str]]:

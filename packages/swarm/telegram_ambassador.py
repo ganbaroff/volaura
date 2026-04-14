@@ -21,7 +21,6 @@ Requires: TELEGRAM_BOT_TOKEN, TELEGRAM_CEO_CHAT_ID, GEMINI_API_KEY
 
 from __future__ import annotations
 
-import asyncio
 import json
 import os
 import sys
@@ -447,7 +446,7 @@ def run_bot() -> None:
                     f"recent_commits: {len(state.get('commit_timestamps', []))} in last 24h\n"
                 )
                 if processed:
-                    msg += f"\nLast 3 processed:\n"
+                    msg += "\nLast 3 processed:\n"
                     for pid in processed[-3:]:
                         msg += f"  {pid[:16]}\n"
                 await update.message.reply_text(msg)
@@ -574,7 +573,7 @@ def run_bot() -> None:
                 )
 
             if resp.status_code == 204:
-                msg = f"[OK] Workflow triggered."
+                msg = "[OK] Workflow triggered."
                 if issue_number:
                     msg += f" Issue #{issue_number} created."
                 msg += "\nResult will be posted here when done (~1-3 min)."

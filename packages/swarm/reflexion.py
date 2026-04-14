@@ -80,7 +80,7 @@ def get_reflexions_for_model(model_name: str, max_entries: int = 5) -> str:
 
         lines.append(f"[{emoji}] Task: {task_summary}")
         if outcome == "wrong":
-            lines.append(f"  Your response was rejected. Avoid this pattern.")
+            lines.append("  Your response was rejected. Avoid this pattern.")
         lines.append("")
 
     failure_rate = len(failures) / max(len(model_entries), 1)

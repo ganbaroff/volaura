@@ -49,6 +49,7 @@ class AdminStatsResponse(BaseModel):
     pending_org_approvals: int
     assessments_today: int
     avg_aura_score: float | None = None
+    pending_grievances: int = 0
 
 
 class OrgApproveResponse(BaseModel):

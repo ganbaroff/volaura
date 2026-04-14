@@ -35,6 +35,7 @@ export interface AdminStats {
   pending_org_approvals: number;
   assessments_today: number;
   avg_aura_score: number | null;
+  pending_grievances: number;
 }
 
 // ── Is Admin check (used by AdminGuard) ───────────────────────────────────────

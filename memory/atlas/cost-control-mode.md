@@ -71,6 +71,43 @@ Cost ceiling per month CEO is willing to pay for Claude Opus: **to be set by CEO
 
 ---
 
+## CEO directives 2026-04-14 — model hierarchy update (overrides Article 0)
+
+Three live CEO messages this afternoon reshape the model hierarchy. Capturing verbatim-intent so the rule isn't lost to compaction.
+
+1. "контролируй цену внешних апи. бесплатные только используй" — external API costs controlled; free-tier only by default.
+2. "для исполнительной силы используй клауд соннет макс тинкинг. внутри своих агентов. когда надо работать. важно. очень важное можешь опус дать. но никогда не давай хаику. запиши это. для консиллиума использовать только внешние и внутренние модели. но никогда хаику." — execution = Sonnet Max Thinking; critical = Opus; Haiku BANNED everywhere; consilium = free external + free internal only, never Haiku.
+3. "сначала планируй потом действуй пойми что будет эффективнее. твоя цельт минимизировать затраты пока не получили гранты мы" — plan before action; goal = minimise cost until grants land.
+
+Hard rules derived:
+- **Haiku is banned**. Neither consilium voices nor execution workers. If any code path falls through to Haiku, the path is wrong — replace with Sonnet (for execution) or re-order free providers first.
+- **Sonnet Max Thinking** = execution worker inside agents when real work must happen (production-facing code, final copy, legally-sensitive responses). Not for parallel consilium debate.
+- **Opus** = critical-only invocation. CEO or Atlas may invoke it consciously for a high-stakes one-shot (architecture decision, irreversible migration, legal review). Logged to `zeus/atlas.governance_events` so the invocation is traceable.
+- **Consilium (multi-voice debate)** = free external (Gemini Flash, NVIDIA NIM, DeepSeek) + free internal (Ollama qwen3:8b, Cerebras Qwen3-235B free tier). Never Claude. Never Haiku.
+- **Goal until grants arrive**: minimise Anthropic API spend. Assume zero planned budget; each Opus/Sonnet call is a conscious spend decision, not a default.
+
+CEO clarification 2026-04-14: "клауд соннет опус можешь. у меня MAX план в клауде. 20x."
+
+Critical distinction — what MAX 20x subscription covers vs doesn't:
+
+- **Covered by MAX 20x (flat cost, use freely)**: Cowork desktop app (Claude Opus in VirtioFS-mounted repo session), Claude Code CLI (this Atlas session on CEO's machine), Claude.ai web chat. Sonnet Max Thinking and Opus here — already paid.
+- **NOT covered (per-call paid via `ANTHROPIC_API_KEY` on Railway/Supabase)**: any `model_router.py` call that routes to `provider="anthropic"`, any server-side Sonnet/Opus fallback, any Python swarm agent dispatched to Claude. Each token billed separately. Max subscription does NOT cover API-direct traffic.
+
+Hard rules derived:
+- **Haiku is banned**. Neither consilium voices nor execution workers. If any code path falls through to Haiku, the path is wrong — remove the Claude fallback entirely, let the caller handle 503 gracefully.
+- **Server-side Claude (any Claude in VOLAURA FastAPI runtime) is off by default.** Not Sonnet, not Opus. The paid `ANTHROPIC_API_KEY` is a live gun — leaving it in a router chain as "last resort" means a free-tier outage silently burns tokens.
+- **Sonnet Max Thinking execution** happens in Cowork desktop app / Claude Code CLI (covered by Max 20x), NOT inside VOLAURA API server. When real work needs Sonnet-quality execution, CEO runs it from his machine where subscription covers it.
+- **Opus critical-invocation** also happens from Cowork or Claude Code CLI, same reasoning.
+- **Consilium (multi-voice debate inside Python swarm)** = free external (Gemini Flash, NVIDIA NIM, DeepSeek) + free internal (Ollama qwen3:8b, Cerebras Qwen3-235B free tier). Never Claude. Never Haiku.
+- **Goal until grants arrive**: zero Anthropic-API-direct spend. Max 20x is the ceiling; don't double-bill CEO by routing API-direct calls on top of his subscription.
+
+This overrides Article 0's "never use Claude models as swarm agents" line with a refined version: no Claude in the server-side router at all; Sonnet/Opus live in the subscription layer (Cowork/CLI) where CEO already pays flat. Article 0 in `CLAUDE.md` to be updated by the planning layer (Cowork) in a follow-up commit, not by Claude Opus CLI.
+
+Runtime change shipped same session:
+- `apps/api/app/services/model_router.py`: `_haiku_last_resort` function removed entirely; `SAFE_USER_FACING` chain now ends after `_nvidia_nemotron_ultra`. If all three free tiers (Gemini Pro, Gemini Flash, NVIDIA) are unavailable the endpoint returns 503 honestly instead of silently spending Sonnet tokens.
+
+---
+
 ## Self-check before any Claude Opus action
 
 Before I (Claude Opus inside this CLI) do a bash/edit/grep:

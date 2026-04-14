@@ -183,23 +183,15 @@ def _groq_llama_8b() -> ProviderSpec | None:
     )
 
 
-def _haiku_last_resort() -> ProviderSpec | None:
-    """Anthropic Haiku — LAST RESORT per Article 0.
-
-    Explicitly gated: only returned for SAFE_USER_FACING role. Never for
-    judge/worker/fast. Article 0 literally forbids Claude as a swarm agent.
-    """
-    # We intentionally do NOT check an env var here — this function is only
-    # ever called from the SAFE_USER_FACING chain, and even there it is the
-    # last entry, so it acts as an always-available fallback.
-    return ProviderSpec(
-        provider="anthropic",
-        model="claude-haiku-4-5-20251001",
-        base_url=None,
-        api_key="",  # resolved via ANTHROPIC_API_KEY env or injected client
-        rationale="Article 0 last-resort for user-facing text only",
-        is_fallback=True,
-    )
+# Anthropic provider removed from server-side router (2026-04-14):
+# CEO directive — Haiku banned everywhere, Sonnet/Opus through server-side
+# ANTHROPIC_API_KEY is per-call paid (Max 20x subscription only covers
+# Cowork desktop + Claude Code CLI, NOT the VOLAURA FastAPI runtime).
+# SAFE_USER_FACING chain ends after NVIDIA Nemotron Ultra; if all three
+# free tiers (Gemini Pro, Gemini Flash, NVIDIA) are unavailable the
+# endpoint returns 503 honestly rather than silently burning Sonnet tokens.
+# If CEO ever wants a server-side Claude fallback it must be an explicit
+# opt-in with a cost ceiling, not a default.
 
 
 # ── Role → ordered list of candidate factories ──────────────────────────
@@ -228,7 +220,8 @@ _CHAINS: dict[ProviderRole, list] = {
         _gemini_pro,
         _gemini_flash,
         _nvidia_nemotron_ultra,
-        _haiku_last_resort,
+        # Claude fallback removed — see comment above _sonnet_execution stub.
+        # If all three free tiers fail, caller handles None (503 to user).
     ],
 }
 

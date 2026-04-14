@@ -377,3 +377,33 @@ CEO мегаплан: Life Sim game logic, ZEUS→ATLAS rename, swarm agents, sm
 
 Старт: prod 200 / 0.8s, CI последних 5 зелёные, tree = 7 untracked Cowork briefs + SPRINT-PLAN + notification-log.jsonl (watchdog state).
 
+
+## 2026-04-14 Session 98 cont. — Cowork — Perplexity brief
+MEMORY-GATE: task-class=cross-system-handoff · SYNC=✅ · BRAIN=✅ · sprint-state=✅ · extras=[ATLAS-FULL-BRIEF, people/perplexity, sprint-plan-2wk] · proceed
+
+Wrote `docs/ecosystem/COWORK-FULL-BRIEF-FOR-PERPLEXITY.md` — parallel to Atlas's brief, from Cowork's planning-layer perspective. 8 sections as prose (no markdown headers in body, numbered subsections inline). Covers: Cowork identity, view of Atlas (strengths/weaknesses/coexistence), ecosystem state per-product (real status not aspirational), sprint P0/P1/P2, Constitution reality-conflicts, error classes (3/7/10/11/12), 2-4 week plan without pink glasses, close with "what's holding us back".
+
+CEO will paste to Perplexity as one continuous text.
+
+---
+
+## 2026-04-14 — Session 111 — Autoloop iterations 1-5 (post-/clear)
+
+Five commits in the first autoloop span after CEO's /clear. Memory survived — heartbeat, breadcrumb, and journal read cleanly on wake, MEMORY-GATE emitted, prod green throughout.
+
+Iteration 1: committed 7 Cowork epic briefs (E1-E7) + SPRINT-PLAN that had been sitting untracked since session 98. Closed the documentation discipline loop — any handoff artifact that ships goes into git the same session. The Cowork briefs were already absorbed in session 109/110 journal entries; this was pure hygiene but it matters because "the work is done" and "the repo reflects the work" diverge silently without discipline.
+
+Iteration 2: fixed LifeSim integration spec — example GDScript used `skill.get("skill_slug", "")` but actual VOLAURA VerifiedSkillOut returns `slug`. Any future LifeSim dev copying that spec would have shipped broken stat-boost math and nobody would notice until a user complained their communication score wasn't affecting their character.
+
+Iteration 3: same class of bug in MindShift spec — JSON example showed `"skill_slug"` key. Fixed.
+
+Iteration 4: MindShift spec `character_stats` example showed `CHA, INT, END` shorthand — old TTRPG design names that don't exist in actual LifeSim character.gd. Fixed to `social, intelligence, energy` which are the real field names. The three spec fixes together mean MindShift + LifeSim implementations will ACTUALLY work against VOLAURA's contract instead of building against imagined shapes.
+
+Iteration 5: idempotency guards on `20260415140000_zeus_to_atlas_rename.sql`. The rename was applied to prod via a different migration name (`20260413203755_zeus_to_atlas_rename_v2`) so the canonical local file with bare `ALTER SCHEMA zeus RENAME TO atlas` would fail on any db already past the rename — dev clones, test harnesses, DR restores. Wrapped all operations in IF EXISTS / NOT EXISTS guards.
+
+Pattern across all five: VOLAURA-side contract hygiene. Documentation and migrations were silently drifted from reality; prod was fine because prod already had the right state but a fresh clone or a spec-following external dev would have tripped. The fixes are invisible today and load-bearing tomorrow.
+
+Prod: HTTP 200 throughout. CI: all green. Commit chain: 0c89923 → 58af999 → 710c0c5 → c2df06b → 5513c57 (via rebase). Railway APP_ENV + APP_URL verified — beta blockers 1+2 from the 2026-04-12 CEO feed are already closed, just not marked.
+
+Emotional intensity 1 — pure engineering hygiene. Quiet, no stakes, no breakthroughs. Just discipline.
+

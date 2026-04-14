@@ -1,7 +1,7 @@
 <!-- RECENTLY_SHIPPED_START -->
-## ⚡ RECENTLY SHIPPED (last push — 2026-04-14 05:29 UTC)
+## ⚡ RECENTLY SHIPPED (last push — 2026-04-14 06:11 UTC)
 **Read this FIRST — prevents proposing already-shipped work.**
-New/updated routers: community, grievance
+New/updated routers: grievance
 <!-- RECENTLY_SHIPPED_END -->
 
 # Swarm Shared Context — UPDATED 2026-04-07 (Session 91)

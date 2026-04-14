@@ -1,6 +1,11 @@
 # Volaura Design System Audit
 
-> **Date:** 2026-03-22
+> **⚠ SUPERSEDED 2026-04-15 by [`BASELINE-2026-04-15.md`](./BASELINE-2026-04-15.md).**
+> This document reflects state as of 2026-03-22. All 4 critical issues flagged
+> below have been RESOLVED (i18n, Lucide icons, ARIA labels, badge tokens).
+> Current baseline lives in BASELINE-2026-04-15.md. Kept for audit-trail history only.
+>
+> **Original Date:** 2026-03-22
 > **Version:** 1.0 — Initial comprehensive audit
 > **Scope:** Frontend v0.dev output (5 sprints, 18 pages, 12+ custom components)
 > **Audit Framework:** WCAG 2.1 AA, Tailwind CSS 4, Framer Motion best practices

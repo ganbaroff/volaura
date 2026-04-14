@@ -295,6 +295,7 @@ export default function BrandedByPage() {
           className="rounded-xl border border-border bg-card p-5 flex items-center gap-4"
         >
           {twin.photo_url ? (
+            // eslint-disable-next-line @next/next/no-img-element -- BrandedBy twin photo may come from fal.ai or other AI provider CDNs outside remotePatterns
             <img
               src={twin.photo_url}
               alt={twin.display_name}

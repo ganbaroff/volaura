@@ -1,0 +1,2 @@
+model=anthropic/claude-opus-4.1
+error=<urlopen error Tunnel connection failed: 403 Forbidden>

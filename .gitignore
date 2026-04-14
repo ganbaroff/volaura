@@ -66,6 +66,7 @@ _stitch_design/
 memory/*
 !memory/swarm/
 !memory/atlas/
+!memory/people/
 decision-simulation-review.html
 volaura-preview.jsx
 

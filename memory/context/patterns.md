@@ -981,3 +981,11 @@ except ImportError:
 **Checkpoint:** If debugging >10 min and haven't checked own code yet → stop, check own code now. Saves time almost always.
 
 **Integration with Simple-First:** Simple-first finds quick wins. "Did I create this?" finds self-created bugs even when they seem external. Run both checks before escalating to complex debugging or architecture redesign.
+
+## Cowork sandbox network constraint (2026-04-14, INC-012)
+
+Cowork sandbox proxy permits outbound HTTPS only to `api.anthropic.com`. All other LLM endpoints return 403. Agent-tool subagents (Task tool) inherit parent context → "Prompt is too long" on trivial requests.
+
+**Always for Cowork-Atlas red-team work:** call `scripts/critique.py` with `--target` and `--personas`. Wrapper is stdlib-only HTTP to Anthropic API with fresh per-persona context. 7 seed personas in `scripts/critique_personas/`. Cost ceiling $3/batch.
+
+NEVER call Agent tool from Cowork for critique (parent-context bleed). NEVER assume any non-Anthropic provider is reachable from Cowork.

@@ -112,3 +112,49 @@ Entries feed into `mistakes.md` patterns and swarm critique sessions.
 **Fix:** Moved to `scripts/atlas_heartbeat.py`, run as a plain script (`python scripts/atlas_heartbeat.py`). Commit `187a3c2`.
 **Status:** ✅ Fixed. Runner writes wake notes autonomously every 30 min.
 **Pattern:** Stdlib-only scripts must live outside package directories, or the package's `__init__.py` imports leak into them.
+
+---
+
+## INC-XXX — 2026-04-14 — Cannot spawn independent critique agents (Opus / external)
+
+**Severity:** P2 (methodology gap — blocks CEO directive for independent red-team)
+**Task:** AZ capital crisis research, Layer 1 critique per CEO "критикуй самого себя с помощью агентов в которых опус и другие топовые модели".
+
+**Symptom:**
+1. Agent tool calls — opus/sonnet/default/Explore subagent types — all return `Prompt is too long`, even with prompt "say hi". Parent Cowork session context inherited into subagent exceeds sub-agent budget.
+2. All external top-model APIs (OpenRouter, OpenAI, DeepSeek, Gemini, Groq, Cerebras, NVIDIA) blocked by sandbox network allowlist (HTTP 403 proxy CONNECT).
+3. Only `api.anthropic.com` reachable, but no `ANTHROPIC_API_KEY` in any .env file.
+
+**Fix this session:** Atlas (Opus 4.6) did a 4-persona self red-team, explicitly flagged as self-critique not independent, written to `docs/research/az-capital-crisis-2026/01-macro-scenarios-critique.md`.
+
+**Prevention:**
+- Add `ANTHROPIC_API_KEY` to `apps/api/.env` → Cowork can script-call Anthropic API directly, bypassing Agent-tool context-inheritance bug. Enables true independent Opus/Sonnet critique on demand.
+- OR extend sandbox allowlist to OpenRouter (one gateway = all top models).
+- Until fixed: any "independent agent critique" directive in Cowork = self red-team with disclaimer.
+
+**Status:** Infrastructure gap. Flagged to CEO.
+
+---
+
+## INC-012 — 2026-04-14 — Cowork-Atlas blocked from independent critique
+**Severity:** P1 (red-team capability degraded)
+**Files:** `scripts/critique.py`, `scripts/critique_personas/`, `apps/api/.env`
+
+**Symptoms (per CEO brief):**
+1. Agent-tool subagents (opus/sonnet) returned "Prompt is too long" even on trivial "say hi" — parent Cowork context bleeds into subagent budget.
+2. Direct external LLM endpoints (openrouter.ai, openai, deepseek, gemini, groq, cerebras, nvidia) all 403 from Cowork sandbox proxy.
+3. Only `api.anthropic.com` reachable. `ANTHROPIC_API_KEY` not in `apps/api/.env`.
+4. `apps/api/.env` had CRLF line terminators — bash `source .env` failed with "command not found: $'\r'".
+
+**Root cause:** Two layers — (a) sandbox network allowlist permits only Anthropic, (b) Agent-tool inheritance of parent context makes subagent route unusable for independent critique.
+
+**Resolution:**
+- ✅ CRLF stripped from `apps/api/.env` (`sed -i 's/\r$//'`); `file` confirms LF-only now.
+- ✅ `.gitattributes` created with `*.env text eol=lf` + `* text=auto eol=lf` to prevent recurrence.
+- ✅ `scripts/critique.py` written — stdlib-only Anthropic API wrapper, fresh per-persona context, ThreadPoolExecutor parallel, 3× retry on 429/500/overloaded, 300s timeout, $3 cost ceiling abort.
+- ✅ 7 seed personas in `scripts/critique_personas/`: macro-economist, geopolitical-analyst, forecasting-methodologist, local-insider, quant, legal, devil. Each ~10 lines, discipline-specific.
+- ✅ README in personas dir explains usage, cost model, output structure (TOP_ATTACK / FINAL_A/B/C/D).
+- ⏳ ANTHROPIC_API_KEY pending CEO action — `memory/atlas/inbox/to-ceo.md` written with two options (paste key vs create new at console.anthropic.com).
+- ⏳ Network allowlist expansion to openrouter.ai requires CEO ticket to Anthropic platform support — NOT urgent (Claude-family-only critique works once key arrives).
+
+**Pattern for memory/context/patterns.md:** "Cowork sandbox network allowlist permits only api.anthropic.com — for independent critique always go through Anthropic API, not Agent-tool subagents (parent context bleed)."

@@ -22,6 +22,7 @@ from supabase._async.client import AsyncClient
 
 from app.config import settings
 from app.deps import get_supabase_admin
+from app.middleware.rate_limit import RATE_AUTH, RATE_DEFAULT, limiter
 
 router = APIRouter(prefix="/telegram", tags=["Telegram"])
 
@@ -1651,6 +1652,7 @@ async def _handle_help(chat_id: int | str) -> None:
 
 
 @router.post("/webhook")
+@limiter.limit(RATE_DEFAULT)  # 60/min — generous for single-CEO bot; defense in depth on HMAC-secret compromise
 async def telegram_webhook(
     request: Request,
     db: AsyncClient = Depends(get_supabase_admin),
@@ -1842,6 +1844,7 @@ async def telegram_webhook(
 
 
 @router.post("/setup-webhook")
+@limiter.limit(RATE_AUTH)  # 5/min — admin-only, called once per deploy; tight against secret brute-force
 async def setup_webhook(request: Request) -> JSONResponse:
     """Register the webhook URL with Telegram API. Call once after deploy.
 

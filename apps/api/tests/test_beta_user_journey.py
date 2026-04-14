@@ -242,12 +242,13 @@ async def test_step2_start_assessment():
     ])
     user = _build_chainable([
         # payment_enabled=False → paywall check skipped in beta
-        [],                             # no in-progress session
-        [],                             # no rapid-restart cooldown
-        [],                             # no retest cooldown
-        MagicMock(data=[], count=0),    # abuse monitoring count
-        [],                             # no carry-over theta
-        {"id": SESSION_ID},             # session insert
+        [],                                 # no in-progress session
+        {"is_platform_admin": False},       # admin lookup (added 2026-04-14 commit 7789545)
+        [],                                 # no rapid-restart cooldown
+        [],                                 # no retest cooldown
+        MagicMock(data=[], count=0),        # abuse monitoring count
+        [],                                 # no carry-over theta
+        {"id": SESSION_ID},                 # session insert
     ])
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
@@ -461,7 +462,9 @@ async def test_full_journey_no_500s():
         [MCQ_QUESTION],
     ])
     user_start = _build_chainable([
-        [], [], [],
+        [],                              # no in-progress session
+        {"is_platform_admin": False},    # admin lookup (added 2026-04-14)
+        [], [],
         MagicMock(data=[], count=0),
         [],
         {"id": SESSION_ID},

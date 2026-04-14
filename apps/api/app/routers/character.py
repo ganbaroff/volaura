@@ -314,12 +314,7 @@ async def list_character_events(
     if limit > 200:
         limit = 200
 
-    query = (
-        db.table("character_events")
-        .select("*")
-        .eq("user_id", str(user_id))
-        .order("created_at", desc=True)
-    )
+    query = db.table("character_events").select("*").eq("user_id", str(user_id)).order("created_at", desc=True)
 
     if since:
         try:

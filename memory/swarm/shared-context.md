@@ -1,8 +1,6 @@
 <!-- RECENTLY_SHIPPED_START -->
-## ⚡ RECENTLY SHIPPED (last push — 2026-04-14 06:23 UTC)
+## ⚡ RECENTLY SHIPPED (last push — 2026-04-14 08:52 UTC)
 **Read this FIRST — prevents proposing already-shipped work.**
-
-New migrations: 20260416040000_ghosting_grace_column.sql
 New/updated routers: admin
 <!-- RECENTLY_SHIPPED_END -->
 

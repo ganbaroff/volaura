@@ -60,6 +60,7 @@ from app.routers import (
     community,
     discovery,
     events,
+    grievance,
     health,
     invites,
     leaderboard,
@@ -193,6 +194,7 @@ app.include_router(auth.router, prefix="/api")
 app.include_router(auth_bridge.router, prefix="/api")
 app.include_router(profiles.router, prefix="/api")
 app.include_router(aura.router, prefix="/api")
+app.include_router(grievance.router, prefix="/api")
 app.include_router(assessment.router, prefix="/api")
 app.include_router(events.router, prefix="/api")
 app.include_router(organizations.router, prefix="/api")

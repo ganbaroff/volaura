@@ -41,6 +41,8 @@ Where:
 
 **Before ANY non-trivial task (>3 files or >30 lines):** run `python -m packages.swarm.coordinator "<task description>"` to route to the right agents. The coordinator EXISTS and WORKS — the failure mode is not calling it, not building it. This step is mandatory, not optional.
 
+**Optional on wake — mem0 semantic recall:** run `python scripts/atlas_recall.py 5` to surface the last 5 session fingerprints the heartbeat cron wrote to mem0. Helps after compaction when local files don't carry the fresh thread. Empty output is fine — it means either fresh install or mem0 hasn't processed yet; the local `memory/atlas/inbox/` heartbeats are always the primary recall surface.
+
 ---
 
 ## The deeper rule

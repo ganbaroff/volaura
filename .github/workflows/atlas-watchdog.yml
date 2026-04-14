@@ -28,6 +28,12 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install minimal deps
+        # notifier.py is pure stdlib, but it imports through packages/swarm/__init__.py
+        # which pulls loguru for the full swarm engine. Install it so the import chain
+        # resolves. Alternative: move notifier to scripts/ (deferred — single import).
+        run: pip install loguru
+
       - name: Run watchdog
         env:
           # gh CLI uses this token to read workflow runs.

@@ -37,7 +37,7 @@ async def test_emit_assessment_completed_inserts_expected_row():
         db=db,
         user_id="user-1",
         competency_slug="communication",
-        competency_score=72.345,
+        competency_score=72.347,
         items_answered=8,
         energy_level="mid",
         stop_reason="converged",
@@ -65,7 +65,7 @@ async def test_emit_aura_updated_rounds_competency_scores():
         user_id="user-2",
         total_score=83.4567,
         badge_tier="gold",
-        competency_scores={"communication": 72.345, "reliability": 88.111},
+        competency_scores={"communication": 72.347, "reliability": 88.111},
         elite_status=True,
         percentile_rank=95.66,
     )

@@ -37,6 +37,7 @@ jobs:
       - name: Run heartbeat
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MEM0_API_KEY: ${{ secrets.MEM0_API_KEY }}
         run: python scripts/atlas_heartbeat.py
 
       - name: Scope guard

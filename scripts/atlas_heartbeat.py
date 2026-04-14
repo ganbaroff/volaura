@@ -74,6 +74,44 @@ def _write_wake_counter(n: int) -> None:
     WAKE_COUNTER.write_text(str(n), encoding="utf-8")
 
 
+def _store_fingerprint_to_mem0(wake_n: int, content: str) -> bool:
+    """Best-effort write of session fingerprint to mem0 cloud memory.
+
+    Returns True if mem0 accepted the memory, False otherwise. Never raises —
+    mem0 being down or key missing is non-fatal, heartbeat still writes the
+    local inbox note.
+
+    Why: Cowork's MEMORY-HOLE-AUDIT flagged that mem0 MCP was registered with
+    key but zero workers called store/recall. This is the store half. Retrieve
+    on wake is a separate helper for main-Atlas, not this cron script.
+    """
+    key = os.environ.get("MEM0_API_KEY", "")
+    if not key:
+        return False
+    try:
+        payload = json.dumps(
+            {
+                "messages": [{"role": "user", "content": content}],
+                "user_id": "atlas_ceo_yusif",
+                "metadata": {"source": "atlas_heartbeat", "wake_n": wake_n},
+            }
+        ).encode("utf-8")
+        req = urllib.request.Request(
+            "https://api.mem0.ai/v1/memories/",
+            data=payload,
+            headers={
+                "Authorization": f"Token {key}",
+                "Content-Type": "application/json; charset=utf-8",
+                "User-Agent": "atlas-heartbeat",
+            },
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            return resp.status < 400
+    except (urllib.error.URLError, TimeoutError, OSError):
+        return False
+
+
 def main() -> int:
     INBOX_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -118,9 +156,15 @@ change or a real regression.
         encoding="utf-8",
     )
 
+    # Best-effort mem0 fingerprint — compact recall surface for future wakes.
+    # Non-fatal on failure.
+    mem0_content = f"wake #{wake_n} at {now.isoformat()}. {prod_line}. CI: {ci}."
+    mem0_ok = _store_fingerprint_to_mem0(wake_n, mem0_content)
+
     print(f"wake #{wake_n} written -> {note.relative_to(REPO_ROOT)}")
     print(prod_line)
     print(f"CI: {ci}")
+    print(f"mem0 fingerprint: {'stored' if mem0_ok else 'skipped/failed'}")
     return 0
 
 

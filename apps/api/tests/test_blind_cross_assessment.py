@@ -864,7 +864,7 @@ CROSS_MATRIX: dict[tuple[str, str], str] = {
 
 # ── Individual persona tests ─────────────────────────────────────────────────
 
-class TestPersonaA_Generalist:
+class TestPersonaA_Generalist:  # noqa: N801 — underscore separates persona letter from descriptor for pytest readability
     """Generalist volunteer should score LOW across all questions (< 0.35).
 
     Generalists lack domain vocabulary. They may catch a few common words
@@ -922,7 +922,7 @@ class TestPersonaA_Generalist:
         assert s < 0.40, f"Generalist scored {s:.3f} on SWE_Q3"
 
 
-class TestPersonaB_BuzzWords:
+class TestPersonaB_BuzzWords:  # noqa: N801 — underscore separates persona letter from descriptor for pytest readability
     """Buzzword persona should score MEDIUM-HIGH due to explicit keyword use.
 
     This tests a known limitation: keyword_fallback rewards vocabulary alignment,
@@ -997,7 +997,7 @@ class TestPersonaB_BuzzWords:
                 )
 
 
-class TestPersonaC_WrongDomainExpert:
+class TestPersonaC_WrongDomainExpert:  # noqa: N801 — underscore separates persona letter from descriptor for pytest readability
     """Wrong-domain expert: technically competent, wrong vocabulary.
 
     Expected: MEDIUM-LOW (0.20–0.55). Expert knowledge bleeds through via

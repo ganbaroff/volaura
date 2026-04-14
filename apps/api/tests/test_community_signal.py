@@ -5,7 +5,7 @@ any per-user data (no ids, no usernames, no session timestamps). That invariant
 is the difference between "social proof" and "leaderboard".
 """
 
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import MagicMock
 
 import pytest
 from httpx import ASGITransport, AsyncClient

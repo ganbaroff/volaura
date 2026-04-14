@@ -69,20 +69,38 @@ Cerebras Qwen3-235B  (primary — 2000+ tokens/sec)
 
 ---
 
-## Open Debt (prioritized)
+## Open Debt (prioritized) — refreshed 2026-04-14 session 110
 
 | Priority | Item | Notes |
 |----------|------|-------|
-| P0 | Railway redeploy — Telegram LLM fix in code, not deployed | Manual trigger needed |
 | P1 | Phase 1 DB migration volunteer→professional | Created, not applied — needs downtime |
 | P1 | match_checker.py + reeval_worker.py column refs | Blocked on Phase 2 migration |
 | P1 | GITHUB_PAT_ACTIONS secret | CEO must create in GitHub Settings |
 | P2 | Azure/ElevenLabs keys | Content pipeline fully blocked |
-| P2 | Constitution pre-launch blockers (19): Energy picker, Pre-Assessment Layer, DIF, SADPP | Status unknown |
+| P2 | Constitution pre-launch blockers (remaining: SADPP filing, DIF data-gated, cross-product Law 2 audit) | VOLAURA audit pass 2026-04-14 |
 | P2 | LifeSimulator P0 fixes — untested in Godot | CEO needs to open project |
-| P2 | Admin dashboard JS error | Vercel logs needed |
-| P2 | mem0 MCP — key PRESENT in apps/api/.env, never exercised | Add wake-step to store/recall (audit 2026-04-14) |
-| P3 | GitHub secrets rename | Script ready: scripts/set-github-secrets.sh |
+| P2 | E-LAW 4 burnout detection runtime | Needs 3+ days heartbeat corpus before threshold tuning |
+| P2 | Langfuse Cloud EU wiring | ~2h per observability research; _trace decorator 50% wired |
+| P3 | GitHub secrets rename (ZEUS_→ATLAS_) | Script ready: scripts/set-github-secrets.sh |
+| P3 | HMAC-SHA256 on memory files | Mostly covered by git SHA + signed commits — research-phase |
+
+### Closed this session (110 — 2026-04-14)
+
+| Item | How |
+|------|-----|
+| CRON_SECRET missing in Railway env (caused daily 403 on tribe matching) | Generated 43-char token_urlsafe, set on Railway + GH |
+| Tribe matching CRON — 10+ days daily red | Auth fixed + NoneType guard on `.maybe_single()` — verified green |
+| ADAS weekly CRON red | Disabled schedule (module archived session 94); kept workflow_dispatch |
+| Daily digest workflow (E6 task 1) | 23 UTC cron live, SLO-24h + notifier gates + Telegram delivery verified |
+| Grievance intake + review UI | User `/aura/contest` (session 109) + admin `/admin/grievances` (session 110) |
+| agent-feedback-distilled dedupe regression | Fixed at generator (memory_consolidation.py), not downstream |
+| Article 22 consent copy — fear-inducing "automated system" | Reframed "AI-assisted, statistically calibrated", kept legal precision |
+| E1 memory infra — MEMORY-GATE wake step | wake.md Step 11 live; mem0 round-trip via atlas_heartbeat + atlas_recall |
+| E5 character_events ecosystem bridge | Verified wired in assessment.py since 83abd8a |
+| Foundation Laws VOLAURA audit | Laws 1-4 clean; Law 5 spot-checked clean. Cross-product audit deferred. |
+| Railway redeploy D-001 | Closed session 108 via `railway redeploy --yes` |
+| mem0 round-trip | atlas_heartbeat writes fingerprint, atlas_recall reads (stdlib only) |
+| Admin dashboard surface | Grievance page added to sidebar; other admin pages unchanged |
 
 ---
 

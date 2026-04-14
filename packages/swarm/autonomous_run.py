@@ -1518,28 +1518,17 @@ async def main():
             report = _friction_report(results)
             logger.info("Simulation complete: {e} events, {f} friction points", e=total_events, f=total_friction)
 
-            # Send to Telegram CEO
-            bot_token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
-            chat_id = os.environ.get("TELEGRAM_CEO_CHAT_ID", "")
-            if bot_token and chat_id:
-                import urllib.request as _urllib
-                msg = f"🎭 Swarm simulation: {len(results)} personas, {total_events} events, {total_friction} UX issues\n\n"
-                all_friction = []
-                for r in results:
-                    for s in r.get("steps", []):
-                        if s.get("friction"):
-                            all_friction.append(f"[{r['persona']}] {s['friction']}")
-                if all_friction[:5]:
-                    msg += "Top friction:\n" + "\n".join(f"• {f[:90]}" for f in all_friction[:5])
-                payload = json.dumps({"chat_id": chat_id, "text": msg}).encode()
-                req = _urllib.Request(
-                    f"https://api.telegram.org/bot{bot_token}/sendMessage",
-                    data=payload, headers={"Content-Type": "application/json"},
-                )
-                try:
-                    _urllib.urlopen(req, timeout=10)
-                except Exception:
-                    pass
+            # Route through notifier.py — applies 6h cooldown + vacation-mode gate.
+            from packages.swarm.notifier import send_notification
+            msg = f"Swarm simulation: {len(results)} personas, {total_events} events, {total_friction} UX issues\n\n"
+            all_friction = []
+            for r in results:
+                for s in r.get("steps", []):
+                    if s.get("friction"):
+                        all_friction.append(f"[{r['persona']}] {s['friction']}")
+            if all_friction[:5]:
+                msg += "Top friction:\n" + "\n".join(f"• {f[:90]}" for f in all_friction[:5])
+            send_notification(category="proposal", text=msg, severity="info")
         except Exception as e:
             logger.error("simulate mode failed: {e}", e=str(e))
         return

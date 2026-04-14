@@ -349,7 +349,8 @@
     "identity_gold": "Qızıl səviyyəli peşəkar",
     "identity_silver": "Gümüş səviyyəli peşəkar",
     "identity_bronze": "Bürünc səviyyəli peşəkar",
-    "identity_none": "Sizin AURA Balınız"
+    "identity_none": "Sizin AURA Balınız",
+    "contestLink": "Skor düzgün görünmürmü? Yenidən baxılmasını istə."
   },
   "competency": {
     "communication": "Ünsiyyət",
@@ -896,5 +897,30 @@
     "gold": "Qızıl",
     "silver": "Gümüş",
     "bronze": "Bürünc"
+  },
+  "contest": {
+    "title": "Yenidən baxılması üçün müraciət",
+    "heading": "Əgər skorunuz düzgün görünmürsə — bizə deyin.",
+    "lede": "Hər müraciəti insan nəzərdən keçirir. Biz sizi mühakimə etmirik — özümüzü yoxlayırıq.",
+    "subjectLabel": "Bir cümlə ilə: nə baş verdi?",
+    "subjectPlaceholder": "Qısa xülasə",
+    "competencyLabel": "Hansı bacarıq (seçim olaraq)?",
+    "competencyNone": "— dəqiq deyil —",
+    "descriptionLabel": "Nə səhv görünür — bizə yazın.",
+    "descriptionPlaceholder": "Hansı sual, hansı skor, nə gözləyirdiniz və niyə. Nə qədər dəqiq — bir o qədər faydalı.",
+    "submit": "Baxılmaya göndər",
+    "submitting": "Göndərilir…",
+    "successTitle": "Müraciətiniz qəbul olundu.",
+    "successBody": "İnsan nəzərdən keçirəcək və cavab verəcək. Statusu bu səhifədə izləyə bilərsiniz.",
+    "fileAnother": "Yenisini yaz",
+    "backToAura": "AURA-ya qayıt",
+    "historyTitle": "Müraciətləriniz",
+    "errorGeneric": "Müraciət göndərilmədi. Bir az sonra yenidən cəhd edin.",
+    "status": {
+      "pending": "Gözləyir",
+      "reviewing": "Baxılır",
+      "resolved": "Həll olundu",
+      "rejected": "Bağlandı"
+    }
   }
 }

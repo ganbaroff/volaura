@@ -1,6 +1,28 @@
 # Sprint State — Volaura
 
-**Last Updated:** 2026-04-14 (Session 97 — Cowork: Stripe Atlas, founder-ops system, null-byte fix, BRAIN.md, CLAUDE-CODE-MEGAPROMPT)
+**Last Updated:** 2026-04-14 (Session 109 — autonomous loop post-compact; E1 closed, E5 verified already wired)
+
+## Active Sprint Plan
+**Plan:** `docs/SPRINT-PLAN-2026-04-14-to-2026-04-28.md` (2 weeks, 7 epics)
+**Briefs:** `memory/atlas/inbox/2026-04-14T0734-epic-E*.md` (E1..E7, self-contained)
+**Canon:** Vision Canon — quality, adaptivity, alive Atlas > velocity
+**CEO touches this sprint:** ≤ 3 (Stripe Atlas filing timing, BrandedBy brief, E3 tone pass)
+**Coordination:** Cowork owns Atlas + Perplexity routing; CEO sees money/risk only.
+
+### Epic status tracker
+- [x] E1 Memory infra hardening (Atlas, 2d) — **DONE Session 109**: MEMORY-GATE in wake.md Step 11, episodic_inbox write no-op'd, dir empty, mem0 scripts live (atlas_heartbeat.py + atlas_recall.py), memory files committed, distilled deduped
+- [x] E2 D-001 Railway unblock — **DONE Session 108** via `railway redeploy --yes`. D-002 Phase 1 migration still pending (needs downtime window)
+- [ ] E3 Alive-Atlas first-session UX (Cowork→Atlas, 4d) — blocked on Cowork UX docs
+- [ ] E4 Constitution P0 (Atlas, 3d) — grievance router shipped Session 108; Pre-Assessment Layer + DIF audit + SADPP remaining
+- [x] E5 character_events bridge (Atlas, 2d) — **DONE**: emit_assessment_completed + emit_aura_updated + emit_badge_tier_changed wired in assessment.py since commit 83abd8a; ecosystem_events.py tracked
+- [ ] E6 E-LAWs + Vacation runtime (Atlas, 2d) — spec exists, daily digest workflow + 6h cooldown + SLO log still to wire
+- [ ] E7 BrandedBy concept (CEO brief + Cowork, 2d async) — waiting on CEO 15-min brief
+
+**Sprint DoD:** see plan doc §"Definition of Done — sprint level".
+
+---
+
+**Previous Last Updated:** 2026-04-14 (Session 97 — Cowork: Stripe Atlas, founder-ops system, null-byte fix, BRAIN.md, CLAUDE-CODE-MEGAPROMPT)
 
 ## Current Position
 Sprint: Sprint 1 — Autonomous execution / Founder-ops infrastructure
@@ -147,7 +169,4 @@ Cleanup: "volunteer" removed from LLM prompts (brandedby_personality.py), Sentry
 |------|--------|
 | G9/G46: Leaderboard page deleted → redirect | ✅ committed |
 | G15: Score counters 2000ms → 800ms (aura + complete pages) | ✅ committed |
-| G21 + Crystal Law 6: Badge/crystals removed from complete screen | ✅ committed |
-| CLAUDE.md: Article 0 — Constitution as supreme law | ✅ committed |
-| Ollama: added to Python swarm (discovered_models.json + OllamaDynamicProvider) | ✅ committed to main |
-| ECOSYSTEM-MAP.md: livin
+| G21 + Crystal Law 6: Badge/crystals removed from comple

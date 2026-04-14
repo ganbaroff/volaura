@@ -347,7 +347,8 @@
     "identity_gold": "Gold-level Professional",
     "identity_silver": "Silver-level Professional",
     "identity_bronze": "Bronze-level Professional",
-    "identity_none": "Your AURA Score"
+    "identity_none": "Your AURA Score",
+    "contestLink": "Does this score feel off? Request a review."
   },
   "competency": {
     "communication": "Communication",
@@ -859,5 +860,30 @@
   },
   "discover": {
     "filterBySkill": "Find by verified skill"
+  },
+  "contest": {
+    "title": "Request a review",
+    "heading": "If your score does not feel right, tell us.",
+    "lede": "A human reviews every request. We are not judging you — we are checking ourselves.",
+    "subjectLabel": "In one line, what happened?",
+    "subjectPlaceholder": "Short summary",
+    "competencyLabel": "Which competency (optional)?",
+    "competencyNone": "— not specific —",
+    "descriptionLabel": "Tell us what feels wrong.",
+    "descriptionPlaceholder": "Which question, which score, what you expected, why. The more specific, the better we can help.",
+    "submit": "Send for review",
+    "submitting": "Sending…",
+    "successTitle": "We received your request.",
+    "successBody": "A human reviewer will read your note and respond. You can track the status on this page.",
+    "fileAnother": "File another",
+    "backToAura": "Back to AURA",
+    "historyTitle": "Your requests",
+    "errorGeneric": "Could not send this request. Please try again in a moment.",
+    "status": {
+      "pending": "Pending",
+      "reviewing": "In review",
+      "resolved": "Resolved",
+      "rejected": "Closed"
+    }
   }
 }

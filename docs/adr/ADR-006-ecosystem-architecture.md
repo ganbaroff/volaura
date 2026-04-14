@@ -129,9 +129,17 @@ When a VOLAURA assessment session completes with a score:
 
 1. `POST /api/assessment/submit_answer` processes last answer
 2. Session marked `completed`
-3. `POST /api/character/rewards/claim` called with `{ skill_slug, session_id }`
+3. Internal claim triggered server-side inside the submit_answer handler —
+   see `apps/api/app/services/assessment/rewards.py::claim_reward` (no
+   separate public HTTP endpoint). Called with `{ user_id, skill_slug, session_id }`.
 4. If not yet claimed → insert `game_character_rewards` row + insert `character_events` row (`crystal_earned`, 50 crystals) + insert `game_crystal_ledger` row
-5. If already claimed → 200 OK, idempotent, no double reward
+5. If already claimed → silent no-op (unique constraint on `game_character_rewards`), idempotent, no double reward
+
+**Implementation note (2026-04-14):** earlier drafts of this ADR showed step 3
+as a standalone `POST /api/character/rewards/claim` HTTP endpoint. The shipped
+implementation folds the claim into the assessment submit handler — there is
+no public rewards/claim endpoint. LifeSim and MindShift never need to call it;
+VOLAURA emits the rewards internally when an assessment completes.
 
 ---
 

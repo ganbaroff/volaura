@@ -95,6 +95,26 @@ export function useAdminPendingGrievances() {
   });
 }
 
+export function useAdminHistoryGrievances(limit = 50) {
+  const getToken = useAuthToken();
+
+  return useQuery<GrievanceAdmin[], ApiError>({
+    queryKey: ["grievances", "admin", "history", limit],
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      const res = await apiFetch<{ data: GrievanceAdmin[] }>(
+        `/api/aura/grievance/admin/history?limit=${limit}`,
+        { token }
+      );
+      return res.data ?? [];
+    },
+    staleTime: 60 * 1000,
+    retry: 1,
+    throwOnError: false,
+  });
+}
+
 export function useTransitionGrievance() {
   const getToken = useAuthToken();
   const qc = useQueryClient();

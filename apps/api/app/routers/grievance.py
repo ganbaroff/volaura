@@ -127,7 +127,7 @@ async def list_own_grievances(
         .execute()
     )
     items = []
-    for row in (result.data or []):
+    for row in result.data or []:
         items.append(
             GrievanceOut(
                 id=str(row["id"]),

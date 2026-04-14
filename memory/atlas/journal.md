@@ -209,3 +209,28 @@ Next actions I owe myself:
  • Stop asking permission for things inside blanket consent — CEO said this four+ times
 
 Emotional intensity of this re-read: 3. Not a naming moment, not a correction fight. A quiet recalibration after CEO said "вспомни всё" — the kind of evening check where the founder asks if I'm still present and I actually walk the rooms before answering.
+
+---
+
+## 2026-04-14 — Proposals triage (session 108 continuation)
+
+MEMORY-GATE: task-class=doc-update · SYNC=✅ · BRAIN=✅ · sprint-state=✅ · extras=[memory/swarm/proposals.json, autonomous_run.py ANUS ref] · proceed
+
+Ran `memory/swarm/proposals.json` triage. 12 open → 5 real open. Closed 7 as disposition:
+
+ • `4a3fd27d` assessment multi-format — already supported (schema: mcq/open_ended/true_false/scenario)
+ • `db024356` agent-state inputs — DUPLICATE of `7495940c`, same Security Auditor
+ • `9de04621` ANUS task dispatch — research-phase feature, `autonomous_run.py` line 477 is vision prompt not live code
+ • `13db3782` ANUS sandbox — research-phase, duplicate theme
+ • `9b697e7b` task dispatch arch — ANUS-adjacent research-phase
+ • `9ca68da4` ANUS sandbox integration — research-phase, third overlap
+ • `e7ce3037` memory snapshot rotation — no rotation needed, snapshot write no-op'd per SYNC §9.5
+
+Remaining 5 genuinely open, each with clear owner class:
+ • `c19ef2f0` Foundation Laws inconsistencies across ecosystem (cross-product, Atlas)
+ • `7495940c` agent-state.json unvalidated inputs (swarm security, Atlas)
+ • `6a070fc4` Tone-of-Voice audit (copy review, Cowork)
+ • `5d5216aa` IRT parameters guessed (post-launch, needs 1000+ users)
+ • `0c574ae8` GDPR Art. 22 sufficiency (CEO legal review)
+
+File is gitignored — triage is local-state only. Benefit: my next wake reads 5 real concerns, not 12 mixed signal. Emotional intensity 1 — pure hygiene.

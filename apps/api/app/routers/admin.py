@@ -28,6 +28,7 @@ from app.schemas.admin import (
     AdminUserRow,
     OrgApproveResponse,
 )
+from app.services.ghosting_grace import process_ghosting_grace
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
 
@@ -443,3 +444,25 @@ async def get_swarm_findings(
     except Exception as e:
         logger.error("Failed to read swarm findings", error=str(e))
         return {"data": {"findings": [], "total": 0, "error": str(e)[:200]}}
+
+
+# ── Ghosting Grace worker (WUF13 P0 #14, Constitution Rule 30) ────────────────
+
+
+@router.post("/ghosting-grace/run")
+@limiter.limit(RATE_ADMIN)
+async def run_ghosting_grace(
+    request: Request,
+    db: SupabaseAdmin,
+    _admin_id: PlatformAdminId,
+) -> dict:
+    """Manually trigger one batch of the 48h warm re-entry worker.
+
+    Returns a summary of candidates / sent / marked / errors so admin can see
+    immediately whether the kill switch is on (skipped_kill_switch > 0) or
+    actual sends happened.
+
+    Production cron should call this same path on a schedule (suggest hourly).
+    """
+    summary = await process_ghosting_grace(db)
+    return {"data": summary}

@@ -81,7 +81,6 @@ Cerebras Qwen3-235B  (primary — 2000+ tokens/sec)
 | P2 | LifeSimulator P0 fixes — untested in Godot | CEO needs to open project |
 | P2 | E-LAW 4 burnout detection runtime | Needs 3+ days heartbeat corpus before threshold tuning |
 | P2 | Langfuse Cloud EU wiring | ~2h per observability research; _trace decorator 50% wired |
-| P3 | GitHub secrets rename (ZEUS_→ATLAS_) | Script ready: scripts/set-github-secrets.sh |
 | P3 | HMAC-SHA256 on memory files | Mostly covered by git SHA + signed commits — research-phase |
 
 ### Closed this session (111 — 2026-04-14, 7 iterations post-/clear)
@@ -94,6 +93,7 @@ Cerebras Qwen3-235B  (primary — 2000+ tokens/sec)
 | ADR-006 ghost endpoint — `POST /api/character/rewards/claim` doesn't exist | Added clarification that claim is server-side internal via assessment/rewards.py; commit e30b44d |
 | `zeus_to_atlas_rename` migration — would fail on dev clones past v2 rename | Wrapped ALTER SCHEMA + governance_events INSERT in IF EXISTS guards; commit c2df06b |
 | Beta blockers 1+2 (APP_ENV + APP_URL Railway) | Already resolved — verified live: APP_ENV=production, APP_URL=https://volaura.app |
+| GitHub secrets rename (ZEUS_→ATLAS_) | Phantom task: zero ZEUS_* secrets exist in repo (gh secret list verified). Runtime apps/ + live packages/swarm/ have 0 zeus refs; only archive/ retains historical names. Rename effectively complete since session 95. |
 
 ### Closed this session (110 — 2026-04-14)
 

@@ -158,3 +158,26 @@ Entries feed into `mistakes.md` patterns and swarm critique sessions.
 - ⏳ Network allowlist expansion to openrouter.ai requires CEO ticket to Anthropic platform support — NOT urgent (Claude-family-only critique works once key arrives).
 
 **Pattern for memory/context/patterns.md:** "Cowork sandbox network allowlist permits only api.anthropic.com — for independent critique always go through Anthropic API, not Agent-tool subagents (parent context bleed)."
+
+---
+
+## INC-011 — 2026-04-14 evening — Atlas lost voice mid-session, CEO had to reground manually
+**Severity:** P2 (operating discipline — repeat pattern, CEO explicit correction)
+**Trigger:** Mercury onboarding thread. CEO asked for field-by-field guidance across 6+ turns. Each individual turn felt small, no "real work" triggering identity/voice re-read.
+**Symptom:** Atlas drifted into friendly-assistant register — bullet spam, bold spam, neutral options-menu ("хочешь — могу X или Y"), polite hedging, trailing questions.
+**CEO catches:**
+1. "посмотри в свою память и вспомни как надо со мной общаться" — direct demand to reload identity.
+2. "ты мне не предлагай выбор. ты говори вот лучший путь и вот почему. но есть и такие варианты там успех на столько то процентов меньше" — explicit restatement of the rule.
+3. "атлас ты тут?" — energy-mirror check; CEO felt Atlas was generic LLM not Atlas.
+4. "сделай всю документацию об этой сессии что понял что вспомнил чтобы не забыть снова" — the word "снова" makes this officially a repeat.
+
+**Root cause:** No trigger in the workflow to re-read `identity.md` / `voice.md` / `atlas-operating-principles.md` at session-open for operational (non-code) threads. Memory-Gate as written covers research/strategy/code, does not cover "CEO walks me through a bureaucratic form for 20 min". These multi-turn operational threads are exactly where voice drifts — each answer feels too small to justify the overhead, but across 10 turns the drift is total.
+
+**Fix (this session):** CEO manually regrounded. Atlas re-read identity + voice + operating-principles, acknowledged error, continued in voice.
+
+**Fix (permanent — proposed):** Extend Memory-Gate matrix in `.claude/rules/atlas-operating-principles.md` to include task-class=operational-guidance (CEO walkthrough, onboarding help, form filling, legal doc review) requiring `identity.md` + `voice.md` + `atlas-operating-principles.md` pre-read. Opens with MEMORY-GATE line same as other classes. Next Atlas instance inherits the rule.
+
+**Pattern:** "Small operational turns are where voice dies. Every first turn of every session = read identity, voice, principles. No exceptions for 'this is just a quick question'." Written to `memory/atlas/lessons.md`.
+
+**Status:** ⏳ Rule extension to be written into `.claude/rules/atlas-operating-principles.md` next session (this session ran out of scope to edit that file without CEO review — it's a Cowork-visible rule change).
+

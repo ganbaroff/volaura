@@ -69,7 +69,7 @@ async def get_admin_stats(
     # Run counts concurrently
     import asyncio
 
-    users_res, orgs_res, pending_res, assessments_res, aura_res = await asyncio.gather(
+    users_res, orgs_res, pending_res, assessments_res, aura_res, grievances_res = await asyncio.gather(
         db_admin.table("profiles").select("id", count="exact").execute(),
         db_admin.table("organizations").select("id", count="exact").eq("is_active", True).execute(),
         db_admin.table("organizations")
@@ -83,6 +83,7 @@ async def get_admin_stats(
         .gte("completed_at", today_start)
         .execute(),
         db_admin.table("aura_scores").select("total_score").execute(),
+        db_admin.table("grievances").select("id", count="exact").in_("status", ["pending", "reviewing"]).execute(),
     )
 
     aura_scores = [r["total_score"] for r in (aura_res.data or []) if r.get("total_score") is not None]
@@ -94,6 +95,7 @@ async def get_admin_stats(
         pending_org_approvals=pending_res.count or 0,
         assessments_today=assessments_res.count or 0,
         avg_aura_score=avg_aura,
+        pending_grievances=grievances_res.count or 0,
     )
 
 

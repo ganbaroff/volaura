@@ -184,7 +184,7 @@ def format_for_agent_prompt(skills: list[dict]) -> str:
             content_preview = skill["content"][:800].rstrip()
             lines.append(content_preview)
         else:
-            lines.append(f"[Built-in skill — no file content]")
+            lines.append("[Built-in skill — no file content]")
         lines.append("")
 
     return "\n".join(lines)

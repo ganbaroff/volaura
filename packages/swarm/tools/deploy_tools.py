@@ -10,7 +10,6 @@ import os
 import subprocess
 from pathlib import Path
 
-from loguru import logger
 
 
 _PROJECT_ROOT = Path(__file__).parent.parent.parent.parent

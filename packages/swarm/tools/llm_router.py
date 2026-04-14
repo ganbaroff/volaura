@@ -11,7 +11,6 @@ Setup: pip install litellm
 """
 
 import os
-from typing import Optional
 
 _router = None
 

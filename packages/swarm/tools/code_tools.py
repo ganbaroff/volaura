@@ -11,7 +11,6 @@ import json
 import re
 from pathlib import Path
 
-from loguru import logger
 
 
 _PROJECT_ROOT = Path(__file__).parent.parent.parent.parent

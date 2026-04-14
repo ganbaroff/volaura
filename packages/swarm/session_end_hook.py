@@ -216,7 +216,7 @@ def update_shared_context_recently_shipped(new_migrations: list[str], new_routes
     )
 
     now_str = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
-    lines = [f"<!-- RECENTLY_SHIPPED_START -->"]
+    lines = ["<!-- RECENTLY_SHIPPED_START -->"]
     lines.append(f"## ⚡ RECENTLY SHIPPED (last push — {now_str})")
     lines.append("**Read this FIRST — prevents proposing already-shipped work.**")
     if new_migrations:

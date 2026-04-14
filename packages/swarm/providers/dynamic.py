@@ -94,7 +94,6 @@ class DeepSeekDynamicProvider(LLMProvider):
         )
 
     async def evaluate(self, prompt: str, temperature: float = 0.7) -> dict[str, Any]:
-        from openai import AsyncOpenAI
         r = await self._client.chat.completions.create(
             model=self._model,
             messages=[{"role": "user", "content": prompt}],

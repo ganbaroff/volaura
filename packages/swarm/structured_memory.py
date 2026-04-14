@@ -22,7 +22,6 @@ import json
 import hashlib
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
 
 from pydantic import BaseModel, Field
 from loguru import logger

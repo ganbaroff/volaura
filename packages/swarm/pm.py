@@ -32,7 +32,6 @@ from .prompts import (
     build_debate_prompt,
     build_evaluator_prompt,
     build_synthesis_prompt,
-    get_group_perspectives,
     get_random_perspectives,
 )
 from .providers import ProviderRegistry

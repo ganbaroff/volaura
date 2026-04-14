@@ -36,7 +36,6 @@ from loguru import logger
 from swarm.inbox_protocol import (
     InboxProtocol,
     Proposal,
-    ProposalStatus,
     ProposalType,
     Severity,
 )
@@ -908,7 +907,7 @@ async def run_autonomous(mode: str = "daily-ideation") -> list[Proposal]:
     # ── Shared Memory: agents post results so others can see ──────────
     run_task_id = f"{mode}-{int(time.time())}"
     try:
-        from swarm.shared_memory import post_result as sm_post, get_context as sm_context
+        from swarm.shared_memory import post_result as sm_post
         _shared_memory_available = True
     except Exception:
         _shared_memory_available = False
@@ -1419,7 +1418,6 @@ async def _write_run_log(
         return
 
     from datetime import datetime, timezone
-    import uuid
     run_id = f"{mode}-{datetime.now(timezone.utc).strftime('%Y-%m-%d')}"
 
     rows = []
@@ -1493,7 +1491,7 @@ async def main():
         coord = Coordinator(runner=_coordinator_runner)
         result = await coord.run(task_desc)
 
-        print(f"\n=== COORDINATOR RESULT ===")
+        print("\n=== COORDINATOR RESULT ===")
         print(f"Task:     {task_desc}")
         print(f"Agents:   {result.total_agents} total ({result.succeeded} ok, {result.failed} failed)")
         print(f"Findings: {len(result.findings)}")

@@ -679,7 +679,8 @@
     "search": "Search",
     "noResults": "No results found",
     "viewAll": "View All",
-    "saving": "Saving…"
+    "saving": "Saving…",
+    "close": "Close"
   },
   "publicProfile": {
     "auraScore": "AURA Score",
@@ -908,6 +909,29 @@
       "title": "Your first chapter is ready",
       "body": "Take at least one assessment on VOLAURA — the first event with a choice will arrive here.",
       "hint": "MVP preview — live pool wire coming in next iteration"
+    },
+    "shop": {
+      "title": "Crystal Shop",
+      "balance": "Balance: {{count}} ♦",
+      "item": {
+        "premium_training_course": {
+          "name": "Premium training course"
+        },
+        "social_event_ticket": {
+          "name": "Social event ticket"
+        },
+        "health_insurance": {
+          "name": "Health insurance"
+        },
+        "career_coach": {
+          "name": "Career coach"
+        }
+      },
+      "confirm": {
+        "title": "Confirm purchase?",
+        "cost": "Cost",
+        "cta": "Confirm"
+      }
     }
   }
 }

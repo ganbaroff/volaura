@@ -15,6 +15,8 @@ import {
 
 import { TopBar } from "@/components/layout/top-bar";
 import { cn } from "@/lib/utils/cn";
+import { CrystalShop } from "@/components/lifesim/crystal-shop";
+import { useCrystalBalance } from "@/hooks/queries/use-character";
 import {
   useLifesimNextChoice,
   useLifesimSubmitChoice,
@@ -163,6 +165,20 @@ export default function LifeFeedPage() {
   });
 
   const submitChoice = useLifesimSubmitChoice();
+  const crystalBalance = useCrystalBalance();
+  const currentCrystals = crystalBalance.data?.crystal_balance ?? 0;
+
+  const applyBoostLocally = (boost: Record<string, number>) => {
+    setStats((prev) => {
+      const next = { ...prev };
+      for (const [k, delta] of Object.entries(boost)) {
+        if (k in next) {
+          next[k as StatKey] = clampStat(k as StatKey, next[k as StatKey] + delta);
+        }
+      }
+      return next;
+    });
+  };
 
   const event = nextChoiceQuery.data?.event as LifesimEvent | null | undefined;
 
@@ -336,6 +352,8 @@ export default function LifeFeedPage() {
             </AnimatePresence>
           </motion.section>
         </div>
+
+        <CrystalShop currentCrystals={currentCrystals} onBoost={applyBoostLocally} />
       </main>
     </div>
   );

@@ -107,11 +107,52 @@ def _open_proposals() -> tuple[int, int]:
     return len(opens), len(escalated)
 
 
+def _slo_24h() -> tuple[int, int, float | None]:
+    """Compute SLO over last 24h from digest-log.jsonl.
+
+    Returns (successes, total, rate_pct). rate_pct is None if no data.
+    Used by E6 task 4 — gives each digest a running reliability number.
+    """
+    if not DIGEST_LOG.exists():
+        return 0, 0, None
+    cutoff = datetime.now(UTC) - timedelta(hours=24)
+    successes = 0
+    total = 0
+    try:
+        with DIGEST_LOG.open("r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    entry = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                ts_str = entry.get("timestamp")
+                if not ts_str:
+                    continue
+                try:
+                    ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
+                except ValueError:
+                    continue
+                if ts < cutoff:
+                    continue
+                total += 1
+                if entry.get("delivered_telegram") or entry.get("vacation_mode"):
+                    successes += 1
+    except OSError:
+        return 0, 0, None
+    if total == 0:
+        return 0, 0, None
+    return successes, total, (successes / total) * 100
+
+
 def _build_digest() -> tuple[str, dict]:
     """Return (telegram-ready text, structured dict for log)."""
     journal_line = _journal_last_24h()
     inbox_pending = _pending_inbox_count()
     open_total, escalated = _open_proposals()
+    slo_succ, slo_tot, slo_rate = _slo_24h()
 
     happened = journal_line or "(quiet — no new journal entry)"
     pending = (
@@ -122,13 +163,19 @@ def _build_digest() -> tuple[str, dict]:
     decide = (
         f"{escalated} escalated to CEO" if escalated else "(none)"
     )
+    slo_line = (
+        f"{slo_rate:.1f}% ({slo_succ}/{slo_tot}, target 99.0)"
+        if slo_rate is not None
+        else "(no data yet)"
+    )
 
     ts = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
     text = (
         f"Atlas digest — {ts}\n\n"
         f"• Happened: {happened}\n"
         f"• Pending:  {pending}\n"
-        f"• Decide:   {decide}"
+        f"• Decide:   {decide}\n"
+        f"• SLO 24h:  {slo_line}"
     )
     record = {
         "timestamp": datetime.now(UTC).isoformat(),
@@ -136,6 +183,9 @@ def _build_digest() -> tuple[str, dict]:
         "pending_inbox": inbox_pending,
         "open_proposals": open_total,
         "escalated": escalated,
+        "slo_24h_successes": slo_succ,
+        "slo_24h_total": slo_tot,
+        "slo_24h_rate_pct": slo_rate,
     }
     return text, record
 

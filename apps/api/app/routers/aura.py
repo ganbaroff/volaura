@@ -218,9 +218,16 @@ async def get_aura_by_id(
         badge_data["competency_scores"] = {}
         badge_data["aura_history"] = []
         return AuraScoreResponse(**_with_effective_score(badge_data))
-    # Strip last_updated from public view — prevents assessment timing inference (Security P2)
+    # Strip fields that leak negative signal or enable timing/shame attacks:
+    #  - last_updated: assessment timing inference (Security P2)
+    #  - events_no_show / events_late: Law 3 (shame-free) — public must not expose
+    #    raw negative counters even in "public" visibility mode. Reliability is
+    #    summarised into reliability_score (aggregated, non-shaming); that stays.
+    # (G43 credential display split — D-007 #18)
     public_data = dict(result.data)
     public_data.pop("last_updated", None)
+    public_data.pop("events_no_show", None)
+    public_data.pop("events_late", None)
     return AuraScoreResponse(**_with_effective_score(public_data))
 
 

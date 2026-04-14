@@ -15,15 +15,21 @@ Scope: read-only on GitHub API. Emits via notifier.py (category=error).
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import os
 import subprocess
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-
-from packages.swarm.notifier import send_notification  # noqa: E402
+# Load notifier by direct file path to avoid packages/swarm/__init__.py pulling
+# heavy deps (pydantic, loguru, the full swarm engine). notifier.py itself is
+# stdlib-only; this import skips the init chain.
+_NOTIFIER_PATH = Path(__file__).resolve().parents[1] / "packages" / "swarm" / "notifier.py"
+_spec = importlib.util.spec_from_file_location("atlas_notifier", _NOTIFIER_PATH)
+_mod = importlib.util.module_from_spec(_spec)  # type: ignore[arg-type]
+_spec.loader.exec_module(_mod)  # type: ignore[union-attr]
+send_notification = _mod.send_notification
 
 
 # Workflows whose scheduled-run health we care about. Explicit allowlist

@@ -1,7 +1,7 @@
 <!-- RECENTLY_SHIPPED_START -->
-## ⚡ RECENTLY SHIPPED (last push — 2026-04-14 19:10 UTC)
+## ⚡ RECENTLY SHIPPED (last push — 2026-04-14 19:20 UTC)
 **Read this FIRST — prevents proposing already-shipped work.**
-New/updated routers: atlas_gateway
+New/updated routers: auth
 <!-- RECENTLY_SHIPPED_END -->
 
 # Swarm Shared Context — UPDATED 2026-04-07 (Session 91)

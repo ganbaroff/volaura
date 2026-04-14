@@ -4,6 +4,7 @@ import initTranslations from "@/app/i18n";
 // Removed force-dynamic — was causing 500 on Vercel cold start
 import { HeroSection } from "@/components/landing/hero-section";
 import { ImpactTicker } from "@/components/landing/impact-ticker";
+import { SampleAuraPreview } from "@/components/landing/sample-aura-preview";
 import { FeaturesGrid } from "@/components/landing/features-grid";
 import { HowItWorks } from "@/components/landing/how-it-works";
 import { OrgCta } from "@/components/landing/org-cta";
@@ -48,6 +49,7 @@ export default async function LandingPage({ params }: LandingPageProps) {
       <main id="main-content">
         <HeroSection locale={locale} />
         <ImpactTicker />
+        <SampleAuraPreview locale={locale} />
         <FeaturesGrid />
         <HowItWorks />
         <OrgCta locale={locale} />

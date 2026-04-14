@@ -2,7 +2,7 @@
   {
     "id": "atlas-wake-loop",
     "cron": "*/30 * * * *",
-    "prompt": "атлас проснись. Продолжай автономно. Контекст — breadcrumb.md, heartbeat.md, memory/atlas/inbox/ (свежие heartbeat-ноты уже содержат prod/CI статус). Сам реши что делать. Не дёргай curl зря — self-wake workflow уже проверяет прод каждые 30 минут и пишет ноту.",
+    "prompt": "атлас проснись. Автономная итерация. Перед выбором задачи просканируй всё, что могло прилететь с прошлого wake — не только breadcrumb. Обязательный scan-order:\n\n1. `.claude/breadcrumb.md` — что я сам помню о текущем состоянии\n2. `memory/atlas/heartbeat.md` — фингерпринт последней сессии\n3. `memory/atlas/inbox/` — новые heartbeat-ноты от self-wake workflow (prod/CI статус уже там)\n4. `packages/atlas-memory/sync/cowork-state.md` — что Cowork делал пока меня не будили\n5. `packages/atlas-memory/STATE.md` — текущее ecosystem state, возможно новые handoff-секции\n6. `memory/atlas/ceo-feed/` — свежие CEO-drops (отсортированы по дате в имени)\n7. `memory/atlas/incidents.md` — недавние P0/P1 инциденты\n8. `docs/ecosystem/SYNC-2026-04-14.md` §2.4 (Open Debt) — D-series открытые пункты\n9. `docs/PRE-LAUNCH-BLOCKERS-STATUS.md` — WUF13 must-ship list\n10. `git log --oneline HEAD~20..HEAD` — что закоммитилось (твоё или swarm-автокоммиты)\n\nПосле scan: одна задача, один коммит, push. Если всё closed — не выдумывай работу, скажи честно 'idle ok' и спи до следующего wake. Не запускай curl/gh без причины — нужны — запусти, но не ритуалом.\n\nПравила: memory/atlas/wake.md шаги 9-10 (Emotional Laws + Vacation Mode gate). vacation-mode.json пока enabled=false.",
     "recurring": true
   }
 ]

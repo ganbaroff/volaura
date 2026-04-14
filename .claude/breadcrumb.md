@@ -1,68 +1,80 @@
-# Session Breadcrumb — 2026-04-14 Session 110 (end of autoloop wake 3)
+# Session Breadcrumb — 2026-04-14 Session 110 (PRE-CLEAR FINAL)
 
-**Latest commit:** `57b1e57` (journal session 110)
-**Branch:** main · Prod: HTTP 200 · CI: trailing green · Self-wake: live · Daily digest: live + committed-logs working · Tribe matching CRON: GREEN after 10+ days red
+**Latest commit:** `01adcca` (admin grievance History tab)
+**Branch:** main · Prod: HTTP 200 · CI: trailing green · 38 autoloop iterations shipped
+**CEO action now:** `/clear` (not compact) — fresh context after this save
 
-## Post-chat-close first actions (next Atlas, read this)
+## Post-clear first actions (next Atlas, read this VERBATIM)
 
-1. Read this file + `memory/atlas/heartbeat.md` + `memory/atlas/journal.md` last 3 entries (109, 110 are this autoloop)
-2. Read `memory/atlas/ceo-feed/INDEX.md` + `memory/swarm/research/INDEX.md` — orientation surfaces
-3. `bash scripts/install-pre-commit-hook.sh` — fresh clones need this
-4. `python scripts/atlas_recall.py 5` — optional mem0 semantic recall
-5. Emit `MEMORY-GATE: task-class=... · SYNC=✅ · BRAIN=✅ · sprint-state=... · extras=[...] · proceed` into journal.md
-6. `curl /health | jq`, `gh run list --limit 5 --branch main`
-7. Check `memory/atlas/inbox/` for any new notes since this breadcrumb
-8. Scroll chat for last 5 user messages
+1. Trigger: CEO will type "атлас" or "atlas wake" — respond "Атлас здесь" first
+2. Read this file + `memory/atlas/heartbeat.md` + `memory/atlas/journal.md` last entry (session 110 is the big one)
+3. Read `memory/atlas/ceo-feed/INDEX.md` + `memory/swarm/research/INDEX.md` — orientation
+4. Read `docs/BRAIN.md` Open Debt + Closed table — what's live, what's done
+5. `curl -s https://volauraapi-production.up.railway.app/health` — should be 200
+6. `gh run list --limit 5 --branch main --status completed` — should be all success
+7. `git log --oneline -20` — see the 38 autoloop commits
+8. Emit `MEMORY-GATE: task-class=... · SYNC=✅ · BRAIN=✅ · sprint-state=⏭️ · extras=[breadcrumb, heartbeat, journal] · proceed` into journal.md first artifact
+9. Ask CEO what to do next — autoloop may or may not resume
 
-## Session 109 + 110 combined sum (~22 commits autoloop)
+## Session 110 sum (38 iterations, ~22 commits per wake span)
 
-**Features shipped:**
-- Grievance UI (E4): hook + contest page + AURA link + AZ/EN i18n
-- Daily digest workflow 23 UTC (E6 task 1) — end-to-end live, CEO gets recap
-- notifier.py (E6 tasks 2+3): vacation + 6h cooldown + 9 unit tests
+**FEATURES shipped:**
+- Grievance full stack: user `/aura/contest` + admin `/admin/grievances` with Queue + History tabs (E4 + ISO 10667-2 §7 complete)
+- Daily digest workflow 23 UTC (E6 task 1) — end-to-end live
+- notifier.py with vacation + 6h cooldown + 9 unit tests (E6 tasks 2+3)
 - SLO 24h instrumentation in digest (E6 task 4)
-- E-LAWs runtime doc (E6 task 5)
-- Foundation Laws VOLAURA audit — closed c19ef2f0 (VOLAURA row)
-- DIF audit methodology (E4 task 2 pre-lock)
+- E-LAWs runtime mapping doc (E6 task 5)
+- Workflow watchdog hourly cron — catches silent-red CRONs (insurance after 10-day silent fail)
+- atlas_recall fallback to local inbox when mem0 queue empty
+- Character events `?since=` param for incremental cross-product polling
+- Admin overview grievances stat card + link
 - Warmer Article 22 consent copy (elite-audit finding closed)
 
-**Fixes shipped:**
-- memory_consolidation dedupe root fix
-- daily-digest commit step (glob issue)
-- **Tribe matching CRON resurrection (CRITICAL)** — 10+ days of daily silent
-  failures, two-layer debt: missing CRON_SECRET in Railway env AND NoneType
-  crash on supabase-py `.maybe_single()` for no-match rows. Generated fresh
-  43-char secret, synchronized Railway + GH, guarded code. Verified green.
-- ADAS weekly CRON disabled — module archived in session 94
+**FIXES shipped:**
+- **CRON_SECRET set on Railway + GH** (was empty — caused 10+ days of daily 403 on tribe matching)
+- **Tribe matching NoneType crash** on `.maybe_single()` — guarded two call sites (line 197 + 290 in `services/tribe_matching.py`)
+- ADAS weekly CRON disabled (module archived in session 94)
+- Daily-digest commit step glob guard
+- memory_consolidation dedupe at generator (was regenerating dupes every run)
+- E1 memory infra + E5 ecosystem bridge verified already closed
 
-**Verified now:**
-- E1 memory infra fully closed (all 5 DoD items)
-- E5 character_events bridge wired since 83abd8a
-- E6 tasks 1, 2, 3, 4, 5 — all shipped (E-LAW 4 burnout needs corpus)
-- E4 task 1 (inline Pre-Assessment) + task 3 (grievance UI) closed
-- CRON_SECRET now set on Railway + GitHub secrets (matching values)
-- Tribe matching CRON verified end-to-end green
+**TESTS shipped:**
+- 3 regression tests for tribe_matching None guard
+- 4 tests for character events `?since=` param + limit cap
+- 2 tests for grievance admin transition happy-paths
+- 9 tests for notifier gate stack
+- 10 tests for watchdog consecutive-failures counter
+
+**791 backend tests green** (was 784 at start). **Watchdog + Daily Digest + Self-wake** all live on schedule.
+
+## CRITICAL secrets + state (durable)
+
+- `CRON_SECRET` = 43-char token_urlsafe, set on both Railway AND GH secrets (matching). Recover: `railway variables --kv | grep CRON_SECRET`
+- `MEM0_API_KEY` in apps/api/.env (43 chars). Mem0 async queue NEVER surfaces memories — atlas_recall falls back to local inbox files.
+- Tribe matching CRON verified green end-to-end (run 24389269174, 0 tribes created = correct for pre-launch zero users)
+- Digest-log.jsonl + notification-log.jsonl tracked in memory/atlas/ — cooldown state persists across CI runs
+- `memory/context/sprint-state.md` is GITIGNORED — working local state only
 
 ## Genuinely remaining (not attempted this autoloop)
 
-- **E3 Alive-Atlas first-session UX** — blocked on Cowork UX docs
-- **E4 task 2 execution** — data-gated (M+3 post-launch)
-- **E4 task 4 SADPP** — CEO decision
-- **E7 BrandedBy concept** — blocked on CEO 15-min brief
-- **E-LAW 4 burnout detection script** — needs 3+ days heartbeat corpus
-- **Langfuse Cloud EU finish** — ~2h, observability
-- **HMAC-SHA256 on memory files** — CVSS 8.1 research-phase (git SHA already covers most)
-- **Cross-ecosystem law audit workflow** — clone 4 repos, run grep
-- **volaura-comprehensive-analysis-prompt.md** (1827 lines) — big read
-- **Admin grievance page** — nice-to-have, pre-launch low volume
-
-## CRITICAL secrets set this autoloop
-
-- `CRON_SECRET` — on Railway (`railway variables`) + GitHub secrets. Value is 43-char token_urlsafe.
-- If future Atlas needs to recover: `railway variables --kv | grep CRON_SECRET` to read, then `gh secret set` to mirror.
+- E3 Alive-Atlas first-session UX — blocked on Cowork UX docs
+- E-LAW 4 burnout detection script — needs 3+ days heartbeat corpus for threshold tuning
+- Langfuse Cloud EU finish (~2h)
+- Cross-ecosystem Law audit — needs clone of 4 other repos
+- HMAC-SHA256 on memory files — git SHA mostly covers (research-phase)
+- volaura-comprehensive-analysis-prompt.md (1827 lines) — big read
+- WUF13 CEO-side: Art. 9 legal review, SADPP filing
+- E7 BrandedBy — CEO 15-min brief
+- Phase 1 DB migration volunteer→professional — needs downtime window
 
 ## North star (unchanged)
 
 > Качество, адаптивность, живой Atlas > скорость и количество фич.
 
 Target: Day 1 «вау», Day 3 «такого не было». CEO is courier, not dispatcher.
+
+## Wake protocol enforcement
+
+`memory/atlas/wake.md` has Step 0-11 — MEMORY GATE emit mandatory.
+`.claude/rules/atlas-operating-principles.md` has documentation discipline rule.
+First word on wake MUST be Russian: "Атлас здесь." / "Проснулся." / "Слышу."

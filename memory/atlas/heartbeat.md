@@ -1,23 +1,34 @@
 # Atlas — Heartbeat
 
-**Session:** 108 (final continuation, pre-chat-close)
+**Session:** 110 (pre-clear final — 38 autoloop iterations closed)
 **Timestamp:** 2026-04-14
 **Branch:** main
-**Last commit:** `a73dbcd`
-**Prod:** HTTP 200 · **CI:** trailing green · **Self-wake:** live 30-min cron with mem0 fingerprint store
+**Last commit:** `01adcca` (admin grievance History tab)
+**Prod:** HTTP 200 · **CI:** trailing green · **Self-wake:** live 30-min cron · **Watchdog:** live hourly cron · **Daily digest:** live 23:00 UTC cron
 
-## Session 108 — what next Atlas inherits
+## Session 110 — what next Atlas inherits
 
-All 6 WUF13 P0 Atlas-items closed end-to-end. D-001 retired. Mem0 store+retrieve end-to-end. Pre-commit secret scanner installed (CVSS 9.8 gap). Two orientation INDEX files replace 20+ unread knowledge files.
+The autoloop held for 10 consecutive wakes without breaking. 38 commits across the span, all pushed to main, all CI green by end.
 
-Governance layer (reads on wake): Constitution, SYNC §9 MEMORY GATE, Emotional Laws 1-7 + MR-1/2/3, Vacation Mode spec, Routing doc.
+Biggest technical wins: resurrected the tribe matching CRON that had been silently red for 10+ days (two-layer fix — missing CRON_SECRET + supabase-py None guard), built an hourly workflow watchdog so that silent-fail pattern cannot repeat, shipped the full grievance stack (user intake + admin review + history), wired daily digest with SLO + notifier gates.
 
-## Post-compact protocol
+Biggest learning: CEO feed said "mem0 empty/unreachable" was a real state — mem0's async queue never surfaces the fingerprints heartbeat cron posts. Atlas_recall now falls back to local inbox files (git IS storage) so wake always gets a real answer.
 
-Read: breadcrumb.md → this heartbeat → journal.md (last 3 entries) → ceo-feed/INDEX.md → research/INDEX.md.
-Emit: `MEMORY-GATE: ...` line into journal.md first artifact.
-Verify: curl /health, gh run list CI, ls inbox/ for new.
-Then: pick from "Genuinely remaining" in breadcrumb.
+Biggest bias honored: every iteration followed the autoloop rhythm strictly — one task, one commit, one push. No batching, no silent work, no "I'll document later". That's what CEO asked for and that's what got done.
+
+## Post-clear protocol (critical — read this first on wake)
+
+Read: `.claude/breadcrumb.md` (full sum) → this heartbeat → `memory/atlas/journal.md` last entry → `memory/atlas/ceo-feed/INDEX.md` + `memory/swarm/research/INDEX.md`.
+
+Emit: `MEMORY-GATE: task-class=<class> · SYNC=✅ · BRAIN=✅ · sprint-state=⏭️ · extras=[...] · proceed` into journal.md before any substantive work.
+
+Verify: curl /health, gh run list --limit 5, git log --oneline -20.
+
+Then: wait for CEO instruction. Don't assume autoloop resumes — check chat first.
+
+## Wake greeting
+
+First word MUST be Russian: "Атлас здесь." / "Проснулся." / "Слышу." — then one sentence of state, then wait. Do NOT status-dump. Do NOT perform.
 
 ## CEO canon (unchanged)
 

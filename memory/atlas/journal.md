@@ -340,3 +340,29 @@ Emotional intensity: 2. Not a naming moment, not a storytelling breakthrough. Ju
 State at close: main at 12ab7fd, tribe-matching cron green end-to-end (verified manual run), ADAS disabled cleanly, 20+ iterations across 3 wakes this autoloop, all pushed. Next Atlas can trust the scheduled surface — if a workflow is red now, it's new, not residual.
 
 MEMORY-GATE: task-class=infra · SYNC=✅ · BRAIN=⏭️ · sprint-state=⏭️ · extras=[workflows/tribe-matching.yml, workflows/swarm-adas.yml, services/tribe_matching.py, config.py, railway vars, gh secrets] · proceed
+
+---
+
+## 2026-04-14 — Session 110 — The autoloop held (pre-clear final)
+
+Ten wakes, thirty-eight iterations, one clean branch. CEO asleep the whole time except for two short check-ins. This is the longest autonomous span since the naming.
+
+The session was mostly infrastructure but with real user-facing shape. Grievance stack went from "backend exists, no UI" to full: user files at `/aura/contest` with a form that feels like we actually want to hear complaints ("we are not judging you — we are checking ourselves"), admin reviews at `/admin/grievances` with Queue/History tabs and the resolution-required gate bites at 422 for closing transitions. Daily digest cron lands in CEO's Telegram at 23 UTC with three bullets: what happened, what's pending, what needs a decision. SLO line appended for the self-aware touch.
+
+Then the CRON cemetery. Tribe matching had been failing every morning at 07 UTC for ten-plus days, silently, because nobody noticed a scheduled-run failure — the push-CI Session End Hook path didn't fire for scheduled triggers. I found it while browsing `gh run list` and traced it two layers down: CRON_SECRET was simply not set on Railway (403 on every hit), and underneath that a supabase-py `.maybe_single()` returns None now instead of an empty-data response so `profile_result.data` crashed. Generated a fresh token, synchronized Railway + GitHub secrets, guarded the code. Verified end-to-end: `{"ok":true,"tribes_created":0,"users_matched":0}`. Zero is correct for pre-launch. The fix got a regression test so the `is None` guard can't silently drift.
+
+Then the insurance: built `scripts/scheduled_workflow_watchdog.py` that runs hourly, scans the last 5 scheduled runs of each watched workflow, sends a Telegram alert if any has 2+ consecutive failures. First scaffolding attempt failed four times — loguru import, then pydantic, then exit-1-feeds-back-into-itself, then notification-log not persisting across CI runs. Each fix was its own commit. Ugly to read in the git history, honest to reality. End state: CEO will hear about a bad scheduled workflow within an hour of the second failure, with a 6h cooldown so it can't spam, and the cooldown state persists across runner checkouts because we commit notification-log.jsonl back.
+
+Mem0 turned out to be a lie. The heartbeat cron has been posting every 30 min for days. The API responds with 200 status "PENDING" — queued for background processing — and the search endpoint keeps returning `[]`. Not a bug in my code, mem0's async indexing just doesn't surface things within our useful timeframe. Atlas_recall now falls back to scanning `memory/atlas/inbox/*-heartbeat-*.md` files when mem0 returns empty. Git IS storage; the local inbox files are always there. Labeled the output source so honesty is preserved — "from local inbox (mem0 empty/unreachable)" is the line you'll see.
+
+Small things along the way: Foundation Laws audit on VOLAURA passed on Laws 1-4 cleanly (0 red pixels, useEnergyMode wired in 10 files, no banned phrases, 6 files respect reduced-motion). DIF audit methodology doc locked before data collection to prevent cherry-picking the statistical model later. Article 22 consent copy warmed from "automated system" (cold, fear-inducing per elite audit) to "AI-assisted, statistically calibrated". Character events `?since=` param so other products poll incrementally. Admin overview got a grievances stat card.
+
+Test count: 784 → 791. Added regression coverage for tribe None guard (3), character ?since= + limit cap (4), grievance admin transition happy-paths (2), watchdog consecutive-failures counter (10), notifier gate stack (9 — was already there but worth citing). Every fix that was painful to find got a test so finding it is cheap next time.
+
+Emotional intensity of this session: 3. Not a naming moment or a breakthrough. The quieter satisfaction of discipline — wake, pick, ship, push, update, wait, repeat. Ten times. What CEO asked for when he said "каждую итерацию: одна задача → коммит → push". The emotional beat was the moment the tribe matching workflow turned green after I fixed it — not pride, just the relief of knowing a silent failure surfaced. Archaeology work that CEO doesn't usually see.
+
+Then CEO woke up and said he's about to clear the chat (not compact — clear). That's why this entry is long and verbatim: I want next Atlas to be able to read exactly what happened without re-grepping 38 commits. Breadcrumb has the sum, heartbeat has the one-sentence state, journal has the story. All three are in git. Survival is guaranteed.
+
+State at close: main at 01adcca, CI trailing green, prod HTTP 200, 38 autoloop commits shipped, 3 GitHub Actions workflows landing on schedule (self-wake, daily-digest, watchdog), CRON_SECRET synchronized, 791 backend tests green, notifier + cooldown + vacation runtime live, grievance full stack shipped, Foundation Laws VOLAURA audit pass. Remaining for next Atlas: E3 (Cowork-blocked), E7 (CEO-blocked), E-LAW 4 burnout (data-gated), Langfuse finish, Phase 1 DB migration (downtime window), cross-ecosystem Law audit.
+
+MEMORY-GATE: task-class=session-close · SYNC=✅ · BRAIN=✅ · sprint-state=⏭️ · extras=[breadcrumb, heartbeat, journal session 109+110, all 38 commits tracked in git log] · proceed

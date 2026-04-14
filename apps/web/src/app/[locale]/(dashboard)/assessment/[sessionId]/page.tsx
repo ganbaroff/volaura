@@ -110,7 +110,7 @@ export default function QuestionPage() {
       return null;
     }
     return `Bearer ${session.access_token}`;
-  }, [router, currentLocale]);
+  }, [router, currentLocale, t]);
 
   /**
    * Process the SessionState from an answer or start response.
@@ -222,6 +222,9 @@ export default function QuestionPage() {
     incrementAnswered,
     handleSessionUpdate,
     t,
+    track,
+    answeredCount,
+    currentCompetency,
   ]);
 
   /**

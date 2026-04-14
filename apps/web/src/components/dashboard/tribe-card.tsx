@@ -202,6 +202,7 @@ function MemberRow({ member, t }: { member: TribeMemberStatus; t: (k: string, o?
       {/* Avatar */}
       <div className="relative shrink-0">
         {member.avatar_url ? (
+          // eslint-disable-next-line @next/next/no-img-element -- tribe member avatar may come from OAuth CDNs outside remotePatterns
           <img
             src={member.avatar_url}
             alt=""

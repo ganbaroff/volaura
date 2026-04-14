@@ -76,6 +76,7 @@ export function Avatar({
       aria-label={name}
     >
       {src ? (
+        // eslint-disable-next-line @next/next/no-img-element -- avatar src may be from OAuth CDNs (Google, GitHub, etc.) outside remotePatterns; native img handles arbitrary URLs safely with lazy loading
         <img
           src={src}
           alt={name}

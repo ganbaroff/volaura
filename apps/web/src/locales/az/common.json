@@ -681,7 +681,8 @@
     "search": "Axtarış",
     "noResults": "Nəticə tapılmadı",
     "viewAll": "Hamısını görüntüləmək",
-    "saving": "Saxlanılır..."
+    "saving": "Saxlanılır...",
+    "close": "Bağla"
   },
   "publicProfile": {
     "auraScore": "AURA Balı",
@@ -945,6 +946,29 @@
       "title": "İlk fəslin hazırdır",
       "body": "VOLAURA-da ən azı bir qiymətləndirmə tamamla — seçimli ilk hadisə burada görünəcək.",
       "hint": "MVP preview — live pool wire coming in next iteration"
+    },
+    "shop": {
+      "title": "Kristal Mağazası",
+      "balance": "Balans: {{count}} ♦",
+      "item": {
+        "premium_training_course": {
+          "name": "Premium təlim kursu"
+        },
+        "social_event_ticket": {
+          "name": "Sosial tədbir bileti"
+        },
+        "health_insurance": {
+          "name": "Sağlamlıq sığortası"
+        },
+        "career_coach": {
+          "name": "Karyera məsləhətçisi"
+        }
+      },
+      "confirm": {
+        "title": "Alışı təsdiqlə?",
+        "cost": "Qiymət",
+        "cta": "Təsdiqlə"
+      }
     }
   }
 }

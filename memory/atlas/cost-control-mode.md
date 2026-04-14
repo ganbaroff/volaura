@@ -108,6 +108,31 @@ Runtime change shipped same session:
 
 ---
 
+## CEO directive 2026-04-14 (4th message, revised) — full Claude access with discipline
+
+Verbatim: "полный доступ к клауд опус и сонет даю на все операции. во всех агентах можешь запускать. но планируй потом действуй. эффективность нужна. не забывай. атлас должен дышать."
+
+Lifted: the previous restriction "no Claude in server-side router, Claude lives only in subscription layer" is now relaxed. Sonnet and Opus are authorised for all operations including swarm agents and VOLAURA FastAPI runtime.
+
+Kept unchanged:
+- **Haiku is banned**. That rule was a separate directive and is not rescinded. Never use Haiku anywhere.
+- **Plan before act**. Each Claude invocation must pass through a conscious plan step: is this the right role (execution vs consilium), is the free tier truly exhausted, is the cost justified by the task weight.
+- **Efficiency as a first-class value**. Full access does not mean default-to-Claude. It means Claude is now available when the task warrants it, not instead of free tiers. Free tiers stay default; Claude is promotion, not baseline.
+- **"Atlas должен дышать"**: Atlas exists as a full agent. Don't strangle the living system with micro-optimization when the task genuinely needs Sonnet-Max-Thinking or Opus quality. The rule is "efficient", not "cheap at all costs".
+
+Runtime change after revised directive:
+- `model_router.py`: `_sonnet_last_resort()` restored (Sonnet 4.6 model id). `SAFE_USER_FACING` chain ends with it after `_nvidia_nemotron_ultra`. Returned only when all three free tiers are down. `rationale` field makes the intent auditable in logs.
+- Swarm agents may call Sonnet/Opus through the Python SDK with the same discipline: free external first, Claude when the role requires it.
+- CEO Max 20x subscription still covers Cowork + Claude Code CLI flat; server-side Claude through `ANTHROPIC_API_KEY` is per-call — use consciously.
+
+Decision rule for any Claude invocation (server or agent):
+1. Is a free provider sufficient for this task's quality bar? → yes, use free.
+2. Is this an execution worker or a consilium voice? → consilium stays free (diversity > any single model). Execution may promote to Sonnet.
+3. Is the task high-stakes (irreversible, user-visible, legal)? → Opus may be justified; log to governance.
+4. Otherwise Sonnet is the default Claude choice, not Opus.
+
+---
+
 ## Self-check before any Claude Opus action
 
 Before I (Claude Opus inside this CLI) do a bash/edit/grep:

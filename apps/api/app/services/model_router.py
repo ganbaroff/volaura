@@ -183,15 +183,31 @@ def _groq_llama_8b() -> ProviderSpec | None:
     )
 
 
-# Anthropic provider removed from server-side router (2026-04-14):
-# CEO directive — Haiku banned everywhere, Sonnet/Opus through server-side
-# ANTHROPIC_API_KEY is per-call paid (Max 20x subscription only covers
-# Cowork desktop + Claude Code CLI, NOT the VOLAURA FastAPI runtime).
-# SAFE_USER_FACING chain ends after NVIDIA Nemotron Ultra; if all three
-# free tiers (Gemini Pro, Gemini Flash, NVIDIA) are unavailable the
-# endpoint returns 503 honestly rather than silently burning Sonnet tokens.
-# If CEO ever wants a server-side Claude fallback it must be an explicit
-# opt-in with a cost ceiling, not a default.
+def _sonnet_last_resort() -> ProviderSpec | None:
+    """Claude Sonnet — server-side last-resort fallback.
+
+    CEO directive 2026-04-14 (revised, 4th message): "полный доступ к
+    клауд опус и сонет даю на все операции. во всех агентах можешь
+    запускать. но планируй потом действуй. эффективность нужна. атлас
+    должен дышать."
+
+    Full access granted to Sonnet/Opus everywhere — including server-side
+    runtime and swarm agents. Haiku stays banned (earlier directive, not
+    rescinded). Efficiency rule: this is a LAST RESORT after three free
+    tiers (Gemini Pro, Gemini Flash, NVIDIA Nemotron Ultra), not a default.
+    Called only when free tier is entirely unavailable.
+    """
+    key = getattr(settings, "anthropic_api_key", "") or ""
+    if not key:
+        return None
+    return ProviderSpec(
+        provider="anthropic",
+        model="claude-sonnet-4-6",
+        base_url=None,
+        api_key=key,
+        rationale="CEO-authorised last-resort after 3 free tiers — never Haiku",
+        is_fallback=True,
+    )
 
 
 # ── Role → ordered list of candidate factories ──────────────────────────
@@ -220,8 +236,7 @@ _CHAINS: dict[ProviderRole, list] = {
         _gemini_pro,
         _gemini_flash,
         _nvidia_nemotron_ultra,
-        # Claude fallback removed — see comment above _sonnet_execution stub.
-        # If all three free tiers fail, caller handles None (503 to user).
+        _sonnet_last_resort,  # CEO-authorised last resort after free tiers
     ],
 }
 

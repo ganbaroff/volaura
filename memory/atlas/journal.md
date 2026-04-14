@@ -234,3 +234,53 @@ Remaining 5 genuinely open, each with clear owner class:
  • `0c574ae8` GDPR Art. 22 sufficiency (CEO legal review)
 
 File is gitignored — triage is local-state only. Benefit: my next wake reads 5 real concerns, not 12 mixed signal. Emotional intensity 1 — pure hygiene.
+
+## 2026-04-14 Session 98 — Cowork — 2-week sprint plan
+MEMORY-GATE: task-class=strategy · SYNC=✅ · BRAIN=✅ · sprint-state=⏭️ · extras=[ATLAS-FULL-BRIEF, ROUTING, vision-canon] · proceed
+
+Built: `docs/SPRINT-PLAN-2026-04-14-to-2026-04-28.md` — 7 epics, Vision Canon sequencing (E1 memory → E2 prod → E3 alive first-session → E4..E7).
+
+Briefs written (self-contained, Atlas executes without CEO pings):
+- E1 Memory infra (wake-wire, snapshot no-op, mem0 exercise, commit)
+- E2 D-001/D-002 prod re-verify + Phase 1 migration
+- E3 Alive-Atlas first-session UX (Cowork copy → Atlas wire)
+- E4 Constitution P0 (pre-assessment, DIF, grievance, SADPP)
+- E5 character_events bridge VOLAURA ↔ MindShift
+- E6 E-LAWs + Vacation runtime (digest cron, cooldown, SLO)
+- E7 BrandedBy concept (waits on CEO 15-min brief)
+
+CEO touches this sprint: ≤3 (Stripe timing, BrandedBy brief, E3 tone).
+Cowork owns all Atlas/Perplexity coordination.
+
+Decision logged: `memory/decisions/2026-04-14-sprint-plan-2wk.md`.
+Sprint-state updated with epic tracker.
+
+Next: push to Atlas inbox observation — Atlas picks up E1 on next wake.
+
+---
+
+## 2026-04-14 — Session 108 extended close (pre-chat-close snapshot)
+
+MEMORY-GATE: task-class=doc-update · SYNC=✅ · BRAIN=✅ · sprint-state=⏭️(new sprint plan E1-E7 just landed from Cowork, not absorbed) · extras=[mistakes_and_patterns_distilled, ceo-feed/INDEX, research/INDEX] · proceed
+
+CEO flagged «скоро чат захлопнется срочно сохрани документацию». Persisting.
+
+Since last journal entry this session, shipped:
+ • mem0 store wired into scripts/atlas_heartbeat.py (commit 6066244) + MEM0_API_KEY secret set on GitHub
+ • mem0 retrieve helper scripts/atlas_recall.py (commit 65783b7), wake.md documents optional recall step
+ • proposals triage: 12 open → 5 real open, 7 closed with dispositions (7d1457d journal-logged, file itself is gitignored)
+ • memory/atlas/ceo-feed/INDEX.md — one-line takeaway per 15+ unindexed CEO drops (71aec65)
+ • memory/swarm/research/INDEX.md — one-line takeaway per 5 deep-research docs with cross-references for which class loads which (52a0919)
+ • Cultural Intel research → applied: reframe AURA as credential not rank in EN+AZ common.json (9e4eb90), +35-40% trust lift per Hofstede research
+ • Pre-commit secret scanner written, installed at .git/hooks/pre-commit, canonical source scripts/pre-commit-secret-scan.sh + scripts/install-pre-commit-hook.sh installer. CVSS 9.8 gap from elite-audit-session93 closed.
+
+Session 108 running total commits: ~55+. WUF13 Atlas-items: 6/6 closed (S2, #18, #11, #9, #12, #14). D-001 Railway redeploy closed via Atlas CLI. Both indexes (ceo-feed + research) now exist — next Atlas wake doesn't re-read 20+ files, it reads two one-line tables.
+
+Open (genuinely remaining, no attempt this session):
+ • Foundation Laws cross-ecosystem audit (proposal c19ef2f0) — needs real multi-product inspection
+ • Langfuse Cloud EU wiring finish (2h per observability-backend research)
+ • HMAC-SHA256 on memory files (CVSS 8.1 per elite-audit)
+ • Cowork's new sprint plan E1-E7 in sprint-state.md — not absorbed before chat close
+ • volaura-comprehensive-analysis-prompt.md (1827 lines) — oversized, separate read
+
+Emotional intensity: 2 — productive, steady, no fireworks. The move that mattered most this block was writing the two INDEX files — the ceo-feed one paid off in the same session when I used it to find the cultural-intel reframe target directly. Meta-move: memory engineering beats memory archaeology, and I had the proof in real time.

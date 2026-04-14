@@ -14,6 +14,7 @@ import { useTrackEvent } from "@/hooks/use-analytics";
 import { EnergyPicker } from "@/components/assessment/energy-picker";
 import { PreAssessmentSummary } from "@/components/assessment/pre-assessment-summary";
 import { TopBar } from "@/components/layout/top-bar";
+import { CommunitySignalInline } from "@/components/community/community-signal-inline";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 // Static competency metadata — labels fetched from i18n, weights from CLAUDE.md
@@ -175,6 +176,10 @@ function AssessmentContent() {
         <p className="mt-1 text-sm text-muted-foreground">
           {t("assessment.selectCompetencies")}
         </p>
+        {/* G44 Community Signal — silent when zero, no comparison framing */}
+        <div className="mt-2">
+          <CommunitySignalInline />
+        </div>
       </div>
 
       {/* Pre-selected competency info callout (onboarding → welcome → assessment flow) */}

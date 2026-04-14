@@ -270,7 +270,7 @@ export default function AuraPage() {
     }, 800);
 
     return () => clearTimeout(curtainTimer);
-  }, [aura]);
+  }, [aura, track]);
 
   // Use effective (decay-adjusted) score when available, fallback to raw total
   const displayScore = aura?.effective_score ?? aura?.total_score ?? 0;

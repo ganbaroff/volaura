@@ -247,7 +247,7 @@ export default function AssessmentResultsPage() {
       setError(msg);
       setPhase("error");
     }
-  }, [sessionId, locale, router, queryClient, t]);
+  }, [sessionId, locale, router, queryClient, t, track]);
 
   useEffect(() => {
     fetchResults();

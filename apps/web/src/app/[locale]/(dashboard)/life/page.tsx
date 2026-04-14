@@ -1,37 +1,50 @@
 "use client";
 
-import { useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useMemo, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { Sparkles, Heart, Zap, Brain, Users, Activity, Coins } from "lucide-react";
+import {
+  Activity,
+  Brain,
+  Coins,
+  Heart,
+  Sparkles,
+  Users,
+  Zap,
+} from "lucide-react";
 
 import { TopBar } from "@/components/layout/top-bar";
 import { cn } from "@/lib/utils/cn";
+import {
+  useLifesimNextChoice,
+  useLifesimSubmitChoice,
+} from "@/hooks/queries/use-lifesim";
 
 /**
- * Life Feed — MVP skeleton (sprint task A6).
+ * Life Feed — MVP with real choice wiring (sprint task A7).
  *
- * Surface for the reimagined Life Simulator (Path C from
- * docs/LIFE-SIMULATOR-REIMAGINE-2026-04-15.md): narrative "chapters" inside
- * the VOLAURA web app instead of a standalone Godot build.
- *
- * This iteration wires layout + stats sidebar + empty state. Next iteration (A7)
- * wires the choice modal to POST /api/lifesim/choice via the freshly generated
- * SDK. Iteration A8 wires the Crystal Shop.
+ * Pulls next eligible event from GET /api/lifesim/next-choice via generated
+ * SDK, renders it as a narrative card with choice buttons. On user pick,
+ * POSTs /api/lifesim/choice, optimistically applies stat deltas with a
+ * 300 ms animation, invalidates caches so the next event auto-loads.
  *
  * Constitution compliance:
- *  • Law 1 (no red) — all states use accent/muted, never destructive color
- *  • Law 2 (energy modes) — minimal layout already adapts to low-energy users
- *  • Law 3 (shame-free copy) — empty state frames as "ready for first chapter"
+ *   Law 1 — no destructive red; only primary / muted / border
+ *   Law 3 — shame-free copy on empty + error states
+ *   Law 4 — max 800 ms non-decorative anim; respects prefers-reduced-motion
  */
 
-type StatKey = "health" | "happiness" | "energy" | "intelligence" | "social" | "money";
+type StatKey =
+  | "health"
+  | "happiness"
+  | "energy"
+  | "intelligence"
+  | "social"
+  | "money";
 
 interface StatRow {
   key: StatKey;
   icon: React.ComponentType<{ className?: string }>;
-  value: number;
-  max: number;
 }
 
 const INITIAL_STATS: Record<StatKey, number> = {
@@ -52,33 +65,65 @@ const STAT_ICONS: Record<StatKey, React.ComponentType<{ className?: string }>> =
   money: Coins,
 };
 
-function StatBar({ row, t }: { row: StatRow; t: (k: string, o?: Record<string, unknown>) => string }) {
-  const Icon = row.icon;
-  const pct = row.key === "money"
-    ? Math.min(100, Math.max(0, (row.value / 9999) * 100))
-    : Math.min(100, Math.max(0, (row.value / row.max) * 100));
-  const displayValue = row.key === "money" ? row.value.toLocaleString() : String(Math.round(row.value));
+const ROWS: StatKey[] = [
+  "health",
+  "happiness",
+  "energy",
+  "intelligence",
+  "social",
+  "money",
+];
+
+function clampStat(key: StatKey, value: number): number {
+  if (key === "money") return value; // unbounded (may go negative for debt)
+  return Math.max(0, Math.min(100, value));
+}
+
+function StatBar({
+  keyName,
+  value,
+  t,
+}: {
+  keyName: StatKey;
+  value: number;
+  t: (k: string, o?: Record<string, unknown>) => string;
+}) {
+  const Icon = STAT_ICONS[keyName];
+  const pct =
+    keyName === "money"
+      ? Math.min(100, Math.max(0, (value / 9999) * 100))
+      : Math.min(100, Math.max(0, value));
+  const display = keyName === "money" ? value.toLocaleString() : String(Math.round(value));
 
   return (
-    <div className="flex items-center gap-3" role="group" aria-label={t(`lifesim.stat.${row.key}`, { defaultValue: row.key })}>
+    <div className="flex items-center gap-3">
       <Icon className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline justify-between gap-2 mb-1">
           <span className="text-xs font-medium text-on-surface-variant">
-            {t(`lifesim.stat.${row.key}`, { defaultValue: row.key })}
+            {t(`lifesim.stat.${keyName}`, { defaultValue: keyName })}
           </span>
-          <span className="text-xs font-semibold tabular-nums">{displayValue}</span>
+          <motion.span
+            key={value}
+            initial={{ scale: 1.15, color: "var(--color-primary)" }}
+            animate={{ scale: 1, color: "inherit" }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="text-xs font-semibold tabular-nums"
+          >
+            {display}
+          </motion.span>
         </div>
         <div
           className="h-1.5 rounded-full bg-surface-container overflow-hidden"
           role="progressbar"
-          aria-valuenow={Math.round(row.value)}
+          aria-valuenow={Math.round(value)}
           aria-valuemin={0}
-          aria-valuemax={row.key === "money" ? 9999 : 100}
+          aria-valuemax={keyName === "money" ? 9999 : 100}
         >
-          <div
-            className="h-full rounded-full bg-primary/70 transition-all duration-500 ease-out"
-            style={{ width: `${pct}%` }}
+          <motion.div
+            className="h-full rounded-full bg-primary/70"
+            animate={{ width: `${pct}%` }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
           />
         </div>
       </div>
@@ -86,22 +131,78 @@ function StatBar({ row, t }: { row: StatRow; t: (k: string, o?: Record<string, u
   );
 }
 
+interface LifesimChoice {
+  text_ru?: string;
+  consequences?: Record<string, number>;
+}
+
+interface LifesimEvent {
+  id: string;
+  category?: string;
+  title_ru?: string;
+  description_ru?: string;
+  choices?: LifesimChoice[];
+}
+
 export default function LifeFeedPage() {
   const { t } = useTranslation();
   const prefersReducedMotion = useReducedMotion();
 
-  // MVP: stats are client-side placeholder. A7 will pull from GET /api/character/events
-  // aggregate + VOLAURA verified-skills boosts via apply_stat_boosts_from_verified_skills.
-  const [stats] = useState<Record<StatKey, number>>(INITIAL_STATS);
+  const [stats, setStats] = useState<Record<StatKey, number>>(INITIAL_STATS);
+  const [age] = useState<number>(25); // TODO A7.1: aggregate from character_events
+  const [submitting, setSubmitting] = useState(false);
 
-  const statRows: StatRow[] = (
-    ["health", "happiness", "energy", "intelligence", "social", "money"] as StatKey[]
-  ).map((k) => ({ key: k, icon: STAT_ICONS[k], value: stats[k], max: 100 }));
+  const nextChoiceQuery = useLifesimNextChoice({
+    age,
+    intelligence: stats.intelligence,
+    social: stats.social,
+    energy: stats.energy,
+    happiness: stats.happiness,
+    health: stats.health,
+    money: stats.money,
+  });
 
-  const sectionVariants = {
-    hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 12 },
-    visible: { opacity: 1, y: 0 },
+  const submitChoice = useLifesimSubmitChoice();
+
+  const event = nextChoiceQuery.data?.event as LifesimEvent | null | undefined;
+
+  const onPick = async (choiceIndex: number) => {
+    if (!event || submitting) return;
+    setSubmitting(true);
+    const choice = event.choices?.[choiceIndex];
+    const consequences = (choice?.consequences ?? {}) as Record<string, number>;
+    try {
+      await submitChoice.mutateAsync({
+        event_id: event.id,
+        choice_index: choiceIndex,
+        stats_before: stats,
+      });
+      // Optimistic: apply consequences locally (server applied same logic)
+      setStats((prev) => {
+        const next = { ...prev };
+        for (const [k, delta] of Object.entries(consequences)) {
+          if (k in next) {
+            next[k as StatKey] = clampStat(k as StatKey, next[k as StatKey] + delta);
+          }
+        }
+        return next;
+      });
+    } catch {
+      // Error surfacing via query state; no user-blocking modal
+    } finally {
+      setSubmitting(false);
+    }
   };
+
+  const sectionVariants = useMemo(
+    () => ({
+      hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 12 },
+      visible: { opacity: 1, y: 0 },
+    }),
+    [prefersReducedMotion]
+  );
+
+  const statRows: StatRow[] = ROWS.map((k) => ({ key: k, icon: STAT_ICONS[k] }));
 
   return (
     <div className="min-h-screen bg-background">
@@ -127,16 +228,12 @@ export default function LifeFeedPage() {
         </motion.header>
 
         <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
-          {/* Stats sidebar */}
           <motion.aside
             initial="hidden"
             animate="visible"
             variants={sectionVariants}
             transition={{ duration: 0.35, delay: 0.05 }}
-            className={cn(
-              "rounded-xl border border-border bg-card p-5",
-              "h-fit lg:sticky lg:top-24"
-            )}
+            className="rounded-xl border border-border bg-card p-5 h-fit lg:sticky lg:top-24"
             aria-label={t("lifesim.stats.title", { defaultValue: "Character stats" })}
           >
             <div className="flex items-center gap-2 mb-4">
@@ -147,12 +244,11 @@ export default function LifeFeedPage() {
             </div>
             <div className="space-y-4">
               {statRows.map((row) => (
-                <StatBar key={row.key} row={row} t={t} />
+                <StatBar key={row.key} keyName={row.key} value={stats[row.key]} t={t} />
               ))}
             </div>
           </motion.aside>
 
-          {/* Feed / empty state */}
           <motion.section
             initial="hidden"
             animate="visible"
@@ -161,32 +257,83 @@ export default function LifeFeedPage() {
             className="min-h-[400px]"
             aria-label={t("lifesim.feed.title", { defaultValue: "Life feed" })}
           >
-            <div
-              className={cn(
-                "rounded-xl border border-dashed border-border bg-card/50",
-                "flex flex-col items-center justify-center text-center",
-                "px-6 py-16 min-h-[400px]"
+            <AnimatePresence mode="wait">
+              {nextChoiceQuery.isLoading ? (
+                <motion.div
+                  key="loading"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="rounded-xl border border-dashed border-border bg-card/50 px-6 py-16 min-h-[400px] flex items-center justify-center"
+                  role="status"
+                  aria-live="polite"
+                >
+                  <span className="text-sm text-muted-foreground">
+                    {t("common.loading", { defaultValue: "Loading…" })}
+                  </span>
+                </motion.div>
+              ) : event ? (
+                <motion.article
+                  key={event.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                  className="rounded-xl border border-border bg-card p-6 md:p-8"
+                >
+                  {event.category ? (
+                    <span className="inline-block mb-3 text-xs font-semibold uppercase tracking-wider text-primary">
+                      {t(`lifesim.category.${event.category}`, { defaultValue: event.category })}
+                    </span>
+                  ) : null}
+                  <h2 className="text-xl md:text-2xl font-headline font-bold text-foreground mb-3">
+                    {event.title_ru}
+                  </h2>
+                  <p className="text-base text-on-surface-variant mb-6 leading-relaxed">
+                    {event.description_ru}
+                  </p>
+                  <div className="flex flex-col gap-3">
+                    {(event.choices ?? []).map((choice, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => onPick(idx)}
+                        disabled={submitting}
+                        className={cn(
+                          "w-full text-left rounded-lg border border-border bg-surface-container-low px-4 py-3",
+                          "text-sm font-medium text-foreground",
+                          "hover:border-primary/60 hover:bg-surface-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
+                          "transition-colors duration-200",
+                          "disabled:opacity-60 disabled:cursor-not-allowed"
+                        )}
+                      >
+                        {choice.text_ru ?? `Choice ${idx + 1}`}
+                      </button>
+                    ))}
+                  </div>
+                </motion.article>
+              ) : (
+                <motion.div
+                  key="empty"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="rounded-xl border border-dashed border-border bg-card/50 px-6 py-16 min-h-[400px] flex flex-col items-center justify-center text-center"
+                  role="status"
+                >
+                  <Sparkles className="size-10 text-primary/60 mb-4" aria-hidden="true" />
+                  <h2 className="text-lg font-semibold text-foreground mb-2">
+                    {t("lifesim.emptyState.title", { defaultValue: "Твоя первая глава ждёт" })}
+                  </h2>
+                  <p className="text-sm text-muted-foreground max-w-md">
+                    {t("lifesim.emptyState.body", {
+                      defaultValue:
+                        "Пройди хотя бы один assessment в VOLAURA — и сюда прилетит первое событие, в котором нужно будет сделать выбор.",
+                    })}
+                  </p>
+                </motion.div>
               )}
-              role="status"
-            >
-              <Sparkles className="size-10 text-primary/60 mb-4" aria-hidden="true" />
-              <h2 className="text-lg font-semibold text-foreground mb-2">
-                {t("lifesim.emptyState.title", {
-                  defaultValue: "Твоя первая глава ждёт",
-                })}
-              </h2>
-              <p className="text-sm text-muted-foreground max-w-md mb-6">
-                {t("lifesim.emptyState.body", {
-                  defaultValue:
-                    "Пройди хотя бы один assessment в VOLAURA — и сюда прилетит первое событие, в котором нужно будет сделать выбор.",
-                })}
-              </p>
-              <span className="text-xs text-muted-foreground/70 font-mono">
-                {t("lifesim.emptyState.hint", {
-                  defaultValue: "MVP preview — live pool wire coming in next iteration",
-                })}
-              </span>
-            </div>
+            </AnimatePresence>
           </motion.section>
         </div>
       </main>

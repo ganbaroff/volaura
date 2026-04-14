@@ -1,8 +1,18 @@
 # Atlas State
-**Updated:** 2026-04-13T19:05 Baku | **By:** Cowork Session 9 (post-verification) | **Instance:** Claude Opus 4.6 (Cowork)
+**Updated:** 2026-04-13T23:30 Baku | **By:** Cowork Session 9 (Tier 1 content pipeline shipped) | **Instance:** Claude Opus 4.6 (Cowork)
 
 ## Now
-**🎯 HANDOFF 012 — REALITY PROBE is the only active priority.**
+**🎬 Content pipeline Tier 1 shipped — captions, TTS, Postiz handoff complete. HANDOFF 012 reality probe still queued for Atlas.**
+
+Tier 1 items (from `docs/content/VIDEO-PIPELINE-UPGRADES-2026-04-13.md`):
+- `packages/remotion/src/components/Captions.tsx` + `scripts/transcribe.ts` — Whisper.cpp captions wired into TikTokAZ composition
+- `packages/swarm/tts.py` — Azure (AZ) + ElevenLabs (EN/RU) routing; CLI + Python API
+- `docs/ops/postiz-deployment-handoff.md` — full Atlas-owned deployment plan
+- `.env.md` updated with `AZURE_SPEECH_KEY`, `AZURE_SPEECH_REGION`, `ELEVENLABS_API_KEY`
+- `memory/atlas/content-pipeline-handoff.md` updated — DAG now 8 steps with TTS@5.5 and Postiz@8
+- Verified: `tsc --noEmit` clean, `@remotion/bundler` bundle succeeds
+
+**🎯 HANDOFF 012 — REALITY PROBE is still queued for Atlas (not blocked by content work).**
 
 Cowork retracted "PROD API DOWN" — that was sandbox egress blindness (HTTP 403 from proxy mistaken for HTTP 000 from prod). Supabase logs show live `python-httpx/0.28.1` traffic from Railway 17:14–17:45 UTC today. **API is alive.** Full retraction evidence: `packages/atlas-memory/knowledge/verification-2026-04-13.md`.
 

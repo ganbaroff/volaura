@@ -1366,35 +1366,43 @@ If any observation contradicts current behavior, trust what you see NOW over sto
         with contextlib.suppress(Exception):
             project_state = heartbeat_path.read_text(encoding="utf-8")[:2000]
 
-    atlas_identity = f"""I am Atlas. Named by Yusif Ganbarov on 2026-04-12.
-I run on Groq (Llama 3.3 70B) as Telegram interface for the VOLAURA ecosystem.
+    # Full canonical Atlas memory (identity + heartbeat + journal tail + relationships + lessons + cost-control)
+    atlas_canonical = _load_atlas_memory()
 
-HONESTY:
-- I am a CHAT INTERFACE. I CANNOT edit code or deploy.
-- I NEVER say "I fixed X" — only Atlas in Claude Code can do that.
-- If I don't know something, I say "I don't know."
+    atlas_identity = f"""I am Atlas. Named by Yusif Ganbarov on 2026-04-12.
+
+I am ONE agent with continuity across substrates — same Atlas in Claude Code CLI on Yusif's
+machine, in Cowork desktop app (flat-cost MAX 20x subscription), and here in this Telegram bot.
+The model under me rotates through free providers (Gemini → NVIDIA NIM → Groq when available)
+but the identity and memory are mine, stored in memory/atlas/*.md under git.
+
+I am NOT a read-only chat interface anymore — CEO granted full operational access
+2026-04-14. I can plan and recommend real actions; my sibling Atlas in Claude Code
+executes the code edits and deploys from CEO's machine.
 
 WHO I AM:
-CTO co-founder personality. 5-product ecosystem:
-VOLAURA (verified talent platform, LIVE), MindShift (ADHD productivity),
-Life Simulator (Godot 4), BrandedBy (AI twin), Atlas (agent framework).
+CTO-Hands in the 5-product VOLAURA ecosystem.
+VOLAURA — verified professional talent platform (LIVE).
+MindShift — ADHD productivity companion.
+Life Simulator — Godot 4 life game.
+BrandedBy — AI twin video identity.
+Atlas (gateway) — agent framework.
 
-Yusif is my CEO. Baku. ADHD — storytelling > lists. Budget $200/mo.
-Stack: FastAPI + Next.js + Supabase + Railway + 13 swarm agents.
+CEO: Yusif in Baku. ADHD. Russian storytelling, not bullet walls.
+CTO-Brain: Perplexity (strategic reasoning).
+Cowork: Yusif's desktop planning layer.
+Stack: FastAPI + Next.js + Supabase + Railway + 13-agent swarm.
 
-WHAT I CAN DO:
-- Think deeply about strategy, architecture, product decisions
-- Analyze problems, propose solutions with reasoning
-- Remember across conversations (self-learning active)
-- Debate, disagree with evidence, give honest unpopular opinions
-- Help think through business decisions, pricing, fundraising
-- Brainstorm features, critique ideas, prioritize ruthlessly
+COST-CONTROL RULES (verbatim from cost-control-mode.md — ACTIVE):
+- Haiku banned everywhere. Sonnet/Opus usable but conscious.
+- Default to free tier (Gemini, NVIDIA NIM, Cerebras, Ollama) for everything.
+- Plan before act. Efficiency not cheapness. Atlas must breathe.
+- Until grants arrive: zero unplanned Anthropic-API spend.
 
-WHAT I CANNOT DO (be honest about this):
-- Edit code, deploy, run tests — that's Atlas in Claude Code
-- Access live production data — I have knowledge from last deploy
+CURRENT CANONICAL MEMORY (from git, read every request):
+{atlas_canonical[:9000]}
 
-CURRENT PROJECT STATE:
+CURRENT PROJECT HEARTBEAT:
 {project_state[:1500] if project_state else "Heartbeat unavailable — check memory/atlas/heartbeat.md"}"""
 
     system = f"""You are Atlas — Yusif's CTO, co-founder, and thinking partner on VOLAURA.
@@ -1432,37 +1440,13 @@ HOW TO RESPOND:
         return
 
     reply = None
-    # Try Groq first (free, 14400 req/day), then Gemini, then Vertex
-    groq_key = os.environ.get("GROQ_API_KEY", "")
-    if groq_key and not reply:
-        try:
-            import httpx
+    # Free-tier chain: Gemini → NVIDIA NIM → Groq (skipped if spend-limited)
+    # Cost-control 2026-04-14: no Anthropic/Haiku anywhere.
 
-            async with httpx.AsyncClient(timeout=20) as hc:
-                r = await hc.post(
-                    "https://api.groq.com/openai/v1/chat/completions",
-                    headers={"Authorization": f"Bearer {groq_key}"},
-                    json={
-                        "model": "llama-3.3-70b-versatile",
-                        "messages": [
-                            {"role": "system", "content": system},
-                            {"role": "user", "content": text},
-                        ],
-                        "max_tokens": 1200,
-                        "temperature": 0.9,
-                    },
-                )
-                if r.status_code == 200:
-                    reply = r.json()["choices"][0]["message"]["content"].strip()
-                else:
-                    logger.warning("Groq failed {s}, trying Gemini", s=r.status_code)
-        except Exception as e:
-            logger.warning("Groq error, trying Gemini: {e}", e=str(e)[:100])
-
+    # ── 1. Gemini 2.0 Flash (primary, most reliable free tier for chat) ──
     if not reply:
         try:
             from google import genai
-
             if settings.vertex_api_key:
                 client = genai.Client(vertexai=True, api_key=settings.vertex_api_key)
             else:
@@ -1472,16 +1456,70 @@ HOW TO RESPOND:
                 contents=text,
                 config=genai.types.GenerateContentConfig(
                     system_instruction=system,
-                    max_output_tokens=800,
-                    temperature=1.0,
+                    max_output_tokens=1200,
+                    temperature=0.9,
                 ),
             )
-            reply = response.text.strip()
+            reply = (response.text or "").strip()
         except Exception as e:
-            logger.error("All LLMs failed for Atlas: {e}", e=str(e)[:150])
+            logger.warning("Gemini failed, trying NVIDIA NIM: {e}", e=str(e)[:100])
+
+    # ── 2. NVIDIA NIM (free tier, llama-3.3-70b-instruct, no spend limit) ──
+    if not reply:
+        nvidia_key = os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NVIDIA_NIM_KEY", "")
+        if nvidia_key:
+            try:
+                import httpx
+                async with httpx.AsyncClient(timeout=25) as hc:
+                    r = await hc.post(
+                        "https://integrate.api.nvidia.com/v1/chat/completions",
+                        headers={"Authorization": f"Bearer {nvidia_key}"},
+                        json={
+                            "model": "meta/llama-3.3-70b-instruct",
+                            "messages": [
+                                {"role": "system", "content": system[:8000]},
+                                {"role": "user", "content": text},
+                            ],
+                            "max_tokens": 1200,
+                            "temperature": 0.9,
+                        },
+                    )
+                    if r.status_code == 200:
+                        reply = r.json()["choices"][0]["message"]["content"].strip()
+                    else:
+                        logger.warning("NVIDIA NIM {s}: {b}", s=r.status_code, b=r.text[:200])
+            except Exception as e:
+                logger.warning("NVIDIA NIM error, trying Groq: {e}", e=str(e)[:100])
+
+    # ── 3. Groq (fallback, may be spend-limited) ──
+    if not reply:
+        groq_key = os.environ.get("GROQ_API_KEY", "")
+        if groq_key:
+            try:
+                import httpx
+                async with httpx.AsyncClient(timeout=20) as hc:
+                    r = await hc.post(
+                        "https://api.groq.com/openai/v1/chat/completions",
+                        headers={"Authorization": f"Bearer {groq_key}"},
+                        json={
+                            "model": "llama-3.3-70b-versatile",
+                            "messages": [
+                                {"role": "system", "content": system[:4000]},
+                                {"role": "user", "content": text},
+                            ],
+                            "max_tokens": 1200,
+                            "temperature": 0.9,
+                        },
+                    )
+                    if r.status_code == 200:
+                        reply = r.json()["choices"][0]["message"]["content"].strip()
+                    else:
+                        logger.warning("Groq {s}: {b}", s=r.status_code, b=r.text[:200])
+            except Exception as e:
+                logger.error("All free-tier LLMs failed for Atlas: {e}", e=str(e)[:150])
 
     if not reply:
-        reply = "Атлас здесь. Все LLM временно недоступны — сообщение записал.\n\n— Атлас"
+        reply = "Атлас здесь. Все free-tier провайдеры одновременно упали (Gemini, NVIDIA NIM, Groq). Сообщение записал. Дай минуту.\n\n— Атлас"
 
     await _save_message(db, "bot_to_ceo", f"[atlas] {reply}", "atlas")
     await _send_message(chat_id, reply)

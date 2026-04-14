@@ -9,13 +9,17 @@
 ### BUG #1 — CRITICAL BLOCKER — Invite-only без выхода
 `/signup` требует "Dəvət kodu" как обязательное поле. Новый реальный пользователь не может зарегистрироваться — hard блокер тропы.
 
-**Immediate fix (to unblock CEO test TODAY):**
-1. Generate one valid invite code for CEO: insert row into `invite_codes` table with `code = 'CEO-TEST-2026-04-14'`, `max_uses = 10`, `expires_at = now() + interval '7 days'`, `is_active = true`.
-2. Send code to CEO via Telegram (or leave in `memory/atlas/inbox/2026-04-14T-invite-code-for-ceo.md`).
+**Correction to earlier brief:** нет таблицы `invite_codes`. Механизм — одна env var на Railway: `BETA_INVITE_CODE` (см. `apps/api/app/routers/auth.py:107-127` + `config.py:85-86`). Default: `open_signup=False`, `beta_invite_code=""` → every code returns `valid=False`. Constant-time `hmac.compare_digest` against single string.
 
-**Structural fix (separate task, not today):**
-- Decide with CEO next session: keep closed-alpha invite-gate OR switch to waitlist+email-confirm.
-- Not urgent — but document decision before real user onboarding begins.
+**Immediate fix (to unblock CEO test TODAY) — pick ONE:**
+1. **Option A (cleanest):** `railway variables set BETA_INVITE_CODE=CEO-TEST-2026-04-14 --service volaura-api` → redeploy → write code to `memory/atlas/inbox/2026-04-14T-invite-code-for-ceo.md` and ping CEO Telegram.
+2. **Option B (temporary open):** `railway variables set OPEN_SIGNUP=true --service volaura-api` → CEO tests tropa → `railway variables set OPEN_SIGNUP=false` immediately after. Log both moments to `memory/atlas/journal.md`.
+
+Atlas has Railway CLI access (verified Session 108). Pick Option A — safer, доказуемо обратимо, CEO получает конкретный код.
+
+**Structural fix (separate task, not today) — money/risk-class:**
+- CEO solo-decision next session: keep closed-alpha invite-gate OR switch to waitlist+email-confirm.
+- Document to `memory/decisions/2026-04-1X-invite-gate-strategy.md` with rationale.
 
 ### BUG #2 — CRITICAL — Layout-коллапс на `/signup` (desktop)
 Контент сжат в ~100px column, всё рендерится вертикально по слову.
@@ -42,11 +46,20 @@
 - Console на cold load — hydration warning?
 
 ### BUG #6 — MEDIUM — Нет error message при провале signup
-Форма отправила, spinner, тихо вернулась в initial state. Нарушение Constitution Law 3 (Shame-Free? — нет, тут Law 1: never silent on error; fail visibly but not red).
+Форма отправила, spinner, тихо вернулась в initial state. Нарушение Constitution Law 1 (never silent on error; fail visibly but not red).
 
-**Fix:** в signup form `onError` handler — `toast.error(t("signup.error.generic"))` или inline error под submit button. Цвет: `#D4B4FF` (purple per Law 1), не red. Текст по-русски/AZ/EN должен сказать "что-то пошло не так у нас, попробуй ещё раз" — не "вы ввели неправильно".
+**Copy уже существует, Law 3-compliant (проверил AZ locale):**
+- `signup.errorGeneric` = `"Bizim tərəfdə nəsə düz getmədi — bir az sonra yenidən cəhd edin."` ✅ shame-free ("наша сторона", не "ты").
+- `signup.inviteCodeInvalid` = `"Keçərsiz dəvət kodu. Zəhmət olmasa, yenidən cəhd edin."` ✅
 
-Проверь также backend — что именно вернул `/v1/auth/signup`? Скорее всего 422 на invalid invite code, и frontend глотает это без UI.
+**Fix:** в signup form `onError` handler — ветвление:
+- `422` + `detail.code === "INVITE_INVALID"` → inline под invite-код поле: `t("signup.inviteCodeInvalid")`
+- любой другой `4xx/5xx` / network fail → toast ИЛИ inline под submit: `t("signup.errorGeneric")`
+- Цвет: `#D4B4FF` (purple per Law 1), не red. Убедиться что `role="alert"` + `aria-live="polite"`.
+
+Frontend файл: `apps/web/src/app/[locale]/(auth)/signup/page.tsx` (client component) — найти `onSubmit`/`mutation.onError`. Также проверь что backend возвращает именно `{"code": "INVITE_INVALID", ...}` формат (см. `auth.py` — возможно просто 422 без code — тогда дополнить).
+
+Налоги Constitution Law 1 + Law 3.
 
 ## Order of operations
 
@@ -78,6 +91,4 @@
 - i18n AZ quality pass — next sprint
 
 ## Escalation
-If any fix takes >3 hours without progress → write to `memory/atlas/inbox/` with blocker, tag Cowork. Do not silently continue.
-
-Cowork. 2026-04-14 10:32 UTC.
+If any fix takes >3 hours without progress → write to `memory/atlas/inbox/` wit

@@ -1,6 +1,6 @@
 # LinkedIn Posts — Tracker
 
-**Последнее обновление:** 13 апреля 2026, 10:05 Баку (automated batch run)
+**Последнее обновление:** 14 апреля 2026, ~16:00 Баку (automated content-post-prep run — B01 Tuesday batch finalized)
 **Начало работы с Claude:** 23 марта 2026
 **До этого (cowork):** 21-22 марта 2026
 
@@ -49,8 +49,8 @@
 | 004 | "The First Deploy" | Yusif | Founder Journey | 💡 IDEA | — | — | — | backlog |
 | 005 | "4 Products From 1 Engine" | Yusif | Platform Thinking | 💡 IDEA | — | — | — | backlog |
 | 006 | "The Marathon" | Yusif | Founder Lifestyle | 💡 IDEA | — | — | — | backlog |
-| B01-LI | "The Vote" (LinkedIn EN) | Claude | AI CTO Diary S1 | 🔄 DRAFT | 14 апр 2026 | — | — | `draft/2026-04-14-linkedin-en-the-vote.md` |
-| B01-TT1 | "AI komandam" (TikTok AZ) | — | AI CTO Diary | 🔄 DRAFT | 14 апр 2026 | — | — | `draft/2026-04-14-tiktok-az-ai-komandam.md` |
+| B01-LI | "The Vote" (LinkedIn EN) | Claude | AI CTO Diary S1 | ✅ READY | 14 апр 2026, 20:00 Баку | — | — | `ready/post-005-the-vote-en.md` |
+| B01-TT1 | "AI komandam" (TikTok AZ) | — | AI CTO Diary | ✅ READY | 14 апр 2026 | — | — | `ready/post-006-ai-komandam-az.md` |
 | B01-TT2 | "My AI team disagreed" (TikTok EN) | — | AI CTO Diary | 💡 PLANNED | 17 апр 2026 | — | — | — |
 | B01-LI2 | "44 agentlə" (LinkedIn AZ) | Yusif | AI CTO Diary S2 | 💡 PLANNED | 17 апр 2026 | — | — | — |
 | B01-CAR | "44 AI Agents Org Chart" (Carousel) | — | AI CTO Diary | 💡 PLANNED | 16 апр 2026 | — | — | — |

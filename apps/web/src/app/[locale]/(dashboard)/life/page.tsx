@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import {
@@ -21,6 +21,7 @@ import {
   useLifesimNextChoice,
   useLifesimSubmitChoice,
 } from "@/hooks/queries/use-lifesim";
+import { useTrackEvent } from "@/hooks/use-analytics";
 
 /**
  * Life Feed — MVP with real choice wiring (sprint task A7).
@@ -167,6 +168,16 @@ export default function LifeFeedPage() {
   const submitChoice = useLifesimSubmitChoice();
   const crystalBalance = useCrystalBalance();
   const currentCrystals = crystalBalance.data?.crystal_balance ?? 0;
+  const track = useTrackEvent();
+
+  // Fire lifesim_feed_viewed once per mount. Guard against strict-mode double-fire
+  // in dev via ref flag — same pattern as aura/page.tsx revealFiredRef.
+  const feedViewFiredRef = useRef(false);
+  useEffect(() => {
+    if (feedViewFiredRef.current) return;
+    feedViewFiredRef.current = true;
+    track("lifesim_feed_viewed", { age });
+  }, [track, age]);
 
   const applyBoostLocally = (boost: Record<string, number>) => {
     setStats((prev) => {
@@ -192,6 +203,12 @@ export default function LifeFeedPage() {
         event_id: event.id,
         choice_index: choiceIndex,
         stats_before: stats,
+      });
+      track("lifesim_choice_submitted", {
+        event_id: event.id,
+        category: event.category,
+        choice_index: choiceIndex,
+        age,
       });
       // Optimistic: apply consequences locally (server applied same logic)
       setStats((prev) => {

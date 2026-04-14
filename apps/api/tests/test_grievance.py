@@ -13,7 +13,6 @@ from pydantic import ValidationError
 
 from app.routers.grievance import GrievanceCreate, GrievanceStatusUpdate
 
-
 # ── Schema-level guards ───────────────────────────────────────────────────────
 
 
@@ -84,6 +83,7 @@ def test_status_update_rejects_garbage_status():
 async def test_admin_endpoint_requires_resolution_on_resolved(monkeypatch):
     """admin_transition_grievance must 422 when status=resolved + no resolution."""
     from fastapi import HTTPException
+
     from app.routers.grievance import admin_transition_grievance
 
     payload = GrievanceStatusUpdate(status="resolved", resolution=None, admin_notes=None)
@@ -104,6 +104,7 @@ async def test_admin_endpoint_requires_resolution_on_resolved(monkeypatch):
 async def test_admin_endpoint_requires_resolution_on_rejected():
     """Rejected = terminal too. Same rule."""
     from fastapi import HTTPException
+
     from app.routers.grievance import admin_transition_grievance
 
     payload = GrievanceStatusUpdate(status="rejected", resolution="   ", admin_notes=None)
@@ -128,6 +129,7 @@ async def test_admin_endpoint_reviewing_without_resolution_passes():
     Uses a minimal MagicMock db that returns a canned row on update().execute().
     """
     from unittest.mock import AsyncMock, MagicMock
+
     from app.routers.grievance import admin_transition_grievance
 
     canned_row = {
@@ -167,6 +169,7 @@ async def test_admin_endpoint_reviewing_without_resolution_passes():
 async def test_admin_endpoint_resolved_with_resolution_passes():
     """Closing with a real resolution text succeeds and sets resolved_at."""
     from unittest.mock import AsyncMock, MagicMock
+
     from app.routers.grievance import admin_transition_grievance
 
     canned_row = {

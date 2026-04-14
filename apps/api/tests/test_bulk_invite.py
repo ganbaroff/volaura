@@ -369,8 +369,10 @@ class TestInviteSchemaValidation:
         assert row.email == "test@example.com"
 
     def test_invalid_email_rejected(self):
+        from pydantic import ValidationError
+
         from app.schemas.invite import InviteRowInput
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             InviteRowInput(email="not-an-email")
 
     def test_formula_injection_sanitized(self):
@@ -394,6 +396,8 @@ class TestInviteSchemaValidation:
         assert "994" in row.phone
 
     def test_short_phone_rejected(self):
+        from pydantic import ValidationError
+
         from app.schemas.invite import InviteRowInput
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             InviteRowInput(email="a@b.com", phone="123")

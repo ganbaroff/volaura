@@ -549,3 +549,122 @@ class TestCharacterEventWrite:
             assert detail["code"] == "DAILY_CRYSTAL_CAP_REACHED"
         finally:
             app.dependency_overrides.clear()
+
+
+# ── Section 5: GET /api/character/events — list + since filter ────────────────
+
+
+def make_events_list_admin(rows: list[dict], captured: dict | None = None) -> MagicMock:
+    """Admin mock for GET /api/character/events.
+
+    If `captured` dict is passed, records the `since` arg used in .gt() call.
+    """
+    admin_mock = MagicMock()
+
+    def mock_table(table_name: str):
+        m = MagicMock()
+        if table_name == "character_events":
+            result = MagicMock()
+            result.data = rows
+
+            # Base chain: .select().eq().order().range().execute() — no since
+            select_chain = m.select.return_value
+            eq_chain = select_chain.eq.return_value
+            order_chain = eq_chain.order.return_value
+            order_chain.range.return_value.execute = AsyncMock(return_value=result)
+
+            # With since: .select().eq().order().gt().range().execute()
+            def gt_mock(column: str, value):
+                if captured is not None:
+                    captured["since_gt_arg"] = value
+                    captured["since_column"] = column
+                gt_result = MagicMock()
+                gt_result.range.return_value.execute = AsyncMock(return_value=result)
+                return gt_result
+
+            order_chain.gt = gt_mock
+        return m
+
+    admin_mock.table = mock_table
+    return admin_mock
+
+
+class TestListCharacterEvents:
+    """GET /api/character/events — pagination + since filter."""
+
+    @pytest.mark.asyncio
+    async def test_list_returns_events(self):
+        """Happy path: returns events for user."""
+        event_row = {
+            "id": str(uuid4()),
+            "user_id": USER_ID,
+            "event_type": "crystal_earned",
+            "payload": {"amount": 10},
+            "source_product": "volaura",
+            "created_at": "2026-04-14T10:00:00+00:00",
+        }
+        admin_mock = make_events_list_admin([event_row])
+        app.dependency_overrides[get_supabase_admin] = lambda: admin_mock
+        app.dependency_overrides[get_supabase_user] = lambda: admin_mock
+        app.dependency_overrides[get_current_user_id] = lambda: USER_ID
+
+        try:
+            async with make_client() as client:
+                resp = await client.get("/api/character/events")
+            assert resp.status_code == 200
+            body = resp.json()
+            assert len(body) == 1
+            assert body[0]["event_type"] == "crystal_earned"
+        finally:
+            app.dependency_overrides.clear()
+
+    @pytest.mark.asyncio
+    async def test_since_param_filters_by_timestamp(self):
+        """?since=<iso> must be parsed and passed to .gt() on created_at."""
+        captured: dict = {}
+        admin_mock = make_events_list_admin([], captured=captured)
+        app.dependency_overrides[get_supabase_admin] = lambda: admin_mock
+        app.dependency_overrides[get_supabase_user] = lambda: admin_mock
+        app.dependency_overrides[get_current_user_id] = lambda: USER_ID
+
+        try:
+            async with make_client() as client:
+                resp = await client.get("/api/character/events?since=2026-04-14T08:00:00Z")
+            assert resp.status_code == 200
+            assert captured.get("since_column") == "created_at"
+            # Parsed value is ISO string with +00:00 suffix
+            assert captured.get("since_gt_arg", "").startswith("2026-04-14T08:00:00")
+        finally:
+            app.dependency_overrides.clear()
+
+    @pytest.mark.asyncio
+    async def test_since_invalid_format_returns_422(self):
+        """?since=garbage → 422 with INVALID_SINCE code, no DB call."""
+        admin_mock = make_events_list_admin([])
+        app.dependency_overrides[get_supabase_admin] = lambda: admin_mock
+        app.dependency_overrides[get_supabase_user] = lambda: admin_mock
+        app.dependency_overrides[get_current_user_id] = lambda: USER_ID
+
+        try:
+            async with make_client() as client:
+                resp = await client.get("/api/character/events?since=not-a-date")
+            assert resp.status_code == 422
+            body = resp.json()
+            assert body["detail"]["code"] == "INVALID_SINCE"
+        finally:
+            app.dependency_overrides.clear()
+
+    @pytest.mark.asyncio
+    async def test_limit_capped_at_200(self):
+        """limit > 200 is silently capped (no error, just enforced ceiling)."""
+        admin_mock = make_events_list_admin([])
+        app.dependency_overrides[get_supabase_admin] = lambda: admin_mock
+        app.dependency_overrides[get_supabase_user] = lambda: admin_mock
+        app.dependency_overrides[get_current_user_id] = lambda: USER_ID
+
+        try:
+            async with make_client() as client:
+                resp = await client.get("/api/character/events?limit=1000")
+            assert resp.status_code == 200
+        finally:
+            app.dependency_overrides.clear()

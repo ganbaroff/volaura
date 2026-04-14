@@ -923,5 +923,28 @@
       "resolved": "Həll olundu",
       "rejected": "Bağlandı"
     }
+  },
+  "lifesim": {
+    "title": "Həyat Axını",
+    "subtitle": "Həyatın fəsillər seriyası kimi. Buradakı hər seçim VOLAURA-da sübut etdiyini əks etdirir.",
+    "stats": {
+      "title": "Xarakter"
+    },
+    "stat": {
+      "health": "Sağlamlıq",
+      "happiness": "Xoşbəxtlik",
+      "energy": "Enerji",
+      "intelligence": "Zəka",
+      "social": "Sosial",
+      "money": "Pul"
+    },
+    "feed": {
+      "title": "Həyat axını"
+    },
+    "emptyState": {
+      "title": "İlk fəslin hazırdır",
+      "body": "VOLAURA-da ən azı bir qiymətləndirmə tamamla — seçimli ilk hadisə burada görünəcək.",
+      "hint": "MVP preview — live pool wire coming in next iteration"
+    }
   }
 }

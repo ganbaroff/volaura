@@ -886,5 +886,28 @@
       "resolved": "Resolved",
       "rejected": "Closed"
     }
+  },
+  "lifesim": {
+    "title": "Life Feed",
+    "subtitle": "Your life as a series of chapters. Every choice here reflects what you've already proven on VOLAURA.",
+    "stats": {
+      "title": "Character"
+    },
+    "stat": {
+      "health": "Health",
+      "happiness": "Happiness",
+      "energy": "Energy",
+      "intelligence": "Intelligence",
+      "social": "Social",
+      "money": "Money"
+    },
+    "feed": {
+      "title": "Life feed"
+    },
+    "emptyState": {
+      "title": "Your first chapter is ready",
+      "body": "Take at least one assessment on VOLAURA — the first event with a choice will arrive here.",
+      "hint": "MVP preview — live pool wire coming in next iteration"
+    }
   }
 }

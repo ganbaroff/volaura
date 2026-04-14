@@ -1,0 +1,8 @@
+{
+  "_comment": "Vacation Mode flag — see docs/VACATION-MODE-SPEC.md for semantics. Template: enabled=false (mode OFF). To activate: set enabled=true, fill dates + emergency channel, commit and push. Atlas reads this on every wake (wake.md step 10).",
+  "enabled": false,
+  "activated_at": null,
+  "expected_return": null,
+  "ceo_reachable_channels": [],
+  "notes": "Template. No vacation in progress."
+}

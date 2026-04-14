@@ -181,11 +181,7 @@ async def submit_choice(
     pure-function helper, then fires the character_events emit (non-blocking).
     """
     result = await (
-        db.table("lifesim_events")
-        .select("id, choices, is_active")
-        .eq("id", payload.event_id)
-        .single()
-        .execute()
+        db.table("lifesim_events").select("id, choices, is_active").eq("id", payload.event_id).single().execute()
     )
     event = getattr(result, "data", None) or {}
     if not event or not event.get("is_active"):

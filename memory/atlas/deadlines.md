@@ -26,12 +26,14 @@ Format: entries sorted chronologically, past-due moves to ARCHIVE at bottom.
 - **Prereqs:** all WUF13 P0 items in `docs/PRE-LAUNCH-BLOCKERS-STATUS.md` closed (4 of 8 Atlas items done as of 2026-04-16; 4 still open: grievance admin UI, landing sample profile, ghosting grace, Art. 9 legal)
 - **Status:** ON TRACK — Atlas items manageable. CEO legal items (SADPP, Soniox DPA) are the harder half.
 
-### TBD+30d — 83(b) election (triggers when Stripe Atlas founder shares issued)
-- **Action:** file IRS Form 83(b) election within 30 calendar days of receiving founder shares in DE C-Corp
-- **Consequence of missing:** every future equity appreciation (Series A onwards) gets taxed as ordinary income at vesting, not at grant. For a $7M post-money company with 85% CEO stake, this is potentially a 7-figure tax penalty over 4-year vest.
-- **Owner:** CEO (personal filing) + tax lawyer to confirm form
+### TBD+30d — 83(b) election (Stripe Atlas auto-files — de-risked)
+- **Action:** Stripe Atlas automatically files 83(b) for C-Corp founders as part of formation fee (USPS Certified Mail with tracking). Per official Atlas docs.
+- **Consequence of missing:** every future equity appreciation gets taxed as ordinary income at vesting. For a $7M post-money company with 85% CEO stake, potentially 7-figure ordinary-income penalty over 4-year vest.
+- **De-risk:** Atlas auto-filing removes CEO manual step. CEO still needs to verify USPS tracking confirms delivery within 30 days.
+- **Blocker:** Atlas filing requires SSN or ITIN at moment of filing. CEO has neither. ITIN application (separate entry below) must complete BEFORE Atlas filing, OR CEO coordinates with Atlas on sequencing.
+- **Owner:** Stripe Atlas (auto) + CEO (verify) + tax lawyer (confirm sequencing)
 - **Trigger:** Stripe Atlas Incorporation complete (~30 days after filing paperwork)
-- **Status:** NOT TRIGGERED YET. Atlas will surface when Stripe Atlas filing begins.
+- **Status:** NOT TRIGGERED YET. Source: https://docs.stripe.com/atlas/83b-elections-non-us-founders
 
 ### TBD — ITIN application (CEO has no US SSN)
 - **Action:** apply for ITIN via IRS Form W-7, typically with first US tax return. Some startup-program portals require it before they can issue a 1099.

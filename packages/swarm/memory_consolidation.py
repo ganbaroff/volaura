@@ -223,25 +223,50 @@ def _fallback_distilled(log_content: str) -> None:
         "",
     ]
 
-    # Extract existing "Rejected Patterns" and "High-Value Proposal Patterns" sections
-    in_section = False
-    section_name = ""
+    # Extract "Rejected Patterns" and "High-Value Proposal Patterns" sections.
+    # The feedback log may contain these sections multiple times (one per run),
+    # so collect bullets into ordered lists with a seen-set to dedupe on first-80-chars
+    # (absorbs minor phrasing drift). Emit one unified list per section.
+    rejected: list[str] = []
+    high_value: list[str] = []
+    seen_rejected: set[str] = set()
+    seen_high: set[str] = set()
+    current: str | None = None
+
     for line in log_content.split("\n"):
         if "## Rejected Patterns" in line:
-            in_section = True
-            section_name = "rejected"
-            lines.append("## ❌ NEVER PROPOSE\n")
-        elif "## High-Value Proposal Patterns" in line:
-            in_section = True
-            section_name = "high_value"
-            lines.append("\n## ✅ HIGH-VALUE PATTERNS\n")
-        elif line.startswith("## ") and in_section:
-            in_section = False
-        elif in_section and (line.startswith("1.") or line.startswith("2.") or
-                              line.startswith("3.") or line.startswith("4.") or
-                              line.startswith("5.") or line.startswith("6.") or
-                              line.startswith("7.")):
-            lines.append(f"- {line[3:].strip()}")
+            current = "rejected"
+            continue
+        if "## High-Value Proposal Patterns" in line:
+            current = "high_value"
+            continue
+        if line.startswith("## "):
+            current = None
+            continue
+        if current and line[:2].rstrip(".").isdigit() and "." in line[:3]:
+            bullet = f"- {line.split('.', 1)[1].strip()}"
+            # Dedupe on the bold title — each bullet is `- **Name** — rest`.
+            # Absorbs phrasing drift in the trailing explanation between runs.
+            if "**" in bullet:
+                try:
+                    title = bullet.split("**", 2)[1].strip().lower()
+                except IndexError:
+                    title = bullet[:60].lower()
+            else:
+                title = bullet[:60].lower()
+            if current == "rejected" and title not in seen_rejected:
+                seen_rejected.add(title)
+                rejected.append(bullet)
+            elif current == "high_value" and title not in seen_high:
+                seen_high.add(title)
+                high_value.append(bullet)
+
+    if rejected:
+        lines.append("## ❌ NEVER PROPOSE\n")
+        lines.extend(rejected)
+    if high_value:
+        lines.append("\n## ✅ HIGH-VALUE PATTERNS\n")
+        lines.extend(high_value)
 
     with open(DISTILLED_FILE, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")

@@ -39,11 +39,20 @@ jobs:
         run: |
           git config user.name "MiroFish Swarm"
           git config user.email "swarm@volaura.app"
-          git add memory/swarm/skills/*.agent-proposal.md
+          # Guard glob: `git add path/*.foo` fails with exit 128 under `set -e`
+          # when nothing matches — kills the step. Expand with shell first and
+          # only call git add when at least one file exists.
+          shopt -s nullglob
+          FILES=(memory/swarm/skills/*.agent-proposal.md)
+          if [ ${#FILES[@]} -eq 0 ]; then
+            echo "No agent proposal files generated this run — skip."
+            exit 0
+          fi
+          git add "${FILES[@]}"
           if git diff --staged --quiet; then
             echo "No new agent proposals to commit."
           else
-            git pull --rebase origin main
+            git pull --rebase --autostash origin main
             git commit -m "swarm(adas): weekly agent design proposal — $(date -u +%Y-%m-%d)"
             git push
           fi

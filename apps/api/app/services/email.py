@@ -167,3 +167,82 @@ async def send_aura_ready_email(
             to=to_email,
             error=str(exc)[:200],
         )
+
+
+def _build_ghosting_grace_html(display_name: str, locale: str = "en") -> str:
+    """Warm 48h re-entry email body — Constitution Rule 30.
+
+    Tone rules: no shame ("you haven't"), no urgency ("hurry"), no comparison.
+    Just an invitation back, with a single clear action.
+    """
+    name = display_name or "there"
+    return f"""<!DOCTYPE html>
+<html><body style="font-family: -apple-system, sans-serif; max-width: 480px; margin: 40px auto; padding: 24px; color: #1a1a1a;">
+  <h2 style="font-size: 20px; margin: 0 0 16px 0;">Hi {name},</h2>
+  <p style="font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">
+    Two days ago you started signing up for VOLAURA. We saved your spot.
+  </p>
+  <p style="font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+    Whenever you're ready, the assessment takes about ten minutes. No competition,
+    no leaderboard — just your verified profile, in your time.
+  </p>
+  <a href="https://volaura.app/{locale}/assessment"
+     style="display: inline-block; padding: 12px 24px; background: linear-gradient(135deg, #C0C1FF, #9D9EE8);
+            color: #1a1a1a; text-decoration: none; border-radius: 12px; font-weight: 600;">
+    Pick up where you left off
+  </a>
+  <p style="font-size: 13px; color: #888; margin-top: 32px;">
+    This is the only nudge we'll send. Reply STOP to unsubscribe from product emails.
+  </p>
+</body></html>"""
+
+
+async def send_ghosting_grace_email(
+    to_email: str,
+    display_name: str,
+    locale: str = "en",
+) -> bool:
+    """Send the single 48h warm re-entry email — Constitution Rule 30, WUF13 #14.
+
+    Returns True if Resend accepted the send, False otherwise (kill switch off,
+    no API key, send failed). Caller uses the return to decide whether to set
+    profiles.ghosting_grace_sent_at — only on True so a failed attempt can retry
+    in the next worker pass.
+
+    Never raises — all errors logged as WARNING.
+    """
+    if not settings.email_enabled:
+        logger.debug("email disabled — skipping send_ghosting_grace_email", to=to_email)
+        return False
+    if not settings.resend_api_key:
+        logger.warning("send_ghosting_grace_email called but RESEND_API_KEY not set", to=to_email)
+        return False
+
+    try:
+        async with httpx.AsyncClient(timeout=8.0) as client:
+            resp = await client.post(
+                _RESEND_URL,
+                headers={
+                    "Authorization": f"Bearer {settings.resend_api_key}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "from": "VOLAURA <noreply@volaura.app>",
+                    "to": [to_email],
+                    "subject": "Your VOLAURA profile is waiting",
+                    "html": _build_ghosting_grace_html(display_name, locale),
+                },
+            )
+            if resp.status_code == 200:
+                logger.info("ghosting_grace_email sent", to=to_email)
+                return True
+            logger.warning(
+                "ghosting_grace_email Resend error",
+                to=to_email,
+                status=resp.status_code,
+                body=resp.text[:200],
+            )
+            return False
+    except Exception as exc:
+        logger.warning("ghosting_grace_email failed (non-fatal)", to=to_email, error=str(exc)[:200])
+        return False

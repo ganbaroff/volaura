@@ -1,0 +1,50 @@
+name: Atlas Daily Digest
+
+on:
+  # 23:00 UTC daily = 03:00 Baku. Per E6 spec (memory/atlas/inbox/2026-04-14T0734-epic-E6-*).
+  # Late-evening time was chosen so CEO reads it tomorrow morning as a recap,
+  # not a notification at peak attention hours.
+  schedule:
+    - cron: '0 23 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: atlas-daily-digest
+  cancel-in-progress: false
+
+permissions:
+  contents: write   # append to digest-log.jsonl
+
+jobs:
+  digest:
+    name: Build + send digest
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Build and send digest
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CEO_CHAT_ID: ${{ secrets.TELEGRAM_CEO_CHAT_ID }}
+        run: python scripts/atlas_daily_digest.py
+
+      - name: Commit digest log
+        run: |
+          git config user.name "Atlas Digest"
+          git config user.email "atlas-digest@volaura.app"
+          git add memory/atlas/digest-log.jsonl memory/atlas/digest-offline.md 2>/dev/null || true
+          if git diff --staged --quiet; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+          git commit -m "atlas-digest: $(date -u +%Y-%m-%d)"
+          git pull --rebase --autostash origin main || true
+          git push || echo "Push failed — next tick will retry"

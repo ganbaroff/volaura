@@ -14,6 +14,7 @@ import {
 
 import { cn } from "@/lib/utils/cn";
 import { useLifesimPurchase } from "@/hooks/queries/use-lifesim";
+import { useTrackEvent } from "@/hooks/use-analytics";
 
 /**
  * Crystal Shop — 4 items hardcoded per LIFE-SIMULATOR-GAME-DESIGN.md §Crystal Economy.
@@ -74,6 +75,7 @@ interface CrystalShopProps {
 export function CrystalShop({ currentCrystals, onBoost }: CrystalShopProps) {
   const { t } = useTranslation();
   const purchaseMutation = useLifesimPurchase();
+  const track = useTrackEvent();
   const [pendingItem, setPendingItem] = useState<ShopItem | null>(null);
 
   const handleConfirm = async () => {
@@ -82,6 +84,11 @@ export function CrystalShop({ currentCrystals, onBoost }: CrystalShopProps) {
       await purchaseMutation.mutateAsync({
         shop_item: pendingItem.id,
         current_crystals: currentCrystals,
+      });
+      track("lifesim_crystal_spent", {
+        shop_item: pendingItem.id,
+        cost: pendingItem.cost,
+        remaining_crystals: currentCrystals - pendingItem.cost,
       });
       onBoost(pendingItem.boost);
     } catch {

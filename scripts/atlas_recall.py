@@ -11,18 +11,25 @@ Usage:
 Mem0 endpoints used:
     POST /v2/memories/search/  body {query, filters: {user_id}}
     GET  /v1/memories/?user_id=... (fallback, no semantic scoring)
+
+Fallback: if mem0 returns empty (their async queue hadn't indexed yet, or
+key scope doesn't allow reads), scan the committed `memory/atlas/inbox/`
+heartbeat files — those are always there because git IS the storage.
 """
 
 from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 import urllib.error
 import urllib.request
+from pathlib import Path
 
 MEM0_USER_ID = "atlas_ceo_yusif"
 MEM0_V2_SEARCH = "https://api.mem0.ai/v2/memories/search/"
+INBOX_DIR = Path(__file__).resolve().parents[1] / "memory" / "atlas" / "inbox"
 
 
 def _post_json(url: str, body: dict, token: str, timeout: float = 10.0) -> list | None:
@@ -82,6 +89,55 @@ def fetch_recent_fingerprints(limit: int = 10, query: str = "Atlas wake") -> lis
     return normalised
 
 
+def _fallback_local_inbox(limit: int) -> list[dict]:
+    """Fallback recall source: the last N committed heartbeat inbox files.
+
+    Mem0 is async and sometimes an empty response just means their queue has not
+    yet indexed. The local inbox files are written every 30 min by the self-wake
+    cron and committed to git — they never go missing.
+
+    Returns dicts with the same shape as fetch_recent_fingerprints so callers
+    don't need to branch.
+    """
+    if not INBOX_DIR.exists():
+        return []
+    # Filter for heartbeat files (pattern: YYYY-MM-DDThhmm-heartbeat-NNNN.md),
+    # sort by mtime newest first, take N.
+    heartbeats = sorted(
+        [p for p in INBOX_DIR.glob("*-heartbeat-*.md") if p.is_file()],
+        key=lambda p: p.stat().st_mtime,
+        reverse=True,
+    )[:limit]
+    out = []
+    for p in heartbeats:
+        try:
+            content = p.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        # Extract the "**When:** <iso>" line for timestamp.
+        ts = ""
+        m = re.search(r"\*\*When:\*\*\s*(\S+)", content)
+        if m:
+            ts = m.group(1)[:19]
+        # One-line summary: first non-empty prose line after the title.
+        summary = ""
+        for line in content.splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or line.startswith("*"):
+                continue
+            summary = line[:180]
+            break
+        out.append(
+            {
+                "id": p.name,
+                "memory": summary or f"(heartbeat {p.stem})",
+                "created_at": ts,
+                "metadata": {"source": "local_inbox_fallback", "file": p.name},
+            }
+        )
+    return out
+
+
 def main() -> int:
     limit = 10
     if len(sys.argv) > 1:
@@ -91,11 +147,16 @@ def main() -> int:
             pass
 
     fingerprints = fetch_recent_fingerprints(limit=limit)
+    source = "mem0"
     if not fingerprints:
-        print("(no fingerprints — mem0 empty, unreachable, or MEM0_API_KEY missing)")
+        fingerprints = _fallback_local_inbox(limit)
+        source = "local inbox (mem0 empty/unreachable)"
+
+    if not fingerprints:
+        print("(no fingerprints — mem0 empty and no local heartbeat files either)")
         return 0
 
-    print(f"Last {len(fingerprints)} Atlas session fingerprints (newest first):")
+    print(f"Last {len(fingerprints)} Atlas session fingerprints from {source} (newest first):")
     print("-" * 60)
     for fp in fingerprints:
         created = fp.get("created_at", "")[:19] or "?"

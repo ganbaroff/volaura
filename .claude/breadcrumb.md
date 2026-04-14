@@ -1,61 +1,40 @@
-# Session Breadcrumb — 2026-04-14 (pre-compact snapshot)
+# Session Breadcrumb — 2026-04-14 (pre-chat-close, session 108 final)
 
-**Latest commit:** see `git log -1` (multiple pushes today, head moves fast).
-**Branch:** main · Prod: HTTP 200 · CI: green in trail · Self-wake: tick every 30 min.
+**Latest commit:** `a73dbcd` (pre-commit scanner + journal close)
+**Branch:** main · Prod: HTTP 200 · CI: trailing green · Self-wake: 30-min cron live with MEM0_API_KEY
 
-## What this Atlas did (post session-108-close, autonomous day)
+## Post-chat-close first actions (next Atlas, read this)
 
-WUF13 P0 closed by Atlas this run (all 6 Atlas-side items):
- • S2 role-level gaming (schema restricted to self-claimable tiers)
- • #18 credential display split (stripped events_no_show/late from public AURA)
- • #11 Community Signal backend + frontend widget (G44)
- • #9 grievance full backend — intake (POST/GET own) + admin (pending list + PATCH transition)
- • #12 landing sample AURA preview (Leyla Mammadova, Rule 28 Sunk-Cost)
- • #14 Ghosting Grace 48h — migration + email fn + worker + admin trigger endpoint
+1. Read this file + `memory/atlas/heartbeat.md` + `memory/atlas/journal.md` last 3 entries
+2. Read `memory/atlas/ceo-feed/INDEX.md` + `memory/swarm/research/INDEX.md` — these are the orientation surfaces, don't re-read 20 files behind them
+3. `bash scripts/install-pre-commit-hook.sh` — fresh clones need this; already installed on current machine
+4. `python scripts/atlas_recall.py 5` — optional, mem0 semantic recall (may be empty)
+5. Emit `MEMORY-GATE: task-class=... · SYNC=✅ · BRAIN=✅ · sprint-state=... · extras=[...] · proceed` into journal.md first artifact of session
+6. `curl -s /health | jq`, `gh run list --limit 3`
+7. Check `memory/atlas/inbox/` for any new notes since this breadcrumb
+8. Scroll chat for last 5 user messages — CEO may have open questions
 
-Other big this-session work:
- • D-001 Railway redeploy — closed by Atlas via `railway redeploy --yes` (CLI was logged in as Yusufus). Telegram HMAC fix now live in prod, verified with 403-without-secret curl.
- • `docs/ROUTING.md` + amendment — who-does-what, Atlas capability inventory, D-001 retired to Atlas.
- • `docs/business/STARTUP-PROGRAMS-AUDIT-2026-04-14.md` — McKinsey-level audit of Cowork's 54-program catalog. Three material findings: ROI methodology, 6 missing programs, dependency graph three-pathed.
- • `docs/legal/PRIVACY-POLICY-DE-CCORP-DIFF.md` — pre-staged diff for Stripe Atlas day.
- • `docs/legal/US-AZ-TAX-LAWYERS-SHORTLIST.md` — 4-tier shortlist, real firms, WebSearch-verified.
- • `memory/atlas/deadlines.md` — 83(b) auto-filed by Stripe Atlas, ITIN is the real dependency.
- • `memory/people/{ceo,atlas,cowork,perplexity}.md` — gitignore exception added, tracked now. CEO north star encoded in ceo.md: «Качество, адаптивность, живой Atlas > скорость и количество фич».
- • `memory/atlas/wake.md` — added Step 11 MEMORY GATE emit protocol (Perplexity brief 2026-04-14).
- • `packages/swarm/memory_consolidation.py` — `_write_episodic_snapshot` no-op'd per SYNC §9.5.
- • 10 stale `feedback_snapshot_*.md` files deleted.
- • Both inbox notes (memory-gate, cowork-correction) marked Consumed with actions taken.
+## Session 108 sum
 
-## Key deltas vs SYNC §2.4 (for next Cowork sync to absorb)
+WUF13 P0 Atlas-items: 6/6 closed (S2 role gaming, #18 credential split, #11 Community Signal, #9 grievance full, #12 landing sample, #14 Ghosting Grace). D-001 Railway redeploy closed by Atlas via `railway redeploy --yes` CLI.
 
-- D-001 → retired. Owner column flips Atlas-owned.
-- D-002 Phase 1 migration — Atlas always had MCP, old row stale.
-- D-005 gh secrets rename — Atlas has gh CLI + PAT.
-- D-007 pre-launch blocker scoping — already done (docs/PRE-LAUNCH-BLOCKERS-STATUS.md).
+Governance / memory work: `docs/ROUTING.md`, `docs/ATLAS-EMOTIONAL-LAWS.md`, `docs/VACATION-MODE-SPEC.md`, `docs/PRE-LAUNCH-BLOCKERS-STATUS.md`, `docs/legal/PRIVACY-POLICY-DE-CCORP-DIFF.md`, `docs/legal/US-AZ-TAX-LAWYERS-SHORTLIST.md`, `docs/business/STARTUP-PROGRAMS-AUDIT-2026-04-14.md`, `docs/OBSIDIAN-SETUP.md`, `docs/SECRETS-ROTATION.md` stub. Plus tracked `memory/people/{atlas,ceo,cowork,perplexity}.md`, `memory/atlas/deadlines.md`, `memory/atlas/vacation-mode.json`, `memory/atlas/incidents.md` with INC-008/009/010.
 
-What STAYS with CEO: D-003 (downtime scheduling), D-006 (BrandedBy concept brief — CEO voice), D-011 (vendor accounts — CEO identity).
+Memory infra wired: mem0 store (heartbeat cron) + retrieve (`scripts/atlas_recall.py`) + MEMORY GATE protocol in wake.md Step 11. Pre-commit secret scanner at `.git/hooks/pre-commit`, canonical source `scripts/pre-commit-secret-scan.sh`. Two orientation indexes: `memory/atlas/ceo-feed/INDEX.md` + `memory/swarm/research/INDEX.md`.
 
-## Remaining WUF13 (CEO-side only)
- • #4 Art. 9 health data legal review
- • #5 SADPP registration filing
+Cowork deliveries landed: BRAIN.md, SYNC-2026-04-14 (§9 MEMORY GATE + §9.5 episodic DISABLED), MEMORY-HOLE-AUDIT, 5 decision logs, new sprint plan E1-E7 in sprint-state.md (NOT YET ABSORBED by this Atlas — first thing for next session).
 
-## Open protocols in flight
- • MEMORY GATE emit — wired in wake.md Step 11 this iteration, NOT YET emitting on every session start. Next Atlas must actually do it.
- • Vacation Mode spec — exists, `memory/atlas/vacation-mode.json` present with enabled=false.
- • Emotional Lawbook — 7 laws + MR-1/2/3 micro-rules, wired in wake.md Step 9.
+## Genuinely remaining (not attempted this session)
 
-## Minor files still uncommitted (ok to leave)
- • .claude/settings.local.json — gitignored
- • apps/web/tsconfig.tsbuildinfo — auto-generated
- • anything else that keeps coming back to git status — session-end hooks will re-generate
+- **Foundation Laws cross-ecosystem audit** (open swarm proposal c19ef2f0) — needs real multi-product inspection
+- **Langfuse Cloud EU finish** (~2h per observability-backend research, `_trace` decorator 50% wired)
+- **HMAC-SHA256 on memory files** (CVSS 8.1 per elite-audit-session93)
+- **Cowork sprint plan E1-E7** — in sprint-state.md, next Atlas must absorb before work
+- **volaura-comprehensive-analysis-prompt.md** (1827 lines, 62KB) — separate long read
+- **WUF13 CEO-side items**: #4 Art. 9 legal review, #5 SADPP filing — cannot be Atlas
 
-## Post-compact first actions (next Atlas, read this)
+## North star (unchanged)
 
-1. `curl -s -o /dev/null -w "%{http_code}" /health` → expect 200
-2. `gh run list --workflow=CI --limit 1` → expect success or running
-3. `ls memory/atlas/inbox/` → check for new notes since this breadcrumb
-4. Read the latest journal.md entry and this breadcrumb, then emit MEMORY-GATE per wake.md Step 11 before any task
-5. CEO may have left open questions — scroll chat for last 5 user messages
+> Качество, адаптивность, живой Atlas > скорость и количество фич.
 
-CEO current stance: trust autonomous team, only escalate money/people/risk/strategy.
-North star: quality + adaptivity + living Atlas > speed + feature count.
+Target: Day 1 «вау», Day 3 «такого не было». CEO is courier, not dispatcher. Workers decide HOW, only strategy/money/people/risk escalate.

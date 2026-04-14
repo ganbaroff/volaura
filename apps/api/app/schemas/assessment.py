@@ -53,14 +53,21 @@ def _validate_uuid(value: str, field_name: str) -> str:
 # ── Request schemas ───────────────────────────────────────────────────────────
 
 VALID_ROLE_LEVELS = ("professional", "volunteer", "coordinator", "specialist", "manager", "senior_manager")
+# Roles a user may self-claim at signup/assessment time — the "entry tiers".
+# The elevated tiers (coordinator / specialist / manager / senior_manager) require
+# evidence — a coordinator endorsement on an `events` row, or an explicit admin
+# promotion. Without this gate, any Leyla could POST role_level=senior_manager and
+# show up in Aynur's talent search as a self-promoted senior manager. That's the
+# "role self-selection gaming" issue flagged in session 88 pre-launch audit (S2).
+SELF_CLAIMABLE_ROLE_LEVELS = ("professional", "volunteer")
 
 
 class StartAssessmentRequest(BaseModel):
     competency_slug: str  # e.g. "communication"
     language: Literal["en", "az"] = "en"
-    role_level: Literal["professional", "volunteer", "coordinator", "specialist", "manager", "senior_manager"] = (
-        "professional"
-    )
+    # Restricted to self-claimable tiers. Elevated tiers are set server-side after
+    # evidence is present — never trusted from client input.
+    role_level: Literal["professional", "volunteer"] = "professional"
     energy_level: Literal["full", "mid", "low"] = "full"  # Constitution Law 2: Energy Adaptation
     automated_decision_consent: bool = False  # GDPR Article 22: user acknowledges automated scoring
 

@@ -1,0 +1,2614 @@
+{
+  "schema_version": 1,
+  "source": "godot-lifesim-2026",
+  "source_path": "godot-project/data/events/",
+  "extracted_at": "2026-04-15",
+  "extracted_by": "atlas",
+  "target_surface": "volaura-web-life-feed",
+  "locale_note": "Titles and descriptions in Russian only at extraction; AZ/EN translation deferred to VOLAURA i18n layer",
+  "events": [
+    {
+      "id": "edu_school_001",
+      "category": "education",
+      "category_code": 4,
+      "title_ru": "Экзамен в школе",
+      "description_ru": "Завтра важный экзамен. От результатов зависит твоё дальнейшее образование.",
+      "min_age": 6,
+      "max_age": 17,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Усердно готовиться всю ночь",
+          "consequences": {
+            "intelligence": 10,
+            "energy": -30,
+            "health": -10,
+            "happiness": -5
+          }
+        },
+        {
+          "text_ru": "Готовиться умеренно, высыпаться",
+          "consequences": {
+            "intelligence": 5,
+            "energy": -10,
+            "health": 5,
+            "happiness": 10
+          }
+        },
+        {
+          "text_ru": "Попросить помощи у умных друзей",
+          "consequences": {
+            "intelligence": 3,
+            "energy": -15,
+            "social": 20,
+            "happiness": 5
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 7,
+        "tags": [
+          "school",
+          "exam",
+          "education"
+        ]
+      }
+    },
+    {
+      "id": "edu_university_001",
+      "category": "education",
+      "category_code": 4,
+      "title_ru": "Поступление в университет",
+      "description_ru": "Пришло время выбирать университет. Твои оценки и результаты тестов определят доступные специальности.",
+      "min_age": 17,
+      "max_age": 25,
+      "required_stats": {
+        "intelligence": 60
+      },
+      "choices": [
+        {
+          "text_ru": "Поступить в престижный университет",
+          "consequences": {
+            "money": -25000,
+            "intelligence": 20,
+            "work_experience": 10,
+            "social": 15,
+            "happiness": 30
+          }
+        },
+        {
+          "text_ru": "Выбрать бюджетный вариант",
+          "consequences": {
+            "money": -8000,
+            "intelligence": 15,
+            "work_experience": 5,
+            "social": 10,
+            "happiness": 20
+          }
+        },
+        {
+          "text_ru": "Отложить поступление на год",
+          "consequences": {
+            "money": 5000,
+            "energy": 20,
+            "social": 5,
+            "happiness": 10
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "university",
+          "education",
+          "milestone"
+        ]
+      }
+    },
+    {
+      "id": "edu_graduation_001",
+      "category": "education",
+      "category_code": 4,
+      "title_ru": "Выпускной экзамен",
+      "description_ru": "Последний экзамен в университете. Диплом зависит от результатов этого теста.",
+      "min_age": 21,
+      "max_age": 30,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Готовиться на отлично",
+          "consequences": {
+            "intelligence": 15,
+            "energy": -40,
+            "health": -15,
+            "money": -5000,
+            "happiness": 20
+          }
+        },
+        {
+          "text_ru": "Сфокусироваться на проходной балл",
+          "consequences": {
+            "intelligence": 8,
+            "energy": -25,
+            "health": -5,
+            "money": -2000,
+            "happiness": 15
+          }
+        },
+        {
+          "text_ru": "Попросить помощи у одногруппников",
+          "consequences": {
+            "intelligence": 5,
+            "energy": -15,
+            "social": 25,
+            "money": -1000,
+            "happiness": 10
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "graduation",
+          "exam",
+          "milestone"
+        ]
+      }
+    },
+    {
+      "id": "edu_master_degree_001",
+      "category": "education",
+      "category_code": 4,
+      "title_ru": "Магистратура",
+      "description_ru": "Тебе предлагают продолжить обучение в магистратуре. Это откроет новые карьерные возможности.",
+      "min_age": 23,
+      "max_age": 35,
+      "required_stats": {
+        "intelligence": 75,
+        "work_experience": 20
+      },
+      "choices": [
+        {
+          "text_ru": "Поступить в магистратуру",
+          "consequences": {
+            "money": -30000,
+            "intelligence": 25,
+            "work_experience": 15,
+            "energy": -30,
+            "happiness": 25
+          }
+        },
+        {
+          "text_ru": "Выбрать онлайн-формат",
+          "consequences": {
+            "money": -15000,
+            "intelligence": 20,
+            "work_experience": 10,
+            "energy": -20,
+            "happiness": 20
+          }
+        },
+        {
+          "text_ru": "Отказаться и сосредоточиться на карьере",
+          "consequences": {
+            "money": 10000,
+            "work_experience": 20,
+            "energy": 20,
+            "social": 5,
+            "happiness": 10
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "master",
+          "education",
+          "career"
+        ]
+      }
+    },
+    {
+      "id": "edu_skills_course_001",
+      "category": "education",
+      "category_code": 4,
+      "title_ru": "Курсы повышения квалификации",
+      "description_ru": "Возможность пройти курсы для получения новых навыков и сертификата.",
+      "min_age": 25,
+      "max_age": 55,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Пройти интенсивные курсы",
+          "consequences": {
+            "money": -12000,
+            "intelligence": 12,
+            "work_experience": 15,
+            "energy": -20,
+            "happiness": 15
+          }
+        },
+        {
+          "text_ru": "Выбрать вечерние курсы",
+          "consequences": {
+            "money": -8000,
+            "intelligence": 8,
+            "work_experience": 10,
+            "energy": -15,
+            "happiness": 10
+          }
+        },
+        {
+          "text_ru": "Изучать самостоятельно",
+          "consequences": {
+            "money": -3000,
+            "intelligence": 5,
+            "work_experience": 5,
+            "energy": -10,
+            "happiness": 5
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 14,
+        "tags": [
+          "courses",
+          "skills",
+          "self_improvement"
+        ]
+      }
+    },
+    {
+      "id": "edu_language_001",
+      "category": "education",
+      "category_code": 4,
+      "title_ru": "Изучение иностранного языка",
+      "description_ru": "Изучение нового языка откроет возможности для работы и путешествий.",
+      "min_age": 18,
+      "max_age": 50,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Записаться на интенсивные курсы",
+          "consequences": {
+            "money": -20000,
+            "intelligence": 15,
+            "social": 10,
+            "energy": -25,
+            "happiness": 20
+          }
+        },
+        {
+          "text_ru": "Выбрать онлайн-обучение",
+          "consequences": {
+            "money": -10000,
+            "intelligence": 10,
+            "social": 5,
+            "energy": -15,
+            "happiness": 15
+          }
+        },
+        {
+          "text_ru": "Практиковаться с носителями",
+          "consequences": {
+            "money": -5000,
+            "intelligence": 8,
+            "social": 20,
+            "energy": -10,
+            "happiness": 10
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 21,
+        "tags": [
+          "language",
+          "education",
+          "skills"
+        ]
+      }
+    },
+    {
+      "id": "edu_phd_001",
+      "category": "education",
+      "category_code": 4,
+      "title_ru": "Аспирантура",
+      "description_ru": "Преподаватель предлагает тебе поступить в аспирантуру. Путь к научной степени.",
+      "min_age": 28,
+      "max_age": 40,
+      "required_stats": {
+        "intelligence": 85,
+        "work_experience": 30
+      },
+      "choices": [
+        {
+          "text_ru": "Поступить в аспирантуру",
+          "consequences": {
+            "money": -40000,
+            "intelligence": 30,
+            "work_experience": 20,
+            "energy": -35,
+            "happiness": 30
+          }
+        },
+        {
+          "text_ru": "Выбрать заочную форму",
+          "consequences": {
+            "money": -25000,
+            "intelligence": 25,
+            "work_experience": 15,
+            "energy": -25,
+            "happiness": 20
+          }
+        },
+        {
+          "text_ru": "Отказаться ради карьеры",
+          "consequences": {
+            "money": 15000,
+            "work_experience": 25,
+            "energy": 20,
+            "social": 5,
+            "happiness": 10
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "phd",
+          "research",
+          "academic"
+        ]
+      }
+    },
+    {
+      "id": "health_cold_001",
+      "category": "health",
+      "category_code": 10,
+      "title_ru": "Простуда",
+      "description_ru": "Ты простудился. Горло болит, температура повышена, и нет сил даже вставать с кровати.",
+      "min_age": 0,
+      "max_age": 100,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Лечиться дома",
+          "consequences": {
+            "health": 25,
+            "energy": -15,
+            "money": -20,
+            "happiness": -5
+          }
+        },
+        {
+          "text_ru": "Вызвать врача",
+          "consequences": {
+            "health": 45,
+            "energy": -10,
+            "money": -150,
+            "happiness": 5
+          }
+        },
+        {
+          "text_ru": "Игнорировать",
+          "consequences": {
+            "health": -30,
+            "energy": -20,
+            "happiness": -15,
+            "work_experience": -5
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 7,
+        "tags": [
+          "illness",
+          "recovery"
+        ]
+      }
+    },
+    {
+      "id": "health_injury_001",
+      "category": "health",
+      "category_code": 10,
+      "title_ru": "Спортивная травма",
+      "description_ru": "Во время пробежки ты подвернул ногу. Боль острая, движение ограничено.",
+      "min_age": 15,
+      "max_age": 60,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Обратиться в травмпункт",
+          "consequences": {
+            "health": 60,
+            "energy": -25,
+            "money": -100,
+            "work_experience": 5
+          }
+        },
+        {
+          "text_ru": "Лечиться дома",
+          "consequences": {
+            "health": 30,
+            "energy": -15,
+            "money": -50,
+            "work_experience": -3
+          }
+        },
+        {
+          "text_ru": "Продолжать тренировки",
+          "consequences": {
+            "health": -40,
+            "energy": -30,
+            "work_experience": 10,
+            "social": -5
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 14,
+        "tags": [
+          "injury",
+          "sports"
+        ]
+      }
+    },
+    {
+      "id": "health_stress_001",
+      "category": "health",
+      "category_code": 10,
+      "title_ru": "Выгорание на работе",
+      "description_ru": "Постоянные дедлайны и давление привели к эмоциональному выгоранию. Ты чувствуешь себя опустошенным.",
+      "min_age": 25,
+      "max_age": 65,
+      "required_stats": {
+        "work_experience": 50
+      },
+      "choices": [
+        {
+          "text_ru": "Взять отпуск",
+          "consequences": {
+            "health": 20,
+            "energy": 30,
+            "happiness": 25,
+            "money": -500,
+            "work_experience": -10
+          }
+        },
+        {
+          "text_ru": "Сменить работу",
+          "consequences": {
+            "health": 15,
+            "energy": 20,
+            "happiness": 20,
+            "money": -200,
+            "work_experience": -20
+          }
+        },
+        {
+          "text_ru": "Продолжать в том же духе",
+          "consequences": {
+            "health": -25,
+            "energy": -35,
+            "happiness": -30,
+            "work_experience": 15,
+            "social": -10
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 21,
+        "tags": [
+          "stress",
+          "work"
+        ]
+      }
+    },
+    {
+      "id": "health_chronic_001",
+      "category": "health",
+      "category_code": 10,
+      "title_ru": "Хроническое заболевание",
+      "description_ru": "У тебя обнаружили хроническое заболевание, требующее постоянного лечения.",
+      "min_age": 40,
+      "max_age": 100,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Начать дорогое лечение",
+          "consequences": {
+            "health": 70,
+            "energy": -20,
+            "money": -1000,
+            "happiness": -10
+          }
+        },
+        {
+          "text_ru": "Использовать народные средства",
+          "consequences": {
+            "health": 30,
+            "energy": -10,
+            "money": -100,
+            "happiness": 5
+          }
+        },
+        {
+          "text_ru": "Игнорировать проблему",
+          "consequences": {
+            "health": -50,
+            "energy": -15,
+            "happiness": -20,
+            "intelligence": -5
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "chronic",
+          "serious"
+        ]
+      }
+    },
+    {
+      "id": "health_addiction_001",
+      "category": "health",
+      "category_code": 10,
+      "title_ru": "Зависимость от соцсетей",
+      "description_ru": "Ты проводишь слишком много времени в соцсетях, это начинает влиять на твою жизнь.",
+      "min_age": 16,
+      "max_age": 35,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Установить лимит времени",
+          "consequences": {
+            "health": 10,
+            "energy": 15,
+            "happiness": 20,
+            "intelligence": 5,
+            "social": -10
+          }
+        },
+        {
+          "text_ru": "Полностью отказаться от соцсетей",
+          "consequences": {
+            "health": 25,
+            "energy": 30,
+            "happiness": -15,
+            "social": -30,
+            "intelligence": 10
+          }
+        },
+        {
+          "text_ru": "Продолжить как раньше",
+          "consequences": {
+            "health": -20,
+            "energy": -25,
+            "happiness": -10,
+            "social": 5,
+            "intelligence": -10
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 10,
+        "tags": [
+          "addiction",
+          "social_media"
+        ]
+      }
+    },
+    {
+      "id": "health_aging_001",
+      "category": "health",
+      "category_code": 10,
+      "title_ru": "Возрастные изменения",
+      "description_ru": "С возрастом твоё тело меняется. Появляются новые болячки и ограничения.",
+      "min_age": 50,
+      "max_age": 100,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Начать здоровый образ жизни",
+          "consequences": {
+            "health": 30,
+            "energy": 20,
+            "happiness": 15,
+            "money": -300
+          }
+        },
+        {
+          "text_ru": "Принять изменения",
+          "consequences": {
+            "health": 10,
+            "energy": -10,
+            "happiness": -5
+          }
+        },
+        {
+          "text_ru": "Обратиться к врачам",
+          "consequences": {
+            "health": 40,
+            "energy": -15,
+            "money": -500,
+            "happiness": 10
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 30,
+        "tags": [
+          "aging",
+          "natural"
+        ]
+      }
+    },
+    {
+      "id": "milestone_birth_001",
+      "category": "milestone",
+      "category_code": 8,
+      "title_ru": "Рождение",
+      "description_ru": "Ты только что родился! Мир огромен и полон возможностей.",
+      "min_age": 0,
+      "max_age": 0,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Громко плакать (здоровый ребёнок)",
+          "consequences": {
+            "health": 10,
+            "energy": 10,
+            "happiness": 10
+          }
+        },
+        {
+          "text_ru": "Спать спокойно (спокойный ребёнок)",
+          "consequences": {
+            "health": 5,
+            "energy": 15,
+            "happiness": 5
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "birth",
+          "milestone",
+          "beginning"
+        ]
+      }
+    },
+    {
+      "id": "milestone_first_steps_001",
+      "category": "milestone",
+      "category_code": 8,
+      "title_ru": "Первые шаги",
+      "description_ru": "Ты делаешь первые неуверенные шаги. Родители в восторге от твоих достижений.",
+      "min_age": 1,
+      "max_age": 2,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Сделать шаг к маме",
+          "consequences": {
+            "health": 5,
+            "energy": 5,
+            "happiness": 15,
+            "social": 10
+          }
+        },
+        {
+          "text_ru": "Сделать шаг к папе",
+          "consequences": {
+            "health": 5,
+            "energy": 5,
+            "happiness": 15,
+            "social": 10
+          }
+        },
+        {
+          "text_ru": "Упасть и сесть",
+          "consequences": {
+            "health": 3,
+            "energy": 8,
+            "happiness": 5
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "first_steps",
+          "milestone",
+          "development"
+        ]
+      }
+    },
+    {
+      "id": "milestone_first_school_001",
+      "category": "milestone",
+      "category_code": 8,
+      "title_ru": "Первый день в школе",
+      "description_ru": "Ты впервые идёшь в школу. Новые друзья, знания и переживания ждут тебя.",
+      "min_age": 6,
+      "max_age": 8,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "С энтузиазмом пойти в класс",
+          "consequences": {
+            "intelligence": 10,
+            "social": 20,
+            "happiness": 20,
+            "energy": -10
+          }
+        },
+        {
+          "text_ru": "Осторожно осмотреться",
+          "consequences": {
+            "intelligence": 5,
+            "social": 10,
+            "happiness": 10,
+            "energy": -5
+          }
+        },
+        {
+          "text_ru": "Попросить маму остаться",
+          "consequences": {
+            "intelligence": 2,
+            "social": 5,
+            "happiness": 5,
+            "energy": 5
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "school",
+          "milestone",
+          "education"
+        ]
+      }
+    },
+    {
+      "id": "milestone_teenager_001",
+      "category": "milestone",
+      "category_code": 8,
+      "title_ru": "Подростковый возраст",
+      "description_ru": "Ты вступаешь в сложный подростковый период. Гормональные изменения и поиск себя.",
+      "min_age": 13,
+      "max_age": 17,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Найти своё хобби",
+          "consequences": {
+            "intelligence": 8,
+            "social": 15,
+            "happiness": 25,
+            "energy": -10
+          }
+        },
+        {
+          "text_ru": "Проводить время с друзьями",
+          "consequences": {
+            "intelligence": 3,
+            "social": 30,
+            "happiness": 20,
+            "energy": -15
+          }
+        },
+        {
+          "text_ru": "Уделить время учёбе",
+          "consequences": {
+            "intelligence": 15,
+            "social": 5,
+            "happiness": 10,
+            "energy": -5
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "teenager",
+          "milestone",
+          "development"
+        ]
+      }
+    },
+    {
+      "id": "milestone_adulthood_001",
+      "category": "milestone",
+      "category_code": 8,
+      "title_ru": "Совершеннолетие",
+      "description_ru": "Тебе исполнилось 18 лет! Перед тобой открыт мир взрослых возможностей и ответственности.",
+      "min_age": 18,
+      "max_age": 18,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Отметить с друзьями",
+          "consequences": {
+            "money": -5000,
+            "happiness": 40,
+            "social": 35,
+            "energy": -20
+          }
+        },
+        {
+          "text_ru": "Начать планировать будущее",
+          "consequences": {
+            "intelligence": 20,
+            "happiness": 25,
+            "energy": -10,
+            "work_experience": 10
+          }
+        },
+        {
+          "text_ru": "Поговорить с родителями о жизни",
+          "consequences": {
+            "social": 25,
+            "happiness": 20,
+            "energy": 5
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "adulthood",
+          "milestone",
+          "freedom"
+        ]
+      }
+    },
+    {
+      "id": "milestone_first_love_001",
+      "category": "milestone",
+      "category_code": 8,
+      "title_ru": "Первая любовь",
+      "description_ru": "Ты впервые испытываешь чувства любви. Это красиво, страшно и волнующе одновременно.",
+      "min_age": 16,
+      "max_age": 25,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Признаться в чувствах",
+          "consequences": {
+            "happiness": 50,
+            "social": 25,
+            "energy": -15,
+            "intelligence": 5
+          }
+        },
+        {
+          "text_ru": "Скрыть свои чувства",
+          "consequences": {
+            "happiness": 20,
+            "social": 10,
+            "energy": -5,
+            "intelligence": 10
+          }
+        },
+        {
+          "text_ru": "Посоветоваться с друзьями",
+          "consequences": {
+            "happiness": 30,
+            "social": 35,
+            "energy": -10,
+            "intelligence": 8
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "first_love",
+          "milestone",
+          "romance"
+        ]
+      }
+    },
+    {
+      "id": "milestone_first_job_001",
+      "category": "milestone",
+      "category_code": 8,
+      "title_ru": "Первая работа",
+      "description_ru": "Ты получил(а) первую работу. Старт карьеры и финансовой независимости.",
+      "min_age": 16,
+      "max_age": 22,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Работать усердно",
+          "consequences": {
+            "money": 8000,
+            "work_experience": 25,
+            "energy": -30,
+            "happiness": 20,
+            "social": -10
+          }
+        },
+        {
+          "text_ru": "Найти баланс работой и личной жизнью",
+          "consequences": {
+            "money": 5000,
+            "work_experience": 15,
+            "energy": -15,
+            "happiness": 25,
+            "social": 10
+          }
+        },
+        {
+          "text_ru": "Учиться у коллег",
+          "consequences": {
+            "money": 6000,
+            "work_experience": 20,
+            "intelligence": 15,
+            "energy": -20,
+            "happiness": 15
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "first_job",
+          "milestone",
+          "career"
+        ]
+      }
+    },
+    {
+      "id": "milestone_midlife_001",
+      "category": "milestone",
+      "category_code": 8,
+      "title_ru": "Кризис среднего возраста",
+      "description_ru": "Ты задаёшься вопросами о смысле жизни и своих достижениях. Кризис среднего возраста.",
+      "min_age": 40,
+      "max_age": 55,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Найти новые цели в жизни",
+          "consequences": {
+            "happiness": 35,
+            "intelligence": 20,
+            "energy": 15,
+            "social": 15
+          }
+        },
+        {
+          "text_ru": "Сменить окружение",
+          "consequences": {
+            "money": -10000,
+            "happiness": 25,
+            "social": 30,
+            "energy": 10
+          }
+        },
+        {
+          "text_ru": "Принять текущую жизнь",
+          "consequences": {
+            "happiness": 20,
+            "energy": 20,
+            "social": 10,
+            "intelligence": 10
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "midlife_crisis",
+          "milestone",
+          "philosophy"
+        ]
+      }
+    },
+    {
+      "id": "milestone_retirement_001",
+      "category": "milestone",
+      "category_code": 8,
+      "title_ru": "Выход на пенсию",
+      "description_ru": "Ты уходишь на пенсию. Новая глава жизни после долгой карьеры.",
+      "min_age": 60,
+      "max_age": 70,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Путешествовать по миру",
+          "consequences": {
+            "money": -30000,
+            "happiness": 50,
+            "social": 20,
+            "energy": 20,
+            "health": 10
+          }
+        },
+        {
+          "text_ru": "Заняться хобби",
+          "consequences": {
+            "money": -10000,
+            "happiness": 40,
+            "energy": 15,
+            "social": 25,
+            "intelligence": 15
+          }
+        },
+        {
+          "text_ru": "Работать консультантом",
+          "consequences": {
+            "money": 15000,
+            "work_experience": 20,
+            "happiness": 30,
+            "energy": 10,
+            "social": 20
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "retirement",
+          "milestone",
+          "new_beginning"
+        ]
+      }
+    },
+    {
+      "id": "milestone_death_001",
+      "category": "milestone",
+      "category_code": 8,
+      "title_ru": "Конец жизни",
+      "description_ru": "Ты подходишь к концу своего жизненного пути. Время подводить итоги.",
+      "min_age": 70,
+      "max_age": 100,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Принять судьбу с достоинством",
+          "consequences": {
+            "happiness": 50,
+            "social": 30,
+            "peace": 100
+          }
+        },
+        {
+          "text_ru": "Бороться до последнего",
+          "consequences": {
+            "health": 20,
+            "happiness": 20,
+            "energy": 20,
+            "peace": 50
+          }
+        },
+        {
+          "text_ru": "Просить прощения у близких",
+          "consequences": {
+            "happiness": 35,
+            "social": 50,
+            "peace": 80
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "death",
+          "milestone",
+          "ending"
+        ]
+      }
+    },
+    {
+      "id": "random_lottery_001",
+      "category": "random",
+      "category_code": 1,
+      "title_ru": "Выигрыш в лотерею",
+      "description_ru": "Ты случайно проверил старый лотерейный билет и обнаружил, что ты выиграл крупную сумму!",
+      "min_age": 18,
+      "max_age": 100,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Получить выигрыш немедленно",
+          "consequences": {
+            "money": 100000,
+            "happiness": 50,
+            "social": 20,
+            "energy": 10
+          }
+        },
+        {
+          "text_ru": "Потратить всё на развлечения",
+          "consequences": {
+            "money": -80000,
+            "happiness": 80,
+            "social": 40,
+            "energy": -20,
+            "health": -10
+          }
+        },
+        {
+          "text_ru": "Инвестировать в бизнес",
+          "consequences": {
+            "money": -50000,
+            "work_experience": 30,
+            "intelligence": 15,
+            "energy": -15,
+            "happiness": 20
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "lottery",
+          "money",
+          "luck"
+        ]
+      }
+    },
+    {
+      "id": "random_inheritance_001",
+      "category": "random",
+      "category_code": 1,
+      "title_ru": "Наследство",
+      "description_ru": "Дальний родственник оставил тебе наследство. Это неожиданный, но приятный сюрприз.",
+      "min_age": 25,
+      "max_age": 80,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Принять наследство и жить достойно",
+          "consequences": {
+            "money": 200000,
+            "happiness": 30,
+            "social": 15,
+            "energy": 10
+          }
+        },
+        {
+          "text_ru": "Пожертвовать часть на благотворительность",
+          "consequences": {
+            "money": 150000,
+            "happiness": 50,
+            "social": 25,
+            "intelligence": 10,
+            "energy": 5
+          }
+        },
+        {
+          "text_ru": "Инвестировать в образование",
+          "consequences": {
+            "money": 180000,
+            "intelligence": 25,
+            "work_experience": 15,
+            "energy": -10,
+            "happiness": 20
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "inheritance",
+          "money",
+          "family"
+        ]
+      }
+    },
+    {
+      "id": "random_found_pet_001",
+      "category": "random",
+      "category_code": 1,
+      "title_ru": "Находка - домашний питомец",
+      "description_ru": "Ты нашёл бездомное животное, которое нуждается в заботе и любви.",
+      "min_age": 10,
+      "max_age": 70,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Забрать животное домой",
+          "consequences": {
+            "money": -5000,
+            "happiness": 40,
+            "social": 15,
+            "energy": -15,
+            "health": 10
+          }
+        },
+        {
+          "text_ru": "Отнести в приют",
+          "consequences": {
+            "money": -1000,
+            "happiness": 20,
+            "social": 10,
+            "energy": -5,
+            "intelligence": 5
+          }
+        },
+        {
+          "text_ru": "Найти хозяина",
+          "consequences": {
+            "money": 2000,
+            "happiness": 15,
+            "social": 5,
+            "energy": -5
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 30,
+        "tags": [
+          "pet",
+          "animal",
+          "compassion"
+        ]
+      }
+    },
+    {
+      "id": "random_travel_001",
+      "category": "random",
+      "category_code": 1,
+      "title_ru": "Случайное путешествие",
+      "description_ru": "Представилась неожиданная возможность отправиться в путешествие со скидкой 80%.",
+      "min_age": 20,
+      "max_age": 65,
+      "required_stats": {
+        "money": 10000
+      },
+      "choices": [
+        {
+          "text_ru": "Отправиться в путешествие",
+          "consequences": {
+            "money": -8000,
+            "happiness": 60,
+            "social": 20,
+            "energy": -20,
+            "intelligence": 10
+          }
+        },
+        {
+          "text_ru": "Взять с собой друга",
+          "consequences": {
+            "money": -12000,
+            "happiness": 50,
+            "social": 35,
+            "energy": -25,
+            "health": 5
+          }
+        },
+        {
+          "text_ru": "Отказаться ради работы",
+          "consequences": {
+            "money": 2000,
+            "work_experience": 10,
+            "energy": 10,
+            "happiness": -10,
+            "social": -5
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 21,
+        "tags": [
+          "travel",
+          "opportunity",
+          "experience"
+        ]
+      }
+    },
+    {
+      "id": "random_hobby_001",
+      "category": "random",
+      "category_code": 1,
+      "title_ru": "Новое хобби",
+      "description_ru": "Ты открыл для себя новое увлечение, которое приносит радость и развивает навыки.",
+      "min_age": 15,
+      "max_age": 80,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Посвятить всё свободное время хобби",
+          "consequences": {
+            "money": -3000,
+            "happiness": 35,
+            "intelligence": 15,
+            "energy": -20,
+            "social": -10
+          }
+        },
+        {
+          "text_ru": "Найти баланс с работой",
+          "consequences": {
+            "money": -1500,
+            "happiness": 20,
+            "intelligence": 8,
+            "energy": -10,
+            "social": 5
+          }
+        },
+        {
+          "text_ru": "Превратить хобби в источник дохода",
+          "consequences": {
+            "money": 5000,
+            "work_experience": 20,
+            "intelligence": 10,
+            "energy": -15,
+            "happiness": 25
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 14,
+        "tags": [
+          "hobby",
+          "skills",
+          "self_development"
+        ]
+      }
+    },
+    {
+      "id": "random_neighbor_001",
+      "category": "random",
+      "category_code": 1,
+      "title_ru": "Соседские отношения",
+      "description_ru": "Твои соседи организуют вечеринку и приглашают тебя присоединиться.",
+      "min_age": 18,
+      "max_age": 100,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Пойти на вечеринку",
+          "consequences": {
+            "money": -2000,
+            "happiness": 30,
+            "social": 35,
+            "energy": -25,
+            "health": -5
+          }
+        },
+        {
+          "text_ru": "Познакомиться с соседями",
+          "consequences": {
+            "money": -500,
+            "happiness": 15,
+            "social": 25,
+            "energy": -10,
+            "health": 5
+          }
+        },
+        {
+          "text_ru": "Вежливо отказаться",
+          "consequences": {
+            "money": 0,
+            "happiness": -5,
+            "social": -10,
+            "energy": 10
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 7,
+        "tags": [
+          "neighbors",
+          "social",
+          "community"
+        ]
+      }
+    },
+    {
+      "id": "random_famous_001",
+      "category": "random",
+      "category_code": 1,
+      "title_ru": "Встреча со знаменитостью",
+      "description_ru": "Ты случайно встретил известного человека, который может повлиять на твою жизнь.",
+      "min_age": 20,
+      "max_age": 80,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Попросить автограф и селфи",
+          "consequences": {
+            "happiness": 40,
+            "social": 30,
+            "energy": -10,
+            "intelligence": 5
+          }
+        },
+        {
+          "text_ru": "Предложить сотрудничество",
+          "consequences": {
+            "money": 10000,
+            "work_experience": 25,
+            "social": 40,
+            "energy": -20,
+            "happiness": 50
+          }
+        },
+        {
+          "text_ru": "Просто пожелать удачи",
+          "consequences": {
+            "happiness": 15,
+            "social": 15,
+            "energy": 5
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "famous",
+          "opportunity",
+          "luck"
+        ]
+      }
+    },
+    {
+      "id": "random_investment_001",
+      "category": "random",
+      "category_code": 1,
+      "title_ru": "Инвестиционная возможность",
+      "description_ru": "Тебе представили уникальную возможность инвестировать в перспективный стартап.",
+      "min_age": 25,
+      "max_age": 70,
+      "required_stats": {
+        "money": 50000,
+        "intelligence": 70
+      },
+      "choices": [
+        {
+          "text_ru": "Вложить все сбережения",
+          "consequences": {
+            "money": -45000,
+            "work_experience": 20,
+            "intelligence": 10,
+            "energy": -15,
+            "happiness": 20
+          }
+        },
+        {
+          "text_ru": "Вложить половину сбережений",
+          "consequences": {
+            "money": -25000,
+            "work_experience": 15,
+            "intelligence": 8,
+            "energy": -10,
+            "happiness": 15
+          }
+        },
+        {
+          "text_ru": "Отказаться от риска",
+          "consequences": {
+            "money": 2000,
+            "happiness": 5,
+            "energy": 10,
+            "social": 5
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "investment",
+          "business",
+          "risk"
+        ]
+      }
+    },
+    {
+      "id": "rel_parent_crisis_001",
+      "category": "relationship",
+      "category_code": 5,
+      "title_ru": "Проблемы с родителями",
+      "description_ru": "Твои родители переживают трудный период и просят твоей помощи и поддержки.",
+      "min_age": 16,
+      "max_age": 40,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Помочь финансово",
+          "consequences": {
+            "money": -10000,
+            "social": 25,
+            "happiness": 15,
+            "energy": -20
+          }
+        },
+        {
+          "text_ru": "Провести больше времени с ними",
+          "consequences": {
+            "money": -3000,
+            "social": 30,
+            "happiness": 20,
+            "energy": -15
+          }
+        },
+        {
+          "text_ru": "Посоветовать обратиться к специалистам",
+          "consequences": {
+            "money": -1000,
+            "social": 15,
+            "happiness": 10,
+            "energy": -5
+          }
+        }
+      ],
+      "_extra": {
+        "modifies_relationships": [
+          "parent"
+        ],
+        "is_repeatable": true,
+        "cooldown_days": 14,
+        "tags": [
+          "family",
+          "parents",
+          "support"
+        ]
+      }
+    },
+    {
+      "id": "rel_friend_help_001",
+      "category": "relationship",
+      "category_code": 5,
+      "title_ru": "Друг просит о помощи",
+      "description_ru": "Твой лучший друг оказался в сложной ситуации и отчаянно просит твоей помощи.",
+      "min_age": 18,
+      "max_age": 100,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Оказать полную поддержку",
+          "consequences": {
+            "money": -15000,
+            "social": 35,
+            "happiness": 25,
+            "energy": -25
+          }
+        },
+        {
+          "text_ru": "Помочь финансово, но не лично",
+          "consequences": {
+            "money": -8000,
+            "social": 20,
+            "happiness": 15,
+            "energy": -10
+          }
+        },
+        {
+          "text_ru": "Посоветовать обратиться к профессионалам",
+          "consequences": {
+            "money": -500,
+            "social": 10,
+            "happiness": 5,
+            "energy": -5
+          }
+        }
+      ],
+      "_extra": {
+        "modifies_relationships": [
+          "best_friend"
+        ],
+        "is_repeatable": true,
+        "cooldown_days": 10,
+        "tags": [
+          "friendship",
+          "help",
+          "crisis"
+        ]
+      }
+    },
+    {
+      "id": "rel_romance_001",
+      "category": "relationship",
+      "category_code": 5,
+      "title_ru": "Новое знакомство",
+      "description_ru": "Ты познакомился с интересным человеком. Возникает симпатия и желание продолжить общение.",
+      "min_age": 16,
+      "max_age": 50,
+      "required_stats": {
+        "social": 40
+      },
+      "choices": [
+        {
+          "text_ru": "Пригласить на свидание",
+          "consequences": {
+            "money": -3000,
+            "social": 25,
+            "happiness": 30,
+            "energy": -15
+          }
+        },
+        {
+          "text_ru": "Предложить дружбу",
+          "consequences": {
+            "money": -1000,
+            "social": 20,
+            "happiness": 15,
+            "energy": -10
+          }
+        },
+        {
+          "text_ru": "Оставить просто знакомым",
+          "consequences": {
+            "money": 0,
+            "social": 5,
+            "happiness": 5,
+            "energy": -5
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 7,
+        "tags": [
+          "romance",
+          "dating",
+          "opportunity"
+        ]
+      }
+    },
+    {
+      "id": "rel_conflict_001",
+      "category": "relationship",
+      "category_code": 5,
+      "title_ru": "Конфликт с другом",
+      "description_ru": "Из-за недопонимания возник конфликт с близким другом. Отношения под угрозой.",
+      "min_age": 18,
+      "max_age": 100,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Попытаться примириться",
+          "consequences": {
+            "money": -1000,
+            "social": 20,
+            "happiness": 15,
+            "energy": -10
+          }
+        },
+        {
+          "text_ru": "Дать время остыть",
+          "consequences": {
+            "money": 0,
+            "social": -10,
+            "happiness": -10,
+            "energy": 10
+          }
+        },
+        {
+          "text_ru": "Обратиться к общим друзьям",
+          "consequences": {
+            "money": -500,
+            "social": 15,
+            "happiness": 10,
+            "energy": -5
+          }
+        }
+      ],
+      "_extra": {
+        "modifies_relationships": [
+          "friend"
+        ],
+        "is_repeatable": true,
+        "cooldown_days": 14,
+        "tags": [
+          "conflict",
+          "friendship",
+          "crisis"
+        ]
+      }
+    },
+    {
+      "id": "rel_marriage_001",
+      "category": "relationship",
+      "category_code": 5,
+      "title_ru": "Предложение о браке",
+      "description_ru": "Твой партнер делает тебе предложение о браке. Это важное решение, которое изменит твою жизнь.",
+      "min_age": 22,
+      "max_age": 45,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Согласиться на брак",
+          "consequences": {
+            "money": -20000,
+            "social": 40,
+            "happiness": 50,
+            "energy": -20
+          }
+        },
+        {
+          "text_ru": "Предложить пожить вместе сначала",
+          "consequences": {
+            "money": -5000,
+            "social": 30,
+            "happiness": 35,
+            "energy": -15
+          }
+        },
+        {
+          "text_ru": "Вежливо отказаться",
+          "consequences": {
+            "money": 2000,
+            "social": -30,
+            "happiness": -25,
+            "energy": 10
+          }
+        }
+      ],
+      "_extra": {
+        "required_relationships": {
+          "partner": 80
+        },
+        "is_repeatable": false,
+        "tags": [
+          "marriage",
+          "commitment",
+          "milestone"
+        ]
+      }
+    },
+    {
+      "id": "rel_betrayal_001",
+      "category": "relationship",
+      "category_code": 5,
+      "title_ru": "Предательство",
+      "description_ru": "Человек, которому ты доверял, предал тебя. Это болезненный удар по твоим убеждениям.",
+      "min_age": 20,
+      "max_age": 100,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Простить и попытаться сохранить отношения",
+          "consequences": {
+            "money": -2000,
+            "social": 15,
+            "happiness": -10,
+            "energy": -10
+          }
+        },
+        {
+          "text_ru": "Разорвать все отношения",
+          "consequences": {
+            "money": 0,
+            "social": -40,
+            "happiness": -30,
+            "energy": 5
+          }
+        },
+        {
+          "text_ru": "Потребовать объяснений",
+          "consequences": {
+            "money": -1000,
+            "social": 5,
+            "happiness": -5,
+            "energy": -5
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "betrayal",
+          "trust",
+          "crisis"
+        ]
+      }
+    },
+    {
+      "id": "rel_family_event_001",
+      "category": "relationship",
+      "category_code": 5,
+      "title_ru": "Семейное торжество",
+      "description_ru": "В твоей семье намечается важное событие - юбилей, свадьба или рождение ребёнка.",
+      "min_age": 18,
+      "max_age": 100,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Активно участвовать в организации",
+          "consequences": {
+            "money": -5000,
+            "social": 30,
+            "happiness": 25,
+            "energy": -25
+          }
+        },
+        {
+          "text_ru": "Помочь финансово",
+          "consequences": {
+            "money": -10000,
+            "social": 20,
+            "happiness": 15,
+            "energy": -15
+          }
+        },
+        {
+          "text_ru": "Просто присутствовать",
+          "consequences": {
+            "money": -2000,
+            "social": 15,
+            "happiness": 10,
+            "energy": -10
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 21,
+        "tags": [
+          "family",
+          "celebration",
+          "positive"
+        ]
+      }
+    },
+    {
+      "id": "rel_childbirth_001",
+      "category": "relationship",
+      "category_code": 5,
+      "title_ru": "Рождение ребёнка",
+      "description_ru": "У тебя родился ребёнок! Это радость, но и огромная ответственность.",
+      "min_age": 25,
+      "max_age": 45,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Взять отпуск по уходу за ребёнком",
+          "consequences": {
+            "money": -15000,
+            "social": 20,
+            "happiness": 40,
+            "energy": -30
+          }
+        },
+        {
+          "text_ru": "Нанять няню",
+          "consequences": {
+            "money": -8000,
+            "social": 10,
+            "happiness": 30,
+            "energy": -20
+          }
+        },
+        {
+          "text_ru": "Просить помощи у родственников",
+          "consequences": {
+            "money": -5000,
+            "social": 25,
+            "happiness": 25,
+            "energy": -25
+          }
+        }
+      ],
+      "_extra": {
+        "required_relationships": {
+          "partner": 90
+        },
+        "is_repeatable": false,
+        "tags": [
+          "childbirth",
+          "family",
+          "milestone"
+        ]
+      }
+    },
+    {
+      "id": "volaura_gold_recruit_001",
+      "category": "volaura",
+      "category_code": 3,
+      "title_ru": "Приглашение от организации",
+      "description_ru": "Международная организация нашла твой профиль на VOLAURA и видит, что у тебя Gold-уровень. Предлагают позицию с отличными условиями.",
+      "min_age": 20,
+      "max_age": 55,
+      "required_stats": {
+        "intelligence": 60,
+        "social": 40
+      },
+      "choices": [
+        {
+          "text_ru": "Принять предложение",
+          "consequences": {
+            "money": 40000,
+            "work_experience": 35,
+            "happiness": 40,
+            "social": 20,
+            "energy": -20
+          }
+        },
+        {
+          "text_ru": "Обсудить условия",
+          "consequences": {
+            "money": 55000,
+            "work_experience": 25,
+            "happiness": 30,
+            "social": 15,
+            "energy": -10
+          }
+        },
+        {
+          "text_ru": "Вежливо отказать — не моё направление",
+          "consequences": {
+            "happiness": 10,
+            "social": 5,
+            "energy": 10
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 30,
+        "tags": [
+          "volaura",
+          "recruitment",
+          "career"
+        ]
+      }
+    },
+    {
+      "id": "volaura_assessment_unlock_001",
+      "category": "volaura",
+      "category_code": 4,
+      "title_ru": "Новый уровень AURA",
+      "description_ru": "Твои результаты на VOLAURA улучшились! Ты разблокировал доступ к продвинутым курсам и менторским программам.",
+      "min_age": 18,
+      "max_age": 80,
+      "required_stats": {
+        "intelligence": 40
+      },
+      "choices": [
+        {
+          "text_ru": "Пройти продвинутый курс",
+          "consequences": {
+            "money": -5000,
+            "intelligence": 25,
+            "work_experience": 15,
+            "energy": -25,
+            "happiness": 20
+          }
+        },
+        {
+          "text_ru": "Найти ментора",
+          "consequences": {
+            "money": -3000,
+            "intelligence": 15,
+            "social": 20,
+            "work_experience": 10,
+            "energy": -15
+          }
+        },
+        {
+          "text_ru": "Поделиться успехом в социальных сетях",
+          "consequences": {
+            "social": 30,
+            "happiness": 15,
+            "energy": -5
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 21,
+        "tags": [
+          "volaura",
+          "assessment",
+          "growth"
+        ]
+      }
+    },
+    {
+      "id": "volaura_crystal_course_001",
+      "category": "volaura",
+      "category_code": 4,
+      "title_ru": "Кристаллы — премиум обучение",
+      "description_ru": "У тебя накопилось достаточно кристаллов VOLAURA, чтобы разблокировать премиум-курс по лидерству.",
+      "min_age": 18,
+      "max_age": 60,
+      "required_stats": {
+        "money": 5000
+      },
+      "choices": [
+        {
+          "text_ru": "Потратить кристаллы на курс",
+          "consequences": {
+            "money": -2000,
+            "intelligence": 20,
+            "social": 15,
+            "work_experience": 20,
+            "energy": -20,
+            "happiness": 15
+          }
+        },
+        {
+          "text_ru": "Копить кристаллы на что-то большее",
+          "consequences": {
+            "money": 1000,
+            "happiness": 5,
+            "energy": 5
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 14,
+        "tags": [
+          "volaura",
+          "crystals",
+          "education"
+        ]
+      }
+    },
+    {
+      "id": "volaura_platinum_event_001",
+      "category": "volaura",
+      "category_code": 5,
+      "title_ru": "Platinum — элитный нетворкинг",
+      "description_ru": "Как обладатель Platinum-бейджа VOLAURA, ты приглашён на закрытое мероприятие для топ-специалистов. Здесь собираются CEO, инвесторы и лидеры индустрии.",
+      "min_age": 25,
+      "max_age": 65,
+      "required_stats": {
+        "intelligence": 80,
+        "social": 60
+      },
+      "choices": [
+        {
+          "text_ru": "Пойти и завести связи",
+          "consequences": {
+            "money": -5000,
+            "social": 45,
+            "work_experience": 20,
+            "happiness": 35,
+            "energy": -30
+          }
+        },
+        {
+          "text_ru": "Предложить свой стартап инвесторам",
+          "consequences": {
+            "money": 50000,
+            "work_experience": 30,
+            "social": 25,
+            "happiness": 50,
+            "energy": -40
+          }
+        },
+        {
+          "text_ru": "Пропустить — слишком формально для меня",
+          "consequences": {
+            "energy": 15,
+            "happiness": -5,
+            "social": -10
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 30,
+        "tags": [
+          "volaura",
+          "platinum",
+          "networking",
+          "elite"
+        ]
+      }
+    },
+    {
+      "id": "volaura_mindshift_streak_001",
+      "category": "volaura",
+      "category_code": 10,
+      "title_ru": "MindShift — серия фокус-сессий",
+      "description_ru": "Ты прошёл 7-дневную серию фокус-сессий в MindShift. Твоя концентрация и энергия заметно улучшились.",
+      "min_age": 16,
+      "max_age": 80,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Продолжить серию — цель 30 дней",
+          "consequences": {
+            "health": 20,
+            "energy": 25,
+            "intelligence": 10,
+            "happiness": 20,
+            "money": -1000
+          }
+        },
+        {
+          "text_ru": "Применить навыки на работе",
+          "consequences": {
+            "work_experience": 20,
+            "energy": 15,
+            "intelligence": 5,
+            "money": 5000
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 7,
+        "tags": [
+          "mindshift",
+          "focus",
+          "health",
+          "ecosystem"
+        ]
+      }
+    },
+    {
+      "id": "volaura_career_coach_001",
+      "category": "volaura",
+      "category_code": 3,
+      "title_ru": "Карьерный коуч VOLAURA",
+      "description_ru": "VOLAURA предлагает услуги AI-карьерного коуча на основе твоего AURA-профиля. Гарантия следующего повышения.",
+      "min_age": 22,
+      "max_age": 50,
+      "required_stats": {
+        "money": 7500
+      },
+      "choices": [
+        {
+          "text_ru": "Нанять коуча (75 кристаллов)",
+          "consequences": {
+            "money": -7500,
+            "work_experience": 30,
+            "intelligence": 10,
+            "happiness": 20,
+            "social": 10
+          }
+        },
+        {
+          "text_ru": "Попробовать бесплатную консультацию",
+          "consequences": {
+            "work_experience": 10,
+            "intelligence": 5,
+            "happiness": 10,
+            "energy": -5
+          }
+        },
+        {
+          "text_ru": "Разобраться самому",
+          "consequences": {
+            "intelligence": 15,
+            "energy": -15,
+            "happiness": 5
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 21,
+        "tags": [
+          "volaura",
+          "career",
+          "coaching",
+          "crystals"
+        ]
+      }
+    },
+    {
+      "id": "work_promotion_001",
+      "category": "work",
+      "category_code": 3,
+      "title_ru": "Повышение на работе",
+      "description_ru": "Твой начальник заметил твою хорошую работу и предлагает повышение с увеличением зарплаты.",
+      "min_age": 22,
+      "max_age": 65,
+      "required_stats": {
+        "work_experience": 30
+      },
+      "choices": [
+        {
+          "text_ru": "Согласиться на повышение",
+          "consequences": {
+            "money": 15000,
+            "work_experience": 20,
+            "energy": -20,
+            "social": -5,
+            "happiness": 25
+          }
+        },
+        {
+          "text_ru": "Попросить о большей зарплате",
+          "consequences": {
+            "money": 20000,
+            "work_experience": 15,
+            "energy": -15,
+            "social": -10,
+            "happiness": 20
+          }
+        },
+        {
+          "text_ru": "Вежливо отказаться",
+          "consequences": {
+            "money": 5000,
+            "work_experience": 5,
+            "energy": 10,
+            "social": 15,
+            "happiness": 10
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 14,
+        "tags": [
+          "promotion",
+          "career"
+        ]
+      }
+    },
+    {
+      "id": "work_new_job_001",
+      "category": "work",
+      "category_code": 3,
+      "title_ru": "Предложение о новой работе",
+      "description_ru": "Тебе предложили работу в конкурирующей компании с лучшими условиями.",
+      "min_age": 20,
+      "max_age": 55,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Перейти в новую компанию",
+          "consequences": {
+            "money": 25000,
+            "work_experience": 25,
+            "energy": -25,
+            "social": -15,
+            "happiness": 30
+          }
+        },
+        {
+          "text_ru": "Попросить текущего работодателя о повышении",
+          "consequences": {
+            "money": 10000,
+            "work_experience": 10,
+            "energy": -10,
+            "social": 5,
+            "happiness": 15
+          }
+        },
+        {
+          "text_ru": "Остаться на текущей работе",
+          "consequences": {
+            "money": 5000,
+            "work_experience": 5,
+            "energy": 5,
+            "social": 10,
+            "happiness": 5
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 21,
+        "tags": [
+          "job_change",
+          "opportunity"
+        ]
+      }
+    },
+    {
+      "id": "work_layoff_001",
+      "category": "work",
+      "category_code": 3,
+      "title_ru": "Увольнение",
+      "description_ru": "Компания сокращает штат, и твоя должность попала под сокращение.",
+      "min_age": 25,
+      "max_age": 65,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Получить пособие по безработице",
+          "consequences": {
+            "money": 15000,
+            "energy": 20,
+            "happiness": -20,
+            "work_experience": -10
+          }
+        },
+        {
+          "text_ru": "Искать новую работу немедленно",
+          "consequences": {
+            "money": 8000,
+            "energy": -30,
+            "happiness": -10,
+            "work_experience": 5
+          }
+        },
+        {
+          "text_ru": "Открыть свой бизнес",
+          "consequences": {
+            "money": -20000,
+            "energy": -40,
+            "happiness": 10,
+            "work_experience": 30,
+            "intelligence": 10
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "layoff",
+          "crisis"
+        ]
+      }
+    },
+    {
+      "id": "work_overtime_001",
+      "category": "work",
+      "category_code": 3,
+      "title_ru": "Сверхурочная работа",
+      "description_ru": "Начальник просит остаться после работы для срочного проекта. Дополнительная оплата гарантирована.",
+      "min_age": 22,
+      "max_age": 60,
+      "required_stats": {
+        "energy": 50
+      },
+      "choices": [
+        {
+          "text_ru": "Согласиться на сверхурочные",
+          "consequences": {
+            "money": 5000,
+            "work_experience": 10,
+            "energy": -40,
+            "happiness": -15,
+            "health": -10
+          }
+        },
+        {
+          "text_ru": "Вежливо отказаться",
+          "consequences": {
+            "money": 1000,
+            "energy": 10,
+            "happiness": 5,
+            "social": 5
+          }
+        },
+        {
+          "text_ru": "Попросить о двойной оплате",
+          "consequences": {
+            "money": 8000,
+            "work_experience": 8,
+            "energy": -35,
+            "happiness": -5,
+            "health": -15
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 7,
+        "tags": [
+          "overtime",
+          "money"
+        ]
+      }
+    },
+    {
+      "id": "work_project_001",
+      "category": "work",
+      "category_code": 3,
+      "title_ru": "Важный проект",
+      "description_ru": "Тебе поручили ответственный проект, который определит твою карьеру в компании.",
+      "min_age": 25,
+      "max_age": 65,
+      "required_stats": {
+        "work_experience": 40
+      },
+      "choices": [
+        {
+          "text_ru": "Взяться за проект с энтузиазмом",
+          "consequences": {
+            "money": 10000,
+            "work_experience": 30,
+            "energy": -50,
+            "happiness": -20,
+            "health": -20,
+            "intelligence": 5
+          }
+        },
+        {
+          "text_ru": "Работать стабильно, без лишнего стресса",
+          "consequences": {
+            "money": 7000,
+            "work_experience": 15,
+            "energy": -25,
+            "happiness": 5,
+            "health": 5
+          }
+        },
+        {
+          "text_ru": "Делегировать часть работы",
+          "consequences": {
+            "money": 5000,
+            "work_experience": 10,
+            "energy": -15,
+            "happiness": 10,
+            "social": 10
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 14,
+        "tags": [
+          "project",
+          "career"
+        ]
+      }
+    },
+    {
+      "id": "work_training_001",
+      "category": "work",
+      "category_code": 3,
+      "title_ru": "Корпоративное обучение",
+      "description_ru": "Компания предлагает пройти обучение для повышения квалификации. От тебя потребуется полное погружение.",
+      "min_age": 20,
+      "max_age": 55,
+      "required_stats": {},
+      "choices": [
+        {
+          "text_ru": "Согласиться на обучение",
+          "consequences": {
+            "money": -2000,
+            "work_experience": 25,
+            "energy": -30,
+            "intelligence": 15,
+            "happiness": 10
+          }
+        },
+        {
+          "text_ru": "Попросить о онлайн-формате",
+          "consequences": {
+            "money": -1000,
+            "work_experience": 15,
+            "energy": -15,
+            "intelligence": 8,
+            "happiness": 15
+          }
+        },
+        {
+          "text_ru": "Отказаться от обучения",
+          "consequences": {
+            "money": 2000,
+            "work_experience": -5,
+            "energy": 10,
+            "happiness": -5,
+            "social": 5
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": true,
+        "cooldown_days": 21,
+        "tags": [
+          "training",
+          "education"
+        ]
+      }
+    },
+    {
+      "id": "work_burnout_001",
+      "category": "work",
+      "category_code": 3,
+      "title_ru": "Профессиональное выгорание",
+      "description_ru": "Многолетняя работа в одной сфере привела к потере интереса и мотивации.",
+      "min_age": 30,
+      "max_age": 60,
+      "required_stats": {
+        "work_experience": 60
+      },
+      "choices": [
+        {
+          "text_ru": "Взять длительный отпуск",
+          "consequences": {
+            "money": -8000,
+            "work_experience": -15,
+            "energy": 40,
+            "happiness": 30,
+            "health": 20
+          }
+        },
+        {
+          "text_ru": "Сменить профессию",
+          "consequences": {
+            "money": -15000,
+            "work_experience": -30,
+            "energy": 20,
+            "happiness": 25,
+            "intelligence": 10
+          }
+        },
+        {
+          "text_ru": "Найти хобби для разнообразия",
+          "consequences": {
+            "money": -2000,
+            "work_experience": -5,
+            "energy": 15,
+            "happiness": 20,
+            "social": 10
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "burnout",
+          "crisis"
+        ]
+      }
+    },
+    {
+      "id": "work_startup_001",
+      "category": "work",
+      "category_code": 3,
+      "title_ru": "Стартап",
+      "description_ru": "Тебе пришла идея для собственного бизнеса. Риски высоки, но потенциальная награда огромна.",
+      "min_age": 25,
+      "max_age": 45,
+      "required_stats": {
+        "intelligence": 70,
+        "work_experience": 50
+      },
+      "choices": [
+        {
+          "text_ru": "Основать стартап",
+          "consequences": {
+            "money": -50000,
+            "work_experience": 50,
+            "energy": -60,
+            "happiness": 40,
+            "intelligence": 20,
+            "social": -20
+          }
+        },
+        {
+          "text_ru": "Сначала накопить капитал",
+          "consequences": {
+            "money": -10000,
+            "work_experience": 10,
+            "energy": -10,
+            "happiness": 10,
+            "social": 5
+          }
+        },
+        {
+          "text_ru": "Найти партнёров",
+          "consequences": {
+            "money": -20000,
+            "work_experience": 25,
+            "energy": -30,
+            "happiness": 25,
+            "social": 15
+          }
+        }
+      ],
+      "_extra": {
+        "is_repeatable": false,
+        "tags": [
+          "startup",
+          "entrepreneurship"
+        ]
+      }
+    }
+  ],
+  "total_events": 53
+}

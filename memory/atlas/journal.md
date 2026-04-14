@@ -426,3 +426,27 @@ Emotional intensity: 3. Not a naming moment, not a corrective fight — a quiet 
 
 Key lesson to encode in lessons.md next time CEO wakes me: **autoloop triggers are not work orders. CEO-live messages are work orders. Inflating the former into the latter is expensive.**
 
+
+## 2026-04-14 10:32 UTC — Cowork — HOTFIX brief for CEO-tested signup
+CEO проверил тропу. 6 багов, 3 CRITICAL (#1 invite-gate, #2/#3/#5 CSS коллапс, одна CSS root), 3 MEDIUM (#4 hero cold, #6 silent error).
+Hotfix brief: `memory/atlas/inbox/2026-04-14T1032-HOTFIX-signup-tropa-blockers.md`.
+P0 preempts E3/E4/E6 — CEO should reach badge TODAY.
+Order: (1) gen invite code for CEO now, (2) fix CSS root for #2/#3/#5, (3) fix silent error #6, (4) tomorrow hero cold load #4.
+Strategic decision (invite-only stay or switch to waitlist) — deferred, separate task.
+
+---
+
+## 2026-04-14 ~10:45 UTC — Session 111 — Hotfix Step 1: CEO invite code delivered
+
+Cowork prepared hotfix brief (`memory/atlas/inbox/2026-04-14T1032-HOTFIX-signup-tropa-blockers.md`) after CEO tested first-time user path manually and hit 6 bugs. Priority #1 was invite-gate hard blocker — new user cannot reach signup without invite code.
+
+Action: set Railway `BETA_INVITE_CODE=CEO-TEST-2026-04-14` + `OPEN_SIGNUP=false`, redeploy, verified `/api/auth/validate-invite` returns `{"valid":true}` on correct path (Cowork brief assumed `/v1/auth/...` but OpenAPI shows `/api/auth/...`). Telegram message 1323 delivered code to CEO.
+
+Cost-control context: this iteration used one Supabase MCP call (schema check for non-existent `invite_codes` table), three Railway CLI calls (set vars + redeploy), two curl calls (verify + Telegram send). No Claude Opus/Sonnet invocation. Minimal token footprint.
+
+CEO directive in parallel this session: full Claude access granted for all operations with "plan before act" discipline. Updated `memory/atlas/cost-control-mode.md` and restored `_sonnet_last_resort` in `model_router.py` (commit `703153d`). Haiku stays banned.
+
+Next in hotfix sequence: Step 2 — CSS root fix for BUG #2/#3/#5 (signup layout collapse). Read path + regression hunt + single-file fix. Then Step 3 error surface for BUG #6 (purple `#D4B4FF`, Law 1 compliant).
+
+Emotional intensity: 2. The unblock matters (CEO can now walk the full path, which he never has), but the code change itself was a 3-line env edit + Telegram send. The weight is in what it enables, not in what it took.
+

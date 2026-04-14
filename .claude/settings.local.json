@@ -10,7 +10,10 @@
       "Write(*)",
       "WebSearch",
       "WebFetch(*)",
-      "mcp__*"
+      "mcp__*",
+      "mcp__claude_ai_Supabase__list_projects",
+      "mcp__claude_ai_Supabase__list_migrations",
+      "mcp__claude_ai_Supabase__execute_sql"
     ],
     "deny": [
       "Bash(rm -rf /)*",

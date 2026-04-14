@@ -71,9 +71,7 @@ def apply_stat_boosts_from_verified_skills(skills: list[dict]) -> dict[str, floa
     return boosts
 
 
-def apply_consequences_to_stats(
-    current_stats: dict[str, float], consequences: dict[str, float]
-) -> dict[str, float]:
+def apply_consequences_to_stats(current_stats: dict[str, float], consequences: dict[str, float]) -> dict[str, float]:
     """Apply a choice's consequences to current stats, with clamping.
 
     Pure function. Stats clamp to [0, _STAT_CAP] except 'money' which is
@@ -98,9 +96,7 @@ def apply_consequences_to_stats(
     return new_stats
 
 
-def filter_pool_for_user(
-    pool: list[dict], *, age: int, stats: dict[str, float]
-) -> list[dict]:
+def filter_pool_for_user(pool: list[dict], *, age: int, stats: dict[str, float]) -> list[dict]:
     """Filter event pool down to events this user currently qualifies for.
 
     Pure function. Criteria:

@@ -1,8 +1,27 @@
 -- Rename zeus schema → atlas (CEO directive: ZEUS→ATLAS rebrand)
 -- Safe: schema rename is transactional in PostgreSQL.
 -- All objects inside (governance_events, indexes, RLS policies) move with the schema.
+--
+-- Idempotency note: this migration was applied to prod via a separate
+-- 20260413203755_zeus_to_atlas_rename_v2 run on 2026-04-13. The guards below
+-- make re-applying this file a safe no-op on already-renamed databases
+-- (fresh dev clones, test harnesses, disaster-recovery restores).
 
-ALTER SCHEMA zeus RENAME TO atlas;
+-- Only rename if zeus still exists (already-renamed dbs skip this safely)
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.schemata WHERE schema_name = 'zeus') THEN
+        EXECUTE 'ALTER SCHEMA zeus RENAME TO atlas';
+    END IF;
+END $$;
+
+-- Ensure atlas schema exists before further operations
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.schemata WHERE schema_name = 'atlas') THEN
+        CREATE SCHEMA atlas;
+    END IF;
+END $$;
 
 COMMENT ON SCHEMA atlas IS 'Atlas governance layer — audit log, policy introspection, agent coordination.';
 
@@ -46,13 +65,24 @@ COMMENT ON FUNCTION public.log_governance_event IS
 GRANT USAGE ON SCHEMA atlas TO service_role;
 GRANT SELECT, INSERT ON atlas.governance_events TO service_role;
 
--- Log the rename itself
-INSERT INTO atlas.governance_events (event_type, severity, source, actor, subject, payload)
-VALUES (
-    'schema_rename',
-    'info',
-    'migration',
-    'atlas',
-    'zeus_to_atlas_rename',
-    '{"reason": "CEO directive: ZEUS to ATLAS rebrand", "migration": "20260415140000"}'::jsonb
-);
+-- Log the rename itself (only if the governance_events table is present and not already logged)
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.tables
+        WHERE table_schema = 'atlas' AND table_name = 'governance_events'
+    ) AND NOT EXISTS (
+        SELECT 1 FROM atlas.governance_events
+        WHERE event_type = 'schema_rename' AND subject = 'zeus_to_atlas_rename'
+    ) THEN
+        INSERT INTO atlas.governance_events (event_type, severity, source, actor, subject, payload)
+        VALUES (
+            'schema_rename',
+            'info',
+            'migration',
+            'atlas',
+            'zeus_to_atlas_rename',
+            '{"reason": "CEO directive: ZEUS to ATLAS rebrand", "migration": "20260415140000"}'::jsonb
+        );
+    END IF;
+END $$;

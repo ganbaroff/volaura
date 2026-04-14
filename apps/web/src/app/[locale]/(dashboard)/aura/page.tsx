@@ -621,6 +621,16 @@ export default function AuraPage() {
                 The page itself is already a redirect to /dashboard. This tombstone prevents
                 future re-introduction. See docs/ECOSYSTEM-CONSTITUTION.md lines 967, 1004. */}
           </div>
+
+          {/* Grievance link — ISO 10667-2 §7 / Constitution G35. Quiet, not a primary CTA. */}
+          <div className="pt-4 border-t border-border/40">
+            <Link
+              href={`/${locale}/aura/contest`}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors underline-offset-2 hover:underline"
+            >
+              {t("aura.contestLink", { defaultValue: "Does this score feel off? Request a review." })}
+            </Link>
+          </div>
         </motion.div>
       </div>
     </>

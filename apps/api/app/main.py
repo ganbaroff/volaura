@@ -57,6 +57,7 @@ from app.routers import (
     badges,
     brandedby,
     character,
+    community,
     discovery,
     events,
     health,
@@ -201,6 +202,7 @@ app.include_router(verification.router, prefix="/api")
 app.include_router(activity.router, prefix="/api")
 app.include_router(analytics.router, prefix="/api")
 app.include_router(discovery.router, prefix="/api")
+app.include_router(community.router, prefix="/api")
 app.include_router(leaderboard.router, prefix="/api")
 app.include_router(notifications.router, prefix="/api")
 app.include_router(stats.router, prefix="/api")

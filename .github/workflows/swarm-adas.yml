@@ -1,9 +1,14 @@
 name: ADAS Weekly Agent Designer
 
 on:
-  schedule:
-    # Run every Sunday at 06:00 UTC (10:00 Baku time, AZT = UTC+4)
-    - cron: '0 6 * * 0'
+  # DISABLED 2026-04-14 Session 110: packages.swarm.adas_agent_designer was
+  # moved to packages/swarm/archive/ (session 94 demolition — 51 skill files
+  # pruned; this module was archived along with them). CRON fired every
+  # Sunday and failed with ModuleNotFoundError. Keeping workflow_dispatch so
+  # we can hand-run it after restoring the module OR writing an equivalent
+  # on top of the new atlas-memory knowledge base.
+  # schedule:
+  #   - cron: '0 6 * * 0'
   workflow_dispatch: {}
 
 jobs:

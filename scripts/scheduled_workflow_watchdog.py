@@ -112,6 +112,7 @@ def check() -> int:
         return 0
 
     # Compose one message per workflow, route through notifier cooldown gate.
+    all_delivered = True
     for a in alerts:
         text = (
             f"Watchdog: workflow {a['workflow']} has {a['fails']} consecutive "
@@ -119,9 +120,14 @@ def check() -> int:
             f"'{a['latest_title']}'. Check /actions."
         )
         delivered = send_notification(category="error", text=text, severity="warning")
+        if not delivered:
+            all_delivered = False
         print(f"[{a['workflow']}] alert: delivered={delivered}", flush=True)
 
-    return 1
+    # Exit 0 when the alert path succeeded — the alert IS the signal, we don't
+    # want this workflow to itself look "failed" and start feeding back into
+    # monitoring. Exit 1 only if the notifier couldn't deliver (real problem).
+    return 0 if all_delivered else 1
 
 
 if __name__ == "__main__":

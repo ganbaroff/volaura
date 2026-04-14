@@ -60,3 +60,58 @@ export function useOwnGrievances() {
     throwOnError: false,
   });
 }
+
+// ── Admin ─────────────────────────────────────────────────────────────────────
+
+export interface GrievanceAdmin extends Grievance {
+  user_id: string;
+  admin_notes: string | null;
+  updated_at: string;
+}
+
+export interface GrievanceTransition {
+  grievance_id: string;
+  status: "reviewing" | "resolved" | "rejected";
+  resolution?: string | null;
+}
+
+export function useAdminPendingGrievances() {
+  const getToken = useAuthToken();
+
+  return useQuery<GrievanceAdmin[], ApiError>({
+    queryKey: ["grievances", "admin", "pending"],
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      const res = await apiFetch<{ data: GrievanceAdmin[] }>(
+        "/api/aura/grievance/admin/pending",
+        { token }
+      );
+      return res.data ?? [];
+    },
+    staleTime: 30 * 1000,
+    retry: 1,
+    throwOnError: false,
+  });
+}
+
+export function useTransitionGrievance() {
+  const getToken = useAuthToken();
+  const qc = useQueryClient();
+
+  return useMutation<GrievanceAdmin, ApiError, GrievanceTransition>({
+    mutationFn: async ({ grievance_id, ...body }) => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      return apiFetch<GrievanceAdmin>(`/api/aura/grievance/admin/${grievance_id}`, {
+        token,
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["grievances"] });
+    },
+  });
+}

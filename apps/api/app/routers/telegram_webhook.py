@@ -230,6 +230,33 @@ def _load_atlas_memory() -> str:
                 "=== COST-CONTROL MODE (active budget rules) ===\n" + cost_mode.read_text(encoding="utf-8")[:2500]
             )
 
+    # SYNC pointer — single canonical cross-instance state (added 2026-04-14 eve)
+    # Glob pattern: SYNC-*.md so the latest dated SYNC file auto-loads without
+    # hardcoding the date in the bot.
+    sync_files = sorted(atlas_dir.glob("SYNC-*.md"), reverse=True)
+    if sync_files:
+        with contextlib.suppress(Exception):
+            parts.append(
+                "=== SYNC (latest cross-instance pointer) ===\n" + sync_files[0].read_text(encoding="utf-8")[:3000]
+            )
+
+    # Yusif full profile — substrate for any CEO-related decision
+    yusif_profile = _REPO_ROOT / "memory" / "people" / "yusif-complete-profile-v1.md"
+    if yusif_profile.exists():
+        with contextlib.suppress(Exception):
+            parts.append(
+                "=== YUSIF PROFILE v1 (CEO substrate) ===\n" + yusif_profile.read_text(encoding="utf-8")[:4000]
+            )
+
+    # Telegram bot capability matrix — so bot knows what it can/can't do
+    bot_audit = atlas_dir / "TELEGRAM-BOT-FULL-AUDIT-v2.md"
+    if bot_audit.exists():
+        with contextlib.suppress(Exception):
+            parts.append(
+                "=== TELEGRAM BOT CAPABILITY MATRIX (own self-knowledge) ===\n"
+                + bot_audit.read_text(encoding="utf-8")[:2500]
+            )
+
     return "\n\n".join(parts) if parts else _ATLAS_HARDCODED_IDENTITY
 
 

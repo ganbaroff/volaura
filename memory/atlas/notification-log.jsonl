@@ -1,0 +1,2 @@
+{"timestamp": "2026-04-14T08:05:53.428283+00:00", "category": "digest", "severity": "info", "delivered": false, "suppression_reason": "telegram_send_failed_or_no_token", "preview": "test ping from notifier smoke test"}
+{"timestamp": "2026-04-14T08:05:53.428822+00:00", "category": "digest", "severity": "info", "delivered": false, "suppression_reason": "telegram_send_failed_or_no_token", "preview": "second within 6h — should cooldown"}

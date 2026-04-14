@@ -85,7 +85,7 @@ async function fetchAuraBadge(volauraToken: string) {
     "xp_total": 3200,
     "verified_skills": [
       {
-        "skill_slug": "communication",
+        "slug": "communication",
         "aura_score": 78.5,
         "badge_tier": "gold"
       }

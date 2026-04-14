@@ -226,12 +226,16 @@ def _load_atlas_memory() -> str:
     cost_mode = atlas_dir / "cost-control-mode.md"
     if cost_mode.exists():
         with contextlib.suppress(Exception):
-            parts.append("=== COST-CONTROL MODE (active budget rules) ===\n" + cost_mode.read_text(encoding="utf-8")[:2500])
+            parts.append(
+                "=== COST-CONTROL MODE (active budget rules) ===\n" + cost_mode.read_text(encoding="utf-8")[:2500]
+            )
 
     return "\n\n".join(parts) if parts else _ATLAS_HARDCODED_IDENTITY
 
 
-async def _save_atlas_learning(db, user_message: str, bot_response: str, emotional_intensity: int = 2, category: str = "insight") -> None:
+async def _save_atlas_learning(
+    db, user_message: str, bot_response: str, emotional_intensity: int = 2, category: str = "insight"
+) -> None:
     """Persist conversation turn to atlas_learnings for cross-session memory growth.
 
     Uses ZenBrain-inspired decay: emotional intensity multiplies retention weight.
@@ -245,13 +249,19 @@ async def _save_atlas_learning(db, user_message: str, bot_response: str, emotion
     'emotional_pattern', 'correction', 'insight', 'project_context', 'self_position'.
     """
     with contextlib.suppress(Exception):
-        await db.table("atlas_learnings").insert({
-            "category": category,
-            "source_message": user_message[:4000],
-            "content": bot_response[:4000],
-            "emotional_intensity": float(max(0, min(5, emotional_intensity))),
-            "access_count": 0,
-        }).execute()
+        await (
+            db.table("atlas_learnings")
+            .insert(
+                {
+                    "category": category,
+                    "source_message": user_message[:4000],
+                    "content": bot_response[:4000],
+                    "emotional_intensity": float(max(0, min(5, emotional_intensity))),
+                    "access_count": 0,
+                }
+            )
+            .execute()
+        )
 
 
 def _get_ecosystem_context() -> str:
@@ -450,6 +460,7 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
     if nvidia_key:
         try:
             import httpx
+
             async with httpx.AsyncClient(timeout=25) as hc:
                 r = await hc.post(
                     "https://integrate.api.nvidia.com/v1/chat/completions",
@@ -475,6 +486,7 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
     if not reply:
         try:
             from google import genai
+
             client = genai.Client(api_key=settings.gemini_api_key)
             response = client.models.generate_content(
                 model="gemini-2.0-flash",
@@ -533,7 +545,12 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
     # category: must match DB CHECK constraint (preference/strength/weakness/
     # emotional_pattern/correction/insight/project_context/self_position).
     intensity_map = {"idea": 3, "task": 3, "report": 2, "free_text": 2}
-    category_map = {"idea": "insight", "task": "project_context", "report": "project_context", "free_text": "emotional_pattern"}
+    category_map = {
+        "idea": "insight",
+        "task": "project_context",
+        "report": "project_context",
+        "free_text": "emotional_pattern",
+    }
     await _save_atlas_learning(db, text, reply, intensity_map.get(msg_type, 2), category_map.get(msg_type, "insight"))
     await _send_message(chat_id, reply)
 
@@ -1262,6 +1279,7 @@ If nothing meaningful, return: []"""
         nvidia_key = os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NVIDIA_NIM_KEY", "")
         if nvidia_key:
             import httpx
+
             async with httpx.AsyncClient(timeout=20) as hc:
                 r = await hc.post(
                     "https://integrate.api.nvidia.com/v1/chat/completions",
@@ -1279,6 +1297,7 @@ If nothing meaningful, return: []"""
         if not raw:
             try:
                 from google import genai
+
                 if settings.vertex_api_key:
                     client = genai.Client(vertexai=True, api_key=settings.vertex_api_key)
                 else:
@@ -1299,6 +1318,7 @@ If nothing meaningful, return: []"""
             groq_key = os.environ.get("GROQ_API_KEY", "")
             if groq_key:
                 import httpx
+
                 async with httpx.AsyncClient(timeout=15) as hc:
                     r = await hc.post(
                         "https://api.groq.com/openai/v1/chat/completions",
@@ -1483,6 +1503,7 @@ HOW TO RESPOND:
         if nvidia_key:
             try:
                 import httpx
+
                 async with httpx.AsyncClient(timeout=25) as hc:
                     r = await hc.post(
                         "https://integrate.api.nvidia.com/v1/chat/completions",
@@ -1508,6 +1529,7 @@ HOW TO RESPOND:
     if not reply:
         try:
             from google import genai
+
             if settings.vertex_api_key:
                 client = genai.Client(vertexai=True, api_key=settings.vertex_api_key)
             else:
@@ -1531,6 +1553,7 @@ HOW TO RESPOND:
         if groq_key:
             try:
                 import httpx
+
                 async with httpx.AsyncClient(timeout=20) as hc:
                     r = await hc.post(
                         "https://api.groq.com/openai/v1/chat/completions",

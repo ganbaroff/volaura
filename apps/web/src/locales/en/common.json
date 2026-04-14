@@ -166,7 +166,7 @@
     "resume": "Resume Assessment",
     "expired": "Session expired",
     "selectAtLeastOne": "Select at least one competency",
-    "automatedScoringConsent": "I understand that my responses will be evaluated by an automated system to generate a competency score. I can request a human review of my results at any time.",
+    "automatedScoringConsent": "We use an AI-assisted, statistically calibrated test to find your actual level with fewer questions — not a simple quiz. You can request a human review of your result any time.",
     "estimatedTime": "~{{n}} min",
     "totalTime": "~{{n}} min total",
     "questionProgress": "Question {{current}} of ~{{total}}",

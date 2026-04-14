@@ -65,11 +65,7 @@ async def get_community_signal(
         .gte("completed_at", week_start)
         .execute()
     )
-    total_res = (
-        await db.table("aura_scores")
-        .select("volunteer_id", count="exact", head=True)
-        .execute()
-    )
+    total_res = await db.table("aura_scores").select("volunteer_id", count="exact", head=True).execute()
 
     def _unique_count(rows: list[dict] | None) -> int:
         return len({r.get("volunteer_id") for r in (rows or []) if r.get("volunteer_id")})

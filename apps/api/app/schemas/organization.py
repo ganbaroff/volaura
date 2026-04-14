@@ -78,7 +78,7 @@ class ProfessionalSearchRequest(BaseModel):
 
 
 class AssignAssessmentRequest(BaseModel):
-    """Assign one or more competency assessments to specific volunteers."""
+    """Assign one or more competency assessments to specific professionals."""
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 

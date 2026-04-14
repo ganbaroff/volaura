@@ -26,7 +26,7 @@ COMPETENCY_SLUGS = {
 
 
 class DiscoveryRequest(BaseModel):
-    """Query parameters for volunteer discovery."""
+    """Query parameters for professional talent discovery."""
 
     model_config = ConfigDict(from_attributes=True, populate_by_name=True)
 
@@ -43,7 +43,7 @@ class DiscoveryRequest(BaseModel):
     )
     role_level: VALID_ROLE_LEVELS | None = Field(
         default=None,
-        description="Filter by highest role level the volunteer has been assessed at.",
+        description="Filter by highest role level the professional has been assessed at.",
     )
     badge_tier: VALID_BADGE_TIERS | None = Field(
         default=None,
@@ -54,7 +54,8 @@ class DiscoveryRequest(BaseModel):
         description="Sort order: score (total AURA desc), events (events attended desc), recent (last updated desc).",
     )
     # Cursor-based pagination — prevents enumeration attacks
-    # Cursor encodes (total_score, volunteer_id) of the LAST item on the previous page.
+    # Cursor encodes (total_score, professional_id) of the LAST item on the previous page.
+    # (DB column is still named volunteer_id during Phase 1 migration; API surface uses professional_id.)
     after_score: float | None = Field(
         default=None,
         ge=0.0,

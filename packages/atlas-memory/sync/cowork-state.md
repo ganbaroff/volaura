@@ -1,5 +1,71 @@
 # Cowork State
-**Updated:** 2026-04-13T19:05 Baku | **Session:** 9 (continued, post-verification)
+**Updated:** 2026-04-14 Baku | **Session:** 10 (startup-programs research deliverable)
+
+---
+
+## 💼 STARTUP PROGRAMS RESEARCH — DELIVERED (2026-04-14)
+
+CEO directive "пропусти вопрос, делай по своему усмотрению — широкий охват" → built three artifacts:
+
+1. **`docs/business/startup-programs-catalog.xlsx`** — 54 programs across Cloud / AI-LLM /
+   Banking-Perks / DevTools / Marketing / Productivity / Accelerators / AZ-CIS.
+   6 sheets: README · Catalog (filterable, ROI-color-scaled) · Top 10 ROI · Sequence
+   Plan (week-by-week) · Pre-reqs (what unlocks what) · Status Tracker.
+   108 formulas, all green via `scripts/recalc.py`. Total potential ≈ $5.5M+ stacked.
+
+2. **`docs/business/volaura-pitch-deck.pptx`** — 12-slide reusable deck, Constitution-aligned
+   palette (BG_DARK + ACCENT lavender #C0C1FF, never red, sandwich structure dark→light→dark).
+   Cover · Problem · Solution · Product · How it works · Market · Traction (with honest
+   readiness bars 50-70%) · Business Model · Tech & Moat · Team · Roadmap · The Ask.
+   Visual QA passed: all 12 slides re-rendered after fixes (ring-on-text overlap on cover,
+   list-into-footer on slide 3, card-into-footer on slide 4, clipped numbers on slide 7,
+   ring-on-footer on slide 12 — all corrected).
+
+3. **`docs/business/applications/README.md`** — 10 personalized application drafts +
+   common reusable answers + week-by-week order of operations + "what NOT to do" rules.
+   Top 10 chosen by ROI score from catalog: Microsoft for Startups, Cloudflare, Notion,
+   Databricks, NVIDIA Inception, DigitalOcean, HubSpot, Google AI tier, Sentry, Anthropic.
+   Plus 2 bonus: Innoland (AZ-specific) and ElevenLabs (already integrated).
+
+Strategic finding for CEO (week-5 decision in Sequence Plan): **Stripe Atlas ($500 +
+30 days) is the single biggest leverage point** — converts $0 startup to $500K+ in
+stacked US-only perks (Brex, Mercury, Ramp, HubSpot 90%, AWS Activate Portfolio).
+Documented in Pre-reqs sheet. CEO sign-off needed.
+
+---
+
+## 📂 PRIOR SESSION CONTENT (2026-04-13T19:05)
+
+---
+
+## 🎬 CONTENT PIPELINE — TIER 1 SHIPPED (2026-04-13 evening)
+
+Cowork executed CEO directive "do" (Tier 1 from `docs/content/VIDEO-PIPELINE-UPGRADES-2026-04-13.md`). All three Tier-1 items landed in this session:
+
+1. **Whisper.cpp captions** — `packages/remotion/src/components/Captions.tsx` + `scripts/transcribe.ts`.
+   `@remotion/captions` + `@remotion/install-whisper-cpp` 4.0.448 wired. Run
+   `pnpm --filter @volaura/remotion transcribe -- voice.wav --language=az`
+   → emits `voice.captions.json` consumable by `<Captions captions={...} />`.
+   TikTokAZ composition now accepts optional `audio` + `captions` data fields.
+2. **TTS module** — `packages/swarm/tts.py`. Azure (`az-AZ-BabekNeural`/`BanuNeural`) for AZ;
+   ElevenLabs Multilingual v2 for EN/RU. Output is 22.05kHz/16-bit/mono RIFF WAV
+   (Whisper-friendly, drops into Remotion `<Audio>` via `staticFile()`). Env vars
+   added to `.env.md`. CLI: `python -m packages.swarm.tts --lang az --text ... --out ....wav`.
+3. **Postiz deployment handoff** — `docs/ops/postiz-deployment-handoff.md`. Apache 2.0
+   self-hosted scheduler picked over Mixpost/Buffer/Hootsuite. Deployment plan, env vars,
+   Gherkin acceptance criteria, rollback strategy all written. Atlas-owned next step
+   is Railway provision + `packages/swarm/postiz_client.py` once CEO grants OAuth.
+
+Verification: `tsc --noEmit` clean against full source; `@remotion/bundler` bundle
+succeeds end-to-end (only Chromium download is sandbox-blocked, expected).
+
+Atlas pipeline doc updated: `memory/atlas/content-pipeline-handoff.md` now has
+Step 5.5 (TTS) and Step 8 (Postiz) in the DAG with new Gherkin AC #10–12.
+
+Side-effect of session: discovered that the prior session's Write tool silently
+truncated 10+ files at byte boundaries. All 10 restored and now passing typecheck.
+Mistake to log in `mistakes.md` next pass: "trust file completeness only after
+re-reading tail + a parser pass — silent truncation looks fine in editor preview."
 
 ---
 
@@ -101,5 +167,4 @@ Full verification: `packages/atlas-memory/knowledge/verification-2026-04-13.md`.
 1. Rewrite `knowledge/verification-2026-04-13.md` with ground-truth corrections.
 2. Rewrite `plans/ROAD-TO-100-2026-04-13.md` with real readiness percentages + DB security items.
 3. Trim or rewrite Handoff 011 (drop Task 0 if API confirmed alive, keep outbox + Sentry + E2E + Constitution).
-4. Write Handoff 013 — actual fixes based on ground truth.
-5. Report to CEO: ONE paragraph, outcome-only, per `.claude/rules/ceo-protocol.md`.
+4. Write Ha

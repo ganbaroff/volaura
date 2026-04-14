@@ -1,10 +1,52 @@
 # Sprint State — Volaura
 
-**Last Updated:** 2026-04-15 (Session 96 — autonomous mega-plan, 8 commits)
+**Last Updated:** 2026-04-14 (Session 97 — Cowork: Stripe Atlas, founder-ops system, null-byte fix, BRAIN.md, CLAUDE-CODE-MEGAPROMPT)
 
 ## Current Position
-Sprint: Sprint 1 — Mega-plan autonomous execution
-Status: ACTIVE — prod healthy, ZEUS→ATLAS rename done, Life Sim P0s fixed, Phase 1 migration ready
+Sprint: Sprint 1 — Autonomous execution / Founder-ops infrastructure
+Status: ACTIVE — Telegram LLM bug fixed (needs Railway redeploy), Constitution checker restored, BRAIN.md compiled
+
+## Session 97 — 2026-04-14 — COMPLETE (Cowork session)
+
+### What shipped
+| What | Status |
+|------|--------|
+| Stripe Atlas 14-step cheat sheet (VOLAURA-specific) | ✅ `docs/business/applications/STRIPE-ATLAS-CHEATSHEET.md` |
+| Founder-Ops 5-layer AI system architecture | ✅ `docs/business/FOUNDER-OPS-SYSTEM.md` |
+| Founder-ops agent: incorporator | ✅ `.claude/agents/founder-ops-incorporator.md` |
+| Founder-ops agent: banker (Mercury/Relay/Brex/Wise) | ✅ `.claude/agents/founder-ops-banker.md` |
+| Founder-ops agent: compliance (83(b), franchise tax, Form 5472) | ✅ `.claude/agents/founder-ops-compliance.md` |
+| company-state.md (incorporation tracker, risk register) | ✅ `memory/atlas/company-state.md` |
+| Telegram LLM bug fixed (Groq early-exit) | ✅ `apps/api/app/routers/telegram_webhook.py` — **needs Railway redeploy** |
+| openspace MCP removed (.mcp.json) | ✅ Windows-only, used Claude model (Constitution violation) |
+| Null bytes fixed: deploy_tools.py, swarm/__init__.py, backlog.py, squad_leaders.py | ✅ 4 files cleaned |
+| pm.py truncation fixed (return None added) | ✅ `packages/swarm/pm.py` line 1047 |
+| Constitution checker restored and ran | ✅ 14 violations found: LAW_4 (3), LAW_3 (2), CRYSTAL_5 (9) |
+| BRAIN.md unified memory compiled | ✅ `memory/atlas/BRAIN.md` |
+| CLAUDE-CODE-MEGAPROMPT.md autonomous handoff | ✅ `docs/CLAUDE-CODE-MEGAPROMPT.md` |
+| Deadline watcher cron (daily 08:00 UTC = 12:00 Baku) | ✅ `.github/workflows/founder-ops-watcher.yml` |
+
+### Known debt (carried forward + new)
+- **Railway redeploy needed** — Telegram LLM fix is in code but Railway hasn't redeployed
+- volunteer_id DB columns — Phase 1 migration created, not applied. Phase 2 (rename) needs downtime
+- DB column refs in match_checker.py, reeval_worker.py — blocked on Phase 2 migration
+- **0 Playwright E2E tests** — highest-impact missing test coverage
+- **prefers-reduced-motion violation** — `assessment/info/[slug]/page.tsx` motion.div elements (Law 4 real violation)
+- **ZEUS_ → ATLAS_ GitHub secrets rename** — code renamed but secrets still old names
+- Azure/ElevenLabs keys missing — content video pipeline fully blocked
+- Constitution pre-launch blockers (19 total): Energy picker (Law 2), Pre-Assessment Layer, DIF audit, SADPP
+- swarm full import chain still needs verification after pm.py + null byte fixes
+- mem0 MCP needs MEM0_API_KEY in .env
+- Admin dashboard JS error unconfirmed (Vercel logs needed)
+- git commit required from Claude Code (sandbox git index corrupted)
+
+### Next session priorities
+1. **Railway redeploy** — trigger from Railway dashboard or `railway up`
+2. **prefers-reduced-motion fix** — `assessment/info/[slug]/page.tsx` (Law 4 blocker)
+3. **First Playwright E2E smoke test** — login → assessment → AURA score
+4. **ZEUS_ → ATLAS_ GitHub secrets rename** — `gh secret set` for each
+5. **Phase 1 DB migration** — apply to production Supabase
+6. **Swarm import chain verify** — `python -m packages.swarm.autonomous_run --mode=audit`
 
 ## Session 96 — 2026-04-15 — IN PROGRESS
 
@@ -108,26 +150,4 @@ Cleanup: "volunteer" removed from LLM prompts (brandedby_personality.py), Sentry
 | G21 + Crystal Law 6: Badge/crystals removed from complete screen | ✅ committed |
 | CLAUDE.md: Article 0 — Constitution as supreme law | ✅ committed |
 | Ollama: added to Python swarm (discovered_models.json + OllamaDynamicProvider) | ✅ committed to main |
-| ECOSYSTEM-MAP.md: living map for all 44 Python swarm agents | ✅ committed to main |
-| shared-context.md: updated to 2026-04-06, adds ECOSYSTEM-MAP reference | ✅ committed |
-| claw3d CLAUDE.md: fixed red colors (overloaded/error) → Law 1 compliant | ✅ committed |
-
-### Architecture gaps identified (honest audit)
-- Two swarms (Python 44 + Node.js 39) isolated — share only filesystem
-- Python swarm reads static shared-context.md — no live codebase knowledge
-- L1 fix (git-diff injection) not yet done — requires GitHub Action
-- Python↔Node.js bridge (~20 lines) not yet done
-
-## Next Session Priorities
-1. **Merge PR #9** — dashboard empty state (NewUserWelcomeCard)
-2. **Merge PR #12** — Constitution v1.7 (already on branch, supersedes PR #12 v1.3)
-3. **L1: Git-diff injection** — GitHub Action → auto-update shared-context.md on push
-4. **Python↔Node.js bridge** — 20 lines in autonomous_run.py → unified findings
-5. **Phase 0 unblock** — first real user E2E walk (signup → assessment → AURA → share)
-6. **ZEUS P0** — JWT WebSocket auth deploy + WEBHOOK_SECRETs in Railway
-
-## Rules Active
-- 80/20: VOLAURA first, Universal Weapon only after
-- Research → Agents → Synthesis → Build (3 violations logged Session 87)
-- CEO decides strategy only; CTO handles everything else
-- Never SupabaseAdmin where SupabaseUser + RLS is sufficient
+| ECOSYSTEM-MAP.md: livin

@@ -3,6 +3,14 @@
 Purpose: Reusable knowledge about what works in this project. Read at session start.
 
 ---
+## New Patterns (2026-04-14, Atlas cowork)
+
+### Pattern: Dormant agent skills activate via research-into-docs pipeline — PROVEN
+**Context:** `memory/swarm/skills/legal-advisor.md`, `startup-registration-finder.md`, `compliance-officer.candidate.md` had lived as prompt snippets for weeks with zero output. Skill file even contained INCORRECT claims (Turkey KOSGEB $50K for Volaura — actually citizens-only; GITA $55K — actually ~$37K; stacked $125K — realistic ~$49K).
+**Rule:** A skill file without an execution pipeline is dead weight. To operationalize a domain-expert agent skill: (1) run its topical research via WebSearch/NotebookLM in one batch, (2) dump raw findings to `docs/research/<topic>/raw.md`, (3) synthesize to `summary.md` with ranked shortlist + action plan. Never trust a skill file's factual claims — verify via external sources and correct the skill file itself.
+**Why it works:** Skills are instructions, not knowledge. Research + docs/research/ turns them into auditable artifacts that survive compactions and catch their own errors.
+
+---
 ## New Patterns (Session 83, 2026-04-03 — Biggest Session)
 
 ### Pattern: NotebookLM + 45 sources > CTO knowledge for quality system design — PROVEN

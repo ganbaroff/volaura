@@ -59,10 +59,17 @@ CEO idea (text)
 └──────────┬──────────────────────┘
            ▼
 ┌─────────────────────────────────┐
+│ STEP 5.5: TTS Voice-over (04-13)  │  ← packages/swarm/tts.py
+│         Azure AZ / ElevenLabs EN+RU│     depends_on: ["quality_gate"]
+│         Writes WAV to public/voice │     Sets piece.audio_path
+└──────────┬──────────────────────┘
+           ▼
+┌─────────────────────────────────┐
 │ STEP 6: Video Render (NEW 04-13)  │  ← packages/remotion/ (@volaura/remotion)
-│         For pieces where          │     depends_on: ["quality_gate"]
+│         For pieces where          │     depends_on: ["tts"]
 │         format ∈ {tiktok_az,       │     Writes MP4 / PNG to out/
-│         linkedin_carousel}         │     Sets piece.media_path
+│         linkedin_carousel}         │     Reads piece.audio_path → <Audio>
+│                                    │     Reads .captions.json if present
 └──────────┬──────────────────────┘
            ▼
 ┌─────────────────────────────────┐
@@ -70,6 +77,13 @@ CEO idea (text)
 │         Send each piece to CEO     │     depends_on: ["video_render"]
 │         Text < 4096 chars          │
 │         Videos as file attachments │     uses piece.media_path if present
+└──────────┬──────────────────────┘
+           ▼
+┌─────────────────────────────────┐
+│ STEP 8: Postiz Scheduling (04-13) │  ← docs/ops/postiz-deployment-handoff.md
+│         POST to Postiz API         │     depends_on: ["telegram_delivery"]
+│         Schedule to LinkedIn / X / │     One POST per (piece × platform)
+│         TikTok / IG / YouTube      │     Idempotent dedupeKey per slug
 └─────────────────────────────────┘
 ```
 
@@ -96,6 +110,30 @@ CEO idea (text)
 > ```
 > Telegram Ambassador (Step 7) already handles file attachments — just needs to
 > prefer `piece.media_path` over text when present.
+
+> **2026-04-13 UPDATE — Step 5.5 TTS module is ready.**
+> `packages/swarm/tts.py` ships with `synthesize(text, lang, out_path, gender)`.
+> Routing: AZ → Azure (`az-AZ-BabekNeural` / `az-AZ-BanuNeural`), EN/RU → ElevenLabs
+> Multilingual v2 with PCM 22.05kHz output wrapped in RIFF WAV. Output is
+> Whisper-friendly so Step 6 can transcribe to word-level captions immediately
+> via `pnpm --filter @volaura/remotion transcribe -- voiceover.wav`.
+>
+> Atlas wiring (between quality_gate and video_render):
+> ```python
+> from packages.swarm.tts import synthesize
+> if piece.has_voiceover:
+>     out = Path(f"apps/web/public/voiceovers/{piece.slug}.wav")
+>     synthesize(piece.script, lang=piece.lang, out_path=out)
+>     piece.audio_path = f"voiceovers/{piece.slug}.wav"  # relative for staticFile()
+> ```
+> Then video_render passes `data.audio = piece.audio_path` into the Remotion
+> composition's `defaultProps`.
+
+> **2026-04-13 UPDATE — Step 8 Postiz handoff written.**
+> See `docs/ops/postiz-deployment-handoff.md` for full deployment plan, env vars
+> (`POSTIZ_API_URL`, `POSTIZ_API_KEY`), and acceptance criteria. Atlas client
+> (`packages/swarm/postiz_client.py`) is the next-up build — Postiz infra needs
+> Railway provision + CEO OAuth before client work starts.
 
 ---
 
@@ -322,6 +360,12 @@ DONE when:
   8. PASS (video, added 04-13): pieces with format ∈ {tiktok_az, linkedin_carousel}
      render to MP4/PNG via `@volaura/remotion` and piece.media_path is set
   9. PASS (video): Telegram delivery attaches media_path file when present instead of text
+ 10. PASS (TTS, added 04-13): pieces with has_voiceover=True get a WAV at
+     apps/web/public/voiceovers/<slug>.wav and piece.audio_path is set
+ 11. PASS (TTS): AZ pieces use Azure (az-AZ-*Neural), EN/RU pieces use ElevenLabs;
+     no language ever crosses providers
+ 12. PASS (Postiz, added 04-13): each approved piece is POSTed to Postiz with
+     a sha256(platform+slug+week) dedupeKey; re-runs do NOT create duplicates
 ```
 
 ---
@@ -335,6 +379,8 @@ DONE when:
 | MODIFY | `packages/swarm/autonomous_run.py` | Add `--mode=content-batch` mode |
 | CREATE | `packages/swarm/content_prompts.py` | Step-specific prompt templates (SPARK/CORTEX roles, quality gate criteria) |
 | DONE   | `packages/remotion/` | Video render package (scaffolded 2026-04-13 by Cowork — Remotion 4.0.448, 2 compositions, typecheck green) |
+| DONE   | `packages/swarm/tts.py` | TTS module (scaffolded 2026-04-13 — Azure AZ + ElevenLabs EN/RU, WAV out) |
+| CREATE | `packages/swarm/postiz_client.py` | Postiz REST client + dedupeKey logic (after Postiz is provisioned per `docs/ops/postiz-deployment-handoff.md`) |
 
 ---
 
@@ -360,16 +406,4 @@ DONE when:
 - Do NOT truncate skill files to 500 chars — load the FULL markdown
 - Do NOT make AZ a translation of EN — they are different pieces
 - Do NOT skip the quality gate for "speed"
-- Do NOT hardcode platform list — let CEO pick per batch
-- Do NOT use `print()` — use `loguru.logger`
-
----
-
-## Test command
-
-```bash
-cd /path/to/volaura
-python -m packages.swarm.content_pipeline --idea "44 agents built my startup while I slept" --platforms tiktok,linkedin_en,linkedin_az
-```
-
-Expected: 3 content pieces, each with 5 format blocks, delivered to stdout (or Telegram if --telegram flag).
+- Do NOT hardcode platform list — let CEO 

@@ -201,23 +201,15 @@ def _write_distilled(synthesis: dict) -> None:
 
 
 def _write_episodic_snapshot(log_content: str) -> None:
-    """Save the raw log as a timestamped episodic snapshot (hippocampus archive)."""
-    EPISODIC_INBOX.mkdir(parents=True, exist_ok=True)
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-    snapshot_path = EPISODIC_INBOX / f"feedback_snapshot_{timestamp}.md"
+    """DISABLED per SYNC §9.5 (Perplexity brief 2026-04-14, Cowork inbox note
+    `2026-04-14T1030-memory-gate-from-perplexity.md`).
 
-    with open(snapshot_path, "w", encoding="utf-8") as f:
-        f.write(f"# Episodic Snapshot — {timestamp}\n\n")
-        f.write("Auto-saved by memory_consolidation.py before pruning.\n\n---\n\n")
-        f.write(log_content)
-
-    # Keep only last 10 snapshots (REM pruning)
-    snapshots = sorted(EPISODIC_INBOX.glob("feedback_snapshot_*.md"))
-    for old in snapshots[:-10]:
-        old.unlink()
-        logger.debug(f"Pruned old snapshot: {old.name}")
-
-    logger.info(f"Episodic snapshot saved: {snapshot_path.name}")
+    Snapshots were write-only: 10 files accumulated daily, all with functionally
+    identical content (only timestamp differed), and no worker read them. Disabled
+    until a reader-agent OR a content-diff guard exists. Signature kept so
+    call-sites upstream don't break.
+    """
+    logger.info("episodic snapshot disabled per SYNC §9.5 — noop")
 
 
 def _fallback_distilled(log_content: str) -> None:

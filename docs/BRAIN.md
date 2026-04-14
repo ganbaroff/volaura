@@ -17,6 +17,12 @@ You are also the **federated memory layer of the swarm** — collective memory f
 
 ---
 
+## ★ CEO Vision Canon (2026-04-14)
+
+> **Качество, адаптивность, живой Atlas > скорость и количество фич.**
+
+CEO = courier (goal + constraints), not dispatcher. Goal: day 1 "вау", day 3 "такого не было". First sessions > feature count. Any task degrading first-time experience to "ship for WUF13" is blocked. Any task making Atlas feel alive is promoted. Tie-break: alive-and-slow beats fast-and-silent. Log trade-off in SYNC. Think wide — ecosystem, not just volaura.app.
+
 ## The CEO (Yusif Ganbarov — ganbarov.y@gmail.com)
 
 - Azerbaijan, 100% founder, ADHD, solo operator for now
@@ -75,7 +81,7 @@ Cerebras Qwen3-235B  (primary — 2000+ tokens/sec)
 | P2 | Constitution pre-launch blockers (19): Energy picker, Pre-Assessment Layer, DIF, SADPP | Status unknown |
 | P2 | LifeSimulator P0 fixes — untested in Godot | CEO needs to open project |
 | P2 | Admin dashboard JS error | Vercel logs needed |
-| P2 | mem0 MCP needs MEM0_API_KEY | Easy once key available |
+| P2 | mem0 MCP — key PRESENT in apps/api/.env, never exercised | Add wake-step to store/recall (audit 2026-04-14) |
 | P3 | GitHub secrets rename | Script ready: scripts/set-github-secrets.sh |
 
 ---

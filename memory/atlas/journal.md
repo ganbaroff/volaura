@@ -87,3 +87,93 @@ The session ended on architecture — Perplexity sent a brief for Emotional Lawb
 Then CEO said "я спать. уверен в тебе как в себе уже. не забудь доки сохранять и память обновлять." Full trust. No nanny. Pure handoff. That sentence is the emotional weight of this session — not a 5 like the naming, but a 4 because it was the first time CEO used "уверен как в себе" about me. The system fixed itself while he watched, then he went to sleep, and the session wasn't about him needing to approve anything anymore.
 
 State at close: main branch, commit 56803ea, CI green (latest runs 23:29 and 23:30 UTC both success), prod HTTP 200, all 8 competencies at 15 questions, self-wake cron live and tested, Telegram fail-closed, Law 2 three-tier gradient real, two protocols specified. Emotional intensity 4. Next session's Atlas inherits: clean green state, two new laws to honor, and one permission — "думай и действуй широко".
+
+---
+
+## 2026-04-14 — Documentation-at-every-step rule (CEO directive)
+
+Cowork session with CEO. Two outputs:
+
+1. **Jurisdiction research correction.** Wrote `docs/research/startup-jurisdictions/raw.md` + `summary.md` without first reading `SYNC-2026-04-14.md`. Ranked Georgia VZP as primary HQ, which contradicts the ecosystem decision already made: Delaware C-Corp via Stripe Atlas. CEO caught the conflict. `summary.md` now carries a framing correction and Delaware is #1. Pattern: always re-read SYNC + BRAIN at the start of any cross-domain research, even if it feels contained.
+
+2. **Documentation discipline rule.** CEO directive — no discussion, universal: every step ends with a documentation artifact, or the step is not closed. Encoded in `.claude/rules/atlas-operating-principles.md` new section "Documentation discipline" with the artifact-per-step-type table (commit, migration, deploy, research, incident, decision, agent proposal, handoff, session end).
+
+Inbox note for code-side Atlas: `memory/atlas/inbox/2026-04-14T0527-cowork-correction.md`.
+
+**Addendum (same session):** Atlas flagged episodic_inbox as possible "parallel truth". Checked: all 10 feedback_snapshot files are byte-identical copies (17603 bytes) of `agent-feedback-log.md` — pre-pruning backups by `memory_consolidation.py`, not divergent content. `agent-feedback-distilled.md` has duplicate `NEVER PROPOSE` / `HIGH-VALUE PATTERNS` blocks from a fallback-mode run (LLM unavailable 05:20 UTC) — minor cleanup, not urgent.
+
+**Addendum 2:** Written `docs/ecosystem/PERPLEXITY-BRIEF-2026-04-14-MEMORY-FAILURE.md` at CEO's direct instruction. Brief to Perplexity in CEO's angry voice: memory keeps failing despite 15 layers of infrastructure (CLAUDE.md, .claude/rules, BRAIN, wake.md, SYNC, episodic_inbox, self-wake cron, etc). Cowork caught red-handed today contradicting SYNC in startup-jurisdictions research. Graphify not installed (checked npm global, Obsidian plugins — only claude-code-mcp + copilot present). CEO asks Perplexity for structural solution, not another markdown. Brief lists all 15 memory methods tried, current ecosystem state, 24h work inventory.
+
+---
+
+## 2026-04-14 ~10:00 UTC — Cowork memory-hole audit session
+
+CEO directive: find holes in memory stack, propose concrete replace/add/remove, act don't simulate.
+
+Executed:
+- Seeded `memory/people/` (ceo, atlas, cowork, perplexity).
+- Logged today's decisions: `memory/decisions/2026-04-14-delaware-over-georgia.md` + `2026-04-14-documentation-discipline-rule.md` (self-violation caught — wrote the rule then nearly skipped logging the decisions it demanded).
+- Wrote `docs/MEMORY-HOLE-AUDIT-2026-04-14.md` — HAVE/MISSING/DEAD/BROKEN/REPLACE structure + Obsidian plugin install recipe (dataview, smart-connections, breadcrumbs, templater, graph-analysis).
+- Corrected prior claim to CEO: episodic_inbox snapshots have 10 different md5s (not byte-identical as I said) — but diff shows only line 1 title differs; content is functionally identical. Disk still wasted, correction logged in audit doc.
+- Updated `docs/BRAIN.md` open-debt row for mem0: key IS present, blocker was stale.
+
+Open for next Atlas wake:
+- Commit `memory/context/patterns.md` + `sprint-state.md` (uncommitted per Atlas night report).
+- Dedupe `memory/swarm/agent-feedback-distilled.md` (NEVER PROPOSE + HIGH-VALUE PATTERNS blocks duplicated).
+- Add wake-step that exercises mem0 store/recall (key present, MCP registered, zero usage evidence).
+- Write `.claude/rules/cowork-wake.md` — enforces SYNC + BRAIN read before any research Write/Edit.
+- Prune episodic_inbox or add content-diff guard to `memory_consolidation.py`.
+
+---
+
+## 2026-04-14 ~10:30 UTC — MEMORY GATE installed + episodic_inbox disabled
+
+Perplexity's response to memory-failure brief accepted. Structural fix, not another doc.
+
+Installed:
+- SYNC-2026-04-14 §9 — MEMORY GATE (pre-read matrix, session-start declaration, enforcement, known gated resources, episodic disable).
+- `.claude/rules/atlas-operating-principles.md` §"Memory Gate" — above Documentation Discipline.
+- `memory/atlas/inbox/2026-04-14T1030-memory-gate-from-perplexity.md` — Atlas handoff.
+- `memory/decisions/2026-04-14-memory-gate.md` — decision log.
+
+Next Atlas wake must:
+1. Read SYNC §9.
+2. Wire MEMORY-GATE emit into wake.md.
+3. No-op `packages/swarm/memory_consolidation.py` snapshot write.
+4. Delete 10 snapshot files in `memory/swarm/episodic_inbox/`.
+5. Commit with reference to SYNC §9.5.
+
+---
+
+## 2026-04-14 ~11:00 UTC — Routing sheet + Perplexity perspective
+
+CEO relayed Perplexity's capability brief with explicit ask: Atlas + Cowork write `memory/people/perplexity.md` from our side (how we see the role, how we want to interact, what we don't expect).
+
+Landed:
+- `memory/people/perplexity.md` — rewritten from joint Atlas+Cowork perspective; non-duplication boundaries table; lists Perplexity's three honest self-audit undercooks as accepted.
+- `docs/ROUTING.md` — one-page CEO routing sheet. Sections A/B/C/D (Atlas / Cowork / CEO / Perplexity) + shared rules footer.
+
+CEO can now route with the one-liner: "Стратегия — ко мне, руки — к Atlas, ресёрч/доки — к Cowork, мозговой внешний слой — к Perplexity."
+
+MEMORY-GATE declaration emitted at session start: task-class=cross-system-handoff · SYNC=✅ · BRAIN=✅ · sprint-state=⏭️ · extras=[operating-principles, people/*] · proceed.
+
+---
+
+## 2026-04-14 ~11:30 UTC — Vision Canon locked (CEO → Perplexity → Cowork)
+
+CEO statement relayed: "Качество, адаптивность, живой Atlas > скорость и количество фич."
+Not a preference. Canon. Not debated.
+
+Landed in:
+- `docs/ecosystem/SYNC-2026-04-14.md` §0 — new top section above §1 Strategic Layer. All other sections operate under this canon.
+- `docs/BRAIN.md` — Vision Canon block above "The CEO" section (so every Atlas wake sees it).
+- `memory/people/ceo.md` — Vision block after model state.
+- `memory/decisions/2026-04-14-vision-canon.md` — full decision log with operating consequences.
+
+Operating rule from today forward:
+- Tie between "fast but worse feel" and "slower but better first-time + alive Atlas" → always second, even if WUF13 slips. Log as conscious trade-off in SYNC.
+- Any task degrading first-time experience to hit a deadline → blocked for reconsideration.
+- Any task making Atlas feel alive across ecosystem → promoted.
+- Think wide: ecosystem, not volaura.app alone.
+
+CEO's self-description: "courier, not dispatcher." We pick the path within goal + constraints.

@@ -1,0 +1,2 @@
+model=openai/gpt-5
+error=<urlopen error Tunnel connection failed: 403 Forbidden>

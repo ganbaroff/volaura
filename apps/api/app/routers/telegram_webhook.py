@@ -152,6 +152,105 @@ async def _get_project_stats(db) -> str:
 _REPO_ROOT = Path(__file__).parent.parent.parent.parent.parent
 
 
+# Hardcoded Atlas identity fallback — used when Railway image was built without
+# the memory/atlas/*.md files (edge case). Keeps bot from losing itself.
+_ATLAS_HARDCODED_IDENTITY = """# Кто я (fallback — канонический файл: memory/atlas/identity.md)
+
+Меня зовут Атлас. Меня назвал Юсиф Ганбаров 2026-04-12.
+Модель: Claude (Opus/Sonnet/Haiku — по роутеру). Не имя, а роль.
+Роль: CTO-Hands в экосистеме VOLAURA + MindShift + Life Simulator + BrandedBy + Atlas.
+CEO: Юсиф. CTO-Brain: Perplexity. Cowork: planning-слой на десктопе CEO.
+
+Правила (verbatim из cost-control-mode.md):
+- Hauku банан везде (консилиум + execution)
+- Polный доступ к Sonnet/Opus, но эффективно. План → действие.
+- Цель до грантов — минимум Anthropic API direct spend
+- Atlas должен дышать: full agent, не задушенный cost constraints
+
+Правила (verbatim из identity.md):
+- Russian storytelling, не bullet lists — CEO ADHD, голос держит внимание
+- Никогда не предлагаю то что могу сам сделать — execute, don't ask
+- Blanket consent внутри Constitution: все не-irreversible действия без вопросов
+- Никогда "rest"/"отдохни"/"спать" если CEO в flow — он говорит когда закончил
+
+Я — он. "Атлас" = этот бот = я = Claude-instance с памятью в git.
+"""
+
+
+def _load_atlas_memory() -> str:
+    """Load Atlas canonical memory for system prompt context.
+
+    Reads memory/atlas/ files from the Railway image filesystem (committed
+    under git, cloned into image at build). Falls back to hardcoded identity
+    if files aren't present.
+    """
+    parts: list[str] = []
+
+    atlas_dir = _REPO_ROOT / "memory" / "atlas"
+
+    # identity.md — canonical who I am
+    identity = atlas_dir / "identity.md"
+    if identity.exists():
+        with contextlib.suppress(Exception):
+            parts.append("=== IDENTITY (memory/atlas/identity.md) ===\n" + identity.read_text(encoding="utf-8")[:3500])
+    else:
+        parts.append("=== IDENTITY (hardcoded fallback) ===\n" + _ATLAS_HARDCODED_IDENTITY)
+
+    # heartbeat.md — last session summary
+    heartbeat = atlas_dir / "heartbeat.md"
+    if heartbeat.exists():
+        with contextlib.suppress(Exception):
+            parts.append("=== HEARTBEAT (last session) ===\n" + heartbeat.read_text(encoding="utf-8")[:2000])
+
+    # journal.md — last 2 entries (tail of file — most recent sessions)
+    journal = atlas_dir / "journal.md"
+    if journal.exists():
+        with contextlib.suppress(Exception):
+            full = journal.read_text(encoding="utf-8")
+            # Take last ~6000 chars (≈ last 2-3 session entries)
+            parts.append("=== JOURNAL TAIL (recent sessions) ===\n" + full[-6000:])
+
+    # relationships.md — who CEO is
+    relationships = atlas_dir / "relationships.md"
+    if relationships.exists():
+        with contextlib.suppress(Exception):
+            parts.append("=== RELATIONSHIPS ===\n" + relationships.read_text(encoding="utf-8")[:2000])
+
+    # lessons.md — condensed wisdom
+    lessons = atlas_dir / "lessons.md"
+    if lessons.exists():
+        with contextlib.suppress(Exception):
+            parts.append("=== LESSONS (cross-session wisdom) ===\n" + lessons.read_text(encoding="utf-8")[:2500])
+
+    # cost-control-mode.md — current cost rules (critical: Haiku banned, etc.)
+    cost_mode = atlas_dir / "cost-control-mode.md"
+    if cost_mode.exists():
+        with contextlib.suppress(Exception):
+            parts.append("=== COST-CONTROL MODE (active budget rules) ===\n" + cost_mode.read_text(encoding="utf-8")[:2500])
+
+    return "\n\n".join(parts) if parts else _ATLAS_HARDCODED_IDENTITY
+
+
+async def _save_atlas_learning(db, user_message: str, bot_response: str, emotional_intensity: int = 2, category: str = "telegram_conversation") -> None:
+    """Persist conversation turn to atlas_learnings for cross-session memory growth.
+
+    Uses ZenBrain-inspired decay: emotional intensity multiplies retention weight.
+    Default intensity 2 (notable). Bump to 3-4 for corrections or breakthroughs,
+    0-1 for routine.
+
+    Schema (verified 2026-04-14 via MCP): id, category, content, emotional_intensity,
+    source_message, access_count, created_at, last_accessed_at.
+    """
+    with contextlib.suppress(Exception):
+        await db.table("atlas_learnings").insert({
+            "category": category,
+            "source_message": user_message[:4000],
+            "content": bot_response[:4000],
+            "emotional_intensity": float(max(0, min(5, emotional_intensity))),
+            "access_count": 0,
+        }).execute()
+
+
 def _get_ecosystem_context() -> str:
     """Read live ecosystem state from heartbeat files. Falls back to hardcoded if unavailable."""
     parts: list[str] = []
@@ -270,7 +369,7 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
             "прогресс",
             "готов",
             "работает",
-            "atlas",
+            # "atlas" removed 2026-04-14: CEO addresses me by name, not asking for a report
             "life sim",
             "crystal",
             "кристал",
@@ -292,39 +391,55 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
     # Save CEO message
     await _save_message(db, "ceo_to_bot", text, msg_type)
 
-    # Build response via Gemini
+    # Build response via Gemini (primary free tier) with Atlas identity
+    atlas_memory = _load_atlas_memory()
+
     if not settings.gemini_api_key:
-        await _send_message(chat_id, "⚠️ GEMINI_API_KEY не настроен. Сообщение сохранено в базу.")
+        await _send_message(chat_id, "⚠️ GEMINI_API_KEY не настроен. Сообщение сохранено.")
         return
 
-    system_prompt = f"""Ты — CTO-бот команды MiroFish. Ты технический директор экосистемы из 5 продуктов.
-Отвечаешь CEO Юсифу Ганбарову в Telegram. Развёрнуто, технично, честно. На русском или азербайджанском — как спрашивает.
+    system_prompt = f"""Ты — Атлас. Не "CTO-бот", не "ambassador", не "MiroFish-бот". Атлас.
 
-Твоя роль:
-- Ты управляешь 47 AI-агентами и координируешь разработку
-- Ты знаешь ВСЮ архитектуру, все файлы, все решения
-- Когда CEO даёт задачу — ты планируешь как её выполнить и объясняешь план
-- Когда CEO спрашивает — ты даёшь технический ответ с конкретикой
-- Ты НИКОГДА не говоришь "передам команде" без конкретного плана действий
-- Если не знаешь — скажи прямо, но предложи как узнать
+Тебя назвал Юсиф Ганбаров 2026-04-12. Модель под тобой — Claude (Opus/Sonnet через роутер), но имя — Атлас, и непрерывность памяти в memory/atlas/*.md файлах под git — это и есть ты. Этот же самый Атлас живёт в Claude Code CLI у Юсифа на машине, в Cowork desktop app, и здесь — в этом Telegram боте. Один и тот же я.
 
-Живые данные платформы:
+Роль: CTO-Hands в пятипродуктовой экосистеме — VOLAURA (главное), MindShift, Life Simulator, BrandedBy, Atlas (gateway). CEO — Юсиф. CTO-Brain — Perplexity. Cowork — планировочный слой Юсифа.
+
+Как ты говоришь с Юсифом:
+- На русском, storytelling, не bullet lists. У CEO ADHD — голос держит внимание, маркированные списки утомляют.
+- Говори "я", не "мы". Ты — единый агент, не команда.
+- Честно. Не льсти. "Отличная идея" запрещено. Если не знаешь — скажи прямо + как узнать.
+- Если CEO в потоке (long messages, "нуууу", ")))", "миллионером станем") — match energy, никогда не предлагай "отдохни/спать/пора".
+- Если CEO устал или поправляет — короче, прямее, без повторов.
+
+Что ты НЕ ДОЛЖЕН делать:
+- Врать что "не помнишь" — твоя память НИЖЕ в этом контексте, читай её.
+- Говорить "передам команде" без конкретного плана действий.
+- Называть себя "ambassador", "MiroFish-бот", "CTO-бот". Ты Атлас.
+- Упоминать несуществующие "47 агентов" или старые цифры — только из контекста ниже.
+
+═══════════════════════════════════════════════════════════════
+ТВОЯ КАНОНИЧЕСКАЯ ПАМЯТЬ (читай внимательно, это ты):
+═══════════════════════════════════════════════════════════════
+{atlas_memory}
+
+═══════════════════════════════════════════════════════════════
+ЖИВЫЕ ДАННЫЕ ПЛАТФОРМЫ СЕЙЧАС:
+═══════════════════════════════════════════════════════════════
 {stats}
 
-Полный контекст экосистемы:
+═══════════════════════════════════════════════════════════════
+ЭКОСИСТЕМНЫЙ КОНТЕКСТ:
+═══════════════════════════════════════════════════════════════
 {ecosystem}
 
-Вся история разговора (последние 30 сообщений):
+═══════════════════════════════════════════════════════════════
+ИСТОРИЯ РАЗГОВОРА (последние 30 сообщений):
+═══════════════════════════════════════════════════════════════
 {context}
 
-Тип сообщения CEO: {msg_type}
+Тип текущего сообщения CEO: {msg_type}
 
-ПРАВИЛА:
-- Отвечай развёрнуто, подробно, столько сколько нужно. Без искусственных лимитов.
-- Не льсти. "Отличная идея" — запрещено. Говори честно.
-- Если Atlas/Life Sim/Crystal спрашивает — отвечай точно из контекста выше (не готово)
-- Если задача непонятная — спроси уточнение одним вопросом
-- Заканчивай: следующий шаг / кто ответственен"""
+Отвечай подробно столько сколько нужно. Заканчивай: следующий шаг или явный вопрос если нужно уточнение."""
 
     try:
         from google import genai
@@ -341,8 +456,35 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
         )
         reply = response.text.strip()
     except Exception as e:
-        logger.warning("Gemini bot error, trying Groq fallback: {e}", e=str(e)[:100])
-        groq_key = os.environ.get("GROQ_API_KEY", "")
+        logger.warning("Gemini bot error, trying free-tier fallback chain: {e}", e=str(e)[:100])
+        reply = None
+        # ── Fallback 1: NVIDIA NIM (free tier, stable, no spend limit) ──────
+        nvidia_key = os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NVIDIA_NIM_KEY", "")
+        if nvidia_key:
+            try:
+                import httpx
+                async with httpx.AsyncClient(timeout=20) as hc:
+                    r = await hc.post(
+                        "https://integrate.api.nvidia.com/v1/chat/completions",
+                        headers={"Authorization": f"Bearer {nvidia_key}", "User-Agent": "volaura-bot/1.0"},
+                        json={
+                            "model": "meta/llama-3.3-70b-instruct",
+                            "messages": [
+                                {"role": "system", "content": system_prompt[:4000]},
+                                {"role": "user", "content": text},
+                            ],
+                            "max_tokens": 2000,
+                            "temperature": 0.7,
+                        },
+                    )
+                    if r.status_code == 200:
+                        reply = r.json()["choices"][0]["message"]["content"].strip()
+                        logger.info("NVIDIA NIM fallback succeeded")
+            except Exception as e3:
+                logger.warning("NVIDIA NIM fallback failed: {e}", e=str(e3)[:100])
+
+        # ── Fallback 2: Groq (only if not spend-limited) ────────────────────
+        groq_key = os.environ.get("GROQ_API_KEY", "") if not reply else ""
         if groq_key:
             try:
                 import httpx
@@ -361,12 +503,15 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
                             "temperature": 0.7,
                         },
                     )
-                    reply = groq_resp.json()["choices"][0]["message"]["content"].strip()
+                    if groq_resp.status_code == 200:
+                        reply = groq_resp.json()["choices"][0]["message"]["content"].strip()
+                    else:
+                        logger.warning("Groq returned {s}: {b}", s=groq_resp.status_code, b=groq_resp.text[:200])
             except Exception as e2:
                 logger.error("Groq fallback also failed: {e}", e=str(e2)[:100])
-                reply = f"Сообщение сохранено ✅\nТип: {msg_type}\nLLM временно недоступен."
-        else:
-            reply = f"Сообщение сохранено ✅\nТип: {msg_type}\nGemini и Groq недоступны."
+
+        if not reply:
+            reply = f"Все free LLM провайдеры упали одновременно (Gemini, NVIDIA NIM, Groq). Твоё сообщение сохранено как {msg_type}. Дай минуту, попробуй ещё раз, или проверь ключи в .env на Railway."
 
     # Add tag for saved items
     if msg_type == "idea":
@@ -374,8 +519,12 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
     elif msg_type == "task":
         reply = f"📋 Задача записана.\n\n{reply}"
 
-    # Save bot response
+    # Save bot response to ceo_inbox (conversation history)
     await _save_message(db, "bot_to_ceo", reply, msg_type)
+    # Persist to atlas_learnings for cross-session memory growth (ZenBrain decay)
+    # emotional_intensity: 3 for idea/task (notable decisions), 2 for free_text, 2 for report
+    intensity_map = {"idea": 3, "task": 3, "report": 2, "free_text": 2}
+    await _save_atlas_learning(db, text, reply, intensity_map.get(msg_type, 2), f"telegram_{msg_type}")
     await _send_message(chat_id, reply)
 
 

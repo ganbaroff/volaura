@@ -156,7 +156,17 @@ async def start_assessment(
     # SECURITY: Rapid-restart cooldown — 30 minutes between ANY starts (including abandoned).
     # Prevents answer-fishing: start → see hard question → abandon → restart to cherry-pick.
     # The 7-day cooldown below only gates COMPLETED sessions; this gates ALL starts.
+    # Platform admins bypass — needed for QA, calibration runs, and CEO smoke tests.
     RAPID_RESTART_COOLDOWN_MINUTES = 30
+    is_admin = False
+    try:
+        admin_check = (
+            await db_user.table("profiles").select("is_platform_admin").eq("id", user_id).maybe_single().execute()
+        )
+        if admin_check and admin_check.data:
+            is_admin = bool(admin_check.data.get("is_platform_admin", False))
+    except Exception:
+        is_admin = False  # fail-closed — unknown = treat as regular user
     recent_start = (
         await db_user.table("assessment_sessions")
         .select("started_at, status")
@@ -167,7 +177,7 @@ async def start_assessment(
         .limit(1)
         .execute()
     )
-    if recent_start.data and recent_start.data[0].get("started_at"):
+    if recent_start.data and recent_start.data[0].get("started_at") and not is_admin:
         try:
             last_start = datetime.fromisoformat(recent_start.data[0]["started_at"].replace("Z", "+00:00"))
         except (ValueError, TypeError):
@@ -214,7 +224,7 @@ async def start_assessment(
         .limit(1)
         .execute()
     )
-    if recent.data and recent.data[0].get("completed_at"):
+    if recent.data and recent.data[0].get("completed_at") and not is_admin:
         last_completed = datetime.fromisoformat(recent.data[0]["completed_at"])
         if last_completed.tzinfo is None:
             last_completed = last_completed.replace(tzinfo=UTC)

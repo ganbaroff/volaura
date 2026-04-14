@@ -15,6 +15,7 @@ import pathlib
 from fastapi import APIRouter, Header, HTTPException, Request
 
 from app.config import settings
+from app.middleware.rate_limit import RATE_AUTH, RATE_DEFAULT, limiter
 
 router = APIRouter(prefix="/api/atlas", tags=["atlas-gateway"])
 
@@ -23,11 +24,13 @@ _PROPOSALS_PATH = pathlib.Path("memory/swarm/proposals.json")
 
 
 @router.get("/health")
-async def gateway_health() -> dict:
+@limiter.limit(RATE_DEFAULT)
+async def gateway_health(request: Request) -> dict:
     return {"status": "ok", "service": "atlas-gateway"}
 
 
 @router.post("/proposal")
+@limiter.limit(RATE_AUTH)  # Tight — secret-gated but defense-in-depth against brute-force or runaway swarm retry loop
 async def receive_proposal(
     request: Request,
     x_gateway_secret: str = Header(None),

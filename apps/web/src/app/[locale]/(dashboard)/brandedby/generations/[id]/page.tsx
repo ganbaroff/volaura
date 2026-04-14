@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
@@ -193,9 +193,9 @@ function VideoShareButtons({ videoUrl, displayName, genId }: VideoShareButtonsPr
 export default function GenerationPage({
   params,
 }: {
-  params: Promise<{ id: string; locale: string }>;
+  params: { id: string; locale: string };
 }) {
-  const { id: genId, locale } = use(params);
+  const { id: genId, locale } = params;
   const { t } = useTranslation();
   const router = useRouter();
   const isMounted = useRef(true);

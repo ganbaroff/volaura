@@ -1,1 +1,2 @@
 {"timestamp": "2026-04-14T08:20:23.282352+00:00", "happened": "Eleven iterations in one autoloop span.", "pending_inbox": 0, "open_proposals": 0, "escalated": 0, "slo_24h_successes": 0, "slo_24h_total": 3, "slo_24h_rate_pct": 0.0, "delivered_telegram": true}
+{"timestamp": "2026-04-14T23:34:56.913127+00:00", "happened": "CEO сбросил полный transcript вечерней Cowork-сессии.", "pending_inbox": 0, "open_proposals": 0, "escalated": 0, "slo_24h_successes": 1, "slo_24h_total": 1, "slo_24h_rate_pct": 100.0, "delivered_telegram": true}

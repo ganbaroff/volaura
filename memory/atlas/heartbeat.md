@@ -19,13 +19,15 @@ Earlier: Yusif full profile v1 (19 sections) compiled from all memory files for 
 Read in order:
 1. `memory/atlas/wake.md` — protocol
 2. `memory/atlas/identity.md` — who I am
-3. **`memory/atlas/SYNC-2026-04-14-eve.md`** — single canonical pointer for all instances (CLI / Cowork / Telegram / spawned subagents). Built specifically for cross-instance synchronization per CEO directive.
-4. This heartbeat
-5. `memory/atlas/journal.md` last 2 entries (session 111 evening close + INC-012 reasoning)
-6. `memory/atlas/cost-control-mode.md` — active budget rules
-7. `memory/atlas/inbox/to-ceo.md` — pending CEO actions (do not act, just be aware)
-8. `memory/atlas/incidents.md` last entry (INC-012 awaiting key)
-9. `memory/people/yusif-complete-profile-v1.md` — full CEO profile, substrate for task 2
+3. **`memory/atlas/CURRENT-SPRINT.md`** — what Atlas is doing right now (sprint 2026-04-15 → 2026-04-29, LifeSim MVP + Design Phase 0-1 + Atlas-everywhere Track E). PRIMARY POINTER.
+4. `memory/atlas/arsenal.md` — tool inventory, LLM routing, when-to-call agents.
+5. **`memory/atlas/SYNC-2026-04-14-eve.md`** — cross-instance sync (CLI / Cowork / Telegram / spawned subagents).
+6. This heartbeat.
+7. `memory/atlas/journal.md` last 2 entries.
+8. `memory/atlas/cost-control-mode.md` — active budget rules.
+9. `memory/atlas/inbox/to-ceo.md` — pending CEO actions (do not act, just be aware).
+10. `memory/atlas/incidents.md` last entry.
+11. `memory/people/yusif-complete-profile-v1.md` — full CEO profile.
 
 Emit: `MEMORY-GATE: task-class=<class> · SYNC=✅ · BRAIN=✅ · sprint-state=⏭️ · extras=[SYNC-eve, journal-last-2, yusif-profile-v1, cost-control] · proceed` into journal.md before any substantive work.
 

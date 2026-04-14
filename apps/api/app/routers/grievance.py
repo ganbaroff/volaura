@@ -211,6 +211,33 @@ async def admin_list_pending_grievances(
     return GrievanceAdminListResponse(data=[_to_admin_out(r) for r in (result.data or [])])
 
 
+@router.get("/grievance/admin/history", response_model=GrievanceAdminListResponse)
+@limiter.limit(RATE_DEFAULT)
+async def admin_list_closed_grievances(
+    request: Request,
+    db: SupabaseAdmin,
+    _admin_id: str = Depends(require_platform_admin),
+    limit: int = 50,
+) -> GrievanceAdminListResponse:
+    """Admin view: list closed grievances (resolved + rejected).
+
+    Sorted newest-first so the most recent resolutions are at the top. Capped
+    at 200 rows per request. Used by the /admin/grievances history tab so
+    admins can review past decisions without scrolling.
+    """
+    if limit > 200:
+        limit = 200
+    result = await (
+        db.table("grievances")
+        .select("*")
+        .in_("status", ["resolved", "rejected"])
+        .order("resolved_at", desc=True)
+        .limit(limit)
+        .execute()
+    )
+    return GrievanceAdminListResponse(data=[_to_admin_out(r) for r in (result.data or [])])
+
+
 @router.patch("/grievance/admin/{grievance_id}", response_model=GrievanceAdminOut)
 @limiter.limit(RATE_AUTH)
 async def admin_transition_grievance(

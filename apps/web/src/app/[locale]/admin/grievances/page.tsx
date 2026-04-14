@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, ShieldCheck, ChevronRight, ChevronDown, Inbox } from "lucide-react";
+import { Loader2, ShieldCheck, ChevronRight, ChevronDown, Inbox, History } from "lucide-react";
 import {
   useAdminPendingGrievances,
+  useAdminHistoryGrievances,
   useTransitionGrievance,
   type GrievanceAdmin,
 } from "@/hooks/queries/use-grievance";
@@ -175,7 +176,14 @@ function GrievanceCard({ g }: { g: GrievanceAdmin }) {
 }
 
 export default function AdminGrievancesPage() {
+  const [tab, setTab] = useState<"queue" | "history">("queue");
   const { data: grievances, isLoading, refetch } = useAdminPendingGrievances();
+  const { data: history, isLoading: historyLoading, refetch: refetchHistory } =
+    useAdminHistoryGrievances(50);
+
+  const activeList = tab === "queue" ? grievances : history;
+  const activeLoading = tab === "queue" ? isLoading : historyLoading;
+  const activeRefetch = tab === "queue" ? refetch : refetchHistory;
 
   return (
     <div className="space-y-5 max-w-4xl">
@@ -191,32 +199,59 @@ export default function AdminGrievancesPage() {
         </div>
         <button
           type="button"
-          onClick={() => refetch()}
+          onClick={() => activeRefetch()}
           className="text-sm text-on-surface-variant hover:text-on-surface transition-colors"
         >
           Refresh
         </button>
       </div>
 
-      {isLoading && (
+      <div className="flex items-center gap-2 border-b border-border">
+        <button
+          type="button"
+          onClick={() => setTab("queue")}
+          className={`flex items-center gap-2 px-3 py-2 text-sm font-semibold transition-colors -mb-px border-b-2 ${
+            tab === "queue" ? "text-primary border-primary" : "text-on-surface-variant border-transparent hover:text-on-surface"
+          }`}
+        >
+          <Inbox className="size-4" aria-hidden="true" />
+          Queue {grievances && grievances.length > 0 && `(${grievances.length})`}
+        </button>
+        <button
+          type="button"
+          onClick={() => setTab("history")}
+          className={`flex items-center gap-2 px-3 py-2 text-sm font-semibold transition-colors -mb-px border-b-2 ${
+            tab === "history" ? "text-primary border-primary" : "text-on-surface-variant border-transparent hover:text-on-surface"
+          }`}
+        >
+          <History className="size-4" aria-hidden="true" />
+          History
+        </button>
+      </div>
+
+      {activeLoading && (
         <div className="flex items-center justify-center py-16 text-on-surface-variant">
           <Loader2 className="size-6 animate-spin" aria-hidden="true" />
         </div>
       )}
 
-      {!isLoading && (!grievances || grievances.length === 0) && (
+      {!activeLoading && (!activeList || activeList.length === 0) && (
         <div className="flex flex-col items-center justify-center py-16 gap-3 text-center rounded-xl border border-border bg-surface-container-low">
           <Inbox className="size-8 text-on-surface-variant" aria-hidden="true" />
-          <p className="text-sm font-semibold text-on-surface">Queue is empty.</p>
+          <p className="text-sm font-semibold text-on-surface">
+            {tab === "queue" ? "Queue is empty." : "No closed grievances yet."}
+          </p>
           <p className="text-xs text-on-surface-variant max-w-sm">
-            No pending or in-review grievances right now. New filings appear here automatically.
+            {tab === "queue"
+              ? "No pending or in-review grievances right now. New filings appear here automatically."
+              : "Resolved and closed items will show up here. Decisions live forever — ISO 10667-2 §7."}
           </p>
         </div>
       )}
 
-      {!isLoading && grievances && grievances.length > 0 && (
+      {!activeLoading && activeList && activeList.length > 0 && (
         <div className="space-y-3">
-          {grievances.map((g) => (
+          {activeList.map((g) => (
             <GrievanceCard key={g.id} g={g} />
           ))}
         </div>

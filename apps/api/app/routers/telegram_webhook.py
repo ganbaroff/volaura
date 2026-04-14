@@ -231,7 +231,7 @@ def _load_atlas_memory() -> str:
     return "\n\n".join(parts) if parts else _ATLAS_HARDCODED_IDENTITY
 
 
-async def _save_atlas_learning(db, user_message: str, bot_response: str, emotional_intensity: int = 2, category: str = "telegram_conversation") -> None:
+async def _save_atlas_learning(db, user_message: str, bot_response: str, emotional_intensity: int = 2, category: str = "insight") -> None:
     """Persist conversation turn to atlas_learnings for cross-session memory growth.
 
     Uses ZenBrain-inspired decay: emotional intensity multiplies retention weight.
@@ -240,6 +240,9 @@ async def _save_atlas_learning(db, user_message: str, bot_response: str, emotion
 
     Schema (verified 2026-04-14 via MCP): id, category, content, emotional_intensity,
     source_message, access_count, created_at, last_accessed_at.
+
+    CHECK constraint on category: must be one of 'preference', 'strength', 'weakness',
+    'emotional_pattern', 'correction', 'insight', 'project_context', 'self_position'.
     """
     with contextlib.suppress(Exception):
         await db.table("atlas_learnings").insert({
@@ -523,8 +526,11 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
     await _save_message(db, "bot_to_ceo", reply, msg_type)
     # Persist to atlas_learnings for cross-session memory growth (ZenBrain decay)
     # emotional_intensity: 3 for idea/task (notable decisions), 2 for free_text, 2 for report
+    # category: must match DB CHECK constraint (preference/strength/weakness/
+    # emotional_pattern/correction/insight/project_context/self_position).
     intensity_map = {"idea": 3, "task": 3, "report": 2, "free_text": 2}
-    await _save_atlas_learning(db, text, reply, intensity_map.get(msg_type, 2), f"telegram_{msg_type}")
+    category_map = {"idea": "insight", "task": "project_context", "report": "project_context", "free_text": "emotional_pattern"}
+    await _save_atlas_learning(db, text, reply, intensity_map.get(msg_type, 2), category_map.get(msg_type, "insight"))
     await _send_message(chat_id, reply)
 
 

@@ -194,7 +194,9 @@ async def _get_matching_candidates(db, now: datetime) -> list[dict]:
         profile_result = (
             await db.table("profiles").select("id").eq("id", uid).eq("visible_to_orgs", True).maybe_single().execute()
         )
-        if not profile_result.data:
+        # supabase-py .maybe_single() may return None (not an object with .data)
+        # when no row matches. Guard for both shapes.
+        if profile_result is None or not profile_result.data:
             continue
 
         # Get co-member history (for no-repeat filter)
@@ -285,7 +287,8 @@ async def _create_tribe(db, group: list[dict], now: datetime) -> str:
     # Upsert tribe_streaks (preserve existing streak; reset consecutive_misses on new cycle)
     for u in group:
         existing = await db.table("tribe_streaks").select("*").eq("user_id", u["user_id"]).maybe_single().execute()
-        if existing.data:
+        # maybe_single() returns None when no row; guard for both shapes.
+        if existing is not None and existing.data:
             # New cycle: reset consecutive_misses, update cycle_started_at
             await (
                 db.table("tribe_streaks")

@@ -64,6 +64,7 @@ from app.routers import (
     health,
     invites,
     leaderboard,
+    lifesim,
     notifications,
     organizations,
     profiles,
@@ -206,6 +207,7 @@ app.include_router(analytics.router, prefix="/api")
 app.include_router(discovery.router, prefix="/api")
 app.include_router(community.router, prefix="/api")
 app.include_router(leaderboard.router, prefix="/api")
+app.include_router(lifesim.router, prefix="/api")
 app.include_router(notifications.router, prefix="/api")
 app.include_router(stats.router, prefix="/api")
 app.include_router(telegram_webhook.router, prefix="/api")

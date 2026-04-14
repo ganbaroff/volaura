@@ -281,8 +281,11 @@ describe("Signup", () => {
     checkboxes.forEach((cb) => fireEvent.click(cb));
     fireEvent.click(screen.getByRole("button", { name: "auth.signupAction" }));
 
+    // Shame-free (Law 3): raw Supabase message "Email already in use" is
+    // swallowed and logged to console; user sees t("auth.errorGeneric") key
+    // (resolves to friendly copy in production — test harness returns key name).
     await waitFor(() => {
-      expect(screen.getByText("Email already in use")).toBeInTheDocument();
+      expect(screen.getByText("auth.errorGeneric")).toBeInTheDocument();
     });
   });
 

@@ -21,7 +21,7 @@ from loguru import logger
 
 from app.config import settings
 from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
-from app.middleware.rate_limit import RATE_DEFAULT, RATE_PROFILE_WRITE, limiter
+from app.middleware.rate_limit import RATE_AUTH, RATE_DEFAULT, RATE_PROFILE_WRITE, limiter
 from app.schemas.tribes import (
     KudosResponse,
     OptOutResponse,
@@ -438,6 +438,7 @@ def _verify_cron_secret(x_cron_secret: str | None) -> None:
 
 
 @router.post("/cron/run-matching", include_in_schema=False)
+@limiter.limit(RATE_AUTH)  # 5/min — cron runs once/day; tight against CRON_SECRET brute-force
 async def cron_run_matching(
     request: Request,
     db_admin: SupabaseAdmin,
@@ -454,6 +455,7 @@ async def cron_run_matching(
 
 
 @router.post("/cron/run-streak-update", include_in_schema=False)
+@limiter.limit(RATE_AUTH)  # 5/min — cron runs weekly; tight against CRON_SECRET brute-force
 async def cron_run_streak_update(
     request: Request,
     db_admin: SupabaseAdmin,

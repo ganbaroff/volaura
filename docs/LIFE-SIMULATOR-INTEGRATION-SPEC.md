@@ -197,11 +197,12 @@ func load_from_cloud() -> Dictionary:
 
 
 ## Compute game stat boosts from VOLAURA verified skills
+## VOLAURA VerifiedSkillOut shape: { slug, aura_score, badge_tier }
 func _compute_stat_boosts(verified_skills: Array) -> Dictionary:
     var boosts = {"social": 0.0, "intelligence": 0.0, "energy": 0.0, "happiness": 0.0}
     for skill in verified_skills:
         var score: float = skill.get("aura_score", 0.0)
-        match skill.get("skill_slug", ""):
+        match skill.get("slug", ""):
             "communication":
                 boosts["social"] += score * 0.1
             "reliability":

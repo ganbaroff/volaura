@@ -444,50 +444,54 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
 
 Отвечай подробно столько сколько нужно. Заканчивай: следующий шаг или явный вопрос если нужно уточнение."""
 
-    try:
-        from google import genai
+    reply = None
+    # ── 1. NVIDIA NIM primary (free, no quota/billing concerns) ──
+    nvidia_key = os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NVIDIA_NIM_KEY", "")
+    if nvidia_key:
+        try:
+            import httpx
+            async with httpx.AsyncClient(timeout=25) as hc:
+                r = await hc.post(
+                    "https://integrate.api.nvidia.com/v1/chat/completions",
+                    headers={"Authorization": f"Bearer {nvidia_key}", "User-Agent": "volaura-bot/1.0"},
+                    json={
+                        "model": "meta/llama-3.3-70b-instruct",
+                        "messages": [
+                            {"role": "system", "content": system_prompt[:8000]},
+                            {"role": "user", "content": text},
+                        ],
+                        "max_tokens": 2000,
+                        "temperature": 0.7,
+                    },
+                )
+                if r.status_code == 200:
+                    reply = r.json()["choices"][0]["message"]["content"].strip()
+                else:
+                    logger.warning("NVIDIA NIM {s}: {b}", s=r.status_code, b=r.text[:200])
+        except Exception as e_nv:
+            logger.warning("NVIDIA NIM primary failed, trying Gemini: {e}", e=str(e_nv)[:100])
 
-        client = genai.Client(api_key=settings.gemini_api_key)
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=text,
-            config=genai.types.GenerateContentConfig(
-                system_instruction=system_prompt,
-                max_output_tokens=4000,
-                temperature=0.7,
-            ),
-        )
-        reply = response.text.strip()
-    except Exception as e:
-        logger.warning("Gemini bot error, trying free-tier fallback chain: {e}", e=str(e)[:100])
-        reply = None
-        # ── Fallback 1: NVIDIA NIM (free tier, stable, no spend limit) ──────
-        nvidia_key = os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NVIDIA_NIM_KEY", "")
-        if nvidia_key:
-            try:
-                import httpx
-                async with httpx.AsyncClient(timeout=20) as hc:
-                    r = await hc.post(
-                        "https://integrate.api.nvidia.com/v1/chat/completions",
-                        headers={"Authorization": f"Bearer {nvidia_key}", "User-Agent": "volaura-bot/1.0"},
-                        json={
-                            "model": "meta/llama-3.3-70b-instruct",
-                            "messages": [
-                                {"role": "system", "content": system_prompt[:4000]},
-                                {"role": "user", "content": text},
-                            ],
-                            "max_tokens": 2000,
-                            "temperature": 0.7,
-                        },
-                    )
-                    if r.status_code == 200:
-                        reply = r.json()["choices"][0]["message"]["content"].strip()
-                        logger.info("NVIDIA NIM fallback succeeded")
-            except Exception as e3:
-                logger.warning("NVIDIA NIM fallback failed: {e}", e=str(e3)[:100])
+    # ── 2. Gemini fallback (may hit daily free quota) ──
+    if not reply:
+        try:
+            from google import genai
+            client = genai.Client(api_key=settings.gemini_api_key)
+            response = client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=text,
+                config=genai.types.GenerateContentConfig(
+                    system_instruction=system_prompt,
+                    max_output_tokens=4000,
+                    temperature=0.7,
+                ),
+            )
+            reply = (response.text or "").strip()
+        except Exception as e:
+            logger.warning("Gemini fallback failed: {e}", e=str(e)[:100])
 
-        # ── Fallback 2: Groq (only if not spend-limited) ────────────────────
-        groq_key = os.environ.get("GROQ_API_KEY", "") if not reply else ""
+    # ── 3. Groq (last fallback, may be spend-limited) ──
+    if not reply:
+        groq_key = os.environ.get("GROQ_API_KEY", "")
         if groq_key:
             try:
                 import httpx
@@ -1254,16 +1258,16 @@ If nothing meaningful, return: []"""
         import json as _json
 
         raw = None
-        groq_key = os.environ.get("GROQ_API_KEY", "")
-        if groq_key:
+        # Extraction chain: NVIDIA NIM → Gemini → Groq (same order as chat handlers)
+        nvidia_key = os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NVIDIA_NIM_KEY", "")
+        if nvidia_key:
             import httpx
-
-            async with httpx.AsyncClient(timeout=15) as hc:
+            async with httpx.AsyncClient(timeout=20) as hc:
                 r = await hc.post(
-                    "https://api.groq.com/openai/v1/chat/completions",
-                    headers={"Authorization": f"Bearer {groq_key}"},
+                    "https://integrate.api.nvidia.com/v1/chat/completions",
+                    headers={"Authorization": f"Bearer {nvidia_key}"},
                     json={
-                        "model": "llama-3.3-70b-versatile",
+                        "model": "meta/llama-3.3-70b-instruct",
                         "messages": [{"role": "user", "content": extraction_prompt}],
                         "max_tokens": 500,
                         "temperature": 0.3,
@@ -1273,21 +1277,44 @@ If nothing meaningful, return: []"""
                     raw = r.json()["choices"][0]["message"]["content"].strip()
 
         if not raw:
-            from google import genai
+            try:
+                from google import genai
+                if settings.vertex_api_key:
+                    client = genai.Client(vertexai=True, api_key=settings.vertex_api_key)
+                else:
+                    client = genai.Client(api_key=settings.gemini_api_key)
+                response = client.models.generate_content(
+                    model="gemini-2.0-flash",
+                    contents=extraction_prompt,
+                    config=genai.types.GenerateContentConfig(
+                        max_output_tokens=500,
+                        temperature=0.3,
+                    ),
+                )
+                raw = (response.text or "").strip()
+            except Exception as e_gem:
+                logger.warning("Gemini extraction failed: {e}", e=str(e_gem)[:100])
 
-            if settings.vertex_api_key:
-                client = genai.Client(vertexai=True, api_key=settings.vertex_api_key)
-            else:
-                client = genai.Client(api_key=settings.gemini_api_key)
-            response = client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=extraction_prompt,
-                config=genai.types.GenerateContentConfig(
-                    max_output_tokens=500,
-                    temperature=0.3,
-                ),
-            )
-            raw = response.text.strip()
+        if not raw:
+            groq_key = os.environ.get("GROQ_API_KEY", "")
+            if groq_key:
+                import httpx
+                async with httpx.AsyncClient(timeout=15) as hc:
+                    r = await hc.post(
+                        "https://api.groq.com/openai/v1/chat/completions",
+                        headers={"Authorization": f"Bearer {groq_key}"},
+                        json={
+                            "model": "llama-3.3-70b-versatile",
+                            "messages": [{"role": "user", "content": extraction_prompt}],
+                            "max_tokens": 500,
+                            "temperature": 0.3,
+                        },
+                    )
+                    if r.status_code == 200:
+                        raw = r.json()["choices"][0]["message"]["content"].strip()
+
+        if not raw:
+            return
         # Strip markdown code fences if present
         if raw.startswith("```"):
             raw = raw.split("\n", 1)[-1].rsplit("```", 1)[0]
@@ -1318,7 +1345,7 @@ If nothing meaningful, return: []"""
 async def _handle_atlas(db, chat_id: int | str, text: str) -> None:
     """Atlas personal assistant — self-learning, emotionally aware, self-positioning."""
     # Save incoming CEO message FIRST
-    await _save_message(db, "ceo_to_bot", text, "atlas")
+    await _save_message(db, "ceo_to_bot", text, "free_text", metadata={"handler": "atlas"})
 
     state = _detect_emotional_state(text)
     context = await _get_recent_context(db, limit=10)
@@ -1446,31 +1473,11 @@ HOW TO RESPOND:
         return
 
     reply = None
-    # Free-tier chain: Gemini → NVIDIA NIM → Groq (skipped if spend-limited)
-    # Cost-control 2026-04-14: no Anthropic/Haiku anywhere.
+    # Free-tier chain (reordered 2026-04-14 after audit found Gemini quota exhausted
+    # and NVIDIA NIM responding cleanly): NVIDIA NIM → Gemini → Groq.
+    # Cost-control: no Anthropic/Haiku anywhere.
 
-    # ── 1. Gemini 2.0 Flash (primary, most reliable free tier for chat) ──
-    if not reply:
-        try:
-            from google import genai
-            if settings.vertex_api_key:
-                client = genai.Client(vertexai=True, api_key=settings.vertex_api_key)
-            else:
-                client = genai.Client(api_key=settings.gemini_api_key)
-            response = client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=text,
-                config=genai.types.GenerateContentConfig(
-                    system_instruction=system,
-                    max_output_tokens=1200,
-                    temperature=0.9,
-                ),
-            )
-            reply = (response.text or "").strip()
-        except Exception as e:
-            logger.warning("Gemini failed, trying NVIDIA NIM: {e}", e=str(e)[:100])
-
-    # ── 2. NVIDIA NIM (free tier, llama-3.3-70b-instruct, no spend limit) ──
+    # ── 1. NVIDIA NIM (free tier, llama-3.3-70b-instruct, no spend/quota limit) ──
     if not reply:
         nvidia_key = os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NVIDIA_NIM_KEY", "")
         if nvidia_key:
@@ -1495,7 +1502,28 @@ HOW TO RESPOND:
                     else:
                         logger.warning("NVIDIA NIM {s}: {b}", s=r.status_code, b=r.text[:200])
             except Exception as e:
-                logger.warning("NVIDIA NIM error, trying Groq: {e}", e=str(e)[:100])
+                logger.warning("NVIDIA NIM error, trying Gemini: {e}", e=str(e)[:100])
+
+    # ── 2. Gemini 2.0 Flash (fallback — may hit daily quota) ──
+    if not reply:
+        try:
+            from google import genai
+            if settings.vertex_api_key:
+                client = genai.Client(vertexai=True, api_key=settings.vertex_api_key)
+            else:
+                client = genai.Client(api_key=settings.gemini_api_key)
+            response = client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=text,
+                config=genai.types.GenerateContentConfig(
+                    system_instruction=system,
+                    max_output_tokens=1200,
+                    temperature=0.9,
+                ),
+            )
+            reply = (response.text or "").strip()
+        except Exception as e:
+            logger.warning("Gemini failed, trying Groq: {e}", e=str(e)[:100])
 
     # ── 3. Groq (fallback, may be spend-limited) ──
     if not reply:
@@ -1527,7 +1555,7 @@ HOW TO RESPOND:
     if not reply:
         reply = "Атлас здесь. Все free-tier провайдеры одновременно упали (Gemini, NVIDIA NIM, Groq). Сообщение записал. Дай минуту.\n\n— Атлас"
 
-    await _save_message(db, "bot_to_ceo", f"[atlas] {reply}", "atlas")
+    await _save_message(db, "bot_to_ceo", f"[atlas] {reply}", "free_text", metadata={"handler": "atlas"})
     await _send_message(chat_id, reply)
 
     # Self-learning: extract observations about CEO from this exchange

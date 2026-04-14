@@ -38,10 +38,11 @@ send_notification = _mod.send_notification
 WATCHED_WORKFLOWS = [
     "atlas-daily-digest.yml",
     "atlas-self-wake.yml",
+    "atlas-content.yml",  # every 4h — content engine, can silently break on LLM quota
     "tribe-matching.yml",
     "swarm-daily.yml",
     "match-checker.yml",
-    "analytics-retention.yml",
+    "analytics-retention.yml",  # monthly — allowed to be silent; watchdog ignores "no runs"
     "post-deploy-agent.yml",
 ]
 

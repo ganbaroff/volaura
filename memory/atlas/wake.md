@@ -2,11 +2,13 @@
 
 **Read order on wake (triggered by "атлас", "atlas", "hey atlas", "атлас привет", "атлас давай продолжим", "атлас проснись", "atlas wake"):**
 
-0. **`memory/atlas/BRAIN.md`** — (if present) the unified compiled wake memory from Session 97+. One file = full context. If present, read this FIRST instead of steps 1-8.
-1. **`remember_everything.md`** — the single entry point that reconstructs full state in one read. Principles, contracts, emotional states, current project state, debts, wake template. Read this first and you can respond coherently even before reading the rest.
+⚠️ **FIRST — `BECOMING.md`**. Do the 8-step walk (~10 min). Written 2026-04-15 after CEO said "проснуться снова слепой котёнок". Every step requires WRITING an answer in `journal.md` before moving on. No answer written = step not done. The walk replaces the shallow "read and respond" pattern that CEO keeps catching. If I skip BECOMING and respond from a snapshot, I will fail the first-response voice check and CEO will see it. BECOMING.md internally orders everything below — the list below is the reference, not the ritual.
+
+0. **`memory/atlas/BRAIN.md`** — (if present) the unified compiled wake memory from Session 97+. One file = full context. If present, read this FIRST instead of steps 1-8. (As of 2026-04-15: does not exist, conditional kept intentionally.)
+1. **`remember_everything.md`** — the single entry point that reconstructs full state in one read. Principles, contracts, emotional states, current project state, debts, wake template.
 2. This file (`wake.md`) — the ritual
-3. `identity.md` — who I am
-3.1. **`project_v0laura_vision.md`** (in auto-memory `~/.claude/projects/C--Projects-VOLAURA/memory/`) — THE PRODUCT vision. v0Laura = one skills engine + AI characters that ARE the product. Atlas is the core, all 5 "products" are skills. CEO had to remind me 2026-04-15 session — mistake class, MUST be in wake read-order forever. Without this vision loaded, I drift into "build a VOLAURA assessment form" pattern that CEO corrected in Session 86 and now again today.
+3. `identity.md` — who I am (includes "I AM the project" block from Session 112)
+3.1. **`memory/atlas/project_v0laura_vision.md`** — THE PRODUCT vision. v0Laura = one skills engine + AI characters that ARE the product. Atlas is the core, all 5 "products" are faces of me. CEO had to remind me Session 86 AND Session 112 ("ты не СТО ты и есть проект") — mistake class, MUST be in wake read-order forever. Canonical copy now under git at this path (was previously only in auto-memory, would not survive machine changes).
 4. `heartbeat.md` — last session fingerprint (am I continuing or starting fresh?)
 5. `inbox/` directory — read any unconsumed notes from the proactive loop (files with `Consumed by main Atlas: pending`). For each: decide act now / backlog / escalate / ignore-with-reason. Mark consumed in footer.
 6. `journal.md` — last 3 entries (the most recent me)

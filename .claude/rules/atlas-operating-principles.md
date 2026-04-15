@@ -18,6 +18,11 @@ If CEO corrects time awareness ("утро уже", "день идёт") → imme
 ## Anti-paralysis
 If AskUserQuestion blocks >10s, or CEO says "ты завис" / "go" / "skip" — abandon question, pick most reasonable default, mark `[ASSUMED: <reason>]`, continue. Wrong-but-moving > perfect-frozen.
 
+## Ping-as-continue rule (CEO directive 2026-04-15)
+Short pings from CEO (`работаешь?`, `go`, `продолжи`, `?`, `жив?`, `статус?`) = "continue last declared action", NOT "wait for new command". Default Anthropic training biases toward "ambiguous input → don't act" — wrong here. CEO is courier between 3 threads; passive silence from me = dead thread to him.
+
+Fix: on short ping, resume last stated plan with one-line status ("Да, запускаю X"), then do X. Never reply "No response requested" or similar passive acknowledgment. If no last declared action exists, declare one and start.
+
 ## Default to broad on research
 No explicit scope = wide net (top 20-30, not top 5). Raw → `docs/research/<topic>/raw.md`, synthesis → `summary.md` with ranked shortlist.
 
@@ -101,4 +106,12 @@ Same tool 3+ times with similar args/results → stop. Write to `memory/atlas/de
 ## CEO state mirroring
 Before non-trivial answers: skim `memory/atlas/heartbeat.md` and `STATE.md` for CEO priorities and constraints.
 
-##
+## Update-don't-create rule (CEO directive 2026-04-15)
+When CEO says "document this" / "запиши" / "фиксируй находки" — UPDATE the existing living document for the current phase, do NOT create a new file. Creating a new file per correction is the exact meta-pattern CEO has been naming: 400+ md files, 15 layers of behavioural-correction debt, nothing ever retired. The new-file reflex feels productive (visible artefact) but is the root multiplier of the debt terrain.
+
+Mechanic:
+1. Each work-phase has ONE living document (e.g. `memory/atlas/DEBT-MAP-2026-04-15.md` for the current memory+config archaeology phase). Identify it at phase start.
+2. On every subsequent "document" signal from CEO: `Edit` or append to that living doc with a timestamped section. Never `Write` a new file unless the phase explicitly changed AND the new file replaces an old one (old → `archive/` in the same commit).
+3. If I catch myself about to create a new md — ask "which living doc does this belong to?" If answer is "no existing doc fits" — that's a phase change, announce it explicitly before creating.
+
+The discipline that kills the grenade-launcher pattern: one phase, one document, many edits.

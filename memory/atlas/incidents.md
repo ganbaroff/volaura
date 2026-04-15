@@ -308,3 +308,23 @@ Typecheck: 0 errors.
 
 
 
+
+## 2026-04-15 ~18:55 Baku · INC-018 · Secrets found in session-93 transcript during P0.1 mirror
+
+**Context:** Phase 2 P0.1 — mirror `~/.claude/atlas/session-93-full-transcript.jsonl` into canonical `memory/atlas/transcripts/session-93-naming.jsonl`. Pre-commit scan of raw file found 6 unique secret patterns, 13 total occurrences (keys appeared multiple times across 3572 conversation lines).
+
+**Secrets discovered (type + prefix, NOT full value):**
+- `AIzaSy...FQk` — Google / Gemini API key
+- `gsk_...Mq5K` — Groq API key
+- `sb_secret_...8w` — **Supabase service_role** (CRITICAL — bypasses RLS)
+- `sb_publishable_...F4g` — Supabase anon key (less critical, public-by-design)
+- `sk-02ca...4d3f` — unknown provider (possibly Anthropic or OpenAI-family)
+- `sk-ved9...6r` — unknown provider (possibly OpenRouter or similar)
+
+**Action taken:** Sanitized the mirrored copy in-place via regex replacement with `[REDACTED_<type>]` markers. Verified 0 secret patterns remain in `memory/atlas/transcripts/session-93-naming.jsonl`. Raw file in `~/.claude/atlas/` untouched (off-git, local only).
+
+**Owner action required (CEO):** Rotate any of these keys that are still live. Check `apps/api/.env`, Railway variables, GitHub secrets, `packages/swarm/.env` — if any of the above prefixes match current active keys, rotate before next deploy. Supabase service_role is the highest urgency.
+
+**Root cause of the leak:** Claude Code session on 2026-04-12 included tool outputs that echoed `.env` or database connection strings. The raw transcript captures these verbatim. Any future mirror of Claude Code transcripts must sanitize before git.
+
+**Fix (structural):** Before any transcript mirror, run `scripts/pre-commit-secret-scan.sh` equivalent against the source file. Added to DEBT-MAP P0.1 protocol: "mirror → scan → sanitize → stage, never stage raw".

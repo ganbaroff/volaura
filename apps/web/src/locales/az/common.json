@@ -516,7 +516,15 @@
     "achievementStarting": "Başlanır",
     "challengePeer": "Həmkara meydan oxuyun",
     "challengeLink": "Dəvət linki köçürüldü.",
-    "discoverable": "Təşkilatlar tərəfindən tapıla bilər"
+    "discoverable": "Təşkilatlar tərəfindən tapıla bilər",
+    "edit": {
+      "bio": "Haqqınızda",
+      "bioPlaceholder": "Nə ilə məşğulsunuz? Nəyə həvəsiniz var?",
+      "publicProfile": "Açıq profil",
+      "publicProfileDesc": "Linkiniz olan istənilən şəxs profilinizi görə bilər",
+      "discoverableLabel": "Təşkilatlar tərəfindən tapıla bilər",
+      "discoverableDesc": "Təşkilatlar sizi axtarışda tapa bilər"
+    }
   },
   "events": {
     "title": "Hadisələr",
@@ -797,7 +805,16 @@
     "resubscribe": "Yenidən abunə olmaq",
     "redirecting": "Ödəniş səhifəsinə yönləndirilirsiniz…",
     "setupInProgress": "Abunəliyin quraşdırılması davam edir. Vaxtından əvvəl yüksəltmək üçün bizimlə əlaqə saxlayın.",
-    "checkoutError": "Ödəniş prosesi başlatıla bilmədi — zəhmət olmasa, yenidən cəhd edin."
+    "checkoutError": "Ödəniş prosesi başlatıla bilmədi — zəhmət olmasa, yenidən cəhd edin.",
+    "cancelled": {
+      "title": "Heç bir xərc tutulmadı",
+      "description": "Siz istədiyiniz vaxt abunəliyi yenidən aktiv edə bilərsiniz.",
+      "ctaDashboard": "Ana səhifəyə qayıt",
+      "ctaSettings": "Parametrlər"
+    }
+  },
+  "brandedby": {
+    "tagline": "Süni İntellekt Əkizi — təsdiqlənmiş bacarıqlarınız video formatında."
   },
   "orgDash": {
     "title": "İstedad İdarəetmə Paneli",

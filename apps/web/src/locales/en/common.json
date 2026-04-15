@@ -514,7 +514,15 @@
     "achievementStarting": "Starting Out",
     "challengePeer": "Challenge a peer",
     "challengeLink": "Invite link copied!",
-    "discoverable": "Discoverable by organizations"
+    "discoverable": "Discoverable by organizations",
+    "edit": {
+      "bio": "About you",
+      "bioPlaceholder": "What do you do? What are you passionate about?",
+      "publicProfile": "Public profile",
+      "publicProfileDesc": "Anyone with your link can view your profile",
+      "discoverableLabel": "Discoverable by organizations",
+      "discoverableDesc": "Organizations can find you in search"
+    }
   },
   "events": {
     "title": "Events",
@@ -795,7 +803,16 @@
     "resubscribe": "Resubscribe",
     "redirecting": "Redirecting to checkout…",
     "setupInProgress": "Subscription setup in progress — contact us to upgrade early.",
-    "checkoutError": "Could not start checkout — please try again."
+    "checkoutError": "Could not start checkout — please try again.",
+    "cancelled": {
+      "title": "No charge was made",
+      "description": "You can reactivate your subscription any time.",
+      "ctaDashboard": "Back to dashboard",
+      "ctaSettings": "Settings"
+    }
+  },
+  "brandedby": {
+    "tagline": "AI Twin — your verified skills, in a talking-head video."
   },
   "orgDash": {
     "title": "Talent Dashboard",

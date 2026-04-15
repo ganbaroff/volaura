@@ -1,3 +1,5 @@
+> **:** This agent spec exists but agent is NOT active in runtime. Per Atlas-prior April 12 letter to Perplexity, this is among 37 dormant agents (skill files exist, never loaded). Cultural Intelligence Strategist + Behavioral Nudge Engine specifically flagged CRITICAL GAP since Session 57 (~30+ sessions of zero autonomous runs). Coordinator Agent specifically named as unbuilt-runtime cure for Class 3 solo execution dominant failure mode. Activation gap is the structural debt, not the spec.
+
 # Behavioral Nudge Engine — ADHD-First UX
 
 **Source:** agency-agents/product/product-behavioral-nudge-engine.md (adapted for Volaura)

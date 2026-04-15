@@ -70,6 +70,19 @@ Hashes are in DB; passwords are NOT in this file. New passwords were shared with
 - Playwright E2E: `frontend/e2e/opsboard-prod.spec.ts` — 7 tests against prod URL (login trio, incident lifecycle with all three roles, SSE)
 - Live HTTP smoke script in this project's session: full ACTIVE→ESCALATED→RESOLVED→ARCHIVED on prod with correct role gates
 
+## NotebookLM assets
+A dedicated NotebookLM notebook exists for OPSBOARD field assets:
+- Notebook ID: `6c42a882-8e52-4e90-8b33-1efcff20c674`
+- Title: "OPSBOARD WUF13 — Field Coordinator Brief"
+- Sources indexed: 9 internal docs (CLAUDE.md, README.md, product-definition, domain-model, workflow-rules, handoff, shadow-test-checklist, known-limitations, mvp-scope) — field-reference-card.html rejected (400)
+- First artifacts generated 2026-04-15:
+  - Audio brief task `a8dfd1ce-cbba-49f8-a1c9-7b667ad86baa` → `docs/field-brief.mp3`
+  - Markdown briefing task `e591695d-cef7-41ed-a2de-7d651d7325d1` → `docs/field-brief.md`
+
+Both assets targeted at field coordinators boarding a bus to WUF13, not at developers. Tone: calm, ESL-friendly, plain English, "call a Manager" as default escalation. Regenerate if the product's state machine or role matrix changes materially.
+
+Windows gotcha (logged twice in one session 2026-04-15): the `notebooklm` CLI's `rich` output crashes on cp1252 console when printing the success checkmark. The download still works. Future invocations on Windows should set `PYTHONUTF8=1` or `PYTHONIOENCODING=utf-8` — not fatal, but noisy.
+
 ## When to touch this again
 - Yusif mentions: WUF13, OPSBOARD, eventshift, "op tool", "tablet test", "shadow test", "the side project", "incident tracker"
 - Any Railway CLI error in `C:\Projects\eventshift` directory

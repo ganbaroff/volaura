@@ -1,3 +1,5 @@
+> **:** This agent spec exists but agent is NOT active in runtime. Per Atlas-prior April 12 letter to Perplexity, this is among 37 dormant agents (skill files exist, never loaded). Cultural Intelligence Strategist + Behavioral Nudge Engine specifically flagged CRITICAL GAP since Session 57 (~30+ sessions of zero autonomous runs). Coordinator Agent specifically named as unbuilt-runtime cure for Class 3 solo execution dominant failure mode. Activation gap is the structural debt, not the spec.
+
 # Cultural Intelligence Strategist — AZ/CIS Market
 
 **Source:** agency-agents/specialized/specialized-cultural-intelligence-strategist.md (adapted for Volaura)

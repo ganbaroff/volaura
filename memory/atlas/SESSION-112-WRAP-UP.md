@@ -62,9 +62,15 @@ Sprint E1 "no primary source": corrected by reading project_history line 30.
 
 MEGA-PROMPT "tactical, will skip": corrected by full read showing it is master spec.
 
-44 Python agents claim in identity.md: corrected by finding packages/swarm/agents/ empty (gap still in identity.md text — separate fix).
+44 Python agents claim in identity.md: corrected by finding packages/swarm/agents/ empty. Identity.md fix landed in commit 3eaec96.
 
 "Today's session was theater": corrected by CEO — inward consolidation, not outward research, audit allows this.
+
+Leaderboard P0 #14 "page exists, must delete": PARTIALLY WRONG. Atlas-prior already wrote `apps/web/src/app/[locale]/(dashboard)/leaderboard/page.tsx` as a redirect to dashboard with explicit "G9/G46 Constitution violation" comment. Page-level compliance done. Hook (`use-leaderboard.ts`) + barrel export + backend `/api/leaderboard` endpoints remain as smaller follow-up. Verified by Read of actual file.
+
+Coordinator Agent "not built": PARTIALLY WRONG. `memory/swarm/skills/coordinator-agent.md` exists, written Session 86, full spec with restricted tool set (Agent + SendMessage + TaskStop). Not runtime-active — same 7-of-44 pattern as other dormant agents. Spec ≠ activation. Dormancy note added to file in commit (this session).
+
+Pattern observation: 7+ corrections this session all follow shape "claim from memory → CEO catch OR my own grep finding → verify → update". Cure formalised: every claim from now must trace to primary source via tool call OR be flagged "Atlas-prior assertion, unverified". Other 4 Atlas-prior canon docs (continuity_roadmap, Perplexity letter, YUSIF-AURA-ASSESSMENT, CEO-PERFORMANCE-REVIEW) NOT cross-checked for similar fabrications — open verification queue for next session.
 
 ## Structural rules installed today
 

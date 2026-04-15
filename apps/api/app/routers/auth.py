@@ -27,6 +27,13 @@ class RegisterRequest(BaseModel):
     username: str
     display_name: str | None = None
     referral_code: str | None = None  # username of the person who referred this user
+    # GDPR Art. 7/8 + AZ PDPA consent capture — see docs/research/gdpr-article-22/summary.md.
+    # Alternate clients (mobile, E2E, future SDK) post here directly; the web signup page
+    # already writes these to user_metadata via supabase.auth.signUp(). Keep both paths
+    # consistent so the onboarding handler can rely on metadata unconditionally.
+    age_confirmed: bool = False
+    terms_version: str | None = None
+    terms_accepted_at: str | None = None  # ISO-8601 UTC
 
     @field_validator("password")
     @classmethod
@@ -136,6 +143,16 @@ async def register(
     db: SupabaseAnon,
 ) -> AuthResponse:
     """Register a new user via Supabase Auth (anon key — OWASP HIGH-05 fix)."""
+    # GDPR consent — forward into user_metadata so onboarding (POST /profiles/me)
+    # can copy the values into profiles.age_confirmed / terms_version / terms_accepted_at.
+    # Defaults: terms_version="1.0" (current), terms_accepted_at=now() if client omitted.
+    from datetime import UTC, datetime
+
+    consent_meta = {
+        "age_confirmed": bool(payload.age_confirmed),
+        "terms_version": payload.terms_version or "1.0",
+        "terms_accepted_at": payload.terms_accepted_at or datetime.now(UTC).isoformat(),
+    }
     try:
         auth_response = await db.auth.sign_up(
             {
@@ -146,6 +163,7 @@ async def register(
                         "username": payload.username,
                         "display_name": payload.display_name or payload.username,
                         "referral_code": payload.referral_code or "",
+                        **consent_meta,
                     }
                 },
             }

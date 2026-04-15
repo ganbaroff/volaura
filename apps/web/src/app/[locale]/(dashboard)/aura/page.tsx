@@ -139,7 +139,7 @@ function RevealCurtain() {
     >
       <motion.div
         animate={prefersReducedMotion ? {} : { scale: [1, 1.08, 1], opacity: [0.6, 1, 0.6] }}
-        transition={{ repeat: Infinity, duration: 1.4, ease: "easeInOut" }}
+        transition={prefersReducedMotion ? {} : { repeat: Infinity, duration: 1.4, ease: "easeInOut" }}
         className="text-6xl mb-6"
         aria-hidden="true"
       >
@@ -371,6 +371,10 @@ export default function AuraPage() {
           </h2>
           <p className="text-sm text-muted-foreground max-w-xs">
             {t("aura.noScoreDescription")}
+          </p>
+          {/* T1-6: identity aspiration — empty state lacked pull, only had push. */}
+          <p className="text-sm font-medium text-primary max-w-xs">
+            {t("aura.emptyAspiration")}
           </p>
           <Button asChild size="lg" className="mt-2">
             <Link href={`/${locale}/assessment`}>{t("aura.startAssessment")}</Link>

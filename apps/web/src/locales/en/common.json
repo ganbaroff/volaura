@@ -16,6 +16,10 @@
     "impactVolunteers": "professionals verified",
     "impactEvents": "events completed",
     "impactHours": "hours contributed",
+    "statsFallback": {
+      "professionals": "Growing community of verified professionals in Baku",
+      "events": "First events being organized now"
+    },
     "featuresTitle": "Everything you need to stand out",
     "featuresSubtitle": "Volaura is not just another platform. It is proof.",
     "feature1Title": "AURA Score",
@@ -153,6 +157,7 @@
   },
   "assessment": {
     "title": "Competency Assessment",
+    "socialProof": "{{count}} professionals took an assessment this week",
     "selectCompetencies": "Select competencies to assess",
     "guidance": "New here? Start with 1-2 competencies. You can always come back for more.",
     "canSave": "You can save and resume anytime — no pressure to finish in one go",
@@ -258,7 +263,9 @@
     "scoreUnlocksMore": "Add 2+ competencies and organizations can discover you.",
     "crystalsEarned": "+{{count}} Crystals",
     "crystalsEarnedDesc": "Added to your Life Simulator balance",
-    "voiceHint": "Answer with voice"
+    "voiceHint": "Answer with voice",
+    "startListening": "Start voice input",
+    "stopListening": "Stop voice input"
   },
   "stats": {
     "notYet": "Not yet",
@@ -293,6 +300,7 @@
     "scoreOutOf": "{{score}}/100 · {{weight}}%",
     "noScoreYet": "No AURA score yet",
     "noScoreDescription": "Complete at least one assessment to earn your score.",
+    "emptyAspiration": "You could earn Gold Communicator in minutes — start with one assessment.",
     "startAssessment": "Start assessment",
     "copyLink": "Copy link",
     "copied": "Copied!",
@@ -372,6 +380,11 @@
   "onboarding": {
     "title": "Set up your profile",
     "step": "Step",
+    "stageLabel": {
+      "start": "Starting",
+      "almost": "Almost there",
+      "final": "Final step"
+    },
     "step1": {
       "title": "Your identity"
     },
@@ -732,6 +745,7 @@
     "today": "Today",
     "emptyTitle": "All caught up!",
     "emptyDesc": "We'll let you know when something important happens.",
+    "emptyCta": "Share your assessment — let friends find you.",
     "types": {
       "auraUpdate": "AURA Update",
       "eventInvite": "Event Invite",
@@ -908,6 +922,7 @@
   "lifesim": {
     "title": "Life Feed",
     "subtitle": "Your life as a series of chapters. Every choice here reflects what you've already proven on VOLAURA.",
+    "moneyEmpty": "Starting",
     "stats": {
       "title": "Character"
     },

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils/cn";
 
 type BadgeTier = "platinum" | "gold" | "silver" | "bronze" | "none";
@@ -47,6 +47,9 @@ const TIER_STYLES: Record<BadgeTier, { bg: string; text: string; ring: string; g
 
 export function BadgeDisplay({ tier, label, eliteLabel, isElite }: BadgeDisplayProps) {
   const style = TIER_STYLES[tier] ?? TIER_STYLES.none;
+  // T1-4 (a11y ghost-audit 2026-04-15): gate infinite loop pulse on
+  // prefers-reduced-motion. Entrance spring is short/one-shot — kept.
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <motion.div
@@ -58,14 +61,18 @@ export function BadgeDisplay({ tier, label, eliteLabel, isElite }: BadgeDisplayP
       {/* Badge circle */}
       <motion.div
         animate={
-          tier === "platinum"
+          prefersReducedMotion
+            ? {}
+            : tier === "platinum"
             ? { boxShadow: ["0 0 16px rgba(139,92,246,0.3)", "0 0 32px rgba(139,92,246,0.5)", "0 0 16px rgba(139,92,246,0.3)"] }
             : tier === "gold"
               ? { boxShadow: ["0 0 12px rgba(250,204,21,0.2)", "0 0 24px rgba(250,204,21,0.4)", "0 0 12px rgba(250,204,21,0.2)"] }
               : {}
         }
         transition={
-          tier === "platinum" || tier === "gold"
+          prefersReducedMotion
+            ? {}
+            : tier === "platinum" || tier === "gold"
             ? { repeat: Infinity, duration: 2, ease: "easeInOut" }
             : {}
         }

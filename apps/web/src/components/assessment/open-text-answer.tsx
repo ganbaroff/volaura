@@ -125,12 +125,16 @@ export function OpenTextAnswer({
             type="button"
             onClick={isListening ? stopListening : startListening}
             disabled={disabled}
-            aria-label={isListening ? t("assessment.voiceHint") : t("assessment.voiceHint")}
+            aria-label={isListening
+              ? t("assessment.stopListening", { defaultValue: "Stop voice input" })
+              : t("assessment.startListening", { defaultValue: "Start voice input" })}
             aria-pressed={isListening}
             className={cn(
               "absolute right-3 top-3",
               "flex items-center justify-center",
-              "min-w-[44px] min-h-[44px] rounded-lg",
+              // T1-12 (a11y ghost-audit 2026-04-15): energy-target scales
+              // 44→48→56px across Full/Mid/Low energy instead of hardcoded 44.
+              "energy-target rounded-lg",
               "transition-colors duration-150",
               "disabled:opacity-50 disabled:cursor-not-allowed",
               isListening

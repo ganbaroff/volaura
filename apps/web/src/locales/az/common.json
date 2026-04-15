@@ -16,6 +16,10 @@
     "impactVolunteers": "Doğrulanmış mütəxəssislər",
     "impactEvents": "Tamamlanmış tədbirlər",
     "impactHours": "Töhfə verilən saatlar",
+    "statsFallback": {
+      "professionals": "Bakıda yoxlanmış mütəxəssislərin böyüyən ictimaiyyəti",
+      "events": "İlk tədbirlər artıq təşkil olunur"
+    },
     "featuresTitle": "Fərqlənməyiniz üçün lazım olan hər şey.",
     "featuresSubtitle": "Volaura sadəcə başqa bir platforma deyildir. Bu, sübutdur.",
     "feature1Title": "AURA Balı",
@@ -155,6 +159,7 @@
   },
   "assessment": {
     "title": "Səriştə qiymətləndirməsi",
+    "socialProof": "Bu həftə {{count}} mütəxəssis qiymətləndirmə keçdi",
     "selectCompetencies": "Qiymətləndiriləcək səriştələri seçin",
     "guidance": "Məqsədiniz: tam profil qurmaq. Hər qiymətləndirmə AURA balınıza +1-2 xal əlavə edir.",
     "canSave": "İstənilən vaxt yadda saxlaya və davam edə bilərsiniz; bir dəfəyə tamamlamağa məcbur deyilsiniz.",
@@ -260,7 +265,9 @@
     "scoreUnlocksMore": "İki və daha çox kompetensiya əlavə edin və təşkilatlar sizi kəşf edə bilərlər.",
     "crystalsEarned": "+{{count}} Kristal",
     "crystalsEarnedDesc": "Life Simulator balansınıza əlavə edildi",
-    "voiceHint": "Səsinizlə cavab verin"
+    "voiceHint": "Səsinizlə cavab verin",
+    "startListening": "Səs yazmağa başla",
+    "stopListening": "Səs yazmağı dayandır"
   },
   "stats": {
     "notYet": "Hələ yoxdur",
@@ -295,6 +302,7 @@
     "scoreOutOf": "100-dən {{score}} bal · {{weight}}% çəki",
     "noScoreYet": "Hələ AURA balı yoxdur.",
     "noScoreDescription": "Balınızı qazanmaq üçün ən azı bir qiymətləndirməni tamamlayın.",
+    "emptyAspiration": "Az ərzində Qızıl Kommunikator ola bilərsiniz — bir qiymətləndirmə ilə başlayın.",
     "startAssessment": "Qiymətləndirməyə başlamaq",
     "copyLink": "İstinadı köçür",
     "copied": "Köçürüldü!",
@@ -374,6 +382,11 @@
   "onboarding": {
     "title": "Profilinizi qurun",
     "step": "Addım",
+    "stageLabel": {
+      "start": "Başlanğıc",
+      "almost": "Demək olar ki hazırsınız",
+      "final": "Son addım"
+    },
     "step1": {
       "title": "Şəxsiyyətiniz"
     },
@@ -734,6 +747,7 @@
     "today": "Bu gün",
     "emptyTitle": "Hər şey nəzərdən keçirilib!",
     "emptyDesc": "Vacib bir hadisə baş verdikdə sizə bildirəcəyik.",
+    "emptyCta": "Qiymətləndirmənizi paylaşın — dostlarınız sizi tapsın.",
     "types": {
       "auraUpdate": "AURA Yeniləməsi",
       "eventInvite": "Tədbir Dəvəti",
@@ -945,6 +959,7 @@
   "lifesim": {
     "title": "Həyat Axını",
     "subtitle": "Həyatın fəsillər seriyası kimi. Buradakı hər seçim VOLAURA-da sübut etdiyini əks etdirir.",
+    "moneyEmpty": "Başlanğıc",
     "stats": {
       "title": "Xarakter"
     },

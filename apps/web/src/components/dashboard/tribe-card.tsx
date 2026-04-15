@@ -13,7 +13,7 @@
  */
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
 import { cn } from "@/lib/utils/cn";
@@ -37,6 +37,8 @@ const CRYSTAL_OPACITY: Record<0 | 1 | 2, string> = {
 
 export function TribeCard() {
   const { t } = useTranslation();
+  // T1-4 (a11y ghost-audit 2026-04-15): infinite spinner gated on reduced motion.
+  const prefersReducedMotion = useReducedMotion();
   const { data: tribe, isLoading: tribeLoading } = useMyTribe();
   const { data: poolStatus, isLoading: poolLoading } = useMyPoolStatus();
   const { data: streak } = useMyStreak();
@@ -60,8 +62,8 @@ export function TribeCard() {
           <motion.span
             className="text-2xl"
             aria-hidden="true"
-            animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+            animate={prefersReducedMotion ? {} : { rotate: 360 }}
+            transition={prefersReducedMotion ? {} : { repeat: Infinity, duration: 2, ease: "linear" }}
           >
             🌀
           </motion.span>

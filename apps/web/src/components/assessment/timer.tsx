@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils/cn";
 import { Clock } from "lucide-react";
 
@@ -40,6 +40,9 @@ export function Timer({
   const timeStr = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   const isWarning = remaining <= warningThreshold;
   const isCritical = remaining <= 5;
+  // T1-4 (a11y ghost-audit 2026-04-15): infinite clock pulse → vestibular risk.
+  const prefersReducedMotion = useReducedMotion();
+  const shouldPulse = isCritical && !prefersReducedMotion;
 
   // T0-3 (ghost-audit a11y P0-4, 2026-04-15): AT used to be told the initial
   // value at mount and never again because aria-live was "off". Users on
@@ -55,8 +58,8 @@ export function Timer({
       aria-label={`${label}: ${timeStr}`}
     >
       <motion.div
-        animate={isCritical ? { scale: [1, 1.15, 1] } : { scale: 1 }}
-        transition={isCritical ? { repeat: Infinity, duration: 0.8 } : {}}
+        animate={shouldPulse ? { scale: [1, 1.15, 1] } : { scale: 1 }}
+        transition={shouldPulse ? { repeat: Infinity, duration: 0.8 } : {}}
       >
         <Clock
           className={cn(

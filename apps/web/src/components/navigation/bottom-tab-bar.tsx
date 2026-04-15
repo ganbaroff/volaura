@@ -100,7 +100,6 @@ export function BottomTabBar({ locale: localeProp }: BottomTabBarProps) {
     <nav
       className="fixed bottom-0 left-0 right-0 glass-nav border-t border-border/50 safe-area-bottom md:hidden"
       style={{ zIndex: "var(--z-bottomnav)" } as React.CSSProperties}
-      role="tablist"
       aria-label={t("nav.productSwitcher", { defaultValue: "Product navigation" })}
     >
       <div className="mx-auto flex max-w-md items-center justify-around px-2 py-1">
@@ -110,8 +109,7 @@ export function BottomTabBar({ locale: localeProp }: BottomTabBarProps) {
             <a
               key={tab.href}
               href={`/${locale}${tab.href === "/" ? "" : tab.href}`}
-              role="tab"
-              aria-selected={isActive}
+              aria-current={isActive ? "page" : undefined}
               aria-label={t(tab.labelKey, { defaultValue: tab.defaultLabel })}
               className={cn(
                 "flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl",

@@ -1,3 +1,8 @@
+// TODO T1-2 (PUNTED to Phase 1 Week 3, per 05-PHASE-1-GAP-MATRIX.md §3):
+// Unauth users hit AuthGuard redirect to login instead of seeing a teaser.
+// Larger than a surgical copy fix — requires a PublicTeaser component
+// (3 anonymized profile cards + single signup CTA) and route group split.
+// Not addressed in 2026-04-15 T1 surgical pass.
 "use client";
 
 import { useState, useRef, useEffect } from "react";

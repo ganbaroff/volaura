@@ -243,10 +243,10 @@ export default function EditProfilePage() {
           <div className="flex items-center justify-between gap-3 p-4">
             <div className="min-w-0">
               <label htmlFor="toggle-orgs" className="text-sm font-medium text-foreground">
-                {t("profile.discoverable")}
+                {t("profile.edit.discoverableLabel", { defaultValue: "Discoverable by organizations" })}
               </label>
               <p className="text-xs text-muted-foreground mt-0.5">
-                {t("onboarding.visibleToOrgsInfo")}
+                {t("profile.edit.discoverableDesc", { defaultValue: "Organizations can find you in search" })}
               </p>
             </div>
             <Toggle id="toggle-orgs" checked={visibleToOrgs} onChange={setVisibleToOrgs} />

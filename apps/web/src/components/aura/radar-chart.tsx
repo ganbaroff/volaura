@@ -81,42 +81,49 @@ export function AuraRadarChart({
     </table>
   );
 
+  // T0-1 (ghost-audit a11y P0-1, 2026-04-15): previously `aria-hidden="true"`
+  // wrapped BOTH the visual chart AND the sr-only table — AT saw zero data.
+  // Fix: srTable sits OUTSIDE the aria-hidden wrapper so screen readers get
+  // the competency scores as a real table; only the decorative Recharts SVG
+  // inside the motion.div is hidden.
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.85 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
-      aria-hidden="true"  // visual chart hidden from AT; sr-only table provides the data
-    >
+    <div>
       {srTable}
-      <ResponsiveContainer width="100%" height={heights[size]}>
-        <RadarChart data={data} margin={{ top: 10, right: 20, bottom: 10, left: 20 }}>
-          <PolarGrid stroke="hsl(var(--border))" />
-          <PolarAngleAxis
-            dataKey="subject"
-            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
-          />
-          <Radar
-            name="AURA"
-            dataKey="score"
-            stroke={stroke}
-            fill={stroke}
-            fillOpacity={0.18}
-            strokeWidth={2}
-            animationDuration={800}
-            animationEasing="ease-out"
-          />
-          <Tooltip
-            formatter={(value: number) => [`${value}/100`, t("aura.totalScore")]}
-            contentStyle={{
-              background: "hsl(var(--popover))",
-              border: "1px solid hsl(var(--border))",
-              borderRadius: "8px",
-              fontSize: "12px",
-            }}
-          />
-        </RadarChart>
-      </ResponsiveContainer>
-    </motion.div>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.85 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
+        aria-hidden="true"
+      >
+        <ResponsiveContainer width="100%" height={heights[size]}>
+          <RadarChart data={data} margin={{ top: 10, right: 20, bottom: 10, left: 20 }}>
+            <PolarGrid stroke="hsl(var(--border))" />
+            <PolarAngleAxis
+              dataKey="subject"
+              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
+            />
+            <Radar
+              name="AURA"
+              dataKey="score"
+              stroke={stroke}
+              fill={stroke}
+              fillOpacity={0.18}
+              strokeWidth={2}
+              animationDuration={800}
+              animationEasing="ease-out"
+            />
+            <Tooltip
+              formatter={(value: number) => [`${value}/100`, t("aura.totalScore")]}
+              contentStyle={{
+                background: "hsl(var(--popover))",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: "8px",
+                fontSize: "12px",
+              }}
+            />
+          </RadarChart>
+        </ResponsiveContainer>
+      </motion.div>
+    </div>
   );
 }

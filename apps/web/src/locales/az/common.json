@@ -970,5 +970,8 @@
         "cta": "Təsdiqlə"
       }
     }
+  },
+  "a11y": {
+    "skipToContent": "Əsas məzmuna keç"
   }
 }

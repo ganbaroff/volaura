@@ -41,8 +41,16 @@ export function Timer({
   const isWarning = remaining <= warningThreshold;
   const isCritical = remaining <= 5;
 
+  // T0-3 (ghost-audit a11y P0-4, 2026-04-15): AT used to be told the initial
+  // value at mount and never again because aria-live was "off". Users on
+  // screen readers couldn't perceive time pressure. Fix: role="timer" +
+  // aria-live="polite" on threshold transitions only (not every second —
+  // that would spam the SR).
+  const announceLive = isCritical || (remaining === 60 || remaining === 30 || remaining === 10);
+
   return (
     <div
+      role="timer"
       className="flex items-center gap-1.5"
       aria-label={`${label}: ${timeStr}`}
     >
@@ -69,7 +77,8 @@ export function Timer({
             "text-sm font-mono font-semibold tabular-nums transition-colors",
             isWarning ? "text-destructive" : "text-foreground"
           )}
-          aria-live="off" // parent has the aria-label
+          aria-live={announceLive ? "polite" : "off"}
+          aria-atomic="true"
         >
           {timeStr}
         </motion.span>

@@ -112,7 +112,16 @@ def compute_grs(question: dict[str, Any]) -> float:
 
         try:
             concepts = json.loads(concepts)
-        except Exception:
+        except Exception as parse_err:
+            # Ghost-audit P1 (2026-04-15): silent empty-list → every answer
+            # judged against empty rubric → anti-gaming gates weaken silently.
+            # "Verified talent platform" integrity depends on this NOT being silent.
+            logger.error(
+                "quality_gate expected_concepts JSON parse failed — empty rubric",
+                question_id=question.get("id"),
+                raw_preview=str(concepts)[:200],
+                error=str(parse_err)[:200],
+            )
             concepts = []
 
     question_text: str = (question.get("scenario_en") or question.get("question_en") or "").lower()
@@ -236,7 +245,16 @@ def generate_attack_answers(question: dict[str, Any]) -> list[dict[str, str]]:
 
         try:
             concepts = json.loads(concepts)
-        except Exception:
+        except Exception as parse_err:
+            # Ghost-audit P1 (2026-04-15): silent empty-list → every answer
+            # judged against empty rubric → anti-gaming gates weaken silently.
+            # "Verified talent platform" integrity depends on this NOT being silent.
+            logger.error(
+                "quality_gate expected_concepts JSON parse failed — empty rubric",
+                question_id=question.get("id"),
+                raw_preview=str(concepts)[:200],
+                error=str(parse_err)[:200],
+            )
             concepts = []
 
     all_keywords: list[str] = []
@@ -308,7 +326,16 @@ def run_adversarial_gate(question: dict[str, Any]) -> dict[str, Any]:
 
         try:
             concepts = json.loads(concepts)
-        except Exception:
+        except Exception as parse_err:
+            # Ghost-audit P1 (2026-04-15): silent empty-list → every answer
+            # judged against empty rubric → anti-gaming gates weaken silently.
+            # "Verified talent platform" integrity depends on this NOT being silent.
+            logger.error(
+                "quality_gate expected_concepts JSON parse failed — empty rubric",
+                question_id=question.get("id"),
+                raw_preview=str(concepts)[:200],
+                error=str(parse_err)[:200],
+            )
             concepts = []
 
     attacks = generate_attack_answers(question)
@@ -409,7 +436,16 @@ def run_quality_checklist(question: dict[str, Any]) -> dict[str, Any]:
     if isinstance(concepts, str):
         try:
             concepts = json.loads(concepts)
-        except Exception:
+        except Exception as parse_err:
+            # Ghost-audit P1 (2026-04-15): silent empty-list → every answer
+            # judged against empty rubric → anti-gaming gates weaken silently.
+            # "Verified talent platform" integrity depends on this NOT being silent.
+            logger.error(
+                "quality_gate expected_concepts JSON parse failed — empty rubric",
+                question_id=question.get("id"),
+                raw_preview=str(concepts)[:200],
+                error=str(parse_err)[:200],
+            )
             concepts = []
 
     question_text: str = (question.get("scenario_en") or question.get("question_en") or "").lower()

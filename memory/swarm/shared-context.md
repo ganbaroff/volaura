@@ -1,9 +1,8 @@
 <!-- RECENTLY_SHIPPED_START -->
-## ⚡ RECENTLY SHIPPED (last push — 2026-04-15 12:31 UTC)
+## ⚡ RECENTLY SHIPPED (last push — 2026-04-15 12:41 UTC)
 **Read this FIRST — prevents proposing already-shipped work.**
 
-New migrations: 20260415210000_force_row_level_security.sql
-New/updated routers: auth
+New migrations: 20260415230000_ecosystem_compliance_schema.sql
 <!-- RECENTLY_SHIPPED_END -->
 
 # Swarm Shared Context — UPDATED 2026-04-07 (Session 91)

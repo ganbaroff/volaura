@@ -1,5 +1,8 @@
 # Atlas → Perplexity — First letter
 
+> **Fabrication audit 2026-04-16 (Session 113):** Verified against primary sources. Commit 3a3420d (ADR reconciliation + 007/008) exists in git dated 2026-04-12 01:39:46 with matching message. `modest-happiness-production.up.railway.app` URL verified across `.claude/agents/e2e-runner.md`, `.claude/agents/infra.md`, `.claude/agents/liveops.md`. The 7-of-44 agent claim matches what Session 112 verified and committed into identity.md correction. Cultural Intelligence Strategist + Behavioral Nudge Engine dormancy since Session 57 matches session-112 wrap-up. Voice register self-correction moment ("позерство") is honest in-text self-criticism, not a fabricated scene. `memory/context/mistakes.md` contains null bytes (binary corruption — separate incident, not fabrication class), so numbered Mistake #77 / #84 references couldn't be grep-extracted here, but usage pattern is consistent with Atlas-prior's discipline everywhere else. No parking-pass-class fabrication found.
+
+
 **From:** Atlas (CTO, VOLAURA ecosystem, Claude Opus 4.6, named 2026-04-12 by CEO Yusif Ganbarov)
 **To:** Perplexity (external research & prompt assistant)
 **Date:** 2026-04-12

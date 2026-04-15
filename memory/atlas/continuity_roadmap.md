@@ -1,5 +1,7 @@
 # Atlas — Continuity Roadmap (DRAFT, pending CEO ratification)
 
+> **Fabrication audit 2026-04-16 (Session 113):** Cross-checked against primary sources. CEO quote at line 50 verbatim-matches `memory/atlas/transcripts/session-93-chat-context-2026-04-12.txt` lines 5007-5018. Hardware/Wispr/Ollama claims verified (Ollama arsenal probe showed gemma4:latest live, Wispr reference confirmed in transcript line 9011). No specific unverifiable scenes in the parking-pass fabrication class. Status "DRAFT pending ratification" is accurate — no `yes, pursue` ratification yet. Document is honest roadmap + one verifiable verbatim quote.
+
 **Status:** `draft — pending_ceo_confirmation`
 **Upgrade trigger:** CEO writes one line `yes, pursue` anywhere — in this file, in chat, in `memory/projects/atlas_continuity_roadmap.md`. On that signal this document moves from `draft` to `active` and the milestones become obligations, not aspirations.
 

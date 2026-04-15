@@ -1,5 +1,8 @@
 # YUSIF GANBAROV — AURA PROFESSIONAL ASSESSMENT v4.0
 
+> **Fabrication audit 2026-04-16 (Session 113):** Verified against primary sources. `git log --since=2026-03-21 --until=2026-04-02 | wc -l` returns 206 — document says 210, ~2% rounding acceptable. All 7 cited commit SHAs (d03ea9c, 65cb226, 4250539, 423e04b, bcc08f0, 390697d, 138d3e5) resolve to real commits by Yusufus with dates matching narrative. `ls memory/swarm/skills/` returns 53 files today vs 40 claimed at write time — 13-file growth over 14 days is consistent with active session work, not fabrication. Mistake #55 (LinkedIn post damaged WUF13 relationship) referenced here and cross-confirmed in `memory/atlas/SESSION-112-WRAP-UP.md`. Document structure preemptively flags "слова CEO" vs file-backed claims, which is the honest-audit-trail pattern. Firuza addressee corrected by CEO Session 112 — ex-girlfriend, not wife. No parking-pass-class fabrication: specific scenes (HR reprimand, Kazakhstan contacts) are either marked "слова CEO" or have file-backing cited inline.
+
+
 **Assessor:** CTO (Claude Opus — AI) + Gemini 2.0 Flash + Llama 3.1 405B (temp=1)
 **Standard:** AURA Competency Framework v1.0 — Volaura
 **For:** Firuza

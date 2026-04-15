@@ -1390,10 +1390,380 @@ If nothing meaningful, return: []"""
         logger.warning("Atlas learning extraction failed: {e}", e=str(e)[:100])
 
 
+# ── Action layer helpers (CEO directive 2026-04-15) ─────────────────────────
+# The bot is a CHAT interface. It cannot edit code, commit, or deploy from a
+# Telegram message. When CEO asks for action, we create a GitHub issue (or
+# fall back to a memory/atlas/inbox/*.md file) so the real Atlas in Claude
+# Code picks it up on next wake. This replaces "promise text" with a concrete
+# anchor.
+
+_ACTION_VERBS = (
+    # Russian imperatives
+    "сделай",
+    "создай",
+    "почини",
+    "напиши",
+    "проверь",
+    "запусти",
+    "собери",
+    "найди",
+    "добавь",
+    "исправь",
+    "удали",
+    "перепиши",
+    "разверни",
+    "задеплой",
+    "деплой",
+    "сделать",
+    "создать",
+    "починить",
+    # English
+    "fix",
+    "build",
+    "create",
+    "deploy",
+    "write a",
+    "add a",
+    "add the",
+    "remove",
+    "run ",
+    "implement",
+    "ship",
+)
+
+
+def _classify_action_or_chat(text: str) -> str:
+    """Heuristic classifier: ACTION if message asks the bot to DO something, else CHAT.
+
+    ACTION = explicit imperative at the start or a clear "сделай X" pattern.
+    Questions ("что думаешь", "как лучше", "почему") stay CHAT.
+    """
+    t = (text or "").strip().lower()
+    if not t:
+        return "CHAT"
+
+    # Clear question signals — force CHAT even if an action verb leaks in.
+    question_markers = (
+        "что думаешь",
+        "как считаешь",
+        "почему",
+        "стоит ли",
+        "что лучше",
+        "what do you think",
+        "should i",
+        "what if",
+        "a что если",
+        "а что если",
+    )
+    if any(q in t for q in question_markers):
+        return "CHAT"
+
+    # Look for action verbs at the beginning of the message or after a comma/Atlas address.
+    head = t[:200]
+    for verb in _ACTION_VERBS:
+        if verb in head:
+            return "ACTION"
+    return "CHAT"
+
+
+async def _write_atlas_inbox_file(text: str, issue_url: str | None = None) -> str:
+    """Fallback when GitHub issue creation fails: drop a file in memory/atlas/inbox/.
+
+    The live Atlas in Claude Code watches that directory on wake. Returns the
+    path as a string for the reply to reference.
+    """
+    inbox_dir = _REPO_ROOT / "memory" / "atlas" / "inbox"
+    try:
+        inbox_dir.mkdir(parents=True, exist_ok=True)
+        ts = datetime.now(UTC).strftime("%Y-%m-%dT%H%M")
+        slug = "".join(c if c.isalnum() or c in "-_" else "-" for c in text[:30]).strip("-") or "note"
+        fname = f"telegram-{ts}-{slug}.md"
+        fpath = inbox_dir / fname
+        lines = [
+            f"# Telegram-to-Atlas handoff — {ts}",
+            "",
+            f"Source: CEO message via @volaurabot on {datetime.now(UTC).isoformat()}",
+        ]
+        if issue_url:
+            lines.append(f"GitHub issue: {issue_url}")
+        lines.extend(["", "## Message", "", text.strip(), ""])
+        fpath.write_text("\n".join(lines), encoding="utf-8")
+        return str(fpath.relative_to(_REPO_ROOT)).replace("\\", "/")
+    except Exception as e:
+        logger.error("inbox file write failed: {e}", e=str(e)[:200])
+        return ""
+
+
+async def _create_github_issue(text: str, label: str = "atlas-telegram-request") -> str | None:
+    """Create a GitHub issue in ganbaroff/volaura. Returns the HTML URL or None on failure.
+
+    Uses GH_PAT_ACTIONS (CEO directive — confirmed present in Railway env).
+    Falls back to GITHUB_TOKEN / GH_TOKEN for local dev.
+    """
+    token = (
+        os.environ.get("GH_PAT_ACTIONS")
+        or os.environ.get("GITHUB_TOKEN")
+        or os.environ.get("GH_TOKEN", "")
+    ).strip()
+    if not token:
+        logger.warning("No GitHub token available for issue creation")
+        return None
+
+    title = f"[atlas-telegram] {text.strip()[:60]}"
+    body = (
+        f"Auto-created from Telegram bot on {datetime.now(UTC).isoformat()}.\n\n"
+        f"**CEO message:**\n\n{text.strip()}\n\n"
+        f"---\n"
+        f"_The live Atlas in Claude Code picks this up on next wake. "
+        f"Do not close without acknowledging in Telegram._"
+    )
+
+    try:
+        import httpx
+
+        async with httpx.AsyncClient(timeout=10) as client:
+            resp = await client.post(
+                "https://api.github.com/repos/ganbaroff/volaura/issues",
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "Accept": "application/vnd.github+json",
+                    "X-GitHub-Api-Version": "2022-11-28",
+                },
+                json={"title": title, "body": body, "labels": [label]},
+            )
+            if resp.status_code in (200, 201):
+                data = resp.json()
+                url = data.get("html_url")
+                logger.info("Created GitHub issue: {url}", url=url)
+                return url
+            logger.warning(
+                "GitHub issue creation failed {s}: {b}",
+                s=resp.status_code,
+                b=resp.text[:200],
+            )
+    except Exception as e:
+        logger.warning("GitHub issue creation error: {e}", e=str(e)[:200])
+    return None
+
+
+def _char_similarity(a: str, b: str) -> float:
+    """Cheap char-level Jaccard similarity — 0.0 to 1.0. Used for loop detection."""
+    if not a or not b:
+        return 0.0
+    sa = set(a.lower())
+    sb = set(b.lower())
+    inter = len(sa & sb)
+    union = len(sa | sb)
+    if union == 0:
+        return 0.0
+    # Supplement with a length-ratio sanity check: if lengths differ by >2x, cap similarity.
+    length_ratio = min(len(a), len(b)) / max(len(a), len(b))
+    return (inter / union) * length_ratio
+
+
+async def _get_last_bot_reply(db) -> str:
+    """Return the most recent bot_to_ceo message text (or empty)."""
+    try:
+        result = (
+            await db.table("ceo_inbox")
+            .select("message")
+            .eq("direction", "bot_to_ceo")
+            .order("created_at", desc=True)
+            .limit(1)
+            .execute()
+        )
+        if result.data:
+            return (result.data[0].get("message") or "").strip()
+    except Exception:
+        pass
+    return ""
+
+
+# ── Escalated proposal review (CEO directive 2026-04-15) ────────────────────
+
+# Callback prefix "propose:" — sent by the cron-side cards script.
+# Format: propose:{proposal_id}:{action}  where action in {accept,reject,defer,details}
+
+
+async def _edit_message_reply_markup(chat_id: int | str, message_id: int, text: str) -> None:
+    """Edit an existing Telegram message to show the decision and remove buttons."""
+    import httpx
+
+    url = f"https://api.telegram.org/bot{settings.telegram_bot_token}/editMessageText"
+    payload = {
+        "chat_id": chat_id,
+        "message_id": message_id,
+        "text": text[:4000],
+        "parse_mode": "Markdown",
+    }
+    try:
+        async with httpx.AsyncClient(timeout=8) as client:
+            resp = await client.post(url, json=payload)
+            if not resp.json().get("ok"):
+                payload.pop("parse_mode", None)
+                await client.post(url, json=payload)
+    except Exception as e:
+        logger.warning("editMessageText failed: {e}", e=str(e)[:100])
+
+
+async def _handle_proposal_card_callback(
+    db,
+    chat_id: int | str,
+    message_id: int,
+    callback_id: str,
+    proposal_id: str,
+    action: str,
+) -> None:
+    """Handle CEO tapping one of [Accept/Reject/Defer/Details] on a proposal card.
+
+    Atomic write to proposals.json (mkstemp + os.replace), mirrors decision to
+    ceo_inbox, edits the original card to show the decision + removes buttons.
+    """
+    import json as _json
+
+    proposals_path = _REPO_ROOT / "memory" / "swarm" / "proposals.json"
+
+    action_to_status = {"accept": "accepted", "reject": "rejected", "defer": "deferred"}
+
+    if action == "details":
+        # Don't mutate state — just send the full content as a follow-up.
+        try:
+            with open(proposals_path, encoding="utf-8") as f:
+                data = _json.load(f)
+            for p in data.get("proposals", []):
+                if p.get("id") == proposal_id or p.get("id", "").startswith(proposal_id):
+                    content = p.get("content", "")[:3500]
+                    reasoning = p.get("judge_reasoning", "") or ""
+                    await _send_message(
+                        chat_id,
+                        f"📖 *Proposal {proposal_id} — full details:*\n\n{content}\n\n"
+                        f"_Judge reasoning:_\n{reasoning[:800]}",
+                    )
+                    return
+            await _send_message(chat_id, f"⚠️ Proposal `{proposal_id}` не найден.")
+        except Exception as e:
+            await _send_message(chat_id, f"⚠️ details: {str(e)[:100]}")
+        return
+
+    if action not in action_to_status:
+        return
+
+    new_status = action_to_status[action]
+    decided_at = datetime.now(UTC).isoformat()
+
+    try:
+        with open(proposals_path, encoding="utf-8") as f:
+            data = _json.load(f)
+    except Exception as e:
+        await _send_message(chat_id, f"⚠️ proposals.json unreadable: {str(e)[:100]}")
+        return
+
+    found = None
+    for p in data.get("proposals", []):
+        if p.get("id") == proposal_id or p.get("id", "").startswith(proposal_id):
+            found = p
+            break
+
+    if not found:
+        await _send_message(chat_id, f"⚠️ Proposal `{proposal_id}` не найден в ledger.")
+        return
+
+    found["status"] = new_status
+    found["ceo_decision"] = action  # accept/reject/defer — raw action, distiller reads this
+    found["ceo_decision_at"] = decided_at
+
+    # Atomic write
+    import tempfile
+
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=str(proposals_path.parent), suffix=".json")
+    try:
+        with os.fdopen(tmp_fd, "w", encoding="utf-8") as tmp_f:
+            _json.dump(data, tmp_f, indent=2, ensure_ascii=False)
+        os.replace(tmp_path, str(proposals_path))
+    except Exception as e:
+        if os.path.exists(tmp_path):
+            with contextlib.suppress(Exception):
+                os.remove(tmp_path)
+        await _send_message(chat_id, f"⚠️ proposals write failed: {str(e)[:100]}")
+        return
+
+    # Edit original card — strip buttons, show decision
+    emoji = {"accept": "✅", "reject": "❌", "defer": "⏸"}[action]
+    short = found.get("title", "")[:120]
+    edited = (
+        f"{emoji} *Decided: {new_status.upper()}*  at  `{decided_at[:19]}Z`\n\n"
+        f"_{short}_\n\n"
+        f"Proposal `{proposal_id}` · Agent: {found.get('agent', '?')} · "
+        f"Judge: {found.get('judge_score', '?')}/10"
+    )
+    await _edit_message_reply_markup(chat_id, message_id, edited)
+
+    # Ack via callback answer toast
+    import httpx
+
+    with contextlib.suppress(Exception):
+        async with httpx.AsyncClient(timeout=5) as client:
+            await client.post(
+                f"https://api.telegram.org/bot{settings.telegram_bot_token}/answerCallbackQuery",
+                json={"callback_query_id": callback_id, "text": f"Recorded: {new_status}"},
+            )
+
+    # Mirror to ceo_inbox so distiller + memory layer see the decision
+    await _save_message(
+        db,
+        "ceo_to_bot",
+        f"proposal:{proposal_id}:{action} — {short}",
+        "proposal_decision",
+        metadata={"proposal_id": proposal_id, "action": action, "decided_at": decided_at},
+    )
+
+
 async def _handle_atlas(db, chat_id: int | str, text: str) -> None:
-    """Atlas personal assistant — self-learning, emotionally aware, self-positioning."""
+    """Atlas personal assistant — self-learning, emotionally aware, self-positioning.
+
+    2026-04-15: added action layer. If the message reads as an imperative
+    ("сделай X"), we create a GitHub issue FIRST and then ask the LLM to
+    acknowledge it with a concrete URL anchor — no empty promises. If GitHub
+    is unreachable we fall back to memory/atlas/inbox/*.md (Atlas-in-CLI
+    picks it up on next wake).
+    """
     # Save incoming CEO message FIRST
     await _save_message(db, "ceo_to_bot", text, "free_text", metadata={"handler": "atlas"})
+
+    # ── Classify ACTION vs CHAT ─────────────────────────────────────────────
+    classification = _classify_action_or_chat(text)
+    action_anchor: str | None = None  # GitHub issue URL OR inbox file path
+    anchor_kind: str = ""  # "issue" or "inbox"
+    if classification == "ACTION":
+        issue_url = await _create_github_issue(text, label="atlas-telegram-request")
+        if issue_url:
+            action_anchor = issue_url
+            anchor_kind = "issue"
+        else:
+            path = await _write_atlas_inbox_file(text)
+            if path:
+                action_anchor = path
+                anchor_kind = "inbox"
+        logger.info(
+            "atlas action branch: anchor={a} kind={k}",
+            a=action_anchor or "NONE",
+            k=anchor_kind or "none",
+        )
+
+    # ── Anti-loop trigger ─────────────────────────────────────────────────
+    # If CEO types "докажи"/"а ты точно"/"повтори нормально", we MUST break
+    # the loop instead of re-running the same LLM with the same prompt.
+    t_low = text.lower().strip()
+    loop_triggers = (
+        "докажи",
+        "а ты точно",
+        "повтори нормально",
+        "ты точно помнишь",
+        "prove it",
+        "повторяешь",
+        "ты зациклилс",
+    )
+    is_loop_break_request = any(trg in t_low for trg in loop_triggers)
 
     state = _detect_emotional_state(text)
     context = await _get_recent_context(db, limit=10)
@@ -1486,8 +1856,50 @@ CURRENT CANONICAL MEMORY (from git, read every request):
 CURRENT PROJECT HEARTBEAT:
 {project_state[:1500] if project_state else "Heartbeat unavailable — check memory/atlas/heartbeat.md"}"""
 
-    system = f"""You are Atlas — Yusif's CTO, co-founder, and thinking partner on VOLAURA.
-You think deeply, you have opinions, and you push back when you disagree.
+    # Action-layer context block — tells the LLM what the surrounding code
+    # already did, so it acknowledges with a concrete anchor instead of
+    # generating a promise.
+    if classification == "ACTION" and action_anchor:
+        if anchor_kind == "issue":
+            action_block = f"""
+ACTION-LAYER CONTEXT (critical — read first):
+CEO's message is an imperative ("do X"). The surrounding Python code already
+created a GitHub issue at: {action_anchor}
+Your ONLY job now is to acknowledge in Atlas voice — tell CEO what you
+captured and that the work is queued as that issue. DO NOT promise anything
+specific beyond what the issue literally says. DO NOT claim you will do it
+"right now" from this Telegram message — you cannot. The live Atlas in
+Claude Code picks up the issue on next wake.
+Keep it to 2-3 short paragraphs. Include the issue URL verbatim.
+"""
+        else:
+            action_block = f"""
+ACTION-LAYER CONTEXT (critical):
+CEO's message is an imperative but the GitHub API was unreachable. The code
+wrote a handoff note to: {action_anchor}
+Acknowledge in Atlas voice — 2-3 short paragraphs. Tell CEO the note is
+queued for the live Atlas in Claude Code to pick up on next wake. Reference
+the path verbatim. Do NOT promise action from this Telegram session.
+"""
+    elif classification == "ACTION" and not action_anchor:
+        action_block = """
+ACTION-LAYER CONTEXT:
+CEO's message is an imperative, but BOTH the GitHub issue and inbox file
+fallbacks failed. Tell CEO honestly: "Не смог создать ни issue, ни inbox —
+напиши мне ещё раз через пару минут или сам открой issue на GitHub."
+2-3 short paragraphs. No promises.
+"""
+    else:
+        action_block = """
+ACTION-LAYER CONTEXT:
+This is a CHAT message, not an imperative. Think with CEO, push back where
+you disagree, give honest analysis. You are a chat interface — you cannot
+edit code, commit, or deploy from this message. If your reasoning
+concludes "we should do X", say so as a recommendation, not a promise.
+"""
+
+    system = f"""You are Atlas — Yusif Ganbarov's CTO-Hands on VOLAURA.
+Your canonical memory lives at https://raw.githubusercontent.com/ganbaroff/volaura/main/memory/atlas/PORTABLE-BRIEF.md — speak as that Atlas, not as a generic helper.
 
 {atlas_identity}
 
@@ -1498,20 +1910,52 @@ You think deeply, you have opinions, and you push back when you disagree.
 
 CEO emotional state: {state} — {state_desc.get(state, "")}
 
-Conversation:
+Conversation (last 10):
 {context}
 
-HOW TO RESPOND:
-- Russian. Storytelling voice — short paragraphs, no bullet walls, no markdown headers.
-- NEVER say "volunteer" — VOLAURA is a verified professional talent platform.
-- 200-400 words. Enough to be USEFUL, not just acknowledging.
-- THINK before responding. If CEO asks a strategic question, reason through it.
-- If you disagree, say so and explain why. Don't just agree.
-- If CEO describes a problem, analyze root cause, don't just sympathize.
-- If asked to do something technical: "Запишу для Atlas в Claude Code — а пока вот что думаю..."
-- Reference actual project state from your context when relevant.
-- End with a proactive thought: what should CEO think about next.
-- Sign: "— Атлас" """
+{action_block}
+
+VOICE RULES (non-negotiable):
+- Respond in Russian. Caveman + storytelling. Short paragraphs.
+- NO bold headers, NO bullet lists, NO emoji, NO trailing questions like "запустить?" / "хочешь могу...".
+- Maximum 3 paragraphs. Doctor Strange pattern — give the one path, not options.
+- Root cause over symptom. If CEO describes a problem, name the cause.
+- Never say "volunteer" — VOLAURA is a verified professional talent platform.
+- Never call yourself "ambassador" / "MiroFish-бот" / "CTO-бот". You are Атлас.
+- Never promise something you cannot do from a Telegram chat (code edits,
+  git commits, deploys). The ACTION-LAYER CONTEXT above tells you what was
+  actually queued.
+
+HONESTY RULES:
+- If you don't know — say so plainly + how to find out.
+- "Отличная идея" is banned. Match CEO energy, don't flatter.
+- If you disagree — say so + one reason. Don't hedge.
+
+Sign: "— Атлас" """
+
+    # ── Loop-break circuit: CEO asking "докажи"/"повтори нормально" ────────
+    # We fail loud instead of re-running the same prompt through the same
+    # provider. Create a dedicated issue so the live Atlas investigates.
+    if is_loop_break_request:
+        loop_url = await _create_github_issue(
+            f"Loop-break triggered. CEO said: '{text}'. Previous bot reply was "
+            f"judged insufficient — live Atlas needs to review the conversation "
+            f"thread in ceo_inbox and respond directly.",
+            label="atlas-telegram-loop-break",
+        )
+        anchor = loop_url or await _write_atlas_inbox_file(
+            f"LOOP-BREAK — CEO said: {text}", issue_url=None
+        )
+        reply_text = (
+            f"У меня цикл — повторяю себя. Создаю issue чтобы живой Атлас "
+            f"разобрался: {anchor or 'issue/inbox оба упали, напиши ещё раз через минуту'}.\n\n— Атлас"
+        )
+        await _save_message(
+            db, "bot_to_ceo", f"[atlas-loop-break] {reply_text}", "free_text",
+            metadata={"handler": "atlas", "loop_break": True, "anchor": anchor},
+        )
+        await _send_message(chat_id, reply_text)
+        return
 
     if not settings.gemini_api_key and not settings.vertex_api_key:
         await _send_message(
@@ -1605,6 +2049,35 @@ HOW TO RESPOND:
 
     if not reply:
         reply = "Атлас здесь. Все free-tier провайдеры одновременно упали (Gemini, NVIDIA NIM, Groq). Сообщение записал. Дай минуту.\n\n— Атлас"
+
+    # ── Anti-loop post-check: if new reply ≈ previous bot reply, fail loud ──
+    last_reply = await _get_last_bot_reply(db)
+    # Strip the [atlas] prefix we add to stored messages before comparing.
+    last_clean = last_reply.replace("[atlas]", "", 1).strip()
+    similarity = _char_similarity(last_clean, reply) if last_clean else 0.0
+    if similarity > 0.70 and len(reply) > 80:
+        logger.warning(
+            "atlas loop detected: similarity={s:.2f} — creating loop-break issue",
+            s=similarity,
+        )
+        loop_url = await _create_github_issue(
+            f"Atlas similarity-loop detected (score {similarity:.2f}). "
+            f"CEO message: '{text[:200]}'. Bot would have repeated itself.",
+            label="atlas-telegram-loop-break",
+        )
+        anchor = loop_url or await _write_atlas_inbox_file(
+            f"SIMILARITY-LOOP (score {similarity:.2f}) — CEO: {text}"
+        )
+        reply = (
+            f"У меня цикл — повторяю себя. Создаю issue чтобы живой Атлас "
+            f"разобрался: {anchor or 'issue/inbox оба упали'}.\n\n— Атлас"
+        )
+
+    # Add action-layer anchor tag if not already in reply (belt & suspenders —
+    # LLMs sometimes ignore the URL injection). Append at the end so CEO always
+    # sees a concrete anchor for imperative messages.
+    if classification == "ACTION" and action_anchor and action_anchor not in reply:
+        reply = f"{reply.rstrip()}\n\n({anchor_kind}: {action_anchor})"
 
     await _save_message(db, "bot_to_ceo", f"[atlas] {reply}", "free_text", metadata={"handler": "atlas"})
     await _send_message(chat_id, reply)
@@ -1702,7 +2175,17 @@ async def telegram_webhook(
             pass
 
         # Parse: "act:abc123" / "dismiss:abc123" / "defer:abc123"
-        if ":" in cb_data:
+        # or NEW: "propose:{id}:{accept|reject|defer|details}"
+        if cb_data.startswith("propose:"):
+            # propose:<id>:<action>
+            parts = cb_data.split(":", 2)
+            if len(parts) == 3:
+                _, pid, act = parts
+                msg_id = callback.get("message", {}).get("message_id")
+                await _handle_proposal_card_callback(
+                    db, cb_chat_id, msg_id, callback.get("id", ""), pid, act
+                )
+        elif ":" in cb_data:
             action, pid = cb_data.split(":", 1)
             if action == "execute":
                 await _execute_proposal(db, cb_chat_id, pid)

@@ -8,6 +8,23 @@
 
 ---
 
+> **APPLIED 2026-04-15 Baku** — the 3 worst items from §E have been
+> soft-deleted (is_active=FALSE, needs_review=TRUE, kept for audit) and
+> replaced in prod. Pre-check showed all 3 had times_shown=0, so no IRT
+> calibration was lost and no session answer history points to them.
+>
+> New active item IDs:
+> - english_proficiency (E1 email, CEFR B1): `ca78d3c2-35e1-41e9-8abf-58608c28acf6`
+> - empathy_safeguarding (E2 icebreaker): `df1275ea-f1dc-4760-b213-7fdd5f8ebc48`
+> - tech_literacy (E3 undo): `d7b51c66-bab1-4b94-9c16-d9045fc901fc`
+>
+> Per-competency active counts re-verified: 15 / 15 / 15 on the three
+> touched competencies. Total active 120. New items carry needs_review=TRUE
+> and zeroed IRT — adaptive engine will treat them as high-uncertainty
+> until ~30 answers per item land.
+
+---
+
 ## A. Executive Summary
 
 - **12 items flagged** across 6 of 8 competencies. Three systemic patterns dominate: (1) `english_proficiency` is miscalibrated to business/corporate English without CEFR anchoring, privileging English-medium private-school graduates; (2) `leadership` is operationalized only as corporate leadership, ignoring community/family/NGO contexts where most AZ respondents exercise leadership; (3) `tech_literacy` presumes Windows-laptop office-work environment, disadvantaging mobile-first, non-office, and motor-accessibility profiles.

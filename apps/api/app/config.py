@@ -46,6 +46,16 @@ class Settings(BaseSettings):
 
     # Monitoring — V-EYE: error tracking + performance
     sentry_dsn: str = ""  # Org: volaura, Project: volaura-api (created 2026-03-29)
+    # Sentry → recurring-symptoms watchdog webhook shared secret.
+    # Used by /api/webhooks/sentry to verify X-Sentry-Signature HMAC (SHA-256).
+    # CEO pastes this value into Sentry Dashboard → Settings → Integrations →
+    # (Internal) → Webhooks → "Client Secret". If empty, endpoint hard-fails 403.
+    # Generate: python -c "import secrets; print(secrets.token_urlsafe(48))"
+    sentry_webhook_secret: str = ""
+    # GitHub PAT with `repo` + `issues:write` for the recurring-symptoms watchdog
+    # to create/update issues on regression. If empty, webhook only pings Telegram.
+    github_pat_actions: str = ""
+    github_repo: str = "ganbaroff/volaura"  # owner/repo for gh issue upserts
 
     # Observability — Langfuse: LLM tracing, cost tracking, latency monitoring
     # Free tier: 50k events/month. If keys not set, tracing is silently disabled.

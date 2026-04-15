@@ -1,0 +1,85 @@
+name: needs-RCA merge gate
+
+# Research: docs/research/recurring-symptoms-watchdog/summary.md §Day-2
+# Trigger:  any PR to main with the `needs-RCA` label set by the Sentry webhook
+#           or the fix-of-fix detector.
+# Behavior: fail the check run unless the PR diff contains a file matching
+#           memory/decisions/YYYY-MM-DD-*.md with both `root_cause:` and
+#           `prevention:` sections. Passing the gate unblocks merge.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  rca-gate:
+    name: RCA decision file required
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check for needs-RCA label
+        id: label
+        env:
+          LABELS_JSON: ${{ toJson(github.event.pull_request.labels) }}
+        run: |
+          if echo "$LABELS_JSON" | grep -q '"needs-RCA"'; then
+            echo "required=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "required=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Skip (no label)
+        if: steps.label.outputs.required == 'false'
+        run: echo "No needs-RCA label — gate not required."
+
+      - uses: actions/checkout@v4
+        if: steps.label.outputs.required == 'true'
+        with:
+          fetch-depth: 0
+
+      - name: Require RCA decision file
+        if: steps.label.outputs.required == 'true'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+
+          # List added/modified files in this PR.
+          CHANGED=$(git diff --name-only --diff-filter=AM "$BASE_SHA...$HEAD_SHA")
+          echo "Changed files:"
+          echo "$CHANGED"
+
+          RCA_FILE=$(echo "$CHANGED" | grep -E '^memory/decisions/[0-9]{4}-[0-9]{2}-[0-9]{2}-.+\.md$' || true)
+
+          if [ -z "$RCA_FILE" ]; then
+            echo "::error::PR is labelled needs-RCA but no memory/decisions/YYYY-MM-DD-*.md file was added or modified."
+            echo "::error::Drop a decision file with root_cause: and prevention: sections to pass the gate."
+            exit 1
+          fi
+
+          echo "Found RCA file(s):"
+          echo "$RCA_FILE"
+
+          FAIL=0
+          for f in $RCA_FILE; do
+            if ! grep -qiE '^\s*root[_ -]?cause\s*:' "$f"; then
+              echo "::error file=$f::Missing 'root_cause:' section."
+              FAIL=1
+            fi
+            if ! grep -qiE '^\s*prevention\s*:' "$f"; then
+              echo "::error file=$f::Missing 'prevention:' section."
+              FAIL=1
+            fi
+          done
+
+          if [ "$FAIL" -ne 0 ]; then
+            exit 1
+          fi
+
+          echo "RCA gate passed."

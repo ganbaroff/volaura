@@ -35,6 +35,8 @@ import time
 from datetime import UTC, datetime
 from pathlib import Path
 
+import hashlib
+
 import httpx
 from loguru import logger
 
@@ -93,8 +95,41 @@ def _eligible(p: dict, min_score: int) -> bool:
         return False
 
 
-def _format_card(p: dict) -> str:
-    """Format a proposal into a Telegram Markdown card."""
+def compute_payload_sha12(payload: dict) -> str:
+    """Canonical sha256(payload) → first 12 hex chars.
+
+    Shared helper so the card formatter AND the callback handler compute the
+    same fingerprint over the same JSON representation (Pattern 2 — defeats
+    Lies-in-the-Loop payload swapping between display and execution).
+    """
+    canon = json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=True)
+    return hashlib.sha256(canon.encode("utf-8")).hexdigest()[:12]
+
+
+def _extract_action_payload(p: dict) -> dict:
+    """Pull the JSON payload that WILL run on Accept.
+
+    Preference order:
+      1. explicit `p["action_payload"]` (set by agent authors)
+      2. `p["tool_args"]` (Pattern-3 atlas_tool invocations)
+      3. fallback: {title, content} — at minimum CEO sees what gets recorded.
+    """
+    if isinstance(p.get("action_payload"), dict):
+        return p["action_payload"]
+    if isinstance(p.get("tool_args"), dict):
+        return {"tool": p.get("tool_name", "?"), "args": p["tool_args"]}
+    return {
+        "title": p.get("title", ""),
+        "content": (p.get("content") or "")[:1000],
+    }
+
+
+def _format_card(p: dict) -> tuple[str, str]:
+    """Format a proposal into a Telegram Markdown card.
+
+    Returns (card_text, sha12). The sha12 MUST match what the callback handler
+    recomputes when CEO taps Accept — mismatch aborts the action.
+    """
     sev_emoji = {
         "critical": "🔴",
         "high": "🟠",
@@ -107,7 +142,14 @@ def _format_card(p: dict) -> str:
     severity = p.get("severity", "?")
     score = p.get("judge_score", "?")
     reasoning = (p.get("judge_reasoning") or "")[:400]
-    content = (p.get("content") or "")[:600]
+    content = (p.get("content") or "")[:400]
+
+    # Pattern 2 — exact payload rendered inline + sha12 footer.
+    payload = _extract_action_payload(p)
+    sha12 = compute_payload_sha12(payload)
+    payload_json = json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=True)
+    if len(payload_json) > 1500:
+        payload_json = payload_json[:1500] + "\n  …(truncated — tap Details for full)"
 
     lines = [
         f"{sev_emoji} *Swarm proposal* `{pid}`",
@@ -118,21 +160,37 @@ def _format_card(p: dict) -> str:
     if reasoning:
         lines.append("")
         lines.append(f"Judge says: {reasoning}")
-    lines.append("")
-    lines.append(content)
-    return "\n".join(lines)
+    if content:
+        lines.append("")
+        lines.append(content)
+    lines.extend(
+        [
+            "",
+            "*Will run on Accept:*",
+            "```json",
+            payload_json,
+            "```",
+            f"`payload_sha: {sha12}`",
+        ]
+    )
+    return "\n".join(lines), sha12
 
 
-def _build_keyboard(pid: str) -> dict:
+def _build_keyboard(pid: str, sha12: str) -> dict:
+    """Inline keyboard with sha12 bound to each callback.
+
+    Format: `propose:{id}:{action}:{sha12}` — handler recomputes the sha from
+    the stored payload and rejects the action if they don't match.
+    """
     return {
         "inline_keyboard": [
             [
-                {"text": "✅ Accept", "callback_data": f"propose:{pid}:accept"},
-                {"text": "❌ Reject", "callback_data": f"propose:{pid}:reject"},
+                {"text": "✅ Accept", "callback_data": f"propose:{pid}:accept:{sha12}"},
+                {"text": "❌ Reject", "callback_data": f"propose:{pid}:reject:{sha12}"},
             ],
             [
-                {"text": "⏸ Defer", "callback_data": f"propose:{pid}:defer"},
-                {"text": "📖 Details", "callback_data": f"propose:{pid}:details"},
+                {"text": "⏸ Defer", "callback_data": f"propose:{pid}:defer:{sha12}"},
+                {"text": "📖 Details", "callback_data": f"propose:{pid}:details:{sha12}"},
             ],
         ]
     }
@@ -197,8 +255,8 @@ def main() -> int:
         pid = p.get("id")
         if not pid:
             continue
-        card = _format_card(p)
-        kb = _build_keyboard(pid)
+        card, sha12 = _format_card(p)
+        kb = _build_keyboard(pid, sha12)
         resp = _send_card(token, chat_id, card, kb)
         if resp and resp.get("ok"):
             message_id = resp.get("result", {}).get("message_id")
@@ -208,6 +266,7 @@ def main() -> int:
                 "sent_at": datetime.now(UTC).isoformat(),
                 "judge_score": p.get("judge_score"),
                 "severity": p.get("severity"),
+                "payload_sha12": sha12,  # Pattern 2 — tamper evidence
             }
             logger.info("Sent card for {pid} (msg_id={mid})", pid=pid, mid=message_id)
             # Tiny gap between sends to avoid Telegram flood limits.

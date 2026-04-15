@@ -74,6 +74,7 @@ from app.routers import (
     telegram_webhook,
     tribes,
     verification,
+    webhooks_sentry,
 )
 from app.services.reeval_worker import run_reeval_worker
 from app.services.video_generation_worker import run_video_generation_worker
@@ -211,6 +212,7 @@ app.include_router(lifesim.router, prefix="/api")
 app.include_router(notifications.router, prefix="/api")
 app.include_router(stats.router, prefix="/api")
 app.include_router(telegram_webhook.router, prefix="/api")
+app.include_router(webhooks_sentry.router, prefix="/api")
 app.include_router(character.router, prefix="/api")
 app.include_router(brandedby.router, prefix="/api")
 app.include_router(skills.router, prefix="/api")

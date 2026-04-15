@@ -1,0 +1,116 @@
+name: fix-of-fix hotspot detector
+
+# Research: docs/research/recurring-symptoms-watchdog/summary.md §Day-3-4
+# Trigger:  every PR to main.
+# Behavior: for each changed file, count commits in the last 60 days whose
+#           subject starts with fix/hotfix/bugfix/INC-/correct/restore.
+#             >= 3 → post comment + add `hotspot` label.
+#             >= 5 → also add `needs-RCA` label (trips the merge-gate).
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  detect:
+    name: Scan changed files for fix-of-fix pattern
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: changed
+        uses: tj-actions/changed-files@v45
+        with:
+          files_ignore: |
+            memory/**
+            docs/**
+            **/*.md
+
+      - name: Count fix-of-fix touches per file
+        id: scan
+        env:
+          CHANGED_FILES: ${{ steps.changed.outputs.all_changed_files }}
+        run: |
+          set -euo pipefail
+          : > /tmp/hotspots.txt
+          THRESHOLD_WARN=3
+          THRESHOLD_BLOCK=5
+          WARN=0
+          BLOCK=0
+          FIX_PATTERN='^(fix|hotfix|bugfix|INC-|correct|restore)'
+          for f in $CHANGED_FILES; do
+            [ -f "$f" ] || continue
+            COUNT=$(git log --since='60 days ago' --pretty=format:'%s' -- "$f" \
+                    | grep -ciE "$FIX_PATTERN" || true)
+            if [ "$COUNT" -ge "$THRESHOLD_WARN" ]; then
+              echo "=== $f (fix-touches: $COUNT) ===" >> /tmp/hotspots.txt
+              git log --since='60 days ago' --pretty=format:'- %h %ad %s' --date=short -- "$f" \
+                  | grep -iE "$FIX_PATTERN" >> /tmp/hotspots.txt || true
+              echo "" >> /tmp/hotspots.txt
+              WARN=$((WARN+1))
+              if [ "$COUNT" -ge "$THRESHOLD_BLOCK" ]; then
+                BLOCK=$((BLOCK+1))
+              fi
+            fi
+          done
+          echo "warn_count=$WARN" >> "$GITHUB_OUTPUT"
+          echo "block_count=$BLOCK" >> "$GITHUB_OUTPUT"
+          if [ -s /tmp/hotspots.txt ]; then
+            echo "=== Hotspots detected ==="
+            cat /tmp/hotspots.txt
+          else
+            echo "No hotspots."
+          fi
+
+      - name: Label hotspot
+        if: steps.scan.outputs.warn_count != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT_ACTIONS }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label hotspot || true
+
+      - name: Label needs-RCA (block threshold)
+        if: steps.scan.outputs.block_count != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT_ACTIONS }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label needs-RCA || true
+
+      - name: Comment with fix history
+        if: steps.scan.outputs.warn_count != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT_ACTIONS }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          {
+            echo "## 🔁 fix-of-fix hotspot detected"
+            echo ""
+            echo "One or more changed files have been fixed ≥3 times in the last 60 days."
+            echo "Per the recurring-symptoms research verdict, a third fix on the same file"
+            echo "is a **root-cause bug**, not a symptom. Name it in the PR body."
+            echo ""
+            echo '```'
+            cat /tmp/hotspots.txt
+            echo '```'
+            if [ "${{ steps.scan.outputs.block_count }}" != "0" ]; then
+              echo ""
+              echo "⚠️ One or more files crossed the **5-fix threshold** — \`needs-RCA\` label was set."
+              echo "You must drop a \`memory/decisions/YYYY-MM-DD-*.md\` file with \`root_cause:\` +"
+              echo "\`prevention:\` sections before the merge-gate will pass."
+            fi
+          } > /tmp/comment.md
+          gh pr comment "$PR_NUMBER" --repo "$REPO" --body-file /tmp/comment.md

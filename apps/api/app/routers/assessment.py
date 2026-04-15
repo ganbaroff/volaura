@@ -808,6 +808,10 @@ async def complete_assessment(
                     await asyncio.sleep(2)
                     continue
                 aura_updated = False
+                # INC ghost-audit P0-2 (2026-04-15): if the recovery flag also fails,
+                # the session is forever orphan with no AURA and no marker for any
+                # background reconciler to pick up. Log loud — silent swallow here is
+                # how user-finished assessments disappear into the void.
                 try:
                     await (
                         db_admin.table("assessment_sessions")
@@ -815,8 +819,14 @@ async def complete_assessment(
                         .eq("id", session_id)
                         .execute()
                     )
-                except Exception:
-                    pass
+                except Exception as flag_err:
+                    logger.error(
+                        "pending_aura_sync flag write failed — ghost session risk",
+                        session_id=session_id,
+                        user_id=str(user_id),
+                        competency_slug=slug,
+                        error=str(flag_err)[:300],
+                    )
 
     # ── Sprint A1: Emit crystal_earned + skill_verified to character_state ───
     # Best-effort: never blocks the response. Idempotency via game_character_rewards.
@@ -839,8 +849,8 @@ async def complete_assessment(
     # Tribe streak: record activity for current week (fire-and-forget, never blocks response)
     try:
         await record_assessment_activity(db=db_admin, user_id=str(user_id))
-    except Exception:
-        pass  # tribe streak failure must never fail assessment completion
+    except Exception as e:
+        logger.error("tribe streak record failed", user_id=str(user_id), session_id=session_id, error=str(e)[:300])
 
     # Analytics: assessment_completed event (fire-and-forget, never blocks response)
     try:
@@ -859,8 +869,8 @@ async def complete_assessment(
                 "gaming_flags": gaming.flags,
             },
         )
-    except Exception:
-        pass  # analytics failure must never fail assessment completion
+    except Exception as e:
+        logger.error("assessment_completed analytics failed", user_id=str(user_id), session_id=session_id, error=str(e)[:300])
 
     # Transactional email: AURA score ready (fire-and-forget, kill switch: EMAIL_ENABLED)
     try:
@@ -891,8 +901,8 @@ async def complete_assessment(
                 badge_tier=badge_tier,
                 crystals_earned=crystals_earned,
             )
-    except Exception:
-        pass  # email failure must never fail assessment completion
+    except Exception as e:
+        logger.error("aura-ready email failed", user_id=str(user_id), session_id=session_id, error=str(e)[:300])
 
     # ── Ecosystem events: assessment → character_events bus → all 5 products ──
     # Fire-and-forget: NEVER blocks /complete response. Errors logged, not raised.
@@ -909,8 +919,14 @@ async def complete_assessment(
             stop_reason=state.stop_reason,
             gaming_flags=gaming.flags,
         )
-    except Exception:
-        pass
+    except Exception as e:
+        logger.error(
+            "emit_assessment_completed failed — character_events bridge silent",
+            user_id=str(user_id),
+            session_id=session_id,
+            competency_slug=slug,
+            error=str(e)[:300],
+        )
 
     if aura_updated and slug:
         try:
@@ -943,8 +959,14 @@ async def complete_assessment(
                     new_tier=_new_tier,
                     total_score=float(_aura_data.get("total_score", 0)),
                 )
-        except Exception:
-            pass  # ecosystem event failure must never fail assessment completion
+        except Exception as e:
+            logger.error(
+                "emit_aura_updated/badge_tier_changed failed — Life Sim crystals + BrandedBy badge updates silent",
+                user_id=str(user_id),
+                session_id=session_id,
+                old_tier=_old_badge_tier,
+                error=str(e)[:300],
+            )
 
     return AssessmentResultOut(
         session_id=session_id,

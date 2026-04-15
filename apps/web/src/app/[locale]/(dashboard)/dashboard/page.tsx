@@ -106,8 +106,12 @@ export default function DashboardPage() {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data }) => {
       if (data.user && isMounted.current) {
+        // INC-018 (2026-04-15): Google OAuth sends full_name/name, not display_name.
+        // Chain: our display_name → Google full_name → Google name → email local-part.
         setDisplayName(
           data.user.user_metadata?.display_name ??
+          data.user.user_metadata?.full_name ??
+          data.user.user_metadata?.name ??
           data.user.email?.split("@")[0] ??
           ""
         );

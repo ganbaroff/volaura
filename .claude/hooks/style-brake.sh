@@ -5,6 +5,32 @@
 PROJECT_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
 INPUT=$(cat)
 
+# ── STEP 0: Trailing-question flag from prior turn ────────────
+# Written by trailing-question-check.sh on Stop. If present, the prior
+# assistant response ended with "?" on a reversible action — CEO hates
+# this, caught 3x in one session on 2026-04-15. Surface LOUDLY so the
+# next response draft self-corrects.
+TQ_FLAG="$PROJECT_DIR/.claude/last-trailing-question.flag"
+if [ -f "$TQ_FLAG" ]; then
+  LAST_TQ=$(cat "$TQ_FLAG" 2>/dev/null)
+  echo ""
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "⛔ TRAILING-QUESTION BREACH IN PRIOR TURN"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "Your last response ended with:"
+  echo "   > $LAST_TQ"
+  echo ""
+  echo "The trailing-question-ban in atlas-operating-principles.md exists"
+  echo "because CEO has named this 4+ times. Rule: reversible + below money"
+  echo "threshold = just do it and report. No 'пушим?', no 'беру?', no"
+  echo "'сделать?'. If scope was given, the next action is execution."
+  echo ""
+  echo "In THIS response: do NOT ask. Execute. Report. Stop."
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  rm -f "$TQ_FLAG"
+fi
+
 # ── STEP 1: Classify prompt type ──────────────────────────────
 # Determines which lessons/context to inject (GeM-CoT pattern)
 CEO_MSG=$(echo "$INPUT" | python3 -c "

@@ -13,6 +13,7 @@ import { API_BASE } from "@/lib/api/client";
 import { useTrackEvent } from "@/hooks/use-analytics";
 import { EnergyPicker } from "@/components/assessment/energy-picker";
 import { PreAssessmentSummary } from "@/components/assessment/pre-assessment-summary";
+import { SafetyBlock } from "@/components/assessment/safety-block";
 import { TopBar } from "@/components/layout/top-bar";
 import { CommunitySignalInline } from "@/components/community/community-signal-inline";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
@@ -246,6 +247,9 @@ function AssessmentContent() {
           competencyCount={selected.size}
         />
       )}
+
+      {/* Constitution P0 (E4) Pre-Assessment Layer: psychotype hint + pause + safety copy */}
+      {selected.size > 0 && <SafetyBlock />}
 
       {/* Constitution Law 2: Energy Adaptation — user picks energy level before assessment */}
       {selected.size > 0 && (

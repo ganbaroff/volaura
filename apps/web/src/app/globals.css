@@ -337,12 +337,14 @@
   }
 
   /* Primary gradient button */
+  /* T1-3 (a11y ghost-audit 2026-04-15): gradient end darkened from #8083ff
+     to #6366ff to clear WCAG 1.4.3 AA (4.5:1) against #1000a9 text. */
   .btn-primary-gradient {
-    background: linear-gradient(135deg, #c0c1ff 0%, #8083ff 100%);
+    background: linear-gradient(135deg, #c0c1ff 0%, #6366ff 100%);
     color: #1000a9;
   }
   .btn-primary-gradient:hover {
-    background: linear-gradient(135deg, #d0d1ff 0%, #9093ff 100%);
+    background: linear-gradient(135deg, #d0d1ff 0%, #7376ff 100%);
   }
 
   /* Podium gradient */
@@ -368,6 +370,13 @@
     min-height: var(--energy-min-target);
     min-width: var(--energy-min-target);
   }
+}
+
+/* T1-12 (a11y ghost-audit 2026-04-15): Low-energy-only min-target for
+   elements (e.g. Button size=sm) that must stay compact in Full/Mid. */
+[data-energy="low"] .energy-target-low {
+  min-height: var(--energy-min-target);
+  min-width: var(--energy-min-target);
 }
 
 /* ─── Keyframes ─── */

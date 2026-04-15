@@ -49,9 +49,13 @@ const variantClasses: Record<string, string> = {
     "text-surface font-semibold",
 };
 
+// T1-12 (a11y ghost-audit 2026-04-15): sm keeps 32px in Full/Mid for dense
+// inline UIs; `energy-target-low` (see globals.css) scales it to 56px only
+// when user opts into Low energy mode. default/lg/icon already scale via
+// `energy-target` (44→48→56 across modes).
 const sizeClasses: Record<string, string> = {
   default: "h-10 px-4 py-2 rounded-xl energy-target",
-  sm: "h-8 px-3 text-xs rounded-lg",
+  sm: "h-8 px-3 text-xs rounded-lg energy-target-low",
   lg: "h-12 px-8 text-base rounded-xl energy-target",
   icon: "h-10 w-10 rounded-xl energy-target",
 };

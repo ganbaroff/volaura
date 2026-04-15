@@ -96,7 +96,14 @@ function StatBar({
     keyName === "money"
       ? Math.min(100, Math.max(0, (value / 9999) * 100))
       : Math.min(100, Math.max(0, value));
-  const display = keyName === "money" ? value.toLocaleString() : String(Math.round(value));
+  // T1-10: "Pul: 0" fires same neural pathway as "0 AURA". Replace zero with
+  // qualitative "Başlanğıc" / "Starting". Once money > 0, show the number.
+  const display =
+    keyName === "money"
+      ? value === 0
+        ? t("lifesim.moneyEmpty")
+        : value.toLocaleString()
+      : String(Math.round(value));
 
   return (
     <div className="flex items-center gap-3">

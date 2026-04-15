@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import { API_BASE } from "@/lib/api/client";
+import { cn } from "@/lib/utils/cn";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -75,11 +76,34 @@ function ProgressBar({ step, totalSteps }: { step: Step; totalSteps: number }) {
 
 // ── Step label ─────────────────────────────────────────────────────────────────
 
+// T1-5: Dots replace "ADDIM 1 / 3" fraction. Fractions trigger the same
+// "incomplete" neural pathway as "X% complete" (Constitution Law 3 shame-free).
+// Shows qualitative stage label + filled dots. i18n keys: onboarding.stageLabel.*
 function StepLabel({ step, total, t }: { step: Step; total: number; t: (k: string, opts?: Record<string, string | number>) => string }) {
+  const stageKey =
+    step === 1
+      ? "onboarding.stageLabel.start"
+      : step >= total
+        ? "onboarding.stageLabel.final"
+        : "onboarding.stageLabel.almost";
+
   return (
-    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-2 text-center">
-      {t("onboarding.step")} {step} / {total}
-    </p>
+    <div className="flex flex-col items-center gap-2 mb-2">
+      <div className="flex gap-1.5" aria-hidden="true">
+        {Array.from({ length: total }).map((_, i) => (
+          <span
+            key={i}
+            className={cn(
+              "h-1.5 w-1.5 rounded-full transition-colors",
+              step >= i + 1 ? "bg-primary" : "bg-muted",
+            )}
+          />
+        ))}
+      </div>
+      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest text-center">
+        {t(stageKey)}
+      </p>
+    </div>
   );
 }
 

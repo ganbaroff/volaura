@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Loader2, BellOff, CheckCheck } from "lucide-react";
@@ -123,6 +125,7 @@ const CATEGORY_KEYS: { key: NotifCategory; labelKey: string }[] = [
 
 export default function NotificationsPage() {
   const { t } = useTranslation();
+  const { locale } = useParams<{ locale: string }>();
   const [category, setCategory] = useState<NotifCategory>("all");
 
   const { data, isLoading } = useNotifications({ limit: 50 });
@@ -212,6 +215,13 @@ export default function NotificationsPage() {
             </div>
             <h3 className="text-xl font-bold mb-2">{t("notifications.emptyTitle")}</h3>
             <p className="text-muted-foreground text-sm max-w-xs">{t("notifications.emptyDesc")}</p>
+            {/* T1-11: empty state had no exit — dead end. Soft secondary link (not button) */}
+            <Link
+              href={`/${locale}/profile?share=1`}
+              className="mt-6 text-sm text-primary hover:underline underline-offset-2"
+            >
+              {t("notifications.emptyCta")}
+            </Link>
           </div>
         )}
       </main>

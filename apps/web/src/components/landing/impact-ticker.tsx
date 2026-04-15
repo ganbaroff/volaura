@@ -50,20 +50,33 @@ function StatCard({
   icon: Icon,
   value,
   label,
+  fallbackLabel,
 }: {
   icon: React.ElementType;
   value: number;
   label: string;
+  // T1-1: below-threshold qualitative fallback. Zero counters = anti-social-proof.
+  // When count < 5, render the qualitative string instead of the raw number.
+  fallbackLabel?: string;
 }) {
   const count = useCountUp(value, 1800);
+  const belowThreshold = fallbackLabel != null && value < 5;
 
   return (
-    <div className="flex flex-col items-center gap-2 rounded-2xl border border-border bg-card px-8 py-7 shadow-sm">
+    <div className="flex flex-col items-center gap-2 rounded-2xl border border-border bg-card px-8 py-7 shadow-sm text-center">
       <Icon className="h-6 w-6 text-primary" aria-hidden="true" />
-      <span className="text-4xl font-extrabold tabular-nums text-foreground sm:text-5xl">
-        {count.toLocaleString()}
-      </span>
-      <span className="text-sm font-medium text-muted-foreground">{label}</span>
+      {belowThreshold ? (
+        <span className="text-base font-semibold text-foreground sm:text-lg">
+          {fallbackLabel}
+        </span>
+      ) : (
+        <>
+          <span className="text-4xl font-extrabold tabular-nums text-foreground sm:text-5xl">
+            {count.toLocaleString()}
+          </span>
+          <span className="text-sm font-medium text-muted-foreground">{label}</span>
+        </>
+      )}
     </div>
   );
 }
@@ -95,11 +108,13 @@ export function ImpactTicker() {
             icon={Users}
             value={totalProfessionals}
             label={t("landing.impactVolunteers")}
+            fallbackLabel={t("landing.statsFallback.professionals")}
           />
           <StatCard
             icon={CalendarCheck}
             value={totalEvents}
             label={t("landing.impactEvents")}
+            fallbackLabel={t("landing.statsFallback.events")}
           />
           <StatCard
             icon={Clock}

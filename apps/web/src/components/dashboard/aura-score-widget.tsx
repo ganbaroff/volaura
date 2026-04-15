@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import NumberFlow from "@number-flow/react";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/cn";
@@ -27,13 +27,16 @@ export function AuraScoreWidget({ score, badgeTier, isElite, locale }: AuraScore
   const style = BADGE_STYLES[badgeTier] ?? BADGE_STYLES.none;
   const tierLabel = t(`aura.${badgeTier}`, { defaultValue: badgeTier });
   const pct = Math.min(100, score);
+  // T1-4 (a11y ghost-audit 2026-04-15): drop hover scale + long width
+  // transition when user prefers reduced motion.
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.1 }}
-      whileHover={{ scale: 1.02 }}
+      whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}
       className={cn(
         "rounded-2xl border border-border bg-card p-5 cursor-pointer",
         "transition-shadow duration-300",
@@ -69,7 +72,7 @@ export function AuraScoreWidget({ score, badgeTier, isElite, locale }: AuraScore
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${pct}%` }}
-              transition={{ duration: 1.2, ease: "easeOut", delay: 0.3 }}
+              transition={prefersReducedMotion ? { duration: 0 } : { duration: 1.2, ease: "easeOut", delay: 0.3 }}
               className="h-full rounded-full bg-primary"
             />
           </div>

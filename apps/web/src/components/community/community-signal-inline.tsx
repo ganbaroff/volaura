@@ -33,11 +33,10 @@ export function CommunitySignalInline() {
     >
       <Users className="size-4" aria-hidden="true" />
       <span>
-        {t("community.signalThisWeek", {
+        {/* T1-13: was rendering raw EN default in AZ sessions. Now i18n-keyed. */}
+        {t("assessment.socialProof", {
           count: data.professionals_this_week,
-          defaultValue_one: "{{count}} professional took an assessment this week",
-          defaultValue_other: "{{count}} professionals took an assessment this week",
-          defaultValue: `${data.professionals_this_week} professionals took an assessment this week`,
+          defaultValue: "{{count}} professionals took an assessment this week",
         })}
       </span>
     </div>

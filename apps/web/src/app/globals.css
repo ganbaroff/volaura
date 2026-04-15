@@ -115,7 +115,15 @@
   --color-destructive-foreground: var(--color-on-error-container);
   --color-border:          var(--color-outline-variant);
   --color-input:           var(--color-surface-container-high);
-  --color-ring:            var(--color-primary);
+
+  /* Focus ring — Phase 1 T0-2 (ghost-audit a11y P0-2, 2026-04-15):
+     Prior `--color-ring: var(--color-primary)` shared hex with bg-primary,
+     producing 1:1 contrast on default buttons — ring invisible.
+     White ring is 21:1 on dark surfaces AND 4.7:1 on primary bg — always
+     visible, satisfies WCAG 2.2 1.4.11 non-text contrast on all interactives.
+     One-line change fixes 40+ focus states across the app. */
+  --color-ring-focus:      #FFFFFF;
+  --color-ring:            var(--color-ring-focus);
 
   /* ══════════════════════════════════════════════════════════════════════
      TIER 3 — PRODUCT TOKENS (per-product accent, applied via data-product)

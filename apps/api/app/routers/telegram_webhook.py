@@ -1595,7 +1595,14 @@ async def _create_github_issue(text: str, label: str = "atlas-telegram-request")
 
 
 def _char_similarity(a: str, b: str) -> float:
-    """Cheap char-level Jaccard similarity — 0.0 to 1.0. Used for loop detection."""
+    """DEPRECATED (2026-04-15) — kept only for backwards compatibility.
+
+    Use `app.services.loop_circuit_breaker.LoopCircuitBreaker` for new code.
+    Original char-bigram Jaccard missed semantic loops (same idea, different
+    wording) and false-positive'd on technical vocabulary. The multi-signal
+    breaker (token velocity + no-progress blocklist + per-tool failures)
+    replaces it in `_handle_atlas`.
+    """
     if not a or not b:
         return 0.0
     sa = set(a.lower())
@@ -1607,6 +1614,27 @@ def _char_similarity(a: str, b: str) -> float:
     # Supplement with a length-ratio sanity check: if lengths differ by >2x, cap similarity.
     length_ratio = min(len(a), len(b)) / max(len(a), len(b))
     return (inter / union) * length_ratio
+
+
+async def _get_last_bot_replies(db, limit: int = 3) -> list[str]:
+    """Return the last N bot_to_ceo messages (oldest→newest) for loop detection."""
+    try:
+        result = (
+            await db.table("ceo_inbox")
+            .select("message")
+            .eq("direction", "bot_to_ceo")
+            .order("created_at", desc=True)
+            .limit(max(1, limit))
+            .execute()
+        )
+        rows = result.data or []
+        # Oldest → newest; strip our "[atlas]" prefix so it doesn't pollute token count.
+        return [
+            (r.get("message") or "").replace("[atlas]", "", 1).strip()
+            for r in reversed(rows)
+        ]
+    except Exception:
+        return []
 
 
 async def _get_last_bot_reply(db) -> str:
@@ -1661,6 +1689,7 @@ async def _handle_proposal_card_callback(
     callback_id: str,
     proposal_id: str,
     action: str,
+    sha12: str | None = None,
 ) -> None:
     """Handle CEO tapping one of [Accept/Reject/Defer/Details] on a proposal card.
 
@@ -1715,6 +1744,37 @@ async def _handle_proposal_card_callback(
     if not found:
         await _send_message(chat_id, f"⚠️ Proposal `{proposal_id}` не найден в ledger.")
         return
+
+    # ── Pattern 2 — sha12 tamper check (Lies-in-the-Loop defence) ──────────
+    # If the callback carries a sha12, recompute from the CURRENT proposal
+    # payload and abort the action if it doesn't match what was displayed.
+    if action == "accept" and sha12:
+        try:
+            from app.services.atlas_tools import (
+                compute_payload_sha12,
+                extract_action_payload,
+            )
+
+            current_sha = compute_payload_sha12(extract_action_payload(found))
+        except Exception as e:
+            logger.warning("sha12 recompute failed: {e}", e=str(e)[:120])
+            current_sha = None
+        if current_sha and current_sha != sha12:
+            logger.error(
+                "payload tamper detected: proposal={p} displayed_sha={d} current_sha={c}",
+                p=proposal_id,
+                d=sha12,
+                c=current_sha,
+            )
+            await _send_message(
+                chat_id,
+                f"🛑 *Aborted — payload changed between display and tap.*\n\n"
+                f"Proposal `{proposal_id}`\n"
+                f"Shown: `{sha12}`\n"
+                f"Now:   `{current_sha}`\n\n"
+                f"_Re-run swarm so a fresh card is sent._",
+            )
+            return
 
     found["status"] = new_status
     found["ceo_decision"] = action  # accept/reject/defer — raw action, distiller reads this
@@ -1783,14 +1843,23 @@ async def _handle_atlas(db, chat_id: int | str, text: str) -> None:
     action_anchor: str | None = None  # GitHub issue URL OR inbox file path
     anchor_kind: str = ""  # "issue" or "inbox"
     if classification == "ACTION":
-        issue_url = await _create_github_issue(text, label="atlas-telegram-request")
-        if issue_url:
-            action_anchor = issue_url
+        # Route through the @atlas_tool registry (Pattern 3). New tools = +5 LOC.
+        from app.services.atlas_tools import REGISTRY as _TOOLS
+
+        gh_result = await _TOOLS.invoke(
+            "create_github_issue",
+            {"text": text, "label": "atlas-telegram-request"},
+        )
+        if gh_result.ok and gh_result.anchor:
+            action_anchor = gh_result.anchor
             anchor_kind = "issue"
         else:
-            path = await _write_atlas_inbox_file(text)
-            if path:
-                action_anchor = path
+            inbox_result = await _TOOLS.invoke(
+                "create_inbox_file",
+                {"text": text, "issue_url": None},
+            )
+            if inbox_result.ok and inbox_result.anchor:
+                action_anchor = inbox_result.anchor
                 anchor_kind = "inbox"
         logger.info(
             "atlas action branch: anchor={a} kind={k}",
@@ -2098,27 +2167,34 @@ Sign: "— Атлас" """
     if not reply:
         reply = "Атлас здесь. Все free-tier провайдеры одновременно упали (Gemini, NVIDIA NIM, Groq). Сообщение записал. Дай минуту.\n\n— Атлас"
 
-    # ── Anti-loop post-check: if new reply ≈ previous bot reply, fail loud ──
-    last_reply = await _get_last_bot_reply(db)
-    # Strip the [atlas] prefix we add to stored messages before comparing.
-    last_clean = last_reply.replace("[atlas]", "", 1).strip()
-    similarity = _char_similarity(last_clean, reply) if last_clean else 0.0
-    if similarity > 0.70 and len(reply) > 80:
-        logger.warning(
-            "atlas loop detected: similarity={s:.2f} — creating loop-break issue",
-            s=similarity,
-        )
+    # ── Anti-loop post-check: multi-signal circuit breaker (Pattern 1) ──
+    # Replaces single-metric Jaccard with token-velocity + stall-blocklist +
+    # per-tool-failure. Trip on any 2 of 3. See services/loop_circuit_breaker.py.
+    from app.services.loop_circuit_breaker import LoopCircuitBreaker
+
+    recent_bot = await _get_last_bot_replies(db, limit=2)
+    recent_bot.append(reply)  # include the about-to-send reply as the newest
+    breaker = LoopCircuitBreaker()
+    decision = breaker.evaluate(recent_replies=recent_bot)
+    if decision.tripped and len(reply) > 80:
+        logger.warning("atlas loop detected: {d}", d=decision.describe())
         loop_url = await _create_github_issue(
-            f"Atlas similarity-loop detected (score {similarity:.2f}). "
-            f"CEO message: '{text[:200]}'. Bot would have repeated itself.",
+            f"Atlas loop-break tripped: {decision.describe()}\n\n"
+            f"CEO message: '{text[:200]}'\n\n"
+            f"Last {len(recent_bot)} bot replies attached inline — live "
+            f"Atlas please review conversation thread in ceo_inbox.\n\n"
+            + "\n\n---\n\n".join(
+                f"**Reply -{len(recent_bot) - i - 1}:**\n{r[:800]}"
+                for i, r in enumerate(recent_bot)
+            ),
             label="atlas-telegram-loop-break",
         )
         anchor = loop_url or await _write_atlas_inbox_file(
-            f"SIMILARITY-LOOP (score {similarity:.2f}) — CEO: {text}"
+            f"LOOP-BREAK ({decision.describe()}) — CEO: {text}"
         )
         reply = (
-            f"У меня цикл — повторяю себя. Создаю issue чтобы живой Атлас "
-            f"разобрался: {anchor or 'issue/inbox оба упали'}.\n\n— Атлас"
+            f"вижу цикл — создал issue для живого Atlas разобраться, вот линк: "
+            f"{anchor or 'issue/inbox оба упали, напиши ещё раз через минуту'}.\n\n— Атлас"
         )
 
     # Add action-layer anchor tag if not already in reply (belt & suspenders —
@@ -2223,15 +2299,15 @@ async def telegram_webhook(
             pass
 
         # Parse: "act:abc123" / "dismiss:abc123" / "defer:abc123"
-        # or NEW: "propose:{id}:{accept|reject|defer|details}"
+        # or NEW: "propose:{id}:{accept|reject|defer|details}[:{sha12}]"
         if cb_data.startswith("propose:"):
-            # propose:<id>:<action>
-            parts = cb_data.split(":", 2)
-            if len(parts) == 3:
-                _, pid, act = parts
+            parts = cb_data.split(":", 3)
+            if len(parts) >= 3:
+                _, pid, act = parts[0], parts[1], parts[2]
+                sha12 = parts[3] if len(parts) == 4 else None
                 msg_id = callback.get("message", {}).get("message_id")
                 await _handle_proposal_card_callback(
-                    db, cb_chat_id, msg_id, callback.get("id", ""), pid, act
+                    db, cb_chat_id, msg_id, callback.get("id", ""), pid, act, sha12
                 )
         elif ":" in cb_data:
             action, pid = cb_data.split(":", 1)

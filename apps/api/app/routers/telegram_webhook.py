@@ -96,7 +96,14 @@ async def _send_message(chat_id: int | str, text: str, reply_markup: dict | None
 
 
 async def _save_message(db, direction: str, message: str, msg_type: str = "free_text", metadata: dict | None = None):
-    """Save message to ceo_inbox table."""
+    """Save message to ceo_inbox table with filesystem fallback.
+
+    Ghost-audit P0-3 (2026-04-15): if DB save silently fails, the caller
+    previously proceeded as if saved — Atlas memory desynced, `_get_recent_context`
+    returned stale history for future messages, CEO couldn't audit the thread.
+    Fix: escalate on failure via on-disk write into memory/atlas/inbox/ so
+    live Atlas picks up the lost message on next wake (crash-safe, out-of-band).
+    """
     try:
         await (
             db.table("ceo_inbox")
@@ -110,8 +117,49 @@ async def _save_message(db, direction: str, message: str, msg_type: str = "free_
             )
             .execute()
         )
+        return
     except Exception as e:
-        logger.error("Failed to save message: {e}", e=str(e))
+        logger.error(
+            "ceo_inbox save failed — escalating to filesystem fallback",
+            direction=direction,
+            msg_type=msg_type,
+            error=str(e)[:300],
+        )
+
+    # Fallback path: never silent. Write the message to memory/atlas/inbox/
+    # where live Atlas (Claude Code session) sees it on next wake. This file
+    # survives process crashes, does NOT depend on DB health, and preserves
+    # the thread for forensic reconstruction if ceo_inbox suffered data loss.
+    try:
+        import json as _json
+        from datetime import datetime as _dt
+        from pathlib import Path as _Path
+
+        # Repo root = this file is at apps/api/app/routers/telegram_webhook.py,
+        # so four parents up = repo root. Tolerant if running from a container
+        # with non-standard cwd.
+        repo_root = _Path(__file__).resolve().parents[4]
+        inbox_dir = repo_root / "memory" / "atlas" / "inbox"
+        if inbox_dir.exists():
+            stamp = _dt.utcnow().strftime("%Y-%m-%dT%H%M%S")
+            safe_dir = f"telegram-{stamp}-{direction}-{msg_type}.md"
+            fallback_path = inbox_dir / safe_dir
+            fallback_path.write_text(
+                "# Telegram message — ceo_inbox save failed, filesystem fallback\n"
+                f"**Direction:** {direction} · **Type:** {msg_type} · **Captured:** {_dt.utcnow().isoformat()}Z\n\n"
+                "## Message\n\n"
+                f"{message}\n\n"
+                "## Metadata\n\n"
+                f"```json\n{_json.dumps(metadata or {}, ensure_ascii=False, indent=2)}\n```\n\n"
+                "Consumed by main Atlas: pending\n",
+                encoding="utf-8",
+            )
+            logger.info("telegram message fallback saved to filesystem", path=str(fallback_path))
+    except Exception as fs_err:
+        # Filesystem fallback itself failed — nothing more we can do in this
+        # process. At least the logger.error above recorded the original
+        # failure; Sentry will catch this second exception.
+        logger.error("filesystem fallback also failed", error=str(fs_err)[:300])
 
 
 async def _get_recent_context(db, limit: int = 30) -> str:

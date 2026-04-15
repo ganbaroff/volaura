@@ -933,5 +933,8 @@
         "cta": "Confirm"
       }
     }
+  },
+  "a11y": {
+    "skipToContent": "Skip to main content"
   }
 }

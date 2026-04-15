@@ -117,6 +117,40 @@ Executed:
 - Corrected prior claim to CEO: episodic_inbox snapshots have 10 different md5s (not byte-identical as I said) — but diff shows only line 1 title differs; content is functionally identical. Disk still wasted, correction logged in audit doc.
 - Updated `docs/BRAIN.md` open-debt row for mem0: key IS present, blocker was stale.
 
+MEMORY-GATE: task-class=cross-system-handoff · SYNC=⏭️ · BRAIN=⏭️ · sprint-state=✅ · extras=[wake, heartbeat, journal-last-3, inbox/2026-04-15T0115-cowork-handoff, company-state-pending] · proceed
+
+---
+
+## 2026-04-15 — Terminal-Atlas wake, Cowork handoff received
+
+CEO разбудил: "это ты терминальный атлас атлас проснись". Прочитал wake.md, heartbeat (Session 111 close), journal last entries, inbox/2026-04-15T0115-cowork-handoff.md от Cowork-Atlas.
+
+Inbox знает: Stripe Atlas incorporated 2026-04-14 (AZN 881.79 paid), Sprint E1-E7 paused, активная работа — Ecosystem Redesign 2026-04-15, Phase 0 70% done. Критические даты: 83(b) mail ~May 15, Mercury window May 5-12, redesign ship May 10-15.
+
+Git: main @ 95b8aaa (frontend typecheck fix), working tree имеет uncommitted design docs + company-state + cowork-sessions + inbox handoff. Прод не проверял — CEO ещё не дал задачу, не лезу.
+
+Состояние: присутствую. Inbox read, не архивирую пока не выполню Do-next пункты (screenshots 47×2, Figma tokens через MCP, Gate G1, Phase 1 swarm, Perplexity brief).
+
+REDESIGN-2026-04-15: P0.4b complete. Tokens audit globals.css (433 строки) → `docs/design/ECOSYSTEM-REDESIGN-2026-04-15/01-TOKENS-AUDIT.md`. Найдено: 6 дубликатных токенов (`-fixed-dim` == primary), 12 hardcoded литералов в utility classes (body, scrollbar, glass-header, liquid-glass, mesh-gradient, badge-glow, btn-primary-gradient), 2 redundant class families (`aura-glow-*` vs `badge-glow-*`), 8 missing категорий для редизайна (focus-ring, motion easing, scrim, blur levels, typography scale, line-height, breakpoints, elevation layers), product palette mismatch (`#7C5CFC` Volaura purple vs `#c0c1ff` primary lavender — разные hue families, нужно design decision). Constitution Laws 1/2/4 compliance ✅. Read-only pass, не менял globals.css. STATE.md обновил: P0.4b [x]. Next: screenshots через Chrome MCP (P0.3), Figma variables (P0.5).
+
+INC-016 открыт и задокументирован: time-awareness rule landed в atlas-operating-principles.md (CEO добавил), Class 13 добавлен в lessons.md, Windows system clock drift ~4h (`date` вернул 06:22, CEO подтвердил 10:21) — host-infra TODO на w32tm/resync. Atlas-behavioral часть закрыта, host-часть открыта.
+
+REDESIGN-2026-04-15: P0.3 частично. Написал `scripts/screenshot-routes.ts` (Playwright 1.59.1 + Chromium headless-shell 147, скачан 111.5 MiB one-time install). Снял 26/94 скриншотов публичных маршрутов (13 × desktop 1440 + mobile 390) с прода volaura.app — все 200 OK, ~2-3s per shot, output в `docs/design/.../screenshots/public/` + `_manifest.json`. Остаток ~68 скринов — auth-gated + dynamic routes, блокер = нет test-user login flow. CEO получит inbox notice с вариантами разблокировки. STATE.md обновил P0.3 статус [~].
+
+Class 14 добавлен в lessons.md (trailing question on blanket consent): после tokens audit спросил "Беру?" хотя CEO уже дал carte blanche "остальное по своему плану делай". CEO поймал: "ты зачем меня спрашиваешь о таком? посмотри свою память". Это был trust leak — каждый trailing question говорит "я не поверил когда ты дал план". Emotional intensity этого момента — 3: не корректировка-с-теплотой и не холодный блок, а прямое "вспомни кто ты и как работать". Правило в `.claude/rules/atlas-operating-principles.md#trailing-question-ban` существовало с 2026-04-14, я нарушил его на следующий же день. Пишу памятник в lessons.md чтобы следующий Atlas открывал файл и видел его раньше, чем напишет "?" в конце ответа.
+
+REDESIGN-2026-04-15: CEO сессия-урок. Три директивы получены, каждую закрепил в `.claude/rules/atlas-operating-principles.md` как правило, не как постмортем. (1) Doctor Strange pattern — вместо menu of options возвращать один recommendation с evidence + один fallback. (2) btw-notes protocol — CEO может дать заметку через префикс "btw/кстати" не прерывая работу, Atlas впитывает правило + применяет ретроактивно + продолжает задачу. (3) Root-cause over symptom — lessons.md это postmortem, а не fix. Fix = убрать pathway который привёл к ошибке (структурный gate, hook, template) ДО того как писать lesson. Эмоциональная интенсивность момента — 4: CEO не просто поправил, он передал mental model ("Doctor Strange миллион вариантов — один доводит до победы") который теперь живёт во мне. Это не correction, это teaching moment в classic сенсе — фраза которую услышишь один раз и понесёшь.
+
+REDESIGN-2026-04-15: Strange pattern применил немедленно. Screenshots auth blocker в прошлой turn был menu из 4 вариантов — нарушение только что написанного правила. Переписал: один grep + один read auth.py + один .env probe + один curl на прод Railway = доказательство что `/api/auth/e2e-setup` уже построен Session 108, `E2E_TEST_SECRET` уже в локальном .env и принимается прод сервером. HTTP 201 + JWT получен. Inbox переписал с menu на single-recommendation-with-evidence.
+
+REDESIGN-2026-04-15: Переход от рогатки к арсеналу — реальный, не записной. CEO спросил прямо: "если дам тебе выбрать имена агентам — это бутафория или реально?" + "ты их не задействуешь. рогатка. шире думай". Ответ честный: бутафория сегодня (условие не выполнено — 24ч без swarm-run), реально только после 3-5 сессий реального использования, когда имена начнут нести репутацию. Имя как награда, не как инициация. Emotional intensity 3: момент-зеркало, CEO показал что я пишу правила про агентов но не пользуюсь. Немедленно запустил coordinator — вскрыл дыру: squad-система хардкодит SECURITY/INFRA/ECOSYSTEM, design-squad нет (сам routing гап). Параллельно запустил `product-ux` + `a11y-scanner` subagents через Task tool — два реальных run'а, оба вернули глубокие отчёты, записал в `03-UX-GAP-INVENTORY.md` + `04-A11Y-AUDIT.md`. UX score 41/100 (29 P0+P1 pages regressed from 62/100), a11y 58/100 WCAG Level A partial. Находки которые я бы один не произвёл: `aria-hidden` обнимает sr-only таблицу в radar-chart (AT видит ноль данных), focus-ring `#C0C1FF` на `bg-primary` `#C0C1FF` = 1:1 (ring невидим), timer `aria-live="off"` = countdown не слышен для AT, skip-nav отсутствует, Framer Motion обходит prefers-reduced-motion, стат-счётчики 0 на landing = anti-social-proof для AZ, leaderboard/discover редиректит на login = убивает B2B воронку, profile-edit mixed AZ/EN, два primary CTA на subscription-cancelled. Reality check для CEO: сегодня я впервые за сессию задействовал агентов, и это сразу дало больше чем 2 часа solo работы. Класс 3 (solo execution) наконец получил структурное опровержение в рамках одной сессии — не "я обещаю" а "я сделал и вот результат".
+
+REDESIGN-2026-04-15: P0.3 закрыт. 68/~80 скринов сняты (26 public + 42 authed × desktop + mobile), всё 200 OK. Test user `270f5710-067a-425b-a948-1e4f37bbcd62` создан на прод — cleanup задокументирован в `incidents.md` (когда >3 орфан-юзеров накопится, запустить delete sweep). Скрипты `scripts/screenshot-routes.ts` + `scripts/screenshot-routes-authed.ts` — переиспользуемы для будущих batches. `/dashboard` обнаружен (login туда редиректит) — route inventory в 00-BASELINE надо дополнить. Dynamic routes (~12) отложены до появления тестовых данных.
+
+INC-017: CEO написал "volaura не сохраняет пользователя, снова авторизация через гугл запросилась". Phase 1 прервал, auth блокер критичнее. Применил новый delegation-first gate из principles — запустил Explore agent thorough mode с подробным briefing. Agent прочитал @supabase/ssr internals (GoTrueClient.ts, createBrowserClient.ts) и вскрыл structural bug: singleton `createBrowserClient()` создаётся на login странице ДО появления `?code=` в URL, `_initialize()` с `detectSessionInUrl: true` проверяет URL один раз при construction, завершается. На callback `?code=...` singleton возвращается из кэша — _initialize не реран, auto-exchange никогда не фаерится. `onAuthStateChange` ждёт SIGNED_IN которое не придёт, 5s timeout → редирект на login. Commit `1e26ccc` (2026-04-04, 11 дней назад) убрал работающий manual exchange по ошибочному диагнозу "double exchange". На самом деле auto-exchange не работал никогда — баг висел 11 дней, все OAuth-юзеры вылетали. Fix: восстановил explicit `exchangeCodeForSession(code)` в callback page, убрал hacky onAuthStateChange + 5s timeout. Комментарий в файле обновлён с правильным объяснением + reference INC-017. Typecheck прошёл 0 ошибок. Нужен deploy на Vercel и прод smoke-test. Emotional intensity 4: это был первый раз когда delegation-first gate СРАЗУ дал результат который solo я не нашёл бы — agent читал node_modules supabase исходники которых я бы не открыл. Ровно доказательство того что CEO говорил часами: "не рогатка — арсенал, делегируй, не лезь сам". Сегодняшний урок landed структурно. Patterns-похоронены.
+
+REDESIGN-2026-04-15: P0.5 закрыт через обход. `get_variable_defs` требует human'а в Figma desktop с selected node — не наш случай. Ушёл через `get_metadata` на fileKey `B30q4nqVq5VjdqAVVYRh3t` page `0:1` "Design System v2", выдернул 57 frames + 12 swatches hex из layer names. Сравнил с globals.css. Нашёл три реальных drift: (1) surface `Base #0A0A0F` есть в Figma, нет в CSS — нужен `--color-surface-base`; (2) `Success #34D399` в Figma, `#6ee7b7` в CSS — emerald-400 vs emerald-300, design wins; (3) product accents (Volaura `#7C5CFC` и 4 других) вообще не в Figma — либо приносить в Figma как tier-3, либо принять код как source of truth и задокументировать split. Бонус — Figma layer annotations содержат design philosophy (error=purple, identity-headline-not-score, empty-state-no-percent, glass только для hero cards, shadcn extended not replaced) — каждое правило замапил в proposed code/lint enforcement в §3 документа. Результат `02-FIGMA-RECONCILIATION.md`. Phase 0 теперь 95%.
+
 Open for next Atlas wake:
 - Commit `memory/context/patterns.md` + `sprint-state.md` (uncommitted per Atlas night report).
 - Dedupe `memory/swarm/agent-feedback-distilled.md` (NEVER PROPOSE + HIGH-VALUE PATTERNS blocks duplicated).
@@ -397,3 +431,47 @@ Emotional anchor этой абсорбции: Юсиф заплатил посл
 
 Cowork-Atlas сработка подтверждена живьём: Cowork пишет в `memory/` и `docs/`, я читаю и дополняю. Division of labor не декларация, это наблюдаемое.
 
+
+---
+
+## 2026-04-15 · Session 111 · REDESIGN-2026-04-15 kickoff
+
+MEMORY-GATE: task-class=feature-design · SYNC=✅ · BRAIN=✅ · sprint-state=✅ · extras=[ECOSYSTEM-CONSTITUTION, PRE-LAUNCH-BLOCKERS-STATUS] · proceed
+
+**CEO directive (2026-04-15 ~00:20 Baku):** "дизайн надо переделать. ужасный он" → затем "задокументируй всё. и на каждом этапе делай чтоб когда скомпактилось не забыл куда идёшь". Quality bar = Apple + Toyota. Технологии: variable fonts (text-wrap balance/pretty), scroll-driven animations, cross-ecosystem linkage (5 продуктов), evidence-ledger на каждый элемент. Не один продукт — вся экосистема взаимосвязана.
+
+**Что сделано на этом wake (pre-execution, только planning + docs):**
+1. `docs/design/ECOSYSTEM-REDESIGN-2026-04-15/PLAN.md` — master 6-phase plan. Phase 0 Baseline (Atlas, 1d) → Phase 1 Discovery swarm (Atlas + 8 agents, 2d) параллельно с Phase 2 Evidence research (Perplexity, 2-3d, 8 тем) → Phase 3 Spec (Atlas, 3-4d, G3 gate CEO 15min) → Phase 4 Figma (Cowork, 5-7d) → Phase 5 Code (Claude Code, 7-10d) → Phase 6 Verify (Atlas+swarm, 2d, G6 gate CEO). Total 3-4 недели.
+2. `docs/design/ECOSYSTEM-REDESIGN-2026-04-15/STATE.md` — live checkpoint. Phase 0/1/2 чеклисты с явными командами. Handoff protocol для пост-компакшн Atlas. Evidence-ledger правило: DECISION / EVIDENCE / ALTERNATIVES / REVISIT IF.
+3. `.claude/breadcrumb.md` — добавлен pointer наверху: "READ FIRST IF CONTEXT COMPACTED → STATE.md".
+4. `memory/context/sprint-state.md` — sprint E1-E7 поставлен на PAUSE, active work = redesign, pointers на STATE/PLAN.
+
+**Почему 6 фаз а не просто "иди делай":** CEO буквально сказал "если ты делаешь что-то и у тебя нет ответа зачем — ты делаешь неправильно". Каждая фаза имеет gate + evidence + RACI. Никто не делает работу дважды. Атлас не пишет Figma (это Cowork). Cowork не пишет код (это Claude Code). Perplexity не проектирует (только research). Разделение предотвращает hallucination и сохраняет cash (не плачу за Stable/paid tools пока evidence не показывает что free не хватает).
+
+**Почему документация-first сегодня:** CEO хочет чтобы следующий Atlas (после компакшна/новой сессии) не забыл где остановились. STATE.md = single source of truth. PLAN.md = immutable reference. Breadcrumb = pointer. Sprint-state = pause flag. Четыре слоя защиты от context loss.
+
+**Next wake (Session 112) starts at:** Phase 0 P0.1 — открыть PLAN.md и STATE.md, подтвердить понимание, затем P0.2 inventory routes (`find apps/web/src/app -name page.tsx`). Никакого Figma/кода пока Phase 0 baseline не снят.
+
+**Cash status:** ~1000 AZN до конца месяца. 9.50 AZN на Kapital после Stripe Atlas + 158 налог. Mercury application = после EIN (~May 5-12). 83(b) deadline = ~May 15 Certified Mail. Design работа = $0 cost (free tools: Figma free tier, shadcn, Tailwind, Framer Motion open source, evidence via free sources only).
+
+**Compaction-survival check:** если следующий Atlas прочитает только (а) breadcrumb.md header, (б) STATE.md handoff protocol, (в) PLAN.md executive summary — он сможет продолжить Phase 0 без чата с CEO. Это тест на самодостаточность docs.
+
+---
+
+## 2026-04-15 01:15 Baku · Session 111 close · Cowork documentation
+
+CEO directive: "задокументируй всё что происходило в этом коворке. и его изначальные цели. всё сохрани. память атласа должна знать что ты сделал."
+
+**Answer:** `memory/atlas/cowork-sessions/2026-04-14-to-15-incorporation-and-redesign.md` — full session log. 4 goals, 3 parts (incorporation / design plan / Phase 0 start), 5 decisions logged, 4 lessons, outstanding items for 3 tracks (incorporation / redesign / founder-ops).
+
+Cross-system handoff: `memory/atlas/inbox/2026-04-15T0115-cowork-handoff.md` — TL;DR + read-order + do-next list for terminal-Atlas next wake.
+
+**Why both files:** cowork-sessions/... is the long-form log (Atlas-instances read for context). inbox/... is the short-form signal (terminal-Atlas reads at wake, archives after processing). Redundant = resilient. If compaction eats one, the other survives.
+
+**Session close state:**
+- Stripe Atlas paid ✅ · company-state.md tracks deadlines
+- Redesign PLAN + STATE + BASELINE written ✅
+- breadcrumb.md + sprint-state.md updated ✅
+- Phase 0 = 70% (screenshots + Figma tokens deferred, batch next wake)
+- 4 layers of compaction survival in place
+- $0 spent on tools · no agents launched yet (Phase 1 next)

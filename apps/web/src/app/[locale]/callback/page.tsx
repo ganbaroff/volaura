@@ -57,80 +57,81 @@ function AuthCallbackContent() {
       return;
     }
 
-    const supabase = createClient();
-
-    // WHY: createBrowserClient is a singleton with detectSessionInUrl: true.
-    // When the singleton was first created (on the login page), it stored the
-    // code_verifier in document.cookie. On this callback page, detectSessionInUrl
-    // causes the singleton to auto-initiate exchangeCodeForSession internally the
-    // moment it sees ?code= in the URL. Calling exchangeCodeForSession() manually
-    // a second time would attempt to reuse a single-use code → 401 from Supabase.
-    //
-    // SOLUTION: Do NOT call exchangeCodeForSession manually. Instead, listen via
-    // onAuthStateChange which fires once the auto-exchange completes successfully.
-    // A 5-second timeout guards against silent failures.
-
-    const timeoutId = setTimeout(() => {
-      if (!isMounted.current) return;
-      console.error("[callback] Timed out waiting for SIGNED_IN event");
+    const code = searchParams.get("code");
+    if (!code) {
+      console.error("[callback] Missing ?code= in callback URL");
       router.replace(`/${locale}/login?message=oauth-error`);
-    }, 5000);
+      return;
+    }
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event !== "SIGNED_IN" || !session) return;
+    // WHY (INC-017, 2026-04-15): previous implementation relied on the singleton
+    // `createBrowserClient` auto-calling exchangeCodeForSession when it "sees"
+    // ?code= via detectSessionInUrl. That assumption is false when the singleton
+    // was first constructed on the login page (no ?code= in URL) — _initialize()
+    // runs once at construction, does NOT re-check the URL on subsequent pages,
+    // so the auto-exchange never fires. Result: session never persists, user
+    // bounces back to login. Repeat bug reported by CEO 2026-04-15.
+    //
+    // FIX: explicitly call exchangeCodeForSession(code). The code_verifier is
+    // still in document.cookie from signInWithOAuth, so the exchange works.
+    // No double-exchange risk because auto-exchange never runs for a reused
+    // singleton (the original concern in commit 1e26ccc was misdiagnosed).
 
-        clearTimeout(timeoutId);
+    void (async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+
+      if (!isMounted.current) return;
+
+      if (error || !data.session) {
+        console.error("[callback] exchangeCodeForSession failed:", error?.message);
+        router.replace(`/${locale}/login?message=oauth-error`);
+        return;
+      }
+
+      const session = data.session;
+      setSession(session);
+
+      // Attribution + OAuth metadata capture (fire-and-forget, non-blocking)
+      const attribution = readAndClearAttribution();
+      const oauthMeta = readAndClearFromStorage(OAUTH_META_KEY);
+      const payload = { ...attribution, ...oauthMeta };
+      if (Object.keys(payload).length > 0) {
+        fetch(`${API_BASE}/profiles/me`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify(payload),
+        }).catch(() => {
+          // Non-blocking — analytics loss acceptable, auth must not fail
+        });
+      }
+
+      // Honour ?next= redirect (relative paths only, prevents open redirect)
+      const rawNext = searchParams.get("next");
+      if (rawNext?.startsWith("/") && !rawNext.startsWith("//")) {
+        router.replace(rawNext);
+        return;
+      }
+
+      // Route new users (no profile yet) to onboarding, returning users to dashboard
+      try {
+        const res = await fetch(`${API_BASE}/profiles/me`, {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        });
         if (!isMounted.current) return;
-
-        setSession(session);
-
-        // Attribution + OAuth metadata capture (fire-and-forget, non-blocking)
-        const attribution = readAndClearAttribution();
-        const oauthMeta = readAndClearFromStorage(OAUTH_META_KEY);
-        const payload = { ...attribution, ...oauthMeta };
-        if (Object.keys(payload).length > 0) {
-          fetch(`${API_BASE}/profiles/me`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${session.access_token}`,
-            },
-            body: JSON.stringify(payload),
-          }).catch(() => {
-            // Non-blocking — analytics loss is acceptable, auth must not fail
-          });
-        }
-
-        // Honour ?next= redirect (relative paths only, prevents open redirect)
-        const rawNext = searchParams.get("next");
-        if (rawNext?.startsWith("/") && !rawNext.startsWith("//")) {
-          router.replace(rawNext);
+        if (res.status === 404) {
+          router.replace(`/${locale}/onboarding`);
           return;
         }
-
-        // Route new users (no profile yet) to onboarding, returning users to dashboard
-        try {
-          const res = await fetch(`${API_BASE}/profiles/me`, {
-            headers: { Authorization: `Bearer ${session.access_token}` },
-          });
-          if (!isMounted.current) return;
-          if (res.status === 404) {
-            router.replace(`/${locale}/onboarding`);
-            return;
-          }
-        } catch {
-          // Network error — fall through to dashboard
-        }
-
-        router.replace(`/${locale}/dashboard`);
+      } catch {
+        // Network error — fall through to dashboard
       }
-    );
 
-    return () => {
-      clearTimeout(timeoutId);
-      subscription.unsubscribe();
-    };
+      router.replace(`/${locale}/dashboard`);
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

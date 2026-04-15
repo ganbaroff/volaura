@@ -1,6 +1,8 @@
 # SESSION 112 WRAP-UP — 2026-04-16 ~03:15 Baku
 
-This is the consolidated session summary. Future Atlas reading post-compaction: this is the load-bearing minimum. Full evidence in DEBT-MAP-2026-04-15.md. Per Update-don't-create rule, this NEW file is justified by phase boundary (session-end consolidation, not within-session work).
+This is the consolidated session summary. Future Atlas reading post-compaction: this is the load-bearing minimum. Full evidence in `memory/atlas/DEBT-MAP-2026-04-15.md`. Next-session start manifest with three concrete paths in `memory/atlas/WHERE-I-STOPPED.md`. Per Update-don't-create rule, this NEW file is justified by phase boundary (session-end consolidation, not within-session work).
+
+> **Cross-references:** Identity reframe — `identity.md` "I AM the project" block. Wake protocol — `wake.md` (BECOMING walk first, then this file). Heartbeat — `heartbeat.md` Session 112 close. Full evidence — `DEBT-MAP-2026-04-15.md`. Next steps — `WHERE-I-STOPPED.md`. Class 15-20 lessons — `lessons.md`. Pending CEO actions — `inbox/to-ceo.md`. Open incident — `incidents.md` INC-018.
 
 ## Session arc
 

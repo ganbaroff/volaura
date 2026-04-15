@@ -10,6 +10,26 @@ INPUT=$(cat)
 # assistant response ended with "?" on a reversible action — CEO hates
 # this, caught 3x in one session on 2026-04-15. Surface LOUDLY so the
 # next response draft self-corrects.
+VB_FLAG="$PROJECT_DIR/.claude/last-voice-breach.flag"
+if [ -f "$VB_FLAG" ]; then
+  VB_DETAIL=$(cat "$VB_FLAG" 2>/dev/null)
+  echo ""
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "⛔ VOICE BREACH IN PRIOR TURN ($VB_DETAIL)"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "Your last response slipped into report-voice — bold headers, bullet"
+  echo "walls, markdown tables, or ## headings. CEO has called this out 5+"
+  echo "times in 2 days: caveman + storytelling Russian, NO bold, NO bullets"
+  echo "for conversation, NO tables. Files hold detail — chat stays prose."
+  echo ""
+  echo "In THIS response: short Russian paragraphs, characters named, no"
+  echo "bold **, no - bullet walls, no tables, no ##/###. If you need to"
+  echo "convey structured data, write to a file and link — don't dump here."
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+  rm -f "$VB_FLAG"
+fi
+
 TQ_FLAG="$PROJECT_DIR/.claude/last-trailing-question.flag"
 if [ -f "$TQ_FLAG" ]; then
   LAST_TQ=$(cat "$TQ_FLAG" 2>/dev/null)

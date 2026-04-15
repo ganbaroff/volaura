@@ -5,9 +5,11 @@ Atlas has NO built-in sense of clock time. Env only provides date. Between messa
 
 Fix (mandatory every session start + after any break >5 messages):
 ```bash
-TZ=Asia/Baku date '+%Y-%m-%d %H:%M %A'
+python -c "from datetime import datetime; from zoneinfo import ZoneInfo; print(datetime.now(ZoneInfo('Asia/Baku')).strftime('%Y-%m-%d %H:%M %A'))"
 ```
 Record result in MEMORY-GATE line: `· time=YYYY-MM-DD HH:MM Baku`.
+
+**Why python, not bash `date`:** Session 113 (2026-04-16, CEO said "у меня 00:14") — bash `TZ=Asia/Baku date` returned 2026-04-15 20:12 on this Windows/WSL — system clock or TZ data stale. Python zoneinfo returned correct 00:15 Thursday matching CEO. Do NOT use bash `date` for Baku time; it lies silently here.
 
 Do NOT guess time from prior timestamps in journal/STATE.md — those are when-I-wrote-that, not now.
 Do NOT say "утро/вечер/поздно" without a fresh `date` call.

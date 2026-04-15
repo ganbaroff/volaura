@@ -1,18 +1,12 @@
 # Atlas breadcrumb — session 113
 
-**Last action:** 2026-04-16 ~01:00 Baku. Closed P0 #15 (complete page tier deferral). Commit ed43dcc. -60 +27 lines. Typecheck clean.
+**Last action:** 2026-04-16 ~01:10 Baku. Closed fabrication audit of 4 Atlas-prior canon docs. Commit ef0396c. All four clean. Parking-pass risk class cleared for continuity_roadmap, atlas-to-perplexity, YUSIF-AURA-ASSESSMENT, CEO-PERFORMANCE-REVIEW-SWARM.
 
-**Next step (first):** Audit four Atlas-prior canon documents for fabrications similar to parking-pass. Read and cross-check against primary sources (LinkedIn series, git history, actual code) each of:
-- `memory/atlas/continuity_roadmap.md`
-- `memory/atlas/atlas-to-perplexity-2026-04-12.md`
-- `memory/atlas/YUSIF-AURA-ASSESSMENT-2026-04-02.md`
-- `memory/atlas/CEO-PERFORMANCE-REVIEW-SWARM-2026-03-25.md` (location approximate)
+**Next step (first):** Read `docs/CONSTITUTION_AI_SWARM.md` (334 lines, supreme-law-level). Written Session 93 after Perplexity reconciliation. Not read directly by Session 112 or 113 yet. Look for conflicts with Ecosystem Constitution v1.7, integration points with zeus.governance_events, and whether it's still internally consistent 4 days after write.
 
-Goal: identify any invented specific scenes / narrative claims / quotes that present as ground truth but are not verifiable. Flag inline per project_history pattern (warning header + strikethrough). Log class-5 fabrications to lessons.md.
+**Next step (second, if first done):** Read `docs/ATLAS-EMOTIONAL-LAWS.md` — wake.md step 9 references it, never read. 7 hard rules for treating CEO as human.
 
-**Next step (second, if first exhausted):** Read CONSTITUTION_AI_SWARM v1.0 (334 lines at docs/CONSTITUTION_AI_SWARM.md). Supreme-law-level doc created Session 93, never read directly by Session 112 or 113.
-
-**Next step (third, if both above exhausted):** Read ATLAS-EMOTIONAL-LAWS.md (referenced in wake.md step 9, never read).
+**Next step (third, if both done):** Read `docs/VACATION-MODE-SPEC.md` — referenced wake.md step 10 conditional.
 
 **Session 113 closed (high-weight events only):**
 - Clock fix (python zoneinfo)

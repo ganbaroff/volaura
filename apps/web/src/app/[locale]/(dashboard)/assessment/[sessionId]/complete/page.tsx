@@ -119,17 +119,13 @@ function GamingFlagsWarning({ flags }: { flags: string[] }) {
   );
 }
 
-// ── Tier → identity label mapping (for screen reader copy only) ────────
-
-const TIER_IDENTITY_KEYS: Record<string, string> = {
-  platinum: "aura.identity_platinum",
-  gold: "aura.identity_gold",
-  silver: "aura.identity_silver",
-  bronze: "aura.identity_bronze",
-  none: "aura.identity_none",
-};
-
 // ── Animated counter ───────────────────────────────────────────────────
+
+// NOTE: Tier identity reveal removed from this page per Crystal Law 6 Amendment
+// + G21 (vulnerability window rule). Badge tier and crystal rewards are deferred
+// to the next AURA page visit so users don't see emotionally loaded status
+// feedback at the moment they complete an assessment. The "View AURA score" card
+// (below) routes them there when they choose to look.
 
 function useAnimatedCounter(target: number, duration = 800) {
   const [value, setValue] = useState(0);
@@ -260,7 +256,10 @@ export default function AssessmentResultsPage() {
   const overallAura = useAnimatedCounter(phase === "reveal" ? (aura?.total_score ?? 0) : 0, 800);
   const percentile = aura?.percentile_rank ?? null;
   const effectiveScore = aura?.effective_score ?? null;
-  const tier = score >= 90 ? "platinum" : score >= 75 ? "gold" : score >= 60 ? "silver" : score >= 40 ? "bronze" : "none";
+  // Tier derivation intentionally removed — Crystal Law 6 Amendment defers
+  // badge tier reveal to the next /aura page visit. See TIER_IDENTITY_KEYS
+  // removal note above. Share-card emoji uses overall AURA score threshold
+  // inline below, not a tier name, so we don't leak tier identity on this page.
   const hasGamingFlags = (result?.gaming_flags?.length ?? 0) > 0;
 
   const competencyLabel = result?.competency_slug
@@ -344,12 +343,12 @@ export default function AssessmentResultsPage() {
           <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
             {competencyLabel}
           </p>
-          {/* Identity framing — Research #10: identity headline first, score as context */}
+          {/* Neutral completion headline — tier identity moved to /aura page per
+              Crystal Law 6 Amendment. The competency just assessed stays visible
+              as the subject of the completion, but no badge-tier naming. */}
           <h1 className="text-2xl font-bold text-foreground">
-            {t(TIER_IDENTITY_KEYS[tier] ?? "aura.identity_none", {
-              defaultValue: tier !== "none"
-                ? `${tier.charAt(0).toUpperCase() + tier.slice(1)}-level Professional`
-                : "Volaura Professional",
+            {t("assessment.completeHeadline", {
+              defaultValue: "Assessment complete",
             })}
           </h1>
           <p className="text-4xl font-bold tabular-nums text-muted-foreground mt-0.5">
@@ -435,47 +434,10 @@ export default function AssessmentResultsPage() {
         </div>
       </motion.div>
 
-      {/* Growth Trajectory — "X points to next tier" (D.2-B) */}
-      {aura && (() => {
-        const s = aura.total_score;
-        const TIERS = [
-          { key: "bronze",   min: 40, label: t("aura.bronze",   { defaultValue: "Bronze"   }), bar: "bg-amber-600"  },
-          { key: "silver",   min: 60, label: t("aura.silver",   { defaultValue: "Silver"   }), bar: "bg-slate-400"  },
-          { key: "gold",     min: 75, label: t("aura.gold",     { defaultValue: "Gold"     }), bar: "bg-yellow-500" },
-          { key: "platinum", min: 90, label: t("aura.platinum", { defaultValue: "Platinum" }), bar: "bg-cyan-400"   },
-        ];
-        const nextIdx = TIERS.findIndex(tier => s < tier.min);
-        const isMax = nextIdx === -1;
-        const next = isMax ? null : TIERS[nextIdx];
-        const prevMin = nextIdx <= 0 ? 0 : TIERS[nextIdx - 1].min;
-        const pct = isMax ? 100 : Math.min(100, Math.round(((s - prevMin) / (next!.min - prevMin)) * 100));
-        const ptsLeft = isMax ? 0 : Math.ceil(next!.min - s);
-        return (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.55 }}
-            className="rounded-xl bg-surface-container-low px-4 py-3 space-y-2"
-          >
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span className="font-medium">
-                {isMax
-                  ? t("assessment.tierMaxReached", { defaultValue: "Platinum tier reached! 🏆" })
-                  : t("assessment.progressToNextTier", { pts: ptsLeft, tier: next!.label, defaultValue: `${ptsLeft} pts to ${next!.label}` })}
-              </span>
-              <span>{pct}%</span>
-            </div>
-            <div className="h-1.5 rounded-full bg-border overflow-hidden">
-              <motion.div
-                className={cn("h-full rounded-full", isMax ? "bg-cyan-400" : next!.bar)}
-                initial={{ width: 0 }}
-                animate={{ width: `${pct}%` }}
-                transition={{ delay: 0.75, duration: 0.9, ease: "easeOut" }}
-              />
-            </div>
-          </motion.div>
-        );
-      })()}
+      {/* Growth trajectory with tier names intentionally removed here per
+          Crystal Law 6 Amendment. The same progress-to-next-tier bar belongs on
+          /aura where the user chooses to see badge context. The "View AURA score"
+          card below is the deliberate handoff. */}
 
       {/* AURA Sync Pending Banner */}
       {result?.aura_updated === false && (
@@ -641,14 +603,19 @@ export default function AssessmentResultsPage() {
           className="rounded-xl border border-primary/30 bg-primary/5 p-4 flex flex-col items-center gap-3 text-center"
         >
           <p className="text-sm font-semibold text-foreground">
-            {/* GROW-N01: Silver tier gets "building momentum" copy, not "top tier" */}
-            {tier === "silver" ? t("assessment.shareNudgeSilver") : t("assessment.shareNudge")}
+            {/* Neutral share copy — tier-specific framing moved off this page per
+                Crystal Law 6 Amendment. Share-nudge stays because the share link
+                goes to the public /u/<username> card, where tier context is
+                appropriate and user-initiated. */}
+            {t("assessment.shareNudge")}
           </p>
           <Button
             onClick={() => {
               if (!username) return;
               const cardUrl = `https://volaura.app/u/${username}?utm_source=assessment_complete&utm_medium=share`;
-              const tierEmoji = tier === "platinum" ? "💎" : "🥇";
+              // Neutral emoji on the share card — the public profile page carries
+              // the actual tier badge imagery, this page does not reveal it.
+              const tierEmoji = "✨";
               // BATCH-O CULT #4: locale-aware share text — no more hardcoded English going to Telegram/WhatsApp
               const percentileText = percentile !== null ? ` · ${t("profile.topPercent", { percent: Math.max(1, Math.round(100 - percentile)) })}` : "";
               const text = t("assessment.shareBody", {

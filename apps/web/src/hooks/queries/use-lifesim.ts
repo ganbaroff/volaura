@@ -8,6 +8,10 @@ import {
   purchaseShopItemApiLifesimPurchasePost,
   submitChoiceApiLifesimChoicePost,
 } from "@/lib/api/generated";
+import type {
+  FeedResponse,
+  NextChoiceResponse,
+} from "@/lib/api/generated/types.gen";
 
 /**
  * LifeSim queries + mutations — Life Feed MVP (sprint A7).
@@ -31,28 +35,28 @@ interface NextChoiceParams {
 }
 
 export function useLifesimFeed(limit = 50) {
-  return useQuery({
+  return useQuery<FeedResponse>({
     queryKey: ["lifesim-feed", limit],
     queryFn: async () => {
       const { data, error } = await getFeedApiLifesimFeedGet({
         query: { limit },
       });
       if (error) throw new Error("Failed to fetch life feed");
-      return data ?? { data: [] };
+      return (data ?? { data: [] }) as FeedResponse;
     },
     staleTime: 30 * 1000, // feed updates on each choice — short stale so UI reflects fast
   });
 }
 
 export function useLifesimNextChoice(params: NextChoiceParams, enabled = true) {
-  return useQuery({
+  return useQuery<NextChoiceResponse>({
     queryKey: ["lifesim-next-choice", params],
     queryFn: async () => {
       const { data, error } = await getNextChoiceApiLifesimNextChoiceGet({
         query: params,
       });
       if (error) throw new Error("Failed to fetch next choice");
-      return data ?? { event: null, pool_size: 0 };
+      return (data ?? { event: null, pool_size: 0 }) as NextChoiceResponse;
     },
     enabled,
     // Don't auto-refetch — user pulls next choice explicitly via mutation follow-up

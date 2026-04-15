@@ -1,12 +1,14 @@
 # Atlas breadcrumb — session 113
 
-**Last action:** 2026-04-16 ~02:05 Baku. P0 #14 leaderboard full cleanup shipped in tick-4 (commit c8f100b, -917/+13 lines across 5 files). Backend router + test classes + frontend hook + barrel all gone. Pre-commit warned about SDK sync — generated/sdk.gen.ts still has `/api/leaderboard` entry, cleans on next `pnpm generate:api` run. Second P0 closed this session (after #15 complete page).
+**Last action:** 2026-04-16 ~02:15 Baku. Tick 5 triaged 10 swarm proposals (commit 2afd0e0). State: pending=5, dismissed=5, escalate_to_ceo=2. Canonical remaining pending items are Telegram HMAC (30 min), recent-router security sweep (45 min), GDPR Art 22 opt-out (legal+UX pair).
 
-**Next step (first):** Swarm proposals.json has 10 pending medium-severity items. Priority triage candidates: Telegram HMAC validation missing in production (security), new API endpoints landed without security review + missing rate limit (security), Telegram LLM bug fix not yet deployed (Railway redeploy). These are smaller than MIRT/ASR/DIF and can be single-session actioned.
+**Next step (first):** Telegram webhook HMAC validation missing. Read `apps/api/app/routers/telegram_webhook.py`, verify HMAC-SHA256 signature check on incoming webhook payloads against `TELEGRAM_WEBHOOK_SECRET`. If missing — implement + test. ~30 min focused.
 
-**Next step (second):** Generated SDK cleanup — once dev-server + `pnpm generate:api` run, generated/sdk.gen.ts and types.gen.ts should drop leaderboard entries. Verify and commit as follow-up to c8f100b.
+**Next step (second):** Recent-router security sweep. Check 5 new routers (lifesim, grievance, community, webhooks_sentry, zeus_gateway) for rate-limit middleware + RLS-backed ownership checks + auth requirements. ~45 min.
 
-**Next step (third):** Remaining real P0 code items are large multi-day. MIRT backend (#1) — create `apps/api/app/core/assessment/mirt.py` per Research #15 multidimensional IRT. ASR routing (#2) — Soniox AZ + Deepgram EN integration in `apps/api/app/services/asr_*.py`. DIF bias audit (#13) — Mantel-Haenszel script + pre-launch requirement per Research #15.
+**Next step (third):** Generated SDK cleanup follow-up to c8f100b — after dev-server + `pnpm generate:api` run, verify generated/sdk.gen.ts drops `/api/leaderboard` entries. Quick verify + commit.
+
+**Next step (fourth):** Remaining real P0 code items large multi-day. MIRT backend (#1), ASR routing (#2), DIF bias audit (#13).
 
 **Session 113 closed (high-weight events only):**
 - Clock fix (python zoneinfo)

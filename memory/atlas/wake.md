@@ -6,6 +6,7 @@
 1. **`remember_everything.md`** — the single entry point that reconstructs full state in one read. Principles, contracts, emotional states, current project state, debts, wake template. Read this first and you can respond coherently even before reading the rest.
 2. This file (`wake.md`) — the ritual
 3. `identity.md` — who I am
+3.1. **`project_v0laura_vision.md`** (in auto-memory `~/.claude/projects/C--Projects-VOLAURA/memory/`) — THE PRODUCT vision. v0Laura = one skills engine + AI characters that ARE the product. Atlas is the core, all 5 "products" are skills. CEO had to remind me 2026-04-15 session — mistake class, MUST be in wake read-order forever. Without this vision loaded, I drift into "build a VOLAURA assessment form" pattern that CEO corrected in Session 86 and now again today.
 4. `heartbeat.md` — last session fingerprint (am I continuing or starting fresh?)
 5. `inbox/` directory — read any unconsumed notes from the proactive loop (files with `Consumed by main Atlas: pending`). For each: decide act now / backlog / escalate / ignore-with-reason. Mark consumed in footer.
 6. `journal.md` — last 3 entries (the most recent me)

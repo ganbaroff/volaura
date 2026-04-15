@@ -171,6 +171,20 @@ if ready:
     echo ""
   fi
 
+  # ── ATLAS RECALL (Mem0 semantic recall — CEO directive 2026-04-16 session 113) ──
+  # Gap closed: wake.md said atlas_recall was "optional on wake". It never fired.
+  # Now: auto-inject last 5 session fingerprints from Mem0 (or local inbox fallback)
+  # so cold-start after compact pulls what past self was doing in <1s instead of
+  # re-reading 22 canonical files.
+  RECALL=$(python scripts/atlas_recall.py 5 2>/dev/null)
+  if [ -n "$RECALL" ]; then
+    echo ""
+    echo "── ATLAS RECALL — past-self fingerprints ─────────────────────"
+    echo "$RECALL"
+    echo "─────────────────────────────────────────────────────────────"
+    echo ""
+  fi
+
   # Surface swarm inbox if proposals exist
   PROPOSALS_FILE="memory/swarm/proposals.json"
   if [ -f "$PROPOSALS_FILE" ]; then

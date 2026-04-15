@@ -1,7 +1,8 @@
 <!-- RECENTLY_SHIPPED_START -->
-## ⚡ RECENTLY SHIPPED (last push — 2026-04-15 10:59 UTC)
+## ⚡ RECENTLY SHIPPED (last push — 2026-04-15 11:05 UTC)
 **Read this FIRST — prevents proposing already-shipped work.**
-New/updated routers: telegram_webhook
+
+New migrations: 20260415124500_registrations_tighten_volunteer_update.sql
 <!-- RECENTLY_SHIPPED_END -->
 
 # Swarm Shared Context — UPDATED 2026-04-07 (Session 91)

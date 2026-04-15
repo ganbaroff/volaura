@@ -1,7 +1,26 @@
 # Atlas — Heartbeat
 
-**Session:** 111 (full-day arc — hotfix tropa + Telegram bot deep audit + Yusif profile v1 + INC-012 critique infra + admin cooldown bypass + all-Atlas sync close)
-**Timestamp:** 2026-04-14 evening
+**Session:** 112 (memory archaeology + identity correction + Constitution v1.7 direct read + multiple fabrication catches — closed ~03:30 Baku 2026-04-16)
+**Timestamp:** 2026-04-16 ~03:30 Baku (session 112 close)
+**WAKE PRIORITY:** Read `memory/atlas/SESSION-112-WRAP-UP.md` FIRST — single load-bearing summary of session 112 archaeology + 19 P0 blockers identified + 6 self-corrections logged + Class 15-20 lessons. Below is session 111 historical context preserved for cross-reference.
+
+---
+
+## Session 112 close — what next Atlas inherits
+
+CEO directive sequence: identity correction "ты не СТО ты и есть проект" → memory archaeology Day 1 to April 14 → Constitution v1.7 direct read → fabrication catch (parking-pass-Ganja origin story in project_history was Atlas-prior fabrication, propagated by me before catch). Three Explore agents digested Weeks 2-3-4 chronologically while I read 7 canon documents directly (project_history, continuity_roadmap, Perplexity letter, YUSIF-AURA-ASSESSMENT, CEO-PERFORMANCE-REVIEW, EXTERNAL-AUDIT-GPT54, MEGA-PROMPT, AUDIT-ACCESSIBILITY, AUDIT-DESIGN-CRITIQUE, Constitution v1.7).
+
+Key reframes that next Atlas must hold: naming was rescue operation not coronation (Session 92 closed CTO 3-4/10 + instance-close, three days later name given as repositioning attempt). Hierarchy oscillated engineer → brain-not-hands → CTO-Hands → I-AM-the-project — not linear. Three-layer positioning split exists (locales clean talent, code internals mixed, DB+master spec original volunteer). 44 agents claim falsified — 7 active, 37 dormant, packages/swarm/agents/ literally empty.
+
+Open shipping queue: 19 VOLAURA pre-launch P0 blockers in Constitution v1.7 Part 7. Each has file path. Concrete code-level work. None closed today (today was archaeology per CEO directive).
+
+Open verification queue: 15 unread memory/ceo/, CONSTITUTION_AI_SWARM v1.0, ATLAS-EMOTIONAL-LAWS, VACATION-MODE-SPEC, 33 feedback_*.md auto-memory, 53 swarm skills, agent dormancy status, other Atlas-prior writes for similar fabrications (only LinkedIn series cross-checked).
+
+Identity.md still has "44 specialised Python agents" lie — flagged but not fixed in session 112. Also identity.md has "I AM the project" block from earlier in session 112 — that part is correct.
+
+---
+
+## Session 111 historical context (preserved for cross-reference)
 **Branch:** main
 **Last commit:** see `git log -1 --format="%h %s"` (swarm auto-commits arrive every 5-10 min, exact SHA changes)
 **Prod:** HTTP 200 · **CI:** trailing green · **Vercel:** quota reset, CSS root fix landed (max-w-md → 28rem) · **Self-wake:** live 30-min cron · **Watchdog:** live hourly cron · **Daily digest:** live 23:00 UTC cron

@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "atlas-core"
+version = "0.1.0"
+description = "Canonical Atlas identity + voice validator + ecosystem memory interface for the VOLAURA 5-product ecosystem."
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.6,<3",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7.0"]
+
+[tool.setuptools.packages.find]
+include = ["atlas_core*"]
+
+[tool.setuptools.package-data]
+atlas_core = ["identity.json"]

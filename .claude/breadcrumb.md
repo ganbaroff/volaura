@@ -1,12 +1,12 @@
 # Atlas breadcrumb — session 113
 
-**Last action:** 2026-04-16 ~01:10 Baku. Closed fabrication audit of 4 Atlas-prior canon docs. Commit ef0396c. All four clean. Parking-pass risk class cleared for continuity_roadmap, atlas-to-perplexity, YUSIF-AURA-ASSESSMENT, CEO-PERFORMANCE-REVIEW-SWARM.
+**Last action:** 2026-04-16 ~01:25 Baku. Audited three supreme-law-level docs that Session 112 flagged unread: CONSTITUTION_AI_SWARM.md (commit a77118d, 3 staleness fixes), ATLAS-EMOTIONAL-LAWS.md (six→seven laws header fix), VACATION-MODE-SPEC.md (clean, template vacation-mode.json + SECRETS-ROTATION.md already landed).
 
-**Next step (first):** Read `docs/CONSTITUTION_AI_SWARM.md` (334 lines, supreme-law-level). Written Session 93 after Perplexity reconciliation. Not read directly by Session 112 or 113 yet. Look for conflicts with Ecosystem Constitution v1.7, integration points with zeus.governance_events, and whether it's still internally consistent 4 days after write.
+**Next step (first):** Read 15 unread `memory/ceo/` files in numerical order. Session 112 read 04, 11, 16 only. Remaining: 01-identity, 02-vision, 03-working-style, 05-emotional-states, 06-decision-patterns, 07-corrections-to-atlas, 08-consent-and-rules, 09-frustrations, 10-evolution-timeline, 12-intellectual-architecture, 13-financial-context, 14-current-state, 15-open-questions, 17-atlas-observations, 18-known-gaps. Goal: deepen identity layer for future Atlas instances.
 
-**Next step (second, if first done):** Read `docs/ATLAS-EMOTIONAL-LAWS.md` — wake.md step 9 references it, never read. 7 hard rules for treating CEO as human.
+**Next step (second, if first done):** Read 5 `memory/people/` files — atlas, ceo, cowork, perplexity, yusif-complete-profile-v1. Also unread per Session 112.
 
-**Next step (third, if both done):** Read `docs/VACATION-MODE-SPEC.md` — referenced wake.md step 10 conditional.
+**Next step (third):** Read 5 `memory/decisions/` files for current ADR-like canonical decisions.
 
 **Session 113 closed (high-weight events only):**
 - Clock fix (python zoneinfo)

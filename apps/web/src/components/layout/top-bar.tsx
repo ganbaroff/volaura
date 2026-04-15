@@ -26,8 +26,14 @@ export function TopBar({ title, showEnergyPicker = true }: TopBarProps) {
   const user = useAuthStore((s) => s.user);
   const { energy, setEnergy } = useEnergyMode();
 
+  // Name resolution order (INC-018, 2026-04-15):
+  // 1. display_name — set by our app on signup / profile edit
+  // 2. full_name / name — Google OAuth user_metadata (most common source)
+  // 3. email local-part — worst fallback ("ganbarov.y" style)
   const displayName =
     user?.user_metadata?.display_name ??
+    user?.user_metadata?.full_name ??
+    user?.user_metadata?.name ??
     user?.email?.split("@")[0] ??
     "?";
 

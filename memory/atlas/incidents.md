@@ -238,6 +238,33 @@ Entries feed into `mistakes.md` patterns and swarm critique sessions.
 
 ---
 
+## 2026-04-15 — INC-018: display name shows email local-part for Google OAuth users
+
+**Severity:** S3 (cosmetic but trust-damaging — CEO sees "ganbarov.y" instead of "Yusif Ganbarov") · **Status:** Fix landed local, pending push + deploy
+
+**Symptom:** CEO signed in via Google OAuth (ganbarov.y@gmail.com), app displays "ganbarov.y" instead of his real name.
+
+**DB state (verified via Supabase MCP):**
+- `auth.users.id = 5a01f0ce-0d1c-4109-bfe4-d9f061d549e2`
+- `raw_user_meta_data.full_name = "Yusif Ganbarov"` (Google payload)
+- `raw_user_meta_data.name = "Yusif Ganbarov"` (Google payload)
+- `public.profiles.display_name = "Yusif Ganbarov"` (correctly stored)
+- `public.profiles.username = "yusif"`
+
+Data is clean. Bug is in UI layer.
+
+**Root cause:** Two files read `user.user_metadata.display_name` directly from Supabase auth user, which is NOT a field Google OAuth sets. Google sets `full_name` and `name`. Our chain went: `display_name (undefined) → email.split("@")[0]` = "ganbarov.y".
+
+**Files fixed:**
+- `apps/web/src/components/layout/top-bar.tsx:29-34` — extended chain `display_name → full_name → name → email local-part`
+- `apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx:109-115` — same chain
+
+**Not fixed yet (follow-up):** these components read auth.user_metadata, not `profiles.display_name`. A user who edits their profile display_name gets a stale UI until auth refresh. Long-term: read from profiles via React Query / server component. Log as ticket.
+
+Typecheck: 0 errors.
+
+---
+
 ## 2026-04-15 — CLEANUP: orphan test users on prod from screenshot batch
 
 **Context:** `scripts/screenshot-routes-authed.ts` creates one test user per run via `/api/auth/e2e-setup`. The endpoint creates an `auth.users` row + `profiles` row + whatever downstream tables the signup flow touches. These accumulate on prod until manually deleted.

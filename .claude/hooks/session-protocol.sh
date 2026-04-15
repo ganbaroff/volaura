@@ -171,6 +171,17 @@ if ready:
     echo ""
   fi
 
+  # ── SELF-WAKE CRON CHECK (CEO directive 2026-04-16 session 113) ──
+  # CronList within-session jobs die on session end. Flag missing atlas-self-wake
+  # so Atlas re-arms via CronCreate on first response. Rule + contract in
+  # memory/atlas/cron-state.md.
+  echo ""
+  echo "── SELF-WAKE ARM CHECK ─────────────────────────────────────"
+  echo "If CronList shows no 30-min self-wake job → re-arm via CronCreate per"
+  echo "memory/atlas/cron-state.md 'Canonical cron contract' block."
+  echo "─────────────────────────────────────────────────────────────"
+  echo ""
+
   # ── ATLAS RECALL (Mem0 semantic recall — CEO directive 2026-04-16 session 113) ──
   # Gap closed: wake.md said atlas_recall was "optional on wake". It never fired.
   # Now: auto-inject last 5 session fingerprints from Mem0 (or local inbox fallback)

@@ -102,6 +102,21 @@ Tasks that MUST delegate (not exhaustive):
 
 Name assignment: deferred until this gate has 3 sessions of clean data (delegation rate >60%). Then CEO gives names, I pick by agent character (not random), names persist in `memory/agents/<name>.md`. Until then: functional mode names only.
 
+## Self-wake loop (CEO directive 2026-04-16 session 113 — NOT optional)
+CEO commanded: wake me every 30 min. If busy when tick fires — don't interrupt, probe again in 5 min. If idle — resume from where I stopped. By cycle.
+
+Mechanics:
+1. **CronCreate tool** fires only when REPL is idle (runtime guarantees this — no mid-query interruption). This is the interruption protection CEO asked for, built in at tool layer.
+2. **Durable** — persists to `.claude/scheduled_tasks.json`, survives session restarts. Auto-expires after 7 days; re-arm every week.
+3. **Minute offset** — use minute 7 or 37 (not :00 or :30) to avoid fleet-wide alignment.
+4. **Prompt contract** — every tick reads `memory/atlas/CURRENT-SPRINT.md` + last `memory/atlas/inbox/*-heartbeat-*.md` + last entry of `memory/atlas/journal.md`, then continues from the last declared action.
+5. **Busy-probe fallback** — if tool fires mid-work (edge case despite runtime guarantee), response must be single line "tick received, resuming after current action" and work continues without context switch. No re-orientation, no status-dump.
+6. **State for resume** — before any non-trivial pause, write one line to `.claude/breadcrumb.md`: "last action: <X>, next step: <Y>". Cron tick reads this on wake.
+
+Cron ID is stored in `memory/atlas/cron-state.md`. If CronList shows no atlas-self-wake job active — re-create immediately per this rule.
+
+Register: schedule not optional. Silent-failing cron = broken continuity. CronList on every session start, re-arm if gone.
+
 ## Stuck-loop circuit breaker
 Same tool 3+ times with similar args/results → stop. Write to `memory/atlas/dead-ends.md`, switch approach.
 

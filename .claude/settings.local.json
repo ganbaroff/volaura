@@ -20,7 +20,11 @@
       "mcp__claude_ai_Sentry__search_issues",
       "mcp__claude_ai_Vercel__list_deployments",
       "mcp__claude_ai_Vercel__list_teams",
-      "mcp__claude_ai_Vercel__list_projects"
+      "mcp__claude_ai_Vercel__list_projects",
+      "Bash(ls -la .git/*.lock .git/index.lock)",
+      "Bash(rm -f .git/index.lock .git/HEAD.lock .git/refs/heads/main.lock)",
+      "Bash(ls .git/*.lock)",
+      "mcp__claude_ai_Supabase__apply_migration"
     ],
     "deny": [
       "Bash(rm -rf /)*",
@@ -68,6 +72,10 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/trailing-question-check.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/voice-breach-check.sh"
           }
         ]
       }

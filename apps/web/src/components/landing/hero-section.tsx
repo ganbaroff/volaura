@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { ArrowRight, Star } from "lucide-react";
@@ -17,6 +17,25 @@ const BADGE_PILLS = [
 
 export function HeroSection({ locale }: HeroSectionProps) {
   const { t } = useTranslation();
+  // BUG #4 fix — cold-load race: if Framer `animate` prop hasn't fired yet
+  // (slow hydration, throttled first paint), elements stuck at inline opacity:0.
+  // whileInView fires reliably on mount and guarantees visibility even pre-hydration.
+  // Reduced motion → skip the entrance, render visible immediately.
+  const shouldReduce = useReducedMotion();
+  const fadeDown = shouldReduce
+    ? { initial: false as const, animate: { opacity: 1, y: 0 } }
+    : {
+        initial: { opacity: 0, y: -16 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: true, amount: 0 },
+      };
+  const fadeUp = shouldReduce
+    ? { initial: false as const, animate: { opacity: 1, y: 0 } }
+    : {
+        initial: { opacity: 0, y: 20 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: true, amount: 0 },
+      };
 
   return (
     <section className="relative overflow-hidden bg-background py-20 md:py-32">
@@ -33,16 +52,20 @@ export function HeroSection({ locale }: HeroSectionProps) {
           {/* Badge pills (animated) */}
           <motion.div
             className="mb-8 flex flex-wrap justify-center gap-2"
-            initial={{ opacity: 0, y: -16 }}
-            animate={{ opacity: 1, y: 0 }}
+            {...fadeDown}
             transition={{ duration: 0.5 }}
           >
             {BADGE_PILLS.map((pill, i) => (
               <motion.div
                 key={pill.tier}
                 className={`inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r ${pill.color} px-3 py-1 text-xs font-semibold ${pill.text} shadow-sm`}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
+                {...(shouldReduce
+                  ? { initial: false as const, animate: { opacity: 1, scale: 1 } }
+                  : {
+                      initial: { opacity: 0, scale: 0.8 },
+                      whileInView: { opacity: 1, scale: 1 },
+                      viewport: { once: true, amount: 0 },
+                    })}
                 transition={{ duration: 0.4, delay: i * 0.1 }}
               >
                 <Star className="h-3 w-3 fill-current" aria-hidden="true" />
@@ -54,8 +77,7 @@ export function HeroSection({ locale }: HeroSectionProps) {
           {/* Headline */}
           <motion.h1
             className="mb-6 text-4xl font-headline font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            {...fadeUp}
             transition={{ type: "spring", damping: 14, stiffness: 100 }}
           >
             <span className="block">{t("landing.heroTitle")}</span>
@@ -64,8 +86,7 @@ export function HeroSection({ locale }: HeroSectionProps) {
           {/* Subtitle */}
           <motion.p
             className="mb-10 max-w-2xl text-lg text-muted-foreground sm:text-xl"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            {...fadeUp}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             {t("landing.heroSubtitle")}
@@ -74,8 +95,7 @@ export function HeroSection({ locale }: HeroSectionProps) {
           {/* CTAs */}
           <motion.div
             className="flex flex-col gap-3 sm:flex-row sm:gap-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            {...fadeUp}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
             <Link

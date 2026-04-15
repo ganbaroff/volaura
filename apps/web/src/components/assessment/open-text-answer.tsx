@@ -111,6 +111,10 @@ export function OpenTextAnswer({
             "text-sm text-foreground placeholder:text-muted-foreground",
             "transition-colors duration-150 outline-none",
             "focus:border-primary",
+            // T0-4 (ghost-audit a11y P0-3, 2026-04-15): WCAG 2.4.7 Focus Visible.
+            // 1px border change insufficient as focus indicator. Add ring
+            // using --color-ring-focus (white) — always visible on any bg.
+            "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             "disabled:opacity-50 disabled:cursor-not-allowed",
             "border-border min-h-[120px]",
             supported && "pr-14"

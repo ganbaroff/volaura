@@ -1,0 +1,56 @@
+name: Swarm Proposal Cards (CEO review)
+
+# Hourly: reads memory/swarm/proposals.json, pings CEO on Telegram for every
+# proposal that is escalate_to_ceo=True AND judge_score>=7 AND status=pending
+# and has not already been sent. Tracks sent IDs in memory/swarm/proposals-sent.json
+# (atomic write) so we never double-ping.
+
+on:
+  schedule:
+    - cron: '15 * * * *'  # every hour at :15
+  workflow_dispatch:
+    inputs:
+      min_judge_score:
+        description: 'Minimum judge score to escalate (default 7)'
+        required: false
+        default: '7'
+
+permissions:
+  contents: write
+
+jobs:
+  send-cards:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT_ACTIONS || secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install httpx loguru
+
+      - name: Run proposal cards
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CEO_CHAT_ID: ${{ secrets.TELEGRAM_CEO_CHAT_ID }}
+          PROPOSAL_MIN_JUDGE_SCORE: ${{ github.event.inputs.min_judge_score || '7' }}
+        run: |
+          python -m packages.swarm.telegram_proposal_cards
+
+      - name: Commit sent ledger
+        run: |
+          git config user.name "volaura-swarm[bot]"
+          git config user.email "swarm@volaura.app"
+          if [[ -n "$(git status --porcelain memory/swarm/proposals-sent.json)" ]]; then
+            git add memory/swarm/proposals-sent.json
+            git commit -m "swarm: proposals-sent ledger update [skip ci]"
+            git push
+          else
+            echo "No ledger changes to commit."
+          fi

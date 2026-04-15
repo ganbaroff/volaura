@@ -1,0 +1,19 @@
+{
+  "name": "@volaura/ecosystem-compliance",
+  "version": "0.1.0",
+  "description": "Shared GDPR Art.22 + EU AI Act + AZ PDPA compliance Zod schemas for the VOLAURA ecosystem (volaura, mindshift, lifesim, brandedby, zeus).",
+  "main": "dist/types.js",
+  "types": "dist/types.d.ts",
+  "files": ["dist", "src"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "peerDependencies": {
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "zod": "^3.22.0"
+  }
+}

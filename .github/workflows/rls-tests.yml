@@ -1,0 +1,45 @@
+name: RLS tests (pgTAP)
+
+# Runs on every PR that touches migrations or tests. Pre-requisite for merge.
+# Research: docs/research/rls-testing/summary.md §"Day 3 — Wire CI".
+
+on:
+  pull_request:
+    paths:
+      - 'supabase/migrations/**'
+      - 'supabase/tests/**'
+      - '.github/workflows/rls-tests.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/migrations/**'
+      - 'supabase/tests/**'
+
+jobs:
+  pgtap:
+    name: supabase db test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start local Supabase stack
+        working-directory: ./
+        run: supabase start
+
+      - name: Run pgTAP test suite
+        working-directory: ./
+        run: supabase test db
+
+      - name: Dump DB logs on failure
+        if: failure()
+        run: supabase status && supabase db diff --linked=false || true
+
+      - name: Stop local Supabase stack
+        if: always()
+        run: supabase stop --no-backup || true

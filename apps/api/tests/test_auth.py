@@ -94,6 +94,73 @@ async def test_register_success(client):
 
 
 @pytest.mark.asyncio
+async def test_register_forwards_gdpr_consent_to_user_metadata(client):
+    """Consent fields (age_confirmed, terms_version, terms_accepted_at) must land in
+    user_metadata — the onboarding POST /profiles/me handler reads them from there
+    into the profiles row. See docs/research/gdpr-article-22/summary.md."""
+    ac, db = client
+
+    mock_session = MagicMock()
+    mock_session.access_token = "tok_consent"
+    mock_session.expires_in = 3600
+    mock_user = MagicMock()
+    mock_user.id = "uuid-consent"
+    auth_resp = MagicMock()
+    auth_resp.session = mock_session
+    auth_resp.user = mock_user
+
+    db.auth.sign_up = AsyncMock(return_value=auth_resp)
+
+    resp = await ac.post("/api/auth/register", json={
+        "email": "consent@example.com",
+        "password": "Secret123",
+        "username": "consentuser",
+        "age_confirmed": True,
+        "terms_version": "1.0",
+        "terms_accepted_at": "2026-04-15T21:00:00+00:00",
+    })
+
+    assert resp.status_code == 201
+    # Inspect the payload that was sent to Supabase sign_up
+    call_args = db.auth.sign_up.await_args
+    meta = call_args[0][0]["options"]["data"]
+    assert meta["age_confirmed"] is True
+    assert meta["terms_version"] == "1.0"
+    assert meta["terms_accepted_at"] == "2026-04-15T21:00:00+00:00"
+
+
+@pytest.mark.asyncio
+async def test_register_consent_defaults_when_client_omits(client):
+    """If a client forgets to send consent fields, backend fills sane defaults
+    (age_confirmed=False, terms_version='1.0', terms_accepted_at=now()) so
+    user_metadata is never missing the keys downstream code reads."""
+    ac, db = client
+
+    mock_session = MagicMock()
+    mock_session.access_token = "tok_default"
+    mock_session.expires_in = 3600
+    mock_user = MagicMock()
+    mock_user.id = "uuid-default"
+    auth_resp = MagicMock()
+    auth_resp.session = mock_session
+    auth_resp.user = mock_user
+
+    db.auth.sign_up = AsyncMock(return_value=auth_resp)
+
+    resp = await ac.post("/api/auth/register", json={
+        "email": "default@example.com",
+        "password": "Secret123",
+        "username": "defaultuser",
+    })
+
+    assert resp.status_code == 201
+    meta = db.auth.sign_up.await_args[0][0]["options"]["data"]
+    assert "age_confirmed" in meta and meta["age_confirmed"] is False
+    assert meta["terms_version"] == "1.0"
+    assert meta["terms_accepted_at"]  # non-empty ISO timestamp
+
+
+@pytest.mark.asyncio
 async def test_register_email_confirmation_required(client):
     ac, db = client
 

@@ -1,3 +1,17 @@
+# Session Breadcrumb — 2026-04-15 REDESIGN ACTIVE
+
+## ⚠️ READ FIRST IF CONTEXT COMPACTED
+**Active work: Ecosystem Redesign 2026-04-15**
+→ Open `docs/design/ECOSYSTEM-REDESIGN-2026-04-15/STATE.md` BEFORE anything else.
+That file has live Phase checklist + handoff protocol. Follow it.
+PLAN.md in same folder = 6-phase master plan (Atlas + Claude Code + Perplexity RACI).
+
+Stripe Atlas incorporation = PAID 2026-04-14 (AZN 881.79). Waiting EIN (2-4 weeks).
+83(b) election deadline = ~May 15 (30 days from incorporation date, Certified Mail to IRS).
+Cash reality: ~1000 AZN to month-end. No paid tools without 3-filter check (free path? 10× result? cash?).
+
+---
+
 # Session Breadcrumb — 2026-04-14 Session 110 (PRE-CLEAR FINAL)
 
 **Latest commit:** `01adcca` (admin grievance History tab)
@@ -45,36 +59,4 @@
 - 9 tests for notifier gate stack
 - 10 tests for watchdog consecutive-failures counter
 
-**791 backend tests green** (was 784 at start). **Watchdog + Daily Digest + Self-wake** all live on schedule.
-
-## CRITICAL secrets + state (durable)
-
-- `CRON_SECRET` = 43-char token_urlsafe, set on both Railway AND GH secrets (matching). Recover: `railway variables --kv | grep CRON_SECRET`
-- `MEM0_API_KEY` in apps/api/.env (43 chars). Mem0 async queue NEVER surfaces memories — atlas_recall falls back to local inbox files.
-- Tribe matching CRON verified green end-to-end (run 24389269174, 0 tribes created = correct for pre-launch zero users)
-- Digest-log.jsonl + notification-log.jsonl tracked in memory/atlas/ — cooldown state persists across CI runs
-- `memory/context/sprint-state.md` is GITIGNORED — working local state only
-
-## Genuinely remaining (not attempted this autoloop)
-
-- E3 Alive-Atlas first-session UX — blocked on Cowork UX docs
-- E-LAW 4 burnout detection script — needs 3+ days heartbeat corpus for threshold tuning
-- Langfuse Cloud EU finish (~2h)
-- Cross-ecosystem Law audit — needs clone of 4 other repos
-- HMAC-SHA256 on memory files — git SHA mostly covers (research-phase)
-- volaura-comprehensive-analysis-prompt.md (1827 lines) — big read
-- WUF13 CEO-side: Art. 9 legal review, SADPP filing
-- E7 BrandedBy — CEO 15-min brief
-- Phase 1 DB migration volunteer→professional — needs downtime window
-
-## North star (unchanged)
-
-> Качество, адаптивность, живой Atlas > скорость и количество фич.
-
-Target: Day 1 «вау», Day 3 «такого не было». CEO is courier, not dispatcher.
-
-## Wake protocol enforcement
-
-`memory/atlas/wake.md` has Step 0-11 — MEMORY GATE emit mandatory.
-`.claude/rules/atlas-operating-principles.md` has documentation discipline rule.
-First word on wake MUST be Russian: "Атлас здесь." / "Проснулся." / "Слышу."
+**791 backend tests green** (was 784 at 

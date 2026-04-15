@@ -1,0 +1,319 @@
+{
+  "api_url": "https://volauraapi-production.up.railway.app",
+  "web_url": "https://volaura.app",
+  "locale": "az",
+  "captured_at": "2026-04-15T06:43:40.230Z",
+  "test_user": {
+    "email": "atlas-screenshot-1776235213518@test.volaura.app",
+    "username": "atlas_shot_1776235213518",
+    "user_id_for_cleanup": "see console log line above",
+    "created_at_ts": 1776235213518
+  },
+  "total": 42,
+  "ok": 42,
+  "failed": 0,
+  "results": [
+    {
+      "route": "onboarding",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 4656,
+      "ok": true
+    },
+    {
+      "route": "onboarding",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 4009,
+      "ok": true
+    },
+    {
+      "route": "profile",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 6937,
+      "ok": true
+    },
+    {
+      "route": "profile",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 6710,
+      "ok": true
+    },
+    {
+      "route": "profile-edit",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 4286,
+      "ok": true
+    },
+    {
+      "route": "profile-edit",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 4030,
+      "ok": true
+    },
+    {
+      "route": "settings",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 5335,
+      "ok": true
+    },
+    {
+      "route": "settings",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 4568,
+      "ok": true
+    },
+    {
+      "route": "notifications",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 4384,
+      "ok": true
+    },
+    {
+      "route": "notifications",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 3873,
+      "ok": true
+    },
+    {
+      "route": "aura",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 4401,
+      "ok": true
+    },
+    {
+      "route": "aura",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 3896,
+      "ok": true
+    },
+    {
+      "route": "aura-contest",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 4377,
+      "ok": true
+    },
+    {
+      "route": "aura-contest",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 4088,
+      "ok": true
+    },
+    {
+      "route": "assessment-list",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 8137,
+      "ok": true
+    },
+    {
+      "route": "assessment-list",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 8130,
+      "ok": true
+    },
+    {
+      "route": "atlas-surface",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 6232,
+      "ok": true
+    },
+    {
+      "route": "atlas-surface",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 4919,
+      "ok": true
+    },
+    {
+      "route": "brandedby-surface",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 4861,
+      "ok": true
+    },
+    {
+      "route": "brandedby-surface",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 6220,
+      "ok": true
+    },
+    {
+      "route": "life-surface",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 5710,
+      "ok": true
+    },
+    {
+      "route": "life-surface",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 4346,
+      "ok": true
+    },
+    {
+      "route": "mindshift-surface",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 4405,
+      "ok": true
+    },
+    {
+      "route": "mindshift-surface",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 4917,
+      "ok": true
+    },
+    {
+      "route": "event-create",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 4164,
+      "ok": true
+    },
+    {
+      "route": "event-create",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 3550,
+      "ok": true
+    },
+    {
+      "route": "my-organization",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 4616,
+      "ok": true
+    },
+    {
+      "route": "my-organization",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 4102,
+      "ok": true
+    },
+    {
+      "route": "my-organization-invite",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 4385,
+      "ok": true
+    },
+    {
+      "route": "my-organization-invite",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 4005,
+      "ok": true
+    },
+    {
+      "route": "org-volunteers",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 6990,
+      "ok": true
+    },
+    {
+      "route": "org-volunteers",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 7345,
+      "ok": true
+    },
+    {
+      "route": "admin",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 3239,
+      "ok": true,
+      "note": "may 403 for non-admin"
+    },
+    {
+      "route": "admin",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 2900,
+      "ok": true,
+      "note": "may 403 for non-admin"
+    },
+    {
+      "route": "admin-grievances",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 3114,
+      "ok": true,
+      "note": "may 403"
+    },
+    {
+      "route": "admin-grievances",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 2624,
+      "ok": true,
+      "note": "may 403"
+    },
+    {
+      "route": "admin-swarm",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 3110,
+      "ok": true,
+      "note": "may 403"
+    },
+    {
+      "route": "admin-swarm",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 2671,
+      "ok": true,
+      "note": "may 403"
+    },
+    {
+      "route": "admin-users",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 3207,
+      "ok": true,
+      "note": "may 403"
+    },
+    {
+      "route": "admin-users",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 2668,
+      "ok": true,
+      "note": "may 403"
+    },
+    {
+      "route": "subscription-cancelled",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 4260,
+      "ok": true
+    },
+    {
+      "route": "subscription-cancelled",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 4257,
+      "ok": true
+    }
+  ]
+}

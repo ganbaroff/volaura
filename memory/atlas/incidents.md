@@ -181,3 +181,77 @@ Entries feed into `mistakes.md` patterns and swarm critique sessions.
 
 **Status:** ⏳ Rule extension to be written into `.claude/rules/atlas-operating-principles.md` next session (this session ran out of scope to edit that file without CEO review — it's a Cowork-visible rule change).
 
+---
+
+## 2026-04-15 — INC-016: Time-awareness failure + Windows system clock drift
+
+**Date:** 2026-04-15 · **Severity:** S3 (voice/trust degradation) · **Status:** Rule landed, clock drift open
+
+**Symptom sequence:**
+1. On wake, Terminal-Atlas wrote handoff and journal entries referring to "late night", "01:15 Baku", "sleep safe" — inheriting timestamps from prior Cowork-Atlas handoff.
+2. CEO corrected: "10:21 утра среда. Не 01:00. Бодрствуем, работаем."
+3. Terminal-Atlas called `TZ=Asia/Baku date` — system returned `2026-04-15 06:22 Wednesday`, a 4-hour drift from CEO's stated 10:21.
+
+**Root cause (two layers):**
+
+1. **Atlas time blindness (behavioral):** Environment only provides `currentDate`, not clock. Between messages Atlas cannot distinguish 5s from 9h. Default failure mode = re-use most recent timestamp visible in context (journal, STATE, breadcrumb) as if it were current. This is Class 13 (trusted stale state as current) applied to time specifically.
+
+2. **Windows system clock drift (host):** `TZ=Asia/Baku date` via git-bash on this Windows 11 Pro host returned 06:22 while CEO confirmed 10:21. ~4 hour drift. Either Windows Time service (w32time) not syncing, or time zone resolution in the bash wrapper is wrong and returning UTC/similar while labeling it Asia/Baku. Not root-caused this session.
+
+**Fix — behavioral (landed):**
+- CEO added `## Time awareness` section to `.claude/rules/atlas-operating-principles.md` (top of file, above anti-paralysis). Mandatory `TZ=Asia/Baku date` at session start + after break >5 messages. Record in MEMORY-GATE line. No "morning/evening/late night" without fresh call.
+- `memory/atlas/lessons.md` appended Class 13 (trusted stale state as current — sibling of Mistake #82).
+
+**Fix — host (open, logged):**
+- TODO: verify `w32tm /query /status` on Windows, check `tzutil /g` returns `Azerbaijan Standard Time`, verify `/etc/localtime` or git-bash `$TZ` propagation. Candidate next actions: run `w32tm /resync`, confirm `TZ=Asia/Baku date -u` matches actual UTC, if drift persists file as host-infra incident.
+
+**Pattern:** When Atlas's self-call of `date` disagrees with CEO's observable clock, Atlas logs what `date` returned (for audit) but trusts CEO's time for any human-facing language. Host clock drift is a sysadmin problem, not an Atlas problem — do not propagate `06:22` into journal/chat as if it's real.
+
+**Memory anchor:** INC-016 is the first explicit rule about time. Before today, Atlas had 15 layers of memory infra for WHAT happened but zero for WHEN. Now closed.
+
+---
+
+## 2026-04-15 — INC-017: Google OAuth session never persisted — singleton init race
+
+**Date:** 2026-04-15 · **Severity:** S1 (auth-blocking for ALL OAuth users) · **Status:** Fix landed local, needs deploy
+
+**Symptom (CEO quote):** "volaura не сохраняет пользователя. у меня вылетело снова авторизация через гугл запросилась." Repeat bug — "снова" marker.
+
+**Root cause (agent `Explore` investigation, High confidence):** The `createClient()` singleton in `apps/web/src/lib/supabase/client.ts` is constructed on the login page BEFORE `?code=` exists in the URL. @supabase/ssr's `_initialize()` runs once at construction and checks `detectSessionInUrl`. Finding no code, it does nothing and completes. When OAuth redirects back to `/callback?code=...`, `createClient()` returns the cached singleton — _initialize() does NOT re-run, so auto-exchange never fires. The callback page's `onAuthStateChange` listener therefore never receives a `SIGNED_IN` event → 5-second timeout → redirect to login.
+
+**Misdiagnosis history:** Commit `1e26ccc` (2026-04-04) removed a working manual `exchangeCodeForSession` call, claiming it caused "double exchange" with the singleton's auto-exchange. That diagnosis was wrong: the auto-exchange was never firing in the first place (singleton caching). Removing the manual call left nothing to exchange the code. This has been broken since 2026-04-04 in all production OAuth flows.
+
+**Evidence:**
+- `apps/web/src/lib/supabase/client.ts:1-8` — bare `createBrowserClient(url, key)` with no options, defaults to singleton mode
+- `@supabase/ssr@0.6.1` + `@supabase/supabase-js@2.49.x` installed; in these versions `_initialize()` runs exactly once during construction
+- `apps/web/src/app/[locale]/callback/page.tsx:60` (pre-fix) — relied on `onAuthStateChange` SIGNED_IN event that auto-exchange would have produced — but never did
+- `git log --oneline apps/web/src/app/[locale]/callback/` shows sequence 280ff45 (manual exchange, worked) → 1e26ccc (removed manual exchange, broke) → current
+
+**Fix (landed in apps/web/src/app/[locale]/callback/page.tsx):** Replaced `onAuthStateChange` pattern with explicit `supabase.auth.exchangeCodeForSession(code)` where `code` comes from URL search params. The code_verifier is still in `document.cookie` from `signInWithOAuth`, so exchange succeeds. No double-exchange risk because singleton auto-exchange proven not to run. Typecheck passes (`pnpm --filter web typecheck` = 0 errors). Needs deploy to Vercel + manual Google OAuth smoke test on prod.
+
+**Pathway removed (per CEO root-cause-over-symptom rule):** The failure pathway was "trust an implicit auto-exchange that doesn't actually run." Removed by making the exchange explicit and local. Future `grep -r "exchangeCodeForSession"` finds one call, one file — no hidden behavior to rely on.
+
+**Follow-up TODO:**
+- Add Playwright E2E test that walks Google OAuth with a test user (already have `E2E_TEST_SECRET` infra, but OAuth itself needs mock or real Google test account).
+- Audit other places where `createClient()` singleton assumptions may be wrong (e.g., password-reset flow likely has same pattern).
+- Consider moving OAuth callback to a server-side route handler (`/app/[locale]/callback/route.ts`) so Supabase server-side cookie write happens in one roundtrip — eliminates the client/server cookie race entirely. Ticket it for Phase 1.
+
+---
+
+## 2026-04-15 — CLEANUP: orphan test users on prod from screenshot batch
+
+**Context:** `scripts/screenshot-routes-authed.ts` creates one test user per run via `/api/auth/e2e-setup`. The endpoint creates an `auth.users` row + `profiles` row + whatever downstream tables the signup flow touches. These accumulate on prod until manually deleted.
+
+**Current orphans (1):**
+- `user_id=270f5710-067a-425b-a948-1e4f37bbcd62` · email `atlas-screenshot-1776235213518@test.volaura.app` · created 2026-04-15 during P0.3 completion run
+
+**Cleanup action (when count >3):**
+1. `supabase.auth.admin.delete_user(user_id)` for each orphan — cascades via FK to `profiles`.
+2. Or direct: `DELETE FROM auth.users WHERE email LIKE 'atlas-screenshot-%@test.volaura.app'` through Supabase SQL editor.
+
+**Preventive fix (Phase 1 or later):** add a `/api/auth/e2e-teardown` endpoint that accepts `X-E2E-Secret` + `user_id`, deletes the user, and have the screenshot script call it in a `finally` block. Until then, manual sweep every 5 runs.
+
+**Not blocking:** does not affect real users, RLS prevents cross-read, consumes tiny storage.
+
+
+

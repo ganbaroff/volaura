@@ -1,0 +1,192 @@
+{
+  "base_url": "https://volaura.app",
+  "locale": "az",
+  "captured_at": "2026-04-15T06:30:34.358Z",
+  "total": 26,
+  "ok": 26,
+  "failed": 0,
+  "results": [
+    {
+      "route": "landing",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 9062,
+      "ok": true
+    },
+    {
+      "route": "landing",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 3171,
+      "ok": true
+    },
+    {
+      "route": "login",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 2857,
+      "ok": true
+    },
+    {
+      "route": "login",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 1906,
+      "ok": true
+    },
+    {
+      "route": "signup",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 2591,
+      "ok": true
+    },
+    {
+      "route": "signup",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 1981,
+      "ok": true
+    },
+    {
+      "route": "forgot-password",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 2897,
+      "ok": true
+    },
+    {
+      "route": "forgot-password",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 1945,
+      "ok": true
+    },
+    {
+      "route": "reset-password",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 2489,
+      "ok": true
+    },
+    {
+      "route": "reset-password",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 1914,
+      "ok": true
+    },
+    {
+      "route": "welcome",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 3256,
+      "ok": true
+    },
+    {
+      "route": "welcome",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 2109,
+      "ok": true
+    },
+    {
+      "route": "discover",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 2957,
+      "ok": true
+    },
+    {
+      "route": "discover",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 2124,
+      "ok": true
+    },
+    {
+      "route": "leaderboard",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 2526,
+      "ok": true
+    },
+    {
+      "route": "leaderboard",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 2127,
+      "ok": true
+    },
+    {
+      "route": "events-list",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 3261,
+      "ok": true
+    },
+    {
+      "route": "events-list",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 2110,
+      "ok": true
+    },
+    {
+      "route": "organizations-list",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 2336,
+      "ok": true
+    },
+    {
+      "route": "organizations-list",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 1815,
+      "ok": true
+    },
+    {
+      "route": "privacy-policy",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 2426,
+      "ok": true
+    },
+    {
+      "route": "privacy-policy",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 1981,
+      "ok": true
+    },
+    {
+      "route": "invite",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 2556,
+      "ok": true
+    },
+    {
+      "route": "invite",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 1841,
+      "ok": true
+    },
+    {
+      "route": "subscription-success",
+      "viewport": "desktop",
+      "status": 200,
+      "ms": 2830,
+      "ok": true
+    },
+    {
+      "route": "subscription-success",
+      "viewport": "mobile",
+      "status": 200,
+      "ms": 2280,
+      "ok": true
+    }
+  ]
+}

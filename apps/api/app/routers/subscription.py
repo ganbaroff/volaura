@@ -315,11 +315,27 @@ async def stripe_webhook(request: Request) -> WebhookAck:
 
     # ── customer.subscription.updated ────────────────────────────────────────
     elif event_type == "customer.subscription.updated":
-        await _handle_subscription_updated(data_object)
+        # INC-ghost-audit 2026-04-15 P0-1: must raise 5xx when profile update
+        # fails so Stripe retries — Stripe retries on 5xx only, not 2xx. Previously
+        # discarded the bool and silently marked the event processed → revenue loss.
+        success = await _handle_subscription_updated(data_object)
+        if not success:
+            raise HTTPException(
+                status_code=500,
+                detail={"code": "PROFILE_NOT_FOUND", "message": "Profile not yet created — Stripe will retry"},
+            )
 
     # ── customer.subscription.deleted ────────────────────────────────────────
     elif event_type == "customer.subscription.deleted":
-        await _handle_subscription_deleted(data_object)
+        # INC-ghost-audit 2026-04-15 P0-1: same as .updated — cancellation MUST
+        # propagate. If the profile write fails, return 5xx so Stripe retries
+        # rather than 2xx which would drop the cancellation forever.
+        success = await _handle_subscription_deleted(data_object)
+        if not success:
+            raise HTTPException(
+                status_code=500,
+                detail={"code": "PROFILE_NOT_FOUND", "message": "Profile not yet created — Stripe will retry"},
+            )
 
     else:
         # Unhandled event type — acknowledge silently (Stripe retries on non-2xx)
@@ -443,7 +459,7 @@ async def _handle_subscription_created(sub: dict) -> bool:
     )
 
 
-async def _handle_subscription_updated(sub: dict) -> None:
+async def _handle_subscription_updated(sub: dict) -> bool:
     customer_id: str = sub.get("customer", "")
     subscription_id: str = sub.get("id", "")
     stripe_status: str = sub.get("status", "")
@@ -467,7 +483,7 @@ async def _handle_subscription_updated(sub: dict) -> None:
     if current_period_end:
         ends_at = datetime.fromtimestamp(current_period_end, tz=UTC).isoformat()
 
-    await _update_profile_subscription(
+    return await _update_profile_subscription(
         customer_id,
         {
             "subscription_status": volaura_status,
@@ -477,10 +493,10 @@ async def _handle_subscription_updated(sub: dict) -> None:
     )
 
 
-async def _handle_subscription_deleted(sub: dict) -> None:
+async def _handle_subscription_deleted(sub: dict) -> bool:
     customer_id: str = sub.get("customer", "")
 
-    await _update_profile_subscription(
+    return await _update_profile_subscription(
         customer_id,
         {
             "subscription_status": "cancelled",

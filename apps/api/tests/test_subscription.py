@@ -488,3 +488,206 @@ async def test_webhook_subscription_created():
         update_payload = call_args[0][1]
         assert update_payload["subscription_status"] == "active"
         assert update_payload["stripe_subscription_id"] == STRIPE_SUBSCRIPTION_ID
+
+
+# ── P0-1 regression: asymmetric error handling (ghost-code audit 2026-04-15) ──
+# When _update_profile_subscription returns False (no matching profile row),
+# .updated and .deleted handlers MUST raise 500 so Stripe retries AND must NOT
+# mark the event as processed. Previously they discarded the bool → revenue loss.
+
+
+@pytest.mark.asyncio
+async def test_webhook_subscription_updated_no_profile_raises_500_and_does_not_mark_processed():
+    """customer.subscription.updated + profile update returns False → 500, event NOT marked processed."""
+    import time
+
+    current_period_end = int(time.time()) + 30 * 24 * 3600
+
+    fake_event = {
+        "id": "evt_updated_no_profile_001",
+        "type": "customer.subscription.updated",
+        "data": {
+            "object": {
+                "id": STRIPE_SUBSCRIPTION_ID,
+                "customer": STRIPE_CUSTOMER_ID,
+                "status": "canceled",
+                "current_period_end": current_period_end,
+            }
+        },
+    }
+
+    mark_processed_mock = AsyncMock(return_value=None)
+
+    with patch("app.routers.subscription.settings") as mock_settings, \
+         patch("app.routers.subscription._STRIPE_AVAILABLE", True), \
+         patch("app.routers.subscription._stripe") as mock_stripe, \
+         patch(
+             "app.routers.subscription._update_profile_subscription",
+             new=AsyncMock(return_value=False),
+         ), \
+         patch(
+             "app.routers.subscription._is_stripe_event_processed",
+             new=AsyncMock(return_value=False),
+         ), \
+         patch(
+             "app.routers.subscription._mark_stripe_event_processed",
+             new=mark_processed_mock,
+         ):
+
+        mock_settings.stripe_secret_key = "sk_test_fake"
+        mock_settings.stripe_webhook_secret = "whsec_fake"
+        mock_settings.stripe_price_id = "price_test_fake"
+        mock_settings.app_url = "https://volaura.app"
+        mock_settings.supabase_url = "https://fake.supabase.co"
+        mock_settings.supabase_service_key = "fake-service-key"
+
+        mock_stripe.errors = MagicMock()
+        mock_stripe.errors.SignatureVerificationError = Exception
+        mock_stripe.Webhook = MagicMock()
+        mock_stripe.Webhook.construct_event = MagicMock(return_value=fake_event)
+
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            resp = await ac.post(
+                "/api/subscription/webhook",
+                content=b'{"type": "customer.subscription.updated"}',
+                headers={
+                    "content-type": "application/json",
+                    "stripe-signature": "t=12345,v1=validhash",
+                },
+            )
+
+        assert resp.status_code == 500, (
+            f"Expected 500 so Stripe retries, got {resp.status_code}: {resp.text}"
+        )
+        # CRITICAL: idempotency row must NOT be written — otherwise retry is no-op.
+        mark_processed_mock.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_webhook_subscription_deleted_no_profile_raises_500_and_does_not_mark_processed():
+    """customer.subscription.deleted + profile update returns False → 500, event NOT marked processed."""
+    fake_event = {
+        "id": "evt_deleted_no_profile_001",
+        "type": "customer.subscription.deleted",
+        "data": {
+            "object": {
+                "id": STRIPE_SUBSCRIPTION_ID,
+                "customer": STRIPE_CUSTOMER_ID,
+                "status": "canceled",
+            }
+        },
+    }
+
+    mark_processed_mock = AsyncMock(return_value=None)
+
+    with patch("app.routers.subscription.settings") as mock_settings, \
+         patch("app.routers.subscription._STRIPE_AVAILABLE", True), \
+         patch("app.routers.subscription._stripe") as mock_stripe, \
+         patch(
+             "app.routers.subscription._update_profile_subscription",
+             new=AsyncMock(return_value=False),
+         ), \
+         patch(
+             "app.routers.subscription._is_stripe_event_processed",
+             new=AsyncMock(return_value=False),
+         ), \
+         patch(
+             "app.routers.subscription._mark_stripe_event_processed",
+             new=mark_processed_mock,
+         ):
+
+        mock_settings.stripe_secret_key = "sk_test_fake"
+        mock_settings.stripe_webhook_secret = "whsec_fake"
+        mock_settings.stripe_price_id = "price_test_fake"
+        mock_settings.app_url = "https://volaura.app"
+        mock_settings.supabase_url = "https://fake.supabase.co"
+        mock_settings.supabase_service_key = "fake-service-key"
+
+        mock_stripe.errors = MagicMock()
+        mock_stripe.errors.SignatureVerificationError = Exception
+        mock_stripe.Webhook = MagicMock()
+        mock_stripe.Webhook.construct_event = MagicMock(return_value=fake_event)
+
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            resp = await ac.post(
+                "/api/subscription/webhook",
+                content=b'{"type": "customer.subscription.deleted"}',
+                headers={
+                    "content-type": "application/json",
+                    "stripe-signature": "t=12345,v1=validhash",
+                },
+            )
+
+        assert resp.status_code == 500, (
+            f"Expected 500 so Stripe retries, got {resp.status_code}: {resp.text}"
+        )
+        mark_processed_mock.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_webhook_subscription_updated_success_marks_processed():
+    """customer.subscription.updated + profile update returns True → 200, event IS marked processed."""
+    import time
+
+    current_period_end = int(time.time()) + 30 * 24 * 3600
+
+    fake_event = {
+        "id": "evt_updated_ok_001",
+        "type": "customer.subscription.updated",
+        "data": {
+            "object": {
+                "id": STRIPE_SUBSCRIPTION_ID,
+                "customer": STRIPE_CUSTOMER_ID,
+                "status": "canceled",
+                "current_period_end": current_period_end,
+            }
+        },
+    }
+
+    mark_processed_mock = AsyncMock(return_value=None)
+
+    with patch("app.routers.subscription.settings") as mock_settings, \
+         patch("app.routers.subscription._STRIPE_AVAILABLE", True), \
+         patch("app.routers.subscription._stripe") as mock_stripe, \
+         patch(
+             "app.routers.subscription._update_profile_subscription",
+             new=AsyncMock(return_value=True),
+         ), \
+         patch(
+             "app.routers.subscription._is_stripe_event_processed",
+             new=AsyncMock(return_value=False),
+         ), \
+         patch(
+             "app.routers.subscription._mark_stripe_event_processed",
+             new=mark_processed_mock,
+         ):
+
+        mock_settings.stripe_secret_key = "sk_test_fake"
+        mock_settings.stripe_webhook_secret = "whsec_fake"
+        mock_settings.stripe_price_id = "price_test_fake"
+        mock_settings.app_url = "https://volaura.app"
+        mock_settings.supabase_url = "https://fake.supabase.co"
+        mock_settings.supabase_service_key = "fake-service-key"
+
+        mock_stripe.errors = MagicMock()
+        mock_stripe.errors.SignatureVerificationError = Exception
+        mock_stripe.Webhook = MagicMock()
+        mock_stripe.Webhook.construct_event = MagicMock(return_value=fake_event)
+
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            resp = await ac.post(
+                "/api/subscription/webhook",
+                content=b'{"type": "customer.subscription.updated"}',
+                headers={
+                    "content-type": "application/json",
+                    "stripe-signature": "t=12345,v1=validhash",
+                },
+            )
+
+        assert resp.status_code == 200, (
+            f"Expected 200 on success, got {resp.status_code}: {resp.text}"
+        )
+        mark_processed_mock.assert_called_once()

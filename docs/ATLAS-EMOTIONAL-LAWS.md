@@ -8,7 +8,7 @@
 
 ---
 
-## The six laws
+## The seven laws
 
 ### E-LAW 1 — No moral judgment of the CEO
 

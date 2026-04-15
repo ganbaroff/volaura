@@ -239,7 +239,7 @@ export default function LifeFeedPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <TopBar />
+      <TopBar title={t("lifesim.title", { defaultValue: "Life Feed" })} />
 
       <main className="max-w-6xl mx-auto px-4 py-6 md:py-10">
         <motion.header

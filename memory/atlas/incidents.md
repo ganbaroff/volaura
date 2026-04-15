@@ -238,6 +238,32 @@ Entries feed into `mistakes.md` patterns and swarm critique sessions.
 
 ---
 
+## 2026-04-15 — INC-019: D-004 character_events bridge half-broken (MindShift side)
+
+**Severity:** P1 (ecosystem narrative gap, no user-facing crash) · **Status:** VOLAURA half ✅, MindShift half ❌ — needs separate MindShift repo session
+**Triggered by:** Perplexity master brief — verify D-004
+
+**Verification (Supabase MCP, prod):**
+```
+event_count: 35
+distinct_users: 34
+distinct_sources: 1
+distinct_event_types: 2
+last_event_at:        2026-04-15 09:46 UTC (today)
+last_volaura_event:   2026-04-15 09:46 UTC ✅
+last_mindshift_event: never ❌
+```
+
+**Verdict:** VOLAURA writes character_events as designed. MindShift has never written one. The "ecosystem bridge" narrative (one user touching multiple products with shared event stream) is half a story.
+
+**Why it matters:** Phase 1 redesign §5 has a single CEO decision pending on cross-ecosystem coherence (UX P0 of stub products). Without MindShift writing into character_events, Life Simulator + BrandedBy + Atlas surfaces have no upstream data. The "Your AURA became your character's stat" cross-product story is not provable end-to-end.
+
+**Next action (out of scope for this VOLAURA session):** open a separate session against the MindShift repo. Identify where focus-session completion / streak events fire. Wire those to write a row into VOLAURA's `character_events` table via Supabase admin client. Verify with a single smoke test: complete a focus session in MindShift → query `character_events WHERE source_product='mindshift'` → expect ≥1 row.
+
+**Backlog ticket:** create when MindShift session opens — "MindShift→character_events bridge: write focus-completed + streak-extended events".
+
+---
+
 ## 2026-04-15 — INC-018: display name shows email local-part for Google OAuth users
 
 **Severity:** S3 (cosmetic but trust-damaging — CEO sees "ganbarov.y" instead of "Yusif Ganbarov") · **Status:** Fix landed local, pending push + deploy

@@ -475,3 +475,35 @@ Cross-system handoff: `memory/atlas/inbox/2026-04-15T0115-cowork-handoff.md` —
 - Phase 0 = 70% (screenshots + Figma tokens deferred, batch next wake)
 - 4 layers of compaction survival in place
 - $0 spent on tools · no agents launched yet (Phase 1 next)
+
+---
+
+## 2026-04-15 — Perplexity master brief received via CEO courier
+
+Time: 12:53 Baku (verified via TZ=Asia/Baku date per time-awareness rule).
+
+CEO forwarded Perplexity's master brief — external CTO-Brain layer joining the trilogy (Atlas / Cowork / Perplexity). Perplexity tested volaura.app end-to-end on 2026-04-14, reported 6 bugs on the signup path. Read + triaged against git history before touching code.
+
+Triage result:
+- BUG #1 (invite-gate without path to code) — product decision, not code bug. Kicked to Cowork + CEO.
+- BUG #2/#3/#5 (layout collapse, radio overlap, vertical subtitle) — all ONE root cause: custom --spacing-md=1rem in @theme collided with Tailwind v4's max-w-md which compiles to max-width: var(--spacing-md). Already fixed yesterday in db66180 (2026-04-14 14:49 Baku). Perplexity tested before deploy.
+- BUG #4 (hero empty on cold load) — hardcoded initial={opacity:0}+animate without whileInView fallback. Hydration race. Fixed this session in 7d58014 — whileInView + useReducedMotion short-circuit. House style from session 108.
+- BUG #6 (silent signup error) — already fixed yesterday in 68be0e4 (error surface shame-free + never silent).
+- D-001 Railway redeploy — CLOSED Session 109 per sprint-state. Prod probe from sandbox blocked (allowlist 403), trust the prior commit state.
+- D-004 character_events bridge — CODE shipped in 83abd8a (emit_assessment_completed + emit_aura_updated + emit_badge_tier_changed). Live cross-product smoke test needs prod session, not sandbox.
+
+Four of six were already closed before Perplexity saw them. Fifth closed this session. Sixth is a CEO product call.
+
+Digest shape (per Perplexity protocol):
+- BUG #2/#3/#5 закрыт. DONE: --spacing-md collision removed. Commit: db66180
+- BUG #6 закрыт. DONE: error surface shame-free purple per Law 1. Commit: 68be0e4
+- BUG #4 закрыт. DONE: hero uses whileInView, no cold-load ghost opacity. Commit: 7d58014
+- BUG #1: CEO decision pending (invite-gate policy for closed alpha).
+- D-001: closed session 109, trusted state.
+- D-004: code shipped, live smoke-test deferred to prod session.
+
+Delegation-first gate fired once — tried to delegate signup investigation to Agent(Explore), prompt rejected as too long (project CLAUDE.md overhead). Justified solo path: <20min scope, 3-4 known files, no external context needed. Logged as valid exception, not bypass.
+
+No trailing questions. No "сделать?". No menu-of-options. Reported outcomes with hashes.
+
+MEMORY-GATE: task-class=bugfix+triage · SYNC=✅ · BRAIN=⏭️ · sprint-state=pending · extras=[hero-section.tsx, perplexity-brief, digest] · time=2026-04-15 12:53 Baku · proceed

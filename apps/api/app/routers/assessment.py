@@ -777,14 +777,59 @@ async def complete_assessment(
             pass  # first assessment — no previous tier
 
     # Upsert AURA score via DB RPC — retry once on failure (Gate 1: zero data loss)
+    #
+    # ghost-audit P0-2 root fix (2026-04-15): intent-before-action.
+    # Set pending_aura_sync=TRUE BEFORE the RPC attempt, not only in recovery.
+    # Clear it only on confirmed success. A session that reaches status='completed'
+    # without pending_aura_sync cleared is an orphan — the aura_reconciler cron
+    # will re-run upsert_aura_score for it every 10 minutes until it succeeds.
     aura_updated = False
     if slug:
+        # Pre-set flag — never-silent contract: even if everything below crashes,
+        # the reconciler will find this session and retry.
+        try:
+            await (
+                db_admin.table("assessment_sessions")
+                .update({"pending_aura_sync": True})
+                .eq("id", session_id)
+                .execute()
+            )
+        except Exception as pre_flag_err:
+            # If we cannot even mark intent, log at CRITICAL — this means the
+            # reconciler has no way to find this session. Without pre-flag we
+            # fall back to the old recovery semantics (post-failure flag write).
+            logger.error(
+                "pending_aura_sync pre-flag write failed — reconciler blind",
+                session_id=session_id,
+                user_id=str(user_id),
+                competency_slug=slug,
+                error=str(pre_flag_err)[:300],
+            )
+
         rpc_params = {"p_volunteer_id": user_id, "p_competency_scores": {slug: competency_score}}
         for attempt in range(2):
             try:
                 rpc_result = await db_admin.rpc("upsert_aura_score", rpc_params).execute()
                 aura_updated = rpc_result.data is not None
                 if aura_updated:
+                    # Success — clear the intent flag. If THIS write fails the
+                    # session looks like a ghost to the reconciler; reconciler
+                    # is idempotent so re-running upsert_aura_score is safe.
+                    try:
+                        await (
+                            db_admin.table("assessment_sessions")
+                            .update({"pending_aura_sync": False})
+                            .eq("id", session_id)
+                            .execute()
+                        )
+                    except Exception as clear_err:
+                        logger.warning(
+                            "pending_aura_sync clear-after-success failed "
+                            "(reconciler will double-check; idempotent)",
+                            session_id=session_id,
+                            user_id=str(user_id),
+                            error=str(clear_err)[:300],
+                        )
                     break
                 logger.warning(
                     "upsert_aura_score returned no data",
@@ -808,25 +853,8 @@ async def complete_assessment(
                     await asyncio.sleep(2)
                     continue
                 aura_updated = False
-                # INC ghost-audit P0-2 (2026-04-15): if the recovery flag also fails,
-                # the session is forever orphan with no AURA and no marker for any
-                # background reconciler to pick up. Log loud — silent swallow here is
-                # how user-finished assessments disappear into the void.
-                try:
-                    await (
-                        db_admin.table("assessment_sessions")
-                        .update({"pending_aura_sync": True})
-                        .eq("id", session_id)
-                        .execute()
-                    )
-                except Exception as flag_err:
-                    logger.error(
-                        "pending_aura_sync flag write failed — ghost session risk",
-                        session_id=session_id,
-                        user_id=str(user_id),
-                        competency_slug=slug,
-                        error=str(flag_err)[:300],
-                    )
+                # Flag is already set from pre-flag above; reconciler will pick
+                # this session up on next cycle. No recovery flag write needed.
 
     # ── Sprint A1: Emit crystal_earned + skill_verified to character_state ───
     # Best-effort: never blocks the response. Idempotency via game_character_rewards.

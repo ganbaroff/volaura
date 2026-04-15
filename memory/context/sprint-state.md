@@ -1,6 +1,27 @@
 # Sprint State — Volaura
 
-**Last Updated:** 2026-04-14 (Session 109 — autonomous loop post-compact; E1 closed, E5 verified already wired)
+**Last Updated:** 2026-04-15 12:53 Baku — Perplexity master brief triaged, 4 bugs closed
+
+## ⚠️ ACTIVE: Perplexity hotfix sweep complete (2026-04-15)
+
+6 bugs from volaura.app end-to-end test. Outcome:
+- BUG #2/#3/#5 (layout collapse, radio overlap, vertical subtitle) — CLOSED pre-test via `db66180` (--spacing-md collision with Tailwind v4 max-w-md)
+- BUG #6 (silent signup error) — CLOSED pre-test via `68be0e4`
+- BUG #4 (hero cold-load empty) — CLOSED this session via `7d58014` (whileInView + useReducedMotion)
+- BUG #1 (invite-gate policy) — product decision pending, Cowork + CEO
+- D-001 Railway redeploy — CLOSED Session 109
+- D-004 character_events bridge — code shipped (`83abd8a`), live smoke-test deferred to prod session
+
+4 of 6 already closed before Perplexity tested (deploy lag). 5th closed this session. 6th is CEO call.
+
+## Ecosystem Redesign 2026-04-15 (resumable)
+→ `docs/design/ECOSYSTEM-REDESIGN-2026-04-15/STATE.md` (Phase 0 ~95%)
+→ `docs/design/ECOSYSTEM-REDESIGN-2026-04-15/PLAN.md` (6-phase plan)
+Phase 1 swarm discovery next.
+
+---
+
+**Previous Update:** 2026-04-14 (Session 109 — autonomous loop post-compact; E1 closed, E5 verified already wired)
 
 ## Active Sprint Plan
 **Plan:** `docs/SPRINT-PLAN-2026-04-14-to-2026-04-28.md` (2 weeks, 7 epics)
@@ -170,3 +191,13 @@ Cleanup: "volunteer" removed from LLM prompts (brandedby_personality.py), Sentry
 | G9/G46: Leaderboard page deleted → redirect | ✅ committed |
 | G15: Score counters 2000ms → 800ms (aura + complete pages) | ✅ committed |
 | G21 + Crystal Law 6: Badge/crystals removed from comple
+---
+
+## Session 110 close — 2026-04-14 evening
+
+**CEO signal:** Assessment test passed end-to-end. Verdict: "офигенно". Core product works.
+
+**Next focus (CEO directive):** Design finalization across VOLAURA. Not features, not backend. Polish pass across all user-facing surfaces.
+
+**Priority reorder:**
+1. Close Mercury onboarding (bank statement: Leobank, Submit, await dec

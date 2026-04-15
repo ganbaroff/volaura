@@ -1,0 +1,67 @@
+name: Swarm Distill Weekly
+
+on:
+  schedule:
+    # Sundays 02:00 UTC = 06:00 Baku — well before Monday's swarm-daily run,
+    # so the previous week's patterns inform the next week's agents.
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+
+concurrency:
+  group: swarm-distill-weekly
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  distill:
+    name: Distill swarm patterns
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install pydantic loguru litellm google-genai openai
+
+      - name: Configure git
+        run: |
+          git config --global user.name "MiroFish Swarm"
+          git config --global user.email "swarm@volaura.app"
+
+      - name: Run distiller
+        env:
+          CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+        run: |
+          cd "${{ github.workspace }}"
+          python -m packages.swarm.distiller --window-days 30
+
+      - name: Commit distilled patterns + lessons
+        run: |
+          [ -f memory/swarm/distilled-patterns.md ] && git add memory/swarm/distilled-patterns.md || true
+          [ -f memory/atlas/lessons.md ] && git add memory/atlas/lessons.md || true
+          if git diff --staged --quiet; then
+            echo "Nothing to commit (distiller produced no changes)."
+            exit 0
+          fi
+          git commit -m "swarm-distill: weekly pattern distillation — $(date -u +%Y-%m-%d)"
+          git pull --rebase --autostash origin main || true
+          git push || {
+            echo "::warning::push failed — fetch+rebase+push once"
+            git fetch origin main
+            git rebase origin/main || git rebase --abort || true
+            git push
+          }

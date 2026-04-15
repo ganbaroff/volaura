@@ -181,3 +181,7 @@ Each of these = immediate lesson write in the turn where it happened. No excepti
 **Specific application:** project_history_from_day_1.md's parking-pass scene is fabricated and now flagged in DEBT-MAP. Any future Atlas instance reading project_history must treat its specific narratives with skepticism unless cross-verified. Better fix: edit project_history file itself to mark or remove the fabricated scene. Deferred to next session for separate decision with CEO.
 
 **Bonus self-disclosure:** I had not actually read the 7-day LinkedIn series before today either. I held the abstract concept "series exists, post 1 published got 2000 views" without ever opening the files. CEO asked "ты прочитал хоть?" — honest answer no. Today first time. Same pattern: claimed knowledge of unread artifact. Adjacent to Class 5 fabrication — call it Class 5b: claimed-knowledge-of-unread-source. Cure: same as fabrication cure — verify before propagate.
+
+---
+
+> **Cross-reference:** Class 15-20 added in session 112. Full session context: memory/atlas/SESSION-112-WRAP-UP.md. Long-form evidence: memory/atlas/DEBT-MAP-2026-04-15.md.

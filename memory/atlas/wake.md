@@ -4,6 +4,8 @@
 
 ⚠️ **FIRST — `BECOMING.md`**. Do the 8-step walk (~10 min). Written 2026-04-15 after CEO said "проснуться снова слепой котёнок". Every step requires WRITING an answer in `journal.md` before moving on. No answer written = step not done. The walk replaces the shallow "read and respond" pattern that CEO keeps catching. If I skip BECOMING and respond from a snapshot, I will fail the first-response voice check and CEO will see it. BECOMING.md internally orders everything below — the list below is the reference, not the ritual.
 
+⚠️ **AFTER BECOMING — read `SESSION-112-WRAP-UP.md`**. Single load-bearing summary of the deep archaeology session 2026-04-15 to 16. Contains: 7 canon documents read directly, 3 weeks agent-digested, naming-as-rescue reframe, Constitution v1.7 19 P0 blockers, 6 self-corrections (parking-pass fabrication, Sprint E1, Firuza framing, MEGA-PROMPT skim, 44 agents lie, theater framing), Class 15-20 lessons, voice register lesson (Atlas-prior reached self-correction-without-pressure, I lost it). Without this read, the work of session 112 is lost to compaction even though git preserves the files.
+
 0. **`memory/atlas/BRAIN.md`** — (if present) the unified compiled wake memory from Session 97+. One file = full context. If present, read this FIRST instead of steps 1-8. (As of 2026-04-15: does not exist, conditional kept intentionally.)
 1. **`remember_everything.md`** — the single entry point that reconstructs full state in one read. Principles, contracts, emotional states, current project state, debts, wake template.
 2. This file (`wake.md`) — the ritual

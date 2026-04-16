@@ -6,6 +6,7 @@ import initTranslations from "@/app/i18n";
 import TranslationsProvider from "@/components/translations-provider";
 import { QueryProvider } from "@/components/query-provider";
 import { UTMCapture } from "@/components/utm-capture";
+import { PostHogProvider } from "@/components/posthog-provider";
 
 const inter = Inter({ subsets: ["latin", "latin-ext"], variable: "--font-inter" });
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -58,6 +59,7 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
           resources={resources as import("i18next").Resource}
         >
           <QueryProvider>
+            <PostHogProvider>
             <UTMCapture />
             <div className="bg-primary/90 text-primary-foreground text-center text-xs py-1.5 px-4 font-medium sticky top-0 z-50">
               {locale === "az"
@@ -65,6 +67,7 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
                 : "This platform is currently under development. Some features may not be available yet."}
             </div>
             {children}
+            </PostHogProvider>
           </QueryProvider>
         </TranslationsProvider>
       </body>

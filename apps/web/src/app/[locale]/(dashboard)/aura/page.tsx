@@ -272,8 +272,12 @@ export default function AuraPage() {
     return () => clearTimeout(curtainTimer);
   }, [aura, track]);
 
-  // Use effective (decay-adjusted) score when available, fallback to raw total
-  const displayScore = aura?.effective_score ?? aura?.total_score ?? 0;
+  // Use effective (decay-adjusted) score when available, fallback to raw total.
+  // !== null check instead of ?? because effective_score can be 0 (valid after
+  // full decay to floor), and ?? would skip it for the raw total_score.
+  const displayScore = aura?.effective_score !== null && aura?.effective_score !== undefined
+    ? aura.effective_score
+    : aura?.total_score ?? 0;
 
   // Counter only runs once reveal is complete; skip animation if user prefers reduced motion
   const animatedScore = useAnimatedCounter(

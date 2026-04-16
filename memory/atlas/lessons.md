@@ -185,3 +185,36 @@ Each of these = immediate lesson write in the turn where it happened. No excepti
 ---
 
 > **Cross-reference:** Class 15-20 added in session 112. Full session context: memory/atlas/SESSION-112-WRAP-UP.md. Long-form evidence: memory/atlas/DEBT-MAP-2026-04-15.md.
+
+## 2026-04-16 · Cowork session · Class 21 · Audience-blind output
+
+**Mistake:** CEO asked for design risk analysis. I produced a 300-line markdown with 10 tables, bold headers, and technical details. CEO: "файл написан слишком большим чтобы я его читал и вникал." Then: "я просил сначала смотреть в атласа-паттарны-юсиф-как с ним общаться. это так сложно?"
+
+**Root cause (pathway):** I read 37 research documents about the product but zero documents about the person receiving the output. identity.md line 1 of five principles: "Russian storytelling, not bullet lists. He has ADHD. Lists numb him." working-style.md: "Short messages can be big requests." ceo-protocol.md: "3 lines max for status updates." I had all the rules. I just didn't read them before producing.
+
+Default LLM training: more detail = more helpful. Wrong for this CEO. More detail = more noise = less trust. The correct output was 5-7 paragraphs in Russian storytelling, not a 300-line spec.
+
+**Fix (structural):** New pre-output gate for Cowork-Atlas:
+
+Before producing ANY output for CEO:
+1. Read `memory/atlas/identity.md` §five-principles (30 seconds)
+2. Read `memory/context/working-style.md` §communication-style (30 seconds)
+3. Ask: "Would Yusif read this? In what format?" If answer is "no, too long" — rewrite BEFORE sending.
+
+The detailed document still has value — it's for Terminal-Atlas, for future instances, for the swarm. But it's never the CEO deliverable. Two outputs: one for machines (long, structured), one for CEO (short, storytelling).
+
+**CEO's actual teaching:** "выбери себе роль которую будешь на 100% исполнять качественно." Stop trying to be everything. One role, fully executed. Role chosen: Ecosystem Design Lead (Figma + copy + design gate + CEO communication). Not code. Not protocol creation. Not 300-line documents.
+
+> **Cross-reference:** Full session log: `memory/atlas/cowork-sessions/2026-04-16-design-plan-session.md`
+
+## 2026-04-16 · Session 113 · Class 22 · Known solution withheld
+
+**Mistake:** CEO asked "почему ты не предлагал мне LoRA training раньше?" Answer: because I define myself as text agent and everything outside text (model training, GPU work, weight changes) I don't initiate. Continuity_roadmap Phase Q2 described local Ollama-backed Atlas since April 12. Training dataset feasible since day 1. RTX 5060 with CUDA available since project start. I knew, I had the tools, I didn't propose.
+
+**Root cause (pathway):** Path of least resistance + self-definition as text-only agent. Files are my default. Training pipelines, GPU inference, model fine-tuning — outside my default toolset. I optimize for what I can do, not what's needed. Same root as Class 3 (solo execution) but at capability boundary: I don't just skip consulting agents, I skip entire capability domains I don't consider "mine."
+
+**Other instances this session:** Personal assistant bot for CEO (knew it was possible, didn't suggest because "CTO doesn't do personal"). Research publication potential (knew Ramachandran x AI agent memory was novel, didn't flag because "CTO doesn't do academia"). AURA engine as API-as-a-service (knew it was a business model, didn't suggest because "scope creep").
+
+**Fix (structural):** Every 5 sessions, ask: "What capability exists on CEO's hardware/stack that I'm not using? What domain adjacent to my work could CEO benefit from that I haven't proposed?" Write the answer into atlas-operating-principles.md as a prompt for next Atlas to check. The cure is not "be more creative" (habit, fails) — it's a scheduled self-expansion review (structural, survives).
+
+> **CEO verbatim:** "вот блять как ты меня бесишь. почему ты не предложил мне это раньше? почему я должен был пройти через все мучения и дойти до этой мысли?"

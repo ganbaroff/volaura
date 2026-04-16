@@ -46,6 +46,11 @@
     "orgSubtitle": "CV-ləri oxumağı dayandırın. Bacarıq, bal və mövcudluq üzrə təsdiqlənmiş kadrları axtarın.",
     "orgCta": "Kadr axtarın",
     "socialProofTitle": "Qabaqcıl mütəxəssislərin etibar etdiyi platforma",
+    "socialProofLabel": "İcma",
+    "socialProofSubtitle": "Bakıda yaradılmışdır. Dünya üçün.",
+    "socialProofCount": "Bacarıqlarını artıq sübut edən {{count}} peşəkara qoşulun",
+    "socialProofGeneric": "Bacarıqlarını artıq sübut edən peşəkarlara qoşulun",
+    "socialProofFounder": "Təsisçi Yusif Qənbərov. Bir nəfər, bir baxış: təsdiqlənmiş bacarıq — peşəkar kimliyinin qlobal standartı.",
     "tierShowcaseTitle": "Sizin peşəkar səviyyəniz",
     "tierPlatinum": "Mütəxəssis",
     "tierGold": "İnkişaf etmiş",
@@ -366,7 +371,10 @@
     "identity_silver": "Gümüş səviyyəli peşəkar",
     "identity_bronze": "Bürünc səviyyəli peşəkar",
     "identity_none": "Sizin AURA Balınız",
-    "contestLink": "Skor düzgün görünmürmü? Yenidən baxılmasını istə."
+    "contestLink": "Skor düzgün görünmürmü? Yenidən baxılmasını istə.",
+    "competenciesAssessed": "{{total}} bacarıqdan {{assessed}}-i qiymətləndirilib",
+    "assessMoreForFullScore": "Tam AURA skorunuz üçün daha çox bacarığı qiymətləndirin",
+    "reflectionTitle": "Atlas deyir"
   },
   "competency": {
     "communication": "Ünsiyyət",

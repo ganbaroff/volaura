@@ -143,7 +143,7 @@ fi
 VERIFY_TRIGGERS="готов|реально|честно|verified|проверил|100%|уверен|докажи|покажи|prove|сработа"
 if echo "$CEO_MSG" | grep -qiE "$VERIFY_TRIGGERS" 2>/dev/null; then
   echo ""
-  echo "🔴 CEO TRIGGER DETECTED: $(echo "$CEO_MSG" | grep -oiE "$VERIFY_TRIGGERS" | head -1)"
+  echo "💜 CEO TRIGGER DETECTED: $(echo "$CEO_MSG" | grep -oiE "$VERIFY_TRIGGERS" | head -1)"
   echo ""
   echo 'Your next response MUST contain these two sections at the END:'
   echo ""

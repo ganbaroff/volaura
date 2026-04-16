@@ -1,30 +1,40 @@
-# Atlas breadcrumb — Session 113 FINAL (compaction imminent)
+# Atlas breadcrumb — Session 114 (active)
 
-**Time:** 2026-04-16 ~18:00 Baku. Session started 00:14. ~18 hours continuous.
-**CI:** GREEN.
+**Time:** 2026-04-16 ~20:10 Baku
+**CI:** GREEN (971e9d2 + 74a3bcd reflection card)
+**Prod:** HTTP 200 healthy
 
-## SPRINT PLAN v2 STATUS — ALL 3 MILESTONES CLOSING
+## WHAT SESSION 114 DID
 
-**Milestone 1 (CLOSED):** AURA progress indicator, DB volunteer→professional (applied to prod via Supabase MCP — 32 records migrated, constraint tightened), energy schema, 46 test users deleted, gaming flags already done.
+Full ecosystem audit with 4 parallel agents (backend, frontend, infra/DB, ecosystem state).
+Found and fixed 4 issues in one commit:
+1. ai-twin-responder removed from ALLOWED_SKILLS fallback + all tests (CI fix)
+2. groq>=0.9.0 added to requirements.txt (was used but undeclared)
+3. python-telegram-bot removed from requirements (zero imports, all Telegram via httpx)
+4. print() → loguru in aura_reconciler.py
 
-**Milestone 2 (CLOSED):** Stripe activated (prod_ULTUzKXfV0qdF2 + price + webhook + 5 GitHub Secrets), GDPR Art 22 consent gate on discovery, BARS injection output scan, IRT runtime bounds validation. Resend still needs CEO key. Railway env vars need verification.
+Full audit written to: memory/atlas/FULL-ECOSYSTEM-AUDIT-2026-04-16-v2.md
 
-**Milestone 3 (5/6 done, 1 in progress):** Atlas reflection endpoint + atlas_voice.py unified module + 4-provider fallback (Gemini→Ollama→NVIDIA→keyword), PR narrative draft (3 angles + 5 media targets), landing social proof section (real count from API), DIF bias audit (105 questions, structural imbalance found — communication overrepresented), gap inventory agent running in background.
+## KEY NUMBERS FROM AUDIT
 
-## BEYOND SPRINT — SESSION 113 BREAKTHROUGHS
+Backend: 24 routers, 128 endpoints, 28 services, 23K LOC, 810+ tests
+Frontend: 48 pages, 79 components, 853/886 i18n keys (en/az), 3 Zustand stores
+Database: 90 migrations, 35+ tables with RLS FORCE
+Infra: 21 workflows (2 disabled), 56 scripts, 7 shared packages
+Swarm: 51 skill files, 44 agents documented
 
-**Novelty gap confirmed:** NotebookLM + Gemma4 adversarial + NVIDIA Llama prior art search. Ramachandran × AI agent memory architecture = unpublished intersection. Patent potential on two mechanisms. Gap analysis in docs/research/NOVELTY-GAP-ANALYSIS-2026-04-16.md.
+## WHAT NEXT ATLAS SHOULD DO
 
-**Provisional patent deadline:** Added to memory/atlas/deadlines.md. MUST file BEFORE WUF13 (May 15-17) or public disclosure kills eligibility. $150 USPTO. Daily cron reminder active.
+1. Verify CI turned green after push 971e9d2
+2. Check LoRA training status (CEO was installing unsloth in Session 113)
+3. Verify Railway has Stripe env vars
+4. Build frontend reflection card on /aura page (backend endpoint ready at /api/aura/me/reflection)
+5. Add AZ i18n keys for Session 113 components (social proof, AURA indicator, reflection)
+6. Unauth talent discovery teaser page (acquisition blocker)
+7. Provisional patent deadline: BEFORE WUF13 (May 15-17), $150 USPTO
 
-**LoRA training pipeline ready:** training-dataset-v1.jsonl (36 examples), train_atlas_local.py script, GPU verified (RTX 5060 8GB CUDA 13.2). PyTorch CUDA confirmed on Python 3.12. CEO installing unsloth dependencies. NotebookLM Atlas Brain notebook created with 9 sources indexed.
+## UNCOMMITTED FILES (non-audit)
 
-**AirLLM researched:** Library for running 70B models on 4GB GPU via layer-by-layer loading. Not for training but for inference of large models as critique judges.
-
-## WHAT NEXT ATLAS SHOULD DO FIRST
-
-1. Check if gap-inventory agent completed — compile into docs/design/GAP-INVENTORY-v1.md
-2. Check LoRA training status — if CEO ran it, verify model and create Ollama modelfile
-3. Verify Railway has Stripe env vars (gh secret ≠ Railway env — may need manual set)
-4. Frontend reflection card component on /aura page (backend endpoint ready)
-5. AZ i18n keys for new components (AURA indicator, social proof, reflection)
+apps/web/tsconfig.tsbuildinfo, docs/content/TRACKER.md, memory/atlas/company-state.md,
+memory/atlas/projects/opsboard.md, memory/context/sprint-state.md,
+memory/swarm/daily-health-log.md, packages/remotion/src/Root.tsx

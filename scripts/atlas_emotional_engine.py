@@ -1,5 +1,9 @@
 """Atlas Emotional Engine — ZenBrain-powered emotion-aware response system.
 
+v2: Hybrid mode. Keyword matching (fast, no GPU) + Ollama LLM detection (accurate).
+Use --ollama flag to enable LLM-based detection via qwen3:8b.
+Without flag: falls back to vocabulary-based PAD scoring (v1 behavior).
+
 Scores incoming CEO messages on emotional dimensions, retrieves memory
 weighted by emotional context, and outputs behavioral directives.
 
@@ -15,6 +19,7 @@ Usage:
 import json
 import math
 import re
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -188,6 +193,73 @@ def get_memory_retrieval_order(emotional_state: dict) -> list[str]:
     return scored
 
 
+OLLAMA_EMOTION_PROMPT = (
+    "You analyze emotional state of a Russian-speaking CEO. "
+    "IMPORTANT: Russian mat (заебись, бля, нахуй) is OFTEN positive/neutral in casual speech. "
+    "\"заебись\" = \"awesome\". \"бля\" with )))) = playful. Context matters more than words. "
+    "Return ONLY JSON: {\"valence\":-1to1,\"arousal\":0to1,\"dominant\":\"one_word\",\"intensity\":0to1}. "
+    "dominant must be one of: frustrated|pleased|urgent|tired|curious|angry|neutral|proud|playful"
+)
+
+
+def analyze_message_ollama(message: str) -> dict:
+    """Use Ollama qwen3:8b for accurate emotion detection (handles Russian mat context)."""
+    try:
+        payload = json.dumps({
+            "model": "qwen3:8b",
+            "messages": [
+                {"role": "system", "content": OLLAMA_EMOTION_PROMPT},
+                {"role": "user", "content": message},
+            ],
+            "format": "json",
+            "stream": False,
+        })
+        result = subprocess.run(
+            ["curl", "-s", "http://localhost:11434/api/chat", "-d", payload],
+            capture_output=True, text=True, timeout=15,
+        )
+        data = json.loads(result.stdout)
+        emotion = json.loads(data["message"]["content"])
+
+        v = float(emotion.get("valence", 0))
+        a = float(emotion.get("arousal", 0.3))
+        dominant = emotion.get("dominant", "neutral")
+        intensity = float(emotion.get("intensity", 0.5))
+
+        state_map = {
+            "frustrated": "correcting", "angry": "correcting",
+            "pleased": "drive", "proud": "drive", "playful": "drive",
+            "urgent": "correcting", "tired": "exhausted",
+            "curious": "warm", "neutral": "analytical",
+        }
+        state = state_map.get(dominant, "analytical")
+
+        directive_map = {
+            "drive": "match_energy_execute_fast",
+            "warm": "storytelling_slow_depth",
+            "correcting": "reflexion_fix_same_turn",
+            "exhausted": "minimal_one_action_stop",
+            "analytical": "standard_response",
+        }
+
+        zen_intensity = min(5, int(abs(v) * 5 + a * 2))
+        decay_multiplier = 1.0 + zen_intensity * 2.0
+
+        return {
+            "valence": round(v, 3),
+            "arousal": round(a, 3),
+            "dominance": 0.5,
+            "state": state,
+            "intensity": zen_intensity,
+            "decay_multiplier": decay_multiplier,
+            "directive": directive_map.get(state, "standard_response"),
+            "dominant_emotion": dominant,
+            "source": "ollama_qwen3",
+        }
+    except Exception as e:
+        return analyze_message(message)
+
+
 def main():
     if len(sys.argv) < 2:
         print("Usage: python atlas_emotional_engine.py 'CEO message'")
@@ -202,8 +274,9 @@ def main():
             print(f"  {score:5.2f} [{emotion:>15s}] {path}")
         return
 
-    message = " ".join(sys.argv[1:])
-    result = analyze_message(message)
+    message = " ".join(arg for arg in sys.argv[1:] if not arg.startswith("--"))
+    use_ollama = "--ollama" in sys.argv
+    result = analyze_message_ollama(message) if use_ollama else analyze_message(message)
 
     print(f"State: {result['state']} | Intensity: {result['intensity']} | "
           f"Decay: {result['decay_multiplier']}x")

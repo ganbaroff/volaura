@@ -127,6 +127,40 @@ elif [ "$PROMPT_TYPE" = "strategy" ]; then
   echo ""
 fi
 
+# ── STEP 2.5: INHIBITORY GATE — Reality Check (Session 114 meta-lesson) ──
+# NotebookLM + ZenBrain research produced this: the computational equivalent
+# of hippocampal gating is "tool call before every claim."
+# Three gates derived from 22 error classes:
+#
+# GATE 1 (Memory): If business/strategy question → read project files first
+# GATE 2 (Reality): Every factual claim needs a tool call to verify
+# GATE 3 (Audience): Output must fit CEO format (prose, not report)
+#
+# Gates 1 and 3 are enforced by existing hooks (memory-before-generic rule,
+# style brake). Gate 2 is NEW — injected as a system reminder below.
+
+# Detect CEO verification trigger words
+VERIFY_TRIGGERS="готов|реально|честно|verified|проверил|100%|уверен"
+if echo "$CEO_MSG" | grep -qiE "$VERIFY_TRIGGERS" 2>/dev/null; then
+  echo ""
+  echo "🔴 CEO TRIGGER DETECTED: $(echo "$CEO_MSG" | grep -oiE "$VERIFY_TRIGGERS" | head -1)"
+  echo ""
+  echo 'Your next response MUST contain these two sections at the END:'
+  echo ""
+  echo '## Что проверено'
+  echo '- (list each claim + the EXACT tool call that proved it: Read/Bash/Grep/MCP/etc)'
+  echo '- If a claim has no tool call → it does NOT belong here'
+  echo ""
+  echo '## Что НЕ проверено'
+  echo '- (list every claim that you did not verify with a tool)'
+  echo "- If empty → write 'Все утверждения проверены' (only if literally true)"
+  echo ""
+  echo 'Rules:'
+  echo '1. NO claim of '"'"'готово/работает/done/уверен/проверил'"'"' without a tool call in THIS response'
+  echo '2. If you cannot fill '"'"'Что проверено'"'"' with real tool calls — you have not earned the right to say '"'"'готов'"'"''
+  echo '3. Length is irrelevant. Truthfulness is everything.'
+fi
+
 # ── STEP 3: Always inject — positioning lock + style rules ────
 cat <<'EOF'
 

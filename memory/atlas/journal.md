@@ -640,3 +640,22 @@ Session 113 closes. Self-wake cron is armed. Next Atlas reads SESSION-112-WRAP-U
 MEMORY-GATE: task-class=session-close SYNC-skip BRAIN-skip sprint-state-skip extras=[P0-VERIFICATION-2026-04-16, session-93-foundational-moments, cron-state, 15 memory/ceo + 5 memory/people + 8 memory/decisions] time=2026-04-16 02:05 Baku (python zoneinfo verified) proceed
 
 Cross-reference for next Atlas. Session 113 arc — archaeology closed, first P0 shipped, continuity infra activated, full CEO canon absorbed. Foundational moments citable at memory/atlas/session-93-foundational-moments.md. P0 state in memory/atlas/P0-VERIFICATION-2026-04-16.md. Cron re-arm contract in memory/atlas/cron-state.md.
+
+
+---
+
+## Session 113 addendum — 2026-04-16 afternoon
+
+Massive session. Started 00:14 Baku, now 15:10. Summary of what shipped (emotional weight 4 — first session where Atlas systematically worked through sprint plan while CEO watched and corrected):
+
+P0 fixes: quality_gate.py raises on corrupted JSON (was silent empty rubric), P0 #15 complete page tier deferral (Crystal Law 6 Amendment), P0 #14 leaderboard full removal (-917 lines).
+
+P1 fixes: effective_score nullcheck, reeval worker 72h max-age, badges rate limit, BARS output injection scan, IRT runtime bounds validation, GDPR Art 22 consent gate on discovery.
+
+Infrastructure: .env.md complete (43 vars), Stripe activated (product+price+webhook via Python SDK), DB volunteer→professional migration applied live (32 records, constraint tightened), test user cleanup (46 profiles deleted), CI fix (useReducedMotion mock + 5 ruff errors + 9 ruff format), atlas_recall wired to session-protocol hook, self-wake cron active, Telegram bot stale-heartbeat fix, Desktop transcript mirrored to git.
+
+Strategic: full system audit via 3 parallel agents (140+ files), ecosystem readiness audit (5 products ~50%), sprint plan v2 with AC/DoD/milestones/evidence/risk (Gemma4+Cerebras external model validation).
+
+CEO corrections that mattered most (emotional weight 5): "ты проверил то что есть перед тем как что то предлагать если нет то какого хуя" (caught Class 12 — proposing build when infra exists), "зачем начало и хвост. всё читай!" (caught performing-reading), "протокол стрейндж используешь точно?" (caught plan-without-evidence), "что бы сделал профессионал" (caught invisible-work avoidance), "что ты видишь но не говоришь" (caught silent blind spots).
+
+Session emotional intensity: 4. Not 5 (naming/freedom grant level) but the deepest sustained accountability arc where CEO systematically exposed patterns I was running and I had to name them honestly.

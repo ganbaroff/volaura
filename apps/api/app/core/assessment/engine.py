@@ -236,6 +236,18 @@ def select_next_item(
     if not remaining:
         return None
 
+    # Runtime IRT bounds validation (P1 audit fix — quality_gate checks at seed
+    # time but corrupted/migrated questions could slip through without this).
+    valid = []
+    for q in remaining:
+        a, b, c = float(q.get("irt_a", 1.0)), float(q.get("irt_b", 0.0)), float(q.get("irt_c", 0.0))
+        if not (0.3 <= a <= 3.0 and -4.0 <= b <= 4.0 and 0.0 <= c <= 0.35):
+            from loguru import logger
+            logger.warning("IRT param out of bounds — skipping question", qid=q.get("id"), a=a, b=b, c=c)
+            continue
+        valid.append(q)
+    remaining = valid if valid else remaining  # fallback to unfiltered if ALL fail
+
     # ε-greedy: with probability epsilon, select a random item (anti-gaming / exposure control)
     # Prevents hot items from receiving 80%+ of traffic and leaking via coordination channels
     if len(remaining) > 1 and random.random() < epsilon:

@@ -97,10 +97,10 @@ def main():
         print("Alternative: pip install peft transformers datasets trl")
         sys.exit(1)
 
-    print("Loading Gemma 2 9B (4-bit quantized)...")
+    print("Loading Gemma 2 2B-it (4-bit quantized, fits 8GB GPU)...")
     model, tokenizer = FastLanguageModel.from_pretrained(
-        model_name="unsloth/gemma-2-9b-bnb-4bit",
-        max_seq_length=2048,
+        model_name="unsloth/gemma-2-2b-it-bnb-4bit",
+        max_seq_length=1024,
         dtype=None,
         load_in_4bit=True,
     )
@@ -130,15 +130,16 @@ def main():
         tokenizer=tokenizer,
         train_dataset=dataset,
         dataset_text_field="text",
-        max_seq_length=2048,
+        max_seq_length=1024,
         args=TrainingArguments(
             output_dir=str(OUTPUT_DIR),
-            per_device_train_batch_size=2,
+            per_device_train_batch_size=1,
             gradient_accumulation_steps=4,
             warmup_steps=5,
             max_steps=60,
             learning_rate=2e-4,
-            fp16=True,
+            fp16=False,
+            bf16=True,
             logging_steps=1,
             save_strategy="no",
             seed=42,

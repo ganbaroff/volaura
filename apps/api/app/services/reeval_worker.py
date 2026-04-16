@@ -48,6 +48,7 @@ POLL_INTERVAL_S: float = 60.0  # seconds between queue drain cycles
 BATCH_SIZE: int = 10  # max items processed per cycle
 STALE_TIMEOUT_S: float = 300.0  # 5 min — reset 'processing' items this old
 MAX_RETRIES: int = 3
+MAX_AGE_HOURS: float = 72.0  # skip pending items older than 3 days (P1 audit fix)
 
 
 # ── Admin client factory (module-level singleton for background task) ─────────
@@ -155,8 +156,24 @@ async def _recover_stale_items(db: AsyncClient) -> None:
 
 
 async def _fetch_pending_batch(db: AsyncClient) -> list[dict[str, Any]]:
-    """Fetch up to BATCH_SIZE pending items, oldest first."""
+    """Fetch up to BATCH_SIZE pending items, oldest first.
+
+    Items older than MAX_AGE_HOURS are skipped (marked 'expired') so the
+    queue doesn't grow unbounded when LLM providers are down for days.
+    """
+    max_age_cutoff = (datetime.now(UTC) - timedelta(hours=MAX_AGE_HOURS)).isoformat()
     try:
+        # Expire old pending items in one pass
+        expired = await (
+            db.table("evaluation_queue")
+            .update({"status": "expired"})
+            .eq("status", "pending")
+            .lt("queued_at", max_age_cutoff)
+            .execute()
+        )
+        if expired.data:
+            logger.info("Expired stale evaluation_queue items", count=len(expired.data))
+
         result = await (
             db.table("evaluation_queue")
             .select("*")

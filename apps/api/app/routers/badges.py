@@ -132,6 +132,7 @@ async def get_open_badge_credential(
 
 
 @router.get("/issuer")
+@limiter.limit(RATE_DISCOVERY)
 async def get_issuer_profile(request: Request) -> dict:
     """Open Badges issuer profile."""
     base_url = str(request.base_url).rstrip("/")

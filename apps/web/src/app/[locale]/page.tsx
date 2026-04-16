@@ -8,6 +8,7 @@ import { SampleAuraPreview } from "@/components/landing/sample-aura-preview";
 import { FeaturesGrid } from "@/components/landing/features-grid";
 import { HowItWorks } from "@/components/landing/how-it-works";
 import { OrgCta } from "@/components/landing/org-cta";
+import { SocialProof } from "@/components/landing/social-proof";
 import { LandingNav } from "@/components/landing/landing-nav";
 import { LandingFooter } from "@/components/landing/landing-footer";
 
@@ -53,6 +54,7 @@ export default async function LandingPage({ params }: LandingPageProps) {
         <FeaturesGrid />
         <HowItWorks />
         <OrgCta locale={locale} />
+        <SocialProof />
       </main>
       <LandingFooter locale={locale} />
     </>

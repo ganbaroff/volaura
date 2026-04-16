@@ -2,7 +2,7 @@
 
 **Single source of truth for legal entity, obligations, and deadlines. Atlas + founder-ops agents read this first. CEO sees digest, not this file.**
 
-Last updated: 2026-04-15 — Stripe Atlas dashboard confirms Application review ✅ COMPLETED. Incorporation expected Apr 15-16.
+Last updated: 2026-04-16 — Stripe Atlas dashboard confirms: Application review ✅, Incorporation ✅ (Apr 14), Tax ID (EIN) expected Apr 29 – May 13, 83(b) postmark by Apr 28.
 
 ---
 
@@ -35,10 +35,10 @@ Last updated: 2026-04-15 — Stripe Atlas dashboard confirms Application review 
 | Milestone | Expected | Deadline | Owner | Status |
 |-----------|----------|----------|-------|--------|
 | Application review | Apr 14-15 | — | Stripe Atlas | ✅ COMPLETED (dashboard 2026-04-15) |
-| Incorporation (DE filing) | Apr 15-16 | — | Stripe Atlas | PENDING (confirmed dashboard) |
-| Certificate of Incorporation issued | Apr 15-16 | — | Stripe Atlas | PENDING |
-| 83(b) election mailed to IRS | **Within 10 business days** (Stripe Atlas SLA — ~Apr 29-30) | IRS statutory max: 30 calendar days (~May 15) | Founder + Atlas | **CRITICAL P0 — Stripe deadline TIGHTER than IRS by 2+ weeks** |
-| Tax ID (EIN) received | 2-4 weeks (May 5-12) | — | IRS via Stripe Atlas | PENDING |
+| Incorporation (DE filing) | Apr 14 | — | Stripe Atlas | ✅ COMPLETED (dashboard Apr 16) |
+| Certificate of Incorporation issued | Apr 14 | — | Stripe Atlas | ✅ COMPLETED |
+| 83(b) election mailed to IRS | **Postmark by Apr 28** (Stripe Atlas handles) | IRS statutory max: 30 calendar days (~May 14) | Founder + Atlas | **⚠️ CRITICAL P0 — 12 DAYS LEFT** |
+| Tax ID (EIN) received | Apr 29 – May 13 | — | IRS via Stripe Atlas | PENDING |
 | ITIN application (Form W-7) | Immediately after incorporation | — | Founder | P0 (needed for 83(b) + taxes) |
 | Mercury Bank application | After EIN received (~May 5-12) | — | Founder + Atlas | QUEUED |
 | Stripe Atlas Perks review | **Apr 15-16** (available now per dashboard) | — | Atlas | **NEW — free credits potential (AWS, Notion, etc) — cash save** |
@@ -101,6 +101,21 @@ All three read Atlas memory + this file on wake. All three write personal lesson
 | Quo US phone (future) | When Mercury re-opens | ~$15/mo |
 
 Stripe credits received: $2,500 (use for production processing first revenue).
+
+## Perks & Credits Status (Session 114, 2026-04-16)
+
+| Service | Status | Amount | Expected |
+|---------|--------|--------|----------|
+| Stripe payment processing | ACTIVE | $2,500 credit | Available now |
+| GCP trial | ACTIVE | $300 credit | 90 days from activation |
+| AWS Activate | SUBMITTED | $5,000 credit | Review 5-10 biz days |
+| PostHog Startup | SUBMITTED | $50,000 credit | Review 3-5 biz days |
+| Google for Startups | SUBMITTED | up to $350,000 | Review 3-10 biz days |
+| Google Workspace | ACTIVE | $6/mo cost | yusif@volaura.app live |
+| Cloudflare Email Routing | ACTIVE | $0 | hello@volaura.app → Gmail |
+| OpenAI | BLOCKED | — | Region restriction (AZ) |
+
+Total submitted: ~$405K potential. Total confirmed active: $2,800.
 
 ---
 

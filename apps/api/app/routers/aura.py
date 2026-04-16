@@ -355,14 +355,18 @@ async def get_atlas_reflection(
         user_context=f"AURA total: {score:.1f}/100. Assessed {assessed_count}/8 competencies. Scores: {comp_summary}.",
     )
 
-    # Try Gemini Flash (free tier)
+    # Provider chain: Gemini Flash → Ollama local → NVIDIA NIM → keyword fallback
+    import os
+
+    from app.config import settings
+
     reflection = None
-    try:
-        from google import genai
 
-        from app.config import settings
+    # 1. Gemini Flash (free tier)
+    if not reflection and settings.gemini_api_key:
+        try:
+            from google import genai
 
-        if settings.gemini_api_key:
             client = genai.Client(api_key=settings.gemini_api_key)
             response = client.models.generate_content(
                 model="gemini-2.5-flash",
@@ -374,11 +378,62 @@ async def get_atlas_reflection(
                 ),
             )
             reflection = (response.text or "").strip()
-    except Exception as e:
-        logger.warning("Atlas reflection Gemini failed: {e}", e=str(e)[:100])
+        except Exception as e:
+            logger.warning("Atlas reflection Gemini failed: {e}", e=str(e)[:100])
 
+    # 2. Ollama local (free, zero cost — CEO's GPU when available)
     if not reflection:
-        # Keyword fallback — no LLM needed, just template
+        import json as json_mod
+        import urllib.request
+
+        ollama_url = os.environ.get("OLLAMA_URL", "http://localhost:11434")
+        try:
+            req = urllib.request.Request(
+                f"{ollama_url}/api/generate",
+                data=json_mod.dumps(
+                    {
+                        "model": "gemma4",
+                        "prompt": f"{system}\n\nWrite Atlas' reflection. 2-3 sentences, Russian, warm.",
+                        "stream": False,
+                    }
+                ).encode(),
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                data = json_mod.loads(resp.read().decode())
+                reflection = (data.get("response") or "").strip()
+        except Exception as e:
+            logger.warning("Atlas reflection Ollama failed: {e}", e=str(e)[:100])
+
+    # 3. NVIDIA NIM (free tier)
+    if not reflection:
+        nvidia_key = os.environ.get("NVIDIA_API_KEY", "")
+        if nvidia_key:
+            try:
+                import httpx
+
+                r = httpx.post(
+                    "https://integrate.api.nvidia.com/v1/chat/completions",
+                    headers={"Authorization": f"Bearer {nvidia_key}"},
+                    json={
+                        "model": "meta/llama-3.3-70b-instruct",
+                        "messages": [
+                            {"role": "system", "content": system[:4000]},
+                            {"role": "user", "content": "Write Atlas' reflection. 2-3 sentences, Russian, warm."},
+                        ],
+                        "max_tokens": 200,
+                        "temperature": 0.85,
+                    },
+                    timeout=15,
+                )
+                if r.status_code == 200:
+                    reflection = r.json()["choices"][0]["message"]["content"].strip()
+            except Exception as e:
+                logger.warning("Atlas reflection NVIDIA failed: {e}", e=str(e)[:100])
+
+    # 4. Keyword fallback — no LLM needed
+    if not reflection:
         if score >= 75:
             reflection = f"Сильный профиль. {assessed_count} компетенций оценено, средний уровень уверенно выше среднего. Продолжай в том же темпе."
         elif score >= 40:

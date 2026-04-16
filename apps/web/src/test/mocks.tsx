@@ -78,6 +78,7 @@ vi.mock("framer-motion", () => ({
     }
   ),
   AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  useReducedMotion: () => false,
 }));
 
 // ── Supabase client mock ──

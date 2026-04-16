@@ -11,7 +11,7 @@ import { API_BASE } from "@/lib/api/client";
 import type { SignupStatusResponse, ValidateInviteResponse } from "@/lib/api/generated/types.gen";
 import { SocialAuthButtons } from "@/components/ui/social-auth-buttons";
 
-type AccountType = "volunteer" | "organization";
+type AccountType = "professional" | "organization";
 type OrgType = "ngo" | "corporate" | "government" | "startup" | "academic" | "other";
 
 export default function SignupPage() {
@@ -30,7 +30,7 @@ function SignupForm() {
   const searchParams = useSearchParams();
 
   // Pre-select org type if coming from "Find talent" hero CTA
-  const initialType: AccountType = searchParams.get("type") === "organization" ? "organization" : "volunteer";
+  const initialType: AccountType = searchParams.get("type") === "organization" ? "organization" : "professional";
   const [accountType, setAccountType] = useState<AccountType>(initialType);
   const [orgType, setOrgType] = useState<OrgType | "">("");
   const [username, setUsername] = useState("");
@@ -225,7 +225,7 @@ function SignupForm() {
         <div className="space-y-2">
           <p className="text-sm font-medium">{t("auth.accountTypeLabel")}</p>
           <div className="grid grid-cols-2 gap-3">
-            {(["volunteer", "organization"] as AccountType[]).map((type) => (
+            {(["professional", "organization"] as AccountType[]).map((type) => (
               <button
                 key={type}
                 type="button"
@@ -238,10 +238,10 @@ function SignupForm() {
                 }`}
               >
                 <div className="text-sm font-medium">
-                  {t(`auth.accountType${type === "volunteer" ? "Volunteer" : "Org"}`)}
+                  {t(`auth.accountType${type === "professional" ? "Volunteer" : "Org"}`)}
                 </div>
                 <div className="text-xs text-muted-foreground mt-0.5">
-                  {t(`auth.accountType${type === "volunteer" ? "Volunteer" : "Org"}Desc`)}
+                  {t(`auth.accountType${type === "professional" ? "Volunteer" : "Org"}Desc`)}
                 </div>
               </button>
             ))}

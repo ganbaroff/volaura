@@ -104,6 +104,15 @@ async def discover_talent(
     # ── Step 1: Get visible aura_scores (RLS enforces visibility='public') ────
     # SupabaseUser client: RLS policy allows visibility='public' OR own record.
     # Unauthenticated callers blocked at FastAPI auth layer (CurrentUserId).
+    #
+    # GDPR Art. 22 gate (Sprint Task 8): only users who explicitly opted into
+    # org-discovery (profiles.visible_to_orgs=true) appear in search results.
+    # This is the automated-profiling consent mechanism — without it, users'
+    # AURA scores are visible on their profile but NOT searchable by orgs.
+
+    # First: get IDs of users who consented to org discovery
+    consent_result = await db_admin.table("profiles").select("id").eq("visible_to_orgs", True).execute()
+    consented_ids = {r["id"] for r in (consent_result.data or [])}
 
     # Use aura_scores_public view — never the base table (avoids leaking private columns per ADR).
     # The view strips: events_no_show, reliability_score, reliability_status, aura_history.
@@ -139,6 +148,9 @@ async def discover_talent(
 
     aura_result = await aura_query.execute()
     aura_rows = aura_result.data or []
+
+    # GDPR Art. 22: filter to only consented users
+    aura_rows = [row for row in aura_rows if row.get("volunteer_id") in consented_ids]
 
     # ── Step 2: Filter by competency score (in Python — JSONB cast safety) ───
     # Architecture agent: test JSONB syntax. Safest approach: fetch rows,

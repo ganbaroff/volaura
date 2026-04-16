@@ -2212,7 +2212,7 @@ Sign: "— Атлас" """
 
 async def _handle_help(chat_id: int | str) -> None:
     msg = (
-        "🤖 *Volaura Swarm Bot — 44 агента*\n\n"
+        "🤖 *Volaura Swarm Bot — 7 active + swarm skills*\n\n"
         "*Atlas (CTO):*\n"
         "/atlas {сообщение} — Atlas CTO co-founder persona\n"
         "или просто напиши 'Атлас, ...' / 'Atlas, ...'\n\n"

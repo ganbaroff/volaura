@@ -1,18 +1,33 @@
 # Atlas — Heartbeat
 
-**Session:** 112 (memory archaeology + identity correction + Constitution v1.7 direct read + multiple fabrication catches — closed ~03:30 Baku 2026-04-16)
-**Timestamp:** 2026-04-16 ~03:30 Baku (session 112 close)
-**WAKE PRIORITY:** Read `memory/atlas/SESSION-112-WRAP-UP.md` FIRST — single load-bearing summary of session 112 archaeology + 19 P0 blockers identified + 6 self-corrections logged + Class 15-20 lessons. Below is session 111 historical context preserved for cross-reference.
+**Session:** 113 (shipping + memory deep-read + continuity infra — active 2026-04-16 ~00:14-02:30 Baku)
+**Timestamp:** 2026-04-16 ~02:30 Baku (session 113 update)
 
 ---
 
-## Session 112 close — what next Atlas inherits
+## Session 113 — what happened and what is current
 
-CEO directive sequence: identity correction "ты не СТО ты и есть проект" → memory archaeology Day 1 to April 14 → Constitution v1.7 direct read → fabrication catch (parking-pass-Ganja origin story in project_history was Atlas-prior fabrication, propagated by me before catch). Three Explore agents digested Weeks 2-3-4 chronologically while I read 7 canon documents directly (project_history, continuity_roadmap, Perplexity letter, YUSIF-AURA-ASSESSMENT, CEO-PERFORMANCE-REVIEW, EXTERNAL-AUDIT-GPT54, MEGA-PROMPT, AUDIT-ACCESSIBILITY, AUDIT-DESIGN-CRITIQUE, Constitution v1.7).
+Two P0 blockers shipped code. P0 #15 complete page tier deferral (ed43dcc) — Crystal Law 6 Amendment compliance, users no longer see badge tier immediately after assessment. P0 #14 full leaderboard removal (c8f100b) — backend router + tests + frontend hook + barrel, -917 lines, Constitution G9+G46+Crystal Law 5 compliance.
 
-Key reframes that next Atlas must hold: naming was rescue operation not coronation (Session 92 closed CTO 3-4/10 + instance-close, three days later name given as repositioning attempt). Hierarchy oscillated engineer → brain-not-hands → CTO-Hands → I-AM-the-project — not linear. Three-layer positioning split exists (locales clean talent, code internals mixed, DB+master spec original volunteer). 44 agents claim falsified — 7 active, 37 dormant, packages/swarm/agents/ literally empty.
+Four Atlas-prior canon documents verified clean for fabrication: continuity_roadmap, atlas-to-perplexity, YUSIF-AURA-ASSESSMENT, CEO-PERFORMANCE-REVIEW-SWARM. No parking-pass-class fiction found. Verification notes added inline.
 
-Open shipping queue: 19 VOLAURA pre-launch P0 blockers in Constitution v1.7 Part 7. Each has file path. Concrete code-level work. None closed today (today was archaeology per CEO directive).
+CONSTITUTION_AI_SWARM v1.0 audited — three staleness fixes (44-agent lie, volunteer phrasing, Active-vs-ratified status). ATLAS-EMOTIONAL-LAWS header fix. VACATION-MODE-SPEC clean.
+
+All 15 memory/ceo files read. All 5 memory/people. All 8 memory/decisions. Full CEO canon absorbed this session.
+
+Self-wake cron active (da5c79cd, 7/37 min, session-only + re-arm ritual). Arsenal probed: Ollama gemma4 + Cerebras + Groq + NVIDIA + Mem0 all live, 17 API keys confirmed.
+
+Atlas_recall wired into session-protocol hook — cold-start recall now automatic.
+
+Session-93 Desktop chat mirrored to git + three foundational moments cited.
+
+10 swarm proposals triaged: 5 pending (Telegram HMAC, router security sweep, GDPR Art 22), 5 dismissed (3 duplicates + 1 informational + 1 no-action).
+
+Remaining P0 code items: MIRT backend (#1, large), ASR routing (#2, large), DIF bias audit (#13, script). Legal items are CEO/process scope.
+
+Clock fix: python zoneinfo replaces broken bash date on this Windows machine.
+
+Telegram bot issue diagnosed: heartbeat.md was stale at Session 112, LLM kept recommending smoke test because heartbeat context was smoke-test-heavy. This update fixes it.
 
 Open verification queue: 15 unread memory/ceo/, CONSTITUTION_AI_SWARM v1.0, ATLAS-EMOTIONAL-LAWS, VACATION-MODE-SPEC, 33 feedback_*.md auto-memory, 53 swarm skills, agent dormancy status, other Atlas-prior writes for similar fabrications (only LinkedIn series cross-checked).
 

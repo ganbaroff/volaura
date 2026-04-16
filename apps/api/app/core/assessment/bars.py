@@ -325,6 +325,7 @@ async def evaluate_answer(
     # via /aura/me/explanation — strip them before storage.
     if concept_details:
         from app.schemas.assessment import _INJECTION_PATTERNS
+
         for detail in concept_details:
             quote = detail.get("quote", "")
             if isinstance(quote, str) and any(p.search(quote) for p in _INJECTION_PATTERNS):

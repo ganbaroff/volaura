@@ -183,10 +183,7 @@ def atlas_tool(
         sig = inspect.signature(fn)
         params = [p for p in sig.parameters.values() if p.kind != inspect.Parameter.VAR_KEYWORD]
         if len(params) != 1:
-            raise TypeError(
-                f"@atlas_tool {name}: function must take exactly one positional arg "
-                f"(got {len(params)})"
-            )
+            raise TypeError(f"@atlas_tool {name}: function must take exactly one positional arg (got {len(params)})")
         # `from __future__ import annotations` turns annotations into strings at
         # class bodies but not at module-level functions on 3.12 — still, resolve
         # defensively via inspect.get_annotations.
@@ -197,8 +194,7 @@ def atlas_tool(
         ann = resolved.get(params[0].name, params[0].annotation)
         if ann is inspect.Parameter.empty or not (isinstance(ann, type) and issubclass(ann, BaseModel)):
             raise TypeError(
-                f"@atlas_tool {name}: single arg must be annotated with a Pydantic BaseModel "
-                f"subclass (got {ann!r})"
+                f"@atlas_tool {name}: single arg must be annotated with a Pydantic BaseModel subclass (got {ann!r})"
             )
         if not inspect.iscoroutinefunction(fn):
             raise TypeError(f"@atlas_tool {name}: function must be async")

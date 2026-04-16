@@ -24,6 +24,7 @@ DESIGN:
     that was already persisted when the user completed. We only resync
     the AURA aggregate.
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -70,13 +71,7 @@ async def _fetch_pending(db: AsyncClient, limit: int) -> list[dict[str, Any]]:
 
 async def _get_slug(db: AsyncClient, competency_id: str) -> str | None:
     try:
-        r = (
-            await db.table("competencies")
-            .select("slug")
-            .eq("id", competency_id)
-            .single()
-            .execute()
-        )
+        r = await db.table("competencies").select("slug").eq("id", competency_id).single().execute()
         return (r.data or {}).get("slug")
     except Exception as e:
         logger.error("reconcile: failed to load competency slug", competency_id=competency_id, error=str(e)[:200])
@@ -163,15 +158,14 @@ async def _mark_gave_up(db: AsyncClient, session_id: str, reason: str) -> None:
     emitted upstream; the session's state is preserved (competency_score
     still there). Manual CTO inspection is expected."""
     try:
-        await (
-            db.table("assessment_sessions")
-            .update({"pending_aura_sync": False})
-            .eq("id", session_id)
-            .execute()
-        )
+        await db.table("assessment_sessions").update({"pending_aura_sync": False}).eq("id", session_id).execute()
     except Exception as e:
-        logger.error("reconcile: failed to clear flag on gave-up session",
-                     session_id=session_id, reason=reason, error=str(e)[:200])
+        logger.error(
+            "reconcile: failed to clear flag on gave-up session",
+            session_id=session_id,
+            reason=reason,
+            error=str(e)[:200],
+        )
 
 
 async def run_once() -> dict[str, int]:

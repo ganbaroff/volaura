@@ -18,6 +18,7 @@ import { useAuraScore } from "@/hooks/queries/use-aura";
 import { useProfile } from "@/hooks/queries/use-profile";
 import { useAssessmentStore } from "@/stores/assessment-store";
 import { useSkill } from "@/hooks/queries/use-skill";
+import { useReflection } from "@/hooks/queries/use-reflection";
 import { ApiError } from "@/lib/api/client";
 import { EvaluationLog } from "@/components/aura/evaluation-log";
 import { triggerHaptic } from "@/lib/haptics";
@@ -205,6 +206,10 @@ export default function AuraPage() {
   } = useAuraScore();
 
   const { data: profile } = useProfile();
+
+  const { data: reflectionText, isLoading: reflectionLoading } = useReflection(
+    revealed && aura != null && (aura.total_score ?? 0) > 0,
+  );
 
   const { data: coachData, isLoading: coachLoading } = useSkill(
     "aura-coach",
@@ -611,6 +616,32 @@ export default function AuraPage() {
               </div>
             ) : coachData?.output ? (
               <AuraCoach output={coachData.output} />
+            ) : null}
+          </motion.div>
+        )}
+
+        {/* Atlas Reflection — personalized narrative from LLM */}
+        {revealed && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.5 }}
+          >
+            {reflectionLoading ? (
+              <div className="rounded-xl border border-border bg-surface-container-low p-5 space-y-2">
+                <Skeleton className="h-4 w-40" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-3/4" />
+              </div>
+            ) : reflectionText ? (
+              <div className="rounded-xl border border-border bg-surface-container-low p-5 space-y-2">
+                <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+                  {t("aura.reflectionTitle", { defaultValue: "Atlas says" })}
+                </p>
+                <p className="text-sm text-foreground/90 leading-relaxed italic">
+                  {reflectionText}
+                </p>
+              </div>
             ) : null}
           </motion.div>
         )}

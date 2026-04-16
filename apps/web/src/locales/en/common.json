@@ -46,6 +46,11 @@
     "orgSubtitle": "Stop reading CVs. Search verified talent by skill, score, and availability.",
     "orgCta": "Search talent",
     "socialProofTitle": "The platform top professionals trust",
+    "socialProofLabel": "Community",
+    "socialProofSubtitle": "Built in Baku. For the world.",
+    "socialProofCount": "Join {{count}} professionals already proving their skills",
+    "socialProofGeneric": "Join professionals already proving their skills",
+    "socialProofFounder": "Founded by Yusif Ganbarov. One person, one vision: verified competency as the global standard for professional identity.",
     "tierShowcaseTitle": "Your professional level",
     "tierPlatinum": "Expert",
     "tierGold": "Advanced",
@@ -364,7 +369,10 @@
     "identity_silver": "Silver-level Professional",
     "identity_bronze": "Bronze-level Professional",
     "identity_none": "Your AURA Score",
-    "contestLink": "Does this score feel off? Request a review."
+    "contestLink": "Does this score feel off? Request a review.",
+    "competenciesAssessed": "{{assessed}} of {{total}} competencies assessed",
+    "assessMoreForFullScore": "Complete more to build your full AURA score",
+    "reflectionTitle": "Atlas says"
   },
   "competency": {
     "communication": "Communication",

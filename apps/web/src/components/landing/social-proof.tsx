@@ -8,7 +8,7 @@ export function SocialProof() {
   const [count, setCount] = useState<number | null>(null);
 
   useEffect(() => {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://volauraapi-production.up.railway.app";
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
     fetch(`${API_URL}/api/stats/public`)
       .then((r) => r.json())
       .then((d) => setCount(d?.total_professionals ?? null))

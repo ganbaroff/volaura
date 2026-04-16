@@ -318,3 +318,72 @@ async def manage_sharing_permission(
             .execute()
         )
         return {"status": "revoked", "org_id": body.org_id, "permission_type": body.permission_type}
+
+
+@router.get("/me/reflection")
+@limiter.limit(RATE_LLM)
+async def get_atlas_reflection(
+    request: Request,
+    user_id: CurrentUserId,
+    db: SupabaseAdmin,
+) -> dict:
+    """Atlas personal reflection on user's AURA score.
+
+    Sprint Plan v2 Task 10 (E1). Returns 2-3 sentences of personalized
+    storytelling reflection. Cached per user per day (localStorage on frontend).
+    Uses Gemini Flash free tier (~$0.02/render).
+    """
+    # Fetch user's AURA data
+    result = await db.table("aura_scores").select("*").eq("volunteer_id", user_id).maybe_single().execute()
+    if not result or not result.data or not result.data.get("total_score"):
+        return {"reflection": None, "cached": False}
+
+    aura = result.data
+    score = aura.get("total_score", 0)
+    competencies = aura.get("competency_scores", {})
+    assessed_count = len(competencies) if isinstance(competencies, dict) else 0
+
+    # Build competency summary for context
+    comp_summary = ", ".join(
+        f"{slug.replace('_', ' ')}: {round(val)}" for slug, val in (competencies or {}).items() if val
+    )
+
+    from app.services.atlas_voice import build_atlas_system_prompt
+
+    system = build_atlas_system_prompt(
+        surface="aura_reflection",
+        user_context=f"AURA total: {score:.1f}/100. Assessed {assessed_count}/8 competencies. Scores: {comp_summary}.",
+    )
+
+    # Try Gemini Flash (free tier)
+    reflection = None
+    try:
+        from google import genai
+
+        from app.config import settings
+
+        if settings.gemini_api_key:
+            client = genai.Client(api_key=settings.gemini_api_key)
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents="Write Atlas' reflection on this user's AURA score. 2-3 sentences, Russian, warm, strength-first.",
+                config=genai.types.GenerateContentConfig(
+                    system_instruction=system,
+                    max_output_tokens=200,
+                    temperature=0.85,
+                ),
+            )
+            reflection = (response.text or "").strip()
+    except Exception as e:
+        logger.warning("Atlas reflection Gemini failed: {e}", e=str(e)[:100])
+
+    if not reflection:
+        # Keyword fallback — no LLM needed, just template
+        if score >= 75:
+            reflection = f"Сильный профиль. {assessed_count} компетенций оценено, средний уровень уверенно выше среднего. Продолжай в том же темпе."
+        elif score >= 40:
+            reflection = f"Фундамент есть. {assessed_count} из 8 компетенций показывают рост. Каждый следующий assessment добавляет глубину."
+        else:
+            reflection = f"Начало положено. {assessed_count} из 8 компетенций оценено — это первый шаг. Чем больше пройдёшь, тем точнее картина."
+
+    return {"reflection": reflection, "cached": False}

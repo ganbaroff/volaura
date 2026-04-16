@@ -17,15 +17,18 @@ httpx>=0.28.0
 # LLM
 google-genai>=1.0.0
 openai>=1.60.0
+groq>=0.9.0
 
 # Assessment (IRT/CAT engine is pure-Python, no external dep needed)
 numpy>=1.24.0
 
-# Notifications
-python-telegram-bot>=21.0
+# Notifications — Telegram uses httpx directly, no telegram SDK needed
 
 # Logging
 loguru>=0.7.0
+
+# Payments — Stripe Billing (subscription.py graceful import)
+stripe>=8.0.0
 
 # File uploads
 python-multipart>=0.0.20

@@ -121,7 +121,7 @@ def test_allowed_skills_auto_detected_from_disk():
     from app.routers.skills import ALLOWED_SKILLS, INTERNAL_ONLY_SKILLS
 
     # The 5 canonical user-facing skills must be present
-    expected = {"aura-coach", "feed-curator", "ai-twin-responder", "content-formatter", "behavior-pattern-analyzer"}
+    expected = {"aura-coach", "feed-curator", "content-formatter", "behavior-pattern-analyzer"}
     assert expected.issubset(ALLOWED_SKILLS), (
         f"Missing expected skills: {expected - ALLOWED_SKILLS}"
     )
@@ -144,7 +144,6 @@ def test_internal_only_skills_blocked_even_if_ready():
 @pytest.mark.parametrize("skill_name", [
     "aura-coach",
     "feed-curator",
-    "ai-twin-responder",
     "content-formatter",
     "behavior-pattern-analyzer",
 ])
@@ -257,7 +256,7 @@ async def test_compliance_log_omits_raw_user_input():
     ):
         async with make_client() as client:
             resp = await client.post(
-                "/api/skills/ai-twin-responder",
+                "/api/skills/content-formatter",
                 json={"question": secret_question, "language": "en"},
             )
 

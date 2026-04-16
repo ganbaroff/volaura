@@ -59,3 +59,20 @@ Atlas is responsible for proactively flagging the first entry within 14 days of 
 ## Archive
 
 (empty — first revision)
+
+## PROVISIONAL PATENT — CRITICAL (added 2026-04-16 Session 113)
+
+**What:** File USPTO Provisional Patent Application for two mechanisms:
+1. "Emotional decay modulation for AI memory prioritization"
+2. "Hippocampal replay mechanism for autonomous knowledge consolidation"
+
+**Why urgent:** ANY public disclosure (WUF13 demo, LinkedIn post, pitch deck, arXiv paper) before filing DESTROYS patent eligibility. Provisional costs $150, gives 12-month protection window.
+
+**Deadline:** BEFORE WUF13 (May 15-17 2026). Ideally BEFORE any public mention.
+**Cost:** $150 USPTO fee (micro entity rate for solo founder).
+**Blocker:** Cash (CEO ~1000 AZN to month-end per Session 111).
+**Draft:** Atlas can generate via Gemma4+Cerebras. CEO reviews + files through VOLAURA Inc. (Delaware C-Corp).
+
+**Trigger for Atlas:** Every session start, check this deadline. If WUF13 < 14 days away and provisional NOT filed — escalate to CEO via Telegram.
+
+**Filed?** [ ] NO — waiting for funds

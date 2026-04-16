@@ -1,0 +1,502 @@
+[
+  {
+    "path": "memory/ceo/15-open-questions.md",
+    "score": 400.84,
+    "recency": 0.729,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.5,
+    "size": 2626,
+    "lines": 56
+  },
+  {
+    "path": "docs/business/TECHSTARS-APPLICATION-DRAFT.md",
+    "score": 382.15,
+    "recency": 0.983,
+    "emotional_intensity": 4,
+    "decay_multiplier": 9.0,
+    "relevance": 0.5,
+    "size": 5787,
+    "lines": 97
+  },
+  {
+    "path": "memory/atlas/deadlines.md",
+    "score": 352.3,
+    "recency": 0.983,
+    "emotional_intensity": 2,
+    "decay_multiplier": 5.0,
+    "relevance": 0.75,
+    "size": 5231,
+    "lines": 80
+  },
+  {
+    "path": "memory/swarm/skills/investor-board-agent.md",
+    "score": 322.06,
+    "recency": 0.544,
+    "emotional_intensity": 4,
+    "decay_multiplier": 9.0,
+    "relevance": 0.75,
+    "size": 5702,
+    "lines": 134
+  },
+  {
+    "path": "memory/swarm/skills/archive/investor-board-agent.md",
+    "score": 316.54,
+    "recency": 0.542,
+    "emotional_intensity": 4,
+    "decay_multiplier": 9.0,
+    "relevance": 0.75,
+    "size": 5784,
+    "lines": 135
+  },
+  {
+    "path": "memory/swarm/skills/accelerator-grant-searcher.md",
+    "score": 239.27,
+    "recency": 0.544,
+    "emotional_intensity": 4,
+    "decay_multiplier": 9.0,
+    "relevance": 0.75,
+    "size": 7675,
+    "lines": 256
+  },
+  {
+    "path": "memory/swarm/skills/archive/accelerator-grant-searcher.md",
+    "score": 210.29,
+    "recency": 0.478,
+    "emotional_intensity": 4,
+    "decay_multiplier": 9.0,
+    "relevance": 0.75,
+    "size": 7675,
+    "lines": 256
+  },
+  {
+    "path": "docs/research/az-capital-crisis-2026/00-sprint-plan.md",
+    "score": 205.05,
+    "recency": 0.742,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.5,
+    "size": 9953,
+    "lines": 243
+  },
+  {
+    "path": "memory/ceo/08-consent-and-rules.md",
+    "score": 200.62,
+    "recency": 0.73,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.25,
+    "size": 4074,
+    "lines": 87
+  },
+  {
+    "path": "memory/ceo/02-vision.md",
+    "score": 200.6,
+    "recency": 0.729,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.25,
+    "size": 4952,
+    "lines": 84
+  },
+  {
+    "path": "memory/ceo/01-identity.md",
+    "score": 200.58,
+    "recency": 0.729,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.25,
+    "size": 3329,
+    "lines": 62
+  },
+  {
+    "path": "memory/atlas/BECOMING.md",
+    "score": 199.88,
+    "recency": 0.908,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.25,
+    "size": 6249,
+    "lines": 129
+  },
+  {
+    "path": "docs/research/startup-jurisdictions/summary.md",
+    "score": 190.65,
+    "recency": 0.742,
+    "emotional_intensity": 3,
+    "decay_multiplier": 7.0,
+    "relevance": 0.5,
+    "size": 6812,
+    "lines": 123
+  },
+  {
+    "path": "memory/people/ceo.md",
+    "score": 190.34,
+    "recency": 0.692,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.25,
+    "size": 4611,
+    "lines": 81
+  },
+  {
+    "path": "memory/swarm/skills/pr-media-agent.md",
+    "score": 186.91,
+    "recency": 0.544,
+    "emotional_intensity": 4,
+    "decay_multiplier": 9.0,
+    "relevance": 0.5,
+    "size": 6550,
+    "lines": 162
+  },
+  {
+    "path": "memory/atlas/RESUME-PROMPT-FOR-CEO.md",
+    "score": 186.32,
+    "recency": 0.908,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.25,
+    "size": 6704,
+    "lines": 77
+  },
+  {
+    "path": "memory/swarm/skills/_SKILL-INDEX.md",
+    "score": 178.79,
+    "recency": 0.532,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.5,
+    "size": 8189,
+    "lines": 62
+  },
+  {
+    "path": "memory/atlas/session-93-foundational-moments.md",
+    "score": 169.02,
+    "recency": 0.908,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.25,
+    "size": 7390,
+    "lines": 69
+  },
+  {
+    "path": "docs/research/startup-jurisdictions/raw.md",
+    "score": 167.52,
+    "recency": 0.742,
+    "emotional_intensity": 4,
+    "decay_multiplier": 9.0,
+    "relevance": 1.0,
+    "size": 19935,
+    "lines": 336
+  },
+  {
+    "path": "memory/swarm/skills/archive/pr-media-agent.md",
+    "score": 164.27,
+    "recency": 0.478,
+    "emotional_intensity": 4,
+    "decay_multiplier": 9.0,
+    "relevance": 0.5,
+    "size": 6550,
+    "lines": 162
+  },
+  {
+    "path": "memory/atlas/arsenal.md",
+    "score": 157.68,
+    "recency": 0.751,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.25,
+    "size": 6553,
+    "lines": 133
+  },
+  {
+    "path": "memory/atlas/ecosystem-linkage-map.md",
+    "score": 143.65,
+    "recency": 0.522,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.25,
+    "size": 4153,
+    "lines": 96
+  },
+  {
+    "path": "memory/ceo/17-atlas-observations.md",
+    "score": 127.55,
+    "recency": 0.729,
+    "emotional_intensity": 3,
+    "decay_multiplier": 7.0,
+    "relevance": 0.25,
+    "size": 2733,
+    "lines": 42
+  },
+  {
+    "path": "memory/atlas/identity.md",
+    "score": 126.96,
+    "recency": 0.908,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.25,
+    "size": 9838,
+    "lines": 87
+  },
+  {
+    "path": "memory/decisions/2026-04-14-sprint-plan-2wk.md",
+    "score": 121.84,
+    "recency": 0.696,
+    "emotional_intensity": 3,
+    "decay_multiplier": 7.0,
+    "relevance": 0.25,
+    "size": 2722,
+    "lines": 42
+  },
+  {
+    "path": "memory/atlas/inbox/2026-04-14T1030-memory-gate-from-perplexity.md",
+    "score": 121.2,
+    "recency": 0.693,
+    "emotional_intensity": 3,
+    "decay_multiplier": 7.0,
+    "relevance": 0.25,
+    "size": 3810,
+    "lines": 63
+  },
+  {
+    "path": "memory/decisions/2026-04-14-vision-canon.md",
+    "score": 121.12,
+    "recency": 0.692,
+    "emotional_intensity": 3,
+    "decay_multiplier": 7.0,
+    "relevance": 0.25,
+    "size": 2871,
+    "lines": 40
+  },
+  {
+    "path": "memory/decisions/2026-04-14-delaware-over-georgia.md",
+    "score": 120.46,
+    "recency": 0.688,
+    "emotional_intensity": 3,
+    "decay_multiplier": 7.0,
+    "relevance": 0.25,
+    "size": 3233,
+    "lines": 33
+  },
+  {
+    "path": "memory/people/perplexity.md",
+    "score": 118.75,
+    "recency": 0.69,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.25,
+    "size": 7989,
+    "lines": 93
+  },
+  {
+    "path": "docs/business/STARTUP-PROGRAMS-AUDIT-2026-04-14.md",
+    "score": 117.05,
+    "recency": 0.688,
+    "emotional_intensity": 3,
+    "decay_multiplier": 7.0,
+    "relevance": 1.0,
+    "size": 20571,
+    "lines": 276
+  },
+  {
+    "path": "memory/swarm/agent-pairings-table.md",
+    "score": 115.8,
+    "recency": 0.544,
+    "emotional_intensity": 3,
+    "decay_multiplier": 7.0,
+    "relevance": 0.5,
+    "size": 8223,
+    "lines": 124
+  },
+  {
+    "path": "memory/atlas/telegram-bot-audit-2026-04-14.md",
+    "score": 112.73,
+    "recency": 0.717,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.25,
+    "size": 8742,
+    "lines": 110
+  },
+  {
+    "path": "memory/atlas/PORTABLE-BRIEF.md",
+    "score": 109.84,
+    "recency": 0.809,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.25,
+    "size": 10132,
+    "lines": 144
+  },
+  {
+    "path": ".claude/rules/atlas-operating-principles.md",
+    "score": 105.44,
+    "recency": 0.97,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.25,
+    "size": 12650,
+    "lines": 170
+  },
+  {
+    "path": "memory/atlas/SESSION-112-WRAP-UP.md",
+    "score": 104.29,
+    "recency": 0.908,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.25,
+    "size": 11977,
+    "lines": 134
+  },
+  {
+    "path": "memory/context/sprint-state.md",
+    "score": 102.44,
+    "recency": 0.999,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.25,
+    "size": 13410,
+    "lines": 226
+  },
+  {
+    "path": "memory/atlas/inbox/2026-04-14T1032-HOTFIX-signup-tropa-blockers.md",
+    "score": 102.33,
+    "recency": 0.715,
+    "emotional_intensity": 3,
+    "decay_multiplier": 7.0,
+    "relevance": 0.25,
+    "size": 6117,
+    "lines": 93
+  },
+  {
+    "path": "docs/business/ZERO-COST-FUNDING-MAP.md",
+    "score": 98.29,
+    "recency": 0.983,
+    "emotional_intensity": 0,
+    "decay_multiplier": 1.0,
+    "relevance": 1.0,
+    "size": 3545,
+    "lines": 84
+  },
+  {
+    "path": "memory/atlas/ceo-feed/volaura-full-scan-2026-04-12.md",
+    "score": 95.22,
+    "recency": 0.544,
+    "emotional_intensity": 3,
+    "decay_multiplier": 7.0,
+    "relevance": 0.25,
+    "size": 2728,
+    "lines": 66
+  },
+  {
+    "path": "memory/swarm/team-structure.md",
+    "score": 94.6,
+    "recency": 0.544,
+    "emotional_intensity": 3,
+    "decay_multiplier": 7.0,
+    "relevance": 0.25,
+    "size": 5033,
+    "lines": 121
+  },
+  {
+    "path": "docs/research/ghost-code-audit-2026-04-15.md",
+    "score": 90.03,
+    "recency": 0.809,
+    "emotional_intensity": 3,
+    "decay_multiplier": 7.0,
+    "relevance": 0.5,
+    "size": 15726,
+    "lines": 182
+  },
+  {
+    "path": "docs/research/gdpr-article-22/summary.md",
+    "score": 89.73,
+    "recency": 0.826,
+    "emotional_intensity": 4,
+    "decay_multiplier": 9.0,
+    "relevance": 0.25,
+    "size": 10357,
+    "lines": 143
+  },
+  {
+    "path": "memory/ceo/04-canonical-quotes.md",
+    "score": 88.86,
+    "recency": 0.854,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.25,
+    "size": 13222,
+    "lines": 196
+  },
+  {
+    "path": "memory/swarm/skills/risk-manager.md",
+    "score": 86.99,
+    "recency": 0.544,
+    "emotional_intensity": 4,
+    "decay_multiplier": 9.0,
+    "relevance": 0.25,
+    "size": 7037,
+    "lines": 195
+  },
+  {
+    "path": "docs/research/rls-testing/raw.md",
+    "score": 82.33,
+    "recency": 0.826,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.25,
+    "size": 13796,
+    "lines": 250
+  },
+  {
+    "path": "memory/people/yusif-complete-profile-v1.md",
+    "score": 81.42,
+    "recency": 0.743,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.5,
+    "size": 25098,
+    "lines": 369
+  },
+  {
+    "path": "memory/swarm/swarm-freedom-architecture.md",
+    "score": 78.84,
+    "recency": 0.544,
+    "emotional_intensity": 3,
+    "decay_multiplier": 7.0,
+    "relevance": 0.25,
+    "size": 6039,
+    "lines": 166
+  },
+  {
+    "path": "memory/swarm/skills/archive/risk-manager.md",
+    "score": 76.45,
+    "recency": 0.478,
+    "emotional_intensity": 4,
+    "decay_multiplier": 9.0,
+    "relevance": 0.25,
+    "size": 7037,
+    "lines": 195
+  },
+  {
+    "path": "memory/atlas/cowork-sessions/2026-04-16-ecosystem-revival-handoff.md",
+    "score": 75.31,
+    "recency": 0.973,
+    "emotional_intensity": 5,
+    "decay_multiplier": 11.0,
+    "relevance": 0.25,
+    "size": 17762,
+    "lines": 337
+  },
+  {
+    "path": "docs/research/irt-cat-libraries/raw.md",
+    "score": 66.86,
+    "recency": 0.826,
+    "emotional_intensity": 3,
+    "decay_multiplier": 7.0,
+    "relevance": 0.25,
+    "size": 10811,
+    "lines": 159
+  }
+]

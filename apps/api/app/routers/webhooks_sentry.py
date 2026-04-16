@@ -243,10 +243,7 @@ async def _ping_ceo_telegram(event_row: dict[str, Any], issue_url: str | None) -
     if not (settings.telegram_bot_token and settings.telegram_ceo_chat_id):
         return
     title = (event_row.get("title") or "Sentry regression")[:160]
-    msg = (
-        f"🔁 Recurring symptom (x{event_row['occurrences']}) — {event_row['source_product']}\n"
-        f"{title}\n"
-    )
+    msg = f"🔁 Recurring symptom (x{event_row['occurrences']}) — {event_row['source_product']}\n{title}\n"
     if issue_url:
         msg += f"RCA required: {issue_url}"
     try:
@@ -277,11 +274,7 @@ async def sentry_webhook(request: Request) -> dict[str, Any]:
         raise HTTPException(status_code=403, detail={"code": "WEBHOOK_DISABLED"})
 
     body = await request.body()
-    signature = (
-        request.headers.get("sentry-hook-signature")
-        or request.headers.get("x-sentry-signature")
-        or ""
-    )
+    signature = request.headers.get("sentry-hook-signature") or request.headers.get("x-sentry-signature") or ""
     if not _verify_sentry_signature(body, signature):
         logger.warning("Sentry webhook signature mismatch — refusing.")
         raise HTTPException(status_code=403, detail={"code": "BAD_SIGNATURE"})

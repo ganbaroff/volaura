@@ -60,6 +60,7 @@ for _p in _PKG_PATHS:
 try:
     from atlas_core.voice import validate_voice  # type: ignore
     from ecosystem_compliance.models import AutomatedDecisionCreate  # type: ignore
+
     _WAVE3_READY = True
 except Exception as _e:  # pragma: no cover — defensive
     logger.warning(f"Wave-3 modules unavailable ({_e}); skills will run without voice/compliance")
@@ -77,7 +78,7 @@ except Exception as _e:  # pragma: no cover — defensive
 
 INTERNAL_ONLY_SKILLS: set[str] = {
     "assessment-generator",  # writes question bank — admin-only
-    "ceo-report-agent",      # batch close summaries for CEO — no end-user shape
+    "ceo-report-agent",  # batch close summaries for CEO — no end-user shape
 }
 
 _INPUT_RE = re.compile(r"^##\s+Input\b", re.MULTILINE)

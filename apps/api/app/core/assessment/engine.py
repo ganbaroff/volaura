@@ -243,6 +243,7 @@ def select_next_item(
         a, b, c = float(q.get("irt_a", 1.0)), float(q.get("irt_b", 0.0)), float(q.get("irt_c", 0.0))
         if not (0.3 <= a <= 3.0 and -4.0 <= b <= 4.0 and 0.0 <= c <= 0.35):
             from loguru import logger
+
             logger.warning("IRT param out of bounds — skipping question", qid=q.get("id"), a=a, b=b, c=c)
             continue
         valid.append(q)

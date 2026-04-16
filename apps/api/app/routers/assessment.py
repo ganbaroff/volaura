@@ -789,10 +789,7 @@ async def complete_assessment(
         # the reconciler will find this session and retry.
         try:
             await (
-                db_admin.table("assessment_sessions")
-                .update({"pending_aura_sync": True})
-                .eq("id", session_id)
-                .execute()
+                db_admin.table("assessment_sessions").update({"pending_aura_sync": True}).eq("id", session_id).execute()
             )
         except Exception as pre_flag_err:
             # If we cannot even mark intent, log at CRITICAL — this means the
@@ -824,8 +821,7 @@ async def complete_assessment(
                         )
                     except Exception as clear_err:
                         logger.warning(
-                            "pending_aura_sync clear-after-success failed "
-                            "(reconciler will double-check; idempotent)",
+                            "pending_aura_sync clear-after-success failed (reconciler will double-check; idempotent)",
                             session_id=session_id,
                             user_id=str(user_id),
                             error=str(clear_err)[:300],
@@ -898,7 +894,9 @@ async def complete_assessment(
             },
         )
     except Exception as e:
-        logger.error("assessment_completed analytics failed", user_id=str(user_id), session_id=session_id, error=str(e)[:300])
+        logger.error(
+            "assessment_completed analytics failed", user_id=str(user_id), session_id=session_id, error=str(e)[:300]
+        )
 
     # Transactional email: AURA score ready (fire-and-forget, kill switch: EMAIL_ENABLED)
     try:

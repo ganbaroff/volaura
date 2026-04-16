@@ -122,9 +122,7 @@ class LoopCircuitBreaker:
                 return True, phrase
         return False, ""
 
-    def _signal_tool_failure(
-        self, tool_error_streak: dict[str, int] | None
-    ) -> tuple[bool, str]:
+    def _signal_tool_failure(self, tool_error_streak: dict[str, int] | None) -> tuple[bool, str]:
         """True if any tool has >= `tool_failure_threshold` consecutive failures."""
         streak = tool_error_streak if tool_error_streak is not None else self._tool_error_counter
         for tool, count in streak.items():
@@ -155,9 +153,7 @@ class LoopCircuitBreaker:
 
         if self._signal_token_velocity(recent_replies):
             fired.append("token_velocity")
-            reasons.append(
-                f"last {self.window_size} replies < {self.min_unique_tokens} unique tokens"
-            )
+            reasons.append(f"last {self.window_size} replies < {self.min_unique_tokens} unique tokens")
 
         no_progress, phrase = self._signal_no_progress(recent_replies)
         if no_progress:

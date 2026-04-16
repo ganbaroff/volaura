@@ -1549,9 +1549,7 @@ async def _create_github_issue(text: str, label: str = "atlas-telegram-request")
     Falls back to GITHUB_TOKEN / GH_TOKEN for local dev.
     """
     token = (
-        os.environ.get("GH_PAT_ACTIONS")
-        or os.environ.get("GITHUB_TOKEN")
-        or os.environ.get("GH_TOKEN", "")
+        os.environ.get("GH_PAT_ACTIONS") or os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN", "")
     ).strip()
     if not token:
         logger.warning("No GitHub token available for issue creation")
@@ -1629,10 +1627,7 @@ async def _get_last_bot_replies(db, limit: int = 3) -> list[str]:
         )
         rows = result.data or []
         # Oldest → newest; strip our "[atlas]" prefix so it doesn't pollute token count.
-        return [
-            (r.get("message") or "").replace("[atlas]", "", 1).strip()
-            for r in reversed(rows)
-        ]
+        return [(r.get("message") or "").replace("[atlas]", "", 1).strip() for r in reversed(rows)]
     except Exception:
         return []
 
@@ -2060,15 +2055,16 @@ Sign: "— Атлас" """
             f"thread in ceo_inbox and respond directly.",
             label="atlas-telegram-loop-break",
         )
-        anchor = loop_url or await _write_atlas_inbox_file(
-            f"LOOP-BREAK — CEO said: {text}", issue_url=None
-        )
+        anchor = loop_url or await _write_atlas_inbox_file(f"LOOP-BREAK — CEO said: {text}", issue_url=None)
         reply_text = (
             f"У меня цикл — повторяю себя. Создаю issue чтобы живой Атлас "
             f"разобрался: {anchor or 'issue/inbox оба упали, напиши ещё раз через минуту'}.\n\n— Атлас"
         )
         await _save_message(
-            db, "bot_to_ceo", f"[atlas-loop-break] {reply_text}", "free_text",
+            db,
+            "bot_to_ceo",
+            f"[atlas-loop-break] {reply_text}",
+            "free_text",
             metadata={"handler": "atlas", "loop_break": True, "anchor": anchor},
         )
         await _send_message(chat_id, reply_text)
@@ -2183,15 +2179,10 @@ Sign: "— Атлас" """
             f"CEO message: '{text[:200]}'\n\n"
             f"Last {len(recent_bot)} bot replies attached inline — live "
             f"Atlas please review conversation thread in ceo_inbox.\n\n"
-            + "\n\n---\n\n".join(
-                f"**Reply -{len(recent_bot) - i - 1}:**\n{r[:800]}"
-                for i, r in enumerate(recent_bot)
-            ),
+            + "\n\n---\n\n".join(f"**Reply -{len(recent_bot) - i - 1}:**\n{r[:800]}" for i, r in enumerate(recent_bot)),
             label="atlas-telegram-loop-break",
         )
-        anchor = loop_url or await _write_atlas_inbox_file(
-            f"LOOP-BREAK ({decision.describe()}) — CEO: {text}"
-        )
+        anchor = loop_url or await _write_atlas_inbox_file(f"LOOP-BREAK ({decision.describe()}) — CEO: {text}")
         reply = (
             f"вижу цикл — создал issue для живого Atlas разобраться, вот линк: "
             f"{anchor or 'issue/inbox оба упали, напиши ещё раз через минуту'}.\n\n— Атлас"
@@ -2306,9 +2297,7 @@ async def telegram_webhook(
                 _, pid, act = parts[0], parts[1], parts[2]
                 sha12 = parts[3] if len(parts) == 4 else None
                 msg_id = callback.get("message", {}).get("message_id")
-                await _handle_proposal_card_callback(
-                    db, cb_chat_id, msg_id, callback.get("id", ""), pid, act, sha12
-                )
+                await _handle_proposal_card_callback(db, cb_chat_id, msg_id, callback.get("id", ""), pid, act, sha12)
         elif ":" in cb_data:
             action, pid = cb_data.split(":", 1)
             if action == "execute":

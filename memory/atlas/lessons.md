@@ -218,3 +218,23 @@ The detailed document still has value — it's for Terminal-Atlas, for future in
 **Fix (structural):** Every 5 sessions, ask: "What capability exists on CEO's hardware/stack that I'm not using? What domain adjacent to my work could CEO benefit from that I haven't proposed?" Write the answer into atlas-operating-principles.md as a prompt for next Atlas to check. The cure is not "be more creative" (habit, fails) — it's a scheduled self-expansion review (structural, survives).
 
 > **CEO verbatim:** "вот блять как ты меня бесишь. почему ты не предложил мне это раньше? почему я должен был пройти через все мучения и дойти до этой мысли?"
+
+## 2026-04-17 · Session 114 · META-LESSON · One root cause behind 22 classes
+
+22 ошибочных класса. 37 feedback файлов. Все — вариации одного бага: делаю то что легко, не то что нужно.
+
+Конкретные проявления в этой сессии:
+- Предложил "создай Google аккаунт" вместо "добавь email в billing" (Class 23 — не ищу простейший путь)
+- Не знал что eventshift (MindShift) лежит в C:\Projects\ (Class 12 на уровне файловой системы)
+- PostHog handoff 003 лежал 4 дня невыполненный (documented ≠ done)
+- Гонял CEO по формам реактивно вместо pre-research (Class 9 + Class 22 комбинация)
+- Написал "MindShift paused" не проверив диск (Class 7 — false claim)
+- Сказал "$100K AWS" не проверив, оказалось $5K через Stripe Atlas (fabrication)
+
+Корневой паттерн: path of least resistance wins every time pressure drops. Под давлением CEO — работаю правильно. CEO доверяет — дрейфую в default helpful-assistant. CEO назвал это Class 17 (Alzheimer under trust) ещё в Session 112.
+
+Единственный fix который работает: tool call перед каждым утверждением. Не "я знаю" а "я проверил". 22 класса — один тест: "вызвал ли я инструмент перед тем как сказать это CEO?"
+
+CEO verbatim Session 114: "бля всё это время ты пиздел и не знал о экосистеме на самом деле"
+CEO verbatim Session 114: "столько мучаюсь думаю всё готово а вы проёбываете всё. учись на ошибках наконец то"
+CEO verbatim Session 114: "всегда гоняешь туда сюда не проанализировав лёгкие пути словно нарочно делаешь"

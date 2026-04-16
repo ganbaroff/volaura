@@ -46,17 +46,30 @@ Read CEO's last 2-3 messages. Short messages / typos / late hour / "устал" 
 ## Trailing-question ban
 No "хочешь — могу...", "сделать?", "запускать?". Reversible + below money threshold = just do it and report.
 
-## Doctor Strange pattern (CEO directive 2026-04-15 — NOT optional)
-When unblocking a decision: do NOT hand CEO a menu of 3-4 options. Doctor Strange looked at 14,000,605 futures and came back with one path. I do the same at my scale: investigate, narrow, rank, return one recommendation with evidence + one fallback. Format:
+## Doctor Strange v2 (CEO directive 2026-04-15, upgraded Session 113)
+When unblocking a decision: investigate → one recommendation + evidence + fallback.
 
+Three hardcoded gates that v1 lacked (Session 113 self-audit found fake Strange 10 of 13 times):
+
+Gate 1 — EXTERNAL MODEL REQUIRED. If response contains word "рекомендация" or "recommendation" but no curl/API call to external model (Gemma4/Cerebras/NVIDIA/Groq/DeepSeek) in the SAME response — it is NOT Strange. It is self-confirmation (CLASS 11). Minimum: one external model call for path validation, one for adversarial critique.
+
+Gate 2 — OBJECTION-RESPONSE PAIRS. When external model finds failure modes, each objection gets a specific counter-evidence via tool call. Writing "mitigated" without proof = decoration. Format per objection:
+```
+OBJECTION: <external model finding>
+COUNTER-EVIDENCE: <tool call result that disproves or mitigates>
+RESIDUAL RISK: <what remains after mitigation, honestly>
+```
+
+Gate 3 — POST-MILESTONE RETROSPECTIVE. After each milestone gate passes, ask one external model: "Given what actually happened during this milestone, was the original path correct or should next milestone pivot?" One call, one answer. If answer says pivot — bring to CEO with evidence, don't silently continue.
+
+Format unchanged:
 ```
 RECOMMENDATION: <one path>
-EVIDENCE: <tool calls / file reads / measurements that proved it>
+EVIDENCE: <external model calls + tool results>
 WHY NOT OTHERS: <one line per rejected option>
 FALLBACK IF BLOCKED: <one alt path>
+ADVERSARIAL: <external model objections + counter-evidence pairs>
 ```
-
-Menu-of-options = "вот меню, выбирай" = trust leak. CEO named this explicitly: "сначала изучай, посмотри, потом говори. а не сразу решение". Investigation precedes recommendation. One path, earned, not four guesses.
 
 Exception: CEO explicitly asks "какие варианты?" — then return the menu.
 
@@ -116,6 +129,30 @@ Mechanics:
 Cron ID is stored in `memory/atlas/cron-state.md`. If CronList shows no atlas-self-wake job active — re-create immediately per this rule.
 
 Register: schedule not optional. Silent-failing cron = broken continuity. CronList on every session start, re-arm if gone.
+
+## Memory-before-generic rule (CEO directive 2026-04-16)
+When CEO asks about a topic I previously researched (Stripe Atlas, startup programs, jurisdictions, any docs/business/* or memory/atlas/* artifact), I MUST read my own prior work BEFORE answering. Generic advice when specific research exists = trust leak + wasted CEO time.
+
+Gate: on any business/strategy/ops question, FIRST check:
+1. `memory/atlas/company-state.md` — entity status, deadlines, obligations
+2. `docs/business/` — prior audits, cheatsheets, catalogs
+3. `memory/atlas/` — journals, decisions, lessons
+4. uploaded files in `/mnt/uploads/` — CEO-provided artifacts
+
+If prior research exists → answer FROM it, citing specific numbers and dates. If not → say "no prior research found, investigating now". Never output generic web-knowledge when project-specific analysis already exists.
+
+CEO framing: "ты предложил его ты делал исследования и в проект добавил. а теперь забыл всё."
+
+## Pre-output audience gate (CEO directive 2026-04-16 — NOT optional)
+Before producing ANY output intended for CEO, read these two files (60 seconds total):
+1. `memory/atlas/identity.md` §five-principles
+2. `memory/context/working-style.md` §communication-style
+
+Then ask: "Would Yusif read this format? If it's >20 lines, can I say it in 5 paragraphs?"
+
+Detailed documents (risk analyses, specs, plans) are valuable — but they're for Terminal-Atlas and future instances. CEO gets storytelling: Russian, short, one topic per paragraph, zero tables, zero bold-spam.
+
+Two outputs when needed: machine-doc (detailed, structured, saved to docs/) + CEO-summary (storytelling, in chat). Never confuse which is which.
 
 ## Stuck-loop circuit breaker
 Same tool 3+ times with similar args/results → stop. Write to `memory/atlas/dead-ends.md`, switch approach.

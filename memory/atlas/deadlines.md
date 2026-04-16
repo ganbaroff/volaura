@@ -66,13 +66,15 @@ Atlas is responsible for proactively flagging the first entry within 14 days of 
 1. "Emotional decay modulation for AI memory prioritization"
 2. "Hippocampal replay mechanism for autonomous knowledge consolidation"
 
-**Why urgent:** ANY public disclosure (WUF13 demo, LinkedIn post, pitch deck, arXiv paper) before filing DESTROYS patent eligibility. Provisional costs $150, gives 12-month protection window.
+**Clarification (2026-04-16 Session 114):** Product demo does NOT destroy patent. Only public disclosure of the SPECIFIC MECHANISM kills it — the formula, the architecture, the algorithm details. Showing VOLAURA on WUF13 = safe. Publishing a paper describing emotional decay math = destroys patent. Sharing pitch deck with mechanism details without NDA = destroys patent.
 
-**Deadline:** BEFORE WUF13 (May 15-17 2026). Ideally BEFORE any public mention.
+**Revised urgency:** NOT before WUF13. Before any: research publication, non-NDA pitch deck with architecture details, arXiv/blog post describing the mechanism, or open-source release of memory code.
+
+**Deadline:** BEFORE first public technical disclosure (not product demo). No fixed date — triggered by CEO decision to publish research or share architecture externally.
 **Cost:** $150 USPTO fee (micro entity rate for solo founder).
-**Blocker:** Cash (CEO ~1000 AZN to month-end per Session 111).
-**Draft:** Atlas can generate via Gemma4+Cerebras. CEO reviews + files through VOLAURA Inc. (Delaware C-Corp).
+**Blocker:** Cash. Deferrable until funding arrives or CEO decides to publish.
+**Draft:** Atlas can generate via Gemma4+Cerebras when ready.
 
-**Trigger for Atlas:** Every session start, check this deadline. If WUF13 < 14 days away and provisional NOT filed — escalate to CEO via Telegram.
+**Rule for CEO:** At WUF13 — show the product, don't explain the engine. "AI-powered adaptive assessment" = safe. "We use emotional decay with multiplier formula for memory prioritization" = patent dead.
 
-**Filed?** [ ] NO — waiting for funds
+**Filed?** [ ] NO — deferred, not urgent until public technical disclosure planned

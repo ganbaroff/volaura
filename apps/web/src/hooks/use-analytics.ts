@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
+import posthog from "posthog-js";
 import { useAuthToken } from "./queries/use-auth-token";
 import { API_BASE } from "@/lib/api/client";
 
@@ -22,14 +23,14 @@ export function useTrackEvent() {
       properties?: Record<string, unknown>,
       sessionId?: string,
     ) => {
+      const locale =
+        typeof window !== "undefined"
+          ? window.location.pathname.split("/")[1] || "en"
+          : "en";
+
       try {
         const token = await getToken();
         if (!token) return; // not authenticated — skip silently
-
-        const locale =
-          typeof window !== "undefined"
-            ? window.location.pathname.split("/")[1] || "en"
-            : "en";
 
         await fetch(`${API_BASE}/analytics/event`, {
           method: "POST",
@@ -46,7 +47,15 @@ export function useTrackEvent() {
           }),
         });
       } catch {
-        // analytics failure is silent — never blocks UX
+        // Supabase analytics failure is silent — never blocks UX
+      }
+
+      try {
+        if (typeof window !== "undefined" && posthog.__loaded) {
+          posthog.capture(eventName, { ...properties, locale, session_id: sessionId });
+        }
+      } catch {
+        // PostHog failure is silent — dual-write, Supabase is primary
       }
     },
     [getToken],

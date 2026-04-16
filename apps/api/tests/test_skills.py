@@ -203,12 +203,12 @@ async def test_happy_path_returns_skill_response():
 
 @pytest.mark.asyncio
 async def test_skill_with_question_context():
-    """ai-twin-responder accepts 'question' field."""
+    """Skill endpoint accepts 'question' field."""
     user_db = make_user_db()
     app.dependency_overrides = override_deps(user_db)
 
     with (
-        patch("app.routers.skills.ALLOWED_SKILLS", {"ai-twin-responder"}),
+        patch("app.routers.skills.ALLOWED_SKILLS", {"content-formatter"}),
         patch("pathlib.Path.exists", return_value=True),
         patch("builtins.open", mock_open(read_data=_MOCK_SKILL_MD)),
         patch("app.routers.skills.evaluate_with_llm", new_callable=AsyncMock,
@@ -216,13 +216,13 @@ async def test_skill_with_question_context():
     ):
         async with make_client() as client:
             resp = await client.post(
-                "/api/skills/ai-twin-responder",
+                "/api/skills/content-formatter",
                 json={"question": "What do you specialize in?", "language": "en"}
             )
 
     app.dependency_overrides = {}
     assert resp.status_code == 200
-    assert resp.json()["skill"] == "ai-twin-responder"
+    assert resp.json()["skill"] == "content-formatter"
 
 
 # ── Allowlist contract ────────────────────────────────────────────────────────
@@ -230,7 +230,7 @@ async def test_skill_with_question_context():
 def test_allowed_skills_set_contains_expected_members():
     """ALLOWED_SKILLS contains the 5 product-facing skills — no accidental additions."""
     from app.routers.skills import ALLOWED_SKILLS
-    expected = {"aura-coach", "feed-curator", "ai-twin-responder", "content-formatter", "behavior-pattern-analyzer"}
+    expected = {"aura-coach", "feed-curator", "content-formatter", "behavior-pattern-analyzer"}
     # All expected skills must be present
     for skill in expected:
         assert skill in ALLOWED_SKILLS, f"Expected skill '{skill}' missing from ALLOWED_SKILLS"

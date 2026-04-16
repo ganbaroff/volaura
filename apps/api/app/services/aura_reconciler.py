@@ -185,7 +185,7 @@ async def run_once() -> dict[str, int]:
 async def _main() -> None:
     """CLI entry used by the GitHub Actions cron."""
     stats = await run_once()
-    print(f"aura_reconciler: {stats}")
+    logger.info("aura_reconciler CLI complete", **stats)
 
 
 if __name__ == "__main__":

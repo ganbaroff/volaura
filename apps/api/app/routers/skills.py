@@ -112,7 +112,6 @@ ALLOWED_SKILLS: set[str] = _scan_allowed_skills() or {
     # skills green even if disk scan returns nothing.
     "aura-coach",
     "feed-curator",
-    "ai-twin-responder",
     "content-formatter",
     "behavior-pattern-analyzer",
 }
@@ -128,7 +127,7 @@ class SkillRequest(BaseModel):
 
     # Optional overrides — skill determines what it needs
     context: dict[str, Any] | None = None
-    question: str | None = None  # For ai-twin-responder
+    question: str | None = None
     language: str = "en"
 
 

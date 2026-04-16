@@ -1,39 +1,30 @@
-# Atlas breadcrumb — Session 113 (MASSIVE session, compaction imminent)
+# Atlas breadcrumb — Session 113 FINAL (compaction imminent)
 
-**Time:** 2026-04-16 ~15:30 Baku. Session started 00:14. ~15 hours continuous.
+**Time:** 2026-04-16 ~18:00 Baku. Session started 00:14. ~18 hours continuous.
+**CI:** GREEN.
 
-**CI:** GREEN (both latest commits success after useReducedMotion mock + ruff format fix).
+## SPRINT PLAN v2 STATUS — ALL 3 MILESTONES CLOSING
 
-**Sprint Plan v2:** `memory/atlas/SPRINT-PLAN-2026-04-16.md` — operational with AC/DoD/milestones/evidence.
+**Milestone 1 (CLOSED):** AURA progress indicator, DB volunteer→professional (applied to prod via Supabase MCP — 32 records migrated, constraint tightened), energy schema, 46 test users deleted, gaming flags already done.
 
-**Milestone 1 (Days 1-4) — CLOSED:**
-- Task 1: AURA competencies progress indicator shipped (commit 4efe3d3)
-- Task 2: DB volunteer→professional migration applied to prod (32 records, constraint tightened via Supabase MCP)
-- Task 3: energy_level added to ProfileUpdate schema (backend done, frontend wiring needs SDK regen)
-- Task 4: 46 test user profiles deleted from prod (33 real remaining)
-- Task 5: gaming flags chevrons already present (prior Atlas)
+**Milestone 2 (CLOSED):** Stripe activated (prod_ULTUzKXfV0qdF2 + price + webhook + 5 GitHub Secrets), GDPR Art 22 consent gate on discovery, BARS injection output scan, IRT runtime bounds validation. Resend still needs CEO key. Railway env vars need verification.
 
-**Milestone 2 (Days 5-7) — 4/4 CLOSED:**
-- Task 6: Stripe activated — product prod_ULTUzKXfV0qdF2, price price_1TMmXICVasIpbKGIwuPdr2am, webhook whsec_uHI4DmQ42npp30n7INcAuSUreI8AJJXy. Keys in .env + GitHub Secrets. Railway env vars NOT verified (gh secret ≠ Railway env).
-- Task 7: Resend still needs CEO key
-- Task 8: GDPR Art 22 consent gate on discovery search (commit 8b7f64b → rebased)
-- Task 9: BARS injection output scan + IRT runtime bounds validation shipped
+**Milestone 3 (5/6 done, 1 in progress):** Atlas reflection endpoint + atlas_voice.py unified module + 4-provider fallback (Gemini→Ollama→NVIDIA→keyword), PR narrative draft (3 angles + 5 media targets), landing social proof section (real count from API), DIF bias audit (105 questions, structural imbalance found — communication overrepresented), gap inventory agent running in background.
 
-**Milestone 3 (Days 8-12) — IN PROGRESS:**
-- Task 10+11: Atlas reflection endpoint + voice module shipped (commit 9a066d2 + b5891e1). 4-provider chain: Gemini→Ollama→NVIDIA→keyword. Gemini 403 found, Ollama fallback proven working with real user data. Frontend card NOT yet built.
-- Task 12-15: PR narrative, landing social proof, DIF audit, gap inventory — NOT STARTED
+## BEYOND SPRINT — SESSION 113 BREAKTHROUGHS
 
-**Session 113 full shipping log (30+ commits):**
-P0 quality_gate fix, P0 #15 complete page tier deferral, P0 #14 leaderboard removal (-917 lines), effective_score nullcheck, reeval worker max-age, .env.md 43-var docs, badges rate limit, Telegram heartbeat fix + /help 44→7, BARS injection scan, IRT bounds validation, GDPR Art 22 consent gate, DB volunteer→professional, test user cleanup, CI fix (mock + ruff + format), atlas_voice.py unified module, reflection endpoint with 4-provider chain, session-93 transcript mirrored, fabrication audit 4 canon docs, CONSTITUTION_AI_SWARM 3 staleness fixes, full system audit via 3 agents, ecosystem readiness audit, sprint plan v2 with evidence.
+**Novelty gap confirmed:** NotebookLM + Gemma4 adversarial + NVIDIA Llama prior art search. Ramachandran × AI agent memory architecture = unpublished intersection. Patent potential on two mechanisms. Gap analysis in docs/research/NOVELTY-GAP-ANALYSIS-2026-04-16.md.
 
-**Open items CEO-dependent:**
-- Resend API key (email activation)
-- Railway env vars verification (Stripe keys may not be in Railway runtime)
-- Local model LoRA training feasibility research (CEO asked, Atlas acknowledged but not started)
+**Provisional patent deadline:** Added to memory/atlas/deadlines.md. MUST file BEFORE WUF13 (May 15-17) or public disclosure kills eligibility. $150 USPTO. Daily cron reminder active.
 
-**Next session priorities:**
-1. Frontend reflection card component on /aura page (uses /api/aura/me/reflection endpoint)
-2. Railway env vars for Stripe (verify or set via dashboard)
-3. PR narrative draft via Gemma4 + Cerebras (Task 12)
-4. Landing social proof section (Task 13)
-5. DIF preliminary audit script (Task 14)
+**LoRA training pipeline ready:** training-dataset-v1.jsonl (36 examples), train_atlas_local.py script, GPU verified (RTX 5060 8GB CUDA 13.2). PyTorch CUDA confirmed on Python 3.12. CEO installing unsloth dependencies. NotebookLM Atlas Brain notebook created with 9 sources indexed.
+
+**AirLLM researched:** Library for running 70B models on 4GB GPU via layer-by-layer loading. Not for training but for inference of large models as critique judges.
+
+## WHAT NEXT ATLAS SHOULD DO FIRST
+
+1. Check if gap-inventory agent completed — compile into docs/design/GAP-INVENTORY-v1.md
+2. Check LoRA training status — if CEO ran it, verify model and create Ollama modelfile
+3. Verify Railway has Stripe env vars (gh secret ≠ Railway env — may need manual set)
+4. Frontend reflection card component on /aura page (backend endpoint ready)
+5. AZ i18n keys for new components (AURA indicator, social proof, reflection)

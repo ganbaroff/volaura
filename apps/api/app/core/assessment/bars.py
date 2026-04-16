@@ -319,6 +319,22 @@ async def evaluate_answer(
     if concept_details:
         concept_details = [d for d in concept_details if d.get("concept_id") in allowed_names]
 
+    # Security (P1 audit fix): scan LLM output text for injection patterns.
+    # concept_details[].quote could contain "ignore previous instructions" if the
+    # LLM was manipulated. These quotes get stored in evaluation_log and served
+    # via /aura/me/explanation — strip them before storage.
+    if concept_details:
+        from app.schemas.assessment import _INJECTION_PATTERNS
+        for detail in concept_details:
+            quote = detail.get("quote", "")
+            if isinstance(quote, str) and any(p.search(quote) for p in _INJECTION_PATTERNS):
+                logger.warning(
+                    "BARS output injection detected — stripping quote",
+                    concept=detail.get("concept_id"),
+                    quote_preview=quote[:100],
+                )
+                detail["quote"] = "[redacted — injection pattern detected]"
+
     composite = _aggregate(scores, expected_concepts)
     result = EvaluationResult(composite, scores, model_used, concept_details)
 

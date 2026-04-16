@@ -55,10 +55,12 @@ echo ""
 echo "📱 Setting up frontend env..."
 cat > "$WEB_ENV" << 'WEBEOF'
 # AUTO-GENERATED — frontend env
-NEXT_PUBLIC_SUPABASE_URL=https://hvykysvdkalkbswmgfut.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_hruec2YAtdmvD1jZ6ElbNQ_g4VNDItM
+# Fill these from Supabase dashboard (Settings → API → Project URL + anon key)
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
 NEXT_PUBLIC_API_URL=https://volauraapi-production.up.railway.app
 WEBEOF
+echo "⚠️  Fill NEXT_PUBLIC_SUPABASE_URL and ANON_KEY from Supabase dashboard"
 echo "✅ Written apps/web/.env.local"
 
 echo ""

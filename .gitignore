@@ -92,3 +92,4 @@ memory/swarm/*.jsonl
 # Obsidian workspace state
 docs/.obsidian/
 memory/atlas/session-93-full-transcript.jsonl
+models/

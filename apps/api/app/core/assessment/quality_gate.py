@@ -122,7 +122,10 @@ def compute_grs(question: dict[str, Any]) -> float:
                 raw_preview=str(concepts)[:200],
                 error=str(parse_err)[:200],
             )
-            concepts = []
+            raise ValueError(
+                f"Question {question.get('id', '?')}: expected_concepts JSON corrupted — "
+                f"cannot evaluate against empty rubric. Raw: {str(concepts)[:100]}"
+            ) from parse_err
 
     question_text: str = (question.get("scenario_en") or question.get("question_en") or "").lower()
 
@@ -255,7 +258,10 @@ def generate_attack_answers(question: dict[str, Any]) -> list[dict[str, str]]:
                 raw_preview=str(concepts)[:200],
                 error=str(parse_err)[:200],
             )
-            concepts = []
+            raise ValueError(
+                f"Question {question.get('id', '?')}: expected_concepts JSON corrupted — "
+                f"cannot evaluate against empty rubric. Raw: {str(concepts)[:100]}"
+            ) from parse_err
 
     all_keywords: list[str] = []
     for concept in concepts:
@@ -336,7 +342,10 @@ def run_adversarial_gate(question: dict[str, Any]) -> dict[str, Any]:
                 raw_preview=str(concepts)[:200],
                 error=str(parse_err)[:200],
             )
-            concepts = []
+            raise ValueError(
+                f"Question {question.get('id', '?')}: expected_concepts JSON corrupted — "
+                f"cannot evaluate against empty rubric. Raw: {str(concepts)[:100]}"
+            ) from parse_err
 
     attacks = generate_attack_answers(question)
     attack_results: list[dict[str, Any]] = []
@@ -446,7 +455,10 @@ def run_quality_checklist(question: dict[str, Any]) -> dict[str, Any]:
                 raw_preview=str(concepts)[:200],
                 error=str(parse_err)[:200],
             )
-            concepts = []
+            raise ValueError(
+                f"Question {question.get('id', '?')}: expected_concepts JSON corrupted — "
+                f"cannot evaluate against empty rubric. Raw: {str(concepts)[:100]}"
+            ) from parse_err
 
     question_text: str = (question.get("scenario_en") or question.get("question_en") or "").lower()
 

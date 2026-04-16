@@ -64,11 +64,20 @@ except:
 
 PROMPT_TYPE=$(python3 -c "
 msg = '''$CEO_MSG'''.lower()
-# Detect if CEO is correcting (triggers reflexion)
-correction_signals = ['блять','бля','опять','ну зачем','херн','нахрен','неправильно','ошибка','проебал','сколько раз','бесит']
-is_correction = any(s in msg for s in correction_signals)
-# Detect conversation vs code vs strategy
-if is_correction:
+
+# EMOTIONAL CLASSIFICATION (ZenBrain-inspired, 4 channels)
+positive_signals = ['шикарно','круто','молодец','правильно','ооо','класс','супер','красава','заебись','вооот','офигенно','прекрасно','))))']
+negative_signals = ['блять','бля','опять','ну зачем','херн','нахрен','неправильно','ошибка','проебал','сколько раз','бесит','заебал','нахуя','пиздец']
+challenge_signals = ['докажи','покажи','уверен','готов','реально','100','verified','проверил','честно']
+
+is_positive = any(s in msg for s in positive_signals)
+is_negative = any(s in msg for s in negative_signals)
+is_challenge = any(s in msg for s in challenge_signals)
+
+# Emotional state determines prompt type
+if is_positive and not is_negative:
+    print('positive')
+elif is_negative:
     print('correction')
 elif any(w in msg for w in ['код','fix','bug','тест','commit','push','deploy','ci','endpoint']):
     print('code')
@@ -79,7 +88,18 @@ else:
 " 2>/dev/null)
 
 # ── STEP 2: Dynamic context injection (not full dump) ─────────
-if [ "$PROMPT_TYPE" = "correction" ]; then
+if [ "$PROMPT_TYPE" = "positive" ]; then
+  # CEO is HAPPY — record what worked (ZenBrain: positive emotion = high decay weight)
+  echo ""
+  echo "💚 POSITIVE REINFORCEMENT DETECTED"
+  echo "CEO is expressing satisfaction. Whatever you just did — WORKED."
+  echo "IMMEDIATELY: append to memory/atlas/lessons.md §things-that-worked"
+  echo "what specific action/approach caused this positive reaction."
+  echo "ZenBrain weight: emotionalIntensity=3, decayMultiplier=7.0"
+  echo "Do MORE of this. This is the signal to AMPLIFY, not just continue."
+  echo ""
+
+elif [ "$PROMPT_TYPE" = "correction" ]; then
   # CEO is correcting — inject ONLY reflexion trigger
   echo ""
   echo "══════════════════════════════════════════════════════════"

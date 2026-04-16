@@ -442,6 +442,29 @@ export default function AuraPage() {
               {(animatedScore ?? 0).toFixed(1)}
             </p>
             <ScoreMeaning score={displayScore} />
+            {(() => {
+              const assessed = Object.keys(aura.competency_scores ?? {}).length;
+              const total = 8;
+              if (assessed < total) {
+                return (
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    {t("aura.competenciesAssessed", {
+                      assessed,
+                      total,
+                      defaultValue: `${assessed} of ${total} competencies assessed`,
+                    })}
+                    {assessed < 3 && (
+                      <span className="block mt-0.5 text-primary/80">
+                        {t("aura.assessMoreForFullScore", {
+                          defaultValue: "Complete more to build your full AURA score",
+                        })}
+                      </span>
+                    )}
+                  </p>
+                );
+              }
+              return null;
+            })()}
           </div>
 
           {/* Badge with spring overshoot on reveal */}

@@ -22,7 +22,7 @@ from __future__ import annotations
 import hashlib
 import hmac
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import httpx
@@ -68,7 +68,7 @@ def _extract_fingerprint(payload: dict[str, Any]) -> str:
         return f"sentry:{issue['id']}"
     title = (issue.get("title") or payload.get("event", {}).get("title") or "").strip()
     culprit = (issue.get("culprit") or payload.get("event", {}).get("culprit") or "").strip()
-    return "fp:" + hashlib.sha256(f"{title}|{culprit}".encode("utf-8")).hexdigest()[:32]
+    return "fp:" + hashlib.sha256(f"{title}|{culprit}".encode()).hexdigest()[:32]
 
 
 def _extract_source_product(payload: dict[str, Any]) -> str:
@@ -125,7 +125,7 @@ async def _upsert_event_row(
 
     data = payload.get("data", {}) or {}
     issue = data.get("issue") or {}
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(UTC).isoformat()
 
     existing = (
         await db.table("recurring_symptom_events")

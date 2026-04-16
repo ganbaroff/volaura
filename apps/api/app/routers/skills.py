@@ -20,7 +20,7 @@ import hashlib
 import json
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -268,7 +268,7 @@ def _format_context(ctx: dict) -> str:
 
 def _atlas_signature(skill_name: str) -> str:
     """Per-invocation audit tag — one line per skill call."""
-    ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    ts = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
     return f"atlas-{skill_name}-{ts}"
 
 

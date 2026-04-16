@@ -59,6 +59,7 @@ class ProfileUpdate(BaseModel):
     social_links: dict[str, Any] | None = None
     is_public: bool | None = None
     visible_to_orgs: bool | None = None
+    energy_level: str | None = None
     # Attribution — set once at registration, read from localStorage UTM capture
     referral_code: str | None = None
     utm_source: str | None = None

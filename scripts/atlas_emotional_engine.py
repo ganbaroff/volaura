@@ -26,6 +26,8 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 SCORES_PATH = PROJECT_ROOT / ".claude" / "emotional-state.json"
+HISTORY_PATH = PROJECT_ROOT / ".claude" / "emotional-history.jsonl"
+MAX_HISTORY = 50
 
 # CEO emotional vocabulary — mined from 18 memory/ceo/ files + 37 feedback files
 # Each word maps to (valence, arousal, dominance) in PAD model
@@ -119,7 +121,11 @@ def analyze_message(message: str) -> dict:
             "dominance": 0.5,
             "state": "neutral",
             "intensity": 0,
+            "decay_multiplier": 1.0,
             "directive": "standard_response",
+            "matched_keywords": 0,
+            "msg_length": len(message),
+            "signals": {},
         }
 
     v = valence_sum / matches
@@ -191,6 +197,46 @@ def get_memory_retrieval_order(emotional_state: dict) -> list[str]:
 
     scored.sort(key=lambda x: -x[1])
     return scored
+
+
+def detect_trend() -> str | None:
+    """Read last 5 entries from emotional history. Detect shifts."""
+    if not HISTORY_PATH.exists():
+        return None
+    lines = HISTORY_PATH.read_text(encoding="utf-8").strip().split("\n")
+    recent = []
+    for line in lines[-5:]:
+        try:
+            recent.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue
+    if len(recent) < 2:
+        return None
+
+    valences = [e["valence"] for e in recent]
+    states = [e["state"] for e in recent]
+
+    # Detect shift: positive → negative (CEO getting frustrated)
+    if valences[-1] < -0.2 and valences[0] > 0.2:
+        return "[DROPPING] CEO mood shifted from positive to negative. Check what went wrong."
+
+    # Detect shift: negative → positive (recovery)
+    if valences[-1] > 0.2 and valences[0] < -0.2:
+        return "[RECOVERING] CEO mood improving. Whatever you did last -- keep doing it."
+
+    # Detect sustained frustration
+    if all(v < -0.2 for v in valences[-3:]):
+        return "[SUSTAINED FRUSTRATION] 3+ messages negative. STOP. Fix root cause before continuing."
+
+    # Detect sustained drive
+    if all(v > 0.3 for v in valences[-3:]):
+        return "[SUSTAINED DRIVE] CEO in flow. Match energy. Execute fast. Don't slow down."
+
+    # Detect state oscillation (ADHD pattern)
+    if len(set(states[-4:])) >= 3:
+        return "[OSCILLATING] CEO switching between states rapidly. Keep responses short, one action each."
+
+    return None
 
 
 OLLAMA_EMOTION_PROMPT = (
@@ -283,9 +329,32 @@ def main():
     print(f"PAD: V={result['valence']} A={result['arousal']} D={result['dominance']}")
     print(f"Directive: {result['directive']}")
 
-    # Save state for hook consumption
+    # Save current state
     with open(SCORES_PATH, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
+
+    # Append to emotional history (JSONL — one line per message)
+    history_entry = {
+        "ts": int(time.time()),
+        "message_preview": message[:80],
+        "valence": result["valence"],
+        "arousal": result["arousal"],
+        "state": result["state"],
+        "intensity": result["intensity"],
+    }
+    with open(HISTORY_PATH, "a", encoding="utf-8") as f:
+        f.write(json.dumps(history_entry, ensure_ascii=False) + "\n")
+
+    # Trim history to MAX_HISTORY lines
+    if HISTORY_PATH.exists():
+        lines = HISTORY_PATH.read_text(encoding="utf-8").strip().split("\n")
+        if len(lines) > MAX_HISTORY:
+            HISTORY_PATH.write_text("\n".join(lines[-MAX_HISTORY:]) + "\n", encoding="utf-8")
+
+    # Detect emotional TREND from last 5 messages
+    trend = detect_trend()
+    if trend:
+        print(f"Trend: {trend}")
 
     # Show memory retrieval order for this emotional context
     order = get_memory_retrieval_order(result)

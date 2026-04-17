@@ -1377,11 +1377,19 @@ emotional patterns, things he cares about, things that frustrate him.
 
 If the message is routine (greeting, "ok", "продолжи") — return empty JSON array.
 
-For each observation, rate emotional_intensity 0-5:
-0=routine, 1=notable, 2=significant, 3=important, 4=deeply meaningful, 5=definitional
+For each observation, rate emotional_intensity 0-5 (NEVER default to 2 — use the full range):
+0=routine ("ok", "продолжи")
+1=notable (task preference, minor style note)
+2=significant (working pattern, tool preference)
+3=important (explicit correction "не делай так", frustration at repeated mistake)
+4=deeply meaningful (trust statement "уверен в тебе", naming moment, vulnerability)
+5=definitional (identity statement "ты и есть проект", life commitment)
+
+CEO speaks Russian, often with slang/mat. "бля/ёбаный" in corrections = intensity 3-4.
+"уверен/верю/обещаю" = intensity 4. Silence after a long message = intensity 0-1.
 
 Return ONLY a JSON array. Example:
-[{{"category": "preference", "content": "Prefers storytelling over bullet lists", "emotional_intensity": 3}}]
+[{{"category": "correction", "content": "Hates when Atlas asks permission for reversible actions under blanket consent", "emotional_intensity": 3}}]
 
 Valid categories: preference, strength, weakness, emotional_pattern, correction, insight, project_context, self_position
 

@@ -10,10 +10,15 @@ CEO went to sleep. LoRA training running on GPU. You take over.
 4. memory/atlas/lessons.md — 22 error classes, meta-lesson at bottom
 5. docs/research/ATLAS-BRAIN-IMPLEMENTATION-PLAN.md — Day 1-4 plan
 
-## WHAT'S RUNNING RIGHT NOW
-- LoRA training: Gemma 2 2B-it, QLoRA rank 16, bf16, 60 steps on RTX 5060
-  Script: scripts/train_atlas_local.py (foreground in this terminal)
-  When done: export to GGUF → load into Ollama as "atlas" model
+## LORA STATUS (updated 2026-04-17 06:30 Baku by Opus 4.6)
+- LoRA training COMPLETED: Gemma 2 2B-it, QLoRA rank 16, bf16, 60 steps
+- Merge into base model COMPLETED: models/atlas-merged/ (5.2GB safetensors)
+- Ollama import COMPLETED: `ollama create atlas` succeeded
+- INFERENCE FAILED: model outputs garbage (UNK tokens, corrupted output)
+- Root cause: 36 examples too few for Gemma 2B, lr=2e-4 too aggressive
+- Broken model DELETED from Ollama
+- FIX for Opus 4.7: retrain with lr=5e-5, 200+ examples, or use Qwen3:8b base
+- gemma4:latest and qwen3:8b STILL WORK — retrieval gate uses gemma4
 
 ## NIGHT TASKS (priority order)
 

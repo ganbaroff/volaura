@@ -351,7 +351,7 @@ export default function OrganizationsPage() {
                       onClick={() => router.push(`/${locale}/events/${ev.id}`)}
                       role="button"
                       tabIndex={0}
-                      onKeyDown={(e) => e.key === "Enter" && router.push(`/${locale}/events/${ev.id}`)}
+                      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); router.push(`/${locale}/events/${ev.id}`); } }}
                     >
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-on-surface truncate">{ev.title_en}</p>

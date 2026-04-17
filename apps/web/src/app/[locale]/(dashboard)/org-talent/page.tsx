@@ -72,7 +72,7 @@ function ProfessionalRow({ row, onClick }: { row: OrgProfessionalRow; onClick: (
       onClick={onClick}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => e.key === "Enter" && onClick()}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(); } }}
       className="flex items-center gap-3 rounded-xl border border-border bg-surface-container-low px-4 py-3 cursor-pointer hover:bg-surface-container hover:border-primary/30 transition-all"
     >
       {/* Avatar initials */}

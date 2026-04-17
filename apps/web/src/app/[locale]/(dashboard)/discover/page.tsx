@@ -56,7 +56,7 @@ function BrowseCard({ professional, onClick }: { professional: DiscoverableProfe
       onClick={onClick}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => e.key === "Enter" && onClick()}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(); } }}
       className="flex items-center gap-4 rounded-xl border border-border bg-surface-container-low px-4 py-3 cursor-pointer hover:bg-surface-container hover:border-primary/30 transition-all"
     >
       <span className="size-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-sm font-bold text-primary">
@@ -101,7 +101,7 @@ function SearchResultCard({ result, onClick }: { result: ProfessionalSearchResul
       onClick={onClick}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => e.key === "Enter" && onClick()}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(); } }}
       className="flex items-center gap-4 rounded-xl border border-border bg-surface-container-low px-4 py-3 cursor-pointer hover:bg-surface-container hover:border-primary/30 transition-all"
     >
       <span className="size-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-sm font-bold text-primary">

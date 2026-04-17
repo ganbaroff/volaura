@@ -187,7 +187,7 @@ export default function BulkInvitePage() {
         role="button"
         tabIndex={0}
         aria-label={t("orgs.dropCSV", { defaultValue: "Click or drop CSV file here" })}
-        onKeyDown={(e) => e.key === "Enter" && fileInputRef.current?.click()}
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fileInputRef.current?.click(); } }}
       >
         <input
           ref={fileInputRef}

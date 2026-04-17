@@ -1,5 +1,6 @@
 """Health check endpoint — verifies DB connectivity, not just HTTP alive."""
 
+import os
 import re
 
 from fastapi import APIRouter
@@ -17,7 +18,9 @@ class HealthResponse(BaseModel):
     version: str
     database: str
     llm_configured: bool
-    supabase_project_ref: str  # CEO can verify this = dwdgzfusjsobnixgyzjk without env-debug
+    supabase_project_ref: str
+    openrouter: bool = False
+    nvidia: bool = False
 
 
 def _extract_project_ref(url: str) -> str:
@@ -41,15 +44,19 @@ async def health_check(db: SupabaseAdmin) -> HealthResponse:
 
     # Check LLM configuration
     llm_ok = bool(settings.gemini_api_key or settings.vertex_api_key)
+    openrouter_set = bool(os.environ.get("OPENROUTER_API_KEY", ""))
+    nvidia_set = bool(os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NVIDIA_NIM_KEY", ""))
 
     status = "ok" if db_status == "connected" and llm_ok else "degraded"
 
     return HealthResponse(
         status=status,
-        version="0.1.0",
+        version="0.2.0",
         database=db_status,
         llm_configured=llm_ok,
         supabase_project_ref=_extract_project_ref(settings.supabase_url),
+        openrouter=openrouter_set,
+        nvidia=nvidia_set,
     )
 
 

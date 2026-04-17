@@ -34,7 +34,7 @@ function OrgCard({ org, onSelect }: { org: OrganizationResponse; onSelect: () =>
       onClick={onSelect}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => e.key === "Enter" && onSelect()}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(); } }}
       className="group relative flex flex-col gap-3 rounded-2xl border border-border bg-surface-container-low p-5 cursor-pointer hover:border-primary/40 hover:bg-surface-container transition-all"
     >
       {/* Avatar */}

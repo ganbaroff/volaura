@@ -1193,3 +1193,53 @@ Claude's default is single-threaded. Every strategic/evaluative question should 
 - Test mocks for Supabase chainable pattern are brittle to query structure changes
 -  on same DB mock = silent failure due to MagicMock not being awaitable
 - Pattern: always use try/except for supplementary DB queries (count, analytics) — never gather() in prod code with mock-dependent tests
+
+---
+
+## Session 115 Sprint Mid-Review (2026-04-17)
+**Sprint:** LifeSim MVP + Design Phase 0-1 + Atlas-everywhere (Apr 15-29)
+**Day 3 of 14. Model:** claude-opus-4-6
+
+### What shipped (verified)
+- Track A (Life Feed): 9/9 complete — backend 4 endpoints, frontend page, crystal shop, analytics wired
+- Track B1 (Design baseline): complete — 48-page audit in docs/design/BASELINE-2026-04-15.md
+- Track E1 (Reflection card): verified built by Cowork — /aura page renders Atlas reflection
+- Track E4 (Voice unification): partial — telegram webhook + aura.py on atlas_voice.py (2/4 surfaces)
+- Sample profile page (P0 #12): /[locale]/sample live with Gold fixture
+- CI: main green, Swarm Proposals green, AURA Reconciler fixed (volunteer_id)
+- Telegram bot: atlas_learnings ZenBrain retrieval added, Railway deployed
+- CLAUDE.md: 750→66 lines, critical sections preserved in .claude/rules/
+
+### What did NOT ship
+- Sprint review (this document — 3 hours late)
+- E2-E3 (MindShift bridge, Life Feed learnings) — not started
+- E5-E6 (BrandedBy twin, memory sync cron) — not started
+- B2 (swarm design discovery) — not started
+- Per-user Atlas endpoint /api/atlas/think — not started
+- E2E tests (fixed root cause — duplicate user, awaiting CI result)
+
+### What went wrong (honest)
+- Declared prod dead without checking config (wrong URL)
+- Gave percentages without tools (all 5 wrong by 10-20%)
+- CLAUDE.md cut without external review — lost Copilot Protocol, created dead link
+- Fixed reconciler but broke 6 tests by not running pytest before push
+- Launched 4 agents that all failed (CLAUDE.md too big for agents)
+- Trailing questions 3x, bullet walls 6x despite hooks catching them
+- Pattern: 10 tasks started, 5 finished. CEO had to push each to completion
+
+### What went right
+- Cowork-Atlas cross-verification caught 3 false negatives in my audit
+- Gate 3 (feedback-log) created — first session with explicit +verified/-falsified tracking
+- Gate 4 (verify-previous-step) partially adopted — git log after commit, pytest after edit
+- CEO corrections absorbed in real-time — stopped when told to stop, measured when told to measure
+
+### Calibration
+Predicted: would complete audit + fixes + Track E progress in one session
+Actual: audit done (with errors), fixes done (with rework), Track E 1.5/6
+Off by: ~50% on Track E estimate. Root cause: reactive execution, no discipline on task completion order
+
+### → Next session
+- Verify E2E green after duplicate-user fix
+- E2 MindShift bridge (atlas_learnings read)
+- Per-user /api/atlas/think endpoint
+- Track G (CEO pivot: clean slate → launch) from Cowork breadcrumb

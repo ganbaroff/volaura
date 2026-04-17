@@ -59,7 +59,7 @@ async def _fetch_pending(db: AsyncClient, limit: int) -> list[dict[str, Any]]:
     """
     result = (
         await db.table("assessment_sessions")
-        .select("id,user_id,competency_id,competency_score,reconcile_attempts")
+        .select("id,volunteer_id,competency_id,competency_score,reconcile_attempts")
         .eq("pending_aura_sync", True)
         .eq("status", "completed")
         .order("completed_at", desc=False)
@@ -81,7 +81,7 @@ async def _get_slug(db: AsyncClient, competency_id: str) -> str | None:
 async def _reconcile_session(db: AsyncClient, row: dict[str, Any]) -> str:
     """Return 'ok' | 'retry' | 'gave_up'."""
     session_id: str = row["id"]
-    user_id: str = row["user_id"]
+    user_id: str = row["volunteer_id"]
     competency_id: str = row["competency_id"]
     competency_score: float | None = row.get("competency_score")
     attempts: int = int(row.get("reconcile_attempts") or 0)

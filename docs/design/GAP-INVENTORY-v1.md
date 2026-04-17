@@ -6,7 +6,7 @@
 
 ## Summary
 
-**Session 117 update:** 22 code-verified gaps. 6 fixed in same commit. 2 Critical, 6 High, 5 Medium, 3 Low remaining.
+**Session 117 update:** 22 code-verified gaps. 8 fixed (F1-F7 + M5). 1 Critical, 6 High, 4 Medium, 3 Low remaining.
 **Session 113 original:** 58 gaps (8 P0, 34 P1, 24 P2). Cross-product gaps remain valid. P0 items 1-5 (MindShift/LifeSim/BrandedBy placeholders, crystal economy) are architectural; items 6-8 (Stripe, Resend, Atlas page) partially resolved.
 
 ---
@@ -21,18 +21,17 @@
 | F4 | AURA progress bar animation 1.2s — Law 4 max 800ms | Reduced to 0.8s in aura-score-widget.tsx |
 | F5 | Impact ticker animation 1800ms — Law 4 max 800ms | Reduced to 800ms in impact-ticker.tsx |
 | F6 | Impact ticker no reduced-motion guard | Added prefers-reduced-motion check |
+| F7 | No focus trapping in 5 modals (C1) | Added `useFocusTrap` hook + applied to all 5 dialogs. `role="dialog"` moved to inner panel. |
 
 ---
 
 ## CRITICAL — Blocks launch
 
-### C1. No focus trapping in ANY modal (5 modals)
+### ~~C1. No focus trapping in ANY modal (5 modals)~~ FIXED
 
-All dialogs use hand-built `motion.div` overlays with `role="dialog"` but zero focus trapping. Keyboard users Tab behind the backdrop.
+Added `hooks/use-focus-trap.ts` — traps Tab cycle inside dialog, restores focus on close. Applied to all 5 modals. Also moved `role="dialog"` from backdrop to inner panel (M5 also resolved).
 
-**Files:** `crystal-shop.tsx:172`, `intro-request-button.tsx:99`, `aura/page.tsx:532`, `org-talent/page.tsx:411`, `assessment/[sessionId]/page.tsx:525`
-
-**Fix:** Install `focus-trap-react` or use native `<dialog>`. ~2h.
+**Files changed:** `crystal-shop.tsx`, `intro-request-button.tsx`, `aura/page.tsx`, `org-talent/page.tsx`, `assessment/[sessionId]/page.tsx`
 
 ### C2. Onboarding inputs have no label-input association
 
@@ -91,9 +90,9 @@ Implemented in 9 files. Missing: onboarding, settings, events/*, org-talent, bra
 
 All auth pages. Mouse users see unnecessary ring. Inconsistent with rest of codebase.
 
-### M5. Share modal aria structure fragile
+### ~~M5. Share modal aria structure fragile~~ FIXED (in C1 fix)
 
-`aura/page.tsx:532` — role="dialog" on backdrop, not inner panel. Move to inner div.
+All 5 modals now have `role="dialog"` on inner panel, not backdrop.
 
 ---
 

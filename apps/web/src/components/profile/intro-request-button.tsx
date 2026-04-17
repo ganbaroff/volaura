@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { useMyOrganization, useCreateIntroRequest } from "@/hooks/queries/use-organizations";
 import type { ApiError } from "@/lib/api/client";
 
@@ -23,7 +24,7 @@ export function IntroRequestButton({ professionalId, professionalName }: Props) 
   const [message, setMessage] = useState("");
   const [toast, setToast] = useState<{ type: "success" | "error"; msg: string } | null>(null);
 
-  const dialogRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useFocusTrap<HTMLDivElement>(open);
   const isMounted = useRef(true);
   useEffect(() => () => { isMounted.current = false; }, []);
 

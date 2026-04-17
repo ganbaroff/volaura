@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
@@ -190,6 +191,7 @@ export default function AuraPage() {
   const [showCurtain, setShowCurtain] = useState(false);
   const [revealed, setRevealed] = useState(false);
   const [showSharePrompt, setShowSharePrompt] = useState(false);
+  const shareDialogRef = useFocusTrap<HTMLDivElement>(showSharePrompt);
 
   useEffect(() => {
     isMounted.current = true;
@@ -529,13 +531,14 @@ export default function AuraPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              role="dialog"
-              aria-modal="true"
-              aria-label={t("aura.sharePromptTitle", { defaultValue: "Share your AURA score" })}
               className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
               onClick={() => setShowSharePrompt(false)}
             >
               <motion.div
+                ref={shareDialogRef}
+                role="dialog"
+                aria-modal="true"
+                aria-label={t("aura.sharePromptTitle", { defaultValue: "Share your AURA score" })}
                 initial={{ y: 40, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: 40, opacity: 0 }}

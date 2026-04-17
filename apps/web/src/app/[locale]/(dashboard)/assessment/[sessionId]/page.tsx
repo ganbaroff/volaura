@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { useRouter, useParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { AnimatePresence } from "framer-motion";
@@ -50,6 +51,7 @@ export default function QuestionPage() {
   const [localError, setLocalError] = useState<string | null>(null);
   const [timingWarning, setTimingWarning] = useState<string | null>(null);
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
+  const leaveDialogRef = useFocusTrap<HTMLDivElement>(showLeaveConfirm);
   const [isSlowFetch, setIsSlowFetch] = useState(false);
   // PROD-M01: Brief "Saved \u2713" confirmation after successful answer submission
   const [answerSaved, setAnswerSaved] = useState(false);
@@ -522,12 +524,15 @@ export default function QuestionPage() {
       {/* Leave confirmation modal — replaces window.confirm (ADHD-first, accessible) */}
       {showLeaveConfirm && (
         <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="leave-dialog-title"
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
         >
-          <div className="w-full max-w-sm rounded-2xl bg-surface-container-low p-6 shadow-xl space-y-4">
+          <div
+            ref={leaveDialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="leave-dialog-title"
+            className="w-full max-w-sm rounded-2xl bg-surface-container-low p-6 shadow-xl space-y-4"
+          >
             <h2 id="leave-dialog-title" className="text-base font-bold text-on-surface">
               {t("assessment.leaveTitle")}
             </h2>

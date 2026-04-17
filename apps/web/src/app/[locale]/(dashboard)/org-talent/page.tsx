@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
@@ -158,6 +159,7 @@ export default function OrgTalentPage() {
 
   // ── Saved searches ──────────────────────────────────────────────────────────
   const [showSaveModal, setShowSaveModal] = useState(false);
+  const saveDialogRef = useFocusTrap<HTMLDivElement>(showSaveModal);
   const [saveName, setSaveName] = useState("");
   const [saveNotify, setSaveNotify] = useState(true);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -408,13 +410,16 @@ export default function OrgTalentPage() {
           {/* Save Search Modal */}
           {showSaveModal && (
             <div
-              role="dialog"
-              aria-modal="true"
-              aria-label={t("orgDash.saveSearchModal", { defaultValue: "Save search" })}
               className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-4"
               onClick={(e) => { if (e.target === e.currentTarget) setShowSaveModal(false); }}
             >
-              <div className="w-full max-w-sm rounded-2xl border border-border bg-surface-container p-6 space-y-4">
+              <div
+                ref={saveDialogRef}
+                role="dialog"
+                aria-modal="true"
+                aria-label={t("orgDash.saveSearchModal", { defaultValue: "Save search" })}
+                className="w-full max-w-sm rounded-2xl border border-border bg-surface-container p-6 space-y-4"
+              >
                 <div className="flex items-center justify-between">
                   <h2 className="text-sm font-semibold text-on-surface">
                     {t("orgDash.saveSearchModal", { defaultValue: "Save this search" })}

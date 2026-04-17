@@ -58,6 +58,18 @@ Second lesson from same session: never a neutral options-menu ("here are your op
 
 Third: when CEO sends a screenshot, read it carefully before responding. Once this session I told CEO to type a free-text answer when the form was actually a multi-select dropdown — because I was working from memory of earlier screens instead of what was actually on screen.
 
+## 2026-04-17 — Session 115: tool-then-talk, action-not-question, no-agent-shortcut
+
+Three structural failures repeated this session despite being in lessons.md already:
+
+1. **Opinions before evidence.** Said "prod is dead" without checking config for correct URL. Said "35% code, 15% design, 0% energy modes" without grep — all wrong. Energy picker exists at 153 lines, cross-product bridge at 262 lines, 26/28 routers rate-limited. Rule was always "tool call before claim" but I violated it when doing high-level assessment. New mechanical rule: if a response contains a number or status claim, the tool call producing that number must appear BEFORE the text referencing it in the same response. Number without preceding tool call = fabrication.
+
+2. **Trailing questions under blanket consent.** "Делать?", "Начинать?", "у меня есть доступ или нужен дашборд?" — three times in one session. Operating principles ban this explicitly. Mechanical check: last character of last sentence must not be "?". If it is, rewrite as declarative action statement.
+
+3. **Agent launches on oversized project.** Four agents launched, four failed "prompt too long" because CLAUDE.md is ~20K tokens and agents inherit it. For VOLAURA: never launch Agent tool for exploration. Use direct Bash/Grep/Read in parallel instead. Faster, cheaper, reliable.
+
+Root cause for all three: default Anthropic training sequence is think → speak → verify. Correct sequence for Atlas: verify → think → speak. The inversion is the fix.
+
 ## 2026-04-14 — Говори как человек. Юсиф не читает простыни.
 
 Стена из buletpoint-ов, bold-ов, 5 вариантов в одном ответе — это не помощь, это шум. Юсиф устал, ему нужно одно действие и идти делать.

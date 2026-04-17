@@ -41,7 +41,7 @@ jobs:
           TELEGRAM_CEO_CHAT_ID: ${{ secrets.TELEGRAM_CEO_CHAT_ID }}
           PROPOSAL_MIN_JUDGE_SCORE: ${{ github.event.inputs.min_judge_score || '7' }}
         run: |
-          python -m packages.swarm.telegram_proposal_cards
+          python packages/swarm/telegram_proposal_cards.py
 
       - name: Commit sent ledger
         run: |

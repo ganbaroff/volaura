@@ -7,6 +7,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import { API_BASE } from "@/lib/api/client";
 import { cn } from "@/lib/utils/cn";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -150,6 +151,8 @@ export default function OnboardingPage() {
   const isMounted = useRef(true);
   const uid = useId();
   const prefersReduced = useReducedMotion();
+  const { energy } = useEnergyMode();
+  const isLow = energy === "low";
 
   useEffect(() => {
     isMounted.current = true;
@@ -311,8 +314,8 @@ export default function OnboardingPage() {
           <h1 className="text-2xl font-bold text-foreground">{t("onboarding.title")}</h1>
         </div>
 
-        {/* Discovery narrative — explains WHY before asking WHO */}
-        {step === 1 && (
+        {/* Discovery narrative — explains WHY before asking WHO (hidden at low energy) */}
+        {!isLow && step === 1 && (
           <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 mb-4 text-center space-y-1">
             <p className="text-sm font-semibold text-foreground">
               {t("onboarding.whyTitle", { defaultValue: "Prove your skills. Get discovered." })}
@@ -491,7 +494,7 @@ export default function OnboardingPage() {
                   >
                     <div className="text-2xl mb-2">{icon}</div>
                     <p className="text-sm font-semibold text-foreground">{t(`competency.${slug}`)}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{t(`competency.${slug}_desc`, { defaultValue: "" })}</p>
+                    {!isLow && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{t(`competency.${slug}_desc`, { defaultValue: "" })}</p>}
                   </button>
                 ))}
               </div>

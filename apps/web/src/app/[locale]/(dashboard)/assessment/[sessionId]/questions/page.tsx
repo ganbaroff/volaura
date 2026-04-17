@@ -5,7 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Loader2, CheckCircle2, XCircle, ArrowLeft, Clock } from "lucide-react";
+import { CheckCircle2, XCircle, ArrowLeft, Clock } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils/cn";
 import { useQuestionBreakdown } from "@/hooks/queries/use-assessment";
 import type { QuestionResult } from "@/hooks/queries/use-assessment";
@@ -107,11 +108,16 @@ export default function QuestionBreakdownPage() {
 
   if (isLoading) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-16 flex flex-col items-center gap-4">
-        <Loader2 className="size-10 text-primary animate-spin" aria-hidden="true" />
-        <p className="text-sm text-muted-foreground" role="status" aria-live="polite">
-          {t("common.loading")}
-        </p>
+      <div className="mx-auto max-w-lg px-4 py-8 space-y-4" role="status" aria-live="polite">
+        <div className="space-y-1">
+          <Skeleton className="h-8 w-32" />
+          <Skeleton className="h-5 w-48" />
+        </div>
+        <div className="space-y-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-24 w-full rounded-xl" />
+          ))}
+        </div>
       </div>
     );
   }

@@ -12,6 +12,7 @@ import { useEventAttendees, useRateProfessional } from "@/hooks/queries/use-even
 import { useEvent } from "@/hooks/queries/use-events";
 import type { EventAttendeeRow } from "@/hooks/queries/use-events";
 import { ApiError } from "@/lib/api/client";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 // ── Badge chip ─────────────────────────────────────────────────────────────────
 
@@ -100,12 +101,14 @@ function AttendeeRow({
   index,
   onRate,
   isRatingPending,
+  isLow,
 }: {
   a: EventAttendeeRow;
   locale: string;
   index: number;
   onRate: (registrationId: string, rating: number) => void;
   isRatingPending: boolean;
+  isLow: boolean;
 }) {
   const router = useRouter();
   const statusColor = STATUS_COLORS[a.status] ?? "text-muted-foreground";
@@ -143,23 +146,23 @@ function AttendeeRow({
         )}
       </div>
 
-      {/* AURA score */}
-      {a.total_score !== null && (
+      {/* AURA score — hidden at low energy */}
+      {!isLow && a.total_score !== null && (
         <span className="text-sm font-mono tabular-nums text-muted-foreground w-12 text-right shrink-0">
           {a.total_score.toFixed(1)}
         </span>
       )}
 
-      {/* Badge tier */}
-      <BadgeChip tier={a.badge_tier} />
+      {/* Badge tier — hidden at low energy */}
+      {!isLow && <BadgeChip tier={a.badge_tier} />}
 
       {/* Status */}
       <span className={cn("text-xs font-medium capitalize shrink-0", statusColor)}>
         {a.status.replace(/_/g, " ")}
       </span>
 
-      {/* Star rating — only for checked-in attendees */}
-      {checkedIn && (
+      {/* Star rating — hidden at low energy */}
+      {!isLow && checkedIn && (
         <StarRating
           registrationId={a.registration_id}
           onRate={onRate}
@@ -176,6 +179,9 @@ export default function EventAttendeesPage() {
   const { locale, eventId } = useParams<{ locale: string; eventId: string }>();
   const { t } = useTranslation();
   const router = useRouter();
+
+  const { energy } = useEnergyMode();
+  const isLow = energy === "low";
 
   const { data: event } = useEvent(eventId);
   const { data: attendees, isLoading, error } = useEventAttendees(eventId);
@@ -217,7 +223,7 @@ export default function EventAttendeesPage() {
         {eventTitle && (
           <p className="text-sm text-muted-foreground">{eventTitle}</p>
         )}
-        {!isLoading && totalCount > 0 && (
+        {!isLow && !isLoading && totalCount > 0 && (
           <p className="text-xs text-muted-foreground">
             {totalCount} {t("events.registered", { defaultValue: "registered" })} ·{" "}
             {checkedInCount} {t("events.checkedIn", { defaultValue: "checked in" })}
@@ -273,6 +279,7 @@ export default function EventAttendeesPage() {
               index={i}
               onRate={handleRate}
               isRatingPending={rateProfessional.isPending}
+              isLow={isLow}
             />
           ))}
         </div>

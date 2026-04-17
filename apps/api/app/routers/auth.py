@@ -318,19 +318,30 @@ async def e2e_create_user(
         raise HTTPException(status_code=404, detail="Not found")
 
     try:
-        result = await db_admin.auth.admin.create_user(
-            {
-                "email": payload.email,
-                "password": payload.password,
-                "email_confirm": True,
-                "user_metadata": {
-                    "username": payload.username,
-                    "display_name": payload.display_name or payload.username,
-                },
-            }
-        )
-        user = getattr(result, "user", None) or result
-        user_id = str(getattr(user, "id", None))
+        user_id: str | None = None
+        try:
+            result = await db_admin.auth.admin.create_user(
+                {
+                    "email": payload.email,
+                    "password": payload.password,
+                    "email_confirm": True,
+                    "user_metadata": {
+                        "username": payload.username,
+                        "display_name": payload.display_name or payload.username,
+                    },
+                }
+            )
+            user = getattr(result, "user", None) or result
+            user_id = str(getattr(user, "id", None))
+        except Exception:
+            existing = await db_admin.auth.admin.list_users()
+            for u in getattr(existing, "users", existing) or []:
+                if getattr(u, "email", None) == payload.email:
+                    user_id = str(getattr(u, "id", ""))
+                    await db_admin.auth.admin.update_user_by_id(user_id, {"password": payload.password})
+                    break
+            if not user_id:
+                raise
 
         await (
             db_admin.table("profiles")

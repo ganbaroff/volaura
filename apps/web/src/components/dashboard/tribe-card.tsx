@@ -121,7 +121,7 @@ export function TribeCard() {
       animate={{ opacity: 1, y: 0 }}
       className="rounded-xl border border-violet-400/20 bg-gradient-to-br from-violet-500/5 to-indigo-500/5 p-4 space-y-3"
     >
-      {/* Header: streak crystal + count */}
+      {/* Header: streak crystal + count (hidden at 0-1 per Law 3 / anti-pattern #5) */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span
@@ -131,12 +131,14 @@ export function TribeCard() {
             💎
           </span>
           <div>
-            <p className="text-sm font-semibold text-foreground leading-tight">
-              {t("tribe.streakWeeks", { count: currentStreak, defaultValue: `${currentStreak} week streak` })}
-            </p>
+            {currentStreak > 1 && (
+              <p className="text-sm font-semibold text-foreground leading-tight">
+                {t("tribe.streakWeeks", { count: currentStreak, defaultValue: `${currentStreak} week streak` })}
+              </p>
+            )}
             {fadeLevel > 0 && (
               <p className="text-xs text-amber-500">
-                {t("tribe.crystalFading", { defaultValue: "Keep your streak alive this week" })}
+                {t("tribe.crystalFading", { defaultValue: "Your crystal glow is fading" })}
               </p>
             )}
           </div>

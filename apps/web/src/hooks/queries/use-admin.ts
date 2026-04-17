@@ -244,6 +244,86 @@ export type SwarmFinding = {
   confidence: number;
 };
 
+// ── M1 Admin Overview (2026-04-18) ────────────────────────────────────────────
+// Backend: apps/api/app/routers/admin.py → /api/admin/stats/overview
+// Schemas: apps/api/app/schemas/admin.py → AdminOverviewResponse
+// Spec:    docs/engineering/ADMIN-DASHBOARD-SPEC.md §7 (Strange v2 pivot)
+// Activation-first; pre-PMF. MRR/NRR/CAC stubbed until revenue exists.
+
+export interface AdminActivationFunnel {
+  product: "volaura" | "mindshift";
+  signups_24h: number;
+  activated_24h: number;
+  activation_rate: number; // 0.0-1.0
+}
+
+export interface AdminPresenceMatrix {
+  volaura_only: number;
+  mindshift_only: number;
+  both_products: number;
+  total_users: number;
+}
+
+export interface AdminOverviewResponse {
+  // Tier 1 scorecard
+  activation_rate_24h: number;
+  w4_retention: number | null;
+  dau_wau_ratio: number;
+  errors_24h: number;
+  runway_months: number | null;
+  // Tier 2 cross-product
+  presence: AdminPresenceMatrix;
+  funnels: AdminActivationFunnel[];
+  // Meta
+  computed_at: string;
+  stale_after_seconds: number;
+}
+
+export interface AdminActivityEvent {
+  id: string;
+  product: "volaura" | "mindshift" | "lifesim" | "brandedby" | "zeus";
+  event_type: string;
+  user_id_prefix: string;
+  created_at: string;
+  payload_summary: string | null;
+}
+
+/** Exec scorecard + cross-product presence. 30s stale, 60s refetch. */
+export function useAdminOverview() {
+  const getToken = useAuthToken();
+
+  return useQuery<AdminOverviewResponse, ApiError>({
+    queryKey: ["admin", "stats", "overview"],
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      return apiFetch<AdminOverviewResponse>("/api/admin/stats/overview", { token });
+    },
+    staleTime: 30_000,
+    refetchInterval: 60_000,
+    retry: 1,
+    throwOnError: false,
+  });
+}
+
+/** Live character_events tail for the admin feed. 15s poll. */
+export function useAdminLiveEvents(limit = 50) {
+  const getToken = useAuthToken();
+
+  return useQuery<AdminActivityEvent[], ApiError>({
+    queryKey: ["admin", "events", "live", limit],
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      return apiFetch<AdminActivityEvent[]>(`/api/admin/events/live?limit=${limit}`, { token });
+    },
+    staleTime: 10_000,
+    refetchInterval: 15_000,
+    retry: 1,
+    throwOnError: false,
+  });
+}
+
 export function useSwarmFindings(category?: string, minImportance?: number) {
   const getToken = useAuthToken();
 

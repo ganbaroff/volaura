@@ -11,12 +11,11 @@ Covers:
 from __future__ import annotations
 
 import json
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
 from app.routers import telegram_webhook as tw
-
 
 # ── 1. Classifier ────────────────────────────────────────────────────────────
 
@@ -51,24 +50,24 @@ async def test_action_branch_creates_github_issue(monkeypatch) -> None:
     class _FakeResp:
         status_code = 201
 
-        def json(self_inner):
+        def json(self):
             return {"html_url": "https://github.com/ganbaroff/volaura/issues/4242"}
 
         @property
-        def text(self_inner):
+        def text(self):
             return ""
 
     class _FakeAsyncClient:
-        def __init__(self_inner, *a, **k):
+        def __init__(self, *a, **k):
             pass
 
-        async def __aenter__(self_inner):
-            return self_inner
+        async def __aenter__(self):
+            return self
 
-        async def __aexit__(self_inner, *a):
+        async def __aexit__(self, *a):
             return False
 
-        async def post(self_inner, url, headers=None, json=None):
+        async def post(self, url, headers=None, json=None):
             captured["url"] = url
             captured["headers"] = headers
             captured["json"] = json
@@ -172,18 +171,18 @@ async def test_proposal_card_callback_accepts_and_writes(monkeypatch, tmp_path) 
 
     # httpx.AsyncClient stub for answerCallbackQuery
     class _FakeAsyncClient:
-        def __init__(self_inner, *a, **k):
+        def __init__(self, *a, **k):
             pass
 
-        async def __aenter__(self_inner):
-            return self_inner
+        async def __aenter__(self):
+            return self
 
-        async def __aexit__(self_inner, *a):
+        async def __aexit__(self, *a):
             return False
 
-        async def post(self_inner, *a, **k):
+        async def post(self, *a, **k):
             class _R:
-                def json(self_r):
+                def json(self):
                     return {"ok": True}
 
             return _R()

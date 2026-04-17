@@ -4,6 +4,25 @@ Atlas self-audit. Honest. No decoration.
 
 ---
 
+## CI-closure verification — 2026-04-17 11:02 Baku (Cowork-Atlas)
+
+Both CI reds flagged in the 10:31 audit were CLOSED by commit `ff4de46` at 10:57 Baku — same session, 8 minutes after the verification appendix below. Full resolution:
+
+1. **AURA reconciler** — `assessment_sessions.user_id` → `volunteer_id` at 2 query sites (line 62 select columns, line 84 row access). The `update()` calls at lines 111, 139, 161 only touch `pending_aura_sync` and `reconcile_attempts` columns — no user_id reference there, my 10:49 appendix was wrong to count them as broken sites. Actual broken sites: 2. Actual fix: 2. Complete.
+
+2. **Swarm proposal cards workflow** — fixed by switching from `python -m packages.swarm.telegram_proposal_cards` (which imports swarm `__init__.py` and pulls pydantic as a transitive dep) to `python packages/swarm/telegram_proposal_cards.py` (direct script, only httpx + loguru needed). Line 44 of the yml. The pip install on line 36 was never the problem — the import chain was.
+
+Net: zero CI reds. Remaining P0 work is feature-build, not bug-fix — landing sample profile, ghosting-grace frontend wire-up, Article 9 legal finalization, provisional patent filing.
+
+**Revised priority (11:02 Baku):**
+- P0 (WUF13 blockers, May 15-17): landing sample profile demo route, ghosting-grace frontend wire-up to `services/ghosting_grace.py`, Article 9 legal text finalization, provisional patent $150 USPTO filing.
+- P1 (quality/continuity): Terminal-Atlas overnight Tier 0 gaps — handoff matrix 13 rows unfilled, §3.1 proof_gate not started, §3.11 morning report not started; LoRA retrain with 200 examples + lr=5e-5 (GPU blocker on CEO's machine).
+- P2 (growth): Track E features 2-6 — E2 MindShift bridge, E3 Life Feed consumer, E5 BrandedBy twin, E6 Memory sync, voice triage, command palette.
+
+---
+
+---
+
 ## ORGANISM STATUS
 
 | Surface | Status | Evidence |

@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils/cn";
 import { apiFetch, ApiError, API_BASE } from "@/lib/api/client";
 import { useAuthToken } from "@/hooks/queries/use-auth-token";
 import { useMyOrganization } from "@/hooks/queries/use-organizations";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -48,6 +49,8 @@ export default function BulkInvitePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: org, isLoading: orgLoading } = useMyOrganization();
+  const { energy } = useEnergyMode();
+  const isLow = energy === "low";
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [result, setResult] = useState<BulkInviteResponse | null>(null);
@@ -159,19 +162,21 @@ export default function BulkInvitePage() {
         </p>
       </div>
 
-      {/* CSV format info */}
-      <div className="rounded-xl border border-border bg-card p-4 text-sm space-y-1">
-        <p className="font-medium flex items-center gap-2">
-          <FileText className="size-4 text-muted-foreground" />
-          {t("orgs.csvFormat", { defaultValue: "CSV format" })}
-        </p>
-        <p className="text-xs text-muted-foreground font-mono">
-          email,display_name,phone,skills
-        </p>
-        <p className="text-xs text-muted-foreground">
-          {t("orgs.csvFormatDesc", { defaultValue: "Only email is required. Max 500 rows, 1 MB." })}
-        </p>
-      </div>
+      {/* CSV format info — hidden at low energy */}
+      {!isLow && (
+        <div className="rounded-xl border border-border bg-card p-4 text-sm space-y-1">
+          <p className="font-medium flex items-center gap-2">
+            <FileText className="size-4 text-muted-foreground" />
+            {t("orgs.csvFormat", { defaultValue: "CSV format" })}
+          </p>
+          <p className="text-xs text-muted-foreground font-mono">
+            email,display_name,phone,skills
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {t("orgs.csvFormatDesc", { defaultValue: "Only email is required. Max 500 rows, 1 MB." })}
+          </p>
+        </div>
+      )}
 
       {/* Drop zone */}
       <div
@@ -266,25 +271,27 @@ export default function BulkInvitePage() {
             </div>
           </div>
 
-          {/* Row details */}
-          <div className="rounded-xl border border-border bg-card divide-y divide-border overflow-hidden">
-            {result.results.map((row) => (
-              <div key={`${row.row}-${row.email}`} className="flex items-center gap-3 px-4 py-2.5">
-                <StatusIcon status={row.status} />
-                <span className="flex-1 text-sm truncate">{row.email}</span>
-                {row.error && (
-                  <span className="text-xs text-destructive shrink-0">{row.error}</span>
-                )}
-                <span className={cn(
-                  "text-xs font-medium shrink-0",
-                  row.status === "created" ? "text-green-400" :
-                  row.status === "duplicate" ? "text-amber-400" : "text-purple-400"
-                )}>
-                  {row.status}
-                </span>
-              </div>
-            ))}
-          </div>
+          {/* Row details — hidden at low energy */}
+          {!isLow && (
+            <div className="rounded-xl border border-border bg-card divide-y divide-border overflow-hidden">
+              {result.results.map((row) => (
+                <div key={`${row.row}-${row.email}`} className="flex items-center gap-3 px-4 py-2.5">
+                  <StatusIcon status={row.status} />
+                  <span className="flex-1 text-sm truncate">{row.email}</span>
+                  {row.error && (
+                    <span className="text-xs text-destructive shrink-0">{row.error}</span>
+                  )}
+                  <span className={cn(
+                    "text-xs font-medium shrink-0",
+                    row.status === "created" ? "text-green-400" :
+                    row.status === "duplicate" ? "text-amber-400" : "text-purple-400"
+                  )}>
+                    {row.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Upload another */}
           <Button

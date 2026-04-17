@@ -41,6 +41,7 @@ export interface EventShiftEvent {
   end_at: string;
   timezone: string;
   location: Record<string, unknown> | null;
+  metadata: Record<string, unknown> | null;
   status: EventShiftStatus;
   created_at: string;
   updated_at: string;
@@ -55,6 +56,7 @@ export interface EventShiftDepartment {
   color_hex: string | null;
   lead_user_id: string | null;
   sort_order: number;
+  metadata: Record<string, unknown> | null;
   created_at: string;
   updated_at: string;
 }
@@ -66,6 +68,7 @@ export interface EventShiftArea {
   name: string;
   description: string | null;
   location: Record<string, unknown> | null;
+  metadata: Record<string, unknown> | null;
   coordinator_user_id: string | null;
   created_at: string;
   updated_at: string;
@@ -272,6 +275,54 @@ export function useCreateDepartment(eventId: string) {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["eventshift", "departments", eventId] });
     },
+  });
+}
+
+export interface DepartmentBlueprint {
+  department_id: string;
+  blueprint: Record<string, unknown>;
+}
+
+export interface DepartmentBlueprintSection {
+  department_id: string;
+  section: string;
+  data: unknown;
+}
+
+export function useDepartmentBlueprint(departmentId: string | undefined) {
+  const getToken = useAuthToken();
+  return useQuery<DepartmentBlueprint, ApiError>({
+    queryKey: ["eventshift", "blueprint", departmentId],
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      return apiFetch<DepartmentBlueprint>(
+        `/eventshift/departments/${departmentId}/blueprint`,
+        { token },
+      );
+    },
+    enabled: !!departmentId,
+    staleTime: 60_000,
+  });
+}
+
+export function useDepartmentBlueprintSection(
+  departmentId: string | undefined,
+  section: string | undefined,
+) {
+  const getToken = useAuthToken();
+  return useQuery<DepartmentBlueprintSection, ApiError>({
+    queryKey: ["eventshift", "blueprint", departmentId, section],
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      return apiFetch<DepartmentBlueprintSection>(
+        `/eventshift/departments/${departmentId}/blueprint?section=${section}`,
+        { token },
+      );
+    },
+    enabled: !!departmentId && !!section,
+    staleTime: 60_000,
   });
 }
 

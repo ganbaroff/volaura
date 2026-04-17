@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { useFocusTrap } from "@/hooks/use-focus-trap";
 import {
   Briefcase,
   Coins,
@@ -77,6 +78,7 @@ export function CrystalShop({ currentCrystals, onBoost }: CrystalShopProps) {
   const purchaseMutation = useLifesimPurchase();
   const track = useTrackEvent();
   const [pendingItem, setPendingItem] = useState<ShopItem | null>(null);
+  const trapRef = useFocusTrap<HTMLDivElement>(!!pendingItem);
 
   const handleConfirm = async () => {
     if (!pendingItem) return;
@@ -169,12 +171,13 @@ export function CrystalShop({ currentCrystals, onBoost }: CrystalShopProps) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="shop-confirm-title"
             onClick={() => setPendingItem(null)}
           >
             <motion.div
+              ref={trapRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="shop-confirm-title"
               initial={{ opacity: 0, y: 12, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.97 }}

@@ -83,7 +83,7 @@ def wake_atlas(reason: str) -> None:
         subprocess.run(
             [str(CLAUDE), "--dangerously-skip-permissions", "-p", prompt],
             cwd=REPO, timeout=600,
-            capture_output=True, text=True
+            capture_output=True, text=True, encoding="utf-8", errors="replace"
         )
         log("wake complete")
     except subprocess.TimeoutExpired:

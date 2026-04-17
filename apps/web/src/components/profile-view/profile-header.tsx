@@ -65,12 +65,12 @@ export function ProfileHeader({ profile, locale, isOwnProfile }: ProfileHeaderPr
                   </span>
                 )}
                 {profile.registration_tier === "founding_1000" && (
-                  <span className="ml-2 text-xs font-medium text-cyan-600">
+                  <span className="ml-2 text-xs font-medium text-cyan-400">
                     {t("profile.founding1000")}
                   </span>
                 )}
                 {profile.registration_tier === "early_adopter" && (
-                  <span className="ml-2 text-xs font-medium text-blue-500">
+                  <span className="ml-2 text-xs font-medium text-blue-400">
                     {t("profile.earlyAdopter")}
                   </span>
                 )}

@@ -38,7 +38,7 @@ const slideUp = {
 };
 
 function getFreshnessInfo(daysSince: number) {
-  if (daysSince <= 7) return { key: "freshnessRecent", color: "text-cyan-600" };
+  if (daysSince <= 7) return { key: "freshnessRecent", color: "text-cyan-400" };
   if (daysSince <= 21) return { key: "freshnessWeeks", color: "text-amber-600" };
   return { key: "freshnessMonth", color: "text-muted-foreground" };
 }
@@ -107,7 +107,7 @@ export function CompetencyBreakdown({ scores, lastUpdated, isOwner = false }: Co
                 {canRetake ? (
                   <Link
                     href={`/${locale}/assessment?competency=${id}`}
-                    className="text-xs font-medium text-cyan-600 hover:text-cyan-700 transition-colors"
+                    className="text-xs font-medium text-cyan-400 hover:text-cyan-300 transition-colors"
                   >
                     {t("aura.retakeNow")}
                   </Link>

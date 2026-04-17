@@ -18,7 +18,7 @@ import {
  */
 
 const FEATURES = [
-  { key: "1", Icon: BarChart3, color: "text-blue-500", bg: "bg-blue-500/10" },
+  { key: "1", Icon: BarChart3, color: "text-blue-400", bg: "bg-blue-400/10" },
   { key: "2", Icon: Award, color: "text-yellow-500", bg: "bg-yellow-500/10" },
   { key: "3", Icon: UserCheck, color: "text-emerald-500", bg: "bg-emerald-500/10" },
 ] as const;

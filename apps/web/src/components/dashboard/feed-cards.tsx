@@ -48,7 +48,7 @@ const CARD_CONFIG: Record<FeedCardType, {
   people:      { icon: Users,         accent: "text-blue-600",   bg: "bg-blue-50 dark:bg-blue-950/30" },
   event:       { icon: CalendarCheck, accent: "text-green-600",  bg: "bg-green-50 dark:bg-green-950/30" },
   achievement: { icon: Trophy,        accent: "text-purple-600", bg: "bg-purple-50 dark:bg-purple-950/30" },
-  insight:     { icon: Lightbulb,     accent: "text-cyan-600",   bg: "bg-cyan-50 dark:bg-cyan-950/30" },
+  insight:     { icon: Lightbulb,     accent: "text-cyan-400",   bg: "bg-cyan-50 dark:bg-cyan-950/30" },
 };
 
 const stagger = {

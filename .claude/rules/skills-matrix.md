@@ -17,4 +17,4 @@ Payment/billing → memory/swarm/skills/payment-provider-agent.md + Security Age
 
 Rule: if in doubt → load the skill. 30 sec cost vs hours of rework.
 
-Full 80-row matrix archived: `docs/archive/skills-matrix-full.md`
+Full 80-row matrix: search git history for CLAUDE.md prior to commit cbe50c6 (2026-04-17).

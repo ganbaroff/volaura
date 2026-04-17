@@ -1,30 +1,29 @@
 # Sprint State — Volaura
 
-**Last Updated:** 2026-04-16 14:30 Baku — Phase 1 ecosystem discovery DONE, Stripe activation prepped
+**Last Updated:** 2026-04-17 12:30 Baku — Session 115 Terminal-Atlas audit + fixes
 
-## Session 114-115 (Cowork, 2026-04-16)
+## Session 115 Terminal (2026-04-17)
 
-Session 114 completed:
-- Phase 1 ecosystem discovery: 55 pages, 78 components, 34 routers, 91 migrations audited
-- Stripe Billing activation prep, identity reconstruction, company-state updated
+Delivered:
+- Full ecosystem audit (memory/atlas/FULL-AUDIT-2026-04-17.md) — found 3 items wrongly marked missing (Cowork corrected)
+- CI fix: AURA Reconciler column user_id → volunteer_id + test fixtures updated (7/7 green locally)
+- CI fix: Swarm Proposal Cards workflow — direct script execution bypassing __init__.py pydantic import
+- Sample profile page: /[locale]/sample with Cowork fixture (Gold tier, 8 competencies, 3 events)
+- CLAUDE.md reduced 750→66 lines (44KB→3.3KB), critical sections moved to .claude/rules/
+- E4 partial: telegram_webhook now uses atlas_voice.py (2/4 surfaces unified)
+- Copilot Protocol restored to .claude/rules/copilot-protocol.md after CLAUDE.md cut lost it
+- lessons.md updated: tool-then-talk, action-not-question, no-agent-shortcut rules
 
-Session 115 completed:
-- Read ALL 37 design-related documents in the project (full list in risk analysis)
-- Produced: `docs/design/ECOSYSTEM-RISK-ANALYSIS-AND-PLAN-2026-04-16.md` — 10 risks, 3 phases, 36 eng days
-- CEO corrections absorbed: Class 21 (audience-blind output) added to lessons.md
-- Pre-output audience gate added to `.claude/rules/atlas-operating-principles.md`
-- Cowork-Atlas role declared: Ecosystem Design Lead (Figma + copy + design gate + CEO comms)
-- CEO decision: Option B+C hybrid for ecosystem stubs (hide from new users + wire Life Sim)
-- Terminal handoff written: `memory/atlas/cowork-sessions/2026-04-16-terminal-handoff.md`
+Known issues from this session:
+- CI main workflow still failing (reconciler test fix pushed but cron hasn't re-run yet)
+- Wake loop cron not registering (CronCreate EEXIST bug, lock removed, awaits CLI restart)
+- memory/context/heartbeat.md stale since 2026-04-05 (10 sessions behind)
+- 20 files reference removed CLAUDE.md sections — most resolved, some reference archived content
 
-Active plan — 3 phases:
-- Phase A (now): T0 a11y bugs (9 items) + [data-face] context + energy picker + Option B stub gate
-- Phase B (week 2-3): Token cleanup + cross-face bridge (Life Sim ← VOLAURA events)
-- Phase C (week 3-4): Figma redesign → code, 5 key screens × 3 energy modes
+Sprint: LifeSim MVP + Design Phase 0-1 + Atlas-everywhere
+Track A: 9/9 done. Track B: 1/2. Track E: 1/6 (E1 done per Cowork, E4 partial).
 
-Next immediate:
-- Terminal-Atlas picks up Phase A handoff
-- Cowork-Atlas starts Figma work on energy modes for 5 key screens
+Next: finish cleaning session 115 damage, then E2 (MindShift→atlas_learnings bridge)
 
 ## ⚠️ ACTIVE: Perplexity hotfix sweep complete (2026-04-15)
 

@@ -126,7 +126,7 @@ function IntroScreen({
       transition={{ duration: 0.35 }}
       className="space-y-6"
     >
-      {/* Volunteer card */}
+      {/* Professional card */}
       <div className="flex flex-col items-center gap-3 py-4">
         <div className="size-20 rounded-full bg-primary/20 flex items-center justify-center text-2xl font-bold text-primary">
           {info.professional_avatar_url ? (

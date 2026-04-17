@@ -43,9 +43,9 @@ async function fetchProfile(username: string): Promise<PublicProfile | null> {
   }
 }
 
-async function fetchAura(volunteerId: string): Promise<AuraScore | null> {
+async function fetchAura(userId: string): Promise<AuraScore | null> {
   try {
-    const r = await fetch(`${API_URL}/api/aura/${volunteerId}`, { next: { revalidate: 60 } });
+    const r = await fetch(`${API_URL}/api/aura/${userId}`, { next: { revalidate: 60 } });
     return r.ok ? r.json() : null;
   } catch {
     return null;

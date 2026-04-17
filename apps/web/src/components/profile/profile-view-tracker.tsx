@@ -7,12 +7,12 @@ import { apiFetch, API_BASE } from "@/lib/api/client";
 /**
  * ProfileViewTracker — fires POST /api/profiles/{username}/view on mount.
  *
- * This notifies the volunteer when an authenticated org views their profile.
+ * This notifies the professional when an authenticated org views their profile.
  * Rendered silently (no UI output). Safe to include in any public profile page.
  *
  * Behavior:
  * - Only fires if the viewer has an active Supabase session (logged in)
- * - The backend deduplicates: at most 1 notification per (org, volunteer) per 24h
+ * - The backend deduplicates: at most 1 notification per (org, professional) per 24h
  * - Non-org viewers: backend silently returns 204 with no notification sent
  * - Any error is swallowed — never blocks page rendering
  */

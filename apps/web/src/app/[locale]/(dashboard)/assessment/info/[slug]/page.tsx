@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils/cn";
 import { useAssessmentInfo } from "@/hooks/queries/use-assessment";
 import { ApiError } from "@/lib/api/client";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 const SUPPORTED_LOCALES = ["az", "en"] as const;
 type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
@@ -44,6 +45,8 @@ export default function AssessmentInfoPage() {
           transition: { delay, duration: 0.3 },
         };
 
+  const { energy } = useEnergyMode();
+  const isLow = energy === "low";
   const locale: SupportedLocale = isSupportedLocale(rawLocale) ? rawLocale : "en";
 
   useEffect(() => {
@@ -176,52 +179,53 @@ export default function AssessmentInfoPage() {
         <h1 className="text-2xl font-bold text-foreground">{competencyLabel}</h1>
       </motion.div>
 
-      {/* Description */}
-      <motion.p
-        {...fadeUp(0.1, 8)}
-        className="text-sm text-muted-foreground leading-relaxed"
-        lang={data.description ? "en" : undefined}
-      >
-        {description}
-      </motion.p>
+      {!isLow && (
+        <motion.p
+          {...fadeUp(0.1, 8)}
+          className="text-sm text-muted-foreground leading-relaxed"
+          lang={data.description ? "en" : undefined}
+        >
+          {description}
+        </motion.p>
+      )}
 
-      {/* Meta cards */}
-      <motion.div
-        {...fadeUp(0.2, 8)}
-        className="grid grid-cols-2 gap-3"
-      >
-        <div className="rounded-xl bg-surface-container-low p-4 space-y-1">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Clock className="size-3.5" aria-hidden="true" />
-            {t("assessment.infoTimeLabel")}
+      {!isLow && (
+        <motion.div
+          {...fadeUp(0.2, 8)}
+          className="grid grid-cols-2 gap-3"
+        >
+          <div className="rounded-xl bg-surface-container-low p-4 space-y-1">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Clock className="size-3.5" aria-hidden="true" />
+              {t("assessment.infoTimeLabel")}
+            </div>
+            <p className="text-lg font-semibold">
+              ~{data.time_estimate_minutes} {t("assessment.min")}
+            </p>
           </div>
-          <p className="text-lg font-semibold">
-            ~{data.time_estimate_minutes} {t("assessment.min")}
-          </p>
-        </div>
 
-        <div className={cn(
-          "rounded-xl p-4 space-y-1",
-          retakeBlocked
-            ? "bg-amber-500/10 border border-amber-500/20"
-            : "bg-green-500/10 border border-green-500/20"
-        )}>
-          <p className="text-xs text-muted-foreground">
-            {t("assessment.retake", { defaultValue: "Retake" })}
-          </p>
-          <p className={cn(
-            "text-sm font-semibold",
-            retakeBlocked ? "text-amber-400" : "text-green-400"
+          <div className={cn(
+            "rounded-xl p-4 space-y-1",
+            retakeBlocked
+              ? "bg-amber-500/10 border border-amber-500/20"
+              : "bg-green-500/10 border border-green-500/20"
           )}>
-            {retakeBlocked
-              ? t("assessment.infoRetakeCooldown", { days: data.days_until_retake })
-              : t("assessment.infoRetakeAvailable")}
-          </p>
-        </div>
-      </motion.div>
+            <p className="text-xs text-muted-foreground">
+              {t("assessment.retake", { defaultValue: "Retake" })}
+            </p>
+            <p className={cn(
+              "text-sm font-semibold",
+              retakeBlocked ? "text-amber-400" : "text-green-400"
+            )}>
+              {retakeBlocked
+                ? t("assessment.infoRetakeCooldown", { days: data.days_until_retake })
+                : t("assessment.infoRetakeAvailable")}
+            </p>
+          </div>
+        </motion.div>
+      )}
 
-      {/* Retake blocked warning */}
-      {retakeBlocked && (
+      {retakeBlocked && !isLow && (
         <motion.div
           {...fadeIn(0.3)}
           className="rounded-xl bg-amber-500/10 border border-amber-500/20 px-4 py-3"

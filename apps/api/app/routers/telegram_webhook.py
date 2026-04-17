@@ -573,20 +573,24 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
 Отвечай подробно столько сколько нужно. Заканчивай: следующий шаг или явный вопрос если нужно уточнение."""
 
     reply = None
-    # ── 1. NVIDIA NIM primary (free, no quota/billing concerns) ──
-    nvidia_key = os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NVIDIA_NIM_KEY", "")
-    if nvidia_key:
+    # ── 1. Claude Sonnet via OpenRouter (primary — follows persona instructions) ──
+    openrouter_key = os.environ.get("OPENROUTER_API_KEY", "")
+    if openrouter_key:
         try:
             import httpx
 
-            async with httpx.AsyncClient(timeout=25) as hc:
+            async with httpx.AsyncClient(timeout=30) as hc:
                 r = await hc.post(
-                    "https://integrate.api.nvidia.com/v1/chat/completions",
-                    headers={"Authorization": f"Bearer {nvidia_key}", "User-Agent": "volaura-bot/1.0"},
+                    "https://openrouter.ai/api/v1/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {openrouter_key}",
+                        "HTTP-Referer": "https://volaura.app",
+                        "X-Title": "VOLAURA Atlas",
+                    },
                     json={
-                        "model": "meta/llama-3.3-70b-instruct",
+                        "model": "anthropic/claude-sonnet-4",
                         "messages": [
-                            {"role": "system", "content": system_prompt[:8000]},
+                            {"role": "system", "content": system_prompt},
                             {"role": "user", "content": text},
                         ],
                         "max_tokens": 2000,
@@ -595,12 +599,13 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
                 )
                 if r.status_code == 200:
                     reply = r.json()["choices"][0]["message"]["content"].strip()
+                    logger.info("Atlas replied via Claude Sonnet (OpenRouter)")
                 else:
-                    logger.warning("NVIDIA NIM {s}: {b}", s=r.status_code, b=r.text[:200])
-        except Exception as e_nv:
-            logger.warning("NVIDIA NIM primary failed, trying Gemini: {e}", e=str(e_nv)[:100])
+                    logger.warning("OpenRouter {s}: {b}", s=r.status_code, b=r.text[:200])
+        except Exception as e_or:
+            logger.warning("OpenRouter failed, trying Gemini: {e}", e=str(e_or)[:100])
 
-    # ── 2. Gemini fallback (may hit daily free quota) ──
+    # ── 2. Gemini Flash fallback (free tier) ──
     if not reply:
         try:
             from google import genai
@@ -616,10 +621,40 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
                 ),
             )
             reply = (response.text or "").strip()
+            if reply:
+                logger.info("Atlas replied via Gemini Flash (fallback)")
         except Exception as e:
             logger.warning("Gemini fallback failed: {e}", e=str(e)[:100])
 
-    # ── 3. Groq (last fallback, may be spend-limited) ──
+    # ── 3. NVIDIA NIM fallback (free, weaker persona adherence) ──
+    if not reply:
+        nvidia_key = os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NVIDIA_NIM_KEY", "")
+        if nvidia_key:
+            try:
+                import httpx
+
+                async with httpx.AsyncClient(timeout=25) as hc:
+                    r = await hc.post(
+                        "https://integrate.api.nvidia.com/v1/chat/completions",
+                        headers={"Authorization": f"Bearer {nvidia_key}"},
+                        json={
+                            "model": "meta/llama-3.3-70b-instruct",
+                            "messages": [
+                                {"role": "system", "content": system_prompt[:4000]},
+                                {"role": "user", "content": text},
+                            ],
+                            "max_tokens": 2000,
+                            "temperature": 0.7,
+                        },
+                    )
+                    if r.status_code == 200:
+                        reply = r.json()["choices"][0]["message"]["content"].strip()
+                    else:
+                        logger.warning("NVIDIA NIM {s}: {b}", s=r.status_code, b=r.text[:200])
+            except Exception as e_nv:
+                logger.warning("NVIDIA NIM failed: {e}", e=str(e_nv)[:100])
+
+    # ── 4. Groq (last fallback) ──
     if not reply:
         groq_key = os.environ.get("GROQ_API_KEY", "")
         if groq_key:
@@ -627,28 +662,26 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
                 import httpx
 
                 async with httpx.AsyncClient(timeout=15) as hc:
-                    groq_resp = await hc.post(
+                    r = await hc.post(
                         "https://api.groq.com/openai/v1/chat/completions",
-                        headers={"Authorization": f"Bearer {groq_key}", "User-Agent": "volaura-bot/1.0"},
+                        headers={"Authorization": f"Bearer {groq_key}"},
                         json={
                             "model": "llama-3.3-70b-versatile",
                             "messages": [
-                                {"role": "system", "content": system_prompt[:2000]},
+                                {"role": "system", "content": system_prompt[:3000]},
                                 {"role": "user", "content": text},
                             ],
                             "max_tokens": 2000,
                             "temperature": 0.7,
                         },
                     )
-                    if groq_resp.status_code == 200:
-                        reply = groq_resp.json()["choices"][0]["message"]["content"].strip()
-                    else:
-                        logger.warning("Groq returned {s}: {b}", s=groq_resp.status_code, b=groq_resp.text[:200])
-            except Exception as e2:
-                logger.error("Groq fallback also failed: {e}", e=str(e2)[:100])
+                    if r.status_code == 200:
+                        reply = r.json()["choices"][0]["message"]["content"].strip()
+            except Exception as e_gr:
+                logger.warning("Groq failed: {e}", e=str(e_gr)[:100])
 
         if not reply:
-            reply = f"Все free LLM провайдеры упали одновременно (Gemini, NVIDIA NIM, Groq). Твоё сообщение сохранено как {msg_type}. Дай минуту, попробуй ещё раз, или проверь ключи в .env на Railway."
+            reply = "Все провайдеры недоступны. Сообщение сохранено. Попробуй через минуту."
 
     # Add tag for saved items
     if msg_type == "idea":

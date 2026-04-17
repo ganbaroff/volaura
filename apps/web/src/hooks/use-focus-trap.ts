@@ -4,8 +4,8 @@ import { useEffect, useRef, type RefObject } from "react";
 
 export function useFocusTrap<T extends HTMLElement>(
   active: boolean
-): RefObject<T | null> {
-  const ref = useRef<T | null>(null);
+) {
+  const ref = useRef<T>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
 
   useEffect(() => {

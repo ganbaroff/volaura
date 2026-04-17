@@ -16,6 +16,7 @@ import { useProfessionalSearch } from "@/hooks/queries/use-organizations";
 import type { ProfessionalSearchResultItem } from "@/hooks/queries/use-organizations";
 import { cn } from "@/lib/utils/cn";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 // ── Animations ─────────────────────────────────────────────────────────────────
 
@@ -196,7 +197,10 @@ export default function DiscoverPage() {
   const isMounted = useRef(true);
   useEffect(() => () => { isMounted.current = false; }, []);
 
-  // Mode toggle
+  const { energy } = useEnergyMode();
+  const isLowEnergy = energy === "low";
+
+  // Mode toggle — low energy locks to browse
   const [mode, setMode] = useState<"browse" | "search">("browse");
 
   // Browse state
@@ -253,41 +257,43 @@ export default function DiscoverPage() {
           </p>
         </motion.div>
 
-        {/* Mode toggle */}
-        <motion.div initial="hidden" animate="visible" variants={fadeUp}
-          className="flex gap-2 p-1 rounded-xl bg-surface-container w-fit"
-          role="tablist"
-          aria-label={t("discover.modeToggle", { defaultValue: "Discovery mode" })}
-        >
-          <button
-            role="tab"
-            aria-selected={mode === "browse"}
-            onClick={() => setMode("browse")}
-            className={cn(
-              "flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-              mode === "browse"
-                ? "bg-surface text-on-surface shadow-sm"
-                : "text-on-surface-variant hover:text-on-surface"
-            )}
+        {/* Mode toggle (hidden in low energy — browse only) */}
+        {!isLowEnergy && (
+          <motion.div initial="hidden" animate="visible" variants={fadeUp}
+            className="flex gap-2 p-1 rounded-xl bg-surface-container w-fit"
+            role="tablist"
+            aria-label={t("discover.modeToggle", { defaultValue: "Discovery mode" })}
           >
-            <Users className="size-3.5" aria-hidden="true" />
-            {t("discover.browse", { defaultValue: "Browse" })}
-          </button>
-          <button
-            role="tab"
-            aria-selected={mode === "search"}
-            onClick={() => setMode("search")}
-            className={cn(
-              "flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-              mode === "search"
-                ? "bg-surface text-on-surface shadow-sm"
-                : "text-on-surface-variant hover:text-on-surface"
-            )}
-          >
-            <Sparkles className="size-3.5" aria-hidden="true" />
-            {t("discover.semanticSearch", { defaultValue: "Smart Search" })}
-          </button>
-        </motion.div>
+            <button
+              role="tab"
+              aria-selected={mode === "browse"}
+              onClick={() => setMode("browse")}
+              className={cn(
+                "flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+                mode === "browse"
+                  ? "bg-surface text-on-surface shadow-sm"
+                  : "text-on-surface-variant hover:text-on-surface"
+              )}
+            >
+              <Users className="size-3.5" aria-hidden="true" />
+              {t("discover.browse", { defaultValue: "Browse" })}
+            </button>
+            <button
+              role="tab"
+              aria-selected={mode === "search"}
+              onClick={() => setMode("search")}
+              className={cn(
+                "flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+                mode === "search"
+                  ? "bg-surface text-on-surface shadow-sm"
+                  : "text-on-surface-variant hover:text-on-surface"
+              )}
+            >
+              <Sparkles className="size-3.5" aria-hidden="true" />
+              {t("discover.semanticSearch", { defaultValue: "Smart Search" })}
+            </button>
+          </motion.div>
+        )}
 
         <AnimatePresence mode="wait">
 
@@ -311,28 +317,30 @@ export default function DiscoverPage() {
                 />
               </div>
 
-              {/* Competency quick-search chips */}
-              <div className="space-y-1.5">
-                <p className="text-xs font-medium text-on-surface-variant">
-                  {t("discover.filterBySkill", { defaultValue: "Find by verified skill" })}
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {COMPETENCIES.map((comp) => (
-                    <button
-                      key={comp}
-                      type="button"
-                      onClick={() => {
-                        setMode("search");
-                        setQuery(t(`competency.${comp}`));
-                        setMinAura(60);
-                      }}
-                      className="rounded-full border border-outline-variant bg-surface-container px-3 py-1.5 text-xs font-medium text-on-surface-variant hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-colors"
-                    >
-                      {t(`competency.${comp}`)}
-                    </button>
-                  ))}
+              {/* Competency quick-search chips (hidden in low energy) */}
+              {!isLowEnergy && (
+                <div className="space-y-1.5">
+                  <p className="text-xs font-medium text-on-surface-variant">
+                    {t("discover.filterBySkill", { defaultValue: "Find by verified skill" })}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {COMPETENCIES.map((comp) => (
+                      <button
+                        key={comp}
+                        type="button"
+                        onClick={() => {
+                          setMode("search");
+                          setQuery(t(`competency.${comp}`));
+                          setMinAura(60);
+                        }}
+                        className="rounded-full border border-outline-variant bg-surface-container px-3 py-1.5 text-xs font-medium text-on-surface-variant hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-colors"
+                      >
+                        {t(`competency.${comp}`)}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* List */}
               {browseLoading && <ProfessionalSkeleton />}

@@ -22,6 +22,7 @@ import {
   useLifesimSubmitChoice,
 } from "@/hooks/queries/use-lifesim";
 import { useTrackEvent } from "@/hooks/use-analytics";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 /**
  * Life Feed — MVP with real choice wiring (sprint task A7).
@@ -157,6 +158,9 @@ interface LifesimEvent {
 export default function LifeFeedPage() {
   const { t } = useTranslation();
   const prefersReducedMotion = useReducedMotion();
+
+  const { energy } = useEnergyMode();
+  const isLowEnergy = energy === "low";
 
   const [stats, setStats] = useState<Record<StatKey, number>>(INITIAL_STATS);
   const [age] = useState<number>(25); // TODO A7.1: aggregate from character_events
@@ -377,7 +381,9 @@ export default function LifeFeedPage() {
           </motion.section>
         </div>
 
-        <CrystalShop currentCrystals={currentCrystals} onBoost={applyBoostLocally} />
+        {!isLowEnergy && (
+          <CrystalShop currentCrystals={currentCrystals} onBoost={applyBoostLocally} />
+        )}
       </main>
     </div>
   );

@@ -18,6 +18,7 @@ import { useDashboardStats } from "@/hooks/queries/use-dashboard";
 import { useMyEvents } from "@/hooks/queries/use-events";
 import { ApiError } from "@/lib/api/client";
 import type { TimelineEvent } from "@/components/profile-view/activity-timeline";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 /* ─── Section wrapper ─── */
 const sectionVariants = {
@@ -132,6 +133,9 @@ export default function ProfilePage() {
     isMounted.current = true;
     return () => { isMounted.current = false; };
   }, []);
+
+  const { energy } = useEnergyMode();
+  const isLowEnergy = energy === "low";
 
   const {
     data: profile,
@@ -252,8 +256,8 @@ export default function ProfilePage() {
           <SkillChips competencies={competencies} />
         </Section>
 
-        {/* Referral Link */}
-        {profile?.username && (
+        {/* Referral Link (hidden in low energy) */}
+        {!isLowEnergy && profile?.username && (
           <Section title={t("profile.referral", { defaultValue: "Invite Friends" })} delay={0.25}>
             <ReferralSection username={profile.username} />
           </Section>
@@ -264,10 +268,12 @@ export default function ProfilePage() {
           <ExpertVerifications verifications={verifications ?? []} />
         </Section>
 
-        {/* Activity Timeline */}
-        <Section title={t("profile.timeline")} delay={0.4}>
-          <ActivityTimeline events={timelineEvents} />
-        </Section>
+        {/* Activity Timeline (hidden in low energy) */}
+        {!isLowEnergy && (
+          <Section title={t("profile.timeline")} delay={0.4}>
+            <ActivityTimeline events={timelineEvents} />
+          </Section>
+        )}
       </div>
     </>
   );

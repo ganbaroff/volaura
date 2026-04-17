@@ -43,12 +43,12 @@ function similarityLabel(sim: number | null): { label: string; cls: string } | n
   return { label: "Partial match", cls: "text-on-surface-variant bg-surface-container" };
 }
 
-// ── Browse volunteer card ──────────────────────────────────────────────────────
+// ── Browse professional card ──────────────────────────────────────────────────
 
-function BrowseCard({ volunteer, onClick }: { volunteer: DiscoverableProfessional; onClick: () => void }) {
-  const badgeStyle = BADGE_STYLES[volunteer.badge_tier?.toLowerCase() ?? ""] ?? null;
-  const score = volunteer.total_score != null ? volunteer.total_score.toFixed(1) : "—";
-  const initials = (volunteer.display_name ?? volunteer.username)[0]?.toUpperCase() ?? "?";
+function BrowseCard({ professional, onClick }: { professional: DiscoverableProfessional; onClick: () => void }) {
+  const badgeStyle = BADGE_STYLES[professional.badge_tier?.toLowerCase() ?? ""] ?? null;
+  const score = professional.total_score != null ? professional.total_score.toFixed(1) : "—";
+  const initials = (professional.display_name ?? professional.username)[0]?.toUpperCase() ?? "?";
 
   return (
     <motion.div
@@ -64,18 +64,18 @@ function BrowseCard({ volunteer, onClick }: { volunteer: DiscoverableProfessiona
       </span>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-on-surface truncate">
-          {volunteer.display_name ?? volunteer.username}
+          {professional.display_name ?? professional.username}
         </p>
-        {volunteer.location && (
+        {professional.location && (
           <p className="flex items-center gap-1 text-xs text-on-surface-variant mt-0.5">
             <MapPin className="size-3" aria-hidden="true" />
-            {volunteer.location}
+            {professional.location}
           </p>
         )}
       </div>
-      {badgeStyle && volunteer.badge_tier && (
+      {badgeStyle && professional.badge_tier && (
         <span className={cn("shrink-0 text-xs font-medium px-2 py-0.5 rounded-full capitalize", badgeStyle.bg, badgeStyle.text)}>
-          {volunteer.badge_tier}
+          {professional.badge_tier}
         </span>
       )}
       <div className="shrink-0 flex items-center gap-1 text-sm font-bold tabular-nums text-on-surface w-12 text-right">
@@ -201,9 +201,9 @@ export default function DiscoverPage() {
 
   // Browse state
   const [browseSearch, setBrowseSearch] = useState("");
-  const { data: volunteers, isLoading: browseLoading, isError: browseError } = useDiscoverableProfessionals({ limit: 50 });
+  const { data: professionals, isLoading: browseLoading, isError: browseError } = useDiscoverableProfessionals({ limit: 50 });
 
-  const filtered = (volunteers ?? []).filter((v) => {
+  const filtered = (professionals ?? []).filter((v) => {
     if (!browseSearch) return true;
     const q = browseSearch.toLowerCase();
     return (
@@ -371,7 +371,7 @@ export default function DiscoverPage() {
                     {filtered.map((v) => (
                       <BrowseCard
                         key={v.id}
-                        volunteer={v}
+                        professional={v}
                         onClick={() => router.push(`/${locale}/u/${v.username}`)}
                       />
                     ))}

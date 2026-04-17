@@ -101,7 +101,7 @@ export default function DashboardPage() {
 
   // Get user display name + account_type from Supabase
   const [displayName, setDisplayName] = useState("");
-  const [accountType, setAccountType] = useState<"volunteer" | "organization">("volunteer");
+  const [accountType, setAccountType] = useState<"professional" | "organization">("professional");
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data }) => {
@@ -467,10 +467,10 @@ function NewUserWelcomeCard({
 }: {
   locale: string;
   t: (k: string, opts?: Record<string, unknown>) => string;
-  accountType: "volunteer" | "organization";
+  accountType: "professional" | "organization";
 }) {
   const isOrg = accountType === "organization";
-  const href = isOrg ? `/${locale}/org-volunteers` : `/${locale}/assessment`;
+  const href = isOrg ? `/${locale}/org-talent` : `/${locale}/assessment`;
 
   const steps = isOrg
     ? [

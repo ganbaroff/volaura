@@ -97,6 +97,8 @@
     "accountTypeLabel": "Who are you?",
     "accountTypeVolunteer": "I'm a professional",
     "accountTypeVolunteerDesc": "I want to prove my skills",
+    "accountTypeProfessional": "I'm a professional",
+    "accountTypeProfessionalDesc": "I want to prove my skills",
     "accountTypeOrg": "I represent an organization",
     "accountTypeOrgDesc": "I'm looking for verified talent",
     "orgTypeLabel": "Organization type",

@@ -49,7 +49,7 @@ function InviteContent() {
   const { t } = useTranslation();
 
   const code = (searchParams.get("code") ?? "OPEN").toUpperCase();
-  const type = searchParams.get("type") ?? "volunteer"; // "volunteer" | "organization"
+  const type = searchParams.get("type") ?? "professional"; // "professional" | "organization"
   const isOrgCode = code.startsWith("ORG_");
   const accountType = isOrgCode ? "organization" : (type as string);
 

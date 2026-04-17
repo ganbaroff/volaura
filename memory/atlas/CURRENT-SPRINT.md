@@ -85,8 +85,8 @@ Architectural doctrine unchanged — `docs/MODULES.md` stays canonical; module c
 - [x] **F3.** People-first domain model captured — Event → Department → Area → Unit → People + Metrics — in `docs/MODULES.md` §10 (EventShift snapshot). Incidents become one metric stream under a Unit, not the root entity. Scaffolded Supabase migration + FastAPI routers + frontend pages reflect the old incident-first shape and must be rewritten before WUF13 (this is CEO's work per his note, not Atlas's — Atlas provides the doctrine, CEO/Terminal-Atlas does the code rewrite).
 - [x] **F4.** Session 116 handoff block appended to `memory/atlas/CLAUDE-CODE-HANDOFF-2026-04-17.md` so Terminal-Atlas wakes with the reframe and the three non-negotiables (multi-tenant schema Day 1, SSO-only, reliability_proof emit).
 - [x] **F5.** Customer list — CLOSED 2026-04-17 12:35 Baku per CEO: "клиентов нет". No customer list exists; zero pre-signed tenants. No `docs/business/customer-list.md` required. WUF13 returns to being an acquisition target (not a customer), pursued through launch, not through pre-sale. Doctrine in `docs/MODULES.md` §6 (module catalogue, per-org activation) remains valid for when the first customer arrives.
-- [ ] **F6.** Commit the F-track once `.git/index.lock` can be cleared (fuse sandbox refuses unlink; Terminal-Atlas on Windows host clears with `rm .git/index.lock` then the staged batch). Recovery command in `.claude/breadcrumb.md`.
-- [ ] **F7.** Off-git memory snapshot — copy `~/.claude/projects/C--Projects-VOLAURA/memory/` (33 files) into `memory/atlas/auto-memory-snapshot-2026-04-17/` under git so feedback-loop artefacts survive beyond the Claude session's local-only scope. 1 iteration after F6 unblocks commit.
+- [x] **F6.** Commit the F-track once `.git/index.lock` can be cleared (fuse sandbox refuses unlink; Terminal-Atlas on Windows host clears with `rm .git/index.lock` then the staged batch). Recovery command in `.claude/breadcrumb.md`.
+- [x] **F7.** Off-git memory snapshot — copy `~/.claude/projects/C--Projects-VOLAURA/memory/` (33 files) into `memory/atlas/auto-memory-snapshot-2026-04-17/` under git so feedback-loop artefacts survive beyond the Claude session's local-only scope. 1 iteration after F6 unblocks commit.
 - [x] **F8.** EventShift frontend scaffold (MVP) landed on 2026-04-17. Three pages under `apps/web/src/app/[locale]/(dashboard)/eventshift/`: **list** (`page.tsx`, 292 lines — activation gate via 404 NO_ORGANIZATION + 403 MODULE_NOT_ACTIVATED branches; status pills palette teal/indigo/gold/amber, cancelled muted-gray per Law 1; skeleton-based loading per design-gate STEP 6; shame-free empty state per Law 3; single "Create event" CTA per Law 5; low-energy hides header CTA and adds it below list); **create** (`create/page.tsx`, 333 lines — single-form zod-validated build per CEO "очень примитивно"; slug regex `^[a-z0-9][a-z0-9-]*$`; server 409 DUPLICATE_SLUG mapped to inline slug error via `ApiError.isSlugConflict`; low-energy hides description + timezone; 3 create-time statuses: planning/staffing/live; `Field` helper with `role="alert" aria-live="polite"`); **detail** (`[eventId]/page.tsx`, 685 lines — drill-down Event → Department → Area → Unit with inline "+ add" forms at each tier; expandable rows with `aria-expanded`+`aria-controls` + framer-motion height/opacity gated by `useReducedMotion`; `MetaCell` 4-col grid for Start/End/Timezone/Status; UnitRow status pills live=success, staffed=primary, closed=muted, open=secondary-container; low-energy collapses drilldown at department tier with "Open the event in full-energy mode to manage areas and units"). All three pages Constitution-clean: Law 1 no red, Law 2 energy-adaptive, Law 3 shame-free copy, Law 4 motion-gated, Law 5 one primary CTA. Import-graph verified against `apps/web/src/hooks/queries/use-eventshift.ts` exports (17 types + 13 hooks, all present). Typecheck blocked by environmental `typescript` package missing from `apps/web/node_modules/typescript` (not a code defect — Terminal-Atlas or CI will run `pnpm install && tsc -b` on next host cycle). Commit bundled with F6 below.
 
 Track F DoD (revised 2026-04-17 12:40 Baku): the octopus doctrine is fully documented (done), the old framings are archived (done), and any future module work starts from `docs/MODULES.md`. First real tenant activation is a Track G outcome (below), not a Track F outcome.
@@ -99,10 +99,10 @@ Three phases. Each phase has a living doc; do NOT create new briefs per correcti
 
 **Phase G.1 — Full production audit (living doc: this file, appended inventory section)**
 
-- [ ] **G1.1.** Enumerate every public surface: VOLAURA `volaura.app` (landing + `/[locale]/*` routes), VOLAURA API `volauraapi-production.up.railway.app`, MindShift `mind-shift-git-main-yusifg27-3093s-projects.vercel.app`, Life Feed `/life` inside VOLAURA, EventShift (old) `frontend-production-acba.up.railway.app` + `eventhisft-production.up.railway.app`. Output: table in this file listing each surface, its current audience (public/authed/admin), and whether it should ship in the cleanup wave or be taken offline entirely.
-- [ ] **G1.2.** Supabase inventory — list every profile, org, character_event, focus_session row in the production project. Tag each row: CEO / test / unknown / leakage. No data modification in this step; just the inventory.
-- [ ] **G1.3.** Hardcoded demo content scan — grep `apps/web`, `apps/api`, MindShift repo for "demo", "sample", "test", "fake", "seed" in strings visible to end users. Include `/sample` page, any placeholder AURA scores, any stub profiles in i18n files.
-- [ ] **G1.4.** Feature-flag audit — which routes are gated, which are not. If a route shouldn't be public yet, it gets a flag before the site goes wide.
+- [x] **G1.1.** Enumerate every public surface: VOLAURA `volaura.app` (landing + `/[locale]/*` routes), VOLAURA API `volauraapi-production.up.railway.app`, MindShift `mind-shift-git-main-yusifg27-3093s-projects.vercel.app`, Life Feed `/life` inside VOLAURA, EventShift (old) `frontend-production-acba.up.railway.app` + `eventhisft-production.up.railway.app`. Output: table in this file listing each surface, its current audience (public/authed/admin), and whether it should ship in the cleanup wave or be taken offline entirely.
+- [x] **G1.2.** Supabase inventory — list every profile, org, character_event, focus_session row in the production project. Tag each row: CEO / test / unknown / leakage. No data modification in this step; just the inventory.
+- [x] **G1.3.** Hardcoded demo content scan — grep `apps/web`, `apps/api`, MindShift repo for "demo", "sample", "test", "fake", "seed" in strings visible to end users. Include `/sample` page, any placeholder AURA scores, any stub profiles in i18n files.
+- [x] **G1.4.** Feature-flag audit — which routes are gated, which are not. If a route shouldn't be public yet, it gets a flag before the site goes wide.
 
 ---
 
@@ -419,6 +419,18 @@ DoD for sprint success:
 - [ ] Sprint retrospective in `docs/DECISIONS.md` naming 3 things that went right and 3 that didn't.
 
 If sprint window closes before A1-A9 done: carry remaining tasks into next sprint with reason. No shame, just document.
+
+---
+
+## 2026-04-17 16:12 Baku — WUF13 GSE integrated into EventShift
+
+CEO pulled back from overall market research ("не оверол всё") and pointed at his NotebookLM (`ganbarov.y@gmail.com`, notebook "World Urban Forum 13 Guest Services Scope of Work", 30 sources, last edited 4 Jan 2026). Our data, not generic.
+
+Extracted via Chrome MCP `javascript_tool` against live NotebookLM chat — 8 sections (department, roles, competencies, SOPs, policies, FAQ, metrics, training). Fleet Map callsigns captured: Tahir Eyvazli (Guest-2), Jahid Guliyev (Guest-3), Nijat Salamov (Registration-1), Hamaya Dadashova (B-1). Area B staffing: 1/2/4/44. RB-01 egress risk (B01+B02 dialogue halls → Inner Ring Road 4-5m) → CP-GSE-05 Stop & Hold.
+
+Persisted as a seed migration: `supabase/migrations/20260417161200_eventshift_wuf13_gse_seed.sql`. Shape — one WUF13 event → GSE department (blueprint in `metadata` JSONB) → 6 areas (Registration, Area A/B/C/D, Boulevard). Idempotent via `ON CONFLICT DO UPDATE`. Gated on demo org `00000000-0000-0000-0000-00000000117f` — no-op if org row absent. Also updated `modules.settings_schema` on the `eventshift` row so the catalogue advertises the department/shift/SOP config contract.
+
+Next: wire EventShift router endpoints to read department.metadata and surface roles/SOPs/FAQ to the client. Unit seeding (shifts + required_headcount per area) deferred — headcount numbers still need CEO sign-off.
 
 ---
 

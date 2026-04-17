@@ -12,6 +12,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useOrgDashboard, useOrgProfessionals, useCreateSavedSearch, useSavedSearches, useDeleteSavedSearch } from "@/hooks/queries/use-organizations";
 import { cn } from "@/lib/utils/cn";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 import type { OrgProfessionalRow } from "@/lib/api/types";
 
 // ── Animations ─────────────────────────────────────────────────────────────────
@@ -151,6 +152,8 @@ export default function OrgTalentPage() {
   const { t } = useTranslation();
   const { locale } = useParams<{ locale: string }>();
   const router = useRouter();
+  const { energy } = useEnergyMode();
+  const isLowEnergy = energy === "low";
   const isMounted = useRef(true);
   useEffect(() => () => { isMounted.current = false; }, []);
 
@@ -278,8 +281,8 @@ export default function OrgTalentPage() {
               />
             </motion.div>
 
-            {/* Badge distribution */}
-            {totalBadges > 0 && (
+            {/* Badge distribution — hidden at low energy */}
+            {!isLowEnergy && totalBadges > 0 && (
               <motion.div variants={fadeUp} initial="hidden" animate="visible" className="rounded-xl border border-border bg-surface-container-low p-5 space-y-3">
                 <div className="flex items-center gap-2">
                   <BarChart3 className="size-4 text-on-surface-variant" aria-hidden="true" />
@@ -297,8 +300,8 @@ export default function OrgTalentPage() {
               </motion.div>
             )}
 
-            {/* Top professionals highlight */}
-            {stats.top_professionals.length > 0 && (
+            {/* Top professionals highlight — hidden at low energy */}
+            {!isLowEnergy && stats.top_professionals.length > 0 && (
               <motion.div variants={fadeUp} initial="hidden" animate="visible" className="rounded-xl border border-primary/20 bg-primary/5 p-5 space-y-3">
                 <h3 className="text-sm font-semibold text-primary">
                   {t("orgDash.topTalent", { defaultValue: "⭐ Top Talent" })}
@@ -363,8 +366,8 @@ export default function OrgTalentPage() {
             </div>
           </div>
 
-          {/* Save Search — only show when a search term is active */}
-          {search && (
+          {/* Save Search — hidden at low energy */}
+          {!isLowEnergy && search && (
             <div className="flex items-center justify-between rounded-xl border border-primary/20 bg-primary/5 px-4 py-2.5">
               <p className="text-xs text-on-surface-variant">
                 {t("orgDash.saveSearchHint", { defaultValue: "Save this search to get notified of new matches" })}
@@ -380,8 +383,8 @@ export default function OrgTalentPage() {
             </div>
           )}
 
-          {/* Saved searches list — compact pills */}
-          {savedSearches && savedSearches.length > 0 && (
+          {/* Saved searches list — hidden at low energy */}
+          {!isLowEnergy && savedSearches && savedSearches.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {savedSearches.map((s) => (
                 <div
@@ -558,8 +561,8 @@ export default function OrgTalentPage() {
           )}
         </div>
 
-        {/* Pending assignments notice */}
-        {!isLoading && stats && stats.total_assigned > stats.total_completed && (
+        {/* Pending assignments notice — hidden at low energy */}
+        {!isLowEnergy && !isLoading && stats && stats.total_assigned > stats.total_completed && (
           <motion.div variants={fadeUp} initial="hidden" animate="visible" className="rounded-xl border border-yellow-400/20 bg-yellow-400/5 p-4">
             <div className="flex items-start gap-3">
               <Clock className="size-4 text-yellow-400 mt-0.5 shrink-0" aria-hidden="true" />

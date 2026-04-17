@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useReducedMotion } from "framer-motion";
 import { AuraRadarChart } from "@/components/aura/radar-chart";
 import { BadgeDisplay } from "@/components/aura/badge-display";
-import { getSampleProfile } from "@/data/sample-profile";
+import { getSampleProfile, type SampleVerifiedEvent, type CompetencyId } from "@/data/sample-profile";
 import { MapPin, Calendar, Clock, CheckCircle2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -71,12 +71,12 @@ export default function SampleProfilePage() {
           />
 
           <div className="mt-6 space-y-2">
-            {Object.entries(profile.competencyScores).map(([id, score]) => (
+            {(Object.keys(profile.competencyScores) as CompetencyId[]).map((id) => (
               <div key={id} className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">
                   {t(`competency.${id}`, { defaultValue: COMPETENCY_LABELS[id] ?? id })}
                 </span>
-                <span className="font-medium tabular-nums">{score}/100</span>
+                <span className="font-medium tabular-nums">{profile.competencyScores[id]}/100</span>
               </div>
             ))}
           </div>
@@ -87,7 +87,7 @@ export default function SampleProfilePage() {
             {t("sample.verifiedEvents", { defaultValue: "Verified Events" })}
           </h2>
           <div className="space-y-3">
-            {profile.verifiedEvents.map((evt) => (
+            {profile.verifiedEvents.map((evt: SampleVerifiedEvent) => (
               <div
                 key={evt.id}
                 className="rounded-xl border border-border bg-card p-4"

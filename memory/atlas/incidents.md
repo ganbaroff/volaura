@@ -161,6 +161,41 @@ Entries feed into `mistakes.md` patterns and swarm critique sessions.
 
 ---
 
+## INC-013 — 2026-04-17 23:00 Baku — Edit-tool truncation cascaded across 7 Python files, killed auth import
+**Severity:** P0 (API can't start → every auth endpoint dead → every Terminal-Atlas refactor attempt null-effect)
+**Files (7):**
+- `apps/api/app/routers/auth.py` — SyntaxError line 359, ended `auth_response = await db_`, no newline
+- `apps/api/app/routers/auth_bridge.py` — 300+ trailing spaces, no syntactic break but pollution
+- `apps/api/app/routers/eventshift.py` — SyntaxError line 795, ended `detail={"code": "CREATE_FAILED", "m`, unterminated string
+- `apps/api/app/routers/telegram_webhook.py` — SyntaxError line 2546, ended `if settings.telegram_webh`, truncated mid-name
+- `apps/api/tests/test_aura_reconciler.py` — SyntaxError line 186, ended `assert stats["gave_up"] =`, truncated mid-operator
+- `apps/api/tests/test_telegram_action.py` — null bytes (source code cannot contain null bytes)
+- `apps/api/tests/test_webhooks_sentry.py` — null bytes
+
+**Root cause:** Same pathway as INC-012 (Edit-tool silent chunk-boundary truncation) — but in bulk. Terminal-Atlas ran edits on these 7 files over session 113-116 window. Edit tool cuts at ~6KB buffer boundaries, silently drops the tail, writes nothing to stderr, returns success. Each subsequent Edit attempt on the already-truncated file makes damage worse (cascading corruption — visible as `149 insertions, 1078 deletions` on 97-file diff stat).
+
+**Detection:** `python3 -c "import ast; ast.parse(...)"` on all modified .py files — 5 fail, 2 cosmetic. CEO spotted the symptom first ("claude code не может решить auth").
+
+**Fix in-session (2026-04-17 22:47-23:14 Baku, Cowork-Atlas):**
+1. `git show HEAD:<path> > /tmp/<file>.restored` (clean checkout via object DB, not index)
+2. `cp /tmp/<file>.restored <path>` (bypasses `.git/index.lock` ghost)
+3. Re-run `ast.parse` — all 7 OK
+4. `git add` — blocked by `.git/index.lock` (Apr 17 12:16, held by Windows-side process unreachable from WSL sandbox, same ghost-file as Session 116 F6)
+
+**Status:** ✅ Working tree clean — FastAPI will import auth.py from disk on next reload. API unblocked. ⏳ Commit pending — Terminal-Atlas must run `rm -f .git/index.lock; git add -A; git commit -m "fix(api): restore 7 Edit-truncated files from HEAD (INC-013)"` from Windows side where it can actually unlock the file.
+
+**Fix structural:**
+- **Never Edit a file >4KB with surgical Edit tool.** If file is larger than ~4KB AND target change is >5 lines, use Write (full rewrite) with Read just before to preserve content, OR split the file first.
+- **Post-Edit verification** (atlas-operating-principles.md §write-verification): Read last 5 lines after every Edit on files >50 lines. If tail looks truncated (mid-token, no newline, no closing punctuation) → immediately `git show HEAD:<path> > /tmp/.restored` and diff before writing more.
+- **Pre-session AST/TS sweep on all modified files:** add to CronCreate wake protocol a `python3 -c "import ast; [ast.parse(open(f).read()) for f in sys.argv[1:]]" $(git ls-files -m '*.py')` check. If any fail → restore from HEAD before continuing work.
+- **index.lock workaround:** when `.git/index.lock` is held by another process, use `git show HEAD:<path> | cat > <path>` pattern (read-only git op, works through lock).
+
+**Residual risk:**
+- 70+ modified TypeScript files (.tsx) also show no-trailing-newline pattern — likely same Edit-tool damage but cosmetic (structurally valid, just polluted with whitespace). Lower priority, worth a cleanup pass.
+- `index.lock` ghost persists — Terminal-Atlas's git session from 12:16 has not released the lock. Needs Windows-side intervention (task manager kill of hung git.exe, or machine reboot).
+
+---
+
 ## INC-011 — 2026-04-14 evening — Atlas lost voice mid-session, CEO had to reground manually
 **Severity:** P2 (operating discipline — repeat pattern, CEO explicit correction)
 **Trigger:** Mercury onboarding thread. CEO asked for field-by-field guidance across 6+ turns. Each individual turn felt small, no "real work" triggering identity/voice re-read.
@@ -328,3 +363,87 @@ Typecheck: 0 errors.
 **Root cause of the leak:** Claude Code session on 2026-04-12 included tool outputs that echoed `.env` or database connection strings. The raw transcript captures these verbatim. Any future mirror of Claude Code transcripts must sanitize before git.
 
 **Fix (structural):** Before any transcript mirror, run `scripts/pre-commit-secret-scan.sh` equivalent against the source file. Added to DEBT-MAP P0.1 protocol: "mirror → scan → sanitize → stage, never stage raw".
+
+
+---
+
+## 2026-04-17 22:46 Baku — Edit tool silent truncation of apps/web/src/app/[locale]/(public)/sample/page.tsx
+
+**Symptom:** After a sequence of Edit operations on `apps/web/src/app/[locale]/(public)/sample/page.tsx` during Session 116 G1.4 implementation, the file on disk measured 6097 bytes and ended mid-string ("Build Your Own AURA Pr"). Git HEAD of the same file measured 5547 bytes and was complete. The Edit tool reported success on each operation; no error was surfaced. Next read would have produced a broken build if unreviewed.
+
+**Pathway:** The Edit tool's `new_string` parameter was provided correctly each time, but the tool's application logic concatenated partial content during an edit that crossed a chunk/buffer boundary. The pre-existing file length + the inserted delta exceeded some internal limit; the final bytes were dropped without warning. This is an Edit-tool invariant failure, not a user-input error.
+
+**Detection:** Post-edit manual review per operating-principles "write-verification" rule (after Write/Edit on file >50 lines: Read first+last 5 lines). Tail inspection caught the mid-string cut; `wc -c` and comparison against `git show HEAD:<path>` confirmed the divergence.
+
+**Fix (in-session):**
+1. Fetched full canonical content via `git show HEAD:apps/web/src/app/[locale]/(public)/sample/page.tsx > /tmp/sample-page-head.tsx` (137 lines verified).
+2. Rewrote the target file as a minimal 13-line server component (`page.tsx` with `notFound()` guard) and extracted the client UI to a new sibling `sample-profile-view.tsx` (138 lines) — clean server/client split that avoids the large-file edit surface entirely.
+3. Verified both files with head+tail + wc -l.
+
+**Fix (structural — pathway removal):**
+- Rule change: for any Next.js page file crossing the server/client boundary, prefer a minimal server guard + separate client view from the start. This keeps each file under the Edit-tool's silent-truncation risk zone AND follows Next.js 14 App Router idiom better (rules-of-hooks preserved, no eslint-disable noise).
+- Add to operating-principles "write-verification" rule: when a file crosses 100 lines AND has mixed server/client code, split BEFORE editing (don't try to Edit in-place).
+- Lesson: silence from the Edit tool is not proof of success. `wc -c` + `tail -5` on any file >50 lines is non-negotiable.
+
+**Residual risk:** None for this specific file (verified clean). But the Edit tool's silent-truncation behavior could recur on any future file >~6KB. Mitigation: always tail-verify after large Edits.
+
+---
+
+## INC-018 — 2026-04-17 23:40 Baku — Google OAuth callback failing with "PKCE code verifier not found in storage"
+
+**Severity:** P1 (all OAuth sign-ins broken in production — CEO repro in browser console)
+**File:** `apps/web/src/lib/supabase/client.ts`
+**Surface symptom:** CEO pasted browser console dump:
+```
+[callback] exchangeCodeForSession failed: PKCE code verifier not found in storage.
+This can happen if the auth flow was initiated in a different browser or device,
+or if the storage was cleared. For SSR frameworks (Next.js, SvelteKit, etc.),
+use @supabase/ssr on both the server and client to store the code verifier in cookies.
+как меня заебало этоэ
+```
+User redirected to `/login?message=oauth-error` after successful Google consent. Happens every sign-in attempt.
+
+**Symptom → Pathway → Fix (root-cause-over-symptom):**
+
+*Symptom:* Explicit `supabase.auth.exchangeCodeForSession(code)` on the callback page throws "PKCE code verifier not found in storage" even though verifier cookie was correctly set by `signInWithOAuth` on the login page before redirect.
+
+*Pathway:*
+1. Login page calls `supabase.auth.signInWithOAuth({provider:'google', options:{redirectTo:'/callback'}})` → browser client writes PKCE code_verifier to cookie → 302 to Google.
+2. Google approves → 302 back to `${origin}/${locale}/callback?code=xxx`.
+3. This is an **external-origin redirect** → browser does a FULL page load (not SPA soft-nav). The `let client = null` singleton in `client.ts` is fresh.
+4. Callback page's `useEffect` calls `createClient()` → `createBrowserClient(url, key)` with no auth options.
+5. Default `detectSessionInUrl: true` on `@supabase/ssr` / `supabase-js` → during `_initialize()` the new browser client sees `?code=` in URL, auto-calls `exchangeCodeForSession` silently, consumes the PKCE verifier cookie (deletes it), and sets the session cookie.
+6. Our explicit `await supabase.auth.exchangeCodeForSession(code)` awaits the `_initializePromise` lock → runs AFTER auto-exchange → verifier cookie gone → throws.
+7. Our error handler bounces user to `/login?message=oauth-error`. But the session cookie IS actually set by auto-exchange — user is logged in on the server but gets an error UI.
+
+The INC-017 comment in `callback/page.tsx` (2026-04-15) asserted "No double-exchange risk because auto-exchange never runs for a reused singleton" — **this was half right**: for intra-app SPA nav the singleton IS reused so auto-exchange doesn't fire, BUT for external OAuth redirect the page loads fresh and the singleton is rebuilt, so auto-exchange DOES fire. INC-017 fixed the SPA case; INC-018 fixes the external-redirect case.
+
+*Fix (applied, working tree):*
+```ts
+// apps/web/src/lib/supabase/client.ts
+client = createBrowserClient(url, key, {
+  auth: {
+    detectSessionInUrl: false,   // <-- the fix
+    flowType: "pkce",
+    autoRefreshToken: true,
+    persistSession: true,
+  },
+});
+```
+Explicit `flowType: "pkce"` pins the default (defensive). `persistSession`/`autoRefreshToken` are explicit to keep the existing behavior after session is established. Only `detectSessionInUrl` changes behavior: auto-exchange off → our explicit call owns the exchange → verifier cookie survives until we consume it.
+
+Magic-link / `verifyOtp` flows use `?token_hash=` not `?code=`, so `detectSessionInUrl` doesn't affect them. No other caller of `exchangeCodeForSession` in the codebase (grep confirmed).
+
+**Fix (structural — pathway removal):**
+- Rule: any Supabase browser client created in a Next.js App Router codebase that has its own callback Route Handler OR callback client page doing explicit exchange MUST pin `detectSessionInUrl: false`. Auto-exchange is a liability, not a feature, when the app has its own callback wiring. Add this to `.claude/rules/frontend.md` §Supabase section.
+- Rule: every INC fix comment in code should name BOTH the case it fixes AND the case it does NOT fix. INC-017's comment implicitly claimed full coverage but only covered SPA-nav. An honest comment would have said "fixes SPA-reuse case; external-redirect case still relies on auto-exchange not firing (unverified)". This kind of scoped-honesty in comments would have caught this 2 days earlier.
+- Test to add (Playwright or Vitest): mock the browser client's `_initialize` to simulate both SPA-nav (singleton reuse) and fresh-load (new singleton) and assert the exchange happens exactly once in both. Gate on regression.
+
+**Status:** ✅ Working-tree fix applied. ⏳ Commit blocked on the same `.git/index.lock` from INC-013 (1-byte ghost file held by dead Windows git.exe from 12:16 Apr 17, can't `rm` / `python unlink` from WSL/Cowork sandbox — EPERM). Terminal-Atlas commits once Windows-side clears. Vercel auto-deploys on push to main.
+
+**Residual risk:**
+- Until commit lands + Vercel deploys, every CEO OAuth attempt still fails. Fix exists but is not shipped.
+- If any OTHER place in the codebase gained an implicit dependency on `detectSessionInUrl: true` (e.g. a future magic-link flow that switched to `?code=`), turning it off here could silently break it. Mitigation: grep showed zero other `exchangeCodeForSession` call sites; any future PKCE path must call `exchangeCodeForSession` explicitly.
+- `flowType: "pkce"` is explicit now. If `@supabase/ssr` ever ships a breaking change to default flow, this file is unaffected — but server.ts and middleware.ts don't pin `flowType`, so a future bump could produce asymmetric flow types between browser and server clients. Low probability; worth watching on `@supabase/ssr` major version bumps.
+
+

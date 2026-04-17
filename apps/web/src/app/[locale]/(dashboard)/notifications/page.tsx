@@ -16,6 +16,7 @@ import {
   useMarkAllRead,
 } from "@/hooks/queries/use-notifications";
 import type { NotificationItem } from "@/hooks/queries/use-notifications";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -128,6 +129,8 @@ export default function NotificationsPage() {
   const { t } = useTranslation();
   const { locale } = useParams<{ locale: string }>();
   const [category, setCategory] = useState<NotifCategory>("all");
+  const { energy } = useEnergyMode();
+  const isLowEnergy = energy === "low";
 
   const { data, isLoading } = useNotifications({ limit: 50 });
   const markRead = useMarkNotificationRead();
@@ -142,8 +145,12 @@ export default function NotificationsPage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] ambient-glow-primary pointer-events-none z-0" />
-      <div className="fixed bottom-[-5%] right-[-5%] w-[30%] h-[30%] ambient-glow-secondary pointer-events-none z-0" />
+      {!isLowEnergy && (
+        <>
+          <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] ambient-glow-primary pointer-events-none z-0" />
+          <div className="fixed bottom-[-5%] right-[-5%] w-[30%] h-[30%] ambient-glow-secondary pointer-events-none z-0" />
+        </>
+      )}
 
       <TopBar title={t("nav.notifications")} />
 
@@ -165,28 +172,30 @@ export default function NotificationsPage() {
           </div>
         )}
 
-        {/* Category tabs */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-          {CATEGORY_KEYS.map(({ key, labelKey }) => (
-            <button
-              key={key}
-              onClick={() => setCategory(key)}
-              className={cn(
-                "px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all active:scale-95",
-                category === key
-                  ? "bg-primary text-on-primary font-bold"
-                  : "bg-surface-container text-on-surface-variant hover:bg-surface-container-highest",
-              )}
-            >
-              {t(labelKey, { defaultValue: key })}
-              {key === "all" && unreadCount > 0 && (
-                <span className="ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full bg-primary-container text-on-primary text-[10px] font-bold px-1">
-                  {unreadCount > 99 ? "99+" : unreadCount}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
+        {/* Category tabs — hidden at low energy for simplicity */}
+        {!isLowEnergy && (
+          <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+            {CATEGORY_KEYS.map(({ key, labelKey }) => (
+              <button
+                key={key}
+                onClick={() => setCategory(key)}
+                className={cn(
+                  "px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all active:scale-95",
+                  category === key
+                    ? "bg-primary text-on-primary font-bold"
+                    : "bg-surface-container text-on-surface-variant hover:bg-surface-container-highest",
+                )}
+              >
+                {t(labelKey, { defaultValue: key })}
+                {key === "all" && unreadCount > 0 && (
+                  <span className="ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full bg-primary-container text-on-primary text-[10px] font-bold px-1">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Loading */}
         {isLoading && (

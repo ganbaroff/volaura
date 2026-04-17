@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useMyOrganization, useCreateOrganization, useCollectiveAura } from "@/hooks/queries/use-organizations";
 import { useMyEvents } from "@/hooks/queries/use-events";
 import { cn } from "@/lib/utils/cn";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 // ── Stagger ────────────────────────────────────────────────────────────────────
 
@@ -90,6 +91,8 @@ export default function OrganizationsPage() {
   const { t } = useTranslation();
   const { locale } = useParams<{ locale: string }>();
   const router = useRouter();
+  const { energy } = useEnergyMode();
+  const isLowEnergy = energy === "low";
   const isMounted = useRef(true);
   useEffect(() => () => { isMounted.current = false; }, []);
 
@@ -211,15 +214,17 @@ export default function OrganizationsPage() {
               </div>
             </motion.div>
 
-            {/* Stats row */}
-            <motion.div variants={stagger} initial="hidden" animate="visible" className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <StatCard icon={<Calendar className="size-5" />} value={totalEvents} label={t("orgs.totalEvents")} />
-              <StatCard icon={<Globe className="size-5" />} value={openEvents} label={t("orgs.openEvents")} highlight />
-              <StatCard icon={<CheckCircle2 className="size-5" />} value={completedEvents} label={t("orgs.completedEvents")} />
-            </motion.div>
+            {/* Stats row — hidden at low energy */}
+            {!isLowEnergy && (
+              <motion.div variants={stagger} initial="hidden" animate="visible" className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <StatCard icon={<Calendar className="size-5" />} value={totalEvents} label={t("orgs.totalEvents")} />
+                <StatCard icon={<Globe className="size-5" />} value={openEvents} label={t("orgs.openEvents")} highlight />
+                <StatCard icon={<CheckCircle2 className="size-5" />} value={completedEvents} label={t("orgs.completedEvents")} />
+              </motion.div>
+            )}
 
-            {/* Collective AURA Ladders widget */}
-            {collective && (
+            {/* Collective AURA Ladders widget — hidden at low energy */}
+            {!isLowEnergy && collective && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -253,8 +258,8 @@ export default function OrganizationsPage() {
               </motion.div>
             )}
 
-            {/* First-action onboarding banner — shown when org exists but no events yet */}
-            {totalEvents === 0 && !eventsLoading && (
+            {/* First-action onboarding banner — hidden at low energy */}
+            {!isLowEnergy && totalEvents === 0 && !eventsLoading && (
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -299,12 +304,14 @@ export default function OrganizationsPage() {
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-on-surface">{t("orgs.myEvents")}</h3>
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => router.push(`/${locale}/my-organization/invite`)}
-                    className="flex items-center gap-1.5 rounded-xl border border-border bg-surface-container px-3.5 py-2 text-xs font-semibold text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors"
-                  >
-                    <Upload className="size-3.5" aria-hidden="true" /> {t("orgs.bulkInvite", { defaultValue: "Invite" })}
-                  </button>
+                  {!isLowEnergy && (
+                    <button
+                      onClick={() => router.push(`/${locale}/my-organization/invite`)}
+                      className="flex items-center gap-1.5 rounded-xl border border-border bg-surface-container px-3.5 py-2 text-xs font-semibold text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors"
+                    >
+                      <Upload className="size-3.5" aria-hidden="true" /> {t("orgs.bulkInvite", { defaultValue: "Invite" })}
+                    </button>
+                  )}
                   <button
                     onClick={() => router.push(`/${locale}/events/create`)}
                     className="flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-semibold text-on-primary hover:opacity-90 transition-opacity"

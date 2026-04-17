@@ -87,7 +87,7 @@ export function ImpactTicker() {
 
   // Use real data if available, fallback if API fails or returns null
   const totalProfessionals =
-    (data && !isError ? data.total_volunteers : null) ?? FALLBACK_STATS.totalProfessionals;
+    (data && !isError ? data.total_professionals : null) ?? FALLBACK_STATS.totalProfessionals;
   const totalEvents =
     (data && !isError ? data.total_events : null) ?? FALLBACK_STATS.totalEvents;
   // API returns total_assessments; we map this to "hours" as an approximation
@@ -107,7 +107,7 @@ export function ImpactTicker() {
           <StatCard
             icon={Users}
             value={totalProfessionals}
-            label={t("landing.impactVolunteers")}
+            label={t("landing.impactProfessionals")}
             fallbackLabel={t("landing.statsFallback.professionals")}
           />
           <StatCard

@@ -257,7 +257,7 @@ export default function OrganizationsPage() {
                     className="flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-on-primary hover:opacity-90 transition-opacity"
                   >
                     <Search className="size-3.5" aria-hidden="true" />
-                    {t("orgs.browseVolunteers", { defaultValue: "Browse professionals" })}
+                    {t("orgs.browseProfessionals", { defaultValue: "Browse professionals" })}
                     <ArrowRight className="size-3.5" aria-hidden="true" />
                   </button>
                   <button

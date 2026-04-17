@@ -354,7 +354,7 @@ export default function DiscoverPage() {
                   <p className="text-sm text-on-surface-variant">
                     {browseSearch
                       ? t("discover.noResults", { defaultValue: "No professionals match your filter" })
-                      : t("discover.noVolunteers", { defaultValue: "No professionals have opted in to discovery yet." })}
+                      : t("discover.noProfessionals", { defaultValue: "No professionals have opted in to discovery yet." })}
                   </p>
                 </div>
               )}

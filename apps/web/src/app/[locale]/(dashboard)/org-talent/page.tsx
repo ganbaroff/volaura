@@ -275,7 +275,7 @@ export default function OrgTalentPage() {
             {stats.top_professionals.length > 0 && (
               <motion.div variants={fadeUp} initial="hidden" animate="visible" className="rounded-xl border border-primary/20 bg-primary/5 p-5 space-y-3">
                 <h3 className="text-sm font-semibold text-primary">
-                  {t("orgDash.topVolunteers", { defaultValue: "⭐ Top Talent" })}
+                  {t("orgDash.topTalent", { defaultValue: "⭐ Top Talent" })}
                 </h3>
                 <div className="space-y-2">
                   {stats.top_professionals.map((v) => {
@@ -314,7 +314,7 @@ export default function OrgTalentPage() {
                 type="search"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder={t("orgDash.searchVolunteers", { defaultValue: "Search professionals…" })}
+                placeholder={t("orgDash.searchProfessionals", { defaultValue: "Search professionals…" })}
                 className="w-full rounded-xl border border-outline-variant bg-surface-container pl-9 pr-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
               />
             </div>
@@ -485,7 +485,7 @@ export default function OrgTalentPage() {
               <p className="text-sm text-on-surface-variant">
                 {search
                   ? t("orgDash.noSearchResults", { defaultValue: "No professionals match your search" })
-                  : t("orgDash.noVolunteers", { defaultValue: "No professionals assigned yet. Use the search to find and assign assessments." })}
+                  : t("orgDash.noProfessionals", { defaultValue: "No professionals assigned yet. Use the search to find and assign assessments." })}
               </p>
               {!search && (
                 <button

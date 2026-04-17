@@ -160,7 +160,7 @@ export default function EventDetailPage() {
               <div className="flex items-start gap-3">
                 <Users className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
                 <div>
-                  <p className="text-xs font-medium text-muted-foreground">{t("events.volunteers")}</p>
+                  <p className="text-xs font-medium text-muted-foreground">{t("events.participants")}</p>
                   <p className="text-sm font-semibold text-foreground">
                     {t("events.capacity", { count: event.capacity, defaultValue: `${event.capacity} spots` })}
                   </p>

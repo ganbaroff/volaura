@@ -11,6 +11,7 @@ import { ProgressBar } from "@/components/assessment/progress-bar";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Loader2, ChevronLeft } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { createClient } from "@/lib/supabase/client";
 import { API_BASE } from "@/lib/api/client";
 import { useTrackEvent } from "@/hooks/use-analytics";
@@ -50,7 +51,7 @@ export default function QuestionPage() {
   const [timingWarning, setTimingWarning] = useState<string | null>(null);
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
   const [isSlowFetch, setIsSlowFetch] = useState(false);
-  // PROD-M01: Brief "Saved ✓" confirmation after successful answer submission
+  // PROD-M01: Brief "Saved \u2713" confirmation after successful answer submission
   const [answerSaved, setAnswerSaved] = useState(false);
   // Recovery state: shown when currentQuestion is null after 6s (e.g. refresh mid-session)
   const [isStuck, setIsStuck] = useState(false);
@@ -190,7 +191,7 @@ export default function QuestionPage() {
         setTimingWarning(feedback.timing_warning);
       }
 
-      // PROD-M01: Brief "Saved ✓" visual confirmation before next question renders
+      // PROD-M01: Brief "Saved \u2713" visual confirmation before next question renders
       setAnswerSaved(true);
       setTimeout(() => { if (isMounted.current) setAnswerSaved(false); }, 600);
 
@@ -273,7 +274,7 @@ export default function QuestionPage() {
   }, [currentQuestion, sessionId, getAuthHeader, setSubmitting, incrementAnswered, handleSessionUpdate]);
 
   /**
-   * Start the next competency assessment (transition screen → next competency).
+   * Start the next competency assessment (transition screen -> next competency).
    */
   const handleNextCompetency = useCallback(async () => {
     setLocalError(null);
@@ -465,7 +466,15 @@ export default function QuestionPage() {
                 </Button>
               </>
             ) : (
-              <Loader2 className="size-8 animate-spin text-primary" aria-label={t("common.loading")} />
+              <div className="w-full max-w-lg space-y-4 px-4" role="status" aria-label={t("common.loading")}>
+                <Skeleton className="h-4 w-full rounded-lg" />
+                <Skeleton className="h-32 w-full rounded-xl" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+                <Skeleton className="h-12 w-full rounded-lg" />
+              </div>
             )}
           </div>
         )}

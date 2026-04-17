@@ -6,8 +6,9 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import {
   Users, TrendingUp, Award, CheckCircle2, Clock,
-  ChevronRight, Loader2, BarChart3, Search, Bookmark, BookmarkCheck, X, Bell, BellOff,
+  ChevronRight, BarChart3, Search, Bookmark, BookmarkCheck, X, Bell, BellOff,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useOrgDashboard, useOrgProfessionals, useCreateSavedSearch, useSavedSearches, useDeleteSavedSearch } from "@/hooks/queries/use-organizations";
 import { cn } from "@/lib/utils/cn";
 import type { OrgProfessionalRow } from "@/lib/api/types";
@@ -218,8 +219,31 @@ export default function OrgTalentPage() {
         </motion.div>
 
         {isLoading && (
-          <div className="flex justify-center py-16">
-            <Loader2 className="size-6 animate-spin text-primary" role="status" aria-label="Loading" />
+          <div className="space-y-6" role="status" aria-live="polite">
+            {/* Stats row skeleton */}
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="rounded-xl border border-border bg-surface-container-low p-4 space-y-2">
+                  <Skeleton className="size-5 rounded" />
+                  <Skeleton className="h-7 w-16" />
+                  <Skeleton className="h-3 w-24" />
+                </div>
+              ))}
+            </div>
+            {/* Professional list skeleton */}
+            <div className="space-y-2">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-3 rounded-xl border border-border px-4 py-3">
+                  <Skeleton className="size-9 rounded-full" />
+                  <div className="flex-1 space-y-1.5">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-3 w-20" />
+                  </div>
+                  <Skeleton className="h-5 w-16 rounded-full" />
+                  <Skeleton className="h-4 w-10" />
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
@@ -474,8 +498,18 @@ export default function OrgTalentPage() {
 
           {/* List */}
           {volsLoading && (
-            <div className="flex justify-center py-8">
-              <Loader2 className="size-5 animate-spin text-primary" role="status" aria-label="Loading" />
+            <div className="space-y-2" role="status" aria-live="polite">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-3 rounded-xl border border-border px-4 py-3">
+                  <Skeleton className="size-9 rounded-full" />
+                  <div className="flex-1 space-y-1.5">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-3 w-20" />
+                  </div>
+                  <Skeleton className="h-5 w-16 rounded-full" />
+                  <Skeleton className="h-4 w-10" />
+                </div>
+              ))}
             </div>
           )}
 

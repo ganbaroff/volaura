@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Upload, ArrowLeft, CheckCircle2, XCircle, AlertCircle, FileText, Loader2 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
 import { apiFetch, ApiError, API_BASE } from "@/lib/api/client";
@@ -109,8 +110,14 @@ export default function BulkInvitePage() {
 
   if (orgLoading) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-16 flex justify-center">
-        <Loader2 className="size-8 animate-spin text-primary" />
+      <div className="mx-auto max-w-lg px-4 py-8 space-y-6" role="status" aria-live="polite">
+        <Skeleton className="h-5 w-16" />
+        <div className="space-y-2">
+          <Skeleton className="h-7 w-56" />
+          <Skeleton className="h-4 w-72" />
+        </div>
+        <Skeleton className="h-20 w-full rounded-xl" />
+        <Skeleton className="h-32 w-full rounded-xl" />
       </div>
     );
   }

@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Building2, Calendar, Users, Plus, ExternalLink, CheckCircle2, Loader2, Globe, UserCheck, Upload, Search, ArrowRight } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useMyOrganization, useCreateOrganization, useCollectiveAura } from "@/hooks/queries/use-organizations";
 import { useMyEvents } from "@/hooks/queries/use-events";
 import { cn } from "@/lib/utils/cn";
@@ -107,8 +108,30 @@ export default function OrganizationsPage() {
 
   if (orgLoading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="size-6 animate-spin text-primary" aria-label="Loading" role="status" />
+      <div className="min-h-screen bg-background px-4 py-8 sm:px-6" role="status" aria-live="polite">
+        <div className="mx-auto max-w-2xl space-y-8">
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-4 w-64" />
+          </div>
+          <div className="rounded-2xl border border-border p-5 flex items-start gap-4">
+            <Skeleton className="size-12 rounded-xl" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-5 w-40" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-3 w-24" />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="rounded-xl border border-border p-4 space-y-2">
+                <Skeleton className="size-5 rounded" />
+                <Skeleton className="h-7 w-12" />
+                <Skeleton className="h-3 w-20" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -292,8 +315,16 @@ export default function OrganizationsPage() {
               </div>
 
               {eventsLoading && (
-                <div className="flex justify-center py-6">
-                  <Loader2 className="size-5 animate-spin text-primary" role="status" aria-label="Loading" />
+                <div className="space-y-2" role="status" aria-live="polite">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="flex items-center gap-3 rounded-xl border border-border p-4">
+                      <div className="flex-1 space-y-1.5">
+                        <Skeleton className="h-4 w-48" />
+                        <Skeleton className="h-3 w-32" />
+                      </div>
+                      <Skeleton className="h-5 w-16 rounded-full" />
+                    </div>
+                  ))}
                 </div>
               )}
 

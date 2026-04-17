@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/auth-store";
 import { API_BASE } from "@/lib/api/client";
@@ -16,7 +17,32 @@ type OrgType = "ngo" | "corporate" | "government" | "startup" | "academic" | "ot
 
 export default function SignupPage() {
   return (
-    <Suspense fallback={<div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>}>
+    <Suspense fallback={
+      <div className="space-y-6" role="status" aria-live="polite">
+        <div className="space-y-2 text-center">
+          <Skeleton className="h-8 w-48 mx-auto" />
+          <Skeleton className="h-4 w-64 mx-auto" />
+        </div>
+        <div className="flex justify-center gap-2">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-6 w-28 rounded-full" />
+          ))}
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <Skeleton className="h-10 w-full rounded-md" />
+          <Skeleton className="h-10 w-full rounded-md" />
+        </div>
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="space-y-1.5">
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-10 w-full rounded-md" />
+            </div>
+          ))}
+        </div>
+        <Skeleton className="h-10 w-full rounded-md" />
+      </div>
+    }>
       <SignupForm />
     </Suspense>
   );
@@ -180,7 +206,7 @@ function SignupForm() {
           </p>
         </div>
         <div className="flex justify-center">
-          <Loader2 className="size-5 animate-spin text-muted-foreground" aria-hidden="true" />
+          <Skeleton className="h-5 w-32" />
         </div>
       </div>
     );

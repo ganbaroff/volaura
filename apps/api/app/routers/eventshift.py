@@ -417,6 +417,37 @@ async def update_department(
     return DepartmentResponse(**result.data[0])
 
 
+@router.get("/departments/{department_id}/blueprint")
+@limiter.limit(RATE_DISCOVERY)
+async def get_department_blueprint(
+    request: Request,
+    department_id: str,
+    db_admin: SupabaseAdmin,
+    org_id: OrgId,
+    section: str | None = Query(None, description="Filter: roles, sops, policies, faq, metrics, training, competencies"),
+) -> dict[str, Any]:
+    """Return the operational blueprint (metadata) for a department.
+
+    The WUF13 GSE seed stores roles, SOPs, policies, FAQ, metrics, training,
+    and competencies inside department.metadata JSONB. This endpoint surfaces
+    that structure to clients, optionally filtered by section.
+    """
+    _validate_uuid(department_id, "department_id")
+    dept = await _assert_department_in_org(db_admin, department_id, org_id)
+    meta = dept.get("metadata") or {}
+
+    if section:
+        allowed = {"roles", "sops", "policies", "faq", "metrics", "training", "competencies", "requirements", "kpis", "mission"}
+        if section not in allowed:
+            raise HTTPException(
+                status_code=422,
+                detail={"code": "INVALID_SECTION", "message": f"section must be one of {sorted(allowed)}"},
+            )
+        return {"department_id": department_id, "section": section, "data": meta.get(section)}
+
+    return {"department_id": department_id, "blueprint": meta}
+
+
 # ── Areas ─────────────────────────────────────────────────────────────────────
 
 

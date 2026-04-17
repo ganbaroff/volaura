@@ -82,6 +82,7 @@ class EventShiftEventResponse(BaseModel):
     end_at: datetime
     timezone: str
     location: dict[str, Any] | None = None
+    metadata: dict[str, Any] | None = None
     status: str
     created_at: datetime
     updated_at: datetime
@@ -117,6 +118,7 @@ class DepartmentResponse(BaseModel):
     color_hex: str | None = None
     lead_user_id: str | None = None
     sort_order: int
+    metadata: dict[str, Any] | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -147,6 +149,7 @@ class AreaResponse(BaseModel):
     name: str
     description: str | None = None
     location: dict[str, Any] | None = None
+    metadata: dict[str, Any] | None = None
     coordinator_user_id: str | None = None
     created_at: datetime
     updated_at: datetime

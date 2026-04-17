@@ -176,7 +176,7 @@ export default function OnboardingPage() {
         }
         if (meta.account_type === "organization") {
           setAccountType("organization");
-        } else if (meta.account_type === "professional" || meta.account_type === "volunteer") {
+        } else if (meta.account_type === "professional") {
           setAccountType("professional");
         }
       }
@@ -446,7 +446,7 @@ export default function OnboardingPage() {
             </motion.div>
           )}
 
-          {/* ── Step 3: First Competency (volunteers only) ── */}
+          {/* ── Step 3: First Competency (professionals only) ── */}
           {step === 3 && (
             <motion.div
               key="step3"

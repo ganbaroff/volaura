@@ -158,7 +158,7 @@ function AttendeeRow({
         {a.status.replace(/_/g, " ")}
       </span>
 
-      {/* Star rating — only for checked-in volunteers */}
+      {/* Star rating — only for checked-in attendees */}
       {checkedIn && (
         <StarRating
           registrationId={a.registration_id}

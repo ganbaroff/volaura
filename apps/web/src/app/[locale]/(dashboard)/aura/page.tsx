@@ -24,6 +24,7 @@ import { ApiError } from "@/lib/api/client";
 import { EvaluationLog } from "@/components/aura/evaluation-log";
 import { triggerHaptic } from "@/lib/haptics";
 import { useTrackEvent } from "@/hooks/use-analytics";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 // ── Animated counter hook ────────────────────────────────────────────────
 
@@ -185,6 +186,9 @@ export default function AuraPage() {
   const prefersReducedMotion = useReducedMotion(); // BATCH-O A11Y: respect user motion preference
   const activeSessionId = useAssessmentStore((s) => s.sessionId); // BATCH-O AU2: route Continue to active session
   const track = useTrackEvent();
+  const { energy } = useEnergyMode();
+  const isLowEnergy = energy === "low";
+  const isReducedEnergy = energy === "low" || energy === "mid";
 
   // Reveal sequence — fires exactly once per mount
   const revealFiredRef = useRef(false);
@@ -427,8 +431,8 @@ export default function AuraPage() {
 
   return (
     <>
-      {/* Reveal curtain — appears over the full page on first load */}
-      <AnimatePresence>{showCurtain && <RevealCurtain />}</AnimatePresence>
+      {/* Reveal curtain — appears over the full page on first load (skip in mid/low energy) */}
+      <AnimatePresence>{showCurtain && !isReducedEnergy && <RevealCurtain />}</AnimatePresence>
 
       <TopBar title={t("aura.title")} />
 
@@ -570,8 +574,8 @@ export default function AuraPage() {
           )}
         </AnimatePresence>
 
-        {/* Savant Discovery — hidden strength card */}
-        {aura.competency_scores && (
+        {/* Savant Discovery — hidden strength card (hidden in low energy) */}
+        {!isLowEnergy && aura.competency_scores && (
           <SavantDiscovery
             competencyScores={aura.competency_scores}
             revealed={revealed}
@@ -603,8 +607,8 @@ export default function AuraPage() {
           <CompetencyBreakdown scores={aura.competency_scores} lastUpdated={aura.last_updated} isOwner />
         </motion.div>
 
-        {/* AURA Coach — personalized growth path, loads after reveal */}
-        {revealed && (
+        {/* AURA Coach — personalized growth path (hidden in low energy) */}
+        {!isLowEnergy && revealed && (
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -623,8 +627,8 @@ export default function AuraPage() {
           </motion.div>
         )}
 
-        {/* Atlas Reflection — personalized narrative from LLM */}
-        {revealed && (
+        {/* Atlas Reflection — personalized narrative from LLM (hidden in low energy) */}
+        {!isLowEnergy && revealed && (
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -649,14 +653,16 @@ export default function AuraPage() {
           </motion.div>
         )}
 
-        {/* Why this score? — Evaluation Log */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: revealed ? 1 : 0, y: revealed ? 0 : 16 }}
-          transition={{ delay: 0.65, duration: 0.5 }}
-        >
-          <EvaluationLog />
-        </motion.div>
+        {/* Why this score? — Evaluation Log (hidden in low energy) */}
+        {!isLowEnergy && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: revealed ? 1 : 0, y: revealed ? 0 : 16 }}
+            transition={{ delay: 0.65, duration: 0.5 }}
+          >
+            <EvaluationLog />
+          </motion.div>
+        )}
 
         {/* ISSUE-AU3: NextStepCard — what to do after seeing AURA score */}
         <motion.div

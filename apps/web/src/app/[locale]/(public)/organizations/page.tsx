@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { Building2, Search, CheckCircle2, Globe, ExternalLink, Loader2 } from "lucide-react";
+import { Building2, Search, CheckCircle2, Globe, ExternalLink } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useOrganizations } from "@/hooks/queries/use-organizations";
 import type { OrganizationResponse } from "@/lib/api/types";
 import { cn } from "@/lib/utils/cn";
@@ -144,8 +145,20 @@ export default function OrganizationsDiscoveryPage() {
       {/* Grid */}
       <div className="mx-auto max-w-3xl px-4 py-8">
         {isLoading && (
-          <div className="flex justify-center py-16">
-            <Loader2 className="size-6 animate-spin text-primary" role="status" aria-label="Loading" />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2" role="status" aria-label="Loading">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="rounded-2xl border border-border bg-surface-container-low p-5 space-y-3">
+                <div className="flex items-start gap-3">
+                  <Skeleton className="size-10 rounded-xl" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-3 w-1/2" />
+                  </div>
+                </div>
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-2/3" />
+              </div>
+            ))}
           </div>
         )}
 

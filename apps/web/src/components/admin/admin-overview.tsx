@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Users, Building2, ClipboardList, Star, Loader2, Gavel } from "lucide-react";
+import { Users, Building2, ClipboardList, Star, Gavel } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminStats } from "@/hooks/queries/use-admin";
 import { cn } from "@/lib/utils/cn";
 
@@ -33,8 +34,14 @@ export function AdminOverview() {
         <p className="mt-1 text-sm text-on-surface-variant">Live stats — refreshes every 60 seconds</p>
       </div>
       {isLoading && (
-        <div className="flex justify-center py-12">
-          <Loader2 className="size-6 animate-spin text-primary" role="status" aria-label="Loading" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" role="status" aria-label="Loading">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="rounded-xl border border-border bg-card p-5 space-y-3">
+              <Skeleton className="size-5 rounded" />
+              <Skeleton className="h-8 w-16" />
+              <Skeleton className="h-4 w-24" />
+            </div>
+          ))}
         </div>
       )}
       {stats && (

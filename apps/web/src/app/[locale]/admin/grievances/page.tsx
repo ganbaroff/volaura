@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Loader2, ShieldCheck, ChevronRight, ChevronDown, Inbox, History } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   useAdminPendingGrievances,
   useAdminHistoryGrievances,
@@ -230,8 +231,16 @@ export default function AdminGrievancesPage() {
       </div>
 
       {activeLoading && (
-        <div className="flex items-center justify-center py-16 text-on-surface-variant">
-          <Loader2 className="size-6 animate-spin" aria-hidden="true" />
+        <div className="space-y-3" role="status" aria-label="Loading">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="rounded-xl border border-border bg-surface-container-low p-4 space-y-2">
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-5 w-16 rounded-full" />
+                <Skeleton className="h-3 w-32 ml-auto" />
+              </div>
+              <Skeleton className="h-4 w-3/4" />
+            </div>
+          ))}
         </div>
       )}
 

@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { Loader2, BellOff, CheckCheck } from "lucide-react";
+import { BellOff, CheckCheck } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { TopBar } from "@/components/layout/top-bar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
@@ -189,8 +190,18 @@ export default function NotificationsPage() {
 
         {/* Loading */}
         {isLoading && (
-          <div className="flex justify-center py-16">
-            <Loader2 className="size-8 animate-spin text-primary" aria-label={t("common.loading")} />
+          <div className="space-y-2" role="status" aria-label={t("common.loading")}>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="rounded-xl p-4 bg-surface-container-low">
+                <div className="flex gap-3">
+                  <Skeleton className="size-10 rounded-xl shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-3 w-full" />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
 

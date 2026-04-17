@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuthStore } from "@/stores/auth-store";
 import { useAdminPing } from "@/hooks/queries/use-admin";
-import { Loader2 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 /**
  * AdminGuard — blocks non-admin users from the (admin) route group.
@@ -38,8 +38,13 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center" role="status" aria-label="Loading">
-        <Loader2 className="size-8 animate-spin text-primary" />
+      <div className="min-h-screen p-8 space-y-6" role="status" aria-label="Loading">
+        <Skeleton className="h-8 w-48" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-28 rounded-xl" />
+          ))}
+        </div>
       </div>
     );
   }

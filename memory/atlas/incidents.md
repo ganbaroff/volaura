@@ -507,4 +507,29 @@ Step 3 is now a gate: for any fix that pins a config option on a third-party lib
 - If the user session cookie is SOMEHOW set by auto-exchange but `getSession()` returns null (race window between cookie write and read in storage adapter), we'd double-exchange. Low probability — supabase-js awaits the same storage adapter write before resolving `_initializePromise`. Would surface as intermittent "not found in storage" on only fresh-load path; if seen post-deploy, escalate to INC-018-REV3.
 - Whitespace cleanup backlog (70+ files with BOM/invalid chars) still blocks `tsc -b` full-tree check. This file passes tsc in isolation; ship anyway.
 
+## INC-018 REV2 verification — 2026-04-18 00:26 Baku · deployed + server-side evidence
+
+CEO pasted production console screenshot showing `[callback] exchangeCodeForSession failed: PKCE code verifier not found in storage` AFTER commit 84eab94 landed on `origin/main`. Verification performed from the Cowork instance:
+
+**Bundle served on live production is REV2.** `curl https://volaura.app/en/callback` lists `/_next/static/chunks/app/%5Blocale%5D/callback/page-2920a964cd4c13bc.js` among the scripts. Fetching that bundle (11,179 bytes) and grepping confirms the compiled sequence `await n.auth.getSession() … if(!o){ … exchangeCodeForSession(s) … }` — the REV2 getSession-first / conditional-exchange pattern is what Vercel is serving right now, not a legacy bundle.
+
+**CEO's failing attempt ran a different bundle.** His console stack referenced `page-97eab8bdeb61144d.js` — a different hash from what production serves. Stale browser cache (or a browser tab that loaded before Vercel finished propagating 84eab94) is the most economical explanation. No bundle with that hash is currently served by production for this route.
+
+**Supabase auth logs contradict "it's still broken server-side."** Window covered: 2026-04-17 18:29 → 20:16 UTC (~2h, via Supabase MCP `get_logs(service=auth)` on project `dwdgzfusjsobnixgyzjk`).
+- `ganbarov.y@gmail.com` (actor_id `5a01f0ce-0d1c-4109-bfe4-d9f061d549e2`) completed full Google OAuth with `grant_type=pkce` returning 200 **five times**: 18:29:15, 19:33:00, 19:55:43, 20:15:14, 20:16:51.
+- **Zero** `bad_code_verifier`, zero `invalid_grant`, zero `pkce` failure rows in the entire window.
+- **One** `400: OAuth state has expired` at 20:14:58 — stale tab or bookmark; cleared itself on retry 9 seconds later.
+- All `/authorize` calls had referer `https://volaura.app/az/callback` — the redirect chain is `volaura.app → supabase.co → google.com → supabase.co → volaura.app`, all back on the same eTLD+1, so code_verifier cookie scope is correct.
+- Remote addr `5.191.116.140` (CEO's Baku IP) consistent across every successful PKCE grant.
+
+**Diagnosis.** Server-side PKCE exchange is succeeding. The `"code verifier not found in storage"` message is emitted client-side by `@supabase/ssr` when the SDK cannot find the verifier cookie to build the `POST /token` body — by definition that error means the exchange never reached Supabase. In the same 2-hour window the SDK's calls that DID leave the browser all succeeded. The simplest explanation that reconciles both facts: the failing screenshot was taken on stale bundle `page-97eab8bdeb61144d.js` which still has the REV1 (or earlier) double-exchange race; the live bundle fixes it.
+
+**Resolution path.** REV2 is live. CEO should hard-reload (Ctrl+Shift+R / Cmd+Shift+R) or clear site data for `volaura.app` once, then retry Google sign-in. If new errors appear on bundle `page-2920a964cd4c13bc.js` (or any bundle hash that differs from the one in his screenshot), escalate to INC-018-REV3 with cookie-jar inspection (`document.cookie` at `/callback`, filtered to `sb-*`) and SameSite/Secure attribute dump.
+
+**Status:** ✅ REV2 deployed. ✅ Bundle content verified via `curl` + `grep`. ✅ Auth logs show server-side PKCE grants succeeding for CEO in the reported time window. ⏳ Pending CEO hard-refresh retry for full close-out.
+
+**Residual risk (unchanged from REV2 entry above):** third-party cookie deprecation, extension cookie clearing, or preview-URL cookie scope mismatch could still produce "code verifier not found" on the NEW bundle. None of those are fixable in app code — if observed, triage as a browser-environment issue, not REV2 regression.
+
+**Structural gate added (per root-cause rule):** "CEO console screenshot" now requires three checks BEFORE any claim of residual bug: (1) fetch live bundle hash via `curl` of the route, (2) compare to hash in CEO's stack trace — if different, suspect cache first, (3) pull Supabase auth logs for the same time window to confirm server-side evidence matches (or contradicts) the client-side error. Logged to `.claude/rules/frontend.md` — pattern applies to any future "production still broken" report on auth.
+
 

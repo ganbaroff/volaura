@@ -122,14 +122,11 @@ async def test_start_assessment_returns_session_and_first_question(client):
     # Mock: session insert
     session_inserted = _mock_chain(_mock_execute(data={"id": MOCK_SESSION_ID}))
 
-    # Mock: profile row for paywall check (unused when PAYMENT_ENABLED=False)
-    _mock_chain(_mock_execute(data={"subscription_status": "trial"}))
-
     call_count = {"user": 0, "admin": 0}
 
     def user_table_side_effect(name):
         call_count["user"] += 1
-        # Call order (PAYMENT_ENABLED=False — paywall check skipped):
+        # Call order (paywall patched off):
         # 1=existing session, 2=rapid-restart cooldown, 3=retest cooldown, 4=abuse count, 5=carry-over, 6=insert
         if call_count["user"] == 1:
             return no_session
@@ -203,14 +200,11 @@ async def test_retest_cooldown_returns_429(client):
     two_days_ago = (datetime.now(UTC) - timedelta(days=2)).isoformat()
     recent_session = _mock_chain(_mock_execute(data=[{"completed_at": two_days_ago}]))
 
-    # Mock: profile row for paywall check (unused when PAYMENT_ENABLED=False)
-    _mock_chain(_mock_execute(data={"subscription_status": "trial"}))
-
     call_count = {"user": 0}
 
     def user_table_side_effect(name):
         call_count["user"] += 1
-        # Call order (PAYMENT_ENABLED=False — paywall check skipped):
+        # Call order (paywall patched off):
         # 1=existing session, 2=rapid-restart cooldown, 3=retest cooldown
         if call_count["user"] == 1:
             return no_session  # existing active session check

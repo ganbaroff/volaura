@@ -3,6 +3,7 @@
 import pytest
 from httpx import ASGITransport, AsyncClient
 
+from app.config import settings
 from app.main import app
 from app.middleware.rate_limit import limiter
 from app.services.assessment.helpers import clear_question_cache
@@ -21,6 +22,15 @@ def disable_rate_limiter():
     limiter.enabled = False
     yield
     limiter.enabled = True
+
+
+@pytest.fixture(autouse=True)
+def disable_paywall():
+    """Disable paywall in tests — tests run in beta mode regardless of .env."""
+    original = settings.payment_enabled
+    settings.payment_enabled = False
+    yield
+    settings.payment_enabled = original
 
 
 @pytest.fixture

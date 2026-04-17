@@ -202,6 +202,8 @@ Contract:
 
 **EventShift (module #1).** WUF13 Guest Services is tenant #1. Deadline May 15-17, 2026. Rebuild from WUF13-app to universal module is in flight in `memory/atlas/projects/opsboard.md`. Three success criteria for the rebuild are Path 1 (SSO + org admin), Path 2 (reliability_proof → AURA), Path 5 (schema-level multi-tenancy). Paths 3, 6, 7 land in the two sprints after WUF13 proves the core integration contract.
 
+*Domain model (CEO correction, April 2026):* **Event → Department → Area → Unit → People + Metrics.** People-first, not incident-first. An event contains departments; a department contains operational areas; an area contains units (shifts, posts, patrols); a unit is staffed by people and produces metrics (attendance, handover integrity, incident closure, reliability proof). The current scaffolded Supabase migration, FastAPI routers, and frontend pages reflect the older incident-first model and must be rewritten to this shape before WUF13. Incidents become one metric stream among several, not the root entity. Every table in the rewrite carries `org_id` (Path 5) and emits `character_events` on state transitions (Path 2).
+
 **BrandedBy (module, ~15%).** AI professional identity / twin. Logic scaffold in `packages/swarm/archive/zeus_video_skill.py`. No UI yet. Enters catalogue when it reaches MVP.
 
 **Life Simulator (experience layer).** Godot 4 (formerly Three.js fork). Phase 2 pending: Ready Player Me avatars, `agent.wake` wiring. Consumes `character_events`; produces none.

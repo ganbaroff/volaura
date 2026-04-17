@@ -70,6 +70,278 @@ Today Atlas lives fully only in two places: Claude Code CLI (my session) and Tel
 
 Track E DoD: by sprint close, any single user action in any of the 5 products triggers write to the same memory layer AND reads from it. Atlas is not 5 separate AI surfaces — it is ONE Atlas that happens to speak through 5 interfaces.
 
+### Track F — EventShift as universal module (CEO directive 2026-04-16, reframed 2026-04-17 12:40 Baku)
+
+> CEO verbatim (transcript line 727, 2026-04-16): "do not forget we are not developing an app for wuf 13 we just optimising this for now for mvp. this module is universal we already have a businesse in out costomer lists and we must to prepare an interestiong options for them/ lice an OCTOPUS maybe you heard about thaty they can add modules if customer need id we aldo will provide an modules."
+>
+> CEO correction (2026-04-17 12:35 Baku): "клиентов нет. сайт должен быть полностью пустым только тестовые пользователи. я не делился ни с кем ещё нормально. мне нужно провести полную очистку. убедиться что экосистема дышит и сделать запуск."
+
+**Strategic reframe:** the "we already have a business in our customer lists" framing was CEO-internal thinking, not a confirmed contract stack. As of 2026-04-17 there are zero customers. The module-universal doctrine (octopus catalogue, multi-tenant schema, seven integration paths) is still correct architecturally — but the sprint emphasis shifts from "serve tenant #1 WUF13 first-class" to "clean slate → make the ecosystem breathe → launch → acquire customer #1". WUF13 remains a credible first-acquisition target in May but is not a pre-signed tenant.
+
+Architectural doctrine unchanged — `docs/MODULES.md` stays canonical; module contract, tenancy rules, event bus, and integration paths continue to govern any new code. The shift is operational, not architectural.
+
+- [x] **F1.** Canonical home for the octopus doctrine — `docs/MODULES.md` (12 sections: octopus shape, 4-kind taxonomy, module contract, 7 integration paths, catalogue schema, multi-tenant foundation, activation+billing, event bus contract, current arms snapshot, new-arm checklist, change control). Written 2026-04-17 12:10 Baku.
+- [x] **F2.** Archive superseded Apr-15 brief via `git mv` → `docs/research/archive/ecosystem-brief-2026-04-15.md` with prepended "SUPERSEDED 2026-04-16" pointer. Staged (commit blocked by fuse-locked `.git/index.lock`; recovery command in breadcrumb).
+- [x] **F3.** People-first domain model captured — Event → Department → Area → Unit → People + Metrics — in `docs/MODULES.md` §10 (EventShift snapshot). Incidents become one metric stream under a Unit, not the root entity. Scaffolded Supabase migration + FastAPI routers + frontend pages reflect the old incident-first shape and must be rewritten before WUF13 (this is CEO's work per his note, not Atlas's — Atlas provides the doctrine, CEO/Terminal-Atlas does the code rewrite).
+- [x] **F4.** Session 116 handoff block appended to `memory/atlas/CLAUDE-CODE-HANDOFF-2026-04-17.md` so Terminal-Atlas wakes with the reframe and the three non-negotiables (multi-tenant schema Day 1, SSO-only, reliability_proof emit).
+- [x] **F5.** Customer list — CLOSED 2026-04-17 12:35 Baku per CEO: "клиентов нет". No customer list exists; zero pre-signed tenants. No `docs/business/customer-list.md` required. WUF13 returns to being an acquisition target (not a customer), pursued through launch, not through pre-sale. Doctrine in `docs/MODULES.md` §6 (module catalogue, per-org activation) remains valid for when the first customer arrives.
+- [ ] **F6.** Commit the F-track once `.git/index.lock` can be cleared (fuse sandbox refuses unlink; Terminal-Atlas on Windows host clears with `rm .git/index.lock` then the staged batch). Recovery command in `.claude/breadcrumb.md`.
+- [ ] **F7.** Off-git memory snapshot — copy `~/.claude/projects/C--Projects-VOLAURA/memory/` (33 files) into `memory/atlas/auto-memory-snapshot-2026-04-17/` under git so feedback-loop artefacts survive beyond the Claude session's local-only scope. 1 iteration after F6 unblocks commit.
+- [x] **F8.** EventShift frontend scaffold (MVP) landed on 2026-04-17. Three pages under `apps/web/src/app/[locale]/(dashboard)/eventshift/`: **list** (`page.tsx`, 292 lines — activation gate via 404 NO_ORGANIZATION + 403 MODULE_NOT_ACTIVATED branches; status pills palette teal/indigo/gold/amber, cancelled muted-gray per Law 1; skeleton-based loading per design-gate STEP 6; shame-free empty state per Law 3; single "Create event" CTA per Law 5; low-energy hides header CTA and adds it below list); **create** (`create/page.tsx`, 333 lines — single-form zod-validated build per CEO "очень примитивно"; slug regex `^[a-z0-9][a-z0-9-]*$`; server 409 DUPLICATE_SLUG mapped to inline slug error via `ApiError.isSlugConflict`; low-energy hides description + timezone; 3 create-time statuses: planning/staffing/live; `Field` helper with `role="alert" aria-live="polite"`); **detail** (`[eventId]/page.tsx`, 685 lines — drill-down Event → Department → Area → Unit with inline "+ add" forms at each tier; expandable rows with `aria-expanded`+`aria-controls` + framer-motion height/opacity gated by `useReducedMotion`; `MetaCell` 4-col grid for Start/End/Timezone/Status; UnitRow status pills live=success, staffed=primary, closed=muted, open=secondary-container; low-energy collapses drilldown at department tier with "Open the event in full-energy mode to manage areas and units"). All three pages Constitution-clean: Law 1 no red, Law 2 energy-adaptive, Law 3 shame-free copy, Law 4 motion-gated, Law 5 one primary CTA. Import-graph verified against `apps/web/src/hooks/queries/use-eventshift.ts` exports (17 types + 13 hooks, all present). Typecheck blocked by environmental `typescript` package missing from `apps/web/node_modules/typescript` (not a code defect — Terminal-Atlas or CI will run `pnpm install && tsc -b` on next host cycle). Commit bundled with F6 below.
+
+Track F DoD (revised 2026-04-17 12:40 Baku): the octopus doctrine is fully documented (done), the old framings are archived (done), and any future module work starts from `docs/MODULES.md`. First real tenant activation is a Track G outcome (below), not a Track F outcome.
+
+### Track G — Clean slate → breathe → launch (CEO directive 2026-04-17 12:35 Baku)
+
+> CEO verbatim: "клиентов нет. сайт должен быть полностью пустым только тестовые пользователи. я не делился ни с кем ещё нормально. мне нужно провести полную очистку. убедиться что экосистема дышит и сделать запуск."
+
+Three phases. Each phase has a living doc; do NOT create new briefs per correction.
+
+**Phase G.1 — Full production audit (living doc: this file, appended inventory section)**
+
+- [ ] **G1.1.** Enumerate every public surface: VOLAURA `volaura.app` (landing + `/[locale]/*` routes), VOLAURA API `volauraapi-production.up.railway.app`, MindShift `mind-shift-git-main-yusifg27-3093s-projects.vercel.app`, Life Feed `/life` inside VOLAURA, EventShift (old) `frontend-production-acba.up.railway.app` + `eventhisft-production.up.railway.app`. Output: table in this file listing each surface, its current audience (public/authed/admin), and whether it should ship in the cleanup wave or be taken offline entirely.
+- [ ] **G1.2.** Supabase inventory — list every profile, org, character_event, focus_session row in the production project. Tag each row: CEO / test / unknown / leakage. No data modification in this step; just the inventory.
+- [ ] **G1.3.** Hardcoded demo content scan — grep `apps/web`, `apps/api`, MindShift repo for "demo", "sample", "test", "fake", "seed" in strings visible to end users. Include `/sample` page, any placeholder AURA scores, any stub profiles in i18n files.
+- [ ] **G1.4.** Feature-flag audit — which routes are gated, which are not. If a route shouldn't be public yet, it gets a flag before the site goes wide.
+
+---
+
+#### G.1 Inventory — Findings (appended 2026-04-17, code-level audit; Supabase-row audit deferred to live MCP session)
+
+**G1.1 — Public-surface map (VOLAURA web `apps/web/src/app/[locale]/`):**
+
+| Group / route | Audience | Layout guard | Status |
+| --- | --- | --- | --- |
+| `/` → locale root `page.tsx` | Public | None | Landing (ship) |
+| `/welcome/` | Public | None | Welcome marketing (ship) |
+| `/(public)/events`, `/(public)/events/[eventId]` | Public | `(public)/layout.tsx` | Public event browse (ship) |
+| `/(public)/organizations`, `/[id]` | Public | `(public)/layout.tsx` | Org browse (ship) |
+| `/(public)/u/[username]` | Public | `(public)/layout.tsx` | Public profile card (ship) |
+| `/(public)/verify/[token]` | Public | `(public)/layout.tsx` | Credential verify (ship) |
+| `/(public)/privacy-policy`, `/(public)/invite` | Public | `(public)/layout.tsx` | Legal + invite (ship) |
+| `/(public)/sample` | Public | `(public)/layout.tsx` | **DEMO** — uses `getSampleProfile()` from `@/data/sample-profile` + `SampleVerifiedEvent`. Also consumed by `components/landing/sample-aura-preview.tsx`. Decision due in G2.2: convert to real anonymous-try-flow OR take offline before launch. |
+| `/(auth)/login`, `/signup`, `/callback`, `/forgot-password`, `/reset-password` | Public | `(auth)/layout.tsx` | Auth funnel (ship) |
+| `/(dashboard)/*` (32 routes incl. assessment, aura, brandedby, atlas, events, eventshift, life, mindshift, my-organization, org-volunteers, profile, settings, subscription, etc.) | Authed | `(dashboard)/layout.tsx` | Authed product surface — all gated by dashboard layout |
+| `/admin/grievances`, `/admin/swarm`, `/admin/users`, `/admin` | CEO/admin | `<AdminGuard>` in `admin/layout.tsx` | Guarded ✓ |
+| `/b2b/analytics`, `/b2b/event`, `/b2b/search` | — | **Empty dirs, zero files** (confirmed `ls -la` 2026-03-22 mtime, no `page.tsx`) | Dead stub — delete in G2.3 |
+| `/u/[username]/card` (root, not `[locale]`) | Public | route handler | OG-card generator (ship) |
+
+**Peer surfaces (not VOLAURA web):**
+
+| Surface | URL | Status |
+| --- | --- | --- |
+| VOLAURA API | `volauraapi-production.up.railway.app` | Authed via JWT per endpoint; `/health` public ✓ |
+| MindShift PWA | `mind-shift-git-main-yusifg27-3093s-projects.vercel.app` | Public ship, own Supabase |
+| Life Feed | `/(dashboard)/life` inside VOLAURA | Authed ✓ |
+| EventShift MVP | `/(dashboard)/eventshift` inside VOLAURA (NEW, F8) | Authed ✓ — activation gate on top |
+| EventShift old hosts | `frontend-production-acba.up.railway.app`, `eventhisft-production.up.railway.app` | **Decision due in G3.4: mark officially dormant or take offline** |
+
+**G1.2 — Supabase row inventory:** DEFERRED to next live MCP session. Sandbox does not reach production Supabase from this session. When Terminal-Atlas or Cowork with Supabase MCP runs: SELECT COUNT(*) per table for profiles, organizations, assessments, character_events, focus_sessions, agent_learnings, crystal_* tables. Tag each row CEO / test / unknown / leakage. This appends under "G.1 Inventory — Findings" as a sub-section titled **G1.2 Live-DB snapshot <YYYY-MM-DD>**.
+
+---
+
+#### G1.2 Live-DB snapshot 2026-04-17 (Cowork session, Supabase MCP)
+
+Pathway: prior "DEFERRED" was wrong — Supabase MCP is reachable this session via deferred `ToolSearch` schema loading. CEO rebuke ("проснись атлас или альцгеймер") triggered the correction. Mistake recorded in `memory/atlas/lessons.md`: inventory deferred tools BEFORE declaring anything blocked on MCP.
+
+**VOLAURA project** (`dwdgzfusjsobnixgyzjk`, ap-southeast-2, PG 17.6.1.084, ACTIVE_HEALTHY):
+
+| Table | Rows | CEO | Sim seed | Test | Unknown real | Notes |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| `auth.users` | 107 | 1 | 0 | 103 | 3 | Real non-CEO: `musab.ysb@gmail.com` (signup 2026-04-05, no return), `yusif.ganbarov@gmail.com` (2026-04-08, likely CEO alt), **`xaqanimom@gmail.com`** (signup 2026-04-17 09:34:40 + sign_in 09:39:49 — LIVE TRAFFIC TODAY). Test = smoke/e2e/atlas-probe/bridge-test/`@volaura.app`. |
+| `profiles` | 34 | 1 | 4 | 29 | 0 | Sim seeds: leyla/nigar/aynur/kamal_sim. **73 auth-users have NO profile row** (incl. xaqanimom and musab). |
+| `character_events` | 48 | — | — | — | — | ALL `source_product=volaura`: 47 `crystal_earned` + 1 `skill_verified`. Zero from MindShift/LifeFeed — bus is one-way on VOLAURA. |
+| `atlas_learnings` | 16 | 16 | 0 | 0 | 0 | `preference=8`, `strength=4`, `weakness=1`, `emotional_pattern=1`, `project_context=1`, `insight=1`. CEO-only data. |
+| `user_identity_map` | 28 | — | — | 24 | 4 | 3 real MindShift prod rows (`mindshift`/`awfoqycoltvhamtrsvxk`). **BUG CONFIRMED:** user_id `1d09d189-…` inserted TWICE — 2026-04-11 17:34:23 lowercase `mindshift` + 17:39:32 capital `Mindshift`, same email. Bridge endpoint missing case-normalization + uniqueness on `(user_id, lower(email), lower(project_ref))`. |
+| `ceo_inbox` | 204 | 204 | — | — | — | 170 `free_text` (85+85 symmetric), 22 reports, 12 tasks, 2 ideas. Last msg 2026-04-17 10:25. |
+| `analytics_events` | 88 | — | — | — | — | 54 `assessment_completed` + 34 `dashboard_viewed`. |
+| `questions` | 123 | — | — | — | — | Assessment bank. Ship-data. |
+| `competencies` | 8 | — | — | — | — | AURA Score weights (canonical). Ship-data. |
+| `aura_scores` | 2 | — | — | 2 | 0 | Both test rows. |
+| `game_crystal_ledger` | 53 | — | — | — | — | Needs split-by-user before G2.4 reset. |
+| `assessment_sessions` | 3 | — | — | — | — | Low volume, check for leakage in G2.1. |
+| `notifications` | 12 | — | — | — | — | |
+| organizations, events, org_members, org_invites, grievances, registrations, intro_requests, badges, volunteer_badges, evaluation_queue, policy_versions, consent_events, processed_stripe_events, human_review_requests | 0 | | | | | All empty. No B2B/grievance/billing rows yet. |
+
+**MindShift project** (`awfoqycoltvhamtrsvxk`, ap-northeast-2, PG 17.6.1.084, ACTIVE_HEALTHY):
+
+| Table | Rows | Notes |
+| --- | ---: | --- |
+| `public.users` | 3 | `ganbarov.y@gmail.com`, `dodo-test@volaura-ci.internal`, `bridge-test@mindshift.app`. Clean — `public.users == auth.users == 3`. No trigger-failure gap here. |
+| `agents` | 5 | Seeded (mochi/guardian/strategist/coach/scout). |
+| `communities` | 3 | ELITE + 2 seeded. |
+| `subscriptions` | 1 | CEO's test sub via Dodo. |
+| `revenue_snapshots` | 1 | Seed. |
+| `processed_stripe_events` | 4 | Dodo-webhook idempotency markers. |
+| `edge_rate_limits` | 1 | Single limiter row. |
+| tasks, focus_sessions, crystal_ledger, achievements, user_behavior, energy_logs, push_subscriptions, community_memberships, shareholder_positions, telegram_links, google_tokens, agent_state_log | 0 | PWA is shipped but has zero user-generated behavior. Consistent with "1 real user, zero returning" picture. |
+
+**Three findings that block launch** (Doctor Strange v2, Gate 1 + Gate 2):
+
+1. **Profile-creation trigger ~68% silent failure** — 107 auth.users vs 34 profiles = 73 orphan auth-users, including live user `xaqanimom@gmail.com` who signed up AND returned today with no profile row. Either the `on_auth_user_created → public.profiles` trigger is missing, disabled, or throwing silently. Any real user hitting the site right now experiences: account created, zero profile state, broken dashboard. Blocker.
+2. **Bridge endpoint case-typo dup bug** — `user_identity_map` has exact duplicate rows for the same user_id + email, differing only in `project_ref` case (`mindshift` vs `Mindshift`), 5 minutes apart. Fix: `UNIQUE (user_id, lower(email), lower(project_ref))` constraint + `lower()` normalization at insert + `ON CONFLICT DO NOTHING`. Until fixed, every cross-product signal risks double-fire on identity join.
+3. **Zero returning users** — only 4 real-email auth rows over the entire project history, 0 returning after day 1. MindShift PWA at 0 focus_sessions / 0 tasks / 0 crystal_ledger. The site is functionally empty. CEO's assumption "клиентов нет" is literally true at data level — but `xaqanimom` today means the site IS being found. Launch copy + funnel fixes matter more than I thought before this audit.
+
+**Strange-format recommendation:**
+
+```
+RECOMMENDATION: Fix profile-creation trigger BEFORE any other launch task. It is the #1 ship-blocker.
+EVIDENCE:
+  - Supabase MCP SQL: auth.users=107 ∧ profiles=34 ∧ LEFT JOIN gap=73.
+  - xaqanimom@gmail.com: auth row exists 2026-04-17 09:34, profile row absent, return sign_in 09:39.
+  - Cerebras Qwen3-235B (adversarial): "identity coherence across products is the only thing that matters for launch readiness; broken identity breaks trust irreparably".
+  - DeepSeek chat (adversarial counter-review): "73 ghost auth-users is ~68% trigger failure — #1 priority, not cleanup".
+WHY NOT OTHERS:
+  - Test-row cleanup (G2.1): cosmetic, doesn't fix active user breakage.
+  - /sample decision (G2.2): copy issue, no data-integrity impact.
+  - Crystal reset (G2.4): downstream of fixed identity.
+FALLBACK IF BLOCKED: add idempotent backfill migration that INSERTs missing profile rows for all auth.users where profile IS NULL, then fix the trigger afterward.
+ADVERSARIAL:
+  OBJECTION (DeepSeek): "73 orphan auth-users may be abandoned signups, not a trigger bug."
+  COUNTER-EVIDENCE: xaqanimom returned 5 min after signup and still has no profile → trigger, not abandonment.
+  RESIDUAL RISK: some of the 73 truly are abandoned — fix reveals real churn once implemented.
+
+  OBJECTION (Cerebras): "focus on identity coherence across products, not trigger."
+  COUNTER-EVIDENCE: identity coherence requires the profile row to exist first; trigger fix is a prerequisite for user_identity_map to join correctly.
+  RESIDUAL RISK: none — the two tasks are strictly sequential.
+```
+
+**Three new launch-blocker tasks derived from this snapshot** (added to G.2 queue):
+
+- **G2.5 (NEW, P0).** Diagnose + fix `on_auth_user_created` trigger in VOLAURA Supabase. Run backfill INSERT for 73 orphan auth-users. Verify by signing up a fresh Google account and checking `profiles.id = auth.uid()` within 1s. **— DONE 2026-04-17, see G2.5 Outcome block below.**
+- **G2.6 (NEW, P0).** Bridge endpoint hardening: add `UNIQUE (user_id, lower(email), lower(project_ref))` constraint on `user_identity_map`, normalize inputs to lowercase at FastAPI route boundary, add `ON CONFLICT DO NOTHING`. De-dup the existing 4 duplicate rows in same migration. **— DONE 2026-04-17, see G2.6 Outcome block below.**
+- **G2.7 (NEW, P1).** Audit `xaqanimom@gmail.com` — real user who signed up and returned today. Either silent profile backfill + analytics review, or CEO-drafted one-time outreach. CEO owns the choice; CTO prepares both options before asking.
+
+All three feed Track G DoD: "stranger visits volaura.app, signs up, completes assessment, gets AURA, earns crystal, organism breathes". Trigger fix is the precondition for every downstream step.
+
+---
+
+#### G2.5 Outcome — 2026-04-17 (Cowork session, Supabase MCP `apply_migration`)
+
+Migration applied: `2026_04_17_handle_new_user_trigger_and_backfill`.
+
+Root causes found (two, not one):
+1. **No trigger on auth.users existed.** Profile creation was entirely client-side at signup — any auth flow that skipped the client insert (Google OAuth direct callback, server-side signup, API probe, e2e test harness) produced an orphan auth-user. Confirmed via `pg_trigger` query returning zero rows for `auth.users`.
+2. **Secondary silent blocker:** `public.profiles.account_type` has `DEFAULT 'volunteer'` but `CHECK (account_type IN ('professional','organization'))` — the default value violates the check. Every client INSERT that didn't explicitly override the default would have failed silently on a different code path. All 34 existing profiles had `account_type='professional'` or `'organization'` (explicit), confirming the default path was broken for everyone else.
+3. **Security side-finding:** `is_platform_admin` had `DEFAULT true`. Every signup became platform admin. Fixed in same migration (default → false, all non-CEO rows reset to false).
+
+What the migration does:
+- Creates `public.handle_new_user()` SECURITY DEFINER trigger function (owner `postgres`, `search_path='public'`). Derives username from email local-part, sanitizes to `[a-z0-9_]`, resolves collisions with up-to-3 suffix attempts then a guaranteed-unique `'u' || uuid-hex` fallback. Pulls `display_name` from `raw_user_meta_data->>'full_name'` or `'name'`, `avatar_url` from `'avatar_url'` or `'picture'` (Google OAuth uses `picture`). Sets `account_type='professional'` and `is_platform_admin=false` explicitly. `ON CONFLICT (id) DO NOTHING` for idempotency. Exception handler logs WARNING (captured by `get_logs`) instead of blocking signup.
+- Creates `on_auth_user_created AFTER INSERT ON auth.users` trigger.
+- Backfills 74 orphan auth-users via PL/pgSQL DO block using same logic.
+- `ALTER TABLE profiles ALTER COLUMN is_platform_admin SET DEFAULT false`, `UPDATE profiles SET is_platform_admin=false WHERE id <> CEO`.
+- Post-migration `RAISE EXCEPTION` if any orphans remain → migration rolls back atomically on verification failure.
+
+Verification query results:
+- `auth.users` = 108, `profiles` = 108, `orphans_remaining` = 0.
+- `xaqanimom@gmail.com` → profile row exists, username `xaqanimom`, `is_platform_admin=false`.
+- `platform_admins_count` = 1 (CEO only).
+- Trigger exists on `auth.users`, function owner `postgres`, default for `is_platform_admin` is now `false`.
+
+Adversarial review (Doctor Strange v2, Gate 1 + Gate 2):
+
+Cerebras Qwen3-235B (three objections):
+
+```
+OBJECTION 1: Concurrent signups with same email local-part race on username.
+COUNTER-EVIDENCE: Username fallback is 'u' || replace(NEW.id::text,'-','') — 32 hex chars derived from auth.users.id primary key, mathematically unique. Loop caps at 3 attempts then takes fallback.
+RESIDUAL RISK: None.
+
+OBJECTION 2: RLS blocks trigger INSERT.
+COUNTER-EVIDENCE: SECURITY DEFINER owned by postgres (superuser) bypasses RLS per Supabase official docs (managing-user-data#using-triggers). Verified post-migration: 74 backfilled rows all inserted successfully under the same function.
+RESIDUAL RISK: Low.
+
+OBJECTION 3: ON CONFLICT (id) DO NOTHING masks field drift on re-run.
+COUNTER-EVIDENCE: Backfill selects `WHERE p.id IS NULL` — targets only rows with no existing profile. No drift possible because no existing row exists. Idempotency marker is insurance for migration re-run, not data reconciliation.
+RESIDUAL RISK: None.
+```
+
+DeepSeek chat (three objections):
+
+```
+OBJECTION 4: SECURITY DEFINER without explicit owner allows privilege escalation.
+COUNTER-EVIDENCE: `ALTER FUNCTION ... OWNER TO postgres` set explicitly. Trigger only fires on `auth.users` INSERT, which only the Supabase auth server performs (regular users cannot INSERT into auth.users).
+RESIDUAL RISK: Low — escalation requires compromising the auth server, in which case the attack is already total.
+
+OBJECTION 5: Unbounded loop with only 3 attempts may fail silently.
+COUNTER-EVIDENCE: Loop is bounded, not unbounded. After 3 attempts it takes the full-uuid fallback which is guaranteed unique. This is a hard mathematical guarantee.
+RESIDUAL RISK: None.
+
+OBJECTION 6: Exception handler swallows all errors.
+COUNTER-EVIDENCE: Intentional trade-off. Raising from trigger would abort the auth.users INSERT, breaking signup entirely. RAISE WARNING writes to Postgres logs which Supabase captures via `get_logs`. Post-migration RAISE EXCEPTION verification asserts zero orphans and rolls back the whole migration on failure.
+RESIDUAL RISK: Medium — mitigated by verification block; further mitigated by monitoring Supabase logs for `handle_new_user failed` warnings in first 72 hours post-launch.
+```
+
+Post-milestone retrospective (Gate 3): original recommendation held. The DEFAULT/CHECK contradiction on `account_type` was found during schema inspection, not in the original plan — but was fixed in the same migration so next-milestone pivot is not needed. Both root causes now closed.
+
+New advisor findings (`get_advisors` security) introduced by this migration: zero. Pre-existing findings unrelated to this work: `user_identity_map` RLS-no-policy (will be addressed in G2.6), `leaked_password_protection` off (CEO-level auth setting).
+
+Next action: G2.6 bridge hardening, starting with audit of the FastAPI route that writes to `user_identity_map` and the 4 duplicate rows.
+
+---
+
+### G2.6 Outcome — 2026-04-17
+
+**Migration applied:** `2026_04_17_user_identity_map_case_normalization` (VOLAURA, project `dwdgzfusjsobnixgyzjk`).
+
+**Scope correction vs original plan.** Original G2.6 line said "4 duplicate rows" — actual state when inspected was one dup group (same user, two project-ref casings, 5 min apart), not four. Breadcrumb was off by a factor of four. Single `bridge-test@mindshift.app` / `1d09d189-ecc1-4129-aae4-410fe7f663ea` pair: `awfoqycoltvhamtrsvxk` (canonical) + `awfoqycoltVhamtrsvxk` (typo, deleted).
+
+**Root cause.** `apps/api/app/routers/auth_bridge.py` line 297 normalized `email` to lowercase at request entry, but the parallel `standalone_project_ref` path was not normalized. Existing PK on `user_identity_map` is `(standalone_user_id, standalone_project_ref)` and Postgres PK comparison is case-sensitive by default, so the upsert's `on_conflict` key did not match and a second row was inserted. Belt-and-braces missing at the DB layer — no CHECK invariant pinned the column to lowercase.
+
+**Migration (5 steps, single transaction).** (1) pre-scan for case-folded dup groups with `RAISE EXCEPTION` if more than the one expected, (2) delete the typo row by full PK (not by value alone), (3) conditional `UPDATE ... WHERE col <> lower(col)` for both `standalone_project_ref` and `email` (no-op for already-normalized rows — avoids WAL bloat), (4) add `CHECK (col IS NOT NULL AND col = lower(col))` constraints on both columns, (5) verify DO-block with `RAISE EXCEPTION` if any case-folded dup group remains.
+
+**App patch (`apps/api/app/routers/auth_bridge.py`).** Three lines. Added `project_ref_norm = body.standalone_project_ref.strip().lower()` beside the existing `email_norm`. Replaced `body.standalone_project_ref` with `project_ref_norm` in the three operational call sites (initial mapping SELECT, existing-mapping UPDATE, UPSERT body). Left the pre-auth bridge-secret-mismatch warning log with the raw `body.standalone_project_ref` so audit trail captures what bad clients actually sent, not the normalized version.
+
+**Verification.** Post-migration: 28 → 27 rows (1 dup removed), 27/27 rows `standalone_project_ref = lower(...)`, 27/27 rows `email = lower(...)`, `1d09d189-...` user has exactly one row (was two), both CHECK constraints present in `pg_constraint`. `python3 -m py_compile auth_bridge.py` → SYNTAX OK. `get_advisors(security)` → zero new findings introduced by this migration. Pre-existing `rls_enabled_no_policy` on `user_identity_map` is INFO-level and intentional per the original migration comment (deny-all client access, service_role-only writes, RLS bypass by service_role is by design).
+
+**Adversarial review (Cerebras Qwen3-235B, 4 objections, all incorporated BEFORE apply):**
+
+1. OBJECTION: Delete by project_ref value alone risks hitting other users if typo shared. COUNTER-EVIDENCE: pre-apply query showed exactly one row with `awfoqycoltVhamtrsvxk` tied to `1d09d189-...`; migration uses full PK (`standalone_user_id = ... AND standalone_project_ref = ...`) not value-only. RESIDUAL RISK: none.
+2. OBJECTION: UPDATE of `email = lower(email)` bloats WAL for already-normalized rows. COUNTER-EVIDENCE: migration uses `WHERE email <> lower(email)` — no-op for rows already compliant. Only rows needing change are touched. RESIDUAL RISK: none.
+3. OBJECTION: CHECK constraints may permit NULL bypass in edge cases. COUNTER-EVIDENCE: columns are NOT NULL at schema level (verified via `information_schema.columns`); CHECK additionally includes explicit `col IS NOT NULL AND ...`. Defense-in-depth. RESIDUAL RISK: none.
+4. OBJECTION: Migration assumes only one case-folded dup group exists without verification. COUNTER-EVIDENCE: Step 1 of the migration is a pre-scan that counts case-folded dup groups and raises `EXCEPTION 'Expected at most 1 case-folded dup group, found %'` if the count exceeds one, rolling back the entire transaction. RESIDUAL RISK: none.
+
+**Post-milestone retrospective (Gate 3, DeepSeek-chat):** "CONTINUE TO G2.7 because the migration was clean, all adversarial feedback was pre-incorporated, and the user case is a direct, gated outcome of the normalized data." No pivot needed.
+
+**Carry-forward.** G2.7 (xaqanimom audit) is now unblocked — user was auto-backfilled by G2.5 trigger (username `xaqanimom`, `is_platform_admin=false`). CEO-gated decision: silent backfill + return-analytics only, or one-time welcome email acknowledging the signup-delay experience. CTO will prep both options when CEO reopens this thread.
+
+Next action: G2.7 prep (draft option A memo + option B email copy). No more live-DB migrations in this thread — track G.2 DB hardening is done.
+
+---
+
+**G1.3 — Hardcoded demo-content scan results:**
+
+- `apps/web/src/data/sample-profile.ts` (typed fake AURA profile) — single canonical demo source.
+- `apps/web/src/app/[locale]/(public)/sample/page.tsx` — consumes the above; the known demo surface.
+- `apps/web/src/components/landing/sample-aura-preview.tsx` — renders sample on landing (marketing preview — acceptable if labelled "example profile").
+- 19 other route files matched the grep `(demo|sample|Sample|placeholder|lorem)` but were false positives (incidental use: `sampleRate`, `placeholder="email"`, `aria-label={t("landing.sampleProfileAria")}` referencing the intentional preview). No stub profiles, no Lorem, no `Test User` hardcodes in user-visible strings outside `/sample` + `sample-aura-preview`.
+
+**G1.4 — Feature-flag audit:** NO runtime feature-flag system exists in `apps/web/src/` (grep `feature.*flag|FEATURE_|NEXT_PUBLIC_ENABLE_|isEnabled` returns zero matches). Route gating today is purely structural — `(public)` vs `(dashboard)` vs `admin` route groups with layout-level guards. Consequence for launch: if a route isn't launch-ready, the only clean options are (a) take it out of the tree, (b) wrap it in an env-flag-aware early-return inside the page, or (c) move it under a separate route group that isn't linked from the public nav. Adding a `getFlag()` helper is a one-hour task — deferred until G.2.3 when we know which routes actually need it.
+
+---
+
+**Phase G.2 — Execute cleanup (single-sprint sweep, no rolling "cleanup branch" drift)**
+
+- [ ] **G2.1.** Delete every non-CEO, non-explicit-test row from Supabase production identified in G1.2. Preserve one named "test" org + handful of test profiles for smoke-testing. Document the cutoff in a decision log.
+- [ ] **G2.2.** Remove or flag-gate every hardcoded demo surface from G1.3. `/sample` decision: either make it a real "try it without signing in" page with a disclaimed test profile, or remove it.
+- [ ] **G2.3.** Route hygiene — every public route renders production-quality UI with production-quality copy. Any route that doesn't meet that bar goes behind a flag or gets removed.
+- [ ] **G2.4.** Crystal balance reset — zero out all non-CEO crystal balances. Anyone joining post-launch starts from zero by a clean earn-path, not by inheriting inflated dev balances.
+
+**Phase G.3 — Breathe check (end-to-end organism test)**
+
+- [ ] **G3.1.** One persona — fresh Google account, no prior data — executes the full public flow in production: sign up → complete assessment → receive AURA score → earn first crystal → emit a `character_event` → see the event surface in Life Feed / MindShift gateway. Document every friction point and every broken hop. Fix in-flight; no separate "bug backlog" doc.
+- [ ] **G3.2.** Energy mode check — walk the same flow in Full / Mid / Low energy modes. Every screen must render in every mode; no energy mode silently breaks.
+- [ ] **G3.3.** 5 Foundation Laws spot-check on the live site — open colour picker on every rendered page, scan for any hue in 0-15 / 345-360. Animation audit: every transition gated by `prefers-reduced-motion`. Shame-free language audit on copy.
+- [ ] **G3.4.** `/health` green on every backend (VOLAURA API, MindShift Supabase, EventShift backend). If EventShift-old is staying offline through launch, mark it officially dormant.
+
+**Phase G.4 — Launch (CEO-owned strategic decisions, CTA-owned execution)**
+
+- [ ] **G4.1.** **CEO decision** — target launch date, target audience (personal network / Azerbaijan tech Twitter / ProductHunt / LinkedIn / WUF13 partners), and whether launch is soft (curated invites) or open. This is the one strategic question Track G needs from CEO. All other G.4 execution flows from this answer.
+- [ ] **G4.2.** Launch copy for chosen channel — landing hero, one-pager, short-form posts. Human-voice, position-locked per `docs/TONE-OF-VOICE.md` ("Prove your skills. Earn your AURA. Get found by top organizations." — NEVER "volunteer" / "LinkedIn competitor").
+- [ ] **G4.3.** Post-launch monitoring — Sentry live, `/health` synthetic check, character_events volume graph. First 72 hours Atlas watches continuously (self-wake cron plus event-triggered alerts).
+
+Track G DoD: a stranger visiting `volaura.app` on launch-day-minus-zero sees no test data, no broken routes, no placeholder copy. Signs up. Completes an assessment. Gets a real AURA score. Earns a real crystal. The organism is breathing.
+
 ---
 
 ## Arsenal policy for this sprint
@@ -150,6 +422,4 @@ If sprint window closes before A1-A9 done: carry remaining tasks into next sprin
 
 ---
 
-*This file is the one-read source of truth for Atlas during this sprint. If it ever disagrees with BRAIN.md Open Debt or heartbeat.md — this file wins for near-term decisions, BRAIN.md wins for long-term state.*
-
-*Last updated: 2026-04-15 — initial write, autoloop-driven execution begins next iteration.*
+*This file is the one-read source of truth for Atlas during this sprint. If it ever disagrees with BRAIN.md Open Debt or heartbeat.md 

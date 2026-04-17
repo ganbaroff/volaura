@@ -1026,5 +1026,94 @@
   },
   "a11y": {
     "skipToContent": "Əsas məzmuna keç"
+  },
+  "eventshift": {
+    "title": "EventShift",
+    "create_cta": "Tədbir yarat",
+    "error": {
+      "generic": "Xəta baş verdi. Yenidən cəhd edin."
+    },
+    "empty": {
+      "no_org": {
+        "title": "Hələ təşkilat yoxdur",
+        "desc": "Əvvəlcə təşkilatınızı qurun",
+        "cta": "Təşkilat yarat"
+      },
+      "not_active": {
+        "title": "EventShift aktiv deyil",
+        "desc": "Təşkilatınız üçün EventShift-i aktivləşdirin",
+        "cta": "Modul parametrlərini aç"
+      }
+    },
+    "list": {
+      "heading": "Tədbirləriniz",
+      "sub": "Təşkilatınızın tədbirlərini idarə edin",
+      "empty": {
+        "title": "Hələ tədbir yoxdur",
+        "desc": "İlk tədbiriniz burada başlayır"
+      }
+    },
+    "detail": {
+      "loading": "Tədbir yüklənir\u2026",
+      "back": "Tədbirlərə qayıt",
+      "err": {
+        "load": "Tədbir yüklənmədi"
+      },
+      "meta": {
+        "start": "Başlanğıc",
+        "end": "Son",
+        "timezone": "Saat qurşağı",
+        "status": "Status"
+      },
+      "departments": {
+        "heading": "Şöbələr",
+        "add": "Şöbə əlavə et",
+        "placeholder": "Şöbə adı",
+        "empty": {
+          "title": "Hələ şöbə yoxdur",
+          "desc": "Təşkil etməyə başlamaq üçün ilk şöbəni əlavə edin"
+        }
+      },
+      "areas": {
+        "heading": "Sahələr",
+        "add": "Sahə əlavə et",
+        "placeholder": "Sahə adı",
+        "empty": "Hələ sahə yoxdur"
+      },
+      "units": {
+        "heading": "Növbə bölmələri",
+        "add": "Bölmə əlavə et",
+        "placeholder": "Bölmə adı",
+        "empty": "Hələ bölmə yoxdur",
+        "headcount": "Nəfər sayı",
+        "shift_start": "Növbə başlanğıc vaxtı",
+        "shift_end": "Növbə bitmə vaxtı"
+      },
+      "low_energy": {
+        "drilldown": "Sahə və bölmələri idarə etmək üçün tədbiri tam enerji rejimində açın"
+      }
+    },
+    "create": {
+      "title": "Yeni tədbir",
+      "back": "Tədbirlərə qayıt",
+      "submit": "Tədbir yarat",
+      "submitting": "Yaradılır\u2026",
+      "err": {
+        "slug_taken": "Bu slug artıq istifadə olunur",
+        "generic": "Tədbir yaradılmadı. Yenidən cəhd edin."
+      },
+      "field": {
+        "name": "Ad",
+        "name_ph": "məs. Texnologiya Konfransı 2026",
+        "slug": "URL slug",
+        "slug_hint": "Yalnız kiçik hərflər, rəqəmlər və tire",
+        "start": "Başlanğıc",
+        "end": "Son",
+        "status": "Status",
+        "description": "Təsvir",
+        "description_ph": "İnsanlara tədbiriniz haqqında danışın",
+        "timezone": "Saat qurşağı"
+      }
+    }
   }
 }

@@ -36,7 +36,7 @@ import { TopBar } from "@/components/layout/top-bar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
-import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { useMotionPreference } from "@/hooks/use-reduced-motion";
 import {
   useEventShiftEvent,
   useDepartments,
@@ -72,11 +72,6 @@ export default function EventShiftDetailPage() {
     <div className="flex min-h-screen flex-col">
       <TopBar
         title={ev?.name ?? t("eventshift.detail.loading", { defaultValue: "Loading event…" })}
-        subtitle={
-          ev
-            ? `/${ev.slug} · ${t(`eventshift.status.${ev.status}`, { defaultValue: ev.status })}`
-            : undefined
-        }
       />
 
       <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-6 sm:px-6 md:py-10">
@@ -302,7 +297,7 @@ function DepartmentRow({
   energy: "full" | "mid" | "low";
 }) {
   const [expanded, setExpanded] = useState(false);
-  const shouldReduceMotion = useReducedMotion();
+  const { shouldReduceMotion } = useMotionPreference();
   const { t } = useTranslation();
 
   return (
@@ -453,7 +448,7 @@ function AreaList({ departmentId }: { departmentId: string }) {
 
 function AreaRow({ area }: { area: EventShiftArea }) {
   const [expanded, setExpanded] = useState(false);
-  const shouldReduceMotion = useReducedMotion();
+  const { shouldReduceMotion } = useMotionPreference();
 
   return (
     <div className="rounded-lg border border-outline-variant/60 bg-surface-container-high">

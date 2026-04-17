@@ -27,7 +27,7 @@ import { TopBar } from "@/components/layout/top-bar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
-import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { useMotionPreference } from "@/hooks/use-reduced-motion";
 import {
   useEventShiftActivation,
   useEventShiftEvents,
@@ -51,7 +51,7 @@ export default function EventShiftListPage() {
   const params = useParams<{ locale: string }>();
   const locale = params?.locale ?? "en";
   const energy = useEnergyMode().energy;
-  const shouldReduceMotion = useReducedMotion();
+  const { shouldReduceMotion } = useMotionPreference();
 
   const activation = useEventShiftActivation();
   const events = useEventShiftEvents();
@@ -82,9 +82,6 @@ export default function EventShiftListPage() {
     <div className="flex min-h-screen flex-col">
       <TopBar
         title={t("eventshift.title", { defaultValue: "EventShift" })}
-        subtitle={t("eventshift.tagline", {
-          defaultValue: "Departments · Areas · Units · People",
-        })}
       />
 
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 md:py-10">
@@ -254,7 +251,7 @@ function EventCard({ ev, locale }: { ev: EventShiftEvent; locale: string }) {
         </span>
         <span className="inline-flex items-center gap-1.5">
           <Clock className="h-3.5 w-3.5" aria-hidden="true" />
-          {formatDuration(start, end, t)}
+          {formatDuration(start, end)}
         </span>
       </div>
     </Link>
@@ -275,17 +272,8 @@ function StatusPill({ status }: { status: EventShiftStatus }) {
   );
 }
 
-function formatDuration(start: Date, end: Date, t: (k: string, o?: object) => string): string {
+function formatDuration(start: Date, end: Date): string {
   const hrs = Math.max(1, Math.round((end.getTime() - start.getTime()) / 3_600_000));
-  if (hrs < 24) {
-    return t("eventshift.duration.hours", {
-      defaultValue: "{{count}} h",
-      count: hrs,
-    });
-  }
-  const days = Math.round(hrs / 24);
-  return t("eventshift.duration.days", {
-    defaultValue: "{{count}} d",
-    count: days,
-  });
+  if (hrs < 24) return `${hrs} h`;
+  return `${Math.round(hrs / 24)} d`;
 }

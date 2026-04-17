@@ -8,6 +8,7 @@ import { CompetencyCard } from "@/components/assessment/competency-card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Loader2 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { createClient } from "@/lib/supabase/client";
 import { API_BASE } from "@/lib/api/client";
 import { useTrackEvent } from "@/hooks/use-analytics";
@@ -20,14 +21,14 @@ import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 // Static competency metadata — labels fetched from i18n, weights from CLAUDE.md
 const COMPETENCIES = [
-  { id: "communication",        weight: 0.20, estimatedMinutes: 5,  icon: "💬" },
-  { id: "reliability",          weight: 0.15, estimatedMinutes: 4,  icon: "⏰" },
-  { id: "english_proficiency",  weight: 0.15, estimatedMinutes: 5,  icon: "🌍" },
-  { id: "leadership",           weight: 0.15, estimatedMinutes: 5,  icon: "🧭" },
-  { id: "event_performance",    weight: 0.10, estimatedMinutes: 4,  icon: "🏆" },
-  { id: "tech_literacy",        weight: 0.10, estimatedMinutes: 4,  icon: "💻" },
-  { id: "adaptability",         weight: 0.10, estimatedMinutes: 4,  icon: "🔄" },
-  { id: "empathy_safeguarding", weight: 0.05, estimatedMinutes: 3,  icon: "🤝" },
+  { id: "communication",        weight: 0.20, estimatedMinutes: 5,  icon: "\u{1F4AC}" },
+  { id: "reliability",          weight: 0.15, estimatedMinutes: 4,  icon: "\u23F0" },
+  { id: "english_proficiency",  weight: 0.15, estimatedMinutes: 5,  icon: "\u{1F30D}" },
+  { id: "leadership",           weight: 0.15, estimatedMinutes: 5,  icon: "\u{1F9ED}" },
+  { id: "event_performance",    weight: 0.10, estimatedMinutes: 4,  icon: "\u{1F3C6}" },
+  { id: "tech_literacy",        weight: 0.10, estimatedMinutes: 4,  icon: "\u{1F4BB}" },
+  { id: "adaptability",         weight: 0.10, estimatedMinutes: 4,  icon: "\u{1F504}" },
+  { id: "empathy_safeguarding", weight: 0.05, estimatedMinutes: 3,  icon: "\u{1F91D}" },
 ] as const;
 
 type CompetencyId = (typeof COMPETENCIES)[number]["id"];
@@ -295,8 +296,17 @@ export default function AssessmentPage() {
   return (
     <Suspense
       fallback={
-        <div className="mx-auto max-w-lg px-4 py-16 flex items-center justify-center">
-          <Loader2 className="size-8 text-primary animate-spin" aria-hidden="true" />
+        <div className="mx-auto max-w-lg px-4 py-8 space-y-6">
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-4 w-64" />
+          </div>
+          <div className="grid gap-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-20 w-full rounded-xl" />
+            ))}
+          </div>
+          <Skeleton className="h-12 w-full rounded-lg" />
         </div>
       }
     >

@@ -5,7 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Loader2, Clock, ChevronLeft, RotateCcw, AlertCircle } from "lucide-react";
+import { Clock, ChevronLeft, RotateCcw, AlertCircle } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils/cn";
 import { useAssessmentInfo } from "@/hooks/queries/use-assessment";
 import { ApiError } from "@/lib/api/client";
@@ -66,11 +67,18 @@ export default function AssessmentInfoPage() {
 
   if (isLoading) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-16 flex flex-col items-center gap-4">
-        <Loader2 className="size-10 text-primary animate-spin" aria-hidden="true" />
-        <p className="text-sm text-muted-foreground" role="status" aria-live="polite">
-          {t("common.loading")}
-        </p>
+      <div className="mx-auto max-w-lg px-4 py-6 space-y-6" role="status" aria-live="polite">
+        <Skeleton className="h-4 w-16" />
+        <div className="space-y-2">
+          <Skeleton className="h-3 w-20" />
+          <Skeleton className="h-8 w-48" />
+        </div>
+        <Skeleton className="h-16 w-full rounded-lg" />
+        <div className="grid grid-cols-2 gap-3">
+          <Skeleton className="h-20 w-full rounded-xl" />
+          <Skeleton className="h-20 w-full rounded-xl" />
+        </div>
+        <Skeleton className="h-12 w-full rounded-lg" />
       </div>
     );
   }

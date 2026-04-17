@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import {
-  Loader2,
   ArrowLeft,
   Download,
   Copy,
@@ -14,6 +13,7 @@ import {
   Clock,
   XCircle,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { TopBar } from "@/components/layout/top-bar";
 import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api/client";
@@ -220,8 +220,18 @@ export default function GenerationPage({
     return (
       <>
         <TopBar title={t("brandedby.videoTitle", { defaultValue: "Your Video" })} />
-        <div className="flex h-64 items-center justify-center">
-          <Loader2 className="size-8 animate-spin text-primary" aria-label={t("common.loading")} />
+        <div className="mx-auto max-w-lg p-6 space-y-6" role="status" aria-live="polite">
+          <Skeleton className="h-8 w-24" />
+          <Skeleton className="h-64 w-full rounded-2xl" />
+          <div className="space-y-2 text-center">
+            <Skeleton className="h-6 w-56 mx-auto" />
+            <Skeleton className="h-4 w-72 mx-auto" />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="h-9 w-28 rounded-md" />
+            ))}
+          </div>
         </div>
       </>
     );
@@ -271,7 +281,7 @@ export default function GenerationPage({
           >
             <div className="size-16 rounded-full bg-blue-500/10 flex items-center justify-center">
               {gen.status === "processing" ? (
-                <Loader2 className="size-8 text-blue-500 animate-spin" aria-hidden="true" />
+                <Skeleton className="size-8 rounded-full" />
               ) : (
                 <Clock className="size-8 text-yellow-500" aria-hidden="true" />
               )}

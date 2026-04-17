@@ -19,6 +19,7 @@ import {
   ListChecks,
   Clock,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils/cn";
 import { createClient } from "@/lib/supabase/client";
 import { apiFetch } from "@/lib/api/client";
@@ -272,19 +273,26 @@ export default function AssessmentResultsPage() {
 
   if (phase === "loading") {
     return (
-      <div className="mx-auto max-w-lg px-4 py-16 flex flex-col items-center text-center space-y-8">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 200, damping: 18 }}
-        >
-          <div className="size-24 rounded-full bg-primary/10 flex items-center justify-center">
-            <Loader2 className="size-12 text-primary animate-spin" aria-hidden="true" />
+      <div className="mx-auto max-w-lg px-4 py-16 space-y-8" role="status" aria-live="polite">
+        <div className="flex flex-col items-center text-center space-y-4">
+          <Skeleton className="size-28 rounded-full" />
+          <div className="space-y-2 w-full">
+            <Skeleton className="h-3 w-24 mx-auto" />
+            <Skeleton className="h-7 w-48 mx-auto" />
+            <Skeleton className="h-10 w-20 mx-auto" />
           </div>
-        </motion.div>
-        <div className="space-y-2" role="status" aria-live="polite">
-          <h1 className="text-xl font-semibold text-foreground">{t("assessment.processingResults")}</h1>
-          <p className="text-sm text-muted-foreground">{t("assessment.evaluating")}</p>
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="rounded-xl bg-surface-container-low p-3 space-y-2 flex flex-col items-center">
+              <Skeleton className="h-7 w-12" />
+              <Skeleton className="h-3 w-16" />
+            </div>
+          ))}
+        </div>
+        <div className="space-y-2 text-center">
+          <Skeleton className="h-5 w-40 mx-auto" />
+          <Skeleton className="h-4 w-56 mx-auto" />
         </div>
       </div>
     );

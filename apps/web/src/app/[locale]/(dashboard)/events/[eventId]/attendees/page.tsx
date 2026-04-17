@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { Loader2, ArrowLeft, Users, UserCheck, UserX, Star } from "lucide-react";
+import { ArrowLeft, Users, UserCheck, UserX, Star } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
 import { useEventAttendees, useRateProfessional } from "@/hooks/queries/use-events";
@@ -226,8 +227,19 @@ export default function EventAttendeesPage() {
 
       {/* Loading */}
       {isLoading && (
-        <div className="flex justify-center py-12">
-          <Loader2 className="size-8 animate-spin text-primary" />
+        <div className="space-y-2" role="status" aria-live="polite">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3">
+              <Skeleton className="size-5 rounded" />
+              <div className="flex-1 space-y-1.5">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-3 w-20" />
+              </div>
+              <Skeleton className="h-4 w-12" />
+              <Skeleton className="h-5 w-16 rounded-full" />
+              <Skeleton className="h-4 w-16" />
+            </div>
+          ))}
         </div>
       )}
 

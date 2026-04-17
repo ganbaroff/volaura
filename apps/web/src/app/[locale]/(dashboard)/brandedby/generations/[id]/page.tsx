@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api/client";
 import { useGeneration, useMyTwin } from "@/hooks/queries/use-brandedby";
 import { cn } from "@/lib/utils/cn";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 // ── LinkedIn icon (inline SVG — no dep) ──────────────────────────────────
 
@@ -205,6 +206,8 @@ export default function GenerationPage({
     return () => { isMounted.current = false; };
   }, []);
 
+  const { energy } = useEnergyMode();
+  const isLow = energy === "low";
   const { data: gen, isLoading, error } = useGeneration(genId);
   const { data: twin } = useMyTwin();
 
@@ -379,49 +382,53 @@ export default function GenerationPage({
           />
         </motion.div>
 
-        {/* CTA headline */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="text-center"
-        >
-          <h2 className="text-lg font-bold flex items-center justify-center gap-2">
-            <Share2 className="size-5 text-primary" aria-hidden="true" />
-            {t("brandedby.shareTitle", { defaultValue: "Share to grow your personal brand" })}
-          </h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            {t("brandedby.shareHint", {
-              defaultValue: "Post this on LinkedIn & TikTok. Add the caption below to attract opportunities.",
-            })}
-          </p>
-        </motion.div>
+        {!isLow && (
+          <>
+            {/* CTA headline */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-center"
+            >
+              <h2 className="text-lg font-bold flex items-center justify-center gap-2">
+                <Share2 className="size-5 text-primary" aria-hidden="true" />
+                {t("brandedby.shareTitle", { defaultValue: "Share to grow your personal brand" })}
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                {t("brandedby.shareHint", {
+                  defaultValue: "Post this on LinkedIn & TikTok. Add the caption below to attract opportunities.",
+                })}
+              </p>
+            </motion.div>
 
-        {/* Share buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <VideoShareButtons
-            videoUrl={videoUrl}
-            displayName={twin?.display_name ?? ""}
-            genId={genId}
-          />
-        </motion.div>
+            {/* Share buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <VideoShareButtons
+                videoUrl={videoUrl}
+                displayName={twin?.display_name ?? ""}
+                genId={genId}
+              />
+            </motion.div>
 
-        {/* Script */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="rounded-xl border border-border bg-muted/30 p-4 space-y-1"
-        >
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            {t("brandedby.scriptLabel", { defaultValue: "Script" })}
-          </p>
-          <p className="text-sm text-foreground leading-relaxed">{gen.input_text}</p>
-        </motion.div>
+            {/* Script */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="rounded-xl border border-border bg-muted/30 p-4 space-y-1"
+            >
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                {t("brandedby.scriptLabel", { defaultValue: "Script" })}
+              </p>
+              <p className="text-sm text-foreground leading-relaxed">{gen.input_text}</p>
+            </motion.div>
+          </>
+        )}
       </div>
     </>
   );

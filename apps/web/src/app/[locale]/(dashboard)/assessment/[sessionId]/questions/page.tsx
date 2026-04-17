@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils/cn";
 import { useQuestionBreakdown } from "@/hooks/queries/use-assessment";
 import type { QuestionResult } from "@/hooks/queries/use-assessment";
 import { ApiError } from "@/lib/api/client";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 // ── Difficulty badge ────────────────────────────────────────────────────
 
@@ -40,7 +41,7 @@ function DifficultyBadge({ label }: { label: string }) {
 
 // ── Single question row ─────────────────────────────────────────────────
 
-function QuestionRow({ q, locale, index }: { q: QuestionResult; locale: string; index: number }) {
+function QuestionRow({ q, locale, index, isLow }: { q: QuestionResult; locale: string; index: number; isLow: boolean }) {
   const { t } = useTranslation();
   const text = locale === "az" && q.question_az ? q.question_az : (q.question_en ?? "—");
   const timeSeconds = q.response_time_ms != null
@@ -73,8 +74,8 @@ function QuestionRow({ q, locale, index }: { q: QuestionResult; locale: string; 
           {q.is_correct ? t("assessment.correct") : t("assessment.incorrect")}
         </span>
         <div className="flex-1" />
-        <DifficultyBadge label={q.difficulty_label} />
-        {timeSeconds !== null && (
+        {!isLow && <DifficultyBadge label={q.difficulty_label} />}
+        {!isLow && timeSeconds !== null && (
           <span className="flex items-center gap-1 text-xs text-muted-foreground">
             <Clock className="size-3" aria-hidden="true" />
             {t("assessment.responseTime", { n: timeSeconds })}
@@ -95,6 +96,8 @@ export default function QuestionBreakdownPage() {
   const { t } = useTranslation();
   const router = useRouter();
 
+  const { energy } = useEnergyMode();
+  const isLow = energy === "low";
   const { data, isLoading, error } = useQuestionBreakdown(sessionId);
 
   // 404 → redirect to complete page (session not done yet or not found)
@@ -181,7 +184,7 @@ export default function QuestionBreakdownPage() {
           </h2>
           <div className="space-y-2">
             {correctQuestions.map((q, i) => (
-              <QuestionRow key={q.question_id} q={q} locale={locale} index={i} />
+              <QuestionRow key={q.question_id} q={q} locale={locale} index={i} isLow={isLow} />
             ))}
           </div>
         </section>
@@ -196,7 +199,7 @@ export default function QuestionBreakdownPage() {
           </h2>
           <div className="space-y-2">
             {incorrectQuestions.map((q, i) => (
-              <QuestionRow key={q.question_id} q={q} locale={locale} index={i} />
+              <QuestionRow key={q.question_id} q={q} locale={locale} index={i} isLow={isLow} />
             ))}
           </div>
         </section>

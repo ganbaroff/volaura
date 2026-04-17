@@ -8,12 +8,15 @@ import { Button } from "@/components/ui/button";
 import { apiFetch, ApiError } from "@/lib/api/client";
 import { useAuthToken } from "@/hooks/queries/use-auth-token";
 import { TopBar } from "@/components/layout/top-bar";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 export default function CheckinPage() {
   const { t } = useTranslation();
   const { eventId } = useParams<{ eventId: string }>();
   const getToken = useAuthToken();
 
+  const { energy } = useEnergyMode();
+  const isLow = energy === "low";
   const [code, setCode] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -47,11 +50,13 @@ export default function CheckinPage() {
       <TopBar title={t("events.checkin", { defaultValue: "Event Check-in" })} />
       <div className="max-w-md mx-auto p-4 space-y-6">
         <div className="text-center space-y-2">
-          <QrCode className="size-12 text-primary mx-auto" />
+          {!isLow && <QrCode className="size-12 text-primary mx-auto" />}
           <h2 className="text-lg font-bold">{t("events.enterCode", { defaultValue: "Enter check-in code" })}</h2>
-          <p className="text-sm text-muted-foreground">
-            {t("events.checkinDesc", { defaultValue: "Enter the code provided by the event coordinator." })}
-          </p>
+          {!isLow && (
+            <p className="text-sm text-muted-foreground">
+              {t("events.checkinDesc", { defaultValue: "Enter the code provided by the event coordinator." })}
+            </p>
+          )}
         </div>
 
         <div className="space-y-3">

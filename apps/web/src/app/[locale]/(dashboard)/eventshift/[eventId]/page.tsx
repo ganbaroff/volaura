@@ -51,7 +51,7 @@ import {
 } from "@/hooks/queries/use-eventshift";
 
 const inlineInputClass =
-  "w-full rounded-lg border border-outline-variant bg-surface-container px-3 py-1.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all";
+  "w-full rounded-lg border border-outline-variant bg-surface-container px-3 py-1.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 transition-all";
 
 const inlineButtonClass =
   "inline-flex items-center gap-1.5 rounded-lg border border-outline-variant bg-surface-container px-3 py-1.5 text-xs font-medium text-on-surface transition-all hover:border-primary/40 hover:bg-surface-container-high focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40";
@@ -597,7 +597,7 @@ function UnitList({ areaId }: { areaId: string }) {
               onChange={(e) =>
                 setForm((f) => ({ ...f, required_headcount: Number(e.target.value) }))
               }
-              className="w-20 rounded-lg border border-outline-variant bg-surface-container px-2 py-1 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/40"
+              className="w-20 rounded-lg border border-outline-variant bg-surface-container px-2 py-1 text-sm text-on-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
             />
             <div className="ml-auto flex gap-2">
               <button

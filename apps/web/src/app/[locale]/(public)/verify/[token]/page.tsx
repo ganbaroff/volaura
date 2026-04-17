@@ -294,7 +294,7 @@ function CommentScreen({
           onChange={(e) => setComment(e.target.value.slice(0, 500))}
           rows={4}
           placeholder={t("verify.commentPlaceholder")}
-          className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-ring resize-none"
+          className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
           aria-describedby="comment-count"
         />
         <p

@@ -167,7 +167,7 @@ export default function EditProfilePage() {
             onChange={(e) => setDisplayName(e.target.value)}
             maxLength={80}
             placeholder={t("onboarding.namePlaceholder")}
-            className="w-full rounded-xl border border-input bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="w-full rounded-xl border border-input bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
           />
         </div>
 
@@ -182,7 +182,7 @@ export default function EditProfilePage() {
             maxLength={300}
             rows={3}
             placeholder={t("profile.edit.bioPlaceholder", { defaultValue: "What do you do? What are you passionate about?" })}
-            className="w-full rounded-xl border border-input bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
+            className="w-full rounded-xl border border-input bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 resize-none"
           />
           <p className="text-xs text-muted-foreground text-right">{bio.length}/300</p>
         </div>
@@ -198,7 +198,7 @@ export default function EditProfilePage() {
             onChange={(e) => setLocation(e.target.value)}
             maxLength={100}
             placeholder={t("onboarding.locationPlaceholder")}
-            className="w-full rounded-xl border border-input bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="w-full rounded-xl border border-input bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
           />
         </div>
 

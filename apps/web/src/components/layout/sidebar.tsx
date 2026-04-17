@@ -6,7 +6,7 @@ import { useAuthStore } from "@/stores/auth-store";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useUnreadCount } from "@/hooks/queries/use-notifications";
 import { useProfile } from "@/hooks/queries/use-profile";
 
@@ -34,10 +34,16 @@ export function Sidebar() {
   const clear = useAuthStore((s) => s.clear);
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const hamburgerRef = useRef<HTMLButtonElement>(null);
   const { data: unreadData } = useUnreadCount();
   const unreadCount = unreadData?.unread_count ?? 0;
   const { data: profile } = useProfile();
   const isOrg = (profile as { account_type?: string } | undefined)?.account_type === "organization";
+
+  const closeSidebar = useCallback(() => {
+    setIsOpen(false);
+    hamburgerRef.current?.focus();
+  }, []);
 
   // Close sidebar on route change (mobile)
   useEffect(() => {
@@ -46,8 +52,8 @@ export function Sidebar() {
 
   // Close on Escape key
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.key === "Escape") setIsOpen(false);
-  }, []);
+    if (e.key === "Escape") closeSidebar();
+  }, [closeSidebar]);
 
   useEffect(() => {
     if (isOpen) {
@@ -67,6 +73,7 @@ export function Sidebar() {
     <>
       {/* Mobile hamburger button */}
       <button
+        ref={hamburgerRef}
         onClick={() => setIsOpen(true)}
         aria-label={t("nav.openMenu")}
         className="relative fixed left-3 top-3 z-[60] flex size-11 items-center justify-center rounded-xl bg-surface-container text-on-surface md:hidden"
@@ -87,7 +94,7 @@ export function Sidebar() {
       {isOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/50 md:hidden"
-          onClick={() => setIsOpen(false)}
+          onClick={closeSidebar}
           aria-hidden="true"
         />
       )}
@@ -109,7 +116,7 @@ export function Sidebar() {
             Volaura
           </Link>
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={closeSidebar}
             aria-label={t("nav.closeMenu")}
             className="flex size-8 items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container md:hidden"
           >

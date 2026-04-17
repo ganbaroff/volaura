@@ -283,7 +283,7 @@ function SignupForm() {
               value={orgType}
               onChange={(e) => setOrgType(e.target.value as OrgType)}
               required
-              className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <option value="">—</option>
               <option value="ngo">{t("auth.orgTypeNgo")}</option>
@@ -311,7 +311,7 @@ function SignupForm() {
             pattern="[\-a-zA-Z0-9_\u0259\u011F\u0131\u00F6\u00FC\u015F\u00E7\u018F\u011E\u0130\u00D6\u00DC\u015E\u00C7]+"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+            className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
           />
         </div>
 
@@ -327,7 +327,7 @@ function SignupForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+            className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
           />
         </div>
 
@@ -346,7 +346,7 @@ function SignupForm() {
               maxLength={128}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="flex h-10 w-full rounded-md border border-border bg-background px-3 pr-10 py-2 text-sm outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+              className="flex h-10 w-full rounded-md border border-border bg-background px-3 pr-10 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
             />
             <button
               type="button"
@@ -377,7 +377,7 @@ function SignupForm() {
               value={inviteCode}
               onChange={(e) => setInviteCode(e.target.value)}
               placeholder={t("auth.inviteCodePlaceholder", { defaultValue: "Enter your invite code" })}
-              className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+              className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
             />
             <p className="text-xs text-muted-foreground">
               {t("auth.inviteCodeHint", { defaultValue: "Volaura is currently invite-only. Ask a friend or contact us to get a code." })}

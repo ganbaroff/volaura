@@ -136,7 +136,7 @@ export default function OrganizationsDiscoveryPage() {
               onChange={(e) => setQuery(e.target.value)}
               placeholder={t("orgs.searchPlaceholder")}
               aria-label={t("orgs.searchPlaceholder")}
-              className="w-full rounded-2xl border border-outline-variant bg-surface-container px-4 py-3 pl-10 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+              className="w-full rounded-2xl border border-outline-variant bg-surface-container px-4 py-3 pl-10 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 transition-all"
             />
           </motion.div>
         </div>

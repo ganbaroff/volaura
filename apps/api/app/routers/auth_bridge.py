@@ -293,8 +293,14 @@ async def bridge_from_external(
             detail={"code": "INVALID_BRIDGE_SECRET", "message": "Invalid or missing bridge secret"},
         )
 
-    # ── Normalize email once — used for all lookups, create, and upsert ──
+    # ── Normalize email + project_ref once — used for all lookups, create, and upsert ──
+    # project_ref normalization added 2026-04-17 (G2.6) — MindShift bridge-proxy
+    # was sending mixed-case project refs ('awfoqycoltvhamtrsvxk' vs
+    # 'awfoqycoltVhamtrsvxk'), which created duplicate PK rows that split user
+    # identity. DB now also enforces chk_project_ref_lower + chk_email_lower
+    # CHECK constraints as belt-and-braces.
     email_norm = body.email.strip().lower()
+    project_ref_norm = body.standalone_project_ref.strip().lower()
 
     # ── Step 1: look up existing mapping by (standalone_user_id, project_ref) ──
     # Keyed on standalone_user_id (not email) so that email drift in MindShift
@@ -305,7 +311,7 @@ async def bridge_from_external(
         await admin.table("user_identity_map")
         .select("shared_user_id, email")
         .eq("standalone_user_id", body.standalone_user_id)
-        .eq("standalone_project_ref", body.standalone_project_ref)
+        .eq("standalone_project_ref", project_ref_norm)
         .execute()
     )
 
@@ -327,7 +333,7 @@ async def bridge_from_external(
                 }
             )
             .eq("standalone_user_id", body.standalone_user_id)
-            .eq("standalone_project_ref", body.standalone_project_ref)
+            .eq("standalone_project_ref", project_ref_norm)
             .execute()
         )
         logger.info(
@@ -354,7 +360,7 @@ async def bridge_from_external(
                 .upsert(
                     {
                         "standalone_user_id": body.standalone_user_id,
-                        "standalone_project_ref": body.standalone_project_ref,
+                        "standalone_project_ref": project_ref_norm,
                         "shared_user_id": shared_user_id,
                         "email": email_norm,
                         "source_product": body.source_product,

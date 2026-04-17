@@ -60,6 +60,7 @@ from app.routers import (
     community,
     discovery,
     events,
+    eventshift,
     grievance,
     health,
     invites,
@@ -198,6 +199,7 @@ app.include_router(aura.router, prefix="/api")
 app.include_router(grievance.router, prefix="/api")
 app.include_router(assessment.router, prefix="/api")
 app.include_router(events.router, prefix="/api")
+app.include_router(eventshift.router, prefix="/api")
 app.include_router(organizations.router, prefix="/api")
 app.include_router(invites.router, prefix="/api")
 app.include_router(badges.router, prefix="/api")

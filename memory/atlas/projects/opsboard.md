@@ -260,3 +260,21 @@ Need CEO to point to the file OR acknowledge the customer list is not yet canoni
 - 2026-04-17 11:56 Baku: EventShift = universal module, not WUF13-app. Multi-tenant from schema-level. Octopus catalogue is the business model. WUF13 proves customer #1 on May 15.
 - 2026-04-17 11:56 Baku: The 11:45 "28-day WUF13 scope lock" framing is formally superseded. WUF13 is tenant #1, not the product.
 - Revisit trigger: if a second customer signs before WUF13 (re-plan sequence), OR if customer list reveals a non-event workforce need (new arm category), OR if CEO reverses on universal-module framing.
+
+---
+
+## Canonical CEO directive — verbatim (preserved 2026-04-17 12:30 Baku)
+
+Source: previous Cowork transcript `2db7bd52-fc40-445b-91e1-a5193470d0dc.jsonl` line 727. Preserved inside the project repo per CEO's documents-as-memory principle: "долкументы это твоя память. удалять память нужно только если уверен что она где то хранится в каком то формате" (2026-04-17). Transcript may be pruned over time; this quote block is the permanent home.
+
+> Твоя апрельская правка про домен-модель тоже сохранена: «Event → Department → Area → Unit → People + Metrics», people-first, не incident-first. Набросанные миграция Supabase и роутеры FastAPI и страницы фронта пока отражают старую инцидент-модель — их надо переписать под новый домен до WUF13. Это моя работа, не твоя. do not forget we are not developing an app for wuf 13 we just optimising this for now for mvp. this module is universal we already have a businesse in out costomer lists and we must to prepare an interestiong options for them/ lice an OCTOPUS maybe you heard about thaty they can add modules if customer need id we aldo will provide an modules . but for nw concentrate in this. we must to analyse all ways for integration this module- do researchs( i already prepared 1 or 2 pcs and you can find it? i dont know where you register is( not you previous cowowrk you can ask him anything) and our constitutuion what you think do we have documents which making our ecosystem weaker? do swot analysis.
+
+Five load-bearing instructions in this message (extracted for quick reference):
+
+1. **Domain model is people-first:** Event → Department → Area → Unit → People + Metrics. Incidents are a metric stream under a Unit, not the root entity. Current FastAPI routers + frontend pages reflect the old incident-first shape and must be rewritten before WUF13.
+2. **EventShift is a universal module, not a WUF13 app.** WUF13 is a tenant-#1 MVP trigger, not the product boundary.
+3. **Octopus business shape:** customers pick modules from a catalogue; VOLAURA ships both the core and the modules. Customer list already exists (location pending, flagged separately).
+4. **Do full integration-path research** — all the ways this module plugs into the core. CEO prepared 1-2 research pieces prior; location unknown; CEO grants permission to consult the previous Cowork-Atlas for memory recovery.
+5. **SWOT the ecosystem documentation** — identify which existing docs weaken the ecosystem (contradictory framing, superseded guidance still active, duplication without hierarchy). Feed results into the DEBT-MAP living document, not a new brief.
+
+Canonical doc for points 2-3: `docs/MODULES.md` (written 2026-04-17 12:10 Baku). Canonical doc for point 1: `docs/MODULES.md` §10 EventShift snapshot (updated 2026-04-17 12:30 Baku with the Event → Department → Area → Unit → People + Metrics shape). Point 4 (integration paths) is enumerated in `docs/MODULES.md` §5 as the 7 paths. Point 5 is tracked in `memory/atlas/DEBT-MAP-2026-04-15.md`.

@@ -843,6 +843,12 @@
   "brandedby": {
     "tagline": "AI Twin — your verified skills, in a talking-head video."
   },
+  "atlas": {
+    "tagline": "The orchestrator. One gateway to manage all ecosystem products."
+  },
+  "mindshift": {
+    "tagline": "AI-powered cognitive training. Sharpen focus, build mental resilience."
+  },
   "orgDash": {
     "title": "Talent Dashboard",
     "subtitle": "Track assessment completion and AURA scores across your talent",
@@ -983,5 +989,94 @@
   },
   "a11y": {
     "skipToContent": "Skip to main content"
+  },
+  "eventshift": {
+    "title": "EventShift",
+    "create_cta": "Create event",
+    "error": {
+      "generic": "Something went wrong. Please try again."
+    },
+    "empty": {
+      "no_org": {
+        "title": "No organization yet",
+        "desc": "First, set up your organization",
+        "cta": "Create organization"
+      },
+      "not_active": {
+        "title": "EventShift not active",
+        "desc": "Activate EventShift for your organization",
+        "cta": "Open module settings"
+      }
+    },
+    "list": {
+      "heading": "Your events",
+      "sub": "Manage your organization's events",
+      "empty": {
+        "title": "No events yet",
+        "desc": "Your first event starts here"
+      }
+    },
+    "detail": {
+      "loading": "Loading event\u2026",
+      "back": "Back to events",
+      "err": {
+        "load": "Failed to load event"
+      },
+      "meta": {
+        "start": "Start",
+        "end": "End",
+        "timezone": "Timezone",
+        "status": "Status"
+      },
+      "departments": {
+        "heading": "Departments",
+        "add": "Add department",
+        "placeholder": "Department name",
+        "empty": {
+          "title": "No departments yet",
+          "desc": "Add your first department to start organizing"
+        }
+      },
+      "areas": {
+        "heading": "Areas",
+        "add": "Add area",
+        "placeholder": "Area name",
+        "empty": "No areas yet"
+      },
+      "units": {
+        "heading": "Shift units",
+        "add": "Add unit",
+        "placeholder": "Unit label",
+        "empty": "No units yet",
+        "headcount": "Headcount",
+        "shift_start": "Shift start time",
+        "shift_end": "Shift end time"
+      },
+      "low_energy": {
+        "drilldown": "Open the event in full-energy mode to manage areas and units"
+      }
+    },
+    "create": {
+      "title": "New event",
+      "back": "Back to events",
+      "submit": "Create event",
+      "submitting": "Creating\u2026",
+      "err": {
+        "slug_taken": "This slug is already taken",
+        "generic": "Failed to create event. Please try again."
+      },
+      "field": {
+        "name": "Name",
+        "name_ph": "e.g. Tech Conference 2026",
+        "slug": "URL slug",
+        "slug_hint": "Lowercase letters, numbers, and dashes only",
+        "start": "Start",
+        "end": "End",
+        "status": "Status",
+        "description": "Description",
+        "description_ph": "Tell people about your event",
+        "timezone": "Timezone"
+      }
+    }
   }
 }

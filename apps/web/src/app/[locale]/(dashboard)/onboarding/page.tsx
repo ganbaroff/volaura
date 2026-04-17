@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useId } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import { API_BASE } from "@/lib/api/client";
 import { cn } from "@/lib/utils/cn";
@@ -62,13 +62,14 @@ const slideVariants = {
 
 function ProgressBar({ step, totalSteps }: { step: Step; totalSteps: number }) {
   const pct = Math.round((step / totalSteps) * 100);
+  const prefersReduced = useReducedMotion();
   return (
-    <div className="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden mb-8">
+    <div className="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden mb-8" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
       <motion.div
         className="h-full bg-primary rounded-full"
-        initial={{ width: 0 }}
+        initial={prefersReduced ? false : { width: 0 }}
         animate={{ width: `${pct}%` }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
+        transition={prefersReduced ? { duration: 0 } : { duration: 0.4, ease: "easeOut" }}
       />
     </div>
   );
@@ -110,12 +111,14 @@ function StepLabel({ step, total, t }: { step: Step; total: number; t: (k: strin
 // ── Input ──────────────────────────────────────────────────────────────────────
 
 function Input({
+  id,
   label,
   value,
   onChange,
   placeholder,
   disabled,
 }: {
+  id: string;
   label: string;
   value: string;
   onChange: (v: string) => void;
@@ -124,8 +127,9 @@ function Input({
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-sm font-medium text-foreground">{label}</label>
+      <label htmlFor={id} className="text-sm font-medium text-foreground">{label}</label>
       <input
+        id={id}
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -144,6 +148,8 @@ export default function OnboardingPage() {
   const { locale } = useParams<{ locale: string }>();
   const router = useRouter();
   const isMounted = useRef(true);
+  const uid = useId();
+  const prefersReduced = useReducedMotion();
 
   useEffect(() => {
     isMounted.current = true;
@@ -327,11 +333,11 @@ export default function OnboardingPage() {
           {step === 1 && (
             <motion.div
               key="step1"
-              variants={slideVariants}
-              initial="enter"
+              variants={prefersReduced ? undefined : slideVariants}
+              initial={prefersReduced ? false : "enter"}
               animate="center"
-              exit="exit"
-              transition={{ duration: 0.3 }}
+              exit={prefersReduced ? undefined : "exit"}
+              transition={prefersReduced ? { duration: 0 } : { duration: 0.3 }}
               className="space-y-6"
             >
               <StepLabel step={1} total={totalSteps} t={t} />
@@ -341,12 +347,14 @@ export default function OnboardingPage() {
 
               <div className="rounded-xl border border-border bg-card p-5 space-y-4">
                 <Input
+                  id={`${uid}-display-name`}
                   label={t("onboarding.displayName")}
                   value={formData.display_name}
                   onChange={(v) => setField("display_name", v)}
                   placeholder={t("onboarding.namePlaceholder", { defaultValue: "Your full name" })}
                 />
                 <Input
+                  id={`${uid}-username`}
                   label={t("onboarding.username")}
                   value={formData.username}
                   onChange={(v) => setField("username", v.toLowerCase().replace(/\s+/g, "_"))}
@@ -368,11 +376,11 @@ export default function OnboardingPage() {
           {step === 2 && (
             <motion.div
               key="step2"
-              variants={slideVariants}
-              initial="enter"
+              variants={prefersReduced ? undefined : slideVariants}
+              initial={prefersReduced ? false : "enter"}
               animate="center"
-              exit="exit"
-              transition={{ duration: 0.3 }}
+              exit={prefersReduced ? undefined : "exit"}
+              transition={prefersReduced ? { duration: 0 } : { duration: 0.3 }}
               className="space-y-6"
             >
               <StepLabel step={2} total={totalSteps} t={t} />
@@ -382,14 +390,15 @@ export default function OnboardingPage() {
 
               <div className="rounded-xl border border-border bg-card p-5 space-y-4">
                 <Input
+                  id={`${uid}-location`}
                   label={t("onboarding.location")}
                   value={formData.location}
                   onChange={(v) => setField("location", v)}
                   placeholder={t("onboarding.locationPlaceholder", { defaultValue: "Your city" })}
                 />
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">
+                <div className="space-y-2" role="group" aria-labelledby={`${uid}-languages-label`}>
+                  <label id={`${uid}-languages-label`} className="text-sm font-medium text-foreground">
                     {t("onboarding.languages")}
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -397,6 +406,7 @@ export default function OnboardingPage() {
                       <button
                         key={key}
                         type="button"
+                        aria-pressed={formData.languages.includes(key)}
                         onClick={() => toggleLanguage(key)}
                         className={`px-3 py-2 min-h-[44px] rounded-full text-sm font-medium transition-all border ${
                           formData.languages.includes(key)
@@ -450,11 +460,11 @@ export default function OnboardingPage() {
           {step === 3 && (
             <motion.div
               key="step3"
-              variants={slideVariants}
-              initial="enter"
+              variants={prefersReduced ? undefined : slideVariants}
+              initial={prefersReduced ? false : "enter"}
               animate="center"
-              exit="exit"
-              transition={{ duration: 0.3 }}
+              exit={prefersReduced ? undefined : "exit"}
+              transition={prefersReduced ? { duration: 0 } : { duration: 0.3 }}
               className="space-y-6"
             >
               <StepLabel step={3} total={totalSteps} t={t} />

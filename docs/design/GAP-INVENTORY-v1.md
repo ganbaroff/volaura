@@ -6,7 +6,7 @@
 
 ## Summary
 
-**Session 117 update:** 22 code-verified gaps. 8 fixed (F1-F7 + M5). 1 Critical, 6 High, 4 Medium, 3 Low remaining.
+**Session 117 update:** 22 code-verified gaps. 10 fixed (F1-F7 + M5 + C2 + H3). 0 Critical, 5 High, 4 Medium, 3 Low remaining.
 **Session 113 original:** 58 gaps (8 P0, 34 P1, 24 P2). Cross-product gaps remain valid. P0 items 1-5 (MindShift/LifeSim/BrandedBy placeholders, crystal economy) are architectural; items 6-8 (Stripe, Resend, Atlas page) partially resolved.
 
 ---
@@ -22,6 +22,8 @@
 | F5 | Impact ticker animation 1800ms — Law 4 max 800ms | Reduced to 800ms in impact-ticker.tsx |
 | F6 | Impact ticker no reduced-motion guard | Added prefers-reduced-motion check |
 | F7 | No focus trapping in 5 modals (C1) | Added `useFocusTrap` hook + applied to all 5 dialogs. `role="dialog"` moved to inner panel. |
+| F8 | Onboarding inputs no label association (C2) | Added `id`/`htmlFor` pairs to all inputs, `role="group"` + `aria-labelledby` on language toggles, `aria-pressed` on language buttons. |
+| F9 | Onboarding animations ignore reduced motion (H3) | Added `useReducedMotion` gating to ProgressBar + all 3 step slide transitions. |
 
 ---
 
@@ -33,11 +35,11 @@ Added `hooks/use-focus-trap.ts` — traps Tab cycle inside dialog, restores focu
 
 **Files changed:** `crystal-shop.tsx`, `intro-request-button.tsx`, `aura/page.tsx`, `org-talent/page.tsx`, `assessment/[sessionId]/page.tsx`
 
-### C2. Onboarding inputs have no label-input association
+### ~~C2. Onboarding inputs have no label-input association~~ FIXED
 
-`onboarding/page.tsx:127` — `<label>` no `htmlFor`, `<input>` no `id`. Screen readers can't announce. Language button group (line 392) also unassociated.
+Added `id`/`htmlFor` pairs to all 3 Input instances (display_name, username, location) via `useId()`. Language button group now has `role="group"` + `aria-labelledby` with a labelled container. Each language toggle button has `aria-pressed` for state.
 
-**Fix:** Add `id`/`htmlFor` pairs. Add `role="group"` + `aria-labelledby` to language toggles.
+**Files changed:** `onboarding/page.tsx`
 
 ---
 
@@ -53,9 +55,11 @@ Added `hooks/use-focus-trap.ts` — traps Tab cycle inside dialog, restores focu
 **Files:** `profile-header.tsx:63,68,73`, `competency-breakdown.tsx:41,42,110`, `impact-metrics.tsx:41,47`
 **Fix:** Replace with `-400` variants or tokens.
 
-### H3. Onboarding animations not gated by useReducedMotion
+### ~~H3. Onboarding animations not gated by useReducedMotion~~ FIXED
 
-`onboarding/page.tsx:67,328` — ProgressBar + step slide motions ignore reduced motion preference.
+Added `useReducedMotion()` from framer-motion. ProgressBar skips initial animation and uses `duration: 0`. All 3 step slide transitions (enter/exit) disabled when reduced motion preferred. Also added `role="progressbar"` with `aria-valuenow/min/max` to ProgressBar.
+
+**Files changed:** `onboarding/page.tsx`
 
 ### H4. McqOptions uses aria-pressed for single-selection
 

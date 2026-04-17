@@ -9,6 +9,7 @@ import { TopBar } from "@/components/layout/top-bar";
 import { useProfile, useUpdateProfile } from "@/hooks/queries/use-profile";
 import { ApiError } from "@/lib/api/client";
 import { cn } from "@/lib/utils/cn";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 const LANGUAGE_OPTIONS = [
   { key: "Azerbaijani", labelKey: "onboarding.languageAzerbaijani" },
@@ -64,6 +65,8 @@ export default function EditProfilePage() {
   }, []);
 
   const { data: profile, isLoading, error } = useProfile();
+  const { energy } = useEnergyMode();
+  const isLow = energy === "low";
   const updateProfile = useUpdateProfile();
 
   const [displayName, setDisplayName] = useState("");
@@ -171,21 +174,23 @@ export default function EditProfilePage() {
           />
         </div>
 
-        <div className="space-y-1.5">
-          <label htmlFor="bio" className="text-sm font-medium text-foreground">
-            {t("profile.edit.bio", { defaultValue: "About you" })}
-          </label>
-          <textarea
-            id="bio"
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-            maxLength={300}
-            rows={3}
-            placeholder={t("profile.edit.bioPlaceholder", { defaultValue: "What do you do? What are you passionate about?" })}
-            className="w-full rounded-xl border border-input bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 resize-none"
-          />
-          <p className="text-xs text-muted-foreground text-right">{bio.length}/300</p>
-        </div>
+        {!isLow && (
+          <div className="space-y-1.5">
+            <label htmlFor="bio" className="text-sm font-medium text-foreground">
+              {t("profile.edit.bio", { defaultValue: "About you" })}
+            </label>
+            <textarea
+              id="bio"
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              maxLength={300}
+              rows={3}
+              placeholder={t("profile.edit.bioPlaceholder", { defaultValue: "What do you do? What are you passionate about?" })}
+              className="w-full rounded-xl border border-input bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 resize-none"
+            />
+            <p className="text-xs text-muted-foreground text-right">{bio.length}/300</p>
+          </div>
+        )}
 
         <div className="space-y-1.5">
           <label htmlFor="location" className="text-sm font-medium text-foreground">
@@ -227,31 +232,33 @@ export default function EditProfilePage() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-border bg-card divide-y divide-border overflow-hidden">
-          <div className="flex items-center justify-between gap-3 p-4">
-            <div className="min-w-0">
-              <label htmlFor="toggle-public" className="text-sm font-medium text-foreground">
-                {t("profile.edit.publicProfile", { defaultValue: "Public profile" })}
-              </label>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                {t("profile.edit.publicProfileDesc", { defaultValue: "Anyone with your link can view your profile" })}
-              </p>
+        {!isLow && (
+          <div className="rounded-xl border border-border bg-card divide-y divide-border overflow-hidden">
+            <div className="flex items-center justify-between gap-3 p-4">
+              <div className="min-w-0">
+                <label htmlFor="toggle-public" className="text-sm font-medium text-foreground">
+                  {t("profile.edit.publicProfile", { defaultValue: "Public profile" })}
+                </label>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {t("profile.edit.publicProfileDesc", { defaultValue: "Anyone with your link can view your profile" })}
+                </p>
+              </div>
+              <Toggle id="toggle-public" checked={isPublic} onChange={setIsPublic} />
             </div>
-            <Toggle id="toggle-public" checked={isPublic} onChange={setIsPublic} />
-          </div>
 
-          <div className="flex items-center justify-between gap-3 p-4">
-            <div className="min-w-0">
-              <label htmlFor="toggle-orgs" className="text-sm font-medium text-foreground">
-                {t("profile.edit.discoverableLabel", { defaultValue: "Discoverable by organizations" })}
-              </label>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                {t("profile.edit.discoverableDesc", { defaultValue: "Organizations can find you in search" })}
-              </p>
+            <div className="flex items-center justify-between gap-3 p-4">
+              <div className="min-w-0">
+                <label htmlFor="toggle-orgs" className="text-sm font-medium text-foreground">
+                  {t("profile.edit.discoverableLabel", { defaultValue: "Discoverable by organizations" })}
+                </label>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {t("profile.edit.discoverableDesc", { defaultValue: "Organizations can find you in search" })}
+                </p>
+              </div>
+              <Toggle id="toggle-orgs" checked={visibleToOrgs} onChange={setVisibleToOrgs} />
             </div>
-            <Toggle id="toggle-orgs" checked={visibleToOrgs} onChange={setVisibleToOrgs} />
           </div>
-        </div>
+        )}
 
         {saveError && (
           <p role="alert" className="text-sm text-destructive">{saveError}</p>

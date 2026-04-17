@@ -11,6 +11,7 @@ import { Calendar, MapPin, Users, Globe, ChevronRight, ChevronLeft, Check, Loade
 import { useCreateEvent } from "@/hooks/queries/use-events";
 import type { EventCreate } from "@/lib/api/types";
 import { cn } from "@/lib/utils/cn";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 // ── Zod Schemas ────────────────────────────────────────────────────────────────
 
@@ -86,6 +87,8 @@ export default function CreateEventPage() {
   const { locale } = useParams<{ locale: string }>();
   const router = useRouter();
   const createEvent = useCreateEvent();
+  const { energy } = useEnergyMode();
+  const isLow = energy === "low";
   const isMounted = useRef(true);
   useEffect(() => () => { isMounted.current = false; }, []);
 
@@ -198,22 +201,28 @@ export default function CreateEventPage() {
                   </div>
                 </Field>
 
-                <Field label={t("events.eventType")}>
-                  <select {...form1.register("event_type")} className={inputClass}>
-                    <option value="">{t("events.selectType")}</option>
-                    {EVENT_TYPES.map((et) => (
-                      <option key={et} value={et}>{t(`events.type.${et}`, { defaultValue: et })}</option>
-                    ))}
-                  </select>
-                </Field>
+                {!isLow && (
+                  <Field label={t("events.eventType")}>
+                    <select {...form1.register("event_type")} className={inputClass}>
+                      <option value="">{t("events.selectType")}</option>
+                      {EVENT_TYPES.map((et) => (
+                        <option key={et} value={et}>{t(`events.type.${et}`, { defaultValue: et })}</option>
+                      ))}
+                    </select>
+                  </Field>
+                )}
 
-                <Field label={t("events.descriptionEn")}>
-                  <textarea {...form1.register("description_en")} rows={3} className={cn(inputClass, "resize-none")} placeholder="Describe the event goals and participant tasks..." />
-                </Field>
+                {!isLow && (
+                  <Field label={t("events.descriptionEn")}>
+                    <textarea {...form1.register("description_en")} rows={3} className={cn(inputClass, "resize-none")} placeholder="Describe the event goals and participant tasks..." />
+                  </Field>
+                )}
 
-                <Field label={t("events.descriptionAz")}>
-                  <textarea {...form1.register("description_az")} rows={3} className={cn(inputClass, "resize-none")} placeholder="Tədbirın məqsədini və iştirakçı vəzifələrini izah edin..." />
-                </Field>
+                {!isLow && (
+                  <Field label={t("events.descriptionAz")}>
+                    <textarea {...form1.register("description_az")} rows={3} className={cn(inputClass, "resize-none")} placeholder="Tədbirın məqsədini və iştirakçı vəzifələrini izah edin..." />
+                  </Field>
+                )}
 
                 <div className="flex justify-end pt-2">
                   <button type="submit" className="flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-on-primary transition-opacity hover:opacity-90">
@@ -237,10 +246,12 @@ export default function CreateEventPage() {
                   </div>
                 </Field>
 
-                <Field label={t("events.minAura")} error={form2.formState.errors.required_min_aura?.message}>
-                  <input type="number" min={0} max={100} step={5} {...form2.register("required_min_aura")} className={inputClass} placeholder="0" />
-                  <p className="text-xs text-on-surface-variant">{t("events.minAuraHint")}</p>
-                </Field>
+                {!isLow && (
+                  <Field label={t("events.minAura")} error={form2.formState.errors.required_min_aura?.message}>
+                    <input type="number" min={0} max={100} step={5} {...form2.register("required_min_aura")} className={inputClass} placeholder="0" />
+                    <p className="text-xs text-on-surface-variant">{t("events.minAuraHint")}</p>
+                  </Field>
+                )}
 
                 <Field label={t("events.visibility")}>
                   <label className="flex items-center gap-3 rounded-xl border border-outline-variant bg-surface-container p-3 cursor-pointer">

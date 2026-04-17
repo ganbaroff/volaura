@@ -26,6 +26,7 @@ import { apiFetch } from "@/lib/api/client";
 import { CoachingTips } from "@/components/assessment/coaching-tips";
 import { triggerHaptic } from "@/lib/haptics";
 import { getAchievementLevelKey } from "@/lib/utils/achievement-level";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 // ── Types ──────────────────────────────────────────────────────────────
 
@@ -164,6 +165,8 @@ export default function AssessmentResultsPage() {
   const isMounted = useRef(true);
 
   const track = useTrackEvent();
+  const { energy } = useEnergyMode();
+  const isLow = energy === "low";
 
   const [phase, setPhase] = useState<"loading" | "reveal" | "error">("loading");
   const [result, setResult] = useState<AssessmentResult | null>(null);
@@ -471,8 +474,8 @@ export default function AssessmentResultsPage() {
         )}
       </AnimatePresence>
 
-      {/* Competency Breakdown (if AURA available) */}
-      {aura && Object.keys(aura.competency_scores).length > 0 && (
+      {/* Competency Breakdown (if AURA available) — hidden at low energy */}
+      {!isLow && aura && Object.keys(aura.competency_scores).length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -512,8 +515,8 @@ export default function AssessmentResultsPage() {
         </motion.div>
       )}
 
-      {/* Coaching Tips — moved UP per Leyla feedback (was buried below scroll) */}
-      {result && (
+      {/* Coaching Tips — hidden at low energy */}
+      {!isLow && result && (
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -602,8 +605,8 @@ export default function AssessmentResultsPage() {
         </motion.div>
       )}
 
-      {/* Share nudge — prominent for Silver+ (GROW-M01: was Gold+ only, Silver tier now included) */}
-      {score >= 60 && (
+      {/* Share nudge — hidden at low energy */}
+      {!isLow && score >= 60 && (
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}

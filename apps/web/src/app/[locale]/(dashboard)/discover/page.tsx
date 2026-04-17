@@ -307,7 +307,7 @@ export default function DiscoverPage() {
                   value={browseSearch}
                   onChange={(e) => setBrowseSearch(e.target.value)}
                   placeholder={t("discover.searchPlaceholder", { defaultValue: "Filter by name or location…" })}
-                  className="w-full rounded-xl border border-outline-variant bg-surface-container pl-9 pr-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+                  className="w-full rounded-xl border border-outline-variant bg-surface-container pl-9 pr-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 transition-all"
                 />
               </div>
 
@@ -398,7 +398,7 @@ export default function DiscoverPage() {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder={t("discover.queryPlaceholder", { defaultValue: "e.g. experienced team leader for youth events…" })}
-                    className="w-full rounded-xl border border-outline-variant bg-surface-container pl-9 pr-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+                    className="w-full rounded-xl border border-outline-variant bg-surface-container pl-9 pr-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 transition-all"
                     aria-label={t("discover.queryLabel", { defaultValue: "Search query" })}
                   />
                 </div>

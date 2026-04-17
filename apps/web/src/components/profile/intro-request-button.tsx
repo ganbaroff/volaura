@@ -129,7 +129,7 @@ export function IntroRequestButton({ professionalId, professionalName }: Props) 
                   value={projectName}
                   onChange={(e) => setProjectName(e.target.value)}
                   placeholder={t("intro.projectPlaceholder", { defaultValue: "e.g. COP30 Youth Leadership Programme" })}
-                  className="w-full rounded-xl border border-outline-variant bg-surface px-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  className="w-full rounded-xl border border-outline-variant bg-surface px-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                 />
               </div>
 
@@ -142,7 +142,7 @@ export function IntroRequestButton({ professionalId, professionalName }: Props) 
                   id="intro-timeline"
                   value={timeline}
                   onChange={(e) => setTimeline(e.target.value as Timeline)}
-                  className="w-full rounded-xl border border-outline-variant bg-surface px-3 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  className="w-full rounded-xl border border-outline-variant bg-surface px-3 py-2.5 text-sm text-on-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                 >
                   <option value="urgent">{t("intro.timelineUrgent", { defaultValue: "Urgent (within 1 week)" })}</option>
                   <option value="normal">{t("intro.timelineNormal", { defaultValue: "Normal (2–4 weeks)" })}</option>
@@ -165,7 +165,7 @@ export function IntroRequestButton({ professionalId, professionalName }: Props) 
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder={t("intro.messagePlaceholder", { defaultValue: "Why are you reaching out?" })}
-                  className="w-full resize-none rounded-xl border border-outline-variant bg-surface px-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  className="w-full resize-none rounded-xl border border-outline-variant bg-surface px-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                 />
                 <p className="text-xs text-on-surface-variant text-right">{message.length}/500</p>
               </div>

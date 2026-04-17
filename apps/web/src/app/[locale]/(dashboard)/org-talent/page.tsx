@@ -341,7 +341,7 @@ export default function OrgTalentPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={t("orgDash.searchProfessionals", { defaultValue: "Search professionals…" })}
-                className="w-full rounded-xl border border-outline-variant bg-surface-container pl-9 pr-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+                className="w-full rounded-xl border border-outline-variant bg-surface-container pl-9 pr-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 transition-all"
               />
             </div>
 
@@ -446,7 +446,7 @@ export default function OrgTalentPage() {
                       onChange={(e) => setSaveName(e.target.value)}
                       maxLength={100}
                       placeholder={t("orgDash.saveSearchPlaceholder", { defaultValue: "e.g. Senior communicators" })}
-                      className="mt-1 w-full rounded-xl border border-outline-variant bg-background px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
+                      className="mt-1 w-full rounded-xl border border-outline-variant bg-background px-3 py-2 text-sm text-on-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 transition-all"
                       // eslint-disable-next-line jsx-a11y/no-autofocus
                       autoFocus
                     />

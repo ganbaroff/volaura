@@ -516,7 +516,9 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
             .execute()
         )
         if recall_result.data:
-            lines = [f"[{r['category']}|ei={r['emotional_intensity']}] {r['content'][:200]}" for r in recall_result.data]
+            lines = [
+                f"[{r['category']}|ei={r['emotional_intensity']}] {r['content'][:200]}" for r in recall_result.data
+            ]
             atlas_recall = "\n═══ ATLAS LEARNINGS (ZenBrain top-20 by emotional weight) ═══\n" + "\n".join(lines)
     except Exception as e:
         logger.warning("atlas_learnings recall failed: {e}", e=str(e)[:200])

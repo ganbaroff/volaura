@@ -78,7 +78,7 @@ export default function EventShiftCreatePage() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema as never),
     defaultValues: {
       timezone: "Asia/Baku",
       status: "planning",

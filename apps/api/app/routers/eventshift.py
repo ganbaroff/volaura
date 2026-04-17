@@ -424,7 +424,9 @@ async def get_department_blueprint(
     department_id: str,
     db_admin: SupabaseAdmin,
     org_id: OrgId,
-    section: str | None = Query(None, description="Filter: roles, sops, policies, faq, metrics, training, competencies"),
+    section: str | None = Query(
+        None, description="Filter: roles, sops, policies, faq, metrics, training, competencies"
+    ),
 ) -> dict[str, Any]:
     """Return the operational blueprint (metadata) for a department.
 
@@ -437,7 +439,18 @@ async def get_department_blueprint(
     meta = dept.get("metadata") or {}
 
     if section:
-        allowed = {"roles", "sops", "policies", "faq", "metrics", "training", "competencies", "requirements", "kpis", "mission"}
+        allowed = {
+            "roles",
+            "sops",
+            "policies",
+            "faq",
+            "metrics",
+            "training",
+            "competencies",
+            "requirements",
+            "kpis",
+            "mission",
+        }
         if section not in allowed:
             raise HTTPException(
                 status_code=422,

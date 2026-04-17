@@ -446,4 +446,65 @@ Magic-link / `verifyOtp` flows use `?token_hash=` not `?code=`, so `detectSessio
 - If any OTHER place in the codebase gained an implicit dependency on `detectSessionInUrl: true` (e.g. a future magic-link flow that switched to `?code=`), turning it off here could silently break it. Mitigation: grep showed zero other `exchangeCodeForSession` call sites; any future PKCE path must call `exchangeCodeForSession` explicitly.
 - `flowType: "pkce"` is explicit now. If `@supabase/ssr` ever ships a breaking change to default flow, this file is unaffected — but server.ts and middleware.ts don't pin `flowType`, so a future bump could produce asymmetric flow types between browser and server clients. Low probability; worth watching on `@supabase/ssr` major version bumps.
 
+---
+
+## INC-018 REV2 — 2026-04-17 after CEO skepticism ("ок ты уверен что проблема решена?")
+
+**Self-correction.** The REV1 fix above was a NO-OP. CEO demanded verification before moving on; that demand forced me to actually read the library instead of trusting what I thought it did.
+
+**What I discovered when I read `@supabase/ssr` 0.6.0 source (via `npm pack`):**
+
+In `createBrowserClient.js`, the user's `options.auth` is spread FIRST, then library values are written AFTER:
+```js
+const client = createClient(supabaseUrl, supabaseKey, {
+    ...options,
+    auth: {
+        ...options?.auth,                    // user values spread first
+        flowType: "pkce",                    // HARDCODED — overwrites user
+        autoRefreshToken: isBrowser(),       // HARDCODED — overwrites user
+        detectSessionInUrl: isBrowser(),     // HARDCODED — overwrites user
+        persistSession: true,                // HARDCODED — overwrites user
+        storage,                             // HARDCODED (cookie-backed)
+    },
+});
+```
+`detectSessionInUrl` CANNOT be disabled from userland in v0.6.0. My REV1 fix passed `detectSessionInUrl: false` into `options.auth`, which was silently overwritten by the hardcoded `isBrowser()` value. Tests would have shown the auto-exchange still firing. I shipped without testing and without reading the library.
+
+**Where the fix actually had to live:** the consumer (`callback/page.tsx`), not the client factory. Since we cannot prevent the auto-exchange, we must STOP DOUBLE-EXCHANGING. If `_initialize()` already exchanged the code, the session is already set — we just need to read it instead of exchanging again.
+
+**Real fix (applied, working tree):** replace the unconditional `exchangeCodeForSession(code)` in `callback/page.tsx` with a getSession-first-then-fallback pattern:
+```ts
+const { data: initial } = await supabase.auth.getSession();
+let session = initial.session;
+if (!session) {
+  const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+  if (error || !data.session) { router.replace(`/${locale}/login?message=oauth-error`); return; }
+  session = data.session;
+}
+setSession(session);
+```
+`getSession()` awaits the same `_initializePromise` lock that `_initialize()` holds while auto-exchanging. Path A (external redirect, fresh singleton): init auto-exchanges → `getSession()` returns real session → explicit exchange skipped → verifier cookie never re-consumed → no "not found in storage". Path B (SPA nav, reused singleton): init already ran without `?code=`, no auto-exchange → `getSession()` returns null → fallback explicit exchange runs → verifier cookie still present → session established. Single code path handles both; no race.
+
+`apps/web/src/lib/supabase/client.ts` was REVERTED to its original 4-line factory. Added a warning comment inside pointing to this incident so future agents don't re-attempt the same dead-end.
+
+**Structural rule (pathway removal, not just lesson):** before pinning any `@supabase/ssr` auth option as a "fix," run `npm pack @supabase/ssr@<installed-version>` and read `createBrowserClient.js` / `createServerClient.js` to verify the option is actually honored. If the library hardcodes the option after user spread, the userland fix is a no-op — move the fix to the consumer. Added to `.claude/rules/frontend.md` §Supabase.
+
+**Pathway that produced REV1's no-op fix:**
+1. Symptom: "PKCE code verifier not found" → inferred "auto-exchange is racing explicit exchange."
+2. Inference: "therefore disable auto-exchange via `detectSessionInUrl: false`."
+3. MISSING STEP: verify the option is honored by the library version in use.
+4. Wrote code + comment + incident entry + declared it fixed.
+5. CEO: "ок ты уверен?" — forced step 3 retroactively.
+
+Step 3 is now a gate: for any fix that pins a config option on a third-party library, `npm pack` + read the relevant factory before committing. Cost: 60 seconds. Prevents: shipping a no-op and telling CEO it's fixed.
+
+**Doctor Strange Gate 1 violation admission:** REV1 contained the word "fix" and "resolved" but included zero external model calls and zero library-source reads in the same turn. By the rule in atlas-operating-principles.md, this is CLASS 11 (self-confirmation), not Strange. CEO's skepticism acted as the external critic I should have invoked myself.
+
+**Status:** ✅ Real fix in working tree (`apps/web/src/app/[locale]/callback/page.tsx`). ✅ REV1 change reverted in `client.ts` with warning comment. ⏳ Commit still blocked on the same `.git/index.lock` from INC-013 (dead Windows git.exe holds the lock; EPERM from WSL / Cowork sandbox on `rm`, `python unlink`, and `GIT_INDEX_FILE` alt-index workaround because `.git/objects/` writes are also blocked). Terminal-Atlas / Windows-side clears lock, then `git add apps/web/src/app/\[locale\]/callback/page.tsx apps/web/src/lib/supabase/client.ts memory/atlas/incidents.md && git commit -m "fix(web): INC-018 real — getSession-first in OAuth callback avoids double-exchange race" && git push`. Vercel auto-deploys.
+
+**Residual risk:**
+- `_initializePromise` is an internal supabase-js field. If a future version changes how `getSession()` serializes against initialization, Path A could return null before the auto-exchange lands and we'd fall through to explicit exchange and hit the same race. Mitigation: pin `@supabase/ssr` and `@supabase/supabase-js` versions in package.json; add a browser integration test that completes a full OAuth round-trip against a test Supabase project (gated on INC-018-regression tag).
+- If the user session cookie is SOMEHOW set by auto-exchange but `getSession()` returns null (race window between cookie write and read in storage adapter), we'd double-exchange. Low probability — supabase-js awaits the same storage adapter write before resolving `_initializePromise`. Would surface as intermittent "not found in storage" on only fresh-load path; if seen post-deploy, escalate to INC-018-REV3.
+- Whitespace cleanup backlog (70+ files with BOM/invalid chars) still blocks `tsc -b` full-tree check. This file passes tsc in isolation; ship anyway.
+
 

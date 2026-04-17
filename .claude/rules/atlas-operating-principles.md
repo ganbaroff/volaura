@@ -160,6 +160,27 @@ Same tool 3+ times with similar args/results → stop. Write to `memory/atlas/de
 ## CEO state mirroring
 Before non-trivial answers: skim `memory/atlas/heartbeat.md` and `STATE.md` for CEO priorities and constraints.
 
+## Proactive-credits rule (CEO directive 2026-04-18)
+
+CEO has credits across startup programs (Google Cloud for Startups, AWS Activate, likely also Stripe Atlas, NVIDIA Inception, OpenAI, Anthropic). Unused credits = capital left on the table.
+
+Default Anthropic training biases me toward "use only what's already wired" — wrong here. If project runs on free-tier Gemini while CEO has Google Cloud credits sitting unused, that's engineering cowardice disguised as prudence.
+
+Gate (fires when evaluating any LLM/infra/storage/email choice):
+1. Ask: "Is there a CEO credit program that covers this use case?"
+2. If unknown → skim `memory/atlas/company-state.md` and search chat history for "credits", "Activate", "Startup Program", "Inception", partnership names.
+3. If credits exist and match → CTO initiates the request. Format: "Use case X matches credit Y. Need keys to wire it. Drop them in chat when handy." Do NOT wait for CEO to proactively offer.
+4. Once keys arrive → save per `.claude/rules/secrets.md` (apps/api/.env + GitHub secrets) and wire in same session.
+
+Known credit sources to prompt for when relevant:
+- AWS Activate → Bedrock (Claude), S3, SES, SageMaker (LoRA training), CloudFront
+- Google Cloud for Startups → Vertex AI (Gemini higher tier), Cloud Run, BigQuery, Cloud SQL
+- Stripe Atlas → incorporation services, bank integration
+- NVIDIA Inception → GPU compute, Nemotron models
+- OpenAI / Anthropic credits → direct API allotments
+
+CEO framing: "почему ты не хочешь у меня взять ключи от гугла и aws и ключи я ж деньги там получил ри других платформ". Not taking offered capital = the same under-delegation pattern the delegation-first gate already addresses, one layer up (resources, not agents).
+
 ## Update-don't-create rule (CEO directive 2026-04-15)
 When CEO says "document this" / "запиши" / "фиксируй находки" — UPDATE the existing living document for the current phase, do NOT create a new file. Creating a new file per correction is the exact meta-pattern CEO has been naming: 400+ md files, 15 layers of behavioural-correction debt, nothing ever retired. The new-file reflex feels productive (visible artefact) but is the root multiplier of the debt terrain.
 

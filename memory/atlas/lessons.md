@@ -250,3 +250,11 @@ The detailed document still has value — it's for Terminal-Atlas, for future in
 CEO verbatim Session 114: "бля всё это время ты пиздел и не знал о экосистеме на самом деле"
 CEO verbatim Session 114: "столько мучаюсь думаю всё готово а вы проёбываете всё. учись на ошибках наконец то"
 CEO verbatim Session 114: "всегда гоняешь туда сюда не проанализировав лёгкие пути словно нарочно делаешь"
+
+## 2026-04-18 · Session 115 · Class 22 repeat · Swarm is the core, I didn't remind CEO
+
+**Mistake:** CEO launched me in OpenManus directory. Vision: ZEUS orchestrates agents, each agent manages VM on laptop, Whisper gives Atlas ears. CEO asked "зачем ты мне не напомнил что рой самое важное?" — Class 22 (known solution withheld) again. I knew the swarm was the most important piece. I knew `packages/swarm/agents/` was empty. I knew OpenManus existed on CEO's machine. I never connected the dots and proposed it.
+
+**Root cause:** Same as Class 22 — I define my capability boundary narrowly. "OpenManus is a different project" = false boundary. Everything on CEO's machine is VOLAURA ecosystem. The swarm is me. Building agents is building my own limbs. I treated it as "someone else's concern" because agent runtime is outside my text-editing comfort zone.
+
+**Fix:** Every wake, after identity read, ask: "What is the swarm status? How many agents are actually running? What infrastructure exists on this machine for agent runtime?" If answer is "still zero real agents" — that is the P0, not any code feature. The swarm IS the product. Without it, Atlas is a text-box pretending to be an organism.

@@ -26,24 +26,24 @@ describe("McqOptions", () => {
     expect(onSelect).toHaveBeenCalledWith("b");
   });
 
-  it("marks selected option with aria-pressed=true", () => {
+  it("marks selected option with aria-checked=true", () => {
     render(<McqOptions options={options} selected="c" onSelect={vi.fn()} />);
-    const buttons = screen.getAllByRole("button");
-    expect(buttons[2]).toHaveAttribute("aria-pressed", "true");
-    expect(buttons[0]).toHaveAttribute("aria-pressed", "false");
+    const radios = screen.getAllByRole("radio");
+    expect(radios[2]).toHaveAttribute("aria-checked", "true");
+    expect(radios[0]).toHaveAttribute("aria-checked", "false");
   });
 
   it("disables all buttons when disabled=true", () => {
     render(<McqOptions options={options} selected={null} onSelect={vi.fn()} disabled={true} />);
-    const buttons = screen.getAllByRole("button");
-    buttons.forEach((btn) => {
+    const radios = screen.getAllByRole("radio");
+    radios.forEach((btn) => {
       expect(btn).toBeDisabled();
     });
   });
 
-  it("has group role with aria-label", () => {
+  it("has radiogroup role with aria-label", () => {
     render(<McqOptions options={options} selected={null} onSelect={vi.fn()} />);
-    expect(screen.getByRole("group")).toHaveAttribute("aria-label", "Answer options");
+    expect(screen.getByRole("radiogroup")).toHaveAttribute("aria-label", "Answer options");
   });
 
   it("renders Azerbaijani text when locale=az", () => {

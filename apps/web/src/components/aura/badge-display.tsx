@@ -73,7 +73,7 @@ export function BadgeDisplay({ tier, label, eliteLabel, isElite }: BadgeDisplayP
           prefersReducedMotion
             ? {}
             : tier === "platinum" || tier === "gold"
-            ? { repeat: Infinity, duration: 2, ease: "easeInOut" }
+            ? { repeat: 3, duration: 2, ease: "easeInOut" }
             : {}
         }
         className={cn(

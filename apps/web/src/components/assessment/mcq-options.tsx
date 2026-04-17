@@ -26,7 +26,7 @@ export function McqOptions({
   locale = "en",
 }: McqOptionsProps) {
   return (
-    <div className="space-y-3" role="group" aria-label="Answer options">
+    <div className="space-y-3" role="radiogroup" aria-label="Answer options">
       {options.map((option, index) => {
         const isSelected = selected === option.key;
         const displayText = locale === "az" ? option.text_az : option.text_en;
@@ -34,8 +34,9 @@ export function McqOptions({
           <button
             key={option.key}
             type="button"
+            role="radio"
             disabled={disabled}
-            aria-pressed={isSelected}
+            aria-checked={isSelected}
             onClick={() => onSelect(option.key)}
             className={cn(
               "w-full flex items-center gap-3 rounded-xl border-2 p-4 text-left min-h-[52px]",

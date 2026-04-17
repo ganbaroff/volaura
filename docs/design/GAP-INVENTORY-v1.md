@@ -6,7 +6,7 @@
 
 ## Summary
 
-**Session 117 update:** 22 code-verified gaps. 11 fixed (F1-F7 + M5 + C2 + H3 + H1). 0 Critical, 4 High, 4 Medium, 3 Low remaining.
+**Session 117 update:** 22 code-verified gaps. 15 fixed (F1-F7 + M5 + C2 + H1-H6). 0 Critical, 0 High, 4 Medium, 3 Low remaining.
 **Session 113 original:** 58 gaps (8 P0, 34 P1, 24 P2). Cross-product gaps remain valid. P0 items 1-5 (MindShift/LifeSim/BrandedBy placeholders, crystal economy) are architectural; items 6-8 (Stripe, Resend, Atlas page) partially resolved.
 
 ---
@@ -25,8 +25,10 @@
 | F8 | Onboarding labels unassociated (C2) | Added `id`/`htmlFor` to all inputs, `role="group"` + `aria-labelledby` + `aria-pressed` to language toggles |
 | F9 | Onboarding slide animations ignore reduced motion (H3) | Gated `slideVariants` on `prefersReduced` for all 3 steps |
 | F10 | `role="button"` cards missing Space key (H1) | Added Space key handler with `preventDefault()` across 6 instances in 5 files |
-| F8 | Onboarding inputs no label association (C2) | Added `id`/`htmlFor` pairs to all inputs, `role="group"` + `aria-labelledby` on language toggles, `aria-pressed` on language buttons. |
-| F9 | Onboarding animations ignore reduced motion (H3) | Added `useReducedMotion` gating to ProgressBar + all 3 step slide transitions. |
+| F11 | Hardcoded color contrast failures (H2) | Replaced `-600`/`-500` with `-400` variants across 4 files |
+| F12 | MCQ aria-pressed for single-selection (H4) | Changed to `role="radiogroup"` + `role="radio"` + `aria-checked` |
+| F13 | Infinite animation loops (H5) | Badge glow limited to 3 cycles, AURA reveal to 5 cycles |
+| F14 | Radar chart ignores reduced motion (H6) | Added `useReducedMotion` gating to framer + recharts + reveal delay |
 
 ---
 
@@ -52,11 +54,9 @@ Added `id`/`htmlFor` pairs to all 3 Input instances (display_name, username, loc
 
 Added Space key (`" "`) alongside Enter in `onKeyDown` handlers across all 6 `role="button"` instances: `discover/page.tsx` (2), `organizations/page.tsx` (1), `my-organization/page.tsx` (1), `org-talent/page.tsx` (1), `invite/page.tsx` (1). `e.preventDefault()` prevents page scroll on Space.
 
-### H2. Hardcoded color classes — contrast failures on dark bg
+### ~~H2. Hardcoded color classes — contrast failures on dark bg~~ FIXED
 
-`text-cyan-600` (Lc ~38), `text-blue-500` (Lc ~42) on dark surface. Below Lc 45 minimum.
-**Files:** `profile-header.tsx:63,68,73`, `competency-breakdown.tsx:41,42,110`, `impact-metrics.tsx:41,47`
-**Fix:** Replace with `-400` variants or tokens.
+Replaced `text-cyan-600` → `text-cyan-400`, `text-blue-500` → `text-blue-400` across 4 files: profile-header.tsx, competency-breakdown.tsx, feed-cards.tsx, features-grid.tsx. APCA Lc now ~60+ (was ~38-42). Commit 7bedae9.
 
 ### ~~H3. Onboarding animations not gated by useReducedMotion~~ FIXED
 
@@ -64,17 +64,17 @@ Added `useReducedMotion()` from framer-motion. ProgressBar skips initial animati
 
 **Files changed:** `onboarding/page.tsx`
 
-### H4. McqOptions uses aria-pressed for single-selection
+### ~~H4. McqOptions uses aria-pressed for single-selection~~ FIXED
 
-`mcq-options.tsx:29` — Should be `role="radiogroup"` + `role="radio"` + `aria-checked`.
+Changed container from `role="group"` to `role="radiogroup"`, buttons from `aria-pressed` to `role="radio"` + `aria-checked`. Tests updated.
 
-### H5. Infinite animation loops on action screens
+### ~~H5. Infinite animation loops on action screens~~ FIXED
 
-`badge-display.tsx:76`, `aura/page.tsx:143` — Infinite repeat on non-celebration screens violates Law 4.
+Badge glow (platinum/gold) limited from `Infinity` to 3 repeats. AURA reveal symbol limited to 5 repeats. Both already gated by `prefersReducedMotion`.
 
-### H6. AuraRadarChart animation ignores reduced motion
+### ~~H6. AuraRadarChart animation ignores reduced motion~~ FIXED
 
-`radar-chart.tsx:92` — Framer Motion + Recharts SVG animation both ungated.
+Added `useReducedMotion` from framer-motion. Framer entry animation skipped when reduced motion. Recharts `animationDuration` set to 0. Reveal delay set to 0.
 
 ---
 

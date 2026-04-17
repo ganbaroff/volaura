@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils/cn";
 // ── Types ──────────────────────────────────────────────────────────────────────
 
 type Step = 1 | 2 | 3;
-type AccountType = "volunteer" | "organization";
+type AccountType = "professional" | "organization";
 
 interface FormData {
   display_name: string;
@@ -153,7 +153,7 @@ export default function OnboardingPage() {
   const [step, setStep] = useState<Step>(1);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [accountType, setAccountType] = useState<AccountType>("volunteer");
+  const [accountType, setAccountType] = useState<AccountType>("professional");
 
   const [formData, setFormData] = useState<FormData>({
     display_name: "",
@@ -174,8 +174,10 @@ export default function OnboardingPage() {
         if (meta.username) {
           setFormData((prev) => ({ ...prev, username: meta.username as string }));
         }
-        if (meta.account_type === "organization" || meta.account_type === "volunteer") {
-          setAccountType(meta.account_type as AccountType);
+        if (meta.account_type === "organization") {
+          setAccountType("organization");
+        } else if (meta.account_type === "professional" || meta.account_type === "volunteer") {
+          setAccountType("professional");
         }
       }
     });
@@ -225,7 +227,7 @@ export default function OnboardingPage() {
       if (formData.username.trim()) payload.username = formData.username.trim();
       if (formData.location.trim()) payload.location = formData.location.trim();
       if (formData.languages.length > 0) payload.languages = formData.languages;
-      if (accountType === "volunteer") {
+      if (accountType === "professional") {
         payload.visible_to_orgs = formData.visible_to_orgs;
       }
       if (accountType === "organization") {
@@ -409,7 +411,7 @@ export default function OnboardingPage() {
                 </div>
 
                 {/* BATCH-O ON3: get-found is a feature, not a settings checkbox. Show as positive reinforcement. */}
-                {accountType === "volunteer" && (
+                {accountType === "professional" && (
                   <p className="text-sm text-muted-foreground flex items-start gap-2 pt-1">
                     <span aria-hidden="true">✓</span>
                     <span>{t("onboarding.visibleToOrgsInfo")}</span>

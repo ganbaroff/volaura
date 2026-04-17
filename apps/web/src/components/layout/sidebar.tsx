@@ -20,7 +20,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/brandedby",      labelKey: "nav.brandedby",      icon: "✦" },
   { href: "/events",         labelKey: "nav.events",         icon: "◎" },
   { href: "/my-organization", labelKey: "nav.myOrganization", icon: "🏢", orgOnly: true },
-  { href: "/org-volunteers",  labelKey: "nav.orgVolunteers",  icon: "👥", orgOnly: true },
+  { href: "/org-talent",  labelKey: "nav.orgVolunteers",  icon: "👥", orgOnly: true },
   { href: "/discover",        labelKey: "nav.discover",       icon: "🔍", orgOnly: true },
   // Leaderboard nav removed 2026-04-12 — Constitution v1.7 G9/G46.
   { href: "/notifications",  labelKey: "nav.notifications",  icon: "🔔" },

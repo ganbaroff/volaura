@@ -238,10 +238,10 @@ function SignupForm() {
                 }`}
               >
                 <div className="text-sm font-medium">
-                  {t(`auth.accountType${type === "professional" ? "Volunteer" : "Org"}`)}
+                  {t(`auth.accountType${type === "professional" ? "Professional" : "Org"}`)}
                 </div>
                 <div className="text-xs text-muted-foreground mt-0.5">
-                  {t(`auth.accountType${type === "professional" ? "Volunteer" : "Org"}Desc`)}
+                  {t(`auth.accountType${type === "professional" ? "Professional" : "Org"}Desc`)}
                 </div>
               </button>
             ))}

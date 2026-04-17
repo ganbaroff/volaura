@@ -58,7 +58,7 @@ function StatCard({
   );
 }
 
-// ── Volunteer row ──────────────────────────────────────────────────────────────
+// ── Professional row ──────────────────────────────────────────────────────────
 
 function ProfessionalRow({ row, onClick }: { row: OrgProfessionalRow; onClick: () => void }) {
   const tier = TIER_STYLES[row.badge_tier?.toLowerCase() ?? "none"] ?? TIER_STYLES.none;
@@ -145,7 +145,7 @@ const STATUS_FILTERS = [
   { key: "in_progress",   label: "In Progress" },
 ];
 
-export default function OrgVolunteersPage() {
+export default function OrgTalentPage() {
   const { t } = useTranslation();
   const { locale } = useParams<{ locale: string }>();
   const router = useRouter();
@@ -185,9 +185,9 @@ export default function OrgVolunteersPage() {
   }
 
   const { data: stats, isLoading: statsLoading } = useOrgDashboard();
-  const { data: volunteers, isLoading: volsLoading } = useOrgProfessionals({ status: statusFilter, limit: 50 });
+  const { data: professionals, isLoading: volsLoading } = useOrgProfessionals({ status: statusFilter, limit: 50 });
 
-  const filtered = (volunteers ?? []).filter((v) => {
+  const filtered = (professionals ?? []).filter((v) => {
     if (!search) return true;
     const q = search.toLowerCase();
     return (
@@ -271,7 +271,7 @@ export default function OrgVolunteersPage() {
               </motion.div>
             )}
 
-            {/* Top volunteers highlight */}
+            {/* Top professionals highlight */}
             {stats.top_professionals.length > 0 && (
               <motion.div variants={fadeUp} initial="hidden" animate="visible" className="rounded-xl border border-primary/20 bg-primary/5 p-5 space-y-3">
                 <h3 className="text-sm font-semibold text-primary">
@@ -304,7 +304,7 @@ export default function OrgVolunteersPage() {
           </>
         )}
 
-        {/* Volunteer list */}
+        {/* Professional list */}
         <div className="space-y-4">
           {/* Filters */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">

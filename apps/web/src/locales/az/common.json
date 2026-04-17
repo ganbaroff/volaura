@@ -97,6 +97,8 @@
     "accountTypeLabel": "Siz kimsiniz?",
     "accountTypeVolunteer": "Mən peşəkaram.",
     "accountTypeVolunteerDesc": "Mən bacarıqlarımı nümayiş etdirmək istəyirəm.",
+    "accountTypeProfessional": "Mən peşəkaram.",
+    "accountTypeProfessionalDesc": "Mən bacarıqlarımı nümayiş etdirmək istəyirəm.",
     "accountTypeOrg": "Mən bir təşkilatı təmsil edirəm.",
     "accountTypeOrgDesc": "Təsdiqlənmiş kadr axtarıram.",
     "orgTypeLabel": "Təşkilat növü",

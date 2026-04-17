@@ -6,7 +6,7 @@ import { useAdminUsers } from "@/hooks/queries/use-admin";
 import { cn } from "@/lib/utils/cn";
 
 const ACCOUNT_TYPE_BADGE: Record<string, string> = {
-  volunteer:     "bg-green-500/15 text-green-400 border-green-400/30",
+  professional:  "bg-green-500/15 text-green-400 border-green-400/30",
   organization:  "bg-blue-500/15 text-blue-400 border-blue-400/30",
 };
 

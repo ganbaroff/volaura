@@ -532,41 +532,59 @@ async def get_my_verifications(
 ) -> dict:
     """Return coordinator ratings for this professional — these are expert verifications.
 
-    Data source: event_registrations where coordinator_rating is not null.
+    Data source: registrations where coordinator_rating is not null.
     Joins with events (for event name) and profiles (for coordinator name/org).
     """
-    # Get all event registrations where this professional was rated by a coordinator
-    regs_result = (
-        await db.table("event_registrations")
-        .select("id, event_id, coordinator_rating, coordinator_feedback, created_at")
-        .eq("volunteer_id", str(user_id))
-        .not_.is_("coordinator_rating", "null")
-        .order("created_at", desc=True)
-        .limit(20)
-        .execute()
-    )
+    # Correct table is `registrations` (not `event_registrations`).
+    # Correct timestamp column is `coordinator_rated_at` (not `created_at`).
+    try:
+        regs_result = (
+            await db.table("registrations")
+            .select("id, event_id, coordinator_rating, coordinator_feedback, coordinator_rated_at")
+            .eq("volunteer_id", str(user_id))
+            .not_.is_("coordinator_rating", "null")
+            .order("coordinator_rated_at", desc=True)
+            .limit(20)
+            .execute()
+        )
+    except Exception as e:
+        logger.error("verifications fetch failed", user_id=str(user_id), error=str(e))
+        return {"data": []}
 
     verifications = []
     for reg in regs_result.data or []:
-        # Get event details
-        event_result = (
-            await db.table("events").select("title, organizer_id").eq("id", reg["event_id"]).maybe_single().execute()
-        )
-        event = event_result.data or {}
+        # Get event details — defensive: never let one orphan kill the whole list.
+        event: dict = {}
+        try:
+            event_result = (
+                await db.table("events")
+                .select("title, organizer_id")
+                .eq("id", reg["event_id"])
+                .limit(1)
+                .execute()
+            )
+            if event_result.data:
+                event = event_result.data[0]
+        except Exception as e:
+            logger.warning("verification event lookup failed", reg_id=reg.get("id"), error=str(e))
 
-        # Get organizer profile
+        # Get organizer profile — defensive on same pattern.
         organizer_name = "Coordinator"
         organizer_org = None
         if event.get("organizer_id"):
-            org_result = (
-                await db.table("profiles")
-                .select("display_name, username")
-                .eq("id", event["organizer_id"])
-                .maybe_single()
-                .execute()
-            )
-            if org_result.data:
-                organizer_name = org_result.data.get("display_name") or org_result.data.get("username") or "Coordinator"
+            try:
+                org_result = (
+                    await db.table("profiles")
+                    .select("display_name, username")
+                    .eq("id", event["organizer_id"])
+                    .limit(1)
+                    .execute()
+                )
+                if org_result.data:
+                    org_row = org_result.data[0]
+                    organizer_name = org_row.get("display_name") or org_row.get("username") or "Coordinator"
+            except Exception as e:
+                logger.warning("verification organizer lookup failed", reg_id=reg.get("id"), error=str(e))
 
         verifications.append(
             {
@@ -576,7 +594,7 @@ async def get_my_verifications(
                 "competency_id": "event_performance",
                 "rating": reg.get("coordinator_rating", 0),
                 "comment": reg.get("coordinator_feedback"),
-                "verified_at": reg.get("created_at", ""),
+                "verified_at": reg.get("coordinator_rated_at") or "",
             }
         )
 

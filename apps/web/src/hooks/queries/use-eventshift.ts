@@ -16,7 +16,7 @@ import { useAuthToken } from "./use-auth-token";
 
 export type EventShiftStatus = "planning" | "staffing" | "live" | "closed" | "cancelled";
 export type UnitStatus = "open" | "staffed" | "live" | "closed";
-export type AssignmentRole = "lead" | "staff" | "backup" | "volunteer";
+export type AssignmentRole = "lead" | "staff" | "backup" | "support";
 export type AssignmentStatus =
   | "assigned"
   | "accepted"

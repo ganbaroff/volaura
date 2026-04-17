@@ -75,7 +75,7 @@ def _mk_db_with_pending(pending_rows: list[dict], rpc_data=None, rpc_raises=None
 async def test_happy_path_clears_flag():
     row = {
         "id": str(uuid4()),
-        "user_id": str(uuid4()),
+        "volunteer_id": str(uuid4()),
         "competency_id": str(uuid4()),
         "competency_score": 0.72,
         "reconcile_attempts": 1,
@@ -93,7 +93,7 @@ async def test_happy_path_clears_flag():
 async def test_rpc_failure_below_cap_increments_counter():
     row = {
         "id": str(uuid4()),
-        "user_id": str(uuid4()),
+        "volunteer_id": str(uuid4()),
         "competency_id": str(uuid4()),
         "competency_score": 0.5,
         "reconcile_attempts": 0,
@@ -113,7 +113,7 @@ async def test_rpc_failure_below_cap_increments_counter():
 async def test_rpc_failure_at_cap_marks_gave_up():
     row = {
         "id": str(uuid4()),
-        "user_id": str(uuid4()),
+        "volunteer_id": str(uuid4()),
         "competency_id": str(uuid4()),
         "competency_score": 0.5,
         "reconcile_attempts": MAX_RECONCILE_ATTEMPTS - 1,  # next attempt hits cap
@@ -133,7 +133,7 @@ async def test_rpc_failure_at_cap_marks_gave_up():
 async def test_null_competency_score_gives_up_immediately():
     row = {
         "id": str(uuid4()),
-        "user_id": str(uuid4()),
+        "volunteer_id": str(uuid4()),
         "competency_id": str(uuid4()),
         "competency_score": None,
         "reconcile_attempts": 0,
@@ -150,7 +150,7 @@ async def test_null_competency_score_gives_up_immediately():
 async def test_missing_slug_gives_up():
     row = {
         "id": str(uuid4()),
-        "user_id": str(uuid4()),
+        "volunteer_id": str(uuid4()),
         "competency_id": str(uuid4()),
         "competency_score": 0.6,
         "reconcile_attempts": 0,
@@ -173,9 +173,9 @@ async def test_run_once_empty_returns_zero_stats():
 @pytest.mark.asyncio
 async def test_run_once_mixed_batch():
     rows = [
-        {"id": str(uuid4()), "user_id": str(uuid4()), "competency_id": str(uuid4()),
+        {"id": str(uuid4()), "volunteer_id": str(uuid4()), "competency_id": str(uuid4()),
          "competency_score": 0.9, "reconcile_attempts": 0},  # will succeed
-        {"id": str(uuid4()), "user_id": str(uuid4()), "competency_id": str(uuid4()),
+        {"id": str(uuid4()), "volunteer_id": str(uuid4()), "competency_id": str(uuid4()),
          "competency_score": None, "reconcile_attempts": 0},  # gave_up
     ]
     db, _ = _mk_db_with_pending(rows, rpc_data=[{"ok": True}])

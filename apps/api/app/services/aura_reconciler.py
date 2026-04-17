@@ -20,14 +20,15 @@ DESIGN:
     so CTO/ops can investigate. Leaving the flag TRUE forever would fill
     the retry index and mask fresh failures.
   - Success criterion: RPC returns data. On success we clear the flag.
-  - Never touches session answers, never recomputes competency_score —
-    that was already persisted when the user completed. We only resync
-    the AURA aggregate.
+  - Never touches session answers. Recomputes competency_score from
+    theta_estimate and gaming_penalty_multiplier (the score is not stored
+    as a column). We only resync the AURA aggregate.
 """
 
 from __future__ import annotations
 
 import asyncio
+import math
 import os
 from typing import Any
 
@@ -40,6 +41,11 @@ from supabase._async.client import create_client as acreate_client
 RECONCILE_BATCH_SIZE: int = int(os.environ.get("AURA_RECONCILE_BATCH_SIZE", "50"))
 MAX_RECONCILE_ATTEMPTS: int = int(os.environ.get("AURA_RECONCILE_MAX_ATTEMPTS", "5"))
 RPC_RETRY_SLEEP_S: float = 1.5
+
+
+def _theta_to_score(theta: float) -> float:
+    """Logistic mapping from IRT theta to 0-100 AURA score (mirrors engine.theta_to_score)."""
+    return 100.0 / (1.0 + math.exp(-theta))
 
 
 async def _admin() -> AsyncClient:
@@ -59,7 +65,7 @@ async def _fetch_pending(db: AsyncClient, limit: int) -> list[dict[str, Any]]:
     """
     result = (
         await db.table("assessment_sessions")
-        .select("id,volunteer_id,competency_id,competency_score,reconcile_attempts")
+        .select("id,volunteer_id,competency_id,theta_estimate,gaming_penalty_multiplier,reconcile_attempts")
         .eq("pending_aura_sync", True)
         .eq("status", "completed")
         .order("completed_at", desc=False)
@@ -83,18 +89,20 @@ async def _reconcile_session(db: AsyncClient, row: dict[str, Any]) -> str:
     session_id: str = row["id"]
     user_id: str = row["volunteer_id"]
     competency_id: str = row["competency_id"]
-    competency_score: float | None = row.get("competency_score")
+    theta: float | None = row.get("theta_estimate")
+    penalty: float = float(row.get("gaming_penalty_multiplier") or 1.0)
     attempts: int = int(row.get("reconcile_attempts") or 0)
 
-    if competency_score is None:
+    if theta is None:
         logger.error(
-            "reconcile: session has NULL competency_score — cannot resync AURA",
+            "reconcile: session has NULL theta_estimate — cannot resync AURA",
             session_id=session_id,
             user_id=user_id,
         )
-        # Mark gave_up to stop pounding on a session that cannot recover here.
-        await _mark_gave_up(db, session_id, "null_competency_score")
+        await _mark_gave_up(db, session_id, "null_theta")
         return "gave_up"
+
+    competency_score = round(_theta_to_score(theta) * penalty, 2)
 
     slug = await _get_slug(db, competency_id)
     if not slug:
@@ -155,7 +163,7 @@ async def _reconcile_session(db: AsyncClient, row: dict[str, Any]) -> str:
 
 async def _mark_gave_up(db: AsyncClient, session_id: str, reason: str) -> None:
     """Clear the flag so the session stops being picked up. A CRITICAL log is
-    emitted upstream; the session's state is preserved (competency_score
+    emitted upstream; the session's state is preserved (theta_estimate
     still there). Manual CTO inspection is expected."""
     try:
         await db.table("assessment_sessions").update({"pending_aura_sync": False}).eq("id", session_id).execute()

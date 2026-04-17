@@ -557,11 +557,7 @@ async def get_my_verifications(
         event: dict = {}
         try:
             event_result = (
-                await db.table("events")
-                .select("title, organizer_id")
-                .eq("id", reg["event_id"])
-                .limit(1)
-                .execute()
+                await db.table("events").select("title, organizer_id").eq("id", reg["event_id"]).limit(1).execute()
             )
             if event_result.data:
                 event = event_result.data[0]

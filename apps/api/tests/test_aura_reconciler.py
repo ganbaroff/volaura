@@ -4,7 +4,7 @@ Coverage:
   1. Happy path: pending session → RPC succeeds → flag cleared, attempts reset
   2. RPC failure under retry cap: increments reconcile_attempts, leaves flag TRUE
   3. RPC failure at retry cap: clears flag, logs gave_up
-  4. NULL competency_score: marks gave_up immediately (cannot resync without it)
+  4. NULL theta_estimate: marks gave_up immediately (cannot resync without it)
   5. Missing slug for competency: marks gave_up
   6. Empty pending list: returns zero stats, no errors
 """
@@ -23,8 +23,9 @@ from app.services.aura_reconciler import (
 )
 
 
-def _mk_db_with_pending(pending_rows: list[dict], rpc_data=None, rpc_raises=None,
-                       slug="communication", update_raises=False):
+def _mk_db_with_pending(
+    pending_rows: list[dict], rpc_data=None, rpc_raises=None, slug="communication", update_raises=False
+):
     """Build a chainable mock supabase client matching the reconciler's API usage.
 
     sessions_chain is shared so every update/select call lands on the same mock —
@@ -50,9 +51,7 @@ def _mk_db_with_pending(pending_rows: list[dict], rpc_data=None, rpc_raises=None
     comp_chain.select.return_value = comp_chain
     comp_chain.eq.return_value = comp_chain
     comp_chain.single.return_value = comp_chain
-    comp_chain.execute = AsyncMock(
-        return_value=MagicMock(data={"slug": slug} if slug else None)
-    )
+    comp_chain.execute = AsyncMock(return_value=MagicMock(data={"slug": slug} if slug else None))
 
     def table(name):
         if name == "competencies":
@@ -77,7 +76,8 @@ async def test_happy_path_clears_flag():
         "id": str(uuid4()),
         "volunteer_id": str(uuid4()),
         "competency_id": str(uuid4()),
-        "competency_score": 0.72,
+        "theta_estimate": 0.5,
+        "gaming_penalty_multiplier": 1.0,
         "reconcile_attempts": 1,
     }
     db, update_chain = _mk_db_with_pending([row], rpc_data=[{"ok": True}])
@@ -95,12 +95,11 @@ async def test_rpc_failure_below_cap_increments_counter():
         "id": str(uuid4()),
         "volunteer_id": str(uuid4()),
         "competency_id": str(uuid4()),
-        "competency_score": 0.5,
+        "theta_estimate": 0.0,
+        "gaming_penalty_multiplier": 1.0,
         "reconcile_attempts": 0,
     }
-    db, update_chain = _mk_db_with_pending(
-        [row], rpc_raises=RuntimeError("Gemini timeout")
-    )
+    db, update_chain = _mk_db_with_pending([row], rpc_raises=RuntimeError("Gemini timeout"))
 
     outcome = await _reconcile_session(db, row)
 
@@ -115,12 +114,11 @@ async def test_rpc_failure_at_cap_marks_gave_up():
         "id": str(uuid4()),
         "volunteer_id": str(uuid4()),
         "competency_id": str(uuid4()),
-        "competency_score": 0.5,
+        "theta_estimate": 0.0,
+        "gaming_penalty_multiplier": 1.0,
         "reconcile_attempts": MAX_RECONCILE_ATTEMPTS - 1,  # next attempt hits cap
     }
-    db, update_chain = _mk_db_with_pending(
-        [row], rpc_raises=RuntimeError("permanent failure")
-    )
+    db, update_chain = _mk_db_with_pending([row], rpc_raises=RuntimeError("permanent failure"))
 
     outcome = await _reconcile_session(db, row)
 
@@ -130,12 +128,13 @@ async def test_rpc_failure_at_cap_marks_gave_up():
 
 
 @pytest.mark.asyncio
-async def test_null_competency_score_gives_up_immediately():
+async def test_null_theta_gives_up_immediately():
     row = {
         "id": str(uuid4()),
         "volunteer_id": str(uuid4()),
         "competency_id": str(uuid4()),
-        "competency_score": None,
+        "theta_estimate": None,
+        "gaming_penalty_multiplier": 1.0,
         "reconcile_attempts": 0,
     }
     db, update_chain = _mk_db_with_pending([row])
@@ -152,7 +151,8 @@ async def test_missing_slug_gives_up():
         "id": str(uuid4()),
         "volunteer_id": str(uuid4()),
         "competency_id": str(uuid4()),
-        "competency_score": 0.6,
+        "theta_estimate": 0.5,
+        "gaming_penalty_multiplier": 1.0,
         "reconcile_attempts": 0,
     }
     db, update_chain = _mk_db_with_pending([row], slug=None)
@@ -173,10 +173,22 @@ async def test_run_once_empty_returns_zero_stats():
 @pytest.mark.asyncio
 async def test_run_once_mixed_batch():
     rows = [
-        {"id": str(uuid4()), "volunteer_id": str(uuid4()), "competency_id": str(uuid4()),
-         "competency_score": 0.9, "reconcile_attempts": 0},  # will succeed
-        {"id": str(uuid4()), "volunteer_id": str(uuid4()), "competency_id": str(uuid4()),
-         "competency_score": None, "reconcile_attempts": 0},  # gave_up
+        {
+            "id": str(uuid4()),
+            "volunteer_id": str(uuid4()),
+            "competency_id": str(uuid4()),
+            "theta_estimate": 1.0,
+            "gaming_penalty_multiplier": 1.0,
+            "reconcile_attempts": 0,
+        },  # will succeed
+        {
+            "id": str(uuid4()),
+            "volunteer_id": str(uuid4()),
+            "competency_id": str(uuid4()),
+            "theta_estimate": None,
+            "gaming_penalty_multiplier": 1.0,
+            "reconcile_attempts": 0,
+        },  # gave_up
     ]
     db, _ = _mk_db_with_pending(rows, rpc_data=[{"ok": True}])
     with patch("app.services.aura_reconciler._admin", AsyncMock(return_value=db)):

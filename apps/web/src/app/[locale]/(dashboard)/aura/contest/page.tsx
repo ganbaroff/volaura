@@ -8,6 +8,7 @@ import { TopBar } from "@/components/layout/top-bar";
 import { Button } from "@/components/ui/button";
 import { useFileGrievance, useOwnGrievances } from "@/hooks/queries/use-grievance";
 import { CheckCircle2, ArrowLeft } from "lucide-react";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 const COMPETENCY_SLUGS = [
   "communication",
@@ -31,6 +32,9 @@ export default function ContestScorePage() {
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
   const router = useRouter();
+
+  const { energy } = useEnergyMode();
+  const isLow = energy === "low";
 
   const [subject, setSubject] = useState("");
   const [description, setDescription] = useState("");
@@ -96,7 +100,7 @@ export default function ContestScorePage() {
             </Button>
           </div>
 
-          {ownGrievances && ownGrievances.length > 0 && (
+          {!isLow && ownGrievances && ownGrievances.length > 0 && (
             <div className="space-y-3">
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
                 {t("contest.historyTitle", { defaultValue: "Your requests" })}
@@ -171,24 +175,26 @@ export default function ContestScorePage() {
             <p className="text-xs text-muted-foreground">{subject.length}/200</p>
           </div>
 
-          <div className="space-y-1.5">
-            <label htmlFor="competency" className="block text-sm font-semibold text-foreground">
-              {t("contest.competencyLabel", { defaultValue: "Which competency (optional)?" })}
-            </label>
-            <select
-              id="competency"
-              value={competency}
-              onChange={(e) => setCompetency(e.target.value)}
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              <option value="">{t("contest.competencyNone", { defaultValue: "— not specific —" })}</option>
-              {COMPETENCY_SLUGS.map((slug) => (
-                <option key={slug} value={slug}>
-                  {t(`competency.${slug}`, { defaultValue: slug })}
-                </option>
-              ))}
-            </select>
-          </div>
+          {!isLow && (
+            <div className="space-y-1.5">
+              <label htmlFor="competency" className="block text-sm font-semibold text-foreground">
+                {t("contest.competencyLabel", { defaultValue: "Which competency (optional)?" })}
+              </label>
+              <select
+                id="competency"
+                value={competency}
+                onChange={(e) => setCompetency(e.target.value)}
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <option value="">{t("contest.competencyNone", { defaultValue: "— not specific —" })}</option>
+                {COMPETENCY_SLUGS.map((slug) => (
+                  <option key={slug} value={slug}>
+                    {t(`competency.${slug}`, { defaultValue: slug })}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className="space-y-1.5">
             <label htmlFor="description" className="block text-sm font-semibold text-foreground">

@@ -13,7 +13,7 @@ const makeItem = (
 const sampleItems: ActivityItem[] = [
   makeItem("1", "aura_update", "Your AURA score was updated to 78.5"),
   makeItem("2", "org_view", "TechCorp viewed your profile"),
-  makeItem("3", "event", "You registered for CIS Games Volunteer Day"),
+  makeItem("3", "event", "You registered for CIS Games Community Day"),
 ];
 
 describe("ActivityFeed", () => {
@@ -26,7 +26,7 @@ describe("ActivityFeed", () => {
     render(<ActivityFeed items={sampleItems} locale="en" />);
     expect(screen.getByText("Your AURA score was updated to 78.5")).toBeInTheDocument();
     expect(screen.getByText("TechCorp viewed your profile")).toBeInTheDocument();
-    expect(screen.getByText("You registered for CIS Games Volunteer Day")).toBeInTheDocument();
+    expect(screen.getByText("You registered for CIS Games Community Day")).toBeInTheDocument();
   });
 
   it("renders each item's timeAgo value", () => {
@@ -57,10 +57,10 @@ describe("ActivityFeed", () => {
 
   it("renders event activity item correctly", () => {
     const items: ActivityItem[] = [
-      makeItem("3", "event", "Registered for volunteer day"),
+      makeItem("3", "event", "Registered for community day"),
     ];
     render(<ActivityFeed items={items} locale="en" />);
-    expect(screen.getByText("Registered for volunteer day")).toBeInTheDocument();
+    expect(screen.getByText("Registered for community day")).toBeInTheDocument();
   });
 
   it("renders the correct number of items (up to 5)", () => {

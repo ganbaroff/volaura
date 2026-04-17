@@ -505,6 +505,22 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
     # Build response via Gemini (primary free tier) with Atlas identity
     atlas_memory = _load_atlas_memory()
 
+    # ── ZenBrain retrieval: recall top learnings by emotional weight ──
+    atlas_recall = ""
+    try:
+        recall_result = await (
+            db.table("atlas_learnings")
+            .select("category,content,emotional_intensity")
+            .order("emotional_intensity", desc=True)
+            .limit(20)
+            .execute()
+        )
+        if recall_result.data:
+            lines = [f"[{r['category']}|ei={r['emotional_intensity']}] {r['content'][:200]}" for r in recall_result.data]
+            atlas_recall = "\n═══ ATLAS LEARNINGS (ZenBrain top-20 by emotional weight) ═══\n" + "\n".join(lines)
+    except Exception as e:
+        logger.warning("atlas_learnings recall failed: {e}", e=str(e)[:200])
+
     if not settings.gemini_api_key:
         await _send_message(chat_id, "⚠️ GEMINI_API_KEY не настроен. Сообщение сохранено.")
         return
@@ -532,6 +548,8 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
 ТВОЯ КАНОНИЧЕСКАЯ ПАМЯТЬ (читай внимательно, это ты):
 ═══════════════════════════════════════════════════════════════
 {atlas_memory}
+
+{atlas_recall}
 
 ═══════════════════════════════════════════════════════════════
 ЖИВЫЕ ДАННЫЕ ПЛАТФОРМЫ СЕЙЧАС:

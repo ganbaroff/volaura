@@ -893,7 +893,7 @@
     "streakWeeks_one": "{{count}} həftəlik ardıcıllıq",
     "streakWeeks_other": "{{count}} həftəlik ardıcıllıq",
     "streakCrystal": "Ardıcıllıq kristalı",
-    "crystalFading": "Bu həftə ardıcıllığınızı qoruyun",
+    "crystalFading": "Kristalınızın parıltısı azalır",
     "memberActive": "Bu həftə aktivdir",
     "memberInactive": "Bu həftə hələ aktiv deyil",
     "memberActiveLabel": "✓ aktiv",

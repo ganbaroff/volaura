@@ -72,7 +72,7 @@ export function AuraScoreWidget({ score, badgeTier, isElite, locale }: AuraScore
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${pct}%` }}
-              transition={prefersReducedMotion ? { duration: 0 } : { duration: 1.2, ease: "easeOut", delay: 0.3 }}
+              transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.8, ease: "easeOut", delay: 0.2 }}
               className="h-full rounded-full bg-primary"
             />
           </div>

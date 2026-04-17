@@ -372,7 +372,6 @@ export default function GenerationPage({
           <video
             src={videoUrl}
             controls
-            autoPlay
             loop
             playsInline
             className="w-full aspect-video object-contain"

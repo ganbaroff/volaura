@@ -17,8 +17,16 @@ function useCountUp(target: number, duration = 800): number {
   const startRef = useRef<number | null>(null);
   const rafRef = useRef<number | null>(null);
   const isMounted = useRef(true);
+  const prefersReduced = useRef(
+    typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
 
   useEffect(() => {
+    if (prefersReduced.current) {
+      setCount(target);
+      return;
+    }
+
     isMounted.current = true;
     startRef.current = null;
 
@@ -27,7 +35,6 @@ function useCountUp(target: number, duration = 800): number {
       if (startRef.current === null) startRef.current = timestamp;
       const elapsed = timestamp - startRef.current;
       const progress = Math.min(elapsed / duration, 1);
-      // cubic ease-out
       const eased = 1 - Math.pow(1 - progress, 3);
       setCount(Math.floor(eased * target));
       if (progress < 1) {
@@ -59,7 +66,7 @@ function StatCard({
   // When count < 5, render the qualitative string instead of the raw number.
   fallbackLabel?: string;
 }) {
-  const count = useCountUp(value, 1800);
+  const count = useCountUp(value, 800);
   const belowThreshold = fallbackLabel != null && value < 5;
 
   return (

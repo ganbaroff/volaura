@@ -893,7 +893,7 @@
     "streakWeeks_one": "{{count}} week streak",
     "streakWeeks_other": "{{count}} week streak",
     "streakCrystal": "Streak crystal",
-    "crystalFading": "Keep your streak alive this week",
+    "crystalFading": "Your crystal glow is fading",
     "memberActive": "Active this week",
     "memberInactive": "Not active yet this week",
     "memberActiveLabel": "✓ active",

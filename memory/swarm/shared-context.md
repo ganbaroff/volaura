@@ -1,5 +1,5 @@
 <!-- RECENTLY_SHIPPED_START -->
-## ⚡ RECENTLY SHIPPED (last push — 2026-04-17 10:27 UTC)
+## ⚡ RECENTLY SHIPPED (last push — 2026-04-17 10:49 UTC)
 **Read this FIRST — prevents proposing already-shipped work.**
 New/updated routers: telegram_webhook
 <!-- RECENTLY_SHIPPED_END -->

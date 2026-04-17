@@ -158,7 +158,9 @@
     "continueWithGoogle": "Continue with Google",
     "continueWithGitHub": "Continue with GitHub",
     "oauthError": "Sign-in failed. Please try again.",
-    "oauthInviteRequired": "Social sign-up is unavailable during invite-only beta. Use email + invite code."
+    "oauthInviteRequired": "Social sign-up is unavailable during invite-only beta. Use email + invite code.",
+    "ageConfirm": "I confirm that I am 16 years old or older.",
+    "checkboxesRequired": "Please check both boxes above to continue"
   },
   "assessment": {
     "title": "Competency Assessment",
@@ -913,7 +915,42 @@
     "bronze": "Bronze"
   },
   "discover": {
-    "filterBySkill": "Find by verified skill"
+    "filterBySkill": "Find by verified skill",
+    "title": "Discover Talent",
+    "subtitle": "Browse verified professionals open to opportunities",
+    "modeToggle": "Discovery mode",
+    "browse": "Browse",
+    "semanticSearch": "Smart Search",
+    "searchPlaceholder": "Filter by name or location...",
+    "accessError": "Discovering talent requires an organization account.",
+    "accessErrorDesc": "Make sure your account is registered as an organization.",
+    "noResults": "No professionals match your filter",
+    "noProfessionals": "No professionals have opted in for discovery yet.",
+    "count": "{{count}} professionals available",
+    "queryPlaceholder": "e.g. experienced team leader for youth events...",
+    "queryLabel": "Search query",
+    "minAura": "Min. AURA score",
+    "badgeTier": "Badge tier",
+    "searching": "Searching...",
+    "search": "Search",
+    "searchError": "Search failed. Please try again.",
+    "searchNoResults": "No professionals match your search.",
+    "searchCount": "{{count}} results",
+    "backToBrowse": "← Back to browse",
+    "clearSearch": "Clear",
+    "aura": {
+      "AnyAura": "Any AURA",
+      "BronzePlus": "Bronze+",
+      "SilverPlus": "Silver+",
+      "GoldPlus": "Gold+"
+    },
+    "badge": {
+      "Anygrade": "Any grade",
+      "Bronze": "Bronze",
+      "Silver": "Silver",
+      "Gold": "Gold",
+      "Platinum": "Platinum"
+    }
   },
   "contest": {
     "title": "Request a review",

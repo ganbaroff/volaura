@@ -64,32 +64,51 @@ function AuthCallbackContent() {
       return;
     }
 
-    // WHY (INC-017, 2026-04-15): previous implementation relied on the singleton
-    // `createBrowserClient` auto-calling exchangeCodeForSession when it "sees"
-    // ?code= via detectSessionInUrl. That assumption is false when the singleton
-    // was first constructed on the login page (no ?code= in URL) — _initialize()
-    // runs once at construction, does NOT re-check the URL on subsequent pages,
-    // so the auto-exchange never fires. Result: session never persists, user
-    // bounces back to login. Repeat bug reported by CEO 2026-04-15.
+    // WHY (INC-018, 2026-04-17): two entry paths reach this callback with opposite
+    // exchange needs, and auto-exchange by `_initialize()` cannot be disabled from
+    // userland. `@supabase/ssr` 0.6.0's `createBrowserClient` HARDCODES
+    // `detectSessionInUrl: isBrowser()` AFTER spreading user options, so any
+    // `auth: { detectSessionInUrl: false }` override is silently ignored.
     //
-    // FIX: explicitly call exchangeCodeForSession(code). The code_verifier is
-    // still in document.cookie from signInWithOAuth, so the exchange works.
-    // No double-exchange risk because auto-exchange never runs for a reused
-    // singleton (the original concern in commit 1e26ccc was misdiagnosed).
+    //   Path A — external OAuth redirect (fresh page load from Google):
+    //     New `createBrowserClient` singleton is built on /callback. Its first
+    //     `_initialize()` sees `?code=` in the URL and auto-exchanges it. The
+    //     PKCE `code_verifier` cookie is consumed. If we *also* call
+    //     `exchangeCodeForSession(code)` explicitly, whichever runs second hits
+    //     "PKCE code verifier not found in storage" and bounces user to /login.
+    //
+    //   Path B — SPA navigation (user clicked in-app link that carried ?code=):
+    //     Singleton already exists (built on login page with no ?code=).
+    //     `_initialize()` already ran and did NOT auto-exchange (URL had no code
+    //     at construction time). We MUST call `exchangeCodeForSession(code)`
+    //     ourselves or the session never lands. This is the INC-017 case.
+    //
+    // FIX: `getSession()` awaits the internal `_initializePromise` lock, so if
+    // `_initialize()` auto-exchanged (Path A), we get a real session back. If
+    // it didn't (Path B), we get null and fall through to the explicit exchange.
+    // Single code path, covers both, no race, no double-consume of the verifier.
 
     void (async () => {
       const supabase = createClient();
-      const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+
+      // Path A awaits init; returns real session when auto-exchange ran.
+      // Path B returns null session; fall through to explicit exchange.
+      const { data: initial } = await supabase.auth.getSession();
+      let session = initial.session;
 
       if (!isMounted.current) return;
 
-      if (error || !data.session) {
-        console.error("[callback] exchangeCodeForSession failed:", error?.message);
-        router.replace(`/${locale}/login?message=oauth-error`);
-        return;
+      if (!session) {
+        const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+        if (!isMounted.current) return;
+        if (error || !data.session) {
+          console.error("[callback] exchangeCodeForSession failed:", error?.message);
+          router.replace(`/${locale}/login?message=oauth-error`);
+          return;
+        }
+        session = data.session;
       }
 
-      const session = data.session;
       setSession(session);
 
       // Attribution + OAuth metadata capture (fire-and-forget, non-blocking)

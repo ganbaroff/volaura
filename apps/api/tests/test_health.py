@@ -33,7 +33,7 @@ async def test_health_endpoint(client: AsyncClient):
         # In test environment (no real Supabase/Gemini), status may be "degraded" — that is expected.
         # In production (real services connected), status will be "ok".
         assert data["status"] in ("ok", "degraded"), f"Unexpected status: {data['status']}"
-        assert data["version"] == "0.1.0"
+        assert data["version"] == "0.2.0"
         assert "database" in data
         assert "llm_configured" in data
     finally:

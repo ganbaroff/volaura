@@ -1,6 +1,6 @@
 # LinkedIn Posts — Tracker
 
-**Последнее обновление:** 14 апреля 2026, ~16:00 Баку (automated content-post-prep run — B01 Tuesday batch finalized)
+**Последнее обновление:** 15 апреля 2026, 21:30 Баку (все скрипты B01 + B02 YouTube написаны)
 **Начало работы с Claude:** 23 марта 2026
 **До этого (cowork):** 21-22 марта 2026
 
@@ -51,18 +51,18 @@
 | 006 | "The Marathon" | Yusif | Founder Lifestyle | 💡 IDEA | — | — | — | backlog |
 | B01-LI | "The Vote" (LinkedIn EN) | Claude | AI CTO Diary S1 | ✅ READY | 14 апр 2026, 20:00 Баку | — | — | `ready/post-005-the-vote-en.md` |
 | B01-TT1 | "AI komandam" (TikTok AZ) | — | AI CTO Diary | ✅ READY | 14 апр 2026 | — | — | `ready/post-006-ai-komandam-az.md` |
-| B01-TT2 | "My AI team disagreed" (TikTok EN) | — | AI CTO Diary | 💡 PLANNED | 17 апр 2026 | — | — | — |
-| B01-LI2 | "44 agentlə" (LinkedIn AZ) | Yusif | AI CTO Diary S2 | 💡 PLANNED | 17 апр 2026 | — | — | — |
-| B01-CAR | "44 AI Agents Org Chart" (Carousel) | — | AI CTO Diary | 💡 PLANNED | 16 апр 2026 | — | — | — |
-| B01-TG | AI CTO Diary (Telegram RU) | — | AI CTO Diary | 💡 PLANNED | 18 апр 2026 | — | — | — |
-| B01-YT | "I Gave AI Full Control" (YouTube) | — | AI CTO Diary | 💡 PLANNED | record by 15 апр | — | — | — |
+| B01-TT2 | "My AI team disagreed" (TikTok EN) | — | AI CTO Diary | 🔄 DRAFT | 17 апр 2026 | — | — | `draft/2026-04-17-tiktok-en-my-ai-team-disagreed.md` |
+| B01-LI2 | "44 agentlə" (LinkedIn AZ) | Yusif | AI CTO Diary S2 | 🔄 DRAFT | 17 апр 2026 | — | — | `draft/2026-04-17-linkedin-az-44-agentla.md` |
+| B01-CAR | "44 AI Agents Org Chart" (Carousel) | — | AI CTO Diary | 🔄 DRAFT | 16 апр 2026 | — | — | `draft/2026-04-16-carousel-44-agents-org-chart.md` |
+| B01-TG | AI CTO Diary (Telegram RU) | — | AI CTO Diary | 🔄 DRAFT | 18 апр 2026 | — | — | `draft/2026-04-18-telegram-ru-ai-politika.md` |
+| B01-YT | "I Gave AI Full Control" (YouTube) | — | AI CTO Diary | 🔄 DRAFT | record by 15 апр ⚠️ TODAY | — | — | `draft/2026-04-15-youtube-en-i-gave-ai-full-control.md` |
 | B02-LI | "The Certificate" (LinkedIn EN) | Standalone | Vol. Insights | 🔄 DRAFT | 21 апр 2026 | — | — | `draft/2026-04-21-linkedin-en-the-certificate.md` |
 | B02-TT1 | "Könüllülük iş sayılmır" (TikTok AZ) | — | Vol. Insights | 🔄 DRAFT | 21 апр 2026 | — | — | `draft/2026-04-21-tiktok-az-konulluluk.md` |
 | B02-TT2 | "Your volunteer work is invisible" (TikTok EN) | — | Vol. Insights | 💡 PLANNED | 24 апр 2026 | — | — | — |
 | B02-LI2 | "Bir sertifikat, iki nəfər" (LinkedIn AZ) | Yusif | Vol. Insights S2 | 💡 PLANNED | 24 апр 2026 | — | — | — |
 | B02-CAR | "Why Your Volunteer Work Is Invisible" (Carousel) | — | Vol. Insights | 💡 PLANNED | 23 апр 2026 | — | — | — |
 | B02-TG | Vol. Insights (Telegram RU) | — | Vol. Insights | 💡 PLANNED | 25 апр 2026 | — | — | — |
-| B02-YT | "The $0 Industry With Billions of Hours" (YouTube) | — | Vol. Insights | 💡 PLANNED | record by 22 апр | — | — | — |
+| B02-YT | "The $0 Industry With Billions of Hours" (YouTube) | — | Vol. Insights | 🔄 DRAFT | record by 22 апр | — | — | `draft/2026-04-22-youtube-en-the-zero-dollar-industry.md` |
 
 ---
 

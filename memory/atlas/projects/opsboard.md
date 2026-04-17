@@ -1,9 +1,11 @@
 # OPSBOARD / eventshift — side project map
 
-**Status as of 2026-04-15 14:30 Baku.** Live, first production traffic. First eyes on UI still pending.
+**Status as of 2026-04-16 14:30 Baku.** CEO directive: eventshift becomes part of VOLAURA ecosystem. Not a separate side tool anymore.
 
 ## What it is
-Operational platform for live events (incident/operation/shift tracking). First real use target: WUF13 Guest Services. Separate from VOLAURA ecosystem — different repo, different Railway project, different memory concerns. Do NOT try to consolidate with VOLAURA; it is Yusif's side tool, not part of the 5-product platform.
+Event workforce operations module INSIDE the VOLAURA ecosystem. Manages staff deployment, shift reporting, operational metrics per zone/unit at live events. First real use target: WUF13 Guest Services department (GSE). CEO directive 2026-04-16: "часть волаура. регистрируется аккаунт через VOLAURA, попадает на страницу ивента."
+
+**SUPERSEDES** previous directive "Do NOT try to consolidate with VOLAURA." CEO explicitly reversed this 2026-04-16.
 
 ## Where the code lives
 - Local clone: `C:\Projects\eventshift` (cloned today 2026-04-15)
@@ -90,7 +92,16 @@ Windows gotcha (logged twice in one session 2026-04-15): the `notebooklm` CLI's 
 - Production 502 on either URL
 
 ## When NOT to touch
-- Any VOLAURA-related work. OPSBOARD is fully isolated: different repo, different Railway project, different users, different compliance scope. Do not invent cross-product features.
+- When working on non-event VOLAURA features (assessment, AURA, profile). Ops module has its own development track.
+
+## Integration status (2026-04-16)
+- CEO vision: Event → Department → Area → Unit → People + Metrics
+- Research complete: Rosterfy, Engelsystem, LASSO, Liveforce analyzed. NotebookLM notebook with 7 sources.
+- Domain model revised per CEO vision (not incident-first, but people-and-metrics-first)
+- Supabase migration drafted (needs revision to match new domain model)
+- FastAPI routers drafted (needs revision to match new domain model)
+- Frontend pages drafted (needs revision to match new domain model)
+- Build order: 1) Reporting 2) Daily Run Sheet 3) Deployment Plan 4) Data Import
 
 ## First thing to check next wake
 `curl https://eventhisft-production.up.railway.app/health` → expect `200 {status:"ok"}`.

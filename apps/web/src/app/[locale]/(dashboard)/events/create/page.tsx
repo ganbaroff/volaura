@@ -179,7 +179,7 @@ export default function CreateEventPage() {
                 </Field>
 
                 <Field label={t("events.titleAz")} error={form1.formState.errors.title_az?.message}>
-                  <input {...form1.register("title_az")} className={inputClass} placeholder="Yay Texnologiya Könüllü Sammiti" />
+                  <input {...form1.register("title_az")} className={inputClass} placeholder="Yay Texnologiya Konfransı 2026" />
                 </Field>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -212,7 +212,7 @@ export default function CreateEventPage() {
                 </Field>
 
                 <Field label={t("events.descriptionAz")}>
-                  <textarea {...form1.register("description_az")} rows={3} className={cn(inputClass, "resize-none")} placeholder="Tədbirın məqsədini və könüllü vəzifələrini izah edin..." />
+                  <textarea {...form1.register("description_az")} rows={3} className={cn(inputClass, "resize-none")} placeholder="Tədbirın məqsədini və iştirakçı vəzifələrini izah edin..." />
                 </Field>
 
                 <div className="flex justify-end pt-2">

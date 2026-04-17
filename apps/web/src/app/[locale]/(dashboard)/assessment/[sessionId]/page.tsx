@@ -36,6 +36,7 @@ export default function QuestionPage() {
     currentCompetencyIndex,
     answeredCount,
     isSubmitting,
+    _hydrated,
     setQuestion,
     setSession,
     setSubmitting,
@@ -86,11 +87,12 @@ export default function QuestionPage() {
   const isLastCompetency = currentCompetencyIndex >= selectedCompetencies.length - 1;
 
   // Guard: if store was cleared (direct URL access / page refresh), redirect to selection
+  // Wait for zustand hydration from localStorage before checking — prevents false redirect on tab switch
   useEffect(() => {
-    if (selectedCompetencies.length === 0) {
+    if (_hydrated && selectedCompetencies.length === 0) {
       router.replace(`/${currentLocale}/assessment`);
     }
-  }, [selectedCompetencies.length, currentLocale, router]);
+  }, [_hydrated, selectedCompetencies.length, currentLocale, router]);
 
   useEffect(() => {
     isMounted.current = true;
@@ -98,6 +100,17 @@ export default function QuestionPage() {
       isMounted.current = false;
     };
   }, []);
+
+  // Warn before tab close/reload during active assessment
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (currentQuestion) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [currentQuestion]);
 
   const getAuthHeader = useCallback(async () => {
     const supabase = createClient();

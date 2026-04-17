@@ -535,7 +535,7 @@ def _validate_uuid(value: str, field_name: str) -> None:
     """Validate UUID format to prevent injection."""
     try:
         uuid.UUID(value)
-    except (ValueError, AttributeError):
+    except (ValueError, AttributeError, TypeError):
         raise HTTPException(
             status_code=422,
             detail={"code": "INVALID_UUID", "message": f"Invalid {field_name} format"},

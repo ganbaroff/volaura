@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminUsers } from "@/hooks/queries/use-admin";
 import { cn } from "@/lib/utils/cn";
 
@@ -33,8 +34,20 @@ export default function AdminUsersPage() {
       </div>
 
       {isLoading && (
-        <div className="flex justify-center py-12">
-          <Loader2 className="size-6 animate-spin text-primary" role="status" aria-label="Loading" />
+        <div className="rounded-xl border border-border overflow-hidden" role="status" aria-label="Loading">
+          <div className="bg-surface-container px-4 py-3">
+            <Skeleton className="h-4 w-full" />
+          </div>
+          <div className="divide-y divide-border">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="px-4 py-3 flex items-center gap-4">
+                <Skeleton className="h-4 w-1/3" />
+                <Skeleton className="h-5 w-20 rounded-full" />
+                <Skeleton className="h-5 w-16 rounded-full" />
+                <Skeleton className="h-3 w-24" />
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

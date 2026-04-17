@@ -7,6 +7,8 @@ Security: fail-closed gate via PlatformAdminId dep (Mistake #57 pattern).
 Endpoints:
   GET  /api/admin/ping                        — AdminGuard health check
   GET  /api/admin/stats                       — platform stats dashboard
+  GET  /api/admin/stats/overview              — activation-first scorecard
+  GET  /api/admin/events/live                 — character_events live tail
   GET  /api/admin/users                       — paginated user list
   GET  /api/admin/organizations/pending       — orgs awaiting approval
   POST /api/admin/organizations/{id}/approve  — verify org
@@ -15,7 +17,10 @@ Endpoints:
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+import asyncio
+import json
+import os
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, HTTPException, Query, Request
 from loguru import logger
@@ -23,7 +28,11 @@ from loguru import logger
 from app.deps import PlatformAdminId, SupabaseAdmin
 from app.middleware.rate_limit import limiter
 from app.schemas.admin import (
+    AdminActivationFunnel,
+    AdminActivityEvent,
     AdminOrgRow,
+    AdminOverviewResponse,
+    AdminPresenceMatrix,
     AdminStatsResponse,
     AdminUserRow,
     OrgApproveResponse,
@@ -66,9 +75,6 @@ async def get_admin_stats(
     """Platform health stats for the admin dashboard home page."""
     today_start = datetime.now(UTC).replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
 
-    # Run counts concurrently
-    import asyncio
-
     users_res, orgs_res, pending_res, assessments_res, aura_res, grievances_res = await asyncio.gather(
         db_admin.table("profiles").select("id", count="exact").execute(),
         db_admin.table("organizations").select("id", count="exact").eq("is_active", True).execute(),
@@ -97,6 +103,249 @@ async def get_admin_stats(
         avg_aura_score=avg_aura,
         pending_grievances=grievances_res.count or 0,
     )
+
+
+# ── Ecosystem overview (M1, 2026-04-18) ──────────────────────────────────────
+# Activation-first founder dashboard — see docs/engineering/ADMIN-DASHBOARD-SPEC.md §7.
+# Pivot from original 5-KPI enterprise scorecard after Doctor Strange v2 Gate 1
+# (WebSearch) confirmed pre-PMF priority = activation + retention, not MRR/NRR/CAC.
+
+
+@router.get("/stats/overview", response_model=AdminOverviewResponse)
+@limiter.limit(RATE_ADMIN)
+async def get_admin_overview(
+    request: Request,
+    admin_id: PlatformAdminId,
+    db_admin: SupabaseAdmin,
+) -> AdminOverviewResponse:
+    """Tier-1 activation-first scorecard + Tier-2 cross-product presence matrix.
+
+    Tier 1 (5 cards): activation_rate_24h, w4_retention, dau_wau_ratio,
+    errors_24h, runway_months.
+    Tier 2: cross-product presence (VOLAURA only / MindShift only / both)
+    + per-product activation funnels.
+    """
+    now = datetime.now(UTC)
+    t_24h = (now - timedelta(hours=24)).isoformat()
+    t_7d = (now - timedelta(days=7)).isoformat()
+    t_28d = (now - timedelta(days=28)).isoformat()
+    t_56d = (now - timedelta(days=56)).isoformat()
+
+    # Fail-soft pattern: every query wrapped so admin dashboard never 500s on a
+    # single missing table. Orphan/missing data logged, treated as 0.
+    async def _safe_count(builder_fn, label: str) -> int:
+        try:
+            res = await builder_fn()
+            return res.count or 0
+        except Exception as e:
+            logger.warning("admin.overview.count_failed", label=label, error=str(e))
+            return 0
+
+    # --- Tier 1 building blocks (run in parallel) ---
+    (
+        signups_24h,
+        assessments_started_24h,
+        failed_sessions_24h,
+        dau_count,
+        wau_count,
+        w0_cohort,
+        w4_cohort,
+        grievances_7d,
+    ) = await asyncio.gather(
+        _safe_count(
+            lambda: db_admin.table("profiles").select("id", count="exact").gte("created_at", t_24h).execute(),
+            "signups_24h",
+        ),
+        _safe_count(
+            lambda: (
+                db_admin.table("assessment_sessions").select("id", count="exact").gte("created_at", t_24h).execute()
+            ),
+            "assessments_started_24h",
+        ),
+        _safe_count(
+            lambda: (
+                db_admin.table("assessment_sessions")
+                .select("id", count="exact")
+                .in_("status", ["flagged", "abandoned"])
+                .gte("updated_at", t_24h)
+                .execute()
+            ),
+            "failed_sessions_24h",
+        ),
+        _safe_count(
+            lambda: db_admin.table("profiles").select("id", count="exact").gte("last_seen_at", t_24h).execute(),
+            "dau_count",
+        ),
+        _safe_count(
+            lambda: db_admin.table("profiles").select("id", count="exact").gte("last_seen_at", t_7d).execute(),
+            "wau_count",
+        ),
+        _safe_count(
+            lambda: (
+                db_admin.table("profiles")
+                .select("id", count="exact")
+                .gte("created_at", t_56d)
+                .lte("created_at", t_28d)
+                .execute()
+            ),
+            "w0_cohort",
+        ),
+        _safe_count(
+            lambda: (
+                db_admin.table("profiles")
+                .select("id", count="exact")
+                .gte("created_at", t_56d)
+                .lte("created_at", t_28d)
+                .gte("last_seen_at", t_28d)
+                .execute()
+            ),
+            "w4_cohort",
+        ),
+        _safe_count(
+            lambda: db_admin.table("grievances").select("id", count="exact").gte("created_at", t_7d).execute(),
+            "grievances_7d",
+        ),
+    )
+
+    activation_rate_24h = round(assessments_started_24h / signups_24h, 3) if signups_24h > 0 else 0.0
+    dau_wau_ratio = round(dau_count / wau_count, 3) if wau_count > 0 else 0.0
+    w4_retention = round(w4_cohort / w0_cohort, 3) if w0_cohort >= 5 else None
+
+    # Runway: manual CEO-editable via env (Strange pivot: no Stripe yet, no auto-compute).
+    runway_raw = os.getenv("PLATFORM_RUNWAY_MONTHS", "").strip()
+    try:
+        runway_months = float(runway_raw) if runway_raw else None
+    except ValueError:
+        runway_months = None
+
+    errors_24h = failed_sessions_24h + grievances_7d  # grievances proxy for user-reported errors
+
+    # --- Tier 2: cross-product presence matrix ---
+    # VOLAURA-only = profiles with no MindShift focus_sessions entry (external project; treat absence as "no").
+    # At M1 we don't have a live MindShift Supabase client here → presence computed from user_identity_map.
+    async def _safe_list(builder_fn, label: str) -> list[dict]:
+        try:
+            res = await builder_fn()
+            return res.data or []
+        except Exception as e:
+            logger.warning("admin.overview.list_failed", label=label, error=str(e))
+            return []
+
+    identity_rows = await _safe_list(
+        lambda: db_admin.table("user_identity_map").select("shared_user_id, source_product").execute(),
+        "user_identity_map",
+    )
+    by_user: dict[str, set[str]] = {}
+    for row in identity_rows:
+        uid = row.get("shared_user_id")
+        prod = row.get("source_product")
+        if not uid or not prod:
+            continue
+        by_user.setdefault(str(uid), set()).add(prod)
+
+    volaura_only = sum(1 for prods in by_user.values() if prods == {"volaura"})
+    mindshift_only = sum(1 for prods in by_user.values() if prods == {"mindshift"})
+    both_products = sum(1 for prods in by_user.values() if {"volaura", "mindshift"}.issubset(prods))
+    total_users = await _safe_count(
+        lambda: db_admin.table("profiles").select("id", count="exact").execute(),
+        "total_users",
+    )
+
+    presence = AdminPresenceMatrix(
+        volaura_only=volaura_only,
+        mindshift_only=mindshift_only,
+        both_products=both_products,
+        total_users=total_users,
+    )
+
+    # --- Per-product activation funnels ---
+    volaura_funnel = AdminActivationFunnel(
+        product="volaura",
+        signups_24h=signups_24h,
+        activated_24h=assessments_started_24h,
+        activation_rate=activation_rate_24h,
+    )
+
+    # MindShift: no local table; stub 0s until bridge endpoint lands in M2.
+    mindshift_funnel = AdminActivationFunnel(
+        product="mindshift",
+        signups_24h=0,
+        activated_24h=0,
+        activation_rate=0.0,
+    )
+
+    logger.info(
+        "admin.overview.computed",
+        admin_id=admin_id,
+        signups_24h=signups_24h,
+        activation_rate=activation_rate_24h,
+        dau_wau=dau_wau_ratio,
+        errors_24h=errors_24h,
+    )
+
+    return AdminOverviewResponse(
+        activation_rate_24h=activation_rate_24h,
+        w4_retention=w4_retention,
+        dau_wau_ratio=dau_wau_ratio,
+        errors_24h=errors_24h,
+        runway_months=runway_months,
+        presence=presence,
+        funnels=[volaura_funnel, mindshift_funnel],
+        computed_at=now,
+        stale_after_seconds=60,
+    )
+
+
+@router.get("/events/live", response_model=list[AdminActivityEvent])
+@limiter.limit(RATE_ADMIN)
+async def get_admin_live_events(
+    request: Request,
+    admin_id: PlatformAdminId,
+    db_admin: SupabaseAdmin,
+    limit: int = Query(default=50, ge=1, le=200),
+) -> list[AdminActivityEvent]:
+    """Live tail of character_events across the ecosystem — replaces Sankey viz.
+
+    CEO framing: "я хочу визуально видеть связи" → character_events IS the
+    cross-product connection log. Showing it as a stream is simpler and more
+    honest than rendering a Sankey at <100 users.
+    """
+    try:
+        res = (
+            await db_admin.table("character_events")
+            .select("id, source_product, event_type, user_id, created_at, payload")
+            .order("created_at", desc=True)
+            .limit(limit)
+            .execute()
+        )
+        rows = res.data or []
+    except Exception as e:
+        logger.warning("admin.events.live.failed", error=str(e))
+        return []
+
+    out: list[AdminActivityEvent] = []
+    for row in rows:
+        uid = str(row.get("user_id") or "")
+        payload = row.get("payload") or {}
+        try:
+            payload_str = json.dumps(payload, ensure_ascii=False) if payload else None
+        except Exception:
+            payload_str = None
+        if payload_str and len(payload_str) > 120:
+            payload_str = payload_str[:117] + "..."
+
+        out.append(
+            AdminActivityEvent(
+                id=str(row["id"]),
+                product=str(row.get("source_product") or "unknown"),
+                event_type=str(row.get("event_type") or "unknown"),
+                user_id_prefix=uid[:8] if uid else "",
+                created_at=row["created_at"],
+                payload_summary=payload_str,
+            )
+        )
+
+    return out
 
 
 # ── Users ─────────────────────────────────────────────────────────────────────

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import {
   RadarChart,
   Radar,
@@ -43,13 +43,13 @@ export function AuraRadarChart({
   size = "md",
 }: AuraRadarChartProps) {
   const { t } = useTranslation();
+  const prefersReducedMotion = useReducedMotion();
   const [revealed, setRevealed] = useState(false);
 
-  // Animate in after mount
   useEffect(() => {
-    const timer = setTimeout(() => setRevealed(true), 400);
+    const timer = setTimeout(() => setRevealed(true), prefersReducedMotion ? 0 : 400);
     return () => clearTimeout(timer);
-  }, []);
+  }, [prefersReducedMotion]);
 
   const data = COMPETENCY_IDS.map((id) => ({
     subject: t(`competency.${id}`, { defaultValue: id }),
@@ -90,9 +90,9 @@ export function AuraRadarChart({
     <div>
       {srTable}
       <motion.div
-        initial={{ opacity: 0, scale: 0.85 }}
+        initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.85 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
+        transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.5, delay: 0.3, ease: "easeOut" }}
         aria-hidden="true"
       >
         <ResponsiveContainer width="100%" height={heights[size]}>
@@ -109,7 +109,7 @@ export function AuraRadarChart({
               fill={stroke}
               fillOpacity={0.18}
               strokeWidth={2}
-              animationDuration={800}
+              animationDuration={prefersReducedMotion ? 0 : 800}
               animationEasing="ease-out"
             />
             <Tooltip

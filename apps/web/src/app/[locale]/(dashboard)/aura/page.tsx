@@ -141,7 +141,7 @@ function RevealCurtain() {
     >
       <motion.div
         animate={prefersReducedMotion ? {} : { scale: [1, 1.08, 1], opacity: [0.6, 1, 0.6] }}
-        transition={prefersReducedMotion ? {} : { repeat: Infinity, duration: 1.4, ease: "easeInOut" }}
+        transition={prefersReducedMotion ? {} : { repeat: 5, duration: 1.4, ease: "easeInOut" }}
         className="text-6xl mb-6"
         aria-hidden="true"
       >

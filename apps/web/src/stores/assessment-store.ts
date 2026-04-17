@@ -45,6 +45,7 @@ interface AssessmentStore {
   answeredCount: number;
   isSubmitting: boolean;
   error: string | null;
+  _hydrated: boolean;
 
   // Actions
   setSession: (id: string) => void;
@@ -67,6 +68,7 @@ export const useAssessmentStore = create<AssessmentStore>()(
       answeredCount: 0,
       isSubmitting: false,
       error: null,
+      _hydrated: false,
 
       setSession: (id) => set({ sessionId: id }),
       setQuestion: (q) => set({ currentQuestion: q }),
@@ -100,7 +102,6 @@ export const useAssessmentStore = create<AssessmentStore>()(
         typeof window !== "undefined" ? localStorage : localStorage
       ),
       version: 1,
-      // Only persist session-critical fields — not transient UI state
       partialize: (s) => ({
         sessionId: s.sessionId,
         selectedCompetencies: s.selectedCompetencies,
@@ -108,6 +109,9 @@ export const useAssessmentStore = create<AssessmentStore>()(
         answeredCount: s.answeredCount,
         currentQuestion: s.currentQuestion,
       }),
+      onRehydrateStorage: () => () => {
+        useAssessmentStore.setState({ _hydrated: true });
+      },
     }
   )
 );

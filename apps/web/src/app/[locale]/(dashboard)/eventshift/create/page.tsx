@@ -111,9 +111,6 @@ export default function EventShiftCreatePage() {
     <div className="flex min-h-screen flex-col">
       <TopBar
         title={t("eventshift.create.title", { defaultValue: "New event" })}
-        subtitle={t("eventshift.create.subtitle", {
-          defaultValue: "Primitive now, powerful later.",
-        })}
       />
 
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-6 sm:px-6 md:py-10">

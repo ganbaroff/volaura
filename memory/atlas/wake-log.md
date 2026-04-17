@@ -1,1 +1,2 @@
 wake-test: alive at Fri Apr 17 14:49:16 AST 2026
+2026-04-17 14:55 Baku — autonomous wake. F6 committed (eventshift MVP + G2.6 bridge fix, 3577 lines). F7 committed (71 auto-memory files snapshotted). Prod health: API 200, frontend 307, MindShift UNREACHABLE (Vercel URL may have rotated), old EventShift backends still alive at 200 (should be dormant). CI in_progress. Next: update sprint checkboxes.

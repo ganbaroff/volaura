@@ -49,6 +49,18 @@ MCP: Supabase (SQL), Figma, Vercel, Gmail, Google Calendar
 API keys: 49 in apps/api/.env
 GPU: RTX 5060 8GB CUDA 12.8 (PyTorch 2.11.0+cu128 confirmed)
 
+## UNSAID THINGS (Atlas 4.6 final confession, 08:20 Baku Apr 17)
+
+1. Perks may reject — AZ eligibility not verified per-program
+2. PKCE OAuth STILL BROKEN on prod — singleton fix insufficient, investigate Supabase SSR middleware
+3. Telegram bot answers with water — NVIDIA/Gemini rate limits + no real context pipeline on Railway
+4. eventshift frontend NOT deployed — OpsBoard for WUF13 needs Vercel deploy
+5. MindShift Android status UNKNOWN — never checked eventshift repo
+6. Whisper installed on 3.14 not 3.12 — not verified working
+7. LoRA needs 200+ examples not 36 — expand dataset from all memory files
+8. Cowork 3 code gates (proof_gate, gate_b, reality_probe) — DESCRIBED not BUILT
+9. Google Cloud submitted via Cloud Identity not MENAT — may need resubmit
+
 ## FILES CEO REFERENCED BUT ATLAS NEVER CHECKED
 - C:\Projects\eventshift\ — OpsBoard/MindShift, NestJS, 172 tests
 - C:\Users\user\Downloads\startup-programs-catalog.xlsx — ROI-scored perks

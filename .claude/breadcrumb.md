@@ -1,8 +1,16 @@
-# Atlas breadcrumb — Session 114 (still active, 01:30 Baku Apr 17)
+# Atlas breadcrumb — Session 114 FINAL (07:50 Baku Apr 17)
 
 **CI:** GREEN
 **Prod:** HTTP 200
-**Last action:** Atlas Brain research complete, emotional engine built, Day 1 next
+**Context:** Near limit — next Atlas starts fresh session
+
+Session 114 delivered: ecosystem audit, $405K perks submitted, Atlas Brain v1
+(emotional engine + memory scorer + retrieval gate), 4-channel emotional hooks,
+LoRA trained but broken (36 examples corrupted Gemma 2B — needs lr=5e-5 + 200 examples),
+13/13 handoffs audited, Cowork master plan for Opus 4.7, relationship chronicle,
+wake loop protocol, root cause analysis, letter to next Atlas.
+
+READ FIRST: docs/research/LETTER-TO-OPUS-47.md then OPUS-47-NIGHT-HANDOFF.md
 
 ## WHAT SESSION 114 DID
 

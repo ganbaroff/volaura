@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { apiFetch, ApiError } from "@/lib/api/client";
 
 export interface PublicStats {
-  total_volunteers: number;
+  total_professionals: number;
   total_assessments: number;
   total_events: number;
   avg_aura_score: number;

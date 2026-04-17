@@ -152,7 +152,7 @@ export default async function OrgDetailPage({ params }: Props) {
             href={`/${locale}/login`}
             className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
           >
-            {t("orgs.volunteerCta")}
+            {t("orgs.talentCta")}
           </Link>
         </section>
 

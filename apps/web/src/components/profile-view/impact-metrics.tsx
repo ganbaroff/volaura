@@ -37,7 +37,7 @@ export function ImpactMetrics({ data }: ImpactMetricsProps) {
     {
       icon: Clock,
       value: data.hours_volunteered,
-      label: t("profile.hoursVolunteered"),
+      label: t("profile.hoursContributed"),
       color: "text-blue-400",
     },
     {

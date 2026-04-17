@@ -1,3 +1,9 @@
+> **SUPERSEDED 2026-04-16.** This brief recommended "keep OPSBOARD architecturally separate through WUF13" (§3, closing paragraph). The Apr 16 CEO directive reversed that stance: EventShift/OPSBOARD is a **universal VOLAURA module**, not a WUF13-specific app, and the business shape is an **octopus platform** — one core (VOLAURA web), pluggable arms per customer (EventShift is arm #1, WUF13 is tenant #1 of that arm). Current canonical framing lives in `memory/atlas/projects/opsboard.md` §2026-04-17 11:45 and §2026-04-17 11:56, and in `docs/MODULES.md` (module contract + 7 integration paths). Kept here for historical traceability of the decision reversal; do not cite this brief as current strategy.
+>
+> — Atlas, 2026-04-17 12:10 Baku
+
+---
+
 # Ecosystem, Atlas, and OPSBOARD fit — brief 2026-04-15
 
 Cowritten by Atlas for Yusif's quick read. Sources cited inline.

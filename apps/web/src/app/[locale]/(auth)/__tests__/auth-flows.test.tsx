@@ -153,13 +153,13 @@ describe("ForgotPassword", () => {
     render(<ForgotPasswordPage />);
 
     fireEvent.change(screen.getByLabelText("auth.email"), {
-      target: { value: "volunteer@volaura.az" },
+      target: { value: "talent@volaura.az" },
     });
     fireEvent.click(screen.getByRole("button", { name: "auth.sendResetLink" }));
 
     await waitFor(() => {
       expect(mockResetPasswordForEmail).toHaveBeenCalledWith(
-        "volunteer@volaura.az",
+        "talent@volaura.az",
         expect.objectContaining({ redirectTo: expect.stringContaining("reset-password") })
       );
     });
@@ -171,7 +171,7 @@ describe("ForgotPassword", () => {
     render(<ForgotPasswordPage />);
 
     fireEvent.change(screen.getByLabelText("auth.email"), {
-      target: { value: "volunteer@volaura.az" },
+      target: { value: "talent@volaura.az" },
     });
     fireEvent.click(screen.getByRole("button", { name: "auth.sendResetLink" }));
 
@@ -203,7 +203,7 @@ describe("ForgotPassword", () => {
     render(<ForgotPasswordPage />);
 
     fireEvent.change(screen.getByLabelText("auth.email"), {
-      target: { value: "volunteer@volaura.az" },
+      target: { value: "talent@volaura.az" },
     });
     fireEvent.click(screen.getByRole("button", { name: "auth.sendResetLink" }));
 
@@ -220,7 +220,7 @@ describe("ForgotPassword", () => {
     render(<ForgotPasswordPage />);
 
     fireEvent.change(screen.getByLabelText("auth.email"), {
-      target: { value: "volunteer@volaura.az" },
+      target: { value: "talent@volaura.az" },
     });
     fireEvent.click(screen.getByRole("button", { name: "auth.sendResetLink" }));
 

@@ -196,7 +196,7 @@ export default function OnboardingPage() {
     }));
   }
 
-  // Orgs have 2 steps (no competency selection); volunteers have 3
+  // Orgs have 2 steps (no competency selection); professionals have 3
   const totalSteps = accountType === "organization" ? 2 : 3;
 
   function goNext() {
@@ -275,7 +275,7 @@ export default function OnboardingPage() {
           // Org accounts go to their dashboard, not assessment
           router.push(`/${locale}/my-organization`);
         } else {
-          // Volunteers: redirect to assessment — carry selected competency so user starts immediately
+          // Professionals: redirect to assessment — carry selected competency so user starts immediately
           const competencyParam = formData.selectedCompetency
             ? `?competency=${encodeURIComponent(formData.selectedCompetency)}`
             : "";

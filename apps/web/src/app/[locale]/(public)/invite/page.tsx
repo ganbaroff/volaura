@@ -7,7 +7,7 @@
  *
  * - Validates invite code (simple allowlist for now — no backend lookup needed for beta)
  * - Stores UTM params via utm-capture (already handled by auth callback)
- * - Redirects to /signup?type=volunteer (or ?type=organization) with code preserved
+ * - Redirects to /signup?type=professional (or ?type=organization) with code preserved
  * - Tracks invite code in sessionStorage so callback can log attribution
  *
  * Growth agent recommendation: skip waitlist entirely for warm contacts.

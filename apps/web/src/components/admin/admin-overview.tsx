@@ -334,7 +334,9 @@ export function AdminOverview() {
   const { locale } = useParams<{ locale: string }>();
   const { data: overview, isLoading: overviewLoading, isError: overviewError } = useAdminOverview();
   const { data: stats, isLoading: statsLoading } = useAdminStats();
-  const { data: events, isLoading: eventsLoading } = useAdminLiveEvents(50);
+  const liveQuery = useAdminLiveEvents(50);
+  const events = liveQuery.data as AdminActivityEvent[] | undefined;
+  const eventsLoading = liveQuery.isLoading;
 
   return (
     <div className="space-y-8">

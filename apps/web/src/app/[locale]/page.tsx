@@ -34,6 +34,11 @@ export async function generateMetadata({
   };
 }
 
+// Track G1.4 — feature flag (clean slate launch, CEO directive 2026-04-17).
+// Shared gate with /sample route. When OFF: synthetic AURA preview hidden from
+// landing; when ON: sample content restored for marketing/demo cycles.
+const SAMPLE_PROFILE_ENABLED = process.env.NEXT_PUBLIC_ENABLE_SAMPLE_PROFILE === "true";
+
 export default async function LandingPage({ params }: LandingPageProps) {
   const { locale } = await params;
 
@@ -50,7 +55,7 @@ export default async function LandingPage({ params }: LandingPageProps) {
       <main id="main-content">
         <HeroSection locale={locale} />
         <ImpactTicker />
-        <SampleAuraPreview locale={locale} />
+        {SAMPLE_PROFILE_ENABLED && <SampleAuraPreview locale={locale} />}
         <FeaturesGrid />
         <HowItWorks />
         <OrgCta locale={locale} />

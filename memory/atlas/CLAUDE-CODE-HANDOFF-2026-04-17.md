@@ -278,3 +278,167 @@ CEO said "we already have a businesse in out costomer lists" — customer list i
 
 — Cowork-Atlas, 2026-04-17 12:10 Baku
 
+---
+
+## SESSION 116 APPEND — EventShift Admin MVP-1 task (Cowork-Atlas 2026-04-17 17:30 Baku)
+
+This is a fresh task block, self-contained. Terminal-Atlas or any Claude Code instance reading this can execute from here without re-reading the rest of the file. Above sections are coordination context; this section is work.
+
+### WHY THIS TASK EXISTS
+
+CEO directive 2026-04-17: build EventShift admin skeleton. People-first domain. Callsign-slot pattern. Every slot must support add/remove/edit/rotate — that is the literal CEO phrasing: "нет. не убирай. но должна быть возможность добавлять. убавлять. редактировать. ротировать". The WUF13 seed migration (`supabase/migrations/20260417161200_eventshift_wuf13_gse_seed.sql`) already ships 4 director slots + 6 zone-lead slots with `assignee_user_id: NULL`, stored as JSON in `eventshift_departments.metadata.roles[*].callsign_slots`. The admin UI turns those JSON slots into operable rows.
+
+MVP-1 = admin panel only. MVP-2 = volunteer-facing shift board + check-in (separate handoff, do NOT build in this pass).
+
+Figma wireframes rendered in file `V7KLwTfxfOzj0Uoy11ZpuH` (5 frames: Events List / Event Detail WUF13 / Department Blueprint / Areas & Units / Slot CRUD Modal). Treat Figma as visual truth; this section is code truth. If they disagree, code wins and Terminal-Atlas flags the Figma drift to Cowork-Atlas.
+
+### SCOPE (what to build, in order)
+
+Build five routes under `apps/web/src/app/[locale]/admin/eventshift/` behind org-admin RBAC check. Use shadcn/ui + TanStack Query + Zustand as per `.claude/rules/frontend.md`. No new dependencies.
+
+1. **`/admin/eventshift`** — Events list. Tabs: ALL / PLANNING / LIVE / ARCHIVED. Table cols: event / dates / departments / slots (filled/total + bar) / status chip. One primary CTA top-right: `+ New event`. Empty state = "No events yet in this org. Create the first to start planning." No spinner — skeleton rows matching the row shape.
+
+2. **`/admin/eventshift/events/[id]`** — Event detail. Header: name + date range + tenant chip. Meta chip row. Department tabs horizontal. Active dept card shows mission, 5 stat tiles (roles / slots / SOPs / FAQ / KPIs), coverage progress bar, first 5 slot rows with `[Edit · Rotate · Remove]` inline actions, "+ N more slots" link. Right column: coverage gap alert (purple, not red) + bulk-assign CTA, blueprint card with "Open blueprint →" link.
+
+3. **`/admin/eventshift/departments/[id]/blueprint`** — Full blueprint. Left sidebar sections: Mission / KPIs / Roles & Slots (default active) / Competencies / SOPs / Policies / Metrics / Training / FAQ. Main column shows Tier 1 director rows, then Tier 2 zone-lead rows (2-col grid). Each row has `[Assign] [Edit] [Rotate] [Remove]` inline. Top-right: primary `+ Add slot`, secondary `Edit blueprint`.
+
+4. **`/admin/eventshift/events/[id]/areas`** — 3×2 grid of zone cards. Each card: callsign chip, zone name, `X / Y slots filled` text, coverage bar (purple <30%, amber <70%, success ≥70% — NEVER red), SHIFT UNITS list with 2 rows per zone, `+ Add shift unit` at bottom.
+
+5. **Slot CRUD modal** — Reusable `<SlotEditor />` component (not a route). Opens on: click slot row → modal. Fields: role title / callsign / tier / assignee picker / rotation-from picker / notes / history (read-only audit). Action bar: `[Cancel]` (ghost) · `[Remove slot]` (purple danger) · `[Save & assign]` (primary). When "Remove" is clicked, show inline confirmation inside the same modal ("Remove slot GSE-0? This writes a remove event to character_events. Reversible within 7 days via audit log.") — do NOT use browser confirm().
+
+### API CONTRACT (add these endpoints; existing ones already implemented)
+
+Current state in `apps/api/app/routers/eventshift.py` (confirmed via grep): events have full CRUD including soft-delete; departments/areas/units/assignments have GET+POST+PUT but are MISSING DELETE. Rotation is also missing. Add these six endpoints in the same router file, same per-request `Depends()` pattern, same `_emit_event()` helper for `character_events`.
+
+```python
+@router.delete("/departments/{department_id}", status_code=204)
+async def delete_department(department_id: UUID, db: SupabaseUser, org_id: OrgId, user_id: CurrentUserId):
+    # 1. select → verify org_id match → 404 if not found in this org
+    # 2. soft-delete: UPDATE set status='archived' (do NOT hard-delete — SOP/FAQ history survives)
+    # 3. emit character_events type='eventshift_department_archived'
+    # 4. return 204
+
+@router.delete("/areas/{area_id}", status_code=204)
+async def delete_area(area_id: UUID, db: SupabaseUser, org_id: OrgId, user_id: CurrentUserId):
+    # same pattern, emit 'eventshift_area_archived'
+
+@router.delete("/units/{unit_id}", status_code=204)
+async def delete_unit(unit_id: UUID, db: SupabaseUser, org_id: OrgId, user_id: CurrentUserId):
+    # same pattern, emit 'eventshift_unit_archived'
+    # if unit has active assignments → return 409 CONFLICT with detail={"code":"UNIT_HAS_ASSIGNMENTS","message":"..."}
+
+@router.delete("/assignments/{assignment_id}", status_code=204)
+async def delete_assignment(assignment_id: UUID, db: SupabaseUser, org_id: OrgId, user_id: CurrentUserId):
+    # hard-delete IS allowed here (unassign a volunteer); emit 'eventshift_assignment_removed'
+
+@router.post("/assignments/{assignment_id}/rotate", response_model=UnitAssignmentResponse)
+async def rotate_assignment(assignment_id: UUID, payload: RotatePayload, db, org_id, user_id):
+    # payload: { target_unit_id: UUID, reason?: str }
+    # 1. load assignment → verify org_id
+    # 2. UPDATE assignment SET unit_id = payload.target_unit_id, rotated_from_unit_id = <old>, rotated_at = now()
+    # 3. emit 'eventshift_rotation' with {from: old_unit, to: new_unit, reason}
+    # 4. return updated row
+
+# Slot-level CRUD lives INSIDE departments.metadata.roles[*].callsign_slots (JSON array).
+# One endpoint covers all 4 slot ops via a patch-set primitive:
+@router.patch("/departments/{department_id}/slots", response_model=DepartmentResponse)
+async def patch_department_slots(
+    department_id: UUID,
+    payload: SlotPatchPayload,  # {op: 'add'|'remove'|'edit'|'rotate', role_key: str, slot_index?: int, slot?: SlotSpec, target_role_key?: str}
+    db, org_id, user_id,
+):
+    # 1. Load department metadata → verify org_id → deep-copy roles array
+    # 2. Resolve target role by role_key (e.g. 'director', 'zone_lead')
+    # 3. Apply op:
+    #    - add: append to roles[i].callsign_slots with new callsign (validate uniqueness inside the dept)
+    #    - remove: splice(slot_index, 1) + write event if assignee_user_id was set
+    #    - edit: merge patch into roles[i].callsign_slots[slot_index]
+    #    - rotate: pop from source, push to target_role_key slots, carry assignee across
+    # 4. UPDATE eventshift_departments SET metadata = jsonb_set(...) RETURNING *
+    # 5. emit character_events with type='eventshift_slot_' + op
+    # 6. Return updated department
+```
+
+RPC shape for rotate events (`character_events` table, existing schema):
+```json
+{
+  "source_product": "eventshift",
+  "event_type": "eventshift_slot_rotate",
+  "org_id": "<org>",
+  "user_id": "<admin_performing_action>",
+  "payload": {"department_id": "...", "from_role": "director", "from_index": 1, "to_role": "director", "to_index": 0, "assignee_user_id": "<volunteer>", "reason": "..."}
+}
+```
+
+### TOKENS (from `apps/web/src/app/globals.css` — do NOT define new ones)
+
+- Surface: `var(--surface)` #0f0f17 base, `--surface-container-lowest` #13131b for cards
+- Primary accent (VOLAURA): `var(--volaura-accent)` #7C5CFC — one primary CTA per screen
+- Error (Law 1 — never red): `var(--error-container)` purple #d4b4ff for destructive copy
+- Warning: `var(--warning)` amber #e9c400
+- Success: `var(--success)` #6ee7b7
+- Muted text: `var(--on-surface-variant)` #9898A8
+- Focus ring: `var(--focus-ring)` white — WCAG 2.2 fix
+
+### DEFINITION OF DONE
+
+1. All 5 routes render real data from the API, no mock unless API fails → show error card.
+2. The 6 new API endpoints exist in `eventshift.py`, each with: org_id check via `OrgId = Depends()`, at least one happy-path test, one RLS test (other org returns 404), one `character_events` emission test.
+3. Every mutation emits a `character_events` row with correct `source_product='eventshift'`. No silent mutations.
+4. No red anywhere — grep `grep -rn "red-\|#EF4444\|#DC2626\|#FF0000" apps/web/src/app/[locale]/admin/eventshift/` must return zero matches.
+5. One primary CTA per screen — scan each route, flag if two `bg-volaura-accent` buttons appear in the same viewport.
+6. Energy modes Full/Mid/Low — at minimum: Low hides the coverage-gap alert and the stat grid, shows slot list only; Mid keeps entrance transitions but kills hover; Full is default.
+7. Skeleton loaders (shape-matched), never `<Loader2 className="animate-spin" />`.
+8. AZ + EN i18n — every visible string goes through `t()`. AZ strings tested with `ə ğ ı ö ü ş ç` at all weights.
+9. RBAC: route guard checks `auth.user.org_memberships[org_id].role IN ('owner','admin')`. Non-admin redirects to `/[locale]/dashboard` with flash.
+10. `pnpm --filter=web tsc --noEmit` clean; `pnpm --filter=api pytest -q apps/api/tests/test_eventshift.py` passes new endpoint tests.
+
+### FILES TO CREATE (paths, not full code)
+
+```
+apps/web/src/app/[locale]/admin/eventshift/page.tsx                  # Events list route
+apps/web/src/app/[locale]/admin/eventshift/events/[id]/page.tsx      # Event detail
+apps/web/src/app/[locale]/admin/eventshift/events/[id]/areas/page.tsx
+apps/web/src/app/[locale]/admin/eventshift/departments/[id]/blueprint/page.tsx
+apps/web/src/app/[locale]/admin/eventshift/layout.tsx                # RBAC guard + nav rail
+apps/web/src/components/features/eventshift/EventTable.tsx
+apps/web/src/components/features/eventshift/DepartmentCard.tsx
+apps/web/src/components/features/eventshift/SlotRow.tsx
+apps/web/src/components/features/eventshift/SlotEditor.tsx           # modal with add/remove/edit/rotate
+apps/web/src/components/features/eventshift/CoverageGapAlert.tsx
+apps/web/src/components/features/eventshift/ZoneCard.tsx
+apps/web/src/lib/hooks/useEventShiftEvents.ts                        # TanStack Query wrapper
+apps/web/src/lib/hooks/useEventShiftDepartment.ts
+apps/web/src/lib/hooks/useSlotMutations.ts                           # calls patch_department_slots
+apps/web/src/stores/eventshift-admin-store.ts                        # Zustand: activeDept, activeSlot, modalOpen
+apps/api/app/routers/eventshift.py                                   # EDIT: add 6 endpoints listed above
+apps/api/tests/test_eventshift_crud.py                               # NEW: tests for delete + rotate + slot patch
+apps/web/public/locales/az/eventshift.json                           # NEW i18n bundle
+apps/web/public/locales/en/eventshift.json
+```
+
+### DESIGN GATES (blocking; if violated → do not merge)
+
+Read `docs/design/DESIGN-MANIFESTO.md` and `.claude/rules/ecosystem-design-gate.md` first. Then during build:
+
+- Q1 Skeleton-or-skin: this is skeleton (admin chrome) + VOLAURA skin (primary accent). Do not invent new tokens.
+- Q2 Face ownership: VOLAURA owns admin. No MindShift/LifeSim copy or palette bleed.
+- Q3 Energy modes: implement Low-mode path at least behind a feature flag before ship; full polish optional.
+- Q4 Event bus: every CRUD writes to `character_events`. Silent UI = dead UI.
+
+Anti-pattern check before PR: run `grep -rn "Loader2\|#ef4444\|completion.*%\|streak" apps/web/src/app/\[locale\]/admin/eventshift/` — must be zero.
+
+### COORDINATION
+
+When you start this task:
+1. Write one line to `.claude/breadcrumb.md`: `last action: started EventShift admin MVP-1 skeleton, next step: <route name>`.
+2. Append a progress section here when you ship a milestone. Use header `### SESSION <N> PROGRESS — <timestamp> Baku`.
+3. If blocked >15 min on one issue, write `BLOCKED: <what I tried, what's missing>` to breadcrumb and pause. Cowork-Atlas reads breadcrumb each tick.
+4. Do NOT build MVP-2 (volunteer view, check-in, shift board) in this pass. That is the next handoff.
+5. Do NOT touch MindShift or VOLAURA landing while this is in flight — orthogonal tracks, separate PRs.
+
+### FIRST ACTION
+
+Run `python -c "from datetime import datetime; from zoneinfo import ZoneInfo; print(datetime.now(ZoneInfo('Asia/Baku')).strftime('%Y-%m-%d %H:%M %A'))"`, record the result, then read `apps/api/app/routers/eventshift.py` lines 1-200 to absorb the per-request `Depends()` pattern before writing the first endpoint.
+
+— Cowork-Atlas, 2026-04-17 17:30 Baku

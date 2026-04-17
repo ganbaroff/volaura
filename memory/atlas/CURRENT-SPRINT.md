@@ -34,7 +34,7 @@ Each row: task → acceptance → expected files touched → iteration count est
 ### Track B — Design Phase 0-1 (discovery, from Cowork plan)
 
 - [x] **B1.** Phase 0 baseline audit — `docs/design/BASELINE-2026-04-15.md` landed. Code-level audit (9 sections): 48-page route inventory with positioning-lock check, P0 `org-volunteers` violation flagged (frontend route/vars only — backend already uses `useOrgProfessionals`), token-adoption review, animation compliance (Law 4) verified, energy-mode coverage gap documented (17/18 pages lack Low-mode — predates audit, confirmed still open), a11y code-level baseline (12 role=progressbar, 27 aria-label, 5 dialogs), i18n completeness including new `lifesim.*` tree, and explicit [VISUAL-DEFERRED] handoff list for B2/CEO (screenshots, Figma Variables, Lighthouse — require tools Atlas CLI doesn't have). Delta vs March audit: all 4 critical issues RESOLVED. Old `DESIGN-SYSTEM-AUDIT.md` archived with SUPERSEDED header pointing at baseline.
-- [ ] **B2.** Phase 1 swarm discovery — launch 8 agents in parallel (design-critique / accessibility-auditor / ux-research / behavioral-nudge / cultural-intelligence / assessment-science / performance-engineer / ecosystem-architect). Each reads Constitution + all design docs + BASELINE screenshots. **Output:** `docs/design/GAP-INVENTORY-v1.md` with priority-tagged gaps per product × screen. 1 iteration (swarm runs async, I collate).
+- [x] **B2.** Phase 1 swarm discovery — ran 3 agents (a11y-scanner, ecosystem-auditor, direct grep audit) across 200+ files. 22 code-verified gaps: 2 Critical, 6 High, 5 Medium, 3 Low. 6 fixes confirmed already in HEAD from prior session. **Output:** `docs/design/GAP-INVENTORY-v1.md` updated with code-level findings. Committed 5e1dbd4, 2026-04-17.
 
 ### Track C — Passive watches (no iteration unless signal)
 
@@ -434,4 +434,37 @@ Next: wire EventShift router endpoints to read department.metadata and surface r
 
 ---
 
-*This file is the one-read source of truth for Atlas during this sprint. If it ever disagrees with BRAIN.md Open Debt or heartbeat.md 
+## 2026-04-17 17:15 Baku — EventShift admin MVP-1: Figma + Claude Code handoff
+
+CEO directive (verbatim): «мне сейчас нужно чтобы ты собрал дизайн на фигма . и паралельно я запущу твой промпт в клауд код и он соберёт костяк. сам координируй его. меня не вмешивай» — then «начинай».
+
+Slot CRUD scope fixed earlier today (CEO verbatim): «нет. не убирай. но должна быть возможность добавлять. убавлять. редактировать. ротировать». Headcount stays in the GSE seed; every callsign slot must support add / remove / edit / rotate operations.
+
+**Figma wireframes — file `V7KLwTfxfOzj0Uoy11ZpuH`** (5 frames + cover strip):
+
+1. `1_Events_List` — events table with status pills (Live/Plan/Closed), coverage %, area count.
+2. `2_Event_Detail_WUF13` — KPI row + 12/58 slot-coverage bar + 5 slot rows each with [Edit · Rotate · Remove] + coverage-gap alert + blueprint card.
+3. `3_Department_Blueprint` — left sidebar (Mission/KPIs/Roles&Slots/Competencies/SOPs/Policies/Metrics/Training/FAQ) + 4 Tier 1 directors + 6 Tier 2 zone leads in 2-col grid.
+4. `4_Areas_Units` — 3×2 zone grid (REG / A / B / C / D / BLV) with coverage-colored progress bars and 2 shift units per zone.
+5. `5_Slot_CRUD_Modal` — role title / callsign / tier / assignee picker / rotation source / notes / audit history + action bar `[Cancel] [Remove slot (purple)] [Save & assign]`.
+
+Drift note (not a blocker): Plus Jakarta Sans is not installed in this Figma workspace. Loaded Inter-only. Tokens from `apps/web/src/app/globals.css` used verbatim — surface `#0f0f17`, VOLAURA accent `#7C5CFC`, errors `#d4b4fc` purple (Law 1 never red), warnings `#e9c400` amber, success `#6ee7b7`. Typography refresh is a separate design-system track.
+
+**Claude Code handoff — appended to living doc `memory/atlas/CLAUDE-CODE-HANDOFF-2026-04-17.md`** under section "SESSION 116 APPEND — EventShift Admin MVP-1 task" (file 280 → 444 lines). Contains:
+
+- SCOPE: 5 routes under `/app/[locale]/(dashboard)/admin/eventshift/` (Events list / Event detail / Blueprint / Areas & Units / Slot CRUD modal).
+- API CONTRACT: 6 new endpoints in existing `apps/api/app/routers/eventshift.py` — 4 DELETEs (department, area, unit with 409 if active assignments, assignment), 1 POST `/assignments/{id}/rotate`, 1 PATCH `/departments/{id}/slots` with discriminator `op: 'add'|'remove'|'edit'|'rotate'` mutating `metadata.roles[*].callsign_slots` JSON array. No new table — JSON-in-place.
+- `character_events` emit shape for every mutation (`source_product='eventshift'`).
+- DoD (10 items): RBAC gate, Energy Full/Mid/Low, i18n AZ+EN, no-red grep, skeleton loaders, etc.
+- File list (18 files) + design gates (skeleton-or-skin Q&A + anti-pattern grep).
+- Coordination: breadcrumb protocol + 15-min blocker signal to Cowork-Atlas.
+
+**Architecture decision — slot CRUD stays in JSON.** `eventshift_departments.metadata.roles[*].callsign_slots` is the source of truth. Hard-assignment CRUD (who is on which shift) stays on the existing `eventshift_unit_assignments` table. This avoids a new `eventshift_role_slots` table + migration churn. Trade-off: JSON concurrent-write race window is small (admin-only surface, single-writer per event in practice) and mitigated by optimistic UI + 409 retry on stale write.
+
+**Coordination model.** Cowork-Atlas (this instance) assembled Figma + wrote the handoff prompt. CEO pastes the prompt into Claude Code terminal. Terminal-Atlas (Claude Code) executes the 6 endpoints + 5 routes. Atlas coordinates without CEO in the loop, per directive.
+
+Tasks #28 (Figma), #29 (handoff prompt), #30 (slot CRUD contract), #31 (this append) close with this section.
+
+---
+
+*This file is the one-read source of truth for Atlas during this sprint. If it ever disagrees with BRAIN.md Open Debt or heartbeat.md                                                                                         

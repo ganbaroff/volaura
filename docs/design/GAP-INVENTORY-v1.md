@@ -6,7 +6,7 @@
 
 ## Summary
 
-**Session 117 update:** 22 code-verified gaps. 15 fixed (F1-F7 + M5 + C2 + H1-H6). 0 Critical, 0 High, 4 Medium, 3 Low remaining.
+**Session 117 update:** 22 code-verified gaps. 17 fixed (F1-F7 + M5 + C2 + H1-H6 + M3 + M4). 0 Critical, 0 High, 2 Medium, 3 Low remaining.
 **Session 113 original:** 58 gaps (8 P0, 34 P1, 24 P2). Cross-product gaps remain valid. P0 items 1-5 (MindShift/LifeSim/BrandedBy placeholders, crystal economy) are architectural; items 6-8 (Stripe, Resend, Atlas page) partially resolved.
 
 ---
@@ -89,13 +89,17 @@ Added `useReducedMotion` from framer-motion. Framer entry animation skipped when
 
 Implemented in 9 files. Missing: onboarding, settings, events/*, org-talent, brandedby/*. Track as mini-sprint.
 
-### M3. Sidebar mobile loses focus on close
+### ~~M3. Sidebar mobile loses focus on close~~ FIXED
 
-`sidebar.tsx:88` — No returnFocusTo hamburger button.
+Added `hamburgerRef` + `closeSidebar()` callback. Escape, overlay click, and close button all return focus to hamburger. WCAG 2.4.3 compliant.
 
-### M4. Auth inputs: focus:ring-2 instead of focus-visible:ring-2
+**Files changed:** `sidebar.tsx`
 
-All auth pages. Mouse users see unnecessary ring. Inconsistent with rest of codebase.
+### ~~M4. Auth inputs: focus:ring-2 instead of focus-visible:ring-2~~ FIXED
+
+Replaced `focus:ring-*` with `focus-visible:ring-*` across 16 files (auth, dashboard, public). Mouse users no longer see focus rings; keyboard users still do. WCAG 2.4.7 compliant.
+
+**Files changed:** 16 files across auth/, dashboard/, public/, components/
 
 ### ~~M5. Share modal aria structure fragile~~ FIXED (in C1 fix)
 

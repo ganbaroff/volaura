@@ -322,10 +322,10 @@ Next action: G2.7 prep (draft option A memo + option B email copy). No more live
 
 **Phase G.2 — Execute cleanup (single-sprint sweep, no rolling "cleanup branch" drift)**
 
-- [ ] **G2.1.** Delete every non-CEO, non-explicit-test row from Supabase production identified in G1.2. Preserve one named "test" org + handful of test profiles for smoke-testing. Document the cutoff in a decision log.
+- [x] **G2.1.** Delete every non-CEO, non-explicit-test row from Supabase production identified in G1.2. Preserve one named "test" org + handful of test profiles for smoke-testing. **DONE 2026-04-18 07:30 Baku** — purged 110 test/CI/e2e accounts in single transaction. Preserved 8: CEO + CEO alt + 2 real users (xaqanimom, musab) + 4 sim seeds. auth.users 118→8, profiles 118→8, char_events 48→2, analytics 88→35, crystals 53→1, identity_map 27→0. CEO data (ceo_inbox 228, atlas_learnings 29) untouched.
 - [x] **G2.2.** Remove or flag-gate every hardcoded demo surface from G1.3. `/sample` decision: feature-flagged via `NEXT_PUBLIC_ENABLE_SAMPLE_PROFILE` (default off). Both `/sample` route (404 when off) and landing `SampleAuraPreview` gated. Commit 8a16409.
 - [ ] **G2.3.** Route hygiene — every public route renders production-quality UI with production-quality copy. Any route that doesn't meet that bar goes behind a flag or gets removed.
-- [ ] **G2.4.** Crystal balance reset — zero out all non-CEO crystal balances. Anyone joining post-launch starts from zero by a clean earn-path, not by inheriting inflated dev balances.
+- [x] **G2.4.** Crystal balance reset — zero out all non-CEO crystal balances. **DONE 2026-04-18 07:30 Baku** — G2.1 bulk cleanup deleted all non-CEO crystal ledger rows (52 of 53). Only remaining: CEO's 50 crystals from assessment. New users start from zero.
 
 **Phase G.3 — Breathe check (end-to-end organism test)**
 

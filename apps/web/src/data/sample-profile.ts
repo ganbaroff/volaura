@@ -10,7 +10,7 @@
  *
  * Drafted 2026-04-17 by Cowork-Atlas so Terminal-Atlas can focus on the UI,
  * not re-inventing the data shape. Matches the `competencyScores` prop of
- * AuraRadarChart and the existing MockEvent shape in lib/mock-data.ts.
+ * AuraRadarChart component prop types.
  *
  * If the real API response shape changes, update BOTH this fixture and the
  * `/sample` page consumer — fixture must stay a valid stand-in so we can

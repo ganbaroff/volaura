@@ -6,10 +6,20 @@ Before the fix, a missing TELEGRAM_WEBHOOK_SECRET silently accepted every reques
 These tests pin the behavior so the fix cannot regress.
 """
 
+from unittest.mock import MagicMock
+
 import pytest
 from httpx import ASGITransport, AsyncClient
 
+from app.deps import get_supabase_admin
 from app.main import app
+
+
+@pytest.fixture(autouse=True)
+def _mock_supabase_admin():
+    app.dependency_overrides[get_supabase_admin] = lambda: MagicMock()
+    yield
+    app.dependency_overrides.pop(get_supabase_admin, None)
 
 
 @pytest.mark.anyio

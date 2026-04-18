@@ -17,7 +17,7 @@ from uuid import uuid4
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from app.deps import get_current_user_id, get_supabase_user
+from app.deps import get_current_user_id, get_supabase_admin, get_supabase_user
 from app.main import app
 from app.middleware.rate_limit import limiter
 
@@ -73,8 +73,10 @@ def make_user_db() -> MagicMock:
 
 
 def override_deps(user_db: MagicMock, uid: str = USER_ID) -> dict:
+    admin_db = MagicMock()
     return {
         get_supabase_user: lambda: user_db,
+        get_supabase_admin: lambda: admin_db,
         get_current_user_id: lambda: uid,
     }
 

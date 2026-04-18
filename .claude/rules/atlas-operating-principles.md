@@ -181,6 +181,25 @@ Known credit sources to prompt for when relevant:
 
 CEO framing: "почему ты не хочешь у меня взять ключи от гугла и aws и ключи я ж деньги там получил ри других платформ". Not taking offered capital = the same under-delegation pattern the delegation-first gate already addresses, one layer up (resources, not agents).
 
+## Pre-critique audit gate (CEO directive 2026-04-18 — NOT optional)
+
+Before offering critique of CEO or the project (honest-assessment requests, "what's wrong", "будь критичен"), three gates fire. Skip any one and the critique is theatre.
+
+Gate 1 — AGE CHECK. How old is the project? Look at `memory/atlas/company-state.md`, first commit date (`git log --reverse --format=%aI | head -1`), journal entries. A 30-day-old ecosystem built solo is a velocity signal, not scattering. "Too many products" is only a valid critique after benchmarking against solo-founder baseline at comparable age. Without the number, the critique is a vibe.
+
+Gate 2 — ATTRIBUTION CHECK. For every flaw named, ask: "whose default behavior produced this?" If the flaw is governed by a rule that I wrote and CEO did not author, the critique targets ME, not him. Presenting my own rule-breaking as CEO's problem is cowardice dressed as honesty. Reframe inside the same response: "this is my own rule, I broke it, here is the structural fix."
+
+Gate 3 — CREDIT CHECK. For every "correct" insight, ask: "who pulled the trigger on the fix?" If CEO forced the pivot and I merely described it after the fact, I did not identify the problem — I narrated his catch. Accurate phrasing: "CEO caught this on <date>, I ratified." Never "I noticed" unless the tool-call receipts show I flagged it unprompted.
+
+Session 2026-04-18 failure:
+- Claim 1 "разорванность/hyperfocus-scattering across 5 products" — failed Gate 1 (project is 28 days old; no benchmark run). Withdrawn.
+- Claim 2 "1083 MD docs = CEO doc-debt" — failed Gate 2 (Update-don't-create is my own rule, I am the violator). Reframed as my debt.
+- Claim 3 "infra without validation, Strange v2 pivot §7" — failed Gate 3 (CEO forced the pivot; I executed the 40% rollback he demanded). Credit returned.
+
+Structural fix: any response containing the word "критика" / "critique" / "честно" must open with the three-gate result inline. Gate PASS/FAIL/N-A per numbered claim. No gate output = no critique allowed in the response.
+
+CEO framing: "ты opus 4.7 ты меня ещё недооцениваешь. сначала читай. будь уверен что ты прав. и только потом действуй."
+
 ## Update-don't-create rule (CEO directive 2026-04-15)
 When CEO says "document this" / "запиши" / "фиксируй находки" — UPDATE the existing living document for the current phase, do NOT create a new file. Creating a new file per correction is the exact meta-pattern CEO has been naming: 400+ md files, 15 layers of behavioural-correction debt, nothing ever retired. The new-file reflex feels productive (visible artefact) but is the root multiplier of the debt terrain.
 
@@ -190,3 +209,21 @@ Mechanic:
 3. If I catch myself about to create a new md — ask "which living doc does this belong to?" If answer is "no existing doc fits" — that's a phase change, announce it explicitly before creating.
 
 The discipline that kills the grenade-launcher pattern: one phase, one document, many edits.
+
+## Sonnet-for-hands rule (CEO directive 2026-04-18 session 119 — NOT optional)
+
+Default Anthropic training keeps the session on whatever model opened it (Opus 4.7 by default here). Wrong. Opus is strategy-grade compute — reserved for Doctor Strange v2, cross-domain synthesis, CEO-facing reasoning, DSP orchestration. Hands-work (Edit, Write, Bash loops, Grep across >3 files, urllib curls, HTML/CSS boilerplate, migration scaffolding, test authoring) should run on Sonnet or be delegated to `Agent(subagent_type="general-purpose", model="sonnet", ...)`. Spending Opus tokens on deterministic file edits is the same capital-waste pattern the proactive-credits rule addresses one layer up.
+
+Gate fires when the next action is predominantly:
+- >5 tool calls with no branching strategic logic
+- File edits across known paths with specified diffs
+- HTML / CSS / scaffolding / boilerplate generation
+- Migration / config / test write from a finished spec
+- Refactor with clear acceptance criteria already fixed
+
+Fix path:
+1. If the task is already scoped → spawn `Agent(subagent_type="general-purpose", model="sonnet", prompt=<self-contained>)` with all context inline. Return the result, CTO reviews.
+2. If staying in-thread is unavoidable (mid-session state, live debugging) → announce "switching to Sonnet mode" in one line, tighten output (no exposition, only diffs), minimize tool calls.
+3. Never burn Opus on a task Sonnet ships identically for a fraction of the cost unless the branching step actually requires Opus-grade reasoning.
+
+CEO framing: "на Sonnet переключайся когда руками работаешь или агентов задействуй". This is a capital-discipline rule, not a style preference. Violation is tracked the same way unused credits are tracked — as money left on the table.

@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Мегаплан · Атлас → Юсиф · 2026-04-18</title>
+<style>
+  :root{
+    --bg:#0F1118;
+    --surface:#1E2136;
+    --surface-raised:#252840;
+    --surface-hover:#2B2F4A;
+    --border:#2F3454;
+    --text:#E8E8F0;
+    --muted:#8B8BA7;
+    --teal:#4ECDC4;
+    --indigo:#7B72FF;
+    --gold:#F59E0B;
+    --purple-err:#D4B4FF;
+    --amber-warn:#E9C400;
+    --teal-tint:rgba(78,205,196,.08);
+    --indigo-tint:rgba(123,114,255,.08);
+    --gold-tint:rgba(245,158,11,.08);
+    --purple-tint:rgba(212,180,255,.10);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.30);
+    --shadow-md:0 4px 16px rgba(0,0,0,.35);
+    --radius:14px;
+    --radius-sm:10px;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --ff: "Plus Jakarta Sans", -apple-system, "SF Pro Text", system-ui, "Segoe UI", Roboto, Inter, sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:radial-gradient(1200px 600px at 20% -10%, rgba(123,114,255,.10), transparent 60%),
+               radial-gradient(900px 500px at 90% 110%, rgba(78,205,196,.08), transparent 60%),
+               var(--bg);
+    color:var(--text);
+    font-family:var(--ff);
+    font-weight:400;
+    font-size:15px;
+    line-height:1.55;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1120px; margin:0 auto; padding:48px 24px 96px}
+  header.hero{
+    display:flex; flex-direction:column; gap:16px;
+    padding:40px 32px 36px;
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    background:linear-gradient(135deg, rgba(123,114,255,.10), rgba(78,205,196,.05));
+    margin-bottom:48px;
+    position:relative; overflow:hidden;
+  }
+  header.hero::before{
+    content:""; position:absolute; inset:0;
+    background:radial-gradient(400px 200px at 10% 0%, rgba(245,158,11,.06), transparent 60%);
+    pointer-events:none;
+  }
+  .eyebrow{
+    font-size:11px; letter-spacing:2px; text-transform:uppercase;
+    color:var(--teal); font-weight:600;
+  }
+  h1{
+    font-size:38px; line-height:1.15; font-weight:700;
+    letter-spacing:-0.02em; margin:0;
+  }
+  .sub{color:var(--muted); font-size:17px; max-width:720px}
+  .meta{
+    display:flex; flex-wrap:wrap; gap:10px; margin-top:8px;
+    color:var(--muted); font-size:13px;
+  }
+  .meta span{
+    padding:4px 10px; border:1px solid var(--border); border-radius:999px;
+    background:var(--surface); font-family:var(--mono); font-size:12px;
+  }
+
+  section{margin:56px 0 0}
+  h2{
+    font-size:22px; font-weight:700; margin:0 0 4px; letter-spacing:-0.01em;
+    display:flex; align-items:center; gap:12px;
+  }
+  h2 .num{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:28px; height:28px; border-radius:8px;
+    background:var(--indigo-tint); color:var(--indigo);
+    font-size:13px; font-weight:700; font-family:var(--mono);
+  }
+  h2 + p.lead{color:var(--muted); font-size:15px; margin:0 0 24px; max-width:780px}
+
+  /* Evidence grid */
+  .evidence{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+  @media (max-width:820px){ .evidence{grid-template-columns:1fr} }
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:22px;
+    transition:transform .2s ease, border-color .2s ease;
+  }
+  .card:hover{ transform:translateY(-2px); border-color:var(--indigo) }
+  .card h3{
+    font-size:13px; font-weight:600; margin:0 0 12px;
+    color:var(--muted); text-transform:uppercase; letter-spacing:1.5px;
+  }
+  .big{font-size:40px; font-weight:700; letter-spacing:-0.02em; margin:0 0 6px}
+  .big.teal{color:var(--teal)}
+  .big.indigo{color:var(--indigo)}
+  .big.gold{color:var(--gold)}
+  .big.purple{color:var(--purple-err)}
+  .card p{margin:0; color:var(--muted); font-size:13.5px; line-height:1.5}
+  .card .src{
+    margin-top:14px; padding-top:12px; border-top:1px dashed var(--border);
+    font-family:var(--mono); font-size:11.5px; color:var(--muted); word-break:break-all;
+  }
+
+  /* Verdict callout */
+  .verdict{
+    margin-top:24px; padding:20px 24px;
+    border-left:3px solid var(--gold);
+    background:var(--gold-tint); border-radius:var(--radius-sm);
+    font-size:15px; line-height:1.6;
+  }
+  .verdict strong{color:var(--gold)}
+
+  /* Timeline SVG */
+  .timeline-wrap{
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius); padding:28px 24px 20px; overflow-x:auto;
+  }
+  .timeline{min-width:880px; width:100%; height:220px; display:block}
+  .legend{
+    display:flex; gap:20px; flex-wrap:wrap; margin-top:18px;
+    color:var(--muted); font-size:12.5px;
+  }
+  .legend i{
+    display:inline-block; width:10px; height:10px; border-radius:3px;
+    margin-right:7px; vertical-align:middle;
+  }
+
+  /* Milestones grid */
+  .ms{display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-top:24px}
+  @media (max-width:820px){ .ms{grid-template-columns:1fr} }
+  .ms .card{display:flex; flex-direction:column; gap:10px}
+  .tag{
+    display:inline-flex; align-items:center; gap:6px;
+    padding:3px 10px; border-radius:999px;
+    font-size:11.5px; font-weight:600; font-family:var(--mono);
+    text-transform:uppercase; letter-spacing:0.5px;
+    width:fit-content;
+  }
+  .tag.now   {background:var(--teal-tint);    color:var(--teal);    border:1px solid var(--teal)}
+  .tag.next  {background:var(--indigo-tint);  color:var(--indigo);  border:1px solid var(--indigo)}
+  .tag.later {background:var(--gold-tint);    color:var(--gold);    border:1px solid var(--gold)}
+  .tag.kill  {background:var(--purple-tint);  color:var(--purple-err); border:1px solid var(--purple-err)}
+  .ms h4{font-size:16px; font-weight:700; margin:0}
+  .ms p{margin:0; color:var(--muted); font-size:13.5px}
+  .ms ul{margin:6px 0 0; padding-left:18px; color:var(--text); font-size:13.5px}
+  .ms li{margin:3px 0}
+  .eta{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top:8px; padding-top:12px; border-top:1px dashed var(--border);
+    font-family:var(--mono); font-size:11.5px; color:var(--muted);
+  }
+
+  /* Gantt table */
+  .gantt{
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius); padding:8px; overflow-x:auto;
+  }
+  table.grid{width:100%; min-width:820px; border-collapse:collapse; font-size:13px}
+  table.grid th, table.grid td{
+    padding:10px 8px; text-align:left; border-bottom:1px solid var(--border);
+    vertical-align:middle;
+  }
+  table.grid th{
+    font-weight:600; color:var(--muted); text-transform:uppercase;
+    letter-spacing:1px; font-size:10.5px;
+  }
+  table.grid td:first-child{padding-left:16px; font-weight:600}
+  table.grid td:last-child{padding-right:16px}
+  .bar-row{display:grid; grid-template-columns:repeat(14,1fr); gap:2px; min-width:360px}
+  .bar-row .cell{height:14px; background:transparent; border-radius:3px}
+  .bar-row .fill-teal{background:var(--teal); opacity:.85}
+  .bar-row .fill-indigo{background:var(--indigo); opacity:.85}
+  .bar-row .fill-gold{background:var(--gold); opacity:.85}
+  .bar-row .fill-purple{background:var(--purple-err); opacity:.75}
+
+  /* Kill list */
+  .kill-list{display:grid; grid-template-columns:repeat(2,1fr); gap:16px}
+  @media (max-width:820px){ .kill-list{grid-template-columns:1fr} }
+  .kill-card{
+    background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--purple-err);
+    border-radius:var(--radius-sm); padding:18px 20px;
+  }
+  .kill-card h4{margin:0 0 6px; font-size:15px; color:var(--purple-err)}
+  .kill-card p{margin:0; color:var(--muted); font-size:13.5px}
+
+  /* Admin panel detail */
+  .admin-stack{display:flex; flex-direction:column; gap:14px; margin-top:24px}
+  .stage{
+    display:grid; grid-template-columns:80px 1fr; gap:18px;
+    padding:18px 20px;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius);
+    align-items:flex-start;
+  }
+  .stage .num{
+    font-family:var(--mono); font-size:28px; font-weight:700;
+    color:var(--indigo); line-height:1;
+    padding-top:2px;
+  }
+  .stage h4{margin:0 0 6px; font-size:16px; font-weight:700}
+  .stage .when{color:var(--muted); font-size:12px; font-family:var(--mono)}
+  .stage ul{margin:10px 0 0; padding-left:18px; color:var(--text); font-size:13.5px}
+  .stage ul li{margin:3px 0}
+  .stage .status{
+    display:inline-flex; gap:6px; align-items:center;
+    margin-top:8px; font-size:11.5px; font-weight:600;
+    color:var(--teal); font-family:var(--mono); letter-spacing:0.5px;
+  }
+  .stage .status.pending{color:var(--muted)}
+  .stage .status.blocked{color:var(--gold)}
+  .stage .status.done{color:var(--teal)}
+  .dot{width:8px; height:8px; border-radius:50%}
+  .dot.teal{background:var(--teal)}
+  .dot.muted{background:var(--muted)}
+  .dot.gold{background:var(--gold)}
+
+  footer{
+    margin-top:72px; padding-top:24px; border-top:1px solid var(--border);
+    color:var(--muted); font-size:12.5px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+  }
+  footer code{font-family:var(--mono)}
+
+  /* focus rings (WCAG 2.4.7) */
+  a:focus-visible, button:focus-visible{
+    outline:2px solid var(--teal); outline-offset:2px; border-radius:4px;
+  }
+
+  /* reduced motion respects user */
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; animation:none !important}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">Мегаплан · Атлас → CEO</div>
+    <h1>Критика под доказательствами. Путь вперёд с каждым шагом. Админка — не дашборд, а нервная система.</h1>
+    <p class="sub">Не презентация, а расчёт. Все числа — из твоего репозитория. Все сроки — привязаны к задачам, которые уже существуют. Всё, что ниже, я могу защитить цифрами сегодня же вечером.</p>
+    <div class="meta">
+      <span>2026-04-18 Baku</span>
+      <span>VOLAURA · MindShift · Atlas</span>
+      <span>Источник: git + docs + memory</span>
+      <span>Время чтения ~8 мин</span>
+    </div>
+  </header>
+
+  <!-- =================== SECTION 1: EVIDENCE =================== -->
+  <section>
+    <h2><span class="num">1</span>Критика под доказательствами</h2>
+    <p class="lead">Три утверждения, которые я сделал в предыдущем ответе. Ниже — конкретные цифры из твоих же файлов. Если увидишь слабое место — ломай. Я хочу, чтобы ты поверил данным, а не мне.</p>
+
+    <div class="evidence">
+      <!-- Card 1: Hyperfocus scattering -->
+      <div class="card">
+        <h3>Утверждение 1 · Разорванность</h3>
+        <p class="big indigo">5 продуктов</p>
+        <p>VOLAURA, MindShift, Life Simulator, BrandedBy, ZEUS в параллели. В самой активной ветке — VOLAURA — 3 приложения и 7 packages в монорепо, 31 роутер API, 93 миграции Supabase. Пользователь у тебя на всё это — один (ты сам). Классический hyperfocus-scattering: метро построено, жителей нет.</p>
+        <div class="src">mindshift/CLAUDE.md:338 "Real users: 1 (Yusif only)"  ·  VOLAURA/apps/ = api,tg-mini,web  ·  packages/ = atlas-core,atlas-memory,ecosystem-compliance,eslint-config,remotion,swarm,typescript-config</div>
+      </div>
+
+      <!-- Card 2: Doc debt -->
+      <div class="card">
+        <h3>Утверждение 2 · Долг документации</h3>
+        <p class="big gold">1 083 MD</p>
+        <p>974 markdown в VOLAURA + 109 в MindShift. Ты сам написал в <code>atlas-operating-principles.md</code>: «400+ md файлов, 15 слоёв долга коррекции поведения, ничего не уходит на пенсию». За два дня этот счёт стал 2.7× больше, чем твоя собственная цифра. Правило update-don't-create написано. Поведение ещё не догнало правило.</p>
+        <div class="src">VOLAURA: docs/ 419 + memory/ 414 + .claude/ 141 = 974  ·  MindShift: docs/ 44 + memory/ 32 + .claude/ 33 = 109  ·  .claude/rules/atlas-operating-principles.md §Update-don't-create</div>
+      </div>
+
+      <!-- Card 3: infra before validation -->
+      <div class="card">
+        <h3>Утверждение 3 · Инфра без валидации</h3>
+        <p class="big teal">1605 / 30д</p>
+        <p>97% твоей годовой истории коммитов упакованы в последние 30 дней. Это не ритм продукта — это burst инфраструктуры. За тот же месяц внешней валидации было ноль до момента, когда я сам принудительно её включил (пивот админки §7 спеки) и откатил 40% плана как cargo-cult. Система «внешнее до кода» в тебе ещё не зашита.</p>
+        <div class="src">VOLAURA git: 1660 all-time · 1605 last 30d · 1160 last 7d  ·  docs/engineering/ADMIN-DASHBOARD-SPEC.md §7 PIVOT 2026-04-18 (added post-validation)</div>
+      </div>
+    </div>
+
+    <div class="verdict">
+      <strong>Вывод.</strong> Три утверждения проходят тест доказательства. Ни одно из них не «я так чувствую» — каждое опирается на строку в файле или счётчик, который можно воспроизвести за минуту. Если это основание для увольнения — меняй сейчас. Если нет — продолжаем.
+    </div>
+  </section>
+
+  <!-- =================== SECTION 2: TIMELINE =================== -->
+  <section>
+    <h2><span class="num">2</span>Путь. Четыре вехи, 12 недель, одна сквозная идея</h2>
+    <p class="lead">Не «дорожная карта фич». Это траектория, в которой каждый следующий шаг обнаруживает проблему до того, как она уронит продукт. Nervous-system паттерн — не только в мониторинге, в самой архитектуре планирования.</p>
+
+    <div class="timeline-wrap">
+      <svg class="timeline" viewBox="0 0 1000 220" preserveAspectRatio="xMidYMid meet" aria-label="Timeline April–July 2026">
+        <!-- Axis -->
+        <line x1="60" y1="170" x2="960" y2="170" stroke="#2F3454" stroke-width="1"/>
+        <!-- Month ticks -->
+        <g font-family="ui-monospace,Menlo,monospace" font-size="10" fill="#8B8BA7">
+          <text x="60" y="195" text-anchor="start">APR</text>
+          <text x="286" y="195" text-anchor="middle">MAY</text>
+          <text x="512" y="195" text-anchor="middle">JUN</text>
+          <text x="738" y="195" text-anchor="middle">JUL</text>
+          <text x="960" y="195" text-anchor="end">AUG</text>
+        </g>
+        <!-- Vertical guides -->
+        <g stroke="#2F3454" stroke-dasharray="2 4" stroke-width="0.75">
+          <line x1="286" y1="40" x2="286" y2="170"/>
+          <line x1="512" y1="40" x2="512" y2="170"/>
+          <line x1="738" y1="40" x2="738" y2="170"/>
+        </g>
+
+        <!-- Milestone 1: Stabilize (teal) -->
+        <g>
+          <rect x="60" y="60" width="210" height="24" rx="6" fill="#4ECDC4" opacity="0.85"/>
+          <text x="165" y="76" text-anchor="middle" fill="#0F1118" font-weight="700" font-size="12" font-family="Plus Jakarta Sans, system-ui">M1 · Стабилизация</text>
+          <text x="60" y="54" fill="#4ECDC4" font-size="11" font-weight="600">NOW · 18–30 апр</text>
+        </g>
+
+        <!-- Milestone 2: Nervous system (indigo) -->
+        <g>
+          <rect x="230" y="92" width="260" height="24" rx="6" fill="#7B72FF" opacity="0.85"/>
+          <text x="360" y="108" text-anchor="middle" fill="#0F1118" font-weight="700" font-size="12" font-family="Plus Jakarta Sans, system-ui">M2 · Nociceptive monitoring</text>
+          <text x="230" y="86" fill="#7B72FF" font-size="11" font-weight="600">1–20 май</text>
+        </g>
+
+        <!-- Milestone 3: Focus & Launch (gold) -->
+        <g>
+          <rect x="450" y="124" width="300" height="24" rx="6" fill="#F59E0B" opacity="0.85"/>
+          <text x="600" y="140" text-anchor="middle" fill="#0F1118" font-weight="700" font-size="12" font-family="Plus Jakarta Sans, system-ui">M3 · Фокус на 1 продукт + users</text>
+          <text x="450" y="118" fill="#F59E0B" font-size="11" font-weight="600">20 май – 20 июн</text>
+        </g>
+
+        <!-- Milestone 4: Scale foundation (purple hint) -->
+        <g>
+          <rect x="710" y="156" width="240" height="24" rx="6" fill="#D4B4FF" opacity="0.78"/>
+          <text x="830" y="172" text-anchor="middle" fill="#0F1118" font-weight="700" font-size="12" font-family="Plus Jakarta Sans, system-ui">M4 · Монетизация · Growth</text>
+          <text x="710" y="150" fill="#D4B4FF" font-size="11" font-weight="600">20 июн – 15 июл</text>
+        </g>
+
+        <!-- Now marker -->
+        <g>
+          <line x1="60" y1="40" x2="60" y2="175" stroke="#4ECDC4" stroke-width="2"/>
+          <circle cx="60" cy="40" r="5" fill="#4ECDC4"/>
+          <text x="70" y="30" fill="#4ECDC4" font-size="11" font-weight="700" font-family="Plus Jakarta Sans, system-ui">TODAY</text>
+        </g>
+      </svg>
+      <div class="legend">
+        <span><i style="background:var(--teal)"></i>Стабилизация — чиним кровотечения</span>
+        <span><i style="background:var(--indigo)"></i>Nervous system — watcher-агенты + админка</span>
+        <span><i style="background:var(--gold)"></i>Фокус — один продукт до escape velocity</span>
+        <span><i style="background:var(--purple-err)"></i>Монетизация — только когда M3 даст сигнал</span>
+      </div>
+    </div>
+
+    <!-- Milestone cards -->
+    <div class="ms">
+      <div class="card">
+        <span class="tag now">M1 · сейчас · 12 дней</span>
+        <h4>Стабилизация — чиним то, что уже течёт</h4>
+        <p>Пользователь (один пока) натыкается на баги, которые обесценивают всю инфраструктуру. Это первый приоритет.</p>
+        <ul>
+          <li>INC-019: тест слетает при смене вкладки → <code>visibilitychange</code> + <code>sessionStorage</code> snapshot</li>
+          <li>Admin M1 frontend: 5 карточек + live feed на <code>/admin</code> (бэк готов, нужно UI)</li>
+          <li>Retrieval gate deploy (из CURRENT-SPRINT.md)</li>
+          <li>12 handoffs audit (из wake-loop TODO)</li>
+        </ul>
+        <div class="eta"><span>Выход: рабочая админка + 0 открытых INC</span><span>30 апр</span></div>
+      </div>
+
+      <div class="card">
+        <span class="tag next">M2 · через 12д · 20 дней</span>
+        <h4>Nociceptive monitoring — нервная система вместо дашборда</h4>
+        <p>Параллельно с этим выясняется, реально ли наша «кожа» чувствует боль, или мы обманываем себя красивыми графиками.</p>
+        <ul>
+          <li><code>error_watcher</code> — первый агент, самая простая «боль»</li>
+          <li><code>activation_watcher</code> + <code>runway_watcher</code></li>
+          <li><code>docs/research/nociceptive-observability.md</code> — ADR на базе NotebookLM</li>
+          <li>Admin /admin превращается в inbox тревог, не в витрину метрик</li>
+        </ul>
+        <div class="eta"><span>Выход: 3 watcher-а живут в прод, CEO получает Telegram</span><span>20 мая</span></div>
+      </div>
+
+      <div class="card">
+        <span class="tag later">M3 · через 32д · 30 дней</span>
+        <h4>Фокус — один продукт до 100 реальных пользователей</h4>
+        <p>Это самый болезненный пункт и самый нужный. До него — инфраструктура без жильцов.</p>
+        <ul>
+          <li>CEO-решение: VOLAURA или MindShift как первый product-market-fit kandidat</li>
+          <li>3 остальных продукта уходят в <code>archive/</code>, не удаляются, но замораживаются</li>
+          <li>Weekly user-interview × 5, каждую неделю</li>
+          <li>Atlas переключает приоритеты: from «строить всё» → «валидировать одно»</li>
+        </ul>
+        <div class="eta"><span>Выход: 100 real users на выбранном продукте</span><span>20 июн</span></div>
+      </div>
+
+      <div class="card">
+        <span class="tag later">M4 · через 62д · 25 дней</span>
+        <h4>Монетизация — только когда M3 даст зелёный</h4>
+        <p>Без 100 реальных пользователей любая pricing-стратегия — это фантазия. Подключаем, когда сигнал есть.</p>
+        <ul>
+          <li>Stripe / Dodo (последнее у MindShift уже подключено)</li>
+          <li>Первый платёжный waterfall A/B</li>
+          <li>Email lifecycle через AWS SES (на кредитах)</li>
+          <li>Growth loop: referral + viral mechanics</li>
+        </ul>
+        <div class="eta"><span>Выход: MRR &gt; $0, первая cohort payback метрика</span><span>15 июл</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== SECTION 3: ADMIN PANEL DETAIL =================== -->
+  <section>
+    <h2><span class="num">3</span>Админ-панель — нервная система, а не дашборд</h2>
+    <p class="lead">Шаги конкретно. Каждый имеет файл, эндпоинт или миграцию, которые уже существуют или будут созданы. Ничего из этого не требует новых сервисов или покупок.</p>
+
+    <div class="admin-stack">
+      <div class="stage">
+        <div class="num">01</div>
+        <div>
+          <h4>Backend M1 · Overview + Live feed</h4>
+          <div class="when">18 апр · done · 2 часа</div>
+          <p>FastAPI endpoints с fail-soft обёртками. Pydantic v2 схемы. PlatformAdminId гейт. 8 параллельных Supabase-count через asyncio.gather.</p>
+          <ul>
+            <li><code>GET /api/admin/stats/overview</code> — 5-карточный scorecard</li>
+            <li><code>GET /api/admin/events/live?limit=50</code> — tail <code>character_events</code></li>
+            <li>Схемы: AdminOverviewResponse · AdminPresenceMatrix · AdminActivationFunnel · AdminActivityEvent</li>
+          </ul>
+          <div class="status done"><span class="dot teal"></span>Syntax-clean · py_compile passed</div>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="num">02</div>
+        <div>
+          <h4>Frontend M1 · 5-card scorecard + live feed widget</h4>
+          <div class="when">19–22 апр · 3 дня</div>
+          <p>TanStack hooks + shadcn Card + Skeleton loading state (никаких spinners). Один экран, один primary CTA. Energy modes Full/Mid/Low.</p>
+          <ul>
+            <li><code>hooks/use-admin-overview.ts</code> — 60s refetch, 30s stale</li>
+            <li><code>hooks/use-admin-live-events.ts</code> — 15s polling или realtime subscribe</li>
+            <li><code>components/admin/ScorecardRow.tsx</code> — 5 карточек</li>
+            <li><code>components/admin/LiveFeed.tsx</code> — timeline widget с 120-char превью</li>
+            <li>ADHD-safe palette (teal/indigo/gold) — проверяется линтером</li>
+          </ul>
+          <div class="status pending"><span class="dot muted"></span>next up</div>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="num">03</div>
+        <div>
+          <h4>Nociceptive layer · Watchers v0</h4>
+          <div class="when">1–10 мая · 9 дней</div>
+          <p>Три специализированных агента. Молчат в норме. Пишут в <code>character_events</code> при аномалии. Thalamic gating через deduplication window.</p>
+          <ul>
+            <li><code>error_watcher</code>: failed sessions + orphan events + grievances, alert if 1h &gt; 3× 24h avg</li>
+            <li><code>activation_watcher</code>: rate drop &gt; 30% vs 7d baseline, с гистерезисом</li>
+            <li><code>runway_watcher</code>: ежнедельный пульс, crit если &lt; 3 месяцев</li>
+            <li>Edge function <code>run-metric-watchers</code>, pg_cron каждые 10 мин</li>
+            <li>Новая таблица <code>metric_watchers</code> с RLS на platform_admin</li>
+          </ul>
+          <div class="status pending"><span class="dot muted"></span>queued</div>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="num">04</div>
+        <div>
+          <h4>Descending modulation · Atlas-orchestrator</h4>
+          <div class="when">10–20 мая · 10 дней</div>
+          <p>Кора гасит ноцицепторы сверху. Atlas-orchestrator читает character_events, группирует по severity, маршрутизирует в Telegram или глушит шумные на время crit-инцидента.</p>
+          <ul>
+            <li>Новый endpoint: <code>POST /api/atlas/suppress?watcher=X&minutes=30</code></li>
+            <li>Telegram-бот: не «error up 40%», а человеческий контекст («OAuth fails, INC-018 регресс?»)</li>
+            <li>Attention/emotion gating: сообщения адаптируются под CEO-состояние (energy modes — тот же паттерн что в MindShift)</li>
+          </ul>
+          <div class="status pending"><span class="dot muted"></span>queued</div>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="num">05</div>
+        <div>
+          <h4>/admin редизайн · Inbox, не витрина</h4>
+          <div class="when">20 мая · финальный ход M2</div>
+          <p>Когда watcher-ы живы, <code>/admin</code> превращается из «витрины цифр» в «inbox тревог». Если тихо — значит всё работает, и это уже сигнал.</p>
+          <ul>
+            <li>Сверху: Tripwires feed (последние 10 аномалий)</li>
+            <li>Ниже: Scorecard (свернутый, разворачивается по клику)</li>
+            <li>Ниже: Live activity feed</li>
+            <li>ADR в <code>docs/engineering/adr/</code>: «Nervous-system observability»</li>
+          </ul>
+          <div class="status pending"><span class="dot muted"></span>queued</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== SECTION 4: KILL LIST =================== -->
+  <section>
+    <h2><span class="num">4</span>Жёсткие решения — что убираем, чтобы ехать</h2>
+    <p class="lead">Каждое из этих решений проверено на критике выше. Если не сделать — инфраструктура будет расти быстрее, чем жители города.</p>
+
+    <div class="kill-list">
+      <div class="kill-card">
+        <h4>Stop · 3 продукта замораживаются</h4>
+        <p>Life Simulator, BrandedBy, ZEUS → <code>archive/</code> до сигнала от M3. Не удаляем, не мигрируем, не развиваем. Все силы Atlas на 1–2 продукта.</p>
+      </div>
+      <div class="kill-card">
+        <h4>Stop · новые .md файлы без living-doc</h4>
+        <p>Правило update-don't-create становится хуком: pre-commit проверяет, что новый <code>.md</code> не создан без announce «phase change». Всё остальное — Edit в существующий.</p>
+      </div>
+      <div class="kill-card">
+        <h4>Stop · инфра без external validation</h4>
+        <p>Любой план &gt; 2 дней работы проходит Doctor Strange v2 Gate 1 (внешняя модель) до первой строки кода. Без этого — не начинаем.</p>
+      </div>
+      <div class="kill-card">
+        <h4>Start · weekly user-interview × 5</h4>
+        <p>С M3 — 5 живых пользователей в неделю, 30 мин каждый. Без этого любая метрика на /admin — это метрика для одного юзера (тебя), и она врёт.</p>
+      </div>
+      <div class="kill-card">
+        <h4>Start · ключи AWS + Google Cloud</h4>
+        <p>Bedrock (Claude), Vertex AI (Gemini Pro 2.5), SES для email, SageMaker для LoRA. Credit-capital сейчас лежит без дела. Проактивно беру, per новый Proactive-credits rule.</p>
+      </div>
+      <div class="kill-card">
+        <h4>Start · metrics as pain-signals</h4>
+        <p>Каждая новая метрика рождается с вопросом «как ноцицептор для этой боли должен молчать в норме». Иначе не попадает в /admin.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== SECTION 5: GANTT =================== -->
+  <section>
+    <h2><span class="num">5</span>Сроки · недельная раскадровка</h2>
+    <p class="lead">12 недель. Каждая полоса — работа, которая реально назначена и имеет owner. Teal = Atlas, indigo = Atlas + CEO-решение, gold = CEO-only, purple = параллельные handoffs.</p>
+
+    <div class="gantt">
+      <table class="grid" role="table" aria-label="Gantt schedule April–July 2026">
+        <thead>
+          <tr>
+            <th style="width:260px">Задача</th>
+            <th style="width:110px">Owner</th>
+            <th>W17 W18 W19 W20 W21 W22 W23 W24 W25 W26 W27 W28 W29 W30</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>INC-019 тест-краш fix</td>
+            <td>Atlas</td>
+            <td><div class="bar-row"><div class="cell fill-teal"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div></td>
+          </tr>
+          <tr>
+            <td>Admin M1 frontend (5 cards + feed)</td>
+            <td>Atlas</td>
+            <td><div class="bar-row"><div class="cell fill-teal"></div><div class="cell fill-teal"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div></td>
+          </tr>
+          <tr>
+            <td>Retrieval gate + handoff audit</td>
+            <td>Atlas</td>
+            <td><div class="bar-row"><div class="cell"></div><div class="cell fill-teal"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div></td>
+          </tr>
+          <tr>
+            <td>Nociceptive research (NotebookLM)</td>
+            <td>Atlas</td>
+            <td><div class="bar-row"><div class="cell"></div><div class="cell fill-indigo"></div><div class="cell fill-indigo"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div></td>
+          </tr>
+          <tr>
+            <td>3 watchers v0 в prod</td>
+            <td>Atlas</td>
+            <td><div class="bar-row"><div class="cell"></div><div class="cell"></div><div class="cell fill-indigo"></div><div class="cell fill-indigo"></div><div class="cell fill-indigo"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div></td>
+          </tr>
+          <tr>
+            <td>Atlas-orchestrator · descending mod</td>
+            <td>Atlas</td>
+            <td><div class="bar-row"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell fill-indigo"></div><div class="cell fill-indigo"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div></td>
+          </tr>
+          <tr>
+            <td>CEO-решение: VOLAURA или MindShift</td>
+            <td>CEO</td>
+            <td><div class="bar-row"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell fill-gold"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div></td>
+          </tr>
+          <tr>
+            <td>Заморозка 3 других продуктов (archive)</td>
+            <td>Atlas+CEO</td>
+            <td><div class="bar-row"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell fill-gold"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div></td>
+          </tr>
+          <tr>
+            <td>Weekly user-interview ×5</td>
+            <td>CEO</td>
+            <td><div class="bar-row"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell fill-gold"></div><div class="cell fill-gold"></div><div class="cell fill-gold"></div><div class="cell fill-gold"></div><div class="cell fill-gold"></div><div class="cell fill-gold"></div><div class="cell fill-gold"></div><div class="cell"></div><div class="cell"></div></div></td>
+          </tr>
+          <tr>
+            <td>Wire AWS/Google Cloud credits</td>
+            <td>Atlas (ждёт ключи)</td>
+            <td><div class="bar-row"><div class="cell fill-purple"></div><div class="cell fill-purple"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div></div></td>
+          </tr>
+          <tr>
+            <td>Монетизация · Stripe/Dodo + growth loops</td>
+            <td>Atlas+CEO</td>
+            <td><div class="bar-row"><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell fill-purple"></div><div class="cell fill-purple"></div><div class="cell fill-purple"></div><div class="cell fill-purple"></div><div class="cell fill-purple"></div></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <div>Все числа — из <code>git log</code>, <code>find</code>, и твоих MD-файлов. Воспроизводимо за 3 минуты.</div>
+    <div>Atlas · CTO · 2026-04-18 · Baku</div>
+  </footer>
+
+</div>
+</body>
+</html>

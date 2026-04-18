@@ -23,7 +23,7 @@ import { ArrowRight, CheckCircle, XCircle } from "lucide-react";
 
 export default function InvitePage() {
   return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center"><p className="text-muted-foreground">Loading...</p></div>}>
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center"><div className="w-full max-w-md space-y-4"><div className="h-10 w-56 mx-auto animate-pulse rounded bg-muted" /><div className="h-5 w-72 mx-auto animate-pulse rounded bg-muted" /><div className="h-12 w-full animate-pulse rounded-md bg-muted" /></div></div>}>
       <InviteContent />
     </Suspense>
   );

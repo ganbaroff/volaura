@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center"><p className="text-muted-foreground">Loading...</p></div>}>
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center"><div className="w-full max-w-sm space-y-4"><div className="h-8 w-48 mx-auto animate-pulse rounded bg-muted" /><div className="h-10 w-full animate-pulse rounded-md bg-muted" /><div className="h-10 w-full animate-pulse rounded-md bg-muted" /></div></div>}>
       <ResetPasswordContent />
     </Suspense>
   );
@@ -71,10 +71,22 @@ function ResetPasswordContent() {
 
   if (!sessionReady) {
     return (
-      <div className="space-y-6 text-center">
-        <h1 className="text-2xl font-semibold">{t("auth.resetPasswordTitle")}</h1>
-        <p className="text-sm text-muted-foreground">{t("auth.verifyingLink")}</p>
-        <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      <div className="space-y-6">
+        <div className="space-y-1 text-center">
+          <h1 className="text-2xl font-semibold">{t("auth.resetPasswordTitle")}</h1>
+          <p className="text-sm text-muted-foreground">{t("auth.verifyingLink")}</p>
+        </div>
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <div className="h-4 w-24 animate-pulse rounded bg-muted" />
+            <div className="h-10 w-full animate-pulse rounded-md bg-muted" />
+          </div>
+          <div className="space-y-1.5">
+            <div className="h-4 w-32 animate-pulse rounded bg-muted" />
+            <div className="h-10 w-full animate-pulse rounded-md bg-muted" />
+          </div>
+          <div className="h-10 w-full animate-pulse rounded-md bg-muted" />
+        </div>
       </div>
     );
   }

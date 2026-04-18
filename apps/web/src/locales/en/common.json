@@ -456,7 +456,10 @@
     "languageGeorgian": "Georgian",
     "languageUzbek": "Uzbek",
     "visibleToOrgs": "Let organizations find me in search (my data stays protected)",
-    "visibleToOrgsInfo": "Your profile will be visible to verified organizations — you can control this in Settings."
+    "visibleToOrgsInfo": "Your profile will be visible to verified organizations — you can control this in Settings.",
+    "error": {
+      "orgCreation": "Failed to create organization. You can create it from the organization page."
+    }
   },
   "welcome": {
     "title": "You're in, {{name}}! 🎉",
@@ -578,6 +581,7 @@
     "free": "Free",
     "viewDetails": "View details",
     "backToEvents": "Back to events",
+    "backToEvent": "Back to event",
     "organizer": "Organizer",
     "date": "Date",
     "about": "About this event",

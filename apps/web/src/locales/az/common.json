@@ -456,7 +456,10 @@
     "languageGeorgian": "Gürcü",
     "languageUzbek": "Özbək",
     "visibleToOrgs": "Təşkilatlar məni axtarışda tapa bilsinlər (məlumatlarım qorunur).",
-    "visibleToOrgsInfo": "Profiliniz təsdiqlənmiş təşkilatlara görünəcək — Siz bunu Parametrlərdə idarə edə bilərsiniz."
+    "visibleToOrgsInfo": "Profiliniz təsdiqlənmiş təşkilatlara görünəcək — Siz bunu Parametrlərdə idarə edə bilərsiniz.",
+    "error": {
+      "orgCreation": "Təşkilat yaradılmadı. Təşkilat səhifəsindən yarada bilərsiniz."
+    }
   },
   "welcome": {
     "title": "Siz qəbul oldunuz, {{name}}! 🎉",
@@ -578,6 +581,7 @@
     "free": "Pulsuz",
     "viewDetails": "Təfərrüatlara bax",
     "backToEvents": "Tədbirlərə qayıt",
+    "backToEvent": "Tədbirə qayıt",
     "organizer": "Təşkilatçı",
     "date": "Tarix",
     "about": "Bu tədbir haqqında",

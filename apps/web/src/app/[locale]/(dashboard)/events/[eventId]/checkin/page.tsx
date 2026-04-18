@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { QrCode, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,7 @@ import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 export default function CheckinPage() {
   const { t } = useTranslation();
-  const { eventId } = useParams<{ eventId: string }>();
+  const { eventId, locale } = useParams<{ eventId: string; locale: string }>();
   const getToken = useAuthToken();
 
   const { energy } = useEnergyMode();
@@ -84,9 +85,17 @@ export default function CheckinPage() {
         </div>
 
         {status === "success" && (
-          <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-3 text-emerald-400">
-            <CheckCircle className="size-5 shrink-0" />
-            <span className="text-sm font-medium">{message}</span>
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-3 text-emerald-400">
+              <CheckCircle className="size-5 shrink-0" />
+              <span className="text-sm font-medium">{message}</span>
+            </div>
+            <Link
+              href={`/${locale}/events/${eventId}`}
+              className="block text-center text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              ← {t("events.backToEvent", { defaultValue: "Back to event" })}
+            </Link>
           </div>
         )}
 

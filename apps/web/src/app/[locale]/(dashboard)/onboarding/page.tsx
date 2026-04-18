@@ -274,8 +274,12 @@ export default function OnboardingPage() {
         });
         if (!orgRes.ok && orgRes.status !== 409) {
           // 409 = already exists (safe to ignore), other errors are not fatal — profile was saved
-          const body = await orgRes.json().catch(() => ({}));
-          console.warn("org row creation failed", body);
+          // Surface to user but still navigate — they can create org from the org page
+          if (isMounted.current) {
+            setError(t("onboarding.error.orgCreation", { defaultValue: "Failed to create organization. You can create it from the organization page." }));
+            setSaving(false);
+          }
+          return;
         }
       }
 

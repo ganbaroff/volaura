@@ -267,8 +267,8 @@
     "shareNudge": "Siz ən yüksək pillədəsiniz — qoy təşkilatlar sizi tapsınlar.",
     "shareNudgeSilver": "Sürət qazanırıq — irəliləyişinizi həmkarlarınızla bölüşün.",
     "shareNudgeLow": "Tərəqqinizi paylaşın — hər bir nəticə bir hekayə söyləyir.",
-    "shareBody": "{{emoji}} {{competency}} — AURA {{score}}\nVolaura tərəfindən təsdiqlənib:",
-    "shareBodyLow": "{{competency}} sahəsini öyrənirəm — Volaura-da AURA balım: {{score}} 📈",
+    "shareBody": "{{emoji}} {{competency}}{{percentile}} — AURA {{score}}\nVolaura tərəfindən təsdiqlənib:",
+    "shareBodyLow": "{{competency}} nəticəsi: {{score}}{{percentile}} Volaura-da — AURA-mı təkmilləşdirirəm 📈",
     "shareTitle": "Volaura AURA balım",
     "shareTitleLow": "Volaura balım",
     "answerSaved": "Saxlanılıb",
@@ -464,7 +464,7 @@
     "benefit2": "LinkedIn və Telegram-da paylaşılan Bürüncdən Platinə qədər nişan",
     "benefit3": "Təşkilatlar istedad hovuzumuzda axtarış aparır – siz kəşf edilirsiniz.",
     "selectedCompetency": "Sizin ilk qiymətləndirməniz:",
-    "startCta": "{{kompetensiya}} qiymətləndirməsinə başlayın",
+    "startCta": "{{competency}} qiymətləndirməsinə başlayın",
     "startCtaGeneric": "İlk qiymətləndirmənizə başlayın.",
     "exploreCta": "Əvvəlcə dashboard-u nəzərdən keçirin.",
     "takes": "Təxminən 5 dəqiqə çəkir."
@@ -476,6 +476,7 @@
     "days": "günlər",
     "league": "Liqa",
     "position": "Vəzifə",
+    "auraTier": "AURA Səviyyəsi",
     "recentActivity": "Son fəaliyyət",
     "startAssessment": "Qiymətləndirmənizi edin.",
     "noScore": "AURA balınızı almaq üçün ilk qiymətləndirmənizi tamamlayın.",
@@ -718,7 +719,9 @@
     "noResults": "Nəticə tapılmadı",
     "viewAll": "Hamısını görüntüləmək",
     "saving": "Saxlanılır...",
-    "close": "Bağla"
+    "close": "Bağla",
+    "yes": "Bəli",
+    "no": "Xeyr"
   },
   "publicProfile": {
     "auraScore": "AURA Balı",
@@ -1092,6 +1095,18 @@
       "low_energy": {
         "drilldown": "Sahə və bölmələri idarə etmək üçün tədbiri tam enerji rejimində açın"
       }
+    },
+"status": {
+      "planning": "Planlaşdırma",
+      "staffing": "Kadr yığımı",
+      "live": "Canlı",
+      "closed": "Bağlı",
+      "cancelled": "Ləğv edilib"
+    },
+    "unit_status": {
+      "live": "Canlı",
+      "staffed": "Kadrlanıb",
+      "closed": "Bağlı"
     },
     "create": {
       "title": "Yeni tədbir",

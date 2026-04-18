@@ -2254,7 +2254,7 @@ async def _handle_telegram_update(update: dict, db: AsyncClient) -> None:
     if not text:
         return JSONResponse({"ok": True})
 
-    logger.info("Telegram CEO: {text}", text=text[:100])
+    logger.info("Telegram CEO: {n} chars", n=len(text))
 
     try:
         # Route commands (db injected via Depends)

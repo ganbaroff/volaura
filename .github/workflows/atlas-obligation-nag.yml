@@ -1,0 +1,64 @@
+name: Atlas Obligation Nag
+
+# Deterministic nag loop — fires Telegram reminders at escalating cadence when
+# CEO has open obligations in the atlas_obligations table without attached
+# proof. Spec: memory/atlas/OBLIGATION-SYSTEM-SPEC-2026-04-18.md
+#
+# v2 fixes inline (OBJECTION 2 from Doctor Strange v2 external critique):
+#   - `concurrency` block: workflow-layer single-writer. `cancel-in-progress: false`
+#     lets an in-flight nag finish its Telegram sendMessage rather than die halfway.
+#   - At-least-once semantics in the script: nag_log row written AFTER Telegram
+#     returns 200. If send fails, no log row, next tick retries.
+
+on:
+  schedule:
+    - cron: '37 */4 * * *'   # every 4h at minute :37 (avoid fleet-wide :00 alignment)
+  workflow_dispatch:
+
+permissions:
+  contents: write            # commit-back for memory/atlas/notification-log.jsonl
+
+concurrency:
+  group: atlas-obligation-nag
+  cancel-in-progress: false
+
+jobs:
+  nag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install --quiet supabase==2.* loguru
+
+      - name: Run obligation nag
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CEO_CHAT_ID: ${{ secrets.TELEGRAM_CEO_CHAT_ID }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python scripts/atlas_obligation_nag.py
+
+      - name: Commit notification log delta
+        if: always()
+        run: |
+          set -e
+          git config user.name "Atlas Nag"
+          git config user.email "atlas-nag@volaura.app"
+          if [ -f memory/atlas/notification-log.jsonl ]; then
+            git add memory/atlas/notification-log.jsonl || true
+          fi
+          if git diff --staged --quiet; then
+            echo "No nag-log delta to commit."
+            exit 0
+          fi
+          git commit -m "atlas-nag: tick $(date -u +%Y-%m-%dT%H:%MZ)"
+          git pull --rebase --autostash origin main || true
+          git push || echo "Push failed (non-fatal) — next tick will retry."

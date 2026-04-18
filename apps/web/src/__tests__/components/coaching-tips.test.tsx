@@ -167,7 +167,7 @@ describe("CoachingTips — error state", () => {
 
   it("shows empty tips (no error UI) when apiFetch returns 404", async () => {
     const { ApiError } = await import("@/lib/api/client");
-    mockApiFetch.mockRejectedValue(new ApiError("not found", 404));
+    mockApiFetch.mockRejectedValue(new (ApiError as unknown as new (m: string, s: number) => Error)("not found", 404));
     render(<CoachingTips {...defaultProps} />);
     await waitFor(() => expect(screen.queryByRole("status")).not.toBeInTheDocument());
     expect(screen.queryByText("assessment.coachingError")).not.toBeInTheDocument();

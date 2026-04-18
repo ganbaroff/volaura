@@ -268,7 +268,7 @@ describe("ProfileViewTracker — rendering", () => {
         String(c[0]).includes("/analytics/event")
       );
       expect(call).toBeDefined();
-      const body = JSON.parse(call[1].body);
+      const body = JSON.parse(call![1].body);
       expect(body.properties.viewed_username).toBe("charlie");
     });
   });

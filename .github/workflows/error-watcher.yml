@@ -1,0 +1,47 @@
+name: Error Watcher
+
+# Nociceptive monitoring — silent in steady state, fires on anomaly.
+# Checks: stuck assessment sessions, orphan character_events, error rate.
+# Auto-heals stuck sessions. Emits metric_anomaly to character_events.
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch: {}
+
+concurrency:
+  group: error-watcher
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    name: Run error watcher
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        working-directory: apps/api
+        run: pip install -r requirements.txt
+
+      - name: Run watcher
+        working-directory: apps/api
+        env:
+          SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          python -c "
+          import asyncio, sys
+          sys.path.insert(0, '.')
+          from app.services.error_watcher import run_error_watcher
+          results = asyncio.run(run_error_watcher())
+          print(f'Watcher results: {results}')
+          "

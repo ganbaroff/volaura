@@ -151,13 +151,23 @@ async def start_assessment(
     # Strange v2 objection: must audit-log expirations (Gemini 2026-04-18).
     if is_admin:
         stale_cutoff = (datetime.utcnow() - timedelta(hours=24)).isoformat()
-        stale_check = await db_admin.table("assessment_sessions").select("id").eq(
-            "volunteer_id", user_id
-        ).eq("status", "in_progress").lt("created_at", stale_cutoff).execute()
+        stale_check = (
+            await db_admin.table("assessment_sessions")
+            .select("id")
+            .eq("volunteer_id", user_id)
+            .eq("status", "in_progress")
+            .lt("created_at", stale_cutoff)
+            .execute()
+        )
         if stale_check.data:
-            await db_admin.table("assessment_sessions").update({"status": "expired"}).eq(
-                "volunteer_id", user_id
-            ).eq("status", "in_progress").lt("created_at", stale_cutoff).execute()
+            await (
+                db_admin.table("assessment_sessions")
+                .update({"status": "expired"})
+                .eq("volunteer_id", user_id)
+                .eq("status", "in_progress")
+                .lt("created_at", stale_cutoff)
+                .execute()
+            )
             logger.info("Admin bypass: expired stale sessions", user_id=user_id, count=len(stale_check.data))
 
     # Check for in-progress session

@@ -10,7 +10,7 @@ import { SocialAuthButtons } from "@/components/ui/social-auth-buttons";
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center"><p className="text-muted-foreground">Loading...</p></div>}>
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center"><div className="w-full max-w-sm space-y-4"><div className="h-8 w-48 mx-auto animate-pulse rounded bg-muted" /><div className="h-10 w-full animate-pulse rounded-md bg-muted" /><div className="h-10 w-full animate-pulse rounded-md bg-muted" /><div className="h-10 w-full animate-pulse rounded-md bg-muted" /></div></div>}>
       <LoginContent />
     </Suspense>
   );

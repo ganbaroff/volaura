@@ -202,7 +202,11 @@ export default function WelcomePage() {
     <Suspense
       fallback={
         <div className="flex min-h-screen items-center justify-center">
-          <p className="text-muted-foreground">Loading...</p>
+          <div className="w-full max-w-lg space-y-6">
+            <div className="h-10 w-64 mx-auto animate-pulse rounded bg-muted" />
+            <div className="h-5 w-80 mx-auto animate-pulse rounded bg-muted" />
+            <div className="h-12 w-full animate-pulse rounded-md bg-muted" />
+          </div>
         </div>
       }
     >

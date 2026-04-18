@@ -43,3 +43,11 @@ ignore = ["N806", "B904", "E501", "B008", "E402", "B005", "SIM105", "SIM108", "S
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+filterwarnings = [
+    "ignore::DeprecationWarning:supabase",
+    "ignore::DeprecationWarning:sentry_sdk",
+    "ignore::DeprecationWarning:slowapi",
+    "ignore::DeprecationWarning:google",
+    "ignore::DeprecationWarning:aiohttp",
+    "ignore::ResourceWarning:starlette",
+]

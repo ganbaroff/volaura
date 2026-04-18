@@ -7,5 +7,6 @@
   "regions": ["fra1"],
   "git": {
     "deploymentEnabled": true
-  }
+  },
+  "ignoreCommand": "git diff --quiet HEAD~1 -- apps/web/ packages/ .env.md vercel.json"
 }

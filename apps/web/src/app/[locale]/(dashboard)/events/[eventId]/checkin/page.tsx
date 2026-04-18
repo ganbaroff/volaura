@@ -76,7 +76,7 @@ export default function CheckinPage() {
             size="lg"
           >
             {status === "loading" ? (
-              <><Loader2 className="size-4 animate-spin" /> {t("common.loading", { defaultValue: "..." })}</>
+              <><Loader2 className="size-4 animate-spin" aria-hidden="true" /> {t("common.loading", { defaultValue: "..." })}</>
             ) : (
               <><QrCode className="size-4" /> {t("events.checkinButton", { defaultValue: "Check In" })}</>
             )}

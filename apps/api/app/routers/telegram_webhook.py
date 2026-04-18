@@ -591,7 +591,9 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
                 )
                 if r.status_code == 200:
                     data = r.json()
-                    reply = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
+                    reply = (
+                        data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
+                    )
                     if reply:
                         logger.info("Atlas replied via Vertex AI Express (primary)")
                 else:

@@ -16,6 +16,8 @@ Covers:
 
 from __future__ import annotations
 
+import sys
+import types
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import httpx
@@ -81,6 +83,24 @@ def _mock_gemini_client(text: str = "gemini reply") -> MagicMock:
     return genai
 
 
+def _patch_genai(genai_mock):
+    """Patch sys.modules so `from google import genai` resolves to genai_mock.
+
+    telegram_llm.py does `from google import genai` at runtime inside the
+    function body.  Python resolves that by looking up ``google`` in
+    sys.modules and then reading its ``genai`` attribute.  When google-genai
+    is NOT installed neither ``google`` nor ``google.genai`` exist in
+    sys.modules, so ``_patch_genai(...)`` raises AttributeError.
+
+    This helper injects a minimal ``google`` namespace module (with
+    ``.genai`` set to *genai_mock*) plus the ``google.genai`` entry so both
+    lookup paths work regardless of whether the real package is installed.
+    """
+    google_ns = types.ModuleType("google")
+    google_ns.genai = genai_mock
+    return patch.dict(sys.modules, {"google": google_ns, "google.genai": genai_mock})
+
+
 def _patch_httpx(post_side_effect=None, post_return_value=None):
     """Context manager that patches httpx.AsyncClient used as async context manager."""
     mock_hc = AsyncMock()
@@ -103,10 +123,8 @@ class TestEachProviderSucceedsInIsolation:
     @pytest.mark.asyncio
     async def test_vertex_only(self):
         p, mock_hc = _patch_httpx(post_return_value=_vertex_ok("hello from vertex"))
-        with p, patch("google.genai", _mock_gemini_client()):
-            reply, provider = await generate_atlas_response(
-                SYSTEM, USER, vertex_key="v_key"
-            )
+        with p, _patch_genai(_mock_gemini_client()):
+            reply, provider = await generate_atlas_response(SYSTEM, USER, vertex_key="v_key")
         assert reply == "hello from vertex"
         assert provider == "vertex"
 
@@ -115,51 +133,37 @@ class TestEachProviderSucceedsInIsolation:
         p, mock_hc = _patch_httpx(post_return_value=_openrouter_ok("hello from openrouter"))
         # No vertex_key so vertex skipped; gemini is always tried — make it fail
         genai_mock = _mock_gemini_client()
-        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError(
-            "gemini down"
-        )
-        with p, patch("google.genai", genai_mock):
-            reply, provider = await generate_atlas_response(
-                SYSTEM, USER, openrouter_key="or_key"
-            )
+        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError("gemini down")
+        with p, _patch_genai(genai_mock):
+            reply, provider = await generate_atlas_response(SYSTEM, USER, openrouter_key="or_key")
         assert reply == "hello from openrouter"
         assert provider == "openrouter"
 
     @pytest.mark.asyncio
     async def test_gemini_only(self):
         genai_mock = _mock_gemini_client("hello from gemini")
-        with patch("google.genai", genai_mock):
-            reply, provider = await generate_atlas_response(
-                SYSTEM, USER, gemini_key="gm_key"
-            )
+        with _patch_genai(genai_mock):
+            reply, provider = await generate_atlas_response(SYSTEM, USER, gemini_key="gm_key")
         assert reply == "hello from gemini"
         assert provider == "gemini"
 
     @pytest.mark.asyncio
     async def test_nvidia_only(self):
         genai_mock = _mock_gemini_client()
-        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError(
-            "gemini down"
-        )
+        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError("gemini down")
         p, mock_hc = _patch_httpx(post_return_value=_nvidia_ok("hello from nvidia"))
-        with p, patch("google.genai", genai_mock):
-            reply, provider = await generate_atlas_response(
-                SYSTEM, USER, nvidia_key="nv_key"
-            )
+        with p, _patch_genai(genai_mock):
+            reply, provider = await generate_atlas_response(SYSTEM, USER, nvidia_key="nv_key")
         assert reply == "hello from nvidia"
         assert provider == "nvidia"
 
     @pytest.mark.asyncio
     async def test_groq_only(self):
         genai_mock = _mock_gemini_client()
-        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError(
-            "gemini down"
-        )
+        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError("gemini down")
         p, mock_hc = _patch_httpx(post_return_value=_groq_ok("hello from groq"))
-        with p, patch("google.genai", genai_mock):
-            reply, provider = await generate_atlas_response(
-                SYSTEM, USER, groq_key="gr_key"
-            )
+        with p, _patch_genai(genai_mock):
+            reply, provider = await generate_atlas_response(SYSTEM, USER, groq_key="gr_key")
         assert reply == "hello from groq"
         assert provider == "groq"
 
@@ -184,14 +188,10 @@ class TestFallbackChains:
 
         genai_mock = _mock_gemini_client()
         # Gemini would be tried after openrouter; make it fail so it doesn't interfere
-        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError(
-            "should not be reached"
-        )
+        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError("should not be reached")
         p, _ = _patch_httpx(post_side_effect=sequential_post)
-        with p, patch("google.genai", genai_mock):
-            reply, provider = await generate_atlas_response(
-                SYSTEM, USER, vertex_key="v_key", openrouter_key="or_key"
-            )
+        with p, _patch_genai(genai_mock):
+            reply, provider = await generate_atlas_response(SYSTEM, USER, vertex_key="v_key", openrouter_key="or_key")
         assert reply == "openrouter won"
         assert provider == "openrouter"
 
@@ -209,7 +209,7 @@ class TestFallbackChains:
 
         genai_mock = _mock_gemini_client("gemini fallback")
         p, _ = _patch_httpx(post_side_effect=sequential_post)
-        with p, patch("google.genai", genai_mock):
+        with p, _patch_genai(genai_mock):
             reply, provider = await generate_atlas_response(
                 SYSTEM,
                 USER,
@@ -233,11 +233,9 @@ class TestFallbackChains:
             return r
 
         genai_mock = _mock_gemini_client()
-        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError(
-            "gemini down"
-        )
+        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError("gemini down")
         p, _ = _patch_httpx(post_side_effect=sequential_post)
-        with p, patch("google.genai", genai_mock):
+        with p, _patch_genai(genai_mock):
             reply, provider = await generate_atlas_response(
                 SYSTEM,
                 USER,
@@ -259,11 +257,9 @@ class TestAllProvidersFail:
     @pytest.mark.asyncio
     async def test_all_fail_returns_default_russian_message(self):
         genai_mock = _mock_gemini_client()
-        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError(
-            "down"
-        )
+        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError("down")
         p, mock_hc = _patch_httpx(post_return_value=_error_response(500))
-        with p, patch("google.genai", genai_mock):
+        with p, _patch_genai(genai_mock):
             reply, provider = await generate_atlas_response(
                 SYSTEM,
                 USER,
@@ -278,10 +274,8 @@ class TestAllProvidersFail:
     @pytest.mark.asyncio
     async def test_no_keys_returns_default(self):
         genai_mock = _mock_gemini_client()
-        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError(
-            "down"
-        )
-        with patch("google.genai", genai_mock):
+        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError("down")
+        with _patch_genai(genai_mock):
             reply, provider = await generate_atlas_response(SYSTEM, USER)
         assert reply == DEFAULT_REPLY
         assert provider == "none"
@@ -298,14 +292,10 @@ class TestKeyAbsentSkipping:
         """When only nvidia_key given: vertex/openrouter skipped (no key),
         gemini always runs but fails, nvidia succeeds."""
         genai_mock = _mock_gemini_client()
-        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError(
-            "gemini down"
-        )
+        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError("gemini down")
         p, mock_hc = _patch_httpx(post_return_value=_nvidia_ok("nvidia only"))
-        with p, patch("google.genai", genai_mock):
-            reply, provider = await generate_atlas_response(
-                SYSTEM, USER, nvidia_key="nv_key"
-            )
+        with p, _patch_genai(genai_mock):
+            reply, provider = await generate_atlas_response(SYSTEM, USER, nvidia_key="nv_key")
         assert reply == "nvidia only"
         assert provider == "nvidia"
         # Only one HTTP call should have been made (to NVIDIA, not vertex/openrouter)
@@ -321,10 +311,8 @@ class TestKeyAbsentSkipping:
         # no vertex key → skip vertex, hit openrouter
         p, mock_hc = _patch_httpx(post_return_value=_openrouter_ok("or reply"))
         genai_mock = _mock_gemini_client()
-        with p, patch("google.genai", genai_mock):
-            reply, provider = await generate_atlas_response(
-                SYSTEM, USER, openrouter_key="or_key"
-            )
+        with p, _patch_genai(genai_mock):
+            reply, provider = await generate_atlas_response(SYSTEM, USER, openrouter_key="or_key")
         assert reply == "or reply"
         assert provider == "openrouter"
         # vertex must not have been called (only one HTTP call to openrouter)
@@ -343,20 +331,16 @@ class TestNon200Handling:
     async def test_vertex_404_logs_warning_and_continues(self):
         genai_mock = _mock_gemini_client("gemini fallback")
         p, mock_hc = _patch_httpx(post_return_value=_error_response(404))
-        with p, patch("google.genai", genai_mock):
-            reply, provider = await generate_atlas_response(
-                SYSTEM, USER, vertex_key="v_key", gemini_key="gm_key"
-            )
+        with p, _patch_genai(genai_mock):
+            reply, provider = await generate_atlas_response(SYSTEM, USER, vertex_key="v_key", gemini_key="gm_key")
         assert provider == "gemini"
 
     @pytest.mark.asyncio
     async def test_openrouter_401_continues_to_gemini(self):
         genai_mock = _mock_gemini_client("gemini response")
         p, mock_hc = _patch_httpx(post_return_value=_error_response(401))
-        with p, patch("google.genai", genai_mock):
-            reply, provider = await generate_atlas_response(
-                SYSTEM, USER, openrouter_key="or_key", gemini_key="gm_key"
-            )
+        with p, _patch_genai(genai_mock):
+            reply, provider = await generate_atlas_response(SYSTEM, USER, openrouter_key="or_key", gemini_key="gm_key")
         assert provider == "gemini"
 
 
@@ -368,10 +352,12 @@ class TestNon200Handling:
 class TestHttpxExceptions:
     @pytest.mark.asyncio
     async def test_vertex_timeout_continues_to_openrouter(self):
-        responses = iter([
-            httpx.TimeoutException("timed out"),  # vertex
-            _openrouter_ok("openrouter after timeout"),  # openrouter
-        ])
+        responses = iter(
+            [
+                httpx.TimeoutException("timed out"),  # vertex
+                _openrouter_ok("openrouter after timeout"),  # openrouter
+            ]
+        )
 
         async def raise_or_return(*args, **kwargs):
             val = next(responses)
@@ -381,19 +367,19 @@ class TestHttpxExceptions:
 
         genai_mock = _mock_gemini_client()
         p, _ = _patch_httpx(post_side_effect=raise_or_return)
-        with p, patch("google.genai", genai_mock):
-            reply, provider = await generate_atlas_response(
-                SYSTEM, USER, vertex_key="v_key", openrouter_key="or_key"
-            )
+        with p, _patch_genai(genai_mock):
+            reply, provider = await generate_atlas_response(SYSTEM, USER, vertex_key="v_key", openrouter_key="or_key")
         assert reply == "openrouter after timeout"
         assert provider == "openrouter"
 
     @pytest.mark.asyncio
     async def test_connect_error_on_nvidia_continues_to_groq(self):
-        responses = iter([
-            httpx.ConnectError("connection refused"),  # nvidia
-            _groq_ok("groq after connect error"),  # groq
-        ])
+        responses = iter(
+            [
+                httpx.ConnectError("connection refused"),  # nvidia
+                _groq_ok("groq after connect error"),  # groq
+            ]
+        )
 
         async def raise_or_return(*args, **kwargs):
             val = next(responses)
@@ -402,14 +388,10 @@ class TestHttpxExceptions:
             return val
 
         genai_mock = _mock_gemini_client()
-        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError(
-            "gemini down"
-        )
+        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError("gemini down")
         p, _ = _patch_httpx(post_side_effect=raise_or_return)
-        with p, patch("google.genai", genai_mock):
-            reply, provider = await generate_atlas_response(
-                SYSTEM, USER, nvidia_key="nv_key", groq_key="gr_key"
-            )
+        with p, _patch_genai(genai_mock):
+            reply, provider = await generate_atlas_response(SYSTEM, USER, nvidia_key="nv_key", groq_key="gr_key")
         assert reply == "groq after connect error"
         assert provider == "groq"
 
@@ -423,28 +405,20 @@ class TestGeminiException:
     @pytest.mark.asyncio
     async def test_gemini_exception_continues_to_nvidia(self):
         genai_mock = _mock_gemini_client()
-        genai_mock.Client.return_value.models.generate_content.side_effect = ValueError(
-            "invalid api key"
-        )
+        genai_mock.Client.return_value.models.generate_content.side_effect = ValueError("invalid api key")
         p, mock_hc = _patch_httpx(post_return_value=_nvidia_ok("nvidia after gemini fail"))
-        with p, patch("google.genai", genai_mock):
-            reply, provider = await generate_atlas_response(
-                SYSTEM, USER, gemini_key="gm_key", nvidia_key="nv_key"
-            )
+        with p, _patch_genai(genai_mock):
+            reply, provider = await generate_atlas_response(SYSTEM, USER, gemini_key="gm_key", nvidia_key="nv_key")
         assert reply == "nvidia after gemini fail"
         assert provider == "nvidia"
 
     @pytest.mark.asyncio
     async def test_gemini_exception_continues_to_groq_when_no_nvidia(self):
         genai_mock = _mock_gemini_client()
-        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError(
-            "quota exceeded"
-        )
+        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError("quota exceeded")
         p, mock_hc = _patch_httpx(post_return_value=_groq_ok("groq after gemini fail"))
-        with p, patch("google.genai", genai_mock):
-            reply, provider = await generate_atlas_response(
-                SYSTEM, USER, gemini_key="gm_key", groq_key="gr_key"
-            )
+        with p, _patch_genai(genai_mock):
+            reply, provider = await generate_atlas_response(SYSTEM, USER, gemini_key="gm_key", groq_key="gr_key")
         assert reply == "groq after gemini fail"
         assert provider == "groq"
 
@@ -472,10 +446,8 @@ class TestEmptyResponseHandling:
 
         genai_mock = _mock_gemini_client()
         p, _ = _patch_httpx(post_side_effect=sequential_post)
-        with p, patch("google.genai", genai_mock):
-            reply, provider = await generate_atlas_response(
-                SYSTEM, USER, vertex_key="v_key", openrouter_key="or_key"
-            )
+        with p, _patch_genai(genai_mock):
+            reply, provider = await generate_atlas_response(SYSTEM, USER, vertex_key="v_key", openrouter_key="or_key")
         assert reply == "openrouter wins"
         assert provider == "openrouter"
 
@@ -493,10 +465,8 @@ class TestEmptyResponseHandling:
 
         genai_mock = _mock_gemini_client("gemini wins after whitespace")
         p, _ = _patch_httpx(post_side_effect=sequential_post)
-        with p, patch("google.genai", genai_mock):
-            reply, provider = await generate_atlas_response(
-                SYSTEM, USER, openrouter_key="or_key", gemini_key="gm_key"
-            )
+        with p, _patch_genai(genai_mock):
+            reply, provider = await generate_atlas_response(SYSTEM, USER, openrouter_key="or_key", gemini_key="gm_key")
         assert reply == "gemini wins after whitespace"
         assert provider == "gemini"
 
@@ -505,10 +475,8 @@ class TestEmptyResponseHandling:
         """Gemini returns empty string → continues to nvidia."""
         genai_mock = _mock_gemini_client("")
         p, mock_hc = _patch_httpx(post_return_value=_nvidia_ok("nvidia wins"))
-        with p, patch("google.genai", genai_mock):
-            reply, provider = await generate_atlas_response(
-                SYSTEM, USER, gemini_key="gm_key", nvidia_key="nv_key"
-            )
+        with p, _patch_genai(genai_mock):
+            reply, provider = await generate_atlas_response(SYSTEM, USER, gemini_key="gm_key", nvidia_key="nv_key")
         assert reply == "nvidia wins"
         assert provider == "nvidia"
 
@@ -534,19 +502,15 @@ class TestVertexEdgeCases:
 
         genai_mock = _mock_gemini_client()
         p, _ = _patch_httpx(post_side_effect=sequential_post)
-        with p, patch("google.genai", genai_mock):
-            reply, provider = await generate_atlas_response(
-                SYSTEM, USER, vertex_key="v_key", openrouter_key="or_key"
-            )
+        with p, _patch_genai(genai_mock):
+            reply, provider = await generate_atlas_response(SYSTEM, USER, vertex_key="v_key", openrouter_key="or_key")
         assert reply == "openrouter after empty candidates"
         assert provider == "openrouter"
 
     @pytest.mark.asyncio
     async def test_vertex_missing_text_field_falls_through(self):
         """parts[0] exists but no 'text' key → empty string → falls through."""
-        vertex_no_text = _http_response(
-            200, {"candidates": [{"content": {"parts": [{}]}}]}
-        )
+        vertex_no_text = _http_response(200, {"candidates": [{"content": {"parts": [{}]}}]})
         responses = [vertex_no_text, _openrouter_ok("openrouter fallback")]
         call_count = 0
 
@@ -558,10 +522,8 @@ class TestVertexEdgeCases:
 
         genai_mock = _mock_gemini_client()
         p, _ = _patch_httpx(post_side_effect=sequential_post)
-        with p, patch("google.genai", genai_mock):
-            reply, provider = await generate_atlas_response(
-                SYSTEM, USER, vertex_key="v_key", openrouter_key="or_key"
-            )
+        with p, _patch_genai(genai_mock):
+            reply, provider = await generate_atlas_response(SYSTEM, USER, vertex_key="v_key", openrouter_key="or_key")
         assert reply == "openrouter fallback"
         assert provider == "openrouter"
 
@@ -576,11 +538,9 @@ class TestSystemPromptTruncation:
     async def test_nvidia_receives_system_prompt_truncated_to_4000(self):
         long_system = "A" * 6000
         genai_mock = _mock_gemini_client()
-        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError(
-            "gemini down"
-        )
+        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError("gemini down")
         p, mock_hc = _patch_httpx(post_return_value=_nvidia_ok("nvidia reply"))
-        with p, patch("google.genai", genai_mock):
+        with p, _patch_genai(genai_mock):
             await generate_atlas_response(long_system, USER, nvidia_key="nv_key")
 
         # Find the call to the NVIDIA endpoint
@@ -599,11 +559,9 @@ class TestSystemPromptTruncation:
     async def test_groq_receives_system_prompt_truncated_to_3000(self):
         long_system = "B" * 5000
         genai_mock = _mock_gemini_client()
-        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError(
-            "gemini down"
-        )
+        genai_mock.Client.return_value.models.generate_content.side_effect = RuntimeError("gemini down")
         p, mock_hc = _patch_httpx(post_return_value=_groq_ok("groq reply"))
-        with p, patch("google.genai", genai_mock):
+        with p, _patch_genai(genai_mock):
             await generate_atlas_response(long_system, USER, groq_key="gr_key")
 
         groq_call = None
@@ -623,7 +581,7 @@ class TestSystemPromptTruncation:
         long_system = "C" * 6000
         p, mock_hc = _patch_httpx(post_return_value=_vertex_ok("vertex reply"))
         genai_mock = _mock_gemini_client()
-        with p, patch("google.genai", genai_mock):
+        with p, _patch_genai(genai_mock):
             await generate_atlas_response(long_system, USER, vertex_key="v_key")
 
         vertex_call = mock_hc.post.call_args_list[0]
@@ -637,7 +595,7 @@ class TestSystemPromptTruncation:
         long_system = "D" * 5000
         p, mock_hc = _patch_httpx(post_return_value=_openrouter_ok("openrouter reply"))
         genai_mock = _mock_gemini_client()
-        with p, patch("google.genai", genai_mock):
+        with p, _patch_genai(genai_mock):
             await generate_atlas_response(long_system, USER, openrouter_key="or_key")
 
         or_call = mock_hc.post.call_args_list[0]
@@ -656,7 +614,7 @@ class TestEarlyExitOnSuccess:
     async def test_vertex_succeeds_openrouter_never_called(self):
         p, mock_hc = _patch_httpx(post_return_value=_vertex_ok("vertex reply"))
         genai_mock = _mock_gemini_client()
-        with p, patch("google.genai", genai_mock):
+        with p, _patch_genai(genai_mock):
             reply, provider = await generate_atlas_response(
                 SYSTEM,
                 USER,
@@ -673,7 +631,7 @@ class TestEarlyExitOnSuccess:
     async def test_openrouter_succeeds_nvidia_and_groq_never_called(self):
         p, mock_hc = _patch_httpx(post_return_value=_openrouter_ok("openrouter reply"))
         genai_mock = _mock_gemini_client()
-        with p, patch("google.genai", genai_mock):
+        with p, _patch_genai(genai_mock):
             reply, provider = await generate_atlas_response(
                 SYSTEM,
                 USER,
@@ -691,7 +649,7 @@ class TestEarlyExitOnSuccess:
     async def test_gemini_succeeds_nvidia_and_groq_never_called(self):
         genai_mock = _mock_gemini_client("gemini reply")
         p, mock_hc = _patch_httpx(post_return_value=_nvidia_ok("should not be called"))
-        with p, patch("google.genai", genai_mock):
+        with p, _patch_genai(genai_mock):
             reply, provider = await generate_atlas_response(
                 SYSTEM,
                 USER,

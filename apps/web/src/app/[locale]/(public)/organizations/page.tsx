@@ -163,7 +163,7 @@ export default function OrganizationsDiscoveryPage() {
         )}
 
         {error && (
-          <div className="rounded-xl border border-error/30 bg-error/10 p-4 text-center text-sm text-error">
+          <div className="rounded-xl border border-warning/30 bg-warning/10 p-4 text-center text-sm text-on-surface-variant">
             {t("error.generic")}
           </div>
         )}

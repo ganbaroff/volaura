@@ -48,6 +48,18 @@ export function LandingFooter({ locale }: LandingFooterProps) {
             >
               {t("auth.login")}
             </Link>
+            <Link
+              href={`/${locale}/privacy`}
+              className="transition-colors hover:text-foreground"
+            >
+              {t("landing.footerPrivacy")}
+            </Link>
+            <Link
+              href={`/${locale}/terms`}
+              className="transition-colors hover:text-foreground"
+            >
+              {t("landing.footerTerms")}
+            </Link>
           </nav>
 
           {/* Copyright — suppressHydrationWarning: year computed at render time */}

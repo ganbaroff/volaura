@@ -1,9 +1,7 @@
 <!-- RECENTLY_SHIPPED_START -->
-## ⚡ RECENTLY SHIPPED (last push — 2026-04-18 15:52 UTC)
+## ⚡ RECENTLY SHIPPED (last push — 2026-04-18 19:07 UTC)
 **Read this FIRST — prevents proposing already-shipped work.**
-
-New migrations: 20260418194500_fix_profiles_account_type_default.sql
-New/updated routers: auth
+New/updated routers: admin
 <!-- RECENTLY_SHIPPED_END -->
 
 # Swarm Shared Context — UPDATED 2026-04-07 (Session 91)

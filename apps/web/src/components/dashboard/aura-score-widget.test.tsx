@@ -47,6 +47,7 @@ describe("AuraScoreWidget", () => {
 
   it("renders none tier when score is low", () => {
     render(<AuraScoreWidget {...defaults} score={20} badgeTier="none" />);
-    expect(screen.getByText("aura.none")).toBeInTheDocument();
+    // badgeTier="none" sets isAssessing=true, so the pill renders "aura.assessing"
+    expect(screen.getByText("aura.assessing")).toBeInTheDocument();
   });
 });

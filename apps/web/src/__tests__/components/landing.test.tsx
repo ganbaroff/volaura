@@ -70,9 +70,23 @@ vi.mock("next/image", () => ({
 }));
 
 vi.mock("framer-motion", () => {
-  const makePassthrough =
-    (tag: string) =>
-    ({
+  type PassthroughProps = {
+    children?: React.ReactNode;
+    initial?: unknown;
+    animate?: unknown;
+    whileInView?: unknown;
+    viewport?: unknown;
+    transition?: unknown;
+    variants?: unknown;
+    className?: string;
+    style?: React.CSSProperties;
+    "aria-label"?: string;
+    "aria-labelledby"?: string;
+    [key: string]: unknown;
+  };
+
+  const makePassthrough = (tag: string) => {
+    function PassthroughComponent({
       children,
       initial: _i,
       animate: _a,
@@ -85,25 +99,20 @@ vi.mock("framer-motion", () => {
       "aria-label": ariaLabel,
       "aria-labelledby": ariaLabelledBy,
       ...rest
-    }: {
-      children?: React.ReactNode;
-      initial?: unknown;
-      animate?: unknown;
-      whileInView?: unknown;
-      viewport?: unknown;
-      transition?: unknown;
-      variants?: unknown;
-      className?: string;
-      style?: React.CSSProperties;
-      "aria-label"?: string;
-      "aria-labelledby"?: string;
-      [key: string]: unknown;
-    }) =>
-      React.createElement(
+    }: PassthroughProps) {
+      return React.createElement(
         tag as keyof React.JSX.IntrinsicElements,
         { className, style, "aria-label": ariaLabel, "aria-labelledby": ariaLabelledBy, ...rest },
         children
       );
+    }
+    PassthroughComponent.displayName = `Motion_${tag}`;
+    return PassthroughComponent;
+  };
+
+  function AnimatePresenceMock({ children }: { children: React.ReactNode }) {
+    return React.createElement(React.Fragment, null, children);
+  }
 
   return {
     motion: {
@@ -118,8 +127,7 @@ vi.mock("framer-motion", () => {
       li: makePassthrough("li"),
     },
     useReducedMotion: vi.fn(() => false),
-    AnimatePresence: ({ children }: { children: React.ReactNode }) =>
-      React.createElement(React.Fragment, null, children),
+    AnimatePresence: AnimatePresenceMock,
   };
 });
 

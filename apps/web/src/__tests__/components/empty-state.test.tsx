@@ -5,13 +5,16 @@ import React from "react";
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
+const SlotMock = React.forwardRef<HTMLElement, { children?: React.ReactNode; [key: string]: unknown }>(
+  ({ children, ...props }, ref) => {
+    if (!React.isValidElement(children)) return null;
+    return React.cloneElement(children as React.ReactElement<Record<string, unknown>>, { ...props, ref });
+  }
+);
+SlotMock.displayName = "SlotMock";
+
 vi.mock("@radix-ui/react-slot", () => ({
-  Slot: React.forwardRef<HTMLElement, { children?: React.ReactNode; [key: string]: unknown }>(
-    ({ children, ...props }, ref) => {
-      if (!React.isValidElement(children)) return null;
-      return React.cloneElement(children as React.ReactElement<Record<string, unknown>>, { ...props, ref });
-    }
-  ),
+  Slot: SlotMock,
 }));
 
 // ── Import after mocks ────────────────────────────────────────────────────────

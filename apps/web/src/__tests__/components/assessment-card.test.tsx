@@ -8,19 +8,28 @@ vi.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (key: string) => key, i18n: { language: "en" } }),
 }));
 
+const MotionArticle = React.forwardRef<
+  HTMLElement,
+  React.HTMLAttributes<HTMLElement> & { children?: React.ReactNode }
+>(({ children, ...rest }, ref) =>
+  React.createElement("article", { ...rest, ref }, children)
+);
+MotionArticle.displayName = "MotionArticle";
+
+function MotionDiv({ children, ...rest }: React.HTMLAttributes<HTMLDivElement> & { children?: React.ReactNode }) {
+  return React.createElement("div", rest, children);
+}
+
+function AnimatePresenceMock({ children }: { children: React.ReactNode }) {
+  return React.createElement(React.Fragment, null, children);
+}
+
 vi.mock("framer-motion", () => ({
   motion: {
-    article: React.forwardRef<
-      HTMLElement,
-      React.HTMLAttributes<HTMLElement> & { children?: React.ReactNode }
-    >(({ children, ...rest }, ref) =>
-      React.createElement("article", { ...rest, ref }, children)
-    ),
-    div: ({ children, ...rest }: React.HTMLAttributes<HTMLDivElement> & { children?: React.ReactNode }) =>
-      React.createElement("div", rest, children),
+    article: MotionArticle,
+    div: MotionDiv,
   },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) =>
-    React.createElement(React.Fragment, null, children),
+  AnimatePresence: AnimatePresenceMock,
 }));
 
 // ── Import after mocks ────────────────────────────────────────────────────────

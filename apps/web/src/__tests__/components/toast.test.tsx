@@ -6,14 +6,20 @@ import React from "react";
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
 // framer-motion: skip animation, render children directly
+const MotionDiv = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & { children?: React.ReactNode }>(
+  ({ children, ...rest }, ref) => React.createElement("div", { ...rest, ref }, children)
+);
+MotionDiv.displayName = "MotionDiv";
+
+function AnimatePresenceMock({ children }: { children: React.ReactNode }) {
+  return React.createElement(React.Fragment, null, children);
+}
+
 vi.mock("framer-motion", () => ({
   motion: {
-    div: React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & { children?: React.ReactNode }>(
-      ({ children, ...rest }, ref) => React.createElement("div", { ...rest, ref }, children)
-    ),
+    div: MotionDiv,
   },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) =>
-    React.createElement(React.Fragment, null, children),
+  AnimatePresence: AnimatePresenceMock,
 }));
 
 // ── Import after mocks ────────────────────────────────────────────────────────

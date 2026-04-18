@@ -4,14 +4,22 @@ import React from "react";
 
 // ── Standard mocks ─────────────────────────────────────────────────────────────
 
+function MotionDiv({ children, initial: _i, animate: _a, exit: _e, transition: _t, ...props }: any) {
+  return React.createElement("div", props, children);
+}
+function MotionSpan({ children, initial: _i, animate: _a, exit: _e, transition: _t, ...props }: any) {
+  return React.createElement("span", props, children);
+}
+function AnimatePresenceMock({ children }: any) {
+  return React.createElement(React.Fragment, null, children);
+}
+
 vi.mock("framer-motion", () => ({
   motion: {
-    div: ({ children, initial: _i, animate: _a, exit: _e, transition: _t, ...props }: any) =>
-      React.createElement("div", props, children),
-    span: ({ children, initial: _i, animate: _a, exit: _e, transition: _t, ...props }: any) =>
-      React.createElement("span", props, children),
+    div: MotionDiv,
+    span: MotionSpan,
   },
-  AnimatePresence: ({ children }: any) => React.createElement(React.Fragment, null, children),
+  AnimatePresence: AnimatePresenceMock,
   useReducedMotion: vi.fn(() => false),
 }));
 
@@ -21,10 +29,12 @@ vi.mock("react-i18next", () => ({
   }),
 }));
 
-vi.mock("next/link", () => ({
-  default: ({ children, href, ...props }: any) =>
-    React.createElement("a", { href, ...props }, children),
-}));
+vi.mock("next/link", () => {
+  function NextLinkMock({ children, href, ...props }: any) {
+    return React.createElement("a", { href, ...props }, children);
+  }
+  return { default: NextLinkMock };
+});
 
 vi.mock("next/navigation", () => ({
   usePathname: vi.fn(() => "/az/"),
@@ -35,17 +45,22 @@ vi.mock("@/lib/utils/cn", () => ({
   cn: (...args: any[]) => args.filter(Boolean).join(" "),
 }));
 
-vi.mock("@/components/ui/skeleton", () => ({
-  Skeleton: ({ className }: { className?: string }) =>
-    React.createElement("div", { "data-testid": "skeleton", className }),
-}));
+vi.mock("@/components/ui/skeleton", () => {
+  function Skeleton({ className }: { className?: string }) {
+    return React.createElement("div", { "data-testid": "skeleton", className });
+  }
+  return { Skeleton };
+});
 
-vi.mock("@/components/ui/card", () => ({
-  Card: ({ children, className }: any) =>
-    React.createElement("div", { "data-testid": "card", className }, children),
-  CardContent: ({ children, className }: any) =>
-    React.createElement("div", { "data-testid": "card-content", className }, children),
-}));
+vi.mock("@/components/ui/card", () => {
+  function Card({ children, className }: any) {
+    return React.createElement("div", { "data-testid": "card", className }, children);
+  }
+  function CardContent({ children, className }: any) {
+    return React.createElement("div", { "data-testid": "card-content", className }, children);
+  }
+  return { Card, CardContent };
+});
 
 // ── Component-specific mocks ───────────────────────────────────────────────────
 
@@ -65,10 +80,12 @@ vi.mock("@/hooks/use-energy-mode", () => ({
   useEnergyMode: vi.fn(() => ({ energy: "full", setEnergy: vi.fn() })),
 }));
 
-vi.mock("@/components/layout/top-bar", () => ({
-  TopBar: ({ title }: { title: string }) =>
-    React.createElement("div", { "data-testid": "top-bar" }, title),
-}));
+vi.mock("@/components/layout/top-bar", () => {
+  function TopBar({ title }: { title: string }) {
+    return React.createElement("div", { "data-testid": "top-bar" }, title);
+  }
+  return { TopBar };
+});
 
 vi.mock("@/hooks/queries/use-admin", () => ({
   useAdminStats: vi.fn(),
@@ -77,10 +94,13 @@ vi.mock("@/hooks/queries/use-admin", () => ({
 }));
 
 vi.mock("lucide-react", () => {
-  const icon =
-    (name: string) =>
-    ({ className, "aria-hidden": ah }: any) =>
-      React.createElement("svg", { "data-testid": `icon-${name}`, className, "aria-hidden": ah });
+  const icon = (name: string) => {
+    function IconComponent({ className, "aria-hidden": ah }: { className?: string; "aria-hidden"?: boolean | string }) {
+      return React.createElement("svg", { "data-testid": `icon-${name}`, className, "aria-hidden": ah });
+    }
+    IconComponent.displayName = `Icon_${name}`;
+    return IconComponent;
+  };
   return {
     Briefcase: icon("briefcase"),
     Coins: icon("coins"),

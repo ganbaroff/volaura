@@ -135,7 +135,7 @@ function InviteContent() {
         ) : (
           <>
             <div className="flex justify-center">
-              <XCircle className="h-16 w-16 text-destructive" />
+              <XCircle className="h-16 w-16 text-[#D4B4FF]" />
             </div>
 
             <div className="space-y-2">

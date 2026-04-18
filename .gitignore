@@ -62,7 +62,7 @@ htmlcov/
 .obsidian/
 _tmp_*
 _stitch_design/
-*.tsconfig.tsbuildinfo
+*.tsbuildinfo
 memory/*
 !memory/swarm/
 !memory/atlas/

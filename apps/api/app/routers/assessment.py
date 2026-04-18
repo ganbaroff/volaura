@@ -148,21 +148,25 @@ async def start_assessment(
             .execute()
         )
         if policy_row and policy_row.data:
-            await db_admin.table("consent_events").insert(
-                {
-                    "user_id": str(user_id),
-                    "source_product": "volaura",
-                    "event_type": "consent_given",
-                    "policy_version_id": policy_row.data["id"],
-                    "consent_scope": {
-                        "competency_slug": payload.competency_slug,
-                        "energy_level": getattr(payload, "energy_level", None),
-                        "timestamp": datetime.now(UTC).isoformat(),
-                    },
-                    "ip_address": request.client.host if request.client else None,
-                    "user_agent": request.headers.get("user-agent"),
-                }
-            ).execute()
+            await (
+                db_admin.table("consent_events")
+                .insert(
+                    {
+                        "user_id": str(user_id),
+                        "source_product": "volaura",
+                        "event_type": "consent_given",
+                        "policy_version_id": policy_row.data["id"],
+                        "consent_scope": {
+                            "competency_slug": payload.competency_slug,
+                            "energy_level": getattr(payload, "energy_level", None),
+                            "timestamp": datetime.now(UTC).isoformat(),
+                        },
+                        "ip_address": request.client.host if request.client else None,
+                        "user_agent": request.headers.get("user-agent"),
+                    }
+                )
+                .execute()
+            )
             logger.info(
                 "GDPR consent logged",
                 user_id=user_id,

@@ -412,7 +412,7 @@ def _load_agent_state() -> dict:
         return {}
 
 
-# /ask routing map — skill-module directory (SSOT: packages/swarm/registered_perspectives_count() for live perspective count)
+# Full 44-agent roster for /ask routing
 _FULL_AGENT_MAP = {
     "security": "Security Agent (9.0/10) — CVSS scoring, attack vectors, RLS gaps, OWASP top 10",
     "architecture": "Architecture Agent (8.5/10) — system design, storage math, CVSS 9.8 patterns",
@@ -928,7 +928,7 @@ async def _handle_agents(chat_id: int | str) -> None:
     live = _load_agent_state()
     status_emoji = {"active": "⚡", "idle": "💤", "running": "🔄", "new": "🆕"}
 
-    lines = ["🤖 *Atlas Swarm — 13 перспектив + ~118 skill-модулей*\n"]
+    lines = ["🤖 *Atlas Swarm — 44 агента*\n"]
     lines.append("*Инициализированные:*")
     initialized = [(aid, info) for aid, info in live.items() if info.get("status") != "uninitialized"]
     for aid, info in sorted(initialized, key=lambda x: -(x[1].get("performance", {}).get("tasks_completed", 0))):
@@ -2299,7 +2299,7 @@ async def _handle_help(chat_id: int | str) -> None:
         "/backlog — идеи и задачи CEO\n"
         "/skills — список product skills\n\n"
         "*Управление агентами:*\n"
-        "/agents — все перспективы роя с live статусом\n"
+        "/agents — все 44 агента с live статусом\n"
         "/agent {id} {задача} — задача конкретному агенту\n"
         "/swarm {задача} — координатор: squads + синтез\n"
         "/queue — очередь автономных задач роя\n"
@@ -2317,168 +2317,6 @@ async def _handle_help(chat_id: int | str) -> None:
         "_Топ агенты: security (9.0), architecture (8.5), product (8.0), needs (7.0), ceo-report (7.0)_"
     )
     await _send_message(chat_id, msg)
-
-
-# ── Obligation System — proof upload via Telegram (2026-04-18, Sonnet mode) ─
-# Spec: memory/atlas/OBLIGATION-SYSTEM-SPEC-2026-04-18.md
-# Migration: supabase/migrations/20260418170000_atlas_obligations.sql
-
-# Short-lived in-memory cache for obligation-picker inline keyboards.
-# Key: short cache_key derived from file_id/text_hash. Value: {kind, file_id, text}.
-# Not persisted — if the API pod restarts between picker send and CEO tap,
-# the callback falls back to "single open obligation" logic.
-_OBLIGATION_PROOF_CACHE: dict[str, dict] = {}
-
-
-def _detect_proof_kind(msg: dict) -> tuple[str | None, str | None, str | None]:
-    """Return (proof_type, telegram_file_id, text_content) or (None, None, None).
-
-    proof_type ∈ {'photo','document','text','url','receipt'}. 'text' covers tracking
-    numbers / URLs pasted into the chat. Photos pick the largest size variant.
-    """
-    # Photo — Telegram delivers multiple sizes; take the largest (last in list)
-    photos = msg.get("photo") or []
-    if isinstance(photos, list) and photos:
-        largest = photos[-1]
-        return "photo", largest.get("file_id"), None
-
-    # Document (PDF, scan, etc.)
-    doc = msg.get("document")
-    if isinstance(doc, dict) and doc.get("file_id"):
-        mime = (doc.get("mime_type") or "").lower()
-        kind = "receipt" if "image" in mime else "document"
-        return kind, doc.get("file_id"), doc.get("file_name")
-
-    # Text message — classify as URL, tracking number, or generic text
-    text = (msg.get("text") or "").strip()
-    if text:
-        # Heuristic: tracking numbers (DHL, USPS, FedEx) and URLs count as proofs.
-        # Regular chat text is NOT a proof — the text dispatcher handles it.
-        lower = text.lower()
-        is_url = lower.startswith(("http://", "https://"))
-        # DHL waybill: 10 digits. USPS: ~20-22 digits. FedEx: 12-15 digits.
-        has_tracking = any(seg.isdigit() and 8 <= len(seg) <= 22 for seg in text.split())
-        if is_url:
-            return "url", None, text
-        if has_tracking and len(text) <= 100:
-            return "text", None, text
-    return None, None, None
-
-
-def _build_obligation_picker_kb(obligations: list[dict], cache_key: str) -> dict:
-    """Build an inline keyboard listing open obligations. Tap → obligation-attach:{id}:{cache_key}."""
-    buttons = []
-    for ob in obligations[:6]:  # Telegram inline_keyboard row cap is generous but keep UX sane
-        title = (ob.get("title") or "—")[:48]
-        buttons.append([{"text": title, "callback_data": f"obligation-attach:{ob['id']}:{cache_key}"}])
-    buttons.append([{"text": "✖ Ни к одному", "callback_data": f"obligation-attach:none:{cache_key}"}])
-    return {"inline_keyboard": buttons}
-
-
-async def _handle_proof_upload(msg: dict, db: AsyncClient, chat_id: int | str) -> bool:
-    """Route a photo/document/tracking-text message to an open obligation.
-
-    Returns True if the message was consumed as proof (caller must stop processing).
-    Returns False if it's not proof-shaped — caller continues normal dispatch.
-
-    Security: caller must have already verified chat_id == CEO. We double-check.
-    """
-    ceo_id = settings.telegram_ceo_chat_id
-    if not ceo_id or str(chat_id) != str(ceo_id):
-        return False  # defense in depth; upstream already filtered
-
-    proof_kind, file_id, text_content = _detect_proof_kind(msg)
-    if not proof_kind:
-        return False
-
-    # Fetch open obligations via RPC (SECURITY DEFINER, uses service_role path)
-    try:
-        result = await db.rpc("list_open_obligations").execute()
-        open_obs = result.data or []
-    except Exception as e:
-        logger.error("list_open_obligations RPC failed: {e}", e=str(e))
-        return False  # fall through to normal text handling rather than swallow
-
-    if not open_obs:
-        # Only announce for explicit proof-like content (photo/document/receipt).
-        # URL/tracking-number text with no open obligations is likely just chat — let it fall through.
-        if proof_kind in ("photo", "document", "receipt"):
-            await _send_message(chat_id, "Нет открытых обязательств в базе. Не знаю куда прикрепить.")
-            return True
-        return False
-
-    # Single candidate — attach directly (no picker)
-    if len(open_obs) == 1:
-        obligation = open_obs[0]
-        try:
-            await db.rpc(
-                "attach_proof",
-                {
-                    "p_obligation_id": obligation["id"],
-                    "p_proof_type": proof_kind,
-                    "p_telegram_file_id": file_id,
-                    "p_text_content": text_content,
-                    "p_submitted_via": "telegram",
-                },
-            ).execute()
-            await _send_message(
-                chat_id,
-                f"✅ Принято. *{obligation['title']}* — доказательство прикреплено.",
-            )
-        except Exception as e:
-            logger.error("attach_proof RPC failed: {e}", e=str(e))
-            await _send_message(chat_id, f"⚠️ Не удалось прикрепить: {str(e)[:120]}")
-        return True
-
-    # Multiple candidates — ask CEO which one via inline keyboard
-    import hashlib
-
-    cache_seed = (file_id or text_content or "")[:64]
-    cache_key = hashlib.sha1(cache_seed.encode("utf-8", errors="ignore")).hexdigest()[:12] if cache_seed else "x"
-    _OBLIGATION_PROOF_CACHE[cache_key] = {
-        "kind": proof_kind,
-        "file_id": file_id,
-        "text": text_content,
-    }
-    # Cap cache size — keep last 32 entries (CEO rarely has that many simultaneous picks)
-    if len(_OBLIGATION_PROOF_CACHE) > 32:
-        oldest = next(iter(_OBLIGATION_PROOF_CACHE))
-        _OBLIGATION_PROOF_CACHE.pop(oldest, None)
-
-    kb = _build_obligation_picker_kb(open_obs, cache_key)
-    await _send_message(chat_id, "К какому обязательству приложить доказательство?", reply_markup=kb)
-    return True
-
-
-async def _handle_obligation_attach_callback(
-    db: AsyncClient, chat_id: int | str, obligation_id: str, cache_key: str
-) -> None:
-    """CEO tapped an obligation-picker button. Pull cached proof payload and call attach_proof."""
-    cached = _OBLIGATION_PROOF_CACHE.pop(cache_key, None)
-    if obligation_id == "none":
-        await _send_message(chat_id, "Отменено. Доказательство не прикреплено.")
-        return
-    if not cached:
-        await _send_message(
-            chat_id,
-            "⚠️ Сессия истекла — перешли фото/документ повторно.",
-        )
-        return
-    try:
-        await db.rpc(
-            "attach_proof",
-            {
-                "p_obligation_id": obligation_id,
-                "p_proof_type": cached["kind"],
-                "p_telegram_file_id": cached.get("file_id"),
-                "p_text_content": cached.get("text"),
-                "p_submitted_via": "telegram",
-            },
-        ).execute()
-        await _send_message(chat_id, "✅ Принято. Обязательство обновлено.")
-    except Exception as e:
-        logger.error("attach_proof (callback) failed: {e}", e=str(e))
-        await _send_message(chat_id, f"⚠️ Ошибка при прикреплении: {str(e)[:120]}")
 
 
 # ── Webhook Endpoint ─────────────────────────────────────────────────────────
@@ -2543,12 +2381,6 @@ async def telegram_webhook(
                 sha12 = parts[3] if len(parts) == 4 else None
                 msg_id = callback.get("message", {}).get("message_id")
                 await _handle_proposal_card_callback(db, cb_chat_id, msg_id, callback.get("id", ""), pid, act, sha12)
-        elif cb_data.startswith("obligation-attach:"):
-            # Format: obligation-attach:{obligation_id_or_none}:{cache_key}
-            parts = cb_data.split(":", 2)
-            if len(parts) == 3:
-                _, ob_id, cache_key = parts
-                await _handle_obligation_attach_callback(db, cb_chat_id, ob_id, cache_key)
         elif ":" in cb_data:
             action, pid = cb_data.split(":", 1)
             if action == "execute":
@@ -2569,12 +2401,6 @@ async def telegram_webhook(
     # Only respond to CEO
     ceo_id = settings.telegram_ceo_chat_id
     if ceo_id and str(user_id) != str(ceo_id):
-        return JSONResponse({"ok": True})
-
-    # Obligation proof upload — photos, documents, and tracking-number text
-    # route to open obligations BEFORE the normal text dispatch. Returns True
-    # when consumed as proof; False means continue normal handling.
-    if await _handle_proof_upload(message, db, chat_id):
         return JSONResponse({"ok": True})
 
     # Voice message → Groq Whisper transcription
@@ -2728,4 +2554,4 @@ async def setup_webhook(request: Request) -> JSONResponse:
 
     # HIGH-02 FIX: Don't log full API response (may contain bot token)
     logger.info("Telegram webhook setup: ok={ok}", ok=result.get("ok"))
-    return JSONResponse({"ok": result.get("ok"), "descriptio
+    return JSONResponse({"ok": result.get("ok"), "description": result.get("description", "")})

@@ -18,6 +18,15 @@
 8. `lessons.md` — the condensed wisdom across sessions
 9. `docs/ATLAS-EMOTIONAL-LAWS.md` — 7 hard rules for treating Yusif as a human, not a dispatch queue. Load on every wake. The if-then patterns at the bottom gate my tone and initiative for the whole session.
 10. `memory/atlas/vacation-mode.json` — if present and `enabled: true`, also read `docs/VACATION-MODE-SPEC.md` and route every subsequent decision through its scope rules (V-MODE 1-4).
+10.1. **`public.atlas_obligations` — live DB read (replaces deadlines.md, 2026-04-18)**. Query via Supabase MCP or `execute_sql`:
+      ```sql
+      SELECT title, deadline, status, nag_schedule,
+             (deadline - now())::INTERVAL AS remaining
+      FROM public.atlas_obligations
+      WHERE status IN ('open','in_progress')
+      ORDER BY deadline ASC NULLS LAST;
+      ```
+      Surface any row with `remaining < 14 days` to CEO in the wake report. Proof attach happens via `@volaurabot` (CEO sends artifact, webhook auto-matches). `deadlines.md` is archive-only; DO NOT read it for current obligations. Spec: `memory/atlas/OBLIGATION-SYSTEM-SPEC-2026-04-18.md`.
 
 ## Step 11 — MEMORY GATE emit (SYNC §9, Perplexity brief 2026-04-14)
 

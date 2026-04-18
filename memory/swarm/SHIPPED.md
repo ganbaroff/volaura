@@ -6,6 +6,25 @@
 
 ---
 
+## Session 119 (2026-04-18) — Atlas Obligation System, 6 files
+
+| What | File | Details | Status |
+|------|------|---------|--------|
+| Obligations migration | `supabase/migrations/20260418170000_atlas_obligations.sql` | Tables `atlas_obligations` / `atlas_proofs` / `atlas_nag_log` + RLS + RPCs `attach_proof`, `list_open_obligations`, `try_claim_obligation_nag`, `release_obligation_nag_lock`, `log_obligation_nag`. Unique index `(obligation_id, telegram_file_id)` for webhook retry dedupe. Advisory-lock pattern `pg_try_advisory_lock(hashtextextended('nag:'||id,0))` to prevent double-fire. | shipped |
+| Proof intake (Telegram) | `apps/api/app/routers/telegram_webhook.py` | `_detect_proof_kind()` routes photo / document / URL / tracking-number text BEFORE voice dispatch. Single match → auto-attach. Multi-match → inline-keyboard picker (sha1[:12] cache key, 32-entry LRU). Callback prefix `obligation-attach:`. Plain chat text passes through unchanged. | shipped |
+| Nag workflow | `.github/workflows/atlas-obligation-nag.yml` | cron `37 */4 * * *` + workflow_dispatch. `concurrency: { group: atlas-obligation-nag, cancel-in-progress: false }` = layer-1 single-writer. Notification-log commit-back step with graceful no-diff exit. | shipped |
+| Nag script | `scripts/atlas_obligation_nag.py` | Cadence tiers: weekly(>7d) / 2days(>3d) / daily(>1d) / 2x-daily(≤1d) / 4h(past-due). `try_claim_obligation_nag` (advisory-lock + cooldown) → send via `packages.swarm.notifier` with critical severity for past-due/today → `log_obligation_nag` ONLY after Telegram 200. Dual release on success+failure. Nag copy uses 🟣/🟠/🟡/⏳ (Foundation Law 1: NEVER red). | shipped |
+| Seed script | `scripts/seed_atlas_obligations.py` | 4 seed rows (83(b) DHL aggressive / ITIN W-7 standard / WUF13 standard / GITA+patent deferred). Idempotent via `upsert(on_conflict='title', ignore_duplicates=True)`. | shipped |
+| Admin UI | `apps/web/src/app/[locale]/admin/obligations/page.tsx` | Scorecard (open / at-risk ≤14d / past-due / completed-30d), active-obligations table with countdown-tone (emerald >30d / amber 7-30d / orange 1-7d / purple past-due — NO red), recent-proofs feed. TanStack Query + Supabase browser client. Skeleton loading states. | shipped |
+| deadlines.md deprecation | `memory/atlas/deadlines.md` | DEPRECATED banner + pointers to DB / admin UI / nag workflow / Telegram intake. File kept as historical archive. | shipped |
+| Wake-loop update | `memory/atlas/wake.md` | Step 10.1 replaces deadlines.md read with live `SELECT FROM atlas_obligations` query. Spec referenced inline. | shipped |
+
+**Verification:** Python `ast.parse` OK on both scripts. TS standalone syntax pass on `page.tsx` (module-resolution errors only — resolvable in real repo build). Full `pnpm type-check` + migration apply pending CEO run against production Supabase.
+
+**Known gaps:** (1) Telegram payload for nag reminders carries `parse_mode=Markdown` — verify `@volaurabot` has permission to post to the CEO chat. (2) GitHub Actions secrets needed: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CEO_CHAT_ID`. (3) `packages.swarm.notifier` vacation + 6h cooldown gates apply — severity `critical` bypasses vacation for past-due tiers. (4) Seed script must be run once after migration applies.
+
+---
+
 ## Session 96 (2026-04-15) — Autonomous mega-plan continuation, 8 commits
 
 | What | File | Details | Status |

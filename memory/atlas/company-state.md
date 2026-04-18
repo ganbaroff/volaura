@@ -2,7 +2,7 @@
 
 **Single source of truth for legal entity, obligations, and deadlines. Atlas + founder-ops agents read this first. CEO sees digest, not this file.**
 
-Last updated: 2026-04-16 — Stripe Atlas dashboard confirms: Application review ✅, Incorporation ✅ (Apr 14), Tax ID (EIN) expected Apr 29 – May 13, 83(b) postmark by Apr 28.
+Last updated: 2026-04-18 — 83(b) filing: DHL Express direct Баку → IRS is the SOLE path. Friend-fallback deprecated (CEO confirmed 2026-04-18: friend did not respond). 230 AZN negotiated. CEO goes to DHL Monday Apr 20. Stripe Atlas dashboard confirms: Application review ✅, Incorporation ✅ (Apr 14), Tax ID (EIN) expected Apr 29 – May 13, 83(b) postmark by Apr 28.
 
 ---
 
@@ -37,7 +37,7 @@ Last updated: 2026-04-16 — Stripe Atlas dashboard confirms: Application review
 | Application review | Apr 14-15 | — | Stripe Atlas | ✅ COMPLETED (dashboard 2026-04-15) |
 | Incorporation (DE filing) | Apr 14 | — | Stripe Atlas | ✅ COMPLETED (dashboard Apr 16) |
 | Certificate of Incorporation issued | Apr 14 | — | Stripe Atlas | ✅ COMPLETED |
-| 83(b) election mailed to IRS | **Postmark by Apr 28** (Stripe Atlas handles) | IRS statutory max: 30 calendar days (~May 14) | Founder + Atlas | **⚠️ CRITICAL P0 — 12 DAYS LEFT** |
+| 83(b) election mailed to IRS | **Postmark by Apr 28** (CEO goes to DHL Баку Mon Apr 20) | IRS statutory max: 30 calendar days (~May 14) | Founder + Atlas | **⚠️ CRITICAL P0 — 10 DAYS LEFT · DHL-direct path per 2026-04-18 pivot** |
 | Tax ID (EIN) received | Apr 29 – May 13 | — | IRS via Stripe Atlas | PENDING |
 | ITIN application (Form W-7) | Immediately after incorporation | — | Founder | P0 (needed for 83(b) + taxes) |
 | Mercury Bank application | After EIN received (~May 5-12) | — | Founder + Atlas | QUEUED |
@@ -54,13 +54,19 @@ Last updated: 2026-04-16 — Stripe Atlas dashboard confirms: Application review
 
 **Why it matters:** Without timely 83(b), founder pays income tax on stock appreciation as it vests. If VOLAURA reaches $10M valuation in 4 years, tax bill could be 7-figure.
 
-**Procedure:**
-1. Sign 83(b) election form (Stripe Atlas provides)
-2. Mail to IRS via USPS Certified Mail with Return Receipt, within 30 days of incorporation
-3. Keep postmarked copy + green card forever
-4. Atlas stores scans in `memory/atlas/legal/83b-election/`
+**Procedure (revised 2026-04-18 — DHL-direct path):**
+1. Verify DHL Express Worldwide is on current IRS §7502(f) designated PDS list (irs.gov → "Private Delivery Services")
+2. Sign 83(b) election form from Stripe Atlas dashboard (wet signature + date ручкой, NO notarization required)
+3. Ship DHL Express Worldwide direct Баку → IRS filing center (230 AZN with guarantee, negotiated from 300)
+4. Include self-addressed stamped envelope inside for IRS to return stamped copy
+5. DHL air waybill date = legal postmark per IRC §7502(f) / Notice 2016-30
+6. Atlas stores scans in `memory/atlas/legal/83b-election/`
+
+**Fallback path:** DEPRECATED. Friend-path (DHL Баку → friend in USA → USPS Certified) is off the table — friend did not respond (CEO confirmed 2026-04-18). Original 18-step guide in `docs/business/83b-filing-guide.html` kept as archive only. If A1 check fails (DHL Express Worldwide not on current IRS PDS list) → emergency-fallback = FedEx International Priority direct Баку → IRS (also §7502(f) designated). No friend-intermediary. Atlas must be pinged before shipping any non-DHL service.
 
 **Postmark = legal filing date.** Not delivery date.
+
+**EIN status:** Not yet issued. Form writes "Applied for" in EIN field — standard and IRS-accepted. 83(b) cannot wait for EIN per 30-day rule.
 
 ---
 
@@ -93,7 +99,7 @@ All three read Atlas memory + this file on wake. All three write personal lesson
 | Item | When | Rough cost |
 |------|------|------------|
 | ITIN filing (CAA agent) | 2026-05 | $150-400 one-time |
-| USPS Certified Mail for 83(b) | 2026-04/05 | ~$10 |
+| DHL Express Worldwide for 83(b) (direct Baku → IRS) | 2026-04-20 | 230 AZN (~$135) |
 | CPA for Form 5472 + 1120 | 2027-03 | $500-1,500/year |
 | Delaware franchise tax | 2027-03 | $450 minimum (authorized shares method) |
 | Registered agent year 2+ | 2027-04 | $100-300/year |

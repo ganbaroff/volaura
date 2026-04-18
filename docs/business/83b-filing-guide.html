@@ -323,11 +323,127 @@
 <main>
 
   <h1>Отправка 83(b) Election — план для Юсифа</h1>
-  <p class="subtitle">Через американского друга, USPS Certified Mail. Поэтапно, без спешки. Галочки сохраняются пока страница открыта.</p>
+  <p class="subtitle">Единственный путь: прямая отправка DHL Express Worldwide из Баку в IRS (230 AZN negotiated). Запасной путь через друга в США ОТПАЛ — друг недоступен на 2026-04-18. Legal postmark по IRC §7502(f) — DHL-сервис обязан быть в текущем IRS PDS list (шаг A1 = жёсткий gate). Галочки сохраняются пока страница открыта.</p>
+
+  <!-- ═══════════ REVISION 2026-04-18 ═══════════ -->
+  <section class="phase" style="border-left: 4px solid #4ECDC4; background: rgba(78, 205, 196, 0.05);">
+    <div class="phase-tag" style="color: #4ECDC4;">Обновление · 18 апреля 2026</div>
+    <div class="phase-title">План изменился: прямая отправка DHL Баку → IRS</div>
+    <div class="phase-meta">CEO идёт в DHL в понедельник 20 апреля с паспортом. Запас до дедлайна — 8 дней.</div>
+    <div style="padding: 16px; line-height: 1.6;">
+      <p>Изначальный план был «DHL Баку → друг в США → USPS Certified Mail». Затем (2026-04-18) перешли на DHL Express напрямую из Баку в IRS (230 AZN с гарантией, CEO negotiated с 300). В тот же день friend-path отпал окончательно — друг не ответил. Остался единственный путь: DHL Express Worldwide direct. Запасного варианта нет — шаг A1 (проверка IRS PDS list) стал hard gate, не рекомендацией.</p>
+      <p><strong style="color: #4ECDC4;">Почему DHL-прямая работает:</strong> IRS по коду §7502(f) и Notice 2016-30 признаёт postmark от «designated private delivery services» наравне с USPS. DHL Express Worldwide и ряд других DHL Express сервисов входят в этот список. Значит DHL air waybill с датой отправки = legal filing date, идентично USPS Certified postmark.</p>
+      <p><strong style="color: #F59E0B;">Критичный чек-поинт перед походом:</strong> зайди на <code>irs.gov</code> → поиск «Private Delivery Services» → найди актуальный PDS list. Убедись что DHL Express Worldwide (или тот сервис что DHL Баку предлагает) ТАМ. Если его нет в текущем списке — разворачивайся, переходи на friend-path ниже. 5 минут на проверку сэкономят tax disaster на $10K+.</p>
+      <p><strong>Нотариально заверять не нужно.</strong> 83(b) требует только твоей подписи и даты ручкой на форме. Без нотариуса, без apostille, без свидетеля. Stripe Atlas генерирует предзаполненную форму в дашборде.</p>
+      <p><strong>EIN ещё не получен</strong> (expected Apr 29 – May 13 per Stripe Atlas). В поле EIN на форме будет «Applied for» — так и должно быть, IRS принимает. 83(b) по закону не ждёт EIN, правило 30 дней жёсткое.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════ PHASE 0 · DHL-DIRECT PATH ═══════════ -->
+  <section class="phase" style="border-left: 4px solid #4ECDC4;">
+    <div class="phase-tag" style="color: #4ECDC4;">Путь A · Основной · DHL-прямая</div>
+    <div class="phase-title">Прямая отправка Баку → IRS</div>
+    <div class="phase-meta">~2 часа · понедельник 20 апреля · 230 AZN</div>
+  </section>
+
+  <div class="step-card teal">
+    <div class="step-num">A1</div>
+    <div class="step-body">
+      <h3><span class="icon">✅</span>Проверить IRS PDS list за 5 минут</h3>
+      <p>Открой <code>irs.gov</code> → в поиске введи «Private Delivery Services» → открой страницу с designated PDS списком.</p>
+      <p>Убедись что DHL Express Worldwide (или тот DHL Express сервис что офис в Баку предлагает) ТАМ в списке.</p>
+      <div class="hint warn">⚠️ HARD GATE: запасного пути больше НЕТ (друг недоступен 2026-04-18). Если DHL-сервиса НЕТ в текущем IRS PDS list — СТОП, не отправляй. Пиши Atlas немедленно — ищем другого §7502(f)-провайдера (FedEx International Priority тоже в списке). Отправка через не-PDS сервис = IRS не признает postmark = 83(b) считается неподанным = tax-disaster на 4-летнем vesting.</div>
+      <span class="time">⏱ 5 минут</span>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="A1"></div>
+  </div>
+
+  <div class="step-card teal">
+    <div class="step-num">A2</div>
+    <div class="step-body">
+      <h3><span class="icon">📄</span>Скачать и подписать 83(b) форму из Stripe Atlas</h3>
+      <p>Dashboard → Atlas → 83(b) election → скачай PDF. Распечатай две копии.</p>
+      <p>Ручкой: подпись + дата. Подпиши прямо перед выходом или в офисе DHL. IRS принимает только wet signature.</p>
+      <p>Если в поле EIN стоит «Applied for» — не исправляй.</p>
+      <span class="time">⏱ 10 минут</span>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="A2"></div>
+  </div>
+
+  <div class="step-card teal">
+    <div class="step-num">A3</div>
+    <div class="step-body">
+      <h3><span class="icon">📮</span>Подготовить конверты</h3>
+      <p><strong>Внешний:</strong> DHL выдаст в офисе. На нём адрес IRS-филиала для Delaware C-Corp (Stripe Atlas в 83(b) разделе показывает точный адрес — обычно Kansas City, MO или Ogden, UT).</p>
+      <p><strong>Внутренний (self-addressed, stamped):</strong> возьми обычный конверт с адресом твоей квартиры в Баку. Вложи его в DHL вместе с одной копией 83(b) и запиской:</p>
+      <p><em>«Please date-stamp the enclosed copy and return in provided envelope.»</em></p>
+      <p>IRS вернёт копию с их штампом — железное доказательство на случай аудита через 5 лет.</p>
+      <span class="time">⏱ 15 минут</span>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="A3"></div>
+  </div>
+
+  <div class="step-card teal">
+    <div class="step-num">A4</div>
+    <div class="step-body">
+      <h3><span class="icon">🚗</span>Ехать в DHL Express Baku с паспортом</h3>
+      <p>Паспорт — для DHL identity check (международная отправка), не для IRS.</p>
+      <p>С собой: паспорт, обе подписанные копии 83(b), self-addressed return конверт, адрес IRS.</p>
+      <p>В офисе: попроси DHL Express Worldwide (тот что ты проверил на A1). Не соглашайся на DHL Economy или DHL Parcel — они НЕ в PDS list.</p>
+      <span class="time">⏱ 45 минут в офисе</span>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="A4"></div>
+  </div>
+
+  <div class="step-card teal">
+    <div class="step-num">A5</div>
+    <div class="step-body">
+      <h3><span class="icon">🧾</span>Получить DHL квитанцию и сфоткать до отдачи</h3>
+      <p>DHL выдаст air waybill с tracking number и датой отправки. Эта дата = твой legal postmark в глазах IRS.</p>
+      <p><strong>Сфоткай квитанцию и конверт ДО того как отдашь курьеру</strong> — страховка на случай если квитанцию потеряют или повредят.</p>
+      <p>Стоимость с гарантией: 230 AZN (negotiated с 300).</p>
+      <div class="hint">Пришли мне tracking number в чат — я добавлю в <code>memory/atlas/company-state.md</code> и переведу пункт 83(b) в зелёный.</div>
+      <span class="time">⏱ 10 минут</span>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="A5"></div>
+  </div>
+
+  <div class="step-card teal">
+    <div class="step-num">A6</div>
+    <div class="step-body">
+      <h3><span class="icon">📸</span>Отметить в Stripe Atlas «83(b) postmarked»</h3>
+      <p>В дашборде Atlas блок «Save your 83(b) election tracking information» ждёт USPS tracking number. У нас DHL — введи DHL tracking в поле либо оставь пустым.</p>
+      <p>Этот блок — для внутренней аналитики Stripe Atlas, НЕ для IRS. Твоё юридическое доказательство — физический DHL air waybill.</p>
+      <span class="time">⏱ 5 минут</span>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="A6"></div>
+  </div>
+
+  <div class="step-card teal">
+    <div class="step-num">A7</div>
+    <div class="step-body">
+      <h3><span class="icon">⏳</span>Ждать stamped copy от IRS (~6–8 недель)</h3>
+      <p>IRS получит конверт, проштампует твою копию датой получения, вложит в self-addressed envelope, отправит обратно. В Баку доедет через 6–8 недель.</p>
+      <p>Когда придёт — скан в <code>memory/atlas/legal/83b-election/</code>, фото мне. Я обновлю company-state.md на финальный ✅.</p>
+      <p>До получения stamped copy: DHL tracking в телефоне и в <code>memory/atlas/legal/</code> достаточно на любой аудит.</p>
+      <span class="time">⏱ passive wait</span>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="A7"></div>
+  </div>
+
+  <!-- ═══════════ DEPRECATED PATH B BANNER ═══════════ -->
+  <section class="phase" style="border-left: 4px solid #8B8BA7; background: rgba(139, 139, 167, 0.05); opacity: 0.7;">
+    <div class="phase-tag" style="color: #8B8BA7;">Путь B · DEPRECATED · Архив</div>
+    <div class="phase-title">ОТМЕНЁН — друг недоступен на 2026-04-18</div>
+    <div class="phase-meta">Оставлено ниже только как историческая справка — НЕ ИСПОЛЬЗОВАТЬ</div>
+    <div style="padding: 16px; line-height: 1.6;">
+      <p>Путь через американского друга + USPS Certified Mail больше НЕ работает: друг не ответил на запрос (CEO-подтверждение 2026-04-18). Оригинальные Фазы 1–7 ниже оставлены как архив — НЕ ИСПОЛЬЗОВАТЬ. Если DHL-сервис окажется снят со списка §7502(f) на шаге A1 — emergency-fallback = FedEx International Priority direct Баку → IRS (тоже §7502(f) designated, офис FedEx в Баку есть). Не импровизируй — пиши Atlas.</p>
+    </div>
+  </section>
 
   <div class="now-card" id="nowCard">
     <div class="label">Сейчас делаем</div>
-    <div class="step" id="nowStep">Шаг 1 — Войти в Stripe Atlas dashboard</div>
+    <div class="step" id="nowStep">Шаг A1 — Проверить IRS PDS list на irs.gov</div>
   </div>
 
   <!-- ═══════════ PHASE 1 ═══════════ -->
@@ -706,10 +822,12 @@ Thank you seriously. This means everything.</pre>
     <div class="fact"><span class="k">Окно (от инкорпорации)</span><span class="v">30 дней — жёсткое</span></div>
     <div class="fact"><span class="k">Акций на founder</span><span class="v">9,000,000 @ $0.0001 = $900 basis</span></div>
     <div class="fact"><span class="k">Vesting</span><span class="v">4 года, 1-year cliff</span></div>
-    <div class="fact"><span class="k">Способ подачи</span><span class="v">USPS Certified Mail + Return Receipt (friend-mailed)</span></div>
+    <div class="fact"><span class="k">Единственный способ подачи</span><span class="v">DHL Express Worldwide direct Баку → IRS (§7502(f))</span></div>
+    <div class="fact"><span class="k">Запасной способ</span><span class="v">Нет — друг недоступен (2026-04-18). Emergency = FedEx International Priority если DHL снят со списка</span></div>
     <div class="fact"><span class="k">Адрес IRS</span><span class="v">Из Stripe Atlas 83(b) пакета (не искать в интернете)</span></div>
-    <div class="fact"><span class="k">Стоимость DHL Баку → США</span><span class="v">~$80–130 (150–220 AZN)</span></div>
-    <div class="fact"><span class="k">Стоимость USPS в США</span><span class="v">~$9–12</span></div>
+    <div class="fact"><span class="k">Стоимость</span><span class="v">230 AZN (DHL Express Worldwide с гарантией доставки, negotiated с 300)</span></div>
+    <div class="fact"><span class="k">Нотариус нужен?</span><span class="v">Нет. Только подпись + дата ручкой.</span></div>
+    <div class="fact"><span class="k">EIN на форме</span><span class="v">«Applied for» (будет выдан Apr 29 – May 13)</span></div>
     <div class="fact"><span class="k">Цена ошибки (не подать)</span><span class="v">~$400–500K налогов на paper gains без liquidity</span></div>
     <div class="fact"><span class="k">Цена подачи правильно</span><span class="v">$300 сейчас + 20% LTCG при продаже</span></div>
     <div class="fact"><span class="k">Дубликат через Stripe Atlas</span><span class="v">Отключить в dashboard (Шаг 2)</span></div>

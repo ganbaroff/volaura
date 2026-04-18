@@ -1,4 +1,18 @@
-# Atlas Deadlines
+# DEPRECATED 2026-04-18 — source of truth moved to DB
+
+Obligations now live in `public.atlas_obligations` (Supabase). View / manage:
+- Admin UI: `/admin/obligations`
+- DB query: `SELECT * FROM atlas_obligations WHERE status IN ('open','in_progress') ORDER BY deadline ASC NULLS LAST`
+- Telegram nag loop: `.github/workflows/atlas-obligation-nag.yml` (cron every 4h) + `scripts/atlas_obligation_nag.py`
+- Proof intake: send photo / document / URL / tracking number to `@volaurabot` → it attaches to the matching open obligation automatically (picker if multiple match).
+- Seed migration: `scripts/seed_atlas_obligations.py` (one-shot, idempotent)
+- Spec: `memory/atlas/OBLIGATION-SYSTEM-SPEC-2026-04-18.md`
+
+This markdown file is retained as historical archive only. New obligations MUST be added via DB, not here. Atlas wake-loop reads the DB (see `memory/atlas/wake.md`).
+
+---
+
+# Atlas Deadlines (archive as of 2026-04-18)
 
 Rolling log of dated obligations that affect money, legal status, or launch.
 Each row: **date · action · consequence of missing · owner · status**.

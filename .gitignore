@@ -93,3 +93,5 @@ memory/swarm/*.jsonl
 docs/.obsidian/
 memory/atlas/session-93-full-transcript.jsonl
 models/
+
+.vercel

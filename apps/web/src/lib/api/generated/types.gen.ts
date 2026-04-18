@@ -36,6 +36,28 @@ export type AiTwinUpdate = {
 };
 
 /**
+ * One product's activation funnel (signup → key action).
+ */
+export type AdminActivationFunnel = {
+    product: string;
+    signups_24h: number;
+    activated_24h: number;
+    activation_rate: number;
+};
+
+/**
+ * Single row in the live activity feed (character_events tail).
+ */
+export type AdminActivityEvent = {
+    id: string;
+    product: string;
+    event_type: string;
+    user_id_prefix: string;
+    created_at: string;
+    payload_summary?: string | null;
+};
+
+/**
  * Organization row for the admin approval queue.
  */
 export type AdminOrgRow = {
@@ -49,6 +71,34 @@ export type AdminOrgRow = {
     verified_at?: string | null;
     is_active: boolean;
     created_at: string;
+};
+
+/**
+ * Tier-1 exec scorecard + Tier-2 cross-product presence.
+ *
+ * Activation-first founder dashboard: pre-PMF stage prioritises activation
+ * and retention over MRR/NRR/CAC. See ADMIN-DASHBOARD-SPEC.md §7.
+ */
+export type AdminOverviewResponse = {
+    activation_rate_24h: number;
+    w4_retention: number | null;
+    dau_wau_ratio: number;
+    errors_24h: number;
+    runway_months: number | null;
+    presence: AdminPresenceMatrix;
+    funnels: Array<AdminActivationFunnel>;
+    computed_at: string;
+    stale_after_seconds?: number;
+};
+
+/**
+ * Cross-product presence counts. Replaces Sankey (premature at <100 users).
+ */
+export type AdminPresenceMatrix = {
+    volaura_only: number;
+    mindshift_only: number;
+    both_products: number;
+    total_users: number;
 };
 
 /**
@@ -88,6 +138,41 @@ export type AnswerFeedback = {
     question_id: string;
     timing_warning?: string | null;
     session: SessionOut;
+};
+
+export type AreaCreate = {
+    name: string;
+    description?: string | null;
+    location?: {
+        [key: string]: unknown;
+    } | null;
+    coordinator_user_id?: string | null;
+};
+
+export type AreaResponse = {
+    id: string;
+    org_id: string;
+    department_id: string;
+    name: string;
+    description?: string | null;
+    location?: {
+        [key: string]: unknown;
+    } | null;
+    metadata?: {
+        [key: string]: unknown;
+    } | null;
+    coordinator_user_id?: string | null;
+    created_at: string;
+    updated_at: string;
+};
+
+export type AreaUpdate = {
+    name?: string | null;
+    description?: string | null;
+    location?: {
+        [key: string]: unknown;
+    } | null;
+    coordinator_user_id?: string | null;
 };
 
 /**
@@ -414,6 +499,38 @@ export type CrystalBalanceOut = {
     computed_at: string;
 };
 
+export type DepartmentCreate = {
+    name: string;
+    description?: string | null;
+    color_hex?: string | null;
+    lead_user_id?: string | null;
+    sort_order?: number;
+};
+
+export type DepartmentResponse = {
+    id: string;
+    org_id: string;
+    event_id: string;
+    name: string;
+    description?: string | null;
+    color_hex?: string | null;
+    lead_user_id?: string | null;
+    sort_order: number;
+    metadata?: {
+        [key: string]: unknown;
+    } | null;
+    created_at: string;
+    updated_at: string;
+};
+
+export type DepartmentUpdate = {
+    name?: string | null;
+    description?: string | null;
+    color_hex?: string | null;
+    lead_user_id?: string | null;
+    sort_order?: number | null;
+};
+
 /**
  * Professional profile visible to org users on the discovery page.
  *
@@ -527,6 +644,51 @@ export type EventResponse = {
     is_public: boolean;
     created_at: string;
     updated_at: string;
+};
+
+export type EventShiftEventCreate = {
+    slug: string;
+    name: string;
+    description?: string | null;
+    start_at: string;
+    end_at: string;
+    timezone?: string;
+    location?: {
+        [key: string]: unknown;
+    } | null;
+    status?: string;
+};
+
+export type EventShiftEventResponse = {
+    id: string;
+    org_id: string;
+    slug: string;
+    name: string;
+    description?: string | null;
+    start_at: string;
+    end_at: string;
+    timezone: string;
+    location?: {
+        [key: string]: unknown;
+    } | null;
+    metadata?: {
+        [key: string]: unknown;
+    } | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+};
+
+export type EventShiftEventUpdate = {
+    name?: string | null;
+    description?: string | null;
+    start_at?: string | null;
+    end_at?: string | null;
+    timezone?: string | null;
+    location?: {
+        [key: string]: unknown;
+    } | null;
+    status?: string | null;
 };
 
 export type EventUpdate = {
@@ -668,6 +830,8 @@ export type HealthResponse = {
     database: string;
     llm_configured: boolean;
     supabase_project_ref: string;
+    openrouter?: boolean;
+    nvidia?: boolean;
 };
 
 export type IntroRequestCreate = {
@@ -715,21 +879,6 @@ export type KudosResponse = {
     message?: string;
 };
 
-export type LeaderboardEntry = {
-    rank: number;
-    display_name: string;
-    total_score: number;
-    badge_tier: string;
-    username: string | null;
-    is_current_user?: boolean;
-};
-
-export type LeaderboardResponse = {
-    entries: Array<LeaderboardEntry>;
-    period: string;
-    total_count: number;
-};
-
 export type LoginRequest = {
     email: string;
     password: string;
@@ -744,11 +893,6 @@ export type MeResponse = {
 
 export type MessageResponse = {
     message: string;
-};
-
-export type MyRankResponse = {
-    rank: number | null;
-    total_users: number;
 };
 
 export type NextChoiceResponse = {
@@ -945,6 +1089,7 @@ export type ProfileUpdate = {
     } | null;
     is_public?: boolean | null;
     visible_to_orgs?: boolean | null;
+    energy_level?: string | null;
     referral_code?: string | null;
     utm_source?: string | null;
     utm_campaign?: string | null;
@@ -1056,6 +1201,9 @@ export type RegisterRequest = {
     username: string;
     display_name?: string | null;
     referral_code?: string | null;
+    age_confirmed?: boolean;
+    terms_version?: string | null;
+    terms_accepted_at?: string | null;
 };
 
 export type RegistrationResponse = {
@@ -1177,6 +1325,9 @@ export type SkillResponse = {
         [key: string]: unknown;
     } | string;
     model_used?: string;
+    atlas_signature?: string;
+    voice_breaches?: Array<string>;
+    compliance_logged?: boolean;
 };
 
 export type StartAssessmentRequest = {
@@ -1269,6 +1420,88 @@ export type TribeStreakOut = {
     last_activity_week: string | null;
     consecutive_misses_count: number;
     crystal_fade_level: 0 | 1 | 2;
+};
+
+export type UnitAssignmentCreate = {
+    user_id: string;
+    role?: string;
+    notes?: string | null;
+};
+
+export type UnitAssignmentResponse = {
+    id: string;
+    org_id: string;
+    unit_id: string;
+    user_id: string;
+    role: string;
+    status: string;
+    notes?: string | null;
+    assigned_at: string;
+    updated_at: string;
+};
+
+export type UnitAssignmentUpdate = {
+    role?: string | null;
+    status?: string | null;
+    notes?: string | null;
+};
+
+export type UnitCreate = {
+    name: string;
+    description?: string | null;
+    shift_start: string;
+    shift_end: string;
+    required_headcount?: number;
+    required_skills?: Array<string>;
+    status?: string;
+};
+
+export type UnitMetricCreate = {
+    metric_type: string;
+    value?: number | null;
+    payload?: {
+        [key: string]: unknown;
+    } | null;
+    recorded_at?: string | null;
+};
+
+export type UnitMetricResponse = {
+    id: string;
+    org_id: string;
+    unit_id: string;
+    metric_type: string;
+    value?: number | null;
+    payload?: {
+        [key: string]: unknown;
+    } | null;
+    recorded_at: string;
+    recorded_by?: string | null;
+    created_at: string;
+};
+
+export type UnitResponse = {
+    id: string;
+    org_id: string;
+    area_id: string;
+    name: string;
+    description?: string | null;
+    shift_start: string;
+    shift_end: string;
+    required_headcount: number;
+    required_skills: Array<string>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+};
+
+export type UnitUpdate = {
+    name?: string | null;
+    description?: string | null;
+    shift_start?: string | null;
+    shift_end?: string | null;
+    required_headcount?: number | null;
+    required_skills?: Array<string> | null;
+    status?: string | null;
 };
 
 export type UnreadCountOut = {
@@ -1868,6 +2101,24 @@ export type ManageSharingPermissionApiAuraMeSharingPostResponses = {
      */
     200: unknown;
 };
+
+export type GetAtlasReflectionApiAuraMeReflectionGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/aura/me/reflection';
+};
+
+export type GetAtlasReflectionApiAuraMeReflectionGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type GetAtlasReflectionApiAuraMeReflectionGetResponse = GetAtlasReflectionApiAuraMeReflectionGetResponses[keyof GetAtlasReflectionApiAuraMeReflectionGetResponses];
 
 export type ListOwnGrievancesApiAuraGrievanceGetData = {
     body?: never;
@@ -2504,6 +2755,574 @@ export type MyRegistrationsApiEventsMyRegistrationsGetResponses = {
 };
 
 export type MyRegistrationsApiEventsMyRegistrationsGetResponse = MyRegistrationsApiEventsMyRegistrationsGetResponses[keyof MyRegistrationsApiEventsMyRegistrationsGetResponses];
+
+export type ListEventsApiEventshiftEventsGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        status?: string | null;
+        limit?: number;
+        offset?: number;
+    };
+    url: '/api/eventshift/events';
+};
+
+export type ListEventsApiEventshiftEventsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListEventsApiEventshiftEventsGetError = ListEventsApiEventshiftEventsGetErrors[keyof ListEventsApiEventshiftEventsGetErrors];
+
+export type ListEventsApiEventshiftEventsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: Array<EventShiftEventResponse>;
+};
+
+export type ListEventsApiEventshiftEventsGetResponse = ListEventsApiEventshiftEventsGetResponses[keyof ListEventsApiEventshiftEventsGetResponses];
+
+export type CreateEventApiEventshiftEventsPostData = {
+    body: EventShiftEventCreate;
+    path?: never;
+    query?: never;
+    url: '/api/eventshift/events';
+};
+
+export type CreateEventApiEventshiftEventsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateEventApiEventshiftEventsPostError = CreateEventApiEventshiftEventsPostErrors[keyof CreateEventApiEventshiftEventsPostErrors];
+
+export type CreateEventApiEventshiftEventsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: EventShiftEventResponse;
+};
+
+export type CreateEventApiEventshiftEventsPostResponse = CreateEventApiEventshiftEventsPostResponses[keyof CreateEventApiEventshiftEventsPostResponses];
+
+export type CancelEventApiEventshiftEventsEventIdDeleteData = {
+    body?: never;
+    path: {
+        event_id: string;
+    };
+    query?: never;
+    url: '/api/eventshift/events/{event_id}';
+};
+
+export type CancelEventApiEventshiftEventsEventIdDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CancelEventApiEventshiftEventsEventIdDeleteError = CancelEventApiEventshiftEventsEventIdDeleteErrors[keyof CancelEventApiEventshiftEventsEventIdDeleteErrors];
+
+export type CancelEventApiEventshiftEventsEventIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type CancelEventApiEventshiftEventsEventIdDeleteResponse = CancelEventApiEventshiftEventsEventIdDeleteResponses[keyof CancelEventApiEventshiftEventsEventIdDeleteResponses];
+
+export type GetEventApiEventshiftEventsEventIdGetData = {
+    body?: never;
+    path: {
+        event_id: string;
+    };
+    query?: never;
+    url: '/api/eventshift/events/{event_id}';
+};
+
+export type GetEventApiEventshiftEventsEventIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetEventApiEventshiftEventsEventIdGetError = GetEventApiEventshiftEventsEventIdGetErrors[keyof GetEventApiEventshiftEventsEventIdGetErrors];
+
+export type GetEventApiEventshiftEventsEventIdGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: EventShiftEventResponse;
+};
+
+export type GetEventApiEventshiftEventsEventIdGetResponse = GetEventApiEventshiftEventsEventIdGetResponses[keyof GetEventApiEventshiftEventsEventIdGetResponses];
+
+export type UpdateEventApiEventshiftEventsEventIdPutData = {
+    body: EventShiftEventUpdate;
+    path: {
+        event_id: string;
+    };
+    query?: never;
+    url: '/api/eventshift/events/{event_id}';
+};
+
+export type UpdateEventApiEventshiftEventsEventIdPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateEventApiEventshiftEventsEventIdPutError = UpdateEventApiEventshiftEventsEventIdPutErrors[keyof UpdateEventApiEventshiftEventsEventIdPutErrors];
+
+export type UpdateEventApiEventshiftEventsEventIdPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: EventShiftEventResponse;
+};
+
+export type UpdateEventApiEventshiftEventsEventIdPutResponse = UpdateEventApiEventshiftEventsEventIdPutResponses[keyof UpdateEventApiEventshiftEventsEventIdPutResponses];
+
+export type ListDepartmentsApiEventshiftEventsEventIdDepartmentsGetData = {
+    body?: never;
+    path: {
+        event_id: string;
+    };
+    query?: never;
+    url: '/api/eventshift/events/{event_id}/departments';
+};
+
+export type ListDepartmentsApiEventshiftEventsEventIdDepartmentsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListDepartmentsApiEventshiftEventsEventIdDepartmentsGetError = ListDepartmentsApiEventshiftEventsEventIdDepartmentsGetErrors[keyof ListDepartmentsApiEventshiftEventsEventIdDepartmentsGetErrors];
+
+export type ListDepartmentsApiEventshiftEventsEventIdDepartmentsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: Array<DepartmentResponse>;
+};
+
+export type ListDepartmentsApiEventshiftEventsEventIdDepartmentsGetResponse = ListDepartmentsApiEventshiftEventsEventIdDepartmentsGetResponses[keyof ListDepartmentsApiEventshiftEventsEventIdDepartmentsGetResponses];
+
+export type CreateDepartmentApiEventshiftEventsEventIdDepartmentsPostData = {
+    body: DepartmentCreate;
+    path: {
+        event_id: string;
+    };
+    query?: never;
+    url: '/api/eventshift/events/{event_id}/departments';
+};
+
+export type CreateDepartmentApiEventshiftEventsEventIdDepartmentsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateDepartmentApiEventshiftEventsEventIdDepartmentsPostError = CreateDepartmentApiEventshiftEventsEventIdDepartmentsPostErrors[keyof CreateDepartmentApiEventshiftEventsEventIdDepartmentsPostErrors];
+
+export type CreateDepartmentApiEventshiftEventsEventIdDepartmentsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: DepartmentResponse;
+};
+
+export type CreateDepartmentApiEventshiftEventsEventIdDepartmentsPostResponse = CreateDepartmentApiEventshiftEventsEventIdDepartmentsPostResponses[keyof CreateDepartmentApiEventshiftEventsEventIdDepartmentsPostResponses];
+
+export type UpdateDepartmentApiEventshiftDepartmentsDepartmentIdPutData = {
+    body: DepartmentUpdate;
+    path: {
+        department_id: string;
+    };
+    query?: never;
+    url: '/api/eventshift/departments/{department_id}';
+};
+
+export type UpdateDepartmentApiEventshiftDepartmentsDepartmentIdPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateDepartmentApiEventshiftDepartmentsDepartmentIdPutError = UpdateDepartmentApiEventshiftDepartmentsDepartmentIdPutErrors[keyof UpdateDepartmentApiEventshiftDepartmentsDepartmentIdPutErrors];
+
+export type UpdateDepartmentApiEventshiftDepartmentsDepartmentIdPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: DepartmentResponse;
+};
+
+export type UpdateDepartmentApiEventshiftDepartmentsDepartmentIdPutResponse = UpdateDepartmentApiEventshiftDepartmentsDepartmentIdPutResponses[keyof UpdateDepartmentApiEventshiftDepartmentsDepartmentIdPutResponses];
+
+export type GetDepartmentBlueprintApiEventshiftDepartmentsDepartmentIdBlueprintGetData = {
+    body?: never;
+    path: {
+        department_id: string;
+    };
+    query?: {
+        /**
+         * Filter: roles, sops, policies, faq, metrics, training, competencies
+         */
+        section?: string | null;
+    };
+    url: '/api/eventshift/departments/{department_id}/blueprint';
+};
+
+export type GetDepartmentBlueprintApiEventshiftDepartmentsDepartmentIdBlueprintGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetDepartmentBlueprintApiEventshiftDepartmentsDepartmentIdBlueprintGetError = GetDepartmentBlueprintApiEventshiftDepartmentsDepartmentIdBlueprintGetErrors[keyof GetDepartmentBlueprintApiEventshiftDepartmentsDepartmentIdBlueprintGetErrors];
+
+export type GetDepartmentBlueprintApiEventshiftDepartmentsDepartmentIdBlueprintGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type GetDepartmentBlueprintApiEventshiftDepartmentsDepartmentIdBlueprintGetResponse = GetDepartmentBlueprintApiEventshiftDepartmentsDepartmentIdBlueprintGetResponses[keyof GetDepartmentBlueprintApiEventshiftDepartmentsDepartmentIdBlueprintGetResponses];
+
+export type ListAreasApiEventshiftDepartmentsDepartmentIdAreasGetData = {
+    body?: never;
+    path: {
+        department_id: string;
+    };
+    query?: never;
+    url: '/api/eventshift/departments/{department_id}/areas';
+};
+
+export type ListAreasApiEventshiftDepartmentsDepartmentIdAreasGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListAreasApiEventshiftDepartmentsDepartmentIdAreasGetError = ListAreasApiEventshiftDepartmentsDepartmentIdAreasGetErrors[keyof ListAreasApiEventshiftDepartmentsDepartmentIdAreasGetErrors];
+
+export type ListAreasApiEventshiftDepartmentsDepartmentIdAreasGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: Array<AreaResponse>;
+};
+
+export type ListAreasApiEventshiftDepartmentsDepartmentIdAreasGetResponse = ListAreasApiEventshiftDepartmentsDepartmentIdAreasGetResponses[keyof ListAreasApiEventshiftDepartmentsDepartmentIdAreasGetResponses];
+
+export type CreateAreaApiEventshiftDepartmentsDepartmentIdAreasPostData = {
+    body: AreaCreate;
+    path: {
+        department_id: string;
+    };
+    query?: never;
+    url: '/api/eventshift/departments/{department_id}/areas';
+};
+
+export type CreateAreaApiEventshiftDepartmentsDepartmentIdAreasPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateAreaApiEventshiftDepartmentsDepartmentIdAreasPostError = CreateAreaApiEventshiftDepartmentsDepartmentIdAreasPostErrors[keyof CreateAreaApiEventshiftDepartmentsDepartmentIdAreasPostErrors];
+
+export type CreateAreaApiEventshiftDepartmentsDepartmentIdAreasPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: AreaResponse;
+};
+
+export type CreateAreaApiEventshiftDepartmentsDepartmentIdAreasPostResponse = CreateAreaApiEventshiftDepartmentsDepartmentIdAreasPostResponses[keyof CreateAreaApiEventshiftDepartmentsDepartmentIdAreasPostResponses];
+
+export type UpdateAreaApiEventshiftAreasAreaIdPutData = {
+    body: AreaUpdate;
+    path: {
+        area_id: string;
+    };
+    query?: never;
+    url: '/api/eventshift/areas/{area_id}';
+};
+
+export type UpdateAreaApiEventshiftAreasAreaIdPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateAreaApiEventshiftAreasAreaIdPutError = UpdateAreaApiEventshiftAreasAreaIdPutErrors[keyof UpdateAreaApiEventshiftAreasAreaIdPutErrors];
+
+export type UpdateAreaApiEventshiftAreasAreaIdPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: AreaResponse;
+};
+
+export type UpdateAreaApiEventshiftAreasAreaIdPutResponse = UpdateAreaApiEventshiftAreasAreaIdPutResponses[keyof UpdateAreaApiEventshiftAreasAreaIdPutResponses];
+
+export type ListUnitsApiEventshiftAreasAreaIdUnitsGetData = {
+    body?: never;
+    path: {
+        area_id: string;
+    };
+    query?: never;
+    url: '/api/eventshift/areas/{area_id}/units';
+};
+
+export type ListUnitsApiEventshiftAreasAreaIdUnitsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListUnitsApiEventshiftAreasAreaIdUnitsGetError = ListUnitsApiEventshiftAreasAreaIdUnitsGetErrors[keyof ListUnitsApiEventshiftAreasAreaIdUnitsGetErrors];
+
+export type ListUnitsApiEventshiftAreasAreaIdUnitsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: Array<UnitResponse>;
+};
+
+export type ListUnitsApiEventshiftAreasAreaIdUnitsGetResponse = ListUnitsApiEventshiftAreasAreaIdUnitsGetResponses[keyof ListUnitsApiEventshiftAreasAreaIdUnitsGetResponses];
+
+export type CreateUnitApiEventshiftAreasAreaIdUnitsPostData = {
+    body: UnitCreate;
+    path: {
+        area_id: string;
+    };
+    query?: never;
+    url: '/api/eventshift/areas/{area_id}/units';
+};
+
+export type CreateUnitApiEventshiftAreasAreaIdUnitsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateUnitApiEventshiftAreasAreaIdUnitsPostError = CreateUnitApiEventshiftAreasAreaIdUnitsPostErrors[keyof CreateUnitApiEventshiftAreasAreaIdUnitsPostErrors];
+
+export type CreateUnitApiEventshiftAreasAreaIdUnitsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: UnitResponse;
+};
+
+export type CreateUnitApiEventshiftAreasAreaIdUnitsPostResponse = CreateUnitApiEventshiftAreasAreaIdUnitsPostResponses[keyof CreateUnitApiEventshiftAreasAreaIdUnitsPostResponses];
+
+export type UpdateUnitApiEventshiftUnitsUnitIdPutData = {
+    body: UnitUpdate;
+    path: {
+        unit_id: string;
+    };
+    query?: never;
+    url: '/api/eventshift/units/{unit_id}';
+};
+
+export type UpdateUnitApiEventshiftUnitsUnitIdPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateUnitApiEventshiftUnitsUnitIdPutError = UpdateUnitApiEventshiftUnitsUnitIdPutErrors[keyof UpdateUnitApiEventshiftUnitsUnitIdPutErrors];
+
+export type UpdateUnitApiEventshiftUnitsUnitIdPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: UnitResponse;
+};
+
+export type UpdateUnitApiEventshiftUnitsUnitIdPutResponse = UpdateUnitApiEventshiftUnitsUnitIdPutResponses[keyof UpdateUnitApiEventshiftUnitsUnitIdPutResponses];
+
+export type ListAssignmentsApiEventshiftUnitsUnitIdAssignmentsGetData = {
+    body?: never;
+    path: {
+        unit_id: string;
+    };
+    query?: never;
+    url: '/api/eventshift/units/{unit_id}/assignments';
+};
+
+export type ListAssignmentsApiEventshiftUnitsUnitIdAssignmentsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListAssignmentsApiEventshiftUnitsUnitIdAssignmentsGetError = ListAssignmentsApiEventshiftUnitsUnitIdAssignmentsGetErrors[keyof ListAssignmentsApiEventshiftUnitsUnitIdAssignmentsGetErrors];
+
+export type ListAssignmentsApiEventshiftUnitsUnitIdAssignmentsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: Array<UnitAssignmentResponse>;
+};
+
+export type ListAssignmentsApiEventshiftUnitsUnitIdAssignmentsGetResponse = ListAssignmentsApiEventshiftUnitsUnitIdAssignmentsGetResponses[keyof ListAssignmentsApiEventshiftUnitsUnitIdAssignmentsGetResponses];
+
+export type CreateAssignmentApiEventshiftUnitsUnitIdAssignmentsPostData = {
+    body: UnitAssignmentCreate;
+    path: {
+        unit_id: string;
+    };
+    query?: never;
+    url: '/api/eventshift/units/{unit_id}/assignments';
+};
+
+export type CreateAssignmentApiEventshiftUnitsUnitIdAssignmentsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateAssignmentApiEventshiftUnitsUnitIdAssignmentsPostError = CreateAssignmentApiEventshiftUnitsUnitIdAssignmentsPostErrors[keyof CreateAssignmentApiEventshiftUnitsUnitIdAssignmentsPostErrors];
+
+export type CreateAssignmentApiEventshiftUnitsUnitIdAssignmentsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: UnitAssignmentResponse;
+};
+
+export type CreateAssignmentApiEventshiftUnitsUnitIdAssignmentsPostResponse = CreateAssignmentApiEventshiftUnitsUnitIdAssignmentsPostResponses[keyof CreateAssignmentApiEventshiftUnitsUnitIdAssignmentsPostResponses];
+
+export type UpdateAssignmentApiEventshiftAssignmentsAssignmentIdPutData = {
+    body: UnitAssignmentUpdate;
+    path: {
+        assignment_id: string;
+    };
+    query?: never;
+    url: '/api/eventshift/assignments/{assignment_id}';
+};
+
+export type UpdateAssignmentApiEventshiftAssignmentsAssignmentIdPutErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateAssignmentApiEventshiftAssignmentsAssignmentIdPutError = UpdateAssignmentApiEventshiftAssignmentsAssignmentIdPutErrors[keyof UpdateAssignmentApiEventshiftAssignmentsAssignmentIdPutErrors];
+
+export type UpdateAssignmentApiEventshiftAssignmentsAssignmentIdPutResponses = {
+    /**
+     * Successful Response
+     */
+    200: UnitAssignmentResponse;
+};
+
+export type UpdateAssignmentApiEventshiftAssignmentsAssignmentIdPutResponse = UpdateAssignmentApiEventshiftAssignmentsAssignmentIdPutResponses[keyof UpdateAssignmentApiEventshiftAssignmentsAssignmentIdPutResponses];
+
+export type ListMetricsApiEventshiftUnitsUnitIdMetricsGetData = {
+    body?: never;
+    path: {
+        unit_id: string;
+    };
+    query?: {
+        metric_type?: string | null;
+        limit?: number;
+    };
+    url: '/api/eventshift/units/{unit_id}/metrics';
+};
+
+export type ListMetricsApiEventshiftUnitsUnitIdMetricsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListMetricsApiEventshiftUnitsUnitIdMetricsGetError = ListMetricsApiEventshiftUnitsUnitIdMetricsGetErrors[keyof ListMetricsApiEventshiftUnitsUnitIdMetricsGetErrors];
+
+export type ListMetricsApiEventshiftUnitsUnitIdMetricsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: Array<UnitMetricResponse>;
+};
+
+export type ListMetricsApiEventshiftUnitsUnitIdMetricsGetResponse = ListMetricsApiEventshiftUnitsUnitIdMetricsGetResponses[keyof ListMetricsApiEventshiftUnitsUnitIdMetricsGetResponses];
+
+export type RecordMetricApiEventshiftUnitsUnitIdMetricsPostData = {
+    body: UnitMetricCreate;
+    path: {
+        unit_id: string;
+    };
+    query?: never;
+    url: '/api/eventshift/units/{unit_id}/metrics';
+};
+
+export type RecordMetricApiEventshiftUnitsUnitIdMetricsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RecordMetricApiEventshiftUnitsUnitIdMetricsPostError = RecordMetricApiEventshiftUnitsUnitIdMetricsPostErrors[keyof RecordMetricApiEventshiftUnitsUnitIdMetricsPostErrors];
+
+export type RecordMetricApiEventshiftUnitsUnitIdMetricsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: UnitMetricResponse;
+};
+
+export type RecordMetricApiEventshiftUnitsUnitIdMetricsPostResponse = RecordMetricApiEventshiftUnitsUnitIdMetricsPostResponses[keyof RecordMetricApiEventshiftUnitsUnitIdMetricsPostResponses];
+
+export type DebugActivationStateApiEventshiftDebugActivationStateGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/eventshift/debug/activation-state';
+};
+
+export type DebugActivationStateApiEventshiftDebugActivationStateGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type DebugActivationStateApiEventshiftDebugActivationStateGetResponse = DebugActivationStateApiEventshiftDebugActivationStateGetResponses[keyof DebugActivationStateApiEventshiftDebugActivationStateGetResponses];
 
 export type ListOrganizationsApiOrganizationsGetData = {
     body?: never;
@@ -3165,50 +3984,6 @@ export type GetCommunitySignalApiCommunitySignalGetResponses = {
 
 export type GetCommunitySignalApiCommunitySignalGetResponse = GetCommunitySignalApiCommunitySignalGetResponses[keyof GetCommunitySignalApiCommunitySignalGetResponses];
 
-export type GetLeaderboardApiLeaderboardGetData = {
-    body?: never;
-    path?: never;
-    query?: {
-        period?: string;
-        limit?: number;
-    };
-    url: '/api/leaderboard';
-};
-
-export type GetLeaderboardApiLeaderboardGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type GetLeaderboardApiLeaderboardGetError = GetLeaderboardApiLeaderboardGetErrors[keyof GetLeaderboardApiLeaderboardGetErrors];
-
-export type GetLeaderboardApiLeaderboardGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: LeaderboardResponse;
-};
-
-export type GetLeaderboardApiLeaderboardGetResponse = GetLeaderboardApiLeaderboardGetResponses[keyof GetLeaderboardApiLeaderboardGetResponses];
-
-export type GetMyRankApiLeaderboardMeGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/leaderboard/me';
-};
-
-export type GetMyRankApiLeaderboardMeGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: MyRankResponse;
-};
-
-export type GetMyRankApiLeaderboardMeGetResponse = GetMyRankApiLeaderboardMeGetResponses[keyof GetMyRankApiLeaderboardMeGetResponses];
-
 export type GetFeedApiLifesimFeedGetData = {
     body?: never;
     path?: never;
@@ -3473,6 +4248,24 @@ export type SetupWebhookApiTelegramSetupWebhookPostResponses = {
      */
     200: unknown;
 };
+
+export type SentryWebhookApiWebhooksSentryPostData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/webhooks/sentry';
+};
+
+export type SentryWebhookApiWebhooksSentryPostResponses = {
+    /**
+     * Successful Response
+     */
+    202: {
+        [key: string]: unknown;
+    };
+};
+
+export type SentryWebhookApiWebhooksSentryPostResponse = SentryWebhookApiWebhooksSentryPostResponses[keyof SentryWebhookApiWebhooksSentryPostResponses];
 
 export type ListCharacterEventsApiCharacterEventsGetData = {
     body?: never;
@@ -3997,6 +4790,49 @@ export type GetAdminStatsApiAdminStatsGetResponses = {
 
 export type GetAdminStatsApiAdminStatsGetResponse = GetAdminStatsApiAdminStatsGetResponses[keyof GetAdminStatsApiAdminStatsGetResponses];
 
+export type GetAdminOverviewApiAdminStatsOverviewGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/admin/stats/overview';
+};
+
+export type GetAdminOverviewApiAdminStatsOverviewGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: AdminOverviewResponse;
+};
+
+export type GetAdminOverviewApiAdminStatsOverviewGetResponse = GetAdminOverviewApiAdminStatsOverviewGetResponses[keyof GetAdminOverviewApiAdminStatsOverviewGetResponses];
+
+export type GetAdminLiveEventsApiAdminEventsLiveGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+    };
+    url: '/api/admin/events/live';
+};
+
+export type GetAdminLiveEventsApiAdminEventsLiveGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetAdminLiveEventsApiAdminEventsLiveGetError = GetAdminLiveEventsApiAdminEventsLiveGetErrors[keyof GetAdminLiveEventsApiAdminEventsLiveGetErrors];
+
+export type GetAdminLiveEventsApiAdminEventsLiveGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: Array<AdminActivityEvent>;
+};
+
+export type GetAdminLiveEventsApiAdminEventsLiveGetResponse = GetAdminLiveEventsApiAdminEventsLiveGetResponses[keyof GetAdminLiveEventsApiAdminEventsLiveGetResponses];
+
 export type ListAdminUsersApiAdminUsersGetData = {
     body?: never;
     path?: never;
@@ -4282,5 +5118,5 @@ export type ReceiveProposalApiAtlasProposalPostResponses = {
 export type ReceiveProposalApiAtlasProposalPostResponse = ReceiveProposalApiAtlasProposalPostResponses[keyof ReceiveProposalApiAtlasProposalPostResponses];
 
 export type ClientOptions = {
-    baseUrl: 'https://volauraapi-production.up.railway.app' | (string & {});
+    baseUrl: `${string}://${string}` | (string & {});
 };

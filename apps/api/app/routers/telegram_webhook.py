@@ -573,8 +573,9 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
 Отвечай подробно столько сколько нужно. Заканчивай: следующий шаг или явный вопрос если нужно уточнение."""
 
     reply = None
-    # ── 0. Vertex AI Gemini (enterprise SLA, $300 credits, never free-tier throttled) ──
-    vertex_key = os.environ.get("VERTEX_API_KEY", "")
+    # ── 0. Gemini via best available key (Vertex $300 credits preferred, AI Studio fallback) ──
+    # Vertex needs Gemini API enabled in GCP project — until then, AI Studio key works
+    vertex_key = os.environ.get("VERTEX_API_KEY", "") or os.environ.get("GEMINI_API_KEY", "")
     if vertex_key and not reply:
         try:
             import httpx

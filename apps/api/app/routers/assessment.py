@@ -15,7 +15,7 @@ Business logic lives in app/services/assessment/:
 from __future__ import annotations
 
 import uuid
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, HTTPException, Request
 from loguru import logger
@@ -134,6 +134,32 @@ async def start_assessment(
             },
         )
 
+    # Resolve admin status once — used by both the stale-session bypass and the
+    # rapid-restart cooldown below.
+    RAPID_RESTART_COOLDOWN_MINUTES = 30
+    is_admin = False
+    try:
+        admin_check = (
+            await db_user.table("profiles").select("is_platform_admin").eq("id", user_id).maybe_single().execute()
+        )
+        if admin_check and admin_check.data:
+            is_admin = bool(admin_check.data.get("is_platform_admin", False))
+    except Exception:
+        is_admin = False  # fail-closed — unknown = treat as regular user
+
+    # Admin bypass: expire stale in_progress sessions (>24 h) before conflict check.
+    # Strange v2 objection: must audit-log expirations (Gemini 2026-04-18).
+    if is_admin:
+        stale_cutoff = (datetime.utcnow() - timedelta(hours=24)).isoformat()
+        stale_check = await db_admin.table("assessment_sessions").select("id").eq(
+            "volunteer_id", user_id
+        ).eq("status", "in_progress").lt("created_at", stale_cutoff).execute()
+        if stale_check.data:
+            await db_admin.table("assessment_sessions").update({"status": "expired"}).eq(
+                "volunteer_id", user_id
+            ).eq("status", "in_progress").lt("created_at", stale_cutoff).execute()
+            logger.info("Admin bypass: expired stale sessions", user_id=user_id, count=len(stale_check.data))
+
     # Check for in-progress session
     existing = (
         await db_user.table("assessment_sessions")
@@ -157,16 +183,6 @@ async def start_assessment(
     # Prevents answer-fishing: start → see hard question → abandon → restart to cherry-pick.
     # The 7-day cooldown below only gates COMPLETED sessions; this gates ALL starts.
     # Platform admins bypass — needed for QA, calibration runs, and CEO smoke tests.
-    RAPID_RESTART_COOLDOWN_MINUTES = 30
-    is_admin = False
-    try:
-        admin_check = (
-            await db_user.table("profiles").select("is_platform_admin").eq("id", user_id).maybe_single().execute()
-        )
-        if admin_check and admin_check.data:
-            is_admin = bool(admin_check.data.get("is_platform_admin", False))
-    except Exception:
-        is_admin = False  # fail-closed — unknown = treat as regular user
     recent_start = (
         await db_user.table("assessment_sessions")
         .select("started_at, status")

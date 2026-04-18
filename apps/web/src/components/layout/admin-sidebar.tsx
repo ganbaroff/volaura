@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Building2, Star, Bot, ShieldCheck, Gavel } from "lucide-react";
+import { LayoutDashboard, Users, Building2, Star, Bot, ShieldCheck, Gavel, Clock } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
 const NAV_ITEMS = [
@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { href: "/swarm",        label: "AI Office",     icon: Bot             },
   { href: "/users",        label: "Users",         icon: Users           },
   { href: "/grievances",   label: "Grievances",    icon: Gavel           },
+  { href: "/obligations",  label: "Obligations",   icon: Clock           },
 ];
 
 export function AdminSidebar() {

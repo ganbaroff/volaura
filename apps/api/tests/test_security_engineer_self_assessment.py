@@ -362,6 +362,7 @@ Score: 1.0 for all.
 
 # ─── Helpers ──────────────────────────────────────────────────────────────────
 
+
 def score(question: dict, answer: str) -> float:
     """Run _keyword_fallback → _aggregate and return composite score."""
     raw_scores = _keyword_fallback(answer, question["expected_concepts"])
@@ -375,8 +376,8 @@ def detailed_scores(question: dict, answer: str) -> dict[str, float]:
 
 # ─── Tests: Question 1 (Phishing / Incident Response) ────────────────────────
 
-class TestQ1PhishingResponse:
 
+class TestQ1PhishingResponse:
     def test_excellent_above_threshold(self):
         s = score(Q1, Q1_EXCELLENT)
         print(f"\nQ1 EXCELLENT composite: {s:.3f}")
@@ -429,8 +430,8 @@ class TestQ1PhishingResponse:
 
 # ─── Tests: Question 2 (Threat Modeling) ─────────────────────────────────────
 
-class TestQ2ThreatModeling:
 
+class TestQ2ThreatModeling:
     def test_excellent_above_threshold(self):
         s = score(Q2, Q2_EXCELLENT)
         print(f"\nQ2 EXCELLENT composite: {s:.3f}")
@@ -481,8 +482,8 @@ class TestQ2ThreatModeling:
 
 # ─── Tests: Question 3 (Secrets Management) ───────────────────────────────────
 
-class TestQ3SecretsManagement:
 
+class TestQ3SecretsManagement:
     def test_excellent_above_threshold(self):
         s = score(Q3, Q3_EXCELLENT)
         print(f"\nQ3 EXCELLENT composite: {s:.3f}")
@@ -528,6 +529,7 @@ class TestQ3SecretsManagement:
 
 # ─── Cross-question summary ───────────────────────────────────────────────────
 
+
 class TestSummaryAndInsights:
     """Print a consolidated score table and verify global ordering."""
 
@@ -551,8 +553,8 @@ class TestSummaryAndInsights:
         """Print a human-readable score table for review."""
         data = [
             ("Q1 — Phishing Response", Q1, Q1_EXCELLENT, Q1_MEDIOCRE, Q1_POOR, Q1_GAMING),
-            ("Q2 — Threat Modeling",   Q2, Q2_EXCELLENT, Q2_MEDIOCRE, Q2_POOR, Q2_GAMING),
-            ("Q3 — Secrets Management",Q3, Q3_EXCELLENT, Q3_MEDIOCRE, Q3_POOR, Q3_GAMING),
+            ("Q2 — Threat Modeling", Q2, Q2_EXCELLENT, Q2_MEDIOCRE, Q2_POOR, Q2_GAMING),
+            ("Q3 — Secrets Management", Q3, Q3_EXCELLENT, Q3_MEDIOCRE, Q3_POOR, Q3_GAMING),
         ]
         print("\n")
         print("=" * 75)

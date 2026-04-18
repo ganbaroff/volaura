@@ -60,9 +60,7 @@ def _mock_supabase_deny():
 def _mock_supabase_error(code: str = "42501", message: str = "permission denied"):
     """Returns a mock that simulates a Supabase RLS error response."""
     mock = AsyncMock()
-    mock.execute = AsyncMock(
-        side_effect=Exception(f"PostgREST error {code}: {message}")
-    )
+    mock.execute = AsyncMock(side_effect=Exception(f"PostgREST error {code}: {message}"))
     return mock
 
 
@@ -380,13 +378,13 @@ class TestAuditFindings:
         }
         # Tables with no findings are fine — document them here
         clean_tables = {
-            "profiles",          # existing policies correct; L3 (DELETE) added
-            "competencies",      # L1 fix added
+            "profiles",  # existing policies correct; L3 (DELETE) added
+            "competencies",  # L1 fix added
             "assessment_sessions",  # C5 fix added
-            "organizations",     # C6 fix added
+            "organizations",  # C6 fix added
             "organization_ratings",  # design-correct; explicit SELECT deny added
-            "events",            # H3 fix added
-            "registrations",     # C7 fix added
+            "events",  # H3 fix added
+            "registrations",  # C7 fix added
             "expert_verifications",  # H2 fix added
         }
         # Every table should appear in either findings or the clean set
@@ -394,8 +392,7 @@ class TestAuditFindings:
             in_findings = table in audited_tables
             in_clean = table in clean_tables
             assert in_findings or in_clean, (
-                f"Table '{table}' was not covered by the audit. "
-                "Add a finding or explicitly mark it as clean."
+                f"Table '{table}' was not covered by the audit. Add a finding or explicitly mark it as clean."
             )
 
 
@@ -414,9 +411,7 @@ class TestC1BehaviorSignalsInsert:
         After fix: INSERT WITH CHECK (auth.uid() = volunteer_id).
         """
         with patch("app.deps.get_supabase_user") as mock_db:
-            mock_db.return_value = _mock_supabase_error(
-                "42501", "new row violates row-level security policy"
-            )
+            mock_db.return_value = _mock_supabase_error("42501", "new row violates row-level security policy")
             await client.post(
                 "/api/v1/assessment/submit",
                 json={
@@ -449,12 +444,10 @@ class TestC2AuraScoresExposure:
     def test_aura_scores_private_fields_listed(self):
         """Verify the audit documents which fields are private."""
         c2 = next(f for f in AUDIT_FINDINGS if f["id"] == "C2")
-        private_fields = ["aura_history", "reliability_score", "reliability_status",
-                          "events_no_show", "events_late"]
+        private_fields = ["aura_history", "reliability_score", "reliability_status", "events_no_show", "events_late"]
         for field in private_fields:
             assert field in c2["finding"], (
-                f"Field '{field}' not mentioned in C2 finding — "
-                "update the finding if schema changes"
+                f"Field '{field}' not mentioned in C2 finding — update the finding if schema changes"
             )
 
     def test_aura_scores_public_view_excludes_private_fields(self):
@@ -463,9 +456,14 @@ class TestC2AuraScoresExposure:
         sensitive columns.  This test reads the migration SQL and checks.
         """
         import os
+
         migration_path = os.path.join(
             os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
+            "..",
+            "..",
+            "..",
+            "supabase",
+            "migrations",
             "20260324000015_rls_audit_fixes.sql",
         )
         migration_path = os.path.abspath(migration_path)
@@ -488,15 +486,15 @@ class TestC2AuraScoresExposure:
         ]
         for col in forbidden_in_view:
             assert col not in view_sql, (
-                f"Column '{col}' found in aura_scores_public view — "
-                "this is a privacy leak, remove it from the view"
+                f"Column '{col}' found in aura_scores_public view — this is a privacy leak, remove it from the view"
             )
 
     def test_c2_self_write_attack_vector_documented(self):
         next(f for f in AUDIT_FINDINGS if f["id"] == "C2")
-        assert "total_score: 99.0" in AUDIT_FINDINGS[
-            next(i for i, f in enumerate(AUDIT_FINDINGS) if f["id"] == "H1")
-        ]["attack_vector"]
+        assert (
+            "total_score: 99.0"
+            in AUDIT_FINDINGS[next(i for i, f in enumerate(AUDIT_FINDINGS) if f["id"] == "H1")]["attack_vector"]
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -510,11 +508,18 @@ class TestC3EmbeddingsExposure:
     def test_embeddings_select_denied_in_migration(self):
         """Verify the migration drops the broad SELECT policy and adds a FALSE deny."""
         import os
-        migration_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-            "20260324000015_rls_audit_fixes.sql",
-        ))
+
+        migration_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+                "20260324000015_rls_audit_fixes.sql",
+            )
+        )
         with open(migration_path, encoding="utf-8") as f:
             sql = f.read()
 
@@ -539,11 +544,18 @@ class TestC4QuestionsAnswerKeyExposure:
     def test_questions_safe_view_excludes_answer_columns(self):
         """Read migration and verify questions_safe view does not include answer columns."""
         import os
-        migration_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-            "20260324000015_rls_audit_fixes.sql",
-        ))
+
+        migration_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+                "20260324000015_rls_audit_fixes.sql",
+            )
+        )
         with open(migration_path, encoding="utf-8") as f:
             sql = f.read()
 
@@ -554,6 +566,7 @@ class TestC4QuestionsAnswerKeyExposure:
         view_sql = sql[view_start:view_end]
         # Strip SQL line comments (--) so we only check actual column references
         import re
+
         view_sql_no_comments = re.sub(r"--[^\n]*", "", view_sql)
 
         forbidden_columns = [
@@ -577,11 +590,18 @@ class TestC4QuestionsAnswerKeyExposure:
     def test_questions_safe_view_includes_required_columns(self):
         """Verify questions_safe includes everything needed to render a question card."""
         import os
-        migration_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-            "20260324000015_rls_audit_fixes.sql",
-        ))
+
+        migration_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+                "20260324000015_rls_audit_fixes.sql",
+            )
+        )
         with open(migration_path, encoding="utf-8") as f:
             sql = f.read()
 
@@ -600,8 +620,7 @@ class TestC4QuestionsAnswerKeyExposure:
         ]
         for col in required_columns:
             assert col in view_sql, (
-                f"Required column '{col}' missing from questions_safe view. "
-                "Assessment rendering will break."
+                f"Required column '{col}' missing from questions_safe view. Assessment rendering will break."
             )
 
 
@@ -616,11 +635,18 @@ class TestC7RegistrationsSelfRating:
     def test_registration_update_policy_has_with_check(self):
         """Verify the fix migration adds WITH CHECK (status = 'cancelled')."""
         import os
-        migration_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-            "20260324000015_rls_audit_fixes.sql",
-        ))
+
+        migration_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+                "20260324000015_rls_audit_fixes.sql",
+            )
+        )
         with open(migration_path, encoding="utf-8") as f:
             sql = f.read()
 
@@ -647,11 +673,18 @@ class TestC8VolunteerBadgesPrivacyLeak:
     def test_old_true_policy_dropped_in_migration(self):
         """The 'Public can view volunteer badges' (TRUE) policy must be dropped."""
         import os
-        migration_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-            "20260324000015_rls_audit_fixes.sql",
-        ))
+
+        migration_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+                "20260324000015_rls_audit_fixes.sql",
+            )
+        )
         with open(migration_path, encoding="utf-8") as f:
             sql = f.read()
 
@@ -661,11 +694,18 @@ class TestC8VolunteerBadgesPrivacyLeak:
     def test_new_badge_policy_respects_is_public(self):
         """The replacement policy must check is_public = TRUE for other users."""
         import os
-        migration_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-            "20260324000015_rls_audit_fixes.sql",
-        ))
+
+        migration_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+                "20260324000015_rls_audit_fixes.sql",
+            )
+        )
         with open(migration_path, encoding="utf-8") as f:
             sql = f.read()
 
@@ -683,11 +723,18 @@ class TestH1AuraScoresDirectWrite:
 
     def test_aura_scores_write_policies_replaced_in_migration(self):
         import os
-        migration_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-            "20260324000015_rls_audit_fixes.sql",
-        ))
+
+        migration_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+                "20260324000015_rls_audit_fixes.sql",
+            )
+        )
         with open(migration_path, encoding="utf-8") as f:
             sql = f.read()
 
@@ -707,11 +754,18 @@ class TestH2ExpertVerificationsOrphan:
 
     def test_org_admin_policy_requires_real_volunteer(self):
         import os
-        migration_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-            "20260324000015_rls_audit_fixes.sql",
-        ))
+
+        migration_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+                "20260324000015_rls_audit_fixes.sql",
+            )
+        )
         with open(migration_path, encoding="utf-8") as f:
             sql = f.read()
 
@@ -729,11 +783,18 @@ class TestH3EventsForAllReplaced:
 
     def test_for_all_policy_dropped(self):
         import os
-        migration_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-            "20260324000015_rls_audit_fixes.sql",
-        ))
+
+        migration_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+                "20260324000015_rls_audit_fixes.sql",
+            )
+        )
         with open(migration_path, encoding="utf-8") as f:
             sql = f.read()
 
@@ -754,11 +815,18 @@ class TestL3ProfilesGdprDelete:
 
     def test_profile_delete_policy_added(self):
         import os
-        migration_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-            "20260324000015_rls_audit_fixes.sql",
-        ))
+
+        migration_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+                "20260324000015_rls_audit_fixes.sql",
+            )
+        )
         with open(migration_path, encoding="utf-8") as f:
             sql = f.read()
 
@@ -776,14 +844,20 @@ class TestMigrationIntegrity:
 
     def test_migration_file_exists(self):
         import os
-        migration_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-            "20260324000015_rls_audit_fixes.sql",
-        ))
+
+        migration_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+                "20260324000015_rls_audit_fixes.sql",
+            )
+        )
         assert os.path.isfile(migration_path), (
-            "Migration file 20260324000015_rls_audit_fixes.sql not found. "
-            "The RLS fixes have not been applied."
+            "Migration file 20260324000015_rls_audit_fixes.sql not found. The RLS fixes have not been applied."
         )
 
     def test_migration_has_no_naked_true_using_policies(self):
@@ -793,16 +867,24 @@ class TestMigrationIntegrity:
         reference data (competencies, badge catalog).
         """
         import os
-        migration_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-            "20260324000015_rls_audit_fixes.sql",
-        ))
+
+        migration_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+                "20260324000015_rls_audit_fixes.sql",
+            )
+        )
         with open(migration_path, encoding="utf-8") as f:
             content = f.read()
 
         # Split into individual policy statements and check each
         import re
+
         policy_blocks = re.findall(
             r"CREATE POLICY.*?;",
             content,
@@ -818,10 +900,9 @@ class TestMigrationIntegrity:
         for block in policy_blocks:
             for table in sensitive_tables:
                 if f"ON public.{table}" in block and "USING (TRUE)" in block and "FOR SELECT" in block:
-                        pytest.fail(
-                            f"Policy on sensitive table '{table}' uses USING (TRUE) "
-                            f"for SELECT. Block:\n{block[:300]}"
-                        )
+                    pytest.fail(
+                        f"Policy on sensitive table '{table}' uses USING (TRUE) for SELECT. Block:\n{block[:300]}"
+                    )
 
     def test_all_drop_policies_reference_existing_policy_names(self):
         """
@@ -842,11 +923,18 @@ class TestMigrationIntegrity:
             ("expert_verifications", "Org admins create verification links"),
         ]
         import os
-        migration_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-            "20260324000015_rls_audit_fixes.sql",
-        ))
+
+        migration_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+                "20260324000015_rls_audit_fixes.sql",
+            )
+        )
         with open(migration_path, encoding="utf-8") as f:
             sql = f.read()
 
@@ -860,11 +948,18 @@ class TestMigrationIntegrity:
     def test_migration_grants_views_to_authenticated(self):
         """The migration must grant SELECT on safe views to authenticated role."""
         import os
-        migration_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-            "20260324000015_rls_audit_fixes.sql",
-        ))
+
+        migration_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+                "20260324000015_rls_audit_fixes.sql",
+            )
+        )
         with open(migration_path, encoding="utf-8") as f:
             sql = f.read()
 
@@ -875,11 +970,18 @@ class TestMigrationIntegrity:
     def test_security_barrier_views_declared(self):
         """Both safe views must use security_barrier to prevent WHERE-clause pushdown attacks."""
         import os
-        migration_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-            "20260324000015_rls_audit_fixes.sql",
-        ))
+
+        migration_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+                "20260324000015_rls_audit_fixes.sql",
+            )
+        )
         with open(migration_path, encoding="utf-8") as f:
             sql = f.read()
 
@@ -907,11 +1009,18 @@ class TestWriteVectorIsolation:
     def test_assessment_sessions_update_policy_exists(self):
         """assessment_sessions: users can only UPDATE own sessions (abandon only)."""
         import os
-        migration_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-            "20260324000015_rls_audit_fixes.sql",
-        ))
+
+        migration_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+                "20260324000015_rls_audit_fixes.sql",
+            )
+        )
         with open(migration_path, encoding="utf-8") as f:
             sql = f.read()
 
@@ -928,38 +1037,57 @@ class TestWriteVectorIsolation:
         User-role must be denied all write operations.
         """
         import os
-        migration_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-            "20260324000015_rls_audit_fixes.sql",
-        ))
+
+        migration_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+                "20260324000015_rls_audit_fixes.sql",
+            )
+        )
         with open(migration_path, encoding="utf-8") as f:
             sql = f.read()
 
         # Check that old permissive write policies were dropped
         assert "DROP POLICY" in sql and "aura_scores" in sql, (
-            "aura_scores must have old permissive write policies dropped. "
-            "Direct writes enable score manipulation."
+            "aura_scores must have old permissive write policies dropped. Direct writes enable score manipulation."
         )
 
     def test_profiles_update_restricted_to_own(self):
         """profiles: users can only UPDATE their own profile row."""
         import os
-        migration_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-            "20260324000015_rls_audit_fixes.sql",
-        ))
+
+        migration_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+                "20260324000015_rls_audit_fixes.sql",
+            )
+        )
         with open(migration_path, encoding="utf-8") as f:
             f.read()
 
         # Profile update must include auth.uid() = id check
         # The migration should have either kept or added this policy
         # Check the base migration instead
-        base_migration_dir = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-        ))
+        base_migration_dir = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+            )
+        )
         # Read all migration files to find profiles UPDATE policy
         all_sql = ""
         for fname in sorted(os.listdir(base_migration_dir)):
@@ -978,11 +1106,18 @@ class TestWriteVectorIsolation:
         correct answers, and expected concepts — all security-sensitive.
         """
         import os
-        migration_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-            "20260324000015_rls_audit_fixes.sql",
-        ))
+
+        migration_path = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+                "20260324000015_rls_audit_fixes.sql",
+            )
+        )
         with open(migration_path, encoding="utf-8") as f:
             sql = f.read()
 
@@ -997,10 +1132,17 @@ class TestWriteVectorIsolation:
     def test_events_isolation_by_owner(self):
         """events: org admin can only manage own org's events."""
         import os
-        base_migration_dir = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-        ))
+
+        base_migration_dir = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+            )
+        )
         all_sql = ""
         for fname in sorted(os.listdir(base_migration_dir)):
             if fname.endswith(".sql"):
@@ -1008,9 +1150,7 @@ class TestWriteVectorIsolation:
                     all_sql += f.read()
 
         # Events must have RLS enabled
-        assert "ENABLE ROW LEVEL SECURITY" in all_sql, (
-            "RLS must be enabled on events-related tables"
-        )
+        assert "ENABLE ROW LEVEL SECURITY" in all_sql, "RLS must be enabled on events-related tables"
 
     def test_no_naked_true_policies_anywhere(self):
         """No RLS policy should use USING (TRUE) for write operations.
@@ -1020,10 +1160,17 @@ class TestWriteVectorIsolation:
         """
         import os
         import re
-        base_migration_dir = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "..", "..", "..", "supabase", "migrations",
-        ))
+
+        base_migration_dir = os.path.abspath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "..",
+                "..",
+                "supabase",
+                "migrations",
+            )
+        )
         all_sql = ""
         for fname in sorted(os.listdir(base_migration_dir)):
             if fname.endswith(".sql"):

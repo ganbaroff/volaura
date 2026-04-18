@@ -51,6 +51,7 @@ class TestCircuitBreaker:
         assert _is_circuit_open() is True
 
         import app.services.cross_product_bridge as mod
+
         mod._cb_silenced_until = time.monotonic() - 1
         assert _is_circuit_open() is False
 
@@ -59,6 +60,7 @@ class TestCircuitBreaker:
         _record_failure()
 
         import app.services.cross_product_bridge as mod
+
         mod._cb_window_start = time.monotonic() - _CB_WINDOW_SEC - 1
         _record_failure()
         assert _is_circuit_open() is False

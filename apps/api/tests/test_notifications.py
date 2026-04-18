@@ -34,15 +34,18 @@ NOTIF_ROW_READ = {**NOTIF_ROW, "is_read": True}
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
+
 def _user_override(db):
     async def _dep():
         yield db
+
     return _dep
 
 
 def _uid_override(uid: str = USER_ID):
     async def _dep():
         return uid
+
     return _dep
 
 
@@ -61,6 +64,7 @@ def _make_chain_mock():
 
 
 # ── GET /notifications/unread-count ──────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_unread_count_returns_count():
@@ -103,6 +107,7 @@ async def test_unread_count_zero_when_none():
 
 
 # ── GET /notifications ────────────────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_list_notifications_returns_items():
@@ -211,6 +216,7 @@ async def test_list_notifications_limit_above_max_rejected():
 
 # ── PATCH /notifications/read-all ────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_mark_all_read_returns_zero():
     """PATCH /read-all updates all unread rows and returns unread_count=0."""
@@ -230,6 +236,7 @@ async def test_mark_all_read_returns_zero():
 
 
 # ── PATCH /notifications/{id}/read ───────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_mark_single_notification_read():

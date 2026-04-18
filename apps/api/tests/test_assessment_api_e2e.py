@@ -25,6 +25,7 @@ MOCK_USER_ID = str(uuid4())
 MOCK_COMPETENCY_ID = str(uuid4())
 MOCK_SESSION_ID = str(uuid4())
 
+
 def _opt(key: int, text: str) -> dict:
     """Build an MCQ option dict matching the QuestionOut schema (list[dict])."""
     return {"key": key, "text_en": text, "text_az": text}
@@ -62,7 +63,12 @@ MOCK_QUESTIONS = [
         "type": "mcq",
         "scenario_en": "Best way to give feedback to a colleague?",
         "scenario_az": "Həmkarınıza rəy verməyin ən yaxşı yolu?",
-        "options": [_opt(0, "Public criticism"), _opt(1, "Private constructive"), _opt(2, "Email only"), _opt(3, "Avoid it")],
+        "options": [
+            _opt(0, "Public criticism"),
+            _opt(1, "Private constructive"),
+            _opt(2, "Email only"),
+            _opt(3, "Avoid it"),
+        ],
         "irt_a": 0.8,
         "irt_b": -0.5,
         "irt_c": 0.25,
@@ -285,10 +291,14 @@ async def test_question_breakdown_returns_mapped_difficulty(client):
     }
     session_found = _mock_chain(_mock_execute(data=session_data))
     # Mock: question texts
-    q_texts = _mock_chain(_mock_execute(data=[
-        {"id": q["id"], "scenario_en": q["scenario_en"], "scenario_az": q["scenario_az"]}
-        for q in MOCK_QUESTIONS
-    ]))
+    q_texts = _mock_chain(
+        _mock_execute(
+            data=[
+                {"id": q["id"], "scenario_en": q["scenario_en"], "scenario_az": q["scenario_az"]}
+                for q in MOCK_QUESTIONS
+            ]
+        )
+    )
     # Mock: competency slug
     comp_found = _mock_chain(_mock_execute(data={"slug": "communication"}))
 

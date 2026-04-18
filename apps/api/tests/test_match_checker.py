@@ -24,9 +24,9 @@ from app.services.match_checker import (
     run_match_check,
 )
 
-ORG_ID   = str(uuid4())
+ORG_ID = str(uuid4())
 ORG_ID_2 = str(uuid4())
-VOL_ID   = str(uuid4())
+VOL_ID = str(uuid4())
 
 _NOW_ISO = "2026-04-02T10:00:00+00:00"
 _LAST_CHECKED = "2026-04-01T10:00:00+00:00"
@@ -38,6 +38,7 @@ class MockResult:
 
 
 # ── Builders ──────────────────────────────────────────────────────────────────
+
 
 def _search(org_id: str = ORG_ID, search_id: str | None = None, filters: dict | None = None) -> dict:
     return {
@@ -92,8 +93,10 @@ def make_db(
 
         if name == "org_saved_searches":
             if raise_on_saved_searches:
+
                 async def raise_exc(*a, **kw):
                     raise Exception("relation org_saved_searches does not exist")
+
                 m.select.return_value.eq.return_value.order.return_value.limit.return_value.execute = raise_exc
             else:
                 m.select.return_value.eq.return_value.order.return_value.limit.return_value.execute = AsyncMock(
@@ -128,9 +131,7 @@ def make_db(
             )
 
         elif name == "profiles":
-            m.select.return_value.in_.return_value.execute = AsyncMock(
-                return_value=MockResult(data=profiles)
-            )
+            m.select.return_value.in_.return_value.execute = AsyncMock(return_value=MockResult(data=profiles))
 
         _table_cache[name] = m
         return m
@@ -140,6 +141,7 @@ def make_db(
 
 
 # ── Tests: Happy path ─────────────────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_happy_path_finds_matches_and_attempts_telegram():
@@ -177,6 +179,7 @@ async def test_no_matches_updates_last_checked_but_does_not_notify():
 
 
 # ── Tests: Circuit breaker ────────────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_circuit_breaker_stops_telegram_after_threshold():
@@ -231,6 +234,7 @@ async def test_circuit_breaker_does_not_trip_on_zero_failures():
 
 # ── Tests: Table migration fallback ───────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_missing_table_returns_empty_summary_gracefully():
     """If org_saved_searches table doesn't exist → warn + return empty, never raise."""
@@ -243,6 +247,7 @@ async def test_missing_table_returns_empty_summary_gracefully():
 
 
 # ── Tests: Per-search error isolation ─────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_one_bad_search_does_not_abort_others():
@@ -280,6 +285,7 @@ async def test_one_bad_search_does_not_abort_others():
 
 # ── Tests: Location filter ────────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_no_location_filter_includes_all_matches():
     """Searches without location filter return all matching profiles."""
@@ -295,6 +301,7 @@ async def test_no_location_filter_includes_all_matches():
 
 
 # ── Tests: RunSummary structure ───────────────────────────────────────────────
+
 
 def test_run_summary_defaults():
     """RunSummary initializes with safe zero defaults."""
@@ -321,6 +328,7 @@ def test_match_check_result_with_error():
 
 
 # ── Tests: Max searches per run cap ───────────────────────────────────────────
+
 
 def test_max_searches_per_run_constant():
     """_MAX_SEARCHES_PER_RUN is 50 — prevents DB timeout on large installs."""

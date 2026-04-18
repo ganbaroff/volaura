@@ -31,6 +31,7 @@ def enable_payment():
         mock_settings.payment_enabled = True
         # Pass through all other settings attributes used in start_assessment
         from app.config import settings as real_settings
+
         mock_settings.swarm_enabled = real_settings.swarm_enabled
         yield
 
@@ -40,6 +41,7 @@ async def _permissive_client():
     transport = ASGITransport(app=app, raise_app_exceptions=False)
     async with AsyncClient(transport=transport, base_url="http://test") as c:
         yield c
+
 
 MOCK_USER_ID = "00000000-0000-0000-0000-000000000001"
 MOCK_COMPETENCY_ID = "00000000-0000-0000-0000-000000000010"
@@ -80,6 +82,7 @@ def _make_deps(user_db, admin_db):
 
 
 # ── Paywall blocks ─────────────────────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_start_assessment_blocked_when_expired(client):
@@ -144,6 +147,7 @@ async def test_start_assessment_blocked_when_cancelled(client):
 
 
 # ── Paywall does not block ─────────────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_start_assessment_allowed_when_trial():
@@ -260,6 +264,7 @@ async def test_start_assessment_blocked_when_no_profile_row(client):
 
 # ── Error shape ────────────────────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_subscription_required_error_shape(client):
     """HTTP 402 response has correct JSON shape for frontend parsing."""
@@ -328,8 +333,8 @@ async def test_submit_answer_blocked_when_expired(client):
     def user_side_effect(table_name):
         call_count["user"] += 1
         if call_count["user"] == 1:
-            return session_chain   # assessment_sessions lookup
-        return expired_profile     # profiles subscription check
+            return session_chain  # assessment_sessions lookup
+        return expired_profile  # profiles subscription check
 
     mock_user_db = MagicMock()
     mock_user_db.table = MagicMock(side_effect=user_side_effect)
@@ -356,7 +361,9 @@ async def test_submit_answer_blocked_when_expired(client):
     finally:
         app.dependency_overrides.clear()
 
-    assert response.status_code == 402, f"Expired user should be blocked on /answer, got {response.status_code}: {response.text}"
+    assert response.status_code == 402, (
+        f"Expired user should be blocked on /answer, got {response.status_code}: {response.text}"
+    )
     body = response.json()
     assert body["detail"]["code"] == "SUBSCRIPTION_REQUIRED"
 
@@ -372,8 +379,8 @@ async def test_submit_answer_blocked_when_cancelled(client):
     def user_side_effect(table_name):
         call_count["user"] += 1
         if call_count["user"] == 1:
-            return session_chain    # assessment_sessions lookup
-        return cancelled_profile    # profiles subscription check
+            return session_chain  # assessment_sessions lookup
+        return cancelled_profile  # profiles subscription check
 
     mock_user_db = MagicMock()
     mock_user_db.table = MagicMock(side_effect=user_side_effect)
@@ -400,6 +407,8 @@ async def test_submit_answer_blocked_when_cancelled(client):
     finally:
         app.dependency_overrides.clear()
 
-    assert response.status_code == 402, f"Cancelled user should be blocked on /answer, got {response.status_code}: {response.text}"
+    assert response.status_code == 402, (
+        f"Cancelled user should be blocked on /answer, got {response.status_code}: {response.text}"
+    )
     body = response.json()
     assert body["detail"]["code"] == "SUBSCRIPTION_REQUIRED"

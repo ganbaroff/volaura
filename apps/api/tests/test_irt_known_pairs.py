@@ -36,6 +36,7 @@ from app.core.assessment.engine import (
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
+
 def _make_item(
     question_id: str,
     a: float,
@@ -85,61 +86,47 @@ class TestProb3PLKnownValues:
         # exp_val = 1.0 * (0.0 - 0.0) = 0.0
         # P = 0 + 1 / (1 + exp(0)) = 1 / 2 = 0.5
         p = _prob_3pl(theta=0.0, a=1.0, b=0.0, c=0.0)
-        assert math.isclose(p, 0.5, abs_tol=1e-9), (
-            f"Expected exactly 0.5 by logistic symmetry, got {p}"
-        )
+        assert math.isclose(p, 0.5, abs_tol=1e-9), f"Expected exactly 0.5 by logistic symmetry, got {p}"
 
     def test_guessing_raises_probability_floor(self):
         """a=1, b=0, c=0.25, theta=0 → P=0.625 (guessing shifts floor to 0.25)."""
         # exp_val = 1.0 * (0.0 - 0.0) = 0.0
         # P = 0.25 + 0.75 / (1 + 1) = 0.25 + 0.375 = 0.625
         p = _prob_3pl(theta=0.0, a=1.0, b=0.0, c=0.25)
-        assert math.isclose(p, 0.625, abs_tol=1e-9), (
-            f"Expected 0.625, got {p}"
-        )
+        assert math.isclose(p, 0.625, abs_tol=1e-9), f"Expected 0.625, got {p}"
 
     def test_high_ability_hard_item_no_guessing(self):
         """a=1.5, b=1.0, c=0.0, theta=2.0 → P≈0.8176."""
         # exp_val = 1.5 * (2.0 - 1.0) = 1.5
         # P = 1 / (1 + exp(-1.5)) ≈ 1 / (1 + 0.22313) ≈ 0.81757
         p = _prob_3pl(theta=2.0, a=1.5, b=1.0, c=0.0)
-        assert math.isclose(p, 0.81757, abs_tol=1e-4), (
-            f"Expected ≈0.8176, got {p}"
-        )
+        assert math.isclose(p, 0.81757, abs_tol=1e-4), f"Expected ≈0.8176, got {p}"
 
     def test_easy_item_high_ability_no_guessing(self):
         """a=1.0, b=-1.0, c=0.0, theta=1.0 → P≈0.8808."""
         # exp_val = 1.0 * (1.0 - (-1.0)) = 2.0
         # P = 1 / (1 + exp(-2.0)) ≈ 1 / (1 + 0.13534) ≈ 0.88080
         p = _prob_3pl(theta=1.0, a=1.0, b=-1.0, c=0.0)
-        assert math.isclose(p, 0.88080, abs_tol=1e-4), (
-            f"Expected ≈0.8808, got {p}"
-        )
+        assert math.isclose(p, 0.88080, abs_tol=1e-4), f"Expected ≈0.8808, got {p}"
 
     def test_at_difficulty_with_guessing(self):
         """a=2.0, b=0.5, c=0.2, theta=0.5 → P=0.6 (theta==b, c shifts midpoint)."""
         # exp_val = 2.0 * (0.5 - 0.5) = 0.0
         # P = 0.2 + 0.8 / (1 + 1) = 0.2 + 0.4 = 0.6
         p = _prob_3pl(theta=0.5, a=2.0, b=0.5, c=0.2)
-        assert math.isclose(p, 0.6, abs_tol=1e-9), (
-            f"Expected exactly 0.6, got {p}"
-        )
+        assert math.isclose(p, 0.6, abs_tol=1e-9), f"Expected exactly 0.6, got {p}"
 
     def test_very_low_theta_near_guessing_floor(self):
         """a=1.0, b=0.0, c=0.3, theta=-5.0 → P approaches c=0.3 from above."""
         # At theta → -∞: P → c
         p = _prob_3pl(theta=-5.0, a=1.0, b=0.0, c=0.3)
         assert p > 0.3, "P must be above guessing floor"
-        assert math.isclose(p, 0.3, abs_tol=0.01), (
-            f"At theta=-5, P should be near c=0.3, got {p}"
-        )
+        assert math.isclose(p, 0.3, abs_tol=0.01), f"At theta=-5, P should be near c=0.3, got {p}"
 
     def test_very_high_theta_approaches_one(self):
         """a=1.0, b=0.0, c=0.0, theta=5.0 → P approaches 1.0."""
         p = _prob_3pl(theta=5.0, a=1.0, b=0.0, c=0.0)
-        assert math.isclose(p, 1.0, abs_tol=0.01), (
-            f"At theta=5, P should be near 1.0, got {p}"
-        )
+        assert math.isclose(p, 1.0, abs_tol=0.01), f"At theta=5, P should be near 1.0, got {p}"
 
     def test_probability_always_in_unit_interval(self):
         """P(correct) must always be in [0, 1] across extreme parameter values."""
@@ -151,9 +138,7 @@ class TestProb3PLKnownValues:
         ]
         for theta, a, b, c in test_cases:
             p = _prob_3pl(theta=theta, a=a, b=b, c=c)
-            assert 0.0 <= p <= 1.0, (
-                f"P={p} out of [0,1] for theta={theta}, a={a}, b={b}, c={c}"
-            )
+            assert 0.0 <= p <= 1.0, f"P={p} out of [0,1] for theta={theta}, a={a}, b={b}, c={c}"
 
     def test_monotone_increasing_in_theta(self):
         """P must be strictly increasing in theta for fixed a, b, c (a > 0)."""
@@ -162,8 +147,7 @@ class TestProb3PLKnownValues:
         probs = [_prob_3pl(t, a, b, c) for t in thetas]
         for i in range(len(probs) - 1):
             assert probs[i] < probs[i + 1], (
-                f"P not monotone: P(theta={thetas[i]})={probs[i]} "
-                f">= P(theta={thetas[i+1]})={probs[i+1]}"
+                f"P not monotone: P(theta={thetas[i]})={probs[i]} >= P(theta={thetas[i + 1]})={probs[i + 1]}"
             )
 
 
@@ -179,18 +163,14 @@ class TestThetaToScore:
     def test_theta_zero_maps_to_exactly_50(self):
         """theta=0 → score=50 by symmetry of sigmoid."""
         score = theta_to_score(0.0)
-        assert math.isclose(score, 50.0, abs_tol=1e-9), (
-            f"Expected exactly 50.0, got {score}"
-        )
+        assert math.isclose(score, 50.0, abs_tol=1e-9), f"Expected exactly 50.0, got {score}"
 
     def test_theta_negative_3_near_zero(self):
         """theta=-3 → score ≈ 4.74 (significantly below 50)."""
         # 100 / (1 + exp(3)) = 100 / (1 + 20.086) ≈ 4.74
         score = theta_to_score(-3.0)
         expected = 100.0 / (1.0 + math.exp(3.0))
-        assert math.isclose(score, expected, abs_tol=1e-6), (
-            f"Expected ≈{expected:.4f}, got {score}"
-        )
+        assert math.isclose(score, expected, abs_tol=1e-6), f"Expected ≈{expected:.4f}, got {score}"
         assert score < 10.0, f"theta=-3 should score below 10, got {score}"
 
     def test_theta_positive_3_near_hundred(self):
@@ -198,24 +178,18 @@ class TestThetaToScore:
         # 100 / (1 + exp(-3)) = 100 / (1 + 0.04979) ≈ 95.26
         score = theta_to_score(3.0)
         expected = 100.0 / (1.0 + math.exp(-3.0))
-        assert math.isclose(score, expected, abs_tol=1e-6), (
-            f"Expected ≈{expected:.4f}, got {score}"
-        )
+        assert math.isclose(score, expected, abs_tol=1e-6), f"Expected ≈{expected:.4f}, got {score}"
         assert score > 90.0, f"theta=3 should score above 90, got {score}"
 
     def test_theta_minus_4_near_zero_bound(self):
         """theta=-4 → score ≈ 1.80 (near but not at 0)."""
         score = theta_to_score(-4.0)
-        assert 0.0 < score < 5.0, (
-            f"theta=-4 should be near 0, got {score}"
-        )
+        assert 0.0 < score < 5.0, f"theta=-4 should be near 0, got {score}"
 
     def test_theta_plus_4_near_hundred_bound(self):
         """theta=4 → score ≈ 98.20 (near but not at 100)."""
         score = theta_to_score(4.0)
-        assert 95.0 < score <= 100.0, (
-            f"theta=4 should be near 100, got {score}"
-        )
+        assert 95.0 < score <= 100.0, f"theta=4 should be near 100, got {score}"
 
     def test_clamp_extreme_positive(self):
         """Very large positive theta must not exceed 100."""
@@ -235,8 +209,7 @@ class TestThetaToScore:
         scores = [theta_to_score(t) for t in thetas]
         for i in range(len(scores) - 1):
             assert scores[i] < scores[i + 1], (
-                f"score not monotone: score({thetas[i]})={scores[i]} "
-                f">= score({thetas[i+1]})={scores[i+1]}"
+                f"score not monotone: score({thetas[i]})={scores[i]} >= score({thetas[i + 1]})={scores[i + 1]}"
             )
 
     def test_theta_1_known_value(self):
@@ -269,26 +242,16 @@ class TestEAPEstimation:
 
     def test_all_correct_easy_items_positive_theta(self):
         """All correct on easy items (b=-1) → theta should be moderate positive."""
-        items = [
-            _make_item(f"q{i}", a=1.0, b=-1.0, c=0.0, response=1)
-            for i in range(5)
-        ]
+        items = [_make_item(f"q{i}", a=1.0, b=-1.0, c=0.0, response=1) for i in range(5)]
         theta_hat, se = _estimate_eap(items)
-        assert theta_hat > 0.0, (
-            f"All correct on easy items should give positive theta, got {theta_hat}"
-        )
+        assert theta_hat > 0.0, f"All correct on easy items should give positive theta, got {theta_hat}"
         assert se > 0.0, "SE must be positive"
 
     def test_all_wrong_negative_theta(self):
         """All wrong → theta should be negative (prior drags toward -∞)."""
-        items = [
-            _make_item(f"q{i}", a=1.0, b=0.0, c=0.0, response=0)
-            for i in range(5)
-        ]
+        items = [_make_item(f"q{i}", a=1.0, b=0.0, c=0.0, response=0) for i in range(5)]
         theta_hat, se = _estimate_eap(items)
-        assert theta_hat < 0.0, (
-            f"All wrong should give negative theta, got {theta_hat}"
-        )
+        assert theta_hat < 0.0, f"All wrong should give negative theta, got {theta_hat}"
 
     def test_mixed_pattern_theta_near_zero(self):
         """Balanced correct/wrong on items near b=0 → theta near prior mean (0)."""
@@ -299,47 +262,27 @@ class TestEAPEstimation:
         for i in range(3):
             items.append(_make_item(f"w{i}", a=1.0, b=0.0, c=0.0, response=0))
         theta_hat, se = _estimate_eap(items)
-        assert abs(theta_hat) < 1.0, (
-            f"Mixed pattern should give theta near 0, got {theta_hat}"
-        )
+        assert abs(theta_hat) < 1.0, f"Mixed pattern should give theta near 0, got {theta_hat}"
 
     def test_se_decreases_with_more_items(self):
         """SE should decrease as we add more discriminating items."""
-        items_3 = [
-            _make_item(f"q{i}", a=1.5, b=0.0, c=0.0, response=1)
-            for i in range(3)
-        ]
-        items_10 = [
-            _make_item(f"q{i}", a=1.5, b=0.0, c=0.0, response=1)
-            for i in range(10)
-        ]
+        items_3 = [_make_item(f"q{i}", a=1.5, b=0.0, c=0.0, response=1) for i in range(3)]
+        items_10 = [_make_item(f"q{i}", a=1.5, b=0.0, c=0.0, response=1) for i in range(10)]
         _, se_3 = _estimate_eap(items_3)
         _, se_10 = _estimate_eap(items_10)
-        assert se_10 < se_3, (
-            f"SE with 10 items ({se_10}) should be < SE with 3 items ({se_3})"
-        )
+        assert se_10 < se_3, f"SE with 10 items ({se_10}) should be < SE with 3 items ({se_3})"
 
     def test_all_correct_hard_items_high_theta(self):
         """All correct on hard items (b=2.0) → theta should be substantially > 0."""
-        items = [
-            _make_item(f"q{i}", a=1.5, b=2.0, c=0.0, response=1)
-            for i in range(7)
-        ]
+        items = [_make_item(f"q{i}", a=1.5, b=2.0, c=0.0, response=1) for i in range(7)]
         theta_hat, _ = _estimate_eap(items)
-        assert theta_hat > 1.0, (
-            f"All correct on hard items (b=2) should give theta > 1.0, got {theta_hat}"
-        )
+        assert theta_hat > 1.0, f"All correct on hard items (b=2) should give theta > 1.0, got {theta_hat}"
 
     def test_all_wrong_easy_items_very_negative_theta(self):
         """All wrong on easy items (b=-2.0) → theta should be substantially < 0."""
-        items = [
-            _make_item(f"q{i}", a=1.5, b=-2.0, c=0.0, response=0)
-            for i in range(7)
-        ]
+        items = [_make_item(f"q{i}", a=1.5, b=-2.0, c=0.0, response=0) for i in range(7)]
         theta_hat, _ = _estimate_eap(items)
-        assert theta_hat < -1.0, (
-            f"All wrong on easy items (b=-2) should give theta < -1.0, got {theta_hat}"
-        )
+        assert theta_hat < -1.0, f"All wrong on easy items (b=-2) should give theta < -1.0, got {theta_hat}"
 
     def test_se_bounds(self):
         """SE must always be non-negative and bounded by prior width."""
@@ -349,19 +292,11 @@ class TestEAPEstimation:
 
     def test_high_discrimination_items_lower_se(self):
         """High-discrimination items (a=3.0) should give lower SE than low-a items."""
-        items_low_a = [
-            _make_item(f"q{i}", a=0.3, b=0.0, c=0.0, response=1)
-            for i in range(5)
-        ]
-        items_high_a = [
-            _make_item(f"q{i}", a=3.0, b=0.0, c=0.0, response=1)
-            for i in range(5)
-        ]
+        items_low_a = [_make_item(f"q{i}", a=0.3, b=0.0, c=0.0, response=1) for i in range(5)]
+        items_high_a = [_make_item(f"q{i}", a=3.0, b=0.0, c=0.0, response=1) for i in range(5)]
         _, se_low = _estimate_eap(items_low_a)
         _, se_high = _estimate_eap(items_high_a)
-        assert se_high < se_low, (
-            f"High-a items should give lower SE ({se_high}) than low-a ({se_low})"
-        )
+        assert se_high < se_low, f"High-a items should give lower SE ({se_high}) than low-a ({se_low})"
 
 
 # ── Section 4: Fisher Information / item selection (MFI) ──────────────────────
@@ -377,10 +312,7 @@ class TestFisherInformationAndMFI:
         thetas = [b - 1.5, b - 0.5, b, b + 0.5, b + 1.5]
         infos = [_fisher_information(t, a, b, c) for t in thetas]
         peak_idx = infos.index(max(infos))
-        assert peak_idx == 2, (
-            f"Maximum information should be at theta=b={b}, "
-            f"but peak was at theta={thetas[peak_idx]}"
-        )
+        assert peak_idx == 2, f"Maximum information should be at theta=b={b}, but peak was at theta={thetas[peak_idx]}"
 
     def test_fisher_information_non_negative(self):
         """Fisher information must always be >= 0."""
@@ -392,9 +324,7 @@ class TestFisherInformationAndMFI:
         ]
         for theta, a, b, c in test_cases:
             info = _fisher_information(theta, a, b, c)
-            assert info >= 0.0, (
-                f"Fisher info={info} negative for theta={theta}, a={a}, b={b}, c={c}"
-            )
+            assert info >= 0.0, f"Fisher info={info} negative for theta={theta}, a={a}, b={b}, c={c}"
 
     def test_fisher_information_higher_discrimination_more_info(self):
         """Higher discrimination (a) yields higher Fisher information at theta=b."""
@@ -403,9 +333,7 @@ class TestFisherInformationAndMFI:
         theta = 0.0  # == b
         info_low = _fisher_information(theta, a=0.5, b=b, c=c)
         info_high = _fisher_information(theta, a=2.0, b=b, c=c)
-        assert info_high > info_low, (
-            f"Higher a should give more information: {info_high} vs {info_low}"
-        )
+        assert info_high > info_low, f"Higher a should give more information: {info_high} vs {info_low}"
 
     def test_fisher_information_known_value_2pl(self):
         """For 2PL at theta=b: I(theta) = a^2 * P * Q where P=Q=0.5, so I = a^2/4."""
@@ -413,16 +341,12 @@ class TestFisherInformationAndMFI:
         # P = 0.5, Q = 0.5
         # I = (2^2 * (0.5-0)^2 * 0.5) / ((1-0)^2 * 0.5) = (4 * 0.25 * 0.5) / 0.5 = 1.0
         info = _fisher_information(theta=0.0, a=2.0, b=0.0, c=0.0)
-        assert math.isclose(info, 1.0, abs_tol=1e-9), (
-            f"Expected I=1.0 for a=2 at theta=b, got {info}"
-        )
+        assert math.isclose(info, 1.0, abs_tol=1e-9), f"Expected I=1.0 for a=2 at theta=b, got {info}"
 
     def test_fisher_information_a1_at_b_equals_0_25(self):
         """For 2PL with a=1.0 at theta=b: I = 1^2 / 4 = 0.25."""
         info = _fisher_information(theta=0.0, a=1.0, b=0.0, c=0.0)
-        assert math.isclose(info, 0.25, abs_tol=1e-9), (
-            f"Expected I=0.25 for a=1 at theta=b, got {info}"
-        )
+        assert math.isclose(info, 0.25, abs_tol=1e-9), f"Expected I=0.25 for a=1 at theta=b, got {info}"
 
     def test_mfi_selects_item_closest_to_theta(self):
         """MFI should prefer items whose b is closest to current theta."""
@@ -431,7 +355,7 @@ class TestFisherInformationAndMFI:
         questions = [
             _make_question("q_neg2", a=1.5, b=-2.0, c=0.0),
             _make_question("q_neg1", a=1.5, b=-1.0, c=0.0),
-            _make_question("q_zero", a=1.5, b=0.0, c=0.0),   # ← should win
+            _make_question("q_zero", a=1.5, b=0.0, c=0.0),  # ← should win
             _make_question("q_pos1", a=1.5, b=1.0, c=0.0),
             _make_question("q_pos2", a=1.5, b=2.0, c=0.0),
         ]
@@ -439,24 +363,20 @@ class TestFisherInformationAndMFI:
         # epsilon=0 disables ε-greedy — tests deterministic MFI, not exposure-control randomness
         selected = select_next_item(state, questions, epsilon=0)
         assert selected is not None
-        assert selected["id"] == "q_zero", (
-            f"At theta=0, MFI should select b=0 item, selected b={selected['irt_b']}"
-        )
+        assert selected["id"] == "q_zero", f"At theta=0, MFI should select b=0 item, selected b={selected['irt_b']}"
 
     def test_mfi_shifts_selection_with_theta(self):
         """After ability update, MFI should select items matching new theta."""
         questions = [
             _make_question("q_neg2", a=1.5, b=-2.0, c=0.0),
             _make_question("q_zero", a=1.5, b=0.0, c=0.0),
-            _make_question("q_pos2", a=1.5, b=2.0, c=0.0),   # ← should win at theta=2
+            _make_question("q_pos2", a=1.5, b=2.0, c=0.0),  # ← should win at theta=2
         ]
         state = CATState(theta=2.0)
         # epsilon=0 disables ε-greedy — tests deterministic MFI, not exposure-control randomness
         selected = select_next_item(state, questions, epsilon=0)
         assert selected is not None
-        assert selected["id"] == "q_pos2", (
-            f"At theta=2, MFI should select b=2 item, selected b={selected['irt_b']}"
-        )
+        assert selected["id"] == "q_pos2", f"At theta=2, MFI should select b=2 item, selected b={selected['irt_b']}"
 
     def test_mfi_skips_already_answered(self):
         """MFI must not re-select an item that was already administered."""
@@ -469,9 +389,7 @@ class TestFisherInformationAndMFI:
         # epsilon=0 disables ε-greedy — tests deterministic MFI
         selected = select_next_item(state, questions, epsilon=0)
         assert selected is not None
-        assert selected["id"] == "q_pos1", (
-            "MFI should skip answered item and select next-best"
-        )
+        assert selected["id"] == "q_pos1", "MFI should skip answered item and select next-best"
 
     def test_mfi_returns_none_when_pool_exhausted(self):
         """Returns None when all items in the pool have been answered."""
@@ -512,9 +430,7 @@ class TestStoppingCriteria:
         for i in range(MIN_ITEMS_BEFORE_SE_STOP - 1):
             state.items.append(_make_item(f"q{i}", a=1.0, b=0.0, c=0.0, response=1))
         stopped, _ = should_stop(state)
-        assert stopped is False, (
-            f"Should not stop before {MIN_ITEMS_BEFORE_SE_STOP} items even with low SE"
-        )
+        assert stopped is False, f"Should not stop before {MIN_ITEMS_BEFORE_SE_STOP} items even with low SE"
 
     def test_does_not_stop_high_se(self):
         """Session should NOT stop when SE is above threshold."""
@@ -592,19 +508,14 @@ class TestSubmitResponse:
         state = CATState(theta=0.0)
         for i in range(5):
             state = submit_response(state, f"q{i}", 1.0, 2.0, 0.0, 1.0, 8000)
-        assert state.theta > 0.0, (
-            f"5 correct answers on hard items (b=2) should raise theta above 0, "
-            f"got {state.theta}"
-        )
+        assert state.theta > 0.0, f"5 correct answers on hard items (b=2) should raise theta above 0, got {state.theta}"
 
     def test_wrong_answers_decrease_theta(self):
         """Wrong answers on medium items → theta must decrease from default 0."""
         state = CATState(theta=0.0)
         for i in range(5):
             state = submit_response(state, f"q{i}", 1.0, 0.0, 0.0, 0.0, 8000)
-        assert state.theta < 0.0, (
-            f"5 wrong answers should lower theta below 0, got {state.theta}"
-        )
+        assert state.theta < 0.0, f"5 wrong answers should lower theta below 0, got {state.theta}"
 
     def test_raw_score_preserved(self):
         """raw_score should be stored as-is (not binarised in the record)."""
@@ -623,9 +534,7 @@ class TestSubmitResponse:
         state = CATState()
         state = submit_response(state, "q1", 2.0, 0.0, 0.0, 1.0, 5000)
         # After 1 highly discriminating item, SE should be < 1.0 (prior width)
-        assert state.theta_se < 1.0, (
-            f"SE should be updated after submission, got {state.theta_se}"
-        )
+        assert state.theta_se < 1.0, f"SE should be updated after submission, got {state.theta_se}"
 
 
 # ── Section 7: IRT boundary / edge cases ──────────────────────────────────────
@@ -650,9 +559,7 @@ class TestIRTEdgeCases:
         # At theta >> b, P≈1, Q≈0, so info → 0
         info_far = _fisher_information(theta=20.0, a=1.0, b=0.0, c=0.0)
         info_near = _fisher_information(theta=0.0, a=1.0, b=0.0, c=0.0)
-        assert info_far < info_near, (
-            f"Information far from b should be lower: {info_far} vs {info_near}"
-        )
+        assert info_far < info_near, f"Information far from b should be lower: {info_far} vs {info_near}"
 
     def test_eap_empty_items_returns_prior(self):
         """With no items, EAP should return prior mean (0.0) and prior SE (1.0)."""
@@ -660,16 +567,12 @@ class TestIRTEdgeCases:
         assert math.isclose(theta_hat, 0.0, abs_tol=1e-6), (
             f"EAP with no items should return prior mean 0.0, got {theta_hat}"
         )
-        assert math.isclose(se, 1.0, abs_tol=0.1), (
-            f"EAP with no items should return near-prior SE (~1.0), got {se}"
-        )
+        assert math.isclose(se, 1.0, abs_tol=0.1), f"EAP with no items should return near-prior SE (~1.0), got {se}"
 
     def test_prob_3pl_c_equals_1_always_correct(self):
         """c=1.0 means P=1 regardless of theta (degenerate but must not crash)."""
         p = _prob_3pl(theta=-5.0, a=1.0, b=0.0, c=1.0)
-        assert math.isclose(p, 1.0, abs_tol=1e-9), (
-            f"c=1.0 should give P=1 always, got {p}"
-        )
+        assert math.isclose(p, 1.0, abs_tol=1e-9), f"c=1.0 should give P=1 always, got {p}"
 
     def test_fisher_info_c_equals_1_is_zero(self):
         """Fisher information is 0 when c=1 (P always 1, Q always 0)."""

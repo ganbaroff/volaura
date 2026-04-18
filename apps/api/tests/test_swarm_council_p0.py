@@ -19,6 +19,7 @@ from app.core.assessment.engine import (
 
 # ── QA Engineer: EAP failure cascade ─────────────────────────────────────────
 
+
 class TestEAPEdgeCases:
     """QA Engineer gap: EAP failure with pathological IRT parameters."""
 
@@ -66,6 +67,7 @@ class TestEAPEdgeCases:
 
 # ── QA Engineer: CATState.from_dict with corrupted data ──────────────────────
 
+
 class TestCATStateCorruption:
     """QA Engineer gap: corrupted JSONB in assessment_sessions.answers."""
 
@@ -105,6 +107,7 @@ class TestCATStateCorruption:
 
 
 # ── QA Engineer: Small question pool ─────────────────────────────────────────
+
 
 class TestSmallQuestionPool:
     """QA Engineer gap: what happens with only 1-2 questions available."""
@@ -150,6 +153,7 @@ class TestSmallQuestionPool:
 
 # ── QA Engineer: raw_score binarization boundary ─────────────────────────────
 
+
 class TestBinarizationBoundary:
     """QA Engineer gap: exact 0.5 boundary behavior."""
 
@@ -182,6 +186,7 @@ class TestBinarizationBoundary:
 
 # ── Leyla: slow connection timing ────────────────────────────────────────────
 
+
 class TestTimingEdgeCases:
     """Leyla gap: false positives from slow mobile connections."""
 
@@ -202,10 +207,7 @@ class TestTimingEdgeCases:
 
     def test_penalty_from_rushing(self):
         """Many rushed answers should reduce penalty_multiplier below 1.0."""
-        answers = [
-            {"response_time_ms": 500, "response": 1, "raw_score": 1.0}
-            for _ in range(10)
-        ]
+        answers = [{"response_time_ms": 500, "response": 1, "raw_score": 1.0} for _ in range(10)]
         signal = antigaming.analyse(answers)
         assert signal.penalty_multiplier < 1.0
 
@@ -219,14 +221,14 @@ class TestTimingEdgeCases:
         responses = [1, 0, 1, 1, 0, 1, 0, 0]
         timings = [8_000, 15_000, 6_000, 12_000, 9_000, 20_000, 7_000, 18_000]  # CV ≈ 0.45
         answers = [
-            {"response_time_ms": t, "response": r, "raw_score": 0.7}
-            for r, t in zip(responses, timings, strict=True)
+            {"response_time_ms": t, "response": r, "raw_score": 0.7} for r, t in zip(responses, timings, strict=True)
         ]
         signal = antigaming.analyse(answers)
         assert signal.penalty_multiplier == 1.0
 
 
 # ── Attacker: deterministic selection detection ──────────────────────────────
+
 
 class TestAdaptiveSelectionDeterminism:
     """Attacker gap: is item selection deterministic (exploitable)?"""
@@ -264,6 +266,7 @@ class TestAdaptiveSelectionDeterminism:
 
 
 # ── 3PL math validation ─────────────────────────────────────────────────────
+
 
 class TestIRTMath:
     """Validate 3PL probability function edge cases."""

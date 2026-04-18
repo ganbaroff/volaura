@@ -141,8 +141,11 @@ class TestAtlasTool:
             raise RuntimeError("boom")
 
         tool = AtlasTool(
-            name="boom", description="explodes", requires_approval=False,
-            fn=_exploding, args_model=_DummyArgs,
+            name="boom",
+            description="explodes",
+            requires_approval=False,
+            fn=_exploding,
+            args_model=_DummyArgs,
         )
         result = await tool.invoke({"text": "x"})
         assert result.ok is False
@@ -167,8 +170,11 @@ class TestRegistry:
 
     def test_register_and_get(self):
         tool = AtlasTool(
-            name="test_reg", description="test", requires_approval=False,
-            fn=_dummy_fn, args_model=_DummyArgs,
+            name="test_reg",
+            description="test",
+            requires_approval=False,
+            fn=_dummy_fn,
+            args_model=_DummyArgs,
         )
         REGISTRY.register(tool)
         assert REGISTRY.get("test_reg") is tool
@@ -183,10 +189,15 @@ class TestRegistry:
         assert "unknown tool" in result.error
 
     def test_clear(self):
-        REGISTRY.register(AtlasTool(
-            name="clearme", description="", requires_approval=False,
-            fn=_dummy_fn, args_model=_DummyArgs,
-        ))
+        REGISTRY.register(
+            AtlasTool(
+                name="clearme",
+                description="",
+                requires_approval=False,
+                fn=_dummy_fn,
+                args_model=_DummyArgs,
+            )
+        )
         REGISTRY.clear()
         assert REGISTRY.list_tools() == []
 
@@ -219,24 +230,28 @@ class TestDecorator:
 
     def test_decorator_rejects_sync_fn(self):
         with pytest.raises(TypeError):
+
             @atlas_tool(name="sync_bad", description="sync")
             def _fn(args: _DecTestArgs) -> ToolResult:  # type: ignore[return-type]
                 pass
 
     def test_decorator_rejects_no_args(self):
         with pytest.raises(TypeError, match="exactly one"):
+
             @atlas_tool(name="noargs", description="noargs")
             async def _fn() -> ToolResult:
                 return ToolResult.success()
 
     def test_decorator_rejects_non_basemodel_arg(self):
         with pytest.raises(TypeError, match="BaseModel subclass"):
+
             @atlas_tool(name="badarg", description="badarg")
             async def _fn(args: str) -> ToolResult:
                 return ToolResult.success()
 
     def test_decorator_rejects_too_many_args(self):
         with pytest.raises(TypeError, match="exactly one"):
+
             @atlas_tool(name="toomany", description="toomany")
             async def _fn(args: _DecTooManyArgs, extra: str) -> ToolResult:
                 return ToolResult.success()

@@ -52,9 +52,11 @@ TOKEN_ROW_EXPIRED = {**TOKEN_ROW_VALID, "token_expires_at": PAST_EXPIRY}
 
 # ── Dependency helpers ────────────────────────────────────────────────────────
 
+
 def _admin_override(db):
     async def _dep():
         yield db
+
     return _dep
 
 
@@ -67,6 +69,7 @@ def reset_rate_limiter():
 
 
 # ── Mock DB factory ───────────────────────────────────────────────────────────
+
 
 def _make_token_lookup_mock(token_row: dict | None) -> MagicMock:
     """Mock for the expert_verifications table with JOIN result."""
@@ -105,6 +108,7 @@ def _build_submit_mock_db(
         call_counts.setdefault(table_name, 0)
 
         if table_name == "expert_verifications":
+
             async def _ev_execute(*_a, **_kw):
                 n = call_counts["expert_verifications"]
                 call_counts["expert_verifications"] += 1
@@ -127,9 +131,7 @@ def _build_submit_mock_db(
             t.select.return_value = t
             t.eq.return_value = t
             t.single.return_value = t
-            t.execute = AsyncMock(return_value=MagicMock(
-                data={"competency_scores": {COMPETENCY_ID: 70.0}}
-            ))
+            t.execute = AsyncMock(return_value=MagicMock(data={"competency_scores": {COMPETENCY_ID: 70.0}}))
 
         else:
             t.execute = AsyncMock(return_value=MagicMock(data=None))
@@ -148,6 +150,7 @@ def _build_submit_mock_db(
 
 
 # ── GET /api/verify/{token} ───────────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_get_verification_valid_token():
@@ -226,6 +229,7 @@ async def test_get_verification_token_expired():
 
 
 # ── POST /api/verify/{token} ──────────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_submit_verification_success():

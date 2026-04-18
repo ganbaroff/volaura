@@ -48,6 +48,7 @@ MOCK_PROFILE_NO_AURA = {
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
 
+
 @pytest.fixture(autouse=True)
 def reset_rate_limiter():
     """Reset in-memory rate limiter before each test."""
@@ -61,12 +62,14 @@ def reset_rate_limiter():
 def _make_dep_override(value):
     async def _override():
         yield value
+
     return _override
 
 
 def _make_user_id_override(user_id: str):
     async def _override():
         return user_id
+
     return _override
 
 
@@ -77,10 +80,27 @@ def _build_chainable(execute_side_effects: list):
     """
     mock = MagicMock()
     for attr in [
-        "table", "select", "insert", "update", "delete", "upsert",
-        "eq", "neq", "gte", "lte", "gt", "lt",
-        "order", "limit", "range", "filter", "not_", "in_",
-        "single", "maybe_single", "rpc",
+        "table",
+        "select",
+        "insert",
+        "update",
+        "delete",
+        "upsert",
+        "eq",
+        "neq",
+        "gte",
+        "lte",
+        "gt",
+        "lt",
+        "order",
+        "limit",
+        "range",
+        "filter",
+        "not_",
+        "in_",
+        "single",
+        "maybe_single",
+        "rpc",
     ]:
         setattr(mock, attr, MagicMock(return_value=mock))
 
@@ -101,6 +121,7 @@ def _build_chainable(execute_side_effects: list):
 
 # ── Test 1: Duplicate username → 409 ──────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_duplicate_username_returns_409():
     """POST /api/profiles/me with a username that is already taken must return 409.
@@ -110,9 +131,11 @@ async def test_duplicate_username_returns_409():
     """
     # The first execute() call is the "check username taken" query.
     # Return a non-empty list → username IS taken → router raises 409.
-    user = _build_chainable([
-        [{"id": USER_A_ID}],   # username-taken check → row exists → conflict
-    ])
+    user = _build_chainable(
+        [
+            [{"id": USER_A_ID}],  # username-taken check → row exists → conflict
+        ]
+    )
     admin = _build_chainable([])
 
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
@@ -130,14 +153,10 @@ async def test_duplicate_username_returns_409():
                     "account_type": "volunteer",
                 },
             )
-        assert resp.status_code == 409, (
-            f"Expected 409 USERNAME_TAKEN, got {resp.status_code}: {resp.text}"
-        )
+        assert resp.status_code == 409, f"Expected 409 USERNAME_TAKEN, got {resp.status_code}: {resp.text}"
         body = resp.json()
         detail = body.get("detail", {})
-        assert detail.get("code") == "USERNAME_TAKEN", (
-            f"Expected code=USERNAME_TAKEN in detail, got: {detail}"
-        )
+        assert detail.get("code") == "USERNAME_TAKEN", f"Expected code=USERNAME_TAKEN in detail, got: {detail}"
     finally:
         app.dependency_overrides.pop(get_supabase_user, None)
         app.dependency_overrides.pop(get_supabase_admin, None)
@@ -145,6 +164,7 @@ async def test_duplicate_username_returns_409():
 
 
 # ── Test 2: complete_assessment with zero answers → not 500 ───────────────────
+
 
 @pytest.mark.asyncio
 async def test_complete_with_zero_answers_does_not_crash():
@@ -159,7 +179,7 @@ async def test_complete_with_zero_answers_does_not_crash():
         "volunteer_id": USER_A_ID,
         "status": "in_progress",
         "competency_id": COMP_ID,
-        "answers": {},          # zero answers — the critical edge case
+        "answers": {},  # zero answers — the critical edge case
         "answer_version": 0,
         "expires_at": None,
         "question_delivered_at": None,
@@ -171,15 +191,19 @@ async def test_complete_with_zero_answers_does_not_crash():
         "role_level": "volunteer",
     }
 
-    user = _build_chainable([
-        empty_session,    # db_user.select("*").eq(session_id).single() → session row
-    ])
-    admin = _build_chainable([
-        empty_session,    # db_admin.update(status=completed) → return session
-        {"slug": COMP_SLUG},                # competencies.select("slug") → slug
-        {"id": "aura-rpc-result"},          # rpc("upsert_aura_score") → success
-        None,                               # crystal emit (non-fatal, if any)
-    ])
+    user = _build_chainable(
+        [
+            empty_session,  # db_user.select("*").eq(session_id).single() → session row
+        ]
+    )
+    admin = _build_chainable(
+        [
+            empty_session,  # db_admin.update(status=completed) → return session
+            {"slug": COMP_SLUG},  # competencies.select("slug") → slug
+            {"id": "aura-rpc-result"},  # rpc("upsert_aura_score") → success
+            None,  # crystal emit (non-fatal, if any)
+        ]
+    )
 
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
@@ -191,13 +215,9 @@ async def test_complete_with_zero_answers_does_not_crash():
             resp = await ac.post(f"/api/assessment/complete/{SESSION_ID}")
 
         # Must not 500 — engine handles empty answers gracefully
-        assert resp.status_code != 500, (
-            f"complete_assessment crashed with 500 on zero-answer session: {resp.text}"
-        )
+        assert resp.status_code != 500, f"complete_assessment crashed with 500 on zero-answer session: {resp.text}"
         # 200 or 4xx are both acceptable — 500 is the only failure mode we guard against
-        assert resp.status_code in (200, 400, 404, 410, 422), (
-            f"Unexpected status {resp.status_code}: {resp.text}"
-        )
+        assert resp.status_code in (200, 400, 404, 410, 422), f"Unexpected status {resp.status_code}: {resp.text}"
     finally:
         app.dependency_overrides.pop(get_supabase_user, None)
         app.dependency_overrides.pop(get_supabase_admin, None)
@@ -205,6 +225,7 @@ async def test_complete_with_zero_answers_does_not_crash():
 
 
 # ── Test 3: Public profile with no AURA score → 200 with null fields ──────────
+
 
 @pytest.mark.asyncio
 async def test_public_profile_no_aura_returns_200():
@@ -218,11 +239,13 @@ async def test_public_profile_no_aura_returns_200():
 
     This guards against a regression where None aura_scores row causes AttributeError.
     """
-    admin = _build_chainable([
-        MOCK_PROFILE_NO_AURA,   # profiles SELECT → profile found
-        None,                   # aura_scores SELECT by volunteer_id → no row
-        # No further execute() calls because score_row.data is None → loop exits early
-    ])
+    admin = _build_chainable(
+        [
+            MOCK_PROFILE_NO_AURA,  # profiles SELECT → profile found
+            None,  # aura_scores SELECT by volunteer_id → no row
+            # No further execute() calls because score_row.data is None → loop exits early
+        ]
+    )
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
 
@@ -236,12 +259,8 @@ async def test_public_profile_no_aura_returns_200():
         )
         body = resp.json()
         # Confirm the response is not a 500 body masquerading as success
-        assert "username" in body or "detail" not in body, (
-            f"Response missing username field: {body}"
-        )
-        assert body.get("username") == PUBLIC_USERNAME, (
-            f"Username mismatch: {body}"
-        )
+        assert "username" in body or "detail" not in body, f"Response missing username field: {body}"
+        assert body.get("username") == PUBLIC_USERNAME, f"Username mismatch: {body}"
         # percentile_rank must be null (no score → no computation)
         assert body.get("percentile_rank") is None, (
             f"Expected null percentile_rank for user with no AURA, got: {body.get('percentile_rank')}"

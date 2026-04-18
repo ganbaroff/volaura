@@ -24,6 +24,7 @@ from app.services.embeddings import build_profile_text, generate_embedding, upse
 
 # ── build_profile_text ────────────────────────────────────────────────────────
 
+
 def test_build_profile_text_minimal_profile():
     profile = {"display_name": "Leyla M."}
     result = build_profile_text(profile, aura=None)
@@ -83,6 +84,7 @@ def test_build_profile_text_zero_score_competencies_excluded():
 
 # ── generate_embedding ────────────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_generate_embedding_empty_string_returns_none_no_api_call():
     """Empty text → None immediately without calling Gemini."""
@@ -117,9 +119,7 @@ async def test_generate_embedding_success_returns_768_floats():
 @pytest.mark.asyncio
 async def test_generate_embedding_api_failure_returns_none():
     mock_client = MagicMock()
-    mock_client.aio.models.embed_content = AsyncMock(
-        side_effect=Exception("Gemini 503 Service Unavailable")
-    )
+    mock_client.aio.models.embed_content = AsyncMock(side_effect=Exception("Gemini 503 Service Unavailable"))
 
     with patch("app.services.embeddings.settings") as mock_settings:
         mock_settings.gemini_api_key = "fake-key"
@@ -155,6 +155,7 @@ async def test_generate_embedding_text_truncated_to_8000():
 
 # ── upsert_volunteer_embedding ────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_upsert_volunteer_embedding_success():
     profile = {"display_name": "Leyla M.", "bio": "Researcher"}
@@ -167,8 +168,7 @@ async def test_upsert_volunteer_embedding_success():
         return_value=MagicMock(data=[{"volunteer_id": "uid-1"}])
     )
 
-    with patch("app.services.embeddings.generate_embedding", new_callable=AsyncMock,
-               return_value=fake_embedding):
+    with patch("app.services.embeddings.generate_embedding", new_callable=AsyncMock, return_value=fake_embedding):
         result = await upsert_volunteer_embedding(mock_db, "uid-1", profile, aura)
 
     assert result is True
@@ -180,8 +180,7 @@ async def test_upsert_volunteer_embedding_no_embedding_returns_false():
     """If generate_embedding returns None (API fail) → no upsert, return False."""
     mock_db = MagicMock()
 
-    with patch("app.services.embeddings.generate_embedding", new_callable=AsyncMock,
-               return_value=None):
+    with patch("app.services.embeddings.generate_embedding", new_callable=AsyncMock, return_value=None):
         result = await upsert_volunteer_embedding(mock_db, "uid-1", {}, None)
 
     assert result is False

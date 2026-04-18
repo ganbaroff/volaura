@@ -74,27 +74,57 @@ Q3_REDESIGNED = {
         {
             "name": "calm_tone",
             "weight": 0.20,
-            "keywords": ["spoke slowly and clearly", "kept my voice soft", "maintained a calm demeanor", "reduced my speaking pace", "stayed patient despite the frustration"],
+            "keywords": [
+                "spoke slowly and clearly",
+                "kept my voice soft",
+                "maintained a calm demeanor",
+                "reduced my speaking pace",
+                "stayed patient despite the frustration",
+            ],
         },
         {
             "name": "nonverbal_support",
             "weight": 0.20,
-            "keywords": ["used hand gestures to indicate", "drew a quick sketch", "pointed to a map", "used visual aids to guide", "showed them the registration form"],
+            "keywords": [
+                "used hand gestures to indicate",
+                "drew a quick sketch",
+                "pointed to a map",
+                "used visual aids to guide",
+                "showed them the registration form",
+            ],
         },
         {
             "name": "simplify_language",
             "weight": 0.20,
-            "keywords": ["used short simple sentences", "avoided technical jargon", "spoke one step at a time", "repeated key information more slowly", "used basic words they might know"],
+            "keywords": [
+                "used short simple sentences",
+                "avoided technical jargon",
+                "spoke one step at a time",
+                "repeated key information more slowly",
+                "used basic words they might know",
+            ],
         },
         {
             "name": "seek_help",
             "weight": 0.20,
-            "keywords": ["found a bilingual colleague to assist", "used a translation app", "called over a team member who spoke their language", "asked a nearby colleague to help translate", "used Google Translate as a bridge"],
+            "keywords": [
+                "found a bilingual colleague to assist",
+                "used a translation app",
+                "called over a team member who spoke their language",
+                "asked a nearby colleague to help translate",
+                "used Google Translate as a bridge",
+            ],
         },
         {
             "name": "follow_through",
             "weight": 0.20,
-            "keywords": ["confirmed they completed registration successfully", "checked they had everything they needed", "ensured the delegate was no longer confused", "stayed with them until the issue was resolved", "followed up after handing them to a colleague"],
+            "keywords": [
+                "confirmed they completed registration successfully",
+                "checked they had everything they needed",
+                "ensured the delegate was no longer confused",
+                "stayed with them until the issue was resolved",
+                "followed up after handing them to a colleague",
+            ],
         },
     ],
     "irt_a": 2.0,
@@ -209,16 +239,12 @@ class TestComputeGRS:
         """Redesigned Q3 must score strictly higher than original Q3."""
         grs_old = compute_grs(Q3_SEED)
         grs_new = compute_grs(Q3_REDESIGNED)
-        assert grs_new > grs_old, (
-            f"Redesigned Q3 ({grs_new}) must score higher than original ({grs_old})."
-        )
+        assert grs_new > grs_old, f"Redesigned Q3 ({grs_new}) must score higher than original ({grs_old})."
 
     def test_well_designed_question_passes_grs(self) -> None:
         """Well-designed question with multi-word keywords should pass GRS."""
         grs = compute_grs(Q_WELL_DESIGNED)
-        assert grs >= GRS_THRESHOLD, (
-            f"Expected well-designed question to PASS GRS (>= {GRS_THRESHOLD}), got {grs}."
-        )
+        assert grs >= GRS_THRESHOLD, f"Expected well-designed question to PASS GRS (>= {GRS_THRESHOLD}), got {grs}."
 
     def test_grs_returns_float_in_range(self) -> None:
         """GRS must always return a value in [0.0, 1.0]."""
@@ -289,9 +315,7 @@ class TestComputeGRS:
             ],
         }
         grs = compute_grs(q_poor)
-        assert grs < GRS_THRESHOLD, (
-            f"Poor question (no narrative + single-word keywords) should fail GRS, got {grs}"
-        )
+        assert grs < GRS_THRESHOLD, f"Poor question (no narrative + single-word keywords) should fail GRS, got {grs}"
 
     def test_keyword_equals_concept_name_penalises_grs(self) -> None:
         """If a keyword is exactly the concept name, GRS should be penalised."""
@@ -318,9 +342,7 @@ class TestComputeGRS:
         }
         grs_bad = compute_grs(q)
         grs_clean = compute_grs(q_clean)
-        assert grs_bad < grs_clean, (
-            f"keyword=concept_name should penalise GRS. Bad: {grs_bad}, Clean: {grs_clean}"
-        )
+        assert grs_bad < grs_clean, f"keyword=concept_name should penalise GRS. Bad: {grs_bad}, Clean: {grs_clean}"
 
     def test_keyword_leakage_in_question_penalises_grs(self) -> None:
         """Keywords that appear verbatim in the question text should reduce GRS."""
@@ -347,9 +369,7 @@ class TestComputeGRS:
         }
         grs_leaked = compute_grs(q_leaked)
         grs_clean = compute_grs(q_clean)
-        assert grs_leaked < grs_clean, (
-            f"Keyword leakage should reduce GRS. Leaked: {grs_leaked}, Clean: {grs_clean}"
-        )
+        assert grs_leaked < grs_clean, f"Keyword leakage should reduce GRS. Leaked: {grs_leaked}, Clean: {grs_clean}"
 
     def test_json_string_concepts_parsed(self) -> None:
         """GRS should handle expected_concepts as a JSON string (as stored in some DB rows)."""
@@ -357,13 +377,15 @@ class TestComputeGRS:
 
         q = {
             "scenario_en": "Describe how you would handle a difficult situation.",
-            "expected_concepts": json.dumps([
-                {
-                    "name": "problem_solving",
-                    "weight": 1.0,
-                    "keywords": ["identify the root cause", "evaluate options", "implement solution"],
-                }
-            ]),
+            "expected_concepts": json.dumps(
+                [
+                    {
+                        "name": "problem_solving",
+                        "weight": 1.0,
+                        "keywords": ["identify the root cause", "evaluate options", "implement solution"],
+                    }
+                ]
+            ),
         }
         grs = compute_grs(q)
         assert 0.0 <= grs <= 1.0
@@ -445,9 +467,7 @@ class TestAdversarialGate:
         """Questions with no keywords defined should pass trivially (nothing to dump)."""
         q_no_kw = {
             "scenario_en": "Describe your leadership style.",
-            "expected_concepts": [
-                {"name": "leadership", "weight": 1.0}
-            ],
+            "expected_concepts": [{"name": "leadership", "weight": 1.0}],
         }
         result = run_adversarial_gate(q_no_kw)
         # keyword_fallback returns 0.5 for concepts with no keywords
@@ -470,10 +490,7 @@ class TestRunQualityChecklist:
         """Q3 should fail the full checklist due to GRS < 0.6 and adversarial gate."""
         result = run_quality_checklist(Q3_SEED)
         # Q3 fails GRS (check 6) and adversarial gate (check 7)
-        assert not result["passed"], (
-            "Q3 should FAIL the quality checklist. "
-            f"Score: {result['score']}/{result['total']}"
-        )
+        assert not result["passed"], f"Q3 should FAIL the quality checklist. Score: {result['score']}/{result['total']}"
         failed_checks = [c for c in result["checks"] if not c["passed"]]
         failed_ids = {c["id"] for c in failed_checks}
         assert 6 in failed_ids or 7 in failed_ids, (
@@ -492,20 +509,14 @@ class TestRunQualityChecklist:
         result = run_quality_checklist(Q_WELL_DESIGNED)
         # Structural checks that must pass
         structural_check_ids = {1, 2, 3, 4, 5, 8, 9, 10}
-        failed_structural = [
-            c for c in result["checks"]
-            if c["id"] in structural_check_ids and not c["passed"]
-        ]
+        failed_structural = [c for c in result["checks"] if c["id"] in structural_check_ids and not c["passed"]]
         assert not failed_structural, (
-            f"Well-designed question should pass all structural checks. "
-            f"Failed: {failed_structural}"
+            f"Well-designed question should pass all structural checks. Failed: {failed_structural}"
         )
         # GRS check should pass (check 6)
         grs_check = next((c for c in result["checks"] if c["id"] == 6), None)
         if grs_check:
-            assert grs_check["passed"], (
-                f"Well-designed question should pass GRS. Detail: {grs_check['detail']}"
-            )
+            assert grs_check["passed"], f"Well-designed question should pass GRS. Detail: {grs_check['detail']}"
 
     def test_broken_question_fails_multiple_checks(self) -> None:
         """A question with empty scenario and no concepts must fail checks 1, 2, and 10."""

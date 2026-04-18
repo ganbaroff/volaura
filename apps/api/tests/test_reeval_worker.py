@@ -396,8 +396,10 @@ class TestProcessItem:
         concepts_as_string = json.dumps([{"c": "x"}])
         item = _make_queue_item(expected_concepts=concepts_as_string)
 
-        with patch("app.services.reeval_worker._reconcile_session", new_callable=AsyncMock), \
-             patch("app.services.reeval_worker._reconcile_aura", new_callable=AsyncMock):
+        with (
+            patch("app.services.reeval_worker._reconcile_session", new_callable=AsyncMock),
+            patch("app.services.reeval_worker._reconcile_aura", new_callable=AsyncMock),
+        ):
             await _process_item(db, item)
 
         mock_eval.assert_awaited_once()
@@ -426,8 +428,10 @@ class TestProcessItem:
         db.execute.return_value = MagicMock(data=[])
         item = _make_queue_item(degraded_score=0.4)
 
-        with patch("app.services.reeval_worker._reconcile_session", new_callable=AsyncMock), \
-             patch("app.services.reeval_worker._reconcile_aura", new_callable=AsyncMock):
+        with (
+            patch("app.services.reeval_worker._reconcile_session", new_callable=AsyncMock),
+            patch("app.services.reeval_worker._reconcile_aura", new_callable=AsyncMock),
+        ):
             await _process_item(db, item)
 
         final_update = db.first_positional("update")
@@ -583,9 +587,7 @@ class TestReconcileAura:
     @pytest.mark.asyncio
     async def test_skips_when_slug_missing(self):
         db = _db()
-        db.execute.return_value = MagicMock(
-            data={"competency_scores": {"leadership": 0.7}}
-        )
+        db.execute.return_value = MagicMock(data={"competency_scores": {"leadership": 0.7}})
 
         await _reconcile_aura(
             db,
@@ -601,9 +603,7 @@ class TestReconcileAura:
     @pytest.mark.asyncio
     async def test_skips_when_score_diverged(self):
         db = _db()
-        db.execute.return_value = MagicMock(
-            data={"competency_scores": {"communication": 0.8}}
-        )
+        db.execute.return_value = MagicMock(data={"competency_scores": {"communication": 0.8}})
 
         await _reconcile_aura(
             db,
@@ -639,9 +639,7 @@ class TestReconcileAura:
     async def test_skips_at_tolerance_boundary(self):
         """0.42 - 0.4 = 0.02 > 0.01 tolerance, should skip."""
         db = _db()
-        db.execute.return_value = MagicMock(
-            data={"competency_scores": {"communication": 0.42}}
-        )
+        db.execute.return_value = MagicMock(data={"competency_scores": {"communication": 0.42}})
 
         await _reconcile_aura(
             db,

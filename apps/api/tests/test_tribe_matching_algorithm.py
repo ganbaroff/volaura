@@ -35,33 +35,39 @@ class TestClusterAndMatchBasic:
         assert ids == {"a", "b"}
 
     def test_three_candidates_form_triplet(self):
-        groups = _cluster_and_match([
-            _cand("a", 50.0),
-            _cand("b", 55.0),
-            _cand("c", 60.0),
-        ])
+        groups = _cluster_and_match(
+            [
+                _cand("a", 50.0),
+                _cand("b", 55.0),
+                _cand("c", 60.0),
+            ]
+        )
         assert len(groups) == 1
         assert len(groups[0]) == TRIBE_SIZE
 
     def test_four_candidates_triplet_plus_remainder(self):
-        groups = _cluster_and_match([
-            _cand("a", 50.0),
-            _cand("b", 52.0),
-            _cand("c", 54.0),
-            _cand("d", 56.0),
-        ])
+        groups = _cluster_and_match(
+            [
+                _cand("a", 50.0),
+                _cand("b", 52.0),
+                _cand("c", 54.0),
+                _cand("d", 56.0),
+            ]
+        )
         total_matched = sum(len(g) for g in groups)
         assert total_matched >= 3
 
     def test_six_candidates_two_triplets(self):
-        groups = _cluster_and_match([
-            _cand("a", 50.0),
-            _cand("b", 52.0),
-            _cand("c", 54.0),
-            _cand("d", 56.0),
-            _cand("e", 58.0),
-            _cand("f", 60.0),
-        ])
+        groups = _cluster_and_match(
+            [
+                _cand("a", 50.0),
+                _cand("b", 52.0),
+                _cand("c", 54.0),
+                _cand("d", 56.0),
+                _cand("e", 58.0),
+                _cand("f", 60.0),
+            ]
+        )
         total_matched = sum(len(g) for g in groups)
         assert total_matched >= 4
         for g in groups:
@@ -70,37 +76,45 @@ class TestClusterAndMatchBasic:
 
 class TestScoreProximity:
     def test_within_boundary_matched(self):
-        groups = _cluster_and_match([
-            _cand("a", 50.0),
-            _cand("b", 50.0 + SCORE_PROXIMITY),
-        ])
+        groups = _cluster_and_match(
+            [
+                _cand("a", 50.0),
+                _cand("b", 50.0 + SCORE_PROXIMITY),
+            ]
+        )
         assert len(groups) == 1
 
     def test_exact_boundary_included(self):
-        groups = _cluster_and_match([
-            _cand("a", 50.0),
-            _cand("b", 50.0 + SCORE_PROXIMITY),
-        ])
+        groups = _cluster_and_match(
+            [
+                _cand("a", 50.0),
+                _cand("b", 50.0 + SCORE_PROXIMITY),
+            ]
+        )
         assert len(groups) == 1
         ids = {u["user_id"] for u in groups[0]}
         assert ids == {"a", "b"}
 
     def test_beyond_boundary_not_matched(self):
-        groups = _cluster_and_match([
-            _cand("a", 50.0),
-            _cand("b", 50.0 + SCORE_PROXIMITY + 0.1),
-        ])
+        groups = _cluster_and_match(
+            [
+                _cand("a", 50.0),
+                _cand("b", 50.0 + SCORE_PROXIMITY + 0.1),
+            ]
+        )
         assert groups == []
 
     def test_two_clusters_separated_by_gap(self):
-        groups = _cluster_and_match([
-            _cand("a", 10.0),
-            _cand("b", 12.0),
-            _cand("c", 14.0),
-            _cand("d", 80.0),
-            _cand("e", 82.0),
-            _cand("f", 84.0),
-        ])
+        groups = _cluster_and_match(
+            [
+                _cand("a", 10.0),
+                _cand("b", 12.0),
+                _cand("c", 14.0),
+                _cand("d", 80.0),
+                _cand("e", 82.0),
+                _cand("f", 84.0),
+            ]
+        )
         assert len(groups) == 2
         cluster_1_ids = {u["user_id"] for u in groups[0]}
         cluster_2_ids = {u["user_id"] for u in groups[1]}
@@ -110,18 +124,22 @@ class TestScoreProximity:
 
 class TestCoMemberExclusion:
     def test_previous_co_member_excluded(self):
-        groups = _cluster_and_match([
-            _cand("a", 50.0, prev=["b"]),
-            _cand("b", 52.0),
-        ])
+        groups = _cluster_and_match(
+            [
+                _cand("a", 50.0, prev=["b"]),
+                _cand("b", 52.0),
+            ]
+        )
         assert groups == []
 
     def test_excluded_co_member_falls_to_next_compatible(self):
-        groups = _cluster_and_match([
-            _cand("a", 50.0, prev=["b"]),
-            _cand("b", 51.0),
-            _cand("c", 53.0),
-        ])
+        groups = _cluster_and_match(
+            [
+                _cand("a", 50.0, prev=["b"]),
+                _cand("b", 51.0),
+                _cand("c", 53.0),
+            ]
+        )
         matched_ids = set()
         for g in groups:
             for u in g:
@@ -133,20 +151,24 @@ class TestCoMemberExclusion:
                     assert "b" not in ids
 
     def test_all_excluded_yields_empty(self):
-        groups = _cluster_and_match([
-            _cand("a", 50.0, prev=["b", "c"]),
-            _cand("b", 52.0, prev=["a", "c"]),
-            _cand("c", 54.0, prev=["a", "b"]),
-        ])
+        groups = _cluster_and_match(
+            [
+                _cand("a", 50.0, prev=["b", "c"]),
+                _cand("b", 52.0, prev=["a", "c"]),
+                _cand("c", 54.0, prev=["a", "b"]),
+            ]
+        )
         assert groups == []
 
     def test_partial_exclusion_forms_valid_group(self):
-        groups = _cluster_and_match([
-            _cand("a", 50.0, prev=["b"]),
-            _cand("b", 51.0),
-            _cand("c", 52.0),
-            _cand("d", 53.0),
-        ])
+        groups = _cluster_and_match(
+            [
+                _cand("a", 50.0, prev=["b"]),
+                _cand("b", 51.0),
+                _cand("c", 52.0),
+                _cand("d", 53.0),
+            ]
+        )
         for g in groups:
             ids = {u["user_id"] for u in g}
             if "a" in ids:
@@ -181,34 +203,42 @@ class TestSortingInvariant:
 
 class TestEdgeCases:
     def test_identical_scores(self):
-        groups = _cluster_and_match([
-            _cand("a", 75.0),
-            _cand("b", 75.0),
-            _cand("c", 75.0),
-        ])
+        groups = _cluster_and_match(
+            [
+                _cand("a", 75.0),
+                _cand("b", 75.0),
+                _cand("c", 75.0),
+            ]
+        )
         assert len(groups) == 1
         assert len(groups[0]) == 3
 
     def test_zero_scores(self):
-        groups = _cluster_and_match([
-            _cand("a", 0.0),
-            _cand("b", 0.0),
-        ])
+        groups = _cluster_and_match(
+            [
+                _cand("a", 0.0),
+                _cand("b", 0.0),
+            ]
+        )
         assert len(groups) == 1
 
     def test_high_scores(self):
-        groups = _cluster_and_match([
-            _cand("a", 100.0),
-            _cand("b", 100.0),
-            _cand("c", 100.0),
-        ])
+        groups = _cluster_and_match(
+            [
+                _cand("a", 100.0),
+                _cand("b", 100.0),
+                _cand("c", 100.0),
+            ]
+        )
         assert len(groups) == 1
 
     def test_negative_score_difference(self):
-        groups = _cluster_and_match([
-            _cand("a", 60.0),
-            _cand("b", 50.0),
-        ])
+        groups = _cluster_and_match(
+            [
+                _cand("a", 60.0),
+                _cand("b", 50.0),
+            ]
+        )
         assert len(groups) == 1
 
     def test_large_pool_no_crash(self):

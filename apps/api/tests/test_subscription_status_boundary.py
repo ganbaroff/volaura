@@ -43,6 +43,7 @@ def _make_status_row(subscription_status: str, trial_ends_at=None):
 
 # ── Trial auto-expiry ─────────────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_trial_expired_when_past_trial_end(client):
     """Trial with trial_ends_at in the past is auto-expired."""

@@ -35,6 +35,7 @@ from app.core.assessment.bars import (
 # Helpers
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 def _ts(days_ago: float) -> datetime:
     """Return a UTC-aware datetime `days_ago` days in the past."""
     return datetime.now(UTC) - timedelta(days=days_ago)
@@ -54,6 +55,7 @@ def _expected_decay_factor(days: float, half_life: float) -> float:
 # ─────────────────────────────────────────────────────────────────────────────
 # Section 1 — Per-competency decay half-lives
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 class TestDecayMathPerCompetency:
     """Each competency decays at the correct rate (verified against formula)."""
@@ -108,10 +110,7 @@ class TestDecayMathPerCompetency:
 
     def test_default_half_life_computed_correctly(self) -> None:
         """Weighted-average half-life matches manual computation."""
-        manual = sum(
-            COMPETENCY_WEIGHTS[c] * _COMPETENCY_HALF_LIVES[c]
-            for c in COMPETENCY_WEIGHTS
-        )
+        manual = sum(COMPETENCY_WEIGHTS[c] * _COMPETENCY_HALF_LIVES[c] for c in COMPETENCY_WEIGHTS)
         assert pytest.approx(round(manual, 1), abs=0.01) == _DECAY_PHASE2_HALF_LIFE_DEFAULT
 
 
@@ -124,9 +123,7 @@ class TestDecayFloor:
         raw = 80.0
         effective = calculate_effective_score(raw, _ts(10_000.0), competency_slug=slug)
         floor_score = round(raw * _DECAY_FLOOR, 2)
-        assert effective >= floor_score - 0.01, (
-            f"{slug}: effective {effective} dropped below floor {floor_score}"
-        )
+        assert effective >= floor_score - 0.01, f"{slug}: effective {effective} dropped below floor {floor_score}"
 
     def test_floor_value_is_60_percent(self) -> None:
         assert pytest.approx(0.60) == _DECAY_FLOOR
@@ -147,14 +144,9 @@ class TestPhase1Uniformity:
         """All competencies must produce identical effective scores within phase 1."""
         raw = 80.0
         ts = _ts(days)
-        results = {
-            slug: calculate_effective_score(raw, ts, competency_slug=slug)
-            for slug in _COMPETENCY_HALF_LIVES
-        }
+        results = {slug: calculate_effective_score(raw, ts, competency_slug=slug) for slug in _COMPETENCY_HALF_LIVES}
         unique_values = set(results.values())
-        assert len(unique_values) == 1, (
-            f"At day {days}, competencies diverged: {results}"
-        )
+        assert len(unique_values) == 1, f"At day {days}, competencies diverged: {results}"
 
     def test_phase1_linear_at_day_0(self) -> None:
         raw = 80.0
@@ -271,14 +263,17 @@ class TestEdgeCases:
 # Section 2 — DeCE Framework: _parse_dece_scores
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 class TestParseDeCEFormat:
     """Parse DeCE format correctly — score, quote, confidence extracted."""
 
     def test_basic_dece_format(self) -> None:
-        raw = json.dumps({
-            "active_listening": {"score": 0.8, "quote": "I always hear everyone out", "confidence": 0.9},
-            "empathy": {"score": 0.5, "quote": None, "confidence": 0.7},
-        })
+        raw = json.dumps(
+            {
+                "active_listening": {"score": 0.8, "quote": "I always hear everyone out", "confidence": 0.9},
+                "empathy": {"score": 0.5, "quote": None, "confidence": 0.7},
+            }
+        )
         scores, details = _parse_dece_scores(raw)
         assert scores is not None
         assert details is not None
@@ -286,9 +281,11 @@ class TestParseDeCEFormat:
         assert scores["empathy"] == pytest.approx(0.5)
 
     def test_dece_detail_fields_present(self) -> None:
-        raw = json.dumps({
-            "teamwork": {"score": 0.75, "quote": "coordinated the volunteers", "confidence": 0.85},
-        })
+        raw = json.dumps(
+            {
+                "teamwork": {"score": 0.75, "quote": "coordinated the volunteers", "confidence": 0.85},
+            }
+        )
         scores, details = _parse_dece_scores(raw)
         assert details is not None
         assert len(details) == 1
@@ -299,26 +296,32 @@ class TestParseDeCEFormat:
         assert detail["confidence"] == pytest.approx(0.85, abs=0.001)
 
     def test_null_quote_stored_as_none(self) -> None:
-        raw = json.dumps({
-            "leadership": {"score": 0.3, "quote": None, "confidence": 0.6},
-        })
+        raw = json.dumps(
+            {
+                "leadership": {"score": 0.3, "quote": None, "confidence": 0.6},
+            }
+        )
         _, details = _parse_dece_scores(raw)
         assert details is not None
         assert details[0]["quote"] is None
 
     def test_score_rounded_to_3dp(self) -> None:
-        raw = json.dumps({
-            "reliability": {"score": 0.66666, "quote": "always on time", "confidence": 0.9},
-        })
+        raw = json.dumps(
+            {
+                "reliability": {"score": 0.66666, "quote": "always on time", "confidence": 0.9},
+            }
+        )
         _, details = _parse_dece_scores(raw)
         assert details is not None
         # score in detail dict is rounded to 3dp
         assert details[0]["score"] == pytest.approx(0.667, abs=0.001)
 
     def test_confidence_rounded_to_3dp(self) -> None:
-        raw = json.dumps({
-            "adaptability": {"score": 0.5, "quote": "adjusted quickly", "confidence": 0.88888},
-        })
+        raw = json.dumps(
+            {
+                "adaptability": {"score": 0.5, "quote": "adjusted quickly", "confidence": 0.88888},
+            }
+        )
         _, details = _parse_dece_scores(raw)
         assert details is not None
         assert details[0]["confidence"] == pytest.approx(0.889, abs=0.001)
@@ -352,20 +355,24 @@ class TestParseMixedFormat:
     """Mixed format: some DeCE dicts, some legacy floats."""
 
     def test_mixed_scores_all_parsed(self) -> None:
-        raw = json.dumps({
-            "active_listening": {"score": 0.9, "quote": "great listener", "confidence": 0.95},
-            "empathy": 0.6,
-        })
+        raw = json.dumps(
+            {
+                "active_listening": {"score": 0.9, "quote": "great listener", "confidence": 0.95},
+                "empathy": 0.6,
+            }
+        )
         scores, details = _parse_dece_scores(raw)
         assert scores is not None
         assert scores["active_listening"] == pytest.approx(0.9)
         assert scores["empathy"] == pytest.approx(0.6)
 
     def test_mixed_details_only_contains_dece_entries(self) -> None:
-        raw = json.dumps({
-            "active_listening": {"score": 0.9, "quote": "great listener", "confidence": 0.95},
-            "empathy": 0.6,
-        })
+        raw = json.dumps(
+            {
+                "active_listening": {"score": 0.9, "quote": "great listener", "confidence": 0.95},
+                "empathy": 0.6,
+            }
+        )
         _, details = _parse_dece_scores(raw)
         # Only DeCE entries appear in concept_details
         assert details is not None
@@ -385,27 +392,33 @@ class TestQuoteCapping:
 
     def test_long_quote_capped_at_200(self) -> None:
         long_quote = "x" * 300
-        raw = json.dumps({
-            "concept": {"score": 0.8, "quote": long_quote, "confidence": 0.9},
-        })
+        raw = json.dumps(
+            {
+                "concept": {"score": 0.8, "quote": long_quote, "confidence": 0.9},
+            }
+        )
         _, details = _parse_dece_scores(raw)
         assert details is not None
         assert len(details[0]["quote"]) == 200
 
     def test_short_quote_not_truncated(self) -> None:
         short_quote = "short phrase"
-        raw = json.dumps({
-            "concept": {"score": 0.8, "quote": short_quote, "confidence": 0.9},
-        })
+        raw = json.dumps(
+            {
+                "concept": {"score": 0.8, "quote": short_quote, "confidence": 0.9},
+            }
+        )
         _, details = _parse_dece_scores(raw)
         assert details is not None
         assert details[0]["quote"] == short_quote
 
     def test_exactly_200_chars_not_truncated(self) -> None:
         exact_quote = "a" * 200
-        raw = json.dumps({
-            "concept": {"score": 0.8, "quote": exact_quote, "confidence": 0.9},
-        })
+        raw = json.dumps(
+            {
+                "concept": {"score": 0.8, "quote": exact_quote, "confidence": 0.9},
+            }
+        )
         _, details = _parse_dece_scores(raw)
         assert details is not None
         assert len(details[0]["quote"]) == 200
@@ -451,17 +464,21 @@ class TestScoreClamping:
     """Score is clamped to [0, 1]."""
 
     def test_score_above_1_clamped_to_1_dece(self) -> None:
-        raw = json.dumps({
-            "concept": {"score": 1.5, "quote": "excellent", "confidence": 0.9},
-        })
+        raw = json.dumps(
+            {
+                "concept": {"score": 1.5, "quote": "excellent", "confidence": 0.9},
+            }
+        )
         scores, _ = _parse_dece_scores(raw)
         assert scores is not None
         assert scores["concept"] == pytest.approx(1.0)
 
     def test_score_below_0_clamped_to_0_dece(self) -> None:
-        raw = json.dumps({
-            "concept": {"score": -0.3, "quote": None, "confidence": 0.9},
-        })
+        raw = json.dumps(
+            {
+                "concept": {"score": -0.3, "quote": None, "confidence": 0.9},
+            }
+        )
         scores, _ = _parse_dece_scores(raw)
         assert scores is not None
         assert scores["concept"] == pytest.approx(0.0)
@@ -495,26 +512,32 @@ class TestConfidenceClamping:
     """Confidence is clamped to [0, 1]."""
 
     def test_confidence_above_1_clamped(self) -> None:
-        raw = json.dumps({
-            "concept": {"score": 0.8, "quote": "nice", "confidence": 1.8},
-        })
+        raw = json.dumps(
+            {
+                "concept": {"score": 0.8, "quote": "nice", "confidence": 1.8},
+            }
+        )
         _, details = _parse_dece_scores(raw)
         assert details is not None
         assert details[0]["confidence"] == pytest.approx(1.0)
 
     def test_confidence_below_0_clamped(self) -> None:
-        raw = json.dumps({
-            "concept": {"score": 0.8, "quote": "nice", "confidence": -0.5},
-        })
+        raw = json.dumps(
+            {
+                "concept": {"score": 0.8, "quote": "nice", "confidence": -0.5},
+            }
+        )
         _, details = _parse_dece_scores(raw)
         assert details is not None
         assert details[0]["confidence"] == pytest.approx(0.0)
 
     def test_missing_confidence_defaults_to_0_5(self) -> None:
         """Absent confidence key defaults to 0.5 per source code."""
-        raw = json.dumps({
-            "concept": {"score": 0.7, "quote": "some phrase"},
-        })
+        raw = json.dumps(
+            {
+                "concept": {"score": 0.7, "quote": "some phrase"},
+            }
+        )
         _, details = _parse_dece_scores(raw)
         assert details is not None
         assert details[0]["confidence"] == pytest.approx(0.5)
@@ -523,6 +546,7 @@ class TestConfidenceClamping:
 # ─────────────────────────────────────────────────────────────────────────────
 # Section 3 — EvaluationResult
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 class TestEvaluationResultToLog:
     """EvaluationResult.to_log() includes/omits concept_details correctly."""
@@ -601,9 +625,11 @@ class TestParseJsonScoresBackwardCompat:
         assert result["concept_a"] == pytest.approx(0.8)
 
     def test_alias_returns_dict_for_dece_format(self) -> None:
-        raw = json.dumps({
-            "active_listening": {"score": 0.9, "quote": "good", "confidence": 0.85},
-        })
+        raw = json.dumps(
+            {
+                "active_listening": {"score": 0.9, "quote": "good", "confidence": 0.85},
+            }
+        )
         result = _parse_json_scores(raw)
         assert result is not None
         assert result["active_listening"] == pytest.approx(0.9)

@@ -40,6 +40,7 @@ MOCK_EMBEDDING: list[float] = [0.01] * 768  # 768-dim zero vector (Gemini dimens
 
 # ── Fixtures ───────────────────────────────────────────────────────────────────
 
+
 @pytest.fixture
 def mock_llm():
     """Patch evaluate_with_llm to return MOCK_BARS_RESPONSE.

@@ -37,7 +37,6 @@ def make_client() -> AsyncClient:
     return AsyncClient(transport=ASGITransport(app=app), base_url="http://test")
 
 
-
 # ── CLASS 2: TestPublicStats ──────────────────────────────────────────────────
 
 
@@ -148,9 +147,7 @@ class TestPublicStats:
         try:
             async with make_client() as client:
                 response = await client.get("/api/stats/public")
-            assert response.status_code == 200, (
-                f"Public stats must not require auth — got {response.status_code}"
-            )
+            assert response.status_code == 200, f"Public stats must not require auth — got {response.status_code}"
         finally:
             app.dependency_overrides.pop(get_supabase_admin, None)
 
@@ -197,9 +194,7 @@ class TestPublicStats:
             # Check it's rounded to 1 decimal — no more than 1 decimal digit
             avg_str = str(avg)
             decimal_part = avg_str.split(".")[-1] if "." in avg_str else ""
-            assert len(decimal_part) <= 1, (
-                f"avg_aura_score should be rounded to 1 decimal, got {avg}"
-            )
+            assert len(decimal_part) <= 1, f"avg_aura_score should be rounded to 1 decimal, got {avg}"
             assert avg == 73.5, f"Expected 73.5 for input 73.456789, got {avg}"
         finally:
             app.dependency_overrides.pop(get_supabase_admin, None)
@@ -234,7 +229,9 @@ class TestCoachingEndpoint:
         result = MagicMock()
         result.data = session_data
 
-        user_mock.table.return_value.select.return_value.eq.return_value.eq.return_value.eq.return_value.maybe_single.return_value.execute = AsyncMock(return_value=result)
+        user_mock.table.return_value.select.return_value.eq.return_value.eq.return_value.eq.return_value.maybe_single.return_value.execute = AsyncMock(
+            return_value=result
+        )
         return user_mock
 
     @staticmethod
@@ -246,8 +243,10 @@ class TestCoachingEndpoint:
         accepts no arguments (FastAPI resolves Request automatically for the real dep,
         but since we fully replace the dependency, we skip request entirely).
         """
+
         async def override():
             yield user_mock
+
         return override
 
     def _make_admin_mock(self, comp_slug: str = "communication") -> MagicMock:
@@ -291,9 +290,7 @@ class TestCoachingEndpoint:
                     f"/api/assessment/{valid_session_id}/coaching"
                     # intentionally no Authorization header
                 )
-            assert response.status_code == 401, (
-                f"Coaching endpoint must require auth — got {response.status_code}"
-            )
+            assert response.status_code == 401, f"Coaching endpoint must require auth — got {response.status_code}"
         finally:
             app.dependency_overrides.pop(get_supabase_admin, None)
 
@@ -318,9 +315,7 @@ class TestCoachingEndpoint:
                     f"/api/assessment/{self.SESSION_ID}/coaching",
                     headers={"Authorization": "Bearer fake-token"},
                 )
-            assert response.status_code == 404, (
-                f"Expected 404 for missing session, got {response.status_code}"
-            )
+            assert response.status_code == 404, f"Expected 404 for missing session, got {response.status_code}"
             body = response.json()
             assert "detail" in body
         finally:
@@ -344,13 +339,15 @@ class TestCoachingEndpoint:
         async def override_user_id():
             return USER_ID
 
-        gemini_response = json.dumps({
-            "tips": [
-                {"title": "Tip 1", "description": "Desc 1", "action": "Do this 1"},
-                {"title": "Tip 2", "description": "Desc 2", "action": "Do this 2"},
-                {"title": "Tip 3", "description": "Desc 3", "action": "Do this 3"},
-            ]
-        })
+        gemini_response = json.dumps(
+            {
+                "tips": [
+                    {"title": "Tip 1", "description": "Desc 1", "action": "Do this 1"},
+                    {"title": "Tip 2", "description": "Desc 2", "action": "Do this 2"},
+                    {"title": "Tip 3", "description": "Desc 3", "action": "Do this 3"},
+                ]
+            }
+        )
 
         app.dependency_overrides[get_supabase_admin] = override_admin
         app.dependency_overrides[get_supabase_user] = override_user
@@ -360,7 +357,9 @@ class TestCoachingEndpoint:
                 mock_settings.gemini_api_key = "fake-key"
 
                 # Patch google.genai.Client inside the router
-                with patch("app.services.assessment.coaching_service.asyncio.wait_for", new_callable=AsyncMock) as mock_wait:
+                with patch(
+                    "app.services.assessment.coaching_service.asyncio.wait_for", new_callable=AsyncMock
+                ) as mock_wait:
                     mock_wait.return_value = gemini_response
 
                     async with make_client() as client:
@@ -406,7 +405,9 @@ class TestCoachingEndpoint:
             with patch("app.routers.assessment.settings") as mock_settings:
                 mock_settings.gemini_api_key = "fake-key"
 
-                with patch("app.services.assessment.coaching_service.asyncio.wait_for", new_callable=AsyncMock) as mock_wait:
+                with patch(
+                    "app.services.assessment.coaching_service.asyncio.wait_for", new_callable=AsyncMock
+                ) as mock_wait:
                     mock_wait.side_effect = Exception("Gemini API unavailable")
 
                     async with make_client() as client:
@@ -450,7 +451,9 @@ class TestCoachingEndpoint:
         app.dependency_overrides[get_supabase_user] = override_user
         app.dependency_overrides[get_current_user_id] = override_user_id
         try:
-            with patch("app.services.assessment.coaching_service.asyncio.wait_for", new_callable=AsyncMock) as mock_gemini:
+            with patch(
+                "app.services.assessment.coaching_service.asyncio.wait_for", new_callable=AsyncMock
+            ) as mock_gemini:
                 mock_gemini.side_effect = Exception("Should not be called for cached sessions")
 
                 async with make_client() as client:
@@ -475,6 +478,7 @@ class TestCoachingEndpoint:
     @pytest.mark.asyncio
     async def test_coaching_invalid_session_id_format(self):
         """POST with a non-UUID session_id returns 422 (not 500)."""
+
         async def override_user_id():
             return USER_ID
 
@@ -596,6 +600,7 @@ class TestSecurityEndpoints:
         finally:
             app.dependency_overrides.pop(get_supabase_admin, None)
 
+
 # ── CLASS 6: TestVerificationEndpoint ──────────────────────────────────────────
 
 
@@ -627,9 +632,7 @@ class TestVerificationEndpoint:
         volunteer_id = str(uuid4())
         competency_id = "communication"
 
-        expires_at = (
-            datetime.now(UTC) + timedelta(days=expires_delta_days)
-        ).isoformat()
+        expires_at = (datetime.now(UTC) + timedelta(days=expires_delta_days)).isoformat()
 
         token_row = {
             "id": str(uuid4()),
@@ -652,14 +655,10 @@ class TestVerificationEndpoint:
         verif_mock = MagicMock()
         get_result = MagicMock()
         get_result.data = token_row
-        verif_mock.select.return_value.eq.return_value.single.return_value.execute = AsyncMock(
-            return_value=get_result
-        )
+        verif_mock.select.return_value.eq.return_value.single.return_value.execute = AsyncMock(return_value=get_result)
         update_result = MagicMock()
         update_result.data = [token_row]
-        verif_mock.update.return_value.eq.return_value.eq.return_value.execute = AsyncMock(
-            return_value=update_result
-        )
+        verif_mock.update.return_value.eq.return_value.eq.return_value.execute = AsyncMock(return_value=update_result)
 
         # aura_scores table mock
         aura_mock = MagicMock()
@@ -668,9 +667,7 @@ class TestVerificationEndpoint:
             aura_result.data = {"competency_scores": {competency_id: existing_aura_score}}
         else:
             aura_result.data = None
-        aura_mock.select.return_value.eq.return_value.single.return_value.execute = AsyncMock(
-            return_value=aura_result
-        )
+        aura_mock.select.return_value.eq.return_value.single.return_value.execute = AsyncMock(return_value=aura_result)
 
         def mock_table(table_name: str) -> MagicMock:
             if table_name == "expert_verifications":
@@ -705,9 +702,7 @@ class TestVerificationEndpoint:
                     json={"rating": 4, "comment": "Great communicator"},
                     headers={"X-Forwarded-For": "10.2.0.1"},
                 )
-            assert response.status_code == 201, (
-                f"Expected 201, got {response.status_code}: {response.text}"
-            )
+            assert response.status_code == 201, f"Expected 201, got {response.status_code}: {response.text}"
             body = response.json()
             assert body["status"] == "verified"
             assert body["rating"] == 4
@@ -732,9 +727,7 @@ class TestVerificationEndpoint:
                     json={"rating": 3},
                     headers={"X-Forwarded-For": "10.2.0.2"},
                 )
-            assert response.status_code == 409, (
-                f"Used token must return 409, got {response.status_code}"
-            )
+            assert response.status_code == 409, f"Used token must return 409, got {response.status_code}"
             body = response.json()
             assert body["detail"]["code"] == "TOKEN_ALREADY_USED"
         finally:
@@ -756,9 +749,7 @@ class TestVerificationEndpoint:
                     json={"rating": 5},
                     headers={"X-Forwarded-For": "10.2.0.3"},
                 )
-            assert response.status_code == 410, (
-                f"Expired token must return 410, got {response.status_code}"
-            )
+            assert response.status_code == 410, f"Expired token must return 410, got {response.status_code}"
             body = response.json()
             assert body["detail"]["code"] == "TOKEN_EXPIRED"
         finally:
@@ -772,9 +763,7 @@ class TestVerificationEndpoint:
         get_result = MagicMock()
         get_result.data = None
         verif_mock = MagicMock()
-        verif_mock.select.return_value.eq.return_value.single.return_value.execute = AsyncMock(
-            return_value=get_result
-        )
+        verif_mock.select.return_value.eq.return_value.single.return_value.execute = AsyncMock(return_value=get_result)
         admin_mock.table.side_effect = lambda t: verif_mock if t == "expert_verifications" else MagicMock()
 
         async def override_admin():
@@ -788,9 +777,7 @@ class TestVerificationEndpoint:
                     json={"rating": 3},
                     headers={"X-Forwarded-For": "10.2.0.4"},
                 )
-            assert response.status_code == 404, (
-                f"Invalid token must return 404, got {response.status_code}"
-            )
+            assert response.status_code == 404, f"Invalid token must return 404, got {response.status_code}"
             body = response.json()
             assert body["detail"]["code"] == "TOKEN_INVALID"
         finally:

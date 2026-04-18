@@ -407,9 +407,7 @@ class TestQ2TestStrategy:
 
         # Anti-gaming gate (2026-03-26): short keyword-stuffed answers now penalized.
         # keyword_fallback detects high keyword density in short answers → 0.3x multiplier.
-        assert s_game < 0.5, (
-            f"Q2 gaming scores {s_game:.3f}: anti-gaming gate should cap keyword stuffing."
-        )
+        assert s_game < 0.5, f"Q2 gaming scores {s_game:.3f}: anti-gaming gate should cap keyword stuffing."
 
     def test_per_concept_breakdown(self):
         for quality, answer in self.A.items():
@@ -498,8 +496,7 @@ class TestCrossQuestionSummary:
             s = score(answers["poor"], q_def["expected_concepts"])
             print(f"\n{q_def['id']} poor: {s:.3f}")
             assert s < 0.3, (
-                f"{q_def['id']}: poor answer scores {s:.3f} -- "
-                "answer may accidentally contain assessment keywords"
+                f"{q_def['id']}: poor answer scores {s:.3f} -- answer may accidentally contain assessment keywords"
             )
 
     def test_ordering_holds_across_all_questions(self):
@@ -513,10 +510,7 @@ class TestCrossQuestionSummary:
             s_med = score(answers["mediocre"], c)
             s_poor = score(answers["poor"], c)
             s_game = score(answers["gaming"], c)
-            print(
-                f"\n{q_def['id']}: exc={s_exc:.3f} med={s_med:.3f} "
-                f"poor={s_poor:.3f} game={s_game:.3f}"
-            )
+            print(f"\n{q_def['id']}: exc={s_exc:.3f} med={s_med:.3f} poor={s_poor:.3f} game={s_game:.3f}")
             assert s_exc > s_med, f"{q_def['id']}: excellent <= mediocre"
             assert s_med > s_poor, f"{q_def['id']}: mediocre <= poor"
             # keyword_fallback: gaming > poor (documented limitation, not a bug)
@@ -542,9 +536,7 @@ class TestCrossQuestionSummary:
                 ans = answers[quality]
                 breakdown = score_breakdown(ans, q_def["expected_concepts"])
                 composite = score(ans, q_def["expected_concepts"])
-                concepts_str = "  ".join(
-                    f"{n}={v:.2f}" for n, v in breakdown.items()
-                )
+                concepts_str = "  ".join(f"{n}={v:.2f}" for n, v in breakdown.items())
                 print(f"{quality:<12} {composite:>10.3f}  {concepts_str}")
 
         print("\n" + "=" * 65)

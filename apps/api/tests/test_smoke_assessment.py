@@ -68,15 +68,18 @@ OPEN_QUESTION = {
 
 # ── Mock helpers ───────────────────────────────────────────────────────────────
 
+
 def _make_dep_override(value):
     async def _override():
         yield value
+
     return _override
 
 
 def _make_user_id_override(user_id: str):
     async def _override():
         return user_id
+
     return _override
 
 
@@ -122,23 +125,28 @@ def _build_chainable(execute_side_effects: list):
 
 # ── Test 1: Full happy path — MCQ only session ─────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_start_assessment_returns_first_question():
     """POST /api/assessment/start → 201 with a question."""
-    admin = _build_chainable([
-        {"id": COMP_ID},          # competency id lookup
-        [MCQ_QUESTION],            # questions list
-    ])
-    user = _build_chainable([
-        # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
-        [],                                # no existing in-progress session
-        {"is_platform_admin": False},      # admin lookup (commit 7789545)
-        [],                                # rapid-restart cooldown check (no recent abandoned sessions)
-        [],                                # retest cooldown check (no completed sessions)
-        MagicMock(data=[], count=0),       # abuse monitoring count query
-        [],                                # carry-over theta (no prior completed session)
-        {"id": SESSION_ID},                # insert session
-    ])
+    admin = _build_chainable(
+        [
+            {"id": COMP_ID},  # competency id lookup
+            [MCQ_QUESTION],  # questions list
+        ]
+    )
+    user = _build_chainable(
+        [
+            # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
+            [],  # no existing in-progress session
+            {"is_platform_admin": False},  # admin lookup (commit 7789545)
+            [],  # rapid-restart cooldown check (no recent abandoned sessions)
+            [],  # retest cooldown check (no completed sessions)
+            MagicMock(data=[], count=0),  # abuse monitoring count query
+            [],  # carry-over theta (no prior completed session)
+            {"id": SESSION_ID},  # insert session
+        ]
+    )
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
@@ -184,15 +192,19 @@ async def test_submit_correct_mcq_answer():
 
     # After 1 answer the session is still in_progress (not enough to stop)
     # Admin returns: question detail, then questions list, then competency slug
-    admin = _build_chainable([
-        MCQ_QUESTION,              # question detail lookup
-        [MCQ_QUESTION],            # remaining questions for next item selection
-        {"slug": COMP_SLUG},       # competency slug for response
-    ])
-    user = _build_chainable([
-        in_progress_session,       # session lookup
-        {"id": SESSION_ID},        # session update
-    ])
+    admin = _build_chainable(
+        [
+            MCQ_QUESTION,  # question detail lookup
+            [MCQ_QUESTION],  # remaining questions for next item selection
+            {"slug": COMP_SLUG},  # competency slug for response
+        ]
+    )
+    user = _build_chainable(
+        [
+            in_progress_session,  # session lookup
+            {"id": SESSION_ID},  # session update
+        ]
+    )
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
@@ -206,7 +218,7 @@ async def test_submit_correct_mcq_answer():
                 json={
                     "session_id": SESSION_ID,
                     "question_id": Q_MCQ_ID,
-                    "answer": "B",              # correct answer
+                    "answer": "B",  # correct answer
                     "response_time_ms": 5000,
                 },
                 headers={"Authorization": "Bearer fake-token"},
@@ -236,15 +248,19 @@ async def test_submit_wrong_mcq_answer():
         "theta_se": 1.0,
     }
 
-    admin = _build_chainable([
-        MCQ_QUESTION,
-        [MCQ_QUESTION],
-        {"slug": COMP_SLUG},
-    ])
-    user = _build_chainable([
-        in_progress_session,
-        {"id": SESSION_ID},
-    ])
+    admin = _build_chainable(
+        [
+            MCQ_QUESTION,
+            [MCQ_QUESTION],
+            {"slug": COMP_SLUG},
+        ]
+    )
+    user = _build_chainable(
+        [
+            in_progress_session,
+            {"id": SESSION_ID},
+        ]
+    )
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
@@ -258,7 +274,7 @@ async def test_submit_wrong_mcq_answer():
                 json={
                     "session_id": SESSION_ID,
                     "question_id": Q_MCQ_ID,
-                    "answer": "A",              # wrong answer
+                    "answer": "A",  # wrong answer
                     "response_time_ms": 5000,
                 },
                 headers={"Authorization": "Bearer fake-token"},
@@ -297,28 +313,33 @@ async def test_submit_open_ended_uses_keyword_fallback():
     # 5. fetch_questions (next item selection)
     # 6. update session (db_admin; optimistic locking)
     # 7. competency slug for make_session_out (or cache hit after call 3)
-    admin = _build_chainable([
-        OPEN_QUESTION,                      # 1. question detail
-        [],                                 # 2. daily LLM cap check (no sessions today)
-        {"slug": COMP_SLUG},                # 3. competency slug for re-eval queue
-        [{"id": "queue-row-1"}],            # 4. evaluation_queue insert result (truthy)
-        [OPEN_QUESTION],                    # 5. fetch_questions
-        [{"id": SESSION_ID}],               # 6. update session result (must be truthy)
-        {"slug": COMP_SLUG},                # 7. competency slug for make_session_out
-    ])
-    user = _build_chainable([
-        in_progress_session,            # session lookup
-    ])
+    admin = _build_chainable(
+        [
+            OPEN_QUESTION,  # 1. question detail
+            [],  # 2. daily LLM cap check (no sessions today)
+            {"slug": COMP_SLUG},  # 3. competency slug for re-eval queue
+            [{"id": "queue-row-1"}],  # 4. evaluation_queue insert result (truthy)
+            [OPEN_QUESTION],  # 5. fetch_questions
+            [{"id": SESSION_ID}],  # 6. update session result (must be truthy)
+            {"slug": COMP_SLUG},  # 7. competency slug for make_session_out
+        ]
+    )
+    user = _build_chainable(
+        [
+            in_progress_session,  # session lookup
+        ]
+    )
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
     app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
 
     # Disable all LLMs — force keyword fallback
-    with patch("app.core.assessment.bars._try_gemini", AsyncMock(return_value=(None, None))), \
-         patch("app.core.assessment.bars._try_groq", AsyncMock(return_value=(None, None))), \
-         patch("app.core.assessment.bars._try_openai", AsyncMock(return_value=(None, None))):
-
+    with (
+        patch("app.core.assessment.bars._try_gemini", AsyncMock(return_value=(None, None))),
+        patch("app.core.assessment.bars._try_groq", AsyncMock(return_value=(None, None))),
+        patch("app.core.assessment.bars._try_openai", AsyncMock(return_value=(None, None))),
+    ):
         try:
             transport = ASGITransport(app=app)
             async with AsyncClient(transport=transport, base_url="http://test") as ac:
@@ -379,15 +400,19 @@ async def test_complete_assessment_returns_aura_score():
     rpc_mock.execute = AsyncMock(return_value=MagicMock(data=True))
 
     # Admin call order: 1. update gaming columns, 2. competency slug lookup, 3. rpc (overridden)
-    admin = _build_chainable([
-        [{"id": SESSION_ID}],     # 1. update gaming columns (truthy = no exception)
-        {"slug": COMP_SLUG},      # 2. competency slug lookup
-    ])
+    admin = _build_chainable(
+        [
+            [{"id": SESSION_ID}],  # 1. update gaming columns (truthy = no exception)
+            {"slug": COMP_SLUG},  # 2. competency slug lookup
+        ]
+    )
     admin.rpc = MagicMock(return_value=rpc_mock)
 
-    user = _build_chainable([
-        completed_session,         # session lookup
-    ])
+    user = _build_chainable(
+        [
+            completed_session,  # session lookup
+        ]
+    )
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
@@ -444,12 +469,16 @@ async def test_get_results_returns_same_score():
         "completed_at": "2026-03-24T12:00:00Z",
     }
 
-    admin = _build_chainable([
-        {"slug": COMP_SLUG},
-    ])
-    user = _build_chainable([
-        completed_session,
-    ])
+    admin = _build_chainable(
+        [
+            {"slug": COMP_SLUG},
+        ]
+    )
+    user = _build_chainable(
+        [
+            completed_session,
+        ]
+    )
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
@@ -518,13 +547,17 @@ async def test_cannot_answer_wrong_question():
 @pytest.mark.asyncio
 async def test_cannot_start_duplicate_session():
     """Starting a second session for same competency while one is in_progress → 409."""
-    admin = _build_chainable([
-        {"id": COMP_ID},  # competency lookup
-    ])
-    user = _build_chainable([
-        # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
-        [{"id": "existing-session-id"}],  # existing in-progress session found
-    ])
+    admin = _build_chainable(
+        [
+            {"id": COMP_ID},  # competency lookup
+        ]
+    )
+    user = _build_chainable(
+        [
+            # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
+            [{"id": "existing-session-id"}],  # existing in-progress session found
+        ]
+    )
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
@@ -595,9 +628,7 @@ async def test_submit_answer_returns_410_when_session_expired():
             f"Expected 410 SESSION_EXPIRED for expired session, got {resp.status_code}: {resp.text}"
         )
         body = resp.json()
-        assert body["detail"]["code"] == "SESSION_EXPIRED", (
-            f"Expected code SESSION_EXPIRED, got: {body['detail']}"
-        )
+        assert body["detail"]["code"] == "SESSION_EXPIRED", f"Expected code SESSION_EXPIRED, got: {body['detail']}"
     finally:
         app.dependency_overrides.clear()
 
@@ -644,9 +675,7 @@ async def test_complete_assessment_returns_410_when_session_expired():
             f"Expected 410 SESSION_EXPIRED for expired session, got {resp.status_code}: {resp.text}"
         )
         body = resp.json()
-        assert body["detail"]["code"] == "SESSION_EXPIRED", (
-            f"Expected code SESSION_EXPIRED, got: {body['detail']}"
-        )
+        assert body["detail"]["code"] == "SESSION_EXPIRED", f"Expected code SESSION_EXPIRED, got: {body['detail']}"
     finally:
         app.dependency_overrides.clear()
 
@@ -685,14 +714,18 @@ async def test_submit_answer_returns_409_on_version_conflict():
     #   1. question detail lookup       (.single())
     #   2. fetch_questions list         (next item selection — cache miss)
     #   3. UPDATE with optimistic lock  → returns [] (version mismatch = concurrent submit)
-    admin = _build_chainable([
-        MCQ_QUESTION,   # 1. question detail
-        [MCQ_QUESTION], # 2. fetch_questions (cache cleared, so DB hit)
-        [],             # 3. UPDATE returns empty list — optimistic lock version conflict
-    ])
-    user = _build_chainable([
-        in_progress_session,  # session fetch
-    ])
+    admin = _build_chainable(
+        [
+            MCQ_QUESTION,  # 1. question detail
+            [MCQ_QUESTION],  # 2. fetch_questions (cache cleared, so DB hit)
+            [],  # 3. UPDATE returns empty list — optimistic lock version conflict
+        ]
+    )
+    user = _build_chainable(
+        [
+            in_progress_session,  # session fetch
+        ]
+    )
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
@@ -712,13 +745,9 @@ async def test_submit_answer_returns_409_on_version_conflict():
                 headers={"Authorization": "Bearer fake-token"},
             )
 
-        assert resp.status_code == 409, (
-            f"Expected 409 CONCURRENT_SUBMIT, got {resp.status_code}: {resp.text}"
-        )
+        assert resp.status_code == 409, f"Expected 409 CONCURRENT_SUBMIT, got {resp.status_code}: {resp.text}"
         body = resp.json()
-        assert body["detail"]["code"] == "CONCURRENT_SUBMIT", (
-            f"Expected code CONCURRENT_SUBMIT, got: {body['detail']}"
-        )
+        assert body["detail"]["code"] == "CONCURRENT_SUBMIT", f"Expected code CONCURRENT_SUBMIT, got: {body['detail']}"
         assert "already submitted" in body["detail"]["message"].lower(), (
             f"Expected user-facing message about duplicate submit, got: {body['detail']['message']}"
         )

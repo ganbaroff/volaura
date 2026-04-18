@@ -38,8 +38,8 @@ limiter.enabled = False
 
 ORG_A_USER = str(uuid4())
 ORG_B_USER = str(uuid4())
-ORG_A_ID   = str(uuid4())
-ORG_B_ID   = str(uuid4())
+ORG_A_ID = str(uuid4())
+ORG_B_ID = str(uuid4())
 
 SEARCH_OWNED_BY_ORG_A = {
     "id": str(uuid4()),
@@ -69,6 +69,7 @@ def make_client() -> AsyncClient:
 
 class MockResult:
     """Thin wrapper around .data for async execute() calls."""
+
     def __init__(self, data=None, count=None):
         self.data = data
         self.count = count
@@ -81,10 +82,10 @@ def make_org_admin(
     ownership_search: dict | None = None,
 ) -> MagicMock:
     """Build an admin mock that:
-      - Returns `user_org_id` when looking up the caller's org
-      - Returns `searches` when listing org_saved_searches
-      - Returns `search_count` for count queries (cap enforcement)
-      - Returns `ownership_search` when asserting search ownership (None = 404)
+    - Returns `user_org_id` when looking up the caller's org
+    - Returns `searches` when listing org_saved_searches
+    - Returns `search_count` for count queries (cap enforcement)
+    - Returns `ownership_search` when asserting search ownership (None = 404)
     """
     admin = MagicMock()
 
@@ -124,15 +125,11 @@ def make_org_admin(
                 # vs .eq().order() — list query
                 # We return a combined mock that handles both chains
                 combined = MagicMock()
-                combined.eq.return_value.maybe_single.return_value.execute = AsyncMock(
-                    return_value=ownership_result
-                )
+                combined.eq.return_value.maybe_single.return_value.execute = AsyncMock(return_value=ownership_result)
                 combined.eq.return_value.eq.return_value.maybe_single.return_value.execute = AsyncMock(
                     return_value=ownership_result
                 )
-                combined.eq.return_value.order.return_value.execute = AsyncMock(
-                    return_value=list_result
-                )
+                combined.eq.return_value.order.return_value.execute = AsyncMock(return_value=list_result)
                 combined.eq.return_value.execute = AsyncMock(return_value=list_result)
                 return combined
 
@@ -157,6 +154,7 @@ def make_org_admin(
 
 
 # ── Section 1: Happy Path ─────────────────────────────────────────────────────
+
 
 class TestSavedSearchHappyPath:
     """Standard create / list / delete / update flows."""
@@ -218,9 +216,7 @@ class TestSavedSearchHappyPath:
 
         try:
             async with make_client() as client:
-                resp = await client.delete(
-                    f"/api/organizations/saved-searches/{SEARCH_OWNED_BY_ORG_A['id']}"
-                )
+                resp = await client.delete(f"/api/organizations/saved-searches/{SEARCH_OWNED_BY_ORG_A['id']}")
             assert resp.status_code == 204
         finally:
             app.dependency_overrides.clear()
@@ -248,6 +244,7 @@ class TestSavedSearchHappyPath:
 
 # ── Section 2: Privilege Escalation (Sprint 8 Security P0) ───────────────────
 
+
 class TestSavedSearchPrivilegeEscalation:
     """
     CRITICAL: These tests verify that org A cannot access org B's data.
@@ -268,7 +265,7 @@ class TestSavedSearchPrivilegeEscalation:
         """
         admin = make_org_admin(
             user_org_id=ORG_A_ID,
-            searches=[SEARCH_OWNED_BY_ORG_A],   # only org A's searches returned
+            searches=[SEARCH_OWNED_BY_ORG_A],  # only org A's searches returned
         )
         app.dependency_overrides[get_supabase_admin] = lambda: admin
         app.dependency_overrides[get_current_user_id] = lambda: ORG_A_USER
@@ -304,9 +301,7 @@ class TestSavedSearchPrivilegeEscalation:
         try:
             async with make_client() as client:
                 # Attempt to delete a search that belongs to org B
-                resp = await client.delete(
-                    f"/api/organizations/saved-searches/{SEARCH_OWNED_BY_ORG_B['id']}"
-                )
+                resp = await client.delete(f"/api/organizations/saved-searches/{SEARCH_OWNED_BY_ORG_B['id']}")
             # Must be 404, NOT 204 or 200
             assert resp.status_code == 404
             body = resp.json()
@@ -322,7 +317,7 @@ class TestSavedSearchPrivilegeEscalation:
         """
         admin = make_org_admin(
             user_org_id=ORG_A_ID,
-            ownership_search=None,   # foreign search = not found for org A
+            ownership_search=None,  # foreign search = not found for org A
         )
         app.dependency_overrides[get_supabase_admin] = lambda: admin
         app.dependency_overrides[get_current_user_id] = lambda: ORG_A_USER
@@ -342,6 +337,7 @@ class TestSavedSearchPrivilegeEscalation:
 
 # ── Section 3: Input Validation ────────────────────────────────────────────────
 
+
 class TestSavedSearchValidation:
     """Cap enforcement, duplicate names, invalid badge tier, invalid UUID."""
 
@@ -354,7 +350,7 @@ class TestSavedSearchValidation:
         """
         admin = make_org_admin(
             user_org_id=ORG_A_ID,
-            search_count=20,   # already at the cap
+            search_count=20,  # already at the cap
         )
         app.dependency_overrides[get_supabase_admin] = lambda: admin
         app.dependency_overrides[get_current_user_id] = lambda: ORG_A_USER
@@ -430,7 +426,7 @@ class TestSavedSearchValidation:
     @pytest.mark.asyncio
     async def test_no_org_returns_404(self):
         """User without an organization → 404 ORG_NOT_FOUND on all endpoints."""
-        admin = make_org_admin(user_org_id="")   # empty = no org found
+        admin = make_org_admin(user_org_id="")  # empty = no org found
         app.dependency_overrides[get_supabase_admin] = lambda: admin
         app.dependency_overrides[get_current_user_id] = lambda: str(uuid4())
 
@@ -468,6 +464,7 @@ class TestSavedSearchValidation:
 
 # ── Section 4: Match Checker Unit Tests ───────────────────────────────────────
 
+
 class TestMatchCheckerService:
     """Unit tests for match_checker.py service — no HTTP, pure service layer."""
 
@@ -480,8 +477,8 @@ class TestMatchCheckerService:
         # org_saved_searches returns empty list
         result_mock = MagicMock()
         result_mock.data = []
-        admin.table.return_value.select.return_value.eq.return_value.order.return_value.limit.return_value.execute = AsyncMock(
-            return_value=result_mock
+        admin.table.return_value.select.return_value.eq.return_value.order.return_value.limit.return_value.execute = (
+            AsyncMock(return_value=result_mock)
         )
 
         summary = await run_match_check(admin)
@@ -500,16 +497,18 @@ class TestMatchCheckerService:
 
         # One search in the list
         searches_result = MagicMock()
-        searches_result.data = [{
-            "id": str(uuid4()),
-            "org_id": ORG_A_ID,
-            "name": "Broken search",
-            "filters": {"min_aura": 50.0},
-            "notify_on_match": True,
-            "last_checked_at": "2026-04-01T00:00:00+00:00",
-        }]
-        admin.table.return_value.select.return_value.eq.return_value.order.return_value.limit.return_value.execute = AsyncMock(
-            return_value=searches_result
+        searches_result.data = [
+            {
+                "id": str(uuid4()),
+                "org_id": ORG_A_ID,
+                "name": "Broken search",
+                "filters": {"min_aura": 50.0},
+                "notify_on_match": True,
+                "last_checked_at": "2026-04-01T00:00:00+00:00",
+            }
+        ]
+        admin.table.return_value.select.return_value.eq.return_value.order.return_value.limit.return_value.execute = (
+            AsyncMock(return_value=searches_result)
         )
 
         # Org lookup raises an exception
@@ -521,7 +520,7 @@ class TestMatchCheckerService:
 
         # Must not raise — errors are counted and logged
         assert summary.errors == 1
-        assert summary.searches_checked == 0   # failed before incrementing
+        assert summary.searches_checked == 0  # failed before incrementing
 
     @pytest.mark.asyncio
     async def test_circuit_breaker_stops_telegram_after_threshold(self):
@@ -563,11 +562,13 @@ class TestMatchCheckerService:
 
         # aura_scores returns 1 new match for each search
         match_result = MagicMock()
-        match_result.data = [{
-            "volunteer_id": str(uuid4()),
-            "total_score": 75.0,
-            "badge_tier": "gold",
-        }]
+        match_result.data = [
+            {
+                "volunteer_id": str(uuid4()),
+                "total_score": 75.0,
+                "badge_tier": "gold",
+            }
+        ]
 
         # Profiles result
         profile_result = MagicMock()

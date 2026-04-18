@@ -19,6 +19,7 @@ from app.services.lifesim import (
 
 # ── apply_stat_boosts_from_verified_skills ────────────────────────────────
 
+
 def test_stat_boosts_empty_skills():
     assert apply_stat_boosts_from_verified_skills([]) == {
         "social": 0.0,
@@ -69,6 +70,7 @@ def test_stat_boosts_multiple_skills_accumulate():
 
 
 # ── apply_consequences_to_stats ────────────────────────────────────────────
+
 
 def test_consequences_basic_add():
     stats = {"health": 50, "social": 30}
@@ -155,9 +157,7 @@ def test_filter_pool_age_match():
 
 
 def test_filter_pool_required_stats_met():
-    out = filter_pool_for_user(
-        _SAMPLE_POOL, age=35, stats={"intelligence": 70, "social": 50, "energy": 30}
-    )
+    out = filter_pool_for_user(_SAMPLE_POOL, age=35, stats={"intelligence": 70, "social": 50, "energy": 30})
     ids = {e["id"] for e in out}
     assert "e2" in ids  # intelligence 70 >= 60
     assert "e4" in ids  # social 50 >= 30 and energy 30 >= 20
@@ -171,9 +171,7 @@ def test_filter_pool_required_stats_not_met():
 
 def test_filter_pool_no_age_limits():
     # e4 has no age limits — should match any age if stats OK
-    out = filter_pool_for_user(
-        _SAMPLE_POOL, age=100, stats={"social": 99, "energy": 99}
-    )
+    out = filter_pool_for_user(_SAMPLE_POOL, age=100, stats={"social": 99, "energy": 99})
     ids = {e["id"] for e in out}
     assert "e4" in ids
     assert "e1" not in ids  # age 100 > max 25

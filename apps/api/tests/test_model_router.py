@@ -50,15 +50,18 @@ class TestProviderRole:
 
 class TestProviderSpec:
     def test_frozen(self):
-        spec = ProviderSpec(
-            provider="test", model="m", base_url=None, api_key="k", rationale="r", is_fallback=False
-        )
+        spec = ProviderSpec(provider="test", model="m", base_url=None, api_key="k", rationale="r", is_fallback=False)
         with pytest.raises(FrozenInstanceError):
             spec.provider = "other"  # type: ignore[misc]
 
     def test_fields(self):
         spec = ProviderSpec(
-            provider="cerebras", model="qwen-3-235b", base_url="http://x", api_key="sk-x", rationale="test", is_fallback=True
+            provider="cerebras",
+            model="qwen-3-235b",
+            base_url="http://x",
+            api_key="sk-x",
+            rationale="test",
+            is_fallback=True,
         )
         assert spec.provider == "cerebras"
         assert spec.is_fallback is True

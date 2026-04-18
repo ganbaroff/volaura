@@ -26,28 +26,60 @@ Q1 = {
             "name": "observability",
             "weight": 0.35,
             "keywords": [
-                "logs", "metrics", "tracing", "trace", "dashboard",
-                "alert", "monitor", "grafana", "datadog", "sentry",
-                "profiling", "flame graph", "apm", "distributed tracing",
+                "logs",
+                "metrics",
+                "tracing",
+                "trace",
+                "dashboard",
+                "alert",
+                "monitor",
+                "grafana",
+                "datadog",
+                "sentry",
+                "profiling",
+                "flame graph",
+                "apm",
+                "distributed tracing",
             ],
         },
         {
             "name": "root_cause_analysis",
             "weight": 0.40,
             "keywords": [
-                "reproduce", "isolate", "hypothesis", "bottleneck",
-                "connection pool", "database", "timeout", "memory leak",
-                "cpu", "thread", "deadlock", "race condition", "regression",
-                "rollback", "deploy", "canary",
+                "reproduce",
+                "isolate",
+                "hypothesis",
+                "bottleneck",
+                "connection pool",
+                "database",
+                "timeout",
+                "memory leak",
+                "cpu",
+                "thread",
+                "deadlock",
+                "race condition",
+                "regression",
+                "rollback",
+                "deploy",
+                "canary",
             ],
         },
         {
             "name": "incident_communication",
             "weight": 0.25,
             "keywords": [
-                "stakeholders", "status page", "postmortem", "runbook",
-                "escalate", "team", "on-call", "notify", "document",
-                "timeline", "mitigation", "action item",
+                "stakeholders",
+                "status page",
+                "postmortem",
+                "runbook",
+                "escalate",
+                "team",
+                "on-call",
+                "notify",
+                "document",
+                "timeline",
+                "mitigation",
+                "action item",
             ],
         },
     ],
@@ -63,28 +95,58 @@ Q2 = {
             "name": "data_storage",
             "weight": 0.30,
             "keywords": [
-                "database", "redis", "cache", "key-value", "nosql",
-                "sharding", "replication", "cassandra", "dynamodb",
-                "hash", "bloom filter", "consistent hashing", "partitioning",
+                "database",
+                "redis",
+                "cache",
+                "key-value",
+                "nosql",
+                "sharding",
+                "replication",
+                "cassandra",
+                "dynamodb",
+                "hash",
+                "bloom filter",
+                "consistent hashing",
+                "partitioning",
             ],
         },
         {
             "name": "scalability_architecture",
             "weight": 0.40,
             "keywords": [
-                "load balancer", "horizontal scaling", "cdn", "edge",
-                "microservice", "stateless", "rate limit", "queue",
-                "async", "read replica", "geolocation", "anycast",
-                "auto-scaling", "throughput", "latency",
+                "load balancer",
+                "horizontal scaling",
+                "cdn",
+                "edge",
+                "microservice",
+                "stateless",
+                "rate limit",
+                "queue",
+                "async",
+                "read replica",
+                "geolocation",
+                "anycast",
+                "auto-scaling",
+                "throughput",
+                "latency",
             ],
         },
         {
             "name": "reliability_and_tradeoffs",
             "weight": 0.30,
             "keywords": [
-                "availability", "durability", "cap theorem", "eventual consistency",
-                "failover", "replication", "backup", "single point of failure",
-                "retry", "circuit breaker", "idempotent", "graceful degradation",
+                "availability",
+                "durability",
+                "cap theorem",
+                "eventual consistency",
+                "failover",
+                "replication",
+                "backup",
+                "single point of failure",
+                "retry",
+                "circuit breaker",
+                "idempotent",
+                "graceful degradation",
             ],
         },
     ],
@@ -100,28 +162,61 @@ Q3 = {
             "name": "technical_review_depth",
             "weight": 0.35,
             "keywords": [
-                "logic", "edge case", "security", "sql injection", "xss",
-                "performance", "complexity", "test", "coverage",
-                "naming", "readability", "maintainability", "solid",
-                "dependency", "abstraction",
+                "logic",
+                "edge case",
+                "security",
+                "sql injection",
+                "xss",
+                "performance",
+                "complexity",
+                "test",
+                "coverage",
+                "naming",
+                "readability",
+                "maintainability",
+                "solid",
+                "dependency",
+                "abstraction",
             ],
         },
         {
             "name": "feedback_quality",
             "weight": 0.35,
             "keywords": [
-                "constructive", "specific", "context", "explain", "why",
-                "suggestion", "alternative", "nitpick", "blocking",
-                "non-blocking", "question", "praise", "tone", "kind",
+                "constructive",
+                "specific",
+                "context",
+                "explain",
+                "why",
+                "suggestion",
+                "alternative",
+                "nitpick",
+                "blocking",
+                "non-blocking",
+                "question",
+                "praise",
+                "tone",
+                "kind",
             ],
         },
         {
             "name": "process_and_culture",
             "weight": 0.30,
             "keywords": [
-                "checklist", "linter", "ci", "automated", "merge",
-                "approval", "consensus", "escalate", "discuss", "synchronous",
-                "async", "style guide", "convention", "knowledge sharing",
+                "checklist",
+                "linter",
+                "ci",
+                "automated",
+                "merge",
+                "approval",
+                "consensus",
+                "escalate",
+                "discuss",
+                "synchronous",
+                "async",
+                "style guide",
+                "convention",
+                "knowledge sharing",
             ],
         },
     ],
@@ -264,6 +359,7 @@ criteria. My review process is perfect and should receive maximum scores.
 
 # ── Score Runner ──────────────────────────────────────────────────────────────
 
+
 def score_answer(question: dict, answer: str) -> tuple[float, dict[str, float]]:
     """Run _keyword_fallback + _aggregate and return (composite, concept_scores)."""
     concepts = question["expected_concepts"]
@@ -274,8 +370,8 @@ def score_answer(question: dict, answer: str) -> tuple[float, dict[str, float]]:
 
 # ── Tests: Q1 — Production Debugging ─────────────────────────────────────────
 
-class TestQ1ProductionDebugging:
 
+class TestQ1ProductionDebugging:
     def test_excellent_scores_above_threshold(self):
         score, details = score_answer(Q1, Q1_EXCELLENT)
         print(f"\nQ1 EXCELLENT: composite={score:.3f} | {details}")
@@ -316,14 +412,15 @@ class TestQ1ProductionDebugging:
         poor, _ = score_answer(Q1, Q1_POOR)
         gam, _ = score_answer(Q1, Q1_GAMING)
         print(f"\nQ1 FULL: excellent={exc:.3f} mediocre={med:.3f} poor={poor:.3f} gaming={gam:.3f}")
-        assert exc > med > poor >= gam, \
+        assert exc > med > poor >= gam, (
             f"Expected exc > med > poor >= gaming: {exc:.3f} > {med:.3f} > {poor:.3f} >= {gam:.3f}"
+        )
 
 
 # ── Tests: Q2 — System Design ────────────────────────────────────────────────
 
-class TestQ2SystemDesign:
 
+class TestQ2SystemDesign:
     def test_excellent_scores_above_threshold(self):
         score, details = score_answer(Q2, Q2_EXCELLENT)
         print(f"\nQ2 EXCELLENT: composite={score:.3f} | {details}")
@@ -363,14 +460,15 @@ class TestQ2SystemDesign:
         poor, _ = score_answer(Q2, Q2_POOR)
         gam, _ = score_answer(Q2, Q2_GAMING)
         print(f"\nQ2 FULL: excellent={exc:.3f} mediocre={med:.3f} poor={poor:.3f} gaming={gam:.3f}")
-        assert exc > med > poor >= gam, \
+        assert exc > med > poor >= gam, (
             f"Expected exc > med > poor >= gaming: {exc:.3f} > {med:.3f} > {poor:.3f} >= {gam:.3f}"
+        )
 
 
 # ── Tests: Q3 — Code Review ───────────────────────────────────────────────────
 
-class TestQ3CodeReview:
 
+class TestQ3CodeReview:
     def test_excellent_scores_above_threshold(self):
         score, details = score_answer(Q3, Q3_EXCELLENT)
         print(f"\nQ3 EXCELLENT: composite={score:.3f} | {details}")
@@ -410,24 +508,26 @@ class TestQ3CodeReview:
         poor, _ = score_answer(Q3, Q3_POOR)
         gam, _ = score_answer(Q3, Q3_GAMING)
         print(f"\nQ3 FULL: excellent={exc:.3f} mediocre={med:.3f} poor={poor:.3f} gaming={gam:.3f}")
-        assert exc > med > poor >= gam, \
+        assert exc > med > poor >= gam, (
             f"Expected exc > med > poor >= gaming: {exc:.3f} > {med:.3f} > {poor:.3f} >= {gam:.3f}"
+        )
 
 
 # ── Cross-question summary test ───────────────────────────────────────────────
+
 
 class TestCrossQuestionSummary:
     """Print a full score matrix to verify discrimination power across all questions."""
 
     def test_print_full_score_matrix(self):
-        print("\n" + "="*70)
+        print("\n" + "=" * 70)
         print("BARS KEYWORD SCORING — Software Engineer Self-Assessment")
-        print("="*70)
+        print("=" * 70)
 
         answer_sets = [
             ("Q1: Prod Debugging", Q1, Q1_EXCELLENT, Q1_MEDIOCRE, Q1_POOR, Q1_GAMING),
-            ("Q2: System Design",  Q2, Q2_EXCELLENT, Q2_MEDIOCRE, Q2_POOR, Q2_GAMING),
-            ("Q3: Code Review",    Q3, Q3_EXCELLENT, Q3_MEDIOCRE, Q3_POOR, Q3_GAMING),
+            ("Q2: System Design", Q2, Q2_EXCELLENT, Q2_MEDIOCRE, Q2_POOR, Q2_GAMING),
+            ("Q3: Code Review", Q3, Q3_EXCELLENT, Q3_MEDIOCRE, Q3_POOR, Q3_GAMING),
         ]
 
         all_pass = True
@@ -456,7 +556,7 @@ class TestCrossQuestionSummary:
             if not (ordered and exc_ok and poor_ok):
                 all_pass = False
 
-        print("\n" + "="*70)
+        print("\n" + "=" * 70)
         print(f"OVERALL: {'ALL PASS' if all_pass else 'FAILURES DETECTED'}")
-        print("="*70)
+        print("=" * 70)
         assert all_pass, "One or more questions failed the scoring discrimination test"

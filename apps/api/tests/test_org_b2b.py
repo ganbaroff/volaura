@@ -32,6 +32,7 @@ NON_ORG_USER_ID = "cccccccc-1111-0000-0000-000000000001"
 
 # ── Shared fixtures ───────────────────────────────────────────────────────────
 
+
 @pytest.fixture(autouse=True)
 def reset_rate_limiter():
     """Prevent test cross-contamination via in-memory rate limiter."""
@@ -43,16 +44,19 @@ def reset_rate_limiter():
 def _admin_override(db):
     async def _dep():
         yield db
+
     return _dep
 
 
 def _uid_override(uid: str):
     async def _dep():
         return uid
+
     return _dep
 
 
 # ── Dashboard helpers ─────────────────────────────────────────────────────────
+
 
 def _build_dashboard_mock(
     org_exists: bool = True,
@@ -87,35 +91,43 @@ def _build_dashboard_mock(
         table_call_counts.setdefault(table_name, 0)
 
         if table_name == "organizations":
+
             async def _execute(*_a, **_kw):
                 return MagicMock(data=org_row)
+
             t.select.return_value = t
             t.eq.return_value = t
             t.maybe_single.return_value = t
             t.execute = AsyncMock(side_effect=_execute)
 
         elif table_name == "assessment_sessions":
+
             async def _execute(*_a, **_kw):
                 n = table_call_counts["assessment_sessions"]
                 table_call_counts["assessment_sessions"] += 1
                 # Call 0: get all sessions for org
                 # Call 1: get completed sessions for comp count
                 return MagicMock(data=sessions if n == 0 else [s for s in sessions if s.get("status") == "completed"])
+
             t.select.return_value = t
             t.eq.return_value = t
             t.limit.return_value = t  # SEC-Q4: .limit(_DASHBOARD_SESSION_CAP) added to call 0
             t.execute = AsyncMock(side_effect=_execute)
 
         elif table_name == "aura_scores":
+
             async def _execute(*_a, **_kw):
                 return MagicMock(data=aura_rows)
+
             t.select.return_value = t
             t.in_.return_value = t
             t.execute = AsyncMock(side_effect=_execute)
 
         elif table_name == "profiles":
+
             async def _execute(*_a, **_kw):
                 return MagicMock(data=profiles)
+
             t.select.return_value = t
             t.in_.return_value = t
             t.execute = AsyncMock(side_effect=_execute)
@@ -131,6 +143,7 @@ def _build_dashboard_mock(
 
 
 # ── Dashboard tests ────────────────────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_org_dashboard_returns_stats_for_active_org():
@@ -238,6 +251,7 @@ async def test_org_dashboard_no_org_returns_404():
 
 # ── Volunteer list helpers ────────────────────────────────────────────────────
 
+
 def _build_volunteers_mock(
     org_exists: bool = True,
     sessions: list[dict] | None = None,
@@ -266,31 +280,39 @@ def _build_volunteers_mock(
         t = MagicMock()
 
         if table_name == "organizations":
+
             async def _execute(*_a, **_kw):
                 return MagicMock(data=org_row)
+
             t.select.return_value = t
             t.eq.return_value = t
             t.maybe_single.return_value = t
             t.execute = AsyncMock(side_effect=_execute)
 
         elif table_name == "assessment_sessions":
+
             async def _execute(*_a, **_kw):
                 return MagicMock(data=sessions)
+
             t.select.return_value = t
             t.eq.return_value = t
             t.limit.return_value = t  # SEC-Q4: .limit(_LIST_SESSION_CAP) added to query
             t.execute = AsyncMock(side_effect=_execute)
 
         elif table_name == "profiles":
+
             async def _execute(*_a, **_kw):
                 return MagicMock(data=profiles)
+
             t.select.return_value = t
             t.in_.return_value = t
             t.execute = AsyncMock(side_effect=_execute)
 
         elif table_name == "aura_scores":
+
             async def _execute(*_a, **_kw):
                 return MagicMock(data=aura_rows)
+
             t.select.return_value = t
             t.in_.return_value = t
             t.execute = AsyncMock(side_effect=_execute)
@@ -306,6 +328,7 @@ def _build_volunteers_mock(
 
 
 # ── Volunteer list tests ───────────────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_list_org_volunteers_returns_paginated_results():
@@ -384,6 +407,7 @@ async def test_list_org_volunteers_empty():
 
 # ── Search helpers ────────────────────────────────────────────────────────────
 
+
 def _build_search_mock(
     is_org_account: bool = True,
     org_exists: bool = True,
@@ -409,13 +433,17 @@ def _build_search_mock(
     if visibility_ids is None:
         visibility_ids = [r["volunteer_id"] for r in aura_rows]
     if profiles is None:
-        profiles = [{"id": VOL_ID_1, "username": "alice", "display_name": "Alice A", "location": "Baku", "languages": ["az", "en"]}]
+        profiles = [
+            {
+                "id": VOL_ID_1,
+                "username": "alice",
+                "display_name": "Alice A",
+                "location": "Baku",
+                "languages": ["az", "en"],
+            }
+        ]
 
-    caller_profile = (
-        {"account_type": "organization"}
-        if is_org_account
-        else {"account_type": "volunteer"}
-    )
+    caller_profile = {"account_type": "organization"} if is_org_account else {"account_type": "volunteer"}
     org_row = {"id": ORG_ID} if org_exists else None
 
     # Track call counts per table to sequence them correctly
@@ -426,6 +454,7 @@ def _build_search_mock(
         table_call_counts.setdefault(table_name, 0)
 
         if table_name == "profiles":
+
             async def _execute(*_a, **_kw):
                 n = table_call_counts["profiles"]
                 table_call_counts["profiles"] += 1
@@ -435,6 +464,7 @@ def _build_search_mock(
                 else:
                     # Later calls: enrich volunteer profiles (.in_)
                     return MagicMock(data=profiles)
+
             t.select.return_value = t
             t.eq.return_value = t
             t.maybe_single.return_value = t
@@ -442,14 +472,17 @@ def _build_search_mock(
             t.execute = AsyncMock(side_effect=_execute)
 
         elif table_name == "organizations":
+
             async def _execute(*_a, **_kw):
                 return MagicMock(data=org_row)
+
             t.select.return_value = t
             t.eq.return_value = t
             t.maybe_single.return_value = t
             t.execute = AsyncMock(side_effect=_execute)
 
         elif table_name == "aura_scores":
+
             async def _execute(*_a, **_kw):
                 n = table_call_counts["aura_scores"]
                 table_call_counts["aura_scores"] += 1
@@ -459,6 +492,7 @@ def _build_search_mock(
                 else:
                     # Visibility post-filter
                     return MagicMock(data=[{"volunteer_id": vid} for vid in visibility_ids])
+
             t.select.return_value = t
             t.eq.return_value = t
             t.gte.return_value = t
@@ -480,6 +514,7 @@ SEARCH_PAYLOAD = {"query": "experienced communicator", "min_aura": 0.0, "limit":
 
 
 # ── Search tests ───────────────────────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_search_volunteers_rule_based_fallback():

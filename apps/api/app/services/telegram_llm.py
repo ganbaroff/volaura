@@ -25,7 +25,12 @@ async def generate_atlas_response(
     provider: str = "none"
 
     # ── 0. Vertex AI Express Gemini ($300 credits, enterprise SLA) ──
-    logger.info("LLM chain start: vertex_key={vl} openrouter={ol} gemini={gl}", vl=len(vertex_key or ""), ol=len(openrouter_key or ""), gl=len(gemini_key or ""))
+    logger.info(
+        "LLM chain start: vertex_key={vl} openrouter={ol} gemini={gl}",
+        vl=len(vertex_key or ""),
+        ol=len(openrouter_key or ""),
+        gl=len(gemini_key or ""),
+    )
     if vertex_key and not reply:
         try:
             async with httpx.AsyncClient(timeout=30) as hc:

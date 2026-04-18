@@ -348,12 +348,7 @@ async def get_admin_growth(
             "profiles_created_7d",
         ),
         _count(
-            lambda: (
-                db_admin.table("assessment_sessions")
-                .select("id", count="exact")
-                .gte("created_at", t_7d)
-                .execute()
-            ),
+            lambda: db_admin.table("assessment_sessions").select("id", count="exact").gte("created_at", t_7d).execute(),
             "assessments_started_7d",
         ),
         _count(
@@ -368,10 +363,7 @@ async def get_admin_growth(
         ),
         _count(
             lambda: (
-                db_admin.table("aura_scores")
-                .select("volunteer_id", count="exact")
-                .gte("created_at", t_7d)
-                .execute()
+                db_admin.table("aura_scores").select("volunteer_id", count="exact").gte("created_at", t_7d).execute()
             ),
             "aura_scores_7d",
         ),

@@ -452,3 +452,117 @@ async def test_validate_invite_no_code_configured():
 
     assert resp.status_code == 200
     assert resp.json()["valid"] is False
+
+
+# ── GDPR consent_events logging on register ──────────────────────────────────
+
+
+@pytest.fixture
+async def consent_client(mock_admin_db, mock_anon_db):
+    app.dependency_overrides[get_supabase_admin] = _make_admin_override(mock_admin_db)
+    app.dependency_overrides[get_supabase_anon] = _make_anon_override(mock_anon_db)
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        yield ac, mock_anon_db, mock_admin_db
+    app.dependency_overrides.clear()
+
+
+def _setup_successful_signup(mock_anon_db):
+    mock_session = MagicMock()
+    mock_session.access_token = "tok_consent_test"
+    mock_session.expires_in = 3600
+    mock_user = MagicMock()
+    mock_user.id = "uuid-consent-test"
+    auth_resp = MagicMock()
+    auth_resp.session = mock_session
+    auth_resp.user = mock_user
+    mock_anon_db.auth.sign_up = AsyncMock(return_value=auth_resp)
+    return auth_resp
+
+
+def _setup_policy_chain(mock_admin_db, policy_id="policy-uuid-1"):
+    chain = MagicMock()
+    chain.select = MagicMock(return_value=chain)
+    chain.eq = MagicMock(return_value=chain)
+    chain.is_ = MagicMock(return_value=chain)
+    chain.order = MagicMock(return_value=chain)
+    chain.limit = MagicMock(return_value=chain)
+    chain.maybe_single = MagicMock(return_value=chain)
+    result = MagicMock()
+    result.data = {"id": policy_id} if policy_id else None
+    chain.execute = AsyncMock(return_value=result)
+
+    insert_chain = MagicMock()
+    insert_chain.insert = MagicMock(return_value=insert_chain)
+    insert_chain.execute = AsyncMock()
+
+    def table_router(name):
+        if name == "policy_versions":
+            return chain
+        if name == "consent_events":
+            return insert_chain
+        return MagicMock()
+
+    mock_admin_db.table = MagicMock(side_effect=table_router)
+    return chain, insert_chain
+
+
+REGISTER_PAYLOAD = {
+    "email": "consent-test@example.com",
+    "password": "Secret123",
+    "username": "consenttest",
+    "age_confirmed": True,
+    "terms_version": "1.0",
+}
+
+
+@pytest.mark.asyncio
+async def test_register_logs_consent_event_when_policy_exists(consent_client):
+    ac, anon_db, admin_db = consent_client
+    _setup_successful_signup(anon_db)
+    _chain, insert_chain = _setup_policy_chain(admin_db, policy_id="pol-123")
+
+    resp = await ac.post("/api/auth/register", json=REGISTER_PAYLOAD)
+
+    assert resp.status_code == 201
+    insert_chain.insert.assert_called_once()
+    row = insert_chain.insert.call_args[0][0]
+    assert row["user_id"] == "uuid-consent-test"
+    assert row["source_product"] == "volaura"
+    assert row["event_type"] == "consent_given"
+    assert row["policy_version_id"] == "pol-123"
+    assert row["consent_scope"]["age_confirmed"] is True
+    assert row["consent_scope"]["terms_version"] == "1.0"
+
+
+@pytest.mark.asyncio
+async def test_register_skips_consent_when_no_policy(consent_client):
+    ac, anon_db, admin_db = consent_client
+    _setup_successful_signup(anon_db)
+    _chain, insert_chain = _setup_policy_chain(admin_db, policy_id=None)
+
+    resp = await ac.post("/api/auth/register", json=REGISTER_PAYLOAD)
+
+    assert resp.status_code == 201
+    insert_chain.insert.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_register_succeeds_even_if_consent_logging_fails(consent_client):
+    ac, anon_db, admin_db = consent_client
+    _setup_successful_signup(anon_db)
+
+    chain = MagicMock()
+    chain.select = MagicMock(return_value=chain)
+    chain.eq = MagicMock(return_value=chain)
+    chain.is_ = MagicMock(return_value=chain)
+    chain.order = MagicMock(return_value=chain)
+    chain.limit = MagicMock(return_value=chain)
+    chain.maybe_single = MagicMock(return_value=chain)
+    chain.execute = AsyncMock(side_effect=Exception("DB connection error"))
+    admin_db.table = MagicMock(return_value=chain)
+
+    resp = await ac.post("/api/auth/register", json=REGISTER_PAYLOAD)
+
+    assert resp.status_code == 201
+    assert resp.json()["user_id"] == "uuid-consent-test"

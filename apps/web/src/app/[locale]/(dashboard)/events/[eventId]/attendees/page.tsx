@@ -208,7 +208,7 @@ export default function EventAttendeesPage() {
         variant="ghost"
         size="sm"
         className="-ml-2 text-muted-foreground"
-        onClick={() => router.back()}
+        onClick={() => router.push(`/${locale}/events/${eventId}`)}
       >
         <ArrowLeft className="size-4 mr-1" />
         {t("common.back", { defaultValue: "Back" })}

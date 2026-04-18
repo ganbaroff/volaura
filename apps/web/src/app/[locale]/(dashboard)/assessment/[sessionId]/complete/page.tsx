@@ -18,6 +18,7 @@ import {
   ChevronUp,
   ListChecks,
   Clock,
+  LayoutDashboard,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils/cn";
@@ -679,6 +680,16 @@ export default function AssessmentResultsPage() {
         >
           <RotateCcw className="size-4 mr-2" />
           {t("aura.retake")}
+        </Button>
+
+        <Button
+          onClick={() => router.push(`/${locale}/dashboard`)}
+          variant="ghost"
+          size="lg"
+          className="w-full"
+        >
+          <LayoutDashboard className="size-4 mr-2" />
+          {t("common.backToDashboard", { defaultValue: "Back to Dashboard" })}
         </Button>
 
         {score < 60 && (

@@ -131,7 +131,7 @@ export default function QuestionBreakdownPage() {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 flex flex-col items-center gap-4 text-center">
         <p className="text-sm text-muted-foreground">{error.message}</p>
-        <Button variant="outline" size="sm" onClick={() => router.back()}>
+        <Button variant="outline" size="sm" onClick={() => router.push(`/${locale}/assessment`)}>
           <ArrowLeft className="size-4 mr-2" />
           {t("assessment.backToResults")}
         </Button>

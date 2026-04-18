@@ -231,7 +231,7 @@
     <div class="sub">Один взгляд — всё состояние экосистемы</div>
   </div>
   <div class="meta">
-    Обновлено: 2026-04-18 14:00 Баку<br>
+    Обновлено: 2026-04-18 17:31 Баку<br>
     Sprint 119 · Atlas (Opus 4.7) + CLI (Sonnet)
   </div>
 </header>
@@ -239,15 +239,15 @@
 <div class="kpi-row">
   <div class="kpi">
     <div class="k-label">Закрыто сегодня</div>
-    <div class="k-value teal">5</div>
+    <div class="k-value teal">9</div>
   </div>
   <div class="kpi">
     <div class="k-label">Автотестов от swarm</div>
     <div class="k-value indigo">550+</div>
   </div>
   <div class="kpi">
-    <div class="k-label">Требует ключа / блок</div>
-    <div class="k-value gold">4</div>
+    <div class="k-label">Требует действий CEO</div>
+    <div class="k-value gold">5</div>
   </div>
   <div class="kpi">
     <div class="k-label">Всего открытых задач</div>
@@ -257,7 +257,7 @@
 
 <div class="sprint-line">
   <div class="label">Sprint 119 · Курс недели</div>
-  <div>Ротируем Vertex-ключ на продакшен, пропагируем в Railway, затем GDPR consent (таблица есть, не пишется) и три show-stopper'а из feature-audit. Цель: к концу недели платформа расходует $300 GCP-кредитов на проде, а не бесплатный fallback.</div>
+  <div>Stripe-ключи CEO отдал — сохранил локально и в GitHub Secrets. Obligation System уехал в шесть файлов: таблицы в Postgres, Telegram-ловушка proof'ов, GH-Actions nag каждые 4 часа, admin-страница с фиолетовым обратным отсчётом (no red). Ждём три твоих действия: supabase db push, seed-скрипт один раз, STRIPE_PRICE_ID + webhook URL из Dashboard. Параллельно: Railway-токен, LifeSim Godot parse-order, GDPR consent.</div>
 </div>
 
 <div class="legend">
@@ -272,13 +272,18 @@
     <h2>Идёт сейчас</h2>
     <div class="item">
       <span class="dot green"></span>
+      <div class="title">Dashboard — этот самый файл</div>
+      <div class="desc">Обновляю по месту после каждого значимого шага. Один живой файл — не плодим новые. Следующий шаг: HTML-render pipeline для heartbeat / CURRENT-SPRINT / company-state, чтобы весь важный контекст был визуальным.</div>
+    </div>
+    <div class="item">
+      <span class="dot green"></span>
       <div class="title">T52 — LifeSim parse-order fix</div>
-      <div class="desc">Запускаю Godot-агента на VolauraAPIClient. Show-stopper для публичного демо — без этого главное меню не стартует.</div>
+      <div class="desc">Godot-агент на VolauraAPIClient. Show-stopper — без него главное меню не стартует.</div>
     </div>
     <div class="item">
       <span class="dot green"></span>
       <div class="title">Swarm автотесты (фон)</div>
-      <div class="desc">Автономно: 550+ unit-тестов за последние 2 часа (TanStack hooks, middleware, AURA schemas, reliability). Без моего вмешательства.</div>
+      <div class="desc">550+ unit-тестов залетели автономно за день через session-end хуки. Гигиена растёт без моего вмешательства.</div>
     </div>
   </div>
 
@@ -286,52 +291,67 @@
     <h2>Закрыто сегодня</h2>
     <div class="item">
       <span class="dot green"></span>
+      <div class="title">Stripe ключи × 3 сохранены</div>
+      <div class="desc">rk_test (restricted, предпочтительный для прод-бэкенда), sk_test (dev/fallback), pk_test (клиент). Три места: apps/api/.env, .env.md таблица, GitHub Actions Secrets. Ни один не болтается в чате.</div>
+    </div>
+    <div class="item">
+      <span class="dot green"></span>
+      <div class="title">Atlas Obligation System — 6 файлов</div>
+      <div class="desc">Postgres-миграция (3 таблицы + 3 SECURITY DEFINER RPC), telegram_webhook.py для proof'ов, GH Actions nag каждые 4 часа, seed-скрипт, admin-страница с фиолетовым обратным отсчётом (no red). Осталось: supabase db push + один seed + три GH-секрета — делаешь ты.</div>
+    </div>
+    <div class="item">
+      <span class="dot green"></span>
+      <div class="title">push_gh_secret.py универсализирован</div>
+      <div class="desc">Был хардкод под VERTEX_API_KEY. Теперь принимает имя секрета через argv[1], legacy-вызов без аргумента цел. Любой ключ теперь уезжает в GH Secrets одной командой.</div>
+    </div>
+    <div class="item">
+      <span class="dot green"></span>
       <div class="title">T46 sweep — полный (43 файла)</div>
-      <div class="desc">Мои 15 правок из Cowork + 28 правок от CLI-Atlas (Sonnet agent af1c85f6) слились в коммит 212a833. "44 агента" убрано везде.</div>
+      <div class="desc">Мои 15 правок + CLI-Atlas (Sonnet) 28 правок слились в коммит 212a833. "44 агента" зачищено везде.</div>
     </div>
     <div class="item">
       <span class="dot green"></span>
-      <div class="title">Vertex AI ключ ротирован</div>
-      <div class="desc">Новый ключ в локальном .env. Код менять не пришлось — Vertex уже первый в цепочке LLM-провайдеров.</div>
-    </div>
-    <div class="item">
-      <span class="dot green"></span>
-      <div class="title">GitHub Secrets залиты в CI</div>
-      <div class="desc">Python-скрипт (stdlib urllib + PyNaCl), без участия CEO. Следующий билд подхватит новый ключ автоматически.</div>
-    </div>
-    <div class="item">
-      <span class="dot green"></span>
-      <div class="title">CEO-dashboard (этот файл + STATE.md)</div>
-      <div class="desc">Живые документы. Обновляю по месту, новых файлов не плодим.</div>
-    </div>
-    <div class="item">
-      <span class="dot green"></span>
-      <div class="title">Swarm фоновой гигиены</div>
-      <div class="desc">550+ unit-тестов залетели автономно через session-end хуки. Гигиена растёт без моего участия.</div>
+      <div class="title">Vertex AI ключ ротирован + залит в CI</div>
+      <div class="desc">Новый ключ в локальном .env и в GitHub Secrets. Следующий билд подхватит автоматически. $300 GCP-кредитов живы и ждут Railway propagation.</div>
     </div>
   </div>
 
   <div class="column">
     <h2>Следующее (в порядке приоритета)</h2>
     <div class="item">
-      <span class="dot amber"></span>
-      <div class="title">T48 — GDPR consent (сам, но долго)</div>
-      <div class="desc">27 routers без записи согласий. Таблица consent_events пустая. Разрежу через swarm на 27 мелких правок. Регуляторный риск в ЕС.</div>
+      <span class="dot purple"></span>
+      <div class="title">Obligation System активация (3 шага за тобой)</div>
+      <div class="desc">(1) supabase db push — миграция уезжает на прод. (2) GH-секреты: SUPABASE_URL, SERVICE_KEY, TELEGRAM_BOT_TOKEN, TELEGRAM_CEO_CHAT_ID. (3) python scripts/seed_atlas_obligations.py — один раз. После этого nag-cron начнёт пинговать тебя каждые 4ч по просроченным обязательствам.</div>
+    </div>
+    <div class="item">
+      <span class="dot purple"></span>
+      <div class="title">Stripe — последние две дырки</div>
+      <div class="desc">STRIPE_PRICE_ID (создать Price в Dashboard → Products) и STRIPE_WEBHOOK_SECRET (Webhook endpoint в Dashboard). Без них Checkout не уедет в прод. Как будут — сохраняю мгновенно.</div>
     </div>
     <div class="item">
       <span class="dot purple"></span>
       <div class="title">Railway propagation (жду токен)</div>
-      <div class="desc">Railway Dashboard → Project Settings → Tokens. Брось в чат — закрою одним curl. До тех пор $300 GCP-кредитов простаивают.</div>
+      <div class="desc">Railway Dashboard → Project Settings → Tokens. Брось в чат — закрою одним curl. До тех пор Vertex живёт только локально, прод на fallback.</div>
     </div>
     <div class="item">
-      <span class="dot purple"></span>
-      <div class="title">T54 — BrandedBy (жду ключи)</div>
-      <div class="desc">Нужны Azure + ElevenLabs. Если где-то лежат — дай. Если нет — надо регистрировать.</div>
+      <span class="dot amber"></span>
+      <div class="title">T52 — LifeSim parse-order (сам)</div>
+      <div class="desc">Godot 4.6.1 show-stopper на VolauraAPIClient. Разгребу через swarm, репорт-back одной строкой.</div>
+    </div>
+    <div class="item">
+      <span class="dot amber"></span>
+      <div class="title">T48 — GDPR consent (сам, долго)</div>
+      <div class="desc">27 routers без записи согласий, consent_events пустая. Регуляторный риск в ЕС. Разрежу на 27 мелких правок через swarm.</div>
     </div>
     <div class="item">
       <span class="dot amber"></span>
       <div class="title">T53 — Vercel unblock (после reset)</div>
-      <div class="desc">Rate limit 100/день исчерпан ночью + module_not_found. Ждём reset quota к утру, потом одна попытка с правильным build-command.</div>
+      <div class="desc">Rate limit 100/день исчерпан + module_not_found. Одна попытка с правильным build-command после reset quota.</div>
+    </div>
+    <div class="item">
+      <span class="dot purple"></span>
+      <div class="title">T54 — BrandedBy (жду ключи Azure + ElevenLabs)</div>
+      <div class="desc">Если где-то лежат — скинь. Если нет — нужно зарегистрировать trial.</div>
     </div>
   </div>
 </div>

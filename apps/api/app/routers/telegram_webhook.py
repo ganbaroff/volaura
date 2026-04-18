@@ -2062,91 +2062,18 @@ Sign: "— Атлас" """
         )
         return
 
-    reply = None
-    # Free-tier chain (reordered 2026-04-14 after audit found Gemini quota exhausted
-    # and NVIDIA NIM responding cleanly): NVIDIA NIM → Gemini → Groq.
-    # Cost-control: no Anthropic/Haiku anywhere.
+    from app.services.telegram_llm import generate_atlas_response
 
-    # ── 1. NVIDIA NIM (free tier, llama-3.3-70b-instruct, no spend/quota limit) ──
-    if not reply:
-        nvidia_key = os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NVIDIA_NIM_KEY", "")
-        if nvidia_key:
-            try:
-                import httpx
-
-                async with httpx.AsyncClient(timeout=25) as hc:
-                    r = await hc.post(
-                        "https://integrate.api.nvidia.com/v1/chat/completions",
-                        headers={"Authorization": f"Bearer {nvidia_key}"},
-                        json={
-                            "model": "meta/llama-3.3-70b-instruct",
-                            "messages": [
-                                {"role": "system", "content": system[:8000]},
-                                {"role": "user", "content": text},
-                            ],
-                            "max_tokens": 1200,
-                            "temperature": 0.9,
-                        },
-                    )
-                    if r.status_code == 200:
-                        reply = r.json()["choices"][0]["message"]["content"].strip()
-                    else:
-                        logger.warning("NVIDIA NIM {s}: {b}", s=r.status_code, b=r.text[:200])
-            except Exception as e:
-                logger.warning("NVIDIA NIM error, trying Gemini: {e}", e=str(e)[:100])
-
-    # ── 2. Gemini 2.0 Flash (fallback — may hit daily quota) ──
-    if not reply:
-        try:
-            from google import genai
-
-            if settings.vertex_api_key:
-                client = genai.Client(vertexai=True, api_key=settings.vertex_api_key)
-            else:
-                client = genai.Client(api_key=settings.gemini_api_key)
-            response = client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=text,
-                config=genai.types.GenerateContentConfig(
-                    system_instruction=system,
-                    max_output_tokens=1200,
-                    temperature=0.9,
-                ),
-            )
-            reply = (response.text or "").strip()
-        except Exception as e:
-            logger.warning("Gemini failed, trying Groq: {e}", e=str(e)[:100])
-
-    # ── 3. Groq (fallback, may be spend-limited) ──
-    if not reply:
-        groq_key = os.environ.get("GROQ_API_KEY", "")
-        if groq_key:
-            try:
-                import httpx
-
-                async with httpx.AsyncClient(timeout=20) as hc:
-                    r = await hc.post(
-                        "https://api.groq.com/openai/v1/chat/completions",
-                        headers={"Authorization": f"Bearer {groq_key}"},
-                        json={
-                            "model": "llama-3.3-70b-versatile",
-                            "messages": [
-                                {"role": "system", "content": system[:4000]},
-                                {"role": "user", "content": text},
-                            ],
-                            "max_tokens": 1200,
-                            "temperature": 0.9,
-                        },
-                    )
-                    if r.status_code == 200:
-                        reply = r.json()["choices"][0]["message"]["content"].strip()
-                    else:
-                        logger.warning("Groq {s}: {b}", s=r.status_code, b=r.text[:200])
-            except Exception as e:
-                logger.error("All free-tier LLMs failed for Atlas: {e}", e=str(e)[:150])
-
-    if not reply:
-        reply = "Атлас здесь. Все free-tier провайдеры одновременно упали (Gemini, NVIDIA NIM, Groq). Сообщение записал. Дай минуту.\n\n— Атлас"
+    reply, provider = await generate_atlas_response(
+        system_prompt=system,
+        user_message=text,
+        vertex_key=os.environ.get("VERTEX_API_KEY", ""),
+        openrouter_key=os.environ.get("OPENROUTER_API_KEY", ""),
+        gemini_key=os.environ.get("GEMINI_API_KEY", "") or settings.gemini_api_key,
+        nvidia_key=os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NVIDIA_NIM_KEY", ""),
+        groq_key=os.environ.get("GROQ_API_KEY", ""),
+    )
+    logger.info("Atlas replied via {p}", p=provider)
 
     # ── Anti-loop post-check: multi-signal circuit breaker (Pattern 1) ──
     # Replaces single-metric Jaccard with token-velocity + stall-blocklist +

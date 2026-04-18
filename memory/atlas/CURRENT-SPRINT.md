@@ -42,6 +42,8 @@ Each row: task → acceptance → expected files touched → iteration count est
 - **C2.** 83(b) election — hard deadline ~2026-05-15. Watch Certificate of Incorporation email (~2026-04-16). Moment it lands, draft 83(b) filing with Certified Acceptance Agent research.
 - **C3.** ANTHROPIC_API_KEY credits — if balance tops up, run `scripts/critique.py` against `docs/research/az-capital-crisis-2026/01-macro-scenarios.md` with 4 personas on Sonnet. Log cost. AZ crisis Layers 2-6 depend on this.
 
+- [x] **C4.** Atlas Obligation System — 6 files shipped Session 119 (2026-04-18). Postgres tables `atlas_obligations` / `atlas_proofs` / `atlas_nag_log` + RLS + 3 SECURITY DEFINER RPCs (migration `20260418170000_atlas_obligations.sql`). Telegram proof intake wired in `apps/api/app/routers/telegram_webhook.py` (photo / doc / URL / tracking matcher, picker when multiple open rows match). Nag-loop: `.github/workflows/atlas-obligation-nag.yml` (cron every 4h) + `scripts/atlas_obligation_nag.py` with advisory-lock dedupe and at-least-once semantics (log only after Telegram 200). Seed: `scripts/seed_atlas_obligations.py` idempotent via `UNIQUE(title)` + `ignore_duplicates=True`, 4 canonical rows (83(b) aggressive, ITIN standard, WUF13 standard, GITA deferred). Admin UI: `apps/web/src/app/[locale]/admin/obligations/page.tsx` scorecard + countdown table (purple overdue / orange ≤7d / amber ≤30d / emerald >30d — Law 1 clean). `deadlines.md` DEPRECATED banner + archive-only; `wake.md` §10.1 now mandates live DB query on wake. Verification: Python `ast.parse` clean across 3 scripts, standalone TS `tsc --noEmit` clean on page.tsx (only module-resolution errors — resolve in real repo build). **Residual gaps for CEO:** (1) `supabase db push` for the migration, (2) GH Actions secrets `SUPABASE_URL` + `SUPABASE_SERVICE_KEY` + `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CEO_CHAT_ID`, (3) one-shot `python scripts/seed_atlas_obligations.py` against prod. Without these three steps the nag-loop is silent; with them, Atlas cannot physically forget a deadline.
+
 ### Track D — Opportunistic small fixes (between sprint tasks)
 
 - Backend ruff cleanup (33 remaining in live swarm, non-mechanical — one category per iteration).
@@ -567,6 +569,4 @@ API could not import the auth router at all. Every Terminal-Atlas "fix" via Edit
 **Still owed (Session 117 handoff to Terminal-Atlas).**
 1. Windows-side: `rm -f .git/index.lock` (Task Manager: kill hung git.exe processes from 12:16 Apr 17, or reboot).
 2. Stage and commit the 7 restored files: `git add apps/api/app/routers/{auth,auth_bridge,eventshift,telegram_webhook}.py apps/api/tests/test_*.py && git commit -m "fix(api): restore 7 Edit-truncated files from HEAD (INC-013)"`.
-3. Verify API starts: `cd apps/api && uv run python -c "from app.routers import auth, auth_bridge, eventshift, telegram_webhook; print('imports OK')"`.
-4. Resume whatever Terminal-Atlas was doing before the cascade corrupted auth.py (check last inbox heartbeat / journal for context).
-5. Then Session 116 G1.4 still owed: Vercel `NEXT_PUBLIC_ENABLE_SAMPLE_PROFILE=false` + 404 smoke (Task #32).
+3. Verify API starts:

@@ -4,6 +4,8 @@
 
 Last updated: 2026-04-18 — 83(b) filing: DHL Express direct Баку → IRS is the SOLE path. Friend-fallback deprecated (CEO confirmed 2026-04-18: friend did not respond). 230 AZN negotiated. CEO goes to DHL Monday Apr 20. Stripe Atlas dashboard confirms: Application review ✅, Incorporation ✅ (Apr 14), Tax ID (EIN) expected Apr 29 – May 13, 83(b) postmark by Apr 28.
 
+**Obligation tracking (2026-04-18):** deadlines + obligations now live in Postgres (`public.atlas_obligations`), not `memory/atlas/deadlines.md` (archive-only). Source of truth: `/admin/obligations` UI + Supabase table. Telegram proof intake via `@volaurabot` (photo / doc / URL / tracking number auto-matches open obligation). Nag cadence: GH Actions cron every 4h, escalates by `nag_schedule` (aggressive / standard / silent). Atlas wake-loop reads DB, not markdown, per `memory/atlas/wake.md` §10.1. Seeded rows: 83(b) aggressive (2026-05-14), ITIN standard (trigger = Atlas filing), WUF13 standard (2026-06-13), GITA deferred. **Gap remaining (2026-04-18):** migration not yet applied to prod, GH Actions secrets not yet populated, seed-script not yet run against prod — Atlas shipped the pipes, CEO opens the valve.
+
 ---
 
 ## Entity

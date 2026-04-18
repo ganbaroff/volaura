@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
-"""Push VERTEX_API_KEY to GitHub repo secrets via REST API + libsodium.
+"""Push a named secret from apps/api/.env to GitHub Actions secrets.
 
-Sidesteps the CRLF-in-.env bash-sourcing bug by reading the .env file
-directly with Python (strips \r) and making urllib.request calls.
+Usage:
+    python scripts/push_gh_secret.py [secret_name]
+
+If secret_name is omitted, defaults to VERTEX_API_KEY (legacy behavior).
+Reads .env directly (strips \\r) to sidestep the CRLF bash-sourcing bug,
+then libsodium-sealbox-encrypts and PUTs via the GitHub REST API.
 """
 from __future__ import annotations
 
@@ -17,7 +21,7 @@ from nacl import encoding, public
 
 ENV_PATH = Path("/sessions/elegant-fervent-carson/mnt/VOLAURA/apps/api/.env")
 REPO = "ganbaroff/volaura"
-SECRET_NAME = "VERTEX_API_KEY"
+DEFAULT_SECRET = "VERTEX_API_KEY"
 
 
 def load_env(path: Path) -> dict[str, str]:
@@ -75,15 +79,16 @@ def encrypt_for_repo(public_key_b64: str, secret_value: str) -> str:
 
 
 def main() -> int:
+    secret_name = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_SECRET
     env = load_env(ENV_PATH)
     token = env.get("GH_PAT_ACTIONS")
-    secret_value = env.get(SECRET_NAME)
+    secret_value = env.get(secret_name)
 
     if not token:
         print(f"ERROR: GH_PAT_ACTIONS not found in {ENV_PATH}", file=sys.stderr)
         return 1
     if not secret_value:
-        print(f"ERROR: {SECRET_NAME} not found in {ENV_PATH}", file=sys.stderr)
+        print(f"ERROR: {secret_name} not found in {ENV_PATH}", file=sys.stderr)
         return 1
 
     # Auth probe
@@ -104,15 +109,15 @@ def main() -> int:
 
     # PUT secret
     status = gh_put(
-        f"https://api.github.com/repos/{REPO}/actions/secrets/{SECRET_NAME}",
+        f"https://api.github.com/repos/{REPO}/actions/secrets/{secret_name}",
         token,
         {"encrypted_value": encrypted_value, "key_id": key_id},
     )
-    print(f"PUT {SECRET_NAME} -> HTTP {status}")
+    print(f"PUT {secret_name} -> HTTP {status}")
 
     # Verify by listing (metadata only — value never exposed by API)
     meta = gh_get(
-        f"https://api.github.com/repos/{REPO}/actions/secrets/{SECRET_NAME}", token
+        f"https://api.github.com/repos/{REPO}/actions/secrets/{secret_name}", token
     )
     print(f"verified: name={meta.get('name')} updated_at={meta.get('updated_at')}")
     return 0

@@ -9,21 +9,20 @@ curl https://volaura.app → 200. Verified.
 
 ---
 
-## Current chunk: Auth flow end-to-end on prod
+## CHUNK CLOSED: Auth flow verified on prod (2026-04-18 14:10 Baku)
+All pages 200. INC-018 REV2 in main (84eab94). Google OAuth consent in Testing mode — CEO action: switch to Production in Google Cloud Console. Both CEO accounts admin=true.
 
-**Goal:** signup → Google OAuth → dashboard → start assessment → complete → AURA badge visible. On volaura.app, not localhost.
+---
 
-**Acceptance:** walk the flow in browser, screenshot or curl proof of each step.
+## Current chunk: Apply obligation migration to prod Supabase + seed data
+
+**Goal:** atlas_obligations table live on prod, seeded with 83(b)/ITIN/EIN/Form5472/franchise deadlines. Nag-bot workflow ready to fire.
+
+**Acceptance:** SQL query on prod returns seeded obligations. GitHub Actions workflow visible.
 
 **Who does what:**
-- CLI (Terminal Atlas): test auth flow, fix any blockers found
-- Cowork: do NOT touch apps/web/src/app/[locale]/(auth)/ or callback/ until chunk closes
-
-**Non-overlapping safe zone for Cowork:**
-- memory/atlas/ updates
-- docs/ content
-- MindShift repo
-- backend files not in auth path
+- CLI (Terminal Atlas): apply migration via Supabase MCP, run seed script
+- Cowork: do NOT touch supabase/migrations/ until chunk closes
 
 ---
 

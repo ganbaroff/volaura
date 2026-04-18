@@ -228,7 +228,7 @@ export default function BulkInvitePage() {
         >
           {uploading ? (
             <>
-              <Loader2 className="size-4 animate-spin" />
+              <Loader2 className="size-4 animate-spin" aria-hidden="true" />
               {t("loading.uploading", { defaultValue: "Uploading..." })}
             </>
           ) : (

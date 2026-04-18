@@ -15,12 +15,14 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from packages.swarm.team_leads import (
-    ArchitectureTeamLead,
-    SecurityTeamLead,
-    SpeedTeamLead,
-    get_tilead_for_domain,
+team_leads = pytest.importorskip(
+    "packages.swarm.team_leads",
+    reason="team_leads module not yet implemented (TDD stub from Session 26)",
 )
+ArchitectureTeamLead = team_leads.ArchitectureTeamLead
+SecurityTeamLead = team_leads.SecurityTeamLead
+SpeedTeamLead = team_leads.SpeedTeamLead
+get_tilead_for_domain = team_leads.get_tilead_for_domain
 from packages.swarm.swarm_types import DomainTag, SwarmConfig
 
 

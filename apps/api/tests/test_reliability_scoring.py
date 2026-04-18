@@ -13,7 +13,6 @@ Covers:
   - Edge cases: negative inputs, values > 1.0, empty no_show_types, None rating
 """
 
-
 from app.core.reliability.scoring import (
     BEHAVIORAL_MAX,
     BEHAVIORAL_MIN,
@@ -238,7 +237,9 @@ def test_proven_all_ghost_penalty():
 def test_proven_same_day_penalty():
     h_clean = EventHistory(total_registered=3, total_attended=2, total_no_shows=1)
     h_penalty = EventHistory(
-        total_registered=3, total_attended=2, total_no_shows=1,
+        total_registered=3,
+        total_attended=2,
+        total_no_shows=1,
         no_show_types=["same_day"],
     )
     assert proven_score(h_penalty) < proven_score(h_clean)
@@ -249,7 +250,9 @@ def test_proven_same_day_penalty():
 def test_proven_within_24h_penalty():
     h_clean = EventHistory(total_registered=3, total_attended=2)
     h_penalty = EventHistory(
-        total_registered=3, total_attended=2, no_show_types=["within_24h"],
+        total_registered=3,
+        total_attended=2,
+        no_show_types=["within_24h"],
     )
     delta = proven_score(h_clean) - proven_score(h_penalty)
     assert abs(delta - abs(NO_SHOW_PENALTIES["within_24h"])) < 0.01
@@ -258,7 +261,9 @@ def test_proven_within_24h_penalty():
 def test_proven_within_48h_penalty():
     h_clean = EventHistory(total_registered=3, total_attended=2)
     h_penalty = EventHistory(
-        total_registered=3, total_attended=2, no_show_types=["within_48h"],
+        total_registered=3,
+        total_attended=2,
+        no_show_types=["within_48h"],
     )
     delta = proven_score(h_clean) - proven_score(h_penalty)
     assert abs(delta - abs(NO_SHOW_PENALTIES["within_48h"])) < 0.01
@@ -267,7 +272,9 @@ def test_proven_within_48h_penalty():
 def test_proven_advance_cancel_no_penalty():
     h_clean = EventHistory(total_registered=3, total_attended=2)
     h_advance = EventHistory(
-        total_registered=3, total_attended=2, no_show_types=["advance"],
+        total_registered=3,
+        total_attended=2,
+        no_show_types=["advance"],
     )
     assert proven_score(h_clean) == proven_score(h_advance)
 
@@ -275,7 +282,9 @@ def test_proven_advance_cancel_no_penalty():
 def test_proven_unknown_noshow_type_no_penalty():
     h_clean = EventHistory(total_registered=3, total_attended=2)
     h_unknown = EventHistory(
-        total_registered=3, total_attended=2, no_show_types=["future_type_xyz"],
+        total_registered=3,
+        total_attended=2,
+        no_show_types=["future_type_xyz"],
     )
     assert proven_score(h_clean) == proven_score(h_unknown)
 
@@ -359,11 +368,7 @@ def test_proven_mixed_no_show_types():
         total_no_shows=3,
         no_show_types=["ghost", "same_day", "within_48h"],
     )
-    expected_penalty = (
-        NO_SHOW_PENALTIES["ghost"]
-        + NO_SHOW_PENALTIES["same_day"]
-        + NO_SHOW_PENALTIES["within_48h"]
-    )
+    expected_penalty = NO_SHOW_PENALTIES["ghost"] + NO_SHOW_PENALTIES["same_day"] + NO_SHOW_PENALTIES["within_48h"]
     h_clean = EventHistory(total_registered=5, total_attended=2)
     delta = proven_score(h_clean) - proven_score(h)
     assert abs(delta - abs(expected_penalty)) < 0.01

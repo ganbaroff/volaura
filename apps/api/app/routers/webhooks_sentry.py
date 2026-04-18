@@ -30,6 +30,7 @@ from fastapi import APIRouter, HTTPException, Request, status
 from loguru import logger
 
 from app.config import settings
+from app.middleware.rate_limit import limiter
 
 router = APIRouter(prefix="/webhooks", tags=["webhooks"])
 
@@ -261,6 +262,7 @@ async def _ping_ceo_telegram(event_row: dict[str, Any], issue_url: str | None) -
 
 
 @router.post("/sentry", status_code=status.HTTP_202_ACCEPTED)
+@limiter.limit("100/minute")
 async def sentry_webhook(request: Request) -> dict[str, Any]:
     """Receive Sentry alert webhook, upsert fingerprint, escalate on recurrence.
 

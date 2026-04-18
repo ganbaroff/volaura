@@ -69,9 +69,26 @@ vi.mock("next/link", () => ({
 }));
 
 vi.mock("framer-motion", () => {
-  const makePassthrough =
-    (tag: string) =>
-    ({
+  type PassthroughProps = {
+    children?: React.ReactNode;
+    initial?: unknown;
+    animate?: unknown;
+    exit?: unknown;
+    whileInView?: unknown;
+    viewport?: unknown;
+    transition?: unknown;
+    variants?: unknown;
+    custom?: unknown;
+    style?: React.CSSProperties;
+    className?: string;
+    "aria-label"?: string;
+    "aria-labelledby"?: string;
+    id?: string;
+    [key: string]: unknown;
+  };
+
+  const makePassthrough = (tag: string) => {
+    function PassthroughComponent({
       children,
       initial: _i,
       animate: _a,
@@ -87,28 +104,20 @@ vi.mock("framer-motion", () => {
       "aria-labelledby": ariaLabelledBy,
       id,
       ...rest
-    }: {
-      children?: React.ReactNode;
-      initial?: unknown;
-      animate?: unknown;
-      exit?: unknown;
-      whileInView?: unknown;
-      viewport?: unknown;
-      transition?: unknown;
-      variants?: unknown;
-      custom?: unknown;
-      style?: React.CSSProperties;
-      className?: string;
-      "aria-label"?: string;
-      "aria-labelledby"?: string;
-      id?: string;
-      [key: string]: unknown;
-    }) =>
-      React.createElement(
+    }: PassthroughProps) {
+      return React.createElement(
         tag as keyof React.JSX.IntrinsicElements,
         { className, style, "aria-label": ariaLabel, "aria-labelledby": ariaLabelledBy, id, ...rest },
         children
       );
+    }
+    PassthroughComponent.displayName = `Motion_${tag}`;
+    return PassthroughComponent;
+  };
+
+  function AnimatePresenceMock({ children }: { children: React.ReactNode }) {
+    return React.createElement(React.Fragment, null, children);
+  }
 
   return {
     motion: {
@@ -123,8 +132,7 @@ vi.mock("framer-motion", () => {
       li: makePassthrough("li"),
     },
     useReducedMotion: vi.fn(() => false),
-    AnimatePresence: ({ children }: { children: React.ReactNode }) =>
-      React.createElement(React.Fragment, null, children),
+    AnimatePresence: AnimatePresenceMock,
   };
 });
 
@@ -136,7 +144,7 @@ vi.mock("@/lib/utils/cn", () => ({
 // ── Hook mocks ────────────────────────────────────────────────────────────────
 
 const mockRegisterMutate = vi.fn();
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 const mockRegisterMutation: any = {
   mutate: mockRegisterMutate,
   isSuccess: false,
@@ -552,7 +560,7 @@ describe("EvaluationLog — closed state (default)", () => {
       data: undefined,
       isLoading: false,
       error: null,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        
     } as any);
   });
 
@@ -597,7 +605,7 @@ describe("EvaluationLog — open state", () => {
       data: undefined,
       isLoading: false,
       error: null,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        
     } as any);
     render(<EvaluationLog />);
     const btn = screen.getByRole("button");
@@ -610,7 +618,7 @@ describe("EvaluationLog — open state", () => {
       data: undefined,
       isLoading: true,
       error: null,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        
     } as any);
     render(<EvaluationLog />);
     fireEvent.click(screen.getByRole("button"));
@@ -623,7 +631,7 @@ describe("EvaluationLog — open state", () => {
       data: undefined,
       isLoading: false,
       error: new Error("Failed"),
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        
     } as any);
     render(<EvaluationLog />);
     fireEvent.click(screen.getByRole("button"));
@@ -635,7 +643,7 @@ describe("EvaluationLog — open state", () => {
       data: { volunteer_id: "u1", explanation_count: 0, methodology_reference: "BARS", explanations: [] },
       isLoading: false,
       error: null,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        
     } as any);
     render(<EvaluationLog />);
     fireEvent.click(screen.getByRole("button"));
@@ -647,7 +655,7 @@ describe("EvaluationLog — open state", () => {
       data: makeExplanation(),
       isLoading: false,
       error: null,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        
     } as any);
     render(<EvaluationLog />);
     fireEvent.click(screen.getByRole("button"));
@@ -661,7 +669,7 @@ describe("EvaluationLog — open state", () => {
       data: makeExplanation(),
       isLoading: false,
       error: null,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        
     } as any);
     render(<EvaluationLog />);
     fireEvent.click(screen.getByRole("button"));
@@ -674,7 +682,7 @@ describe("EvaluationLog — open state", () => {
       data: makeExplanation(),
       isLoading: false,
       error: null,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        
     } as any);
     render(<EvaluationLog />);
     fireEvent.click(screen.getByRole("button"));
@@ -691,7 +699,7 @@ describe("EvaluationLog — open state", () => {
       data: makeExplanation(),
       isLoading: false,
       error: null,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        
     } as any);
     render(<EvaluationLog />);
     fireEvent.click(screen.getByRole("button"));
@@ -703,7 +711,7 @@ describe("EvaluationLog — open state", () => {
       data: makeExplanation(),
       isLoading: false,
       error: null,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        
     } as any);
     render(<EvaluationLog />);
     fireEvent.click(screen.getByRole("button"));
@@ -715,7 +723,7 @@ describe("EvaluationLog — open state", () => {
       data: undefined,
       isLoading: false,
       error: null,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        
     } as any);
     render(<EvaluationLog />);
     const btn = screen.getByRole("button");
@@ -729,7 +737,7 @@ describe("EvaluationLog — open state", () => {
       data: makeExplanation(),
       isLoading: false,
       error: null,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        
     } as any);
     render(<EvaluationLog />);
     fireEvent.click(screen.getByRole("button"));
@@ -741,7 +749,7 @@ describe("EvaluationLog — open state", () => {
       data: makeExplanation(),
       isLoading: false,
       error: null,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        
     } as any);
     render(<EvaluationLog />);
     fireEvent.click(screen.getByRole("button"));

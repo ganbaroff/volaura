@@ -669,7 +669,7 @@ describe("TopBar — showEnergyPicker=false", () => {
 
 describe("TopBar — rendering with user", () => {
   beforeEach(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     vi.mocked(useAuthStore).mockImplementation(((selector: any) =>
       selector({
         user: {
@@ -693,7 +693,7 @@ describe("TopBar — rendering with user", () => {
   });
 
   it("falls back to full_name when display_name absent", () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     vi.mocked(useAuthStore).mockImplementationOnce(((selector: any) =>
       selector({
         user: {
@@ -706,7 +706,7 @@ describe("TopBar — rendering with user", () => {
   });
 
   it("falls back to email local-part when no metadata name", () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     vi.mocked(useAuthStore).mockImplementationOnce(((selector: any) =>
       selector({
         user: {

@@ -3,12 +3,13 @@
 import os
 import re
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from loguru import logger
 from pydantic import BaseModel
 
 from app.config import settings
 from app.deps import SupabaseAdmin
+from app.middleware.rate_limit import limiter
 
 router = APIRouter()
 
@@ -30,7 +31,8 @@ def _extract_project_ref(url: str) -> str:
 
 
 @router.get("/health", response_model=HealthResponse)
-async def health_check(db: SupabaseAdmin) -> HealthResponse:
+@limiter.limit("60/minute")
+async def health_check(request: Request, db: SupabaseAdmin) -> HealthResponse:
     """Real health check: verifies Supabase is reachable and LLM keys are set."""
     db_status = "unknown"
 

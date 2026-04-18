@@ -669,18 +669,17 @@ describe("TopBar — showEnergyPicker=false", () => {
 
 describe("TopBar — rendering with user", () => {
   beforeEach(() => {
-    vi.mocked(useAuthStore).mockImplementation(
-      (selector: (s: { user: unknown }) => unknown) =>
-        selector({
-          user: {
-            email: "yusif@example.com",
-            user_metadata: {
-              display_name: "Yusif G",
-              avatar_url: null,
-            },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    vi.mocked(useAuthStore).mockImplementation(((selector: any) =>
+      selector({
+        user: {
+          email: "yusif@example.com",
+          user_metadata: {
+            display_name: "Yusif G",
+            avatar_url: null,
           },
-        }) as ReturnType<typeof useAuthStore>
-    );
+        },
+      })) as any);
   });
 
   it("renders Avatar when user is present", () => {
@@ -694,29 +693,27 @@ describe("TopBar — rendering with user", () => {
   });
 
   it("falls back to full_name when display_name absent", () => {
-    vi.mocked(useAuthStore).mockImplementationOnce(
-      (selector: (s: { user: unknown }) => unknown) =>
-        selector({
-          user: {
-            email: "yusif@example.com",
-            user_metadata: { full_name: "Yusif Ganbarov" },
-          },
-        }) as ReturnType<typeof useAuthStore>
-    );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    vi.mocked(useAuthStore).mockImplementationOnce(((selector: any) =>
+      selector({
+        user: {
+          email: "yusif@example.com",
+          user_metadata: { full_name: "Yusif Ganbarov" },
+        },
+      })) as any);
     render(<TopBar title="Dashboard" />);
     expect(screen.getByTestId("avatar")).toHaveTextContent("Yusif Ganbarov");
   });
 
   it("falls back to email local-part when no metadata name", () => {
-    vi.mocked(useAuthStore).mockImplementationOnce(
-      (selector: (s: { user: unknown }) => unknown) =>
-        selector({
-          user: {
-            email: "yusif@example.com",
-            user_metadata: {},
-          },
-        }) as ReturnType<typeof useAuthStore>
-    );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    vi.mocked(useAuthStore).mockImplementationOnce(((selector: any) =>
+      selector({
+        user: {
+          email: "yusif@example.com",
+          user_metadata: {},
+        },
+      })) as any);
     render(<TopBar title="Dashboard" />);
     expect(screen.getByTestId("avatar")).toHaveTextContent("yusif");
   });

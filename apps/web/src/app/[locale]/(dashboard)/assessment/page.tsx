@@ -252,12 +252,7 @@ function AssessmentContent() {
       {/* Constitution P0 (E4) Pre-Assessment Layer: psychotype hint + pause + safety copy */}
       {selected.size > 0 && <SafetyBlock />}
 
-      {/* Constitution Law 2: Energy Adaptation — user picks energy level before assessment */}
-      {selected.size > 0 && (
-        <EnergyPicker value={energyLevel} onChange={setEnergyLevel} />
-      )}
-
-      {/* GDPR Article 22: consent for automated decision-making */}
+      {/* GDPR Article 22: consent for automated decision-making — above energy picker so it's visible without scrolling on mobile */}
       {selected.size > 0 && (
         <label className="flex items-start gap-3 text-sm text-muted-foreground cursor-pointer">
           <input
@@ -268,6 +263,11 @@ function AssessmentContent() {
           />
           <span>{t("assessment.automatedScoringConsent")}</span>
         </label>
+      )}
+
+      {/* Constitution Law 2: Energy Adaptation — user picks energy level before assessment */}
+      {selected.size > 0 && (
+        <EnergyPicker value={energyLevel} onChange={setEnergyLevel} />
       )}
 
       <Button

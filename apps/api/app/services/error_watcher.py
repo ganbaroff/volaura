@@ -16,7 +16,6 @@ Telegram escalation is future (watcher → atlas_voice → telegram_webhook).
 from __future__ import annotations
 
 import asyncio
-import os
 from datetime import UTC, datetime, timedelta
 
 from loguru import logger

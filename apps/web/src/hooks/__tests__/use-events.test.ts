@@ -406,7 +406,7 @@ describe("useCreateEvent", () => {
         description: "Test",
         start_time: "2026-06-01T10:00:00Z",
         end_time: "2026-06-01T12:00:00Z",
-      } as Parameters<typeof result.current.mutateAsync>[0]);
+      } as unknown as Parameters<typeof result.current.mutateAsync>[0]);
     });
 
     expect(qc.getQueryState(["events"])?.isInvalidated).toBe(true);
@@ -422,7 +422,7 @@ describe("useCreateEvent", () => {
       act(async () => {
         await result.current.mutateAsync({
           title: "Bad Event",
-        } as Parameters<typeof result.current.mutateAsync>[0]);
+        } as unknown as Parameters<typeof result.current.mutateAsync>[0]);
       })
     ).rejects.toThrow("Failed to create event");
   });

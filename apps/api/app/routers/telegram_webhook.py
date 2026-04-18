@@ -572,142 +572,18 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
 
 Отвечай подробно столько сколько нужно. Заканчивай: следующий шаг или явный вопрос если нужно уточнение."""
 
-    reply = None
-    # ── 0. Vertex AI Express Gemini ($300 credits, enterprise SLA) ──
-    vertex_key = os.environ.get("VERTEX_API_KEY", "")
-    if vertex_key and not reply:
-        try:
-            import httpx
+    from app.services.telegram_llm import generate_atlas_response
 
-            async with httpx.AsyncClient(timeout=30) as hc:
-                r = await hc.post(
-                    f"https://aiplatform.googleapis.com/v1/publishers/google/models/gemini-2.5-flash:generateContent?key={vertex_key}",
-                    headers={"Content-Type": "application/json"},
-                    json={
-                        "contents": [{"role": "user", "parts": [{"text": text}]}],
-                        "system_instruction": {"parts": [{"text": system_prompt}]},
-                        "generation_config": {"max_output_tokens": 4000, "temperature": 0.7},
-                    },
-                )
-                if r.status_code == 200:
-                    data = r.json()
-                    reply = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
-                    if reply:
-                        logger.info("Atlas replied via Vertex AI Express (primary)")
-                else:
-                    logger.warning("Vertex {s}: {b}", s=r.status_code, b=r.text[:200])
-        except Exception as e_vx:
-            logger.warning("Vertex failed, trying OpenRouter: {e}", e=str(e_vx)[:100])
-
-    # ── 1. Claude Sonnet via OpenRouter (secondary — follows persona instructions) ──
-    openrouter_key = os.environ.get("OPENROUTER_API_KEY", "")
-    if openrouter_key:
-        try:
-            import httpx
-
-            async with httpx.AsyncClient(timeout=30) as hc:
-                r = await hc.post(
-                    "https://openrouter.ai/api/v1/chat/completions",
-                    headers={
-                        "Authorization": f"Bearer {openrouter_key}",
-                        "HTTP-Referer": "https://volaura.app",
-                        "X-Title": "VOLAURA Atlas",
-                    },
-                    json={
-                        "model": "anthropic/claude-sonnet-4",
-                        "messages": [
-                            {"role": "system", "content": system_prompt},
-                            {"role": "user", "content": text},
-                        ],
-                        "max_tokens": 2000,
-                        "temperature": 0.7,
-                    },
-                )
-                if r.status_code == 200:
-                    reply = r.json()["choices"][0]["message"]["content"].strip()
-                    logger.info("Atlas replied via Claude Sonnet (OpenRouter)")
-                else:
-                    logger.warning("OpenRouter {s}: {b}", s=r.status_code, b=r.text[:200])
-        except Exception as e_or:
-            logger.warning("OpenRouter failed, trying Gemini: {e}", e=str(e_or)[:100])
-
-    # ── 2. Gemini Flash fallback (free tier) ──
-    if not reply:
-        try:
-            from google import genai
-
-            client = genai.Client(api_key=settings.gemini_api_key)
-            response = client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=text,
-                config=genai.types.GenerateContentConfig(
-                    system_instruction=system_prompt,
-                    max_output_tokens=4000,
-                    temperature=0.7,
-                ),
-            )
-            reply = (response.text or "").strip()
-            if reply:
-                logger.info("Atlas replied via Gemini Flash (fallback)")
-        except Exception as e:
-            logger.warning("Gemini fallback failed: {e}", e=str(e)[:100])
-
-    # ── 3. NVIDIA NIM fallback (free, weaker persona adherence) ──
-    if not reply:
-        nvidia_key = os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NVIDIA_NIM_KEY", "")
-        if nvidia_key:
-            try:
-                import httpx
-
-                async with httpx.AsyncClient(timeout=25) as hc:
-                    r = await hc.post(
-                        "https://integrate.api.nvidia.com/v1/chat/completions",
-                        headers={"Authorization": f"Bearer {nvidia_key}"},
-                        json={
-                            "model": "meta/llama-3.3-70b-instruct",
-                            "messages": [
-                                {"role": "system", "content": system_prompt[:4000]},
-                                {"role": "user", "content": text},
-                            ],
-                            "max_tokens": 2000,
-                            "temperature": 0.7,
-                        },
-                    )
-                    if r.status_code == 200:
-                        reply = r.json()["choices"][0]["message"]["content"].strip()
-                    else:
-                        logger.warning("NVIDIA NIM {s}: {b}", s=r.status_code, b=r.text[:200])
-            except Exception as e_nv:
-                logger.warning("NVIDIA NIM failed: {e}", e=str(e_nv)[:100])
-
-    # ── 4. Groq (last fallback) ──
-    if not reply:
-        groq_key = os.environ.get("GROQ_API_KEY", "")
-        if groq_key:
-            try:
-                import httpx
-
-                async with httpx.AsyncClient(timeout=15) as hc:
-                    r = await hc.post(
-                        "https://api.groq.com/openai/v1/chat/completions",
-                        headers={"Authorization": f"Bearer {groq_key}"},
-                        json={
-                            "model": "llama-3.3-70b-versatile",
-                            "messages": [
-                                {"role": "system", "content": system_prompt[:3000]},
-                                {"role": "user", "content": text},
-                            ],
-                            "max_tokens": 2000,
-                            "temperature": 0.7,
-                        },
-                    )
-                    if r.status_code == 200:
-                        reply = r.json()["choices"][0]["message"]["content"].strip()
-            except Exception as e_gr:
-                logger.warning("Groq failed: {e}", e=str(e_gr)[:100])
-
-        if not reply:
-            reply = "Все провайдеры недоступны. Сообщение сохранено. Попробуй через минуту."
+    reply, provider = await generate_atlas_response(
+        system_prompt=system_prompt,
+        user_message=text,
+        vertex_key=os.environ.get("VERTEX_API_KEY", ""),
+        openrouter_key=os.environ.get("OPENROUTER_API_KEY", ""),
+        gemini_key=os.environ.get("GEMINI_API_KEY", "") or settings.gemini_api_key,
+        nvidia_key=os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NVIDIA_NIM_KEY", ""),
+        groq_key=os.environ.get("GROQ_API_KEY", ""),
+    )
+    logger.info("Atlas replied via {p}", p=provider)
 
     # Add tag for saved items
     if msg_type == "idea":

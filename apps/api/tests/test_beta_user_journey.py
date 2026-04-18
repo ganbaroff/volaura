@@ -329,6 +329,7 @@ async def test_step2_start_assessment():
     admin = _build_chainable(
         [
             {"id": COMP_ID},  # competency lookup by slug
+            [],  # stale session check (none found)
             [MCQ_QUESTION],  # questions pool
         ]
     )

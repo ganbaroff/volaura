@@ -15,7 +15,7 @@ VOLAURA is a turborepo monorepo with three runtimes:
 - **Frontend** (`apps/web`) — Next.js 14, deployed to Vercel
 - **Backend** (`apps/api`) — FastAPI + Python 3.11, deployed to Railway
 - **Telegram Mini** (`apps/tg-mini`) — Telegram Web App, deployed alongside frontend
-- **Swarm** (`packages/swarm`) — 44-agent Python orchestration, runs via GitHub Actions cron
+- **Swarm** (`packages/swarm`) — Python orchestration (13 perspectives + ~118 skill modules), runs via GitHub Actions cron
 
 ## Key Files
 
@@ -88,7 +88,7 @@ When editing the API:
 
 ## Python Swarm (packages/swarm)
 
-44-agent orchestration system in `packages/swarm/`:
+Orchestration system in `packages/swarm/` — 13 perspectives + ~118 skill modules:
 - Daily cron via `.github/workflows/swarm-daily.yml`
 - Prompt modules in `packages/swarm/prompt_modules/`
 - ADAS-style optimization in `swarm-adas.yml`

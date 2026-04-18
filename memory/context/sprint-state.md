@@ -220,7 +220,23 @@ Cleanup: "volunteer" removed from LLM prompts (brandedby_personality.py), Sentry
 
 **CEO signal:** Assessment test passed end-to-end. Verdict: "офигенно". Core product works.
 
-**Next focus (CEO directive):** Design finalization across VOLAURA. Not features, not backend. Polish pass across all user-facing surfaces.
+**Next focus (CEO directive):** Design finalization across VOLAURA. Not features, not backend. Polish pass across all use
 
-**Priority reorder:**
-1. Close Mercury onboarding (bank statement: Leobank, Submit, await dec
+---
+
+## Session 120 close — 2026-04-18 18:49 Baku
+
+**Closed end-to-end:**
+- #49 Vertex rotation wired across 4 surfaces (.env, .env.md, config.py, llm.py, GH Secrets, Railway) — llm_configured:true verified on volauraapi-production/health.
+- #50 Railway API arsenal seeded for future CTO instances. Workspace + project + service ids, urllib-Cloudflare gotcha, `apiToken vs me` auth distinction, `variableUpsert/Delete` mutations — all stored in .env.md RAILWAY_API_TOKEN row.
+
+**Follow-ups that survived arsenal-audit (real CEO needs):**
+- #53 Vercel `NEXT_PUBLIC_API_URL` still pointed at stale modest-happiness-production — separate Node service, not VOLAURA. Frontend may be calling wrong backend. Priority on next web sprint.
+- #54 BrandedBy video-gen blocked on Azure + ElevenLabs keys (neither in apps/api/.env, no MCP equivalent for issuance).
+
+**In-flight:**
+- #52 LifeSim Godot 4.6.1 VolauraAPIClient parse-order.
+- #47 3-competency UX nudge scope.
+- #48 Article 9 GDPR consent integration plan.
+
+**Arsenal-before-request gate holding:** 3-step Obligation System list from Session 119 collapsed to 0 steps after audit (Supabase + Telegram secrets were already in .env; Railway token the only real ask). Pattern repeated Session 120 for Vertex propagation — no "CEO action needed" list reached CEO, all work self-serve once token arrived.

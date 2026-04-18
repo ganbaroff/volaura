@@ -14,15 +14,27 @@ All pages 200. INC-018 REV2 in main (84eab94). Google OAuth consent in Testing m
 
 ---
 
-## Current chunk: Apply obligation migration to prod Supabase + seed data
+## CHUNK CLOSED: Obligation system deployed to prod (2026-04-18 15:00 Baku)
+6 obligations seeded. RPC list_open_obligations() returns live data. 83(b) = 10 days urgent.
 
-**Goal:** atlas_obligations table live on prod, seeded with 83(b)/ITIN/EIN/Form5472/franchise deadlines. Nag-bot workflow ready to fire.
+## CHUNK CLOSED: Assessment 409 fix (2026-04-18 15:05 Baku)
+Admin bypass for stale sessions + audit logging. Strange v2 Gate 1 passed (Gemini).
 
-**Acceptance:** SQL query on prod returns seeded obligations. GitHub Actions workflow visible.
+---
+
+## Current chunk: volunteer_ table rename migration
+
+**Status:** DEFERRED to next sprint. 3 tables (volunteer_badges, volunteer_behavior_signals, volunteer_embeddings) used in activity.py + embeddings.py + 6 test files. Breaking change needs coordinated migration + code + test update. Not a quick fix.
+
+---
+
+## Current chunk: Admin panel live verification on prod
+
+**Goal:** CEO opens volaura.app/en/admin, sees 5 KPI cards + obligations + live feed.
 
 **Who does what:**
-- CLI (Terminal Atlas): apply migration via Supabase MCP, run seed script
-- Cowork: do NOT touch supabase/migrations/ until chunk closes
+- CLI: verify Vercel deployed latest, check /admin renders
+- Cowork: do NOT touch admin components
 
 ---
 

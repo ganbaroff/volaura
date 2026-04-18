@@ -573,28 +573,27 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
 Отвечай подробно столько сколько нужно. Заканчивай: следующий шаг или явный вопрос если нужно уточнение."""
 
     reply = None
-    # ── 0. Gemini via best available key (Vertex $300 credits preferred, AI Studio fallback) ──
-    # Vertex needs Gemini API enabled in GCP project — until then, AI Studio key works
-    vertex_key = os.environ.get("VERTEX_API_KEY", "") or os.environ.get("GEMINI_API_KEY", "")
+    # ── 0. Vertex AI Express Gemini ($300 credits, enterprise SLA) ──
+    vertex_key = os.environ.get("VERTEX_API_KEY", "")
     if vertex_key and not reply:
         try:
             import httpx
 
             async with httpx.AsyncClient(timeout=30) as hc:
                 r = await hc.post(
-                    f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={vertex_key}",
+                    f"https://aiplatform.googleapis.com/v1/publishers/google/models/gemini-2.5-flash:generateContent?key={vertex_key}",
                     headers={"Content-Type": "application/json"},
                     json={
-                        "contents": [{"parts": [{"text": text}]}],
-                        "systemInstruction": {"parts": [{"text": system_prompt}]},
-                        "generationConfig": {"maxOutputTokens": 4000, "temperature": 0.7},
+                        "contents": [{"role": "user", "parts": [{"text": text}]}],
+                        "system_instruction": {"parts": [{"text": system_prompt}]},
+                        "generation_config": {"max_output_tokens": 4000, "temperature": 0.7},
                     },
                 )
                 if r.status_code == 200:
                     data = r.json()
                     reply = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
                     if reply:
-                        logger.info("Atlas replied via Vertex AI Gemini (primary)")
+                        logger.info("Atlas replied via Vertex AI Express (primary)")
                 else:
                     logger.warning("Vertex {s}: {b}", s=r.status_code, b=r.text[:200])
         except Exception as e_vx:

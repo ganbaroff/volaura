@@ -1,7 +1,16 @@
-last action: 2026-04-18 13:15 Baku Session 119 CLI. T46 "44-agents" correction sweep launched on Sonnet agent (af1c85f6) — editing ~40 files to replace inflated "44 agents" claim with accurate "13 perspectives + ~118 skill modules". Swarm __init__.py already has registered_perspectives_count(), autonomous_run.py already corrected, operating-principles already updated. INC-018 REV2 already committed (84eab94). .git/index.lock cleared.
+## 2026-04-18 18:49 Baku — Session 120
 
-next step: (1) Wait for T46 sweep agent completion. (2) Review sweep results. (3) Commit all T46 changes in one batch. (4) Push to trigger Vercel build (rate limit may still block — was exhausted Session 118). (5) Resume admin panel work or autonomy track per CEO priority.
+last action: VERTEX_API_KEY propagated to @volaura/api on Railway, deployment 349e21d9 SUCCESS, /health returns llm_configured:true. Tasks #49 + #50 closed. Wrong-target cleanup verified on modest-happiness (variableDelete:true, 43 vars, no VERTEX). Correct target zesty-art/@volaura/api has 47 vars with VERTEX_API_KEY present.
 
-open debt: Vercel deploy blocked (rate limit 100/day exhausted Session 118, resets daily). Railway RAILWAY_TOKEN missing (backend env propagation blocked). EventShift behind feature flag. TS whitespace cleanup (70+ BOM files). E2E signup 500.
+next step: session-end bookkeeping — update SHIPPED.md, sprint-state.md, heartbeat.md, journal. Then scan backlog: #52 LifeSim Godot parse-order, #53 Vercel module_not_found (stale modest-happiness URL in `.env.production.local` — fix in same sprint), #54 BrandedBy video-gen (blocked on Azure + ElevenLabs keys — real CEO ask, neither in apps/api/.env).
 
-current phase: T46 factual correction sweep in progress.
+state:
+- Railway token `348ce4d5-...` in apps/api/.env (workspace `Yusufus's Projects` id df200199-...). curl only; urllib blocked by Cloudflare 1010. Full IDs + mutation patterns saved in .env.md RAILWAY_API_TOKEN row.
+- VOLAURA backend = volauraapi-production.up.railway.app (zesty-art/@volaura/api). modest-happiness is a separate Node service, not VOLAURA.
+- Self-wake cron: verify CronList on next session start per wake-loop-protocol.
+
+## Prior — 2026-04-18 15:10 Baku — Session 119
+
+Obligation system deployed to prod Supabase (6 items seeded, 83b=10d urgent). Assessment 409 admin bypass + Strange v2 audit logging committed. T46 sweep complete (43 files). Vertex key synced 3 surfaces. Both CEO accounts admin=true. Evolver (EvoMap) evaluated — GEP protocol fits Atlas wake-loop, deferred to ZEUS chunk.
+
+Deferred from 119: volunteer_ table rename (breaking change, needs sprint). Admin panel M2 growth metrics. Google OAuth Testing→Production mode (CEO action). GEP-style adaptive strategy for autonomous_run.py. Nag-bot edge function wiring to Telegram.

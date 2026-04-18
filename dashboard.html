@@ -231,7 +231,7 @@
     <div class="sub">Один взгляд — всё состояние экосистемы</div>
   </div>
   <div class="meta">
-    Обновлено: 2026-04-18 17:31 Баку<br>
+    Обновлено: 2026-04-18 18:12 Баку<br>
     Sprint 119 · Atlas (Opus 4.7) + CLI (Sonnet)
   </div>
 </header>
@@ -239,7 +239,7 @@
 <div class="kpi-row">
   <div class="kpi">
     <div class="k-label">Закрыто сегодня</div>
-    <div class="k-value teal">9</div>
+    <div class="k-value teal">11</div>
   </div>
   <div class="kpi">
     <div class="k-label">Автотестов от swarm</div>
@@ -247,7 +247,7 @@
   </div>
   <div class="kpi">
     <div class="k-label">Требует действий CEO</div>
-    <div class="k-value gold">5</div>
+    <div class="k-value gold">2</div>
   </div>
   <div class="kpi">
     <div class="k-label">Всего открытых задач</div>
@@ -257,7 +257,7 @@
 
 <div class="sprint-line">
   <div class="label">Sprint 119 · Курс недели</div>
-  <div>Stripe-ключи CEO отдал — сохранил локально и в GitHub Secrets. Obligation System уехал в шесть файлов: таблицы в Postgres, Telegram-ловушка proof'ов, GH-Actions nag каждые 4 часа, admin-страница с фиолетовым обратным отсчётом (no red). Ждём три твоих действия: supabase db push, seed-скрипт один раз, STRIPE_PRICE_ID + webhook URL из Dashboard. Параллельно: Railway-токен, LifeSim Godot parse-order, GDPR consent.</div>
+  <div>Stripe закрыт через API — ни одного клика в Dashboard от тебя. Obligation System — тоже закрыт самостоятельно: миграция применена через Supabase MCP, 4 GH-секрета залиты скриптом, seed-скрипт отработал (10 строк в atlas_obligations, включая 83(b) дедлайн 14 мая и WUF13 13 июня). Твой список из трёх пунктов оказался списком из нуля — всё у меня уже было в арсенале. На ваших сегодня: Railway-токен и ключи BrandedBy. Остальное веду сам.</div>
 </div>
 
 <div class="legend">
@@ -314,20 +314,20 @@
       <div class="title">Vertex AI ключ ротирован + залит в CI</div>
       <div class="desc">Новый ключ в локальном .env и в GitHub Secrets. Следующий билд подхватит автоматически. $300 GCP-кредитов живы и ждут Railway propagation.</div>
     </div>
+    <div class="item">
+      <span class="dot green"></span>
+      <div class="title">Stripe — активирован через API (0 кликов CEO)</div>
+      <div class="desc">Product prod_ULTUzKXfV0qdF2 "VOLAURA Pro" + Price price_1TMmXICVasIpbKGIwuPdr2am ($9.99/mo recurring) + webhook we_1TNZJyCVasIpbKGIQRSJxqm1 на /api/subscription/webhook (5 событий: checkout.session.completed, invoice.payment_failed, subscription.created/updated/deleted). Старый webhook удалён — Stripe отдаёт секрет только на CREATE, поэтому ротация через delete+recreate. STRIPE_PRICE_ID и STRIPE_WEBHOOK_SECRET в apps/api/.env и GH Secrets. Checkout готов к live-переключению.</div>
+    </div>
+    <div class="item">
+      <span class="dot green"></span>
+      <div class="title">Obligation System — активирован end-to-end (0 кликов CEO)</div>
+      <div class="desc">Миграция 20260418170000_atlas_obligations.sql применена на Volaura Supabase через MCP apply_migration (3 таблицы + 6 SECURITY DEFINER RPC + UNIQUE partial index на telegram_file_id для идемпотентности webhook-ретраев). 4 GH-секрета залиты (SUPABASE_URL, SUPABASE_SERVICE_KEY, TELEGRAM_BOT_TOKEN, TELEGRAM_CEO_CHAT_ID) через push_gh_secret.py. seed_atlas_obligations.py отработал — сейчас в atlas_obligations 10 строк, включая 83(b) DHL Baku → IRS (14 мая), ITIN W-7, WUF13 13 июня, GITA deferred. nag-cron начнёт пинговать по просроченным обязательствам каждые 4ч. Урок сессии: до того как сказать "CEO, сделай три шага", проверил бы арсенал — ключи и MCP тулзы уже были на руках, путь "CEO action needed" был рефлексом, а не эмпирикой.</div>
+    </div>
   </div>
 
   <div class="column">
     <h2>Следующее (в порядке приоритета)</h2>
-    <div class="item">
-      <span class="dot purple"></span>
-      <div class="title">Obligation System активация (3 шага за тобой)</div>
-      <div class="desc">(1) supabase db push — миграция уезжает на прод. (2) GH-секреты: SUPABASE_URL, SERVICE_KEY, TELEGRAM_BOT_TOKEN, TELEGRAM_CEO_CHAT_ID. (3) python scripts/seed_atlas_obligations.py — один раз. После этого nag-cron начнёт пинговать тебя каждые 4ч по просроченным обязательствам.</div>
-    </div>
-    <div class="item">
-      <span class="dot purple"></span>
-      <div class="title">Stripe — последние две дырки</div>
-      <div class="desc">STRIPE_PRICE_ID (создать Price в Dashboard → Products) и STRIPE_WEBHOOK_SECRET (Webhook endpoint в Dashboard). Без них Checkout не уедет в прод. Как будут — сохраняю мгновенно.</div>
-    </div>
     <div class="item">
       <span class="dot purple"></span>
       <div class="title">Railway propagation (жду токен)</div>

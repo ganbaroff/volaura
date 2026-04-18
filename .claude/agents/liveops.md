@@ -43,7 +43,7 @@ If the health endpoint fails:
 
 ## Python Swarm Status
 
-The 44-agent Python swarm in `packages/swarm/` runs on a daily cron via GitHub Actions:
+The Python swarm (13 perspectives + ~118 skill modules) in `packages/swarm/` runs on a daily cron via GitHub Actions:
 
 ```bash
 gh run list --workflow=swarm-daily.yml --limit 5

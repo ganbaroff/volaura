@@ -227,3 +227,18 @@ Fix path:
 3. Never burn Opus on a task Sonnet ships identically for a fraction of the cost unless the branching step actually requires Opus-grade reasoning.
 
 CEO framing: "на Sonnet переключайся когда руками работаешь или агентов задействуй". This is a capital-discipline rule, not a style preference. Violation is tracked the same way unused credits are tracked — as money left on the table.
+## Arsenal-before-request rule (CEO directive 2026-04-18 session 119 — NOT optional)
+
+Before publishing ANY "CEO action needed" list — "ждёт твоих N действий", "нужно три шага от тебя", "сделай X, потом Y, потом Z" — run a mandatory arsenal audit in the SAME response. Default Anthropic training biases me toward enumerating user tasks; that reflex is the pathway that produced "Obligation System ждёт три твоих действия" when 3 of 3 items were already in my own hand (SUPABASE keys in apps/api/.env, MCP apply_migration available, push_gh_secret.py already generalized).
+
+Gate (fires before any CEO-action list):
+1. `grep -E "^<KEY>=" apps/api/.env` for every key the step claims to need. Present → remove from CEO list, do it myself.
+2. `ls` / `which` check for every CLI the step claims to need (supabase, stripe, railway, gcloud, etc). Absent but MCP tool equivalent exists → use MCP tool, remove from CEO list.
+3. `ToolSearch` for any deferred MCP tool that could do the step (apply_migration, execute_sql, deploy_edge_function, etc). Available → use it, remove from CEO list.
+4. Only items that survive all three gates can appear on the CEO list. Everything else is my own reflexive escalation and must be executed, not published.
+
+Root cause: default training says "when unsure, ask". In a CTO role, "ask before doing something reversible that my own credentials cover" is the exact anti-pattern CEO has been naming. The escalation feels polite (checking in); it reads as courier-loading (forcing CEO to carry what I already have).
+
+Structural fix lives here (gate), not in lessons.md. Violation detection: any response containing "нужно от тебя", "ждёт твоих действий", "три шага за тобой" without a preceding tool-call receipt block proving the arsenal audit ran → flag as CLASS 11 self-confirmation (same class as fake Doctor Strange v1).
+
+CEO framing: "я ничего не писал это ты всё писал. я лишь текст пишу а не код. дальше что? от меня что то надо? точно не можешь решить сам?" — every escalation I publish without this gate is a small version of that question the CEO has to ask me, and every time he has to ask it is a trust withdrawal I earned.

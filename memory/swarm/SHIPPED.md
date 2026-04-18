@@ -6,6 +6,23 @@
 
 ---
 
+## Session 120 (2026-04-18 18:49 Baku) — Railway VERTEX_API_KEY propagation + Railway API arsenal
+
+| What | File | Details | Status |
+|------|------|---------|--------|
+| VERTEX_API_KEY on @volaura/api | Railway (no repo change) | `variableUpsert(input: VariableUpsertInput!)` → projectId `9e1940ed-038d-4d42-a79d-b8430034e697` (zesty-art) / envId `6474308a-4b75-4035-959d-16e703362ad5` (production) / serviceId `3902da60-d560-475d-8978-4a6871d4c2de` (@volaura/api). Response `{"data":{"variableUpsert":true}}`. Deployment `349e21d9-7ba9-4577-8d41-651f8c73c261` reached SUCCESS, staticUrl `volauraapi-production.up.railway.app`. /health returns `{"status":"ok","database":"connected","llm_configured":true,"openrouter":true,"nvidia":true}`. | shipped |
+| Wrong-target cleanup on modest-happiness | Railway (no repo change) | Initial misroute (CEO-selected wrong serviceId — modest-happiness-production is a separate Node service, not VOLAURA backend) reverted via `variableDelete(input: VariableDeleteInput!)`. Response `{"data":{"variableDelete":true}}`. Verified: modest-happiness service now 43 vars, no VERTEX; @volaura/api 47 vars, VERTEX present. | shipped |
+| Railway token + API arsenal in .env.md | `.env.md` line ~110 | RAILWAY_API_TOKEN row now carries full discovery path: workspace id, project/env/service ids, auth header, `apiToken { workspaces }` introspection (the `me` query fails — token is `ApiTokenContext`-shaped, not `User`-shaped), Cloudflare 1010 gotcha on Python urllib default UA (use curl or set Mozilla UA), mutation signatures. Future CTO wakes can skip the 45-minute diagnostic. | shipped |
+| Tasks #49 + #50 closed | TaskList | #49 Vertex rotation end-to-end + #50 Railway propagation both `completed`. | shipped |
+
+**Verification:** /health HTTP 200 with llm_configured:true, Railway deployment status SUCCESS (via GraphQL query against `deployment(id: ...)`), both services' variable counts confirmed via `variables` field.
+
+**Known gaps / follow-ups:**
+1. Vercel `.env.production.local` still points `NEXT_PUBLIC_API_URL` at the stale `modest-happiness-production.up.railway.app` (unrelated Node service) — frontend may be calling the wrong backend. Fix in task #53 sprint.
+2. RAILWAY_API_TOKEN not yet pushed to GH Actions Secrets — no workflow currently needs it, push when first CI Railway env-var automation lands.
+
+---
+
 ## Session 119 (2026-04-18) — Atlas Obligation System, 6 files
 
 | What | File | Details | Status |
@@ -1498,4 +1515,4 @@ Add to the correct session section. Never delete old entries — archive to SHIP
 
 | What | Where | Does what | Status |
 |------|-------|-----------|--------|
-| `TASK-PROTOCOL.md` v3.0 | `docs/` | +10 protocol steps from 5 swarm agents: Steps 0.1 (Mistakes Audit), 0.25 (Team Selection), 1.5 (Decision Type Gate), 3.5 (Ecosystem Blast Radius), 3.7 (User Journey Walkthrough), 6.5 (Security Pre-Commit Checklist), 9.5 (Work Verdict Gate), 10.5 (CEO Silenc
+| `TASK-PROTOCOL.md` v3.0 | `docs/` | +10 protocol steps from 5 swarm agents: Steps 0.1 (Mistakes Audit), 0.25 (Team Selection), 1.5 (Decision Type Gate), 3.5 (Ecosystem Blast Radius), 3.7 (User Journey Walkthrough), 6.5 (Security Pre-Commit Checklist), 9.5 (Work Verdict Gate), 10.5 (CEO Silenc                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            

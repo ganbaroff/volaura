@@ -48,10 +48,15 @@ async def run_error_watcher() -> dict[str, int]:
 
         if count > 0:
             logger.warning("watcher.stuck_sessions", count=count)
-            await _emit_anomaly(db, "stuck_sessions", count, {
-                "threshold_minutes": STUCK_SESSION_THRESHOLD_MINUTES,
-                "severity": "warn",
-            })
+            await _emit_anomaly(
+                db,
+                "stuck_sessions",
+                count,
+                {
+                    "threshold_minutes": STUCK_SESSION_THRESHOLD_MINUTES,
+                    "severity": "warn",
+                },
+            )
 
             # Auto-heal: abandon stuck sessions
             await (
@@ -78,10 +83,15 @@ async def run_error_watcher() -> dict[str, int]:
 
         if orphan_count > 0:
             logger.warning("watcher.orphan_events", count=orphan_count)
-            await _emit_anomaly(db, "orphan_events", orphan_count, {
-                "window_hours": 1,
-                "severity": "info",
-            })
+            await _emit_anomaly(
+                db,
+                "orphan_events",
+                orphan_count,
+                {
+                    "window_hours": 1,
+                    "severity": "info",
+                },
+            )
     except Exception as e:
         # RPC may not exist yet — that's ok, log and move on
         logger.debug("watcher.orphan_events.skipped", error=str(e))
@@ -102,11 +112,16 @@ async def run_error_watcher() -> dict[str, int]:
 
         if fail_count >= ERROR_RATE_THRESHOLD_PER_HOUR:
             logger.warning("watcher.error_rate", count=fail_count)
-            await _emit_anomaly(db, "error_rate_high", fail_count, {
-                "window_hours": 1,
-                "threshold": ERROR_RATE_THRESHOLD_PER_HOUR,
-                "severity": "crit" if fail_count >= ERROR_RATE_THRESHOLD_PER_HOUR * 2 else "warn",
-            })
+            await _emit_anomaly(
+                db,
+                "error_rate_high",
+                fail_count,
+                {
+                    "window_hours": 1,
+                    "threshold": ERROR_RATE_THRESHOLD_PER_HOUR,
+                    "severity": "crit" if fail_count >= ERROR_RATE_THRESHOLD_PER_HOUR * 2 else "warn",
+                },
+            )
     except Exception as e:
         logger.error("watcher.error_rate.failed", error=str(e))
         results["error_rate_1h"] = -1
@@ -125,12 +140,14 @@ async def _emit_anomaly(
     try:
         await (
             db.table("character_events")
-            .insert({
-                "user_id": WATCHER_USER_ID,
-                "event_type": f"metric_anomaly_{anomaly_type}",
-                "payload": {"value": value, **payload},
-                "source_product": "atlas_watcher",
-            })
+            .insert(
+                {
+                    "user_id": WATCHER_USER_ID,
+                    "event_type": f"metric_anomaly_{anomaly_type}",
+                    "payload": {"value": value, **payload},
+                    "source_product": "atlas_watcher",
+                }
+            )
             .execute()
         )
     except Exception as e:

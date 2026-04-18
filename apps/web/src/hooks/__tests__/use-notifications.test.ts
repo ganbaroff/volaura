@@ -462,12 +462,12 @@ describe("useRealtimeNotifications", () => {
     const { wrapper } = makeWrapper();
     const { rerender } = renderHook(
       ({ userId }: { userId: string | null }) => useRealtimeNotifications(userId),
-      { wrapper, initialProps: { userId: "user_123" } }
+      { wrapper, initialProps: { userId: "user_123" as string | null } }
     );
 
     const callCountBefore = mockChannel.mock.calls.length;
 
-    rerender({ userId: null });
+    rerender({ userId: null as string | null });
 
     // No new channel for null userId
     expect(mockChannel.mock.calls.length).toBe(callCountBefore);

@@ -3,7 +3,7 @@ import { renderHook, waitFor, act } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createElement } from "react";
 import type { ReactNode } from "react";
-import type { FeedResponse, NextChoiceResponse } from "@/lib/api/generated/types.gen";
+import type { FeedItem, FeedResponse, NextChoiceResponse } from "@/lib/api/generated/types.gen";
 
 // ── Generated SDK mocks ───────────────────────────────────────────────────────
 const mockGetFeed = vi.fn();
@@ -58,7 +58,7 @@ describe("useLifesimFeed", () => {
   });
 
   it("returns feed data on success", async () => {
-    const feed = makeFeedResponse({ data: [{ id: "e1", text: "You started school" } as Record<string, unknown>] });
+    const feed = makeFeedResponse({ data: [{ id: "e1", event_type: "lifesim_choice", payload: { text: "You started school" }, created_at: "2026-01-01T00:00:00Z" }] });
     mockGetFeed.mockResolvedValue({ data: feed, error: null });
     const { wrapper } = makeWrapper();
 
@@ -124,8 +124,10 @@ describe("useLifesimFeed", () => {
   });
 
   it("keeps distinct caches for different limit values", async () => {
-    const feed10 = makeFeedResponse({ data: new Array(10).fill({ id: "x" }) as Record<string, unknown>[] });
-    const feed20 = makeFeedResponse({ data: new Array(20).fill({ id: "y" }) as Record<string, unknown>[] });
+    const item10: FeedItem = { id: "x", event_type: "lifesim_choice", payload: {}, created_at: "2026-01-01T00:00:00Z" };
+    const item20: FeedItem = { id: "y", event_type: "lifesim_choice", payload: {}, created_at: "2026-01-01T00:00:00Z" };
+    const feed10 = makeFeedResponse({ data: new Array(10).fill(item10) });
+    const feed20 = makeFeedResponse({ data: new Array(20).fill(item20) });
 
     mockGetFeed
       .mockResolvedValueOnce({ data: feed10, error: null })

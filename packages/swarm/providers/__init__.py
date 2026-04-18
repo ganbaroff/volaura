@@ -36,8 +36,22 @@ class ProviderRegistry:
     """Discovers available providers and allocates agents for swarm runs."""
 
     def discover(self, env: dict[str, str] | None = None) -> list[LLMProvider]:
-        """Check each provider's env var. Return instances of available ones."""
+        """Check each provider's env var. Return instances of available ones.
+
+        If SWARM_USE_LITELLM=1, returns a single LiteLLMProvider that handles
+        the full fallback chain internally. Legacy per-provider path otherwise.
+        """
         env = env or dict(os.environ)
+
+        if env.get("SWARM_USE_LITELLM", "0").strip() == "1":
+            try:
+                from .litellm_adapter import LiteLLMProvider
+                provider = LiteLLMProvider()
+                logger.info("LiteLLM router active — fallback chain: Cerebras→Ollama→NVIDIA→Haiku")
+                return [provider]
+            except Exception as e:
+                logger.warning("SWARM_USE_LITELLM=1 but LiteLLM init failed ({e}), falling back to legacy providers", e=str(e)[:200])
+
         available: list[LLMProvider] = []
 
         for env_var, mod_path, cls_name in _PROVIDER_MAP:

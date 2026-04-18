@@ -370,7 +370,7 @@ export default function GenerationPage({
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
-          className="rounded-2xl overflow-hidden border border-border bg-black shadow-xl"
+          className="rounded-2xl overflow-hidden border border-border bg-[#0a0a0f] shadow-xl"
         >
           <video
             src={videoUrl}

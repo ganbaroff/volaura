@@ -91,8 +91,7 @@ describe("haptics", () => {
     });
 
     it("no-ops when vibrate is not in navigator", () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      delete (navigator as any).vibrate;
+      delete (navigator as unknown as Record<string, unknown>).vibrate;
       expect(() => triggerHaptic("focus_start")).not.toThrow();
     });
 
@@ -117,8 +116,7 @@ describe("haptics", () => {
     });
 
     it("returns false when vibrate is absent", () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      delete (navigator as any).vibrate;
+      delete (navigator as unknown as Record<string, unknown>).vibrate;
       expect(isHapticsSupported()).toBe(false);
     });
   });

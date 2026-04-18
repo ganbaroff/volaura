@@ -211,7 +211,9 @@ class TestAuraScoreResponse:
         assert asr.last_updated == NOW
         assert len(asr.aura_history) == 1
 
-    @pytest.mark.parametrize("missing", ["volunteer_id", "total_score", "badge_tier", "elite_status", "competency_scores"])
+    @pytest.mark.parametrize(
+        "missing", ["volunteer_id", "total_score", "badge_tier", "elite_status", "competency_scores"]
+    )
     def test_missing_required(self, missing):
         data = self._base()
         del data[missing]
@@ -348,7 +350,14 @@ class TestAuraExplanationResponse:
 
     @pytest.mark.parametrize(
         "missing",
-        ["volunteer_id", "explanation_count", "has_pending_evaluations", "pending_reeval_count", "methodology_reference", "explanations"],
+        [
+            "volunteer_id",
+            "explanation_count",
+            "has_pending_evaluations",
+            "pending_reeval_count",
+            "methodology_reference",
+            "explanations",
+        ],
     )
     def test_missing_required(self, missing):
         data = self._base()
@@ -552,7 +561,18 @@ class TestEventResponse:
 
     @pytest.mark.parametrize(
         "missing",
-        ["id", "organization_id", "title_en", "title_az", "start_date", "end_date", "status", "is_public", "created_at", "updated_at"],
+        [
+            "id",
+            "organization_id",
+            "title_en",
+            "title_az",
+            "start_date",
+            "end_date",
+            "status",
+            "is_public",
+            "created_at",
+            "updated_at",
+        ],
     )
     def test_missing_required(self, missing):
         data = self._base()

@@ -69,6 +69,7 @@ def _build_full_db_mock(
     We distinguish them by inspecting which builder method is called first on
     the returned chain: select → query chain; update → heal chain.
     """
+
     # We use a dispatcher chain that routes based on first builder call.
     def _smart_session_chain(select_result, heal_result=None):
         """Chain that returns select_result on select(), heal_result on update()."""
@@ -353,7 +354,7 @@ async def test_orphan_events_triggers_emit_when_nonzero():
         patch("app.deps.get_admin_client", AsyncMock(return_value=db), create=True),
         patch("app.services.error_watcher._emit_anomaly", AsyncMock()) as mock_emit,
     ):
-            await run_error_watcher()
+        await run_error_watcher()
 
     emit_types = [c.args[1] for c in mock_emit.call_args_list]
     assert "orphan_events" in emit_types
@@ -370,7 +371,7 @@ async def test_error_rate_below_threshold_skips_emit():
         patch("app.deps.get_admin_client", AsyncMock(return_value=db), create=True),
         patch("app.services.error_watcher._emit_anomaly", AsyncMock()) as mock_emit,
     ):
-            result = await run_error_watcher()
+        result = await run_error_watcher()
 
     assert result["error_rate_1h"] == below
     emit_types = [c.args[1] for c in mock_emit.call_args_list]
@@ -384,7 +385,7 @@ async def test_error_rate_at_threshold_triggers_emit():
         patch("app.deps.get_admin_client", AsyncMock(return_value=db), create=True),
         patch("app.services.error_watcher._emit_anomaly", AsyncMock()) as mock_emit,
     ):
-            result = await run_error_watcher()
+        result = await run_error_watcher()
 
     assert result["error_rate_1h"] == ERROR_RATE_THRESHOLD_PER_HOUR
     emit_types = [c.args[1] for c in mock_emit.call_args_list]
@@ -399,7 +400,7 @@ async def test_error_rate_warn_severity_at_threshold():
         patch("app.deps.get_admin_client", AsyncMock(return_value=db), create=True),
         patch("app.services.error_watcher._emit_anomaly", AsyncMock()) as mock_emit,
     ):
-            await run_error_watcher()
+        await run_error_watcher()
 
     rate_calls = [c for c in mock_emit.call_args_list if c.args[1] == "error_rate_high"]
     assert len(rate_calls) == 1
@@ -415,7 +416,7 @@ async def test_error_rate_crit_severity_at_double_threshold():
         patch("app.deps.get_admin_client", AsyncMock(return_value=db), create=True),
         patch("app.services.error_watcher._emit_anomaly", AsyncMock()) as mock_emit,
     ):
-            await run_error_watcher()
+        await run_error_watcher()
 
     rate_calls = [c for c in mock_emit.call_args_list if c.args[1] == "error_rate_high"]
     assert len(rate_calls) == 1

@@ -134,6 +134,53 @@ async def start_assessment(
             },
         )
 
+    # GDPR Art 7 — log consent grant to consent_events (append-only, service role).
+    # Non-blocking: a logging failure must never abort the assessment start.
+    try:
+        policy_row = (
+            await db_admin.table("policy_versions")
+            .select("id")
+            .eq("document_type", "ai_decision_notice")
+            .is_("superseded_by", "null")
+            .order("effective_from", desc=True)
+            .limit(1)
+            .maybe_single()
+            .execute()
+        )
+        if policy_row and policy_row.data:
+            await db_admin.table("consent_events").insert(
+                {
+                    "user_id": str(user_id),
+                    "source_product": "volaura",
+                    "event_type": "consent_given",
+                    "policy_version_id": policy_row.data["id"],
+                    "consent_scope": {
+                        "competency_slug": payload.competency_slug,
+                        "energy_level": getattr(payload, "energy_level", None),
+                        "timestamp": datetime.now(UTC).isoformat(),
+                    },
+                    "ip_address": request.client.host if request.client else None,
+                    "user_agent": request.headers.get("user-agent"),
+                }
+            ).execute()
+            logger.info(
+                "GDPR consent logged",
+                user_id=user_id,
+                competency_slug=payload.competency_slug,
+                policy_version_id=policy_row.data["id"],
+            )
+        else:
+            logger.warning(
+                "GDPR consent not logged — no active ai_decision_notice policy version found",
+                user_id=user_id,
+            )
+    except Exception as exc:
+        logger.warning(
+            "GDPR consent logging failed (non-blocking)",
+            user_id=user_id,
+            error=str(exc),
+        )
+
     # Resolve admin status once — used by both the stale-session bypass and the
     # rapid-restart cooldown below.
     RAPID_RESTART_COOLDOWN_MINUTES = 30

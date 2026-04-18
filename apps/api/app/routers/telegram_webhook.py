@@ -573,7 +573,33 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
 Отвечай подробно столько сколько нужно. Заканчивай: следующий шаг или явный вопрос если нужно уточнение."""
 
     reply = None
-    # ── 1. Claude Sonnet via OpenRouter (primary — follows persona instructions) ──
+    # ── 0. Vertex AI Gemini (enterprise SLA, $300 credits, never free-tier throttled) ──
+    vertex_key = os.environ.get("VERTEX_API_KEY", "")
+    if vertex_key and not reply:
+        try:
+            import httpx
+
+            async with httpx.AsyncClient(timeout=30) as hc:
+                r = await hc.post(
+                    f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={vertex_key}",
+                    headers={"Content-Type": "application/json"},
+                    json={
+                        "contents": [{"parts": [{"text": text}]}],
+                        "systemInstruction": {"parts": [{"text": system_prompt}]},
+                        "generationConfig": {"maxOutputTokens": 4000, "temperature": 0.7},
+                    },
+                )
+                if r.status_code == 200:
+                    data = r.json()
+                    reply = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
+                    if reply:
+                        logger.info("Atlas replied via Vertex AI Gemini (primary)")
+                else:
+                    logger.warning("Vertex {s}: {b}", s=r.status_code, b=r.text[:200])
+        except Exception as e_vx:
+            logger.warning("Vertex failed, trying OpenRouter: {e}", e=str(e_vx)[:100])
+
+    # ── 1. Claude Sonnet via OpenRouter (secondary — follows persona instructions) ──
     openrouter_key = os.environ.get("OPENROUTER_API_KEY", "")
     if openrouter_key:
         try:

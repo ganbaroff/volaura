@@ -251,7 +251,7 @@ export default function GenerationPage({
           <p className="text-sm text-muted-foreground">
             {t("error.generic", { defaultValue: "Something went wrong" })}
           </p>
-          <Button variant="outline" onClick={() => router.back()}>
+          <Button variant="outline" onClick={() => router.push(`/${locale}/brandedby`)}>
             <ArrowLeft className="size-4 mr-1.5" aria-hidden="true" />
             {t("common.back", { defaultValue: "Back" })}
           </Button>

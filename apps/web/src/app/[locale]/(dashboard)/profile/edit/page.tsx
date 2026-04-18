@@ -152,7 +152,7 @@ export default function EditProfilePage() {
         {/* Back navigation */}
         <button
           type="button"
-          onClick={() => router.back()}
+          onClick={() => router.push(`/${locale}/profile`)}
           className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground -ml-1 mb-1"
           aria-label={t("onboarding.back")}
         >

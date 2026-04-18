@@ -137,7 +137,7 @@ export default function ContestScorePage() {
       <div className="mx-auto max-w-xl p-6 space-y-6">
         <button
           type="button"
-          onClick={() => router.back()}
+          onClick={() => router.push(`/${locale}/aura`)}
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="size-4" aria-hidden="true" />

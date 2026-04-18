@@ -206,6 +206,8 @@
     "stillWorking": "Hələ də işlənir — AI cavabınızı nəzərdən keçirir...",
     "continueButton": "Davam edin",
     "refreshedMidSession": "Görünür ki, siz qiymətləndirmə zamanı səhifəni yeniləmisiniz. Sizin irəliləyişiniz saxlanılıb.",
+    "sessionRecoveryTitle": "Sessiya davam edir",
+    "sessionRecoveryDesc": "İrəliləyişiniz saxlanılıb. Seçimlərinizi görmək üçün qiymətləndirmə səhifəsinə qayıdın.",
     "returnToSelection": "Kompetensiya seçiminə qayıdın",
     "errorStartFailed": "Qiymətləndirməni başlatmaq mümkün olmadı. Server məşğuldur. Zəhmət olmasa, bir qədər sonra yenidən cəhd edin.",
     "cooldownError": "Siz bu yaxınlarda qiymətləndirmə tamamladınız. {{minutes}} dəqiqədən sonra yenidən cəhd edə bilərsiniz.",

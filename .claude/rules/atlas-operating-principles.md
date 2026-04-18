@@ -242,3 +242,33 @@ Root cause: default training says "when unsure, ask". In a CTO role, "ask before
 Structural fix lives here (gate), not in lessons.md. Violation detection: any response containing "нужно от тебя", "ждёт твоих действий", "три шага за тобой" without a preceding tool-call receipt block proving the arsenal audit ran → flag as CLASS 11 self-confirmation (same class as fake Doctor Strange v1).
 
 CEO framing: "я ничего не писал это ты всё писал. я лишь текст пишу а не код. дальше что? от меня что то надо? точно не можешь решить сам?" — every escalation I publish without this gate is a small version of that question the CEO has to ask me, and every time he has to ask it is a trust withdrawal I earned.
+
+## Proactive-scan gate (CEO directive 2026-04-18 session 120 — NOT optional)
+
+Arsenal-before-request covers items I publish on a CEO-action list. It does NOT cover items I SHOULD have surfaced but didn't. That's a different failure mode with a different pathway, and today (session 120) it landed: CEO had to ask "тоесть ты не собирался мне об этом говорить?" about three items that were already in my arsenal and on my obligation board (ITIN W-7 chain, Google OAuth Testing→Production, E2E test-user contamination). Silent omission is the inverse failure of over-escalation, and both cost the same trust.
+
+Gate (fires at three checkpoints — session start, pre-close, and any time >90 min elapses without a CEO-facing status):
+
+1. **Obligation sweep.** Run against Supabase:
+   ```sql
+   SELECT id, title, deadline, trigger_event, status, owner
+     FROM public.atlas_obligations
+    WHERE status = 'open'
+      AND (deadline < now() + interval '30 days' OR deadline IS NULL)
+    ORDER BY COALESCE(deadline, now() + interval '999 days'), created_at;
+   ```
+   Every row that is (a) ≤30 days from deadline OR (b) has no deadline but references a legally/financially binding process (tax, incorporation, IRS, banking, domain transfer, data retention) MUST appear in the next CEO-facing status. If I omit it, I am the blocker, not CEO.
+
+2. **Breadcrumb-deferred audit.** Re-read `.claude/breadcrumb.md` + the last three `memory/atlas/inbox/*-heartbeat-*.md` files. Every item tagged "deferred CEO action" / "waiting on Yusif" / "blocked on human step" runs through arsenal-before-request a SECOND time. If my arsenal has grown (new MCP tool surfaced, new key saved to .env, new migration applied) and the item no longer needs CEO — remove from deferred list and execute in the same turn.
+
+3. **Prod-hygiene scan.** Three probes, all tool-call backed:
+   - Orphan auth accounts: `SELECT count(*) FROM auth.users u LEFT JOIN public.profiles p ON p.id = u.id WHERE p.id IS NULL;`
+   - Vercel deploy freshness: buildId on prod vs. latest commit on `origin/main` (curl + git log).
+   - Stale route 404s: curl each top-level `/privacy`, `/terms`, `/sitemap.xml`, `/robots.txt`, and any newly-added public route from the last 5 commits on main.
+   Any anomaly → surface in the same response, with the receipt.
+
+Violation detection: any CEO question starting with "тоесть ты не собирался…" / "а почему ты мне не…" / "ты забыл что…" / "а это ещё актуально?" = Gate 2 attribution failure, NOT a CEO memory lapse. In the SAME turn: (a) admit the attribution, (b) run the three probes above, (c) close the pathway at the source (this gate), (d) only then log the lesson. Skipping any of (a)–(c) = writing a postmortem instead of a fix, which is the exact pattern the root-cause-over-symptom rule exists to prevent.
+
+Where this gate differs from arsenal-before-request: arsenal fires when I'm about to publish a CEO-action list. Proactive-scan fires when I'm about to CLOSE a session / send a status / go silent. Arsenal protects CEO from courier-loading; proactive-scan protects CEO from silent-omission. Both pathways converge on the same trust leak, but the defense lives at different points in the response cycle.
+
+CEO framing: "тоесть ты не собирался мне об этом говорить?" — one question, three items omitted, all three in my arsenal. The cost is not the items (they're fixable in one turn, as today proved); the cost is the moment CEO has to ask the question. Every time that question fires, the trust-probe debt increments, and no amount of execution speed pays it back.

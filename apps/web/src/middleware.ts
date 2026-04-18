@@ -20,6 +20,6 @@ export const config = {
   matcher: [
     // Match all paths except: API proxy, static files, PWA assets, Next.js internals
     // CRITICAL: api/ must be excluded so Vercel beforeFiles rewrite can proxy to Railway
-    "/((?!api/|_next/static|_next/image|favicon.ico|manifest\\.json|sw\\.js|workbox-.*\\.js|icons/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js)$).*)",
+    "/((?!api/|_next/static|_next/image|favicon.ico|manifest\\.json|sw\\.js|workbox-.*\\.js|icons/|sitemap\\.xml|robots\\.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js)$).*)",
   ],
 };

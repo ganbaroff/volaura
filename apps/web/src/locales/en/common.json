@@ -206,6 +206,8 @@
     "stillWorking": "Still working — AI is reviewing your answer...",
     "continueButton": "Continue",
     "refreshedMidSession": "It looks like you refreshed mid-assessment. Your progress is saved.",
+    "sessionRecoveryTitle": "Session in progress",
+    "sessionRecoveryDesc": "Your progress is saved. Return to the assessment page to see your options.",
     "returnToSelection": "Return to competency selection",
     "errorStartFailed": "Couldn't start assessment. Server is busy. Please try again in a moment.",
     "cooldownError": "You recently completed an assessment. You can try again in {{minutes}} minute(s).",

@@ -11,7 +11,7 @@ import { QuestionCard } from "@/components/assessment/question-card";
 import { ProgressBar } from "@/components/assessment/progress-bar";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Loader2, ChevronLeft } from "lucide-react";
+import { AlertCircle, Loader2, ChevronLeft, RefreshCw } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createClient } from "@/lib/supabase/client";
 import { API_BASE } from "@/lib/api/client";
@@ -19,6 +19,7 @@ import { useTrackEvent } from "@/hooks/use-analytics";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 type ScreenState = "question" | "transition" | "error";
+type RecoveryState = "checking" | "resume" | "redirect";
 
 const ESTIMATED_QUESTIONS = 8; // adaptive CAT — matches current pool size (8 MCQs per competency)
 const DEFAULT_TIME_LIMIT_SECONDS = 120; // 2 minutes per question
@@ -61,6 +62,9 @@ export default function QuestionPage() {
   const [answerSaved, setAnswerSaved] = useState(false);
   // Recovery state: shown when currentQuestion is null after 6s (e.g. refresh mid-session)
   const [isStuck, setIsStuck] = useState(false);
+  // Session recovery for direct URL access (bookmark / history / shared link)
+  const [recoveryState, setRecoveryState] = useState<RecoveryState>("checking");
+  const [isRecovering, setIsRecovering] = useState(false);
 
   // Show "Still working..." after 4s — LLM evaluation can take up to 8s
   useEffect(() => {
@@ -89,13 +93,51 @@ export default function QuestionPage() {
   const nextCompetencyName = selectedCompetencies[currentCompetencyIndex + 1];
   const isLastCompetency = currentCompetencyIndex >= selectedCompetencies.length - 1;
 
-  // Guard: if store was cleared (direct URL access / page refresh), redirect to selection
-  // Wait for zustand hydration from localStorage before checking — prevents false redirect on tab switch
+  const storeCleared = _hydrated && selectedCompetencies.length === 0;
+
+  // When store is empty but sessionId exists in URL: verify session on the backend
+  // before deciding whether to redirect or show a resume prompt.
   useEffect(() => {
-    if (_hydrated && selectedCompetencies.length === 0) {
+    if (!storeCleared) return;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const supabase = createClient();
+        const { data: { session: authSession } } = await supabase.auth.getSession();
+        if (!authSession) {
+          if (!cancelled) setRecoveryState("redirect");
+          return;
+        }
+
+        const res = await fetch(`${API_BASE}/assessment/verify/${sessionId}`, {
+          headers: { Authorization: `Bearer ${authSession.access_token}` },
+        });
+
+        if (!cancelled) {
+          if (res.ok) {
+            const data = await res.json().catch(() => null);
+            // Backend returns { status: "in_progress" | "completed" | "abandoned" | ... }
+            setRecoveryState(data?.status === "in_progress" ? "resume" : "redirect");
+          } else {
+            // 404 or other error — session gone, redirect to selection
+            setRecoveryState("redirect");
+          }
+        }
+      } catch {
+        if (!cancelled) setRecoveryState("redirect");
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [storeCleared, sessionId]);
+
+  // Execute redirect only once recoveryState resolves to "redirect"
+  useEffect(() => {
+    if (storeCleared && recoveryState === "redirect") {
       router.replace(`/${currentLocale}/assessment`);
     }
-  }, [_hydrated, selectedCompetencies.length, currentLocale, router]);
+  }, [storeCleared, recoveryState, currentLocale, router]);
 
   useEffect(() => {
     isMounted.current = true;
@@ -352,6 +394,85 @@ export default function QuestionPage() {
     : "";
 
   // ── Render ──────────────────────────────────────────────────────────────
+
+  if (storeCleared) {
+    // "checking" — waiting for verify API response
+    if (recoveryState === "checking") {
+      return (
+        <div className="w-full mx-auto max-w-lg px-4 sm:px-6 py-8 space-y-6">
+          <div className="flex flex-col items-center text-center space-y-4 py-12">
+            <div className="size-16 rounded-full bg-primary/10 flex items-center justify-center">
+              <Loader2 className="size-8 text-primary animate-spin" aria-hidden="true" />
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {t("assessment.sessionRecoveryChecking", {
+                defaultValue: "Checking session status…",
+              })}
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    // "resume" — backend confirmed session is in_progress
+    if (recoveryState === "resume") {
+      const handleResume = async () => {
+        setIsRecovering(true);
+        router.push(`/${currentLocale}/assessment`);
+      };
+
+      return (
+        <div className="w-full mx-auto max-w-lg px-4 sm:px-6 py-8 space-y-6">
+          <div className="flex flex-col items-center text-center space-y-4 py-12">
+            <div className="size-16 rounded-full bg-primary/10 flex items-center justify-center">
+              <RefreshCw className="size-8 text-primary" aria-hidden="true" />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-xl font-semibold">
+                {t("assessment.sessionRecoveryTitle", {
+                  defaultValue: "You have an active session",
+                })}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {t("assessment.sessionRecoveryDesc", {
+                  defaultValue:
+                    "Your progress is saved. Resume where you left off.",
+                })}
+              </p>
+            </div>
+            <Button
+              onClick={handleResume}
+              size="lg"
+              className="w-full sm:w-auto min-h-[44px]"
+              disabled={isRecovering}
+              aria-busy={isRecovering}
+            >
+              {isRecovering ? (
+                <>
+                  <Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />
+                  {t("common.loading")}
+                </>
+              ) : (
+                t("assessment.resumeSession", { defaultValue: "Resume session" })
+              )}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground min-h-[44px]"
+              onClick={() => router.replace(`/${currentLocale}/assessment`)}
+              disabled={isRecovering}
+            >
+              {t("assessment.startNewInstead", { defaultValue: "Start a new assessment instead" })}
+            </Button>
+          </div>
+        </div>
+      );
+    }
+
+    // "redirect" — handled by the effect above, render nothing while it fires
+    return null;
+  }
 
   if (screen === "transition") {
     const completedLabel = t("assessment.competencyComplete", {

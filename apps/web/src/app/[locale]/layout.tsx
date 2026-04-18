@@ -19,7 +19,25 @@ export const metadata: Metadata = {
   title: "Volaura — Verified Professional Talent Platform",
   description:
     "Prove your skills through adaptive assessment. Earn your AURA badge. Get discovered by top organizations.",
-  metadataBase: new URL(process.env.APP_URL || "http://localhost:3000"),
+  metadataBase: new URL(process.env.APP_URL || "https://volaura.app"),
+  openGraph: {
+    title: "Volaura — Verified Professional Talent Platform",
+    description:
+      "Prove your skills through adaptive assessment. Earn your AURA badge. Get discovered by top organizations.",
+    siteName: "Volaura",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Volaura — Verified Professional Talent Platform",
+    description:
+      "Prove your skills through adaptive assessment. Earn your AURA badge. Get discovered by top organizations.",
+  },
+  icons: {
+    icon: "/icons/icon-192x192.png",
+    apple: "/icons/icon-512x512.png",
+  },
 };
 
 export const dynamic = "force-dynamic";

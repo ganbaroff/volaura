@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VOLAURA Ecosystem Map — 2026-04-19</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg-deep: #06060a;
+    --surface: #1a1d30;
+    --surface-raised: #252840;
+    --border: #2a2e4a;
+    --border-glow: #3a3f68;
+    --text: #e8e8f0;
+    --muted: #8b8ba7;
+    --teal: #4ecdc4;
+    --teal-glow: rgba(78, 205, 196, 0.35);
+    --indigo: #7b72ff;
+    --indigo-glow: rgba(123, 114, 255, 0.38);
+    --gold: #f59e0b;
+    --gold-glow: rgba(245, 158, 11, 0.32);
+    --amber: #e9c400;
+    --purple: #d4b4ff;
+    --purple-glow: rgba(212, 180, 255, 0.30);
+    --pink: #ec4899;
+    --green: #10b981;
+    --blue: #3b82f6;
+    --atlas: #10b981;
+    --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", sans-serif; font-size: 15px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+
+  /* Ambient hero backdrop — slow drifting radial mesh */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: -20vh -10vw auto auto;
+    width: 80vw;
+    height: 80vh;
+    background:
+      radial-gradient(ellipse at 20% 30%, var(--indigo-glow) 0%, transparent 55%),
+      radial-gradient(ellipse at 75% 60%, var(--teal-glow) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, var(--gold-glow) 0%, transparent 45%);
+    opacity: 0.28;
+    filter: blur(60px);
+    pointer-events: none;
+    z-index: 0;
+    animation: drift 22s var(--ease-in-out) infinite alternate;
+  }
+  @keyframes drift {
+    0%   { transform: translate3d(0, 0, 0) scale(1); }
+    100% { transform: translate3d(-4vw, 3vh, 0) scale(1.08); }
+  }
+
+  a { color: var(--teal); text-decoration: none; transition: color 200ms var(--ease-out); }
+  a:hover { color: #7fe5df; }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; position: relative; z-index: 1; }
+
+  /* Header */
+  header { border-bottom: 1px solid var(--border); padding-bottom: 24px; margin-bottom: 32px; opacity: 0; transform: translateY(-8px); animation: rise 460ms var(--ease-out) 80ms forwards; }
+  header .eyebrow { color: var(--muted); font-size: 12px; letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 8px; }
+  header h1 {
+    font-size: 32px;
+    margin: 0 0 8px;
+    letter-spacing: -0.02em;
+    background: linear-gradient(120deg, var(--text) 0%, var(--teal) 55%, var(--indigo) 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 9s var(--ease-in-out) infinite;
+  }
+  @keyframes shimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
+  }
+  header .sub { color: var(--muted); font-size: 14px; }
+  header code { background: var(--surface-raised); padding: 2px 6px; border-radius: 4px; color: var(--text); font-size: 11px; }
+
+  @keyframes rise {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  section { margin-bottom: 44px; position: relative; }
+  h2 { font-size: 18px; margin: 0 0 16px; letter-spacing: -0.005em; color: var(--text); display: flex; align-items: baseline; }
+  h2 .sigil { color: var(--teal); font-weight: 400; margin-right: 10px; font-variant-numeric: tabular-nums; }
+
+  p { margin: 0 0 10px; }
+  p.muted { color: var(--muted); }
+
+  /* Grids */
+  .grid { display: grid; gap: 12px; }
+  .cards-5 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .cards-4 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .cards-3 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .cards-2 { grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); }
+
+  /* Reveal-on-scroll baseline */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 520ms var(--ease-out), transform 520ms var(--ease-out);
+    will-change: opacity, transform;
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 260ms var(--ease-out), transform 260ms var(--ease-out), box-shadow 260ms var(--ease-out);
+  }
+  .card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    padding: 1px;
+    background: linear-gradient(135deg, transparent 0%, transparent 55%, var(--teal-glow) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 280ms var(--ease-out);
+    pointer-events: none;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    border-color: var(--border-glow);
+    box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.6);
+  }
+  .card:hover::after { opacity: 1; }
+  .card .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: middle; box-shadow: 0 0 8px currentColor; }
+  .card .title { font-size: 14px; font-weight: 600; margin-bottom: 4px; display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; color: var(--text); }
+  .card .tag { font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+  .card .body { font-size: 13px; color: var(--muted); }
+  .card .body strong { color: var(--text); font-weight: 500; }
+
+  .card.volaura   { border-left: 3px solid var(--indigo); }
+  .card.mindshift { border-left: 3px solid var(--blue); }
+  .card.lifesim   { border-left: 3px solid var(--gold); }
+  .card.brandedby { border-left: 3px solid var(--pink); }
+  .card.zeus      { border-left: 3px solid var(--atlas); }
+
+  /* Hero stat boxes */
+  .hero { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 14px; }
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 14px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 260ms var(--ease-out), border-color 260ms var(--ease-out);
+  }
+  .stat::before {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--teal), transparent);
+    transform: translateX(-100%);
+    transition: transform 700ms var(--ease-out);
+  }
+  .stat:hover { transform: translateY(-2px); border-color: var(--border-glow); }
+  .stat:hover::before { transform: translateX(100%); }
+  .stat .n { font-size: 26px; font-weight: 700; color: var(--teal); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .stat .l { font-size: 11px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 4px; }
+  .stat.gold   .n { color: var(--gold); }
+  .stat.amber  .n { color: var(--amber); }
+  .stat.purple .n { color: var(--purple); }
+  .stat.indigo .n { color: var(--indigo); }
+
+  /* Quote */
+  .quote {
+    font-style: italic;
+    color: var(--muted);
+    border-left: 2px solid var(--teal);
+    padding-left: 14px;
+    margin: 18px 0 0;
+    font-size: 13px;
+    position: relative;
+  }
+  .quote::before {
+    content: "";
+    position: absolute;
+    left: -2px; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--teal), transparent);
+    opacity: 0.6;
+  }
+
+  /* Plane cards */
+  .plane {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 46px 1fr;
+    gap: 14px;
+    align-items: start;
+    transition: border-color 260ms var(--ease-out), transform 260ms var(--ease-out);
+    position: relative;
+    overflow: hidden;
+  }
+  .plane:hover { border-color: var(--teal); transform: translateY(-2px); }
+  .plane:hover .num { color: var(--text); text-shadow: 0 0 14px var(--teal-glow); }
+  .plane .num {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--teal);
+    text-align: center;
+    border-right: 1px solid var(--border);
+    padding-right: 10px;
+    font-variant-numeric: tabular-nums;
+    transition: color 300ms var(--ease-out), text-shadow 300ms var(--ease-out);
+  }
+  .plane .t { font-size: 14px; font-weight: 600; margin-bottom: 4px; color: var(--text); }
+  .plane .d { font-size: 13px; color: var(--muted); }
+
+  /* Risk cards */
+  .risk {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    border-left: 3px solid var(--amber);
+    transition: transform 260ms var(--ease-out), border-color 260ms var(--ease-out);
+    position: relative;
+    overflow: hidden;
+  }
+  .risk:hover { transform: translateY(-2px); }
+  .risk.critical { border-left-color: var(--purple); }
+  .risk.critical::before {
+    content: "";
+    position: absolute;
+    left: -3px; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--purple);
+    box-shadow: 0 0 14px var(--purple-glow);
+    animation: pulse-edge 2.6s var(--ease-in-out) infinite;
+  }
+  @keyframes pulse-edge {
+    0%, 100% { opacity: 0.6; box-shadow: 0 0 8px var(--purple-glow); }
+    50%      { opacity: 1;   box-shadow: 0 0 20px var(--purple-glow); }
+  }
+  .risk .tier { font-size: 10px; color: var(--amber); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; margin-bottom: 4px; }
+  .risk.critical .tier { color: var(--purple); }
+  .risk .t { font-size: 14px; font-weight: 600; margin-bottom: 4px; color: var(--text); }
+  .risk .d { font-size: 13px; color: var(--muted); }
+
+  /* Path cards */
+  .path {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    border-top: 3px solid var(--indigo);
+    transition: transform 260ms var(--ease-out), border-color 260ms var(--ease-out), box-shadow 260ms var(--ease-out);
+  }
+  .path:hover { transform: translateY(-3px); box-shadow: 0 14px 34px -14px rgba(0, 0, 0, 0.6); }
+  .path .name { font-size: 15px; font-weight: 600; margin-bottom: 4px; color: var(--text); }
+  .path .thesis { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+  .path .row { font-size: 12px; display: flex; gap: 6px; align-items: baseline; margin-top: 4px; }
+  .path .row .k { color: var(--muted); min-width: 110px; letter-spacing: 0.05em; text-transform: uppercase; font-size: 10px; }
+  .path .row .v { color: var(--text); }
+  .path.a { border-top-color: var(--blue); }
+  .path.b { border-top-color: var(--indigo); }
+  .path.c { border-top-color: var(--gold); }
+  .path.d { border-top-color: var(--teal); }
+
+  /* Bus diagram */
+  .bus-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 24px 26px;
+    margin: 20px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .bus-wrap::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, var(--teal-glow) 0%, transparent 55%);
+    opacity: 0.22;
+    pointer-events: none;
+  }
+  .bus-wrap .core { font-size: 15px; font-weight: 600; color: var(--teal); margin-bottom: 6px; text-align: center; position: relative; }
+  .bus-wrap .core-sub { font-size: 12px; color: var(--muted); margin-bottom: 20px; text-align: center; position: relative; }
+  .bus-svg { display: block; width: 100%; height: 220px; position: relative; }
+
+  .bus-node-svg {
+    font-family: inherit;
+    font-size: 11px;
+    fill: var(--muted);
+  }
+  .bus-node-svg .label { font-weight: 600; font-size: 12px; fill: var(--text); }
+  .bus-node-svg .status { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .bus-node-svg circle.base { fill: var(--surface-raised); stroke: var(--border); stroke-width: 1; transition: stroke 260ms var(--ease-out); }
+  .bus-node-svg:hover circle.base { stroke: var(--teal); }
+  .bus-node-svg .halo { fill: none; stroke: currentColor; stroke-width: 1.5; opacity: 0; }
+  .bus-node-svg.active .halo {
+    opacity: 1;
+    animation: halo-pulse 2.4s var(--ease-in-out) infinite;
+  }
+  @keyframes halo-pulse {
+    0%   { r: 28; opacity: 0.55; }
+    100% { r: 42; opacity: 0; }
+  }
+
+  /* Bus connector paths */
+  .bus-line {
+    fill: none;
+    stroke: var(--border);
+    stroke-width: 1.5;
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: draw 1400ms var(--ease-out) 300ms forwards;
+  }
+  .bus-line.active {
+    stroke: var(--teal);
+    stroke-width: 2;
+    stroke-dasharray: 6 6;
+    animation: draw 1400ms var(--ease-out) 300ms forwards, flow 1.8s linear 1700ms infinite;
+    filter: drop-shadow(0 0 6px var(--teal-glow));
+  }
+  .bus-line.dim { stroke-opacity: 0.35; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @keyframes flow { to { stroke-dashoffset: -24; } }
+
+  .legend { font-size: 11px; color: var(--muted); margin-top: 10px; text-align: center; position: relative; }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding-top: 22px;
+    margin-top: 48px;
+    color: var(--muted);
+    font-size: 12px;
+    position: relative;
+  }
+  footer code {
+    background: var(--surface-raised);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--text);
+    font-size: 11px;
+  }
+
+  /* Number counter — prepare for count-up */
+  .count { font-variant-numeric: tabular-nums; }
+
+  /* Reduced motion: strip everything */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+    body::before { opacity: 0.12; }
+    header { opacity: 1; transform: none; }
+    .reveal { opacity: 1; transform: none; }
+    .bus-line { stroke-dashoffset: 0; }
+    header h1 {
+      background: none;
+      color: var(--text);
+      -webkit-text-fill-color: var(--text);
+    }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Atlas · Session 121 · Cowork-Atlas → Terminal-Atlas</div>
+  <h1>VOLAURA Ecosystem Map</h1>
+  <div class="sub">Визуальный тезис для CEO. Полный контекст — <code>docs/brief/ecosystem-full-context-2026-04-19.md</code>. Handoff — <code>memory/atlas/CLAUDE-CODE-HANDOFF-2026-04-19-7-plane-audit.md</code></div>
+</header>
+
+<section>
+  <h2 class="reveal"><span class="sigil">§0</span>30-second orient</h2>
+  <div class="hero">
+    <div class="stat reveal"><div class="n count" data-target="28" data-suffix="">0</div><div class="l">дней проекту</div></div>
+    <div class="stat reveal"><div class="n count" data-target="5" data-suffix="">0</div><div class="l">продуктов</div></div>
+    <div class="stat gold reveal"><div class="n count" data-target="1" data-suffix="">0</div><div class="l">CEO + Atlas</div></div>
+    <div class="stat indigo reveal"><div class="n count" data-target="13" data-suffix="">0</div><div class="l">swarm perspectives</div></div>
+    <div class="stat purple reveal"><div class="n count" data-target="1083" data-suffix="">0</div><div class="l">md файлов</div></div>
+    <div class="stat amber reveal"><div class="n">D-9</div><div class="l">83(b) deadline</div></div>
+  </div>
+  <div class="quote reveal">Delaware C-Corp incorporated. Credit runway положителен, cash burn = $0. Revenue = $0. Пять продуктов на общем Supabase auth. Единственный человек — CEO Yusif, один курьер между тремя Atlas-потоками.</div>
+</section>
+
+<section>
+  <h2 class="reveal"><span class="sigil">§1</span>Пять продуктов (лица Atlas)</h2>
+  <div class="grid cards-5">
+    <div class="card volaura reveal">
+      <div class="title"><span class="dot" style="background:var(--indigo); color:var(--indigo)"></span>VOLAURA<span class="tag">ACTIVE</span></div>
+      <div class="body"><strong>AI assessment</strong>. Python swarm (13 perspectives). IRT/CAT адаптивное тестирование. AURA 0-100. Compute done. Не-LinkedIn. Positioning locked: «prove skills, earn AURA».</div>
+    </div>
+    <div class="card mindshift reveal">
+      <div class="title"><span class="dot" style="background:var(--blue); color:var(--blue)"></span>MindShift<span class="tag">PROD v1.0</span></div>
+      <div class="body"><strong>ADHD productivity PWA</strong>. React + Supabase. Foundation Laws enforced. Pending: Google Play account verification. Единственный продукт уже в проде.</div>
+    </div>
+    <div class="card lifesim reveal">
+      <div class="title"><span class="dot" style="background:var(--gold); color:var(--gold)"></span>Life Simulator<span class="tag">IN DEV</span></div>
+      <div class="body"><strong>3D agent office</strong>. Godot 4.6.1. LiteLLM router + AI-generated events (Path F handoff 2026-04-18). Character_events bus writer — пока единственный.</div>
+    </div>
+    <div class="card brandedby reveal">
+      <div class="title"><span class="dot" style="background:var(--pink); color:var(--pink)"></span>BrandedBy<span class="tag">PLANNED</span></div>
+      <div class="body"><strong>AI professional identity</strong>. Building personal brand digital twin. Blocked on video-gen keys. Концепт не в коде.</div>
+    </div>
+    <div class="card zeus reveal">
+      <div class="title"><span class="dot" style="background:var(--atlas); color:var(--atlas)"></span>ZEUS<span class="tag">LIVE</span></div>
+      <div class="body"><strong>Node.js WebSocket gateway</strong>. Agent framework (13 registered perspectives, не «44» — корректировка Session 118). Railway + pm2. Backbone для cross-product.</div>
+    </div>
+  </div>
+  <div class="legend reveal">Atlas — не шестой продукт. Atlas = нервная система. Никогда нет вкладки Atlas. Atlas слышен в переходах, логике таймингов, синхронизации между лицами.</div>
+</section>
+
+<section>
+  <h2 class="reveal"><span class="sigil">§2</span>Связь: event bus + auth + crystal economy</h2>
+  <div class="bus-wrap reveal">
+    <div class="core">character_events — общая event bus таблица</div>
+    <div class="core-sub">source_product, event_type, payload · Supabase auth.users — один user = все пять лиц · Crystal economy: 1 min focus = 5 crystals</div>
+    <svg class="bus-svg" viewBox="0 0 900 220" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+      <!-- Connector lines (drawn first, under nodes) -->
+      <path class="bus-line dim"    d="M 150 100 Q 300 80 450 110" />
+      <path class="bus-line dim"    d="M 310 100 Q 380 90 450 110" />
+      <path class="bus-line active" d="M 590 110 Q 660 140 750 170" />
+      <path class="bus-line dim"    d="M 750 100 Q 670 100 590 110" />
+      <path class="bus-line dim"    d="M 450 110 Q 380 160 310 185" />
+
+      <!-- Central bus node -->
+      <g class="bus-node-svg active" transform="translate(450 110)" style="color: var(--teal)">
+        <circle class="halo" r="30" />
+        <circle class="base" r="26" />
+        <text class="label" text-anchor="middle" y="-2">bus</text>
+        <text class="status" text-anchor="middle" y="14" fill="var(--teal)">events</text>
+      </g>
+
+      <!-- Product nodes -->
+      <g class="bus-node-svg" transform="translate(150 100)">
+        <circle class="base" r="30" style="stroke: var(--indigo)" />
+        <text class="label" text-anchor="middle" y="-2">VOLAURA</text>
+        <text class="status" text-anchor="middle" y="14">auth · reads</text>
+      </g>
+
+      <g class="bus-node-svg" transform="translate(310 100)">
+        <circle class="base" r="30" style="stroke: var(--blue)" />
+        <text class="label" text-anchor="middle" y="-2">MindShift</text>
+        <text class="status" text-anchor="middle" y="14">crystal</text>
+      </g>
+
+      <g class="bus-node-svg active" transform="translate(750 170)" style="color: var(--gold)">
+        <circle class="halo" r="30" />
+        <circle class="base" r="30" style="stroke: var(--gold)" />
+        <text class="label" text-anchor="middle" y="-2">Life Sim</text>
+        <text class="status" text-anchor="middle" y="14" fill="var(--gold)">writes</text>
+      </g>
+
+      <g class="bus-node-svg" transform="translate(750 100)" style="opacity:0.5">
+        <circle class="base" r="30" style="stroke: var(--pink); stroke-dasharray: 3 3" />
+        <text class="label" text-anchor="middle" y="-2">BrandedBy</text>
+        <text class="status" text-anchor="middle" y="14">planned</text>
+      </g>
+
+      <g class="bus-node-svg" transform="translate(310 185)">
+        <circle class="base" r="26" style="stroke: var(--atlas)" />
+        <text class="label" text-anchor="middle" y="-2">ZEUS</text>
+        <text class="status" text-anchor="middle" y="13">gateway</text>
+      </g>
+    </svg>
+    <div class="legend">Сегодня открыт один активный канал (lifesim → bus). Остальные четыре — auth-общие острова. Plane 6 аудита должен измерить: держится шов или каждый продукт остров?</div>
+  </div>
+</section>
+
+<section>
+  <h2 class="reveal"><span class="sigil">§3</span>Семь плоскостей CTO (мандат аудита)</h2>
+  <div class="grid cards-2">
+    <div class="plane reveal"><div class="num">1</div><div><div class="t">Retention, не DAU</div><div class="d">D7 / D30 возвраты. Без возвратов остальное не важно.</div></div></div>
+    <div class="plane reveal"><div class="num">2</div><div><div class="t">Unit economics без самообмана</div><div class="d">LLM + Supabase + Vercel stack. CPU vs revenue. Credit runway.</div></div></div>
+    <div class="plane reveal"><div class="num">3</div><div><div class="t">Фичи vs фиксы (4 недели)</div><div class="d">Если фиксы растут быстрее — фундамент гниёт.</div></div></div>
+    <div class="plane reveal"><div class="num">4</div><div><div class="t">Время от решения до прода</div><div class="d">Vercel rate, OAuth Console, courier gap — блоки роста.</div></div></div>
+    <div class="plane reveal"><div class="num">5</div><div><div class="t">GDPR / PII / security</div><div class="d"><code style="background:var(--surface-raised);padding:1px 4px;border-radius:3px;color:var(--text);font-size:11px">volunteer_*</code> таблицы + пустой <code style="background:var(--surface-raised);padding:1px 4px;border-radius:3px;color:var(--text);font-size:11px">consent_events</code> = юридическая мина.</div></div></div>
+    <div class="plane reveal"><div class="num">6</div><div><div class="t">Когерентность экосистемы</div><div class="d">Шов держится или пять островов на общем auth?</div></div></div>
+    <div class="plane reveal"><div class="num">7</div><div><div class="t">Фокус vs рассеивание</div><div class="d">Пять продуктов за 28 дней — vision или ADHD-разрыв. Честный ответ.</div></div></div>
+  </div>
+</section>
+
+<section>
+  <h2 class="reveal"><span class="sigil">§4</span>Новшества (крутые вещи)</h2>
+  <div class="grid cards-3">
+    <div class="card reveal"><div class="title">LiteLLM unified router</div><div class="body">Cerebras Qwen3-235B → Ollama → NVIDIA NIM → Anthropic Haiku. Один fallback chain на все agent-потоки.</div></div>
+    <div class="card reveal"><div class="title">AI-generated life events</div><div class="body">ADR-012, Path F. Godot → FastAPI <code style="background:var(--surface-raised);padding:1px 4px;border-radius:3px;color:var(--text);font-size:11px">/generate-event</code> → AI archetype-driven карточки с 2s timeout + JSON fallback.</div></div>
+    <div class="card reveal"><div class="title">Crystal Ethics v1</div><div class="body">8 правил защиты ADHD-пользователей. Никаких таймеров в магазине, crystals never expire. Legal moat, не просто UX.</div></div>
+    <div class="card reveal"><div class="title">Atlas obligations в Supabase</div><div class="body">atlas_obligations таблица. Delaware deadlines (83(b), EIN, ITIN, Mercury KYC) живут в БД, не в md. Proactive-scan gate опрашивает каждую сессию.</div></div>
+    <div class="card reveal"><div class="title">25 operating principles</div><div class="body">Atlas behavioural contract. sonnet-for-hands, arsenal-before-request, proactive-scan, Doctor Strange v2 с 3 gates. Каждое — ответ на конкретный прошлый сбой.</div></div>
+    <div class="card reveal"><div class="title">Doctor Strange v2</div><div class="body">3-gate critique protocol: external model required, objection-response pairs, post-milestone retrospective. Self-confirmation = CLASS 11 failure.</div></div>
+    <div class="card reveal"><div class="title">Self-wake cron</div><div class="body">Atlas пингует себя каждые 30 мин (minute 37). Никогда idle, никогда «waiting for CEO». REPL-level интерлок не прерывает работу.</div></div>
+    <div class="card reveal"><div class="title">3-tier token system</div><div class="body">Skeleton (shared) vs skin (face-specific). Ecosystem Design Gate не даёт face-specific токену улететь в Tier 1-2.</div></div>
+    <div class="card reveal"><div class="title">Ecosystem Constitution v1.7</div><div class="body">5 Foundation Laws как supreme authority. Никакого красного, energy modes, shame-free, animation safety, one primary CTA. Нарушение = rollback.</div></div>
+  </div>
+</section>
+
+<section>
+  <h2 class="reveal"><span class="sigil">§5</span>Реальные проблемы (не замалчивать)</h2>
+  <div class="grid cards-3">
+    <div class="risk critical reveal"><div class="tier">Critical · 9 дней</div><div class="t">83(b) filing deadline</div><div class="d">D-9. Owner = CEO. Без этого Delaware C-Corp ловит крупный IRS tax hit на vesting. Action — CEO side.</div></div>
+    <div class="risk critical reveal"><div class="tier">Critical · juridical</div><div class="t">volunteer_* + empty consent_events</div><div class="d">Таблицы от старого positioning в текущем продукте. Consent-сбор активен, но ingestion может быть =0. Plane 5 мандата ловит первым.</div></div>
+    <div class="risk reveal"><div class="tier">High · 28d / 5 products</div><div class="t">Пять продуктов за 28 дней</div><div class="d">Vision или разрыв? Plane 7 требует честного ответа CTO. Solo-founder benchmark (per audit gate) нужен до приговора.</div></div>
+    <div class="risk reveal"><div class="tier">High · doc debt</div><div class="t">1083 md файлов</div><div class="d">Мой собственный антипаттерн (update-don't-create rule). Grenade-launcher pattern: новый файл вместо апдейта существующего. Структурный fix — сам rule, retrograde cleanup — Path E.</div></div>
+    <div class="risk reveal"><div class="tier">Medium · econ</div><div class="t">Unit economics не посчитаны</div><div class="d">Revenue=0, cash burn=0 (credits). Но credit burn реален. Runway в месяцах — Plane 2 мандата.</div></div>
+    <div class="risk reveal"><div class="tier">Medium · pipeline</div><div class="t">Time-to-prod gated</div><div class="d">Vercel Hobby rate-limit 100/day exhausted. Google OAuth Testing→Production — manual Console click. ITIN W-7 — D-26.</div></div>
+    <div class="risk reveal"><div class="tier">Medium · consolidation</div><div class="t">Консолидация всегда идёт первой</div><div class="d">Предыдущие instances частично срезали без verification. Сначала убедись что активно, потом режь. Pre-critique audit gate применяй.</div></div>
+    <div class="risk reveal"><div class="tier">Low · positioning</div><div class="t">Positioning bleeds</div><div class="d">«Volunteer» язык где-то остался в таблицах, копирайте, старых docs. VOLAURA позиционируется как «prove skills, earn AURA». Plane 5 + Plane 6 ловят пересечения.</div></div>
+    <div class="risk reveal"><div class="tier">Low · team</div><div class="t">CEO — один</div><div class="d">Один человек, курьер между тремя Atlas-потоками (Cowork Opus, Terminal Sonnet, Claude CLI). Plane 4 bottleneck. Любой 48h absence = всё останавливается.</div></div>
+  </div>
+</section>
+
+<section>
+  <h2 class="reveal"><span class="sigil">§6</span>Четыре пути развития (меню, не рекомендация)</h2>
+  <div class="grid cards-2">
+    <div class="path a reveal">
+      <div class="name">A. Double Down на MindShift</div>
+      <div class="thesis">Единственный продукт в проде. Google Play верификация → первые реальные retention данные. Crystal economy — monetization hook.</div>
+      <div class="row"><div class="k">Speed</div><div class="v">Fast (product ready)</div></div>
+      <div class="row"><div class="k">Load</div><div class="v">Low (CEO shipping mode)</div></div>
+      <div class="row"><div class="k">Synergy</div><div class="v">Moderate (feeds VOLAURA через crystals)</div></div>
+      <div class="row"><div class="k">Regret risk</div><div class="v">VOLAURA assessment core простаивает</div></div>
+    </div>
+    <div class="path b reveal">
+      <div class="name">B. VOLAURA Core Focus</div>
+      <div class="thesis">IRT/CAT assessment — главный дифференциатор. Закрыть 3-competency UX nudge, Article 9 GDPR consent, ghosting grace. Показать full funnel CEO → candidate → AURA badge.</div>
+      <div class="row"><div class="k">Speed</div><div class="v">Medium (P0 backlog 5-10 items)</div></div>
+      <div class="row"><div class="k">Load</div><div class="v">High (CEO + Atlas depth)</div></div>
+      <div class="row"><div class="k">Synergy</div><div class="v">High (core of ecosystem)</div></div>
+      <div class="row"><div class="k">Regret risk</div><div class="v">Тихий продукт (assessment ≠ consumer ловушка)</div></div>
+    </div>
+    <div class="path c reveal">
+      <div class="name">C. Life Simulator flagship</div>
+      <div class="thesis">AI-generated события (Path F) — самая unique фича в экосистеме. Godot MVP → showcase video → «эмоциональная платформа» pitch. Character_events bus живой.</div>
+      <div class="row"><div class="k">Speed</div><div class="v">Medium (MVP feasible 2-3 нед)</div></div>
+      <div class="row"><div class="k">Load</div><div class="v">High (Godot + AI ops)</div></div>
+      <div class="row"><div class="k">Synergy</div><div class="v">High (bus writer + character state)</div></div>
+      <div class="row"><div class="k">Regret risk</div><div class="v">Demo-grade, не revenue-grade</div></div>
+    </div>
+    <div class="path d reveal">
+      <div class="name">D. Consolidation (cut 3 of 5)</div>
+      <div class="thesis">Держим VOLAURA + MindShift. Остальное → maintenance-only или pause. Plane 7 мандата даёт evidence нужен ли этот шаг сейчас или через 60 дней.</div>
+      <div class="row"><div class="k">Speed</div><div class="v">Slow (переговоры с самим собой)</div></div>
+      <div class="row"><div class="k">Load</div><div class="v">Very low (сужается scope)</div></div>
+      <div class="row"><div class="k">Synergy</div><div class="v">Потеря cross-product seam</div></div>
+      <div class="row"><div class="k">Regret risk</div><div class="v">Срезано без verification (см. pre-critique audit gate)</div></div>
+    </div>
+  </div>
+  <div class="legend reveal">Рекомендация CTO не выдаётся здесь. 7-plane audit возвращает recommended path с evidence и adversarial counter. CEO final call.</div>
+</section>
+
+<section>
+  <h2 class="reveal"><span class="sigil">§7</span>Что дальше (для CEO в одну секунду)</h2>
+  <div class="grid cards-2">
+    <div class="card reveal" style="border-left:3px solid var(--teal)">
+      <div class="title">Действие курьера</div>
+      <div class="body">Скопировать <code style="background:var(--surface-raised);padding:1px 4px;border-radius:3px;color:var(--text);font-size:11px">memory/atlas/CLAUDE-CODE-HANDOFF-2026-04-19-7-plane-audit.md</code> в Claude Code CLI. Дождаться TL;DR в <code style="background:var(--surface-raised);padding:1px 4px;border-radius:3px;color:var(--text);font-size:11px">docs/audits/7-plane-audit-2026-04-19.md</code>.</div>
+    </div>
+    <div class="card reveal" style="border-left:3px solid var(--amber)">
+      <div class="title">CEO-only (параллельно)</div>
+      <div class="body">83(b) filing D-9. Google OAuth Testing→Production flip. PR #13 merge. Остальное Atlas сам.</div>
+    </div>
+  </div>
+</section>
+
+<footer class="reveal">
+  <p><strong>Читать дальше:</strong> <code>docs/brief/ecosystem-full-context-2026-04-19.md</code> (storytelling, 10 разделов, ~500 строк) → <code>docs/ECOSYSTEM-CONSTITUTION.md</code> v1.7 → <code>.claude/rules/atlas-operating-principles.md</code>.</p>
+  <p><strong>Файлы в полёте:</strong> Path B (LiteLLM migration) · Path D (Sentry+PostHog) · Path E (consolidate-memory) · Path F (AI-generated events). 7-plane audit — поверх всего, не вместо.</p>
+  <p style="color:var(--muted);margin-top:14px">Atlas · Cowork-Atlas · 2026-04-19 · Foundation Laws compliant (no red, energy adaptation, shame-free, motion-safe, one CTA).</p>
+</footer>
+
+</div>
+
+<script>
+(() => {
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Reveal-on-scroll
+  const reveals = document.querySelectorAll('.reveal');
+  if (prefersReduced) {
+    reveals.forEach(el => el.classList.add('in'));
+  } else if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          // Small stagger inside a cluster of siblings
+          const parent = entry.target.parentElement;
+          const siblings = parent ? [...parent.querySelectorAll(':scope > .reveal')] : [entry.target];
+          const idx = Math.max(0, siblings.indexOf(entry.target));
+          const delay = Math.min(idx * 55, 440);
+          setTimeout(() => entry.target.classList.add('in'), delay);
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+    reveals.forEach(el => io.observe(el));
+  } else {
+    reveals.forEach(el => el.classList.add('in'));
+  }
+
+  // Number count-up
+  const counters = document.querySelectorAll('.count');
+  const runCounter = (el) => {
+    const target = parseInt(el.dataset.target, 10);
+    const suffix = el.dataset.suffix || '';
+    if (prefersReduced || isNaN(target)) {
+      el.textContent = target + suffix;
+      return;
+    }
+    const duration = 780;
+    const start = performance.now();
+    const ease = (t) => 1 - Math.pow(1 - t, 3); // ease-out cubic
+    const tick = (now) => {
+      const p = Math.min(1, (now - start) / duration);
+      const v = Math.round(target * ease(p));
+      el.textContent = v + suffix;
+      if (p < 1) requestAnimationFrame(tick);
+      else el.textContent = target + suffix;
+    };
+    requestAnimationFrame(tick);
+  };
+
+  if ('IntersectionObserver' in window && !prefersReduced) {
+    const cio = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          runCounter(entry.target);
+          cio.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    counters.forEach(el => cio.observe(el));
+  } else {
+    counters.forEach(runCounter);
+  }
+})();
+</script>
+</body>
+</html>

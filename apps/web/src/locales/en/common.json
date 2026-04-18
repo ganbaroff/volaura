@@ -1130,5 +1130,96 @@
         "timezone": "Timezone"
       }
     }
+  },
+  "privacy": {
+    "back": "Back to Volaura",
+    "title": "Privacy Policy",
+    "effectiveDate": "Effective: April 1, 2026 · Version 1.0",
+    "termsLink": "Terms of Service",
+    "s1": {
+      "title": "1. Who We Are",
+      "body": "Volaura is a verified competency platform for professionals. We help you prove your skills and help organizations find verified talent.",
+      "contact": "Data controller contact:"
+    },
+    "s2": {
+      "title": "2. What Data We Collect",
+      "collected": "We collect the following data to deliver the service:",
+      "item1": "Email address and username — account creation and authentication",
+      "item2": "Assessment responses — used to compute your AURA score; never shared raw",
+      "item3": "AURA score and badge tier — your verified competency profile",
+      "item4": "Location and languages — professional matching quality",
+      "notCollected": "We do not collect payment card details, government IDs, biometric data, GPS location, or your contacts."
+    },
+    "s3": {
+      "title": "3. Why We Use Your Data",
+      "body": "Your data is used only to:",
+      "reason1": "Run assessments and compute your AURA score (contract performance)",
+      "reason2": "Match your verified profile with organizations that are hiring (legitimate interest)",
+      "reason3": "Improve platform calibration using aggregate, non-identifiable analytics",
+      "noSell": "We do not sell your data, use it for advertising, or share raw assessment answers with anyone."
+    },
+    "s4": {
+      "title": "4. Who Can See Your Data",
+      "body": "Your data is shared only in these circumstances:",
+      "item1": "Verified organizations — see your username, AURA score, badge tier, location, and languages only if your profile is public",
+      "item2": "Infrastructure partners (Supabase, Vercel, Railway) — under Data Processing Agreements; no data sold or used for their own products",
+      "item3": "Volaura team — access limited to support and security roles, fully logged"
+    },
+    "s5": {
+      "title": "5. Your Rights (GDPR)",
+      "intro": "You have the following rights over your personal data:",
+      "access": "Access — request a copy of all data we hold about you",
+      "rectify": "Rectification — correct inaccurate or incomplete data",
+      "delete": "Erasure — delete your account and all associated data within 30 days",
+      "portability": "Portability — export your AURA history and badges as JSON",
+      "object": "Objection — object to processing based on legitimate interest",
+      "contact": "To exercise any right, email us at"
+    },
+    "s6": {
+      "title": "6. Data Retention",
+      "body": "Active account data is kept until you delete your account. Assessment sessions are retained for 2 years for score recalibration and dispute resolution. When you delete your account, all personally identifiable data is permanently erased within 30 days."
+    },
+    "s7": {
+      "title": "7. Updates to This Policy",
+      "body": "We may update this policy. Material changes will be communicated via email at least 14 days before taking effect. Continued use of Volaura after that date constitutes acceptance."
+    }
+  },
+  "terms": {
+    "back": "Back to Volaura",
+    "title": "Terms of Service",
+    "effectiveDate": "Effective: April 1, 2026 · Version 1.0",
+    "privacyLink": "Privacy Policy",
+    "s1": {
+      "title": "1. The Platform",
+      "body": "Volaura is a professional skill verification platform. By using Volaura, you agree to these terms. If you do not agree, please do not use the platform."
+    },
+    "s2": {
+      "title": "2. Acceptable Use",
+      "body": "You agree to use Volaura honestly and professionally. You must not:",
+      "rule1": "Submit fraudulent or scripted assessment responses",
+      "rule2": "Attempt to manipulate your AURA score or badge tier",
+      "rule3": "Use the platform to misrepresent your identity or qualifications to organizations"
+    },
+    "s3": {
+      "title": "3. AURA Scores Are Advisory",
+      "body": "AURA scores are AI-generated assessments of professional competency based on your responses. They are advisory indicators, not professional certifications, licenses, or guarantees of employment. Organizations use them as one signal among many."
+    },
+    "s4": {
+      "title": "4. Your Data",
+      "body": "You own your data. Volaura holds it under license to deliver the service. You may request export or deletion at any time. See our Privacy Policy for full details."
+    },
+    "s5": {
+      "title": "5. Limitation of Liability",
+      "body": "Volaura is provided as-is. We are not liable for hiring decisions made by organizations based on AURA scores, for service interruptions, or for any indirect, incidental, or consequential damages arising from use of the platform."
+    },
+    "s6": {
+      "title": "6. Updates to Terms",
+      "body": "We may update these terms. Material changes will be communicated via email at least 14 days before taking effect. Continued use of Volaura after the effective date constitutes acceptance of the updated terms."
+    },
+    "s7": {
+      "title": "7. Contact",
+      "body": "Questions about these terms?",
+      "contact": "Email us:"
+    }
   }
 }

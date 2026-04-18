@@ -1130,5 +1130,96 @@
         "timezone": "Saat qurşağı"
       }
     }
+  },
+  "privacy": {
+    "back": "Volaura-ya qayıt",
+    "title": "Məxfilik Siyasəti",
+    "effectiveDate": "Qüvvəyə minmə tarixi: 1 aprel 2026 · Versiya 1.0",
+    "termsLink": "İstifadə Şərtləri",
+    "s1": {
+      "title": "1. Biz Kimik",
+      "body": "Volaura peşəkarlar üçün yoxlanılmış kompetensiya platformasıdır. Bacarıqlarınızı sübut etməyinizə və təşkilatların yoxlanılmış istedadı tapmasına kömək edirik.",
+      "contact": "Məlumat nəzarətçisi ilə əlaqə:"
+    },
+    "s2": {
+      "title": "2. Hansı Məlumatları Toplayırıq",
+      "collected": "Xidməti göstərmək üçün aşağıdakı məlumatları toplayırıq:",
+      "item1": "E-poçt ünvanı və istifadəçi adı — hesab yaradılması və autentifikasiya üçün",
+      "item2": "Qiymətləndirmə cavabları — AURA xalınızı hesablamaq üçün istifadə edilir; xam formada paylaşılmır",
+      "item3": "AURA xalı və nişan səviyyəsi — yoxlanılmış kompetensiya profiliniz",
+      "item4": "Məkan və dillər — peşəkar uyğunlaşma keyfiyyəti üçün",
+      "notCollected": "Ödəniş kartı məlumatları, şəxsiyyət sənədləri, biometrik məlumatlar, GPS mövqeyi və ya kontaktlarınızı toplamırıq."
+    },
+    "s3": {
+      "title": "3. Məlumatlarınızı Niyə İstifadə Edirik",
+      "body": "Məlumatlarınız yalnız aşağıdakı məqsədlər üçün istifadə edilir:",
+      "reason1": "Qiymətləndirmələrin aparılması və AURA xalınızın hesablanması (müqavilə icrasının yerinə yetirilməsi)",
+      "reason2": "Yoxlanılmış profilinizin işə götürmə aparan təşkilatlarla uyğunlaşdırılması (qanuni maraq əsasında)",
+      "reason3": "Xidmət keyfiyyətinin artırılması üçün anonimləşdirilmiş, şəxsiyyəti müəyyənləşdirməyən analitika",
+      "noSell": "Məlumatlarınızı satmırıq, reklam məqsədilə istifadə etmirik və ya xam qiymətləndirmə cavablarını heç kimlə paylaşmırıq."
+    },
+    "s4": {
+      "title": "4. Məlumatlarınıza Kim Baxa Bilər",
+      "body": "Məlumatlarınız yalnız aşağıdakı hallarda paylaşılır:",
+      "item1": "Yoxlanılmış təşkilatlar — yalnız profiliniz ictimai olduqda istifadəçi adınızı, AURA xalınızı, nişan səviyyənizi, məkanınızı və dillərinizi görür",
+      "item2": "İnfrastruktur tərəfdaşları (Supabase, Vercel, Railway) — Məlumat Emalı Müqavilələri çərçivəsində; məlumat satılmır",
+      "item3": "Volaura komandası — dəstək və təhlükəsizlik rolu ilə məhdudlaşdırılmış giriş, tam qeyd edilir"
+    },
+    "s5": {
+      "title": "5. Hüquqlarınız (GDPR)",
+      "intro": "Şəxsi məlumatlarınız üzərində aşağıdakı hüquqlara maliksiniz:",
+      "access": "Giriş — saxladığımız bütün məlumatların surətini tələb edin",
+      "rectify": "Düzəliş — yanlış və ya natamam məlumatları düzəldin",
+      "delete": "Silinmə — hesabınızı və bütün əlaqəli məlumatları 30 gün ərzində silin",
+      "portability": "Daşınabilirlik — AURA tarixinizi və nişanlarınızı JSON formatında ixrac edin",
+      "object": "Etiraz — qanuni marağa əsaslanan emal əməliyyatına etiraz edin",
+      "contact": "Hər hansı bir hüququ həyata keçirmək üçün bizimlə əlaqə saxlayın:"
+    },
+    "s6": {
+      "title": "6. Məlumatların Saxlanma Müddəti",
+      "body": "Aktiv hesab məlumatları hesabı silənə qədər saxlanılır. Qiymətləndirmə sessiyaları xal kalibrasiyası və mübahisələrin həlli üçün 2 il müddətinə saxlanılır. Hesabınızı sildikdə, şəxsiyyəti müəyyənləşdirən bütün məlumatlar 30 gün ərzində həmişəlik silinir."
+    },
+    "s7": {
+      "title": "7. Bu Siyasətin Yenilənməsi",
+      "body": "Bu siyasəti yeniləyə bilərik. Əhəmiyyətli dəyişikliklər qüvvəyə minməsindən ən azı 14 gün əvvəl e-poçt vasitəsilə bildiriləcək. Həmin tarixdən sonra Volaura-dan istifadənin davam etdirilməsi dəyişikliklərin qəbul edilməsi kimi qiymətləndirilir."
+    }
+  },
+  "terms": {
+    "back": "Volaura-ya qayıt",
+    "title": "İstifadə Şərtləri",
+    "effectiveDate": "Qüvvəyə minmə tarixi: 1 aprel 2026 · Versiya 1.0",
+    "privacyLink": "Məxfilik Siyasəti",
+    "s1": {
+      "title": "1. Platforma",
+      "body": "Volaura peşəkar bacarıq yoxlama platformasıdır. Volaura-dan istifadə edərək bu şərtləri qəbul etmiş olursunuz. Razı deyilsinizsə, platformadan istifadə etməyin."
+    },
+    "s2": {
+      "title": "2. Məqbul İstifadə",
+      "body": "Volaura-dan dürüst və peşəkarcasına istifadə etməyə razılaşırsınız. Aşağıdakılar qadağandır:",
+      "rule1": "Saxta və ya skriptlə hazırlanmış qiymətləndirmə cavablarının təqdim edilməsi",
+      "rule2": "AURA xalınızı və ya nişan səviyyənizi manipulyasiya etməyə cəhd",
+      "rule3": "Platformadan şəxsiyyətinizi və ya ixtisaslarınızı təşkilatlara yanlış təqdim etmək üçün istifadə"
+    },
+    "s3": {
+      "title": "3. AURA Xalları Məsləhət Xarakterlidi",
+      "body": "AURA xalları cavablarınıza əsasən peşəkar kompetensiyaların süni intellekt tərəfindən qiymətləndirilməsidir. Onlar məsləhət xarakterli göstəricilərdir — peşəkar sertifikatlar, lisenziyalar və ya məşğulluq zəmanəti deyil. Təşkilatlar onları bir çox siqnaldan biri kimi istifadə edir."
+    },
+    "s4": {
+      "title": "4. Məlumatlarınız",
+      "body": "Məlumatlarınız sizə məxsusdur. Volaura xidməti göstərmək üçün lisenziya əsasında saxlayır. İstənilən vaxt ixrac və ya silinmə tələb edə bilərsiniz. Ətraflı məlumat üçün Məxfilik Siyasətimizə baxın."
+    },
+    "s5": {
+      "title": "5. Məsuliyyətin Məhdudlaşdırılması",
+      "body": "Volaura olduğu kimi təqdim edilir. AURA xallarına əsasən təşkilatların qəbul etdiyi işə götürmə qərarlarına, xidmət fasilələrinə və ya platformadan istifadə nəticəsində yaranan dolayı, təsadüfi və ya nəticəvi zərərlərə görə məsuliyyət daşımırıq."
+    },
+    "s6": {
+      "title": "6. Şərtlərin Yenilənməsi",
+      "body": "Bu şərtləri yeniləyə bilərik. Əhəmiyyətli dəyişikliklər qüvvəyə minməsindən ən azı 14 gün əvvəl e-poçt vasitəsilə bildiriləcək. Həmin tarixdən sonra Volaura-dan istifadənin davam etdirilməsi yenilənmiş şərtlərin qəbul edilməsi kimi qiymətləndirilir."
+    },
+    "s7": {
+      "title": "7. Əlaqə",
+      "body": "Bu şərtlər barədə suallarınız var?",
+      "contact": "Bizimlə əlaqə saxlayın:"
+    }
   }
 }

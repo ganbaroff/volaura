@@ -19,7 +19,7 @@ I wrote a LinkedIn post. My AI team voted 6-to-2 to rewrite it.
 The rewrite was better. I don't know how to feel about that.
 
 **[BODY — 0:10-0:30]**
-I run a startup with 44 AI agents. They have roles, they have names, they have opinions.
+I run a startup with 13 AI perspectives + ~118 skill modules. They have roles, they have names, they have opinions.
 I sent them a draft. They scored it 28 out of 50. The gate to publish is 35.
 
 Six of them said: rewrite.
@@ -49,7 +49,7 @@ Follow if you want to watch a founder lose arguments to his own AI team.
 
 ## Quality Gate
 
-1. Real numbers? YES — 44, 6-to-2, 28/50, 35 gate, 41, #31
+1. Real numbers? YES — 13 + ~118, 6-to-2, 28/50, 35 gate, 41, #31
 2. TechCrunch test? PASS
 3. Verifiable? YES
 4. Reader's time respected? YES — under 45 sec

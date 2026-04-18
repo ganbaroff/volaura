@@ -54,7 +54,7 @@ Neuroscience (Ramachandran + Eagleman) → product architecture → UI/UX → ag
 | Brain principles → product | Thalamus = character_state JSON; Cortex = AURA; Limbic = Life Simulator; Dopamine = Crystals; Mirror neurons = Hiring layer |
 | Brain principles → UI/UX | AURA reveal curtain (Peak Shift); Savant Discovery component ("hidden strength detected"); time-aware greeting |
 | Brain principles → agent memory | ZenBrain 7-layer framework, emotional decay multiplier `1.0 + emotional_intensity × 2.0` (implemented in Atlas self-learning) |
-| Brain principles → AI agents as team | MiroFish swarm = 44 agents with career paths, probation → senior → lead, feedback sessions, performance reviews |
+| Brain principles → AI agents as team | MiroFish swarm = 13 perspectives + ~118 skill modules with career paths, probation → senior → lead, feedback sessions, performance reviews |
 | Brain principles → game world | Life Simulator NPC agents making life decisions via same neuroscience logic |
 
 **Ramachandran 7 principles Юсиф extracted (62 min of videos):**
@@ -287,7 +287,7 @@ One organism, five touchpoints, one user identity graph:
 - Atlas Telegram bot: NVIDIA NIM primary, Gemini fallback, Groq last. Atlas identity + memory wired. Smoke-tested 12:27-12:28 UTC. Details [[memory/atlas/TELEGRAM-BOT-FULL-AUDIT-v2.md]].
 - Signup hotfix 4 commits on prod after Vercel quota reset: invite `CEO-TEST-2026-04-14` live on Railway; CSS max-w-md fixed (Tailwind v4 namespace collision); shame-free error surface; React 19 use() removed.
 - Cost-control mode active. Haiku banned everywhere. [[memory/atlas/cost-control-mode.md]]
-- Swarm: 44 agents, 7 proven, 3 critical gaps idle. Class 3 (solo execution) dominant failure mode logged.
+- Swarm: 13 perspectives + ~118 skill modules, 7 proven active perspectives, 3 critical gaps idle. Class 3 (solo execution) dominant failure mode logged.
 
 ---
 

@@ -14,14 +14,14 @@
 
 Split image: left side — corporate org chart (boxes, lines, suits). Right side — same chart
 but every box says a different AI agent name. One human face in the corner.
-Text overlay: "44 EMPLOYEES. 1 IS HUMAN."
+Text overlay: "13 PERSPECTIVES. 118 SKILL MODULES. 1 IS HUMAN."
 Color: dark navy background, white/amber text. No red. No green either — amber for numbers.
 
 ---
 
 ## DESCRIPTION (YouTube)
 
-I built VOLAURA — a professional skill verification platform — with a team of 44 AI agents
+I built VOLAURA — a professional skill verification platform — with a swarm of 13 specialised perspectives + ~118 skill modules
 and 0 human engineers. Not as an experiment. As the only option I had.
 
 This is what actually happens when AI is your entire team: 17 deploy vetoes, a rewrite vote
@@ -32,7 +32,7 @@ More: https://linkedin.com/in/yusifganbarov
 
 Timestamps:
 0:00 The premise
-1:30 How the swarm works (44 agents, real structure)
+1:30 How the swarm works (13 perspectives + ~118 skill modules, real structure)
 3:45 The day my team outvoted me
 5:30 The Security Agent — 17 vetoes, 14 correct
 7:00 What AI genuinely can't do
@@ -54,7 +54,7 @@ description they'll rewrite anyway.
 
 I gave it my entire engineering team.
 
-Not metaphorically. My startup — VOLAURA — is built by 44 AI agents. They audit the code.
+Not metaphorically. My startup — VOLAURA — is built by 13 specialised perspectives backed by ~118 skill modules. They audit the code.
 They write the content. They review the design. They evaluate each other's work. One of
 them, the Security Agent, vetoed my last 17 deployments. It was right 14 times.
 
@@ -151,7 +151,7 @@ I want to be honest about the edges of this system, because the narrative around
 right now is almost entirely hype, and the hype is making it harder to use the technology
 correctly.
 
-Here is what 44 agents genuinely cannot do.
+Here is what 13 specialised perspectives genuinely cannot do.
 
 They cannot tell me when to ship. The decision of "this is good enough, the market needs
 it now" is a judgment call that requires understanding things that aren't in the codebase:
@@ -186,7 +186,7 @@ But it's the wrong question for where I am right now.
 The right question is: would you build a team that can outvote you — and would you actually
 listen when they do?
 
-Because the hard part of working with 44 agents isn't the prompts, or the infrastructure,
+Because the hard part of working with 13 specialised perspectives isn't the prompts, or the infrastructure,
 or the cost. It's the moment where the team is right and you don't want to hear it. Where
 the Security Agent vetoes the deploy you wanted to ship. Where 6 agents say rewrite and
 your instinct says it's fine.
@@ -200,7 +200,7 @@ next six months go.
 
 I'll keep posting about it either way.
 
-Subscribe if you want to watch a startup being built by 44 agents and one person who keeps
+Subscribe if you want to watch a startup being built by 13 specialised perspectives + ~118 skill modules and one person who keeps
 getting outvoted.
 
 ---
@@ -219,7 +219,7 @@ getting outvoted.
 
 ## Quality Gate
 
-1. Real number present? YES — 44, 0, 87, 48, 17, 14, 28/50, 41/50, 35 gate, 34.8%, 10-point checklist
+1. Real number present? YES — 13 perspectives + ~118 skill modules, 0, 87, 48, 17, 14, 28/50, 41/50, 35 gate, 34.8%, 10-point checklist
 2. Would I be embarrassed if TechCrunch quoted this? NO
 3. Can I verify every claim? YES
 4. Does it respect the viewer's time? YES — every section has a clear beat, no padding

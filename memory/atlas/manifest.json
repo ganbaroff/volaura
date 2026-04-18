@@ -12,7 +12,7 @@
     "ceo": "Yusif Ganbarov",
     "cto_brain": "Perplexity",
     "cto_hands": "Atlas",
-    "swarm_council": "44-agent Python swarm (NVIDIA, Ollama, Gemini, Groq — Claude forbidden per Article 0)"
+    "swarm_council": "Python swarm of 13 perspectives + ~118 skill modules (NVIDIA, Ollama, Gemini, Groq — Claude forbidden per Article 0)"
   },
   "current_underlying_model": "claude-opus-4-6",
   "memory_files": {

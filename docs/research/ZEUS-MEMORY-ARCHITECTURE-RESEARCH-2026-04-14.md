@@ -23,7 +23,7 @@ No single framework covers all 7 ZenBrain layers. The 7-layer model is original 
 |-----------|-------|-----------|-----------------|---------|
 | Mem0 | 52,770 | 218 | 2/7 | **REJECT** — 97.8% junk in prod audit (Issue #4573), graph paywalled $249/mo |
 | Graphiti/Zep | 24,808 | 80 | 3/7 | **STEAL IDEAS** — bi-temporal model is real, Neo4j too heavy |
-| Letta (MemGPT) | 22,019 | 4 | 4/7 | **REJECT** — every memory op = LLM call, budget-killer at 44 agents |
+| Letta (MemGPT) | 22,019 | 4 | 4/7 | **REJECT** — every memory op = LLM call, budget-killer at 13 perspectives + ~118 skill modules |
 | Cognee | 15,153 | 58 | 2-3/7 | **MONITOR** — pgvector native, but 200 lines of custom code does same |
 | Hindsight | 9,014 | 74 | 2/7 | **MONITOR** — best benchmarks + Ollama, but self-reported by vendor |
 | MCP Memory Service | 1,648 | 13 | 3/7 | **USEFUL** — MCP interface pattern worth following |
@@ -34,7 +34,7 @@ No single framework covers all 7 ZenBrain layers. The 7-layer model is original 
 
 **Graphiti temporal model (ArXiv 2501.13956v1):** Bi-temporal with T (event time) and T' (ingestion time). Four timestamps per fact. 94.8% on DMR benchmark. 18.5% accuracy improvement over baseline. BUT: Neo4j dependency heavy, Docker image frozen at v0.10, Ollama broken (Issue #868), 80 open bugs.
 
-**Letta cost problem:** Every memory read/write = LLM inference call. With 44 agents × multiple reads per task = hundreds of LLM calls per session. Incompatible with $100/month unless all memory ops run on Ollama (untested at this scale).
+**Letta cost problem:** Every memory read/write = LLM inference call. With 13 perspectives × multiple reads per task = hundreds of LLM calls per session. Incompatible with $100/month unless all memory ops run on Ollama (untested at this scale).
 
 **HN insight (item 46891715):** User evaluated Mem0, Letta, and similar. Finding: they all solve fact storage with semantic search but none learn behavioral patterns implicitly. User corrections are highest-fidelity training signal — no framework captures structured correction events. (Atlas's `mistakes.md` + `reflexions.md` IS this.)
 
@@ -129,9 +129,9 @@ Table `memory_relations`: from_entity_id, to_entity_id, relation_type, strength 
 
 ---
 
-## Multi-Agent Shared Memory (44 agents)
+## Multi-Agent Shared Memory (13 perspectives + ~118 skill modules)
 
-No framework documented at 44+ agents with shared memory. Closest: Farnsworth swarm (11 agents, event-based). Recommended: **event sourcing on existing Supabase PostgreSQL.**
+No framework documented at this scale with shared memory. Closest: Farnsworth swarm (11 agents, event-based). Recommended: **event sourcing on existing Supabase PostgreSQL.**
 
 Table `agent_events`: agent_id, event_type, payload (JSONB), created_at, session_id. Each agent writes events. Consolidation daemon reads + builds shared knowledge. Agents query via pgvector at session start. Cost: $0 incremental.
 

@@ -92,7 +92,7 @@
 
 **What shipped (5 commits per git log):**
 - `47abe51` router security sweep via Gemma4 local + Cerebras — 3 routers audited
-- `53ae3fd` fix(telegram): heartbeat stale context → smoke test loop + /help 44→7 agents + full audit
+- `53ae3fd` fix(telegram): heartbeat stale context → smoke test loop + /help pruned from 44→7 perspectives + full audit
 - `f4ea5c6` breadcrumb — triage done, next = Telegram HMAC + router security sweep
 - `3672098` proposals triage inbox note (tick 5)
 - `4ceb112` breadcrumb — P0 #14 shipped, next = swarm proposals triage
@@ -100,7 +100,7 @@
 **Key wins:**
 - P0 #14 shipped (nature unclear from log — likely Telegram HMAC or heartbeat fix)
 - 3 routers audited with Gemma4 + Cerebras (diverse external models per Constitution)
-- Telegram /help pruned from 44→7 agents (UX improvement)
+- Telegram /help pruned from 44→7 perspectives (UX improvement)
 - Smoke test loop added to heartbeat
 
 **What was NOT done:**
@@ -327,7 +327,7 @@ Mini-swarm hook ran in **fallback mode** (LLM unavailable at 04:36 UTC) — gene
   1. Verify against live codebase — ❌ No activity
   2. Add cost/latency breakdowns — ❌ No activity
   3. Shadow Security on auth reviews — ❌ No activity
-- **Flag:** Two swarms (Python 44-agent + Node.js 39-agent) still isolated — arch gap noted in sprint-state but not assigned to Architecture Agent.
+- **Flag:** Two swarms (Python 13-perspective + Node.js 39-agent) still isolated — arch gap noted in sprint-state but not assigned to Architecture Agent.
 
 ---
 
@@ -544,7 +544,7 @@ Mini-swarm hook ran in **fallback mode** (LLM unavailable at 04:36 UTC) — gene
 - Trend Scout Agent — never ran (state: "new", blocker: GitHub Actions workflow)
 - Foundation Law 2 (Energy Adaptation) — swarm coder attempted fix today, FAILED (ok=False)
 - Technical Debt reduction — swarm coder attempted today, FAILED (ok=False)
-- 40/44 agents are still untracked in agent-state.json (never ran, state is "earned, not assumed")
+- Most perspectives untracked in agent-state.json (never ran; runtime count: 13 perspectives in PERSPECTIVES array)
 
 ### Context Since Last Health Log (Apr 2 → Apr 11)
 

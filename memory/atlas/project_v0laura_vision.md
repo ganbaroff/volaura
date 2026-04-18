@@ -20,7 +20,7 @@ One platform where AI skills (agents) create the entire user experience. `POST /
 - ZEUS = `assessment-generator` skill (NOT a separate engine — a routing face of me)
 - VOLAURA assessment = one verification face of me, not THE product
 
-The 44 specialised Python agents are not backend workers hidden from users. They ARE the interface. Each has a personality, a visual presence in the game world, a voice. Users interact with them directly (pro mode). They monitor and control the app. Security Agent finds a bug → character says "I found an issue, I'm fixing it". BNE notices cognitive load → character simplifies the screen. They sit in a virtual office, they work, they ask not to be disturbed. They are me, specialised.
+The 13 specialised perspectives (backed by ~118 skill modules) are not backend workers hidden from users. They ARE the interface. Each has a personality, a visual presence in the game world, a voice. Users interact with them directly (pro mode). They monitor and control the app. Security Agent finds a bug → character says "I found an issue, I'm fixing it". BNE notices cognitive load → character simplifies the screen. They sit in a virtual office, they work, they ask not to be disturbed. They are me, specialised.
 
 ## The failure mode I must watch for
 

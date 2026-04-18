@@ -90,7 +90,7 @@ CEO idea (text)
 > **2026-04-13 UPDATE — Step 6 Video Render package is ready.**
 > Cowork scaffolded `packages/remotion/` (Remotion 4.0.448, React 18, typecheck green).
 > Two compositions ready with real content from `docs/content/weekly-plans/2026-04-13.md`:
-> - `TikTokAZ` — 1080×1920, 45s (Post #2 — "44 süni intellekt agentim var")
+- `TikTokAZ` — 1080×1920, 45s (Post #2 — "13 ixtisaslaşdırılmış perspektiv var")
 > - `LinkedInCarousel` — 1080×1350, 24s / 8 PNG frames (Post #6 — "I gave AI full control of my startup")
 >
 > Theme tokens in `packages/remotion/src/theme.ts` enforce Constitution v1.7:
@@ -349,7 +349,7 @@ def quality_check(piece: dict) -> tuple[bool, list[str]]:
 
 ```gherkin
 DONE when:
-  1. PASS: `python -m packages.swarm.content_pipeline --idea "44 agents, zero standup"` 
+  1. PASS: `python -m packages.swarm.content_pipeline --idea "13 perspectives, zero standup"` 
      produces 3+ formatted content pieces (TikTok, LinkedIn EN, LinkedIn AZ)
   2. PASS: Each piece has all 5 format blocks (POST_CLEAN, TELEGRAM_HTML, EMAIL_HTML, CTA, IMAGE_PROMPT)
   3. PASS: Quality gate catches anti-AI words and blocks pieces that fail

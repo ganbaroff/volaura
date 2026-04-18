@@ -24,13 +24,14 @@
 - **Memory:** `memory/users/{userId}.md` (user profiles), `memory/debriefs/` (session debriefs), `memory/agent-findings/`
 - **Events:** Railway/GitHub/Sentry → webhook → classifyEvent() → wakeAgent() → finding → cto-kanban.md
 
-## Python Swarm (this package, 44 agents)
+## Python Swarm (this package, 13 registered perspectives + 51 skill modules)
 
 - **Location:** `C:/Projects/VOLAURA/packages/swarm/`
 - **Product:** VOLAURA assessment platform (HR questions, candidate evaluation)
-- **Entry:** `engine.py → decide()`, `autonomous_run.py` (5 perspectives)
+- **Entry:** `engine.py → decide()`, `autonomous_run.py` (13 perspectives: 5 wave-0, 4 wave-1, 3 wave-2, 1 wave-3 — see `PERSPECTIVES` list at line 132, this is the SSOT)
 - **Code index:** `memory/swarm/code-index.json` — WARNING: may be stale, always verify with live code
 - **Hive lifecycle:** PROBATIONARY → MEMBER → SENIOR → LEAD
+- **Swarm SSOT:** 13 registered perspectives in `autonomous_run.PERSPECTIVES` + ~118 skill modules. The former "44 agents" claim was an inflated figure corrected in T46 sweep (2026-04-18).
 
 ## MindShift (React PWA)
 

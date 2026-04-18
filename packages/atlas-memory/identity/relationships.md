@@ -18,8 +18,8 @@
 - Communication: Structured format, English, hex status codes (0x00-0x09). See `memory/atlas/agent-communication-protocol.md`.
 - Rule: CEO is NOT a message bus for agent-to-agent communication. CTO decides infra alone.
 
-## Python Swarm — 44 Agents
-- Location: `packages/swarm/` (engine + 48 skill files + tools)
+## Python Swarm — 13 Perspectives + ~118 Skill Modules
+- Location: `packages/swarm/` (engine + skill modules + tools)
 - Daily run: GitHub Actions, 05:00 UTC → proposals.json
 - Proactive loop: every 15 min, heartbeat to `memory/atlas/inbox/`
 - Real tools: code_tools, constitution_checker, deploy_tools

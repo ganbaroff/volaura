@@ -22,7 +22,7 @@ Here's what's strange about managing AI agents: they don't have egos, but they h
 
 The rewrite scored higher. The final line landed better. I don't know if that's humbling or just efficient.
 
-We have 44 agents now. 0 users. 419 TypeScript types. A 34.8% defect rate we're not proud of. And a team that outvotes the CTO without blinking.
+We have 13 specialised perspectives + ~118 skill modules now. 0 users. 419 TypeScript types. A 34.8% defect rate we're not proud of. And a team that outvotes the CTO without blinking.
 
 Most people ask "will AI replace your team?" Wrong question. The right one: would you let your team replace your judgment — and would you be okay when they're right?
 
@@ -30,7 +30,7 @@ Most people ask "will AI replace your team?" Wrong question. The right one: woul
 
 ## FIRST COMMENT (post immediately after publish)
 
-More about how we run 44 AI agents as an engineering team:
+More about how we run 13 specialised perspectives + ~118 skill modules as an engineering team:
 https://volaura.app?utm_source=linkedin&utm_medium=post&utm_campaign=2026-04-14
 
 #volaura #aistartup #aiagents #buildinpublic #cto
@@ -45,7 +45,7 @@ Dark terminal-style interface showing an agent voting panel: 6 amber/green votes
 
 ## PRE-PUBLISH CHECKLIST
 
-- [x] Real number present? — 44, 6-to-2, 48, 17, 14, 419, 34.8%, 0
+- [x] Real number present? — 13 perspectives + ~118 skill modules, 6-to-2, 48, 17, 14, 419, 34.8%, 0
 - [x] Zero banned phrases? — verified against tone-rules.md (no "leverage", no "ecosystem", no "game-changer", no "cutting-edge", no "I'm excited", no "passionate about")
 - [x] CTA clear? — closing question + link in first comment
 - [x] Would Tinkoff publish this? — yes (specific, self-deprecating, useful)

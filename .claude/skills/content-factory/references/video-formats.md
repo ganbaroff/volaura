@@ -60,7 +60,7 @@ CTA + CLOSE (10:00-12:00)
 
 ```
 TITLE: [Number or Hook] + [Topic] + [Qualifier]
-  Good: "44 AI Agents Run My Startup (Here's What Happened)"
+  Good: "13 AI Perspectives + 118 Skill Modules Run My Startup (Here's What Happened)"
   Good: "I Built a GRE for Volunteers — The Results Were Surprising"
   Bad: "VOLAURA Product Update Q2 2026"
 
@@ -89,7 +89,7 @@ THUMBNAIL BRIEF:
 HOOK (0:00-0:03)
   → THE most important 3 seconds.
   → Start mid-action or with a bold statement.
-  → "I gave 44 AI agents one task." (pause)
+  → "I gave 13 AI perspectives + ~118 skill modules one task." (pause)
   → "This app knows your volunteer skills better than you do."
   → NEVER start with "Hey guys" or "So today I wanted to..."
 

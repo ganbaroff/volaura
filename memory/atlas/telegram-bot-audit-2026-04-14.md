@@ -16,7 +16,7 @@
 | `/backlog` — CEO ideas/tasks history | `_handle_backlog` | Working |
 | `/ecosystem` — 5-product state | `_handle_ecosystem` | Working |
 | `/skills` — product skills list | `_handle_skills` | Working |
-| `/agents` — 44-agent live roster | `_handle_agents` | Working |
+| `/agents` — live roster (13 perspectives + ~118 skill modules) | `_handle_agents` | Working |
 | `/agent {id} {task}` — delegate to one agent | `_handle_agent_task` | Working |
 | `/swarm {task}` — coordinator + synthesis | `_handle_swarm` | Working |
 | `/queue` — autonomous queue | `_handle_queue` | Working |

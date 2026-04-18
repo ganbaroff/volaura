@@ -151,7 +151,7 @@ CEO picks which to generate from this table. Then produce each piece.
 Check TRACKER.md for last hook used. Continue rotation.
 
 **Real Data Only:**
-- "44 agents" not "many agents"
+- "13 perspectives + ~118 skill modules" not "many agents"
 - "0 users" not "growing user base"
 - "419 TypeScript types" not "comprehensive type system"
 - "34.8% defect rate" not "we're improving quality"
@@ -262,7 +262,7 @@ When sending via Telegram bot, each piece goes as separate message:
 | MindShift | "Your brain isn't broken, the apps are — ADHD-first productivity" |
 | LifeSimulator | "What if you could test-drive life decisions in a game?" |
 | BrandedBy | "Your brand, built from verified data, not self-promotion" |
-| ZEUS | "44 agents, 1 human, zero meetings — autonomous AI operations" |
+| ZEUS | "13 perspectives + ~118 skill modules, 1 human, zero meetings — autonomous AI operations" |
 
 ---
 

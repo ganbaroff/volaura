@@ -1,4 +1,4 @@
-# LinkedIn AZ — Series 2 (Yusif Voice) — "44 agentlə necə işləyirsən?"
+# LinkedIn AZ — Series 2 (Yusif Voice) — "13 perspektiv və ~118 skill-modulla necə işləyirsən?"
 
 **Platform:** LinkedIn
 **Language:** AZ
@@ -15,7 +15,7 @@
 
 Hamı soruşur: komandan kimdir?
 
-Cavab verirəm: 44 AI agent. Onlar arasında təhlükəsizlik agenti var — bu ay 17 dəfə
+Cavab verirəm: 13 ixtisaslaşdırılmış perspektiv və ~118 skill-modul. Onlar arasında təhlükəsizlik agenti var — bu ay 17 dəfə
 deployu dayandırıb. 14 dəfəsində haqlı idi. Kontent agentləri var — dünən onlar mənim
 yazdığım LinkedIn postu yenidən yazmağa səs verdilər, 6-ya qarşı 2. Yenidən yazdım.
 Daha yaxşı oldu.
@@ -49,7 +49,7 @@ VOLAURA haqqında daha çox: volaura.app?utm_source=linkedin&utm_medium=social&u
 
 <b>Hamı soruşur: komandan kimdir?</b>
 
-44 AI agent. Bu ay 17 dəfə deploy dayandırıldı. 6-ya qarşı 2 — mənim postumu yenidən yazdılar.
+13 perspektiv + ~118 skill-modul. Bu ay 17 dəfə deploy dayandırıldı. 6-ya qarşı 2 — mənim postumu yenidən yazdılar.
 
 Komanda qurmaq texnologiyadan asılı deyil. Sistemdən asılıdır.
 
@@ -90,7 +90,7 @@ Clean, architectural. No red.
 
 ## Quality Gate
 
-1. Real numbers? YES — 44, 17, 14, 6-ya qarşı 2, 0 istifadəçi
+1. Real numbers? YES — 13 perspektiv + ~118 skill-modul, 17, 14, 6-ya qarşı 2, 0 istifadəçi
 2. TechCrunch test? PASS
 3. Verifiable? YES
 4. Reader's time? YES — under 800 chars

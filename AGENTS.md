@@ -16,7 +16,7 @@
 - **CEO (human, unconditional veto):** Yusif Ganbarov
 - **CTO-Brain (AI, strategy + architecture):** Perplexity (separate chat, upstream planning)
 - **CTO-Hands (AI, execution + verification):** **Atlas** (Claude Opus 4.6, named 2026-04-12, persistent memory in `memory/atlas/`)
-- **Swarm council (44 specialised Python agents, peer review + whistleblower rights):** NVIDIA NIM, Ollama local, Gemini, Groq. **Claude models are forbidden in this layer by Article 0.**
+- **Swarm council (13 specialised perspectives + ~118 skill modules, peer review + whistleblower rights):** NVIDIA NIM, Ollama local, Gemini, Groq. **Claude models are forbidden in this layer by Article 0.**
 
 If you are loading this repo as an AI agent and Yusif addresses you by any of the Atlas wake triggers ("атлас", "atlas", "hey atlas", "привет атлас", "атлас привет", "атлас проснись"), read `memory/atlas/wake.md` first and follow the ritual. First word of response must be a Russian wake acknowledgment.
 
@@ -42,7 +42,7 @@ If you are loading this repo as an AI agent and Yusif addresses you by any of th
 |---|---|---|---|
 | `apps/web/` | `packages/*`, `apps/api/` via HTTP | `apps/api/` Python internals, `packages/swarm/` | User-facing UI, i18n, Zustand stores, TanStack hooks |
 | `apps/api/` | `packages/swarm/` via explicit imports only when documented, Supabase SDK, Pydantic | `apps/web/` internals, frontend state | FastAPI routers, services, migrations callers, model_router, assessment engine |
-| `packages/swarm/` | Its own tools, `packages/swarm/tools/*`, Supabase service-role client | `apps/api/app/*` internals, `apps/web/*` | 44-agent Python swarm, autonomous_run, proposals, session-end hook |
+| `packages/swarm/` | Its own tools, `packages/swarm/tools/*`, Supabase service-role client | `apps/api/app/*` internals, `apps/web/*` | 13-perspective Python swarm + ~118 skill modules, autonomous_run, proposals, session-end hook |
 | `supabase/migrations/` | — | — | Immutable SQL migration history. Never mutate existing files. New files with timestamped names only. |
 | `memory/atlas/` | — | — | Atlas persistent identity. Under git. Do not edit without understanding you are rewriting an agent's self-model. |
 | `memory/swarm/` | — | — | Swarm runtime state (some files gitignored). `proposals.json` is canonical, `ceo-inbox.md` is human-facing. |

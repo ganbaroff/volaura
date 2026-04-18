@@ -13,8 +13,8 @@
   - LinkedIn EN "The Vote" (Series 1, Claude) — вторник 14 апреля, 20:00 ← DRAFT READY
   - TikTok AZ "AI komandam" — вторник 14 апреля ← DRAFT READY
   - TikTok EN "My AI team disagreed" — четверг 17 апреля ← PLANNED
-  - LinkedIn AZ "44 agentlə" (Series 2, Yusif) — четверг 17 апреля, 20:00 ← PLANNED
-  - Carousel "44 AI Agents Org Chart" — среда 16 апреля ← PLANNED
+  - LinkedIn AZ "13 perspektiv + ~118 skill-modul" (Series 2, Yusif) — четверг 17 апреля, 20:00 ← PLANNED
+  - Carousel "13 Perspectives + 118 Skill Modules Org Chart" — среда 16 апреля ← PLANNED
   - Telegram RU — пятница 18 апреля ← PLANNED
   - YouTube script "I Gave AI Full Control" — запись до среды 15 апреля ← PLANNED
 
@@ -52,8 +52,8 @@
 | B01-LI | "The Vote" (LinkedIn EN) | Claude | AI CTO Diary S1 | ✅ READY | 14 апр 2026, 20:00 Баку | — | — | `ready/post-005-the-vote-en.md` |
 | B01-TT1 | "AI komandam" (TikTok AZ) | — | AI CTO Diary | ✅ READY | 14 апр 2026 | — | — | `ready/post-006-ai-komandam-az.md` |
 | B01-TT2 | "My AI team disagreed" (TikTok EN) | — | AI CTO Diary | 🔄 DRAFT | 17 апр 2026 | — | — | `draft/2026-04-17-tiktok-en-my-ai-team-disagreed.md` |
-| B01-LI2 | "44 agentlə" (LinkedIn AZ) | Yusif | AI CTO Diary S2 | 🔄 DRAFT | 17 апр 2026 | — | — | `draft/2026-04-17-linkedin-az-44-agentla.md` |
-| B01-CAR | "44 AI Agents Org Chart" (Carousel) | — | AI CTO Diary | 🔄 DRAFT | 16 апр 2026 | — | — | `draft/2026-04-16-carousel-44-agents-org-chart.md` |
+| B01-LI2 | "13 perspektiv + ~118 skill-modul" (LinkedIn AZ) | Yusif | AI CTO Diary S2 | 🔄 DRAFT | 17 апр 2026 | — | — | `draft/2026-04-17-linkedin-az-44-agentla.md` |
+| B01-CAR | "13 Perspectives + 118 Skill Modules Org Chart" (Carousel) | — | AI CTO Diary | 🔄 DRAFT | 16 апр 2026 | — | — | `draft/2026-04-16-carousel-44-agents-org-chart.md` |
 | B01-TG | AI CTO Diary (Telegram RU) | — | AI CTO Diary | 🔄 DRAFT | 18 апр 2026 | — | — | `draft/2026-04-18-telegram-ru-ai-politika.md` |
 | B01-YT | "I Gave AI Full Control" (YouTube) | — | AI CTO Diary | 🔄 DRAFT | record by 15 апр ⚠️ TODAY | — | — | `draft/2026-04-15-youtube-en-i-gave-ai-full-control.md` |
 | B02-LI | "The Certificate" (LinkedIn EN) | Standalone | Vol. Insights | 🔄 DRAFT | 21 апр 2026 | — | — | `draft/2026-04-21-linkedin-en-the-certificate.md` |

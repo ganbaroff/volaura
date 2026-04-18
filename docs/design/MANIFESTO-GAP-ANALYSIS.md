@@ -193,7 +193,7 @@ The product-level audit above missed the forest. These gaps are about whether 5 
 
 ### EGAP 3: No Agent Character Presence in UI (Principle 3: Agent Characters Are the UI)
 
-**Finding:** 44 agents exist in swarm. Zero agent personalities surface in the user-facing UI. No character avatars, no agent voice in empty states, no "who is speaking" slot in any component.
+**Finding:** 13 specialised perspectives + ~118 skill modules exist in swarm. Zero agent personalities surface in the user-facing UI. No character avatars, no agent voice in empty states, no "who is speaking" slot in any component.
 
 **What's needed (Phase 2):** Design system accommodation for agent presence:
 - Agent avatar component (small, circular, with face-specific accent ring)

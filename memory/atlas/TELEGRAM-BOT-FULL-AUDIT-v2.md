@@ -38,7 +38,7 @@
 - `/proposals` — pending swarm proposals с inline-кнопками.
 - `/backlog` — ceo_inbox ideas/tasks последние 30.
 - `/skills` — product skills список.
-- `/agents` — 44-agent roster с live-state из agent-state.json.
+- `/agents` — roster (13 perspectives + ~118 skill modules) с live-state из agent-state.json.
 - `/agent {id} {task}` — делегирует задачу одному агенту (NVIDIA/Gemini через perspective).
 - `/swarm {task}` — координатор, squads + синтез.
 - `/queue` — autonomous-queue из memory/swarm/.

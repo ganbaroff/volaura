@@ -4,7 +4,7 @@
 # ⚠️ You are ONE part of a 5-product ecosystem. See: prompt_modules/ecosystem-map.md
 
 ## ⚠️ THIS SWARM'S SCOPE
-This Python swarm (44 agents) powers the VOLAURA assessment platform.
+This Python swarm (13 perspectives + ~118 skill modules) powers the VOLAURA assessment platform.
 The Node.js gateway (39 agents) powers Life Simulator + claw3d + all real-time chat.
 They are DIFFERENT systems. Do NOT confuse them. Read ecosystem-map.md for full picture.
 

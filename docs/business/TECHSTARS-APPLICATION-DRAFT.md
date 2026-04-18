@@ -48,7 +48,7 @@ Target: $50K ARR Year 1, $500K ARR Year 2 with 10 enterprise clients.
 - AI-powered evaluation with 4-provider LLM fallback chain (Gemini, Ollama, NVIDIA, keyword)
 - 35+ database tables with row-level security on every table
 - Stripe payment integration ready (kill-switched for beta)
-- 44-agent autonomous swarm system for continuous product improvement
+- Autonomous swarm of 13 specialised perspectives + ~118 skill modules for continuous product improvement
 
 ## What is your unfair advantage?
 1. First-mover in Azerbaijan/CIS market for verified professional talent
@@ -65,7 +65,7 @@ Target: $50K ARR Year 1, $500K ARR Year 2 with 10 enterprise clients.
 Yusif Ganbarov — Founder & CEO
 - Based in Baku, Azerbaijan
 - Background in neurocognitive research (ZenBrain 7-layer memory framework)
-- Solo founder with AI-augmented development team (44 autonomous agents + Claude CTO)
+- Solo founder with AI-augmented development team (autonomous swarm of 13 specialised perspectives + ~118 skill modules + Claude CTO)
 - Built entire platform solo in 4 months from concept to production
 
 ## What are you looking for from Techstars?
@@ -78,7 +78,7 @@ I'm a solo founder from Baku, Azerbaijan — a market where professionals have z
 
 I started researching neurocognitive architecture — how the brain stores, prioritizes, and retrieves memories. That research became the ZenBrain framework: a 7-layer memory model with emotional decay weighting. Then I realized: the same principles that make human memory work can make AI assessment systems work. Adaptive difficulty. Emotional context. Decay-resistant skill verification.
 
-I built VOLAURA in 4 months. Solo. No funding. No team. I used AI agents as my development team — 44 autonomous agents that review code, propose features, and catch security issues before I ship. The entire platform — 128 API endpoints, 810+ tests, bilingual, Stripe-ready — was built for under $500 total.
+I built VOLAURA in 4 months. Solo. No funding. No team. I used AI agents as my development team — an autonomous swarm of 13 specialised perspectives and ~118 skill modules that review code, propose features, and catch security issues before I ship. The entire platform — 128 API endpoints, 810+ tests, bilingual, Stripe-ready — was built for under $500 total.
 
 I'm not looking for money to build the product. It's built. I'm looking for the GTM expertise and network I can't build alone from Baku.
 

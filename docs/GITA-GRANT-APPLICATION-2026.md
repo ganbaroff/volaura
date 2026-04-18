@@ -37,7 +37,7 @@ Volaura is a **verified talent platform**. Not a volunteer platform. Not a Linke
 
 **TEAM:**
 - Yusif Ganbarov — Founder & CEO
-- AI-assisted development (Claude Code + MiroFish swarm system of 44+ specialized agents coordinating across multiple LLM providers)
+- AI-assisted development (Claude Code + MiroFish swarm system of 13 specialised perspectives + ~118 skill modules coordinating across multiple LLM providers)
 
 **ASK:**
 150,000 GEL for product development, go-to-market execution, and market expansion into Georgia + wider CIS.
@@ -184,7 +184,7 @@ Conservative launch trajectory:
 
 ### 6.1 Team Structure (Year 1)
 - **CEO:** Yusif Ganbarov
-- **Technical delivery:** AI-assisted development via Claude Code + MiroFish swarm (44 agents across multiple LLM providers for code review, security audit, architecture, UX research)
+- **Technical delivery:** AI-assisted development via Claude Code + MiroFish swarm (13 specialised perspectives + ~118 skill modules across multiple LLM providers for code review, security audit, architecture, UX research)
 - **Contractors:** React developer, Python developer (3 months each, funded by grant)
 - **Advisors:** [Pending]
 

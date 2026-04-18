@@ -412,7 +412,7 @@ def _load_agent_state() -> dict:
         return {}
 
 
-# Full 44-agent roster for /ask routing
+# /ask routing map — skill-module directory (SSOT: packages/swarm/registered_perspectives_count() for live perspective count)
 _FULL_AGENT_MAP = {
     "security": "Security Agent (9.0/10) — CVSS scoring, attack vectors, RLS gaps, OWASP top 10",
     "architecture": "Architecture Agent (8.5/10) — system design, storage math, CVSS 9.8 patterns",
@@ -928,7 +928,7 @@ async def _handle_agents(chat_id: int | str) -> None:
     live = _load_agent_state()
     status_emoji = {"active": "⚡", "idle": "💤", "running": "🔄", "new": "🆕"}
 
-    lines = ["🤖 *Atlas Swarm — 44 агента*\n"]
+    lines = ["🤖 *Atlas Swarm — 13 перспектив + ~118 skill-модулей*\n"]
     lines.append("*Инициализированные:*")
     initialized = [(aid, info) for aid, info in live.items() if info.get("status") != "uninitialized"]
     for aid, info in sorted(initialized, key=lambda x: -(x[1].get("performance", {}).get("tasks_completed", 0))):
@@ -2299,7 +2299,7 @@ async def _handle_help(chat_id: int | str) -> None:
         "/backlog — идеи и задачи CEO\n"
         "/skills — список product skills\n\n"
         "*Управление агентами:*\n"
-        "/agents — все 44 агента с live статусом\n"
+        "/agents — все перспективы роя с live статусом\n"
         "/agent {id} {задача} — задача конкретному агенту\n"
         "/swarm {задача} — координатор: squads + синтез\n"
         "/queue — очередь автономных задач роя\n"
@@ -2554,4 +2554,4 @@ async def setup_webhook(request: Request) -> JSONResponse:
 
     # HIGH-02 FIX: Don't log full API response (may contain bot token)
     logger.info("Telegram webhook setup: ok={ok}", ok=result.get("ok"))
-    return JSONResponse({"ok": result.get("ok"), "description": result.get("description", "")})
+    return JSONResponse({"ok": result.get("ok"

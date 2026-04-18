@@ -198,8 +198,8 @@
     "leaveConfirm": "Yes, leave",
     "timerExpired": "Time's up — moving to next question",
     "takingBreak": "Progress saved. You can return any time.",
-    "competencyComplete": "{name} complete ✓",
-    "continueToNext": "Continue to {next}",
+    "competencyComplete": "{{name}} complete ✓",
+    "continueToNext": "Continue to {{next}}",
     "processingResults": "Calculating your results...",
     "evaluating": "Evaluating your answer...",
     "stillWorking": "Still working — AI is reviewing your answer...",
@@ -476,6 +476,7 @@
     "days": "days",
     "league": "League",
     "position": "Position",
+    "auraTier": "AURA Tier",
     "recentActivity": "Recent Activity",
     "startAssessment": "Take Your Assessment",
     "noScore": "Complete your first assessment to get your AURA score",
@@ -718,7 +719,9 @@
     "noResults": "No results found",
     "viewAll": "View All",
     "saving": "Saving…",
-    "close": "Close"
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No"
   },
   "publicProfile": {
     "auraScore": "AURA Score",
@@ -1092,6 +1095,18 @@
       "low_energy": {
         "drilldown": "Open the event in full-energy mode to manage areas and units"
       }
+    },
+"status": {
+      "planning": "Planning",
+      "staffing": "Staffing",
+      "live": "Live",
+      "closed": "Closed",
+      "cancelled": "Cancelled"
+    },
+    "unit_status": {
+      "live": "Live",
+      "staffed": "Staffed",
+      "closed": "Closed"
     },
     "create": {
       "title": "New event",

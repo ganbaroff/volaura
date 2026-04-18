@@ -1,6 +1,8 @@
 <!-- RECENTLY_SHIPPED_START -->
-## ⚡ RECENTLY SHIPPED (last push — 2026-04-18 09:46 UTC)
+## ⚡ RECENTLY SHIPPED (last push — 2026-04-18 13:18 UTC)
 **Read this FIRST — prevents proposing already-shipped work.**
+
+New migrations: 20260418170000_atlas_obligations.sql
 New/updated routers: telegram_webhook
 <!-- RECENTLY_SHIPPED_END -->
 

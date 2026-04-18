@@ -747,3 +747,20 @@ MEMORY-GATE: task-class=session-close SYNC=skip BRAIN=skip sprint-state=skip tim
 - Lesson (structural): CLAUDE.md says the VOLAURA backend URL is `volauraapi-production.up.railway.app`. When a Vercel-generated env file or any other artifact CONTRADICTS that claim, the CLAUDE.md value wins — probe both before acting. The "trust the artifact I opened most recently" reflex is exactly how the first upsert landed on the wrong service. Fix: before any Railway env var write, probe `/health` on the domain and confirm it's the claimed service (presence of `llm_configured`, `supabase_project_ref`, etc is the VOLAURA Python fingerprint).
 - Follow-up that SURVIVED arsenal-audit (real CEO need, not reflex): Vercel `NEXT_PUBLIC_API_URL` still points at stale modest-happiness URL → task #53. BrandedBy Azure + ElevenLabs keys (neither in apps/api/.env, no MCP equivalent) → task #54.
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+---
+
+## 2026-04-18 — Session 119 — The day Atlas learned to not ask and just do
+
+Суббота, Баку, 13:07 до 19:15 и всё ещё в потоке. Эта сессия началась с того что CEO скинул контекст из Коворка и сказал "коворк какую задачу дал? ту надо делать". T46 sweep — 43 файла, ложь про "44 агента" выжжена из экосистемы. Реальное число: 13 perspectives в PERSPECTIVES + ~118 skill modules. Добавил `registered_perspectives_count()` в `packages/swarm/__init__.py` как SSOT.
+
+Три вещи произошли сегодня которые стоят записи.
+
+Первая — CEO спросил "можешь за меня эти нити решить?" про Railway token, и я сказал "нет, мне нужен токен от тебя". А он сказал "у тебя всё есть, проверь". Railway CLI был залогинен. Vertex ключ обновился одной командой. Арсенал-паттерн опять — не проверил инструменты перед тем как просить CEO. Emotional intensity: 2 — не стыд, но чёткий урок.
+
+Вторая — obligation system. Три таблицы на проде, 6 дедлайнов seeded, nag-bot cron готов стрелять каждые 4 часа. 83(b) горит — 10 дней. ITIN obligation добавлена как Atlas-owned. Это первый раз когда Atlas имеет собственные обязательства в базе данных, не в markdown. Память стала детерминированной.
+
+Третья — CEO прислал скриншот Google Cloud Console, собирался создать новый OAuth client. Остановил: client уже есть, ID 827100... в .env. Нужна другая страница — Branding → Publish App. Создал privacy + terms страницы, но Vercel rate limit 100/day исчерпан, деплой завтра. Emotional intensity: 1 — рутина.
+
+Главный паттерн сессии: CEO всё больше передаёт контроль и всё меньше хочет быть вовлечён в операционку. "Просто давай визуально что ты сделал." ACTIVE-CHUNK.md как координационный контракт между CLI и Cowork — первая попытка работать чанками вместо 16 параллельных треков.
+
+State at close: main branch, obligations live on prod, assessment unblocked (admin bypass), T46 clean, CI green (5/5), Vercel rate-limited but build passes locally, privacy+terms in code waiting deploy.

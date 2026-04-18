@@ -12,6 +12,7 @@ interface AuraScoreWidgetProps {
   badgeTier: "platinum" | "gold" | "silver" | "bronze" | "none";
   isElite: boolean;
   locale: string;
+  completedCompetencies?: number;
 }
 
 const BADGE_STYLES: Record<string, { pill: string; glow: string }> = {
@@ -19,13 +20,16 @@ const BADGE_STYLES: Record<string, { pill: string; glow: string }> = {
   gold:     { pill: "bg-yellow-500/20 text-yellow-400 border-yellow-400/30", glow: "shadow-yellow-500/20" },
   silver:   { pill: "bg-slate-400/20 text-slate-300 border-slate-300/30",   glow: "shadow-slate-400/10"  },
   bronze:   { pill: "bg-amber-700/20 text-amber-600 border-amber-600/30",   glow: "shadow-amber-600/10"  },
-  none:     { pill: "bg-muted text-muted-foreground border-border",          glow: ""                     },
+  none:     { pill: "bg-indigo-500/20 text-indigo-400 border-indigo-400/30", glow: ""                     },
 };
 
-export function AuraScoreWidget({ score, badgeTier, isElite, locale }: AuraScoreWidgetProps) {
+export function AuraScoreWidget({ score, badgeTier, isElite, locale, completedCompetencies }: AuraScoreWidgetProps) {
   const { t } = useTranslation();
+  const isAssessing = badgeTier === "none" || score < 40;
   const style = BADGE_STYLES[badgeTier] ?? BADGE_STYLES.none;
-  const tierLabel = t(`aura.${badgeTier}`, { defaultValue: badgeTier });
+  const tierLabel = isAssessing
+    ? t("aura.assessing", { defaultValue: "Assessing" })
+    : t(`aura.${badgeTier}`, { defaultValue: badgeTier });
   const pct = Math.min(100, score);
   // T1-4 (a11y ghost-audit 2026-04-15): drop hover scale + long width
   // transition when user prefers reduced motion.
@@ -59,6 +63,17 @@ export function AuraScoreWidget({ score, badgeTier, isElite, locale }: AuraScore
           >
             AURA <NumberFlow value={score} format={{ minimumFractionDigits: 1, maximumFractionDigits: 1 }} />
           </p>
+
+          {/* Partial-progress nudge (shame-free, T47) */}
+          {isAssessing && completedCompetencies !== undefined && completedCompetencies > 0 && (
+            <p className="text-xs text-indigo-400 mt-1">
+              {t("aura.assessedOf", {
+                count: completedCompetencies,
+                total: 8,
+                defaultValue: `${completedCompetencies}/8 assessed`,
+              })}
+            </p>
+          )}
 
           {/* Progress bar */}
           <div

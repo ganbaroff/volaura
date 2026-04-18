@@ -308,6 +308,8 @@
     "silver": "Gümüş",
     "bronze": "Bürünc",
     "none": "Hələ qiymətləndirilməyib",
+    "assessing": "Qiymətləndirilir",
+    "assessedOf": "{{count}}/{{total}} qiymətləndirildi",
     "elite": "Elit",
     "overallScore": "Ümumi xal",
     "eventsAttended": "İştirak olunan tədbirlər",

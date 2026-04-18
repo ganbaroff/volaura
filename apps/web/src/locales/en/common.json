@@ -308,6 +308,8 @@
     "silver": "Silver",
     "bronze": "Bronze",
     "none": "Not yet rated",
+    "assessing": "Assessing",
+    "assessedOf": "{{count}}/{{total}} assessed",
     "elite": "Elite",
     "overallScore": "Overall score",
     "eventsAttended": "Events attended",

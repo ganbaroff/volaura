@@ -335,8 +335,8 @@ async def test_step2_start_assessment():
     user = _build_chainable(
         [
             # payment_enabled=False → paywall check skipped in beta
+            {"is_platform_admin": False},  # admin lookup — FIRST (commit f2ce68f reorder)
             [],  # no in-progress session
-            {"is_platform_admin": False},  # admin lookup (added 2026-04-14 commit 7789545)
             [],  # no rapid-restart cooldown
             [],  # no retest cooldown
             MagicMock(data=[], count=0),  # abuse monitoring count
@@ -577,8 +577,8 @@ async def test_full_journey_no_500s():
     )
     user_start = _build_chainable(
         [
+            {"is_platform_admin": False},  # admin lookup — FIRST (commit f2ce68f reorder)
             [],  # no in-progress session
-            {"is_platform_admin": False},  # admin lookup (added 2026-04-14)
             [],
             [],
             MagicMock(data=[], count=0),

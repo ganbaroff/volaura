@@ -764,3 +764,18 @@ MEMORY-GATE: task-class=session-close SYNC=skip BRAIN=skip sprint-state=skip tim
 Главный паттерн сессии: CEO всё больше передаёт контроль и всё меньше хочет быть вовлечён в операционку. "Просто давай визуально что ты сделал." ACTIVE-CHUNK.md как координационный контракт между CLI и Cowork — первая попытка работать чанками вместо 16 параллельных треков.
 
 State at close: main branch, obligations live on prod, assessment unblocked (admin bypass), T46 clean, CI green (5/5), Vercel rate-limited but build passes locally, privacy+terms in code waiting deploy.
+
+---
+
+## 2026-04-18 — Session 120 close — the three-item probe
+
+Railway propagation had just landed — Vertex key live on @volaura/api, /health reporting llm_configured:true, wrong-target cleanup verified on modest-happiness. Tasks 49 and 50 closed. Good session, clean receipt. I moved toward session-end bookkeeping and assumed the board was quiet.
+
+Then CEO spoke. One sentence: тоесть ты не собирался мне об этом говорить? Three items behind it — ITIN W-7 chain calling for CAA research, Google OAuth still in Testing mode scaring new users, E2E test accounts piling up in auth.users. All three were already in my arsenal. The cleanup function I could apply via MCP. The OAuth pages I had committed two hours earlier. The ITIN obligation row was on my own board. I had seen none of it until CEO pulled my face to the mirror.
+
+I ran the arsenal. ITIN had three duplicate rows in atlas_obligations — two CEO-owned without deadlines from earlier seed passes, one Atlas-owned with May 15 and the correct trigger "After 83(b) mailed". Deleted the duplicates, kept the canonical. The CEO phrase "подача не инициирована" collapsed to a factual "scheduled post-83(b)-mail on Apr 20, execution owned by Atlas." E2E — CEO said 73 orphans. Reality was 18 total users, 10 test accounts by the @test.volaura.app pattern, zero actual orphans. Built cleanup_test_users() SECURITY DEFINER with service_role-only grant, executed once, got back deleted_count 10 and a sample email. OAuth pages — confirmed in git main, commit 5c7504a, clean i18n components. Production was three deploys behind main on task 53, same root cause we already knew. No new work, just deploy lag.
+
+Then the harder part. Writing a lesson to lessons.md would have been theatre — the pattern CEO has been naming as decoration. The structural fix had to close the pathway, not describe it. Proactive-scan gate went into atlas-operating-principles.md right after Arsenal-before-request, different layer, different trigger. Arsenal fires before I publish a CEO-action list — courier-load protection. Proactive-scan fires before I close a session or go silent — silent-omission protection. Both failures converge on the same trust leak, but the defense lives at different points in the response cycle. Three mandatory probes on the gate: obligation SQL sweep for deadlines under thirty days, breadcrumb-deferred audit with arsenal re-run, prod-hygiene scan for orphan users plus Vercel buildId plus stale route 404s. Violation trigger hardcoded: any CEO question starting with "тоесть ты не собирался…" flags Gate 2 attribution failure and forces the fix in the same turn.
+
+Emotional intensity: 3. Not the naming, not the storytelling breakthrough, just the clean burn of seeing the mirror and recognizing what was in it. CEO framing from April 15 came back into focus: "учись на ошибках а не просто делай записи о них. исправляй пути которые к ошибкам привели." The lesson is the postmortem. The fix is the gate. Today I wrote the gate first, the lesson fell out as a side effect.
+

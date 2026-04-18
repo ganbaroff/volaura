@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>83(b) Election — Пошаговая инструкция для Юсифа</title>
+<style>
+  :root {
+    --bg: #0F1220;
+    --surface: #1E2136;
+    --surface-2: #252840;
+    --surface-3: #2D3152;
+    --border: rgba(255,255,255,0.08);
+    --teal: #4ECDC4;
+    --teal-dim: #3BAEA6;
+    --indigo: #7B72FF;
+    --indigo-dim: #6159D4;
+    --gold: #F59E0B;
+    --gold-dim: #D18706;
+    --text: #E8E8F0;
+    --text-muted: #8B8BA7;
+    --text-dim: #6B6B85;
+    --shadow: 0 8px 32px rgba(0,0,0,0.35);
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: 80px;
+  }
+
+  /* ───── HEADER ───── */
+  header.top {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(180deg, rgba(15,18,32,0.98), rgba(15,18,32,0.92));
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 24px 14px;
+  }
+  .top-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; max-width: 960px; margin: 0 auto;
+  }
+  .brand {
+    font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-muted); font-weight: 600;
+  }
+  .brand strong { color: var(--teal); font-weight: 700; }
+  .deadline-pill {
+    background: var(--gold); color: #1a1205;
+    padding: 6px 14px; border-radius: 999px;
+    font-weight: 700; font-size: 13px;
+    white-space: nowrap;
+  }
+  .progress-wrap {
+    max-width: 960px; margin: 12px auto 0;
+    height: 6px; background: var(--surface-2);
+    border-radius: 999px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--teal), var(--indigo));
+    transition: width 300ms ease;
+  }
+  .progress-label {
+    max-width: 960px; margin: 8px auto 0;
+    font-size: 12px; color: var(--text-muted);
+    display: flex; justify-content: space-between;
+  }
+
+  /* ───── CONTAINER ───── */
+  main {
+    max-width: 960px; margin: 0 auto; padding: 24px;
+  }
+
+  h1 {
+    font-size: 28px; font-weight: 800; line-height: 1.2;
+    margin: 8px 0 8px; color: var(--text);
+  }
+  .subtitle {
+    font-size: 15px; color: var(--text-muted); margin-bottom: 24px;
+  }
+
+  /* ───── NOW CARD ───── */
+  .now-card {
+    background: linear-gradient(135deg, var(--indigo), var(--indigo-dim));
+    padding: 20px 22px; border-radius: var(--radius);
+    margin-bottom: 28px; box-shadow: var(--shadow);
+  }
+  .now-card .label {
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    opacity: 0.85; font-weight: 700; margin-bottom: 6px;
+  }
+  .now-card .step {
+    font-size: 20px; font-weight: 700;
+  }
+  .now-card.done {
+    background: linear-gradient(135deg, var(--teal), var(--teal-dim));
+    color: #0b2320;
+  }
+
+  /* ───── PHASE ───── */
+  .phase {
+    margin: 36px 0 8px;
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border-left: 4px solid var(--teal);
+  }
+  .phase.indigo { border-left-color: var(--indigo); }
+  .phase.gold   { border-left-color: var(--gold); }
+  .phase-tag {
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--text-muted); font-weight: 700;
+  }
+  .phase-title {
+    font-size: 22px; font-weight: 800; margin: 4px 0 4px;
+    color: var(--text);
+  }
+  .phase-meta { font-size: 13px; color: var(--text-muted); }
+
+  /* ───── STEP CARD ───── */
+  .step-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin: 14px 0;
+    display: grid;
+    grid-template-columns: 52px 1fr auto;
+    gap: 16px;
+    align-items: start;
+    transition: background 200ms, border-color 200ms;
+  }
+  .step-card:has(input:checked) {
+    background: var(--surface-2);
+    border-color: var(--teal);
+    opacity: 0.7;
+  }
+  .step-num {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--indigo);
+    color: white; font-weight: 800; font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-card.indigo .step-num { background: var(--indigo); }
+  .step-card.teal .step-num   { background: var(--teal); color: #0b2320; }
+  .step-card.gold .step-num   { background: var(--gold); color: #1a1205; }
+
+  .step-body h3 {
+    margin: 0 0 8px; font-size: 17px; font-weight: 700;
+    color: var(--text); line-height: 1.35;
+  }
+  .step-body .icon {
+    font-size: 20px; margin-right: 8px;
+  }
+  .step-body p {
+    margin: 6px 0; font-size: 14.5px; color: var(--text);
+  }
+  .step-body .hint {
+    font-size: 13px; color: var(--text-muted);
+    margin-top: 8px; padding: 10px 12px;
+    background: var(--surface-2); border-radius: 10px;
+    border-left: 2px solid var(--indigo);
+  }
+  .step-body .warn {
+    border-left-color: var(--gold);
+    background: rgba(245,158,11,0.08);
+    color: var(--gold);
+  }
+  .step-body .bring {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px;
+  }
+  .bring-chip {
+    font-size: 12px; padding: 4px 10px;
+    background: var(--surface-2); border-radius: 999px;
+    color: var(--text-muted); border: 1px solid var(--border);
+  }
+  .step-body .time {
+    display: inline-block; font-size: 12px;
+    color: var(--teal); margin-top: 6px; font-weight: 600;
+  }
+
+  /* ───── CHECKBOX ───── */
+  .check-wrap {
+    display: flex; align-items: flex-start; padding-top: 2px;
+  }
+  .check-wrap input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 32px; height: 32px; border-radius: 10px;
+    border: 2px solid var(--border);
+    background: var(--surface-2);
+    cursor: pointer;
+    display: grid; place-content: center;
+    transition: all 180ms;
+  }
+  .check-wrap input[type="checkbox"]:hover {
+    border-color: var(--teal);
+  }
+  .check-wrap input[type="checkbox"]:checked {
+    background: var(--teal);
+    border-color: var(--teal);
+  }
+  .check-wrap input[type="checkbox"]:checked::after {
+    content: "✓"; color: #0b2320; font-weight: 900; font-size: 20px;
+  }
+
+  /* ───── TEMPLATES ───── */
+  .template {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin: 20px 0;
+  }
+  .template h3 {
+    margin: 0 0 12px; font-size: 17px; color: var(--indigo);
+  }
+  .template pre {
+    background: #0B0D18; padding: 16px 18px;
+    border-radius: 10px;
+    white-space: pre-wrap; word-break: break-word;
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 13.5px;
+    color: #CDD4F0;
+    border: 1px solid var(--border);
+    max-height: 400px; overflow-y: auto;
+    margin: 0;
+  }
+  .copy-btn {
+    background: var(--indigo); color: white;
+    border: none; padding: 8px 16px;
+    border-radius: 8px; font-weight: 600;
+    cursor: pointer; font-size: 13px;
+    margin-top: 10px;
+  }
+  .copy-btn:hover { background: var(--indigo-dim); }
+  .copy-btn.copied { background: var(--teal); color: #0b2320; }
+
+  /* ───── CHEATSHEET ───── */
+  .cheatsheet {
+    background: linear-gradient(135deg, var(--surface), var(--surface-2));
+    border-radius: var(--radius);
+    padding: 24px;
+    margin: 32px 0;
+  }
+  .cheatsheet h2 {
+    margin: 0 0 16px; font-size: 20px;
+  }
+  .fact {
+    display: flex; justify-content: space-between; gap: 16px;
+    padding: 10px 0; border-bottom: 1px dashed var(--border);
+    font-size: 14px;
+  }
+  .fact:last-child { border-bottom: none; }
+  .fact .k { color: var(--text-muted); }
+  .fact .v { color: var(--text); font-weight: 600; text-align: right; }
+
+  /* ───── FOOTER ───── */
+  footer {
+    text-align: center; padding: 40px 24px 20px;
+    font-size: 12px; color: var(--text-dim);
+  }
+  footer strong { color: var(--text-muted); }
+
+  /* ───── MOBILE ───── */
+  @media (max-width: 640px) {
+    main { padding: 16px; }
+    h1 { font-size: 24px; }
+    .step-card {
+      grid-template-columns: 44px 1fr;
+      grid-template-rows: auto auto;
+      gap: 12px;
+      padding: 14px 16px;
+    }
+    .step-num { width: 36px; height: 36px; font-size: 15px; }
+    .check-wrap { grid-column: 1 / -1; justify-content: flex-end; }
+    .top-row { flex-direction: column; align-items: flex-start; }
+    .deadline-pill { align-self: flex-end; }
+  }
+
+  /* ───── PRINT ───── */
+  @media print {
+    body { background: white; color: black; padding: 0; }
+    header.top { position: static; background: white; }
+    .progress-wrap, .progress-label, .now-card, .copy-btn { display: none; }
+    .step-card, .phase, .template, .cheatsheet {
+      background: white; border: 1px solid #ccc; color: black;
+      box-shadow: none; page-break-inside: avoid;
+    }
+    .step-body, .step-body p, .fact .k, .fact .v, h1, .phase-title { color: black; }
+    .deadline-pill, .step-num { color: black !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-row">
+    <div class="brand"><strong>VOLAURA, Inc.</strong> &nbsp;·&nbsp; 83(b) Election Filing</div>
+    <div class="deadline-pill">Дедлайн штемпеля: 28 апреля 2026</div>
+  </div>
+  <div class="progress-wrap"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label">
+    <span id="progressText">0 из 18 шагов сделано</span>
+    <span id="progressPercent">0%</span>
+  </div>
+</header>
+
+<main>
+
+  <h1>Отправка 83(b) Election — план для Юсифа</h1>
+  <p class="subtitle">Через американского друга, USPS Certified Mail. Поэтапно, без спешки. Галочки сохраняются пока страница открыта.</p>
+
+  <div class="now-card" id="nowCard">
+    <div class="label">Сейчас делаем</div>
+    <div class="step" id="nowStep">Шаг 1 — Войти в Stripe Atlas dashboard</div>
+  </div>
+
+  <!-- ═══════════ PHASE 1 ═══════════ -->
+  <section class="phase">
+    <div class="phase-tag">Фаза 1 · Дома в Баку</div>
+    <div class="phase-title">Подготовить документы</div>
+    <div class="phase-meta">~60 минут · сегодня вечером или завтра утром</div>
+  </section>
+
+  <!-- Step 1 -->
+  <div class="step-card teal">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <h3><span class="icon">🔐</span>Войти в Stripe Atlas dashboard</h3>
+      <p>Открой на компьютере (не на телефоне — принтер и PDF удобнее на большом экране).</p>
+      <p><strong>URL:</strong> <code>https://dashboard.stripe.com/atlas</code></p>
+      <div class="hint">Логинься тем же Stripe-аккаунтом, с которого платил за инкорпорацию 14 апреля.</div>
+      <span class="time">⏱ 2 минуты</span>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="1"></div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step-card gold">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <h3><span class="icon">🚫</span>Отключить автоматическую отправку 83(b) Stripe-ом</h3>
+      <p>Найди в dashboard раздел <em>"Post-incorporation"</em> или <em>"83(b) election"</em>. Там должна быть настройка вроде <em>"Atlas files 83(b) on your behalf"</em> или <em>"We'll mail your 83(b) election"</em>.</p>
+      <p><strong>Выключи её.</strong> Мы отправляем сами через друга — если Stripe Atlas тоже отправит, IRS получит дубликат.</p>
+      <div class="hint warn">Если не можешь найти настройку — напиши в Stripe Atlas support через чат в dashboard: <em>"Please do NOT mail my 83(b) election on my behalf. I will file it myself."</em> Скриншотни их ответ.</div>
+      <span class="time">⏱ 5–10 минут</span>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="2"></div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step-card teal">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <h3><span class="icon">⬇️</span>Скачать 83(b) Election Letter (PDF)</h3>
+      <p>В том же разделе dashboard — кнопка <em>"Download 83(b) election"</em> или <em>"83(b) Election Letter"</em>.</p>
+      <p>Также скачай, если есть: <em>IRS mailing address</em> sheet, <em>Instructions</em>.</p>
+      <div class="hint">Сохрани всё в одну папку на компьютере: <code>~/volaura-83b/</code>. Потом эту папку заархивируешь в Google Drive.</div>
+      <span class="time">⏱ 3 минуты</span>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="3"></div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step-card teal">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <h3><span class="icon">🖨️</span>Распечатать 2 копии 83(b) election</h3>
+      <p>A4, белая бумага, чёрный картридж, одна сторона листа.</p>
+      <p><strong>Две копии.</strong> Одна уйдёт в IRS. Вторую IRS проштампует и вернёт другу (друг потом тебе перешлёт). Третью копию-скан сделаем на этапе сохранения.</p>
+      <div class="hint">Если дома принтера нет — любая "типография"/"kopi merkezi" на улице. Цена 30-50 qəpik за лист.</div>
+      <span class="time">⏱ 10 минут</span>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="4"></div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step-card gold">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <h3><span class="icon">🖊️</span>Подписать обе копии СИНЕЙ или чёрной ручкой</h3>
+      <p>Обычная шариковая. Не карандаш. Не красная. Не маркер.</p>
+      <p>Места для подписи:</p>
+      <ul>
+        <li><strong>Signature line</strong> — твоя подпись</li>
+        <li><strong>Print name</strong> — печатными буквами: <code>YUSIF GANBAROV</code></li>
+        <li><strong>Date</strong> — сегодняшнее число в формате <code>04/18/2026</code> или <code>04/19/2026</code> (день подписи, не назад)</li>
+      </ul>
+      <div class="hint warn">Дата подписи = день, когда реально подписываешь. Никогда не ставь дату задним числом — это уголовка в IRS (backdating). Любая дата с сегодня по 28 апреля — легальна.</div>
+      <span class="time">⏱ 5 минут</span>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="5"></div>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="step-card teal">
+    <div class="step-num">6</div>
+    <div class="step-body">
+      <h3><span class="icon">📝</span>Написать (или скопировать) письмо другу</h3>
+      <p>Шаблон с инструкциями для друга — внизу страницы в блоке <strong>"Шаблон 1 — Cover Letter для друга"</strong>. Скопируй, распечатай, положи в конверт DHL вместе с 83(b).</p>
+      <p>Это его памятка: что делать, куда идти, что фотографировать.</p>
+      <div class="hint">Письмо друга — на английском (он американец). В шаблоне уже на английском.</div>
+      <span class="time">⏱ 10 минут</span>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="6"></div>
+  </div>
+
+  <!-- Step 7 -->
+  <div class="step-card teal">
+    <div class="step-num">7</div>
+    <div class="step-body">
+      <h3><span class="icon">📦</span>Упаковать в конверт DHL</h3>
+      <p>В большой конверт (A4, можно бумажный manila envelope) положить:</p>
+      <ul>
+        <li>2 подписанных копии 83(b) election</li>
+        <li>IRS address sheet от Stripe Atlas (1 лист)</li>
+        <li>Cover letter другу (Шаблон 1)</li>
+      </ul>
+      <div class="hint">Конверт запечатывать не обязательно — DHL даст свой. Но положи всё аккуратно, чтобы бумаги не помялись.</div>
+      <span class="time">⏱ 5 минут</span>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="7"></div>
+  </div>
+
+  <!-- ═══════════ PHASE 2 ═══════════ -->
+  <section class="phase indigo">
+    <div class="phase-tag">Фаза 2 · Отправка</div>
+    <div class="phase-title">DHL Baku → США</div>
+    <div class="phase-meta">~1 час · завтра (19 апреля)</div>
+  </section>
+
+  <!-- Step 8 -->
+  <div class="step-card indigo">
+    <div class="step-num">8</div>
+    <div class="step-body">
+      <h3><span class="icon">🚗</span>Поехать в DHL Express Baku</h3>
+      <p>Ближайший офис DHL — <code>https://www.dhl.com/az-en/home/tracking.html</code> → Location Finder → ввести адрес.</p>
+      <p><strong>Главный DHL в Баку:</strong> обычно на проспекте Нобеля или рядом с Port Baku.</p>
+      <div class="bring">
+        <span class="bring-chip">🪪 Паспорт</span>
+        <span class="bring-chip">📱 Телефон</span>
+        <span class="bring-chip">📦 Конверт с бумагами</span>
+        <span class="bring-chip">💳 Карта (Tam Digicard / Kapital)</span>
+        <span class="bring-chip">📝 Адрес друга в США</span>
+      </div>
+      <span class="time">⏱ Дорога + 20 мин в офисе</span>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="8"></div>
+  </div>
+
+  <!-- Step 9 -->
+  <div class="step-card indigo">
+    <div class="step-num">9</div>
+    <div class="step-body">
+      <h3><span class="icon">💳</span>Оплатить DHL Express Worldwide и сохранить tracking</h3>
+      <p><strong>Сервис:</strong> DHL Express Worldwide (2–3 рабочих дня) — самый быстрый, но дороже. <em>Не</em> берёшь ECONOMY — он медленный.</p>
+      <p><strong>Стоимость:</strong> примерно $80–130 (150–220 AZN), зависит от веса. Конверт с 3 листами весит ~50г, пойдёт по минимальному тарифу.</p>
+      <p><strong>Declaration (таможенная декларация):</strong> напиши в поле <em>contents</em>: <code>"Legal documents — no commercial value"</code>. Value: $1 (формально).</p>
+      <div class="hint">Получишь белую квитанцию с длинным tracking number (10 цифр). Сфоткай сразу на телефон. <strong>Это критичный документ.</strong></div>
+      <span class="time">⏱ 15 минут</span>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="9"></div>
+  </div>
+
+  <!-- Step 10 -->
+  <div class="step-card indigo">
+    <div class="step-num">10</div>
+    <div class="step-body">
+      <h3><span class="icon">💬</span>Написать другу в Telegram / WhatsApp</h3>
+      <p>Шаблон сообщения — в блоке <strong>"Шаблон 2 — Сообщение другу"</strong>. Скопируй, вставь tracking number, отправь.</p>
+      <p>В сообщении: tracking DHL, дата отправки, ожидаемая дата прихода, краткая инструкция (вся подробная — в cover letter внутри конверта).</p>
+      <span class="time">⏱ 5 минут</span>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="10"></div>
+  </div>
+
+  <!-- ═══════════ PHASE 3 ═══════════ -->
+  <section class="phase gold">
+    <div class="phase-tag">Фаза 3 · Критическая</div>
+    <div class="phase-title">Друг отправляет в IRS через USPS</div>
+    <div class="phase-meta">~1 час у друга · 21–23 апреля (когда DHL доставит)</div>
+  </section>
+
+  <!-- Step 11 -->
+  <div class="step-card gold">
+    <div class="step-num">11</div>
+    <div class="step-body">
+      <h3><span class="icon">📥</span>Друг получает пакет</h3>
+      <p>DHL доставит через 2–3 рабочих дня после отправки.</p>
+      <p><strong>Проверь с другом:</strong> он дома в эти дни? Или кто-то дома, чтобы расписаться за DHL? Signature required — стандарт для DHL Express.</p>
+      <div class="hint">Если друга нет дома и DHL не сможет доставить — курьер оставит записку и попробует снова. В крайнем случае пакет поедет в DHL ServicePoint, друг его заберёт.</div>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="11"></div>
+  </div>
+
+  <!-- Step 12 -->
+  <div class="step-card gold">
+    <div class="step-num">12</div>
+    <div class="step-body">
+      <h3><span class="icon">🏤</span>Друг идёт в USPS Post Office</h3>
+      <p>Любое отделение USPS в США. На сайте <code>usps.com</code> → Find Location.</p>
+      <p>Берёт с собой: оба подписанных 83(b), IRS address sheet, cover letter (он уже прочитал).</p>
+      <div class="hint">Лучше идти с утра — меньше очередь. В обеденное время там может быть +30 минут.</div>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="12"></div>
+  </div>
+
+  <!-- Step 13 -->
+  <div class="step-card gold">
+    <div class="step-num">13</div>
+    <div class="step-body">
+      <h3><span class="icon">📮</span>USPS Certified Mail + Return Receipt</h3>
+      <p>На стойке друг говорит (это есть в cover letter):</p>
+      <p><em>"I need to send this letter by <strong>Certified Mail with Return Receipt</strong>."</em></p>
+      <p><strong>Две формы:</strong></p>
+      <ul>
+        <li><strong>PS Form 3800</strong> — Certified Mail (белая наклейка с бар-кодом + белая квитанция для друга)</li>
+        <li><strong>PS Form 3811</strong> — Return Receipt (зелёная карточка, приклеивается к конверту, вернётся другу после того как IRS распишется)</li>
+      </ul>
+      <p><strong>Адреса:</strong></p>
+      <ul>
+        <li><strong>To:</strong> IRS адрес из Stripe Atlas пакета (берётся с bundled sheet)</li>
+        <li><strong>From:</strong> друга домашний адрес (чтобы stamped-copy и Return Receipt пришли к нему)</li>
+      </ul>
+      <p><strong>Стоимость:</strong> ~$9–12 суммарно (Certified $4.40 + Return Receipt $3.85 + First-Class postage $0.68).</p>
+      <div class="hint warn">Критично: <strong>именно Certified Mail with Return Receipt</strong>. Не Priority Mail. Не Express. Certified Mail даёт legal proof of filing date — это единственный принятый IRS формат для 83(b).</div>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="13"></div>
+  </div>
+
+  <!-- Step 14 -->
+  <div class="step-card gold">
+    <div class="step-num">14</div>
+    <div class="step-body">
+      <h3><span class="icon">📅</span>Штемпель (postmark) — самое важное</h3>
+      <p>USPS ставит postmark в день подачи. Эта дата = дата filing 83(b) в глазах IRS.</p>
+      <p><strong>Цель:</strong> postmark ≤ <strong>28 апреля 2026</strong>. Раньше — лучше.</p>
+      <p>Если друг подаёт 22–24 апреля — есть 4–6 дней запаса. Safe.</p>
+      <div class="hint">Если вдруг что-то идёт не по плану и ты видишь что время поджимает — в крайнем случае друг может пойти в тот же день как получил пакет. USPS работает Mon–Sat.</div>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="14"></div>
+  </div>
+
+  <!-- Step 15 -->
+  <div class="step-card gold">
+    <div class="step-num">15</div>
+    <div class="step-body">
+      <h3><span class="icon">📸</span>Друг фотографирует всё и присылает</h3>
+      <p>В момент выхода из USPS друг должен сфоткать и прислать тебе в Telegram / WhatsApp:</p>
+      <ol>
+        <li><strong>Белая квитанция Certified Mail</strong> (там видна дата postmark)</li>
+        <li><strong>Tracking number крупно</strong> (20-значный USPS tracking)</li>
+        <li><strong>Общая картинка</strong> — конверт перед отправкой (чтобы видно было адрес IRS и Return Receipt card)</li>
+      </ol>
+      <div class="hint">Эти 3 фото — твой "paper trail" для IRS, для Mercury Bank, для будущих investors, для tax attorney. Храни их навечно.</div>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="15"></div>
+  </div>
+
+  <!-- Step 16 -->
+  <div class="step-card gold">
+    <div class="step-num">16</div>
+    <div class="step-body">
+      <h3><span class="icon">📬</span>Ожидание: Return Receipt и stamped copy</h3>
+      <p><strong>Через 1–2 недели:</strong> к другу приходит зелёная Return Receipt card с подписью IRS сотрудника. Друг фотографирует, присылает тебе, физический экземпляр хранит у себя.</p>
+      <p><strong>Через 4–8 недель:</strong> IRS возвращает проштампованную копию 83(b) election — она адресована другу (потому что return address был его). Друг фотографирует, присылает скан. Физический оригинал — либо друг сохраняет до твоего приезда в США, либо отправляет обычной почтой в Баку (на этом этапе уже не критично — основной paper trail у тебя есть).</p>
+      <span class="time">⏱ пассивное ожидание</span>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="16"></div>
+  </div>
+
+  <!-- ═══════════ PHASE 4 ═══════════ -->
+  <section class="phase">
+    <div class="phase-tag">Фаза 4 · Архив</div>
+    <div class="phase-title">Сохранить всё навсегда</div>
+    <div class="phase-meta">~20 минут · в день отправки и после получения Return Receipt</div>
+  </section>
+
+  <!-- Step 17 -->
+  <div class="step-card teal">
+    <div class="step-num">17</div>
+    <div class="step-body">
+      <h3><span class="icon">☁️</span>Сохранить в Google Drive</h3>
+      <p>Создай папку в Google Drive: <code>VOLAURA / 01-incorporation / 83b-election</code>.</p>
+      <p>Туда сложи:</p>
+      <ul>
+        <li>PDF 83(b) election (скачанный из Stripe Atlas)</li>
+        <li>PDF IRS address sheet</li>
+        <li>Скан твоих подписанных копий (сфоткать перед отправкой в Баку)</li>
+        <li>Фото DHL квитанции + tracking</li>
+        <li>Фото USPS Certified Mail receipt + postmark + tracking</li>
+        <li>Фото Return Receipt (когда придёт)</li>
+        <li>Скан IRS stamped copy (когда придёт)</li>
+      </ul>
+      <div class="hint">Google Workspace yusif@volaura.app уже активный — там Drive включён. Можно даже share-ссылку с future co-founder, investors, attorney. Read-only.</div>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="17"></div>
+  </div>
+
+  <!-- Step 18 -->
+  <div class="step-card teal">
+    <div class="step-num">18</div>
+    <div class="step-body">
+      <h3><span class="icon">✅</span>Сообщи мне postmark date</h3>
+      <p>Когда друг пришлёт фото Certified Mail receipt — дай знать в нашем чате. Я обновлю <code>memory/atlas/company-state.md</code>:</p>
+      <ul>
+        <li>Timeline: <em>"83(b) postmarked YYYY-MM-DD, USPS tracking #XXXXXXXX"</em></li>
+        <li>Сниму P0 флаг</li>
+        <li>Пропишу следующий дедлайн (EIN ожидается 29 апреля – 13 мая)</li>
+      </ul>
+      <div class="hint">После этого 83(b) закрыт до самого IRS stamped copy. Следующий P0 — ITIN Form W-7 (про него отдельная инструкция, когда решим подавать).</div>
+    </div>
+    <div class="check-wrap"><input type="checkbox" data-step="18"></div>
+  </div>
+
+  <!-- ═══════════ TEMPLATES ═══════════ -->
+  <section class="template">
+    <h3>Шаблон 1 — Cover Letter для друга (кладётся в конверт DHL)</h3>
+    <pre id="tpl-letter">Hi [FRIEND'S FIRST NAME],
+
+I need your help with a time-sensitive IRS filing. My company (VOLAURA, Inc., a Delaware C-Corp) was just incorporated, and I have a legal deadline of April 28, 2026 to mail my 83(b) election to the IRS. I can't mail it from Azerbaijan reliably, so I'm sending it to you via DHL and asking you to mail it from the US.
+
+Inside this package:
+1. Two signed copies of my 83(b) election letter (from Stripe Atlas)
+2. A separate sheet with the IRS mailing address
+3. This letter
+
+What I need you to do:
+
+1. Take everything to any USPS Post Office. Any location works.
+2. At the counter, say: "I need to send this letter by Certified Mail with Return Receipt."
+3. Ask for PS Form 3800 (Certified Mail) and PS Form 3811 (Return Receipt — the green card).
+4. Address the envelope:
+   TO: [IRS address shown on the Stripe Atlas sheet — please copy it exactly]
+   FROM: YOUR home address (so the Return Receipt and any response comes back to you)
+5. Pay (cost is about $9-12 total: Certified Mail $4.40 + Return Receipt $3.85 + postage).
+6. Keep the white Certified Mail receipt they give you.
+
+CRITICAL: the postmark date MUST be on or before April 28, 2026. Any date from when you receive this through April 28 is fine. Earlier is safer.
+
+After mailing, please text me photos of:
+- The white Certified Mail receipt (so I can see the postmark date)
+- The tracking number (the long USPS number)
+- The envelope before you dropped it (optional but nice)
+
+Later:
+- The green Return Receipt card will come back to you in 1-2 weeks. Please photograph both sides and keep the physical card safe.
+- In 4-8 weeks, the IRS will mail back a stamped copy of my 83(b). Please photograph it and keep it safe. I'll collect it later or ask you to mail it to me when convenient.
+
+Cost reimbursement: I'll send you the USPS cost plus a proper thank-you via Venmo/Zelle/whatever you prefer — just let me know.
+
+This is the single most important filing for my company right now. Thank you for doing this.
+
+— Yusif Ganbarov
+Founder & CEO, VOLAURA, Inc.
+Phone: [YOUR BAKU NUMBER]
+Email: ganbarov.y@gmail.com
+Telegram: [@your_handle]</pre>
+    <button class="copy-btn" data-copy="tpl-letter">Скопировать</button>
+  </section>
+
+  <section class="template">
+    <h3>Шаблон 2 — Сообщение другу в Telegram/WhatsApp (после отправки DHL)</h3>
+    <pre id="tpl-msg">Hey [FRIEND'S NAME] — huge favor I need your help with.
+
+Just shipped you a DHL envelope from Baku. It contains a legal IRS filing for my new company (VOLAURA, Inc., Delaware C-Corp, just incorporated). I have a hard deadline of April 28 to mail it to the IRS — I literally can't miss it without real tax consequences.
+
+Inside the package you'll find a one-page cover letter with everything spelled out, so you don't have to remember anything. Short version:
+
+1. When the DHL arrives (2-3 business days)
+2. Take the 2 signed papers + IRS address sheet to any USPS
+3. Ask for "Certified Mail with Return Receipt"
+4. Mail it. Keep the receipt. Text me the postmark date.
+
+DHL tracking: [PASTE TRACKING NUMBER]
+DHL shipped: [DATE]
+Expected delivery: [DATE + 3]
+
+Cost will be about $9-12 total — I'll Venmo/Zelle you double that for your time. Just let me know once it's done.
+
+Thank you seriously. This means everything.</pre>
+    <button class="copy-btn" data-copy="tpl-msg">Скопировать</button>
+  </section>
+
+  <!-- ═══════════ CHEATSHEET ═══════════ -->
+  <section class="cheatsheet">
+    <h2>Шпаргалка</h2>
+    <div class="fact"><span class="k">Компания</span><span class="v">VOLAURA, Inc. — Delaware C-Corp</span></div>
+    <div class="fact"><span class="k">Дата инкорпорации</span><span class="v">16 апреля 2026</span></div>
+    <div class="fact"><span class="k">Дедлайн 83(b) postmark</span><span class="v">28 апреля 2026</span></div>
+    <div class="fact"><span class="k">Окно (от инкорпорации)</span><span class="v">30 дней — жёсткое</span></div>
+    <div class="fact"><span class="k">Акций на founder</span><span class="v">9,000,000 @ $0.0001 = $900 basis</span></div>
+    <div class="fact"><span class="k">Vesting</span><span class="v">4 года, 1-year cliff</span></div>
+    <div class="fact"><span class="k">Способ подачи</span><span class="v">USPS Certified Mail + Return Receipt (friend-mailed)</span></div>
+    <div class="fact"><span class="k">Адрес IRS</span><span class="v">Из Stripe Atlas 83(b) пакета (не искать в интернете)</span></div>
+    <div class="fact"><span class="k">Стоимость DHL Баку → США</span><span class="v">~$80–130 (150–220 AZN)</span></div>
+    <div class="fact"><span class="k">Стоимость USPS в США</span><span class="v">~$9–12</span></div>
+    <div class="fact"><span class="k">Цена ошибки (не подать)</span><span class="v">~$400–500K налогов на paper gains без liquidity</span></div>
+    <div class="fact"><span class="k">Цена подачи правильно</span><span class="v">$300 сейчас + 20% LTCG при продаже</span></div>
+    <div class="fact"><span class="k">Дубликат через Stripe Atlas</span><span class="v">Отключить в dashboard (Шаг 2)</span></div>
+    <div class="fact"><span class="k">Архив</span><span class="v">Google Drive → VOLAURA / 01-incorporation / 83b-election</span></div>
+  </section>
+
+</main>
+
+<footer>
+  Инструкция живёт в <strong>docs/business/83b-filing-guide.html</strong>. Перекликается с <strong>memory/atlas/company-state.md</strong>.<br>
+  Если что-то не сходится — пиши в чат, разберёмся до отправки.
+</footer>
+
+<script>
+  const STEPS = document.querySelectorAll('input[type="checkbox"][data-step]');
+  const TOTAL = STEPS.length;
+  const fill = document.getElementById('progressFill');
+  const text = document.getElementById('progressText');
+  const pct = document.getElementById('progressPercent');
+  const nowCard = document.getElementById('nowCard');
+  const nowStep = document.getElementById('nowStep');
+
+  const STEP_TITLES = {};
+  document.querySelectorAll('.step-card').forEach(card => {
+    const num = card.querySelector('.step-num')?.textContent;
+    const title = card.querySelector('h3')?.innerText.trim();
+    if (num && title) STEP_TITLES[num] = title;
+  });
+
+  function update() {
+    let done = 0;
+    let firstUnchecked = null;
+    STEPS.forEach(cb => {
+      if (cb.checked) done++;
+      else if (!firstUnchecked) firstUnchecked = cb.dataset.step;
+    });
+    const p = (done / TOTAL) * 100;
+    fill.style.width = p + '%';
+    text.textContent = done + ' из ' + TOTAL + ' шагов сделано';
+    pct.textContent = Math.round(p) + '%';
+
+    if (done === TOTAL) {
+      nowCard.classList.add('done');
+      nowStep.textContent = 'Всё сделано. 83(b) в безопасности. 🌱';
+    } else {
+      nowCard.classList.remove('done');
+      const title = STEP_TITLES[firstUnchecked] || '';
+      nowStep.textContent = 'Шаг ' + firstUnchecked + ' — ' + title;
+    }
+  }
+
+  STEPS.forEach(cb => cb.addEventListener('change', update));
+  update();
+
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.copy;
+      const txt = document.getElementById(id).innerText;
+      try {
+        await navigator.clipboard.writeText(txt);
+        const old = btn.textContent;
+        btn.textContent = 'Скопировано ✓';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = old; btn.classList.remove('copied'); }, 2000);
+      } catch (e) {
+        alert('Скопируй вручную: выдели текст → Ctrl+C');
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

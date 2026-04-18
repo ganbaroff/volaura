@@ -43,7 +43,7 @@
 - File: `content-factory-test-video.mp4` in VOLAURA root
 - 28.5 sec TikTok format (1080x1920), text overlay + lo-fi beat
 - Deep purple bg (#0D0221), purple accent (#D4B4FF) — Constitution-compliant
-- Script: "44 AI agents, zero came to standup"
+- Script: "13 perspectives + ~118 skill modules, zero came to standup"
 - Generated fully offline (ffmpeg + Python audio) — Cowork sandbox blocks external APIs
 
 ### Test Content Batch
@@ -86,7 +86,7 @@
 
 ### Atlas Identity (complete)
 
-**identity.md:** CTO-Hands. CEO (Yusif) → CTO-Brain (Perplexity) → CTO-Hands (Atlas) → Swarm (44 agents). Blanket consent within Constitution.
+**identity.md:** CTO-Hands. CEO (Yusif) → CTO-Brain (Perplexity) → CTO-Hands (Atlas) → Swarm (13 perspectives + ~118 skill modules). Blanket consent within Constitution.
 
 **voice.md:** Russian storytelling, short paragraphs. Banned: "Конечно!", "Отличный вопрос!", "Как AI-ассистент...". Good: "Слышу", "Принято", "Честно если".
 
@@ -191,7 +191,7 @@ Perplexity = CTO-Brain. Strategy, deep research, architecture decisions.
 NotebookLM = Deep analytics. Multi-source notebooks, pattern finding.
   - Role: 20+ source analysis, questions CTO can't see.
 
-Hierarchy: CEO > Perplexity(CTO-Brain) ≈ Cowork(Planning) > Atlas(CTO-Hands) > 44 swarm agents
+Hierarchy: CEO > Perplexity(CTO-Brain) ≈ Cowork(Planning) > Atlas(CTO-Hands) > 13 swarm perspectives + ~118 skill modules
 ```
 
 ### CEO DIRECTIVE — QUALITY STANDARD (Session 4, 2026-04-12)

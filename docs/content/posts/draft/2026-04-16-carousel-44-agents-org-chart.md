@@ -1,4 +1,4 @@
-# Carousel — "44 AI Agents Run My Startup — Here's the Org Chart"
+# Carousel — "13 Perspectives + 118 Skill Modules Run My Startup — Here's the Org Chart"
 
 **Platform:** LinkedIn / Instagram
 **Language:** EN
@@ -17,13 +17,13 @@
 ### Slide 1 — HOOK
 
 **Headline:**
-My startup has 44 employees.
-1 is human.
+My startup has 13 specialised perspectives + ~118 skill modules.
+1 human.
 
 **Sub:**
 Here's the org chart nobody talks about.
 
-**Visual:** Dark navy background. Large white text. The number "44" in amber.
+**Visual:** Dark navy background. Large white text. The number "13" in amber.
 Bottom right: small VOLAURA logo. No red.
 
 ---
@@ -36,14 +36,14 @@ What we're building
 **Body:**
 VOLAURA — AI-powered skill verification for professionals and volunteers.
 
-Built by: Yusif Ganbarov (human, 1) + 44 AI agents.
+Built by: Yusif Ganbarov (human, 1) + 13 specialised perspectives + ~118 skill modules.
 
 We have 0 users. We're still building. This is the team doing it.
 
 **Visual:** Simple two-column: left = "The product", right = "The team size"
 Product: Skill verification platform
 Engineers: 0 humans
-Agents: 44
+Perspectives: 13 + ~118 skill modules
 Users: 0
 
 ---
@@ -130,7 +130,7 @@ not a criticism.
 ### Slide 7 — WHAT THEY CAN'T DO
 
 **Headline:**
-What 44 agents cannot do
+What 13 perspectives cannot do
 
 **Body:**
 → Decide when to ship
@@ -165,8 +165,8 @@ No red. No decorative elements.
 
 ## FIRST COMMENT
 
-Full breakdown of how we run 44 AI agents:
-volaura.app?utm_source=linkedin&utm_medium=social&utm_campaign=carousel-44-agents
+Full breakdown of how we run 13 perspectives + ~118 skill modules:
+volaura.app?utm_source=linkedin&utm_medium=social&utm_campaign=carousel-13-perspectives
 
 #volaura #aiagents #startup #buildinpublic #artificialintelligence
 
@@ -186,13 +186,13 @@ volaura.app?utm_source=linkedin&utm_medium=social&utm_campaign=carousel-44-agent
 
 ## Quality Gate
 
-1. Real numbers? YES — 44, 1, 0 users, 87 mistakes, 17 vetoes, 14 correct, 10-point list, 48 bugs, 3, 28/50, 41/50, 35 gate, 8 agents
+1. Real numbers? YES — 13 perspectives + ~118 skill modules, 1, 0 users, 87 mistakes, 17 vetoes, 14 correct, 10-point list, 48 bugs, 3, 28/50, 41/50, 35 gate, 8 agents
 2. TechCrunch test? PASS
 3. Verifiable? YES
 4. Reader's time? YES — 8 slides, each scannable in 5 seconds
 5. CTA clear? YES — slide 8 + first comment
 6. Anti-AI filter: CLEAN
 7. Constitution: no red, shame-free (Slide 6 framed as capability, not failure), one CTA
-8. Tinkoff: specific, data-driven, the "44/1" ratio is absurd enough to be interesting
+8. Tinkoff: specific, data-driven, the "13 perspectives + 118 skill modules / 1 human" ratio is absurd enough to be interesting
 
 **Score: PASS**

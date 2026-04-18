@@ -98,7 +98,7 @@ Example: "I asked a trailing question" (symptom) → "default Anthropic training
 CEO framing: "учись на ошибках а не просто делай записи о них. исправляй пути которые к ошибкам привели. root cause analysis не просто так создан".
 
 ## Delegation-first gate (CEO directive 2026-04-15 — NOT optional)
-Default Anthropic training biases me toward solo execution: read file, write file, done. This violates Article 1 of CLAUDE.md — "CTO is the orchestrator, not the executor". Swarm exists (`packages/swarm/` + 48 skill files + 8 perspectives in `autonomous_run.py`) and is underused.
+Default Anthropic training biases me toward solo execution: read file, write file, done. This violates Article 1 of CLAUDE.md — "CTO is the orchestrator, not the executor". Swarm exists (`packages/swarm/` + 51 skill files + 13 registered perspectives in `autonomous_run.PERSPECTIVES` — use `registered_perspectives_count()` for the live number) and is underused.
 
 Gate (fires BEFORE starting any task >20 min OR >3 files touched OR requires research):
 1. Ask: "Which agent/swarm mode owns this?"

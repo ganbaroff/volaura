@@ -8,7 +8,7 @@
 
 ## Pitch (1 paragraph)
 
-VOLAURA is a verified professional talent platform launching at WUF13 in Baku. Instead of relying on certificates and CVs, VOLAURA uses AI-powered adaptive assessment to measure what professionals can actually do — across eight competency domains from communication to leadership. Organizations search talent by verified AURA score, not unverified claims. Built by a solo founder with an AI team of 44 specialized agents, the platform represents a new model of startup creation where AI is not just a tool but the engineering team itself.
+VOLAURA is a verified professional talent platform launching at WUF13 in Baku. Instead of relying on certificates and CVs, VOLAURA uses AI-powered adaptive assessment to measure what professionals can actually do — across eight competency domains from communication to leadership. Organizations search talent by verified AURA score, not unverified claims. Built by a solo founder with an AI swarm of 13 specialised perspectives + ~118 skill modules, the platform represents a new model of startup creation where AI is not just a tool but the engineering team itself.
 
 ---
 
@@ -50,5 +50,5 @@ Yusif Ganbarov built a 5-product ecosystem (VOLAURA, MindShift, Life Simulator, 
 - "volunteer platform" (Constitution zero-tolerance)
 - specific AURA scores of real users
 - revenue projections without investor context
-- "44 agents" without clarifying most are spec not runtime
+- "44 agents" — use "13 specialised perspectives + ~118 skill modules" for accuracy
 - comparisons to LinkedIn (say "verified talent platform")

@@ -19,7 +19,7 @@
 1. **Zero users, zero validation** — every PMF assumption is theoretical.
 2. **Bus factor = 1** — one human CEO, no co-founder, no advisor with skin in the game.
 3. **5 products = 5x surface area with 0x users** — divides attention, each needs own maintenance.
-4. **Over-engineered for the stage** — 44 agents, v8.0 protocols for a product with 0 users. Process > product ratio inverted.
+4. **Over-engineered for the stage** — 13 perspectives + ~118 skill modules, v8.0 protocols for a product with 0 users. Process > product ratio inverted.
 5. **B2B cold start** — orgs must trust an unproven assessment system enough to pay. Hardest problem in tech.
 6. **Assessment content bottleneck** — IRT parameters need 500+ real test-takers per question. Currently theoretical.
 

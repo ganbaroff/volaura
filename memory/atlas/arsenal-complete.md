@@ -187,7 +187,7 @@ CEO (Yusif) — strategic direction, veto, values
     │
     ├── NotebookLM — deep analytics, source-grounded research
     │
-    └── Python Swarm (44 agents) — autonomous background work
+    └── Python Swarm (13 perspectives + ~118 skill modules) — autonomous background work
             │
             ├── Cerebras Qwen3-235B (primary)
             ├── Ollama qwen3:8b (local)
@@ -207,7 +207,7 @@ CEO (Yusif) — strategic direction, veto, values
 ### Important (P1)
 4. **Supabase MCP for Cowork** — Atlas has direct SQL, Cowork doesn't. Limits database visibility.
 5. **Sentry MCP for Cowork** — production errors only visible in Claude Code or browser.
-6. **Agent activation rate** — 44 agents in roster, ~6 ever activated. 86% idle. Root cause: skills loaded as 500-char snippets.
+6. **Agent activation rate** — 13 perspectives in PERSPECTIVES array + ~118 skill modules; ~6 ever activated. Root cause: skills loaded as 500-char snippets.
 7. **Content pipeline not implemented** — handoff written (memory/atlas/content-pipeline-handoff.md), needs Atlas execution.
 
 ### Nice to Have (P2)

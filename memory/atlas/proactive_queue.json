@@ -19,7 +19,7 @@
       "refresh_interval_hours": 168,
       "last_researched": null,
       "next_due": "2026-04-11T01:00:00Z",
-      "context_hint": "Atlas Mistake #84 says 44 agents created and 0 activated because there is no Coordinator Agent that intercepts sprint kickoffs. Research: what are the best current patterns (2025-2026) for a coordinator/router/supervisor agent that sits between the main CTO instance and specialised worker agents? LangGraph supervisor pattern, AutoGen GroupChatManager, CrewAI hierarchical, MetaGPT RolePlay. For each: one-paragraph description, fit with VOLAURA bespoke Python swarm, integration effort."
+      "context_hint": "Atlas Mistake #84 says agents created and not activated because there is no Coordinator Agent that intercepts sprint kickoffs. Reality: 13 registered perspectives in PERSPECTIVES array + ~118 skill modules. Research: what are the best current patterns (2025-2026) for a coordinator/router/supervisor agent that sits between the main CTO instance and specialised worker agents? LangGraph supervisor pattern, AutoGen GroupChatManager, CrewAI hierarchical, MetaGPT RolePlay. For each: one-paragraph description, fit with VOLAURA bespoke Python swarm, integration effort."
     },
     {
       "id": "llm-golden-dataset-eval-methodology",

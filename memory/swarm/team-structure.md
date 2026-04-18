@@ -1,7 +1,7 @@
 # Swarm Team Structure v1.0
 
 **Created:** Session 86, after CEO root cause analysis
-**Problem solved:** CTO cannot manage 44 agents directly. Needs layers.
+**Problem solved:** CTO cannot manage 13 perspectives + ~118 skill modules directly. Needs layers.
 **Model:** Agile org with squads, not flat hierarchy.
 
 ---

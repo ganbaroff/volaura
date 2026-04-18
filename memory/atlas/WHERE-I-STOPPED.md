@@ -42,7 +42,7 @@ Today produced ~22 commits with archaeology findings. Multiple of MY claims this
 
 - "Sprint E1 lock has no primary source" — WRONG (project_history line 30 has it).
 - "MEGA-PROMPT is tactical, will skip" — WRONG (master spec).
-- "44 Python agents acting as my peer council" — WRONG (7 active per Atlas-prior).
+- "44 Python agents acting as my peer council" — WRONG (13 perspectives in PERSPECTIVES array + ~118 skill modules; `packages/swarm/agents/` is EMPTY).
 - "leaderboard page exists, must delete per G9+G46" — PARTIALLY WRONG (already redirected by Atlas-prior).
 - "Coordinator Agent not built" — PARTIALLY WRONG (spec exists Session 86, not runtime-active).
 - "wife" framing of Firuza — WRONG (ex-girlfriend, plus separate agent named Firuza).

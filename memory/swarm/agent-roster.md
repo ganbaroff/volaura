@@ -1,7 +1,7 @@
 # Agent Roster — Swarm Team
 
 **Purpose:** Agents know who's on the team and what each agent is best at.
-**Updated:** 2026-04-03 (Session 83 — Trend Scout added, total 44 agents)
+**Updated:** 2026-04-03 (Session 83 — Trend Scout added). Runtime perspectives: 13 (autonomous_run.py PERSPECTIVES array). Skill modules: ~118. Roster file lists full aspirational roster; runtime-active subset is 13 perspectives.
 
 ---
 
@@ -270,7 +270,7 @@ These agents represent EXTERNAL voices — investors, competitors, ecosystem par
 | Quarterly strategic planning | **Trend Scout Agent** + Investor/Board Agent |
 | AZ regulatory changes | **Trend Scout Agent** + Legal Advisor |
 
-**Total active agents after Session 83: 44.**
+**Total roster entries after Session 83: 44. Runtime perspectives (autonomous_run.py): 13. Skill modules: ~118.**
 
 ---
 

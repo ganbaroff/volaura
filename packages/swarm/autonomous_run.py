@@ -1351,7 +1351,7 @@ async def _run_auto_fix(
 async def _notify_atlas_gateway(proposals: list[Proposal]) -> None:
     """Send HIGH/CRITICAL findings to Atlas Gateway via POST /api/atlas/proposal.
 
-    Bridge between Python swarm (44 agents, GitHub Actions cron) and
+    Bridge between Python swarm (13 registered perspectives, GitHub Actions cron) and
     FastAPI backend. Non-blocking: if unreachable, log and continue.
     Requires GATEWAY_SECRET env var for auth.
     """

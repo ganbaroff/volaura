@@ -13,18 +13,18 @@ import type { LinkedInCarouselProps } from "../compositions/LinkedInCarousel";
 export const carouselData20260413: LinkedInCarouselProps["data"] = {
   brand: "VOLAURA",
   title: "I gave AI full control of my startup",
-  subtitle: "Here's what 44 agents actually do (and what they don't)",
+  subtitle: "Here's what 13 perspectives + ~118 skill modules actually do (and what they don't)",
   slides: [
     {
       kind: "headline",
       eyebrow: "The setup",
-      body: "44 AI agents, each a skill file, each an opinion. One human founder.",
+      body: "13 AI perspectives + ~118 skill modules. Each a file. Each an opinion. One human founder.",
     },
     {
       kind: "stat",
-      value: "44",
-      label: "AI agents currently running",
-      footnote: "Swarm, memory, audit, content, infra, brand — all separate perspectives.",
+      value: "13",
+      label: "AI perspectives in the swarm",
+      footnote: "Plus ~118 skill modules. Swarm, memory, audit, content, infra, brand — all separate perspectives.",
     },
     {
       kind: "stat",
@@ -45,7 +45,7 @@ export const carouselData20260413: LinkedInCarouselProps["data"] = {
         "Finding code smells I'd normalized",
         "Disagreeing with each other — forcing the real argument",
         "Not getting tired at 2am",
-        "Holding 44 perspectives I couldn't hold alone",
+        "Holding 13 perspectives + ~118 skill modules I couldn't hold alone",
       ],
     },
     {
@@ -66,7 +66,7 @@ export const carouselData20260413: LinkedInCarouselProps["data"] = {
     {
       kind: "cta",
       headline: "Watch the full story →",
-      body: "Link in the first comment. Built with 44 agents and one human.",
+      body: "Link in the first comment. Built with 13 perspectives + ~118 skill modules and one human.",
       handle: "volaura.io",
     },
   ],

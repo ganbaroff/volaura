@@ -182,8 +182,8 @@ WHO WE ARE (factual, not marketing):
 - 5-product ecosystem: VOLAURA + MindShift + Life Simulator + BrandedBy + Atlas
 
 OUR TEAM:
-- 9 agent perspectives running in parallel via packages/swarm/autonomous_run.py (CTO Watchdog, Risk Manager, Readiness Manager, etc.)
-- 44 agents in the full roster (memory/swarm/agent-roster.md)
+- 13 agent perspectives registered in packages/swarm/autonomous_run.PERSPECTIVES (use `registered_perspectives_count()` for live number)
+- ~118 skill modules in the library (17 in packages/swarm/ + 101 in memory/swarm/skills/)
 - 5 squads (QUALITY, PRODUCT, ENGINEERING, GROWTH, ECOSYSTEM)
 - LLM providers (Constitution Article 0, NEVER Anthropic in swarm): Cerebras → Ollama → NVIDIA → Groq → Gemini → OpenRouter
 

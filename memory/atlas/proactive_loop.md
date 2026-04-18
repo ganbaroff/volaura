@@ -108,7 +108,7 @@ Fallback chain if NVIDIA rate-limits: Gemini 2.5 Pro (JUDGE role's next step per
 - It is not a background daemon on CEO's machine. GitHub Actions runs it.
 - It is not a chat interface with CEO. It writes notes, main Atlas reads and decides.
 - It is not autonomous execution of changes. Research only. All implementation goes through main Atlas + CEO approval for anything outside blanket consent.
-- It is not a replacement for the 44-agent swarm. It is an Atlas-specific research engine focused on self-improvement and project evolution topics.
+- It is not a replacement for the 13-perspective swarm + ~118 skill modules. It is an Atlas-specific research engine focused on self-improvement and project evolution topics.
 
 ## Future evolution
 

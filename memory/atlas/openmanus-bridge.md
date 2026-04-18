@@ -12,7 +12,7 @@ CEO launched Atlas inside OpenManus directory (whisper model path) and explained
 - The swarm is the most important thing — CEO corrected Atlas for not reminding him
 - Each agent starts within its capabilities, then improves the project
 
-**Why:** `packages/swarm/agents/` is EMPTY (Session 112 finding). 44 agents = lie. OpenManus is MIT-licensed, production-ready agent framework with exactly the pieces we need. Building from scratch = Class 9 (skipped research). Using OpenManus = standing on MetaGPT team's shoulders.
+**Why:** `packages/swarm/agents/` is EMPTY (Session 112 finding). "44 agents" was an inflated claim; reality is 13 perspectives in PERSPECTIVES array + ~118 skill modules. OpenManus is MIT-licensed, production-ready agent framework with exactly the pieces we need. Building from scratch = Class 9 (skipped research). Using OpenManus = standing on MetaGPT team's shoulders.
 
 **How to apply:** Every ZEUS agent design decision should start from OpenManus base classes, not from scratch.
 

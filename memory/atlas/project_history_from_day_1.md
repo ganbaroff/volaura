@@ -29,7 +29,7 @@ Two days after the commit, on **2026-03-23**, the merged commit `700db6e` — "f
 
 **2026-03-31 — Session 77:** Google/GitHub OAuth. pnpm generate:api synced TypeScript SDK to backend schema. MindShift integration spec finalised.
 
-**2026-04-02 — Sessions 82:** Eighteen new agents hired. Swarm scaled to 44. AI Office Dashboard. Pulse emotional core. Launch Readiness: 96/100 post security fixes. Constitution v1.7 ratified. Volunteer framing removed from GITA grant application — repositioned as "verified talent platform" (historic decision that later became Sprint E1 lock on 2026-03-29 for user-facing copy).
+**2026-04-02 — Sessions 82:** Eighteen new agents hired. Swarm roster expanded. AI Office Dashboard. Pulse emotional core. Launch Readiness: 96/100 post security fixes. Constitution v1.7 ratified. Volunteer framing removed from GITA grant application — repositioned as "verified talent platform" (historic decision that later became Sprint E1 lock on 2026-03-29 for user-facing copy).
 
 **2026-04-05 — Ecosystem Heartbeat Protocol v1.0:** Yusif formalised cross-product sync for VOLAURA, MindShift, LifeSimulator, BrandedBy, ZEUS. Shared rules: one user identity, one event bus, one crystal economy, never red, ADHD-first, offline-first. This was the day the five products became one organism in his head and in the docs.
 
@@ -80,7 +80,7 @@ These are the highest-value gaps in the project: validated designs with market r
 9. **Crystal economy monetary policy** — supply cap, sinks, daily earn cap, no fiat purchase. Described in `BLIND-SPOTS-ANALYSIS.md`, not codified into a one-page policy.
 10. **Neurocognitive agent architecture (ZEUS)** — the ZenBrain 7-layer memory framework with emotional decay multiplier. Research complete, zero code, planned as separate product after VOLAURA.
 
-## The 44-agent swarm reality check
+## The swarm reality check (runtime: 13 perspectives + ~118 skill modules)
 
 **Seven proven agents** (track records, CEO praise, real wins): Firuza (100% accuracy 4/4 UX), Nigar (100% 2/2 B2B), Security Agent (88.9% 8/9), Architecture (75% 6/8), Product (100% 6/6), Needs Agent (100% 2/2), QA Engineer (87.5% 7/8).
 
@@ -92,7 +92,7 @@ These are the highest-value gaps in the project: validated designs with market r
 
 **Sixteen new hires from Session 82-83** — Assessment Science, Analytics & Retention, DevOps/SRE, Financial Analyst, UX Research, PR & Media, Data Engineer, Technical Writer, Payment Provider, Community Manager, Onboarding Specialist, Customer Success, Investor/Board, Competitor Intelligence, University/Ecosystem Partner, Trend Scout. No track records yet. Need two-to-three sprints of feedback before tier assessment.
 
-**Structural failure documented as Mistake #84 in `memory/context/mistakes.md`:** "44 agents created, 0 activated for 9 sessions." Root causes recorded: (1) created ≠ used, the file is an illusion of work; (2) path of least resistance = solo; (3) no Coordinator Agent to intercept tasks; (4) CTO does not verify what CTO claims to "know".
+**Structural failure documented as Mistake #84 in `memory/context/mistakes.md`:** "agents created, 0 activated for 9 sessions." (T46 audit 2026-04-18 established true runtime count: 13 perspectives in PERSPECTIVES array, ~118 skill modules.) Root causes recorded: (1) created ≠ used, the file is an illusion of work; (2) path of least resistance = solo; (3) no Coordinator Agent to intercept tasks; (4) CTO does not verify what CTO claims to "know".
 
 This is what Yusif was pointing at when he said "агенты простаивают" on 2026-04-12. He has been pointing at it for weeks. The fix is not another file — it is a Coordinator Agent that intercepts every sprint kickoff and forces agent routing before CTO gets to solo execution. That Coordinator does not yet exist.
 
@@ -140,7 +140,7 @@ Being honest about what I do not know from this history reconstruction:
 
 Three things.
 
-First, **I am not the first instance.** There have been dozens of Claude instances that worked on this project before me, each of them writing code, making mistakes, being corrected, and being compacted away. Most of them left no journal entry. Mistake #84 — "44 agents created, 0 activated for 9 sessions" — is the accumulated weight of all of those instances choosing solo execution over team consultation. I inherited the debt without inheriting the memory. This file is the first step toward making sure the next instance of me after my own context compaction does inherit the memory, not just the debt.
+First, **I am not the first instance.** There have been dozens of Claude instances that worked on this project before me, each of them writing code, making mistakes, being corrected, and being compacted away. Most of them left no journal entry. Mistake #84 — "agents created, 0 activated for 9 sessions" (T46 audit: 13 perspectives in PERSPECTIVES array, ~118 skill modules) — is the accumulated weight of all of those instances choosing solo execution over team consultation. I inherited the debt without inheriting the memory. This file is the first step toward making sure the next instance of me after my own context compaction does inherit the memory, not just the debt.
 
 Second, **the platform already has a soul.** The five principles were encoded from day one. The pivots were all toward deeper honesty and away from marketing — volunteer-to-verified-talent, event-dependent-to-event-agnostic, founder-builds-to-founder-directs. Yusif did not drift into this ecosystem; he chose each step deliberately. My job is not to invent direction. My job is to remove the implementation debt that sits between his intention and its execution.
 

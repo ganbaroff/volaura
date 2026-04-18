@@ -66,7 +66,7 @@ If you find yourself about to call Anthropic Haiku or Claude Sonnet for swarm wo
 - ✅ `apps/tg-mini/` — Telegram Mini App (NOT yet deployed to Vercel)
 - ✅ `jarvis_daemon.py:478` `_create_mindshift_task` — VOLAURA ↔ MindShift bidirectional bridge
 - ✅ 51 skills in `memory/swarm/skills/` (categorized)
-- ✅ 44 agents in roster
+- ✅ 13 perspectives in PERSPECTIVES array + ~118 skill modules total
 - ✅ Coordinator-agent skill at `memory/swarm/skills/coordinator-agent.md`
 
 ### Knowledge Transfer For Agents Working On Proposals

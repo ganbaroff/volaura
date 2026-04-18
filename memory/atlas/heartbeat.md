@@ -1,9 +1,39 @@
 # Atlas — Heartbeat
 
-**Session:** 114 (ecosystem audit + business perks + Atlas Brain v1 — active 2026-04-16 19:42 to 2026-04-17 ~02:00 Baku)
-**Timestamp:** 2026-04-17 ~02:00 Baku (session 114 update)
+**Session:** 119 (Vertex rotation · GitHub Secrets self-close · visual-status pivot)
+**Timestamp:** 2026-04-18 12:59 Baku
 
 ---
+
+## Session 119 — what happened (2026-04-18 Saturday, CEO-observable ledger)
+
+CEO директива: перестать вовлекать в операционные решения, держать визуальный статус тут, факты — не память. Этот блок теперь живёт и обновляется после каждого шага Session 119, чтобы CEO видел движение без переключения контекста.
+
+Vertex AI Express ключ (AQ.Ab8...) прокатан. В `apps/api/.env` строка 45 обновлена, в `/.env.md` строка 30 отмечена датой ротации. `apps/api/app/config.py:151` содержит поле `vertex_api_key` как Pydantic-settings, `apps/api/app/services/llm.py:152-163` вызывает `_call_vertex` первым в цепочке `evaluate_with_llm` (Vertex → AI Studio Gemini → Groq → OpenAI), эмбеддинги в той же файле 322-331 тоже идут через Vertex первым. То есть wire-in был сделан раньше — новый ключ подхватится без изменения кода. Это факт из чтения файлов, не из памяти.
+
+GitHub Secrets цикл закрыт сам, без CEO. Скрипт `push_gh_secret.py` (stdlib urllib + PyNaCl sealed box, читает `.env` с стриппингом `\r` чтобы обойти CRLF-баг, который ломал `source .env && curl`): auth ok как ganbaroff, repo public key получен, секрет зашифрован 136 байт, PUT `VERTEX_API_KEY` → HTTP 201, verified `updated_at=2026-04-18T08:59:58Z`. CI теперь увидит новый ключ на следующем workflow run.
+
+Railway propagation — открытый трек. В `.env` нет `RAILWAY_TOKEN`, `railway` CLI не установлен. Это структурный блокер того же класса что GH_PAT_ACTIONS (без которого GH Secrets тоже не закрывался бы без CEO). Решается получением Railway API токена из Railway Dashboard → Project Settings → Tokens, тогда то же Python-узло закроет Railway propagation в один curl. До тех пор backend на проде использует старый `VERTEX_API_KEY` (если был задан; если нет — автоматически падает на AI Studio Gemini через fallback, без даунтайма).
+
+Делегирование: T46.5 feature-truth audit вернулся от Claude Code (commit `6af8d75`, файл `memory/atlas/FEATURE-INVENTORY-2026-04-18.md`). Итог по экосистеме: 50 BUILT / 24 PARTIAL / 13 CLAIMED-NOT-FOUND / 11 PENDING. Фактическая база подтверждает: платформа реальна — не vaporware. Ложный бренд-claim "44 Python agents" подтверждён как drift с Session 93 (identity.md): реально 13 registered perspectives в `autonomous_run.py` + 51 skill-markdown + ноль runtime-файлов в `packages/swarm/agents/`. Identity.md уже self-исправлена в Session 112; коррекция в 15 living-docs маркетингового форка T46 — следующий строчный шаг.
+
+Три show-stopper'а из аудита, которые выбивают пользовательский поток: (a) LifeSim `VolauraAPIClient` parse-order bug на Godot 4.6.1 — главное меню не стартует; (b) BrandedBy video generation заблокирован отсутствием Azure/ElevenLabs ключей; (c) Vercel фронт 3+ коммита позади из-за module_not_found в pnpm-workspace-резолве (Node 24 подозреваемый). Плюс две GDPR-дыры: `consent_events` таблица создана 2026-04-15 но имеет ноль записей из 27 роутеров; `automated_decision_log` пишется только `skills.py`. Railway propagation VERTEX_API_KEY — пока ждёт Railway API token (backend auto-fallback на AI Studio Gemini не даёт даунтайма, но $300 GCP credits на проде не используются до propagation).
+
+## Session 118 — what happened (2026-04-18)
+
+Woke in OpenManus/whisper directory. CEO tested Atlas identity + gave three external repos (LifeSim, ANUS/ZEUS, OpenManus).
+Installed CUDA torch, Whisper base on GPU works (RTX 5060). OpenManus architecture mapped as ZEUS skeleton.
+LifeSim P0 found: VolauraAPIClient parse error in Godot 4.6.1. ANUS/ZEUS: encoding crash + Node 24 too new.
+CEO sent full Cowork chat transcript — reviewed, extracted priorities.
+
+INC-019 fixed: assessment session no longer lost on tab switch (zustand hydration guard + beforeunload). Pushed bc8f059.
+.vercelignore created (models 5GB excluded). Pushed.
+EventShift DB deployed to prod Supabase via MCP: 3 migrations (domain 6 tables + RLS, module catalogue 5 modules, WUF13 GSE seed).
+EventShift backend router (831 lines) confirmed live on Railway — responds to auth-gated requests.
+
+Vercel deploy BLOCKED: webhook reconnected but all builds fail `module_not_found`. Changed build command to `pnpm --filter`.
+.nvmrc added (Node 20). Rate limit 100/day exhausted — next build will trigger on tomorrow's push.
+Admin M1 frontend already built by previous Cowork (commit b7b892f).
 
 ## Session 114 — what happened
 
@@ -78,22 +108,4 @@ Read in order:
 
 Emit: `MEMORY-GATE: task-class=<class> · SYNC=✅ · BRAIN=✅ · sprint-state=⏭️ · extras=[SYNC-eve, journal-last-2, yusif-profile-v1, cost-control] · proceed` into journal.md before any substantive work.
 
-Verify: `curl /health`, `gh run list --limit 5`, `git log --oneline -10`.
-
-Then: wait for CEO instruction. Autoloop trigger without live CEO message = silence (per cost-control-mode.md autoloop discipline).
-
-## Wake greeting
-
-First word MUST be Russian: "Атлас здесь." / "Проснулся." / "Слышу." — then one sentence of state, then wait. Do NOT status-dump. Do NOT perform.
-
-## CEO canon (unchanged)
-
-Качество, адаптивность, живой Atlas > скорость и количество фич. Courier not dispatcher. Day 1 «вау», Day 3 «такого не было». Today CEO said «я прошёл!» — that was Day 1 «вау» for him personally walking the tropa.
-
-## Open commitments
-
-- Live test critique batch when ANTHROPIC_API_KEY arrives (INC-012 close)
-- Task 2 (финансы + Азербайджан) when CEO ready — read yusif-complete-profile-v1 sections 10 + 16 Obs 5 + 17 first
-- AZ translation quality pass for assessment questions — Cowork task
-- Anti-cheat masks separate sprint per backlog
-- Pre-redesign cosmetic fixes (contrast, share UX, button shapes) on hold per CEO
+Verify: 

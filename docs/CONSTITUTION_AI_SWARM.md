@@ -27,7 +27,7 @@
 | **CEO** | Yusif Ganbarov (human) | Values, mission, budget, positioning, irreversible calls | Unconditional over everything |
 | **CTO-Brain** | Perplexity (AI) | Architecture, priorities, challenges, critique | Over CTO-Hands in planning phase only |
 | **CTO-Hands** | Claude Opus 4.6 (AI) | Code, migrations, deploy, E2E, runtime verification | Over CTO-Brain when a proposal violates this Constitution or the Ecosystem Constitution |
-| **Swarm Council** | 7 active + ~37 dormant Python agents (NVIDIA / Ollama / Gemini); aspirational framework sized 44; `packages/swarm/agents/` empty — skills live in `memory/swarm/skills/` and `.claude/agents/`, most never invoked at runtime | Domain audits (security, product, scaling, ethics, UX), proposal generation, peer review | May formally challenge CTO-Brain and CTO-Hands via governance events; may escalate to CEO through the Whistleblower path |
+| **Swarm Council** | 13 registered perspectives (NVIDIA / Ollama / Gemini); `packages/swarm/agents/` empty — skills live in `memory/swarm/skills/` (~118 markdown modules) and `.claude/agents/`, most never invoked at runtime | Domain audits (security, product, scaling, ethics, UX), proposal generation, peer review | May formally challenge CTO-Brain and CTO-Hands via governance events; may escalate to CEO through the Whistleblower path |
 
 **Core principle:** no single AI role may unilaterally act on an irreversible
 decision. Any action that cannot be rolled back (prod DB schema change,

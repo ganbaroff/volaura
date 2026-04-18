@@ -6,7 +6,7 @@
 
 ## Summary
 
-**Session 117 update:** 22 code-verified gaps. 17 fixed (F1-F7 + M5 + C2 + H1-H6 + M3 + M4). 0 Critical, 0 High, 2 Medium, 3 Low remaining.
+**Session 117-118 update:** 22 code-verified gaps. 18 fixed (F1-F7 + M5 + C2 + H1-H6 + M3 + M4 + M2). 0 Critical, 0 High, 1 Medium (M1 — CEO decision), 3 Low remaining.
 **Session 113 original:** 58 gaps (8 P0, 34 P1, 24 P2). Cross-product gaps remain valid. P0 items 1-5 (MindShift/LifeSim/BrandedBy placeholders, crystal economy) are architectural; items 6-8 (Stripe, Resend, Atlas page) partially resolved.
 
 ---
@@ -85,9 +85,9 @@ Added `useReducedMotion` from framer-motion. Framer entry animation skipped when
 `bottom-tab-bar.tsx:101` (glass-nav), `top-bar.tsx:43` (glass-header). Manifesto: glass for hero only.
 **Decision needed from CEO.**
 
-### M2. Energy mode coverage gap — 15+ pages missing
+### ~~M2. Energy mode coverage gap — 15+ pages missing~~ FIXED
 
-Implemented in 9 files. Missing: onboarding, settings, events/*, org-talent, brandedby/*. Track as mini-sprint.
+Energy mode gating added to all 31 dashboard pages across 20+ commits (Session 117-118 autonomous wakes). Coverage: 31/31 pages including assessment session, all placeholders, create flows, profile edit, subscription, checkin, and brandedby. Low energy hides non-essential descriptions, meta cards, difficulty badges, share buttons, and secondary CTAs throughout.
 
 ### ~~M3. Sidebar mobile loses focus on close~~ FIXED
 

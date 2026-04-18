@@ -224,7 +224,14 @@ export default function CreateEventPage() {
                   </Field>
                 )}
 
-                <div className="flex justify-end pt-2">
+                <div className="flex justify-between pt-2">
+                  <button
+                    type="button"
+                    onClick={() => router.push(`/${locale}/my-organization`)}
+                    className="text-sm text-on-surface-variant hover:underline"
+                  >
+                    {t("common.cancel")}
+                  </button>
                   <button type="submit" className="flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-on-primary transition-opacity hover:opacity-90">
                     {t("common.next")} <ChevronRight className="size-4" aria-hidden="true" />
                   </button>

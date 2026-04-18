@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { createClient } from "@/lib/supabase/client";
 import { API_BASE } from "@/lib/api/client";
 import { useTrackEvent } from "@/hooks/use-analytics";
+import { useEnergyMode } from "@/hooks/use-energy-mode";
 
 type ScreenState = "question" | "transition" | "error";
 
@@ -46,6 +47,8 @@ export default function QuestionPage() {
   } = useAssessmentStore();
 
   const track = useTrackEvent();
+  const { energy } = useEnergyMode();
+  const isLow = energy === "low";
 
   const [answer, setAnswer] = useState("");
   const [screen, setScreen] = useState<ScreenState>("question");
@@ -405,9 +408,11 @@ export default function QuestionPage() {
           {t("common.back")}
         </button>
 
-        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-          {t(`competency.${currentCompetency}`, { defaultValue: currentCompetency })}
-        </p>
+        {!isLow && (
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            {t(`competency.${currentCompetency}`, { defaultValue: currentCompetency })}
+          </p>
+        )}
       </div>
 
       {/* Progress */}
@@ -417,16 +422,18 @@ export default function QuestionPage() {
           total={ESTIMATED_QUESTIONS}
           label={t("assessment.progress")}
         />
-        <p className="text-xs text-muted-foreground" aria-live="polite">
-          {t("assessment.questionProgress", {
-            current: Math.min(answeredCount + 1, ESTIMATED_QUESTIONS),  // BATCH-O Q1: cap at total — prevents "9 of 8"
-            total: ESTIMATED_QUESTIONS,
-          })}
-        </p>
+        {!isLow && (
+          <p className="text-xs text-muted-foreground" aria-live="polite">
+            {t("assessment.questionProgress", {
+              current: Math.min(answeredCount + 1, ESTIMATED_QUESTIONS),
+              total: ESTIMATED_QUESTIONS,
+            })}
+          </p>
+        )}
       </div>
 
-      {/* Timing warning from backend */}
-      {timingWarning && (
+      {/* Timing warning from backend — hidden in low energy to reduce anxiety */}
+      {timingWarning && !isLow && (
         <Alert variant="destructive" role="alert">
           <AlertCircle className="size-4" aria-hidden="true" />
           <AlertDescription>{timingWarning}</AlertDescription>
@@ -522,15 +529,17 @@ export default function QuestionPage() {
             )}
           </Button>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-muted-foreground min-h-[44px]"
-            onClick={handleSkip}
-            disabled={isSubmitting}
-          >
-            {t("assessment.skipQuestion")}
-          </Button>
+          {!isLow && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground min-h-[44px]"
+              onClick={handleSkip}
+              disabled={isSubmitting}
+            >
+              {t("assessment.skipQuestion")}
+            </Button>
+          )}
         </div>
       )}
 

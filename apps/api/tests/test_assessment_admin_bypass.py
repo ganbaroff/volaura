@@ -201,9 +201,7 @@ async def test_no_stale_sessions_skips_update():
         )
 
     assert resp.status_code == 409
-    assert admin_call_n["n"] == 2, (
-        f"Expected 2 admin calls (competency + stale_check), got {admin_call_n['n']}"
-    )
+    assert admin_call_n["n"] == 2, f"Expected 2 admin calls (competency + stale_check), got {admin_call_n['n']}"
 
 
 @pytest.mark.asyncio

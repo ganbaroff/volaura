@@ -1,6 +1,22 @@
 # Sprint State — Volaura
 
-**Last Updated:** 2026-04-17 12:30 Baku — Session 115 Terminal-Atlas audit + fixes
+**Last Updated:** 2026-04-18 ~19:30 Baku — Session 120 close (three CEO-items resolved + proactive-scan gate)
+
+## Session 120 close (2026-04-18)
+
+CEO surfaced three items that were already in Atlas arsenal but not surfaced proactively: ITIN W-7 chain, Google OAuth Testing→Production, E2E test-user contamination. All three resolved in-turn:
+
+- E2E cleanup: `public.cleanup_test_users()` function applied and executed — 10 test users deleted, 0 actual orphans (CEO's 73 figure corrected: only 18 total auth.users existed).
+- ITIN chain: obligation row verified live (Atlas-owned, May 15 deadline, trigger "After 83(b) mailed"), 2 duplicate rows purged. Next action: CAA research post-83(b)-mail on Apr 20.
+- OAuth pages: /privacy + /terms exist in git main (5c7504a), prod lag is task #53 (Vercel module_not_found, 3+ deploys behind). No new dev work — free on #53 fix.
+
+Structural fix: appended "Proactive-scan gate" to `.claude/rules/atlas-operating-principles.md` (line 246+). Three mandatory probes before session-close: obligation sweep, breadcrumb-deferred audit, prod-hygiene scan. Violation detection: CEO probes matching "тоесть ты не собирался…" trigger Gate 2 attribution failure and in-turn structural fix.
+
+Two new tasks created: OAuth Console flip (CEO-only, gated on #53), ITIN CAA research (Atlas-owned, post-Apr-20).
+
+---
+
+**Previous Update:** 2026-04-17 12:30 Baku — Session 115 Terminal-Atlas audit + fixes
 
 ## Session 115 Terminal (2026-04-17)
 

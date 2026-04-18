@@ -350,6 +350,7 @@ async def e2e_create_user(
                     "id": user_id,
                     "username": payload.username,
                     "display_name": payload.display_name or payload.username,
+                    "account_type": "professional",
                 },
                 on_conflict="id",
             )

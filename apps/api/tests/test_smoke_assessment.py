@@ -138,8 +138,8 @@ async def test_start_assessment_returns_first_question():
     user = _build_chainable(
         [
             # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
+            {"is_platform_admin": False},  # admin lookup — FIRST (commit f2ce68f reorder)
             [],  # no existing in-progress session
-            {"is_platform_admin": False},  # admin lookup (commit 7789545)
             [],  # rapid-restart cooldown check (no recent abandoned sessions)
             [],  # retest cooldown check (no completed sessions)
             MagicMock(data=[], count=0),  # abuse monitoring count query
@@ -555,7 +555,8 @@ async def test_cannot_start_duplicate_session():
     user = _build_chainable(
         [
             # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
-            [{"id": "existing-session-id"}],  # existing in-progress session found
+            {"is_platform_admin": False},  # admin lookup — FIRST (commit f2ce68f reorder)
+            [{"id": "existing-session-id"}],  # in-progress session found → triggers 409
         ]
     )
 

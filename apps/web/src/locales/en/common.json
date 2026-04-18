@@ -724,7 +724,11 @@
     "saving": "Saving…",
     "close": "Close",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "skipToContent": "Skip to content"
+  },
+  "verification": {
+    "assessedBy": "Assessed by Volaura adaptive testing"
   },
   "publicProfile": {
     "auraScore": "AURA Score",
@@ -1125,12 +1129,14 @@
         "name_ph": "e.g. Tech Conference 2026",
         "slug": "URL slug",
         "slug_hint": "Lowercase letters, numbers, and dashes only",
+        "slug_placeholder": "championship-2026",
         "start": "Start",
         "end": "End",
         "status": "Status",
         "description": "Description",
         "description_ph": "Tell people about your event",
-        "timezone": "Timezone"
+        "timezone": "Timezone",
+        "timezone_placeholder": "Asia/Baku"
       }
     }
   },

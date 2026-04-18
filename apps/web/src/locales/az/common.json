@@ -724,7 +724,11 @@
     "saving": "Saxlanılır...",
     "close": "Bağla",
     "yes": "Bəli",
-    "no": "Xeyr"
+    "no": "Xeyr",
+    "skipToContent": "Məzmuna keçin"
+  },
+  "verification": {
+    "assessedBy": "Volaura adaptiv test sistemi ilə qiymətləndirilib"
   },
   "publicProfile": {
     "auraScore": "AURA Balı",
@@ -1125,12 +1129,14 @@
         "name_ph": "məs. Texnologiya Konfransı 2026",
         "slug": "URL slug",
         "slug_hint": "Yalnız kiçik hərflər, rəqəmlər və tire",
+        "slug_placeholder": "championship-2026",
         "start": "Başlanğıc",
         "end": "Son",
         "status": "Status",
         "description": "Təsvir",
         "description_ph": "İnsanlara tədbiriniz haqqında danışın",
-        "timezone": "Saat qurşağı"
+        "timezone": "Saat qurşağı",
+        "timezone_placeholder": "Asia/Baku"
       }
     }
   },

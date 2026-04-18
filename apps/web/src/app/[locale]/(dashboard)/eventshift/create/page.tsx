@@ -155,7 +155,7 @@ export default function EventShiftCreatePage() {
           >
             <input
               type="text"
-              placeholder="championship-2026"
+              placeholder={t("eventshift.create.field.slug_placeholder", { defaultValue: "championship-2026" })}
               className={inputClass}
               autoComplete="off"
               {...register("slug")}
@@ -230,7 +230,7 @@ export default function EventShiftCreatePage() {
                 <input
                   type="text"
                   className={inputClass}
-                  placeholder="Asia/Baku"
+                  placeholder={t("eventshift.create.field.timezone_placeholder", { defaultValue: "Asia/Baku" })}
                   {...register("timezone")}
                 />
               </Field>

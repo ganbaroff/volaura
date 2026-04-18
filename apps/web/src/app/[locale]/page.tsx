@@ -41,6 +41,7 @@ const SAMPLE_PROFILE_ENABLED = process.env.NEXT_PUBLIC_ENABLE_SAMPLE_PROFILE ===
 
 export default async function LandingPage({ params }: LandingPageProps) {
   const { locale } = await params;
+  const { t } = await initTranslations(locale, ["common"]);
 
   return (
     <>
@@ -49,7 +50,7 @@ export default async function LandingPage({ params }: LandingPageProps) {
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
       >
-        Skip to content
+        {t("common.skipToContent")}
       </a>
       <LandingNav locale={locale} />
       <main id="main-content">

@@ -1,11 +1,11 @@
 {
   "name": "Volaura",
   "short_name": "Volaura",
-  "description": "Elite Volunteer Talent Platform",
-  "start_url": "/en",
+  "description": "Prove your skills. Earn your AURA. Get found by top organizations.",
+  "start_url": "/az",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#6366f1",
+  "background_color": "#0f0f17",
+  "theme_color": "#7C5CFC",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",

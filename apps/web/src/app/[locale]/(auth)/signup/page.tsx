@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 import { Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createClient } from "@/lib/supabase/client";
@@ -385,7 +385,7 @@ function SignupForm() {
           </div>
         )}
 
-        {/* Privacy consent — AZ-native framing */}
+        {/* Privacy + Terms consent — GDPR-compliant with linked policies */}
         <label className="flex items-start gap-2.5 cursor-pointer">
           <input
             type="checkbox"
@@ -394,7 +394,13 @@ function SignupForm() {
             className="mt-0.5 h-4 w-4 rounded border-border accent-primary flex-shrink-0"
           />
           <span className="text-sm text-muted-foreground">
-            {t("auth.privacyConsent")}
+            <Trans
+              i18nKey="auth.privacyConsent"
+              components={{
+                privacyLink: <Link href={`/${locale}/privacy`} className="underline underline-offset-2 text-foreground hover:text-primary transition-colors" target="_blank" />,
+                termsLink: <Link href={`/${locale}/terms`} className="underline underline-offset-2 text-foreground hover:text-primary transition-colors" target="_blank" />,
+              }}
+            />
           </span>
         </label>
 

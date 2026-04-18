@@ -59,7 +59,8 @@
     "footerTagline": "Built for professionals who want proof, not promises.",
     "footerRights": "All rights reserved.",
     "footerAbout": "About",
-    "footerPrivacy": "Privacy",
+    "footerPrivacy": "Privacy Policy",
+    "footerTerms": "Terms of Service",
     "footerContact": "Contact"
   },
   "nav": {
@@ -113,8 +114,8 @@
     "inviteCodePlaceholder": "Enter your invite code",
     "inviteCodeHint": "Volaura is currently invite-only. Ask a friend or contact us to get a code.",
     "inviteCodeInvalid": "Invalid invite code. Please try again.",
-    "privacyConsent": "🔒 My data is protected — Volaura never sells to third parties",
-    "privacyConsentRequired": "Please accept the privacy policy to continue.",
+    "privacyConsent": "I agree to the <privacyLink>Privacy Policy</privacyLink> and <termsLink>Terms of Service</termsLink>.",
+    "privacyConsentRequired": "Please accept the Privacy Policy and Terms of Service to continue.",
     "passwordHint": "8+ characters, uppercase, lowercase, and a number.",
     "showPassword": "Show password",
     "hidePassword": "Hide password",

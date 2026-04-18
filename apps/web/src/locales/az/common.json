@@ -59,7 +59,8 @@
     "footerTagline": "Vədlər yerinə sübut tələb edən peşəkarlar üçün yaradılmışdır.",
     "footerRights": "Bütün hüquqlar qorunur.",
     "footerAbout": "Haqqımızda",
-    "footerPrivacy": "Məxfilik",
+    "footerPrivacy": "Məxfilik Siyasəti",
+    "footerTerms": "İstifadə Şərtləri",
     "footerContact": "Əlaqə"
   },
   "nav": {
@@ -113,9 +114,9 @@
     "inviteCodePlaceholder": "Dəvət kodunuzu daxil edin.",
     "inviteCodeHint": "Volaura hazırda yalnız dəvətnamə əsasında istifadəyə açıqdır. Kod almaq üçün dostunuzdan soruşun və ya bizimlə əlaqə saxlayın.",
     "inviteCodeInvalid": "Keçərsiz dəvət kodu. Zəhmət olmasa, yenidən cəhd edin.",
-    "privacyConsent": "🔒 Məlumatlarım qorunur — Volaura heç vaxt üçüncü tərəflərə satmır.",
+    "privacyConsent": "<privacyLink>Məxfilik Siyasəti</privacyLink> və <termsLink>İstifadə Şərtləri</termsLink> ilə razıyam.",
     "ageConfirm": "Təsdiq edirəm ki, 16 yaşım var və ya daha böyüyəm.",
-    "privacyConsentRequired": "Zəhmət olmasa, davam etmək üçün məxfilik siyasətini qəbul edin.",
+    "privacyConsentRequired": "Zəhmət olmasa, davam etmək üçün Məxfilik Siyasəti və İstifadə Şərtlərini qəbul edin.",
     "passwordHint": "Minimum 8 simvol, böyük hərflər, kiçik hərflər və rəqəmlərdən ibarət olmalıdır.",
     "showPassword": "Şifrəni göstərin",
     "hidePassword": "Şifrəni gizlətmək",

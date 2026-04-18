@@ -33,6 +33,7 @@ def reset_rate_limiter():
     yield
     limiter._storage.reset()
 
+
 ORG_USER_ID = "aaaaaaaa-0000-0000-0000-000000000001"
 VOLUNTEER_ID = "bbbbbbbb-0000-0000-0000-000000000002"
 INTRO_ID = "cccccccc-0000-0000-0000-000000000003"
@@ -58,19 +59,23 @@ INTRO_ROW = {
 
 # ── Dependency helpers ────────────────────────────────────────────────────────
 
+
 def _admin_override(db):
     async def _dep():
         yield db
+
     return _dep
 
 
 def _uid_override(uid: str):
     async def _dep():
         return uid
+
     return _dep
 
 
 # ── Mock DB factory ───────────────────────────────────────────────────────────
+
 
 def _build_intro_mock_db(
     caller_account_type: str = "organization",
@@ -95,6 +100,7 @@ def _build_intro_mock_db(
         call_counts.setdefault(table_name, 0)
 
         if table_name == "profiles":
+
             async def _profiles_execute(*_a, **_kw):
                 n = call_counts["profiles"]
                 call_counts["profiles"] += 1
@@ -102,22 +108,26 @@ def _build_intro_mock_db(
                     # First call: caller lookup
                     if caller_account_type == "none":
                         return MagicMock(data=None)
-                    return MagicMock(data={
-                        "account_type": caller_account_type,
-                        "display_name": "Tech Corp" if caller_account_type == "organization" else None,
-                        "username": "techcorp",
-                    })
+                    return MagicMock(
+                        data={
+                            "account_type": caller_account_type,
+                            "display_name": "Tech Corp" if caller_account_type == "organization" else None,
+                            "username": "techcorp",
+                        }
+                    )
                 else:
                     # Second call: volunteer lookup
                     if not volunteer_exists:
                         return MagicMock(data=None)
-                    return MagicMock(data={
-                        "id": VOLUNTEER_ID,
-                        "display_name": "Alice",
-                        "username": "alice",
-                        "visible_to_orgs": volunteer_visible,
-                        "account_type": volunteer_account_type,
-                    })
+                    return MagicMock(
+                        data={
+                            "id": VOLUNTEER_ID,
+                            "display_name": "Alice",
+                            "username": "alice",
+                            "visible_to_orgs": volunteer_visible,
+                            "account_type": volunteer_account_type,
+                        }
+                    )
 
             t.select.return_value = t
             t.eq.return_value = t
@@ -126,9 +136,11 @@ def _build_intro_mock_db(
 
         elif table_name == "intro_requests":
             if duplicate:
+
                 async def _intro_insert_execute(*_a, **_kw):
                     raise Exception("duplicate key value violates unique constraint")
             else:
+
                 async def _intro_insert_execute(*_a, **_kw):
                     inserted_rows["intro_requests"].append(INTRO_ROW)
                     return MagicMock(data=[INTRO_ROW])
@@ -137,6 +149,7 @@ def _build_intro_mock_db(
             t.execute = AsyncMock(side_effect=_intro_insert_execute)
 
         elif table_name == "notifications":
+
             async def _notif_insert_execute(*_a, **_kw):
                 inserted_rows["notifications"].append({"inserted": True})
                 return MagicMock(data=[{"id": "notif-id"}])
@@ -155,6 +168,7 @@ def _build_intro_mock_db(
 
 
 # ── Tests ─────────────────────────────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_intro_request_success():
@@ -316,6 +330,7 @@ async def test_intro_request_requires_auth():
     get_current_user_id still runs and returns 401 for missing Bearer token.
     """
     from app.deps import get_supabase_admin as _admin_dep
+
     mock_admin = MagicMock()
     mock_admin.auth = MagicMock()
 

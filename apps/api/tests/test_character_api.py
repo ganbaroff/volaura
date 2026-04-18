@@ -155,9 +155,7 @@ class TestCrystalBalance:
                     "/api/character/crystals"
                     # intentionally no Authorization header
                 )
-            assert resp.status_code == 401, (
-                f"Crystal endpoint must require auth — got {resp.status_code}"
-            )
+            assert resp.status_code == 401, f"Crystal endpoint must require auth — got {resp.status_code}"
         finally:
             app.dependency_overrides.pop(get_supabase_admin, None)
 
@@ -198,9 +196,7 @@ class TestCharacterState:
             assert body["login_streak"] == 5
             assert body["event_count"] == 20
             # Confirm RPC was called with correct user_id
-            admin_mock.rpc.assert_called_once_with(
-                "get_character_state", {"p_user_id": USER_ID}
-            )
+            admin_mock.rpc.assert_called_once_with("get_character_state", {"p_user_id": USER_ID})
         finally:
             app.dependency_overrides.clear()
 
@@ -292,9 +288,7 @@ def make_post_mock(
     rewards_select_result = MagicMock()
     rewards_select_result.data = rewards_rows
     rewards_select_chain = MagicMock()
-    rewards_select_chain.eq.return_value.eq.return_value.execute = AsyncMock(
-        return_value=rewards_select_result
-    )
+    rewards_select_chain.eq.return_value.eq.return_value.execute = AsyncMock(return_value=rewards_select_result)
 
     # ── game_character_rewards UPSERT mock ───────────────────────────────────
     rewards_upsert_result = MagicMock()
@@ -490,9 +484,7 @@ class TestCharacterEventWrite:
     @pytest.mark.asyncio
     async def test_reward_already_claimed_idempotency(self):
         """game_character_rewards has a row for this skill → 409 REWARD_ALREADY_CLAIMED."""
-        admin_mock = make_post_mock(
-            rewards_rows=[{"claimed": True}]
-        )
+        admin_mock = make_post_mock(rewards_rows=[{"claimed": True}])
         app.dependency_overrides[get_supabase_admin] = lambda: admin_mock
         app.dependency_overrides[get_supabase_user] = lambda: admin_mock
         app.dependency_overrides[get_current_user_id] = lambda: USER_ID
@@ -525,9 +517,7 @@ class TestCharacterEventWrite:
     async def test_daily_cap_reached(self):
         """Ledger already has 15 crystals from daily_login today → 422 DAILY_CRYSTAL_CAP_REACHED."""
         # DAILY_CRYSTAL_CAP["daily_login"] == 15; returning a row with amount=15 means cap is hit
-        admin_mock = make_post_mock(
-            ledger_today_rows=[{"amount": 15}]
-        )
+        admin_mock = make_post_mock(ledger_today_rows=[{"amount": 15}])
         app.dependency_overrides[get_supabase_admin] = lambda: admin_mock
         app.dependency_overrides[get_supabase_user] = lambda: admin_mock
         app.dependency_overrides[get_current_user_id] = lambda: USER_ID

@@ -33,15 +33,18 @@ __all__ = ["mock_llm", "mock_embedding", "mock_llm_failure"]
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
+
 def _make_admin_override(mock_db):
     async def _override():
         yield mock_db
+
     return _override
 
 
 def _make_user_id_override(user_id: str):
     async def _override():
         return user_id
+
     return _override
 
 
@@ -59,6 +62,7 @@ def _chainable_db():
 
 
 # ── LLM Mock Validation ───────────────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_mock_llm_returns_valid_bars_response(mock_llm):
@@ -109,22 +113,25 @@ async def test_mock_llm_failure_raises(mock_llm_failure):
 
 # ── Assessment Endpoint Uses Mock ─────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_assessment_answer_uses_mock_not_real_llm(mock_llm):
     """Assessment answer endpoint evaluates via mock — no real API call made."""
     mock_db = _chainable_db()
 
     # Session exists and belongs to user
-    mock_db.execute.return_value = MagicMock(data={
-        "id": "sess-123",
-        "volunteer_id": "user-uuid",
-        "competency_id": "comp-1",
-        "status": "in_progress",
-        "current_question_id": "q-1",
-        "question_history": [],
-        "theta": 0.0,
-        "theta_se": 1.5,
-    })
+    mock_db.execute.return_value = MagicMock(
+        data={
+            "id": "sess-123",
+            "volunteer_id": "user-uuid",
+            "competency_id": "comp-1",
+            "status": "in_progress",
+            "current_question_id": "q-1",
+            "question_history": [],
+            "theta": 0.0,
+            "theta_se": 1.5,
+        }
+    )
 
     app.dependency_overrides[get_supabase_admin] = _make_admin_override(mock_db)
     app.dependency_overrides[get_current_user_id] = _make_user_id_override("user-uuid")
@@ -150,6 +157,7 @@ async def test_assessment_answer_uses_mock_not_real_llm(mock_llm):
 
 
 # ── No Accidental Real LLM Calls ─────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_real_llm_not_called_when_mock_active(mock_llm):

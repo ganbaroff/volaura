@@ -27,15 +27,18 @@ USER_ID = "11111111-2222-3333-4444-555555555555"
 
 # ── Helpers ─────────────────────────────────────────────────────────────────
 
+
 def _make_admin_override(mock_db):
     async def _override():
         yield mock_db
+
     return _override
 
 
 def _make_user_id_override(user_id: str):
     async def _override():
         return user_id
+
     return _override
 
 
@@ -60,6 +63,7 @@ def _build_db_mock():
 
 # ── Tests: emit_assessment_rewards ──────────────────────────────────────────
 
+
 def _build_rewards_mock_db(already_claimed: bool = False) -> tuple[MagicMock, list[str]]:
     """Build a Supabase mock that tracks table names passed to .insert()/.upsert().
 
@@ -77,9 +81,7 @@ def _build_rewards_mock_db(already_claimed: bool = False) -> tuple[MagicMock, li
             return_value=MagicMock(data=no_reward_data)
         )
         # daily cap query: .select().eq().gte().execute() → no crystals today
-        t.select.return_value.eq.return_value.gte.return_value.execute = AsyncMock(
-            return_value=MagicMock(data=[])
-        )
+        t.select.return_value.eq.return_value.gte.return_value.execute = AsyncMock(return_value=MagicMock(data=[]))
 
         # insert chain: tracks table name
         async def _track_insert(*args, **kwargs):
@@ -87,9 +89,7 @@ def _build_rewards_mock_db(already_claimed: bool = False) -> tuple[MagicMock, li
             return MagicMock(data=[{"id": "test-id"}])
 
         t.insert.return_value.execute = AsyncMock(side_effect=_track_insert)
-        t.upsert.return_value.execute = AsyncMock(
-            return_value=MagicMock(data=[{"claimed": True}])
-        )
+        t.upsert.return_value.execute = AsyncMock(return_value=MagicMock(data=[{"claimed": True}]))
         return t
 
     db = MagicMock()
@@ -103,6 +103,7 @@ async def test_emit_rewards_writes_crystal_and_skill_events():
     db, insert_calls = _build_rewards_mock_db(already_claimed=False)
 
     import app.services.assessment.rewards as rewards_module
+
     original_notify = rewards_module.notify
 
     async def _noop_notify(*args, **kwargs):
@@ -119,12 +120,8 @@ async def test_emit_rewards_writes_crystal_and_skill_events():
         )
 
         # crystal_earned → character_events, then game_crystal_ledger, then character_events for skill_verified
-        assert "character_events" in insert_calls, (
-            f"Expected character_events insert — got: {insert_calls}"
-        )
-        assert "game_crystal_ledger" in insert_calls, (
-            f"Expected game_crystal_ledger insert — got: {insert_calls}"
-        )
+        assert "character_events" in insert_calls, f"Expected character_events insert — got: {insert_calls}"
+        assert "game_crystal_ledger" in insert_calls, f"Expected game_crystal_ledger insert — got: {insert_calls}"
     finally:
         rewards_module.notify = original_notify
 
@@ -142,6 +139,7 @@ async def test_emit_rewards_no_skill_verified_below_bronze():
     db, insert_calls = _build_rewards_mock_db(already_claimed=False)
 
     import app.services.assessment.rewards as rewards_module
+
     original_notify = rewards_module.notify
 
     async def _noop_notify(*args, **kwargs):
@@ -175,6 +173,7 @@ async def test_emit_rewards_no_skill_verified_below_bronze():
 async def test_emit_rewards_idempotent_double_call():
     """Second call with same user+skill does not re-award crystals."""
     import app.services.assessment.rewards as rewards_module
+
     original_notify = rewards_module.notify
 
     async def _noop_notify(*args, **kwargs):
@@ -201,9 +200,7 @@ async def test_emit_rewards_idempotent_double_call():
             competency_score=80.0,
         )
 
-        assert "game_crystal_ledger" in insert_calls_first, (
-            "First call must write crystal ledger"
-        )
+        assert "game_crystal_ledger" in insert_calls_first, "First call must write crystal ledger"
         assert "game_crystal_ledger" not in insert_calls_second, (
             "Second call must NOT write crystal ledger (idempotency enforced)"
         )
@@ -212,6 +209,7 @@ async def test_emit_rewards_idempotent_double_call():
 
 
 # ── Tests: GET /character/state endpoint ────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_get_character_state_after_assessment():
@@ -277,9 +275,7 @@ async def test_get_character_state_after_assessment():
 
         # RPC was called with the correct function name
         rpc_call = mock_admin.rpc.call_args
-        assert rpc_call[0][0] == "get_character_state", (
-            f"Wrong RPC function: {rpc_call[0][0]}"
-        )
+        assert rpc_call[0][0] == "get_character_state", f"Wrong RPC function: {rpc_call[0][0]}"
         assert rpc_call[0][1]["p_user_id"] == USER_ID
 
     finally:

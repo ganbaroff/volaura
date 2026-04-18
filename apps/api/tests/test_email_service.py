@@ -21,8 +21,15 @@ class TestBadgeLabels:
 
 class TestCompetencyNames:
     def test_known_slugs(self):
-        expected = {"adaptability", "communication", "leadership", "teamwork",
-                    "problem_solving", "time_management", "initiative"}
+        expected = {
+            "adaptability",
+            "communication",
+            "leadership",
+            "teamwork",
+            "problem_solving",
+            "time_management",
+            "initiative",
+        }
         assert set(_COMPETENCY_NAMES.keys()) == expected
 
     def test_values_human_readable(self):

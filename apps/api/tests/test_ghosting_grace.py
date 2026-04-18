@@ -265,9 +265,7 @@ class TestProcessGhostingGrace:
     @patch("app.services.ghosting_grace._fetch_email", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace._fetch_candidates", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace.settings")
-    async def test_happy_path_send_and_mark(
-        self, mock_settings, mock_fetch, mock_email, mock_send
-    ):
+    async def test_happy_path_send_and_mark(self, mock_settings, mock_fetch, mock_email, mock_send):
         mock_settings.email_enabled = True
         mock_settings.resend_api_key = "re_xxx"
         mock_fetch.return_value = [_make_candidate("u1")]
@@ -286,9 +284,7 @@ class TestProcessGhostingGrace:
     @patch("app.services.ghosting_grace._fetch_email", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace._fetch_candidates", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace.settings")
-    async def test_email_fetch_fails(
-        self, mock_settings, mock_fetch, mock_email, mock_send
-    ):
+    async def test_email_fetch_fails(self, mock_settings, mock_fetch, mock_email, mock_send):
         mock_settings.email_enabled = True
         mock_settings.resend_api_key = "re_xxx"
         mock_fetch.return_value = [_make_candidate("u1")]
@@ -305,9 +301,7 @@ class TestProcessGhostingGrace:
     @patch("app.services.ghosting_grace._fetch_email", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace._fetch_candidates", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace.settings")
-    async def test_email_send_fails(
-        self, mock_settings, mock_fetch, mock_email, mock_send
-    ):
+    async def test_email_send_fails(self, mock_settings, mock_fetch, mock_email, mock_send):
         mock_settings.email_enabled = True
         mock_settings.resend_api_key = "re_xxx"
         mock_fetch.return_value = [_make_candidate("u1")]
@@ -325,9 +319,7 @@ class TestProcessGhostingGrace:
     @patch("app.services.ghosting_grace._fetch_email", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace._fetch_candidates", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace.settings")
-    async def test_mark_fails_after_send(
-        self, mock_settings, mock_fetch, mock_email, mock_send
-    ):
+    async def test_mark_fails_after_send(self, mock_settings, mock_fetch, mock_email, mock_send):
         mock_settings.email_enabled = True
         mock_settings.resend_api_key = "re_xxx"
         mock_fetch.return_value = [_make_candidate("u1")]
@@ -349,9 +341,7 @@ class TestProcessGhostingGrace:
     @patch("app.services.ghosting_grace._fetch_email", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace._fetch_candidates", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace.settings")
-    async def test_multiple_candidates_mixed(
-        self, mock_settings, mock_fetch, mock_email, mock_send
-    ):
+    async def test_multiple_candidates_mixed(self, mock_settings, mock_fetch, mock_email, mock_send):
         mock_settings.email_enabled = True
         mock_settings.resend_api_key = "re_xxx"
         mock_fetch.return_value = [
@@ -375,14 +365,10 @@ class TestProcessGhostingGrace:
     @patch("app.services.ghosting_grace._fetch_email", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace._fetch_candidates", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace.settings")
-    async def test_display_name_fallback_to_username(
-        self, mock_settings, mock_fetch, mock_email, mock_send
-    ):
+    async def test_display_name_fallback_to_username(self, mock_settings, mock_fetch, mock_email, mock_send):
         mock_settings.email_enabled = True
         mock_settings.resend_api_key = "re_xxx"
-        mock_fetch.return_value = [
-            {"id": "u1", "display_name": None, "username": "fallback_user"}
-        ]
+        mock_fetch.return_value = [{"id": "u1", "display_name": None, "username": "fallback_user"}]
         mock_email.return_value = "user@test.com"
         mock_send.return_value = True
 
@@ -398,14 +384,10 @@ class TestProcessGhostingGrace:
     @patch("app.services.ghosting_grace._fetch_email", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace._fetch_candidates", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace.settings")
-    async def test_display_name_and_username_both_none(
-        self, mock_settings, mock_fetch, mock_email, mock_send
-    ):
+    async def test_display_name_and_username_both_none(self, mock_settings, mock_fetch, mock_email, mock_send):
         mock_settings.email_enabled = True
         mock_settings.resend_api_key = "re_xxx"
-        mock_fetch.return_value = [
-            {"id": "u1", "display_name": None, "username": None}
-        ]
+        mock_fetch.return_value = [{"id": "u1", "display_name": None, "username": None}]
         mock_email.return_value = "user@test.com"
         mock_send.return_value = True
 
@@ -420,9 +402,7 @@ class TestProcessGhostingGrace:
     @patch("app.services.ghosting_grace._fetch_email", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace._fetch_candidates", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace.settings")
-    async def test_locale_always_en(
-        self, mock_settings, mock_fetch, mock_email, mock_send
-    ):
+    async def test_locale_always_en(self, mock_settings, mock_fetch, mock_email, mock_send):
         mock_settings.email_enabled = True
         mock_settings.resend_api_key = "re_xxx"
         mock_fetch.return_value = [_make_candidate("u1")]
@@ -441,18 +421,14 @@ class TestProcessGhostingGrace:
         mock_fetch.return_value = []
         db = MagicMock()
         summary = await process_ghosting_grace(db)
-        assert set(summary.keys()) == {
-            "candidates", "sent", "skipped_kill_switch", "marked", "errors"
-        }
+        assert set(summary.keys()) == {"candidates", "sent", "skipped_kill_switch", "marked", "errors"}
 
     @pytest.mark.asyncio
     @patch("app.services.ghosting_grace.send_ghosting_grace_email", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace._fetch_email", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace._fetch_candidates", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace.settings")
-    async def test_update_calls_correct_table(
-        self, mock_settings, mock_fetch, mock_email, mock_send
-    ):
+    async def test_update_calls_correct_table(self, mock_settings, mock_fetch, mock_email, mock_send):
         mock_settings.email_enabled = True
         mock_settings.resend_api_key = "re_xxx"
         mock_fetch.return_value = [_make_candidate("u1")]
@@ -469,9 +445,7 @@ class TestProcessGhostingGrace:
     @patch("app.services.ghosting_grace._fetch_email", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace._fetch_candidates", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace.settings")
-    async def test_update_sets_ghosting_grace_sent_at(
-        self, mock_settings, mock_fetch, mock_email, mock_send
-    ):
+    async def test_update_sets_ghosting_grace_sent_at(self, mock_settings, mock_fetch, mock_email, mock_send):
         mock_settings.email_enabled = True
         mock_settings.resend_api_key = "re_xxx"
         mock_fetch.return_value = [_make_candidate("u1")]
@@ -489,9 +463,7 @@ class TestProcessGhostingGrace:
     @patch("app.services.ghosting_grace._fetch_email", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace._fetch_candidates", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace.settings")
-    async def test_update_filters_by_user_id(
-        self, mock_settings, mock_fetch, mock_email, mock_send
-    ):
+    async def test_update_filters_by_user_id(self, mock_settings, mock_fetch, mock_email, mock_send):
         mock_settings.email_enabled = True
         mock_settings.resend_api_key = "re_xxx"
         mock_fetch.return_value = [_make_candidate("u42")]
@@ -508,9 +480,7 @@ class TestProcessGhostingGrace:
     @patch("app.services.ghosting_grace._fetch_email", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace._fetch_candidates", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace.settings")
-    async def test_all_emails_fail_no_sends(
-        self, mock_settings, mock_fetch, mock_email, mock_send
-    ):
+    async def test_all_emails_fail_no_sends(self, mock_settings, mock_fetch, mock_email, mock_send):
         mock_settings.email_enabled = True
         mock_settings.resend_api_key = "re_xxx"
         mock_fetch.return_value = [_make_candidate("u1"), _make_candidate("u2")]
@@ -528,14 +498,10 @@ class TestProcessGhostingGrace:
     @patch("app.services.ghosting_grace._fetch_email", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace._fetch_candidates", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace.settings")
-    async def test_display_name_empty_string_uses_username(
-        self, mock_settings, mock_fetch, mock_email, mock_send
-    ):
+    async def test_display_name_empty_string_uses_username(self, mock_settings, mock_fetch, mock_email, mock_send):
         mock_settings.email_enabled = True
         mock_settings.resend_api_key = "re_xxx"
-        mock_fetch.return_value = [
-            {"id": "u1", "display_name": "", "username": "myuser"}
-        ]
+        mock_fetch.return_value = [{"id": "u1", "display_name": "", "username": "myuser"}]
         mock_email.return_value = "user@test.com"
         mock_send.return_value = True
 
@@ -550,9 +516,7 @@ class TestProcessGhostingGrace:
     @patch("app.services.ghosting_grace._fetch_email", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace._fetch_candidates", new_callable=AsyncMock)
     @patch("app.services.ghosting_grace.settings")
-    async def test_send_called_with_correct_email(
-        self, mock_settings, mock_fetch, mock_email, mock_send
-    ):
+    async def test_send_called_with_correct_email(self, mock_settings, mock_fetch, mock_email, mock_send):
         mock_settings.email_enabled = True
         mock_settings.resend_api_key = "re_xxx"
         mock_fetch.return_value = [_make_candidate("u1")]

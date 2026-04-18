@@ -25,7 +25,9 @@ class TestLoadFile:
             os.unlink(f.name)
 
     def test_reads_full_content_under_limit(self):
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False, encoding="utf-8", dir=str(_REPO_ROOT)) as f:
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".md", delete=False, encoding="utf-8", dir=str(_REPO_ROOT)
+        ) as f:
             f.write("hello atlas")
             f.flush()
             rel = os.path.relpath(f.name, _REPO_ROOT)

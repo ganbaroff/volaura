@@ -16,12 +16,14 @@ from app.main import app
 def _make_admin_override(mock_db):
     async def _override():
         yield mock_db
+
     return _override
 
 
 def _make_user_id_override(user_id: str):
     async def _override():
         return user_id
+
     return _override
 
 
@@ -48,6 +50,7 @@ async def client():
 
 
 # ── Security Headers ─────────────────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_security_headers_present(client: AsyncClient):
@@ -84,6 +87,7 @@ async def test_security_headers_present(client: AsyncClient):
 async def test_csp_header_present_in_production():
     """Content-Security-Policy must be set in production mode."""
     from app.config import settings
+
     # CSP is only set when is_dev=False
     # This test documents the behavior — CSP verified via production deploy
     assert hasattr(settings, "is_dev")
@@ -93,14 +97,18 @@ async def test_csp_header_present_in_production():
 
 # ── Auth Input Validation ────────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_register_rejects_empty_email(client: AsyncClient, mock_db):
     app.dependency_overrides[get_supabase_anon] = _make_admin_override(mock_db)
-    resp = await client.post("/api/auth/register", json={
-        "email": "",
-        "password": "secret123",
-        "username": "test",
-    })
+    resp = await client.post(
+        "/api/auth/register",
+        json={
+            "email": "",
+            "password": "secret123",
+            "username": "test",
+        },
+    )
     assert resp.status_code == 422
     app.dependency_overrides.pop(get_supabase_anon, None)
 
@@ -108,11 +116,14 @@ async def test_register_rejects_empty_email(client: AsyncClient, mock_db):
 @pytest.mark.asyncio
 async def test_register_rejects_empty_password(client: AsyncClient, mock_db):
     app.dependency_overrides[get_supabase_anon] = _make_admin_override(mock_db)
-    resp = await client.post("/api/auth/register", json={
-        "email": "test@example.com",
-        "password": "",
-        "username": "test",
-    })
+    resp = await client.post(
+        "/api/auth/register",
+        json={
+            "email": "test@example.com",
+            "password": "",
+            "username": "test",
+        },
+    )
     assert resp.status_code == 422
     app.dependency_overrides.pop(get_supabase_anon, None)
 
@@ -126,6 +137,7 @@ async def test_login_rejects_missing_fields(client: AsyncClient, mock_db):
 
 
 # ── Assessment Input Validation ──────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_assessment_start_rejects_invalid_slug(client: AsyncClient, mock_db):
@@ -171,6 +183,7 @@ async def test_assessment_answer_rejects_negative_timing(client: AsyncClient, mo
 
 # ── BARS Prompt Injection Defense ────────────────────────────────────────────
 
+
 def test_bars_wraps_user_input_in_tags():
     """User answers must be wrapped in <user_answer> tags to prevent injection."""
     from app.core.assessment.bars import _USER_TEMPLATE
@@ -188,6 +201,7 @@ def test_bars_system_prompt_has_injection_defense():
 
 
 # ── Anti-gaming Edge Cases ───────────────────────────────────────────────────
+
 
 def test_antigaming_handles_zero_timing():
     """Zero ms timing = spoofed, should flag as rushed."""
@@ -208,6 +222,7 @@ def test_antigaming_handles_negative_timing():
 
 
 # ── Rate Limit Token Hashing ─────────────────────────────────────────────────
+
 
 def test_rate_limit_token_hashing_principle():
     """Rate limiter must hash the FULL JWT token, not just prefix.
@@ -230,6 +245,7 @@ def test_rate_limit_token_hashing_principle():
 
 
 # ── CRIT-02: Verification Link Authorization ────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_crit02_cannot_create_verification_link_for_other_user(client: AsyncClient, mock_db):
@@ -263,15 +279,22 @@ async def test_crit02_can_create_verification_link_for_self(client: AsyncClient,
 
     # Mock DB: call 1 = volunteer exists check (single row dict), call 2 = insert result (list)
     verif_row = {
-        "id": "new-verif-uuid", "volunteer_id": user_id, "created_by": user_id,
-        "verifier_name": "Prof. Aliyev", "verifier_org": "ADA University",
-        "competency_id": "communication", "token": "tok_abc123",
-        "token_expires_at": "2099-01-01T00:00:00+00:00", "token_used": False,
+        "id": "new-verif-uuid",
+        "volunteer_id": user_id,
+        "created_by": user_id,
+        "verifier_name": "Prof. Aliyev",
+        "verifier_org": "ADA University",
+        "competency_id": "communication",
+        "token": "tok_abc123",
+        "token_expires_at": "2099-01-01T00:00:00+00:00",
+        "token_used": False,
     }
-    mock_db.execute = AsyncMock(side_effect=[
-        MagicMock(data={"id": user_id}),    # volunteer exists
-        MagicMock(data=[verif_row]),         # insert result (list)
-    ])
+    mock_db.execute = AsyncMock(
+        side_effect=[
+            MagicMock(data={"id": user_id}),  # volunteer exists
+            MagicMock(data=[verif_row]),  # insert result (list)
+        ]
+    )
 
     app.dependency_overrides[get_supabase_admin] = _make_admin_override(mock_db)
     app.dependency_overrides[get_supabase_user] = _make_admin_override(mock_db)
@@ -294,14 +317,14 @@ async def test_crit02_can_create_verification_link_for_self(client: AsyncClient,
 
 # ── CRIT-03: raw_score Not In Response ───────────────────────────────────────
 
+
 def test_crit03_answer_feedback_schema_has_no_raw_score():
     """CRIT-03: AnswerFeedback must NOT contain raw_score field."""
     from app.schemas.assessment import AnswerFeedback
 
     field_names = set(AnswerFeedback.model_fields.keys())
     assert "raw_score" not in field_names, (
-        "raw_score must be removed from AnswerFeedback — "
-        "leaking BARS scores enables calibration attacks"
+        "raw_score must be removed from AnswerFeedback — leaking BARS scores enables calibration attacks"
     )
 
 
@@ -326,13 +349,14 @@ def test_crit03_answer_feedback_serializes_without_raw_score():
 
 # ── CRIT-01: No Internal Errors Leaked ───────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_crit01_generic_error_handler_hides_details(client: AsyncClient):
     """CRIT-01: Unhandled exceptions must return generic message, not DB details."""
     # The global exception handler is registered in main.py
     # We can verify it exists on the app
     from app.main import app as real_app
-    assert any(
-        handler is not None
-        for handler in real_app.exception_handlers.values()
-    ), "Global exception handler must be registered"
+
+    assert any(handler is not None for handler in real_app.exception_handlers.values()), (
+        "Global exception handler must be registered"
+    )

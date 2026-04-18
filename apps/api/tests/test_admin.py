@@ -39,15 +39,17 @@ def make_admin_db(is_admin: bool = True) -> MagicMock:
         if name == "profiles":
             admin_result = MockResult(data={"is_platform_admin": is_admin} if is_admin else None)
             users_result = MockResult(
-                data=[{
-                    "id": ADMIN_USER_ID,
-                    "username": "yusif",
-                    "display_name": "Yusif E.",
-                    "account_type": "volunteer",
-                    "subscription_status": "trial",
-                    "is_platform_admin": True,
-                    "created_at": "2026-01-01T00:00:00+00:00",
-                }],
+                data=[
+                    {
+                        "id": ADMIN_USER_ID,
+                        "username": "yusif",
+                        "display_name": "Yusif E.",
+                        "account_type": "volunteer",
+                        "subscription_status": "trial",
+                        "is_platform_admin": True,
+                        "created_at": "2026-01-01T00:00:00+00:00",
+                    }
+                ],
                 count=1,
             )
             # owner username lookup via .in_()
@@ -69,32 +71,31 @@ def make_admin_db(is_admin: bool = True) -> MagicMock:
             m.select = profiles_select
 
         elif name == "organizations":
-            pending_result = MockResult(data=[
-                {
-                    "id": ORG_ID,
-                    "name": "Test NGO",
-                    "description": "A test org",
-                    "website": None,
-                    "owner_id": REGULAR_USER_ID,
-                    "trust_score": None,
-                    "verified_at": None,
-                    "is_active": True,
-                    "created_at": "2026-01-01T00:00:00+00:00",
-                }
-            ], count=1)
-            m.select.return_value.is_.return_value.eq.return_value.order.return_value.range.return_value.execute = AsyncMock(
-                return_value=pending_result
+            pending_result = MockResult(
+                data=[
+                    {
+                        "id": ORG_ID,
+                        "name": "Test NGO",
+                        "description": "A test org",
+                        "website": None,
+                        "owner_id": REGULAR_USER_ID,
+                        "trust_score": None,
+                        "verified_at": None,
+                        "is_active": True,
+                        "created_at": "2026-01-01T00:00:00+00:00",
+                    }
+                ],
+                count=1,
+            )
+            m.select.return_value.is_.return_value.eq.return_value.order.return_value.range.return_value.execute = (
+                AsyncMock(return_value=pending_result)
             )
             # org existence check for approve/reject
             m.select.return_value.eq.return_value.maybe_single.return_value.execute = AsyncMock(
                 return_value=MockResult(data={"id": ORG_ID})
             )
-            m.update.return_value.eq.return_value.execute = AsyncMock(
-                return_value=MockResult(data=[])
-            )
-            m.select.return_value.eq.return_value.execute = AsyncMock(
-                return_value=MockResult(data=[], count=0)
-            )
+            m.update.return_value.eq.return_value.execute = AsyncMock(return_value=MockResult(data=[]))
+            m.select.return_value.eq.return_value.execute = AsyncMock(return_value=MockResult(data=[], count=0))
 
         elif name == "assessment_sessions":
             m.select.return_value.eq.return_value.eq.return_value.gte.return_value.execute = AsyncMock(
@@ -102,9 +103,7 @@ def make_admin_db(is_admin: bool = True) -> MagicMock:
             )
 
         elif name == "aura_scores":
-            m.select.return_value.execute = AsyncMock(
-                return_value=MockResult(data=[{"total_score": 72.5}])
-            )
+            m.select.return_value.execute = AsyncMock(return_value=MockResult(data=[{"total_score": 72.5}]))
 
         return m
 
@@ -117,6 +116,7 @@ def make_client() -> AsyncClient:
 
 
 # ── Gate: non-admin is blocked ────────────────────────────────────────────────
+
 
 class TestAdminGate:
     """All admin endpoints return 403 for non-admin users (fail-closed)."""
@@ -161,8 +161,8 @@ class TestAdminGate:
 
 # ── Happy path: admin access ──────────────────────────────────────────────────
 
-class TestAdminHappyPath:
 
+class TestAdminHappyPath:
     @pytest.mark.asyncio
     async def test_ping_admin_returns_200(self):
         db = make_admin_db(is_admin=True)

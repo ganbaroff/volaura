@@ -42,18 +42,21 @@ AURA_ROW = {
 def _admin_override(db):
     async def _dep():
         yield db
+
     return _dep
 
 
 def _user_override(db):
     async def _dep():
         yield db
+
     return _dep
 
 
 def _uid_override(uid=USER_ID):
     async def _dep():
         return uid
+
     return _dep
 
 
@@ -143,6 +146,7 @@ async def test_get_aura_by_id_not_found():
 
 # ── BUG-012: has_pending_evaluations flag ─────────────────────────────────────
 
+
 def _make_session_with_degraded_eval():
     return {
         "competency_id": "comp-uuid-1",
@@ -159,9 +163,13 @@ def _make_session_with_degraded_eval():
             "items": [
                 {
                     "question_id": "q-1",
-                    "irt_a": 1.0, "irt_b": 0.0, "irt_c": 0.2,
-                    "response": 1, "raw_score": 0.6,
-                    "response_time_ms": 5000, "theta_at_answer": 0.0,
+                    "irt_a": 1.0,
+                    "irt_b": 0.0,
+                    "irt_c": 0.2,
+                    "response": 1,
+                    "raw_score": 0.6,
+                    "response_time_ms": 5000,
+                    "theta_at_answer": 0.0,
                     "evaluation_log": {
                         "evaluation_mode": "degraded",
                         "model_used": "keyword_fallback",
@@ -190,9 +198,13 @@ def _make_session_with_llm_eval():
             "items": [
                 {
                     "question_id": "q-2",
-                    "irt_a": 1.0, "irt_b": 0.0, "irt_c": 0.2,
-                    "response": 1, "raw_score": 0.85,
-                    "response_time_ms": 8000, "theta_at_answer": 0.3,
+                    "irt_a": 1.0,
+                    "irt_b": 0.0,
+                    "irt_c": 0.2,
+                    "response": 1,
+                    "raw_score": 0.85,
+                    "response_time_ms": 8000,
+                    "theta_at_answer": 0.3,
                     "evaluation_log": {
                         "evaluation_mode": "full_llm",
                         "model_used": "gemini-2.5-flash",

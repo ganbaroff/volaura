@@ -51,12 +51,14 @@ def make_user_db() -> MagicMock:
         m = MagicMock()
         if name == "profiles":
             m.select.return_value.eq.return_value.single.return_value.execute = AsyncMock(
-                return_value=MockResult(data={
-                    "display_name": "Test User",
-                    "bio": "tester",
-                    "location": "Baku",
-                    "languages": ["en"],
-                })
+                return_value=MockResult(
+                    data={
+                        "display_name": "Test User",
+                        "bio": "tester",
+                        "location": "Baku",
+                        "languages": ["en"],
+                    }
+                )
             )
         elif name == "aura_scores":
             m.select.return_value.eq.return_value.execute = AsyncMock(
@@ -80,20 +82,25 @@ def make_admin_db(insert_ok: bool = True) -> MagicMock:
         m = MagicMock()
         if name == "automated_decision_log":
             if insert_ok:
+
                 async def _exec():
                     return MockResult(data=[{"id": str(uuid4())}])
+
                 def _insert(row):
                     db._inserts.append(row)
                     mi = MagicMock()
                     mi.execute = AsyncMock(side_effect=_exec)
                     return mi
+
                 m.insert = _insert
             else:
+
                 def _insert(row):
                     db._inserts.append(row)
                     mi = MagicMock()
                     mi.execute = AsyncMock(side_effect=RuntimeError("DB down"))
                     return mi
+
                 m.insert = _insert
         return m
 
@@ -122,9 +129,7 @@ def test_allowed_skills_auto_detected_from_disk():
 
     # The 5 canonical user-facing skills must be present
     expected = {"aura-coach", "feed-curator", "content-formatter", "behavior-pattern-analyzer"}
-    assert expected.issubset(ALLOWED_SKILLS), (
-        f"Missing expected skills: {expected - ALLOWED_SKILLS}"
-    )
+    assert expected.issubset(ALLOWED_SKILLS), f"Missing expected skills: {expected - ALLOWED_SKILLS}"
 
     # Internal-only skills must NEVER leak into the allow-list
     for internal in INTERNAL_ONLY_SKILLS:
@@ -134,6 +139,7 @@ def test_allowed_skills_auto_detected_from_disk():
 def test_internal_only_skills_blocked_even_if_ready():
     """assessment-generator has ## Input + ## Output but is internal-only."""
     from app.routers.skills import ALLOWED_SKILLS
+
     assert "assessment-generator" not in ALLOWED_SKILLS
 
 
@@ -141,12 +147,15 @@ def test_internal_only_skills_blocked_even_if_ready():
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("skill_name", [
-    "aura-coach",
-    "feed-curator",
-    "content-formatter",
-    "behavior-pattern-analyzer",
-])
+@pytest.mark.parametrize(
+    "skill_name",
+    [
+        "aura-coach",
+        "feed-curator",
+        "content-formatter",
+        "behavior-pattern-analyzer",
+    ],
+)
 async def test_smoke_allowed_skill_returns_wave3_fields(skill_name: str):
     """Every allowed skill: 200 + non-empty output + wave-3 fields populated."""
     user_db = make_user_db()
@@ -224,8 +233,7 @@ async def test_compliance_log_failure_does_not_break_response():
     with (
         patch("pathlib.Path.exists", return_value=True),
         patch("builtins.open", mock_open(read_data=_MOCK_SKILL_MD)),
-        patch("app.routers.skills.evaluate_with_llm", new_callable=AsyncMock,
-              return_value={"answer": "ok"}),
+        patch("app.routers.skills.evaluate_with_llm", new_callable=AsyncMock, return_value={"answer": "ok"}),
     ):
         async with make_client() as client:
             resp = await client.post("/api/skills/feed-curator", json={"language": "en"})
@@ -251,8 +259,7 @@ async def test_compliance_log_omits_raw_user_input():
     with (
         patch("pathlib.Path.exists", return_value=True),
         patch("builtins.open", mock_open(read_data=_MOCK_SKILL_MD)),
-        patch("app.routers.skills.evaluate_with_llm", new_callable=AsyncMock,
-              return_value={"answer": "harmless"}),
+        patch("app.routers.skills.evaluate_with_llm", new_callable=AsyncMock, return_value={"answer": "harmless"}),
     ):
         async with make_client() as client:
             resp = await client.post(

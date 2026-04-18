@@ -20,18 +20,21 @@ COMPETENCY_ID = "comp-uuid-1234"
 def _make_admin_override(mock_db):
     async def _override():
         yield mock_db
+
     return _override
 
 
 def _make_user_override(mock_db):
     async def _override():
         yield mock_db
+
     return _override
 
 
 def _make_user_id_override(user_id: str):
     async def _override():
         return user_id
+
     return _override
 
 

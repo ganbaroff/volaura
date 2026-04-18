@@ -171,11 +171,13 @@ class TestBulkInviteCSVParsing:
         app.dependency_overrides[get_current_user_id] = lambda: USER_ID
 
         try:
-            csv_data = make_csv([
-                {"email": "alice@test.com", "display_name": "Alice", "phone": "+994501234567"},
-                {"email": "bob@test.com", "display_name": "Bob"},
-                {"email": "carol@test.com"},
-            ])
+            csv_data = make_csv(
+                [
+                    {"email": "alice@test.com", "display_name": "Alice", "phone": "+994501234567"},
+                    {"email": "bob@test.com", "display_name": "Bob"},
+                    {"email": "carol@test.com"},
+                ]
+            )
             async with make_client() as client:
                 resp = await client.post(
                     f"/api/organizations/{ORG_ID}/invites/bulk",
@@ -216,11 +218,13 @@ class TestBulkInviteCSVParsing:
         app.dependency_overrides[get_current_user_id] = lambda: USER_ID
 
         try:
-            csv_data = make_csv([
-                {"email": "valid@test.com"},
-                {"email": "not-an-email"},
-                {"email": "also@bad"},
-            ])
+            csv_data = make_csv(
+                [
+                    {"email": "valid@test.com"},
+                    {"email": "not-an-email"},
+                    {"email": "also@bad"},
+                ]
+            )
             async with make_client() as client:
                 resp = await client.post(
                     f"/api/organizations/{ORG_ID}/invites/bulk",
@@ -240,11 +244,13 @@ class TestBulkInviteCSVParsing:
         app.dependency_overrides[get_current_user_id] = lambda: USER_ID
 
         try:
-            csv_data = make_csv([
-                {"email": "alice@test.com"},
-                {"email": "alice@test.com"},  # duplicate
-                {"email": "bob@test.com"},
-            ])
+            csv_data = make_csv(
+                [
+                    {"email": "alice@test.com"},
+                    {"email": "alice@test.com"},  # duplicate
+                    {"email": "bob@test.com"},
+                ]
+            )
             async with make_client() as client:
                 resp = await client.post(
                     f"/api/organizations/{ORG_ID}/invites/bulk",
@@ -264,10 +270,12 @@ class TestBulkInviteCSVParsing:
         app.dependency_overrides[get_current_user_id] = lambda: USER_ID
 
         try:
-            csv_data = make_csv([
-                {"email": "existing@test.com"},  # already in DB
-                {"email": "new@test.com"},
-            ])
+            csv_data = make_csv(
+                [
+                    {"email": "existing@test.com"},  # already in DB
+                    {"email": "new@test.com"},
+                ]
+            )
             async with make_client() as client:
                 resp = await client.post(
                     f"/api/organizations/{ORG_ID}/invites/bulk",
@@ -365,6 +373,7 @@ class TestInviteSchemaValidation:
 
     def test_valid_email(self):
         from app.schemas.invite import InviteRowInput
+
         row = InviteRowInput(email="test@example.com")
         assert row.email == "test@example.com"
 
@@ -372,26 +381,31 @@ class TestInviteSchemaValidation:
         from pydantic import ValidationError
 
         from app.schemas.invite import InviteRowInput
+
         with pytest.raises(ValidationError):
             InviteRowInput(email="not-an-email")
 
     def test_formula_injection_sanitized(self):
         from app.schemas.invite import InviteRowInput
+
         row = InviteRowInput(email="test@safe.com", display_name="=CMD()")
         assert row.display_name.startswith("'")
 
     def test_skills_parsing(self):
         from app.schemas.invite import InviteRowInput
+
         row = InviteRowInput(email="a@b.com", skills="leadership|english|events")
         assert row.to_skills_list() == ["leadership", "english", "events"]
 
     def test_empty_skills(self):
         from app.schemas.invite import InviteRowInput
+
         row = InviteRowInput(email="a@b.com")
         assert row.to_skills_list() == []
 
     def test_phone_validation(self):
         from app.schemas.invite import InviteRowInput
+
         row = InviteRowInput(email="a@b.com", phone="+994501234567")
         assert "994" in row.phone
 
@@ -399,5 +413,6 @@ class TestInviteSchemaValidation:
         from pydantic import ValidationError
 
         from app.schemas.invite import InviteRowInput
+
         with pytest.raises(ValidationError):
             InviteRowInput(email="a@b.com", phone="123")

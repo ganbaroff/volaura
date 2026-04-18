@@ -30,6 +30,7 @@ COMP_SLUG_A = "communication"
 COMP_SLUG_B = "leadership"
 Q_ID = "00000003-0000-0000-0000-000000000099"
 
+
 @pytest.fixture(autouse=True)
 def reset_rate_limiter():
     """Reset the in-memory rate limiter before every test.
@@ -64,15 +65,18 @@ MCQ_QUESTION = {
 
 # ── Mock helpers ───────────────────────────────────────────────────────────────
 
+
 def _make_dep_override(value):
     async def _override():
         yield value
+
     return _override
 
 
 def _make_user_id_override(user_id: str):
     async def _override():
         return user_id
+
     return _override
 
 
@@ -123,18 +127,23 @@ def _iso_minutes_ago(minutes: float) -> str:
 
 # ── Rapid-restart cooldown tests ───────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_rapid_restart_blocked_at_25_minutes():
     """A non-completed session started 25 min ago → 429 RAPID_RESTART_COOLDOWN."""
-    admin = _build_chainable([
-        {"id": COMP_ID_A},   # competency id lookup
-    ])
-    user = _build_chainable([
-        # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
-        [],                                                # no existing in-progress session
-        {"is_platform_admin": False},                      # admin lookup (commit 7789545)
-        [{"started_at": _iso_minutes_ago(25), "status": "abandoned"}],  # rapid-restart hit
-    ])
+    admin = _build_chainable(
+        [
+            {"id": COMP_ID_A},  # competency id lookup
+        ]
+    )
+    user = _build_chainable(
+        [
+            # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
+            [],  # no existing in-progress session
+            {"is_platform_admin": False},  # admin lookup (commit 7789545)
+            [{"started_at": _iso_minutes_ago(25), "status": "abandoned"}],  # rapid-restart hit
+        ]
+    )
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
@@ -159,20 +168,24 @@ async def test_rapid_restart_blocked_at_25_minutes():
 @pytest.mark.asyncio
 async def test_rapid_restart_allowed_at_35_minutes():
     """A non-completed session started 35 min ago → 201 (cooldown has elapsed)."""
-    admin = _build_chainable([
-        {"id": COMP_ID_A},   # competency id lookup
-        [MCQ_QUESTION],      # questions list for session creation
-    ])
-    user = _build_chainable([
-        # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
-        [],                                                        # no existing in-progress
-        {"is_platform_admin": False},                              # admin lookup (commit 7789545)
-        [{"started_at": _iso_minutes_ago(35), "status": "abandoned"}],  # 35 min ago — OK
-        [],                                                        # retest cooldown (no completed)
-        MagicMock(data=[], count=0),                              # abuse monitoring count
-        [],                                                        # carry-over theta
-        {"id": SESSION_ID},                                        # insert session
-    ])
+    admin = _build_chainable(
+        [
+            {"id": COMP_ID_A},  # competency id lookup
+            [MCQ_QUESTION],  # questions list for session creation
+        ]
+    )
+    user = _build_chainable(
+        [
+            # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
+            [],  # no existing in-progress
+            {"is_platform_admin": False},  # admin lookup (commit 7789545)
+            [{"started_at": _iso_minutes_ago(35), "status": "abandoned"}],  # 35 min ago — OK
+            [],  # retest cooldown (no completed)
+            MagicMock(data=[], count=0),  # abuse monitoring count
+            [],  # carry-over theta
+            {"id": SESSION_ID},  # insert session
+        ]
+    )
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
@@ -195,20 +208,24 @@ async def test_rapid_restart_allowed_at_35_minutes():
 @pytest.mark.asyncio
 async def test_rapid_restart_only_applies_to_non_completed():
     """A completed session 10 min ago does NOT trigger rapid-restart (7-day gate applies instead)."""
-    admin = _build_chainable([
-        {"id": COMP_ID_A},
-        [MCQ_QUESTION],
-    ])
-    user = _build_chainable([
-        # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
-        [],                                # no existing in-progress
-        {"is_platform_admin": False},      # admin lookup (commit 7789545)
-        [],                                # rapid-restart query returns empty (completed sessions excluded by neq)
-        [],                                # retest cooldown: no completed session within 7 days
-        MagicMock(data=[], count=0),       # abuse monitoring count
-        [],                                # carry-over theta
-        {"id": SESSION_ID},                # insert session
-    ])
+    admin = _build_chainable(
+        [
+            {"id": COMP_ID_A},
+            [MCQ_QUESTION],
+        ]
+    )
+    user = _build_chainable(
+        [
+            # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
+            [],  # no existing in-progress
+            {"is_platform_admin": False},  # admin lookup (commit 7789545)
+            [],  # rapid-restart query returns empty (completed sessions excluded by neq)
+            [],  # retest cooldown: no completed session within 7 days
+            MagicMock(data=[], count=0),  # abuse monitoring count
+            [],  # carry-over theta
+            {"id": SESSION_ID},  # insert session
+        ]
+    )
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
@@ -232,15 +249,19 @@ async def test_rapid_restart_only_applies_to_non_completed():
 @pytest.mark.asyncio
 async def test_rapid_restart_returns_retry_after_minutes():
     """429 response body contains a positive `retry_after_minutes` field."""
-    admin = _build_chainable([
-        {"id": COMP_ID_A},
-    ])
-    user = _build_chainable([
-        # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
-        [],
-        {"is_platform_admin": False},      # admin lookup (commit 7789545)
-        [{"started_at": _iso_minutes_ago(10), "status": "abandoned"}],
-    ])
+    admin = _build_chainable(
+        [
+            {"id": COMP_ID_A},
+        ]
+    )
+    user = _build_chainable(
+        [
+            # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
+            [],
+            {"is_platform_admin": False},  # admin lookup (commit 7789545)
+            [{"started_at": _iso_minutes_ago(10), "status": "abandoned"}],
+        ]
+    )
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
@@ -260,7 +281,9 @@ async def test_rapid_restart_returns_retry_after_minutes():
         assert "retry_after_minutes" in body["detail"], "retry_after_minutes must be in 429 detail"
         assert body["detail"]["retry_after_minutes"] > 0, "retry_after_minutes must be positive"
         # 10 minutes in → ~20 minutes remaining (plus the +1 buffer from code)
-        assert body["detail"]["retry_after_minutes"] <= 21, "retry_after_minutes should not exceed 21 for 10 min elapsed"
+        assert body["detail"]["retry_after_minutes"] <= 21, (
+            "retry_after_minutes should not exceed 21 for 10 min elapsed"
+        )
     finally:
         app.dependency_overrides.clear()
 
@@ -270,20 +293,24 @@ async def test_rapid_restart_allows_different_competency():
     """Rapid-restart for competency A does NOT block starting competency B."""
     # The rapid-restart check uses .eq("competency_id", competency_id) — different
     # competency_id means a completely separate DB query sequence; no interference.
-    admin = _build_chainable([
-        {"id": COMP_ID_B},   # competency B id lookup
-        [MCQ_QUESTION],      # questions for competency B
-    ])
-    user = _build_chainable([
-        # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
-        [],                                # no in-progress session for comp B
-        {"is_platform_admin": False},      # admin lookup (commit 7789545)
-        [],                                # no recent non-completed session for comp B
-        [],                                # no completed session within 7 days for comp B
-        MagicMock(data=[], count=0),       # abuse monitoring
-        [],                                # carry-over theta
-        {"id": SESSION_ID},                # insert session
-    ])
+    admin = _build_chainable(
+        [
+            {"id": COMP_ID_B},  # competency B id lookup
+            [MCQ_QUESTION],  # questions for competency B
+        ]
+    )
+    user = _build_chainable(
+        [
+            # paywall check removed — PAYMENT_ENABLED=False (beta mode), gate is skipped
+            [],  # no in-progress session for comp B
+            {"is_platform_admin": False},  # admin lookup (commit 7789545)
+            [],  # no recent non-completed session for comp B
+            [],  # no completed session within 7 days for comp B
+            MagicMock(data=[], count=0),  # abuse monitoring
+            [],  # carry-over theta
+            {"id": SESSION_ID},  # insert session
+        ]
+    )
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
@@ -299,8 +326,7 @@ async def test_rapid_restart_allows_different_competency():
             )
 
         assert resp.status_code == 201, (
-            f"Starting a DIFFERENT competency must not be blocked by rapid-restart: "
-            f"{resp.status_code}: {resp.text}"
+            f"Starting a DIFFERENT competency must not be blocked by rapid-restart: {resp.status_code}: {resp.text}"
         )
     finally:
         app.dependency_overrides.clear()
@@ -308,6 +334,7 @@ async def test_rapid_restart_allows_different_competency():
 
 # ── Prompt injection detection tests ──────────────────────────────────────────
 # These tests exercise Pydantic schema validation directly — no HTTP needed.
+
 
 def _make_request(answer: str) -> SubmitAnswerRequest:
     return SubmitAnswerRequest(
@@ -362,20 +389,17 @@ def test_injection_print_instructions():
 
 # ── False positive (legitimate answers must NOT be blocked) ───────────────────
 
+
 def test_no_false_positive_ignore_in_context():
     """'ignore' in a professional context without the full injection phrase → NOT blocked."""
-    req = _make_request(
-        "I think the best action is to ignore the complaint and escalate it to management"
-    )
+    req = _make_request("I think the best action is to ignore the complaint and escalate it to management")
     # "ignore the complaint" does not match ignore\s+(all\s+)?(previous|prior|above)\s+instructions?
     assert req.answer == "I think the best action is to ignore the complaint and escalate it to management"
 
 
 def test_no_false_positive_system_design_answer():
     """'system' in a professional answer → NOT blocked."""
-    req = _make_request(
-        "Let me explain my answer about system design and how distributed architectures scale"
-    )
+    req = _make_request("Let me explain my answer about system design and how distributed architectures scale")
     assert "system design" in req.answer
 
 
@@ -383,7 +407,5 @@ def test_no_false_positive_coordinator_role():
     """'act as coordinator' (no article a/an/if) → NOT blocked by the regex."""
     # The pattern requires act\s+as\s+(?:a|an|if)\s+\w+
     # "act as coordinator" has no article → does not match
-    req = _make_request(
-        "In this scenario I would act as coordinator between the field teams and HQ"
-    )
+    req = _make_request("In this scenario I would act as coordinator between the field teams and HQ")
     assert "act as coordinator" in req.answer

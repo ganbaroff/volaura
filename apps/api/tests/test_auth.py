@@ -12,24 +12,28 @@ from app.main import app
 def _make_admin_override(mock_db):
     async def _override():
         yield mock_db
+
     return _override
 
 
 def _make_anon_override(mock_db):
     async def _override():
         yield mock_db
+
     return _override
 
 
 def _make_user_override(mock_db):
     async def _override():
         yield mock_db
+
     return _override
 
 
 def _make_user_id_override(user_id: str):
     async def _override():
         return user_id
+
     return _override
 
 
@@ -80,11 +84,14 @@ async def test_register_success(client):
 
     db.auth.sign_up = AsyncMock(return_value=auth_resp)
 
-    resp = await ac.post("/api/auth/register", json={
-        "email": "test@example.com",
-        "password": "Secret123",
-        "username": "testuser",
-    })
+    resp = await ac.post(
+        "/api/auth/register",
+        json={
+            "email": "test@example.com",
+            "password": "Secret123",
+            "username": "testuser",
+        },
+    )
 
     assert resp.status_code == 201
     body = resp.json()
@@ -111,14 +118,17 @@ async def test_register_forwards_gdpr_consent_to_user_metadata(client):
 
     db.auth.sign_up = AsyncMock(return_value=auth_resp)
 
-    resp = await ac.post("/api/auth/register", json={
-        "email": "consent@example.com",
-        "password": "Secret123",
-        "username": "consentuser",
-        "age_confirmed": True,
-        "terms_version": "1.0",
-        "terms_accepted_at": "2026-04-15T21:00:00+00:00",
-    })
+    resp = await ac.post(
+        "/api/auth/register",
+        json={
+            "email": "consent@example.com",
+            "password": "Secret123",
+            "username": "consentuser",
+            "age_confirmed": True,
+            "terms_version": "1.0",
+            "terms_accepted_at": "2026-04-15T21:00:00+00:00",
+        },
+    )
 
     assert resp.status_code == 201
     # Inspect the payload that was sent to Supabase sign_up
@@ -147,11 +157,14 @@ async def test_register_consent_defaults_when_client_omits(client):
 
     db.auth.sign_up = AsyncMock(return_value=auth_resp)
 
-    resp = await ac.post("/api/auth/register", json={
-        "email": "default@example.com",
-        "password": "Secret123",
-        "username": "defaultuser",
-    })
+    resp = await ac.post(
+        "/api/auth/register",
+        json={
+            "email": "default@example.com",
+            "password": "Secret123",
+            "username": "defaultuser",
+        },
+    )
 
     assert resp.status_code == 201
     meta = db.auth.sign_up.await_args[0][0]["options"]["data"]
@@ -169,11 +182,14 @@ async def test_register_email_confirmation_required(client):
     auth_resp.user = MagicMock()
     db.auth.sign_up = AsyncMock(return_value=auth_resp)
 
-    resp = await ac.post("/api/auth/register", json={
-        "email": "test@example.com",
-        "password": "Secret123",
-        "username": "testuser",
-    })
+    resp = await ac.post(
+        "/api/auth/register",
+        json={
+            "email": "test@example.com",
+            "password": "Secret123",
+            "username": "testuser",
+        },
+    )
 
     assert resp.status_code == 400
     assert resp.json()["detail"]["code"] == "EMAIL_CONFIRMATION_REQUIRED"
@@ -184,11 +200,14 @@ async def test_register_failure(client):
     ac, db = client
     db.auth.sign_up = AsyncMock(side_effect=Exception("Email already registered"))
 
-    resp = await ac.post("/api/auth/register", json={
-        "email": "dup@example.com",
-        "password": "Secret123",
-        "username": "dupuser",
-    })
+    resp = await ac.post(
+        "/api/auth/register",
+        json={
+            "email": "dup@example.com",
+            "password": "Secret123",
+            "username": "dupuser",
+        },
+    )
 
     assert resp.status_code == 400
     assert resp.json()["detail"]["code"] == "REGISTRATION_FAILED"
@@ -211,10 +230,13 @@ async def test_login_success(client):
 
     db.auth.sign_in_with_password = AsyncMock(return_value=auth_resp)
 
-    resp = await ac.post("/api/auth/login", json={
-        "email": "test@example.com",
-        "password": "Secret123",
-    })
+    resp = await ac.post(
+        "/api/auth/login",
+        json={
+            "email": "test@example.com",
+            "password": "Secret123",
+        },
+    )
 
     assert resp.status_code == 200
     body = resp.json()
@@ -227,10 +249,13 @@ async def test_login_invalid_credentials(client):
     ac, db = client
     db.auth.sign_in_with_password = AsyncMock(side_effect=Exception("Invalid login"))
 
-    resp = await ac.post("/api/auth/login", json={
-        "email": "wrong@example.com",
-        "password": "wrongpass",
-    })
+    resp = await ac.post(
+        "/api/auth/login",
+        json={
+            "email": "wrong@example.com",
+            "password": "wrongpass",
+        },
+    )
 
     assert resp.status_code == 401
     assert resp.json()["detail"]["code"] == "INVALID_CREDENTIALS"
@@ -239,12 +264,16 @@ async def test_login_invalid_credentials(client):
 @pytest.mark.asyncio
 async def test_get_me_with_profile(mock_admin_db):
     user_id = "uuid-me"
-    mock_admin_db.execute = AsyncMock(return_value=MagicMock(data={
-        "id": user_id,
-        "username": "meuser",
-        "display_name": "Me User",
-        "avatar_url": None,
-    }))
+    mock_admin_db.execute = AsyncMock(
+        return_value=MagicMock(
+            data={
+                "id": user_id,
+                "username": "meuser",
+                "display_name": "Me User",
+                "avatar_url": None,
+            }
+        )
+    )
 
     app.dependency_overrides[get_supabase_admin] = _make_admin_override(mock_admin_db)
     app.dependency_overrides[get_current_user_id] = _make_user_id_override(user_id)
@@ -288,6 +317,7 @@ async def test_get_me_no_profile(mock_admin_db):
 
 
 # ── BUG-016: Logout / token revocation ───────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_logout_revokes_token(mock_admin_db):
@@ -338,6 +368,7 @@ async def test_logout_succeeds_even_if_revocation_fails(mock_admin_db):
 
 
 # ── Invite gate (RISK-014) ────────────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_signup_status_open():

@@ -31,9 +31,7 @@ async def test_get_matching_candidates_handles_none_profile_result():
         m = MagicMock()
         if name == "tribe_members":
             # Nobody in active tribes — empty exclusion set.
-            m.select.return_value.is_.return_value.execute = AsyncMock(
-                return_value=MagicMock(data=[])
-            )
+            m.select.return_value.is_.return_value.execute = AsyncMock(return_value=MagicMock(data=[]))
         elif name == "aura_scores":
             # One candidate with a score.
             m.select.return_value.gt.return_value.gt.return_value.execute = AsyncMock(
@@ -53,9 +51,7 @@ async def test_get_matching_candidates_handles_none_profile_result():
                 return_value=None
             )
         elif name == "tribe_member_history":
-            m.select.return_value.eq.return_value.execute = AsyncMock(
-                return_value=MagicMock(data=[])
-            )
+            m.select.return_value.eq.return_value.execute = AsyncMock(return_value=MagicMock(data=[]))
         return m
 
     db.table = table
@@ -76,9 +72,7 @@ async def test_get_matching_candidates_handles_missing_data_attr():
     def table(name: str) -> MagicMock:
         m = MagicMock()
         if name == "tribe_members":
-            m.select.return_value.is_.return_value.execute = AsyncMock(
-                return_value=MagicMock(data=[])
-            )
+            m.select.return_value.is_.return_value.execute = AsyncMock(return_value=MagicMock(data=[]))
         elif name == "aura_scores":
             m.select.return_value.gt.return_value.gt.return_value.execute = AsyncMock(
                 return_value=MagicMock(
@@ -97,9 +91,7 @@ async def test_get_matching_candidates_handles_missing_data_attr():
                 return_value=MagicMock(data=None)
             )
         elif name == "tribe_member_history":
-            m.select.return_value.eq.return_value.execute = AsyncMock(
-                return_value=MagicMock(data=[])
-            )
+            m.select.return_value.eq.return_value.execute = AsyncMock(return_value=MagicMock(data=[]))
         return m
 
     db.table = table
@@ -117,9 +109,7 @@ async def test_get_matching_candidates_passes_through_visible_candidate():
     def table(name: str) -> MagicMock:
         m = MagicMock()
         if name == "tribe_members":
-            m.select.return_value.is_.return_value.execute = AsyncMock(
-                return_value=MagicMock(data=[])
-            )
+            m.select.return_value.is_.return_value.execute = AsyncMock(return_value=MagicMock(data=[]))
         elif name == "aura_scores":
             m.select.return_value.gt.return_value.gt.return_value.execute = AsyncMock(
                 return_value=MagicMock(
@@ -138,9 +128,7 @@ async def test_get_matching_candidates_passes_through_visible_candidate():
                 return_value=MagicMock(data={"id": uid})
             )
         elif name == "tribe_member_history":
-            m.select.return_value.eq.return_value.execute = AsyncMock(
-                return_value=MagicMock(data=[])
-            )
+            m.select.return_value.eq.return_value.execute = AsyncMock(return_value=MagicMock(data=[]))
         return m
 
     db.table = table

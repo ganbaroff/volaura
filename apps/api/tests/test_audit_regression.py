@@ -26,18 +26,21 @@ ORG_ID = str(uuid4())
 def _admin_override(db):
     async def _dep():
         yield db
+
     return _dep
 
 
 def _user_override(db):
     async def _dep():
         yield db
+
     return _dep
 
 
 def _uid_override(uid=USER_ID):
     async def _dep():
         return uid
+
     return _dep
 
 
@@ -91,22 +94,26 @@ async def test_aura_explanation_redacts_raw_score(client):
     This test catches any accidental exposure of raw_score (CRIT-03/CRIT-05).
     """
     # Mock the completed sessions data structure
-    sessions_data = [{
-        "competency_id": "comp-uuid-123",
-        "role_level": "volunteer",
-        "completed_at": "2026-03-01T00:00:00Z",
-        "answers": {
-            "items": [{
-                "question_id": "q1",
-                "evaluation_log": {
-                    "model_used": "gemini",
-                    "concept_scores": {"communication": 0.8},
-                    "methodology": "BARS",
-                    # raw_score intentionally NOT in evaluation_log (CRIT-03)
-                },
-            }]
-        },
-    }]
+    sessions_data = [
+        {
+            "competency_id": "comp-uuid-123",
+            "role_level": "volunteer",
+            "completed_at": "2026-03-01T00:00:00Z",
+            "answers": {
+                "items": [
+                    {
+                        "question_id": "q1",
+                        "evaluation_log": {
+                            "model_used": "gemini",
+                            "concept_scores": {"communication": 0.8},
+                            "methodology": "BARS",
+                            # raw_score intentionally NOT in evaluation_log (CRIT-03)
+                        },
+                    }
+                ]
+            },
+        }
+    ]
 
     db = _make_mock_db()
     db.execute = AsyncMock(return_value=MagicMock(data=sessions_data))
@@ -144,20 +151,28 @@ async def test_badges_credential_uses_correct_columns(client):
         m.single = MagicMock(return_value=m)
         m.maybe_single = MagicMock(return_value=m)
         if table_name == "profiles":
-            m.execute = AsyncMock(return_value=MagicMock(data={
-                "id": USER_ID,
-                "username": "testuser",
-                "display_name": "Test User",
-                "badge_issued_at": None,
-            }))
+            m.execute = AsyncMock(
+                return_value=MagicMock(
+                    data={
+                        "id": USER_ID,
+                        "username": "testuser",
+                        "display_name": "Test User",
+                        "badge_issued_at": None,
+                    }
+                )
+            )
         elif table_name == "aura_scores":
-            m.execute = AsyncMock(return_value=MagicMock(data={
-                "total_score": 85.0,
-                "badge_tier": "gold",
-                "elite_status": False,
-                "last_updated": "2026-03-25T00:00:00Z",
-                "visibility": "public",
-            }))
+            m.execute = AsyncMock(
+                return_value=MagicMock(
+                    data={
+                        "total_score": 85.0,
+                        "badge_tier": "gold",
+                        "elite_status": False,
+                        "last_updated": "2026-03-25T00:00:00Z",
+                        "visibility": "public",
+                    }
+                )
+            )
         else:
             m.execute = AsyncMock(return_value=MagicMock(data=None))
         return m
@@ -184,4 +199,5 @@ async def test_badges_credential_uses_correct_columns(client):
 async def test_engine_min_items_constant():
     """Verify engine constant was updated."""
     from app.core.assessment.engine import MIN_ITEMS_BEFORE_SE_STOP
+
     assert MIN_ITEMS_BEFORE_SE_STOP == 5

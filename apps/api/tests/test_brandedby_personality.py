@@ -154,8 +154,14 @@ class TestBuildFallbackPersonality:
 class TestConstants:
     def test_all_8_competencies_in_labels(self):
         expected = {
-            "communication", "reliability", "english_proficiency", "leadership",
-            "event_performance", "tech_literacy", "adaptability", "empathy_safeguarding",
+            "communication",
+            "reliability",
+            "english_proficiency",
+            "leadership",
+            "event_performance",
+            "tech_literacy",
+            "adaptability",
+            "empathy_safeguarding",
         }
         assert set(AURA_SKILL_LABELS.keys()) == expected
 

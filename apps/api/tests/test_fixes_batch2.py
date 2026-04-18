@@ -23,18 +23,21 @@ USER_ID = str(uuid4())
 def _admin_override(db):
     async def _dep():
         yield db
+
     return _dep
 
 
 def _user_override(db):
     async def _dep():
         yield db
+
     return _dep
 
 
 def _uid_override(uid=USER_ID):
     async def _dep():
         return uid
+
     return _dep
 
 
@@ -58,6 +61,7 @@ def _make_chainable_db():
 
 
 # ── [A] activity.py column name fixes ────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_activity_feed_uses_status_column_not_is_complete(client):
@@ -102,6 +106,7 @@ async def test_activity_stats_uses_status_column_not_is_complete(client):
 
 # ── [B] badges.py security fixes ─────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_badges_credential_invalid_uuid_returns_422(client):
     """Invalid volunteer_id must return 422, not 500 or silent failure.
@@ -142,20 +147,28 @@ async def test_badges_credential_respects_visibility_hidden(client):
         m.eq = MagicMock(return_value=m)
         m.maybe_single = MagicMock(return_value=m)
         if table_name == "profiles":
-            m.execute = AsyncMock(return_value=MagicMock(data={
-                "id": valid_volunteer_id,
-                "username": "testuser",
-                "display_name": "Test User",
-                "badge_issued_at": None,
-            }))
+            m.execute = AsyncMock(
+                return_value=MagicMock(
+                    data={
+                        "id": valid_volunteer_id,
+                        "username": "testuser",
+                        "display_name": "Test User",
+                        "badge_issued_at": None,
+                    }
+                )
+            )
         elif table_name == "aura_scores":
-            m.execute = AsyncMock(return_value=MagicMock(data={
-                "total_score": 88.0,
-                "badge_tier": "gold",
-                "elite_status": False,
-                "last_updated": "2026-03-26T00:00:00Z",
-                "visibility": "hidden",
-            }))
+            m.execute = AsyncMock(
+                return_value=MagicMock(
+                    data={
+                        "total_score": 88.0,
+                        "badge_tier": "gold",
+                        "elite_status": False,
+                        "last_updated": "2026-03-26T00:00:00Z",
+                        "visibility": "hidden",
+                    }
+                )
+            )
         else:
             m.execute = AsyncMock(return_value=MagicMock(data=None))
         return m
@@ -185,21 +198,28 @@ async def test_badges_credential_serves_public_profiles(client):
         m.eq = MagicMock(return_value=m)
         m.maybe_single = MagicMock(return_value=m)
         if table_name == "profiles":
-            m.execute = AsyncMock(return_value=MagicMock(data={
-                "id": valid_volunteer_id,
-                    "username": "testuser",
-                    "display_name": "Test User",
-                    "badge_issued_at": None,
-                })
+            m.execute = AsyncMock(
+                return_value=MagicMock(
+                    data={
+                        "id": valid_volunteer_id,
+                        "username": "testuser",
+                        "display_name": "Test User",
+                        "badge_issued_at": None,
+                    }
+                )
             )
         elif table_name == "aura_scores":
-            m.execute = AsyncMock(return_value=MagicMock(data={
-                "total_score": 88.0,
-                "badge_tier": "gold",
-                "elite_status": False,
-                "last_updated": "2026-03-26T00:00:00Z",
-                "visibility": "public",
-            }))
+            m.execute = AsyncMock(
+                return_value=MagicMock(
+                    data={
+                        "total_score": 88.0,
+                        "badge_tier": "gold",
+                        "elite_status": False,
+                        "last_updated": "2026-03-26T00:00:00Z",
+                        "visibility": "public",
+                    }
+                )
+            )
         else:
             m.execute = AsyncMock(return_value=MagicMock(data=None))
         return m
@@ -216,6 +236,7 @@ async def test_badges_credential_serves_public_profiles(client):
 
 # ── [C] aura.py rate limit presence ──────────────────────────────────────────
 
+
 def test_aura_me_endpoint_accepts_request_param():
     """GET /me must accept a Request parameter (required for @limiter.limit).
 
@@ -225,6 +246,7 @@ def test_aura_me_endpoint_accepts_request_param():
     import inspect
 
     from app.routers.aura import get_my_aura
+
     sig = inspect.signature(get_my_aura)
     assert "request" in sig.parameters, (
         "get_my_aura is missing 'request: Request' parameter. "
@@ -237,6 +259,7 @@ def test_aura_explanation_endpoint_accepts_request_param():
     import inspect
 
     from app.routers.aura import get_aura_explanation
+
     sig = inspect.signature(get_aura_explanation)
     assert "request" in sig.parameters, (
         "get_aura_explanation is missing 'request: Request' parameter. "
@@ -247,6 +270,7 @@ def test_aura_explanation_endpoint_accepts_request_param():
 def test_aura_me_has_rate_limit_decorator():
     """GET /me must have @limiter.limit() decorator applied."""
     from app.routers.aura import get_my_aura
+
     # slowapi stores limit info on the function via _rate_limit_metadata attribute
     (
         hasattr(get_my_aura, "_rate_limit_metadata")
@@ -255,6 +279,7 @@ def test_aura_me_has_rate_limit_decorator():
     )
     # Also check via the router decorator chain
     from app.routers.aura import router
+
     next(
         (r for r in router.routes if hasattr(r, "endpoint") and r.endpoint == get_my_aura),
         None,
@@ -262,5 +287,6 @@ def test_aura_me_has_rate_limit_decorator():
     # If we can't find via metadata, just check the Request param is present
     # (necessary condition for rate limiting to work)
     import inspect
+
     sig = inspect.signature(get_my_aura)
     assert "request" in sig.parameters, "Rate limiting requires Request parameter"

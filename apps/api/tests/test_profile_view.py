@@ -25,19 +25,23 @@ VOLUNTEER_USERNAME = "alice"
 
 # ── Dependency helpers ────────────────────────────────────────────────────────
 
+
 def _admin_override(db):
     async def _dep():
         yield db
+
     return _dep
 
 
 def _uid_override(uid: str):
     async def _dep():
         return uid
+
     return _dep
 
 
 # ── Mock DB factory ───────────────────────────────────────────────────────────
+
 
 def _build_view_mock_db(
     caller_account_type: str = "organization",
@@ -73,11 +77,13 @@ def _build_view_mock_db(
                 # First call: caller account_type check
                 if caller_account_type == "none":
                     return MagicMock(data=None)
-                return MagicMock(data={
-                    "account_type": caller_account_type,
-                    "display_name": org_display_name if caller_account_type == "organization" else None,
-                    "username": "techcorp" if caller_account_type == "organization" else "volunteer_viewer",
-                })
+                return MagicMock(
+                    data={
+                        "account_type": caller_account_type,
+                        "display_name": org_display_name if caller_account_type == "organization" else None,
+                        "username": "techcorp" if caller_account_type == "organization" else "volunteer_viewer",
+                    }
+                )
             else:
                 # Second call: volunteer lookup
                 if not volunteer_exists:
@@ -120,6 +126,7 @@ def _build_view_mock_db(
 
 
 # ── Tests ─────────────────────────────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_org_view_sends_notification():

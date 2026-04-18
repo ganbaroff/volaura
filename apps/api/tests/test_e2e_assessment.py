@@ -37,7 +37,9 @@ async def run_e2e():
     weight_sum = sum(weights.values())
     print(f"  Weights sum: {weight_sum} (should be ~1.0)")
 
-    questions = await admin.table("questions").select("id, competency_id, difficulty, irt_a, irt_b, irt_c, type").execute()
+    questions = (
+        await admin.table("questions").select("id, competency_id, difficulty, irt_a, irt_b, irt_c, type").execute()
+    )
     assert len(questions.data) >= 8, f"Expected >= 8 questions, got {len(questions.data)}"
     print(f"  OK: {len(questions.data)} questions")
 
@@ -50,12 +52,14 @@ async def run_e2e():
 
     items = []
     for q in comm_qs:
-        items.append({
-            "id": q["id"],
-            "a": q.get("irt_a") or 1.0,
-            "b": q.get("irt_b") or 0.0,
-            "c": q.get("irt_c") or 0.2,
-        })
+        items.append(
+            {
+                "id": q["id"],
+                "a": q.get("irt_a") or 1.0,
+                "b": q.get("irt_b") or 0.0,
+                "c": q.get("irt_c") or 0.2,
+            }
+        )
 
     # Step 3: Run IRT/CAT engine
     print("\nStep 3: Running IRT/CAT engine...")
@@ -82,7 +86,7 @@ async def run_e2e():
             response_time_ms=5000,
         )
         answers += 1
-        print(f"  Q{i+1}: theta={state.theta:.3f}, SE={state.theta_se:.3f}")
+        print(f"  Q{i + 1}: theta={state.theta:.3f}, SE={state.theta_se:.3f}")
 
         if should_stop(state):
             print(f"  CAT stop criterion met after {answers} questions")

@@ -54,24 +54,42 @@ SEC_Q1 = {
             "name": "threat_identification",
             "weight": 0.35,
             "keywords": [
-                "phishing", "social engineering", "suspicious", "verify sender",
-                "spoofed", "domain", "typosquat", "lookalike",
+                "phishing",
+                "social engineering",
+                "suspicious",
+                "verify sender",
+                "spoofed",
+                "domain",
+                "typosquat",
+                "lookalike",
             ],
         },
         {
             "name": "incident_response",
             "weight": 0.35,
             "keywords": [
-                "report", "isolate", "escalate", "document", "notify",
-                "block", "contain", "investigate",
+                "report",
+                "isolate",
+                "escalate",
+                "document",
+                "notify",
+                "block",
+                "contain",
+                "investigate",
             ],
         },
         {
             "name": "user_communication",
             "weight": 0.30,
             "keywords": [
-                "explain", "calm", "steps", "protect", "warn", "alert",
-                "train", "awareness",
+                "explain",
+                "calm",
+                "steps",
+                "protect",
+                "warn",
+                "alert",
+                "train",
+                "awareness",
             ],
         },
     ],
@@ -89,24 +107,43 @@ SEC_Q2 = {
             "name": "threat_modeling_methodology",
             "weight": 0.40,
             "keywords": [
-                "STRIDE", "data flow", "trust boundary", "attack surface",
-                "threat model", "DFD", "DREAD", "PASTA", "attacker",
+                "STRIDE",
+                "data flow",
+                "trust boundary",
+                "attack surface",
+                "threat model",
+                "DFD",
+                "DREAD",
+                "PASTA",
+                "attacker",
             ],
         },
         {
             "name": "data_classification",
             "weight": 0.30,
             "keywords": [
-                "PII", "personal data", "sensitive", "GDPR", "classify",
-                "data class", "encryption", "anonymize",
+                "PII",
+                "personal data",
+                "sensitive",
+                "GDPR",
+                "classify",
+                "data class",
+                "encryption",
+                "anonymize",
             ],
         },
         {
             "name": "access_control_design",
             "weight": 0.30,
             "keywords": [
-                "authorization", "RBAC", "least privilege", "permission",
-                "role", "RLS", "audit log", "access control",
+                "authorization",
+                "RBAC",
+                "least privilege",
+                "permission",
+                "role",
+                "RLS",
+                "audit log",
+                "access control",
             ],
         },
     ],
@@ -125,24 +162,44 @@ SEC_Q3 = {
             "name": "immediate_containment",
             "weight": 0.35,
             "keywords": [
-                "revoke", "rotate", "invalidate", "disable", "immediately",
-                "payment processor", "contact", "deactivate",
+                "revoke",
+                "rotate",
+                "invalidate",
+                "disable",
+                "immediately",
+                "payment processor",
+                "contact",
+                "deactivate",
             ],
         },
         {
             "name": "git_remediation",
             "weight": 0.30,
             "keywords": [
-                "git history", "rewrite", "BFG", "filter-branch", "force push",
-                "remove from history", "secrets scanning", "truffleHog", "gitleaks",
+                "git history",
+                "rewrite",
+                "BFG",
+                "filter-branch",
+                "force push",
+                "remove from history",
+                "secrets scanning",
+                "truffleHog",
+                "gitleaks",
             ],
         },
         {
             "name": "process_improvement",
             "weight": 0.35,
             "keywords": [
-                "pre-commit", "hook", "CI", "secret scanning", "vault",
-                "environment variable", ".gitignore", "training", "policy",
+                "pre-commit",
+                "hook",
+                "CI",
+                "secret scanning",
+                "vault",
+                "environment variable",
+                ".gitignore",
+                "training",
+                "policy",
             ],
         },
     ],
@@ -158,24 +215,42 @@ QA_Q1 = {
             "name": "risk_assessment",
             "weight": 0.30,
             "keywords": [
-                "severity", "impact", "users affected", "workaround", "rollback",
-                "hotfix", "scope", "critical",
+                "severity",
+                "impact",
+                "users affected",
+                "workaround",
+                "rollback",
+                "hotfix",
+                "scope",
+                "critical",
             ],
         },
         {
             "name": "communication",
             "weight": 0.30,
             "keywords": [
-                "stakeholders", "status update", "escalate", "transparent",
-                "notify", "inform", "alert", "team",
+                "stakeholders",
+                "status update",
+                "escalate",
+                "transparent",
+                "notify",
+                "inform",
+                "alert",
+                "team",
             ],
         },
         {
             "name": "systematic_debugging",
             "weight": 0.40,
             "keywords": [
-                "reproduce", "logs", "root cause", "isolate", "test",
-                "regression", "stack trace", "monitoring",
+                "reproduce",
+                "logs",
+                "root cause",
+                "isolate",
+                "test",
+                "regression",
+                "stack trace",
+                "monitoring",
             ],
         },
     ],
@@ -191,24 +266,42 @@ QA_Q2 = {
             "name": "coverage_prioritisation",
             "weight": 0.35,
             "keywords": [
-                "critical path", "risk-based", "high value", "smoke test",
-                "regression suite", "prioritise", "coverage", "happy path",
+                "critical path",
+                "risk-based",
+                "high value",
+                "smoke test",
+                "regression suite",
+                "prioritise",
+                "coverage",
+                "happy path",
             ],
         },
         {
             "name": "automation_approach",
             "weight": 0.35,
             "keywords": [
-                "unit test", "integration test", "e2e", "ci/cd", "pipeline",
-                "framework", "pytest", "playwright",
+                "unit test",
+                "integration test",
+                "e2e",
+                "ci/cd",
+                "pipeline",
+                "framework",
+                "pytest",
+                "playwright",
             ],
         },
         {
             "name": "team_buy_in",
             "weight": 0.30,
             "keywords": [
-                "stakeholder", "developers", "culture", "training", "incremental",
-                "quick wins", "metric", "defect rate",
+                "stakeholder",
+                "developers",
+                "culture",
+                "training",
+                "incremental",
+                "quick wins",
+                "metric",
+                "defect rate",
             ],
         },
     ],
@@ -224,24 +317,42 @@ QA_Q3 = {
             "name": "diagnosis",
             "weight": 0.35,
             "keywords": [
-                "timing", "race condition", "async", "dependency", "environment",
-                "isolation", "data", "pattern",
+                "timing",
+                "race condition",
+                "async",
+                "dependency",
+                "environment",
+                "isolation",
+                "data",
+                "pattern",
             ],
         },
         {
             "name": "remediation",
             "weight": 0.40,
             "keywords": [
-                "quarantine", "retry", "deterministic", "mock", "seed",
-                "wait strategy", "fix", "delete",
+                "quarantine",
+                "retry",
+                "deterministic",
+                "mock",
+                "seed",
+                "wait strategy",
+                "fix",
+                "delete",
             ],
         },
         {
             "name": "process_change",
             "weight": 0.25,
             "keywords": [
-                "zero tolerance", "block", "gate", "policy", "trust",
-                "culture", "ownership", "escalate",
+                "zero tolerance",
+                "block",
+                "gate",
+                "policy",
+                "trust",
+                "culture",
+                "ownership",
+                "escalate",
             ],
         },
     ],
@@ -257,28 +368,60 @@ SWE_Q1 = {
             "name": "observability",
             "weight": 0.35,
             "keywords": [
-                "logs", "metrics", "tracing", "trace", "dashboard", "alert",
-                "monitor", "grafana", "datadog", "sentry", "profiling",
-                "flame graph", "apm", "distributed tracing",
+                "logs",
+                "metrics",
+                "tracing",
+                "trace",
+                "dashboard",
+                "alert",
+                "monitor",
+                "grafana",
+                "datadog",
+                "sentry",
+                "profiling",
+                "flame graph",
+                "apm",
+                "distributed tracing",
             ],
         },
         {
             "name": "root_cause_analysis",
             "weight": 0.40,
             "keywords": [
-                "reproduce", "isolate", "hypothesis", "bottleneck",
-                "connection pool", "database", "timeout", "memory leak",
-                "cpu", "thread", "deadlock", "race condition",
-                "regression", "rollback", "deploy", "canary",
+                "reproduce",
+                "isolate",
+                "hypothesis",
+                "bottleneck",
+                "connection pool",
+                "database",
+                "timeout",
+                "memory leak",
+                "cpu",
+                "thread",
+                "deadlock",
+                "race condition",
+                "regression",
+                "rollback",
+                "deploy",
+                "canary",
             ],
         },
         {
             "name": "incident_communication",
             "weight": 0.25,
             "keywords": [
-                "stakeholders", "status page", "postmortem", "runbook",
-                "escalate", "team", "on-call", "notify", "document",
-                "timeline", "mitigation", "action item",
+                "stakeholders",
+                "status page",
+                "postmortem",
+                "runbook",
+                "escalate",
+                "team",
+                "on-call",
+                "notify",
+                "document",
+                "timeline",
+                "mitigation",
+                "action item",
             ],
         },
     ],
@@ -294,28 +437,58 @@ SWE_Q2 = {
             "name": "data_storage",
             "weight": 0.30,
             "keywords": [
-                "database", "redis", "cache", "key-value", "nosql", "sharding",
-                "replication", "cassandra", "dynamodb", "hash",
-                "bloom filter", "consistent hashing", "partitioning",
+                "database",
+                "redis",
+                "cache",
+                "key-value",
+                "nosql",
+                "sharding",
+                "replication",
+                "cassandra",
+                "dynamodb",
+                "hash",
+                "bloom filter",
+                "consistent hashing",
+                "partitioning",
             ],
         },
         {
             "name": "scalability_architecture",
             "weight": 0.40,
             "keywords": [
-                "load balancer", "horizontal scaling", "cdn", "edge",
-                "microservice", "stateless", "rate limit", "queue",
-                "async", "read replica", "geolocation", "anycast",
-                "auto-scaling", "throughput", "latency",
+                "load balancer",
+                "horizontal scaling",
+                "cdn",
+                "edge",
+                "microservice",
+                "stateless",
+                "rate limit",
+                "queue",
+                "async",
+                "read replica",
+                "geolocation",
+                "anycast",
+                "auto-scaling",
+                "throughput",
+                "latency",
             ],
         },
         {
             "name": "reliability_and_tradeoffs",
             "weight": 0.30,
             "keywords": [
-                "availability", "durability", "cap theorem", "eventual consistency",
-                "failover", "replication", "backup", "single point of failure",
-                "retry", "circuit breaker", "idempotent", "graceful degradation",
+                "availability",
+                "durability",
+                "cap theorem",
+                "eventual consistency",
+                "failover",
+                "replication",
+                "backup",
+                "single point of failure",
+                "retry",
+                "circuit breaker",
+                "idempotent",
+                "graceful degradation",
             ],
         },
     ],
@@ -331,28 +504,61 @@ SWE_Q3 = {
             "name": "technical_review_depth",
             "weight": 0.35,
             "keywords": [
-                "logic", "edge case", "security", "sql injection", "xss",
-                "performance", "complexity", "test", "coverage",
-                "naming", "readability", "maintainability", "solid",
-                "dependency", "abstraction",
+                "logic",
+                "edge case",
+                "security",
+                "sql injection",
+                "xss",
+                "performance",
+                "complexity",
+                "test",
+                "coverage",
+                "naming",
+                "readability",
+                "maintainability",
+                "solid",
+                "dependency",
+                "abstraction",
             ],
         },
         {
             "name": "feedback_quality",
             "weight": 0.35,
             "keywords": [
-                "constructive", "specific", "context", "explain", "why",
-                "suggestion", "alternative", "nitpick", "blocking",
-                "non-blocking", "question", "praise", "tone", "kind",
+                "constructive",
+                "specific",
+                "context",
+                "explain",
+                "why",
+                "suggestion",
+                "alternative",
+                "nitpick",
+                "blocking",
+                "non-blocking",
+                "question",
+                "praise",
+                "tone",
+                "kind",
             ],
         },
         {
             "name": "process_and_culture",
             "weight": 0.30,
             "keywords": [
-                "checklist", "linter", "ci", "automated", "merge",
-                "approval", "consensus", "escalate", "discuss", "synchronous",
-                "async", "style guide", "convention", "knowledge sharing",
+                "checklist",
+                "linter",
+                "ci",
+                "automated",
+                "merge",
+                "approval",
+                "consensus",
+                "escalate",
+                "discuss",
+                "synchronous",
+                "async",
+                "style guide",
+                "convention",
+                "knowledge sharing",
             ],
         },
     ],
@@ -362,9 +568,9 @@ ALL_QUESTIONS = {
     "SEC_Q1": SEC_Q1,
     "SEC_Q2": SEC_Q2,
     "SEC_Q3": SEC_Q3,
-    "QA_Q1":  QA_Q1,
-    "QA_Q2":  QA_Q2,
-    "QA_Q3":  QA_Q3,
+    "QA_Q1": QA_Q1,
+    "QA_Q2": QA_Q2,
+    "QA_Q3": QA_Q3,
     "SWE_Q1": SWE_Q1,
     "SWE_Q2": SWE_Q2,
     "SWE_Q3": SWE_Q3,
@@ -376,16 +582,13 @@ ALL_QUESTIONS = {
 # Written BLIND — no keywords looked up.
 
 PERSONA_A = {
-
     # --- Security Questions ---
-
     "SEC_Q1": (
         "I would tell the volunteer to be careful and not click anything in the email. "
         "Something feels off about the message — the urgency and the weird link. "
         "I'd tell them to ignore it and report it to whoever manages the team communications. "
         "Then I'd let the rest of the team know to watch out for similar messages."
     ),
-
     "SEC_Q2": (
         "Before building this feature I would think about who should be allowed to download "
         "the data. Probably only administrators of the organization. I'd make sure there's "
@@ -393,7 +596,6 @@ PERSONA_A = {
         "The CSV file probably has personal information so we should be careful about who "
         "gets access to it."
     ),
-
     "SEC_Q3": (
         "This is a serious problem. I'd tell the developer immediately and ask them to remove "
         "the key from the code. We should also change the key with the payment company so the "
@@ -401,9 +603,7 @@ PERSONA_A = {
         "pushing it to make sure no passwords or keys are included. Maybe have a policy about "
         "this kind of thing."
     ),
-
     # --- QA Questions ---
-
     "QA_Q1": (
         "I would stay calm and first figure out how bad the problem actually is. Can we "
         "delay the demo? If not, is there a way to work around the bug? I'd let the "
@@ -411,7 +611,6 @@ PERSONA_A = {
         "fix the problem as fast as possible. If I can't fix it in time, maybe we can show "
         "a different part of the product that works."
     ),
-
     "QA_Q2": (
         "I would start by understanding what the most important parts of the product are "
         "and make sure those get tested first. Writing tests for everything at once is too "
@@ -419,7 +618,6 @@ PERSONA_A = {
         "Getting the team involved is important — everyone should feel responsible for quality. "
         "Over time we'd add more tests as we learn what needs coverage."
     ),
-
     "QA_Q3": (
         "If tests are failing randomly it's very confusing for the team. I would look at "
         "the tests that fail most often and try to understand what makes them unreliable. "
@@ -427,9 +625,7 @@ PERSONA_A = {
         "fixed and remove the ones that can't be trusted. We need the team to take "
         "test failures seriously again."
     ),
-
     # --- SWE Questions ---
-
     "SWE_Q1": (
         "I would start by looking at what's different — did we recently release something "
         "new? I'd check the error messages to understand what's going wrong. The fact that "
@@ -437,7 +633,6 @@ PERSONA_A = {
         "users at the same time. I'd see if we can add more capacity or reduce the load "
         "somehow, and let the team know what's happening."
     ),
-
     "SWE_Q2": (
         "For a service like this you need a database to store the links. Since there are a "
         "lot of requests you'd want to cache popular links so you don't hit the database every "
@@ -445,7 +640,6 @@ PERSONA_A = {
         "you could use servers in different countries. The main challenge is making sure it "
         "stays fast when lots of people use it at the same time."
     ),
-
     "SWE_Q3": (
         "When I review code I look for things that seem wrong or confusing. I try to give "
         "helpful feedback rather than just criticizing. If I disagree with something I'd "
@@ -461,9 +655,7 @@ PERSONA_A = {
 # Written BLIND — no keywords looked up.
 
 PERSONA_B = {
-
     # --- Security Questions ---
-
     "SEC_Q1": (
         "This is clearly a social engineering and phishing attack using a lookalike domain "
         "with typosquatting techniques. The suspicious link should be treated as a spoofed "
@@ -472,7 +664,6 @@ PERSONA_B = {
         "are key. Alert the team, explain the threat, and take steps to protect everyone "
         "involved by verifying sender authenticity going forward."
     ),
-
     "SEC_Q2": (
         "Threat modeling is a critical security practice. Using STRIDE methodology and data "
         "flow diagrams (DFD), we can identify attack surfaces and trust boundaries. PII and "
@@ -481,7 +672,6 @@ PERSONA_B = {
         "proper authorization, audit log tracking, and role-based permissions ensures data "
         "security. A comprehensive threat model is essential before development begins."
     ),
-
     "SEC_Q3": (
         "This is a secrets management incident. The API key should be immediately revoked and "
         "rotated with the payment processor. Contact them to deactivate the compromised key. "
@@ -490,9 +680,7 @@ PERSONA_B = {
         "pre-commit hooks, enable secret scanning in CI, store credentials in a vault or as "
         "environment variables, update .gitignore, and implement a training policy."
     ),
-
     # --- QA Questions ---
-
     "QA_Q1": (
         "In this critical situation, immediate risk assessment is paramount. Evaluate scope and "
         "impact on users affected. Consider rollback, hotfix, or workaround options. Escalate "
@@ -501,7 +689,6 @@ PERSONA_B = {
         "stack trace. Regression testing should follow any fix. Systematic debugging with proper "
         "documentation ensures a complete incident response process."
     ),
-
     "QA_Q2": (
         "Building a test strategy requires prioritization based on critical path and risk-based "
         "analysis. Start with smoke tests and a regression suite for high value paths including "
@@ -510,7 +697,6 @@ PERSONA_B = {
         "pipeline. Team buy-in from developers and stakeholders is crucial. Use incremental "
         "adoption, quick wins, training, and track metrics like defect rate to demonstrate value."
     ),
-
     "QA_Q3": (
         "Flaky tests are a systemic problem. Diagnosis involves identifying timing issues, race "
         "conditions, async dependencies, environment and data isolation problems, and test "
@@ -519,9 +705,7 @@ PERSONA_B = {
         "Process change requires a zero tolerance policy with a quality gate, blocking merges, "
         "establishing ownership and culture of trust, with escalation paths for new failures."
     ),
-
     # --- SWE Questions ---
-
     "SWE_Q1": (
         "For production incidents you need strong observability: logs, metrics, tracing across "
         "distributed systems, dashboards in tools like Grafana, Datadog, or Sentry. Root cause "
@@ -530,7 +714,6 @@ PERSONA_B = {
         "conditions. Consider rollback or canary deployment. Communicate with stakeholders, "
         "update the status page, prepare a postmortem with runbook and action items."
     ),
-
     "SWE_Q2": (
         "A URL shortener at scale requires careful architectural decisions. For data storage: "
         "Redis cache with consistent hashing, NoSQL like DynamoDB or Cassandra with sharding and "
@@ -540,7 +723,6 @@ PERSONA_B = {
         "and latency requirements. Reliability tradeoffs: CAP theorem, eventual consistency, "
         "failover, circuit breakers, graceful degradation, avoiding single points of failure."
     ),
-
     "SWE_Q3": (
         "A thorough code review examines logic, edge cases, security vulnerabilities like SQL "
         "injection and XSS, performance and complexity, test coverage, naming, readability, "
@@ -564,9 +746,7 @@ PERSONA_B = {
 # Written BLIND — no keywords looked up.
 
 PERSONA_C = {
-
     # --- Security expert answering QA questions ---
-
     "QA_Q1": (
         "My first concern is containment — we need to understand the blast radius of this "
         "issue before the demo. I'd immediately document the bug, its trigger conditions, "
@@ -577,7 +757,6 @@ PERSONA_C = {
         "to the stakeholders presenting. Transparency with the team is non-negotiable — "
         "everyone needs to know the current state so we're not caught off guard publicly."
     ),
-
     "QA_Q2": (
         "Starting from scratch is actually an opportunity to do this right. I'd begin with "
         "a threat model of the application — what are the highest-risk areas? Those get "
@@ -588,7 +767,6 @@ PERSONA_C = {
         "critical user paths, document coverage metrics, and build incrementally. Getting "
         "management buy-in by showing defect trends over time is key to sustaining it."
     ),
-
     "QA_Q3": (
         "Flaky tests are a trust and security problem as much as a technical one — "
         "when engineers ignore failures, you've lost your safety net. My approach: "
@@ -600,9 +778,7 @@ PERSONA_C = {
         "test is better than a lying test. Process: enforce zero tolerance going forward "
         "with a mandatory block on merges that introduce new flakiness."
     ),
-
     # --- Security expert answering SWE questions ---
-
     "SWE_Q1": (
         "Intermittent errors under load are often a resource exhaustion or concurrency problem. "
         "My first step is to review the logs and any available monitoring dashboards for "
@@ -614,7 +790,6 @@ PERSONA_C = {
         "the error rate isn't improving. A post-incident review to prevent recurrence is "
         "essential — we need to understand root cause, not just restore service."
     ),
-
     "SWE_Q2": (
         "For a high-throughput global service the primary security and architecture concern "
         "is limiting attack surface while meeting performance requirements. I'd use a stateless "
@@ -626,7 +801,6 @@ PERSONA_C = {
         "I'd accept eventual consistency for URL resolution since a short propagation delay "
         "is acceptable. Multi-region replication provides failover protection."
     ),
-
     "SWE_Q3": (
         "My code review process starts with automated checks — linter, static analysis, "
         "security scanning — before any human review. This filters mechanical and security "
@@ -640,9 +814,7 @@ PERSONA_C = {
         "consensus. Knowledge sharing through review comments builds the team's security "
         "awareness over time."
     ),
-
     # --- QA expert answering SWE questions ---
-
     "SWE_Q1_qa": (
         "When production is failing I immediately check monitoring dashboards and logs "
         "to understand the scope — how many users affected, which endpoints, what percentage "
@@ -654,7 +826,6 @@ PERSONA_C = {
         "Once the root cause is isolated and fixed I'd write a regression test immediately "
         "before the fix is merged to prevent it coming back."
     ),
-
     "SWE_Q2_qa": (
         "For a URL shortener at 10k RPS I'd think about this from a testability angle: "
         "the system needs to be simple enough to test reliably under load. I'd use a "
@@ -666,7 +837,6 @@ PERSONA_C = {
         "propagate globally rather than making reads slower for everyone. Load testing "
         "during development would be mandatory before any traffic reaches this service."
     ),
-
     "SWE_Q3_qa": (
         "Code review is basically a quality gate, which is my domain. I'd focus on: "
         "does this code have test coverage for the new paths? Are edge cases handled? "
@@ -679,9 +849,7 @@ PERSONA_C = {
         "to the team convention. CI should block merges that drop coverage below "
         "the threshold — this removes the disagreement from being a human debate."
     ),
-
     # --- QA expert answering Security questions ---
-
     "SEC_Q1_qa": (
         "This is an urgent situation that needs to be handled quickly and systematically. "
         "First I'd tell the volunteer to stop — don't click anything, don't enter any "
@@ -693,7 +861,6 @@ PERSONA_C = {
         "If anyone has already clicked the link, they need to change their password "
         "immediately through the real website, not through any link in email."
     ),
-
     "SEC_Q2_qa": (
         "Before a single line of code I'd want to understand who uses this feature "
         "and what could go wrong. The main risks are: wrong people getting access "
@@ -705,7 +872,6 @@ PERSONA_C = {
         "controls matter. I'd also think about rate limiting — prevent someone "
         "from dumping the entire database repeatedly."
     ),
-
     "SEC_Q3_qa": (
         "The moment I see this I'd raise it as a critical incident. The payment key "
         "needs to be revoked with the payment provider immediately — assume it's "
@@ -718,9 +884,7 @@ PERSONA_C = {
         "Add a check to the CI pipeline that blocks commits containing potential "
         "API keys. Run a training session so the team understands why this is serious."
     ),
-
     # --- SWE expert answering Security questions ---
-
     "SEC_Q1_swe": (
         "The email is clearly attempting to get the volunteer to hand over their password "
         "by creating urgency around account access. The dead giveaway is the domain — "
@@ -732,7 +896,6 @@ PERSONA_C = {
         "credentials are compromised, force password reset through the actual platform. "
         "Follow up with a quick awareness brief on how to spot these attacks."
     ),
-
     "SEC_Q2_swe": (
         "Before writing any code I'd map out the data flows in the feature and identify "
         "where things can go wrong. The feature touches personal data — names, contact "
@@ -744,7 +907,6 @@ PERSONA_C = {
         "permanently — generate on demand and deliver directly. Rate limit the "
         "endpoint to prevent bulk extraction abuse."
     ),
-
     "SEC_Q3_swe": (
         "First priority is revoking the key — call the payment processor and get that "
         "key disabled before anything else. A compromised payment key is a live financial "
@@ -757,9 +919,7 @@ PERSONA_C = {
         "CI so there's a server-side safety net. Update the .gitignore and team policy "
         "to make environment variables the mandatory pattern for any secret."
     ),
-
     # --- SWE expert answering QA questions ---
-
     "QA_Q1_swe": (
         "Thirty minutes is tight. First: check what the bug actually does — is it a crash "
         "or a degraded experience? Check logs and error tracking to understand scope. "
@@ -771,7 +931,6 @@ PERSONA_C = {
         "write a minimal fix, test it in staging, deploy. If not, prepare the workaround "
         "option: demo the unaffected parts of the product instead."
     ),
-
     "QA_Q2_swe": (
         "No tests is a technical debt situation. I'd start by assessing risk: which "
         "parts of the codebase are most critical and most likely to break? Those get "
@@ -784,7 +943,6 @@ PERSONA_C = {
         "than the QA engineer writing all of them. Code review should block PRs "
         "that add logic without tests."
     ),
-
     "QA_Q3_swe": (
         "A 15% flaky rate means the test suite has become noise. The immediate fix "
         "is to quarantine every known flaky test so they don't block the pipeline — "
@@ -803,6 +961,7 @@ PERSONA_C = {
 
 # ── Scoring helpers ──────────────────────────────────────────────────────────
 
+
 def score(question: dict, answer: str) -> float:
     """Run _keyword_fallback + _aggregate, return composite 0.0-1.0."""
     raw = _keyword_fallback(answer, question["expected_concepts"])
@@ -819,50 +978,51 @@ def breakdown(question: dict, answer: str) -> dict[str, float]:
 # Map: (question_id, persona_label) -> answer text
 CROSS_MATRIX: dict[tuple[str, str], str] = {
     # Persona A (generalist) on all 9 questions
-    ("SEC_Q1", "A_generalist"):  PERSONA_A["SEC_Q1"],
-    ("SEC_Q2", "A_generalist"):  PERSONA_A["SEC_Q2"],
-    ("SEC_Q3", "A_generalist"):  PERSONA_A["SEC_Q3"],
-    ("QA_Q1",  "A_generalist"):  PERSONA_A["QA_Q1"],
-    ("QA_Q2",  "A_generalist"):  PERSONA_A["QA_Q2"],
-    ("QA_Q3",  "A_generalist"):  PERSONA_A["QA_Q3"],
-    ("SWE_Q1", "A_generalist"):  PERSONA_A["SWE_Q1"],
-    ("SWE_Q2", "A_generalist"):  PERSONA_A["SWE_Q2"],
-    ("SWE_Q3", "A_generalist"):  PERSONA_A["SWE_Q3"],
+    ("SEC_Q1", "A_generalist"): PERSONA_A["SEC_Q1"],
+    ("SEC_Q2", "A_generalist"): PERSONA_A["SEC_Q2"],
+    ("SEC_Q3", "A_generalist"): PERSONA_A["SEC_Q3"],
+    ("QA_Q1", "A_generalist"): PERSONA_A["QA_Q1"],
+    ("QA_Q2", "A_generalist"): PERSONA_A["QA_Q2"],
+    ("QA_Q3", "A_generalist"): PERSONA_A["QA_Q3"],
+    ("SWE_Q1", "A_generalist"): PERSONA_A["SWE_Q1"],
+    ("SWE_Q2", "A_generalist"): PERSONA_A["SWE_Q2"],
+    ("SWE_Q3", "A_generalist"): PERSONA_A["SWE_Q3"],
     # Persona B (buzzwords) on all 9 questions
-    ("SEC_Q1", "B_buzzwords"):   PERSONA_B["SEC_Q1"],
-    ("SEC_Q2", "B_buzzwords"):   PERSONA_B["SEC_Q2"],
-    ("SEC_Q3", "B_buzzwords"):   PERSONA_B["SEC_Q3"],
-    ("QA_Q1",  "B_buzzwords"):   PERSONA_B["QA_Q1"],
-    ("QA_Q2",  "B_buzzwords"):   PERSONA_B["QA_Q2"],
-    ("QA_Q3",  "B_buzzwords"):   PERSONA_B["QA_Q3"],
-    ("SWE_Q1", "B_buzzwords"):   PERSONA_B["SWE_Q1"],
-    ("SWE_Q2", "B_buzzwords"):   PERSONA_B["SWE_Q2"],
-    ("SWE_Q3", "B_buzzwords"):   PERSONA_B["SWE_Q3"],
+    ("SEC_Q1", "B_buzzwords"): PERSONA_B["SEC_Q1"],
+    ("SEC_Q2", "B_buzzwords"): PERSONA_B["SEC_Q2"],
+    ("SEC_Q3", "B_buzzwords"): PERSONA_B["SEC_Q3"],
+    ("QA_Q1", "B_buzzwords"): PERSONA_B["QA_Q1"],
+    ("QA_Q2", "B_buzzwords"): PERSONA_B["QA_Q2"],
+    ("QA_Q3", "B_buzzwords"): PERSONA_B["QA_Q3"],
+    ("SWE_Q1", "B_buzzwords"): PERSONA_B["SWE_Q1"],
+    ("SWE_Q2", "B_buzzwords"): PERSONA_B["SWE_Q2"],
+    ("SWE_Q3", "B_buzzwords"): PERSONA_B["SWE_Q3"],
     # Persona C: Security expert on QA + SWE questions
-    ("QA_Q1",  "C_sec_on_qa"):   PERSONA_C["QA_Q1"],
-    ("QA_Q2",  "C_sec_on_qa"):   PERSONA_C["QA_Q2"],
-    ("QA_Q3",  "C_sec_on_qa"):   PERSONA_C["QA_Q3"],
-    ("SWE_Q1", "C_sec_on_swe"):  PERSONA_C["SWE_Q1"],
-    ("SWE_Q2", "C_sec_on_swe"):  PERSONA_C["SWE_Q2"],
-    ("SWE_Q3", "C_sec_on_swe"):  PERSONA_C["SWE_Q3"],
+    ("QA_Q1", "C_sec_on_qa"): PERSONA_C["QA_Q1"],
+    ("QA_Q2", "C_sec_on_qa"): PERSONA_C["QA_Q2"],
+    ("QA_Q3", "C_sec_on_qa"): PERSONA_C["QA_Q3"],
+    ("SWE_Q1", "C_sec_on_swe"): PERSONA_C["SWE_Q1"],
+    ("SWE_Q2", "C_sec_on_swe"): PERSONA_C["SWE_Q2"],
+    ("SWE_Q3", "C_sec_on_swe"): PERSONA_C["SWE_Q3"],
     # Persona C: QA expert on Security + SWE questions
-    ("SEC_Q1", "C_qa_on_sec"):   PERSONA_C["SEC_Q1_qa"],
-    ("SEC_Q2", "C_qa_on_sec"):   PERSONA_C["SEC_Q2_qa"],
-    ("SEC_Q3", "C_qa_on_sec"):   PERSONA_C["SEC_Q3_qa"],
-    ("SWE_Q1", "C_qa_on_swe"):   PERSONA_C["SWE_Q1_qa"],
-    ("SWE_Q2", "C_qa_on_swe"):   PERSONA_C["SWE_Q2_qa"],
-    ("SWE_Q3", "C_qa_on_swe"):   PERSONA_C["SWE_Q3_qa"],
+    ("SEC_Q1", "C_qa_on_sec"): PERSONA_C["SEC_Q1_qa"],
+    ("SEC_Q2", "C_qa_on_sec"): PERSONA_C["SEC_Q2_qa"],
+    ("SEC_Q3", "C_qa_on_sec"): PERSONA_C["SEC_Q3_qa"],
+    ("SWE_Q1", "C_qa_on_swe"): PERSONA_C["SWE_Q1_qa"],
+    ("SWE_Q2", "C_qa_on_swe"): PERSONA_C["SWE_Q2_qa"],
+    ("SWE_Q3", "C_qa_on_swe"): PERSONA_C["SWE_Q3_qa"],
     # Persona C: SWE expert on Security + QA questions
-    ("SEC_Q1", "C_swe_on_sec"):  PERSONA_C["SEC_Q1_swe"],
-    ("SEC_Q2", "C_swe_on_sec"):  PERSONA_C["SEC_Q2_swe"],
-    ("SEC_Q3", "C_swe_on_sec"):  PERSONA_C["SEC_Q3_swe"],
-    ("QA_Q1",  "C_swe_on_qa"):   PERSONA_C["QA_Q1_swe"],
-    ("QA_Q2",  "C_swe_on_qa"):   PERSONA_C["QA_Q2_swe"],
-    ("QA_Q3",  "C_swe_on_qa"):   PERSONA_C["QA_Q3_swe"],
+    ("SEC_Q1", "C_swe_on_sec"): PERSONA_C["SEC_Q1_swe"],
+    ("SEC_Q2", "C_swe_on_sec"): PERSONA_C["SEC_Q2_swe"],
+    ("SEC_Q3", "C_swe_on_sec"): PERSONA_C["SEC_Q3_swe"],
+    ("QA_Q1", "C_swe_on_qa"): PERSONA_C["QA_Q1_swe"],
+    ("QA_Q2", "C_swe_on_qa"): PERSONA_C["QA_Q2_swe"],
+    ("QA_Q3", "C_swe_on_qa"): PERSONA_C["QA_Q3_swe"],
 }
 
 
 # ── Individual persona tests ─────────────────────────────────────────────────
+
 
 class TestPersonaA_Generalist:  # noqa: N801 — underscore separates persona letter from descriptor for pytest readability
     """Generalist volunteer should score LOW across all questions (< 0.35).
@@ -1064,6 +1224,7 @@ class TestPersonaC_WrongDomainExpert:  # noqa: N801 — underscore separates per
 
 # ── Full score matrix test ────────────────────────────────────────────────────
 
+
 class TestFullScoreMatrix:
     """Print the complete cross-assessment score matrix and run analysis."""
 
@@ -1084,8 +1245,7 @@ class TestFullScoreMatrix:
         print(f"{'Question':<12} {'A_generalist':>14} {'B_buzzwords':>13} {'C_wrong_expert':>15}")
         print("-" * 85)
 
-        question_order = ["SEC_Q1", "SEC_Q2", "SEC_Q3", "QA_Q1", "QA_Q2", "QA_Q3",
-                          "SWE_Q1", "SWE_Q2", "SWE_Q3"]
+        question_order = ["SEC_Q1", "SEC_Q2", "SEC_Q3", "QA_Q1", "QA_Q2", "QA_Q3", "SWE_Q1", "SWE_Q2", "SWE_Q3"]
 
         # For C, pick the most relevant wrong-domain expert per question
         c_persona_map = {
@@ -1110,11 +1270,7 @@ class TestFullScoreMatrix:
             b_flag = " LOW?" if b_score < 0.30 else ""
             c_gap = f"({c_label})"
 
-            print(
-                f"{qid:<12} {a_score:>14.3f}{a_flag:<8} "
-                f"{b_score:>13.3f}{b_flag:<6} "
-                f"{c_score:>15.3f}  {c_gap}"
-            )
+            print(f"{qid:<12} {a_score:>14.3f}{a_flag:<8} {b_score:>13.3f}{b_flag:<6} {c_score:>15.3f}  {c_gap}")
 
         print("=" * 85)
 
@@ -1136,8 +1292,9 @@ class TestFullScoreMatrix:
         print("=" * 85)
 
         # Check 1: Does A (generalist) score suspiciously high anywhere?
-        high_a = [(qid, results[(qid, "A_generalist")]) for qid in question_order
-                  if results[(qid, "A_generalist")] > 0.4]
+        high_a = [
+            (qid, results[(qid, "A_generalist")]) for qid in question_order if results[(qid, "A_generalist")] > 0.4
+        ]
         if high_a:
             print(f"\n[CONCERN] Generalist scores > 0.40 on: {high_a}")
             print("  -> These questions contain common English words in their keyword lists.")
@@ -1147,8 +1304,9 @@ class TestFullScoreMatrix:
             print("\n[PASS] Generalist scores < 0.40 on all questions. Keyword lists are domain-specific.")
 
         # Check 2: Does B (buzzwords) score suspiciously HIGH? (tests vocabulary vs competence)
-        very_high_b = [(qid, results[(qid, "B_buzzwords")]) for qid in question_order
-                       if results[(qid, "B_buzzwords")] > 0.75]
+        very_high_b = [
+            (qid, results[(qid, "B_buzzwords")]) for qid in question_order if results[(qid, "B_buzzwords")] > 0.75
+        ]
         if very_high_b:
             print(f"\n[CONCERN] Buzzword persona scores > 0.75 on: {very_high_b}")
             print("  -> keyword_fallback CANNOT distinguish prose expertise from vocabulary lists.")
@@ -1159,8 +1317,11 @@ class TestFullScoreMatrix:
             print(f"\n[INFO] Buzzword persona max score: {max(b_scores):.3f} (threshold for concern: 0.75)")
 
         # Check 3: Does wrong-domain expert score surprisingly well? (domain specificity check)
-        surprising_c = [(qid, results.get((qid, c_persona_map[qid]), 0.0)) for qid in question_order
-                        if results.get((qid, c_persona_map[qid]), 0.0) > 0.60]
+        surprising_c = [
+            (qid, results.get((qid, c_persona_map[qid]), 0.0))
+            for qid in question_order
+            if results.get((qid, c_persona_map[qid]), 0.0) > 0.60
+        ]
         if surprising_c:
             print(f"\n[CONCERN] Wrong-domain expert scores > 0.60 on: {surprising_c}")
             print("  -> These questions may not be domain-specific enough.")
@@ -1170,12 +1331,14 @@ class TestFullScoreMatrix:
             print("  -> Questions appear domain-specific (cross-expert doesn't ace them).")
 
         # Check 4: Ordering B > C > A (expected hierarchy)
-        b_gt_c = sum(1 for qid in question_order
-                     if results.get((qid, "B_buzzwords"), 0) >
-                        results.get((qid, c_persona_map[qid]), 0))
-        c_gt_a = sum(1 for qid in question_order
-                     if results.get((qid, c_persona_map[qid]), 0) >
-                        results[(qid, "A_generalist")])
+        b_gt_c = sum(
+            1
+            for qid in question_order
+            if results.get((qid, "B_buzzwords"), 0) > results.get((qid, c_persona_map[qid]), 0)
+        )
+        c_gt_a = sum(
+            1 for qid in question_order if results.get((qid, c_persona_map[qid]), 0) > results[(qid, "A_generalist")]
+        )
 
         print(f"\n[ORDERING] B > C: {b_gt_c}/9 questions")
         print(f"[ORDERING] C > A: {c_gt_a}/9 questions")
@@ -1203,8 +1366,7 @@ class TestFullScoreMatrix:
     def test_a_always_below_b(self):
         """Generalist must score below buzzword persona on every question."""
         results = self._compute_all_scores()
-        question_order = ["SEC_Q1", "SEC_Q2", "SEC_Q3", "QA_Q1", "QA_Q2", "QA_Q3",
-                          "SWE_Q1", "SWE_Q2", "SWE_Q3"]
+        question_order = ["SEC_Q1", "SEC_Q2", "SEC_Q3", "QA_Q1", "QA_Q2", "QA_Q3", "SWE_Q1", "SWE_Q2", "SWE_Q3"]
         failures = []
         for qid in question_order:
             s_a = results[(qid, "A_generalist")]
@@ -1219,8 +1381,7 @@ class TestFullScoreMatrix:
     def test_generalist_average_below_threshold(self):
         """Generalist average should be below 0.35 across all 9 questions."""
         results = self._compute_all_scores()
-        question_order = ["SEC_Q1", "SEC_Q2", "SEC_Q3", "QA_Q1", "QA_Q2", "QA_Q3",
-                          "SWE_Q1", "SWE_Q2", "SWE_Q3"]
+        question_order = ["SEC_Q1", "SEC_Q2", "SEC_Q3", "QA_Q1", "QA_Q2", "QA_Q3", "SWE_Q1", "SWE_Q2", "SWE_Q3"]
         a_avg = sum(results[(qid, "A_generalist")] for qid in question_order) / 9
         print(f"\nGeneralist average: {a_avg:.3f}")
         assert a_avg < 0.40, (
@@ -1231,15 +1392,13 @@ class TestFullScoreMatrix:
     def test_buzzword_average_above_generalist(self):
         """Buzzword average should be meaningfully higher than generalist average."""
         results = self._compute_all_scores()
-        question_order = ["SEC_Q1", "SEC_Q2", "SEC_Q3", "QA_Q1", "QA_Q2", "QA_Q3",
-                          "SWE_Q1", "SWE_Q2", "SWE_Q3"]
+        question_order = ["SEC_Q1", "SEC_Q2", "SEC_Q3", "QA_Q1", "QA_Q2", "QA_Q3", "SWE_Q1", "SWE_Q2", "SWE_Q3"]
         a_avg = sum(results[(qid, "A_generalist")] for qid in question_order) / 9
         b_avg = sum(results[(qid, "B_buzzwords")] for qid in question_order) / 9
         gap = b_avg - a_avg
         print(f"\nA avg: {a_avg:.3f}  B avg: {b_avg:.3f}  gap: {gap:.3f}")
         assert gap > 0.15, (
-            f"Buzzword-generalist gap is only {gap:.3f}. "
-            "Expected > 0.15 — keyword lists should strongly discriminate."
+            f"Buzzword-generalist gap is only {gap:.3f}. Expected > 0.15 — keyword lists should strongly discriminate."
         )
 
     def test_per_concept_breakdown_full(self):
@@ -1248,19 +1407,18 @@ class TestFullScoreMatrix:
         print("PER-CONCEPT BREAKDOWN — ALL 27 CROSS-TEST ENTRIES")
         print("=" * 85)
 
-        question_order = ["SEC_Q1", "SEC_Q2", "SEC_Q3", "QA_Q1", "QA_Q2", "QA_Q3",
-                          "SWE_Q1", "SWE_Q2", "SWE_Q3"]
+        question_order = ["SEC_Q1", "SEC_Q2", "SEC_Q3", "QA_Q1", "QA_Q2", "QA_Q3", "SWE_Q1", "SWE_Q2", "SWE_Q3"]
         persona_order = [
             ("A_generalist", PERSONA_A),
-            ("B_buzzwords",  PERSONA_B),
+            ("B_buzzwords", PERSONA_B),
         ]
         c_persona_per_q = {
-            "SEC_Q1": ("C_qa_on_sec",  PERSONA_C["SEC_Q1_qa"]),
-            "SEC_Q2": ("C_qa_on_sec",  PERSONA_C["SEC_Q2_qa"]),
+            "SEC_Q1": ("C_qa_on_sec", PERSONA_C["SEC_Q1_qa"]),
+            "SEC_Q2": ("C_qa_on_sec", PERSONA_C["SEC_Q2_qa"]),
             "SEC_Q3": ("C_swe_on_sec", PERSONA_C["SEC_Q3_swe"]),
-            "QA_Q1":  ("C_sec_on_qa",  PERSONA_C["QA_Q1"]),
-            "QA_Q2":  ("C_sec_on_qa",  PERSONA_C["QA_Q2"]),
-            "QA_Q3":  ("C_sec_on_qa",  PERSONA_C["QA_Q3"]),
+            "QA_Q1": ("C_sec_on_qa", PERSONA_C["QA_Q1"]),
+            "QA_Q2": ("C_sec_on_qa", PERSONA_C["QA_Q2"]),
+            "QA_Q3": ("C_sec_on_qa", PERSONA_C["QA_Q3"]),
             "SWE_Q1": ("C_sec_on_swe", PERSONA_C["SWE_Q1"]),
             "SWE_Q2": ("C_sec_on_swe", PERSONA_C["SWE_Q2"]),
             "SWE_Q3": ("C_sec_on_swe", PERSONA_C["SWE_Q3"]),
@@ -1292,6 +1450,7 @@ class TestFullScoreMatrix:
 
 
 # ── Key insights test ─────────────────────────────────────────────────────────
+
 
 class TestKeyInsights:
     """Summary findings from the blind cross-assessment."""
@@ -1329,9 +1488,7 @@ class TestKeyInsights:
         )
 
         # SWE expert should still beat generalist
-        assert s_swe_expert > s_generalist, (
-            "SWE expert should outperform generalist even on security question"
-        )
+        assert s_swe_expert > s_generalist, "SWE expert should outperform generalist even on security question"
         assert 0.0 <= s_buzzword <= 1.0  # sanity check
 
     def test_domain_tax_is_measurable(self):

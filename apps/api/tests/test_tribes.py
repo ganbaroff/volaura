@@ -29,10 +29,10 @@ from app.middleware.rate_limit import limiter
 
 limiter.enabled = False
 
-USER_ID   = str(uuid4())
-OTHER_ID  = str(uuid4())
-TRIBE_ID  = str(uuid4())
-ISO_WEEK  = "2026-W14"
+USER_ID = str(uuid4())
+OTHER_ID = str(uuid4())
+TRIBE_ID = str(uuid4())
+ISO_WEEK = "2026-W14"
 
 
 class MockResult:
@@ -42,6 +42,7 @@ class MockResult:
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
+
 
 def make_user_db_in_tribe() -> MagicMock:
     """User-scoped DB: user IS in an active tribe."""
@@ -53,21 +54,28 @@ def make_user_db_in_tribe() -> MagicMock:
         if name == "tribe_members":
             # membership lookup (for /me, /kudos, /opt-out, /renew)
             m.select.return_value.eq.return_value.is_.return_value.maybe_single.return_value.execute = AsyncMock(
-                return_value=MockResult(data={"tribe_id": TRIBE_ID, "tribes": {
-                    "id": TRIBE_ID,
-                    "expires_at": "2026-05-01T00:00:00+00:00",
-                    "status": "active",
-                }})
+                return_value=MockResult(
+                    data={
+                        "tribe_id": TRIBE_ID,
+                        "tribes": {
+                            "id": TRIBE_ID,
+                            "expires_at": "2026-05-01T00:00:00+00:00",
+                            "status": "active",
+                        },
+                    }
+                )
             )
 
         elif name == "tribe_streaks":
             m.select.return_value.eq.return_value.maybe_single.return_value.execute = AsyncMock(
-                return_value=MockResult(data={
-                    "current_streak": 3,
-                    "longest_streak": 5,
-                    "last_activity_week": ISO_WEEK,
-                    "consecutive_misses_count": 0,
-                })
+                return_value=MockResult(
+                    data={
+                        "current_streak": 3,
+                        "longest_streak": 5,
+                        "last_activity_week": ISO_WEEK,
+                        "consecutive_misses_count": 0,
+                    }
+                )
             )
 
         elif name == "tribe_kudos":
@@ -79,9 +87,7 @@ def make_user_db_in_tribe() -> MagicMock:
                 return_value=MockResult(data=None)
             )
             m.upsert.return_value.execute = AsyncMock(return_value=MockResult(data=[{}]))
-            m.delete.return_value.eq.return_value.eq.return_value.execute = AsyncMock(
-                return_value=MockResult(data=[])
-            )
+            m.delete.return_value.eq.return_value.eq.return_value.execute = AsyncMock(return_value=MockResult(data=[]))
 
         elif name == "profiles":
             m.select.return_value.eq.return_value.maybe_single.return_value.execute = AsyncMock(
@@ -94,9 +100,7 @@ def make_user_db_in_tribe() -> MagicMock:
         db.rpc = MagicMock(return_value=rpc_m)
 
         # tribe_members update (opt-out)
-        m.update.return_value.eq.return_value.eq.return_value.execute = AsyncMock(
-            return_value=MockResult(data=[{}])
-        )
+        m.update.return_value.eq.return_value.eq.return_value.execute = AsyncMock(return_value=MockResult(data=[{}]))
 
         return m
 
@@ -151,10 +155,15 @@ def make_admin_db_in_tribe() -> MagicMock:
         if name == "tribe_members":
             # All members in tribe (admin view, used for GET /me)
             m.select.return_value.eq.return_value.is_.return_value.execute = AsyncMock(
-                return_value=MockResult(data=[
-                    {"user_id": USER_ID,  "profiles": {"display_name": "Yusif E.", "avatar_url": None}},
-                    {"user_id": OTHER_ID, "profiles": {"display_name": "Leyla M.", "avatar_url": "https://cdn.example.com/l.jpg"}},
-                ])
+                return_value=MockResult(
+                    data=[
+                        {"user_id": USER_ID, "profiles": {"display_name": "Yusif E.", "avatar_url": None}},
+                        {
+                            "user_id": OTHER_ID,
+                            "profiles": {"display_name": "Leyla M.", "avatar_url": "https://cdn.example.com/l.jpg"},
+                        },
+                    ]
+                )
             )
             # active member count for /renew
             m.select.return_value.eq.return_value.is_.return_value.execute = AsyncMock(
@@ -182,9 +191,9 @@ def make_admin_db_in_tribe() -> MagicMock:
 def override_deps(user_db: MagicMock, admin_db: MagicMock, uid: str = USER_ID):
     """Return FastAPI dependency overrides dict."""
     return {
-        get_supabase_user:    lambda: user_db,
-        get_supabase_admin:   lambda: admin_db,
-        get_current_user_id:  lambda: uid,
+        get_supabase_user: lambda: user_db,
+        get_supabase_admin: lambda: admin_db,
+        get_current_user_id: lambda: uid,
     }
 
 
@@ -194,9 +203,10 @@ def make_client() -> AsyncClient:
 
 # ── GET /api/tribes/me ────────────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_get_tribe_returns_tribe_when_member():
-    user_db  = make_user_db_in_tribe()
+    user_db = make_user_db_in_tribe()
     admin_db = make_admin_db_in_tribe()
 
     app.dependency_overrides = override_deps(user_db, admin_db)
@@ -219,7 +229,7 @@ async def test_get_tribe_returns_tribe_when_member():
 
 @pytest.mark.asyncio
 async def test_get_tribe_returns_null_when_not_member():
-    user_db  = make_user_db_not_in_tribe()
+    user_db = make_user_db_not_in_tribe()
     admin_db = make_admin_db_in_tribe()
 
     app.dependency_overrides = override_deps(user_db, admin_db)
@@ -233,9 +243,10 @@ async def test_get_tribe_returns_null_when_not_member():
 
 # ── GET /api/tribes/me/streak ─────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_get_streak_returns_streak_data():
-    user_db  = make_user_db_in_tribe()
+    user_db = make_user_db_in_tribe()
     admin_db = make_admin_db_in_tribe()
 
     app.dependency_overrides = override_deps(user_db, admin_db)
@@ -253,7 +264,7 @@ async def test_get_streak_returns_streak_data():
 
 @pytest.mark.asyncio
 async def test_get_streak_returns_null_when_no_streak():
-    user_db  = make_user_db_not_in_tribe()
+    user_db = make_user_db_not_in_tribe()
     admin_db = make_admin_db_in_tribe()
 
     app.dependency_overrides = override_deps(user_db, admin_db)
@@ -267,9 +278,10 @@ async def test_get_streak_returns_null_when_no_streak():
 
 # ── POST /api/tribes/me/kudos ─────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_send_kudos_succeeds_when_in_tribe():
-    user_db  = make_user_db_in_tribe()
+    user_db = make_user_db_in_tribe()
     admin_db = make_admin_db_in_tribe()
 
     app.dependency_overrides = override_deps(user_db, admin_db)
@@ -283,7 +295,7 @@ async def test_send_kudos_succeeds_when_in_tribe():
 @pytest.mark.asyncio
 async def test_send_kudos_blocked_when_not_in_tribe():
     """Security gate: NOT_IN_TRIBE → 400."""
-    user_db  = make_user_db_not_in_tribe()
+    user_db = make_user_db_not_in_tribe()
     admin_db = make_admin_db_in_tribe()
 
     app.dependency_overrides = override_deps(user_db, admin_db)
@@ -298,7 +310,7 @@ async def test_send_kudos_blocked_when_not_in_tribe():
 @pytest.mark.asyncio
 async def test_kudos_does_not_expose_sender():
     """Security: kudos insert must NOT include sender_id in the payload."""
-    user_db  = make_user_db_in_tribe()
+    user_db = make_user_db_in_tribe()
     admin_db = make_admin_db_in_tribe()
 
     inserted_payload: dict | None = None
@@ -333,9 +345,10 @@ async def test_kudos_does_not_expose_sender():
 
 # ── POST /api/tribes/opt-out ──────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_opt_out_succeeds_when_in_tribe():
-    user_db  = make_user_db_in_tribe()
+    user_db = make_user_db_in_tribe()
     admin_db = make_admin_db_in_tribe()
 
     app.dependency_overrides = override_deps(user_db, admin_db)
@@ -348,7 +361,7 @@ async def test_opt_out_succeeds_when_in_tribe():
 
 @pytest.mark.asyncio
 async def test_opt_out_blocked_when_not_in_tribe():
-    user_db  = make_user_db_not_in_tribe()
+    user_db = make_user_db_not_in_tribe()
     admin_db = make_admin_db_in_tribe()
 
     app.dependency_overrides = override_deps(user_db, admin_db)
@@ -362,9 +375,10 @@ async def test_opt_out_blocked_when_not_in_tribe():
 
 # ── POST /api/tribes/renew ────────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_renew_succeeds_and_reports_waiting():
-    user_db  = make_user_db_in_tribe()
+    user_db = make_user_db_in_tribe()
     admin_db = make_admin_db_in_tribe()
 
     app.dependency_overrides = override_deps(user_db, admin_db)
@@ -381,7 +395,7 @@ async def test_renew_succeeds_and_reports_waiting():
 
 @pytest.mark.asyncio
 async def test_renew_blocked_when_not_in_tribe():
-    user_db  = make_user_db_not_in_tribe()
+    user_db = make_user_db_not_in_tribe()
     admin_db = make_admin_db_in_tribe()
 
     app.dependency_overrides = override_deps(user_db, admin_db)
@@ -395,9 +409,10 @@ async def test_renew_blocked_when_not_in_tribe():
 
 # ── POST /api/tribes/join-pool ────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_join_pool_succeeds_when_not_in_tribe():
-    user_db  = make_user_db_not_in_tribe()
+    user_db = make_user_db_not_in_tribe()
     admin_db = make_admin_db_in_tribe()
 
     app.dependency_overrides = override_deps(user_db, admin_db)
@@ -411,7 +426,7 @@ async def test_join_pool_succeeds_when_not_in_tribe():
 @pytest.mark.asyncio
 async def test_join_pool_blocked_when_already_in_tribe():
     """Security gate: ALREADY_IN_TRIBE → 400."""
-    user_db  = make_user_db_in_tribe()
+    user_db = make_user_db_in_tribe()
     admin_db = make_admin_db_in_tribe()
 
     app.dependency_overrides = override_deps(user_db, admin_db)
@@ -453,14 +468,18 @@ async def test_join_pool_blocked_when_profile_not_visible():
 
 # ── Q2: Crystal fade level ─────────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
-@pytest.mark.parametrize("misses,expected_level", [
-    (0, 0),
-    (1, 1),
-    (2, 2),
-    (3, 2),  # capped at 2 (3+ misses → reset cycle, shown as 2 until reset runs)
-    (5, 2),
-])
+@pytest.mark.parametrize(
+    "misses,expected_level",
+    [
+        (0, 0),
+        (1, 1),
+        (2, 2),
+        (3, 2),  # capped at 2 (3+ misses → reset cycle, shown as 2 until reset runs)
+        (5, 2),
+    ],
+)
 async def test_crystal_fade_level_capped_at_2(misses: int, expected_level: int):
     """Q2: crystal_fade_level = min(consecutive_misses_count, 2)."""
     user_db = make_user_db_in_tribe()
@@ -472,12 +491,14 @@ async def test_crystal_fade_level_capped_at_2(misses: int, expected_level: int):
         m = original_table(name)
         if name == "tribe_streaks":
             m.select.return_value.eq.return_value.maybe_single.return_value.execute = AsyncMock(
-                return_value=MockResult(data={
-                    "current_streak": 2,
-                    "longest_streak": 4,
-                    "last_activity_week": None,
-                    "consecutive_misses_count": misses,
-                })
+                return_value=MockResult(
+                    data={
+                        "current_streak": 2,
+                        "longest_streak": 4,
+                        "last_activity_week": None,
+                        "consecutive_misses_count": misses,
+                    }
+                )
             )
         return m
 

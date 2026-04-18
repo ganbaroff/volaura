@@ -121,14 +121,78 @@ COMPLETED_SESSION = {
     "answers": {
         "items": [
             # Each item MUST include irt_a/b/c + response — required by CATState.from_dict()
-            {"question_id": Q_MCQ_ID,              "irt_a": 1.2, "irt_b": 0.0,  "irt_c": 0.2, "response": 1, "raw_score": 1.0, "response_time_ms": 3000},
-            {"question_id": str(uuid.uuid4()),     "irt_a": 1.0, "irt_b": -0.5, "irt_c": 0.2, "response": 1, "raw_score": 0.8, "response_time_ms": 4000},
-            {"question_id": str(uuid.uuid4()),     "irt_a": 1.3, "irt_b": 0.2,  "irt_c": 0.1, "response": 1, "raw_score": 1.0, "response_time_ms": 3500},
-            {"question_id": str(uuid.uuid4()),     "irt_a": 0.9, "irt_b": 0.5,  "irt_c": 0.2, "response": 1, "raw_score": 0.9, "response_time_ms": 2800},
-            {"question_id": str(uuid.uuid4()),     "irt_a": 1.1, "irt_b": -0.2, "irt_c": 0.2, "response": 1, "raw_score": 1.0, "response_time_ms": 3200},
-            {"question_id": str(uuid.uuid4()),     "irt_a": 1.0, "irt_b": 0.8,  "irt_c": 0.2, "response": 1, "raw_score": 0.7, "response_time_ms": 5000},
-            {"question_id": str(uuid.uuid4()),     "irt_a": 1.2, "irt_b": 0.3,  "irt_c": 0.1, "response": 1, "raw_score": 0.8, "response_time_ms": 4500},
-            {"question_id": str(uuid.uuid4()),     "irt_a": 1.0, "irt_b": -0.1, "irt_c": 0.2, "response": 1, "raw_score": 0.9, "response_time_ms": 3800},
+            {
+                "question_id": Q_MCQ_ID,
+                "irt_a": 1.2,
+                "irt_b": 0.0,
+                "irt_c": 0.2,
+                "response": 1,
+                "raw_score": 1.0,
+                "response_time_ms": 3000,
+            },
+            {
+                "question_id": str(uuid.uuid4()),
+                "irt_a": 1.0,
+                "irt_b": -0.5,
+                "irt_c": 0.2,
+                "response": 1,
+                "raw_score": 0.8,
+                "response_time_ms": 4000,
+            },
+            {
+                "question_id": str(uuid.uuid4()),
+                "irt_a": 1.3,
+                "irt_b": 0.2,
+                "irt_c": 0.1,
+                "response": 1,
+                "raw_score": 1.0,
+                "response_time_ms": 3500,
+            },
+            {
+                "question_id": str(uuid.uuid4()),
+                "irt_a": 0.9,
+                "irt_b": 0.5,
+                "irt_c": 0.2,
+                "response": 1,
+                "raw_score": 0.9,
+                "response_time_ms": 2800,
+            },
+            {
+                "question_id": str(uuid.uuid4()),
+                "irt_a": 1.1,
+                "irt_b": -0.2,
+                "irt_c": 0.2,
+                "response": 1,
+                "raw_score": 1.0,
+                "response_time_ms": 3200,
+            },
+            {
+                "question_id": str(uuid.uuid4()),
+                "irt_a": 1.0,
+                "irt_b": 0.8,
+                "irt_c": 0.2,
+                "response": 1,
+                "raw_score": 0.7,
+                "response_time_ms": 5000,
+            },
+            {
+                "question_id": str(uuid.uuid4()),
+                "irt_a": 1.2,
+                "irt_b": 0.3,
+                "irt_c": 0.1,
+                "response": 1,
+                "raw_score": 0.8,
+                "response_time_ms": 4500,
+            },
+            {
+                "question_id": str(uuid.uuid4()),
+                "irt_a": 1.0,
+                "irt_b": -0.1,
+                "irt_c": 0.2,
+                "response": 1,
+                "raw_score": 0.9,
+                "response_time_ms": 3800,
+            },
         ],
         "theta": 0.8,
         "theta_se": 0.3,
@@ -140,6 +204,7 @@ COMPLETED_SESSION = {
 
 
 # ── Fixtures ───────────────────────────────────────────────────────────────────
+
 
 @pytest.fixture(autouse=True)
 def reset_rate_limiter():
@@ -154,12 +219,14 @@ def reset_rate_limiter():
 def _make_dep_override(value):
     async def _override():
         yield value
+
     return _override
 
 
 def _make_user_id_override(user_id: str):
     async def _override():
         return user_id
+
     return _override
 
 
@@ -167,10 +234,27 @@ def _build_chainable(execute_side_effects: list):
     """Build a Supabase-like chainable mock with a sequence of execute() responses."""
     mock = MagicMock()
     for attr in [
-        "table", "select", "insert", "update", "delete", "upsert",
-        "eq", "neq", "gte", "lte", "gt", "lt",
-        "order", "limit", "range", "filter", "not_", "in_",
-        "single", "maybe_single", "rpc",
+        "table",
+        "select",
+        "insert",
+        "update",
+        "delete",
+        "upsert",
+        "eq",
+        "neq",
+        "gte",
+        "lte",
+        "gt",
+        "lt",
+        "order",
+        "limit",
+        "range",
+        "filter",
+        "not_",
+        "in_",
+        "single",
+        "maybe_single",
+        "rpc",
     ]:
         setattr(mock, attr, MagicMock(return_value=mock))
 
@@ -192,19 +276,24 @@ def _build_chainable(execute_side_effects: list):
 
 # ── Step 1: Profile creation ───────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_step1_create_profile():
     """POST /api/profiles/me → 201 with profile data including username.
 
     Router does result.data[0] on insert result — mock must return a LIST.
     """
-    user = _build_chainable([
-        None,                    # maybe_single: no existing profile (not found)
-        [MOCK_PROFILE_DB],       # insert → returns list of inserted rows (router uses [0])
-    ])
-    admin = _build_chainable([
-        [MOCK_PROFILE_DB],       # fallback read if needed
-    ])
+    user = _build_chainable(
+        [
+            None,  # maybe_single: no existing profile (not found)
+            [MOCK_PROFILE_DB],  # insert → returns list of inserted rows (router uses [0])
+        ]
+    )
+    admin = _build_chainable(
+        [
+            [MOCK_PROFILE_DB],  # fallback read if needed
+        ]
+    )
 
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
@@ -233,23 +322,28 @@ async def test_step1_create_profile():
 
 # ── Step 2: Start assessment ───────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_step2_start_assessment():
     """POST /api/assessment/start → session_id + next_question (not None)."""
-    admin = _build_chainable([
-        {"id": COMP_ID},        # competency lookup by slug
-        [MCQ_QUESTION],         # questions pool
-    ])
-    user = _build_chainable([
-        # payment_enabled=False → paywall check skipped in beta
-        [],                                 # no in-progress session
-        {"is_platform_admin": False},       # admin lookup (added 2026-04-14 commit 7789545)
-        [],                                 # no rapid-restart cooldown
-        [],                                 # no retest cooldown
-        MagicMock(data=[], count=0),        # abuse monitoring count
-        [],                                 # no carry-over theta
-        {"id": SESSION_ID},                 # session insert
-    ])
+    admin = _build_chainable(
+        [
+            {"id": COMP_ID},  # competency lookup by slug
+            [MCQ_QUESTION],  # questions pool
+        ]
+    )
+    user = _build_chainable(
+        [
+            # payment_enabled=False → paywall check skipped in beta
+            [],  # no in-progress session
+            {"is_platform_admin": False},  # admin lookup (added 2026-04-14 commit 7789545)
+            [],  # no rapid-restart cooldown
+            [],  # no retest cooldown
+            MagicMock(data=[], count=0),  # abuse monitoring count
+            [],  # no carry-over theta
+            {"id": SESSION_ID},  # session insert
+        ]
+    )
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
@@ -274,6 +368,7 @@ async def test_step2_start_assessment():
 
 # ── Step 3: Submit MCQ answer ──────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_step3_submit_answer():
     """POST /api/assessment/answer → session state updated, timing_warning field present.
@@ -284,31 +379,37 @@ async def test_step3_submit_answer():
     - Response contains: session_id, question_id, timing_warning, session (SessionOut)
     """
     next_q = {**MCQ_QUESTION, "id": str(uuid.uuid4()), "irt_b": 0.3}
-    updated_session_list = [{
-        **IN_PROGRESS_SESSION,
-        "current_question_id": next_q["id"],
-        "answer_version": 1,
-        "answers": {
-            "items": [{"question_id": Q_MCQ_ID, "raw_score": 1.0, "response_time_ms": 3000}],
-            "theta": 0.3,
-        },
-    }]
+    updated_session_list = [
+        {
+            **IN_PROGRESS_SESSION,
+            "current_question_id": next_q["id"],
+            "answer_version": 1,
+            "answers": {
+                "items": [{"question_id": Q_MCQ_ID, "raw_score": 1.0, "response_time_ms": 3000}],
+                "theta": 0.3,
+            },
+        }
+    ]
 
     # db_user: only session load (1 call) — updates use db_admin
-    user = _build_chainable([
-        IN_PROGRESS_SESSION,  # session lookup by id + volunteer_id
-    ])
+    user = _build_chainable(
+        [
+            IN_PROGRESS_SESSION,  # session lookup by id + volunteer_id
+        ]
+    )
     # db_admin sequence for MCQ answer:
     # 1. questions table lookup (question fetch)
     # 2. questions list for next item (fetch_questions via helpers)
     # 3. assessment_sessions UPDATE with optimistic lock → must return LIST not None
     # 4. competencies lookup for slug (get_competency_slug)
-    admin = _build_chainable([
-        MCQ_QUESTION,                   # question fetch
-        [MCQ_QUESTION, next_q],         # fetch_questions → pool for next item selection
-        updated_session_list,           # session UPDATE (optimistic lock) → LIST required
-        {"slug": COMP_SLUG},            # get_competency_slug
-    ])
+    admin = _build_chainable(
+        [
+            MCQ_QUESTION,  # question fetch
+            [MCQ_QUESTION, next_q],  # fetch_questions → pool for next item selection
+            updated_session_list,  # session UPDATE (optimistic lock) → LIST required
+            {"slug": COMP_SLUG},  # get_competency_slug
+        ]
+    )
 
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
@@ -341,23 +442,28 @@ async def test_step3_submit_answer():
 
 # ── Step 4: Complete assessment ────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_step4_complete_assessment():
     """POST /api/assessment/complete/{session_id} → competency_score > 0, session_id present."""
     # db_user: session load
-    user = _build_chainable([
-        COMPLETED_SESSION,  # session lookup
-    ])
+    user = _build_chainable(
+        [
+            COMPLETED_SESSION,  # session lookup
+        ]
+    )
     # db_admin sequence for complete_assessment:
     # 1. assessment_sessions UPDATE (force complete in_progress)
     # 2. competencies SELECT slug
     # 3. rpc("upsert_aura_score", ...)
     # 4. emit_assessment_rewards calls (character_state inserts etc.)
-    admin = _build_chainable([
-        [COMPLETED_SESSION],              # session UPDATE to completed
-        {"slug": COMP_SLUG, "id": COMP_ID},  # competency slug lookup
-        MagicMock(data={"total_score": 72.5, "badge_tier": "silver"}),  # upsert_aura_score RPC
-    ])
+    admin = _build_chainable(
+        [
+            [COMPLETED_SESSION],  # session UPDATE to completed
+            {"slug": COMP_SLUG, "id": COMP_ID},  # competency slug lookup
+            MagicMock(data={"total_score": 72.5, "badge_tier": "silver"}),  # upsert_aura_score RPC
+        ]
+    )
 
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
@@ -387,6 +493,7 @@ async def test_step4_complete_assessment():
 
 # ── Step 5: Fetch AURA score ───────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_step5_fetch_aura_score():
     """GET /api/aura/me → total_score not None, badge_tier valid."""
@@ -408,11 +515,13 @@ async def test_step5_fetch_aura_score():
     assert resp.status_code == 200, f"AURA fetch failed: {resp.status_code} — {resp.text}"
     body = resp.json()
     assert body.get("total_score") is not None, "AURA total_score is None — score not persisted"
-    assert body.get("badge_tier") in ("bronze", "silver", "gold", "platinum"), \
+    assert body.get("badge_tier") in ("bronze", "silver", "gold", "platinum"), (
         f"Invalid badge_tier: {body.get('badge_tier')}"
+    )
 
 
 # ── Step 6: Public profile visibility ─────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_step6_public_profile_shows_badge():
@@ -422,10 +531,12 @@ async def test_step6_public_profile_shows_badge():
     computes it via two COUNT queries and passes it as a separate kwarg.
     Putting it in result.data causes 'multiple values for keyword argument' TypeError.
     """
-    admin = _build_chainable([
-        MOCK_PROFILE_DB,     # profile lookup by username
-        # percentile computation (aura_scores queries) — will return None gracefully
-    ])
+    admin = _build_chainable(
+        [
+            MOCK_PROFILE_DB,  # profile lookup by username
+            # percentile computation (aura_scores queries) — will return None gracefully
+        ]
+    )
 
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
     # No auth needed — this is a public endpoint
@@ -447,6 +558,7 @@ async def test_step6_public_profile_shows_badge():
 
 # ── Step 7: Journey smoke test — all critical steps return non-500 ─────────────
 
+
 @pytest.mark.asyncio
 async def test_full_journey_no_500s():
     """Smoke: critical journey endpoints return non-5xx responses.
@@ -457,18 +569,23 @@ async def test_full_journey_no_500s():
     results = {}
 
     # Step 2 — start assessment
-    admin_start = _build_chainable([
-        {"id": COMP_ID},
-        [MCQ_QUESTION],
-    ])
-    user_start = _build_chainable([
-        [],                              # no in-progress session
-        {"is_platform_admin": False},    # admin lookup (added 2026-04-14)
-        [], [],
-        MagicMock(data=[], count=0),
-        [],
-        {"id": SESSION_ID},
-    ])
+    admin_start = _build_chainable(
+        [
+            {"id": COMP_ID},
+            [MCQ_QUESTION],
+        ]
+    )
+    user_start = _build_chainable(
+        [
+            [],  # no in-progress session
+            {"is_platform_admin": False},  # admin lookup (added 2026-04-14)
+            [],
+            [],
+            MagicMock(data=[], count=0),
+            [],
+            {"id": SESSION_ID},
+        ]
+    )
     app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin_start)
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user_start)
     app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)

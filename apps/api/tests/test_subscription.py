@@ -236,9 +236,7 @@ async def test_create_checkout_no_stripe_configured():
                     headers={"Authorization": "Bearer fake-token"},
                 )
 
-            assert resp.status_code == 503, (
-                f"Expected 503, got {resp.status_code}: {resp.text}"
-            )
+            assert resp.status_code == 503, f"Expected 503, got {resp.status_code}: {resp.text}"
             body = resp.json()
             assert body["detail"]["code"] == "STRIPE_NOT_CONFIGURED"
         finally:
@@ -253,10 +251,12 @@ async def test_create_checkout_with_stripe_mock():
         "subscription_status": "trial",
     }
 
-    admin = _build_chainable([
-        profile_row,        # profile select (stripe_customer_id + subscription_status)
-        {"id": USER_ID},    # profiles.update (stripe_customer_id persist — skipped if already set)
-    ])
+    admin = _build_chainable(
+        [
+            profile_row,  # profile select (stripe_customer_id + subscription_status)
+            {"id": USER_ID},  # profiles.update (stripe_customer_id persist — skipped if already set)
+        ]
+    )
 
     # Mock auth.admin.get_user_by_id
     mock_user = MagicMock()
@@ -273,10 +273,11 @@ async def test_create_checkout_with_stripe_mock():
     # Build a fake Stripe checkout session response
     fake_session = {"url": "https://checkout.stripe.com/pay/cs_test_fake123"}
 
-    with patch("app.routers.subscription.settings") as mock_settings, \
-         patch("app.routers.subscription._STRIPE_AVAILABLE", True), \
-         patch("app.routers.subscription._stripe") as mock_stripe:
-
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("app.routers.subscription._STRIPE_AVAILABLE", True),
+        patch("app.routers.subscription._stripe") as mock_stripe,
+    ):
         mock_settings.stripe_secret_key = "sk_test_fake"
         mock_settings.stripe_webhook_secret = "whsec_fake"
         mock_settings.stripe_price_id = "price_test_fake"
@@ -295,9 +296,7 @@ async def test_create_checkout_with_stripe_mock():
                     headers={"Authorization": "Bearer fake-token"},
                 )
 
-            assert resp.status_code == 201, (
-                f"Expected 201, got {resp.status_code}: {resp.text}"
-            )
+            assert resp.status_code == 201, f"Expected 201, got {resp.status_code}: {resp.text}"
             body = resp.json()
             assert "checkout_url" in body
             assert body["checkout_url"].startswith("https://checkout.stripe.com/")
@@ -336,10 +335,11 @@ async def test_webhook_no_signature():
     With it set but no signature header, the Webhook.construct_event raises ValueError
     which maps to INVALID_PAYLOAD (400). We test the common path: sig header missing.
     """
-    with patch("app.routers.subscription.settings") as mock_settings, \
-         patch("app.routers.subscription._STRIPE_AVAILABLE", True), \
-         patch("app.routers.subscription._stripe") as mock_stripe:
-
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("app.routers.subscription._STRIPE_AVAILABLE", True),
+        patch("app.routers.subscription._stripe") as mock_stripe,
+    ):
         mock_settings.stripe_secret_key = "sk_test_fake"
         mock_settings.stripe_webhook_secret = "whsec_fake"
         mock_settings.stripe_price_id = "price_test_fake"
@@ -349,9 +349,7 @@ async def test_webhook_no_signature():
         mock_stripe.errors = MagicMock()
         mock_stripe.errors.SignatureVerificationError = ValueError
         mock_stripe.Webhook = MagicMock()
-        mock_stripe.Webhook.construct_event = MagicMock(
-            side_effect=ValueError("No signatures found")
-        )
+        mock_stripe.Webhook.construct_event = MagicMock(side_effect=ValueError("No signatures found"))
 
         transport = ASGITransport(app=app)
         async with AsyncClient(transport=transport, base_url="http://test") as ac:
@@ -362,9 +360,7 @@ async def test_webhook_no_signature():
                 # stripe-signature header intentionally omitted
             )
 
-        assert resp.status_code == 400, (
-            f"Expected 400 for missing signature, got {resp.status_code}: {resp.text}"
-        )
+        assert resp.status_code == 400, f"Expected 400 for missing signature, got {resp.status_code}: {resp.text}"
         body = resp.json()
         assert body["detail"]["code"] in ("INVALID_SIGNATURE", "INVALID_PAYLOAD", "MISSING_SIGNATURE")
 
@@ -372,10 +368,11 @@ async def test_webhook_no_signature():
 @pytest.mark.asyncio
 async def test_webhook_invalid_signature():
     """Wrong stripe-signature header → 400 with INVALID_SIGNATURE."""
-    with patch("app.routers.subscription.settings") as mock_settings, \
-         patch("app.routers.subscription._STRIPE_AVAILABLE", True), \
-         patch("app.routers.subscription._stripe") as mock_stripe:
-
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("app.routers.subscription._STRIPE_AVAILABLE", True),
+        patch("app.routers.subscription._stripe") as mock_stripe,
+    ):
         mock_settings.stripe_secret_key = "sk_test_fake"
         mock_settings.stripe_webhook_secret = "whsec_fake"
         mock_settings.stripe_price_id = "price_test_fake"
@@ -403,9 +400,7 @@ async def test_webhook_invalid_signature():
                 },
             )
 
-        assert resp.status_code == 400, (
-            f"Expected 400 for invalid signature, got {resp.status_code}: {resp.text}"
-        )
+        assert resp.status_code == 400, f"Expected 400 for invalid signature, got {resp.status_code}: {resp.text}"
         body = resp.json()
         assert body["detail"]["code"] == "INVALID_SIGNATURE"
 
@@ -431,26 +426,29 @@ async def test_webhook_subscription_created():
 
     # The webhook handler calls _update_profile_subscription which creates its own
     # Supabase admin client via acreate_client. We patch that factory directly.
-    _build_chainable([
-        [{"id": USER_ID}],   # profiles.update result (truthy = no warning logged)
-    ])
+    _build_chainable(
+        [
+            [{"id": USER_ID}],  # profiles.update result (truthy = no warning logged)
+        ]
+    )
 
-    with patch("app.routers.subscription.settings") as mock_settings, \
-         patch("app.routers.subscription._STRIPE_AVAILABLE", True), \
-         patch("app.routers.subscription._stripe") as mock_stripe, \
-         patch(
-             "app.routers.subscription._update_profile_subscription",
-             new=AsyncMock(return_value=None),
-         ) as mock_update, \
-         patch(
-             "app.routers.subscription._is_stripe_event_processed",
-             new=AsyncMock(return_value=False),
-         ), \
-         patch(
-             "app.routers.subscription._mark_stripe_event_processed",
-             new=AsyncMock(return_value=None),
-         ):
-
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("app.routers.subscription._STRIPE_AVAILABLE", True),
+        patch("app.routers.subscription._stripe") as mock_stripe,
+        patch(
+            "app.routers.subscription._update_profile_subscription",
+            new=AsyncMock(return_value=None),
+        ) as mock_update,
+        patch(
+            "app.routers.subscription._is_stripe_event_processed",
+            new=AsyncMock(return_value=False),
+        ),
+        patch(
+            "app.routers.subscription._mark_stripe_event_processed",
+            new=AsyncMock(return_value=None),
+        ),
+    ):
         mock_settings.stripe_secret_key = "sk_test_fake"
         mock_settings.stripe_webhook_secret = "whsec_fake"
         mock_settings.stripe_price_id = "price_test_fake"
@@ -475,9 +473,7 @@ async def test_webhook_subscription_created():
                 },
             )
 
-        assert resp.status_code == 200, (
-            f"Expected 200 for valid webhook, got {resp.status_code}: {resp.text}"
-        )
+        assert resp.status_code == 200, f"Expected 200 for valid webhook, got {resp.status_code}: {resp.text}"
         body = resp.json()
         assert body.get("received") is True, f"Expected received=true, got: {body}"
 
@@ -518,22 +514,23 @@ async def test_webhook_subscription_updated_no_profile_raises_500_and_does_not_m
 
     mark_processed_mock = AsyncMock(return_value=None)
 
-    with patch("app.routers.subscription.settings") as mock_settings, \
-         patch("app.routers.subscription._STRIPE_AVAILABLE", True), \
-         patch("app.routers.subscription._stripe") as mock_stripe, \
-         patch(
-             "app.routers.subscription._update_profile_subscription",
-             new=AsyncMock(return_value=False),
-         ), \
-         patch(
-             "app.routers.subscription._is_stripe_event_processed",
-             new=AsyncMock(return_value=False),
-         ), \
-         patch(
-             "app.routers.subscription._mark_stripe_event_processed",
-             new=mark_processed_mock,
-         ):
-
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("app.routers.subscription._STRIPE_AVAILABLE", True),
+        patch("app.routers.subscription._stripe") as mock_stripe,
+        patch(
+            "app.routers.subscription._update_profile_subscription",
+            new=AsyncMock(return_value=False),
+        ),
+        patch(
+            "app.routers.subscription._is_stripe_event_processed",
+            new=AsyncMock(return_value=False),
+        ),
+        patch(
+            "app.routers.subscription._mark_stripe_event_processed",
+            new=mark_processed_mock,
+        ),
+    ):
         mock_settings.stripe_secret_key = "sk_test_fake"
         mock_settings.stripe_webhook_secret = "whsec_fake"
         mock_settings.stripe_price_id = "price_test_fake"
@@ -557,9 +554,7 @@ async def test_webhook_subscription_updated_no_profile_raises_500_and_does_not_m
                 },
             )
 
-        assert resp.status_code == 500, (
-            f"Expected 500 so Stripe retries, got {resp.status_code}: {resp.text}"
-        )
+        assert resp.status_code == 500, f"Expected 500 so Stripe retries, got {resp.status_code}: {resp.text}"
         # CRITICAL: idempotency row must NOT be written — otherwise retry is no-op.
         mark_processed_mock.assert_not_called()
 
@@ -581,22 +576,23 @@ async def test_webhook_subscription_deleted_no_profile_raises_500_and_does_not_m
 
     mark_processed_mock = AsyncMock(return_value=None)
 
-    with patch("app.routers.subscription.settings") as mock_settings, \
-         patch("app.routers.subscription._STRIPE_AVAILABLE", True), \
-         patch("app.routers.subscription._stripe") as mock_stripe, \
-         patch(
-             "app.routers.subscription._update_profile_subscription",
-             new=AsyncMock(return_value=False),
-         ), \
-         patch(
-             "app.routers.subscription._is_stripe_event_processed",
-             new=AsyncMock(return_value=False),
-         ), \
-         patch(
-             "app.routers.subscription._mark_stripe_event_processed",
-             new=mark_processed_mock,
-         ):
-
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("app.routers.subscription._STRIPE_AVAILABLE", True),
+        patch("app.routers.subscription._stripe") as mock_stripe,
+        patch(
+            "app.routers.subscription._update_profile_subscription",
+            new=AsyncMock(return_value=False),
+        ),
+        patch(
+            "app.routers.subscription._is_stripe_event_processed",
+            new=AsyncMock(return_value=False),
+        ),
+        patch(
+            "app.routers.subscription._mark_stripe_event_processed",
+            new=mark_processed_mock,
+        ),
+    ):
         mock_settings.stripe_secret_key = "sk_test_fake"
         mock_settings.stripe_webhook_secret = "whsec_fake"
         mock_settings.stripe_price_id = "price_test_fake"
@@ -620,9 +616,7 @@ async def test_webhook_subscription_deleted_no_profile_raises_500_and_does_not_m
                 },
             )
 
-        assert resp.status_code == 500, (
-            f"Expected 500 so Stripe retries, got {resp.status_code}: {resp.text}"
-        )
+        assert resp.status_code == 500, f"Expected 500 so Stripe retries, got {resp.status_code}: {resp.text}"
         mark_processed_mock.assert_not_called()
 
 
@@ -648,22 +642,23 @@ async def test_webhook_subscription_updated_success_marks_processed():
 
     mark_processed_mock = AsyncMock(return_value=None)
 
-    with patch("app.routers.subscription.settings") as mock_settings, \
-         patch("app.routers.subscription._STRIPE_AVAILABLE", True), \
-         patch("app.routers.subscription._stripe") as mock_stripe, \
-         patch(
-             "app.routers.subscription._update_profile_subscription",
-             new=AsyncMock(return_value=True),
-         ), \
-         patch(
-             "app.routers.subscription._is_stripe_event_processed",
-             new=AsyncMock(return_value=False),
-         ), \
-         patch(
-             "app.routers.subscription._mark_stripe_event_processed",
-             new=mark_processed_mock,
-         ):
-
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("app.routers.subscription._STRIPE_AVAILABLE", True),
+        patch("app.routers.subscription._stripe") as mock_stripe,
+        patch(
+            "app.routers.subscription._update_profile_subscription",
+            new=AsyncMock(return_value=True),
+        ),
+        patch(
+            "app.routers.subscription._is_stripe_event_processed",
+            new=AsyncMock(return_value=False),
+        ),
+        patch(
+            "app.routers.subscription._mark_stripe_event_processed",
+            new=mark_processed_mock,
+        ),
+    ):
         mock_settings.stripe_secret_key = "sk_test_fake"
         mock_settings.stripe_webhook_secret = "whsec_fake"
         mock_settings.stripe_price_id = "price_test_fake"
@@ -687,7 +682,5 @@ async def test_webhook_subscription_updated_success_marks_processed():
                 },
             )
 
-        assert resp.status_code == 200, (
-            f"Expected 200 on success, got {resp.status_code}: {resp.text}"
-        )
+        assert resp.status_code == 200, f"Expected 200 on success, got {resp.status_code}: {resp.text}"
         mark_processed_mock.assert_called_once()

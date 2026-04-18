@@ -1,6 +1,5 @@
 """Unit tests for IRT/CAT engine, anti-gaming, BARS, and AURA calculation."""
 
-
 from app.core.assessment import antigaming
 from app.core.assessment.aura_calc import (
     calculate_overall,
@@ -19,12 +18,20 @@ from app.core.assessment.engine import (
 
 # ── CATState serialisation ────────────────────────────────────────────────────
 
+
 def test_cat_state_round_trip():
     state = CATState(theta=0.5, theta_se=0.4)
-    state.items.append(ItemRecord(
-        question_id="q1", irt_a=1.0, irt_b=0.0, irt_c=0.0,
-        response=1, raw_score=0.8, response_time_ms=5000,
-    ))
+    state.items.append(
+        ItemRecord(
+            question_id="q1",
+            irt_a=1.0,
+            irt_b=0.0,
+            irt_c=0.0,
+            response=1,
+            raw_score=0.8,
+            response_time_ms=5000,
+        )
+    )
     restored = CATState.from_dict(state.to_dict())
     assert restored.theta == 0.5
     assert restored.theta_se == 0.4
@@ -34,6 +41,7 @@ def test_cat_state_round_trip():
 
 
 # ── theta_to_score ────────────────────────────────────────────────────────────
+
 
 def test_theta_zero_maps_to_50():
     score = theta_to_score(0.0)
@@ -56,9 +64,17 @@ def test_theta_clamped():
 # ── select_next_item ──────────────────────────────────────────────────────────
 
 MOCK_QUESTIONS = [
-    {"id": f"q{i}", "irt_a": 1.0, "irt_b": float(i - 3), "irt_c": 0.0,
-     "question_type": "mcq", "question_en": f"Q{i}", "question_az": f"Q{i}az",
-     "options": None, "competency_id": "comp1"}
+    {
+        "id": f"q{i}",
+        "irt_a": 1.0,
+        "irt_b": float(i - 3),
+        "irt_c": 0.0,
+        "question_type": "mcq",
+        "question_en": f"Q{i}",
+        "question_az": f"Q{i}az",
+        "options": None,
+        "competency_id": "comp1",
+    }
     for i in range(6)
 ]
 
@@ -72,10 +88,17 @@ def test_select_first_item_with_empty_state():
 
 def test_select_skips_answered():
     state = CATState()
-    state.items.append(ItemRecord(
-        question_id="q0", irt_a=1.0, irt_b=-3.0, irt_c=0.0,
-        response=1, raw_score=1.0, response_time_ms=5000,
-    ))
+    state.items.append(
+        ItemRecord(
+            question_id="q0",
+            irt_a=1.0,
+            irt_b=-3.0,
+            irt_c=0.0,
+            response=1,
+            raw_score=1.0,
+            response_time_ms=5000,
+        )
+    )
     q = select_next_item(state, MOCK_QUESTIONS)
     assert q is not None
     assert q["id"] != "q0"
@@ -84,15 +107,23 @@ def test_select_skips_answered():
 def test_select_returns_none_when_all_answered():
     state = CATState()
     for q in MOCK_QUESTIONS:
-        state.items.append(ItemRecord(
-            question_id=q["id"], irt_a=1.0, irt_b=0.0, irt_c=0.0,
-            response=1, raw_score=1.0, response_time_ms=5000,
-        ))
+        state.items.append(
+            ItemRecord(
+                question_id=q["id"],
+                irt_a=1.0,
+                irt_b=0.0,
+                irt_c=0.0,
+                response=1,
+                raw_score=1.0,
+                response_time_ms=5000,
+            )
+        )
     result = select_next_item(state, MOCK_QUESTIONS)
     assert result is None
 
 
 # ── submit_response ───────────────────────────────────────────────────────────
+
 
 def test_submit_response_appends_item():
     state = CATState()
@@ -117,6 +148,7 @@ def test_submit_response_updates_theta():
 
 
 # ── should_stop ───────────────────────────────────────────────────────────────
+
 
 def test_should_stop_max_items():
     state = CATState()
@@ -146,6 +178,7 @@ def test_should_not_stop_early():
 
 
 # ── Energy-adaptive stopping (Constitution Law 2) ─────────────────────────────
+
 
 def test_should_stop_low_energy_max_5_items():
     """Low energy caps assessment at 5 items (vs 20 for full)."""
@@ -207,6 +240,7 @@ def test_unknown_energy_defaults_to_full():
 
 # ── Anti-gaming ───────────────────────────────────────────────────────────────
 
+
 def test_no_flags_for_clean_answers():
     # Non-alternating, varied pattern with genuinely varied timing (humans aren't robots)
     # S8.2: Using uniform timing like 10_000 for all answers now correctly triggers
@@ -214,8 +248,7 @@ def test_no_flags_for_clean_answers():
     responses = [1, 1, 0, 1, 0, 0]
     timings = [8_000, 15_000, 6_000, 12_000, 9_000, 20_000]  # natural variance, CV ≈ 0.43
     answers = [
-        {"response_time_ms": t, "response": r, "raw_score": 0.7}
-        for r, t in zip(responses, timings, strict=True)
+        {"response_time_ms": t, "response": r, "raw_score": 0.7} for r, t in zip(responses, timings, strict=True)
     ]
     signal = antigaming.analyse(answers)
     assert signal.overall_flag is False
@@ -255,6 +288,7 @@ def test_check_answer_timing_too_fast():
 
 # ── BARS helpers ──────────────────────────────────────────────────────────────
 
+
 def test_parse_json_scores_valid():
     raw = '{"active_listening": 0.8, "empathy": 0.6}'
     scores = _parse_json_scores(raw)
@@ -271,7 +305,7 @@ def test_parse_json_scores_clamped():
 
 
 def test_parse_json_scores_strips_markdown():
-    raw = "```json\n{\"a\": 0.7}\n```"
+    raw = '```json\n{"a": 0.7}\n```'
     scores = _parse_json_scores(raw)
     assert scores is not None
     assert abs(scores["a"] - 0.7) < 0.01
@@ -299,15 +333,25 @@ def test_aggregate_weighted():
 
 # ── AURA calc ─────────────────────────────────────────────────────────────────
 
+
 def test_calculate_overall_all_zeros():
     assert calculate_overall({}) == 0.0
 
 
 def test_calculate_overall_all_100():
-    scores = {slug: 100.0 for slug in [
-        "communication", "reliability", "english_proficiency", "leadership",
-        "event_performance", "tech_literacy", "adaptability", "empathy_safeguarding",
-    ]}
+    scores = {
+        slug: 100.0
+        for slug in [
+            "communication",
+            "reliability",
+            "english_proficiency",
+            "leadership",
+            "event_performance",
+            "tech_literacy",
+            "adaptability",
+            "empathy_safeguarding",
+        ]
+    }
     assert calculate_overall(scores) == 100.0
 
 
@@ -326,10 +370,19 @@ def test_get_badge_tier():
 
 
 def test_is_elite_true():
-    scores = {slug: 80.0 for slug in [
-        "communication", "reliability", "english_proficiency", "leadership",
-        "event_performance", "tech_literacy", "adaptability", "empathy_safeguarding",
-    ]}
+    scores = {
+        slug: 80.0
+        for slug in [
+            "communication",
+            "reliability",
+            "english_proficiency",
+            "leadership",
+            "event_performance",
+            "tech_literacy",
+            "adaptability",
+            "empathy_safeguarding",
+        ]
+    }
     assert is_elite(80.0, scores) is True
 
 

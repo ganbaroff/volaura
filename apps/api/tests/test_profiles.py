@@ -32,18 +32,21 @@ PROFILE_ROW = {
 def _admin_override(db):
     async def _dep():
         yield db
+
     return _dep
 
 
 def _user_override(db):
     async def _dep():
         yield db
+
     return _dep
 
 
 def _uid_override(uid=USER_ID):
     async def _dep():
         return uid
+
     return _dep
 
 
@@ -102,10 +105,12 @@ async def test_create_my_profile_success():
     admin_db = _make_mock_db()
     # First call: username check returns empty (not taken)
     # Second call: insert returns the new row
-    db.execute = AsyncMock(side_effect=[
-        MagicMock(data=[]),          # username check
-        MagicMock(data=[PROFILE_ROW]),  # insert result
-    ])
+    db.execute = AsyncMock(
+        side_effect=[
+            MagicMock(data=[]),  # username check
+            MagicMock(data=[PROFILE_ROW]),  # insert result
+        ]
+    )
     # Admin: used for upsert_volunteer_embedding (fire-and-forget, caught in try/except)
     admin_db.execute = AsyncMock(return_value=MagicMock(data=[]))
 
@@ -262,6 +267,7 @@ async def test_get_public_profile_not_found():
 
 # ── GROWTH-2: Invite attribution ──────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_create_profile_with_invite_attribution():
     """invited_by_org_id stored + matching invite marked accepted."""
@@ -270,10 +276,12 @@ async def test_create_profile_with_invite_attribution():
     ORG_ID = "org-uuid-123"
 
     # user db: username check empty, insert succeeds
-    user_db.execute = AsyncMock(side_effect=[
-        MagicMock(data=[]),             # username check
-        MagicMock(data=[PROFILE_ROW]),  # insert
-    ])
+    user_db.execute = AsyncMock(
+        side_effect=[
+            MagicMock(data=[]),  # username check
+            MagicMock(data=[PROFILE_ROW]),  # insert
+        ]
+    )
 
     # admin db: get_user_by_id returns email, then invite update
     mock_user_obj = MagicMock()
@@ -312,10 +320,12 @@ async def test_create_profile_without_invite_attribution():
     admin_db.auth.admin = MagicMock()
     admin_db.auth.admin.get_user_by_id = AsyncMock()
 
-    user_db.execute = AsyncMock(side_effect=[
-        MagicMock(data=[]),
-        MagicMock(data=[PROFILE_ROW]),
-    ])
+    user_db.execute = AsyncMock(
+        side_effect=[
+            MagicMock(data=[]),
+            MagicMock(data=[PROFILE_ROW]),
+        ]
+    )
     admin_db.execute = AsyncMock(return_value=MagicMock(data=None))
 
     app.dependency_overrides[get_supabase_user] = _user_override(user_db)

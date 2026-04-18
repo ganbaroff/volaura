@@ -120,9 +120,7 @@ async def test_emit_badge_tier_changed_emits_on_promotion():
 async def test_emitter_swallows_db_errors():
     """Fire-and-forget contract: ecosystem failures never bubble up."""
     db = MagicMock()
-    db.table.return_value.insert.return_value.execute = AsyncMock(
-        side_effect=RuntimeError("supabase exploded")
-    )
+    db.table.return_value.insert.return_value.execute = AsyncMock(side_effect=RuntimeError("supabase exploded"))
 
     # None of these should raise
     await emit_assessment_completed(

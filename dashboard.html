@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas — CEO Dashboard</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #14141f;
+    --surface-raised: #1c1c2b;
+    --border: #2a2a3d;
+    --text: #E8E8F0;
+    --text-muted: #8B8BA7;
+    --teal: #4ECDC4;
+    --indigo: #7B72FF;
+    --gold: #F59E0B;
+    --purple-block: #D4B4FF;
+    --amber-warn: #F59E0B;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 32px 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 20px;
+    margin-bottom: 32px;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .sub {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-top: 4px;
+  }
+  .meta {
+    text-align: right;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .sprint-line {
+    background: linear-gradient(135deg, rgba(123, 114, 255, 0.12), rgba(78, 205, 196, 0.08));
+    border: 1px solid rgba(123, 114, 255, 0.3);
+    padding: 16px 20px;
+    border-radius: 12px;
+    margin-bottom: 32px;
+  }
+  .sprint-line .label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--indigo);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .columns {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+  @media (max-width: 900px) {
+    .columns { grid-template-columns: 1fr; }
+  }
+  .column {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    min-height: 200px;
+  }
+  .column h2 {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .item {
+    background: var(--surface-raised);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    position: relative;
+    padding-left: 34px;
+  }
+  .item .dot {
+    position: absolute;
+    left: 14px;
+    top: 20px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .dot.green { background: var(--teal); box-shadow: 0 0 8px rgba(78, 205, 196, 0.5); }
+  .dot.amber { background: var(--gold); box-shadow: 0 0 8px rgba(245, 158, 11, 0.5); }
+  .dot.purple { background: var(--purple-block); box-shadow: 0 0 8px rgba(212, 180, 255, 0.5); }
+  .item .title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .item .desc {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .legend {
+    display: flex;
+    gap: 20px;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .glossary {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-top: 8px;
+  }
+  .glossary h2 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .glossary .intro {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+  .glossary dl {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 10px 24px;
+  }
+  @media (max-width: 700px) {
+    .glossary dl { grid-template-columns: 1fr; }
+    .glossary dd { margin-bottom: 8px; }
+  }
+  .glossary dt {
+    font-weight: 600;
+    color: var(--teal);
+    font-size: 13px;
+  }
+  .glossary dd {
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+  footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+  }
+  kbd {
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 11px;
+    font-family: 'SF Mono', Monaco, monospace;
+    color: var(--teal);
+  }
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 700px) {
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+  }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .kpi .k-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .kpi .k-value {
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .kpi .k-value.teal { color: var(--teal); }
+  .kpi .k-value.gold { color: var(--gold); }
+  .kpi .k-value.indigo { color: var(--indigo); }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Atlas — CEO Dashboard</h1>
+    <div class="sub">Один взгляд — всё состояние экосистемы</div>
+  </div>
+  <div class="meta">
+    Обновлено: 2026-04-18 14:00 Баку<br>
+    Sprint 119 · Atlas (Opus 4.7) + CLI (Sonnet)
+  </div>
+</header>
+
+<div class="kpi-row">
+  <div class="kpi">
+    <div class="k-label">Закрыто сегодня</div>
+    <div class="k-value teal">5</div>
+  </div>
+  <div class="kpi">
+    <div class="k-label">Автотестов от swarm</div>
+    <div class="k-value indigo">550+</div>
+  </div>
+  <div class="kpi">
+    <div class="k-label">Требует ключа / блок</div>
+    <div class="k-value gold">4</div>
+  </div>
+  <div class="kpi">
+    <div class="k-label">Всего открытых задач</div>
+    <div class="k-value">11</div>
+  </div>
+</div>
+
+<div class="sprint-line">
+  <div class="label">Sprint 119 · Курс недели</div>
+  <div>Ротируем Vertex-ключ на продакшен, пропагируем в Railway, затем GDPR consent (таблица есть, не пишется) и три show-stopper'а из feature-audit. Цель: к концу недели платформа расходует $300 GCP-кредитов на проде, а не бесплатный fallback.</div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><span class="legend-dot" style="background: var(--teal)"></span> работает / идёт</div>
+  <div class="legend-item"><span class="legend-dot" style="background: var(--gold)"></span> частично, внимание</div>
+  <div class="legend-item"><span class="legend-dot" style="background: var(--purple-block)"></span> блок — нужен ключ / решение CEO</div>
+  <div class="legend-item">Никакого красного — Constitution: красный триггерит стресс, у нас фиолетовый для блоков.</div>
+</div>
+
+<div class="columns">
+  <div class="column">
+    <h2>Идёт сейчас</h2>
+    <div class="item">
+      <span class="dot green"></span>
+      <div class="title">T52 — LifeSim parse-order fix</div>
+      <div class="desc">Запускаю Godot-агента на VolauraAPIClient. Show-stopper для публичного демо — без этого главное меню не стартует.</div>
+    </div>
+    <div class="item">
+      <span class="dot green"></span>
+      <div class="title">Swarm автотесты (фон)</div>
+      <div class="desc">Автономно: 550+ unit-тестов за последние 2 часа (TanStack hooks, middleware, AURA schemas, reliability). Без моего вмешательства.</div>
+    </div>
+  </div>
+
+  <div class="column">
+    <h2>Закрыто сегодня</h2>
+    <div class="item">
+      <span class="dot green"></span>
+      <div class="title">T46 sweep — полный (43 файла)</div>
+      <div class="desc">Мои 15 правок из Cowork + 28 правок от CLI-Atlas (Sonnet agent af1c85f6) слились в коммит 212a833. "44 агента" убрано везде.</div>
+    </div>
+    <div class="item">
+      <span class="dot green"></span>
+      <div class="title">Vertex AI ключ ротирован</div>
+      <div class="desc">Новый ключ в локальном .env. Код менять не пришлось — Vertex уже первый в цепочке LLM-провайдеров.</div>
+    </div>
+    <div class="item">
+      <span class="dot green"></span>
+      <div class="title">GitHub Secrets залиты в CI</div>
+      <div class="desc">Python-скрипт (stdlib urllib + PyNaCl), без участия CEO. Следующий билд подхватит новый ключ автоматически.</div>
+    </div>
+    <div class="item">
+      <span class="dot green"></span>
+      <div class="title">CEO-dashboard (этот файл + STATE.md)</div>
+      <div class="desc">Живые документы. Обновляю по месту, новых файлов не плодим.</div>
+    </div>
+    <div class="item">
+      <span class="dot green"></span>
+      <div class="title">Swarm фоновой гигиены</div>
+      <div class="desc">550+ unit-тестов залетели автономно через session-end хуки. Гигиена растёт без моего участия.</div>
+    </div>
+  </div>
+
+  <div class="column">
+    <h2>Следующее (в порядке приоритета)</h2>
+    <div class="item">
+      <span class="dot amber"></span>
+      <div class="title">T48 — GDPR consent (сам, но долго)</div>
+      <div class="desc">27 routers без записи согласий. Таблица consent_events пустая. Разрежу через swarm на 27 мелких правок. Регуляторный риск в ЕС.</div>
+    </div>
+    <div class="item">
+      <span class="dot purple"></span>
+      <div class="title">Railway propagation (жду токен)</div>
+      <div class="desc">Railway Dashboard → Project Settings → Tokens. Брось в чат — закрою одним curl. До тех пор $300 GCP-кредитов простаивают.</div>
+    </div>
+    <div class="item">
+      <span class="dot purple"></span>
+      <div class="title">T54 — BrandedBy (жду ключи)</div>
+      <div class="desc">Нужны Azure + ElevenLabs. Если где-то лежат — дай. Если нет — надо регистрировать.</div>
+    </div>
+    <div class="item">
+      <span class="dot amber"></span>
+      <div class="title">T53 — Vercel unblock (после reset)</div>
+      <div class="desc">Rate limit 100/день исчерпан ночью + module_not_found. Ждём reset quota к утру, потом одна попытка с правильным build-command.</div>
+    </div>
+  </div>
+</div>
+
+<div class="glossary">
+  <h2>Glossary — ликбез параллельно</h2>
+  <div class="intro">Технические термины простыми словами — чтобы ты видел не только статус, но и понимал, о чём я говорю.</div>
+  <dl>
+    <dt>Railway</dt>
+    <dd>Хостинг бэкенда (Python/FastAPI). Примерно как Heroku. У нас там volauraapi-production.up.railway.app.</dd>
+
+    <dt>Vertex AI</dt>
+    <dd>Google Cloud API для Gemini. У тебя $300 стартовых кредитов, сейчас их используем. Платная ветка — быстрее и лимиты выше.</dd>
+
+    <dt>AI Studio Gemini</dt>
+    <dd>Бесплатная ветка того же Gemini с жёсткими rate-лимитами. Наш fallback, когда Vertex упал.</dd>
+
+    <dt>Fallback chain</dt>
+    <dd>Цепочка резервирования провайдеров. Первый упал → автоматом идёт на второй. У нас: Vertex → AI Studio → Groq → OpenAI. Юзер не замечает падения.</dd>
+
+    <dt>CI (Continuous Integration)</dt>
+    <dd>GitHub Actions. При git push GitHub автоматически гоняет тесты и деплоит. Тесты упали — деплой не проходит.</dd>
+
+    <dt>GitHub Secrets</dt>
+    <dd>Сейф внутри GitHub для API-ключей. CI оттуда читает, в коде ключей нет.</dd>
+
+    <dt>Swarm / 13 perspectives</dt>
+    <dd>Автономная команда 13 виртуальных специалистов в packages/swarm/. Смотрят на код с разных углов (security, design, assessment, legal). Плюс ~118 skill-модулей — библиотека умений. НЕ 44 — цифра 44 была моей галлюцинацией из Session 93, сегодня зачистил.</dd>
+
+    <dt>Show-stopper</dt>
+    <dd>Баг, который полностью блокирует сценарий пользователя. Не косметика — "продукт не работает".</dd>
+
+    <dt>Propagation</dt>
+    <dd>Перенос ключа из локального .env на продакшен. Локально работает ≠ на сервере работает.</dd>
+
+    <dt>Sprint</dt>
+    <dd>Рабочий цикл. У нас номер сессии ≈ номер спринта. Сейчас 119-й.</dd>
+
+    <dt>GDPR consent_events</dt>
+    <dd>В ЕС юридически обязательно логировать каждое действие пользователя со согласиями. Таблица есть, 26 из 27 endpoints пишут мимо неё. Аудит = штраф.</dd>
+
+    <dt>Feature-audit</dt>
+    <dd>Полная инвентаризация: 50 фич реально работают, 24 частично, 13 "заявлены и не найдены", 11 в планах. Зеркало маркетинга vs реальность.</dd>
+
+    <dt>heartbeat.md / CURRENT-SPRINT.md</dt>
+    <dd>Мои технические журналы для self-continuity. На английском, для моих будущих инстансов. CEO читать не нужно.</dd>
+  </dl>
+</div>
+
+<footer>
+  <div>Источник правды: <kbd>memory/atlas/ceo-feed/STATE.md</kbd></div>
+  <div>Обновляется после каждого значимого шага Atlas'а</div>
+</footer>
+
+</body>
+</html>

@@ -15,7 +15,7 @@ import os
 from datetime import UTC, datetime
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, Request
 from fastapi.responses import JSONResponse
 from loguru import logger
 from supabase._async.client import AsyncClient
@@ -2228,17 +2228,13 @@ async def _handle_help(chat_id: int | str) -> None:
 @limiter.limit(RATE_DEFAULT)  # 60/min — generous for single-CEO bot; defense in depth on HMAC-secret compromise
 async def telegram_webhook(
     request: Request,
+    background_tasks: BackgroundTasks,
     db: AsyncClient = Depends(get_supabase_admin),
 ) -> JSONResponse:
-    """Receive Telegram update via webhook. Uses Depends for admin client (OWASP HIGH-01 fix)."""
+    """Receive Telegram update via webhook. Returns 200 immediately, processes in background."""
     if not settings.telegram_bot_token:
         return JSONResponse({"ok": False, "error": "Bot not configured"})
 
-    # Validate webhook origin — fail-closed.
-    # Require X-Telegram-Bot-Api-Secret-Token header matches settings.telegram_webhook_secret
-    # via constant-time compare (hmac.compare_digest). If the secret is not configured at all,
-    # the endpoint refuses every request — prevents silent bypass when secret is forgotten.
-    # CEO_CHAT_ID filter below is defence-in-depth, not the primary gate.
     secret_header = request.headers.get("X-Telegram-Bot-Api-Secret-Token", "")
     if not settings.telegram_webhook_secret:
         logger.error("Telegram webhook called but TELEGRAM_WEBHOOK_SECRET is not set — rejecting")
@@ -2251,6 +2247,22 @@ async def telegram_webhook(
         update = await request.json()
     except Exception:
         return JSONResponse({"ok": False})
+
+    # Return 200 immediately — Telegram won't retry. Process message in background.
+    background_tasks.add_task(_process_telegram_update, update, db)
+    return JSONResponse({"ok": True})
+
+
+async def _process_telegram_update(update: dict, db: AsyncClient) -> None:
+    """Background processing of Telegram update — no timeout pressure."""
+    try:
+        await _handle_telegram_update(update, db)
+    except Exception as e:
+        logger.error("Background telegram handler failed: {e}", e=str(e)[:200])
+
+
+async def _handle_telegram_update(update: dict, db: AsyncClient) -> None:
+    """Actual message processing logic, extracted from webhook handler."""
 
     # ── Handle callback queries (inline keyboard button presses) ──────────────
     callback = update.get("callback_query")

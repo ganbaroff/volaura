@@ -64,7 +64,15 @@ Fix: rename tables via migration (breaking if code references old names).
 /u/[username] renders for all 14 users. 13 have no AURA score.
 Likely shows empty or broken card. Not verified visually.
 
-### 10. Crystal economy nearly empty
+### 10. UX dead ends and missing navigation (found 2026-04-18 19:30 Baku)
+- /en/brandedby/generations → 404 (viewer exists at /generations/[id] but no list page)
+- /en/admin/obligations → 404 (file written, Vercel rate limit blocks deploy until tomorrow)
+- No breadcrumbs component anywhere in the dashboard — navigation relies entirely on browser back button and tab bar. User clicks into assessment/[sessionId]/complete → no way back except browser back. Same for profile/edit, events/create, onboarding steps.
+- router.back() used in 6 places but fails if user arrived via direct link (back goes to previous site, not to dashboard)
+- MindShift and BrandedBy tabs visible in nav but lead to placeholder-like pages with no real content
+- Assessment completion page has no clear "return to dashboard" CTA
+
+### 11. Crystal economy nearly empty
 game_crystal_ledger: 1 transaction. Crystal shop exists in code
 but no users have crystals. Economy is a ghost town.
 

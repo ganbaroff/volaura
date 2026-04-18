@@ -283,6 +283,9 @@ function DepartmentList({
               {t("common.cancel", { defaultValue: "Cancel" })}
             </button>
           </div>
+          {createDept.error && (
+            <p className="text-sm text-[#D4B4FF] mt-1">{(createDept.error as Error).message || "Failed to create"}</p>
+          )}
         </form>
       )}
     </div>
@@ -440,6 +443,9 @@ function AreaList({ departmentId }: { departmentId: string }) {
               {t("common.cancel", { defaultValue: "Cancel" })}
             </button>
           </div>
+          {createArea.error && (
+            <p className="text-sm text-[#D4B4FF] mt-1">{(createArea.error as Error).message || "Failed to create"}</p>
+          )}
         </form>
       )}
     </div>
@@ -618,6 +624,9 @@ function UnitList({ areaId }: { areaId: string }) {
               </button>
             </div>
           </div>
+          {createUnit.error && (
+            <p className="text-sm text-[#D4B4FF] mt-1">{(createUnit.error as Error).message || "Failed to create"}</p>
+          )}
         </form>
       )}
     </div>

@@ -180,7 +180,11 @@ export default function AssessmentResultsPage() {
     return () => { isMounted.current = false; };
   }, []);
 
+  const completedRef = useRef(false);
+
   const fetchResults = useCallback(async () => {
+    if (completedRef.current) return;
+    completedRef.current = true;
     try {
       setPhase("loading");
       setError(null);

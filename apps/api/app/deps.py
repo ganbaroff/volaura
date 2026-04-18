@@ -31,6 +31,11 @@ _admin_client: AsyncClient | None = None
 _admin_lock = asyncio.Lock()
 
 
+async def get_admin_client() -> AsyncClient:
+    """Public factory for standalone scripts (cron jobs, watchers)."""
+    return await _get_or_create_admin_client()
+
+
 async def _get_or_create_admin_client() -> AsyncClient:
     """Return the singleton admin client, creating it on first call.
 

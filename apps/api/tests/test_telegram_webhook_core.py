@@ -263,22 +263,24 @@ async def test_save_message_defaults_empty_metadata():
 
 @pytest.mark.asyncio
 async def test_save_message_db_failure_triggers_filesystem_fallback():
-    """DB failure → filesystem fallback writes to memory/atlas/inbox/ (uses __file__ path)."""
+    """DB failure on both original + retry → filesystem fallback writes to memory/atlas/inbox/."""
     from pathlib import Path as _Path
 
-    # Derive real inbox dir the same way the production code does
     repo_root = _Path(tw.__file__).resolve().parents[4]
     inbox_dir = repo_root / "memory" / "atlas" / "inbox"
 
     if not inbox_dir.exists():
         pytest.skip("memory/atlas/inbox/ not present — fallback won't run")
 
-    # Count files before
     before = set(inbox_dir.iterdir())
 
     db, _ = _make_db_with_insert(side_effect=Exception("DB down"))
     unique_msg = f"sentinel-{id(before)}"
-    await tw._save_message(db, "ceo_to_bot", unique_msg, "free_text")
+
+    # Mock reset_admin_client to return a client that also fails
+    fresh_db, _ = _make_db_with_insert(side_effect=Exception("DB still down"))
+    with patch("app.deps.reset_admin_client", new_callable=AsyncMock, return_value=fresh_db):
+        await tw._save_message(db, "ceo_to_bot", unique_msg, "free_text")
 
     after = set(inbox_dir.iterdir())
     new_files = after - before
@@ -287,6 +289,18 @@ async def test_save_message_db_failure_triggers_filesystem_fallback():
     content = created_file.read_text(encoding="utf-8")
     assert unique_msg in content
     created_file.unlink()
+
+
+@pytest.mark.asyncio
+async def test_save_message_retry_succeeds_after_client_reset():
+    """DB failure on first try, retry with fresh client succeeds — no filesystem fallback."""
+    db, _ = _make_db_with_insert(side_effect=Exception("stale connection"))
+    fresh_db, mock_execute = _make_db_with_insert()
+
+    with patch("app.deps.reset_admin_client", new_callable=AsyncMock, return_value=fresh_db):
+        await tw._save_message(db, "ceo_to_bot", "retry-test", "free_text")
+
+    mock_execute.assert_awaited_once()
 
 
 @pytest.mark.asyncio

@@ -241,6 +241,33 @@ function AssessmentContent() {
         })}
       </div>
 
+      {/* Sequential flow indicator — clarify one-at-a-time when multiple selected */}
+      {selected.size > 1 && (
+        <div className="rounded-2xl border border-border bg-surface-container-low p-4 space-y-2">
+          <p className="text-xs font-semibold text-foreground uppercase tracking-wide">
+            {t("assessment.yourOrder", { defaultValue: "Your assessment order" })}
+          </p>
+          <ol className="space-y-1.5">
+            {Array.from(selected).map((id, i) => (
+              <li key={id} className="flex items-center gap-2 text-sm">
+                <span className="flex items-center justify-center size-5 rounded-full bg-primary/10 text-primary text-[10px] font-bold shrink-0">
+                  {i + 1}
+                </span>
+                <span className="text-foreground">
+                  {t(`competency.${id}`, { defaultValue: id })}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  ~{COMPETENCIES.find(c => c.id === id)?.estimatedMinutes ?? 0} {t("assessment.min", { defaultValue: "min" })}
+                </span>
+              </li>
+            ))}
+          </ol>
+          <p className="text-xs text-muted-foreground">
+            {t("assessment.sequentialNote", { defaultValue: "You'll complete one competency at a time. Progress is saved between each." })}
+          </p>
+        </div>
+      )}
+
       {/* Pre-assessment layer: what user gets before they commit */}
       {selected.size > 0 && (
         <PreAssessmentSummary
@@ -284,7 +311,12 @@ function AssessmentContent() {
             {t("common.loading")}
           </>
         ) : (
-          t("assessment.start")
+          selected.size > 1
+            ? t("assessment.startFirst", {
+                name: t(`competency.${Array.from(selected)[0]}`, { defaultValue: Array.from(selected)[0] }),
+                defaultValue: `Start with ${t(`competency.${Array.from(selected)[0]}`, { defaultValue: Array.from(selected)[0] })}`,
+              })
+            : t("assessment.start")
         )}
       </Button>
     </div>

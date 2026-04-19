@@ -222,7 +222,15 @@ def _build_list_orgs_mock(orgs: list[dict]):
 @pytest.mark.asyncio
 async def test_list_organizations_returns_list():
     orgs = [
-        {"id": ORG_ID, "name": "Acme", "description": None, "logo_url": None, "type": None, "website": None, "is_active": True},
+        {
+            "id": ORG_ID,
+            "name": "Acme",
+            "description": None,
+            "logo_url": None,
+            "type": None,
+            "website": None,
+            "is_active": True,
+        },
     ]
     db = _build_list_orgs_mock(orgs)
     app.dependency_overrides[get_supabase_admin] = _admin_override(db)
@@ -324,6 +332,7 @@ def _build_create_org_mock(existing: bool, created_row: dict | None = None):
         call_counts.setdefault(table_name, 0)
 
         if table_name == "organizations":
+
             async def _exec(*_a, **_kw):
                 n = call_counts["organizations"]
                 call_counts["organizations"] += 1
@@ -333,6 +342,7 @@ def _build_create_org_mock(existing: bool, created_row: dict | None = None):
                 else:
                     # insert (user db)
                     return MagicMock(data=[created_row] if created_row else [])
+
             t.select.return_value = t
             t.eq.return_value = t
             t.insert.return_value = t
@@ -510,23 +520,29 @@ def _build_collective_aura_mock(
         call_counts.setdefault(table_name, 0)
 
         if table_name == "organizations":
+
             async def _exec(*_a, **_kw):
                 return MagicMock(data={"id": ORG_ID} if is_owner else None)
+
             t.select.return_value = t
             t.eq.return_value = t
             t.maybe_single.return_value = t
             t.execute = AsyncMock(side_effect=_exec)
 
         elif table_name == "assessment_sessions":
+
             async def _exec(*_a, **_kw):
                 return MagicMock(data=sessions)
+
             t.select.return_value = t
             t.eq.return_value = t
             t.execute = AsyncMock(side_effect=_exec)
 
         elif table_name == "aura_scores":
+
             async def _exec(*_a, **_kw):
                 return MagicMock(data=aura_rows)
+
             t.select.return_value = t
             t.in_.return_value = t
             t.execute = AsyncMock(side_effect=_exec)
@@ -629,27 +645,34 @@ def _build_assign_mock(
         call_counts.setdefault(table_name, 0)
 
         if table_name == "organizations":
+
             async def _exec(*_a, **_kw):
                 return MagicMock(data={"id": ORG_ID, "name": "Test Corp"} if org_exists else None)
+
             t.select.return_value = t
             t.eq.return_value = t
             t.maybe_single.return_value = t
             t.execute = AsyncMock(side_effect=_exec)
 
         elif table_name == "competencies":
+
             async def _exec(*_a, **_kw):
                 return MagicMock(data=[{"slug": k, "id": v} for k, v in valid_slugs.items()])
+
             t.select.return_value = t
             t.execute = AsyncMock(side_effect=_exec)
 
         elif table_name == "profiles":
+
             async def _exec(*_a, **_kw):
                 return MagicMock(data=[{"id": pid} for pid in prof_ids])
+
             t.select.return_value = t
             t.in_.return_value = t
             t.execute = AsyncMock(side_effect=_exec)
 
         elif table_name == "assessment_sessions":
+
             async def _exec(*_a, **_kw):
                 n = call_counts["assessment_sessions"]
                 call_counts["assessment_sessions"] += 1
@@ -658,6 +681,7 @@ def _build_assign_mock(
                     return MagicMock(data=[{"id": "sess-x"}] if existing_session else [])
                 else:
                     return MagicMock(data=[{"id": "sess-new"}])
+
             t.select.return_value = t
             t.eq.return_value = t
             t.insert.return_value = t
@@ -774,14 +798,17 @@ def _build_saved_search_create_mock(
         call_counts.setdefault(table_name, 0)
 
         if table_name == "organizations":
+
             async def _exec(*_a, **_kw):
                 return MagicMock(data={"id": ORG_ID} if org_exists else None)
+
             t.select.return_value = t
             t.eq.return_value = t
             t.maybe_single.return_value = t
             t.execute = AsyncMock(side_effect=_exec)
 
         elif table_name == "org_saved_searches":
+
             async def _exec(*_a, **_kw):
                 n = call_counts["org_saved_searches"]
                 call_counts["org_saved_searches"] += 1
@@ -793,6 +820,7 @@ def _build_saved_search_create_mock(
                     if duplicate_name:
                         raise Exception("duplicate key value violates unique constraint")
                     return MagicMock(data=[result_row])
+
             t.select.return_value = t
             t.eq.return_value = t
             t.insert.return_value = t
@@ -904,14 +932,17 @@ def _build_patch_search_mock(
         call_counts.setdefault(table_name, 0)
 
         if table_name == "organizations":
+
             async def _exec(*_a, **_kw):
                 return MagicMock(data={"id": ORG_ID} if org_exists else None)
+
             t.select.return_value = t
             t.eq.return_value = t
             t.maybe_single.return_value = t
             t.execute = AsyncMock(side_effect=_exec)
 
         elif table_name == "org_saved_searches":
+
             async def _exec(*_a, **_kw):
                 n = call_counts["org_saved_searches"]
                 call_counts["org_saved_searches"] += 1
@@ -921,6 +952,7 @@ def _build_patch_search_mock(
                 else:
                     # update
                     return MagicMock(data=[updated_row])
+
             t.select.return_value = t
             t.eq.return_value = t
             t.maybe_single.return_value = t
@@ -1024,14 +1056,17 @@ def _build_delete_search_mock(org_exists: bool = True, search_exists: bool = Tru
         call_counts.setdefault(table_name, 0)
 
         if table_name == "organizations":
+
             async def _exec(*_a, **_kw):
                 return MagicMock(data={"id": ORG_ID} if org_exists else None)
+
             t.select.return_value = t
             t.eq.return_value = t
             t.maybe_single.return_value = t
             t.execute = AsyncMock(side_effect=_exec)
 
         elif table_name == "org_saved_searches":
+
             async def _exec(*_a, **_kw):
                 n = call_counts["org_saved_searches"]
                 call_counts["org_saved_searches"] += 1
@@ -1039,6 +1074,7 @@ def _build_delete_search_mock(org_exists: bool = True, search_exists: bool = Tru
                     return MagicMock(data=SAVED_SEARCH_ROW if search_exists else None)
                 else:
                     return MagicMock(data=None)
+
             t.select.return_value = t
             t.eq.return_value = t
             t.maybe_single.return_value = t
@@ -1119,16 +1155,20 @@ def _build_list_searches_mock(searches: list[dict]):
         call_counts.setdefault(table_name, 0)
 
         if table_name == "organizations":
+
             async def _exec(*_a, **_kw):
                 return MagicMock(data={"id": ORG_ID})
+
             t.select.return_value = t
             t.eq.return_value = t
             t.maybe_single.return_value = t
             t.execute = AsyncMock(side_effect=_exec)
 
         elif table_name == "org_saved_searches":
+
             async def _exec(*_a, **_kw):
                 return MagicMock(data=searches)
+
             t.select.return_value = t
             t.eq.return_value = t
             t.order.return_value = t
@@ -1172,8 +1212,10 @@ def _build_list_talent_mock(org_exists: bool = True):
     def make_table(table_name: str) -> MagicMock:
         t = MagicMock()
         if table_name == "organizations":
+
             async def _exec(*_a, **_kw):
                 return MagicMock(data={"id": ORG_ID} if org_exists else None)
+
             t.select.return_value = t
             t.eq.return_value = t
             t.maybe_single.return_value = t
@@ -1233,15 +1275,19 @@ async def test_list_org_talent_valid_statuses(status: str):
         t = MagicMock()
         call_counts.setdefault(table_name, 0)
         if table_name == "organizations":
+
             async def _exec(*_a, **_kw):
                 return MagicMock(data={"id": ORG_ID})
+
             t.select.return_value = t
             t.eq.return_value = t
             t.maybe_single.return_value = t
             t.execute = AsyncMock(side_effect=_exec)
         elif table_name == "assessment_sessions":
+
             async def _exec(*_a, **_kw):
                 return MagicMock(data=[])
+
             t.select.return_value = t
             t.eq.return_value = t
             t.limit.return_value = t
@@ -1279,12 +1325,14 @@ def _build_search_talent_mock(is_org_account: bool = True, org_exists: bool = Tr
         call_counts.setdefault(table_name, 0)
 
         if table_name == "profiles":
+
             async def _exec(*_a, **_kw):
                 n = call_counts["profiles"]
                 call_counts["profiles"] += 1
                 if n == 0:
                     return MagicMock(data={"account_type": "organization" if is_org_account else "volunteer"})
                 return MagicMock(data=[])
+
             t.select.return_value = t
             t.eq.return_value = t
             t.in_.return_value = t
@@ -1292,16 +1340,20 @@ def _build_search_talent_mock(is_org_account: bool = True, org_exists: bool = Tr
             t.execute = AsyncMock(side_effect=_exec)
 
         elif table_name == "organizations":
+
             async def _exec(*_a, **_kw):
                 return MagicMock(data={"id": ORG_ID} if org_exists else None)
+
             t.select.return_value = t
             t.eq.return_value = t
             t.maybe_single.return_value = t
             t.execute = AsyncMock(side_effect=_exec)
 
         elif table_name == "aura_scores":
+
             async def _exec(*_a, **_kw):
                 return MagicMock(data=[])
+
             t.select.return_value = t
             t.eq.return_value = t
             t.gte.return_value = t

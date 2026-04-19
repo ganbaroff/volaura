@@ -245,12 +245,12 @@ async def test_proposal_write_oserror_still_returns_queued(tmp_path, monkeypatch
         patch.object(gw_module, "_PROPOSALS_PATH", proposals_file),
         patch.object(pathlib.Path, "write_text", _raise_on_target),
     ):
-            async with _make_client() as ac:
-                resp = await ac.post(
-                    "/api/atlas/proposal",
-                    json={"title": "volatile"},
-                    headers={"X-Gateway-Secret": GATEWAY_SECRET},
-                )
+        async with _make_client() as ac:
+            resp = await ac.post(
+                "/api/atlas/proposal",
+                json={"title": "volatile"},
+                headers={"X-Gateway-Secret": GATEWAY_SECRET},
+            )
 
     assert resp.status_code == 200
     data = resp.json()

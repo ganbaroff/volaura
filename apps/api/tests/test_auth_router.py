@@ -763,9 +763,7 @@ class TestE2ESetup:
 
         with patch("app.routers.auth.settings") as mock_settings:
             mock_settings.e2e_test_secret = "supersecret"
-            result = await e2e_create_user(
-                FAKE_REQUEST, payload, db_admin, db_anon, x_e2e_secret="supersecret"
-            )
+            result = await e2e_create_user(FAKE_REQUEST, payload, db_admin, db_anon, x_e2e_secret="supersecret")
 
         assert result.access_token == ACCESS_TOKEN
         assert result.user_id == USER_ID
@@ -781,9 +779,7 @@ class TestE2ESetup:
             mock_settings.e2e_test_secret = None
 
             with pytest.raises(HTTPException) as exc:
-                await e2e_create_user(
-                    FAKE_REQUEST, payload, db_admin, db_anon, x_e2e_secret="any"
-                )
+                await e2e_create_user(FAKE_REQUEST, payload, db_admin, db_anon, x_e2e_secret="any")
 
         assert exc.value.status_code == 404
 
@@ -798,9 +794,7 @@ class TestE2ESetup:
             mock_settings.e2e_test_secret = "supersecret"
 
             with pytest.raises(HTTPException) as exc:
-                await e2e_create_user(
-                    FAKE_REQUEST, payload, db_admin, db_anon, x_e2e_secret=None
-                )
+                await e2e_create_user(FAKE_REQUEST, payload, db_admin, db_anon, x_e2e_secret=None)
 
         assert exc.value.status_code == 404
 
@@ -815,9 +809,7 @@ class TestE2ESetup:
             mock_settings.e2e_test_secret = "supersecret"
 
             with pytest.raises(HTTPException) as exc:
-                await e2e_create_user(
-                    FAKE_REQUEST, payload, db_admin, db_anon, x_e2e_secret="wrongsecret"
-                )
+                await e2e_create_user(FAKE_REQUEST, payload, db_admin, db_anon, x_e2e_secret="wrongsecret")
 
         assert exc.value.status_code == 404
 
@@ -840,9 +832,7 @@ class TestE2ESetup:
 
         with patch("app.routers.auth.settings") as mock_settings:
             mock_settings.e2e_test_secret = "supersecret"
-            result = await e2e_create_user(
-                FAKE_REQUEST, payload, db_admin, db_anon, x_e2e_secret="supersecret"
-            )
+            result = await e2e_create_user(FAKE_REQUEST, payload, db_admin, db_anon, x_e2e_secret="supersecret")
 
         assert result.user_id == existing_id
         db_admin.auth.admin.update_user_by_id.assert_called_once()
@@ -862,7 +852,7 @@ class TestE2ESetup:
         def patched_table(name):
             if name == "profiles":
                 t = MagicMock()
-                t.upsert = MagicMock(side_effect=lambda data, **kw: (upsert_called_with.update(data) or upsert_chain))
+                t.upsert = MagicMock(side_effect=lambda data, **kw: upsert_called_with.update(data) or upsert_chain)
                 return t
             return original_table(name)
 
@@ -877,9 +867,7 @@ class TestE2ESetup:
 
         with patch("app.routers.auth.settings") as mock_settings:
             mock_settings.e2e_test_secret = "supersecret"
-            await e2e_create_user(
-                FAKE_REQUEST, payload, db_admin, db_anon, x_e2e_secret="supersecret"
-            )
+            await e2e_create_user(FAKE_REQUEST, payload, db_admin, db_anon, x_e2e_secret="supersecret")
 
         assert upsert_called_with.get("username") == "e2euser"
 
@@ -891,9 +879,7 @@ class TestE2ESetup:
 
         db_anon = _make_db()
         db_anon.auth = MagicMock()
-        db_anon.auth.sign_in_with_password = AsyncMock(
-            side_effect=RuntimeError("Unexpected DB failure")
-        )
+        db_anon.auth.sign_in_with_password = AsyncMock(side_effect=RuntimeError("Unexpected DB failure"))
 
         payload = RegisterRequest(**_make_valid_register_payload())
 
@@ -901,9 +887,7 @@ class TestE2ESetup:
             mock_settings.e2e_test_secret = "supersecret"
 
             with pytest.raises(HTTPException) as exc:
-                await e2e_create_user(
-                    FAKE_REQUEST, payload, db_admin, db_anon, x_e2e_secret="supersecret"
-                )
+                await e2e_create_user(FAKE_REQUEST, payload, db_admin, db_anon, x_e2e_secret="supersecret")
 
         assert exc.value.status_code == 500
         assert exc.value.detail["code"] == "E2E_SETUP_FAILED"
@@ -916,9 +900,7 @@ class TestE2ESetup:
             list_users_result=MagicMock(users=[]),  # no matching user found
         )
         # user_id stays None → re-raises
-        db_admin.auth.admin.list_users = AsyncMock(
-            side_effect=Exception("list_users also failed")
-        )
+        db_admin.auth.admin.list_users = AsyncMock(side_effect=Exception("list_users also failed"))
 
         db_anon = _make_db()
         payload = RegisterRequest(**_make_valid_register_payload())
@@ -927,8 +909,6 @@ class TestE2ESetup:
             mock_settings.e2e_test_secret = "supersecret"
 
             with pytest.raises(HTTPException) as exc:
-                await e2e_create_user(
-                    FAKE_REQUEST, payload, db_admin, db_anon, x_e2e_secret="supersecret"
-                )
+                await e2e_create_user(FAKE_REQUEST, payload, db_admin, db_anon, x_e2e_secret="supersecret")
 
         assert exc.value.status_code == 500

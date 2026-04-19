@@ -231,9 +231,7 @@ class TestAdminStats:
             if name == "aura_scores":
                 m = MagicMock()
                 m.select.return_value.execute = AsyncMock(return_value=MockResult(data=[]))
-                m.select.return_value.gte.return_value.execute = AsyncMock(
-                    return_value=MockResult(data=[], count=0)
-                )
+                m.select.return_value.gte.return_value.execute = AsyncMock(return_value=MockResult(data=[], count=0))
                 return m
             return orig_table(name)
 
@@ -322,12 +320,8 @@ class TestAdminOverview:
             if name == "grievances":
                 m = MagicMock()
                 # Make all select chains raise
-                m.select.return_value.gte.return_value.execute = AsyncMock(
-                    side_effect=Exception("DB down")
-                )
-                m.select.return_value.in_.return_value.execute = AsyncMock(
-                    side_effect=Exception("DB down")
-                )
+                m.select.return_value.gte.return_value.execute = AsyncMock(side_effect=Exception("DB down"))
+                m.select.return_value.in_.return_value.execute = AsyncMock(side_effect=Exception("DB down"))
                 return m
             return orig_table(name)
 
@@ -660,17 +654,20 @@ class TestSwarmAgents:
             "_uninitialized_count": 47,
         }
         try:
-            with patch(
-                "builtins.open",
-                MagicMock(
-                    return_value=MagicMock(
-                        __enter__=MagicMock(
-                            return_value=MagicMock(read=MagicMock(return_value=json.dumps(agent_state)))
-                        ),
-                        __exit__=MagicMock(return_value=False),
-                    )
+            with (
+                patch(
+                    "builtins.open",
+                    MagicMock(
+                        return_value=MagicMock(
+                            __enter__=MagicMock(
+                                return_value=MagicMock(read=MagicMock(return_value=json.dumps(agent_state)))
+                            ),
+                            __exit__=MagicMock(return_value=False),
+                        )
+                    ),
                 ),
-            ), patch("json.load", return_value=agent_state):
+                patch("json.load", return_value=agent_state),
+            ):
                 async with make_client() as client:
                     resp = await client.get("/api/admin/swarm/agents")
             assert resp.status_code == 200
@@ -828,9 +825,7 @@ class TestSwarmProposalDecide:
     async def test_decide_approve_writes_back(self):
         self._setup_admin()
         proposal_id = "abc123"
-        proposals_data = {
-            "proposals": [{"id": proposal_id, "status": "pending", "timestamp": "2026-04-19T09:00:00"}]
-        }
+        proposals_data = {"proposals": [{"id": proposal_id, "status": "pending", "timestamp": "2026-04-19T09:00:00"}]}
         try:
             with (
                 patch("builtins.open", MagicMock()),
@@ -856,9 +851,7 @@ class TestSwarmProposalDecide:
     async def test_decide_dismiss_action(self):
         self._setup_admin()
         proposal_id = "xyz789"
-        proposals_data = {
-            "proposals": [{"id": proposal_id, "status": "pending", "timestamp": "2026-04-19T09:00:00"}]
-        }
+        proposals_data = {"proposals": [{"id": proposal_id, "status": "pending", "timestamp": "2026-04-19T09:00:00"}]}
         try:
             with (
                 patch("builtins.open", MagicMock()),
@@ -882,9 +875,7 @@ class TestSwarmProposalDecide:
     async def test_decide_defer_action(self):
         self._setup_admin()
         proposal_id = "def456"
-        proposals_data = {
-            "proposals": [{"id": proposal_id, "status": "pending", "timestamp": "2026-04-19T09:00:00"}]
-        }
+        proposals_data = {"proposals": [{"id": proposal_id, "status": "pending", "timestamp": "2026-04-19T09:00:00"}]}
         try:
             with (
                 patch("builtins.open", MagicMock()),

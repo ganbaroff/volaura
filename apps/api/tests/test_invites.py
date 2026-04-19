@@ -120,6 +120,7 @@ def _build_db(
 def _override(db: MagicMock, user_id: str = VALID_USER_ID) -> None:
     """Install dep overrides on the FastAPI app."""
     app.dependency_overrides[get_current_user_id] = lambda: user_id
+
     # get_supabase_admin is an async generator dep — override must yield
     async def _db_override():
         yield db
@@ -365,9 +366,7 @@ class TestBulkInviteAuth:
             _clear()
 
     async def test_not_org_owner_returns_403(self, client):
-        db = _build_db(
-            org_data={"id": VALID_ORG_ID, "owner_id": "other-user-id", "name": "Org"}
-        )
+        db = _build_db(org_data={"id": VALID_ORG_ID, "owner_id": "other-user-id", "name": "Org"})
         _override(db)
         try:
             resp = await client.post(
@@ -383,9 +382,7 @@ class TestBulkInviteAuth:
 @pytest.mark.asyncio
 class TestBulkInviteFileValidation:
     async def test_file_too_large_returns_413(self, client):
-        db = _build_db(
-            org_data={"id": VALID_ORG_ID, "owner_id": VALID_USER_ID, "name": "Org"}
-        )
+        db = _build_db(org_data={"id": VALID_ORG_ID, "owner_id": VALID_USER_ID, "name": "Org"})
         _override(db)
         try:
             big_csv = b"email\n" + b"a@b.com\n" * 200_000
@@ -398,9 +395,7 @@ class TestBulkInviteFileValidation:
             _clear()
 
     async def test_non_utf8_file_returns_422(self, client):
-        db = _build_db(
-            org_data={"id": VALID_ORG_ID, "owner_id": VALID_USER_ID, "name": "Org"}
-        )
+        db = _build_db(org_data={"id": VALID_ORG_ID, "owner_id": VALID_USER_ID, "name": "Org"})
         _override(db)
         try:
             bad_bytes = b"email\n\xff\xfe@example.com\n"
@@ -414,9 +409,7 @@ class TestBulkInviteFileValidation:
             _clear()
 
     async def test_missing_email_column_returns_422(self, client):
-        db = _build_db(
-            org_data={"id": VALID_ORG_ID, "owner_id": VALID_USER_ID, "name": "Org"}
-        )
+        db = _build_db(org_data={"id": VALID_ORG_ID, "owner_id": VALID_USER_ID, "name": "Org"})
         _override(db)
         try:
             csv = b"name,phone\nAhmed,+994501234567\n"
@@ -430,9 +423,7 @@ class TestBulkInviteFileValidation:
             _clear()
 
     async def test_empty_csv_header_only_returns_422(self, client):
-        db = _build_db(
-            org_data={"id": VALID_ORG_ID, "owner_id": VALID_USER_ID, "name": "Org"}
-        )
+        db = _build_db(org_data={"id": VALID_ORG_ID, "owner_id": VALID_USER_ID, "name": "Org"})
         _override(db)
         try:
             resp = await client.post(

@@ -84,6 +84,11 @@ async def _maybe_alert_fallback_spike() -> None:
             hour=current_hour.isoformat(),
             alert="keyword_fallback_spike",
         )
+        # HARD KILL-SWITCH (2026-04-19): see error_alerting.py for context.
+        # Short-circuit the whole Telegram-send block; logger.warning above still
+        # captures the spike for log-based inspection. Remove this early-return
+        # only after CEO says 'unlock telegram alerts'.
+        return
         # Send Telegram alert using the same pattern as error_alerting middleware.
         # Fire-and-forget: alert failure must never block the evaluation path.
         try:

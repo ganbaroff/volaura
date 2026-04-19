@@ -198,6 +198,10 @@ def _build_keyboard(pid: str, sha12: str) -> dict:
 
 def _send_card(token: str, chat_id: str, text: str, keyboard: dict) -> dict | None:
     """Send one Telegram message. Returns the API response dict or None on failure."""
+    # HARD KILL-SWITCH (2026-04-19): see error_alerting.py. Remove early-return
+    # only after CEO says 'unlock telegram alerts'.
+    return {"ok": False, "hard_kill_switch": True}
+
     # Central telegram-gate (2026-04-19 spam kill).
     try:
         from .telegram_gate import allow_send as _gate_allow

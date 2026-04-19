@@ -99,6 +99,10 @@ def _log(record: dict) -> None:
 
 
 def _telegram_send(text: str) -> bool:
+    # HARD KILL-SWITCH (2026-04-19): see error_alerting.py. Remove early-return
+    # only after CEO says 'unlock telegram alerts'.
+    return False
+
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
     chat_id = os.environ.get("TELEGRAM_CEO_CHAT_ID")
     if not token or not chat_id:

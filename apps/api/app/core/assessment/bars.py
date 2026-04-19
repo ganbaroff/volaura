@@ -105,6 +105,7 @@ async def _maybe_alert_fallback_spike() -> None:
                 send_ok = True
                 try:
                     from packages.swarm.telegram_gate import allow_send as _gate_allow
+
                     send_ok = _gate_allow(category="error", severity="warning", preview=text[:120])
                 except ImportError:
                     pass

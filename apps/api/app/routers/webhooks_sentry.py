@@ -251,6 +251,7 @@ async def _ping_ceo_telegram(event_row: dict[str, Any], issue_url: str | None) -
     # Central telegram-gate (2026-04-19): dedup by fingerprint + global rate cap.
     try:
         from packages.swarm.telegram_gate import allow_send as _gate_allow
+
         if not _gate_allow(category="error", severity="warning", preview=msg[:120]):
             return
     except ImportError:

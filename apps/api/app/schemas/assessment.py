@@ -163,6 +163,31 @@ class SessionOut(BaseModel):
     next_question: QuestionOut | None = None
 
 
+class SessionResumeOut(BaseModel):
+    """Minimal session state for client-side resume after a store clear.
+
+    Returned by GET /api/assessment/session/{session_id}. Used by the
+    assessment page when the Zustand store has been cleared (browser storage
+    eviction, private-window reload) but the URL still carries a session_id.
+    The frontend fetches this to decide whether to resume, show an expired
+    message, or redirect to fresh assessment start.
+
+    Intentionally minimal — does NOT expose theta, raw answers, or the next
+    question payload. Those stay on the existing /answer flow. This is a
+    resume-helper, not a full session replay.
+    """
+
+    session_id: str
+    competency_slug: str
+    role_level: str = "professional"
+    status: str  # 'in_progress' | 'completed' | 'expired'
+    questions_answered: int
+    started_at: str | None = None
+    # True when the session can actually be resumed (in_progress + not past
+    # the 24h auto-expiry threshold used by /start).
+    is_resumable: bool
+
+
 class AnswerFeedback(BaseModel):
     """Immediate feedback after submitting an answer.
 

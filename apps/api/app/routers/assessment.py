@@ -200,7 +200,7 @@ async def start_assessment(
 
     # Auto-expire stale in_progress sessions (>24 h) before conflict check.
     # Any session abandoned for over a day is clearly not resumable.
-    stale_cutoff = (datetime.utcnow() - timedelta(hours=24)).isoformat()
+    stale_cutoff = (datetime.now(UTC) - timedelta(hours=24)).isoformat()
     stale_check = (
         await db_admin.table("assessment_sessions")
         .select("id")

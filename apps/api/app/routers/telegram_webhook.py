@@ -132,6 +132,7 @@ async def _save_message(db, direction: str, message: str, msg_type: str = "free_
     # the thread for forensic reconstruction if ceo_inbox suffered data loss.
     try:
         import json as _json
+        from datetime import UTC
         from datetime import datetime as _dt
         from pathlib import Path as _Path
 
@@ -141,12 +142,12 @@ async def _save_message(db, direction: str, message: str, msg_type: str = "free_
         repo_root = _Path(__file__).resolve().parents[4]
         inbox_dir = repo_root / "memory" / "atlas" / "inbox"
         if inbox_dir.exists():
-            stamp = _dt.utcnow().strftime("%Y-%m-%dT%H%M%S")
+            stamp = _dt.now(UTC).strftime("%Y-%m-%dT%H%M%S")
             safe_dir = f"telegram-{stamp}-{direction}-{msg_type}.md"
             fallback_path = inbox_dir / safe_dir
             fallback_path.write_text(
                 "# Telegram message — ceo_inbox save failed, filesystem fallback\n"
-                f"**Direction:** {direction} · **Type:** {msg_type} · **Captured:** {_dt.utcnow().isoformat()}Z\n\n"
+                f"**Direction:** {direction} · **Type:** {msg_type} · **Captured:** {_dt.now(UTC).isoformat()}Z\n\n"
                 "## Message\n\n"
                 f"{message}\n\n"
                 "## Metadata\n\n"

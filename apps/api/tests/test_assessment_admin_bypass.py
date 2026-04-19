@@ -16,7 +16,7 @@ Call order inside start_assessment (with payment_enabled=False):
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -306,7 +306,7 @@ async def test_stale_cutoff_is_24_hours():
     app.dependency_overrides[get_supabase_user] = _override_user(mock_user)
     app.dependency_overrides[get_current_user_id] = _override_user_id()
 
-    before = datetime.utcnow() - timedelta(hours=24)
+    before = datetime.now(UTC) - timedelta(hours=24)
 
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         await ac.post(
@@ -315,7 +315,7 @@ async def test_stale_cutoff_is_24_hours():
             headers={"Authorization": "Bearer fake"},
         )
 
-    after = datetime.utcnow() - timedelta(hours=24)
+    after = datetime.now(UTC) - timedelta(hours=24)
 
     assert len(captured_lt_args) >= 1, "lt('created_at', ...) was never called"
 

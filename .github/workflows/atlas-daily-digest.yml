@@ -1,11 +1,11 @@
 name: Atlas Daily Digest
 
 on:
-  # 23:00 UTC daily = 03:00 Baku. Per E6 spec (memory/atlas/inbox/2026-04-14T0734-epic-E6-*).
-  # Late-evening time was chosen so CEO reads it tomorrow morning as a recap,
-  # not a notification at peak attention hours.
-  schedule:
-    - cron: '0 23 * * *'
+  # 2026-04-19: cron disabled at CEO's request — "пусть будет тишина дальше
+  # решим". Part of the telegram silence-sweep. Re-enable only after shell
+  # silence-gate honors memory/atlas/telegram-silenced-until.txt.
+  # schedule:
+  #   - cron: '0 23 * * *'  # 23:00 UTC = 03:00 Baku (E6 spec)
   workflow_dispatch:
 
 concurrency:

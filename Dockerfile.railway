@@ -11,6 +11,16 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY apps/api/app/ ./app/
 
+# 2026-04-19: telegram_gate lives in packages/swarm/. apps/api/app/ emitters
+# (error_alerting, webhooks_sentry, match_checker, bars) import it to honor
+# the silence-file and rate-limits. Without this copy, the gate raises
+# ImportError, the `except ImportError: pass` fallback kicks in, and every
+# 5xx triggers a Telegram alert despite the silence-file being set. CEO saw
+# 100+/day as a result. Copy the full swarm package so gate + its helpers
+# resolve cleanly, and the silence-file so is_silenced() can read it.
+COPY packages/swarm/ ./packages/swarm/
+COPY memory/atlas/telegram-silenced-until.txt ./memory/atlas/telegram-silenced-until.txt
+
 # Railway injects PORT at runtime
 ENV PORT=8000
 EXPOSE $PORT

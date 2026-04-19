@@ -1,18 +1,16 @@
 """Unit tests for app/routers/beta_invite.py — schemas, defaults, env loading."""
 
-import pytest
-
 from app.routers.beta_invite import (
     _DEFAULT_CODES,
-    _load_valid_codes,
+    RATE_VALIDATE,
     ValidateCodeRequest,
     ValidateCodeResponse,
+    _load_valid_codes,
     router,
-    RATE_VALIDATE,
 )
 
-
 # ── _DEFAULT_CODES ────────────────────────────────────────────────────────────
+
 
 class TestDefaultCodes:
     def test_exactly_36_entries(self):
@@ -50,6 +48,7 @@ class TestDefaultCodes:
 
 
 # ── _load_valid_codes ─────────────────────────────────────────────────────────
+
 
 class TestLoadValidCodes:
     def test_no_env_vars_returns_defaults(self, monkeypatch):
@@ -124,6 +123,7 @@ class TestLoadValidCodes:
 
 # ── ValidateCodeRequest ───────────────────────────────────────────────────────
 
+
 class TestValidateCodeRequest:
     def test_strips_whitespace(self):
         req = ValidateCodeRequest(code="  BETA_01  ")
@@ -152,6 +152,7 @@ class TestValidateCodeRequest:
 
 # ── ValidateCodeResponse ──────────────────────────────────────────────────────
 
+
 class TestValidateCodeResponse:
     def test_valid_true(self):
         resp = ValidateCodeResponse(valid=True)
@@ -164,6 +165,7 @@ class TestValidateCodeResponse:
 
 # ── Router metadata ───────────────────────────────────────────────────────────
 
+
 class TestRouterMetadata:
     def test_prefix(self):
         assert router.prefix == "/invite"
@@ -173,6 +175,7 @@ class TestRouterMetadata:
 
 
 # ── RATE_VALIDATE constant ────────────────────────────────────────────────────
+
 
 class TestRateValidate:
     def test_rate_validate_value(self):

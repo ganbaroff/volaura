@@ -35,6 +35,7 @@ async def _send_telegram_alert(status_code: int, path: str, method: str) -> None
     # kill-switch. Bypasses don't bypass the gate.
     try:
         from packages.swarm.telegram_gate import allow_send as _gate_allow
+
         preview = f"5xx alert {method} {path} status={status_code}"
         if not _gate_allow(category="error", severity="error", preview=preview):
             return

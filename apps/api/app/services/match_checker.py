@@ -219,6 +219,7 @@ async def _send_telegram_notification(
         # Central telegram-gate (2026-04-19 spam kill).
         try:
             from packages.swarm.telegram_gate import allow_send as _gate_allow
+
             if not _gate_allow(category="info", severity="info", preview=message[:120]):
                 return False
         except ImportError:

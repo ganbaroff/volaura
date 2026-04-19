@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Eye, Zap, Calendar } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -37,6 +37,7 @@ const row = {
 
 export function ActivityFeed({ items, loading, locale }: ActivityFeedProps) {
   const { t } = useTranslation();
+  const shouldReduceMotion = useReducedMotion();
 
   if (loading) {
     return (
@@ -68,7 +69,7 @@ export function ActivityFeed({ items, loading, locale }: ActivityFeedProps) {
   }
 
   return (
-    <motion.div variants={stagger} initial="hidden" animate="visible" className="space-y-3">
+    <motion.div variants={stagger} initial={shouldReduceMotion ? false : "hidden"} animate="visible" className="space-y-3">
       {items.slice(0, 5).map((item) => {
         const Icon = ICONS[item.type] ?? Zap;
         return (
@@ -92,6 +93,7 @@ export function ActivityFeed({ items, loading, locale }: ActivityFeedProps) {
         <a
           href={`/${locale}/profile`}
           className="block text-center text-xs text-primary hover:underline pt-1"
+          aria-label="View all activity"
         >
           {t("common.viewAll")}
         </a>

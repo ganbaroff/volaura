@@ -11,13 +11,36 @@ import { apiFetch, ApiError } from "@/lib/api/client";
 import { useAuthToken } from "./use-auth-token";
 import type { OrganizationResponse, OrganizationCreate, OrgDashboardStats, OrgProfessionalRow } from "@/lib/api/types";
 
-/** My organization — the one the current user owns */
+/**
+ * My organization — the one the current user owns.
+ *
+ * Returns:
+ *   data = OrganizationResponse  — org found and loaded
+ *   data = null                  — user has no org (404, correct empty state)
+ *   error = ApiError(401)        — session expired; show re-auth CTA
+ *   error = ApiError(5xx)        — server error; show retry
+ *
+ * HTTP status is preserved so the page can render three distinct states
+ * instead of collapsing all errors into "no org" empty state (BUG-018).
+ */
 export function useMyOrganization() {
-  return useQuery<OrganizationResponse>({
+  return useQuery<OrganizationResponse | null, ApiError>({
     queryKey: ["organizations", "me"],
     queryFn: async () => {
-      const { data, error } = await getMyOrganizationApiOrganizationsMeGet();
-      if (error || !data) throw new Error("Failed to fetch organization");
+      const result = await getMyOrganizationApiOrganizationsMeGet();
+      const { data, error } = result;
+      const status = result.response?.status ?? 0;
+
+      if (status === 404) return null;
+
+      if (error || !data) {
+        const errBody = error as { code?: string; message?: string } | undefined;
+        throw new ApiError(
+          status,
+          errBody?.code ?? "UNKNOWN",
+          errBody?.message ?? "Failed to fetch organization",
+        );
+      }
       return data as unknown as OrganizationResponse;
     },
     staleTime: 5 * 60 * 1000,

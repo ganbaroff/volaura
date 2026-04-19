@@ -283,8 +283,10 @@ async def test_save_message_db_failure_triggers_filesystem_fallback():
     after = set(inbox_dir.iterdir())
     new_files = after - before
     assert len(new_files) == 1
-    content = new_files.pop().read_text(encoding="utf-8")
+    created_file = new_files.pop()
+    content = created_file.read_text(encoding="utf-8")
     assert unique_msg in content
+    created_file.unlink()
 
 
 @pytest.mark.asyncio

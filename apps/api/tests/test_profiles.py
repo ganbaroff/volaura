@@ -1247,8 +1247,8 @@ async def test_create_my_profile_insert_failure():
     admin_db = _make_mock_db()
     db.execute = AsyncMock(
         side_effect=[
-            MagicMock(data=[]),   # username check: not taken
-            MagicMock(data=None), # insert: fails
+            MagicMock(data=[]),  # username check: not taken
+            MagicMock(data=None),  # insert: fails
         ]
     )
     admin_db.execute = AsyncMock(return_value=MagicMock(data=[]))
@@ -1330,7 +1330,7 @@ async def test_create_my_profile_age_confirmed_sets_terms_at():
 
     db.execute = AsyncMock(
         side_effect=[
-            MagicMock(data=[]),        # username check
+            MagicMock(data=[]),  # username check
             MagicMock(data=[PROFILE_ROW]),  # insert
         ]
     )

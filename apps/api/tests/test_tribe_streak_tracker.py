@@ -39,18 +39,14 @@ def _make_table(name, tribe_members, streak_data):
     if name == "tribe_members":
         chain = MagicMock()
         chain.is_.return_value = chain
-        chain.execute = AsyncMock(
-            return_value=MagicMock(data=tribe_members or [])
-        )
+        chain.execute = AsyncMock(return_value=MagicMock(data=tribe_members or []))
         tbl.select.return_value = chain
 
     elif name == "tribe_streaks":
         select_chain = MagicMock()
         select_chain.eq.return_value = select_chain
         select_chain.maybe_single.return_value = select_chain
-        select_chain.execute = AsyncMock(
-            return_value=MagicMock(data=streak_data)
-        )
+        select_chain.execute = AsyncMock(return_value=MagicMock(data=streak_data))
         tbl.select.return_value = select_chain
 
         update_chain = MagicMock()
@@ -98,49 +94,57 @@ class TestUpdateUserStreak:
 
     @pytest.mark.asyncio
     async def test_active_week_returns_extended(self):
-        db = _mock_db(streak_data={
-            "user_id": USER_ID,
-            "current_streak": 3,
-            "longest_streak": 5,
-            "last_activity_week": "2026-W16",
-            "consecutive_misses_count": 0,
-        })
+        db = _mock_db(
+            streak_data={
+                "user_id": USER_ID,
+                "current_streak": 3,
+                "longest_streak": 5,
+                "last_activity_week": "2026-W16",
+                "consecutive_misses_count": 0,
+            }
+        )
         result = await _update_user_streak(db, USER_ID, "2026-W16")
         assert result == "extended"
 
     @pytest.mark.asyncio
     async def test_inactive_below_threshold_returns_missed(self):
-        db = _mock_db(streak_data={
-            "user_id": USER_ID,
-            "current_streak": 5,
-            "longest_streak": 5,
-            "last_activity_week": "2026-W14",
-            "consecutive_misses_count": 1,
-        })
+        db = _mock_db(
+            streak_data={
+                "user_id": USER_ID,
+                "current_streak": 5,
+                "longest_streak": 5,
+                "last_activity_week": "2026-W14",
+                "consecutive_misses_count": 1,
+            }
+        )
         result = await _update_user_streak(db, USER_ID, "2026-W16")
         assert result == "missed"
 
     @pytest.mark.asyncio
     async def test_three_misses_resets_streak(self):
-        db = _mock_db(streak_data={
-            "user_id": USER_ID,
-            "current_streak": 10,
-            "longest_streak": 10,
-            "last_activity_week": "2026-W12",
-            "consecutive_misses_count": 2,
-        })
+        db = _mock_db(
+            streak_data={
+                "user_id": USER_ID,
+                "current_streak": 10,
+                "longest_streak": 10,
+                "last_activity_week": "2026-W12",
+                "consecutive_misses_count": 2,
+            }
+        )
         result = await _update_user_streak(db, USER_ID, "2026-W16")
         assert result == "reset"
 
     @pytest.mark.asyncio
     async def test_reset_sets_streak_to_zero(self):
-        db = _mock_db(streak_data={
-            "user_id": USER_ID,
-            "current_streak": 10,
-            "longest_streak": 10,
-            "last_activity_week": "2026-W12",
-            "consecutive_misses_count": 2,
-        })
+        db = _mock_db(
+            streak_data={
+                "user_id": USER_ID,
+                "current_streak": 10,
+                "longest_streak": 10,
+                "last_activity_week": "2026-W12",
+                "consecutive_misses_count": 2,
+            }
+        )
         await _update_user_streak(db, USER_ID, "2026-W16")
 
         streak_tbl = db.table("tribe_streaks")
@@ -150,13 +154,15 @@ class TestUpdateUserStreak:
 
     @pytest.mark.asyncio
     async def test_missed_increments_misses(self):
-        db = _mock_db(streak_data={
-            "user_id": USER_ID,
-            "current_streak": 5,
-            "longest_streak": 5,
-            "last_activity_week": "2026-W14",
-            "consecutive_misses_count": 0,
-        })
+        db = _mock_db(
+            streak_data={
+                "user_id": USER_ID,
+                "current_streak": 5,
+                "longest_streak": 5,
+                "last_activity_week": "2026-W14",
+                "consecutive_misses_count": 0,
+            }
+        )
         await _update_user_streak(db, USER_ID, "2026-W16")
 
         streak_tbl = db.table("tribe_streaks")
@@ -177,25 +183,29 @@ class TestRecordAssessmentActivity:
     @pytest.mark.asyncio
     async def test_already_credited_this_week_noop(self):
         current_week = _iso_week(datetime.now(UTC))
-        db = _mock_db(streak_data={
-            "user_id": USER_ID,
-            "current_streak": 3,
-            "longest_streak": 5,
-            "last_activity_week": current_week,
-            "consecutive_misses_count": 0,
-        })
+        db = _mock_db(
+            streak_data={
+                "user_id": USER_ID,
+                "current_streak": 3,
+                "longest_streak": 5,
+                "last_activity_week": current_week,
+                "consecutive_misses_count": 0,
+            }
+        )
         await record_assessment_activity(db, USER_ID)
         db.table("tribe_streaks").update.assert_not_called()
 
     @pytest.mark.asyncio
     async def test_extends_streak(self):
-        db = _mock_db(streak_data={
-            "user_id": USER_ID,
-            "current_streak": 3,
-            "longest_streak": 5,
-            "last_activity_week": "2025-W01",
-            "consecutive_misses_count": 1,
-        })
+        db = _mock_db(
+            streak_data={
+                "user_id": USER_ID,
+                "current_streak": 3,
+                "longest_streak": 5,
+                "last_activity_week": "2025-W01",
+                "consecutive_misses_count": 1,
+            }
+        )
         await record_assessment_activity(db, USER_ID)
 
         streak_tbl = db.table("tribe_streaks")
@@ -206,13 +216,15 @@ class TestRecordAssessmentActivity:
 
     @pytest.mark.asyncio
     async def test_updates_longest_streak(self):
-        db = _mock_db(streak_data={
-            "user_id": USER_ID,
-            "current_streak": 5,
-            "longest_streak": 5,
-            "last_activity_week": "2025-W01",
-            "consecutive_misses_count": 0,
-        })
+        db = _mock_db(
+            streak_data={
+                "user_id": USER_ID,
+                "current_streak": 5,
+                "longest_streak": 5,
+                "last_activity_week": "2025-W01",
+                "consecutive_misses_count": 0,
+            }
+        )
         await record_assessment_activity(db, USER_ID)
 
         streak_tbl = db.table("tribe_streaks")
@@ -251,9 +263,7 @@ class TestUpdateWeeklyStreaks:
         members_tbl = MagicMock()
         members_chain = MagicMock()
         members_chain.is_.return_value = members_chain
-        members_chain.execute = AsyncMock(
-            return_value=MagicMock(data=[{"user_id": USER_ID}])
-        )
+        members_chain.execute = AsyncMock(return_value=MagicMock(data=[{"user_id": USER_ID}]))
         members_tbl.select.return_value = members_chain
 
         streak_tbl = MagicMock()

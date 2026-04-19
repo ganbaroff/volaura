@@ -126,8 +126,21 @@ def _uid_override(uid: str):
 def _make_chain_mock(data=None, list_data=None) -> MagicMock:
     """Generic fluent-chain mock. execute() returns data."""
     t = MagicMock()
-    for method in ("select", "eq", "neq", "in_", "insert", "update", "delete",
-                   "order", "limit", "range", "single", "maybe_single", "rpc"):
+    for method in (
+        "select",
+        "eq",
+        "neq",
+        "in_",
+        "insert",
+        "update",
+        "delete",
+        "order",
+        "limit",
+        "range",
+        "single",
+        "maybe_single",
+        "rpc",
+    ):
         getattr(t, method).return_value = t
     result_data = list_data if list_data is not None else data
     t.execute = AsyncMock(return_value=MagicMock(data=result_data))
@@ -152,26 +165,42 @@ def _make_org_gate_db(
     def make_table(table_name: str) -> MagicMock:
         t = MagicMock()
         call_counts.setdefault(table_name, 0)
-        for method in ("select", "eq", "neq", "in_", "insert", "update",
-                       "delete", "order", "limit", "range", "single",
-                       "maybe_single"):
+        for method in (
+            "select",
+            "eq",
+            "neq",
+            "in_",
+            "insert",
+            "update",
+            "delete",
+            "order",
+            "limit",
+            "range",
+            "single",
+            "maybe_single",
+        ):
             getattr(t, method).return_value = t
 
         if table_name == "organizations":
+
             async def _exec(*_a, **_kw):
                 return MagicMock(data=[{"id": ORG_ID}] if has_org else [])
+
             t.execute = AsyncMock(side_effect=_exec)
 
         elif table_name == "eventshift_events":
+
             async def _exec(*_a, **_kw):
                 if insert_data is not None:
                     return MagicMock(data=[insert_data])
                 if list_data is not None:
                     return MagicMock(data=list_data)
                 return MagicMock(data=event_data)
+
             t.execute = AsyncMock(side_effect=_exec)
 
         elif table_name == "eventshift_departments":
+
             async def _exec(*_a, **_kw):
                 n = call_counts["eventshift_departments"]
                 call_counts["eventshift_departments"] += 1
@@ -180,16 +209,21 @@ def _make_org_gate_db(
                 if list_data is not None and n > 0:
                     return MagicMock(data=list_data)
                 return MagicMock(data=dept_data)
+
             t.execute = AsyncMock(side_effect=_exec)
 
         elif table_name == "eventshift_areas":
+
             async def _exec(*_a, **_kw):
                 return MagicMock(data=area_data)
+
             t.execute = AsyncMock(side_effect=_exec)
 
         elif table_name == "eventshift_units":
+
             async def _exec(*_a, **_kw):
                 return MagicMock(data=unit_data)
+
             t.execute = AsyncMock(side_effect=_exec)
 
         elif table_name == "character_events":
@@ -201,9 +235,7 @@ def _make_org_gate_db(
         return t
 
     rpc_mock = MagicMock()
-    rpc_mock.execute = AsyncMock(
-        return_value=MagicMock(data=[True] if module_active else [])
-    )
+    rpc_mock.execute = AsyncMock(return_value=MagicMock(data=[True] if module_active else []))
 
     db = MagicMock()
     db.table = MagicMock(side_effect=make_table)
@@ -456,7 +488,7 @@ async def test_list_events_returns_list():
     db = _make_org_gate_db(
         has_org=True,
         module_active=True,
-        event_data=None,   # first call returns org
+        event_data=None,  # first call returns org
         list_data=[EVENT_ROW],
     )
     app.dependency_overrides[get_supabase_admin] = _admin_override(db)
@@ -528,7 +560,7 @@ async def test_create_event_invalid_times_422():
                 json={
                     "slug": "bad-times",
                     "name": "Bad Times",
-                    "start_at": LATER_ISO,   # end before start
+                    "start_at": LATER_ISO,  # end before start
                     "end_at": FUTURE_ISO,
                 },
                 headers={"Authorization": "Bearer fake"},
@@ -677,8 +709,18 @@ async def test_list_departments_success():
     def make_table(table_name: str) -> MagicMock:
         t = MagicMock()
         call_counts.setdefault(table_name, 0)
-        for method in ("select", "eq", "order", "single", "maybe_single",
-                       "insert", "update", "delete", "limit", "range"):
+        for method in (
+            "select",
+            "eq",
+            "order",
+            "single",
+            "maybe_single",
+            "insert",
+            "update",
+            "delete",
+            "limit",
+            "range",
+        ):
             getattr(t, method).return_value = t
 
         if table_name == "organizations":
@@ -686,9 +728,11 @@ async def test_list_departments_success():
         elif table_name == "eventshift_events":
             t.execute = AsyncMock(return_value=MagicMock(data=EVENT_ROW))
         elif table_name == "eventshift_departments":
+
             async def _exec(*_a, **_kw):
                 call_counts["eventshift_departments"] += 1
                 return MagicMock(data=[DEPT_ROW])
+
             t.execute = AsyncMock(side_effect=_exec)
         elif table_name == "character_events":
             t.execute = AsyncMock(return_value=MagicMock(data=[]))

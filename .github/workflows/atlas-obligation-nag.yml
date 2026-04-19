@@ -11,8 +11,13 @@ name: Atlas Obligation Nag
 #     returns 200. If send fails, no log row, next tick retries.
 
 on:
-  schedule:
-    - cron: '37 */4 * * *'   # every 4h at minute :37 (avoid fleet-wide :00 alignment)
+  # 2026-04-19: cron disabled — 6 telegrams/day baseline, often more when
+  # escalation tier fires. Part of CEO's 100+/day Telegram-spam report.
+  # Re-enable only after shell-level silence-gate honors
+  # memory/atlas/telegram-silenced-until.txt for curl-based senders.
+  # Manual dispatch still works — CEO can nag himself on demand.
+  # schedule:
+  #   - cron: '37 */4 * * *'   # every 4h at minute :37 (avoid fleet-wide :00 alignment)
   workflow_dispatch:
 
 permissions:

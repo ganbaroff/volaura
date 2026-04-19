@@ -8,8 +8,6 @@ from __future__ import annotations
 
 import json
 import os
-import tempfile
-from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
@@ -672,10 +670,9 @@ class TestSwarmAgents:
                         __exit__=MagicMock(return_value=False),
                     )
                 ),
-            ):
-                with patch("json.load", return_value=agent_state):
-                    async with make_client() as client:
-                        resp = await client.get("/api/admin/swarm/agents")
+            ), patch("json.load", return_value=agent_state):
+                async with make_client() as client:
+                    resp = await client.get("/api/admin/swarm/agents")
             assert resp.status_code == 200
             body = resp.json()
             assert "data" in body
@@ -735,12 +732,6 @@ class TestSwarmProposals:
     @pytest.mark.asyncio
     async def test_proposals_returns_list(self):
         self._setup_admin()
-        proposals_data = {
-            "proposals": [
-                {"id": "p1", "status": "pending", "timestamp": "2026-04-19T09:00:00", "title": "Add caching"},
-                {"id": "p2", "status": "approved", "timestamp": "2026-04-18T09:00:00", "title": "Add tests"},
-            ]
-        }
         try:
             with patch("builtins.open", side_effect=FileNotFoundError()):
                 async with make_client() as client:
@@ -755,12 +746,6 @@ class TestSwarmProposals:
     @pytest.mark.asyncio
     async def test_proposals_status_filter(self):
         self._setup_admin()
-        proposals_data = {
-            "proposals": [
-                {"id": "p1", "status": "pending", "timestamp": "2026-04-19T09:00:00"},
-                {"id": "p2", "status": "approved", "timestamp": "2026-04-18T09:00:00"},
-            ]
-        }
         try:
             with patch("builtins.open", side_effect=FileNotFoundError()):
                 async with make_client() as client:
@@ -847,17 +832,19 @@ class TestSwarmProposalDecide:
             "proposals": [{"id": proposal_id, "status": "pending", "timestamp": "2026-04-19T09:00:00"}]
         }
         try:
-            with patch("builtins.open", MagicMock()):
-                with patch("json.load", return_value=proposals_data):
-                    with patch("json.dump"):
-                        with patch("os.replace"):
-                            with patch("tempfile.mkstemp", return_value=(0, "/tmp/fake.json")):
-                                with patch("os.fdopen", return_value=MagicMock().__enter__):
-                                    async with make_client() as client:
-                                        resp = await client.post(
-                                            f"/api/admin/swarm/proposals/{proposal_id}/decide",
-                                            json={"action": "approve"},
-                                        )
+            with (
+                patch("builtins.open", MagicMock()),
+                patch("json.load", return_value=proposals_data),
+                patch("json.dump"),
+                patch("os.replace"),
+                patch("tempfile.mkstemp", return_value=(0, "/tmp/fake.json")),
+                patch("os.fdopen", return_value=MagicMock().__enter__),
+            ):
+                async with make_client() as client:
+                    resp = await client.post(
+                        f"/api/admin/swarm/proposals/{proposal_id}/decide",
+                        json={"action": "approve"},
+                    )
             assert resp.status_code == 200
             body = resp.json()
             assert body["data"]["action"] == "approve"
@@ -873,17 +860,19 @@ class TestSwarmProposalDecide:
             "proposals": [{"id": proposal_id, "status": "pending", "timestamp": "2026-04-19T09:00:00"}]
         }
         try:
-            with patch("builtins.open", MagicMock()):
-                with patch("json.load", return_value=proposals_data):
-                    with patch("json.dump"):
-                        with patch("os.replace"):
-                            with patch("tempfile.mkstemp", return_value=(0, "/tmp/fake.json")):
-                                with patch("os.fdopen", return_value=MagicMock().__enter__):
-                                    async with make_client() as client:
-                                        resp = await client.post(
-                                            f"/api/admin/swarm/proposals/{proposal_id}/decide",
-                                            json={"action": "dismiss"},
-                                        )
+            with (
+                patch("builtins.open", MagicMock()),
+                patch("json.load", return_value=proposals_data),
+                patch("json.dump"),
+                patch("os.replace"),
+                patch("tempfile.mkstemp", return_value=(0, "/tmp/fake.json")),
+                patch("os.fdopen", return_value=MagicMock().__enter__),
+            ):
+                async with make_client() as client:
+                    resp = await client.post(
+                        f"/api/admin/swarm/proposals/{proposal_id}/decide",
+                        json={"action": "dismiss"},
+                    )
             assert resp.status_code == 200
             assert resp.json()["data"]["status"] == "rejected"
         finally:
@@ -897,17 +886,19 @@ class TestSwarmProposalDecide:
             "proposals": [{"id": proposal_id, "status": "pending", "timestamp": "2026-04-19T09:00:00"}]
         }
         try:
-            with patch("builtins.open", MagicMock()):
-                with patch("json.load", return_value=proposals_data):
-                    with patch("json.dump"):
-                        with patch("os.replace"):
-                            with patch("tempfile.mkstemp", return_value=(0, "/tmp/fake.json")):
-                                with patch("os.fdopen", return_value=MagicMock().__enter__):
-                                    async with make_client() as client:
-                                        resp = await client.post(
-                                            f"/api/admin/swarm/proposals/{proposal_id}/decide",
-                                            json={"action": "defer"},
-                                        )
+            with (
+                patch("builtins.open", MagicMock()),
+                patch("json.load", return_value=proposals_data),
+                patch("json.dump"),
+                patch("os.replace"),
+                patch("tempfile.mkstemp", return_value=(0, "/tmp/fake.json")),
+                patch("os.fdopen", return_value=MagicMock().__enter__),
+            ):
+                async with make_client() as client:
+                    resp = await client.post(
+                        f"/api/admin/swarm/proposals/{proposal_id}/decide",
+                        json={"action": "defer"},
+                    )
             assert resp.status_code == 200
             assert resp.json()["data"]["status"] == "deferred"
         finally:

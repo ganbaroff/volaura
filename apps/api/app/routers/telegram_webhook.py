@@ -104,26 +104,35 @@ async def _save_message(db, direction: str, message: str, msg_type: str = "free_
     Fix: escalate on failure via on-disk write into memory/atlas/inbox/ so
     live Atlas picks up the lost message on next wake (crash-safe, out-of-band).
     """
+    row = {
+        "direction": direction,
+        "message": message[:5000],
+        "message_type": msg_type,
+        "metadata": metadata or {},
+    }
     try:
-        await (
-            db.table("ceo_inbox")
-            .insert(
-                {
-                    "direction": direction,
-                    "message": message[:5000],
-                    "message_type": msg_type,
-                    "metadata": metadata or {},
-                }
-            )
-            .execute()
-        )
+        await db.table("ceo_inbox").insert(row).execute()
         return
-    except Exception as e:
+    except Exception as first_err:
+        logger.warning(
+            "ceo_inbox insert failed, retrying with fresh client",
+            error=str(first_err)[:200],
+        )
+
+    # Stale TCP connection in singleton pool — reset and retry once.
+    try:
+        from app.deps import reset_admin_client
+
+        fresh_db = await reset_admin_client()
+        await fresh_db.table("ceo_inbox").insert(row).execute()
+        logger.info("ceo_inbox retry succeeded after client reset")
+        return
+    except Exception as retry_err:
         logger.error(
             "ceo_inbox save failed — escalating to filesystem fallback",
             direction=direction,
             msg_type=msg_type,
-            error=str(e)[:300],
+            error=str(retry_err)[:300],
         )
 
     # Fallback path: never silent. Write the message to memory/atlas/inbox/

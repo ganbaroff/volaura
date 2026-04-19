@@ -36,6 +36,14 @@ async def get_admin_client() -> AsyncClient:
     return await _get_or_create_admin_client()
 
 
+async def reset_admin_client() -> AsyncClient:
+    """Drop stale singleton and create fresh one. Use after connection-pool failures."""
+    global _admin_client
+    async with _admin_lock:
+        _admin_client = None
+    return await _get_or_create_admin_client()
+
+
 async def _get_or_create_admin_client() -> AsyncClient:
     """Return the singleton admin client, creating it on first call.
 

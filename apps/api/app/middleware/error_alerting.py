@@ -31,6 +31,16 @@ async def _send_telegram_alert(status_code: int, path: str, method: str) -> None
     if not token or not chat_id:
         return  # Not configured
 
+    # Central telegram-gate (2026-04-19 spam kill): global rate-limit, dedup,
+    # kill-switch. Bypasses don't bypass the gate.
+    try:
+        from packages.swarm.telegram_gate import allow_send as _gate_allow
+        preview = f"5xx alert {method} {path} status={status_code}"
+        if not _gate_allow(category="error", severity="error", preview=preview):
+            return
+    except ImportError:
+        pass  # gate unavailable in some contexts — fall through to local cooldown only
+
     _last_alert_time = now
 
     text = (

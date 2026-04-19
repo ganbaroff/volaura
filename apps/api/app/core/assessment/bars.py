@@ -101,11 +101,19 @@ async def _maybe_alert_fallback_spike() -> None:
                     f"`{_fallback_count}` evaluations this hour.\n\n"
                     f"AURA scores in degraded mode — check Railway logs."
                 )
-                async with httpx.AsyncClient(timeout=5) as client:
-                    await client.post(
-                        f"https://api.telegram.org/bot{token}/sendMessage",
-                        json={"chat_id": chat_id, "text": text, "parse_mode": "Markdown"},
-                    )
+                # Central telegram-gate (2026-04-19 spam kill).
+                send_ok = True
+                try:
+                    from packages.swarm.telegram_gate import allow_send as _gate_allow
+                    send_ok = _gate_allow(category="error", severity="warning", preview=text[:120])
+                except ImportError:
+                    pass
+                if send_ok:
+                    async with httpx.AsyncClient(timeout=5) as client:
+                        await client.post(
+                            f"https://api.telegram.org/bot{token}/sendMessage",
+                            json={"chat_id": chat_id, "text": text, "parse_mode": "Markdown"},
+                        )
         except Exception as _e:
             logger.warning("Failed to send fallback spike Telegram alert", error=str(_e)[:100])
 

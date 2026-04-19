@@ -216,6 +216,14 @@ async def _send_telegram_notification(
             f"[View all matches on Volaura]({settings.app_url}/az/org-volunteers)"
         )
 
+        # Central telegram-gate (2026-04-19 spam kill).
+        try:
+            from packages.swarm.telegram_gate import allow_send as _gate_allow
+            if not _gate_allow(category="info", severity="info", preview=message[:120]):
+                return False
+        except ImportError:
+            pass
+
         async with httpx.AsyncClient(timeout=httpx.Timeout(10.0)) as client:
             resp = await client.post(
                 f"https://api.telegram.org/bot{settings.telegram_bot_token}/sendMessage",

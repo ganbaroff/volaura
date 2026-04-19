@@ -198,6 +198,15 @@ def _build_keyboard(pid: str, sha12: str) -> dict:
 
 def _send_card(token: str, chat_id: str, text: str, keyboard: dict) -> dict | None:
     """Send one Telegram message. Returns the API response dict or None on failure."""
+    # Central telegram-gate (2026-04-19 spam kill).
+    try:
+        from .telegram_gate import allow_send as _gate_allow
+        if not _gate_allow(category="proposal", severity="info", preview=text[:120]):
+            logger.info("telegram_gate blocked proposal card send")
+            return {"ok": False, "gate_blocked": True}
+    except ImportError:
+        pass
+
     url = f"https://api.telegram.org/bot{token}/sendMessage"
     payload: dict = {
         "chat_id": chat_id,

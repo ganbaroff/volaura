@@ -30,9 +30,7 @@ RATE_VALIDATE = "10/minute"
 # ORG_01..ORG_05 cover early org pilots
 # OPEN is the public LinkedIn CTA code (no personal code required)
 _DEFAULT_CODES: frozenset[str] = frozenset(
-    [f"BETA_{i:02d}" for i in range(1, 31)]
-    + [f"ORG_{i:02d}" for i in range(1, 6)]
-    + ["OPEN"]
+    [f"BETA_{i:02d}" for i in range(1, 31)] + [f"ORG_{i:02d}" for i in range(1, 6)] + ["OPEN"]
 )
 
 

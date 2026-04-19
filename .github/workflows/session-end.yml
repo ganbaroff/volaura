@@ -1,15 +1,18 @@
 name: Session End Hook
 
 on:
-  push:
-    branches: [main]
-    # Only trigger when backend/frontend/migration code changed (not just docs/memory)
-    paths:
-      - 'apps/api/**'
-      - 'apps/web/src/**'
-      - 'supabase/migrations/**'
-      - 'packages/swarm/**'
-      - 'docs/**'
+  # 2026-04-19: push trigger disabled at CEO's request — "пусть будет тишина
+  # дальше решим". Fires on every code-touching push to main; CEO was
+  # seeing one Telegram per push. Manual dispatch still available.
+  # push:
+  #   branches: [main]
+  #   paths:
+  #     - 'apps/api/**'
+  #     - 'apps/web/src/**'
+  #     - 'supabase/migrations/**'
+  #     - 'packages/swarm/**'
+  #     - 'docs/**'
+  workflow_dispatch:
 
 jobs:
   session-end-hook:

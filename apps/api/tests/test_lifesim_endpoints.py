@@ -106,6 +106,10 @@ def _make_client() -> AsyncClient:
     return AsyncClient(transport=ASGITransport(app=app), base_url="http://test")
 
 
+async def _fake_admin():
+    yield AsyncMock()
+
+
 # ── Feed rows ──────────────────────────────────────────────────────────────────
 
 
@@ -183,8 +187,12 @@ class TestLifesimFeed:
     @pytest.mark.asyncio
     async def test_401_when_no_auth(self):
         """No dependency override → real get_current_user_id rejects missing token."""
-        async with _make_client() as c:
-            resp = await c.get("/api/lifesim/feed")
+        app.dependency_overrides[get_supabase_admin] = _fake_admin
+        try:
+            async with _make_client() as c:
+                resp = await c.get("/api/lifesim/feed")
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
         assert resp.status_code == 401
 
     @pytest.mark.asyncio
@@ -294,8 +302,12 @@ class TestLifesimNextChoice:
 
     @pytest.mark.asyncio
     async def test_401_when_no_auth(self):
-        async with _make_client() as c:
-            resp = await c.get("/api/lifesim/next-choice?age=18")
+        app.dependency_overrides[get_supabase_admin] = _fake_admin
+        try:
+            async with _make_client() as c:
+                resp = await c.get("/api/lifesim/next-choice?age=18")
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
         assert resp.status_code == 401
 
     @pytest.mark.asyncio
@@ -384,8 +396,12 @@ class TestLifesimChoice:
 
     @pytest.mark.asyncio
     async def test_401_when_no_auth(self):
-        async with _make_client() as c:
-            resp = await c.post("/api/lifesim/choice", json=self._valid_payload())
+        app.dependency_overrides[get_supabase_admin] = _fake_admin
+        try:
+            async with _make_client() as c:
+                resp = await c.post("/api/lifesim/choice", json=self._valid_payload())
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
         assert resp.status_code == 401
 
     @pytest.mark.asyncio
@@ -504,8 +520,12 @@ class TestLifesimPurchase:
 
     @pytest.mark.asyncio
     async def test_401_when_no_auth(self):
-        async with _make_client() as c:
-            resp = await c.post("/api/lifesim/purchase", json=self._valid_payload())
+        app.dependency_overrides[get_supabase_admin] = _fake_admin
+        try:
+            async with _make_client() as c:
+                resp = await c.post("/api/lifesim/purchase", json=self._valid_payload())
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
         assert resp.status_code == 401
 
     @pytest.mark.asyncio

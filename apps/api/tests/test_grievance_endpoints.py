@@ -206,11 +206,15 @@ class TestFileGrievance:
 
     @pytest.mark.asyncio
     async def test_requires_auth(self):
-        async with make_client() as client:
-            r = await client.post(
-                "/api/aura/grievance",
-                json={"subject": "Test subject here", "description": "Long enough description."},
-            )
+        app.dependency_overrides[get_supabase_admin] = admin_dep(make_db())
+        try:
+            async with make_client() as client:
+                r = await client.post(
+                    "/api/aura/grievance",
+                    json={"subject": "Test subject here", "description": "Long enough description."},
+                )
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
         assert r.status_code == 401
 
 
@@ -251,8 +255,12 @@ class TestListOwnGrievances:
 
     @pytest.mark.asyncio
     async def test_requires_auth(self):
-        async with make_client() as client:
-            r = await client.get("/api/aura/grievance")
+        app.dependency_overrides[get_supabase_admin] = admin_dep(make_db())
+        try:
+            async with make_client() as client:
+                r = await client.get("/api/aura/grievance")
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
         assert r.status_code == 401
 
 

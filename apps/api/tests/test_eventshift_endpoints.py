@@ -241,8 +241,15 @@ class _DepCtx:
 
 
 async def _assert_requires_auth(method: str, path: str) -> None:
-    async with make_client() as c:
-        r = await getattr(c, method)(path)
+    async def _fake_admin():
+        yield AsyncMock()
+
+    app.dependency_overrides[get_supabase_admin] = _fake_admin
+    try:
+        async with make_client() as c:
+            r = await getattr(c, method)(path)
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
     assert r.status_code == 401
 
 

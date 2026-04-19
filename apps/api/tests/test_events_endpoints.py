@@ -698,6 +698,10 @@ class TestRegisterForEvent:
 # ══════════════════════════════════════════════════════════════════════════════
 
 
+async def _fake_admin():
+    yield AsyncMock()
+
+
 class TestCheckIn:
     @pytest.mark.asyncio
     async def test_happy_path_returns_200(self):
@@ -724,11 +728,15 @@ class TestCheckIn:
 
     @pytest.mark.asyncio
     async def test_401_when_no_auth(self):
-        async with _make_client() as c:
-            resp = await c.post(
-                f"/api/events/{EVENT_ID}/checkin",
-                json={"check_in_code": "ABCDEF123456"},
-            )
+        app.dependency_overrides[get_supabase_admin] = _fake_admin
+        try:
+            async with _make_client() as c:
+                resp = await c.post(
+                    f"/api/events/{EVENT_ID}/checkin",
+                    json={"check_in_code": "ABCDEF123456"},
+                )
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
         assert resp.status_code == 401
 
     @pytest.mark.asyncio
@@ -822,8 +830,12 @@ class TestListRegistrations:
 
     @pytest.mark.asyncio
     async def test_401_when_no_auth(self):
-        async with _make_client() as c:
-            resp = await c.get(f"/api/events/{EVENT_ID}/registrations")
+        app.dependency_overrides[get_supabase_admin] = _fake_admin
+        try:
+            async with _make_client() as c:
+                resp = await c.get(f"/api/events/{EVENT_ID}/registrations")
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
         assert resp.status_code == 401
 
     @pytest.mark.asyncio
@@ -900,8 +912,12 @@ class TestListAttendees:
 
     @pytest.mark.asyncio
     async def test_401_when_no_auth(self):
-        async with _make_client() as c:
-            resp = await c.get(f"/api/events/{EVENT_ID}/attendees")
+        app.dependency_overrides[get_supabase_admin] = _fake_admin
+        try:
+            async with _make_client() as c:
+                resp = await c.get(f"/api/events/{EVENT_ID}/attendees")
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
         assert resp.status_code == 401
 
     @pytest.mark.asyncio
@@ -983,8 +999,12 @@ class TestMyRegistrations:
     @pytest.mark.asyncio
     async def test_401_when_no_auth(self):
         """No auth on shadowed route still requires a user_id dep — returns 401."""
-        async with _make_client() as c:
-            resp = await c.get("/api/events/my/registrations")
+        app.dependency_overrides[get_supabase_admin] = _fake_admin
+        try:
+            async with _make_client() as c:
+                resp = await c.get("/api/events/my/registrations")
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
         assert resp.status_code == 401
 
     @pytest.mark.asyncio

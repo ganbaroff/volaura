@@ -2,6 +2,13 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import React from "react";
 
+// Enable feature-flagged tabs so BottomTabBar renders all 5 tabs in tests.
+// vi.hoisted runs before vi.mock hoisting AND before static imports are evaluated.
+vi.hoisted(() => {
+  process.env.NEXT_PUBLIC_ENABLE_MINDSHIFT = "true";
+  process.env.NEXT_PUBLIC_ENABLE_ATLAS = "true";
+});
+
 // ── Standard mocks ─────────────────────────────────────────────────────────────
 
 function MotionDiv({ children, initial: _i, animate: _a, exit: _e, transition: _t, ...props }: any) {

@@ -284,7 +284,7 @@ function DepartmentList({
             </button>
           </div>
           {createDept.error && (
-            <p className="text-sm text-[#D4B4FF] mt-1">{(createDept.error as Error).message || "Failed to create"}</p>
+            <p role="alert" aria-live="polite" className="text-sm text-[#D4B4FF] mt-1">{(createDept.error as Error).message || "Failed to create"}</p>
           )}
         </form>
       )}
@@ -444,7 +444,7 @@ function AreaList({ departmentId }: { departmentId: string }) {
             </button>
           </div>
           {createArea.error && (
-            <p className="text-sm text-[#D4B4FF] mt-1">{(createArea.error as Error).message || "Failed to create"}</p>
+            <p role="alert" aria-live="polite" className="text-sm text-[#D4B4FF] mt-1">{(createArea.error as Error).message || "Failed to create"}</p>
           )}
         </form>
       )}
@@ -625,7 +625,7 @@ function UnitList({ areaId }: { areaId: string }) {
             </div>
           </div>
           {createUnit.error && (
-            <p className="text-sm text-[#D4B4FF] mt-1">{(createUnit.error as Error).message || "Failed to create"}</p>
+            <p role="alert" aria-live="polite" className="text-sm text-[#D4B4FF] mt-1">{(createUnit.error as Error).message || "Failed to create"}</p>
           )}
         </form>
       )}

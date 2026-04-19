@@ -52,14 +52,12 @@ function AuthCallbackContent() {
 
     // OAuth provider returned an explicit error before even reaching Supabase
     if (errorParam) {
-      console.error("[callback] OAuth error:", errorParam, errorDescription);
       router.replace(`/${locale}/login?message=oauth-error`);
       return;
     }
 
     const code = searchParams.get("code");
     if (!code) {
-      console.error("[callback] Missing ?code= in callback URL");
       router.replace(`/${locale}/login?message=oauth-error`);
       return;
     }
@@ -102,7 +100,6 @@ function AuthCallbackContent() {
         const { data, error } = await supabase.auth.exchangeCodeForSession(code);
         if (!isMounted.current) return;
         if (error || !data.session) {
-          console.error("[callback] exchangeCodeForSession failed:", error?.message);
           router.replace(`/${locale}/login?message=oauth-error`);
           return;
         }

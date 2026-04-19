@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
@@ -63,6 +63,7 @@ interface ConceptBarProps {
 function ConceptBar({ concept, value }: ConceptBarProps) {
   const pct = Math.round(value * 100);
   const label = concept.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  const shouldReduceMotion = useReducedMotion();
 
   return (
     <div>
@@ -79,9 +80,9 @@ function ConceptBar({ concept, value }: ConceptBarProps) {
         aria-label={`${label}: ${pct}%`}
       >
         <motion.div
-          initial={{ width: 0 }}
+          initial={shouldReduceMotion ? false : { width: 0 }}
           animate={{ width: `${pct}%` }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.6, ease: "easeOut" }}
           className="h-full rounded-full bg-primary"
         />
       </div>
@@ -107,6 +108,7 @@ const cardVariants = {
 
 function CompetencyCard({ item, index }: CompetencyCardProps) {
   const { t } = useTranslation();
+  const shouldReduceMotion = useReducedMotion();
 
   // Aggregate concept_scores across all evaluations (average per concept)
   const conceptAggregates: Record<string, number[]> = {};
@@ -134,7 +136,7 @@ function CompetencyCard({ item, index }: CompetencyCardProps) {
     <motion.div
       custom={index}
       variants={cardVariants}
-      initial="hidden"
+      initial={shouldReduceMotion ? false : "hidden"}
       animate="visible"
       className="rounded-xl border border-border bg-card p-4 space-y-3"
     >
@@ -189,6 +191,7 @@ function CompetencyCard({ item, index }: CompetencyCardProps) {
 export function EvaluationLog() {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
   // Only start fetching once the section is opened
   const { data, isLoading, error } = useAuraExplanation(isOpen);
@@ -231,10 +234,10 @@ export function EvaluationLog() {
           <motion.div
             id="evaluation-log-body"
             key="evaluation-log-body"
-            initial={{ height: 0, opacity: 0 }}
+            initial={shouldReduceMotion ? false : { height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
+            exit={shouldReduceMotion ? {} : { height: 0, opacity: 0 }}
+            transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.3, ease: "easeInOut" }}
             style={{ overflow: "hidden" }}
           >
             <div className="px-4 pb-4 space-y-4">

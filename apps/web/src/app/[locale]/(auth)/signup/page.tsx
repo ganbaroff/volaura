@@ -137,9 +137,6 @@ function SignupForm() {
       });
 
       if (authError) {
-        // Shame-free (Law 3): no raw Supabase text to the user.
-        // We still log the real error for debugging.
-        console.error("[signup] supabase auth error:", authError);
         setError(
           t("auth.errorGeneric", {
             defaultValue: "Something's off on our side — please try again in a moment.",
@@ -176,8 +173,6 @@ function SignupForm() {
         router.push(`/${locale}/onboarding`);
       }
     } catch (err) {
-      // Network failure, CORS, JSON parse — never silent.
-      console.error("[signup] unexpected error:", err);
       setError(
         t("auth.errorGeneric", {
           defaultValue: "Something's off on our side — please try again in a moment.",

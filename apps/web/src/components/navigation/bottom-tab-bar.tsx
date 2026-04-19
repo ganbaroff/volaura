@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils/cn";
  * - Labels always visible (no icon-only tabs — ADHD clarity)
  */
 
-type Product = "volaura" | "mindshift" | "lifesim" | "brandedby" | "atlas";
+type Product = "volaura" | "aura" | "mindshift" | "lifesim" | "brandedby" | "atlas";
 
 interface TabItem {
   id: Product;
@@ -41,7 +41,7 @@ const TABS: TabItem[] = [
     accentVar: "var(--color-product-volaura)",
   },
   {
-    id: "volaura",
+    id: "aura",
     labelKey: "nav.aura",
     defaultLabel: "AURA",
     icon: <RadarIcon />,

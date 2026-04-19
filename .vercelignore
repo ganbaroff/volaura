@@ -1,8 +1,5 @@
 node_modules
 .git
-packages/remotion
-packages/atlas-core
-apps/api
 .venv
 venv
 *.pyc
@@ -13,3 +10,7 @@ supabase
 models
 *.safetensors
 *.gguf
+*.onnx
+apps/api/.venv
+apps/api/venv
+packages/atlas-core

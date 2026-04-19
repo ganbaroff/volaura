@@ -1,5 +1,5 @@
 <!-- RECENTLY_SHIPPED_START -->
-## ⚡ RECENTLY SHIPPED (last push — 2026-04-19 03:06 UTC)
+## ⚡ RECENTLY SHIPPED (last push — 2026-04-19 03:48 UTC)
 **Read this FIRST — prevents proposing already-shipped work.**
 New/updated routers: organizations
 <!-- RECENTLY_SHIPPED_END -->

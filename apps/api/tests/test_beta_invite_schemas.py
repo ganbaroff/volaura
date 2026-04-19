@@ -180,3 +180,89 @@ class TestRouterMetadata:
 class TestRateValidate:
     def test_rate_validate_value(self):
         assert RATE_VALIDATE == "10/minute"
+
+
+# ── Endpoint: POST /api/invite/validate ──────────────────────────────────────
+
+from fastapi.testclient import TestClient  # noqa: E402
+
+from app.main import app  # noqa: E402
+
+_client = TestClient(app, raise_server_exceptions=True)
+
+_ENDPOINT = "/api/invite/validate"
+
+
+class TestValidateEndpoint:
+    def test_valid_default_code(self, monkeypatch):
+        monkeypatch.delenv("INVITE_CODES", raising=False)
+        monkeypatch.delenv("BETA_INVITE_CODE", raising=False)
+        resp = _client.post(_ENDPOINT, json={"code": "BETA_01"})
+        assert resp.status_code == 200
+        assert resp.json()["data"]["valid"] is True
+
+    def test_valid_open_code(self, monkeypatch):
+        monkeypatch.delenv("INVITE_CODES", raising=False)
+        monkeypatch.delenv("BETA_INVITE_CODE", raising=False)
+        resp = _client.post(_ENDPOINT, json={"code": "OPEN"})
+        assert resp.status_code == 200
+        assert resp.json()["data"]["valid"] is True
+
+    def test_invalid_code(self, monkeypatch):
+        monkeypatch.delenv("INVITE_CODES", raising=False)
+        monkeypatch.delenv("BETA_INVITE_CODE", raising=False)
+        resp = _client.post(_ENDPOINT, json={"code": "NONEXISTENT"})
+        assert resp.status_code == 200
+        assert resp.json()["data"]["valid"] is False
+
+    def test_case_insensitive(self, monkeypatch):
+        monkeypatch.delenv("INVITE_CODES", raising=False)
+        monkeypatch.delenv("BETA_INVITE_CODE", raising=False)
+        resp = _client.post(_ENDPOINT, json={"code": "beta_01"})
+        assert resp.status_code == 200
+        assert resp.json()["data"]["valid"] is True
+
+    def test_whitespace_stripped(self, monkeypatch):
+        monkeypatch.delenv("INVITE_CODES", raising=False)
+        monkeypatch.delenv("BETA_INVITE_CODE", raising=False)
+        resp = _client.post(_ENDPOINT, json={"code": "  BETA_01  "})
+        assert resp.status_code == 200
+        assert resp.json()["data"]["valid"] is True
+
+    def test_empty_code(self, monkeypatch):
+        monkeypatch.delenv("INVITE_CODES", raising=False)
+        monkeypatch.delenv("BETA_INVITE_CODE", raising=False)
+        resp = _client.post(_ENDPOINT, json={"code": ""})
+        assert resp.status_code == 200
+        assert resp.json()["data"]["valid"] is False
+
+    def test_custom_env_codes(self, monkeypatch):
+        monkeypatch.setenv("INVITE_CODES", "CUSTOM1,CUSTOM2")
+        monkeypatch.delenv("BETA_INVITE_CODE", raising=False)
+        resp_valid = _client.post(_ENDPOINT, json={"code": "CUSTOM1"})
+        assert resp_valid.status_code == 200
+        assert resp_valid.json()["data"]["valid"] is True
+        resp_invalid = _client.post(_ENDPOINT, json={"code": "BETA_01"})
+        assert resp_invalid.status_code == 200
+        assert resp_invalid.json()["data"]["valid"] is False
+
+    def test_legacy_env_code(self, monkeypatch):
+        monkeypatch.delenv("INVITE_CODES", raising=False)
+        monkeypatch.setenv("BETA_INVITE_CODE", "LEGACY")
+        resp = _client.post(_ENDPOINT, json={"code": "LEGACY"})
+        assert resp.status_code == 200
+        assert resp.json()["data"]["valid"] is True
+
+    def test_response_envelope_shape(self, monkeypatch):
+        monkeypatch.delenv("INVITE_CODES", raising=False)
+        monkeypatch.delenv("BETA_INVITE_CODE", raising=False)
+        resp = _client.post(_ENDPOINT, json={"code": "OPEN"})
+        assert resp.status_code == 200
+        body = resp.json()
+        assert "data" in body
+        assert "valid" in body["data"]
+        assert isinstance(body.get("meta"), dict)
+
+    def test_missing_code_field(self):
+        resp = _client.post(_ENDPOINT, json={})
+        assert resp.status_code == 422

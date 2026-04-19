@@ -646,7 +646,13 @@
     "loadError": "Could not load events",
     "loadErrorDesc": "Please try refreshing the page.",
     "eventEnded": "This event has ended.",
-    "capacityLabel": "Max participants"
+    "capacityLabel": "Max participants",
+    "checkin": "Event Check-in",
+    "enterCode": "Enter check-in code",
+    "checkinDesc": "Enter the code provided by the event coordinator.",
+    "codePlaceholder": "Enter code...",
+    "checkinSuccess": "Check-in successful!",
+    "checkinButton": "Check In"
   },
   "settings": {
     "title": "Settings",

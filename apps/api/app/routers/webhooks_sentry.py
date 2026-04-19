@@ -247,6 +247,14 @@ async def _ping_ceo_telegram(event_row: dict[str, Any], issue_url: str | None) -
     msg = f"🔁 Recurring symptom (x{event_row['occurrences']}) — {event_row['source_product']}\n{title}\n"
     if issue_url:
         msg += f"RCA required: {issue_url}"
+
+    # Central telegram-gate (2026-04-19): dedup by fingerprint + global rate cap.
+    try:
+        from packages.swarm.telegram_gate import allow_send as _gate_allow
+        if not _gate_allow(category="error", severity="warning", preview=msg[:120]):
+            return
+    except ImportError:
+        pass
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
             await client.post(

@@ -140,7 +140,7 @@ describe("AuthGuard", () => {
   // 7. onAuthStateChange fires with session — calls setSession
   it("calls setSession when onAuthStateChange emits a valid session", () => {
     const session = fakeSession();
-    let capturedCb: (event: string, session: typeof session | null) => void = () => {};
+    let capturedCb: (event: string, sess: typeof session | null) => void = () => {};
     mockOnAuthStateChange.mockImplementation((cb: typeof capturedCb) => {
       capturedCb = cb;
       return makeSubscription();

@@ -399,59 +399,74 @@ async def test_signup_status_closed():
 
 
 @pytest.mark.asyncio
-async def test_validate_invite_correct_code():
+async def test_validate_invite_correct_code(monkeypatch):
     """POST /auth/validate-invite returns valid=True for matching code."""
+    monkeypatch.setenv("BETA_INVITE_CODE", "VOLAURA2026")
+    monkeypatch.delenv("INVITE_CODES", raising=False)
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        with patch("app.routers.auth.settings") as mock_settings:
-            mock_settings.beta_invite_code = "VOLAURA2026"
-            resp = await ac.post("/api/auth/validate-invite", json={"invite_code": "VOLAURA2026"})
+        resp = await ac.post("/api/auth/validate-invite", json={"invite_code": "VOLAURA2026"})
 
     assert resp.status_code == 200
     assert resp.json()["valid"] is True
 
 
 @pytest.mark.asyncio
-async def test_validate_invite_case_insensitive():
+async def test_validate_invite_case_insensitive(monkeypatch):
     """Invite code comparison is case-insensitive."""
+    monkeypatch.setenv("BETA_INVITE_CODE", "VOLAURA2026")
+    monkeypatch.delenv("INVITE_CODES", raising=False)
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        with patch("app.routers.auth.settings") as mock_settings:
-            mock_settings.beta_invite_code = "VOLAURA2026"
-            resp = await ac.post("/api/auth/validate-invite", json={"invite_code": "volaura2026"})
+        resp = await ac.post("/api/auth/validate-invite", json={"invite_code": "volaura2026"})
 
     assert resp.status_code == 200
     assert resp.json()["valid"] is True
 
 
 @pytest.mark.asyncio
-async def test_validate_invite_wrong_code():
+async def test_validate_invite_wrong_code(monkeypatch):
     """POST /auth/validate-invite returns valid=False for wrong code."""
+    monkeypatch.setenv("BETA_INVITE_CODE", "VOLAURA2026")
+    monkeypatch.delenv("INVITE_CODES", raising=False)
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        with patch("app.routers.auth.settings") as mock_settings:
-            mock_settings.beta_invite_code = "VOLAURA2026"
-            resp = await ac.post("/api/auth/validate-invite", json={"invite_code": "WRONG"})
+        resp = await ac.post("/api/auth/validate-invite", json={"invite_code": "WRONG"})
 
     assert resp.status_code == 200
     assert resp.json()["valid"] is False
 
 
 @pytest.mark.asyncio
-async def test_validate_invite_no_code_configured():
-    """When BETA_INVITE_CODE is empty, always returns valid=False (gate armed, no valid code)."""
+async def test_validate_invite_no_code_configured(monkeypatch):
+    """When no env vars set, defaults are used; 'anything' not in defaults → valid=False."""
+    monkeypatch.delenv("BETA_INVITE_CODE", raising=False)
+    monkeypatch.delenv("INVITE_CODES", raising=False)
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        with patch("app.routers.auth.settings") as mock_settings:
-            mock_settings.beta_invite_code = ""
-            resp = await ac.post("/api/auth/validate-invite", json={"invite_code": "anything"})
+        resp = await ac.post("/api/auth/validate-invite", json={"invite_code": "anything"})
 
     assert resp.status_code == 200
     assert resp.json()["valid"] is False
+
+
+@pytest.mark.asyncio
+async def test_validate_invite_multi_code_list(monkeypatch):
+    """G2.3 sync fix: INVITE_CODES multi-code list now works via /auth/validate-invite."""
+    monkeypatch.setenv("INVITE_CODES", "BETA_01,BETA_02,OPEN")
+    monkeypatch.delenv("BETA_INVITE_CODE", raising=False)
+
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        resp_valid = await ac.post("/api/auth/validate-invite", json={"invite_code": "BETA_02"})
+        resp_invalid = await ac.post("/api/auth/validate-invite", json={"invite_code": "BETA_99"})
+
+    assert resp_valid.json()["valid"] is True
+    assert resp_invalid.json()["valid"] is False
 
 
 # ── GDPR consent_events logging on register ──────────────────────────────────

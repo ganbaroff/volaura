@@ -846,7 +846,6 @@
     "searchPlaceholder": "Search organizations...",
     "showing_one": "{{count}} organization",
     "showing_other": "{{count}} organizations",
-    "showing": "{{count}} organizations",
     "noSearchResults": "No organizations match your search.",
     "noOrgsYet": "No organizations registered yet.",
     "ctaTitle": "Run events for your organization?",

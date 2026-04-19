@@ -66,9 +66,9 @@ export default function CheckinPage() {
             value={code}
             onChange={(e) => { setCode(e.target.value); setStatus("idle"); }}
             placeholder={t("events.codePlaceholder", { defaultValue: "Enter code..." })}
+            aria-label={t("events.enterCode", { defaultValue: "Enter check-in code" })}
             className="w-full rounded-lg border border-input bg-background px-4 py-3 text-center text-lg font-mono tracking-widest placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             maxLength={20}
-            autoFocus
           />
           <Button
             onClick={handleCheckin}

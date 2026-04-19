@@ -646,7 +646,13 @@
     "loadError": "Tədbirlər yüklənə bilmədi",
     "loadErrorDesc": "Zəhmət olmasa səhifəni yeniləyin.",
     "eventEnded": "Bu tədbir başa çatıb.",
-    "capacityLabel": "Maksimum iştirakçı sayı"
+    "capacityLabel": "Maksimum iştirakçı sayı",
+    "checkin": "Hadisə qeydiyyatı",
+    "enterCode": "Qeydiyyat kodunu daxil edin",
+    "checkinDesc": "Hadisə koordinatoru tərəfindən verilən kodu daxil edin.",
+    "codePlaceholder": "Kodu daxil edin...",
+    "checkinSuccess": "Qeydiyyat uğurlu oldu!",
+    "checkinButton": "Qeydiyyatdan keç"
   },
   "settings": {
     "title": "Tənzimləmələr",
@@ -839,6 +845,8 @@
     "discoverySubtitle": "Təşkilatları tapın və onların tədbirlərinə töhfə verin.",
     "searchPlaceholder": "Təşkilatlar üzrə axtarış...",
     "showing": "{{count}} təşkilat",
+    "showing_one": "{{count}} təşkilat",
+    "showing_other": "{{count}} təşkilat",
     "noSearchResults": "Sizin axtarışınıza heç bir təşkilat uyğun gəlmir.",
     "noOrgsYet": "Hələ heç bir təşkilat qeydiyyatdan keçməmişdir.",
     "ctaTitle": "Sizin təşkilatınız üçün tədbirlər keçirirsiniz?",

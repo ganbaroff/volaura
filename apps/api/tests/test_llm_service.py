@@ -40,7 +40,6 @@ from app.services.llm import (
     reset_llm_clients,
 )
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -230,9 +229,9 @@ class TestSingletonClients:
             from app.services.llm import _get_vertex_client
 
             reset_llm_clients()
-            c1 = _get_vertex_client()
+            _get_vertex_client()
             reset_llm_clients()
-            c2 = _get_vertex_client()
+            _get_vertex_client()
             # After reset a fresh Client() call must occur
             assert genai_mock.Client.call_count >= 2
 

@@ -243,6 +243,7 @@ async def get_event(
     db_admin: SupabaseAdmin,
     org_id: OrgId,
 ) -> EventShiftEventResponse:
+    """Retrieve a single event by ID within the caller's organization."""
     _validate_uuid(event_id, "event_id")
     event = await _assert_event_in_org(db_admin, event_id, org_id)
     return EventShiftEventResponse(**event)
@@ -258,6 +259,7 @@ async def update_event(
     user_id: CurrentUserId,
     org_id: OrgId,
 ) -> EventShiftEventResponse:
+    """Update mutable fields of an event (org owner only)."""
     _validate_uuid(event_id, "event_id")
     await _assert_event_in_org(db_admin, event_id, org_id)
 
@@ -337,6 +339,7 @@ async def list_departments(
     db_admin: SupabaseAdmin,
     org_id: OrgId,
 ) -> list[DepartmentResponse]:
+    """List all departments belonging to an event, ordered by sort_order."""
     _validate_uuid(event_id, "event_id")
     await _assert_event_in_org(db_admin, event_id, org_id)
     result = (
@@ -360,6 +363,7 @@ async def create_department(
     user_id: CurrentUserId,
     org_id: OrgId,
 ) -> DepartmentResponse:
+    """Create a new department under an event (org owner only)."""
     _validate_uuid(event_id, "event_id")
     await _assert_event_in_org(db_admin, event_id, org_id)
     row = {"org_id": org_id, "event_id": event_id, **payload.model_dump(mode="json")}
@@ -390,6 +394,7 @@ async def update_department(
     user_id: CurrentUserId,
     org_id: OrgId,
 ) -> DepartmentResponse:
+    """Update mutable fields of a department (org owner only)."""
     _validate_uuid(department_id, "department_id")
     await _assert_department_in_org(db_admin, department_id, org_id)
     update_data = payload.model_dump(mode="json", exclude_none=True)
@@ -472,6 +477,7 @@ async def list_areas(
     db_admin: SupabaseAdmin,
     org_id: OrgId,
 ) -> list[AreaResponse]:
+    """List all areas within a department, ordered by creation time."""
     _validate_uuid(department_id, "department_id")
     await _assert_department_in_org(db_admin, department_id, org_id)
     result = (
@@ -495,6 +501,7 @@ async def create_area(
     user_id: CurrentUserId,
     org_id: OrgId,
 ) -> AreaResponse:
+    """Create a new area under a department (org owner only)."""
     _validate_uuid(department_id, "department_id")
     await _assert_department_in_org(db_admin, department_id, org_id)
     row = {"org_id": org_id, "department_id": department_id, **payload.model_dump(mode="json")}
@@ -525,6 +532,7 @@ async def update_area(
     user_id: CurrentUserId,
     org_id: OrgId,
 ) -> AreaResponse:
+    """Update mutable fields of an area (org owner only)."""
     _validate_uuid(area_id, "area_id")
     await _assert_area_in_org(db_admin, area_id, org_id)
     update_data = payload.model_dump(mode="json", exclude_none=True)
@@ -556,6 +564,7 @@ async def list_units(
     db_admin: SupabaseAdmin,
     org_id: OrgId,
 ) -> list[UnitResponse]:
+    """List all shift units within an area, ordered by shift start time."""
     _validate_uuid(area_id, "area_id")
     await _assert_area_in_org(db_admin, area_id, org_id)
     result = (
@@ -579,6 +588,7 @@ async def create_unit(
     user_id: CurrentUserId,
     org_id: OrgId,
 ) -> UnitResponse:
+    """Create a new shift unit under an area (org owner only)."""
     _validate_uuid(area_id, "area_id")
     await _assert_area_in_org(db_admin, area_id, org_id)
     if payload.shift_end <= payload.shift_start:
@@ -611,6 +621,7 @@ async def update_unit(
     user_id: CurrentUserId,
     org_id: OrgId,
 ) -> UnitResponse:
+    """Update mutable fields of a shift unit (org owner only)."""
     _validate_uuid(unit_id, "unit_id")
     await _assert_unit_in_org(db_admin, unit_id, org_id)
     update_data = payload.model_dump(mode="json", exclude_none=True)
@@ -642,6 +653,7 @@ async def list_assignments(
     db_admin: SupabaseAdmin,
     org_id: OrgId,
 ) -> list[UnitAssignmentResponse]:
+    """List all volunteer assignments for a unit, ordered by assignment time."""
     _validate_uuid(unit_id, "unit_id")
     await _assert_unit_in_org(db_admin, unit_id, org_id)
     result = (
@@ -669,6 +681,7 @@ async def create_assignment(
     user_id: CurrentUserId,
     org_id: OrgId,
 ) -> UnitAssignmentResponse:
+    """Assign a volunteer to a unit; returns 409 if already assigned."""
     _validate_uuid(unit_id, "unit_id")
     _validate_uuid(payload.user_id, "user_id")
     await _assert_unit_in_org(db_admin, unit_id, org_id)
@@ -719,6 +732,7 @@ async def update_assignment(
     user_id: CurrentUserId,
     org_id: OrgId,
 ) -> UnitAssignmentResponse:
+    """Update role or status of a volunteer assignment (org owner only)."""
     _validate_uuid(assignment_id, "assignment_id")
     update_data = payload.model_dump(mode="json", exclude_none=True)
     if not update_data:
@@ -758,6 +772,7 @@ async def list_metrics(
     metric_type: str | None = Query(None),
     limit: int = Query(100, le=500),
 ) -> list[UnitMetricResponse]:
+    """List recorded metrics for a unit, optionally filtered by metric_type."""
     _validate_uuid(unit_id, "unit_id")
     await _assert_unit_in_org(db_admin, unit_id, org_id)
     q = db_admin.table("eventshift_unit_metrics").select("*").eq("unit_id", unit_id).eq("org_id", org_id)
@@ -777,6 +792,7 @@ async def record_metric(
     user_id: CurrentUserId,
     org_id: OrgId,
 ) -> UnitMetricResponse:
+    """Record a performance metric against a unit and emit a character event."""
     _validate_uuid(unit_id, "unit_id")
     await _assert_unit_in_org(db_admin, unit_id, org_id)
     row = {

@@ -55,6 +55,7 @@ from app.routers import (
     auth,
     auth_bridge,
     badges,
+    beta_invite,
     brandedby,
     character,
     community,
@@ -202,6 +203,7 @@ app.include_router(events.router, prefix="/api")
 app.include_router(eventshift.router, prefix="/api")
 app.include_router(organizations.router, prefix="/api")
 app.include_router(invites.router, prefix="/api")
+app.include_router(beta_invite.router, prefix="/api")
 app.include_router(badges.router, prefix="/api")
 app.include_router(verification.router, prefix="/api")
 app.include_router(activity.router, prefix="/api")

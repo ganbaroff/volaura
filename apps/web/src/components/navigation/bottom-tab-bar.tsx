@@ -31,7 +31,11 @@ interface TabItem {
   accentVar: string;
 }
 
-const TABS: TabItem[] = [
+// Feature flags — tabs only appear when the corresponding page is enabled.
+const MINDSHIFT_ENABLED = process.env.NEXT_PUBLIC_ENABLE_MINDSHIFT === "true";
+const ATLAS_ENABLED = process.env.NEXT_PUBLIC_ENABLE_ATLAS === "true";
+
+const ALL_TABS: (TabItem & { enabled?: boolean })[] = [
   {
     id: "volaura",
     labelKey: "nav.volaura",
@@ -55,6 +59,7 @@ const TABS: TabItem[] = [
     icon: <BrainIcon />,
     href: "/mindshift",
     accentVar: "var(--color-product-mindshift)",
+    enabled: MINDSHIFT_ENABLED,
   },
   {
     id: "lifesim",
@@ -71,8 +76,11 @@ const TABS: TabItem[] = [
     icon: <BoltIcon />,
     href: "/atlas",
     accentVar: "var(--color-product-atlas)",
+    enabled: ATLAS_ENABLED,
   },
 ];
+
+const TABS: TabItem[] = ALL_TABS.filter((tab) => tab.enabled !== false);
 
 interface BottomTabBarProps {
   /** Override locale (optional — defaults to URL param) */

@@ -1,8 +1,7 @@
 <!-- RECENTLY_SHIPPED_START -->
-## ⚡ RECENTLY SHIPPED (last push — 2026-04-19 08:01 UTC)
+## ⚡ RECENTLY SHIPPED (last push — 2026-04-19 08:24 UTC)
 **Read this FIRST — prevents proposing already-shipped work.**
-
-New migrations: 20260419080000_add_count_orphan_character_events_rpc.sql
+New/updated routers: telegram_webhook
 <!-- RECENTLY_SHIPPED_END -->
 
 # Swarm Shared Context — UPDATED 2026-04-07 (Session 91)

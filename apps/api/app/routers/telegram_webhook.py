@@ -2116,6 +2116,11 @@ Sign: "— Атлас" """
     if classification == "ACTION" and action_anchor and action_anchor not in reply:
         reply = f"{reply.rstrip()}\n\n({anchor_kind}: {action_anchor})"
 
+    # Strip LLM-mimicked prefix (LLM copies [atlas] from conversation history)
+    reply = reply.lstrip()
+    if reply.startswith("[atlas]"):
+        reply = reply[len("[atlas]") :].lstrip()
+
     await _save_message(db, "bot_to_ceo", f"[atlas] {reply}", "free_text", metadata={"handler": "atlas"})
     await _send_message(chat_id, reply)
 

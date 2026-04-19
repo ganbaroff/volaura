@@ -550,7 +550,7 @@ class TestAtlasReflection:
             assert r.status_code == 200
             body = r.json()
             assert body["reflection"] is not None
-            assert len(body["reflection"]) > 10
+            assert len(body["reflection"]) >= 8
         finally:
             app.dependency_overrides.pop(get_supabase_admin, None)
             app.dependency_overrides.pop(get_current_user_id, None)

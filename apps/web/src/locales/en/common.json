@@ -616,7 +616,7 @@
     "endDate": "End date",
     "eventType": "Event type",
     "selectType": "Select type",
-    "capacity": "Max participants",
+    "capacity": "{{count}} spots",
     "minAura": "Minimum AURA score",
     "minAuraHint": "Set 0 to allow all participants regardless of score.",
     "visibility": "Visibility",
@@ -641,7 +641,11 @@
       "sports": "Sports",
       "cultural": "Cultural",
       "other": "Other"
-    }
+    },
+    "loadError": "Could not load events",
+    "loadErrorDesc": "Please try refreshing the page.",
+    "eventEnded": "This event has ended.",
+    "capacityLabel": "Max participants"
   },
   "settings": {
     "title": "Settings",
@@ -736,7 +740,15 @@
     "skipToContent": "Skip to content"
   },
   "verification": {
-    "assessedBy": "Assessed by Volaura adaptive testing"
+    "assessedBy": "Assessed by Volaura adaptive testing",
+    "verified": "Verified",
+    "questions": "Questions",
+    "completed": "Completed",
+    "howTitle": "How this score was verified",
+    "how1": "Adaptive IRT assessment adjusts difficulty to each user",
+    "how2": "Anti-gaming system detects suspicious patterns",
+    "how3": "AI evaluation cross-checks open-ended responses",
+    "how4": "Score is anchored to a global percentile ranking"
   },
   "publicProfile": {
     "auraScore": "AURA Score",
@@ -746,7 +758,8 @@
     "ctaTitle": "Want your own verified AURA score?",
     "ctaDescription": "Join Volaura, complete your assessment, and share your verified professional badge.",
     "getAuraScore": "Get your AURA score",
-    "getStarted": "Get started — it's free"
+    "getStarted": "Get started — it's free",
+    "elite": "Elite ⭐"
   },
   "error": {
     "generic": "Something went wrong. Please try again.",
@@ -839,7 +852,12 @@
     "trial": "Free Trial",
     "active": "Pro Plan",
     "expired": "Trial Expired",
-    "cancelled": "Cancelled",
+    "cancelled": {
+      "title": "No charge was made",
+      "description": "You can reactivate your subscription any time.",
+      "ctaDashboard": "Back to dashboard",
+      "ctaSettings": "Settings"
+    },
     "daysRemaining": "{{count}} day left",
     "daysRemainingPlural": "{{count}} days left",
     "trialBanner": "Your free trial ends in {{count}} days.",
@@ -854,13 +872,7 @@
     "resubscribe": "Resubscribe",
     "redirecting": "Redirecting to checkout…",
     "setupInProgress": "Subscription setup in progress — contact us to upgrade early.",
-    "checkoutError": "Could not start checkout — please try again.",
-    "cancelled": {
-      "title": "No charge was made",
-      "description": "You can reactivate your subscription any time.",
-      "ctaDashboard": "Back to dashboard",
-      "ctaSettings": "Settings"
-    }
+    "checkoutError": "Could not start checkout — please try again."
   },
   "brandedby": {
     "tagline": "AI Twin — your verified skills, in a talking-head video."
@@ -1074,7 +1086,7 @@
       }
     },
     "detail": {
-      "loading": "Loading event\u2026",
+      "loading": "Loading event…",
       "back": "Back to events",
       "err": {
         "load": "Failed to load event"
@@ -1113,7 +1125,7 @@
         "drilldown": "Open the event in full-energy mode to manage areas and units"
       }
     },
-"status": {
+    "status": {
       "planning": "Planning",
       "staffing": "Staffing",
       "live": "Live",
@@ -1129,7 +1141,7 @@
       "title": "New event",
       "back": "Back to events",
       "submit": "Create event",
-      "submitting": "Creating\u2026",
+      "submitting": "Creating…",
       "err": {
         "slug_taken": "This slug is already taken",
         "generic": "Failed to create event. Please try again."
@@ -1240,5 +1252,23 @@
       "body": "Questions about these terms?",
       "contact": "Email us:"
     }
+  },
+  "invite": {
+    "welcome": "You're invited.",
+    "orgSubtitle": "Set up your organization profile and start finding verified talent.",
+    "subtitle": "Complete your first assessment. Get your AURA score. Get found.",
+    "cta": "Create your account",
+    "redirecting": "Redirecting in {{count}}s...",
+    "invalidTitle": "This invite link is not valid.",
+    "invalidBody": "Volaura is currently invite-only. Write to us in Telegram to request access.",
+    "telegramCta": "Request access on Telegram",
+    "linkedinCta": "Follow on LinkedIn for updates",
+    "hasCode": "Already have a code?",
+    "enterManually": "Enter it manually"
+  },
+  "sample": {
+    "label": "Sample Profile",
+    "verifiedEvents": "Verified Events",
+    "cta": "Build Your Own AURA Profile"
   }
 }

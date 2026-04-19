@@ -616,7 +616,7 @@
     "endDate": "Son tarix",
     "eventType": "Hadisə növü",
     "selectType": "Növ seçin",
-    "capacity": "Maksimum iştirakçı sayı",
+    "capacity": "{{count}} yer",
     "minAura": "Minimum AURA balı",
     "minAuraHint": "Balından asılı olmayaraq bütün iştirakçılara icazə vermək üçün 0-ı təyin edin.",
     "visibility": "Görünürlük",
@@ -641,7 +641,11 @@
       "sports": "İdman",
       "cultural": "Mədəni",
       "other": "Digər"
-    }
+    },
+    "loadError": "Tədbirlər yüklənə bilmədi",
+    "loadErrorDesc": "Zəhmət olmasa səhifəni yeniləyin.",
+    "eventEnded": "Bu tədbir başa çatıb.",
+    "capacityLabel": "Maksimum iştirakçı sayı"
   },
   "settings": {
     "title": "Tənzimləmələr",
@@ -736,7 +740,15 @@
     "skipToContent": "Məzmuna keçin"
   },
   "verification": {
-    "assessedBy": "Volaura adaptiv test sistemi ilə qiymətləndirilib"
+    "assessedBy": "Volaura adaptiv test sistemi ilə qiymətləndirilib",
+    "verified": "Təsdiqlənib",
+    "questions": "Suallar",
+    "completed": "Tamamlandı",
+    "howTitle": "Bu bal necə təsdiqlənib",
+    "how1": "Adaptiv IRT qiymətləndirmə çətinliyi hər istifadəçiyə uyğunlaşdırır",
+    "how2": "Anti-hiylə sistemi şübhəli nümunələri aşkar edir",
+    "how3": "Süni intellekt açıq cavabları çarpaz yoxlayır",
+    "how4": "Bal qlobal faiz sıralamasına bağlıdır"
   },
   "publicProfile": {
     "auraScore": "AURA Balı",
@@ -746,7 +758,8 @@
     "ctaTitle": "Sizin özünüzün təsdiqlənmiş AURA balı istəyirsinizmi?",
     "ctaDescription": "Volaura-ya qoşulun, qiymətləndirmənizi tamamlayın və təsdiqlənmiş peşəkar nişanınızı paylaşın.",
     "getAuraScore": "AURA balınızı əldə edin.",
-    "getStarted": "Başlayın — ödənişsizdir."
+    "getStarted": "Başlayın — ödənişsizdir.",
+    "elite": "Elit ⭐"
   },
   "error": {
     "generic": "Xəta baş verdi. Zəhmət olmasa, yenidən cəhd edin.",
@@ -837,7 +850,12 @@
     "trial": "Ödənişsiz Sınaq",
     "active": "Peşəkar Plan",
     "expired": "Sınaq başa çatdı",
-    "cancelled": "Ləğv olunub",
+    "cancelled": {
+      "title": "Heç bir xərc tutulmadı",
+      "description": "Siz istədiyiniz vaxt abunəliyi yenidən aktiv edə bilərsiniz.",
+      "ctaDashboard": "Ana səhifəyə qayıt",
+      "ctaSettings": "Parametrlər"
+    },
     "daysRemaining": "{{count}} gün qalıb",
     "daysRemainingPlural": "{{count}} gün qaldı",
     "trialBanner": "Sizin pulsuz sınaq müddətiniz {{count}} gün sonra başa çatır.",
@@ -852,13 +870,7 @@
     "resubscribe": "Yenidən abunə olmaq",
     "redirecting": "Ödəniş səhifəsinə yönləndirilirsiniz…",
     "setupInProgress": "Abunəliyin quraşdırılması davam edir. Vaxtından əvvəl yüksəltmək üçün bizimlə əlaqə saxlayın.",
-    "checkoutError": "Ödəniş prosesi başlatıla bilmədi — zəhmət olmasa, yenidən cəhd edin.",
-    "cancelled": {
-      "title": "Heç bir xərc tutulmadı",
-      "description": "Siz istədiyiniz vaxt abunəliyi yenidən aktiv edə bilərsiniz.",
-      "ctaDashboard": "Ana səhifəyə qayıt",
-      "ctaSettings": "Parametrlər"
-    }
+    "checkoutError": "Ödəniş prosesi başlatıla bilmədi — zəhmət olmasa, yenidən cəhd edin."
   },
   "brandedby": {
     "tagline": "Süni İntellekt Əkizi — təsdiqlənmiş bacarıqlarınız video formatında."
@@ -1072,7 +1084,7 @@
       }
     },
     "detail": {
-      "loading": "Tədbir yüklənir\u2026",
+      "loading": "Tədbir yüklənir…",
       "back": "Tədbirlərə qayıt",
       "err": {
         "load": "Tədbir yüklənmədi"
@@ -1111,7 +1123,7 @@
         "drilldown": "Sahə və bölmələri idarə etmək üçün tədbiri tam enerji rejimində açın"
       }
     },
-"status": {
+    "status": {
       "planning": "Planlaşdırma",
       "staffing": "Kadr yığımı",
       "live": "Canlı",
@@ -1127,7 +1139,7 @@
       "title": "Yeni tədbir",
       "back": "Tədbirlərə qayıt",
       "submit": "Tədbir yarat",
-      "submitting": "Yaradılır\u2026",
+      "submitting": "Yaradılır…",
       "err": {
         "slug_taken": "Bu slug artıq istifadə olunur",
         "generic": "Tədbir yaradılmadı. Yenidən cəhd edin."
@@ -1238,5 +1250,23 @@
       "body": "Bu şərtlər barədə suallarınız var?",
       "contact": "Bizimlə əlaqə saxlayın:"
     }
+  },
+  "invite": {
+    "welcome": "Siz dəvət olunmusunuz.",
+    "orgSubtitle": "Təşkilat profilinizi qurun və təsdiqlənmiş mütəxəssisləri tapın.",
+    "subtitle": "İlk qiymətləndirməni tamamlayın. AURA balınızı alın. Kəşf olunun.",
+    "cta": "Hesabınızı yaradın",
+    "redirecting": "{{count}} saniyəyə yönləndirilir...",
+    "invalidTitle": "Bu dəvət linki etibarsızdır.",
+    "invalidBody": "Volaura hazırda yalnız dəvətlə işləyir. Giriş əldə etmək üçün Telegram-dan yazın.",
+    "telegramCta": "Telegram-da giriş istəyin",
+    "linkedinCta": "Yenilikləri LinkedIn-dən izləyin",
+    "hasCode": "Artıq kodunuz var?",
+    "enterManually": "Əl ilə daxil edin"
+  },
+  "sample": {
+    "label": "Nümunə Profil",
+    "verifiedEvents": "Təsdiqlənmiş Tədbirlər",
+    "cta": "Öz AURA Profilinizi Yaradın"
   }
 }

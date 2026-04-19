@@ -1134,11 +1134,7 @@ async def get_session_state(
 
     # Resolve competency slug for client-side store rehydration.
     comp_result = (
-        await db_user.table("competencies")
-        .select("slug")
-        .eq("id", session["competency_id"])
-        .maybe_single()
-        .execute()
+        await db_user.table("competencies").select("slug").eq("id", session["competency_id"]).maybe_single().execute()
     )
     slug = comp_result.data["slug"] if (comp_result and comp_result.data) else ""
 

@@ -972,17 +972,24 @@
     "backToBrowse": "← Back to browse",
     "clearSearch": "Clear",
     "aura": {
+      "Any": "Any",
       "AnyAura": "Any AURA",
       "BronzePlus": "Bronze+",
       "SilverPlus": "Silver+",
       "GoldPlus": "Gold+"
     },
     "badge": {
+      "Alltiers": "All tiers",
       "Anygrade": "Any grade",
       "Bronze": "Bronze",
       "Silver": "Silver",
       "Gold": "Gold",
       "Platinum": "Platinum"
+    },
+    "similarity": {
+      "high": "High match",
+      "good": "Good match",
+      "partial": "Partial match"
     }
   },
   "contest": {

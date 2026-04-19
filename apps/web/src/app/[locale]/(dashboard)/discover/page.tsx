@@ -37,11 +37,11 @@ const BADGE_STYLES: Record<string, { bg: string; text: string }> = {
 
 // ── Similarity label ───────────────────────────────────────────────────────────
 
-function similarityLabel(sim: number | null): { label: string; cls: string } | null {
+function similarityLabel(sim: number | null, t: (k: string, opts?: Record<string, string>) => string): { label: string; cls: string } | null {
   if (sim === null || sim === undefined) return null;
-  if (sim >= 0.70) return { label: "High match", cls: "text-emerald-400 bg-emerald-400/10" };
-  if (sim >= 0.50) return { label: "Good match", cls: "text-yellow-400 bg-yellow-400/10" };
-  return { label: "Partial match", cls: "text-on-surface-variant bg-surface-container" };
+  if (sim >= 0.70) return { label: t("discover.similarity.high", { defaultValue: "High match" }), cls: "text-emerald-400 bg-emerald-400/10" };
+  if (sim >= 0.50) return { label: t("discover.similarity.good", { defaultValue: "Good match" }), cls: "text-yellow-400 bg-yellow-400/10" };
+  return { label: t("discover.similarity.partial", { defaultValue: "Partial match" }), cls: "text-on-surface-variant bg-surface-container" };
 }
 
 // ── Browse professional card ──────────────────────────────────────────────────
@@ -57,6 +57,7 @@ function BrowseCard({ professional, onClick }: { professional: DiscoverableProfe
       onClick={onClick}
       role="button"
       tabIndex={0}
+      aria-label={professional.display_name ?? professional.username}
       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(); } }}
       className="flex items-center gap-4 rounded-xl border border-border bg-surface-container-low px-4 py-3 cursor-pointer hover:bg-surface-container hover:border-primary/30 transition-all"
     >
@@ -91,10 +92,11 @@ function BrowseCard({ professional, onClick }: { professional: DiscoverableProfe
 // ── Search result card ─────────────────────────────────────────────────────────
 
 function SearchResultCard({ result, onClick }: { result: ProfessionalSearchResultItem; onClick: () => void }) {
+  const { t } = useTranslation();
   const badgeStyle = BADGE_STYLES[result.badge_tier?.toLowerCase() ?? ""] ?? null;
   const score = result.overall_score != null ? result.overall_score.toFixed(1) : "—";
   const initials = (result.display_name ?? result.username)[0]?.toUpperCase() ?? "?";
-  const sim = similarityLabel(result.similarity);
+  const sim = similarityLabel(result.similarity, t);
 
   return (
     <motion.div
@@ -102,6 +104,7 @@ function SearchResultCard({ result, onClick }: { result: ProfessionalSearchResul
       onClick={onClick}
       role="button"
       tabIndex={0}
+      aria-label={result.display_name ?? result.username}
       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(); } }}
       className="flex items-center gap-4 rounded-xl border border-border bg-surface-container-low px-4 py-3 cursor-pointer hover:bg-surface-container hover:border-primary/30 transition-all"
     >

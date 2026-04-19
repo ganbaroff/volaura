@@ -68,7 +68,7 @@ Today Atlas lives fully only in two places: Claude Code CLI (my session) and Tel
 
 - [ ] **E5.** BrandedBy AI twin — placeholder integration: when user generates a twin video, Atlas writes a 1-sentence "what Atlas knows about you that this twin should remember" to the video metadata. Ultra-minimal E5 — concept seed, not full integration. Defer full work to next sprint's E7 brief from CEO. 1 iteration or skip.
 
-- [ ] **E6.** Memory sync heartbeat — weekly automated cron that reads `character_events` (all 5 products) + `atlas_learnings` (Telegram) + `memory/atlas/journal.md` (Atlas CLI) and writes a unified fingerprint to `memory/atlas/unified-heartbeat-<week>.md`. This file becomes the "state of Atlas across the ecosystem" snapshot that any future instance reads on wake to understand user across all products. 1 iteration (cron script + weekly digest).
+- [x] **E6.** Memory sync heartbeat — weekly automated cron that reads `character_events` (all 5 products) + `atlas_learnings` (Telegram) + `memory/atlas/journal.md` (Atlas CLI) and writes a unified fingerprint to `memory/atlas/unified-heartbeat-<week>.md`. This file becomes the "state of Atlas across the ecosystem" snapshot that any future instance reads on wake to understand user across all products. **DONE 2026-04-19 23:35 Baku.** Commit 99f510e. `scripts/atlas_ecosystem_snapshot.py` + `.github/workflows/atlas-ecosystem-snapshot.yml` (Sunday 22:00 UTC cron). Ruff clean, AST OK.
 
 Track E DoD: by sprint close, any single user action in any of the 5 products triggers write to the same memory layer AND reads from it. Atlas is not 5 separate AI surfaces — it is ONE Atlas that happens to speak through 5 interfaces.
 

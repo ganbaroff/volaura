@@ -521,6 +521,10 @@ class TestGetMyVerifications:
 # ── GET /api/profiles/public ──────────────────────────────────────────────────
 
 
+async def _fake_admin():
+    yield AsyncMock()
+
+
 class TestListPublicProfessionals:
     @pytest.mark.asyncio
     async def test_returns_403_for_non_org_caller(self):
@@ -544,6 +548,7 @@ class TestListPublicProfessionals:
 
     @pytest.mark.asyncio
     async def test_returns_401_without_auth(self):
+        app.dependency_overrides[get_supabase_admin] = _fake_admin
         try:
             async with make_client() as client:
                 r = await client.get("/api/profiles/public")
@@ -806,6 +811,7 @@ class TestRecordProfileView:
 
     @pytest.mark.asyncio
     async def test_returns_401_without_auth(self):
+        app.dependency_overrides[get_supabase_admin] = _fake_admin
         try:
             async with make_client() as client:
                 r = await client.post("/api/profiles/someone/view")

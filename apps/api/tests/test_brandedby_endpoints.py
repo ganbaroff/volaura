@@ -190,12 +190,20 @@ async def test_create_twin_happy_path():
     assert "id" in body
 
 
+async def _fake_admin():
+    yield AsyncMock()
+
+
 @pytest.mark.asyncio
 async def test_create_twin_no_auth_returns_401():
     """No Authorization header → 401."""
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        resp = await ac.post("/api/brandedby/twins", json={"display_name": "Twin"})
+    app.dependency_overrides[get_supabase_admin] = _fake_admin
+    try:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            resp = await ac.post("/api/brandedby/twins", json={"display_name": "Twin"})
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
 
     assert resp.status_code == 401
 
@@ -274,9 +282,13 @@ async def test_get_my_twin_happy_path():
 @pytest.mark.asyncio
 async def test_get_my_twin_no_auth_returns_401():
     """No Authorization header → 401."""
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        resp = await ac.get("/api/brandedby/twins")
+    app.dependency_overrides[get_supabase_admin] = _fake_admin
+    try:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            resp = await ac.get("/api/brandedby/twins")
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
 
     assert resp.status_code == 401
 
@@ -323,9 +335,13 @@ async def test_update_twin_happy_path():
 @pytest.mark.asyncio
 async def test_update_twin_no_auth_returns_401():
     """No Authorization header → 401."""
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        resp = await ac.patch(f"/api/brandedby/twins/{TWIN_ID}", json={"display_name": "x"})
+    app.dependency_overrides[get_supabase_admin] = _fake_admin
+    try:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            resp = await ac.patch(f"/api/brandedby/twins/{TWIN_ID}", json={"display_name": "x"})
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
 
     assert resp.status_code == 401
 
@@ -401,9 +417,13 @@ async def test_refresh_personality_happy_path():
 @pytest.mark.asyncio
 async def test_refresh_personality_no_auth_returns_401():
     """No Authorization header → 401."""
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        resp = await ac.post(f"/api/brandedby/twins/{TWIN_ID}/refresh-personality")
+    app.dependency_overrides[get_supabase_admin] = _fake_admin
+    try:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            resp = await ac.post(f"/api/brandedby/twins/{TWIN_ID}/refresh-personality")
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
 
     assert resp.status_code == 401
 
@@ -481,9 +501,13 @@ async def test_activate_twin_happy_path():
 @pytest.mark.asyncio
 async def test_activate_twin_no_auth_returns_401():
     """No Authorization header → 401."""
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        resp = await ac.post(f"/api/brandedby/twins/{TWIN_ID}/activate")
+    app.dependency_overrides[get_supabase_admin] = _fake_admin
+    try:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            resp = await ac.post(f"/api/brandedby/twins/{TWIN_ID}/activate")
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
 
     assert resp.status_code == 401
 
@@ -572,9 +596,13 @@ async def test_create_generation_happy_path():
 @pytest.mark.asyncio
 async def test_create_generation_no_auth_returns_401():
     """No Authorization header → 401."""
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        resp = await ac.post("/api/brandedby/generations", json=_GEN_BODY)
+    app.dependency_overrides[get_supabase_admin] = _fake_admin
+    try:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            resp = await ac.post("/api/brandedby/generations", json=_GEN_BODY)
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
 
     assert resp.status_code == 401
 
@@ -717,9 +745,13 @@ async def test_list_generations_happy_path():
 @pytest.mark.asyncio
 async def test_list_generations_no_auth_returns_401():
     """No Authorization header → 401."""
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        resp = await ac.get("/api/brandedby/generations")
+    app.dependency_overrides[get_supabase_admin] = _fake_admin
+    try:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            resp = await ac.get("/api/brandedby/generations")
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
 
     assert resp.status_code == 401
 
@@ -772,9 +804,13 @@ async def test_get_generation_happy_path():
 @pytest.mark.asyncio
 async def test_get_generation_no_auth_returns_401():
     """No Authorization header → 401."""
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        resp = await ac.get(f"/api/brandedby/generations/{GEN_ID}")
+    app.dependency_overrides[get_supabase_admin] = _fake_admin
+    try:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            resp = await ac.get(f"/api/brandedby/generations/{GEN_ID}")
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
 
     assert resp.status_code == 401
 

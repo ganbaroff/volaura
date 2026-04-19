@@ -187,6 +187,8 @@ def test_credential_id_contains_professional_id(client):
 
 
 def test_credential_invalid_uuid_422(client):
+    mock_db = _make_admin_mock(profile_data=None, aura_data=None)
+    _override_admin(mock_db)
     resp = client.get("/api/badges/not-a-uuid/credential")
     assert resp.status_code == 422
     detail = resp.json()["detail"]
@@ -194,6 +196,8 @@ def test_credential_invalid_uuid_422(client):
 
 
 def test_credential_uuid_with_wrong_format_422(client):
+    mock_db = _make_admin_mock(profile_data=None, aura_data=None)
+    _override_admin(mock_db)
     resp = client.get("/api/badges/12345/credential")
     assert resp.status_code == 422
 

@@ -110,6 +110,7 @@ async def test_get_status_unauthenticated_returns_401_or_403():
     """No auth → real get_current_user_id dep raises 401/403."""
     db = _build_chainable([])
     app.dependency_overrides[get_supabase_user] = _db_override(db)
+    app.dependency_overrides[get_supabase_admin] = _db_override(db)
 
     try:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:

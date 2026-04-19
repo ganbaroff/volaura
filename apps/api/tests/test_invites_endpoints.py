@@ -30,6 +30,13 @@ def make_client() -> AsyncClient:
     return AsyncClient(transport=ASGITransport(app=app), base_url="http://test")
 
 
+def _fake_admin_dep():
+    async def _dep():
+        yield AsyncMock()
+
+    return _dep
+
+
 def make_chain(data=None, side_effect=None) -> MagicMock:
     result = MagicMock()
     result.data = data
@@ -375,12 +382,16 @@ class TestBulkInvite:
 
     @pytest.mark.asyncio
     async def test_requires_auth(self):
-        csv_content = "email\nahmed@example.com\n"
-        async with make_client() as client:
-            r = await client.post(
-                f"/api/organizations/{ORG_ID}/invites/bulk",
-                files=csv_file(csv_content),
-            )
+        app.dependency_overrides[get_supabase_admin] = _fake_admin_dep()
+        try:
+            csv_content = "email\nahmed@example.com\n"
+            async with make_client() as client:
+                r = await client.post(
+                    f"/api/organizations/{ORG_ID}/invites/bulk",
+                    files=csv_file(csv_content),
+                )
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
         assert r.status_code == 401
 
 
@@ -487,6 +498,10 @@ class TestListInvites:
 
     @pytest.mark.asyncio
     async def test_requires_auth(self):
-        async with make_client() as client:
-            r = await client.get(f"/api/organizations/{ORG_ID}/invites")
+        app.dependency_overrides[get_supabase_admin] = _fake_admin_dep()
+        try:
+            async with make_client() as client:
+                r = await client.get(f"/api/organizations/{ORG_ID}/invites")
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
         assert r.status_code == 401

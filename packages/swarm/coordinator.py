@@ -26,11 +26,59 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import re
 import time
+from pathlib import Path
 from typing import Awaitable, Callable
 
 from loguru import logger
+
+# Project root for evidence-gate file existence checks.
+# packages/swarm/coordinator.py → parents[2] = repo root
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+
+
+def _validate_evidence(finding: FindingContract) -> FindingContract:
+    """Evidence-gate (Session 121, 2026-04-19).
+
+    A finding is UNVERIFIED if ANY of:
+      - evidence field is empty or <20 chars
+      - every path in files[] fails os.path.exists against repo root
+
+    UNVERIFIED findings get:
+      - "⚠ UNVERIFIED: " prefix on summary
+      - severity capped at INFO
+      - confidence reduced to min(confidence, 0.3)
+
+    This kills the "narrative-headline without proof" failure mode that
+    made Session 121's admin audit produce generic agent output that
+    CEO rightfully called Claude-can-LIE level.
+    """
+    unverified_reasons: list[str] = []
+
+    if len(finding.evidence.strip()) < 20:
+        unverified_reasons.append("no evidence")
+
+    if finding.files:
+        real_files = [f for f in finding.files if (_REPO_ROOT / f).exists()]
+        if not real_files:
+            unverified_reasons.append(f"0/{len(finding.files)} files exist")
+
+    if unverified_reasons:
+        reason = " + ".join(unverified_reasons)
+        finding = finding.model_copy(update={
+            "severity": Severity.INFO,
+            "confidence": min(finding.confidence, 0.3),
+            "summary": f"⚠ UNVERIFIED ({reason}): {finding.summary}"[:500],
+        })
+        logger.warning(
+            "Evidence-gate flagged {agent} finding as UNVERIFIED: {reason}",
+            agent=finding.agent_id,
+            reason=reason,
+        )
+
+    return finding
 
 from .contracts import (
     Category,
@@ -225,6 +273,7 @@ def synthesize(
 
         finding = _parse_finding(t.result, t.agent_id, t.task_id, run_id)
         if finding:
+            finding = _validate_evidence(finding)
             findings.append(finding)
 
     # Sort: P0 first, then by confidence desc

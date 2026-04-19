@@ -5,9 +5,11 @@ name: Org Match Checker
 # Sprint 8: https://volaura.app
 
 on:
-  schedule:
-    # Run daily at 07:00 UTC (11:00 Baku time — after morning review)
-    - cron: '0 7 * * *'
+  # 2026-04-19: cron disabled at CEO's request — "пусть будет тишина дальше
+  # решим". match-checker sends Telegram to org owners on new matches;
+  # silenced together with the rest of the scheduled senders.
+  # schedule:
+  #   - cron: '0 7 * * *'   # 07:00 UTC = 11:00 Baku
   workflow_dispatch:
     inputs:
       dry_run:

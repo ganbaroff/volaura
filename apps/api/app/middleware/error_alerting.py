@@ -19,7 +19,18 @@ _last_alert_time: float = 0
 
 
 async def _send_telegram_alert(status_code: int, path: str, method: str) -> None:
-    """Send error alert to CEO Telegram. Fire-and-forget."""
+    """Send error alert to CEO Telegram. Fire-and-forget.
+
+    HARD KILL-SWITCH (2026-04-19) — CEO reported 100+ Telegram alerts/day and
+    three silence-gate iterations (PR #18 gate, PR #19 cron disable, PR #20
+    full cron/push sweep, PR #21 Dockerfile gate-ship) didn't get him to zero
+    fast enough. Short-circuiting here at the function boundary guarantees
+    zero sends regardless of gate import state, silence-file presence, or
+    cooldown timing. Remove this early-return after CEO explicitly says
+    'unlock telegram alerts' — until then this path is dead code.
+    """
+    return
+
     global _last_alert_time
 
     now = time.time()

@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils/cn";
 import { CrystalShop } from "@/components/lifesim/crystal-shop";
 import { useCrystalBalance } from "@/hooks/queries/use-character";
 import {
+  useLifesimFeed,
   useLifesimNextChoice,
   useLifesimSubmitChoice,
 } from "@/hooks/queries/use-lifesim";
@@ -163,8 +164,15 @@ export default function LifeFeedPage() {
   const isLowEnergy = energy === "low";
 
   const [stats, setStats] = useState<Record<StatKey, number>>(INITIAL_STATS);
-  const [age] = useState<number>(25); // TODO A7.1: aggregate from character_events
   const [submitting, setSubmitting] = useState(false);
+
+  const feedQuery = useLifesimFeed();
+  const choiceCount = useMemo(
+    () =>
+      (feedQuery.data?.data ?? []).filter((item) => item.event_type === "lifesim_choice").length,
+    [feedQuery.data]
+  );
+  const age = 18 + choiceCount;
 
   const nextChoiceQuery = useLifesimNextChoice({
     age,

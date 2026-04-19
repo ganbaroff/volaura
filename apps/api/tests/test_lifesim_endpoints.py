@@ -367,9 +367,7 @@ class TestLifesimChoice:
         orig_emit = ls_router.emit_lifesim_choice_event
         ls_router.emit_lifesim_choice_event = AsyncMock(return_value=None)
         orig_apply = ls_router.apply_consequences_to_stats
-        ls_router.apply_consequences_to_stats = MagicMock(
-            return_value={"intelligence": 55.0, "social": 50.0}
-        )
+        ls_router.apply_consequences_to_stats = MagicMock(return_value={"intelligence": 55.0, "social": 50.0})
         try:
             async with _make_client() as c:
                 resp = await c.post("/api/lifesim/choice", json=self._valid_payload())

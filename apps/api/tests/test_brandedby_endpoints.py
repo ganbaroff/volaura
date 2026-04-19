@@ -314,9 +314,7 @@ async def test_update_twin_happy_path():
         _r(data={"id": TWIN_ID, "user_id": USER_ID}),  # ownership check
         _r(data=[updated]),  # update result
     )
-    resp = await _call(
-        "patch", f"/api/brandedby/twins/{TWIN_ID}", db=db, json={"display_name": "Updated Name"}
-    )
+    resp = await _call("patch", f"/api/brandedby/twins/{TWIN_ID}", db=db, json={"display_name": "Updated Name"})
 
     assert resp.status_code == 200
     assert resp.json()["display_name"] == "Updated Name"
@@ -336,9 +334,7 @@ async def test_update_twin_no_auth_returns_401():
 async def test_update_twin_not_found_returns_404():
     """404 TWIN_NOT_FOUND when no twin with that id."""
     db = _make_chain(_r(data=None))
-    resp = await _call(
-        "patch", f"/api/brandedby/twins/{TWIN_ID}", db=db, json={"display_name": "x"}
-    )
+    resp = await _call("patch", f"/api/brandedby/twins/{TWIN_ID}", db=db, json={"display_name": "x"})
 
     assert resp.status_code == 404
     assert resp.json()["detail"]["code"] == "TWIN_NOT_FOUND"
@@ -348,9 +344,7 @@ async def test_update_twin_not_found_returns_404():
 async def test_update_twin_not_owner_returns_403():
     """403 NOT_OWNER when user doesn't own the twin."""
     db = _make_chain(_r(data={"id": TWIN_ID, "user_id": OTHER_USER_ID}))
-    resp = await _call(
-        "patch", f"/api/brandedby/twins/{TWIN_ID}", db=db, json={"display_name": "x"}
-    )
+    resp = await _call("patch", f"/api/brandedby/twins/{TWIN_ID}", db=db, json={"display_name": "x"})
 
     assert resp.status_code == 403
     assert resp.json()["detail"]["code"] == "NOT_OWNER"
@@ -373,9 +367,7 @@ async def test_update_twin_db_fail_returns_500():
         _r(data={"id": TWIN_ID, "user_id": USER_ID}),
         _r(data=[]),  # update fails
     )
-    resp = await _call(
-        "patch", f"/api/brandedby/twins/{TWIN_ID}", db=db, json={"tagline": "New tagline"}
-    )
+    resp = await _call("patch", f"/api/brandedby/twins/{TWIN_ID}", db=db, json={"tagline": "New tagline"})
 
     assert resp.status_code == 500
     assert resp.json()["detail"]["code"] == "UPDATE_FAILED"
@@ -400,9 +392,7 @@ async def test_refresh_personality_happy_path():
         "app.routers.brandedby.generate_twin_personality",
         new=AsyncMock(return_value="You are Test Twin, an expert..."),
     ):
-        resp = await _call(
-            "post", f"/api/brandedby/twins/{TWIN_ID}/refresh-personality", db=db
-        )
+        resp = await _call("post", f"/api/brandedby/twins/{TWIN_ID}/refresh-personality", db=db)
 
     assert resp.status_code == 200
     assert resp.json()["personality_prompt"] == "You are Test Twin, an expert..."

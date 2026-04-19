@@ -20,7 +20,7 @@
  */
 
 import { client } from "@/lib/api/generated/client.gen";
-import { createClient as createSupabaseClient } from "@/lib/supabase/client";
+import { getFreshAccessToken } from "@/lib/api/get-fresh-token";
 
 let configured = false;
 
@@ -35,20 +35,18 @@ export function configureApiClient(): void {
     baseUrl: "",
   });
 
-  // Inject Supabase Bearer token on every request
+  // Inject Supabase Bearer token on every request.
+  // getFreshAccessToken() refreshes the JWT when expired or expiring within
+  // 60 seconds, so stale tokens never reach the API silently.
   client.interceptors.request.use(async (request) => {
     try {
-      const supabase = createSupabaseClient();
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      if (session?.access_token) {
-        request.headers.set("Authorization", `Bearer ${session.access_token}`);
+      const token = await getFreshAccessToken();
+      if (token) {
+        request.headers.set("Authorization", `Bearer ${token}`);
       }
     } catch {
-      // Never block the request if auth lookup fails — let the API return 401
-      // so the frontend auth state can handle it gracefully
+      // Never block the request if token lookup fails — let the API return 401
+      // so the frontend auth state can handle it gracefully.
     }
     return request;
   });

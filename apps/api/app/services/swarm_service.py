@@ -108,7 +108,7 @@ async def _swarm_evaluate_scores(
 
     config = SwarmConfig(
         question=swarm_prompt,
-        context="Volunteer competency assessment evaluation for Volaura platform.",
+        context="Professional competency assessment evaluation for Volaura platform.",
         stakes=StakesLevel.LOW,  # 3-5 agents, fast
         domain=DomainTag.GENERAL,
         timeout_seconds=20.0,

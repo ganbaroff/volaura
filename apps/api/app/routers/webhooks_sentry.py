@@ -240,7 +240,12 @@ async def _upsert_github_issue(event_row: dict[str, Any]) -> str | None:
 
 
 async def _ping_ceo_telegram(event_row: dict[str, Any], issue_url: str | None) -> None:
-    """Best-effort CEO alert. Silent if Telegram is unconfigured."""
+    """Best-effort CEO alert. Silent if Telegram is unconfigured.
+
+    HARD KILL-SWITCH (2026-04-19) — see error_alerting.py for context. Remove
+    early-return only after CEO says 'unlock telegram alerts'.
+    """
+    return
     if not (settings.telegram_bot_token and settings.telegram_ceo_chat_id):
         return
     title = (event_row.get("title") or "Sentry regression")[:160]

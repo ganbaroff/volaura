@@ -190,6 +190,10 @@ async def _send_telegram_notification(
 
     Returns True on success, False on failure (non-raising).
     """
+    # HARD KILL-SWITCH (2026-04-19): see error_alerting.py for context.
+    # Remove early-return only after CEO says 'unlock telegram alerts'.
+    return False
+
     if not settings.telegram_bot_token or not settings.telegram_ceo_chat_id:
         logger.debug("Telegram not configured — skipping match notification")
         return False

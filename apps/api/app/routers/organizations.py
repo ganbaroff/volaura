@@ -39,7 +39,9 @@ router = APIRouter(prefix="/organizations", tags=["Organizations"])
 
 @router.get("", response_model=list[OrganizationResponse])
 @limiter.limit(RATE_DEFAULT)
-async def list_organizations(request: Request, db: SupabaseAdmin, user_id: OptionalCurrentUserId = None) -> list[OrganizationResponse]:
+async def list_organizations(
+    request: Request, db: SupabaseAdmin, user_id: OptionalCurrentUserId = None
+) -> list[OrganizationResponse]:
     """List all public organizations. Rate-limited by IP."""
     result = (
         await db.table("organizations")

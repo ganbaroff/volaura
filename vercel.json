@@ -8,5 +8,5 @@
   "git": {
     "deploymentEnabled": true
   },
-  "ignoreCommand": "git diff --quiet HEAD~1 -- apps/web/ packages/ .env.md vercel.json"
+  "ignoreCommand": "git diff --quiet HEAD~1 -- apps/web/ packages/ .env.md vercel.json .vercelignore .nvmrc"
 }

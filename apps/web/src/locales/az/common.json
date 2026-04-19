@@ -200,6 +200,8 @@
     "timerExpired": "Vaxt bitdi — növbəti suala keçilir",
     "takingBreak": "İrəliləyişiniz saxlanıldı. İstənilən vaxt qayıda bilərsiniz.",
     "competencyComplete": "{{name}} tamamlanıb.",
+    "competencyOfTotal": "{{total}}-dən {{current}}-ci kompetensiya",
+    "competencyProgressTransition": "{{total}}-dən {{current}}-si tamamlandı — {{remaining}} qalıb",
     "continueToNext": "Növbətiyə keçin",
     "processingResults": "Nəticələriniz hesablanır...",
     "evaluating": "Cavabınız qiymətləndirilir...",

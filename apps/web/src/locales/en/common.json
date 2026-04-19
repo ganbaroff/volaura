@@ -200,6 +200,8 @@
     "timerExpired": "Time's up — moving to next question",
     "takingBreak": "Progress saved. You can return any time.",
     "competencyComplete": "{{name}} complete ✓",
+    "competencyOfTotal": "Competency {{current}} of {{total}}",
+    "competencyProgressTransition": "{{current}} of {{total}} complete — {{remaining}} remaining",
     "continueToNext": "Continue to {{next}}",
     "processingResults": "Calculating your results...",
     "evaluating": "Evaluating your answer...",

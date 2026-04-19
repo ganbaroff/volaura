@@ -406,6 +406,15 @@ export default function QuestionPage() {
           </div>
           <div className="space-y-2">
             <h2 className="text-xl font-semibold">{completedLabel}</h2>
+            {selectedCompetencies.length > 1 && (
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                {t("assessment.competencyProgressTransition", {
+                  current: currentCompetencyIndex + 1,
+                  total: selectedCompetencies.length,
+                  remaining: selectedCompetencies.length - currentCompetencyIndex - 1,
+                })}
+              </p>
+            )}
             <p className="text-sm text-muted-foreground">{continueLabel}</p>
           </div>
           <Button onClick={handleNextCompetency} size="lg" className="w-full sm:w-auto min-h-[44px]" disabled={isSubmitting} aria-busy={isSubmitting}>
@@ -438,9 +447,19 @@ export default function QuestionPage() {
         </button>
 
         {!isLow && (
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            {t(`competency.${currentCompetency}`, { defaultValue: currentCompetency })}
-          </p>
+          <div className="flex flex-col items-end gap-0.5">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              {t(`competency.${currentCompetency}`, { defaultValue: currentCompetency })}
+            </p>
+            {selectedCompetencies.length > 1 && (
+              <p className="text-[10px] text-muted-foreground/80" aria-live="polite">
+                {t("assessment.competencyOfTotal", {
+                  current: currentCompetencyIndex + 1,
+                  total: selectedCompetencies.length,
+                })}
+              </p>
+            )}
+          </div>
         )}
       </div>
 

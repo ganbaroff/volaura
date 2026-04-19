@@ -673,7 +673,7 @@ class TestRegisterForEvent:
         """Cancelled registration is reactivated rather than creating a duplicate."""
         db_user = _db(
             _R(data=[_reg_row(status="cancelled")]),  # existing cancelled
-            _R(data=[_reg_row(status="pending")]),   # update to pending
+            _R(data=[_reg_row(status="pending")]),  # update to pending
         )
         db_admin = _db(
             _R(data={"status": "open", "capacity": None}),
@@ -703,7 +703,7 @@ class TestCheckIn:
     async def test_happy_path_returns_200(self):
         db_admin = _db(
             _R(data={"organization_id": ORG_ID}),  # event org lookup
-            _R(data={"owner_id": USER_ID}),         # org owner check
+            _R(data={"owner_id": USER_ID}),  # org owner check
             _R(data=_reg_row(checked_in_at=None)),  # find by code
             _R(data=[_reg_row(status="approved", checked_in_at=NOW_ISO)]),  # update
         )
@@ -878,8 +878,8 @@ class TestListAttendees:
         }
         db_admin = _db(
             _R(data={"organization_id": ORG_ID}),  # event lookup
-            _R(data={"owner_id": USER_ID}),         # org owner
-            _R(data=[reg]),                          # regs
+            _R(data={"owner_id": USER_ID}),  # org owner
+            _R(data=[reg]),  # regs
             _R(data=[{"id": USER_ID, "display_name": "Alice", "username": "alice"}]),  # profiles
             _R(data=[{"volunteer_id": USER_ID, "total_score": 80.0, "badge_tier": "Gold"}]),  # aura
         )
@@ -1020,10 +1020,10 @@ class TestCoordinatorRate:
         db_user = _db(_R(data=[]))
         updated_reg = _reg_row(coordinator_rating=4.5, coordinator_feedback="Great volunteer")
         db_admin = _db(
-            _R(data={"organization_id": ORG_ID}),   # event lookup
-            _R(data={"owner_id": USER_ID}),           # org owner
-            _R(data=[updated_reg]),                   # update reg
-            _R(data=[{"coordinator_rating": 4.5}]),   # rated regs for AURA avg
+            _R(data={"organization_id": ORG_ID}),  # event lookup
+            _R(data={"owner_id": USER_ID}),  # org owner
+            _R(data=[updated_reg]),  # update reg
+            _R(data=[{"coordinator_rating": 4.5}]),  # rated regs for AURA avg
         )
         # rpc for upsert_aura_score
         rpc_chain = MagicMock()
@@ -1112,8 +1112,8 @@ class TestVolunteerRate:
             volunteer_feedback="Excellent event",
         )
         db_user = _db(
-            _R(data=approved_reg),    # find registration
-            _R(data=[updated_reg]),   # update
+            _R(data=approved_reg),  # find registration
+            _R(data=[updated_reg]),  # update
         )
         app.dependency_overrides[get_supabase_user] = lambda: db_user
         app.dependency_overrides[get_current_user_id] = lambda: USER_ID

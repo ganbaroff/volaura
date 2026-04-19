@@ -240,7 +240,9 @@ def test_discovery_returns_professionals(client):
         aura_rows=[row],
         consent_ids=[{"id": PROF_ID_1}],
         profile_rows=[{"id": PROF_ID_1, "display_name": "Leyla Aghayeva"}],
-        session_rows=[{"volunteer_id": PROF_ID_1, "role_level": "professional", "completed_at": "2026-03-01T00:00:00Z"}],
+        session_rows=[
+            {"volunteer_id": PROF_ID_1, "role_level": "professional", "completed_at": "2026-03-01T00:00:00Z"}
+        ],
     )
     resp = client.get(ENDPOINT)
     assert resp.status_code == 200

@@ -171,9 +171,7 @@ async def test_public_stats_fails_soft_when_profiles_db_errors():
             sel = MagicMock()
             sel.execute = AsyncMock(side_effect=Exception("connection reset"))
             # caller lookup must still work for public endpoint (no auth needed)
-            sel.eq.return_value.maybe_single.return_value.execute = AsyncMock(
-                side_effect=Exception("connection reset")
-            )
+            sel.eq.return_value.maybe_single.return_value.execute = AsyncMock(side_effect=Exception("connection reset"))
             m.select = MagicMock(return_value=sel)
             return m
         return orig_table(name)
@@ -389,9 +387,7 @@ async def test_beta_funnel_403_when_profile_missing():
             m = MagicMock()
             sel = MagicMock()
             # no profile row → data=None
-            sel.eq.return_value.maybe_single.return_value.execute = AsyncMock(
-                return_value=MockResult(data=None)
-            )
+            sel.eq.return_value.maybe_single.return_value.execute = AsyncMock(return_value=MockResult(data=None))
             sel.execute = AsyncMock(return_value=MockResult(data=[], count=0))
             m.select = MagicMock(return_value=sel)
             return m

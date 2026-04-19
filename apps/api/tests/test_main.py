@@ -1,6 +1,5 @@
 """Tests for app/main.py — metadata, router registration, middleware, exception handler."""
 
-
 import pytest
 from fastapi.testclient import TestClient
 

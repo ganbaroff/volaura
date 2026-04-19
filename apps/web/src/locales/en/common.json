@@ -822,6 +822,8 @@
     "discoveryTitle": "Partner Organizations",
     "discoverySubtitle": "Find organizations and contribute to their events.",
     "searchPlaceholder": "Search organizations...",
+    "showing_one": "{{count}} organization",
+    "showing_other": "{{count}} organizations",
     "showing": "{{count}} organizations",
     "noSearchResults": "No organizations match your search.",
     "noOrgsYet": "No organizations registered yet.",

@@ -126,7 +126,7 @@ export function SampleProfileView() {
         </div>
 
         <div className="mt-8 text-center">
-          <Link href={`/${locale}/auth/signup`}>
+          <Link href={`/${locale}/signup`}>
             <Button size="lg" className="w-full">
               {t("sample.cta", { defaultValue: "Build Your Own AURA Profile" })}
             </Button>

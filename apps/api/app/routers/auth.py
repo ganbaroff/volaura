@@ -120,18 +120,15 @@ async def validate_invite(
 ) -> ValidateInviteResponse:
     """Validate a beta invite code. Returns {valid: bool}.
 
-    Uses constant-time comparison (hmac.compare_digest) to prevent timing attacks.
-    If BETA_INVITE_CODE is empty, always returns valid=False (gate is armed but
-    misconfigured — prevents silent bypass when code is not yet set on Railway).
+    Delegates to the shared multi-code loader (INVITE_CODES env var, comma-separated)
+    so /auth/validate-invite and /invite/validate share the same allowlist.
+    Fixes G2.3 sync gap: signup page called this endpoint while invite page called
+    /invite/validate — codes from INVITE_CODES were silently rejected here.
     """
-    code = settings.beta_invite_code
-    if not code:
-        # Code not configured — gate armed but no valid code exists
-        return ValidateInviteResponse(valid=False)
-    is_valid = hmac.compare_digest(
-        payload.invite_code.strip().lower(),
-        code.strip().lower(),
-    )
+    from app.routers.beta_invite import _load_valid_codes  # noqa: PLC0415
+
+    valid_codes = _load_valid_codes()
+    is_valid = payload.invite_code.strip().upper() in valid_codes
     return ValidateInviteResponse(valid=is_valid)
 
 

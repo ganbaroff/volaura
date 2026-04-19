@@ -4,6 +4,8 @@ Covers:
   - apply_stat_boosts_from_verified_skills
   - apply_consequences_to_stats (clamping)
   - filter_pool_for_user (age + required_stats filtering)
+  - _extract_category_bias (E3 atlas_learnings bias)
+  - pick_event_with_bias (E3 weighted selection)
 
 DB-side helpers (query_event_pool, emit_lifesim_*) are covered by integration
 tests in a later iteration that wires the router.
@@ -11,10 +13,14 @@ tests in a later iteration that wires the router.
 
 from __future__ import annotations
 
+import pytest
+
 from app.services.lifesim import (
+    _extract_category_bias,
     apply_consequences_to_stats,
     apply_stat_boosts_from_verified_skills,
     filter_pool_for_user,
+    pick_event_with_bias,
 )
 
 # ── apply_stat_boosts_from_verified_skills ────────────────────────────────
@@ -182,3 +188,118 @@ def test_filter_pool_inactive_always_excluded():
     out = filter_pool_for_user(_SAMPLE_POOL, age=25, stats={})
     ids = {e["id"] for e in out}
     assert "e3" not in ids
+
+
+# ── _extract_category_bias ────────────────────────────────────────────────────
+
+
+def test_extract_bias_empty_learnings():
+    assert _extract_category_bias([]) == {}
+
+
+def test_extract_bias_finance_keyword():
+    learnings = [{"category": "preference", "content": "финансовую независимость", "emotional_intensity": 3.0}]
+    bias = _extract_category_bias(learnings)
+    # "финанс" maps to finance, "независимост" maps to finance — two hits
+    assert "finance" in bias
+    assert bias["finance"] > 0.0
+
+
+def test_extract_bias_high_intensity_bigger_than_low():
+    keyword = "карьер"
+    high = _extract_category_bias([{"content": keyword, "emotional_intensity": 5.0}])
+    low = _extract_category_bias([{"content": keyword, "emotional_intensity": 1.0}])
+    assert high.get("career", 0.0) > low.get("career", 0.0)
+
+
+def test_extract_bias_multiple_learnings_accumulate():
+    learnings = [
+        {"content": "карьер", "emotional_intensity": 2.0},
+        {"content": "карьер", "emotional_intensity": 2.0},
+    ]
+    single = _extract_category_bias([{"content": "карьер", "emotional_intensity": 2.0}])
+    both = _extract_category_bias(learnings)
+    assert both.get("career", 0.0) > single.get("career", 0.0)
+
+
+def test_extract_bias_unknown_keyword_returns_empty():
+    learnings = [{"content": "xyzzy foobar quux", "emotional_intensity": 5.0}]
+    assert _extract_category_bias(learnings) == {}
+
+
+def test_extract_bias_multiple_categories_from_one_learning():
+    # "деньг" → finance, "образован" → education in same content
+    learnings = [{"content": "деньги и образование", "emotional_intensity": 2.0}]
+    bias = _extract_category_bias(learnings)
+    assert "finance" in bias
+    assert "education" in bias
+
+
+def test_extract_bias_intensity_zero_gives_min_boost():
+    learnings = [{"content": "здоровье", "emotional_intensity": 0.0}]
+    bias = _extract_category_bias(learnings)
+    # At intensity=0: weight_boost = 0.5 + (0/5)*1.5 = 0.5
+    assert abs(bias.get("health", 0.0) - 0.5) < 0.001
+
+
+def test_extract_bias_intensity_five_gives_max_boost():
+    learnings = [{"content": "здоровье", "emotional_intensity": 5.0}]
+    bias = _extract_category_bias(learnings)
+    # At intensity=5: weight_boost = 0.5 + (5/5)*1.5 = 2.0
+    assert abs(bias.get("health", 0.0) - 2.0) < 0.001
+
+
+# ── pick_event_with_bias ──────────────────────────────────────────────────────
+
+
+def test_pick_event_empty_raises():
+    with pytest.raises((IndexError, ValueError)):
+        pick_event_with_bias([], {})
+
+
+def test_pick_event_single_always_returned():
+    event = {"id": "solo", "category": "career"}
+    result = pick_event_with_bias([event], {})
+    assert result == event
+
+
+def test_pick_event_single_with_bias_still_returns_it():
+    event = {"id": "solo", "category": "education"}
+    result = pick_event_with_bias([event], {"education": 5.0})
+    assert result == event
+
+
+def test_pick_event_biased_category_dominates_statistically():
+    biased = {"id": "biased", "category": "finance"}
+    other = {"id": "other", "category": "hobby"}
+    eligible = [biased, other]
+    bias = {"finance": 99.0}  # heavy bias
+    counts = {"biased": 0, "other": 0}
+    for _ in range(100):
+        result = pick_event_with_bias(eligible, bias)
+        counts[result["id"]] += 1
+    # With weight ratio 100:1, biased event must appear far more than 60 times
+    assert counts["biased"] > 60
+
+
+def test_pick_event_empty_bias_uniform():
+    events = [{"id": str(i), "category": "education"} for i in range(10)]
+    counts: dict[str, int] = {e["id"]: 0 for e in events}
+    for _ in range(1000):
+        result = pick_event_with_bias(events, {})
+        counts[result["id"]] += 1
+    # Each event should appear roughly 100 times; no event should be absent
+    assert all(c > 0 for c in counts.values())
+
+
+def test_pick_event_no_category_key_uses_default_weight():
+    # Event with no "category" key should get default weight 1.0 (no KeyError)
+    no_cat = {"id": "nc"}
+    with_cat = {"id": "wc", "category": "finance"}
+    bias = {"finance": 0.0}  # both effectively weight 1.0
+    seen = set()
+    for _ in range(200):
+        seen.add(pick_event_with_bias([no_cat, with_cat], bias)["id"])
+    # Both events must appear — no crash on missing category key
+    assert "nc" in seen
+    assert "wc" in seen

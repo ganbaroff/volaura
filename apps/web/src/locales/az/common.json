@@ -963,17 +963,24 @@
     "backToBrowse": "← Göz gəzdirməyə qayıt",
     "clearSearch": "Sıfırla",
     "aura": {
+      "Any": "İstənilən",
       "AnyAura": "İstənilən AURA",
       "BronzePlus": "Bürünc+",
       "SilverPlus": "Gümüş+",
       "GoldPlus": "Qızıl+"
     },
     "badge": {
+      "Alltiers": "Bütün dərəcələr",
       "Anygrade": "İstənilən dərəcə",
       "Bronze": "Bürünc",
       "Silver": "Gümüş",
       "Gold": "Qızıl",
       "Platinum": "Platin"
+    },
+    "similarity": {
+      "high": "Yüksək uyğunluq",
+      "good": "Yaxşı uyğunluq",
+      "partial": "Qismən uyğunluq"
     },
     "filterBySkill": "Təsdiqlənmiş bacarığa görə axtar"
   },

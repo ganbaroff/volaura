@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils/cn";
 
 export interface ImpactData {
   events_count: number;
-  hours_volunteered: number;
+  hours_contributed: number;
   verified_skills: number;
 }
 
@@ -36,7 +36,7 @@ export function ImpactMetrics({ data }: ImpactMetricsProps) {
     },
     {
       icon: Clock,
-      value: data.hours_volunteered,
+      value: data.hours_contributed,
       label: t("profile.hoursContributed"),
       color: "text-blue-400",
     },

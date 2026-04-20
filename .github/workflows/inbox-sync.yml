@@ -1,0 +1,125 @@
+name: "Atlas Inbox Sync — ceo_inbox → git"
+
+# Layer 5 completion (2026-04-20): ensures every CEO Telegram message lands
+# in git so the next Claude Code session sees it on wake, regardless of
+# whether Railway redeployed (and wiped the ephemeral filesystem fallback)
+# in the meantime.
+#
+# Queries Supabase ceo_inbox for rows created in the last 20 minutes,
+# writes any missing inbox files to memory/atlas/inbox/, commits, pushes.
+# Overlapping window + idempotent file names = safe to run frequently.
+
+on:
+  schedule:
+    # Every 10 min. Adjust to 30 min if GitHub Actions quota becomes a concern.
+    - cron: '*/10 * * * *'
+  workflow_dispatch:  # manual backfill
+
+permissions:
+  contents: write
+
+concurrency:
+  group: inbox-sync
+  cancel-in-progress: false  # serialize — don't want two syncs racing on git push
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install deps
+        run: pip install -q supabase python-dotenv
+
+      - name: Sync ceo_inbox → git
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          python3 <<'PYEOF'
+          import os, re, json, pathlib
+          from datetime import datetime, timedelta, timezone
+          from supabase import create_client
+
+          url = os.environ["SUPABASE_URL"]
+          key = os.environ["SUPABASE_SERVICE_KEY"]
+          supa = create_client(url, key)
+
+          # Window: last 20 minutes with 5-min overlap to prevent missed rows at boundaries.
+          since = (datetime.now(timezone.utc) - timedelta(minutes=20)).isoformat()
+
+          resp = (
+              supa.table("ceo_inbox")
+              .select("id, direction, message, message_type, metadata, created_at")
+              .gte("created_at", since)
+              .order("created_at", desc=False)
+              .limit(200)
+              .execute()
+          )
+          rows = resp.data or []
+          print(f"Found {len(rows)} rows since {since}")
+
+          inbox_dir = pathlib.Path("memory/atlas/inbox")
+          inbox_dir.mkdir(parents=True, exist_ok=True)
+
+          written = 0
+          for row in rows:
+              created = row["created_at"]  # ISO timestamp from pg
+              # Normalize: 2026-04-20T17:42:10.123456+00:00 → 2026-04-20T174210
+              ts = re.sub(r"[^\dT]", "", created.split(".")[0].split("+")[0])[:15]
+              direction = row["direction"]
+              msg_type = row.get("message_type") or "free_text"
+              fname = f"telegram-{ts}-{direction}-{msg_type}.md"
+              path = inbox_dir / fname
+              if path.exists():
+                  continue
+
+              msg = (row.get("message") or "").strip()
+              metadata = row.get("metadata") or {}
+
+              body = (
+                  f"# Telegram message — inbox-sync auto-commit\n"
+                  f"**Direction:** {direction} · **Type:** {msg_type} · **Captured:** {created}Z\n\n"
+                  f"## Message\n\n{msg}\n\n"
+                  f"## Metadata\n\n```json\n{json.dumps(metadata, indent=2, ensure_ascii=False)}\n```\n\n"
+                  f"Consumed by main Atlas: pending\n"
+              )
+              path.write_text(body, encoding="utf-8")
+              written += 1
+
+          print(f"Wrote {written} new inbox files")
+          # Emit count so later steps can decide to skip commit
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"written={written}\n")
+          PYEOF
+        id: sync
+
+      - name: Commit and push
+        if: steps.sync.outputs.written != '0'
+        run: |
+          git config user.email "atlas-inbox-sync@volaura.az"
+          git config user.name "Atlas Inbox Sync"
+          git add memory/atlas/inbox/
+          if git diff --staged --quiet; then
+            echo "Nothing staged after all — skipping commit."
+            exit 0
+          fi
+          COUNT=$(git diff --staged --name-only | wc -l)
+          git commit -m "atlas-inbox-sync: $COUNT new message(s) from ceo_inbox" -m "[skip ci]"
+          # Race protection: rebase on top of origin/main before push.
+          git pull --rebase origin main || git rebase --abort || true
+          git push || {
+            echo "::warning::push raced — fetch + rebase + retry"
+            git fetch origin main
+            git rebase origin/main || git rebase --abort || true
+            git push
+          }

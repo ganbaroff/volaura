@@ -4,6 +4,58 @@
 
 ---
 
+## SESSION 1 FINAL STATE (2026-04-20 ~22:00 Baku, after extended work)
+
+PRs merged in this session, full list:
+- #27 autonomous loop trigger
+- #30 intent routing (code_fix + content + analysis)
+- #32 CEO cheatsheet + this handoff doc
+- #33 direct Aider call (replaced autonomous_run pipeline)
+- #35 workflow timeout 10→15 min
+- #37 lazy-install aider-chat (base deps + lazy aider)
+- #40 Layer 5 inbox-sync workflow — DONE THIS SESSION (was on sessions 2-3 list)
+- #41 Aider model switch: Cerebras primary + NVIDIA fallback (Groq spend-blocked)
+- #44 autofix-by-Aider (Aider committed line to TELEGRAM-CHEATSHEET.md, validated E2E)
+- #45 gh-pr-create strict-mode fix (step always reports to Telegram even on PR creation hiccup)
+
+Test outcomes:
+- #38 analysis path — success 1m9s E2E
+- #39 code_fix path (Groq blocked) — surfaced spend issue
+- #42 code_fix path Cerebras primary (no-op task) — success 1m11s, correct "no changes needed" reply
+- #43 code_fix path Cerebras primary (real change task) — Aider committed+pushed branch, gh pr create returned exit 1, PR #44 opened manually. Strict-mode fix (#45) closes this gap for future tasks.
+
+Paid API tier added this session (CEO $20 each, 3 providers):
+- OPENAI_API_KEY (sk-proj-9D8R...) — env + gh secret
+- ANTHROPIC_API_KEY (sk-ant-api03-z-nT...) — env + gh secret  
+- DEEPSEEK_API_KEY (sk-ae4932a0...) — env + gh secret
+
+Constraints per constitution: Anthropic + OpenAI NOT for swarm perspectives ("Never use Claude as swarm agent"). Usage plan:
+- Anthropic/Sonnet 4.5 → Aider code_fix primary upgrade (replace Cerebras), content engine voice, Layer 3 consult endpoint
+- OpenAI/GPT → Aider fallback, content fallback, external-judge layer
+- DeepSeek → OK as swarm agent (different family), fourth voice in debate
+
+Layer 5 (inbox → git sync) DONE EARLY — `.github/workflows/inbox-sync.yml` live, cron every 10 min.
+Layer 6 (autonomous loop) DONE.
+Remaining layers: 1 (router extraction), 2 (voice), 3 (consult endpoint), 4 (git-commit from bot teaching).
+
+Critical ops notes:
+- Groq org account hit spend limit 2026-04-20. ALL Groq calls fail. Either CEO raises limit OR we keep Cerebras primary (already done).
+- Aider `--auto-commits` works, Cerebras produces correct edits. Validated via test #43.
+- Bash strict-mode bug in code_fix step — fixed in #45. Future Aider tasks won't hide "branch pushed but PR create hiccup" from CEO — they'll get a branch URL to open manually.
+
+Next-session priorities REORDERED after new keys + completed Layer 5:
+
+1. Wire Sonnet into Aider as primary (30 min). `SWARM_CODER_MODEL` → Sonnet. Cerebras → fallback.
+2. Layer 3 self-consult endpoint (30 min). Uses Anthropic key directly.
+3. Layer 4 git-commit from Telegram teaching (45 min) — only path with Railway redeploy risk.
+4. Layer 2 edge-tts voice (90 min) + lock Russian neural voice.
+5. Layer 1 router extraction (2 hours) — pure refactor, no behavior change.
+6. Constitution-enforcement CI (variable) — start with ONE law (e.g. `no red colors` Tailwind scan), then expand. High long-term leverage.
+
+---
+
+---
+
 ## What shipped in session 1
 
 ### PR #27 (merged) — Autonomous loop trigger

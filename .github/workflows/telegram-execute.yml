@@ -128,11 +128,18 @@ jobs:
           echo "Task: $TASK"
           python -m packages.swarm.coordinator "$TASK" 2>&1 | tee /tmp/swarm_output.txt || true
 
-          # Extract team_recommendation from the stdout if present (coordinator prints it).
-          # Fallback to full output head if no team-synth happened (e.g., ANTHROPIC key missing).
-          # The coordinator's __main__ path is responsible for printing team_recommendation to stdout
-          # (see packages/swarm/coordinator.py entrypoint).
-          head -c 3500 /tmp/swarm_output.txt > /tmp/swarm_result.txt
+          # Prefer TEAM ANSWER section (Sonnet 4.5 voice, fan-in synthesis).
+          # It prints AFTER coordinator logger output, so naive head -c slicing misses it.
+          # Use awk to extract from "TEAM ANSWER" marker onward. If absent (ANTHROPIC key
+          # missing or LLM unreachable), fall back to tail — tail still captures mechanical
+          # synthesis which also prints after logs.
+          if grep -q "TEAM ANSWER" /tmp/swarm_output.txt; then
+            awk '/=== TEAM ANSWER/,0' /tmp/swarm_output.txt | head -c 3500 > /tmp/swarm_result.txt
+            echo "[analysis: captured team_recommendation (Sonnet 4.5 voice)]"
+          else
+            tail -c 3500 /tmp/swarm_output.txt > /tmp/swarm_result.txt
+            echo "[analysis: mechanical synthesis only — ANTHROPIC key missing or LLM unreachable]"
+          fi
 
       # === BRANCH 1: code_fix (direct Aider call — fast path) ===
       # Calls Aider directly with the task as --message. Aider picks files

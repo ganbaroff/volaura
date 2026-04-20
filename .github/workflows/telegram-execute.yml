@@ -134,6 +134,10 @@ jobs:
         if: steps.resolve.outputs.intent == 'code_fix'
         id: swarm_codefix
         env:
+          # Cerebras primary (2000 tok/sec, matches constitution hierarchy).
+          # NVIDIA fallback. Groq removed after 2026-04-20 spend-alert block.
+          CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TASK: ${{ steps.resolve.outputs.task }}
@@ -155,18 +159,34 @@ jobs:
           # Lazy-install aider-chat only when code_fix fires. ~2-3 min on cold pip cache.
           pip install -q aider-chat pytest
 
-          # Direct Aider call with 4-min timeout. --yes-always auto-commits,
-          # --no-analytics skips telemetry, --model uses Groq's fast 70B.
-          # --no-check-update + --no-auto-commits off: we WANT auto-commit.
-          timeout 240 aider \
-            --model "groq/llama-3.3-70b-versatile" \
-            --yes-always \
-            --no-analytics \
-            --no-check-update \
-            --no-show-model-warnings \
-            --message "$TASK" 2>&1 | tee /tmp/autofix_output.txt || {
-              echo "[warn] aider timed out or failed at 240s"
+          # Direct Aider call with 4-min timeout. Model priority follows
+          # constitution: Cerebras Qwen3-235B (primary, 2000 tok/sec) →
+          # NVIDIA llama-3.3-70b-instruct (fallback). Groq removed after
+          # 2026-04-20 spend-alert block on CEO's Groq org account.
+          # LiteLLM maps cerebras/<id> → Cerebras API natively.
+          PRIMARY_MODEL="cerebras/qwen-3-235b-a22b-instruct-2507"
+          FALLBACK_MODEL="nvidia/meta/llama-3.3-70b-instruct"
+
+          run_aider() {
+            local model="$1"
+            echo "[code_fix] Trying model: $model"
+            timeout 240 aider \
+              --model "$model" \
+              --yes-always \
+              --no-analytics \
+              --no-check-update \
+              --no-show-model-warnings \
+              --message "$TASK" 2>&1
+          }
+
+          if run_aider "$PRIMARY_MODEL" | tee /tmp/autofix_output.txt; then
+            echo "[code_fix] Primary model succeeded"
+          else
+            echo "[code_fix] Primary failed — trying fallback"
+            run_aider "$FALLBACK_MODEL" 2>&1 | tee -a /tmp/autofix_output.txt || {
+              echo "[warn] Both primary and fallback models failed"
             }
+          fi
 
           COMMIT_COUNT=$(git rev-list --count origin/main..HEAD 2>/dev/null || echo "0")
           echo "Commits produced: $COMMIT_COUNT"

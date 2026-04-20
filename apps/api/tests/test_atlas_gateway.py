@@ -333,8 +333,13 @@ def _make_admin_mock(rows: list | None = None) -> AsyncMock:
 @pytest.mark.asyncio
 async def test_learnings_401_without_auth():
     """No JWT → 401 Unauthorized."""
-    async with _make_client() as ac:
-        resp = await ac.get("/api/atlas/learnings")
+    mock_admin = _make_admin_mock()
+    app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
+    try:
+        async with _make_client() as ac:
+            resp = await ac.get("/api/atlas/learnings")
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
     assert resp.status_code == 401
 
 

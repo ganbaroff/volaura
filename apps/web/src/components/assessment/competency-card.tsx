@@ -28,7 +28,7 @@ export function CompetencyCard({
       aria-pressed={isSelected}
       onClick={() => onToggle(id)}
       className={cn(
-        "w-full text-left rounded-xl border-2 p-4 transition-all duration-200",
+        "w-full text-left rounded-xl border-2 p-4 transition-all duration-200 motion-reduce:transition-none",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
         isSelected
           ? "border-primary bg-primary/5"

@@ -72,7 +72,13 @@ Likely shows empty or broken card. Not verified visually.
 - MindShift and BrandedBy tabs visible in nav but lead to placeholder-like pages with no real content
 - Assessment completion page has no clear "return to dashboard" CTA
 
-### 11. Crystal economy nearly empty
+### 11. Backend endpoint audit (2026-04-19 00:30 Baku)
+128 endpoints on prod. Smoke test 27 key endpoints — all healthy (200/401/403).
+Telegram 503/502 errors were transient Railway cold-starts, not broken code.
+Vertex AI Express now primary LLM for bot (aiplatform.googleapis.com endpoint).
+from_external, feed-curator, e2e-setup all respond correctly post-redeploy.
+
+### 12. Crystal economy nearly empty
 game_crystal_ledger: 1 transaction. Crystal shop exists in code
 but no users have crystals. Economy is a ghost town.
 

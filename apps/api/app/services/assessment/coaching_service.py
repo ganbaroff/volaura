@@ -55,7 +55,7 @@ _FALLBACK_TIPS: dict[str, list[dict]] = {
     ],
     "leadership": [
         {
-            "title": "Volunteer to lead a small task",
+            "title": "Step up to lead a small task",
             "description": "Leadership skill grows fastest through practice, even on minor tasks.",
             "action": "Offer to coordinate the next team activity, however small.",
         },
@@ -108,7 +108,7 @@ _FALLBACK_TIPS: dict[str, list[dict]] = {
         {
             "title": "Complete one online tutorial",
             "description": "Structured tutorials build foundational skills faster than exploration alone.",
-            "action": "Pick a free tutorial on a tool relevant to your volunteer work and finish one module today.",
+            "action": "Pick a free tutorial on a tool relevant to your professional work and finish one module today.",
         },
         {
             "title": "Document a process you use",
@@ -146,8 +146,8 @@ _FALLBACK_TIPS: dict[str, list[dict]] = {
         },
         {
             "title": "Learn one safeguarding principle",
-            "description": "Safeguarding knowledge protects both volunteers and beneficiaries.",
-            "action": "Read your organisation's safeguarding policy or one external resource on volunteer safeguarding today.",
+            "description": "Safeguarding knowledge protects both professionals and beneficiaries.",
+            "action": "Read your organisation's safeguarding policy or one external resource on professional safeguarding today.",
         },
         {
             "title": "Check in with a quieter teammate",
@@ -196,12 +196,12 @@ async def generate_coaching_tips(
             from google import genai as google_genai
 
             prompt = (
-                f"You are a volunteer development coach. "
-                f"The volunteer scored {score}/100 in {competency_name}. "
+                f"You are a professional development coach. "
+                f"The user scored {score}/100 in {competency_name}. "
                 f"Give exactly 3 specific, actionable improvement tips. "
                 f"Return valid JSON only, no markdown, no explanation: "
                 f'{{ "tips": [ {{ "title": "str", "description": "str", "action": "str" }}, ... ] }} '
-                f"Each tip must be practical and focused on real volunteer scenarios. "
+                f"Each tip must be practical and focused on real professional scenarios. "
                 f"Avoid generic advice like 'read more' or 'practice more'."
             )
 

@@ -190,8 +190,8 @@ function makeEvent(overrides: Partial<EventResponse> = {}): EventResponse {
   return {
     id: "evt-001",
     organization_id: "org-001",
-    title_en: "Tech Volunteer Summit",
-    title_az: "Texnologiya Könüllü Zirvəsi",
+    title_en: "Tech Talent Summit",
+    title_az: "Texnologiya Peşəkar Zirvəsi",
     description_en: "A great tech event",
     description_az: "Gözəl texnologiya tədbirı",
     event_type: "workshop",
@@ -266,17 +266,17 @@ describe("EventCard — basic rendering", () => {
   it("article has aria-label equal to English title", () => {
     render(<EventCard event={makeEvent()} locale="en" />);
     const article = document.querySelector("article");
-    expect(article).toHaveAttribute("aria-label", "Tech Volunteer Summit");
+    expect(article).toHaveAttribute("aria-label", "Tech Talent Summit");
   });
 
   it("shows Azerbaijani title when locale=az", () => {
     render(<EventCard event={makeEvent()} locale="az" />);
-    expect(screen.getByText("Texnologiya Könüllü Zirvəsi")).toBeInTheDocument();
+    expect(screen.getByText("Texnologiya Peşəkar Zirvəsi")).toBeInTheDocument();
   });
 
   it("shows English title when locale=en", () => {
     render(<EventCard event={makeEvent()} locale="en" />);
-    expect(screen.getByText("Tech Volunteer Summit")).toBeInTheDocument();
+    expect(screen.getByText("Tech Talent Summit")).toBeInTheDocument();
   });
 
   it("renders view details link with correct locale href", () => {
@@ -497,7 +497,7 @@ describe("EventsList — events grid", () => {
     ];
     render(<EventsList events={events} locale="en" />);
     fireEvent.click(screen.getByRole("tab", { name: "events.filterUpcoming" }));
-    expect(screen.getByText("Tech Volunteer Summit")).toBeInTheDocument();
+    expect(screen.getByText("Tech Talent Summit")).toBeInTheDocument();
     expect(screen.queryByText("Past Event")).not.toBeInTheDocument();
   });
 
@@ -508,7 +508,7 @@ describe("EventsList — events grid", () => {
     ];
     render(<EventsList events={events} locale="en" />);
     fireEvent.click(screen.getByRole("tab", { name: "events.filterPast" }));
-    expect(screen.queryByText("Tech Volunteer Summit")).not.toBeInTheDocument();
+    expect(screen.queryByText("Tech Talent Summit")).not.toBeInTheDocument();
     expect(screen.getByText("Past Event")).toBeInTheDocument();
   });
 });

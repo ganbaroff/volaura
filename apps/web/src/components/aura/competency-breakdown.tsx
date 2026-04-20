@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { useParams } from "next/navigation";
 import { triggerHaptic } from "@/lib/haptics";
@@ -46,6 +46,7 @@ function getFreshnessInfo(daysSince: number) {
 export function CompetencyBreakdown({ scores, lastUpdated, isOwner = false }: CompetencyBreakdownProps) {
   const { t } = useTranslation();
   const { locale } = useParams<{ locale: string }>();
+  const shouldReduceMotion = useReducedMotion();
 
   // Single gentle tap when competency scores first render — ADHD reward signal
   // Only fires if owner is viewing their own scores (not org/public views)
@@ -65,7 +66,7 @@ export function CompetencyBreakdown({ scores, lastUpdated, isOwner = false }: Co
   return (
     <motion.div
       variants={staggerChildren}
-      initial="hidden"
+      initial={shouldReduceMotion ? false : "hidden"}
       animate="visible"
       className="space-y-3"
     >
@@ -91,9 +92,9 @@ export function CompetencyBreakdown({ scores, lastUpdated, isOwner = false }: Co
               aria-label={`${label}: ${score}/100`}
             >
               <motion.div
-                initial={{ width: 0 }}
+                initial={shouldReduceMotion ? false : { width: 0 }}
                 animate={{ width: `${score}%` }}
-                transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
+                transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.8, ease: "easeOut", delay: 0.3 }}
                 className="h-full rounded-full bg-primary"
               />
             </div>

@@ -10,14 +10,17 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useUnreadCount } from "@/hooks/queries/use-notifications";
 import { useProfile } from "@/hooks/queries/use-profile";
 
-type NavItem = { href: string; labelKey: string; icon: string; orgOnly?: boolean };
+type NavItem = { href: string; labelKey: string; icon: string; orgOnly?: boolean; flagged?: boolean };
+
+// Feature flag — sidebar link only shown when the page is enabled.
+const BRANDEDBY_ENABLED = process.env.NEXT_PUBLIC_ENABLE_BRANDEDBY === "true";
 
 const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard",      labelKey: "nav.dashboard",      icon: "⊞" },
   { href: "/profile",        labelKey: "nav.profile",        icon: "◉" },
   { href: "/aura",           labelKey: "nav.aura",           icon: "◈" },
   { href: "/assessment",     labelKey: "nav.assessment",     icon: "◑" },
-  { href: "/brandedby",      labelKey: "nav.brandedby",      icon: "✦" },
+  { href: "/brandedby",      labelKey: "nav.brandedby",      icon: "✦", flagged: !BRANDEDBY_ENABLED },
   { href: "/events",         labelKey: "nav.events",         icon: "◎" },
   { href: "/my-organization", labelKey: "nav.myOrganization", icon: "🏢", orgOnly: true },
   { href: "/org-talent",  labelKey: "nav.orgTalent",  icon: "👥", orgOnly: true },
@@ -128,7 +131,7 @@ export function Sidebar() {
 
         {/* Nav */}
         <nav className="flex-1 space-y-1">
-          {NAV_ITEMS.filter((item) => !item.orgOnly || isOrg).map(({ href, labelKey, icon }) => {
+          {NAV_ITEMS.filter((item) => (!item.orgOnly || isOrg) && !item.flagged).map(({ href, labelKey, icon }) => {
             const fullHref = `/${locale}${href}`;
             const isActive = pathname === fullHref || pathname.startsWith(`${fullHref}/`);
             const isNotifications = href === "/notifications";

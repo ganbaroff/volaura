@@ -88,7 +88,7 @@ function makeAdminUserRow(overrides: Partial<AdminUserRow> = {}): AdminUserRow {
     id: "user-001",
     username: "johndoe",
     display_name: "John Doe",
-    account_type: "volunteer",
+    account_type: "professional",
     subscription_status: "free",
     is_platform_admin: false,
     created_at: "2026-01-01T00:00:00Z",

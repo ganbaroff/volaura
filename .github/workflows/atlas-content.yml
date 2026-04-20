@@ -1,10 +1,14 @@
 name: Atlas Content Engine
 
 on:
-  schedule:
-    # Run every 4 hours (06:00, 10:00, 14:00, 18:00, 22:00 UTC)
-    # = 10:00, 14:00, 18:00, 22:00, 02:00 Baku time
-    - cron: '17 2,6,10,14,18 * * *'
+  # 2026-04-19: cron disabled — 5 telegrams/day from this workflow.
+  # Part of CEO's 100+/day Telegram-spam report. Re-enable only after
+  # shell-level silence-gate is wired to honor memory/atlas/telegram-silenced-until.txt
+  # for curl-based senders. Manual dispatch still works.
+  # schedule:
+  #   # Run every 4 hours (06:00, 10:00, 14:00, 18:00, 22:00 UTC)
+  #   # = 10:00, 14:00, 18:00, 22:00, 02:00 Baku time
+  #   - cron: '17 2,6,10,14,18 * * *'
   workflow_dispatch:
     inputs:
       mode:

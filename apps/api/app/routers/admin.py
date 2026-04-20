@@ -8,6 +8,7 @@ Endpoints:
   GET  /api/admin/ping                        — AdminGuard health check
   GET  /api/admin/stats                       — platform stats dashboard
   GET  /api/admin/stats/overview              — activation-first scorecard
+  GET  /api/admin/growth                      — AARRR 7-day funnel (M2)
   GET  /api/admin/events/live                 — character_events live tail
   GET  /api/admin/users                       — paginated user list
   GET  /api/admin/organizations/pending       — orgs awaiting approval
@@ -30,6 +31,7 @@ from app.middleware.rate_limit import limiter
 from app.schemas.admin import (
     AdminActivationFunnel,
     AdminActivityEvent,
+    AdminGrowthFunnel,
     AdminOrgRow,
     AdminOverviewResponse,
     AdminPresenceMatrix,
@@ -293,6 +295,97 @@ async def get_admin_overview(
         funnels=[volaura_funnel, mindshift_funnel],
         computed_at=now,
         stale_after_seconds=60,
+    )
+
+
+# ── AARRR Growth Funnel (M2, 2026-04-18) ─────────────────────────────────────
+
+
+@router.get("/growth", response_model=AdminGrowthFunnel)
+@limiter.limit(RATE_ADMIN)
+async def get_admin_growth(
+    request: Request,
+    admin_id: PlatformAdminId,
+    db_admin: SupabaseAdmin,
+) -> AdminGrowthFunnel:
+    """AARRR funnel data for the last 7 days — /admin/growth page.
+
+    Queries service-role client (RLS bypassed) to access auth.users count.
+    All counts are fail-soft: missing tables → 0, never 500.
+    """
+    now = datetime.now(UTC)
+    t_7d = (now - timedelta(days=7)).isoformat()
+
+    async def _count(builder_fn, label: str) -> int:
+        try:
+            res = await builder_fn()
+            return res.count or 0
+        except Exception as exc:
+            logger.warning("admin.growth.count_failed", label=label, error=str(exc))
+            return 0
+
+    (
+        signups_7d,
+        profiles_created_7d,
+        assessments_started_7d,
+        assessments_completed_7d,
+        aura_scores_7d,
+    ) = await asyncio.gather(
+        # auth.users is not a public schema table — query via service role rpc
+        # Fallback: use profiles.created_at as proxy when auth.users RPC unavailable.
+        _count(
+            lambda: db_admin.table("profiles").select("id", count="exact").gte("created_at", t_7d).execute(),
+            "signups_7d",
+        ),
+        _count(
+            lambda: (
+                db_admin.table("profiles")
+                .select("id", count="exact")
+                .gte("created_at", t_7d)
+                .not_.is_("username", "null")
+                .execute()
+            ),
+            "profiles_created_7d",
+        ),
+        _count(
+            lambda: db_admin.table("assessment_sessions").select("id", count="exact").gte("created_at", t_7d).execute(),
+            "assessments_started_7d",
+        ),
+        _count(
+            lambda: (
+                db_admin.table("assessment_sessions")
+                .select("id", count="exact")
+                .eq("status", "completed")
+                .gte("created_at", t_7d)
+                .execute()
+            ),
+            "assessments_completed_7d",
+        ),
+        _count(
+            lambda: (
+                db_admin.table("aura_scores").select("volunteer_id", count="exact").gte("created_at", t_7d).execute()
+            ),
+            "aura_scores_7d",
+        ),
+    )
+
+    logger.info(
+        "admin.growth.computed",
+        admin_id=admin_id,
+        signups_7d=signups_7d,
+        profiles_created_7d=profiles_created_7d,
+        assessments_started_7d=assessments_started_7d,
+        assessments_completed_7d=assessments_completed_7d,
+        aura_scores_7d=aura_scores_7d,
+    )
+
+    return AdminGrowthFunnel(
+        signups_7d=signups_7d,
+        profiles_created_7d=profiles_created_7d,
+        assessments_started_7d=assessments_started_7d,
+        assessments_completed_7d=assessments_completed_7d,
+        aura_scores_7d=aura_scores_7d,
+        computed_at=now,
     )
 
 

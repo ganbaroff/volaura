@@ -11,7 +11,7 @@ import { QuestionCard } from "@/components/assessment/question-card";
 import { ProgressBar } from "@/components/assessment/progress-bar";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Loader2, ChevronLeft } from "lucide-react";
+import { AlertCircle, Loader2, ChevronLeft, RefreshCw } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createClient } from "@/lib/supabase/client";
 import { API_BASE } from "@/lib/api/client";
@@ -40,11 +40,16 @@ export default function QuestionPage() {
     _hydrated,
     setQuestion,
     setSession,
+    setCompetencies,
     setSubmitting,
     incrementAnswered,
     nextCompetency,
     reset,
   } = useAssessmentStore();
+
+  // Resume-from-store-cleared state (UX Audit Task 2, 2026-04-19)
+  const [resumeState, setResumeState] = useState<"idle" | "loading" | "expired" | "completed" | "error">("idle");
+  const [resumeError, setResumeError] = useState<string | null>(null);
 
   const track = useTrackEvent();
   const { energy } = useEnergyMode();
@@ -89,13 +94,8 @@ export default function QuestionPage() {
   const nextCompetencyName = selectedCompetencies[currentCompetencyIndex + 1];
   const isLastCompetency = currentCompetencyIndex >= selectedCompetencies.length - 1;
 
-  // Guard: if store was cleared (direct URL access / page refresh), redirect to selection
-  // Wait for zustand hydration from localStorage before checking — prevents false redirect on tab switch
-  useEffect(() => {
-    if (_hydrated && selectedCompetencies.length === 0) {
-      router.replace(`/${currentLocale}/assessment`);
-    }
-  }, [_hydrated, selectedCompetencies.length, currentLocale, router]);
+  const storeCleared = _hydrated && selectedCompetencies.length === 0;
+
 
   useEffect(() => {
     isMounted.current = true;
@@ -353,6 +353,144 @@ export default function QuestionPage() {
 
   // ── Render ──────────────────────────────────────────────────────────────
 
+  // Real resume flow (UX Audit Task 2, 2026-04-19). When the Zustand store is
+  // cleared (browser storage evicted, private-window reload) but the URL still
+  // carries a sessionId, fetch backend session state and rehydrate instead of
+  // silently redirecting to the selection screen. This is the first path users
+  // hit after losing local state — making it a dead-end lost real sessions.
+  const handleResume = useCallback(async () => {
+    setResumeState("loading");
+    setResumeError(null);
+    try {
+      const supabase = createClient();
+      const { data: { session: authSession } } = await supabase.auth.getSession();
+      const token = authSession?.access_token;
+      if (!token) {
+        router.replace(`/${currentLocale}/login`);
+        return;
+      }
+
+      const res = await fetch(`${API_BASE}/api/assessment/session/${sessionId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.status === 404) {
+        setResumeState("expired");
+        return;
+      }
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        setResumeError(body?.detail?.message || `HTTP ${res.status}`);
+        setResumeState("error");
+        return;
+      }
+      const data = (await res.json()) as {
+        session_id: string;
+        competency_slug: string;
+        status: string;
+        questions_answered: number;
+        is_resumable: boolean;
+      };
+
+      if (data.status === "completed") {
+        setResumeState("completed");
+        // Push user to results — the existing /complete page handles display
+        router.replace(`/${currentLocale}/assessment/${sessionId}/complete`);
+        return;
+      }
+      if (!data.is_resumable) {
+        setResumeState("expired");
+        return;
+      }
+
+      // Rehydrate the store with the competency this session belongs to so the
+      // existing question-flow can resume. The "stuck-spinner" recovery timer
+      // (useEffect on lines 75-86) will prompt for next-question fetch if
+      // currentQuestion stays null after 6s.
+      setCompetencies([data.competency_slug]);
+      setSession(data.session_id);
+      // answeredCount is derived from CATState.items length on the backend;
+      // the existing store reducer has no "setAnsweredCount", so we let
+      // incrementAnswered catch up naturally as answers post. Non-blocking:
+      // the progress bar may briefly show 0/N before /answer lands.
+    } catch (err) {
+      setResumeError((err as Error).message || "Unknown error");
+      setResumeState("error");
+    }
+  }, [sessionId, currentLocale, router, setCompetencies, setSession]);
+
+  if (storeCleared) {
+    const isExpired = resumeState === "expired";
+    const isError = resumeState === "error";
+    const isLoading = resumeState === "loading";
+
+    return (
+      <div className="w-full mx-auto max-w-lg px-4 sm:px-6 py-8 space-y-6">
+        <div className="flex flex-col items-center text-center space-y-4 py-12">
+          <div className="size-16 rounded-full bg-primary/10 flex items-center justify-center">
+            <RefreshCw className="size-8 text-primary" aria-hidden="true" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-xl font-semibold">
+              {isExpired
+                ? t("assessment.sessionExpiredTitle", { defaultValue: "This session has expired" })
+                : t("assessment.sessionRecoveryTitle", { defaultValue: "Your session may still be active" })}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {isExpired
+                ? t("assessment.sessionExpiredDesc", {
+                    defaultValue:
+                      "Sessions auto-expire after 24 hours of inactivity. Your progress is saved in your AURA history. Start a fresh assessment when you're ready.",
+                  })
+                : isError
+                ? (resumeError ?? t("assessment.sessionRecoveryError", { defaultValue: "We couldn't check your session. Try again or start a new assessment." }))
+                : t("assessment.sessionRecoveryDesc", {
+                    defaultValue:
+                      "Your progress is saved on the server. Resume where you left off, or start a fresh assessment.",
+                  })}
+            </p>
+            {isError && (
+              <p role="alert" aria-live="polite" className="sr-only">
+                {resumeError}
+              </p>
+            )}
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            {!isExpired && (
+              <Button
+                onClick={handleResume}
+                disabled={isLoading}
+                size="lg"
+                className="w-full sm:w-auto min-h-[44px]"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="size-4 mr-2 animate-spin" aria-hidden="true" />
+                    {t("assessment.sessionResumeLoading", { defaultValue: "Checking session…" })}
+                  </>
+                ) : (
+                  t("assessment.sessionResume", { defaultValue: "Resume session" })
+                )}
+              </Button>
+            )}
+            <Button
+              onClick={() => {
+                reset();
+                router.push(`/${currentLocale}/assessment`);
+              }}
+              variant={isExpired ? "default" : "outline"}
+              size="lg"
+              className="w-full sm:w-auto min-h-[44px]"
+            >
+              {isExpired
+                ? t("assessment.startNew", { defaultValue: "Start new assessment" })
+                : t("assessment.returnToSelection", { defaultValue: "Return to competency selection" })}
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (screen === "transition") {
     const completedLabel = t("assessment.competencyComplete", {
       name: t(`competency.${currentCompetency}`, { defaultValue: currentCompetency }),
@@ -377,6 +515,15 @@ export default function QuestionPage() {
           </div>
           <div className="space-y-2">
             <h2 className="text-xl font-semibold">{completedLabel}</h2>
+            {selectedCompetencies.length > 1 && (
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                {t("assessment.competencyProgressTransition", {
+                  current: currentCompetencyIndex + 1,
+                  total: selectedCompetencies.length,
+                  remaining: selectedCompetencies.length - currentCompetencyIndex - 1,
+                })}
+              </p>
+            )}
             <p className="text-sm text-muted-foreground">{continueLabel}</p>
           </div>
           <Button onClick={handleNextCompetency} size="lg" className="w-full sm:w-auto min-h-[44px]" disabled={isSubmitting} aria-busy={isSubmitting}>
@@ -409,9 +556,19 @@ export default function QuestionPage() {
         </button>
 
         {!isLow && (
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            {t(`competency.${currentCompetency}`, { defaultValue: currentCompetency })}
-          </p>
+          <div className="flex flex-col items-end gap-0.5">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              {t(`competency.${currentCompetency}`, { defaultValue: currentCompetency })}
+            </p>
+            {selectedCompetencies.length > 1 && (
+              <p className="text-[10px] text-muted-foreground/80" aria-live="polite">
+                {t("assessment.competencyOfTotal", {
+                  current: currentCompetencyIndex + 1,
+                  total: selectedCompetencies.length,
+                })}
+              </p>
+            )}
+          </div>
         )}
       </div>
 

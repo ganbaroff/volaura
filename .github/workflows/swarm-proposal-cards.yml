@@ -6,8 +6,12 @@ name: Swarm Proposal Cards (CEO review)
 # (atomic write) so we never double-ping.
 
 on:
-  schedule:
-    - cron: '15 * * * *'  # every hour at :15
+  # 2026-04-19: cron disabled — 24 telegrams/day from this single workflow.
+  # CEO was receiving 100+/day across all scheduled workflows. Re-enable
+  # only after shell-level silence-gate is wired so memory/atlas/telegram-silenced-until.txt
+  # actually blocks curl-based senders. Manual dispatch still works.
+  # schedule:
+  #   - cron: '15 * * * *'  # every hour at :15
   workflow_dispatch:
     inputs:
       min_judge_score:

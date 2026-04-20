@@ -53,8 +53,8 @@ class TestAtlasGatewayRouterStructure:
         assert "/api/atlas/proposal" in paths
 
     def test_route_count(self):
-        # health + proposal = 2 routes
-        assert len(atlas_router.routes) == 2
+        # health + proposal + learnings = 3 routes
+        assert len(atlas_router.routes) == 3
 
 
 # ── CommunitySignal schema ─────────────────────────────────────────

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/cn";
 
@@ -40,6 +40,7 @@ const chip = {
 
 export function SkillChips({ competencies }: SkillChipsProps) {
   const { t } = useTranslation();
+  const shouldReduceMotion = useReducedMotion();
 
   if (competencies.length === 0) {
     return (
@@ -52,9 +53,10 @@ export function SkillChips({ competencies }: SkillChipsProps) {
   return (
     <motion.div
       variants={stagger}
-      initial="hidden"
+      initial={shouldReduceMotion ? false : "hidden"}
       animate="visible"
       className="flex flex-wrap gap-2"
+      role="list"
     >
       {competencies.map(({ competency_id, score }) => {
         const tier = getTier(score);
@@ -63,6 +65,7 @@ export function SkillChips({ competencies }: SkillChipsProps) {
           <motion.span
             key={competency_id}
             variants={chip}
+            role="listitem"
             className={cn(
               "inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border",
               CHIP_STYLES[tier]

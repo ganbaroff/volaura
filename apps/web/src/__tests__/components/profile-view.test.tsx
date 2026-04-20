@@ -410,7 +410,7 @@ describe("ActivityTimeline — event rendering", () => {
 describe("ImpactMetrics — rendering", () => {
   const baseData: ImpactData = {
     events_count: 12,
-    hours_volunteered: 48,
+    hours_contributed: 48,
     verified_skills: 5,
   };
 
@@ -425,7 +425,7 @@ describe("ImpactMetrics — rendering", () => {
     expect(screen.getByText("12")).toBeInTheDocument();
   });
 
-  it("shows hours_volunteered value", () => {
+  it("shows hours_contributed value", () => {
     render(<ImpactMetrics data={baseData} />);
     expect(screen.getByText("48")).toBeInTheDocument();
   });
@@ -444,7 +444,7 @@ describe("ImpactMetrics — rendering", () => {
   });
 
   it("renders zero values correctly", () => {
-    render(<ImpactMetrics data={{ events_count: 0, hours_volunteered: 0, verified_skills: 0 }} />);
+    render(<ImpactMetrics data={{ events_count: 0, hours_contributed: 0, verified_skills: 0 }} />);
     const zeros = screen.getAllByText("0");
     expect(zeros).toHaveLength(3);
   });

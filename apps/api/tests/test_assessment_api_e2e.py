@@ -96,8 +96,11 @@ def _mock_chain(execute_result):
     chain.upsert.return_value = chain
     chain.eq.return_value = chain
     chain.neq.return_value = chain
-    chain.in_.return_value = chain
+    chain.lt.return_value = chain
+    chain.gt.return_value = chain
+    chain.lte.return_value = chain
     chain.gte.return_value = chain
+    chain.in_.return_value = chain
     chain.order.return_value = chain
     chain.limit.return_value = chain
     chain.single.return_value = chain

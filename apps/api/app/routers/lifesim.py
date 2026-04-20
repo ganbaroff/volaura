@@ -17,8 +17,6 @@ Service composition: see app/services/lifesim.py for pure logic + DB helpers.
 
 from __future__ import annotations
 
-import random
-
 from fastapi import APIRouter, HTTPException, Query, Request
 from loguru import logger
 from pydantic import BaseModel, ConfigDict, Field
@@ -26,10 +24,13 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.deps import CurrentUserId, SupabaseAdmin
 from app.middleware.rate_limit import RATE_DEFAULT, RATE_PROFILE_WRITE, limiter
 from app.services.lifesim import (
+    _extract_category_bias,
     apply_consequences_to_stats,
     emit_lifesim_choice_event,
     emit_lifesim_crystal_spent_event,
     filter_pool_for_user,
+    get_atlas_learnings_for_bias,
+    pick_event_with_bias,
     query_event_pool,
 )
 
@@ -163,7 +164,9 @@ async def get_next_choice(
     eligible = filter_pool_for_user(pool, age=age, stats=stats)
     if not eligible:
         return NextChoiceResponse(event=None, pool_size=0)
-    picked = random.choice(eligible)
+    learnings = await get_atlas_learnings_for_bias(db)
+    bias = _extract_category_bias(learnings)
+    picked = pick_event_with_bias(eligible, bias)
     return NextChoiceResponse(event=picked, pool_size=len(eligible))
 
 

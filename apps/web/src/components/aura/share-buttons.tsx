@@ -159,16 +159,16 @@ export function ShareButtons({ username, overallScore, badgeTier, settingsUrl }:
         )}
       </Button>
 
-      <Button variant="outline" size="sm" onClick={openTelegram} className="gap-1.5 min-h-[44px] sm:min-h-0">
+      <Button variant="outline" size="sm" onClick={openTelegram} className="gap-1.5 min-h-[44px] sm:min-h-0" aria-label={t("aura.telegram") + " (opens in new window)"}>
         <Send className="size-3.5" aria-hidden="true" />
         {t("aura.telegram")}
       </Button>
 
-      <Button variant="outline" size="sm" onClick={openLinkedIn} className="gap-1.5 min-h-[44px] sm:min-h-0">
+      <Button variant="outline" size="sm" onClick={openLinkedIn} className="gap-1.5 min-h-[44px] sm:min-h-0" aria-label={t("aura.linkedin") + " (opens in new window)"}>
         {t("aura.linkedin")}
       </Button>
 
-      <Button variant="outline" size="sm" onClick={openWhatsApp} className="gap-1.5 min-h-[44px] sm:min-h-0">
+      <Button variant="outline" size="sm" onClick={openWhatsApp} className="gap-1.5 min-h-[44px] sm:min-h-0" aria-label={t("aura.whatsapp") + " (opens in new window)"}>
         {t("aura.whatsapp")}
       </Button>
 
@@ -177,6 +177,7 @@ export function ShareButtons({ username, overallScore, badgeTier, settingsUrl }:
         size="sm"
         onClick={openTikTok}
         className="gap-1.5 min-h-[44px] sm:min-h-0"
+        aria-label={tiktokCopied ? t("aura.captionCopied", { defaultValue: "Caption copied!" }) : t("aura.tiktok") + " (opens in new window)"}
       >
         {tiktokCopied ? (
           <>

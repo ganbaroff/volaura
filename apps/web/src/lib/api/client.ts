@@ -6,7 +6,7 @@
  * Error responses: { error: { code, message, details? } }
  */
 
-import { createClient as createSupabaseClient } from "@/lib/supabase/client";
+import { getFreshAccessToken } from "@/lib/api/get-fresh-token";
 
 // Relative path — Vercel rewrites to NEXT_PUBLIC_API_URL (or localhost in dev)
 // Production: volaura.app/api → modest-happiness-production.up.railway.app/api
@@ -41,17 +41,11 @@ export async function apiFetch<T>(
   const { token: explicitToken, headers: extraHeaders, ...fetchOptions } = options;
 
   // Auto-inject Supabase session token if none provided explicitly.
-  // Session 85 fix: manual apiFetch calls (tribes, analytics, etc.) were
-  // missing token because callers didn't pass it. Now auto-resolves from cookies.
+  // getFreshAccessToken() refreshes the JWT when expired or expiring within
+  // 60 seconds — same logic as the generated SDK interceptor in configure-client.ts.
   let token = explicitToken;
-  if (!token && typeof window !== "undefined") {
-    try {
-      const supabase = createSupabaseClient();
-      const { data: { session } } = await supabase.auth.getSession();
-      token = session?.access_token;
-    } catch {
-      // Silent — let API return 401 if no token
-    }
+  if (!token) {
+    token = (await getFreshAccessToken()) ?? undefined;
   }
 
   const headers: Record<string, string> = {

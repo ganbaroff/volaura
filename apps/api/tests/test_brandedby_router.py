@@ -24,6 +24,7 @@ from fastapi import HTTPException
 
 from app.routers.brandedby import (
     QUEUE_SKIP_CRYSTAL_COST,
+    _get_atlas_note_for_user,
     activate_twin,
     create_generation,
     create_twin,
@@ -173,6 +174,7 @@ def _gen_row(**overrides) -> dict:
         "processing_started_at": None,
         "completed_at": None,
         "created_at": NOW,
+        "atlas_note": None,
     }
     return {**base, **overrides}
 
@@ -961,6 +963,7 @@ class TestCreateGeneration:
         db = _make_db(
             _result(data=self._active_twin()),  # twin check
             _result(data=[], count=0),  # count queued jobs
+            _result(data=[]),  # E5 atlas_note query → None
             _result(data=[gen_row]),  # insert generation
         )
 
@@ -999,12 +1002,13 @@ class TestCreateGeneration:
             getattr(chain, method).return_value = chain
             getattr(db, method).return_value = chain
 
-        # 3 chain.execute calls: twin check, audit insert (character_events), gen insert
+        # 4 chain.execute calls: twin check, audit insert (character_events), E5 atlas_note, gen insert
         chain.execute = AsyncMock(
             side_effect=[
-                _result(data=self._active_twin()),  # twin ownership check
-                _result(data=[{"id": "audit-id"}]),  # character_events audit insert
-                _result(data=[gen_row]),  # generation insert
+                _result(data=self._active_twin()),         # 1. twin ownership check
+                _result(data=[{"id": "audit-id"}]),        # 2. character_events audit insert
+                _result(data=[]),                           # 3. E5 atlas_note query → None
+                _result(data=[gen_row]),                    # 4. generation insert
             ]
         )
 
@@ -1155,6 +1159,7 @@ class TestCreateGeneration:
         db = _make_db(
             _result(data=self._active_twin()),
             _result(data=[], count=0),  # queued count
+            _result(data=[]),  # E5 atlas_note query → None
             _result(data=[]),  # insert fails
         )
 
@@ -1170,6 +1175,7 @@ class TestCreateGeneration:
         db = _make_db(
             _result(data=self._active_twin()),
             _result(data=[], count=0),
+            _result(data=[]),  # E5 atlas_note → None
             _result(data=None),
         )
 
@@ -1185,6 +1191,7 @@ class TestCreateGeneration:
         db = _make_db(
             _result(data=self._active_twin()),
             _result(data=[], count=3),  # 3 jobs ahead
+            _result(data=[]),  # E5 atlas_note → None
             _result(data=[gen_row]),
         )
 
@@ -1202,15 +1209,16 @@ class TestCreateGeneration:
 
         db = MagicMock()
         chain = MagicMock()
-        for method in ["schema", "table", "select", "insert", "update", "eq", "maybe_single", "order", "range"]:
+        for method in ["schema", "table", "select", "insert", "update", "eq", "maybe_single", "order", "range", "limit"]:
             getattr(chain, method).return_value = chain
             getattr(db, method).return_value = chain
 
         chain.execute = AsyncMock(
             side_effect=[
-                _result(data=self._active_twin()),  # twin check
-                _result(data=[{"id": "audit-id"}]),  # character_events audit insert
-                _result(data=[gen_row]),  # generation insert
+                _result(data=self._active_twin()),  # 1. twin check
+                _result(data=[{"id": "audit-id"}]),  # 2. character_events audit insert
+                _result(data=[]),                     # 3. E5 atlas_note → None
+                _result(data=[gen_row]),               # 4. generation insert
             ]
         )
 
@@ -1229,6 +1237,7 @@ class TestCreateGeneration:
         db = _make_db(
             _result(data=self._active_twin()),
             _result(data=[], count=None),  # count is None
+            _result(data=[]),  # E5 atlas_note → None
             _result(data=[gen_row]),
         )
 
@@ -1248,6 +1257,7 @@ class TestCreateGeneration:
         db = _make_db(
             _result(data=self._active_twin()),
             _result(data=[], count=0),
+            _result(data=[]),  # E5 atlas_note → None
             _result(data=[gen_row]),
         )
         body = GenerationCreate(
@@ -1267,6 +1277,7 @@ class TestCreateGeneration:
         db = _make_db(
             _result(data=self._active_twin()),
             _result(data=[], count=0),
+            _result(data=[]),  # E5 atlas_note → None
             _result(data=[gen_row]),
         )
         body = GenerationCreate(
@@ -1482,3 +1493,37 @@ class TestGetGeneration:
             await get_generation(FAKE_REQUEST, GEN_ID, OTHER_USER_ID, db)
 
         assert exc.value.status_code == 404
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# E5: _get_atlas_note_for_user — Atlas memory anchor concept seed
+# ══════════════════════════════════════════════════════════════════════════════
+
+
+class TestGetAtlasNoteForUser:
+    """3 tests: note composed, no learnings returns None, empty content returns None."""
+
+    @pytest.mark.asyncio
+    async def test_composes_note_from_top_learning(self):
+        """Returns formatted note when atlas_learning exists."""
+        db = _make_db(
+            _result(data=[{"content": "loves building in public", "category": "strength"}]),
+        )
+        note = await _get_atlas_note_for_user(USER_ID, db)
+        assert note is not None
+        assert "strength" in note
+        assert "loves building in public" in note
+
+    @pytest.mark.asyncio
+    async def test_returns_none_when_no_learnings(self):
+        """Returns None when atlas_learnings table has no rows for user."""
+        db = _make_db(_result(data=[]))
+        note = await _get_atlas_note_for_user(USER_ID, db)
+        assert note is None
+
+    @pytest.mark.asyncio
+    async def test_returns_none_when_content_empty(self):
+        """Returns None when the top learning has blank content."""
+        db = _make_db(_result(data=[{"content": "", "category": "insight"}]))
+        note = await _get_atlas_note_for_user(USER_ID, db)
+        assert note is None

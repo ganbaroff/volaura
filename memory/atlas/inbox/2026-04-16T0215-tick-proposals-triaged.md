@@ -12,4 +12,4 @@ Escalated to CEO (2): Telegram LLM deploy needs Railway redeploy (Scaling Engine
 
 All triage decisions logged as `triage_notes` entry per proposal with timestamp + reason. Session 51 "3/5 = act immediately" rule honored — the 4-agent convergent security concern stays as actionable (Code Quality proposal) rather than being lost in duplicates.
 
-## Consumed by main Atlas: pending
+## Consumed by inbox-consumer: 2026-04-20T21:01:33+00:00 · intent=code_fix

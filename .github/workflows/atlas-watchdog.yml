@@ -2,8 +2,13 @@ name: Atlas Workflow Watchdog
 
 on:
   # Hourly scan. Catches silent-red CRONs within an hour of second failure.
-  schedule:
-    - cron: '30 * * * *'
+  # 2026-04-19: cron disabled — CEO reported 100+ telegrams/day from all
+  # scheduled workflows combined. This one contributed 24/day. Re-enable
+  # only after shell-level silence-gate (mirror of telegram_gate.py) is
+  # wired into the workflow, so the silence-file in memory/atlas/ actually
+  # applies to curl-based senders too. Manual dispatch still available.
+  # schedule:
+  #   - cron: '30 * * * *'
   workflow_dispatch:
 
 concurrency:

@@ -1,14 +1,8 @@
-name: "Telegram Execute — CEO task pipeline"
+name: "Telegram Execute - CEO task pipeline"
 
 on:
-  # AUTO trigger: when the Telegram bot creates an issue with the
-  # atlas-telegram-request label, run the swarm coordinator immediately.
-  # This is the autonomous loop CEO asked for on 2026-04-20 — bot writes
-  # issue, GitHub Actions picks it up, swarm answers, result back via
-  # Telegram. No Claude Code session needed.
   issues:
     types: [labeled]
-  # MANUAL trigger: for debugging/backfill.
   workflow_dispatch:
     inputs:
       task:
@@ -23,13 +17,12 @@ on:
         default: ""
 
 permissions:
-  contents: read
+  contents: write
   issues: write
+  pull-requests: write
 
 jobs:
   execute:
-    # Only fire on the atlas-telegram-request label (ignore all other labels),
-    # or on manual workflow_dispatch.
     if: >
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'issues' && github.event.label.name == 'atlas-telegram-request')
@@ -37,6 +30,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -45,12 +40,11 @@ jobs:
 
       - name: Install swarm dependencies
         run: |
-          # Same stack as swarm-daily.yml — keeps parity so coordinator
-          # behaves identically in both trigger paths.
           pip install -q pydantic loguru groq google-genai python-dotenv \
-            aiohttp httpx supabase litellm openai nest-asyncio
+            aiohttp httpx supabase litellm openai nest-asyncio \
+            aider-chat pytest
 
-      - name: Resolve task + chat_id + issue_number
+      - name: Resolve task + chat_id + issue_number + intent
         id: resolve
         env:
           ISSUE_BODY: ${{ github.event.issue.body }}
@@ -65,37 +59,55 @@ jobs:
           import os, re, sys, pathlib
           event = os.environ.get("GITHUB_EVENT_NAME", "")
           if os.environ.get("DISPATCH_TASK"):
-              # Manual dispatch path — inputs already explicit.
               task = os.environ["DISPATCH_TASK"]
               chat_id = os.environ.get("DISPATCH_CHAT_ID", "") or os.environ.get("DEFAULT_CHAT_ID", "")
               issue_number = os.environ.get("DISPATCH_ISSUE_NUMBER", "")
           else:
-              # issues.labeled path — parse from bot-created issue body.
               body = os.environ.get("ISSUE_BODY", "") or ""
               title = os.environ.get("ISSUE_TITLE", "") or ""
-              # Bot format: body contains "**CEO message:**\n\n{text}\n\n---\n..."
               m = re.search(r"\*\*CEO message:\*\*\s*\n+(.+?)\n+---", body, re.DOTALL)
               if m:
                   task = m.group(1).strip()
               else:
-                  # Fallback: strip the [atlas-telegram] prefix from the title.
                   task = re.sub(r"^\s*\[atlas-telegram\]\s*", "", title).strip() or body[:300].strip()
               chat_id = os.environ.get("DEFAULT_CHAT_ID", "").strip()
               issue_number = os.environ.get("ISSUE_NUMBER_EVENT", "") or ""
 
-          # Emit to GITHUB_OUTPUT. Task may be multi-line — use delimiter form.
+          task_lower = task.lower()
+          CODE_FIX_PATTERNS = [
+              r'\bпофикси\b', r'\bфикс\b', r'\bсделай pr\b',
+              r'\bfix code\b', r'\bfix:\b', r'\bbug:\b', r'\bfeature:\b',
+              r'\bimplement\b', r'\bреализуй\b', r'\bисправь\b',
+          ]
+          CONTENT_PATTERNS = [
+              r'\bпост\b', r'\bнапиши про\b', r'\bcontent:\b',
+              r'\blinkedin\b', r'\btelegram пост\b', r'\bстатья\b',
+              r'\bdraft:\b',
+          ]
+          is_code_fix = any(re.search(p, task_lower) for p in CODE_FIX_PATTERNS)
+          is_content  = any(re.search(p, task_lower) for p in CONTENT_PATTERNS)
+          if is_code_fix:
+              intent = "code_fix"
+          elif is_content:
+              intent = "content"
+          else:
+              intent = "analysis"
+
+          print(f"Resolved task ({len(task)} chars), chat_id={bool(chat_id)}, issue={issue_number}, intent={intent}")
           out_path = os.environ["GITHUB_OUTPUT"]
           with open(out_path, "a", encoding="utf-8") as f:
               f.write(f"chat_id={chat_id}\n")
               f.write(f"issue_number={issue_number}\n")
+              f.write(f"intent={intent}\n")
               f.write("task<<EOF_TASK\n")
               f.write(task + "\n")
               f.write("EOF_TASK\n")
-          print(f"Resolved task ({len(task)} chars), chat_id={bool(chat_id)}, issue={issue_number}")
           PYEOF
 
-      - name: Run swarm coordinator on task
-        id: swarm
+      # === BRANCH 3: analysis (existing coordinator, unchanged) ===
+      - name: Run swarm coordinator (analysis path)
+        if: steps.resolve.outputs.intent == 'analysis'
+        id: swarm_analysis
         env:
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
@@ -107,13 +119,94 @@ jobs:
         run: |
           cd "${{ github.workspace }}"
           echo "Task: $TASK"
-          # Run coordinator — captures output. `|| true` keeps the downstream
-          # "report to Telegram" step alive even if coordinator crashes so CEO
-          # at least sees the traceback instead of silent failure.
           python -m packages.swarm.coordinator "$TASK" 2>&1 | tee /tmp/swarm_output.txt || true
-          # Truncate to 3500 chars for Telegram (4096 limit minus overhead)
           head -c 3500 /tmp/swarm_output.txt > /tmp/swarm_result.txt
 
+      # === BRANCH 1: code_fix (autonomous_run + Aider + PR) ===
+      - name: Run Aider auto-fix (code_fix path)
+        if: steps.resolve.outputs.intent == 'code_fix'
+        id: swarm_codefix
+        env:
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          TASK: ${{ steps.resolve.outputs.task }}
+          ISSUE_NUMBER: ${{ steps.resolve.outputs.issue_number }}
+          SWARM_DATA_DIR: memory/swarm/structured
+          SWARM_AUTO_FIX: "1"
+          SWARM_AUTO_FIX_MAX: "3"
+          SWARM_CODER_MODEL: "groq/llama-3.3-70b-versatile"
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd "${{ github.workspace }}"
+          git config user.email "atlas-autofix@volaura.az"
+          git config user.name "Atlas AutoFix"
+
+          if [ -n "$ISSUE_NUMBER" ]; then
+            BRANCH_NAME="telegram-autofix/issue-${ISSUE_NUMBER}"
+          else
+            BRANCH_NAME="telegram-autofix/dispatch-${{ github.run_id }}"
+          fi
+          git checkout -b "$BRANCH_NAME"
+          echo "[code_fix] Branch: $BRANCH_NAME  Task: $TASK"
+
+          python scripts/project_qa.py --rebuild-index 2>&1 || echo "[warn] index build failed"
+          python -m packages.swarm.autonomous_run --mode=coordinator 2>&1 | tee /tmp/autofix_output.txt || true
+
+          COMMIT_COUNT=$(git rev-list --count origin/main..HEAD 2>/dev/null || echo "0")
+          echo "Commits produced: $COMMIT_COUNT"
+
+          if [ "$COMMIT_COUNT" -gt "0" ]; then
+            git push -u origin "$BRANCH_NAME"
+            printf '%s\n' \
+              "Auto-fix by Atlas" \
+              "" \
+              "Task: $TASK" \
+              "$([ -n "$ISSUE_NUMBER" ] && printf 'Triggered by: #%s' "$ISSUE_NUMBER")" \
+              "" \
+              "Autonomous fix via autonomous_run --mode=coordinator + SWARM_AUTO_FIX." \
+              "" \
+              "Auto-created PR. Review before merging." \
+              > /tmp/pr_body.txt
+            PR_URL=$(gh pr create \
+              --base main \
+              --title "[atlas-autofix] $TASK" \
+              --body-file /tmp/pr_body.txt 2>&1)
+            echo "PR: $PR_URL"
+            printf '[AUTOFIX] PR created: %s\n\n%s' "$PR_URL" "$(head -c 2000 /tmp/autofix_output.txt)" \
+              | head -c 3500 > /tmp/swarm_result.txt
+          else
+            printf '[AUTOFIX] no changes needed or task unclear\n\n%s' \
+              "$(head -c 1500 /tmp/autofix_output.txt)" | head -c 3500 > /tmp/swarm_result.txt
+          fi
+
+      # === BRANCH 2: content (draft-only, routed to CEO chat) ===
+      - name: Generate content draft (content path)
+        if: steps.resolve.outputs.intent == 'content'
+        id: swarm_content
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TASK: ${{ steps.resolve.outputs.task }}
+          ATLAS_VOLAURA_CHANNEL: ${{ steps.resolve.outputs.chat_id }}
+          ATLAS_BRANDEDBY_CHANNEL: ${{ steps.resolve.outputs.chat_id }}
+          ATLAS_MINDSHIFT_CHANNEL: ${{ steps.resolve.outputs.chat_id }}
+          ATLAS_ECOSYSTEM_CHANNEL: ${{ steps.resolve.outputs.chat_id }}
+        run: |
+          cd "${{ github.workspace }}"
+          echo "[content] Generating draft for: $TASK"
+          python -m packages.swarm.atlas_content_run --mode=scheduled 2>&1 \
+            | tee /tmp/content_output.txt || true
+          printf '[DRAFT - not published, confirm to publish]\n\n%s' \
+            "$(head -c 3000 /tmp/content_output.txt)" | head -c 3500 > /tmp/swarm_result.txt
+
+      # === Common: Report + Comment + Close (all branches) ===
       - name: Report result to Telegram
         if: always()
         env:
@@ -121,10 +214,11 @@ jobs:
           CHAT_ID: ${{ steps.resolve.outputs.chat_id }}
           TASK: ${{ steps.resolve.outputs.task }}
           ISSUE_NUMBER: ${{ steps.resolve.outputs.issue_number }}
+          INTENT: ${{ steps.resolve.outputs.intent }}
           STATUS: ${{ job.status }}
         run: |
           if [ -z "$CHAT_ID" ]; then
-            echo "::warning::No chat_id resolved — cannot report to Telegram"
+            echo "::warning::No chat_id resolved - cannot report to Telegram"
             exit 0
           fi
 
@@ -134,7 +228,7 @@ jobs:
             RESULT="No output captured"
           fi
 
-          MSG="[EXECUTE ${STATUS^^}]"
+          MSG="[EXECUTE ${STATUS^^} | ${INTENT}]"
           MSG="$MSG"$'\n'"Task: $TASK"
           if [ -n "$ISSUE_NUMBER" ]; then
             MSG="$MSG"$'\n'"Issue: #$ISSUE_NUMBER"
@@ -151,12 +245,13 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE: ${{ steps.resolve.outputs.issue_number }}
+          INTENT: ${{ steps.resolve.outputs.intent }}
           STATUS: ${{ job.status }}
         run: |
           if [ -f /tmp/swarm_result.txt ]; then
-            BODY="Swarm execution: **${STATUS}**"$'\n\n'"\`\`\`"$'\n'"$(head -c 2000 /tmp/swarm_result.txt)"$'\n'"\`\`\`"
+            BODY="Swarm [${INTENT}]: **${STATUS}**"$'\n\n'"\`\`\`"$'\n'"$(head -c 2000 /tmp/swarm_result.txt)"$'\n'"\`\`\`"
           else
-            BODY="Swarm execution: **${STATUS}** — no output captured"
+            BODY="Swarm [${INTENT}]: **${STATUS}** - no output captured"
           fi
           gh issue comment "$ISSUE" --body "$BODY"
 
@@ -166,7 +261,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE: ${{ steps.resolve.outputs.issue_number }}
         run: |
-          # Close the auto-created atlas-telegram-request issue once the
-          # swarm has answered. Prevents backlog buildup. If CEO wants to
-          # re-run, he sends another Telegram message = new issue.
           gh issue close "$ISSUE" --reason completed || true

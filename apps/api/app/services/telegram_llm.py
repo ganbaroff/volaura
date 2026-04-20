@@ -1,7 +1,24 @@
 """LLM provider chain for Atlas Telegram bot.
 
-Tries providers in order: Vertex AI → OpenRouter → Gemini → NVIDIA NIM → Groq.
+Tries providers in order:
+  0. Anthropic Claude Sonnet 4.5 (direct) — NEW primary 2026-04-20. CEO paid-tier
+     $20 budget, best-in-class for Atlas-voice nuance (storytelling Russian,
+     emotional state adaptation, long-context persona adherence).
+  1. Vertex AI Gemini 2.5 Flash — second fallback, $300 GCP credits, very fast
+  2. OpenRouter Claude Sonnet — third fallback (proxy path, used if direct Anthropic hits rate limit)
+  3. Gemini 2.0 Flash direct — free tier fallback
+  4. NVIDIA NIM llama-3.3-70b — hardware fallback (weakest persona adherence)
+  (Groq removed 2026-04-20 — org spend-limit blocked account-wide)
+
 Returns (reply_text, provider_name) so callers can log which provider answered.
+
+2026-04-20 rationale: prior chain had Vertex Flash as primary and Sonnet only via
+OpenRouter secondary (requires OPENROUTER_API_KEY which may not be set on Railway).
+Result: bot was effectively answering CEO via Flash-tier model — good at speed,
+weak at the storytelling-Russian Atlas voice CEO cares about. Flipping Sonnet to
+primary uses CEO's dedicated $20 budget (~4000 bot replies at ~500in+300out per
+reply) to massively improve voice quality. At CEO's ~20 msg/day pace that's ~200
+days of runway; before the $20 depletes the chain naturally falls through to Vertex.
 """
 
 from __future__ import annotations
@@ -13,6 +30,7 @@ from loguru import logger
 async def generate_atlas_response(
     system_prompt: str,
     user_message: str,
+    anthropic_key: str | None = None,
     vertex_key: str | None = None,
     openrouter_key: str | None = None,
     gemini_key: str | None = None,
@@ -24,13 +42,49 @@ async def generate_atlas_response(
     reply: str | None = None
     provider: str = "none"
 
-    # ── 0. Vertex AI Express Gemini ($300 credits, enterprise SLA) ──
     logger.info(
-        "LLM chain start: vertex_key={vl} openrouter={ol} gemini={gl}",
+        "LLM chain start: anthropic_key={al} vertex_key={vl} openrouter={ol} gemini={gl}",
+        al=len(anthropic_key or ""),
         vl=len(vertex_key or ""),
         ol=len(openrouter_key or ""),
         gl=len(gemini_key or ""),
     )
+
+    # ── 0. Anthropic Claude Sonnet 4.5 DIRECT — PRIMARY (paid tier, Atlas voice) ──
+    if anthropic_key and not reply:
+        try:
+            async with httpx.AsyncClient(timeout=30) as hc:
+                r = await hc.post(
+                    "https://api.anthropic.com/v1/messages",
+                    headers={
+                        "x-api-key": anthropic_key,
+                        "anthropic-version": "2023-06-01",
+                        "content-type": "application/json",
+                    },
+                    json={
+                        "model": "claude-sonnet-4-5-20250929",
+                        "max_tokens": 2000,
+                        "temperature": 0.7,
+                        "system": system_prompt,
+                        "messages": [
+                            {"role": "user", "content": user_message},
+                        ],
+                    },
+                )
+                if r.status_code == 200:
+                    data = r.json()
+                    # Anthropic returns content as list of blocks, each with type+text
+                    text_blocks = [b.get("text", "") for b in data.get("content", []) if b.get("type") == "text"]
+                    candidate_text = "".join(text_blocks).strip()
+                    if candidate_text:
+                        reply = candidate_text
+                        provider = "anthropic-sonnet-4.5"
+                else:
+                    logger.warning("Anthropic {s}: {b}", s=r.status_code, b=r.text[:200])
+        except Exception as e_an:
+            logger.warning("Anthropic failed, trying Vertex: {e}", e=str(e_an)[:100])
+
+    # ── 1. Vertex AI Express Gemini ($300 credits, fallback #1) ──
     if vertex_key and not reply:
         try:
             async with httpx.AsyncClient(timeout=30) as hc:

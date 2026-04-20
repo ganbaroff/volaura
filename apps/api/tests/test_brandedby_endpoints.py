@@ -582,6 +582,7 @@ async def test_create_generation_happy_path():
     db = _make_chain(
         _r(data=_ACTIVE_TWIN),  # twin check
         _r(data=[], count=0),  # queued count
+        _r(data=None),  # E5 atlas_note fetch (no learnings)
         _r(data=[row]),  # insert
     )
     resp = await _call("post", "/api/brandedby/generations", db=db, json=_GEN_BODY)
@@ -654,6 +655,7 @@ async def test_create_generation_skip_queue_deducts_crystals():
         side_effect=[
             _r(data=_ACTIVE_TWIN),  # twin check
             _r(data=[{"id": "audit-id"}]),  # character_events audit insert
+            _r(data=None),  # E5 atlas_note fetch (no learnings)
             _r(data=[row]),  # generation insert
         ]
     )
@@ -706,6 +708,7 @@ async def test_create_generation_insert_fail_returns_500():
     db = _make_chain(
         _r(data=_ACTIVE_TWIN),
         _r(data=[], count=0),
+        _r(data=None),  # E5 atlas_note fetch (no learnings)
         _r(data=[]),  # insert fails
     )
     resp = await _call("post", "/api/brandedby/generations", db=db, json=_GEN_BODY)

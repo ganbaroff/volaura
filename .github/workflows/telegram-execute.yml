@@ -40,11 +40,13 @@ jobs:
           python-version: "3.11"
           cache: pip
 
-      - name: Install swarm dependencies
+      - name: Install base swarm dependencies
+        # aider-chat is HEAVY (~3 min install + many transitive deps). Only 1 in 3
+        # messages is code_fix. Lazy-install aider-chat inside the code_fix step,
+        # not upfront. Analysis + content paths now finish in under 1 min.
         run: |
           pip install -q pydantic loguru groq google-genai python-dotenv \
-            aiohttp httpx supabase litellm openai nest-asyncio \
-            aider-chat pytest
+            aiohttp httpx supabase litellm openai nest-asyncio
 
       - name: Resolve task + chat_id + issue_number + intent
         id: resolve
@@ -149,6 +151,9 @@ jobs:
           fi
           git checkout -b "$BRANCH_NAME"
           echo "[code_fix] Branch: $BRANCH_NAME  Task: $TASK"
+
+          # Lazy-install aider-chat only when code_fix fires. ~2-3 min on cold pip cache.
+          pip install -q aider-chat pytest
 
           # Direct Aider call with 4-min timeout. --yes-always auto-commits,
           # --no-analytics skips telemetry, --model uses Groq's fast 70B.

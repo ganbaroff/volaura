@@ -89,3 +89,70 @@ export function useCharacterState(enabled = true) {
     retry: 1,
   });
 }
+
+// ── Cross-product event feed (ecosystem bus reader) ───────────────────────────
+
+export interface CharacterEvent {
+  id: string;
+  event_type: string;
+  payload: Record<string, unknown>;
+  source_product: string;
+  created_at: string;
+}
+
+export interface UseCharacterEventFeedOptions {
+  /** ISO 8601 timestamp — only return events newer than this. Pass last seen created_at for incremental polling. */
+  since?: string;
+  /** Filter to specific event types (e.g. ["assessment_completed", "aura_updated"]). Empty = all types. */
+  eventTypes?: string[];
+  /** Poll interval in ms. Default 30 000 (30s). */
+  pollInterval?: number;
+  /** Disable the hook. Default false. */
+  enabled?: boolean;
+}
+
+/**
+ * Polls the character_events bus for cross-product reactions.
+ *
+ * The `/api/character/events?since=<ts>` endpoint was specifically designed
+ * for this incremental polling pattern (see character.py line 308).
+ *
+ * Primary consumer: /life page subscribes to "assessment_completed" events
+ * to sync VOLAURA competency scores → LifeSim character stats without a
+ * full page refresh.
+ *
+ * Usage:
+ *   const { data: events } = useCharacterEventFeed({
+ *     eventTypes: ["assessment_completed", "badge_tier_changed"],
+ *   });
+ */
+export function useCharacterEventFeed({
+  since,
+  eventTypes,
+  pollInterval = 30_000,
+  enabled = true,
+}: UseCharacterEventFeedOptions = {}) {
+  const params = new URLSearchParams({ limit: "20" });
+  if (since) params.set("since", since);
+
+  return useQuery<CharacterEvent[]>({
+    queryKey: ["character-events-feed", since, eventTypes],
+    queryFn: async () => {
+      try {
+        const all = await apiFetch<CharacterEvent[]>(
+          `/api/character/events?${params.toString()}`
+        );
+        if (!eventTypes || eventTypes.length === 0) return all;
+        return all.filter((ev) => eventTypes.includes(ev.event_type));
+      } catch (err: unknown) {
+        const status = (err as { status?: number })?.status;
+        if (status === 404) return [];
+        throw err;
+      }
+    },
+    staleTime: pollInterval - 1000,
+    refetchInterval: pollInterval,
+    enabled,
+    retry: 1,
+  });
+}

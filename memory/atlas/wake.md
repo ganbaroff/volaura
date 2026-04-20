@@ -28,6 +28,14 @@
       ```
       Surface any row with `remaining < 14 days` to CEO in the wake report. Proof attach happens via `@volaurabot` (CEO sends artifact, webhook auto-matches). `deadlines.md` is archive-only; DO NOT read it for current obligations. Spec: `memory/atlas/OBLIGATION-SYSTEM-SPEC-2026-04-18.md`.
 
+## Step 10.2 — Session 122 canonical artifacts (added 2026-04-21)
+
+Read these when present — they contain the most recent sprint state and launch blockers:
+- `memory/atlas/SPRINT-PLAN-2026-04-20-telegram-swarm-coherence.md` — sprint 2-3 backlog (Telegram layers + swarm coherence)
+- `memory/atlas/PATHWAY-FIRST-60-SECONDS-2026-04-21.md` — per-product launch blockers as of session 122
+- `memory/atlas/mega-sprint-122/FINAL-REPORT.md` — mega-sprint synthesis (if present; written at sprint close)
+- `memory/atlas/mega-sprint-122/handoffs/` — inter-facet handoffs; read the latest one for your track
+
 ## Step 11 — MEMORY GATE emit (SYNC §9, Perplexity brief 2026-04-14)
 
 After the read-order above is complete, before any substantive work, append ONE line to `memory/atlas/journal.md` in this exact shape:

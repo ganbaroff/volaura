@@ -134,8 +134,13 @@ jobs:
         if: steps.resolve.outputs.intent == 'code_fix'
         id: swarm_codefix
         env:
-          # Cerebras primary (2000 tok/sec, matches constitution hierarchy).
-          # NVIDIA fallback. Groq removed after 2026-04-20 spend-alert block.
+          # Sonnet 4.5 primary (CEO paid-tier $20 budget 2026-04-20, frontier code quality).
+          # Cerebras Qwen3-235B fallback 1 (2000 tok/sec, free tier, strong reasoning).
+          # NVIDIA llama-3.3-70b-instruct fallback 2 (enterprise hardware).
+          # Constitution compliance: Aider is a code EDITOR tool, not a swarm perspective —
+          # the "Never use Claude as swarm agent" rule (identity.md) applies to
+          # autonomous_run.PERSPECTIVES, not to one-off code fixes.
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
@@ -159,13 +164,15 @@ jobs:
           # Lazy-install aider-chat only when code_fix fires. ~2-3 min on cold pip cache.
           pip install -q aider-chat pytest
 
-          # Direct Aider call with 4-min timeout. Model priority follows
-          # constitution: Cerebras Qwen3-235B (primary, 2000 tok/sec) →
-          # NVIDIA llama-3.3-70b-instruct (fallback). Groq removed after
-          # 2026-04-20 spend-alert block on CEO's Groq org account.
-          # LiteLLM maps cerebras/<id> → Cerebras API natively.
-          PRIMARY_MODEL="cerebras/qwen-3-235b-a22b-instruct-2507"
-          FALLBACK_MODEL="nvidia/meta/llama-3.3-70b-instruct"
+          # Model priority (updated 2026-04-20 Session 122):
+          #   Primary:  Sonnet 4.5 (CEO paid-tier, frontier code edits)
+          #   Fallback: Cerebras Qwen3-235B (2000 tok/sec, strong reasoning, free)
+          #   Last:     NVIDIA llama-3.3-70b-instruct (enterprise hardware fallback)
+          # Aider's LiteLLM layer maps anthropic/claude-sonnet-4-5-20250929 → Anthropic API.
+          # If Anthropic spend-limit or rate-limit hits, chain falls through automatically.
+          PRIMARY_MODEL="anthropic/claude-sonnet-4-5-20250929"
+          FALLBACK_MODEL="cerebras/qwen-3-235b-a22b-instruct-2507"
+          LAST_RESORT_MODEL="nvidia/meta/llama-3.3-70b-instruct"
 
           run_aider() {
             local model="$1"
@@ -180,12 +187,17 @@ jobs:
           }
 
           if run_aider "$PRIMARY_MODEL" | tee /tmp/autofix_output.txt; then
-            echo "[code_fix] Primary model succeeded"
+            echo "[code_fix] Primary (Sonnet 4.5) succeeded"
           else
-            echo "[code_fix] Primary failed — trying fallback"
-            run_aider "$FALLBACK_MODEL" 2>&1 | tee -a /tmp/autofix_output.txt || {
-              echo "[warn] Both primary and fallback models failed"
-            }
+            echo "[code_fix] Primary failed — trying Cerebras fallback"
+            if run_aider "$FALLBACK_MODEL" 2>&1 | tee -a /tmp/autofix_output.txt; then
+              echo "[code_fix] Fallback (Cerebras) succeeded"
+            else
+              echo "[code_fix] Fallback failed — trying NVIDIA last-resort"
+              run_aider "$LAST_RESORT_MODEL" 2>&1 | tee -a /tmp/autofix_output.txt || {
+                echo "[warn] All three models failed"
+              }
+            fi
           fi
 
           COMMIT_COUNT=$(git rev-list --count origin/main..HEAD 2>/dev/null || echo "0")

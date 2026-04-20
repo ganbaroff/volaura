@@ -1929,15 +1929,10 @@ If any observation contradicts current behavior, trust what you see NOW over sto
     # E4: build unified system prompt via atlas_voice (single source of truth for
     # identity, voice rules, emotional laws, positioning lock). Canonical memory
     # injected as user_context so the style-brake layer stays separate.
-    _heartbeat_ctx = (
-        f"\n\nCURRENT PROJECT HEARTBEAT:\n{project_state[:1000]}" if project_state else ""
-    )
+    _heartbeat_ctx = f"\n\nCURRENT PROJECT HEARTBEAT:\n{project_state[:1000]}" if project_state else ""
     atlas_identity = build_atlas_system_prompt(
         surface="telegram",
-        user_context=(
-            f"CANONICAL MEMORY (identity+heartbeat+journal):\n{atlas_canonical[:7000]}"
-            + _heartbeat_ctx
-        ),
+        user_context=(f"CANONICAL MEMORY (identity+heartbeat+journal):\n{atlas_canonical[:7000]}" + _heartbeat_ctx),
         max_chars=12000,
     )
 

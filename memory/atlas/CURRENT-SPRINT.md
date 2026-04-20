@@ -9,6 +9,20 @@
 
 ---
 
+## Path E — Ship the Bridge (ACTIVE 2026-04-21)
+
+**Status:** Confirmed per Cowork-Atlas swarm audit (Session 121+122) and CEO acknowledgement ("свором аудит был охуенный, я согласен"). This is the active operating shape.
+
+**Active products (full development):** MindShift · VOLAURA core (assessment + AURA + LifeSim)
+**Read-only product:** Life Simulator (Godot 4 — consumes character_events only, no active dev)
+**DORMANT — Path E freeze:** BrandedBy · ZEUS
+
+BrandedBy and ZEUS are formally archived as of 2026-04-21. Code stays in git. Routes stay 404 via feature flags. No agent allocation. Revival triggers documented in `memory/atlas/archive-notices/`. Do NOT open feat/brandedby-* or feat/zeus-* branches without CEO explicit reactivation signoff.
+
+**Current leveraged step (from PATHWAY-FIRST-60-SECONDS-2026-04-21.md):** MindShift to Play Store — CEO keystore → `bundleRelease` → AAB upload → Internal Testing. Everything else is secondary until first real Android user.
+
+---
+
 ## Sprint goal (one sentence)
 
 Ship Life Feed inside VOLAURA web as functional MVP (backend + frontend + 4-item crystal shop) AND land Phase 0+1 of the ecosystem design sprint (baseline + gap inventory) so that when Mercury EIN arrives (~2026-05-05..05-12), VOLAURA is launch-ready with a real secondary surface that proves the 5-product ecosystem story.

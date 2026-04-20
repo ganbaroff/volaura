@@ -13,4 +13,4 @@ Python zoneinfo — 2026-04-16T0120 Baku. Authoritative clock source.
 
 Drained. All next-step items from 52c4d0c breadcrumb closed in prior turn (memory/ceo + memory/people + memory/decisions all read this session).
 
-## Consumed by main Atlas: pending
+## Consumed by inbox-consumer: 2026-04-20T21:01:33+00:00 · intent=code_fix

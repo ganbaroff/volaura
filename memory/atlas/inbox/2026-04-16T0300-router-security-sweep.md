@@ -25,4 +25,4 @@ Scope: receives Sentry alerts, internal only. No user-facing surface. Lower prio
 ## Lesson
 Local LLM on truncated code hallucinates security gaps. Always feed full file or explicitly state truncation. Cross-verify HIGH findings via grep before acting.
 
-## Consumed by main Atlas: pending
+## Consumed by inbox-consumer: 2026-04-20T21:01:33+00:00 · intent=chat

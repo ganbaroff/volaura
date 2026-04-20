@@ -340,7 +340,7 @@ Next action: G2.7 prep (draft option A memo + option B email copy). No more live
 
 - [ ] **G4.1.** **CEO decision** — target launch date, target audience (personal network / Azerbaijan tech Twitter / ProductHunt / LinkedIn / WUF13 partners), and whether launch is soft (curated invites) or open. This is the one strategic question Track G needs from CEO. All other G.4 execution flows from this answer.
 - [ ] **G4.2.** Launch copy for chosen channel — landing hero, one-pager, short-form posts. Human-voice, position-locked per `docs/TONE-OF-VOICE.md` ("Prove your skills. Earn your AURA. Get found by top organizations." — NEVER "volunteer" / "LinkedIn competitor").
-- [ ] **G4.3.** Post-launch monitoring — Sentry live, `/health` synthetic check, character_events volume graph. First 72 hours Atlas watches continuously (self-wake cron plus event-triggered alerts).
+- [x] **G4.3.** Post-launch monitoring — Sentry live, `/health` synthetic check, character_events volume graph. First 72 hours Atlas watches continuously (self-wake cron plus event-triggered alerts). **DONE 2026-04-20** — commit d8534bf: `.github/workflows/prod-health-check.yml` pings VOLAURA API + frontend every 15 min, fires Telegram alert on failure.
 
 Track G DoD: a stranger visiting `volaura.app` on launch-day-minus-zero sees no test data, no broken routes, no placeholder copy. Signs up. Completes an assessment. Gets a real AURA score. Earns a real crystal. The organism is breathing.
 

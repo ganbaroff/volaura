@@ -108,11 +108,14 @@ jobs:
               f.write("EOF_TASK\n")
           PYEOF
 
-      # === BRANCH 3: analysis (existing coordinator, unchanged) ===
+      # === BRANCH 3: analysis (coordinator + LLM team-synth via Anthropic Sonnet) ===
       - name: Run swarm coordinator (analysis path)
         if: steps.resolve.outputs.intent == 'analysis'
         id: swarm_analysis
         env:
+          # ANTHROPIC key: powers llm_synthesize_team_answer() in coordinator.py,
+          # turning 5 agent findings into ONE coherent Atlas-voice answer. CEO dedicated $20 paid tier.
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -124,6 +127,11 @@ jobs:
           cd "${{ github.workspace }}"
           echo "Task: $TASK"
           python -m packages.swarm.coordinator "$TASK" 2>&1 | tee /tmp/swarm_output.txt || true
+
+          # Extract team_recommendation from the stdout if present (coordinator prints it).
+          # Fallback to full output head if no team-synth happened (e.g., ANTHROPIC key missing).
+          # The coordinator's __main__ path is responsible for printing team_recommendation to stdout
+          # (see packages/swarm/coordinator.py entrypoint).
           head -c 3500 /tmp/swarm_output.txt > /tmp/swarm_result.txt
 
       # === BRANCH 1: code_fix (direct Aider call — fast path) ===

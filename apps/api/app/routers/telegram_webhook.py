@@ -2034,6 +2034,7 @@ Sign: "— Атлас" """
     reply, provider = await generate_atlas_response(
         system_prompt=system,
         user_message=text,
+        anthropic_key=os.environ.get("ANTHROPIC_API_KEY", ""),  # NEW 2026-04-20: Sonnet 4.5 primary
         vertex_key=os.environ.get("VERTEX_API_KEY", ""),
         openrouter_key=os.environ.get("OPENROUTER_API_KEY", ""),
         gemini_key=os.environ.get("GEMINI_API_KEY", "") or settings.gemini_api_key,

@@ -18,7 +18,8 @@ export default function BrandedByPage() {
       name="BrandedBy"
       icon="✨"
       tagline={t("brandedby.tagline", {
-        defaultValue: "AI Twin — your verified skills, in a talking-head video.",
+        defaultValue:
+          "Coming after MindShift launch — archived notice at memory/atlas/archive-notices/2026-04-19-brandedby-frozen.md",
       })}
       accentVar="var(--color-product-brandedby)"
     />

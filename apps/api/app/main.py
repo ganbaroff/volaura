@@ -50,6 +50,7 @@ from app.routers import (
     admin,
     analytics,
     assessment,
+    atlas_consult,
     atlas_gateway,
     aura,
     auth,
@@ -222,4 +223,5 @@ app.include_router(skills.router, prefix="/api")
 app.include_router(subscription.router, prefix="/api")
 app.include_router(tribes.router, prefix="/api")
 app.include_router(admin.router)  # prefix already set in router (/api/admin)
+app.include_router(atlas_consult.router, prefix="")  # Atlas self-consult — Layer 3 mirror consultation
 app.include_router(atlas_gateway.router)  # Atlas gateway — Python swarm → FastAPI

@@ -191,28 +191,49 @@ jobs:
           COMMIT_COUNT=$(git rev-list --count origin/main..HEAD 2>/dev/null || echo "0")
           echo "Commits produced: $COMMIT_COUNT"
 
+          # Disable strict-mode for the push+PR sequence. Test #43 (2026-04-20) showed
+          # Aider successfully committed+pushed but `gh pr create` returned non-zero,
+          # which killed the whole step before the Report-to-Telegram stage could fire.
+          # We explicitly want to report the outcome regardless of gh pr create exit code.
+          set +e
           if [ "$COMMIT_COUNT" -gt "0" ]; then
             git push -u origin "$BRANCH_NAME" 2>&1 | tail -5
+            PUSH_EXIT=$?
             {
               echo "Auto-fix by Atlas"
               echo ""
               echo "Task: $TASK"
               [ -n "$ISSUE_NUMBER" ] && echo "Triggered by: #$ISSUE_NUMBER"
               echo ""
-              echo "Direct Aider call (groq/llama-3.3-70b-versatile, --yes-always)."
+              echo "Direct Aider call (cerebras/qwen-3-235b-a22b-instruct-2507 primary)."
               echo "Review diff before merging."
             } > /tmp/pr_body.txt
-            PR_URL=$(gh pr create \
+            PR_OUTPUT=$(gh pr create \
               --base main \
               --title "[atlas-autofix] $TASK" \
               --body-file /tmp/pr_body.txt 2>&1)
-            echo "PR: $PR_URL"
-            printf '[AUTOFIX] PR created: %s\n\nAider output tail:\n%s' "$PR_URL" "$(tail -c 1500 /tmp/autofix_output.txt)" \
-              | head -c 3500 > /tmp/swarm_result.txt
+            PR_EXIT=$?
+            echo "push exit: $PUSH_EXIT, gh pr create exit: $PR_EXIT"
+            echo "PR output: $PR_OUTPUT"
+            if [ "$PR_EXIT" -eq 0 ]; then
+              PR_URL="$PR_OUTPUT"
+              printf '[AUTOFIX] PR created: %s\n\nAider output tail:\n%s' "$PR_URL" "$(tail -c 1500 /tmp/autofix_output.txt)" \
+                | head -c 3500 > /tmp/swarm_result.txt
+            else
+              # Branch pushed, PR creation failed (name collision / API hiccup / auth).
+              # Report branch URL so CEO can open PR manually from there.
+              BRANCH_URL="https://github.com/ganbaroff/volaura/tree/${BRANCH_NAME}"
+              printf '[AUTOFIX] branch pushed but PR auto-create failed (exit %s). Open manually: %s\n\ngh output:\n%s\n\nAider tail:\n%s' \
+                "$PR_EXIT" "$BRANCH_URL" "$PR_OUTPUT" "$(tail -c 1000 /tmp/autofix_output.txt)" \
+                | head -c 3500 > /tmp/swarm_result.txt
+            fi
           else
             printf '[AUTOFIX] no changes needed or task unclear\n\nAider output tail:\n%s' \
               "$(tail -c 1500 /tmp/autofix_output.txt)" | head -c 3500 > /tmp/swarm_result.txt
           fi
+          set -e
+          # Return success so Report-to-Telegram step always runs with real content.
+          exit 0
 
       # === BRANCH 2: content (draft-only, routed to CEO chat) ===
       - name: Generate content draft (content path)

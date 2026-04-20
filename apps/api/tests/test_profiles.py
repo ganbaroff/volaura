@@ -1,7 +1,7 @@
 """Tests for /api/profiles endpoints."""
 
 from datetime import UTC, datetime
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from httpx import ASGITransport, AsyncClient
@@ -1353,6 +1353,107 @@ async def test_create_my_profile_age_confirmed_sets_terms_at():
     assert len(inserted_payloads) == 1
     assert "terms_accepted_at" in inserted_payloads[0]
     assert inserted_payloads[0]["age_confirmed"] is True
+
+
+@pytest.mark.asyncio
+async def test_age_confirmed_false_omits_terms_accepted_at():
+    """GDPR Art. 8: age_confirmed=False → terms_accepted_at is ABSENT (not just None)."""
+    inserted_payloads: list[dict] = []
+
+    db = _make_mock_db()
+    admin_db = _make_mock_db()
+
+    def capturing_insert(data: dict):
+        inserted_payloads.append(data)
+        return db
+
+    db.insert = MagicMock(side_effect=capturing_insert)
+    db.execute = AsyncMock(
+        side_effect=[
+            MagicMock(data=[]),  # username uniqueness check
+            MagicMock(data=[PROFILE_ROW]),  # insert result
+        ]
+    )
+    admin_db.execute = AsyncMock(return_value=MagicMock(data=[]))
+
+    app.dependency_overrides[get_supabase_user] = _user_override(db)
+    app.dependency_overrides[get_supabase_admin] = _admin_override(admin_db)
+    app.dependency_overrides[get_current_user_id] = _uid_override()
+
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        await ac.post(
+            "/api/profiles/me",
+            json={"username": "voluser", "age_confirmed": False},
+            headers={"Authorization": "Bearer fake"},
+        )
+
+    app.dependency_overrides.clear()
+
+    assert len(inserted_payloads) == 1
+    assert "terms_accepted_at" not in inserted_payloads[0]
+
+
+@pytest.mark.asyncio
+async def test_age_confirmed_false_profile_still_created():
+    """GDPR Art. 8: age_confirmed=False is non-blocking — profile still returns 201."""
+    db = _make_mock_db()
+    admin_db = _make_mock_db()
+
+    db.execute = AsyncMock(
+        side_effect=[
+            MagicMock(data=[]),  # username uniqueness check
+            MagicMock(data=[PROFILE_ROW]),  # insert result
+        ]
+    )
+    admin_db.execute = AsyncMock(return_value=MagicMock(data=[]))
+
+    app.dependency_overrides[get_supabase_user] = _user_override(db)
+    app.dependency_overrides[get_supabase_admin] = _admin_override(admin_db)
+    app.dependency_overrides[get_current_user_id] = _uid_override()
+
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        resp = await ac.post(
+            "/api/profiles/me",
+            json={"username": "voluser", "age_confirmed": False},
+            headers={"Authorization": "Bearer fake"},
+        )
+
+    app.dependency_overrides.clear()
+
+    assert resp.status_code == 201
+
+
+@pytest.mark.asyncio
+async def test_age_confirmed_false_logs_art8_warning():
+    """GDPR Art. 8: age_confirmed=False triggers logger.warning with 'GDPR Art. 8 gap'."""
+    db = _make_mock_db()
+    admin_db = _make_mock_db()
+
+    db.execute = AsyncMock(
+        side_effect=[
+            MagicMock(data=[]),  # username uniqueness check
+            MagicMock(data=[PROFILE_ROW]),  # insert result
+        ]
+    )
+    admin_db.execute = AsyncMock(return_value=MagicMock(data=[]))
+
+    app.dependency_overrides[get_supabase_user] = _user_override(db)
+    app.dependency_overrides[get_supabase_admin] = _admin_override(admin_db)
+    app.dependency_overrides[get_current_user_id] = _uid_override()
+
+    with patch("app.routers.profiles.logger") as mock_logger:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+            await ac.post(
+                "/api/profiles/me",
+                json={"username": "voluser", "age_confirmed": False},
+                headers={"Authorization": "Bearer fake"},
+            )
+
+    app.dependency_overrides.clear()
+
+    mock_logger.warning.assert_called_once()
+    warning_msg = mock_logger.warning.call_args[0][0]
+    assert "GDPR Art. 8 gap" in warning_msg
 
 
 @pytest.mark.asyncio

@@ -451,6 +451,90 @@ class TestRegister:
         assert captured.get("display_name") == payload.username
 
 
+    @pytest.mark.asyncio
+    async def test_consent_event_captures_ip_address(self):
+        """GDPR Art. 7: ip_address from request.client.host is stored in consent_events."""
+        auth_resp = _make_auth_response()
+        db_anon = _make_db()
+        db_admin = _make_db(
+            _result(data={"id": POLICY_ROW_ID}),
+            _result(data=[{"id": "consent-id"}]),
+        )
+        db_anon.auth = MagicMock()
+        db_anon.auth.sign_up = AsyncMock(return_value=auth_resp)
+
+        captured_inserts: list[dict] = []
+
+        original_table = db_admin.table
+
+        def capturing_table(name: str):
+            chain = original_table(name)
+            if name == "consent_events":
+                original_insert = chain.insert
+
+                def capturing_insert(data: dict):
+                    captured_inserts.append(data)
+                    return original_insert(data)
+
+                chain.insert = capturing_insert
+            return chain
+
+        db_admin.table = capturing_table
+
+        request = MagicMock()
+        request.client.host = "203.0.113.42"
+        request.headers = {"user-agent": "test-agent", "authorization": f"Bearer {ACCESS_TOKEN}"}
+
+        payload = RegisterRequest(**_make_valid_register_payload())
+        await register(request, payload, db_anon, db_admin)
+
+        assert len(captured_inserts) == 1
+        assert captured_inserts[0]["ip_address"] == "203.0.113.42"
+
+    @pytest.mark.asyncio
+    async def test_consent_event_captures_user_agent(self):
+        """GDPR Art. 7: user-agent header is stored in consent_events."""
+        auth_resp = _make_auth_response()
+        db_anon = _make_db()
+        db_admin = _make_db(
+            _result(data={"id": POLICY_ROW_ID}),
+            _result(data=[{"id": "consent-id"}]),
+        )
+        db_anon.auth = MagicMock()
+        db_anon.auth.sign_up = AsyncMock(return_value=auth_resp)
+
+        captured_inserts: list[dict] = []
+
+        original_table = db_admin.table
+
+        def capturing_table(name: str):
+            chain = original_table(name)
+            if name == "consent_events":
+                original_insert = chain.insert
+
+                def capturing_insert(data: dict):
+                    captured_inserts.append(data)
+                    return original_insert(data)
+
+                chain.insert = capturing_insert
+            return chain
+
+        db_admin.table = capturing_table
+
+        request = MagicMock()
+        request.client.host = "127.0.0.1"
+        request.headers = {
+            "user-agent": "Mozilla/5.0 (test)",
+            "authorization": f"Bearer {ACCESS_TOKEN}",
+        }
+
+        payload = RegisterRequest(**_make_valid_register_payload())
+        await register(request, payload, db_anon, db_admin)
+
+        assert len(captured_inserts) == 1
+        assert captured_inserts[0]["user_agent"] == "Mozilla/5.0 (test)"
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 # POST /auth/login
 # ══════════════════════════════════════════════════════════════════════════════

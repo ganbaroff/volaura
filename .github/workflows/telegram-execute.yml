@@ -27,7 +27,9 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'issues' && github.event.label.name == 'atlas-telegram-request')
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # 15 min: code_fix path needs pip install aider-chat (~2-3 min) + Aider run (4 min cap) +
+    # possibly long LLM responses. 15 is safe without being wasteful. Analysis/content finish much faster.
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:

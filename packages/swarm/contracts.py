@@ -98,8 +98,15 @@ class CoordinatorResult(BaseModel):
     total_agents: int
     succeeded: int
     failed: int
-    synthesis: str = Field(default="", description="Coordinator's synthesis of all findings")
+    synthesis: str = Field(default="", description="Coordinator's synthesis of all findings (mechanical)")
     priority_action: Optional[str] = Field(default=None, description="Single most important action to take")
+    team_recommendation: Optional[str] = Field(
+        default=None,
+        description=(
+            "LLM-synthesized team answer in Atlas voice (Russian, storytelling, 3-5 paragraphs). "
+            "Populated by llm_synthesize_team_answer() when ANTHROPIC_API_KEY is set. Falls back to None silently."
+        ),
+    )
 
 
 # ── Prompt injection helper ──────────────────────────────────────────

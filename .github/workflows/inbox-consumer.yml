@@ -1,0 +1,80 @@
+name: "Atlas Inbox Consumer — classify + drain pending"
+
+# T3.3 from SPRINT-PLAN-2026-04-20-telegram-swarm-coherence.md
+# Runs DOWNSTREAM of inbox-sync.yml (which writes files).
+# For each file tagged "Consumed by main Atlas: pending":
+#   1. Classifies intent (code_fix / content / analysis / chat)
+#   2. Appends routing decision to router-log-<date>.md
+#   3. Updates footer: "Consumed by inbox-consumer: <ISO ts> · intent=<intent>"
+#
+# Dispatch is LOGGED, not re-fired — prevents duplicate triggers for
+# messages already answered by telegram-execute workflow.
+#
+# Concurrency group is intentionally DIFFERENT from inbox-sync (inbox-consumer)
+# so both can run simultaneously — sync writes, consumer reads different files.
+# No race: sync only CREATES new files; consumer only UPDATES pending footers.
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'   # every 15 min
+  workflow_dispatch:           # manual drain
+
+permissions:
+  contents: write
+
+concurrency:
+  group: inbox-consumer
+  cancel-in-progress: false    # serialize consumer runs; never interrupt mid-drain
+
+jobs:
+  consume:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install deps
+        run: pip install -q loguru
+
+      - name: Run inbox consumer
+        env:
+          # Available for future model_router enhancement (T3.1).
+          # Consumer itself is keyword-only — these are not called today.
+          ANTHROPIC_API_KEY:  ${{ secrets.ANTHROPIC_API_KEY }}
+          CEREBRAS_API_KEY:   ${{ secrets.CEREBRAS_API_KEY }}
+          GEMINI_API_KEY:     ${{ secrets.GEMINI_API_KEY }}
+          NVIDIA_API_KEY:     ${{ secrets.NVIDIA_API_KEY }}
+          DEEPSEEK_API_KEY:   ${{ secrets.DEEPSEEK_API_KEY }}
+        id: consume
+        run: |
+          COUNT=$(python -m packages.swarm.inbox_consumer 2>&1 | tee /dev/stderr | grep -oP 'Processed \K\d+' | tail -1)
+          echo "processed=${COUNT:-0}" >> "$GITHUB_OUTPUT"
+
+      - name: Commit router log + consumed footers
+        if: steps.consume.outputs.processed != '0'
+        run: |
+          git config user.email "atlas-inbox-consumer@volaura.az"
+          git config user.name "Atlas Inbox Consumer"
+          git add memory/atlas/inbox/
+          if git diff --staged --quiet; then
+            echo "Nothing staged — skipping commit."
+            exit 0
+          fi
+          COUNT=${{ steps.consume.outputs.processed }}
+          git commit -m "inbox-consumer: ${COUNT} file(s) classified + marked consumed [skip ci]"
+          git pull --rebase origin main || git rebase --abort || true
+          git push || {
+            echo "::warning::push raced — fetch + rebase + retry"
+            git fetch origin main
+            git rebase origin/main || git rebase --abort || true
+            git push
+          }

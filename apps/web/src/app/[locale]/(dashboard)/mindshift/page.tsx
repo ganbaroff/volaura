@@ -18,7 +18,8 @@ export default function MindShiftPage() {
       name="MindShift"
       icon="🧠"
       tagline={t("mindshift.tagline", {
-        defaultValue: "AI-powered cognitive training. Sharpen focus, build mental resilience.",
+        defaultValue:
+          "MindShift is live as a standalone Android app — search 'MindShift Focus' on Google Play.",
       })}
       accentVar="var(--color-product-mindshift)"
     />

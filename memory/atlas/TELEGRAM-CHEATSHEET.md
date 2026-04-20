@@ -107,3 +107,5 @@ GitHub Actions free tier = 2000 минут/месяц. Каждый swarm run = 
 Проверено автономной Aider сессией 2026-04-20.
 
 Sonnet 4.5 подтверждён как primary для Aider 2026-04-20
+
+Полный автономный луп Telegram → Aider Sonnet 4.5 → auto-PR → merge подтверждён 2026-04-20 session 122.

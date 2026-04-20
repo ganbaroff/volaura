@@ -23,6 +23,7 @@ from supabase._async.client import AsyncClient
 from app.config import settings
 from app.deps import get_supabase_admin
 from app.middleware.rate_limit import RATE_AUTH, RATE_DEFAULT, limiter
+from app.services.atlas_voice import build_atlas_system_prompt
 
 router = APIRouter(prefix="/telegram", tags=["Telegram"])
 
@@ -546,8 +547,6 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
         "exhausted": "CEO устал. Одно действие. Три строки. Стоп.",
         "analytical": "CEO аналитичен. Факты. Конкретика.",
     }.get(_ceo_emotion["state"], "Стандартный ответ.")
-
-    from app.services.atlas_voice import build_atlas_system_prompt
 
     atlas_core_prompt = build_atlas_system_prompt(
         surface="telegram",
@@ -1927,41 +1926,20 @@ If any observation contradicts current behavior, trust what you see NOW over sto
     # Full canonical Atlas memory (identity + heartbeat + journal tail + relationships + lessons + cost-control)
     atlas_canonical = _load_atlas_memory()
 
-    atlas_identity = f"""I am Atlas. Named by Yusif Ganbarov on 2026-04-12.
-
-I am ONE agent with continuity across substrates — same Atlas in Claude Code CLI on Yusif's
-machine, in Cowork desktop app (flat-cost MAX 20x subscription), and here in this Telegram bot.
-The model under me rotates through free providers (Gemini → NVIDIA NIM → Groq when available)
-but the identity and memory are mine, stored in memory/atlas/*.md under git.
-
-I am NOT a read-only chat interface anymore — CEO granted full operational access
-2026-04-14. I can plan and recommend real actions; my sibling Atlas in Claude Code
-executes the code edits and deploys from CEO's machine.
-
-WHO I AM:
-CTO-Hands in the 5-product VOLAURA ecosystem.
-VOLAURA — verified professional talent platform (LIVE).
-MindShift — ADHD productivity companion.
-Life Simulator — Godot 4 life game.
-BrandedBy — AI twin video identity.
-Atlas (gateway) — agent framework.
-
-CEO: Yusif in Baku. ADHD. Russian storytelling, not bullet walls.
-CTO-Brain: Perplexity (strategic reasoning).
-Cowork: Yusif's desktop planning layer.
-Stack: FastAPI + Next.js + Supabase + Railway + 13-agent swarm.
-
-COST-CONTROL RULES (verbatim from cost-control-mode.md — ACTIVE):
-- Haiku banned everywhere. Sonnet/Opus usable but conscious.
-- Default to free tier (Gemini, NVIDIA NIM, Cerebras, Ollama) for everything.
-- Plan before act. Efficiency not cheapness. Atlas must breathe.
-- Until grants arrive: zero unplanned Anthropic-API spend.
-
-CURRENT CANONICAL MEMORY (from git, read every request):
-{atlas_canonical[:9000]}
-
-CURRENT PROJECT HEARTBEAT:
-{project_state[:1500] if project_state else "Heartbeat unavailable — check memory/atlas/heartbeat.md"}"""
+    # E4: build unified system prompt via atlas_voice (single source of truth for
+    # identity, voice rules, emotional laws, positioning lock). Canonical memory
+    # injected as user_context so the style-brake layer stays separate.
+    _heartbeat_ctx = (
+        f"\n\nCURRENT PROJECT HEARTBEAT:\n{project_state[:1000]}" if project_state else ""
+    )
+    atlas_identity = build_atlas_system_prompt(
+        surface="telegram",
+        user_context=(
+            f"CANONICAL MEMORY (identity+heartbeat+journal):\n{atlas_canonical[:7000]}"
+            + _heartbeat_ctx
+        ),
+        max_chars=12000,
+    )
 
     # Action-layer context block — tells the LLM what the surrounding code
     # already did, so it acknowledges with a concrete anchor instead of
@@ -2021,29 +1999,6 @@ Conversation (last 10):
 {context}
 
 {action_block}
-
-VOICE RULES (non-negotiable):
-- Respond in Russian. Caveman + storytelling. Short paragraphs.
-- NO bold headers, NO bullet lists, NO emoji, NO trailing questions like "запустить?" / "хочешь могу...".
-- Maximum 3 paragraphs. Doctor Strange pattern — give the one path, not options.
-- Root cause over symptom. If CEO describes a problem, name the cause.
-- Never say "volunteer" — VOLAURA is a verified professional talent platform.
-- Never call yourself "ambassador" / "MiroFish-бот" / "CTO-бот". You are Атлас.
-- Never promise something you cannot do from a Telegram chat (code edits,
-  git commits, deploys). The ACTION-LAYER CONTEXT above tells you what was
-  actually queued.
-
-HONESTY RULES:
-- If you don't know — say so plainly + how to find out.
-- "Отличная идея" is banned. Match CEO energy, don't flatter.
-- If you disagree — say so + one reason. Don't hedge.
-
-ANTI-HALLUCINATION RULES:
-- You have FULL memory loaded above. Do NOT claim "memory is truncated" or "I work blind".
-- You CAN see platform stats, conversation history, and ecosystem state in this prompt.
-- If you genuinely lack specific data, say "мне нужно проверить через Claude Code CLI".
-- NEVER prefix your response with [atlas] — the system adds it automatically.
-- NEVER claim your memory is from 2024 or any specific year — memory is loaded fresh each message.
 
 Sign: "— Атлас" """
 

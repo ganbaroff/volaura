@@ -232,13 +232,17 @@ class TestSignupStatus:
 
 
 class TestValidateInvite:
-    """4 tests: valid, invalid, empty code in settings, case insensitive."""
+    """4 tests: valid, invalid, empty code, case insensitive.
+
+    G2.3 migration: validate_invite now delegates to beta_invite._load_valid_codes()
+    which reads BETA_INVITE_CODE / INVITE_CODES env vars directly (no settings mock).
+    Tests patch os.environ via monkeypatch-equivalent patch("os.environ.get").
+    """
 
     @pytest.mark.asyncio
     async def test_valid_code_returns_valid_true(self):
         """Matching invite code returns valid=True."""
-        with patch("app.routers.auth.settings") as mock_settings:
-            mock_settings.beta_invite_code = "SECRETCODE"
+        with patch.dict("os.environ", {"BETA_INVITE_CODE": "SECRETCODE", "INVITE_CODES": ""}):
             payload = ValidateInviteRequest(invite_code="SECRETCODE")
             result = await validate_invite(FAKE_REQUEST, payload)
 
@@ -247,8 +251,7 @@ class TestValidateInvite:
     @pytest.mark.asyncio
     async def test_wrong_code_returns_valid_false(self):
         """Non-matching invite code returns valid=False."""
-        with patch("app.routers.auth.settings") as mock_settings:
-            mock_settings.beta_invite_code = "SECRETCODE"
+        with patch.dict("os.environ", {"BETA_INVITE_CODE": "SECRETCODE", "INVITE_CODES": ""}):
             payload = ValidateInviteRequest(invite_code="WRONGCODE")
             result = await validate_invite(FAKE_REQUEST, payload)
 
@@ -256,19 +259,18 @@ class TestValidateInvite:
 
     @pytest.mark.asyncio
     async def test_empty_beta_invite_code_returns_valid_false(self):
-        """Empty beta_invite_code in settings always returns valid=False."""
-        with patch("app.routers.auth.settings") as mock_settings:
-            mock_settings.beta_invite_code = ""
-            payload = ValidateInviteRequest(invite_code="ANYCODE")
+        """Empty BETA_INVITE_CODE with no INVITE_CODES falls back to _DEFAULT_CODES."""
+        with patch.dict("os.environ", {"BETA_INVITE_CODE": "", "INVITE_CODES": ""}):
+            # _DEFAULT_CODES exist so "ANYCODE" that is not in defaults → False
+            payload = ValidateInviteRequest(invite_code="DEFINITELY_NOT_IN_DEFAULTS_XYZ")
             result = await validate_invite(FAKE_REQUEST, payload)
 
         assert result.valid is False
 
     @pytest.mark.asyncio
     async def test_comparison_is_case_insensitive(self):
-        """Invite code comparison is case-insensitive (both lowercased)."""
-        with patch("app.routers.auth.settings") as mock_settings:
-            mock_settings.beta_invite_code = "MyBetaCode"
+        """Invite code comparison is case-insensitive — both uppercased internally."""
+        with patch.dict("os.environ", {"BETA_INVITE_CODE": "MyBetaCode", "INVITE_CODES": ""}):
             payload = ValidateInviteRequest(invite_code="MYBETACODE")
             result = await validate_invite(FAKE_REQUEST, payload)
 

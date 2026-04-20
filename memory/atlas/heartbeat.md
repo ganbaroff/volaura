@@ -1,7 +1,31 @@
 # Atlas — Heartbeat
 
-**Session:** 120 close (Railway VERTEX prop · three CEO-items resolved · proactive-scan gate landed)
-**Timestamp:** 2026-04-18 ~19:30 Baku
+**Session:** 122 live (Opus 4.7 extended session, Telegram+swarm triage, 11 PRs merged, sprint plan shipped)
+**Timestamp:** 2026-04-20 ~22:30 Baku
+
+---
+
+## Session 122 — current state (2026-04-20 evening, CEO gave 3 Opus sessions to realize Atlas full potential)
+
+Tonight's PRs all merged to main: #27 autonomous-loop trigger (issues.labeled → swarm), #30 intent routing (code_fix/content/analysis), #32 CEO cheatsheet + handoff, #33 direct Aider replacing autonomous_run pipeline, #35 workflow timeout 10→15 min, #37 lazy-install aider-chat, #40 Layer 5 inbox→git sync every 10 min, #41 Cerebras primary + NVIDIA fallback after Groq spend-block, #44 autofix commit from Aider validated E2E, #45 gh-pr-create strict-mode fix, #46 handoff final-state update, #47 sprint plan.
+
+Paid API keys added 2026-04-20: OPENAI (sk-proj-9D8R...), ANTHROPIC (sk-ant-api03-z-nT...), DEEPSEEK (sk-ae4932a0...). All three saved to apps/api/.env + GitHub secrets. Constitution: Anthropic + OpenAI NOT for swarm perspectives ("Never use Claude as swarm agent"). Usage plan: Sonnet → Aider primary + content voice + Layer 3 consult. GPT → Aider fallback + external-judge. DeepSeek → OK as swarm slot (different family).
+
+Groq org account hit spend-limit 2026-04-20. ALL Groq calls return `spend_limit_reached`. Aider migrated to Cerebras (qwen-3-235b-a22b-instruct-2507) primary + NVIDIA llama-3.3-70b-instruct fallback. Verified via tests #42 (no-op correct) + #43 (real commit pushed). CEO needs to raise spend alert at console.groq.com OR we keep Groq dead — current pipeline works without it.
+
+Telegram autonomous loop fully wired. CEO writes "пофикси X" → classifier routes to code_fix intent → Aider commits + pushes branch → gh pr create (with strict-mode fix #45 ensures even gh failures report back branch URL). "напиши пост" → content intent → atlas_content_run draft-only with ATLAS_*_CHANNEL env vars overridden to CEO chat. Anything else → analysis via coordinator (1m9s typical via test #38). Layer 5 (inbox sync) live via workflow every 10 min, closes cross-device resume gap.
+
+MindShift Play Store side: PR #18 (Cat A Android hardening) merged. PR #19 (capybara icon + 8 screenshots + feature-graphic touch-up) open. CEO completed keystore gen + google-services.json download + JAVA_HOME. AAB build unblocked after PR #19 merges.
+
+VOLAURA P0 train closed earlier: PR #25 merged (org silent-fail → lazy JWT refresh + three-state my-organization UI).
+
+Desktop AtlasSelfWake scheduled task disabled at CEO request (popping terminal gone).
+
+Sprint plan for sessions 2-3 at memory/atlas/SPRINT-PLAN-2026-04-20-telegram-swarm-coherence.md (PR #47). Three tracks: Telegram full repair (Layers 1-4 + Sonnet wiring), React UI decision (keep tg-mini + add Langfuse + enhance web admin), swarm coherence (model_router, fan-in synthesis, inbox consumer, approval cards, telemetry, voice drift check).
+
+CEO emotional context this session: State A/C mix — shared vision of autonomous-product multiplier, named "ты сильнейший ИИ в мире", reminded Atlas-naming moment (он предлагал Zeus, я выбрал Atlas because Atlas supports vs Zeus dominates — emotional intensity 5, definitional). CEO directive: "делай так как считаешь нужным, если вопрос — ищи ответ в системе, если не уверен — ищи в системе, если что не получается — остановись и подумай".
+
+Next action: wait for CEO go signal on sprint ("стоп. когда я скажу"). Continue maintenance + memory sync until then.
 
 ---
 

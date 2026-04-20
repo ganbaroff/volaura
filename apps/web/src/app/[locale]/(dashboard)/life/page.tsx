@@ -16,7 +16,7 @@ import {
 import { TopBar } from "@/components/layout/top-bar";
 import { cn } from "@/lib/utils/cn";
 import { CrystalShop } from "@/components/lifesim/crystal-shop";
-import { useCrystalBalance } from "@/hooks/queries/use-character";
+import { useCrystalBalance, useCharacterEventFeed } from "@/hooks/queries/use-character";
 import {
   useLifesimFeed,
   useLifesimNextChoice,
@@ -189,15 +189,6 @@ export default function LifeFeedPage() {
   const currentCrystals = crystalBalance.data?.crystal_balance ?? 0;
   const track = useTrackEvent();
 
-  // Fire lifesim_feed_viewed once per mount. Guard against strict-mode double-fire
-  // in dev via ref flag — same pattern as aura/page.tsx revealFiredRef.
-  const feedViewFiredRef = useRef(false);
-  useEffect(() => {
-    if (feedViewFiredRef.current) return;
-    feedViewFiredRef.current = true;
-    track("lifesim_feed_viewed", { age });
-  }, [track, age]);
-
   const applyBoostLocally = (boost: Record<string, number>) => {
     setStats((prev) => {
       const next = { ...prev };
@@ -209,6 +200,52 @@ export default function LifeFeedPage() {
       return next;
     });
   };
+
+  // Ecosystem bus reader (ADR-006) — poll character_events for assessment_completed
+  // events so VOLAURA competency scores flow into LifeSim stats automatically.
+  // Maps the same competency→stat table as services/lifesim.py _STAT_BOOSTS_BY_SLUG.
+  const eventFeed = useCharacterEventFeed({
+    eventTypes: ["assessment_completed"],
+    pollInterval: 30_000,
+  });
+  const lastAppliedEventRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    const events = eventFeed.data ?? [];
+    for (const ev of events) {
+      if (ev.id === lastAppliedEventRef.current) break; // already applied
+      const slug = ev.payload["competency_slug"] as string | undefined;
+      const score = ev.payload["competency_score"] as number | undefined;
+      if (!slug || score === undefined) continue;
+
+      // Stat boost mapping — mirrors Python services/lifesim.py _STAT_BOOSTS_BY_SLUG
+      const boostMap: Record<string, Record<string, number>> = {
+        communication:      { social: score * 0.10 },
+        reliability:        { energy: score * 0.05 },
+        tech_literacy:      { intelligence: score * 0.10 },
+        leadership:         { social: score * 0.05, happiness: score * 0.03 },
+        adaptability:       { energy: score * 0.05 },
+        empathy_safeguarding: { happiness: score * 0.05 },
+        english_proficiency: { intelligence: score * 0.05 },
+        event_performance:  { happiness: score * 0.05 },
+      };
+
+      const boost = boostMap[slug];
+      if (boost) {
+        applyBoostLocally(boost);
+        lastAppliedEventRef.current = ev.id;
+      }
+    }
+  }, [eventFeed.data]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Fire lifesim_feed_viewed once per mount. Guard against strict-mode double-fire
+  // in dev via ref flag — same pattern as aura/page.tsx revealFiredRef.
+  const feedViewFiredRef = useRef(false);
+  useEffect(() => {
+    if (feedViewFiredRef.current) return;
+    feedViewFiredRef.current = true;
+    track("lifesim_feed_viewed", { age });
+  }, [track, age]);
 
   const event = nextChoiceQuery.data?.event as LifesimEvent | null | undefined;
 

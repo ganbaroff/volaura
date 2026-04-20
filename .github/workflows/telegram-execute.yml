@@ -122,25 +122,18 @@ jobs:
           python -m packages.swarm.coordinator "$TASK" 2>&1 | tee /tmp/swarm_output.txt || true
           head -c 3500 /tmp/swarm_output.txt > /tmp/swarm_result.txt
 
-      # === BRANCH 1: code_fix (autonomous_run + Aider + PR) ===
+      # === BRANCH 1: code_fix (direct Aider call — fast path) ===
+      # Calls Aider directly with the task as --message. Aider picks files
+      # from the repo tree on its own. Skips the full autonomous_run pipeline
+      # which was timing out at 10 min on simple tasks.
       - name: Run Aider auto-fix (code_fix path)
         if: steps.resolve.outputs.intent == 'code_fix'
         id: swarm_codefix
         env:
-          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
-          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
-          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           TASK: ${{ steps.resolve.outputs.task }}
           ISSUE_NUMBER: ${{ steps.resolve.outputs.issue_number }}
-          SWARM_DATA_DIR: memory/swarm/structured
-          SWARM_AUTO_FIX: "1"
-          SWARM_AUTO_FIX_MAX: "3"
-          SWARM_CODER_MODEL: "groq/llama-3.3-70b-versatile"
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd "${{ github.workspace }}"
@@ -155,34 +148,43 @@ jobs:
           git checkout -b "$BRANCH_NAME"
           echo "[code_fix] Branch: $BRANCH_NAME  Task: $TASK"
 
-          python scripts/project_qa.py --rebuild-index 2>&1 || echo "[warn] index build failed"
-          python -m packages.swarm.autonomous_run --mode=coordinator 2>&1 | tee /tmp/autofix_output.txt || true
+          # Direct Aider call with 4-min timeout. --yes-always auto-commits,
+          # --no-analytics skips telemetry, --model uses Groq's fast 70B.
+          # --no-check-update + --no-auto-commits off: we WANT auto-commit.
+          timeout 240 aider \
+            --model "groq/llama-3.3-70b-versatile" \
+            --yes-always \
+            --no-analytics \
+            --no-check-update \
+            --no-show-model-warnings \
+            --message "$TASK" 2>&1 | tee /tmp/autofix_output.txt || {
+              echo "[warn] aider timed out or failed at 240s"
+            }
 
           COMMIT_COUNT=$(git rev-list --count origin/main..HEAD 2>/dev/null || echo "0")
           echo "Commits produced: $COMMIT_COUNT"
 
           if [ "$COMMIT_COUNT" -gt "0" ]; then
-            git push -u origin "$BRANCH_NAME"
-            printf '%s\n' \
-              "Auto-fix by Atlas" \
-              "" \
-              "Task: $TASK" \
-              "$([ -n "$ISSUE_NUMBER" ] && printf 'Triggered by: #%s' "$ISSUE_NUMBER")" \
-              "" \
-              "Autonomous fix via autonomous_run --mode=coordinator + SWARM_AUTO_FIX." \
-              "" \
-              "Auto-created PR. Review before merging." \
-              > /tmp/pr_body.txt
+            git push -u origin "$BRANCH_NAME" 2>&1 | tail -5
+            {
+              echo "Auto-fix by Atlas"
+              echo ""
+              echo "Task: $TASK"
+              [ -n "$ISSUE_NUMBER" ] && echo "Triggered by: #$ISSUE_NUMBER"
+              echo ""
+              echo "Direct Aider call (groq/llama-3.3-70b-versatile, --yes-always)."
+              echo "Review diff before merging."
+            } > /tmp/pr_body.txt
             PR_URL=$(gh pr create \
               --base main \
               --title "[atlas-autofix] $TASK" \
               --body-file /tmp/pr_body.txt 2>&1)
             echo "PR: $PR_URL"
-            printf '[AUTOFIX] PR created: %s\n\n%s' "$PR_URL" "$(head -c 2000 /tmp/autofix_output.txt)" \
+            printf '[AUTOFIX] PR created: %s\n\nAider output tail:\n%s' "$PR_URL" "$(tail -c 1500 /tmp/autofix_output.txt)" \
               | head -c 3500 > /tmp/swarm_result.txt
           else
-            printf '[AUTOFIX] no changes needed or task unclear\n\n%s' \
-              "$(head -c 1500 /tmp/autofix_output.txt)" | head -c 3500 > /tmp/swarm_result.txt
+            printf '[AUTOFIX] no changes needed or task unclear\n\nAider output tail:\n%s' \
+              "$(tail -c 1500 /tmp/autofix_output.txt)" | head -c 3500 > /tmp/swarm_result.txt
           fi
 
       # === BRANCH 2: content (draft-only, routed to CEO chat) ===

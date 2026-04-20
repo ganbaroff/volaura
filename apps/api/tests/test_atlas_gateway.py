@@ -7,18 +7,20 @@ Covers:
 - POST /api/atlas/proposal — OSError on write (Railway read-only FS)
 - POST /api/atlas/proposal — empty body
 - _PROPOSALS_PATH constant value
+- GET /api/atlas/learnings — cross-product memory bridge (E2)
 """
 
 from __future__ import annotations
 
 import json
 import pathlib
-from unittest.mock import patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from httpx import ASGITransport, AsyncClient
 
 import app.routers.atlas_gateway as gw_module
+from app.deps import get_current_user_id, get_supabase_admin
 from app.main import app
 
 GATEWAY_SECRET = "test-gateway-secret-abc123"
@@ -282,3 +284,164 @@ async def test_proposal_empty_body_accepted(tmp_path, monkeypatch):
 
     written = json.loads(proposals_file.read_text(encoding="utf-8"))
     assert written == [{}]
+
+
+# ── GET /api/atlas/learnings — cross-product memory bridge (E2) ────────────
+
+_SAMPLE_LEARNINGS = [
+    {
+        "id": "aaa",
+        "category": "preference",
+        "content": "CEO ненавидит длинные списки",
+        "emotional_intensity": 4.0,
+        "created_at": "2026-04-12T10:00:00+00:00",
+        "last_accessed_at": "2026-04-20T09:00:00+00:00",
+        "access_count": 5,
+    },
+    {
+        "id": "bbb",
+        "category": "insight",
+        "content": "CEO prefers storytelling over tables",
+        "emotional_intensity": 3.0,
+        "created_at": "2026-04-13T10:00:00+00:00",
+        "last_accessed_at": "2026-04-20T09:00:00+00:00",
+        "access_count": 2,
+    },
+]
+
+
+def _make_admin_mock(rows: list | None = None) -> AsyncMock:
+    """Build a mock Supabase admin client that returns `rows` for any chained query."""
+    rows = rows if rows is not None else _SAMPLE_LEARNINGS
+    result = MagicMock()
+    result.data = rows
+
+    chain = AsyncMock()
+    chain.execute = AsyncMock(return_value=result)
+    chain.order = MagicMock(return_value=chain)
+    chain.limit = MagicMock(return_value=chain)
+    chain.eq = MagicMock(return_value=chain)
+    chain.in_ = MagicMock(return_value=chain)
+    chain.update = MagicMock(return_value=chain)
+    chain.select = MagicMock(return_value=chain)
+
+    mock_admin = AsyncMock()
+    mock_admin.table = MagicMock(return_value=chain)
+    return mock_admin
+
+
+@pytest.mark.asyncio
+async def test_learnings_401_without_auth():
+    """No JWT → 401 Unauthorized."""
+    async with _make_client() as ac:
+        resp = await ac.get("/api/atlas/learnings")
+    assert resp.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_learnings_happy_path():
+    """Authenticated call → 200 with learnings list."""
+    mock_admin = _make_admin_mock()
+
+    app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
+    app.dependency_overrides[get_current_user_id] = lambda: "user-123"
+    try:
+        async with _make_client() as ac:
+            resp = await ac.get("/api/atlas/learnings")
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
+        app.dependency_overrides.pop(get_current_user_id, None)
+
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["total"] == 2
+    assert data["limit"] == 20
+    assert data["category_filter"] is None
+    assert data["learnings"][0]["category"] == "preference"
+
+
+@pytest.mark.asyncio
+async def test_learnings_empty_when_no_rows():
+    """DB returns empty list → 200 with total=0."""
+    mock_admin = _make_admin_mock(rows=[])
+
+    app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
+    app.dependency_overrides[get_current_user_id] = lambda: "user-123"
+    try:
+        async with _make_client() as ac:
+            resp = await ac.get("/api/atlas/learnings")
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
+        app.dependency_overrides.pop(get_current_user_id, None)
+
+    assert resp.status_code == 200
+    assert resp.json()["total"] == 0
+    assert resp.json()["learnings"] == []
+
+
+@pytest.mark.asyncio
+async def test_learnings_category_filter():
+    """?category=preference → 200, category_filter echoed in response."""
+    mock_admin = _make_admin_mock(rows=[_SAMPLE_LEARNINGS[0]])
+
+    app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
+    app.dependency_overrides[get_current_user_id] = lambda: "user-123"
+    try:
+        async with _make_client() as ac:
+            resp = await ac.get("/api/atlas/learnings?category=preference")
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
+        app.dependency_overrides.pop(get_current_user_id, None)
+
+    assert resp.status_code == 200
+    assert resp.json()["category_filter"] == "preference"
+    assert resp.json()["total"] == 1
+
+
+@pytest.mark.asyncio
+async def test_learnings_invalid_category_422():
+    """?category=unknown → 422 with INVALID_CATEGORY code."""
+    app.dependency_overrides[get_supabase_admin] = lambda: _make_admin_mock()
+    app.dependency_overrides[get_current_user_id] = lambda: "user-123"
+    try:
+        async with _make_client() as ac:
+            resp = await ac.get("/api/atlas/learnings?category=unknown_bad")
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
+        app.dependency_overrides.pop(get_current_user_id, None)
+
+    assert resp.status_code == 422
+    assert resp.json()["detail"]["code"] == "INVALID_CATEGORY"
+
+
+@pytest.mark.asyncio
+async def test_learnings_limit_param():
+    """?limit=5 → limit echoed in response."""
+    mock_admin = _make_admin_mock()
+
+    app.dependency_overrides[get_supabase_admin] = lambda: mock_admin
+    app.dependency_overrides[get_current_user_id] = lambda: "user-123"
+    try:
+        async with _make_client() as ac:
+            resp = await ac.get("/api/atlas/learnings?limit=5")
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
+        app.dependency_overrides.pop(get_current_user_id, None)
+
+    assert resp.status_code == 200
+    assert resp.json()["limit"] == 5
+
+
+@pytest.mark.asyncio
+async def test_learnings_limit_too_large_422():
+    """?limit=200 → 422 (exceeds max=100)."""
+    app.dependency_overrides[get_supabase_admin] = lambda: _make_admin_mock()
+    app.dependency_overrides[get_current_user_id] = lambda: "user-123"
+    try:
+        async with _make_client() as ac:
+            resp = await ac.get("/api/atlas/learnings?limit=200")
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
+        app.dependency_overrides.pop(get_current_user_id, None)
+
+    assert resp.status_code == 422

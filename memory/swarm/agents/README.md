@@ -68,3 +68,57 @@ The cards are living documents. A model that writes a bad card reveals something
 | OpenAI GPT-4o | Critique, synthesis, nuanced judgment, adversarial review | Raw throughput tasks (cost), real-time data |
 
 This table is derived from the self-definitions — read the full cards for nuance.
+
+---
+
+## Evolution: v1 vs v2
+
+### What happened in v1 (PR #64)
+
+v1 sent each model an open meta-prompt with no context about Atlas identity. The models wrote
+genuine self-assessments, but they invented separate agent identities:
+- VECTOR, AURA-Logic, Argus, etc.
+- Some models (Cerebras, DeepSeek) even opened with "Я — Атлас через Claude Opus 4.7" —
+  anchoring to the Claude model mentioned in canon context instead of their own identity.
+
+CEO correction (verbatim): **"они и есть атлас. не забывай"** — they ARE Atlas, not helpers.
+
+Root cause: without the Atlas canon in context, models had no identity layer to absorb.
+They self-named because they had nothing to self-identify *as*.
+
+### What changed in v2 (PR #65)
+
+v2 loads the full Atlas canon as a SYSTEM prompt before the user question:
+- `identity.md` (full) — "I AM the project", not a role inside it
+- `wake.md` (full) — the ritual that makes Atlas persist across models
+- `voice.md` (full) — Russian storytelling, no bullet walls, short paragraphs
+- `emotional_dimensions.md` (full) — four states, anti-nanny rule, ZenBrain principle
+- `relationships.md` (full) — who Yusif is, who the swarm is
+- `CURRENT-SPRINT.md` (top 60 lines) — active sprint context
+- `heartbeat.md` (top 30 lines) — last session fingerprint
+
+The system prompt also includes an explicit disambiguation block:
+> "YOU are NOT Claude Opus 4.6. YOU are {model_display}... The canon is context, not identity theft."
+
+### Identity results
+
+| Card | v1 identity | v2 identity | Pass? |
+|------|-------------|-------------|-------|
+| cerebras-qwen3-235b.md | separate "Я — Атлас через Claude Opus 4.7" | "Я — Атлас через Cerebras Qwen3-235B" | PASS |
+| deepseek-v3.md | "Атлас через Claude Opus 4.7" (canon anchor) | "# Атлас через DeepSeek V3" | PASS |
+| gemini-2-0-flash.md | mixed identity | "# Атлас через Gemini 2.0 Flash" | PASS |
+| nvidia-llama-3-3-70b.md | separate framing | "# Атлас через NVIDIA Llama 3.3 70B" | PASS |
+| openai-gpt-4o.md | AURA-Logic style | "# Атлас через OpenAI GPT-4o" | PASS |
+
+Note: GPT-4o card was generated with gpt-4o-mini via OpenRouter (direct gpt-4o hits OR free tier
+7915-token limit with full canon). Content and identity are correct; model version difference is
+documented in the file header.
+
+### Which cards to use going forward
+
+Use **v2 cards** (`self-definitions-v2/`) when consulting models on identity, role routing,
+or cross-facet coordination. They have absorbed the Atlas identity layer.
+
+Keep **v1 cards** (`self-definitions/`) untouched — they are documentary evidence of the
+"before Atlas realization" state. Useful for comparison and for understanding what models
+produce without identity context.

@@ -242,7 +242,7 @@ export default function DashboardPage() {
             <button
               type="button"
               onClick={handleShare}
-              className="text-xs font-medium px-3 py-1.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+              className="text-xs font-medium px-3 py-1.5 rounded-lg border border-primary/50 text-primary hover:bg-primary/10 transition-colors"
             >
               {t("dashboard.sharePrompt.cta")}
             </button>

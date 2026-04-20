@@ -1,0 +1,61 @@
+name: Cleanup CI Test Users
+
+on:
+  schedule:
+    - cron: '0 6 * * 0'  # Weekly Sunday 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    name: Purge stale @test.volaura.app accounts
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Delete test accounts older than 1 hour
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          AUTH_HEADER="Authorization: Bearer $SUPABASE_SERVICE_KEY"
+          API_HEADER="apikey: $SUPABASE_SERVICE_KEY"
+
+          # List all test users
+          USERS=$(curl -s -H "$API_HEADER" -H "$AUTH_HEADER" \
+            "$SUPABASE_URL/auth/v1/admin/users?page=1&per_page=200" \
+            | python3 -c "
+          import json, sys
+          from datetime import datetime, timezone, timedelta
+          data = json.load(sys.stdin)
+          users = data.get('users', data) if isinstance(data, dict) else data
+          cutoff = datetime.now(timezone.utc) - timedelta(hours=1)
+          for u in (users or []):
+              email = u.get('email', '')
+              if email.endswith('@test.volaura.app'):
+                  created = datetime.fromisoformat(u['created_at'].replace('Z', '+00:00'))
+                  if created < cutoff:
+                      print(u['id'])
+          ")
+
+          if [ -z "$USERS" ]; then
+            echo "No stale test users found"
+            exit 0
+          fi
+
+          COUNT=0
+          for USER_ID in $USERS; do
+            for TABLE in consent_events automated_decision_log human_review_requests; do
+              curl -s -X DELETE \
+                -H "$API_HEADER" -H "$AUTH_HEADER" \
+                "$SUPABASE_URL/rest/v1/$TABLE?user_id=eq.$USER_ID" \
+                -o /dev/null
+            done
+
+            HTTP=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE \
+              -H "$API_HEADER" -H "$AUTH_HEADER" \
+              "$SUPABASE_URL/auth/v1/admin/users/$USER_ID")
+            echo "Deleted $USER_ID (HTTP $HTTP)"
+            COUNT=$((COUNT + 1))
+          done
+
+          echo "Total purged: $COUNT stale test accounts"

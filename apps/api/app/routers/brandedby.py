@@ -38,6 +38,32 @@ router = APIRouter(prefix="/brandedby", tags=["BrandedBy"])
 QUEUE_SKIP_CRYSTAL_COST = 25  # crystals to skip generation queue
 
 
+async def _get_atlas_note_for_user(user_id: str, db: SupabaseAdmin) -> str | None:
+    """E5 concept seed: read top atlas_learning and compose a 1-sentence memory anchor.
+
+    Fire-and-forget: caller wraps in try/except so failure never blocks the generation.
+    Full LLM-composed twin briefing deferred to E7 sprint.
+    """
+    result = (
+        await db.table("atlas_learnings")
+        .select("content, category")
+        .eq("user_id", user_id)
+        .order("emotional_intensity", desc=True)
+        .limit(1)
+        .execute()
+    )
+    if not result.data:
+        return None
+    row = result.data[0]
+    content: str = (row.get("content") or "").strip()
+    category: str = (row.get("category") or "insight").replace("_", " ")
+    if not content:
+        return None
+    # Trim long content to keep the note concise
+    snippet = content[:120] + ("…" if len(content) > 120 else "")
+    return f"Atlas {category}: {snippet}"
+
+
 # ── AI Twin CRUD ──────────────────────────────────────────────
 
 
@@ -388,6 +414,13 @@ async def create_generation(
         )
         queue_position = (queued.count or 0) + 1
 
+    # E5: attach Atlas memory anchor (fire-and-forget — never blocks the generation)
+    atlas_note: str | None = None
+    try:
+        atlas_note = await _get_atlas_note_for_user(user_id, db)
+    except Exception as e:
+        logger.debug("E5 atlas_note fetch skipped", user_id=user_id, error=str(e))
+
     row = {
         "twin_id": str(body.twin_id),
         "user_id": user_id,
@@ -396,6 +429,7 @@ async def create_generation(
         "status": "queued",
         "queue_position": queue_position,
         "crystal_cost": crystal_cost,
+        "atlas_note": atlas_note,
     }
     result = await db.schema("brandedby").table("generations").insert(row).execute()
 

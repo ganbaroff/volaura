@@ -324,6 +324,37 @@ export function useAdminLiveEvents(limit = 50) {
   });
 }
 
+// ── M2 Admin Growth Funnel (2026-04-18) ──────────────────────────────────────
+// Backend: apps/api/app/routers/admin.py → /api/admin/growth
+// Schema:  apps/api/app/schemas/admin.py → AdminGrowthFunnel
+// Page:    apps/web/src/app/[locale]/admin/growth/page.tsx
+
+export interface AdminGrowthFunnel {
+  signups_7d: number;
+  profiles_created_7d: number;
+  assessments_started_7d: number;
+  assessments_completed_7d: number;
+  aura_scores_7d: number;
+  computed_at: string;
+}
+
+export function useAdminGrowth() {
+  const getToken = useAuthToken();
+
+  return useQuery<AdminGrowthFunnel, ApiError>({
+    queryKey: ["admin", "growth"],
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      return apiFetch<AdminGrowthFunnel>("/api/admin/growth", { token });
+    },
+    staleTime: 60_000,
+    refetchInterval: 120_000,
+    retry: 1,
+    throwOnError: false,
+  });
+}
+
 export function useSwarmFindings(category?: string, minImportance?: number) {
   const getToken = useAuthToken();
 

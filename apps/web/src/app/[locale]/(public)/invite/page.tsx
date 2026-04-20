@@ -5,10 +5,10 @@
  *
  * Usage: /az/invite?code=BETA_01&utm_source=linkedin&utm_campaign=beta_week1
  *
- * - Validates invite code (simple allowlist for now — no backend lookup needed for beta)
+ * - Validates invite code server-side (POST /api/invite/validate) — no allowlist in bundle
  * - Stores UTM params via utm-capture (already handled by auth callback)
  * - Redirects to /signup?type=professional (or ?type=organization) with code preserved
- * - Tracks invite code in sessionStorage so callback can log attribution
+ * - Tracks invite code in localStorage so callback can log attribution
  *
  * Growth agent recommendation: skip waitlist entirely for warm contacts.
  * Warm contacts expect instant access — a waitlist queue kills conversion.
@@ -29,18 +29,7 @@ export default function InvitePage() {
   );
 }
 
-// Simple beta allowlist — replace with DB lookup post-beta
-const VALID_BETA_CODES = new Set([
-  "BETA_01", "BETA_02", "BETA_03", "BETA_04", "BETA_05",
-  "BETA_06", "BETA_07", "BETA_08", "BETA_09", "BETA_10",
-  "BETA_11", "BETA_12", "BETA_13", "BETA_14", "BETA_15",
-  "BETA_16", "BETA_17", "BETA_18", "BETA_19", "BETA_20",
-  "BETA_21", "BETA_22", "BETA_23", "BETA_24", "BETA_25",
-  "BETA_26", "BETA_27", "BETA_28", "BETA_29", "BETA_30",
-  "ORG_01", "ORG_02", "ORG_03", "ORG_04", "ORG_05",
-  // Open invite (from LinkedIn post CTA — no personal code needed)
-  "OPEN",
-]);
+type ValidationState = "pending" | "valid" | "invalid";
 
 function InviteContent() {
   const { locale } = useParams<{ locale: string }>();
@@ -53,17 +42,55 @@ function InviteContent() {
   const isOrgCode = code.startsWith("ORG_");
   const accountType = isOrgCode ? "organization" : (type as string);
 
-  const isValid = VALID_BETA_CODES.has(code);
+  const [validation, setValidation] = useState<ValidationState>("pending");
   const [countdown, setCountdown] = useState(3);
 
   useEffect(() => {
-    if (!isValid) return;
+    let cancelled = false;
 
-    // BUG-GROWTH-1 FIX: localStorage persists across page refreshes; sessionStorage is lost
-    // on browser refresh — invite codes were silently dropped before signup completed
-    localStorage.setItem("invite_code", code);
+    async function validate() {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL ?? "https://volauraapi-production.up.railway.app"}/api/invite/validate`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code }),
+          }
+        );
 
-    // Auto-redirect after countdown
+        if (!res.ok) {
+          if (!cancelled) setValidation("invalid");
+          return;
+        }
+
+        const json = await res.json();
+        const isValid: boolean = json?.data?.valid === true;
+
+        if (cancelled) return;
+        setValidation(isValid ? "valid" : "invalid");
+
+        if (isValid) {
+          // BUG-GROWTH-1 FIX: localStorage persists across page refreshes;
+          // sessionStorage is lost on browser refresh — invite codes were silently
+          // dropped before signup completed.
+          localStorage.setItem("invite_code", code);
+        }
+      } catch {
+        if (!cancelled) setValidation("invalid");
+      }
+    }
+
+    void validate();
+    return () => {
+      cancelled = true;
+    };
+  }, [code]);
+
+  // Auto-redirect countdown only starts after server confirms code is valid
+  useEffect(() => {
+    if (validation !== "valid") return;
+
     const interval = setInterval(() => {
       setCountdown((c) => {
         if (c <= 1) {
@@ -76,7 +103,29 @@ function InviteContent() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isValid, code, accountType, locale, router]);
+  }, [validation, code, accountType, locale, router]);
+
+  // Loading skeleton — matches final content shape (no spinner per design rules)
+  if (validation === "pending") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <div className="w-full max-w-md text-center space-y-6">
+          <div className="space-y-1">
+            <h1 className="text-2xl font-black tracking-tight text-foreground">VOLAURA</h1>
+            <div className="h-4 w-48 mx-auto animate-pulse rounded bg-muted" />
+          </div>
+          <div className="h-16 w-16 mx-auto animate-pulse rounded-full bg-muted" />
+          <div className="space-y-2">
+            <div className="h-6 w-40 mx-auto animate-pulse rounded bg-muted" />
+            <div className="h-4 w-64 mx-auto animate-pulse rounded bg-muted" />
+          </div>
+          <div className="h-12 w-full animate-pulse rounded-xl bg-muted" />
+        </div>
+      </div>
+    );
+  }
+
+  const isValid = validation === "valid";
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
@@ -135,7 +184,7 @@ function InviteContent() {
         ) : (
           <>
             <div className="flex justify-center">
-              <XCircle className="h-16 w-16 text-destructive" />
+              <XCircle className="h-16 w-16 text-[#D4B4FF]" />
             </div>
 
             <div className="space-y-2">

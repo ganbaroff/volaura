@@ -17,6 +17,7 @@ Cross-references:
 
 from __future__ import annotations
 
+import random
 from typing import Any
 
 from loguru import logger
@@ -238,3 +239,117 @@ async def emit_lifesim_crystal_spent_event(
             shop_item=shop_item,
             error=str(exc)[:200],
         )
+
+
+# ── E3: atlas_learnings bias ──────────────────────────────────────────────────
+
+# Maps substrings (matched against learning content lowercased) to lifesim_events
+# category slugs. Multiple keywords can map to the same category — weights add up.
+_KEYWORD_CATEGORY_MAP: dict[str, str] = {
+    # finance / money
+    "финанс": "finance",
+    "деньг": "finance",
+    "независимост": "finance",
+    "инвестиц": "finance",
+    "бизнес": "career",
+    "стартап": "career",
+    # career
+    "карьер": "career",
+    "работ": "career",
+    "профессион": "career",
+    "предпринимат": "career",
+    # education
+    "образован": "education",
+    "учёб": "education",
+    "учеб": "education",
+    "знани": "education",
+    "навык": "education",
+    # health
+    "здоровь": "health",
+    "спорт": "health",
+    "фитнес": "health",
+    # social / family
+    "семь": "family",
+    "отношени": "social",
+    "друзь": "social",
+    "общени": "social",
+    # travel / hobby
+    "путешеств": "travel",
+    "хобби": "hobby",
+    "творчеств": "hobby",
+}
+
+
+def _extract_category_bias(learnings: list[dict]) -> dict[str, float]:
+    """Compute lifesim category weight boosts from atlas_learnings rows.
+
+    Pure function — no DB calls.
+
+    Args:
+      learnings: list of atlas_learnings dicts with at least 'content' and
+                 'emotional_intensity' fields.
+
+    Returns:
+      dict mapping lifesim category slug → extra weight (above the default 1.0).
+      Categories with no match are absent; caller handles missing key as 0 extra.
+    """
+    bias: dict[str, float] = {}
+    for row in learnings:
+        content = (row.get("content") or "").lower()
+        intensity = float(row.get("emotional_intensity") or 0.0)
+        # weight_boost: 0.5 at intensity=0, 2.0 at intensity=5
+        weight_boost = 0.5 + (intensity / 5.0) * 1.5
+        for keyword, category in _KEYWORD_CATEGORY_MAP.items():
+            if keyword in content:
+                bias[category] = bias.get(category, 0.0) + weight_boost
+    return bias
+
+
+def pick_event_with_bias(eligible: list[dict], bias: dict[str, float]) -> dict:
+    """Weighted-random selection of one event from the eligible pool.
+
+    Pure function. Falls back to uniform random when bias is empty.
+
+    Args:
+      eligible: non-empty list of event dicts (caller must guard empty case).
+      bias: category → extra weight (from _extract_category_bias). Default weight
+            per event is 1.0; the bias value is ADDED to that base.
+
+    Returns:
+      One event dict selected proportionally to its weight.
+
+    Raises:
+      IndexError: if eligible is empty (caller should guard).
+    """
+    weights = [1.0 + bias.get(event.get("category", ""), 0.0) for event in eligible]
+    return random.choices(eligible, weights=weights, k=1)[0]
+
+
+async def get_atlas_learnings_for_bias(db: Any) -> list[dict]:
+    """Fetch a small subset of atlas_learnings to drive event bias.
+
+    Fire-and-forget: on any error, logs a warning and returns [] so the
+    Life Feed is never blocked by atlas_learnings availability.
+
+    Args:
+      db: Supabase client (admin — atlas_learnings is CEO-only, no user RLS).
+
+    Returns:
+      Up to 20 rows with category, content, emotional_intensity.
+    """
+    try:
+        result = await (
+            db.table("atlas_learnings")
+            .select("category, content, emotional_intensity")
+            .in_("category", ["preference", "insight", "project_context"])
+            .order("emotional_intensity", desc=True)
+            .limit(20)
+            .execute()
+        )
+        return list(result.data or [])
+    except Exception as exc:
+        logger.warning(
+            "atlas_learnings fetch failed — falling back to unbiased selection",
+            error=str(exc)[:200],
+        )
+        return []

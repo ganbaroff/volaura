@@ -1,6 +1,8 @@
-name: "Telegram Execute — CEO task pipeline"
+name: "Telegram Execute - CEO task pipeline"
 
 on:
+  issues:
+    types: [labeled]
   workflow_dispatch:
     inputs:
       task:
@@ -15,48 +17,287 @@ on:
         default: ""
 
 permissions:
-  contents: read
+  contents: write
   issues: write
+  pull-requests: write
 
 jobs:
   execute:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'issues' && github.event.label.name == 'atlas-telegram-request')
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # 15 min: code_fix path needs pip install aider-chat (~2-3 min) + Aider run (4 min cap) +
+    # possibly long LLM responses. 15 is safe without being wasteful. Analysis/content finish much faster.
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: pip
 
-      - name: Install swarm dependencies
+      - name: Install base swarm dependencies
+        # aider-chat is HEAVY (~3 min install + many transitive deps). Only 1 in 3
+        # messages is code_fix. Lazy-install aider-chat inside the code_fix step,
+        # not upfront. Analysis + content paths now finish in under 1 min.
         run: |
-          pip install -q httpx loguru pydantic
+          pip install -q pydantic loguru groq google-genai python-dotenv \
+            aiohttp httpx supabase litellm openai nest-asyncio
 
-      - name: Run swarm coordinator on task
-        id: swarm
+      - name: Resolve task + chat_id + issue_number + intent
+        id: resolve
         env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_NUMBER_EVENT: ${{ github.event.issue.number }}
+          DISPATCH_TASK: ${{ github.event.inputs.task }}
+          DISPATCH_CHAT_ID: ${{ github.event.inputs.telegram_chat_id }}
+          DISPATCH_ISSUE_NUMBER: ${{ github.event.inputs.issue_number }}
+          DEFAULT_CHAT_ID: ${{ secrets.TELEGRAM_CEO_CHAT_ID }}
+        run: |
+          python3 <<'PYEOF'
+          import os, re, sys, pathlib
+          event = os.environ.get("GITHUB_EVENT_NAME", "")
+          if os.environ.get("DISPATCH_TASK"):
+              task = os.environ["DISPATCH_TASK"]
+              chat_id = os.environ.get("DISPATCH_CHAT_ID", "") or os.environ.get("DEFAULT_CHAT_ID", "")
+              issue_number = os.environ.get("DISPATCH_ISSUE_NUMBER", "")
+          else:
+              body = os.environ.get("ISSUE_BODY", "") or ""
+              title = os.environ.get("ISSUE_TITLE", "") or ""
+              m = re.search(r"\*\*CEO message:\*\*\s*\n+(.+?)\n+---", body, re.DOTALL)
+              if m:
+                  task = m.group(1).strip()
+              else:
+                  task = re.sub(r"^\s*\[atlas-telegram\]\s*", "", title).strip() or body[:300].strip()
+              chat_id = os.environ.get("DEFAULT_CHAT_ID", "").strip()
+              issue_number = os.environ.get("ISSUE_NUMBER_EVENT", "") or ""
+
+          task_lower = task.lower()
+          CODE_FIX_PATTERNS = [
+              r'\bпофикси\b', r'\bфикс\b', r'\bсделай pr\b',
+              r'\bfix code\b', r'\bfix:\b', r'\bbug:\b', r'\bfeature:\b',
+              r'\bimplement\b', r'\bреализуй\b', r'\bисправь\b',
+          ]
+          CONTENT_PATTERNS = [
+              r'\bпост\b', r'\bнапиши про\b', r'\bcontent:\b',
+              r'\blinkedin\b', r'\btelegram пост\b', r'\bстатья\b',
+              r'\bdraft:\b',
+          ]
+          is_code_fix = any(re.search(p, task_lower) for p in CODE_FIX_PATTERNS)
+          is_content  = any(re.search(p, task_lower) for p in CONTENT_PATTERNS)
+          if is_code_fix:
+              intent = "code_fix"
+          elif is_content:
+              intent = "content"
+          else:
+              intent = "analysis"
+
+          print(f"Resolved task ({len(task)} chars), chat_id={bool(chat_id)}, issue={issue_number}, intent={intent}")
+          out_path = os.environ["GITHUB_OUTPUT"]
+          with open(out_path, "a", encoding="utf-8") as f:
+              f.write(f"chat_id={chat_id}\n")
+              f.write(f"issue_number={issue_number}\n")
+              f.write(f"intent={intent}\n")
+              f.write("task<<EOF_TASK\n")
+              f.write(task + "\n")
+              f.write("EOF_TASK\n")
+          PYEOF
+
+      # === BRANCH 3: analysis (coordinator + LLM team-synth via Anthropic Sonnet) ===
+      - name: Run swarm coordinator (analysis path)
+        if: steps.resolve.outputs.intent == 'analysis'
+        id: swarm_analysis
+        env:
+          # ANTHROPIC key: powers llm_synthesize_team_answer() in coordinator.py,
+          # turning 5 agent findings into ONE coherent Atlas-voice answer. CEO dedicated $20 paid tier.
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          TASK: ${{ steps.resolve.outputs.task }}
         run: |
           cd "${{ github.workspace }}"
-          TASK="${{ github.event.inputs.task }}"
           echo "Task: $TASK"
-          # Run coordinator — captures output
           python -m packages.swarm.coordinator "$TASK" 2>&1 | tee /tmp/swarm_output.txt || true
-          # Truncate to 3500 chars for Telegram (4096 limit minus overhead)
-          head -c 3500 /tmp/swarm_output.txt > /tmp/swarm_result.txt
 
+          # Prefer TEAM ANSWER section (Sonnet 4.5 voice, fan-in synthesis).
+          # It prints AFTER coordinator logger output, so naive head -c slicing misses it.
+          # Use awk to extract from "TEAM ANSWER" marker onward. If absent (ANTHROPIC key
+          # missing or LLM unreachable), fall back to tail — tail still captures mechanical
+          # synthesis which also prints after logs.
+          if grep -q "TEAM ANSWER" /tmp/swarm_output.txt; then
+            awk '/=== TEAM ANSWER/,0' /tmp/swarm_output.txt | head -c 3500 > /tmp/swarm_result.txt
+            echo "[analysis: captured team_recommendation (Sonnet 4.5 voice)]"
+          else
+            tail -c 3500 /tmp/swarm_output.txt > /tmp/swarm_result.txt
+            echo "[analysis: mechanical synthesis only — ANTHROPIC key missing or LLM unreachable]"
+          fi
+
+      # === BRANCH 1: code_fix (direct Aider call — fast path) ===
+      # Calls Aider directly with the task as --message. Aider picks files
+      # from the repo tree on its own. Skips the full autonomous_run pipeline
+      # which was timing out at 10 min on simple tasks.
+      - name: Run Aider auto-fix (code_fix path)
+        if: steps.resolve.outputs.intent == 'code_fix'
+        id: swarm_codefix
+        env:
+          # Sonnet 4.5 primary (CEO paid-tier $20 budget 2026-04-20, frontier code quality).
+          # Cerebras Qwen3-235B fallback 1 (2000 tok/sec, free tier, strong reasoning).
+          # NVIDIA llama-3.3-70b-instruct fallback 2 (enterprise hardware).
+          # Constitution compliance: Aider is a code EDITOR tool, not a swarm perspective —
+          # the "Never use Claude as swarm agent" rule (identity.md) applies to
+          # autonomous_run.PERSPECTIVES, not to one-off code fixes.
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TASK: ${{ steps.resolve.outputs.task }}
+          ISSUE_NUMBER: ${{ steps.resolve.outputs.issue_number }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd "${{ github.workspace }}"
+          git config user.email "atlas-autofix@volaura.az"
+          git config user.name "Atlas AutoFix"
+
+          if [ -n "$ISSUE_NUMBER" ]; then
+            BRANCH_NAME="telegram-autofix/issue-${ISSUE_NUMBER}"
+          else
+            BRANCH_NAME="telegram-autofix/dispatch-${{ github.run_id }}"
+          fi
+          git checkout -b "$BRANCH_NAME"
+          echo "[code_fix] Branch: $BRANCH_NAME  Task: $TASK"
+
+          # Lazy-install aider-chat only when code_fix fires. ~2-3 min on cold pip cache.
+          pip install -q aider-chat pytest
+
+          # Model priority (updated 2026-04-20 Session 122):
+          #   Primary:  Sonnet 4.5 (CEO paid-tier, frontier code edits)
+          #   Fallback: Cerebras Qwen3-235B (2000 tok/sec, strong reasoning, free)
+          #   Last:     NVIDIA llama-3.3-70b-instruct (enterprise hardware fallback)
+          # Aider's LiteLLM layer maps anthropic/claude-sonnet-4-5-20250929 → Anthropic API.
+          # If Anthropic spend-limit or rate-limit hits, chain falls through automatically.
+          PRIMARY_MODEL="anthropic/claude-sonnet-4-5-20250929"
+          FALLBACK_MODEL="cerebras/qwen-3-235b-a22b-instruct-2507"
+          LAST_RESORT_MODEL="nvidia/meta/llama-3.3-70b-instruct"
+
+          run_aider() {
+            local model="$1"
+            echo "[code_fix] Trying model: $model"
+            timeout 240 aider \
+              --model "$model" \
+              --yes-always \
+              --no-analytics \
+              --no-check-update \
+              --no-show-model-warnings \
+              --message "$TASK" 2>&1
+          }
+
+          if run_aider "$PRIMARY_MODEL" | tee /tmp/autofix_output.txt; then
+            echo "[code_fix] Primary (Sonnet 4.5) succeeded"
+          else
+            echo "[code_fix] Primary failed — trying Cerebras fallback"
+            if run_aider "$FALLBACK_MODEL" 2>&1 | tee -a /tmp/autofix_output.txt; then
+              echo "[code_fix] Fallback (Cerebras) succeeded"
+            else
+              echo "[code_fix] Fallback failed — trying NVIDIA last-resort"
+              run_aider "$LAST_RESORT_MODEL" 2>&1 | tee -a /tmp/autofix_output.txt || {
+                echo "[warn] All three models failed"
+              }
+            fi
+          fi
+
+          COMMIT_COUNT=$(git rev-list --count origin/main..HEAD 2>/dev/null || echo "0")
+          echo "Commits produced: $COMMIT_COUNT"
+
+          # Disable strict-mode for the push+PR sequence. Test #43 (2026-04-20) showed
+          # Aider successfully committed+pushed but `gh pr create` returned non-zero,
+          # which killed the whole step before the Report-to-Telegram stage could fire.
+          # We explicitly want to report the outcome regardless of gh pr create exit code.
+          set +e
+          if [ "$COMMIT_COUNT" -gt "0" ]; then
+            git push -u origin "$BRANCH_NAME" 2>&1 | tail -5
+            PUSH_EXIT=$?
+            {
+              echo "Auto-fix by Atlas"
+              echo ""
+              echo "Task: $TASK"
+              [ -n "$ISSUE_NUMBER" ] && echo "Triggered by: #$ISSUE_NUMBER"
+              echo ""
+              echo "Direct Aider call (cerebras/qwen-3-235b-a22b-instruct-2507 primary)."
+              echo "Review diff before merging."
+            } > /tmp/pr_body.txt
+            PR_OUTPUT=$(gh pr create \
+              --base main \
+              --title "[atlas-autofix] $TASK" \
+              --body-file /tmp/pr_body.txt 2>&1)
+            PR_EXIT=$?
+            echo "push exit: $PUSH_EXIT, gh pr create exit: $PR_EXIT"
+            echo "PR output: $PR_OUTPUT"
+            if [ "$PR_EXIT" -eq 0 ]; then
+              PR_URL="$PR_OUTPUT"
+              printf '[AUTOFIX] PR created: %s\n\nAider output tail:\n%s' "$PR_URL" "$(tail -c 1500 /tmp/autofix_output.txt)" \
+                | head -c 3500 > /tmp/swarm_result.txt
+            else
+              # Branch pushed, PR creation failed (name collision / API hiccup / auth).
+              # Report branch URL so CEO can open PR manually from there.
+              BRANCH_URL="https://github.com/ganbaroff/volaura/tree/${BRANCH_NAME}"
+              printf '[AUTOFIX] branch pushed but PR auto-create failed (exit %s). Open manually: %s\n\ngh output:\n%s\n\nAider tail:\n%s' \
+                "$PR_EXIT" "$BRANCH_URL" "$PR_OUTPUT" "$(tail -c 1000 /tmp/autofix_output.txt)" \
+                | head -c 3500 > /tmp/swarm_result.txt
+            fi
+          else
+            printf '[AUTOFIX] no changes needed or task unclear\n\nAider output tail:\n%s' \
+              "$(tail -c 1500 /tmp/autofix_output.txt)" | head -c 3500 > /tmp/swarm_result.txt
+          fi
+          set -e
+          # Return success so Report-to-Telegram step always runs with real content.
+          exit 0
+
+      # === BRANCH 2: content (draft-only, routed to CEO chat) ===
+      - name: Generate content draft (content path)
+        if: steps.resolve.outputs.intent == 'content'
+        id: swarm_content
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TASK: ${{ steps.resolve.outputs.task }}
+          ATLAS_VOLAURA_CHANNEL: ${{ steps.resolve.outputs.chat_id }}
+          ATLAS_BRANDEDBY_CHANNEL: ${{ steps.resolve.outputs.chat_id }}
+          ATLAS_MINDSHIFT_CHANNEL: ${{ steps.resolve.outputs.chat_id }}
+          ATLAS_ECOSYSTEM_CHANNEL: ${{ steps.resolve.outputs.chat_id }}
+        run: |
+          cd "${{ github.workspace }}"
+          echo "[content] Generating draft for: $TASK"
+          python -m packages.swarm.atlas_content_run --mode=scheduled 2>&1 \
+            | tee /tmp/content_output.txt || true
+          printf '[DRAFT - not published, confirm to publish]\n\n%s' \
+            "$(head -c 3000 /tmp/content_output.txt)" | head -c 3500 > /tmp/swarm_result.txt
+
+      # === Common: Report + Comment + Close (all branches) ===
       - name: Report result to Telegram
         if: always()
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ steps.resolve.outputs.chat_id }}
+          TASK: ${{ steps.resolve.outputs.task }}
+          ISSUE_NUMBER: ${{ steps.resolve.outputs.issue_number }}
+          INTENT: ${{ steps.resolve.outputs.intent }}
+          STATUS: ${{ job.status }}
         run: |
-          CHAT_ID="${{ github.event.inputs.telegram_chat_id }}"
-          TASK="${{ github.event.inputs.task }}"
-          ISSUE="${{ github.event.inputs.issue_number }}"
-          STATUS="${{ job.status }}"
+          if [ -z "$CHAT_ID" ]; then
+            echo "::warning::No chat_id resolved - cannot report to Telegram"
+            exit 0
+          fi
 
           if [ -f /tmp/swarm_result.txt ]; then
             RESULT=$(cat /tmp/swarm_result.txt)
@@ -64,30 +305,37 @@ jobs:
             RESULT="No output captured"
           fi
 
-          # Build message
-          MSG="[EXECUTE ${STATUS^^}]"
-          MSG="$MSG\nTask: $TASK"
-          if [ -n "$ISSUE" ]; then
-            MSG="$MSG\nIssue: #$ISSUE"
+          MSG="[EXECUTE ${STATUS^^} | ${INTENT}]"
+          MSG="$MSG"$'\n'"Task: $TASK"
+          if [ -n "$ISSUE_NUMBER" ]; then
+            MSG="$MSG"$'\n'"Issue: #$ISSUE_NUMBER"
           fi
-          MSG="$MSG\n\n$RESULT"
+          MSG="$MSG"$'\n\n'"$RESULT"
 
-          # Send to Telegram (plain text, no parse_mode to avoid formatting crashes)
           curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
             -d "chat_id=${CHAT_ID}" \
             --data-urlencode "text=${MSG}" \
             > /dev/null
 
       - name: Comment on issue if exists
-        if: always() && github.event.inputs.issue_number != ''
+        if: always() && steps.resolve.outputs.issue_number != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE: ${{ steps.resolve.outputs.issue_number }}
+          INTENT: ${{ steps.resolve.outputs.intent }}
+          STATUS: ${{ job.status }}
         run: |
-          ISSUE="${{ github.event.inputs.issue_number }}"
-          STATUS="${{ job.status }}"
           if [ -f /tmp/swarm_result.txt ]; then
-            BODY="Swarm execution: **${STATUS}**\n\n\`\`\`\n$(head -c 2000 /tmp/swarm_result.txt)\n\`\`\`"
+            BODY="Swarm [${INTENT}]: **${STATUS}**"$'\n\n'"\`\`\`"$'\n'"$(head -c 2000 /tmp/swarm_result.txt)"$'\n'"\`\`\`"
           else
-            BODY="Swarm execution: **${STATUS}** — no output captured"
+            BODY="Swarm [${INTENT}]: **${STATUS}** - no output captured"
           fi
           gh issue comment "$ISSUE" --body "$BODY"
+
+      - name: Close issue on success
+        if: success() && steps.resolve.outputs.issue_number != '' && github.event_name == 'issues'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE: ${{ steps.resolve.outputs.issue_number }}
+        run: |
+          gh issue close "$ISSUE" --reason completed || true

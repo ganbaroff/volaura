@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useTranslation, Trans } from "react-i18next";
-import { Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/auth-store";
@@ -137,9 +137,6 @@ function SignupForm() {
       });
 
       if (authError) {
-        // Shame-free (Law 3): no raw Supabase text to the user.
-        // We still log the real error for debugging.
-        console.error("[signup] supabase auth error:", authError);
         setError(
           t("auth.errorGeneric", {
             defaultValue: "Something's off on our side — please try again in a moment.",
@@ -176,8 +173,6 @@ function SignupForm() {
         router.push(`/${locale}/onboarding`);
       }
     } catch (err) {
-      // Network failure, CORS, JSON parse — never silent.
-      console.error("[signup] unexpected error:", err);
       setError(
         t("auth.errorGeneric", {
           defaultValue: "Something's off on our side — please try again in a moment.",
@@ -354,7 +349,7 @@ function SignupForm() {
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               aria-label={showPassword ? t("auth.hidePassword", { defaultValue: "Hide password" }) : t("auth.showPassword", { defaultValue: "Show password" })}
             >
-              {showPassword ? "👁" : "👁‍🗨"}
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
           </div>
           {/* Password requirements — inline hint (Security agent: conversion killer without this) */}

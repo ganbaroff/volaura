@@ -134,6 +134,7 @@ async def test_rapid_restart_blocked_at_25_minutes():
     admin = _build_chainable(
         [
             {"id": COMP_ID_A},  # competency id lookup
+            [],  # stale session check (none found)
         ]
     )
     user = _build_chainable(
@@ -171,6 +172,7 @@ async def test_rapid_restart_allowed_at_35_minutes():
     admin = _build_chainable(
         [
             {"id": COMP_ID_A},  # competency id lookup
+            [],  # stale session check (none found)
             [MCQ_QUESTION],  # questions list for session creation
         ]
     )
@@ -211,6 +213,7 @@ async def test_rapid_restart_only_applies_to_non_completed():
     admin = _build_chainable(
         [
             {"id": COMP_ID_A},
+            [],  # stale session check (none found)
             [MCQ_QUESTION],
         ]
     )
@@ -252,6 +255,7 @@ async def test_rapid_restart_returns_retry_after_minutes():
     admin = _build_chainable(
         [
             {"id": COMP_ID_A},
+            [],  # stale session check (none found)
         ]
     )
     user = _build_chainable(
@@ -296,6 +300,7 @@ async def test_rapid_restart_allows_different_competency():
     admin = _build_chainable(
         [
             {"id": COMP_ID_B},  # competency B id lookup
+            [],  # stale session check (none found)
             [MCQ_QUESTION],  # questions for competency B
         ]
     )

@@ -43,7 +43,7 @@ export default function EventsPage() {
             {t("events.title")}
           </h1>
           <p className="mt-2 text-muted-foreground">
-            {t("events.noEventsSubtitle")}
+            {t("events.subtitle", { defaultValue: "Discover upcoming events and opportunities to prove your skills." })}
           </p>
         </div>
 

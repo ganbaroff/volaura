@@ -158,7 +158,7 @@ export default async function PublicProfilePage({ params }: Props) {
                   <p className="text-sm text-muted-foreground">{t("publicProfile.auraScore")}</p>
                   <p className="text-3xl sm:text-4xl font-bold">{aura.overall_score.toFixed(1)}</p>
                   <p className={`mt-1 text-sm font-semibold capitalize ${BADGE_COLORS[aura.badge_tier] ?? ""}`}>
-                    {aura.badge_tier} {aura.elite_status && "· Elite ⭐"}
+                    {aura.badge_tier} {aura.elite_status && `· ${t("publicProfile.elite")}`}
                   </p>
                   {profile.percentile_rank !== null && profile.percentile_rank !== undefined && (
                     <p className="mt-1.5 text-xs font-medium text-primary">

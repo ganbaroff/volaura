@@ -117,3 +117,25 @@ class AdminActivityEvent(BaseModel):
     user_id_prefix: str  # first 8 chars of UUID; full id would leak in admin logs
     created_at: datetime
     payload_summary: str | None = None  # truncated preview, <=120 chars
+
+
+# ── AARRR Growth Funnel (M2, 2026-04-18) ─────────────────────────────────────
+# 7-day acquisition/activation/retention signal for the /admin/growth page.
+# auth.users queried via service role (db_admin) — RLS bypassed intentionally.
+
+
+class AdminGrowthFunnel(BaseModel):
+    """AARRR funnel data for last 7 days."""
+
+    # Acquisition
+    signups_7d: int
+    # Activation
+    profiles_created_7d: int
+    # Engagement step 1
+    assessments_started_7d: int
+    # Engagement step 2 (completion)
+    assessments_completed_7d: int
+    # Retention signal
+    aura_scores_7d: int
+    # Meta
+    computed_at: datetime

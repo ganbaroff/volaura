@@ -9,7 +9,7 @@ from datetime import UTC, datetime, timedelta
 from fastapi import APIRouter, HTTPException, Query, Request
 from loguru import logger
 
-from app.deps import CurrentUserId, SupabaseAdmin, SupabaseUser
+from app.deps import CurrentUserId, OptionalCurrentUserId, SupabaseAdmin, SupabaseUser
 from app.middleware.rate_limit import RATE_DEFAULT, RATE_DISCOVERY, RATE_PROFILE_WRITE, limiter
 from app.schemas.organization import (
     AssignAssessmentRequest,
@@ -39,8 +39,10 @@ router = APIRouter(prefix="/organizations", tags=["Organizations"])
 
 @router.get("", response_model=list[OrganizationResponse])
 @limiter.limit(RATE_DEFAULT)
-async def list_organizations(request: Request, db: SupabaseAdmin, user_id: CurrentUserId) -> list[OrganizationResponse]:
-    """List all public organizations. Requires authentication to prevent unauthenticated enumeration."""
+async def list_organizations(
+    request: Request, db: SupabaseAdmin, user_id: OptionalCurrentUserId = None
+) -> list[OrganizationResponse]:
+    """List all public organizations. Rate-limited by IP."""
     result = (
         await db.table("organizations")
         .select("id, name, description, logo_url, type, website, is_active")
@@ -152,9 +154,9 @@ async def list_saved_searches_early(
 @router.get("/{org_id}", response_model=OrganizationResponse)
 @limiter.limit(RATE_DEFAULT)
 async def get_organization(
-    request: Request, org_id: str, db: SupabaseAdmin, user_id: CurrentUserId
+    request: Request, org_id: str, db: SupabaseAdmin, user_id: OptionalCurrentUserId = None
 ) -> OrganizationResponse:
-    """Get a public organization by ID. Requires authentication to prevent unauthenticated UUID enumeration."""
+    """Get a public organization by ID. Rate-limited by IP."""
     result = await db.table("organizations").select("*").eq("id", org_id).maybe_single().execute()
     if not result.data:
         raise HTTPException(status_code=404, detail={"code": "ORG_NOT_FOUND", "message": "Organization not found"})

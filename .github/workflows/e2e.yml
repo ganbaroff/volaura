@@ -37,6 +37,49 @@ jobs:
           E2E_TEST_SECRET: ${{ secrets.E2E_TEST_SECRET }}
         run: npx playwright test --reporter=list
 
+      - name: Cleanup test user from Supabase
+        if: always()
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          E2E_TEST_EMAIL: e2e_ci_${{ github.run_id }}@test.volaura.app
+        run: |
+          AUTH_HEADER="Authorization: Bearer $SUPABASE_SERVICE_KEY"
+          API_HEADER="apikey: $SUPABASE_SERVICE_KEY"
+
+          # Find user ID via GoTrue admin list (single test user expected)
+          USER_ID=$(curl -s -H "$API_HEADER" -H "$AUTH_HEADER" \
+            "$SUPABASE_URL/auth/v1/admin/users?page=1&per_page=50" \
+            | python3 -c "
+          import json, sys, os
+          data = json.load(sys.stdin)
+          users = data.get('users', data) if isinstance(data, dict) else data
+          email = os.environ['E2E_TEST_EMAIL']
+          for u in (users or []):
+              if u.get('email') == email:
+                  print(u['id']); break
+          " 2>/dev/null)
+
+          if [ -z "$USER_ID" ]; then
+            echo "Cleanup: test user not found (may not have been created)"
+            exit 0
+          fi
+
+          # Pre-clean tables with ON DELETE RESTRICT before admin delete
+          for TABLE in consent_events automated_decision_log human_review_requests; do
+            curl -s -X DELETE \
+              -H "$API_HEADER" -H "$AUTH_HEADER" \
+              -H "Content-Type: application/json" \
+              "$SUPABASE_URL/rest/v1/$TABLE?user_id=eq.$USER_ID" \
+              -o /dev/null
+          done
+
+          # Delete auth user (cascades to profiles + all CASCADE FK tables)
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE \
+            -H "$API_HEADER" -H "$AUTH_HEADER" \
+            "$SUPABASE_URL/auth/v1/admin/users/$USER_ID")
+          echo "Cleanup: deleted $USER_ID (HTTP $HTTP_CODE)"
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4

@@ -101,6 +101,7 @@ async def test_csp_header_present_in_production():
 @pytest.mark.asyncio
 async def test_register_rejects_empty_email(client: AsyncClient, mock_db):
     app.dependency_overrides[get_supabase_anon] = _make_admin_override(mock_db)
+    app.dependency_overrides[get_supabase_admin] = _make_admin_override(mock_db)
     resp = await client.post(
         "/api/auth/register",
         json={
@@ -111,11 +112,13 @@ async def test_register_rejects_empty_email(client: AsyncClient, mock_db):
     )
     assert resp.status_code == 422
     app.dependency_overrides.pop(get_supabase_anon, None)
+    app.dependency_overrides.pop(get_supabase_admin, None)
 
 
 @pytest.mark.asyncio
 async def test_register_rejects_empty_password(client: AsyncClient, mock_db):
     app.dependency_overrides[get_supabase_anon] = _make_admin_override(mock_db)
+    app.dependency_overrides[get_supabase_admin] = _make_admin_override(mock_db)
     resp = await client.post(
         "/api/auth/register",
         json={
@@ -126,6 +129,7 @@ async def test_register_rejects_empty_password(client: AsyncClient, mock_db):
     )
     assert resp.status_code == 422
     app.dependency_overrides.pop(get_supabase_anon, None)
+    app.dependency_overrides.pop(get_supabase_admin, None)
 
 
 @pytest.mark.asyncio

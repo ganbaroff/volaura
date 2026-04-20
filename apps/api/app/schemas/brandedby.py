@@ -104,3 +104,6 @@ class GenerationOut(BaseModel):
     processing_started_at: datetime | None = None
     completed_at: datetime | None = None
     created_at: datetime
+    # E5: Atlas memory anchor — 1-sentence note from atlas_learnings at generation time.
+    # Full integration (LLM-composed twin briefing) deferred to E7 sprint.
+    atlas_note: str | None = None

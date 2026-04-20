@@ -249,7 +249,7 @@ export default function DashboardPage() {
             <button
               type="button"
               onClick={handleDismissSharePrompt}
-              aria-label="Dismiss"
+              aria-label={t("common.dismiss", { defaultValue: "Dismiss" })}
               className="min-h-[44px] min-w-[44px] flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors -mr-2"
             >
               ✕
@@ -566,7 +566,7 @@ function TrialBanner({
         <button
           type="button"
           onClick={onDismiss}
-          aria-label="Dismiss"
+          aria-label={t("common.dismiss", { defaultValue: "Dismiss" })}
           className="size-11 flex items-center justify-center rounded-full text-amber-600 hover:text-amber-900 transition-colors -mr-2"
         >
           ×

@@ -1,6 +1,6 @@
 # Atlas Breadcrumb — post-r2 cron ticking
 
-**Last update:** 2026-04-21 tick 5 (Sonnet)
+**Last update:** 2026-04-21 tick 6 (Sonnet)
 **Self-wake cron:** 14d7810d, minute 7/37 every hour, durable
 **Round 2:** CLOSED. Cron ticks now tackle test-coverage roadmap one function per tick.
 
@@ -20,17 +20,19 @@
 - Tick 4: tribe_matching.py — PR #81 — 24 tests, 39% → 100% on `app.services.tribe_matching`
 - Tick 4.5: test-pollution fix — PR #82 merged
 - Tick 5 (2026-04-21): az_translation.py — PR #83 — 28 tests, 28% → 100% on `app.services.az_translation`
+- Tick 6 (2026-04-21): email.py — PR #84 — 30 tests, 34% → 100% on `app.services.email`
 
 ## What's next (pick top)
 
-1. **`email.py`** (`apps/api/app/services/email.py`) — 34% → ≥85%. ~33 missing lines, Resend API mock.
+1. **`swarm_service.py`** — 61% → ≥90%.
 
-2. **`swarm_service.py`** — 61% → ≥90%.
+2. **`cross_product_bridge.py`** — 64% → ≥90%.
 
-3. **`cross_product_bridge.py`** — 64% → ≥90%.
+3. **`atlas_consult.py`** — 84% → ≥95%.
 
-4. **bars.py** — DONE. 99% coverage, PR #80 merged.
-5. **tribe_matching.py** — DONE. 100% coverage, PR #81 merged.
+4. **email.py** — DONE. 100% coverage, PR #84 merged. Release `v0.1.0-beta.1` published.
+5. **bars.py** — DONE. 99% coverage, PR #80 merged.
+6. **tribe_matching.py** — DONE. 100% coverage, PR #81 merged.
 
 ## Per-tick recipe (unchanged)
 

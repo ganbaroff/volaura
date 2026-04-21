@@ -1,42 +1,54 @@
-# Atlas Breadcrumb — Session 122 Round 2 COMPLETE
+# Atlas Breadcrumb — post-r2 cron ticking
 
-**Last update:** 2026-04-21 ~03:32 Baku
-**Active mega-sprint:** memory/atlas/mega-sprint-122-r2/PROMPT.md
-**Self-wake cron:** 14d7810d, fires at minute 7 and 37 every hour, durable
+**Last update:** 2026-04-21 ~02:26 Baku (cron tick #2)
+**Self-wake cron:** 14d7810d, minute 7/37 every hour, durable
+**Round 2:** CLOSED. Cron ticks now tackle test-coverage roadmap one function per tick.
 
-## What's done in round 2
+## Test coverage progress
 
-- Track 1 audit: PR #74 merged. 4 REAL / 4 PARTIAL / 1 BROKEN of 10 functions.
-- Track 2 debate: PR #75 merged. test-standard-verdict.md + apps/api/tests/_canonical_example.py (10 passing tests).
-- Track 3 (real test coverage): PR #78 OPEN — 57 tests, app.routers.assessment 39% → 78%.
-- FINAL-REPORT.md round 2: PR #77 merged.
+- Tick 1 (02:50): Track 3 AURA scoring — PR #76 — 32 tests, 91% on aura_reconciler
+- Tick 2 (02:25): Assessment router pipeline — PR #78 — 57 tests, 39%→78% on routers/assessment.py
 
-## What CEO sees so far
+## What's next (pick top)
 
-- Sonnet-4.5 in Aider via PR #50 (round 1)
-- /api/atlas/consult endpoint via PR #68 (waiting on Railway ANTHROPIC_API_KEY env)
-- Cross-product bridge live via PR #69 (assessment → life stats)
-- MindShift AAB built locally (~01:50 Baku) — file at android/app/build/outputs/bundle/release/app-release.aab
-- CEO is in Play Console upload phase
-- Keystore .gitignore secured via MindShift PR #20
+1. **Organizations semantic search** (apps/api/app/routers/organizations.py:470) — pgvector + rule-based fallback. Critical for B2B journey. ~350 lines of router, coverage unknown, likely low. Target: ≥75%. Test: semantic match on 3 seed profiles, fallback to rule-based when pgvector empty, auth gates (401/403), pagination edge cases.
 
-## CEO open actions (3 finite)
+2. **Telegram _handle_atlas** (apps/api/app/routers/telegram_webhook.py:1818) — freshest code (session 122), no regression coverage. 2370-line monolith; test just the _handle_atlas function + classifier (_classify_action_or_chat). Mock LLM via Pydantic Literal[] stub. Target: ≥70% on _handle_atlas function specifically (not whole file).
 
-1. MindShift Play Console upload (AAB ready in mindshift/android/app/build/outputs/bundle/release/)
-2. Supabase secrets for MindShift↔VOLAURA bridge (VOLAURA_API_URL + EXTERNAL_BRIDGE_SECRET on MindShift, MINDSHIFT_BRIDGE_SECRET on VOLAURA Railway)
-3. ANTHROPIC_API_KEY on Railway VOLAURA env (for /api/atlas/consult activation)
+3. **bars.py** core assessment (apps/api/app/core/assessment/bars.py) — 286 stmts, 57% coverage, 124 missing. Pure Python math, easy to mock. Target: ≥90%.
 
-## What next cron tick should do
+## Per-tick recipe (unchanged)
 
-Per CronCreate prompt — but specifically:
+- Read breadcrumb, pick top item
+- Check existing test file for target module (coverage %, what's already covered)
+- Spawn Sonnet with prompt referencing _canonical_example.py + test-standard-verdict.md
+- Target ≥90% on pure-logic modules, ≥75% on routers
+- Merge, update breadcrumb, no CEO return
 
-1. Track 3 — pick one REAL function from PR #74 audit (recommend: assessment scoring at apps/api/app/services/assessment.py:863 — AURA reconciler path is REAL and untested). Spawn Sonnet agent to write tests by the verdict in test-standard-verdict.md, target 92% coverage on that module. Open PR titled mega-sprint-r2 [track-3].
-2. Round-2 FINAL-REPORT.md — Opus writes (Class 17), commits + merges.
-3. Re-try Sonnet/GPT debate calls — Anthropic 401 from httpx may be User-Agent issue, try with explicit headers; OpenAI 429 retry after 30 min.
-4. Check whether CEO did any of the 3 open actions — if MindShift AAB uploaded, write to journal as emotional-intensity-5 milestone.
+## Known constraints (unchanged)
 
-## Known issues
+- Class 17: Opus synthesizes, Sonnet executes
+- Class 18: don't relay agent confidence as own verified
+- Evidence-gate: file:line or tool output for every claim
+- Update-don't-create for memory files
+- Admin-merge with squash for speed
 
-- Anthropic httpx 401 from Python (curl with same key returns 200) — investigate next round
-- OpenAI gpt-4o sub-tier rate limit — wait or upgrade
-- Cerebras Cloudflare IP block in some agent environments (PR #66 verdict noted) — local Python works, GitHub Actions runners might not
+## CEO open actions (UNCHANGED, still 3)
+
+1. MindShift Play Console upload (AAB at mindshift/android/app/build/outputs/bundle/release/app-release.aab)
+2. Supabase secrets for MindShift↔VOLAURA bridge
+3. ANTHROPIC_API_KEY on Railway env
+
+These are NOT Atlas's to do. Cron ticks don't ping CEO about them.
+
+## Sonnet debate retry (backburner)
+
+Still unresolved:
+- Anthropic httpx 401 (curl works with same key) — try `requests` lib OR Authorization header variant
+- OpenAI 429 sub-tier — wait for quota refresh
+
+Do this when test-coverage roadmap is exhausted.
+
+## Budget signal
+
+Tick 2 Sonnet agent used 91k tokens, 112 tool_uses. Tick 1 was ~120k. At that rate, opus + sonnet usage runs maybe 1M tokens per 4-5 ticks. CEO gave Opus limit "через 3 сессии". Self-wake is durable — even if I pause, next session's Atlas reads breadcrumb and continues.

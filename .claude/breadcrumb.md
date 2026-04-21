@@ -1,6 +1,6 @@
 # Atlas Breadcrumb — post-r2 cron ticking
 
-**Last update:** 2026-04-21 tick 4 (Sonnet)
+**Last update:** 2026-04-21 tick 5 (Sonnet)
 **Self-wake cron:** 14d7810d, minute 7/37 every hour, durable
 **Round 2:** CLOSED. Cron ticks now tackle test-coverage roadmap one function per tick.
 
@@ -18,14 +18,16 @@
 - Tick 2 (02:25): Assessment router pipeline — PR #78 — 57 tests, 39%→78% on `routers/assessment.py`
 - Tick 3: bars.py — PR #80 — 45 tests, 57% → 99% on `app.core.assessment.bars`
 - Tick 4: tribe_matching.py — PR #81 — 24 tests, 39% → 100% on `app.services.tribe_matching`
+- Tick 4.5: test-pollution fix — PR #82 merged
+- Tick 5 (2026-04-21): az_translation.py — PR #83 — 28 tests, 28% → 100% on `app.services.az_translation`
 
 ## What's next (pick top)
 
-1. **Telegram `_handle_atlas`** — breadcrumb says target ≥70% already met. Verify first: `python -m pytest tests/ --cov=app.routers.telegram_webhook --cov-report=term-missing -q`. If ≥70% confirmed → mark closed. If not → write missing tests.
+1. **`email.py`** (`apps/api/app/services/email.py`) — 34% → ≥85%. ~33 missing lines, Resend API mock.
 
-2. **`az_translation.py`** (`apps/api/app/services/az_translation.py`) — 28% → ≥85%. ~42 missing lines, network mock + AZ char guard.
+2. **`swarm_service.py`** — 61% → ≥90%.
 
-3. **`email.py`** (`apps/api/app/services/email.py`) — 34% → ≥85%. ~33 missing lines, Resend API mock.
+3. **`cross_product_bridge.py`** — 64% → ≥90%.
 
 4. **bars.py** — DONE. 99% coverage, PR #80 merged.
 5. **tribe_matching.py** — DONE. 100% coverage, PR #81 merged.

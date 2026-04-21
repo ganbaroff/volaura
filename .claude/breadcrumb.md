@@ -1,6 +1,6 @@
 # Atlas Breadcrumb — post-r2 cron ticking
 
-**Last update:** 2026-04-21 ~02:35 Baku (cron tick #2 closed + merge conflict resolved)
+**Last update:** 2026-04-21 tick 3 (Sonnet)
 **Self-wake cron:** 14d7810d, minute 7/37 every hour, durable
 **Round 2:** CLOSED. Cron ticks now tackle test-coverage roadmap one function per tick.
 
@@ -16,14 +16,15 @@
 
 - Tick 1 (02:50): Track 3 AURA scoring — PR #76 — 32 tests, 91% on `aura_reconciler`
 - Tick 2 (02:25): Assessment router pipeline — PR #78 — 57 tests, 39%→78% on `routers/assessment.py`
+- Tick 3: bars.py — PR #80 — 45 tests, 57% → 99% on `app.core.assessment.bars`
 
 ## What's next (pick top)
 
-1. **Organizations semantic search** (`apps/api/app/routers/organizations.py:470`) — pgvector + rule-based fallback. Critical for B2B journey. ~350 lines of router, coverage unknown, likely low. Target: ≥75%. Test: semantic match on 3 seed profiles, fallback to rule-based when pgvector empty, auth gates (401/403), pagination edge cases.
+1. **Telegram `_handle_atlas`** (`apps/api/app/routers/telegram_webhook.py:1818`) — freshest code (session 122), no regression coverage. 2370-line monolith; test just the `_handle_atlas` function + classifier (`_classify_action_or_chat`). Mock LLM via Pydantic `Literal[]` stub. Target: ≥70% on `_handle_atlas` function specifically (not whole file).
 
-2. **Telegram `_handle_atlas`** (`apps/api/app/routers/telegram_webhook.py:1818`) — freshest code (session 122), no regression coverage. 2370-line monolith; test just the `_handle_atlas` function + classifier (`_classify_action_or_chat`). Mock LLM via Pydantic `Literal[]` stub. Target: ≥70% on `_handle_atlas` function specifically (not whole file).
+2. **Organizations semantic search** (`apps/api/app/routers/organizations.py:470`) — DONE AT 89% per Opus measurement. Verify: `python -m pytest tests/test_organizations.py --cov=app.routers.organizations --cov-report=term-missing -q`. If ≥85% confirmed, mark closed.
 
-3. **bars.py** core assessment (`apps/api/app/core/assessment/bars.py`) — 286 stmts, 57% coverage, 124 missing. Pure Python math, easy to mock. Target: ≥90%.
+3. **bars.py** — DONE. 99% coverage, PR #80 merged.
 
 ## Per-tick recipe (unchanged)
 

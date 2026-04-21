@@ -247,7 +247,17 @@ def select_next_item(
             logger.warning("IRT param out of bounds — skipping question", qid=q.get("id"), a=a, b=b, c=c)
             continue
         valid.append(q)
-    remaining = valid if valid else remaining  # fallback to unfiltered if ALL fail
+    if not valid:
+        # All remaining questions have out-of-bounds IRT params — corrupt bank.
+        # Return None so caller triggers no_items_left stop rather than serving
+        # items with near-zero discrimination that produce meaningless theta estimates.
+        from loguru import logger
+        logger.critical(
+            "ALL remaining questions failed IRT bounds — stopping session cleanly",
+            competency_items=len(remaining),
+        )
+        return None
+    remaining = valid
 
     # ε-greedy: with probability epsilon, select a random item (anti-gaming / exposure control)
     # Prevents hot items from receiving 80%+ of traffic and leaking via coordination channels

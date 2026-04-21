@@ -575,7 +575,13 @@ async def submit_answer(
             daily_llm_count = 0
             for _sess in today_sessions_result.data or []:
                 _answers_blob = _sess.get("answers") or {}
-                daily_llm_count += len(_answers_blob.get("items", []))
+                # Count only open-ended items that consumed an LLM call (have evaluation_log).
+                # MCQ answers never hit the LLM — counting them inflated the cap and
+                # force-degraded users who answered many MCQs legitimately.
+                daily_llm_count += sum(
+                    1 for _item in _answers_blob.get("items", [])
+                    if _item.get("evaluation_log") is not None
+                )
 
             if daily_llm_count >= _DAILY_LLM_CAP:
                 _force_degraded = True

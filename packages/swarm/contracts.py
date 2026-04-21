@@ -56,6 +56,16 @@ class FindingContract(BaseModel):
     confidence: float = Field(ge=0.0, le=1.0, description="Agent's confidence in this finding")
     est_impact: Impact = Field(default=Impact.MEDIUM, description="Estimated impact if not addressed")
 
+    # Evidence-gate (Session 121, 2026-04-19): no claim without receipts.
+    # Free-text quotes of grep output, file snippets, command results, URL status
+    # codes. Coordinator rejects findings where this is empty OR all `files`
+    # paths are bogus by flagging UNVERIFIED and capping severity at INFO.
+    evidence: str = Field(
+        default="",
+        max_length=1200,
+        description="Observed proof backing the finding — file snippets, command output, URL status. Empty = UNVERIFIED.",
+    )
+
     # Metadata (set by coordinator, not by agent)
     agent_id: str = Field(default="", description="Which agent produced this finding")
     task_id: str = Field(default="", description="Which task this finding belongs to")
@@ -88,8 +98,15 @@ class CoordinatorResult(BaseModel):
     total_agents: int
     succeeded: int
     failed: int
-    synthesis: str = Field(default="", description="Coordinator's synthesis of all findings")
+    synthesis: str = Field(default="", description="Coordinator's synthesis of all findings (mechanical)")
     priority_action: Optional[str] = Field(default=None, description="Single most important action to take")
+    team_recommendation: Optional[str] = Field(
+        default=None,
+        description=(
+            "LLM-synthesized team answer in Atlas voice (Russian, storytelling, 3-5 paragraphs). "
+            "Populated by llm_synthesize_team_answer() when ANTHROPIC_API_KEY is set. Falls back to None silently."
+        ),
+    )
 
 
 # ── Prompt injection helper ──────────────────────────────────────────
@@ -103,11 +120,13 @@ RESPONSE FORMAT (strict JSON — no markdown, no extra fields):
     "summary": "What you found (10-500 chars)",
     "recommendation": "What to do about it (10-500 chars)",
     "confidence": 0.0-1.0,
-    "est_impact": "low|medium|high"
+    "est_impact": "low|medium|high",
+    "evidence": "Observed proof — file snippet / grep output / HTTP status / command result (20-1200 chars)"
 }
 
 RULES:
-- "files" must be real paths. If you don't know the file, use [].
+- "files" must be REAL paths that exist in the repo. Bogus paths trigger UNVERIFIED flag + severity cap at INFO.
+- "evidence" must quote observed output (file line, grep result, curl status). NO speculation. NO "I think". Empty or <20 chars → UNVERIFIED.
 - "summary" and "recommendation" are REQUIRED strings, not objects.
 - Return ONLY the JSON object. No ```json``` wrapper. No explanation outside JSON.
 """

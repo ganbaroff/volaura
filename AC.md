@@ -1,9 +1,7 @@
-## Acceptance Criteria — Path B: LiteLLM gateway (Phase 1)
-
-- [ ] `packages/swarm/providers/litellm_adapter.py` exists with `LiteLLMProvider` implementing `LLMProvider` ABC
-- [ ] `SWARM_USE_LITELLM=0` (default): `ProviderRegistry.discover()` returns legacy providers, no behavioral change
-- [ ] `SWARM_USE_LITELLM=1`: `ProviderRegistry.discover()` returns single `LiteLLMProvider` instance
-- [ ] All existing provider files (`gemini.py`, `groq_*.py`, etc.) untouched
-- [ ] `litellm>=1.50.0` in `apps/api/requirements.txt`
-- [ ] ADR-011 filed in `docs/adr/`
-- [ ] Python syntax valid on both modified files
+## Acceptance Criteria
+- [x] All 4 LLM providers have unit tests (Vertex, Gemini, Groq, OpenAI)
+- [x] Fallback chain tested (timeout + exception → next provider)
+- [x] JSON/text response modes tested for each provider
+- [x] Singleton client lifecycle tested (lazy init + reset)
+- [x] Embedding function tested (Vertex primary + Gemini fallback)
+- [x] Full backend suite passes with zero regressions

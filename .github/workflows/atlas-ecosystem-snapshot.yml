@@ -1,0 +1,62 @@
+name: Atlas Ecosystem Snapshot
+
+# Weekly cross-product memory fingerprint — Track E6 (CURRENT-SPRINT.md).
+# Reads character_events (all 5 products) + atlas_learnings (Telegram) +
+# memory/atlas/journal.md and writes a unified state-of-Atlas file.
+#
+# The output file (memory/atlas/unified-heartbeat-<ISO-week>.md) is committed
+# to git so any Atlas instance (Claude Code, Cowork, future) can read it on
+# wake without a live DB query.
+#
+# Sunday 22:00 UTC (01:00 Monday Baku) — runs after a full week of data.
+
+on:
+  schedule:
+    - cron: '0 22 * * 0'   # Sunday 22:00 UTC
+  workflow_dispatch:        # manual trigger for testing
+
+permissions:
+  contents: write           # commit-back the heartbeat file
+
+concurrency:
+  group: atlas-ecosystem-snapshot
+  cancel-in-progress: false  # let in-flight snapshot finish
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install --quiet supabase==2.* loguru
+
+      - name: Run ecosystem snapshot
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python scripts/atlas_ecosystem_snapshot.py
+
+      - name: Commit heartbeat file
+        if: always()
+        run: |
+          set -e
+          git config user.name "Atlas Snapshot"
+          git config user.email "atlas-snapshot@volaura.app"
+          git add memory/atlas/unified-heartbeat-*.md || true
+          if git diff --staged --quiet; then
+            echo "No snapshot delta to commit."
+            exit 0
+          fi
+          WEEK=$(python -c "from datetime import datetime, UTC; print(datetime.now(UTC).strftime('%G-W%V'))")
+          git commit -m "atlas-snapshot: unified ecosystem heartbeat week ${WEEK}"
+          git pull --rebase --autostash origin main || true
+          git push || echo "Push failed (non-fatal) — next Sunday will retry."

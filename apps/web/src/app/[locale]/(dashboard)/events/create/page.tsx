@@ -246,7 +246,7 @@ export default function CreateEventPage() {
               <form onSubmit={form2.handleSubmit(goNext2)} className="space-y-5 rounded-2xl border border-border bg-surface-container-low p-6">
                 <h2 className="font-semibold text-on-surface">{t("events.stepRecruitTitle")}</h2>
 
-                <Field label={t("events.capacity")} error={form2.formState.errors.capacity?.message}>
+                <Field label={t("events.capacityLabel")} error={form2.formState.errors.capacity?.message}>
                   <div className="relative">
                     <Users className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-on-surface-variant" aria-hidden="true" />
                     <input type="number" min={1} max={10000} {...form2.register("capacity")} className={cn(inputClass, "pl-9")} placeholder="50" />
@@ -307,7 +307,7 @@ export default function CreateEventPage() {
                     value={new Date(step1Data.end_date).toLocaleString()}
                   />
                   {step2Data.capacity && (
-                    <ReviewRow icon={<Users className="size-4" />} label={t("events.capacity")} value={String(step2Data.capacity)} />
+                    <ReviewRow icon={<Users className="size-4" />} label={t("events.capacityLabel")} value={String(step2Data.capacity)} />
                   )}
                   <ReviewRow
                     icon={<Globe className="size-4" />}

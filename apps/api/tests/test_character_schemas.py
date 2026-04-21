@@ -67,7 +67,7 @@ class TestCharacterEventCreate:
             CharacterEventCreate(event_type="invalid_type", source_product="volaura")
 
     def test_all_source_products(self):
-        for sp in ("volaura", "mindshift", "lifesim", "brandedby"):
+        for sp in ("volaura", "mindshift", "lifesim", "brandedby", "eventshift"):
             e = CharacterEventCreate(event_type="xp_earned", source_product=sp)
             assert e.source_product == sp
 

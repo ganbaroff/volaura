@@ -25,7 +25,7 @@ EventType = Literal[
 ]
 
 # Valid source products — enforced at both API and DB
-SourceProduct = Literal["volaura", "mindshift", "lifesim", "brandedby"]
+SourceProduct = Literal["volaura", "mindshift", "lifesim", "brandedby", "eventshift"]
 
 # Daily crystal cap per source — prevents login farming
 DAILY_CRYSTAL_CAP: dict[str, int] = {

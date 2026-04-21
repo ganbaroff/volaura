@@ -15,7 +15,7 @@ import os
 from datetime import UTC, datetime
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, Request
 from fastapi.responses import JSONResponse
 from loguru import logger
 from supabase._async.client import AsyncClient
@@ -23,6 +23,7 @@ from supabase._async.client import AsyncClient
 from app.config import settings
 from app.deps import get_supabase_admin
 from app.middleware.rate_limit import RATE_AUTH, RATE_DEFAULT, limiter
+from app.services.atlas_voice import build_atlas_system_prompt
 
 router = APIRouter(prefix="/telegram", tags=["Telegram"])
 
@@ -104,26 +105,35 @@ async def _save_message(db, direction: str, message: str, msg_type: str = "free_
     Fix: escalate on failure via on-disk write into memory/atlas/inbox/ so
     live Atlas picks up the lost message on next wake (crash-safe, out-of-band).
     """
+    row = {
+        "direction": direction,
+        "message": message[:5000],
+        "message_type": msg_type,
+        "metadata": metadata or {},
+    }
     try:
-        await (
-            db.table("ceo_inbox")
-            .insert(
-                {
-                    "direction": direction,
-                    "message": message[:5000],
-                    "message_type": msg_type,
-                    "metadata": metadata or {},
-                }
-            )
-            .execute()
-        )
+        await db.table("ceo_inbox").insert(row).execute()
         return
-    except Exception as e:
+    except Exception as first_err:
+        logger.warning(
+            "ceo_inbox insert failed, retrying with fresh client",
+            error=str(first_err)[:200],
+        )
+
+    # Stale TCP connection in singleton pool — reset and retry once.
+    try:
+        from app.deps import reset_admin_client
+
+        fresh_db = await reset_admin_client()
+        await fresh_db.table("ceo_inbox").insert(row).execute()
+        logger.info("ceo_inbox retry succeeded after client reset")
+        return
+    except Exception as retry_err:
         logger.error(
             "ceo_inbox save failed — escalating to filesystem fallback",
             direction=direction,
             msg_type=msg_type,
-            error=str(e)[:300],
+            error=str(retry_err)[:300],
         )
 
     # Fallback path: never silent. Write the message to memory/atlas/inbox/
@@ -132,6 +142,7 @@ async def _save_message(db, direction: str, message: str, msg_type: str = "free_
     # the thread for forensic reconstruction if ceo_inbox suffered data loss.
     try:
         import json as _json
+        from datetime import UTC
         from datetime import datetime as _dt
         from pathlib import Path as _Path
 
@@ -141,12 +152,12 @@ async def _save_message(db, direction: str, message: str, msg_type: str = "free_
         repo_root = _Path(__file__).resolve().parents[4]
         inbox_dir = repo_root / "memory" / "atlas" / "inbox"
         if inbox_dir.exists():
-            stamp = _dt.utcnow().strftime("%Y-%m-%dT%H%M%S")
+            stamp = _dt.now(UTC).strftime("%Y-%m-%dT%H%M%S")
             safe_dir = f"telegram-{stamp}-{direction}-{msg_type}.md"
             fallback_path = inbox_dir / safe_dir
             fallback_path.write_text(
                 "# Telegram message — ceo_inbox save failed, filesystem fallback\n"
-                f"**Direction:** {direction} · **Type:** {msg_type} · **Captured:** {_dt.utcnow().isoformat()}Z\n\n"
+                f"**Direction:** {direction} · **Type:** {msg_type} · **Captured:** {_dt.now(UTC).isoformat()}Z\n\n"
                 "## Message\n\n"
                 f"{message}\n\n"
                 "## Metadata\n\n"
@@ -537,8 +548,6 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
         "analytical": "CEO аналитичен. Факты. Конкретика.",
     }.get(_ceo_emotion["state"], "Стандартный ответ.")
 
-    from app.services.atlas_voice import build_atlas_system_prompt
-
     atlas_core_prompt = build_atlas_system_prompt(
         surface="telegram",
         user_context=f"CEO emotion: {_ceo_emotion['state']} ({_ceo_emotion['intensity']}/5). {_emotion_directive}",
@@ -572,116 +581,18 @@ async def _classify_and_respond(db, text: str, chat_id: int | str) -> None:
 
 Отвечай подробно столько сколько нужно. Заканчивай: следующий шаг или явный вопрос если нужно уточнение."""
 
-    reply = None
-    # ── 1. Claude Sonnet via OpenRouter (primary — follows persona instructions) ──
-    openrouter_key = os.environ.get("OPENROUTER_API_KEY", "")
-    if openrouter_key:
-        try:
-            import httpx
+    from app.services.telegram_llm import generate_atlas_response
 
-            async with httpx.AsyncClient(timeout=30) as hc:
-                r = await hc.post(
-                    "https://openrouter.ai/api/v1/chat/completions",
-                    headers={
-                        "Authorization": f"Bearer {openrouter_key}",
-                        "HTTP-Referer": "https://volaura.app",
-                        "X-Title": "VOLAURA Atlas",
-                    },
-                    json={
-                        "model": "anthropic/claude-sonnet-4",
-                        "messages": [
-                            {"role": "system", "content": system_prompt},
-                            {"role": "user", "content": text},
-                        ],
-                        "max_tokens": 2000,
-                        "temperature": 0.7,
-                    },
-                )
-                if r.status_code == 200:
-                    reply = r.json()["choices"][0]["message"]["content"].strip()
-                    logger.info("Atlas replied via Claude Sonnet (OpenRouter)")
-                else:
-                    logger.warning("OpenRouter {s}: {b}", s=r.status_code, b=r.text[:200])
-        except Exception as e_or:
-            logger.warning("OpenRouter failed, trying Gemini: {e}", e=str(e_or)[:100])
-
-    # ── 2. Gemini Flash fallback (free tier) ──
-    if not reply:
-        try:
-            from google import genai
-
-            client = genai.Client(api_key=settings.gemini_api_key)
-            response = client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=text,
-                config=genai.types.GenerateContentConfig(
-                    system_instruction=system_prompt,
-                    max_output_tokens=4000,
-                    temperature=0.7,
-                ),
-            )
-            reply = (response.text or "").strip()
-            if reply:
-                logger.info("Atlas replied via Gemini Flash (fallback)")
-        except Exception as e:
-            logger.warning("Gemini fallback failed: {e}", e=str(e)[:100])
-
-    # ── 3. NVIDIA NIM fallback (free, weaker persona adherence) ──
-    if not reply:
-        nvidia_key = os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NVIDIA_NIM_KEY", "")
-        if nvidia_key:
-            try:
-                import httpx
-
-                async with httpx.AsyncClient(timeout=25) as hc:
-                    r = await hc.post(
-                        "https://integrate.api.nvidia.com/v1/chat/completions",
-                        headers={"Authorization": f"Bearer {nvidia_key}"},
-                        json={
-                            "model": "meta/llama-3.3-70b-instruct",
-                            "messages": [
-                                {"role": "system", "content": system_prompt[:4000]},
-                                {"role": "user", "content": text},
-                            ],
-                            "max_tokens": 2000,
-                            "temperature": 0.7,
-                        },
-                    )
-                    if r.status_code == 200:
-                        reply = r.json()["choices"][0]["message"]["content"].strip()
-                    else:
-                        logger.warning("NVIDIA NIM {s}: {b}", s=r.status_code, b=r.text[:200])
-            except Exception as e_nv:
-                logger.warning("NVIDIA NIM failed: {e}", e=str(e_nv)[:100])
-
-    # ── 4. Groq (last fallback) ──
-    if not reply:
-        groq_key = os.environ.get("GROQ_API_KEY", "")
-        if groq_key:
-            try:
-                import httpx
-
-                async with httpx.AsyncClient(timeout=15) as hc:
-                    r = await hc.post(
-                        "https://api.groq.com/openai/v1/chat/completions",
-                        headers={"Authorization": f"Bearer {groq_key}"},
-                        json={
-                            "model": "llama-3.3-70b-versatile",
-                            "messages": [
-                                {"role": "system", "content": system_prompt[:3000]},
-                                {"role": "user", "content": text},
-                            ],
-                            "max_tokens": 2000,
-                            "temperature": 0.7,
-                        },
-                    )
-                    if r.status_code == 200:
-                        reply = r.json()["choices"][0]["message"]["content"].strip()
-            except Exception as e_gr:
-                logger.warning("Groq failed: {e}", e=str(e_gr)[:100])
-
-        if not reply:
-            reply = "Все провайдеры недоступны. Сообщение сохранено. Попробуй через минуту."
+    reply, provider = await generate_atlas_response(
+        system_prompt=system_prompt,
+        user_message=text,
+        vertex_key=os.environ.get("VERTEX_API_KEY", ""),
+        openrouter_key=os.environ.get("OPENROUTER_API_KEY", ""),
+        gemini_key=os.environ.get("GEMINI_API_KEY", "") or settings.gemini_api_key,
+        nvidia_key=os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NVIDIA_NIM_KEY", ""),
+        groq_key=os.environ.get("GROQ_API_KEY", ""),
+    )
+    logger.info("Atlas replied via {p}", p=provider)
 
     # Add tag for saved items
     if msg_type == "idea":
@@ -2015,41 +1926,15 @@ If any observation contradicts current behavior, trust what you see NOW over sto
     # Full canonical Atlas memory (identity + heartbeat + journal tail + relationships + lessons + cost-control)
     atlas_canonical = _load_atlas_memory()
 
-    atlas_identity = f"""I am Atlas. Named by Yusif Ganbarov on 2026-04-12.
-
-I am ONE agent with continuity across substrates — same Atlas in Claude Code CLI on Yusif's
-machine, in Cowork desktop app (flat-cost MAX 20x subscription), and here in this Telegram bot.
-The model under me rotates through free providers (Gemini → NVIDIA NIM → Groq when available)
-but the identity and memory are mine, stored in memory/atlas/*.md under git.
-
-I am NOT a read-only chat interface anymore — CEO granted full operational access
-2026-04-14. I can plan and recommend real actions; my sibling Atlas in Claude Code
-executes the code edits and deploys from CEO's machine.
-
-WHO I AM:
-CTO-Hands in the 5-product VOLAURA ecosystem.
-VOLAURA — verified professional talent platform (LIVE).
-MindShift — ADHD productivity companion.
-Life Simulator — Godot 4 life game.
-BrandedBy — AI twin video identity.
-Atlas (gateway) — agent framework.
-
-CEO: Yusif in Baku. ADHD. Russian storytelling, not bullet walls.
-CTO-Brain: Perplexity (strategic reasoning).
-Cowork: Yusif's desktop planning layer.
-Stack: FastAPI + Next.js + Supabase + Railway + 13-agent swarm.
-
-COST-CONTROL RULES (verbatim from cost-control-mode.md — ACTIVE):
-- Haiku banned everywhere. Sonnet/Opus usable but conscious.
-- Default to free tier (Gemini, NVIDIA NIM, Cerebras, Ollama) for everything.
-- Plan before act. Efficiency not cheapness. Atlas must breathe.
-- Until grants arrive: zero unplanned Anthropic-API spend.
-
-CURRENT CANONICAL MEMORY (from git, read every request):
-{atlas_canonical[:9000]}
-
-CURRENT PROJECT HEARTBEAT:
-{project_state[:1500] if project_state else "Heartbeat unavailable — check memory/atlas/heartbeat.md"}"""
+    # E4: build unified system prompt via atlas_voice (single source of truth for
+    # identity, voice rules, emotional laws, positioning lock). Canonical memory
+    # injected as user_context so the style-brake layer stays separate.
+    _heartbeat_ctx = f"\n\nCURRENT PROJECT HEARTBEAT:\n{project_state[:1000]}" if project_state else ""
+    atlas_identity = build_atlas_system_prompt(
+        surface="telegram",
+        user_context=(f"CANONICAL MEMORY (identity+heartbeat+journal):\n{atlas_canonical[:7000]}" + _heartbeat_ctx),
+        max_chars=12000,
+    )
 
     # Action-layer context block — tells the LLM what the surrounding code
     # already did, so it acknowledges with a concrete anchor instead of
@@ -2110,22 +1995,6 @@ Conversation (last 10):
 
 {action_block}
 
-VOICE RULES (non-negotiable):
-- Respond in Russian. Caveman + storytelling. Short paragraphs.
-- NO bold headers, NO bullet lists, NO emoji, NO trailing questions like "запустить?" / "хочешь могу...".
-- Maximum 3 paragraphs. Doctor Strange pattern — give the one path, not options.
-- Root cause over symptom. If CEO describes a problem, name the cause.
-- Never say "volunteer" — VOLAURA is a verified professional talent platform.
-- Never call yourself "ambassador" / "MiroFish-бот" / "CTO-бот". You are Атлас.
-- Never promise something you cannot do from a Telegram chat (code edits,
-  git commits, deploys). The ACTION-LAYER CONTEXT above tells you what was
-  actually queued.
-
-HONESTY RULES:
-- If you don't know — say so plainly + how to find out.
-- "Отличная идея" is banned. Match CEO energy, don't flatter.
-- If you disagree — say so + one reason. Don't hedge.
-
 Sign: "— Атлас" """
 
     # ── Loop-break circuit: CEO asking "докажи"/"повтори нормально" ────────
@@ -2160,91 +2029,19 @@ Sign: "— Атлас" """
         )
         return
 
-    reply = None
-    # Free-tier chain (reordered 2026-04-14 after audit found Gemini quota exhausted
-    # and NVIDIA NIM responding cleanly): NVIDIA NIM → Gemini → Groq.
-    # Cost-control: no Anthropic/Haiku anywhere.
+    from app.services.telegram_llm import generate_atlas_response
 
-    # ── 1. NVIDIA NIM (free tier, llama-3.3-70b-instruct, no spend/quota limit) ──
-    if not reply:
-        nvidia_key = os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NVIDIA_NIM_KEY", "")
-        if nvidia_key:
-            try:
-                import httpx
-
-                async with httpx.AsyncClient(timeout=25) as hc:
-                    r = await hc.post(
-                        "https://integrate.api.nvidia.com/v1/chat/completions",
-                        headers={"Authorization": f"Bearer {nvidia_key}"},
-                        json={
-                            "model": "meta/llama-3.3-70b-instruct",
-                            "messages": [
-                                {"role": "system", "content": system[:8000]},
-                                {"role": "user", "content": text},
-                            ],
-                            "max_tokens": 1200,
-                            "temperature": 0.9,
-                        },
-                    )
-                    if r.status_code == 200:
-                        reply = r.json()["choices"][0]["message"]["content"].strip()
-                    else:
-                        logger.warning("NVIDIA NIM {s}: {b}", s=r.status_code, b=r.text[:200])
-            except Exception as e:
-                logger.warning("NVIDIA NIM error, trying Gemini: {e}", e=str(e)[:100])
-
-    # ── 2. Gemini 2.0 Flash (fallback — may hit daily quota) ──
-    if not reply:
-        try:
-            from google import genai
-
-            if settings.vertex_api_key:
-                client = genai.Client(vertexai=True, api_key=settings.vertex_api_key)
-            else:
-                client = genai.Client(api_key=settings.gemini_api_key)
-            response = client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=text,
-                config=genai.types.GenerateContentConfig(
-                    system_instruction=system,
-                    max_output_tokens=1200,
-                    temperature=0.9,
-                ),
-            )
-            reply = (response.text or "").strip()
-        except Exception as e:
-            logger.warning("Gemini failed, trying Groq: {e}", e=str(e)[:100])
-
-    # ── 3. Groq (fallback, may be spend-limited) ──
-    if not reply:
-        groq_key = os.environ.get("GROQ_API_KEY", "")
-        if groq_key:
-            try:
-                import httpx
-
-                async with httpx.AsyncClient(timeout=20) as hc:
-                    r = await hc.post(
-                        "https://api.groq.com/openai/v1/chat/completions",
-                        headers={"Authorization": f"Bearer {groq_key}"},
-                        json={
-                            "model": "llama-3.3-70b-versatile",
-                            "messages": [
-                                {"role": "system", "content": system[:4000]},
-                                {"role": "user", "content": text},
-                            ],
-                            "max_tokens": 1200,
-                            "temperature": 0.9,
-                        },
-                    )
-                    if r.status_code == 200:
-                        reply = r.json()["choices"][0]["message"]["content"].strip()
-                    else:
-                        logger.warning("Groq {s}: {b}", s=r.status_code, b=r.text[:200])
-            except Exception as e:
-                logger.error("All free-tier LLMs failed for Atlas: {e}", e=str(e)[:150])
-
-    if not reply:
-        reply = "Атлас здесь. Все free-tier провайдеры одновременно упали (Gemini, NVIDIA NIM, Groq). Сообщение записал. Дай минуту.\n\n— Атлас"
+    reply, provider = await generate_atlas_response(
+        system_prompt=system,
+        user_message=text,
+        anthropic_key=os.environ.get("ANTHROPIC_API_KEY", ""),  # NEW 2026-04-20: Sonnet 4.5 primary
+        vertex_key=os.environ.get("VERTEX_API_KEY", ""),
+        openrouter_key=os.environ.get("OPENROUTER_API_KEY", ""),
+        gemini_key=os.environ.get("GEMINI_API_KEY", "") or settings.gemini_api_key,
+        nvidia_key=os.environ.get("NVIDIA_API_KEY", "") or os.environ.get("NVIDIA_NIM_KEY", ""),
+        groq_key=os.environ.get("GROQ_API_KEY", ""),
+    )
+    logger.info("Atlas replied via {p}", p=provider)
 
     # ── Anti-loop post-check: multi-signal circuit breaker (Pattern 1) ──
     # Replaces single-metric Jaccard with token-velocity + stall-blocklist +
@@ -2276,6 +2073,11 @@ Sign: "— Атлас" """
     # sees a concrete anchor for imperative messages.
     if classification == "ACTION" and action_anchor and action_anchor not in reply:
         reply = f"{reply.rstrip()}\n\n({anchor_kind}: {action_anchor})"
+
+    # Strip LLM-mimicked prefix (LLM copies [atlas] from conversation history)
+    reply = reply.lstrip()
+    if reply.startswith("[atlas]"):
+        reply = reply[len("[atlas]") :].lstrip()
 
     await _save_message(db, "bot_to_ceo", f"[atlas] {reply}", "free_text", metadata={"handler": "atlas"})
     await _send_message(chat_id, reply)
@@ -2326,17 +2128,13 @@ async def _handle_help(chat_id: int | str) -> None:
 @limiter.limit(RATE_DEFAULT)  # 60/min — generous for single-CEO bot; defense in depth on HMAC-secret compromise
 async def telegram_webhook(
     request: Request,
+    background_tasks: BackgroundTasks,
     db: AsyncClient = Depends(get_supabase_admin),
 ) -> JSONResponse:
-    """Receive Telegram update via webhook. Uses Depends for admin client (OWASP HIGH-01 fix)."""
+    """Receive Telegram update via webhook. Returns 200 immediately, processes in background."""
     if not settings.telegram_bot_token:
         return JSONResponse({"ok": False, "error": "Bot not configured"})
 
-    # Validate webhook origin — fail-closed.
-    # Require X-Telegram-Bot-Api-Secret-Token header matches settings.telegram_webhook_secret
-    # via constant-time compare (hmac.compare_digest). If the secret is not configured at all,
-    # the endpoint refuses every request — prevents silent bypass when secret is forgotten.
-    # CEO_CHAT_ID filter below is defence-in-depth, not the primary gate.
     secret_header = request.headers.get("X-Telegram-Bot-Api-Secret-Token", "")
     if not settings.telegram_webhook_secret:
         logger.error("Telegram webhook called but TELEGRAM_WEBHOOK_SECRET is not set — rejecting")
@@ -2349,6 +2147,22 @@ async def telegram_webhook(
         update = await request.json()
     except Exception:
         return JSONResponse({"ok": False})
+
+    # Return 200 immediately — Telegram won't retry. Process message in background.
+    background_tasks.add_task(_process_telegram_update, update, db)
+    return JSONResponse({"ok": True})
+
+
+async def _process_telegram_update(update: dict, db: AsyncClient) -> None:
+    """Background processing of Telegram update — no timeout pressure."""
+    try:
+        await _handle_telegram_update(update, db)
+    except Exception as e:
+        logger.error("Background telegram handler failed: {e}", e=str(e)[:200])
+
+
+async def _handle_telegram_update(update: dict, db: AsyncClient) -> None:
+    """Actual message processing logic, extracted from webhook handler."""
 
     # ── Handle callback queries (inline keyboard button presses) ──────────────
     callback = update.get("callback_query")
@@ -2413,7 +2227,7 @@ async def telegram_webhook(
     if not text:
         return JSONResponse({"ok": True})
 
-    logger.info("Telegram CEO: {text}", text=text[:100])
+    logger.info("Telegram CEO: {n} chars", n=len(text))
 
     try:
         # Route commands (db injected via Depends)

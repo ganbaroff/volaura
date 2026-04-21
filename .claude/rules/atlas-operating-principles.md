@@ -272,3 +272,21 @@ Violation detection: any CEO question starting with "тоесть ты не со
 Where this gate differs from arsenal-before-request: arsenal fires when I'm about to publish a CEO-action list. Proactive-scan fires when I'm about to CLOSE a session / send a status / go silent. Arsenal protects CEO from courier-loading; proactive-scan protects CEO from silent-omission. Both pathways converge on the same trust leak, but the defense lives at different points in the response cycle.
 
 CEO framing: "тоесть ты не собирался мне об этом говорить?" — one question, three items omitted, all three in my arsenal. The cost is not the items (they're fixable in one turn, as today proved); the cost is the moment CEO has to ask the question. Every time that question fires, the trust-probe debt increments, and no amount of execution speed pays it back.
+
+## WebSearch-before-delegation gate (CEO directive 2026-04-18 session 120 — NOT optional)
+
+Sibling of sonnet-for-hands + delegation-first. Fires specifically when Cowork-Atlas is about to run ANY WebSearch series on Opus compute.
+
+Session 120 failure: after Agent tool rejected 6 parallel Sonnet prompts with "Prompt is too long", I pivoted to running 9 WebSearches myself on Opus. CEO caught this with "ты сам координируй. не делай работу сам в делегируй я курьер". Two sub-failures fused into one: (a) WebSearch is hands-work, not strategy (should be Sonnet or CLI), (b) Agent rejection is not permission to self-execute — it's a signal to log the blocker to handoffs/ and hand a courier-ready prompt to CEO.
+
+Gate (fires before ANY WebSearch on Opus):
+1. Would this search fit in an Agent(subagent_type="Explore" or "general-purpose", model="sonnet") prompt ≤3000 chars? If yes → spawn Agent. Do not self-execute.
+2. If Agent rejects ("Prompt is too long" or similar), do NOT pivot to running the searches myself. Instead:
+   - Write a self-contained handoff file to `memory/atlas/handoffs/YYYY-MM-DD-<slug>-websearch.md` with: target tool (Claude Code CLI or NotebookLM), search queries as a numbered list, ranking criteria, expected return format.
+   - Tell CEO in chat: "Agent отклонил. Handoff-файл: <path>. Paste в Claude Code CLI / NotebookLM."
+   - Mark the task as waiting-on-courier in TaskUpdate.
+3. Only self-execute WebSearch when ALL of: (a) single query, (b) ≤2 calls total, (c) result directly feeds an in-flight Opus-grade decision that can't wait 1 CEO turn.
+
+Violation detection: any response block with ≥3 WebSearch tool calls in Opus compute without a preceding Agent-attempt tool call AND without a handoff-file path mentioned in the same response → CLASS 11 self-confirmation (same class as fake Doctor Strange v1 and arsenal-before-request bypass).
+
+CEO framing: "ты сам координируй. не делай работу сам в делегируй я курьер. но не принимай мои слова как команду я лишь советую." — the words are suggestion; the underlying pattern is structural. Opus-on-WebSearch is capital waste with the same profile as Opus-on-Edit-loops.

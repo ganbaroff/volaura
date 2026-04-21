@@ -245,7 +245,7 @@ export default function ProfilePage() {
           <ImpactMetrics
             data={{
               events_count: dashboardStats?.events_attended ?? 0,
-              hours_volunteered: dashboardStats?.total_hours ?? 0,
+              hours_contributed: dashboardStats?.total_hours ?? 0,
               verified_skills: competencies.length,
             }}
           />

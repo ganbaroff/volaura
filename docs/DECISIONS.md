@@ -1243,3 +1243,77 @@ Off by: ~50% on Track E estimate. Root cause: reactive execution, no discipline 
 - E2 MindShift bridge (atlas_learnings read)
 - Per-user /api/atlas/think endpoint
 - Track G (CEO pivot: clean slate → launch) from Cowork breadcrumb
+
+---
+
+## Sprint E1-E4 Mid-Sprint Retrospective — 2026-04-20 09:49 Baku
+**Sprint:** LifeSim Life Feed MVP + Design Phase 0-1 + Atlas-everywhere (Apr 15-29, day 6 of 14)
+**Written by:** Atlas autonomous wake (headless, CEO not present)
+
+### What shipped (verified via git log + Supabase SQL)
+
+**Track A — Life Feed (9/9 complete):**
+- A1-A9 all committed. Backend: 4 endpoints (/feed, /next-choice, /choice, /purchase). Service layer: 6 functions, keyword→category bias map (E3). Frontend: event card + stat sidebar + crystal shop + optimistic UI + analytics (3 PostHog events). Atlas-bias wiring: Life Feed now reads `atlas_learnings` to weight event recommendations by CEO's stated intentions.
+
+**Track B — Design Phase 0-1 (2/2 complete):**
+- B1: 48-page audit → `docs/design/BASELINE-2026-04-15.md`. B2: 22 code-verified gaps, 6 already fixed in HEAD.
+
+**Track E — Atlas-everywhere (5/6 complete):**
+- E1: Reflection card on /aura (Gemini 2.5 Flash, Atlas voice).
+- E2: `GET /api/atlas/learnings` — MindShift can now pull CEO context for focus-session enrichment.
+- E3: Life Feed biased by atlas_learnings — organism can feel what Atlas knows about user.
+- E4: `atlas_voice.build_atlas_system_prompt` unified — all surfaces load same ATLAS-EMOTIONAL-LAWS + voice.md + position-lock. Telegram action handler refactored.
+- E6: `atlas_ecosystem_snapshot.py` + weekly GitHub Actions cron — Sunday snapshot of cross-product state.
+- E5 (BrandedBy twin seed): deferred to next sprint per CEO brief.
+
+**Track G — Clean slate launch prep:**
+- G2.5: auth.users → profiles trigger created (73 orphan users backfilled). is_platform_admin DEFAULT bug fixed.
+- G2.6: user_identity_map case-normalization + unique constraint.
+- G2.1-G2.4: production data purge (118→8 users preserved), demo flag-gate, route hygiene, crystal reset.
+- G3.3: Laws 1/3/4/5 spot-check passed. G3.4: /health green on all surfaces.
+
+**Track D — Quality (not originally planned; fully autonomous):**
+1,177 unit tests added across all routers, services, core assessment modules (IRT, AURA, antigaming, BARS evaluator). Backend started sprint at ~800 collected tests; ended at 1,959 collected.
+
+### What did NOT ship
+
+1. **G3.1 browser E2E test** — verified organism chain via SQL (CEO's April 14 assessment → crystal_earned + skill_verified → AURA 14.29 ✓). Browser test ("stranger signs up, completes assessment, sees AURA") requires OAuth or CEO credentials. Marked PARTIAL — needs one CEO session with Playwright.
+2. **G3.2 energy mode check** — blocked on G3.1 auth.
+3. **G4 (launch)** — CEO-owned: target date, channel, soft/open. No input yet. Sprint cannot close this without CEO.
+4. **E5 BrandedBy twin** — explicitly deferred.
+5. **C1 Mercury / C2 83(b)** — waiting on Stripe Atlas EIN email (C1) and Certificate of Incorporation email (C2). Both time-sensitive; Atlas cannot act until emails arrive.
+
+### What went right
+
+1. **Track G trigger fix was the highest-ROI action of the sprint.** 73 orphan auth users, live user xaqanimom with no profile, admin escalation bug. One migration fixed three root causes simultaneously. This was discovered through SQL audit, not CEO flagging it.
+
+2. **Autonomous Track D was unsolicited and shipped 1,177 tests.** CEO never asked for test coverage. Gap existed. Atlas filled it across 35 autonomous wakes. This is the CTO-proposes, not just executes, pattern working.
+
+3. **Doctor Strange v2 gates held on G2.5 and G2.6.** Both migrations had external model adversarial review (Cerebras + DeepSeek), objection-response pairs, and post-milestone retrospective. Neither migration required rollback.
+
+### What went wrong
+
+1. **G3.1 cannot be completed autonomously.** Browser OAuth requires CEO. The sprint DoD includes "stranger visits volaura.app, signs up" — this verification will slip to the next session. Root cause: the DoD was written assuming Playwright could simulate OAuth, but Google OAuth requires real account interaction.
+
+2. **atlas_learnings data quality is low.** CEO has 16 learnings: 8 `preference`, 4 `strength`, 1 `weakness`, 1 `emotional_pattern`, 1 `project_context`, 1 `insight`. ZenBrain recommends richer categories. The E3 bias map has 8 categories but only `strength`/`preference` drive meaningful recommendations. Atlas should prompt CEO more directly via Telegram to log richer insights.
+
+3. **Supabase `assessment_sessions.volunteer_id` column still exists.** G2.3 noted backend API field rename needed but flagged as "not safe for autonomous iteration" (DB migration + backend + frontend all must sync). This technical debt (wrong entity name) is unresolved going into sprint week 2. One properly-scoped migration would fix it.
+
+### Calibration check (Day 6 of 14)
+
+| Track | Planned | Actual |
+|-------|---------|--------|
+| A (Life Feed) | 9 tasks | 9/9 ✓ |
+| B (Design) | 2 tasks | 2/2 ✓ |
+| E (Atlas-everywhere) | 6 tasks | 5/6 ✓ |
+| G (Launch prep) | 4 phases | G1-G2 done, G3 partial, G4 CEO-gated |
+| D (Quality) | opportunistic | 1,177 tests (unplanned) |
+
+Day 6 velocity: above plan on everything Atlas can control. Below plan only where CEO input is required. Good signal.
+
+### → Next autonomous session priorities
+
+1. Verify `assessment_sessions` `volunteer_id` → `user_id` rename migration is feasible (check FK dependencies first).
+2. Proactive-scan: run obligation sweep SQL for any deadlines within 30 days.
+3. If prod CI green and no incidents → begin sprint week 2 backlog (any remaining Track D or E5 if CEO brief arrives).
+

@@ -132,6 +132,7 @@ async def test_start_assessment_returns_first_question():
     admin = _build_chainable(
         [
             {"id": COMP_ID},  # competency id lookup
+            [],  # stale session check (none found)
             [MCQ_QUESTION],  # questions list
         ]
     )
@@ -550,6 +551,7 @@ async def test_cannot_start_duplicate_session():
     admin = _build_chainable(
         [
             {"id": COMP_ID},  # competency lookup
+            [],  # stale session check (none found)
         ]
     )
     user = _build_chainable(

@@ -200,12 +200,19 @@
     "timerExpired": "Vaxt bitdi — növbəti suala keçilir",
     "takingBreak": "İrəliləyişiniz saxlanıldı. İstənilən vaxt qayıda bilərsiniz.",
     "competencyComplete": "{{name}} tamamlanıb.",
+    "competencyOfTotal": "{{total}}-dən {{current}}-ci kompetensiya",
+    "competencyProgressTransition": "{{total}}-dən {{current}}-si tamamlandı — {{remaining}} qalıb",
+    "yourOrder": "Qiymətləndirmə sıranız",
+    "sequentialNote": "Hər dəfə bir kompetensiya tamamlayacaqsınız. İrəliləyişiniz hər birinin arasında saxlanılır.",
+    "startFirst": "{{name}} ilə başlayın",
     "continueToNext": "Növbətiyə keçin",
     "processingResults": "Nəticələriniz hesablanır...",
     "evaluating": "Cavabınız qiymətləndirilir...",
     "stillWorking": "Hələ də işlənir — AI cavabınızı nəzərdən keçirir...",
     "continueButton": "Davam edin",
     "refreshedMidSession": "Görünür ki, siz qiymətləndirmə zamanı səhifəni yeniləmisiniz. Sizin irəliləyişiniz saxlanılıb.",
+    "sessionRecoveryTitle": "Sessiya davam edir",
+    "sessionRecoveryDesc": "İrəliləyişiniz saxlanılıb. Seçimlərinizi görmək üçün qiymətləndirmə səhifəsinə qayıdın.",
     "returnToSelection": "Kompetensiya seçiminə qayıdın",
     "errorStartFailed": "Qiymətləndirməni başlatmaq mümkün olmadı. Server məşğuldur. Zəhmət olmasa, bir qədər sonra yenidən cəhd edin.",
     "cooldownError": "Siz bu yaxınlarda qiymətləndirmə tamamladınız. {{minutes}} dəqiqədən sonra yenidən cəhd edə bilərsiniz.",
@@ -571,6 +578,7 @@
     "iParticipated": "İştirak etdim",
     "participants": "İştirakçılar",
     "checkedIn": "Daxil olundu",
+    "subtitle": "Gələcək tədbirləri kəşf edin və bacarıqlarınızı sübut etmək üçün imkanlar tapın.",
     "noEvents": "Nəzərdə tutulmuş tədbirlər yoxdur.",
     "noEventsSubtitle": "Yeni tədbirlər müntəzəm olaraq əlavə olunur. İlk bildirişləri almaq üçün Telegramda bizi izləyin.",
     "filterAll": "Hamısı",
@@ -612,7 +620,7 @@
     "endDate": "Son tarix",
     "eventType": "Hadisə növü",
     "selectType": "Növ seçin",
-    "capacity": "Maksimum iştirakçı sayı",
+    "capacity": "{{count}} yer",
     "minAura": "Minimum AURA balı",
     "minAuraHint": "Balından asılı olmayaraq bütün iştirakçılara icazə vermək üçün 0-ı təyin edin.",
     "visibility": "Görünürlük",
@@ -637,7 +645,17 @@
       "sports": "İdman",
       "cultural": "Mədəni",
       "other": "Digər"
-    }
+    },
+    "loadError": "Tədbirlər yüklənə bilmədi",
+    "loadErrorDesc": "Zəhmət olmasa səhifəni yeniləyin.",
+    "eventEnded": "Bu tədbir başa çatıb.",
+    "capacityLabel": "Maksimum iştirakçı sayı",
+    "checkin": "Hadisə qeydiyyatı",
+    "enterCode": "Qeydiyyat kodunu daxil edin",
+    "checkinDesc": "Hadisə koordinatoru tərəfindən verilən kodu daxil edin.",
+    "codePlaceholder": "Kodu daxil edin...",
+    "checkinSuccess": "Qeydiyyat uğurlu oldu!",
+    "checkinButton": "Qeydiyyatdan keç"
   },
   "settings": {
     "title": "Tənzimləmələr",
@@ -732,7 +750,15 @@
     "skipToContent": "Məzmuna keçin"
   },
   "verification": {
-    "assessedBy": "Volaura adaptiv test sistemi ilə qiymətləndirilib"
+    "assessedBy": "Volaura adaptiv test sistemi ilə qiymətləndirilib",
+    "verified": "Təsdiqlənib",
+    "questions": "Suallar",
+    "completed": "Tamamlandı",
+    "howTitle": "Bu bal necə təsdiqlənib",
+    "how1": "Adaptiv IRT qiymətləndirmə çətinliyi hər istifadəçiyə uyğunlaşdırır",
+    "how2": "Anti-hiylə sistemi şübhəli nümunələri aşkar edir",
+    "how3": "Süni intellekt açıq cavabları çarpaz yoxlayır",
+    "how4": "Bal qlobal faiz sıralamasına bağlıdır"
   },
   "publicProfile": {
     "auraScore": "AURA Balı",
@@ -742,7 +768,8 @@
     "ctaTitle": "Sizin özünüzün təsdiqlənmiş AURA balı istəyirsinizmi?",
     "ctaDescription": "Volaura-ya qoşulun, qiymətləndirmənizi tamamlayın və təsdiqlənmiş peşəkar nişanınızı paylaşın.",
     "getAuraScore": "AURA balınızı əldə edin.",
-    "getStarted": "Başlayın — ödənişsizdir."
+    "getStarted": "Başlayın — ödənişsizdir.",
+    "elite": "Elit ⭐"
   },
   "error": {
     "generic": "Xəta baş verdi. Zəhmət olmasa, yenidən cəhd edin.",
@@ -821,6 +848,8 @@
     "discoverySubtitle": "Təşkilatları tapın və onların tədbirlərinə töhfə verin.",
     "searchPlaceholder": "Təşkilatlar üzrə axtarış...",
     "showing": "{{count}} təşkilat",
+    "showing_one": "{{count}} təşkilat",
+    "showing_other": "{{count}} təşkilat",
     "noSearchResults": "Sizin axtarışınıza heç bir təşkilat uyğun gəlmir.",
     "noOrgsYet": "Hələ heç bir təşkilat qeydiyyatdan keçməmişdir.",
     "ctaTitle": "Sizin təşkilatınız üçün tədbirlər keçirirsiniz?",
@@ -833,7 +862,12 @@
     "trial": "Ödənişsiz Sınaq",
     "active": "Peşəkar Plan",
     "expired": "Sınaq başa çatdı",
-    "cancelled": "Ləğv olunub",
+    "cancelled": {
+      "title": "Heç bir xərc tutulmadı",
+      "description": "Siz istədiyiniz vaxt abunəliyi yenidən aktiv edə bilərsiniz.",
+      "ctaDashboard": "Ana səhifəyə qayıt",
+      "ctaSettings": "Parametrlər"
+    },
     "daysRemaining": "{{count}} gün qalıb",
     "daysRemainingPlural": "{{count}} gün qaldı",
     "trialBanner": "Sizin pulsuz sınaq müddətiniz {{count}} gün sonra başa çatır.",
@@ -848,13 +882,7 @@
     "resubscribe": "Yenidən abunə olmaq",
     "redirecting": "Ödəniş səhifəsinə yönləndirilirsiniz…",
     "setupInProgress": "Abunəliyin quraşdırılması davam edir. Vaxtından əvvəl yüksəltmək üçün bizimlə əlaqə saxlayın.",
-    "checkoutError": "Ödəniş prosesi başlatıla bilmədi — zəhmət olmasa, yenidən cəhd edin.",
-    "cancelled": {
-      "title": "Heç bir xərc tutulmadı",
-      "description": "Siz istədiyiniz vaxt abunəliyi yenidən aktiv edə bilərsiniz.",
-      "ctaDashboard": "Ana səhifəyə qayıt",
-      "ctaSettings": "Parametrlər"
-    }
+    "checkoutError": "Ödəniş prosesi başlatıla bilmədi — zəhmət olmasa, yenidən cəhd edin."
   },
   "brandedby": {
     "tagline": "Süni İntellekt Əkizi — təsdiqlənmiş bacarıqlarınız video formatında."
@@ -946,17 +974,24 @@
     "backToBrowse": "← Göz gəzdirməyə qayıt",
     "clearSearch": "Sıfırla",
     "aura": {
+      "Any": "İstənilən",
       "AnyAura": "İstənilən AURA",
       "BronzePlus": "Bürünc+",
       "SilverPlus": "Gümüş+",
       "GoldPlus": "Qızıl+"
     },
     "badge": {
+      "Alltiers": "Bütün dərəcələr",
       "Anygrade": "İstənilən dərəcə",
       "Bronze": "Bürünc",
       "Silver": "Gümüş",
       "Gold": "Qızıl",
       "Platinum": "Platin"
+    },
+    "similarity": {
+      "high": "Yüksək uyğunluq",
+      "good": "Yaxşı uyğunluq",
+      "partial": "Qismən uyğunluq"
     },
     "filterBySkill": "Təsdiqlənmiş bacarığa görə axtar"
   },
@@ -1068,7 +1103,7 @@
       }
     },
     "detail": {
-      "loading": "Tədbir yüklənir\u2026",
+      "loading": "Tədbir yüklənir…",
       "back": "Tədbirlərə qayıt",
       "err": {
         "load": "Tədbir yüklənmədi"
@@ -1107,7 +1142,7 @@
         "drilldown": "Sahə və bölmələri idarə etmək üçün tədbiri tam enerji rejimində açın"
       }
     },
-"status": {
+    "status": {
       "planning": "Planlaşdırma",
       "staffing": "Kadr yığımı",
       "live": "Canlı",
@@ -1123,7 +1158,7 @@
       "title": "Yeni tədbir",
       "back": "Tədbirlərə qayıt",
       "submit": "Tədbir yarat",
-      "submitting": "Yaradılır\u2026",
+      "submitting": "Yaradılır…",
       "err": {
         "slug_taken": "Bu slug artıq istifadə olunur",
         "generic": "Tədbir yaradılmadı. Yenidən cəhd edin."
@@ -1234,5 +1269,23 @@
       "body": "Bu şərtlər barədə suallarınız var?",
       "contact": "Bizimlə əlaqə saxlayın:"
     }
+  },
+  "invite": {
+    "welcome": "Siz dəvət olunmusunuz.",
+    "orgSubtitle": "Təşkilat profilinizi qurun və təsdiqlənmiş mütəxəssisləri tapın.",
+    "subtitle": "İlk qiymətləndirməni tamamlayın. AURA balınızı alın. Kəşf olunun.",
+    "cta": "Hesabınızı yaradın",
+    "redirecting": "{{count}} saniyəyə yönləndirilir...",
+    "invalidTitle": "Bu dəvət linki etibarsızdır.",
+    "invalidBody": "Volaura hazırda yalnız dəvətlə işləyir. Giriş əldə etmək üçün Telegram-dan yazın.",
+    "telegramCta": "Telegram-da giriş istəyin",
+    "linkedinCta": "Yenilikləri LinkedIn-dən izləyin",
+    "hasCode": "Artıq kodunuz var?",
+    "enterManually": "Əl ilə daxil edin"
+  },
+  "sample": {
+    "label": "Nümunə Profil",
+    "verifiedEvents": "Təsdiqlənmiş Tədbirlər",
+    "cta": "Öz AURA Profilinizi Yaradın"
   }
 }

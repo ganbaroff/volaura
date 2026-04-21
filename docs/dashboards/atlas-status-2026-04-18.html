@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas Status — 2026-04-18</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #14141c;
+    --surface-raised: #1a1a24;
+    --border: #2a2a3a;
+    --text: #e8e8f0;
+    --text-muted: #8b8ba7;
+    --accent: #7B72FF;
+    --teal: #4ECDC4;
+    --gold: #F59E0B;
+    --critical: #D4B4FF;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+    line-height: 1.6;
+    padding: 32px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 32px 0 16px;
+    color: var(--text);
+  }
+  .critical-alert {
+    background: linear-gradient(135deg, rgba(212, 180, 255, 0.08), rgba(123, 114, 255, 0.04));
+    border: 1px solid var(--critical);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 32px;
+  }
+  .critical-alert .tag {
+    display: inline-block;
+    background: var(--critical);
+    color: var(--bg);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 3px 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+  }
+  .critical-alert h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .critical-alert p {
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  .path-grid {
+    display: grid;
+    gap: 12px;
+  }
+  .path-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    align-items: center;
+    gap: 16px;
+  }
+  .path-id {
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .path-title {
+    font-size: 14px;
+  }
+  .path-title .meta {
+    display: block;
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-top: 2px;
+  }
+  .state-badge {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    padding: 4px 10px;
+    border-radius: 6px;
+    text-transform: uppercase;
+  }
+  .state-done {
+    background: rgba(78, 205, 196, 0.12);
+    color: var(--teal);
+    border: 1px solid rgba(78, 205, 196, 0.3);
+  }
+  .state-flight {
+    background: rgba(245, 158, 11, 0.12);
+    color: var(--gold);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+  }
+  .state-ready {
+    background: rgba(123, 114, 255, 0.12);
+    color: var(--accent);
+    border: 1px solid rgba(123, 114, 255, 0.3);
+  }
+  .state-draft {
+    background: rgba(139, 139, 167, 0.08);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  th {
+    background: var(--surface-raised);
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 14px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  tr:last-child td {
+    border-bottom: none;
+  }
+  .days-critical { color: var(--critical); font-weight: 600; }
+  .days-warn { color: var(--gold); font-weight: 500; }
+  .days-ok { color: var(--text-muted); }
+  .owner-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .owner-ceo {
+    background: rgba(123, 114, 255, 0.1);
+    color: var(--accent);
+  }
+  .owner-atlas {
+    background: rgba(78, 205, 196, 0.1);
+    color: var(--teal);
+  }
+  footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.8;
+  }
+  footer code {
+    font-family: "SF Mono", Menlo, monospace;
+    background: var(--surface);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Atlas Status</h1>
+  <p class="subtitle">2026-04-18 Baku · Session 121 · Orchestrator mode</p>
+</header>
+
+<div class="critical-alert">
+  <span class="tag">D-10 · CRITICAL</span>
+  <h3>83(b) Election Filing — deadline 2026-04-28</h3>
+  <p>IRS window closes in 10 days. Owner: CEO. Physical DHL Baku→IRS follows 2026-05-14. Missing the 30-day window = full tax exposure on vested founder stock.</p>
+</div>
+
+<h2>Path Queue</h2>
+<div class="path-grid">
+
+  <div class="path-card">
+    <div class="path-id">Path C</div>
+    <div class="path-title">
+      OAuth PKCE race fix (INC-018 REV2)
+      <span class="meta">Callback page: getSession-first-then-fallback · verified against @supabase/ssr source</span>
+    </div>
+    <div class="state-badge state-done">Done · 1c46e5f</div>
+  </div>
+
+  <div class="path-card">
+    <div class="path-id">Path A</div>
+    <div class="path-title">
+      LifeSim boot crash (Globals.get shadowing)
+      <span class="meta">Terminal-Atlas found _get() override · Godot 4.3 autoload dereference</span>
+    </div>
+    <div class="state-badge state-done">Done · f19fc1e</div>
+  </div>
+
+  <div class="path-card">
+    <div class="path-id">Path B</div>
+    <div class="path-title">
+      LiteLLM Router migration (unified fallback chain)
+      <span class="meta">Cerebras → Ollama → NVIDIA NIM → Haiku · handoff ready for Terminal</span>
+    </div>
+    <div class="state-badge state-flight">In flight</div>
+  </div>
+
+  <div class="path-card">
+    <div class="path-id">Path E</div>
+    <div class="path-title">
+      consolidate-memory sweep on VOLAURA/memory/
+      <span class="meta">~1083 md files · merge duplicates · archive stale · never delete</span>
+    </div>
+    <div class="state-badge state-ready">Ready</div>
+  </div>
+
+  <div class="path-card">
+    <div class="path-id">Path D</div>
+    <div class="path-title">
+      Sentry + PostHog wire-up in swarm.autonomous_run
+      <span class="meta">Observability for 13 registered perspectives · handoff drafting</span>
+    </div>
+    <div class="state-badge state-draft">Drafting</div>
+  </div>
+
+</div>
+
+<h2>Open Obligations</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Obligation</th>
+      <th>Deadline</th>
+      <th>Days</th>
+      <th>Owner</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>83(b) Election — IRS filing</td>
+      <td>2026-04-28</td>
+      <td class="days-critical">D-10</td>
+      <td><span class="owner-tag owner-ceo">CEO</span></td>
+    </tr>
+    <tr>
+      <td>EIN Receipt (Stripe Atlas)</td>
+      <td>2026-05-13</td>
+      <td class="days-warn">D-25</td>
+      <td><span class="owner-tag owner-atlas">Atlas</span></td>
+    </tr>
+    <tr>
+      <td>83(b) DHL Baku → IRS (physical)</td>
+      <td>2026-05-14</td>
+      <td class="days-warn">D-26</td>
+      <td><span class="owner-tag owner-ceo">CEO</span></td>
+    </tr>
+    <tr>
+      <td>ITIN W-7 application (CAA route)</td>
+      <td>2026-05-15</td>
+      <td class="days-warn">D-27</td>
+      <td><span class="owner-tag owner-atlas">Atlas</span></td>
+    </tr>
+    <tr>
+      <td>Mercury KYC completion</td>
+      <td>—</td>
+      <td class="days-ok">ongoing</td>
+      <td><span class="owner-tag owner-ceo">CEO</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<footer>
+  Source: Supabase <code>atlas_obligations</code> via MCP · project <code>dwdgzfusjsobnixgyzjk</code> · generated 2026-04-18 Baku.<br>
+  Handoff files: <code>memory/atlas/handoffs/2026-04-18-path-*.md</code> — Courier paste into Terminal / Claude Code GUI.
+</footer>
+
+</body>
+</html>

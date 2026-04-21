@@ -43,7 +43,7 @@ export function RatingScale({
               onClick={() => onChange(step)}
               className={cn(
                 "flex-1 flex flex-col items-center gap-1.5 rounded-xl border-2 py-3 px-1",
-                "transition-all duration-150",
+                "transition-all duration-150 motion-reduce:transition-none",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                 "disabled:opacity-50 disabled:cursor-not-allowed",
                 isSelected

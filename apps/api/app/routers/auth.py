@@ -120,18 +120,15 @@ async def validate_invite(
 ) -> ValidateInviteResponse:
     """Validate a beta invite code. Returns {valid: bool}.
 
-    Uses constant-time comparison (hmac.compare_digest) to prevent timing attacks.
-    If BETA_INVITE_CODE is empty, always returns valid=False (gate is armed but
-    misconfigured — prevents silent bypass when code is not yet set on Railway).
+    Delegates to the shared multi-code loader (INVITE_CODES env var, comma-separated)
+    so /auth/validate-invite and /invite/validate share the same allowlist.
+    Fixes G2.3 sync gap: signup page called this endpoint while invite page called
+    /invite/validate — codes from INVITE_CODES were silently rejected here.
     """
-    code = settings.beta_invite_code
-    if not code:
-        # Code not configured — gate armed but no valid code exists
-        return ValidateInviteResponse(valid=False)
-    is_valid = hmac.compare_digest(
-        payload.invite_code.strip().lower(),
-        code.strip().lower(),
-    )
+    from app.routers.beta_invite import _load_valid_codes  # noqa: PLC0415
+
+    valid_codes = _load_valid_codes()
+    is_valid = payload.invite_code.strip().upper() in valid_codes
     return ValidateInviteResponse(valid=is_valid)
 
 
@@ -141,6 +138,7 @@ async def register(
     request: Request,
     payload: RegisterRequest,
     db: SupabaseAnon,
+    db_admin: SupabaseAdmin,
 ) -> AuthResponse:
     """Register a new user via Supabase Auth (anon key — OWASP HIGH-05 fix)."""
     # GDPR consent — forward into user_metadata so onboarding (POST /profiles/me)
@@ -169,9 +167,6 @@ async def register(
             }
         )
     except Exception as e:
-        # Security: don't leak internal error details to client
-        from loguru import logger
-
         logger.warning("Registration failed", email_domain=payload.email.split("@")[-1], error=str(e)[:200])
         raise HTTPException(
             status_code=400,
@@ -184,10 +179,47 @@ async def register(
             detail={"code": "EMAIL_CONFIRMATION_REQUIRED", "message": "Check your email to confirm registration"},
         )
 
+    user_id = str(auth_response.user.id)
+
+    try:
+        policy_row = (
+            await db_admin.table("policy_versions")
+            .select("id")
+            .eq("document_type", "terms_of_service")
+            .is_("superseded_by", "null")
+            .order("effective_from", desc=True)
+            .limit(1)
+            .maybe_single()
+            .execute()
+        )
+        if policy_row and policy_row.data:
+            await (
+                db_admin.table("consent_events")
+                .insert(
+                    {
+                        "user_id": user_id,
+                        "source_product": "volaura",
+                        "event_type": "consent_given",
+                        "policy_version_id": policy_row.data["id"],
+                        "consent_scope": {
+                            "age_confirmed": consent_meta["age_confirmed"],
+                            "terms_version": consent_meta["terms_version"],
+                            "timestamp": consent_meta["terms_accepted_at"],
+                        },
+                        "ip_address": request.client.host if request.client else None,
+                        "user_agent": request.headers.get("user-agent"),
+                    }
+                )
+                .execute()
+            )
+            logger.info("GDPR signup consent logged", user_id=user_id)
+    except Exception as exc:
+        logger.warning("GDPR signup consent logging failed (non-blocking)", user_id=user_id, error=str(exc)[:200])
+
     return AuthResponse(
         access_token=auth_response.session.access_token,
         expires_in=auth_response.session.expires_in or 3600,
-        user_id=str(auth_response.user.id),
+        user_id=user_id,
     )
 
 
@@ -254,8 +286,6 @@ async def delete_account(
 
     GDPR compliance: all user data removed. This action is irreversible.
     """
-    from loguru import logger
-
     try:
         await db_admin.auth.admin.delete_user(user_id)
         logger.info("Account deleted", user_id=str(user_id))
@@ -283,8 +313,6 @@ async def logout(
 
     Scope: "global" — invalidates ALL sessions for this user (all devices).
     """
-    from loguru import logger
-
     auth_header = request.headers.get("authorization", "")
     token = auth_header.removeprefix("Bearer ").strip()
 

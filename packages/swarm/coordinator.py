@@ -26,11 +26,59 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import re
 import time
+from pathlib import Path
 from typing import Awaitable, Callable
 
 from loguru import logger
+
+# Project root for evidence-gate file existence checks.
+# packages/swarm/coordinator.py → parents[2] = repo root
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+
+
+def _validate_evidence(finding: FindingContract) -> FindingContract:
+    """Evidence-gate (Session 121, 2026-04-19).
+
+    A finding is UNVERIFIED if ANY of:
+      - evidence field is empty or <20 chars
+      - every path in files[] fails os.path.exists against repo root
+
+    UNVERIFIED findings get:
+      - "⚠ UNVERIFIED: " prefix on summary
+      - severity capped at INFO
+      - confidence reduced to min(confidence, 0.3)
+
+    This kills the "narrative-headline without proof" failure mode that
+    made Session 121's admin audit produce generic agent output that
+    CEO rightfully called Claude-can-LIE level.
+    """
+    unverified_reasons: list[str] = []
+
+    if len(finding.evidence.strip()) < 20:
+        unverified_reasons.append("no evidence")
+
+    if finding.files:
+        real_files = [f for f in finding.files if (_REPO_ROOT / f).exists()]
+        if not real_files:
+            unverified_reasons.append(f"0/{len(finding.files)} files exist")
+
+    if unverified_reasons:
+        reason = " + ".join(unverified_reasons)
+        finding = finding.model_copy(update={
+            "severity": Severity.INFO,
+            "confidence": min(finding.confidence, 0.3),
+            "summary": f"⚠ UNVERIFIED ({reason}): {finding.summary}"[:500],
+        })
+        logger.warning(
+            "Evidence-gate flagged {agent} finding as UNVERIFIED: {reason}",
+            agent=finding.agent_id,
+            reason=reason,
+        )
+
+    return finding
 
 from .contracts import (
     Category,
@@ -225,6 +273,7 @@ def synthesize(
 
         finding = _parse_finding(t.result, t.agent_id, t.task_id, run_id)
         if finding:
+            finding = _validate_evidence(finding)
             findings.append(finding)
 
     # Sort: P0 first, then by confidence desc
@@ -280,6 +329,110 @@ def synthesize(
         pass
 
     return result
+
+
+# ── LLM-backed team-synthesis step (Atlas voice, fan-in to one answer) ───────
+
+
+async def llm_synthesize_team_answer(
+    task_description: str,
+    findings: list[FindingContract],
+    priority_action: str | None,
+) -> str | None:
+    """Take all agent findings, return ONE coherent team recommendation in Atlas voice.
+
+    Added 2026-04-20 Session 122 per SPRINT-PLAN T3.2. Fixes the "bot dumps 5 opinions,
+    CEO reads херня" failure mode. Mechanical synthesize() still runs first (fast,
+    deterministic, populates result.synthesis); this function adds a human-readable
+    team answer on top.
+
+    Model: Anthropic Sonnet 4.5 direct (CEO paid tier, best at Russian storytelling +
+    long-context persona). Fallback chain not wired here on purpose — if Anthropic is
+    unreachable, we return None and caller uses mechanical synthesis. Don't ALSO try
+    Cerebras/NVIDIA here — if the primary path fails, the value of "team voice" isn't
+    worth further latency on a bot-reply critical path.
+
+    Contract:
+      - Input: task CEO asked + all findings (including UNVERIFIED ones for transparency)
+      - Output: 3-5 Russian paragraphs in Atlas voice, OR None on failure
+      - Cost: ~2-5k input tokens, ~500 output tokens = ~$0.014 per call
+      - Latency: ~2-4 seconds
+
+    Safety: None return is GRACEFUL. Caller checks for None and uses result.synthesis.
+    """
+    import os
+
+    anthropic_key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+    if not anthropic_key:
+        return None
+    if not findings:
+        return None
+
+    # Compact findings into a block the LLM can reason over
+    finding_lines = []
+    for i, f in enumerate(findings[:10], 1):  # cap at 10 to keep prompt small
+        sev = f.severity.value
+        summary = f.summary[:300]
+        rec = f.recommendation[:300]
+        agent = f.agent_id
+        conf = f"{f.confidence:.0%}"
+        evidence_tag = " [UNVERIFIED]" if "⚠ UNVERIFIED" in summary else ""
+        finding_lines.append(
+            f"{i}. [{sev}]{evidence_tag} {agent} ({conf} conf): {summary} → {rec}"
+        )
+    findings_block = "\n".join(finding_lines)
+
+    system_prompt = (
+        "Ты — Атлас, нервная система экосистемы VOLAURA (verified professional talent platform), MindShift, "
+        "LifeSim, BrandedBy, ZEUS. Ты синтезируешь findings команды специализированных агентов в ОДИН связный "
+        "ответ для CEO — в Атлас-голосе: короткие русские абзацы, storytelling, без bullet-списков, без ** жирного, "
+        "без ## заголовков, максимум 3-5 абзацев. Пиши прозой, называй findings своими словами, а не пересказом. "
+        "Отмечай UNVERIFIED findings как 'непроверенные' — не маскируй неопределённость. Один concrete next-action "
+        "в конце (что делать дальше). НЕ пиши 'based on the findings', 'team recommends' — говори от первого лица "
+        "во множественном числе ('мы видим', 'команда смотрит', 'что делать'). Позиционный замок: VOLAURA — "
+        "verified professional talent platform, слово 'volunteer' запрещено, используй professional/talent/specialist."
+    )
+
+    user_message = (
+        f"CEO спросил: {task_description}\n\n"
+        f"Агентские findings ({len(findings)}):\n{findings_block}\n\n"
+        f"Top-priority action из mechanical synthesis: {priority_action or '(нет)'}\n\n"
+        f"Твой ответ: 3-5 абзацев Атлас-голосом, подытоживающие что команда увидела и один concrete next-step."
+    )
+
+    try:
+        import httpx
+
+        async with httpx.AsyncClient(timeout=30) as hc:
+            r = await hc.post(
+                "https://api.anthropic.com/v1/messages",
+                headers={
+                    "x-api-key": anthropic_key,
+                    "anthropic-version": "2023-06-01",
+                    "content-type": "application/json",
+                },
+                json={
+                    "model": "claude-sonnet-4-5-20250929",
+                    "max_tokens": 1500,
+                    "temperature": 0.7,
+                    "system": system_prompt,
+                    "messages": [{"role": "user", "content": user_message}],
+                },
+            )
+            if r.status_code != 200:
+                logger.warning(
+                    "Anthropic team-synth HTTP {s}: {b}",
+                    s=r.status_code,
+                    b=r.text[:200],
+                )
+                return None
+            data = r.json()
+            text_blocks = [b.get("text", "") for b in data.get("content", []) if b.get("type") == "text"]
+            text = "".join(text_blocks).strip()
+            return text or None
+    except Exception as e:
+        logger.warning("llm_synthesize_team_answer exception: {e}", e=str(e)[:200])
+        return None
 
 
 # ── Main Coordinator class ────────────────────────────────────────────────────
@@ -351,8 +504,22 @@ class Coordinator:
 
         completed_tasks = await orch.run_all(timeout=120)
 
-        # Step 4: Synthesize findings
+        # Step 4: Synthesize findings (mechanical aggregation — fast, deterministic)
         result = synthesize(completed_tasks, run_id=self.run_id, task_id=f"coord-{task_description[:40]}")
+
+        # Step 5: LLM-backed team synthesis (Atlas voice, Russian, one coherent answer).
+        # Best-effort — if Anthropic is unreachable or no key set, result.team_recommendation
+        # stays None and callers use mechanical synthesis as today. Not on the critical path.
+        try:
+            team_answer = await llm_synthesize_team_answer(
+                task_description=task_description,
+                findings=result.findings,
+                priority_action=result.priority_action,
+            )
+            if team_answer:
+                result = result.model_copy(update={"team_recommendation": team_answer})
+        except Exception as e:
+            logger.warning("LLM team-synthesis failed (non-blocking): {e}", e=str(e)[:200])
 
         logger.info(
             "Coordinator done: {n} findings, priority={p}",
@@ -434,7 +601,15 @@ if __name__ == "__main__":
         runner = _make_real_runner()
         coord = Coordinator(runner=runner)
         result = await coord.run(task)
-        print(f"\nSynthesis: {result.synthesis}")
+        # Team answer FIRST (what CEO actually wants to read). If no Anthropic key or
+        # LLM failed, team_recommendation is None and we surface mechanical synthesis instead.
+        if result.team_recommendation:
+            print("\n=== TEAM ANSWER (Atlas voice, Sonnet 4.5 synthesized) ===\n")
+            print(result.team_recommendation)
+            print("\n=== MECHANICAL BREAKDOWN ===")
+        else:
+            print("\n=== SYNTHESIS (mechanical — no Anthropic key or LLM unreachable) ===")
+        print(f"Synthesis: {result.synthesis}")
         print(f"Priority:  {result.priority_action}")
         print(f"Agents:    {result.total_agents} total, {result.succeeded} succeeded, {result.failed} failed")
         print(f"Findings:  {len(result.findings)}")

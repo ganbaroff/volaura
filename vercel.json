@@ -1,11 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "pnpm --filter apps/web build",
+  "buildCommand": "pnpm --filter @volaura/web build",
   "outputDirectory": "apps/web/.next",
   "installCommand": "pnpm install --frozen-lockfile",
   "framework": "nextjs",
   "regions": ["fra1"],
   "git": {
     "deploymentEnabled": true
-  }
+  },
+  "ignoreCommand": "git diff --quiet HEAD~1 -- apps/web/ packages/ .env.md vercel.json .vercelignore .nvmrc"
 }

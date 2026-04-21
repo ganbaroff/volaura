@@ -21,6 +21,11 @@ from app.middleware.rate_limit import RATE_DISCOVERY, limiter
 router = APIRouter(prefix="/community", tags=["Community"])
 
 
+def _unique_count(rows: list[dict] | None) -> int:
+    """Count distinct non-None volunteer_id values in a list of row dicts."""
+    return len({r.get("volunteer_id") for r in (rows or []) if r.get("volunteer_id")})
+
+
 class CommunitySignal(BaseModel):
     """Aggregate-only social proof counters."""
 
@@ -66,9 +71,6 @@ async def get_community_signal(
         .execute()
     )
     total_res = await db.table("aura_scores").select("volunteer_id", count="exact", head=True).execute()
-
-    def _unique_count(rows: list[dict] | None) -> int:
-        return len({r.get("volunteer_id") for r in (rows or []) if r.get("volunteer_id")})
 
     return CommunitySignal(
         professionals_today=_unique_count(today_res.data),

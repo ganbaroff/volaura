@@ -107,7 +107,7 @@ export function ImpactTicker() {
   return (
     <section
       className="bg-muted/40 py-16"
-      aria-label="Platform impact statistics"
+      aria-label={t("landing.impactAriaLabel", { defaultValue: "Platform impact statistics" })}
     >
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">

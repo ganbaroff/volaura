@@ -1,6 +1,6 @@
 # Atlas Breadcrumb — post-r2 cron ticking
 
-**Last update:** 2026-04-21 tick 6 (Sonnet)
+**Last update:** 2026-04-21 tick 7 (Sonnet)
 **Self-wake cron:** 14d7810d, minute 7/37 every hour, durable
 **Round 2:** CLOSED. Cron ticks now tackle test-coverage roadmap one function per tick.
 
@@ -21,14 +21,15 @@
 - Tick 4.5: test-pollution fix — PR #82 merged
 - Tick 5 (2026-04-21): az_translation.py — PR #83 — 28 tests, 28% → 100% on `app.services.az_translation`
 - Tick 6 (2026-04-21): email.py — PR #84 — 30 tests, 34% → 100% on `app.services.email`
+- Tick 7 (2026-04-21): swarm_service 61% → 100% (PR #86) + cross_product_bridge 64% → 100% (PR #87)
 
 ## What's next (pick top)
 
-1. **`swarm_service.py`** — 61% → ≥90%.
+1. **`atlas_consult.py`** — 84% → ≥95%.
 
-2. **`cross_product_bridge.py`** — 64% → ≥90%.
+2. **`match_checker.py`** — 85% → ≥95%.
 
-3. **`atlas_consult.py`** — 84% → ≥95%.
+3. **`subscription.py` router** — 74% → ≥90%.
 
 4. **email.py** — DONE. 100% coverage, PR #84 merged. Release `v0.1.0-beta.1` published.
 5. **bars.py** — DONE. 99% coverage, PR #80 merged.

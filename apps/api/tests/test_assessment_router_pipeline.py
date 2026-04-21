@@ -2112,3 +2112,206 @@ async def test_verify_returns_badge_data() -> None:
         assert body["session_id"] == SESSION_ID
     finally:
         app.dependency_overrides.clear()
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Finding 3 — no_items_left integration path
+# ══════════════════════════════════════════════════════════════════════════════
+
+
+@pytest.mark.asyncio
+async def test_answer_no_items_left_sets_is_complete_true() -> None:
+    """fetch_questions returns [] → state.stop_reason='no_items_left', is_complete=True.
+
+    Finding 3: when the question pool is exhausted after an answer, the router
+    sets state.stopped=True / state.stop_reason='no_items_left' and returns
+    is_complete=True in the AnswerFeedback.session field.
+    """
+    from unittest.mock import patch
+
+    session = _session_row(current_question_id=QUESTION_ID, answer_version=0)
+    question = _mcq_question(correct_answer="A")
+
+    _q_counter_nil = {"n": 0}
+
+    admin_m = MagicMock()
+    admin_m.auth = MagicMock()
+    admin_m.auth.admin = MagicMock()
+    admin_m.auth.admin.get_user_by_id = AsyncMock(return_value=MagicMock(user=None))
+
+    def _admin_table_nil(name: str) -> MagicMock:
+        t = MagicMock()
+        t.select = MagicMock(return_value=t)
+        t.update = MagicMock(return_value=t)
+        t.eq = MagicMock(return_value=t)
+        t.gte = MagicMock(return_value=t)
+        t.order = MagicMock(return_value=t)
+        t.limit = MagicMock(return_value=t)
+        t.single = MagicMock(return_value=t)
+        t.maybe_single = MagicMock(return_value=t)
+        t.in_ = MagicMock(return_value=t)
+        if name == "questions":
+            async def _q_exec_nil(*a, **kw):
+                _q_counter_nil["n"] += 1
+                if _q_counter_nil["n"] == 1:
+                    return MagicMock(data=question)   # single() → load current question
+                return MagicMock(data=[question])     # fallback (should not reach if patched)
+            t.execute = AsyncMock(side_effect=_q_exec_nil)
+        elif name == "assessment_sessions":
+            # optimistic-lock update returns a valid row so the update passes
+            t.execute = AsyncMock(return_value=MagicMock(data=[{"id": SESSION_ID}], count=1))
+        elif name == "competencies":
+            t.execute = AsyncMock(return_value=MagicMock(data={"slug": "communication"}))
+        else:
+            t.execute = AsyncMock(return_value=MagicMock(data=None))
+        return t
+
+    admin_m.table = MagicMock(side_effect=_admin_table_nil)
+    mock_user = _chainable(execute_result=session)
+    app.dependency_overrides[get_supabase_admin] = _admin_override(admin_m)
+    app.dependency_overrides[get_supabase_user] = _user_override(mock_user)
+    app.dependency_overrides[get_current_user_id] = _uid_override(USER_ID)
+    try:
+        # Patch fetch_questions to return empty list → triggers no_items_left branch
+        with patch("app.routers.assessment.fetch_questions", new_callable=AsyncMock, return_value=[]):
+            async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+                resp = await ac.post(
+                    "/api/assessment/answer",
+                    json={
+                        "session_id": SESSION_ID,
+                        "question_id": QUESTION_ID,
+                        "answer": "A",
+                        "response_time_ms": 4000,
+                    },
+                    headers={"Authorization": "Bearer fake"},
+                )
+        assert resp.status_code == 200, f"Expected 200, got {resp.status_code}: {resp.text}"
+        body = resp.json()
+        session_state = body.get("session", {})
+        assert session_state.get("is_complete") is True, (
+            f"Expected is_complete=True when no items left, got: {session_state}"
+        )
+        assert session_state.get("stop_reason") == "no_items_left", (
+            f"Expected stop_reason='no_items_left', got: {session_state.get('stop_reason')}"
+        )
+    finally:
+        app.dependency_overrides.clear()
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Finding 6 — daily LLM cap degraded path
+# ══════════════════════════════════════════════════════════════════════════════
+
+
+@pytest.mark.asyncio
+async def test_answer_daily_llm_cap_forces_degraded_scoring() -> None:
+    """≥20 open-ended LLM calls today → bars.evaluate_answer called with force_degraded=True.
+
+    Finding 6: when today's sessions already contain 20 items with evaluation_log
+    (open-ended LLM calls), the next open-ended answer must trigger the keyword-
+    fallback path via bars.evaluate_answer(force_degraded=True) instead of the
+    swarm/full-LLM path.
+    """
+    from unittest.mock import patch
+
+    open_question = {
+        "id": QUESTION_ID,
+        "type": "open_ended",
+        "scenario_en": "How do you handle conflict in a team?",
+        "scenario_az": "Komandada münaqişəni necə həll edirsiniz?",
+        "scenario_ru": None,
+        "correct_answer": None,
+        "irt_a": 1.0,
+        "irt_b": 0.0,
+        "irt_c": 0.0,
+        "competency_id": COMPETENCY_ID,
+        "expected_concepts": [{"concept": "empathy"}],
+        "options": None,
+    }
+    session = _session_row(current_question_id=QUESTION_ID, answer_version=0)
+
+    # Build today's sessions data: one session with 20 items that each consumed LLM
+    llm_items = [
+        {"question_id": str(uuid.uuid4()), "evaluation_log": {"evaluation_mode": "llm"}}
+        for _ in range(20)
+    ]
+    today_sessions_data = [{"answers": {"items": llm_items}}]
+
+    _q_counter_cap = {"n": 0}
+
+    admin_m = MagicMock()
+    admin_m.auth = MagicMock()
+    admin_m.auth.admin = MagicMock()
+    admin_m.auth.admin.get_user_by_id = AsyncMock(return_value=MagicMock(user=None))
+
+    def _admin_table_cap(name: str) -> MagicMock:
+        t = MagicMock()
+        t.select = MagicMock(return_value=t)
+        t.update = MagicMock(return_value=t)
+        t.eq = MagicMock(return_value=t)
+        t.gte = MagicMock(return_value=t)
+        t.order = MagicMock(return_value=t)
+        t.limit = MagicMock(return_value=t)
+        t.single = MagicMock(return_value=t)
+        t.maybe_single = MagicMock(return_value=t)
+        t.in_ = MagicMock(return_value=t)
+        if name == "questions":
+            async def _q_exec_cap(*a, **kw):
+                _q_counter_cap["n"] += 1
+                if _q_counter_cap["n"] == 1:
+                    return MagicMock(data=open_question)
+                return MagicMock(data=[open_question])
+            t.execute = AsyncMock(side_effect=_q_exec_cap)
+        elif name == "assessment_sessions":
+            # The router makes TWO assessment_sessions queries in the open-ended path:
+            # 1. daily LLM cap check (select answers, gte started_at) → today_sessions_data
+            # 2. optimistic lock update (update + eq answer_version) → [{"id": SESSION_ID}]
+            _cap_exec_n = {"n": 0}
+            async def _sess_exec_cap(*a, **kw):
+                _cap_exec_n["n"] += 1
+                if _cap_exec_n["n"] == 1:
+                    return MagicMock(data=today_sessions_data, count=1)
+                return MagicMock(data=[{"id": SESSION_ID}], count=1)
+            t.execute = AsyncMock(side_effect=_sess_exec_cap)
+        elif name == "competencies":
+            t.execute = AsyncMock(return_value=MagicMock(data={"slug": "communication"}))
+        else:
+            t.execute = AsyncMock(return_value=MagicMock(data=None))
+        return t
+
+    admin_m.table = MagicMock(side_effect=_admin_table_cap)
+    mock_user = _chainable(execute_result=session)
+    app.dependency_overrides[get_supabase_admin] = _admin_override(admin_m)
+    app.dependency_overrides[get_supabase_user] = _user_override(mock_user)
+    app.dependency_overrides[get_current_user_id] = _uid_override(USER_ID)
+
+    captured_kwargs: dict = {}
+
+    async def _fake_bars_evaluate(*args, **kwargs):
+        captured_kwargs.update(kwargs)
+        result = MagicMock()
+        result.composite = 0.5
+        result.to_log = MagicMock(return_value={"evaluation_mode": "degraded", "score": 0.5})
+        return result
+
+    try:
+        with patch("app.routers.assessment.bars.evaluate_answer", side_effect=_fake_bars_evaluate):
+            with patch("app.routers.assessment.fetch_questions", new_callable=AsyncMock, return_value=[open_question]):
+                async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+                    resp = await ac.post(
+                        "/api/assessment/answer",
+                        json={
+                            "session_id": SESSION_ID,
+                            "question_id": QUESTION_ID,
+                            "answer": "I try to listen carefully and find common ground.",
+                            "response_time_ms": 7000,
+                        },
+                        headers={"Authorization": "Bearer fake"},
+                    )
+        assert resp.status_code == 200, f"Expected 200, got {resp.status_code}: {resp.text}"
+        assert captured_kwargs.get("force_degraded") is True, (
+            f"Expected bars.evaluate_answer called with force_degraded=True; "
+            f"captured kwargs: {captured_kwargs}"
+        )
+    finally:
+        app.dependency_overrides.clear()

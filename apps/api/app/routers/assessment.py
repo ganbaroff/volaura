@@ -48,6 +48,7 @@ from app.schemas.assessment import (
     QuestionBreakdownOut,
     QuestionResultOut,
     SessionOut,
+    SessionResumeOut,
     StartAssessmentRequest,
     SubmitAnswerRequest,
 )
@@ -198,28 +199,27 @@ async def start_assessment(
     except Exception:
         is_admin = False  # fail-closed — unknown = treat as regular user
 
-    # Admin bypass: expire stale in_progress sessions (>24 h) before conflict check.
-    # Strange v2 objection: must audit-log expirations (Gemini 2026-04-18).
-    if is_admin:
-        stale_cutoff = (datetime.utcnow() - timedelta(hours=24)).isoformat()
-        stale_check = (
-            await db_admin.table("assessment_sessions")
-            .select("id")
+    # Auto-expire stale in_progress sessions (>24 h) before conflict check.
+    # Any session abandoned for over a day is clearly not resumable.
+    stale_cutoff = (datetime.now(UTC) - timedelta(hours=24)).isoformat()
+    stale_check = (
+        await db_admin.table("assessment_sessions")
+        .select("id")
+        .eq("volunteer_id", user_id)
+        .eq("status", "in_progress")
+        .lt("created_at", stale_cutoff)
+        .execute()
+    )
+    if stale_check.data:
+        await (
+            db_admin.table("assessment_sessions")
+            .update({"status": "expired"})
             .eq("volunteer_id", user_id)
             .eq("status", "in_progress")
             .lt("created_at", stale_cutoff)
             .execute()
         )
-        if stale_check.data:
-            await (
-                db_admin.table("assessment_sessions")
-                .update({"status": "expired"})
-                .eq("volunteer_id", user_id)
-                .eq("status", "in_progress")
-                .lt("created_at", stale_cutoff)
-                .execute()
-            )
-            logger.info("Admin bypass: expired stale sessions", user_id=user_id, count=len(stale_check.data))
+        logger.info("Auto-expired stale sessions", user_id=user_id, count=len(stale_check.data))
 
     # Check for in-progress session
     existing = (
@@ -1082,6 +1082,91 @@ async def complete_assessment(
         gaming_flags=gaming.flags,
         completed_at=datetime.now(UTC),
         crystals_earned=crystals_earned,
+    )
+
+
+@router.get("/session/{session_id}", response_model=SessionResumeOut)
+@limiter.limit(RATE_ASSESSMENT_COMPLETE)
+async def get_session_state(
+    request: Request,
+    session_id: str,
+    db_admin: SupabaseAdmin,  # noqa: ARG001 — mirrors get_results signature
+    db_user: SupabaseUser,
+    user_id: CurrentUserId,
+) -> SessionResumeOut:
+    """Minimal session state for client-side resume (2026-04-19, P0 UX-Audit Task 2).
+
+    Called by the assessment page when the Zustand store has been cleared
+    (browser storage eviction, private-window reload) but the URL still
+    carries a session_id. Frontend decides:
+      - is_resumable=True  → rehydrate store + continue the existing session
+      - is_resumable=False + status='completed' → redirect to results
+      - is_resumable=False + status='expired' → show 'expired, start new'
+
+    Intentionally minimal — does NOT expose theta, raw answers, or the next
+    question. The existing /answer flow returns the next question; this is
+    a resume-helper, not a full session replay.
+    """
+    try:
+        uuid.UUID(session_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=422,
+            detail={"code": "INVALID_SESSION_ID", "message": "session_id must be a valid UUID"},
+        )
+
+    session_result = (
+        await db_user.table("assessment_sessions")
+        .select("id, status, competency_id, role_level, answers, started_at, created_at")
+        .eq("id", session_id)
+        .eq("volunteer_id", user_id)
+        .maybe_single()
+        .execute()
+    )
+    if not session_result or not session_result.data:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "SESSION_NOT_FOUND", "message": "Session not found"},
+        )
+
+    session = session_result.data
+    status = session.get("status") or "in_progress"
+
+    # Resolve competency slug for client-side store rehydration.
+    comp_result = (
+        await db_user.table("competencies").select("slug").eq("id", session["competency_id"]).maybe_single().execute()
+    )
+    slug = comp_result.data["slug"] if (comp_result and comp_result.data) else ""
+
+    # Count how many questions have been answered — CATState.items length mirrors
+    # what SessionOut.questions_answered returns on /start + /answer.
+    state = CATState.from_dict(session.get("answers") or {})
+    answered = len(state.items)
+
+    # 24h auto-expiry mirrors the /start stale-session sweep above. A session
+    # older than that is not resumable even if its status wasn't flipped yet.
+    started_raw = session.get("started_at") or session.get("created_at")
+    is_stale = False
+    if started_raw:
+        try:
+            started_dt = datetime.fromisoformat(str(started_raw).replace("Z", "+00:00"))
+            if started_dt.tzinfo is None:
+                started_dt = started_dt.replace(tzinfo=UTC)
+            is_stale = (datetime.now(UTC) - started_dt) > timedelta(hours=24)
+        except (ValueError, TypeError):
+            is_stale = False
+
+    is_resumable = status == "in_progress" and not is_stale
+    reported_status = "expired" if (status == "in_progress" and is_stale) else status
+
+    return SessionResumeOut(
+        session_id=session_id,
+        competency_slug=slug,
+        role_level=session.get("role_level") or "professional",
+        status=reported_status,
+        questions_answered=answered,
+        started_at=str(started_raw) if started_raw else None,
+        is_resumable=is_resumable,
     )
 
 

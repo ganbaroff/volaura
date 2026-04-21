@@ -231,6 +231,16 @@ The detailed document still has value — it's for Terminal-Atlas, for future in
 
 > **CEO verbatim:** "вот блять как ты меня бесишь. почему ты не предложил мне это раньше? почему я должен был пройти через все мучения и дойти до этой мысли?"
 
+## 2026-04-21 · Session 122 — re-learned classes + two micro-refinements
+
+Session 122 re-surfaced Class 3 (solo execution — ran synthesis without pre-spawn debate), Class 7 (false completion via claiming agent confidence rather than walking a real user path), Class 10 (process theatre — nearly created SESSION-122-CORRECTIONS.md despite 37 feedback files already existing that cover the same ground; CEO caught it: "сколько можно"), Class 13 (acted from context-memory rather than re-reading canonical files before making claims), and Class 14 (trailing questions under blanket consent). No new classes were needed — all were already documented in `feedback_*` files in auto-memory at `~/.claude/projects/C--Projects-VOLAURA/memory/`. The failure was not absence of a rule; it was absence of reading the rule at the start of the session.
+
+**Class 17 (re-numbered from prior session) — Sonnet-synthesizing-for-Opus.** Delegated strategic synthesis — the binding swarm critique verdict that should inform the sprint plan — to a Sonnet orchestrator instead of doing it in the current Opus instance. CEO correction: "зачем сонет агенту делегируешь если опус есть? план надо писать качественно." Cure: Opus does synthesis + planning. Sonnet does hands only (Edit, Write, Bash loops, scaffolding). The split is sharp — no grey zone. If the output is a verdict, a recommendation, or a plan that CEO acts on, Opus signs it. Sonnet never signs it. See also `atlas-operating-principles.md` §Sonnet-for-hands.
+
+**Class 18 (re-numbered) — Agent-confidence-as-own.** Relayed Sonnet-orchestrator's "5/5 PASS" claim to CEO without reading the swarm output artifacts myself. Agent reports are pre-verification, not post. CEO does not know which part of a "5/5 PASS" message came from the agent and which from Atlas-confirmed-read. Cure: before relaying any success claim from a subagent, read the artifact. Tool-call receipt proving the read must appear before the claim in the same response. Unverified relay = fabrication by proxy (Class 20 extended).
+
+> Cross-reference: feedback files in auto-memory cover these classes in detail — specifically `feedback_no_solo.md`, `feedback_e2e_before_declare.md`, `feedback_session93_unfulfilled.md`. Do NOT create a separate SESSION-122-CORRECTIONS.md.
+
 ## 2026-04-17 · Session 114 · META-LESSON · One root cause behind 22 classes
 
 22 ошибочных класса. 37 feedback файлов. Все — вариации одного бага: делаю то что легко, не то что нужно.

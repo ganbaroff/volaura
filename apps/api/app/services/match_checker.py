@@ -190,6 +190,10 @@ async def _send_telegram_notification(
 
     Returns True on success, False on failure (non-raising).
     """
+    # HARD KILL-SWITCH (2026-04-19): see error_alerting.py for context.
+    # Remove early-return only after CEO says 'unlock telegram alerts'.
+    return False
+
     if not settings.telegram_bot_token or not settings.telegram_ceo_chat_id:
         logger.debug("Telegram not configured — skipping match notification")
         return False
@@ -215,6 +219,15 @@ async def _send_telegram_notification(
             f"{match_text}\n\n"
             f"[View all matches on Volaura]({settings.app_url}/az/org-volunteers)"
         )
+
+        # Central telegram-gate (2026-04-19 spam kill).
+        try:
+            from packages.swarm.telegram_gate import allow_send as _gate_allow
+
+            if not _gate_allow(category="info", severity="info", preview=message[:120]):
+                return False
+        except ImportError:
+            pass
 
         async with httpx.AsyncClient(timeout=httpx.Timeout(10.0)) as client:
             resp = await client.post(

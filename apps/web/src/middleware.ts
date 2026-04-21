@@ -4,6 +4,11 @@ import i18nConfig from "@/i18nConfig";
 import { updateSession } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  if (pathname === "/robots.txt" || pathname === "/sitemap.xml") {
+    return NextResponse.next();
+  }
+
   // Step 1: i18n routing — redirects / → /az, handles locale detection
   const i18nResponse = i18nRouter(request, i18nConfig);
 

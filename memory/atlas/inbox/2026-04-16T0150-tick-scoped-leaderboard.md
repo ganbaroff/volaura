@@ -10,4 +10,4 @@ Too big for single-tick. Stopped before half-doing. Documented full deletion pla
 
 Also surfaced: 10 pending medium-severity swarm proposals including Telegram HMAC missing + new endpoints without security review (breadcrumb next-step 3).
 
-## Consumed by main Atlas: pending
+## Consumed by inbox-consumer: 2026-04-20T21:01:33+00:00 · intent=code_fix

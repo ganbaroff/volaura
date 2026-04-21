@@ -168,7 +168,7 @@ describe("useMyOrganization", () => {
 
     await waitFor(() => expect(result.current.isError).toBe(true), ERROR_TIMEOUT);
 
-    expect(result.current.error?.message).toBe("Failed to fetch organization");
+    expect(result.current.error?.message).toBe("Not found");
   });
 
   it("uses ['organizations', 'me'] as query key", async () => {

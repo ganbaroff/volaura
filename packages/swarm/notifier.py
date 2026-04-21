@@ -99,6 +99,10 @@ def _log(record: dict) -> None:
 
 
 def _telegram_send(text: str) -> bool:
+    # HARD KILL-SWITCH (2026-04-19): see error_alerting.py. Remove early-return
+    # only after CEO says 'unlock telegram alerts'.
+    return False
+
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
     chat_id = os.environ.get("TELEGRAM_CEO_CHAT_ID")
     if not token or not chat_id:
@@ -134,10 +138,15 @@ def send_notification(
 
     is_critical = _SEVERITY_ORDER.get(severity, 0) >= _SEVERITY_ORDER["critical"]
 
+    # Central telegram-gate: global rate-limit + dedup + kill-switch (2026-04-19).
+    from .telegram_gate import allow_send as _gate_allow
+
     if _vacation_active() and not is_critical:
         reason = "vacation_mode"
     elif _cooldown_blocks(category) and not is_critical:
         reason = "cooldown"
+    elif not _gate_allow(category=category, severity=severity, preview=text[:120]):
+        reason = "telegram_gate_blocked"
     else:
         delivered = _telegram_send(text)
         if not delivered:

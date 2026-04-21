@@ -175,6 +175,7 @@ vi.mock("lucide-react", () => ({
   ShieldCheck: () => React.createElement("svg", { "aria-hidden": "true", "data-icon": "shield-check" }),
   Gavel: () => React.createElement("svg", { "aria-hidden": "true", "data-icon": "gavel" }),
   Clock: () => React.createElement("svg", { "aria-hidden": "true", "data-icon": "clock" }),
+  TrendingUp: () => React.createElement("svg", { "aria-hidden": "true", "data-icon": "trending-up" }),
 }));
 
 // ── Imports after mocks ───────────────────────────────────────────────────────

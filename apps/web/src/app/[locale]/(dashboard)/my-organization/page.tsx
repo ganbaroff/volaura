@@ -3,13 +3,18 @@
 import { useRef, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Building2, Calendar, Users, Plus, ExternalLink, CheckCircle2, Loader2, Globe, UserCheck, Upload, Search, ArrowRight } from "lucide-react";
+import { Building2, Calendar, Users, Plus, ExternalLink, CheckCircle2, Loader2, Globe, UserCheck, Upload, Search, ArrowRight, RefreshCw, LogIn } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMyOrganization, useCreateOrganization, useCollectiveAura } from "@/hooks/queries/use-organizations";
 import { useMyEvents } from "@/hooks/queries/use-events";
+import { ApiError } from "@/lib/api/client";
 import { cn } from "@/lib/utils/cn";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
+
+/** sessionStorage key: set before redirecting to login on 401, cleared on return. */
+const ORG_RETURN_KEY = "my-org:return:v1";
 
 // ── Stagger ────────────────────────────────────────────────────────────────────
 
@@ -91,6 +96,7 @@ export default function OrganizationsPage() {
   const { t } = useTranslation();
   const { locale } = useParams<{ locale: string }>();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { energy } = useEnergyMode();
   const isLowEnergy = energy === "low";
   const isMounted = useRef(true);
@@ -100,15 +106,94 @@ export default function OrganizationsPage() {
 
   const { data: org, isLoading: orgLoading, error: orgError } = useMyOrganization();
   const { data: events, isLoading: eventsLoading } = useMyEvents();
-  const { data: collective } = useCollectiveAura(org?.id);
+  const { data: collective } = useCollectiveAura(org?.id ?? undefined);
 
-  const hasOrg = !!org && !orgError;
+  // On return from a 401-triggered login redirect, invalidate the org query
+  // immediately so the page refetches with the fresh session rather than
+  // briefly showing the stale auth-error state.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const returning = sessionStorage.getItem(ORG_RETURN_KEY);
+    if (returning) {
+      sessionStorage.removeItem(ORG_RETURN_KEY);
+      void queryClient.invalidateQueries({ queryKey: ["organizations", "me"] });
+    }
+  }, [queryClient]);
+
+  // ── Error state classification ─────────────────────────────────────────────
+  // org === null      → user has no org (correct empty state, API returned 404)
+  // org === undefined → loading or first-render
+  // orgError?.status === 401 → session expired while on this page
+  // orgError?.status >= 500  → server error
+  const hasOrg = org != null && !orgError;
+  const isAuthError = orgError instanceof ApiError && orgError.status === 401;
+  const isServerError = orgError != null && !(orgError instanceof ApiError && orgError.status === 401);
+
+  function handleReauth() {
+    if (typeof window !== "undefined") {
+      try { sessionStorage.setItem(ORG_RETURN_KEY, "true"); } catch { /* ignore */ }
+    }
+    router.replace(`/${locale}/login?next=${encodeURIComponent(`/${locale}/my-organization`)}`);
+  }
+
+  function handleRetry() {
+    void queryClient.invalidateQueries({ queryKey: ["organizations", "me"] });
+  }
 
   // Stats
   const totalEvents = events?.length ?? 0;
   const openEvents = events?.filter((e) => e.status === "open").length ?? 0;
   const completedEvents = events?.filter((e) => e.status === "completed").length ?? 0;
 
+  // ── Auth-expired state ────────────────────────────────────────────────────
+  if (isAuthError) {
+    return (
+      <div className="min-h-screen bg-background px-4 py-8 sm:px-6 flex items-center justify-center">
+        <div className="mx-auto max-w-sm text-center space-y-4">
+          <LogIn className="mx-auto size-10 text-on-surface-variant" aria-hidden="true" />
+          <p className="font-semibold text-on-surface">
+            {t("orgs.authExpiredTitle", { defaultValue: "Session expired" })}
+          </p>
+          <p className="text-sm text-on-surface-variant">
+            {t("orgs.authExpiredDesc", { defaultValue: "Please sign in again to view your organization." })}
+          </p>
+          <button
+            onClick={handleReauth}
+            className="flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-on-primary mx-auto hover:opacity-90 transition-opacity"
+          >
+            <LogIn className="size-4" aria-hidden="true" />
+            {t("orgs.signInAgain", { defaultValue: "Sign in again" })}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Server error state ────────────────────────────────────────────────────
+  if (isServerError) {
+    return (
+      <div className="min-h-screen bg-background px-4 py-8 sm:px-6 flex items-center justify-center">
+        <div className="mx-auto max-w-sm text-center space-y-4">
+          <RefreshCw className="mx-auto size-10 text-on-surface-variant" aria-hidden="true" />
+          <p className="font-semibold text-on-surface">
+            {t("orgs.loadErrorTitle", { defaultValue: "Something went wrong" })}
+          </p>
+          <p className="text-sm text-on-surface-variant">
+            {t("orgs.loadErrorDesc", { defaultValue: "Could not load your organization. Please try again." })}
+          </p>
+          <button
+            onClick={handleRetry}
+            className="flex items-center gap-2 rounded-xl border border-border bg-surface-container px-5 py-2.5 text-sm font-semibold text-on-surface mx-auto hover:bg-surface-container-high transition-colors"
+          >
+            <RefreshCw className="size-4" aria-hidden="true" />
+            {t("common.retry", { defaultValue: "Retry" })}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Loading skeleton ───────────────────────────────────────────────────────
   if (orgLoading) {
     return (
       <div className="min-h-screen bg-background px-4 py-8 sm:px-6" role="status" aria-live="polite">

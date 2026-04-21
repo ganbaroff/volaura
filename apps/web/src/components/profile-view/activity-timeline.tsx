@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { CalendarCheck, Calendar } from "lucide-react";
 
@@ -27,6 +27,7 @@ const row = {
 
 export function ActivityTimeline({ events }: ActivityTimelineProps) {
   const { t } = useTranslation();
+  const shouldReduceMotion = useReducedMotion();
 
   if (events.length === 0) {
     return (
@@ -40,7 +41,7 @@ export function ActivityTimeline({ events }: ActivityTimelineProps) {
   return (
     <motion.div
       variants={stagger}
-      initial="hidden"
+      initial={shouldReduceMotion ? false : "hidden"}
       animate="visible"
       className="relative space-y-0"
     >

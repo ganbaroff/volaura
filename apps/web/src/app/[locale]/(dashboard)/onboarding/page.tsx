@@ -5,9 +5,14 @@ import { useRouter, useParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
-import { API_BASE } from "@/lib/api/client";
+import { apiFetch, ApiError } from "@/lib/api/client";
 import { cn } from "@/lib/utils/cn";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
+import {
+  readOnboardingDraft,
+  writeOnboardingDraft,
+  clearOnboardingDraft,
+} from "./draft-storage";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -173,8 +178,22 @@ export default function OnboardingPage() {
     visible_to_orgs: true,
   });
 
-  // Pre-fill username and account_type from signup user_metadata
+  // Task 4 (UX-LOGIC-AUDIT-2026-04-18 #4): session draft rehydration.
+  // If sessionStorage has a valid in-flight draft (written by the 401 recovery
+  // branch in handleFinish before bouncing to /login), restore form state +
+  // jump to the step the user was on. Draft always wins over user_metadata
+  // prefill — the metadata is stale-at-signup; the draft is what the user
+  // actually typed before auth expired.
   useEffect(() => {
+    const draft = readOnboardingDraft();
+    if (draft) {
+      setAccountType(draft.accountType);
+      setFormData(draft.formData);
+      setStep(draft.step);
+      return;
+    }
+
+    // No draft — fall back to user_metadata prefill captured at signup.
     const supabase = createClient();
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!isMounted.current) return;
@@ -226,8 +245,20 @@ export default function OnboardingPage() {
     setError(null);
     try {
       const supabase = createClient();
+
+      // Task 4 (UX-LOGIC-AUDIT-2026-04-18 #4): pre-flight refresh.
+      // The previous version passed `if (token) headers.Authorization = ...`
+      // straight through to a raw fetch — if the Supabase refresh-token ladder
+      // silently failed, the stale JWT rode the request and the backend 401'd
+      // with no recovery path. Now: refresh first; treat any refresh failure
+      // as a synthetic 401 and drop into the recovery branch below.
+      const { error: refreshErr } = await supabase.auth.refreshSession();
+      if (refreshErr) {
+        throw new ApiError(401, "SESSION_EXPIRED", refreshErr.message);
+      }
+
       const { data: { session } } = await supabase.auth.getSession();
-      const token = session?.access_token;
+      const meta = session?.user?.user_metadata ?? {};
 
       const payload: Record<string, unknown> = {
         account_type: accountType,
@@ -241,47 +272,48 @@ export default function OnboardingPage() {
       }
       if (accountType === "organization") {
         // org_type was captured in user_metadata at signup — read it here and persist to profile
-        const orgType = session?.user?.user_metadata?.org_type;
+        const orgType = meta.org_type;
         if (orgType) payload.org_type = orgType;
       }
       // GDPR consent — read from user_metadata captured at signup.
       // age_confirmed=true means the user checked the "I am 16+" checkbox before creating their account.
-      const meta = session?.user?.user_metadata ?? {};
       payload.age_confirmed = meta.age_confirmed === true;
       if (meta.terms_version) payload.terms_version = meta.terms_version;
 
-      const headers: Record<string, string> = { "Content-Type": "application/json" };
-      if (token) headers.Authorization = `Bearer ${token}`;
-
-      const res = await fetch(`${API_BASE}/profiles/me`, {
+      await apiFetch("/profiles/me", {
         method: "POST",
-        headers,
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error((body as { detail?: string }).detail ?? "Failed to save profile");
-      }
-
-      // For org accounts: auto-create the organizations row so search/intro works immediately
+      // For org accounts: auto-create the organizations row so search/intro works immediately.
+      // 409 = already exists (safe to ignore). Other non-auth errors: profile was
+      // saved already, so we surface a message but don't block — user can create
+      // the org manually from the org page.
       if (accountType === "organization") {
         const orgName = formData.display_name.trim() || formData.username.trim() || "My Organization";
-        const orgRes = await fetch(`${API_BASE}/organizations`, {
-          method: "POST",
-          headers,
-          body: JSON.stringify({ name: orgName }),
-        });
-        if (!orgRes.ok && orgRes.status !== 409) {
-          // 409 = already exists (safe to ignore), other errors are not fatal — profile was saved
-          // Surface to user but still navigate — they can create org from the org page
-          if (isMounted.current) {
-            setError(t("onboarding.error.orgCreation", { defaultValue: "Failed to create organization. You can create it from the organization page." }));
-            setSaving(false);
+        try {
+          await apiFetch("/organizations", {
+            method: "POST",
+            body: JSON.stringify({ name: orgName }),
+          });
+        } catch (orgErr) {
+          if (orgErr instanceof ApiError && orgErr.status === 401) {
+            // Re-throw 401 so outer catch runs draft-save + login redirect.
+            throw orgErr;
           }
-          return;
+          if (!(orgErr instanceof ApiError) || orgErr.status !== 409) {
+            if (isMounted.current) {
+              setError(t("onboarding.error.orgCreation", { defaultValue: "Failed to create organization. You can create it from the organization page." }));
+              setSaving(false);
+            }
+            return;
+          }
         }
       }
+
+      // Success — clear any stale draft (prevents the next mount from
+      // rehydrating an already-submitted state).
+      clearOnboardingDraft();
 
       if (isMounted.current) {
         if (accountType === "organization") {
@@ -295,9 +327,24 @@ export default function OnboardingPage() {
           router.push(`/${locale}/assessment${competencyParam}`);
         }
       }
-    } catch {
+    } catch (err) {
+      // Task 4 recovery branch: on 401, preserve in-flight form to sessionStorage
+      // and bounce to /login?next=<onboarding>. When the user returns, the
+      // rehydration effect on mount pulls the draft back into state and the
+      // user picks up at the exact step they were on.
+      if (err instanceof ApiError && err.status === 401) {
+        writeOnboardingDraft({ step, accountType, formData });
+        if (isMounted.current) {
+          const onboardingPath = `/${locale}/onboarding`;
+          router.replace(`/${locale}/login?next=${encodeURIComponent(onboardingPath)}`);
+        }
+        return;
+      }
       if (isMounted.current) {
-        setError(t("error.generic", { defaultValue: "Something went wrong. Please try again." }));
+        const message = err instanceof ApiError && err.detail
+          ? err.detail
+          : t("error.generic", { defaultValue: "Something went wrong. Please try again." });
+        setError(message);
         setSaving(false);
       }
     }

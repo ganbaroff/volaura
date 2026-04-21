@@ -5,8 +5,11 @@ name: Post-Deploy Health Check
 # Sends result to CEO via Telegram within 2 minutes of deploy.
 
 on:
-  push:
-    branches: [main]
+  # 2026-04-19: push trigger disabled at CEO's request — "пусть будет тишина
+  # дальше решим". Fires once per main push and sends a CEO-facing Telegram
+  # summary — with 20+ pushes today that produced noticeable noise.
+  # push:
+  #   branches: [main]
   workflow_dispatch:
     inputs:
       deploy_sha:

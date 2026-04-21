@@ -83,6 +83,7 @@ async def fetch_questions(db: SupabaseAdmin, competency_id: str) -> list[dict]:
         )
         .eq("competency_id", competency_id)
         .eq("is_active", True)
+        .eq("needs_review", False)
         .execute()
     )
     questions = result.data or []

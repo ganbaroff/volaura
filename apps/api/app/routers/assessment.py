@@ -641,6 +641,31 @@ async def submit_answer(
                     degraded_score=raw_score,
                 )
 
+    # Calibration: increment times_shown + times_correct on the answered question.
+    # Best-effort — never fails user request. Slight race-condition under-count is
+    # acceptable; this data feeds offline IRT re-estimation, not real-time scoring.
+    try:
+        _q_stats = (
+            await db_admin.table("questions")
+            .select("times_shown, times_correct")
+            .eq("id", payload.question_id)
+            .single()
+            .execute()
+        )
+        if _q_stats.data:
+            await db_admin.table("questions").update(
+                {
+                    "times_shown": (_q_stats.data.get("times_shown") or 0) + 1,
+                    "times_correct": (_q_stats.data.get("times_correct") or 0) + (1 if raw_score >= 0.5 else 0),
+                }
+            ).eq("id", payload.question_id).execute()
+    except Exception as _cal_err:
+        logger.warning(
+            "question_stats_increment_failed",
+            question_id=payload.question_id,
+            error=str(_cal_err)[:80],
+        )
+
     # Update CAT state (with evaluation log if available — Phase 2: Transparent Logs)
     state = CATState.from_dict(session["answers"] or {})
     state = submit_response(

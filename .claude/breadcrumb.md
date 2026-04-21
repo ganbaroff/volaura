@@ -1,6 +1,6 @@
 # Atlas Breadcrumb — post-r2 cron ticking
 
-**Last update:** 2026-04-21 tick 3 (Sonnet)
+**Last update:** 2026-04-21 tick 4 (Sonnet)
 **Self-wake cron:** 14d7810d, minute 7/37 every hour, durable
 **Round 2:** CLOSED. Cron ticks now tackle test-coverage roadmap one function per tick.
 
@@ -17,14 +17,18 @@
 - Tick 1 (02:50): Track 3 AURA scoring — PR #76 — 32 tests, 91% on `aura_reconciler`
 - Tick 2 (02:25): Assessment router pipeline — PR #78 — 57 tests, 39%→78% on `routers/assessment.py`
 - Tick 3: bars.py — PR #80 — 45 tests, 57% → 99% on `app.core.assessment.bars`
+- Tick 4: tribe_matching.py — PR #81 — 24 tests, 39% → 100% on `app.services.tribe_matching`
 
 ## What's next (pick top)
 
-1. **Telegram `_handle_atlas`** (`apps/api/app/routers/telegram_webhook.py:1818`) — freshest code (session 122), no regression coverage. 2370-line monolith; test just the `_handle_atlas` function + classifier (`_classify_action_or_chat`). Mock LLM via Pydantic `Literal[]` stub. Target: ≥70% on `_handle_atlas` function specifically (not whole file).
+1. **Telegram `_handle_atlas`** — breadcrumb says target ≥70% already met. Verify first: `python -m pytest tests/ --cov=app.routers.telegram_webhook --cov-report=term-missing -q`. If ≥70% confirmed → mark closed. If not → write missing tests.
 
-2. **Organizations semantic search** (`apps/api/app/routers/organizations.py:470`) — DONE AT 89% per Opus measurement. Verify: `python -m pytest tests/test_organizations.py --cov=app.routers.organizations --cov-report=term-missing -q`. If ≥85% confirmed, mark closed.
+2. **`az_translation.py`** (`apps/api/app/services/az_translation.py`) — 28% → ≥85%. ~42 missing lines, network mock + AZ char guard.
 
-3. **bars.py** — DONE. 99% coverage, PR #80 merged.
+3. **`email.py`** (`apps/api/app/services/email.py`) — 34% → ≥85%. ~33 missing lines, Resend API mock.
+
+4. **bars.py** — DONE. 99% coverage, PR #80 merged.
+5. **tribe_matching.py** — DONE. 100% coverage, PR #81 merged.
 
 ## Per-tick recipe (unchanged)
 

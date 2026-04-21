@@ -63,7 +63,10 @@ async def generate_atlas_response(
                     },
                     json={
                         "model": "claude-sonnet-4-5-20250929",
-                        "max_tokens": 2000,
+                        # 500 tokens ≈ 350-400 Russian chars after tokenization.
+                        # Upper bound kept loose to allow emotional-nuance replies
+                        # while system prompt enforces the 700-char one-bubble rule.
+                        "max_tokens": 500,
                         "temperature": 0.7,
                         "system": system_prompt,
                         "messages": [
@@ -94,7 +97,7 @@ async def generate_atlas_response(
                     json={
                         "contents": [{"role": "user", "parts": [{"text": user_message}]}],
                         "system_instruction": {"parts": [{"text": system_prompt}]},
-                        "generation_config": {"max_output_tokens": 4000, "temperature": 0.7},
+                        "generation_config": {"max_output_tokens": 500, "temperature": 0.7},
                     },
                 )
                 if r.status_code == 200:
@@ -131,7 +134,7 @@ async def generate_atlas_response(
                             {"role": "system", "content": system_prompt},
                             {"role": "user", "content": user_message},
                         ],
-                        "max_tokens": 2000,
+                        "max_tokens": 500,
                         "temperature": 0.7,
                     },
                 )
@@ -154,7 +157,7 @@ async def generate_atlas_response(
                 contents=user_message,
                 config=genai.types.GenerateContentConfig(
                     system_instruction=system_prompt,
-                    max_output_tokens=4000,
+                    max_output_tokens=500,
                     temperature=0.7,
                 ),
             )
@@ -178,7 +181,7 @@ async def generate_atlas_response(
                             {"role": "system", "content": system_prompt[:4000]},
                             {"role": "user", "content": user_message},
                         ],
-                        "max_tokens": 2000,
+                        "max_tokens": 500,
                         "temperature": 0.7,
                     },
                 )
@@ -203,7 +206,7 @@ async def generate_atlas_response(
                             {"role": "system", "content": system_prompt[:3000]},
                             {"role": "user", "content": user_message},
                         ],
-                        "max_tokens": 2000,
+                        "max_tokens": 500,
                         "temperature": 0.7,
                     },
                 )

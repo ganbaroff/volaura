@@ -2086,6 +2086,71 @@ Sign: "— Атлас" """
     await _atlas_extract_learnings(db, text, reply, state)
 
 
+async def _handle_dashboard(chat_id: int | str) -> None:
+    """Compact CEO dashboard — last 5 PRs, cron tick progress, release status.
+
+    Reads from .claude/breadcrumb.md (canonical source for tick progress) and
+    git log (last merged PRs). One Telegram bubble, no walls.
+    """
+    import subprocess
+
+    # Last 5 merged PRs from git log
+    pr_lines = []
+    try:
+        out = subprocess.run(
+            ["git", "log", "--oneline", "-20", "--grep=#"],
+            capture_output=True,
+            text=True,
+            cwd=str(_REPO_ROOT),
+            timeout=5,
+        )
+        if out.returncode == 0:
+            for line in out.stdout.strip().split("\n"):
+                # Match "<sha> <msg> (#<num>)"
+                if "(#" in line and line.count(" ") >= 1:
+                    # Trim long lines to stay under 700 chars total
+                    pr_lines.append(f"• {line[7:90].strip()}")
+                if len(pr_lines) >= 5:
+                    break
+    except Exception as e:
+        logger.warning("dashboard: git log failed — {e}", e=str(e)[:80])
+
+    # Current cron tick progress from breadcrumb
+    tick_summary = "—"
+    bc_path = _REPO_ROOT / ".claude" / "breadcrumb.md"
+    if bc_path.exists():
+        try:
+            text = bc_path.read_text(encoding="utf-8")
+            # Extract the "## Test coverage progress (cron ticks)" section lines
+            in_section = False
+            ticks: list[str] = []
+            for line in text.split("\n"):
+                if "Test coverage progress" in line or "cron tick" in line.lower():
+                    in_section = True
+                    continue
+                if in_section:
+                    if line.startswith("## ") and "coverage" not in line.lower():
+                        break
+                    if line.strip().startswith("- Tick"):
+                        ticks.append(line.strip()[:110])
+            if ticks:
+                tick_summary = "\n".join(ticks[-4:])
+        except Exception as e:
+            logger.warning("dashboard: breadcrumb read failed — {e}", e=str(e)[:80])
+
+    # Compose compact message (target ≤700 chars)
+    pr_block = "\n".join(pr_lines) if pr_lines else "—"
+    msg = (
+        "📊 *Dashboard*\n\n"
+        "*Last 5 merged:*\n"
+        f"{pr_block}\n\n"
+        "*Cron ticks:*\n"
+        f"{tick_summary}\n\n"
+        "Release: `v0.1.0-beta.1` · Full history: github.com/ganbaroff/volaura/releases"
+    )
+    await _send_message(chat_id, msg[:1500])
+
+
 async def _handle_help(chat_id: int | str) -> None:
     msg = (
         "🤖 *Volaura Swarm Bot — 7 active + swarm skills*\n\n"
@@ -2094,6 +2159,7 @@ async def _handle_help(chat_id: int | str) -> None:
         "или просто напиши 'Атлас, ...' / 'Atlas, ...'\n\n"
         "*Статус и данные:*\n"
         "/status — live статистика (users, sessions, orgs)\n"
+        "/dashboard — последние 5 PR + cron-тики + релиз\n"
         "/ecosystem — состояние всех 5 продуктов\n"
         "/proposals — pending proposals от роя\n"
         "/findings — typed findings из blackboard\n"
@@ -2233,6 +2299,8 @@ async def _handle_telegram_update(update: dict, db: AsyncClient) -> None:
         # Route commands (db injected via Depends)
         if text.startswith("/status"):
             await _handle_status(db, chat_id)
+        elif text.startswith("/dashboard"):
+            await _handle_dashboard(chat_id)
         elif text.startswith("/proposals"):
             await _handle_proposals(db, chat_id)
         elif text.startswith("/backlog"):

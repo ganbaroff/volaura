@@ -38,6 +38,11 @@ from loguru import logger
 # packages/swarm/coordinator.py → parents[2] = repo root
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 
+try:
+    from .project_briefing import PROJECT_FACTS as _PROJECT_FACTS
+except ImportError:
+    _PROJECT_FACTS = ""
+
 
 def _validate_evidence(finding: FindingContract) -> FindingContract:
     """Evidence-gate (Session 121, 2026-04-19).
@@ -141,6 +146,7 @@ def make_plan(task_description: str, run_id: str = "") -> list[SubtaskContract]:
             task_id=f"{run_id}-{squad.name.lower()}-{i}",
             agent_id=agents[0],  # squad leader is primary executor
             instruction=(
+                f"{_PROJECT_FACTS}\n\n"
                 f"You are the {squad.name} squad leader ({squad.leader}). "
                 f"Your squad members available: {', '.join(agents[1:])}. "
                 f"Task: {task_description}. "

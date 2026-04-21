@@ -41,6 +41,8 @@ from swarm.inbox_protocol import (
 )
 from swarm.perspective_registry import PerspectiveRegistry
 
+from swarm.project_briefing import PROJECT_FACTS
+
 # ──────────────────────────────────────────────────────────────
 # Settled decisions — injected into ALL agent prompts
 # ──────────────────────────────────────────────────────────────
@@ -602,6 +604,8 @@ Tag [ESCALATE] if this deploy should be rolled back immediately."""
     research_context = _load_research_context(perspective["name"], _pr)
 
     return f"""{team_context}
+
+{PROJECT_FACTS}
 
 {SETTLED_DECISIONS}
 

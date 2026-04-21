@@ -33,6 +33,27 @@ from app.core.assessment.bars import (
 )
 
 
+# ── Module-state reset (prevents pollution of later test files) ────────────────
+# bars.py has module-level mutable state: _fallback_count, _fallback_hour,
+# _evaluation_cache. Without autouse reset, counters/caches carry across tests
+# and break unrelated tests that hit BARS keyword_fallback path
+# (e.g. test_aura_endpoints.py::test_keyword_fallback_low_score).
+
+
+@pytest.fixture(autouse=True)
+def _reset_bars_module_state():
+    """Reset bars.py module-level state before AND after each test in this file."""
+    # Before: ensure clean slate
+    bars_mod._fallback_hour = None
+    bars_mod._fallback_count = 0
+    bars_mod._evaluation_cache.clear()
+    yield
+    # After: restore clean slate so other test files see pristine module state
+    bars_mod._fallback_hour = None
+    bars_mod._fallback_count = 0
+    bars_mod._evaluation_cache.clear()
+
+
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 CONCEPTS_SIMPLE = [{"name": "security", "keywords": ["firewall", "encryption", "access"]}]

@@ -50,7 +50,10 @@ class TestBuildAtlasSystemPrompt:
     def test_surface_telegram(self):
         prompt = build_atlas_system_prompt(surface="telegram")
         assert "Telegram" in prompt
-        assert "3 paragraphs" in prompt
+        # CEO directive 2026-04-21: one Telegram bubble, no walls. Updated from
+        # "3 paragraphs" to "1-2 SHORT paragraphs, ≤700 characters".
+        assert "700 characters" in prompt
+        assert "SHORT paragraphs" in prompt
 
     def test_surface_aura_reflection(self):
         prompt = build_atlas_system_prompt(surface="aura_reflection")

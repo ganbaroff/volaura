@@ -1,5 +1,7 @@
 # MindShift ↔ VOLAURA Integration Spec
 
+> Runtime contract warning (2026-04-21): this spec contains target-state items. For current implemented architecture truth, consult `docs/CURRENT-VS-TARGET-ARCHITECTURE-2026-04-21.md`. API fields and limits must match runtime schemas before rollout.
+
 **Version:** 1.0 | **Sprint:** E1 | **Date:** 2026-03-29
 **Status:** READY FOR E2 IMPLEMENTATION
 **Owner:** CTO
@@ -118,14 +120,15 @@ async function fetchAuraBadge(volauraToken: string) {
 
 **Endpoint:** `GET /api/character/crystals`
 
-**Response:**
+**Current runtime response (pinned):**
 ```json
 {
   "data": {
-    "balance": 150,
-    "earned_lifetime": 350,
-    "spent_lifetime": 200,
-    "pending_rewards": []
+    "user_id": "uuid",
+    "crystal_balance": 150,
+    "last_earned_at": "2026-03-29T08:00:00Z",
+    "lifetime_earned": 350,
+    "computed_at": "2026-03-29T08:05:00Z"
   }
 }
 ```
@@ -277,9 +280,10 @@ connector → CHA stat as primary growth axis
 
 ## Rate Limits
 
-All MindShift calls to VOLAURA API:
+All MindShift calls to VOLAURA API (current runtime limits):
 - POST /api/character/events: **30 req/minute** per user
 - GET /api/character/state: **60 req/minute** per user
+- GET /api/character/crystals: **60 req/minute** per user
 - Recommendation: batch focus events per session (one call at end, not per minute)
 - Recommendation: cache GET /state for 5 minutes in MindShift
 

@@ -165,13 +165,13 @@ if echo "$CEO_MSG" | grep -qiE "$VERIFY_TRIGGERS" 2>/dev/null; then
   echo ""
   echo "💜 CEO TRIGGER DETECTED: $(echo "$CEO_MSG" | grep -oiE "$VERIFY_TRIGGERS" | head -1)"
   echo ""
-  echo 'Your next response MUST contain these two sections at the END:'
+  echo 'Your next response MUST contain these two sections at the END (prose labels, NO ## headers):'
   echo ""
-  echo '## Что проверено'
+  echo 'Что проверено:'
   echo '- (list each claim + the EXACT tool call that proved it: Read/Bash/Grep/MCP/etc)'
   echo '- If a claim has no tool call → it does NOT belong here'
   echo ""
-  echo '## Что НЕ проверено'
+  echo 'Что НЕ проверено:'
   echo '- (list every claim that you did not verify with a tool)'
   echo "- If empty → write 'Все утверждения проверены' (only if literally true)"
   echo ""

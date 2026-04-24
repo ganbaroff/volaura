@@ -91,11 +91,7 @@ def mark_side_effect(
 
 async def get_completion_job(db: AsyncClient, session_id: str) -> dict[str, Any] | None:
     result = (
-        await db.table("assessment_completion_jobs")
-        .select("*")
-        .eq("session_id", session_id)
-        .maybe_single()
-        .execute()
+        await db.table("assessment_completion_jobs").select("*").eq("session_id", session_id).maybe_single().execute()
     )
     return result.data or None
 

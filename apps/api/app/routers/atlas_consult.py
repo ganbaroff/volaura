@@ -238,7 +238,9 @@ async def atlas_consult(
     # Build the user message for the self-consult
     user_parts: list[str] = [f"SITUATION:\n{body.situation}"]
     if body.draft:
-        user_parts.append(f"MY DRAFT:\n{body.draft}\n\nPlease critique this draft and tell me if you'd change anything.")
+        user_parts.append(
+            f"MY DRAFT:\n{body.draft}\n\nPlease critique this draft and tell me if you'd change anything."
+        )
     else:
         user_parts.append("What would you say or do here?")
 

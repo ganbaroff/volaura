@@ -112,9 +112,7 @@ class StartAssessmentRequest(BaseModel):
     def validate_plan_consistency(self) -> StartAssessmentRequest:
         if self.assessment_plan_competencies is None:
             if self.assessment_plan_current_index is not None:
-                raise ValueError(
-                    "assessment_plan_current_index requires assessment_plan_competencies"
-                )
+                raise ValueError("assessment_plan_current_index requires assessment_plan_competencies")
             return self
 
         if self.assessment_plan_current_index is None:

@@ -110,7 +110,9 @@ async def _mark_terminal(
         result_context=result_context,
         status=final_status,
         last_error=None if final_status == "completed" else last_error,
-        completed_at=(job.get("completed_at") or result_context.get("completed_at")) if final_status == "completed" else job.get("completed_at"),
+        completed_at=(job.get("completed_at") or result_context.get("completed_at"))
+        if final_status == "completed"
+        else job.get("completed_at"),
     )
 
 
@@ -145,7 +147,9 @@ async def _reconcile_job(db: AsyncClient, job: dict[str, Any]) -> str:
     last_error: str | None = None
     slug = result_context.get("competency_slug") or job.get("competency_slug") or ""
     competency_score = float(result_context.get("competency_score") or 0)
-    questions_answered = int(result_context.get("questions_answered") or len((session.get("answers") or {}).get("items", [])))
+    questions_answered = int(
+        result_context.get("questions_answered") or len((session.get("answers") or {}).get("items", []))
+    )
     stop_reason = result_context.get("stop_reason")
     gaming_flags = list(result_context.get("gaming_flags") or session.get("gaming_flags") or [])
     crystals_earned = int(result_context.get("crystals_earned") or 0)
@@ -154,7 +158,9 @@ async def _reconcile_job(db: AsyncClient, job: dict[str, Any]) -> str:
     old_badge_tier = result_context.get("old_badge_tier")
     aura_snapshot = result_context.get("aura_snapshot")
 
-    job = await save_completion_job(db, job, status="processing", increment_attempts=True, result_context=result_context)
+    job = await save_completion_job(
+        db, job, status="processing", increment_attempts=True, result_context=result_context
+    )
 
     if not slug:
         side_effects = mark_side_effect(side_effects, "rewards", status="skipped", increment_attempts=False)
@@ -217,10 +223,16 @@ async def _reconcile_job(db: AsyncClient, job: dict[str, Any]) -> str:
             user_email = user_resp.user.email if user_resp and user_resp.user else None
             if user_email:
                 badge_resp = (
-                    await db.table("aura_scores").select("badge_tier").eq("volunteer_id", str(user_id)).maybe_single().execute()
+                    await db.table("aura_scores")
+                    .select("badge_tier")
+                    .eq("volunteer_id", str(user_id))
+                    .maybe_single()
+                    .execute()
                 )
                 badge_tier = (badge_resp.data or {}).get("badge_tier", "bronze")
-                prof_resp = await db.table("profiles").select("display_name").eq("id", str(user_id)).maybe_single().execute()
+                prof_resp = (
+                    await db.table("profiles").select("display_name").eq("id", str(user_id)).maybe_single().execute()
+                )
                 display_name = (prof_resp.data or {}).get("display_name") or ""
                 await send_aura_ready_email(
                     to_email=user_email,

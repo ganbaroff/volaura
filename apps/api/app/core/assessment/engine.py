@@ -255,6 +255,7 @@ def select_next_item(
         # Return None so caller triggers no_items_left stop rather than serving
         # items with near-zero discrimination that produce meaningless theta estimates.
         from loguru import logger
+
         logger.critical(
             "ALL remaining questions failed IRT bounds — stopping session cleanly",
             competency_items=len(remaining),

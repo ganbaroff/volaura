@@ -680,8 +680,7 @@ async def submit_answer(
                 # MCQ answers never hit the LLM — counting them inflated the cap and
                 # force-degraded users who answered many MCQs legitimately.
                 daily_llm_count += sum(
-                    1 for _item in _answers_blob.get("items", [])
-                    if _item.get("evaluation_log") is not None
+                    1 for _item in _answers_blob.get("items", []) if _item.get("evaluation_log") is not None
                 )
 
             if daily_llm_count >= _DAILY_LLM_CAP:
@@ -760,12 +759,17 @@ async def submit_answer(
             .execute()
         )
         if _q_stats.data:
-            await db_admin.table("questions").update(
-                {
-                    "times_shown": (_q_stats.data.get("times_shown") or 0) + 1,
-                    "times_correct": (_q_stats.data.get("times_correct") or 0) + (1 if raw_score >= 0.5 else 0),
-                }
-            ).eq("id", payload.question_id).execute()
+            await (
+                db_admin.table("questions")
+                .update(
+                    {
+                        "times_shown": (_q_stats.data.get("times_shown") or 0) + 1,
+                        "times_correct": (_q_stats.data.get("times_correct") or 0) + (1 if raw_score >= 0.5 else 0),
+                    }
+                )
+                .eq("id", payload.question_id)
+                .execute()
+            )
     except Exception as _cal_err:
         logger.warning(
             "question_stats_increment_failed",
@@ -974,7 +978,11 @@ async def complete_assessment(
     )
     slug = comp_result.data["slug"] if comp_result.data else ""
 
-    if existing_job and existing_job.get("status") == "completed" and all_side_effects_complete(existing_job.get("side_effects")):
+    if (
+        existing_job
+        and existing_job.get("status") == "completed"
+        and all_side_effects_complete(existing_job.get("side_effects"))
+    ):
         completed_context = existing_job.get("result_context") or {}
         return AssessmentResultOut(
             session_id=session_id,
@@ -1010,7 +1018,11 @@ async def complete_assessment(
         "stop_reason": state.stop_reason,
         "gaming_flags": gaming_flags,
         "completed_at": completed_at_dt.isoformat(),
-        "energy_level": ((session.get("metadata") or {}).get("energy_level", "full") if isinstance(session.get("metadata"), dict) else "full"),
+        "energy_level": (
+            (session.get("metadata") or {}).get("energy_level", "full")
+            if isinstance(session.get("metadata"), dict)
+            else "full"
+        ),
         "old_badge_tier": (existing_job or {}).get("result_context", {}).get("old_badge_tier", _old_badge_tier),
         "aura_updated": bool((existing_job or {}).get("result_context", {}).get("aura_updated", False)),
         "crystals_earned": int((existing_job or {}).get("result_context", {}).get("crystals_earned") or 0),
@@ -1041,7 +1053,9 @@ async def complete_assessment(
     # Upsert AURA score via DB RPC — retryable and persisted in assessment_completion_jobs.
     if slug and not is_side_effect_complete(side_effects, "aura_sync"):
         try:
-            await db_admin.table("assessment_sessions").update({"pending_aura_sync": True}).eq("id", session_id).execute()
+            await (
+                db_admin.table("assessment_sessions").update({"pending_aura_sync": True}).eq("id", session_id).execute()
+            )
         except Exception as pre_flag_err:
             logger.error(
                 "pending_aura_sync pre-flag write failed — reconciler blind",
@@ -1204,7 +1218,10 @@ async def complete_assessment(
         except Exception as e:
             analytics_error = str(e)[:300]
             logger.error(
-                "assessment_completed analytics failed", user_id=str(user_id), session_id=session_id, error=analytics_error
+                "assessment_completed analytics failed",
+                user_id=str(user_id),
+                session_id=session_id,
+                error=analytics_error,
             )
             last_error = analytics_error
             side_effects = mark_side_effect(side_effects, "analytics", status="failed", error=analytics_error)
@@ -1231,7 +1248,11 @@ async def complete_assessment(
                 )
                 badge_tier = (badge_resp.data or {}).get("badge_tier", "bronze")
                 prof_resp = (
-                    await db_admin.table("profiles").select("display_name").eq("id", str(user_id)).maybe_single().execute()
+                    await db_admin.table("profiles")
+                    .select("display_name")
+                    .eq("id", str(user_id))
+                    .maybe_single()
+                    .execute()
                 )
                 display_name = (prof_resp.data or {}).get("display_name") or ""
 

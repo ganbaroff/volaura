@@ -89,9 +89,7 @@ ALTER POLICY "Users can only abandon own sessions"
     AND (status = ANY (ARRAY['abandoned'::text, 'in_progress'::text]))
   );
 
-ALTER POLICY "Users can update own sessions"
-  ON public.assessment_sessions
-  USING ((select auth.uid()) = volunteer_id);
+-- "Users can update own sessions" was dropped in 20260325000020 — skip
 
 ALTER POLICY "Users can view own sessions"
   ON public.assessment_sessions

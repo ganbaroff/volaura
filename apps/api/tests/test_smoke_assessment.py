@@ -428,7 +428,16 @@ async def test_complete_assessment_returns_aura_score():
         "attempts": 0,
         "side_effects": {
             k: {"status": "pending", "attempts": 0, "last_error": None, "updated_at": "2026-04-24T00:00:00Z"}
-            for k in ("aura_sync", "rewards", "streak", "analytics", "email", "ecosystem_events", "aura_events", "decision_log")
+            for k in (
+                "aura_sync",
+                "rewards",
+                "streak",
+                "analytics",
+                "email",
+                "ecosystem_events",
+                "aura_events",
+                "decision_log",
+            )
         },
         "result_context": {
             "competency_slug": COMP_SLUG,

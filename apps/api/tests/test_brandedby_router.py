@@ -1005,10 +1005,10 @@ class TestCreateGeneration:
         # 4 chain.execute calls: twin check, audit insert (character_events), E5 atlas_note, gen insert
         chain.execute = AsyncMock(
             side_effect=[
-                _result(data=self._active_twin()),         # 1. twin ownership check
-                _result(data=[{"id": "audit-id"}]),        # 2. character_events audit insert
-                _result(data=[]),                           # 3. E5 atlas_note query → None
-                _result(data=[gen_row]),                    # 4. generation insert
+                _result(data=self._active_twin()),  # 1. twin ownership check
+                _result(data=[{"id": "audit-id"}]),  # 2. character_events audit insert
+                _result(data=[]),  # 3. E5 atlas_note query → None
+                _result(data=[gen_row]),  # 4. generation insert
             ]
         )
 
@@ -1209,7 +1209,18 @@ class TestCreateGeneration:
 
         db = MagicMock()
         chain = MagicMock()
-        for method in ["schema", "table", "select", "insert", "update", "eq", "maybe_single", "order", "range", "limit"]:
+        for method in [
+            "schema",
+            "table",
+            "select",
+            "insert",
+            "update",
+            "eq",
+            "maybe_single",
+            "order",
+            "range",
+            "limit",
+        ]:
             getattr(chain, method).return_value = chain
             getattr(db, method).return_value = chain
 
@@ -1217,8 +1228,8 @@ class TestCreateGeneration:
             side_effect=[
                 _result(data=self._active_twin()),  # 1. twin check
                 _result(data=[{"id": "audit-id"}]),  # 2. character_events audit insert
-                _result(data=[]),                     # 3. E5 atlas_note → None
-                _result(data=[gen_row]),               # 4. generation insert
+                _result(data=[]),  # 3. E5 atlas_note → None
+                _result(data=[gen_row]),  # 4. generation insert
             ]
         )
 

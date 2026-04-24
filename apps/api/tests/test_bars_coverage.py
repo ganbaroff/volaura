@@ -72,6 +72,7 @@ GOOD_ANSWER = (
 async def test_bars_spike_alerter_first_call_increments():
     """First call in a fresh hour resets count to 1."""
     import app.core.assessment.bars as m
+
     m._fallback_hour = None
     m._fallback_count = 0
     await _maybe_alert_fallback_spike()
@@ -147,9 +148,7 @@ async def test_bars_evaluate_empty_answer_returns_zero():
 
 async def test_bars_evaluate_empty_answer_return_details():
     """Empty answer with return_details=True returns EvaluationResult with model=empty_answer."""
-    result = await evaluate_answer(
-        "How do you handle security?", "", CONCEPTS_SIMPLE, return_details=True
-    )
+    result = await evaluate_answer("How do you handle security?", "", CONCEPTS_SIMPLE, return_details=True)
     assert isinstance(result, EvaluationResult)
     assert result.model_used == "empty_answer"
     assert result.composite == 0.0
@@ -246,7 +245,7 @@ async def test_bars_evaluate_cache_lru_moves_to_end():
 
     _evaluation_cache.clear()
     q, a = "q_lru_test", "a_lru_test"
-    ck = _cache_key(q, a, '[]')
+    ck = _cache_key(q, a, "[]")
     _evaluation_cache["earlier_key"] = EvaluationResult(0.5, {}, "test")
     _evaluation_cache[ck] = EvaluationResult(0.8, {}, "gemini-2.5-flash")
     _evaluation_cache["later_key"] = EvaluationResult(0.6, {}, "test")
@@ -292,9 +291,7 @@ async def test_bars_evaluate_gemini_raises_falls_through():
         patch.object(bars_mod, "_try_gemini", side_effect=RuntimeError("timeout")),
         patch.object(bars_mod, "_try_groq", new_callable=AsyncMock, return_value=(groq_scores, None)),
     ):
-        result = await evaluate_answer(
-            "Security question?", GOOD_ANSWER, [{"name": "security"}], return_details=True
-        )
+        result = await evaluate_answer("Security question?", GOOD_ANSWER, [{"name": "security"}], return_details=True)
     assert isinstance(result, EvaluationResult)
     assert result.model_used == "groq-llama-3.3-70b"
     bars_mod._evaluation_cache.clear()
@@ -308,9 +305,7 @@ async def test_bars_evaluate_gemini_returns_none_falls_through():
         patch.object(bars_mod, "_try_gemini", new_callable=AsyncMock, return_value=(None, None)),
         patch.object(bars_mod, "_try_groq", new_callable=AsyncMock, return_value=(groq_scores, None)),
     ):
-        result = await evaluate_answer(
-            "Security question?", GOOD_ANSWER, [{"name": "security"}], return_details=True
-        )
+        result = await evaluate_answer("Security question?", GOOD_ANSWER, [{"name": "security"}], return_details=True)
     assert result.model_used == "groq-llama-3.3-70b"
     bars_mod._evaluation_cache.clear()
 
@@ -342,9 +337,7 @@ async def test_bars_evaluate_groq_raises_falls_to_openai():
         patch.object(bars_mod, "_try_groq", side_effect=ConnectionError("groq down")),
         patch.object(bars_mod, "_try_openai", new_callable=AsyncMock, return_value=(openai_scores, None)),
     ):
-        result = await evaluate_answer(
-            "Security question?", GOOD_ANSWER, [{"name": "security"}], return_details=True
-        )
+        result = await evaluate_answer("Security question?", GOOD_ANSWER, [{"name": "security"}], return_details=True)
     assert result.model_used == "gpt-4o-mini"
     bars_mod._evaluation_cache.clear()
 
@@ -358,9 +351,7 @@ async def test_bars_evaluate_groq_none_falls_to_openai():
         patch.object(bars_mod, "_try_groq", new_callable=AsyncMock, return_value=(None, None)),
         patch.object(bars_mod, "_try_openai", new_callable=AsyncMock, return_value=(openai_scores, None)),
     ):
-        result = await evaluate_answer(
-            "Security question?", GOOD_ANSWER, [{"name": "security"}], return_details=True
-        )
+        result = await evaluate_answer("Security question?", GOOD_ANSWER, [{"name": "security"}], return_details=True)
     assert result.model_used == "gpt-4o-mini"
     bars_mod._evaluation_cache.clear()
 
@@ -377,9 +368,7 @@ async def test_bars_evaluate_openai_success_sets_model():
         patch.object(bars_mod, "_try_groq", new_callable=AsyncMock, return_value=(None, None)),
         patch.object(bars_mod, "_try_openai", new_callable=AsyncMock, return_value=(openai_scores, None)),
     ):
-        result = await evaluate_answer(
-            "Security question?", GOOD_ANSWER, [{"name": "security"}], return_details=True
-        )
+        result = await evaluate_answer("Security question?", GOOD_ANSWER, [{"name": "security"}], return_details=True)
     assert result.model_used == "gpt-4o-mini"
     assert result.concept_scores == {"security": pytest.approx(0.75, abs=0.001)}
     bars_mod._evaluation_cache.clear()
@@ -395,7 +384,9 @@ async def test_bars_evaluate_openai_evaluation_result_passthrough():
         patch.object(bars_mod, "_try_openai", new_callable=AsyncMock, return_value=fake_result),
     ):
         result = await evaluate_answer(
-            "Security question?", GOOD_ANSWER, [{"name": "security"}],
+            "Security question?",
+            GOOD_ANSWER,
+            [{"name": "security"}],
             return_details=True,
         )
     assert isinstance(result, EvaluationResult)
@@ -413,7 +404,9 @@ async def test_bars_evaluate_openai_evaluation_result_float_passthrough():
         patch.object(bars_mod, "_try_openai", new_callable=AsyncMock, return_value=fake_result),
     ):
         result = await evaluate_answer(
-            "Security question?", GOOD_ANSWER, [{"name": "security"}],
+            "Security question?",
+            GOOD_ANSWER,
+            [{"name": "security"}],
         )
     assert isinstance(result, float)
     assert result == pytest.approx(0.77, abs=0.001)
@@ -432,9 +425,7 @@ async def test_bars_evaluate_все_провайдеры_упали_keyword_fall
         patch.object(bars_mod, "_try_openai", new_callable=AsyncMock, return_value=(None, None)),
         patch.object(bars_mod, "_maybe_alert_fallback_spike", new_callable=AsyncMock),
     ):
-        result = await evaluate_answer(
-            "Security question?", GOOD_ANSWER, CONCEPTS_SIMPLE, return_details=True
-        )
+        result = await evaluate_answer("Security question?", GOOD_ANSWER, CONCEPTS_SIMPLE, return_details=True)
     assert isinstance(result, EvaluationResult)
     assert result.model_used == "keyword_fallback"
     assert result.concept_details == []
@@ -450,9 +441,7 @@ async def test_bars_evaluate_все_упали_spike_alert_fired():
         patch.object(bars_mod, "_try_openai", new_callable=AsyncMock, return_value=(None, None)),
         patch.object(bars_mod, "_maybe_alert_fallback_spike", new_callable=AsyncMock),
     ):
-        await evaluate_answer(
-            "Security question?", GOOD_ANSWER, CONCEPTS_SIMPLE
-        )
+        await evaluate_answer("Security question?", GOOD_ANSWER, CONCEPTS_SIMPLE)
         # ensure_future is called with the coroutine — let event loop drain
         await asyncio.sleep(0)
     # _maybe_alert_fallback_spike mock was patched — it may or may not have been called
@@ -474,9 +463,7 @@ async def test_bars_evaluate_allowlist_filters_injected_keys():
     with (
         patch.object(bars_mod, "_try_gemini", new_callable=AsyncMock, return_value=(injected_scores, None)),
     ):
-        result = await evaluate_answer(
-            "Security question?", GOOD_ANSWER, [{"name": "security"}], return_details=True
-        )
+        result = await evaluate_answer("Security question?", GOOD_ANSWER, [{"name": "security"}], return_details=True)
     assert "__proto__" not in result.concept_scores
     assert "security" in result.concept_scores
     bars_mod._evaluation_cache.clear()
@@ -833,9 +820,7 @@ async def test_bars_evaluate_openai_raises_falls_to_keyword_fallback():
         patch.object(bars_mod, "_try_openai", side_effect=RuntimeError("openai auth failed")),
         patch.object(bars_mod, "_maybe_alert_fallback_spike", new_callable=AsyncMock),
     ):
-        result = await evaluate_answer(
-            "Security question?", GOOD_ANSWER, CONCEPTS_SIMPLE, return_details=True
-        )
+        result = await evaluate_answer("Security question?", GOOD_ANSWER, CONCEPTS_SIMPLE, return_details=True)
     assert isinstance(result, EvaluationResult)
     assert result.model_used == "keyword_fallback"
     bars_mod._evaluation_cache.clear()

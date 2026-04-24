@@ -118,9 +118,7 @@ def _inject_gcp_module(
         pytest.param("\t\n", id="пробельные_символы"),
     ],
 )
-async def test_translate_empty_returns_unchanged(
-    text: str, monkeypatch: pytest.MonkeyPatch
-) -> None:
+async def test_translate_empty_returns_unchanged(text: str, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(az_mod, "settings", _make_settings())
     result = await translate_en_to_az(text)
     assert result == text
@@ -154,11 +152,14 @@ async def test_translate_gcp_returns_english_falls_to_gemini(
 
     en_only = "This is an English response with no AZ specific chars at all."
 
-    with _inject_gcp_module(en_only), patch.object(
-        az_mod,
-        "_gemini_az_translation",
-        AsyncMock(return_value=_AZ_TEXT_WITH_CHARS),
-    ) as mock_gem:
+    with (
+        _inject_gcp_module(en_only),
+        patch.object(
+            az_mod,
+            "_gemini_az_translation",
+            AsyncMock(return_value=_AZ_TEXT_WITH_CHARS),
+        ) as mock_gem,
+    ):
         result = await translate_en_to_az(_EN_TEXT)
 
     assert result == _AZ_TEXT_WITH_CHARS
@@ -173,11 +174,10 @@ async def test_translate_gcp_returns_english_falls_to_gemini(
 async def test_translate_gcp_raises_falls_to_gemini(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(az_mod, "settings", _make_settings(gcp="proj-x", gemini="gm-key"))
 
-    with patch.object(
-        az_mod, "_google_translation_llm", AsyncMock(side_effect=RuntimeError("gcp down"))
-    ), patch.object(
-        az_mod, "_gemini_az_translation", AsyncMock(return_value=_AZ_TEXT_WITH_CHARS)
-    ) as mock_gem:
+    with (
+        patch.object(az_mod, "_google_translation_llm", AsyncMock(side_effect=RuntimeError("gcp down"))),
+        patch.object(az_mod, "_gemini_az_translation", AsyncMock(return_value=_AZ_TEXT_WITH_CHARS)) as mock_gem,
+    ):
         result = await translate_en_to_az(_EN_TEXT)
 
     assert result == _AZ_TEXT_WITH_CHARS
@@ -192,8 +192,9 @@ async def test_translate_gcp_raises_falls_to_gemini(monkeypatch: pytest.MonkeyPa
 async def test_translate_no_gcp_uses_gemini_directly(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(az_mod, "settings", _make_settings(gcp=None, gemini="gm-key"))
 
-    with patch.object(az_mod, "_google_translation_llm") as mock_gcp, patch.object(
-        az_mod, "_gemini_az_translation", AsyncMock(return_value=_AZ_TEXT_WITH_CHARS)
+    with (
+        patch.object(az_mod, "_google_translation_llm") as mock_gcp,
+        patch.object(az_mod, "_gemini_az_translation", AsyncMock(return_value=_AZ_TEXT_WITH_CHARS)),
     ):
         result = await translate_en_to_az(_EN_TEXT)
 
@@ -306,9 +307,7 @@ async def test_translate_context_forwarded(monkeypatch: pytest.MonkeyPatch) -> N
     monkeypatch.setattr(az_mod, "settings", _make_settings(gcp=None, gemini="gm-key"))
     ctx = "professional HR assessment question"
 
-    with patch.object(
-        az_mod, "_gemini_az_translation", AsyncMock(return_value=_AZ_TEXT_WITH_CHARS)
-    ) as mock_gem:
+    with patch.object(az_mod, "_gemini_az_translation", AsyncMock(return_value=_AZ_TEXT_WITH_CHARS)) as mock_gem:
         await translate_en_to_az(_EN_TEXT, context=ctx)
 
     mock_gem.assert_called_once_with(_EN_TEXT, ctx)
@@ -353,9 +352,7 @@ async def test_google_translation_llm_uses_run_in_executor(
 
     with _inject_gcp_module(_AZ_TEXT_WITH_CHARS), patch("asyncio.get_event_loop") as mock_get_loop:
         mock_loop = MagicMock()
-        mock_loop.run_in_executor = AsyncMock(
-            return_value=MagicMock(translations=[translation])
-        )
+        mock_loop.run_in_executor = AsyncMock(return_value=MagicMock(translations=[translation]))
         mock_get_loop.return_value = mock_loop
         await _google_translation_llm("Hello")
 
@@ -489,9 +486,7 @@ async def test_gemini_az_translation_calls_correct_model(
         await _gemini_az_translation("Hello", context=None)
 
     call_kwargs = instance.aio.models.generate_content.call_args
-    model_used = call_kwargs.kwargs.get("model") or (
-        call_kwargs.args[0] if call_kwargs.args else None
-    )
+    model_used = call_kwargs.kwargs.get("model") or (call_kwargs.args[0] if call_kwargs.args else None)
     assert model_used == "gemini-2.5-flash"
 
 

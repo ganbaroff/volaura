@@ -26,6 +26,7 @@ if "docker" not in sys.modules:
 
 # ── Ensure swarm stub is present (packages/swarm not on path in test env) ────
 
+
 def _ensure_swarm_stub() -> None:
     """Inject minimal fake swarm package so _swarm_evaluate_scores can be imported."""
     if "swarm" in sys.modules:
@@ -64,6 +65,7 @@ from app.services.swarm_service import _extract_consensus_scores, _swarm_evaluat
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
+
 def _make_agent(raw: str | None) -> MagicMock:
     a = MagicMock()
     a.raw_response = raw
@@ -90,6 +92,7 @@ def _fake_settings(**kwargs: object) -> SimpleNamespace:
 
 
 # ── _extract_consensus_scores: scores-FOUND branch (lines 162-163) ───────────
+
 
 class TestExtractConsensusScoresFoundBranch:
     """Cover the `if scores: consensus[name] = sum/len` branch explicitly."""
@@ -119,9 +122,7 @@ class TestExtractConsensusScoresFoundBranch:
             pytest.param([1.0], 1.0, id="единственный_агент_максимум"),
         ],
     )
-    def test_average_calculation_parametrize(
-        self, raw_scores: list[float], expected_avg: float
-    ) -> None:
+    def test_average_calculation_parametrize(self, raw_scores: list[float], expected_avg: float) -> None:
         """Coverage of average branch across common score distributions."""
         agents = [_make_agent(json.dumps({"focus": s})) for s in raw_scores]
         result = _extract_consensus_scores(_make_report(agents), ["focus"])
@@ -129,6 +130,7 @@ class TestExtractConsensusScoresFoundBranch:
 
 
 # ── _swarm_evaluate_scores: lines 68-137 ────────────────────────────────────
+
 
 class TestSwarmEvaluateScores:
     """Cover the _swarm_evaluate_scores function body.
@@ -203,9 +205,7 @@ class TestSwarmEvaluateScores:
         assert captured_env.get("OPENAI_API_KEY") == "oai-456"
         assert captured_env.get("GROQ_API_KEY") == "groq-789"
 
-    async def test_raises_value_error_when_no_parseable_scores(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    async def test_raises_value_error_when_no_parseable_scores(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """ValueError raised when all agent responses are unparseable (no scores)."""
         monkeypatch.setattr("app.services.swarm_service.settings", _fake_settings())
 
@@ -345,9 +345,7 @@ class TestSwarmEvaluateScores:
         import app.services.swarm_service as svc_mod
 
         real_abspath = os.path.abspath(svc_mod.__file__)
-        project_root = os.path.dirname(
-            os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(real_abspath))))
-        )
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(real_abspath)))))
         packages_path = os.path.join(project_root, "packages")
 
         original_path = sys.path.copy()
@@ -374,6 +372,7 @@ class TestSwarmEvaluateScores:
 
 # ── _extract_consensus_scores: except block (lines 162-163) ──────────────────
 
+
 class TestExtractConsensusScoresExceptBranch:
     """Explicitly cover the except (JSONDecodeError, ValueError, TypeError) branch."""
 
@@ -387,7 +386,7 @@ class TestExtractConsensusScoresExceptBranch:
     def test_except_branch_covered_by_bad_json(self, raw: str) -> None:
         """Malformed agent responses silently skip via except continue (lines 162-163)."""
         agents = [
-            _make_agent(raw),           # triggers except → continue
+            _make_agent(raw),  # triggers except → continue
             _make_agent('{"x": 0.7}'),  # valid → contributes
         ]
         result = _extract_consensus_scores(_make_report(agents), ["x"])

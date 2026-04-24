@@ -42,6 +42,7 @@ def _reset_cb():
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
+
 def _fake_settings(**kwargs: object) -> SimpleNamespace:
     defaults = {"mindshift_url": "https://mindshift.example.com"}
     defaults.update(kwargs)
@@ -195,9 +196,7 @@ class TestPostEvent:
         assert result is False
         assert mod._cb_failures == 1
 
-    async def test_jwt_injected_into_authorization_header(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    async def test_jwt_injected_into_authorization_header(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """user_jwt ends up in Authorization: Bearer header."""
         monkeypatch.setattr(mod, "settings", _fake_settings())
 
@@ -217,9 +216,7 @@ class TestPostEvent:
 
         assert captured_headers.get("Authorization") == "Bearer my-jwt-token"
 
-    async def test_no_jwt_no_authorization_header(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    async def test_no_jwt_no_authorization_header(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """user_jwt=None → no Authorization header added."""
         monkeypatch.setattr(mod, "settings", _fake_settings())
 
@@ -274,6 +271,7 @@ class TestPostEvent:
 def _draining_ensure_future(coro: object) -> MagicMock:
     """Close the coroutine immediately to prevent 'never awaited' warnings."""
     import inspect
+
     if inspect.iscoroutine(coro):
         coro.close()  # type: ignore[union-attr]
     return MagicMock()
@@ -414,9 +412,7 @@ class TestPushXpEarned:
             pytest.param(1, "daily_login", id="ежедневный_вход"),
         ],
     )
-    async def test_various_xp_reasons(
-        self, amount: int, reason: str, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    async def test_various_xp_reasons(self, amount: int, reason: str, monkeypatch: pytest.MonkeyPatch) -> None:
         """Function completes for common XP reason slugs."""
         monkeypatch.setattr(mod, "settings", _fake_settings())
         with patch(

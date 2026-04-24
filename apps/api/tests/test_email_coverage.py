@@ -19,6 +19,7 @@ import app.services.email as email_mod
 # Fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def mock_settings(monkeypatch):
     fake = SimpleNamespace(
@@ -48,22 +49,19 @@ def _mock_client(status_code: int = 200, text_body: str = "ok", raises=None):
 # send_aura_ready_email — kill switch + no-key
 # ---------------------------------------------------------------------------
 
+
 class TestAuraReadyKillSwitch:
     async def test_disabled_returns_none_no_http(self, mock_settings):
         mock_settings.email_enabled = False
         with patch("app.services.email.httpx.AsyncClient") as mock_cls:
-            result = await email_mod.send_aura_ready_email(
-                "u@x.com", "Leyla", "communication", 80.0, "Gold", 5
-            )
+            result = await email_mod.send_aura_ready_email("u@x.com", "Leyla", "communication", 80.0, "Gold", 5)
         assert result is None
         mock_cls.assert_not_called()
 
     async def test_no_api_key_returns_none(self, mock_settings):
         mock_settings.resend_api_key = ""
         with patch("app.services.email.httpx.AsyncClient") as mock_cls:
-            result = await email_mod.send_aura_ready_email(
-                "u@x.com", "Leyla", "communication", 80.0, "Gold"
-            )
+            result = await email_mod.send_aura_ready_email("u@x.com", "Leyla", "communication", 80.0, "Gold")
         assert result is None
         mock_cls.assert_not_called()
 
@@ -71,6 +69,7 @@ class TestAuraReadyKillSwitch:
 # ---------------------------------------------------------------------------
 # send_aura_ready_email — HTTP status scenarios
 # ---------------------------------------------------------------------------
+
 
 class TestAuraReadyHttpScenarios:
     @pytest.mark.parametrize(
@@ -84,34 +83,26 @@ class TestAuraReadyHttpScenarios:
     async def test_http_status_codes(self, mock_settings, status_code, expected):
         cm, _ = _mock_client(status_code=status_code)
         with patch("app.services.email.httpx.AsyncClient", return_value=cm):
-            result = await email_mod.send_aura_ready_email(
-                "u@x.com", "Leyla", "adaptability", 75.0, "Silver", 10
-            )
+            result = await email_mod.send_aura_ready_email("u@x.com", "Leyla", "adaptability", 75.0, "Silver", 10)
         assert result is expected
 
     async def test_request_error_returns_none_no_raise(self, mock_settings):
         """httpx.RequestError must NOT propagate — function returns None."""
         cm, _ = _mock_client(raises=httpx.RequestError("timeout"))
         with patch("app.services.email.httpx.AsyncClient", return_value=cm):
-            result = await email_mod.send_aura_ready_email(
-                "u@x.com", "Leyla", "leadership", 60.0, "Bronze"
-            )
+            result = await email_mod.send_aura_ready_email("u@x.com", "Leyla", "leadership", 60.0, "Bronze")
         assert result is None
 
     async def test_timeout_exception_returns_none(self, mock_settings):
         cm, _ = _mock_client(raises=httpx.TimeoutException("read timeout"))
         with patch("app.services.email.httpx.AsyncClient", return_value=cm):
-            result = await email_mod.send_aura_ready_email(
-                "u@x.com", "Leyla", "teamwork", 55.0, "Bronze"
-            )
+            result = await email_mod.send_aura_ready_email("u@x.com", "Leyla", "teamwork", 55.0, "Bronze")
         assert result is None
 
     async def test_generic_exception_returns_none(self, mock_settings):
         cm, _ = _mock_client(raises=RuntimeError("boom"))
         with patch("app.services.email.httpx.AsyncClient", return_value=cm):
-            result = await email_mod.send_aura_ready_email(
-                "u@x.com", "Leyla", "initiative", 50.0, "Bronze"
-            )
+            result = await email_mod.send_aura_ready_email("u@x.com", "Leyla", "initiative", 50.0, "Bronze")
         assert result is None
 
 
@@ -119,16 +110,19 @@ class TestAuraReadyHttpScenarios:
 # send_aura_ready_email — payload & header verification
 # ---------------------------------------------------------------------------
 
+
 class TestAuraReadyPayload:
     async def test_post_payload_shape(self, mock_settings):
         cm, instance = _mock_client(200)
         with patch("app.services.email.httpx.AsyncClient", return_value=cm):
-            await email_mod.send_aura_ready_email(
-                "user@test.com", "Kamran", "problem_solving", 88.4, "Gold", 20
-            )
+            await email_mod.send_aura_ready_email("user@test.com", "Kamran", "problem_solving", 88.4, "Gold", 20)
         call_kwargs = instance.post.call_args
         assert call_kwargs is not None
-        json_body = call_kwargs.kwargs.get("json") or call_kwargs.args[1] if len(call_kwargs.args) > 1 else call_kwargs.kwargs["json"]
+        json_body = (
+            call_kwargs.kwargs.get("json") or call_kwargs.args[1]
+            if len(call_kwargs.args) > 1
+            else call_kwargs.kwargs["json"]
+        )
         assert json_body["to"] == ["user@test.com"]
         assert "Problem Solving" in json_body["subject"]
         assert json_body["from"] == "VOLAURA <noreply@volaura.app>"
@@ -137,9 +131,7 @@ class TestAuraReadyPayload:
     async def test_auth_header_bearer(self, mock_settings):
         cm, instance = _mock_client(200)
         with patch("app.services.email.httpx.AsyncClient", return_value=cm):
-            await email_mod.send_aura_ready_email(
-                "user@test.com", "Kamran", "communication", 70.0, "Silver"
-            )
+            await email_mod.send_aura_ready_email("user@test.com", "Kamran", "communication", 70.0, "Silver")
         call_kwargs = instance.post.call_args
         headers = call_kwargs.kwargs.get("headers", {})
         assert headers.get("Authorization") == "Bearer re_test_key"
@@ -148,27 +140,21 @@ class TestAuraReadyPayload:
     async def test_score_rounded_in_html(self, mock_settings):
         cm, instance = _mock_client(200)
         with patch("app.services.email.httpx.AsyncClient", return_value=cm):
-            await email_mod.send_aura_ready_email(
-                "u@x.com", "Ali", "adaptability", 77.6, "Gold"
-            )
+            await email_mod.send_aura_ready_email("u@x.com", "Ali", "adaptability", 77.6, "Gold")
         html = instance.post.call_args.kwargs["json"]["html"]
         assert ">78<" in html
 
     async def test_crystals_in_html_when_positive(self, mock_settings):
         cm, instance = _mock_client(200)
         with patch("app.services.email.httpx.AsyncClient", return_value=cm):
-            await email_mod.send_aura_ready_email(
-                "u@x.com", "Ali", "communication", 80.0, "Gold", crystals_earned=15
-            )
+            await email_mod.send_aura_ready_email("u@x.com", "Ali", "communication", 80.0, "Gold", crystals_earned=15)
         html = instance.post.call_args.kwargs["json"]["html"]
         assert "+15 crystals earned" in html
 
     async def test_no_crystals_when_zero(self, mock_settings):
         cm, instance = _mock_client(200)
         with patch("app.services.email.httpx.AsyncClient", return_value=cm):
-            await email_mod.send_aura_ready_email(
-                "u@x.com", "Ali", "communication", 80.0, "Gold", crystals_earned=0
-            )
+            await email_mod.send_aura_ready_email("u@x.com", "Ali", "communication", 80.0, "Gold", crystals_earned=0)
         html = instance.post.call_args.kwargs["json"]["html"]
         assert "crystals earned" not in html
 
@@ -177,40 +163,33 @@ class TestAuraReadyPayload:
 # send_aura_ready_email — display_name fallback + slug fallback
 # ---------------------------------------------------------------------------
 
+
 class TestAuraReadyFallbacks:
     async def test_display_name_none_uses_there(self, mock_settings):
         cm, instance = _mock_client(200)
         with patch("app.services.email.httpx.AsyncClient", return_value=cm):
-            await email_mod.send_aura_ready_email(
-                "u@x.com", None, "communication", 70.0, "Silver"
-            )
+            await email_mod.send_aura_ready_email("u@x.com", None, "communication", 70.0, "Silver")
         html = instance.post.call_args.kwargs["json"]["html"]
         assert "there" in html
 
     async def test_display_name_empty_uses_there(self, mock_settings):
         cm, instance = _mock_client(200)
         with patch("app.services.email.httpx.AsyncClient", return_value=cm):
-            await email_mod.send_aura_ready_email(
-                "u@x.com", "", "communication", 70.0, "Silver"
-            )
+            await email_mod.send_aura_ready_email("u@x.com", "", "communication", 70.0, "Silver")
         html = instance.post.call_args.kwargs["json"]["html"]
         assert "there" in html
 
     async def test_unknown_slug_humanized(self, mock_settings):
         cm, instance = _mock_client(200)
         with patch("app.services.email.httpx.AsyncClient", return_value=cm):
-            await email_mod.send_aura_ready_email(
-                "u@x.com", "User", "critical_thinking", 65.0, "Bronze"
-            )
+            await email_mod.send_aura_ready_email("u@x.com", "User", "critical_thinking", 65.0, "Bronze")
         json_body = instance.post.call_args.kwargs["json"]
         assert "Critical Thinking" in json_body["subject"]
 
     async def test_known_slug_problem_solving(self, mock_settings):
         cm, instance = _mock_client(200)
         with patch("app.services.email.httpx.AsyncClient", return_value=cm):
-            await email_mod.send_aura_ready_email(
-                "u@x.com", "User", "problem_solving", 72.0, "Silver"
-            )
+            await email_mod.send_aura_ready_email("u@x.com", "User", "problem_solving", 72.0, "Silver")
         json_body = instance.post.call_args.kwargs["json"]
         assert "Problem Solving" in json_body["subject"]
 
@@ -218,6 +197,7 @@ class TestAuraReadyFallbacks:
 # ---------------------------------------------------------------------------
 # send_ghosting_grace_email — kill switch + no-key
 # ---------------------------------------------------------------------------
+
 
 class TestGhostingGraceKillSwitch:
     async def test_disabled_returns_false(self, mock_settings):
@@ -239,6 +219,7 @@ class TestGhostingGraceKillSwitch:
 # send_ghosting_grace_email — HTTP status scenarios
 # ---------------------------------------------------------------------------
 
+
 class TestGhostingGraceHttpScenarios:
     @pytest.mark.parametrize(
         "status_code,expected",
@@ -251,9 +232,7 @@ class TestGhostingGraceHttpScenarios:
     async def test_http_status_codes(self, mock_settings, status_code, expected):
         cm, _ = _mock_client(status_code=status_code)
         with patch("app.services.email.httpx.AsyncClient", return_value=cm):
-            result = await email_mod.send_ghosting_grace_email(
-                "u@x.com", "Leyla", locale="en"
-            )
+            result = await email_mod.send_ghosting_grace_email("u@x.com", "Leyla", locale="en")
         assert result is expected
 
     async def test_httpx_error_returns_false_no_raise(self, mock_settings):
@@ -279,6 +258,7 @@ class TestGhostingGraceHttpScenarios:
 # ---------------------------------------------------------------------------
 # send_ghosting_grace_email — locale and display_name
 # ---------------------------------------------------------------------------
+
 
 class TestGhostingGraceLocaleAndName:
     async def test_locale_az_in_html(self, mock_settings):

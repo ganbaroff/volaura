@@ -452,7 +452,6 @@ class TestRegister:
 
         assert captured.get("display_name") == payload.username
 
-
     @pytest.mark.asyncio
     async def test_consent_event_captures_ip_address(self):
         """GDPR Art. 7: ip_address from request.client.host is stored in consent_events."""

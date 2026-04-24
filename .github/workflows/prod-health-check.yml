@@ -26,7 +26,7 @@ jobs:
         run: |
           STATUS=$(curl -sS -o /tmp/api_body.json -w "%{http_code}" \
             --max-time 10 \
-            https://volauraapi-production.up.railway.app/health)
+            https://modest-happiness-production.up.railway.app/health)
           echo "status=$STATUS" >> "$GITHUB_OUTPUT"
           echo "API health: $STATUS"
           cat /tmp/api_body.json || true

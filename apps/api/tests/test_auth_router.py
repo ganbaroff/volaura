@@ -8,6 +8,7 @@ Endpoints:
   POST   /auth/register        — register
   POST   /auth/login           — login
   GET    /auth/me              — get_me
+  GET    /auth/export          — export_my_data
   DELETE /auth/me              — delete_account
   POST   /auth/logout          — logout
   POST   /auth/e2e-setup       — e2e_create_user
@@ -27,6 +28,7 @@ from app.routers.auth import (
     ValidateInviteRequest,
     delete_account,
     e2e_create_user,
+    export_my_data,
     get_me,
     login,
     logout,
@@ -659,6 +661,51 @@ class TestGetMe:
 
         # result.data = {} is falsy but the endpoint returns result.data directly
         assert result.user_id == USER_ID
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# GET /auth/export
+# ══════════════════════════════════════════════════════════════════════════════
+
+
+class TestExportMyData:
+    """2 tests: happy path + section failure is non-blocking."""
+
+    @pytest.mark.asyncio
+    async def test_happy_path_returns_export_bundle(self):
+        """Export returns machine-readable bundle with key sections."""
+        db = _make_db(
+            _result(data={"id": USER_ID, "username": "u1"}),  # profile
+            _result(data=[{"volunteer_id": USER_ID, "total_score": 77.0}]),  # aura_scores
+            _result(data=[{"slug": "gold"}]),  # badges
+            _result(data=[{"id": "s1", "status": "completed"}]),  # assessment_sessions
+            _result(data=[{"id": "e1", "event_type": "crystal_earned"}]),  # character_events
+            _result(data=[{"id": "l1", "amount": 50}]),  # game_crystal_ledger
+            _result(data=[{"skill_slug": "communication", "claimed": True}]),  # game_character_rewards
+            _result(data=[{"id": "g1", "status": "open"}]),  # grievances
+            _result(data=[{"id": "c1", "event_type": "consent_given"}]),  # consent_events
+        )
+
+        result = await export_my_data(FAKE_REQUEST, USER_ID, db)
+
+        assert result.user_id == USER_ID
+        assert result.export_version == "1.0"
+        assert isinstance(result.data, dict)
+        assert "profile" in result.data
+        assert "aura_scores" in result.data
+        assert "assessment_sessions" in result.data
+
+    @pytest.mark.asyncio
+    async def test_section_failure_sets_none_and_continues(self):
+        """A failing section must not abort the full export."""
+        db = _make_db()
+        db.table = MagicMock(side_effect=Exception("db offline"))
+
+        result = await export_my_data(FAKE_REQUEST, USER_ID, db)
+
+        assert result.user_id == USER_ID
+        assert result.data["profile"] is None
+        assert result.data["aura_scores"] is None
 
 
 # ══════════════════════════════════════════════════════════════════════════════

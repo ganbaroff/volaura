@@ -74,6 +74,21 @@ class EventResponse(BaseModel):
     updated_at: datetime
 
 
+class MyEventResponse(EventResponse):
+    """Event payload tailored for "events relevant to me" surfaces.
+
+    Includes optional registration context for participant timelines while
+    remaining directly usable by org-owner dashboards that only need the core
+    event fields.
+    """
+
+    registration_id: str | None = None
+    registration_status: str | None = None
+    registered_at: datetime | None = None
+    checked_in_at: datetime | None = None
+    role: str | None = None
+
+
 # ── Registrations ─────────────────────────────────────────────────────────────
 
 

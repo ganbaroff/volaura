@@ -2,6 +2,9 @@
 
 Covers every endpoint:
   GET    /api/events                        — list_events (public)
+  GET    /api/events/my/timeline            — my_event_timeline (auth)
+  GET    /api/events/my/owned               — my_owned_events (auth)
+  GET    /api/events/my/registrations       — my_registrations (auth)
   GET    /api/events/{id}                   — get_event (public)
   POST   /api/events                        — create_event (auth + org)
   PUT    /api/events/{id}                   — update_event (auth)
@@ -12,7 +15,6 @@ Covers every endpoint:
   POST   /api/events/{id}/rate/volunteer    — participant_rate_event (auth)
   GET    /api/events/{id}/registrations     — list_registrations (auth, org owner)
   GET    /api/events/{id}/attendees         — list_attendees (auth, org owner)
-  GET    /api/events/my/registrations       — my_registrations (auth)
 
 Every endpoint: 200/201/204 happy path, 401 no-auth, plus relevant edge cases.
 Supabase mocked entirely — no real DB.
@@ -960,6 +962,64 @@ class TestListAttendees:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# GET /api/events/my/timeline  — my_event_timeline (auth)
+# ══════════════════════════════════════════════════════════════════════════════
+
+
+class TestMyEventTimeline:
+    @pytest.mark.asyncio
+    async def test_happy_path_returns_registered_events_with_metadata(self):
+        db_user = _db(_R(data=[_reg_row(status="approved", checked_in_at=NOW_ISO)]))
+        db_admin = _db(_R(data=[_event_row()]))
+        app.dependency_overrides[get_supabase_user] = lambda: db_user
+        app.dependency_overrides[get_supabase_admin] = lambda: db_admin
+        app.dependency_overrides[get_current_user_id] = lambda: USER_ID
+        try:
+            async with _make_client() as c:
+                resp = await c.get(
+                    "/api/events/my/timeline",
+                    headers={"Authorization": "Bearer fake-token"},
+                )
+            assert resp.status_code == 200
+            body = resp.json()
+            assert len(body) == 1
+            assert body[0]["title_en"] == "Test Event"
+            assert body[0]["registration_status"] == "approved"
+            assert body[0]["checked_in_at"] == NOW_ISO
+        finally:
+            app.dependency_overrides.clear()
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# GET /api/events/my/owned  — my_owned_events (auth)
+# ══════════════════════════════════════════════════════════════════════════════
+
+
+class TestMyOwnedEvents:
+    @pytest.mark.asyncio
+    async def test_happy_path_returns_org_owned_events(self):
+        db_admin = _db(
+            _R(data={"id": ORG_ID}),
+            _R(data=[_event_row(organization_id=ORG_ID)]),
+        )
+        app.dependency_overrides[get_supabase_admin] = lambda: db_admin
+        app.dependency_overrides[get_current_user_id] = lambda: USER_ID
+        try:
+            async with _make_client() as c:
+                resp = await c.get(
+                    "/api/events/my/owned",
+                    headers={"Authorization": "Bearer fake-token"},
+                )
+            assert resp.status_code == 200
+            body = resp.json()
+            assert len(body) == 1
+            assert body[0]["organization_id"] == ORG_ID
+            assert body[0]["title_en"] == "Test Event"
+        finally:
+            app.dependency_overrides.clear()
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # GET /api/events/my/registrations  — my_registrations (auth)
 # ══════════════════════════════════════════════════════════════════════════════
 
@@ -967,22 +1027,13 @@ class TestListAttendees:
 class TestMyRegistrations:
     """GET /api/events/my/registrations.
 
-    NOTE: This route is shadowed by /{event_id}/registrations because FastAPI
-    matches path parameters greedily. The string "my" is not a valid UUID so
-    the UUID-validation guard in list_registrations fires first and returns 422.
-    Tests document the ACTUAL runtime behaviour so CI catches regressions; a
-    fix would require reordering the routes in the router (tracked separately).
+    Static /my/* routes must stay reachable and never be shadowed by /{event_id}.
     """
 
     @pytest.mark.asyncio
-    async def test_my_registrations_shadowed_by_event_id_route(self):
-        """Route /my/registrations is shadowed — FastAPI matches /{event_id}/registrations first.
-
-        'my' is not a valid UUID → the UUID validation guard fires → 422.
-        This test documents the real runtime behaviour of the current router.
-        """
-        db_admin = _db(_R(data=None))  # list_registrations hits admin db first
-        app.dependency_overrides[get_supabase_admin] = lambda: db_admin
+    async def test_happy_path_returns_registrations(self):
+        db_user = _db(_R(data=[_reg_row()]))
+        app.dependency_overrides[get_supabase_user] = lambda: db_user
         app.dependency_overrides[get_current_user_id] = lambda: USER_ID
         try:
             async with _make_client() as c:
@@ -990,40 +1041,23 @@ class TestMyRegistrations:
                     "/api/events/my/registrations",
                     headers={"Authorization": "Bearer fake-token"},
                 )
-            # FastAPI routes "my" through /{event_id}/registrations; UUID check fails → 422
-            assert resp.status_code == 422
-            assert resp.json()["detail"]["code"] == "INVALID_UUID"
+            assert resp.status_code == 200
+            body = resp.json()
+            assert len(body) == 1
+            assert body[0]["event_id"] == EVENT_ID
         finally:
             app.dependency_overrides.clear()
 
     @pytest.mark.asyncio
     async def test_401_when_no_auth(self):
-        """No auth on shadowed route still requires a user_id dep — returns 401."""
-        app.dependency_overrides[get_supabase_admin] = _fake_admin
+        """No auth on /my/registrations still requires a user_id dep — returns 401."""
+        app.dependency_overrides[get_supabase_user] = _db(_R(data=[]))
         try:
             async with _make_client() as c:
                 resp = await c.get("/api/events/my/registrations")
         finally:
-            app.dependency_overrides.pop(get_supabase_admin, None)
+            app.dependency_overrides.pop(get_supabase_user, None)
         assert resp.status_code == 401
-
-    @pytest.mark.asyncio
-    async def test_my_registrations_uuid_error_shape(self):
-        """422 detail has INVALID_UUID code and helpful message."""
-        db_admin = _db(_R(data=None))
-        app.dependency_overrides[get_supabase_admin] = lambda: db_admin
-        app.dependency_overrides[get_current_user_id] = lambda: USER_ID
-        try:
-            async with _make_client() as c:
-                resp = await c.get(
-                    "/api/events/my/registrations",
-                    headers={"Authorization": "Bearer fake-token"},
-                )
-            detail = resp.json()["detail"]
-            assert detail["code"] == "INVALID_UUID"
-            assert "event_id" in detail["message"]
-        finally:
-            app.dependency_overrides.clear()
 
 
 # ══════════════════════════════════════════════════════════════════════════════

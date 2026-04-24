@@ -1,4 +1,4 @@
-name: Analytics GDPR Retention
+name: Retention Enforcement
 
 # ── Schedule ──────────────────────────────────────────────────────────────────
 # Runs monthly on the 1st at 03:00 UTC.
@@ -21,7 +21,7 @@ on:
         type: boolean
 
 jobs:
-  gdpr-retention:
+  analytics-retention:
     name: Delete analytics events older than 390 days
     runs-on: ubuntu-latest
 
@@ -81,4 +81,50 @@ jobs:
                   body = e.read().decode()
                   print(f"ERROR during delete: {e.code} {body}")
                   sys.exit(1)
+          EOF
+
+  compliance-retention:
+    name: Execute compliance retention RPC
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute compliance retention RPC
+        env:
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          python3 - <<'EOF'
+          import json
+          import os
+          import sys
+          import urllib.error
+          import urllib.request
+
+          project_id = os.environ.get("SUPABASE_PROJECT_ID")
+          service_key = os.environ.get("SUPABASE_SERVICE_KEY")
+          if not project_id or not service_key:
+              print("Missing SUPABASE_PROJECT_ID or SUPABASE_SERVICE_KEY")
+              sys.exit(1)
+
+          url = f"https://{project_id}.supabase.co/rest/v1/rpc/enforce_compliance_retention"
+          payload = {
+              "p_decision_retention_days": 730,
+              "p_human_review_retention_days": 1095,
+              "p_consent_retention_days": 2190,
+          }
+          data = json.dumps(payload).encode("utf-8")
+          headers = {
+              "apikey": service_key,
+              "Authorization": f"Bearer {service_key}",
+              "Content-Type": "application/json",
+          }
+          req = urllib.request.Request(url, data=data, headers=headers, method="POST")
+
+          try:
+              with urllib.request.urlopen(req) as resp:
+                  body = resp.read().decode("utf-8")
+                  print(f"Compliance retention RPC success: {body}")
+          except urllib.error.HTTPError as e:
+              body = e.read().decode("utf-8")
+              print(f"Compliance retention RPC failed: {e.code} {body}")
+              sys.exit(1)
           EOF

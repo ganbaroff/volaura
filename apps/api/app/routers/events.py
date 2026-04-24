@@ -16,6 +16,7 @@ from app.schemas.event import (
     CoordinatorRatingRequest,
     EventAttendeeRow,
     EventCreate,
+    MyEventResponse,
     EventResponse,
     EventUpdate,
     ProfessionalRatingRequest,
@@ -43,6 +44,99 @@ async def list_events(
         q = q.eq("status", status)
     result = await q.order("start_date").range(offset, offset + limit - 1).execute()
     return [EventResponse(**row) for row in (result.data or [])]
+
+
+@router.get("/my/timeline", response_model=list[MyEventResponse])
+@limiter.limit(RATE_DEFAULT)
+async def my_event_timeline(
+    request: Request,
+    db: SupabaseUser,
+    db_admin: SupabaseAdmin,
+    user_id: CurrentUserId,
+) -> list[MyEventResponse]:
+    """List the current user's registered events with event metadata attached."""
+    registrations = (
+        await db.table("registrations")
+        .select("*")
+        .eq("volunteer_id", user_id)
+        .order("registered_at", desc=True)
+        .limit(50)
+        .execute()
+    )
+    reg_rows = registrations.data or []
+    if not reg_rows:
+        return []
+
+    event_ids = [row["event_id"] for row in reg_rows if row.get("event_id")]
+    events_result = await db_admin.table("events").select("*").in_("id", event_ids).execute()
+    event_map = {row["id"]: row for row in (events_result.data or [])}
+
+    rows: list[MyEventResponse] = []
+    for reg in reg_rows:
+        event = event_map.get(reg["event_id"])
+        if not event:
+            continue
+        rows.append(
+            MyEventResponse(
+                **event,
+                registration_id=reg["id"],
+                registration_status=reg.get("status"),
+                registered_at=reg.get("registered_at"),
+                checked_in_at=reg.get("checked_in_at"),
+                role=None,
+            )
+        )
+    return rows
+
+
+@router.get("/my/owned", response_model=list[EventResponse])
+@limiter.limit(RATE_DEFAULT)
+async def my_owned_events(
+    request: Request,
+    db_admin: SupabaseAdmin,
+    user_id: CurrentUserId,
+) -> list[EventResponse]:
+    """List events owned by the caller's organization."""
+    org = (
+        await db_admin.table("organizations")
+        .select("id")
+        .eq("owner_id", user_id)
+        .order("created_at", desc=True)
+        .limit(1)
+        .maybe_single()
+        .execute()
+    )
+    if not org.data:
+        return []
+
+    result = (
+        await db_admin.table("events")
+        .select("*")
+        .eq("organization_id", org.data["id"])
+        .order("start_date", desc=True)
+        .limit(100)
+        .execute()
+    )
+    return [EventResponse(**row) for row in (result.data or [])]
+
+
+@router.get("/my/registrations", response_model=list[RegistrationResponse])
+@limiter.limit(RATE_DEFAULT)
+async def my_registrations(
+    request: Request,
+    db: SupabaseUser,
+    user_id: CurrentUserId,
+) -> list[RegistrationResponse]:
+    """List the current user's raw event registrations."""
+    result = (
+        await db.table("registrations")
+        .select("*")
+        .eq("volunteer_id", user_id)
+        .order("registered_at", desc=True)
+        .limit(50)
+        .execute()
+    )
+    return [RegistrationResponse(**row) for row in (result.data or [])]
 
 
 @router.get("/{event_id}", response_model=EventResponse)
@@ -510,25 +604,6 @@ async def list_attendees(
             )
         )
     return rows
-
-
-@router.get("/my/registrations", response_model=list[RegistrationResponse])
-@limiter.limit(RATE_DEFAULT)
-async def my_registrations(
-    request: Request,
-    db: SupabaseUser,
-    user_id: CurrentUserId,
-) -> list[RegistrationResponse]:
-    """List the current user's event registrations."""
-    result = (
-        await db.table("registrations")
-        .select("*")
-        .eq("volunteer_id", user_id)
-        .order("registered_at", desc=True)
-        .limit(50)
-        .execute()
-    )
-    return [RegistrationResponse(**row) for row in (result.data or [])]
 
 
 def _validate_uuid(value: str, field_name: str) -> None:

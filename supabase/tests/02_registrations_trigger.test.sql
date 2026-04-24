@@ -24,23 +24,30 @@ DECLARE
     v_evt UUID := '33333333-3333-3333-3333-333333333333';
     v_reg UUID := '44444444-4444-4444-4444-444444444444';
 BEGIN
-    -- Seed auth.users so FK on organizations.owner_id is satisfied.
+    -- Seed auth.users — required for profiles FK + organizations.owner_id FK.
     INSERT INTO auth.users (id, email, aud, role, created_at, updated_at, encrypted_password)
         VALUES (v_vol, 'pgtap_vol@test.internal', 'authenticated', 'authenticated',
                 now(), now(), '')
         ON CONFLICT (id) DO NOTHING;
 
-    -- Seed a skeletal org + event — owner_id required (NOT NULL FK to auth.users).
+    -- Seed profiles — registrations.volunteer_id references public.profiles(id).
+    INSERT INTO public.profiles (id, username)
+        VALUES (v_vol, 'pgtap_test_volunteer')
+        ON CONFLICT (id) DO NOTHING;
+
+    -- Seed org — owner_id is NOT NULL FK to auth.users(id).
     INSERT INTO public.organizations (id, name, owner_id)
         VALUES (v_org, '__pgtap_test_org__', v_vol)
         ON CONFLICT (id) DO NOTHING;
 
-    INSERT INTO public.events (id, org_id, title, start_at, end_at)
-        VALUES (v_evt, v_org, '__pgtap_test_event__', now(), now() + interval '2 hours')
+    -- Seed event — column names: organization_id, title_en/az (both NOT NULL), start_date/end_date.
+    INSERT INTO public.events (id, organization_id, title_en, title_az, start_date, end_date)
+        VALUES (v_evt, v_org, '__pgtap_test_event__', '__pgtap_test_event__', now(), now() + interval '2 hours')
         ON CONFLICT (id) DO NOTHING;
 
+    -- status CHECK: ('pending','approved','rejected','waitlisted','cancelled') — 'confirmed' is invalid.
     INSERT INTO public.registrations (id, event_id, volunteer_id, status)
-        VALUES (v_reg, v_evt, v_vol, 'confirmed')
+        VALUES (v_reg, v_evt, v_vol, 'approved')
         ON CONFLICT (id) DO NOTHING;
 END $$;
 

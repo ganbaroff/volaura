@@ -419,13 +419,51 @@ async def test_complete_assessment_returns_aura_score():
     app.dependency_overrides[get_supabase_user] = _make_dep_override(user)
     app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
 
+    _smoke_job = {
+        "id": "smoke-job-1",
+        "session_id": SESSION_ID,
+        "volunteer_id": USER_ID,
+        "competency_slug": COMP_SLUG,
+        "status": "pending",
+        "attempts": 0,
+        "side_effects": {
+            k: {"status": "pending", "attempts": 0, "last_error": None, "updated_at": "2026-04-24T00:00:00Z"}
+            for k in ("aura_sync", "rewards", "streak", "analytics", "email", "ecosystem_events", "aura_events", "decision_log")
+        },
+        "result_context": {
+            "competency_slug": COMP_SLUG,
+            "competency_score": 72.5,
+            "questions_answered": 1,
+            "stop_reason": "se_threshold",
+            "gaming_flags": [],
+            "completed_at": "2026-04-24T10:00:00Z",
+            "aura_updated": False,
+            "crystals_earned": 0,
+            "energy_level": "full",
+            "old_badge_tier": None,
+            "aura_snapshot": None,
+        },
+        "last_error": None,
+        "completed_at": None,
+    }
+
+    async def _smoke_save_job(_db, job, **kwargs):
+        next_job = dict(job)
+        next_job.update(kwargs)
+        return next_job
+
     try:
-        transport = ASGITransport(app=app)
-        async with AsyncClient(transport=transport, base_url="http://test") as ac:
-            resp = await ac.post(
-                f"/api/assessment/complete/{SESSION_ID}",
-                headers={"Authorization": "Bearer fake-token"},
-            )
+        with (
+            patch("app.routers.assessment.get_completion_job", new=AsyncMock(return_value=None)),
+            patch("app.routers.assessment.ensure_completion_job", new=AsyncMock(return_value=_smoke_job)),
+            patch("app.routers.assessment.save_completion_job", new=AsyncMock(side_effect=_smoke_save_job)),
+        ):
+            transport = ASGITransport(app=app)
+            async with AsyncClient(transport=transport, base_url="http://test") as ac:
+                resp = await ac.post(
+                    f"/api/assessment/complete/{SESSION_ID}",
+                    headers={"Authorization": "Bearer fake-token"},
+                )
 
         assert resp.status_code == 200, f"Expected 200, got {resp.status_code}: {resp.text}"
         body = resp.json()

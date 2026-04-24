@@ -748,34 +748,39 @@ async def submit_answer(
                 )
 
     # Calibration: increment times_shown + times_correct on the answered question.
-    # Best-effort — never fails user request. Slight race-condition under-count is
+    # Fire-and-forget via asyncio.create_task — never blocks the user response,
+    # never consumes mock sequences in tests. Slight race-condition under-count is
     # acceptable; this data feeds offline IRT re-estimation, not real-time scoring.
-    try:
-        _q_stats = (
-            await db_admin.table("questions")
-            .select("times_shown, times_correct")
-            .eq("id", payload.question_id)
-            .single()
-            .execute()
-        )
-        if _q_stats.data:
-            await (
-                db_admin.table("questions")
-                .update(
-                    {
-                        "times_shown": (_q_stats.data.get("times_shown") or 0) + 1,
-                        "times_correct": (_q_stats.data.get("times_correct") or 0) + (1 if raw_score >= 0.5 else 0),
-                    }
-                )
-                .eq("id", payload.question_id)
+    import asyncio as _asyncio
+
+    async def _bump_question_stats(qid: str, was_correct: bool) -> None:
+        try:
+            _q_stats = (
+                await db_admin.table("questions")
+                .select("times_shown, times_correct")
+                .eq("id", qid)
+                .single()
                 .execute()
             )
-    except Exception as _cal_err:
-        logger.warning(
-            "question_stats_increment_failed",
-            question_id=payload.question_id,
-            error=str(_cal_err)[:80],
-        )
+            if _q_stats.data and isinstance(_q_stats.data, dict):
+                await (
+                    db_admin.table("questions")
+                    .update(
+                        {
+                            "times_shown": (_q_stats.data.get("times_shown") or 0) + 1,
+                            "times_correct": (_q_stats.data.get("times_correct") or 0) + (1 if was_correct else 0),
+                        }
+                    )
+                    .eq("id", qid)
+                    .execute()
+                )
+        except Exception as _cal_err:
+            logger.warning("question_stats_increment_failed", question_id=qid, error=str(_cal_err)[:80])
+
+    try:
+        _asyncio.create_task(_bump_question_stats(payload.question_id, raw_score >= 0.5))
+    except Exception:  # nosec B110 — calibration is best-effort
+        pass
 
     # Update CAT state (with evaluation log if available — Phase 2: Transparent Logs)
     state = CATState.from_dict(session["answers"] or {})

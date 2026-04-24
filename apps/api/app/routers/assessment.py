@@ -14,6 +14,8 @@ Business logic lives in app/services/assessment/:
 
 from __future__ import annotations
 
+import hashlib
+import json
 import uuid
 from datetime import UTC, datetime, timedelta
 
@@ -54,10 +56,20 @@ from app.schemas.assessment import (
 )
 from app.services.analytics import track_event
 from app.services.assessment.coaching_service import generate_coaching_tips
+from app.services.assessment.completion_jobs import (
+    all_side_effects_complete,
+    ensure_completion_job,
+    get_completion_job,
+    is_side_effect_complete,
+    mark_side_effect,
+    normalize_side_effects,
+    save_completion_job,
+)
 from app.services.assessment.helpers import (
     fetch_questions,
     get_competency_id,
     get_competency_slug,
+    make_question_out,
     make_session_out,
 )
 from app.services.assessment.rewards import emit_assessment_rewards
@@ -71,6 +83,86 @@ from app.services.notification_service import notify
 from app.services.tribe_streak_tracker import record_assessment_activity
 
 router = APIRouter(prefix="/assessment", tags=["Assessment"])
+
+
+def _hash_assessment_decision_inputs(
+    *,
+    user_id: str,
+    session_id: str,
+    competency_slug: str,
+    questions_answered: int,
+    gaming_flags: list[str],
+) -> str:
+    payload = {
+        "user_id": user_id,
+        "session_id": session_id,
+        "competency_slug": competency_slug,
+        "questions_answered": questions_answered,
+        "gaming_flags": sorted(gaming_flags),
+    }
+    return hashlib.sha256(json.dumps(payload, sort_keys=True).encode("utf-8")).hexdigest()
+
+
+async def _log_assessment_automated_decision(
+    db_admin: SupabaseAdmin,
+    *,
+    user_id: str,
+    session_id: str,
+    competency_slug: str,
+    competency_score: float,
+    questions_answered: int,
+    stop_reason: str | None,
+    aura_updated: bool,
+    gaming_flags: list[str],
+    crystals_earned: int,
+    aura_snapshot: dict[str, object] | None = None,
+) -> bool:
+    """Persist the contestable automated assessment outcome for Art.22 review."""
+    decision_output: dict[str, object] = {
+        "session_id": session_id,
+        "competency_slug": competency_slug,
+        "competency_score": competency_score,
+        "questions_answered": questions_answered,
+        "stop_reason": stop_reason,
+        "aura_updated": aura_updated,
+        "gaming_flags": gaming_flags,
+        "crystals_earned": crystals_earned,
+    }
+    if aura_snapshot:
+        decision_output["aura_snapshot"] = aura_snapshot
+
+    row = {
+        "user_id": user_id,
+        "source_product": "volaura",
+        "decision_type": "assessment_completed",
+        "decision_output": decision_output,
+        "algorithm_version": "assessment-pipeline-v1",
+        "model_inputs_hash": _hash_assessment_decision_inputs(
+            user_id=user_id,
+            session_id=session_id,
+            competency_slug=competency_slug,
+            questions_answered=questions_answered,
+            gaming_flags=gaming_flags,
+        ),
+        "explanation_text": (
+            f"Assessment session {session_id} completed for {competency_slug} using "
+            "IRT/CAT scoring, anti-gaming analysis, and AURA reconciliation."
+        ),
+        "human_reviewable": True,
+    }
+
+    try:
+        await db_admin.table("automated_decision_log").insert(row).execute()
+        return True
+    except Exception as exc:
+        logger.error(
+            "assessment automated_decision_log insert failed",
+            user_id=user_id,
+            session_id=session_id,
+            competency_slug=competency_slug,
+            error=str(exc)[:300],
+        )
+        return False
 
 
 # ── helpers moved to services (see imports above) ─────────────────────────────
@@ -401,6 +493,15 @@ async def start_assessment(
     if payload.energy_level != "full":
         metadata["energy_level"] = payload.energy_level
     metadata["article22_consent_at"] = datetime.now(UTC).isoformat()
+    assessment_plan_current_index = (
+        payload.assessment_plan_current_index
+        if payload.assessment_plan_competencies is not None and payload.assessment_plan_current_index is not None
+        else 0
+    )
+    metadata["assessment_plan"] = {
+        "competencies": payload.assessment_plan_competencies or [payload.competency_slug],
+        "current_index": assessment_plan_current_index,
+    }
     session_data["metadata"] = metadata
     await db_user.table("assessment_sessions").insert(session_data).execute()
 
@@ -783,29 +884,15 @@ async def complete_assessment(
         raise HTTPException(status_code=404, detail={"code": "SESSION_NOT_FOUND", "message": "Session not found"})
 
     session = session_result.data
+    existing_job = await get_completion_job(db_admin, session_id)
 
-    # BUG-015 FIX: if session already completed, return stored results without re-running pipeline.
-    # Prevents: double upsert_aura_score, duplicate aura_history entries, double emit_rewards.
-    # Race scenario: submit_answer(last Q) + complete_assessment fire simultaneously.
-    if session.get("status") == "completed":
-        comp_result_early = (
-            await db_admin.table("competencies").select("slug").eq("id", session["competency_id"]).single().execute()
-        )
-        slug_early = comp_result_early.data["slug"] if comp_result_early.data else ""
-        state_early = CATState.from_dict(session["answers"] or {})
-        stored_multiplier = float(session.get("gaming_penalty_multiplier") or 1.0)
-        stored_flags = session.get("gaming_flags") or []
-        competency_score_early = round(theta_to_score(state_early.theta) * stored_multiplier, 2)
-        return AssessmentResultOut(
-            session_id=session_id,
-            competency_slug=slug_early,
-            competency_score=competency_score_early,
-            questions_answered=len(state_early.items),
-            stop_reason=state_early.stop_reason,
-            aura_updated=False,  # already updated in the original complete call
-            gaming_flags=stored_flags,
-            completed_at=session.get("completed_at") or datetime.now(UTC),
-        )
+    def _parse_dt(value: str | None) -> datetime:
+        if not value:
+            return datetime.now(UTC)
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=UTC)
+        return parsed
 
     # BUG-010 FIX: reject completion of expired sessions (expired but in_progress sessions)
     expires_at_str = session.get("expires_at")
@@ -821,14 +908,45 @@ async def complete_assessment(
             )
 
     state = CATState.from_dict(session["answers"] or {})
+    already_completed = session.get("status") == "completed"
 
-    # Anti-gaming analysis — run ONCE here, store in session (never re-run in get_results)
-    gaming = antigaming.analyse(state.to_dict().get("items", []))
+    if already_completed and existing_job is None:
+        comp_result_early = (
+            await db_admin.table("competencies").select("slug").eq("id", session["competency_id"]).single().execute()
+        )
+        slug_early = comp_result_early.data["slug"] if comp_result_early.data else ""
+        stored_multiplier = float(session.get("gaming_penalty_multiplier") or 1.0)
+        stored_flags = session.get("gaming_flags") or []
+        competency_score_early = round(theta_to_score(state.theta) * stored_multiplier, 2)
+        return AssessmentResultOut(
+            session_id=session_id,
+            competency_slug=slug_early,
+            competency_score=competency_score_early,
+            questions_answered=len(state.items),
+            stop_reason=state.stop_reason,
+            aura_updated=False,
+            gaming_flags=stored_flags,
+            completed_at=_parse_dt(session.get("completed_at")),
+            crystals_earned=0,
+        )
+
+    # Anti-gaming analysis — run once for new completions, reuse stored values for durable replays.
+    if already_completed:
+        gaming_flags = session.get("gaming_flags") or []
+        penalty_multiplier = float(session.get("gaming_penalty_multiplier") or 1.0)
+    else:
+        gaming = antigaming.analyse(state.to_dict().get("items", []))
+        gaming_flags = gaming.flags
+        penalty_multiplier = gaming.penalty_multiplier
+
     raw_competency_score = theta_to_score(state.theta)
-    competency_score = round(raw_competency_score * gaming.penalty_multiplier, 2)
+    competency_score = round(raw_competency_score * penalty_multiplier, 2)
+
+    completed_at_dt = _parse_dt(session.get("completed_at"))
 
     # Force-complete if somehow still open — single UPDATE merging all fields (no race condition)
     if session["status"] == "in_progress":
+        completed_at_dt = datetime.now(UTC)
         state.stopped = True
         state.stop_reason = "manual_complete"
         # BLOCKER-1 FIX: Use db_admin for updates (user-level UPDATE policy removed)
@@ -841,22 +959,9 @@ async def complete_assessment(
                     "theta_estimate": state.theta,
                     "theta_se": state.theta_se,
                     "answers": state.to_dict(),
-                    "completed_at": datetime.now(UTC).isoformat(),
-                    "gaming_penalty_multiplier": gaming.penalty_multiplier,
-                    "gaming_flags": gaming.flags,
-                }
-            )
-            .eq("id", session_id)
-            .execute()
-        )
-    else:
-        # Session was already completed — still sync final gaming analysis in one update
-        await (
-            db_admin.table("assessment_sessions")
-            .update(
-                {
-                    "gaming_penalty_multiplier": gaming.penalty_multiplier,
-                    "gaming_flags": gaming.flags,
+                    "completed_at": completed_at_dt.isoformat(),
+                    "gaming_penalty_multiplier": penalty_multiplier,
+                    "gaming_flags": gaming_flags,
                 }
             )
             .eq("id", session_id)
@@ -869,9 +974,23 @@ async def complete_assessment(
     )
     slug = comp_result.data["slug"] if comp_result.data else ""
 
-    # Capture old badge tier BEFORE upsert — needed for badge_tier_changed event
+    if existing_job and existing_job.get("status") == "completed" and all_side_effects_complete(existing_job.get("side_effects")):
+        completed_context = existing_job.get("result_context") or {}
+        return AssessmentResultOut(
+            session_id=session_id,
+            competency_slug=completed_context.get("competency_slug") or slug,
+            competency_score=float(completed_context.get("competency_score") or competency_score),
+            questions_answered=int(completed_context.get("questions_answered") or len(state.items)),
+            stop_reason=completed_context.get("stop_reason") or state.stop_reason,
+            aura_updated=bool(completed_context.get("aura_updated", False)),
+            gaming_flags=list(completed_context.get("gaming_flags") or gaming_flags),
+            completed_at=_parse_dt(completed_context.get("completed_at") or session.get("completed_at")),
+            crystals_earned=int(completed_context.get("crystals_earned") or 0),
+        )
+
+    # Capture old badge tier BEFORE upsert — needed for badge_tier_changed event.
     _old_badge_tier: str | None = None
-    if slug:
+    if slug and not already_completed:
         try:
             _old_aura = (
                 await db_admin.table("aura_scores")
@@ -884,25 +1003,46 @@ async def complete_assessment(
         except Exception:
             pass  # first assessment — no previous tier
 
-    # Upsert AURA score via DB RPC — retry once on failure (Gate 1: zero data loss)
-    #
-    # ghost-audit P0-2 root fix (2026-04-15): intent-before-action.
-    # Set pending_aura_sync=TRUE BEFORE the RPC attempt, not only in recovery.
-    # Clear it only on confirmed success. A session that reaches status='completed'
-    # without pending_aura_sync cleared is an orphan — the aura_reconciler cron
-    # will re-run upsert_aura_score for it every 10 minutes until it succeeds.
-    aura_updated = False
-    if slug:
-        # Pre-set flag — never-silent contract: even if everything below crashes,
-        # the reconciler will find this session and retry.
+    completion_context = {
+        "competency_slug": slug,
+        "competency_score": competency_score,
+        "questions_answered": len(state.items),
+        "stop_reason": state.stop_reason,
+        "gaming_flags": gaming_flags,
+        "completed_at": completed_at_dt.isoformat(),
+        "energy_level": ((session.get("metadata") or {}).get("energy_level", "full") if isinstance(session.get("metadata"), dict) else "full"),
+        "old_badge_tier": (existing_job or {}).get("result_context", {}).get("old_badge_tier", _old_badge_tier),
+        "aura_updated": bool((existing_job or {}).get("result_context", {}).get("aura_updated", False)),
+        "crystals_earned": int((existing_job or {}).get("result_context", {}).get("crystals_earned") or 0),
+        "aura_snapshot": (existing_job or {}).get("result_context", {}).get("aura_snapshot"),
+    }
+    job = await ensure_completion_job(
+        db_admin,
+        session_id=session_id,
+        volunteer_id=str(user_id),
+        competency_slug=slug,
+        result_context=completion_context,
+    )
+    job = await save_completion_job(
+        db_admin,
+        job,
+        status="processing",
+        increment_attempts=True,
+        result_context=completion_context,
+    )
+
+    side_effects = normalize_side_effects(job.get("side_effects"))
+    result_context = dict(job.get("result_context") or {})
+    aura_updated = bool(result_context.get("aura_updated", False))
+    crystals_earned = int(result_context.get("crystals_earned") or 0)
+    aura_snapshot: dict[str, object] | None = result_context.get("aura_snapshot")
+    last_error: str | None = None
+
+    # Upsert AURA score via DB RPC — retryable and persisted in assessment_completion_jobs.
+    if slug and not is_side_effect_complete(side_effects, "aura_sync"):
         try:
-            await (
-                db_admin.table("assessment_sessions").update({"pending_aura_sync": True}).eq("id", session_id).execute()
-            )
+            await db_admin.table("assessment_sessions").update({"pending_aura_sync": True}).eq("id", session_id).execute()
         except Exception as pre_flag_err:
-            # If we cannot even mark intent, log at CRITICAL — this means the
-            # reconciler has no way to find this session. Without pre-flag we
-            # fall back to the old recovery semantics (post-failure flag write).
             logger.error(
                 "pending_aura_sync pre-flag write failed — reconciler blind",
                 session_id=session_id,
@@ -912,14 +1052,13 @@ async def complete_assessment(
             )
 
         rpc_params = {"p_volunteer_id": user_id, "p_competency_scores": {slug: competency_score}}
+        aura_error: str | None = None
         for attempt in range(2):
             try:
                 rpc_result = await db_admin.rpc("upsert_aura_score", rpc_params).execute()
                 aura_updated = rpc_result.data is not None
+                result_context["aura_updated"] = aura_updated
                 if aura_updated:
-                    # Success — clear the intent flag. If THIS write fails the
-                    # session looks like a ghost to the reconciler; reconciler
-                    # is idempotent so re-running upsert_aura_score is safe.
                     try:
                         await (
                             db_admin.table("assessment_sessions")
@@ -934,6 +1073,15 @@ async def complete_assessment(
                             user_id=str(user_id),
                             error=str(clear_err)[:300],
                         )
+                    side_effects = mark_side_effect(side_effects, "aura_sync", status="done")
+                    job = await save_completion_job(
+                        db_admin,
+                        job,
+                        side_effects=side_effects,
+                        result_context=result_context,
+                        last_error=None,
+                    )
+                    aura_error = None
                     break
                 logger.warning(
                     "upsert_aura_score returned no data",
@@ -942,13 +1090,15 @@ async def complete_assessment(
                     session_id=session_id,
                     attempt=attempt + 1,
                 )
+                aura_error = "upsert_aura_score returned no data"
             except Exception as rpc_error:
+                aura_error = str(rpc_error)[:300]
                 logger.error(
                     "upsert_aura_score RPC failed",
                     user_id=str(user_id),
                     competency_slug=slug,
                     session_id=session_id,
-                    error=str(rpc_error)[:300],
+                    error=aura_error,
                     attempt=attempt + 1,
                 )
                 if attempt == 0:
@@ -957,150 +1107,315 @@ async def complete_assessment(
                     await asyncio.sleep(2)
                     continue
                 aura_updated = False
-                # Flag is already set from pre-flag above; reconciler will pick
-                # this session up on next cycle. No recovery flag write needed.
+        if aura_error:
+            last_error = aura_error
+            side_effects = mark_side_effect(side_effects, "aura_sync", status="failed", error=aura_error)
+            job = await save_completion_job(
+                db_admin,
+                job,
+                side_effects=side_effects,
+                result_context=result_context,
+                status="partial",
+                last_error=aura_error,
+            )
+    elif not slug:
+        side_effects = mark_side_effect(side_effects, "aura_sync", status="skipped", increment_attempts=False)
+        job = await save_completion_job(db_admin, job, side_effects=side_effects, result_context=result_context)
 
-    # ── Sprint A1: Emit crystal_earned + skill_verified to character_state ───
-    # Best-effort: never blocks the response. Idempotency via game_character_rewards.
-    # Sprint 7: pass user JWT so cross_product_bridge can authenticate with MindShift.
-    crystals_earned = 0
-    if slug:
+    # Crystal rewards
+    if slug and not is_side_effect_complete(side_effects, "rewards"):
         _auth_header = request.headers.get("Authorization", "")
         _user_jwt: str | None = _auth_header.removeprefix("Bearer ").strip() or None
-        crystals_earned = int(
-            await emit_assessment_rewards(
+        try:
+            crystals_earned = int(
+                await emit_assessment_rewards(
+                    db=db_admin,
+                    user_id=str(user_id),
+                    skill_slug=slug,
+                    competency_score=competency_score,
+                    user_jwt=_user_jwt,
+                )
+                or 0
+            )
+            result_context["crystals_earned"] = crystals_earned
+            side_effects = mark_side_effect(side_effects, "rewards", status="done")
+            job = await save_completion_job(
+                db_admin,
+                job,
+                side_effects=side_effects,
+                result_context=result_context,
+                last_error=last_error,
+            )
+        except Exception as e:
+            reward_error = str(e)[:300]
+            logger.error("assessment rewards failed", user_id=str(user_id), session_id=session_id, error=reward_error)
+            last_error = reward_error
+            side_effects = mark_side_effect(side_effects, "rewards", status="failed", error=reward_error)
+            job = await save_completion_job(
+                db_admin,
+                job,
+                side_effects=side_effects,
+                result_context=result_context,
+                status="partial",
+                last_error=reward_error,
+            )
+    elif not slug:
+        side_effects = mark_side_effect(side_effects, "rewards", status="skipped", increment_attempts=False)
+        job = await save_completion_job(db_admin, job, side_effects=side_effects, result_context=result_context)
+
+    if not is_side_effect_complete(side_effects, "streak"):
+        try:
+            await record_assessment_activity(db=db_admin, user_id=str(user_id))
+            side_effects = mark_side_effect(side_effects, "streak", status="done")
+            job = await save_completion_job(db_admin, job, side_effects=side_effects, result_context=result_context)
+        except Exception as e:
+            streak_error = str(e)[:300]
+            logger.error("tribe streak record failed", user_id=str(user_id), session_id=session_id, error=streak_error)
+            last_error = streak_error
+            side_effects = mark_side_effect(side_effects, "streak", status="failed", error=streak_error)
+            job = await save_completion_job(
+                db=db_admin,
+                job=job,
+                side_effects=side_effects,
+                result_context=result_context,
+                status="partial",
+                last_error=streak_error,
+            )
+
+    if not is_side_effect_complete(side_effects, "analytics"):
+        try:
+            await track_event(
                 db=db_admin,
                 user_id=str(user_id),
-                skill_slug=slug,
-                competency_score=competency_score,
-                user_jwt=_user_jwt,
+                event_name="assessment_completed",
+                session_id=session_id,
+                properties={
+                    "competency_slug": slug,
+                    "competency_score": competency_score,
+                    "questions_answered": len(state.items),
+                    "stop_reason": state.stop_reason,
+                    "aura_updated": aura_updated,
+                    "crystals_earned": crystals_earned,
+                    "gaming_flags": gaming_flags,
+                },
             )
-            or 0
-        )
-
-    # Tribe streak: record activity for current week (fire-and-forget, never blocks response)
-    try:
-        await record_assessment_activity(db=db_admin, user_id=str(user_id))
-    except Exception as e:
-        logger.error("tribe streak record failed", user_id=str(user_id), session_id=session_id, error=str(e)[:300])
-
-    # Analytics: assessment_completed event (fire-and-forget, never blocks response)
-    try:
-        await track_event(
-            db=db_admin,
-            user_id=str(user_id),
-            event_name="assessment_completed",
-            session_id=session_id,
-            properties={
-                "competency_slug": slug,
-                "competency_score": competency_score,
-                "questions_answered": len(state.items),
-                "stop_reason": state.stop_reason,
-                "aura_updated": aura_updated,
-                "crystals_earned": crystals_earned,
-                "gaming_flags": gaming.flags,
-            },
-        )
-    except Exception as e:
-        logger.error(
-            "assessment_completed analytics failed", user_id=str(user_id), session_id=session_id, error=str(e)[:300]
-        )
-
-    # Transactional email: AURA score ready (fire-and-forget, kill switch: EMAIL_ENABLED)
-    try:
-        user_resp = await db_admin.auth.admin.get_user_by_id(str(user_id))
-        user_email = user_resp.user.email if user_resp and user_resp.user else None
-        if user_email:
-            # Resolve badge tier from aura_scores (best-effort; defaults to "bronze" if missing)
-            badge_resp = (
-                await db_admin.table("aura_scores")
-                .select("badge_tier")
-                .eq("volunteer_id", str(user_id))
-                .maybe_single()
-                .execute()
+            side_effects = mark_side_effect(side_effects, "analytics", status="done")
+            job = await save_completion_job(db_admin, job, side_effects=side_effects, result_context=result_context)
+        except Exception as e:
+            analytics_error = str(e)[:300]
+            logger.error(
+                "assessment_completed analytics failed", user_id=str(user_id), session_id=session_id, error=analytics_error
             )
-            badge_tier = (badge_resp.data or {}).get("badge_tier", "bronze")
-
-            # display_name from profiles (best-effort; falls back to "there")
-            prof_resp = (
-                await db_admin.table("profiles").select("display_name").eq("id", str(user_id)).maybe_single().execute()
+            last_error = analytics_error
+            side_effects = mark_side_effect(side_effects, "analytics", status="failed", error=analytics_error)
+            job = await save_completion_job(
+                db_admin,
+                job,
+                side_effects=side_effects,
+                result_context=result_context,
+                status="partial",
+                last_error=analytics_error,
             )
-            display_name = (prof_resp.data or {}).get("display_name") or ""
 
-            await send_aura_ready_email(
-                to_email=user_email,
-                display_name=display_name,
+    if not is_side_effect_complete(side_effects, "email"):
+        try:
+            user_resp = await db_admin.auth.admin.get_user_by_id(str(user_id))
+            user_email = user_resp.user.email if user_resp and user_resp.user else None
+            if user_email:
+                badge_resp = (
+                    await db_admin.table("aura_scores")
+                    .select("badge_tier")
+                    .eq("volunteer_id", str(user_id))
+                    .maybe_single()
+                    .execute()
+                )
+                badge_tier = (badge_resp.data or {}).get("badge_tier", "bronze")
+                prof_resp = (
+                    await db_admin.table("profiles").select("display_name").eq("id", str(user_id)).maybe_single().execute()
+                )
+                display_name = (prof_resp.data or {}).get("display_name") or ""
+
+                await send_aura_ready_email(
+                    to_email=user_email,
+                    display_name=display_name,
+                    competency_slug=slug,
+                    competency_score=competency_score,
+                    badge_tier=badge_tier,
+                    crystals_earned=crystals_earned,
+                )
+            side_effects = mark_side_effect(side_effects, "email", status="done")
+            job = await save_completion_job(db_admin, job, side_effects=side_effects, result_context=result_context)
+        except Exception as e:
+            email_error = str(e)[:300]
+            logger.error("aura-ready email failed", user_id=str(user_id), session_id=session_id, error=email_error)
+            last_error = email_error
+            side_effects = mark_side_effect(side_effects, "email", status="failed", error=email_error)
+            job = await save_completion_job(
+                db_admin,
+                job,
+                side_effects=side_effects,
+                result_context=result_context,
+                status="partial",
+                last_error=email_error,
+            )
+
+    if not is_side_effect_complete(side_effects, "ecosystem_events"):
+        try:
+            await emit_assessment_completed(
+                db=db_admin,
+                user_id=str(user_id),
                 competency_slug=slug,
                 competency_score=competency_score,
-                badge_tier=badge_tier,
-                crystals_earned=crystals_earned,
+                items_answered=len(state.items),
+                energy_level=result_context.get("energy_level", "full"),
+                stop_reason=state.stop_reason,
+                gaming_flags=gaming_flags,
             )
-    except Exception as e:
-        logger.error("aura-ready email failed", user_id=str(user_id), session_id=session_id, error=str(e)[:300])
-
-    # ── Ecosystem events: assessment → character_events bus → all 5 products ──
-    # Fire-and-forget: NEVER blocks /complete response. Errors logged, not raised.
-    _session_meta = session.get("metadata") or {}
-    _energy = _session_meta.get("energy_level", "full") if isinstance(_session_meta, dict) else "full"
-    try:
-        await emit_assessment_completed(
-            db=db_admin,
-            user_id=str(user_id),
-            competency_slug=slug,
-            competency_score=competency_score,
-            items_answered=len(state.items),
-            energy_level=_energy,
-            stop_reason=state.stop_reason,
-            gaming_flags=gaming.flags,
-        )
-    except Exception as e:
-        logger.error(
-            "emit_assessment_completed failed — character_events bridge silent",
-            user_id=str(user_id),
-            session_id=session_id,
-            competency_slug=slug,
-            error=str(e)[:300],
-        )
-
-    if aura_updated and slug:
-        try:
-            _fresh_aura = (
-                await db_admin.table("aura_scores")
-                .select("total_score, badge_tier, competency_scores, elite_status, percentile_rank")
-                .eq("volunteer_id", str(user_id))
-                .maybe_single()
-                .execute()
-            )
-            _aura_data = _fresh_aura.data or {}
-            if _aura_data:
-                _new_tier = _aura_data.get("badge_tier", "bronze")
-                _comp_scores = _aura_data.get("competency_scores") or {}
-
-                await emit_aura_updated(
-                    db=db_admin,
-                    user_id=str(user_id),
-                    total_score=float(_aura_data.get("total_score", 0)),
-                    badge_tier=_new_tier,
-                    competency_scores={k: float(v) for k, v in _comp_scores.items()},
-                    elite_status=bool(_aura_data.get("elite_status", False)),
-                    percentile_rank=float(_aura_data["percentile_rank"]) if _aura_data.get("percentile_rank") else None,
-                )
-
-                await emit_badge_tier_changed(
-                    db=db_admin,
-                    user_id=str(user_id),
-                    old_tier=_old_badge_tier,
-                    new_tier=_new_tier,
-                    total_score=float(_aura_data.get("total_score", 0)),
-                )
+            side_effects = mark_side_effect(side_effects, "ecosystem_events", status="done")
+            job = await save_completion_job(db_admin, job, side_effects=side_effects, result_context=result_context)
         except Exception as e:
+            ecosystem_error = str(e)[:300]
             logger.error(
-                "emit_aura_updated/badge_tier_changed failed — Life Sim crystals + BrandedBy badge updates silent",
+                "emit_assessment_completed failed — character_events bridge silent",
                 user_id=str(user_id),
                 session_id=session_id,
-                old_tier=_old_badge_tier,
-                error=str(e)[:300],
+                competency_slug=slug,
+                error=ecosystem_error,
             )
+            last_error = ecosystem_error
+            side_effects = mark_side_effect(side_effects, "ecosystem_events", status="failed", error=ecosystem_error)
+            job = await save_completion_job(
+                db_admin,
+                job,
+                side_effects=side_effects,
+                result_context=result_context,
+                status="partial",
+                last_error=ecosystem_error,
+            )
+
+    if not is_side_effect_complete(side_effects, "aura_events"):
+        if aura_updated and slug:
+            try:
+                _fresh_aura = (
+                    await db_admin.table("aura_scores")
+                    .select("total_score, badge_tier, competency_scores, elite_status, percentile_rank")
+                    .eq("volunteer_id", str(user_id))
+                    .maybe_single()
+                    .execute()
+                )
+                _aura_data = _fresh_aura.data or {}
+                if _aura_data:
+                    _new_tier = _aura_data.get("badge_tier", "bronze")
+                    _comp_scores = _aura_data.get("competency_scores") or {}
+                    aura_snapshot = {
+                        "total_score": float(_aura_data.get("total_score", 0)),
+                        "badge_tier": _new_tier,
+                        "competency_scores": {k: float(v) for k, v in _comp_scores.items()},
+                        "elite_status": bool(_aura_data.get("elite_status", False)),
+                        "percentile_rank": (
+                            float(_aura_data["percentile_rank"]) if _aura_data.get("percentile_rank") else None
+                        ),
+                    }
+                    result_context["aura_snapshot"] = aura_snapshot
+
+                    await emit_aura_updated(
+                        db=db_admin,
+                        user_id=str(user_id),
+                        total_score=float(aura_snapshot["total_score"]),
+                        badge_tier=_new_tier,
+                        competency_scores=aura_snapshot["competency_scores"],
+                        elite_status=bool(aura_snapshot["elite_status"]),
+                        percentile_rank=aura_snapshot["percentile_rank"],
+                    )
+
+                    await emit_badge_tier_changed(
+                        db=db_admin,
+                        user_id=str(user_id),
+                        old_tier=result_context.get("old_badge_tier"),
+                        new_tier=_new_tier,
+                        total_score=float(_aura_data.get("total_score", 0)),
+                    )
+                side_effects = mark_side_effect(side_effects, "aura_events", status="done")
+                job = await save_completion_job(
+                    db_admin,
+                    job,
+                    side_effects=side_effects,
+                    result_context=result_context,
+                    last_error=last_error,
+                )
+            except Exception as e:
+                aura_events_error = str(e)[:300]
+                logger.error(
+                    "emit_aura_updated/badge_tier_changed failed — Life Sim crystals + BrandedBy badge updates silent",
+                    user_id=str(user_id),
+                    session_id=session_id,
+                    old_tier=result_context.get("old_badge_tier"),
+                    error=aura_events_error,
+                )
+                last_error = aura_events_error
+                side_effects = mark_side_effect(side_effects, "aura_events", status="failed", error=aura_events_error)
+                job = await save_completion_job(
+                    db_admin,
+                    job,
+                    side_effects=side_effects,
+                    result_context=result_context,
+                    status="partial",
+                    last_error=aura_events_error,
+                )
+        else:
+            side_effects = mark_side_effect(side_effects, "aura_events", status="skipped", increment_attempts=False)
+            job = await save_completion_job(db_admin, job, side_effects=side_effects, result_context=result_context)
+
+    if not is_side_effect_complete(side_effects, "decision_log"):
+        if slug:
+            logged = await _log_assessment_automated_decision(
+                db_admin,
+                user_id=str(user_id),
+                session_id=session_id,
+                competency_slug=slug,
+                competency_score=competency_score,
+                questions_answered=len(state.items),
+                stop_reason=state.stop_reason,
+                aura_updated=aura_updated,
+                gaming_flags=gaming_flags,
+                crystals_earned=crystals_earned,
+                aura_snapshot=aura_snapshot,
+            )
+            if logged:
+                side_effects = mark_side_effect(side_effects, "decision_log", status="done")
+                job = await save_completion_job(
+                    db_admin,
+                    job,
+                    side_effects=side_effects,
+                    result_context=result_context,
+                    last_error=last_error,
+                )
+            else:
+                decision_error = "automated_decision_log insert failed"
+                last_error = decision_error
+                side_effects = mark_side_effect(side_effects, "decision_log", status="failed", error=decision_error)
+                job = await save_completion_job(
+                    db_admin,
+                    job,
+                    side_effects=side_effects,
+                    result_context=result_context,
+                    status="partial",
+                    last_error=decision_error,
+                )
+        else:
+            side_effects = mark_side_effect(side_effects, "decision_log", status="skipped", increment_attempts=False)
+            job = await save_completion_job(db_admin, job, side_effects=side_effects, result_context=result_context)
+
+    final_status = "completed" if all_side_effects_complete(side_effects) else "partial"
+    job = await save_completion_job(
+        db_admin,
+        job,
+        side_effects=side_effects,
+        result_context=result_context,
+        status=final_status,
+        last_error=None if final_status == "completed" else last_error,
+        completed_at=(datetime.now(UTC).isoformat() if final_status == "completed" else job.get("completed_at")),
+    )
 
     return AssessmentResultOut(
         session_id=session_id,
@@ -1110,8 +1425,8 @@ async def complete_assessment(
         questions_answered=len(state.items),
         stop_reason=state.stop_reason,
         aura_updated=aura_updated,
-        gaming_flags=gaming.flags,
-        completed_at=datetime.now(UTC),
+        gaming_flags=gaming_flags,
+        completed_at=completed_at_dt,
         crystals_earned=crystals_earned,
     )
 
@@ -1121,7 +1436,7 @@ async def complete_assessment(
 async def get_session_state(
     request: Request,
     session_id: str,
-    db_admin: SupabaseAdmin,  # noqa: ARG001 — mirrors get_results signature
+    db_admin: SupabaseAdmin,
     db_user: SupabaseUser,
     user_id: CurrentUserId,
 ) -> SessionResumeOut:
@@ -1134,9 +1449,10 @@ async def get_session_state(
       - is_resumable=False + status='completed' → redirect to results
       - is_resumable=False + status='expired' → show 'expired, start new'
 
-    Intentionally minimal — does NOT expose theta, raw answers, or the next
-    question. The existing /answer flow returns the next question; this is
-    a resume-helper, not a full session replay.
+    Intentionally limited — does NOT expose theta or raw answer history.
+    It includes the currently active question and multi-competency plan
+    metadata so the frontend can resume or re-enter the transition screen
+    without depending on fragile local storage.
     """
     try:
         uuid.UUID(session_id)
@@ -1148,7 +1464,7 @@ async def get_session_state(
 
     session_result = (
         await db_user.table("assessment_sessions")
-        .select("id, status, competency_id, role_level, answers, started_at, created_at")
+        .select("id, status, competency_id, role_level, answers, started_at, created_at, current_question_id, metadata")
         .eq("id", session_id)
         .eq("volunteer_id", user_id)
         .maybe_single()
@@ -1173,6 +1489,30 @@ async def get_session_state(
     # what SessionOut.questions_answered returns on /start + /answer.
     state = CATState.from_dict(session.get("answers") or {})
     answered = len(state.items)
+    current_question_id = session.get("current_question_id")
+
+    metadata = session.get("metadata") or {}
+    plan_metadata = metadata.get("assessment_plan") if isinstance(metadata, dict) else None
+    raw_plan = plan_metadata.get("competencies") if isinstance(plan_metadata, dict) else None
+    raw_index = plan_metadata.get("current_index") if isinstance(plan_metadata, dict) else None
+
+    assessment_plan_competencies = [slug] if slug else []
+    if isinstance(raw_plan, list):
+        normalized_plan = [str(item).strip().lower() for item in raw_plan if isinstance(item, str) and item.strip()]
+        if normalized_plan:
+            assessment_plan_competencies = normalized_plan
+
+    if slug and slug in assessment_plan_competencies:
+        assessment_plan_current_index = assessment_plan_competencies.index(slug)
+    else:
+        assessment_plan_current_index = 0
+
+    if isinstance(raw_index, int) and 0 <= raw_index < len(assessment_plan_competencies):
+        assessment_plan_current_index = raw_index
+        if slug and assessment_plan_competencies[raw_index] != slug and slug in assessment_plan_competencies:
+            assessment_plan_current_index = assessment_plan_competencies.index(slug)
+    elif slug and slug in assessment_plan_competencies:
+        assessment_plan_current_index = assessment_plan_competencies.index(slug)
 
     # 24h auto-expiry mirrors the /start stale-session sweep above. A session
     # older than that is not resumable even if its status wasn't flipped yet.
@@ -1187,8 +1527,24 @@ async def get_session_state(
         except (ValueError, TypeError):
             is_stale = False
 
-    is_resumable = status == "in_progress" and not is_stale
-    reported_status = "expired" if (status == "in_progress" and is_stale) else status
+    is_logically_complete = status == "completed" or (
+        status == "in_progress" and state.stopped and current_question_id is None
+    )
+
+    next_question = None
+    if status == "in_progress" and not is_stale and not is_logically_complete and current_question_id:
+        questions = await fetch_questions(db_admin, session["competency_id"])
+        current_question = next((question for question in questions if question["id"] == current_question_id), None)
+        if current_question:
+            next_question = make_question_out(current_question)
+
+    is_resumable = status == "in_progress" and not is_stale and not is_logically_complete and next_question is not None
+    if status == "in_progress" and is_stale:
+        reported_status = "expired"
+    elif is_logically_complete:
+        reported_status = "completed"
+    else:
+        reported_status = status
 
     return SessionResumeOut(
         session_id=session_id,
@@ -1197,6 +1553,9 @@ async def get_session_state(
         status=reported_status,
         questions_answered=answered,
         started_at=str(started_raw) if started_raw else None,
+        next_question=next_question,
+        assessment_plan_competencies=assessment_plan_competencies,
+        assessment_plan_current_index=assessment_plan_current_index,
         is_resumable=is_resumable,
     )
 

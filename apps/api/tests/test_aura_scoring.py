@@ -742,14 +742,17 @@ from app.services.aura_reconciler import (
 )
 
 
+_RPC_DATA_UNSET = object()  # sentinel — distinguishes "no rpc_data given" from "rpc_data=None"
+
+
 def _mk_reconciler_db(
     slug: str | None = "communication",
-    rpc_data: Any = None,
+    rpc_data: Any = _RPC_DATA_UNSET,
     rpc_raises: Exception | None = None,
     update_raises: bool = False,
 ) -> tuple[MagicMock, MagicMock]:
     """Build reconciler mock DB. Returns (db, sessions_chain)."""
-    if rpc_data is None:
+    if rpc_data is _RPC_DATA_UNSET:
         rpc_data = [{"ok": True}]
     db = MagicMock()
     sessions_chain = MagicMock()

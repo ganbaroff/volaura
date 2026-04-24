@@ -454,12 +454,14 @@ async def test_step4_complete_assessment():
         ]
     )
     # db_admin sequence for complete_assessment:
+    # 0. get_completion_job (assessment_completion_jobs SELECT) — returns None (no existing job)
     # 1. assessment_sessions UPDATE (force complete in_progress)
     # 2. competencies SELECT slug
     # 3. rpc("upsert_aura_score", ...)
     # 4. emit_assessment_rewards calls (character_state inserts etc.)
     admin = _build_chainable(
         [
+            None,  # get_completion_job → no existing job (router calls this first)
             [COMPLETED_SESSION],  # session UPDATE to completed
             {"slug": COMP_SLUG, "id": COMP_ID},  # competency slug lookup
             MagicMock(data={"total_score": 72.5, "badge_tier": "silver"}),  # upsert_aura_score RPC

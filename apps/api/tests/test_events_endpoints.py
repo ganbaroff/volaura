@@ -42,7 +42,7 @@ OTHER_USER_ID = str(uuid4())
 ORG_ID = str(uuid4())
 EVENT_ID = str(uuid4())
 REG_ID = str(uuid4())
-NOW_ISO = datetime.now(UTC).isoformat()
+NOW_ISO = datetime.now(UTC).isoformat().replace("+00:00", "Z")
 
 # Valid UUID for path params
 VALID_UUID = str(uuid4())
@@ -1050,13 +1050,10 @@ class TestMyRegistrations:
 
     @pytest.mark.asyncio
     async def test_401_when_no_auth(self):
-        """No auth on /my/registrations still requires a user_id dep — returns 401."""
-        app.dependency_overrides[get_supabase_user] = _db(_R(data=[]))
-        try:
-            async with _make_client() as c:
-                resp = await c.get("/api/events/my/registrations")
-        finally:
-            app.dependency_overrides.pop(get_supabase_user, None)
+        """No auth on /my/registrations → get_supabase_user raises 401 before any DB call."""
+        # No dependency overrides — let the real auth dep run (checks Bearer header first).
+        async with _make_client() as c:
+            resp = await c.get("/api/events/my/registrations")
         assert resp.status_code == 401
 
 

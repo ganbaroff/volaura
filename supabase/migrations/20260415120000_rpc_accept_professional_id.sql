@@ -209,6 +209,10 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- 3. match_volunteers — add professional_id to result set
 -- ═══════════════════════════════════════════════════════════════════════════════
+-- Must DROP first: same parameter list but new return column (professional_id).
+-- CREATE OR REPLACE cannot change return type (SQLSTATE 42P13).
+DROP FUNCTION IF EXISTS public.match_volunteers(VECTOR(768), INT, FLOAT, TEXT);
+
 CREATE OR REPLACE FUNCTION public.match_volunteers(
     query_embedding VECTOR(768),
     match_count INT DEFAULT 10,

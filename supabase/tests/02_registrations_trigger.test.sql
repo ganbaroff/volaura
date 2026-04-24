@@ -30,9 +30,9 @@ BEGIN
                 now(), now(), '')
         ON CONFLICT (id) DO NOTHING;
 
-    -- Seed profiles — registrations.volunteer_id references public.profiles(id).
-    INSERT INTO public.profiles (id, username)
-        VALUES (v_vol, 'pgtap_test_volunteer')
+    -- Seed profiles — volunteer_id FK. account_type must be valid per CHECK constraint.
+    INSERT INTO public.profiles (id, username, account_type)
+        VALUES (v_vol, 'pgtap_test_volunteer', 'professional')
         ON CONFLICT (id) DO NOTHING;
 
     -- Seed org — owner_id is NOT NULL FK to auth.users(id).

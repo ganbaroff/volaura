@@ -179,12 +179,32 @@ async def test_complete_assessment_calls_rpc_with_jsonb_scores():
     app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
 
     try:
-        transport = ASGITransport(app=app)
-        async with AsyncClient(transport=transport, base_url="http://test") as ac:
-            resp = await ac.post(
-                f"/api/assessment/complete/{SESSION_ID}",
-                headers={"Authorization": "Bearer fake-token"},
-            )
+        with (
+            patch("app.routers.assessment.get_completion_job", new=AsyncMock(return_value=None)),
+            patch(
+                "app.routers.assessment.ensure_completion_job",
+                new=AsyncMock(
+                    return_value=_job_with_side_effects(
+                        status="pending",
+                        overrides={
+                            "aura_sync": {
+                                "status": "pending",
+                                "attempts": 0,
+                                "last_error": None,
+                                "updated_at": "2026-04-23T00:00:00Z",
+                            }
+                        },
+                    )
+                ),
+            ),
+            patch("app.routers.assessment.save_completion_job", new=AsyncMock(side_effect=_save_job_side_effect_factory())),
+        ):
+            transport = ASGITransport(app=app)
+            async with AsyncClient(transport=transport, base_url="http://test") as ac:
+                resp = await ac.post(
+                    f"/api/assessment/complete/{SESSION_ID}",
+                    headers={"Authorization": "Bearer fake-token"},
+                )
 
         assert resp.status_code == 200, f"Expected 200, got {resp.status_code}: {resp.text}"
         body = resp.json()
@@ -248,12 +268,17 @@ async def test_complete_assessment_skips_rpc_when_no_slug():
     app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
 
     try:
-        transport = ASGITransport(app=app)
-        async with AsyncClient(transport=transport, base_url="http://test") as ac:
-            resp = await ac.post(
-                f"/api/assessment/complete/{SESSION_ID}",
-                headers={"Authorization": "Bearer fake-token"},
-            )
+        with (
+            patch("app.routers.assessment.get_completion_job", new=AsyncMock(return_value=None)),
+            patch("app.routers.assessment.ensure_completion_job", new=AsyncMock(return_value=_job_with_side_effects(status="pending"))),
+            patch("app.routers.assessment.save_completion_job", new=AsyncMock(side_effect=_save_job_side_effect_factory())),
+        ):
+            transport = ASGITransport(app=app)
+            async with AsyncClient(transport=transport, base_url="http://test") as ac:
+                resp = await ac.post(
+                    f"/api/assessment/complete/{SESSION_ID}",
+                    headers={"Authorization": "Bearer fake-token"},
+                )
 
         assert resp.status_code == 200
         body = resp.json()
@@ -352,6 +377,39 @@ async def test_complete_assessment_logs_automated_decision_for_human_review():
 
     try:
         with (
+            patch(
+                "app.routers.assessment.get_completion_job",
+                new=AsyncMock(
+                    return_value=_job_with_side_effects(
+                        status="partial",
+                        overrides={
+                            "decision_log": {
+                                "status": "pending",
+                                "attempts": 0,
+                                "last_error": None,
+                                "updated_at": "2026-04-23T00:00:00Z",
+                            }
+                        },
+                    )
+                ),
+            ),
+            patch(
+                "app.routers.assessment.ensure_completion_job",
+                new=AsyncMock(
+                    return_value=_job_with_side_effects(
+                        status="partial",
+                        overrides={
+                            "decision_log": {
+                                "status": "pending",
+                                "attempts": 0,
+                                "last_error": None,
+                                "updated_at": "2026-04-23T00:00:00Z",
+                            }
+                        },
+                    )
+                ),
+            ),
+            patch("app.routers.assessment.save_completion_job", new=AsyncMock(side_effect=_save_job_side_effect_factory())),
             patch("app.routers.assessment.emit_assessment_rewards", new=AsyncMock(return_value=0)),
             patch("app.routers.assessment.record_assessment_activity", new=AsyncMock(return_value=None)),
             patch("app.routers.assessment.track_event", new=AsyncMock(return_value=None)),

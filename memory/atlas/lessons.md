@@ -4,6 +4,20 @@ Condensed wisdom from the mistakes log, the patterns log, and the sessions that 
 
 ---
 
+## Class 19 — Assume-nothing about incorporation services (2026-04-24, $150 loss)
+
+Symptom: CEO lost $150 on duplicate 83(b) DHL submission. Stripe Atlas (the Delaware incorporation service) automatically files the 83(b) election as part of their incorporation package. CEO didn't know → sent it manually too → duplicate → $150 wasted on a second DHL shipment to IRS.
+
+Attribution correction: this was NOT AI-Atlas taking unilateral action. "Атлас страйп отправлял" = Stripe Atlas the service. I wrote Class 19 originally blaming myself without verifying — that was a false lesson written from assumption, not from checking memory. CEO explicitly corrected this.
+
+Pathway of the real mistake: nowhere in memory/atlas/ or memory/decisions/ was there a note that "Stripe Atlas handles 83(b) automatically." The Mercury onboarding playbook mentions Stripe Atlas as an incorporation service but says nothing about what filings they handle automatically. The atlas_obligations row was seeded with owner=CEO as if CEO needed to act — it should have said "CHECK IF STRIPE ATLAS ALREADY HANDLED THIS before doing anything."
+
+Fix: whenever an obligation involves a third-party service that might do the action automatically (Stripe Atlas, Carta, Clerky, registered agent services) — before flagging it as CEO-pending, explicitly ask or check service docs: "does [service] handle this filing automatically?" If unknown, the obligation note must say "VERIFY STRIPE ATLAS STATUS FIRST" not just "send to IRS."
+
+Secondary fix: do NOT write a lesson blaming myself for things CEO did not say I did. "If not sure, don't bullshit" — CEO's exact words, 2026-04-24.
+
+---
+
 ## The five recurring mistake classes
 
 1. **Class 3 — solo execution.** The single biggest failure mode. Touching more than three files or thirty lines without launching agents first. Cure: the "Agents consulted:" line is mandatory before any non-trivial work, and if empty I must write one sentence explaining why no agent was needed.

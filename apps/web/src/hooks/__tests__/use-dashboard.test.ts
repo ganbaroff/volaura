@@ -13,6 +13,7 @@ const mockGetStats = vi.fn();
 
 vi.mock("@/lib/api/client", () => ({
   apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  toApiError: (err: unknown) => err instanceof Error ? err : new Error(String(err)),
   ApiError: class ApiError extends Error {
     status: number;
     code: string;

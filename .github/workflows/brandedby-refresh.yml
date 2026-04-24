@@ -1,0 +1,65 @@
+name: BrandedBy Personality Refresh
+
+# Reads stale AI twins (needs_personality_refresh = true) and regenerates
+# personality prompts via Gemini so twins always reflect current AURA scores.
+# Triggered by: ecosystem_consumer marking twins stale (every 15 min) → this
+# worker materialises the new personality within the next hourly tick.
+#
+# G3.3 — completes the ecosystem loop:
+#   character_events → ecosystem_consumer → ai_twins (stale) → this worker → ai_twins (fresh)
+
+on:
+  schedule:
+    - cron: '0 * * * *'   # every hour on the hour
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (no DB writes — logs only)'
+        required: false
+        default: 'false'
+        type: boolean
+
+concurrency:
+  group: brandedby-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    name: Run BrandedBy personality refresh
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        working-directory: apps/api
+        run: pip install -r requirements.txt
+
+      - name: Run refresh worker
+        working-directory: apps/api
+        env:
+          SUPABASE_URL:                    ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY:            ${{ secrets.SUPABASE_SERVICE_KEY }}
+          GEMINI_API_KEY:                  ${{ secrets.GEMINI_API_KEY }}
+          BRANDEDBY_REFRESH_BATCH_SIZE:    '20'
+          DRY_RUN:                         ${{ inputs.dry_run || 'false' }}
+        run: |
+          python -c "
+          import asyncio, os, sys
+          sys.path.insert(0, '.')
+          if os.environ.get('DRY_RUN') == 'true':
+              print('DRY RUN: would call run_brandedby_refresh() — skipping')
+              sys.exit(0)
+          from app.services.brandedby_refresh_worker import run_brandedby_refresh
+          stats = asyncio.run(run_brandedby_refresh())
+          print(f'refreshed={stats.refreshed} skipped={stats.skipped} errors={stats.errors}')
+          if stats.errors > 0:
+              print(f'WARNING: {stats.errors} twin(s) failed — check logs')
+          "

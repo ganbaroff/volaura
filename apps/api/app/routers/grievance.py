@@ -299,3 +299,245 @@ async def admin_transition_grievance(
         new_status=payload.status,
     )
     return _to_admin_out(rows[0])
+
+
+# ── Human review requests (GDPR Art.22(3)) ────────────────────────────────────
+
+
+class HumanReviewRequestCreate(BaseModel):
+    automated_decision_id: str = Field(..., min_length=1, max_length=64)
+    request_reason: str = Field(..., min_length=10, max_length=5000)
+    source_product: Literal["volaura", "mindshift", "lifesim", "brandedby", "zeus"] = "volaura"
+
+
+class HumanReviewRequestOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    user_id: str
+    automated_decision_id: str
+    source_product: str
+    request_reason: str
+    requested_at: str
+    sla_deadline: str
+    status: str
+    resolved_at: str | None
+    resolution_notes: str | None
+    reviewer_user_id: str | None
+
+
+class HumanReviewRequestListResponse(BaseModel):
+    data: list[HumanReviewRequestOut]
+
+
+class HumanReviewRequestStatusUpdate(BaseModel):
+    status: Literal["in_review", "resolved_uphold", "resolved_overturn", "escalated_to_authority"]
+    resolution_notes: str | None = Field(default=None, max_length=5000)
+
+
+class AutomatedDecisionOut(BaseModel):
+    id: str
+    decision_type: str
+    created_at: str
+    human_reviewable: bool
+
+
+class AutomatedDecisionListResponse(BaseModel):
+    data: list[AutomatedDecisionOut]
+
+
+def _to_human_review_out(row: dict) -> HumanReviewRequestOut:
+    return HumanReviewRequestOut(
+        id=str(row["id"]),
+        user_id=str(row["user_id"]),
+        automated_decision_id=str(row["automated_decision_id"]),
+        source_product=row["source_product"],
+        request_reason=row["request_reason"],
+        requested_at=str(row["requested_at"]),
+        sla_deadline=str(row["sla_deadline"]),
+        status=row["status"],
+        resolved_at=(str(row["resolved_at"]) if row.get("resolved_at") else None),
+        resolution_notes=row.get("resolution_notes"),
+        reviewer_user_id=(str(row["reviewer_user_id"]) if row.get("reviewer_user_id") else None),
+    )
+
+
+@router.get("/human-review/decisions", response_model=AutomatedDecisionListResponse)
+@limiter.limit(RATE_DEFAULT)
+async def list_my_automated_decisions(
+    request: Request,
+    user_id: CurrentUserId,
+    db: SupabaseAdmin,
+    limit: int = 20,
+) -> AutomatedDecisionListResponse:
+    """List caller's recent automated decisions that can be contested."""
+    if limit > 100:
+        limit = 100
+    result = await (
+        db.table("automated_decision_log")
+        .select("id,decision_type,created_at,human_reviewable")
+        .eq("user_id", str(user_id))
+        .eq("human_reviewable", True)
+        .order("created_at", desc=True)
+        .limit(limit)
+        .execute()
+    )
+    items = [
+        AutomatedDecisionOut(
+            id=str(r["id"]),
+            decision_type=r["decision_type"],
+            created_at=str(r["created_at"]),
+            human_reviewable=bool(r.get("human_reviewable", True)),
+        )
+        for r in (result.data or [])
+    ]
+    return AutomatedDecisionListResponse(data=items)
+
+
+@router.post("/human-review", response_model=HumanReviewRequestOut, status_code=201)
+@limiter.limit(RATE_AUTH)
+async def create_human_review_request(
+    request: Request,
+    payload: HumanReviewRequestCreate,
+    user_id: CurrentUserId,
+    db: SupabaseAdmin,
+) -> HumanReviewRequestOut:
+    """Create a formal human review request for an automated decision."""
+    try:
+        exists = (
+            await db.table("automated_decision_log")
+            .select("id,user_id")
+            .eq("id", payload.automated_decision_id)
+            .maybe_single()
+            .execute()
+        )
+        if not exists.data:
+            raise HTTPException(
+                status_code=404,
+                detail={
+                    "code": "DECISION_NOT_FOUND",
+                    "message": "Automated decision not found",
+                },
+            )
+        if str(exists.data["user_id"]) != str(user_id):
+            raise HTTPException(
+                status_code=403,
+                detail={"code": "DECISION_NOT_OWNED", "message": "You can only request review for your own decisions"},
+            )
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.error("Human review lookup failed", user_id=str(user_id), error=str(exc)[:200])
+        raise HTTPException(
+            status_code=500,
+            detail={"code": "HUMAN_REVIEW_CREATE_FAILED", "message": "Could not create review request"},
+        )
+
+    try:
+        result = await (
+            db.table("human_review_requests")
+            .insert(
+                {
+                    "user_id": str(user_id),
+                    "automated_decision_id": payload.automated_decision_id,
+                    "source_product": payload.source_product,
+                    "request_reason": payload.request_reason.strip(),
+                }
+            )
+            .execute()
+        )
+    except Exception as exc:
+        logger.error("Human review insert failed", user_id=str(user_id), error=str(exc)[:200])
+        raise HTTPException(
+            status_code=500,
+            detail={"code": "HUMAN_REVIEW_CREATE_FAILED", "message": "Could not create review request"},
+        )
+
+    rows = result.data or []
+    if not rows:
+        raise HTTPException(
+            status_code=500,
+            detail={"code": "HUMAN_REVIEW_CREATE_FAILED", "message": "Could not create review request"},
+        )
+    return _to_human_review_out(rows[0])
+
+
+@router.get("/human-review", response_model=HumanReviewRequestListResponse)
+@limiter.limit(RATE_DEFAULT)
+async def list_my_human_review_requests(
+    request: Request,
+    user_id: CurrentUserId,
+    db: SupabaseAdmin,
+) -> HumanReviewRequestListResponse:
+    """List caller's human review requests newest-first."""
+    result = await (
+        db.table("human_review_requests")
+        .select("*")
+        .eq("user_id", str(user_id))
+        .order("requested_at", desc=True)
+        .limit(100)
+        .execute()
+    )
+    return HumanReviewRequestListResponse(data=[_to_human_review_out(r) for r in (result.data or [])])
+
+
+@router.get("/human-review/admin/pending", response_model=HumanReviewRequestListResponse)
+@limiter.limit(RATE_DEFAULT)
+async def admin_list_pending_human_review_requests(
+    request: Request,
+    db: SupabaseAdmin,
+    _admin_id: str = Depends(require_platform_admin),
+) -> HumanReviewRequestListResponse:
+    """Admin queue: pending + in_review human review requests."""
+    result = await (
+        db.table("human_review_requests")
+        .select("*")
+        .in_("status", ["pending", "in_review"])
+        .order("requested_at", desc=False)
+        .limit(200)
+        .execute()
+    )
+    return HumanReviewRequestListResponse(data=[_to_human_review_out(r) for r in (result.data or [])])
+
+
+@router.patch("/human-review/admin/{request_id}", response_model=HumanReviewRequestOut)
+@limiter.limit(RATE_AUTH)
+async def admin_transition_human_review_request(
+    request: Request,
+    request_id: str,
+    payload: HumanReviewRequestStatusUpdate,
+    db: SupabaseAdmin,
+    admin_id: str = Depends(require_platform_admin),
+) -> HumanReviewRequestOut:
+    """Admin transition for human review requests."""
+    if payload.status in ("resolved_uphold", "resolved_overturn") and not (payload.resolution_notes and payload.resolution_notes.strip()):
+        raise HTTPException(
+            status_code=422,
+            detail={"code": "RESOLUTION_REQUIRED", "message": "resolution_notes is required for resolved statuses"},
+        )
+
+    update_body: dict = {
+        "status": payload.status,
+        "reviewer_user_id": admin_id,
+    }
+    if payload.resolution_notes is not None:
+        update_body["resolution_notes"] = payload.resolution_notes.strip()
+    if payload.status in ("resolved_uphold", "resolved_overturn"):
+        update_body["resolved_at"] = datetime.now(UTC).isoformat()
+
+    try:
+        result = await db.table("human_review_requests").update(update_body).eq("id", request_id).execute()
+    except Exception as exc:
+        logger.error("Human review transition failed", admin_id=str(admin_id), request_id=request_id, error=str(exc)[:200])
+        raise HTTPException(
+            status_code=500,
+            detail={"code": "HUMAN_REVIEW_UPDATE_FAILED", "message": "Could not update review request"},
+        )
+
+    rows = result.data or []
+    if not rows:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "HUMAN_REVIEW_NOT_FOUND", "message": "Review request not found"},
+        )
+    return _to_human_review_out(rows[0])

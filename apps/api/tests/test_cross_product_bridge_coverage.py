@@ -13,7 +13,6 @@ asyncio_mode = "auto" (pyproject.toml) — no @pytest.mark.asyncio needed.
 
 from __future__ import annotations
 
-import asyncio
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -29,7 +28,6 @@ from app.services.cross_product_bridge import (
     push_xp_earned,
     reset_circuit_breaker,
 )
-
 
 # ── Module-state reset (circuit breaker globals) ──────────────────────────────
 

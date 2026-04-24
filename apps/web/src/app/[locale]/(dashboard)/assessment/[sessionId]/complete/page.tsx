@@ -28,7 +28,7 @@ import { CoachingTips } from "@/components/assessment/coaching-tips";
 import { triggerHaptic } from "@/lib/haptics";
 import { getAchievementLevelKey } from "@/lib/utils/achievement-level";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
-import { buildLoginNextPath } from "../../auth-recovery";
+import { buildLoginNextPath } from "../../../auth-recovery";
 
 // ── Types ──────────────────────────────────────────────────────────────
 

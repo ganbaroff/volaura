@@ -109,7 +109,7 @@ class StartAssessmentRequest(BaseModel):
         return value
 
     @model_validator(mode="after")
-    def validate_plan_consistency(self) -> "StartAssessmentRequest":
+    def validate_plan_consistency(self) -> StartAssessmentRequest:
         if self.assessment_plan_competencies is None:
             if self.assessment_plan_current_index is not None:
                 raise ValueError(

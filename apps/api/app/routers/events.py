@@ -16,9 +16,9 @@ from app.schemas.event import (
     CoordinatorRatingRequest,
     EventAttendeeRow,
     EventCreate,
-    MyEventResponse,
     EventResponse,
     EventUpdate,
+    MyEventResponse,
     ProfessionalRatingRequest,
     RegistrationResponse,
 )

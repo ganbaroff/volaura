@@ -51,7 +51,6 @@ def _ok_execute(data=None):
 
 from app.services.tribe_matching import _get_matching_candidates  # noqa: E402
 
-
 # ─── _get_matching_candidates line 191 (excluded uid continue) ────────────────
 
 

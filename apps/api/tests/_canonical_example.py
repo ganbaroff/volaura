@@ -25,7 +25,6 @@ from __future__ import annotations
 import pytest
 from pydantic import BaseModel, Field, ValidationError
 
-
 # ─── Stand-in domain types (replace with your real imports) ─────────────────
 
 

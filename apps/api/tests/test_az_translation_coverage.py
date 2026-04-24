@@ -10,8 +10,9 @@ from __future__ import annotations
 
 import sys
 import types
+from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Any, Generator
+from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -134,9 +135,8 @@ async def test_translate_gcp_happy_path(monkeypatch: pytest.MonkeyPatch) -> None
     """GCP returns valid AZ -> returned directly, Gemini not called."""
     monkeypatch.setattr(az_mod, "settings", _make_settings(gcp="proj-x", gemini=None))
 
-    with _inject_gcp_module(_AZ_TEXT_WITH_CHARS):
-        with patch.object(az_mod, "_gemini_az_translation") as mock_gemini:
-            result = await translate_en_to_az(_EN_TEXT)
+    with _inject_gcp_module(_AZ_TEXT_WITH_CHARS), patch.object(az_mod, "_gemini_az_translation") as mock_gemini:
+        result = await translate_en_to_az(_EN_TEXT)
 
     assert result == _AZ_TEXT_WITH_CHARS
     mock_gemini.assert_not_called()
@@ -154,13 +154,12 @@ async def test_translate_gcp_returns_english_falls_to_gemini(
 
     en_only = "This is an English response with no AZ specific chars at all."
 
-    with _inject_gcp_module(en_only):
-        with patch.object(
-            az_mod,
-            "_gemini_az_translation",
-            AsyncMock(return_value=_AZ_TEXT_WITH_CHARS),
-        ) as mock_gem:
-            result = await translate_en_to_az(_EN_TEXT)
+    with _inject_gcp_module(en_only), patch.object(
+        az_mod,
+        "_gemini_az_translation",
+        AsyncMock(return_value=_AZ_TEXT_WITH_CHARS),
+    ) as mock_gem:
+        result = await translate_en_to_az(_EN_TEXT)
 
     assert result == _AZ_TEXT_WITH_CHARS
     mock_gem.assert_called_once_with(_EN_TEXT, None)
@@ -176,11 +175,10 @@ async def test_translate_gcp_raises_falls_to_gemini(monkeypatch: pytest.MonkeyPa
 
     with patch.object(
         az_mod, "_google_translation_llm", AsyncMock(side_effect=RuntimeError("gcp down"))
-    ):
-        with patch.object(
-            az_mod, "_gemini_az_translation", AsyncMock(return_value=_AZ_TEXT_WITH_CHARS)
-        ) as mock_gem:
-            result = await translate_en_to_az(_EN_TEXT)
+    ), patch.object(
+        az_mod, "_gemini_az_translation", AsyncMock(return_value=_AZ_TEXT_WITH_CHARS)
+    ) as mock_gem:
+        result = await translate_en_to_az(_EN_TEXT)
 
     assert result == _AZ_TEXT_WITH_CHARS
     mock_gem.assert_called_once()
@@ -194,11 +192,10 @@ async def test_translate_gcp_raises_falls_to_gemini(monkeypatch: pytest.MonkeyPa
 async def test_translate_no_gcp_uses_gemini_directly(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(az_mod, "settings", _make_settings(gcp=None, gemini="gm-key"))
 
-    with patch.object(az_mod, "_google_translation_llm") as mock_gcp:
-        with patch.object(
-            az_mod, "_gemini_az_translation", AsyncMock(return_value=_AZ_TEXT_WITH_CHARS)
-        ):
-            result = await translate_en_to_az(_EN_TEXT)
+    with patch.object(az_mod, "_google_translation_llm") as mock_gcp, patch.object(
+        az_mod, "_gemini_az_translation", AsyncMock(return_value=_AZ_TEXT_WITH_CHARS)
+    ):
+        result = await translate_en_to_az(_EN_TEXT)
 
     assert result == _AZ_TEXT_WITH_CHARS
     mock_gcp.assert_not_called()
@@ -328,7 +325,7 @@ async def test_google_translation_llm_request_structure(monkeypatch: pytest.Monk
 
     captured: list[dict] = []
 
-    with _inject_gcp_module(_AZ_TEXT_WITH_CHARS) as client_instance:
+    with _inject_gcp_module(_AZ_TEXT_WITH_CHARS):
         # Override TranslateTextRequest to capture kwargs
         import google.cloud.translate_v3 as fake_v3  # type: ignore[import]
 
@@ -354,14 +351,13 @@ async def test_google_translation_llm_uses_run_in_executor(
     translation = MagicMock()
     translation.translated_text = _AZ_TEXT_WITH_CHARS
 
-    with _inject_gcp_module(_AZ_TEXT_WITH_CHARS) as client_instance:
-        with patch("asyncio.get_event_loop") as mock_get_loop:
-            mock_loop = MagicMock()
-            mock_loop.run_in_executor = AsyncMock(
-                return_value=MagicMock(translations=[translation])
-            )
-            mock_get_loop.return_value = mock_loop
-            await _google_translation_llm("Hello")
+    with _inject_gcp_module(_AZ_TEXT_WITH_CHARS), patch("asyncio.get_event_loop") as mock_get_loop:
+        mock_loop = MagicMock()
+        mock_loop.run_in_executor = AsyncMock(
+            return_value=MagicMock(translations=[translation])
+        )
+        mock_get_loop.return_value = mock_loop
+        await _google_translation_llm("Hello")
 
     mock_loop.run_in_executor.assert_called_once()
     args = mock_loop.run_in_executor.call_args[0]

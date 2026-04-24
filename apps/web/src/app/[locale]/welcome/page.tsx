@@ -61,16 +61,17 @@ function WelcomeContent() {
   const isMounted = useRef(true);
 
   const [user, setUser] = useState<UserInfo | null>(null);
-  const reauthPath = buildLoginNextPath(
-    locale,
-    `/${locale}/welcome${competency ? `?competency=${encodeURIComponent(competency)}` : ""}`
-  );
 
   const competency = searchParams.get("competency") ?? "";
   const competencyIcon = COMPETENCY_ICONS[competency] ?? "⭐";
   const competencyLabel = competency
     ? t(`competency.${competency}`, { defaultValue: competency })
     : "";
+
+  const reauthPath = buildLoginNextPath(
+    locale,
+    `/${locale}/welcome${competency ? `?competency=${encodeURIComponent(competency)}` : ""}`
+  );
 
   useEffect(() => {
     isMounted.current = true;

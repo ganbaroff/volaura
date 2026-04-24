@@ -6,7 +6,7 @@ export function getCallbackProfileRoute(
     return `/${locale}/onboarding`;
   }
 
-  if (profileStatus >= 200 && profileStatus < 300) {
+  if (typeof profileStatus === "number" && profileStatus >= 200 && profileStatus < 300) {
     return `/${locale}/dashboard`;
   }
 

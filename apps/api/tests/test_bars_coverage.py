@@ -15,8 +15,7 @@ asyncio_mode = "auto" (pyproject.toml) — no @pytest.mark.asyncio needed.
 from __future__ import annotations
 
 import asyncio
-from collections import OrderedDict
-from typing import Any
+from datetime import UTC
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -26,12 +25,11 @@ from app.core.assessment.bars import (
     EvaluationResult,
     _keyword_fallback,
     _maybe_alert_fallback_spike,
-    evaluate_answer,
     _try_gemini,
     _try_groq,
     _try_openai,
+    evaluate_answer,
 )
-
 
 # ── Module-state reset (prevents pollution of later test files) ────────────────
 # bars.py has module-level mutable state: _fallback_count, _fallback_hour,
@@ -82,9 +80,9 @@ async def test_bars_spike_alerter_first_call_increments():
 
 async def test_bars_spike_alerter_same_hour_accumulates():
     """Multiple calls in same hour accumulate without reset."""
+    from datetime import UTC, datetime
+
     import app.core.assessment.bars as m
-    from datetime import datetime
-    from datetime import UTC
 
     current_hour = datetime.now(UTC).replace(minute=0, second=0, microsecond=0)
     m._fallback_hour = current_hour
@@ -95,10 +93,11 @@ async def test_bars_spike_alerter_same_hour_accumulates():
 
 async def test_bars_spike_alerter_hour_boundary_resets():
     """New UTC hour resets counter to 1."""
-    import app.core.assessment.bars as m
-    from datetime import datetime, timezone, timedelta
+    from datetime import datetime, timedelta
 
-    old_hour = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0) - timedelta(hours=1)
+    import app.core.assessment.bars as m
+
+    old_hour = datetime.now(UTC).replace(minute=0, second=0, microsecond=0) - timedelta(hours=1)
     m._fallback_hour = old_hour
     m._fallback_count = 99
     await _maybe_alert_fallback_spike()
@@ -107,9 +106,9 @@ async def test_bars_spike_alerter_hour_boundary_resets():
 
 async def test_bars_spike_alerter_threshold_hit_returns_silently():
     """On threshold breach, function returns after logger.warning (hard kill-switch)."""
+    from datetime import UTC, datetime
+
     import app.core.assessment.bars as m
-    from datetime import datetime
-    from datetime import UTC
 
     current_hour = datetime.now(UTC).replace(minute=0, second=0, microsecond=0)
     m._fallback_hour = current_hour
@@ -122,15 +121,15 @@ async def test_bars_spike_alerter_threshold_hit_returns_silently():
 
 async def test_bars_spike_alerter_above_threshold_no_telegram():
     """After threshold crossed, subsequent calls do NOT send Telegram (kill-switch returns early)."""
+    from datetime import UTC, datetime
+
     import app.core.assessment.bars as m
-    from datetime import datetime
-    from datetime import UTC
 
     current_hour = datetime.now(UTC).replace(minute=0, second=0, microsecond=0)
     m._fallback_hour = current_hour
     m._fallback_count = m._FALLBACK_SPIKE_THRESHOLD + 5  # already past threshold
 
-    with patch("app.core.assessment.bars.logger") as mock_logger:
+    with patch("app.core.assessment.bars.logger"):
         await _maybe_alert_fallback_spike()
     # No warning should be logged for counts beyond threshold (only AT the threshold)
     # The function just increments and the kill-switch only fires at == threshold
@@ -214,7 +213,7 @@ async def test_bars_evaluate_cache_hit_skips_llm():
 
 async def test_bars_evaluate_cache_lru_eviction():
     """Cache evicts oldest entry when size exceeds _MAX_CACHE_SIZE."""
-    from app.core.assessment.bars import _evaluation_cache, _MAX_CACHE_SIZE
+    from app.core.assessment.bars import _MAX_CACHE_SIZE, _evaluation_cache
 
     # Fill cache to exactly the limit with dummy entries
     _evaluation_cache.clear()
@@ -449,7 +448,7 @@ async def test_bars_evaluate_все_упали_spike_alert_fired():
         patch.object(bars_mod, "_try_gemini", new_callable=AsyncMock, return_value=(None, None)),
         patch.object(bars_mod, "_try_groq", new_callable=AsyncMock, return_value=(None, None)),
         patch.object(bars_mod, "_try_openai", new_callable=AsyncMock, return_value=(None, None)),
-        patch.object(bars_mod, "_maybe_alert_fallback_spike", new_callable=AsyncMock) as mock_alert,
+        patch.object(bars_mod, "_maybe_alert_fallback_spike", new_callable=AsyncMock),
     ):
         await evaluate_answer(
             "Security question?", GOOD_ANSWER, CONCEPTS_SIMPLE
@@ -516,7 +515,7 @@ async def test_bars_gemini_timeout_returns_none():
     mock_client_instance.aio = MagicMock()
     mock_client_instance.aio.models = MagicMock()
     # Raise TimeoutError directly on the coroutine to avoid never-awaited mock warning
-    mock_client_instance.aio.models.generate_content = AsyncMock(side_effect=asyncio.TimeoutError())
+    mock_client_instance.aio.models.generate_content = AsyncMock(side_effect=TimeoutError())
 
     mock_genai = MagicMock()
     mock_genai.Client.return_value = mock_client_instance
@@ -526,7 +525,7 @@ async def test_bars_gemini_timeout_returns_none():
         # Close the coroutine to avoid RuntimeWarning about never-awaited coroutine
         if hasattr(coro, "close"):
             coro.close()
-        raise asyncio.TimeoutError()
+        raise TimeoutError()
 
     with (
         patch.dict("sys.modules", {"google": MagicMock(genai=mock_genai), "google.genai": mock_genai}),
@@ -614,7 +613,7 @@ async def test_bars_groq_timeout_returns_none():
     mock_groq_client = MagicMock()
     mock_groq_client.chat = MagicMock()
     mock_groq_client.chat.completions = MagicMock()
-    mock_groq_client.chat.completions.create = AsyncMock(side_effect=asyncio.TimeoutError())
+    mock_groq_client.chat.completions.create = AsyncMock(side_effect=TimeoutError())
 
     mock_groq_module = MagicMock()
     mock_groq_module.AsyncGroq.return_value = mock_groq_client
@@ -622,7 +621,7 @@ async def test_bars_groq_timeout_returns_none():
     with (
         patch.dict("sys.modules", {"groq": mock_groq_module}),
         patch.object(bars_mod.settings, "groq_api_key", "fake-key"),
-        patch("asyncio.wait_for", side_effect=asyncio.TimeoutError()),
+        patch("asyncio.wait_for", side_effect=TimeoutError()),
     ):
         scores, details = await _try_groq("test prompt")
 
@@ -707,7 +706,7 @@ async def test_bars_openai_timeout_returns_none():
     mock_openai_client = MagicMock()
     mock_openai_client.chat = MagicMock()
     mock_openai_client.chat.completions = MagicMock()
-    mock_openai_client.chat.completions.create = AsyncMock(side_effect=asyncio.TimeoutError())
+    mock_openai_client.chat.completions.create = AsyncMock(side_effect=TimeoutError())
 
     mock_openai_module = MagicMock()
     mock_openai_module.AsyncOpenAI.return_value = mock_openai_client
@@ -715,7 +714,7 @@ async def test_bars_openai_timeout_returns_none():
     with (
         patch.dict("sys.modules", {"openai": mock_openai_module}),
         patch.object(bars_mod.settings, "openai_api_key", "fake-key"),
-        patch("asyncio.wait_for", side_effect=asyncio.TimeoutError()),
+        patch("asyncio.wait_for", side_effect=TimeoutError()),
     ):
         scores, details = await _try_openai("test prompt", ["security"])
 

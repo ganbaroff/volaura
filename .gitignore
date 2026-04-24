@@ -95,3 +95,4 @@ memory/atlas/session-93-full-transcript.jsonl
 models/
 
 .vercel
+.coverage

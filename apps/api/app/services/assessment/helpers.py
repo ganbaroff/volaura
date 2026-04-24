@@ -111,6 +111,19 @@ async def fetch_questions(db: SupabaseAdmin, competency_id: str) -> list[dict]:
     return [q.copy() for q in questions]
 
 
+def make_question_out(question: dict) -> QuestionOut:
+    """Build QuestionOut from a raw DB question row."""
+    return QuestionOut(
+        id=question["id"],
+        question_type=question["type"],
+        question_en=question["scenario_en"],
+        question_az=question["scenario_az"],
+        question_ru=question.get("scenario_ru"),
+        options=question.get("options"),
+        competency_id=question["competency_id"],
+    )
+
+
 def make_session_out(
     session_id: str,
     competency_slug: str,
@@ -121,15 +134,7 @@ def make_session_out(
     """Build SessionOut from CAT state + next question dict."""
     nq = None
     if next_q and not state.stopped:
-        nq = QuestionOut(
-            id=next_q["id"],
-            question_type=next_q["type"],
-            question_en=next_q["scenario_en"],
-            question_az=next_q["scenario_az"],
-            question_ru=next_q.get("scenario_ru"),
-            options=next_q.get("options"),
-            competency_id=next_q["competency_id"],
-        )
+        nq = make_question_out(next_q)
     return SessionOut(
         session_id=session_id,
         competency_slug=competency_slug,

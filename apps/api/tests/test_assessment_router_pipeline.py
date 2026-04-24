@@ -244,6 +244,14 @@ class TestStartAssessmentRequestSchema:
                 role_level="god_mode",  # invalid
             )
 
+    def test_plan_index_requires_plan_competencies(self) -> None:
+        with pytest.raises(ValidationError):
+            StartAssessmentRequest(
+                competency_slug="communication",
+                automated_decision_consent=True,
+                assessment_plan_current_index=1,
+            )
+
 
 class TestSubmitAnswerRequestSchema:
     """SubmitAnswerRequest validation — no HTTP."""
@@ -1180,6 +1188,8 @@ async def test_get_session_active_returns_is_resumable_true() -> None:
         "competency_id": COMPETENCY_ID,
         "status": "in_progress",
         "answers": {"theta": 0.0, "theta_se": 1.0, "stopped": False, "stop_reason": None, "items": []},
+        "current_question_id": QUESTION_ID,
+        "metadata": {"assessment_plan": {"competencies": ["communication", "leadership"], "current_index": 1}},
         "role_level": "professional",
         "started_at": recent_start,
         "created_at": recent_start,
@@ -1201,8 +1211,38 @@ async def test_get_session_active_returns_is_resumable_true() -> None:
         return t
 
     user_m.table = MagicMock(side_effect=_user_table)
-    mock_admin = _chainable()
-    app.dependency_overrides[get_supabase_admin] = _admin_override(mock_admin)
+    admin_m = MagicMock()
+
+    def _admin_table(name: str) -> MagicMock:
+        t = MagicMock()
+        t.select = MagicMock(return_value=t)
+        t.eq = MagicMock(return_value=t)
+        t.execute = AsyncMock(return_value=MagicMock(data=None))
+        if name == "questions":
+            t.execute = AsyncMock(
+                return_value=MagicMock(
+                    data=[
+                        {
+                            "id": QUESTION_ID,
+                            "type": "mcq",
+                            "scenario_en": "What is the next best step?",
+                            "scenario_az": "Növbəti ən yaxşı addım nədir?",
+                            "scenario_ru": None,
+                            "options": [{"key": "a", "text_en": "Option A", "text_az": "Variant A"}],
+                            "irt_a": 1.0,
+                            "irt_b": 0.0,
+                            "irt_c": 0.0,
+                            "expected_concepts": None,
+                            "correct_answer": "a",
+                            "competency_id": COMPETENCY_ID,
+                        }
+                    ]
+                )
+            )
+        return t
+
+    admin_m.table = MagicMock(side_effect=_admin_table)
+    app.dependency_overrides[get_supabase_admin] = _admin_override(admin_m)
     app.dependency_overrides[get_supabase_user] = _user_override(user_m)
     app.dependency_overrides[get_current_user_id] = _uid_override(USER_ID)
     try:
@@ -1216,6 +1256,70 @@ async def test_get_session_active_returns_is_resumable_true() -> None:
         assert body["is_resumable"] is True
         assert body["status"] == "in_progress"
         assert body["competency_slug"] == "leadership"
+        assert body["assessment_plan_competencies"] == ["communication", "leadership"]
+        assert body["assessment_plan_current_index"] == 1
+        assert body["next_question"]["id"] == QUESTION_ID
+        assert body["next_question"]["question_type"] == "mcq"
+    finally:
+        app.dependency_overrides.clear()
+
+
+@pytest.mark.asyncio
+async def test_get_session_logically_complete_returns_completed_transition_plan() -> None:
+    """Остановленная mid-plan сессия без current_question_id возвращается как completed."""
+    recent_start = (datetime.now(UTC) - timedelta(minutes=5)).isoformat()
+    session_data = {
+        "id": SESSION_ID,
+        "volunteer_id": USER_ID,
+        "competency_id": COMPETENCY_ID,
+        "status": "in_progress",
+        "answers": {
+            "theta": 0.3,
+            "theta_se": 0.6,
+            "stopped": True,
+            "stop_reason": "se_threshold",
+            "items": [{"question_id": QUESTION_ID, "raw_score": 1.0}],
+        },
+        "current_question_id": None,
+        "metadata": {"assessment_plan": {"competencies": ["communication", "leadership"], "current_index": 0}},
+        "role_level": "professional",
+        "started_at": recent_start,
+        "created_at": recent_start,
+    }
+
+    user_m = MagicMock()
+
+    def _user_table(name: str) -> MagicMock:
+        t = MagicMock()
+        t.select = MagicMock(return_value=t)
+        t.eq = MagicMock(return_value=t)
+        t.maybe_single = MagicMock(return_value=t)
+        if name == "assessment_sessions":
+            t.execute = AsyncMock(return_value=MagicMock(data=session_data))
+        elif name == "competencies":
+            t.execute = AsyncMock(return_value=MagicMock(data={"slug": "communication"}))
+        else:
+            t.execute = AsyncMock(return_value=MagicMock(data=None))
+        return t
+
+    user_m.table = MagicMock(side_effect=_user_table)
+    admin_m = _chainable()
+    app.dependency_overrides[get_supabase_admin] = _admin_override(admin_m)
+    app.dependency_overrides[get_supabase_user] = _user_override(user_m)
+    app.dependency_overrides[get_current_user_id] = _uid_override(USER_ID)
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+            resp = await ac.get(
+                f"/api/assessment/session/{SESSION_ID}",
+                headers={"Authorization": "Bearer fake"},
+            )
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["status"] == "completed"
+        assert body["is_resumable"] is False
+        assert body["assessment_plan_competencies"] == ["communication", "leadership"]
+        assert body["assessment_plan_current_index"] == 0
+        assert body["next_question"] is None
     finally:
         app.dependency_overrides.clear()
 

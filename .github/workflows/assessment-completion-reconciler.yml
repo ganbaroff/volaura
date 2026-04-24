@@ -1,0 +1,54 @@
+name: Assessment Completion Reconciler
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (no side effects, safety check only)'
+        required: false
+        default: 'false'
+        type: boolean
+
+concurrency:
+  group: assessment-completion-reconciler
+  cancel-in-progress: false
+
+jobs:
+  reconcile:
+    name: Run assessment completion reconciler
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        working-directory: apps/api
+        run: pip install -r requirements.txt
+
+      - name: Run reconciler
+        working-directory: apps/api
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          ASSESSMENT_COMPLETION_RECONCILE_BATCH_SIZE: '25'
+          ASSESSMENT_COMPLETION_RECONCILE_MAX_ATTEMPTS: '6'
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
+        run: |
+          python -c "
+          import asyncio, os, sys
+          sys.path.insert(0, '.')
+          if os.environ.get('DRY_RUN') == 'true':
+              print('DRY RUN: would call assessment_completion_reconciler.run_once() — skipping')
+              sys.exit(0)
+          from app.services.assessment_completion_reconciler import _main
+          asyncio.run(_main())
+          "

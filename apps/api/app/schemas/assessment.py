@@ -15,7 +15,7 @@ import uuid
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
 # Allowed competency slugs pattern
 SLUG_RE = re.compile(r"^[a-z][a-z0-9_]{1,49}$")
@@ -70,6 +70,8 @@ class StartAssessmentRequest(BaseModel):
     role_level: Literal["professional", "volunteer"] = "professional"
     energy_level: Literal["full", "mid", "low"] = "full"  # Constitution Law 2: Energy Adaptation
     automated_decision_consent: bool = False  # GDPR Article 22: user acknowledges automated scoring
+    assessment_plan_competencies: list[str] | None = None
+    assessment_plan_current_index: int | None = None
 
     @field_validator("competency_slug")
     @classmethod
@@ -78,6 +80,53 @@ class StartAssessmentRequest(BaseModel):
         if not SLUG_RE.match(v):
             raise ValueError("Invalid competency slug: lowercase letters, numbers, underscore only (2-50 chars)")
         return v
+
+    @field_validator("assessment_plan_competencies")
+    @classmethod
+    def validate_plan_competencies(cls, value: list[str] | None) -> list[str] | None:
+        if value is None:
+            return value
+        if len(value) == 0:
+            raise ValueError("assessment_plan_competencies cannot be empty")
+
+        cleaned: list[str] = []
+        for slug in value:
+            normalized = slug.strip().lower()
+            if not SLUG_RE.match(normalized):
+                raise ValueError(
+                    "Invalid assessment plan competency slug: lowercase letters, numbers, underscore only (2-50 chars)"
+                )
+            cleaned.append(normalized)
+        return cleaned
+
+    @field_validator("assessment_plan_current_index")
+    @classmethod
+    def validate_plan_index(cls, value: int | None) -> int | None:
+        if value is None:
+            return value
+        if value < 0:
+            raise ValueError("assessment_plan_current_index must be non-negative")
+        return value
+
+    @model_validator(mode="after")
+    def validate_plan_consistency(self) -> "StartAssessmentRequest":
+        if self.assessment_plan_competencies is None:
+            if self.assessment_plan_current_index is not None:
+                raise ValueError(
+                    "assessment_plan_current_index requires assessment_plan_competencies"
+                )
+            return self
+
+        if self.assessment_plan_current_index is None:
+            self.assessment_plan_current_index = 0
+
+        if self.assessment_plan_current_index >= len(self.assessment_plan_competencies):
+            raise ValueError("assessment_plan_current_index is out of range for assessment_plan_competencies")
+
+        if self.assessment_plan_competencies[self.assessment_plan_current_index] != self.competency_slug:
+            raise ValueError("competency_slug must match assessment_plan_competencies[current_index]")
+
+        return self
 
 
 class SubmitAnswerRequest(BaseModel):
@@ -164,7 +213,7 @@ class SessionOut(BaseModel):
 
 
 class SessionResumeOut(BaseModel):
-    """Minimal session state for client-side resume after a store clear.
+    """Resume state for client-side recovery after a store clear.
 
     Returned by GET /api/assessment/session/{session_id}. Used by the
     assessment page when the Zustand store has been cleared (browser storage
@@ -172,9 +221,8 @@ class SessionResumeOut(BaseModel):
     The frontend fetches this to decide whether to resume, show an expired
     message, or redirect to fresh assessment start.
 
-    Intentionally minimal — does NOT expose theta, raw answers, or the next
-    question payload. Those stay on the existing /answer flow. This is a
-    resume-helper, not a full session replay.
+    Does NOT expose theta or raw answer history. It includes only the current
+    question plus enough plan metadata to restore multi-competency progress.
     """
 
     session_id: str
@@ -183,6 +231,9 @@ class SessionResumeOut(BaseModel):
     status: str  # 'in_progress' | 'completed' | 'expired'
     questions_answered: int
     started_at: str | None = None
+    next_question: QuestionOut | None = None
+    assessment_plan_competencies: list[str]
+    assessment_plan_current_index: int
     # True when the session can actually be resumed (in_progress + not past
     # the 24h auto-expiry threshold used by /start).
     is_resumable: bool

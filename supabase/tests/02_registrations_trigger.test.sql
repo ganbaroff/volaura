@@ -24,9 +24,15 @@ DECLARE
     v_evt UUID := '33333333-3333-3333-3333-333333333333';
     v_reg UUID := '44444444-4444-4444-4444-444444444444';
 BEGIN
-    -- Seed a skeletal org + event — columns that exist in current schema only.
-    INSERT INTO public.organizations (id, name)
-        VALUES (v_org, '__pgtap_test_org__')
+    -- Seed auth.users so FK on organizations.owner_id is satisfied.
+    INSERT INTO auth.users (id, email, aud, role, created_at, updated_at, encrypted_password)
+        VALUES (v_vol, 'pgtap_vol@test.internal', 'authenticated', 'authenticated',
+                now(), now(), '')
+        ON CONFLICT (id) DO NOTHING;
+
+    -- Seed a skeletal org + event — owner_id required (NOT NULL FK to auth.users).
+    INSERT INTO public.organizations (id, name, owner_id)
+        VALUES (v_org, '__pgtap_test_org__', v_vol)
         ON CONFLICT (id) DO NOTHING;
 
     INSERT INTO public.events (id, org_id, title, start_at, end_at)

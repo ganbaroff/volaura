@@ -8,20 +8,13 @@ import type { ReactNode } from "react";
 
 const mockApiFetch = vi.fn();
 
-vi.mock("@/lib/api/client", () => ({
-  apiFetch: (...args: unknown[]) => mockApiFetch(...args),
-  toApiError: (err: unknown) => err instanceof Error ? err : new Error(String(err)),
-  ApiError: class ApiError extends Error {
-    status: number;
-    code: string;
-    constructor(status: number, code: string, message: string) {
-      super(message);
-      this.status = status;
-      this.code = code;
-      this.name = "ApiError";
-    }
-  },
-}));
+vi.mock("@/lib/api/client", async () => {
+  const actual = await vi.importActual<typeof import("@/lib/api/client")>("@/lib/api/client");
+  return {
+    ...actual,
+    apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  };
+});
 
 const mockTrackEvent = vi.fn();
 

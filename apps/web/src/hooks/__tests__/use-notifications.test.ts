@@ -6,22 +6,13 @@ import { createElement, type ReactNode } from "react";
 // ── apiFetch mock ─────────────────────────────────────────────────────────────
 const mockApiFetch = vi.fn();
 
-vi.mock("@/lib/api/client", () => ({
-  apiFetch: (...args: unknown[]) => mockApiFetch(...args),
-  toApiError: (err: unknown) => err instanceof Error ? err : new Error(String(err)),
-  ApiError: class ApiError extends Error {
-    status: number;
-    code: string;
-    detail: string;
-    constructor(status: number, code: string, detail: string) {
-      super(detail);
-      this.name = "ApiError";
-      this.status = status;
-      this.code = code;
-      this.detail = detail;
-    }
-  },
-}));
+vi.mock("@/lib/api/client", async () => {
+  const actual = await vi.importActual<typeof import("@/lib/api/client")>("@/lib/api/client");
+  return {
+    ...actual,
+    apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  };
+});
 
 // ── useAuthToken mock ─────────────────────────────────────────────────────────
 const mockGetToken = vi.fn();

@@ -70,9 +70,5 @@ EXCEPTION WHEN OTHERS THEN
 END;
 $$;
 
-COMMENT ON FUNCTION public.deduct_crystals_atomic(UUID, INT, TEXT, TEXT) IS 'P0-3 fix (Session 53): Atomic crystal deduction with advisory lock. Prevents double-spend TOCTOU race on game_crystal_ledger. Session-level lock ensures SELECT + INSERT are atomic per user.';
-
--- Only service_role (backend) can call this — never anon or authenticated directly
-GRANT EXECUTE ON FUNCTION public.deduct_crystals_atomic(UUID, INT, TEXT, TEXT) TO service_role;
-REVOKE EXECUTE ON FUNCTION public.deduct_crystals_atomic(UUID, INT, TEXT, TEXT) FROM PUBLIC;
-REVOKE EXECUTE ON FUNCTION public.deduct_crystals_atomic(UUID, INT, TEXT, TEXT) FROM authenticated;
+-- COMMENT, GRANT, and REVOKE moved to 20260328000041 to avoid Supabase CLI
+-- "multiple commands in prepared statement" error when combining DDL + GRANT in one file.

@@ -19,10 +19,11 @@ SELECT plan(5);
 -- We use a synthetic org + event + registration owned by volunteer_id.
 DO $$
 DECLARE
-    v_vol UUID := '11111111-1111-1111-1111-111111111111';
-    v_org UUID := '22222222-2222-2222-2222-222222222222';
-    v_evt UUID := '33333333-3333-3333-3333-333333333333';
-    v_reg UUID := '44444444-4444-4444-4444-444444444444';
+    v_vol  UUID := '11111111-1111-1111-1111-111111111111';
+    v_vol2 UUID := '99999999-9999-9999-9999-999999999999'; -- decoy for test 4
+    v_org  UUID := '22222222-2222-2222-2222-222222222222';
+    v_evt  UUID := '33333333-3333-3333-3333-333333333333';
+    v_reg  UUID := '44444444-4444-4444-4444-444444444444';
 BEGIN
     -- Seed auth.users — required for profiles FK + organizations.owner_id FK.
     INSERT INTO auth.users (id, email, aud, role, created_at, updated_at, encrypted_password)
@@ -30,9 +31,22 @@ BEGIN
                 now(), now(), '')
         ON CONFLICT (id) DO NOTHING;
 
+    -- Seed decoy auth.users — so test 4 (volunteer_id reassign) hits the trigger
+    -- (ERRCODE 42501) rather than the FK constraint (SQLSTATE 23503).
+    INSERT INTO auth.users (id, email, aud, role, created_at, updated_at, encrypted_password)
+        VALUES (v_vol2, 'pgtap_vol2@test.internal', 'authenticated', 'authenticated',
+                now(), now(), '')
+        ON CONFLICT (id) DO NOTHING;
+
     -- Seed profiles — volunteer_id FK. account_type must be valid per CHECK constraint.
     INSERT INTO public.profiles (id, username, account_type)
         VALUES (v_vol, 'pgtap_test_volunteer', 'professional')
+        ON CONFLICT (id) DO NOTHING;
+
+    -- Seed decoy profile — needed so FK on registrations.volunteer_id passes in
+    -- test 4, allowing the trigger to fire and raise 42501 (not 23503).
+    INSERT INTO public.profiles (id, username, account_type)
+        VALUES (v_vol2, 'pgtap_test_decoy', 'professional')
         ON CONFLICT (id) DO NOTHING;
 
     -- Seed org — owner_id is NOT NULL FK to auth.users(id).

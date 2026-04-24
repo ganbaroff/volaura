@@ -919,7 +919,7 @@ async def complete_assessment(
         comp_result_early = (
             await db_admin.table("competencies").select("slug").eq("id", session["competency_id"]).single().execute()
         )
-        slug_early = comp_result_early.data["slug"] if comp_result_early.data else ""
+        slug_early = (comp_result_early.data or {}).get("slug", "") if comp_result_early.data else ""
         stored_multiplier = float(session.get("gaming_penalty_multiplier") or 1.0)
         stored_flags = session.get("gaming_flags") or []
         competency_score_early = round(theta_to_score(state.theta) * stored_multiplier, 2)
@@ -977,7 +977,7 @@ async def complete_assessment(
     comp_result = (
         await db_admin.table("competencies").select("slug").eq("id", session["competency_id"]).single().execute()
     )
-    slug = comp_result.data["slug"] if comp_result.data else ""
+    slug = (comp_result.data or {}).get("slug", "") if comp_result.data else ""
 
     if (
         existing_job
@@ -1622,7 +1622,7 @@ async def get_results(
     comp_result = (
         await db_admin.table("competencies").select("slug").eq("id", session["competency_id"]).single().execute()
     )
-    slug = comp_result.data["slug"] if comp_result.data else ""
+    slug = (comp_result.data or {}).get("slug", "") if comp_result.data else ""
 
     return AssessmentResultOut(
         session_id=session_id,

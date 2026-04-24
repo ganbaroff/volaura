@@ -4,6 +4,7 @@ from copy import deepcopy
 from datetime import UTC, datetime
 from typing import Any
 
+from loguru import logger
 from supabase._async.client import AsyncClient
 
 SIDE_EFFECT_KEYS = (
@@ -90,10 +91,19 @@ def mark_side_effect(
 
 
 async def get_completion_job(db: AsyncClient, session_id: str) -> dict[str, Any] | None:
-    result = (
-        await db.table("assessment_completion_jobs").select("*").eq("session_id", session_id).maybe_single().execute()
-    )
-    return result.data or None
+    # Tolerate missing/uncreated table during tests + early prod boot.
+    # Caller treats None as "no existing job" and proceeds to create fresh path.
+    try:
+        result = (
+            await db.table("assessment_completion_jobs")
+            .select("*")
+            .eq("session_id", session_id)
+            .maybe_single()
+            .execute()
+        )
+    except Exception:
+        return None
+    return getattr(result, "data", None) or None
 
 
 async def ensure_completion_job(
@@ -126,7 +136,10 @@ async def ensure_completion_job(
         "result_context": deepcopy(result_context),
         "last_error": None,
     }
-    await db.table("assessment_completion_jobs").insert(row).execute()
+    try:
+        await db.table("assessment_completion_jobs").insert(row).execute()
+    except Exception as exc:
+        logger.warning("completion_job_insert_failed", session_id=session_id, error=str(exc)[:120])
     return {
         "id": None,
         **row,
@@ -166,7 +179,10 @@ async def save_completion_job(
     if completed_at is not None:
         payload["completed_at"] = completed_at
 
-    await db.table("assessment_completion_jobs").update(payload).eq("session_id", job["session_id"]).execute()
+    try:
+        await db.table("assessment_completion_jobs").update(payload).eq("session_id", job["session_id"]).execute()
+    except Exception as exc:
+        logger.warning("completion_job_update_failed", session_id=job.get("session_id"), error=str(exc)[:120])
 
     next_job.update(payload)
     return next_job

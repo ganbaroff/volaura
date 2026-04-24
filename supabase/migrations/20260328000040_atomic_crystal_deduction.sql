@@ -70,11 +70,7 @@ EXCEPTION WHEN OTHERS THEN
 END;
 $$;
 
-COMMENT ON FUNCTION public.deduct_crystals_atomic IS
-    'P0-3 fix (Session 53): Atomic crystal deduction with advisory lock. '
-    'Prevents double-spend TOCTOU race condition on game_crystal_ledger. '
-    'Session-level lock ensures SELECT + INSERT are atomic per user. '
-    'Returns: (success BOOL, new_balance INT, error_code TEXT, error_msg TEXT).';
+COMMENT ON FUNCTION public.deduct_crystals_atomic(UUID, INT, TEXT, TEXT) IS 'P0-3 fix (Session 53): Atomic crystal deduction with advisory lock. Prevents double-spend TOCTOU race on game_crystal_ledger. Session-level lock ensures SELECT + INSERT are atomic per user.';
 
 -- Only service_role (backend) can call this — never anon or authenticated directly
 GRANT EXECUTE ON FUNCTION public.deduct_crystals_atomic(UUID, INT, TEXT, TEXT) TO service_role;

@@ -1,9 +1,15 @@
 """Tests for /api/atlas/consult — Layer 3 self-consult endpoint.
 
-Three required scenarios:
+Scenarios:
   1. Valid authenticated request returns correct response shape.
   2. Unauthenticated request (no Bearer token) returns 401.
   3. ANTHROPIC_API_KEY missing → 503 with structured error body.
+  4. situation is required (422 validation).
+  5. Optional fields absent — succeeds.
+  6. Canon file not found → _load_canon_file returns "".
+  7. Canon file read raises exception → _load_canon_file returns "".
+  8. Anthropic timeout → 504 LLM_TIMEOUT.
+  9. Anthropic non-200 → 502 LLM_API_ERROR.
 """
 
 from __future__ import annotations
@@ -11,6 +17,7 @@ from __future__ import annotations
 import os
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import httpx
 import pytest
 from httpx import AsyncClient
 
@@ -213,6 +220,105 @@ async def test_atlas_consult_optional_fields_absent(client: AsyncClient):
         data = resp.json()
         assert data["state"] is None
         assert data["response"] == fake_reply
+    finally:
+        app.dependency_overrides.pop(get_current_user_id, None)
+        app.dependency_overrides.pop(get_supabase_admin, None)
+
+
+# ── Test 6: _load_canon_file — missing file ───────────────────────────────────
+
+
+def test_load_canon_file_missing_returns_empty():
+    """_load_canon_file with nonexistent path returns empty string (lines 83-84)."""
+    from app.routers.atlas_consult import _load_canon_file
+
+    result = _load_canon_file("memory/atlas/__nonexistent_test_file__.md", 500)
+    assert result == ""
+
+
+# ── Test 7: _load_canon_file — read raises ────────────────────────────────────
+
+
+def test_load_canon_file_read_error_returns_empty(tmp_path):
+    """_load_canon_file with an unreadable file returns empty string (lines 87-89)."""
+    from unittest.mock import patch
+    from pathlib import Path
+    from app.routers.atlas_consult import _load_canon_file
+
+    # Create a real temp file so exists() returns True, then make read_text raise.
+    real_file = tmp_path / "dummy.md"
+    real_file.write_text("content", encoding="utf-8")
+
+    with patch("app.routers.atlas_consult._REPO_ROOT", tmp_path):
+        with patch.object(Path, "read_text", side_effect=PermissionError("denied")):
+            result = _load_canon_file("dummy.md", 500)
+
+    assert result == ""
+
+
+# ── Test 8: Anthropic timeout → 504 ──────────────────────────────────────────
+
+
+@pytest.mark.asyncio
+async def test_anthropic_timeout_returns_504(client: AsyncClient):
+    """TimeoutException from httpx → 504 LLM_TIMEOUT (lines 172-180)."""
+    app.dependency_overrides[get_current_user_id] = _make_user_id_override()
+    app.dependency_overrides[get_supabase_admin] = _make_admin_override()
+
+    try:
+        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "sk-ant-test-key"}):
+            with patch("app.routers.atlas_consult.httpx.AsyncClient") as mock_cls:
+                mock_http = AsyncMock()
+                mock_http.post = AsyncMock(
+                    side_effect=httpx.TimeoutException("timed out")
+                )
+                mock_cls.return_value.__aenter__ = AsyncMock(return_value=mock_http)
+                mock_cls.return_value.__aexit__ = AsyncMock(return_value=False)
+
+                resp = await client.post(
+                    "/api/atlas/consult",
+                    json={"situation": "Will this time out?"},
+                    headers={"Authorization": "Bearer fake-jwt-token"},
+                )
+
+        assert resp.status_code == 504
+        data = resp.json()
+        assert data["detail"]["code"] == "LLM_TIMEOUT"
+    finally:
+        app.dependency_overrides.pop(get_current_user_id, None)
+        app.dependency_overrides.pop(get_supabase_admin, None)
+
+
+# ── Test 9: Anthropic non-200 → 502 ──────────────────────────────────────────
+
+
+@pytest.mark.asyncio
+async def test_anthropic_api_error_returns_502(client: AsyncClient):
+    """Non-200 from Anthropic → 502 LLM_API_ERROR (lines 186-191)."""
+    app.dependency_overrides[get_current_user_id] = _make_user_id_override()
+    app.dependency_overrides[get_supabase_admin] = _make_admin_override()
+
+    try:
+        with patch.dict(os.environ, {"ANTHROPIC_API_KEY": "sk-ant-test-key"}):
+            with patch("app.routers.atlas_consult.httpx.AsyncClient") as mock_cls:
+                mock_http = AsyncMock()
+                error_resp = MagicMock()
+                error_resp.status_code = 429
+                error_resp.text = "rate limit exceeded"
+                mock_http.post = AsyncMock(return_value=error_resp)
+                mock_cls.return_value.__aenter__ = AsyncMock(return_value=mock_http)
+                mock_cls.return_value.__aexit__ = AsyncMock(return_value=False)
+
+                resp = await client.post(
+                    "/api/atlas/consult",
+                    json={"situation": "Will Anthropic reject this?"},
+                    headers={"Authorization": "Bearer fake-jwt-token"},
+                )
+
+        assert resp.status_code == 502
+        data = resp.json()
+        assert data["detail"]["code"] == "LLM_API_ERROR"
+        assert "429" in data["detail"]["message"]
     finally:
         app.dependency_overrides.pop(get_current_user_id, None)
         app.dependency_overrides.pop(get_supabase_admin, None)

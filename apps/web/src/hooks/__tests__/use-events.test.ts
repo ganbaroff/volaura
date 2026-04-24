@@ -24,24 +24,13 @@ vi.mock("@/lib/api/generated", () => ({
 
 const mockApiFetch = vi.fn();
 
-vi.mock("@/lib/api/client", () => ({
-  apiFetch: (...args: unknown[]) => mockApiFetch(...args),
-  ApiError: class ApiError extends Error {
-    status: number;
-    code: string;
-    constructor(status: number, code: string, message: string) {
-      super(message);
-      this.status = status;
-      this.code = code;
-      this.name = "ApiError";
-    }
-  },
-  toApiError: (
-    error: { code?: string; message?: string } | undefined,
-    fallback?: { message?: string }
-  ) =>
-    new Error(error?.message ?? fallback?.message ?? "Unknown error"),
-}));
+vi.mock("@/lib/api/client", async () => {
+  const actual = await vi.importActual<typeof import("@/lib/api/client")>("@/lib/api/client");
+  return {
+    ...actual,
+    apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  };
+});
 
 // ── useAuthToken mock ─────────────────────────────────────────────────────────
 

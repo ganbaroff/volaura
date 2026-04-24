@@ -16,9 +16,13 @@ vi.mock("posthog-js", () => ({
 }));
 
 // ── API client mock (API_BASE) ────────────────────────────────────────────────
-vi.mock("@/lib/api/client", () => ({
-  API_BASE: "/api",
-}));
+vi.mock("@/lib/api/client", async () => {
+  const actual = await vi.importActual<typeof import("@/lib/api/client")>("@/lib/api/client");
+  return {
+    ...actual,
+    apiFetch: (...args: unknown[]) => mockApiFetch(...args),
+  };
+});
 
 // ── useAuthToken mock ─────────────────────────────────────────────────────────
 const mockGetToken = vi.fn();

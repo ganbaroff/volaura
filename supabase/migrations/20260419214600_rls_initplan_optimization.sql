@@ -705,9 +705,7 @@ ALTER POLICY "Users can join pool"
 -- public.tribe_members
 -- ---------------------------------------------------------------------------
 
-ALTER POLICY "Users can read own tribe memberships"
-  ON public.tribe_members
-  USING (user_id = (select auth.uid()));
+-- "Users can read own tribe memberships" never existed — policy is "Active members can read their tribe members", skipped
 
 ALTER POLICY "Users can soft opt-out of own membership"
   ON public.tribe_members

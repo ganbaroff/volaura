@@ -1,0 +1,65 @@
+name: Ecosystem Consumer
+
+# First real downstream event loop — processes character_events emitted by
+# VOLAURA (aura_updated, badge_tier_changed) and mutates downstream product
+# state (BrandedBy: ai_twins.needs_personality_refresh = true).
+#
+# Cursor-based, idempotent, batch-bounded. In steady state: almost always
+# 0 events. On assessment completion: marks stale twins within 15 min.
+#
+# Cadence: every 15 min (offset from aura-reconciler's */10 to avoid
+# fleet-wide alignment).
+
+on:
+  schedule:
+    - cron: '7,22,37,52 * * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (no DB writes — logs only)'
+        required: false
+        default: 'false'
+        type: boolean
+
+concurrency:
+  group: ecosystem-consumer
+  cancel-in-progress: false
+
+jobs:
+  consume:
+    name: Run ecosystem consumer
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        working-directory: apps/api
+        run: pip install -r requirements.txt
+
+      - name: Run consumer
+        working-directory: apps/api
+        env:
+          SUPABASE_URL:                   ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY:           ${{ secrets.SUPABASE_SERVICE_KEY }}
+          ECOSYSTEM_CONSUMER_BATCH_SIZE:  '100'
+          DRY_RUN:                        ${{ inputs.dry_run || 'false' }}
+        run: |
+          python -c "
+          import asyncio, os, sys
+          sys.path.insert(0, '.')
+          if os.environ.get('DRY_RUN') == 'true':
+              print('DRY RUN: would call ecosystem_consumer.run_once() — skipping')
+              sys.exit(0)
+          from app.services.ecosystem_consumer import run_once
+          stats = asyncio.run(run_once())
+          for product, s in stats.items():
+              print(f'{product}: found={s[\"found\"]} handled={s[\"handled\"]} errors={s[\"errors\"]}')
+          "

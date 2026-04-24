@@ -86,13 +86,19 @@ class TestCATStateCorruption:
         assert state.theta_se == 0.3
         assert len(state.items) == 0
 
-    def test_from_dict_items_with_missing_keys_raises(self):
-        """Items with missing required keys should raise KeyError."""
+    def test_from_dict_items_with_missing_keys_uses_defaults(self):
+        """Items with missing optional keys should get IRT defaults, not raise."""
+        # engine.py uses .get() with defaults to tolerate legacy/incomplete JSON.
         data = {
             "items": [{"question_id": "q1"}]  # missing irt_a, irt_b, etc.
         }
-        with pytest.raises(KeyError):
-            CATState.from_dict(data)
+        state = CATState.from_dict(data)
+        assert len(state.items) == 1
+        item = state.items[0]
+        assert item.question_id == "q1"
+        assert item.irt_a == 1.0  # default
+        assert item.irt_b == 0.0  # default
+        assert item.irt_c == 0.0  # default
 
     def test_from_dict_preserves_stop_reason(self):
         """Stop reason should survive serialization."""

@@ -38,11 +38,21 @@ ALTER TABLE public.profiles
 ALTER SEQUENCE public.profile_registration_seq OWNED BY public.profiles.registration_number;
 
 -- ── Step 3: Backfill existing users (ordered by creation — earliest = lowest) ─
+-- PostgreSQL UPDATE does not support ORDER BY. Use row-by-row loop to preserve order.
 
-UPDATE public.profiles
-SET registration_number = nextval('public.profile_registration_seq')
-WHERE registration_number IS NULL
-ORDER BY created_at ASC;
+DO $$
+DECLARE r RECORD;
+BEGIN
+  FOR r IN (
+    SELECT id FROM public.profiles
+    WHERE registration_number IS NULL
+    ORDER BY created_at ASC, id ASC
+  ) LOOP
+    UPDATE public.profiles
+    SET registration_number = nextval('public.profile_registration_seq')
+    WHERE id = r.id;
+  END LOOP;
+END $$;
 
 -- ── Step 4: Make column NOT NULL now that all rows are filled ─────────────────
 

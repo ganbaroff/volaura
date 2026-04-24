@@ -10,6 +10,8 @@ DROP POLICY IF EXISTS "Users can update own sessions" ON public.assessment_sessi
 
 -- Add a restricted user-level update policy that ONLY allows status changes
 -- (for the edge case of user-initiated abandonment via the UI)
+-- Drop first: 20260324000015_rls_audit_fixes already created this policy — guard against duplicate.
+DROP POLICY IF EXISTS "Users can only abandon own sessions" ON public.assessment_sessions;
 CREATE POLICY "Users can only abandon own sessions"
 ON public.assessment_sessions FOR UPDATE
 USING (auth.uid() = volunteer_id)

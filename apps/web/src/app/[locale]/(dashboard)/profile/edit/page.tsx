@@ -10,6 +10,7 @@ import { useProfile, useUpdateProfile } from "@/hooks/queries/use-profile";
 import { ApiError } from "@/lib/api/client";
 import { cn } from "@/lib/utils/cn";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
+import { buildLoginNextPath } from "../../auth-recovery";
 
 const LANGUAGE_OPTIONS = [
   { key: "Azerbaijani", labelKey: "onboarding.languageAzerbaijani" },
@@ -68,31 +69,39 @@ export default function EditProfilePage() {
   const { energy } = useEnergyMode();
   const isLow = energy === "low";
   const updateProfile = useUpdateProfile();
+  const reauthPath = buildLoginNextPath(locale, `/${locale}/profile/edit`);
 
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
   const [location, setLocation] = useState("");
   const [languages, setLanguages] = useState<string[]>([]);
-  const [isPublic, setIsPublic] = useState(true);
-  const [visibleToOrgs, setVisibleToOrgs] = useState(false);
+  const [isPublic, setIsPublic] = useState<boolean | null>(null);
+  const [visibleToOrgs, setVisibleToOrgs] = useState<boolean | null>(null);
+  const [profileSeeded, setProfileSeeded] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!profile) return;
+    if (!profile) {
+      setProfileSeeded(false);
+      setIsPublic(null);
+      setVisibleToOrgs(null);
+      return;
+    }
     setDisplayName(profile.display_name ?? "");
     setBio((profile as Record<string, unknown>).bio as string ?? "");
     setLocation(profile.location ?? "");
     setLanguages(profile.languages ?? []);
-    setIsPublic((profile as Record<string, unknown>).is_public as boolean ?? true);
+    setIsPublic((profile as Record<string, unknown>).is_public as boolean ?? false);
     setVisibleToOrgs((profile as Record<string, unknown>).visible_to_orgs as boolean ?? false);
+    setProfileSeeded(true);
   }, [profile]);
 
   useEffect(() => {
     if (error instanceof ApiError && error.status === 401 && isMounted.current) {
-      router.replace(`/${locale}/login`);
+      router.replace(reauthPath);
     }
-  }, [error, locale, router]);
+  }, [error, reauthPath, router]);
 
   function toggleLanguage(key: string) {
     setLanguages((prev) =>
@@ -106,6 +115,14 @@ export default function EditProfilePage() {
     setSaved(false);
 
     try {
+      if (!profileSeeded || isPublic === null || visibleToOrgs === null) {
+        setSaveError(
+          t("settings.profileLoadError", {
+            defaultValue: "We couldn't load your current profile settings. Refresh before saving changes.",
+          })
+        );
+        return;
+      }
       await updateProfile.mutateAsync({
         display_name: displayName.trim() || null,
         bio: bio.trim() || null,
@@ -133,6 +150,26 @@ export default function EditProfilePage() {
           {[...Array(5)].map((_, i) => (
             <div key={i} className="h-12 rounded-xl bg-muted animate-pulse" />
           ))}
+        </div>
+      </>
+    );
+  }
+
+  const profileLoadErrorMessage =
+    error instanceof Error
+      ? error.message
+      : t("settings.profileLoadError", {
+          defaultValue: "We couldn't load your current profile settings. Refresh before saving changes.",
+        });
+
+  if (!profile) {
+    return (
+      <>
+        <TopBar title={t("profile.editProfile")} />
+        <div className="p-4">
+          <div className="rounded-xl border border-border bg-card p-4">
+            <p role="alert" className="text-sm text-muted-foreground">{profileLoadErrorMessage}</p>
+          </div>
         </div>
       </>
     );
@@ -243,7 +280,7 @@ export default function EditProfilePage() {
                   {t("profile.edit.publicProfileDesc", { defaultValue: "Anyone with your link can view your profile" })}
                 </p>
               </div>
-              <Toggle id="toggle-public" checked={isPublic} onChange={setIsPublic} />
+              <Toggle id="toggle-public" checked={isPublic ?? false} onChange={setIsPublic} />
             </div>
 
             <div className="flex items-center justify-between gap-3 p-4">
@@ -255,7 +292,7 @@ export default function EditProfilePage() {
                   {t("profile.edit.discoverableDesc", { defaultValue: "Organizations can find you in search" })}
                 </p>
               </div>
-              <Toggle id="toggle-orgs" checked={visibleToOrgs} onChange={setVisibleToOrgs} />
+              <Toggle id="toggle-orgs" checked={visibleToOrgs ?? false} onChange={setVisibleToOrgs} />
             </div>
           </div>
         )}
@@ -266,7 +303,7 @@ export default function EditProfilePage() {
 
         <button
           type="submit"
-          disabled={updateProfile.isPending || saved}
+          disabled={updateProfile.isPending || saved || !profileSeeded || isPublic === null || visibleToOrgs === null}
           className={cn(
             "w-full flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-semibold transition-colors",
             saved

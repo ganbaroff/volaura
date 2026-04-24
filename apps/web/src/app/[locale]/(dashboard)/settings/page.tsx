@@ -26,22 +26,28 @@ export default function SettingsPage() {
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   // Profile section state
-  const { data: profile, isLoading: profileLoading } = useProfile();
+  const {
+    data: profile,
+    isLoading: profileLoading,
+    isError: profileLoadFailed,
+    error: profileQueryError,
+  } = useProfile();
   const updateProfile = useUpdateProfile();
   const [displayName, setDisplayName] = useState("");
   const [location, setLocation] = useState("");
+  const [profileSeeded, setProfileSeeded] = useState(false);
   const [profileSaved, setProfileSaved] = useState(false);
   const [profileError, setProfileError] = useState<string | null>(null);
 
-  // AURA visibility state — seeded from API, not hardcoded to "public"
-  const [visibility, setVisibility] = useState<VisibilityOption>("public");
+  // AURA visibility state — block writes until current value is actually loaded
+  const [visibility, setVisibility] = useState<VisibilityOption | null>(null);
   const [visibilityFetched, setVisibilityFetched] = useState(false);
   const [visibilitySaved, setVisibilitySaved] = useState(false);
   const [visibilityError, setVisibilityError] = useState<string | null>(null);
   const [visibilityLoading, setVisibilityLoading] = useState(false);
 
   // Talent search opt-in state (visible_to_orgs)
-  const [visibleToOrgs, setVisibleToOrgs] = useState(false);
+  const [visibleToOrgs, setVisibleToOrgs] = useState<boolean | null>(null);
   const [orgVisibilitySaved, setOrgVisibilitySaved] = useState(false);
   const [orgVisibilityError, setOrgVisibilityError] = useState<string | null>(null);
   const [orgVisibilityLoading, setOrgVisibilityLoading] = useState(false);
@@ -57,33 +63,72 @@ export default function SettingsPage() {
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [exportingData, setExportingData] = useState(false);
+  const [exportStatus, setExportStatus] = useState<string | null>(null);
+  const [exportError, setExportError] = useState<string | null>(null);
 
   // Seed form fields when profile loads (including visible_to_orgs)
   useEffect(() => {
     if (profile) {
       setDisplayName(profile.display_name ?? "");
       setLocation(profile.location ?? "");
-      setVisibleToOrgs((profile as Record<string, unknown>).visible_to_orgs as boolean ?? false);
+      setVisibleToOrgs(profile.visible_to_orgs ?? false);
+      setProfileSeeded(true);
+      return;
     }
+    setProfileSeeded(false);
+    setVisibleToOrgs(null);
   }, [profile]);
 
   // Fetch current AURA visibility from API — prevents silent override (Leyla simulation P0)
   useEffect(() => {
     if (visibilityFetched) return;
+    let cancelled = false;
+
     getToken().then(async (token) => {
-      if (!token) return;
       try {
+        if (!token) {
+          if (!cancelled) {
+            setVisibilityError(
+              t("settings.visibilityLoadError", {
+                defaultValue: "We couldn't load your current AURA visibility. Refresh before saving changes.",
+              })
+            );
+            setVisibility(null);
+          }
+          return;
+        }
         const res = await apiFetch<{ visibility: VisibilityOption }>("/api/aura/me/visibility", { token });
-        if (res?.visibility) {
+        if (!cancelled && res?.visibility) {
           setVisibility(res.visibility);
         }
       } catch {
-        // Not critical — defaults to "public" if fetch fails (user can still save)
+        if (!cancelled) {
+          setVisibilityError(
+            t("settings.visibilityLoadError", {
+              defaultValue: "We couldn't load your current AURA visibility. Refresh before saving changes.",
+            })
+          );
+          setVisibility(null);
+        }
       } finally {
-        setVisibilityFetched(true);
+        if (!cancelled) {
+          setVisibilityFetched(true);
+        }
       }
     });
-  }, [getToken, visibilityFetched]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [getToken, t, visibilityFetched]);
+
+  const profileLoadErrorMessage =
+    profileQueryError instanceof Error
+      ? profileQueryError.message
+      : t("settings.profileLoadError", {
+          defaultValue: "We couldn't load your current profile settings. Refresh before saving changes.",
+        });
 
   async function handleSubscribeClick() {
     setCheckoutError(null);
@@ -134,6 +179,14 @@ export default function SettingsPage() {
     setVisibilityLoading(true);
 
     try {
+      if (!visibility) {
+        setVisibilityError(
+          t("settings.visibilityLoadError", {
+            defaultValue: "We couldn't load your current AURA visibility. Refresh before saving changes.",
+          })
+        );
+        return;
+      }
       const token = await getToken();
       if (!token) {
         setVisibilityError(t("error.unauthorized"));
@@ -197,6 +250,43 @@ export default function SettingsPage() {
     }
   }
 
+  async function handleExportData() {
+    setExportStatus(null);
+    setExportError(null);
+    setExportingData(true);
+
+    try {
+      const token = await getToken();
+      if (!token) {
+        setExportError(t("error.unauthorized"));
+        return;
+      }
+
+      const payload = await apiFetch<Record<string, unknown>>("/api/auth/export", { token });
+      const now = new Date();
+      const stamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}-${String(now.getHours()).padStart(2, "0")}${String(now.getMinutes()).padStart(2, "0")}`;
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `volaura-export-${stamp}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+
+      setExportStatus(
+        t("settings.exportSuccess", {
+          defaultValue: "Export ready. File downloaded as JSON.",
+        })
+      );
+    } catch (err) {
+      setExportError(err instanceof Error ? err.message : t("error.generic"));
+    } finally {
+      setExportingData(false);
+    }
+  }
+
   return (
     <>
       <TopBar title={t("settings.title")} />
@@ -205,8 +295,12 @@ export default function SettingsPage() {
         {/* Account Section */}
         <section className="rounded-xl border border-border bg-card p-5">
           <h2 className="mb-4 text-base font-semibold">{t("settings.account")}</h2>
-          {profileLoading ? (
+          {profileLoading || (profile && !profileSeeded) ? (
             <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
+          ) : profileLoadFailed || !profile ? (
+            <p className="rounded-md bg-error-container p-3 text-sm text-on-error-container">
+              {profileLoadErrorMessage}
+            </p>
           ) : (
             <form onSubmit={handleSaveProfile} className="space-y-4">
               <div className="space-y-1.5">
@@ -253,7 +347,7 @@ export default function SettingsPage() {
               <div className="flex items-center gap-3">
                 <button
                   type="submit"
-                  disabled={updateProfile.isPending}
+                  disabled={updateProfile.isPending || !profileSeeded}
                   className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
                 >
                   {updateProfile.isPending ? t("loading.saving") : t("settings.saveChanges")}
@@ -270,6 +364,9 @@ export default function SettingsPage() {
         <section className="rounded-xl border border-border bg-card p-5">
           <h2 className="mb-1 text-base font-semibold">{t("settings.privacy")}</h2>
           <p className="mb-4 text-sm text-muted-foreground">{t("settings.visibility")}</p>
+          {!visibilityFetched ? (
+            <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
+          ) : (
           <form onSubmit={handleSaveVisibility} className="space-y-3">
             {(
               [
@@ -292,6 +389,7 @@ export default function SettingsPage() {
                   value={option.value}
                   checked={visibility === option.value}
                   onChange={() => setVisibility(option.value)}
+                  disabled={visibilityLoading || visibility === null}
                   className="accent-primary"
                 />
                 <span className="text-sm">{option.label}</span>
@@ -307,7 +405,7 @@ export default function SettingsPage() {
             <div className="flex items-center gap-3 pt-1">
               <button
                 type="submit"
-                disabled={visibilityLoading}
+                disabled={visibilityLoading || visibility === null}
                 className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
               >
                 {visibilityLoading ? t("loading.saving") : t("settings.saveChanges")}
@@ -317,6 +415,7 @@ export default function SettingsPage() {
               )}
             </div>
           </form>
+          )}
         </section>
 
         {/* Talent Search Visibility (visible_to_orgs) — Leyla simulation P0: was only settable at onboarding */}
@@ -327,12 +426,20 @@ export default function SettingsPage() {
           <p className="mb-4 text-sm text-muted-foreground">
             {t("settings.talentSearchDesc", { defaultValue: "Control whether organizations can find you in their talent search." })}
           </p>
+          {profileLoading || (profile && !profileSeeded) ? (
+            <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
+          ) : profileLoadFailed || !profile ? (
+            <p className="rounded-md bg-error-container p-3 text-sm text-on-error-container">
+              {profileLoadErrorMessage}
+            </p>
+          ) : (
           <form onSubmit={handleSaveOrgVisibility} className="space-y-3">
             <label className={`flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition-colors ${visibleToOrgs ? "border-primary bg-primary/5" : "border-border"}`}>
               <input
                 type="checkbox"
-                checked={visibleToOrgs}
+                checked={!!visibleToOrgs}
                 onChange={(e) => setVisibleToOrgs(e.target.checked)}
+                disabled={orgVisibilityLoading || !profileSeeded || visibleToOrgs === null}
                 className="accent-primary h-4 w-4"
               />
               <div>
@@ -354,7 +461,7 @@ export default function SettingsPage() {
             <div className="flex items-center gap-3 pt-1">
               <button
                 type="submit"
-                disabled={orgVisibilityLoading}
+                disabled={orgVisibilityLoading || !profileSeeded || visibleToOrgs === null}
                 className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
               >
                 {orgVisibilityLoading ? t("loading.saving") : t("settings.saveChanges")}
@@ -364,6 +471,7 @@ export default function SettingsPage() {
               )}
             </div>
           </form>
+          )}
         </section>
 
         {/* Energy Mode — Constitution Law 2 */}
@@ -510,6 +618,32 @@ export default function SettingsPage() {
               </button>
             </div>
           </div>
+        </section>
+
+        {/* Data portability (GDPR Art.20) */}
+        <section className="rounded-xl border border-border bg-card p-5 space-y-3">
+          <h2 className="text-base font-semibold">
+            {t("settings.dataPortability", { defaultValue: "Data Portability" })}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {t("settings.dataPortabilityDesc", {
+              defaultValue: "Download your account data in a machine-readable JSON file.",
+            })}
+          </p>
+          <button
+            type="button"
+            onClick={handleExportData}
+            disabled={exportingData}
+            className="h-10 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+          >
+            {exportingData
+              ? t("settings.exporting", { defaultValue: "Preparing export..." })
+              : t("settings.exportData", { defaultValue: "Export my data" })}
+          </button>
+          {exportStatus && <p className="rounded-md bg-primary/10 p-3 text-sm text-primary">{exportStatus}</p>}
+          {exportError && (
+            <p className="rounded-md bg-error-container p-3 text-sm text-on-error-container">{exportError}</p>
+          )}
         </section>
 
         {/* Delete confirmation modal */}

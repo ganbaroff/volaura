@@ -8,6 +8,7 @@ import { useAuthStore } from "@/stores/auth-store";
 import { readAndClearAttribution, readAndClearFromStorage } from "@/components/utm-capture";
 import { OAUTH_META_KEY } from "@/components/ui/social-auth-buttons";
 import { API_BASE } from "@/lib/api/client";
+import { getCallbackProfileRoute } from "./route-decision";
 
 export default function AuthCallbackPage() {
   return (
@@ -48,8 +49,6 @@ function AuthCallbackContent() {
     didRun.current = true;
 
     const errorParam = searchParams.get("error");
-    const errorDescription = searchParams.get("error_description");
-
     // OAuth provider returned an explicit error before even reaching Supabase
     if (errorParam) {
       router.replace(`/${locale}/login?message=oauth-error`);
@@ -132,21 +131,20 @@ function AuthCallbackContent() {
         return;
       }
 
-      // Route new users (no profile yet) to onboarding, returning users to dashboard
+      // Route new users (no profile yet) to onboarding, returning users to dashboard.
+      // Anything else is ambiguous runtime truth and must not silently pretend
+      // the user has a valid profile/dashboard path.
       try {
         const res = await fetch(`${API_BASE}/profiles/me`, {
           headers: { Authorization: `Bearer ${session.access_token}` },
         });
         if (!isMounted.current) return;
-        if (res.status === 404) {
-          router.replace(`/${locale}/onboarding`);
-          return;
-        }
+        router.replace(getCallbackProfileRoute(locale, res.status));
+        return;
       } catch {
-        // Network error — fall through to dashboard
+        router.replace(getCallbackProfileRoute(locale, "network-error"));
+        return;
       }
-
-      router.replace(`/${locale}/dashboard`);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

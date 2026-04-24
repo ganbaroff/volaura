@@ -5,22 +5,21 @@ import { getMyAuraApiAuraMeGet, getAuraByIdApiAuraProfessionalIdGet } from "@/li
 import type { AuraScore } from "@/lib/api/types";
 import type { AuraScoreResponse } from "@/lib/api/generated/types.gen";
 import { toAuraScore } from "@/lib/api/types";
+import { ApiError, toApiError } from "@/lib/api/client";
 
 /**
  * Fetches current user's AURA score via generated SDK.
  * Auth handled by client interceptor.
  */
 export function useAuraScore() {
-  return useQuery<AuraScore | null>({
+  return useQuery<AuraScore | null, ApiError>({
     queryKey: ["aura-score"],
     queryFn: async () => {
       const { data, error } = await getMyAuraApiAuraMeGet();
       if (error) {
-        // 404 = no AURA score yet — return null so the page shows empty state
-        const errBody = error as unknown as Record<string, unknown>;
-        const detail = errBody?.detail as Record<string, unknown> | undefined;
-        if (detail?.code === "AURA_NOT_FOUND") return null;
-        throw new Error("Failed to fetch AURA score");
+        const apiError = toApiError(error, { message: "Failed to fetch AURA score" });
+        if (apiError.code === "AURA_NOT_FOUND") return null;
+        throw apiError;
       }
       if (!data) return null;
       return toAuraScore(data as unknown as AuraScoreResponse);
@@ -31,17 +30,16 @@ export function useAuraScore() {
 }
 
 export function useAuraScoreByProfessional(professionalId: string | undefined) {
-  return useQuery<AuraScore | null>({
+  return useQuery<AuraScore | null, ApiError>({
     queryKey: ["aura-score", professionalId],
     queryFn: async () => {
       const { data, error } = await getAuraByIdApiAuraProfessionalIdGet({
         path: { professional_id: professionalId! },
       });
       if (error) {
-        const errBody = error as unknown as Record<string, unknown>;
-        const detail = errBody?.detail as Record<string, unknown> | undefined;
-        if (detail?.code === "AURA_NOT_FOUND") return null;
-        throw new Error("Failed to fetch AURA score");
+        const apiError = toApiError(error, { message: "Failed to fetch AURA score" });
+        if (apiError.code === "AURA_NOT_FOUND") return null;
+        throw apiError;
       }
       if (!data) return null;
       return toAuraScore(data as unknown as AuraScoreResponse);

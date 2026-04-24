@@ -168,7 +168,7 @@ describe("useAuraScore", () => {
   it("throws for non-AURA_NOT_FOUND errors", async () => {
     mockGetMyAura.mockResolvedValue({
       data: null,
-      error: { detail: { code: "INTERNAL_ERROR", message: "Server error" } },
+      error: { status: 403, detail: { code: "FORBIDDEN", message: "Server error" } },
     });
     const { wrapper } = makeWrapper();
 
@@ -176,7 +176,9 @@ describe("useAuraScore", () => {
 
     await waitFor(() => expect(result.current.isError).toBe(true), ERROR_TIMEOUT);
 
-    expect(result.current.error?.message).toBe("Failed to fetch AURA score");
+    expect(result.current.error?.message).toBe("Server error");
+    expect(result.current.error?.status).toBe(403);
+    expect(result.current.error?.code).toBe("FORBIDDEN");
   });
 
   // ── Query config ─────────────────────────────────────────────────────────
@@ -290,7 +292,7 @@ describe("useAuraScoreByProfessional", () => {
   it("throws for non-AURA_NOT_FOUND errors on professional lookup", async () => {
     mockGetAuraById.mockResolvedValue({
       data: null,
-      error: { detail: { code: "FORBIDDEN", message: "access denied" } },
+      error: { status: 403, detail: { code: "FORBIDDEN", message: "access denied" } },
     });
     const { wrapper } = makeWrapper();
 
@@ -298,7 +300,9 @@ describe("useAuraScoreByProfessional", () => {
 
     await waitFor(() => expect(result.current.isError).toBe(true), ERROR_TIMEOUT);
 
-    expect(result.current.error?.message).toBe("Failed to fetch AURA score");
+    expect(result.current.error?.message).toBe("access denied");
+    expect(result.current.error?.status).toBe(403);
+    expect(result.current.error?.code).toBe("FORBIDDEN");
   });
 
   // ── Query key ────────────────────────────────────────────────────────────

@@ -15,6 +15,7 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import { API_BASE } from "@/lib/api/client";
+import { buildLoginNextPath } from "../(dashboard)/auth-recovery";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -60,6 +61,10 @@ function WelcomeContent() {
   const isMounted = useRef(true);
 
   const [user, setUser] = useState<UserInfo | null>(null);
+  const reauthPath = buildLoginNextPath(
+    locale,
+    `/${locale}/welcome${competency ? `?competency=${encodeURIComponent(competency)}` : ""}`
+  );
 
   const competency = searchParams.get("competency") ?? "";
   const competencyIcon = COMPETENCY_ICONS[competency] ?? "⭐";
@@ -77,7 +82,7 @@ function WelcomeContent() {
     const supabase = createClient();
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session && isMounted.current) {
-        router.replace(`/${locale}/login`);
+        router.replace(reauthPath);
         return;
       }
       // Fetch display name from profile
@@ -96,7 +101,7 @@ function WelcomeContent() {
           });
       }
     });
-  }, [locale, router]);
+  }, [reauthPath, router]);
 
   const firstName = user?.displayName?.split(" ")[0] ?? t("welcome.defaultName");
   const assessmentHref = `/${locale}/assessment${competency ? `?competency=${competency}` : ""}`;

@@ -24,6 +24,69 @@ export class ApiError extends Error {
   }
 }
 
+type UnknownRecord = Record<string, unknown>;
+
+function asRecord(value: unknown): UnknownRecord | null {
+  return typeof value === "object" && value !== null ? (value as UnknownRecord) : null;
+}
+
+function asString(value: unknown): string | undefined {
+  return typeof value === "string" && value.length > 0 ? value : undefined;
+}
+
+function asNumber(value: unknown): number | undefined {
+  return typeof value === "number" && Number.isFinite(value) ? value : undefined;
+}
+
+/**
+ * Normalize generated SDK / fetch errors into the same ApiError contract used
+ * by the manual apiFetch layer. This preserves HTTP semantics in query hooks
+ * instead of collapsing everything to plain Error("Failed to fetch ...").
+ */
+export function toApiError(
+  error: unknown,
+  fallback: {
+    status?: number;
+    code?: string;
+    message: string;
+  },
+): ApiError {
+  if (error instanceof ApiError) {
+    return error;
+  }
+
+  const root = asRecord(error);
+  const detail = asRecord(root?.detail);
+  const nestedError = asRecord(root?.error);
+  const response = asRecord(root?.response);
+  const responseData = asRecord(response?.data);
+  const responseDetail = asRecord(responseData?.detail);
+
+  const status =
+    asNumber(root?.status) ??
+    asNumber(response?.status) ??
+    fallback.status ??
+    500;
+
+  const code =
+    asString(root?.code) ??
+    asString(detail?.code) ??
+    asString(nestedError?.code) ??
+    asString(responseDetail?.code) ??
+    fallback.code ??
+    "UNKNOWN";
+
+  const message =
+    asString(detail?.message) ??
+    asString(nestedError?.message) ??
+    asString(responseDetail?.message) ??
+    asString(root?.message) ??
+    asString(response?.statusText) ??
+    fallback.message;
+
+  return new ApiError(status, code, message);
+}
+
 interface FetchOptions extends Omit<RequestInit, "headers"> {
   token?: string;
   headers?: Record<string, string>;

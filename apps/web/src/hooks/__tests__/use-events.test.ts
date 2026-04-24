@@ -36,6 +36,11 @@ vi.mock("@/lib/api/client", () => ({
       this.name = "ApiError";
     }
   },
+  toApiError: (
+    error: { code?: string; message?: string } | undefined,
+    fallback?: { message?: string }
+  ) =>
+    new Error(error?.message ?? fallback?.message ?? "Unknown error"),
 }));
 
 // ── useAuthToken mock ─────────────────────────────────────────────────────────
@@ -51,7 +56,9 @@ vi.mock("../queries/use-auth-token", () => ({
 import {
   useEvents,
   useEvent,
+  useMyEventTimeline,
   useMyEvents,
+  useMyOwnedEvents,
   useRateProfessional,
   useEventAttendees,
   useCreateEvent,
@@ -136,13 +143,16 @@ describe("useEvents", () => {
   });
 
   it("throws when SDK returns error", async () => {
-    mockListEvents.mockResolvedValue({ data: null, error: { detail: "fail" } });
+    mockListEvents.mockResolvedValue({
+      data: null,
+      error: { code: "RATE_LIMITED", message: "Event list temporarily unavailable" },
+    });
     const { wrapper } = makeWrapper();
 
     const { result } = renderHook(() => useEvents(), { wrapper });
     await waitFor(() => expect(result.current.isError).toBe(true), ERROR_TIMEOUT);
 
-    expect(result.current.error?.message).toBe("Failed to fetch events");
+    expect(result.current.error?.message).toBe("Event list temporarily unavailable");
   });
 
   it("uses ['events', params] as query key", async () => {
@@ -194,13 +204,16 @@ describe("useEvent", () => {
   });
 
   it("throws when SDK returns error or null data", async () => {
-    mockGetEvent.mockResolvedValue({ data: null, error: { detail: "not found" } });
+    mockGetEvent.mockResolvedValue({
+      data: null,
+      error: { code: "EVENT_NOT_FOUND", message: "Event not found" },
+    });
     const { wrapper } = makeWrapper();
 
     const { result } = renderHook(() => useEvent("event_missing"), { wrapper });
     await waitFor(() => expect(result.current.isError).toBe(true), ERROR_TIMEOUT);
 
-    expect(result.current.error?.message).toBe("Failed to fetch event");
+    expect(result.current.error?.message).toBe("Event not found");
   });
 
   it("uses ['events', eventId] as query key", async () => {
@@ -216,51 +229,89 @@ describe("useEvent", () => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe("useMyEvents", () => {
+describe("useMyEventTimeline", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockGetToken.mockResolvedValue("test-token");
   });
 
-  it("returns my events array via apiFetch", async () => {
+  it("returns my timeline events array via apiFetch", async () => {
     const events = [makeEventResponse({ id: "my_event_1" })];
     mockApiFetch.mockResolvedValue(events);
     const { wrapper } = makeWrapper();
 
-    const { result } = renderHook(() => useMyEvents(), { wrapper });
+    const { result } = renderHook(() => useMyEventTimeline(), { wrapper });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(result.current.data).toHaveLength(1);
   });
 
-  it("calls apiFetch with /events/my and auth token", async () => {
+  it("calls apiFetch with /events/my/timeline and auth token", async () => {
     mockApiFetch.mockResolvedValue([]);
     const { wrapper } = makeWrapper();
 
-    const { result } = renderHook(() => useMyEvents(), { wrapper });
+    const { result } = renderHook(() => useMyEventTimeline(), { wrapper });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(mockApiFetch).toHaveBeenCalledWith("/events/my", { token: "test-token" });
+    expect(mockApiFetch).toHaveBeenCalledWith("/events/my/timeline", { token: "test-token" });
   });
 
   it("throws 401 when token is null", async () => {
     mockGetToken.mockResolvedValue(null);
     const { wrapper } = makeWrapper();
 
-    const { result } = renderHook(() => useMyEvents(), { wrapper });
+    const { result } = renderHook(() => useMyEventTimeline(), { wrapper });
     await waitFor(() => expect(result.current.isError).toBe(true), ERROR_TIMEOUT);
 
     expect((result.current.error as { status?: number })?.status).toBe(401);
   });
 
-  it("uses ['events', 'my'] as query key", async () => {
+  it("uses ['events', 'my', 'timeline'] as query key", async () => {
     mockApiFetch.mockResolvedValue([]);
     const { wrapper, qc } = makeWrapper();
+
+    const { result } = renderHook(() => useMyEventTimeline(), { wrapper });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(qc.getQueryData(["events", "my", "timeline"])).toBeDefined();
+  });
+
+  it("keeps useMyEvents as a backward-compatible alias", async () => {
+    mockApiFetch.mockResolvedValue([]);
+    const { wrapper } = makeWrapper();
 
     const { result } = renderHook(() => useMyEvents(), { wrapper });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(qc.getQueryData(["events", "my"])).toBeDefined();
+    expect(mockApiFetch).toHaveBeenCalledWith("/events/my/timeline", { token: "test-token" });
+  });
+});
+
+describe("useMyOwnedEvents", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetToken.mockResolvedValue("test-token");
+  });
+
+  it("returns owned events array via apiFetch", async () => {
+    const events = [makeEventResponse({ id: "owned_event_1" })];
+    mockApiFetch.mockResolvedValue(events);
+    const { wrapper } = makeWrapper();
+
+    const { result } = renderHook(() => useMyOwnedEvents(), { wrapper });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(result.current.data).toHaveLength(1);
+  });
+
+  it("calls apiFetch with /events/my/owned and auth token", async () => {
+    mockApiFetch.mockResolvedValue([]);
+    const { wrapper } = makeWrapper();
+
+    const { result } = renderHook(() => useMyOwnedEvents(), { wrapper });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(mockApiFetch).toHaveBeenCalledWith("/events/my/owned", { token: "test-token" });
   });
 });
 
@@ -413,7 +464,10 @@ describe("useCreateEvent", () => {
   });
 
   it("throws when SDK returns error", async () => {
-    mockCreateEvent.mockResolvedValue({ data: null, error: { detail: "fail" } });
+    mockCreateEvent.mockResolvedValue({
+      data: null,
+      error: { code: "VALIDATION_ERROR", message: "Title is required" },
+    });
     const { wrapper } = makeWrapper();
 
     const { result } = renderHook(() => useCreateEvent(), { wrapper });
@@ -424,7 +478,7 @@ describe("useCreateEvent", () => {
           title: "Bad Event",
         } as unknown as Parameters<typeof result.current.mutateAsync>[0]);
       })
-    ).rejects.toThrow("Failed to create event");
+    ).rejects.toThrow("Title is required");
   });
 });
 
@@ -467,7 +521,10 @@ describe("useRegisterForEvent", () => {
   });
 
   it("throws when SDK returns error", async () => {
-    mockRegisterForEvent.mockResolvedValue({ data: null, error: { detail: "closed" } });
+    mockRegisterForEvent.mockResolvedValue({
+      data: null,
+      error: { code: "EVENT_CLOSED", message: "Registration is closed" },
+    });
     const { wrapper } = makeWrapper();
 
     const { result } = renderHook(() => useRegisterForEvent(), { wrapper });
@@ -476,6 +533,6 @@ describe("useRegisterForEvent", () => {
       act(async () => {
         await result.current.mutateAsync({ eventId: "event_closed" });
       })
-    ).rejects.toThrow("Failed to register for event");
+    ).rejects.toThrow("Registration is closed");
   });
 });

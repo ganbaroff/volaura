@@ -8,12 +8,12 @@ import {
   registerForEventApiEventsEventIdRegisterPost,
   myRegistrationsApiEventsMyRegistrationsGet,
 } from "@/lib/api/generated";
-import { apiFetch, ApiError } from "@/lib/api/client";
+import { apiFetch, ApiError, toApiError } from "@/lib/api/client";
 import { useAuthToken } from "./use-auth-token";
 import type { EventResponse, EventCreate, RegistrationResponse } from "@/lib/api/types";
 
 export function useEvents(params?: { status?: string; limit?: number; offset?: number }) {
-  return useQuery<EventResponse[]>({
+  return useQuery<EventResponse[], ApiError>({
     queryKey: ["events", params],
     queryFn: async () => {
       const { data, error } = await listEventsApiEventsGet({
@@ -23,7 +23,7 @@ export function useEvents(params?: { status?: string; limit?: number; offset?: n
           offset: params?.offset,
         },
       });
-      if (error) throw new Error("Failed to fetch events");
+      if (error) throw toApiError(error, { message: "Failed to fetch events" });
       return (data ?? []) as unknown as EventResponse[];
     },
     staleTime: 2 * 60 * 1000,
@@ -32,13 +32,14 @@ export function useEvents(params?: { status?: string; limit?: number; offset?: n
 }
 
 export function useEvent(eventId: string | undefined) {
-  return useQuery<EventResponse>({
+  return useQuery<EventResponse, ApiError>({
     queryKey: ["events", eventId],
     queryFn: async () => {
       const { data, error } = await getEventApiEventsEventIdGet({
         path: { event_id: eventId! },
       });
-      if (error || !data) throw new Error("Failed to fetch event");
+      if (error) throw toApiError(error, { message: "Failed to fetch event" });
+      if (!data) throw new ApiError(500, "EMPTY_RESPONSE", "Failed to fetch event");
       return data as unknown as EventResponse;
     },
     enabled: !!eventId,
@@ -47,21 +48,59 @@ export function useEvent(eventId: string | undefined) {
   });
 }
 
-// /api/events/my returns EventResponse[] with registration context — not in generated SDK
-export function useMyEvents() {
+export interface MyEventResponse extends EventResponse {
+  registration_id?: string | null;
+  registration_status?: string | null;
+  registered_at?: string | null;
+  checked_in_at?: string | null;
+  role?: string | null;
+}
+
+export function useMyEventTimeline() {
   const getToken = useAuthToken();
 
-  return useQuery<EventResponse[], ApiError>({
-    queryKey: ["events", "my"],
+  return useQuery<MyEventResponse[], ApiError>({
+    queryKey: ["events", "my", "timeline"],
     queryFn: async () => {
       const token = await getToken();
       if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
-      return apiFetch<EventResponse[]>("/events/my", { token });
+      return apiFetch<MyEventResponse[]>("/events/my/timeline", { token });
     },
     staleTime: 2 * 60 * 1000,
     retry: 2,
   });
 }
+
+export function useMyOwnedEvents() {
+  const getToken = useAuthToken();
+
+  return useQuery<EventResponse[], ApiError>({
+    queryKey: ["events", "my", "owned"],
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      return apiFetch<EventResponse[]>("/events/my/owned", { token });
+    },
+    staleTime: 2 * 60 * 1000,
+    retry: 2,
+  });
+}
+
+export function useMyRegistrations() {
+  return useQuery<RegistrationResponse[], ApiError>({
+    queryKey: ["events", "my", "registrations"],
+    queryFn: async () => {
+      const { data, error } = await myRegistrationsApiEventsMyRegistrationsGet();
+      if (error) throw toApiError(error, { message: "Failed to fetch registrations" });
+      return (data ?? []) as unknown as RegistrationResponse[];
+    },
+    staleTime: 2 * 60 * 1000,
+    retry: 2,
+  });
+}
+
+// Backward-compatible alias while pages migrate to explicit names.
+export const useMyEvents = useMyEventTimeline;
 
 export interface EventAttendeeRow {
   registration_id: string;
@@ -123,10 +162,11 @@ export function useEventAttendees(eventId: string | undefined) {
 export function useCreateEvent() {
   const queryClient = useQueryClient();
 
-  return useMutation<EventResponse, Error, EventCreate>({
+  return useMutation<EventResponse, ApiError, EventCreate>({
     mutationFn: async (body) => {
       const { data, error } = await createEventApiEventsPost({ body });
-      if (error || !data) throw new Error("Failed to create event");
+      if (error) throw toApiError(error, { message: "Failed to create event" });
+      if (!data) throw new ApiError(500, "EMPTY_RESPONSE", "Failed to create event");
       return data as unknown as EventResponse;
     },
     onSuccess: () => {
@@ -138,12 +178,13 @@ export function useCreateEvent() {
 export function useRegisterForEvent() {
   const queryClient = useQueryClient();
 
-  return useMutation<RegistrationResponse, Error, { eventId: string }>({
+  return useMutation<RegistrationResponse, ApiError, { eventId: string }>({
     mutationFn: async ({ eventId }) => {
       const { data, error } = await registerForEventApiEventsEventIdRegisterPost({
         path: { event_id: eventId },
       });
-      if (error || !data) throw new Error("Failed to register for event");
+      if (error) throw toApiError(error, { message: "Failed to register for event" });
+      if (!data) throw new ApiError(500, "EMPTY_RESPONSE", "Failed to register for event");
       return data as unknown as RegistrationResponse;
     },
     onSuccess: (_data, { eventId }) => {

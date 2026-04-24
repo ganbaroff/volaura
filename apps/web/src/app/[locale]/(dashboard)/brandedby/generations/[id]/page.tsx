@@ -20,6 +20,7 @@ import { ApiError } from "@/lib/api/client";
 import { useGeneration, useMyTwin } from "@/hooks/queries/use-brandedby";
 import { cn } from "@/lib/utils/cn";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
+import { buildLoginNextPath } from "../../../auth-recovery";
 
 // ── LinkedIn icon (inline SVG — no dep) ──────────────────────────────────
 
@@ -210,12 +211,13 @@ export default function GenerationPage({
   const isLow = energy === "low";
   const { data: gen, isLoading, error } = useGeneration(genId);
   const { data: twin } = useMyTwin();
+  const reauthPath = buildLoginNextPath(locale, `/${locale}/brandedby/generations/${genId}`);
 
   useEffect(() => {
     if (error instanceof ApiError && error.status === 401 && isMounted.current) {
-      router.replace(`/${locale}/login`);
+      router.replace(reauthPath);
     }
-  }, [error, locale, router]);
+  }, [error, reauthPath, router]);
 
   // ── Loading ──
 

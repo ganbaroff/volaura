@@ -15,10 +15,11 @@ import { ActivityTimeline } from "@/components/profile-view/activity-timeline";
 import { useProfile, useMyVerifications } from "@/hooks/queries/use-profile";
 import { useAuraScore } from "@/hooks/queries/use-aura";
 import { useDashboardStats } from "@/hooks/queries/use-dashboard";
-import { useMyEvents } from "@/hooks/queries/use-events";
+import { useMyEventTimeline } from "@/hooks/queries/use-events";
 import { ApiError } from "@/lib/api/client";
 import type { TimelineEvent } from "@/components/profile-view/activity-timeline";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
+import { buildLoginNextPath } from "../auth-recovery";
 
 /* ─── Section wrapper ─── */
 const sectionVariants = {
@@ -136,6 +137,7 @@ export default function ProfilePage() {
 
   const { energy } = useEnergyMode();
   const isLowEnergy = energy === "low";
+  const reauthPath = buildLoginNextPath(locale, `/${locale}/profile`);
 
   const {
     data: profile,
@@ -151,15 +153,15 @@ export default function ProfilePage() {
 
   const { data: dashboardStats } = useDashboardStats();
   const { data: verifications } = useMyVerifications();
-  const { data: myEvents } = useMyEvents();
+  const { data: myEvents } = useMyEventTimeline();
 
   // Transform events into timeline format
   const timelineEvents: TimelineEvent[] = (myEvents || []).map((ev: Record<string, unknown>) => ({
     id: String(ev.id ?? ""),
-    event_name: String(ev.title ?? "Event"),
-    event_date: String(ev.date ?? ev.created_at ?? ""),
+    event_name: String(ev.title_en ?? ev.title_az ?? "Event"),
+    event_date: String(ev.start_date ?? ev.created_at ?? ""),
     role: ev.role ? String(ev.role) : null,
-    participated: ev.status === "attended",
+    participated: Boolean(ev.checked_in_at) || ev.registration_status === "approved",
   }));
 
   const loading = profileLoading || auraLoading;
@@ -167,9 +169,9 @@ export default function ProfilePage() {
   // Handle 401
   useEffect(() => {
     if (profileError instanceof ApiError && profileError.status === 401 && isMounted.current) {
-      router.replace(`/${locale}/login`);
+      router.replace(reauthPath);
     }
-  }, [profileError, locale, router]);
+  }, [profileError, reauthPath, router]);
 
   if (loading) {
     return (

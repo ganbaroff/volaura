@@ -150,14 +150,19 @@ describe("useProfile", () => {
   });
 
   it("throws when SDK returns error", async () => {
-    mockGetMyProfile.mockResolvedValue({ data: null, error: { message: "not found" } });
+    mockGetMyProfile.mockResolvedValue({
+      data: null,
+      error: { status: 401, detail: { code: "UNAUTHORIZED", message: "Session expired" } },
+    });
     const { wrapper } = makeWrapper();
 
     const { result } = renderHook(() => useProfile(), { wrapper });
 
     await waitFor(() => expect(result.current.isError).toBe(true), ERROR_TIMEOUT);
 
-    expect(result.current.error?.message).toBe("Failed to fetch profile");
+    expect(result.current.error?.message).toBe("Session expired");
+    expect(result.current.error?.status).toBe(401);
+    expect(result.current.error?.code).toBe("UNAUTHORIZED");
   });
 
   it("uses ['profile', 'me'] as query key", async () => {
@@ -335,14 +340,17 @@ describe("useUpdateProfile", () => {
   });
 
   it("throws when SDK returns error", async () => {
-    mockUpdateMyProfile.mockResolvedValue({ data: null, error: { message: "validation failed" } });
+    mockUpdateMyProfile.mockResolvedValue({
+      data: null,
+      error: { status: 422, detail: { code: "VALIDATION_ERROR", message: "validation failed" } },
+    });
     const { wrapper } = makeWrapper();
 
     const { result } = renderHook(() => useUpdateProfile(), { wrapper });
 
     await act(async () => {
       await expect(result.current.mutateAsync({ display_name: "" })).rejects.toThrow(
-        "Failed to update profile"
+        "validation failed"
       );
     });
   });

@@ -51,6 +51,13 @@ interface AssessmentStore {
   setSession: (id: string) => void;
   setQuestion: (q: Question | null) => void;
   setCompetencies: (c: string[]) => void;
+  restoreProgress: (payload: {
+    sessionId: string;
+    question: Question | null;
+    competencies: string[];
+    currentCompetencyIndex: number;
+    answeredCount: number;
+  }) => void;
   incrementAnswered: () => void;
   nextCompetency: () => void;
   setSubmitting: (v: boolean) => void;
@@ -73,6 +80,14 @@ export const useAssessmentStore = create<AssessmentStore>()(
       setSession: (id) => set({ sessionId: id }),
       setQuestion: (q) => set({ currentQuestion: q }),
       setCompetencies: (c) => set({ selectedCompetencies: c, currentCompetencyIndex: 0 }),
+      restoreProgress: ({ sessionId, question, competencies, currentCompetencyIndex, answeredCount }) =>
+        set({
+          sessionId,
+          currentQuestion: question,
+          selectedCompetencies: competencies,
+          currentCompetencyIndex,
+          answeredCount,
+        }),
       incrementAnswered: () => set((s) => ({ answeredCount: s.answeredCount + 1 })),
       nextCompetency: () =>
         set((s) => ({

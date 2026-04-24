@@ -20,6 +20,7 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle, XCircle } from "lucide-react";
+import { API_BASE } from "@/lib/api/client";
 
 export default function InvitePage() {
   return (
@@ -51,7 +52,7 @@ function InviteContent() {
     async function validate() {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL ?? "https://volauraapi-production.up.railway.app"}/api/invite/validate`,
+          `${API_BASE}/invite/validate`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

@@ -9,7 +9,7 @@ import {
 import type { Profile, UpdateProfileRequest } from "@/lib/api/types";
 import type { ProfileResponse } from "@/lib/api/generated/types.gen";
 import { toProfile } from "@/lib/api/types";
-import { apiFetch, ApiError } from "@/lib/api/client";
+import { apiFetch, ApiError, toApiError } from "@/lib/api/client";
 import { useAuthToken } from "./use-auth-token";
 
 export interface DiscoverableProfessional {
@@ -25,11 +25,12 @@ export interface DiscoverableProfessional {
 }
 
 export function useProfile() {
-  return useQuery<Profile>({
+  return useQuery<Profile, ApiError>({
     queryKey: ["profile", "me"],
     queryFn: async () => {
       const { data, error } = await getMyProfileApiProfilesMeGet();
-      if (error || !data) throw new Error("Failed to fetch profile");
+      if (error) throw toApiError(error, { message: "Failed to fetch profile" });
+      if (!data) throw new ApiError(500, "EMPTY_RESPONSE", "Failed to fetch profile");
       return toProfile(data as unknown as ProfileResponse);
     },
     staleTime: 5 * 60 * 1000,
@@ -38,13 +39,14 @@ export function useProfile() {
 }
 
 export function usePublicProfile(username: string | undefined) {
-  return useQuery<Profile>({
+  return useQuery<Profile, ApiError>({
     queryKey: ["profile", username],
     queryFn: async () => {
       const { data, error } = await getPublicProfileApiProfilesUsernameGet({
         path: { username: username! },
       });
-      if (error || !data) throw new Error("Failed to fetch profile");
+      if (error) throw toApiError(error, { message: "Failed to fetch profile" });
+      if (!data) throw new ApiError(500, "EMPTY_RESPONSE", "Failed to fetch profile");
       return toProfile(data as unknown as ProfileResponse);
     },
     enabled: !!username,
@@ -77,12 +79,13 @@ export function useDiscoverableProfessionals(params?: { limit?: number; offset?:
 export function useUpdateProfile() {
   const queryClient = useQueryClient();
 
-  return useMutation<Profile, Error, UpdateProfileRequest>({
+  return useMutation<Profile, ApiError, UpdateProfileRequest>({
     mutationFn: async (body) => {
       const { data, error } = await updateMyProfileApiProfilesMePut({
         body,
       });
-      if (error || !data) throw new Error("Failed to update profile");
+      if (error) throw toApiError(error, { message: "Failed to update profile" });
+      if (!data) throw new ApiError(500, "EMPTY_RESPONSE", "Failed to update profile");
       return toProfile(data as unknown as ProfileResponse);
     },
     onSuccess: () => {

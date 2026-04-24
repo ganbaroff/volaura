@@ -28,6 +28,7 @@ import { CoachingTips } from "@/components/assessment/coaching-tips";
 import { triggerHaptic } from "@/lib/haptics";
 import { getAchievementLevelKey } from "@/lib/utils/achievement-level";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
+import { buildLoginNextPath } from "../../auth-recovery";
 
 // ── Types ──────────────────────────────────────────────────────────────
 
@@ -168,6 +169,7 @@ export default function AssessmentResultsPage() {
   const track = useTrackEvent();
   const { energy } = useEnergyMode();
   const isLow = energy === "low";
+  const reauthPath = buildLoginNextPath(locale, `/${locale}/assessment/${sessionId}/complete`);
 
   const [phase, setPhase] = useState<"loading" | "reveal" | "error">("loading");
   const [result, setResult] = useState<AssessmentResult | null>(null);
@@ -193,7 +195,7 @@ export default function AssessmentResultsPage() {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
       if (!token) {
-        router.replace(`/${locale}/login`);
+        router.replace(reauthPath);
         return;
       }
 
@@ -252,7 +254,7 @@ export default function AssessmentResultsPage() {
       setError(msg);
       setPhase("error");
     }
-  }, [sessionId, locale, router, queryClient, t, track]);
+  }, [sessionId, locale, reauthPath, router, queryClient, t, track]);
 
   useEffect(() => {
     fetchResults();

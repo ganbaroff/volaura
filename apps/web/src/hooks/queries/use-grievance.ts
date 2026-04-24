@@ -23,6 +23,33 @@ export interface Grievance {
   resolved_at: string | null;
 }
 
+export interface AutomatedDecision {
+  id: string;
+  decision_type: string;
+  created_at: string;
+  human_reviewable: boolean;
+}
+
+export interface HumanReviewRequest {
+  id: string;
+  user_id: string;
+  automated_decision_id: string;
+  source_product: "volaura" | "mindshift" | "lifesim" | "brandedby" | "zeus";
+  request_reason: string;
+  requested_at: string;
+  sla_deadline: string;
+  status: "pending" | "in_review" | "resolved_uphold" | "resolved_overturn" | "escalated_to_authority";
+  resolved_at: string | null;
+  resolution_notes: string | null;
+  reviewer_user_id: string | null;
+}
+
+export interface HumanReviewCreateInput {
+  automated_decision_id: string;
+  request_reason: string;
+  source_product?: "volaura" | "mindshift" | "lifesim" | "brandedby" | "zeus";
+}
+
 export function useFileGrievance() {
   const getToken = useAuthToken();
   const qc = useQueryClient();
@@ -53,6 +80,61 @@ export function useOwnGrievances() {
       const token = await getToken();
       if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
       const res = await apiFetch<{ data: Grievance[] }>("/api/aura/grievance", { token });
+      return res.data ?? [];
+    },
+    staleTime: 60 * 1000,
+    retry: 1,
+    throwOnError: false,
+  });
+}
+
+export function useAutomatedDecisions(limit = 20) {
+  const getToken = useAuthToken();
+
+  return useQuery<AutomatedDecision[], ApiError>({
+    queryKey: ["human-review", "decisions", limit],
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      const res = await apiFetch<{ data: AutomatedDecision[] }>(`/api/aura/human-review/decisions?limit=${limit}`, { token });
+      return res.data ?? [];
+    },
+    staleTime: 60 * 1000,
+    retry: 1,
+    throwOnError: false,
+  });
+}
+
+export function useCreateHumanReview() {
+  const getToken = useAuthToken();
+  const qc = useQueryClient();
+
+  return useMutation<HumanReviewRequest, ApiError, HumanReviewCreateInput>({
+    mutationFn: async (payload) => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      return apiFetch<HumanReviewRequest>("/api/aura/human-review", {
+        token,
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["human-review"] });
+    },
+  });
+}
+
+export function useMyHumanReviews() {
+  const getToken = useAuthToken();
+
+  return useQuery<HumanReviewRequest[], ApiError>({
+    queryKey: ["human-review", "own"],
+    queryFn: async () => {
+      const token = await getToken();
+      if (!token) throw new ApiError(401, "UNAUTHORIZED", "Not authenticated");
+      const res = await apiFetch<{ data: HumanReviewRequest[] }>("/api/aura/human-review", { token });
       return res.data ?? [];
     },
     staleTime: 60 * 1000,

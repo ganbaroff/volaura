@@ -75,6 +75,7 @@ export type Profile = {
   location: string | null;
   languages: string[];
   is_public: boolean;
+  visible_to_orgs: boolean;
   created_at: string;
   updated_at: string;
   registration_number: number | null;
@@ -92,6 +93,7 @@ export function toProfile(raw: ProfileResponse): Profile {
     location: raw.location ?? null,
     languages: raw.languages ?? [],
     is_public: raw.is_public ?? false,
+    visible_to_orgs: raw.visible_to_orgs ?? false,
     created_at: raw.created_at,
     updated_at: raw.updated_at,
     registration_number: raw.registration_number ?? null,

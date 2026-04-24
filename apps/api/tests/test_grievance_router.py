@@ -1007,6 +1007,166 @@ class TestRouteOrderingRegression:
         assert "data" in body
         assert isinstance(body["data"], list)
 
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Human review requests (GDPR Art.22(3))
+# ══════════════════════════════════════════════════════════════════════════════
+
+
+class TestHumanReviewRequests:
+    @pytest.mark.asyncio
+    async def test_list_my_automated_decisions(self):
+        decision_id = str(uuid.uuid4())
+        db = _make_db(
+            _result(
+                data=[
+                    {
+                        "id": decision_id,
+                        "decision_type": "assessment_score",
+                        "created_at": NOW_STR,
+                        "human_reviewable": True,
+                    }
+                ]
+            )
+        )
+
+        app.dependency_overrides[get_supabase_admin] = _admin_override(db)
+        app.dependency_overrides[get_current_user_id] = _user_id_override(USER_ID)
+        try:
+            async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+                resp = await ac.get("/api/aura/human-review/decisions")
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
+            app.dependency_overrides.pop(get_current_user_id, None)
+
+        assert resp.status_code == 200
+        body = resp.json()
+        assert len(body["data"]) == 1
+        assert body["data"][0]["id"] == decision_id
+
+    @pytest.mark.asyncio
+    async def test_create_human_review_request_happy_path(self):
+        decision_id = str(uuid.uuid4())
+        review_id = str(uuid.uuid4())
+        db = _make_db(
+            _result(data={"id": decision_id, "user_id": USER_ID}),  # decision lookup
+            _result(
+                data=[
+                    {
+                        "id": review_id,
+                        "user_id": USER_ID,
+                        "automated_decision_id": decision_id,
+                        "source_product": "volaura",
+                        "request_reason": "I believe this decision used incomplete evidence.",
+                        "requested_at": NOW_STR,
+                        "sla_deadline": "2026-05-19T12:00:00+00:00",
+                        "status": "pending",
+                        "resolved_at": None,
+                        "resolution_notes": None,
+                        "reviewer_user_id": None,
+                    }
+                ]
+            ),
+        )
+
+        app.dependency_overrides[get_supabase_admin] = _admin_override(db)
+        app.dependency_overrides[get_current_user_id] = _user_id_override(USER_ID)
+        try:
+            async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+                resp = await ac.post(
+                    "/api/aura/human-review",
+                    json={
+                        "automated_decision_id": decision_id,
+                        "request_reason": "I believe this decision used incomplete evidence.",
+                    },
+                )
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
+            app.dependency_overrides.pop(get_current_user_id, None)
+
+        assert resp.status_code == 201
+        body = resp.json()
+        assert body["id"] == review_id
+        assert body["status"] == "pending"
+
+    @pytest.mark.asyncio
+    async def test_create_human_review_request_404_when_decision_missing(self):
+        db = _make_db(_result(data=None))
+
+        app.dependency_overrides[get_supabase_admin] = _admin_override(db)
+        app.dependency_overrides[get_current_user_id] = _user_id_override(USER_ID)
+        try:
+            async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+                resp = await ac.post(
+                    "/api/aura/human-review",
+                    json={
+                        "automated_decision_id": str(uuid.uuid4()),
+                        "request_reason": "Need review due to suspected scoring error.",
+                    },
+                )
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
+            app.dependency_overrides.pop(get_current_user_id, None)
+
+        assert resp.status_code == 404
+        assert resp.json()["detail"]["code"] == "DECISION_NOT_FOUND"
+
+    @pytest.mark.asyncio
+    async def test_list_my_human_review_requests(self):
+        decision_id = str(uuid.uuid4())
+        review_id = str(uuid.uuid4())
+        db = _make_db(
+            _result(
+                data=[
+                    {
+                        "id": review_id,
+                        "user_id": USER_ID,
+                        "automated_decision_id": decision_id,
+                        "source_product": "volaura",
+                        "request_reason": "Review reason text",
+                        "requested_at": NOW_STR,
+                        "sla_deadline": "2026-05-19T12:00:00+00:00",
+                        "status": "pending",
+                        "resolved_at": None,
+                        "resolution_notes": None,
+                        "reviewer_user_id": None,
+                    }
+                ]
+            )
+        )
+
+        app.dependency_overrides[get_supabase_admin] = _admin_override(db)
+        app.dependency_overrides[get_current_user_id] = _user_id_override(USER_ID)
+        try:
+            async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+                resp = await ac.get("/api/aura/human-review")
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
+            app.dependency_overrides.pop(get_current_user_id, None)
+
+        assert resp.status_code == 200
+        assert len(resp.json()["data"]) == 1
+
+    @pytest.mark.asyncio
+    async def test_admin_transition_human_review_request_requires_resolution_for_resolved(self):
+        db = _make_db(_result(data=[]))
+        app.dependency_overrides[get_supabase_admin] = _admin_override(db)
+        app.dependency_overrides[get_current_user_id] = _user_id_override(ADMIN_ID)
+        app.dependency_overrides[require_platform_admin] = _require_admin_override(ADMIN_ID)
+        try:
+            async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+                resp = await ac.patch(
+                    f"/api/aura/human-review/admin/{str(uuid.uuid4())}",
+                    json={"status": "resolved_uphold"},
+                )
+        finally:
+            app.dependency_overrides.pop(get_supabase_admin, None)
+            app.dependency_overrides.pop(get_current_user_id, None)
+            app.dependency_overrides.pop(require_platform_admin, None)
+
+        assert resp.status_code == 422
+        assert resp.json()["detail"]["code"] == "RESOLUTION_REQUIRED"
+
     @pytest.mark.asyncio
     async def test_admin_pending_not_matched_as_professional_id(self):
         """GET /aura/grievance/admin/pending must resolve to grievance admin route."""

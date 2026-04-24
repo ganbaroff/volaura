@@ -316,6 +316,44 @@ async def test_get_me_no_profile(mock_admin_db):
     assert body["profile"] is None
 
 
+@pytest.mark.asyncio
+async def test_export_me_returns_machine_readable_bundle(mock_admin_db):
+    user_id = "uuid-export"
+    # export endpoint queries 9 sections; provide deterministic empty results
+    mock_admin_db.execute = AsyncMock(
+        side_effect=[
+            MagicMock(data={"id": user_id, "username": "export_user"}),  # profile
+            MagicMock(data=[]),  # aura_scores
+            MagicMock(data=[]),  # badges
+            MagicMock(data=[]),  # assessment_sessions
+            MagicMock(data=[]),  # character_events
+            MagicMock(data=[]),  # game_crystal_ledger
+            MagicMock(data=[]),  # game_character_rewards
+            MagicMock(data=[]),  # grievances
+            MagicMock(data=[]),  # consent_events
+        ]
+    )
+
+    app.dependency_overrides[get_supabase_admin] = _make_admin_override(mock_admin_db)
+    app.dependency_overrides[get_current_user_id] = _make_user_id_override(user_id)
+
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        resp = await ac.get(
+            "/api/auth/export",
+            headers={"Authorization": "Bearer fake-token"},
+        )
+
+    app.dependency_overrides.clear()
+
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["user_id"] == user_id
+    assert body["export_version"] == "1.0"
+    assert isinstance(body["data"], dict)
+    assert "profile" in body["data"]
+
+
 # ── BUG-016: Logout / token revocation ───────────────────────────────────────
 
 

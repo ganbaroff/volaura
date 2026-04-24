@@ -89,6 +89,13 @@ class MessageResponse(BaseModel):
     message: str
 
 
+class ExportResponse(BaseModel):
+    user_id: str
+    export_version: str = "1.0"
+    exported_at: str
+    data: dict
+
+
 class SignupStatusResponse(BaseModel):
     open_signup: bool
 
@@ -269,6 +276,69 @@ async def get_me(
         .execute()
     )
     return MeResponse(user_id=user_id, profile=result.data)
+
+
+@router.get("/export", response_model=ExportResponse)
+@limiter.limit(RATE_DEFAULT)
+async def export_my_data(
+    request: Request,
+    user_id: CurrentUserId,
+    db_admin: SupabaseAdmin,
+) -> ExportResponse:
+    """GDPR Art.20 portability export (JSON) for the authenticated user.
+
+    Returns a machine-readable snapshot with core profile, AURA, badges,
+    assessments, and character ledger/events. The export is scoped to the
+    requester's user_id and intentionally excludes auth secrets/tokens.
+    """
+    from datetime import UTC, datetime
+
+    export_data: dict = {}
+
+    # Read each section independently so one failing query doesn't block export.
+    sections = {
+        "profile": ("profiles", "*"),
+        "aura_scores": ("aura_scores", "*"),
+        "badges": ("badges", "*"),
+        "assessment_sessions": (
+            "assessment_sessions",
+            "id,status,competency_slug,score,created_at,completed_at,expires_at,energy_level",
+        ),
+        "character_events": ("character_events", "id,event_type,payload,source_product,created_at"),
+        "game_crystal_ledger": ("game_crystal_ledger", "id,amount,source,reference_id,created_at"),
+        "game_character_rewards": ("game_character_rewards", "skill_slug,crystals,claimed,claimed_at"),
+        "grievances": ("grievances", "*"),
+        "consent_events": ("consent_events", "*"),
+    }
+
+    for section, (table_name, fields) in sections.items():
+        try:
+            query = db_admin.table(table_name).select(fields).eq("user_id", user_id)
+            # Profiles/AURA/badges use different user key names
+            if table_name == "profiles":
+                query = db_admin.table(table_name).select(fields).eq("id", user_id)
+            elif table_name == "aura_scores":
+                query = db_admin.table(table_name).select(fields).eq("volunteer_id", user_id)
+            elif table_name == "badges":
+                query = db_admin.table(table_name).select(fields).eq("volunteer_id", user_id)
+            result = await query.execute()
+            export_data[section] = result.data or ([] if section != "profile" else None)
+            if section == "profile" and isinstance(export_data[section], list):
+                export_data[section] = export_data[section][0] if export_data[section] else None
+        except Exception as exc:
+            logger.warning(
+                "Data export section failed (non-blocking)",
+                user_id=str(user_id),
+                section=section,
+                error=str(exc)[:200],
+            )
+            export_data[section] = None
+
+    return ExportResponse(
+        user_id=user_id,
+        exported_at=datetime.now(UTC).isoformat(),
+        data=export_data,
+    )
 
 
 @router.delete("/me", status_code=200, response_model=MessageResponse)

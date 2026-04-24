@@ -30,7 +30,7 @@ jobs:
 
       - name: Run E2E tests
         env:
-          VOLAURA_API_URL: https://volauraapi-production.up.railway.app
+          VOLAURA_API_URL: https://modest-happiness-production.up.railway.app
           VOLAURA_URL: https://volaura.app
           E2E_TEST_EMAIL: e2e_ci_${{ github.run_id }}@test.volaura.app
           E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}

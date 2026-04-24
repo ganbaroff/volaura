@@ -11,9 +11,6 @@ jobs:
   frontend:
     name: Frontend (Next.js)
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'push' ||
-      contains(join(github.event.pull_request.changed_files.*.filename, ','), 'apps/web/')
 
     defaults:
       run:
@@ -47,9 +44,6 @@ jobs:
   backend:
     name: Backend (FastAPI)
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'push' ||
-      contains(join(github.event.pull_request.changed_files.*.filename, ','), 'apps/api/')
 
     defaults:
       run:

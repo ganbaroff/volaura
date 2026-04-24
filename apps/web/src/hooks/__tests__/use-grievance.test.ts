@@ -33,11 +33,14 @@ vi.mock("../queries/use-auth-token", () => ({
 import {
   useFileGrievance,
   useOwnGrievances,
+  useAutomatedDecisions,
+  useCreateHumanReview,
+  useMyHumanReviews,
   useAdminPendingGrievances,
   useAdminHistoryGrievances,
   useTransitionGrievance,
 } from "../queries/use-grievance";
-import type { Grievance, GrievanceAdmin } from "../queries/use-grievance";
+import type { AutomatedDecision, Grievance, GrievanceAdmin, HumanReviewRequest } from "../queries/use-grievance";
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -77,6 +80,33 @@ function makeGrievanceAdmin(overrides: Partial<GrievanceAdmin> = {}): GrievanceA
     user_id: "user_123",
     admin_notes: null,
     updated_at: "2026-04-01T00:00:00Z",
+    ...overrides,
+  };
+}
+
+function makeAutomatedDecision(overrides: Partial<AutomatedDecision> = {}): AutomatedDecision {
+  return {
+    id: "decision_001",
+    decision_type: "assessment_score",
+    created_at: "2026-04-01T00:00:00Z",
+    human_reviewable: true,
+    ...overrides,
+  };
+}
+
+function makeHumanReview(overrides: Partial<HumanReviewRequest> = {}): HumanReviewRequest {
+  return {
+    id: "hr_001",
+    user_id: "user_123",
+    automated_decision_id: "decision_001",
+    source_product: "volaura",
+    request_reason: "Needs formal review due to inconsistent scoring.",
+    requested_at: "2026-04-01T00:00:00Z",
+    sla_deadline: "2026-04-08T00:00:00Z",
+    status: "pending",
+    resolved_at: null,
+    resolution_notes: null,
+    reviewer_user_id: null,
     ...overrides,
   };
 }
@@ -427,5 +457,68 @@ describe("useTransitionGrievance", () => {
     });
 
     expect(qc.getQueryState(["grievances", "own"])?.isInvalidated).toBe(true);
+  });
+});
+
+describe("useAutomatedDecisions", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetToken.mockResolvedValue("test-token");
+  });
+
+  it("calls GET /api/aura/human-review/decisions with limit", async () => {
+    mockApiFetch.mockResolvedValue({ data: [makeAutomatedDecision()] });
+    const { wrapper } = makeWrapper();
+
+    const { result } = renderHook(() => useAutomatedDecisions(10), { wrapper });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(mockApiFetch).toHaveBeenCalledWith("/api/aura/human-review/decisions?limit=10", {
+      token: "test-token",
+    });
+  });
+});
+
+describe("useCreateHumanReview", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetToken.mockResolvedValue("test-token");
+  });
+
+  it("calls POST /api/aura/human-review and invalidates human-review queries", async () => {
+    mockApiFetch.mockResolvedValue(makeHumanReview());
+    const { wrapper, qc } = makeWrapper();
+    qc.setQueryData(["human-review", "own"], [makeHumanReview()]);
+
+    const { result } = renderHook(() => useCreateHumanReview(), { wrapper });
+    await act(async () => {
+      await result.current.mutateAsync({
+        automated_decision_id: "decision_001",
+        request_reason: "Please review this automated decision in detail.",
+      });
+    });
+
+    expect(mockApiFetch).toHaveBeenCalledWith(
+      "/api/aura/human-review",
+      expect.objectContaining({ method: "POST", token: "test-token" })
+    );
+    expect(qc.getQueryState(["human-review", "own"])?.isInvalidated).toBe(true);
+  });
+});
+
+describe("useMyHumanReviews", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetToken.mockResolvedValue("test-token");
+  });
+
+  it("returns own human review requests from envelope data", async () => {
+    mockApiFetch.mockResolvedValue({ data: [makeHumanReview({ id: "hr_123" })] });
+    const { wrapper } = makeWrapper();
+
+    const { result } = renderHook(() => useMyHumanReviews(), { wrapper });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(result.current.data?.[0].id).toBe("hr_123");
   });
 });

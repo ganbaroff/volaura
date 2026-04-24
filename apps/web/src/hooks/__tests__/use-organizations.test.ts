@@ -21,6 +21,11 @@ vi.mock("@/lib/api/client", () => ({
       this.name = "ApiError";
     }
   },
+  toApiError: (
+    error: { code?: string; message?: string } | undefined,
+    fallback?: { message?: string }
+  ) =>
+    new Error(error?.message ?? fallback?.message ?? "Unknown error"),
 }));
 
 vi.mock("../queries/use-auth-token", () => ({
@@ -222,14 +227,17 @@ describe("useOrganizations", () => {
   });
 
   it("throws when SDK returns error", async () => {
-    mockListOrganizations.mockResolvedValue({ data: null, error: { message: "Server error" } });
+    mockListOrganizations.mockResolvedValue({
+      data: null,
+      error: { code: "ORG_LIST_FAILED", message: "Server error" },
+    });
     const { wrapper } = makeWrapper();
 
     const { result } = renderHook(() => useOrganizations(), { wrapper });
 
     await waitFor(() => expect(result.current.isError).toBe(true), ERROR_TIMEOUT);
 
-    expect(result.current.error?.message).toBe("Failed to fetch organizations");
+    expect(result.current.error?.message).toBe("Server error");
   });
 
   it("uses params in query key", async () => {
@@ -283,7 +291,10 @@ describe("useCreateOrganization", () => {
   });
 
   it("surfaces error when SDK returns error", async () => {
-    mockCreateOrganization.mockResolvedValue({ data: null, error: { message: "Conflict" } });
+    mockCreateOrganization.mockResolvedValue({
+      data: null,
+      error: { code: "SLUG_TAKEN", message: "Conflict" },
+    });
     const { wrapper } = makeWrapper();
 
     const { result } = renderHook(() => useCreateOrganization(), { wrapper });
@@ -294,7 +305,7 @@ describe("useCreateOrganization", () => {
 
     await waitFor(() => expect(result.current.isError).toBe(true), ERROR_TIMEOUT);
 
-    expect(result.current.error?.message).toBe("Failed to create organization");
+    expect(result.current.error?.message).toBe("Conflict");
   });
 });
 

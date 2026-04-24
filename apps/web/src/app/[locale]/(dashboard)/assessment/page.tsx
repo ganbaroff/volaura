@@ -18,6 +18,7 @@ import { SafetyBlock } from "@/components/assessment/safety-block";
 import { TopBar } from "@/components/layout/top-bar";
 import { CommunitySignalInline } from "@/components/community/community-signal-inline";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
+import { buildLoginNextPath } from "../auth-recovery";
 
 // Static competency metadata — labels fetched from i18n, weights from CLAUDE.md
 const COMPETENCIES = [
@@ -51,6 +52,7 @@ function AssessmentContent() {
   const [consentGiven, setConsentGiven] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const reauthPath = buildLoginNextPath(locale, `/${locale}/assessment`);
 
   useEffect(() => {
     isMounted.current = true;
@@ -105,13 +107,12 @@ function AssessmentContent() {
 
     try {
       const competencyList = Array.from(selected);
-      setCompetencies(competencyList);
 
       const supabase = createClient();
       const { data: { session } } = await supabase.auth.getSession();
 
       if (!session) {
-        router.push(`/${locale}/login`);
+        router.push(reauthPath);
         return;
       }
 
@@ -121,7 +122,13 @@ function AssessmentContent() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ competency_slug: competencyList[0], energy_level: energyLevel, automated_decision_consent: consentGiven }),
+        body: JSON.stringify({
+          competency_slug: competencyList[0],
+          energy_level: energyLevel,
+          automated_decision_consent: consentGiven,
+          assessment_plan_competencies: competencyList,
+          assessment_plan_current_index: 0,
+        }),
       });
 
       if (!res.ok) {
@@ -153,6 +160,7 @@ function AssessmentContent() {
         session_id: string;
         next_question: import("@/stores/assessment-store").Question | null;
       };
+      setCompetencies(competencyList);
       setSession(data.session_id);
       if (data.next_question) {
         setQuestion(data.next_question);

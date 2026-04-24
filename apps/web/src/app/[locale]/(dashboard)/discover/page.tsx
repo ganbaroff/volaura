@@ -5,7 +5,7 @@
 // Not addressed in 2026-04-15 T1 surgical pass.
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,6 +17,7 @@ import type { ProfessionalSearchResultItem } from "@/hooks/queries/use-organizat
 import { cn } from "@/lib/utils/cn";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
+import { getDiscoverBrowseErrorState, getDiscoverSearchErrorState } from "./error-state";
 
 // ── Animations ─────────────────────────────────────────────────────────────────
 
@@ -197,8 +198,6 @@ export default function DiscoverPage() {
   const { t } = useTranslation();
   const { locale } = useParams<{ locale: string }>();
   const router = useRouter();
-  const isMounted = useRef(true);
-  useEffect(() => () => { isMounted.current = false; }, []);
 
   const { energy } = useEnergyMode();
   const isLowEnergy = energy === "low";
@@ -208,7 +207,13 @@ export default function DiscoverPage() {
 
   // Browse state
   const [browseSearch, setBrowseSearch] = useState("");
-  const { data: professionals, isLoading: browseLoading, isError: browseError } = useDiscoverableProfessionals({ limit: 50 });
+  const {
+    data: professionals,
+    isLoading: browseLoading,
+    isError: browseError,
+    error: browseFailure,
+    refetch: refetchBrowse,
+  } = useDiscoverableProfessionals({ limit: 50 });
 
   const filtered = (professionals ?? []).filter((v) => {
     if (!browseSearch) return true;
@@ -225,8 +230,11 @@ export default function DiscoverPage() {
   const [minAura, setMinAura] = useState(0);
   const [badgeTier, setBadgeTier] = useState<BadgeTierFilter>(null);
   const searchMutation = useProfessionalSearch();
+  const browseErrorState = browseFailure ? getDiscoverBrowseErrorState(browseFailure) : null;
+  const searchErrorState = searchMutation.error ? getDiscoverSearchErrorState(searchMutation.error) : null;
 
   const canSearch = query.trim().length >= 2;
+  const loginPath = `/${locale}/login?next=${encodeURIComponent(`/${locale}/discover`)}`;
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -244,6 +252,15 @@ export default function DiscoverPage() {
     setMinAura(0);
     setBadgeTier(null);
     searchMutation.reset();
+  }
+
+  function handleSearchRetry() {
+    if (!canSearch) return;
+    searchMutation.mutate({
+      query: query.trim(),
+      min_aura: minAura,
+      badge_tier: badgeTier,
+    });
   }
 
   return (
@@ -351,11 +368,27 @@ export default function DiscoverPage() {
               {browseError && (
                 <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-6 text-center space-y-2">
                   <p className="text-sm font-medium text-on-surface">
-                    {t("discover.accessError", { defaultValue: "Talent discovery requires an organization account." })}
+                    {browseErrorState?.title ?? "Could not load professionals"}
                   </p>
                   <p className="text-xs text-on-surface-variant">
-                    {t("discover.accessErrorDesc", { defaultValue: "Make sure your account is set up as an organization." })}
+                    {browseErrorState?.description ?? "Please try again."}
                   </p>
+                  {browseErrorState?.action === "login" && (
+                    <button
+                      onClick={() => router.replace(loginPath)}
+                      className="mx-auto mt-2 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
+                    >
+                      {browseErrorState.actionLabel ?? "Sign in again"}
+                    </button>
+                  )}
+                  {browseErrorState?.action === "retry" && (
+                    <button
+                      onClick={() => void refetchBrowse()}
+                      className="mx-auto mt-2 rounded-xl border border-border bg-surface-container px-4 py-2 text-xs font-semibold text-on-surface hover:bg-surface-container-high transition-colors"
+                    >
+                      {t("common.retry", { defaultValue: browseErrorState.actionLabel ?? "Retry" })}
+                    </button>
+                  )}
                 </div>
               )}
 
@@ -488,9 +521,29 @@ export default function DiscoverPage() {
               {/* Results */}
               {searchMutation.isError && (
                 <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-4 text-center">
-                  <p className="text-sm text-on-surface">
-                    {t("discover.searchError", { defaultValue: "Search failed. Please try again." })}
+                  <p className="text-sm font-medium text-on-surface">
+                    {searchErrorState?.title ?? "Search failed"}
                   </p>
+                  <p className="mt-1 text-xs text-on-surface-variant">
+                    {searchErrorState?.description ?? "Please try again."}
+                  </p>
+                  {searchErrorState?.action === "login" && (
+                    <button
+                      onClick={() => router.replace(loginPath)}
+                      className="mx-auto mt-3 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
+                    >
+                      {searchErrorState.actionLabel ?? "Sign in again"}
+                    </button>
+                  )}
+                  {searchErrorState?.action === "retry" && (
+                    <button
+                      onClick={handleSearchRetry}
+                      disabled={!canSearch || searchMutation.isPending}
+                      className="mx-auto mt-3 rounded-xl border border-border bg-surface-container px-4 py-2 text-xs font-semibold text-on-surface hover:bg-surface-container-high disabled:opacity-50 transition-colors"
+                    >
+                      {t("common.retry", { defaultValue: searchErrorState.actionLabel ?? "Retry" })}
+                    </button>
+                  )}
                 </div>
               )}
 

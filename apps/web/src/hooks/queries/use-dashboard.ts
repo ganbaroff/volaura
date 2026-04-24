@@ -5,7 +5,7 @@ import {
   getMyActivityApiActivityMeGet,
   getMyStatsApiActivityStatsMeGet,
 } from "@/lib/api/generated";
-import { apiFetch, ApiError } from "@/lib/api/client";
+import { apiFetch, ApiError, toApiError } from "@/lib/api/client";
 import { useAuthToken } from "./use-auth-token";
 import type { Badge, ApiActivityItem, DashboardStats } from "@/lib/api/types";
 
@@ -30,13 +30,13 @@ export function useBadges() {
  * Backend: GET /api/activity/me
  */
 export function useActivity(limit = 20) {
-  return useQuery<ApiActivityItem[]>({
+  return useQuery<ApiActivityItem[], ApiError>({
     queryKey: ["activity", limit],
     queryFn: async () => {
       const { data, error } = await getMyActivityApiActivityMeGet({
         query: { limit },
       });
-      if (error) throw new Error("Failed to fetch activity");
+      if (error) throw toApiError(error, { message: "Failed to fetch activity" });
       return (data ?? []) as ApiActivityItem[];
     },
     staleTime: 2 * 60 * 1000,
@@ -49,11 +49,12 @@ export function useActivity(limit = 20) {
  * Backend: GET /api/activity/stats/me
  */
 export function useDashboardStats() {
-  return useQuery<DashboardStats>({
+  return useQuery<DashboardStats, ApiError>({
     queryKey: ["dashboard", "stats"],
     queryFn: async () => {
       const { data, error } = await getMyStatsApiActivityStatsMeGet();
-      if (error || !data) throw new Error("Failed to fetch dashboard stats");
+      if (error) throw toApiError(error, { message: "Failed to fetch dashboard stats" });
+      if (!data) throw new ApiError(500, "EMPTY_RESPONSE", "Failed to fetch dashboard stats");
       return data as DashboardStats;
     },
     staleTime: 5 * 60 * 1000,

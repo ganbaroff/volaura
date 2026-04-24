@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import { Building2, Calendar, Users, Plus, ExternalLink, CheckCircle2, Loader2, Globe, UserCheck, Upload, Search, ArrowRight, RefreshCw, LogIn } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMyOrganization, useCreateOrganization, useCollectiveAura } from "@/hooks/queries/use-organizations";
-import { useMyEvents } from "@/hooks/queries/use-events";
+import { useMyOwnedEvents } from "@/hooks/queries/use-events";
 import { ApiError } from "@/lib/api/client";
 import { cn } from "@/lib/utils/cn";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
@@ -105,7 +105,7 @@ export default function OrganizationsPage() {
   const [showCreateOrg, setShowCreateOrg] = useState(false);
 
   const { data: org, isLoading: orgLoading, error: orgError } = useMyOrganization();
-  const { data: events, isLoading: eventsLoading } = useMyEvents();
+  const { data: events, isLoading: eventsLoading } = useMyOwnedEvents();
   const { data: collective } = useCollectiveAura(org?.id ?? undefined);
 
   // On return from a 401-triggered login redirect, invalidate the org query

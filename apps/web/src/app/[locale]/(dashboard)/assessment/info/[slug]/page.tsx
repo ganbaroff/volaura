@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils/cn";
 import { useAssessmentInfo } from "@/hooks/queries/use-assessment";
 import { ApiError } from "@/lib/api/client";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
+import { buildLoginNextPath } from "../../auth-recovery";
 
 const SUPPORTED_LOCALES = ["az", "en"] as const;
 type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
@@ -48,6 +49,7 @@ export default function AssessmentInfoPage() {
   const { energy } = useEnergyMode();
   const isLow = energy === "low";
   const locale: SupportedLocale = isSupportedLocale(rawLocale) ? rawLocale : "en";
+  const reauthPath = buildLoginNextPath(locale, `/${locale}/assessment/info/${slug}`);
 
   useEffect(() => {
     isMounted.current = true;
@@ -60,11 +62,10 @@ export default function AssessmentInfoPage() {
   useEffect(() => {
     if (!isMounted.current) return;
     if (error instanceof ApiError && error.status === 401) {
-      const returnTo = encodeURIComponent(`/${locale}/assessment/info/${slug}`);
-      router.replace(`/${locale}/login?returnTo=${returnTo}`);
+      router.replace(reauthPath);
     }
     // 404 — invalid slug — stay on page and show error state (handled in render)
-  }, [error, locale, slug, router]);
+  }, [error, reauthPath, router]);
 
   // ── Loading ──────────────────────────────────────────────────────────────
 

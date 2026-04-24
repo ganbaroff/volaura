@@ -12,6 +12,7 @@ import { apiFetch, ApiError, API_BASE } from "@/lib/api/client";
 import { useAuthToken } from "@/hooks/queries/use-auth-token";
 import { useMyOrganization } from "@/hooks/queries/use-organizations";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
+import { buildLoginNextPath } from "../../auth-recovery";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -47,8 +48,9 @@ export default function BulkInvitePage() {
   const router = useRouter();
   const getToken = useAuthToken();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const reauthPath = buildLoginNextPath(locale, `/${locale}/my-organization/invite`);
 
-  const { data: org, isLoading: orgLoading } = useMyOrganization();
+  const { data: org, isLoading: orgLoading, error: orgError, refetch: refetchOrg } = useMyOrganization();
   const { energy } = useEnergyMode();
   const isLow = energy === "low";
   const [file, setFile] = useState<File | null>(null);
@@ -121,6 +123,38 @@ export default function BulkInvitePage() {
         </div>
         <Skeleton className="h-20 w-full rounded-xl" />
         <Skeleton className="h-32 w-full rounded-xl" />
+      </div>
+    );
+  }
+
+  if (orgError instanceof ApiError && orgError.status === 401) {
+    return (
+      <div className="mx-auto max-w-lg px-4 py-16 text-center space-y-4">
+        <p className="text-sm font-medium text-foreground">
+          {t("orgs.authExpiredTitle", { defaultValue: "Session expired" })}
+        </p>
+        <p className="text-sm text-muted-foreground">
+          {t("orgs.authExpiredDesc", { defaultValue: "Please sign in again to manage organization invites." })}
+        </p>
+        <Button onClick={() => router.replace(reauthPath)}>
+          {t("orgs.signInAgain", { defaultValue: "Sign in again" })}
+        </Button>
+      </div>
+    );
+  }
+
+  if (orgError) {
+    return (
+      <div className="mx-auto max-w-lg px-4 py-16 text-center space-y-4">
+        <p className="text-sm font-medium text-foreground">
+          {t("orgs.loadErrorTitle", { defaultValue: "Something went wrong" })}
+        </p>
+        <p className="text-sm text-muted-foreground">
+          {t("orgs.loadErrorDesc", { defaultValue: "Could not load your organization. Please try again." })}
+        </p>
+        <Button variant="outline" onClick={() => void refetchOrg()}>
+          {t("common.retry", { defaultValue: "Retry" })}
+        </Button>
       </div>
     );
   }

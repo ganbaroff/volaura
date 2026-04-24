@@ -257,7 +257,7 @@ describe("useActivity", () => {
   it("throws when SDK returns error", async () => {
     mockGetActivity.mockResolvedValue({
       data: null,
-      error: { code: "INTERNAL", message: "Activity fetch failed" },
+      error: { status: 401, detail: { code: "UNAUTHORIZED", message: "Activity fetch failed" } },
     });
     const { wrapper } = makeWrapper();
 
@@ -265,7 +265,9 @@ describe("useActivity", () => {
 
     await waitFor(() => expect(result.current.isError).toBe(true), ERROR_TIMEOUT);
 
-    expect(result.current.error?.message).toBe("Failed to fetch activity");
+    expect(result.current.error?.message).toBe("Activity fetch failed");
+    expect(result.current.error?.status).toBe(401);
+    expect(result.current.error?.code).toBe("UNAUTHORIZED");
   });
 
   // ── query config ──────────────────────────────────────────────────────────
@@ -335,7 +337,7 @@ describe("useDashboardStats", () => {
   it("throws when SDK returns error", async () => {
     mockGetStats.mockResolvedValue({
       data: null,
-      error: { code: "INTERNAL", message: "Stats unavailable" },
+      error: { status: 401, detail: { code: "UNAUTHORIZED", message: "Stats unavailable" } },
     });
     const { wrapper } = makeWrapper();
 
@@ -343,7 +345,9 @@ describe("useDashboardStats", () => {
 
     await waitFor(() => expect(result.current.isError).toBe(true), ERROR_TIMEOUT);
 
-    expect(result.current.error?.message).toBe("Failed to fetch dashboard stats");
+    expect(result.current.error?.message).toBe("Stats unavailable");
+    expect(result.current.error?.status).toBe(401);
+    expect(result.current.error?.code).toBe("UNAUTHORIZED");
   });
 
   // ── query config ──────────────────────────────────────────────────────────

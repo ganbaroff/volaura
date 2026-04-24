@@ -6,7 +6,13 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { TopBar } from "@/components/layout/top-bar";
 import { Button } from "@/components/ui/button";
-import { useFileGrievance, useOwnGrievances } from "@/hooks/queries/use-grievance";
+import {
+  useAutomatedDecisions,
+  useCreateHumanReview,
+  useFileGrievance,
+  useMyHumanReviews,
+  useOwnGrievances,
+} from "@/hooks/queries/use-grievance";
 import { CheckCircle2, ArrowLeft } from "lucide-react";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
 
@@ -28,6 +34,14 @@ const STATUS_COLORS: Record<string, string> = {
   rejected: "bg-muted text-muted-foreground",
 };
 
+const HUMAN_REVIEW_STATUS_COLORS: Record<string, string> = {
+  pending: "bg-amber-500/15 text-amber-700 dark:text-amber-300",
+  in_review: "bg-primary/15 text-primary",
+  resolved_uphold: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300",
+  resolved_overturn: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300",
+  escalated_to_authority: "bg-muted text-muted-foreground",
+};
+
 export default function ContestScorePage() {
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
@@ -40,9 +54,15 @@ export default function ContestScorePage() {
   const [description, setDescription] = useState("");
   const [competency, setCompetency] = useState<string>("");
   const [submitted, setSubmitted] = useState(false);
+  const [decisionId, setDecisionId] = useState("");
+  const [reviewReason, setReviewReason] = useState("");
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
   const { mutate: fileGrievance, isPending, error } = useFileGrievance();
   const { data: ownGrievances } = useOwnGrievances();
+  const { mutate: createHumanReview, isPending: isReviewPending, error: reviewError } = useCreateHumanReview();
+  const { data: decisions } = useAutomatedDecisions();
+  const { data: myHumanReviews } = useMyHumanReviews();
 
   const canSubmit =
     subject.trim().length >= 3 &&
@@ -50,6 +70,7 @@ export default function ContestScorePage() {
     description.trim().length >= 10 &&
     description.trim().length <= 5000 &&
     !isPending;
+  const canSubmitReview = decisionId.trim().length > 0 && reviewReason.trim().length >= 10 && !isReviewPending;
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,6 +87,24 @@ export default function ContestScorePage() {
           setSubject("");
           setDescription("");
           setCompetency("");
+        },
+      }
+    );
+  };
+
+  const onSubmitReview = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!canSubmitReview) return;
+    createHumanReview(
+      {
+        automated_decision_id: decisionId,
+        request_reason: reviewReason.trim(),
+        source_product: "volaura",
+      },
+      {
+        onSuccess: () => {
+          setReviewSubmitted(true);
+          setReviewReason("");
         },
       }
     );
@@ -236,6 +275,96 @@ export default function ContestScorePage() {
             </Button>
           </div>
         </form>
+
+        <section className="rounded-2xl border border-border bg-card p-4 space-y-4">
+          <h2 className="text-base font-semibold text-foreground">
+            {t("contest.humanReviewTitle", { defaultValue: "Formal human review (Art.22)" })}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {t("contest.humanReviewDesc", {
+              defaultValue: "Select an automated decision and request a formal human review.",
+            })}
+          </p>
+          <form onSubmit={onSubmitReview} className="space-y-3">
+            <div className="space-y-1.5">
+              <label htmlFor="decisionId" className="block text-sm font-semibold text-foreground">
+                {t("contest.decisionLabel", { defaultValue: "Automated decision" })}
+              </label>
+              <select
+                id="decisionId"
+                value={decisionId}
+                onChange={(e) => setDecisionId(e.target.value)}
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <option value="">{t("contest.decisionNone", { defaultValue: "— select decision —" })}</option>
+                {(decisions ?? []).map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.decision_type} · {new Date(d.created_at).toLocaleDateString()}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1.5">
+              <label htmlFor="reviewReason" className="block text-sm font-semibold text-foreground">
+                {t("contest.reviewReasonLabel", { defaultValue: "Reason for formal review" })}
+              </label>
+              <textarea
+                id="reviewReason"
+                value={reviewReason}
+                onChange={(e) => setReviewReason(e.target.value)}
+                rows={4}
+                minLength={10}
+                maxLength={5000}
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              />
+            </div>
+            {reviewError && (
+              <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm text-foreground">
+                {t("contest.errorGeneric", {
+                  defaultValue: "Could not send this request. Please try again in a moment.",
+                })}
+              </div>
+            )}
+            {reviewSubmitted && (
+              <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm text-foreground">
+                {t("contest.reviewSent", { defaultValue: "Formal human review request sent." })}
+              </div>
+            )}
+            <Button type="submit" disabled={!canSubmitReview}>
+              {isReviewPending
+                ? t("contest.submitting", { defaultValue: "Sending…" })
+                : t("contest.reviewSubmit", { defaultValue: "Request formal review" })}
+            </Button>
+          </form>
+
+          {!isLow && myHumanReviews && myHumanReviews.length > 0 && (
+            <div className="space-y-2">
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                {t("contest.humanReviewHistory", { defaultValue: "Formal review requests" })}
+              </h3>
+              <ul className="space-y-2">
+                {myHumanReviews.map((r) => (
+                  <li key={r.id} className="rounded-lg border border-border bg-card p-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-xs text-muted-foreground truncate">{r.automated_decision_id}</p>
+                      <span
+                        className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${
+                          HUMAN_REVIEW_STATUS_COLORS[r.status] ?? HUMAN_REVIEW_STATUS_COLORS.pending
+                        }`}
+                      >
+                        {t(`contest.status.${r.status}`, { defaultValue: r.status })}
+                      </span>
+                    </div>
+                    <p className="text-sm text-foreground mt-2 whitespace-pre-line">{r.request_reason}</p>
+                    {r.resolution_notes && (
+                      <p className="text-xs text-muted-foreground mt-2 whitespace-pre-line">{r.resolution_notes}</p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </section>
       </div>
     </>
   );

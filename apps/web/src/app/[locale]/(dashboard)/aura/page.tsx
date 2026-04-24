@@ -25,6 +25,7 @@ import { EvaluationLog } from "@/components/aura/evaluation-log";
 import { triggerHaptic } from "@/lib/haptics";
 import { useTrackEvent } from "@/hooks/use-analytics";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
+import { buildLoginNextPath } from "../auth-recovery";
 
 // ── Animated counter hook ────────────────────────────────────────────────
 
@@ -189,6 +190,7 @@ export default function AuraPage() {
   const { energy } = useEnergyMode();
   const isLowEnergy = energy === "low";
   const isReducedEnergy = energy === "low" || energy === "mid";
+  const reauthPath = buildLoginNextPath(locale, `/${locale}/aura`);
 
   // Reveal sequence — fires exactly once per mount
   const revealFiredRef = useRef(false);
@@ -304,9 +306,9 @@ export default function AuraPage() {
       auraError.status === 401 &&
       isMounted.current
     ) {
-      router.replace(`/${locale}/login`);
+      router.replace(reauthPath);
     }
-  }, [auraError, locale, router]);
+  }, [auraError, reauthPath, router]);
 
   // Close share prompt on Escape key (accessibility: keyboard dismiss)
   useEffect(() => {

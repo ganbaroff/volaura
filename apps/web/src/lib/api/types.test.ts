@@ -83,6 +83,7 @@ describe("toProfile", () => {
     location: "Baku",
     languages: ["az", "en"],
     is_public: true,
+    visible_to_orgs: true,
     created_at: "2026-01-01T00:00:00Z",
     updated_at: "2026-04-18T00:00:00Z",
     registration_number: 42,
@@ -99,6 +100,7 @@ describe("toProfile", () => {
     expect(result.location).toBe("Baku");
     expect(result.languages).toEqual(["az", "en"]);
     expect(result.is_public).toBe(true);
+    expect(result.visible_to_orgs).toBe(true);
     expect(result.registration_number).toBe(42);
     expect(result.registration_tier).toBe("gold");
   });
@@ -131,6 +133,11 @@ describe("toProfile", () => {
   it("defaults is_public to false when undefined", () => {
     const result = toProfile({ ...base, is_public: undefined } as unknown as ProfileResponse);
     expect(result.is_public).toBe(false);
+  });
+
+  it("defaults visible_to_orgs to false when undefined", () => {
+    const result = toProfile({ ...base, visible_to_orgs: undefined } as unknown as ProfileResponse);
+    expect(result.visible_to_orgs).toBe(false);
   });
 
   it("defaults registration_number to null when undefined", () => {

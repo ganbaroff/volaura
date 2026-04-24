@@ -60,6 +60,23 @@ describe("assessment-store", () => {
     expect(useAssessmentStore.getState().currentCompetencyIndex).toBe(0);
   });
 
+  it("restoreProgress rehydrates the full plan, index, answer count, session, and question", () => {
+    useAssessmentStore.getState().restoreProgress({
+      sessionId: "sess-restore",
+      question: sampleQuestion,
+      competencies: ["communication", "leadership", "tech_literacy"],
+      currentCompetencyIndex: 1,
+      answeredCount: 4,
+    });
+
+    const state = useAssessmentStore.getState();
+    expect(state.sessionId).toBe("sess-restore");
+    expect(state.currentQuestion).toEqual(sampleQuestion);
+    expect(state.selectedCompetencies).toEqual(["communication", "leadership", "tech_literacy"]);
+    expect(state.currentCompetencyIndex).toBe(1);
+    expect(state.answeredCount).toBe(4);
+  });
+
   it("incrementAnswered bumps count by 1", () => {
     useAssessmentStore.getState().incrementAnswered();
     useAssessmentStore.getState().incrementAnswered();

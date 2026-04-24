@@ -17,6 +17,7 @@ import { createClient } from "@/lib/supabase/client";
 import { API_BASE } from "@/lib/api/client";
 import { useTrackEvent } from "@/hooks/use-analytics";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
+import { buildLoginNextPath } from "../../auth-recovery";
 
 type ScreenState = "question" | "transition" | "error";
 
@@ -40,7 +41,7 @@ export default function QuestionPage() {
     _hydrated,
     setQuestion,
     setSession,
-    setCompetencies,
+    restoreProgress,
     setSubmitting,
     incrementAnswered,
     nextCompetency,
@@ -54,6 +55,7 @@ export default function QuestionPage() {
   const track = useTrackEvent();
   const { energy } = useEnergyMode();
   const isLow = energy === "low";
+  const reauthPath = buildLoginNextPath(currentLocale, `/${currentLocale}/assessment/${sessionId}`);
 
   const [answer, setAnswer] = useState("");
   const [screen, setScreen] = useState<ScreenState>("question");
@@ -120,27 +122,61 @@ export default function QuestionPage() {
     const {
       data: { session },
     } = await supabase.auth.getSession();
-    if (!session) {
-      // Don't silently redirect — inform user their session expired
-      if (isMounted.current) {
-        setLocalError(t("assessment.sessionExpired", { defaultValue: "Your session has ended. Log in again to continue your progress." }));
-      }
-      setTimeout(() => router.push(`/${currentLocale}/login`), 3000);
+      if (!session) {
+        // Don't silently redirect — inform user their session expired
+        if (isMounted.current) {
+          setLocalError(t("assessment.sessionExpired", { defaultValue: "Your session has ended. Log in again to continue your progress." }));
+        }
+      setTimeout(() => router.push(reauthPath), 3000);
       return null;
     }
     return `Bearer ${session.access_token}`;
   }, [router, currentLocale, t]);
+
+  const finalizeSession = useCallback(
+    async (sessionIdToComplete: string) => {
+      const auth = await getAuthHeader();
+      if (!auth) {
+        throw new Error("missing_auth");
+      }
+
+      const res = await fetch(`${API_BASE}/assessment/complete/${sessionIdToComplete}`, {
+        method: "POST",
+        headers: {
+          Authorization: auth,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("complete_failed");
+      }
+    },
+    [getAuthHeader]
+  );
 
   /**
    * Process the SessionState from an answer or start response.
    * Determines whether to show next question, transition, or complete.
    */
   const handleSessionUpdate = useCallback(
-    (session: SessionState) => {
+    async (session: SessionState) => {
       if (!isMounted.current) return;
 
       if (session.is_complete || !session.next_question) {
-        // This competency is done
+        try {
+          await finalizeSession(session.session_id);
+        } catch {
+          if (!isMounted.current) return;
+          setLocalError(
+            t("assessment.errorCompleteFailed", {
+              defaultValue: "We couldn't finalize this competency. Please try again.",
+            })
+          );
+          setScreen("error");
+          return;
+        }
+
+        setQuestion(null);
         if (isLastCompetency) {
           router.push(`/${currentLocale}/assessment/${session.session_id}/complete`);
         } else {
@@ -155,7 +191,7 @@ export default function QuestionPage() {
       setScreen("question");
       questionStartTime.current = Date.now();
     },
-    [isLastCompetency, currentLocale, router, setQuestion]
+    [finalizeSession, isLastCompetency, currentLocale, router, setQuestion, t]
   );
 
   /**
@@ -222,7 +258,7 @@ export default function QuestionPage() {
       }, sessionId);
 
       incrementAnswered();
-      handleSessionUpdate(feedback.session);
+      await handleSessionUpdate(feedback.session);
     } catch {
       if (isMounted.current) {
         setLocalError(t("assessment.errorSubmitFailed"));
@@ -279,7 +315,7 @@ export default function QuestionPage() {
         const feedback = (await res.json()) as AnswerFeedback;
         if (isMounted.current) {
           incrementAnswered();
-          handleSessionUpdate(feedback.session);
+          await handleSessionUpdate(feedback.session);
         }
       }
     } catch {
@@ -310,7 +346,13 @@ export default function QuestionPage() {
             "Content-Type": "application/json",
             Authorization: auth,
           },
-          body: JSON.stringify({ competency_slug: nextCompetencyName }),
+          body: JSON.stringify({
+            competency_slug: nextCompetencyName,
+            energy_level: energy,
+            automated_decision_consent: true,
+            assessment_plan_competencies: selectedCompetencies,
+            assessment_plan_current_index: currentCompetencyIndex + 1,
+          }),
         }
       );
 
@@ -334,7 +376,20 @@ export default function QuestionPage() {
     } finally {
       if (isMounted.current) setSubmitting(false);
     }
-  }, [nextCompetency, nextCompetencyName, getAuthHeader, setSubmitting, setSession, setQuestion, router, currentLocale, t]);
+  }, [
+    nextCompetency,
+    nextCompetencyName,
+    getAuthHeader,
+    setSubmitting,
+    setSession,
+    setQuestion,
+    router,
+    currentLocale,
+    t,
+    energy,
+    selectedCompetencies,
+    currentCompetencyIndex,
+  ]);
 
   const handleLeave = () => {
     setShowLeaveConfirm(true);
@@ -366,11 +421,11 @@ export default function QuestionPage() {
       const { data: { session: authSession } } = await supabase.auth.getSession();
       const token = authSession?.access_token;
       if (!token) {
-        router.replace(`/${currentLocale}/login`);
+        router.replace(reauthPath);
         return;
       }
 
-      const res = await fetch(`${API_BASE}/api/assessment/session/${sessionId}`, {
+      const res = await fetch(`${API_BASE}/assessment/session/${sessionId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.status === 404) {
@@ -388,13 +443,36 @@ export default function QuestionPage() {
         competency_slug: string;
         status: string;
         questions_answered: number;
+        next_question: Question | null;
+        assessment_plan_competencies: string[];
+        assessment_plan_current_index: number;
         is_resumable: boolean;
       };
 
+      const competencies =
+        data.assessment_plan_competencies?.length > 0
+          ? data.assessment_plan_competencies
+          : [data.competency_slug];
+      const currentIndex =
+        data.assessment_plan_current_index >= 0 &&
+        data.assessment_plan_current_index < competencies.length
+          ? data.assessment_plan_current_index
+          : 0;
+
       if (data.status === "completed") {
-        setResumeState("completed");
-        // Push user to results — the existing /complete page handles display
-        router.replace(`/${currentLocale}/assessment/${sessionId}/complete`);
+        restoreProgress({
+          sessionId: data.session_id,
+          question: null,
+          competencies,
+          currentCompetencyIndex: currentIndex,
+          answeredCount: data.questions_answered,
+        });
+        if (currentIndex < competencies.length - 1) {
+          setScreen("transition");
+        } else {
+          setResumeState("completed");
+          router.replace(`/${currentLocale}/assessment/${sessionId}/complete`);
+        }
         return;
       }
       if (!data.is_resumable) {
@@ -402,21 +480,29 @@ export default function QuestionPage() {
         return;
       }
 
-      // Rehydrate the store with the competency this session belongs to so the
-      // existing question-flow can resume. The "stuck-spinner" recovery timer
-      // (useEffect on lines 75-86) will prompt for next-question fetch if
-      // currentQuestion stays null after 6s.
-      setCompetencies([data.competency_slug]);
-      setSession(data.session_id);
-      // answeredCount is derived from CATState.items length on the backend;
-      // the existing store reducer has no "setAnsweredCount", so we let
-      // incrementAnswered catch up naturally as answers post. Non-blocking:
-      // the progress bar may briefly show 0/N before /answer lands.
+      if (!data.next_question) {
+        setResumeError(
+          t("assessment.sessionRecoveryError", {
+            defaultValue: "We couldn't restore the next question for this session. Start a fresh assessment.",
+          })
+        );
+        setResumeState("error");
+        return;
+      }
+
+      restoreProgress({
+        sessionId: data.session_id,
+        question: data.next_question,
+        competencies,
+        currentCompetencyIndex: currentIndex,
+        answeredCount: data.questions_answered,
+      });
+      setScreen("question");
     } catch (err) {
       setResumeError((err as Error).message || "Unknown error");
       setResumeState("error");
     }
-  }, [sessionId, currentLocale, router, setCompetencies, setSession]);
+  }, [sessionId, currentLocale, reauthPath, router, restoreProgress, t]);
 
   if (storeCleared) {
     const isExpired = resumeState === "expired";

@@ -24,6 +24,7 @@ import { TribeCard } from "@/components/dashboard/tribe-card";
 import { ApiError } from "@/lib/api/client";
 import { useTrackEvent } from "@/hooks/use-analytics";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
+import { buildLoginNextPath } from "../auth-recovery";
 
 // BATCH-O A11Y #3: motion variants — reduced-motion override applied per component via useDashboardMotion hook
 const pageVariants = {
@@ -82,6 +83,7 @@ export default function DashboardPage() {
   const { energy } = useEnergyMode();
   const isLowEnergy = energy === "low";
   const isReducedEnergy = energy === "low" || energy === "mid";
+  const reauthPath = buildLoginNextPath(locale, `/${locale}/dashboard`);
 
   useEffect(() => {
     isMounted.current = true;
@@ -94,10 +96,10 @@ export default function DashboardPage() {
     const supabase = createClient();
     supabase.auth.getSession().then(({ data }) => {
       if (!data.session && isMounted.current) {
-        router.replace(`/${locale}/login`);
+        router.replace(reauthPath);
       }
     });
-  }, [locale, router]);
+  }, [reauthPath, router]);
 
   // Get user display name + account_type from Supabase
   const [displayName, setDisplayName] = useState("");
@@ -206,9 +208,9 @@ export default function DashboardPage() {
   // Handle 401 — redirect to login
   useEffect(() => {
     if (auraError instanceof ApiError && auraError.status === 401 && isMounted.current) {
-      router.replace(`/${locale}/login`);
+      router.replace(reauthPath);
     }
-  }, [auraError, locale, router]);
+  }, [auraError, reauthPath, router]);
 
   return (
     <>

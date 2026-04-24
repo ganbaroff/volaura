@@ -7,7 +7,7 @@ import {
   createOrganizationApiOrganizationsPost,
   updateMyOrganizationApiOrganizationsMePut,
 } from "@/lib/api/generated";
-import { apiFetch, ApiError } from "@/lib/api/client";
+import { apiFetch, ApiError, toApiError } from "@/lib/api/client";
 import { useAuthToken } from "./use-auth-token";
 import type { OrganizationResponse, OrganizationCreate, OrgDashboardStats, OrgProfessionalRow } from "@/lib/api/types";
 
@@ -51,11 +51,11 @@ export function useMyOrganization() {
 
 /** Public org list — no auth required */
 export function useOrganizations(params?: { limit?: number; offset?: number }) {
-  return useQuery<OrganizationResponse[]>({
+  return useQuery<OrganizationResponse[], ApiError>({
     queryKey: ["organizations", "list", params],
     queryFn: async () => {
       const { data, error } = await listOrganizationsApiOrganizationsGet();
-      if (error) throw new Error("Failed to fetch organizations");
+      if (error) throw toApiError(error, { message: "Failed to fetch organizations" });
       return (data ?? []) as unknown as OrganizationResponse[];
     },
     staleTime: 5 * 60 * 1000,
@@ -66,10 +66,11 @@ export function useOrganizations(params?: { limit?: number; offset?: number }) {
 export function useCreateOrganization() {
   const queryClient = useQueryClient();
 
-  return useMutation<OrganizationResponse, Error, OrganizationCreate>({
+  return useMutation<OrganizationResponse, ApiError, OrganizationCreate>({
     mutationFn: async (body) => {
       const { data, error } = await createOrganizationApiOrganizationsPost({ body });
-      if (error || !data) throw new Error("Failed to create organization");
+      if (error) throw toApiError(error, { message: "Failed to create organization" });
+      if (!data) throw new ApiError(500, "EMPTY_RESPONSE", "Failed to create organization");
       return data as unknown as OrganizationResponse;
     },
     onSuccess: () => {
@@ -81,12 +82,13 @@ export function useCreateOrganization() {
 export function useUpdateOrganization() {
   const queryClient = useQueryClient();
 
-  return useMutation<OrganizationResponse, Error, Partial<OrganizationCreate>>({
+  return useMutation<OrganizationResponse, ApiError, Partial<OrganizationCreate>>({
     mutationFn: async (body) => {
       const { data, error } = await updateMyOrganizationApiOrganizationsMePut({
         body: body as OrganizationCreate,
       });
-      if (error || !data) throw new Error("Failed to update organization");
+      if (error) throw toApiError(error, { message: "Failed to update organization" });
+      if (!data) throw new ApiError(500, "EMPTY_RESPONSE", "Failed to update organization");
       return data as unknown as OrganizationResponse;
     },
     onSuccess: () => {

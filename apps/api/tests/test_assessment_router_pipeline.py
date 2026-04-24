@@ -586,7 +586,6 @@ async def test_start_no_questions_returns_422() -> None:
     admin_m.auth.admin = MagicMock()
     admin_m.auth.admin.get_user_by_id = AsyncMock(return_value=MagicMock(user=None))
 
-
     def _admin_table(name: str) -> MagicMock:
         t = MagicMock()
         t.select = MagicMock(return_value=t)
@@ -886,11 +885,12 @@ async def test_answer_mcq_scoring(submitted_answer: str, expected_score_gte: flo
             async def _questions_execute(*a, **kw):
                 questions_call_n["n"] += 1
                 if questions_call_n["n"] == 1:
-                    return MagicMock(data=question)   # .single() → bare dict for MCQ scoring
-                return MagicMock(data=[question])     # fetch_questions → list[dict]
+                    return MagicMock(data=question)  # .single() → bare dict for MCQ scoring
+                return MagicMock(data=[question])  # fetch_questions → list[dict]
 
             t.execute = AsyncMock(side_effect=_questions_execute)
         elif name == "assessment_sessions":
+
             async def _sessions_execute(*a, **kw):
                 sessions_call_n["n"] += 1
                 return MagicMock(data=[{"id": SESSION_ID}], count=1)
@@ -957,11 +957,12 @@ async def test_answer_concurrent_submit_returns_409() -> None:
         t.single = MagicMock(return_value=t)
         t.maybe_single = MagicMock(return_value=t)
         if name == "questions":
+
             async def _q_exec_concurrent(*a, **kw):
                 _q_counter_concurrent["n"] += 1
                 if _q_counter_concurrent["n"] == 1:
-                    return MagicMock(data=question)   # .single() → bare dict
-                return MagicMock(data=[question])     # fetch_questions → list
+                    return MagicMock(data=question)  # .single() → bare dict
+                return MagicMock(data=[question])  # fetch_questions → list
 
             t.execute = AsyncMock(side_effect=_q_exec_concurrent)
         elif name == "assessment_sessions":
@@ -1041,11 +1042,12 @@ async def test_answer_complete_signal_sets_is_complete_true() -> None:
         t.maybe_single = MagicMock(return_value=t)
         t.in_ = MagicMock(return_value=t)
         if name == "questions":
+
             async def _q_exec_stopped(*a, **kw):
                 _q_counter_stopped["n"] += 1
                 if _q_counter_stopped["n"] == 1:
-                    return MagicMock(data=question)   # .single() → bare dict
-                return MagicMock(data=[question])     # fetch_questions → list
+                    return MagicMock(data=question)  # .single() → bare dict
+                return MagicMock(data=[question])  # fetch_questions → list
 
             t.execute = AsyncMock(side_effect=_q_exec_stopped)
         elif name == "assessment_sessions":
@@ -1414,6 +1416,7 @@ async def test_results_uses_stored_gaming_data() -> None:
         assert body["competency_slug"] == "reliability"
         # Score should have penalty applied: theta_to_score(1.0) * 0.6
         from app.core.assessment.engine import theta_to_score
+
         expected_score = round(theta_to_score(1.0) * 0.6, 2)
         assert body["competency_score"] == pytest.approx(expected_score, rel=1e-3)
     finally:
@@ -1636,6 +1639,7 @@ async def test_answer_malformed_expires_at_is_skipped() -> None:
         t.single = MagicMock(return_value=t)
         t.maybe_single = MagicMock(return_value=t)
         if name == "questions":
+
             async def _q_exec_malformed(*a, **kw):
                 _q_counter_malformed["n"] += 1
                 if _q_counter_malformed["n"] == 1:
@@ -1669,7 +1673,9 @@ async def test_answer_malformed_expires_at_is_skipped() -> None:
                 headers={"Authorization": "Bearer fake"},
             )
         # Malformed expires_at → skip expiry check → session proceeds normally
-        assert resp.status_code == 200, f"Expected 200 (malformed expires_at skipped), got {resp.status_code}: {resp.text}"
+        assert resp.status_code == 200, (
+            f"Expected 200 (malformed expires_at skipped), got {resp.status_code}: {resp.text}"
+        )
     finally:
         app.dependency_overrides.clear()
 
@@ -1718,6 +1724,7 @@ async def test_answer_open_ended_bars_path() -> None:
         t.single = MagicMock(return_value=t)
         t.maybe_single = MagicMock(return_value=t)
         if name == "questions":
+
             async def _q_open(*a, **kw):
                 _q_counter_open["n"] += 1
                 if _q_counter_open["n"] == 1:
@@ -1745,7 +1752,10 @@ async def test_answer_open_ended_bars_path() -> None:
     app.dependency_overrides[get_supabase_user] = _user_override(mock_user)
     app.dependency_overrides[get_current_user_id] = _uid_override(USER_ID)
     try:
-        with patch("app.routers.assessment.bars.evaluate_answer", new_callable=lambda: lambda *a, **kw: _async_return(eval_stub)):
+        with patch(
+            "app.routers.assessment.bars.evaluate_answer",
+            new_callable=lambda: lambda *a, **kw: _async_return(eval_stub),
+        ):
             async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
                 resp = await ac.post(
                     "/api/assessment/answer",
@@ -1951,11 +1961,11 @@ def test_irt_b_to_label_all_tiers() -> None:
     from app.routers.assessment import _irt_b_to_label
 
     assert _irt_b_to_label(2.0) == "expert"
-    assert _irt_b_to_label(1.5) == "expert"    # exact threshold (inclusive)
+    assert _irt_b_to_label(1.5) == "expert"  # exact threshold (inclusive)
     assert _irt_b_to_label(1.0) == "hard"
-    assert _irt_b_to_label(0.5) == "hard"       # exact threshold (inclusive)
+    assert _irt_b_to_label(0.5) == "hard"  # exact threshold (inclusive)
     assert _irt_b_to_label(0.0) == "medium"
-    assert _irt_b_to_label(-0.5) == "medium"    # exact threshold (inclusive)
+    assert _irt_b_to_label(-0.5) == "medium"  # exact threshold (inclusive)
     assert _irt_b_to_label(-1.0) == "easy"
     assert _irt_b_to_label(-2.0) == "easy"
 
@@ -1990,9 +2000,7 @@ async def test_start_naive_datetime_in_cooldown() -> None:
         t.insert = MagicMock(return_value=t)
         t.update = MagicMock(return_value=t)
         if name == "competencies":
-            t.execute = AsyncMock(
-                return_value=MagicMock(data={"id": COMPETENCY_ID, "slug": "reliability"})
-            )
+            t.execute = AsyncMock(return_value=MagicMock(data={"id": COMPETENCY_ID, "slug": "reliability"}))
         elif name == "assessment_sessions":
             t.execute = AsyncMock(return_value=MagicMock(data=[], count=0))
         elif name == "policy_versions":
@@ -2090,11 +2098,13 @@ async def test_answer_future_question_delivered_at() -> None:
         t.single = MagicMock(return_value=t)
         t.maybe_single = MagicMock(return_value=t)
         if name == "questions":
+
             async def _qexec(*a, **kw):
                 _q_counter_future["n"] += 1
                 if _q_counter_future["n"] == 1:
                     return MagicMock(data=question)
                 return MagicMock(data=[question])
+
             t.execute = AsyncMock(side_effect=_qexec)
         elif name == "assessment_sessions":
             t.execute = AsyncMock(return_value=MagicMock(data=[{"id": SESSION_ID}], count=1))
@@ -2186,15 +2196,11 @@ async def test_verify_returns_badge_data() -> None:
         if name == "assessment_sessions":
             t.execute = AsyncMock(return_value=MagicMock(data=completed_session))
         elif name == "competencies":
-            t.execute = AsyncMock(
-                return_value=MagicMock(data={"slug": "communication", "name_en": "Communication"})
-            )
+            t.execute = AsyncMock(return_value=MagicMock(data={"slug": "communication", "name_en": "Communication"}))
         elif name == "aura_scores":
             t.execute = AsyncMock(return_value=MagicMock(data={"badge_tier": "gold"}))
         elif name == "profiles":
-            t.execute = AsyncMock(
-                return_value=MagicMock(data={"display_name": "Yusif G.", "username": "yusif"})
-            )
+            t.execute = AsyncMock(return_value=MagicMock(data={"display_name": "Yusif G.", "username": "yusif"}))
         else:
             t.execute = AsyncMock(return_value=MagicMock(data=None))
         return t
@@ -2251,11 +2257,13 @@ async def test_answer_no_items_left_sets_is_complete_true() -> None:
         t.maybe_single = MagicMock(return_value=t)
         t.in_ = MagicMock(return_value=t)
         if name == "questions":
+
             async def _q_exec_nil(*a, **kw):
                 _q_counter_nil["n"] += 1
                 if _q_counter_nil["n"] == 1:
-                    return MagicMock(data=question)   # single() → load current question
-                return MagicMock(data=[question])     # fallback (should not reach if patched)
+                    return MagicMock(data=question)  # single() → load current question
+                return MagicMock(data=[question])  # fallback (should not reach if patched)
+
             t.execute = AsyncMock(side_effect=_q_exec_nil)
         elif name == "assessment_sessions":
             # optimistic-lock update returns a valid row so the update passes
@@ -2331,10 +2339,7 @@ async def test_answer_daily_llm_cap_forces_degraded_scoring() -> None:
     session = _session_row(current_question_id=QUESTION_ID, answer_version=0)
 
     # Build today's sessions data: one session with 20 items that each consumed LLM
-    llm_items = [
-        {"question_id": str(uuid.uuid4()), "evaluation_log": {"evaluation_mode": "llm"}}
-        for _ in range(20)
-    ]
+    llm_items = [{"question_id": str(uuid.uuid4()), "evaluation_log": {"evaluation_mode": "llm"}} for _ in range(20)]
     today_sessions_data = [{"answers": {"items": llm_items}}]
 
     _q_counter_cap = {"n": 0}
@@ -2356,22 +2361,26 @@ async def test_answer_daily_llm_cap_forces_degraded_scoring() -> None:
         t.maybe_single = MagicMock(return_value=t)
         t.in_ = MagicMock(return_value=t)
         if name == "questions":
+
             async def _q_exec_cap(*a, **kw):
                 _q_counter_cap["n"] += 1
                 if _q_counter_cap["n"] == 1:
                     return MagicMock(data=open_question)
                 return MagicMock(data=[open_question])
+
             t.execute = AsyncMock(side_effect=_q_exec_cap)
         elif name == "assessment_sessions":
             # The router makes TWO assessment_sessions queries in the open-ended path:
             # 1. daily LLM cap check (select answers, gte started_at) → today_sessions_data
             # 2. optimistic lock update (update + eq answer_version) → [{"id": SESSION_ID}]
             _cap_exec_n = {"n": 0}
+
             async def _sess_exec_cap(*a, **kw):
                 _cap_exec_n["n"] += 1
                 if _cap_exec_n["n"] == 1:
                     return MagicMock(data=today_sessions_data, count=1)
                 return MagicMock(data=[{"id": SESSION_ID}], count=1)
+
             t.execute = AsyncMock(side_effect=_sess_exec_cap)
         elif name == "competencies":
             t.execute = AsyncMock(return_value=MagicMock(data={"slug": "communication"}))
@@ -2410,8 +2419,7 @@ async def test_answer_daily_llm_cap_forces_degraded_scoring() -> None:
                     )
         assert resp.status_code == 200, f"Expected 200, got {resp.status_code}: {resp.text}"
         assert captured_kwargs.get("force_degraded") is True, (
-            f"Expected bars.evaluate_answer called with force_degraded=True; "
-            f"captured kwargs: {captured_kwargs}"
+            f"Expected bars.evaluate_answer called with force_degraded=True; captured kwargs: {captured_kwargs}"
         )
     finally:
         app.dependency_overrides.clear()

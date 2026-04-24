@@ -284,9 +284,7 @@ class _TrackedAdminMock:
             if self._rpc_raises:
                 rpc_chain.execute = AsyncMock(side_effect=self._rpc_raises)
             else:
-                rpc_chain.execute = AsyncMock(
-                    return_value=MagicMock(data=self._rpc_result)
-                )
+                rpc_chain.execute = AsyncMock(return_value=MagicMock(data=self._rpc_result))
             return rpc_chain
 
         def _make_table_mock(name: str):
@@ -300,9 +298,7 @@ class _TrackedAdminMock:
             t.update = MagicMock(side_effect=_on_update)
 
             if name == "competencies":
-                t.execute = AsyncMock(
-                    return_value=MagicMock(data={"slug": self._competency_slug})
-                )
+                t.execute = AsyncMock(return_value=MagicMock(data={"slug": self._competency_slug}))
             elif name == "aura_scores":
                 t.execute = AsyncMock(
                     return_value=MagicMock(data=None)  # no prior AURA row
@@ -321,16 +317,12 @@ class _TrackedAdminMock:
     @property
     def pending_flag_was_set(self) -> bool:
         """True if pending_aura_sync=True was set at any update call."""
-        return any(
-            u.get("pending_aura_sync") is True for u in self.update_calls
-        )
+        return any(u.get("pending_aura_sync") is True for u in self.update_calls)
 
     @property
     def pending_flag_was_cleared(self) -> bool:
         """True if pending_aura_sync=False was set at any update call."""
-        return any(
-            u.get("pending_aura_sync") is False for u in self.update_calls
-        )
+        return any(u.get("pending_aura_sync") is False for u in self.update_calls)
 
     @property
     def upsert_aura_rpc_called(self) -> bool:
@@ -775,9 +767,7 @@ def _mk_reconciler_db(
     comp_chain.select.return_value = comp_chain
     comp_chain.eq.return_value = comp_chain
     comp_chain.single.return_value = comp_chain
-    comp_chain.execute = AsyncMock(
-        return_value=MagicMock(data={"slug": slug} if slug else None)
-    )
+    comp_chain.execute = AsyncMock(return_value=MagicMock(data={"slug": slug} if slug else None))
 
     def table(name: str):
         if name == "competencies":
@@ -866,9 +856,7 @@ async def test_reconcile_retry_below_cap_increments_counter() -> None:
     # Ensure the flag was NOT cleared
     for call in sessions_chain.update.call_args_list:
         payload = call[0][0] if call[0] else {}
-        assert payload.get("pending_aura_sync") is not False, (
-            "Flag must not be cleared on retry-below-cap"
-        )
+        assert payload.get("pending_aura_sync") is not False, "Flag must not be cleared on retry-below-cap"
 
 
 async def test_reconcile_gave_up_at_max_attempts() -> None:
@@ -885,7 +873,7 @@ async def test_reconcile_gave_up_at_max_attempts() -> None:
 async def test_run_once_batch_aggregates_correctly() -> None:
     """run_once returns correct aggregate counts across mixed-outcome batch."""
     rows = [
-        _mk_row(theta=1.0, attempts=0),   # → ok
+        _mk_row(theta=1.0, attempts=0),  # → ok
         _mk_row(theta=None, attempts=0),  # → gave_up (null theta)
     ]
     db, _ = _mk_reconciler_db(rpc_data=[{"ok": True}])
@@ -893,9 +881,7 @@ async def test_run_once_batch_aggregates_correctly() -> None:
     # Override _fetch_pending so run_once uses our rows
     with patch("app.services.aura_reconciler._admin", AsyncMock(return_value=db)):
         # inject pending rows into the sessions mock
-        db.table("assessment_sessions").execute = AsyncMock(
-            return_value=MagicMock(data=rows)
-        )
+        db.table("assessment_sessions").execute = AsyncMock(return_value=MagicMock(data=rows))
         stats = await run_once()
 
     assert stats["found"] == 2

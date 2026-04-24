@@ -50,12 +50,7 @@ def _calc_aura_score(submission: AuraSubmission) -> AuraResult:
     """
     avg = sum(submission.answers.values()) / max(len(submission.answers), 1)
     score = min(100.0, max(1.0, avg * 20.0))  # toy mapping 1-5 → 1-100
-    tier = (
-        "platinum" if score >= 90
-        else "gold" if score >= 75
-        else "silver" if score >= 60
-        else "bronze"
-    )
+    tier = "platinum" if score >= 90 else "gold" if score >= 75 else "silver" if score >= 60 else "bronze"
     return AuraResult(overall_score=score, user_id=submission.user_id, badge_tier=tier)
 
 
@@ -104,23 +99,33 @@ def test_aura_submission_rejects_blank_user_id() -> None:
     [
         # DeepSeek's contribution: descriptive Russian ids for boundary cases
         pytest.param(
-            {"q1": 5, "q2": 5, "q3": 5}, "platinum", (90.0, 100.0),
+            {"q1": 5, "q2": 5, "q3": 5},
+            "platinum",
+            (90.0, 100.0),
             id="максимальные_все_платина",
         ),
         pytest.param(
-            {"q1": 1, "q2": 1, "q3": 1}, "bronze", (1.0, 40.0),
+            {"q1": 1, "q2": 1, "q3": 1},
+            "bronze",
+            (1.0, 40.0),
             id="минимальные_все_бронза",
         ),
         pytest.param(
-            {"q1": 4, "q2": 4, "q3": 3}, "silver", (60.0, 75.0),
+            {"q1": 4, "q2": 4, "q3": 3},
+            "silver",
+            (60.0, 75.0),
             id="средние_серебро",
         ),
         pytest.param(
-            {"q1": 5, "q2": 4, "q3": 4}, "gold", (75.0, 90.0),
+            {"q1": 5, "q2": 4, "q3": 4},
+            "gold",
+            (75.0, 90.0),
             id="высокие_золото",
         ),
         pytest.param(
-            {"q1": 5}, "platinum", (95.0, 100.0),
+            {"q1": 5},
+            "platinum",
+            (95.0, 100.0),
             id="один_ответ_максимум",
         ),
     ],

@@ -40,6 +40,7 @@ def _make_admin_override():
 
 def _make_user_id_override():
     """Non-generator dependency override — returns test user id directly."""
+
     async def _override():
         return _TEST_USER_ID
 

@@ -84,8 +84,13 @@ async def test_reconcile_job_replays_pending_rewards_and_completes():
 
     with (
         patch("app.services.assessment_completion_reconciler._fetch_session", new=AsyncMock(return_value=_session())),
-        patch("app.services.assessment_completion_reconciler.save_completion_job", new=AsyncMock(side_effect=_save_side_effect())) as save_job,
-        patch("app.services.assessment_completion_reconciler.emit_assessment_rewards", new=AsyncMock(return_value=50)) as emit_rewards,
+        patch(
+            "app.services.assessment_completion_reconciler.save_completion_job",
+            new=AsyncMock(side_effect=_save_side_effect()),
+        ) as save_job,
+        patch(
+            "app.services.assessment_completion_reconciler.emit_assessment_rewards", new=AsyncMock(return_value=50)
+        ) as emit_rewards,
     ):
         outcome = await _reconcile_job(db, job)
 
@@ -99,7 +104,10 @@ async def test_reconcile_job_gives_up_after_max_attempts():
     db = MagicMock()
     job = _job(attempts=6)
 
-    with patch("app.services.assessment_completion_reconciler.save_completion_job", new=AsyncMock(side_effect=_save_side_effect())) as save_job:
+    with patch(
+        "app.services.assessment_completion_reconciler.save_completion_job",
+        new=AsyncMock(side_effect=_save_side_effect()),
+    ) as save_job:
         outcome = await _reconcile_job(db, job)
 
     assert outcome == "gave_up"
@@ -115,7 +123,9 @@ async def test_run_once_counts_retry_outcomes():
     with (
         patch("app.services.assessment_completion_reconciler._admin", new=AsyncMock(return_value=db)),
         patch("app.services.assessment_completion_reconciler._fetch_incomplete_jobs", new=AsyncMock(return_value=jobs)),
-        patch("app.services.assessment_completion_reconciler._reconcile_job", new=AsyncMock(side_effect=["ok", "retry"])),
+        patch(
+            "app.services.assessment_completion_reconciler._reconcile_job", new=AsyncMock(side_effect=["ok", "retry"])
+        ),
     ):
         stats = await run_once()
 

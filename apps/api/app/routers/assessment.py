@@ -756,11 +756,7 @@ async def submit_answer(
     async def _bump_question_stats(qid: str, was_correct: bool) -> None:
         try:
             _q_stats = (
-                await db_admin.table("questions")
-                .select("times_shown, times_correct")
-                .eq("id", qid)
-                .single()
-                .execute()
+                await db_admin.table("questions").select("times_shown, times_correct").eq("id", qid).single().execute()
             )
             if _q_stats.data and isinstance(_q_stats.data, dict):
                 await (

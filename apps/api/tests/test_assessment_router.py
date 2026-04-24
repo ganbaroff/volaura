@@ -197,7 +197,9 @@ async def test_complete_assessment_calls_rpc_with_jsonb_scores():
                     )
                 ),
             ),
-            patch("app.routers.assessment.save_completion_job", new=AsyncMock(side_effect=_save_job_side_effect_factory())),
+            patch(
+                "app.routers.assessment.save_completion_job", new=AsyncMock(side_effect=_save_job_side_effect_factory())
+            ),
         ):
             transport = ASGITransport(app=app)
             async with AsyncClient(transport=transport, base_url="http://test") as ac:
@@ -270,8 +272,13 @@ async def test_complete_assessment_skips_rpc_when_no_slug():
     try:
         with (
             patch("app.routers.assessment.get_completion_job", new=AsyncMock(return_value=None)),
-            patch("app.routers.assessment.ensure_completion_job", new=AsyncMock(return_value=_job_with_side_effects(status="pending"))),
-            patch("app.routers.assessment.save_completion_job", new=AsyncMock(side_effect=_save_job_side_effect_factory())),
+            patch(
+                "app.routers.assessment.ensure_completion_job",
+                new=AsyncMock(return_value=_job_with_side_effects(status="pending")),
+            ),
+            patch(
+                "app.routers.assessment.save_completion_job", new=AsyncMock(side_effect=_save_job_side_effect_factory())
+            ),
         ):
             transport = ASGITransport(app=app)
             async with AsyncClient(transport=transport, base_url="http://test") as ac:
@@ -409,7 +416,9 @@ async def test_complete_assessment_logs_automated_decision_for_human_review():
                     )
                 ),
             ),
-            patch("app.routers.assessment.save_completion_job", new=AsyncMock(side_effect=_save_job_side_effect_factory())),
+            patch(
+                "app.routers.assessment.save_completion_job", new=AsyncMock(side_effect=_save_job_side_effect_factory())
+            ),
             patch("app.routers.assessment.emit_assessment_rewards", new=AsyncMock(return_value=0)),
             patch("app.routers.assessment.record_assessment_activity", new=AsyncMock(return_value=None)),
             patch("app.routers.assessment.track_event", new=AsyncMock(return_value=None)),
@@ -496,9 +505,24 @@ async def test_complete_assessment_creates_durable_job_on_first_completion():
             "streak": {"status": "pending", "attempts": 0, "last_error": None, "updated_at": "2026-04-23T00:00:00Z"},
             "analytics": {"status": "pending", "attempts": 0, "last_error": None, "updated_at": "2026-04-23T00:00:00Z"},
             "email": {"status": "pending", "attempts": 0, "last_error": None, "updated_at": "2026-04-23T00:00:00Z"},
-            "ecosystem_events": {"status": "pending", "attempts": 0, "last_error": None, "updated_at": "2026-04-23T00:00:00Z"},
-            "aura_events": {"status": "pending", "attempts": 0, "last_error": None, "updated_at": "2026-04-23T00:00:00Z"},
-            "decision_log": {"status": "pending", "attempts": 0, "last_error": None, "updated_at": "2026-04-23T00:00:00Z"},
+            "ecosystem_events": {
+                "status": "pending",
+                "attempts": 0,
+                "last_error": None,
+                "updated_at": "2026-04-23T00:00:00Z",
+            },
+            "aura_events": {
+                "status": "pending",
+                "attempts": 0,
+                "last_error": None,
+                "updated_at": "2026-04-23T00:00:00Z",
+            },
+            "decision_log": {
+                "status": "pending",
+                "attempts": 0,
+                "last_error": None,
+                "updated_at": "2026-04-23T00:00:00Z",
+            },
         },
     )
 
@@ -510,7 +534,9 @@ async def test_complete_assessment_creates_durable_job_on_first_completion():
         with (
             patch("app.routers.assessment.get_completion_job", new=AsyncMock(return_value=None)),
             patch("app.routers.assessment.ensure_completion_job", new=AsyncMock(return_value=job)) as ensure_job,
-            patch("app.routers.assessment.save_completion_job", new=AsyncMock(side_effect=_save_job_side_effect_factory())) as save_job,
+            patch(
+                "app.routers.assessment.save_completion_job", new=AsyncMock(side_effect=_save_job_side_effect_factory())
+            ) as save_job,
             patch("app.routers.assessment.emit_assessment_rewards", new=AsyncMock(return_value=15)),
             patch("app.routers.assessment.record_assessment_activity", new=AsyncMock(return_value=None)),
             patch("app.routers.assessment.track_event", new=AsyncMock(return_value=None)),
@@ -529,9 +555,7 @@ async def test_complete_assessment_creates_durable_job_on_first_completion():
 
         assert resp.status_code == 200, f"Expected 200, got {resp.status_code}: {resp.text}"
         assert ensure_job.await_count == 1
-        processing_call = next(
-            call for call in save_job.await_args_list if call.kwargs.get("status") == "processing"
-        )
+        processing_call = next(call for call in save_job.await_args_list if call.kwargs.get("status") == "processing")
         assert processing_call.kwargs["increment_attempts"] is True
     finally:
         app.dependency_overrides.clear()
@@ -568,7 +592,12 @@ async def test_complete_assessment_retries_incomplete_job_for_completed_session(
     existing_job = _job_with_side_effects(
         status="partial",
         overrides={
-            "rewards": {"status": "pending", "attempts": 0, "last_error": "worker_crash", "updated_at": "2026-04-23T00:00:00Z"}
+            "rewards": {
+                "status": "pending",
+                "attempts": 0,
+                "last_error": "worker_crash",
+                "updated_at": "2026-04-23T00:00:00Z",
+            }
         },
     )
 
@@ -580,7 +609,9 @@ async def test_complete_assessment_retries_incomplete_job_for_completed_session(
         with (
             patch("app.routers.assessment.get_completion_job", new=AsyncMock(return_value=existing_job)),
             patch("app.routers.assessment.ensure_completion_job", new=AsyncMock(return_value=existing_job)),
-            patch("app.routers.assessment.save_completion_job", new=AsyncMock(side_effect=_save_job_side_effect_factory())) as save_job,
+            patch(
+                "app.routers.assessment.save_completion_job", new=AsyncMock(side_effect=_save_job_side_effect_factory())
+            ) as save_job,
             patch("app.routers.assessment.emit_assessment_rewards", new=AsyncMock(return_value=25)) as rewards,
         ):
             transport = ASGITransport(app=app)

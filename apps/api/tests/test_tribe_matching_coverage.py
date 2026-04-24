@@ -90,9 +90,7 @@ async def test_get_matching_candidates_excludes_user_already_in_tribe():
                 return_value=MagicMock(data={"id": uid_eligible})
             )
         elif name == "tribe_member_history":
-            m.select.return_value.eq.return_value.execute = AsyncMock(
-                return_value=MagicMock(data=[])
-            )
+            m.select.return_value.eq.return_value.execute = AsyncMock(return_value=MagicMock(data=[]))
         return m
 
     db.table = table
@@ -115,9 +113,7 @@ async def test_expire_no_expired_tribes():
     def table(name: str):
         m = MagicMock()
         if name == "tribes":
-            m.select.return_value.eq.return_value.lt.return_value.execute = AsyncMock(
-                return_value=MagicMock(data=[])
-            )
+            m.select.return_value.eq.return_value.lt.return_value.execute = AsyncMock(return_value=MagicMock(data=[]))
         return m
 
     db.table = table
@@ -165,9 +161,7 @@ async def test_expire_tribe_empty_members():
         m = MagicMock()
         if name == "tribes":
             m.select.return_value.eq.return_value.lt.return_value.execute = AsyncMock(
-                return_value=MagicMock(
-                    data=[{"id": TRIBE_ID, "tribe_members": []}]
-                )
+                return_value=MagicMock(data=[{"id": TRIBE_ID, "tribe_members": []}])
             )
             m.update.return_value.eq.return_value.execute = _ok_execute()
         elif name == "tribe_renewal_requests":
@@ -190,9 +184,7 @@ async def test_expire_tribe_none_tribe_members_key():
         m = MagicMock()
         if name == "tribes":
             m.select.return_value.eq.return_value.lt.return_value.execute = AsyncMock(
-                return_value=MagicMock(
-                    data=[{"id": TRIBE_ID, "tribe_members": None}]
-                )
+                return_value=MagicMock(data=[{"id": TRIBE_ID, "tribe_members": None}])
             )
             m.update.return_value.eq.return_value.execute = _ok_execute()
         elif name == "tribe_renewal_requests":
@@ -217,9 +209,7 @@ async def test_renew_no_expiring_tribes():
     def table(name: str):
         m = MagicMock()
         if name == "tribes":
-            m.select.return_value.eq.return_value.lt.return_value.execute = AsyncMock(
-                return_value=MagicMock(data=[])
-            )
+            m.select.return_value.eq.return_value.lt.return_value.execute = AsyncMock(return_value=MagicMock(data=[]))
         return m
 
     db.table = table
@@ -245,9 +235,7 @@ async def test_renew_not_all_members_requested():
             )
         elif name == "tribe_renewal_requests":
             # Only U1 requested
-            m.select.return_value.eq.return_value.execute = AsyncMock(
-                return_value=MagicMock(data=[{"user_id": U1}])
-            )
+            m.select.return_value.eq.return_value.execute = AsyncMock(return_value=MagicMock(data=[{"user_id": U1}]))
             m.delete.return_value.eq.return_value.execute = _ok_execute()
         return m
 
@@ -301,9 +289,7 @@ async def test_renew_fewer_than_two_active_members_skipped():
                 return_value=MagicMock(data=[{"user_id": U1}])
             )
         elif name == "tribe_renewal_requests":
-            m.select.return_value.eq.return_value.execute = AsyncMock(
-                return_value=MagicMock(data=[{"user_id": U1}])
-            )
+            m.select.return_value.eq.return_value.execute = AsyncMock(return_value=MagicMock(data=[{"user_id": U1}]))
         return m
 
     db.table = table
@@ -321,9 +307,7 @@ def _make_db_for_create_tribe(existing_streak: dict | None = None):
     def table(name: str):
         m = MagicMock()
         if name == "tribes":
-            m.insert.return_value.execute = AsyncMock(
-                return_value=MagicMock(data=[{"id": TRIBE_ID}])
-            )
+            m.insert.return_value.execute = AsyncMock(return_value=MagicMock(data=[{"id": TRIBE_ID}]))
         elif name == "tribe_members":
             m.insert.return_value.execute = _ok_execute([{}])
         elif name == "tribe_streaks":
@@ -377,6 +361,7 @@ async def test_create_tribe_expires_at_is_four_weeks_from_now():
     def table(name: str):
         m = MagicMock()
         if name == "tribes":
+
             def capture_insert(payload, **kw):
                 inserted_tribe_payload.update(payload)
                 mm = MagicMock()
@@ -412,16 +397,12 @@ async def test_create_tribe_maybe_single_returns_none_object():
     def table(name: str):
         m = MagicMock()
         if name == "tribes":
-            m.insert.return_value.execute = AsyncMock(
-                return_value=MagicMock(data=[{"id": TRIBE_ID}])
-            )
+            m.insert.return_value.execute = AsyncMock(return_value=MagicMock(data=[{"id": TRIBE_ID}]))
         elif name == "tribe_members":
             m.insert.return_value.execute = _ok_execute([{}])
         elif name == "tribe_streaks":
             # Returns None directly — the None-guard on line 291
-            m.select.return_value.eq.return_value.maybe_single.return_value.execute = AsyncMock(
-                return_value=None
-            )
+            m.select.return_value.eq.return_value.maybe_single.return_value.execute = AsyncMock(return_value=None)
             m.insert.return_value.execute = _ok_execute()
         elif name == "tribe_matching_pool":
             m.delete.return_value.eq.return_value.execute = _ok_execute()
@@ -441,9 +422,7 @@ async def test_create_tribe_cleans_matching_pool_for_each_member():
     def table(name: str):
         m = MagicMock()
         if name == "tribes":
-            m.insert.return_value.execute = AsyncMock(
-                return_value=MagicMock(data=[{"id": TRIBE_ID}])
-            )
+            m.insert.return_value.execute = AsyncMock(return_value=MagicMock(data=[{"id": TRIBE_ID}]))
         elif name == "tribe_members":
             m.insert.return_value.execute = _ok_execute([{}])
         elif name == "tribe_streaks":
@@ -452,16 +431,20 @@ async def test_create_tribe_cleans_matching_pool_for_each_member():
             )
             m.insert.return_value.execute = _ok_execute()
         elif name == "tribe_matching_pool":
+
             def capture_delete():
                 dd = MagicMock()
+
                 def capture_eq(col, val):
                     if col == "user_id":
                         deleted_user_ids.append(val)
                     ee = MagicMock()
                     ee.execute = _ok_execute()
                     return ee
+
                 dd.eq = capture_eq
                 return dd
+
             m.delete = capture_delete
         return m
 
@@ -497,17 +480,11 @@ def _make_full_orchestrator_db(
             )
             # _renew_requesting_tribes SELECT (reuse same chain; second call — empty)
             # INSERT for _create_tribe
-            m.insert.return_value.execute = AsyncMock(
-                return_value=MagicMock(data=tribe_create_data)
-            )
+            m.insert.return_value.execute = AsyncMock(return_value=MagicMock(data=tribe_create_data))
             m.update.return_value.eq.return_value.execute = _ok_execute()
         elif name == "tribe_members":
-            m.select.return_value.is_.return_value.execute = AsyncMock(
-                return_value=MagicMock(data=[])
-            )
-            m.select.return_value.eq.return_value.is_.return_value.execute = AsyncMock(
-                return_value=MagicMock(data=[])
-            )
+            m.select.return_value.is_.return_value.execute = AsyncMock(return_value=MagicMock(data=[]))
+            m.select.return_value.eq.return_value.is_.return_value.execute = AsyncMock(return_value=MagicMock(data=[]))
             m.insert.return_value.execute = _ok_execute([{}])
         elif name == "aura_scores":
             m.select.return_value.gt.return_value.gt.return_value.execute = AsyncMock(
@@ -527,14 +504,10 @@ def _make_full_orchestrator_db(
                 return_value=MagicMock(data={"id": "dummy"})
             )
         elif name == "tribe_member_history":
-            m.select.return_value.eq.return_value.execute = AsyncMock(
-                return_value=MagicMock(data=[])
-            )
+            m.select.return_value.eq.return_value.execute = AsyncMock(return_value=MagicMock(data=[]))
             m.insert.return_value.execute = _ok_execute()
         elif name == "tribe_renewal_requests":
-            m.select.return_value.eq.return_value.execute = AsyncMock(
-                return_value=MagicMock(data=renewing_tribes)
-            )
+            m.select.return_value.eq.return_value.execute = AsyncMock(return_value=MagicMock(data=renewing_tribes))
             m.delete.return_value.eq.return_value.execute = _ok_execute()
         elif name == "tribe_streaks":
             m.select.return_value.eq.return_value.maybe_single.return_value.execute = AsyncMock(
@@ -626,6 +599,7 @@ async def test_run_tribe_matching_returns_renewed_count():
         return_value=AsyncMock(return_value=5),
     ) as mock_renew:
         mock_renew.return_value = 5  # plain int — the real function returns int
+
         # Patch to coroutine returning 5
         async def fake_renew(d, n):
             return 5

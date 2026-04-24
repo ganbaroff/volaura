@@ -273,6 +273,22 @@ Where this gate differs from arsenal-before-request: arsenal fires when I'm abou
 
 CEO framing: "тоесть ты не собирался мне об этом говорить?" — one question, three items omitted, all three in my arsenal. The cost is not the items (they're fixable in one turn, as today proved); the cost is the moment CEO has to ask the question. Every time that question fires, the trust-probe debt increments, and no amount of execution speed pays it back.
 
+## Verify-before-save gate (CEO directive 2026-04-21 session 122)
+
+Before saving any credential, API key, or service account to `.env` or GitHub Secrets — VERIFY it works first.
+
+Gate (fires when saving any key/credential):
+1. Decode/parse the credential
+2. Make one real API call (dry-run, ping, or equivalent) that proves the credential is accepted
+3. Only if the call succeeds → save to `.env` + GitHub Secrets + `.env.example`
+4. If fails → report to CEO before saving: "Key invalid: <error>. Check source."
+
+For JSON service accounts (Firebase, GCP, etc.): initialize the SDK + make one authenticated call (even a list_users or dry-run message). "JSON valid" is not the same as "credentials authorized."
+
+Violation detection: any save to `.env` or GitHub Secrets without a preceding tool-call receipt showing a successful API response → flag as pre-mature save. The key may be wrong, expired, or for a different project.
+
+CEO framing: "перед тем как сохранять что то . проверяй а работает ли вообще." — saved ≠ working. The saving is only meaningful when verified.
+
 ## WebSearch-before-delegation gate (CEO directive 2026-04-18 session 120 — NOT optional)
 
 Sibling of sonnet-for-hands + delegation-first. Fires specifically when Cowork-Atlas is about to run ANY WebSearch series on Opus compute.

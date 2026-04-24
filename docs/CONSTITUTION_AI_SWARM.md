@@ -8,7 +8,7 @@
 **Enforcement backing:** `zeus.governance_events` schema (migrations `20260411193900_zeus_governance.sql` + `20260411200500_zeus_harden.sql`)
 **Authority:** CEO (Yusif Ganbarov) retains final veto. CTO-Brain (Perplexity) proposes. CTO-Hands (Claude Opus 4.6) implements and challenges.
 
-**Cross-references:** [[ECOSYSTEM-CONSTITUTION]] | [[ECOSYSTEM-MAP]] | [[adr/ADR-007-ai-gateway-model-router]] | [[adr/ADR-008-zeus-governance-layer]] | [[adr/ADR-009-crewai-adoption]] | [[research/NEUROCOGNITIVE-ARCHITECTURE-2026]] | [[research/ZEUS-MEMORY-ARCHITECTURE-RESEARCH-2026-04-14]] | [[research/swarm-innovation-research]]
+**Cross-references:** [[ECOSYSTEM-CONSTITUTION]] | [[ECOSYSTEM-MAP]] | [[SWARM-GATES-MATRIX-2026-04-21]] | [[adr/ADR-007-ai-gateway-model-router]] | [[adr/ADR-008-zeus-governance-layer]] | [[adr/ADR-009-crewai-adoption]] | [[research/NEUROCOGNITIVE-ARCHITECTURE-2026]] | [[research/ZEUS-MEMORY-ARCHITECTURE-RESEARCH-2026-04-14]] | [[research/swarm-innovation-research]]
 
 ---
 

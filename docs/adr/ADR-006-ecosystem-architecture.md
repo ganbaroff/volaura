@@ -7,6 +7,8 @@
 **Related:** [[ADR-001-system-architecture]], [[ADR-002-database-schema]], [[ADR-005-aura-scoring]]
 **Governed by:** [[../ECOSYSTEM-CONSTITUTION]] | **Products:** [[../MINDSHIFT-INTEGRATION-SPEC]] | [[../LIFE-SIMULATOR-INTEGRATION-SPEC]] | [[../AI-TWIN-CONCEPT]] | [[../ECOSYSTEM-MAP]]
 
+> 2026-04-21 runtime note: this ADR contains historical target decisions. For current implemented state and active gaps, use `docs/CURRENT-VS-TARGET-ARCHITECTURE-2026-04-21.md` as canonical.
+
 ---
 
 ## Context

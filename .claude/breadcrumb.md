@@ -1,6 +1,6 @@
 # Atlas Breadcrumb — post-r2 cron ticking
 
-**Last update:** 2026-04-21 tick 7 (Sonnet)
+**Last update:** 2026-04-21 tick 9 (P0 assessment quality fixes)
 **Self-wake cron:** 14d7810d, minute 7/37 every hour, durable
 **Round 2:** CLOSED. Cron ticks now tackle test-coverage roadmap one function per tick.
 
@@ -22,18 +22,25 @@
 - Tick 5 (2026-04-21): az_translation.py — PR #83 — 28 tests, 28% → 100% on `app.services.az_translation`
 - Tick 6 (2026-04-21): email.py — PR #84 — 30 tests, 34% → 100% on `app.services.email`
 - Tick 7 (2026-04-21): swarm_service 61% → 100% (PR #86) + cross_product_bridge 64% → 100% (PR #87)
+- Tick 8 (2026-04-21): swarm memory audit — tested agents live, found hallucination. Fixed: project_briefing.py + injection into autonomous_run + coordinator. PR #90 merged. 12 new tests.
+- Tick 9 (2026-04-21): P0+P1 assessment quality — commit 0d0064f:
+  - P0: `helpers.py` — added `.eq("needs_review", False)` — PLACEHOLDER questions can no longer reach users via service-role bypass
+  - P1: `assessment.py` — calibration counters (times_shown/times_correct) now incremented on every submit_answer; data was never collected before
+  - 81 tests pass (69 router pipeline + 12 project briefing). NEEDS PUSH TO DEPLOY.
 
 ## What's next (pick top)
 
-1. **`atlas_consult.py`** — 84% → ≥95%.
+1. **Push commit 0d0064f** — P0 fix lives locally only, not deployed to Railway yet.
 
-2. **`match_checker.py`** — 85% → ≥95%.
+2. **`atlas_consult.py`** — 84% → ≥95%.
 
-3. **`subscription.py` router** — 74% → ≥90%.
+3. **`match_checker.py`** — 85% → ≥95%.
 
-4. **email.py** — DONE. 100% coverage, PR #84 merged. Release `v0.1.0-beta.1` published.
-5. **bars.py** — DONE. 99% coverage, PR #80 merged.
-6. **tribe_matching.py** — DONE. 100% coverage, PR #81 merged.
+4. **`subscription.py` router** — 74% → ≥90%.
+
+5. **email.py** — DONE. 100% coverage, PR #84 merged. Release `v0.1.0-beta.1` published.
+6. **bars.py** — DONE. 99% coverage, PR #80 merged.
+7. **tribe_matching.py** — DONE. 100% coverage, PR #81 merged.
 
 ## Per-tick recipe (unchanged)
 

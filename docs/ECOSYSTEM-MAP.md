@@ -1,5 +1,7 @@
 # ECOSYSTEM MAP — 5-Product Architecture
 
+> Canonical reality check: `docs/CURRENT-VS-TARGET-ARCHITECTURE-2026-04-21.md` is authoritative for CURRENT vs TARGET status.
+
 **Cross-references:** [[ECOSYSTEM-CONSTITUTION]] | [[VISION-FULL]] | [[MASTER-STRATEGY]] | [[MINDSHIFT-INTEGRATION-SPEC]] | [[LIFE-SIMULATOR-INTEGRATION-SPEC]] | [[LIFE-SIMULATOR-GAME-DESIGN]] | [[AI-TWIN-CONCEPT]] | [[adr/ADR-006-ecosystem-architecture]] | [[CONSTITUTION_AI_SWARM]] | [[research/ecosystem-design-research]]
 
 ## Products
@@ -12,10 +14,10 @@
 | **BrandedBy** | FastAPI + fal.ai (MuseTalk) | Dev | brandedby.xyz |
 | **ZEUS** | Python swarm + ngrok | Local | localhost |
 
-## Shared Infrastructure
+## Shared Infrastructure (Current Reality)
 
-- **Supabase project:** `dwdgzfusjsobnixgyzjk` — shared auth for VOLAURA + cross-product bridge
-- **MindShift Supabase:** `awfoqycoltvhamtrsvxk` — separate project, bridged via edge function
+- **VOLAURA Supabase project:** `dwdgzfusjsobnixgyzjk` — primary identity/data plane for VOLAURA and bridge targets
+- **MindShift Supabase:** separate project (bridge-connected for now), not yet fully unified auth
 
 ## Data Flows
 

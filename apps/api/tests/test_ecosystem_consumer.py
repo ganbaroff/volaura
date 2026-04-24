@@ -5,14 +5,20 @@ Coverage:
      → cursor advanced.  Proves: emit event → downstream state changes.
   2. Idempotency: running twice on the same events → second run finds no events
      (cursor is past them) → no duplicate twin updates.
-  3. User without an AI twin: handler succeeds (returns True) even when UPDATE
-     matches zero rows — doesn't block cursor.
+  3. User without an AI twin: handler succeeds (returns True) even when RPC returns
+     0 — doesn't block cursor.
   4. Handler DB error: stats.errors increments, stats.handled still counts other
      events, cursor advances.
   5. Missing cursor row: returns zero-stats without crashing.
   6. Empty event table: returns found=0, cursor stays put.
   7. process_brandedby_events with injected db avoids _admin() being called
      (unit test, no real credentials needed).
+
+Implementation note:
+  _handle_brandedby_event uses db.rpc("ecosystem_mark_twin_stale", ...) — NOT
+  db.schema("brandedby").table("ai_twins").update() — because the brandedby schema
+  is not exposed via PostgREST.  The RPC is a SECURITY DEFINER function in public
+  that crosses the schema boundary at the postgres layer.
 """
 
 from __future__ import annotations
@@ -52,15 +58,16 @@ def _fake_event(
 def _make_db(
     cursor_row: dict | None = None,
     events: list[dict] | None = None,
-    twin_update_returns: list[dict] | None = None,
-    twin_update_raises: Exception | None = None,
+    rpc_returns: int | None = None,
+    rpc_raises: Exception | None = None,
 ):
     """Build a chainable Supabase mock for ecosystem_consumer tests.
 
-    cursor_row     — row returned from ecosystem_event_cursors (None = no row)
-    events         — list of character_events returned from fetch
-    twin_update_returns — rows returned from ai_twins UPDATE (empty list = no twin)
-    twin_update_raises  — exception to raise on ai_twins UPDATE
+    cursor_row   — row returned from ecosystem_event_cursors (None = no row)
+    events       — list of character_events returned from fetch
+    rpc_returns  — INT returned from ecosystem_mark_twin_stale RPC
+                   (0 = no twin, 1+ = rows updated)
+    rpc_raises   — exception to raise on RPC call
     """
     db = MagicMock()
 
@@ -97,21 +104,18 @@ def _make_db(
 
     db.table.side_effect = _table
 
-    # --- brandedby.ai_twins chain ---
-    twins_chain = MagicMock()
-    twins_chain.table.return_value = twins_chain
-    twins_chain.update.return_value = twins_chain
-    twins_chain.eq.return_value = twins_chain
-
-    if twin_update_raises:
-        twins_chain.execute = AsyncMock(side_effect=twin_update_raises)
+    # --- ecosystem_mark_twin_stale RPC ---
+    # Production code: db.rpc("ecosystem_mark_twin_stale", {...}).execute()
+    # Returns INT (row count), not a list of rows.
+    rpc_chain = MagicMock()
+    count = rpc_returns if rpc_returns is not None else 1
+    if rpc_raises:
+        rpc_chain.execute = AsyncMock(side_effect=rpc_raises)
     else:
-        update_data = twin_update_returns if twin_update_returns is not None else [{"id": str(uuid4())}]
-        twins_chain.execute = AsyncMock(return_value=MagicMock(data=update_data))
+        rpc_chain.execute = AsyncMock(return_value=MagicMock(data=count))
+    db.rpc.return_value = rpc_chain
 
-    db.schema.return_value = twins_chain
-
-    return db, cursor_chain, events_chain, twins_chain
+    return db, cursor_chain, events_chain, rpc_chain
 
 
 # ── Unit tests for internal helpers ──────────────────────────────────────────
@@ -150,24 +154,24 @@ async def test_fetch_events_no_filter_when_cursor_null():
 
 @pytest.mark.asyncio
 async def test_handle_brandedby_event_marks_twin_stale():
+    """RPC is called with correct args; returns True on success."""
     event = _fake_event("aura_updated", user_id="user-abc")
-    db, _, _, twins_chain = _make_db(twin_update_returns=[{"id": "twin-1"}])
+    db, _, _, rpc_chain = _make_db(rpc_returns=1)
 
     ok = await _handle_brandedby_event(db, event)
 
     assert ok is True
-    db.schema.assert_called_with("brandedby")
-    twins_chain.update.assert_called_once_with(
-        {"needs_personality_refresh": True, "personality_refresh_reason": "aura_updated"}
+    db.rpc.assert_called_once_with(
+        "ecosystem_mark_twin_stale",
+        {"p_user_id": "user-abc", "p_reason": "aura_updated"},
     )
-    twins_chain.eq.assert_called_with("user_id", "user-abc")
 
 
 @pytest.mark.asyncio
 async def test_handle_brandedby_event_returns_true_when_no_twin():
-    """User not in BrandedBy — no rows updated — still succeeds (not an error)."""
+    """User not in BrandedBy — RPC returns 0 — still succeeds (not an error)."""
     event = _fake_event("badge_tier_changed")
-    db, _, _, twins_chain = _make_db(twin_update_returns=[])
+    db, _, _, rpc_chain = _make_db(rpc_returns=0)
 
     ok = await _handle_brandedby_event(db, event)
     assert ok is True
@@ -176,7 +180,7 @@ async def test_handle_brandedby_event_returns_true_when_no_twin():
 @pytest.mark.asyncio
 async def test_handle_brandedby_event_returns_false_on_db_error():
     event = _fake_event("aura_updated")
-    db, _, _, twins_chain = _make_db(twin_update_raises=RuntimeError("connection reset"))
+    db, _, _, rpc_chain = _make_db(rpc_raises=RuntimeError("connection reset"))
 
     ok = await _handle_brandedby_event(db, event)
     assert ok is False
@@ -191,14 +195,14 @@ async def test_happy_path_marks_twin_and_advances_cursor():
     user_id = str(uuid4())
     event = _fake_event("aura_updated", user_id=user_id, created_at="2026-04-24T10:00:00+00:00")
 
-    db, cursor_chain, events_chain, twins_chain = _make_db(
+    db, cursor_chain, events_chain, rpc_chain = _make_db(
         cursor_row={
             "product": "brandedby",
             "last_processed_at": None,
             "events_processed_total": 0,
         },
         events=[event],
-        twin_update_returns=[{"id": str(uuid4()), "user_id": user_id}],
+        rpc_returns=1,
     )
 
     stats = await process_brandedby_events(db)
@@ -217,10 +221,10 @@ async def test_happy_path_marks_twin_and_advances_cursor():
         }
     )
 
-    # Twin was marked stale
-    db.schema.assert_called_with("brandedby")
-    twins_chain.update.assert_called_once_with(
-        {"needs_personality_refresh": True, "personality_refresh_reason": "aura_updated"}
+    # RPC called with correct user_id and reason
+    db.rpc.assert_called_once_with(
+        "ecosystem_mark_twin_stale",
+        {"p_user_id": user_id, "p_reason": "aura_updated"},
     )
 
 
@@ -258,13 +262,13 @@ async def test_missing_cursor_row_returns_zero_stats():
 
 @pytest.mark.asyncio
 async def test_user_without_twin_still_advances_cursor():
-    """No twin for user → handled still increments (handler returned True), cursor advances."""
+    """No twin for user → handled still increments (RPC returned 0 = not an error), cursor advances."""
     event = _fake_event("badge_tier_changed", created_at="2026-04-24T11:00:00+00:00")
 
     db, cursor_chain, _, _ = _make_db(
         cursor_row={"product": "brandedby", "last_processed_at": None, "events_processed_total": 0},
         events=[event],
-        twin_update_returns=[],  # no rows matched — user not in BrandedBy
+        rpc_returns=0,  # no rows matched — user not in BrandedBy
     )
 
     stats = await process_brandedby_events(db)
@@ -283,7 +287,7 @@ async def test_handler_error_counted_cursor_still_advances():
     db, cursor_chain, _, _ = _make_db(
         cursor_row={"product": "brandedby", "last_processed_at": None, "events_processed_total": 5},
         events=[event],
-        twin_update_raises=RuntimeError("brandedby schema unavailable"),
+        rpc_raises=RuntimeError("brandedby schema unavailable"),
     )
 
     stats = await process_brandedby_events(db)

@@ -145,19 +145,14 @@ async def _handle_brandedby_event(db: AsyncClient, event: dict[str, Any]) -> boo
     event_id: str = event["id"]
 
     try:
-        result = await (
-            db.schema("brandedby")
-            .table("ai_twins")
-            .update(
-                {
-                    "needs_personality_refresh": True,
-                    "personality_refresh_reason": event_type,
-                }
-            )
-            .eq("user_id", user_id)
-            .execute()
-        )
-        updated_count = len(result.data or [])
+        # brandedby schema is not exposed via PostgREST — use SECURITY DEFINER RPC
+        # (public.ecosystem_mark_twin_stale) which runs as postgres and can write
+        # to brandedby.ai_twins directly.
+        result = await db.rpc(
+            "ecosystem_mark_twin_stale",
+            {"p_user_id": user_id, "p_reason": event_type},
+        ).execute()
+        updated_count = int(result.data or 0)
         if updated_count == 0:
             # User has no AI twin — not onboarded to BrandedBy yet.  Not an error.
             logger.debug(
@@ -172,7 +167,7 @@ async def _handle_brandedby_event(db: AsyncClient, event: dict[str, Any]) -> boo
                 user_id=user_id,
                 event_id=event_id,
                 event_type=event_type,
-                twin_rows_updated=updated_count,
+                rows_updated=updated_count,
             )
         return True
     except Exception as exc:

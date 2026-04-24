@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils/cn";
 import { useAssessmentInfo } from "@/hooks/queries/use-assessment";
 import { ApiError } from "@/lib/api/client";
 import { useEnergyMode } from "@/hooks/use-energy-mode";
-import { buildLoginNextPath } from "../../auth-recovery";
+import { buildLoginNextPath } from "../../../auth-recovery";
 
 const SUPPORTED_LOCALES = ["az", "en"] as const;
 type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];

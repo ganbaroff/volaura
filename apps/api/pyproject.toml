@@ -40,6 +40,10 @@ target-version = "py311"
 select = ["E", "W", "F", "I", "N", "UP", "B", "A", "SIM"]
 ignore = ["N806", "B904", "E501", "B008", "E402", "B005", "SIM105", "SIM108", "SIM103"]
 
+[tool.ruff.lint.per-file-ignores]
+# Tests may use nested with/patch for readability and Python <3.10 compat
+"tests/**/*.py" = ["SIM117"]
+
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]

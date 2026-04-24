@@ -33,7 +33,6 @@ Naming convention: Russian descriptive ids for parametrized cases (DeepSeek cont
 
 from __future__ import annotations
 
-import math
 from datetime import UTC, datetime, timedelta
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock
@@ -589,7 +588,6 @@ async def test_complete_gaming_penalty_comes_from_fresh_analysis() -> None:
     This is correct behavior: the router computes the penalty, then stores it.
     The test verifies the RPC receives the freshly-computed score.
     """
-    import math
     from app.core.assessment import antigaming
     from app.core.assessment.engine import CATState
 
@@ -742,22 +740,25 @@ async def test_complete_rpc_receives_correct_user_id() -> None:
 # ══════════════════════════════════════════════════════════════════════════════
 
 
+from unittest.mock import patch
+
 from app.services.aura_reconciler import (
     MAX_RECONCILE_ATTEMPTS,
     _reconcile_session,
     _theta_to_score,
     run_once,
 )
-from unittest.mock import patch
 
 
 def _mk_reconciler_db(
     slug: str | None = "communication",
-    rpc_data: Any = [{"ok": True}],
+    rpc_data: Any = None,
     rpc_raises: Exception | None = None,
     update_raises: bool = False,
 ) -> tuple[MagicMock, MagicMock]:
     """Build reconciler mock DB. Returns (db, sessions_chain)."""
+    if rpc_data is None:
+        rpc_data = [{"ok": True}]
     db = MagicMock()
     sessions_chain = MagicMock()
     sessions_chain.select.return_value = sessions_chain
@@ -865,7 +866,7 @@ async def test_reconcile_retry_below_cap_increments_counter() -> None:
     # Ensure the flag was NOT cleared
     for call in sessions_chain.update.call_args_list:
         payload = call[0][0] if call[0] else {}
-        assert not (payload.get("pending_aura_sync") is False), (
+        assert payload.get("pending_aura_sync") is not False, (
             "Flag must not be cleared on retry-below-cap"
         )
 

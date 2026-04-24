@@ -179,11 +179,12 @@ def _session_row(
 # ─────────────────────────────────────────────────────────────────────────────
 
 
+from pydantic import ValidationError
+
 from app.schemas.assessment import (
     StartAssessmentRequest,
     SubmitAnswerRequest,
 )
-from pydantic import ValidationError
 
 
 class TestStartAssessmentRequestSchema:
@@ -454,7 +455,6 @@ async def test_start_in_progress_conflict_returns_409() -> None:
 
     # User mock: profile (admin check) returns non-admin, existing session returns conflict row
     user_m = MagicMock()
-    user_call_n = {"n": 0}
 
     def _user_table(name: str) -> MagicMock:
         t = MagicMock()
@@ -586,7 +586,6 @@ async def test_start_no_questions_returns_422() -> None:
     admin_m.auth.admin = MagicMock()
     admin_m.auth.admin.get_user_by_id = AsyncMock(return_value=MagicMock(user=None))
 
-    call_n = {"n": 0}
 
     def _admin_table(name: str) -> MagicMock:
         t = MagicMock()
@@ -1682,7 +1681,7 @@ async def test_answer_open_ended_bars_path() -> None:
     Covers lines 552-632 (open-ended evaluation branch).
     Uses unittest.mock.patch to replace bars.evaluate_answer with a stub.
     """
-    from unittest.mock import patch, AsyncMock as AM
+    from unittest.mock import patch
 
     # Open-ended question — type != "mcq"
     open_question = {
@@ -1859,7 +1858,6 @@ async def test_start_stale_sessions_auto_expired() -> None:
     Lines 214-222: stale in_progress sessions are set to 'expired' before
     conflict check. This test verifies the update is called when stale rows exist.
     """
-    admin_exec_n = {"n": 0}
 
     admin_m = MagicMock()
     admin_m.auth = MagicMock()
@@ -1907,9 +1905,7 @@ async def test_start_stale_sessions_auto_expired() -> None:
         elif name == "questions":
             # Triggered after all gates pass: returns empty → NO_QUESTIONS 422
             t.execute = AsyncMock(return_value=MagicMock(data=[]))
-        elif name == "policy_versions":
-            t.execute = AsyncMock(return_value=MagicMock(data=None))
-        elif name == "consent_events":
+        elif name == "policy_versions" or name == "consent_events":
             t.execute = AsyncMock(return_value=MagicMock(data=None))
         else:
             t.execute = AsyncMock(return_value=MagicMock(data=None, count=0))

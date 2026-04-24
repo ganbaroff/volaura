@@ -317,9 +317,7 @@ async def export_my_data(
             # Profiles/AURA/badges use different user key names
             if table_name == "profiles":
                 query = db_admin.table(table_name).select(fields).eq("id", user_id)
-            elif table_name == "aura_scores":
-                query = db_admin.table(table_name).select(fields).eq("volunteer_id", user_id)
-            elif table_name == "badges":
+            elif table_name == "aura_scores" or table_name == "badges":
                 query = db_admin.table(table_name).select(fields).eq("volunteer_id", user_id)
             result = await query.execute()
             export_data[section] = result.data or ([] if section != "profile" else None)

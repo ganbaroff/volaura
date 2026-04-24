@@ -16,7 +16,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-
 # ── Ensure docker stub is present before import ───────────────────────────────
 
 if "docker" not in sys.modules:
@@ -62,7 +61,6 @@ def _ensure_swarm_stub() -> None:
 _ensure_swarm_stub()
 
 from app.services.swarm_service import _extract_consensus_scores, _swarm_evaluate_scores
-
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 

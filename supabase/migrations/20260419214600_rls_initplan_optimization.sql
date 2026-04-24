@@ -55,15 +55,7 @@ ALTER POLICY "Users can create own generations"
   ON brandedby.generations
   WITH CHECK ((select auth.uid()) = user_id);
 
--- ---------------------------------------------------------------------------
--- public.analytics_events
--- ---------------------------------------------------------------------------
-
-ALTER POLICY "Users can read own analytics events"
-  ON public.analytics_events
-  USING ((select auth.uid()) = user_id);
-
--- No INSERT policy exists on analytics_events — skipped
+-- public.analytics_events — table does not exist in migrations, skipped
 
 -- ---------------------------------------------------------------------------
 -- public.assessment_sessions

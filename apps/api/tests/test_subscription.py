@@ -684,3 +684,613 @@ async def test_webhook_subscription_updated_success_marks_processed():
 
         assert resp.status_code == 200, f"Expected 200 on success, got {resp.status_code}: {resp.text}"
         mark_processed_mock.assert_called_once()
+
+
+# ── New tests: missing-line coverage ─────────────────────────────────────────
+# Target lines: 42-44, 72, 122, 175-179, 195-197, 204, 216, 232-236,
+#               264-265, 285-287, 355-362, 367-384, 395-404, 412-436
+
+
+# Lines 42-44 / 72: _STRIPE_AVAILABLE=False → _get_stripe_client raises 503
+
+@pytest.mark.asyncio
+async def test_get_stripe_client_stripe_not_available_raises_503():
+    """When _STRIPE_AVAILABLE is False and payment_enabled=True, _get_stripe_client raises 503."""
+    from app.routers.subscription import _get_stripe_client
+
+    with (
+        patch("app.routers.subscription._STRIPE_AVAILABLE", False),
+        patch("app.routers.subscription.settings") as mock_settings,
+    ):
+        mock_settings.payment_enabled = True
+        mock_settings.stripe_secret_key = "sk_test_fake"
+
+        with pytest.raises(Exception) as exc_info:
+            _get_stripe_client()
+
+        # Should raise HTTPException 503
+        exc = exc_info.value
+        assert exc.status_code == 503
+        assert exc.detail["code"] == "STRIPE_NOT_CONFIGURED"
+
+
+# Line 122: naive datetime branch in get_subscription_status
+
+@pytest.mark.asyncio
+async def test_get_status_trial_naive_datetime_gets_tz_added():
+    """trial_ends_at as naive datetime string (no tz) → line 122 replace(tzinfo=UTC), then expires."""
+    # Use a PAST naive datetime — this triggers line 122 (tzinfo=None branch) then the expiry branch.
+    # The expiry path writes "expired" to DB and returns expired status (no schema tz arithmetic needed).
+    from datetime import timedelta
+    past_naive = (datetime.now(UTC).replace(tzinfo=None) - timedelta(days=3)).isoformat()
+    profile_row = {
+        "subscription_status": "trial",
+        "trial_ends_at": past_naive,
+        "subscription_ends_at": None,
+        "stripe_customer_id": None,
+    }
+
+    # Two executes: profile select + update to expired
+    admin = _build_chainable([profile_row, {"id": USER_ID}])
+
+    app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
+    app.dependency_overrides[get_supabase_user] = _make_dep_override(admin)
+    app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
+
+    try:
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            resp = await ac.get(
+                "/api/subscription/status",
+                headers={"Authorization": "Bearer fake-token"},
+            )
+
+        assert resp.status_code == 200, f"Expected 200, got {resp.status_code}: {resp.text}"
+        body = resp.json()
+        assert body["status"] == "expired"
+        assert body["is_active"] is False
+    finally:
+        app.dependency_overrides.clear()
+
+
+# Lines 175-179: auth exception swallowed → checkout still proceeds
+
+@pytest.mark.asyncio
+async def test_create_checkout_auth_exception_swallowed_proceeds():
+    """db.auth.admin.get_user_by_id raises → user_email=None, checkout still succeeds (201)."""
+    profile_row = {
+        "stripe_customer_id": STRIPE_CUSTOMER_ID,
+        "subscription_status": "trial",
+    }
+    admin = _build_chainable([profile_row])
+
+    # Simulate auth call raising an exception
+    admin.auth = MagicMock()
+    admin.auth.admin = MagicMock()
+    admin.auth.admin.get_user_by_id = AsyncMock(side_effect=RuntimeError("auth service down"))
+
+    app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
+    app.dependency_overrides[get_supabase_user] = _make_dep_override(admin)
+    app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
+
+    fake_session = {"url": "https://checkout.stripe.com/pay/cs_test_auth_exc"}
+
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("app.routers.subscription._STRIPE_AVAILABLE", True),
+        patch("app.routers.subscription._stripe") as mock_stripe,
+    ):
+        mock_settings.payment_enabled = True
+        mock_settings.stripe_secret_key = "sk_test_fake"
+        mock_settings.stripe_webhook_secret = "whsec_fake"
+        mock_settings.stripe_price_id = "price_test_fake"
+        mock_settings.app_url = "https://volaura.app"
+
+        mock_stripe.api_key = None
+        mock_stripe.checkout = MagicMock()
+        mock_stripe.checkout.Session = MagicMock()
+        mock_stripe.checkout.Session.create = MagicMock(return_value=fake_session)
+
+        try:
+            transport = ASGITransport(app=app)
+            async with AsyncClient(transport=transport, base_url="http://test") as ac:
+                resp = await ac.post(
+                    "/api/subscription/create-checkout",
+                    headers={"Authorization": "Bearer fake-token"},
+                )
+
+            assert resp.status_code == 201, f"Expected 201, got {resp.status_code}: {resp.text}"
+            body = resp.json()
+            assert "checkout_url" in body
+        finally:
+            app.dependency_overrides.clear()
+
+
+# Lines 195-197: Stripe Customer.create raises → 502
+
+@pytest.mark.asyncio
+async def test_create_checkout_customer_create_exception_returns_502():
+    """stripe.Customer.create raises → 502 STRIPE_ERROR."""
+    profile_row = {
+        "stripe_customer_id": None,  # force customer creation path
+        "subscription_status": "trial",
+    }
+    admin = _build_chainable([profile_row])
+
+    admin.auth = MagicMock()
+    admin.auth.admin = MagicMock()
+    mock_user = MagicMock()
+    mock_user.user = MagicMock()
+    mock_user.user.email = "user@volaura.app"
+    admin.auth.admin.get_user_by_id = AsyncMock(return_value=mock_user)
+
+    app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
+    app.dependency_overrides[get_supabase_user] = _make_dep_override(admin)
+    app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
+
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("app.routers.subscription._STRIPE_AVAILABLE", True),
+        patch("app.routers.subscription._stripe") as mock_stripe,
+    ):
+        mock_settings.payment_enabled = True
+        mock_settings.stripe_secret_key = "sk_test_fake"
+        mock_settings.stripe_webhook_secret = "whsec_fake"
+        mock_settings.stripe_price_id = "price_test_fake"
+        mock_settings.app_url = "https://volaura.app"
+
+        mock_stripe.api_key = None
+        mock_stripe.Customer = MagicMock()
+        mock_stripe.Customer.create = MagicMock(side_effect=RuntimeError("Stripe down"))
+
+        try:
+            transport = ASGITransport(app=app)
+            async with AsyncClient(transport=transport, base_url="http://test") as ac:
+                resp = await ac.post(
+                    "/api/subscription/create-checkout",
+                    headers={"Authorization": "Bearer fake-token"},
+                )
+
+            assert resp.status_code == 502, f"Expected 502, got {resp.status_code}: {resp.text}"
+            body = resp.json()
+            assert body["detail"]["code"] == "STRIPE_ERROR"
+        finally:
+            app.dependency_overrides.clear()
+
+
+# Line 204: stripe_price_id empty → 503
+
+@pytest.mark.asyncio
+async def test_create_checkout_no_price_id_returns_503():
+    """stripe_price_id empty after customer exists → 503 STRIPE_NOT_CONFIGURED."""
+    profile_row = {
+        "stripe_customer_id": STRIPE_CUSTOMER_ID,
+        "subscription_status": "trial",
+    }
+    admin = _build_chainable([profile_row])
+
+    admin.auth = MagicMock()
+    admin.auth.admin = MagicMock()
+    mock_user = MagicMock()
+    mock_user.user = MagicMock()
+    mock_user.user.email = "user@volaura.app"
+    admin.auth.admin.get_user_by_id = AsyncMock(return_value=mock_user)
+
+    app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
+    app.dependency_overrides[get_supabase_user] = _make_dep_override(admin)
+    app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
+
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("app.routers.subscription._STRIPE_AVAILABLE", True),
+        patch("app.routers.subscription._stripe") as mock_stripe,
+    ):
+        mock_settings.payment_enabled = True
+        mock_settings.stripe_secret_key = "sk_test_fake"
+        mock_settings.stripe_webhook_secret = "whsec_fake"
+        mock_settings.stripe_price_id = ""  # empty → triggers line 204
+        mock_settings.app_url = "https://volaura.app"
+
+        mock_stripe.api_key = None
+
+        try:
+            transport = ASGITransport(app=app)
+            async with AsyncClient(transport=transport, base_url="http://test") as ac:
+                resp = await ac.post(
+                    "/api/subscription/create-checkout",
+                    headers={"Authorization": "Bearer fake-token"},
+                )
+
+            assert resp.status_code == 503, f"Expected 503, got {resp.status_code}: {resp.text}"
+            body = resp.json()
+            assert body["detail"]["code"] == "STRIPE_NOT_CONFIGURED"
+        finally:
+            app.dependency_overrides.clear()
+
+
+# Lines 216 + 233: inner price_id check raises HTTPException, caught by except HTTPException → re-raised
+
+@pytest.mark.asyncio
+async def test_create_checkout_inner_price_id_check_raises_503():
+    """stripe_price_id truthy first time (passes line 203), falsy inside try (hits line 216+233)."""
+    profile_row = {
+        "stripe_customer_id": STRIPE_CUSTOMER_ID,
+        "subscription_status": "trial",
+    }
+    admin = _build_chainable([profile_row])
+
+    admin.auth = MagicMock()
+    admin.auth.admin = MagicMock()
+    mock_user = MagicMock()
+    mock_user.user = MagicMock()
+    mock_user.user.email = "user@volaura.app"
+    admin.auth.admin.get_user_by_id = AsyncMock(return_value=mock_user)
+
+    app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
+    app.dependency_overrides[get_supabase_user] = _make_dep_override(admin)
+    app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
+
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("app.routers.subscription._STRIPE_AVAILABLE", True),
+        patch("app.routers.subscription._stripe") as mock_stripe,
+    ):
+        mock_settings.payment_enabled = True
+        mock_settings.stripe_webhook_secret = "whsec_fake"
+        mock_settings.app_url = "https://volaura.app"
+        mock_stripe.api_key = None
+
+        # First access returns truthy (passes line 203 guard),
+        # second access returns falsy (triggers line 215 inner guard → 216 raise → 233 re-raise)
+        call_count = {"n": 0}
+
+        def price_id_side_effect():
+            call_count["n"] += 1
+            return "price_real" if call_count["n"] == 1 else ""
+
+        type(mock_settings).stripe_secret_key = property(lambda s: "sk_test_fake")
+        type(mock_settings).stripe_price_id = property(lambda s: price_id_side_effect())
+
+        try:
+            transport = ASGITransport(app=app)
+            async with AsyncClient(transport=transport, base_url="http://test") as ac:
+                resp = await ac.post(
+                    "/api/subscription/create-checkout",
+                    headers={"Authorization": "Bearer fake-token"},
+                )
+
+            assert resp.status_code == 503, f"Expected 503, got {resp.status_code}: {resp.text}"
+            body = resp.json()
+            assert body["detail"]["code"] == "STRIPE_NOT_CONFIGURED"
+        finally:
+            app.dependency_overrides.clear()
+
+
+# Lines 232-236: Session.create raises → 502
+
+@pytest.mark.asyncio
+async def test_create_checkout_session_create_exception_returns_502():
+    """stripe.checkout.Session.create raises → 502 STRIPE_ERROR."""
+    profile_row = {
+        "stripe_customer_id": STRIPE_CUSTOMER_ID,
+        "subscription_status": "trial",
+    }
+    admin = _build_chainable([profile_row])
+
+    admin.auth = MagicMock()
+    admin.auth.admin = MagicMock()
+    mock_user = MagicMock()
+    mock_user.user = MagicMock()
+    mock_user.user.email = "user@volaura.app"
+    admin.auth.admin.get_user_by_id = AsyncMock(return_value=mock_user)
+
+    app.dependency_overrides[get_supabase_admin] = _make_dep_override(admin)
+    app.dependency_overrides[get_supabase_user] = _make_dep_override(admin)
+    app.dependency_overrides[get_current_user_id] = _make_user_id_override(USER_ID)
+
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("app.routers.subscription._STRIPE_AVAILABLE", True),
+        patch("app.routers.subscription._stripe") as mock_stripe,
+    ):
+        mock_settings.payment_enabled = True
+        mock_settings.stripe_secret_key = "sk_test_fake"
+        mock_settings.stripe_webhook_secret = "whsec_fake"
+        mock_settings.stripe_price_id = "price_test_fake"
+        mock_settings.app_url = "https://volaura.app"
+
+        mock_stripe.api_key = None
+        mock_stripe.checkout = MagicMock()
+        mock_stripe.checkout.Session = MagicMock()
+        mock_stripe.checkout.Session.create = MagicMock(side_effect=RuntimeError("Stripe checkout error"))
+
+        try:
+            transport = ASGITransport(app=app)
+            async with AsyncClient(transport=transport, base_url="http://test") as ac:
+                resp = await ac.post(
+                    "/api/subscription/create-checkout",
+                    headers={"Authorization": "Bearer fake-token"},
+                )
+
+            assert resp.status_code == 502, f"Expected 502, got {resp.status_code}: {resp.text}"
+            body = resp.json()
+            assert body["detail"]["code"] == "STRIPE_ERROR"
+        finally:
+            app.dependency_overrides.clear()
+
+
+# Lines 264-265: webhook_secret empty → 503
+
+@pytest.mark.asyncio
+async def test_webhook_no_webhook_secret_returns_503():
+    """stripe_webhook_secret empty → 503 STRIPE_NOT_CONFIGURED."""
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("app.routers.subscription._STRIPE_AVAILABLE", True),
+        patch("app.routers.subscription._stripe") as mock_stripe,
+    ):
+        mock_settings.payment_enabled = True
+        mock_settings.stripe_secret_key = "sk_test_fake"
+        mock_settings.stripe_webhook_secret = ""  # empty → triggers lines 264-265
+        mock_settings.stripe_price_id = "price_test_fake"
+        mock_settings.app_url = "https://volaura.app"
+
+        mock_stripe.api_key = None
+
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            resp = await ac.post(
+                "/api/subscription/webhook",
+                content=b'{"type": "test"}',
+                headers={
+                    "content-type": "application/json",
+                    "stripe-signature": "t=12345,v1=validhash",
+                },
+            )
+
+        assert resp.status_code == 503, f"Expected 503, got {resp.status_code}: {resp.text}"
+        body = resp.json()
+        assert body["detail"]["code"] == "STRIPE_NOT_CONFIGURED"
+
+
+# Lines 285-287: construct_event raises generic Exception (not SignatureVerificationError) → 400
+
+@pytest.mark.asyncio
+async def test_webhook_construct_event_generic_exception_returns_400():
+    """construct_event raises generic Exception (not SignatureVerificationError) → 400 INVALID_PAYLOAD."""
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("app.routers.subscription._STRIPE_AVAILABLE", True),
+        patch("app.routers.subscription._stripe") as mock_stripe,
+    ):
+        mock_settings.payment_enabled = True
+        mock_settings.stripe_secret_key = "sk_test_fake"
+        mock_settings.stripe_webhook_secret = "whsec_fake"
+        mock_settings.stripe_price_id = "price_test_fake"
+        mock_settings.app_url = "https://volaura.app"
+
+        # SignatureVerificationError is a DIFFERENT class than the one being raised
+        class FakeSigError(Exception):
+            pass
+
+        mock_stripe.errors = MagicMock()
+        mock_stripe.errors.SignatureVerificationError = FakeSigError
+        mock_stripe.Webhook = MagicMock()
+        # Raise a plain ValueError — NOT the SignatureVerificationError subclass
+        mock_stripe.Webhook.construct_event = MagicMock(side_effect=ValueError("malformed JSON"))
+
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            resp = await ac.post(
+                "/api/subscription/webhook",
+                content=b"not-valid-json",
+                headers={
+                    "content-type": "application/json",
+                    "stripe-signature": "t=12345,v1=validhash",
+                },
+            )
+
+        assert resp.status_code == 400, f"Expected 400, got {resp.status_code}: {resp.text}"
+        body = resp.json()
+        assert body["detail"]["code"] == "INVALID_PAYLOAD"
+
+
+# Lines 355-362: _is_stripe_event_processed — direct unit test
+
+@pytest.mark.asyncio
+async def test_is_stripe_event_processed_found():
+    """_is_stripe_event_processed returns True when event_id exists in DB."""
+    from app.routers.subscription import _is_stripe_event_processed
+
+    mock_admin = MagicMock()
+    # Build chainable that returns data with event_id
+    mock_admin.table = MagicMock(return_value=mock_admin)
+    mock_admin.select = MagicMock(return_value=mock_admin)
+    mock_admin.eq = MagicMock(return_value=mock_admin)
+    mock_admin.limit = MagicMock(return_value=mock_admin)
+    mock_admin.execute = AsyncMock(return_value=MagicMock(data=[{"event_id": "evt_test_found"}]))
+
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("supabase._async.client.create_client", new=AsyncMock(return_value=mock_admin)),
+    ):
+        mock_settings.supabase_url = "https://fake.supabase.co"
+        mock_settings.supabase_service_key = "fake-service-key"
+
+        result = await _is_stripe_event_processed("evt_test_found")
+
+    assert result is True
+
+
+@pytest.mark.asyncio
+async def test_is_stripe_event_processed_not_found():
+    """_is_stripe_event_processed returns False when event_id not in DB."""
+    from app.routers.subscription import _is_stripe_event_processed
+
+    mock_admin = MagicMock()
+    mock_admin.table = MagicMock(return_value=mock_admin)
+    mock_admin.select = MagicMock(return_value=mock_admin)
+    mock_admin.eq = MagicMock(return_value=mock_admin)
+    mock_admin.limit = MagicMock(return_value=mock_admin)
+    mock_admin.execute = AsyncMock(return_value=MagicMock(data=[]))
+
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("supabase._async.client.create_client", new=AsyncMock(return_value=mock_admin)),
+    ):
+        mock_settings.supabase_url = "https://fake.supabase.co"
+        mock_settings.supabase_service_key = "fake-service-key"
+
+        result = await _is_stripe_event_processed("evt_test_missing")
+
+    assert result is False
+
+
+# Lines 367-384: _mark_stripe_event_processed — direct unit tests (success + exception branch)
+
+@pytest.mark.asyncio
+async def test_mark_stripe_event_processed_success():
+    """_mark_stripe_event_processed inserts without error → completes silently."""
+    from app.routers.subscription import _mark_stripe_event_processed
+
+    mock_admin = MagicMock()
+    mock_admin.table = MagicMock(return_value=mock_admin)
+    mock_admin.insert = MagicMock(return_value=mock_admin)
+    mock_admin.execute = AsyncMock(return_value=MagicMock(data=[{"event_id": "evt_mark_ok"}]))
+
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("supabase._async.client.create_client", new=AsyncMock(return_value=mock_admin)),
+    ):
+        mock_settings.supabase_url = "https://fake.supabase.co"
+        mock_settings.supabase_service_key = "fake-service-key"
+
+        # Should not raise
+        await _mark_stripe_event_processed("evt_mark_ok", "customer.subscription.created")
+
+    mock_admin.insert.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_mark_stripe_event_processed_exception_swallowed():
+    """_mark_stripe_event_processed insert raises → exception swallowed, no re-raise."""
+    from app.routers.subscription import _mark_stripe_event_processed
+
+    mock_admin = MagicMock()
+    mock_admin.table = MagicMock(return_value=mock_admin)
+    mock_admin.insert = MagicMock(return_value=mock_admin)
+    mock_admin.execute = AsyncMock(side_effect=RuntimeError("DB constraint violation"))
+
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("supabase._async.client.create_client", new=AsyncMock(return_value=mock_admin)),
+    ):
+        mock_settings.supabase_url = "https://fake.supabase.co"
+        mock_settings.supabase_service_key = "fake-service-key"
+
+        # Must NOT raise — exception is logged and swallowed (lines 382-384)
+        await _mark_stripe_event_processed("evt_mark_exc", "customer.subscription.updated")
+
+
+# Lines 395-404: _resolve_user_id_by_stripe_customer — direct unit tests
+
+@pytest.mark.asyncio
+async def test_resolve_user_id_by_stripe_customer_found():
+    """_resolve_user_id_by_stripe_customer returns user_id when profile found."""
+    from app.routers.subscription import _resolve_user_id_by_stripe_customer
+
+    mock_admin = MagicMock()
+    mock_admin.table = MagicMock(return_value=mock_admin)
+    mock_admin.select = MagicMock(return_value=mock_admin)
+    mock_admin.eq = MagicMock(return_value=mock_admin)
+    mock_admin.limit = MagicMock(return_value=mock_admin)
+    mock_admin.execute = AsyncMock(return_value=MagicMock(data=[{"id": USER_ID}]))
+
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("supabase._async.client.create_client", new=AsyncMock(return_value=mock_admin)),
+    ):
+        mock_settings.supabase_url = "https://fake.supabase.co"
+        mock_settings.supabase_service_key = "fake-service-key"
+
+        result = await _resolve_user_id_by_stripe_customer("cus_test123")
+
+    assert result == USER_ID
+
+
+@pytest.mark.asyncio
+async def test_resolve_user_id_by_stripe_customer_not_found():
+    """_resolve_user_id_by_stripe_customer returns None when no profile found."""
+    from app.routers.subscription import _resolve_user_id_by_stripe_customer
+
+    mock_admin = MagicMock()
+    mock_admin.table = MagicMock(return_value=mock_admin)
+    mock_admin.select = MagicMock(return_value=mock_admin)
+    mock_admin.eq = MagicMock(return_value=mock_admin)
+    mock_admin.limit = MagicMock(return_value=mock_admin)
+    mock_admin.execute = AsyncMock(return_value=MagicMock(data=[]))
+
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("supabase._async.client.create_client", new=AsyncMock(return_value=mock_admin)),
+    ):
+        mock_settings.supabase_url = "https://fake.supabase.co"
+        mock_settings.supabase_service_key = "fake-service-key"
+
+        result = await _resolve_user_id_by_stripe_customer("cus_unknown")
+
+    assert result is None
+
+
+# Lines 412-436: _update_profile_subscription — direct unit tests (success + not-found)
+
+@pytest.mark.asyncio
+async def test_update_profile_subscription_success_returns_true():
+    """_update_profile_subscription returns True when profile row updated."""
+    from app.routers.subscription import _update_profile_subscription
+
+    mock_admin = MagicMock()
+    mock_admin.table = MagicMock(return_value=mock_admin)
+    mock_admin.update = MagicMock(return_value=mock_admin)
+    mock_admin.eq = MagicMock(return_value=mock_admin)
+    mock_admin.execute = AsyncMock(return_value=MagicMock(data=[{"id": USER_ID}]))
+
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("supabase._async.client.create_client", new=AsyncMock(return_value=mock_admin)),
+    ):
+        mock_settings.supabase_url = "https://fake.supabase.co"
+        mock_settings.supabase_service_key = "fake-service-key"
+
+        result = await _update_profile_subscription(
+            STRIPE_CUSTOMER_ID,
+            {"subscription_status": "active"},
+        )
+
+    assert result is True
+
+
+@pytest.mark.asyncio
+async def test_update_profile_subscription_no_row_returns_false():
+    """_update_profile_subscription returns False when no profile matched (empty data)."""
+    from app.routers.subscription import _update_profile_subscription
+
+    mock_admin = MagicMock()
+    mock_admin.table = MagicMock(return_value=mock_admin)
+    mock_admin.update = MagicMock(return_value=mock_admin)
+    mock_admin.eq = MagicMock(return_value=mock_admin)
+    mock_admin.execute = AsyncMock(return_value=MagicMock(data=[]))
+
+    with (
+        patch("app.routers.subscription.settings") as mock_settings,
+        patch("supabase._async.client.create_client", new=AsyncMock(return_value=mock_admin)),
+    ):
+        mock_settings.supabase_url = "https://fake.supabase.co"
+        mock_settings.supabase_service_key = "fake-service-key"
+
+        result = await _update_profile_subscription(
+            "cus_no_match",
+            {"subscription_status": "cancelled"},
+        )
+
+    assert result is False

@@ -103,12 +103,15 @@ class CATState:
         items = [
             ItemRecord(
                 question_id=r["question_id"],
-                irt_a=r["irt_a"],
-                irt_b=r["irt_b"],
-                irt_c=r["irt_c"],
-                response=r["response"],
-                raw_score=r["raw_score"],
-                response_time_ms=r["response_time_ms"],
+                # Tolerate legacy/incomplete item JSON — session resume must not crash
+                # on missing fields. Same defaults are used in the selection path
+                # (engine.py ~line 243) for runtime bounds validation.
+                irt_a=float(r.get("irt_a", 1.0)),
+                irt_b=float(r.get("irt_b", 0.0)),
+                irt_c=float(r.get("irt_c", 0.0)),
+                response=r.get("response", ""),
+                raw_score=float(r.get("raw_score", 0.0)),
+                response_time_ms=int(r.get("response_time_ms", 0)),
                 theta_at_answer=r.get("theta_at_answer", 0.0),
                 evaluation_log=r.get("evaluation_log"),
             )

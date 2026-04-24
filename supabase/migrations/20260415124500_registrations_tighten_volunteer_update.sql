@@ -30,14 +30,21 @@ AS $$
 BEGIN
     -- Only constrain volunteers acting on their own row. Other callers
     -- (org owners, service role, RPCs with SECURITY DEFINER) pass through.
-    IF auth.uid() IS NULL OR auth.uid() <> NEW.volunteer_id THEN
+    -- Gate uses OLD.volunteer_id — the owner of the row being modified.
+    -- Using NEW.volunteer_id would let a volunteer escape the constraint by
+    -- simultaneously changing volunteer_id to another user's UUID (the gate
+    -- would see auth.uid() <> NEW.volunteer_id = TRUE and return early).
+    IF auth.uid() IS NULL OR auth.uid() <> OLD.volunteer_id THEN
         RETURN NEW;
     END IF;
 
     -- Volunteers may only flip status to 'cancelled'. No other column may change.
+    -- Note: professional_id is GENERATED ALWAYS AS (volunteer_id) STORED.
+    -- In a BEFORE trigger the generated value may not yet be recomputed (PG14
+    -- vs PG15 behavior differs). Checking it is redundant: volunteer_id already
+    -- covers the invariant. Removed to avoid spurious failures. (fix 2026-04-24)
     IF NEW.event_id           IS DISTINCT FROM OLD.event_id
        OR NEW.volunteer_id    IS DISTINCT FROM OLD.volunteer_id
-       OR NEW.professional_id IS DISTINCT FROM OLD.professional_id
        OR NEW.registered_at   IS DISTINCT FROM OLD.registered_at
        OR NEW.checked_in_at   IS DISTINCT FROM OLD.checked_in_at
        OR NEW.check_in_code   IS DISTINCT FROM OLD.check_in_code

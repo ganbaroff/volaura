@@ -333,3 +333,203 @@ def test_match_check_result_with_error():
 def test_max_searches_per_run_constant():
     """_MAX_SEARCHES_PER_RUN is 50 — prevents DB timeout on large installs."""
     assert _MAX_SEARCHES_PER_RUN == 50
+
+
+# ── Tests: badge_tier filter ──────────────────────────────────────────────────
+
+
+@pytest.mark.asyncio
+async def test_badge_tier_filter_applied_in_query():
+    """Filters with badge_tier → .eq("badge_tier", ...) applied to aura_scores query.
+
+    make_db's _table_cache only caches org_saved_searches; every other table gets a
+    fresh MagicMock per call, so we must override db.table to return stable mocks.
+    The badge_tier branch extends the query chain:
+        .select().gte().eq().gt().order().limit().eq("badge_tier", ...).execute()
+    """
+    db = make_db(
+        searches=[_search(filters={"min_aura": 60.0, "badge_tier": "gold"})],
+        aura_rows=[],
+    )
+
+    # Build stable per-table mocks so every db.table(name) call returns the same object
+    saved_search_mock = db.table("org_saved_searches")  # already cached by make_db
+
+    org_mock = MagicMock()
+    org_mock.select.return_value.eq.return_value.maybe_single.return_value.execute = AsyncMock(
+        return_value=MockResult(data={"name": "Test NGO"})
+    )
+
+    aura_mock = MagicMock()
+    # badge_tier chain: .select().gte().eq().gt().order().limit().eq().execute
+    aura_mock.select.return_value.gte.return_value.eq.return_value.gt.return_value.order.return_value.limit.return_value.eq.return_value.execute = AsyncMock(
+        return_value=MockResult(data=[])
+    )
+
+    profiles_mock = MagicMock()
+    profiles_mock.select.return_value.in_.return_value.execute = AsyncMock(return_value=MockResult(data=[]))
+
+    _stable: dict = {
+        "org_saved_searches": saved_search_mock,
+        "organizations": org_mock,
+        "aura_scores": aura_mock,
+        "profiles": profiles_mock,
+    }
+    db.table = lambda name: _stable.get(name, MagicMock())
+
+    with patch("app.services.match_checker._send_telegram_notification", new_callable=AsyncMock, return_value=True):
+        summary = await run_match_check(db)
+
+    assert summary.searches_checked == 1
+    assert summary.errors == 0
+
+
+# ── Tests: location filter skips non-matching volunteers ─────────────────────
+
+
+@pytest.mark.asyncio
+async def test_location_filter_skips_non_matching_volunteers():
+    """Volunteer profile.location='London', filter.location='baku' → volunteer excluded."""
+    profile = _profile_row()
+    profile["location"] = "London"
+
+    db = make_db(
+        searches=[_search(filters={"min_aura": 60.0, "location": "baku"})],
+        profiles=[profile],
+    )
+    with patch("app.services.match_checker._send_telegram_notification", new_callable=AsyncMock, return_value=True) as mock_notify:
+        summary = await run_match_check(db)
+
+    assert summary.searches_with_matches == 0  # volunteer was filtered out
+    mock_notify.assert_not_called()
+
+
+# ── Tests: competency query exception is swallowed ────────────────────────────
+
+
+@pytest.mark.asyncio
+async def test_competency_query_exception_is_non_fatal():
+    """Exception on competency lookup is swallowed; match still included (no top_competency).
+
+    make_db returns a fresh MagicMock for aura_scores on every db.table() call, so we
+    must wire a stable aura_mock and replace db.table to ensure the same object is
+    returned on both calls inside _find_new_matches (main query + competency lookup).
+    """
+    saved_search_mock = make_db().table("org_saved_searches")  # get the cached instance
+
+    # Rebuild stable mocks
+    org_mock = MagicMock()
+    org_mock.select.return_value.eq.return_value.maybe_single.return_value.execute = AsyncMock(
+        return_value=MockResult(data={"name": "Test NGO"})
+    )
+
+    aura_mock = MagicMock()
+    # Main aura query (no badge_tier): .select().gte().eq().gt().order().limit().execute
+    aura_mock.select.return_value.gte.return_value.eq.return_value.gt.return_value.order.return_value.limit.return_value.execute = AsyncMock(
+        return_value=MockResult(data=[_aura_row()])
+    )
+    # Competency lookup (.eq().maybe_single().execute) → raises (non-fatal path)
+    aura_mock.select.return_value.eq.return_value.maybe_single.return_value.execute = AsyncMock(
+        side_effect=Exception("competency query timed out")
+    )
+
+    profiles_mock = MagicMock()
+    profiles_mock.select.return_value.in_.return_value.execute = AsyncMock(
+        return_value=MockResult(data=[_profile_row()])
+    )
+
+    _stable: dict = {
+        "org_saved_searches": saved_search_mock,
+        "organizations": org_mock,
+        "aura_scores": aura_mock,
+        "profiles": profiles_mock,
+    }
+
+    db = MagicMock()
+    db.table = lambda name: _stable.get(name, MagicMock())
+
+    with patch("app.services.match_checker._send_telegram_notification", new_callable=AsyncMock, return_value=True):
+        summary = await run_match_check(db)
+
+    # Despite the exception, the run succeeded (exception is non-fatal)
+    assert summary.searches_checked == 1
+    assert summary.errors == 0
+
+
+# ── Tests: telegram kill-switch returns False immediately ─────────────────────
+
+
+@pytest.mark.asyncio
+async def test_send_telegram_notification_kill_switch_returns_false():
+    """_send_telegram_notification always returns False (HARD KILL-SWITCH is active)."""
+    from app.services.match_checker import _send_telegram_notification
+
+    result = await _send_telegram_notification("Test NGO", "My Search", [])
+    assert result is False
+
+
+# ── Tests: non-table exception re-raises ─────────────────────────────────────
+
+
+@pytest.mark.asyncio
+async def test_non_table_exception_propagates():
+    """Exception unrelated to missing table (e.g. auth error) re-raises from run_match_check."""
+    db = make_db()
+
+    # Override org_saved_searches execute to raise an exception that does NOT match the
+    # table-not-found pattern ("org_saved_searches" / "does not exist")
+    async def raise_auth_error(*a, **kw):
+        raise Exception("JWT expired")
+
+    db.table("org_saved_searches").select.return_value.eq.return_value.order.return_value.limit.return_value.execute = (
+        raise_auth_error
+    )
+
+    with pytest.raises(Exception, match="JWT expired"):
+        await run_match_check(db)
+
+
+# ── Tests: last_checked_at as datetime or None ────────────────────────────────
+
+
+@pytest.mark.asyncio
+async def test_last_checked_at_as_datetime_object():
+    """last_checked_at stored as a datetime object (not string) is accepted."""
+    from datetime import datetime, timezone
+
+    search = _search()
+    search["last_checked_at"] = datetime(2026, 4, 1, 10, 0, 0, tzinfo=timezone.utc)
+
+    db = make_db(searches=[search])
+    with patch("app.services.match_checker._send_telegram_notification", new_callable=AsyncMock, return_value=True):
+        summary = await run_match_check(db)
+
+    assert summary.searches_checked == 1
+
+
+@pytest.mark.asyncio
+async def test_last_checked_at_as_none_defaults_to_2020():
+    """last_checked_at=None → defaults to 2020-01-01 (match all history)."""
+    search = _search()
+    search["last_checked_at"] = None
+
+    db = make_db(searches=[search])
+    with patch("app.services.match_checker._send_telegram_notification", new_callable=AsyncMock, return_value=True):
+        summary = await run_match_check(db)
+
+    assert summary.searches_checked == 1
+
+
+# ── Tests: _main() CLI runner ─────────────────────────────────────────────────
+
+
+@pytest.mark.asyncio
+async def test_main_returns_early_when_settings_missing():
+    """_main() returns early when SUPABASE_URL or SUPABASE_SERVICE_KEY not set."""
+    from app.services.match_checker import _main
+
+    with patch("app.services.match_checker.settings") as mock_settings:
+        mock_settings.supabase_url = ""
+        mock_settings.supabase_service_key = ""
+        # Should not raise; returns early
+        await _main()

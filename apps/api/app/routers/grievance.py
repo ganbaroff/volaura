@@ -510,7 +510,9 @@ async def admin_transition_human_review_request(
     admin_id: str = Depends(require_platform_admin),
 ) -> HumanReviewRequestOut:
     """Admin transition for human review requests."""
-    if payload.status in ("resolved_uphold", "resolved_overturn") and not (payload.resolution_notes and payload.resolution_notes.strip()):
+    if payload.status in ("resolved_uphold", "resolved_overturn") and not (
+        payload.resolution_notes and payload.resolution_notes.strip()
+    ):
         raise HTTPException(
             status_code=422,
             detail={"code": "RESOLUTION_REQUIRED", "message": "resolution_notes is required for resolved statuses"},
@@ -528,7 +530,9 @@ async def admin_transition_human_review_request(
     try:
         result = await db.table("human_review_requests").update(update_body).eq("id", request_id).execute()
     except Exception as exc:
-        logger.error("Human review transition failed", admin_id=str(admin_id), request_id=request_id, error=str(exc)[:200])
+        logger.error(
+            "Human review transition failed", admin_id=str(admin_id), request_id=request_id, error=str(exc)[:200]
+        )
         raise HTTPException(
             status_code=500,
             detail={"code": "HUMAN_REVIEW_UPDATE_FAILED", "message": "Could not update review request"},

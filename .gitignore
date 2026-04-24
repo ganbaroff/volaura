@@ -96,3 +96,9 @@ models/
 
 .vercel
 .coverage
+
+# Local Windows voice dictation tools — not part of the API
+apps/api/whisper_dictation.py
+apps/api/whisper_dictation_startup.vbs
+apps/api/whisper_server.py
+apps/api/whisper_startup.vbs

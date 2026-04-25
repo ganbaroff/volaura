@@ -1,0 +1,16 @@
+{
+  "perspective": "Security",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Security\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/web/src/app/[locale]/page.tsx\", \"issue\": \"Landing page presents VOLAURA as standalone talent platform without reference to MindShift, Life Simulator, BrandedBy, or ZEUS. Creates identity fragmentation: attack surface where users perceive isolated products instead of unified organism.\", \"recommended_fix\": \"Reflect Constitution v1.2: reframe as 'Atlas presents: five faces of focused intelligence.' Link each face as a skill of the core platform.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Identity fragmentation enables impersonation attacks — compromised face could be isolated and spoofed without detection by user or system.\"}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "apps/web/src/app/[locale]/page.tsx",
+      "issue": "Landing page presents VOLAURA as standalone talent platform without reference to MindShift, Life Simulator, BrandedBy, or ZEUS. Creates identity fragmentation: attack surface where users perceive isolated products instead of unified organism.",
+      "recommended_fix": "Reflect Constitution v1.2: reframe as 'Atlas presents: five faces of focused intelligence.' Link each face as a skill of the core platform."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "Identity fragmentation enables impersonation attacks — compromised face could be isolated and spoofed without detection by user or system."
+}

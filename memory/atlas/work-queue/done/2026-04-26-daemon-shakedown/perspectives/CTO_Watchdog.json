@@ -1,0 +1,6 @@
+{
+  "perspective": "CTO Watchdog",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"product\",\n  \"findings\": [\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"apps/web/src/app/[locale]/page.tsx\",\n      \"issue\": \"Single-product framing of VOLAURA violates Constitution v1.7's five-face positioning\",\n      \"recommended_fix\": \"Replace 'VOLAURA = verified talent platform' with 'Atlas: Your five-faced platform for assessment, focus, simulation, AI twin, and swarm intelligence'\"\n    },\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"docs/ZEUS/architecture.md\",\n      \"issue\": \"ZEUS is described as a standalone 'swarm intelligence engine'\",\n      \"recommended_fix\": \"Add 'One of Atlas\\' five faces' prefix to all product-specific descriptions\"\n    },\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"memory/swarm/skills/communications-strategist.md\",\n      \"issue\": \"Marketing copy isolates BrandedBy as 'AI twin creation tool'\",\n      \"recommended_fix\": \"Reframe as 'BrandedBy: Your AI twin within Atlas\\' five-faced ecosystem'\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}"
+}

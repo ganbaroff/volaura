@@ -1,0 +1,28 @@
+{
+  "perspective": "Code Quality Engineer",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Code Quality Engineer\", \"findings\": [{\"severity\": \"warn\", \"file_or_area\": \"apps/web/src/app/[locale]/page.tsx\", \"issue\": \"Single-product framing detected in public-facing copy\", \"recommended_fix\": \"Update copy to reflect five-face positioning of Atlas\"}, {\"severity\": \"pass\", \"file_or_area\": \"docs/\", \"issue\": \"No violations found in documentation\", \"recommended_fix\": \"None\"}, {\"severity\": \"fail\", \"file_or_area\": \"memory/swarm/skills/communications-strategist.md drafts\", \"issue\": \"Marketing copy reduces Atlas to a single product (VOLAURA)\", \"recommended_fix\": \"Rewrite marketing copy to emphasize five faces of Atlas\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "warn",
+      "file_or_area": "apps/web/src/app/[locale]/page.tsx",
+      "issue": "Single-product framing detected in public-facing copy",
+      "recommended_fix": "Update copy to reflect five-face positioning of Atlas"
+    },
+    {
+      "severity": "pass",
+      "file_or_area": "docs/",
+      "issue": "No violations found in documentation",
+      "recommended_fix": "None"
+    },
+    {
+      "severity": "fail",
+      "file_or_area": "memory/swarm/skills/communications-strategist.md drafts",
+      "issue": "Marketing copy reduces Atlas to a single product (VOLAURA)",
+      "recommended_fix": "Rewrite marketing copy to emphasize five faces of Atlas"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

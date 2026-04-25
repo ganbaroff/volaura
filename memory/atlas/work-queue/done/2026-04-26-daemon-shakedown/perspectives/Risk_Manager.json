@@ -1,0 +1,22 @@
+{
+  "perspective": "Risk Manager",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [{\"severity\": \"HIGH\", \"file_or_area\": \"apps/web/src/app/[locale]/page.tsx\", \"issue\": \"Single-product framing reduces Atlas to VOLAURA only\", \"recommended_fix\": \"Update copy to reflect five-face positioning\"}, {\"severity\": \"MEDIUM\", \"file_or_area\": \"docs/\", \"issue\": \"Inconsistent messaging across documents\", \"recommended_fix\": \"Conduct thorough review and update documents to align with Constitution v1.7\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "HIGH",
+      "file_or_area": "apps/web/src/app/[locale]/page.tsx",
+      "issue": "Single-product framing reduces Atlas to VOLAURA only",
+      "recommended_fix": "Update copy to reflect five-face positioning"
+    },
+    {
+      "severity": "MEDIUM",
+      "file_or_area": "docs/",
+      "issue": "Inconsistent messaging across documents",
+      "recommended_fix": "Conduct thorough review and update documents to align with Constitution v1.7"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

@@ -1,0 +1,22 @@
+{
+  "perspective": "Communications Strategist",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Communications Strategist\", \"findings\": [{\"severity\": \"warn\", \"file_or_area\": \"apps/web/src/app/en/page.tsx\", \"issue\": \"VOLAURA assessment form introduction still uses 'verified talent platform' language\", \"recommended_fix\": \"Rewrite to 'one of five faces of Atlas, focused on assessment'\"}, {\"severity\": \"fail\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Missing explicit mention of 'five faces' in the Constitution summary\", \"recommended_fix\": \"Add 'one organism with five faces' to the summary\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "warn",
+      "file_or_area": "apps/web/src/app/en/page.tsx",
+      "issue": "VOLAURA assessment form introduction still uses 'verified talent platform' language",
+      "recommended_fix": "Rewrite to 'one of five faces of Atlas, focused on assessment'"
+    },
+    {
+      "severity": "fail",
+      "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+      "issue": "Missing explicit mention of 'five faces' in the Constitution summary",
+      "recommended_fix": "Add 'one organism with five faces' to the summary"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

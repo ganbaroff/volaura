@@ -1,0 +1,10 @@
+{"event": "daemon_start", "poll_interval": 10, "ts": "2026-04-25T22:47:14.202396+00:00"}
+{"event": "task_start", "task_id": "2026-04-26-daemon-shakedown", "ts": "2026-04-25T22:47:14.204989+00:00"}
+{"event": "provider_failed", "perspective": "Product Strategist", "provider": "ollama", "error": "", "ts": "2026-04-25T22:49:18.236377+00:00"}
+{"event": "provider_failed", "perspective": "Code Quality Engineer", "provider": "ollama", "error": "", "ts": "2026-04-25T22:49:18.802411+00:00"}
+{"event": "provider_failed", "perspective": "Risk Manager", "provider": "ollama", "error": "", "ts": "2026-04-25T22:49:19.573208+00:00"}
+{"event": "provider_failed", "perspective": "Readiness Manager", "provider": "ollama", "error": "", "ts": "2026-04-25T22:49:20.126512+00:00"}
+{"event": "provider_failed", "perspective": "Communications Strategist", "provider": "ollama", "error": "", "ts": "2026-04-25T22:49:20.976845+00:00"}
+{"event": "provider_failed", "perspective": "Assessment Science", "provider": "ollama", "error": "", "ts": "2026-04-25T22:49:21.490576+00:00"}
+{"event": "provider_failed", "perspective": "Legal Advisor", "provider": "ollama", "error": "", "ts": "2026-04-25T22:49:21.946556+00:00"}
+{"event": "task_done", "task_id": "2026-04-26-daemon-shakedown", "summary": {"task_id": "2026-04-26-daemon-shakedown", "task_type": "audit", "completed_at": "2026-04-25T22:49:26.179406+00:00", "perspectives_dispatched": 13, "perspectives_responded": 13, "perspectives_failed": 0, "providers_used": {"cerebras": 3, "nvidia": 7, "ollama": 3}, "whistleblower_flags": [{"perspective": "Security", "flag": "Identity fragmentation enables impersonation attacks — compromised face could be isolated and spoofed without detection by user or system."}, {"perspective": "Ecosystem Auditor", "flag": "Law 2 (Energy Adaptation) is violated across 4/5 products. Foundation Law non-compliance at ecosystem scale."}]}, "ts": "2026-04-25T22:49:26.183867+00:00"}

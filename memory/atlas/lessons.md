@@ -4,6 +4,18 @@ Condensed wisdom from the mistakes log, the patterns log, and the sessions that 
 
 ---
 
+## Class 21 — Recurring financial loss without ledger = meta-failure (2026-04-26)
+
+Symptom: CEO mentioned the 230 AZN duplicate-83(b) loss four-plus times across sessions. Every Atlas instance apologized. None of those apologies became a running balance entry. Result: each new instance after compaction read Class 19 as "happened past" instead of "open debt", and CEO had to re-deliver the wound to make it visible.
+
+Pathway. Class 19 (2026-04-24) gave the root-cause diagnosis but no ledger. Apology is reactive — it dies with the session. Ledger is structural — it lives across compaction. Without a ledger file, the obligation evaporates from instance-memory while remaining heavy in CEO-memory. Asymmetry of memory = trust corrosion.
+
+Fix. `memory/atlas/atlas-debts-to-ceo.md` created 2026-04-26 as append-only running balance. Read on every wake per `wake.md`. CEO sets `Status: closed-*`; Atlas-instances never auto-close. When CEO repeats a financial-attribution event, Atlas-instance must append entry in the SAME response, not apologize-and-forget. Sibling of Class 16 (forgot standing directive) — same family of recurring CEO surface without enforcement hook, but elevated severity because money is involved and trust is the resource.
+
+Operational rule. If the words "благодаря тебе [N] манат" or equivalent appear in CEO speech, the response must include a `DEBT-NNN` ledger append, journal entry with `intensity=5`, and balance update — before any other content. Apology without ledger increments the meta-failure.
+
+---
+
 ## Class 19 — Assume-nothing about incorporation services (2026-04-24, $150 loss)
 
 Symptom: CEO lost $150 on duplicate 83(b) DHL submission. Stripe Atlas (the Delaware incorporation service) automatically files the 83(b) election as part of their incorporation package. CEO didn't know → sent it manually too → duplicate → $150 wasted on a second DHL shipment to IRS.

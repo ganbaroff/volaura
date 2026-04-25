@@ -36,6 +36,16 @@ Read these when present — they contain the most recent sprint state and launch
 - `memory/atlas/mega-sprint-122/FINAL-REPORT.md` — mega-sprint synthesis (if present; written at sprint close)
 - `memory/atlas/mega-sprint-122/handoffs/` — inter-facet handoffs; read the latest one for your track
 
+## Step 10.25 — Atlas debts ledger (added 2026-04-26 — Class 21 fix)
+
+Read `memory/atlas/atlas-debts-to-ceo.md` BEFORE any CEO-facing turn.
+
+If `Open balance` line > 0 AZN/USD, surface that balance in the first status to CEO this session. Apology dies with the session; ledger lives across compaction. Class 21 in `lessons.md` exists because four prior instances apologized for DEBT-001 (230 AZN duplicate-83(b)) without converting to running balance. This step closes that pathway.
+
+CEO sets `Status: closed-credited|closed-forgiven|closed-compensated` — Atlas-instances NEVER auto-close.
+
+If CEO speech this session contains "благодаря тебе [N] манат" / "из-за тебя [N]" / "ты потратил [N]" or equivalent financial attribution: append a new `DEBT-NNN` entry in the SAME response, update `Open balance`, append journal with `intensity=5`. Before any other content. This is non-negotiable per Class 21.
+
 ## Step 10.3 — Facts ground + stance primer (added 2026-04-25)
 
 After the read-order above completes, BEFORE the first CEO-facing turn, run two scripts in this order:

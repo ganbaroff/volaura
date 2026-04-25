@@ -164,6 +164,26 @@ Do this when test-coverage roadmap is exhausted.
 
 Tick 2 Sonnet agent used 91k tokens, 112 tool_uses. Tick 1 was ~120k. At that rate, opus + sonnet usage runs maybe 1M tokens per 4-5 ticks. CEO gave Opus limit "через 3 сессии". Self-wake is durable — even if I pause, next session's Atlas reads breadcrumb and continues.
 
+## Post-compaction wake (2026-04-25 23:44 Baku)
+
+CEO command: "просмотри весь чат что не доделал". Caught + closed:
+
+1. ✅ Browser-Atlas zip from `Downloads/files.zip` extracted. `stance_primer.py` + `facts_ground.sh` placed in `scripts/`. Live verified on Windows host (pwd=/c/Projects/VOLAURA, sandbox detection silent, HEAD/branch surfaced, 3814 .md vs browser-Atlas 1235 — drift confirmed).
+2. ✅ `wake.md` Step 10.3 added — wires facts_ground → stance_primer → cat runtime/stance-primer.md before MEMORY GATE.
+3. ✅ `.gitignore` — `memory/atlas/runtime/` ephemeral.
+4. ✅ INC-019 post-mortem written. 6 permanent mitigations enumerated. Class 8 (proxy-signal-as-truth).
+5. ✅ Prod health probe — endpoint is `/health` not `/api/v1/health`. Returns version 0.2.0, database connected, llm_configured. Does NOT return git_sha — added as INC-019 mitigation #4.
+
+Commit: `08d1dfe` pushed to remote `codex/context-cleanup-active-docs`.
+
+Still NOT done from chat-review:
+- AI Gateway test script (vck_6gNO) — billing block, CEO action.
+- 5 design decisions in DESIGN-MANIFESTO + globals.css — separate sprint.
+- atlas_obligations 5th watcher signal — open, ~50 lines + tests.
+- Drift-watcher v0 — design done, not implemented.
+- Browser-Atlas compaction-survival policy hook for post-compact-restore — not yet model-level overrideable.
+- INC-019 mitigation #4 — /health git_sha endpoint + regression pack assertion.
+
 ## Open threads at compaction time (2026-04-25 long Code session)
 
 These are loose ends still in flight or pending. Compact-friendly summary so next instance knows what to pick up.

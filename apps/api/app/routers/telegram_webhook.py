@@ -147,9 +147,13 @@ async def _save_message(db, direction: str, message: str, msg_type: str = "free_
         from pathlib import Path as _Path
 
         # Repo root = this file is at apps/api/app/routers/telegram_webhook.py,
-        # so four parents up = repo root. Tolerant if running from a container
-        # with non-standard cwd.
-        repo_root = _Path(__file__).resolve().parents[4]
+        # so four parents up = repo root. In Docker the file lives shallower
+        # and parents[4] raises IndexError — fall back to parent dir, the
+        # inbox check below will then no-op gracefully.
+        try:
+            repo_root = _Path(__file__).resolve().parents[4]
+        except IndexError:
+            repo_root = _Path(__file__).resolve().parent
         inbox_dir = repo_root / "memory" / "atlas" / "inbox"
         if inbox_dir.exists():
             stamp = _dt.now(UTC).strftime("%Y-%m-%dT%H%M%S")

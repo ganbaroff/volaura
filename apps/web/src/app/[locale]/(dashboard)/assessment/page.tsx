@@ -143,11 +143,13 @@ function AssessmentContent() {
           return;
         }
         // 409 = active session already exists — resume it instead of showing error
+        // FastAPI wraps detail: {"detail": {"code": "...", "session_id": "..."}}
         if (res.status === 409) {
-          const body = await res.json().catch(() => ({})) as { session_id?: string };
-          if (body.session_id && isMounted.current) {
-            setSession(body.session_id);
-            router.push(`/${locale}/assessment/${body.session_id}`);
+          const body = await res.json().catch(() => ({})) as { detail?: { session_id?: string } };
+          const existingSessionId = body.detail?.session_id;
+          if (existingSessionId && isMounted.current) {
+            setSession(existingSessionId);
+            router.push(`/${locale}/assessment/${existingSessionId}`);
           } else if (isMounted.current) {
             setIsStarting(false);
           }

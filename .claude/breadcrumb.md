@@ -182,7 +182,16 @@ Still NOT done from chat-review:
 - atlas_obligations 5th watcher signal — open, ~50 lines + tests.
 - Drift-watcher v0 — design done, not implemented.
 - Browser-Atlas compaction-survival policy hook for post-compact-restore — not yet model-level overrideable.
-- INC-019 mitigation #4 — /health git_sha endpoint + regression pack assertion.
+- TypeScript SDK regen (`pnpm generate:api`) after `/health` schema change — pre-commit warning, not blocker.
+- Sweep remaining `Path(__file__).resolve().parents[N]` sites for INC-019 mitigation #1 — done in 3 files only.
+
+Done in chat-review wake:
+- ✅ INC-019 mitigation #4 — `/health` now returns `git_sha` (RAILWAY_GIT_COMMIT_SHA → Dockerfile ARG → 'unknown'). 4 tests pass. Commit `d49a231`. Regression pack one-liner: `curl .../health | jq -r .git_sha` must match `git rev-parse --short=12 origin/main`.
+
+Commits this wake:
+- `08d1dfe` stance_primer + facts_ground + INC-019 written
+- `1363ea9` breadcrumb + INC-019 url fix
+- `d49a231` /health git_sha endpoint
 
 ## Open threads at compaction time (2026-04-25 long Code session)
 

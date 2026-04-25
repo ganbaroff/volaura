@@ -260,7 +260,7 @@ export function PageSlide({ children }: PageSlideProps) {
 **Spec:**
 - **Element:** Large number displaying AURA score (e.g., "87 / 100")
 - **Animation:** Count up from 0 to final score
-- **Duration:** 2 seconds
+- **Duration:** 800ms max (Constitution Law 4 ceiling — was 2s, corrected BACK-001 2026-04-26)
 - **Easing:** `easeOut`
 - **Font:** JetBrains Mono, 64px, bold
 - **Details:**
@@ -288,7 +288,7 @@ export function ScoreDisplay({ score, maxScore = 100 }: ScoreDisplayProps) {
   const [displayScore, setDisplayScore] = useState(0);
 
   useEffect(() => {
-    const duration = 2; // seconds
+    const duration = 0.8; // seconds — Constitution Law 4 ceiling (max 800ms)
     const steps = 60; // 60 frames @ 60fps ≈ 1 second smooth
     const increment = score / steps;
     let current = 0;

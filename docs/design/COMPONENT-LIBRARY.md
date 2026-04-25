@@ -1535,74 +1535,6 @@ export function LandingHero() {
 
 ---
 
-### Component: LeaderboardRow
-**Status:** Existing
-**File:** `components/leaderboard/leaderboard-row.tsx`
-**Tech:** Table row component, avatar, optional chart sparkline
-
-#### Description
-Single row in leaderboard table. Shows: rank (1-100+), user avatar, name, verification badge, AURA score, tier badge, and optional trend sparkline (mini chart of last 3 scores). Click row to view full profile.
-
-#### Variants
-| Variant | Use When |
-|---------|----------|
-| normal | Standard leaderboard entry |
-| highlighted | Current user's row (faint highlight) |
-| top-3 | Top 3 special styling (gold/silver/bronze background) |
-| compact | Mobile view, fewer columns |
-| with-trend | Show score trend sparkline |
-
-#### Props
-| Prop | Type | Default | Required | Description |
-|------|------|---------|----------|-------------|
-| `rank` | number | — | Yes | Leaderboard position (1-indexed) |
-| `user` | User | — | Yes | User object (name, avatar, verified) |
-| `score` | number | — | Yes | Current AURA score |
-| `tier` | Tier | — | Yes | Badge tier |
-| `trend` | number[] \| undefined | undefined | No | Last 3 scores for sparkline |
-| `isCurrentUser` | boolean | false | No | Highlight current user |
-| `onClick` | () => void | — | No | Handler for row click |
-
-#### States
-| State | Visual | Behavior |
-|-------|--------|----------|
-| Normal | Standard row styling | Tap to view profile |
-| Top 3 | Gold/Silver/Bronze background | Special highlighting |
-| Current user | Subtle background highlight | Click to navigate to own profile |
-| Hover | Lift/shadow effect | Ready for interaction |
-
-#### Accessibility
-- **Role:** row
-- **ARIA:** aria-label="Rank 5: [Name] - 87 AURA score"
-- **Keyboard:** Tab through rows, Enter to navigate
-
-#### Code Example
-```tsx
-import { LeaderboardRow } from "@/components/leaderboard/leaderboard-row";
-
-export function Leaderboard({ users, currentUserId }) {
-  return (
-    <table>
-      <tbody>
-        {users.map((user, index) => (
-          <LeaderboardRow
-            key={user.id}
-            rank={index + 1}
-            user={user}
-            score={user.auraScore}
-            tier={getTier(user.auraScore)}
-            isCurrentUser={user.id === currentUserId}
-            onClick={() => navigateTo(`/profiles/${user.id}`)}
-          />
-        ))}
-      </tbody>
-    </table>
-  );
-}
-```
-
----
-
 ## Component Status Summary
 
 | Component | Status | Priority | Notes |
@@ -1634,7 +1566,7 @@ export function Leaderboard({ users, currentUserId }) {
 | ProfileHeader | Existing | High | Profile page — identity |
 | AURAJourneyTimeline | Planned | Low | Historical viz — engagement |
 | CountdownWidget | Existing | Medium | Launch event timer — urgency |
-| LeaderboardRow | Existing | Medium | Leaderboard — gamification |
+| ~~LeaderboardRow~~ | Removed | — | Constitution G46 bans leaderboards — BACK-002 2026-04-26 |
 
 ---
 

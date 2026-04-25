@@ -11,7 +11,18 @@ from pathlib import Path
 
 from loguru import logger
 
-_REPO_ROOT = Path(__file__).resolve().parents[4]
+# Repo root resolution — must not raise at import in Docker.
+# Locally parents[4] is repo root; in Docker the file lives shallower and
+# parents[4] raises IndexError, blocking app startup.
+def _resolve_repo_root() -> Path:
+    here = Path(__file__).resolve()
+    try:
+        return here.parents[4]
+    except IndexError:
+        return here.parent
+
+
+_REPO_ROOT = _resolve_repo_root()
 
 
 def build_atlas_system_prompt(

@@ -63,6 +63,7 @@ def _build_full_db_mock(
     orphan_data=0,
     fail_count: int = 0,
     dlq_count: int = 0,
+    obligations_count: int = 0,
 ) -> AsyncMock:
     """Build a Supabase-like db mock for the four-signal happy path.
 
@@ -112,6 +113,8 @@ def _build_full_db_mock(
             return fail_dispatcher
         if name == "ecosystem_event_failures":
             return dlq_chain
+        if name == "atlas_obligations":
+            return _chain_mock(make_count_result(obligations_count))
         return MagicMock()
 
     db.table = MagicMock(side_effect=table_side_effect)
@@ -503,6 +506,42 @@ async def test_ecosystem_event_failures_nonzero_triggers_emit():
     assert payload["status"] == "unresolved"
     assert payload["source_table"] == "ecosystem_event_failures"
     assert payload["severity"] == "warn"
+
+
+# ── obligations_due_soon signal (proactive-scan, 2026-04-26) ──────────────────
+
+
+@pytest.mark.asyncio
+async def test_obligations_due_soon_zero_skips_emit():
+    db = _build_full_db_mock(obligations_count=0)
+    with (
+        patch("app.deps.get_admin_client", AsyncMock(return_value=db), create=True),
+        patch("app.services.error_watcher._emit_anomaly", AsyncMock()) as mock_emit,
+    ):
+        result = await run_error_watcher()
+
+    assert result["obligations_due_30d"] == 0
+    emit_types = [c.args[1] for c in mock_emit.call_args_list]
+    assert "obligations_due_soon" not in emit_types
+
+
+@pytest.mark.asyncio
+async def test_obligations_due_soon_nonzero_triggers_emit():
+    db = _build_full_db_mock(obligations_count=3)
+    with (
+        patch("app.deps.get_admin_client", AsyncMock(return_value=db), create=True),
+        patch("app.services.error_watcher._emit_anomaly", AsyncMock()) as mock_emit,
+    ):
+        result = await run_error_watcher()
+
+    assert result["obligations_due_30d"] == 3
+    obl_calls = [c for c in mock_emit.call_args_list if c.args[1] == "obligations_due_soon"]
+    assert len(obl_calls) == 1
+    payload = obl_calls[0].args[3]
+    assert payload["window_days"] == 30
+    assert payload["status"] == "open"
+    assert payload["source_table"] == "atlas_obligations"
+    assert payload["severity"] == "info"
 
 
 @pytest.mark.asyncio

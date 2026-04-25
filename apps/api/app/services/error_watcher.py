@@ -24,7 +24,14 @@ from loguru import logger
 STUCK_SESSION_THRESHOLD_MINUTES = 30
 ERROR_RATE_THRESHOLD_PER_HOUR = 5
 FAILURE_WATCH_WINDOW_HOURS = 1
-WATCHER_USER_ID = "00000000-0000-0000-0000-000000000000"
+# Watcher anomaly events are system-emitted, not user-driven.
+# Migration 20260425_character_events_nullable_user_id_for_system makes
+# character_events.user_id NULL-able for system events. RLS read policy
+# (auth.uid() = user_id) correctly evaluates NULL as falsy, so system
+# events stay invisible to user-client SELECT; service-role bypasses RLS.
+# Pre-fix: sentinel UUID 00...0 caused FK violation on auth.users(id)
+# and silenced ALL watcher emit_anomaly attempts since day one.
+WATCHER_USER_ID: str | None = None
 
 
 async def run_error_watcher() -> dict[str, int]:

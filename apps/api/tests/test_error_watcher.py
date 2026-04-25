@@ -184,14 +184,20 @@ async def test_emit_anomaly_swallows_db_exception():
 
 
 @pytest.mark.asyncio
-async def test_emit_anomaly_user_id_is_watcher_sentinel():
+async def test_emit_anomaly_user_id_is_null_for_system_events():
+    """System-emitted anomaly events have user_id=None (was sentinel UUID).
+
+    Migration 20260425_character_events_nullable_user_id_for_system makes
+    character_events.user_id NULL-able. Pre-fix: sentinel "00...0" failed
+    FK constraint on auth.users(id), silently dropping every watcher emit.
+    """
     insert_chain = _chain_mock(MagicMock())
     db = MagicMock()
     db.table = MagicMock(return_value=insert_chain)
 
     await _emit_anomaly(db, "test_type", 0, {})
     inserted = insert_chain.insert.call_args[0][0]
-    assert inserted["user_id"] == "00000000-0000-0000-0000-000000000000"
+    assert inserted["user_id"] is None
 
 
 # ── run_error_watcher — return shape ─────────────────────────────────────────
@@ -544,8 +550,13 @@ async def test_ecosystem_event_failures_exception_returns_minus_one():
 # ── constants sanity ──────────────────────────────────────────────────────────
 
 
-def test_watcher_user_id_is_zero_uuid():
-    assert WATCHER_USER_ID == "00000000-0000-0000-0000-000000000000"
+def test_watcher_user_id_is_none_for_system_emit():
+    """WATCHER_USER_ID is None (system events have nullable user_id).
+
+    Was sentinel UUID 00...0 — caused FK violation on auth.users(id).
+    Now NULL per migration 20260425_character_events_nullable_user_id_for_system.
+    """
+    assert WATCHER_USER_ID is None
 
 
 def test_stuck_session_threshold_positive():

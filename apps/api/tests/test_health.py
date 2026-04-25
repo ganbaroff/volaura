@@ -36,5 +36,58 @@ async def test_health_endpoint(client: AsyncClient):
         assert data["version"] == "0.2.0"
         assert "database" in data
         assert "llm_configured" in data
+        # INC-019 mitigation #4 — git_sha must be present so regression pack
+        # can assert deployed SHA matches origin/main HEAD.
+        assert "git_sha" in data
+        assert isinstance(data["git_sha"], str)
+        assert len(data["git_sha"]) <= 12
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
+
+
+@pytest.mark.asyncio
+async def test_health_git_sha_from_railway_env(
+    client: AsyncClient, monkeypatch: pytest.MonkeyPatch
+):
+    """Railway injects RAILWAY_GIT_COMMIT_SHA at runtime; /health must echo it (truncated to 12)."""
+    monkeypatch.setenv("RAILWAY_GIT_COMMIT_SHA", "abcdef0123456789deadbeef")
+    monkeypatch.delenv("GIT_SHA", raising=False)
+    app.dependency_overrides[get_supabase_admin] = _mock_admin_for_health
+    try:
+        response = await client.get("/health")
+        assert response.status_code == 200
+        assert response.json()["git_sha"] == "abcdef012345"
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
+
+
+@pytest.mark.asyncio
+async def test_health_git_sha_fallback_to_dockerfile_arg(
+    client: AsyncClient, monkeypatch: pytest.MonkeyPatch
+):
+    """When RAILWAY_GIT_COMMIT_SHA absent, fall back to GIT_SHA (Dockerfile ARG)."""
+    monkeypatch.delenv("RAILWAY_GIT_COMMIT_SHA", raising=False)
+    monkeypatch.setenv("GIT_SHA", "1234567abcd")
+    app.dependency_overrides[get_supabase_admin] = _mock_admin_for_health
+    try:
+        response = await client.get("/health")
+        assert response.status_code == 200
+        assert response.json()["git_sha"] == "1234567abcd"
+    finally:
+        app.dependency_overrides.pop(get_supabase_admin, None)
+
+
+@pytest.mark.asyncio
+async def test_health_git_sha_unknown_when_no_env(
+    client: AsyncClient, monkeypatch: pytest.MonkeyPatch
+):
+    """Local-dev with no env vars: returns 'unknown', does not crash."""
+    monkeypatch.delenv("RAILWAY_GIT_COMMIT_SHA", raising=False)
+    monkeypatch.delenv("GIT_SHA", raising=False)
+    app.dependency_overrides[get_supabase_admin] = _mock_admin_for_health
+    try:
+        response = await client.get("/health")
+        assert response.status_code == 200
+        assert response.json()["git_sha"] == "unknown"
     finally:
         app.dependency_overrides.pop(get_supabase_admin, None)

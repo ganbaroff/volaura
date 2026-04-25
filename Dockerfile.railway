@@ -21,6 +21,12 @@ COPY apps/api/app/ ./app/
 COPY packages/swarm/ ./packages/swarm/
 COPY memory/atlas/telegram-silenced-until.txt ./memory/atlas/telegram-silenced-until.txt
 
+# INC-019 mitigation #4 — bake git SHA into image so /health can echo
+# it back. Regression pack asserts git_sha == origin/main HEAD, catching
+# silent deploy freezes (4-day Railway freeze 2026-04-21..2026-04-25).
+ARG GIT_SHA=unknown
+ENV GIT_SHA=$GIT_SHA
+
 # Railway injects PORT at runtime
 ENV PORT=8000
 EXPOSE $PORT

@@ -1,0 +1,22 @@
+{
+  "perspective": "Product Strategist",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Product Strategist\", \"findings\": [{\"severity\": \"warn\", \"file_or_area\": \"apps/web/src/app/en/page.tsx\", \"issue\": \"VOLAURA = verified talent platform framing reduces Atlas to a single product\", \"recommended_fix\": \"Update copy to reflect one organism with five faces\"}, {\"severity\": \"pass\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"No reduction of Atlas to a single product\", \"recommended_fix\": \"None\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "warn",
+      "file_or_area": "apps/web/src/app/en/page.tsx",
+      "issue": "VOLAURA = verified talent platform framing reduces Atlas to a single product",
+      "recommended_fix": "Update copy to reflect one organism with five faces"
+    },
+    {
+      "severity": "pass",
+      "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+      "issue": "No reduction of Atlas to a single product",
+      "recommended_fix": "None"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

@@ -1,0 +1,22 @@
+{
+  "perspective": "Legal Advisor",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Legal Advisor\", \"findings\": [{\"severity\": \"WARN\", \"file_or_area\": \"apps/web/src/app/[locale]/page.tsx\", \"issue\": \"Single-product framing in landing page copy\", \"recommended_fix\": \"Update copy to reflect five-face positioning\"}, {\"severity\": \"OK\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"None\", \"recommended_fix\": \"None\"}], \"overall_verdict\": \"WARN\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "WARN",
+      "file_or_area": "apps/web/src/app/[locale]/page.tsx",
+      "issue": "Single-product framing in landing page copy",
+      "recommended_fix": "Update copy to reflect five-face positioning"
+    },
+    {
+      "severity": "OK",
+      "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+      "issue": "None",
+      "recommended_fix": "None"
+    }
+  ],
+  "overall_verdict": "WARN",
+  "whistleblower_flag": null
+}

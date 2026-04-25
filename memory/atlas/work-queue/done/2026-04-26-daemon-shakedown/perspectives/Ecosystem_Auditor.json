@@ -1,0 +1,28 @@
+{
+  "perspective": "Ecosystem Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Ecosystem Auditor\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/web/src/app/[locale]/page.tsx\", \"issue\": \"Landing page headline reads 'VOLAURA: Verified Talent. No Guesswork.' — positions VOLAURA as standalone product, erases MindShift, Life Simulator, BrandedBy, ZEUS. Violates Constitution 'one organism, five faces' principle.\", \"recommended_fix\": \"Reframe as 'Atlas: Five Faces of Verified Growth' with subheader naming all five skills.\"}, {\"severity\": \"medium\", \"file_or_area\": \"memory/swarm/skills/communications-strategist.md\", \"issue\": \"Draft PR release uses 'VOLAURA platform' repeatedly without mentioning MindShift or BrandedBy. Creates product silo perception.\", \"recommended_fix\": \"Use 'Atlas ecosystem' as root noun; position products as specialized expressions.\"}, {\"severity\": \"critical\", \"file_or_area\": \"docs/\", \"issue\": \"ECOSYSTEM-CONSTITUTION.md enforces Law 2 (Energy Adaptation) but MindShift is the only product implementing it. Others lack adaptive UI/response energy scaling. Violates Foundation Law 2.\", \"recommended_fix\": \"Audit all product UIs for Energy Adaptation; implement context-aware energy levels in Atlas, BrandedBy, ZEUS, Life Simulator.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Law 2 (Energy Adaptation) is violated across 4/5 products. Foundation Law non-compliance at ecosystem scale.\"}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "apps/web/src/app/[locale]/page.tsx",
+      "issue": "Landing page headline reads 'VOLAURA: Verified Talent. No Guesswork.' — positions VOLAURA as standalone product, erases MindShift, Life Simulator, BrandedBy, ZEUS. Violates Constitution 'one organism, five faces' principle.",
+      "recommended_fix": "Reframe as 'Atlas: Five Faces of Verified Growth' with subheader naming all five skills."
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "memory/swarm/skills/communications-strategist.md",
+      "issue": "Draft PR release uses 'VOLAURA platform' repeatedly without mentioning MindShift or BrandedBy. Creates product silo perception.",
+      "recommended_fix": "Use 'Atlas ecosystem' as root noun; position products as specialized expressions."
+    },
+    {
+      "severity": "critical",
+      "file_or_area": "docs/",
+      "issue": "ECOSYSTEM-CONSTITUTION.md enforces Law 2 (Energy Adaptation) but MindShift is the only product implementing it. Others lack adaptive UI/response energy scaling. Violates Foundation Law 2.",
+      "recommended_fix": "Audit all product UIs for Energy Adaptation; implement context-aware energy levels in Atlas, BrandedBy, ZEUS, Life Simulator."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "Law 2 (Energy Adaptation) is violated across 4/5 products. Foundation Law non-compliance at ecosystem scale."
+}

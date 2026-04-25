@@ -1,0 +1,16 @@
+{
+  "perspective": "Scaling Engineer",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Scaling Engineer\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/web/src/app/[locale]/page.tsx\", \"issue\": \"Landing page headline reads 'VOLAURA: Verified Talent Platform' — reduces Atlas to single-product identity, contradicts Constitution v1.7 'one organism, five faces' principle.\", \"recommended_fix\": \"Reframe as 'Atlas: One Mind, Five Skills' with subheader explaining assessment, focus, life sim, AI twin, swarm routing as integrated faces.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "apps/web/src/app/[locale]/page.tsx",
+      "issue": "Landing page headline reads 'VOLAURA: Verified Talent Platform' — reduces Atlas to single-product identity, contradicts Constitution v1.7 'one organism, five faces' principle.",
+      "recommended_fix": "Reframe as 'Atlas: One Mind, Five Skills' with subheader explaining assessment, focus, life sim, AI twin, swarm routing as integrated faces."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null
+}

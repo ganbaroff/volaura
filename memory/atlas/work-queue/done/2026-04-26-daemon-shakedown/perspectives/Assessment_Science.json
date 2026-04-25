@@ -1,0 +1,16 @@
+{
+  "perspective": "Assessment Science",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Assessment Science\", \"findings\": [{\"severity\": \"low\", \"file_or_area\": \"apps/web/src/app/en/page.tsx\", \"issue\": \"Single-product framing in page title\", \"recommended_fix\": \"Update title to reflect Atlas as a 5-face organism\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "low",
+      "file_or_area": "apps/web/src/app/en/page.tsx",
+      "issue": "Single-product framing in page title",
+      "recommended_fix": "Update title to reflect Atlas as a 5-face organism"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

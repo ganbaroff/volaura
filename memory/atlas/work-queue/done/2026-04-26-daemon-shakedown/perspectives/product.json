@@ -1,0 +1,28 @@
+{
+  "perspective": "product",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"product\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"apps/web/src/app/[locale]/page.tsx\",\n      \"issue\": \"Landing page copy reduces Atlas to 'verified talent platform' framing, omitting MindShift, BrandedBy, ZEUS, and Life Simulator\",\n      \"recommended_fix\": \"Update copy to state 'Atlas is a multi-faced system with five core capabilities: VOLAURA, MindShift, BrandedBy, ZEUS, and Life Simulator'\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"docs/README.md\",\n      \"issue\": \"Documentation refers to 'Atlas as a platform' without specifying its five faces\",\n      \"recommended_fix\": \"Revise to 'Atlas is an organism with five faces: VOLAURA, MindShift, BrandedBy, ZEUS, and Life Simulator'\"\n    },\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"memory/swarm/skills/communications-strategist.md\",\n      \"issue\": \"Marketing draft focuses solely on 'VOLAURA as a talent verification tool'\",\n      \"recommended_fix\": \"Add 'VOLAURA is one face of Atlas, which includes MindShift (focus), BrandedBy (AI twin), ZEUS (swarm), and Life Simulator (Godot)'\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "apps/web/src/app/[locale]/page.tsx",
+      "issue": "Landing page copy reduces Atlas to 'verified talent platform' framing, omitting MindShift, BrandedBy, ZEUS, and Life Simulator",
+      "recommended_fix": "Update copy to state 'Atlas is a multi-faced system with five core capabilities: VOLAURA, MindShift, BrandedBy, ZEUS, and Life Simulator'"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "docs/README.md",
+      "issue": "Documentation refers to 'Atlas as a platform' without specifying its five faces",
+      "recommended_fix": "Revise to 'Atlas is an organism with five faces: VOLAURA, MindShift, BrandedBy, ZEUS, and Life Simulator'"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "memory/swarm/skills/communications-strategist.md",
+      "issue": "Marketing draft focuses solely on 'VOLAURA as a talent verification tool'",
+      "recommended_fix": "Add 'VOLAURA is one face of Atlas, which includes MindShift (focus), BrandedBy (AI twin), ZEUS (swarm), and Life Simulator (Godot)'"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

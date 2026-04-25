@@ -17,6 +17,7 @@ Agent innovation (Kimi-K2, architecture audit 2026-03-24): graceful fallback if 
 
 import asyncio
 import json
+import time
 from typing import Any
 
 from loguru import logger
@@ -135,9 +136,9 @@ def _get_gemini_client() -> Any:
 @_trace(name="evaluate_with_llm")
 async def evaluate_with_llm(
     prompt: str,
-    *,
-    response_format: str = "json",
+    response_format: str = "text",
     timeout: float = LLM_TIMEOUT_SECONDS,
+    _meta: dict | None = None,
 ) -> dict[str, Any] | str:
     """Call LLM with fallback chain: Vertex → Gemini → Groq → OpenAI.
 
@@ -151,11 +152,16 @@ async def evaluate_with_llm(
     """
     # Vertex AI Express — primary (enterprise SLA, same $100/mo budget)
     if settings.vertex_api_key:
+        _t0 = time.monotonic()
         try:
-            return await asyncio.wait_for(
+            result = await asyncio.wait_for(
                 _call_vertex(prompt, response_format),
                 timeout=timeout,
             )
+            if _meta is not None:
+                _meta["provider"] = "vertex"
+                _meta["latency_ms"] = round((time.monotonic() - _t0) * 1000)
+            return result
         except TimeoutError:
             logger.warning("Vertex call timed out, falling back to Gemini", timeout=timeout)
         except Exception as e:
@@ -163,11 +169,16 @@ async def evaluate_with_llm(
 
     # AI Studio Gemini — secondary (free tier, 15 RPM cap)
     if settings.gemini_api_key:
+        _t0 = time.monotonic()
         try:
-            return await asyncio.wait_for(
+            result = await asyncio.wait_for(
                 _call_gemini(prompt, response_format),
                 timeout=timeout,
             )
+            if _meta is not None:
+                _meta["provider"] = "gemini"
+                _meta["latency_ms"] = round((time.monotonic() - _t0) * 1000)
+            return result
         except TimeoutError:
             logger.warning("Gemini call timed out, falling back to Groq", timeout=timeout)
         except Exception as e:
@@ -175,11 +186,16 @@ async def evaluate_with_llm(
 
     # Groq — tertiary (14,400 req/day free tier — cost buffer before paid OpenAI)
     if settings.groq_api_key:
+        _t0 = time.monotonic()
         try:
-            return await asyncio.wait_for(
+            result = await asyncio.wait_for(
                 _call_groq(prompt, response_format),
                 timeout=timeout,
             )
+            if _meta is not None:
+                _meta["provider"] = "groq"
+                _meta["latency_ms"] = round((time.monotonic() - _t0) * 1000)
+            return result
         except TimeoutError:
             logger.error(f"Groq fallback timed out after {timeout}s")
         except Exception as e:
@@ -187,11 +203,16 @@ async def evaluate_with_llm(
 
     # OpenAI — last resort (paid, ~$240/day at activation wave — only if all else fails)
     if settings.openai_api_key:
+        _t0 = time.monotonic()
         try:
-            return await asyncio.wait_for(
+            result = await asyncio.wait_for(
                 _call_openai(prompt, response_format),
                 timeout=timeout,
             )
+            if _meta is not None:
+                _meta["provider"] = "openai"
+                _meta["latency_ms"] = round((time.monotonic() - _t0) * 1000)
+            return result
         except TimeoutError:
             logger.error(f"OpenAI fallback timed out after {timeout}s")
         except Exception as e:

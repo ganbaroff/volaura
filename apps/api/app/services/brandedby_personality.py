@@ -79,6 +79,7 @@ def _build_character_context(character_state: dict) -> str:
 async def generate_twin_personality(
     display_name: str,
     character_state: dict,
+    _meta: dict | None = None,
 ) -> str:
     """Generate a personality prompt for an AI Twin from character_state.
 
@@ -115,7 +116,7 @@ async def generate_twin_personality(
     )
 
     try:
-        result = await evaluate_with_llm(prompt, response_format="text", timeout=20)
+        result = await evaluate_with_llm(prompt, response_format="text", timeout=20, _meta=_meta)
         personality = str(result).strip()
         logger.info(
             "AI Twin personality generated",

@@ -35,7 +35,22 @@ router = APIRouter(prefix="/api/atlas", tags=["atlas-consult"])
 # Sonnet 4.5 is paid; 10/min is generous for human-speed use and blocks runaway loops.
 RATE_CONSULT = "10/minute"
 
-_REPO_ROOT = Path(__file__).resolve().parents[4]
+# Repo root resolution — must not raise at import time.
+# Locally `apps/api/app/routers/atlas_consult.py` has parents[4] = repo root.
+# In Docker the file lives at `/app/app/routers/atlas_consult.py` and parents[4]
+# raises IndexError, blocking the entire FastAPI app from starting. Catching
+# means "no canon files available" — _load_canon_file gracefully returns ""
+# and the consult endpoint runs without atlas memory injection.
+def _resolve_repo_root() -> Path:
+    here = Path(__file__).resolve()
+    try:
+        return here.parents[4]
+    except IndexError:
+        # Docker / shallow layout — return a path that won't match any canon files
+        return here.parent
+
+
+_REPO_ROOT = _resolve_repo_root()
 
 # Atlas canon files loaded into system prompt.
 # Paths relative to repo root. Each file is truncated to avoid hitting

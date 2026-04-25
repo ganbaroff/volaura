@@ -126,7 +126,12 @@ async def generate_twin_personality(
         )
         return personality
     except Exception as e:
-        logger.error("Personality generation failed", error=str(e))
+        # Telemetry: mark fallback explicitly so worker logs show provider=rule_fallback
+        # instead of misleading "unknown". Reason text comes from the exception.
+        if _meta is not None:
+            _meta["provider"] = "rule_fallback"
+            _meta["fallback_reason"] = str(e)[:200]
+        logger.error(f"Personality generation failed reason={str(e)[:200]}")
         # Fallback: rule-based personality (no LLM required)
         return _build_fallback_personality(display_name, character_state)
 

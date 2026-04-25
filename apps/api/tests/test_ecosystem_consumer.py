@@ -218,6 +218,7 @@ async def test_happy_path_marks_twin_and_advances_cursor():
             "last_event_id": event["id"],
             "last_processed_at": event["created_at"],
             "events_processed_total": 1,
+            "events_failed_total": 0,
         }
     )
 
@@ -298,11 +299,13 @@ async def test_handler_error_counted_cursor_still_advances():
     assert stats["cursor_at"] == 1  # cursor advanced despite error
 
     # events_processed_total = prior(5) + handled(0) = 5 (errors don't count)
+    # events_failed_total = prior(0) + errors(1) = 1
     cursor_chain.update.assert_called_once_with(
         {
             "last_event_id": event["id"],
             "last_processed_at": event["created_at"],
             "events_processed_total": 5,
+            "events_failed_total": 1,
         }
     )
 
@@ -331,5 +334,94 @@ async def test_multiple_events_last_one_sets_cursor():
             "last_event_id": events[-1]["id"],
             "last_processed_at": events[-1]["created_at"],
             "events_processed_total": 3,
+            "events_failed_total": 0,
+        }
+    )
+
+
+@pytest.mark.asyncio
+async def test_handler_failure_writes_dlq_then_advances_cursor():
+    """When ecosystem_mark_twin_stale raises, the consumer must:
+       1. call ecosystem_record_event_failure RPC with the right args
+       2. still advance the cursor (no head-of-line block)
+       3. count the event in errors and events_failed_total
+    """
+    user_id = str(uuid4())
+    event = _fake_event("aura_updated", user_id=user_id, created_at="2026-04-24T13:00:00+00:00")
+
+    db = MagicMock()
+
+    # cursor SELECT then UPDATE
+    cursor_chain = MagicMock()
+    cursor_chain.select.return_value = cursor_chain
+    cursor_chain.update.return_value = cursor_chain
+    cursor_chain.eq.return_value = cursor_chain
+    cursor_chain.limit.return_value = cursor_chain
+    cursor_chain.execute = AsyncMock(
+        side_effect=[
+            MagicMock(
+                data=[{
+                    "product": "brandedby",
+                    "last_processed_at": None,
+                    "events_processed_total": 0,
+                    "events_failed_total": 0,
+                }]
+            ),
+            MagicMock(data=[]),
+        ]
+    )
+
+    # events fetch
+    events_chain = MagicMock()
+    events_chain.select.return_value = events_chain
+    events_chain.in_.return_value = events_chain
+    events_chain.gt.return_value = events_chain
+    events_chain.order.return_value = events_chain
+    events_chain.limit.return_value = events_chain
+    events_chain.execute = AsyncMock(return_value=MagicMock(data=[event]))
+
+    db.table = MagicMock(side_effect=lambda n: (
+        cursor_chain if n == "ecosystem_event_cursors" else events_chain
+    ))
+
+    # Two RPC names — first raises, second succeeds
+    mark_stale_chain = MagicMock()
+    mark_stale_chain.execute = AsyncMock(side_effect=RuntimeError("brandedby schema unavailable"))
+    record_failure_chain = MagicMock()
+    record_failure_chain.execute = AsyncMock(return_value=MagicMock(data=None))
+
+    rpc_calls: list = []
+
+    def _rpc(name: str, args: dict):
+        rpc_calls.append((name, args))
+        if name == "ecosystem_mark_twin_stale":
+            return mark_stale_chain
+        if name == "ecosystem_record_event_failure":
+            return record_failure_chain
+        return MagicMock()
+
+    db.rpc = MagicMock(side_effect=_rpc)
+
+    stats = await process_brandedby_events(db)
+
+    assert stats == {"found": 1, "handled": 0, "errors": 1, "cursor_at": 1}
+
+    # DLQ RPC was invoked with the right shape
+    dlq_calls = [c for c in rpc_calls if c[0] == "ecosystem_record_event_failure"]
+    assert len(dlq_calls) == 1
+    dlq_args = dlq_calls[0][1]
+    assert dlq_args["p_product"] == "brandedby"
+    assert dlq_args["p_event_id"] == event["id"]
+    assert dlq_args["p_user_id"] == user_id
+    assert dlq_args["p_event_type"] == "aura_updated"
+    assert "brandedby schema unavailable" in dlq_args["p_error"]
+
+    # Cursor advanced past the event with errors+1 in totals
+    cursor_chain.update.assert_called_once_with(
+        {
+            "last_event_id": event["id"],
+            "last_processed_at": event["created_at"],
+            "events_processed_total": 0,
+            "events_failed_total": 1,
         }
     )

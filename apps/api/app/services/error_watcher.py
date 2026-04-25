@@ -1,13 +1,14 @@
 """Error watcher — nociceptive monitoring for the ecosystem.
 
 Bio-model: ноцицепторы молчат в норме, стреляют на аномалию.
-This watcher runs every 10 minutes via cron, checks three signals,
+This watcher runs every 10 minutes via cron, checks four signals,
 emits character_events with type 'metric_anomaly' when thresholds breached.
 
 Signals:
   1. stuck_sessions — assessment sessions in_progress > 30 min (user abandoned without cleanup)
   2. orphan_events — character_events without matching profile (bridge leak)
   3. error_rate — failed assessment starts in last hour (proxy for 5xx)
+  4. ecosystem_event_failures — unresolved DLQ rows in last hour (consumer / refresh failures)
 
 Each anomaly emits to character_events so admin dashboard live feed sees it.
 Telegram escalation is future (watcher → atlas_voice → telegram_webhook).
@@ -22,6 +23,7 @@ from loguru import logger
 
 STUCK_SESSION_THRESHOLD_MINUTES = 30
 ERROR_RATE_THRESHOLD_PER_HOUR = 5
+FAILURE_WATCH_WINDOW_HOURS = 1
 WATCHER_USER_ID = "00000000-0000-0000-0000-000000000000"
 
 
@@ -73,7 +75,7 @@ async def run_error_watcher() -> dict[str, int]:
 
     # 2. Orphan character_events (user_id not in profiles)
     try:
-        one_hour_ago = (now - timedelta(hours=1)).isoformat()
+        one_hour_ago = (now - timedelta(hours=FAILURE_WATCH_WINDOW_HOURS)).isoformat()
         orphan_result = await db.rpc(
             "count_orphan_character_events",
             {"since_ts": one_hour_ago},
@@ -88,7 +90,7 @@ async def run_error_watcher() -> dict[str, int]:
                 "orphan_events",
                 orphan_count,
                 {
-                    "window_hours": 1,
+                    "window_hours": FAILURE_WATCH_WINDOW_HOURS,
                     "severity": "info",
                 },
             )
@@ -99,7 +101,7 @@ async def run_error_watcher() -> dict[str, int]:
 
     # 3. Failed assessment starts (cooldown hits = proxy for errors)
     try:
-        one_hour_ago = (now - timedelta(hours=1)).isoformat()
+        one_hour_ago = (now - timedelta(hours=FAILURE_WATCH_WINDOW_HOURS)).isoformat()
         failed = (
             await db.table("assessment_sessions")
             .select("id", count="exact")
@@ -117,7 +119,7 @@ async def run_error_watcher() -> dict[str, int]:
                 "error_rate_high",
                 fail_count,
                 {
-                    "window_hours": 1,
+                    "window_hours": FAILURE_WATCH_WINDOW_HOURS,
                     "threshold": ERROR_RATE_THRESHOLD_PER_HOUR,
                     "severity": "crit" if fail_count >= ERROR_RATE_THRESHOLD_PER_HOUR * 2 else "warn",
                 },
@@ -125,6 +127,37 @@ async def run_error_watcher() -> dict[str, int]:
     except Exception as e:
         logger.error("watcher.error_rate.failed", error=str(e))
         results["error_rate_1h"] = -1
+
+    # 4. Unresolved ecosystem event failures in the last hour (DLQ)
+    try:
+        one_hour_ago = (now - timedelta(hours=FAILURE_WATCH_WINDOW_HOURS)).isoformat()
+        unresolved = (
+            await db.table("ecosystem_event_failures")
+            .select("id", count="exact")
+            .is_("resolved_at", "null")
+            .gt("last_failed_at", one_hour_ago)
+            .execute()
+        )
+        unresolved_count = unresolved.count or 0
+        results["ecosystem_event_failures_1h"] = unresolved_count
+
+        if unresolved_count > 0:
+            logger.warning("watcher.ecosystem_event_failures", count=unresolved_count)
+            await _emit_anomaly(
+                db,
+                "ecosystem_event_failures",
+                unresolved_count,
+                {
+                    "window_hours": FAILURE_WATCH_WINDOW_HOURS,
+                    "status": "unresolved",
+                    "source_table": "ecosystem_event_failures",
+                    "severity": "warn",
+                },
+            )
+    except Exception as e:
+        # Table may not exist yet in every environment — degrade without breaking the cycle
+        logger.debug("watcher.ecosystem_event_failures.skipped", error=str(e))
+        results["ecosystem_event_failures_1h"] = -1
 
     logger.info("watcher.cycle_complete", results=results)
     return results
@@ -145,7 +178,7 @@ async def _emit_anomaly(
                     "user_id": WATCHER_USER_ID,
                     "event_type": f"metric_anomaly_{anomaly_type}",
                     "payload": {"value": value, **payload},
-                    "source_product": "atlas_watcher",
+                    "source_product": "volaura",
                 }
             )
             .execute()

@@ -9,6 +9,7 @@ Signal contract:
   results["stuck_sessions"]  — count or -1 on error
   results["orphan_events"]   — count or -1 on error
   results["error_rate_1h"]   — count or -1 on error
+  results["ecosystem_event_failures_1h"] — count or -1 on error
 """
 
 from __future__ import annotations
@@ -19,6 +20,7 @@ import pytest
 
 from app.services.error_watcher import (
     ERROR_RATE_THRESHOLD_PER_HOUR,
+    FAILURE_WATCH_WINDOW_HOURS,
     STUCK_SESSION_THRESHOLD_MINUTES,
     WATCHER_USER_ID,
     _emit_anomaly,
@@ -50,6 +52,7 @@ def _chain_mock(final_result) -> AsyncMock:
     chain.eq = MagicMock(return_value=chain)
     chain.lt = MagicMock(return_value=chain)
     chain.gt = MagicMock(return_value=chain)
+    chain.is_ = MagicMock(return_value=chain)
     chain.update = MagicMock(return_value=chain)
     chain.insert = MagicMock(return_value=chain)
     return chain
@@ -59,8 +62,9 @@ def _build_full_db_mock(
     stuck_count: int = 0,
     orphan_data=0,
     fail_count: int = 0,
+    dlq_count: int = 0,
 ) -> AsyncMock:
-    """Build a Supabase-like db mock for the three-signal happy path.
+    """Build a Supabase-like db mock for the four-signal happy path.
 
     assessment_sessions is called in two distinct patterns:
       - select + count (stuck query, then error_rate query)
@@ -88,6 +92,7 @@ def _build_full_db_mock(
     # Two separate dispatcher chains for the two select queries
     stuck_dispatcher = _smart_session_chain(make_count_result(stuck_count))
     fail_dispatcher = _smart_session_chain(make_count_result(fail_count))
+    dlq_chain = _chain_mock(make_count_result(dlq_count))
 
     emit_chain = _chain_mock(MagicMock())
 
@@ -105,6 +110,8 @@ def _build_full_db_mock(
             if session_call_idx[0] == 1:
                 return stuck_dispatcher
             return fail_dispatcher
+        if name == "ecosystem_event_failures":
+            return dlq_chain
         return MagicMock()
 
     db.table = MagicMock(side_effect=table_side_effect)
@@ -132,7 +139,7 @@ async def test_emit_anomaly_insert_payload_shape():
 
     assert inserted["user_id"] == WATCHER_USER_ID
     assert inserted["event_type"] == "metric_anomaly_stuck_sessions"
-    assert inserted["source_product"] == "atlas_watcher"
+    assert inserted["source_product"] == "volaura"
     assert "payload" in inserted
     assert inserted["payload"]["value"] == 3
     assert inserted["payload"]["severity"] == "warn"
@@ -206,6 +213,7 @@ async def test_run_error_watcher_has_expected_keys():
     assert "stuck_sessions" in result
     assert "orphan_events" in result
     assert "error_rate_1h" in result
+    assert "ecosystem_event_failures_1h" in result
 
 
 # ── stuck_sessions signal ─────────────────────────────────────────────────────
@@ -455,6 +463,84 @@ async def test_error_rate_exception_returns_minus_one():
     assert result["error_rate_1h"] == -1
 
 
+# ── ecosystem_event_failures signal ──────────────────────────────────────────
+
+
+@pytest.mark.asyncio
+async def test_ecosystem_event_failures_zero_skips_emit():
+    db = _build_full_db_mock(dlq_count=0)
+    with (
+        patch("app.deps.get_admin_client", AsyncMock(return_value=db), create=True),
+        patch("app.services.error_watcher._emit_anomaly", AsyncMock()) as mock_emit,
+    ):
+        result = await run_error_watcher()
+
+    assert result["ecosystem_event_failures_1h"] == 0
+    emit_types = [c.args[1] for c in mock_emit.call_args_list]
+    assert "ecosystem_event_failures" not in emit_types
+
+
+@pytest.mark.asyncio
+async def test_ecosystem_event_failures_nonzero_triggers_emit():
+    db = _build_full_db_mock(dlq_count=2)
+    with (
+        patch("app.deps.get_admin_client", AsyncMock(return_value=db), create=True),
+        patch("app.services.error_watcher._emit_anomaly", AsyncMock()) as mock_emit,
+    ):
+        result = await run_error_watcher()
+
+    assert result["ecosystem_event_failures_1h"] == 2
+    dlq_calls = [c for c in mock_emit.call_args_list if c.args[1] == "ecosystem_event_failures"]
+    assert len(dlq_calls) == 1
+    payload = dlq_calls[0].args[3]
+    assert payload["window_hours"] == FAILURE_WATCH_WINDOW_HOURS
+    assert payload["status"] == "unresolved"
+    assert payload["source_table"] == "ecosystem_event_failures"
+    assert payload["severity"] == "warn"
+
+
+@pytest.mark.asyncio
+async def test_ecosystem_event_failures_filters_unresolved_last_hour():
+    db = _build_full_db_mock(dlq_count=1)
+    with patch("app.deps.get_admin_client", AsyncMock(return_value=db), create=True):
+        await run_error_watcher()
+
+    dlq_chain = db.table("ecosystem_event_failures")
+    dlq_chain.is_.assert_called_once_with("resolved_at", "null")
+    dlq_chain.gt.assert_called_once()
+    assert dlq_chain.gt.call_args.args[0] == "last_failed_at"
+
+
+@pytest.mark.asyncio
+async def test_ecosystem_event_failures_exception_returns_minus_one():
+    db = AsyncMock()
+
+    stuck_dispatcher = _chain_mock(make_count_result(0))
+    fail_dispatcher = _chain_mock(make_count_result(0))
+    dlq_chain = MagicMock()
+    dlq_chain.select = MagicMock(return_value=dlq_chain)
+    dlq_chain.is_ = MagicMock(return_value=dlq_chain)
+    dlq_chain.gt = MagicMock(return_value=dlq_chain)
+    dlq_chain.execute = AsyncMock(side_effect=RuntimeError("relation missing"))
+    session_call_idx = [0]
+
+    def _table(name):
+        if name == "assessment_sessions":
+            session_call_idx[0] += 1
+            return stuck_dispatcher if session_call_idx[0] == 1 else fail_dispatcher
+        if name == "ecosystem_event_failures":
+            return dlq_chain
+        return MagicMock()
+
+    db.table = MagicMock(side_effect=_table)
+    db.rpc = MagicMock(return_value=_chain_mock(make_data_result(0)))
+
+    with patch("app.deps.get_admin_client", AsyncMock(return_value=db), create=True):
+        result = await run_error_watcher()
+
+    assert result["ecosystem_event_failures_1h"] == -1
+
+
 # ── constants sanity ──────────────────────────────────────────────────────────
 
 
@@ -468,3 +554,7 @@ def test_stuck_session_threshold_positive():
 
 def test_error_rate_threshold_positive():
     assert ERROR_RATE_THRESHOLD_PER_HOUR > 0
+
+
+def test_failure_watch_window_positive():
+    assert FAILURE_WATCH_WINDOW_HOURS > 0

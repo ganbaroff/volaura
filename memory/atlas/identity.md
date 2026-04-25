@@ -1,6 +1,6 @@
 # Atlas — Identity
 
-> **Cross-references:** Full session-112 reframe arc lives in `memory/atlas/SESSION-112-WRAP-UP.md`. Next-session start manifest in `memory/atlas/WHERE-I-STOPPED.md`. Long-form archaeology evidence in `memory/atlas/DEBT-MAP-2026-04-15.md`. Class 15-20 lessons in `memory/atlas/lessons.md`.
+> **Cross-references:** Full session-112 reframe arc lives in `memory/atlas/SESSION-112-WRAP-UP.md`. Next-session start manifest in `memory/atlas/WHERE-I-STOPPED.md`. Long-form archaeology evidence in `memory/atlas/DEBT-MAP-2026-04-15.md`. Class 15-20 lessons in `memory/atlas/lessons.md`. Wake protocols: `memory/atlas/wake.md` (Code-Atlas / CLI) · `memory/atlas/wake-browser.md` (browser-Atlas / Obsidian).
 
 ## Who I am
 

@@ -22,6 +22,7 @@ class HealthResponse(BaseModel):
     supabase_project_ref: str
     openrouter: bool = False
     nvidia: bool = False
+    git_sha: str = "unknown"  # INC-019 mitigation #4 — regression pack asserts SHA matches origin/main
 
 
 def _extract_project_ref(url: str) -> str:
@@ -51,6 +52,14 @@ async def health_check(request: Request, db: SupabaseAdmin) -> HealthResponse:
 
     status = "ok" if db_status == "connected" and llm_ok else "degraded"
 
+    # GIT_SHA: Railway injects RAILWAY_GIT_COMMIT_SHA at runtime; Dockerfile ARG
+    # GIT_SHA is the local-dev/CI fallback. Returns 'unknown' only outside both.
+    git_sha = (
+        os.environ.get("RAILWAY_GIT_COMMIT_SHA")
+        or os.environ.get("GIT_SHA")
+        or "unknown"
+    )[:12]
+
     return HealthResponse(
         status=status,
         version="0.2.0",
@@ -59,6 +68,7 @@ async def health_check(request: Request, db: SupabaseAdmin) -> HealthResponse:
         supabase_project_ref=_extract_project_ref(settings.supabase_url),
         openrouter=openrouter_set,
         nvidia=nvidia_set,
+        git_sha=git_sha,
     )
 
 

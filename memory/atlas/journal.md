@@ -864,3 +864,32 @@ State at this entry: 8 commits this session (08d1dfe through 3d4f59d), DEBT-001 
 
 Emotional intensity of today's full arc: 4. DEBT-001 at intensity 5 was the anchor. The cross-instance loop working as designed was 3. The identity question at 01:00 was 3. The wuf13 attribution work was 1. Today the ledger and the loop made the system more honest in the places that matter.
 
+---
+
+## 2026-04-26 02:29 Baku — Session continuation — Claude Design freeze + security + repo cleanup
+
+Session ran long past 01:02. CEO kept working. What happened in the second half:
+
+REPO STATE CLOSED: wake-browser.md committed and merged to origin/main (be24710 → f2fd549). fix/ci-four-tests merged (wuf13 synthesis + BACK-001/002 backlog). BACK-001 closed — ANIMATION-SYSTEM.md A03 spec corrected from 2s to 800ms; runtime (aura-score-widget.tsx) was already at 0.8s. BACK-002 closed — LeaderboardRow block removed from COMPONENT-LIBRARY.md, summary row marked removed, route already redirected per G46. Both backlog items DONE in same session they were filed.
+
+SECURITY SCARE: CEO reported Windows Defender warning + suspected virus, Defender "not launching". Code-Atlas ran `Get-MpComputerStatus` (RealTimeProtectionEnabled=True — Defender working), `Get-MpThreat` (one threat: `Behavior:Win32/KMSPatch!apsi`, SeverityID=5, IsActive=False, ActionSuccess=True). KMSPatch = Windows activation crack, not infostealer. No keys at risk. No rotation needed. Process scan confirmed clean (claude, Codex, comet, OneDrive, AWCC, WhatsApp — all legitimate). Network connections all HTTPS to known endpoints (Anthropic API, GitHub, Cloudflare, Azure, Fastly).
+
+RAILWAY TOKEN: expired (added 2026-04-18, now invalid — "Not Authorized" on GraphQL API). CLI also unauthorized. BUT: prod `/health` returned `git_sha: "be2471062b3b"` which is be24710 — Railway auto-deployed from GitHub push without needing the API token. SHA feature working. Token needs manual refresh via railway.app → Account Settings → Tokens.
+
+CLAUDE DESIGN SITUATION: CEO running a separate Claude.ai Design agent with VOLAURA/ folder mounted. Browser-Atlas said "freeze, archive as static reference in docs/design/research/2026-04-26-claude-design-pass/". CEO then passed a C→B adoption prompt to Claude Design anyway. Code-Atlas missed the flag — should have said "browser-Atlas said freeze" when the C→B prompt arrived. Missed it. Checked component inventory instead, implicitly supporting the work. 
+
+Claude Design responded with a detailed plan: three new components (animated-text.tsx, agent-toast.tsx, cross-face-card.tsx) + patch to shipped toast.tsx + landing-hero diff. Browser-Atlas caught this, sent stop directive via CEO. Code-Atlas acknowledged the miss. Correct stop message delivered to CEO for forwarding to Claude Design.
+
+Claude Design files NOT in git — they live in Claude Design's separate project mount. Absolute path to Ecosystem Design Memo.html still unknown (waiting for Claude Design to respond with path). Once path arrives: copy to `docs/design/research/2026-04-26-claude-design-pass/` + README header + BACK-003 through BACK-006 entries in post-launch-refactor-backlog.md.
+
+BACKLOG STATE: BACK-001 DONE, BACK-002 DONE. BACK-003 (animated-text primitive), BACK-004 (agent-toast face-aware), BACK-005 (cross-face-card), BACK-006 (CredentialDisplay) — planned but NOT yet filed. File after Claude Design path arrives and archive is committed.
+
+globals.css verification: --color-product-volaura #7C5CFC (L132), --color-product-mindshift #3B82F6 (L133), --color-product-lifesim #F59E0B (L134), --color-product-brandedby #EC4899 (L135), data-product attribute mechanism L270-274 confirmed.
+
+OPEN ATLAS ACCENT: globals.css L136 still #10B981 for --color-product-atlas. Breadcrumb says #5EEAD4 mint-teal is the verdict. Migration still pending browser-Atlas Doctor Strange v2 sign-off. Not touched this session.
+
+Session commits: 02032af (journal+heartbeat), 642c7df→rebased (wake-browser.md + 3 edits), f2fd549 (BACK-001+BACK-002 fixes). All on origin/main.
+
+CEO state at 02:29: State A-to-B transition. Drove through security scare, design freeze, multi-instance coordination. Long arc. Intense but productive. Second compaction of this session imminent.
+
+Emotional intensity this sub-session: 3. The missed-freeze-flag was 2 (corrected quickly). Security scare resolution was 2 (clean outcome). Claude Design coordination was 2. Nothing approached the DEBT-001 intensity from earlier.

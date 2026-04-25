@@ -1,0 +1,102 @@
+{
+  "proposal": "2026-04-26-tier-metals",
+  "voted_at": "2026-04-25T22:44:17.891249+00:00",
+  "perspectives_total": 13,
+  "perspectives_responded": 13,
+  "perspectives_failed": 0,
+  "yes": 0,
+  "no": 13,
+  "amended_yes": 0,
+  "pass_threshold": 7,
+  "decision": "FAILED — amendment blocked",
+  "whistleblower_flags_count": 5,
+  "whistleblower_flags": [
+    {
+      "perspective": "Security Auditor",
+      "flag": "The redefinition of VOLAURA as only an assessment platform is a fundamental identity distortion that contradicts repeated CEO directives and will lead to an incomplete security scope for the entire project."
+    },
+    {
+      "perspective": "Ecosystem Auditor",
+      "flag": "Дизайнерский агент предлагает изменения, которые прямо нарушают заблокированные Foundation Laws без видимой сверки с конституцией. Это системный сбой в работе агентов."
+    },
+    {
+      "perspective": "Risk Manager",
+      "flag": "The introduction of leaderboard patterns and tier metals may exacerbate existing social comparison issues, potentially causing harm to users' mental health and well-being, and should be reviewed by the CEO regardless of the vote outcome."
+    },
+    {
+      "perspective": "Readiness Manager",
+      "flag": "The introduction of tier metals and leaderboard patterns poses a significant risk to user mental health and well-being, warranting immediate CEO attention."
+    },
+    {
+      "perspective": "Communications Strategist",
+      "flag": "Potential harm to ADHD-first users and those sensitive to comparative shame, contradicting the project's core values of inclusivity and support."
+    }
+  ],
+  "votes_summary": [
+    {
+      "perspective": "Scaling Engineer",
+      "vote": "no",
+      "model": "gemini-2.5-flash"
+    },
+    {
+      "perspective": "Security Auditor",
+      "vote": "no",
+      "model": "gemini-2.5-flash"
+    },
+    {
+      "perspective": "Product Strategist",
+      "vote": "no",
+      "model": "meta/llama-3.3-70b-instruct"
+    },
+    {
+      "perspective": "Code Quality Engineer",
+      "vote": "no",
+      "model": "meta/llama-3.3-70b-instruct"
+    },
+    {
+      "perspective": "Ecosystem Auditor",
+      "vote": "no",
+      "model": "gemini-2.5-flash"
+    },
+    {
+      "perspective": "Risk Manager",
+      "vote": "no",
+      "model": "meta/llama-3.3-70b-instruct"
+    },
+    {
+      "perspective": "Readiness Manager",
+      "vote": "no",
+      "model": "meta/llama-3.3-70b-instruct"
+    },
+    {
+      "perspective": "Cultural Intelligence",
+      "vote": "no",
+      "model": "meta/llama-3.3-70b-instruct"
+    },
+    {
+      "perspective": "Communications Strategist",
+      "vote": "no",
+      "model": "meta/llama-3.3-70b-instruct"
+    },
+    {
+      "perspective": "Assessment Science",
+      "vote": "no",
+      "model": "meta/llama-3.3-70b-instruct"
+    },
+    {
+      "perspective": "Legal Advisor",
+      "vote": "no",
+      "model": "meta/llama-3.3-70b-instruct"
+    },
+    {
+      "perspective": "PR & Media",
+      "vote": "no",
+      "model": "meta/llama-3.3-70b-instruct"
+    },
+    {
+      "perspective": "CTO Watchdog",
+      "vote": "no",
+      "model": "meta/llama-3.3-70b-instruct"
+    }
+  ]
+}

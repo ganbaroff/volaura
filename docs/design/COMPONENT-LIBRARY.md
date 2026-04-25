@@ -972,7 +972,7 @@ export function LandingHero() {
     <div className="relative w-full h-screen overflow-hidden">
       <FloatingOrbs count={5} intensity="high" />
       <div className="relative z-10">
-        <h1>Volunteer Credentials, Verified</h1>
+        <h1>Credentials, Verified</h1>
       </div>
     </div>
   );

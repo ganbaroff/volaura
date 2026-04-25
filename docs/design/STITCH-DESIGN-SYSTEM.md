@@ -48,7 +48,7 @@ We pair **Plus Jakarta Sans** (Display) with **Inter** (Body) to balance persona
 | `body-md` | Inter | 0.875rem | 400 | Primary reading text |
 | `label-sm` | Inter | 0.6875rem | 500 | Metadata, Overlines, Micro-copy |
 
-**Editorial Note:** Use `display-lg` for counting animations (e.g., total volunteer hours) to create a sense of monumental achievement.
+**Editorial Note:** Use `display-lg` for counting animations (e.g., verified impact, completed sessions, earned crystals) to create a sense of monumental achievement.
 
 ---
 
@@ -83,7 +83,7 @@ We do not use drop shadows to create "pop." We use light and layering.
 ## 6. Do’s and Don’ts
 
 ### Do
-- **Do** use `display-lg` for "Big Numbers"—volunteering hours, impact scores, and talent rankings.
+- **Do** use `display-lg` for "Big Numbers"—verified impact, progress scores, and talent rankings.
 - **Do** utilize `xl` (1.5rem) corner radius for large hero sections to give a friendly, "Duolingo-like" softness.
 - **Do** use asymmetrical layouts (e.g., a left-aligned headline with a right-aligned stats card that slightly overlaps the section below it).
 

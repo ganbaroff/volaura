@@ -1209,7 +1209,7 @@ export function FloatingOrbs() {
 **Component:** Hero headline
 
 **Spec:**
-- **Element:** Hero title text (e.g., "Discover Your Volunteer Potential")
+- **Element:** Hero title text (e.g., "Discover Your Verified Potential")
 - **Animation:** Each word fades in and translates up
 - **Start:** `opacity: 0, translateY: 20px`
 - **End:** `opacity: 1, translateY: 0`
@@ -1283,12 +1283,12 @@ export function HeroTextStagger({ text, className = "" }: HeroTextStaggerProps) 
 
 **ID:** A15
 **Name:** Card Hover Lift
-**Trigger:** Mouse hover over any card (event card, volunteer card, etc.)
+**Trigger:** Mouse hover over any card (event card, profile card, etc.)
 **Priority:** Medium
 **Component:** Card wrapper component
 
 **Spec:**
-- **Element:** Card container (e.g., EventCard, VolunteerCard)
+- **Element:** Card container (e.g., EventCard, ProfileCard)
 - **Animations:**
   - TranslateY: 0 → -4px (lift up)
   - Shadow:** none → 0 0 16px rgba(0, 0, 0, 0.1) (increase shadow)
@@ -1466,7 +1466,7 @@ export function ToggleAnimated({
 **Name:** Like/React Burst
 **Trigger:** Tap/click like/heart button
 **Priority:** Low (engagement, decorative)
-**Component:** Like button (volunteer cards, comments, etc.)
+**Component:** Like button (profile cards, comments, etc.)
 
 **Spec:**
 - **Element:** Heart/star icon + particle burst
@@ -1790,4 +1790,3 @@ export function AnimatedCard({ children, ...props }: React.HTMLAttributes<HTMLDi
 | Date | Author | Changes |
 |------|--------|---------|
 | 2026-03-22 | Design System | Initial comprehensive catalog v1.0 |
-

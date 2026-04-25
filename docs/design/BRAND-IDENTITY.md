@@ -10,22 +10,22 @@
 ## 1. Brand Story
 
 ### Mission
-Make volunteer talent visible, measurable, and portable — transforming how organizations discover and verify competent volunteers across Azerbaijan and the CIS/MENA region.
+Make verified talent visible, measurable, and portable — transforming how organizations discover and verify competent people across Azerbaijan and the CIS/MENA region.
 
 ### Vision
-Every volunteer in CIS/MENA has a verified credential that opens doors to meaningful opportunities, lifelong learning, and recognized impact.
+Every ambitious person in CIS/MENA has a verified credential that opens doors to meaningful opportunities, lifelong learning, and recognized impact.
 
 ### Brand Name: Volaura
-**Etymology:** Volunteer + Aura
-- **Volunteer:** The person — committed, skilled, available
+**Etymology:** A distinct brand name built around visibility, signal, and earned presence
+- **Volaura:** A name that carries motion, signal, and the visible aura of verified competence
 - **Aura:** The invisible glow of verified competence — what others *feel* about your abilities
 
 **Tagline:** "Your Skills, Verified"
 
 ### Core Values
 1. **Transparency** — Credentials are earned through rigorous, AI-powered assessment, not guesswork
-2. **Inclusivity** — Every volunteer, regardless of background, can build a verified profile
-3. **Empowerment** — Volunteers own their credentials and control who sees them
+2. **Inclusivity** — Every user, regardless of background, can build a verified profile
+3. **Empowerment** — Users own their credentials and control who sees them
 4. **Trustworthiness** — Peer and organization verification validates authenticity
 5. **Progress** — AURA scores reflect growth; assessments happen on a journey, not once
 
@@ -337,7 +337,7 @@ font-family: "JetBrains Mono", "Courier New", monospace;
 1. **Character Archetypes:** Diverse (gender, age, ethnicity), geometric style, no detailed faces
    - Community leader
    - Event organizer
-   - Young volunteer
+- Young professional
    - Mentor/coach
    - Peer evaluator
 
@@ -366,7 +366,7 @@ font-family: "JetBrains Mono", "Courier New", monospace;
   ├── characters/
   │   ├── leader.svg
   │   ├── organizer.svg
-  │   ├── volunteer.svg
+│   ├── profile.svg
   │   └── mentor.svg
   ├── scenes/
   │   ├── handshake.svg
@@ -483,7 +483,7 @@ font-family: "JetBrains Mono", "Courier New", monospace;
 - **Register/Form Level:** Standard, professional
 - **Pronouns:** Use singular "they" when gender unknown; specify "you" when clear
 - **Formality:** Slightly higher than colloquial (but not stiff)
-- **Example:** "Tell us about yourself. What makes you an exceptional volunteer?"
+- **Example:** "Tell us about yourself. What makes you exceptional at what you do?"
 
 ### Word Choices (Preferred vs. Avoid)
 
@@ -498,7 +498,7 @@ font-family: "JetBrains Mono", "Courier New", monospace;
 | Journey | Process, Path | Implies growth and continuity |
 | Share | Broadcast, Post | Respects user agency and intent |
 | Discover | Find, Search | More aspirational, sense of exploration |
-| Opportunity | Job, Role, Position | Broader than employment; includes volunteering |
+| Opportunity | Job, Role, Position | Broader than employment; includes gigs, projects, and community work |
 
 ### CTAs (Call-to-Action Verbs)
 
@@ -531,23 +531,23 @@ font-family: "JetBrains Mono", "Courier New", monospace;
 ## 8. Photography Guidelines
 
 ### When to Use Photography
-- Event listings (volunteer opportunities in action)
+- Event listings (real opportunities in action)
 - Team/organizer profiles (faces build trust)
 - Case studies or impact stories
-- "Real volunteer" moments (not stock imagery)
+- "Real people, real work" moments (not stock imagery)
 - Event galleries (documentation, social proof)
 
 ### Photography Principles
 
 **Authenticity:**
-- Real volunteers, real events, real impact
+- Real people, real events, real impact
 - Avoid staged "perfection" — real moments preferred
 - Diverse representation: gender, age, ethnicity, ability
 - Geographic diversity (multiple countries in CIS/MENA)
 
 **Settings:**
 - Community events, workshops, meetups
-- Outdoor volunteer activities (cleanup, planting, etc.)
+- Outdoor community activities (cleanup, planting, etc.)
 - Professional settings (training, presentations)
 - Candid team moments
 - Avoid: Office cubicles, studio backdrops, overly polished setups
@@ -568,7 +568,7 @@ font-family: "JetBrains Mono", "Courier New", monospace;
 
 ### Rights & Ethics
 - **Consent:** Model releases for all recognizable faces
-- **Attribution:** Credit volunteers when possible ("Featuring Ali from Baku, Community Leader")
+- **Attribution:** Credit featured people when possible ("Featuring Ali from Baku, Community Leader")
 - **Diversity:** Intentionally source photos representing CIS/MENA communities
 - **Avoid:** Stereotypes, "white savior" imagery, homogeneous group shots
 - **Storage:** Organize in `/public/images/` with metadata tags (date, event, location, photographer)

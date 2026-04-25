@@ -94,6 +94,9 @@ docs/.obsidian/
 memory/atlas/session-93-full-transcript.jsonl
 models/
 
+# Atlas runtime — ephemeral primer files, regenerated each wake, never committed
+memory/atlas/runtime/
+
 .vercel
 .coverage
 

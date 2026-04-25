@@ -163,9 +163,9 @@ async def evaluate_with_llm(
                 _meta["latency_ms"] = round((time.monotonic() - _t0) * 1000)
             return result
         except TimeoutError:
-            logger.warning("Vertex call timed out, falling back to Gemini", timeout=timeout)
+            logger.warning(f"Vertex call timed out after {timeout}s, falling back to Gemini")
         except Exception as e:
-            logger.warning("Vertex call failed, falling back to Gemini", error=str(e)[:200])
+            logger.warning(f"Vertex call failed, falling back to Gemini: {str(e)[:300]}")
 
     # AI Studio Gemini — secondary (free tier, 15 RPM cap)
     if settings.gemini_api_key:
@@ -180,9 +180,9 @@ async def evaluate_with_llm(
                 _meta["latency_ms"] = round((time.monotonic() - _t0) * 1000)
             return result
         except TimeoutError:
-            logger.warning("Gemini call timed out, falling back to Groq", timeout=timeout)
+            logger.warning(f"Gemini call timed out after {timeout}s, falling back to Groq")
         except Exception as e:
-            logger.warning("Gemini call failed, falling back to Groq", error=str(e)[:200])
+            logger.warning(f"Gemini call failed, falling back to Groq: {str(e)[:300]}")
 
     # Groq — tertiary (14,400 req/day free tier — cost buffer before paid OpenAI)
     if settings.groq_api_key:

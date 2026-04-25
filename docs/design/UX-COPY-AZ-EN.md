@@ -129,7 +129,7 @@ Organize translation files by feature:
 | Key | EN | AZ | Notes |
 |-----|----|----|-------|
 | onboard.step1.title | Welcome to Volaura | Volaura-ya Xoş Gəlmisiniz | Step 1 hero title |
-| onboard.step1.desc | Discover your volunteer credentials and connect with opportunities that match your skills. | Könüllü kimlik məlumatlarınızı kəşf edin və bacarıqlarınıza uyğun imkanlarla əlaqə saxlayın. | Step 1 description |
+| onboard.step1.desc | Discover your verified profile and connect with opportunities that match your skills. | Təsdiqlənmiş profilinizi kəşf edin və bacarıqlarınıza uyğun imkanlarla əlaqə saxlayın. | Step 1 description |
 | onboard.step1.cta | Next | Sonrakı | CTA button |
 
 ### Step 2: What is AURA?
@@ -249,10 +249,10 @@ Organize translation files by feature:
 
 | Key | EN | AZ | Notes |
 |-----|----|----|-------|
-| results.badge.platinum | You've achieved Platinum status. You're an exemplary volunteer ready for any challenge. | Siz Platin statusuna çatmısınız. Siz istənilən çətinliyə hazır nümunəvi könüllüsünüz. | Platinum badge copy |
-| results.badge.gold | You've earned a Gold badge. You're a highly skilled and reliable volunteer. | Siz Qızıl nişan qazanmısınız. Siz yüksək bacarıqlı və etibarlı könüllüsünüz. | Gold badge copy |
-| results.badge.silver | You've received a Silver badge. You have solid volunteer skills and are ready to grow. | Siz Gümüş nişan almısınız. Sizin sağlam könüllü bacarıqlarınız var və böyümək üçün hazırsınız. | Silver badge copy |
-| results.badge.bronze | You've earned a Bronze badge. This is your start to becoming an amazing volunteer. | Siz Brons nişan qazanmısınız. Bu, məharətli könüllü olmağa doğru sizin başlanğıcınızdır. | Bronze badge copy |
+| results.badge.platinum | You've achieved Platinum status. You're operating at an exceptional level. | Siz Platin statusuna çatmısınız. Siz müstəsna səviyyədə fəaliyyət göstərirsiniz. | Platinum badge copy |
+| results.badge.gold | You've earned a Gold badge. You're highly skilled and consistently reliable. | Siz Qızıl nişan qazanmısınız. Siz yüksək bacarıqlısınız və davamlı şəkildə etibarlısınız. | Gold badge copy |
+| results.badge.silver | You've received a Silver badge. You have strong foundations and room to grow. | Siz Gümüş nişan almısınız. Sizin güclü təməliniz var və inkişaf üçün yeriniz qalır. | Silver badge copy |
+| results.badge.bronze | You've earned a Bronze badge. This is the start of your verified growth journey. | Siz Brons nişan qazanmısınız. Bu, sizin təsdiqlənmiş inkişaf yolunuzun başlanğıcıdır. | Bronze badge copy |
 | results.badge.none | Keep growing. Retake the assessment in 30 days to improve your score. | Böyümək davam et. Xalını yaxşılaşdırmaq üçün 30 gündən sonra qiymətləndirmə yenidən keçin. | None badge copy |
 
 **Competency Labels (8 Total)**
@@ -331,7 +331,7 @@ Organize translation files by feature:
 | profile.verification.selfAssessed | Self-Assessed | Özü qiymətləndirilmiş | Badge label |
 | profile.verification.orgVerified | Organization Verified | Təşkilat tərəfindən Təsdiqlənmişdir | Badge label |
 | profile.verification.peerVerified | Peer Verified | Həmyaşıd tərəfindən Təsdiqlənmişdir | Badge label |
-| profile.verifyTooltip | This volunteer's competencies have been verified by {source} | Bu könüllünün bacarıqları {source} tərəfindən təsdiq edilmişdir | Tooltip on hover |
+| profile.verifyTooltip | This profile's competencies have been verified by {source} | Bu profilin bacarıqları {source} tərəfindən təsdiq edilmişdir | Tooltip on hover |
 
 **Empty State (No Assessment)**
 
@@ -381,7 +381,7 @@ Organize translation files by feature:
 | events.detail.date | Date & Time | Tarix və Saat | Info label |
 | events.detail.location | Location | Yerləşməsi | Info label |
 | events.detail.organizer | Organized by | {organizerName} tərəfindən təşkil edilir | Organizer credit |
-| events.detail.volunteer_count | {n} volunteers attending | {n} könüllü iştirak edir | Attendance count |
+| events.detail.volunteer_count | {n} participants attending | {n} iştirakçı iştirak edir | Attendance count |
 | events.detail.requirementsTitle | Requirements | Tələblər | Section header |
 | events.detail.minBadge | Minimum Badge | Minimum Nişan | Requirement label |
 | events.detail.skills | Skills | Bacarıqlar | Requirement label |
@@ -405,15 +405,15 @@ Organize translation files by feature:
 |-----|----|----|-------|
 | org.dashboard | Organization Dashboard | Təşkilat Paneli | Page title |
 | org.activeEvents | Active Events | Aktiv Tədbirlər | Widget title |
-| org.volunteerCount | {n} volunteers registered | {n} könüllü qeydiyyatdan keçdi | Stat display |
+| org.volunteerCount | {n} participants registered | {n} iştirakçı qeydiyyatdan keçdi | Stat display |
 | org.createEvent | Create Event | Tədbir Yarat | CTA button |
 | org.manageEvents | Manage Events | Tədbirləri İdarə Et | Link/button |
 
-**Volunteer Search & Filter**
+**Talent Search & Filter**
 
 | Key | EN | AZ | Notes |
 |-----|----|----|-------|
-| org.searchVolunteers | Search volunteers by competency | Bacarıqla könüllüləri axtarın | Search input label |
+| org.searchVolunteers | Search talent by competency | Bacarıqla istedadları axtarın | Search input label |
 | org.filterByTier | Filter by badge tier | Nişan səviyyəsi ilə filtr et | Filter label |
 | org.filterBySkill | Filter by skill | Bacarıq ilə filtr et | Filter label |
 | org.sortBy | Sort by | Sırala: | Dropdown label |
@@ -421,7 +421,7 @@ Organize translation files by feature:
 | org.sortOption.recent | Most Recent | Ən Son | Sort option |
 | org.sortOption.availability | Availability | Mövcudluq | Sort option |
 
-**Volunteer Card (in Org Dashboard)**
+**Talent Card (in Org Dashboard)**
 
 | Key | EN | AZ | Notes |
 |-----|----|----|-------|
@@ -436,8 +436,8 @@ Organize translation files by feature:
 
 | Key | EN | AZ | Notes |
 |-----|----|----|-------|
-| org.attestation.title | Attest Volunteer Competencies | Könüllü Bacarıqlarını Təsdiq Et | Modal title |
-| org.attestation.instructions | Select which competencies you've observed this volunteer demonstrate in your organization. | Bu könüllünün təşkilatınızda nə bacarıqları göstərdiyi müşahidə etdiyinizi seçin. | Modal instructions |
+| org.attestation.title | Attest Profile Competencies | Profil Bacarıqlarını Təsdiq Et | Modal title |
+| org.attestation.instructions | Select which competencies you've observed this person demonstrate in your organization. | Bu şəxsin təşkilatınızda hansı bacarıqları nümayiş etdirdiyini seçin. | Modal instructions |
 | org.attestation.selectAll | Select All | Hamısını Seçin | Checkbox |
 | org.attestation.confirmButton | Submit Attestation | Attestasiyanı Təqdim Et | CTA button |
 | org.attestation.cancelButton | Cancel | Ləğv Et | Cancel button |
@@ -447,7 +447,7 @@ Organize translation files by feature:
 
 | Key | EN | AZ | Notes |
 |-----|----|----|-------|
-| org.rating.title | Rate Volunteer Performance | Könüllü Performansını Qiymətləndirin | Modal title |
+| org.rating.title | Rate Participant Performance | İştirakçı Performansını Qiymətləndirin | Modal title |
 | org.rating.scale | Rate from 1 (poor) to 5 (excellent) | 1-dən (zəif) 5-ə (mükəmməl) qiymətləndirin | Scale instruction |
 | org.rating.comment | Additional Feedback (optional) | Əlavə Rəy (istəkli) | Comment field label |
 | org.rating.submitButton | Submit Rating | Reytinqi Təqdim Et | CTA button |
@@ -588,11 +588,11 @@ Organize translation files by feature:
 | empty.noRegistered.desc | Find and register for events that match your skills. | Bacarıqlarınıza uyğun tədbirləri tapın və qeydiyyatdan keçin. | Empty state description |
 | empty.noRegistered.cta | Browse Events | Tədbirə Bax | CTA button |
 
-**Organization: No Volunteers**
+**Organization: No Talent Yet**
 
 | Key | EN | AZ | Notes |
 |-----|----|----|-------|
-| empty.noVolunteers.title | No Volunteers Yet | Hələ Könüllü Yoxdur | Empty state title |
+| empty.noVolunteers.title | No Talent Yet | Hələ İstedad Yoxdur | Empty state title |
 | empty.noVolunteers.desc | Create an event to start attracting verified participants. | Təsdiqlənmiş iştirakçıları cəlb etməyə başlamaq üçün tədbir yaradın. | Empty state description |
 | empty.noVolunteers.cta | Create First Event | İlk Tədbirini Yarat | CTA button |
 

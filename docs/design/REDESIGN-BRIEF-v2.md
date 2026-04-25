@@ -162,7 +162,7 @@ Returns: transition, entrance, hoverScale, tapScale, shouldReduceMotion
 ## 5. Signup Must-Keeps (validated by research — DO NOT LOSE)
 
 - Trust signal pills ("No CV", "Data private", "No spam") — Research #1 validated
-- Volunteer/Organization role selection — Research #9 validated
+- Talent/Organization role selection — Research #9 validated
 - GDPR age confirmation checkbox — legal requirement
 - Invite code gate — controlled rollout mechanism
 - Password hint text — reduces anxiety

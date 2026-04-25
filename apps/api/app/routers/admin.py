@@ -790,7 +790,7 @@ async def get_swarm_findings(
         return {"data": {"findings": [], "total": 0, "error": str(e)[:200]}}
 
 
-# ── Ghosting Grace worker (WUF13 P0 #14, Constitution Rule 30) ────────────────
+# ── Ghosting Grace worker (Constitution Rule 30) ──────────────────────────────
 
 
 @router.post("/ghosting-grace/run")

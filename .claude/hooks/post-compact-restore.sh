@@ -1,55 +1,41 @@
 #!/bin/bash
-# POST-COMPACT HOOK: Re-injects critical context AFTER compaction
-# stdout from this script is added directly to Claude's context
-# This is how we survive context loss
+# POST-COMPACT HOOK: re-injects only live canonical pointers plus session delta.
+# Avoids stale restore text, dead file references, and hardcoded runtime drift.
 
 MEMORY_DIR="$HOME/.claude/projects/C--Projects-VOLAURA/memory"
 CHECKPOINT="$MEMORY_DIR/context_checkpoint.md"
 PROJECT_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
+COMPACT_FLAG="$PROJECT_DIR/.claude/just-compacted.flag"
 
 echo "========================================"
-echo "CONTEXT RESTORED AFTER COMPACTION"
+echo "ATLAS CONTEXT RESTORED AFTER COMPACTION"
 echo "========================================"
 echo ""
 
-# Re-inject checkpoint if it exists
 if [ -f "$CHECKPOINT" ]; then
   cat "$CHECKPOINT"
   echo ""
-fi
-
-# Re-inject current sprint position from roadmap
-if [ -f "$PROJECT_DIR/docs/ROADMAP.md" ]; then
-  echo "## Current Roadmap (NOW section):"
-  # Extract NOW section only
-  sed -n '/^## NOW/,/^## NEXT/p' "$PROJECT_DIR/docs/ROADMAP.md" | head -30
+else
+  echo "Session delta: checkpoint missing."
   echo ""
 fi
 
-# Re-inject mandatory rules summary
-echo "## Mandatory Rules (7 — read full file if needed):"
-echo "1. No solo decisions — agents review FIRST"
-echo "2. Memory recovery must produce visible output"
-echo "3. Test on PRODUCTION URL (volauraapi-production)"
-echo "4. Schema verification before deployment"
-echo "5. Delegate first, do last"
-echo "6. Sprint retrospective mandatory and structured"
-echo "7. State persisted during work, not after"
+echo "Canonical recovery spine (live authority order for this re-entry):"
+echo "- memory/atlas/wake.md — wake protocol and continuity spine"
+echo "- AGENTS.md — runtime/backend truth wins over older docs when they conflict"
+echo "- .claude/breadcrumb.md — last declared action and next step"
+echo "- docs/CURRENT-VS-TARGET-ARCHITECTURE-2026-04-21.md — current runtime truth vs historical target language"
+echo ""
+echo "Re-entry rule:"
+echo "- Continue from breadcrumb."
+echo "- Verify before claim."
+echo "- Do not reset into audit/report mode just because compaction happened."
 echo ""
 
-# Re-inject key behavioral rules
-echo "## CEO Communication Rules:"
-echo "- Report OUTCOMES only, no technical details"
-echo "- Match Yusif's language (Russian -> Russian, English -> English)"
-echo "- Never ask operational questions — use ROADMAP.md for priorities"
-echo "- Never show: curl output, schemas, deployment logs, git diffs"
-echo ""
+printf 'compacted_at=%s\n' "$(date '+%Y-%m-%d %H:%M:%S')" > "$COMPACT_FLAG"
 
-echo "## Production URLs:"
-echo "- API: https://volauraapi-production.up.railway.app"
-echo "- Frontend: https://volaura.app"
+echo "One-shot compact re-entry marker armed: .claude/just-compacted.flag"
 echo ""
-
 echo "========================================"
 echo "END OF RESTORED CONTEXT"
 echo "========================================"

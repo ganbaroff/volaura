@@ -65,7 +65,7 @@ Hourly rates typically $450–$750/hr. For a single 60–90 minute CFC+WHT consu
 ### 6. USTAXFS (US Tax & Financial Services)
 - **Website:** https://www.ustaxfs.com/
 - **Model:** Integrated cross-border tax lawyers + accountants, UK/Europe base
-- **Fit:** medium-size, useful if CEO visits Europe for WUF13 circuit and needs in-person meeting window
+- **Fit:** medium-size, useful if CEO visits Europe for launch or partnership meetings and needs an in-person window
 
 ---
 
@@ -85,7 +85,7 @@ Only engage these once there's Series A traction or a specific M&A/IP trigger.
 ## Tier 4 — Azerbaijan / Turkey local counsel (for the AZ side)
 
 The DE C-Corp needs AZ-side partner to handle:
-- Notification to SADPP for cross-border data transfer (WUF13 P0 #5)
+- Notification to SADPP for cross-border data transfer (current launch P0 #5)
 - AZ corporate tax treatment of founder's share grant
 - Income classification (founder salary vs dividends vs management fee to AZ operational entity)
 - CFC disclosure on AZ tax return

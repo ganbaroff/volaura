@@ -379,7 +379,7 @@
 - [ ] **Begin org outreach**
   - [ ] Data points: total volunteers, avg AURA, top performers
   - [ ] Outreach email to event organizers: "Thanks for hosting, here's the impact"
-  - [ ] Outreach to top volunteers: "Featured in our leaderboard, thank you"
+  - [ ] Outreach to top profiles: "Featured in our leaderboard, thank you"
   - [ ] Offer: become official "Volaura Partner" org
 
 ---
@@ -394,3 +394,4 @@
 - [Vercel Deployment](https://vercel.com/docs/concepts/deployments/overview)
 - [Railway Documentation](https://railway.app/docs)
 - [Sentry Setup](https://docs.sentry.io/)
+

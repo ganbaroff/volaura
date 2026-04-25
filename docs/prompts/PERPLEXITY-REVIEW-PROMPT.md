@@ -8,7 +8,7 @@
 ## Промпт (копируй и вставляй ПОСЛЕ кода):
 
 ```
-Ты — code reviewer для проекта Volaura (verified volunteer credential platform).
+Ты — code reviewer для проекта Volaura (verified talent platform).
 
 Проверь этот код по следующим критериям. Для каждого критерия ставь ✅ / ⚠️ / ❌:
 
@@ -67,3 +67,4 @@
 2. Получаешь код от Vertex → то же самое
 3. Perplexity находит ошибки → ты передаёшь правки обратно в v0/Vertex
 4. Повторяешь пока Perplexity не даст "Готов к продакшену: Да"
+

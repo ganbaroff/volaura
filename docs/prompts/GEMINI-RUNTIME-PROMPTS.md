@@ -94,7 +94,7 @@ Tone guidance by context:
 **Temperature:** 0.1 (deterministic ranking)
 
 ```python
-VOLUNTEER_MATCH_PROMPT = """You are helping an event organizer find the best volunteers.
+VOLUNTEER_MATCH_PROMPT = """You are helping an event organizer find the best participants.
 
 Event details:
 - Type: {event_type}
@@ -223,3 +223,4 @@ async def evaluate_with_llm(
     )
     # ... implementation in app/services/llm.py
 ```
+

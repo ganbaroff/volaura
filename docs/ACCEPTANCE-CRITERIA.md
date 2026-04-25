@@ -1006,7 +1006,7 @@ And images load, buttons clickable, text readable
 ```gherkin
 Given tracking is configured
 When user_signup event fires
-Then event logged: { name: "user_signup", source: "organic|referral|wuf13", locale: "az|en" }
+Then event logged: { name: "user_signup", source: "organic|referral|partner_event", locale: "az|en" }
 When assessment_completed event fires
 Then event logged: { name: "assessment_completed", competency: "communication", score: 78, time_seconds: 1200 }
 When score_shared event fires
@@ -1027,8 +1027,8 @@ Then join link includes: ?ref=CODE&utm_source=referral&utm_medium=email
 Given a public profile: /u/[username]
 When shared on social media
 Then OG meta tags include:
-  - og:title: "{name} — {tier} Volunteer (AURA {score})"
-  - og:description: "Verified volunteer on Volaura. {top_competency} specialist."
+  - og:title: "{name} — {tier} Profile (AURA {score})"
+  - og:description: "Verified profile on Volaura. {top_competency} specialist."
   - og:image: "https://volaura.com/api/og/{username}"
   - og:url: "https://volaura.com/u/{username}"
   - twitter:card: "summary_large_image"
@@ -1128,7 +1128,7 @@ Then responses cached to avoid redundant LLM calls
 Given landing page or dashboard displayed
 When live-stats.tsx rendered
 Then displays:
-  - "847 verified volunteers"
+  - "847 verified profiles"
   - "+23 new today"
   - "15 organizations"
   - "42 events completed"
@@ -1591,3 +1591,4 @@ This ACCEPTANCE-CRITERIA.md document provides:
 ✅ **Part 9**: Post-Launch Roadmap
 
 **Use this as the single source of truth for "ready to ship".**
+

@@ -1,6 +1,6 @@
 # Pre-Launch Blockers — Status Audit (D-007)
 
-**Authority:** Operational scope split for Constitution v1.7 pre-launch P0 blockers (19 items, originally logged in session 88 handoff). Sessions since then (89-108) closed several of them through various commits; this doc reconciles the list against the real repo state so WUF13 launch planning can work from ground truth.
+**Authority:** Operational scope split for Constitution v1.7 pre-launch P0 blockers (19 items, originally logged in session 88 handoff). Sessions since then (89-108) closed several of them through various commits; this doc reconciles the list against the real repo state so launch planning can work from ground truth.
 
 **Method:** each blocker verified by code read, commit log grep, or explicit schema/DB check. Numbering preserved from the session 88 source list.
 
@@ -75,9 +75,9 @@ Design System v2 is in Figma and mostly deployed. No item-by-item audit against 
 
 ---
 
-## Scope split for WUF13
+## Scope split for current launch readiness
 
-**Must-ship before WUF13 (P0):**
+**Must-ship before public launch (P0):**
 - #4 (Art. 9 consent) — legal review
 - #5 (SADPP registration) — Yusif
 - #9 (grievance mechanism) — Atlas ~1 day
@@ -87,7 +87,7 @@ Design System v2 is in Figma and mostly deployed. No item-by-item audit against 
 - #18 (Credential display split verify) — Atlas ~2h audit
 - S2 (role_level gaming audit) — Atlas ~1h
 
-Total Atlas work for P0 WUF13: ~4 days. Total CEO work: legal review + SADPP + Soniox DPA (if voice).
+Total Atlas work for the current P0 launch scope: ~4 days. Total CEO work: legal review + SADPP + Soniox DPA (if voice).
 
 **Can defer to post-launch (P1):**
 - #7 (DIF bias audit)
@@ -106,6 +106,6 @@ Total Atlas work for P0 WUF13: ~4 days. Total CEO work: legal review + SADPP + S
 
 ## Next action
 
-Atlas picks up the P0 WUF13 list above in priority order, one commit per item. #9, #11, #12, #14 are code-only, no legal dependency — they ship first. The `Must-ship` column estimates total ~4 days of focused Atlas work to clear the WUF13 gate.
+Atlas picks up the P0 launch list above in priority order, one commit per item. #9, #11, #12, #14 are code-only, no legal dependency — they ship first. The `Must-ship` column estimates total ~4 days of focused Atlas work to clear the current launch gate.
 
 CEO action: confirm legal timeline for #4, #5, and S2 audit.

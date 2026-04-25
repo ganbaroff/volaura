@@ -61,7 +61,7 @@ Current policy has NO international-transfer section. GDPR Art. 46 requires one.
 
 ### Rationale
 - Once DE is the controller and Railway/Supabase are US sub-processors, every EU user's data crosses the Atlantic. Silent transfers = GDPR violation.
-- AZ PDPA cross-border notification is WUF13 P0 #5 — connects this diff to the broader pre-launch tracking.
+- AZ PDPA cross-border notification is current launch P0 #5 — connects this diff to the broader pre-launch tracking.
 
 ---
 
@@ -84,7 +84,7 @@ Catalog audit §5 flagged that accepting Google AI / OpenAI / Anthropic credits 
 
 ### Rationale
 - Constitution Article 0 provider hierarchy is operational truth — policy must match.
-- Art. 22 "right to human review" is a must-have before first user completes assessment. WUF13 P0 #4.
+- Art. 22 "right to human review" is a must-have before first user completes assessment. Current launch P0 #4.
 - Explicit DPA links let a regulator verify our sub-processor chain in minutes, not days.
 
 ---

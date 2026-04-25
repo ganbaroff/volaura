@@ -22,10 +22,10 @@
 - Zero articles where Yusif is the main topic
 - Zero YouTube videos with his name
 - Zero mentions on: 1news.az, report.az, azernews.az, azertag.az, oxu.az
-- Zero mentions connecting him to: COP29, WUF13, CIS Games, Megatransko
+- Zero mentions connecting him to: current employers, past event programs, or identifiable internal stakeholders
 - Golden Byte articles name: Samir Nuriyev (AzerTelecom), Laman Abasbayli — not Yusif
 - COP29 articles name: Sayyara Gul Jamal, Adila Aliyeva — not Yusif
-- WUF13 articles name: Anar Guliyev (National Coordinator) — not Yusif
+- Event press articles often name official spokespeople, not operators like Yusif
 
 ### Wikipedia Verdict: NOT eligible (0 independent editorial sources about him as subject)
 
@@ -160,14 +160,14 @@ With GITA grant ($240K): covers 3+ years runway regardless of revenue.
 ## Expansion Roadmap
 
 ### Phase 1: PROOF (months 1-6, Baku)
-- 500+ verified volunteers
+- 500+ verified profiles
 - Win Pasha Bank pitch
 - 10+ paying organizations
 - Apply GITA grant (Georgia)
 - MiroFish processing 1,000+ assessments
 
 ### Phase 2: DATA MOAT (months 6-12)
-- 2,000+ verified volunteers
+- 2,000+ verified profiles
 - Register companies in Georgia + Turkey
 - Launch Tbilisi chapter (GITA grant)
 - Turkiye Tech Visa application
@@ -175,14 +175,14 @@ With GITA grant ($240K): covers 3+ years runway regardless of revenue.
 - 30+ paying organizations
 
 ### Phase 3: LEVERAGE (months 12-18)
-- 5,000+ volunteers across 3 countries
+- 5,000+ verified profiles across 3 countries
 - 50+ paying organizations
 - UN agencies, PwC, Deloitte as clients
 - MiroFish as separate AI assessment API
 - First hires (2-3 people)
 
 ### Phase 4: SCALE (months 18-36)
-- 10,000+ volunteers, 5+ countries
+- 10,000+ verified profiles, 5+ countries
 - Series A pitch: $500K-1M
 - Regional market dominance: Caucasus + Central Asia
 - Istanbul = largest market entry
@@ -194,7 +194,7 @@ With GITA grant ($240K): covers 3+ years runway regardless of revenue.
 | Month | Action | Expected Output |
 |-------|--------|-----------------|
 | 1 | Pasha Bank pitch win | Article on media.az / trend.az |
-| 2 | WUF13 (May 2026) | Name in press releases (ask PR team) |
+| 2 | Major public event launch | Name in press releases (ask PR team) |
 | 3 | Volaura launch | AzerTag press release |
 | 4 | Golden Byte anniversary | 1news.az interview: "man who brought GB to Azerbaijan" |
 | 6 | GITA grant | Article: "Azerbaijani gets $240K grant in Georgia" |
@@ -208,11 +208,11 @@ Then: az.wikipedia.org submission (lower bar than en.wikipedia.org).
 
 ## Three-Sided Marketplace Value
 
-### Volunteer gets:
+### User gets:
 - AURA badge (verified reputation)
 - Access to exclusive events (COP30, WUF14, Expo)
 - Recommendation with real numbers ("AURA 87/100, top 5%")
-- Mentorship from senior volunteers
+- Mentorship from senior operators and mentors
 - Priority hiring at partner organizations
 
 ### Organization gets:
@@ -243,3 +243,4 @@ Then: az.wikipedia.org submission (lower bar than en.wikipedia.org).
 3. Tbilisi (GITA grant, Russian-speaking audience)
 4. Almaty (Astana Hub grant, huge market)
 5. Istanbul (Turkiye Tech Visa, largest regional market)
+

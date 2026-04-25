@@ -8,7 +8,7 @@
 
 ## Context
 
-Design two screens for **Volaura** — a verified volunteer talent platform in Azerbaijan.
+Design two screens for **Volaura** — a verified talent platform in Azerbaijan.
 The platform gives volunteers an AI-evaluated AURA Score (0-100) and badge tier (Platinum / Gold / Silver / Bronze).
 Volunteers get verified by organizations, compete for elite status, and get discovered by event organizers.
 
@@ -257,3 +257,4 @@ apps/web/src/
         ├── expert-verifications.tsx
         └── activity-timeline.tsx
 ```
+

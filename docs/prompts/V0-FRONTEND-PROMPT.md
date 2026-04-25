@@ -4,7 +4,7 @@
 
 ## CONTEXT: What is Volaura?
 
-**Volaura** is a verified competency platform and community for the best volunteers. Volunteers take an adaptive assessment across 8 competencies, receive an AURA composite score (0-100) with a badge tier (Platinum/Gold/Silver/Bronze), and share their verified profile with organizations. Events are dynamic data (COP29, CIS Games, etc.) — NEVER hardcode specific event names.
+**Volaura** is a verified competency platform and community for high-trust talent. Users take an adaptive assessment across 8 competencies, receive an AURA composite score (0-100) with a badge tier (Platinum/Gold/Silver/Bronze), and share their verified profile with organizations. Events are dynamic data (COP29, CIS Games, etc.) — NEVER hardcode specific event names.
 
 This prompt covers FRONTEND ONLY — no Python/FastAPI/backend logic. For API calls, use mock data with the shapes provided. v0 is building a standalone Next.js 14 app (we handle monorepo setup separately).
 
@@ -363,7 +363,7 @@ const handleApiError = (error: ApiError) => {
 
 ```typescript
 type AnalyticsEvent =
-  | { name: "user_signup"; props: { source: "organic" | "referral" | "wuf13" | "google"; locale: "az" | "en" } }
+  | { name: "user_signup"; props: { source: "organic" | "referral" | "partner_event" | "google"; locale: "az" | "en" } }
   | { name: "assessment_started"; props: { competency: string; locale: string } }
   | { name: "assessment_completed"; props: { competency: string; score: number; time_seconds: number; question_count: number } }
   | { name: "aura_calculated"; props: { score: number; tier: string; old_score?: number } }
@@ -430,11 +430,11 @@ export async function generateMetadata({ params }): Promise<Metadata> {
 
   return {
     title: `${profile.full_name} — ${tier} Volunteer (AURA ${profile.aura_score})`,
-    description: `Verified volunteer on Volaura. ${profile.bio || ""}`,
+    description: `Verified profile on Volaura. ${profile.bio || ""}`,
 
     openGraph: {
       title: `${profile.full_name} — ${tier} Volunteer`,
-      description: profile.bio || "Verified volunteer",
+      description: profile.bio || "Verified profile",
       images: [
         {
           url: `https://volaura.com/api/og/${username}?tier=${tier}&score=${profile.aura_score}`,
@@ -681,3 +681,4 @@ src/
 ---
 
 **THIS PROMPT IS SELF-CONTAINED. Copy everything and send to v0.dev. Generate one module at a time. Test each module before moving to the next.**
+

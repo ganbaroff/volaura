@@ -8,9 +8,9 @@
 
 ## 1. Why this document exists
 
-CEO directive (2026-04-16): stop treating EventShift/OPSBOARD as a WUF13-specific app and start treating it as the first **module** of a **universal VOLAURA platform**. The business shape is an **octopus**: one persistent core, many pluggable arms, each arm serving a customer segment.
+CEO directive (2026-04-16): stop treating EventShift/OPSBOARD as a tenant-specific event app and start treating it as the first **module** of a **universal VOLAURA platform**. The business shape is an **octopus**: one persistent core, many pluggable arms, each arm serving a customer segment.
 
-Prior framing (Apr 15 brief, now in `docs/research/archive/`) recommended keeping OPSBOARD separate through WUF13 and revisiting afterwards. That recommendation is reversed. WUF13 is tenant #1 of module #1 (EventShift); it is the proving ground, not the boundary.
+Prior framing (Apr 15 brief, now in `docs/research/archive/`) recommended keeping OPSBOARD separate through the first event-ops deployment and revisiting afterwards. That recommendation is reversed. EventShift is module #1; the first live tenant is proof, not the boundary.
 
 This document is the single source of truth for: what counts as a module, how modules attach to the core, what the multi-tenant contract looks like, and how new arms are added without rewriting the organism every time.
 
@@ -25,7 +25,7 @@ Many **arms** (domain modules that reuse the core and sell to specific customer 
 - Arms never own identity, auth, or reputation. If an arm wants to verify a user, it calls the core. If it wants to reward a user, it emits a `crystal_earned` / `reliability_proof` event to `character_events` and the core settles.
 - Tenants (organisations buying the platform) activate arms via a **module catalogue** with feature flags + billing SKUs. Activation is per-org, not per-deployment.
 
-This shape is what lets WUF13 and a future festival organiser buy different arm bundles off the same VOLAURA install without either of them seeing the other's data.
+This shape is what lets one event tenant and a future festival organiser buy different arm bundles off the same VOLAURA install without either of them seeing the other's data.
 
 ---
 
@@ -198,11 +198,11 @@ Contract:
 
 **VOLAURA-core.** Live. `volaura.app`, `volauraapi-production.up.railway.app`. Owns identity, AURA 8-competency weighted score, adaptive assessment (IRT/CAT, pure-Python 3PL in `apps/api/app/core/assessment/engine.py`), crystal ledger, `character_events`, org model (partial — needs Path 6 surface).
 
-**MindShift-gateway.** Production v1.0, separate Supabase project (awaiting federation). Focus sessions, energy tracking, invisible streaks, 5 Foundation Laws enforced. Integration with core: scheduled for post-WUF13 sprint (`character_events` emit + AURA daily-consistency signal).
+**MindShift-gateway.** Production v1.0, separate Supabase project (awaiting federation). Focus sessions, energy tracking, invisible streaks, 5 Foundation Laws enforced. Integration with core: scheduled for the next bridge sprint (`character_events` emit + AURA daily-consistency signal).
 
-**EventShift (module #1).** WUF13 Guest Services is tenant #1. Deadline May 15-17, 2026. Rebuild from WUF13-app to universal module is in flight in `memory/atlas/projects/opsboard.md`. Three success criteria for the rebuild are Path 1 (SSO + org admin), Path 2 (reliability_proof → AURA), Path 5 (schema-level multi-tenancy). Paths 3, 6, 7 land in the two sprints after WUF13 proves the core integration contract.
+**EventShift (module #1).** The first live event-ops tenant is the proving ground. Rebuild from single-tenant event app to universal module is in flight in `memory/atlas/projects/opsboard.md`. Three success criteria for the rebuild are Path 1 (SSO + org admin), Path 2 (reliability_proof → AURA), Path 5 (schema-level multi-tenancy). Paths 3, 6, 7 land in the follow-up sprints after the first tenant proves the core integration contract.
 
-*Domain model (CEO correction, April 2026):* **Event → Department → Area → Unit → People + Metrics.** People-first, not incident-first. An event contains departments; a department contains operational areas; an area contains units (shifts, posts, patrols); a unit is staffed by people and produces metrics (attendance, handover integrity, incident closure, reliability proof). The current scaffolded Supabase migration, FastAPI routers, and frontend pages reflect the older incident-first model and must be rewritten to this shape before WUF13. Incidents become one metric stream among several, not the root entity. Every table in the rewrite carries `org_id` (Path 5) and emits `character_events` on state transitions (Path 2).
+*Domain model (CEO correction, April 2026):* **Event → Department → Area → Unit → People + Metrics.** People-first, not incident-first. An event contains departments; a department contains operational areas; an area contains units (shifts, posts, patrols); a unit is staffed by people and produces metrics (attendance, handover integrity, incident closure, reliability proof). The current scaffolded Supabase migration, FastAPI routers, and frontend pages reflect the older incident-first model and must be rewritten to this shape before the first external event-ops deployment. Incidents become one metric stream among several, not the root entity. Every table in the rewrite carries `org_id` (Path 5) and emits `character_events` on state transitions (Path 2).
 
 **BrandedBy (module, ~15%).** AI professional identity / twin. Logic scaffold in `packages/swarm/archive/zeus_video_skill.py`. No UI yet. Enters catalogue when it reaches MVP.
 

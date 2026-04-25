@@ -109,7 +109,7 @@ const mockUser = {
 ### Пример промпта для V0 (Assessment Results Page)
 
 ```
-Context: Volaura — volunteer competency verification platform.
+Context: Volaura — verified competency platform.
 This is the Results page shown after completing an 8-competency assessment.
 
 Build a full-page results view with these components:
@@ -404,3 +404,4 @@ Format: severity + location + problem + fix
 
 *Этот документ — живой. Обновлять после каждого взаимодействия с V0/Gemini/Perplexity,
 чтобы фиксировать что работает и что нет.*
+

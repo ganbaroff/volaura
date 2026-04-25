@@ -435,7 +435,7 @@ async def get_department_blueprint(
 ) -> dict[str, Any]:
     """Return the operational blueprint (metadata) for a department.
 
-    The WUF13 GSE seed stores roles, SOPs, policies, FAQ, metrics, training,
+    The department seed stores roles, SOPs, policies, FAQ, metrics, training,
     and competencies inside department.metadata JSONB. This endpoint surfaces
     that structure to clients, optionally filtered by section.
     """

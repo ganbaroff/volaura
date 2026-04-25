@@ -33,12 +33,12 @@ Format: entries sorted chronologically, past-due moves to ARCHIVE at bottom.
 - **Prereq:** Georgia VZP LLC registered and certified; CEO has 10–20% co-financing ready
 - **Status:** NOT PURSUING per SYNC decision (Delaware C-Corp primary). Keep deadline here as a "revisit if Stripe Atlas is blocked" fallback.
 
-### 2026-06-13 — WUF13 Baku (public launch anchor)
-- **Action:** VOLAURA product ready for first external user cohort. WUF13 is the press/partnership moment.
-- **Consequence of missing:** no alternative launch moment with equivalent AZ-local media weight. Next window is roughly 12 months.
-- **Owner:** CEO + Atlas
-- **Prereqs:** all WUF13 P0 items in `docs/PRE-LAUNCH-BLOCKERS-STATUS.md` closed (4 of 8 Atlas items done as of 2026-04-16; 4 still open: grievance admin UI, landing sample profile, ghosting grace, Art. 9 legal)
-- **Status:** ON TRACK — Atlas items manageable. CEO legal items (SADPP, Soniox DPA) are the harder half.
+### 2026-06-13 — Legacy public launch placeholder (deprecated event anchor)
+- **Action:** VOLAURA product ready for the first external user cohort. This line remains only as a deprecated archive marker.
+- **Consequence of missing:** obsolete assumption. Do not use this line for current planning.
+- **Owner:** Archive only
+- **Prereqs:** none — archived context only.
+- **Status:** DEPRECATED — replaced by generic launch planning and live obligations.
 
 ### TBD+30d — 83(b) election (Stripe Atlas auto-files — de-risked)
 - **Action:** Stripe Atlas automatically files 83(b) for C-Corp founders as part of formation fee (USPS Certified Mail with tracking). Per official Atlas docs.
@@ -92,3 +92,4 @@ Atlas is responsible for proactively flagging the first entry within 14 days of 
 **Rule for CEO:** At WUF13 — show the product, don't explain the engine. "AI-powered adaptive assessment" = safe. "We use emotional decay with multiplier formula for memory prioritization" = patent dead.
 
 **Filed?** [ ] NO — deferred, not urgent until public technical disclosure planned
+

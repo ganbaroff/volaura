@@ -137,13 +137,13 @@ The AZ professional audience is your entry point, but the pattern scales.
 **Why Baku works first:**
 - LinkedIn penetration: highest in region (18.5M users, ~40% professional demographic)
 - Language: native AZ speakers trust AZ content (not EN translations)
-- Event network: COP29, WUF13, CIS Games = known context
+- Event network: COP29, CIS Games, major regional operations work = known context
 - Coordinator problem: exists everywhere but most visible in Baku events
 
 **Why Georgia is next (not yet launched):**
 - 2.2M users, ~25% professional
 - Same coordinator problem (events draw talent from across South Caucasus)
-- Shared events (WUF13, regional conferences)
+- Shared events (regional conferences, operations work, major public programs)
 - English literacy higher; AZ loanwords work fine in Georgian context
 
 **Why Kazakhstan is scalable:**

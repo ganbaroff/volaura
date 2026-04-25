@@ -7,7 +7,7 @@
 
 ## Origin (the TRUTH)
 
-It started at **WUF13** (UN World Urban Forum), not CIS Games.
+It started in the event-operations world, not in a single one-off project.
 
 Yusif saw that the volunteer evaluation system was **broken and outdated**:
 - Paper everywhere. Forms piling up. No digital proof of anything.
@@ -61,9 +61,9 @@ A hybrid of:
 Yusif wants BOTH:
 - **Make money honestly** and show it openly
 - **Fund social impact** with platform revenue:
-  - Send best volunteers to study abroad
+  - Send top contributors to study abroad
   - Pay for courses and certifications
-  - Organize community education (with platform volunteers as teachers)
+  - Organize community education (with platform members as teachers)
   - Support children's homes
   - All spending public and trackable
 
@@ -97,7 +97,8 @@ Claude + agents handle: architecture, implementation, testing, deployment, code 
 - Other teams have different department structures
 
 ### Key Events (Yusif's resume)
-- **WUF13** (UN World Urban Forum) — 220+ volunteers, 35 coordinators under Yusif
+- **Major international urban forum** — 220+ volunteers, 35 coordinators under Yusif
 - **COP29** — 170 milestones, 80 coordination meetings, 15,000+ guests, PMO Program Planning
 - **CIS Games** — 5,000 athletes, 30+ venues, 100+ volunteers (Opening/Closing Ceremonies included)
 - **Golden Byte** — International IT championship, brought to Azerbaijan, $20K prize pool, zero marketing budget
+

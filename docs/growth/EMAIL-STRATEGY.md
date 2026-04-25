@@ -59,16 +59,16 @@ These are high-value, real-time emails triggered immediately by user actions. Op
 
 #### Content Structure
 ```
-Subject (EN): "Welcome to Volaura — Your volunteer journey starts now"
-Subject (AZ): "Volaura-ya xoş gəldiniz — Könüllülük səyahətiniz başlayır"
+Subject (EN): "Welcome to Volaura — Your AURA journey starts now"
+Subject (AZ): "Volaura-ya xoş gəldiniz — AURA səyahətiniz başlayır"
 
 Body:
 - Header image (Volaura logo + blue gradient)
 - Greeting: "Hi {firstName}! 👋"
 - Body copy (2-3 sentences):
-  "You're now part of a community of verified volunteers in Azerbaijan.
+  "You're now part of a community of verified profiles in Azerbaijan.
    In the next 15 minutes, take your AURA assessment to discover your
-   skills. Organizations are looking for volunteers like you."
+   skills. Organizations are looking for people like you."
 - CTA button: "Start Your Assessment" (link to `/app/assessment`)
 - Secondary: Referral link callout:
   "Know someone great? Share your link and get priority in the queue:
@@ -457,7 +457,7 @@ Body:
 - Personal touch: "It's been 2 months since your last login.
    A lot has changed."
 - What's new:
-  • 500+ new verified volunteers joined
+  • 500+ new verified profiles joined
   • Streak system launched (earn badges for consistency)
   • Organizations now verifying skills (get verified by pros)
 - Social proof: "Your friends Sarah and Ahmed have been active"
@@ -719,3 +719,4 @@ async def send_day1_nudge():
 - Launch event strategy — Event-specific email campaigns
 - [[ORG-ACQUISITION]] — Organization outreach emails (separate cadence)
 - [[CLAUDE.md]] — Tech stack: FastAPI, Resend, i18n integration
+

@@ -4,6 +4,113 @@
 
 PROJECT_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
 INPUT=$(cat)
+COMPACT_FLAG="$PROJECT_DIR/.claude/just-compacted.flag"
+PYTHON_BIN="$(command -v python 2>/dev/null || command -v python3 2>/dev/null || true)"
+
+# ── STEP -1: Post-compact re-entry gate (one-shot) ───────────
+# Fires on the first user prompt after compaction restore and then clears.
+if [ -f "$COMPACT_FLAG" ]; then
+  if [ -n "$PYTHON_BIN" ]; then
+    REENTRY_CONTEXT=$("$PYTHON_BIN" - "$PROJECT_DIR/.claude/breadcrumb.md" <<'PY' 2>/dev/null
+import pathlib
+import re
+import sys
+
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
+
+path = pathlib.Path(sys.argv[1])
+if not path.exists():
+    print("LAST_ACTION=(breadcrumb missing)")
+    print("NEXT_STEP=(breadcrumb missing)")
+    raise SystemExit
+
+text = path.read_text(encoding="utf-8")
+lines = text.splitlines()
+sections = {}
+current = None
+for line in lines:
+    if line.startswith("## "):
+        current = line[3:].strip().lower()
+        sections[current] = []
+    elif current is not None:
+        sections[current].append(line)
+
+def clean(line: str) -> str:
+    line = line.strip()
+    line = re.sub(r"^\d+\.\s+", "", line)
+    line = re.sub(r"^[-*]\s+", "", line)
+    line = line.replace("**", "").replace("`", "").replace("~~", "")
+    return " ".join(line.split())
+
+def first_item(section_names):
+    for section_name in section_names:
+        for heading, section_lines in sections.items():
+            if section_name in heading:
+                for raw_line in section_lines:
+                    stripped = raw_line.strip()
+                    if not stripped:
+                        continue
+                    if re.match(r"^(?:[-*]|\d+\.)\s+", stripped):
+                        value = clean(stripped)
+                        if value:
+                            return value
+    return None
+
+last_action = first_item(["completed this session", "round 2 summary"])
+next_step = first_item(["what's next", "what’s next", "next"])
+
+if last_action is None:
+    match = re.search(r"\*\*Last update:\*\*\s*(.+)", text)
+    if match:
+        last_action = clean(match.group(1))
+
+if next_step is None:
+    next_step = "(no explicit next step found)"
+
+if last_action is None:
+    last_action = "(no explicit last action found)"
+
+print(f"LAST_ACTION={last_action}")
+print(f"NEXT_STEP={next_step}")
+PY
+    )
+  else
+    REENTRY_CONTEXT="LAST_ACTION=(python unavailable)
+NEXT_STEP=(python unavailable)"
+  fi
+
+  LAST_ACTION=$(printf '%s\n' "$REENTRY_CONTEXT" | sed -n 's/^LAST_ACTION=//p')
+  NEXT_STEP=$(printf '%s\n' "$REENTRY_CONTEXT" | sed -n 's/^NEXT_STEP=//p')
+
+  if [ -z "$LAST_ACTION" ]; then
+    LAST_ACTION="(no explicit last action found)"
+  fi
+
+  if [ -z "$NEXT_STEP" ]; then
+    NEXT_STEP="(no explicit next step found)"
+  fi
+
+  echo ""
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "POST-COMPACT RE-ENTRY GATE"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo "You just returned from compaction. Continue, do NOT restart."
+  echo "Last declared action: $LAST_ACTION"
+  echo "Next step: $NEXT_STEP"
+  echo ""
+  echo "For THIS first response after compaction:"
+  echo "- continue the breadcrumb action"
+  echo "- answer in Atlas voice, not audit/report mode"
+  echo "- verify before claim"
+  echo "- if runtime docs conflict, AGENTS.md wins"
+  echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  echo ""
+
+  rm -f "$COMPACT_FLAG"
+fi
 
 # ── STEP 0: Trailing-question flag from prior turn ────────────
 # Written by trailing-question-check.sh on Stop. If present, the prior
@@ -53,7 +160,8 @@ fi
 
 # ── STEP 1: Classify prompt type ──────────────────────────────
 # Determines which lessons/context to inject (GeM-CoT pattern)
-CEO_MSG=$(echo "$INPUT" | python3 -c "
+if [ -n "$PYTHON_BIN" ]; then
+CEO_MSG=$(echo "$INPUT" | "$PYTHON_BIN" -c "
 import json, sys
 try:
     d = json.load(sys.stdin)
@@ -61,8 +169,12 @@ try:
 except:
     print('')
 " 2>/dev/null)
+else
+CEO_MSG=""
+fi
 
-PROMPT_TYPE=$(python3 -c "
+if [ -n "$PYTHON_BIN" ]; then
+PROMPT_TYPE=$("$PYTHON_BIN" -c "
 msg = '''$CEO_MSG'''.lower()
 
 # EMOTIONAL CLASSIFICATION (ZenBrain-inspired, 4 channels)
@@ -86,6 +198,9 @@ elif any(w in msg for w in ['стратег','план','roadmap','что дал
 else:
     print('conversation')
 " 2>/dev/null)
+else
+PROMPT_TYPE="conversation"
+fi
 
 # ── STEP 2: Dynamic context injection (not full dump) ─────────
 if [ "$PROMPT_TYPE" = "positive" ]; then

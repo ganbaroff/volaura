@@ -6,7 +6,7 @@
 
 ### 1. TAM is 10-15x Smaller Than Assumed (9/10)
 AZ = 10.3M people, but addressable = 500-700K (Baku, 20-35, digitally engaged).
-**Action:** Define TAM as "verified volunteers + hiring orgs in AZ + diaspora UAE/RU/TR."
+**Action:** Define TAM as "verified profiles + hiring orgs in AZ + diaspora UAE/RU/TR."
 
 ### 2. BrandedBy is Legally Indefensible Today (9/10)
 NO FAKES Act (April 2025), TAKE IT DOWN Act (May 2025), EU AI Act high-risk.
@@ -50,3 +50,4 @@ One API key, one Railway, one Supabase, one human reviewer.
 Technically impressive ecosystem. The ecosystem architecture IS the problem — distributes
 scarce founder capacity across 5 products in a market that can't yet absorb 1 profitably.
 **Right move:** Volaura only for 12 months. Everything else = prototype. Prove LTV/CAC. Then expand.
+

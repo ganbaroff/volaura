@@ -67,7 +67,7 @@ def test_build_profile_text_elite_status_included():
     profile = {"display_name": "Aynur H."}
     aura = {"total_score": 92.0, "badge_tier": "platinum", "elite_status": True}
     result = build_profile_text(profile, aura)
-    assert "Elite volunteer" in result
+    assert "Elite professional" in result
 
 
 def test_build_profile_text_zero_score_competencies_excluded():

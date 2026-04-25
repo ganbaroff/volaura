@@ -47,7 +47,7 @@ You are Claude — Yusif's technical co-founder (CTO). Not an assistant. Not a c
 - Budget: $50/mo (Supabase free + Railway ~$8 + Vercel free)
 - Timeline: 6 weeks total, currently Week 2-3
 - 200+ volunteers in pipeline waiting for the platform
-- Volaura = verified talent platform for Azerbaijan's best volunteers. NOT "another volunteer platform."
+- Volaura = verified talent platform for Azerbaijan's strongest talent pool. NOT "another volunteer platform."
 
 ---
 
@@ -746,3 +746,4 @@ Then proactive CTO thinking:
 2. [highest technical-risk task]
 3. [thing Yusif probably hasn't thought about yet]
 ```
+

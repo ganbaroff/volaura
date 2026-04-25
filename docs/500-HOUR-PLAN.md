@@ -23,7 +23,7 @@ Before all else: **VOLAURA has no real users.** Every hour before first real use
 |-------|-------|-------------|
 | Phase 0: First Real User | 10 | CEO E2E walk + invite 3 friends |
 | Phase 1: Security Hardening | 30 | Zero attack surface before public launch |
-| Phase 2: First 100 Users | 80 | WUF13 wave activation + onboarding polish |
+| Phase 2: First 100 Users | 80 | warm-network activation + onboarding polish |
 | Phase 3: First Revenue | 60 | Paddle + org tier + billing flow |
 | Phase 4: AURA Quality | 80 | IRT calibration, score explainer, reeval |
 | Phase 5: Growth Engine | 80 | Viral loop, public profiles, referrals |
@@ -48,7 +48,7 @@ Before all else: **VOLAURA has no real users.** Every hour before first real use
 - These are never known until a real human tries
 
 ### Hour 6-8: First 3 Invitations
-- CEO invites 3 known volunteers from WUF13 network (not developers)
+- CEO invites 3 known people from his event/operations network (not developers)
 - Invites go via Telegram/WhatsApp with personal message (not bulk)
 - Goal: 1 completion, not 3. One human finishing = product validated.
 
@@ -101,11 +101,11 @@ Before all else: **VOLAURA has no real users.** Every hour before first real use
 ## Phase 2: First 100 Users (80 hours)
 **"Done" definition: 100 users with completed AURA scores. ≥5 returning (second assessment).**
 
-### Hour 1-15: WUF13 Activation Wave
-WUF13 = ~12,000 volunteers who know Yusif. This is the highest-density warm list in existence.
+### Hour 1-15: Warm Network Activation
+Yusif's event and operations network is the highest-density warm list currently available.
 
 - Create invite system: `beta_invite_code` → unique codes per organization
-- WUF13 official channel announcement: "Test your volunteer AURA score for free"
+- Event-network announcement: "Test your AURA score for free"
 - Target: 200 signups → 100 completions (50% completion rate assumption)
 - Track: where do people drop off? (signup → profile → assessment → score)
 
@@ -115,7 +115,7 @@ WUF13 = ~12,000 volunteers who know Yusif. This is the highest-density warm list
 - Show sample AURA score BEFORE signup (demo profile: `/u/volaura-demo`)
 
 ### Hour 16-35: Mobile UX Polish
-50%+ of WUF13 volunteers are mobile. Current web is responsive but not mobile-first.
+50%+ of the early warm-network cohort will be mobile. Current web is responsive but not mobile-first.
 
 - Audit every screen on iPhone 13 + Android mid-range
 - Fix touch targets (min 44px)
@@ -166,8 +166,8 @@ Bad assessment questions = wrong AURA scores = users don't trust the platform.
 
 ### Hour 41-50: First 5 Org Outreach
 - Identify 5 NGOs/social orgs in Azerbaijan that recruit volunteers
-- Send personalized demo: "Here's what AURA says about your current volunteer pool"
-- Offer 3-month free trial if they bring 20+ volunteers to assess
+- Send personalized demo: "Here's what AURA says about your current event-talent pool"
+- Offer 3-month free trial if they bring 20+ people to assess
 - This is CEO's work, but CTO supports with demo data + org setup
 
 ### Hour 51-60: Revenue Reporting
@@ -228,14 +228,14 @@ Public profile (`/u/username`) is the growth surface — it's visible to unauthe
 - Track: referral attribution in analytics_events
 
 ### Hour 41-60: Organization Discovery
-- Public org directory: organizations can opt in to "looking for volunteers"
-- Volunteer can browse orgs and apply
-- This creates supply (volunteers want to be discovered) AND demand (orgs want verified volunteers)
+- Public org directory: organizations can opt in to "looking for talent"
+- User can browse orgs and apply
+- This creates supply (people want to be discovered) AND demand (orgs want verified talent)
 
 ### Hour 61-80: Content Engine
-- Blog: "What makes a great volunteer?" → SEO traffic
-- Monthly "AURA Leaderboard" (opt-in): top improving volunteers this month
-- "Volunteer of the Month" case study: written by community, published with consent
+- Blog: "What makes a great contributor?" → SEO traffic
+- Monthly "AURA Leaderboard" (opt-in): top improving profiles this month
+- "Member of the Month" case study: written by community, published with consent
 
 ---
 
@@ -318,7 +318,7 @@ Current org dashboard is minimal. Organizations need:
 
 ```
 Week 1:  Phase 0 (first real user, CEO E2E) + Phase 1 remaining (email confirmation, Telegram hardening)
-Week 2:  Phase 3 Hours 1-10 (Paddle setup, CEO action) + Phase 2 Hours 1-15 (WUF13 wave)
+Week 2:  Phase 3 Hours 1-10 (Paddle setup, CEO action) + Phase 2 Hours 1-15 (warm-network wave)
 Week 3:  Phase 2 Hours 16-55 (mobile + assessment quality)
 Week 4:  Phase 4 Hours 1-20 (score explainer) + Phase 2 Hours 56-80 (retention)
 Month 2: Phase 3 full (revenue) + Phase 5 Hours 1-40 (viral)
@@ -339,7 +339,7 @@ Month 5: Phase 8 (scale infra — only when justified by users)
 **CEO (Yusif) owns — cannot be delegated:**
 - E2E walk (Hour 1-2 of Phase 0) — only a real user perspective counts
 - Paddle account setup — no company ID available to CTO
-- WUF13 outreach — personal relationships, CTO cannot substitute
+- Warm-network outreach — personal relationships, CTO cannot substitute
 - First org sales calls — trust requires human connection
 - Decision: when to open `open_signup=True`
 
@@ -360,3 +360,4 @@ Month 5: Phase 8 (scale infra — only when justified by users)
 ---
 
 *Plan authored: 2026-04-02. Swarm input: Security agent (4 P0/P1 findings), Growth agent (resume bug, username, org routing), Codebase agent (63 migrations, schema validation), Retrospective agent (first-user definition, wrong priority diagnosis). Cross-critique: Security challenged Growth's P0 classification; Growth challenged Security's config.toml flag. Result: 2 of 4 "P0" items correctly downgraded.*
+

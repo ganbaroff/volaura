@@ -10,7 +10,7 @@
 
 ## Revenue Streams
 
-### Stream 1: B2C Volunteer Platform (Freemium)
+### Stream 1: B2C Verified Talent Platform (Freemium)
 | Tier | Price (AZN/mo) | What they get |
 |------|---------------|---------------|
 | Free | 0 | 1 assessment, basic profile, job board access |
@@ -18,7 +18,7 @@
 | Premium | 149 | All Pro + verified badge PDF, LinkedIn-shareable card, mentor matching |
 
 **Assumptions (Yusif to validate):**
-- Year 1 registered volunteers: 2,000 (from COP29/WUF/CIS network + university partnerships)
+- Year 1 registered users: 2,000 (from the event-ops network + university partnerships)
 - Free-to-Pro conversion: 5% (industry benchmark: 3-8% for freemium SaaS)
 - Pro-to-Premium conversion: 15% of Pro users
 - Monthly churn (Pro): 8%
@@ -151,6 +151,8 @@ Breakeven: **4 Pro subscribers** OR **1 Starter org**
 
 Year 1 projection: 214,000 AZN revenue from 4 streams. Costs under 5,000 AZN. 97% gross margin. Already breakeven at 4 subscribers.
 
-Why us: 10 years managing COP29, WUF13, CIS Games. 200+ volunteer network. AI-powered adaptive testing that no competitor in Azerbaijan has.
+Why us: 10 years managing COP29, CIS Games, and large event operations. A strong warm network. AI-powered adaptive testing that no competitor in Azerbaijan has.
 
 Ask: [grant amount / partnership / investment amount]."
+
+

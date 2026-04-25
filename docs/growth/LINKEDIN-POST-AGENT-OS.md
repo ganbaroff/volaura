@@ -14,7 +14,7 @@ Before any significant decision, 6 AI personas debate alternatives. An Attacker 
 
 After execution, the system compares predictions vs reality. If a persona's concerns proved right — its influence weight increases. The system evolves its own rules.
 
-Results on a real project (Volaura — volunteer talent platform):
+Results on a real project (Volaura — verified talent platform):
 
 → Without OS: 3 ad-hoc decisions per sprint. 1 had a CVSS 9.1 security vulnerability
 → With OS: 0 ad-hoc decisions. Architecture confidence: 45/50. Predicted path matched actual outcome
@@ -47,3 +47,4 @@ Skip: #ChatGPT #OpenAI (wrong audience), #startup (too broad)
 - Day 3: If >50 likes → publish GitHub repo
 - Day 5: Write follow-up "Here's how DSP actually works" with diagram
 - Tag: @AmandaAskell @AlexAlbert (Anthropic) after 20+ organic engagements
+

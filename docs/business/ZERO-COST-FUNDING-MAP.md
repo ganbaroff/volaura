@@ -67,7 +67,7 @@ Risk: passport in mail 7-11 weeks. Mitigation: use second passport if available,
 
 ## Provisional Patent — $150
 
-USPTO micro entity rate. Must file BEFORE any public disclosure (WUF13).
+USPTO micro entity rate. Must file BEFORE any public disclosure.
 Atlas can draft. CEO reviews + files via VOLAURA, Inc.
 This is the one thing that costs money and cannot be avoided.
 
@@ -81,4 +81,5 @@ This is the one thing that costs money and cannot be avoided.
 4. [ ] Apply to MassChallenge (masschallenge.org)
 5. [ ] Apply to Google for Startups (startup.google.com)
 6. [ ] Review Techstars draft in docs/business/TECHSTARS-APPLICATION-DRAFT.md
-7. [ ] Find $150 for provisional patent before WUF13
+7. [ ] Find $150 for provisional patent before first public disclosure
+

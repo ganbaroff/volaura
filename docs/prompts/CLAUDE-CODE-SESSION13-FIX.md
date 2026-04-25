@@ -306,7 +306,7 @@ Add ALL new keys to BOTH `apps/web/src/locales/en/common.json` AND `apps/web/src
     "auraScore": "AURA Score",
     "auraNotAvailable": "AURA score not yet available",
     "ctaTitle": "Want your own verified AURA score?",
-    "ctaDescription": "Join Volaura, complete your assessment, and share your verified volunteer badge."
+    "ctaDescription": "Join Volaura, complete your assessment, and share your verified AURA badge."
   },
   "assessment": {
     "answerPlaceholder": "Type your answer here..."
@@ -523,3 +523,4 @@ Once all fixes are committed and verified:
 1. Proceed to Session 13: Org Launch Bundle (`docs/prompts/CLAUDE-CODE-SESSION13-ORG-EVENTS.md`)
 2. The codebase will be secure, fully i18n'd, accessible, and resilient
 3. New features build on a solid foundation instead of compounding hidden issues
+

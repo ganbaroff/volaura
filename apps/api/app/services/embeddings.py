@@ -1,7 +1,7 @@
-"""Volunteer embedding generation via Gemini text-embedding-004.
+"""Profile embedding generation via Gemini text-embedding-004.
 
 Embeddings are vector(768) stored in `volunteer_embeddings` and used
-for semantic volunteer search via the `match_volunteers` RPC.
+for semantic talent search via the `match_volunteers` RPC.
 """
 
 from __future__ import annotations
@@ -35,7 +35,7 @@ async def generate_embedding(text: str) -> list[float] | None:
 
 
 def build_profile_text(profile: dict, aura: dict | None) -> str:
-    """Build the text representation of a volunteer profile for embedding.
+    """Build the text representation of a profile for embedding.
 
     Combines profile fields and AURA competency scores into a rich
     natural-language description so semantic search works well.
@@ -58,7 +58,7 @@ def build_profile_text(profile: dict, aura: dict | None) -> str:
         parts.append(f"AURA score: {aura.get('total_score', 0):.1f}")
         parts.append(f"Badge: {aura.get('badge_tier', 'none')}")
         if aura.get("elite_status"):
-            parts.append("Elite volunteer")
+            parts.append("Elite professional")
 
         comp = aura.get("competency_scores", {})
         if comp:
@@ -75,7 +75,7 @@ async def upsert_volunteer_embedding(
     profile: dict,
     aura: dict | None,
 ) -> bool:
-    """Generate and store an embedding for a volunteer profile.
+    """Generate and store an embedding for a profile.
 
     Returns True on success.
     """

@@ -338,7 +338,7 @@ Organize translation files by feature:
 | Key | EN | AZ | Notes |
 |-----|----|----|-------|
 | profile.noScore.title | Complete Your Assessment | Qiymətləndirməni Tamamla | Empty state title |
-| profile.noScore.desc | Take the AURA assessment to unlock your verified volunteer profile and discover opportunities. | AURA qiymətləndirməsini keçin, təsdiqlənmiş könüllü profilinizi açın və imkanları kəşf edin. | Empty state description |
+| profile.noScore.desc | Take the AURA assessment to unlock your verified profile and discover opportunities. | AURA qiymətləndirməsini keçin, təsdiqlənmiş profilinizi açın və imkanları kəşf edin. | Empty state description |
 | profile.noScore.cta | Start Assessment | Qiymətləndirmə Başlat | CTA button |
 
 ---
@@ -392,7 +392,7 @@ Organize translation files by feature:
 | Key | EN | AZ | Notes |
 |-----|----|----|-------|
 | events.empty.title | No Events Available | Tədbir Mövcud Deyil | Empty state title |
-| events.empty.desc | Check back soon for upcoming volunteer opportunities. | Tezliklə könüllü imkanları üçün yenidən yoxlayın. | Empty state description |
+| events.empty.desc | Check back soon for upcoming opportunities. | Tezliklə yeni imkanlar üçün yenidən yoxlayın. | Empty state description |
 | events.empty.cta | Explore Other Features | Digər Xüsusiyyətləri Kəşf Edin | Alt CTA |
 
 ---
@@ -562,7 +562,7 @@ Organize translation files by feature:
 | Key | EN | AZ | Notes |
 |-----|----|----|-------|
 | empty.noAssessments.title | Take Your First Assessment | İlk Qiymətləndirmənizi Keçin | Empty state title |
-| empty.noAssessments.desc | Unlock your AURA score and discover verified volunteer opportunities. | AURA xalını açın və təsdiqlənmiş könüllü imkanlarını kəşf edin. | Empty state description |
+| empty.noAssessments.desc | Unlock your AURA score and discover verified opportunities. | AURA xalını açın və təsdiqlənmiş imkanları kəşf edin. | Empty state description |
 | empty.noAssessments.cta | Start Assessment | Qiymətləndirmə Başlat | CTA button |
 
 **No Events Available**
@@ -570,7 +570,7 @@ Organize translation files by feature:
 | Key | EN | AZ | Notes |
 |-----|----|----|-------|
 | empty.noEvents.title | No Events Available | Tədbir Mövcud Deyil | Empty state title |
-| empty.noEvents.desc | Check back soon for exciting volunteer opportunities in your area. | Sizin ərazınizdə heyəcan verici könüllü imkanları üçün tezliklə yenidən yoxlayın. | Empty state description |
+| empty.noEvents.desc | Check back soon for exciting opportunities in your area. | Sizin ərazinizdə maraqlı imkanlar üçün tezliklə yenidən yoxlayın. | Empty state description |
 | empty.noEvents.cta | Browse Categories | Kateqoriyalara Bax | Alt CTA (future feature) |
 
 **No Notifications**
@@ -593,7 +593,7 @@ Organize translation files by feature:
 | Key | EN | AZ | Notes |
 |-----|----|----|-------|
 | empty.noVolunteers.title | No Volunteers Yet | Hələ Könüllü Yoxdur | Empty state title |
-| empty.noVolunteers.desc | Create an event to start attracting verified volunteers. | Təsdiqlənmiş könüllüləri cəlb etməyə başlamaq üçün tədbir yaradın. | Empty state description |
+| empty.noVolunteers.desc | Create an event to start attracting verified participants. | Təsdiqlənmiş iştirakçıları cəlb etməyə başlamaq üçün tədbir yaradın. | Empty state description |
 | empty.noVolunteers.cta | Create First Event | İlk Tədbirini Yarat | CTA button |
 
 ---
@@ -730,4 +730,5 @@ Organize translation files by feature:
 | Date | Author | Changes |
 |------|--------|---------|
 | 2026-03-22 | Design System | Initial comprehensive catalog v1.0 |
+
 

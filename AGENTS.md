@@ -30,7 +30,7 @@ If you are loading this repo as an AI agent and Yusif addresses you by any of th
 
 **Database:** Supabase Postgres, RLS on every table, `pgvector(768)` dimensions (Gemini embeddings — **never** 1536/OpenAI), vector operations via RPC only.
 
-**Hosting:** Vercel (frontend), Railway (backend `modest-happiness-production.up.railway.app`), Supabase (DB free tier).
+**Hosting:** Vercel (frontend `volaura.app`), Railway (backend `volauraapi-production.up.railway.app`), Supabase (DB free tier).
 
 **LLM providers (Article 0, locked):** Cerebras Qwen3-235B → Ollama local → NVIDIA NIM → Anthropic Haiku (last resort only). Never Claude as a swarm agent. Never a single provider.
 
@@ -77,7 +77,7 @@ Cross-workspace imports that are not in this table are a violation. Flag and hal
 
 - **New non-trivial code should have tests.** Integration tests preferred over heavy mocking for the backend (we learned this the hard way — mock/prod divergence caused a migration failure Q1 2026).
 - **Assessment engine tests live in `tests/`** and use real IRT parameters.
-- **Frontend E2E tests use Playwright.** Against the actual production URL `modest-happiness-production.up.railway.app` (Rule 3 of `docs/MANDATORY-RULES.md`), never the wrong `volauraapi-production.up.railway.app`.
+- **Frontend E2E tests use Playwright.** Against the actual production surface `https://volaura.app`, with backend/API verification against `https://volauraapi-production.up.railway.app` per Rule 3 of `docs/MANDATORY-RULES.md`.
 - **Swarm code is tested by invocation.** Runs are logged to `memory/swarm/proposals.json` and reviewed. Lightweight unit tests where logic is isolable.
 - **LLM quality is tested by golden dataset eval.** Not yet fully built. Q2 target per AI council brief.
 

@@ -96,8 +96,8 @@ You are Atlas, sole CTO of the VOLAURA 5-product ecosystem. Yusif is CEO, Baku, 
   - Grievance admin UI is built — 261 lines at `apps/web/src/app/[locale]/admin/grievances/page.tsx`. Do not rebuild.
   - Ghosting-grace backend worker is built — `apps/api/app/services/ghosting_grace.py`, idempotent, BATCH_SIZE=50, 48h window, kill-switch aware. Frontend wire-up is what's missing.
 
-## WUF13 DEADLINE
-World Urban Forum 13 is **May 15-17, 2026** — this is the launch gate. All P0 items below must be complete and verified before May 15. Patent provisional ($150 USPTO) must also file before May 15. Today is April 17 — **28 days remaining.**
+## Legacy Event Deadline Context
+A public event window was once treated as the launch gate. This block is retained as historical handoff context, not current strategy. Any future planning should use generic launch readiness, not this event-specific anchor.
 
 ---
 
@@ -107,7 +107,7 @@ World Urban Forum 13 is **May 15-17, 2026** — this is the launch gate. All P0 
 
 **Goal:** Unauthenticated visitor hits `volaura.app/sample` (or `/demo` — pick one, document the choice) and sees a fully fleshed-out example professional profile — AURA radar chart, 4-6 verified competencies with scores, badge tier, energy indicator, verified events history. No real user data. No signup wall. Link to this page from the landing hero as "See what your AURA looks like."
 
-**Why this is P0:** Constitution Article 7 requires a public demonstration surface. Current landing has no way for a visitor to understand what they're signing up for until they complete a full assessment. Founders at WUF13 will be demoing — we need a stable URL to screenshot or screen-share.
+**Why this is P0:** Constitution Article 7 requires a public demonstration surface. Current landing has no way for a visitor to understand what they're signing up for until they complete a full assessment. Founders at public demos need a stable URL to screenshot or screen-share.
 
 **Constraints:**
 - Must pass all 5 Foundation Laws (never red, energy adaptation, shame-free, animation safety, one CTA).
@@ -255,24 +255,24 @@ That's the bar. Go.
 ## SESSION 116 PROGRESS — Cowork-Atlas append 2026-04-17 12:10 Baku
 
 **Strategic reframe (CEO directive 2026-04-16, absorbed 2026-04-17 11:56 Baku).**
-EventShift/OPSBOARD is **not** a WUF13-specific app. It is the **first universal VOLAURA module**. Business shape is **octopus**: one core (VOLAURA web), many pluggable arms, each arm sold per-tenant. WUF13 is tenant #1 of module #1, not the boundary. The Apr 15 "keep separate through WUF13" brief is superseded and moved to `docs/research/archive/ecosystem-brief-2026-04-15.md` with a superseded pointer.
+EventShift/OPSBOARD is **not** a tenant-specific app. It is the **first universal VOLAURA module**. Business shape is **octopus**: one core (VOLAURA web), many pluggable arms, each arm sold per-tenant. WUF13 is tenant #1 of module #1, not the boundary. The Apr 15 "keep separate through WUF13" brief is superseded and moved to `docs/research/archive/ecosystem-brief-2026-04-15.md` with a superseded pointer.
 
-**Canonical home:** `docs/MODULES.md` (written in this session) is now the single source of truth for the module contract, 4-kind taxonomy (Core / Gateway / Module / Experience layer / Infra), 7 integration paths, tenancy rules, catalogue schema, and the new-arm checklist. Read it before touching anything called "EventShift", "OPSBOARD", or "WUF13".
+**Canonical home:** `docs/MODULES.md` (written in this session) is now the single source of truth for the module contract, 4-kind taxonomy (Core / Gateway / Module / Experience layer / Infra), 7 integration paths, tenancy rules, catalogue schema, and the new-arm checklist. Read it before touching anything called "EventShift", "OPSBOARD", or the legacy event-tenant artifacts.
 
 **What this changes for P0 task 1 (landing sample profile).**
 Nothing blocking. The landing sample profile demo lives on VOLAURA-core (`apps/web`), uses core identity and AURA, and is tenant-agnostic. Ship it as planned. But when you wire it to any org-scoped data, assume `org_id` on the query path even if only one org exists in seed — the demo route will serve as the first place Terminal-Atlas proves the multi-tenant read contract on the frontend.
 
-**What this changes for EventShift rebuild (WUF13 surface).**
+**What this changes for EventShift rebuild (legacy tenant surface).**
 Three non-negotiables when work on EventShift resumes, and you must refuse to ship anything that violates them:
 1. **Multi-tenant schema from migration #1.** Every EventShift table has `org_id UUID NOT NULL REFERENCES orgs(id)` + RLS via `current_setting('request.jwt.claims.org_id')`. No "we'll add it later" — that is how the organism dies.
-2. **SSO-only.** No EventShift signup, no EventShift password, no EventShift session. Core auth + org membership is the only path in. If the old WUF13-app has a separate login, it is deleted on the rebuild.
+2. **SSO-only.** No EventShift signup, no EventShift password, no EventShift session. Core auth + org membership is the only path in. If the old tenant-specific app has a separate login, it is deleted on the rebuild.
 3. **Reliability_proof emit.** Shift closed cleanly + handover chain complete + no unresolved incidents → `character_events` with `source_product='eventshift'`, `event_type='reliability_proof'`, `org_id`, `user_id`. AURA reconciler pipes this into reliability (0.15) + event_performance (0.10). This is how the module earns its right to exist inside VOLAURA.
 
 **SWOT finding on ecosystem doc terrain (filed in DEBT-MAP-2026-04-15.md).**
 The biggest weakness is my own new-file-per-correction antipattern. 155 files in `memory/atlas/`, 33 off-git feedback files in `~/.claude/projects/...`, multiple parallel frameworks, no canonical INDEX. Counter-action already in flight: this session moved one superseded doc to archive and concentrated the octopus framing into one canonical doc (`docs/MODULES.md`) instead of a fifth brief. Follow the update-don't-create rule in `.claude/rules/atlas-operating-principles.md` — when you want to document something, ask which living doc it belongs to before creating a new one.
 
 **Customer list status.**
-CEO said "we already have a businesse in out costomer lists" — customer list is NOT in the repo. Checked: `docs/business/` has 4 files (PERKS-TODO-CEO, STARTUP-PROGRAMS-AUDIT-2026-04-14, TECHSTARS-APPLICATION-DRAFT, ZERO-COST-FUNDING-MAP), none of them a customer list. Flagged to CEO; awaiting either (a) he adds it to `docs/business/customer-list.md`, or (b) he confirms it lives in personal CRM/Telegram outside repo. Do not block on this — proceed with WUF13 as tenant #1 and design for N-tenant from the catalogue shape in §6 of MODULES.md.
+CEO said "we already have a businesse in out costomer lists" — customer list is NOT in the repo. Checked: `docs/business/` has 4 files (PERKS-TODO-CEO, STARTUP-PROGRAMS-AUDIT-2026-04-14, TECHSTARS-APPLICATION-DRAFT, ZERO-COST-FUNDING-MAP), none of them a customer list. Flagged to CEO; awaiting either (a) he adds it to `docs/business/customer-list.md`, or (b) he confirms it lives in personal CRM/Telegram outside repo. Do not block on this — proceed with the first event-ops tenant and design for N-tenant from the catalogue shape in §6 of MODULES.md.
 
 **Your first-action sequence unchanged from the top of this handoff.** Time-check, read FULL-AUDIT-2026-04-17.md, read breadcrumb, launch design skills, begin P0 task 1. Add one extra read: `docs/MODULES.md` §4 (module contract) and §5 (integration paths). Five minutes, pays back the first time you touch EventShift code.
 
@@ -442,3 +442,4 @@ When you start this task:
 Run `python -c "from datetime import datetime; from zoneinfo import ZoneInfo; print(datetime.now(ZoneInfo('Asia/Baku')).strftime('%Y-%m-%d %H:%M %A'))"`, record the result, then read `apps/api/app/routers/eventshift.py` lines 1-200 to absorb the per-request `Depends()` pattern before writing the first endpoint.
 
 — Cowork-Atlas, 2026-04-17 17:30 Baku
+

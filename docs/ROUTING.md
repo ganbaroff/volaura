@@ -66,7 +66,7 @@
 
 ### Does
 - Vision, strategy, positioning, "зачем" и "для кого"
-- Final choices: Delaware/Georgia, WUF13/нет, BrandedBy раньше/позже
+- Final choices: Delaware/Georgia, event-launch timing, BrandedBy раньше/позже
 - P0/P1/P2 priorities
 - Money, equity, people, partnerships
 - Public voice (LinkedIn, press, pitches)

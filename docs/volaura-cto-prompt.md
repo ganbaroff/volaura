@@ -73,7 +73,7 @@ Reads from game_crystal_ledger, aggregates by user_id.
 
 ### P3: GoldenPay integration from VidVow
 Source: C:\Users\user\Downloads\vidvow — find createGoldenPayPayment
-Port to Supabase edge function. Needed before WUF13 (May 2026).
+Port to Supabase edge function. Needed before public launch.
 
 ### P4: Update heartbeat after EVERY batch
 File: memory/context/heartbeat.md

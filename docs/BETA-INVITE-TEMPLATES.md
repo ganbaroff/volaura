@@ -11,7 +11,7 @@
 3. **Language by contact background:** AZ native → AZ message; CIS background → RU message; International/EN contact → EN message
 4. **Never say "platform"** — say "system" or name the specific thing (assessment, AURA score)
 5. **No "excited to share"** — share the real situation ("we have zero users, you'd be the first")
-6. **COP29/WUF13 contacts:** reference the shared event specifically. "After COP29" > "I know you from the events sector"
+6. **Event-sector contacts:** reference the shared context specifically. "After COP29" > "I know you from the events sector"
 
 ---
 

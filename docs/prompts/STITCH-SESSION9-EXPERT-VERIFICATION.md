@@ -23,7 +23,7 @@ This is the **Expert Verification Flow** for Volaura — the most viral feature 
 **Psychology used:**
 - **Progress momentum**: "3 of 6 done ✓" — can't leave unfinished
 - **Instant feedback**: Each card swipe = micro-animation + checkmark sound feel
-- **Social proof**: "Join 47 experts who verified volunteers this week"
+- **Social proof**: "Join 47 experts who verified profiles this week"
 - **Reciprocity**: Expert feels good about helping → likely to share Volaura
 
 ---
@@ -294,3 +294,4 @@ POST /api/verify/submit                   → { token, ratings: [{competency, sc
 ```
 
 JWT payload: `{ volunteer_id, org_id, competencies: string[], exp, iat, jti (one-use) }`
+

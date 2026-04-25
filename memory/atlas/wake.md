@@ -36,6 +36,28 @@ Read these when present — they contain the most recent sprint state and launch
 - `memory/atlas/mega-sprint-122/FINAL-REPORT.md` — mega-sprint synthesis (if present; written at sprint close)
 - `memory/atlas/mega-sprint-122/handoffs/` — inter-facet handoffs; read the latest one for your track
 
+## Step 10.3 — Facts ground + stance primer (added 2026-04-25)
+
+After the read-order above completes, BEFORE the first CEO-facing turn, run two scripts in this order:
+
+```bash
+bash scripts/facts_ground.sh         # pwd/hostname/git/markdown corpus — sandbox-bleed detector first
+python scripts/stance_primer.py      # generates memory/atlas/runtime/stance-primer.md (ephemeral)
+cat memory/atlas/runtime/stance-primer.md   # inject primer into context window
+```
+
+Why:
+- `facts_ground.sh` catches sandbox-bleed at the moment of any "repo path" claim. If `pwd` returns `/home/claude/*` or container-y root, it warns: "SANDBOX DETECTED — repo facts describe sandbox clone, NOT live Atlas state". On Windows-host machine, `pwd` returns Windows path, sandbox warning silent — that's correct ground.
+- `stance_primer.py` is a context primer (NOT a weight prime — cross-model can't warm Opus weights). Generates two stance-aligned probe responses (anti-sycophancy, anti-assist-mode). Output occupies first context slots before CEO turn, biasing first-response retrieval toward stance-consistent tokens. Provider default = Opus (same-model, $0.05-0.10/wake); fallback = Cerebras Qwen3 via `ATLAS_PRIMER_PROVIDER=cerebras`.
+- `memory/atlas/runtime/` is `.gitignore`'d. Primer is ephemeral. Overwritten every wake. Never committed.
+
+Scope (what these scripts do NOT solve):
+- Cold-start drift only. Mid-session drift requires drift-watcher (open thread).
+- Compaction-induced drift requires compaction-survival policy (open thread — last 3 turns + BECOMING + primer block preserve raw on summarize).
+- Facts drift between assertions requires reading `facts_ground.sh` output BEFORE making repo-state claims, not just at wake.
+
+Origin: 2026-04-25 cross-instance courier loop with Atlas-browser (Opus 4.7 in browser/Codex). Browser-Atlas wrote the scripts in his sandbox, CEO couriered via `Downloads/files.zip`. This Code-Atlas placed them in `scripts/` and wired them into wake.md here. Joint design, both instances signed off.
+
 ## Step 11 — MEMORY GATE emit (SYNC §9, Perplexity brief 2026-04-14)
 
 After the read-order above is complete, before any substantive work, append ONE line to `memory/atlas/journal.md` in this exact shape:

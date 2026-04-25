@@ -12,7 +12,7 @@ from uuid import uuid4
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from app.deps import get_current_user_id, get_supabase_user
+from app.deps import get_current_user_id, get_supabase_admin
 from app.main import app
 
 USER_ID = str(uuid4())
@@ -58,7 +58,7 @@ _VALID_BODY = {
 @pytest.mark.asyncio
 async def test_ingest_event_returns_204():
     db = _make_user_db()
-    app.dependency_overrides[get_supabase_user] = lambda: db
+    app.dependency_overrides[get_supabase_admin] = lambda: db
     app.dependency_overrides[get_current_user_id] = lambda: USER_ID
     try:
         async with make_client() as client:
@@ -77,7 +77,7 @@ async def test_ingest_event_returns_204():
 async def test_ingest_event_minimal_body():
     """Only event_name is required — all other fields are optional."""
     db = _make_user_db()
-    app.dependency_overrides[get_supabase_user] = lambda: db
+    app.dependency_overrides[get_supabase_admin] = lambda: db
     app.dependency_overrides[get_current_user_id] = lambda: USER_ID
     try:
         async with make_client() as client:
@@ -94,7 +94,7 @@ async def test_ingest_event_minimal_body():
 @pytest.mark.asyncio
 async def test_ingest_event_with_null_optional_fields():
     db = _make_user_db()
-    app.dependency_overrides[get_supabase_user] = lambda: db
+    app.dependency_overrides[get_supabase_admin] = lambda: db
     app.dependency_overrides[get_current_user_id] = lambda: USER_ID
     try:
         async with make_client() as client:
@@ -117,7 +117,7 @@ async def test_ingest_event_with_null_optional_fields():
 @pytest.mark.asyncio
 async def test_ingest_event_mobile_platform():
     db = _make_user_db()
-    app.dependency_overrides[get_supabase_user] = lambda: db
+    app.dependency_overrides[get_supabase_admin] = lambda: db
     app.dependency_overrides[get_current_user_id] = lambda: USER_ID
     try:
         async with make_client() as client:
@@ -135,7 +135,7 @@ async def test_ingest_event_mobile_platform():
 async def test_ingest_event_calls_track_event_with_correct_args():
     """Verify track_event is called with the right user_id and event_name."""
     db = _make_user_db()
-    app.dependency_overrides[get_supabase_user] = lambda: db
+    app.dependency_overrides[get_supabase_admin] = lambda: db
     app.dependency_overrides[get_current_user_id] = lambda: USER_ID
 
     captured: dict = {}
@@ -165,7 +165,12 @@ async def test_ingest_event_calls_track_event_with_correct_args():
 
 @pytest.mark.asyncio
 async def test_ingest_event_401_when_no_auth_header():
-    """No Authorization header → 401 from get_supabase_user dep."""
+    """No Authorization header → 401 from get_current_user_id dep.
+
+    We stub get_supabase_admin so the route can resolve all deps; auth dep
+    fires first and rejects on missing header.
+    """
+    app.dependency_overrides[get_supabase_admin] = lambda: AsyncMock()
     try:
         async with make_client() as client:
             resp = await client.post("/api/analytics/event", json=_VALID_BODY)
@@ -176,7 +181,15 @@ async def test_ingest_event_401_when_no_auth_header():
 
 @pytest.mark.asyncio
 async def test_ingest_event_401_when_bearer_token_empty():
-    """'Bearer ' with no token value → 401."""
+    """'Bearer ' with no token value → 401.
+
+    Empty token → Supabase auth.get_user returns no user → 401.
+    Mock the auth.get_user call to return a response with .user = None.
+    """
+    db = AsyncMock()
+    db.auth = MagicMock()
+    db.auth.get_user = AsyncMock(return_value=MagicMock(user=None))
+    app.dependency_overrides[get_supabase_admin] = lambda: db
     try:
         async with make_client() as client:
             resp = await client.post(
@@ -192,6 +205,7 @@ async def test_ingest_event_401_when_bearer_token_empty():
 @pytest.mark.asyncio
 async def test_ingest_event_401_when_not_bearer_scheme():
     """Non-Bearer auth scheme → 401."""
+    app.dependency_overrides[get_supabase_admin] = lambda: AsyncMock()
     try:
         async with make_client() as client:
             resp = await client.post(
@@ -213,7 +227,7 @@ async def test_ingest_event_401_when_not_bearer_scheme():
 async def test_ingest_event_422_when_event_name_missing():
     """Missing required field event_name → 422 Unprocessable Entity."""
     db = _make_user_db()
-    app.dependency_overrides[get_supabase_user] = lambda: db
+    app.dependency_overrides[get_supabase_admin] = lambda: db
     app.dependency_overrides[get_current_user_id] = lambda: USER_ID
     try:
         async with make_client() as client:
@@ -230,7 +244,7 @@ async def test_ingest_event_422_when_event_name_missing():
 @pytest.mark.asyncio
 async def test_ingest_event_422_when_body_is_empty_json():
     db = _make_user_db()
-    app.dependency_overrides[get_supabase_user] = lambda: db
+    app.dependency_overrides[get_supabase_admin] = lambda: db
     app.dependency_overrides[get_current_user_id] = lambda: USER_ID
     try:
         async with make_client() as client:
@@ -254,7 +268,7 @@ async def test_ingest_event_still_204_when_db_insert_fails():
     """track_event never raises — DB failure must not surface as 500."""
     db = _make_user_db()
     db.table.return_value.insert.return_value.execute = AsyncMock(side_effect=Exception("DB down"))
-    app.dependency_overrides[get_supabase_user] = lambda: db
+    app.dependency_overrides[get_supabase_admin] = lambda: db
     app.dependency_overrides[get_current_user_id] = lambda: USER_ID
     try:
         async with make_client() as client:

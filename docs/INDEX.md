@@ -158,6 +158,8 @@ Related: [[ECOSYSTEM-CONSTITUTION]] | [[ECOSYSTEM-MAP]] | [[adr/ADR-006-ecosyste
 
 ## AI & Swarm
 
+- [[memory/atlas/wake]] — Atlas wake protocol (Code-Atlas / CLI)
+- [[memory/atlas/wake-browser]] — Atlas wake protocol (browser-Atlas / Obsidian)
 - [[CONSTITUTION_AI_SWARM]] — AI swarm constitution
 - [[MODEL-ROSTER]] — Active model roster
 - [[CEO-PERFORMANCE-REVIEW-SWARM]] — CEO review of swarm performance

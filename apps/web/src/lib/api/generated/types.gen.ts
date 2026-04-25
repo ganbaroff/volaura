@@ -58,18 +58,6 @@ export type AdminActivityEvent = {
 };
 
 /**
- * AARRR funnel data for last 7 days.
- */
-export type AdminGrowthFunnel = {
-    signups_7d: number;
-    profiles_created_7d: number;
-    assessments_started_7d: number;
-    assessments_completed_7d: number;
-    aura_scores_7d: number;
-    computed_at: string;
-};
-
-/**
  * Organization row for the admin approval queue.
  */
 export type AdminOrgRow = {
@@ -343,7 +331,7 @@ export type CharacterEventCreate = {
     payload?: {
         [key: string]: unknown;
     };
-    source_product: 'volaura' | 'mindshift' | 'lifesim' | 'brandedby' | 'eventshift';
+    source_product: 'volaura' | 'mindshift' | 'lifesim' | 'brandedby';
 };
 
 /**
@@ -1995,117 +1983,6 @@ export type GetMyVerificationsApiProfilesMeVerificationsGetResponses = {
 
 export type GetMyVerificationsApiProfilesMeVerificationsGetResponse = GetMyVerificationsApiProfilesMeVerificationsGetResponses[keyof GetMyVerificationsApiProfilesMeVerificationsGetResponses];
 
-export type ListOwnGrievancesApiAuraGrievanceGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/aura/grievance';
-};
-
-export type ListOwnGrievancesApiAuraGrievanceGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: GrievanceListResponse;
-};
-
-export type ListOwnGrievancesApiAuraGrievanceGetResponse = ListOwnGrievancesApiAuraGrievanceGetResponses[keyof ListOwnGrievancesApiAuraGrievanceGetResponses];
-
-export type FileGrievanceApiAuraGrievancePostData = {
-    body: GrievanceCreate;
-    path?: never;
-    query?: never;
-    url: '/api/aura/grievance';
-};
-
-export type FileGrievanceApiAuraGrievancePostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type FileGrievanceApiAuraGrievancePostError = FileGrievanceApiAuraGrievancePostErrors[keyof FileGrievanceApiAuraGrievancePostErrors];
-
-export type FileGrievanceApiAuraGrievancePostResponses = {
-    /**
-     * Successful Response
-     */
-    201: GrievanceOut;
-};
-
-export type FileGrievanceApiAuraGrievancePostResponse = FileGrievanceApiAuraGrievancePostResponses[keyof FileGrievanceApiAuraGrievancePostResponses];
-
-export type AdminListPendingGrievancesApiAuraGrievanceAdminPendingGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/aura/grievance/admin/pending';
-};
-
-export type AdminListPendingGrievancesApiAuraGrievanceAdminPendingGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: GrievanceAdminListResponse;
-};
-
-export type AdminListPendingGrievancesApiAuraGrievanceAdminPendingGetResponse = AdminListPendingGrievancesApiAuraGrievanceAdminPendingGetResponses[keyof AdminListPendingGrievancesApiAuraGrievanceAdminPendingGetResponses];
-
-export type AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetData = {
-    body?: never;
-    path?: never;
-    query?: {
-        limit?: number;
-    };
-    url: '/api/aura/grievance/admin/history';
-};
-
-export type AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetError = AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetErrors[keyof AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetErrors];
-
-export type AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: GrievanceAdminListResponse;
-};
-
-export type AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetResponse = AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetResponses[keyof AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetResponses];
-
-export type AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchData = {
-    body: GrievanceStatusUpdate;
-    path: {
-        grievance_id: string;
-    };
-    query?: never;
-    url: '/api/aura/grievance/admin/{grievance_id}';
-};
-
-export type AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchError = AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchErrors[keyof AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchErrors];
-
-export type AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchResponses = {
-    /**
-     * Successful Response
-     */
-    200: GrievanceAdminOut;
-};
-
-export type AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchResponse = AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchResponses[keyof AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchResponses];
-
 export type GetMyAuraApiAuraMeGetData = {
     body?: never;
     path?: never;
@@ -2242,6 +2119,117 @@ export type GetAtlasReflectionApiAuraMeReflectionGetResponses = {
 };
 
 export type GetAtlasReflectionApiAuraMeReflectionGetResponse = GetAtlasReflectionApiAuraMeReflectionGetResponses[keyof GetAtlasReflectionApiAuraMeReflectionGetResponses];
+
+export type ListOwnGrievancesApiAuraGrievanceGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/aura/grievance';
+};
+
+export type ListOwnGrievancesApiAuraGrievanceGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: GrievanceListResponse;
+};
+
+export type ListOwnGrievancesApiAuraGrievanceGetResponse = ListOwnGrievancesApiAuraGrievanceGetResponses[keyof ListOwnGrievancesApiAuraGrievanceGetResponses];
+
+export type FileGrievanceApiAuraGrievancePostData = {
+    body: GrievanceCreate;
+    path?: never;
+    query?: never;
+    url: '/api/aura/grievance';
+};
+
+export type FileGrievanceApiAuraGrievancePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type FileGrievanceApiAuraGrievancePostError = FileGrievanceApiAuraGrievancePostErrors[keyof FileGrievanceApiAuraGrievancePostErrors];
+
+export type FileGrievanceApiAuraGrievancePostResponses = {
+    /**
+     * Successful Response
+     */
+    201: GrievanceOut;
+};
+
+export type FileGrievanceApiAuraGrievancePostResponse = FileGrievanceApiAuraGrievancePostResponses[keyof FileGrievanceApiAuraGrievancePostResponses];
+
+export type AdminListPendingGrievancesApiAuraGrievanceAdminPendingGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/aura/grievance/admin/pending';
+};
+
+export type AdminListPendingGrievancesApiAuraGrievanceAdminPendingGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: GrievanceAdminListResponse;
+};
+
+export type AdminListPendingGrievancesApiAuraGrievanceAdminPendingGetResponse = AdminListPendingGrievancesApiAuraGrievanceAdminPendingGetResponses[keyof AdminListPendingGrievancesApiAuraGrievanceAdminPendingGetResponses];
+
+export type AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+    };
+    url: '/api/aura/grievance/admin/history';
+};
+
+export type AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetError = AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetErrors[keyof AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetErrors];
+
+export type AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: GrievanceAdminListResponse;
+};
+
+export type AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetResponse = AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetResponses[keyof AdminListClosedGrievancesApiAuraGrievanceAdminHistoryGetResponses];
+
+export type AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchData = {
+    body: GrievanceStatusUpdate;
+    path: {
+        grievance_id: string;
+    };
+    query?: never;
+    url: '/api/aura/grievance/admin/{grievance_id}';
+};
+
+export type AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchError = AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchErrors[keyof AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchErrors];
+
+export type AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: GrievanceAdminOut;
+};
+
+export type AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchResponse = AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchResponses[keyof AdminTransitionGrievanceApiAuraGrievanceAdminGrievanceIdPatchResponses];
 
 export type StartAssessmentApiAssessmentStartPostData = {
     body: StartAssessmentRequest;
@@ -4818,22 +4806,6 @@ export type GetAdminOverviewApiAdminStatsOverviewGetResponses = {
 
 export type GetAdminOverviewApiAdminStatsOverviewGetResponse = GetAdminOverviewApiAdminStatsOverviewGetResponses[keyof GetAdminOverviewApiAdminStatsOverviewGetResponses];
 
-export type GetAdminGrowthApiAdminGrowthGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/admin/growth';
-};
-
-export type GetAdminGrowthApiAdminGrowthGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: AdminGrowthFunnel;
-};
-
-export type GetAdminGrowthApiAdminGrowthGetResponse = GetAdminGrowthApiAdminGrowthGetResponses[keyof GetAdminGrowthApiAdminGrowthGetResponses];
-
 export type GetAdminLiveEventsApiAdminEventsLiveGetData = {
     body?: never;
     path?: never;
@@ -5146,5 +5118,5 @@ export type ReceiveProposalApiAtlasProposalPostResponses = {
 export type ReceiveProposalApiAtlasProposalPostResponse = ReceiveProposalApiAtlasProposalPostResponses[keyof ReceiveProposalApiAtlasProposalPostResponses];
 
 export type ClientOptions = {
-    baseUrl: `${string}://openapi.json` | (string & {});
+    baseUrl: `${string}://${string}` | (string & {});
 };

@@ -85,7 +85,7 @@ def _make_db(
 
     def _rpc(name: str, params: dict):
         chain = MagicMock()
-        if name == "brandedby_get_stale_twins":
+        if name == "brandedby_claim_stale_twins":
             if stale_twins_raises:
                 chain.execute = AsyncMock(side_effect=stale_twins_raises)
             else:
@@ -146,8 +146,8 @@ async def test_happy_path_one_twin_refreshed():
     assert stats.skipped == 0
     assert stats.errors == 0
 
-    # Personality generator called with correct args
-    mock_gen.assert_called_once_with(twin["display_name"], _character_state())
+    # Personality generator called with correct args (_meta kwarg is a fresh dict)
+    mock_gen.assert_called_once_with(twin["display_name"], _character_state(), _meta={})
 
     # apply RPC called with correct twin_id and personality
     apply_calls = [
@@ -312,7 +312,7 @@ async def test_fire_forward_one_error_does_not_block_others():
 
     def _rpc(name: str, params: dict):
         chain = MagicMock()
-        if name == "brandedby_get_stale_twins":
+        if name == "brandedby_claim_stale_twins":
             chain.execute = AsyncMock(
                 return_value=MagicMock(data=[twin_1, twin_2])
             )
@@ -360,7 +360,7 @@ async def test_fire_forward_generate_error_does_not_block_sibling():
 
     gen_call_count = {"n": 0}
 
-    async def flaky_gen(display_name: str, state: dict) -> str:
+    async def flaky_gen(display_name: str, state: dict, _meta: dict | None = None) -> str:
         gen_call_count["n"] += 1
         if gen_call_count["n"] == 1:
             raise RuntimeError("LLM unavailable")
@@ -395,7 +395,7 @@ async def test_missing_display_name_defaults_to_professional():
 
     assert stats.refreshed == 1
     # Called with "Professional" fallback
-    mock_gen.assert_called_once_with("Professional", _character_state())
+    mock_gen.assert_called_once_with("Professional", _character_state(), _meta={})
 
 
 # ── get_stale_twins respects batch size ───────────────────────────────────────
@@ -412,10 +412,11 @@ async def test_get_stale_twins_called_with_batch_size():
     ):
         await run_brandedby_refresh(db)
 
-    # First rpc call must be brandedby_get_stale_twins with correct p_limit
+    # First rpc call must be brandedby_claim_stale_twins with correct params
     first_call = db.rpc.call_args_list[0]
-    assert first_call.args[0] == "brandedby_get_stale_twins"
+    assert first_call.args[0] == "brandedby_claim_stale_twins"
     assert first_call.args[1]["p_limit"] == REFRESH_BATCH_SIZE
+    assert first_call.args[1]["p_lock_ttl_minutes"] == 30
 
 
 # ── Injected db avoids _admin() ───────────────────────────────────────────────

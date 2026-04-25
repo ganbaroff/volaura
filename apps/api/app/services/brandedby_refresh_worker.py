@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+import time
 from dataclasses import dataclass, field
 
 from loguru import logger
@@ -49,6 +50,8 @@ class RefreshStats:
     refreshed: int = 0
     skipped: int = 0
     errors: int = 0
+    latency_ms: float = 0
+    provider: str = "unknown"
 
 
 # ── Admin client ───────────────────────────────────────────────────────────────
@@ -80,8 +83,8 @@ async def run_brandedby_refresh(db: AsyncClient | None = None) -> RefreshStats:
     # 1. Fetch stale twins (SECURITY DEFINER RPC — brandedby schema not in PostgREST)
     try:
         twins_result = await db.rpc(
-            "brandedby_get_stale_twins",
-            {"p_limit": REFRESH_BATCH_SIZE},
+            "brandedby_claim_stale_twins",
+            {"p_limit": REFRESH_BATCH_SIZE, "p_lock_ttl_minutes": 30},
         ).execute()
     except Exception as exc:
         logger.error(
@@ -128,9 +131,11 @@ async def run_brandedby_refresh(db: AsyncClient | None = None) -> RefreshStats:
             stats.errors += 1
             continue
 
-        # 3. Generate personality prompt (has its own LLM fallback internally)
+        # 3. Generate personality prompt
+        _meta: dict = {}
+        t_gen_start = time.monotonic()
         try:
-            personality = await generate_twin_personality(display_name, character_state)
+            personality = await generate_twin_personality(display_name, character_state, _meta=_meta)
         except Exception as exc:
             logger.error(
                 "brandedby_refresh_worker: generate_twin_personality raised",
@@ -138,8 +143,23 @@ async def run_brandedby_refresh(db: AsyncClient | None = None) -> RefreshStats:
                 display_name=display_name,
                 error=str(exc)[:300],
             )
+            # Release lock so this twin is retried on next run
+            try:
+                await db.rpc("brandedby_release_twin_lock", {"p_twin_id": twin_id}).execute()
+            except Exception:
+                pass
             stats.errors += 1
             continue
+
+        gen_latency_ms = round((time.monotonic() - t_gen_start) * 1000)
+        logger.info(
+            "brandedby_refresh_worker: twin personality generated",
+            twin_id=twin_id,
+            provider=_meta.get("provider", "unknown"),
+            latency_ms=_meta.get("latency_ms", gen_latency_ms),
+            prompt_len=len(personality),
+            token_estimate=len(personality) // 4,
+        )
 
         # 4. Apply personality and reset the stale flag
         try:
@@ -161,6 +181,11 @@ async def run_brandedby_refresh(db: AsyncClient | None = None) -> RefreshStats:
                 user_id=user_id,
                 error=str(exc)[:300],
             )
+            # Release lock so this twin is retried on next run
+            try:
+                await db.rpc("brandedby_release_twin_lock", {"p_twin_id": twin_id}).execute()
+            except Exception:
+                pass
             stats.errors += 1
 
     logger.info(

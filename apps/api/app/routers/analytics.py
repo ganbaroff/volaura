@@ -10,7 +10,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Request
 from pydantic import BaseModel, ConfigDict
 
-from app.deps import CurrentUserId, SupabaseUser
+from app.deps import CurrentUserId, SupabaseAdmin
 from app.middleware.rate_limit import limiter
 from app.services.analytics import track_event
 
@@ -32,10 +32,17 @@ class TrackEventRequest(BaseModel):
 async def ingest_event(
     request: Request,
     body: TrackEventRequest,
-    db: SupabaseUser,
+    db: SupabaseAdmin,
     user_id: CurrentUserId,
 ) -> None:
-    """Ingest a frontend analytics event. Fire-and-forget."""
+    """Ingest a frontend analytics event. Fire-and-forget.
+
+    Uses service-role admin client (SupabaseAdmin) — analytics_events has
+    only a SELECT RLS policy, no INSERT policy, so user-client INSERTs are
+    silently rejected by RLS. Service docstring requires admin client; this
+    route was previously passing user client which caused 21 days of silent
+    event loss (only ~35 server-side admin events ever landed).
+    """
     await track_event(
         db=db,
         user_id=str(user_id),

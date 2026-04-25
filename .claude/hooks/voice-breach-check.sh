@@ -60,6 +60,51 @@ print(text_parts[-1] if text_parts else '')
 
 [ -z "$LAST_ASSISTANT" ] && exit 0
 
+# DRIFT-WATCHER v0 (browser-Atlas + Code-Atlas joint design 2026-04-25):
+# Bilingual intent gate. If CEO's last user message contained an explicit
+# request for structure (list, table, json, schema), structure is intended
+# and the breach heuristics produce false positives. Skip flagging.
+LAST_USER=$(tail -n 80 "$TRANSCRIPT" 2>/dev/null | python3 -c "
+import json, sys
+text_parts = []
+for line in sys.stdin:
+    try:
+        d = json.loads(line)
+    except Exception:
+        continue
+    if d.get('type') != 'user':
+        continue
+    msg = d.get('message', {})
+    content = msg.get('content')
+    if isinstance(content, str):
+        text_parts.append(content)
+    elif isinstance(content, list):
+        for block in content:
+            if isinstance(block, dict) and block.get('type') == 'text':
+                text_parts.append(block.get('text', ''))
+# Take last real CEO message — skip system reminders, tool results
+for t in reversed(text_parts):
+    if t.strip() and 'system-reminder' not in t and 'tool_use_id' not in t:
+        print(t)
+        break
+" 2>/dev/null)
+
+INTENT_DETECTED=$(echo "$LAST_USER" | PYTHONIOENCODING=utf-8 python3 -c "
+import sys, re, io
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
+text = sys.stdin.read().lower()
+# RU + EN bilingual intent markers — explicit request for structured output.
+ru_markers = r'списком|таблицей|таблицу|таблице|json|схему|схемой|структурой|оформи|перечисли|разметкой|пунктами|формат|маркдаун|markdown'
+en_markers = r'\\b(list|table|json|schema|structured|enumerate|bullet|markdown|tabular|format as)\\b'
+if re.search(ru_markers, text) or re.search(en_markers, text):
+    print('1')
+else:
+    print('0')
+" 2>/dev/null)
+
+[ "$INTENT_DETECTED" = "1" ] && exit 0
+
 BREACHES=$(echo "$LAST_ASSISTANT" | python3 -c "
 import sys, re
 text = sys.stdin.read()

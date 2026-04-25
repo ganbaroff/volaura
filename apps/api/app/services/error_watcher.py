@@ -135,6 +135,38 @@ async def run_error_watcher() -> dict[str, int]:
         logger.error("watcher.error_rate.failed", error=str(e))
         results["error_rate_1h"] = -1
 
+    # 5. Atlas obligations approaching deadline (proactive-scan gate, 2026-04-26)
+    try:
+        from datetime import timedelta as _td
+        thirty_days_out = (now + _td(days=30)).isoformat()
+        due_soon = (
+            await db.table("atlas_obligations")
+            .select("id", count="exact")
+            .eq("status", "open")
+            .lt("deadline", thirty_days_out)
+            .execute()
+        )
+        due_count = due_soon.count or 0
+        results["obligations_due_30d"] = due_count
+
+        if due_count > 0:
+            logger.warning("watcher.obligations_due_soon", count=due_count)
+            await _emit_anomaly(
+                db,
+                "obligations_due_soon",
+                due_count,
+                {
+                    "window_days": 30,
+                    "status": "open",
+                    "source_table": "atlas_obligations",
+                    "severity": "info",
+                },
+            )
+    except Exception as e:
+        # Table may not exist on every environment — degrade gracefully.
+        logger.debug("watcher.obligations_due_soon.skipped", error=str(e))
+        results["obligations_due_30d"] = -1
+
     # 4. Unresolved ecosystem event failures in the last hour (DLQ)
     try:
         one_hour_ago = (now - timedelta(hours=FAILURE_WATCH_WINDOW_HOURS)).isoformat()

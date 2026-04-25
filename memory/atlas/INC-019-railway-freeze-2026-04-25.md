@@ -8,7 +8,7 @@
 
 ## Symptom
 
-BrandedBy refresh worker had been merged + migration applied to prod hours earlier (2b01d09 → 4eabd8e → 1c546d7). Smoke run via `workflow_dispatch` showed `provider=vertex, latency_ms=18986, prompt_len=1021` in GitHub Actions logs. But Railway deploy logs for the most recent SHA showed nothing the API was actually serving. Health probe `/api/v1/health` returned old build SHA. Discrepancy.
+BrandedBy refresh worker had been merged + migration applied to prod hours earlier (2b01d09 → 4eabd8e → 1c546d7). Smoke run via `workflow_dispatch` showed `provider=vertex, latency_ms=18986, prompt_len=1021` in GitHub Actions logs. But Railway deploy logs for the most recent SHA showed nothing the API was actually serving. Health probe `/health` returned old build SHA. Discrepancy.
 
 ## Diagnostic path
 
@@ -52,7 +52,7 @@ After `986f7cf` landed, healthcheck went green on the next deploy. Subsequent co
 ## Why this was silent for 4 days
 
 1. **No deploy-failure alert routing.** Railway shows red in the UI; no Slack hook, no email, no PagerDuty. Atlas-Code looked at GitHub Actions success and Vercel success and assumed the chain was green.
-2. **Healthcheck not actually checked from external monitor.** We have a `/api/v1/health` endpoint but no Uptime Robot / Better Stack / Railway native alert that pings it and fires on regression. Railway's own healthcheck stops the deploy but doesn't escalate.
+2. **Healthcheck not actually checked from external monitor.** We have a `/health` endpoint but no Uptime Robot / Better Stack / Railway native alert that pings it and fires on regression. Railway's own healthcheck stops the deploy but doesn't escalate.
 3. **CI green, prod broken.** Tests run in pytest under Linux but in a `pytest` working directory, not the `/app` Docker mount. The `.parents[4]` walk gives a different absolute path under pytest than under Docker startup. CI was structurally blind to this class of bug.
 4. **Frontend masking.** Vercel's independent pipeline keeps the user-visible surface fresh, hiding backend staleness from "smoke test by visiting the URL" verification.
 5. **No build-SHA assertion in regression pack.** The post-thaw regression pack was rebuilt from scratch in this session (`memory/atlas/wuf13-regression-pack-2026-04-25.md`); prior runs assumed Railway was tracking main. They were wrong.
@@ -63,8 +63,8 @@ After `986f7cf` landed, healthcheck went green on the next deploy. Subsequent co
 |---|--------|--------|
 | 1 | Wrap every `Path(__file__).resolve().parents[N]` with `try/except IndexError` and a Docker-aware fallback | Done in 3 files (c062828, 986f7cf). Sweep remaining files: open task. |
 | 2 | Add Railway deploy-failure → Telegram alert via `TELEGRAM_BOT_TOKEN` already in `.env` | Open. ~30 min work. |
-| 3 | Add `/api/v1/health` external probe (Better Stack free tier) firing every 1 min, alert on 2 consecutive fails | Open. ~10 min setup. |
-| 4 | Add SHA assertion to regression pack: `curl https://volauraapi-production.up.railway.app/api/v1/health` must return `git_sha` matching the latest `origin/main` commit | Open. Add to `wuf13-regression-pack` doc. |
+| 3 | Add `/health` external probe (Better Stack free tier) firing every 1 min, alert on 2 consecutive fails | Open. ~10 min setup. |
+| 4 | Add `git_sha` to `/health` JSON response (currently returns only `status/version/database/llm_configured/supabase_project_ref/openrouter/nvidia`). Then add SHA assertion to regression pack — `curl /health \| jq .git_sha` must match latest `origin/main` commit. | Open. ~5 lines in router + Dockerfile ARG. |
 | 5 | Add `pytest` test that runs the import chain under a simulated `/app` Docker layout via `monkeypatch` on `__file__` resolution | Open. Class of bug needs CI coverage. |
 | 6 | Add this incident to error_watcher as a 5th signal: "Railway last deploy status != SUCCESS for >2h" | Open. ~50 lines code + tests. |
 

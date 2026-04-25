@@ -152,13 +152,19 @@ async def run_brandedby_refresh(db: AsyncClient | None = None) -> RefreshStats:
             continue
 
         gen_latency_ms = round((time.monotonic() - t_gen_start) * 1000)
+        provider = _meta.get("provider", "unknown")
+        latency_ms = _meta.get("latency_ms", gen_latency_ms)
+        token_estimate = len(personality) // 4
+        # Telemetry inlined into message string — default loguru format does not render extras
         logger.info(
-            "brandedby_refresh_worker: twin personality generated",
+            f"brandedby_refresh_worker: twin personality generated "
+            f"twin_id={twin_id} provider={provider} latency_ms={latency_ms} "
+            f"prompt_len={len(personality)} token_estimate={token_estimate}",
             twin_id=twin_id,
-            provider=_meta.get("provider", "unknown"),
-            latency_ms=_meta.get("latency_ms", gen_latency_ms),
+            provider=provider,
+            latency_ms=latency_ms,
             prompt_len=len(personality),
-            token_estimate=len(personality) // 4,
+            token_estimate=token_estimate,
         )
 
         # 4. Apply personality and reset the stale flag

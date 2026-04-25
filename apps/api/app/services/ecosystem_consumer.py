@@ -70,7 +70,10 @@ async def _load_cursor(db: AsyncClient, product: str) -> dict[str, Any] | None:
     """Return the cursor row for *product*, or None if it doesn't exist."""
     result = (
         await db.table("ecosystem_event_cursors")
-        .select("product,last_event_id,last_processed_at,events_processed_total")
+        .select(
+            "product,last_event_id,last_processed_at,"
+            "events_processed_total,events_failed_total"
+        )
         .eq("product", product)
         .limit(1)
         .execute()
@@ -85,8 +88,9 @@ async def _advance_cursor(
     last_event_id: str,
     last_processed_at: str,
     new_total: int,
+    new_failed_total: int,
 ) -> None:
-    """Advance cursor and update running total in a single UPDATE."""
+    """Advance cursor and update running totals in a single UPDATE."""
     await (
         db.table("ecosystem_event_cursors")
         .update(
@@ -94,6 +98,7 @@ async def _advance_cursor(
                 "last_event_id": last_event_id,
                 "last_processed_at": last_processed_at,
                 "events_processed_total": new_total,
+                "events_failed_total": new_failed_total,
             }
         )
         .eq("product", product)
@@ -136,7 +141,8 @@ async def _handle_brandedby_event(db: AsyncClient, event: dict[str, Any]) -> boo
     """React to aura_updated or badge_tier_changed: mark the AI twin stale.
 
     Returns True on success (including "no twin found — user not in BrandedBy"),
-    False only on unexpected DB errors.
+    False only on unexpected DB errors. On False the caller writes the event to
+    ecosystem_event_failures (DLQ) so the cursor can advance without losing it.
     The update is idempotent: setting needs_personality_refresh=TRUE when it's
     already TRUE is safe.
     """
@@ -178,6 +184,28 @@ async def _handle_brandedby_event(db: AsyncClient, event: dict[str, Any]) -> boo
             event_type=event_type,
             error=str(exc)[:300],
         )
+        # DLQ: persist failure so the cursor can move forward without losing
+        # the event. Replay tooling reads ecosystem_event_failures later.
+        try:
+            await db.rpc(
+                "ecosystem_record_event_failure",
+                {
+                    "p_product": "brandedby",
+                    "p_event_id": event_id,
+                    "p_user_id": user_id,
+                    "p_event_type": event_type,
+                    "p_error": str(exc)[:1000],
+                },
+            ).execute()
+        except Exception as dlq_exc:
+            # Belt-and-suspenders: if DLQ insert itself fails, we still don't
+            # block the queue — but log loudly so error_watcher can pick it up.
+            logger.error(
+                "ecosystem_consumer: DLQ insert failed (silent loss possible)",
+                event_id=event_id,
+                primary_error=str(exc)[:200],
+                dlq_error=str(dlq_exc)[:200],
+            )
         return False
 
 
@@ -206,6 +234,7 @@ async def process_brandedby_events(db: AsyncClient | None = None) -> dict[str, i
 
     after_ts: str | None = cursor.get("last_processed_at")
     prior_total: int = int(cursor.get("events_processed_total") or 0)
+    prior_failed_total: int = int(cursor.get("events_failed_total") or 0)
 
     events = await _fetch_events(db, BRANDEDBY_EVENTS, after_ts, CONSUMER_BATCH_SIZE)
     stats: dict[str, int] = {"found": len(events), "handled": 0, "errors": 0, "cursor_at": 0}
@@ -225,13 +254,15 @@ async def process_brandedby_events(db: AsyncClient | None = None) -> dict[str, i
             stats["errors"] += 1
 
     # Always advance cursor — including when some handlers errored.
-    # Not advancing would loop on the same failing events forever.
+    # Failed events are persisted to ecosystem_event_failures by the handler,
+    # so cursor advance does NOT lose them; replay reads the DLQ table.
     await _advance_cursor(
         db,
         "brandedby",
         last_event_id,
         last_processed_at,
         prior_total + stats["handled"],
+        prior_failed_total + stats["errors"],
     )
     stats["cursor_at"] = 1
 
@@ -240,6 +271,7 @@ async def process_brandedby_events(db: AsyncClient | None = None) -> dict[str, i
         **stats,
         prior_total=prior_total,
         new_total=prior_total + stats["handled"],
+        new_failed_total=prior_failed_total + stats["errors"],
     )
     return stats
 

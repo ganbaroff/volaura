@@ -82,7 +82,7 @@ After registration + email confirm → redirect to `/welcome` (new page):
 │  👋 Welcome to Volaura, [Name]                 │
 │                                                 │
 │  You're 10 minutes away from your               │
-│  verified volunteer badge.                      │
+│  verified AURA badge.                           │
 │                                                 │
 │  ┌─────────────────────────────────────────┐   │
 │  │                                         │   │
@@ -515,3 +515,4 @@ This takes 10 minutes from Yusif. Everything else — CTO builds.
 *This document expands the existing LAUNCH-ACTIVATION-PLAN.md with technical infrastructure answers.*
 *For the original growth strategy: docs/growth/LAUNCH-ACTIVATION-PLAN.md*
 *For the referral code pattern: already designed there (volaura.com/start?ref=leyla-cop29) — this doc updates the technical implementation.*
+

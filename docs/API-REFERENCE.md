@@ -8,6 +8,8 @@
 
 **Response format:** All responses use `{ data, meta }` envelope or direct Pydantic models. Errors return `{ detail: { code, message } }`.
 
+**Compatibility note:** Some route names and identifiers still use legacy `volunteer` / `volunteer_id` naming. These are compatibility-preserved API names, not product positioning. User-facing meaning is professional/talent profile unless the route explicitly handles event participation.
+
 **Global limits:** 1 MB max request body. CORS whitelist enforced (no wildcards in production).
 
 ---
@@ -48,9 +50,9 @@ Prefix: `/api/profiles`
 | POST | `/api/profiles/me` | Yes | 10/min | `{ username, display_name?, bio?, location?, languages?, account_type?, invited_by_org_id? }` | `ProfileResponse` | Create profile (post-registration) |
 | PUT | `/api/profiles/me` | Yes | 10/min | Partial profile fields | `ProfileResponse` | Update own profile |
 | POST | `/api/profiles/{volunteer_id}/verification-link` | Yes | 10/min | `{ verifier_name, verifier_org?, competency_id }` | `{ id, token, verify_url, expires_at, ... }` | Create verification link (self only) |
-| GET | `/api/profiles/public` | Yes (org) | 10/min | Query: `limit`, `offset` | `[DiscoverableVolunteer]` | List org-visible volunteers (org accounts only) |
+| GET | `/api/profiles/public` | Yes (org) | 10/min | Query: `limit`, `offset` | `[DiscoverableVolunteer]` | List org-visible talent profiles (org accounts only) |
 | GET | `/api/profiles/{username}` | No | 10/min | - | `PublicProfileResponse` (includes `percentile_rank`) | Get public profile by username |
-| POST | `/api/profiles/{username}/view` | Yes | 20/min | - | `204 No Content` | Record org profile view (sends notification to volunteer) |
+| POST | `/api/profiles/{username}/view` | Yes | 20/min | - | `204 No Content` | Record org profile view (sends notification to the profile owner) |
 
 ---
 
@@ -65,7 +67,7 @@ Prefix: `/api/aura`
 | GET | `/api/aura/me/visibility` | Yes | 60/min | - | `{ visibility }` | Get current visibility setting |
 | PATCH | `/api/aura/me/visibility` | Yes | 10/min | `{ visibility: "public"\|"badge_only"\|"hidden" }` | `{ status, visibility }` | Update AURA visibility |
 | POST | `/api/aura/me/sharing` | Yes | 10/min | `{ org_id, action: "grant"\|"revoke", permission_type }` | `{ status, org_id, permission_type }` | Grant/revoke org sharing permission |
-| GET | `/api/aura/{volunteer_id}` | No | 10/min | - | `AuraScoreResponse` | Get any volunteer's public AURA score |
+| GET | `/api/aura/{volunteer_id}` | No | 10/min | - | `AuraScoreResponse` | Get any public AURA score |
 
 ---
 
@@ -100,9 +102,9 @@ Prefix: `/api/events`
 | PUT | `/api/events/{event_id}` | Yes (org) | 10/min | Partial event fields | `EventResponse` | Update event (org owner only) |
 | DELETE | `/api/events/{event_id}` | Yes (org) | 10/min | - | `204` | Cancel event (soft delete, org owner only) |
 | POST | `/api/events/{event_id}/register` | Yes | 10/min | - | `RegistrationResponse` | Register for event |
-| POST | `/api/events/{event_id}/checkin` | Yes (coordinator) | 10/min | `{ check_in_code }` | `RegistrationResponse` | Check in volunteer via QR code |
-| POST | `/api/events/{event_id}/rate/coordinator` | Yes (coordinator) | 10/min | `{ registration_id, rating: 1-5, feedback? }` | `RegistrationResponse` | Coordinator rates volunteer (updates AURA) |
-| POST | `/api/events/{event_id}/rate/volunteer` | Yes | 10/min | `{ rating: 1-5, feedback? }` | `RegistrationResponse` | Volunteer rates event |
+| POST | `/api/events/{event_id}/checkin` | Yes (coordinator) | 10/min | `{ check_in_code }` | `RegistrationResponse` | Check in participant via QR code |
+| POST | `/api/events/{event_id}/rate/coordinator` | Yes (coordinator) | 10/min | `{ registration_id, rating: 1-5, feedback? }` | `RegistrationResponse` | Coordinator rates participant performance (updates AURA) |
+| POST | `/api/events/{event_id}/rate/volunteer` | Yes | 10/min | `{ rating: 1-5, feedback? }` | `RegistrationResponse` | Participant rates the event experience |
 | GET | `/api/events/{event_id}/registrations` | Yes (org) | 10/min | - | `[RegistrationResponse]` | List registrations (org owner only) |
 | GET | `/api/events/{event_id}/attendees` | Yes (org) | 10/min | - | `[EventAttendeeRow]` (profile + AURA joined) | Enriched attendee list (org owner only) |
 | GET | `/api/events/my/registrations` | Yes | 60/min | - | `[RegistrationResponse]` | List own registrations |
@@ -123,10 +125,10 @@ Prefix: `/api/organizations`
 | GET | `/api/organizations/{org_id}` | Yes | 60/min | - | `OrganizationResponse` | Get organization by ID |
 | GET | `/api/organizations/{org_id}/collective-aura` | Yes (org owner) | 60/min | - | `CollectiveAuraResponse` (count, avg_aura, trend) | Aggregated talent pool AURA metrics |
 | GET | `/api/organizations/me/dashboard` | Yes (org) | 60/min | - | `OrgDashboardStats` (completion rate, badge dist, top 5) | Org management dashboard stats |
-| GET | `/api/organizations/me/volunteers` | Yes (org) | 10/min | Query: `status?`, `limit`, `offset` | `[OrgVolunteerRow]` | List assigned volunteers with AURA |
-| POST | `/api/organizations/search/volunteers` | Yes (org) | 10/min | `{ query, min_aura?, badge_tier?, languages?, location?, limit, offset }` | `[VolunteerSearchResult]` | Semantic volunteer search (pgvector + fallback) |
-| POST | `/api/organizations/assign-assessments` | Yes (org) | 10/min | `{ volunteer_ids, competency_slugs, deadline_days?, message? }` | `AssignmentResponse` (assigned/skipped counts) | Assign assessments to volunteers (max 100) |
-| POST | `/api/organizations/intro-requests` | Yes (org) | 5/hr | `{ volunteer_id, project_name, timeline?, message }` | `IntroRequestResponse` | Send introduction request to volunteer |
+| GET | `/api/organizations/me/volunteers` | Yes (org) | 10/min | Query: `status?`, `limit`, `offset` | `[OrgVolunteerRow]` | List assigned talent profiles with AURA |
+| POST | `/api/organizations/search/volunteers` | Yes (org) | 10/min | `{ query, min_aura?, badge_tier?, languages?, location?, limit, offset }` | `[VolunteerSearchResult]` | Semantic talent search (pgvector + fallback) |
+| POST | `/api/organizations/assign-assessments` | Yes (org) | 10/min | `{ volunteer_ids, competency_slugs, deadline_days?, message? }` | `AssignmentResponse` (assigned/skipped counts) | Assign assessments to selected profiles (max 100) |
+| POST | `/api/organizations/intro-requests` | Yes (org) | 5/hr | `{ volunteer_id, project_name, timeline?, message }` | `IntroRequestResponse` | Send an introduction request to a selected profile |
 | POST | `/api/organizations/saved-searches` | Yes (org) | 10/min | `{ name, filters, notify_on_match? }` | `SavedSearchOut` | Save talent search (max 20 per org) |
 | PATCH | `/api/organizations/saved-searches/{search_id}` | Yes (org) | 10/min | `{ name?, notify_on_match? }` | `SavedSearchOut` | Update saved search |
 | DELETE | `/api/organizations/saved-searches/{search_id}` | Yes (org) | 10/min | - | `204` | Delete saved search |
@@ -139,7 +141,7 @@ Prefix: `/api/organizations` (shares router with Organizations)
 
 | Method | Path | Auth | Rate Limit | Request Body | Response | Description |
 |--------|------|------|------------|--------------|----------|-------------|
-| POST | `/api/organizations/{org_id}/invites/bulk` | Yes (org owner) | 2/min | CSV file upload (email required, max 500 rows) | `207` with `BulkInviteResponse` (per-row audit) | Bulk invite volunteers via CSV |
+| POST | `/api/organizations/{org_id}/invites/bulk` | Yes (org owner) | 2/min | CSV file upload (email required, max 500 rows) | `207` with `BulkInviteResponse` (per-row audit) | Bulk invite participants via CSV |
 | GET | `/api/organizations/{org_id}/invites` | Yes (org owner) | 30/min | Query: `status?`, `batch_id?` | `[InviteListResponse]` | List invites for org |
 | GET | `/api/organizations/{org_id}/invites/template` | No | 30/min | - | CSV template spec | Download invite template |
 
@@ -162,7 +164,7 @@ Prefix: `/api/verify`
 
 | Method | Path | Auth | Rate Limit | Request Body | Response | Description |
 |--------|------|------|------------|--------------|----------|-------------|
-| GET | `/api/verify/{token}` | No | 10/min | - | `VerificationTokenInfo` (volunteer name, competency) | Validate token, get context for rating UI |
+| GET | `/api/verify/{token}` | No | 10/min | - | `VerificationTokenInfo` (profile name, competency) | Validate token, get context for rating UI |
 | POST | `/api/verify/{token}` | No | 5/min | `{ rating: 1-5, comment? }` | `SubmitVerificationResponse` | Submit expert rating (single-use token, 7-day expiry) |
 
 ---
@@ -194,7 +196,7 @@ Prefix: `/api/volunteers`
 
 | Method | Path | Auth | Rate Limit | Request Body | Response | Description |
 |--------|------|------|------------|--------------|----------|-------------|
-| GET | `/api/volunteers/discovery` | Yes | 10/min | Query: `competency?`, `score_min?`, `role_level?`, `badge_tier?`, `sort_by`, `after_*` cursors, `limit` | `DiscoveryResponse` (cursor-paginated) | Search public volunteers by competency, score, role, badge |
+| GET | `/api/volunteers/discovery` | Yes | 10/min | Query: `competency?`, `score_min?`, `role_level?`, `badge_tier?`, `sort_by`, `after_*` cursors, `limit` | `DiscoveryResponse` (cursor-paginated) | Search public talent profiles by competency, score, role, and badge |
 
 **Pagination:** Cursor-based (not offset). Use `next_after_score` + `next_after_id` from `meta` for next page.
 
@@ -206,7 +208,7 @@ Prefix: `/api/leaderboard`
 
 | Method | Path | Auth | Rate Limit | Request Body | Response | Description |
 |--------|------|------|------------|--------------|----------|-------------|
-| GET | `/api/leaderboard` | Optional | 10/min | Query: `period` (`weekly`\|`monthly`\|`all_time`), `limit` | `LeaderboardResponse` (entries with rank, score, badge) | Top volunteers by AURA score (rank >10 anonymized) |
+| GET | `/api/leaderboard` | Optional | 10/min | Query: `period` (`weekly`\|`monthly`\|`all_time`), `limit` | `LeaderboardResponse` (entries with rank, score, badge) | Top public AURA profiles (rank >10 anonymized) |
 | GET | `/api/leaderboard/me` | Yes | 60/min | - | `{ rank, total_users }` | Current user's leaderboard position |
 
 ---
@@ -230,7 +232,7 @@ Prefix: `/api/stats`
 
 | Method | Path | Auth | Rate Limit | Request Body | Response | Description |
 |--------|------|------|------------|--------------|----------|-------------|
-| GET | `/api/stats/public` | No | 60/min | - | `{ total_volunteers, total_assessments, total_events, avg_aura_score }` | Platform stats for landing page |
+| GET | `/api/stats/public` | No | 60/min | - | `{ total_volunteers, total_assessments, total_events, avg_aura_score }` | Platform stats for landing page (legacy metric names preserved for compatibility) |
 | GET | `/api/stats/beta-funnel` | Yes (org) | 10/min | - | `BetaFunnelStats` (started, completed, abandoned, rates) | Beta funnel health (org accounts only) |
 
 ---

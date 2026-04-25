@@ -1,4 +1,4 @@
-"""Ghosting Grace worker — Constitution VOLAURA Rule 30, WUF13 P0 #14.
+"""Ghosting Grace worker — Constitution VOLAURA Rule 30.
 
 After signup, if a user has not completed any assessment within 48 hours,
 send ONE warm re-entry email and mark the user so we never nudge twice.

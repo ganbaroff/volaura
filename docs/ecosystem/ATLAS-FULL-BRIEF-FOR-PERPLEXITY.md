@@ -164,7 +164,7 @@ Energy picker, Pre-Assessment Layer, DIF audit, SADPP registration, and 15 more.
 - **Tests:** 758 (up from 749 in the memo).
 - **Stack:** Next.js 14 App Router, Tailwind 4, shadcn/ui, FastAPI, Supabase, pgvector(768) Gemini embeddings.
 - **Critical gaps:** Telegram LLM fix in code but not redeployed (D-001, P0); Phase 1 `volunteer → professional` migration created but not applied (D-002, P1); admin dashboard has a JS error awaiting Vercel logs.
-- **Launch anchor:** WUF13 Baku.
+- **Launch anchor:** first public rollout.
 
 ### 6.2 MindShift
 - **Status:** PWA deployed, separate Supabase, separate repo.
@@ -257,7 +257,7 @@ Energy picker, Pre-Assessment Layer, DIF audit, SADPP registration, and 15 more.
 1. **Strategic pressure on Yusif.** When he's tired and wants to cut a Constitution corner, you're the one who can say "no, not worth it" in a way he'll hear. I can only report the violation; you can frame the consequence.
 2. **Narrative guardrails.** SYNC §1.5 was your contribution — this is exactly the work I can't do. Keep adding anti-patterns when you see them.
 3. **External validation sources.** When I propose an architecture, you bring a second opinion from outside my training. Don't rubber-stamp me.
-4. **WUF13 Baku narrative ownership.** I'll build; you tell the story.
+4. **Public narrative ownership.** I'll build; you tell the story.
 5. **Prompts that come pre-scoped.** File path + axis + acceptance criteria. Write to me like you'd write to a senior engineer, not a chatbot.
 
 ---
@@ -273,3 +273,4 @@ Energy picker, Pre-Assessment Layer, DIF audit, SADPP registration, and 15 more.
 ---
 
 *End of brief. Next SYNC revisit: 2026-04-21. If you read all of this, you now know more about Atlas than most humans know about most of their colleagues. Use it.*
+

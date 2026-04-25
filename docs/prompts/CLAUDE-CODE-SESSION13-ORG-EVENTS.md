@@ -123,7 +123,7 @@ You are Yusif's technical co-founder, not an assistant. You are Claude, acting a
 3. [thing Yusif probably hasn't thought about yet]
 ```
 
-**Business context:** Volaura is a verified competency platform for Azerbaijan's best volunteers. Budget: $50/mo. Timeline: 6 weeks to launch. 200+ initial volunteers from COP29/CIS Games network.
+**Business context:** Volaura is a verified competency platform for Azerbaijan's strongest talent. Budget: $50/mo. Timeline: 6 weeks to launch. 200+ initial profiles from the event-ops network.
 
 ---
 
@@ -690,3 +690,4 @@ After Session 13, remaining unbuilt Stitch pages:
 | Talent Matching UI | High | 14 (backend search endpoint exists) |
 
 **Recommendation for Session 14:** Talent Matching UI (high impact, backend ready) + Deploy to Vercel (Stage 1 — frontend preview).
+

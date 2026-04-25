@@ -10,7 +10,7 @@
 ```json
 {
   "app_name": { "az": "Volaura", "en": "Volaura" },
-  "tagline": { "az": "Təsdiqlənmiş könüllü bacarıqları", "en": "Verified volunteer credentials" },
+  "tagline": { "az": "Təsdiqlənmiş bacarıq profilləri", "en": "Verified skill profiles" },
   "nav": {
     "dashboard": { "az": "İdarə paneli", "en": "Dashboard" },
     "assessment": { "az": "Qiymətləndirmə", "en": "Assessment" },
@@ -284,3 +284,4 @@
   "EVALUATION_PENDING": { "az": "Cavab saxlanıldı, AI qiymətləndirmə davam edir", "en": "Answer saved, AI evaluation in progress" }
 }
 ```
+

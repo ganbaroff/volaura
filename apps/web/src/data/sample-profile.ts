@@ -14,7 +14,7 @@
  *
  * If the real API response shape changes, update BOTH this fixture and the
  * `/sample` page consumer — fixture must stay a valid stand-in so we can
- * screenshot it for WUF13 without touching production data.
+ * screenshot it for demos and QA without touching production data.
  */
 
 export type CompetencyId =

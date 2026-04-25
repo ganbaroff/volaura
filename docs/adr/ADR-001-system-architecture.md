@@ -8,7 +8,7 @@
 
 ## Context
 
-Volaura is a verified volunteer credential platform launching in Azerbaijan. The system must handle volunteer assessments (adaptive testing), AURA score computation, public profile sharing, event matching, and organization search. Target: 200+ volunteers at launch, scaling to 10,000+ within 6 months. Development speed is 100x via AI-augmented tooling.
+Volaura is a verified professional talent platform launching in Azerbaijan. The system must handle adaptive assessments, AURA score computation, public profile sharing, event matching, and organization search. Target: 200+ assessed users at launch, scaling to 10,000+ within 6 months. Development speed is 100x via AI-augmented tooling.
 
 ### Requirements
 
@@ -222,3 +222,4 @@ Service Worker (Workbox) + IndexedDB (Dexie.js):
 6. [ ] Set up Railway for FastAPI
 7. [ ] Configure Sentry for both frontend and backend
 8. [ ] Set up Workbox for offline PWA capability
+

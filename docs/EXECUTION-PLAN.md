@@ -618,7 +618,7 @@ Graph View покажет связи между всеми 49 документа
 - [x] ACCEPTANCE-CRITERIA.md — 250+ критериев ✓
 - [x] LAUNCH-ACTIVATION-PLAN.md — реальные каналы ✓
 - [x] INDEX.md — Obsidian-навигация, 49 docs ✓
-- [x] WUF13 зачищен из всех файлов ✓
+- [x] old event-anchor cleaned out of active files
 - [x] 5 ADR написаны ✓
 - [ ] Supabase project создан (нужен аккаунт)
 - [ ] Vercel project создан (нужен аккаунт)

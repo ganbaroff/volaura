@@ -4,7 +4,7 @@
 
 ---
 
-Build a multi-step competency assessment flow for Volaura, a verified volunteer talent platform in Azerbaijan. The assessment uses adaptive testing (IRT/CAT) — questions get harder/easier based on answers.
+Build a multi-step competency assessment flow for Volaura, a verified talent platform in Azerbaijan. The assessment uses adaptive testing (IRT/CAT) — questions get harder/easier based on answers.
 
 ## Tech Stack (already set up — match exactly)
 - Next.js 14 App Router, TypeScript strict
@@ -239,3 +239,4 @@ t("common.retry")                   → "Try again"
 - Mobile-first responsive design
 - ALL states must be implemented (default, hover, active, disabled, loading, error, empty)
 - AZ strings are ~25% longer — test all layouts with AZ locale
+

@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const { t } = await initTranslations(locale, ["profile"]);
   const title = `${profile.first_name} ${profile.last_name} — AURA ${profile.aura_scores.badge} | Volaura`;
-  const description = `${profile.first_name} is a verified volunteer with AURA Score ${Math.round(
+  const description = `${profile.first_name} has a verified Volaura profile with AURA Score ${Math.round(
     profile.aura_scores.total
   )}. Specialties: ${profile.competencies.map((c) => c.name).join(", ")}.`;
   const ogImageUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/share/${username}/og-image`;
@@ -283,7 +283,7 @@ export function ShareButtons({ profile, locale }: ShareButtonsProps) {
     {
       name: "WhatsApp",
       url: `https://wa.me/?text=${encodeURIComponent(
-        `Check out ${profile.first_name}'s volunteer profile: ${profileUrl}`
+        `Check out ${profile.first_name}'s Volaura profile: ${profileUrl}`
       )}`,
       icon: "whatsapp",
     },
@@ -292,7 +292,7 @@ export function ShareButtons({ profile, locale }: ShareButtonsProps) {
       url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(
         profileUrl
       )}&text=${encodeURIComponent(
-        `${profile.first_name} is a verified volunteer with AURA ${profile.aura_scores.badge} badge`
+        `${profile.first_name} has a verified Volaura profile with AURA ${profile.aura_scores.badge} badge`
       )}`,
       icon: "twitter",
     },
@@ -620,7 +620,7 @@ export const config = {
   "@type": "Person",
   "name": "Leyla Aliyeva",
   "url": "https://volaura.com/en/u/leyla",
-  "description": "Verified volunteer specializing in community outreach",
+  "description": "Verified profile specializing in community outreach",
   "image": "https://volaura.com/avatars/leyla.jpg",
   "knowsAbout": ["Community Outreach", "Leadership", "English"],
   "hasCredential": {
@@ -654,7 +654,7 @@ export const config = {
   "endDate": "2026-05-15T17:00:00Z",
   "url": "https://volaura.com/en/events/launch-event",
   "description": "Join us for the opening ceremony of our major launch event in Baku",
-  "image": "https://volaura.com/events/wuf13.jpg",
+  "image": "https://volaura.com/events/event-preview.jpg",
   "location": {
     "@type": "Place",
     "name": "Baku Convention Center",
@@ -806,3 +806,4 @@ pnpm run lighthouse:ci --url https://volaura.com/en
 - schema.org: https://schema.org
 - Google Search Central: https://developers.google.com/search
 - Core Web Vitals Guide: https://web.dev/vitals/
+

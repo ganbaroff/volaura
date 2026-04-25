@@ -186,8 +186,8 @@ The productivity system (`memory/context/`, `docs/TASKS.md`) must be PROACTIVE:
 
 ## Project Overview
 
-**Volaura** — Verified competency platform + community for the best volunteers in Azerbaijan.
-NOT "another volunteer platform." A platform for verified skills where orgs CHOOSE talent and volunteers ASPIRE to be listed.
+**Volaura** — Verified competency platform + community for high-trust talent in Azerbaijan.
+NOT "another volunteer platform." A platform for verified skills where orgs CHOOSE talent and people ASPIRE to be listed.
 
 **Target market:** Azerbaijan first. CIS/MENA expansion later.
 **Tech budget:** ~$50/month.
@@ -742,3 +742,4 @@ Sprint 1 had 3 ad-hoc decisions and 1 CVSS 9.1 vulnerability caught late.
 Every step in the algorithm is there because skipping it was painful.
 
 ▶ Now read CLAUDE.md and declare your session start.
+

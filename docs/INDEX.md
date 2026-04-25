@@ -21,7 +21,7 @@
 
 ## Vision & Strategy
 
-- [[VISION-FULL]] — CEO's real vision: from WUF13 to the New LinkedIn
+- [[VISION-FULL]] — CEO's real vision: from verified proof to durable professional identity
 - [[MASTER-STRATEGY]] — Business model, grants, expansion roadmap, unit economics
 - [[TONE-OF-VOICE]] — Tinkoff/Aviasales benchmark, shame-free voice
 - [[ECOSYSTEM-MAP]] — All 5 products and their relationships
@@ -104,7 +104,6 @@ Related: [[adr/ADR-001-system-architecture]] | [[adr/ADR-004-assessment-engine]]
 - [[growth/EMAIL-STRATEGY]] — Transactional and lifecycle emails
 - [[growth/EVENT-ACTIVATION]] — Event activation template
 - [[growth/ORG-ACQUISITION]] — B2B onboarding, partnership outreach
-- [[growth/WUF13-ACTIVATION]] — WUF13 event activation plan
 - [[growth/GROWTH-STRATEGY-DEEP-RESEARCH]] — Deep research on growth
 - [[growth/LINKEDIN-POST-AGENT-OS]] — LinkedIn content strategy
 - [[GROWTH-STRATEGY-PLAYBOOK]] — Growth playbook

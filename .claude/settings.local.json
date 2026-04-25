@@ -25,7 +25,9 @@
       "Bash(rm -f .git/index.lock .git/HEAD.lock .git/refs/heads/main.lock)",
       "Bash(ls .git/*.lock)",
       "mcp__claude_ai_Supabase__apply_migration",
-      "mcp__claude_ai_Supabase__get_project"
+      "mcp__claude_ai_Supabase__get_project",
+      "mcp__0add280d-0951-456b-a542-b304541704af__list_migrations",
+      "mcp__supabase__list_projects"
     ],
     "deny": [
       "Bash(rm -rf /)*",

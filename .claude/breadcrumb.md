@@ -30,13 +30,39 @@
 
 ## What's next (pick top)
 
-1. **Push commit 0d0064f** — P0 fix lives locally only, not deployed to Railway yet.
+1. **Assessment router coverage** — 80% now, submit_answer edge cases (lines 550-563, 619, 633-636, 647, 694-699, 709-718, 762-774) + complete_assessment branches (1101-1361) still uncovered. Target ≥85%.
 
-2. **`atlas_consult.py`** — 84% → ≥95%.
+2. **Provider pinning decision** — wait for next BrandedBy refresh run (GitHub Actions hourly) to see `provider=X` in logs. If OpenAI is hitting, remove it from the brandedby background path.
 
-3. **`match_checker.py`** — 85% → ≥95%.
+3. **G3.1 end-to-end breathe test** — fresh Google account → signup → assessment → AURA → crystal → character_event visible in prod. Blocked only on human: needs a fresh browser session. NOT Atlas's to start.
 
-4. **`subscription.py` router** — 74% → ≥90%.
+4. **Watcher signal gap** — error_watcher.py doesn't monitor ecosystem consumer cursor stall or BrandedBy refresh loop failures. Real observability gap. Low effort to add 2 more checks.
+
+## Completed this session (2026-04-25)
+
+- PGRST106 fix committed (ecosystem_consumer RPC pattern) — d755341
+- `atlas_consult.py` 84% → 96% (4 new tests) — 4244486
+- `match_checker.py` 85% → 98% (8 new tests) — 9361090
+- `subscription.py` 74% → 98% (17 new tests) — 0ac8afd
+- All 3 pushed to main → Railway auto-deploy triggered
+- Frontend 409 resume fix (body.detail?.session_id) — 5a071bb → pushed
+- `error_watcher.py` verified: 98% (line 158 = __main__ guard, irrelevant)
+- `notifications.py` verified: 100%
+- `assessment.py` gap tests: 67% → 80%, coaching/breakdown/verify/carry-over theta — f9a2e7c
+- BrandedBy claim-lock + telemetry — 2b01d09 → pushed + migration applied to prod
+  - brandedby.ai_twins: refresh_locked_at, refresh_lock_token columns live
+  - brandedby_claim_stale_twins RPC (FOR UPDATE SKIP LOCKED) live
+  - brandedby_apply_twin_personality updated (clears lock on success)
+  - brandedby_release_twin_lock RPC (failure path) live
+  - llm.py: _meta param → provider + latency_ms per call
+  - 15/15 tests pass
+
+## Previously (pick top — OLD)
+
+~~1. **Push commit 0d0064f** — P0 fix lives locally only, not deployed to Railway yet.~~
+~~2. **`atlas_consult.py`** — 84% → ≥95%.~~ DONE 96%
+~~3. **`match_checker.py`** — 85% → ≥95%.~~ DONE 98%
+~~4. **`subscription.py` router** — 74% → ≥90%.~~ DONE 98%
 
 5. **email.py** — DONE. 100% coverage, PR #84 merged. Release `v0.1.0-beta.1` published.
 6. **bars.py** — DONE. 99% coverage, PR #80 merged.

@@ -127,7 +127,7 @@ Cowork's `docs/research/startup-jurisdictions/summary.md` already made the hones
 
 **Real structure once Delaware C-Corp is active:**
 - **Delaware C-Corp (HQ)** = receives all equity rounds, owns IP, pays US federal corporate tax (~21%), pays DE state franchise fee (~$450/yr). Signs all US-program applications.
-- **Azerbaijan entity (keep)** = service subsidiary or branch. Pays Azerbaijani corporate tax (20%) on local-sourced revenue. Does the WUF13 launch (local partnerships). Signs Innoland / EBRD / PASHA / ABB applications.
+- **Azerbaijan entity (keep)** = service subsidiary or branch. Pays Azerbaijani corporate tax (20%) on local-sourced revenue. Handles the first local launch wave (local partnerships). Signs Innoland / EBRD / PASHA / ABB applications.
 - **Georgia VZP (optional, deprioritised)** = only if GITA grant May 27 2026 deadline is confirmed and CEO has 10–20% co-financing ready. Not primary. Adds transfer-pricing complexity.
 
 **Tax structure red flags the catalog does not surface:**
@@ -143,7 +143,7 @@ Cowork's `docs/research/startup-jurisdictions/summary.md` already made the hones
 
 - **Article 0 "never single-provider":** Google AI tier $350K and OpenAI $1M are both listed at high ROI. Accepting either at maximum burn rate would concentrate 70%+ of our LLM spend on one provider. Constitution Research #12 explicitly forbids this. Accept BOTH at medium tier, plus NVIDIA Inception (already in catalog), plus Cohere / Mistral / Together (already in catalog) — that preserves the diverse-provider mandate.
 - **Positioning lock:** no program application copy should call VOLAURA an "AI platform" or "AI tool" — Constitution §1.5 anti-pattern. Primary framing across all 54 applications must be "verified professional talent platform" with AI as infrastructure. Cowork's pitch deck nails this; application drafts may not.
-- **Data controller for user text:** accepting Gemini, OpenAI, or Anthropic credits means LLM vendor processes user-submitted assessment answers. Privacy policy must already disclose this. GDPR Art. 28 processor agreement must exist before end-user data flows. WUF13 P0 #4 (Art. 9 health data consent) is a blocker here — we must not accept LLM credits that commit to data flows we cannot legally authorise.
+- **Data controller for user text:** accepting Gemini, OpenAI, or Anthropic credits means LLM vendor processes user-submitted assessment answers. Privacy policy must already disclose this. GDPR Art. 28 processor agreement must exist before end-user data flows. Current launch P0 #4 (Art. 9 health data consent) is a blocker here — we must not accept LLM credits that commit to data flows we cannot legally authorise.
 
 ---
 
@@ -274,3 +274,4 @@ For CEO to execute (this week):
 ## 10. Authority note
 
 This audit does not override Cowork's catalog — it extends it. The xlsx itself is correct as a data artefact; my critique is about methodology and context. If CEO prefers, I can translate this memo into a v2 catalog with the six additions, corrected ROI columns, and a rewritten Pre-reqs sheet that shows the real dependency graph. That's a 2-hour follow-up task.
+

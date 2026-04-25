@@ -1,22 +1,22 @@
 # Volaura Business Model
 
 ## Overview
-Volaura monetizes a verified volunteer credential platform by serving two primary user segments: **individual volunteers** and **organizations** seeking volunteer talent. The platform creates value through AURA Score credibility, reducing friction in volunteer recruitment and matching.
+Volaura monetizes a verified talent platform by serving two primary user segments: **individual users** and **organizations** seeking trusted talent. The platform creates value through AURA Score credibility, reducing friction in discovery, recruitment, and matching.
 
 **Launch Geography:** Azerbaijan (primary), with CIS/MENA expansion roadmap.
-**Target Scale:** 200+ volunteers at launch event (May 2026), 10,000+ within 6 months.
+**Target Scale:** 200+ profiles at first launch, 10,000+ within 6 months.
 
 ---
 
 ## Revenue Streams
 
-### 1. Freemium Volunteer Tier (Free)
-**Target User:** First-time volunteer, exploring the platform.
+### 1. Freemium Individual Tier (Free)
+**Target User:** First-time user exploring the platform.
 
 **Features:**
 - Complete AURA assessment (5–8 competencies via CAT/IRT)
 - AURA score + badge (Bronze, Silver, Gold, Platinum)
-- Public profile with volunteer history, skills, and endorsements
+- Public profile with assessed history, skills, and endorsements
 - Basic event discovery and registration
 - Share AURA score card (social media, WhatsApp)
 - Reassessment every 90 days
@@ -156,11 +156,11 @@ Volaura monetizes a verified volunteer credential platform by serving two primar
 - Partner with internationally recognized bodies (UN, ISO, industry associations)
 - Co-branded certificates (AURA score + partner verification)
 - Premium pricing: $9.99 per certificate download
-- Example: "UN Verified Volunteer Certificate" bundled with Pro tier
+- Example: "Verified Field Leadership Certificate" bundled with Pro tier
 
 #### Recruitment Agency Fees
-- Premium organizations pay commission for vetted volunteer hires into permanent roles
-- Model: 5–10% of hired volunteer's annual salary (if applicable)
+- Premium organizations pay commission for vetted hires into permanent roles
+- Model: 5–10% of hired candidate's annual salary (if applicable)
 
 ---
 
@@ -324,4 +324,5 @@ Volaura monetizes a verified volunteer credential platform by serving two primar
 - [[KPIs]]: North Star metrics and activation targets
 - [[TECH-STACK]]: Revenue system integrations (Stripe, email, analytics)
 - [[ROADMAP]]: Feature rollout timeline (Pro v1, Org API, CIS expansion)
+
 

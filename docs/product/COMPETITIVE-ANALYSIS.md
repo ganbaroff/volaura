@@ -303,8 +303,8 @@ Course completion certificates from online learning platforms. Prove learner com
 ### Moat 1: Network Effects
 
 **Mechanism:**
-- More verified volunteers → orgs see larger talent pool → post more events
-- More events → volunteers see more opportunities → complete re-assessments
+- More verified profiles → orgs see larger talent pool → post more events
+- More events → users see more opportunities → complete re-assessments
 - More assessments → better AURA data → more accurate matching
 - Better matching → higher volunteer retention → word-of-mouth growth
 
@@ -343,10 +343,10 @@ Course completion certificates from online learning platforms. Prove learner com
 - Trust-based culture: "Volaura" becomes synonym for volunteer verification
 - Localization barriers:
   - Native Azerbaijani UI (not translated English)
-  - Understanding of CIS volunteer ecosystem
+  - Understanding of CIS event-ops and trust ecosystem
   - Relationship-based verification (org attestation > generic algorithm)
 
-**Defensibility:** Medium-high. Credly *could* localize, but requires market research + product pivot (out of scope for enterprise badge platform). By the time a competitor tries, Volaura has 1000+ verified volunteers and 50+ org partners.
+**Defensibility:** Medium-high. Credly *could* localize, but requires market research + product pivot (out of scope for enterprise badge platform). By the time a competitor tries, Volaura has 1000+ verified profiles and 50+ org partners.
 
 **Expansion leverage:** Azerbaijan → Georgia/Armenia (adjacent) → Central Asia (same cultural patterns, language overlap).
 
@@ -404,12 +404,12 @@ Building a volunteer-first product requires understanding these dynamics. Credly
 - Target: 200–500 orgs actively using volunteer management
 
 **Initial target (Year 1):**
-- 5K verified volunteers
+- 5K verified profiles
 - 50 active org partners
-- $0 in volunteer revenue (free tier), $50–100K/yr in org services
+- $0 in individual-tier revenue (free tier), $50–100K/yr in org services
 
 **Growth projection (Year 3):**
-- 50K verified volunteers
+- 50K verified profiles
 - 500 active orgs
 - $500K–$1M in annual revenue (orgs, data insights, premium features)
 
@@ -471,7 +471,7 @@ Volaura is **uncontested** in volunteer credentialing for Azerbaijan/CIS. Neares
 - Affordable free tier
 
 **Competitive advantage window:** 18–24 months before potential LinkedIn/Credly entry. By then, Volaura must have:
-- 10K+ verified volunteers in Azerbaijan
+- 10K+ verified profiles in Azerbaijan
 - 100+ active org partners
 - Strong regional brand identity
 - Expansion underway in CIS (Georgia, Armenia, Central Asia)
@@ -487,3 +487,4 @@ Volaura is **uncontested** in volunteer credentialing for Azerbaijan/CIS. Neares
 - LinkedIn Skills: https://learning.linkedin.com/skills
 - IMS Global Open Badges: https://www.imsglobal.org/activity/digital-badges
 - VolunteerHub: https://volunteerhub.com
+

@@ -202,7 +202,7 @@ async def send_ghosting_grace_email(
     display_name: str,
     locale: str = "en",
 ) -> bool:
-    """Send the single 48h warm re-entry email — Constitution Rule 30, WUF13 #14.
+    """Send the single 48h warm re-entry email — Constitution Rule 30.
 
     Returns True if Resend accepted the send, False otherwise (kill switch off,
     no API key, send failed). Caller uses the return to decide whether to set

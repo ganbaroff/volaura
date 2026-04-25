@@ -117,9 +117,9 @@ Month 6: Established Volunteer
 
 ---
 
-## Persona 2: Rashad — The Experienced Volunteer (Secondary)
+## Persona 2: Rashad — The Experienced Contributor (Secondary)
 
-**Archetype:** Mid-career professional, established volunteer network, seeking leadership recognition
+**Archetype:** Mid-career professional with an established service network, seeking leadership recognition
 
 ### Demographics
 - **Age:** 28–35 years old
@@ -258,17 +258,17 @@ Month 6: Leadership Position
 - Budget constraints: Can't afford expensive volunteer management systems
 
 ### Volaura Value Proposition
-- **Pre-verified talent pool:** Search "Gold+ volunteers, leadership 85+" in seconds
+- **Pre-verified talent pool:** Search "Gold+ profiles, leadership 85+" in seconds
 - **Reliability data:** AURA scores correlate with attendance and performance
-- **Reduced friction:** Volunteer already assessed, skip organization's full vetting
-- **Attestation system:** Rate volunteers after events, build reputation data over time
+- **Reduced friction:** Candidate already assessed, skip the organization's full vetting
+- **Attestation system:** Rate participants after events, build reputation data over time
 - **Cost efficiency:** Free tier supports small events; scales affordably
-- **Competitive advantage:** "AURA-verified volunteers" becomes org differentiator
+- **Competitive advantage:** "AURA-verified talent" becomes org differentiator
 
 ### Key Features Used
-1. **Volunteer search:** Filters by badge level, competency, location, past org attestations
-2. **Batch invitations:** Sends event invitations to matched volunteers (bulk action)
-3. **Volunteer profiles:** Reviews volunteer history, past org ratings, re-assessment trends
+1. **Talent search:** Filters by badge level, competency, location, past org attestations
+2. **Batch invitations:** Sends event invitations to matched participants (bulk action)
+3. **Profile review:** Reviews history, past org ratings, and re-assessment trends
 4. **Event creation & management:** Posts event details, tracks registrations, manages attendance
 5. **Post-event ratings:** Provides structured feedback (1-5 stars + comments)
 6. **Analytics dashboard:** Views no-show rate, volunteer satisfaction, team composition trends
@@ -541,3 +541,5 @@ Wali (Event attendee) → Leyla (aspiring) → Rashad (experienced) → Nigar (o
 - [[COMPETITIVE-ANALYSIS.md]] — Positioning vs. Credly, LinkedIn, VolunteerHub
 - [[../DECISIONS.md]] — Product decisions influenced by persona feedback
 - Major event strategy (May 2026 launch timing)
+
+

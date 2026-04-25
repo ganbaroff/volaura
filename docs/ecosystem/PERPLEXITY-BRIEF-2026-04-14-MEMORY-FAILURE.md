@@ -77,7 +77,7 @@
 
 **Company state:** VOLAURA Inc. = Delaware C-Corp через Stripe Atlas, PENDING регистрация. Banking plan: Mercury → Relay → Brex → Wise. 83(b) within 30 days of share issuance. Delaware franchise tax 2027-03-01, Form 1120 2027-04-15.
 
-**Open debt (D-001..D-012):** D-001 Railway redeploy (30 сек, CEO), D-002 Phase 1 migration (Atlas), D-005 GitHub secrets rename (CEO), D-007 Pre-launch blockers (Atlas, ~4 дня до WUF13), D-011 Azure/ElevenLabs keys (CEO), D-012 GITHUB_PAT_ACTIONS (CEO).
+**Open debt (D-001..D-012):** D-001 Railway redeploy (30 сек, CEO), D-002 Phase 1 migration (Atlas), D-005 GitHub secrets rename (CEO), D-007 Pre-launch blockers (Atlas, urgent launch blocker at the time), D-011 Azure/ElevenLabs keys (CEO), D-012 GITHUB_PAT_ACTIONS (CEO).
 
 ---
 
@@ -135,3 +135,4 @@
 
 *Relayed by Cowork 2026-04-14 ~09:30 UTC. Source tone: CEO, not softened.*
 *Sources used: `docs/ecosystem/SYNC-2026-04-14.md`, `docs/BRAIN.md`, `memory/atlas/journal.md`, `.claude/rules/atlas-operating-principles.md`, `memory/swarm/episodic_inbox/`, `.obsidian/plugins/`, repo mtime scan 2026-04-14 00:00–09:30.*
+

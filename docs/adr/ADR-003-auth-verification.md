@@ -10,7 +10,7 @@
 
 ## Context
 
-Volaura is a verified volunteer credential platform where AURA scores must be trustworthy. Users need seamless passwordless authentication, and volunteers need transparent credentialing at three levels: self-assessed (default), organization-attested (org vouches), and peer-verified (3+ Gold+ volunteers confirm). This ADR defines how authentication flows work, how JWT verification protects the API, how the 3-level verification system builds trust, and how role-based access controls (RLS + API roles) prevent unauthorized data access.
+Volaura is a verified professional talent platform where AURA scores must be trustworthy. Users need seamless passwordless authentication, and talent profiles need transparent credentialing at three levels: self-assessed (default), organization-attested (org vouches), and peer-verified (3+ Gold+ peers confirm). This ADR defines how authentication flows work, how JWT verification protects the API, how the 3-level verification system builds trust, and how role-based access controls (RLS + API roles) prevent unauthorized data access.
 
 ### Requirements
 
@@ -23,11 +23,11 @@ Volaura is a verified volunteer credential platform where AURA scores must be tr
 **Verification (Trust Layers):**
 - Level 1: Self-assessed (user completes assessment, gets AURA score, badge marked "Self-Assessed")
 - Level 2: Org-attested (organization admin confirms competencies, raises trust multiplier to 1.15x)
-- Level 3: Peer-verified (3+ Gold+ volunteers micro-assess competencies, multiplier 1.25x, creates network effect)
+- Level 3: Peer-verified (3+ Gold+ peers micro-assess competencies, multiplier 1.25x, creates network effect)
 
 **Authorization:**
-- Volunteers: read own profile, take assessments, view events, see public profiles
-- Org admins: manage organization, attest volunteers, search volunteer pool, create events
+- Users: read own profile, take assessments, view events, see public profiles
+- Org admins: manage organization, attest talent, search verified profile pool, create events
 - Platform admins: full access, verify organizations, audit trails
 
 **Security:**
@@ -412,7 +412,7 @@ Verifier (Gold+)           Browser              FastAPI              Supabase
 **Effect on AURA:**
 - Peer-verified competencies: 1.25x trust multiplier
 - If communication raw = 85, after peer verify = 85 * 1.25 = 106.25 (capped at 100)
-- Creates network effect: volunteers need other verified volunteers to reach elite status
+- Creates network effect: users need other verified peers to reach the highest trust state
 
 **User sees:**
 ```
@@ -1144,3 +1144,4 @@ Ahmed's profile now shows:
 - [[ADR-002-database-schema]]: Profile, competency, assessment schema
 - [[ADR-004-api-security]]: API rate limiting, API key management, audit logs
 - [[ADR-005-aura-scoring]]: AURA composite score calculation with multipliers
+

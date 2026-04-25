@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-Organizations are the demand-side of Volaura's marketplace. They have the events, the volunteer needs, the attestation authority. Acquiring orgs creates a flywheel: events → volunteer engagement → attestations → improved AURA scores → more valuable volunteer pool → more org demand.
+Organizations are the demand-side of Volaura's marketplace. They have the events, staffing needs, and attestation authority. Acquiring orgs creates a flywheel: events → participant engagement → attestations → improved AURA scores → more valuable talent pool → more org demand.
 
 **Target Orgs:**
 - NGOs in Baku (international + local)
@@ -38,19 +38,19 @@ Awareness → Interest → Trial (Free tier) → Activation (1st event) → Rete
 - Local youth organizations (Azərbaycan Gənclik Xidməti)
 
 **Outreach Angle:**
-"Stop guessing if volunteers will show up. AURA scores predict reliability, engagement, and fit. Your best volunteers are verified."
+"Stop guessing who will show up. AURA scores predict reliability, engagement, and fit. Your strongest people are verified."
 
 **Pain Points:**
 - 30-40% no-show rate on events
 - Hours spent manually vetting
-- Difficulty retaining good volunteers
-- Can't assess competency mix of volunteer pool
+- Difficulty retaining strong contributors
+- Can't assess competency mix of their event talent pool
 
 **Value Props:**
 - Pre-vetted talent pool (reduce manual screening)
 - Reliability predictor (AURA ≈ likelihood to show up, perform well)
 - Competency matching (find leadership talent, not just hands)
-- Volunteer retention (attestations keep people engaged)
+- Participant retention (attestations keep people engaged)
 
 ---
 
@@ -66,7 +66,7 @@ Awareness → Interest → Trial (Free tier) → Activation (1st event) → Rete
 - Festival coordinators
 
 **Outreach Angle:**
-"Post your event on Volaura, get access to 500+ verified volunteers. No more late confirmations or unreliable staff."
+"Post your event on Volaura, get access to 500+ verified profiles. No more late confirmations or unreliable staffing."
 
 **Pain Points:**
 - Finding enough volunteers close to event date
@@ -74,7 +74,7 @@ Awareness → Interest → Trial (Free tier) → Activation (1st event) → Rete
 - Hard to coordinate follow-ups post-event
 
 **Value Props:**
-- Access to pre-screened volunteer pool
+- Access to a pre-screened talent pool
 - Event-specific competencies (e.g., "Looking for multilingual guides")
 - Post-event attestation (verify actual performance, keep volunteers engaged)
 
@@ -127,7 +127,7 @@ Awareness → Interest → Trial (Free tier) → Activation (1st event) → Rete
 **Value Props:**
 - Employee engagement platform
 - Volunteer hour tracking
-- Sustainability reporting (verified volunteer pool, hours worked)
+- Sustainability reporting (verified participant pool, hours worked)
 - Competitive differentiator (CSR brand)
 
 ---
@@ -227,9 +227,9 @@ Paid Conversion (Growth or Enterprise tier)
    Hi {FirstName},
 
    I noticed {Org Name} is doing great work in {sector}.
-   Volunteer coordination is hard—we built Volaura to make it easier.
+   Event staffing coordination is hard—we built Volaura to make it easier.
 
-   Quick win: Pre-verify your volunteer pool, reduce no-shows by 25%.
+   Quick win: Pre-verify your event talent pool, reduce no-shows by 25%.
 
    Worth a 15-min call? Free tier access for your next event.
 
@@ -244,21 +244,21 @@ Paid Conversion (Growth or Enterprise tier)
 **Email Outreach:**
 1. **List building:** Use LinkedIn, org websites, Baku business directories to find emails
 2. **Subject line (A/B test):**
-   - Option A: "Reduce volunteer no-shows at {Org Name}"
+   - Option A: "Reduce event no-shows at {Org Name}"
    - Option B: "How {Competitor Org} uses Volaura"
-   - Option C: "Free volunteer verification for {Org Name} this month"
+   - Option C: "Free talent verification for {Org Name} this month"
 3. **Email template:**
    ```
-   Subject: Reduce volunteer no-shows at {Org Name}
+   Subject: Reduce event no-shows at {Org Name}
 
    Hi {Name},
 
-   Volunteer management is tough. 30-40% no-shows, hours spent vetting, no way to track impact.
+   Event staffing is tough. 30-40% no-shows, hours spent vetting, no way to track impact.
 
    Volaura solves this:
-   - Pre-verified volunteer pool (vetted by AI + organizations)
+   - Pre-verified talent pool (vetted by AI + organizations)
    - AURA score predicts reliability (85+ AURA = 95% show-up rate)
-   - Post-event attestations (recognize volunteer effort, keep them engaged)
+   - Post-event attestations (recognize participant effort, keep them engaged)
 
    We're offering free access to {Org Name} for your next event—no credit card needed.
 
@@ -349,7 +349,7 @@ What's next:
 1. We'll verify {OrgName} within 24 hours
 2. You'll get access to your org dashboard
 3. Post your first event
-4. Start searching verified volunteers
+4. Start searching verified profiles
 
 Questions? Reply to this email or [join our Slack community for orgs]
 
@@ -436,15 +436,15 @@ Subject: Your event is live on Volaura
 
 Hi {ContactName},
 
-{EventName} is now searchable to 500+ verified volunteers.
+{EventName} is now searchable to 500+ verified profiles.
 
 Share with your network:
 {Org dashboard link}
 
 Next:
-1. Wait for volunteer applications
-2. Accept/reject volunteers
-3. Send event details to accepted volunteers
+1. Wait for applications
+2. Accept/reject applicants
+3. Send event details to accepted attendees
 4. After event, attest their skills
 
 Questions? See docs or reply here.
@@ -670,7 +670,7 @@ For government programs and universities, the sales cycle is longer. Separate pl
 3. **Custom solutions:**
    - Faster to market (no build time)
    - Maintenance-free (cloud)
-   - Instant access to 500+ volunteer pool
+   - Instant access to 500+ verified profiles
 
 ---
 
@@ -687,13 +687,13 @@ For government programs and universities, the sales cycle is longer. Separate pl
 
 ### Template 1: Cold Email (NGO)
 ```
-Subject: Reduce {OrgName} volunteer no-shows by 25%
+Subject: Reduce {OrgName} event no-shows by 25%
 
 Hi {Name},
 
 I noticed {OrgName} is doing great work in {sector}.
 
-Volunteer coordination is one of your biggest bottlenecks, right?
+Event staffing is one of your biggest bottlenecks, right?
 - 30% no-show rate
 - Hours spent vetting
 - Hard to track impact
@@ -701,9 +701,9 @@ Volunteer coordination is one of your biggest bottlenecks, right?
 We built Volaura to solve this.
 
 In 3 minutes, we can show you:
-- Pre-verified volunteers matched to your needs
+- Pre-verified profiles matched to your needs
 - AURA scores that predict reliability (85+ = 95% show-up)
-- Post-event attestations (recognize, retain top volunteers)
+- Post-event attestations (recognize, retain top contributors)
 
 Free access for your next event. No credit card.
 
@@ -723,7 +723,7 @@ Hi {Name},
 
 Great to meet you at our launch event! I hope it was a productive day.
 
-I wanted to follow up on our chat about {OrgName}'s volunteer challenges.
+I wanted to follow up on our chat about {OrgName}'s staffing challenges.
 
 Here's what we discussed:
 - You need [X volunteers] for [Y events] this year
@@ -731,7 +731,7 @@ Here's what we discussed:
 - No-show rate impacts planning
 
 Volaura is the simplest solution:
-1. Post your event → 500+ verified volunteers see it
+1. Post your event → 500+ verified profiles see it
 2. Invite your picks → they RSVP
 3. After event → attest their skills → improve your pool
 
@@ -753,11 +753,11 @@ Subject: Partnership: Volaura + {OrgName}
 
 Hi {Name},
 
-We're the volunteer credential platform in Baku—building the infrastructure for organizations to find, vet, and develop volunteer talent.
+We're building the infrastructure in Baku for organizations to find, vet, and develop trusted event talent.
 
 I'm reaching out because {OrgName} is a perfect fit for what we're building.
 
-Idea: What if {OrgName} members had access to verified volunteer opportunities?
+Idea: What if {OrgName} members had access to verified opportunities and trusted talent signals?
 
 For you:
 - New revenue stream (or cost savings for members)
@@ -774,4 +774,5 @@ Let me know.
 
 {Your Name}
 ```
+
 

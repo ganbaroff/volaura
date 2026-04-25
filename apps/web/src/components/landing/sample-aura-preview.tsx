@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils/cn";
 
 /**
  * Sunk-Cost Registration — Constitution v1.7 / VOLAURA Rule 28.
- * WUF13 P0 #12.
  *
  * Shows a fictional "Leyla" AURA profile (Communication 74, Silver tier) on the
  * landing page before the visitor ever creates an account. The bet: seeing the

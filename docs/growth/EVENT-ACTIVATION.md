@@ -41,7 +41,7 @@ Value Props (3 columns):
 
 2. "See the live leaderboard"
    Icon: chart
-   Copy: "Watch real-time rankings of top volunteers updating live"
+   Copy: "Watch real-time rankings of top profiles updating live"
 
 3. "Share your badge"
    Icon: share
@@ -375,7 +375,7 @@ export const QUICK_MODE_CONFIG = {
 
 **Process:**
 - Org rep fills short form: org name, sector, contact
-- Demo: "See the verified volunteers matching your needs"
+- Demo: "See the verified profiles matching your needs"
 - Follow-up: Email within 48 hours with onboarding link
 
 **Targets:**
@@ -590,3 +590,5 @@ Copy:
 - [[EMAIL-STRATEGY]] — Pre, during, post-event emails
 - [[ORG-ACQUISITION]] — Organization meetings at booth
 - [[CLAUDE.md]] — Tech stack for offline assessment, live leaderboard
+
+

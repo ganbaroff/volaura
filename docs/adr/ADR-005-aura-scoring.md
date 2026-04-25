@@ -261,9 +261,9 @@ AURA Score  →  Badge Tier
 ```
 
 **Messaging:**
-- **Platinum:** "Elite volunteer. Ready for leadership roles."
+- **Platinum:** "Elite performer. Ready for leadership roles."
 - **Gold:** "Trusted contributor. Proven reliability."
-- **Silver:** "Emerging volunteer. Growing capability."
+- **Silver:** "Emerging contributor. Growing capability."
 - **Bronze:** "Getting started. First events recommended."
 - **None:** "Assessment incomplete or scores too low. Complete assessment to earn a badge."
 
@@ -477,8 +477,8 @@ Volunteer can download or share in 3 formats:
 │  🔗 Verify: volaura.az/u/[handle]   │
 │     [QR code]                        │
 │                                      │
-│  Volaura — Verified Volunteer       │
-│  Talent Platform                    │
+│  Volaura — Verified Talent          │
+│  Platform                           │
 └──────────────────────────────────────┘
 ```
 
@@ -1352,3 +1352,4 @@ A: Badge is "none," total_score is NULL (not 0). Dashboard shows "Assessment inc
 
 **Approved by:** Yusif (product), Claude (architecture)
 **Last Updated:** 2026-03-22
+

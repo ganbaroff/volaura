@@ -3,7 +3,7 @@
 
 ## Why 10 Before 5,000
 
-WUF13 target is 5,000 users. But zero real users have completed the full journey end-to-end. Before scaling, we need 10 humans who:
+The long-tail target may be 5,000 users. But zero real users have completed the full journey end-to-end. Before scaling, we need 10 humans who:
 1. Sign up independently (no hand-holding)
 2. Complete assessment (at least 1 competency)
 3. Receive AURA score (pipeline must work)
@@ -53,11 +53,11 @@ If this loop works for 10, it works for 5,000. If it breaks, we fix it before sp
 
 ### Week 2: Recruit 10 Beta Users
 
-**Source:** Yusif's personal network — people who understand volunteering.
+**Source:** Yusif's personal network — people who understand high-trust coordination work.
 Not random. Not "anyone with a phone." People who will give honest feedback.
 
 **Target profile:**
-- Azerbaijani volunteers (WUF13, COP29, CIS Games alumni)
+- Azerbaijani professionals from Yusif's event and operations network
 - Age 20-35, speak Azerbaijani or English
 - Have used at least 1 professional platform (LinkedIn, Boss.az)
 
@@ -138,7 +138,7 @@ If the loop works (5+ out of 10 complete assessment AND receive score):
 - This is where B2B revenue begins (Starter tier: 49 AZN/mo)
 
 **Phase 3 Scale (Users 1,000-5,000):**
-- WUF13 attendee funnel
+- event/community partner funnel
 - Press/content push (LinkedIn articles, Telegram channels)
 - Referral incentive program (crystals for sharing)
 

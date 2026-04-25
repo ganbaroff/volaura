@@ -4,7 +4,7 @@
 
 ---
 
-I'm building Volaura, a volunteer talent platform with Next.js 14 App Router and Supabase.
+I'm building Volaura, a verified talent platform with Next.js 14 App Router and Supabase.
 
 Please review these implementation decisions and flag any issues or better approaches based on current best practices (2025-2026):
 
@@ -76,3 +76,4 @@ Questions:
 - Any breaking changes in Tailwind v4 that affect shadcn components?
 
 Please search for recent issues, GitHub discussions, and official docs. Flag anything that could break in production.
+

@@ -10,7 +10,7 @@
 
 ## SYSTEM CONTEXT
 
-**Volaura** is a verified volunteer credential platform for Azerbaijan. Volunteers take an adaptive assessment across 8 competencies, receive an AURA composite score (0-100) with a badge tier (Platinum/Gold/Silver/Bronze), and share their verified profile with organizations.
+**Volaura** is a verified talent platform for Azerbaijan. Users take an adaptive assessment across 8 competencies, receive an AURA composite score (0-100) with a badge tier (Platinum/Gold/Silver/Bronze), and share their verified profile with organizations.
 
 **Tech Stack (MANDATORY):**
 - Python 3.11+ with FastAPI (async)
@@ -1484,7 +1484,7 @@ def _welcome_template(context: dict) -> str:
     return f"""
     <h1>Salam, {name}! 👋</h1>
     <p>Volaura-ya xoş gəldiniz!</p>
-    <p>AURA balınızı kəşf edin və verified volunteer olun.</p>
+    <p>AURA balınızı kəşf edin və təsdiqlənmiş profilinizi qurun.</p>
     <a href="https://volaura.com/assessments">Qiymətləndirməyə başla</a>
     """
 
@@ -1601,3 +1601,4 @@ async def recalculate_aura(db: SupabaseUser, user_id: UUID) -> dict:
 - [ ] All endpoints tested with rate limits
 - [ ] JWT token validation working
 - [ ] CORS properly configured
+

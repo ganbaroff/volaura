@@ -78,12 +78,12 @@ Each journey maps a persona through every screen they touch. Columns:
 | 7 | Uses Smart Search with filters | `/{locale}/discover` (search mode) | Focused | HIGH | Semantic search uses pgvector embeddings. Quality depends on volunteer profile completeness (bio, skills). Min-AURA and badge-tier filters exist. But: no competency-specific filter. Cannot search "leadership > 80". | Competency-level filter (e.g., "leadership >= 75"). Sort by specific competency score. Industry/role tags on volunteers. | Built but lacks competency-level filters |
 | 8 | Clicks on a volunteer | `/{locale}/u/{username}` | Evaluating | Medium | Public profile shows: AURA score, radar chart, badge, languages, location. But: no work history, no portfolio, no endorsements, no assessment details. | Assessment completion dates. Competency score trend over time. Peer endorsements. "About" section with professional summary. | Built but profile is thin |
 | 9 | Clicks "Request Introduction" | IntroRequestButton on profile | Decisive | LOW | Button exists and sends request. But: no confirmation of what happens next. No expected response time. No cost indicator. | Confirmation modal: "We'll notify {name} and connect you within 24h." Email notification to both parties. Request status tracking in org dashboard. | Partial -- button built, follow-through unclear |
-| 10 | Goes to Org Volunteers dashboard | `/{locale}/org-volunteers` | Evaluating | Medium | Shows: total assigned, completed, avg AURA, badge distribution, top volunteers, filterable list with search. Saved searches with notification toggle. | Comparison view (side-by-side volunteer profiles). Export to CSV/PDF. Team shortlist feature. Integration with ATS (Applicative Tracking System) via API. | Built |
+| 10 | Goes to Org Volunteers dashboard | `/{locale}/org-volunteers` | Evaluating | Medium | Shows: total assigned, completed, avg AURA, badge distribution, top candidates, filterable list with search. Saved searches with notification toggle. | Comparison view (side-by-side volunteer profiles). Export to CSV/PDF. Team shortlist feature. Integration with ATS (Applicative Tracking System) via API. | Built |
 | 11 | Saves a search with notification | `/{locale}/org-volunteers` (save modal) | Satisfied | Low | Save search modal works. Notification toggle exists. But: notification delivery mechanism unclear -- where do notifications go? | Email digest of new matches. In-app notification center. Webhook/API for ATS integration. | Partial -- save works, delivery unclear |
 | 12 | Returns weekly to check new talent | `/{locale}/org-volunteers` or `/{locale}/discover` | Routine | Medium | No re-engagement mechanism. No "new since last visit" indicator. No email summary. | Weekly email: "3 new Gold+ volunteers matched your saved search." Push notification for high-match candidates. | Not Built |
 
 **Critical Drop-off Points:**
-1. **Step 2 (Signup)** -- No dedicated org landing page. Nigar sees the same signup form as a 22-year-old volunteer. Zero enterprise credibility signals.
+1. **Step 2 (Signup)** -- No dedicated org landing page. Nigar sees the same signup form as a 22-year-old individual candidate. Zero enterprise credibility signals.
 2. **Step 6 (Discover)** -- If the talent pool is small, Nigar sees 5 volunteers and concludes the platform is not ready. She never comes back.
 3. **Step 12 (Retention)** -- No re-engagement. Without automated notifications of new matches, Nigar forgets the platform exists after 1 week.
 
@@ -211,3 +211,4 @@ Each journey maps a persona through every screen they touch. Columns:
 8. **P2: Competency-level search filters** -- Let Nigar search "leadership >= 75 AND communication >= 70".
 9. **P2: WhatsApp share button** -- Add to ShareButtons component. Dominant in AZ market.
 10. **P3: Crystal spending mechanism** -- Profile boost, premium analytics, additional assessment slots.
+

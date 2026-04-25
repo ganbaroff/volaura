@@ -135,7 +135,7 @@ All share formats should include OG (Open Graph) tags so shared links display ri
   - OG tags for rich preview:
     - `og:title`: "{Name}'s AURA Score: {Score}"
     - `og:image`: Dynamic image of badge + score
-    - `og:description`: "Verified volunteer on Volaura"
+    - `og:description`: "Verified profile on Volaura"
 - **Privacy:** Public by default; users can opt to anonymous after signup
 - **Implementation:** Dynamic route in Next.js App Router with generateStaticParams
 
@@ -465,3 +465,4 @@ Beyond badges, these mechanics keep users engaged and sharing.
 - [[EMAIL-STRATEGY]] — Transactional emails trigger sharing
 - [[ORG-ACQUISITION]] — Organizations drive more events, enabling streaks
 - [[CLAUDE.md]] — Tech stack (Zustand for share modal state, TanStack Query for leaderboard)
+

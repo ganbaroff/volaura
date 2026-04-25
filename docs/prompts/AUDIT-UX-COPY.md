@@ -244,7 +244,7 @@ Current errors are **command-style** ("Your session has expired. Please log in a
 
 ### Tone Pattern
 Current empty states use **encouragement + call-to-action**:
-- `profile.noScore.desc`: "...unlock your verified volunteer profile and discover opportunities." (motivating)
+- `profile.noScore.desc`: "...unlock your verified profile and discover opportunities." (motivating)
 - `events.empty.desc`: "Check back soon..." (hopeful, not sad)
 
 **Prompt gap:** New empty states might forget the encouragement angle and go too literal.
@@ -556,3 +556,4 @@ The UX-COPY-AZ-EN.md correctly uses:
 5. **Create i18n generation checklist** for future sprints
 
 This audit is complete. Recommendations are ready for implementation.
+

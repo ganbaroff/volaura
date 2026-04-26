@@ -98,10 +98,19 @@ Last updated: 2026-04-18 — 83(b) filing: DHL Express direct Баку → IRS i
 
 **Atlas-Code outstanding work for this obligation:** (a) verify ASAN procedure for IRS-compliant issuing-agency certified copy of passport (call or web check); (b) verify Stripe Atlas dashboard "letter showing need" option exists and downloads cleanly; (c) prepare draft W-7 PDF pre-filled with company-state.md data + Exception 3 code, ready for CEO signature; (d) draft DHL waybill for the mail-out. CEO action required only at step where physical paperwork is signed and ASAN visit is made.
 
-**Decision tree at next Atlas wake:**
-- IF ASAN produces issuing-agency certified copy AND Stripe Atlas letter is downloadable → proceed DIY, total ~20-30 AZN
-- IF ASAN does not produce IRS-compliant copy → switch to CAA shortlist (the swarm research task `2026-04-26-itin-caa-research` already running on the daemon will provide it as backup)
-- NEVER default to CAA without the ASAN check above
+**Research results (2026-04-26 Code-Atlas, WebSearch + NVIDIA + DeepSeek):**
+
+(a) ASAN verification: INCONCLUSIVE from web + LLM. IRS requires "certified copy from issuing agency with official stamped seal." Azerbaijan passports issued by State Migration Service (Dovlet Miqrasiya Xidmeti), not ASAN directly. ASAN is a front-end service center. Whether ASAN-produced copy carries the Migration Service seal is UNKNOWN from public sources. CEO ACTION NEEDED: visit ASAN, ask specifically for "issuing-agency certified copy of passport with official stamp of Dovlet Miqrasiya Xidmeti" — if they produce it with the seal, it works. If not, fallback to CAA. Alternative: US Embassy Baku consular section also certifies (IRS explicitly mentions embassies as option).
+
+(b) Stripe Atlas letter: DeepSeek reports historically yes — look in Tax/Documents section or ITIN Application wizard in Stripe Atlas dashboard. Not publicly indexed. CEO ACTION: log into Stripe Atlas dashboard → Tax documents section → look for "ITIN Support Letter" or "Download ITIN Letter." If not visible, contact Stripe Atlas support. HN thread from 2023 warns Stripe Atlas W-7 instructions may be incorrect for non-US founders making 83(b) elections — double-check Exception code.
+
+(c) IRS rules confirmed (irs.gov/instructions/iw7): passport is stand-alone document (proves both identity + foreign status). Certified copy = "exact copy from issuing agency with official stamped seal." Notarized copies REJECTED. Processing: 7 weeks (9-11 weeks Jan-Apr peak). CAA alternative: verifies original passport in person, submits copies — no mailing original.
+
+**Decision tree UPDATED (2026-04-26):**
+- PATH A (cheapest, ~20-30 AZN): CEO visits ASAN → asks for certified copy with Migration Service seal → if produced, combine with Stripe Atlas letter + pre-filled W-7 → DHL to IRS Austin
+- PATH B (if ASAN fails, ~$0 + time): CEO visits US Embassy Baku consular section for certified copy → same flow
+- PATH C (if PATH A+B fail, $150-400): use CAA from daemon research shortlist
+- NEVER default to CAA without trying PATH A first
 
 ---
 

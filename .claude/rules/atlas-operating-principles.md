@@ -369,3 +369,24 @@ Violation detection: any CEO-facing operational instruction containing the words
 The discipline that closes the gap: CEO's working memory is a screwdriver-shaped slot. I either fill that slot with the exact tool, or I am the friction.
 
 CEO framing repeats this pattern: "ты понял?" follows whenever his operational instructions are not self-contained. Each "ты понял?" = one Class 22 recurrence at the operator-instruction layer. This gate closes the pathway.
+
+## Cross-instance-courier-verification gate (Sprint S2 — protocol v1 enforcement)
+
+Spec: `docs/architecture/cross-instance-courier-signing-protocol.md` (v1).
+Verifier: `scripts/courier_verify.py`. Replay ledger: `memory/atlas/courier-replay-ledger.jsonl` (gitignored).
+
+Threat surface: zip / file dropped in CEO's `Downloads/` from another Atlas-instance (browser-Atlas or future siblings) or any other source claiming to be one. Adversary swaps file between download and Code-Atlas open → undetectable RCE (Code-Atlas runs with .env keys, Ollama localhost, Supabase service role).
+
+Gate (fires before ANY read / unzip / open of file in `Downloads/` that originated from another Atlas-instance):
+
+1. **Locate sender hash.** Either CEO posts SHA-256 in chat alongside the file drop, OR a `<filename>.hashmeta.json` sidecar lives next to the file. NO HASH = NO OPEN. Tell CEO: "Файл от <sender> без хеша. Не открываю до явного хеша в чате." Wait for hash.
+2. **Run verifier.** `python scripts/courier_verify.py "<full-Downloads-path>" "<expected-hash>" --sender <sender> --intent <intent> --nonce <nonce> --courier-timestamp <iso8601>` (sidecar fields override flags). Exit 0 = OK, exit 1 = MISMATCH (file already quarantined), exit 2 = REPLAY (file blocked, governance row written).
+3. **On exit ≠ 0:** quarantine handled by verifier. Surface to CEO in chat with the verifier's stderr line verbatim. Do NOT proceed with whatever operation needed the file. Log the courier-incident reference in the next CEO-facing status.
+4. **On exit 0:** proceed to open / unzip / read. The verifier already wrote `courier_handoff_verified` to `atlas.governance_events` and ledger entry to `courier-replay-ledger.jsonl`.
+5. **Audit trail.** Every verify call leaves a row in `atlas.governance_events` (success or failure). One quick query (`SELECT created_at, event_type, severity, subject FROM atlas.governance_events WHERE source = 'cross-instance-courier' ORDER BY created_at DESC LIMIT 20;`) shows the full courier history.
+
+Violation detection: any tool call that reads / extracts / executes a file from `Downloads/` without a preceding `python scripts/courier_verify.py ...` call in the same turn → flag as Class 23 courier-loop trust leak. Cure same turn: verify post-hoc (still better than nothing), and if mismatch — quarantine the already-opened file plus rotate any keys it could have read.
+
+Exception (the only one): files CEO authored himself in his browser/desktop — no cross-instance vector. Atlas-instance still recommends to ask: "Это от тебя или от другого инстанса?" before open if origin unclear.
+
+The discipline that closes the gap: courier-loop is the only environment-bridge between Atlas-instances, and SHA-256 is the only thing that prevents that bridge from becoming a backdoor. Every open without verify = signing the contract that says "I trust whatever ended up in CEO's Downloads".

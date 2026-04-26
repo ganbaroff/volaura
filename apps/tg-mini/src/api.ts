@@ -1,5 +1,5 @@
 // API client for VOLAURA backend (Railway)
-const API_BASE = import.meta.env.VITE_API_URL || 'https://volauraapi-production.up.railway.app/api'
+const API_BASE = import.meta.env.VITE_API_URL || 'https://modest-happiness-production.up.railway.app/api'
 
 export interface Proposal {
   id: string

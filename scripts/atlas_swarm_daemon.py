@@ -88,6 +88,11 @@ HEAVY_PERSPECTIVES = {
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen3:8b")  # per Constitution Article 0
 
+# Cap concurrent Ollama calls — qwen3:8b on a single GPU returns empty
+# strings under heavy parallel load. 2 is empirically safe on a 5060.
+OLLAMA_CONCURRENCY = int(os.getenv("ATLAS_OLLAMA_CONCURRENCY", "2"))
+_ollama_semaphore: asyncio.Semaphore | None = None
+
 shutdown_requested = False
 
 
@@ -205,21 +210,28 @@ async def call_provider_chain(perspective: dict, prompt: str) -> dict[str, Any]:
         except Exception as e:
             log_event({"event": "provider_failed", "perspective": name, "provider": "cerebras", "error": str(e)})
 
-    # 2. Ollama (local, CEO's 5060 — preferred for light perspectives)
-    if name not in HEAVY_PERSPECTIVES:
+    # 2. Ollama (local, CEO's 5060 — preferred for light perspectives).
+    # Gated by semaphore — qwen3:8b returns empty string under heavy parallel
+    # load on single-GPU. We also reject empty-string responses so the chain
+    # falls through to cloud rather than silently dropping a perspective.
+    if name not in HEAVY_PERSPECTIVES and _ollama_semaphore is not None:
         try:
             from openai import AsyncOpenAI
             client = AsyncOpenAI(api_key="ollama", base_url=f"{OLLAMA_URL.rstrip('/')}/v1")
-            resp = await asyncio.wait_for(
-                client.chat.completions.create(
-                    model=OLLAMA_MODEL,
-                    messages=[{"role": "user", "content": prompt}],
-                    temperature=1.0,
-                    max_tokens=2000,
-                ),
-                timeout=120.0,  # local can be slower
-            )
-            return {"perspective": name, "provider": "ollama", "model": OLLAMA_MODEL, "raw": resp.choices[0].message.content or ""}
+            async with _ollama_semaphore:
+                resp = await asyncio.wait_for(
+                    client.chat.completions.create(
+                        model=OLLAMA_MODEL,
+                        messages=[{"role": "user", "content": prompt}],
+                        temperature=1.0,
+                        max_tokens=2000,
+                    ),
+                    timeout=120.0,  # local can be slower
+                )
+            content = (resp.choices[0].message.content or "").strip()
+            if content and "{" in content:
+                return {"perspective": name, "provider": "ollama", "model": OLLAMA_MODEL, "raw": content}
+            log_event({"event": "provider_failed", "perspective": name, "provider": "ollama", "error": "empty_or_non_json"})
         except Exception as e:
             log_event({"event": "provider_failed", "perspective": name, "provider": "ollama", "error": str(e)})
 
@@ -331,14 +343,19 @@ async def process_task(task_path: Path) -> None:
     votes_dir = work_dir / "perspectives"
     votes_dir.mkdir(exist_ok=True)
     parsed_results = []
-    for r in results:
+    for i, r in enumerate(results):
         if isinstance(r, Exception):
             parsed_results.append({"error": str(r)})
             continue
         parsed = parse_json_safe(r.get("raw", "")) or {}
-        merged = {**r, **parsed}
+        # Authoritative perspective name comes from dispatch, not LLM response.
+        # qwen3:8b sometimes self-renames to generic labels like "product".
+        dispatched_name = chosen[i]["name"] if i < len(chosen) else r.get("perspective", "unknown")
+        merged = {**r, **parsed, "perspective": dispatched_name}
+        if parsed.get("perspective") and parsed["perspective"] != dispatched_name:
+            merged["perspective_name_drift"] = parsed["perspective"]
         parsed_results.append(merged)
-        fname = (merged.get("perspective", "unknown")).replace(" ", "_") + ".json"
+        fname = dispatched_name.replace(" ", "_") + ".json"
         (votes_dir / fname).write_text(
             json.dumps(merged, indent=2, ensure_ascii=False), encoding="utf-8"
         )
@@ -394,9 +411,11 @@ def handle_signal(signum, frame):
 
 
 async def main():
+    global _ollama_semaphore
+    _ollama_semaphore = asyncio.Semaphore(OLLAMA_CONCURRENCY)
     setup_dirs()
-    log_event({"event": "daemon_start", "poll_interval": POLL_INTERVAL_SECONDS})
-    print(f"[daemon] started. polling {PENDING} every {POLL_INTERVAL_SECONDS}s. Ctrl+C to stop.", flush=True)
+    log_event({"event": "daemon_start", "poll_interval": POLL_INTERVAL_SECONDS, "ollama_concurrency": OLLAMA_CONCURRENCY})
+    print(f"[daemon] started. polling {PENDING} every {POLL_INTERVAL_SECONDS}s. Ollama concurrency={OLLAMA_CONCURRENCY}. Ctrl+C to stop.", flush=True)
 
     signal.signal(signal.SIGINT, handle_signal)
     signal.signal(signal.SIGTERM, handle_signal)

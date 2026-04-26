@@ -1,0 +1,29 @@
+{
+  "perspective": "Risk Manager",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"security\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"courier-loop\",\n      \"issue\": \"Zip-file forging enables cross-instance impersonation via fake CEO-relayed prompts\",\n      \"recommended_fix\": \"Implement digital signatures + content-hash verification for all cross-instance handoffs\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"foundation_laws\",\n      \"issue\": \"Courier loop risks inconsistent shame-free language enforcement across instances\",\n      \"recommended_fix\": \"Centralize prompt sanitization before dispatch to all instances\"\n    },\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"governance_events\",\n      \"issue\": \"Missing audit-trail for cross-instance handoffs\",\n      \"recommended_fix\": \"Log all courier exchanges to zeus.governance_events with content-hash + timestamp + source-instance metadata\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": \"compromised_ceo\"\n}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "courier-loop",
+      "issue": "Zip-file forging enables cross-instance impersonation via fake CEO-relayed prompts",
+      "recommended_fix": "Implement digital signatures + content-hash verification for all cross-instance handoffs"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "foundation_laws",
+      "issue": "Courier loop risks inconsistent shame-free language enforcement across instances",
+      "recommended_fix": "Centralize prompt sanitization before dispatch to all instances"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "governance_events",
+      "issue": "Missing audit-trail for cross-instance handoffs",
+      "recommended_fix": "Log all courier exchanges to zeus.governance_events with content-hash + timestamp + source-instance metadata"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": "compromised_ceo",
+  "perspective_name_drift": "security"
+}

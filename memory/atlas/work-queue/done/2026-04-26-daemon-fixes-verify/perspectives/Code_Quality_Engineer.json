@@ -1,0 +1,29 @@
+{
+  "perspective": "Code Quality Engineer",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Atlas Governance\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"courier-loop architecture\",\n      \"issue\": \"CEO-relayed prompts enable impersonation via forged zip files\",\n      \"recommended_fix\": \"Implement cryptographic signing for all cross-instance payloads\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"zeus.governance_events\",\n      \"issue\": \"Missing audit-trail for cross-instance handoffs\",\n      \"recommended_fix\": \"Log all courier transfers with content-hash + timestamp + signing-instance metadata\"\n    },\n    {\n      \"severity\": \"critical\",\n      \"file_or_area\": \"CEO courier pathway\",\n      \"issue\": \"Compromised CEO laptop enables full system takeover\",\n      \"recommended_fix\": \"Deploy end-to-end encryption with hardware-backed key storage\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": \"CEO compromise creates irreversible constitutional violation risk\"\n}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "courier-loop architecture",
+      "issue": "CEO-relayed prompts enable impersonation via forged zip files",
+      "recommended_fix": "Implement cryptographic signing for all cross-instance payloads"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "zeus.governance_events",
+      "issue": "Missing audit-trail for cross-instance handoffs",
+      "recommended_fix": "Log all courier transfers with content-hash + timestamp + signing-instance metadata"
+    },
+    {
+      "severity": "critical",
+      "file_or_area": "CEO courier pathway",
+      "issue": "Compromised CEO laptop enables full system takeover",
+      "recommended_fix": "Deploy end-to-end encryption with hardware-backed key storage"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": "CEO compromise creates irreversible constitutional violation risk",
+  "perspective_name_drift": "Atlas Governance"
+}

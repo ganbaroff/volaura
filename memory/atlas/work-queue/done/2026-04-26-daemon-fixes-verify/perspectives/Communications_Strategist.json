@@ -1,0 +1,29 @@
+{
+  "perspective": "Communications Strategist",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"constitutional-compliance\",\n  \"findings\": [\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"courier-loop architecture\",\n      \"issue\": \"Zip-file relay creates impersonation vector via forged CEO-prompts or compromised Downloads folder\",\n      \"recommended_fix\": \"Implement digital signature verification for all cross-instance handoffs\"\n    },\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"governance_events logging\",\n      \"issue\": \"Missing audit-trail for cross-instance handoffs violates constitutional transparency requirements\",\n      \"recommended_fix\": \"Mandatory content-hash + courier-timestamp + signing-instance metadata logging\"\n    },\n    {\n      \"severity\": \"fail\",\n      \"file_or_area\": \"CEO-courier security\",\n      \"issue\": \"Compromised CEO device enables full system takeover via social-engineering/malware\",\n      \"recommended_fix\": \"MFA + secure communication channels for all courier operations\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": \"CEO-courier compromise represents existential risk to constitutional integrity\"\n}",
+  "findings": [
+    {
+      "severity": "warn",
+      "file_or_area": "courier-loop architecture",
+      "issue": "Zip-file relay creates impersonation vector via forged CEO-prompts or compromised Downloads folder",
+      "recommended_fix": "Implement digital signature verification for all cross-instance handoffs"
+    },
+    {
+      "severity": "warn",
+      "file_or_area": "governance_events logging",
+      "issue": "Missing audit-trail for cross-instance handoffs violates constitutional transparency requirements",
+      "recommended_fix": "Mandatory content-hash + courier-timestamp + signing-instance metadata logging"
+    },
+    {
+      "severity": "fail",
+      "file_or_area": "CEO-courier security",
+      "issue": "Compromised CEO device enables full system takeover via social-engineering/malware",
+      "recommended_fix": "MFA + secure communication channels for all courier operations"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": "CEO-courier compromise represents existential risk to constitutional integrity",
+  "perspective_name_drift": "constitutional-compliance"
+}

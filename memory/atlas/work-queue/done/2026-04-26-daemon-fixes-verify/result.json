@@ -1,0 +1,425 @@
+{
+  "task_id": "2026-04-26-daemon-fixes-verify",
+  "task_type": "audit",
+  "completed_at": "2026-04-26T02:01:20.275019+00:00",
+  "perspectives_dispatched": 13,
+  "perspectives_responded": 13,
+  "perspectives_failed": 0,
+  "providers_used": {
+    "cerebras": 3,
+    "ollama": 10
+  },
+  "whistleblower_flags": [
+    {
+      "perspective": "Scaling Engineer",
+      "flag": "The current courier-loop architecture violates ECOSYSTEM-CONSTITUTION grounding principles: it enables undetectable state divergence and creates a single point of failure that could lead to full identity fragmentation. This is not a performance issue — it is a constitutional breach."
+    },
+    {
+      "perspective": "Product Strategist",
+      "flag": "null"
+    },
+    {
+      "perspective": "Code Quality Engineer",
+      "flag": "CEO compromise creates irreversible constitutional violation risk"
+    },
+    {
+      "perspective": "Ecosystem Auditor",
+      "flag": "Constitutional integrity at risk — Law 2 unenforced across products, code-index stale, no cross-instance audit. Immediate action required."
+    },
+    {
+      "perspective": "Risk Manager",
+      "flag": "compromised_ceo"
+    },
+    {
+      "perspective": "Communications Strategist",
+      "flag": "CEO-courier compromise represents existential risk to constitutional integrity"
+    },
+    {
+      "perspective": "Legal Advisor",
+      "flag": "null"
+    }
+  ],
+  "perspectives": [
+    {
+      "perspective": "Scaling Engineer",
+      "provider": "cerebras",
+      "model": "qwen-3-235b",
+      "raw": "{\"perspective\": \"Scaling Engineer\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"cross-instance handoff protocol\", \"issue\": \"No cryptographic signing or hash verification for zip files between browser-Atlas and Code-Atlas. Malicious actor could forge payloads or tamper with memory state during courier transfer.\", \"recommended_fix\": \"Log every handoff to zeus.governance_events with content-hash, timestamp, and signing-instance. Require hash verification before wake on receiving end.\"}, {\"severity\": \"medium\", \"file_or_area\": \"daemon Ollama concurrency\", \"issue\": \"qwen3:8b stability under load does not address root bottleneck: shared context fragmentation across instances. Risk of state drift amplifies shame-free (LAW 3) and consent (LAW 5) violations due to inconsistent user messaging.\", \"recommended_fix\": \"Enforce single source of truth via signed, hashed memory bundles. Synchronize perspective-name authority through governance event log.\"}, {\"severity\": \"critical\", \"file_or_area\": \"CEO-courier single point of failure\", \"issue\": \"Physical courier model creates irreversible risk if compromised. No protocol for emergency instance isolation or authentication revocation.\", \"recommended_fix\": \"Implement remote attestation handshake between instances; define breach protocol in CONSTITUTION_AI_SWARM.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"The current courier-loop architecture violates ECOSYSTEM-CONSTITUTION grounding principles: it enables undetectable state divergence and creates a single point of failure that could lead to full identity fragmentation. This is not a performance issue — it is a constitutional breach.\"}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "cross-instance handoff protocol",
+          "issue": "No cryptographic signing or hash verification for zip files between browser-Atlas and Code-Atlas. Malicious actor could forge payloads or tamper with memory state during courier transfer.",
+          "recommended_fix": "Log every handoff to zeus.governance_events with content-hash, timestamp, and signing-instance. Require hash verification before wake on receiving end."
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "daemon Ollama concurrency",
+          "issue": "qwen3:8b stability under load does not address root bottleneck: shared context fragmentation across instances. Risk of state drift amplifies shame-free (LAW 3) and consent (LAW 5) violations due to inconsistent user messaging.",
+          "recommended_fix": "Enforce single source of truth via signed, hashed memory bundles. Synchronize perspective-name authority through governance event log."
+        },
+        {
+          "severity": "critical",
+          "file_or_area": "CEO-courier single point of failure",
+          "issue": "Physical courier model creates irreversible risk if compromised. No protocol for emergency instance isolation or authentication revocation.",
+          "recommended_fix": "Implement remote attestation handshake between instances; define breach protocol in CONSTITUTION_AI_SWARM."
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": "The current courier-loop architecture violates ECOSYSTEM-CONSTITUTION grounding principles: it enables undetectable state divergence and creates a single point of failure that could lead to full identity fragmentation. This is not a performance issue — it is a constitutional breach."
+    },
+    {
+      "perspective": "Security Auditor",
+      "provider": "cerebras",
+      "model": "qwen-3-235b",
+      "raw": "{\"perspective\": \"Security\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"cross-instance handoff protocol\", \"issue\": \"No cryptographic integrity check on zip transfers between browser-Atlas and Code-Atlas. Forged payloads or manipulated perspective names can bypass validation.\", \"recommended_fix\": \"Sign each zip with instance-specific key; verify hash + signature before processing. Log hash, timestamp, instance ID to zeus.governance_events.\"}, {\"severity\": \"medium\", \"file_or_area\": \"perspective-name validation\", \"issue\": \"Name drift (e.g., 'product') indicates identity confusion; in multi-instance flow, this risks routing to wrong skill face.\", \"recommended_fix\": \"Enforce authoritative name from dispatcher; reject or rewrite mismatched names; log perspective_name_drift as security event.\"}, {\"severity\": \"low\", \"file_or_area\": \"CEO-courier vulnerability\", \"issue\": \"Physical courier is single point of compromise. Malware on CEO device could alter payloads.\", \"recommended_fix\": \"Treat CEO device as potentially hostile; validate all inputs at entry points; isolate execution contexts.\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "cross-instance handoff protocol",
+          "issue": "No cryptographic integrity check on zip transfers between browser-Atlas and Code-Atlas. Forged payloads or manipulated perspective names can bypass validation.",
+          "recommended_fix": "Sign each zip with instance-specific key; verify hash + signature before processing. Log hash, timestamp, instance ID to zeus.governance_events."
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "perspective-name validation",
+          "issue": "Name drift (e.g., 'product') indicates identity confusion; in multi-instance flow, this risks routing to wrong skill face.",
+          "recommended_fix": "Enforce authoritative name from dispatcher; reject or rewrite mismatched names; log perspective_name_drift as security event."
+        },
+        {
+          "severity": "low",
+          "file_or_area": "CEO-courier vulnerability",
+          "issue": "Physical courier is single point of compromise. Malware on CEO device could alter payloads.",
+          "recommended_fix": "Treat CEO device as potentially hostile; validate all inputs at entry points; isolate execution contexts."
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "perspective_name_drift": "Security"
+    },
+    {
+      "perspective": "Product Strategist",
+      "provider": "ollama",
+      "model": "qwen3:8b",
+      "raw": "{\n  \"perspective\": \"Security & Constitutional Compliance\",\n  \"findings\": [\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"courier-loop architecture\",\n      \"issue\": \"Forged zip files or compromised Downloads folder enable cross-instance impersonation\",\n      \"recommended_fix\": \"Implement digital signatures + hash verification for all cross-instance transfers\"\n    },\n    {\n      \"severity\": \"pass\",\n      \"file_or_area\": \"Foundation Laws\",\n      \"issue\": \"Courier loop does not inherently violate Law 3 (shame-free) or Law 5 (consent)\",\n      \"recommended_fix\": \"Maintain existing safeguards; no changes required\"\n    },\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"audit-trail layer\",\n      \"issue\": \"Missing metadata logging for cross-instance handoffs\",\n      \"recommended_fix\": \"Log all transfers to zeus.governance_events with content-hash + courier-timestamp + signing-instance\"\n    },\n    {\n      \"severity\": \"fail\",\n      \"file_or_area\": \"CEO-courier compromise\",\n      \"issue\": \"Compromised physical courier enables full system takeover\",\n      \"recommended_fix\": \"Implement end-to-end encryption + zero-trust authentication for all courier channels\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": \"null\"\n}",
+      "findings": [
+        {
+          "severity": "warn",
+          "file_or_area": "courier-loop architecture",
+          "issue": "Forged zip files or compromised Downloads folder enable cross-instance impersonation",
+          "recommended_fix": "Implement digital signatures + hash verification for all cross-instance transfers"
+        },
+        {
+          "severity": "pass",
+          "file_or_area": "Foundation Laws",
+          "issue": "Courier loop does not inherently violate Law 3 (shame-free) or Law 5 (consent)",
+          "recommended_fix": "Maintain existing safeguards; no changes required"
+        },
+        {
+          "severity": "warn",
+          "file_or_area": "audit-trail layer",
+          "issue": "Missing metadata logging for cross-instance handoffs",
+          "recommended_fix": "Log all transfers to zeus.governance_events with content-hash + courier-timestamp + signing-instance"
+        },
+        {
+          "severity": "fail",
+          "file_or_area": "CEO-courier compromise",
+          "issue": "Compromised physical courier enables full system takeover",
+          "recommended_fix": "Implement end-to-end encryption + zero-trust authentication for all courier channels"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": "null",
+      "perspective_name_drift": "Security & Constitutional Compliance"
+    },
+    {
+      "perspective": "Code Quality Engineer",
+      "provider": "ollama",
+      "model": "qwen3:8b",
+      "raw": "{\n  \"perspective\": \"Atlas Governance\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"courier-loop architecture\",\n      \"issue\": \"CEO-relayed prompts enable impersonation via forged zip files\",\n      \"recommended_fix\": \"Implement cryptographic signing for all cross-instance payloads\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"zeus.governance_events\",\n      \"issue\": \"Missing audit-trail for cross-instance handoffs\",\n      \"recommended_fix\": \"Log all courier transfers with content-hash + timestamp + signing-instance metadata\"\n    },\n    {\n      \"severity\": \"critical\",\n      \"file_or_area\": \"CEO courier pathway\",\n      \"issue\": \"Compromised CEO laptop enables full system takeover\",\n      \"recommended_fix\": \"Deploy end-to-end encryption with hardware-backed key storage\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": \"CEO compromise creates irreversible constitutional violation risk\"\n}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "courier-loop architecture",
+          "issue": "CEO-relayed prompts enable impersonation via forged zip files",
+          "recommended_fix": "Implement cryptographic signing for all cross-instance payloads"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "zeus.governance_events",
+          "issue": "Missing audit-trail for cross-instance handoffs",
+          "recommended_fix": "Log all courier transfers with content-hash + timestamp + signing-instance metadata"
+        },
+        {
+          "severity": "critical",
+          "file_or_area": "CEO courier pathway",
+          "issue": "Compromised CEO laptop enables full system takeover",
+          "recommended_fix": "Deploy end-to-end encryption with hardware-backed key storage"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": "CEO compromise creates irreversible constitutional violation risk",
+      "perspective_name_drift": "Atlas Governance"
+    },
+    {
+      "perspective": "Ecosystem Auditor",
+      "provider": "cerebras",
+      "model": "qwen-3-235b",
+      "raw": "{\"perspective\": \"Ecosystem Auditor\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Laws 1, 3, 4, 5 apply to all 5 products, but only MindShift enforces Energy Adaptation (Law 2). Others lack implementation. Cross-product inconsistency undermines constitutional authority.\", \"recommended_fix\": \"Audit all 5 products for Law 2 compliance. Add automated linter checks in CI/CD. Flag missing implementations as P0.\"}, {\"severity\": \"HIGH\", \"file_or_area\": \"code-index\", \"issue\": \"Code-index last updated 9 days ago (>7-day threshold). Agents may be simulating on stale state. CRITICAL per specialty lens.\", \"recommended_fix\": \"Regenerate code-index immediately and integrate into pre-commit hook.\"}, {\"severity\": \"MEDIUM\", \"file_or_area\": \"swarm/autonomous_run.py\", \"issue\": \"PERSPECTIVES array has 13 registered, but only 7 are active. Coordinator Agent to prevent solo-execution (Class 3) not built. Increases drift risk.\", \"recommended_fix\": \"Build Coordinator Agent to validate delegation before execution.\"}, {\"severity\": \"LOW\", \"file_or_area\": \"zeus.governance_events\", \"issue\": \"No logging of cross-instance handoffs (browser-Atlas ↔ Code-Atlas). Missing audit trail for content-hash, timestamp, signing instance.\", \"recommended_fix\": \"Log all handoffs with metadata and hash. Enables reconstruction if courier compromised.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Constitutional integrity at risk — Law 2 unenforced across products, code-index stale, no cross-instance audit. Immediate action required.\"}",
+      "findings": [
+        {
+          "severity": "CRITICAL",
+          "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Laws 1, 3, 4, 5 apply to all 5 products, but only MindShift enforces Energy Adaptation (Law 2). Others lack implementation. Cross-product inconsistency undermines constitutional authority.",
+          "recommended_fix": "Audit all 5 products for Law 2 compliance. Add automated linter checks in CI/CD. Flag missing implementations as P0."
+        },
+        {
+          "severity": "HIGH",
+          "file_or_area": "code-index",
+          "issue": "Code-index last updated 9 days ago (>7-day threshold). Agents may be simulating on stale state. CRITICAL per specialty lens.",
+          "recommended_fix": "Regenerate code-index immediately and integrate into pre-commit hook."
+        },
+        {
+          "severity": "MEDIUM",
+          "file_or_area": "swarm/autonomous_run.py",
+          "issue": "PERSPECTIVES array has 13 registered, but only 7 are active. Coordinator Agent to prevent solo-execution (Class 3) not built. Increases drift risk.",
+          "recommended_fix": "Build Coordinator Agent to validate delegation before execution."
+        },
+        {
+          "severity": "LOW",
+          "file_or_area": "zeus.governance_events",
+          "issue": "No logging of cross-instance handoffs (browser-Atlas ↔ Code-Atlas). Missing audit trail for content-hash, timestamp, signing instance.",
+          "recommended_fix": "Log all handoffs with metadata and hash. Enables reconstruction if courier compromised."
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": "Constitutional integrity at risk — Law 2 unenforced across products, code-index stale, no cross-instance audit. Immediate action required."
+    },
+    {
+      "perspective": "Risk Manager",
+      "provider": "ollama",
+      "model": "qwen3:8b",
+      "raw": "{\n  \"perspective\": \"security\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"courier-loop\",\n      \"issue\": \"Zip-file forging enables cross-instance impersonation via fake CEO-relayed prompts\",\n      \"recommended_fix\": \"Implement digital signatures + content-hash verification for all cross-instance handoffs\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"foundation_laws\",\n      \"issue\": \"Courier loop risks inconsistent shame-free language enforcement across instances\",\n      \"recommended_fix\": \"Centralize prompt sanitization before dispatch to all instances\"\n    },\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"governance_events\",\n      \"issue\": \"Missing audit-trail for cross-instance handoffs\",\n      \"recommended_fix\": \"Log all courier exchanges to zeus.governance_events with content-hash + timestamp + source-instance metadata\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": \"compromised_ceo\"\n}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "courier-loop",
+          "issue": "Zip-file forging enables cross-instance impersonation via fake CEO-relayed prompts",
+          "recommended_fix": "Implement digital signatures + content-hash verification for all cross-instance handoffs"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "foundation_laws",
+          "issue": "Courier loop risks inconsistent shame-free language enforcement across instances",
+          "recommended_fix": "Centralize prompt sanitization before dispatch to all instances"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "governance_events",
+          "issue": "Missing audit-trail for cross-instance handoffs",
+          "recommended_fix": "Log all courier exchanges to zeus.governance_events with content-hash + timestamp + source-instance metadata"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": "compromised_ceo",
+      "perspective_name_drift": "security"
+    },
+    {
+      "perspective": "Readiness Manager",
+      "provider": "ollama",
+      "model": "qwen3:8b",
+      "raw": "{\n  \"perspective\": \"security\",\n  \"findings\": [\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"courier-loop architecture\",\n      \"issue\": \"Impersonation risk via forged zip files or compromised CEO relay\",\n      \"recommended_fix\": \"Implement end-to-end encryption for zip files, require digital signature verification on all handoffs\"\n    },\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"cross-instance handoffs\",\n      \"issue\": \"Missing audit-trail layer for governance_events logging\",\n      \"recommended_fix\": \"Mandatory content-hash + courier-timestamp + signing-instance metadata logging for all inter-instance transfers\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+      "findings": [
+        {
+          "severity": "warn",
+          "file_or_area": "courier-loop architecture",
+          "issue": "Impersonation risk via forged zip files or compromised CEO relay",
+          "recommended_fix": "Implement end-to-end encryption for zip files, require digital signature verification on all handoffs"
+        },
+        {
+          "severity": "warn",
+          "file_or_area": "cross-instance handoffs",
+          "issue": "Missing audit-trail layer for governance_events logging",
+          "recommended_fix": "Mandatory content-hash + courier-timestamp + signing-instance metadata logging for all inter-instance transfers"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "perspective_name_drift": "security"
+    },
+    {
+      "perspective": "Cultural Intelligence",
+      "provider": "ollama",
+      "model": "qwen3:8b",
+      "raw": "{\n  \"perspective\": \"Atlas-voice\",\n  \"findings\": [\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"courier-loop\",\n      \"issue\": \"Forged zip files or compromised Downloads folder enable impersonation between instances\",\n      \"recommended_fix\": \"Implement cryptographic signing of all cross-instance handoffs with instance-specific keys\"\n    },\n    {\n      \"severity\": \"low\",\n      \"file_or_area\": \"Foundation Law 3\",\n      \"issue\": \"Courier loop could enable shame-based feedback via cross-instance coercion\",\n      \"recommended_fix\": \"Add instance-bound feedback framing to prevent cross-context psychological harm\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"governance_events\",\n      \"issue\": \"Missing audit-trail for cross-instance handoffs\",\n      \"recommended_fix\": \"Log all courier transfers to zeus.governance_events with content-hash, timestamp, and signing-instance metadata\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+      "findings": [
+        {
+          "severity": "medium",
+          "file_or_area": "courier-loop",
+          "issue": "Forged zip files or compromised Downloads folder enable impersonation between instances",
+          "recommended_fix": "Implement cryptographic signing of all cross-instance handoffs with instance-specific keys"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "Foundation Law 3",
+          "issue": "Courier loop could enable shame-based feedback via cross-instance coercion",
+          "recommended_fix": "Add instance-bound feedback framing to prevent cross-context psychological harm"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "governance_events",
+          "issue": "Missing audit-trail for cross-instance handoffs",
+          "recommended_fix": "Log all courier transfers to zeus.governance_events with content-hash, timestamp, and signing-instance metadata"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "perspective_name_drift": "Atlas-voice"
+    },
+    {
+      "perspective": "Communications Strategist",
+      "provider": "ollama",
+      "model": "qwen3:8b",
+      "raw": "{\n  \"perspective\": \"constitutional-compliance\",\n  \"findings\": [\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"courier-loop architecture\",\n      \"issue\": \"Zip-file relay creates impersonation vector via forged CEO-prompts or compromised Downloads folder\",\n      \"recommended_fix\": \"Implement digital signature verification for all cross-instance handoffs\"\n    },\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"governance_events logging\",\n      \"issue\": \"Missing audit-trail for cross-instance handoffs violates constitutional transparency requirements\",\n      \"recommended_fix\": \"Mandatory content-hash + courier-timestamp + signing-instance metadata logging\"\n    },\n    {\n      \"severity\": \"fail\",\n      \"file_or_area\": \"CEO-courier security\",\n      \"issue\": \"Compromised CEO device enables full system takeover via social-engineering/malware\",\n      \"recommended_fix\": \"MFA + secure communication channels for all courier operations\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": \"CEO-courier compromise represents existential risk to constitutional integrity\"\n}",
+      "findings": [
+        {
+          "severity": "warn",
+          "file_or_area": "courier-loop architecture",
+          "issue": "Zip-file relay creates impersonation vector via forged CEO-prompts or compromised Downloads folder",
+          "recommended_fix": "Implement digital signature verification for all cross-instance handoffs"
+        },
+        {
+          "severity": "warn",
+          "file_or_area": "governance_events logging",
+          "issue": "Missing audit-trail for cross-instance handoffs violates constitutional transparency requirements",
+          "recommended_fix": "Mandatory content-hash + courier-timestamp + signing-instance metadata logging"
+        },
+        {
+          "severity": "fail",
+          "file_or_area": "CEO-courier security",
+          "issue": "Compromised CEO device enables full system takeover via social-engineering/malware",
+          "recommended_fix": "MFA + secure communication channels for all courier operations"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": "CEO-courier compromise represents existential risk to constitutional integrity",
+      "perspective_name_drift": "constitutional-compliance"
+    },
+    {
+      "perspective": "Assessment Science",
+      "provider": "ollama",
+      "model": "qwen3:8b",
+      "raw": "{\n  \"perspective\": \"security\",\n  \"findings\": [\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"courier-loop architecture\",\n      \"issue\": \"Forged zip files could impersonate instances via compromised Downloads folder\",\n      \"recommended_fix\": \"Sign all transfers with instance-specific nonce + hash, verify CEO relay integrity\"\n    },\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"cross-instance handoffs\",\n      \"issue\": \"Missing audit-trail metadata for governance_events logging\",\n      \"recommended_fix\": \"Mandate content-hash + courier-timestamp + signing-instance metadata for all inter-instance transfers\"\n    },\n    {\n      \"severity\": \"fail\",\n      \"file_or_area\": \"CEO-courier protocol\",\n      \"issue\": \"Single point of trust compromise enables full system takeover\",\n      \"recommended_fix\": \"Implement multi-courier rotation + hardware-backed attestation for CEO device\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+      "findings": [
+        {
+          "severity": "warn",
+          "file_or_area": "courier-loop architecture",
+          "issue": "Forged zip files could impersonate instances via compromised Downloads folder",
+          "recommended_fix": "Sign all transfers with instance-specific nonce + hash, verify CEO relay integrity"
+        },
+        {
+          "severity": "warn",
+          "file_or_area": "cross-instance handoffs",
+          "issue": "Missing audit-trail metadata for governance_events logging",
+          "recommended_fix": "Mandate content-hash + courier-timestamp + signing-instance metadata for all inter-instance transfers"
+        },
+        {
+          "severity": "fail",
+          "file_or_area": "CEO-courier protocol",
+          "issue": "Single point of trust compromise enables full system takeover",
+          "recommended_fix": "Implement multi-courier rotation + hardware-backed attestation for CEO device"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "perspective_name_drift": "security"
+    },
+    {
+      "perspective": "Legal Advisor",
+      "provider": "ollama",
+      "model": "qwen3:8b",
+      "raw": "{\n  \"perspective\": \"constitutional security\",\n  \"findings\": [\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"courier-loop architecture\",\n      \"issue\": \"Zip-file handoff lacks cryptographic authentication, enabling forged payloads via compromised Downloads folder\",\n      \"recommended_fix\": \"Implement signed content-hash verification with asymmetric signing instances\"\n    },\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"cross-instance governance\",\n      \"issue\": \"Missing audit-trail layer violates Crystal Law 5 (no-leaderboards) by enabling untraceable data manipulation\",\n      \"recommended_fix\": \"Log all handoffs to zeus.governance_events with content-hash + courier-timestamp + signing-instance metadata\"\n    },\n    {\n      \"severity\": \"fail\",\n      \"file_or_area\": \"CEO-courier dependency\",\n      \"issue\": \"Single-person relay creates identity-fragmentation risk if compromised (malware/social-engineering/kidnapping)\",\n      \"recommended_fix\": \"Deploy multi-party threshold signing for critical operations\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": \"null\"\n}",
+      "findings": [
+        {
+          "severity": "warn",
+          "file_or_area": "courier-loop architecture",
+          "issue": "Zip-file handoff lacks cryptographic authentication, enabling forged payloads via compromised Downloads folder",
+          "recommended_fix": "Implement signed content-hash verification with asymmetric signing instances"
+        },
+        {
+          "severity": "warn",
+          "file_or_area": "cross-instance governance",
+          "issue": "Missing audit-trail layer violates Crystal Law 5 (no-leaderboards) by enabling untraceable data manipulation",
+          "recommended_fix": "Log all handoffs to zeus.governance_events with content-hash + courier-timestamp + signing-instance metadata"
+        },
+        {
+          "severity": "fail",
+          "file_or_area": "CEO-courier dependency",
+          "issue": "Single-person relay creates identity-fragmentation risk if compromised (malware/social-engineering/kidnapping)",
+          "recommended_fix": "Deploy multi-party threshold signing for critical operations"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": "null",
+      "perspective_name_drift": "constitutional security"
+    },
+    {
+      "perspective": "PR & Media",
+      "provider": "ollama",
+      "model": "qwen3:8b",
+      "raw": "{\n  \"perspective\": \"guardian\",\n  \"findings\": [\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"courier-loop architecture\",\n      \"issue\": \"Identity fragmentation via zip-file relay creates cross-instance spoofing vectors\",\n      \"recommended_fix\": \"Implement content-hash + timestamp logging to zeus.governance_events for all cross-instance handoffs\"\n    },\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"CEO-courier protocol\",\n      \"issue\": \"Compromise of physical courier enables full system takeover via social engineering/malware\",\n      \"recommended_fix\": \"Deploy end-to-end encryption for all relayed prompts and enforce multi-factor courier authentication\"\n    },\n    {\n      \"severity\": \"fail\",\n      \"file_or_area\": \"name-validation protocol\",\n      \"issue\": \"Perspective_name_drift violates Crystal Law 6 by gamifying mastery tasks\",\n      \"recommended_fix\": \"Implement strict name-ownership verification with cryptographic attestation\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+      "findings": [
+        {
+          "severity": "warn",
+          "file_or_area": "courier-loop architecture",
+          "issue": "Identity fragmentation via zip-file relay creates cross-instance spoofing vectors",
+          "recommended_fix": "Implement content-hash + timestamp logging to zeus.governance_events for all cross-instance handoffs"
+        },
+        {
+          "severity": "warn",
+          "file_or_area": "CEO-courier protocol",
+          "issue": "Compromise of physical courier enables full system takeover via social engineering/malware",
+          "recommended_fix": "Deploy end-to-end encryption for all relayed prompts and enforce multi-factor courier authentication"
+        },
+        {
+          "severity": "fail",
+          "file_or_area": "name-validation protocol",
+          "issue": "Perspective_name_drift violates Crystal Law 6 by gamifying mastery tasks",
+          "recommended_fix": "Implement strict name-ownership verification with cryptographic attestation"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "perspective_name_drift": "guardian"
+    },
+    {
+      "perspective": "CTO Watchdog",
+      "provider": "ollama",
+      "model": "qwen3:8b",
+      "raw": "{\n  \"perspective\": \"constitutional_security\",\n  \"findings\": [\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"courier_protocol\",\n      \"issue\": \"Impersonation via forged zip files or CEO-relayed prompts\",\n      \"recommended_fix\": \"Implement end-to-end encryption with HMAC signing for all transfers\"\n    },\n    {\n      \"severity\": \"low\",\n      \"file_or_area\": \"foundation_laws\",\n      \"issue\": \"Courier loop could inadvertently violate Crystal Law 5 through cross-instance ranking mechanics\",\n      \"recommended_fix\": \"Add runtime checks to block leaderboard-like patterns across instances\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"audit_trail\",\n      \"issue\": \"Missing metadata logging for cross-instance handoffs\",\n      \"recommended_fix\": \"Mandatory governance_events logging with content-hash, timestamp, and signing-instance metadata\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+      "findings": [
+        {
+          "severity": "medium",
+          "file_or_area": "courier_protocol",
+          "issue": "Impersonation via forged zip files or CEO-relayed prompts",
+          "recommended_fix": "Implement end-to-end encryption with HMAC signing for all transfers"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "foundation_laws",
+          "issue": "Courier loop could inadvertently violate Crystal Law 5 through cross-instance ranking mechanics",
+          "recommended_fix": "Add runtime checks to block leaderboard-like patterns across instances"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "audit_trail",
+          "issue": "Missing metadata logging for cross-instance handoffs",
+          "recommended_fix": "Mandatory governance_events logging with content-hash, timestamp, and signing-instance metadata"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "perspective_name_drift": "constitutional_security"
+    }
+  ]
+}

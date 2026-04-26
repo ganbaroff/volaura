@@ -138,6 +138,7 @@ async def run_error_watcher() -> dict[str, int]:
     # 5. Atlas obligations approaching deadline (proactive-scan gate, 2026-04-26)
     try:
         from datetime import timedelta as _td
+
         thirty_days_out = (now + _td(days=30)).isoformat()
         due_soon = (
             await db.table("atlas_obligations")

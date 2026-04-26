@@ -54,11 +54,7 @@ async def health_check(request: Request, db: SupabaseAdmin) -> HealthResponse:
 
     # GIT_SHA: Railway injects RAILWAY_GIT_COMMIT_SHA at runtime; Dockerfile ARG
     # GIT_SHA is the local-dev/CI fallback. Returns 'unknown' only outside both.
-    git_sha = (
-        os.environ.get("RAILWAY_GIT_COMMIT_SHA")
-        or os.environ.get("GIT_SHA")
-        or "unknown"
-    )[:12]
+    git_sha = (os.environ.get("RAILWAY_GIT_COMMIT_SHA") or os.environ.get("GIT_SHA") or "unknown")[:12]
 
     return HealthResponse(
         status=status,

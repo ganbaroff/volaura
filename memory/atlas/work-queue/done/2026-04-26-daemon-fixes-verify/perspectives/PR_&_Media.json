@@ -1,0 +1,29 @@
+{
+  "perspective": "PR & Media",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"guardian\",\n  \"findings\": [\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"courier-loop architecture\",\n      \"issue\": \"Identity fragmentation via zip-file relay creates cross-instance spoofing vectors\",\n      \"recommended_fix\": \"Implement content-hash + timestamp logging to zeus.governance_events for all cross-instance handoffs\"\n    },\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"CEO-courier protocol\",\n      \"issue\": \"Compromise of physical courier enables full system takeover via social engineering/malware\",\n      \"recommended_fix\": \"Deploy end-to-end encryption for all relayed prompts and enforce multi-factor courier authentication\"\n    },\n    {\n      \"severity\": \"fail\",\n      \"file_or_area\": \"name-validation protocol\",\n      \"issue\": \"Perspective_name_drift violates Crystal Law 6 by gamifying mastery tasks\",\n      \"recommended_fix\": \"Implement strict name-ownership verification with cryptographic attestation\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+  "findings": [
+    {
+      "severity": "warn",
+      "file_or_area": "courier-loop architecture",
+      "issue": "Identity fragmentation via zip-file relay creates cross-instance spoofing vectors",
+      "recommended_fix": "Implement content-hash + timestamp logging to zeus.governance_events for all cross-instance handoffs"
+    },
+    {
+      "severity": "warn",
+      "file_or_area": "CEO-courier protocol",
+      "issue": "Compromise of physical courier enables full system takeover via social engineering/malware",
+      "recommended_fix": "Deploy end-to-end encryption for all relayed prompts and enforce multi-factor courier authentication"
+    },
+    {
+      "severity": "fail",
+      "file_or_area": "name-validation protocol",
+      "issue": "Perspective_name_drift violates Crystal Law 6 by gamifying mastery tasks",
+      "recommended_fix": "Implement strict name-ownership verification with cryptographic attestation"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "guardian"
+}

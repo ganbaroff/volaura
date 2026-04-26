@@ -1,0 +1,29 @@
+{
+  "perspective": "CTO Watchdog",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"constitutional_security\",\n  \"findings\": [\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"courier_protocol\",\n      \"issue\": \"Impersonation via forged zip files or CEO-relayed prompts\",\n      \"recommended_fix\": \"Implement end-to-end encryption with HMAC signing for all transfers\"\n    },\n    {\n      \"severity\": \"low\",\n      \"file_or_area\": \"foundation_laws\",\n      \"issue\": \"Courier loop could inadvertently violate Crystal Law 5 through cross-instance ranking mechanics\",\n      \"recommended_fix\": \"Add runtime checks to block leaderboard-like patterns across instances\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"audit_trail\",\n      \"issue\": \"Missing metadata logging for cross-instance handoffs\",\n      \"recommended_fix\": \"Mandatory governance_events logging with content-hash, timestamp, and signing-instance metadata\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+  "findings": [
+    {
+      "severity": "medium",
+      "file_or_area": "courier_protocol",
+      "issue": "Impersonation via forged zip files or CEO-relayed prompts",
+      "recommended_fix": "Implement end-to-end encryption with HMAC signing for all transfers"
+    },
+    {
+      "severity": "low",
+      "file_or_area": "foundation_laws",
+      "issue": "Courier loop could inadvertently violate Crystal Law 5 through cross-instance ranking mechanics",
+      "recommended_fix": "Add runtime checks to block leaderboard-like patterns across instances"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "audit_trail",
+      "issue": "Missing metadata logging for cross-instance handoffs",
+      "recommended_fix": "Mandatory governance_events logging with content-hash, timestamp, and signing-instance metadata"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "constitutional_security"
+}

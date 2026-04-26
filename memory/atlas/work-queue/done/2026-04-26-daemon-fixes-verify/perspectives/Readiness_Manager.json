@@ -1,0 +1,23 @@
+{
+  "perspective": "Readiness Manager",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"security\",\n  \"findings\": [\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"courier-loop architecture\",\n      \"issue\": \"Impersonation risk via forged zip files or compromised CEO relay\",\n      \"recommended_fix\": \"Implement end-to-end encryption for zip files, require digital signature verification on all handoffs\"\n    },\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"cross-instance handoffs\",\n      \"issue\": \"Missing audit-trail layer for governance_events logging\",\n      \"recommended_fix\": \"Mandatory content-hash + courier-timestamp + signing-instance metadata logging for all inter-instance transfers\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+  "findings": [
+    {
+      "severity": "warn",
+      "file_or_area": "courier-loop architecture",
+      "issue": "Impersonation risk via forged zip files or compromised CEO relay",
+      "recommended_fix": "Implement end-to-end encryption for zip files, require digital signature verification on all handoffs"
+    },
+    {
+      "severity": "warn",
+      "file_or_area": "cross-instance handoffs",
+      "issue": "Missing audit-trail layer for governance_events logging",
+      "recommended_fix": "Mandatory content-hash + courier-timestamp + signing-instance metadata logging for all inter-instance transfers"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "security"
+}

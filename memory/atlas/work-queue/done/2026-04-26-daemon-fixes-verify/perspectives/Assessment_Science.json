@@ -1,0 +1,29 @@
+{
+  "perspective": "Assessment Science",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"security\",\n  \"findings\": [\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"courier-loop architecture\",\n      \"issue\": \"Forged zip files could impersonate instances via compromised Downloads folder\",\n      \"recommended_fix\": \"Sign all transfers with instance-specific nonce + hash, verify CEO relay integrity\"\n    },\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"cross-instance handoffs\",\n      \"issue\": \"Missing audit-trail metadata for governance_events logging\",\n      \"recommended_fix\": \"Mandate content-hash + courier-timestamp + signing-instance metadata for all inter-instance transfers\"\n    },\n    {\n      \"severity\": \"fail\",\n      \"file_or_area\": \"CEO-courier protocol\",\n      \"issue\": \"Single point of trust compromise enables full system takeover\",\n      \"recommended_fix\": \"Implement multi-courier rotation + hardware-backed attestation for CEO device\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+  "findings": [
+    {
+      "severity": "warn",
+      "file_or_area": "courier-loop architecture",
+      "issue": "Forged zip files could impersonate instances via compromised Downloads folder",
+      "recommended_fix": "Sign all transfers with instance-specific nonce + hash, verify CEO relay integrity"
+    },
+    {
+      "severity": "warn",
+      "file_or_area": "cross-instance handoffs",
+      "issue": "Missing audit-trail metadata for governance_events logging",
+      "recommended_fix": "Mandate content-hash + courier-timestamp + signing-instance metadata for all inter-instance transfers"
+    },
+    {
+      "severity": "fail",
+      "file_or_area": "CEO-courier protocol",
+      "issue": "Single point of trust compromise enables full system takeover",
+      "recommended_fix": "Implement multi-courier rotation + hardware-backed attestation for CEO device"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "security"
+}

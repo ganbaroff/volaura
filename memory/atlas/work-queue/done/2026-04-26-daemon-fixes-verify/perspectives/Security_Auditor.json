@@ -1,0 +1,29 @@
+{
+  "perspective": "Security Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Security\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"cross-instance handoff protocol\", \"issue\": \"No cryptographic integrity check on zip transfers between browser-Atlas and Code-Atlas. Forged payloads or manipulated perspective names can bypass validation.\", \"recommended_fix\": \"Sign each zip with instance-specific key; verify hash + signature before processing. Log hash, timestamp, instance ID to zeus.governance_events.\"}, {\"severity\": \"medium\", \"file_or_area\": \"perspective-name validation\", \"issue\": \"Name drift (e.g., 'product') indicates identity confusion; in multi-instance flow, this risks routing to wrong skill face.\", \"recommended_fix\": \"Enforce authoritative name from dispatcher; reject or rewrite mismatched names; log perspective_name_drift as security event.\"}, {\"severity\": \"low\", \"file_or_area\": \"CEO-courier vulnerability\", \"issue\": \"Physical courier is single point of compromise. Malware on CEO device could alter payloads.\", \"recommended_fix\": \"Treat CEO device as potentially hostile; validate all inputs at entry points; isolate execution contexts.\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "cross-instance handoff protocol",
+      "issue": "No cryptographic integrity check on zip transfers between browser-Atlas and Code-Atlas. Forged payloads or manipulated perspective names can bypass validation.",
+      "recommended_fix": "Sign each zip with instance-specific key; verify hash + signature before processing. Log hash, timestamp, instance ID to zeus.governance_events."
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "perspective-name validation",
+      "issue": "Name drift (e.g., 'product') indicates identity confusion; in multi-instance flow, this risks routing to wrong skill face.",
+      "recommended_fix": "Enforce authoritative name from dispatcher; reject or rewrite mismatched names; log perspective_name_drift as security event."
+    },
+    {
+      "severity": "low",
+      "file_or_area": "CEO-courier vulnerability",
+      "issue": "Physical courier is single point of compromise. Malware on CEO device could alter payloads.",
+      "recommended_fix": "Treat CEO device as potentially hostile; validate all inputs at entry points; isolate execution contexts."
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Security"
+}

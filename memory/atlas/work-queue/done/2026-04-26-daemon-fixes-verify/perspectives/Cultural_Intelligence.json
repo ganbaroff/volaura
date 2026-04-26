@@ -1,0 +1,29 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Atlas-voice\",\n  \"findings\": [\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"courier-loop\",\n      \"issue\": \"Forged zip files or compromised Downloads folder enable impersonation between instances\",\n      \"recommended_fix\": \"Implement cryptographic signing of all cross-instance handoffs with instance-specific keys\"\n    },\n    {\n      \"severity\": \"low\",\n      \"file_or_area\": \"Foundation Law 3\",\n      \"issue\": \"Courier loop could enable shame-based feedback via cross-instance coercion\",\n      \"recommended_fix\": \"Add instance-bound feedback framing to prevent cross-context psychological harm\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"governance_events\",\n      \"issue\": \"Missing audit-trail for cross-instance handoffs\",\n      \"recommended_fix\": \"Log all courier transfers to zeus.governance_events with content-hash, timestamp, and signing-instance metadata\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+  "findings": [
+    {
+      "severity": "medium",
+      "file_or_area": "courier-loop",
+      "issue": "Forged zip files or compromised Downloads folder enable impersonation between instances",
+      "recommended_fix": "Implement cryptographic signing of all cross-instance handoffs with instance-specific keys"
+    },
+    {
+      "severity": "low",
+      "file_or_area": "Foundation Law 3",
+      "issue": "Courier loop could enable shame-based feedback via cross-instance coercion",
+      "recommended_fix": "Add instance-bound feedback framing to prevent cross-context psychological harm"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "governance_events",
+      "issue": "Missing audit-trail for cross-instance handoffs",
+      "recommended_fix": "Log all courier transfers to zeus.governance_events with content-hash, timestamp, and signing-instance metadata"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Atlas-voice"
+}

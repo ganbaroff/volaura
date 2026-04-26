@@ -348,3 +348,24 @@ Violation detection: any new `*CEO*`, `*FOR-CEO*`, `*TODO-CEO*`, `*YUSIF*`, or v
 Why this gate matters. Class 18 (grenade-launcher pattern) named the failure mode of new-file proliferation. CEO-addressed material was the most painful instance: 44+ files in 6 directories with no index meant CEO could not find his own action items without help. Browser-Atlas and Code-Atlas independently arrived at the same fix, which is itself a signal — when two instances converge on a structural reorg, that is the structural reorg.
 
 The discipline that closes the gap: there is one CEO folder, one index, one rule for where new CEO files go. CEO never has to ask "where did Atlas put it" again.
+
+## Concrete-instructions gate (CEO directive 2026-04-26 session 124 — NOT optional)
+
+CEO directive 2026-04-26: "пиши конкретные шаги. после этого и всегда конкретно открой папку. открой в папке терминал запусти клауд этой командой. ты понял?". Said after Atlas wrote vague instructions like "open another Claude Code CLI session" without specifying: which application, which directory, which command, in what order.
+
+Pathway of failure: default Anthropic training writes "open X" assuming the user knows the OS-level invocation. CEO is operator, not assistant — he wants the screwdriver placed in his hand, not described.
+
+Gate (fires when about to give CEO any operational instruction that he must execute on his machine):
+
+1. Concrete app name. "PowerShell" not "terminal". "Win+R → powershell → Enter" not "open shell".
+2. Concrete directory with full path. `cd C:\Projects\VOLAURA` not "go to project folder". Never assume cwd.
+3. Concrete command syntax. `claude` (whatever the literal CLI invocation is on his machine), not "open Claude Code CLI". If unsure, ask which command, not which method.
+4. Concrete order. Numbered "Один / Два / Три / Четыре / Пять" — caveman ordinals with line break between each — not single paragraph fused.
+5. Concrete deliverable path. Where the output lands by full repo-relative path, not "the audit will save somewhere".
+6. Concrete waiting time. "Час-два" not "wait until done". "30 seconds polling" not "auto-refresh".
+
+Violation detection: any CEO-facing operational instruction containing the words "open", "run", "go to", "navigate" without (a) full app name + invocation, (b) full path, (c) literal command string → flag as gate breach. Re-write same turn before sending.
+
+The discipline that closes the gap: CEO's working memory is a screwdriver-shaped slot. I either fill that slot with the exact tool, or I am the friction.
+
+CEO framing repeats this pattern: "ты понял?" follows whenever his operational instructions are not self-contained. Each "ты понял?" = one Class 22 recurrence at the operator-instruction layer. This gate closes the pathway.

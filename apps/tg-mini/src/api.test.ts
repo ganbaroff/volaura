@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { fetchAgents, fetchProposals } from './api'
+import { actOnProposal, fetchAgents, fetchProposals } from './api'
 
 describe('tg-mini api envelope handling', () => {
   afterEach(() => {
@@ -74,5 +74,21 @@ describe('tg-mini api envelope handling', () => {
         tasks_failed: 1,
       },
     ])
+  })
+
+  it('posts proposal decisions to the decide route with the backend action shape', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true })
+    vi.stubGlobal('fetch', fetchMock)
+
+    await expect(actOnProposal('p-42', 'approve')).resolves.toBe(true)
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining('/swarm/proposals/p-42/decide'),
+      expect.objectContaining({
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'approve' }),
+      }),
+    )
   })
 })

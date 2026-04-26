@@ -25,7 +25,7 @@ export function ProposalsPage() {
 
   useEffect(() => { load() }, [])
 
-  const handleAction = async (id: string, action: 'act' | 'dismiss' | 'execute') => {
+  const handleAction = async (id: string, action: 'approve' | 'dismiss' | 'defer') => {
     setActing(id)
     const ok = await actOnProposal(id, action)
     if (ok) {
@@ -122,14 +122,14 @@ export function ProposalsPage() {
                       bg="#4ECDC433"
                       color="#4ECDC4"
                       disabled={isActing}
-                      onClick={() => handleAction(p.id, 'act')}
+                      onClick={() => handleAction(p.id, 'approve')}
                     />
                     <ActionButton
-                      label="🚀 Execute"
+                      label="⏳ Defer"
                       bg="#7B72FF33"
                       color="#7B72FF"
                       disabled={isActing}
-                      onClick={() => handleAction(p.id, 'execute')}
+                      onClick={() => handleAction(p.id, 'defer')}
                     />
                     <ActionButton
                       label="❌ Reject"

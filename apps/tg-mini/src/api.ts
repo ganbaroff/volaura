@@ -102,9 +102,13 @@ export async function fetchAgents(): Promise<SwarmAgent[]> {
   }
 }
 
-export async function actOnProposal(id: string, action: 'act' | 'dismiss' | 'defer' | 'execute'): Promise<boolean> {
+export async function actOnProposal(id: string, action: 'approve' | 'dismiss' | 'defer'): Promise<boolean> {
   try {
-    const res = await fetch(`${API_BASE}/swarm/proposals/${id}/${action}`, { method: 'POST' })
+    const res = await fetch(`${API_BASE}/swarm/proposals/${id}/decide`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action }),
+    })
     return res.ok
   } catch {
     return false

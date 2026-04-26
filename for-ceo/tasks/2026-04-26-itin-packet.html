@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ITIN Packet — ASAN + DHL Plan (2026-04-26)</title>
+  <style>
+    * { box-sizing: border-box }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+      background: #0a0a0f;
+      color: #e8e8ee;
+      line-height: 1.65;
+      padding: 24px 16px;
+    }
+    .wrap { max-width: 720px; margin: 0 auto; }
+    h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #5EEAD4;
+      margin: 0 0 8px;
+      letter-spacing: -0.5px;
+    }
+    .meta { color: #888; font-size: 13px; margin-bottom: 32px; }
+    h2 {
+      font-size: 19px;
+      font-weight: 600;
+      color: #c9c9d4;
+      margin: 36px 0 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #1f1f2c;
+    }
+    h3 { font-size: 16px; font-weight: 600; color: #a8a8b8; margin: 20px 0 8px; }
+    p { margin: 8px 0; font-size: 15px; }
+    .step {
+      background: #11111c;
+      border-left: 3px solid #5EEAD4;
+      padding: 12px 16px;
+      margin: 12px 0;
+      border-radius: 4px;
+    }
+    .step.warn { border-left-color: #F59E0B; }
+    .step.danger { border-left-color: #7C5CFC; }
+    code, .ms {
+      background: #1c1c2c;
+      color: #e8c490;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: "SF Mono", Consolas, Menlo, monospace;
+      font-size: 13px;
+      word-break: break-all;
+    }
+    .field {
+      display: block;
+      background: #16161f;
+      border: 1px solid #2a2a3a;
+      padding: 8px 12px;
+      margin: 6px 0;
+      border-radius: 4px;
+      font-family: "SF Mono", Consolas, monospace;
+      font-size: 13px;
+      color: #c9c9d4;
+    }
+    .field b { color: #5EEAD4; }
+    .pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin: 2px 4px 2px 0;
+    }
+    .pill-go { background: #14532d; color: #86efac; }
+    .pill-warn { background: #5b3a08; color: #fbbf24; }
+    .pill-stop { background: #4a1d4a; color: #d8a4f0; }
+    blockquote {
+      margin: 12px 0;
+      padding: 12px 16px;
+      background: #16161f;
+      border-left: 3px solid #888;
+      font-style: italic;
+      color: #b8b8c8;
+    }
+    .ceo-script {
+      background: #11111c;
+      border: 1px solid #5EEAD4;
+      padding: 14px 16px;
+      border-radius: 6px;
+      margin: 12px 0;
+    }
+    .ceo-script p { margin: 6px 0; font-size: 14px; }
+    .lang-tag {
+      display: inline-block;
+      background: #5EEAD4;
+      color: #0a0a0f;
+      padding: 1px 8px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-right: 8px;
+    }
+    .total {
+      background: linear-gradient(135deg, #11111c, #1a1a2e);
+      border: 1px solid #5EEAD4;
+      padding: 16px 20px;
+      margin: 24px 0;
+      border-radius: 8px;
+    }
+    .total .num { font-size: 28px; color: #5EEAD4; font-weight: 700; }
+    .footer {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid #1f1f2c;
+      color: #666;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>ITIN Packet — ASAN + DHL</h1>
+    <p class="meta">
+      Created 2026-04-26 by Atlas · for Yusif Ganbarov ·
+      open this on phone in ASAN to follow steps
+    </p>
+
+    <div class="total">
+      <p style="margin:0; font-size:14px; color:#888">Total estimated cost</p>
+      <p style="margin:0"><span class="num">~250 AZN</span> <span style="color:#888">(15-25 ASAN + 220-230 DHL)</span></p>
+      <p style="margin:8px 0 0; font-size:13px; color:#aaa">Same DHL Express Worldwide service that 83(b) used. Cheaper carriers (Azərpoçt, etc.) NOT on IRS §7502(f) PDS list — IRS will reject postmark.</p>
+    </div>
+
+    <h2>1 · Что взять с собой в ASAN</h2>
+    <p>Оригинал паспорта (тот же которым пользуешься в DHL drop'е). Телефон с этим документом открытым. Возможно банковская карта — некоторые ASAN сервисы только cashless. ID карта (если ASAN потребует local ID для запроса от твоего имени).</p>
+
+    <h2>2 · Что просить в ASAN — точная формулировка</h2>
+    <p>В ASAN надо просить «issuing-agency certified copy» паспорта, не апостиль и не нотариальную копию. IRS принимает ТОЛЬКО заверение от органа который выдал паспорт (MIA через ASAN), с их официальной печатью. Нотариальная копия и апостиль — это другое, IRS их отклонит.</p>
+    <div class="ceo-script">
+      <p><span class="lang-tag">AZ</span>«Salam, mənə pasportumun rəsmi möhürlü surəti lazımdır — ABŞ-ın IRS qurumuna göndərmək üçün. Apostille deyil, notarius surəti də deyil. Lazımdır pasportu verən qurumun (Daxili İşlər Nazirliyinin) öz möhürü ilə təsdiqlənmiş surət, foreign government-ə təqdim üçün. Bu xidmətiniz var?»</p>
+      <p><span class="lang-tag">RU</span>«Здравствуйте, мне нужна заверенная копия паспорта с официальной печатью органа выдачи — для подачи в IRS США. Не апостиль, не нотариальная копия. Нужна копия с печатью того органа который выдал паспорт (MIA через ASAN), для подачи в иностранный government. Есть такая услуга?»</p>
+    </div>
+
+    <h3>Если ASAN говорит «такой услуги нет»</h3>
+    <div class="step warn">
+      <p><b>Plan B: U.S. Embassy в Баку.</b> Они делают consular-level certified true copy документов для IRS-purposes. Адрес: 111 Azadlig prospekti, Баку. Запись через az.usembassy.gov, обычно ~50 USD за certified copy. Это рабочий путь когда ASAN не оказывает услугу. Не уходи из ASAN расстроенным — переключись на Embassy.</p>
+    </div>
+
+    <h2>3 · Stripe Atlas — letter showing need</h2>
+    <p>Параллельно перед DHL drop'ом — войти в Stripe Atlas dashboard (<code>dashboard.stripe.com/atlas</code>), в section «Tax documents» или «ITIN support letter» скачать письмо с подтверждением что VOLAURA Inc. нуждается в твоём ITIN под Exception 3 (officer/director receiving reportable income). Это required attachment с W-7 для Exception 3 path.</p>
+    <div class="step">
+      <p>Если в dashboard нет автоматической кнопки — пиши Stripe Atlas support («I need an Exception 3 ITIN support letter for my Form W-7 application») и они генерят за 24-48 часов. Делай ДО ASAN визита если есть время.</p>
+    </div>
+
+    <h2>4 · Form W-7 — заполненные поля</h2>
+    <p>Скачай blank PDF: <code>irs.gov/pub/irs-pdf/fw7.pdf</code> (декабрь 2024 revision). Перед ASAN — заполни ручкой или на компе следующие поля:</p>
+
+    <div class="field"><b>Reason for applying</b> · поставь галку <b>«a»</b> + sub-box <b>«Exception 3-c — Recipient of reportable income from a U.S. corporation»</b></div>
+    <div class="field"><b>1a Name (legal)</b> · Yusif Ganbarov</div>
+    <div class="field"><b>1b Name at birth</b> · Yusif Ganbarov</div>
+    <div class="field"><b>2 Applicant's mailing address</b> · Aliyar Aliyev 26, Apt 636, Baku AZ1100, Azerbaijan</div>
+    <div class="field"><b>3 Foreign address</b> · same as #2</div>
+    <div class="field"><b>4 Date of birth</b> · впиши свою (формат MM/DD/YYYY, US format!)</div>
+    <div class="field"><b>4 Country of birth + city</b> · Baku, Azerbaijan</div>
+    <div class="field"><b>5 Gender</b> · galочка</div>
+    <div class="field"><b>6a Country of citizenship</b> · Azerbaijan</div>
+    <div class="field"><b>6b Foreign tax ID number (FİN)</b> · твой Azerbaijan FIN если есть, иначе пусто</div>
+    <div class="field"><b>6c Type of US visa</b> · оставь пусто (нет US visa = не требуется)</div>
+    <div class="field"><b>6d Identification document</b> · Passport · Issued by: Republic of Azerbaijan · Number: <впиши номер паспорта> · Expiration: <впиши date> · Date of entry into US: пусто</div>
+    <div class="field"><b>6e Were you previously assigned an ITIN?</b> · No</div>
+    <div class="field"><b>6f Enter ITIN/IRSN if 6e = Yes</b> · пусто</div>
+    <div class="field"><b>6g Name of college/company</b> · VOLAURA, Inc. · Length of stay: 0 (foreign owner) · City/State: Wilmington, DE</div>
+
+    <p>Внизу формы — твоя подпись, дата (формат MM/DD/YYYY), phone +994 55 585 77 91. <b>НЕ подписывай в ASAN — подписать ручкой можно потом или сразу в DHL точке.</b></p>
+
+    <h2>5 · DHL Express Worldwide — drop instructions</h2>
+    <p>Тот же DHL что 83(b). Стоимость 220-230 AZN. Адрес получателя:</p>
+    <div class="field" style="line-height:1.8">
+      <b>Internal Revenue Service</b><br>
+      ITIN Operation<br>
+      3651 S. Interregional Hwy 35<br>
+      Austin, TX 78741<br>
+      USA<br>
+      Phone: +1-267-941-1000
+    </div>
+    <p>Service type: <b>DHL Express Worldwide</b>. Tracking obligatory. Запроси stamped receipt (DHL air waybill = legal postmark per IRC §7502(f)).</p>
+
+    <h3>Что положить в DHL пакет</h3>
+    <p>1. Заполненная и подписанная Form W-7 (оригинал, не копия).<br>
+    2. ASAN-certified copy паспорта (с печатью MIA или US Embassy notarization fallback).<br>
+    3. Stripe Atlas Exception 3 support letter (printed).<br>
+    4. Self-addressed stamped envelope (Aliyar Aliyev 26 apt 636) для возврата stamped W-7 receipt от IRS.</p>
+
+    <h2>6 · После отправки</h2>
+    <p>DHL даёт tracking number. Сохрани его. IRS обработает W-7 за 7-11 недель — ITIN придёт по почте на твой Aliyar Aliyev адрес в виде Notice CP565 с твоим ITIN номером (формат 9XX-XX-XXXX).</p>
+    <p>Когда придёт Notice CP565 — пришли скан/фото в чат. Atlas сразу обновит <code>memory/atlas/company-state.md</code> и Mercury Bank application unlocked (требует ITIN или SSN).</p>
+
+    <h2>Cross-references</h2>
+    <p>Canonical path lock — <code>memory/atlas/company-state.md</code> §ITIN-CANONICAL.<br>
+    Cost ledger — <code>memory/atlas/atlas-debts-to-ceo.md</code> DEBT-002 (parallel-shipment miss, 230 AZN).<br>
+    Constitution timeline — same file, May 6-20 EIN window, May 15 ITIN PREP-completion deadline.<br>
+    IRS Form W-7 instructions full PDF: <code>irs.gov/pub/irs-pdf/iw7.pdf</code></p>
+
+    <p class="footer">
+      This packet is canonical Atlas-side preparation for CEO Yusif Ganbarov's ITIN application,
+      part of VOLAURA, Inc. Delaware C-Corp founder paperwork chain (incorporation 2026-04-14,
+      83(b) postmarked 2026-04-20, EIN expected May 6-20, Mercury Bank gated on ITIN).
+      Bring this open on phone to ASAN service center on visit day.
+    </p>
+  </div>
+</body>
+</html>

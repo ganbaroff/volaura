@@ -980,3 +980,5 @@ Emotional intensity 5 because two anchors landed in same session: identity-truth
 
 Three pending standing items most load-bearing: ITIN W-7 packet Atlas-side prep (ASAN verify + Stripe Atlas letter + W-7 draft + DHL waybill draft), code-atlas audit run from separate Claude Code CLI session, courier-loop-design daemon output synthesis into docs/architecture/cross-instance-courier-signing-protocol.md.
 
+S E S S I O N   1 2 5   O V E R R I D E :   D r o p   B r a n d e d B y   l o c k s .   P 0   i s   M i n d S h i f t   P l a y   S t o r e   A A B .   F i x   E S L i n t   i n   t e r m s / p a g e . t s x   f i r s t .  
+ 

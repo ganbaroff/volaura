@@ -1,4 +1,4 @@
-# ECOSYSTEM CONSTITUTION v1.2
+# ECOSYSTEM CONSTITUTION v1.7
 ## The Governing Bible of the 5-Product Ecosystem
 
 **Status:** LOCKED — Evidence-based. Built from 17 CEO research documents (~140,000 words), 258+ scientific articles.

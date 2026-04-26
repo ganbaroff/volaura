@@ -11,6 +11,7 @@ from pathlib import Path
 
 from loguru import logger
 
+
 # Repo root resolution — must not raise at import in Docker.
 # Locally parents[4] is repo root; in Docker the file lives shallower and
 # parents[4] raises IndexError, blocking app startup.

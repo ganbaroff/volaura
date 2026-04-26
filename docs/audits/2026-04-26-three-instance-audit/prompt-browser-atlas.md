@@ -10,7 +10,7 @@ The output is for an AI consumer (the next-sprint executor). Not for human readi
 
 ## Context you must internalize before auditing
 
-Repo: github.com/ganbaroff/volaura, branch main. Current HEAD around `ea4a4e9` (live dashboard ship).
+Repo: github.com/ganbaroff/volaura, branch main. Current HEAD around `2cc0d21` (this audit kit shipped). Verify by `git log -1 --oneline` if you have shell access; otherwise read `for-ceo/living/atlas-now.html` which renders live HEAD.
 
 Mount or read the following canonical sources in order:
 1. `docs/ECOSYSTEM-CONSTITUTION.md` (v1.7 in references, file header still v1.2 — note the drift) — the supreme law: 5 Foundation Laws + 8 Crystal Economy Laws + 50+ Guardrails.
@@ -20,9 +20,9 @@ Mount or read the following canonical sources in order:
 5. `memory/atlas/lessons.md` — 22+ recurring failure classes including Class 22 (known solution withheld), Class 18 (grenade-launcher pattern), Class 17 (Alzheimer-under-trust), Class 20 (fabrication propagation).
 6. `memory/atlas/company-state.md` — Delaware C-Corp incorporated 2026-04-14, EIN pending, ITIN canonical DIY path locked 2026-04-26, 9 open obligations.
 7. `for-ceo/reference/zero-cost-funding-map.md` + `for-ceo/reference/perks-todo.md` + `for-ceo/reference/startup-programs-audit.md` — capital strategy.
-8. `docs/MASTER-STRATEGY.md` (if exists) — strategic frame.
-9. `docs/MONETIZATION-ROADMAP.md` (if exists) — revenue path.
-10. `memory/atlas/ecosystem_master_plan.md` — sprint timeline.
+8. `docs/MASTER-STRATEGY.md` — strategic frame.
+9. `docs/MONETIZATION-ROADMAP.md` — revenue path.
+10. `memory/atlas/SPRINT-PLAN-2026-04-20-telegram-swarm-coherence.md` + `memory/atlas/mega-sprint-122/FINAL-REPORT.md` + `memory/atlas/ecosystem-linkage-map.md` — sprint timeline + cross-product wiring map.
 11. `memory/atlas/journal.md` last 5 entries — recent emotional/strategic anchors.
 12. `for-ceo/index.html` source — to see what is currently surfaced to CEO.
 13. `for-ceo/living/atlas-status.html`, `for-ceo/living/ecosystem-map.html`, `for-ceo/living/mega-plan-2026-04-18.html` — current visible state.

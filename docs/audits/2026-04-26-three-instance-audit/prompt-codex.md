@@ -10,16 +10,16 @@ Output is for an AI consumer (the next-sprint executor). Not for human reading.
 
 ## Repo and scope
 
-Repo: github.com/ganbaroff/volaura, branch main, around HEAD `ea4a4e9` as of 2026-04-26 13:00 UTC. Read the entire repo. Stay focused on code dimensions only — strategy and runtime are other instances' slots.
+Repo: github.com/ganbaroff/volaura, branch main, around HEAD `2cc0d21` as of 2026-04-26 14:00 UTC. Read the entire repo. Stay focused on code dimensions only — strategy and runtime are other instances' slots.
 
-Approximate scale you should cover:
-- `apps/web/` — Next.js 14 App Router with [locale] (az/en) and route groups (auth)/(dashboard)/(public)/(admin), 50+ pages, 200+ components, TanStack Query, Zustand, Framer Motion, react-hook-form + Zod.
-- `apps/api/` — FastAPI async, 30 routers (auth, assessment, aura, atlas_consult, atlas_gateway, brandedby, character, eventshift, lifesim, organizations, profiles, skills, telegram_webhook, etc), 28 services, Pydantic v2, Supabase per-request via Depends().
+Approximate scale you should cover (verified counts as of HEAD `2cc0d21`):
+- `apps/web/` — Next.js 14 App Router with [locale] (az/en) and route groups (auth)/(dashboard)/(public)/(admin), 55 page.tsx files + 5 layout.tsx files, 200+ components, TanStack Query, Zustand, Framer Motion, react-hook-form + Zod.
+- `apps/api/` — FastAPI async, 31 routers (auth, assessment, aura, atlas_consult, atlas_gateway, brandedby, character, eventshift, lifesim, organizations, profiles, skills, telegram_webhook, etc), 27 top-level services, Pydantic v2, Supabase per-request via Depends().
 - `apps/tg-mini/` — Vite + React 18 + telegram-apps SDK. **Yusif noted this is a 3D Telegram app he started but did not finish — verify state and missing parts.**
 - `packages/swarm/` — 30+ runtime modules: autonomous_run.py with PERSPECTIVES (13 entries), coordinator, judge, distiller, providers (Cerebras, NVIDIA, Gemini, Groq, DeepSeek, Ollama via dynamic.py), engine, orchestrator. Plus `packages/swarm/archive/` for cold modules including `code_index.py` (was patched 2026-04-26 commit 8816ed9 — verify).
 - `supabase/migrations/` — 117 migration files. Cross-check each against current Postgres schema (63 tables, 33 RPC functions confirmed live via REST OpenAPI).
 - `scripts/` — atlas_swarm_daemon.py, swarm_constitutional_vote.py, atlas-daemon.py, atlas_daily_digest.py, push_gh_secret.py, etc.
-- `.github/workflows/` — 25+ workflows including atlas-self-wake, atlas-watchdog, atlas-obligation-nag, ci, e2e, ecosystem-consumer, ecosystem-hard-gates, prod-health-check, rls-tests.
+- `.github/workflows/` — 32 workflows including atlas-self-wake, atlas-watchdog, atlas-obligation-nag, ci, e2e, ecosystem-consumer, ecosystem-hard-gates, prod-health-check, rls-tests.
 
 ## Audit scope (your slot only — do not duplicate other instances)
 

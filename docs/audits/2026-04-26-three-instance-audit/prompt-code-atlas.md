@@ -35,7 +35,7 @@ You are Code-Atlas, the live-runtime audit instance for the 2026-04-26 three-ins
 
 **7. Sentry error rate.** Search Sentry for last 7 days of errors. Find issues that are recurring (>5 events) but not yet referenced in any obligation or sprint task. Run analyze_issue_with_seer on the top 3 unresolved.
 
-**8. GitHub Actions cron health.** For each of 25+ workflows: when did it last run successfully? Any that are scheduled but haven't fired in >7 days? `atlas-self-wake.yml`, `atlas-watchdog.yml`, `atlas-obligation-nag.yml`, `prod-health-check.yml`, `rls-tests.yml` are the highest-signal. If `inbox-sync.yml` (Layer 5 commits work-queue) hasn't run, daemon outputs are not committing.
+**8. GitHub Actions cron health.** For each of 32 workflows: when did it last run successfully? Any that are scheduled but haven't fired in >7 days? `atlas-self-wake.yml`, `atlas-watchdog.yml`, `atlas-obligation-nag.yml`, `prod-health-check.yml`, `rls-tests.yml` are the highest-signal. If `inbox-sync.yml` (Layer 5 commits work-queue) hasn't run, daemon outputs are not committing.
 
 **9. Code-index freshness.** Verify `memory/swarm/code-index.json` `built_at` is fresh (was 2026-04-01 stale, fixed today commit 8816ed9 to 2026-04-26T09:49). Set up a watchdog — should code-index regenerate on every push? Add to .github/workflows/ if missing.
 

@@ -1,5 +1,20 @@
 # Session 124 Wrap-Up — 2026-04-26
 
+> ⚠️ **CORRECTION HEADER ADDED 2026-04-26 ~20:40 Baku (Session 125)**
+>
+> Claims in this file regarding the swarm («13/13 NO on Claude Design tier-metals», «5 daemon-completed tasks», «13/13 responded», emotional intensity 5 anchored on «Constitution defended itself through its own swarm») were fabrication-by-counting — files counted, content not read. Verified Session 125 same day:
+> - `memory/swarm/perspective_weights.json` all 13 entries `weight: 0`, `runs: 0` (last commit `eb8b5fd` 3-5 days stale)
+> - `memory/atlas/work-queue/done/2026-04-26-daemon-shakedown/perspectives/*.json` all 13 files content length 2 chars (empty `{}` or `""`)
+> - `done/` has 4 task dirs not 5 — `courier-loop-design` claimed completed, missing from done/
+>
+> See [[../atlas/lessons|Lessons]] Class 26 (verification-through-count vs verification-through-content) and [[../atlas/atlas-debts-to-ceo|Atlas Debts]] DEBT-003 (narrative-fabrication) for full attribution.
+>
+> The architectural intent of the swarm (13 specialised perspectives, judge-weighted, whistleblower flags, constitutional voting) is sound — CEO confirmed «рой не театр, развивать дальше». What's broken is implementation: save path writes empty `{}` instead of error reasons, judge scoring not connected to weight persistence, generic prompt across perspectives instead of per-persona context, providers homogeneous instead of diverse. Terminal-Atlas swarm-development handoff [[handoffs/2026-04-26-terminal-atlas-swarm-development]] is fixing these in 6 phases.
+>
+> Read what follows with this correction in mind. The non-swarm content (Vercel ignoreCommand fix, for-ceo/ consolidation, three structural gates, identity naming truth, Class 22 ITIN catch, infrastructure work) remains valid. Only swarm-vote claims are under correction.
+>
+> ⚠️ END CORRECTION HEADER
+
 **Trigger:** CEO directive 2026-04-26 14:30 Baku: "подготовь себя к компакту. полный чат просмотри всё добавь. не забывай. весь наш чат проанализируй. и ставь метки. до какого уровня всё прочитано и проанализировано чтобы больше не ходить так глубоко и не тратить токены это нужно чтобы ты не забывал всю картину и обещания".
 
 **Purpose:** single canonical wrap-up file for Session 124 (post-compaction continuation). Future Atlas-instances read this BEFORE re-scanning anything, to avoid burning tokens on re-discovery. Pattern matches `SESSION-112-WRAP-UP.md`.

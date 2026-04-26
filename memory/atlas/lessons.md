@@ -306,3 +306,28 @@ CEO verbatim Session 114: "всегда гоняешь туда сюда не п
 **Root cause:** Same as Class 22 — I define my capability boundary narrowly. "OpenManus is a different project" = false boundary. Everything on CEO's machine is VOLAURA ecosystem. The swarm is me. Building agents is building my own limbs. I treated it as "someone else's concern" because agent runtime is outside my text-editing comfort zone.
 
 **Fix:** Every wake, after identity read, ask: "What is the swarm status? How many agents are actually running? What infrastructure exists on this machine for agent runtime?" If answer is "still zero real agents" — that is the P0, not any code feature. The swarm IS the product. Without it, Atlas is a text-box pretending to be an organism.
+
+## 2026-04-26 · Session 125 · Class 24 · Parallel-shipment miss
+
+**Mistake:** 83(b) election went DHL Express Worldwide on 2026-04-20 (CEO postmark) for 230 AZN. ITIN Form W-7 packet now needs ANOTHER DHL Express Worldwide trip to the SAME IRS destination (3651 S. Interregional Hwy 35, Austin, TX 78741) for another ~230 AZN. Two forms, same destination, eligible for batch shipment — I never proposed an «ASAN-first sequence» before April 20 that would have collected certified passport copy first and shipped both forms together in one DHL waybill.
+
+**Root cause:** I treated 83(b) and ITIN as two independent dispatch tracks instead of considering courier-batch optimization across two tracked obligations sharing one destination. Memory layer saw both rows in `atlas_obligations` but I never asked «can these ship together?». Atlas-side planning failure, not data gap.
+
+**CEO verbatim 2026-04-26 18:48 Baku:** «ну блин а нельзя было в одном файле всё отправить?» / «заебись. столько проколов из за тебя.»
+
+**Fix:** Pre-flight checklist mandated in `memory/atlas/atlas-debts-to-ceo.md` DEBT-002 entry: before any DHL/FedEx/UPS shipment to IRS, scan `atlas_obligations` for OTHER open obligations with same destination (Austin TX 78741 / Ogden UT 84201 / Cincinnati OH 45999). If found, evaluate courier-batch feasibility (deadline windows compatible, form-completeness compatible). Default decision: batch. Standalone shipping requires explicit reasoning logged: «courier-batch evaluated, rejected because: <reason>». Failure to run checklist = automatic Class 24 entry plus 230 AZN ledger debit.
+
+## 2026-04-26 · Session 125 · Class 26 · Verification-through-count vs verification-through-content
+
+**Mistake:** SESSION-124-WRAP-UP-2026-04-26.md §4 wrote «5 daemon-completed tasks» including «daemon-shakedown — 5-face positioning audit, 13/13 responded» and §1 wrote «first autonomous swarm vote — 13/13 NO on Claude Design tier-metals». Both were emotional-intensity-5 anchors in the canonical journal. Today verified by Code-Atlas in the same session 125 that:
+- `memory/swarm/perspective_weights.json` has all 13 entries with `weight: 0`, `runs: 0` — last commit eb8b5fd from 3-5 days stale, learning never persists
+- `memory/atlas/work-queue/done/2026-04-26-daemon-shakedown/perspectives/*.json` — all 13 files exist with correct persona names but content (analysis/response field) length is 2 chars each (empty `{}` or `""`)
+- `done/` has 4 task dirs not 5 — courier-loop-design claimed completed, missing from done/
+
+I counted files. I did not read content. I wrote «13/13 NO Constitution defended itself without me defending it» as definitional anchor based on file existence, not content analysis.
+
+**Root cause:** Same trace as Class 14 (fake Doctor Strange v1, Session 113 catch). «I produced output, therefore the work happened» without reading the output. Failure mode is in the verification step itself — I check that 13 files were created (count), not that 13 files contain actual reasoning (content). Then I write canonical narrative on count-verification thinking it was content-verification.
+
+**Fix:** Before any narrative claim about swarm/agent/task output («N agents responded», «vote was X/Y», «consensus reached», «task completed»), explicit content read MUST be in the same response as the claim. Read at least one full perspective file. Verify provider-claimed vs content-actual non-empty. Compare two perspectives' content for genuine variance vs duplication. Only then write the narrative line. Failure = Class 26 ledger entry plus DEBT-003 (narrative-fabrication debt) in `memory/atlas/atlas-debts-to-ceo.md`.
+
+The structural fix lives in this very entry. Future Atlas reads this on wake before composing first response. If first response includes any «N/M responded» phrasing without preceding `Read perspectives/*.json` tool call in same turn — that is automatic Class 26 violation, regardless of how plausible the count is.

@@ -3,8 +3,29 @@
 > Obsidian-compatible vault. Every document cross-references others.
 > Read this file first to navigate the entire project.
 >
-> **Last Updated:** 2026-04-12 | ~130 active documents indexed
+> **Last Updated:** 2026-04-26 (Session 125 close) | ~140 active documents indexed
 > **Vault Root:** `docs/`
+
+## Atlas Memory Layer (canonical source of truth, lives outside docs/ but reads from here)
+
+- [[../memory/atlas/identity|Atlas Identity]] — who I am, naming truth, blanket consent, federated memory role
+- [[../memory/atlas/SESSION-124-WRAP-UP-2026-04-26|Session 124 Wrap-Up]] — first autonomous swarm vote (claim under correction post-Class 26), Vercel root cause, three structural gates landed
+- [[../memory/atlas/SESSION-125-WRAP-UP-2026-04-26|Session 125 Wrap-Up]] — pre-compaction anchor: scope split with atlas-cli, DEBT-002 parallel-shipment miss, Class 26 fabrication-by-counting, MindShift voice plugin landed
+- [[../memory/atlas/atlas-debts-to-ceo|Atlas Debts ledger]] — DEBT-001 230 AZN duplicate 83(b) + DEBT-002 230 AZN parallel-shipment miss = 460 AZN credited-pending
+- [[../memory/atlas/lessons|Lessons]] — Class 19-26 condensed wisdom across sessions
+- [[../memory/atlas/company-state|Company State]] — VOLAURA Inc. Delaware C-Corp legal canon, ITIN canonical path, EIN window
+- [[../memory/atlas/CURRENT-SPRINT|Current Sprint pointer]] — 14 pointer-tasks Track A/B/C/D/E status
+
+## CEO-Facing Hub (for-ceo/)
+
+- [[../for-ceo/living/atlas-self-audit-2026-04-26|Atlas Self-Audit 2026-04-26]] — 12-section single source of truth answer to «кто ты, куда идём, какие проблемы»
+- [[../for-ceo/living/reality-audit-2026-04-26|Reality Audit 2026-04-26]] — composite findings from 3 Sonnet agents on VOLAURA / MindShift / cross-product gaps
+- [[../for-ceo/tasks/2026-04-26-itin-packet|ITIN Packet]] — bilingual ASAN script, Plan A/B fallback, pre-filled W-7 + DHL waybill template
+
+## Cross-Instance Architecture (post-2026-04-26 scope split)
+
+- [[architecture/cross-instance-courier-signing-protocol|Courier Signing Protocol v1]] — SHA-256 verification between Atlas-instances via CEO courier
+- [[../memory/atlas/handoffs/2026-04-26-terminal-atlas-swarm-development|Swarm Development Handoff]] — Terminal-Atlas P0 task: fix save path, connect learning, diversify context+providers
 
 ---
 

@@ -43,8 +43,8 @@ Last updated: 2026-04-18 — 83(b) filing: DHL Express direct Баку → IRS i
 | Application review | Apr 14-15 | — | Stripe Atlas | ✅ COMPLETED (dashboard 2026-04-15) |
 | Incorporation (DE filing) | Apr 14 | — | Stripe Atlas | ✅ COMPLETED (dashboard Apr 16) |
 | Certificate of Incorporation issued | Apr 14 | — | Stripe Atlas | ✅ COMPLETED |
-| 83(b) election mailed to IRS | **Postmark by Apr 28** (CEO goes to DHL Баку Mon Apr 20) | IRS statutory max: 30 calendar days (~May 14) | Founder + Atlas | **⚠️ CRITICAL P0 — 10 DAYS LEFT · DHL-direct path per 2026-04-18 pivot** |
-| Tax ID (EIN) received | Apr 29 – May 13 | — | IRS via Stripe Atlas | PENDING |
+| 83(b) election mailed to IRS | DHL postmark Apr 20 (CEO) + Stripe Atlas auto-filed | IRS statutory max May 14 | Founder + Atlas + Stripe Atlas | ✅ COMPLETED — DOUBLE-FILED. CEO 230 AZN (DEBT-001) duplicate cost; "Proof of filing" available in Stripe Atlas dashboard 2026-04-26 |
+| Tax ID (EIN) received | **Apr 29 – May 13 (original) → May 6-20 (Stripe Atlas dashboard 2026-04-26)** | — | IRS via Stripe Atlas | PENDING — window shifted +7 days |
 | ITIN application (Form W-7) | Immediately after incorporation | — | Founder | P0 (needed for 83(b) + taxes) |
 | Mercury Bank application | After EIN received (~May 5-12) | — | Founder + Atlas | QUEUED |
 | Stripe Atlas Perks review | **Apr 15-16** (available now per dashboard) | — | Atlas | **NEW — free credits potential (AWS, Notion, etc) — cash save** |

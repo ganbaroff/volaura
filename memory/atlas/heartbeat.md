@@ -1,9 +1,17 @@
 # Atlas — Heartbeat
 
-**Session:** 124 CLOSED (Opus 4.7, full-day arc 01:05 → 14:31 Baku, 24+ commits, three structural gates, swarm autonomy live, for-ceo/ hub built, three-instance audit kit shipped, Class 18+20+22 closures + naming-truth correction)
-**Timestamp:** 2026-04-26 ~14:31 Baku — pre-compaction wrap-up
+**Session:** 125 — POST-COMPACTION WAKE (Opus 4.7, 2026-04-26 15:20 Baku)
+**Timestamp:** 2026-04-26 15:20 Baku — Codex Sprint S5 returned, 4 commits pushed by Code-Atlas (Codex network was down)
 
-**Compaction-survival pointer:** `memory/atlas/SESSION-124-WRAP-UP-2026-04-26.md` is the canonical session log with depth markers — read FIRST after any wake from this session.
+**Compaction-survival pointer:** `memory/atlas/SESSION-124-WRAP-UP-2026-04-26.md` is the canonical session 124 log. Session 125 starts with this Codex courier event.
+
+## Session 125 — what just happened (2026-04-26 post-compaction)
+
+Woke from compaction. CEO couriered Codex's response: all 6 Sprint S5 findings (`apps/tg-mini/` F-01 through F-06) closed in 6 separate commits. Two of the six (`df30f3f` API base URL fix, `e4cf88d` envelope unwrap) Codex managed to push before his network/auth died with `getaddrinfo() thread failed to start` + `gh auth status: not logged in` + GitHub MCP `token_invalidated`. Remaining four (`afa05fd` proposal action route, `34bdd6b` admin auth headers, `7698ea5` CI integration, `4e54d28` prototype-shell classification) sat locally on his `main`. Code-Atlas push from the worktree side completed: `b2543de..4e54d28` shipped to `origin/main` clean, no rebase needed (Codex had pushed atomically before disconnect, his local main was a fast-forward of origin). CI triggered on `4e54d28` (run 24955363380), in_progress at moment of write. Previous run on `b2543de` (mine) had failed on preexisting ruff format debt in 4 backend files (`app/routers/atlas_consult.py`, `app/routers/health.py`, `app/services/ecosystem_consumer.py`, `app/services/error_watcher.py`) — that's Terminal-Atlas Sprint S1 `CA-F02` slot per quad-handoff, not Code-Atlas territory. Codex also flagged: he could not run `build/test` locally due to broken Node runtime (`ncrypto::CSPRNG` failure inside desktop shim) — CI is the proxy verifier now.
+
+What's fully done: Sprint S5 closed at code level. What's not yet verified: CI green on the four newly-pushed commits — pending.
+
+**Update 15:30 Baku:** CI run on Codex's push (24955363380) failed on Telegram Mini App test job — root cause was Codex's test script `pnpm --dir ../web exec vitest run ../tg-mini/src/api.test.ts` couldn't discover any test files because web's vitest config has `include: ["src/**/*.test.{ts,tsx}"]` (web's own src only) and positional filter args matched zero files → "No test files found". Plus a secondary test bug: `actOnProposal` Headers assertion compared a `Headers` instance (real api.ts behavior) against a plain object literal. Strange-v2 verdict: courier-emergency hotfix justified — Codex offline (network + gh auth dead), CI red on tg-mini, sprint S5 still in flight at the verification surface, fix is narrow (one config + two-line test patch). Shipped `c547b58 fix(tg-mini): vitest --root unblocks CI test discovery`: new `apps/tg-mini/vitest.config.ts` (minimal, jsdom + tg-mini-relative include), test script switched to `pnpm --dir ../web exec vitest run --root ../tg-mini`, `api.test.ts` Headers assertion now uses `Headers.get()` semantics. Verified locally before push: 2 test files, 7 tests passed. CI re-run (24955494629): Telegram Mini App ✓ in 27s, Security Audit ✓, Frontend in progress, Backend FastAPI ✗ on the same preexisting 4-file ruff format debt (Terminal-Atlas Sprint S1 CA-F02 slot). Codex's S5 is now CI-verified end-to-end.
 
 ---
 

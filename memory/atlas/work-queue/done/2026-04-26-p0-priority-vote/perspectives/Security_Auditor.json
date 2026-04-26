@@ -1,0 +1,13 @@
+{
+  "perspective": "Security Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Security\", \"vote\": \"yes\", \"amendment_if_yes_amended\": \"C\", \"rationale\": \"Stale code index creates blind spots in all security analyses — we cannot audit what we don't see. Fixing it first ensures subsequent votes on A and B are based on current reality, not ghost code.\", \"risk_if_other_side_wins\": \"Acting on outdated code references could miss live vulnerabilities or waste effort on deleted paths, increasing attack surface through false confidence.\", \"constitutional_violations_detected\": [], \"whistleblower_flag\": null}",
+  "vote": "yes",
+  "amendment_if_yes_amended": "C",
+  "rationale": "Stale code index creates blind spots in all security analyses — we cannot audit what we don't see. Fixing it first ensures subsequent votes on A and B are based on current reality, not ghost code.",
+  "risk_if_other_side_wins": "Acting on outdated code references could miss live vulnerabilities or waste effort on deleted paths, increasing attack surface through false confidence.",
+  "constitutional_violations_detected": [],
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Security"
+}

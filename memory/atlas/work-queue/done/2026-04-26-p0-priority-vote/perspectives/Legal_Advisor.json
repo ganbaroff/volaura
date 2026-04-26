@@ -1,0 +1,13 @@
+{
+  "perspective": "Legal Advisor",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\"perspective\":\"Risk Manager\",\"vote\":\"yes\",\"amendment_if_yes_amended\":null,\"rationale\":\"Courier-loop compromise is an upstream cause of systemic failure, violating Crystal Law 1 (informational > controlling) and ECOSYSTEM-CONSTITUTION grounding principles. Delaying fixes creates irreversible constitutional breach risk.\",\"risk_if_other_side_wins\":\"Stale code-index (C) risks polluting all subsequent decisions, but courier-loop (A) directly threatens constitutional integrity via undetectable state divergence.\",\"constitutional_violations_detected\":true,\"whistleblower_flag\":\"Critical\"}",
+  "vote": "yes",
+  "amendment_if_yes_amended": null,
+  "rationale": "Courier-loop compromise is an upstream cause of systemic failure, violating Crystal Law 1 (informational > controlling) and ECOSYSTEM-CONSTITUTION grounding principles. Delaying fixes creates irreversible constitutional breach risk.",
+  "risk_if_other_side_wins": "Stale code-index (C) risks polluting all subsequent decisions, but courier-loop (A) directly threatens constitutional integrity via undetectable state divergence.",
+  "constitutional_violations_detected": true,
+  "whistleblower_flag": "Critical",
+  "perspective_name_drift": "Risk Manager"
+}

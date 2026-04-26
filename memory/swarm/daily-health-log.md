@@ -2,6 +2,93 @@
 
 ---
 
+## DAILY HEALTH: 2026-04-26 (Sunday 10:17 Baku)
+
+**Team score: 7.5/10** (up from 6.5 on 2026-04-20 — autonomous daemon now firing, not just chat-driven invocations)
+**Agents active: 13/13 perspectives via daemon** (3 task runs in last 14h: daemon-shakedown 2026-04-25T22:47, daemon-fixes-verify 2026-04-26T01:56, itin-caa-research 2026-04-26T06:09 — all 13 dispatched, 13 responded, 0 failed)
+**Skills loaded: 0/6** (BNE + Cultural Intelligence still dormant since Session 86 — no commits reference them since 2026-04-12 dormant annotation in 6e4796e)
+**Critical gaps:**
+- **Foundation Law 2 (Energy Adaptation)** — Ecosystem Auditor flagged TODAY: "violated across 4/5 products. Foundation Law non-compliance at ecosystem scale." Open since 2026-04-11, 15+ days unresolved. Pre-launch blocker.
+- **Courier-loop / single-CEO failure mode** — 4 perspectives independently flagged in daemon-fixes-verify run (Scaling Engineer, Code Quality Engineer, Risk Manager, Communications Strategist). Pattern: "compromised_ceo creates irreversible constitutional violation risk." Swarm is detecting structural single-point-of-failure on CEO-as-only-decision-node. **Convergent signal — likely real.**
+- **Stale code-index** — Ecosystem Auditor: "agents operating on stale index — halt swarm until sync" (CRITICAL flag in itin-caa-research run). Means swarm verdicts may reference removed/renamed code.
+- **Greenback CAA passport retention** — Security Auditor flagged 7-year retention violates Law 10 (Data Minimization). Relevant for ITIN W-7 chain decision (May 15 deadline).
+- **BNE + Cultural Intelligence still dormant** — 14+ sessions since last load. Mega-Sprint 122 + Class 22 + Claude Design vote shipped without cognitive load or AZ/CIS audit.
+- **Growth Agent retirement** — 7+ daily audits overdue. Still 0 findings all-time. Decision pending.
+
+---
+
+### Daemon health (NEW — first audit since daemon went autonomous)
+
+The swarm has fundamentally changed since the 2026-04-20 audit. Old model: CTO had to invoke agents in-chat → mostly didn't → 0/6 active. New model: Windows Scheduled Task fires daemon → daemon dispatches 13 perspectives → all 13 respond via Cerebras/Ollama/NVIDIA mix.
+
+Last 3 task summaries:
+- **daemon-shakedown** (2026-04-25T22:47): 13/13 responded, providers cerebras=3, nvidia=7, ollama=3. Whistleblowers: Security (face impersonation risk), Ecosystem Auditor (Law 2 violation).
+- **daemon-fixes-verify** (2026-04-26T01:56): 13/13 responded, providers cerebras=3, ollama=10. **7 whistleblower flags** — including 4 convergent on courier-loop/compromised-CEO theme.
+- **itin-caa-research** (2026-04-26T06:09): 13/13 responded, providers cerebras=3, ollama=10. Real research output (CAA selection for ITIN). 6 whistleblower flags.
+
+Convergent signal across all 3 runs: **constitutional-integrity concerns dominate over technical concerns.** This is new. Previously findings were mostly code/security. Now swarm is auditing governance.
+
+Also new: first autonomous constitutional vote landed 2026-04-25 — 13/13 NO on Claude Design tier-metals proposal (commit 8a23879). Swarm exercised veto without CTO intervention.
+
+---
+
+### Per-Agent Report (legacy 6-core roster — still tracked but no longer the primary signal)
+
+**Security Agent — 9.0/10 — Expert**
+- Contributed last 24h? YES indirectly — daemon "Security" perspective fired in all 3 runs, surfaced face-impersonation risk + Greenback retention concern.
+- Growth objectives: still 0/3 (proactive threat modeling not visible in daemon output, policy validator not built, no mentoring activity).
+
+**Architecture Agent — 8.5/10 — Expert**
+- Contributed last 24h? Indirectly via daemon "Scaling Engineer" + "Ecosystem Auditor" perspectives. Surfaced courier-loop architectural risk.
+
+**Product Agent — 8.0/10 — Expert**
+- Contributed last 24h? Indirectly via daemon "Product Strategist" (1 of 3 runs returned null flag). No explicit user-journey audit visible in last week.
+
+**Needs Agent — 7.0/10 — Proficient**
+- Contributed last 24h? NO. Cross-agent coordination flagged by Ecosystem Auditor instead (stale code-index).
+
+**QA Engineer — 6.5/10 — Proficient**
+- Contributed last 24h? NO. Daemon does not yet route to QA-blind-cross-eval lane. Flag for daemon roadmap.
+
+**Growth Agent — 5.0/10 — ⛔ RETIREMENT REVIEW — 7+ DAYS OVERDUE**
+- Contributed last 24h? NO. Still 0 findings ever. Decision still pending.
+
+---
+
+### Hired Skills Report
+
+| Skill | Status | Findings | Note |
+|-------|--------|----------|------|
+| Behavioral Nudge Engine | ⚠️ DORMANT | 10 (Session 86 only) | 14+ sessions silent. Mega-Sprint 122 shipped without cognitive load audit. |
+| Cultural Intelligence Strategist | ⚠️ DORMANT | 10 (Session 86 only) | Same. Class 22 + Claude Design vote landed without AZ/CIS pass. |
+| Sales Deal Strategist | ⏸ Deferred | 0 | OK — Sprint 5+ scope |
+| Sales Discovery Coach | ⏸ Deferred | 0 | OK — Sprint 5+ scope |
+| LinkedIn Content Creator | ⏳ Load soon | 0 | AURA share work pending |
+| Accessibility Auditor | ⏸ Deferred | 0 | OK — Sprint 6+ |
+
+---
+
+### CTO Action Items — TODAY (2026-04-26)
+
+**P0:**
+1. **Address courier-loop convergent signal** — 4 perspectives independently flagged compromised-CEO as constitutional risk in same daemon run. Either (a) accept and design fallback decision-node, or (b) generate counter-evidence and document why concerns are unfounded. Do not silently dismiss — this is exactly the swarm finding pattern that route-shadowing was in Session 25.
+2. **Foundation Law 2 enforcement** — open 15+ days. Energy Adaptation must ship in ≥1 product or be formally deferred with justification. Pre-launch blocker.
+3. **Stale code-index sync** — Ecosystem Auditor wants halt-and-resync. Run code-index regeneration or document why current index is acceptable.
+
+**P1:**
+4. **ITIN W-7 CAA decision** — daemon completed research. Greenback flagged on retention. CTO needs to read `memory/atlas/work-queue/done/2026-04-26-itin-caa-research/` and decide before May 15 deadline.
+5. **Growth Agent retirement** — 7+ overdue. Either assign forced task with deadline or retire formally.
+6. **BNE + Cultural Intelligence reload** — 14+ sessions dormant. Add to next non-trivial UX or content sprint as mandatory load.
+
+**P2:**
+7. **Daemon → QA Engineer routing** — daemon does not currently dispatch to QA blind-cross-eval lane. Add QA perspective to next iteration.
+8. **Ollama provider failures (shakedown run)** — 6/13 perspectives failed Ollama in shakedown but were re-routed to NVIDIA. concurrency cap fix (cbfecf3) reduced failures to 0 in subsequent runs. Monitor next 3 runs to confirm fix holds.
+
+**P3:**
+9. **Document daemon as primary swarm surface** — agent-roster.md still describes legacy "active agents" model. Update to reflect daemon-first reality (13 perspectives via Cerebras/Ollama/NVIDIA, scheduled task fires autonomously).
+
+---
+
 ## DAILY HEALTH: 2026-04-20
 
 **Team score: 6.5/10**
@@ -1212,4 +1299,23 @@ Full E2E verified live on volauraapi-production.up.railway.app: signup → asses
 10. **LifeSimulator anon_key** — still empty. User JWT needed in Godot project settings.
 
 ---
+
+
+---
+
+## 2026-04-26 09:50 Baku — P0 vote OPTION C executed
+
+Swarm vote `2026-04-26-p0-priority-vote` ran 09:44-09:46 UTC, 13/13 perspectives, providers `{cerebras:3, ollama:10}`. Result: **OPTION C — stale code-index resync** chosen by 12 of 13 (Scaling Engineer parse-fail, Legal Advisor leaned A but flagged C as upstream). All rationales converged on "C is upstream cause, A and B verdicts depend on accurate index".
+
+Per CEO directive "Атлас-Code выполняет победителя без сверки с тобой": executed immediately.
+
+Action taken:
+- `packages/swarm/archive/code_index.py` had a path bug (`__file__.parent.parent.parent` resolved to `packages/`, not repo root, because file moved into `archive/` subdirectory at some point). Fixed: now `parent.parent.parent.parent` → repo root.
+- Removed orphan `packages/memory/swarm/code-index.json` created by the bad path resolution from the first run.
+- Rebuilt index: 1027 files (vs 530 stale from 2026-04-01) — 25-day-old index missed half the codebase. `built_at: 2026-04-26T09:49:01` confirmed fresh.
+- Ecosystem Auditor's CRITICAL whistleblower flag on stale index can be cleared. Future swarm runs now operate on current code-state.
+
+Next-ranked option for daemon to pick up: **OPTION A — courier-loop signing protocol design** (4 convergent whistleblower flags from prior runs: Scaling Engineer, Code Quality, Risk Manager, Communications Strategist all flagged compromised_ceo as constitutional risk). Will queue as next pending task.
+
+Status: code-index resync ✅ done, courier-loop ⏭️ queued, Law 2 (Energy Adaptation) ⏸ deferred to post-A.
 

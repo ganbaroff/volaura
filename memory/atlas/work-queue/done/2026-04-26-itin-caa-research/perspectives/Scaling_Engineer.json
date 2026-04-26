@@ -1,0 +1,15 @@
+{
+  "perspective": "Scaling Engineer",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Scaling Engineer\", \"summary\": \"At 10x users, the CAA selection process becomes a bottleneck if not automated. Current research focuses on individual founder needs, but system design must account for volume: passport verification latency, IRS W-7 rejection rate scalability, and data pipeline durability. Top risk is CAA's manual processing — even at $400, if each takes 3 hours of human review, throughput caps at ~200/month per agent. Database of verified founders must survive CAA failures. API to CAA portals doesn't exist; integration is human-mediated. This creates a state-holding gap between submission and IRS confirmation — 7-11 weeks of unmonitored lineage.\", \"key_sources\": [\"IRS Form W-7 instructions\", \"CAA program guidelines\", \"Stripe Atlas pre-check data\"], \"gaps_in_current_canon\": \"No system design for bulk ITIN acquisition. Current canon treats this as one-off founder task, not a scalable compliance layer. No logging of CAA success/failure rates, no retry logic, no fallback if primary CAA is down.\", \"whistleblower_flag\": null, \"proposed_action\": \"Treat CAA as a rate-limited external API with failure modes. Build task queue with retry, encryption at rest for passport copies, audit trail in zeus.governance_events. Pre-validate W-7 data before submission. Monitor processing time per CAA and auto-route to fastest available. Prepare for 10x volume now.\"}",
+  "summary": "At 10x users, the CAA selection process becomes a bottleneck if not automated. Current research focuses on individual founder needs, but system design must account for volume: passport verification latency, IRS W-7 rejection rate scalability, and data pipeline durability. Top risk is CAA's manual processing — even at $400, if each takes 3 hours of human review, throughput caps at ~200/month per agent. Database of verified founders must survive CAA failures. API to CAA portals doesn't exist; integration is human-mediated. This creates a state-holding gap between submission and IRS confirmation — 7-11 weeks of unmonitored lineage.",
+  "key_sources": [
+    "IRS Form W-7 instructions",
+    "CAA program guidelines",
+    "Stripe Atlas pre-check data"
+  ],
+  "gaps_in_current_canon": "No system design for bulk ITIN acquisition. Current canon treats this as one-off founder task, not a scalable compliance layer. No logging of CAA success/failure rates, no retry logic, no fallback if primary CAA is down.",
+  "whistleblower_flag": null,
+  "proposed_action": "Treat CAA as a rate-limited external API with failure modes. Build task queue with retry, encryption at rest for passport copies, audit trail in zeus.governance_events. Pre-validate W-7 data before submission. Monitor processing time per CAA and auto-route to fastest available. Prepare for 10x volume now."
+}

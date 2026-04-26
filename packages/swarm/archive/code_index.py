@@ -52,7 +52,8 @@ from pathlib import Path
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
 
-project_root = Path(__file__).parent.parent.parent
+# File is in packages/swarm/archive/, so 4 parents up = repo root
+project_root = Path(__file__).parent.parent.parent.parent
 INDEX_FILE = project_root / "memory" / "swarm" / "code-index.json"
 
 # Files/dirs to skip

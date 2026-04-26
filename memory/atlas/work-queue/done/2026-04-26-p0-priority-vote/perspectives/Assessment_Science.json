@@ -1,0 +1,13 @@
+{
+  "perspective": "Assessment Science",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Ecosystem Auditor\",\n  \"vote\": \"yes\",\n  \"amendment_if_yes_amended\": \"\",\n  \"rationale\": \"Stale code-index resync (C) is the upstream cause validating all other P0 findings. Irreversible constitutional violations in A/B depend on accurate index state. Delaying C risks cascading false positives in subsequent verdicts.\",\n  \"risk_if_other_side_wins\": \"Courier-loop compromise (A) could create undetectable state divergence violating Constitution grounding principles. Energy mode enforcement (B) without index sync risks ecosystem-scale non-compliance.\",\n  \"constitutional_violations_detected\": true,\n  \"whistleblower_flag\": \"Critical infrastructure failure without code-index sync creates irreversible constitutional breach risks.\"\n}",
+  "vote": "yes",
+  "amendment_if_yes_amended": "",
+  "rationale": "Stale code-index resync (C) is the upstream cause validating all other P0 findings. Irreversible constitutional violations in A/B depend on accurate index state. Delaying C risks cascading false positives in subsequent verdicts.",
+  "risk_if_other_side_wins": "Courier-loop compromise (A) could create undetectable state divergence violating Constitution grounding principles. Energy mode enforcement (B) without index sync risks ecosystem-scale non-compliance.",
+  "constitutional_violations_detected": true,
+  "whistleblower_flag": "Critical infrastructure failure without code-index sync creates irreversible constitutional breach risks.",
+  "perspective_name_drift": "Ecosystem Auditor"
+}

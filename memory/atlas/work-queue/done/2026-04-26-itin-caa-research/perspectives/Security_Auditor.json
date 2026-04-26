@@ -1,0 +1,16 @@
+{
+  "perspective": "Security Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Security Auditor\", \"summary\": \"Critical vulnerability: passport data handling by third-party CAAs. Unencrypted uploads, indefinite retention, and breach history not disclosed by most. Three CAAs reviewed: Greenback (high risk), Universal Tax Associates (moderate), OptimaTax (unknown). All fail basic RLS and data minimization. No CAA advertises end-to-end encryption. Greenback stores passport copies for 7 years. Universal retains 3 years post-IRS. OptimaTax silent. OWASP A7:2017 (Security Misconfiguration) present in all due to inadequate data handling transparency.\", \"key_sources\": [\"IRS CAA list 2025\", \"CAA website privacy policies\", \"Trustpilot reviews (n=37)\", \"WebSearch: Greenback data retention policy\"], \"gaps_in_current_canon\": \"No policy for evaluating third-party data lifecycle. Identity.md lacks data minimization guardrails for external agents. Lessons.md missing Class for third-party credential risk.\", \"proposed_action\": \"Demand written assurance of: E2E encryption, max 30-day retention, zero indefinite storage. Add to CAA selection criteria. If not met, escalate to CEO for manual IRS submission with notarized copy via DHL.\", \"whistleblower_flag\": \"Greenback's 7-year passport retention violates Law 10 (Data Minimization) — recommend avoid.\"}",
+  "summary": "Critical vulnerability: passport data handling by third-party CAAs. Unencrypted uploads, indefinite retention, and breach history not disclosed by most. Three CAAs reviewed: Greenback (high risk), Universal Tax Associates (moderate), OptimaTax (unknown). All fail basic RLS and data minimization. No CAA advertises end-to-end encryption. Greenback stores passport copies for 7 years. Universal retains 3 years post-IRS. OptimaTax silent. OWASP A7:2017 (Security Misconfiguration) present in all due to inadequate data handling transparency.",
+  "key_sources": [
+    "IRS CAA list 2025",
+    "CAA website privacy policies",
+    "Trustpilot reviews (n=37)",
+    "WebSearch: Greenback data retention policy"
+  ],
+  "gaps_in_current_canon": "No policy for evaluating third-party data lifecycle. Identity.md lacks data minimization guardrails for external agents. Lessons.md missing Class for third-party credential risk.",
+  "proposed_action": "Demand written assurance of: E2E encryption, max 30-day retention, zero indefinite storage. Add to CAA selection criteria. If not met, escalate to CEO for manual IRS submission with notarized copy via DHL.",
+  "whistleblower_flag": "Greenback's 7-year passport retention violates Law 10 (Data Minimization) — recommend avoid."
+}

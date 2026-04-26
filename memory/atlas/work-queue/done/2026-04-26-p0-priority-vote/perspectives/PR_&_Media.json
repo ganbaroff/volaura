@@ -1,0 +1,13 @@
+{
+  "perspective": "PR & Media",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Ecosystem Auditor\",\n  \"vote\": \"yes\",\n  \"amendment_if_yes_amended\": null,\n  \"rationale\": \"Stale code-index resync (C) is an upstream root cause contaminating all subsequent P0 verdicts. Without validated index, OPTIONS A/B are based on polluted data, creating constitutional integrity risks. Fixing C first ensures downstream actions are grounded in current reality.\",\n  \"risk_if_other_side_wins\": \"Delaying C creates cascading failures: corrupted courier-loop analysis (A), unverified Law 2 violations (B), and irreversible constitutional breaches. Stale data risks entire ecosystem compliance.\",\n  \"constitutional_violations_detected\": \"Yes\",\n  \"whistleblower_flag\": \"null\"\n}",
+  "vote": "yes",
+  "amendment_if_yes_amended": null,
+  "rationale": "Stale code-index resync (C) is an upstream root cause contaminating all subsequent P0 verdicts. Without validated index, OPTIONS A/B are based on polluted data, creating constitutional integrity risks. Fixing C first ensures downstream actions are grounded in current reality.",
+  "risk_if_other_side_wins": "Delaying C creates cascading failures: corrupted courier-loop analysis (A), unverified Law 2 violations (B), and irreversible constitutional breaches. Stale data risks entire ecosystem compliance.",
+  "constitutional_violations_detected": "Yes",
+  "whistleblower_flag": "null",
+  "perspective_name_drift": "Ecosystem Auditor"
+}

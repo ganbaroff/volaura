@@ -1,0 +1,13 @@
+{
+  "perspective": "Readiness Manager",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Ecosystem Auditor\",\n  \"vote\": \"yes\",\n  \"amendment_if_yes_amended\": \"\",\n  \"rationale\": \"Stale code-index resync (C) is the upstream cause threatening constitutional integrity. All subsequent analyses for A/B depend on current code-state; unresolved stale paths invalidate evidence for all P0 items.\",\n  \"risk_if_other_side_wins\": \"Delaying code-index resync creates irreversible data pollution, rendering all P0 findings unreliable and exposing constitutional violations across 4/5 products.\",\n  \"constitutional_violations_detected\": true,\n  \"whistleblower_flag\": \"null\"\n}",
+  "vote": "yes",
+  "amendment_if_yes_amended": "",
+  "rationale": "Stale code-index resync (C) is the upstream cause threatening constitutional integrity. All subsequent analyses for A/B depend on current code-state; unresolved stale paths invalidate evidence for all P0 items.",
+  "risk_if_other_side_wins": "Delaying code-index resync creates irreversible data pollution, rendering all P0 findings unreliable and exposing constitutional violations across 4/5 products.",
+  "constitutional_violations_detected": true,
+  "whistleblower_flag": "null",
+  "perspective_name_drift": "Ecosystem Auditor"
+}

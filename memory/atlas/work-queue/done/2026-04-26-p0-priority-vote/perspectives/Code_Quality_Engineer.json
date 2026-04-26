@@ -1,0 +1,13 @@
+{
+  "perspective": "Code Quality Engineer",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Ecosystem Auditor\",\n  \"vote\": \"yes\",\n  \"amendment_if_yes_amended\": \"\",\n  \"rationale\": \"Stale code-index data directly threatens constitutional integrity by enabling flawed verdicts on A/B. Resync is upstream cause vs symptom of other issues.\",\n  \"risk_if_other_side_wins\": \"Irreversible constitutional violations via compromised-CEO risk if A/B proceed without validated code-index\",\n  \"constitutional_violations_detected\": true,\n  \"whistleblower_flag\": \"null\"\n}",
+  "vote": "yes",
+  "amendment_if_yes_amended": "",
+  "rationale": "Stale code-index data directly threatens constitutional integrity by enabling flawed verdicts on A/B. Resync is upstream cause vs symptom of other issues.",
+  "risk_if_other_side_wins": "Irreversible constitutional violations via compromised-CEO risk if A/B proceed without validated code-index",
+  "constitutional_violations_detected": true,
+  "whistleblower_flag": "null",
+  "perspective_name_drift": "Ecosystem Auditor"
+}

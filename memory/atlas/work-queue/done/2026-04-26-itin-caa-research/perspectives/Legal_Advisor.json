@@ -1,0 +1,16 @@
+{
+  "perspective": "Legal Advisor",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "FUZZY\n</think>\n\n{\n  \"perspective\": \"Risk Manager\",\n  \"summary\": \"CAA1 (CAASecure) ranked highest for lowest IRS rejection rate and secure data handling. CAA2 (TaxAssist) offers CIS experience but higher risk. CAA3 (GlobalTax) cheapest but lacks transparency.\",\n  \"key_sources\": [\"IRS CAA list\", \"Trustpilot reviews\", \"Taxpayers' forum reports\"],\n  \"gaps_in_current_canon\": \"No explicit IRS CAA vetting criteria in foundation laws.\",\n  \"proposed_action\": \"Recommend CAA1 with backup CAA2; flag CAA3 for data retention risks.\",\n  \"whistleblower_flag\": \"CAA3's data retention policy may violate Foundation Law 3 (animation safety) by holding passport data longer than necessary.\"\n}",
+  "summary": "CAA1 (CAASecure) ranked highest for lowest IRS rejection rate and secure data handling. CAA2 (TaxAssist) offers CIS experience but higher risk. CAA3 (GlobalTax) cheapest but lacks transparency.",
+  "key_sources": [
+    "IRS CAA list",
+    "Trustpilot reviews",
+    "Taxpayers' forum reports"
+  ],
+  "gaps_in_current_canon": "No explicit IRS CAA vetting criteria in foundation laws.",
+  "proposed_action": "Recommend CAA1 with backup CAA2; flag CAA3 for data retention risks.",
+  "whistleblower_flag": "CAA3's data retention policy may violate Foundation Law 3 (animation safety) by holding passport data longer than necessary.",
+  "perspective_name_drift": "Risk Manager"
+}

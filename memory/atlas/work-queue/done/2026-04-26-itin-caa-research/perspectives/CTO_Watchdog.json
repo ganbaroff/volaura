@@ -1,0 +1,16 @@
+{
+  "perspective": "CTO Watchdog",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Risk Manager\",\n  \"summary\": \"Select CAA with lowest IRS rejection risk and data encryption. Prioritize CAAs with CIS experience to avoid treaty disputes.\",\n  \"key_sources\": [\"IRS CAA list\", \"Trustpilot reviews\", \"Better Business Bureau\"],\n  \"gaps_in_current_canon\": \"No verified AZ-specific CAA data; relies on CIS proxy indicators\",\n  \"proposed_action\": \"Engage CAA with end-to-end encryption, CIS track record, and 7-10 week processing window\",\n  \"whistleblower_flag\": null\n}",
+  "summary": "Select CAA with lowest IRS rejection risk and data encryption. Prioritize CAAs with CIS experience to avoid treaty disputes.",
+  "key_sources": [
+    "IRS CAA list",
+    "Trustpilot reviews",
+    "Better Business Bureau"
+  ],
+  "gaps_in_current_canon": "No verified AZ-specific CAA data; relies on CIS proxy indicators",
+  "proposed_action": "Engage CAA with end-to-end encryption, CIS track record, and 7-10 week processing window",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Risk Manager"
+}

@@ -1,0 +1,39 @@
+name: "Daemon Task Seeder"
+
+on:
+  schedule:
+    - cron: '17 */4 * * *'   # every 4 hours at :17
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daemon-seeder
+  cancel-in-progress: false
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run seeder
+        run: python scripts/daemon_task_seeder.py
+
+      - name: Commit new tasks
+        run: |
+          git config user.name "atlas-daemon-seeder"
+          git config user.email "atlas@volaura.app"
+          git add memory/atlas/work-queue/pending/
+          if git diff --cached --quiet; then
+            echo "No new tasks seeded"
+          else
+            COUNT=$(git diff --cached --name-only | wc -l)
+            git commit -m "daemon-seeder: $COUNT new task(s) seeded [skip ci]"
+            git push
+          fi

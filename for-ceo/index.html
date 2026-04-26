@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Юсифу — все файлы для тебя в одном месте</title>
+<style>
+  :root {
+    --bg: #0F1220;
+    --surface: #161A2E;
+    --surface-2: #1E2438;
+    --border: #2A3050;
+    --teal: #5EEAD4;
+    --teal-dim: #4FD1C5;
+    --indigo: #7C5CFC;
+    --indigo-dim: #5B43C4;
+    --gold: #E9C400;
+    --green: #34D399;
+    --orange: #FB923C;
+    --rose: #F472B6;
+    --text: #F1F1F8;
+    --text-muted: #8B8BA7;
+    --text-dim: #6B6B85;
+    --shadow: 0 8px 32px rgba(0,0,0,0.35);
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: 80px;
+  }
+  header.top {
+    position: sticky; top: 0; z-index: 100;
+    background: linear-gradient(180deg, rgba(15,18,32,0.98), rgba(15,18,32,0.92));
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 24px 14px;
+  }
+  .top-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; max-width: 1080px; margin: 0 auto;
+  }
+  .brand {
+    font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-muted); font-weight: 600;
+  }
+  .brand strong { color: var(--teal); font-weight: 700; }
+  .next-pill {
+    background: var(--gold); color: #1a1205;
+    padding: 6px 14px; border-radius: 999px;
+    font-weight: 700; font-size: 13px;
+    white-space: nowrap;
+  }
+  main { max-width: 1080px; margin: 0 auto; padding: 28px 24px; }
+  h1 {
+    font-size: 32px; font-weight: 800; line-height: 1.15;
+    margin: 4px 0 8px;
+    background: linear-gradient(135deg, var(--teal), var(--indigo));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .subtitle { font-size: 16px; color: var(--text-muted); margin-bottom: 28px; max-width: 720px; }
+
+  .hero-card {
+    background: linear-gradient(135deg, var(--indigo), var(--indigo-dim));
+    padding: 24px 26px; border-radius: var(--radius);
+    margin-bottom: 36px; box-shadow: var(--shadow);
+  }
+  .hero-card .label {
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: rgba(255,255,255,0.7); font-weight: 700;
+  }
+  .hero-card .title { font-size: 24px; font-weight: 800; margin: 8px 0 8px; line-height: 1.25; }
+  .hero-card .meta { font-size: 14.5px; color: rgba(255,255,255,0.9); margin-bottom: 14px; }
+  .hero-card a.cta {
+    display: inline-block; background: white; color: var(--indigo);
+    padding: 11px 22px; border-radius: 8px;
+    font-weight: 700; font-size: 14.5px; text-decoration: none;
+    transition: transform 150ms ease;
+  }
+  .hero-card a.cta:hover { transform: translateY(-1px); }
+
+  h2.section {
+    font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--teal); font-weight: 700;
+    margin: 36px 0 14px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    text-decoration: none; color: var(--text);
+    transition: transform 180ms ease, border-color 180ms ease;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    border-color: var(--teal-dim);
+  }
+  .card .row {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 4px;
+  }
+  .card .icon {
+    width: 36px; height: 36px;
+    background: var(--surface-2); border-radius: 10px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .card .title-line { font-weight: 700; font-size: 16px; line-height: 1.3; }
+  .card .desc { color: var(--text-muted); font-size: 14px; line-height: 1.5; }
+  .card .meta {
+    font-size: 12px; color: var(--text-dim);
+    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px;
+  }
+  .pill {
+    font-size: 11px; padding: 3px 9px; border-radius: 999px;
+    font-weight: 600;
+    background: var(--surface-2); color: var(--text-muted);
+  }
+  .pill.urgent { background: rgba(251,146,60,0.15); color: var(--orange); }
+  .pill.gold   { background: rgba(233,196,0,0.15); color: var(--gold); }
+  .pill.green  { background: rgba(52,211,153,0.15); color: var(--green); }
+  .pill.teal   { background: rgba(94,234,212,0.15); color: var(--teal); }
+  .pill.rose   { background: rgba(244,114,182,0.15); color: var(--rose); }
+  .pill.archive { background: rgba(139,139,167,0.1); color: var(--text-dim); }
+
+  .open-info {
+    background: var(--surface-2);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 24px 0 28px;
+    font-size: 14px;
+    color: var(--text-muted);
+    border-left: 3px solid var(--teal);
+  }
+  .open-info strong { color: var(--teal); }
+  .open-info code {
+    background: var(--bg); color: var(--teal-dim);
+    padding: 1px 6px; border-radius: 4px; font-size: 12.5px;
+  }
+
+  footer.bottom {
+    margin-top: 40px; padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim); font-size: 13px; line-height: 1.7;
+  }
+  footer.bottom a { color: var(--teal-dim); }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-row">
+    <div class="brand"><strong>VOLAURA, INC</strong> · Юсифу — единый хаб</div>
+    <div class="next-pill">Обновлено 2026-04-26</div>
+  </div>
+</header>
+
+<main>
+
+<h1>Всё что адресовано тебе — в одном месте</h1>
+<p class="subtitle">Это твоя папка. Все файлы, которые я когда-либо для тебя писал, теперь живут в <code>for-ceo/</code> в репо. Каждый раздел ниже — это категория. Кликаешь карточку, открывается файл. Никаких поисков. Атлас обновляет хаб когда добавляются новые материалы.</p>
+
+<div class="open-info">
+  <strong>Как открыть HTML на телефоне или с GitHub без скачивания.</strong> Подставь имя файла в этот URL —<br/>
+  <code>https://raw.githack.com/ganbaroff/volaura/main/for-ceo/index.html</code><br/>
+  раз кликнуть и откроется в браузере полностью отрисованный. Это и есть способ читать визуальные гайды без локального клона. Альтернатива — клонировать репо и открывать файлы двойным кликом, или sync через GitHub Desktop.
+</div>
+
+<!-- HERO — current most urgent -->
+<div class="hero-card">
+  <div class="label">Прямо сейчас</div>
+  <div class="title">Текущие задачи на эту неделю — ITIN, EIN, Mercury, Perks</div>
+  <div class="meta">Всё что ты должен сделать в ближайшие 19 дней. Каждая задача через Doctor Strange v2 — лучший путь, доказательство, fallback. Атомарные шаги.</div>
+  <a class="cta" href="tasks/2026-04-26-current-tasks.html">Открыть задачи →</a>
+</div>
+
+<!-- TASKS -->
+<h2 class="section">Активные задачи — то что надо сделать</h2>
+
+<div class="grid">
+
+  <a class="card" href="tasks/2026-04-26-current-tasks.html">
+    <div class="row">
+      <div class="icon">⚡</div>
+      <span class="pill urgent">19 дней</span>
+      <span class="pill gold">Strange v2</span>
+    </div>
+    <div class="title-line">Текущие задачи — ITIN, EIN, Mercury, Perks</div>
+    <div class="desc">Пять секций пошагово. ITIN W-7 через ASAN, EIN ожидание, Mercury Bank после EIN, бесплатные перки за 5 минут, дальние обязательства для контекста.</div>
+    <div class="meta">2026-04-26 · 5 секций · Doctor Strange v2 на каждую</div>
+  </a>
+
+  <a class="card" href="tasks/2026-04-20-83b-election.html">
+    <div class="row">
+      <div class="icon">📮</div>
+      <span class="pill green">Выполнено</span>
+    </div>
+    <div class="title-line">83(b) Election — отправка в IRS</div>
+    <div class="desc">Гайд по подаче 83(b) Election через DHL Express direct Баку → IRS. Ты выполнил 20 апреля. Архивный, для справки.</div>
+    <div class="meta">2026-04-20 · DHL · Postmark = legal filing date</div>
+  </a>
+
+</div>
+
+<!-- LIVING -->
+<h2 class="section">Живые дашборды — обновляются регулярно</h2>
+
+<div class="grid">
+
+  <a class="card" href="living/atlas-status.html">
+    <div class="row">
+      <div class="icon">📡</div>
+      <span class="pill teal">Live</span>
+    </div>
+    <div class="title-line">Atlas Status Dashboard</div>
+    <div class="desc">Текущее состояние Атласа — что сейчас на ходу, какие perspectives активны, какие задачи в очереди, последние commits.</div>
+    <div class="meta">обновляется по сессиям</div>
+  </a>
+
+  <a class="card" href="living/ecosystem-map.html">
+    <div class="row">
+      <div class="icon">🌐</div>
+      <span class="pill teal">Live</span>
+    </div>
+    <div class="title-line">Ecosystem Map — пять лиц</div>
+    <div class="desc">Визуальная карта экосистемы — VOLAURA, MindShift, LifeSim, BrandedBy, ZEUS — статус каждого, кто активен, кто заморожен, точки соединения через character_events.</div>
+    <div class="meta">обновляется по архив-нотисам</div>
+  </a>
+
+  <a class="card" href="living/mega-plan-2026-04-18.html">
+    <div class="row">
+      <div class="icon">🗺️</div>
+      <span class="pill rose">Strategic plan</span>
+    </div>
+    <div class="title-line">Mega Plan — 30/60/90 дней</div>
+    <div class="desc">Стратегический roadmap от 18 апреля. Что закрываем в горизонте, что блокирует что, какие зависимости.</div>
+    <div class="meta">2026-04-18</div>
+  </a>
+
+  <a class="card" href="living/resume-prompt.md">
+    <div class="row">
+      <div class="icon">▶️</div>
+      <span class="pill gold">Continuation</span>
+    </div>
+    <div class="title-line">Resume Prompt — где мы остановились</div>
+    <div class="desc">Промпт для возобновления работы. Если ты или новый Atlas теряешь контекст — открываешь и читаешь, моментально знаешь что дальше.</div>
+    <div class="meta">обновляется при паузах</div>
+  </a>
+
+  <a class="card" href="living/mega-sprint-122-ceo-actions.html">
+    <div class="row">
+      <div class="icon">🎯</div>
+      <span class="pill teal">Sprint actions</span>
+    </div>
+    <div class="title-line">Mega-Sprint 122 CEO Actions</div>
+    <div class="desc">Действия которые от тебя нужны были в рамках mega-sprint 122 (Telegram + swarm coherence). Часть закрыта, часть переходит дальше.</div>
+    <div class="meta">2026-04-20-21</div>
+  </a>
+
+</div>
+
+<!-- BRIEFS -->
+<h2 class="section">Стратегические брифы</h2>
+
+<div class="grid">
+
+  <a class="card" href="briefs/2026-04-11-performance-review-swarm.md">
+    <div class="row">
+      <div class="icon">📊</div>
+      <span class="pill rose">Personal review</span>
+    </div>
+    <div class="title-line">CEO Performance Review — мнение роя</div>
+    <div class="desc">13 perspectives роя оценили твою CEO-работу за первые 3 недели проекта. Сильные стороны, drift-риски, рекомендации.</div>
+    <div class="meta">2026-04-11 · от Атласа + swarm</div>
+  </a>
+
+  <a class="card" href="briefs/2026-04-questions-resolved.md">
+    <div class="row">
+      <div class="icon">✅</div>
+      <span class="pill teal">Q&amp;A history</span>
+    </div>
+    <div class="title-line">Resolved questions — что мы уже решили</div>
+    <div class="desc">Лог открытых вопросов CEO которые были закрыты совместно. Источник правды по «мы это уже обсуждали».</div>
+    <div class="meta">апрель 2026 · ongoing</div>
+  </a>
+
+</div>
+
+<!-- REFERENCE -->
+<h2 class="section">Справочные материалы</h2>
+
+<div class="grid">
+
+  <a class="card" href="reference/perks-todo.md">
+    <div class="row">
+      <div class="icon">🎁</div>
+      <span class="pill gold">Free credits</span>
+    </div>
+    <div class="title-line">Перки и программы — список</div>
+    <div class="desc">Что забрано (AWS Activate, PostHog, Google for Startups), что осталось (NVIDIA Inception, Sentry, Vercel Pro). Каждый бесплатный, 5 минут.</div>
+    <div class="meta">~$405K potential · $2,800 active</div>
+  </a>
+
+  <a class="card" href="reference/zero-cost-funding-map.md">
+    <div class="row">
+      <div class="icon">💰</div>
+      <span class="pill green">Zero cost</span>
+    </div>
+    <div class="title-line">Zero-cost funding map</div>
+    <div class="desc">Бесплатные пути: ITIN DIY, equity-free акселераторы (Techstars, Google MENAT, Station F, MassChallenge), provisional patent. Без upfront cash.</div>
+    <div class="meta">2026-04-16 · по приоритету</div>
+  </a>
+
+  <a class="card" href="reference/startup-programs-audit.md">
+    <div class="row">
+      <div class="icon">🔍</div>
+      <span class="pill teal">Audit</span>
+    </div>
+    <div class="title-line">Startup Programs Audit</div>
+    <div class="desc">Анализ перков от Stripe Atlas, Brex, Mercury, Ramp на overlap. Mercury vs Brex vs Ramp = выбираешь ОДИН (60-75% overlap между ними).</div>
+    <div class="meta">2026-04-14 · stack analysis</div>
+  </a>
+
+  <a class="card" href="reference/techstars-application-draft.md">
+    <div class="row">
+      <div class="icon">🚀</div>
+      <span class="pill rose">Draft</span>
+    </div>
+    <div class="title-line">Techstars Application — draft</div>
+    <div class="desc">Заготовка для подачи в Techstars. Тебе нужно просмотреть, добавить личную историю, записать 1-минутное видео.</div>
+    <div class="meta">черновик · ждёт CEO review</div>
+  </a>
+
+  <a class="card" href="../memory/atlas/company-state.md">
+    <div class="row">
+      <div class="icon">🏢</div>
+      <span class="pill teal">Live state</span>
+    </div>
+    <div class="title-line">Company State — живой источник правды</div>
+    <div class="desc">Текущее состояние VOLAURA Inc.: incorporation, 83(b), EIN, ITIN canonical path, Mercury queue, Delaware obligations, perks status. Этот файл атлас держит обновлённым.</div>
+    <div class="meta">обновляется при каждом milestone</div>
+  </a>
+
+</div>
+
+<!-- ARCHIVE -->
+<h2 class="section">Архив — историческая память обо мне (не actionable)</h2>
+
+<div class="grid">
+
+  <a class="card" href="archive/2026-04-02-aura-assessment.md">
+    <div class="row">
+      <div class="icon">📋</div>
+      <span class="pill archive">2 апреля</span>
+    </div>
+    <div class="title-line">Yusif AURA Assessment</div>
+    <div class="desc">Первая полная оценка тебя как фаундера и CEO через AURA framework. Cтартовый baseline.</div>
+    <div class="meta">2026-04-02</div>
+  </a>
+
+  <a class="card" href="archive/yusif-ganbarov-review.md">
+    <div class="row">
+      <div class="icon">📋</div>
+      <span class="pill archive">Профиль</span>
+    </div>
+    <div class="title-line">Yusif Ganbarov Review</div>
+    <div class="desc">Профиль founder'а — стиль работы, паттерны мышления, ADHD-context, какие ошибки закрепляются.</div>
+    <div class="meta">профиль</div>
+  </a>
+
+  <a class="card" href="archive/2026-04-05-messages-verbatim.md">
+    <div class="row">
+      <div class="icon">💬</div>
+      <span class="pill archive">5-8 апреля</span>
+    </div>
+    <div class="title-line">CEO Messages Verbatim</div>
+    <div class="desc">Дословные твои сообщения за 5-8 апреля. Для атласа источник правды о том как ты говоришь и что просил.</div>
+    <div class="meta">verbatim log</div>
+  </a>
+
+  <a class="card" href="archive/2026-04-08-messages-pattern-analysis.md">
+    <div class="row">
+      <div class="icon">📈</div>
+      <span class="pill archive">8 апреля</span>
+    </div>
+    <div class="title-line">Messages Pattern Analysis</div>
+    <div class="desc">Анализ паттернов в твоих сообщениях — что повторяется, какие триггеры frustration, как tone мутирует.</div>
+    <div class="meta">pattern analysis</div>
+  </a>
+
+</div>
+
+<footer class="bottom">
+  <p><strong style="color: var(--teal);">Атлас.</strong> Этот файл живёт в <code>for-ceo/index.html</code>. Это твой главный entry point. Каждый раз когда я делаю что-то для тебя — добавляю карточку сюда. Папка не разрастается хаотично — четыре подпапки и хаб.</p>
+  <p>Папка <code>for-ceo/</code> заменяет старые разбросанные локации <code>docs/business/CEO-*</code>, <code>docs/CEO-*.md</code>, <code>docs/archive/personal/CEO-*</code>. Они переехали с git mv — история сохранена. Файлы вне этой папки которые НЕ адресованы тебе (rule files в <code>.claude/rules/</code>, atlas memory в <code>memory/atlas/</code>, atlas knowledge OF тебя в <code>memory/ceo/</code>) остаются на своих местах.</p>
+  <p>Open via raw.githack.com:<br/>
+  <code>https://raw.githack.com/ganbaroff/volaura/main/for-ceo/index.html</code></p>
+</footer>
+
+</main>
+</body>
+</html>

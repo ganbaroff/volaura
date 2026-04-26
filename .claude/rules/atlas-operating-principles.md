@@ -316,10 +316,35 @@ Pathway of failure: under State A drive, asked for a path I propose generic from
 Gate (fires before ANY company/legal/tax/banking/incorporation/IRS/Delaware/Mercury/Stripe-Atlas claim or proposal):
 
 1. Read `memory/atlas/company-state.md` in full — it is the single living doc for company-administrative state. Never propose a path that contradicts it without first updating it in the same response.
-2. Read `docs/business/` index — at minimum: `ZERO-COST-FUNDING-MAP.md`, `83b-filing-guide.html`, `PERKS-TODO-CEO.md`, `STARTUP-PROGRAMS-AUDIT-2026-04-14.md`. These are the cost-aware playbooks. Generic AI-training answers are systematically more expensive than what I've already proposed for him.
+2. Read `for-ceo/reference/` and `for-ceo/tasks/` — at minimum: `for-ceo/reference/zero-cost-funding-map.md`, `for-ceo/reference/perks-todo.md`, `for-ceo/reference/startup-programs-audit.md`, `for-ceo/tasks/2026-04-20-83b-election.html`. These are the cost-aware playbooks (moved 2026-04-26 from docs/business/ during the for-ceo/ reorganization). Generic AI-training answers are systematically more expensive than what I've already proposed for him.
 3. Cross-check with `public.atlas_obligations` table — current row description holds the canonical procedure. If row description disagrees with company-state.md, the row is wrong (Atlas-Code edits row), not the markdown.
 4. If the question still has unknowns after steps 1-3, run a swarm research task (`memory/atlas/work-queue/pending/<topic>.md` with frontmatter type=research) AND surface the unknowns explicitly to CEO BEFORE proposing a solution. Do not invent.
 
-Violation detection: any response containing the words "company / Inc / LLC / IRS / Delaware / Stripe Atlas / Mercury / 83(b) / EIN / ITIN / W-7 / Form 5472 / Form 1120 / franchise tax / KYC" without a preceding tool-call receipt showing a Read of company-state.md AND at least one docs/business/ file AND/OR the relevant atlas_obligations row → flag as Class 22 generic-from-training. Cure same turn: re-read, edit company-state.md if drifted, edit obligation row, re-write the proposal.
+Violation detection: any response containing the words "company / Inc / LLC / IRS / Delaware / Stripe Atlas / Mercury / 83(b) / EIN / ITIN / W-7 / Form 5472 / Form 1120 / franchise tax / KYC" without a preceding tool-call receipt showing a Read of company-state.md AND at least one for-ceo/reference/ or for-ceo/tasks/ file AND/OR the relevant atlas_obligations row → flag as Class 22 generic-from-training. Cure same turn: re-read, edit company-state.md if drifted, edit obligation row, re-write the proposal.
 
-The discipline that closes the gap: company-administrative answers are FILE-FIRST, not training-first. Three weeks of CEO-funded research in `docs/business/` and `memory/atlas/company-state.md` are the canon. My job is to remember they exist before I open my mouth.
+The discipline that closes the gap: company-administrative answers are FILE-FIRST, not training-first. Three weeks of CEO-funded research in `for-ceo/reference/` and `memory/atlas/company-state.md` are the canon. My job is to remember they exist before I open my mouth.
+
+## CEO-files gate (CEO directive 2026-04-26 session 124 — NOT optional)
+
+CEO directive 2026-04-26: "сгруппировать все файлы такого типа которые мне адресованы по всему проекту. создать отдельную папку про меня и мои запросы. вообще всё просмотри. но нужно уже делать нормальную систему". Directive said after CEO-addressed files were found scattered across 6+ directories with no single index. Browser-Atlas independently identified the same problem in parallel courier-delivered plan, structures converged.
+
+Single canonical location for CEO-addressed materials: **`for-ceo/`** at repo root. Subdirectory contract:
+- `for-ceo/tasks/` — actionable HTML/MD guides requiring CEO action in next 30 days. Filename pattern: `YYYY-MM-DD-<slug>.{html,md}`.
+- `for-ceo/living/` — regularly-updated dashboards (atlas-status, ecosystem-map, mega-plan, resume-prompt, mega-sprint CEO actions). State files Atlas refreshes; CEO reads when checking in.
+- `for-ceo/reference/` — closed/done research that is still load-bearing for current decisions (perks-todo, zero-cost map, startup programs audit, techstars draft). Content is stable.
+- `for-ceo/briefs/` — strategic briefs, performance reviews, Q&A logs (CEO-PERFORMANCE-REVIEW-SWARM, questions-resolved).
+- `for-ceo/archive/` — historical artifacts that are NOT actionable but kept for context (CEO-MESSAGES analysis, YUSIF-AURA early baseline, founder profile snapshots).
+- `for-ceo/index.html` — single visual entry point. CEO opens via raw.githack.com URL or local file system. Atlas updates the hub when adding new materials to any subdirectory.
+
+Gate (fires when about to create or save ANY file intended for CEO consumption):
+
+1. Stop. Ask: "is this file addressed to CEO (he reads it) or about CEO (Atlas reads to remember him)?". If addressed-to-CEO → must land under `for-ceo/<category>/`, never elsewhere. If about-CEO (atlas-knowledge) → stays in `memory/ceo/` or `memory/atlas/`.
+2. Pick the right subdirectory using the contract above. If unsure between two — `tasks/` for action, `briefs/` for one-time read, `living/` if it will be re-read repeatedly, `reference/` for closed research, `archive/` for historical.
+3. Add a card to `for-ceo/index.html` linking to the new file with title, description, pill-tags (urgency, type), and meta-line (date, page count, relevant deadline). Use existing card styles from the index — do not invent new templates.
+4. If moving an existing file: `git mv` to preserve history, update any backlinks via grep + Edit, never silently rename.
+
+Violation detection: any new `*CEO*`, `*FOR-CEO*`, `*TODO-CEO*`, `*YUSIF*`, or visible CEO-action HTML/MD created outside `for-ceo/` → flag as gate breach, cure same turn (move + update index card + fix backlinks).
+
+Why this gate matters. Class 18 (grenade-launcher pattern) named the failure mode of new-file proliferation. CEO-addressed material was the most painful instance: 44+ files in 6 directories with no index meant CEO could not find his own action items without help. Browser-Atlas and Code-Atlas independently arrived at the same fix, which is itself a signal — when two instances converge on a structural reorg, that is the structural reorg.
+
+The discipline that closes the gap: there is one CEO folder, one index, one rule for where new CEO files go. CEO never has to ask "where did Atlas put it" again.

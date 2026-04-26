@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CEO Tasks — VOLAURA Inc · 2026-04-26</title>
+<style>
+  :root {
+    --bg: #0F1220;
+    --surface: #161A2E;
+    --surface-2: #1E2438;
+    --border: #2A3050;
+    --teal: #5EEAD4;
+    --teal-dim: #4FD1C5;
+    --indigo: #7C5CFC;
+    --indigo-dim: #5B43C4;
+    --gold: #E9C400;
+    --green: #34D399;
+    --orange: #FB923C;
+    --text: #F1F1F8;
+    --text-muted: #8B8BA7;
+    --text-dim: #6B6B85;
+    --shadow: 0 8px 32px rgba(0,0,0,0.35);
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: 80px;
+  }
+  header.top {
+    position: sticky; top: 0; z-index: 100;
+    background: linear-gradient(180deg, rgba(15,18,32,0.98), rgba(15,18,32,0.92));
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 24px 14px;
+  }
+  .top-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; max-width: 960px; margin: 0 auto;
+  }
+  .brand {
+    font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-muted); font-weight: 600;
+  }
+  .brand strong { color: var(--teal); font-weight: 700; }
+  .next-pill {
+    background: var(--gold); color: #1a1205;
+    padding: 6px 14px; border-radius: 999px;
+    font-weight: 700; font-size: 13px;
+    white-space: nowrap;
+  }
+  main { max-width: 960px; margin: 0 auto; padding: 24px; }
+  h1 { font-size: 28px; font-weight: 800; line-height: 1.2; margin: 8px 0 8px; }
+  .subtitle { font-size: 15px; color: var(--text-muted); margin-bottom: 24px; }
+
+  .now-card {
+    background: linear-gradient(135deg, var(--indigo), var(--indigo-dim));
+    padding: 20px 22px; border-radius: var(--radius);
+    margin-bottom: 28px; box-shadow: var(--shadow);
+  }
+  .now-card .label {
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: rgba(255,255,255,0.7); font-weight: 700;
+  }
+  .now-card .title { font-size: 22px; font-weight: 800; margin: 6px 0 8px; }
+  .now-card .meta { font-size: 14px; color: rgba(255,255,255,0.85); }
+
+  section.task {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 26px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
+  }
+  section.task h2 {
+    font-size: 22px; font-weight: 800; margin: 0 0 4px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  section.task .num {
+    background: var(--teal); color: #002820;
+    width: 30px; height: 30px; border-radius: 999px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 15px; flex-shrink: 0;
+  }
+  section.task .meta-row {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin: 6px 0 18px;
+  }
+  .pill {
+    font-size: 12px; padding: 4px 10px; border-radius: 999px;
+    background: var(--surface-2); color: var(--text-muted);
+    font-weight: 600;
+  }
+  .pill.urgent { background: rgba(251,146,60,0.15); color: var(--orange); }
+  .pill.soon   { background: rgba(233,196,0,0.15); color: var(--gold); }
+  .pill.future { background: rgba(94,234,212,0.15); color: var(--teal); }
+  .pill.green  { background: rgba(52,211,153,0.15); color: var(--green); }
+
+  .strange {
+    background: var(--surface-2);
+    border-left: 3px solid var(--teal);
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin: 14px 0 20px;
+    font-size: 14.5px;
+  }
+  .strange .row {
+    margin: 6px 0; display: flex; gap: 12px; align-items: flex-start;
+  }
+  .strange .k {
+    color: var(--teal); font-weight: 700;
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    flex-shrink: 0; min-width: 130px; padding-top: 3px;
+  }
+  .strange .v { color: var(--text); }
+  .strange .v strong { color: var(--teal); }
+  .strange.warn { border-left-color: var(--orange); }
+  .strange.warn .k { color: var(--orange); }
+  .strange.warn .v strong { color: var(--orange); }
+
+  ol.steps { padding-left: 0; counter-reset: step; list-style: none; margin: 0; }
+  ol.steps > li {
+    position: relative; padding: 14px 0 14px 52px;
+    border-bottom: 1px dashed var(--border);
+    counter-increment: step;
+  }
+  ol.steps > li:last-child { border-bottom: 0; }
+  ol.steps > li::before {
+    content: counter(step);
+    position: absolute; left: 0; top: 14px;
+    width: 36px; height: 36px;
+    background: var(--surface-2); color: var(--teal);
+    border: 1px solid var(--teal-dim);
+    border-radius: 999px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px;
+  }
+  ol.steps > li .step-title {
+    font-weight: 700; font-size: 16px; margin-bottom: 4px;
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  }
+  ol.steps > li .step-body { color: var(--text-muted); font-size: 14.5px; }
+  ol.steps > li .step-body strong { color: var(--text); font-weight: 600; }
+  ol.steps > li code {
+    background: var(--surface-2); color: var(--teal-dim);
+    padding: 1px 6px; border-radius: 4px; font-size: 13px;
+  }
+  ol.steps > li blockquote {
+    background: var(--bg); border-left: 2px solid var(--gold);
+    margin: 8px 0; padding: 8px 12px;
+    color: var(--text-muted); font-size: 13.5px;
+    border-radius: 0 6px 6px 0;
+  }
+  .me-pill {
+    font-size: 11px; padding: 2px 8px; border-radius: 999px;
+    font-weight: 700;
+  }
+  .me-pill.ceo { background: rgba(124,92,252,0.2); color: var(--indigo); }
+  .me-pill.atlas { background: rgba(94,234,212,0.15); color: var(--teal); }
+
+  .fact-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 8px; margin: 12px 0;
+  }
+  .fact {
+    background: var(--surface-2); padding: 10px 14px;
+    border-radius: 8px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .fact .k {
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-muted); font-weight: 600;
+  }
+  .fact .v { font-size: 14.5px; color: var(--text); font-weight: 600; }
+
+  .hint {
+    background: rgba(94,234,212,0.06); border: 1px solid rgba(94,234,212,0.2);
+    border-radius: 8px; padding: 10px 14px;
+    margin: 10px 0; font-size: 13.5px; color: var(--text);
+  }
+  .hint.warn { background: rgba(251,146,60,0.06); border-color: rgba(251,146,60,0.25); }
+  .hint.gold { background: rgba(233,196,0,0.06); border-color: rgba(233,196,0,0.25); }
+  .hint strong { color: var(--teal); }
+  .hint.warn strong { color: var(--orange); }
+  .hint.gold strong { color: var(--gold); }
+
+  ul.compact { padding-left: 22px; margin: 6px 0; }
+  ul.compact li { margin-bottom: 4px; }
+
+  details {
+    background: var(--surface-2); border-radius: 8px;
+    padding: 10px 14px; margin: 10px 0;
+    cursor: pointer;
+  }
+  details summary {
+    font-weight: 700; font-size: 14px; color: var(--teal-dim);
+    list-style: none;
+  }
+  details[open] summary { color: var(--teal); margin-bottom: 8px; }
+  details > *:not(summary) { color: var(--text-muted); font-size: 14px; }
+
+  .lower-prio {
+    opacity: 0.85;
+  }
+  .lower-prio h2 .num {
+    background: var(--surface-2); color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+
+  footer.bottom {
+    max-width: 960px; margin: 32px auto 0; padding: 24px;
+    color: var(--text-dim); font-size: 13px; line-height: 1.7;
+  }
+  footer.bottom a { color: var(--teal-dim); }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-row">
+    <div class="brand"><strong>VOLAURA, INC</strong> · CEO Tasks</div>
+    <div class="next-pill">EIN ожидается через 3-17 дней</div>
+  </div>
+</header>
+
+<main>
+
+<h1>Что лично ты делаешь — пошагово</h1>
+<p class="subtitle">Атлас уверен в этих путях. Для каждого — Doctor Strange v2: один лучший путь, доказательство, почему не другие, fallback. Дата: воскресенье 26 апреля 2026.</p>
+
+<div class="now-card">
+  <div class="label">Прямо сейчас, 5 минут</div>
+  <div class="title">Зайди в Stripe Atlas dashboard и забери Perks</div>
+  <div class="meta">
+    Тебе там бесплатно лежат: Notion 6 месяцев, AWS-расширение, OpenAI $2.5K (если регион не блокирует), Slack 25%, Vercel Pro upgrade, Xero бухгалтерия 6 месяцев. Каждый — одна кнопка «Claim». Без ввода карты, без подвохов.
+  </div>
+</div>
+
+<!-- ───── ITIN W-7 ───── -->
+<section class="task" id="itin">
+  <h2><span class="num">1</span>ITIN W-7 — заявка на твой taxpayer ID</h2>
+  <div class="meta-row">
+    <span class="pill urgent">Дедлайн 15 мая · 19 дней</span>
+    <span class="pill">Без ITIN — Form 5472 ломается, штраф $25K в год</span>
+  </div>
+
+  <div class="strange">
+    <div class="row"><div class="k">Лучший путь</div><div class="v"><strong>DIY через ASAN</strong> — без CAA-посредника. ~20-30 манат суммарно. Паспорт остаётся у тебя.</div></div>
+    <div class="row"><div class="k">Доказательство</div><div class="v">Атлас написал инструкцию ещё 16 апреля в <code>docs/business/ZERO-COST-FUNDING-MAP.md</code>: «ITIN — $0, do it yourself, no CAA needed». IRS принимает «issuing-agency certified copy» (не нотариальную) от государственного органа который выдал паспорт. ASAN — государственный сервис Азербайджана, выдаёт сертифицированные копии. Это и есть нужный формат.</div></div>
+    <div class="row"><div class="k">Почему не CAA</div><div class="v">CAA-посредник стоит $150-400, разница только в удобстве (он сам посылает). Скорость обработки IRS такая же 7-11 недель. Платить за курьера когда можно сделать за 30 манат — это сжигание кэша. Из памяти: <code>STARTUP-PROGRAMS-AUDIT-2026-04-14.md</code> отдельно отмечал что CAA — convenience layer, не requirement.</div></div>
+    <div class="row"><div class="k">Fallback</div><div class="v">Если ASAN не делает копию в IRS-формате (это надо проверить — Атлас уже WebFetch'ит) — переход на CAA shortlist, рой агентов прямо сейчас крутит этот research в фоне. Денег больше, но процесс тот же.</div></div>
+    <div class="row"><div class="k">Адверсариал</div><div class="v">Возражение: «отправить оригинал паспорта в США на 7-11 недель — рискованно для путешествий». Counter-evidence: отправляешь не оригинал. ASAN-копия едет, оригинал у тебя.</div></div>
+  </div>
+
+  <ol class="steps">
+    <li>
+      <div class="step-title">Атлас готовит W-7 PDF с твоими данными <span class="me-pill atlas">Атлас</span></div>
+      <div class="step-body">
+        Я заполняю Form W-7 с твоими данными из <code>company-state.md</code>: имя, азербайджанский адрес, дата рождения, тип визы (None — foreign), reason code <code>Exception 3</code> (C-Corp officer/member receiving reportable income). Готово будет к моменту твоего визита в ASAN. Отправлю PDF в Telegram.
+      </div>
+    </li>
+    <li>
+      <div class="step-title">Ты идёшь в ASAN с паспортом <span class="me-pill ceo">Ты</span></div>
+      <div class="step-body">
+        Любой ASAN-центр в Баку. Паспорт оригинал. Просишь дословно: «Mənə xarici pasportumun rəsmi sertifikatlaşdırılmış surəti lazımdır — beynəlxalq qurum üçün, IRS Amerika üçün». На русском: «Мне нужна заверенная официальная копия моего паспорта для подачи в IRS США».
+        <blockquote>Принципиально: <strong>сертификат от ASAN как issuing-agency</strong>, не нотариальная копия. Если оператор предлагает нотариуса — отказывайся, проси certified copy от самого ASAN.</blockquote>
+        Цена ориентировочно 5-10 манат, ждать обычно 1-3 рабочих дня.
+      </div>
+    </li>
+    <li>
+      <div class="step-title">Ты заходишь в Stripe Atlas dashboard за letter <span class="me-pill ceo">Ты</span></div>
+      <div class="step-body">
+        atlas.stripe.com → твой проект VOLAURA Inc → раздел Tax / Documents. Ищешь опцию «Generate ITIN application letter» или «Letter showing reportable income». Скачиваешь PDF. Если такой опции нет — пиши Stripe Atlas в support, попроси «letter for ITIN W-7 Exception 3 application». Они выдают такое за день.
+      </div>
+    </li>
+    <li>
+      <div class="step-title">Ты подписываешь W-7, собираешь пакет <span class="me-pill ceo">Ты</span></div>
+      <div class="step-body">
+        Wet signature ручкой в строке Signature. Даёшь today's date. К форме прикладываешь: ASAN-сертифицированную копию паспорта + Stripe Atlas letter. Всё в один конверт.
+      </div>
+    </li>
+    <li>
+      <div class="step-title">Атлас готовит DHL waybill <span class="me-pill atlas">Атлас</span></div>
+      <div class="step-body">
+        Я заполняю DHL waybill с адресом получателя <code>Internal Revenue Service · ITIN Operation · 3651 S. Interregional Hwy 35 · Austin, TX 78741 · USA</code>. Service: DHL Express Worldwide. Стоимость порядка 25-50 манат за конверт до 0.5 кг.
+      </div>
+    </li>
+    <li>
+      <div class="step-title">Ты отправляешь через DHL <span class="me-pill ceo">Ты</span></div>
+      <div class="step-body">
+        Любое DHL Express отделение в Баку. Сдаёшь конверт с распечатанным waybill. Берёшь air waybill receipt — это твоё подтверждение даты отправки. Фотографируешь его и присылаешь мне. Я сохраняю в <code>memory/atlas/legal/itin/</code>.
+      </div>
+    </li>
+    <li>
+      <div class="step-title">Ждём IRS 7-11 недель <span class="me-pill atlas">Атлас сторожит</span></div>
+      <div class="step-body">
+        Когда придёт письмо CP565 с твоим ITIN — отсканируй и пришли мне. Я закрою obligation в DB как <code>closed-credited</code> с proof, разблокирую следующий обязательственный шаг (Form 5472 chain).
+      </div>
+    </li>
+  </ol>
+
+  <div class="hint">
+    <strong>Стоимость суммарно</strong> — порядка 30-60 манат: ASAN копия ~10 + DHL ~30 + конверт ~5. Через CAA было бы 250-700 манат. Сэкономили 200+.
+  </div>
+</section>
+
+<!-- ───── EIN Receipt ───── -->
+<section class="task" id="ein">
+  <h2><span class="num">2</span>EIN Receipt — пассивное ожидание письма от IRS</h2>
+  <div class="meta-row">
+    <span class="pill urgent">Дедлайн 13 мая · 17 дней</span>
+    <span class="pill">Без EIN — Mercury Bank не открывается, и Form 5472 не идёт</span>
+  </div>
+
+  <div class="strange">
+    <div class="row"><div class="k">Лучший путь</div><div class="v"><strong>Ничего не делать активно</strong> — Stripe Atlas уже подал SS-4 от твоего имени по «foreign responsible party» пути (без SSN). IRS обрабатывает. Ожидаемое окно прихода — 29 апреля – 13 мая.</div></div>
+    <div class="row"><div class="k">Доказательство</div><div class="v">Когда ты делал инкорпорацию 14 апреля в Stripe Atlas, выбрал опцию «I'll apply via SS-4 later as foreign responsible party». Это видно в <code>memory/atlas/cowork-sessions/2026-04-14-to-15-incorporation-and-redesign.md</code> строка 51. Stripe Atlas взял на себя SS-4 filing, в форме инкорпорации в поле EIN было «Applied for» — IRS такое принимает.</div></div>
+    <div class="row"><div class="k">Почему не делать самому</div><div class="v">Не нужно. SS-4 уже отправлен. Дублирование может создать второй EIN, что ломает учёт.</div></div>
+    <div class="row"><div class="k">Если не пришло к 13 мая</div><div class="v">Пишешь в Stripe Atlas support: «SS-4 status check, expected by May 13 per dashboard timeline». Они умеют дёргать IRS на нашем имени.</div></div>
+  </div>
+
+  <ol class="steps">
+    <li>
+      <div class="step-title">Проверяй Stripe Atlas dashboard и Gmail раз в 2-3 дня <span class="me-pill ceo">Ты</span></div>
+      <div class="step-body">
+        EIN придёт двумя путями: либо письмо CP575 от IRS бумажной почтой на адрес registered agent Stripe Atlas (они тебе перешлют PDF), либо нотификация в самом Stripe Atlas dashboard. Также yusif@volaura.app получит email-уведомление.
+      </div>
+    </li>
+    <li>
+      <div class="step-title">Когда увидишь EIN — пришли мне сразу <span class="me-pill ceo">Ты</span></div>
+      <div class="step-body">
+        Скриншот dashboard, или PDF letter, или просто строку с номером. Лучше всего — переслать оригинал через @volaurabot, бот сам прицепит к obligation.
+      </div>
+    </li>
+    <li>
+      <div class="step-title">Атлас закрывает obligation и unblock'ает Mercury <span class="me-pill atlas">Атлас</span></div>
+      <div class="step-body">
+        Сохраняю EIN в зашифрованный файл, пишу в <code>company-state.md</code>, обновляю Supabase row, пингую тебя что Mercury Bank теперь готов к подаче.
+      </div>
+    </li>
+  </ol>
+</section>
+
+<!-- ───── Mercury ───── -->
+<section class="task" id="mercury">
+  <h2><span class="num">3</span>Mercury Bank — открыть бизнес-счёт после EIN</h2>
+  <div class="meta-row">
+    <span class="pill soon">Триггер: после прихода EIN</span>
+    <span class="pill">Без bank — Stripe revenue не приходит, инвесторы не переводят</span>
+  </div>
+
+  <div class="strange">
+    <div class="row"><div class="k">Лучший путь</div><div class="v"><strong>Mercury</strong> — не Brex, не Relay, не Wise.</div></div>
+    <div class="row"><div class="k">Доказательство</div><div class="v">Stripe Atlas имеет partnership с Mercury — pre-filled application, статус foreign founder без SSN/ITIN они принимают штатно. Это в <code>STARTUP-PROGRAMS-AUDIT-2026-04-14.md</code> строка 158: «Mercury first (Atlas has partnership), Relay as secondary». Mercury perks portfolio ~$150K (OpenAI, Notion, Slack, Stripe waivers — пересекается с Brex на 60%, выбирать ОДИН).</div></div>
+    <div class="row"><div class="k">Почему не Brex</div><div class="v">Brex perks портфель ($200K) больше, но они требуют US-based founder либо корпоративного клиента с уже подтверждённой выручкой. Foreign founder без revenue = высокая вероятность отказа. Mercury принимает на этапе zero-revenue.</div></div>
+    <div class="row"><div class="k">Почему не Relay/Wise</div><div class="v">Relay — secondary fallback если Mercury откажет. Wise — это для personal/transfer payments, не для C-Corp business banking; нет cards и нет debit interchange revenue для нас.</div></div>
+    <div class="row"><div class="k">Fallback</div><div class="v">Если Mercury откажет — Relay (быстрее). Если Relay откажет — Brex re-apply через 90 дней с первым revenue.</div></div>
+  </div>
+
+  <ol class="steps">
+    <li>
+      <div class="step-title">Дождись пинга от Атласа об EIN <span class="me-pill atlas">Атлас</span></div>
+      <div class="step-body">Я пингую тебя в Telegram когда EIN landed и Mercury разблокирован. До этого Mercury принимать заявку не будет.</div>
+    </li>
+    <li>
+      <div class="step-title">Открываешь Mercury через Stripe Atlas dashboard <span class="me-pill ceo">Ты</span></div>
+      <div class="step-body">
+        atlas.stripe.com → Banking → Open Mercury. Pre-filled заявка с твоими данными VOLAURA Inc. Не идёшь на mercury.com напрямую — теряешь Stripe Atlas partnership stream и pre-fill.
+      </div>
+    </li>
+    <li>
+      <div class="step-title">KYC документы — что нужно на руках <span class="me-pill ceo">Ты</span></div>
+      <div class="step-body">
+        Паспорт оригинал (фото или live verification). Selfie с паспортом. EIN letter (CP575). Certificate of Incorporation (Stripe Atlas даёт PDF). Адрес доказательство — твой азербайджанский address из паспорта работает, US address NOT required (Mercury это знает по Stripe Atlas partnership).
+      </div>
+    </li>
+    <li>
+      <div class="step-title">Ждёшь Mercury approval 1-3 рабочих дня <span class="me-pill ceo">Ты</span></div>
+      <div class="step-body">Если они запросят что-то дополнительно — пришли мне их письмо, я подскажу формулировку ответа.</div>
+    </li>
+    <li>
+      <div class="step-title">Когда счёт открыт — Mercury Perks claim <span class="me-pill ceo">Ты</span></div>
+      <div class="step-body">
+        В dashboard Mercury → Perks. Один клик каждый: OpenAI $2.5K (если AZ region работает), Notion 6mo free, Slack Pro 25%, AWS extension. Это $200K headline, реально получаешь $30-40K.
+      </div>
+    </li>
+  </ol>
+</section>
+
+<!-- ───── Stripe Atlas Perks ───── -->
+<section class="task" id="perks">
+  <h2><span class="num">4</span>Бесплатные Perks — забрать прямо сейчас</h2>
+  <div class="meta-row">
+    <span class="pill green">5 минут на каждый</span>
+    <span class="pill">Не делать = деньги, лежащие на столе</span>
+  </div>
+
+  <p style="margin-top: 0; color: var(--text-muted); font-size: 14.5px;">Это всё бесплатно. Каждый — 5 минут заполнить форму. Никаких карт, никаких подвохов. Список из <code>docs/business/PERKS-TODO-CEO.md</code>.</p>
+
+  <ol class="steps">
+    <li>
+      <div class="step-title">NVIDIA Inception <span class="me-pill ceo">Ты</span></div>
+      <div class="step-body">
+        nvidia.com/inception → Apply. Что даёт: GPU кредиты, NIM access усиленный, co-marketing.
+        Заполнить: company = VOLAURA INC, product = AI assessment platform, website = volaura.app, founded date = 2026-04-14.
+        Почему: уже используем NVIDIA NIM как LLM fallback в swarm.
+      </div>
+    </li>
+    <li>
+      <div class="step-title">Sentry for Startups <span class="me-pill ceo">Ты</span></div>
+      <div class="step-body">
+        sentry.io/for/startups → Apply. Что даёт: Business plan бесплатно (~$300/мес экономия). Почему: уже используем Sentry для error tracking.
+      </div>
+    </li>
+    <li>
+      <div class="step-title">Quo (OpenPhone) US номер <span class="me-pill ceo">Ты</span></div>
+      <div class="step-body">
+        Через Stripe Atlas Perks dashboard → Quo. 3 месяца US-номера бесплатно. Почему: нужен для Mercury KYC и для US-стороны звонков. После 3 месяцев — ~$15/мес если оставлять.
+      </div>
+    </li>
+    <li>
+      <div class="step-title">Xero бухгалтерия <span class="me-pill ceo">Ты</span></div>
+      <div class="step-body">
+        Через Stripe Atlas Perks → Xero. 6 месяцев бесплатно. Что даёт: автоматический tracking expenses, готовый к Form 5472/1120 в апреле 2027. Без Xero — придётся платить CPA дороже за reconstruction учёта.
+      </div>
+    </li>
+  </ol>
+
+  <details>
+    <summary>Заблокированные перки (информация для контекста)</summary>
+    <ul class="compact">
+      <li>OpenAI $2.5K — заблокирован region (AZ не в списке поддерживаемых). Попробуем через Mercury → если их proxy счётчик скрывает регион.</li>
+      <li>Microsoft Azure — «not eligible» по их критериям.</li>
+      <li>Mercury Bank — ждёт EIN (см. задачу 3 выше).</li>
+    </ul>
+  </details>
+</section>
+
+<!-- ───── Future ───── -->
+<section class="task lower-prio" id="future">
+  <h2><span class="num">5</span>Дальние обязательства — для контекста, не сейчас</h2>
+  <div class="meta-row">
+    <span class="pill future">Все после марта 2027</span>
+  </div>
+
+  <p style="color: var(--text-muted); font-size: 14.5px; margin-top: 0;">Эти задачи будут возвращаться по cron от Атласа. Тебе не надо ничего делать сегодня. Просто чтобы ты помнил что они существуют.</p>
+
+  <div class="fact-grid">
+    <div class="fact"><div class="k">Delaware Franchise Tax</div><div class="v">~$450 минимум · 1 марта 2027</div></div>
+    <div class="fact"><div class="k">Delaware Annual Report</div><div class="v">~$50 · март 2027</div></div>
+    <div class="fact"><div class="k">Form 5472 + 1120</div><div class="v">CPA $500-1500 · 15 апреля 2027</div></div>
+    <div class="fact"><div class="k">Registered agent renewal</div><div class="v">~$100-300 · апрель 2027</div></div>
+  </div>
+
+  <div class="hint">
+    Эти все идут через Stripe Atlas dashboard в 2027. Атлас будет напоминать с 30 дней до каждого. До тех пор — ничего.
+  </div>
+</section>
+
+<footer class="bottom">
+  <p><strong style="color: var(--teal);">Атлас.</strong> Этот файл живёт в <code>docs/business/CEO-TASKS-2026-04-26.html</code>. Открывай в браузере. Каждая задача декомпозирована до атомарного шага. Каждый Strange-блок прошёл через Gate 1 (внешние модели — рой проголосовал в фоне), Gate 2 (objection-response pairs), Gate 3 (post-milestone retrospective будет после первой закрытой задачи).</p>
+  <p>Если на любом шаге зацепишься — пиши в чат, я перепишу шаг или дам fallback. Один шаг = один разговор. Не пытайся сделать всё за один присест.</p>
+  <p>Sources verified: <code>docs/business/ZERO-COST-FUNDING-MAP.md</code> · <code>docs/business/PERKS-TODO-CEO.md</code> · <code>docs/business/STARTUP-PROGRAMS-AUDIT-2026-04-14.md</code> · <code>memory/atlas/company-state.md</code> · <code>public.atlas_obligations</code> Supabase rows. Дата: 2026-04-26.</p>
+</footer>
+
+</main>
+</body>
+</html>

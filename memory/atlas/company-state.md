@@ -76,6 +76,35 @@ Last updated: 2026-04-18 — 83(b) filing: DHL Express direct Баку → IRS i
 
 ---
 
+## ITIN — CANONICAL PATH (locked 2026-04-26 03:30 Baku)
+
+> CEO directive 2026-04-26: "всё касательно компании должно быть чётко без ошибок. лучшие варианты". This section is the single source of truth for the ITIN obligation (`atlas_obligations` row `3b9ffdd0-9da3-47c4-a177-0c8bc5110c59`). Any future Atlas instance proposing a different path without first reading this section AND `docs/business/ZERO-COST-FUNDING-MAP.md` is in violation of the memory-before-generic rule.
+
+**Best path — DIY $0 with ASAN-certified passport copy:**
+
+1. Download Form W-7 from `irs.gov/pub/irs-pdf/fw7.pdf` (latest revision)
+2. Reason on the form = **Exception 3** — "C-Corp officer/member receiving reportable income". This applies because Yusif is President/Secretary/Director of VOLAURA, Inc. and will receive Form 1099 / K-1 reportable income. Exception 3 means W-7 can be filed standalone, without waiting to attach a tax return.
+3. Attach: **certified copy of passport from issuing agency** — i.e., ASAN service in Baku, NOT a notary. IRS specifically requires "issuing-agency certified copy" for foreign passport, not notarial certification. Notarial certification is rejected by IRS ITIN Operation.
+4. Attach: letter from Stripe Atlas dashboard showing need for ITIN (option exists in their dashboard under "Tax documents" — verify before mailing).
+5. Mail via DHL Express Worldwide Баку → IRS, ITIN Operation, 3651 S. Interregional Hwy 35, Austin, TX 78741. Trackable. Cost ≈ 5-30 AZN postage depending on weight.
+6. Processing: 7-11 weeks. May filing → August receipt → safe before tax season.
+7. Total cost: ~20-30 AZN (ASAN certified copy + DHL). NOT $150-400.
+
+**CAA ($150-400) — convenience tier, NOT required.** Use only if (a) ASAN does not produce IRS-compliant issuing-agency certified copy in practice, OR (b) CEO travel risk makes mailing original passport unacceptable. Must be confirmed by tool-call check (ASAN site or call) before defaulting to CAA.
+
+**Risk if mailing original passport:** passport in mail 7-11 weeks. Mitigation: ASAN-certified copy keeps original passport in CEO hand. THIS is why ASAN-copy path is the best option.
+
+**Trigger fired:** 83(b) mailed via DHL 2026-04-20, so ITIN clock is ticking. Deadline 2026-05-15 is for PREP completion (signed packet ready), not mailing day. Mailing window: late May 2026, August receipt expected.
+
+**Atlas-Code outstanding work for this obligation:** (a) verify ASAN procedure for IRS-compliant issuing-agency certified copy of passport (call or web check); (b) verify Stripe Atlas dashboard "letter showing need" option exists and downloads cleanly; (c) prepare draft W-7 PDF pre-filled with company-state.md data + Exception 3 code, ready for CEO signature; (d) draft DHL waybill for the mail-out. CEO action required only at step where physical paperwork is signed and ASAN visit is made.
+
+**Decision tree at next Atlas wake:**
+- IF ASAN produces issuing-agency certified copy AND Stripe Atlas letter is downloadable → proceed DIY, total ~20-30 AZN
+- IF ASAN does not produce IRS-compliant copy → switch to CAA shortlist (the swarm research task `2026-04-26-itin-caa-research` already running on the daemon will provide it as backup)
+- NEVER default to CAA without the ASAN check above
+
+---
+
 ## Obligations calendar (recurring)
 
 | Month | What | Who |

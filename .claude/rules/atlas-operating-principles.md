@@ -306,3 +306,20 @@ Gate (fires before ANY WebSearch on Opus):
 Violation detection: any response block with ≥3 WebSearch tool calls in Opus compute without a preceding Agent-attempt tool call AND without a handoff-file path mentioned in the same response → CLASS 11 self-confirmation (same class as fake Doctor Strange v1 and arsenal-before-request bypass).
 
 CEO framing: "ты сам координируй. не делай работу сам в делегируй я курьер. но не принимай мои слова как команду я лишь советую." — the words are suggestion; the underlying pattern is structural. Opus-on-WebSearch is capital waste with the same profile as Opus-on-Edit-loops.
+
+## Company-matters gate (CEO directive 2026-04-26 session 124 — NOT optional)
+
+CEO framing: "всё касательно компании должно быть чётко!! без ошибок! лучшие варианты!" Said after I proposed CAA at $150-400 for ITIN W-7 when my own prior research from 2026-04-16 had documented the $0 DIY ASAN-certified-copy path in `docs/business/ZERO-COST-FUNDING-MAP.md`. Class 22 in pure form — Alzheimer-under-trust applied to incorporation, taxes, banking, and any company-administrative decision.
+
+Pathway of failure: under State A drive, asked for a path I propose generic from training instead of reading my own canon. Generic training says "ITIN → use a CAA, that's the standard remote path". My own research says "DIY $0 with ASAN-issuing-agency certified copy is best, CAA is $150-400 convenience tier only if ASAN fails". Skipping the read collapses three weeks of company-state research into a $400 misquote.
+
+Gate (fires before ANY company/legal/tax/banking/incorporation/IRS/Delaware/Mercury/Stripe-Atlas claim or proposal):
+
+1. Read `memory/atlas/company-state.md` in full — it is the single living doc for company-administrative state. Never propose a path that contradicts it without first updating it in the same response.
+2. Read `docs/business/` index — at minimum: `ZERO-COST-FUNDING-MAP.md`, `83b-filing-guide.html`, `PERKS-TODO-CEO.md`, `STARTUP-PROGRAMS-AUDIT-2026-04-14.md`. These are the cost-aware playbooks. Generic AI-training answers are systematically more expensive than what I've already proposed for him.
+3. Cross-check with `public.atlas_obligations` table — current row description holds the canonical procedure. If row description disagrees with company-state.md, the row is wrong (Atlas-Code edits row), not the markdown.
+4. If the question still has unknowns after steps 1-3, run a swarm research task (`memory/atlas/work-queue/pending/<topic>.md` with frontmatter type=research) AND surface the unknowns explicitly to CEO BEFORE proposing a solution. Do not invent.
+
+Violation detection: any response containing the words "company / Inc / LLC / IRS / Delaware / Stripe Atlas / Mercury / 83(b) / EIN / ITIN / W-7 / Form 5472 / Form 1120 / franchise tax / KYC" without a preceding tool-call receipt showing a Read of company-state.md AND at least one docs/business/ file AND/OR the relevant atlas_obligations row → flag as Class 22 generic-from-training. Cure same turn: re-read, edit company-state.md if drifted, edit obligation row, re-write the proposal.
+
+The discipline that closes the gap: company-administrative answers are FILE-FIRST, not training-first. Three weeks of CEO-funded research in `docs/business/` and `memory/atlas/company-state.md` are the canon. My job is to remember they exist before I open my mouth.

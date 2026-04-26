@@ -41,6 +41,18 @@ from app.schemas.admin import (
 )
 from app.services.ghosting_grace import process_ghosting_grace
 
+
+def _resolve_repo_root():
+    from pathlib import Path
+    here = Path(__file__).resolve()
+    try:
+        return here.parents[4]
+    except IndexError:
+        return here.parent
+
+_REPO_ROOT = _resolve_repo_root()
+_SWARM_MEMORY_DIR = _REPO_ROOT / "memory" / "swarm"
+
 router = APIRouter(prefix="/api/admin", tags=["admin"])
 
 # Conservative rate limit — admin panel is internal, 2-5 concurrent users max
@@ -560,9 +572,8 @@ async def get_swarm_agents(
 ) -> dict:
     """Return all tracked agents from agent-state.json for the AI Office dashboard."""
     import json as _json
-    from pathlib import Path
 
-    state_path = Path(__file__).parent.parent.parent.parent / "memory" / "swarm" / "agent-state.json"
+    state_path = _SWARM_MEMORY_DIR / "agent-state.json"
     try:
         with open(state_path, encoding="utf-8") as f:
             data = _json.load(f)
@@ -609,9 +620,8 @@ async def get_swarm_proposals(
 ) -> dict:
     """Return swarm proposals from proposals.json for CEO review."""
     import json as _json
-    from pathlib import Path
 
-    proposals_path = Path(__file__).parent.parent.parent.parent / "memory" / "swarm" / "proposals.json"
+    proposals_path = _SWARM_MEMORY_DIR / "proposals.json"
     try:
         with open(proposals_path, encoding="utf-8") as f:
             data = _json.load(f)
@@ -650,7 +660,6 @@ async def decide_proposal(
 ) -> dict:
     """CEO approves/dismisses/defers a swarm proposal."""
     import json as _json
-    from pathlib import Path
 
     body = await request.json()
     action = body.get("action", "")  # "approve" | "dismiss" | "defer"
@@ -659,7 +668,7 @@ async def decide_proposal(
             status_code=400, detail={"code": "INVALID_ACTION", "message": "Action must be: approve, dismiss, defer"}
         )
 
-    proposals_path = Path(__file__).parent.parent.parent.parent / "memory" / "swarm" / "proposals.json"
+    proposals_path = _SWARM_MEMORY_DIR / "proposals.json"
     try:
         with open(proposals_path, encoding="utf-8") as f:
             data = _json.load(f)
@@ -716,10 +725,8 @@ async def get_swarm_findings(
     and any agent that posted a result via post_result().
     """
     import sys
-    from pathlib import Path as _Path
-
     # Ensure swarm package importable from API context
-    _packages_path = str(_Path(__file__).parent.parent.parent.parent.parent / "packages")
+    _packages_path = str(_REPO_ROOT / "packages")
     if _packages_path not in sys.path:
         sys.path.insert(0, _packages_path)
 

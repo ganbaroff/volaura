@@ -70,10 +70,7 @@ async def _load_cursor(db: AsyncClient, product: str) -> dict[str, Any] | None:
     """Return the cursor row for *product*, or None if it doesn't exist."""
     result = (
         await db.table("ecosystem_event_cursors")
-        .select(
-            "product,last_event_id,last_processed_at,"
-            "events_processed_total,events_failed_total"
-        )
+        .select("product,last_event_id,last_processed_at,events_processed_total,events_failed_total")
         .eq("product", product)
         .limit(1)
         .execute()

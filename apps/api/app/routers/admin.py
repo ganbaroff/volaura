@@ -44,11 +44,13 @@ from app.services.ghosting_grace import process_ghosting_grace
 
 def _resolve_repo_root():
     from pathlib import Path
+
     here = Path(__file__).resolve()
     try:
         return here.parents[4]
     except IndexError:
         return here.parent
+
 
 _REPO_ROOT = _resolve_repo_root()
 _SWARM_MEMORY_DIR = _REPO_ROOT / "memory" / "swarm"
@@ -725,6 +727,7 @@ async def get_swarm_findings(
     and any agent that posted a result via post_result().
     """
     import sys
+
     # Ensure swarm package importable from API context
     _packages_path = str(_REPO_ROOT / "packages")
     if _packages_path not in sys.path:

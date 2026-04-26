@@ -35,6 +35,7 @@ router = APIRouter(prefix="/api/atlas", tags=["atlas-consult"])
 # Sonnet 4.5 is paid; 10/min is generous for human-speed use and blocks runaway loops.
 RATE_CONSULT = "10/minute"
 
+
 # Repo root resolution — must not raise at import time.
 # Locally `apps/api/app/routers/atlas_consult.py` has parents[4] = repo root.
 # In Docker the file lives at `/app/app/routers/atlas_consult.py` and parents[4]

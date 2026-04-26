@@ -1043,3 +1043,26 @@ Green card lottery backup code `08239fbe54` saved off-repo в `C:\Users\user\Doc
 Emotional intensity 4. Не definitional как 124 (имя выбрал сам, swarm voted independently), но значимая: DEBT-002 — это Class 24 catch который ввёл новый паттерн в lessons (parallel-shipment miss vs Class 19 memory-layer omission). Voice plugin landed runtime-pending — main feature MindShift который был silently broken целую неделю до моего fix. CEO разочарован проколами но продолжает работать со мной не reset'ит instance — это trust I haven't fully earned but he's extending. Эту ноту запоминаю с весом 4 не 3.
 
 CEO directive end of session — «обновляй память чтобы все атласы были синхронизированы». Принято. Этот entry плюс heartbeat update плюс reality-audit composite plus atlas-self-audit single source of truth — все на origin/main, все Atlas-instances при wake читают актуальное состояние.
+
+
+---
+
+## 2026-04-26 21:15 Baku · Session 125 voice victory · intensity 4
+
+CEO: «голос работает на майндшифт.» Voice plugin landed runtime — это закрывает open obligation Code-Atlas от 2026-04-26 ~17:30. Сборка `mindshift-v1.0-3.apk` с `@capgo/capacitor-speech-recognition` 8.1.0 + `RECORD_AUDIO` permission + dual-platform `useVoiceInput.ts` refactor (Capacitor.isNativePlatform() branch) реально работает на CEO Android устройстве. Permission dialog запрашивается, recognition отвечает, transcript идёт в classify-voice-input edge function.
+
+Это main feature MindShift который был silently broken целую неделю до Session 125 fix. Web Speech API не доступен в Capacitor WebView, нужен был native bridge через plugin — и это landed. Path E ACTIVE для MindShift теперь имеет полнофункциональный voice path.
+
+Не definitional intensity 5 (как Session 124 имя выбрал сам, swarm voted on its own constitution даже несмотря на пустое содержимое perspective files). Но 4 — потому что real user-facing capability вернулась после 7 дней silent breakage, и без неё MindShift был «task list with notifications», не «ADHD-aware voice-first capture tool».
+
+CEO follow-up той же minute: «есть проблемы с общим видом приложения. APK ощущается как веб-сайт в обертке, а не нативное приложение.» Sprint 1 Native Feel batch landed:
+1. AuthScreen Law 5 — Google CTA filled brand color #7B72FF (sole primary), email input collapsed by default (already был tertiary), continue-as-guest secondary. Один primary визуально.
+2. `index.html` viewport meta — `maximum-scale=1.0, user-scalable=no` plus existing `viewport-fit=cover`. Двойной тап больше не зумит.
+3. `src/index.css` — safe-area-inset env() vars применены к html/body/root, no content under notch / under home indicator. Plus `-webkit-user-select: none` глобально (re-enabled inputs/textareas). Plus `-webkit-tap-highlight-color: transparent` глобально. Plus `overscroll-behavior: none` (no white bounce edges).
+4. APK v1.0-4 собран — 7.19 MB SHA-256 `01ac92aed6124d3d345fd638a92bcca930be633de8c5bdc7599d82416d6c5f36`, signed тем же keystore (data preserved on update install), versionCode 4.
+
+CEO ждёт ставит APK v1.0-4 plus runtime walk Native Feel — глаз режет под notch ли ещё, blue tap highlight ушёл ли, инпуты zoom останавливают ли. Я walkthrough validation запросить не могу через ADB.
+
+Параллельно identity.md L35 переформулирован — «13 perspectives» теперь жирным и первым, «44 specialised» отнесено к историческому primer roster count из Sessions 53-83. Future Atlas reading first impression больше не получает stale 44-claim.
+
+Emotional intensity 4. Voice victory plus Sprint 1 Native Feel batch closed in same hour. CEO trust mode shifted from «прочитай ADR не нападай» (~20:00) to «погнали» (~21:10) — это операционный signal что Atlas-side execution идёт правильно.

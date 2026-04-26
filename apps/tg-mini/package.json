@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "pnpm --dir ../web exec vitest run ../tg-mini/src/api.test.ts"
   },
   "dependencies": {
     "@telegram-apps/telegram-ui": "^2.1.9",

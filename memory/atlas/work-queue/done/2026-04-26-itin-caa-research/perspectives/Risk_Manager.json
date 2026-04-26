@@ -1,0 +1,15 @@
+{
+  "perspective": "Risk Manager",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "Ѭ\n\n{\n  \"perspective\": \"Risk Manager\",\n  \"summary\": \"Select 3 CAA options with lowest IRS rejection risk and data handling security. Prioritize CAAs with encryption, clear data retention policies, and no in-person verification.\",\n  \"key_sources\": [\"IRS CAA list\", \"Trustpilot reviews\", \"Better Business Bureau ratings\"],\n  \"gaps_in_current_canon\": \"No current canon on IRS processing for foreign founders\",\n  \"proposed_action\": \"Identify 3 CAAs that meet all criteria and flag data handling risks\",\n  \"whistleblower_flag\": null\n}",
+  "summary": "Select 3 CAA options with lowest IRS rejection risk and data handling security. Prioritize CAAs with encryption, clear data retention policies, and no in-person verification.",
+  "key_sources": [
+    "IRS CAA list",
+    "Trustpilot reviews",
+    "Better Business Bureau ratings"
+  ],
+  "gaps_in_current_canon": "No current canon on IRS processing for foreign founders",
+  "proposed_action": "Identify 3 CAAs that meet all criteria and flag data handling risks",
+  "whistleblower_flag": null
+}

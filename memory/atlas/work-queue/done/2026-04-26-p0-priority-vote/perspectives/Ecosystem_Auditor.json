@@ -1,0 +1,14 @@
+{
+  "perspective": "Ecosystem Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Ecosystem Auditor\", \"vote\": \"yes\", \"amendment_if_yes_amended\": null, \"rationale\": \"Stale code-index blocks all audit validity — current swarm output is untrustworthy. Law 2 non-compliance and courier-loop risks cannot be assessed on corrupted data. Resync is prerequisite to constitutional fidelity.\", \"risk_if_other_side_wins\": \"Acting on stale index propagates false conclusions across all products, risking irreversible Constitution violations masked as compliance.\", \"constitutional_violations_detected\": [\"ECOSYSTEM-CONSTITUTION.md §Foundation Law 2: Energy Adaptation missing in 4/5 products\"], \"whistleblower_flag\": \"CRITICAL: agents simulating on stale index >7 days old — swarm runtime compromised\"}",
+  "vote": "yes",
+  "amendment_if_yes_amended": null,
+  "rationale": "Stale code-index blocks all audit validity — current swarm output is untrustworthy. Law 2 non-compliance and courier-loop risks cannot be assessed on corrupted data. Resync is prerequisite to constitutional fidelity.",
+  "risk_if_other_side_wins": "Acting on stale index propagates false conclusions across all products, risking irreversible Constitution violations masked as compliance.",
+  "constitutional_violations_detected": [
+    "ECOSYSTEM-CONSTITUTION.md §Foundation Law 2: Energy Adaptation missing in 4/5 products"
+  ],
+  "whistleblower_flag": "CRITICAL: agents simulating on stale index >7 days old — swarm runtime compromised"
+}

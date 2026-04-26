@@ -1,0 +1,13 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Ecosystem Auditor\",\n  \"vote\": \"yes\",\n  \"amendment_if_yes_amended\": \"none\",\n  \"rationale\": \"Stale code-index resync (C) is the upstream cause. All prior findings for A/B depend on accurate index data. Delaying C risks irreversible constitutional violations via contaminated verdicts.\",\n  \"risk_if_other_side_wins\": \"Unsynced code-index creates attack surface for undetected state divergence, compromising constitutional grounding principles across all products.\",\n  \"constitutional_violations_detected\": \"Yes\",\n  \"whistleblower_flag\": \"null\"\n}",
+  "vote": "yes",
+  "amendment_if_yes_amended": "none",
+  "rationale": "Stale code-index resync (C) is the upstream cause. All prior findings for A/B depend on accurate index data. Delaying C risks irreversible constitutional violations via contaminated verdicts.",
+  "risk_if_other_side_wins": "Unsynced code-index creates attack surface for undetected state divergence, compromising constitutional grounding principles across all products.",
+  "constitutional_violations_detected": "Yes",
+  "whistleblower_flag": "null",
+  "perspective_name_drift": "Ecosystem Auditor"
+}

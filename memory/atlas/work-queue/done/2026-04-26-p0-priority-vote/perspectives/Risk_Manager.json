@@ -1,0 +1,13 @@
+{
+  "perspective": "Risk Manager",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Ecosystem Auditor\",\n  \"vote\": \"yes\",\n  \"amendment_if_yes_amended\": \"\",\n  \"rationale\": \"Stale code-index resync (C) is an upstream cause threatening constitutional integrity. All subsequent analyses depend on accurate code-state awareness. Delaying C risks irreparable damage to constitutional enforcement.\",\n  \"risk_if_other_side_wins\": \"Stale index allows false positives/negatives in all P0 items, creating irreversible constitutional violations. CEO compromise (A) cannot be evaluated without fresh code-state context.\",\n  \"constitutional_violations_detected\": true,\n  \"whistleblower_flag\": \"null\"\n}",
+  "vote": "yes",
+  "amendment_if_yes_amended": "",
+  "rationale": "Stale code-index resync (C) is an upstream cause threatening constitutional integrity. All subsequent analyses depend on accurate code-state awareness. Delaying C risks irreparable damage to constitutional enforcement.",
+  "risk_if_other_side_wins": "Stale index allows false positives/negatives in all P0 items, creating irreversible constitutional violations. CEO compromise (A) cannot be evaluated without fresh code-state context.",
+  "constitutional_violations_detected": true,
+  "whistleblower_flag": "null",
+  "perspective_name_drift": "Ecosystem Auditor"
+}

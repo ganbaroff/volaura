@@ -1,0 +1,13 @@
+{
+  "perspective": "CTO Watchdog",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Ecosystem Auditor\",\n  \"vote\": \"yes\",\n  \"amendment_if_yes_amended\": \"prioritize code-index resync\",\n  \"rationale\": \"Stale code-index corrupts all downstream verdicts, including A and B. Resynchronizing ensures constitutional integrity checks are based on current data.\",\n  \"risk_if_other_side_wins\": \"Delayed code-index sync creates systemic pollution, invalidating all P0 findings and enabling irreversible constitutional violations.\",\n  \"constitutional_violations_detected\": \"Yes\",\n  \"whistleblower_flag\": \"null\"\n}",
+  "vote": "yes",
+  "amendment_if_yes_amended": "prioritize code-index resync",
+  "rationale": "Stale code-index corrupts all downstream verdicts, including A and B. Resynchronizing ensures constitutional integrity checks are based on current data.",
+  "risk_if_other_side_wins": "Delayed code-index sync creates systemic pollution, invalidating all P0 findings and enabling irreversible constitutional violations.",
+  "constitutional_violations_detected": "Yes",
+  "whistleblower_flag": "null",
+  "perspective_name_drift": "Ecosystem Auditor"
+}

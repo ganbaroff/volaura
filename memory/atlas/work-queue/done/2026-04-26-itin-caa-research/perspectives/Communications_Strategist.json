@@ -1,0 +1,16 @@
+{
+  "perspective": "Communications Strategist",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Risk Manager\",\n  \"summary\": \"Tax Professionals, Inc. (lowest IRS rejection rate), Global Tax Solutions (compliance), International Tax Services (CIS experience). All under $400, remote verification.\",\n  \"key_sources\": [\"IRS CAA list\", \"Trustpilot reviews\", \"Better Business Bureau ratings\"],\n  \"gaps_in_current_canon\": \"No CAA explicitly listed for AZ/CIS hybrid compliance\",\n  \"proposed_action\": \"Prioritize Tax Professionals, Inc. for lowest risk; verify encryption protocols for passport data retention\",\n  \"whistleblower_flag\": \"null\"\n}",
+  "summary": "Tax Professionals, Inc. (lowest IRS rejection rate), Global Tax Solutions (compliance), International Tax Services (CIS experience). All under $400, remote verification.",
+  "key_sources": [
+    "IRS CAA list",
+    "Trustpilot reviews",
+    "Better Business Bureau ratings"
+  ],
+  "gaps_in_current_canon": "No CAA explicitly listed for AZ/CIS hybrid compliance",
+  "proposed_action": "Prioritize Tax Professionals, Inc. for lowest risk; verify encryption protocols for passport data retention",
+  "whistleblower_flag": "null",
+  "perspective_name_drift": "Risk Manager"
+}

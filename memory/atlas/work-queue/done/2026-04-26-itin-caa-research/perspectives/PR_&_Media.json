@@ -1,0 +1,16 @@
+{
+  "perspective": "PR & Media",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Risk Manager\",\n  \"summary\": \"Top 3 CAAs: Tax Professionals Inc. (best IRS compliance), Global Tax Solutions (lowest rejection rate), International Tax Services (secure data handling). All meet criteria but vary in risk profiles.\",\n  \"key_sources\": [\"IRS authorized list\", \"Better Business Bureau\", \"Trustpilot reviews\"],\n  \"gaps_in_current_canon\": \"No CIS-specific CAA data in IRS records; verification methods unclear for remote clients.\",\n  \"proposed_action\": \"Audit Tax Professionals Inc. first; prioritize secure data handling for Azerbaijan clients.\",\n  \"whistleblower_flag\": null\n}",
+  "summary": "Top 3 CAAs: Tax Professionals Inc. (best IRS compliance), Global Tax Solutions (lowest rejection rate), International Tax Services (secure data handling). All meet criteria but vary in risk profiles.",
+  "key_sources": [
+    "IRS authorized list",
+    "Better Business Bureau",
+    "Trustpilot reviews"
+  ],
+  "gaps_in_current_canon": "No CIS-specific CAA data in IRS records; verification methods unclear for remote clients.",
+  "proposed_action": "Audit Tax Professionals Inc. first; prioritize secure data handling for Azerbaijan clients.",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Risk Manager"
+}

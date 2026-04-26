@@ -54,7 +54,6 @@ import os
 import shutil
 import signal
 import sys
-import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -210,32 +209,9 @@ async def call_provider_chain(perspective: dict, prompt: str) -> dict[str, Any]:
         except Exception as e:
             log_event({"event": "provider_failed", "perspective": name, "provider": "cerebras", "error": str(e)})
 
-    # 2. Ollama (local, CEO's 5060 — preferred for light perspectives).
-    # Gated by semaphore — qwen3:8b returns empty string under heavy parallel
-    # load on single-GPU. We also reject empty-string responses so the chain
-    # falls through to cloud rather than silently dropping a perspective.
-    if name not in HEAVY_PERSPECTIVES and _ollama_semaphore is not None:
-        try:
-            from openai import AsyncOpenAI
-            client = AsyncOpenAI(api_key="ollama", base_url=f"{OLLAMA_URL.rstrip('/')}/v1")
-            async with _ollama_semaphore:
-                resp = await asyncio.wait_for(
-                    client.chat.completions.create(
-                        model=OLLAMA_MODEL,
-                        messages=[{"role": "user", "content": prompt}],
-                        temperature=1.0,
-                        max_tokens=2000,
-                    ),
-                    timeout=120.0,  # local can be slower
-                )
-            content = (resp.choices[0].message.content or "").strip()
-            if content and "{" in content:
-                return {"perspective": name, "provider": "ollama", "model": OLLAMA_MODEL, "raw": content}
-            log_event({"event": "provider_failed", "perspective": name, "provider": "ollama", "error": "empty_or_non_json"})
-        except Exception as e:
-            log_event({"event": "provider_failed", "perspective": name, "provider": "ollama", "error": str(e)})
-
-    # 3. NVIDIA NIM (cloud heavy fallback)
+    # 2. NVIDIA NIM — primary for light perspectives (A/B test 2026-04-26 proved
+    # Ollama qwen3:8b drifts persona 60%, gemma4 100%, NVIDIA Llama-70B 0%).
+    # Ollama demoted to fallback-of-last-resort for non-persona tasks only.
     nvidia_key = os.getenv("NVIDIA_API_KEY")
     if nvidia_key:
         try:
@@ -293,6 +269,27 @@ async def call_provider_chain(perspective: dict, prompt: str) -> dict[str, Any]:
             return {"perspective": name, "provider": "groq", "model": "llama-3.3-70b-versatile", "raw": resp.choices[0].message.content or ""}
         except Exception as e:
             log_event({"event": "provider_failed", "perspective": name, "provider": "groq", "error": str(e)})
+
+    # 6. Ollama (last resort — persona drift known, but better than nothing)
+    if _ollama_semaphore is not None:
+        try:
+            from openai import AsyncOpenAI
+            client = AsyncOpenAI(api_key="ollama", base_url=f"{OLLAMA_URL.rstrip('/')}/v1")
+            async with _ollama_semaphore:
+                resp = await asyncio.wait_for(
+                    client.chat.completions.create(
+                        model=OLLAMA_MODEL,
+                        messages=[{"role": "user", "content": prompt}],
+                        temperature=1.0,
+                        max_tokens=2000,
+                    ),
+                    timeout=120.0,
+                )
+            content = (resp.choices[0].message.content or "").strip()
+            if content and "{" in content:
+                return {"perspective": name, "provider": "ollama", "model": OLLAMA_MODEL, "raw": content}
+        except Exception as e:
+            log_event({"event": "provider_failed", "perspective": name, "provider": "ollama", "error": str(e)})
 
     return {"perspective": name, "provider": None, "model": None, "raw": "", "error": "all_providers_failed"}
 

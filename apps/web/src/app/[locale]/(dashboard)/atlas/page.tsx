@@ -21,7 +21,7 @@ export default function AtlasPage() {
         defaultValue:
           "Coming after MindShift launch — ZEUS archived notice at memory/atlas/archive-notices/2026-04-19-zeus-frozen.md",
       })}
-      accentVar="var(--color-product-atlas)"
+      accentVar="var(--color-product-atlas-system)"
     />
   );
 }

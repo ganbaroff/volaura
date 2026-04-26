@@ -130,10 +130,10 @@
      ══════════════════════════════════════════════════════════════════════ */
 
   --color-product-volaura:            #7C5CFC;
-  --color-product-mindshift:          #3B82F6;
+  --color-product-mindshift:          #10B981; /* migrated 2026-04-26: was #3B82F6 blue, now emerald per Codex F-18 + Design-Atlas verdict (Browser-Atlas + Claude Design convergence). Token reconciliation aligns runtime with DESIGN-MANIFESTO L153 ecosystem palette. */
   --color-product-lifesim:            #F59E0B;
   --color-product-brandedby:          #EC4899;
-  --color-product-atlas:              #10B981;
+  --color-product-atlas-system:       #5EEAD4; /* migrated 2026-04-26: was --color-product-atlas #10B981. Token renamed (atlas → atlas-system) because Atlas is system-only per DESIGN-MANIFESTO L153, not a user-facing face. Mint-teal #5EEAD4 chosen by Browser-Atlas + Claude Design (verdict 2026-04-26 GO-with-fallback): primary value, +28 lightness from MindShift emerald reads as separate system note in TabBar dot indicators and agent-glow surfaces. Documented fallback if real-render shows visual conflict: #5BD9C8 (canonical secondary). REJECTED: #4FD1C5 — collides with emerald at small sizes per Claude Design. */
 
   /* ── Typography ── */
   --font-sans:     "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -271,7 +271,7 @@
 [data-product="mindshift"] { --color-product-accent: var(--color-product-mindshift); }
 [data-product="lifesim"]   { --color-product-accent: var(--color-product-lifesim); }
 [data-product="brandedby"] { --color-product-accent: var(--color-product-brandedby); }
-[data-product="atlas"]     { --color-product-accent: var(--color-product-atlas); }
+[data-product="atlas"]     { --color-product-accent: var(--color-product-atlas-system); }
 
 :root {
   --color-product-accent: var(--color-product-volaura);

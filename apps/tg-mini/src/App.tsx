@@ -1,9 +1,7 @@
 import { AppRoot } from '@telegram-apps/telegram-ui'
 import { HashRouter, Routes, Route } from 'react-router-dom'
-import { ProposalsPage } from './pages/ProposalsPage'
-import { AgentsPage } from './pages/AgentsPage'
-import { HomePage } from './pages/HomePage'
 import { NavBar } from './components/NavBar'
+import { TG_MINI_ROUTES } from './routes'
 
 export function App() {
   // ADHD-safe: dark theme, calm colors, no red (Law 1)
@@ -18,9 +16,9 @@ export function App() {
           paddingBottom: 72,
         }}>
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/proposals" element={<ProposalsPage />} />
-            <Route path="/agents" element={<AgentsPage />} />
+            {TG_MINI_ROUTES.map(({ path, component: Component }) => (
+              <Route key={path} path={path} element={<Component />} />
+            ))}
           </Routes>
           <NavBar />
         </div>

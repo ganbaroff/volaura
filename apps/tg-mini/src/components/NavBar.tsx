@@ -1,10 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom'
-
-const tabs = [
-  { path: '/', label: 'Home', icon: '🏠' },
-  { path: '/proposals', label: 'Tasks', icon: '📋' },
-  { path: '/agents', label: 'Agents', icon: '🤖' },
-] as const
+import { TG_MINI_ROUTES } from '../routes'
 
 export function NavBar() {
   const location = useLocation()
@@ -24,7 +19,7 @@ export function NavBar() {
       alignItems: 'center',
       zIndex: 50,
     }}>
-      {tabs.map(tab => {
+      {TG_MINI_ROUTES.map(tab => {
         const active = location.pathname === tab.path
         return (
           <button

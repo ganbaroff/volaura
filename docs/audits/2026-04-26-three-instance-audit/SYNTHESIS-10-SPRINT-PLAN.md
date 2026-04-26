@@ -87,9 +87,9 @@
 | CA-F11 | Triage 36 whistleblower flags, create obligation rows for recurring themes | 3h |
 | CX-F18 | Reconcile product accent tokens (MindShift, Atlas colors) | 30m CEO sign-off |
 
-### Sprint S5 — "tg-mini Resurrection" (~8h AI)
+### Sprint S5 — "tg-mini Resurrection" (~8.5h AI)
 **Owner:** Codex
-**Acceptance criteria:** tg-mini builds, tests pass, proposals/agents display real data
+**Acceptance criteria:** tg-mini builds, tests pass, proposals/agents display real data, prototype scope documented
 
 | Finding | Task | Effort |
 |---------|------|--------|
@@ -98,6 +98,7 @@
 | CX-F03 | Fix proposal action route + payload shape | 1h |
 | CX-F04 | Add authentication headers to all API calls | 2h |
 | CX-F05 | Add tg-mini to CI pipeline + test script | 1.5h |
+| CX-F06 | Reclassify tg-mini as admin shell prototype + route smoke test | 30m |
 | CA-F22 | Skip Supabase session refresh for public pages in middleware | 30m |
 | CA-F24 | Add standard href links to for-ceo/index.html cards | 1h |
 
@@ -108,7 +109,6 @@
 | Finding | Task | Effort |
 |---------|------|--------|
 | CA-F06 | Fix code-index builder, regenerate, add CI validation | 2h |
-| CX-F06 | Reclassify tg-mini as "admin shell prototype" in docs | 30m |
 
 ### Sprint S7 — "volaura.com + DNS" (~1h AI + CEO decision)
 **Owner:** CEO (domain decision) + Code-Atlas (DNS config)

@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Atlas Now — что происходит в проекте прямо сейчас</title>
+<style>
+  :root {
+    --bg: #0F1220;
+    --surface: #161A2E;
+    --surface-2: #1E2438;
+    --border: #2A3050;
+    --teal: #5EEAD4;
+    --teal-dim: #4FD1C5;
+    --indigo: #7C5CFC;
+    --gold: #E9C400;
+    --green: #34D399;
+    --orange: #FB923C;
+    --rose: #F472B6;
+    --red-soft: #D4B4FF;
+    --text: #F1F1F8;
+    --text-muted: #8B8BA7;
+    --text-dim: #6B6B85;
+    --shadow: 0 8px 32px rgba(0,0,0,0.35);
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: 60px;
+  }
+  header.top {
+    position: sticky; top: 0; z-index: 100;
+    background: linear-gradient(180deg, rgba(15,18,32,0.98), rgba(15,18,32,0.92));
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px 12px;
+  }
+  .top-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; max-width: 1180px; margin: 0 auto;
+  }
+  .brand {
+    font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-muted); font-weight: 600;
+  }
+  .brand strong { color: var(--teal); font-weight: 700; }
+  .pulse {
+    display: inline-block; width: 9px; height: 9px;
+    background: var(--green); border-radius: 999px; margin-right: 8px;
+    box-shadow: 0 0 0 0 rgba(52,211,153,0.5);
+    animation: pulse 1.6s infinite;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(52,211,153,0.6); }
+    70%  { box-shadow: 0 0 0 12px rgba(52,211,153,0); }
+    100% { box-shadow: 0 0 0 0 rgba(52,211,153,0); }
+  }
+  .last-update {
+    font-size: 12px; color: var(--text-muted);
+    display: flex; align-items: center;
+  }
+  main { max-width: 1180px; margin: 0 auto; padding: 24px; }
+  h1 {
+    font-size: 28px; font-weight: 800; line-height: 1.15;
+    margin: 4px 0 6px;
+    background: linear-gradient(135deg, var(--teal), var(--indigo));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+
+  .grid-status {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px; margin-bottom: 28px;
+  }
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+  .stat .label {
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-muted); font-weight: 600;
+  }
+  .stat .value {
+    font-size: 20px; font-weight: 800; margin-top: 4px;
+  }
+  .stat .value.green { color: var(--green); }
+  .stat .value.gold { color: var(--gold); }
+  .stat .value.orange { color: var(--orange); }
+  .stat .value.teal { color: var(--teal); }
+  .stat .meta { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+  .stat.loading .value { color: var(--text-dim); font-size: 16px; font-weight: 600; }
+
+  h2.section {
+    font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--teal); font-weight: 700;
+    margin: 28px 0 12px; padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+  .row {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .row:last-child { border-bottom: 0; }
+  .row .ts {
+    font-size: 11px; color: var(--text-dim); font-family: ui-monospace, monospace;
+    min-width: 130px; flex-shrink: 0;
+  }
+  .row .body { color: var(--text); flex: 1; word-break: break-word; }
+  .row .body code {
+    background: var(--surface-2); color: var(--teal-dim);
+    padding: 1px 6px; border-radius: 4px; font-size: 12.5px;
+    font-family: ui-monospace, monospace;
+  }
+  .row .pill {
+    font-size: 10px; padding: 2px 8px; border-radius: 999px;
+    font-weight: 600; margin-right: 6px;
+  }
+  .pill.green   { background: rgba(52,211,153,0.15); color: var(--green); }
+  .pill.gold    { background: rgba(233,196,0,0.15); color: var(--gold); }
+  .pill.orange  { background: rgba(251,146,60,0.15); color: var(--orange); }
+  .pill.teal    { background: rgba(94,234,212,0.15); color: var(--teal); }
+  .pill.indigo  { background: rgba(124,92,252,0.2); color: var(--indigo); }
+  .pill.dim     { background: rgba(139,139,167,0.1); color: var(--text-dim); }
+
+  .empty { color: var(--text-dim); font-size: 13px; padding: 12px 0; font-style: italic; }
+  .err { color: var(--orange); font-size: 13px; padding: 12px 0; }
+
+  footer.bottom {
+    margin-top: 32px; padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim); font-size: 12px; line-height: 1.7;
+    text-align: center;
+  }
+  footer.bottom a { color: var(--teal-dim); }
+  footer.bottom code {
+    background: var(--surface-2); color: var(--teal-dim);
+    padding: 1px 6px; border-radius: 4px; font-size: 11.5px;
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-row">
+    <div class="brand"><strong>VOLAURA, INC</strong> · Atlas Now</div>
+    <div class="last-update"><span class="pulse"></span><span id="last-update">подключаюсь...</span></div>
+  </div>
+</header>
+
+<main>
+
+<h1>Что происходит прямо сейчас</h1>
+<p class="subtitle">Этот дашборд автоматически обновляется каждые 30 секунд. Подтягивает Railway prod, Vercel прод, последние коммиты в main, события swarm-демона, статус AtlasSwarmDaemon Scheduled Task. Открывай со страницы или с телефона — будет жить и обновляться сам.</p>
+
+<div class="grid-status">
+  <div class="stat loading" id="prod-api">
+    <div class="label">Railway · Backend</div>
+    <div class="value">проверяю...</div>
+    <div class="meta">volauraapi-production</div>
+  </div>
+  <div class="stat loading" id="prod-web">
+    <div class="label">Vercel · Frontend</div>
+    <div class="value">проверяю...</div>
+    <div class="meta">volaura.app</div>
+  </div>
+  <div class="stat loading" id="git-head">
+    <div class="label">Git HEAD на main</div>
+    <div class="value">проверяю...</div>
+    <div class="meta">github.com/ganbaroff/volaura</div>
+  </div>
+  <div class="stat loading" id="daemon-last">
+    <div class="label">Swarm Daemon · Last Task</div>
+    <div class="value">проверяю...</div>
+    <div class="meta">memory/atlas/work-queue/</div>
+  </div>
+  <div class="stat loading" id="code-index">
+    <div class="label">Code Index Freshness</div>
+    <div class="value">проверяю...</div>
+    <div class="meta">memory/swarm/code-index.json</div>
+  </div>
+  <div class="stat loading" id="commits-today">
+    <div class="label">Commits сегодня</div>
+    <div class="value">проверяю...</div>
+    <div class="meta">last 24h on main</div>
+  </div>
+</div>
+
+<h2 class="section">Последние 10 коммитов</h2>
+<div class="panel" id="commits-panel">
+  <div class="empty">загружаю...</div>
+</div>
+
+<h2 class="section">Swarm Daemon · последние события</h2>
+<div class="panel" id="daemon-panel">
+  <div class="empty">загружаю...</div>
+</div>
+
+<h2 class="section">Whistleblower Flags · последние 5 swarm-прогонов</h2>
+<div class="panel" id="flags-panel">
+  <div class="empty">загружаю...</div>
+</div>
+
+<footer class="bottom">
+  <p>Atlas. Этот дашборд лежит в <code>for-ceo/living/atlas-now.html</code> и обновляется сам через JS-fetch на GitHub raw + Railway /health endpoint. Без скачивания. Открывай через <code>https://raw.githack.com/ganbaroff/volaura/main/for-ceo/living/atlas-now.html</code></p>
+</footer>
+
+</main>
+
+<script>
+'use strict';
+const REPO = 'ganbaroff/volaura';
+const BRANCH = 'main';
+const RAW = (path) => `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${path}`;
+const GH_API = (path) => `https://api.github.com/repos/${REPO}${path}`;
+
+const $ = (id) => document.getElementById(id);
+
+function fmtTime(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  if (isNaN(d)) return iso;
+  return d.toLocaleString('ru-RU', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
+}
+function ago(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  const sec = Math.floor((Date.now() - d) / 1000);
+  if (sec < 60) return `${sec}с назад`;
+  if (sec < 3600) return `${Math.floor(sec/60)}мин назад`;
+  if (sec < 86400) return `${Math.floor(sec/3600)}ч назад`;
+  return `${Math.floor(sec/86400)}д назад`;
+}
+
+async function checkProdAPI() {
+  try {
+    const r = await fetch('https://volauraapi-production.up.railway.app/health', { cache: 'no-store' });
+    const d = await r.json();
+    const cell = $('prod-api');
+    cell.classList.remove('loading');
+    cell.innerHTML = `
+      <div class="label">Railway · Backend</div>
+      <div class="value green">${d.status === 'ok' ? 'OK ✓' : d.status}</div>
+      <div class="meta">v${d.version} · db ${d.database} · sha ${(d.git_sha || '').substring(0,8)}</div>
+    `;
+  } catch (e) {
+    $('prod-api').innerHTML = `<div class="label">Railway · Backend</div><div class="value orange">ERROR</div><div class="meta">${e.message}</div>`;
+  }
+}
+
+async function checkProdWeb() {
+  try {
+    const r = await fetch('https://volaura.app/az', { method: 'HEAD', mode: 'no-cors', cache: 'no-store' });
+    const cell = $('prod-web');
+    cell.classList.remove('loading');
+    cell.innerHTML = `
+      <div class="label">Vercel · Frontend</div>
+      <div class="value green">UP ✓</div>
+      <div class="meta">volaura.app/az reachable</div>
+    `;
+  } catch (e) {
+    $('prod-web').innerHTML = `<div class="label">Vercel · Frontend</div><div class="value orange">UNREACHABLE</div><div class="meta">${e.message}</div>`;
+  }
+}
+
+async function loadCommits() {
+  try {
+    const r = await fetch(GH_API('/commits?per_page=10'));
+    const commits = await r.json();
+    if (!Array.isArray(commits)) throw new Error('not array');
+
+    const head = commits[0];
+    $('git-head').classList.remove('loading');
+    $('git-head').innerHTML = `
+      <div class="label">Git HEAD на main</div>
+      <div class="value teal">${head.sha.substring(0,8)}</div>
+      <div class="meta">${ago(head.commit.author.date)} · ${head.commit.author.name}</div>
+    `;
+
+    const todayCount = commits.filter(c => {
+      const d = new Date(c.commit.author.date);
+      return (Date.now() - d) < 86400000;
+    }).length;
+    $('commits-today').classList.remove('loading');
+    $('commits-today').innerHTML = `
+      <div class="label">Commits сегодня</div>
+      <div class="value gold">${todayCount}</div>
+      <div class="meta">last 24h on main</div>
+    `;
+
+    const panel = $('commits-panel');
+    panel.innerHTML = commits.map(c => {
+      const sha = c.sha.substring(0,8);
+      const msg = (c.commit.message.split('\n')[0] || '').substring(0, 100);
+      const author = c.commit.author.name;
+      const ts = ago(c.commit.author.date);
+      return `<div class="row">
+        <div class="ts">${ts}</div>
+        <div class="body"><span class="pill teal">${sha}</span>${msg} <span class="pill dim">${author}</span></div>
+      </div>`;
+    }).join('');
+  } catch (e) {
+    $('commits-panel').innerHTML = `<div class="err">не удалось загрузить коммиты: ${e.message}</div>`;
+  }
+}
+
+async function loadDaemon() {
+  try {
+    const r = await fetch(RAW('memory/atlas/work-queue/daemon.log.jsonl') + '?t=' + Date.now());
+    const text = await r.text();
+    const lines = text.trim().split('\n').filter(Boolean);
+    const events = lines.map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
+
+    const lastDone = [...events].reverse().find(e => e.event === 'task_done');
+    $('daemon-last').classList.remove('loading');
+    if (lastDone) {
+      const summary = lastDone.summary || {};
+      $('daemon-last').innerHTML = `
+        <div class="label">Swarm Daemon · Last Task</div>
+        <div class="value teal">${summary.task_id ? summary.task_id.substring(11, 50) : '—'}</div>
+        <div class="meta">${ago(lastDone.ts)} · ${summary.perspectives_responded || 0}/${summary.perspectives_dispatched || 0} ответили</div>
+      `;
+    } else {
+      $('daemon-last').innerHTML = `<div class="label">Swarm Daemon · Last Task</div><div class="value">нет данных</div>`;
+    }
+
+    const recent = events.slice(-15).reverse();
+    const panel = $('daemon-panel');
+    panel.innerHTML = recent.map(e => {
+      const ts = ago(e.ts);
+      let body = '';
+      if (e.event === 'task_done') {
+        const s = e.summary || {};
+        body = `<span class="pill green">DONE</span> <code>${s.task_id || '?'}</code> — ${s.perspectives_responded}/${s.perspectives_dispatched} ответили · providers: ${JSON.stringify(s.providers_used || {})}`;
+      } else if (e.event === 'task_start') {
+        body = `<span class="pill gold">START</span> <code>${e.task_id}</code>`;
+      } else if (e.event === 'daemon_start') {
+        body = `<span class="pill indigo">DAEMON START</span> poll=${e.poll_interval}s · ollama-concurrency=${e.ollama_concurrency || '?'}`;
+      } else if (e.event === 'provider_failed') {
+        body = `<span class="pill orange">FAIL</span> <code>${e.perspective}</code> via <code>${e.provider}</code> — ${e.error || 'silent'}`;
+      } else {
+        body = `<span class="pill dim">${e.event}</span> ${JSON.stringify(e).substring(0, 200)}`;
+      }
+      return `<div class="row"><div class="ts">${ts}</div><div class="body">${body}</div></div>`;
+    }).join('');
+  } catch (e) {
+    $('daemon-panel').innerHTML = `<div class="err">не удалось загрузить daemon log: ${e.message}</div>`;
+  }
+}
+
+async function loadCodeIndex() {
+  try {
+    const r = await fetch(RAW('memory/swarm/code-index.json') + '?t=' + Date.now());
+    const text = await r.text();
+    const i = text.indexOf('"built_at"');
+    const tsMatch = text.substring(i, i + 80).match(/"built_at":\s*"([^"]+)"/);
+    const filesMatch = text.substring(0, 500).match(/"total_files":\s*(\d+)/);
+    if (tsMatch) {
+      const built = tsMatch[1];
+      const filesCount = filesMatch ? filesMatch[1] : '?';
+      const cell = $('code-index');
+      cell.classList.remove('loading');
+      const ageHrs = Math.floor((Date.now() - new Date(built)) / 3600000);
+      const cls = ageHrs < 24 ? 'green' : ageHrs < 168 ? 'gold' : 'orange';
+      cell.innerHTML = `
+        <div class="label">Code Index Freshness</div>
+        <div class="value ${cls}">${filesCount} файлов</div>
+        <div class="meta">${ago(built)} · age ${ageHrs}ч</div>
+      `;
+    }
+  } catch (e) {
+    $('code-index').innerHTML = `<div class="label">Code Index Freshness</div><div class="value orange">ERROR</div><div class="meta">${e.message}</div>`;
+  }
+}
+
+async function loadFlags() {
+  try {
+    const r = await fetch(RAW('memory/atlas/work-queue/daemon.log.jsonl') + '?t=' + Date.now());
+    const text = await r.text();
+    const events = text.trim().split('\n').filter(Boolean).map(l => {
+      try { return JSON.parse(l); } catch { return null; }
+    }).filter(Boolean);
+
+    const recent = [...events].reverse().filter(e => e.event === 'task_done').slice(0, 5);
+    const allFlags = [];
+    recent.forEach(e => {
+      const s = e.summary || {};
+      const flags = s.whistleblower_flags || [];
+      flags.forEach(f => {
+        if (f.flag && f.flag !== 'null') {
+          allFlags.push({ task: s.task_id, perspective: f.perspective, flag: f.flag, ts: e.ts });
+        }
+      });
+    });
+
+    const panel = $('flags-panel');
+    if (allFlags.length === 0) {
+      panel.innerHTML = `<div class="empty">нет открытых whistleblower-флагов в последних 5 прогонах</div>`;
+      return;
+    }
+    panel.innerHTML = allFlags.slice(0, 12).map(f => {
+      return `<div class="row">
+        <div class="ts">${ago(f.ts)}</div>
+        <div class="body"><span class="pill orange">${f.perspective}</span><code>${(f.task || '').substring(11, 50)}</code><br/><span style="color: var(--text-muted); font-size: 13.5px;">${f.flag}</span></div>
+      </div>`;
+    }).join('');
+  } catch (e) {
+    $('flags-panel').innerHTML = `<div class="err">не удалось загрузить flags: ${e.message}</div>`;
+  }
+}
+
+async function refreshAll() {
+  await Promise.all([
+    checkProdAPI(),
+    checkProdWeb(),
+    loadCommits(),
+    loadDaemon(),
+    loadCodeIndex(),
+    loadFlags(),
+  ]);
+  $('last-update').textContent = `обновлено ${new Date().toLocaleTimeString('ru-RU')}`;
+}
+
+refreshAll();
+setInterval(refreshAll, 30000);
+</script>
+
+</body>
+</html>

@@ -146,7 +146,7 @@ function TermsAz() {
 
       <Section title="13. Zəmanətlərin məhdudluğu">
         <p>
-          VOLAURA "olduğu kimi" və "mövcud olduğu həcmdə" təqdim edilir. Biz hər zaman xətasız, fasiləsiz, tam dəqiq və ya müəyyən məqsəd üçün tam uyğun olacağını zəmanət vermirik.
+          VOLAURA &laquo;olduğu kimi&raquo; və &laquo;mövcud olduğu həcmdə&raquo; təqdim edilir. Biz hər zaman xətasız, fasiləsiz, tam dəqiq və ya müəyyən məqsəd üçün tam uyğun olacağını zəmanət vermirik.
         </p>
       </Section>
 
@@ -231,7 +231,7 @@ function TermsEn() {
 
       <Section title="9. Prohibited use">
         <p>
-          You may not access another person's account without permission, reverse-engineer, disrupt, or damage the platform, spam, scrape, or abuse the service with automation, upload malicious code, create fake profiles, fake assessment activity, or fake evidence, break the law or violate someone else's rights.
+          You may not access another person&apos;s account without permission, reverse-engineer, disrupt, or damage the platform, spam, scrape, or abuse the service with automation, upload malicious code, create fake profiles, fake assessment activity, or fake evidence, break the law or violate someone else&apos;s rights.
         </p>
       </Section>
 
@@ -255,7 +255,7 @@ function TermsEn() {
 
       <Section title="13. Warranty disclaimer">
         <p>
-          VOLAURA is provided on an "as is" and "as available" basis. We do not promise that the service will always be uninterrupted, error-free, fully accurate, or fit for every specific purpose.
+          VOLAURA is provided on an &quot;as is&quot; and &quot;as available&quot; basis. We do not promise that the service will always be uninterrupted, error-free, fully accurate, or fit for every specific purpose.
         </p>
       </Section>
 

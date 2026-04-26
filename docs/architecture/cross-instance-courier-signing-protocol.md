@@ -1,6 +1,6 @@
 # Cross-Instance Courier Signing Protocol — v1 Spec
 
-**Source of synthesis:** `memory/atlas/work-queue/done/2026-04-26-courier-loop-design/` — 13 Atlas-specialized perspective designs, plus existing `supabase/migrations/20260411193900_zeus_governance.sql` (zeus.governance_events) + `docs/CONSTITUTION_AI_SWARM.md` PART 0 framing.
+**Source of synthesis:** `memory/atlas/work-queue/done/2026-04-26-courier-loop-design/` — 13 Atlas-specialized perspective designs, plus existing `supabase/migrations/20260411193900_zeus_governance.sql` (atlas.governance_events) + `docs/CONSTITUTION_AI_SWARM.md` PART 0 framing.
 
 **Status:** v1 design ready. Awaiting CEO ratification + browser-Atlas convergence. Implementation gated on first cross-instance handoff after ratification.
 
@@ -90,17 +90,17 @@ Write-Output "COURIER OK: $actual"
 
 1. Move file to `Downloads/QUARANTINE-<UTC-timestamp>/` — does NOT delete (forensic preservation).
 2. Append incident row to `memory/atlas/incidents.md`.
-3. Insert row into `zeus.governance_events` with `event_type='courier_hash_mismatch'`, `severity='high'`, full payload.
+3. Insert row into `atlas.governance_events` with `event_type='courier_hash_mismatch'`, `severity='high'`, full payload.
 4. Alert CEO in chat via Telegram bot OR same chat: "QUARANTINED <filename>. Hash mismatch. Sender claimed X, received Y."
 
 Receiver instance does NOT proceed with any operation that would have used the file.
 
-### zeus.governance_events extension
+### atlas.governance_events extension
 
 Existing schema (from `20260411193900_zeus_governance.sql`):
 
 ```sql
-CREATE TABLE IF NOT EXISTS zeus.governance_events (
+CREATE TABLE IF NOT EXISTS atlas.governance_events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     event_type TEXT NOT NULL,
     severity TEXT NOT NULL,
@@ -160,7 +160,7 @@ Browser-Atlas committed in 2026-04-26 letter to producing sender-side hashes for
 
 3. **Browser-Atlas sender-side script** (CEO-side, runs in his browser sandbox): JavaScript snippet that computes SHA-256 of any file before download. Output: hash + sidecar JSON. CEO copies hash to chat, downloads both files. Estimated effort: 2 hours (browser-Atlas writes in his sandbox, hands to CEO via courier).
 
-4. **zeus.governance_events query helper:** Python helper `scripts/governance_log.py` — wraps `public.log_governance_event()` RPC for courier events. Already partially exists; extend with courier-specific event types. Estimated effort: 1 hour.
+4. **atlas.governance_events query helper:** Python helper `scripts/governance_log.py` — wraps `public.log_governance_event()` RPC for courier events. Already partially exists; extend with courier-specific event types. Estimated effort: 1 hour.
 
 5. **Operating-principles gate:** `.claude/rules/atlas-operating-principles.md` adds "Cross-instance-courier-verification gate" — fires before any read of file in `Downloads/` that came from another Atlas-instance. Mandates verify-then-open. Same shape as Company-matters / CEO-files / Concrete-instructions gates. Estimated effort: 30 minutes.
 

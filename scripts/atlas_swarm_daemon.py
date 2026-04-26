@@ -424,6 +424,7 @@ async def main():
 
     while not shutdown_requested:
         try:
+            setup_dirs()
             tasks = sorted(PENDING.glob("*.md"))
             if tasks:
                 async def _wrap(t):

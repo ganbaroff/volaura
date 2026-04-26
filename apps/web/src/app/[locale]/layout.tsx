@@ -55,19 +55,6 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
 
   return (
     <html lang={locale} className="dark" suppressHydrationWarning>
-      <head>
-        {/* One-time SW cache purge — forces browser to drop stale JS bundles */}
-        <script dangerouslySetInnerHTML={{ __html: `
-          if('serviceWorker' in navigator){
-            navigator.serviceWorker.getRegistrations().then(function(regs){
-              regs.forEach(function(r){r.unregister()});
-            });
-            caches.keys().then(function(names){
-              names.forEach(function(n){caches.delete(n)});
-            });
-          }
-        `}} />
-      </head>
       <body className={`${inter.variable} ${plusJakartaSans.variable} font-sans`}>
         <TranslationsProvider
           locale={locale}

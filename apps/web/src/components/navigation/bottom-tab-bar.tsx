@@ -75,7 +75,7 @@ const ALL_TABS: (TabItem & { enabled?: boolean })[] = [
     defaultLabel: "ATLAS",
     icon: <BoltIcon />,
     href: "/atlas",
-    accentVar: "var(--color-product-atlas)",
+    accentVar: "var(--color-product-atlas-system)",
     enabled: ATLAS_ENABLED,
   },
 ];

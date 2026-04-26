@@ -5,6 +5,7 @@ import { actOnProposal, fetchAgents, fetchProposals } from './api'
 describe('tg-mini api envelope handling', () => {
   afterEach(() => {
     vi.restoreAllMocks()
+    vi.unstubAllGlobals()
   })
 
   it('unwraps proposals from the admin data envelope', async () => {
@@ -90,5 +91,67 @@ describe('tg-mini api envelope handling', () => {
         body: JSON.stringify({ action: 'approve' }),
       }),
     )
+  })
+
+  it('adds the stored bearer token to admin requests', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ data: { agents: [] } }),
+    })
+
+    vi.stubGlobal('fetch', fetchMock)
+    vi.stubGlobal('window', {
+      location: {
+        href: 'https://mini.volaura.app/#/agents',
+        search: '',
+        hash: '#/agents',
+      },
+      sessionStorage: {
+        getItem: vi.fn().mockReturnValue('stored-jwt'),
+        setItem: vi.fn(),
+      },
+      history: { replaceState: vi.fn() },
+      document: { title: 'tg-mini' },
+    })
+
+    await fetchAgents()
+
+    const requestInit = fetchMock.mock.calls[0]?.[1] as RequestInit
+    const headers = requestInit.headers as Headers
+    expect(headers.get('Authorization')).toBe('Bearer stored-jwt')
+  })
+
+  it('bootstraps a bearer token from the URL, stores it, and scrubs the location', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ data: { proposals: [], summary: { pending: 0 } } }),
+    })
+    const getItem = vi.fn().mockReturnValue(null)
+    const setItem = vi.fn()
+    const replaceState = vi.fn()
+
+    vi.stubGlobal('fetch', fetchMock)
+    vi.stubGlobal('window', {
+      location: {
+        href: 'https://mini.volaura.app/#/proposals?access_token=bridge-jwt',
+        search: '',
+        hash: '#/proposals?access_token=bridge-jwt',
+      },
+      sessionStorage: {
+        getItem,
+        setItem,
+      },
+      history: { replaceState },
+      document: { title: 'tg-mini' },
+    })
+
+    await fetchProposals()
+
+    const requestInit = fetchMock.mock.calls[0]?.[1] as RequestInit
+    const headers = requestInit.headers as Headers
+
+    expect(headers.get('Authorization')).toBe('Bearer bridge-jwt')
+    expect(setItem).toHaveBeenCalledWith('volaura.tg-mini.access-token', 'bridge-jwt')
+    expect(replaceState).toHaveBeenCalledWith({}, 'tg-mini', '/#/proposals')
   })
 })

@@ -1,7 +1,9 @@
 # Atlas — Heartbeat
 
-**Session:** 124 (Opus 4.7, post-compaction continuation, swarm autonomy infra shipped — first vote 13/13 NO on Claude Design tier-metals, daemon registered as Windows Scheduled Task at logon)
-**Timestamp:** 2026-04-26 ~02:55 Baku
+**Session:** 124 CLOSED (Opus 4.7, full-day arc 01:05 → 14:31 Baku, 24+ commits, three structural gates, swarm autonomy live, for-ceo/ hub built, three-instance audit kit shipped, Class 18+20+22 closures + naming-truth correction)
+**Timestamp:** 2026-04-26 ~14:31 Baku — pre-compaction wrap-up
+
+**Compaction-survival pointer:** `memory/atlas/SESSION-124-WRAP-UP-2026-04-26.md` is the canonical session log with depth markers — read FIRST after any wake from this session.
 
 ---
 

@@ -335,7 +335,7 @@ export default function GenerationPage({
           <div className="flex flex-col items-center gap-4 py-10 text-center">
             <XCircle className="size-10 text-destructive" aria-hidden="true" />
             <div>
-              <h2 className="text-lg font-semibold">{t("brandedby.failed", { defaultValue: "Generation failed" })}</h2>
+              <h2 className="text-lg font-semibold">{t("brandedby.didNotComplete", { defaultValue: "This one didn't come through" })}</h2>
               {gen.error_message && (
                 <p className="text-sm text-muted-foreground mt-1">{gen.error_message}</p>
               )}

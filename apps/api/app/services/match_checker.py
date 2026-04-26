@@ -217,7 +217,7 @@ async def _send_telegram_notification(
             f"Org: {org_name}\n"
             f"{count} new professional{'s' if count != 1 else ''} match your saved search:\n\n"
             f"{match_text}\n\n"
-            f"[View all matches on Volaura]({settings.app_url}/az/org-volunteers)"
+            f"[View all matches on Volaura]({settings.app_url}/az/org-professionals)"
         )
 
         # Central telegram-gate (2026-04-19 spam kill).

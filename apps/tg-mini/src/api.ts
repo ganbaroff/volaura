@@ -1,5 +1,7 @@
 // API client for VOLAURA backend (Railway)
 const API_BASE = import.meta.env.VITE_API_URL || 'https://modest-happiness-production.up.railway.app/api'
+const ACCESS_TOKEN_STORAGE_KEY = 'volaura.tg-mini.access-token'
+const TOKEN_PARAM_KEYS = ['access_token', 'token'] as const
 
 export interface Proposal {
   id: string
@@ -62,6 +64,110 @@ interface AgentsResponse {
   }
 }
 
+function readStoredAccessToken(): string | null {
+  if (typeof window === 'undefined') return null
+
+  try {
+    return window.sessionStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
+  } catch {
+    return null
+  }
+}
+
+function persistAccessToken(token: string): void {
+  if (typeof window === 'undefined') return
+
+  try {
+    window.sessionStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, token)
+  } catch {
+    // Ignore storage failures — requests can still proceed with the in-memory token.
+  }
+}
+
+function extractTokenFromLocation(): string | null {
+  if (typeof window === 'undefined') return null
+
+  const candidates = [new URLSearchParams(window.location.search)]
+  const hash = window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash
+  const hashQueryIndex = hash.indexOf('?')
+
+  if (hashQueryIndex >= 0) {
+    candidates.push(new URLSearchParams(hash.slice(hashQueryIndex + 1)))
+  } else if (hash.includes('=')) {
+    candidates.push(new URLSearchParams(hash))
+  }
+
+  for (const params of candidates) {
+    for (const key of TOKEN_PARAM_KEYS) {
+      const value = params.get(key)?.trim()
+      if (value) return value
+    }
+  }
+
+  return null
+}
+
+function stripTokenFromLocation(): void {
+  if (typeof window === 'undefined' || typeof window.history?.replaceState !== 'function') return
+
+  const url = new URL(window.location.href)
+  let dirty = false
+
+  for (const key of TOKEN_PARAM_KEYS) {
+    if (url.searchParams.has(key)) {
+      url.searchParams.delete(key)
+      dirty = true
+    }
+  }
+
+  const hash = url.hash.startsWith('#') ? url.hash.slice(1) : url.hash
+  const hashQueryIndex = hash.indexOf('?')
+  if (hashQueryIndex >= 0) {
+    const hashPath = hash.slice(0, hashQueryIndex)
+    const hashParams = new URLSearchParams(hash.slice(hashQueryIndex + 1))
+    let hashDirty = false
+
+    for (const key of TOKEN_PARAM_KEYS) {
+      if (hashParams.has(key)) {
+        hashParams.delete(key)
+        hashDirty = true
+      }
+    }
+
+    if (hashDirty) {
+      url.hash = hashParams.toString() ? `#${hashPath}?${hashParams.toString()}` : `#${hashPath}`
+      dirty = true
+    }
+  }
+
+  if (dirty) {
+    window.history.replaceState({}, window.document?.title ?? '', `${url.pathname}${url.search}${url.hash}`)
+  }
+}
+
+function getAccessToken(): string | null {
+  const stored = readStoredAccessToken()
+  if (stored) return stored
+
+  const token = extractTokenFromLocation()
+  if (!token) return null
+
+  persistAccessToken(token)
+  stripTokenFromLocation()
+  return token
+}
+
+function authHeaders(init?: HeadersInit): Headers {
+  const headers = new Headers(init)
+  const token = getAccessToken()
+
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`)
+  }
+
+  return headers
+}
+
 function normalizeAgent(agent: AgentApiRecord): SwarmAgent {
   return {
     id: agent.name,
@@ -79,7 +185,7 @@ function normalizeAgent(agent: AgentApiRecord): SwarmAgent {
 
 export async function fetchProposals(): Promise<SwarmDigest> {
   try {
-    const res = await fetch(`${API_BASE}/swarm/proposals`)
+    const res = await fetch(`${API_BASE}/swarm/proposals`, { headers: authHeaders() })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const json = (await res.json()) as ProposalsResponse
     const proposals = json.data?.proposals ?? []
@@ -93,7 +199,7 @@ export async function fetchProposals(): Promise<SwarmDigest> {
 
 export async function fetchAgents(): Promise<SwarmAgent[]> {
   try {
-    const res = await fetch(`${API_BASE}/swarm/agents`)
+    const res = await fetch(`${API_BASE}/swarm/agents`, { headers: authHeaders() })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const json = (await res.json()) as AgentsResponse
     return (json.data?.agents ?? []).map(normalizeAgent)
@@ -106,7 +212,7 @@ export async function actOnProposal(id: string, action: 'approve' | 'dismiss' | 
   try {
     const res = await fetch(`${API_BASE}/swarm/proposals/${id}/decide`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ action }),
     })
     return res.ok

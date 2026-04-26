@@ -1,0 +1,60 @@
+name: AURA Decay
+
+# Sprint 1 Session 125 (2026-04-26) — closes Sonnet#1 reality-audit finding:
+# AURA decay logic exists in apps/api/app/core/assessment/aura_calc.py:117
+# (apply_temporal_decay, two-phase Ebbinghaus model, per-competency half-lives)
+# but no scheduler triggered it. Decay was math without a clock.
+#
+# This workflow runs daily at 04:00 UTC (~07:00 Baku) and processes every
+# active aura_scores row, applying decay based on time since last_active_at.
+# Cheap operation (read row, compute, write row). At 10K users, well under
+# 5 minutes per run.
+
+on:
+  schedule:
+    # Daily at 04:00 UTC (~07:00 Baku). Off-peak both EU and AZ users.
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (compute decay, do NOT write to DB)'
+        required: false
+        default: 'false'
+        type: boolean
+      max_users:
+        description: 'Max users to process (default: all active)'
+        required: false
+        default: '0'
+        type: string
+
+concurrency:
+  group: aura-decay
+  cancel-in-progress: false
+
+jobs:
+  decay:
+    name: Apply AURA decay to active scores
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install runtime deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install supabase httpx loguru
+
+      - name: Run AURA decay
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+          MAX_USERS: ${{ github.event.inputs.max_users || '0' }}
+        run: python scripts/aura_decay.py

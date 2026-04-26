@@ -87,10 +87,15 @@ describe('tg-mini api envelope handling', () => {
       expect.stringContaining('/swarm/proposals/p-42/decide'),
       expect.objectContaining({
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'approve' }),
       }),
     )
+
+    // Headers come back as a Headers instance (api.ts uses authHeaders({...}))
+    // not a plain object literal — assert content-type via Headers semantics.
+    const requestInit = fetchMock.mock.calls[0]?.[1] as RequestInit
+    const headers = requestInit.headers as Headers
+    expect(headers.get('Content-Type')).toBe('application/json')
   })
 
   it('adds the stored bearer token to admin requests', async () => {

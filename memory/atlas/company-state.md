@@ -2,6 +2,8 @@
 
 **Single source of truth for legal entity, obligations, and deadlines. Atlas + founder-ops agents read this first. CEO sees digest, not this file.**
 
+**Update 2026-04-28 (CEO direct via Stripe Atlas dashboard paste):** EIN issued and confirmed. Number `37-2231884`. Delaware file number `10585236` also surfaced — preserved here as canonical company identifier. Stripe Atlas account ID `acct_1TMCR6CVasIpbKGI`. Registered agent Legalinc Corporate Services Inc. (131 Continental Dr Suite 305, Newark DE 19713 US) — plan active through 2027-04-14 (year-1 included with Stripe Atlas, auto-renew 28 days before incorporation anniversary). EIN arrived 8+ days ahead of Stripe Atlas-projected window 2026-05-06 to 2026-05-20. Unblocks: Mercury Bank application (next), Stripe Atlas Perks claims (NVIDIA Inception + Sentry Startups + Quo + Xero), Form SS-4 obligation closure. ITIN W-7 track is independent, May 15 PREP completion remains.
+
 Last updated: 2026-04-18 — 83(b) filing: DHL Express direct Баку → IRS is the SOLE path. Friend-fallback deprecated (CEO confirmed 2026-04-18: friend did not respond). 230 AZN negotiated. CEO goes to DHL Monday Apr 20. Stripe Atlas dashboard confirms: Application review ✅, Incorporation ✅ (Apr 14), Tax ID (EIN) expected Apr 29 – May 13, 83(b) postmark by Apr 28.
 
 **Update 2026-04-25 (browser-Atlas claim, Code-Atlas not independently verified):** browser-Atlas (Opus 4.7 in claude.ai web) wrote in a handoff document: "83(b) election was postmarked 25 April." This precedes the Apr 28 statutory ceiling and would mean DHL receipt + IRS-bound shipment occurred. NOT verified by Code-Atlas via tool call — needs DHL tracking number from CEO or Telegram proof intake via `@volaurabot` to update `public.atlas_obligations` row to closed. Until then this row stays open in DB and this note remains as cross-instance signal pending confirmation.
@@ -21,7 +23,9 @@ Last updated: 2026-04-18 — 83(b) filing: DHL Express direct Баку → IRS i
 | Formation agent | Stripe Atlas |
 | Paid | 2026-04-14, AZN 881.79 (~$500 USD) via Tam Digicard (Kapital) |
 | Incorporation date | **Apr 15-16 2026** (Stripe Atlas dashboard 2026-04-15: Application review ✅, Incorporation step PENDING) |
-| EIN | PENDING (expected 2-4 weeks, foreign responsible party path via SS-4) |
+| EIN | **`37-2231884`** — received 2026-04-28 via Stripe Atlas (8+ days ahead of projected window) |
+| Delaware file number | `10585236` |
+| Stripe Atlas account ID | `acct_1TMCR6CVasIpbKGI` |
 | Registered agent | Stripe Atlas (included year 1) |
 | Authorized shares | 10,000,000 common |
 | Issued to founder | 9,000,000 (90%) |
@@ -44,9 +48,9 @@ Last updated: 2026-04-18 — 83(b) filing: DHL Express direct Баку → IRS i
 | Incorporation (DE filing) | Apr 14 | — | Stripe Atlas | ✅ COMPLETED (dashboard Apr 16) |
 | Certificate of Incorporation issued | Apr 14 | — | Stripe Atlas | ✅ COMPLETED |
 | 83(b) election mailed to IRS | DHL postmark Apr 20 (CEO) + Stripe Atlas auto-filed | IRS statutory max May 14 | Founder + Atlas + Stripe Atlas | ✅ COMPLETED — DOUBLE-FILED. CEO 230 AZN (DEBT-001) duplicate cost; "Proof of filing" available in Stripe Atlas dashboard 2026-04-26 |
-| Tax ID (EIN) received | **Apr 29 – May 13 (original) → May 6-20 (Stripe Atlas dashboard 2026-04-26)** | — | IRS via Stripe Atlas | PENDING — window shifted +7 days |
+| Tax ID (EIN) received | Apr 29 – May 13 (original) → May 6-20 (Stripe Atlas dashboard 2026-04-26) | — | IRS via Stripe Atlas | ✅ **COMPLETED 2026-04-28** — `37-2231884` (14 days ahead of window) |
 | ITIN application (Form W-7) | Immediately after incorporation | — | Founder | P0 (needed for 83(b) + taxes) |
-| Mercury Bank application | After EIN received (~May 5-12) | — | Founder + Atlas | QUEUED |
+| Mercury Bank application | **NOW — EIN received 2026-04-28** | — | Founder (CEO action: mercury.com/signup) | **UNBLOCKED** |
 | Stripe Atlas Perks review | **Apr 15-16** (available now per dashboard) | — | Atlas | **NEW — free credits potential (AWS, Notion, etc) — cash save** |
 | Tax deadline reminders setup | **Apr 15-16** (available now per dashboard) | — | Compliance agent | NEW — auto-reminders via Stripe Atlas |
 | State registration (DE founder lives abroad) | After Incorporation | Check if AZ triggers nexus | Compliance agent | REVIEW |

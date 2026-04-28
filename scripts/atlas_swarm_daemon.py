@@ -62,6 +62,9 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
 from packages.swarm.autonomous_run import PERSPECTIVES  # type: ignore
+from packages.swarm.perspective_registry import PerspectiveRegistry  # type: ignore
+from packages.swarm.code_index import build_index, INDEX_FILE  # type: ignore
+from packages.swarm.execution_state import AgentExecutionTracker  # type: ignore
 
 ATLAS_MEMORY = REPO_ROOT / "memory" / "atlas"
 DOCS = REPO_ROOT / "docs"
@@ -75,7 +78,7 @@ LOG = QUEUE / "daemon.log.jsonl"
 POLL_INTERVAL_SECONDS = int(os.getenv("ATLAS_DAEMON_POLL", "20"))
 MAX_CONCURRENT_TASKS = int(os.getenv("ATLAS_DAEMON_CONCURRENCY", "1"))
 
-# Map specialty → preferred local Ollama model (CEO's 5060 GPU)
+# Map specialty -> preferred local Ollama model (CEO's 5060 GPU)
 # Light perspectives can run locally; heavy ones go cloud.
 HEAVY_PERSPECTIVES = {
     "Scaling Engineer",
@@ -305,9 +308,206 @@ def parse_json_safe(raw: str) -> dict | None:
         return None
 
 
+SAFE_EXECUTORS: dict[str, Any] = {}
+
+
+def executor(name: str):
+    """Register a safe predefined executor."""
+    def decorator(fn):
+        SAFE_EXECUTORS[name] = fn
+        return fn
+    return decorator
+
+
+@executor("rebuild_code_index")
+def _exec_rebuild_index(**_kw: Any) -> dict:
+    idx = build_index(REPO_ROOT)
+    return {"status": "ok", "total_files": idx["total_files"]}
+
+
+@executor("local_health")
+def _exec_local_health(**_kw: Any) -> dict:
+    """Local machine health only. Prod health is GH Actions prod-health-check.yml."""
+    import subprocess
+    results: dict[str, Any] = {}
+    try:
+        r = subprocess.run(["git", "log", "--oneline", "-3"], capture_output=True,
+                           text=True, cwd=str(REPO_ROOT), timeout=5)
+        results["git_head"] = r.stdout.strip().split("\n")[0] if r.stdout else "unknown"
+    except Exception:
+        results["git_head"] = "unknown"
+    pw = REPO_ROOT / "memory" / "swarm" / "perspective_weights.json"
+    if pw.exists():
+        data = json.loads(pw.read_text(encoding="utf-8"))
+        zero_learners = [k for k, v in data.items() if v.get("spawn_count", 0) == 0]
+        results["zero_learning_perspectives"] = zero_learners
+        total_runs = sum(v.get("spawn_count", 0) for v in data.values())
+        results["total_perspective_runs"] = total_runs
+    ci = REPO_ROOT / "memory" / "swarm" / "code-index.json"
+    if ci.exists():
+        age_h = (datetime.now(timezone.utc).timestamp() - ci.stat().st_mtime) / 3600
+        results["code_index_age_hours"] = round(age_h, 1)
+        ci_data = json.loads(ci.read_text(encoding="utf-8"))
+        results["code_index_files"] = ci_data.get("total_files", 0)
+    else:
+        results["code_index_age_hours"] = "missing"
+    pending_count = len(list(PENDING.glob("*.md"))) if PENDING.exists() else 0
+    done_count = len(list(DONE.iterdir())) if DONE.exists() else 0
+    results["queue"] = {"pending": pending_count, "done": done_count}
+    return {"status": "ok", **results}
+
+
+@executor("run_tests")
+def _exec_run_tests(**kw: Any) -> dict:
+    import subprocess
+    test_dir = kw.get("test_dir", "packages/swarm")
+    try:
+        r = subprocess.run(
+            ["python", "-m", "pytest", test_dir, "-x", "--tb=short", "-q"],
+            capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=120,
+        )
+        return {"status": "ok" if r.returncode == 0 else "failed",
+                "returncode": r.returncode, "output": r.stdout[-500:] if r.stdout else "",
+                "errors": r.stderr[-500:] if r.stderr else ""}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+@executor("git_status")
+def _exec_git_status(**_kw: Any) -> dict:
+    import subprocess
+    try:
+        r = subprocess.run(["git", "status", "--short"], capture_output=True,
+                           text=True, cwd=str(REPO_ROOT), timeout=5)
+        dirty = [l.strip() for l in r.stdout.strip().split("\n") if l.strip()]
+        r2 = subprocess.run(["git", "log", "--oneline", "-5"], capture_output=True,
+                            text=True, cwd=str(REPO_ROOT), timeout=5)
+        return {"status": "ok", "dirty_files": len(dirty), "files": dirty[:10],
+                "recent_commits": r2.stdout.strip().split("\n")[:5]}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+async def process_execute_task(task_path: Path, meta: dict, body: str) -> None:
+    """Execute a predefined safe operation with execution_state tracking."""
+    task_id = task_path.stem
+    executor_name = meta.get("executor", "").strip()
+    tracker = AgentExecutionTracker(task_id=task_id, task_title=meta.get("title", task_id))
+
+    if executor_name not in SAFE_EXECUTORS:
+        log_event({"event": "execute_rejected", "task_id": task_id,
+                    "reason": f"unknown executor: {executor_name}"})
+        target = FAILED / task_id
+        target.mkdir(parents=True, exist_ok=True)
+        shutil.move(str(task_path), str(target / task_path.name))
+        (target / "result.json").write_text(json.dumps(
+            {"error": f"unknown executor: {executor_name}",
+             "execution_state": tracker.to_dict()}, indent=2), encoding="utf-8")
+        return
+
+    log_event({"event": "execute_start", "task_id": task_id, "executor": executor_name})
+    params: dict[str, str] = {}
+    for line in body.strip().splitlines():
+        if "=" in line:
+            k, _, v = line.partition("=")
+            params[k.strip()] = v.strip()
+
+    tracker.start()
+    while not tracker.is_terminal:
+        try:
+            result = SAFE_EXECUTORS[executor_name](**params)
+            tracker.succeed(result)
+        except Exception as e:
+            strategy = tracker.handle_failure(e)
+            if strategy == "retry":
+                tracker.apply_recovery(strategy)
+                tracker.start()
+                continue
+            break
+
+    result = tracker.result if tracker.succeeded else {"status": "failed", "errors": tracker.errors}
+    target = (DONE if tracker.succeeded else FAILED) / task_id
+    target.mkdir(parents=True, exist_ok=True)
+    shutil.move(str(task_path), str(target / task_path.name))
+    (target / "result.json").write_text(
+        json.dumps({"task_id": task_id, "executor": executor_name,
+                    "execution_state": tracker.to_dict(), **(result or {})},
+                   indent=2, ensure_ascii=False), encoding="utf-8")
+    log_event({"event": "execute_done", "task_id": task_id, "executor": executor_name,
+               "state": tracker.state.value, "attempts": tracker.attempt})
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] EXEC: {task_id} -> {executor_name} -> {tracker.summary()}", flush=True)
+
+
+def create_self_task(task_id: str, task_type: str, title: str, body: str,
+                     executor: str | None = None) -> Path | None:
+    """Daemon creates its own pending task. Returns path or None if already exists."""
+    dest = PENDING / f"{task_id}.md"
+    if dest.exists():
+        return None
+    done_dir = DONE / task_id
+    if done_dir.exists():
+        return None
+    meta_lines = [f"type: {task_type}", f"title: {title}"]
+    if executor:
+        meta_lines.append(f"executor: {executor}")
+    content = f"---\n" + "\n".join(meta_lines) + f"\n---\n{body}\n"
+    dest.write_text(content, encoding="utf-8")
+    log_event({"event": "self_task_created", "task_id": task_id})
+    return dest
+
+
+SELF_CHECK_INTERVAL = int(os.getenv("ATLAS_SELF_CHECK_INTERVAL", str(30 * 60)))
+
+
+async def run_self_checks() -> None:
+    """Daemon inspects its own health and creates tasks for problems found."""
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    ci = REPO_ROOT / "memory" / "swarm" / "code-index.json"
+    if not ci.exists() or (datetime.now(timezone.utc).timestamp() - ci.stat().st_mtime > 7 * 3600):
+        create_self_task(
+            f"{today}-auto-reindex", "execute", "Auto-rebuild stale code-index",
+            "", executor="rebuild_code_index")
+
+    pw = REPO_ROOT / "memory" / "swarm" / "perspective_weights.json"
+    if pw.exists():
+        data = json.loads(pw.read_text(encoding="utf-8"))
+        stale = [k for k, v in data.items()
+                 if v.get("spawn_count", 0) > 0
+                 and v.get("last_updated", "") < (datetime.now(timezone.utc).replace(
+                     hour=0, minute=0, second=0).isoformat())]
+        if len(stale) > 10:
+            create_self_task(
+                f"{today}-auto-health", "execute", "System health check — stale weights",
+                "", executor="local_health")
+
+    pending_count = len(list(PENDING.glob("*.md"))) if PENDING.exists() else 0
+    in_progress_count = len(list(IN_PROGRESS.iterdir())) if IN_PROGRESS.exists() else 0
+    if pending_count == 0 and in_progress_count == 0:
+        create_self_task(
+            f"{today}-auto-audit", "audit", "Daily ecosystem self-audit",
+            "Audit the current state of the VOLAURA ecosystem. Check:\n"
+            "1. Are all 5 products correctly positioned as Atlas faces?\n"
+            "2. Is the code-index fresh?\n"
+            "3. Are perspective weights learning (non-zero spawn counts)?\n"
+            "4. Any Constitution violations visible from memory files?\n"
+            "Report findings with severity levels.",
+            executor=None)
+
+    log_event({"event": "self_check_complete", "pending": pending_count})
+
+
 async def process_task(task_path: Path) -> None:
     """Process one task file: read, dispatch to swarm, aggregate, archive."""
     task_id = task_path.stem
+
+    text = task_path.read_text(encoding="utf-8")
+    meta, body = parse_task_frontmatter(text)
+
+    if meta.get("type") == "execute":
+        await process_execute_task(task_path, meta, body)
+        return
+
     log_event({"event": "task_start", "task_id": task_id})
 
     # Move to in-progress
@@ -315,9 +515,6 @@ async def process_task(task_path: Path) -> None:
     work_dir.mkdir(parents=True, exist_ok=True)
     moved_task = work_dir / task_path.name
     shutil.move(str(task_path), str(moved_task))
-
-    text = moved_task.read_text(encoding="utf-8")
-    meta, body = parse_task_frontmatter(text)
 
     # Filter perspectives
     allow = meta.get("perspectives", "all")
@@ -393,6 +590,34 @@ async def process_task(task_path: Path) -> None:
     elif work_dir.exists():
         shutil.rmtree(work_dir, ignore_errors=True)
 
+    # ── Learning: update perspective weights from severity scores ──────────
+    registry = PerspectiveRegistry(REPO_ROOT)
+    SEVERITY_TO_SCORE = {"CRITICAL": 5, "HIGH": 4, "high": 4, "BLOCK": 5,
+                         "medium": 3, "MEDIUM": 3, "warn": 2, "WARN": 2,
+                         "low": 1, "LOW": 1, "pass": 3, "OK": 3, "fail": 5}
+    for r in parsed_results:
+        name = r.get("perspective", "")
+        if not name or not r.get("provider"):
+            continue
+        findings = []
+        raw = r.get("raw", "")
+        if isinstance(raw, str):
+            try:
+                raw = json.loads(raw[raw.find("{"):raw.rfind("}") + 1])
+            except Exception:
+                raw = {}
+        if isinstance(raw, dict):
+            findings = raw.get("findings", [])
+        if findings and isinstance(findings, list):
+            max_sev = max(
+                (SEVERITY_TO_SCORE.get(f.get("severity", ""), 2) for f in findings if isinstance(f, dict)),
+                default=2,
+            )
+            registry.update(name, max_sev)
+        else:
+            registry.update(name, None)
+    log_event({"event": "weights_updated", "task_id": task_id})
+
     log_event({
         "event": "task_done" if target.parent == DONE else "task_failed",
         "task_id": task_id,
@@ -407,10 +632,31 @@ def handle_signal(signum, frame):
     print("\n[daemon] shutdown requested, finishing current task ...", flush=True)
 
 
+CODE_INDEX_REFRESH_SECONDS = int(os.getenv("ATLAS_CODE_INDEX_REFRESH", str(6 * 3600)))
+
+
+def maybe_rebuild_code_index(force: bool = False) -> None:
+    """Rebuild code-index.json if stale (>CODE_INDEX_REFRESH_SECONDS) or forced."""
+    try:
+        if force or not INDEX_FILE.exists():
+            idx = build_index(REPO_ROOT)
+            log_event({"event": "code_index_rebuilt", "total_files": idx["total_files"]})
+            print(f"[daemon] code-index rebuilt: {idx['total_files']} files", flush=True)
+            return
+        age = datetime.now(timezone.utc).timestamp() - INDEX_FILE.stat().st_mtime
+        if age > CODE_INDEX_REFRESH_SECONDS:
+            idx = build_index(REPO_ROOT)
+            log_event({"event": "code_index_rebuilt", "total_files": idx["total_files"], "stale_seconds": int(age)})
+            print(f"[daemon] code-index rebuilt (stale {int(age)}s): {idx['total_files']} files", flush=True)
+    except Exception as e:
+        log_event({"event": "code_index_error", "error": str(e)})
+
+
 async def main():
     global _ollama_semaphore
     _ollama_semaphore = asyncio.Semaphore(OLLAMA_CONCURRENCY)
     setup_dirs()
+    maybe_rebuild_code_index(force=True)
     log_event({"event": "daemon_start", "poll_interval": POLL_INTERVAL_SECONDS, "ollama_concurrency": OLLAMA_CONCURRENCY})
     print(f"[daemon] started. polling {PENDING} every {POLL_INTERVAL_SECONDS}s. Ollama concurrency={OLLAMA_CONCURRENCY}. Ctrl+C to stop.", flush=True)
 
@@ -419,9 +665,19 @@ async def main():
 
     semaphore = asyncio.Semaphore(MAX_CONCURRENT_TASKS)
 
+    _last_index_check = datetime.now(timezone.utc).timestamp()
+    _last_self_check = 0.0
+
     while not shutdown_requested:
         try:
             setup_dirs()
+            now_ts = datetime.now(timezone.utc).timestamp()
+            if now_ts - _last_index_check > CODE_INDEX_REFRESH_SECONDS:
+                maybe_rebuild_code_index()
+                _last_index_check = now_ts
+            if now_ts - _last_self_check > SELF_CHECK_INTERVAL:
+                await run_self_checks()
+                _last_self_check = now_ts
             tasks = sorted(PENDING.glob("*.md"))
             if tasks:
                 async def _wrap(t):

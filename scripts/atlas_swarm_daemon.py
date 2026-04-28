@@ -438,33 +438,76 @@ async def process_execute_task(task_path: Path, meta: dict, body: str) -> None:
     print(f"[{datetime.now().strftime('%H:%M:%S')}] EXEC: {task_id} -> {executor_name} -> {tracker.summary()}", flush=True)
 
 
+MAX_SELF_TASKS_PER_CYCLE = int(os.getenv("ATLAS_MAX_SELF_TASKS", "3"))
+_self_tasks_this_cycle = 0
+
+
 def create_self_task(task_id: str, task_type: str, title: str, body: str,
                      executor: str | None = None) -> Path | None:
-    """Daemon creates its own pending task. Returns path or None if already exists."""
+    """Daemon creates its own pending task. Rate-limited to MAX_SELF_TASKS_PER_CYCLE."""
+    global _self_tasks_this_cycle
+    if _self_tasks_this_cycle >= MAX_SELF_TASKS_PER_CYCLE:
+        log_event({"event": "self_task_throttled", "task_id": task_id,
+                    "reason": f"cap {MAX_SELF_TASKS_PER_CYCLE}/cycle reached"})
+        return None
     dest = PENDING / f"{task_id}.md"
     if dest.exists():
         return None
     done_dir = DONE / task_id
     if done_dir.exists():
         return None
+    in_progress_dir = IN_PROGRESS / task_id
+    if in_progress_dir.exists():
+        return None
     meta_lines = [f"type: {task_type}", f"title: {title}"]
     if executor:
         meta_lines.append(f"executor: {executor}")
     content = f"---\n" + "\n".join(meta_lines) + f"\n---\n{body}\n"
     dest.write_text(content, encoding="utf-8")
-    log_event({"event": "self_task_created", "task_id": task_id})
+    _self_tasks_this_cycle += 1
+    log_event({"event": "self_task_created", "task_id": task_id,
+               "cycle_count": _self_tasks_this_cycle})
     return dest
 
 
 SELF_CHECK_INTERVAL = int(os.getenv("ATLAS_SELF_CHECK_INTERVAL", str(30 * 60)))
 
 
+def _git_last_commit_ts() -> float:
+    """Get timestamp of last git commit in REPO_ROOT. Returns 0 on failure."""
+    import subprocess
+    try:
+        r = subprocess.run(
+            ["git", "log", "-1", "--format=%ct"],
+            capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=5,
+        )
+        return float(r.stdout.strip()) if r.stdout.strip() else 0.0
+    except Exception:
+        return 0.0
+
+
 async def run_self_checks() -> None:
-    """Daemon inspects its own health and creates tasks for problems found."""
+    """Daemon inspects its own health and creates tasks for problems found.
+
+    Anti-storm: capped at MAX_SELF_TASKS_PER_CYCLE per invocation.
+    Code-index freshness: compared against git commit time, not just file mtime.
+    """
+    global _self_tasks_this_cycle
+    _self_tasks_this_cycle = 0
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     ci = REPO_ROOT / "memory" / "swarm" / "code-index.json"
-    if not ci.exists() or (datetime.now(timezone.utc).timestamp() - ci.stat().st_mtime > 7 * 3600):
+    index_stale = False
+    if not ci.exists():
+        index_stale = True
+    else:
+        ci_mtime = ci.stat().st_mtime
+        last_commit_ts = _git_last_commit_ts()
+        if last_commit_ts > 0 and ci_mtime < last_commit_ts - 900:
+            index_stale = True
+        elif (datetime.now(timezone.utc).timestamp() - ci_mtime) > CODE_INDEX_REFRESH_SECONDS:
+            index_stale = True
+    if index_stale:
         create_self_task(
             f"{today}-auto-reindex", "execute", "Auto-rebuild stale code-index",
             "", executor="rebuild_code_index")
@@ -478,7 +521,8 @@ async def run_self_checks() -> None:
                      hour=0, minute=0, second=0).isoformat())]
         if len(stale) > 10:
             create_self_task(
-                f"{today}-auto-health", "execute", "System health check — stale weights",
+                f"{today}-auto-health", "execute",
+                "System health check -- stale weights",
                 "", executor="local_health")
 
     pending_count = len(list(PENDING.glob("*.md"))) if PENDING.exists() else 0
@@ -494,7 +538,8 @@ async def run_self_checks() -> None:
             "Report findings with severity levels.",
             executor=None)
 
-    log_event({"event": "self_check_complete", "pending": pending_count})
+    log_event({"event": "self_check_complete", "pending": pending_count,
+               "tasks_created": _self_tasks_this_cycle})
 
 
 async def process_task(task_path: Path) -> None:

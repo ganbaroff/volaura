@@ -1,0 +1,10 @@
+{
+  "name": "DevOps Engineer",
+  "wave": 0,
+  "temperature": 0.3,
+  "max_tokens": 2000,
+  "assigned_provider": "groq",
+  "assigned_model": "llama-3.3-70b",
+  "agent_role": "Infra",
+  "self_configured": false
+}

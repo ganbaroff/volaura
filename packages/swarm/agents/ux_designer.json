@@ -1,0 +1,10 @@
+{
+  "name": "UX Designer",
+  "wave": 1,
+  "temperature": 0.6,
+  "max_tokens": 3000,
+  "assigned_provider": "azure",
+  "assigned_model": "gpt-4.1-nano",
+  "agent_role": "Designer",
+  "self_configured": false
+}

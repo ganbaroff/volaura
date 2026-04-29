@@ -1283,7 +1283,7 @@ async def complete_assessment(
 
     if not is_side_effect_complete(side_effects, "ecosystem_events"):
         try:
-            await emit_assessment_completed(
+            emitted = await emit_assessment_completed(
                 db=db_admin,
                 user_id=str(user_id),
                 competency_slug=slug,
@@ -1293,7 +1293,10 @@ async def complete_assessment(
                 stop_reason=state.stop_reason,
                 gaming_flags=gaming_flags,
             )
-            side_effects = mark_side_effect(side_effects, "ecosystem_events", status="done")
+            side_effects = mark_side_effect(
+                side_effects, "ecosystem_events",
+                status="done" if emitted else "failed",
+            )
             job = await save_completion_job(db_admin, job, side_effects=side_effects, result_context=result_context)
         except Exception as e:
             ecosystem_error = str(e)[:300]

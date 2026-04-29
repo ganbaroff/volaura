@@ -525,17 +525,33 @@ async def run_self_checks() -> None:
                 "System health check -- stale weights",
                 "", executor="local_health")
 
+    # Scan PRE-LAUNCH-BLOCKERS-STATUS.md for unfinished P0 items
+    blockers_doc = REPO_ROOT / "docs" / "PRE-LAUNCH-BLOCKERS-STATUS.md"
+    if blockers_doc.exists():
+        import re
+        blockers_text = blockers_doc.read_text(encoding="utf-8")
+        unbuilt = re.findall(r"###\s+(\d+\S*)\.\s+(.+?)\s+(🟥|ready to build)", blockers_text, re.IGNORECASE)
+        for num, title, _ in unbuilt[:2]:
+            create_self_task(
+                f"{today}-blocker-{num.strip('.')}", "audit",
+                f"Pre-launch blocker #{num}: {title.strip()[:60]}",
+                f"PRE-LAUNCH-BLOCKERS-STATUS.md says this is NOT BUILT.\n"
+                f"Blocker #{num}: {title.strip()}\n\n"
+                f"1. Is this ACTUALLY not built? Check the codebase for existing implementation.\n"
+                f"2. If not built: what exact code needs to be written? File paths, functions, estimated lines.\n"
+                f"3. If already built: update the blockers doc to mark it done with evidence.\n\n"
+                f"READ THE ACTUAL CODE. Do not guess from memory.",
+            )
+
     pending_count = len(list(PENDING.glob("*.md"))) if PENDING.exists() else 0
     in_progress_count = len(list(IN_PROGRESS.iterdir())) if IN_PROGRESS.exists() else 0
     if pending_count == 0 and in_progress_count == 0:
         create_self_task(
             f"{today}-auto-audit", "audit", "Daily ecosystem self-audit",
-            "Audit the current state of the VOLAURA ecosystem. Check:\n"
-            "1. Are all 5 products correctly positioned as Atlas faces?\n"
-            "2. Is the code-index fresh?\n"
-            "3. Are perspective weights learning (non-zero spawn counts)?\n"
-            "4. Any Constitution violations visible from memory files?\n"
-            "Report findings with severity levels.",
+            "Read docs/PRE-LAUNCH-BLOCKERS-STATUS.md FIRST.\n"
+            "Then audit each P0 item against actual code.\n"
+            "For each: DONE (with file+line evidence) or GAP (with what to build).\n"
+            "Do NOT say READY unless every P0 item is verified DONE.",
             executor=None)
 
     log_event({"event": "self_check_complete", "pending": pending_count,

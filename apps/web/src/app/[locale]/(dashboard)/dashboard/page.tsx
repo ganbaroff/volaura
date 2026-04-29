@@ -291,7 +291,15 @@ export default function DashboardPage() {
               locale={locale}
             />
           ) : (
-            <NewUserWelcomeCard locale={locale} t={t} accountType={accountType} />
+            <NewUserWelcomeCard
+              locale={locale}
+              t={t}
+              accountType={accountType}
+              isGhostingGrace={
+                !!profile?.created_at &&
+                Date.now() - new Date(profile.created_at).getTime() > 48 * 60 * 60 * 1000
+              }
+            />
           )}
         </motion.div>
 
@@ -466,10 +474,12 @@ function NewUserWelcomeCard({
   locale,
   t,
   accountType,
+  isGhostingGrace = false,
 }: {
   locale: string;
   t: (k: string, opts?: Record<string, unknown>) => string;
   accountType: "professional" | "organization";
+  isGhostingGrace?: boolean;
 }) {
   const isOrg = accountType === "organization";
   const href = isOrg ? `/${locale}/org-talent` : `/${locale}/assessment`;
@@ -494,11 +504,15 @@ function NewUserWelcomeCard({
         <p className="text-lg font-bold text-foreground leading-snug">
           {isOrg
             ? t("dashboard.newUser.orgHeadline", { defaultValue: "Verified talent is waiting." })
+            : isGhostingGrace
+            ? t("dashboard.ghostingGrace.headline", { defaultValue: "Still thinking about it?" })
             : t("dashboard.newUser.headline", { defaultValue: "Prove your skills. Earn your AURA." })}
         </p>
         <p className="text-sm text-muted-foreground">
           {isOrg
             ? t("dashboard.newUser.orgSub", { defaultValue: "Browse professionals verified by adaptive assessment." })
+            : isGhostingGrace
+            ? t("dashboard.ghostingGrace.sub", { defaultValue: "Start when you're ready — there's no deadline." })
             : t("dashboard.newUser.sub", { defaultValue: "Companies search by AURA score — not résumés." })}
         </p>
       </div>
@@ -529,6 +543,8 @@ function NewUserWelcomeCard({
       >
         {isOrg
           ? t("dashboard.newUser.orgCta", { defaultValue: "Explore verified talent →" })
+          : isGhostingGrace
+          ? t("dashboard.ghostingGrace.cta", { defaultValue: "Start when ready →" })
           : t("dashboard.newUser.cta", { defaultValue: "Start my first assessment →" })}
       </Link>
     </div>

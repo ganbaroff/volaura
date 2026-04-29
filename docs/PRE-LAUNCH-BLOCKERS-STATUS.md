@@ -96,8 +96,8 @@ Design System v2 is in Figma and mostly deployed. No item-by-item audit against 
 - ~~#11 (Community Signal widget)~~ — ✅ DONE (verified Session 128)
 - ~~#12 (Landing sample profile)~~ — ✅ DONE (verified Session 128)
 - ~~#14 (Ghosting Grace)~~ — ✅ DONE (Session 128, frontend-only)
-- #18 (Credential display split verify) — Atlas ~2h audit
-- S2 (role_level gaming audit) — partial, discovery.py validates. Schema flagged. ~1h to complete.
+- ~~#18 (Credential display split verify)~~ — ✅ DONE (Session 128: PublicProfile interface has no email/energy_level/internal fields)
+- ~~S2 (role_level gaming audit)~~ — ✅ DONE (Session 128: Pydantic Literal["professional","volunteer"] rejects invalid values)
 
 Revised Atlas work: ~1.5 days (was 4 days — 3 items were already built but doc was stale).
 CEO work unchanged: legal review + SADPP.

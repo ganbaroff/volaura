@@ -24,18 +24,21 @@ def _isolate_log_and_vacation(tmp_path, monkeypatch):
     # Default env: pretend we have credentials so _telegram_send would otherwise try.
     monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "fake-token")
     monkeypatch.setenv("TELEGRAM_CEO_CHAT_ID", "123456")
+    # Bypass telegram_gate so notifier tests only test notifier logic.
+    # The gate is late-imported inside send_notification as `from .telegram_gate import allow_send`.
+    # Patch at the source module so the late import picks up the mock.
+    import packages.swarm.telegram_gate as tg
+    monkeypatch.setattr(tg, "allow_send", lambda **kw: True)
+    # Also patch the gate log path to avoid writing to real file
+    gate_log = tmp_path / "telegram-gate-log.jsonl"
+    monkeypatch.setattr(tg, "GATE_LOG", gate_log)
     return log, vacation
 
 
 def _force_deliver(monkeypatch, success: bool = True):
-    """Stub urlopen so _telegram_send returns success without a real HTTP call."""
-    fake_resp = MagicMock()
-    fake_resp.status = 200 if success else 500
-    fake_resp.__enter__ = lambda self: self
-    fake_resp.__exit__ = lambda *a: False
-    monkeypatch.setattr(
-        notifier.urllib.request, "urlopen", lambda *a, **k: fake_resp
-    )
+    """Stub _telegram_send directly — urlopen mocking doesn't work because
+    of the hard kill-switch (return False) at the top of _telegram_send."""
+    monkeypatch.setattr(notifier, "_telegram_send", lambda text: success)
 
 
 def test_sends_when_no_vacation_no_cooldown(monkeypatch, _isolate_log_and_vacation):

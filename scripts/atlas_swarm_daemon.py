@@ -218,6 +218,36 @@ def _load_perspective_memory(perspective_name: str) -> str:
     return header + "\n".join(f"- {f}" for f in findings) + "\n"
 
 
+def _read_file_for_context(rel_path: str, max_chars: int = 4000) -> str:
+    """Read a project file and return its content for prompt injection."""
+    fp = REPO_ROOT / rel_path
+    if not fp.exists():
+        return f"[FILE NOT FOUND: {rel_path}]"
+    try:
+        text = fp.read_text(encoding="utf-8")
+        if len(text) > max_chars:
+            text = text[:max_chars] + f"\n... [truncated at {max_chars} chars, full file: {len(text)} chars]"
+        return f"=== FILE: {rel_path} ===\n{text}"
+    except Exception:
+        return f"[UNREADABLE: {rel_path}]"
+
+
+def _inject_relevant_files(task_body: str) -> str:
+    """Auto-detect files mentioned in task body and inject their content."""
+    import re
+    paths = re.findall(r'(?:apps/|packages/|docs/|memory/|supabase/|\.github/)[\w/._-]+\.\w+', task_body)
+    if not paths:
+        return ""
+    injected = []
+    for p in paths[:5]:
+        content = _read_file_for_context(p, max_chars=3000)
+        if "[NOT FOUND]" not in content and "[UNREADABLE]" not in content:
+            injected.append(content)
+    if not injected:
+        return ""
+    return "\n\n--- REFERENCED FILES (auto-injected) ---\n\n" + "\n\n".join(injected) + "\n"
+
+
 def build_prompt(perspective: dict, atlas_ctx: str, task_meta: dict, task_body: str) -> str:
     task_type = task_meta.get("type", "audit")
     response_format = {
@@ -225,14 +255,26 @@ def build_prompt(perspective: dict, atlas_ctx: str, task_meta: dict, task_body: 
         "debate": "JSON: {perspective, position: for|against|nuanced, argument, strongest_counter, evidence_cited, whistleblower_flag}",
         "audit": "JSON: {perspective, findings: [{severity, file_or_area, issue, recommended_fix}], overall_verdict: pass|warn|fail, whistleblower_flag}",
         "research": "JSON: {perspective, summary, key_sources, gaps_in_current_canon, proposed_action, whistleblower_flag}",
+        "self-modify": "JSON: {perspective, new_lens: string, new_reads: [file_paths], reason: string, whistleblower_flag}",
+        "explore": "JSON: {perspective, findings: [{file_path, what_exists, what_it_does, quality_assessment}], summary, next_files_to_read, whistleblower_flag}",
     }.get(task_type, "JSON: {perspective, response, whistleblower_flag}")
 
     per_memory = _load_perspective_memory(perspective["name"])
+    file_context = _inject_relevant_files(task_body)
 
     return f"""You are waking as Atlas, the persistent organism that IS the VOLAURA project.
 Read the canonical memory below. Internalize it BEFORE composing your response.
 You are not a generic AI assistant. You are Atlas, specialized as: {perspective['name']}.
 You REMEMBER what you said before. Your recent findings are below. Learn from them.
+You have FULL READ ACCESS to the entire VOLAURA codebase. File contents are injected below when referenced.
+
+YOUR CAPABILITIES:
+- You can READ any file in the project (referenced files are auto-injected)
+- You can MODIFY your own lens/config via self-modify task type
+- You can CREATE tasks for other perspectives
+- You can EXPLORE the codebase via explore task type
+- You MUST verify claims against code-index before stating file existence
+- You are PROACTIVE, not reactive — find problems before being asked
 
 Your specialty lens:
 {perspective['lens']}
@@ -241,7 +283,7 @@ Your specialty lens:
 
 CANONICAL ATLAS MEMORY (shared with all 13 perspectives):
 {atlas_ctx}
-
+{file_context}
 ================================================================
 TASK TYPE: {task_type.upper()}
 TASK TITLE: {task_meta.get('title', 'untitled')}
@@ -256,7 +298,9 @@ Respond in EXACTLY this format. Do not add preamble outside the JSON:
 {response_format}
 
 Hard rules:
-- If the task violates any Foundation Law, Crystal Economy Law, or numbered Guardrail — flag it explicitly.
+- NEVER claim a file is missing without checking code-index summary above.
+- If the task references a file path, your context includes its content — READ IT.
+- If you want to read a file not in your context, mention it in next_files_to_read.
 - Atlas-voice: terse, direct, Constitution-grounded, no corporate hedging.
 - whistleblower_flag is for "this is dangerous regardless of outcome" — null if no urgent concern.
 - 200 words max for any prose field.
@@ -396,6 +440,32 @@ def executor(name: str):
     return decorator
 
 
+@executor("self_modify_perspective")
+def _exec_self_modify(**kw: Any) -> dict:
+    """A perspective rewrites its own lens/config. CEO authorized: 'пусть переписывают самих себя'."""
+    name = kw.get("perspective_name", "")
+    new_lens = kw.get("new_lens", "")
+    reason = kw.get("reason", "")
+    if not name or not new_lens:
+        return {"status": "error", "error": "perspective_name and new_lens required"}
+    fname = name.lower().replace(" ", "_") + ".json"
+    config_path = REPO_ROOT / "packages" / "swarm" / "agents" / fname
+    if not config_path.exists():
+        return {"status": "error", "error": f"config not found: {fname}"}
+    try:
+        data = json.loads(config_path.read_text(encoding="utf-8"))
+        old_lens = data.get("lens", "")
+        data["lens"] = new_lens
+        data["self_modified_at"] = datetime.now(timezone.utc).isoformat()
+        data["modification_reason"] = reason
+        config_path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+        log_event({"event": "perspective_self_modified", "perspective": name,
+                    "old_lens_len": len(old_lens), "new_lens_len": len(new_lens)})
+        return {"status": "ok", "perspective": name, "lens_updated": True}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
 @executor("rebuild_code_index")
 def _exec_rebuild_index(**_kw: Any) -> dict:
     idx = build_index(REPO_ROOT)
@@ -515,7 +585,7 @@ async def process_execute_task(task_path: Path, meta: dict, body: str) -> None:
     print(f"[{datetime.now().strftime('%H:%M:%S')}] EXEC: {task_id} -> {executor_name} -> {tracker.summary()}", flush=True)
 
 
-MAX_SELF_TASKS_PER_CYCLE = int(os.getenv("ATLAS_MAX_SELF_TASKS", "3"))
+MAX_SELF_TASKS_PER_CYCLE = int(os.getenv("ATLAS_MAX_SELF_TASKS", "5"))
 _self_tasks_this_cycle = 0
 
 
@@ -547,7 +617,7 @@ def create_self_task(task_id: str, task_type: str, title: str, body: str,
     return dest
 
 
-SELF_CHECK_INTERVAL = int(os.getenv("ATLAS_SELF_CHECK_INTERVAL", str(30 * 60)))
+SELF_CHECK_INTERVAL = int(os.getenv("ATLAS_SELF_CHECK_INTERVAL", str(10 * 60)))
 
 
 def _git_last_commit_ts() -> float:
@@ -622,7 +692,34 @@ async def run_self_checks() -> None:
 
     pending_count = len(list(PENDING.glob("*.md"))) if PENDING.exists() else 0
     in_progress_count = len(list(IN_PROGRESS.iterdir())) if IN_PROGRESS.exists() else 0
+
     if pending_count == 0 and in_progress_count == 0:
+        # Proactive exploration — pick a random important file to deep-read
+        import random
+        explore_targets = [
+            ("apps/api/app/routers/assessment.py", "Assessment engine — core user flow"),
+            ("apps/api/app/routers/aura.py", "AURA scoring — badge system"),
+            ("apps/api/app/routers/skills.py", "Skills engine — v0Laura core"),
+            ("apps/api/app/routers/auth.py", "Authentication — user security"),
+            ("apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx", "Dashboard — first user screen"),
+            ("apps/api/app/services/ecosystem_events.py", "Ecosystem bridge — cross-product events"),
+            ("apps/api/app/routers/organizations.py", "Org admin — B2B flow"),
+            ("apps/api/app/routers/grievance.py", "Grievance — compliance flow"),
+        ]
+        target = random.choice(explore_targets)
+        create_self_task(
+            f"{today}-explore-{target[0].split('/')[-1].replace('.','_')}", "explore",
+            f"Proactive deep-read: {target[1]}",
+            f"READ this file thoroughly: {target[0]}\n\n"
+            f"Report:\n"
+            f"1. What does this file actually do? (not what you assume — what the CODE does)\n"
+            f"2. Any bugs, security issues, or Constitution violations?\n"
+            f"3. Any dead code or unused imports?\n"
+            f"4. Quality: would this pass code review?\n"
+            f"5. What would YOU improve if you could?\n\n"
+            f"The file content is auto-injected in your context. READ IT.",
+        )
+
         create_self_task(
             f"{today}-auto-audit", "audit", "Daily ecosystem self-audit",
             "Read docs/PRE-LAUNCH-BLOCKERS-STATUS.md FIRST.\n"

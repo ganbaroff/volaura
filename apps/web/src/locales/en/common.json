@@ -113,7 +113,7 @@
     "inviteCodeLabel": "Invite code",
     "inviteCodePlaceholder": "Enter your invite code",
     "inviteCodeHint": "Volaura is currently invite-only. Ask a friend or contact us to get a code.",
-    "inviteCodeInvalid": "Invalid invite code. Please try again.",
+    "inviteCodeInvalid": "That invite code didn't work. Double-check and try again.",
     "privacyConsent": "I agree to the <privacyLink>Privacy Policy</privacyLink> and <termsLink>Terms of Service</termsLink>.",
     "privacyConsentRequired": "Please accept the Privacy Policy and Terms of Service to continue.",
     "passwordHint": "8+ characters, uppercase, lowercase, and a number.",
@@ -158,7 +158,7 @@
     "orContinueWith": "or continue with",
     "continueWithGoogle": "Continue with Google",
     "continueWithGitHub": "Continue with GitHub",
-    "oauthError": "Sign-in failed. Please try again.",
+    "oauthError": "Sign-in didn't go through. Please try again.",
     "oauthInviteRequired": "Social sign-up is unavailable during invite-only beta. Use email + invite code.",
     "ageConfirm": "I confirm that I am 16 years old or older.",
     "checkboxesRequired": "Please check both boxes above to continue"

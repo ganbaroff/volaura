@@ -320,9 +320,91 @@ One JSON. No prose before or after.
 """
 
 
+async def _gemini_agent_loop(perspective_name: str, prompt: str) -> dict[str, Any] | None:
+    """Gemini agent loop with file reading tools. Real autonomy — agent reads code itself."""
+    gemini_key = os.getenv("GEMINI_API_KEY")
+    if not gemini_key:
+        return None
+    try:
+        from google import genai
+        from google.genai import types as gtypes
+
+        def read_project_file(file_path: str) -> str:
+            """Read a file from the VOLAURA project."""
+            fp = REPO_ROOT / file_path
+            if not fp.exists():
+                return f"FILE NOT FOUND: {file_path}"
+            try:
+                text = fp.read_text(encoding="utf-8")
+                if len(text) > 8000:
+                    return text[:8000] + f"\n... [truncated, full: {len(text)} chars]"
+                return text
+            except Exception as e:
+                return f"READ ERROR: {e}"
+
+        def grep_project(pattern: str, directory: str = "apps/") -> str:
+            """Search for a pattern in the VOLAURA project."""
+            import subprocess
+            try:
+                r = subprocess.run(
+                    ["grep", "-rn", pattern, directory, "--include=*.py", "--include=*.ts", "--include=*.tsx"],
+                    capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=10,
+                )
+                lines = r.stdout.strip().split("\n")[:20]
+                return "\n".join(lines) if lines[0] else "No matches found."
+            except Exception as e:
+                return f"GREP ERROR: {e}"
+
+        def list_directory(dir_path: str) -> str:
+            """List files in a VOLAURA project directory."""
+            dp = REPO_ROOT / dir_path
+            if not dp.exists():
+                return f"DIR NOT FOUND: {dir_path}"
+            try:
+                files = sorted(str(f.relative_to(REPO_ROOT)) for f in dp.rglob("*") if f.is_file())[:50]
+                return "\n".join(files)
+            except Exception as e:
+                return f"LIST ERROR: {e}"
+
+        tools = [read_project_file, grep_project, list_directory]
+
+        client = genai.Client(api_key=gemini_key)
+        response = await asyncio.wait_for(
+            asyncio.to_thread(
+                client.models.generate_content,
+                model="gemini-2.5-flash",
+                contents=prompt,
+                config=gtypes.GenerateContentConfig(
+                    tools=tools,
+                    response_mime_type="application/json",
+                    temperature=1.0,
+                    max_output_tokens=4000,
+                ),
+            ),
+            timeout=120.0,
+        )
+        log_event({"event": "gemini_agent_loop", "perspective": perspective_name,
+                    "tool_calls": len(response.candidates[0].content.parts) if response.candidates else 0})
+        return {
+            "perspective": perspective_name,
+            "provider": "gemini-agent",
+            "model": "gemini-2.5-flash+tools",
+            "raw": response.text or "",
+        }
+    except Exception as e:
+        log_event({"event": "gemini_agent_failed", "perspective": perspective_name, "error": str(e)[:150]})
+        return None
+
+
 async def call_provider_chain(perspective: dict, prompt: str) -> dict[str, Any]:
     """Try providers in Constitution Article 0 order. First successful response wins."""
     name = perspective["name"]
+
+    # 0. Gemini agent loop (with tools) — for audit/explore tasks, agents READ code
+    if name in HEAVY_PERSPECTIVES or "explore" in prompt[:200].lower() or "audit" in prompt[:200].lower():
+        result = await _gemini_agent_loop(name, prompt)
+        if result and result.get("raw"):
+            return result
 
     # 1. Cerebras (primary heavy)
     cerebras_key = os.getenv("CEREBRAS_API_KEY")

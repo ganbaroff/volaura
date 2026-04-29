@@ -1,6 +1,12 @@
 name: E2E Tests
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/api/app/**'
+      - 'tests/e2e/**'
+      - 'playwright.config.ts'
   push:
     branches: [main]
     paths:

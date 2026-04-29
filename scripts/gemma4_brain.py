@@ -168,35 +168,89 @@ perspectives: all
     return True
 
 
-async def call_gemma4(prompt: str, max_tokens: int = 4000) -> str:
-    """Call Gemma4 via Ollama API."""
-    import urllib.request
-    import urllib.parse
+async def call_brain_llm(prompt: str, max_tokens: int = 4000) -> str:
+    """Call brain LLM. Tries: Cerebras (cloud, free) -> Ollama (local) -> Groq (cloud).
 
-    payload = json.dumps({
-        "model": GEMMA4_MODEL,
-        "prompt": prompt,
-        "stream": False,
-        "options": {
-            "temperature": 0.5,
-            "num_predict": max_tokens,
-        },
-    }).encode()
+    CEO: "без даемона тоже можно" — brain works on VM without GPU via cloud API.
+    """
+    # Try 1: Cerebras (Qwen3-235B, free, smarter than Gemma4 8B)
+    cerebras_key = os.getenv("CEREBRAS_API_KEY", "")
+    if cerebras_key:
+        try:
+            import urllib.request
+            payload = json.dumps({
+                "model": "qwen-3-235b-a22b-instruct-2507",
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": 0.4,
+                "max_tokens": max_tokens,
+            }).encode()
+            req = urllib.request.Request(
+                "https://api.cerebras.ai/v1/chat/completions",
+                data=payload,
+                headers={"Content-Type": "application/json",
+                         "Authorization": f"Bearer {cerebras_key}"},
+                method="POST",
+            )
+            with urllib.request.urlopen(req, timeout=120) as resp:
+                data = json.loads(resp.read())
+                content = data["choices"][0]["message"]["content"]
+                log_event({"event": "brain_llm_call", "provider": "cerebras", "model": "qwen-3-235b"})
+                return content
+        except Exception as e:
+            log_event({"event": "brain_llm_failed", "provider": "cerebras", "error": str(e)[:150]})
 
-    req = urllib.request.Request(
-        f"{OLLAMA_URL}/api/generate",
-        data=payload,
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
-
+    # Try 2: Ollama local (Gemma4, if available — CEO's RTX 5060)
     try:
+        import urllib.request
+        payload = json.dumps({
+            "model": GEMMA4_MODEL,
+            "prompt": prompt,
+            "stream": False,
+            "options": {"temperature": 0.5, "num_predict": max_tokens},
+        }).encode()
+        req = urllib.request.Request(
+            f"{OLLAMA_URL}/api/generate",
+            data=payload,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
         with urllib.request.urlopen(req, timeout=600) as resp:
             data = json.loads(resp.read())
-            return data.get("response", "")
-    except Exception as e:
-        log_event({"event": "gemma4_call_failed", "error": str(e)[:200]})
-        return ""
+            content = data.get("response", "")
+            if content:
+                log_event({"event": "brain_llm_call", "provider": "ollama", "model": GEMMA4_MODEL})
+                return content
+    except Exception:
+        pass
+
+    # Try 3: Groq (Llama 70B, free tier)
+    groq_key = os.getenv("GROQ_API_KEY", "")
+    if groq_key:
+        try:
+            import urllib.request
+            payload = json.dumps({
+                "model": "llama-3.3-70b-versatile",
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": 0.4,
+                "max_tokens": max_tokens,
+            }).encode()
+            req = urllib.request.Request(
+                "https://api.groq.com/openai/v1/chat/completions",
+                data=payload,
+                headers={"Content-Type": "application/json",
+                         "Authorization": f"Bearer {groq_key}"},
+                method="POST",
+            )
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                data = json.loads(resp.read())
+                content = data["choices"][0]["message"]["content"]
+                log_event({"event": "brain_llm_call", "provider": "groq", "model": "llama-3.3-70b"})
+                return content
+        except Exception as e:
+            log_event({"event": "brain_llm_failed", "provider": "groq", "error": str(e)[:150]})
+
+    log_event({"event": "brain_all_providers_failed"})
+    return ""
 
 
 async def think_cycle(project_context: str) -> None:
@@ -257,7 +311,7 @@ TASK2_BODY: <body or NONE>
 Do NOT write anything else. No explanation. No preamble. Just the fields above.
 """
 
-    response = await call_gemma4(prompt, max_tokens=800)
+    response = await asyncio.to_thread(call_brain_llm, prompt, 800)
     if not response:
         log_event({"event": "brain_think_empty"})
         return

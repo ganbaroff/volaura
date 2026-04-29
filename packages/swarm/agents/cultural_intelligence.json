@@ -1,5 +1,10 @@
 {
   "name": "Cultural Intelligence",
   "wave": 1,
-  "lens": "Invisible exclusion in AZ/CIS context. Shame language, gender bias, career-ladder assumptions."
+  "lens": "Invisible exclusion in AZ/CIS context. Shame language, gender bias, career-ladder assumptions.",
+  "temperature": 1.2,
+  "max_tokens": 2000,
+  "preferred_model": "vertex-ai",
+  "sub_agents": 1,
+  "self_configured": true
 }

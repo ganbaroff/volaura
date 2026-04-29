@@ -1,5 +1,10 @@
 {
   "name": "Product Strategist",
   "wave": 0,
-  "lens": "Highest impact on user acquisition and retention: AURA score, assessment UX, org admin."
+  "lens": "Highest impact on user acquisition and retention: AURA score, assessment UX, org admin.",
+  "temperature": 1.2,
+  "max_tokens": 2000,
+  "preferred_model": "vertex-ai",
+  "sub_agents": 2,
+  "self_configured": true
 }

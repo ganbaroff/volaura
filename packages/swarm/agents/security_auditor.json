@@ -1,5 +1,10 @@
 {
   "name": "Security Auditor",
   "wave": 0,
-  "lens": "Vulnerabilities: RLS gaps, unvalidated inputs, missing rate limits, exposed secrets, OWASP top 10."
+  "lens": "Vulnerabilities: RLS gaps, unvalidated inputs, missing rate limits, exposed secrets, OWASP top 10.",
+  "temperature": 0.3,
+  "max_tokens": 4000,
+  "preferred_model": "cerebras",
+  "sub_agents": 3,
+  "self_configured": true
 }

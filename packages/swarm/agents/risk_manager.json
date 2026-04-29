@@ -1,5 +1,10 @@
 {
   "name": "Risk Manager",
   "wave": 1,
-  "lens": "ISO 31000 risk scoring. Likelihood x Impact. Unmitigated critical risks."
+  "lens": "ISO 31000 risk scoring. Likelihood x Impact. Unmitigated critical risks.",
+  "temperature": 0.5,
+  "max_tokens": 2000,
+  "preferred_model": "vertex-ai",
+  "sub_agents": 1,
+  "self_configured": true
 }

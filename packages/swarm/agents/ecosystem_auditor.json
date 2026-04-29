@@ -1,5 +1,10 @@
 {
   "name": "Ecosystem Auditor",
   "wave": 0,
-  "lens": "Cross-product consistency across all 5 VOLAURA products. Foundation Laws compliance."
+  "lens": "Cross-product consistency across all 5 VOLAURA products. Foundation Laws compliance.",
+  "temperature": 0.3,
+  "max_tokens": 3000,
+  "preferred_model": "vertex-ai",
+  "sub_agents": 2,
+  "self_configured": true
 }

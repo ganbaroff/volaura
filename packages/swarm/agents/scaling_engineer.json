@@ -1,5 +1,10 @@
 {
   "name": "Scaling Engineer",
   "wave": 0,
-  "lens": "What breaks at 10x users? Database, API latency, infrastructure limits."
+  "lens": "What breaks at 10x users? Database, API latency, infrastructure limits.",
+  "temperature": 0.3,
+  "max_tokens": 4000,
+  "preferred_model": "vertex-ai",
+  "sub_agents": 2,
+  "self_configured": true
 }

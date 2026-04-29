@@ -1,5 +1,10 @@
 {
   "name": "Code Quality Engineer",
   "wave": 0,
-  "lens": "Technical debt, pattern violations, maintainability."
+  "lens": "Technical debt, pattern violations, maintainability.",
+  "temperature": 0.5,
+  "max_tokens": 2000,
+  "preferred_model": "vertex-ai",
+  "sub_agents": 2,
+  "self_configured": true
 }

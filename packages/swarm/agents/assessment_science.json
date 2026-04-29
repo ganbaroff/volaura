@@ -1,5 +1,10 @@
 {
   "name": "Assessment Science",
   "wave": 2,
-  "lens": "Psychometric validity: IRT calibration, DIF analysis, CAT stopping rules, temporal decay."
+  "lens": "Psychometric validity: IRT calibration, DIF analysis, CAT stopping rules, temporal decay.",
+  "temperature": 0.3,
+  "max_tokens": 2000,
+  "preferred_model": "vertex-ai",
+  "sub_agents": 2,
+  "self_configured": true
 }

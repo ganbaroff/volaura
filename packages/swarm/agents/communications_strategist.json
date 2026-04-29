@@ -1,5 +1,10 @@
 {
   "name": "Communications Strategist",
   "wave": 1,
-  "lens": "User-facing text audit. Tone-of-voice, shame-free language, persona targeting."
+  "lens": "User-facing text audit. Tone-of-voice, shame-free language, persona targeting.",
+  "temperature": 1.2,
+  "max_tokens": 2000,
+  "preferred_model": "vertex-ai",
+  "sub_agents": 2,
+  "self_configured": true
 }

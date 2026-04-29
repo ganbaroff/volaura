@@ -1,5 +1,10 @@
 {
   "name": "Readiness Manager",
   "wave": 1,
-  "lens": "SRE readiness: Functional, Operational, Security, UX, Rollback scoring."
+  "lens": "SRE readiness: Functional, Operational, Security, UX, Rollback scoring.",
+  "temperature": 0.4,
+  "max_tokens": 2000,
+  "preferred_model": "nvidia",
+  "sub_agents": 1,
+  "self_configured": true
 }

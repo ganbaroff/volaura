@@ -137,9 +137,14 @@ async def ensure_completion_job(
         "last_error": None,
     }
     try:
-        await db.table("assessment_completion_jobs").insert(row).execute()
+        resp = await db.table("assessment_completion_jobs").insert(row).execute()
+        if resp.data and len(resp.data) > 0:
+            return resp.data[0]
     except Exception as exc:
-        logger.warning("completion_job_insert_failed", session_id=session_id, error=str(exc)[:120])
+        logger.warning("completion_job_insert_conflict", session_id=session_id, error=str(exc)[:120])
+        winner = await get_completion_job(db, session_id)
+        if winner:
+            return winner
     return {
         "id": None,
         **row,

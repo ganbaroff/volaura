@@ -75,6 +75,40 @@ if _env_file.exists():
 from packages.swarm.autonomous_run import PERSPECTIVES  # type: ignore
 from packages.swarm.perspective_registry import PerspectiveRegistry  # type: ignore
 from packages.swarm.code_index import build_index, INDEX_FILE  # type: ignore
+
+# PostHog LLM Analytics — track every swarm call ($50K credits)
+_posthog_client = None
+try:
+    from posthog import Posthog
+    _ph_key = os.getenv("NEXT_PUBLIC_POSTHOG_KEY") or os.getenv("POSTHOG_API_KEY", "")
+    _ph_host = os.getenv("NEXT_PUBLIC_POSTHOG_HOST") or os.getenv("POSTHOG_HOST", "https://us.i.posthog.com")
+    if _ph_key:
+        _posthog_client = Posthog(_ph_key, host=_ph_host)
+except Exception:
+    pass
+
+
+def _track_llm_call(perspective: str, provider: str, model: str,
+                     duration_ms: float, task_id: str, success: bool) -> None:
+    """Track every LLM call to PostHog LLM Analytics."""
+    if not _posthog_client:
+        return
+    try:
+        _posthog_client.capture(
+            distinct_id="atlas-swarm-daemon",
+            event="llm_call",
+            properties={
+                "perspective": perspective,
+                "provider": provider,
+                "model": model,
+                "duration_ms": round(duration_ms),
+                "task_id": task_id,
+                "success": success,
+                "$lib": "atlas-daemon",
+            },
+        )
+    except Exception:
+        pass
 from packages.swarm.execution_state import AgentExecutionTracker  # type: ignore
 
 ATLAS_MEMORY = REPO_ROOT / "memory" / "atlas"
@@ -1144,6 +1178,17 @@ async def _telegram_report(task_id: str, meta: dict, summary: dict) -> None:
         log_event({"event": "telegram_report_sent", "task_id": task_id})
     except Exception as e:
         log_event({"event": "telegram_report_failed", "task_id": task_id, "error": str(e)[:100]})
+
+    # PostHog: track each perspective call as LLM analytics event
+    for p in summary.get("perspectives", []):
+        _track_llm_call(
+            perspective=p.get("perspective", "?"),
+            provider=p.get("provider", "?"),
+            model=p.get("model", "?"),
+            duration_ms=0,  # not tracked per-call yet
+            task_id=task_id,
+            success=bool(p.get("provider")),
+        )
 
 
 def handle_signal(signum, frame):

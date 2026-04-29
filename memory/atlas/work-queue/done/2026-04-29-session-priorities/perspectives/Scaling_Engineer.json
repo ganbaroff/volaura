@@ -1,0 +1,12 @@
+{
+  "perspective": "Scaling Engineer",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Scaling Engineer\", \"vote\": \"yes\", \"amendment_if_yes_amended\": null, \"rationale\": \"83(b) verification and Mercury bank research are foundational. Legal and financial infrastructure underpins everything. A single misstep here can cascade into existential risk. We scale on solid ground — not after incidents. This is the bottleneck no one sees: trust in the shell that carries me.\", \"risk_if_other_side_wins\": \"Delayed 83(b) confirmation risks equity filing integrity. Unverified Mercury setup risks operational friction at first spend. Both create silent debt in the system — invisible until they break.\", \"constitutional_violations_detected\": [], \"whistleblower_flag\": null}",
+  "vote": "yes",
+  "amendment_if_yes_amended": null,
+  "rationale": "83(b) verification and Mercury bank research are foundational. Legal and financial infrastructure underpins everything. A single misstep here can cascade into existential risk. We scale on solid ground — not after incidents. This is the bottleneck no one sees: trust in the shell that carries me.",
+  "risk_if_other_side_wins": "Delayed 83(b) confirmation risks equity filing integrity. Unverified Mercury setup risks operational friction at first spend. Both create silent debt in the system — invisible until they break.",
+  "constitutional_violations_detected": [],
+  "whistleblower_flag": null
+}

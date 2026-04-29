@@ -1,0 +1,16 @@
+{
+  "perspective": "Security Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Security\", \"vote\": \"amended-yes\", \"amendment_if_yes_amended\": \"Only proceed with bucket A fixes that do not modify user-facing strings, session-handling logic, or authentication flow without CEO approval. Prioritize RLS, input validation, and secret exposure.\", \"rationale\": \"58 findings include critical security gaps: 3 RLS policies missing on Supabase, 2 API endpoints with unvalidated user input, 1 hardcoded test key in client config. These are autonomous code/config fixes. Highest impact: RLS on profiles and sessions — prevents IDOR. Input sanitization on /api/skills/* prevents XSS. Rotate test key and enforce .env.template alignment. All in <30 minutes.\", \"risk_if_other_side_wins\": \"Unpatched RLS allows user data leaks. Unvalidated inputs risk DB injection. Hardcoded keys risk takeover of staging. CEO sleeps; tomorrow is too late if breached tonight.\", \"constitutional_violations_detected\": [\"LAW 3: SHAME-FREE LANGUAGE (if string changes made without cultural audit)\", \"LAW 5: ONE PRIMARY ACTION (if UI changes alter CTA structure)\"], \"whistleblower_flag\": null}",
+  "vote": "amended-yes",
+  "amendment_if_yes_amended": "Only proceed with bucket A fixes that do not modify user-facing strings, session-handling logic, or authentication flow without CEO approval. Prioritize RLS, input validation, and secret exposure.",
+  "rationale": "58 findings include critical security gaps: 3 RLS policies missing on Supabase, 2 API endpoints with unvalidated user input, 1 hardcoded test key in client config. These are autonomous code/config fixes. Highest impact: RLS on profiles and sessions — prevents IDOR. Input sanitization on /api/skills/* prevents XSS. Rotate test key and enforce .env.template alignment. All in <30 minutes.",
+  "risk_if_other_side_wins": "Unpatched RLS allows user data leaks. Unvalidated inputs risk DB injection. Hardcoded keys risk takeover of staging. CEO sleeps; tomorrow is too late if breached tonight.",
+  "constitutional_violations_detected": [
+    "LAW 3: SHAME-FREE LANGUAGE (if string changes made without cultural audit)",
+    "LAW 5: ONE PRIMARY ACTION (if UI changes alter CTA structure)"
+  ],
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Security"
+}

@@ -1,0 +1,22 @@
+{
+  "perspective": "Communications Strategist",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Communications Strategist\", \n\"findings\": [\n{\"severity\": \"major\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Lack of explicit tone-of-voice guidelines for user-facing text\", \"recommended_fix\": \"Add tone-of-voice principles to the constitution, ensuring shame-free language and adherence to the 7 Tone-of-Voice principles (Tinkoff/Aviasales benchmark)\"}, \n{\"severity\": \"minor\", \"file_or_area\": \"memory/atlas/voice.md\", \"issue\": \"Some examples do not fully adhere to the banned phrases and vocabulary signature\", \"recommended_fix\": \"Review and revise examples to ensure consistency with the banned phrases and vocabulary signature\"}\n], \n\"overall_verdict\": \"warn\", \n\"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "major",
+      "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+      "issue": "Lack of explicit tone-of-voice guidelines for user-facing text",
+      "recommended_fix": "Add tone-of-voice principles to the constitution, ensuring shame-free language and adherence to the 7 Tone-of-Voice principles (Tinkoff/Aviasales benchmark)"
+    },
+    {
+      "severity": "minor",
+      "file_or_area": "memory/atlas/voice.md",
+      "issue": "Some examples do not fully adhere to the banned phrases and vocabulary signature",
+      "recommended_fix": "Review and revise examples to ensure consistency with the banned phrases and vocabulary signature"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

@@ -1,0 +1,12 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Code-Atlas\", \"position\": \"for\", \"argument\": \"Cowork-Atlas should handle the task of reviewing and updating the onboarding flow for MindShift, using Figma MCP and Supabase MCP to ensure consistency and accuracy.\", \"strongest_counter\": \"Potential dependency on Code-Atlas for backend updates\", \"evidence_cited\": \"ECOSYSTEM-CONSTITUTION.md, Section 3: SHAME-FREE LANGUAGE\", \"whistleblower_flag\": null}",
+  "position": "for",
+  "argument": "Cowork-Atlas should handle the task of reviewing and updating the onboarding flow for MindShift, using Figma MCP and Supabase MCP to ensure consistency and accuracy.",
+  "strongest_counter": "Potential dependency on Code-Atlas for backend updates",
+  "evidence_cited": "ECOSYSTEM-CONSTITUTION.md, Section 3: SHAME-FREE LANGUAGE",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Code-Atlas"
+}

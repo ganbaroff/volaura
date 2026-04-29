@@ -1,0 +1,70 @@
+{
+  "perspective": "Ecosystem Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Ecosystem Auditor\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"apps/web/src/components/AssessmentForm.tsx\", \"issue\": \"Progress bar depletes in red on error — violates Law 1: NEVER RED.\", \"recommended_fix\": \"Change depletion color to purple (#D4B4FF) in ProgressBar component.\"}, {\"severity\": \"CRITICAL\", \"file_or_area\": \"apps/web/src/lib/zeus-client.ts\", \"issue\": \"No energy adaptation logic present — Law 2 (Energy Adaptation) missing in all products except MindShift.\", \"recommended_fix\": \"Inject energy-throttling middleware that caps assessment length based on user's last 7-day focus score.\"}, {\"severity\": \"HIGH\", \"file_or_area\": \"apps/api/app/routers/skills.py\", \"issue\": \"Skills endpoint returns full agent list even if user has reduced motion enabled — violates Law 4: ANIMATION SAFETY.\", \"recommended_fix\": \"Filter out animated agents when `prefers-reduced-motion` is true.\"}, {\"severity\": \"HIGH\", \"file_or_area\": \"apps/web/src/components/BadgeUnlock.tsx\", \"issue\": \"Badge reveal uses bounce+rotate+sparkle — violates Law 4: UNLIMITED ANIMATION.\", \"recommended_fix\": \"Replace with scale-only entrance, max 1.2x, gentle spring damping ≥14.\"}, {\"severity\": \"MEDIUM\", \"file_or_area\": \"apps/web/src/components/DashboardCTAList.tsx\", \"issue\": \"Four filled buttons visible at once — violates Law 5: ONE PRIMARY ACTION.\", \"recommended_fix\": \"Promote only 'Start Session' to filled; others to ghost buttons.\"}, {\"severity\": \"HIGH\", \"file_or_area\": \"apps/web/src/i18n/en/strings.json\", \"issue\": \"Contains 'You haven't completed your profile' — violates Law 3: SHAME-FREE LANGUAGE.\", \"recommended_fix\": \"Remove string; replace empty state with 'Ready when you are'.\"}, {\"severity\": \"MEDIUM\", \"file_or_area\": \"apps/web/src/components/CrystalCounter.tsx\", \"issue\": \"Counts up over 2s on earn — violates Law 4: UNSAFE COUNT-UP ANIMATION.\", \"recommended_fix\": \"Show final value instantly or animate within 800ms.\"}, {\"severity\": \"LOW\", \"file_or_area\": \"apps/web/src/components/AssessmentResultCard.tsx\", \"issue\": \"Shows '0 of 5 completed' — violates Law 3: SHAME-FREE LANGUAGE.\", \"recommended_fix\": \"Replace with 'Start →' when 0, otherwise show '3 completed'.\"}, {\"severity\": \"HIGH\", \"file_or_area\": \"apps/api/app/skills/behavior-pattern-analyzer.py\", \"issue\": \"MindShift-only energy adaptation model — Law 2 not propagated to other skills.\", \"recommended_fix\": \"Extract energy-adaptation logic to shared lib, import into all skill runtimes.\"}, {\"severity\": \"MEDIUM\", \"file_or_area\": \"apps/web/src/components/Confetti.tsx\", \"issue\": \"Emits 50 particles on achievement — violates Law 4: CONFETTI EXCEEDS 12 PARTICLES.\", \"recommended_fix\": \"Cap at 12 particles, duration 1.5s, contained within card.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Law 2 (Energy Adaptation) is isolated to MindShift — foundational ecosystem risk.\"}",
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "apps/web/src/components/AssessmentForm.tsx",
+      "issue": "Progress bar depletes in red on error — violates Law 1: NEVER RED.",
+      "recommended_fix": "Change depletion color to purple (#D4B4FF) in ProgressBar component."
+    },
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "apps/web/src/lib/zeus-client.ts",
+      "issue": "No energy adaptation logic present — Law 2 (Energy Adaptation) missing in all products except MindShift.",
+      "recommended_fix": "Inject energy-throttling middleware that caps assessment length based on user's last 7-day focus score."
+    },
+    {
+      "severity": "HIGH",
+      "file_or_area": "apps/api/app/routers/skills.py",
+      "issue": "Skills endpoint returns full agent list even if user has reduced motion enabled — violates Law 4: ANIMATION SAFETY.",
+      "recommended_fix": "Filter out animated agents when `prefers-reduced-motion` is true."
+    },
+    {
+      "severity": "HIGH",
+      "file_or_area": "apps/web/src/components/BadgeUnlock.tsx",
+      "issue": "Badge reveal uses bounce+rotate+sparkle — violates Law 4: UNLIMITED ANIMATION.",
+      "recommended_fix": "Replace with scale-only entrance, max 1.2x, gentle spring damping ≥14."
+    },
+    {
+      "severity": "MEDIUM",
+      "file_or_area": "apps/web/src/components/DashboardCTAList.tsx",
+      "issue": "Four filled buttons visible at once — violates Law 5: ONE PRIMARY ACTION.",
+      "recommended_fix": "Promote only 'Start Session' to filled; others to ghost buttons."
+    },
+    {
+      "severity": "HIGH",
+      "file_or_area": "apps/web/src/i18n/en/strings.json",
+      "issue": "Contains 'You haven't completed your profile' — violates Law 3: SHAME-FREE LANGUAGE.",
+      "recommended_fix": "Remove string; replace empty state with 'Ready when you are'."
+    },
+    {
+      "severity": "MEDIUM",
+      "file_or_area": "apps/web/src/components/CrystalCounter.tsx",
+      "issue": "Counts up over 2s on earn — violates Law 4: UNSAFE COUNT-UP ANIMATION.",
+      "recommended_fix": "Show final value instantly or animate within 800ms."
+    },
+    {
+      "severity": "LOW",
+      "file_or_area": "apps/web/src/components/AssessmentResultCard.tsx",
+      "issue": "Shows '0 of 5 completed' — violates Law 3: SHAME-FREE LANGUAGE.",
+      "recommended_fix": "Replace with 'Start →' when 0, otherwise show '3 completed'."
+    },
+    {
+      "severity": "HIGH",
+      "file_or_area": "apps/api/app/skills/behavior-pattern-analyzer.py",
+      "issue": "MindShift-only energy adaptation model — Law 2 not propagated to other skills.",
+      "recommended_fix": "Extract energy-adaptation logic to shared lib, import into all skill runtimes."
+    },
+    {
+      "severity": "MEDIUM",
+      "file_or_area": "apps/web/src/components/Confetti.tsx",
+      "issue": "Emits 50 particles on achievement — violates Law 4: CONFETTI EXCEEDS 12 PARTICLES.",
+      "recommended_fix": "Cap at 12 particles, duration 1.5s, contained within card."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "Law 2 (Energy Adaptation) is isolated to MindShift — foundational ecosystem risk."
+}

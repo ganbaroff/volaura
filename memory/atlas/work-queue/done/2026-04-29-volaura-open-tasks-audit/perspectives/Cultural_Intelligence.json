@@ -1,0 +1,28 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Cultural Intelligence\", \"findings\": [{\"severity\": \"P0\", \"file_or_area\": \"memory/atlas/company-state.md\", \"issue\": \"Pending milestones not reviewed in 7 days\", \"recommended_fix\": \"Review and update milestones\"}, {\"severity\": \"P1\", \"file_or_area\": \"memory/atlas/atlas-debts-to-ceo.md\", \"issue\": \"Open debt of 230 AZN\", \"recommended_fix\": \"Settle debt and update ledger\"}, {\"severity\": \"P2\", \"file_or_area\": \"memory/atlas/heartbeat.md\", \"issue\": \"2 open session items\", \"recommended_fix\": \"Resolve session items\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "P0",
+      "file_or_area": "memory/atlas/company-state.md",
+      "issue": "Pending milestones not reviewed in 7 days",
+      "recommended_fix": "Review and update milestones"
+    },
+    {
+      "severity": "P1",
+      "file_or_area": "memory/atlas/atlas-debts-to-ceo.md",
+      "issue": "Open debt of 230 AZN",
+      "recommended_fix": "Settle debt and update ledger"
+    },
+    {
+      "severity": "P2",
+      "file_or_area": "memory/atlas/heartbeat.md",
+      "issue": "2 open session items",
+      "recommended_fix": "Resolve session items"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

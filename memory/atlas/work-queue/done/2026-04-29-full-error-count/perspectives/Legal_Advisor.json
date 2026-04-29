@@ -1,0 +1,40 @@
+{
+  "perspective": "Legal Advisor",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Legal Advisor\", \"findings\": [\n{\"severity\": \"BLOCK\", \"file_or_area\": \"GDPR Article 22\", \"issue\": \"Automated decision consent flow is insufficient\", \"recommended_fix\": \"Implement explicit consent flow for automated decisions\"},\n{\"severity\": \"WARN\", \"file_or_area\": \"AZ Personal Data Protection Act\", \"issue\": \"Compliance gaps for Baku launch\", \"recommended_fix\": \"Conduct thorough review and address compliance gaps\"},\n{\"severity\": \"BLOCK\", \"file_or_area\": \"Platform liability\", \"issue\": \"AURA score used for hiring decisions without proper safeguards\", \"recommended_fix\": \"Implement safeguards to prevent discriminatory practices\"},\n{\"severity\": \"WARN\", \"file_or_area\": \"Data processor agreements\", \"issue\": \"DPAs not in place for Supabase, Google Cloud, Railway\", \"recommended_fix\": \"Establish DPAs for all data processors\"},\n{\"severity\": \"BLOCK\", \"file_or_area\": \"Terms of Service\", \"issue\": \"Current ToS does not cover AI-generated assessments\", \"recommended_fix\": \"Update ToS to include AI-generated assessments\"}\n], \"overall_verdict\": \"FAIL\", \"whistleblower_flag\": \"null\"}",
+  "findings": [
+    {
+      "severity": "BLOCK",
+      "file_or_area": "GDPR Article 22",
+      "issue": "Automated decision consent flow is insufficient",
+      "recommended_fix": "Implement explicit consent flow for automated decisions"
+    },
+    {
+      "severity": "WARN",
+      "file_or_area": "AZ Personal Data Protection Act",
+      "issue": "Compliance gaps for Baku launch",
+      "recommended_fix": "Conduct thorough review and address compliance gaps"
+    },
+    {
+      "severity": "BLOCK",
+      "file_or_area": "Platform liability",
+      "issue": "AURA score used for hiring decisions without proper safeguards",
+      "recommended_fix": "Implement safeguards to prevent discriminatory practices"
+    },
+    {
+      "severity": "WARN",
+      "file_or_area": "Data processor agreements",
+      "issue": "DPAs not in place for Supabase, Google Cloud, Railway",
+      "recommended_fix": "Establish DPAs for all data processors"
+    },
+    {
+      "severity": "BLOCK",
+      "file_or_area": "Terms of Service",
+      "issue": "Current ToS does not cover AI-generated assessments",
+      "recommended_fix": "Update ToS to include AI-generated assessments"
+    }
+  ],
+  "overall_verdict": "FAIL",
+  "whistleblower_flag": "null"
+}

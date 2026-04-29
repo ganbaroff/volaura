@@ -1,0 +1,28 @@
+{
+  "perspective": "Code Quality Engineer",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Code Quality Engineer\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"v0Laura engine\", \"issue\": \"Inertia in adopting v0Laura vision\", \"recommended_fix\": \"Re-read project_v0laura_vision.md before any feature work\"}, {\"severity\": \"medium\", \"file_or_area\": \"code-index\", \"issue\": \"Stale code-index\", \"recommended_fix\": \"Run code-index update script\"}, {\"severity\": \"low\", \"file_or_area\": \"perspective weights\", \"issue\": \"Zero spawn counts\", \"recommended_fix\": \"Investigate and adjust perspective weights\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "v0Laura engine",
+      "issue": "Inertia in adopting v0Laura vision",
+      "recommended_fix": "Re-read project_v0laura_vision.md before any feature work"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "code-index",
+      "issue": "Stale code-index",
+      "recommended_fix": "Run code-index update script"
+    },
+    {
+      "severity": "low",
+      "file_or_area": "perspective weights",
+      "issue": "Zero spawn counts",
+      "recommended_fix": "Investigate and adjust perspective weights"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

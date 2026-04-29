@@ -1,0 +1,37 @@
+{
+  "task_id": "2026-04-29-auto-health",
+  "executor": "local_health",
+  "execution_state": {
+    "task_id": "2026-04-29-auto-health",
+    "task_title": "System health check -- stale weights",
+    "max_retries": 3,
+    "state": "success",
+    "attempt": 1,
+    "errors": [],
+    "strategies_used": [],
+    "result": {
+      "status": "ok",
+      "git_head": "64b1eef update: EIN confirmed, Mercury unblocked in company-state",
+      "zero_learning_perspectives": [],
+      "total_perspective_runs": 305,
+      "code_index_age_hours": 2.6,
+      "code_index_files": 1042,
+      "queue": {
+        "pending": 1,
+        "done": 18
+      }
+    },
+    "started_at": "2026-04-29T00:24:12.413733+00:00",
+    "completed_at": "2026-04-29T00:24:12.453401+00:00"
+  },
+  "status": "ok",
+  "git_head": "64b1eef update: EIN confirmed, Mercury unblocked in company-state",
+  "zero_learning_perspectives": [],
+  "total_perspective_runs": 305,
+  "code_index_age_hours": 2.6,
+  "code_index_files": 1042,
+  "queue": {
+    "pending": 1,
+    "done": 18
+  }
+}

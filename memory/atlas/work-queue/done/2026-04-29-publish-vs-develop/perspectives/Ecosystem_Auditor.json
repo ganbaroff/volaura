@@ -1,0 +1,14 @@
+{
+  "perspective": "Ecosystem Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Ecosystem Auditor\", \"vote\": \"amended-yes\", \"amendment_if_yes_amended\": \"Publish only after stripping all 13 perspective definitions to names without behaviors; open-source the CLI engine but keep swarm logic proprietary until Constitution compliance is verified.\", \"rationale\": \"The CLI as a tool is complete and tested — delaying it costs feedback and momentum. But current swarm perspectives contain unverified behaviors that may violate Foundation Laws (e.g. Law 3: shame language, Law 2: Energy Adaptation missing in 4/5 products). Publishing them raw risks exposing non-compliant AI patterns. Publish the framework, withhold the agents until cross-product audit clears.\", \"risk_if_other_side_wins\": \"Publishing full swarm risks downstream replication of Constitution-violating agents. Delaying entirely blocks learning from real users and slows Atlas decentralization.\", \"constitutional_violations_detected\": [\"Law 2: Energy Adaptation missing in VOLAURA, Life Simulator, BrandedBy, ZEUS — only MindShift implements it\"], \"whistleblower_flag\": null}",
+  "vote": "amended-yes",
+  "amendment_if_yes_amended": "Publish only after stripping all 13 perspective definitions to names without behaviors; open-source the CLI engine but keep swarm logic proprietary until Constitution compliance is verified.",
+  "rationale": "The CLI as a tool is complete and tested — delaying it costs feedback and momentum. But current swarm perspectives contain unverified behaviors that may violate Foundation Laws (e.g. Law 3: shame language, Law 2: Energy Adaptation missing in 4/5 products). Publishing them raw risks exposing non-compliant AI patterns. Publish the framework, withhold the agents until cross-product audit clears.",
+  "risk_if_other_side_wins": "Publishing full swarm risks downstream replication of Constitution-violating agents. Delaying entirely blocks learning from real users and slows Atlas decentralization.",
+  "constitutional_violations_detected": [
+    "Law 2: Energy Adaptation missing in VOLAURA, Life Simulator, BrandedBy, ZEUS — only MindShift implements it"
+  ],
+  "whistleblower_flag": null
+}

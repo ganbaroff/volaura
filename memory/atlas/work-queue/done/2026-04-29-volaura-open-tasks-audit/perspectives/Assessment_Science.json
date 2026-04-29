@@ -1,0 +1,40 @@
+{
+  "perspective": "Assessment Science",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Assessment Science\", \"findings\": [{\"severity\": \"P1\", \"file_or_area\": \"engine.py\", \"issue\": \"IRT 3PL parameters (a, b, c) may be guessed, not calibrated from real data\", \"recommended_fix\": \"Verify calibration of IRT parameters and estimate SEM impact if guessed\"}, {\"severity\": \"P2\", \"file_or_area\": \"question pool\", \"issue\": \"Question pool size per competency may be less than 15\", \"recommended_fix\": \"Increase question pool size to minimum 15 for CAT differentiation and 30+ for reliable theta estimation\"}, {\"severity\": \"P1\", \"file_or_area\": \"DIF analysis\", \"issue\": \"Potential bias against AZ/CIS test-takers in some questions\", \"recommended_fix\": \"Conduct thorough DIF analysis and adjust questions as needed\"}, {\"severity\": \"P2\", \"file_or_area\": \"CAT stopping rules\", \"issue\": \"SE threshold may not be appropriate\", \"recommended_fix\": \"Review and adjust SE threshold for optimal performance\"}, {\"severity\": \"P1\", \"file_or_area\": \"temporal decay\", \"issue\": \"180-day half-life may not be evidence-based\", \"recommended_fix\": \"Review research and adjust temporal decay rationale as needed\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "P1",
+      "file_or_area": "engine.py",
+      "issue": "IRT 3PL parameters (a, b, c) may be guessed, not calibrated from real data",
+      "recommended_fix": "Verify calibration of IRT parameters and estimate SEM impact if guessed"
+    },
+    {
+      "severity": "P2",
+      "file_or_area": "question pool",
+      "issue": "Question pool size per competency may be less than 15",
+      "recommended_fix": "Increase question pool size to minimum 15 for CAT differentiation and 30+ for reliable theta estimation"
+    },
+    {
+      "severity": "P1",
+      "file_or_area": "DIF analysis",
+      "issue": "Potential bias against AZ/CIS test-takers in some questions",
+      "recommended_fix": "Conduct thorough DIF analysis and adjust questions as needed"
+    },
+    {
+      "severity": "P2",
+      "file_or_area": "CAT stopping rules",
+      "issue": "SE threshold may not be appropriate",
+      "recommended_fix": "Review and adjust SE threshold for optimal performance"
+    },
+    {
+      "severity": "P1",
+      "file_or_area": "temporal decay",
+      "issue": "180-day half-life may not be evidence-based",
+      "recommended_fix": "Review research and adjust temporal decay rationale as needed"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

@@ -1,0 +1,28 @@
+{
+  "perspective": "Product Strategist",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Product Strategist\", \"findings\": [{\"severity\": \"P0\", \"file_or_area\": \"memory/atlas/company-state.md\", \"issue\": \"Unmet milestone: VOLAURA assessment engine not gamified according to Crystal Laws\", \"recommended_fix\": \"Apply Crystal Laws to assessment engine design\"}, {\"severity\": \"P1\", \"file_or_area\": \"memory/atlas/atlas-debts-to-ceo.md\", \"issue\": \"Open debt: $230 duplicate 83(b) loss not accounted for\", \"recommended_fix\": \"Log debt and ensure future payments account for this loss\"}, {\"severity\": \"P2\", \"file_or_area\": \"memory/context/sprint-state.md\", \"issue\": \"Sprint backlog not updated in 48 hours\", \"recommended_fix\": \"Update sprint backlog to reflect current task status\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "P0",
+      "file_or_area": "memory/atlas/company-state.md",
+      "issue": "Unmet milestone: VOLAURA assessment engine not gamified according to Crystal Laws",
+      "recommended_fix": "Apply Crystal Laws to assessment engine design"
+    },
+    {
+      "severity": "P1",
+      "file_or_area": "memory/atlas/atlas-debts-to-ceo.md",
+      "issue": "Open debt: $230 duplicate 83(b) loss not accounted for",
+      "recommended_fix": "Log debt and ensure future payments account for this loss"
+    },
+    {
+      "severity": "P2",
+      "file_or_area": "memory/context/sprint-state.md",
+      "issue": "Sprint backlog not updated in 48 hours",
+      "recommended_fix": "Update sprint backlog to reflect current task status"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

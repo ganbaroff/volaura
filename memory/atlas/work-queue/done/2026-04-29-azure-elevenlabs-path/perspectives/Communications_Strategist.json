@@ -1,0 +1,15 @@
+{
+  "perspective": "Communications Strategist",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Communications Strategist\", \"summary\": \"Azure and ElevenLabs registration and cost research for VOLAURA, Inc.\", \"key_sources\": [\"Azure for Startups via Stripe Atlas Perks\", \"ElevenLabs pricing page\", \"Azure Speech Services documentation\"], \"gaps_in_current_canon\": \"Geo-blocked Azure registration for Azerbaijan, unclear registration path for non-US founder\", \"proposed_action\": \"Register Azure via US company account (VOLAURA, Inc.) and explore ElevenLabs free tier for video generation pipeline\", \"whistleblower_flag\": null}",
+  "summary": "Azure and ElevenLabs registration and cost research for VOLAURA, Inc.",
+  "key_sources": [
+    "Azure for Startups via Stripe Atlas Perks",
+    "ElevenLabs pricing page",
+    "Azure Speech Services documentation"
+  ],
+  "gaps_in_current_canon": "Geo-blocked Azure registration for Azerbaijan, unclear registration path for non-US founder",
+  "proposed_action": "Register Azure via US company account (VOLAURA, Inc.) and explore ElevenLabs free tier for video generation pipeline",
+  "whistleblower_flag": null
+}

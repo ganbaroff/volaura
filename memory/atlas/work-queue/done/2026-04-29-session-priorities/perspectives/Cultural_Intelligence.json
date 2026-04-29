@@ -1,0 +1,12 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Cultural Intelligence\", \"vote\": \"yes\", \"amendment_if_yes_amended\": \"none\", \"rationale\": \"83(b) verification is a priority to prevent financial loss and ensure compliance with CEO directives, aligning with the Constitution's emphasis on clarity and improvement.\", \"risk_if_other_side_wins\": \"Delayed 83(b) verification may result in financial penalties and loss of trust.\", \"constitutional_violations_detected\": \"none\", \"whistleblower_flag\": \"null\"}",
+  "vote": "yes",
+  "amendment_if_yes_amended": "none",
+  "rationale": "83(b) verification is a priority to prevent financial loss and ensure compliance with CEO directives, aligning with the Constitution's emphasis on clarity and improvement.",
+  "risk_if_other_side_wins": "Delayed 83(b) verification may result in financial penalties and loss of trust.",
+  "constitutional_violations_detected": "none",
+  "whistleblower_flag": "null"
+}

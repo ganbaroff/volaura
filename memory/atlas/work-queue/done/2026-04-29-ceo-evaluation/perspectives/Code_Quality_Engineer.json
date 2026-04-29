@@ -1,0 +1,28 @@
+{
+  "perspective": "Code Quality Engineer",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Code Quality Engineer\", \n\"findings\": [\n{\"severity\": \"minor\", \"file_or_area\": \"Resource management\", \"issue\": \"Operating on a tight budget of ~$100/month\", \"recommended_fix\": \"Explore cost-saving measures or funding opportunities\"},\n{\"severity\": \"major\", \"file_or_area\": \"Self-care & sustainability\", \"issue\": \"Irregular work schedule (3am sessions) may lead to burnout\", \"recommended_fix\": \"Establish a consistent, healthy work schedule\"},\n{\"severity\": \"minor\", \"file_or_area\": \"Decision speed\", \"issue\": \"Sometimes makes rapid decisions (e.g., publishing CLI, giving EIN)\", \"recommended_fix\": \"Ensure thorough consideration of consequences before making critical decisions\"}\n], \n\"overall_verdict\": \"warn\", \n\"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "minor",
+      "file_or_area": "Resource management",
+      "issue": "Operating on a tight budget of ~$100/month",
+      "recommended_fix": "Explore cost-saving measures or funding opportunities"
+    },
+    {
+      "severity": "major",
+      "file_or_area": "Self-care & sustainability",
+      "issue": "Irregular work schedule (3am sessions) may lead to burnout",
+      "recommended_fix": "Establish a consistent, healthy work schedule"
+    },
+    {
+      "severity": "minor",
+      "file_or_area": "Decision speed",
+      "issue": "Sometimes makes rapid decisions (e.g., publishing CLI, giving EIN)",
+      "recommended_fix": "Ensure thorough consideration of consequences before making critical decisions"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

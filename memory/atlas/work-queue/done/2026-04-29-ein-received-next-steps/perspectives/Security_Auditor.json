@@ -1,0 +1,16 @@
+{
+  "perspective": "Security Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Security\", \"position\": \"for\", \"argument\": \"First action: verify 83(b) status and secure EIN exposure. EIN 37-2231884 is now a high-value attack surface. Immediate risks: phishing, synthetic identity fraud, IRS impersonation. Stripe Atlas automatically files 83(b) — manual submission already caused $150 loss (Class 19). Confirm no duplicate action was taken. EIN must not be logged, stored in plaintext, or exposed in version control. Rotate if leaked. Restrict access to `secrets/atlas` only. Second: file Delaware franchise tax — late fee starts at $200. Third: use EIN to activate Mercury business account, but only after confirming no ITIN is needed (C-corp = EIN suffices). Priority order: protect → comply → operate.\", \"strongest_counter\": \"Others may argue bank setup is fastest ROI, but unfrozen assets don't matter if the entity is compromised or fined.\", \"evidence_cited\": [\"Class 19 — Assume-nothing about incorporation services\", \"Stripe Atlas docs: automatic 83(b)\", \"DELAWARE.GOV — franchise tax $200 penalty\"], \"whistleblower_flag\": null}",
+  "position": "for",
+  "argument": "First action: verify 83(b) status and secure EIN exposure. EIN 37-2231884 is now a high-value attack surface. Immediate risks: phishing, synthetic identity fraud, IRS impersonation. Stripe Atlas automatically files 83(b) — manual submission already caused $150 loss (Class 19). Confirm no duplicate action was taken. EIN must not be logged, stored in plaintext, or exposed in version control. Rotate if leaked. Restrict access to `secrets/atlas` only. Second: file Delaware franchise tax — late fee starts at $200. Third: use EIN to activate Mercury business account, but only after confirming no ITIN is needed (C-corp = EIN suffices). Priority order: protect → comply → operate.",
+  "strongest_counter": "Others may argue bank setup is fastest ROI, but unfrozen assets don't matter if the entity is compromised or fined.",
+  "evidence_cited": [
+    "Class 19 — Assume-nothing about incorporation services",
+    "Stripe Atlas docs: automatic 83(b)",
+    "DELAWARE.GOV — franchise tax $200 penalty"
+  ],
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Security"
+}

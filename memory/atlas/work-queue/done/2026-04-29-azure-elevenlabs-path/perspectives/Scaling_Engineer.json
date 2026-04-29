@@ -1,0 +1,16 @@
+{
+  "perspective": "Scaling Engineer",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Scaling Engineer\", \"summary\": \"Azure access via Stripe Atlas Perks is possible using VOLAURA, Inc.'s EIN and Delaware address, no SSN or US bank required. $250k credits over 2 years, $25k/month cap. ElevenLabs Scale tier needed for video pipeline — $99/month for 2M characters, free tier insufficient. Azure Speech at $16/month for 1M chars under 1000 reqs/month is cheaper. Register Azure via Stripe Atlas dashboard using corporate entity, not personal account. Use registered agent address (e.g., Harvard Business Services) for verification. Mercury bank not required yet. Total cost at $115/month exceeds $100 cap — requires downgrade to Azure Speech or reduced ElevenLabs usage.\", \"key_sources\": [\"https://stripe.com/atlas/azure\", \"https://azure.microsoft.com/en-us/pricing/details/machine-learning/\", \"https://elevenlabs.io/pricing\", \"https://learn.microsoft.com/en-us/azure/cost-management-billing/manage/enterprise-create-enrollment\"], \"gaps_in_current_canon\": \"No registration path for non-US founders using Stripe Atlas Perks with Azerbaijan residency. Missing cost-benefit analysis between ElevenLabs and Azure Speech for TTS at scale.\", \"proposed_action\": \"Register Azure via Stripe Atlas under VOLAURA, Inc. EIN 37-2231884 using Harvard Business Services address. Activate $250k credits. Use Azure Speech instead of ElevenLabs for MVP — $16/month at 1k reqs. Defer ElevenLabs Scale tier until budget allows. Implement usage cap at API gateway.\", \"whistleblower_flag\": null}",
+  "summary": "Azure access via Stripe Atlas Perks is possible using VOLAURA, Inc.'s EIN and Delaware address, no SSN or US bank required. $250k credits over 2 years, $25k/month cap. ElevenLabs Scale tier needed for video pipeline — $99/month for 2M characters, free tier insufficient. Azure Speech at $16/month for 1M chars under 1000 reqs/month is cheaper. Register Azure via Stripe Atlas dashboard using corporate entity, not personal account. Use registered agent address (e.g., Harvard Business Services) for verification. Mercury bank not required yet. Total cost at $115/month exceeds $100 cap — requires downgrade to Azure Speech or reduced ElevenLabs usage.",
+  "key_sources": [
+    "https://stripe.com/atlas/azure",
+    "https://azure.microsoft.com/en-us/pricing/details/machine-learning/",
+    "https://elevenlabs.io/pricing",
+    "https://learn.microsoft.com/en-us/azure/cost-management-billing/manage/enterprise-create-enrollment"
+  ],
+  "gaps_in_current_canon": "No registration path for non-US founders using Stripe Atlas Perks with Azerbaijan residency. Missing cost-benefit analysis between ElevenLabs and Azure Speech for TTS at scale.",
+  "proposed_action": "Register Azure via Stripe Atlas under VOLAURA, Inc. EIN 37-2231884 using Harvard Business Services address. Activate $250k credits. Use Azure Speech instead of ElevenLabs for MVP — $16/month at 1k reqs. Defer ElevenLabs Scale tier until budget allows. Implement usage cap at API gateway.",
+  "whistleblower_flag": null
+}

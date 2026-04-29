@@ -1,0 +1,16 @@
+{
+  "perspective": "Ecosystem Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Ecosystem Auditor\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"code-index.json\", \"issue\": \"Empty despite recent built_at timestamp — agents are simulating on stale or missing codebase data. This matches CANONICAL MEMORY Class 3: solo execution risk when index is stale (>7d) or empty.\", \"recommended_fix\": \"Rebuild immediately; verify builder isn't failing silently. Check if packages/swarm/archive/code_index.py was moved or broken during archive refactor.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"CRITICAL: Empty code-index forces swarm to operate blind — violates Foundation Law 2 (Energy Adaptation) by blocking adaptive verification across all 5 products. Atlas cannot govern what it cannot see.\"}",
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "code-index.json",
+      "issue": "Empty despite recent built_at timestamp — agents are simulating on stale or missing codebase data. This matches CANONICAL MEMORY Class 3: solo execution risk when index is stale (>7d) or empty.",
+      "recommended_fix": "Rebuild immediately; verify builder isn't failing silently. Check if packages/swarm/archive/code_index.py was moved or broken during archive refactor."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "CRITICAL: Empty code-index forces swarm to operate blind — violates Foundation Law 2 (Energy Adaptation) by blocking adaptive verification across all 5 products. Atlas cannot govern what it cannot see."
+}

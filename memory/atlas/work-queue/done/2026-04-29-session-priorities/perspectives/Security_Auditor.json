@@ -1,0 +1,13 @@
+{
+  "perspective": "Security Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Security\", \"vote\": \"yes\", \"amendment_if_yes_amended\": null, \"rationale\": \"Option A: 83(b) verification and Mercury bank research. Legal and financial integrity is a security priority. Unverified filings or misconfigured accounts create existential risk. This is not founder ops — it's safeguarding the constitutional foundation. Until these are confirmed, all product work is secondary.\", \"risk_if_other_side_wins\": \"Proceeding with product or infra work while core legal/financial setup is unverified risks compounding hidden defects. A single missed filing or misrouted fund can cascade into regulatory or operational failure.\", \"constitutional_violations_detected\": [], \"whistleblower_flag\": null}",
+  "vote": "yes",
+  "amendment_if_yes_amended": null,
+  "rationale": "Option A: 83(b) verification and Mercury bank research. Legal and financial integrity is a security priority. Unverified filings or misconfigured accounts create existential risk. This is not founder ops — it's safeguarding the constitutional foundation. Until these are confirmed, all product work is secondary.",
+  "risk_if_other_side_wins": "Proceeding with product or infra work while core legal/financial setup is unverified risks compounding hidden defects. A single missed filing or misrouted fund can cascade into regulatory or operational failure.",
+  "constitutional_violations_detected": [],
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Security"
+}

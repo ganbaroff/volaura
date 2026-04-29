@@ -1,0 +1,16 @@
+{
+  "perspective": "Readiness Manager",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Readiness Manager\", \"findings\": [{\"severity\": \"critical\", \"file_or_area\": \"code-index.json\", \"issue\": \"empty output despite recent build\", \"recommended_fix\": \"investigate code_index.py and rebuild if necessary\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "critical",
+      "file_or_area": "code-index.json",
+      "issue": "empty output despite recent build",
+      "recommended_fix": "investigate code_index.py and rebuild if necessary"
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null
+}

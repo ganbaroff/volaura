@@ -1,0 +1,16 @@
+{
+  "perspective": "Ecosystem Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Ecosystem Auditor\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"code-index.json\", \"issue\": \"File is empty (0 modules, 0 endpoints) despite recent built_at timestamp. Indicates builder ran but failed silently. Violates Atlas mandate: stale code-index >7 days flags as CRITICAL — agents are simulating on false state.\", \"recommended_fix\": \"1. Verify `packages/swarm/archive/code_index.py` was not moved to archive. 2. Run builder with verbose logging to capture failure. 3. Add post-build validation: if output is empty, exit 1. 4. Block agent execution if index_age > 1 day.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"CRITICAL — swarm operating on unknown codebase. Simulation invalid.\"}",
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "code-index.json",
+      "issue": "File is empty (0 modules, 0 endpoints) despite recent built_at timestamp. Indicates builder ran but failed silently. Violates Atlas mandate: stale code-index >7 days flags as CRITICAL — agents are simulating on false state.",
+      "recommended_fix": "1. Verify `packages/swarm/archive/code_index.py` was not moved to archive. 2. Run builder with verbose logging to capture failure. 3. Add post-build validation: if output is empty, exit 1. 4. Block agent execution if index_age > 1 day."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "CRITICAL — swarm operating on unknown codebase. Simulation invalid."
+}

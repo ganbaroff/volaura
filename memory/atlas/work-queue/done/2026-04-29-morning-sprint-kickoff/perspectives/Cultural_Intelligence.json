@@ -1,0 +1,71 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Atlas-voice\",\n  \"findings\": [\n    {\"severity\": \"high\", \"file_or_area\": \"ui/components/progress-indicator.jsx\", \"issue\": \"Red percentage complete text violates Law 3\", \"recommended_fix\": \"Remove 'Profile X% complete' text\"},\n    {\"severity\": \"high\", \"file_or_area\": \"ui/error-toasts.jsx\", \"issue\": \"Red error toast violates Law 3\", \"recommended_fix\": \"Replace red with purple error container\"},\n    {\"severity\": \"medium\", \"file_or_area\": \"ui/animations/confetti.jsx\", \"issue\": \"Confetti animation violates Law 4\", \"recommended_fix\": \"Replace with 12-particle, 1.5s animation\"},\n    {\"severity\": \"medium\", \"file_or_area\": \"ui/buttons/cta-button.jsx\", \"issue\": \"Multiple CTAs violate Law 5\", \"recommended_fix\": \"Limit to one primary action per screen\"},\n    {\"severity\": \"high\", \"file_or_area\": \"ui/leaderboards/leaderboard.jsx\", \"issue\": \"Leaderboard violates Crystal Law 5\", \"recommended_fix\": \"Remove leaderboard component\"},\n    {\"severity\": \"medium\", \"file_or_area\": \"ui/rewards/badge.jsx\", \"issue\": \"Badge system violates Crystal Law 6\", \"recommended_fix\": \"Restructure to delay reward visibility\"},\n    {\"severity\": \"medium\", \"file_or_area\": \"api/error-handling.js\", \"issue\": \"Missing error container styling\", \"recommended_fix\": \"Add purple container styling for all errors\"},\n    {\"severity\": \"medium\", \"file_or_area\": \"ui/notifications/pulse.jsx\", \"issue\": \"Infinite pulse animation violates Law 4\", \"recommended_fix\": \"Limit to 3 pulses\"},\n    {\"severity\": \"medium\", \"file_or_area\": \"ui/forms/progress.jsx\", \"issue\": \"Progress bar violates Law 4\", \"recommended_fix\": \"Replace with instant display\"},\n    {\"severity\": \"medium\", \"file_or_area\": \"ui/animations/spring.jsx\", \"issue\": \"Unrestricted spring animation\", \"recommended_fix\": \"Restrict to user-initiated actions\"}\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "ui/components/progress-indicator.jsx",
+      "issue": "Red percentage complete text violates Law 3",
+      "recommended_fix": "Remove 'Profile X% complete' text"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "ui/error-toasts.jsx",
+      "issue": "Red error toast violates Law 3",
+      "recommended_fix": "Replace red with purple error container"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "ui/animations/confetti.jsx",
+      "issue": "Confetti animation violates Law 4",
+      "recommended_fix": "Replace with 12-particle, 1.5s animation"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "ui/buttons/cta-button.jsx",
+      "issue": "Multiple CTAs violate Law 5",
+      "recommended_fix": "Limit to one primary action per screen"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "ui/leaderboards/leaderboard.jsx",
+      "issue": "Leaderboard violates Crystal Law 5",
+      "recommended_fix": "Remove leaderboard component"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "ui/rewards/badge.jsx",
+      "issue": "Badge system violates Crystal Law 6",
+      "recommended_fix": "Restructure to delay reward visibility"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "api/error-handling.js",
+      "issue": "Missing error container styling",
+      "recommended_fix": "Add purple container styling for all errors"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "ui/notifications/pulse.jsx",
+      "issue": "Infinite pulse animation violates Law 4",
+      "recommended_fix": "Limit to 3 pulses"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "ui/forms/progress.jsx",
+      "issue": "Progress bar violates Law 4",
+      "recommended_fix": "Replace with instant display"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "ui/animations/spring.jsx",
+      "issue": "Unrestricted spring animation",
+      "recommended_fix": "Restrict to user-initiated actions"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Atlas-voice"
+}

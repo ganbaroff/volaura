@@ -1,0 +1,17 @@
+{
+  "perspective": "Readiness Manager",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Security\", \"findings\": [{\"severity\": \"Critical\", \"file_or_area\": \"packages/swarm/archive/code_index.py\", \"issue\": \"Code index builder produced empty output\", \"recommended_fix\": \"Investigate code_index.py for errors or accidental archiving\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "Critical",
+      "file_or_area": "packages/swarm/archive/code_index.py",
+      "issue": "Code index builder produced empty output",
+      "recommended_fix": "Investigate code_index.py for errors or accidental archiving"
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Security"
+}

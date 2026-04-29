@@ -1,0 +1,12 @@
+{
+  "perspective": "Communications Strategist",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Communications Strategist\", \"vote\": \"amended-yes\", \"amendment_if_yes_amended\": \"A) 83(b) verification + Mercury bank research, with explicit check against Class 19 lesson\", \"rationale\": \"Founder-ops task, CEO-facing, and high-priority. Class 19 lesson warns against assuming incorporation services' automatic filings without verification.\", \"risk_if_other_side_wins\": \"Delay in 83(b) verification may cause financial loss, as seen in Class 19.\", \"constitutional_violations_detected\": \"None\", \"whistleblower_flag\": \"null\"}",
+  "vote": "amended-yes",
+  "amendment_if_yes_amended": "A) 83(b) verification + Mercury bank research, with explicit check against Class 19 lesson",
+  "rationale": "Founder-ops task, CEO-facing, and high-priority. Class 19 lesson warns against assuming incorporation services' automatic filings without verification.",
+  "risk_if_other_side_wins": "Delay in 83(b) verification may cause financial loss, as seen in Class 19.",
+  "constitutional_violations_detected": "None",
+  "whistleblower_flag": "null"
+}

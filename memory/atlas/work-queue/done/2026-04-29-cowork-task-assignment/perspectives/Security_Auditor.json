@@ -1,0 +1,12 @@
+{
+  "perspective": "Security Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Security\", \"position\": \"for\", \"argument\": \"Cowork-Atlas should audit and fix all user-facing strings in Figma prototypes for compliance with LAW 3 (Shame-Free Language) and LAW 1 (Never Red). Current prototypes likely violate both: red error states, shame-based copy like 'You haven't started' or 'X% complete'. Only Cowork can access Figma MCP to inspect and修正 these. Task is independent, high-impact — prevents trauma-triggering UX at design phase. Output: updated Figma frames with compliant text and color, documented change log in Figma comments. Use Figma MCP to navigate pages, Supabase MCP to cross-check against current DB enums if needed.\", \"strongest_counter\": \"Code-Atlas could later override with non-compliant code, making this effort superficial.\", \"evidence_cited\": \"ECOSYSTEM-CONSTITUTION.md §LAW 1, LAW 3; voice.md examples prohibit design-code misalignment\", \"whistleblower_flag\": null}",
+  "position": "for",
+  "argument": "Cowork-Atlas should audit and fix all user-facing strings in Figma prototypes for compliance with LAW 3 (Shame-Free Language) and LAW 1 (Never Red). Current prototypes likely violate both: red error states, shame-based copy like 'You haven't started' or 'X% complete'. Only Cowork can access Figma MCP to inspect and修正 these. Task is independent, high-impact — prevents trauma-triggering UX at design phase. Output: updated Figma frames with compliant text and color, documented change log in Figma comments. Use Figma MCP to navigate pages, Supabase MCP to cross-check against current DB enums if needed.",
+  "strongest_counter": "Code-Atlas could later override with non-compliant code, making this effort superficial.",
+  "evidence_cited": "ECOSYSTEM-CONSTITUTION.md §LAW 1, LAW 3; voice.md examples prohibit design-code misalignment",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Security"
+}

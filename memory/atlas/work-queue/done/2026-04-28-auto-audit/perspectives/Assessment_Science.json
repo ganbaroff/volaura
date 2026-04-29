@@ -1,0 +1,40 @@
+{
+  "perspective": "Assessment Science",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Assessment Science\", \n\"findings\": [\n{\"severity\": \"Critical\", \"file_or_area\": \"apps/api/app/core/assessment/engine.py\", \"issue\": \"IRT 3PL parameters (a, b, c) are guessed, not calibrated from real data\", \"recommended_fix\": \"Recalibrate parameters using real assessment data to minimize SEM impact\"},\n{\"severity\": \"Major\", \"file_or_area\": \"Question pool size per competency\", \"issue\": \"Insufficient question pool size for reliable theta estimation (less than 30 questions per competency)\", \"recommended_fix\": \"Increase question pool size to at least 30 questions per competency for reliable CAT differentiation and theta estimation\"},\n{\"severity\": \"Minor\", \"file_or_area\": \"DIF analysis\", \"issue\": \"No visible DIF analysis for AZ/CIS test-takers\", \"recommended_fix\": \"Conduct DIF analysis to detect potential biases against AZ/CIS test-takers and adjust the assessment engine accordingly\"},\n{\"severity\": \"Major\", \"file_or_area\": \"CAT stopping rules\", \"issue\": \"SE threshold may not be appropriate\", \"recommended_fix\": \"Re-evaluate and adjust the SE threshold to ensure accurate assessment termination\"},\n{\"severity\": \"Critical\", \"file_or_area\": \"Temporal decay rationale\", \"issue\": \"180-day half-life not evidence-based\", \"recommended_fix\": \"Update temporal decay rationale with evidence-based research to ensure validity and fairness\"}\n], \n\"overall_verdict\": \"fail\", \n\"whistleblower_flag\": \"null\"}",
+  "findings": [
+    {
+      "severity": "Critical",
+      "file_or_area": "apps/api/app/core/assessment/engine.py",
+      "issue": "IRT 3PL parameters (a, b, c) are guessed, not calibrated from real data",
+      "recommended_fix": "Recalibrate parameters using real assessment data to minimize SEM impact"
+    },
+    {
+      "severity": "Major",
+      "file_or_area": "Question pool size per competency",
+      "issue": "Insufficient question pool size for reliable theta estimation (less than 30 questions per competency)",
+      "recommended_fix": "Increase question pool size to at least 30 questions per competency for reliable CAT differentiation and theta estimation"
+    },
+    {
+      "severity": "Minor",
+      "file_or_area": "DIF analysis",
+      "issue": "No visible DIF analysis for AZ/CIS test-takers",
+      "recommended_fix": "Conduct DIF analysis to detect potential biases against AZ/CIS test-takers and adjust the assessment engine accordingly"
+    },
+    {
+      "severity": "Major",
+      "file_or_area": "CAT stopping rules",
+      "issue": "SE threshold may not be appropriate",
+      "recommended_fix": "Re-evaluate and adjust the SE threshold to ensure accurate assessment termination"
+    },
+    {
+      "severity": "Critical",
+      "file_or_area": "Temporal decay rationale",
+      "issue": "180-day half-life not evidence-based",
+      "recommended_fix": "Update temporal decay rationale with evidence-based research to ensure validity and fairness"
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "null"
+}

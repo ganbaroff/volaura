@@ -1,0 +1,40 @@
+{
+  "perspective": "PR & Media",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"PR & Media\", \n\"findings\": [\n{\"severity\": \"major\", \"file_or_area\": \"press narrative\", \"issue\": \"no press narrative ready\", \"recommended_fix\": \"develop a press narrative ASAP\"},\n{\"severity\": \"minor\", \"file_or_area\": \"AZ media landscape\", \"issue\": \"outlets not matched to story\", \"recommended_fix\": \"research and match outlets\"},\n{\"severity\": \"major\", \"file_or_area\": \"GITA grant application\", \"issue\": \"application material not ready\", \"recommended_fix\": \"prepare application material before May 27 deadline\"},\n{\"severity\": \"minor\", \"file_or_area\": \"startup competition pipeline\", \"issue\": \"pipeline not optimized\", \"recommended_fix\": \"research and optimize pipeline\"},\n{\"severity\": \"minor\", \"file_or_area\": \"CEO's LinkedIn presence\", \"issue\": \"presence not building toward launch\", \"recommended_fix\": \"improve CEO's LinkedIn presence\"}\n], \n\"overall_verdict\": \"warn\", \n\"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "major",
+      "file_or_area": "press narrative",
+      "issue": "no press narrative ready",
+      "recommended_fix": "develop a press narrative ASAP"
+    },
+    {
+      "severity": "minor",
+      "file_or_area": "AZ media landscape",
+      "issue": "outlets not matched to story",
+      "recommended_fix": "research and match outlets"
+    },
+    {
+      "severity": "major",
+      "file_or_area": "GITA grant application",
+      "issue": "application material not ready",
+      "recommended_fix": "prepare application material before May 27 deadline"
+    },
+    {
+      "severity": "minor",
+      "file_or_area": "startup competition pipeline",
+      "issue": "pipeline not optimized",
+      "recommended_fix": "research and optimize pipeline"
+    },
+    {
+      "severity": "minor",
+      "file_or_area": "CEO's LinkedIn presence",
+      "issue": "presence not building toward launch",
+      "recommended_fix": "improve CEO's LinkedIn presence"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

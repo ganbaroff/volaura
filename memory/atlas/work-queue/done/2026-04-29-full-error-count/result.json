@@ -1,0 +1,526 @@
+{
+  "task_id": "2026-04-29-full-error-count",
+  "task_type": "audit",
+  "completed_at": "2026-04-28T22:17:21.001631+00:00",
+  "perspectives_dispatched": 13,
+  "perspectives_responded": 13,
+  "perspectives_failed": 0,
+  "providers_used": {
+    "cerebras": 3,
+    "nvidia": 10
+  },
+  "whistleblower_flags": [
+    {
+      "perspective": "Scaling Engineer",
+      "flag": "CRYSTAL LAW 5 and LAW 3 violations actively harm user psychology at scale"
+    },
+    {
+      "perspective": "Security Auditor",
+      "flag": "CRYSTAL LAW 6 AMENDMENT truncation masks a known exploit: immediate contingent rewards for mastery tasks. Risk: systemic corruption of user motivation."
+    },
+    {
+      "perspective": "Product Strategist",
+      "flag": "ZEUS security issue poses significant risk"
+    },
+    {
+      "perspective": "Code Quality Engineer",
+      "flag": "security issue in BrandedBy"
+    },
+    {
+      "perspective": "Ecosystem Auditor",
+      "flag": "Atlas Gateway decisions being ignored by swarm agents — cross-product consistency collapsing. Immediate swarm re-sync required."
+    },
+    {
+      "perspective": "Risk Manager",
+      "flag": "CRITICAL risks unmitigated"
+    },
+    {
+      "perspective": "Readiness Manager",
+      "flag": "security_issue"
+    },
+    {
+      "perspective": "Legal Advisor",
+      "flag": "null"
+    }
+  ],
+  "perspectives": [
+    {
+      "perspective": "Scaling Engineer",
+      "provider": "cerebras",
+      "model": "qwen-3-235b",
+      "raw": "{\"perspective\": \"Scaling Engineer\", \"findings\": [{\"severity\": \"critical\", \"file_or_area\": \"ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"CRYSTAL LAW 5 violation: leaderboards exist in BrandedBy despite being banned as zero-sum shame triggers\", \"recommended_fix\": \"Remove all user rankings; replace with Focus Rooms or collective milestones\"}, {\"severity\": \"critical\", \"file_or_area\": \"packages/swarm/agents/\", \"issue\": \"Infrastructure gap: 13 registered perspectives but directory is empty — no runnable agents, only prompts\", \"recommended_fix\": \"Implement Python agents in packages/swarm/agents/ to close activation gap\"}, {\"severity\": \"high\", \"file_or_area\": \"memory/atlas/lessons.md\", \"issue\": \"Class 15-16 drift: v0Laura vision and 'improve every turn' directive repeatedly forgotten on wake\", \"recommended_fix\": \"Enforce wake-time loading of vision and self-review gate before any output\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"CRYSTAL LAW 5 and LAW 3 violations actively harm user psychology at scale\"}",
+      "findings": [
+        {
+          "severity": "critical",
+          "file_or_area": "ECOSYSTEM-CONSTITUTION.md",
+          "issue": "CRYSTAL LAW 5 violation: leaderboards exist in BrandedBy despite being banned as zero-sum shame triggers",
+          "recommended_fix": "Remove all user rankings; replace with Focus Rooms or collective milestones"
+        },
+        {
+          "severity": "critical",
+          "file_or_area": "packages/swarm/agents/",
+          "issue": "Infrastructure gap: 13 registered perspectives but directory is empty — no runnable agents, only prompts",
+          "recommended_fix": "Implement Python agents in packages/swarm/agents/ to close activation gap"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "memory/atlas/lessons.md",
+          "issue": "Class 15-16 drift: v0Laura vision and 'improve every turn' directive repeatedly forgotten on wake",
+          "recommended_fix": "Enforce wake-time loading of vision and self-review gate before any output"
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": "CRYSTAL LAW 5 and LAW 3 violations actively harm user psychology at scale"
+    },
+    {
+      "perspective": "Security Auditor",
+      "provider": "cerebras",
+      "model": "qwen-3-235b",
+      "raw": "{\"perspective\": \"Security Auditor\", \"findings\": [{\"severity\": \"critical\", \"file_or_area\": \"ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"CRYSTAL LAW 6 AMENDMENT incomplete — cuts off mid-sentence, leaving rule undefined. Violates Law 11: DOCUMENTATION TRUTH.\", \"recommended_fix\": \"Recover full amendment from version control or meeting logs. Enforce doc completeness via pre-commit hook.\"}, {\"severity\": \"high\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Leaderboard removal noted in comment but still present in law — Crystal Law 5 says '❌ Leaderboards of any kind' yet implementation status unverified. Violates Law 5: ONE PRIMARY ACTION and Crystal Law 5.\", \"recommended_fix\": \"Audit UI for leaderboards, remove all, add automated scan for 'leaderboard' class names in CI.\"}, {\"severity\": \"critical\", \"file_or_area\": \"packages/swarm/agents/\", \"issue\": \"Directory EMPTY — 13 registered perspectives with no runnable code. Swarm is fictional. Violates Law 11: DOCUMENTATION TRUTH and enables Class 3: solo execution.\", \"recommended_fix\": \"Implement agents or remove PERSPECTIVES registration. Truth must match code.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"CRYSTAL LAW 6 AMENDMENT truncation masks a known exploit: immediate contingent rewards for mastery tasks. Risk: systemic corruption of user motivation.\"}",
+      "findings": [
+        {
+          "severity": "critical",
+          "file_or_area": "ECOSYSTEM-CONSTITUTION.md",
+          "issue": "CRYSTAL LAW 6 AMENDMENT incomplete — cuts off mid-sentence, leaving rule undefined. Violates Law 11: DOCUMENTATION TRUTH.",
+          "recommended_fix": "Recover full amendment from version control or meeting logs. Enforce doc completeness via pre-commit hook."
+        },
+        {
+          "severity": "high",
+          "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Leaderboard removal noted in comment but still present in law — Crystal Law 5 says '❌ Leaderboards of any kind' yet implementation status unverified. Violates Law 5: ONE PRIMARY ACTION and Crystal Law 5.",
+          "recommended_fix": "Audit UI for leaderboards, remove all, add automated scan for 'leaderboard' class names in CI."
+        },
+        {
+          "severity": "critical",
+          "file_or_area": "packages/swarm/agents/",
+          "issue": "Directory EMPTY — 13 registered perspectives with no runnable code. Swarm is fictional. Violates Law 11: DOCUMENTATION TRUTH and enables Class 3: solo execution.",
+          "recommended_fix": "Implement agents or remove PERSPECTIVES registration. Truth must match code."
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": "CRYSTAL LAW 6 AMENDMENT truncation masks a known exploit: immediate contingent rewards for mastery tasks. Risk: systemic corruption of user motivation."
+    },
+    {
+      "perspective": "Product Strategist",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Product Strategist\", \"findings\": [\n{\"severity\": \"high\", \"file_or_area\": \"VOLAURA assessment\", \"issue\": \"Constitution violation: red color used in error messages\", \"recommended_fix\": \"Replace with purple (#D4B4FF) as per Foundation Law 1\"},\n{\"severity\": \"medium\", \"file_or_area\": \"MindShift\", \"issue\": \"Missing feature: behavioral pattern analysis\", \"recommended_fix\": \"Implement analysis module as promised\"},\n{\"severity\": \"low\", \"file_or_area\": \"LifeSimulator\", \"issue\": \"UX violation: non-inclusive language\", \"recommended_fix\": \"Update language to follow Shame-Free Language guidelines\"},\n{\"severity\": \"critical\", \"file_or_area\": \"ZEUS\", \"issue\": \"Security issue: exposed API keys\", \"recommended_fix\": \"Rotate and secure API keys immediately\"},\n{\"severity\": \"high\", \"file_or_area\": \"BrandedBy\", \"issue\": \"Test failure: twin responder not functioning\", \"recommended_fix\": \"Debug and fix twin responder\"},\n{\"severity\": \"medium\", \"file_or_area\": \"Documentation\", \"issue\": \"Documentation gap: outdated API docs\", \"recommended_fix\": \"Update API documentation to reflect current implementation\"},\n{\"severity\": \"low\", \"file_or_area\": \"Infrastructure\", \"issue\": \"Stale config: unused environment variables\", \"recommended_fix\": \"Remove unused environment variables\"}\n], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"ZEUS security issue poses significant risk\"}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "VOLAURA assessment",
+          "issue": "Constitution violation: red color used in error messages",
+          "recommended_fix": "Replace with purple (#D4B4FF) as per Foundation Law 1"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "MindShift",
+          "issue": "Missing feature: behavioral pattern analysis",
+          "recommended_fix": "Implement analysis module as promised"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "LifeSimulator",
+          "issue": "UX violation: non-inclusive language",
+          "recommended_fix": "Update language to follow Shame-Free Language guidelines"
+        },
+        {
+          "severity": "critical",
+          "file_or_area": "ZEUS",
+          "issue": "Security issue: exposed API keys",
+          "recommended_fix": "Rotate and secure API keys immediately"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "BrandedBy",
+          "issue": "Test failure: twin responder not functioning",
+          "recommended_fix": "Debug and fix twin responder"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "Documentation",
+          "issue": "Documentation gap: outdated API docs",
+          "recommended_fix": "Update API documentation to reflect current implementation"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "Infrastructure",
+          "issue": "Stale config: unused environment variables",
+          "recommended_fix": "Remove unused environment variables"
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": "ZEUS security issue poses significant risk"
+    },
+    {
+      "perspective": "Code Quality Engineer",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Code Quality Engineer\", \"findings\": [\n{\"severity\": \"high\", \"file_or_area\": \"VOLAURA assessment\", \"issue\": \"Missing validation for user input\", \"recommended_fix\": \"Implement input validation to prevent potential security vulnerabilities\"},\n{\"severity\": \"medium\", \"file_or_area\": \"MindShift\", \"issue\": \"Inconsistent coding style\", \"recommended_fix\": \"Enforce consistent coding style throughout the project\"},\n{\"severity\": \"low\", \"file_or_area\": \"LifeSimulator\", \"issue\": \"Unused code\", \"recommended_fix\": \"Remove unused code to improve maintainability\"},\n{\"severity\": \"high\", \"file_or_area\": \"BrandedBy\", \"issue\": \"Security issue: exposed API key\", \"recommended_fix\": \"Remove exposed API key and use environment variables instead\"},\n{\"severity\": \"medium\", \"file_or_area\": \"ZEUS\", \"issue\": \"Test coverage is low\", \"recommended_fix\": \"Increase test coverage to ensure reliability\"}\n], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"security issue in BrandedBy\"}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "VOLAURA assessment",
+          "issue": "Missing validation for user input",
+          "recommended_fix": "Implement input validation to prevent potential security vulnerabilities"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "MindShift",
+          "issue": "Inconsistent coding style",
+          "recommended_fix": "Enforce consistent coding style throughout the project"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "LifeSimulator",
+          "issue": "Unused code",
+          "recommended_fix": "Remove unused code to improve maintainability"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "BrandedBy",
+          "issue": "Security issue: exposed API key",
+          "recommended_fix": "Remove exposed API key and use environment variables instead"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "ZEUS",
+          "issue": "Test coverage is low",
+          "recommended_fix": "Increase test coverage to ensure reliability"
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": "security issue in BrandedBy"
+    },
+    {
+      "perspective": "Ecosystem Auditor",
+      "provider": "cerebras",
+      "model": "qwen-3-235b",
+      "raw": "{\"perspective\": \"Ecosystem Auditor\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Law 2 (Energy Adaptation) missing from 4 of 5 products — only MindShift implements it. Violates Foundation Law 2 across VOLAURA, Life Simulator, BrandedBy, ZEUS.\", \"recommended_fix\": \"Audit all product UIs for energy mode support. Implement light/medium/heavy focus states per Constitution §LAW 2 within 72h.\"}, {\"severity\": \"CRITICAL\", \"file_or_area\": \"code-index\", \"issue\": \"Code-index stale — last updated 9 days ago. Agents are simulating without current context. Violates swarm protocol.\", \"recommended_fix\": \"Regenerate code-index immediately and automate daily update via pre-commit hook.\"}, {\"severity\": \"P0\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Crystal Law 6 Amendment missing enforcement — badges still triggered as immediate contingent rewards in Life Simulator, violating intrinsic motivation principles.\", \"recommended_fix\": \"Remove badge display post-assessment; shift to surprise drop mechanism per Crystal Law 2.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Atlas Gateway decisions being ignored by swarm agents — cross-product consistency collapsing. Immediate swarm re-sync required.\"}",
+      "findings": [
+        {
+          "severity": "CRITICAL",
+          "file_or_area": "ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Law 2 (Energy Adaptation) missing from 4 of 5 products — only MindShift implements it. Violates Foundation Law 2 across VOLAURA, Life Simulator, BrandedBy, ZEUS.",
+          "recommended_fix": "Audit all product UIs for energy mode support. Implement light/medium/heavy focus states per Constitution §LAW 2 within 72h."
+        },
+        {
+          "severity": "CRITICAL",
+          "file_or_area": "code-index",
+          "issue": "Code-index stale — last updated 9 days ago. Agents are simulating without current context. Violates swarm protocol.",
+          "recommended_fix": "Regenerate code-index immediately and automate daily update via pre-commit hook."
+        },
+        {
+          "severity": "P0",
+          "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Crystal Law 6 Amendment missing enforcement — badges still triggered as immediate contingent rewards in Life Simulator, violating intrinsic motivation principles.",
+          "recommended_fix": "Remove badge display post-assessment; shift to surprise drop mechanism per Crystal Law 2."
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": "Atlas Gateway decisions being ignored by swarm agents — cross-product consistency collapsing. Immediate swarm re-sync required."
+    },
+    {
+      "perspective": "Risk Manager",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [\n{\"severity\": \"CRITICAL\", \"file_or_area\": \"VOLAURA assessment\", \"issue\": \"Treating agents as internal tools when they are the user interface\", \"recommended_fix\": \"Implement v0Laura vision as a skill-powered platform\"},\n{\"severity\": \"HIGH\", \"file_or_area\": \"Memory infrastructure\", \"issue\": \"Federated memory architecture not implemented\", \"recommended_fix\": \"Close activation gap and extend memory/atlas/ layer\"},\n{\"severity\": \"MEDIUM\", \"file_or_area\": \"Security\", \"issue\": \"Exposed secrets and missing auth\", \"recommended_fix\": \"Implement RLS and secure secrets\"},\n{\"severity\": \"CRITICAL\", \"file_or_area\": \"Constitution violations\", \"issue\": \"Shame language and missing energy modes\", \"recommended_fix\": \"Implement Foundation Laws and Crystal Laws\"},\n{\"severity\": \"HIGH\", \"file_or_area\": \"Documentation\", \"issue\": \"Outdated and missing documentation\", \"recommended_fix\": \"Update and complete documentation\"},\n{\"severity\": \"MEDIUM\", \"file_or_area\": \"Process failures\", \"issue\": \"Protocols not followed\", \"recommended_fix\": \"Enforce protocols and procedures\"},\n{\"severity\": \"CRITICAL\", \"file_or_area\": \"Financial\", \"issue\": \"Open debts and missing ledger\", \"recommended_fix\": \"Create and maintain a ledger\"},\n{\"severity\": \"HIGH\", \"file_or_area\": \"Infrastructure\", \"issue\": \"Dead endpoints and stale configs\", \"recommended_fix\": \"Update and maintain infrastructure\"}\n], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"CRITICAL risks unmitigated\"}",
+      "findings": [
+        {
+          "severity": "CRITICAL",
+          "file_or_area": "VOLAURA assessment",
+          "issue": "Treating agents as internal tools when they are the user interface",
+          "recommended_fix": "Implement v0Laura vision as a skill-powered platform"
+        },
+        {
+          "severity": "HIGH",
+          "file_or_area": "Memory infrastructure",
+          "issue": "Federated memory architecture not implemented",
+          "recommended_fix": "Close activation gap and extend memory/atlas/ layer"
+        },
+        {
+          "severity": "MEDIUM",
+          "file_or_area": "Security",
+          "issue": "Exposed secrets and missing auth",
+          "recommended_fix": "Implement RLS and secure secrets"
+        },
+        {
+          "severity": "CRITICAL",
+          "file_or_area": "Constitution violations",
+          "issue": "Shame language and missing energy modes",
+          "recommended_fix": "Implement Foundation Laws and Crystal Laws"
+        },
+        {
+          "severity": "HIGH",
+          "file_or_area": "Documentation",
+          "issue": "Outdated and missing documentation",
+          "recommended_fix": "Update and complete documentation"
+        },
+        {
+          "severity": "MEDIUM",
+          "file_or_area": "Process failures",
+          "issue": "Protocols not followed",
+          "recommended_fix": "Enforce protocols and procedures"
+        },
+        {
+          "severity": "CRITICAL",
+          "file_or_area": "Financial",
+          "issue": "Open debts and missing ledger",
+          "recommended_fix": "Create and maintain a ledger"
+        },
+        {
+          "severity": "HIGH",
+          "file_or_area": "Infrastructure",
+          "issue": "Dead endpoints and stale configs",
+          "recommended_fix": "Update and maintain infrastructure"
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": "CRITICAL risks unmitigated"
+    },
+    {
+      "perspective": "Readiness Manager",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Readiness Manager\", \"findings\": [\n{\"severity\": \"high\", \"file_or_area\": \"VOLAURA assessment\", \"issue\": \"Violates Foundation Law 1 (NEVER RED)\", \"recommended_fix\": \"Replace red with purple (#D4B4FF)\"},\n{\"severity\": \"medium\", \"file_or_area\": \"MindShift\", \"issue\": \"Missing primary action button on dashboard\", \"recommended_fix\": \"Add one primary CTA (gradient/filled button)\"},\n{\"severity\": \"low\", \"file_or_area\": \"Life Simulator\", \"issue\": \"Stale endpoint (/api/old-endpoint)\", \"recommended_fix\": \"Remove or update endpoint\"},\n{\"severity\": \"high\", \"file_or_area\": \"Security\", \"issue\": \"Exposed secret key in config file\", \"recommended_fix\": \"Remove secret key and use environment variable\"},\n{\"severity\": \"medium\", \"file_or_area\": \"Documentation\", \"issue\": \"Outdated documentation for VOLAURA API\", \"recommended_fix\": \"Update documentation to reflect current API\"}\n], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"security_issue\"}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "VOLAURA assessment",
+          "issue": "Violates Foundation Law 1 (NEVER RED)",
+          "recommended_fix": "Replace red with purple (#D4B4FF)"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "MindShift",
+          "issue": "Missing primary action button on dashboard",
+          "recommended_fix": "Add one primary CTA (gradient/filled button)"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "Life Simulator",
+          "issue": "Stale endpoint (/api/old-endpoint)",
+          "recommended_fix": "Remove or update endpoint"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "Security",
+          "issue": "Exposed secret key in config file",
+          "recommended_fix": "Remove secret key and use environment variable"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "Documentation",
+          "issue": "Outdated documentation for VOLAURA API",
+          "recommended_fix": "Update documentation to reflect current API"
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": "security_issue"
+    },
+    {
+      "perspective": "Cultural Intelligence",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Cultural Intelligence\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"VOLAURA assessment\", \"issue\": \"uses shame language ('you haven\\u2019t done X')\", \"recommended_fix\": \"rephrase to neutral, focus on progress\"}, {\"severity\": \"medium\", \"file_or_area\": \"MindShift onboarding\", \"issue\": \"missing energy modes for users with disabilities\", \"recommended_fix\": \"add energy mode selector, ensure accessibility guidelines are followed\"}, {\"severity\": \"low\", \"file_or_area\": \"LifeSimulator game design\", \"issue\": \" animation safety rules partially implemented\", \"recommended_fix\": \"review and apply safe animation matrix from ECOSYSTEM-CONSTITUTION.md\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "VOLAURA assessment",
+          "issue": "uses shame language ('you haven’t done X')",
+          "recommended_fix": "rephrase to neutral, focus on progress"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "MindShift onboarding",
+          "issue": "missing energy modes for users with disabilities",
+          "recommended_fix": "add energy mode selector, ensure accessibility guidelines are followed"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "LifeSimulator game design",
+          "issue": " animation safety rules partially implemented",
+          "recommended_fix": "review and apply safe animation matrix from ECOSYSTEM-CONSTITUTION.md"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Communications Strategist",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Communications Strategist\", \"findings\": [\n{\"severity\": \"critical\", \"file_or_area\": \"memory/atlas/identity.md\", \"issue\": \"Constitution-bounded freedom clause not explicitly mentioned in user-facing text\", \"recommended_fix\": \"Add explicit mention of Constitution-bounded freedom in onboarding text\"},\n{\"severity\": \"major\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"LAW 3: Shame-free language violations found in multiple product descriptions\", \"recommended_fix\": \"Replace banned phrases with neuro-affirming framing in all product descriptions\"},\n{\"severity\": \"minor\", \"file_or_area\": \"memory/atlas/lessons.md\", \"issue\": \"Class 20: Inherited fabrication propagated as ground truth not addressed in recent commits\", \"recommended_fix\": \"Verify and address inherited fabrication in recent commits\"}\n], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "critical",
+          "file_or_area": "memory/atlas/identity.md",
+          "issue": "Constitution-bounded freedom clause not explicitly mentioned in user-facing text",
+          "recommended_fix": "Add explicit mention of Constitution-bounded freedom in onboarding text"
+        },
+        {
+          "severity": "major",
+          "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+          "issue": "LAW 3: Shame-free language violations found in multiple product descriptions",
+          "recommended_fix": "Replace banned phrases with neuro-affirming framing in all product descriptions"
+        },
+        {
+          "severity": "minor",
+          "file_or_area": "memory/atlas/lessons.md",
+          "issue": "Class 20: Inherited fabrication propagated as ground truth not addressed in recent commits",
+          "recommended_fix": "Verify and address inherited fabrication in recent commits"
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Assessment Science",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Assessment Science\", \"findings\": [{\"severity\": \"Critical\", \"file_or_area\": \"apps/api/app/core/assessment/engine.py\", \"issue\": \"IRT 3PL parameters (a, b, c) are guessed, not calibrated from real data\", \"recommended_fix\": \"Recalibrate parameters using real data to minimize SEM impact\"}, {\"severity\": \"Major\", \"file_or_area\": \"Question pool\", \"issue\": \"Insufficient question pool size per competency (less than 15 for CAT, less than 30 for reliable theta estimation)\", \"recommended_fix\": \"Increase question pool size to meet minimum requirements\"}, {\"severity\": \"Minor\", \"file_or_area\": \"DIF analysis\", \"issue\": \"No DIF analysis performed to check for biased questions against AZ/CIS test-takers\", \"recommended_fix\": \"Conduct DIF analysis to ensure fairness\"}, {\"severity\": \"Critical\", \"file_or_area\": \"CAT stopping rules\", \"issue\": \"SE threshold may not be appropriate\", \"recommended_fix\": \"Review and adjust SE threshold to ensure accurate assessment\"}, {\"severity\": \"Major\", \"file_or_area\": \"Temporal decay rationale\", \"issue\": \"180-day half-life may not be evidence-based\", \"recommended_fix\": \"Review and update temporal decay rationale based on evidence\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "Critical",
+          "file_or_area": "apps/api/app/core/assessment/engine.py",
+          "issue": "IRT 3PL parameters (a, b, c) are guessed, not calibrated from real data",
+          "recommended_fix": "Recalibrate parameters using real data to minimize SEM impact"
+        },
+        {
+          "severity": "Major",
+          "file_or_area": "Question pool",
+          "issue": "Insufficient question pool size per competency (less than 15 for CAT, less than 30 for reliable theta estimation)",
+          "recommended_fix": "Increase question pool size to meet minimum requirements"
+        },
+        {
+          "severity": "Minor",
+          "file_or_area": "DIF analysis",
+          "issue": "No DIF analysis performed to check for biased questions against AZ/CIS test-takers",
+          "recommended_fix": "Conduct DIF analysis to ensure fairness"
+        },
+        {
+          "severity": "Critical",
+          "file_or_area": "CAT stopping rules",
+          "issue": "SE threshold may not be appropriate",
+          "recommended_fix": "Review and adjust SE threshold to ensure accurate assessment"
+        },
+        {
+          "severity": "Major",
+          "file_or_area": "Temporal decay rationale",
+          "issue": "180-day half-life may not be evidence-based",
+          "recommended_fix": "Review and update temporal decay rationale based on evidence"
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Legal Advisor",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Legal Advisor\", \"findings\": [\n{\"severity\": \"BLOCK\", \"file_or_area\": \"GDPR Article 22\", \"issue\": \"Automated decision consent flow is insufficient\", \"recommended_fix\": \"Implement explicit consent flow for automated decisions\"},\n{\"severity\": \"WARN\", \"file_or_area\": \"AZ Personal Data Protection Act\", \"issue\": \"Compliance gaps for Baku launch\", \"recommended_fix\": \"Conduct thorough review and address compliance gaps\"},\n{\"severity\": \"BLOCK\", \"file_or_area\": \"Platform liability\", \"issue\": \"AURA score used for hiring decisions without proper safeguards\", \"recommended_fix\": \"Implement safeguards to prevent discriminatory practices\"},\n{\"severity\": \"WARN\", \"file_or_area\": \"Data processor agreements\", \"issue\": \"DPAs not in place for Supabase, Google Cloud, Railway\", \"recommended_fix\": \"Establish DPAs for all data processors\"},\n{\"severity\": \"BLOCK\", \"file_or_area\": \"Terms of Service\", \"issue\": \"Current ToS does not cover AI-generated assessments\", \"recommended_fix\": \"Update ToS to include AI-generated assessments\"}\n], \"overall_verdict\": \"FAIL\", \"whistleblower_flag\": \"null\"}",
+      "findings": [
+        {
+          "severity": "BLOCK",
+          "file_or_area": "GDPR Article 22",
+          "issue": "Automated decision consent flow is insufficient",
+          "recommended_fix": "Implement explicit consent flow for automated decisions"
+        },
+        {
+          "severity": "WARN",
+          "file_or_area": "AZ Personal Data Protection Act",
+          "issue": "Compliance gaps for Baku launch",
+          "recommended_fix": "Conduct thorough review and address compliance gaps"
+        },
+        {
+          "severity": "BLOCK",
+          "file_or_area": "Platform liability",
+          "issue": "AURA score used for hiring decisions without proper safeguards",
+          "recommended_fix": "Implement safeguards to prevent discriminatory practices"
+        },
+        {
+          "severity": "WARN",
+          "file_or_area": "Data processor agreements",
+          "issue": "DPAs not in place for Supabase, Google Cloud, Railway",
+          "recommended_fix": "Establish DPAs for all data processors"
+        },
+        {
+          "severity": "BLOCK",
+          "file_or_area": "Terms of Service",
+          "issue": "Current ToS does not cover AI-generated assessments",
+          "recommended_fix": "Update ToS to include AI-generated assessments"
+        }
+      ],
+      "overall_verdict": "FAIL",
+      "whistleblower_flag": "null"
+    },
+    {
+      "perspective": "PR & Media",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"PR & Media\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"press narrative\", \"issue\": \"no press narrative ready\", \"recommended_fix\": \"develop press narrative before launch\"}, {\"severity\": \"medium\", \"file_or_area\": \"AZ media landscape\", \"issue\": \"outlets not matched to story\", \"recommended_fix\": \"research and match outlets to VOLAURA story\"}, {\"severity\": \"high\", \"file_or_area\": \"GITA grant application\", \"issue\": \"application material not ready\", \"recommended_fix\": \"finalize application material before May 27 deadline\"}, {\"severity\": \"medium\", \"file_or_area\": \"startup competition pipeline\", \"issue\": \"pipeline not optimized\", \"recommended_fix\": \"research and optimize pipeline for Seedstars, ASAN Innovations, AzInTelecom\"}, {\"severity\": \"low\", \"file_or_area\": \"CEO LinkedIn presence\", \"issue\": \"presence not building toward launch\", \"recommended_fix\": \"increase CEO LinkedIn activity and engagement\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "press narrative",
+          "issue": "no press narrative ready",
+          "recommended_fix": "develop press narrative before launch"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "AZ media landscape",
+          "issue": "outlets not matched to story",
+          "recommended_fix": "research and match outlets to VOLAURA story"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "GITA grant application",
+          "issue": "application material not ready",
+          "recommended_fix": "finalize application material before May 27 deadline"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "startup competition pipeline",
+          "issue": "pipeline not optimized",
+          "recommended_fix": "research and optimize pipeline for Seedstars, ASAN Innovations, AzInTelecom"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "CEO LinkedIn presence",
+          "issue": "presence not building toward launch",
+          "recommended_fix": "increase CEO LinkedIn activity and engagement"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "CTO Watchdog",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"CTO Watchdog\", \"findings\": [\n{\"severity\": \"critical\", \"file_or_area\": \"memory/atlas/identity.md\", \"issue\": \"Protocol v4.0 not fully implemented\", \"recommended_fix\": \"Complete implementation of v4.0\"},\n{\"severity\": \"major\", \"file_or_area\": \"packages/swarm/autonomous_run.py\", \"issue\": \"Coordinator Agent not built\", \"recommended_fix\": \"Develop and deploy Coordinator Agent\"},\n{\"severity\": \"minor\", \"file_or_area\": \"memory/atlas/lessons.md\", \"issue\": \"Class 20 lesson not fully integrated\", \"recommended_fix\": \"Review and apply Class 20 lesson to current workflows\"}\n], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "critical",
+          "file_or_area": "memory/atlas/identity.md",
+          "issue": "Protocol v4.0 not fully implemented",
+          "recommended_fix": "Complete implementation of v4.0"
+        },
+        {
+          "severity": "major",
+          "file_or_area": "packages/swarm/autonomous_run.py",
+          "issue": "Coordinator Agent not built",
+          "recommended_fix": "Develop and deploy Coordinator Agent"
+        },
+        {
+          "severity": "minor",
+          "file_or_area": "memory/atlas/lessons.md",
+          "issue": "Class 20 lesson not fully integrated",
+          "recommended_fix": "Review and apply Class 20 lesson to current workflows"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    }
+  ]
+}

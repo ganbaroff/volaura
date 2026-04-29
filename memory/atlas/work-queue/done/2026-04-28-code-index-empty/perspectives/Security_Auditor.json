@@ -1,0 +1,17 @@
+{
+  "perspective": "Security Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Security\", \"findings\": [{\"severity\": \"critical\", \"file_or_area\": \"packages/swarm/archive/code_index.py\", \"issue\": \"Builder script moved to archive directory but still referenced by live pipeline. code-index.json regeneration fails silently because path resolution points to archived, non-executable location. Empty output violates integrity of dependency mapping.\", \"recommended_fix\": \"Move code_index.py from archive/ back to active package directory. Add pipeline step to verify code-index.json non-emptiness post-build. Add CI check that scans for *.py files in archive/ and blocks execution if referenced in active configs.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "critical",
+      "file_or_area": "packages/swarm/archive/code_index.py",
+      "issue": "Builder script moved to archive directory but still referenced by live pipeline. code-index.json regeneration fails silently because path resolution points to archived, non-executable location. Empty output violates integrity of dependency mapping.",
+      "recommended_fix": "Move code_index.py from archive/ back to active package directory. Add pipeline step to verify code-index.json non-emptiness post-build. Add CI check that scans for *.py files in archive/ and blocks execution if referenced in active configs."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Security"
+}

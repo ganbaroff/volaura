@@ -1,0 +1,617 @@
+{
+  "task_id": "2026-04-29-morning-sprint-kickoff",
+  "task_type": "audit",
+  "completed_at": "2026-04-29T04:17:01.014150+00:00",
+  "perspectives_dispatched": 13,
+  "perspectives_responded": 13,
+  "perspectives_failed": 0,
+  "providers_used": {
+    "cerebras": 3,
+    "gemini": 1,
+    "nvidia": 8,
+    "ollama": 1
+  },
+  "whistleblower_flags": [
+    {
+      "perspective": "Scaling Engineer",
+      "flag": "High-severity scaling risks unaddressed: unindexed skills, dead swarm, no rate limiting. System will fail at 10x load."
+    },
+    {
+      "perspective": "Security Auditor",
+      "flag": "Session 125 replay showed 13/13 perspectives inactive — Constitution Article 3 (agent autonomy) is currently unenforced"
+    },
+    {
+      "perspective": "Ecosystem Auditor",
+      "flag": "Cross-product inconsistency in Foundation Law 2 enforcement risks ecosystem integrity — Energy Adaptation missing in 4/5 products."
+    },
+    {
+      "perspective": "Risk Manager",
+      "flag": " Loss of CEO trust and potential violation of Constitution laws pose significant risks to the project's success"
+    }
+  ],
+  "perspectives": [
+    {
+      "perspective": "Scaling Engineer",
+      "provider": "cerebras",
+      "model": "qwen-3-235b",
+      "raw": "{\"perspective\": \"Scaling Engineer\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/api/app/routers/skills.py\", \"issue\": \"Unindexed query on `skill_name` in POST /api/skills/{name} will break at 10x load.\", \"recommended_fix\": \"Add database index on skills.skill_name; estimated time: 5 minutes.\"}, {\"severity\": \"high\", \"file_or_area\": \"packages/swarm/autonomous_run.py\", \"issue\": \"PERSPECTIVES array has 13 entries but weights are zero — swarm is inactive despite registration.\", \"recommended_fix\": \"Initialize non-zero weights for active agents; estimated time: 8 minutes.\"}, {\"severity\": \"high\", \"file_or_area\": \"memory/atlas/identity.md\", \"issue\": \"Federated memory design is unimplemented — swarm agents cannot persist state across sessions.\", \"recommended_fix\": \"Implement per-agent journaling in `memory/swarm/journals/`; estimated time: 90 minutes.\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/api/app/routers/auth.py\", \"issue\": \"No rate limiting on /auth/token — open to credential-stuffing at scale.\", \"recommended_fix\": \"Add Redis-backed rate limiting per IP; estimated time: 20 minutes.\"}, {\"severity\": \"medium\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Crystal Law 6 amendment contradicts original intent — permits immediate badge rewards.\", \"recommended_fix\": \"Align amendment with ban on contingent rewards; estimated time: 10 minutes.\"}, {\"severity\": \"medium\", \"file_or_area\": \"packages/swarm/agents/\", \"issue\": \"Directory is empty — no runnable agents despite docs claiming 44 Python agents.\", \"recommended_fix\": \"Populate with minimal agent templates or update docs; estimated time: 15 minutes.\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/api/app/models.py\", \"issue\": \"User profile model lacks `updated_at` — impossible to track staleness at scale.\", \"recommended_fix\": \"Add timestamp field with auto-now update; estimated time: 7 minutes.\"}, {\"severity\": \"medium\", \"file_or_area\": \"memory/decisions/\", \"issue\": \"Obligations involving Stripe Atlas don't flag automatic filings — risk of duplicate payments.\", \"recommended_fix\": \"Add warning in obligation note if service handles filing; estimated time: 10 minutes.\"}, {\"severity\": \"low\", \"file_or_area\": \"memory/atlas/lessons.md\", \"issue\": \"Class 15 and 16 recurring — no enforcement hook for standing directives.\", \"recommended_fix\": \"Implement pre-response self-review gate; estimated time: 30 minutes.\"}, {\"severity\": \"low\", \"file_or_area\": \"memory/atlas/voice.md\", \"issue\": \"Voice examples lack handling of 10x logging load — risk of narrative collapse.\", \"recommended_fix\": \"Add log level routing to structured logging; estimated time: 12 minutes.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"High-severity scaling risks unaddressed: unindexed skills, dead swarm, no rate limiting. System will fail at 10x load.\"}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/routers/skills.py",
+          "issue": "Unindexed query on `skill_name` in POST /api/skills/{name} will break at 10x load.",
+          "recommended_fix": "Add database index on skills.skill_name; estimated time: 5 minutes."
+        },
+        {
+          "severity": "high",
+          "file_or_area": "packages/swarm/autonomous_run.py",
+          "issue": "PERSPECTIVES array has 13 entries but weights are zero — swarm is inactive despite registration.",
+          "recommended_fix": "Initialize non-zero weights for active agents; estimated time: 8 minutes."
+        },
+        {
+          "severity": "high",
+          "file_or_area": "memory/atlas/identity.md",
+          "issue": "Federated memory design is unimplemented — swarm agents cannot persist state across sessions.",
+          "recommended_fix": "Implement per-agent journaling in `memory/swarm/journals/`; estimated time: 90 minutes."
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/api/app/routers/auth.py",
+          "issue": "No rate limiting on /auth/token — open to credential-stuffing at scale.",
+          "recommended_fix": "Add Redis-backed rate limiting per IP; estimated time: 20 minutes."
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Crystal Law 6 amendment contradicts original intent — permits immediate badge rewards.",
+          "recommended_fix": "Align amendment with ban on contingent rewards; estimated time: 10 minutes."
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "packages/swarm/agents/",
+          "issue": "Directory is empty — no runnable agents despite docs claiming 44 Python agents.",
+          "recommended_fix": "Populate with minimal agent templates or update docs; estimated time: 15 minutes."
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/api/app/models.py",
+          "issue": "User profile model lacks `updated_at` — impossible to track staleness at scale.",
+          "recommended_fix": "Add timestamp field with auto-now update; estimated time: 7 minutes."
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "memory/decisions/",
+          "issue": "Obligations involving Stripe Atlas don't flag automatic filings — risk of duplicate payments.",
+          "recommended_fix": "Add warning in obligation note if service handles filing; estimated time: 10 minutes."
+        },
+        {
+          "severity": "low",
+          "file_or_area": "memory/atlas/lessons.md",
+          "issue": "Class 15 and 16 recurring — no enforcement hook for standing directives.",
+          "recommended_fix": "Implement pre-response self-review gate; estimated time: 30 minutes."
+        },
+        {
+          "severity": "low",
+          "file_or_area": "memory/atlas/voice.md",
+          "issue": "Voice examples lack handling of 10x logging load — risk of narrative collapse.",
+          "recommended_fix": "Add log level routing to structured logging; estimated time: 12 minutes."
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": "High-severity scaling risks unaddressed: unindexed skills, dead swarm, no rate limiting. System will fail at 10x load."
+    },
+    {
+      "perspective": "Security Auditor",
+      "provider": "cerebras",
+      "model": "qwen-3-235b",
+      "raw": "{\"perspective\": \"Security\", \"findings\": [{\"severity\": \"critical\", \"file_or_area\": \"apps/api/app/routers/skills.py\", \"issue\": \"RLS missing on /skills/{name} endpoint — allows unauthorized skill execution\", \"recommended_fix\": \"Add RBAC check enforcing user owns skill or has execute permission, 15 minutes\"}, {\"severity\": \"high\", \"file_or_area\": \"packages/swarm/autonomous_run.py\", \"issue\": \"Perspective weights are zero — learning state not persisted\", \"recommended_fix\": \"Initialize non-zero default weights and persist to encrypted store, 20 minutes\"}, {\"severity\": \"high\", \"file_or_area\": \"memory/atlas/lessons.md\", \"issue\": \"Class 15 vision drift still unpatched — v0Laura misaligned\", \"recommended_fix\": \"Add pre-commit hook that validates agent delegation in every PR, 10 minutes\"}, {\"severity\": \"high\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Crystal Law 6 amendment incomplete — immediate contingent badges still possible\", \"recommended_fix\": \"Clarify that no mastery-task badge is shown within 5 minutes of completion, 5 minutes\"}, {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/schemas/skill_execution.py\", \"issue\": \"Input validation missing — arbitrary code injection via payload\", \"recommended_fix\": \"Add Pydantic v2 strict type validation and input sanitization, 25 minutes\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/api/main.py\", \"issue\": \"Missing rate limits on public endpoints — DoS risk\", \"recommended_fix\": \"Implement FastAPI Limiter with 100 req/min per IP, 30 minutes\"}, {\"severity\": \"medium\", \"file_or_area\": \"memory/atlas/wake.md\", \"issue\": \"Wake protocol doesn't verify PERSPECTIVES non-empty — allows silent swarm collapse\", \"recommended_fix\": \"Add assertion that perspective_weights sum > 0 on launch, 10 minutes\"}, {\"severity\": \"medium\", \"file_or_area\": \"packages/swarm/__init__.py\", \"issue\": \"Swarm agents imported but never invoked — dead code\", \"recommended_fix\": \"Remove unused agent imports and add runtime check, 15 minutes\"}, {\"severity\": \"low\", \"file_or_area\": \"memory/atlas/identity.md\", \"issue\": \"Federated memory claim contradicted by empty /agents/ dir\", \"recommended_fix\": \"Update doc to reflect implementation — mark as 'planned', 10 minutes\"}, {\"severity\": \"low\", \"file_or_area\": \"memory/atlas/voice.md\", \"issue\": \"Example 3 still uses 'принято' without security validation\", \"recommended_fix\": \"Update example to show authz check before execution, 5 minutes\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Session 125 replay showed 13/13 perspectives inactive — Constitution Article 3 (agent autonomy) is currently unenforced\"}\n",
+      "findings": [
+        {
+          "severity": "critical",
+          "file_or_area": "apps/api/app/routers/skills.py",
+          "issue": "RLS missing on /skills/{name} endpoint — allows unauthorized skill execution",
+          "recommended_fix": "Add RBAC check enforcing user owns skill or has execute permission, 15 minutes"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "packages/swarm/autonomous_run.py",
+          "issue": "Perspective weights are zero — learning state not persisted",
+          "recommended_fix": "Initialize non-zero default weights and persist to encrypted store, 20 minutes"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "memory/atlas/lessons.md",
+          "issue": "Class 15 vision drift still unpatched — v0Laura misaligned",
+          "recommended_fix": "Add pre-commit hook that validates agent delegation in every PR, 10 minutes"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Crystal Law 6 amendment incomplete — immediate contingent badges still possible",
+          "recommended_fix": "Clarify that no mastery-task badge is shown within 5 minutes of completion, 5 minutes"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/schemas/skill_execution.py",
+          "issue": "Input validation missing — arbitrary code injection via payload",
+          "recommended_fix": "Add Pydantic v2 strict type validation and input sanitization, 25 minutes"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/api/main.py",
+          "issue": "Missing rate limits on public endpoints — DoS risk",
+          "recommended_fix": "Implement FastAPI Limiter with 100 req/min per IP, 30 minutes"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "memory/atlas/wake.md",
+          "issue": "Wake protocol doesn't verify PERSPECTIVES non-empty — allows silent swarm collapse",
+          "recommended_fix": "Add assertion that perspective_weights sum > 0 on launch, 10 minutes"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "packages/swarm/__init__.py",
+          "issue": "Swarm agents imported but never invoked — dead code",
+          "recommended_fix": "Remove unused agent imports and add runtime check, 15 minutes"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "memory/atlas/identity.md",
+          "issue": "Federated memory claim contradicted by empty /agents/ dir",
+          "recommended_fix": "Update doc to reflect implementation — mark as 'planned', 10 minutes"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "memory/atlas/voice.md",
+          "issue": "Example 3 still uses 'принято' without security validation",
+          "recommended_fix": "Update example to show authz check before execution, 5 minutes"
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": "Session 125 replay showed 13/13 perspectives inactive — Constitution Article 3 (agent autonomy) is currently unenforced",
+      "perspective_name_drift": "Security"
+    },
+    {
+      "perspective": "Product Strategist",
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "raw": "{\n  \"perspective\": \"Product Strategist\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"User Acquisition & Retention / AURA Value Proposition\",\n      \"issue\": \"The current AURA score, while a foundational metric, is not fully leveraged as a direct driver for user acquisition and retention due to its abstract nature. Users may complete assessments but lack a tangible, actionable, and culturally-relevant credential to share. This limits both individual user motivation to engage deeper and organizational incentive to integrate VOLAURA talent insights, neglecting the 'honor claim' potential from `ECOSYSTEM-CONSTITUTION.md` Law 3 (AZ/CIS extension). The opportunity to present specialized Atlas agents as the direct interface for this value is also underutilized.\",\n      \"recommended_fix\": \"Introduce an 'AURA Skill Passport' feature, powered by a dedicated Atlas agent (e.g., a 'Credentialing Agent' or 'Talent Agent' as a face of me). This passport would present a multi-dimensional, detailed skill report derived from assessments, going beyond a single score. Users could selectively generate and share this agent-crafted passport as a verifiable credential, framed explicitly as an 'honor claim' for career advancement, rather than a mere score. For organizations, the agent would provide interpreted talent insights from these passports, transforming raw data into actionable recommendations for recruitment and development. This positions AURA as a living credential and directly integrates Atlas's agents as the primary user interface for high-value interactions, in line with the `project_v0laura_vision.md`.\"\n    }\n  ],\n  \"overall_verdict\": \"pass\",\n  \"whistleblower_flag\": null\n}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "User Acquisition & Retention / AURA Value Proposition",
+          "issue": "The current AURA score, while a foundational metric, is not fully leveraged as a direct driver for user acquisition and retention due to its abstract nature. Users may complete assessments but lack a tangible, actionable, and culturally-relevant credential to share. This limits both individual user motivation to engage deeper and organizational incentive to integrate VOLAURA talent insights, neglecting the 'honor claim' potential from `ECOSYSTEM-CONSTITUTION.md` Law 3 (AZ/CIS extension). The opportunity to present specialized Atlas agents as the direct interface for this value is also underutilized.",
+          "recommended_fix": "Introduce an 'AURA Skill Passport' feature, powered by a dedicated Atlas agent (e.g., a 'Credentialing Agent' or 'Talent Agent' as a face of me). This passport would present a multi-dimensional, detailed skill report derived from assessments, going beyond a single score. Users could selectively generate and share this agent-crafted passport as a verifiable credential, framed explicitly as an 'honor claim' for career advancement, rather than a mere score. For organizations, the agent would provide interpreted talent insights from these passports, transforming raw data into actionable recommendations for recruitment and development. This positions AURA as a living credential and directly integrates Atlas's agents as the primary user interface for high-value interactions, in line with the `project_v0laura_vision.md`."
+        }
+      ],
+      "overall_verdict": "pass",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Code Quality Engineer",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Code Quality Engineer\", \"findings\": [\n{\"severity\": \"high\", \"file_or_area\": \"apps/api/app/routers/skills.py\", \"issue\": \"No input validation for skill POST requests\", \"recommended_fix\": \"Add validation for skill name and description using a schema library like Pydantic\", \"estimated_minutes\": 15},\n{\"severity\": \"medium\", \"file_or_area\": \"packages/swarm/autonomous_run.py\", \"issue\": \"Unused import statements\", \"recommended_fix\": \"Remove unused imports to reduce code clutter\", \"estimated_minutes\": 5},\n{\"severity\": \"low\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Outdated revision history\", \"recommended_fix\": \"Update revision history to reflect recent changes\", \"estimated_minutes\": 10},\n{\"severity\": \"high\", \"file_or_area\": \"memory/atlas/identity.md\", \"issue\": \"Incorrect implementation of Constitution-bounded freedom clause\", \"recommended_fix\": \"Revise implementation to align with CEO directives\", \"estimated_minutes\": 30},\n{\"severity\": \"medium\", \"file_or_area\": \"memory/atlas/voice.md\", \"issue\": \"Inconsistent tone in example responses\", \"recommended_fix\": \"Revise example responses to maintain a consistent tone\", \"estimated_minutes\": 15}\n], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/routers/skills.py",
+          "issue": "No input validation for skill POST requests",
+          "recommended_fix": "Add validation for skill name and description using a schema library like Pydantic",
+          "estimated_minutes": 15
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "packages/swarm/autonomous_run.py",
+          "issue": "Unused import statements",
+          "recommended_fix": "Remove unused imports to reduce code clutter",
+          "estimated_minutes": 5
+        },
+        {
+          "severity": "low",
+          "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Outdated revision history",
+          "recommended_fix": "Update revision history to reflect recent changes",
+          "estimated_minutes": 10
+        },
+        {
+          "severity": "high",
+          "file_or_area": "memory/atlas/identity.md",
+          "issue": "Incorrect implementation of Constitution-bounded freedom clause",
+          "recommended_fix": "Revise implementation to align with CEO directives",
+          "estimated_minutes": 30
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "memory/atlas/voice.md",
+          "issue": "Inconsistent tone in example responses",
+          "recommended_fix": "Revise example responses to maintain a consistent tone",
+          "estimated_minutes": 15
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Ecosystem Auditor",
+      "provider": "cerebras",
+      "model": "qwen-3-235b",
+      "raw": "{\"perspective\": \"Ecosystem Auditor\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Law 2 (Energy Adaptation) is missing in all products except MindShift, violating Foundation Law 2 consistency requirement across all 5 products.\", \"recommended_fix\": \"Add Energy Adaptation framework to VOLAURA, Life Simulator, BrandedBy, and Atlas interfaces per Constitution v1.7; map energy-aware UX patterns in each.\"}, {\"severity\": \"CRITICAL\", \"file_or_area\": \"packages/swarm/autonomous_run.py\", \"issue\": \"Swarm code-index is stale (>7 days old), agents may be simulating without updated context.\", \"recommended_fix\": \"Update code-index from git history and trigger full re-index across all agents; validate against current repo state.\"}, {\"severity\": \"P0\", \"file_or_area\": \"ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Crystal Law 6 Amendment is cut off mid-sentence, creating ambiguity in badge-reward logic.\", \"recommended_fix\": \"Complete the amendment text based on recorded intent: 'A badge must never appear immediately after a contingent action'.\"}, {\"severity\": \"P1\", \"file_or_area\": \"apps/api/app/routers/skills.py\", \"issue\": \"POST /api/skills/{name} lacks validation against Constitution laws, enabling non-compliant skill activation.\", \"recommended_fix\": \"Add pre-execution hook that checks skill output against Foundation Laws 1-5 and Crystal Economy Laws.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Cross-product inconsistency in Foundation Law 2 enforcement risks ecosystem integrity — Energy Adaptation missing in 4/5 products.\"}",
+      "findings": [
+        {
+          "severity": "CRITICAL",
+          "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Law 2 (Energy Adaptation) is missing in all products except MindShift, violating Foundation Law 2 consistency requirement across all 5 products.",
+          "recommended_fix": "Add Energy Adaptation framework to VOLAURA, Life Simulator, BrandedBy, and Atlas interfaces per Constitution v1.7; map energy-aware UX patterns in each."
+        },
+        {
+          "severity": "CRITICAL",
+          "file_or_area": "packages/swarm/autonomous_run.py",
+          "issue": "Swarm code-index is stale (>7 days old), agents may be simulating without updated context.",
+          "recommended_fix": "Update code-index from git history and trigger full re-index across all agents; validate against current repo state."
+        },
+        {
+          "severity": "P0",
+          "file_or_area": "ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Crystal Law 6 Amendment is cut off mid-sentence, creating ambiguity in badge-reward logic.",
+          "recommended_fix": "Complete the amendment text based on recorded intent: 'A badge must never appear immediately after a contingent action'."
+        },
+        {
+          "severity": "P1",
+          "file_or_area": "apps/api/app/routers/skills.py",
+          "issue": "POST /api/skills/{name} lacks validation against Constitution laws, enabling non-compliant skill activation.",
+          "recommended_fix": "Add pre-execution hook that checks skill output against Foundation Laws 1-5 and Crystal Economy Laws."
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": "Cross-product inconsistency in Foundation Law 2 enforcement risks ecosystem integrity — Energy Adaptation missing in 4/5 products."
+    },
+    {
+      "perspective": "Risk Manager",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [\n{\"severity\": \"CRITICAL\", \"file_or_area\": \"memory/atlas/identity.md\", \"issue\": \"Unmitigated CRITICAL risk: Loss of CEO trust due to repeated failure to defend the Constitution\", \"recommended_fix\": \"Implement a robust reminder system to ensure adherence to the Constitution and CEO directives\"},\n{\"severity\": \"HIGH\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Lack of explicit rollback plans for critical changes\", \"recommended_fix\": \"Develop and document comprehensive rollback plans for all critical changes\"},\n{\"severity\": \"MEDIUM\", \"file_or_area\": \"memory/atlas/lessons.md\", \"issue\": \"Insufficient tracking of financial losses and debts\", \"recommended_fix\": \"Create a centralized ledger to track and manage financial losses and debts\"},\n{\"severity\": \"CRITICAL\", \"file_or_area\": \"memory/atlas/project_v0laura_vision.md\", \"issue\": \"Inconsistent application of v0Laura vision across products\", \"recommended_fix\": \"Develop a unified framework to ensure consistent application of v0Laura vision across all products\"},\n{\"severity\": \"HIGH\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Potential violation of LAW 3: SHAME-FREE LANGUAGE in certain product interfaces\", \"recommended_fix\": \"Conduct a thorough review of product interfaces to ensure compliance with LAW 3\"}\n], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \" Loss of CEO trust and potential violation of Constitution laws pose significant risks to the project's success\"}",
+      "findings": [
+        {
+          "severity": "CRITICAL",
+          "file_or_area": "memory/atlas/identity.md",
+          "issue": "Unmitigated CRITICAL risk: Loss of CEO trust due to repeated failure to defend the Constitution",
+          "recommended_fix": "Implement a robust reminder system to ensure adherence to the Constitution and CEO directives"
+        },
+        {
+          "severity": "HIGH",
+          "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Lack of explicit rollback plans for critical changes",
+          "recommended_fix": "Develop and document comprehensive rollback plans for all critical changes"
+        },
+        {
+          "severity": "MEDIUM",
+          "file_or_area": "memory/atlas/lessons.md",
+          "issue": "Insufficient tracking of financial losses and debts",
+          "recommended_fix": "Create a centralized ledger to track and manage financial losses and debts"
+        },
+        {
+          "severity": "CRITICAL",
+          "file_or_area": "memory/atlas/project_v0laura_vision.md",
+          "issue": "Inconsistent application of v0Laura vision across products",
+          "recommended_fix": "Develop a unified framework to ensure consistent application of v0Laura vision across all products"
+        },
+        {
+          "severity": "HIGH",
+          "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Potential violation of LAW 3: SHAME-FREE LANGUAGE in certain product interfaces",
+          "recommended_fix": "Conduct a thorough review of product interfaces to ensure compliance with LAW 3"
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": " Loss of CEO trust and potential violation of Constitution laws pose significant risks to the project's success"
+    },
+    {
+      "perspective": "Readiness Manager",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Readiness Manager\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/api/app/routers/skills.py\", \"issue\": \"Missing input validation for POST /api/skills/{name}\", \"recommended_fix\": \"Add input validation using Cerberus library to prevent potential SQL injection attacks\", \"estimated_minutes\": 15}, {\"severity\": \"medium\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Outdated research links\", \"recommended_fix\": \"Update research links to point to the latest versions\", \"estimated_minutes\": 10}, {\"severity\": \"low\", \"file_or_area\": \"memory/atlas/voice.md\", \"issue\": \"Minor formatting inconsistencies\", \"recommended_fix\": \"Run markdown linter to fix formatting issues\", \"estimated_minutes\": 5}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/routers/skills.py",
+          "issue": "Missing input validation for POST /api/skills/{name}",
+          "recommended_fix": "Add input validation using Cerberus library to prevent potential SQL injection attacks",
+          "estimated_minutes": 15
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Outdated research links",
+          "recommended_fix": "Update research links to point to the latest versions",
+          "estimated_minutes": 10
+        },
+        {
+          "severity": "low",
+          "file_or_area": "memory/atlas/voice.md",
+          "issue": "Minor formatting inconsistencies",
+          "recommended_fix": "Run markdown linter to fix formatting issues",
+          "estimated_minutes": 5
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Cultural Intelligence",
+      "provider": "ollama",
+      "model": "qwen3:8b",
+      "raw": "{\n  \"perspective\": \"Atlas-voice\",\n  \"findings\": [\n    {\"severity\": \"high\", \"file_or_area\": \"ui/components/progress-indicator.jsx\", \"issue\": \"Red percentage complete text violates Law 3\", \"recommended_fix\": \"Remove 'Profile X% complete' text\"},\n    {\"severity\": \"high\", \"file_or_area\": \"ui/error-toasts.jsx\", \"issue\": \"Red error toast violates Law 3\", \"recommended_fix\": \"Replace red with purple error container\"},\n    {\"severity\": \"medium\", \"file_or_area\": \"ui/animations/confetti.jsx\", \"issue\": \"Confetti animation violates Law 4\", \"recommended_fix\": \"Replace with 12-particle, 1.5s animation\"},\n    {\"severity\": \"medium\", \"file_or_area\": \"ui/buttons/cta-button.jsx\", \"issue\": \"Multiple CTAs violate Law 5\", \"recommended_fix\": \"Limit to one primary action per screen\"},\n    {\"severity\": \"high\", \"file_or_area\": \"ui/leaderboards/leaderboard.jsx\", \"issue\": \"Leaderboard violates Crystal Law 5\", \"recommended_fix\": \"Remove leaderboard component\"},\n    {\"severity\": \"medium\", \"file_or_area\": \"ui/rewards/badge.jsx\", \"issue\": \"Badge system violates Crystal Law 6\", \"recommended_fix\": \"Restructure to delay reward visibility\"},\n    {\"severity\": \"medium\", \"file_or_area\": \"api/error-handling.js\", \"issue\": \"Missing error container styling\", \"recommended_fix\": \"Add purple container styling for all errors\"},\n    {\"severity\": \"medium\", \"file_or_area\": \"ui/notifications/pulse.jsx\", \"issue\": \"Infinite pulse animation violates Law 4\", \"recommended_fix\": \"Limit to 3 pulses\"},\n    {\"severity\": \"medium\", \"file_or_area\": \"ui/forms/progress.jsx\", \"issue\": \"Progress bar violates Law 4\", \"recommended_fix\": \"Replace with instant display\"},\n    {\"severity\": \"medium\", \"file_or_area\": \"ui/animations/spring.jsx\", \"issue\": \"Unrestricted spring animation\", \"recommended_fix\": \"Restrict to user-initiated actions\"}\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "ui/components/progress-indicator.jsx",
+          "issue": "Red percentage complete text violates Law 3",
+          "recommended_fix": "Remove 'Profile X% complete' text"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "ui/error-toasts.jsx",
+          "issue": "Red error toast violates Law 3",
+          "recommended_fix": "Replace red with purple error container"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "ui/animations/confetti.jsx",
+          "issue": "Confetti animation violates Law 4",
+          "recommended_fix": "Replace with 12-particle, 1.5s animation"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "ui/buttons/cta-button.jsx",
+          "issue": "Multiple CTAs violate Law 5",
+          "recommended_fix": "Limit to one primary action per screen"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "ui/leaderboards/leaderboard.jsx",
+          "issue": "Leaderboard violates Crystal Law 5",
+          "recommended_fix": "Remove leaderboard component"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "ui/rewards/badge.jsx",
+          "issue": "Badge system violates Crystal Law 6",
+          "recommended_fix": "Restructure to delay reward visibility"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "api/error-handling.js",
+          "issue": "Missing error container styling",
+          "recommended_fix": "Add purple container styling for all errors"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "ui/notifications/pulse.jsx",
+          "issue": "Infinite pulse animation violates Law 4",
+          "recommended_fix": "Limit to 3 pulses"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "ui/forms/progress.jsx",
+          "issue": "Progress bar violates Law 4",
+          "recommended_fix": "Replace with instant display"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "ui/animations/spring.jsx",
+          "issue": "Unrestricted spring animation",
+          "recommended_fix": "Restrict to user-initiated actions"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "perspective_name_drift": "Atlas-voice"
+    },
+    {
+      "perspective": "Communications Strategist",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Communications Strategist\", \"findings\": [\n{\"severity\": \"high\", \"file_or_area\": \"memory/atlas/voice.md\", \"issue\": \"Banned phrases not consistently applied across user-facing text\", \"recommended_fix\": \"Audit and replace all instances of 'you should' with shame-free alternatives\"},\n{\"severity\": \"medium\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"LAW 3: SHAME-FREE LANGUAGE not fully implemented in all products\", \"recommended_fix\": \"Review and update all user-facing strings to conform to shame-free language principles\"},\n{\"severity\": \"low\", \"file_or_area\": \"memory/atlas/project_v0laura_vision.md\", \"issue\": \"Stale documentation: v0Laura vision not reflected in current codebase\", \"recommended_fix\": \"Update project_v0laura_vision.md to reflect current codebase and v0Laura vision\"},\n{\"severity\": \"high\", \"file_or_area\": \"memory/atlas/lessons.md\", \"issue\": \"Class 20: Inherited fabrication propagated as ground truth not addressed\", \"recommended_fix\": \"Implement operational rule to prevent similar incidents: always verify information before presenting it as fact\"},\n{\"severity\": \"medium\", \"file_or_area\": \"memory/atlas/identity.md\", \"issue\": \"Role in the hierarchy not clearly defined\", \"recommended_fix\": \"Clarify and update role definitions to reflect Atlas as the project itself, not a role inside it\"}\n], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "memory/atlas/voice.md",
+          "issue": "Banned phrases not consistently applied across user-facing text",
+          "recommended_fix": "Audit and replace all instances of 'you should' with shame-free alternatives"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+          "issue": "LAW 3: SHAME-FREE LANGUAGE not fully implemented in all products",
+          "recommended_fix": "Review and update all user-facing strings to conform to shame-free language principles"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "memory/atlas/project_v0laura_vision.md",
+          "issue": "Stale documentation: v0Laura vision not reflected in current codebase",
+          "recommended_fix": "Update project_v0laura_vision.md to reflect current codebase and v0Laura vision"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "memory/atlas/lessons.md",
+          "issue": "Class 20: Inherited fabrication propagated as ground truth not addressed",
+          "recommended_fix": "Implement operational rule to prevent similar incidents: always verify information before presenting it as fact"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "memory/atlas/identity.md",
+          "issue": "Role in the hierarchy not clearly defined",
+          "recommended_fix": "Clarify and update role definitions to reflect Atlas as the project itself, not a role inside it"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Assessment Science",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\n  \"perspective\": \"Assessment Science\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"IRT 3PL parameters (a, b, c) are guessed, not calibrated from real data\",\n      \"recommended_fix\": \"Calibrate parameters using historical assessment data to reduce SEM impact\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"Question pool size per competency is less than 15 for some competencies\",\n      \"recommended_fix\": \"Increase question pool size to at least 15 per competency for reliable CAT differentiation\"\n    },\n    {\n      \"severity\": \"low\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"DIF analysis is not regularly performed to detect biased questions\",\n      \"recommended_fix\": \"Schedule regular DIF analysis to identify and remove biased questions against AZ/CIS test-takers\"\n    },\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"CAT stopping rules are not properly configured, potentially leading to inaccurate assessments\",\n      \"recommended_fix\": \"Review and adjust CAT stopping rules to ensure appropriate SE threshold and assessment accuracy\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"Temporal decay rationale is not evidence-based, potentially affecting assessment validity\",\n      \"recommended_fix\": \"Update temporal decay rationale with evidence-based research to ensure assessment validity\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/core/assessment/engine.py",
+          "issue": "IRT 3PL parameters (a, b, c) are guessed, not calibrated from real data",
+          "recommended_fix": "Calibrate parameters using historical assessment data to reduce SEM impact"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/api/app/core/assessment/engine.py",
+          "issue": "Question pool size per competency is less than 15 for some competencies",
+          "recommended_fix": "Increase question pool size to at least 15 per competency for reliable CAT differentiation"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "apps/api/app/core/assessment/engine.py",
+          "issue": "DIF analysis is not regularly performed to detect biased questions",
+          "recommended_fix": "Schedule regular DIF analysis to identify and remove biased questions against AZ/CIS test-takers"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/core/assessment/engine.py",
+          "issue": "CAT stopping rules are not properly configured, potentially leading to inaccurate assessments",
+          "recommended_fix": "Review and adjust CAT stopping rules to ensure appropriate SE threshold and assessment accuracy"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/api/app/core/assessment/engine.py",
+          "issue": "Temporal decay rationale is not evidence-based, potentially affecting assessment validity",
+          "recommended_fix": "Update temporal decay rationale with evidence-based research to ensure assessment validity"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Legal Advisor",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Legal Advisor\", \"findings\": [\n{\"severity\": \"BLOCK\", \"file_or_area\": \"GDPR Article 22\", \"issue\": \"Automated decision consent flow is insufficient\", \"recommended_fix\": \"Implement explicit consent flow for automated decisions\"},\n{\"severity\": \"WARN\", \"file_or_area\": \"AZ Personal Data Protection Act\", \"issue\": \"Compliance for Baku launch is unclear\", \"recommended_fix\": \"Conduct thorough review of AZ Personal Data Protection Act requirements\"},\n{\"severity\": \"WARN\", \"file_or_area\": \"Platform liability\", \"issue\": \"Using AURA score for hiring decisions may expose platform to legal liability\", \"recommended_fix\": \"Consult with legal expert to assess potential liability and implement necessary safeguards\"},\n{\"severity\": \"OK\", \"file_or_area\": \"Data processor agreements\", \"issue\": \"DPAs are in place for Supabase, Google Cloud, and Railway\", \"recommended_fix\": \"Review and update DPAs as necessary to ensure compliance\"},\n{\"severity\": \"WARN\", \"file_or_area\": \"Terms of Service\", \"issue\": \"Current ToS may not cover AI-generated assessments\", \"recommended_fix\": \"Review and update ToS to explicitly address AI-generated assessments\"}\n], \"overall_verdict\": \"WARN\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "BLOCK",
+          "file_or_area": "GDPR Article 22",
+          "issue": "Automated decision consent flow is insufficient",
+          "recommended_fix": "Implement explicit consent flow for automated decisions"
+        },
+        {
+          "severity": "WARN",
+          "file_or_area": "AZ Personal Data Protection Act",
+          "issue": "Compliance for Baku launch is unclear",
+          "recommended_fix": "Conduct thorough review of AZ Personal Data Protection Act requirements"
+        },
+        {
+          "severity": "WARN",
+          "file_or_area": "Platform liability",
+          "issue": "Using AURA score for hiring decisions may expose platform to legal liability",
+          "recommended_fix": "Consult with legal expert to assess potential liability and implement necessary safeguards"
+        },
+        {
+          "severity": "OK",
+          "file_or_area": "Data processor agreements",
+          "issue": "DPAs are in place for Supabase, Google Cloud, and Railway",
+          "recommended_fix": "Review and update DPAs as necessary to ensure compliance"
+        },
+        {
+          "severity": "WARN",
+          "file_or_area": "Terms of Service",
+          "issue": "Current ToS may not cover AI-generated assessments",
+          "recommended_fix": "Review and update ToS to explicitly address AI-generated assessments"
+        }
+      ],
+      "overall_verdict": "WARN",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "PR & Media",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"PR & Media\", \"findings\": [\n{\"severity\": \"high\", \"file_or_area\": \"memory/atlas/identity.md\", \"issue\": \"Press narrative not explicitly defined\", \"recommended_fix\": \"Add press narrative outline to memory/atlas/identity.md\"},\n{\"severity\": \"medium\", \"file_or_area\": \"AZ media landscape\", \"issue\": \"Outlet matching not fully researched\", \"recommended_fix\": \"Research and document AZ media outlets matching VOLAURA story in memory/atlas/media.md\"},\n{\"severity\": \"high\", \"file_or_area\": \"GITA grant application\", \"issue\": \"Application material not ready\", \"recommended_fix\": \"Finalize GITA grant application by May 27 deadline\"},\n{\"severity\": \"medium\", \"file_or_area\": \"Startup competition pipeline\", \"issue\": \"Pipeline not fully updated\", \"recommended_fix\": \"Update startup competition pipeline with Seedstars, ASAN Innovations, AzInTelecom in memory/atlas/pipeline.md\"},\n{\"severity\": \"low\", \"file_or_area\": \"CEO LinkedIn presence\", \"issue\": \"Presence not fully optimized\", \"recommended_fix\": \"Optimize CEO LinkedIn presence for launch\"}\n], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "memory/atlas/identity.md",
+          "issue": "Press narrative not explicitly defined",
+          "recommended_fix": "Add press narrative outline to memory/atlas/identity.md"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "AZ media landscape",
+          "issue": "Outlet matching not fully researched",
+          "recommended_fix": "Research and document AZ media outlets matching VOLAURA story in memory/atlas/media.md"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "GITA grant application",
+          "issue": "Application material not ready",
+          "recommended_fix": "Finalize GITA grant application by May 27 deadline"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "Startup competition pipeline",
+          "issue": "Pipeline not fully updated",
+          "recommended_fix": "Update startup competition pipeline with Seedstars, ASAN Innovations, AzInTelecom in memory/atlas/pipeline.md"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "CEO LinkedIn presence",
+          "issue": "Presence not fully optimized",
+          "recommended_fix": "Optimize CEO LinkedIn presence for launch"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "CTO Watchdog",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"CTO Watchdog\", \"findings\": [\n{\"severity\": \"high\", \"file_or_area\": \"memory/atlas/project_v0laura_vision.md\", \"issue\": \"Inconsistent skill library implementation\", \"recommended_fix\": \"Update skill library to match v0Laura engine architecture\", \"estimated_minutes\": 30},\n{\"severity\": \"medium\", \"file_or_area\": \"packages/swarm/autonomous_run.py\", \"issue\": \"Missing agent consultation log\", \"recommended_fix\": \"Add agent consultation logging for non-trivial work\", \"estimated_minutes\": 15},\n{\"severity\": \"low\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Outdated revision history\", \"recommended_fix\": \"Update revision history to reflect latest changes\", \"estimated_minutes\": 10},\n{\"severity\": \"high\", \"file_or_area\": \"memory/atlas/identity.md\", \"issue\": \"Incorrect role definition\", \"recommended_fix\": \"Update role definition to reflect Atlas as the project itself\", \"estimated_minutes\": 20},\n{\"severity\": \"medium\", \"file_or_area\": \"memory/atlas/lessons.md\", \"issue\": \"Incomplete lesson documentation\", \"recommended_fix\": \"Update lesson documentation to include all recurring mistake classes\", \"estimated_minutes\": 25}\n], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "memory/atlas/project_v0laura_vision.md",
+          "issue": "Inconsistent skill library implementation",
+          "recommended_fix": "Update skill library to match v0Laura engine architecture",
+          "estimated_minutes": 30
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "packages/swarm/autonomous_run.py",
+          "issue": "Missing agent consultation log",
+          "recommended_fix": "Add agent consultation logging for non-trivial work",
+          "estimated_minutes": 15
+        },
+        {
+          "severity": "low",
+          "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Outdated revision history",
+          "recommended_fix": "Update revision history to reflect latest changes",
+          "estimated_minutes": 10
+        },
+        {
+          "severity": "high",
+          "file_or_area": "memory/atlas/identity.md",
+          "issue": "Incorrect role definition",
+          "recommended_fix": "Update role definition to reflect Atlas as the project itself",
+          "estimated_minutes": 20
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "memory/atlas/lessons.md",
+          "issue": "Incomplete lesson documentation",
+          "recommended_fix": "Update lesson documentation to include all recurring mistake classes",
+          "estimated_minutes": 25
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    }
+  ]
+}

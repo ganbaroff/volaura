@@ -408,14 +408,90 @@ async def _gemini_agent_loop(perspective_name: str, prompt: str) -> dict[str, An
         return None
 
 
+async def _call_sub_agent(model_label: str, base_url: str, api_key: str, model: str,
+                          sub_prompt: str, timeout_s: float = 30.0) -> str:
+    """Call a single free-tier sub-agent. Returns raw text or empty string on failure."""
+    try:
+        from openai import AsyncOpenAI
+        client = AsyncOpenAI(api_key=api_key, base_url=base_url)
+        resp = await asyncio.wait_for(
+            client.chat.completions.create(
+                model=model,
+                messages=[{"role": "user", "content": sub_prompt}],
+                temperature=1.0,
+                max_tokens=500,
+            ),
+            timeout=timeout_s,
+        )
+        return resp.choices[0].message.content or ""
+    except Exception:
+        return ""
+
+
+async def _fan_out_sub_agents(perspective_name: str, task_summary: str) -> str:
+    """Spawn 2-3 sub-agents on free models for additional angles.
+
+    CEO: "даже слабые модели могут дать хотя бы 1 интересную мысль"
+    """
+    sub_prompt = (
+        f"You are a sub-agent helping {perspective_name} analyze VOLAURA project.\n"
+        f"Task: {task_summary[:500]}\n\n"
+        f"Give ONE specific, concrete finding. Not generic advice.\n"
+        f"If you find nothing — say 'no finding'. Max 100 words."
+    )
+    sub_calls = []
+    cerebras_key = os.getenv("CEREBRAS_API_KEY", "")
+    nvidia_key = os.getenv("NVIDIA_API_KEY", "")
+    groq_key = os.getenv("GROQ_API_KEY", "")
+
+    if cerebras_key:
+        sub_calls.append(_call_sub_agent(
+            "cerebras-sub", "https://api.cerebras.ai/v1", cerebras_key,
+            "qwen-3-235b-a22b-instruct-2507", sub_prompt))
+    if nvidia_key:
+        sub_calls.append(_call_sub_agent(
+            "nvidia-sub", "https://integrate.api.nvidia.com/v1", nvidia_key,
+            "meta/llama-3.3-70b-instruct", sub_prompt))
+    if groq_key:
+        sub_calls.append(_call_sub_agent(
+            "groq-sub", "https://api.groq.com/openai/v1", groq_key,
+            "llama-3.3-70b-versatile", sub_prompt, timeout_s=15.0))
+
+    if not sub_calls:
+        return ""
+
+    results = await asyncio.gather(*sub_calls, return_exceptions=True)
+    sub_findings = []
+    for i, r in enumerate(results):
+        if isinstance(r, str) and r.strip() and "no finding" not in r.lower():
+            sub_findings.append(f"Sub-agent {i+1}: {r.strip()[:200]}")
+
+    if not sub_findings:
+        return ""
+    return "\n\nSUB-AGENT FINDINGS (additional angles from free models):\n" + "\n".join(sub_findings)
+
+
 async def call_provider_chain(perspective: dict, prompt: str) -> dict[str, Any]:
-    """Try providers in Constitution Article 0 order. First successful response wins."""
+    """Try providers in Constitution Article 0 order. First successful response wins.
+
+    For audit/explore tasks: Vertex AI agent loop + sub-agent fan-out.
+    """
     name = perspective["name"]
+    is_deep_task = name in HEAVY_PERSPECTIVES or "explore" in prompt[:200].lower() or "audit" in prompt[:200].lower()
+
+    # Fan-out sub-agents for deep tasks (parallel with main call)
+    sub_findings = ""
+    if is_deep_task:
+        task_summary = prompt[prompt.find("TASK TITLE:"):prompt.find("TASK TITLE:") + 300] if "TASK TITLE:" in prompt else prompt[:300]
+        sub_findings = await _fan_out_sub_agents(name, task_summary)
 
     # 0. Gemini agent loop (with tools) — for audit/explore tasks, agents READ code
-    if name in HEAVY_PERSPECTIVES or "explore" in prompt[:200].lower() or "audit" in prompt[:200].lower():
-        result = await _gemini_agent_loop(name, prompt)
+    if is_deep_task:
+        enriched_prompt = prompt + sub_findings if sub_findings else prompt
+        result = await _gemini_agent_loop(name, enriched_prompt)
         if result and result.get("raw"):
+            if sub_findings:
+                result["sub_agents_used"] = True
             return result
 
     # 1. Cerebras (primary heavy)

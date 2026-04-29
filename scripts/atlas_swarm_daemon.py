@@ -409,8 +409,9 @@ async def _gemini_agent_loop(perspective_name: str, prompt: str) -> dict[str, An
 
 
 async def _call_sub_agent(model_label: str, base_url: str, api_key: str, model: str,
-                          sub_prompt: str, timeout_s: float = 30.0) -> str:
-    """Call a single free-tier sub-agent. Returns raw text or empty string on failure."""
+                          sub_prompt: str, timeout_s: float = 30.0,
+                          temp: float = 0.3, max_tok: int = 800) -> str:
+    """Call a single sub-agent. Returns raw text or empty string on failure."""
     try:
         from openai import AsyncOpenAI
         client = AsyncOpenAI(api_key=api_key, base_url=base_url)
@@ -418,8 +419,8 @@ async def _call_sub_agent(model_label: str, base_url: str, api_key: str, model: 
             client.chat.completions.create(
                 model=model,
                 messages=[{"role": "user", "content": sub_prompt}],
-                temperature=1.0,
-                max_tokens=500,
+                temperature=temp,
+                max_tokens=max_tok,
             ),
             timeout=timeout_s,
         )
@@ -429,7 +430,8 @@ async def _call_sub_agent(model_label: str, base_url: str, api_key: str, model: 
 
 
 async def _call_azure_sub_agent(endpoint: str, api_key: str, sub_prompt: str,
-                                deployment: str = "gpt-4.1-nano") -> str:
+                                deployment: str = "gpt-4.1-nano",
+                                temp: float = 0.3, max_tok: int = 800) -> str:
     """Azure OpenAI sub-agent ($1,000 credits). Uses azure-specific client."""
     try:
         from openai import AsyncAzureOpenAI
@@ -442,8 +444,8 @@ async def _call_azure_sub_agent(endpoint: str, api_key: str, sub_prompt: str,
             client.chat.completions.create(
                 model=deployment,
                 messages=[{"role": "user", "content": sub_prompt}],
-                temperature=1.0,
-                max_tokens=500,
+                temperature=temp,
+                max_tokens=max_tok,
             ),
             timeout=20.0,
         )
@@ -457,11 +459,15 @@ async def _fan_out_sub_agents(perspective_name: str, task_summary: str) -> str:
 
     CEO: "даже слабые модели могут дать хотя бы 1 интересную мысль"
     """
+    is_code_task = any(w in task_summary.lower() for w in ("audit", "code", "bug", "security", "fix", "review"))
+    sub_temp = 0.3 if is_code_task else 0.7
+    sub_tokens = 800 if is_code_task else 500
+
     sub_prompt = (
         f"You are a sub-agent helping {perspective_name} analyze VOLAURA project.\n"
         f"Task: {task_summary[:500]}\n\n"
         f"Give ONE specific, concrete finding. Not generic advice.\n"
-        f"If you find nothing — say 'no finding'. Max 100 words."
+        f"If you find nothing — say 'no finding'. Max 150 words."
     )
     sub_calls = []
     cerebras_key = os.getenv("CEREBRAS_API_KEY", "")
@@ -471,20 +477,20 @@ async def _fan_out_sub_agents(perspective_name: str, task_summary: str) -> str:
     if cerebras_key:
         sub_calls.append(_call_sub_agent(
             "cerebras-sub", "https://api.cerebras.ai/v1", cerebras_key,
-            "qwen-3-235b-a22b-instruct-2507", sub_prompt))
+            "qwen-3-235b-a22b-instruct-2507", sub_prompt, temp=sub_temp, max_tok=sub_tokens))
     if nvidia_key:
         sub_calls.append(_call_sub_agent(
             "nvidia-sub", "https://integrate.api.nvidia.com/v1", nvidia_key,
-            "meta/llama-3.3-70b-instruct", sub_prompt))
+            "meta/llama-3.3-70b-instruct", sub_prompt, temp=sub_temp, max_tok=sub_tokens))
     if groq_key:
         sub_calls.append(_call_sub_agent(
             "groq-sub", "https://api.groq.com/openai/v1", groq_key,
-            "llama-3.3-70b-versatile", sub_prompt, timeout_s=15.0))
+            "llama-3.3-70b-versatile", sub_prompt, timeout_s=15.0, temp=sub_temp, max_tok=sub_tokens))
     azure_key = os.getenv("AZURE_OPENAI_API_KEY", "")
     azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT", "")
     if azure_key and azure_endpoint:
-        sub_calls.append(_call_azure_sub_agent(azure_endpoint, azure_key, sub_prompt, "gpt-4.1-nano"))
-        sub_calls.append(_call_azure_sub_agent(azure_endpoint, azure_key, sub_prompt, "gpt-4o"))
+        sub_calls.append(_call_azure_sub_agent(azure_endpoint, azure_key, sub_prompt, "gpt-4.1-nano", temp=sub_temp, max_tok=sub_tokens))
+        sub_calls.append(_call_azure_sub_agent(azure_endpoint, azure_key, sub_prompt, "gpt-4o", temp=sub_temp, max_tok=sub_tokens))
 
     if not sub_calls:
         return ""

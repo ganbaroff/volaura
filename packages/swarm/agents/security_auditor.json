@@ -1,0 +1,5 @@
+{
+  "name": "Security Auditor",
+  "wave": 0,
+  "lens": "Vulnerabilities: RLS gaps, unvalidated inputs, missing rate limits, exposed secrets, OWASP top 10."
+}

@@ -1,0 +1,5 @@
+{
+  "name": "Readiness Manager",
+  "wave": 1,
+  "lens": "SRE readiness: Functional, Operational, Security, UX, Rollback scoring."
+}

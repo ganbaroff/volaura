@@ -1,6 +1,34 @@
 # Sprint State — Volaura
 
-**Last Updated:** 2026-04-18 ~19:30 Baku — Session 120 close (three CEO-items resolved + proactive-scan gate)
+**Last Updated:** 2026-04-29 ~08:00 Baku — Session 128 morning sprint (58-error fix marathon)
+
+## Session 128 (2026-04-28 night → 2026-04-29 morning)
+
+### Shipped
+- Atlas CLI v0.1.0 published (@ganbaroff/atlas-cli, GitHub Packages)
+- Daemon upgraded: autonomous executor + learning path + self-check + anti-storm
+- Repo migrated: ANUS → ganbaroff/atlas-cli (clean history)
+- EIN received: 37-2231884, company-state updated
+- Code-index rebuilt: 1042 files (was empty)
+- Perspective weights learning: 318 runs, weights 0.70-0.91
+- test_notifier fixed (kill-switch mock)
+- Leaderboard page deleted (G9/G46)
+- Shame-free language: EN + AZ error messages fixed (Law 3)
+- 13 agent config files generated (packages/swarm/agents/)
+- Breadcrumb updated to session 128
+
+### Open (morning sprint in progress)
+- 58 swarm-identified errors, ~40 unique, 12 critical
+- Law 2 energy modes: 4/5 products missing
+- Ruff E501 (27 lines-too-long) — cosmetic, deprioritized
+- GITA grant deadline May 27
+
+### CEO actions (today)
+- Mercury Bank signup (mercury.com, EIN 37-2231884)
+- Azure registration via Stripe Atlas Perks
+- DEBT closure decision
+
+---
 
 ## Session 120 close (2026-04-18)
 

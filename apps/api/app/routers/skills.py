@@ -148,8 +148,15 @@ class SkillResponse(BaseModel):
 
 
 def _load_skill(skill_name: str) -> str:
-    """Load skill markdown content."""
-    skill_path = SKILLS_DIR / f"{skill_name}.md"
+    """Load skill markdown content. Path-traversal safe."""
+    if not re.fullmatch(r"[a-z0-9][a-z0-9_-]{0,63}", skill_name):
+        raise HTTPException(
+            status_code=400,
+            detail={"code": "INVALID_SKILL_NAME", "message": "Skill name contains invalid characters"},
+        )
+    skill_path = (SKILLS_DIR / f"{skill_name}.md").resolve()
+    if not str(skill_path).startswith(str(SKILLS_DIR.resolve())):
+        raise HTTPException(status_code=400, detail={"code": "INVALID_SKILL_NAME", "message": "Invalid skill path"})
     if not skill_path.exists():
         raise HTTPException(
             status_code=404,

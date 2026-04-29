@@ -1,7 +1,15 @@
 <!-- RECENTLY_SHIPPED_START -->
-## RECENTLY SHIPPED (last push — 2026-04-26, Session 125)
+## RECENTLY SHIPPED (Session 129 — 2026-04-30)
 **Read this FIRST — prevents proposing already-shipped work.**
-Sprint S5 (tg-mini F-01..F-06) closed by Codex + Code-Atlas. CI green on Sprint S5. Backend ruff debt (4 files) is Terminal-Atlas Sprint S1 CA-F02 — do NOT re-fix without that slot.
+
+Session 129: 17-agent team (was 11). Chief Strategist, Sales Director, UX Designer,
+DevOps Engineer, Growth Hacker, QA Engineer added. Per-perspective temperature wired
+(was hardcoded 1.0). Law 3 "remaining" fix. lint_shame_free.py + audit_dif_bias.py.
+Blockers #7 (DIF), #13, #18 verified done.
+
+Session 128: 35+ commits. Daemon 1263→1300+ LOC. Vertex AI agent loop + Azure sub-agents.
+PostHog $50K tracking. Telegram reports. Per-perspective memory. Smart temperature.
+All P0 blockers closed (code-level). $52K cloud credits connected.
 <!-- RECENTLY_SHIPPED_END -->
 
 # Swarm Shared Context — UPDATED 2026-04-26 (Session 125)
@@ -129,14 +137,20 @@ Recent coverage wins (cron ticks, all merged PRs):
 
 ---
 
-## Swarm Autonomy State (Sessions 124-125)
+## Swarm Autonomy State (Session 129 — 2026-04-30)
 
-- Daemon PID 36220 running, work-queue at `memory/atlas/work-queue/`
-- 13 perspectives registered in `autonomous_run.PERSPECTIVES`
-- 3-instance audit (2026-04-26): Browser-Atlas / Code-Atlas / Codex each independently audited their operating shape — findings in `memory/atlas/work-queue/done/2026-04-26-courier-loop-design/`
-- CEO-facing operational instructions gate active: concrete-instructions rule enforced (paths, commands, ordinals)
-- CEO files gate active: all CEO-addressed material under `for-ceo/` with index at `for-ceo/index.html`
-- Telegram loop: CEO text → classifier → Aider (code_fix) OR atlas_content_run (content) OR coordinator (analysis). Layer 5 inbox sync every 10 min
+- Daemon running, work-queue at `memory/atlas/work-queue/`
+- **17 perspectives** registered in `autonomous_run.PERSPECTIVES` (was 13, then 11, now 17)
+- Each perspective has a DEDICATED LLM in `AGENT_LLM_MAP` (daemon.py)
+- Per-perspective temperature from `packages/swarm/agents/<name>.json`
+- Smart temp: code/audit capped at 0.3 regardless of config
+- Chief Strategist = BOSS — holds all agents accountable, tracks patterns, bans FP agents
+- 84 completed tasks, 0 failed. 880+ perspective runs. Weights learning via EMA.
+- PostHog LLM Analytics tracking every call ($50K credits)
+- Telegram reports to CEO on task completion
+- Self-check every 10min: code-index staleness, blockers scan, proactive explore
+- CEO-facing operational instructions gate active
+- Telegram loop: CEO text → classifier → Aider/content/coordinator
 
 ---
 
@@ -146,7 +160,7 @@ Recent coverage wins (cron ticks, all merged PRs):
 - `packages/swarm/squad_leaders.py` — 5 squads with routing
 - `packages/swarm/shared_memory.py` — SQLite cross-agent state
 - `packages/swarm/telegram_ambassador.py` — Telegram bot
-- `packages/swarm/autonomous_run.py` — 13 perspectives, full debate cycle
+- `packages/swarm/autonomous_run.py` — 17 perspectives, full debate cycle
 - `apps/api/app/services/email.py` — `send_aura_ready_email()` 100% tested
 - `scripts/swarm_agent.py` — multi-provider LLM wrapper
 - `scripts/dsp_debate.py` — 3-model debate

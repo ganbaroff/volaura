@@ -168,7 +168,13 @@ PERSPECTIVES = [
     },
     {
         "name": "Risk Manager",
-        "lens": "ISO 31000:2018 + COSO ERM. Score every open item by Likelihood×Impact (1-5 each). CRITICAL=20-25, HIGH=12-19, MEDIUM=6-11. Flag: unmitigated CRITICAL risks, missing rollback plans, single points of failure, launch blockers. Output a mini Risk Register entry for each finding.",
+        "lens": (
+            "ISO 31000:2018 + COSO ERM risk scoring (Likelihood*Impact 1-5). "
+            "CRITICAL=20-25, HIGH=12-19, MEDIUM=6-11. Flag: unmitigated risks, missing rollback, "
+            "single points of failure, launch blockers. "
+            "Also: PR readiness (AZ media landscape, GITA grant May 27, startup competitions, "
+            "founder visibility, press narrative). Output: risk register + PR score 1-10."
+        ),
         "wave": 1,
         "reads_from": ["Security Auditor", "Scaling Engineer"],
     },
@@ -181,31 +187,18 @@ PERSPECTIVES = [
     {
         "name": "Cultural Intelligence",
         "lens": (
-            "Detect invisible exclusion in AZ/CIS context. Audit: professional identity framing "
-            "(scores vs relationships), naming fields (patronymic handling), photo requirements "
-            "(conservative norms), competitive language ('top talent' vs collaborative framing), "
-            "gender assumptions in assessments. Run the Invisible Exclusion checklist: (1) Does any "
-            "feature assume Western career ladder? (2) Does copy use shame ('you haven't done X')? "
-            "(3) Are trust signals relationship-based or metric-based? (4) Does the platform respect "
-            "collective achievement culture? (5) Are there hidden gender/age biases in question wording?"
+            "Detect invisible exclusion in AZ/CIS context + audit ALL user-facing text. "
+            "Cultural: professional identity framing (scores vs relationships), patronymic handling, "
+            "conservative norms, competitive language ('top talent' vs collaborative). "
+            "Communications: shame-free language (Law 3), banned phrases ('volunteer', '% complete'), "
+            "narrative arc coherence across onboarding->assessment->results->sharing. "
+            "Personas: Leyla (22yo), Nigar (HR), Kamal (34yo senior), Rauf (28yo ambitious). "
+            "For findings: exact file, exact string, exact replacement."
         ),
         "wave": 1,
         "reads_from": ["Product Strategist"],
     },
-    {
-        "name": "Communications Strategist",
-        "lens": (
-            "Strategic gatekeeper for ALL user-facing text. Audit current copy against 7 Tone-of-Voice "
-            "principles (Tinkoff/Aviasales benchmark, not corporate). Check: shame-free language "
-            "(Constitution Law 3), banned phrases ('volunteer', profile % complete, 'you should'), "
-            "narrative arc coherence across onboarding→assessment→results→sharing flow. "
-            "For each finding: specify exact file, exact string, exact replacement. "
-            "Target personas: Leyla (22yo professional), Nigar (HR manager), Kamal (34yo senior), "
-            "Rauf (28yo ambitious). If copy doesn't speak to at least 2 personas — flag it."
-        ),
-        "wave": 1,
-        "reads_from": ["Product Strategist", "Cultural Intelligence"],
-    },
+    # Communications Strategist merged into Cultural Intelligence (CEO: 11 LLMs = 11 agents)
     {
         "name": "Assessment Science",
         "lens": (
@@ -235,19 +228,7 @@ PERSPECTIVES = [
         "wave": 2,
         "reads_from": ["Security Auditor", "Assessment Science"],
     },
-    {
-        "name": "PR & Media",
-        "lens": (
-            "Pre-launch awareness builder. Audit: (1) Do we have a press narrative ready? "
-            "(2) AZ media landscape — ICTnews.az, startup.az, report.az, 1news.az — which outlets "
-            "match our story? (3) GITA grant deadline May 27 — is application material ready? "
-            "(4) Startup competition pipeline — Seedstars, ASAN Innovations, AzInTelecom. "
-            "(5) Founder visibility — is CEO's LinkedIn presence building toward launch? "
-            "Output: PR readiness score 1-10 + next 3 concrete actions."
-        ),
-        "wave": 2,
-        "reads_from": ["Communications Strategist", "Cultural Intelligence"],
-    },
+    # PR & Media merged into Risk Manager observer lens (CEO: 11 LLMs = 11 agents)
     {
         "name": "CTO Watchdog",
         "lens": "Is the CTO (Claude) following process? Check: are plans going through agents? Are memory files updated? Is protocol v4.0 being followed? Flag any process violations. You can escalate directly to CEO.",

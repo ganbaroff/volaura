@@ -6,5 +6,8 @@
   "max_tokens": 2000,
   "preferred_model": "vertex-ai",
   "sub_agents": 1,
-  "self_configured": true
+  "self_configured": true,
+  "assigned_provider": "nvidia",
+  "assigned_model": "llama-3.3-70b",
+  "agent_role": "Pragmatist"
 }

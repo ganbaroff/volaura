@@ -6,5 +6,8 @@
   "max_tokens": 2000,
   "preferred_model": "vertex-ai",
   "sub_agents": 1,
-  "self_configured": true
+  "self_configured": true,
+  "assigned_provider": "ollama",
+  "assigned_model": "gemma4",
+  "agent_role": "Observer"
 }

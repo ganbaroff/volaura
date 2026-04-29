@@ -201,7 +201,7 @@
     "takingBreak": "Progress saved. You can return any time.",
     "competencyComplete": "{{name}} complete ✓",
     "competencyOfTotal": "Competency {{current}} of {{total}}",
-    "competencyProgressTransition": "{{current}} of {{total}} complete — {{remaining}} remaining",
+    "competencyProgressTransition": "{{current}} of {{total}} complete",
     "yourOrder": "Your assessment order",
     "sequentialNote": "You'll complete one competency at a time. Progress is saved between each.",
     "startFirst": "Start with {{name}}",

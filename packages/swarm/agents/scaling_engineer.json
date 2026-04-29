@@ -6,5 +6,8 @@
   "max_tokens": 4000,
   "preferred_model": "vertex-ai",
   "sub_agents": 2,
-  "self_configured": true
+  "self_configured": true,
+  "assigned_provider": "vertex-ai",
+  "assigned_model": "gemini-2.5-flash",
+  "agent_role": "Architect"
 }

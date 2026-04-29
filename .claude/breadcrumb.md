@@ -1,8 +1,41 @@
-# Atlas Breadcrumb — Session 128 close (pre-compaction)
+# Atlas Breadcrumb — Session 129
 
-**Last update:** 2026-04-30 ~01:00 Baku
-**Session:** 128 — marathon session (28 Apr evening → 30 Apr morning)
-**Daemon:** running, 1263 LOC, Vertex AI + Azure + PostHog
+**Last update:** 2026-04-30
+**Session:** 129 — 11-agent architecture + cleanup
+**Daemon:** 11 agents, 11 LLMs, per-perspective config wired, smart temperature
+
+## Session 129 — what shipped
+
+### 11-agent architecture (CEO directive)
+- `scripts/atlas_swarm_daemon.py`: AGENT_LLM_MAP mapping each perspective to dedicated LLM
+- Gemini 2.5 Flash (Architect), gpt-4o (Strategist), gpt-4.1-nano (Scout), gpt-4.1-mini (Reviewer), o4-mini (Reasoner), qwen-3-235b (Analyst), nemotron-ultra-253b (Validator), llama-3.3-70b NVIDIA (Pragmatist), llama-3.3-70b Groq (Speedster), qwen3:8b (Intern), gemma4 (Observer)
+- Per-perspective temperature from agent JSON configs (was hardcoded 1.0)
+- Smart temperature: caps at 0.3 for code/audit tasks regardless of config
+- Communications Strategist + PR & Media merged into Cultural Intelligence + Risk Manager
+- 13 perspectives -> 11 (matching 11 available LLMs)
+
+### Bug fixes
+- CODE_INDEX_REFRESH_SECONDS moved before first use
+- Removed hardcoded temperature=1.0 from all provider calls
+- `competencyProgressTransition` Law 3 fix (removed "remaining" count)
+
+### New scripts
+- `scripts/lint_shame_free.py` — CI check for Constitution Law 3 violations
+- `scripts/audit_dif_bias.py` — Mantel-Haenszel DIF analysis (blocker #7)
+
+### Verified
+- #18 Public profile privacy: PASS (no PII exposed)
+- #13 Vulnerability window: PASS (badge tier deferred per Crystal Law 6 Amendment)
+- Subscription 404 proposal: false positive (no such endpoint)
+- Telegram webhook proposal: already fixed Session 108
+
+### Cleaned
+- Stuck work-queue task moved back to pending
+- 3 stale proposals resolved/acknowledged
+
+---
+
+## Previous session (128) summary
 
 ## What shipped (35+ commits)
 

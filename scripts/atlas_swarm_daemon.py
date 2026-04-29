@@ -3,9 +3,9 @@
 atlas_swarm_daemon.py — always-on swarm work loop.
 
 24/7 background process. Polls memory/atlas/work-queue/ every N seconds.
-When a task file appears, wakes all 13 perspectives as Atlas-specialized
-(same canonical memory layer, different LLM providers, different specialty
-lenses). Aggregates results, writes back to queue, logs to governance.
+When a task file appears, wakes all 11 perspectives as Atlas-specialized
+(each perspective gets ONE dedicated LLM — CEO directive 2026-04-30).
+Aggregates results, writes back to queue, logs to governance.
 
 Master orchestrator (Atlas-Code via Opus 4.7) drops task files. Daemon does
 the work. Opus doesn't pay per-token for execution — only for orchestration.
@@ -123,13 +123,43 @@ LOG = QUEUE / "daemon.log.jsonl"
 POLL_INTERVAL_SECONDS = int(os.getenv("ATLAS_DAEMON_POLL", "20"))
 MAX_CONCURRENT_TASKS = int(os.getenv("ATLAS_DAEMON_CONCURRENCY", "1"))
 
-# Map specialty -> preferred local Ollama model (CEO's 5060 GPU)
-# Light perspectives can run locally; heavy ones go cloud.
+# ── 11-agent architecture: CEO directive 2026-04-30 ─────────────────────
+# "сколько у нас LLM столько и агентов. слабым тоже надо давать шанс."
+# Each perspective gets ONE dedicated LLM. No fallback chain — if your
+# model fails, you return empty. The other 10 still contribute.
+#
+# Mapping: perspective name -> (provider_key, model_id)
+# provider_key used by call_assigned_model() to pick the right client.
+
+AGENT_LLM_MAP: dict[str, tuple[str, str]] = {
+    # 1. Gemini 2.5 Flash — Architect (deep code analysis with tools)
+    "Scaling Engineer":        ("vertex-ai", "gemini-2.5-flash"),
+    # 2. gpt-4o — Strategist (multimodal reasoning)
+    "Product Strategist":      ("azure", "gpt-4o"),
+    # 3. gpt-4.1-nano — Scout (fast cheap recon)
+    "Readiness Manager":       ("azure", "gpt-4.1-nano"),
+    # 4. gpt-4.1-mini — Reviewer (balanced quality)
+    "Code Quality Engineer":   ("azure", "gpt-4.1-mini"),
+    # 5. o4-mini — Reasoner (chain-of-thought, security)
+    "Security Auditor":        ("azure", "o4-mini"),
+    # 6. qwen-3-235b — Analyst (large context, deep analysis)
+    "Assessment Science":      ("cerebras", "qwen-3-235b-a22b-instruct-2507"),
+    # 7. nemotron-ultra-253b — Validator (heavy verification)
+    "Ecosystem Auditor":       ("nvidia-heavy", "nvidia/llama-3.1-nemotron-ultra-253b-v1"),
+    # 8. llama-3.3-70b NVIDIA — Pragmatist (practical solutions)
+    "Legal Advisor":           ("nvidia", "meta/llama-3.3-70b-instruct"),
+    # 9. llama-3.3-70b Groq — Speedster (fastest response)
+    "CTO Watchdog":            ("groq", "llama-3.3-70b-versatile"),
+    # 10. qwen3:8b Ollama — Intern (learning by doing)
+    "Cultural Intelligence":   ("ollama", "qwen3:8b"),
+    # 11. gemma4 Ollama — Observer (different perspective from small model)
+    "Risk Manager":            ("ollama", "gemma4"),
+}
+
+# Legacy set kept for backward compat — now derived from AGENT_LLM_MAP
 HEAVY_PERSPECTIVES = {
-    "Scaling Engineer",
-    "Security Auditor",
-    "Ecosystem Auditor",
-    "Architecture Agent",
+    name for name, (prov, _) in AGENT_LLM_MAP.items()
+    if prov in ("vertex-ai", "cerebras", "nvidia-heavy")
 }
 
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
@@ -140,7 +170,36 @@ OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen3:8b")  # per Constitution Article
 OLLAMA_CONCURRENCY = int(os.getenv("ATLAS_OLLAMA_CONCURRENCY", "2"))
 _ollama_semaphore: asyncio.Semaphore | None = None
 
+# Code-index freshness threshold (moved up from line 1200 for clarity)
+CODE_INDEX_REFRESH_SECONDS = int(os.getenv("ATLAS_CODE_INDEX_REFRESH", str(6 * 3600)))
+
 shutdown_requested = False
+
+
+def _load_agent_config(perspective_name: str) -> dict:
+    """Load per-agent JSON config (temperature, max_tokens, preferred_model).
+
+    CEO directive Session 128: agents must use THEIR config, not hardcoded 1.0.
+    """
+    fname = perspective_name.lower().replace(" ", "_").replace("&", "and") + ".json"
+    config_path = REPO_ROOT / "packages" / "swarm" / "agents" / fname
+    if not config_path.exists():
+        return {"temperature": 0.7, "max_tokens": 2000}
+    try:
+        return json.loads(config_path.read_text(encoding="utf-8"))
+    except Exception:
+        return {"temperature": 0.7, "max_tokens": 2000}
+
+
+def _get_smart_temperature(perspective_name: str, prompt: str) -> float:
+    """Smart temperature: use agent config, but cap at 0.3 for code/audit tasks."""
+    config = _load_agent_config(perspective_name)
+    config_temp = config.get("temperature", 0.7)
+    is_code_task = any(w in prompt[:500].lower() for w in
+                       ("audit", "code", "bug", "security", "fix", "review", "test"))
+    if is_code_task:
+        return min(config_temp, 0.3)
+    return config_temp
 
 
 def log_event(event: dict) -> None:
@@ -415,6 +474,7 @@ async def _gemini_agent_loop(perspective_name: str, prompt: str) -> dict[str, An
 
         tools = [read_project_file, grep_project, list_directory]
 
+        agent_temp = _get_smart_temperature(perspective_name, prompt)
         response = await asyncio.wait_for(
             asyncio.to_thread(
                 client.models.generate_content,
@@ -422,7 +482,7 @@ async def _gemini_agent_loop(perspective_name: str, prompt: str) -> dict[str, An
                 contents=prompt,
                 config=gtypes.GenerateContentConfig(
                     tools=tools,
-                    temperature=1.0,
+                    temperature=agent_temp,
                     max_output_tokens=4000,
                 ),
             ),
@@ -540,12 +600,130 @@ async def _fan_out_sub_agents(perspective_name: str, task_summary: str) -> str:
     return "\n\nSUB-AGENT FINDINGS (additional angles from free models):\n" + "\n".join(sub_findings)
 
 
-async def call_provider_chain(perspective: dict, prompt: str) -> dict[str, Any]:
-    """Try providers in Constitution Article 0 order. First successful response wins.
+async def _call_assigned_model(name: str, provider_key: str, model_id: str,
+                               prompt: str, temp: float, max_tok: int) -> dict[str, Any] | None:
+    """Call the specific LLM assigned to this agent. Returns result or None on failure."""
+    try:
+        if provider_key == "vertex-ai":
+            return await _gemini_agent_loop(name, prompt)
 
-    For audit/explore tasks: Vertex AI agent loop + sub-agent fan-out.
+        elif provider_key == "azure":
+            azure_key = os.getenv("AZURE_OPENAI_API_KEY", "")
+            azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT", "")
+            if not azure_key or not azure_endpoint:
+                return None
+            from openai import AsyncAzureOpenAI
+            client = AsyncAzureOpenAI(
+                api_key=azure_key, azure_endpoint=azure_endpoint,
+                api_version="2024-10-21",
+            )
+            # o4-mini doesn't support temperature parameter
+            create_kw: dict[str, Any] = {
+                "model": model_id,
+                "messages": [{"role": "user", "content": prompt}],
+                "max_tokens": max_tok,
+            }
+            if "o4-mini" not in model_id:
+                create_kw["temperature"] = temp
+            resp = await asyncio.wait_for(
+                client.chat.completions.create(**create_kw),
+                timeout=60.0,
+            )
+            return {"perspective": name, "provider": "azure", "model": model_id,
+                    "raw": resp.choices[0].message.content or ""}
+
+        elif provider_key == "cerebras":
+            cerebras_key = os.getenv("CEREBRAS_API_KEY", "")
+            if not cerebras_key:
+                return None
+            from openai import AsyncOpenAI
+            client = AsyncOpenAI(api_key=cerebras_key, base_url="https://api.cerebras.ai/v1")
+            resp = await asyncio.wait_for(
+                client.chat.completions.create(
+                    model=model_id,
+                    messages=[{"role": "user", "content": prompt}],
+                    temperature=temp, max_tokens=max_tok,
+                    response_format={"type": "json_object"},
+                ),
+                timeout=60.0,
+            )
+            return {"perspective": name, "provider": "cerebras", "model": model_id,
+                    "raw": resp.choices[0].message.content or ""}
+
+        elif provider_key in ("nvidia", "nvidia-heavy"):
+            nvidia_key = os.getenv("NVIDIA_API_KEY", "")
+            if not nvidia_key:
+                return None
+            from openai import AsyncOpenAI
+            client = AsyncOpenAI(api_key=nvidia_key, base_url="https://integrate.api.nvidia.com/v1")
+            resp = await asyncio.wait_for(
+                client.chat.completions.create(
+                    model=model_id,
+                    messages=[{"role": "user", "content": prompt}],
+                    temperature=temp, max_tokens=max_tok,
+                    response_format={"type": "json_object"},
+                ),
+                timeout=60.0,
+            )
+            return {"perspective": name, "provider": "nvidia", "model": model_id,
+                    "raw": resp.choices[0].message.content or ""}
+
+        elif provider_key == "groq":
+            groq_key = os.getenv("GROQ_API_KEY", "")
+            if not groq_key:
+                return None
+            from groq import AsyncGroq
+            resp = await asyncio.wait_for(
+                AsyncGroq(api_key=groq_key).chat.completions.create(
+                    model=model_id,
+                    messages=[{"role": "user", "content": prompt}],
+                    temperature=temp, max_tokens=max_tok,
+                    response_format={"type": "json_object"},
+                ),
+                timeout=30.0,
+            )
+            return {"perspective": name, "provider": "groq", "model": model_id,
+                    "raw": resp.choices[0].message.content or ""}
+
+        elif provider_key == "ollama":
+            if _ollama_semaphore is None:
+                return None
+            from openai import AsyncOpenAI
+            client = AsyncOpenAI(api_key="ollama", base_url=f"{OLLAMA_URL.rstrip('/')}/v1")
+            async with _ollama_semaphore:
+                resp = await asyncio.wait_for(
+                    client.chat.completions.create(
+                        model=model_id,
+                        messages=[{"role": "user", "content": prompt}],
+                        temperature=temp, max_tokens=max_tok,
+                    ),
+                    timeout=120.0,
+                )
+            content = (resp.choices[0].message.content or "").strip()
+            if content and "{" in content:
+                return {"perspective": name, "provider": "ollama", "model": model_id, "raw": content}
+            return None
+
+    except Exception as e:
+        log_event({"event": "provider_failed", "perspective": name,
+                   "provider": provider_key, "model": model_id, "error": str(e)[:150]})
+        return None
+
+    return None
+
+
+async def call_provider_chain(perspective: dict, prompt: str) -> dict[str, Any]:
+    """11-agent architecture: each perspective calls its assigned LLM.
+
+    CEO 2026-04-30: "сколько у нас LLM столько и агентов."
+    No fallback chain. If your model fails, you return empty.
+    Sub-agent fan-out still fires for deep tasks (additional angles).
     """
     name = perspective["name"]
+    temp = _get_smart_temperature(name, prompt)
+    config = _load_agent_config(name)
+    max_tok = config.get("max_tokens", 2000)
+
     is_deep_task = name in HEAVY_PERSPECTIVES or "explore" in prompt[:200].lower() or "audit" in prompt[:200].lower()
 
     # Fan-out sub-agents for deep tasks (parallel with main call)
@@ -554,123 +732,24 @@ async def call_provider_chain(perspective: dict, prompt: str) -> dict[str, Any]:
         task_summary = prompt[prompt.find("TASK TITLE:"):prompt.find("TASK TITLE:") + 300] if "TASK TITLE:" in prompt else prompt[:300]
         sub_findings = await _fan_out_sub_agents(name, task_summary)
 
-    # 0. Gemini agent loop (with tools) — for audit/explore tasks, agents READ code
-    if is_deep_task:
-        enriched_prompt = prompt + sub_findings if sub_findings else prompt
-        result = await _gemini_agent_loop(name, enriched_prompt)
+    enriched_prompt = prompt + sub_findings if sub_findings else prompt
+
+    # Assigned model call — each agent has ONE LLM
+    if name in AGENT_LLM_MAP:
+        provider_key, model_id = AGENT_LLM_MAP[name]
+        result = await _call_assigned_model(name, provider_key, model_id,
+                                            enriched_prompt, temp, max_tok)
         if result and result.get("raw"):
             if sub_findings:
                 result["sub_agents_used"] = True
+            result["assigned_llm"] = True
             return result
+        # Assigned model failed — no fallback per CEO directive.
+        # Return empty so other 10 agents still contribute.
+        log_event({"event": "assigned_model_failed", "perspective": name,
+                   "provider": provider_key, "model": model_id})
 
-    # 1. Cerebras (primary heavy)
-    cerebras_key = os.getenv("CEREBRAS_API_KEY")
-    if cerebras_key and name in HEAVY_PERSPECTIVES:
-        try:
-            from openai import AsyncOpenAI
-            client = AsyncOpenAI(api_key=cerebras_key, base_url="https://api.cerebras.ai/v1")
-            resp = await asyncio.wait_for(
-                client.chat.completions.create(
-                    model="qwen-3-235b-a22b-instruct-2507",
-                    messages=[{"role": "user", "content": prompt}],
-                    temperature=1.0,
-                    max_tokens=2000,
-                    response_format={"type": "json_object"},
-                ),
-                timeout=60.0,
-            )
-            return {"perspective": name, "provider": "cerebras", "model": "qwen-3-235b", "raw": resp.choices[0].message.content or ""}
-        except Exception as e:
-            log_event({"event": "provider_failed", "perspective": name, "provider": "cerebras", "error": str(e)})
-
-    # 2. NVIDIA NIM — primary for light perspectives (A/B test 2026-04-26 proved
-    # Ollama qwen3:8b drifts persona 60%, gemma4 100%, NVIDIA Llama-70B 0%).
-    # Ollama demoted to fallback-of-last-resort for non-persona tasks only.
-    nvidia_key = os.getenv("NVIDIA_API_KEY")
-    if nvidia_key:
-        try:
-            from openai import AsyncOpenAI
-            client = AsyncOpenAI(api_key=nvidia_key, base_url="https://integrate.api.nvidia.com/v1")
-            model = "nvidia/llama-3.1-nemotron-ultra-253b-v1" if name in HEAVY_PERSPECTIVES else "meta/llama-3.3-70b-instruct"
-            resp = await asyncio.wait_for(
-                client.chat.completions.create(
-                    model=model,
-                    messages=[{"role": "user", "content": prompt}],
-                    temperature=1.0,
-                    max_tokens=2000,
-                    response_format={"type": "json_object"},
-                ),
-                timeout=60.0,
-            )
-            return {"perspective": name, "provider": "nvidia", "model": model, "raw": resp.choices[0].message.content or ""}
-        except Exception as e:
-            log_event({"event": "provider_failed", "perspective": name, "provider": "nvidia", "error": str(e)})
-
-    # 4. Gemini (Vertex AI if GCP SA exists, else API key)
-    gemini_key = os.getenv("GEMINI_API_KEY")
-    _gcp_sa = REPO_ROOT / "apps" / "api" / ".gcp-service-account.json"
-    if gemini_key or _gcp_sa.exists():
-        try:
-            from google import genai
-            if _gcp_sa.exists():
-                os.environ.setdefault("GOOGLE_APPLICATION_CREDENTIALS", str(_gcp_sa))
-                client = genai.Client(vertexai=True, project="volaura-inc", location="us-central1")
-            else:
-                client = genai.Client(api_key=gemini_key)
-            resp = await asyncio.wait_for(
-                asyncio.to_thread(
-                    client.models.generate_content,
-                    model="gemini-2.5-flash",
-                    contents=prompt,
-                    config={"response_mime_type": "application/json"},
-                ),
-                timeout=30.0,
-            )
-            return {"perspective": name, "provider": "gemini", "model": "gemini-2.5-flash", "raw": resp.text or ""}
-        except Exception as e:
-            log_event({"event": "provider_failed", "perspective": name, "provider": "gemini", "error": str(e)})
-
-    # 5. Groq (last cloud fallback)
-    groq_key = os.getenv("GROQ_API_KEY")
-    if groq_key:
-        try:
-            from groq import AsyncGroq
-            resp = await asyncio.wait_for(
-                AsyncGroq(api_key=groq_key).chat.completions.create(
-                    model="llama-3.3-70b-versatile",
-                    messages=[{"role": "user", "content": prompt}],
-                    temperature=1.0,
-                    max_tokens=2000,
-                    response_format={"type": "json_object"},
-                ),
-                timeout=30.0,
-            )
-            return {"perspective": name, "provider": "groq", "model": "llama-3.3-70b-versatile", "raw": resp.choices[0].message.content or ""}
-        except Exception as e:
-            log_event({"event": "provider_failed", "perspective": name, "provider": "groq", "error": str(e)})
-
-    # 6. Ollama (last resort — persona drift known, but better than nothing)
-    if _ollama_semaphore is not None:
-        try:
-            from openai import AsyncOpenAI
-            client = AsyncOpenAI(api_key="ollama", base_url=f"{OLLAMA_URL.rstrip('/')}/v1")
-            async with _ollama_semaphore:
-                resp = await asyncio.wait_for(
-                    client.chat.completions.create(
-                        model=OLLAMA_MODEL,
-                        messages=[{"role": "user", "content": prompt}],
-                        temperature=1.0,
-                        max_tokens=2000,
-                    ),
-                    timeout=120.0,
-                )
-            content = (resp.choices[0].message.content or "").strip()
-            if content and "{" in content:
-                return {"perspective": name, "provider": "ollama", "model": OLLAMA_MODEL, "raw": content}
-        except Exception as e:
-            log_event({"event": "provider_failed", "perspective": name, "provider": "ollama", "error": str(e)})
-
-    return {"perspective": name, "provider": None, "model": None, "raw": "", "error": "all_providers_failed"}
+    return {"perspective": name, "provider": None, "model": None, "raw": "", "error": "assigned_model_failed"}
 
 
 def parse_json_safe(raw: str) -> dict | None:
@@ -1195,9 +1274,6 @@ def handle_signal(signum, frame):
     global shutdown_requested
     shutdown_requested = True
     print("\n[daemon] shutdown requested, finishing current task ...", flush=True)
-
-
-CODE_INDEX_REFRESH_SECONDS = int(os.getenv("ATLAS_CODE_INDEX_REFRESH", str(6 * 3600)))
 
 
 def maybe_rebuild_code_index(force: bool = False) -> None:

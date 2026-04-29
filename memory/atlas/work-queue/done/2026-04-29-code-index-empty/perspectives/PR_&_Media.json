@@ -1,0 +1,40 @@
+{
+  "perspective": "PR & Media",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"PR & Media\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"press narrative\", \"issue\": \"no press narrative ready\", \"recommended_fix\": \"create press narrative before launch\"}, {\"severity\": \"medium\", \"file_or_area\": \"AZ media landscape\", \"issue\": \"outlets not matched to story\", \"recommended_fix\": \"match story to ICTnews.az, startup.az, report.az, 1news.az\"}, {\"severity\": \"high\", \"file_or_area\": \"GITA grant application\", \"issue\": \"application material not ready\", \"recommended_fix\": \"prepare application material before May 27 deadline\"}, {\"severity\": \"medium\", \"file_or_area\": \"startup competition pipeline\", \"issue\": \"pipeline not fully utilized\", \"recommended_fix\": \"engage with Seedstars, ASAN Innovations, AzInTelecom\"}, {\"severity\": \"low\", \"file_or_area\": \"CEO LinkedIn presence\", \"issue\": \"presence not building toward launch\", \"recommended_fix\": \"enhance CEO LinkedIn presence\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "press narrative",
+      "issue": "no press narrative ready",
+      "recommended_fix": "create press narrative before launch"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "AZ media landscape",
+      "issue": "outlets not matched to story",
+      "recommended_fix": "match story to ICTnews.az, startup.az, report.az, 1news.az"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "GITA grant application",
+      "issue": "application material not ready",
+      "recommended_fix": "prepare application material before May 27 deadline"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "startup competition pipeline",
+      "issue": "pipeline not fully utilized",
+      "recommended_fix": "engage with Seedstars, ASAN Innovations, AzInTelecom"
+    },
+    {
+      "severity": "low",
+      "file_or_area": "CEO LinkedIn presence",
+      "issue": "presence not building toward launch",
+      "recommended_fix": "enhance CEO LinkedIn presence"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

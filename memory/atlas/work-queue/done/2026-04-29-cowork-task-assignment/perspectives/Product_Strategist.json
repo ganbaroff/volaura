@@ -1,0 +1,11 @@
+{
+  "perspective": "Product Strategist",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Product Strategist\", \"position\": \"for\", \"argument\": \"Fix the AURA score display in user profiles to show the score as a status symbol, not a currency. Use Figma MCP to redesign the profile UI and Supabase MCP to update the database schema. Expected output: a redesigned profile page with AURA score displayed as a status symbol.\", \"strongest_counter\": \"Potential impact on user motivation if the score is not immediately visible\", \"evidence_cited\": \"CRYSTAL LAW 4: Identity > Currency\", \"whistleblower_flag\": null}",
+  "position": "for",
+  "argument": "Fix the AURA score display in user profiles to show the score as a status symbol, not a currency. Use Figma MCP to redesign the profile UI and Supabase MCP to update the database schema. Expected output: a redesigned profile page with AURA score displayed as a status symbol.",
+  "strongest_counter": "Potential impact on user motivation if the score is not immediately visible",
+  "evidence_cited": "CRYSTAL LAW 4: Identity > Currency",
+  "whistleblower_flag": null
+}

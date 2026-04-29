@@ -1,0 +1,40 @@
+{
+  "perspective": "PR & Media",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"PR & Media\", \"findings\": [{\"severity\": \"major\", \"file_or_area\": \"press narrative\", \"issue\": \"No press narrative ready for pre-launch awareness\", \"recommended_fix\": \"Develop a comprehensive press narrative highlighting VOLAURA's unique value proposition\"}, {\"severity\": \"minor\", \"file_or_area\": \"AZ media landscape\", \"issue\": \"Only ICTnews.az and startup.az match our story\", \"recommended_fix\": \"Expand media outreach to include report.az and 1news.az\"}, {\"severity\": \"critical\", \"file_or_area\": \"GITA grant application\", \"issue\": \"Application material not ready\", \"recommended_fix\": \"Prepare and finalize application material before May 27 deadline\"}, {\"severity\": \"minor\", \"file_or_area\": \"startup competition pipeline\", \"issue\": \"Only Seedstars and ASAN Innovations considered\", \"recommended_fix\": \"Research and add AzInTelecom to the pipeline\"}, {\"severity\": \"major\", \"file_or_area\": \"founder visibility\", \"issue\": \"CEO's LinkedIn presence not optimized for launch\", \"recommended_fix\": \"Enhance CEO's LinkedIn profile and content to build thought leadership\"}], \"overall_verdict\": 6, \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "major",
+      "file_or_area": "press narrative",
+      "issue": "No press narrative ready for pre-launch awareness",
+      "recommended_fix": "Develop a comprehensive press narrative highlighting VOLAURA's unique value proposition"
+    },
+    {
+      "severity": "minor",
+      "file_or_area": "AZ media landscape",
+      "issue": "Only ICTnews.az and startup.az match our story",
+      "recommended_fix": "Expand media outreach to include report.az and 1news.az"
+    },
+    {
+      "severity": "critical",
+      "file_or_area": "GITA grant application",
+      "issue": "Application material not ready",
+      "recommended_fix": "Prepare and finalize application material before May 27 deadline"
+    },
+    {
+      "severity": "minor",
+      "file_or_area": "startup competition pipeline",
+      "issue": "Only Seedstars and ASAN Innovations considered",
+      "recommended_fix": "Research and add AzInTelecom to the pipeline"
+    },
+    {
+      "severity": "major",
+      "file_or_area": "founder visibility",
+      "issue": "CEO's LinkedIn presence not optimized for launch",
+      "recommended_fix": "Enhance CEO's LinkedIn profile and content to build thought leadership"
+    }
+  ],
+  "overall_verdict": 6,
+  "whistleblower_flag": null
+}

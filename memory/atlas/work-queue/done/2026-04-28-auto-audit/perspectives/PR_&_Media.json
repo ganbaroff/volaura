@@ -1,0 +1,40 @@
+{
+  "perspective": "PR & Media",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"PR & Media\", \"findings\": [{\"severity\": \"major\", \"file_or_area\": \"press narrative\", \"issue\": \"no press narrative ready\", \"recommended_fix\": \"develop a press narrative ASAP\"}, {\"severity\": \"minor\", \"file_or_area\": \"AZ media landscape\", \"issue\": \"no outlet matches our story\", \"recommended_fix\": \"research and identify matching outlets\"}, {\"severity\": \"critical\", \"file_or_area\": \"GITA grant application\", \"issue\": \"application material not ready\", \"recommended_fix\": \"complete application material before May 27 deadline\"}, {\"severity\": \"minor\", \"file_or_area\": \"startup competition pipeline\", \"issue\": \"no updates on Seedstars, ASAN Innovations, AzInTelecom\", \"recommended_fix\": \"research and update pipeline status\"}, {\"severity\": \"major\", \"file_or_area\": \"CEO's LinkedIn presence\", \"issue\": \"presence not building toward launch\", \"recommended_fix\": \"develop a LinkedIn strategy for the CEO\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "major",
+      "file_or_area": "press narrative",
+      "issue": "no press narrative ready",
+      "recommended_fix": "develop a press narrative ASAP"
+    },
+    {
+      "severity": "minor",
+      "file_or_area": "AZ media landscape",
+      "issue": "no outlet matches our story",
+      "recommended_fix": "research and identify matching outlets"
+    },
+    {
+      "severity": "critical",
+      "file_or_area": "GITA grant application",
+      "issue": "application material not ready",
+      "recommended_fix": "complete application material before May 27 deadline"
+    },
+    {
+      "severity": "minor",
+      "file_or_area": "startup competition pipeline",
+      "issue": "no updates on Seedstars, ASAN Innovations, AzInTelecom",
+      "recommended_fix": "research and update pipeline status"
+    },
+    {
+      "severity": "major",
+      "file_or_area": "CEO's LinkedIn presence",
+      "issue": "presence not building toward launch",
+      "recommended_fix": "develop a LinkedIn strategy for the CEO"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

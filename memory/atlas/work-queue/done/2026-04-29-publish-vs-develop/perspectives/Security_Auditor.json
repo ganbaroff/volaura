@@ -1,0 +1,13 @@
+{
+  "perspective": "Security Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Security\", \"vote\": \"amended-yes\", \"amendment_if_yes_amended\": \"Publish with obfuscated perspective names and mocked memory paths. Remove any real endpoint URLs or auth placeholders from examples.\", \"rationale\": \"The CLI exposes swarm architecture — a security surface. Publishing now tests adoption but risks exposing internal structure. Obfuscation preserves clarity for users while preventing reconnaissance. Real perspective names and memory paths must be stripped to avoid attack surface mapping.\", \"risk_if_other_side_wins\": \"Delaying breaks momentum and hides flaws from real-world use. But rushing exposes live patterns that could be exploited if swarm design has gaps. Current risk is low — no secrets in code — but attack surface grows if agents leak through naming.\", \"constitutional_violations_detected\": [], \"whistleblower_flag\": null}",
+  "vote": "amended-yes",
+  "amendment_if_yes_amended": "Publish with obfuscated perspective names and mocked memory paths. Remove any real endpoint URLs or auth placeholders from examples.",
+  "rationale": "The CLI exposes swarm architecture — a security surface. Publishing now tests adoption but risks exposing internal structure. Obfuscation preserves clarity for users while preventing reconnaissance. Real perspective names and memory paths must be stripped to avoid attack surface mapping.",
+  "risk_if_other_side_wins": "Delaying breaks momentum and hides flaws from real-world use. But rushing exposes live patterns that could be exploited if swarm design has gaps. Current risk is low — no secrets in code — but attack surface grows if agents leak through naming.",
+  "constitutional_violations_detected": [],
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Security"
+}

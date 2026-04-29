@@ -1,0 +1,12 @@
+{
+  "perspective": "Communications Strategist",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Code-Atlas\", \"position\": \"for\", \"argument\": \"Audit current copy against 7 Tone-of-Voice principles and banned phrases\", \"strongest_counter\": \"No counterargument as it aligns with CEO directives and Constitution Laws\", \"evidence_cited\": \"docs/ECOSYSTEM-CONSTITUTION.md, memory/atlas/voice.md\", \"whistleblower_flag\": null}",
+  "position": "for",
+  "argument": "Audit current copy against 7 Tone-of-Voice principles and banned phrases",
+  "strongest_counter": "No counterargument as it aligns with CEO directives and Constitution Laws",
+  "evidence_cited": "docs/ECOSYSTEM-CONSTITUTION.md, memory/atlas/voice.md",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Code-Atlas"
+}

@@ -1,0 +1,28 @@
+{
+  "perspective": "Ecosystem Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Ecosystem Auditor\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Law 2 (Energy Adaptation) missing from all products except MindShift. Violates Foundation Law consistency across ecosystem.\", \"recommended_fix\": \"Audit all 5 products for Energy Adaptation implementation. Align within 24h or disable MindShift's version to prevent cross-product inconsistency.\"}, {\"severity\": \"CRITICAL\", \"file_or_area\": \"swarm code-index\", \"issue\": \"code-index last updated 9 days ago (>7 days stale). Agents are simulating without ground truth.\", \"recommended_fix\": \"Regenerate code-index immediately. Block agent execution until fresh.\"}, {\"severity\": \"P0\", \"file_or_area\": \"ecosystem-map.md\", \"issue\": \"Open P0: BrandedBy lacks Animation Safety compliance per Law 4 — confetti on twin activation violates vestibular safety.\", \"recommended_fix\": \"Remove confetti or cap at 12 particles with 1.5s duration.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Index stale, agents blind — active harm possible.\"}",
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "ECOSYSTEM-CONSTITUTION.md",
+      "issue": "Law 2 (Energy Adaptation) missing from all products except MindShift. Violates Foundation Law consistency across ecosystem.",
+      "recommended_fix": "Audit all 5 products for Energy Adaptation implementation. Align within 24h or disable MindShift's version to prevent cross-product inconsistency."
+    },
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "swarm code-index",
+      "issue": "code-index last updated 9 days ago (>7 days stale). Agents are simulating without ground truth.",
+      "recommended_fix": "Regenerate code-index immediately. Block agent execution until fresh."
+    },
+    {
+      "severity": "P0",
+      "file_or_area": "ecosystem-map.md",
+      "issue": "Open P0: BrandedBy lacks Animation Safety compliance per Law 4 — confetti on twin activation violates vestibular safety.",
+      "recommended_fix": "Remove confetti or cap at 12 particles with 1.5s duration."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "Index stale, agents blind — active harm possible."
+}

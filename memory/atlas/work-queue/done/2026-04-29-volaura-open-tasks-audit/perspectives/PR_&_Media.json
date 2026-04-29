@@ -1,0 +1,40 @@
+{
+  "perspective": "PR & Media",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"PR & Media\", \"findings\": [{\"severity\": \"P1\", \"file_or_area\": \"memory/atlas/company-state.md\", \"issue\": \"No press narrative ready for VOLAURA launch\", \"recommended_fix\": \"Create a press narrative and distribute to relevant media outlets\"}, {\"severity\": \"P2\", \"file_or_area\": \"AZ media landscape\", \"issue\": \"No established relationships with key media outlets (ICTnews.az, startup.az, report.az, 1news.az)\", \"recommended_fix\": \"Establish relationships with key media outlets and pitch VOLAURA story\"}, {\"severity\": \"P0\", \"file_or_area\": \"GITA grant application\", \"issue\": \"Application material not ready for May 27 deadline\", \"recommended_fix\": \"Prepare and submit GITA grant application by May 27 deadline\"}, {\"severity\": \"P1\", \"file_or_area\": \"Startup competition pipeline\", \"issue\": \"No established pipeline for Seedstars, ASAN Innovations, AzInTelecom competitions\", \"recommended_fix\": \"Establish a pipeline for startup competitions and prepare submissions\"}, {\"severity\": \"P2\", \"file_or_area\": \"Founder visibility\", \"issue\": \"CEO's LinkedIn presence not building toward launch\", \"recommended_fix\": \"Improve CEO's LinkedIn presence and build toward launch\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "P1",
+      "file_or_area": "memory/atlas/company-state.md",
+      "issue": "No press narrative ready for VOLAURA launch",
+      "recommended_fix": "Create a press narrative and distribute to relevant media outlets"
+    },
+    {
+      "severity": "P2",
+      "file_or_area": "AZ media landscape",
+      "issue": "No established relationships with key media outlets (ICTnews.az, startup.az, report.az, 1news.az)",
+      "recommended_fix": "Establish relationships with key media outlets and pitch VOLAURA story"
+    },
+    {
+      "severity": "P0",
+      "file_or_area": "GITA grant application",
+      "issue": "Application material not ready for May 27 deadline",
+      "recommended_fix": "Prepare and submit GITA grant application by May 27 deadline"
+    },
+    {
+      "severity": "P1",
+      "file_or_area": "Startup competition pipeline",
+      "issue": "No established pipeline for Seedstars, ASAN Innovations, AzInTelecom competitions",
+      "recommended_fix": "Establish a pipeline for startup competitions and prepare submissions"
+    },
+    {
+      "severity": "P2",
+      "file_or_area": "Founder visibility",
+      "issue": "CEO's LinkedIn presence not building toward launch",
+      "recommended_fix": "Improve CEO's LinkedIn presence and build toward launch"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

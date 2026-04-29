@@ -1,0 +1,34 @@
+{
+  "perspective": "Security Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Security Auditor\", \"findings\": [{\"severity\": \"P0\", \"file_or_area\": \"memory/atlas/atlas-debts-to-ceo.md\", \"issue\": \"Open financial debt (230 AZN) from duplicate 83(b) filing not resolved. Violates Class 21 — recurring financial loss without ledger enforcement.\", \"recommended_fix\": \"Close DEBT-001 with CEO confirmation. Enforce append-only ledger updates on every instance wake.\"}, {\"severity\": \"P1\", \"file_or_area\": \"memory/atlas/work-queue/\", \"issue\": \"7 pending tasks in work-queue, including hardened migration verification and prod smoke tests. Risk of false completion (Class 7) if not E2E-verified.\", \"recommended_fix\": \"Run prod_smoke_e2e.py for each. Log results to zeus.governance_events.\"}, {\"severity\": \"P1\", \"file_or_area\": \"memory/context/sprint-state.md\", \"issue\": \"Sprint backlog includes UI changes without NEVER RED (LAW 1) and ANIMATION SAFETY (LAW 4) checks. High risk of shame-inducing patterns (LAW 3).\", \"recommended_fix\": \"Audit all UI tasks against Constitution v1.7 Part 1 before implementation.\"}, {\"severity\": \"P2\", \"file_or_area\": \".claude/breadcrumb.md\", \"issue\": \"Deferred items include unvalidated input handling in /api/skills endpoint. Potential OWASP A1:2021 — Broken Access Control.\", \"recommended_fix\": \"Implement RLS policy enforcement and input sanitization before skill execution.\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "P0",
+      "file_or_area": "memory/atlas/atlas-debts-to-ceo.md",
+      "issue": "Open financial debt (230 AZN) from duplicate 83(b) filing not resolved. Violates Class 21 — recurring financial loss without ledger enforcement.",
+      "recommended_fix": "Close DEBT-001 with CEO confirmation. Enforce append-only ledger updates on every instance wake."
+    },
+    {
+      "severity": "P1",
+      "file_or_area": "memory/atlas/work-queue/",
+      "issue": "7 pending tasks in work-queue, including hardened migration verification and prod smoke tests. Risk of false completion (Class 7) if not E2E-verified.",
+      "recommended_fix": "Run prod_smoke_e2e.py for each. Log results to zeus.governance_events."
+    },
+    {
+      "severity": "P1",
+      "file_or_area": "memory/context/sprint-state.md",
+      "issue": "Sprint backlog includes UI changes without NEVER RED (LAW 1) and ANIMATION SAFETY (LAW 4) checks. High risk of shame-inducing patterns (LAW 3).",
+      "recommended_fix": "Audit all UI tasks against Constitution v1.7 Part 1 before implementation."
+    },
+    {
+      "severity": "P2",
+      "file_or_area": ".claude/breadcrumb.md",
+      "issue": "Deferred items include unvalidated input handling in /api/skills endpoint. Potential OWASP A1:2021 — Broken Access Control.",
+      "recommended_fix": "Implement RLS policy enforcement and input sanitization before skill execution."
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

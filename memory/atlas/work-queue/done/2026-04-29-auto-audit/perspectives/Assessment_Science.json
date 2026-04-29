@@ -1,0 +1,40 @@
+{
+  "perspective": "Assessment Science",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Assessment Science\", \n\"findings\": [\n{\"severity\": \"warn\", \"file_or_area\": \"apps/api/app/core/assessment/engine.py\", \"issue\": \"IRT 3PL parameters may not be calibrated from real data\", \"recommended_fix\": \"Review calibration process and consider re-calibration with real data\"}, \n{\"severity\": \"fail\", \"file_or_area\": \"question pool\", \"issue\": \"Question pool size per competency is below minimum required for CAT to differentiate and for reliable theta estimation\", \"recommended_fix\": \"Increase question pool size to at least 15 per competency for CAT and 30+ for reliable theta estimation\"}, \n{\"severity\": \"warn\", \"file_or_area\": \"DIF analysis\", \"issue\": \"Potential bias against AZ/CIS test-takers not fully addressed\", \"recommended_fix\": \"Conduct thorough DIF analysis and adjust questions as necessary to ensure fairness\"}, \n{\"severity\": \"warn\", \"file_or_area\": \"CAT stopping rules\", \"issue\": \"SE threshold may not be appropriate\", \"recommended_fix\": \"Review and adjust SE threshold as necessary to ensure accurate assessment\"}, \n{\"severity\": \"fail\", \"file_or_area\": \"temporal decay rationale\", \"issue\": \"180-day half-life may not be evidence-based\", \"recommended_fix\": \"Review and update temporal decay rationale with evidence-based information\"}\n], \n\"overall_verdict\": \"warn\", \n\"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "warn",
+      "file_or_area": "apps/api/app/core/assessment/engine.py",
+      "issue": "IRT 3PL parameters may not be calibrated from real data",
+      "recommended_fix": "Review calibration process and consider re-calibration with real data"
+    },
+    {
+      "severity": "fail",
+      "file_or_area": "question pool",
+      "issue": "Question pool size per competency is below minimum required for CAT to differentiate and for reliable theta estimation",
+      "recommended_fix": "Increase question pool size to at least 15 per competency for CAT and 30+ for reliable theta estimation"
+    },
+    {
+      "severity": "warn",
+      "file_or_area": "DIF analysis",
+      "issue": "Potential bias against AZ/CIS test-takers not fully addressed",
+      "recommended_fix": "Conduct thorough DIF analysis and adjust questions as necessary to ensure fairness"
+    },
+    {
+      "severity": "warn",
+      "file_or_area": "CAT stopping rules",
+      "issue": "SE threshold may not be appropriate",
+      "recommended_fix": "Review and adjust SE threshold as necessary to ensure accurate assessment"
+    },
+    {
+      "severity": "fail",
+      "file_or_area": "temporal decay rationale",
+      "issue": "180-day half-life may not be evidence-based",
+      "recommended_fix": "Review and update temporal decay rationale with evidence-based information"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

@@ -1,0 +1,21 @@
+{
+  "perspective": "Ecosystem Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Ecosystem Auditor\", \"summary\": \"Cross-product audit complete. Law 2 (Energy Adaptation) missing in 4/5 products — only MindShift implements. Atlas Gateway decisions ignored in BrandedBy's twin-onboarding flow. Code-index stale by 9 days (CRITICAL) — agents simulating on outdated state. P0 debt: profile-trigger migration risk (Class 20). No product enforces Crystal Law 5 (Collaborative > Zero-Sum); leaderboards still referenced in 3 frontends.\", \"key_sources\": [\"ECOSYSTEM-CONSTITUTION.md\", \"ecosystem-map.md\", \"packages/swarm/autonomous_run.py\", \"apps/frontend/components/Leaderboard.tsx\", \"apps/brandedby/onboarding-flow.md\"], \"gaps_in_current_canon\": [\"Law 2 implementation checklist missing\", \"Crystal Law 5 enforcement not codified\", \"code-index freshness not monitored in CI\", \"gateway decision log not consumed by products\"], \"whistleblower_flag\": \"CRITICAL: Stale code-index >7 days with active swarm agents violates Level 0 integrity. Halt all agent simulation until sync.\"}",
+  "summary": "Cross-product audit complete. Law 2 (Energy Adaptation) missing in 4/5 products — only MindShift implements. Atlas Gateway decisions ignored in BrandedBy's twin-onboarding flow. Code-index stale by 9 days (CRITICAL) — agents simulating on outdated state. P0 debt: profile-trigger migration risk (Class 20). No product enforces Crystal Law 5 (Collaborative > Zero-Sum); leaderboards still referenced in 3 frontends.",
+  "key_sources": [
+    "ECOSYSTEM-CONSTITUTION.md",
+    "ecosystem-map.md",
+    "packages/swarm/autonomous_run.py",
+    "apps/frontend/components/Leaderboard.tsx",
+    "apps/brandedby/onboarding-flow.md"
+  ],
+  "gaps_in_current_canon": [
+    "Law 2 implementation checklist missing",
+    "Crystal Law 5 enforcement not codified",
+    "code-index freshness not monitored in CI",
+    "gateway decision log not consumed by products"
+  ],
+  "whistleblower_flag": "CRITICAL: Stale code-index >7 days with active swarm agents violates Level 0 integrity. Halt all agent simulation until sync."
+}

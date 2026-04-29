@@ -1,0 +1,22 @@
+{
+  "perspective": "Communications Strategist",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Communications Strategist\", \"findings\": [{\"severity\": \"major\", \"file_or_area\": \"onboarding flow\", \"issue\": \"Banned phrase 'Profile % complete' found\", \"recommended_fix\": \"Remove 'Profile % complete' and replace with shame-free language\"}, {\"severity\": \"minor\", \"file_or_area\": \"assessment results page\", \"issue\": \"Animation safety issue: score counter takes 3s to count up\", \"recommended_fix\": \"Show score instantly or max 800ms\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "major",
+      "file_or_area": "onboarding flow",
+      "issue": "Banned phrase 'Profile % complete' found",
+      "recommended_fix": "Remove 'Profile % complete' and replace with shame-free language"
+    },
+    {
+      "severity": "minor",
+      "file_or_area": "assessment results page",
+      "issue": "Animation safety issue: score counter takes 3s to count up",
+      "recommended_fix": "Show score instantly or max 800ms"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

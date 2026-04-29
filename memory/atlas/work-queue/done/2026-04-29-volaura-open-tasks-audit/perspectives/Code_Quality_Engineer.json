@@ -1,0 +1,58 @@
+{
+  "perspective": "Code Quality Engineer",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Code Quality Engineer\", \"findings\": [\n{\"severity\": \"P0\", \"file_or_area\": \"memory/atlas/company-state.md\", \"issue\": \"Untracked milestone: VOLAURA assessment form completion\", \"recommended_fix\": \"Add milestone to company-state.md and assign owner\"},\n{\"severity\": \"P1\", \"file_or_area\": \"memory/atlas/atlas-debts-to-ceo.md\", \"issue\": \"Open debt: $150 duplicate 83(b) payment\", \"recommended_fix\": \"Append debt to ledger and request CEO confirmation of payment\"},\n{\"severity\": \"P2\", \"file_or_area\": \"memory/atlas/heartbeat.md\", \"issue\": \"Stale session data\", \"recommended_fix\": \"Update heartbeat.md with current session status\"},\n{\"severity\": \"P0\", \"file_or_area\": \"memory/context/sprint-state.md\", \"issue\": \"Incomplete sprint backlog\", \"recommended_fix\": \"Update sprint-state.md with current sprint tasks and owner assignments\"},\n{\"severity\": \"P1\", \"file_or_area\": \".claude/breadcrumb.md\", \"issue\": \"Deferred item: Class 20 lesson implementation\", \"recommended_fix\": \"Implement Class 20 lesson and remove from breadcrumb.md\"},\n{\"severity\": \"P2\", \"file_or_area\": \"for-ceo/\", \"issue\": \"Pending CEO deliverable: migration prep\", \"recommended_fix\": \"Complete migration prep and notify CEO\"},\n{\"severity\": \"P0\", \"file_or_area\": \"memory/atlas/work-queue/\", \"issue\": \"Failed task: VOLAURA assessment engine update\", \"recommended_fix\": \"Re-run failed task and verify assessment engine functionality\"},\n{\"severity\": \"P1\", \"file_or_area\": \"memory/atlas/obligations\", \"issue\": \"Open obligation: Verify Stripe Atlas 83(b) handling\", \"recommended_fix\": \"Verify Stripe Atlas 83(b) handling and update obligations table\"}\n], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "P0",
+      "file_or_area": "memory/atlas/company-state.md",
+      "issue": "Untracked milestone: VOLAURA assessment form completion",
+      "recommended_fix": "Add milestone to company-state.md and assign owner"
+    },
+    {
+      "severity": "P1",
+      "file_or_area": "memory/atlas/atlas-debts-to-ceo.md",
+      "issue": "Open debt: $150 duplicate 83(b) payment",
+      "recommended_fix": "Append debt to ledger and request CEO confirmation of payment"
+    },
+    {
+      "severity": "P2",
+      "file_or_area": "memory/atlas/heartbeat.md",
+      "issue": "Stale session data",
+      "recommended_fix": "Update heartbeat.md with current session status"
+    },
+    {
+      "severity": "P0",
+      "file_or_area": "memory/context/sprint-state.md",
+      "issue": "Incomplete sprint backlog",
+      "recommended_fix": "Update sprint-state.md with current sprint tasks and owner assignments"
+    },
+    {
+      "severity": "P1",
+      "file_or_area": ".claude/breadcrumb.md",
+      "issue": "Deferred item: Class 20 lesson implementation",
+      "recommended_fix": "Implement Class 20 lesson and remove from breadcrumb.md"
+    },
+    {
+      "severity": "P2",
+      "file_or_area": "for-ceo/",
+      "issue": "Pending CEO deliverable: migration prep",
+      "recommended_fix": "Complete migration prep and notify CEO"
+    },
+    {
+      "severity": "P0",
+      "file_or_area": "memory/atlas/work-queue/",
+      "issue": "Failed task: VOLAURA assessment engine update",
+      "recommended_fix": "Re-run failed task and verify assessment engine functionality"
+    },
+    {
+      "severity": "P1",
+      "file_or_area": "memory/atlas/obligations",
+      "issue": "Open obligation: Verify Stripe Atlas 83(b) handling",
+      "recommended_fix": "Verify Stripe Atlas 83(b) handling and update obligations table"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

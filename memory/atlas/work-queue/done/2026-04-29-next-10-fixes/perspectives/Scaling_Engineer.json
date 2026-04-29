@@ -1,0 +1,70 @@
+{
+  "perspective": "Scaling Engineer",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Scaling Engineer\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/api/app/routers/skills.py\", \"issue\": \"Unbounded pagination in GET /skills/{name} — risks OOM at scale\", \"recommended_fix\": \"Add default limit=50, require explicit offset/limit params, enforce max limit=500\"}, {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/services/zeus/assessment_engine.py\", \"issue\": \"Synchronous database calls in generate_assessment() — blocks event loop under load\", \"recommended_fix\": \"Rewrite with asyncpg, use connection pool, add timeout=10s\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/lib/api.ts\", \"issue\": \"API base URL hardcoded in multiple files — breaks multi-region deploy\", \"recommended_fix\": \"Move to ENV var NEXT_PUBLIC_API_BASE, use edge proxy routing\"}, {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/main.py\", \"issue\": \"No request size limit — vulnerable to body payload DoS\", \"recommended_fix\": \"Add FastAPI middleware with max_content_length=10_485_760 (10MB)\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/components/Feed.tsx\", \"issue\": \"Infinite scroll fetches next page on render — causes n+1 waterfall at scale\", \"recommended_fix\": \"Implement cursor-based loading with useEffect, throttle triggers\"}, {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/db/session.py\", \"issue\": \"Database session reused across requests — data leakage and connection contention\", \"recommended_fix\": \"Enforce dependency-injected session per request, close after response\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/hooks/useProfile.ts\", \"issue\": \"Profile data fetched on every component mount — redundant under heavy component trees\", \"recommended_fix\": \"Migrate to React Query with stale-while-revalidate, 5m cache\"}, {\"severity\": \"critical\", \"file_or_area\": \"apps/api/app/routers/assessment.py\", \"issue\": \"Unindexed query on assessment_results.user_id — full table scan at scale\", \"recommended_fix\": \"CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_assessment_results_user_id ON assessment_results(user_id)\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/utils/logger.ts\", \"issue\": \"Client-side console logs include full error stacks — exposes internal structure\", \"recommended_fix\": \"Sanitize and redact before client log, forward details to server-side only\"}, {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/services/llm/provider_router.py\", \"issue\": \"Hot loop over LLM providers without circuit breaker — cascading failure risk\", \"recommended_fix\": \"Add tenacity retry with exponential backoff, circuit breaker at 3 failures\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "apps/api/app/routers/skills.py",
+      "issue": "Unbounded pagination in GET /skills/{name} — risks OOM at scale",
+      "recommended_fix": "Add default limit=50, require explicit offset/limit params, enforce max limit=500"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "apps/api/app/services/zeus/assessment_engine.py",
+      "issue": "Synchronous database calls in generate_assessment() — blocks event loop under load",
+      "recommended_fix": "Rewrite with asyncpg, use connection pool, add timeout=10s"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "apps/web/src/lib/api.ts",
+      "issue": "API base URL hardcoded in multiple files — breaks multi-region deploy",
+      "recommended_fix": "Move to ENV var NEXT_PUBLIC_API_BASE, use edge proxy routing"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "apps/api/app/main.py",
+      "issue": "No request size limit — vulnerable to body payload DoS",
+      "recommended_fix": "Add FastAPI middleware with max_content_length=10_485_760 (10MB)"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "apps/web/src/components/Feed.tsx",
+      "issue": "Infinite scroll fetches next page on render — causes n+1 waterfall at scale",
+      "recommended_fix": "Implement cursor-based loading with useEffect, throttle triggers"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "apps/api/app/db/session.py",
+      "issue": "Database session reused across requests — data leakage and connection contention",
+      "recommended_fix": "Enforce dependency-injected session per request, close after response"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "apps/web/src/hooks/useProfile.ts",
+      "issue": "Profile data fetched on every component mount — redundant under heavy component trees",
+      "recommended_fix": "Migrate to React Query with stale-while-revalidate, 5m cache"
+    },
+    {
+      "severity": "critical",
+      "file_or_area": "apps/api/app/routers/assessment.py",
+      "issue": "Unindexed query on assessment_results.user_id — full table scan at scale",
+      "recommended_fix": "CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_assessment_results_user_id ON assessment_results(user_id)"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "apps/web/src/utils/logger.ts",
+      "issue": "Client-side console logs include full error stacks — exposes internal structure",
+      "recommended_fix": "Sanitize and redact before client log, forward details to server-side only"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "apps/api/app/services/llm/provider_router.py",
+      "issue": "Hot loop over LLM providers without circuit breaker — cascading failure risk",
+      "recommended_fix": "Add tenacity retry with exponential backoff, circuit breaker at 3 failures"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

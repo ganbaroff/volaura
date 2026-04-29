@@ -1,0 +1,22 @@
+{
+  "perspective": "Readiness Manager",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Readiness Manager\", \"findings\": [{\"severity\": \"High\", \"file_or_area\": \"memory/atlas/project_v0laura_vision.md\", \"issue\": \"Inconsistent product positioning\", \"recommended_fix\": \"Realign product documentation to reflect Atlas faces\"}, {\"severity\": \"Medium\", \"file_or_area\": \"packages/swarm/autonomous_run.py\", \"issue\": \"Stale code-index\", \"recommended_fix\": \"Run code-index update script\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "High",
+      "file_or_area": "memory/atlas/project_v0laura_vision.md",
+      "issue": "Inconsistent product positioning",
+      "recommended_fix": "Realign product documentation to reflect Atlas faces"
+    },
+    {
+      "severity": "Medium",
+      "file_or_area": "packages/swarm/autonomous_run.py",
+      "issue": "Stale code-index",
+      "recommended_fix": "Run code-index update script"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

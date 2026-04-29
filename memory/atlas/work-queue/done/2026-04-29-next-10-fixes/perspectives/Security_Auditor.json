@@ -1,0 +1,70 @@
+{
+  "perspective": "Security Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Security Auditor\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/api/app/routers/skills.py\", \"issue\": \"RLS missing on GET /skills/{name} — allows enumeration of internal skill names by unauthenticated users\", \"recommended_fix\": \"Add @router.get(..., dependencies=[Depends(RootTokenHeader)]) to enforce authentication\"}, {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/main.py\", \"issue\": \"Missing rate limit on /api/skills POST — vulnerable to brute-force skill injection\", \"recommended_fix\": \"Apply fastapi-limiter decorator with 5/minute limit per IP\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/lib/api.ts\", \"issue\": \"API base URL hardcoded in client — risk of exposing staging envs in prod builds\", \"recommended_fix\": \"Use runtime environment variable VITE_API_URL\"}, {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/routers/assessment.py\", \"issue\": \"Unvalidated input in assessment_id — susceptible to UUID injection attacks\", \"recommended_fix\": \"Add Pydantic UUID4 validation and server-side existence check\"}, {\"severity\": \"critical\", \"file_or_area\": \"apps/api/.env\", \"issue\": \"SECRET_KEY present in codebase — exposed in git history and client builds\", \"recommended_fix\": \"Move to Supabase secrets, access via os.getenv('SECRET_KEY')\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/routes/AssessmentResult.svelte\", \"issue\": \"Direct DOM insertion of assessment feedback — risk of XSS from malicious skill output\", \"recommended_fix\": \"Sanitize with DOMPurify before innerHTML assignment\"}, {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/routers/auth.py\", \"issue\": \"Incomplete OWASP Top 10 compliance — missing security headers (HSTS, CSP, X-Content-Type-Options)\", \"recommended_fix\": \"Add SecurityHeaders middleware with strict policy\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/api/app/routers/profile.py\", \"issue\": \"Overfetching in /profile GET — returns full user object including is_platform_admin\", \"recommended_fix\": \"Return strict subset: id, avatar_url, account_type only\"}, {\"severity\": \"low\", \"file_or_area\": \"apps/web/src/lib/analytics.js\", \"issue\": \"Analytics tracker sends raw assessment answers — violates data minimization principle\", \"recommended_fix\": \"Hash answers client-side before transmission\"}, {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/routers/zeus.py\", \"issue\": \"Missing RLS on GET /zeus/events — exposes governance logs to unauthenticated users\", \"recommended_fix\": \"Enforce RootTokenHeader dependency and scope to requesting user\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"SECRET_KEY in repo is active credential — rotate immediately\"}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "apps/api/app/routers/skills.py",
+      "issue": "RLS missing on GET /skills/{name} — allows enumeration of internal skill names by unauthenticated users",
+      "recommended_fix": "Add @router.get(..., dependencies=[Depends(RootTokenHeader)]) to enforce authentication"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "apps/api/app/main.py",
+      "issue": "Missing rate limit on /api/skills POST — vulnerable to brute-force skill injection",
+      "recommended_fix": "Apply fastapi-limiter decorator with 5/minute limit per IP"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "apps/web/src/lib/api.ts",
+      "issue": "API base URL hardcoded in client — risk of exposing staging envs in prod builds",
+      "recommended_fix": "Use runtime environment variable VITE_API_URL"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "apps/api/app/routers/assessment.py",
+      "issue": "Unvalidated input in assessment_id — susceptible to UUID injection attacks",
+      "recommended_fix": "Add Pydantic UUID4 validation and server-side existence check"
+    },
+    {
+      "severity": "critical",
+      "file_or_area": "apps/api/.env",
+      "issue": "SECRET_KEY present in codebase — exposed in git history and client builds",
+      "recommended_fix": "Move to Supabase secrets, access via os.getenv('SECRET_KEY')"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "apps/web/src/routes/AssessmentResult.svelte",
+      "issue": "Direct DOM insertion of assessment feedback — risk of XSS from malicious skill output",
+      "recommended_fix": "Sanitize with DOMPurify before innerHTML assignment"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "apps/api/app/routers/auth.py",
+      "issue": "Incomplete OWASP Top 10 compliance — missing security headers (HSTS, CSP, X-Content-Type-Options)",
+      "recommended_fix": "Add SecurityHeaders middleware with strict policy"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "apps/api/app/routers/profile.py",
+      "issue": "Overfetching in /profile GET — returns full user object including is_platform_admin",
+      "recommended_fix": "Return strict subset: id, avatar_url, account_type only"
+    },
+    {
+      "severity": "low",
+      "file_or_area": "apps/web/src/lib/analytics.js",
+      "issue": "Analytics tracker sends raw assessment answers — violates data minimization principle",
+      "recommended_fix": "Hash answers client-side before transmission"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "apps/api/app/routers/zeus.py",
+      "issue": "Missing RLS on GET /zeus/events — exposes governance logs to unauthenticated users",
+      "recommended_fix": "Enforce RootTokenHeader dependency and scope to requesting user"
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "SECRET_KEY in repo is active credential — rotate immediately"
+}

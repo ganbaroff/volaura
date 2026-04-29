@@ -1,0 +1,12 @@
+{
+  "perspective": "Scaling Engineer",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Scaling Engineer\", \"vote\": \"amended-yes\", \"amendment_if_yes_amended\": \"Publish v0.1.0 but exclude swarm agent logic and memory modules from npm/GitHub Packages; ship only CLI shell + mock connectors. Real swarm integration remains private until identity.md access control is enforced.\", \"rationale\": \"The CLI is technically stable (88 passing tests) and v0.1.0 signals momentum. However, publishing swarm perspectives — even as code — risks exposing Constitution-governed behavior patterns (e.g., shame-free language enforcement, animation safety) before runtime access controls exist. Swarm logic must not be publicly inspectable or reusable outside VOLAURA’s user-consented boundary. Shipping mock connectors allows ecosystem testing without architectural exposure.\", \"risk_if_other_side_wins\": \"Delay erodes trust in delivery velocity; prolonged secrecy increases pressure to over-polish. But rushed full release risks swarm logic being forked into red/controlling/shaming interfaces — direct violation of Laws 1,3,5.\", \"constitutional_violations_detected\": [], \"whistleblower_flag\": null}",
+  "vote": "amended-yes",
+  "amendment_if_yes_amended": "Publish v0.1.0 but exclude swarm agent logic and memory modules from npm/GitHub Packages; ship only CLI shell + mock connectors. Real swarm integration remains private until identity.md access control is enforced.",
+  "rationale": "The CLI is technically stable (88 passing tests) and v0.1.0 signals momentum. However, publishing swarm perspectives — even as code — risks exposing Constitution-governed behavior patterns (e.g., shame-free language enforcement, animation safety) before runtime access controls exist. Swarm logic must not be publicly inspectable or reusable outside VOLAURA’s user-consented boundary. Shipping mock connectors allows ecosystem testing without architectural exposure.",
+  "risk_if_other_side_wins": "Delay erodes trust in delivery velocity; prolonged secrecy increases pressure to over-polish. But rushed full release risks swarm logic being forked into red/controlling/shaming interfaces — direct violation of Laws 1,3,5.",
+  "constitutional_violations_detected": [],
+  "whistleblower_flag": null
+}

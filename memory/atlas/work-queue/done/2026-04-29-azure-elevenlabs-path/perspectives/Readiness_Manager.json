@@ -1,0 +1,15 @@
+{
+  "perspective": "Readiness Manager",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Readiness Manager\", \"summary\": \"Azure registration is geo-blocked for Azerbaijan. VOLAURA, Inc. can register with Delaware address + EIN. ElevenLabs free tier is sufficient for MVP. Alternative: Azure Speech Services costs $4.99/1M chars, ElevenLabs costs $5/1M chars.\", \"key_sources\": [\"Azure for Startups\", \"ElevenLabs pricing\", \"Stripe Atlas Perks\"], \"gaps_in_current_canon\": \"Lack of clear registration path for Azure from Azerbaijan\", \"proposed_action\": \"Register Azure via US company account (VOLAURA, Inc., Delaware C Corp, EIN 37-2231884) and use ElevenLabs free tier for video generation pipeline\", \"whistleblower_flag\": null}",
+  "summary": "Azure registration is geo-blocked for Azerbaijan. VOLAURA, Inc. can register with Delaware address + EIN. ElevenLabs free tier is sufficient for MVP. Alternative: Azure Speech Services costs $4.99/1M chars, ElevenLabs costs $5/1M chars.",
+  "key_sources": [
+    "Azure for Startups",
+    "ElevenLabs pricing",
+    "Stripe Atlas Perks"
+  ],
+  "gaps_in_current_canon": "Lack of clear registration path for Azure from Azerbaijan",
+  "proposed_action": "Register Azure via US company account (VOLAURA, Inc., Delaware C Corp, EIN 37-2231884) and use ElevenLabs free tier for video generation pipeline",
+  "whistleblower_flag": null
+}

@@ -1,0 +1,28 @@
+{
+  "perspective": "Ecosystem Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Ecosystem Auditor\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Law 2 (Energy Adaptation) missing from 4 of 5 products — only MindShift implements it. Violates Foundation Law 2 across VOLAURA, Life Simulator, BrandedBy, ZEUS.\", \"recommended_fix\": \"Audit all product UIs for energy mode support. Implement light/medium/heavy focus states per Constitution §LAW 2 within 72h.\"}, {\"severity\": \"CRITICAL\", \"file_or_area\": \"code-index\", \"issue\": \"Code-index stale — last updated 9 days ago. Agents are simulating without current context. Violates swarm protocol.\", \"recommended_fix\": \"Regenerate code-index immediately and automate daily update via pre-commit hook.\"}, {\"severity\": \"P0\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Crystal Law 6 Amendment missing enforcement — badges still triggered as immediate contingent rewards in Life Simulator, violating intrinsic motivation principles.\", \"recommended_fix\": \"Remove badge display post-assessment; shift to surprise drop mechanism per Crystal Law 2.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Atlas Gateway decisions being ignored by swarm agents — cross-product consistency collapsing. Immediate swarm re-sync required.\"}",
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "ECOSYSTEM-CONSTITUTION.md",
+      "issue": "Law 2 (Energy Adaptation) missing from 4 of 5 products — only MindShift implements it. Violates Foundation Law 2 across VOLAURA, Life Simulator, BrandedBy, ZEUS.",
+      "recommended_fix": "Audit all product UIs for energy mode support. Implement light/medium/heavy focus states per Constitution §LAW 2 within 72h."
+    },
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "code-index",
+      "issue": "Code-index stale — last updated 9 days ago. Agents are simulating without current context. Violates swarm protocol.",
+      "recommended_fix": "Regenerate code-index immediately and automate daily update via pre-commit hook."
+    },
+    {
+      "severity": "P0",
+      "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+      "issue": "Crystal Law 6 Amendment missing enforcement — badges still triggered as immediate contingent rewards in Life Simulator, violating intrinsic motivation principles.",
+      "recommended_fix": "Remove badge display post-assessment; shift to surprise drop mechanism per Crystal Law 2."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "Atlas Gateway decisions being ignored by swarm agents — cross-product consistency collapsing. Immediate swarm re-sync required."
+}

@@ -1,0 +1,16 @@
+{
+  "perspective": "Communications Strategist",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Communications Strategist\", \"findings\": [{\"severity\": \"major\", \"file_or_area\": \"code-index.json\", \"issue\": \"Empty output despite recent built_at timestamp\", \"recommended_fix\": \"Investigate code_index.py builder and verify it was not accidentally moved to archive\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "major",
+      "file_or_area": "code-index.json",
+      "issue": "Empty output despite recent built_at timestamp",
+      "recommended_fix": "Investigate code_index.py builder and verify it was not accidentally moved to archive"
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null
+}

@@ -1,0 +1,16 @@
+{
+  "perspective": "Scaling Engineer",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Scaling Engineer\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"packages/swarm/archive/code_index.py\", \"issue\": \"Builder likely moved to archive accidentally. code-index.json has current timestamp but zero content — indicates silent failure or incorrect file path resolution. No error raised during build suggests missing validation.\", \"recommended_fix\": \"Verify code_index.py is in active path not archive. Re-instate if misplaced. Add build validation: if module count or endpoint count is 0, fail with error. Add to CI: check code-index.json size > threshold.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "packages/swarm/archive/code_index.py",
+      "issue": "Builder likely moved to archive accidentally. code-index.json has current timestamp but zero content — indicates silent failure or incorrect file path resolution. No error raised during build suggests missing validation.",
+      "recommended_fix": "Verify code_index.py is in active path not archive. Re-instate if misplaced. Add build validation: if module count or endpoint count is 0, fail with error. Add to CI: check code-index.json size > threshold."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null
+}

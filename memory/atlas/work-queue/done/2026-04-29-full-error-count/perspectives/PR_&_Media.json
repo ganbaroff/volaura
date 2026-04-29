@@ -1,0 +1,40 @@
+{
+  "perspective": "PR & Media",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"PR & Media\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"press narrative\", \"issue\": \"no press narrative ready\", \"recommended_fix\": \"develop press narrative before launch\"}, {\"severity\": \"medium\", \"file_or_area\": \"AZ media landscape\", \"issue\": \"outlets not matched to story\", \"recommended_fix\": \"research and match outlets to VOLAURA story\"}, {\"severity\": \"high\", \"file_or_area\": \"GITA grant application\", \"issue\": \"application material not ready\", \"recommended_fix\": \"finalize application material before May 27 deadline\"}, {\"severity\": \"medium\", \"file_or_area\": \"startup competition pipeline\", \"issue\": \"pipeline not optimized\", \"recommended_fix\": \"research and optimize pipeline for Seedstars, ASAN Innovations, AzInTelecom\"}, {\"severity\": \"low\", \"file_or_area\": \"CEO LinkedIn presence\", \"issue\": \"presence not building toward launch\", \"recommended_fix\": \"increase CEO LinkedIn activity and engagement\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "press narrative",
+      "issue": "no press narrative ready",
+      "recommended_fix": "develop press narrative before launch"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "AZ media landscape",
+      "issue": "outlets not matched to story",
+      "recommended_fix": "research and match outlets to VOLAURA story"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "GITA grant application",
+      "issue": "application material not ready",
+      "recommended_fix": "finalize application material before May 27 deadline"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "startup competition pipeline",
+      "issue": "pipeline not optimized",
+      "recommended_fix": "research and optimize pipeline for Seedstars, ASAN Innovations, AzInTelecom"
+    },
+    {
+      "severity": "low",
+      "file_or_area": "CEO LinkedIn presence",
+      "issue": "presence not building toward launch",
+      "recommended_fix": "increase CEO LinkedIn activity and engagement"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

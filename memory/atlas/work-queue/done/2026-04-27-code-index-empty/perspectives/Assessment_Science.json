@@ -1,0 +1,22 @@
+{
+  "perspective": "Assessment Science",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Assessment Science\", \"findings\": [{\"severity\": \"major\", \"file_or_area\": \"engine.py\", \"issue\": \"IRT 3PL parameters (a, b, c) are not calibrated from real data\", \"recommended_fix\": \"Calibrate IRT parameters using historical assessment data\"}, {\"severity\": \"minor\", \"file_or_area\": \"question pool\", \"issue\": \"Question pool size per competency is less than 15\", \"recommended_fix\": \"Increase question pool size to at least 15 per competency\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "major",
+      "file_or_area": "engine.py",
+      "issue": "IRT 3PL parameters (a, b, c) are not calibrated from real data",
+      "recommended_fix": "Calibrate IRT parameters using historical assessment data"
+    },
+    {
+      "severity": "minor",
+      "file_or_area": "question pool",
+      "issue": "Question pool size per competency is less than 15",
+      "recommended_fix": "Increase question pool size to at least 15 per competency"
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null
+}

@@ -1,7 +1,7 @@
 {
-  "built_at": "2026-04-28T19:27:35.328172+00:00",
-  "total_files": 1043,
-  "scanned": 1043,
+  "built_at": "2026-04-29T03:54:19.788306+00:00",
+  "total_files": 1041,
+  "scanned": 1041,
   "files": {
     "apps/api/app/config.py": {
       "path": "apps/api/app/config.py",
@@ -20647,52 +20647,6 @@
         "@/hooks/queries/use-eventshift"
       ]
     },
-    "apps/web/src/app/[locale]/(dashboard)/leaderboard/page.tsx": {
-      "path": "apps/web/src/app/[locale]/(dashboard)/leaderboard/page.tsx",
-      "type": "typescript",
-      "size": 458,
-      "keywords": [
-        "anxiety",
-        "app",
-        "apps",
-        "async",
-        "await",
-        "comparative",
-        "const",
-        "contradicts",
-        "creates",
-        "dashboard",
-        "default",
-        "design",
-        "discovery",
-        "export",
-        "function",
-        "import",
-        "leaderboard",
-        "leaderboardpage",
-        "locale",
-        "navigation",
-        "page",
-        "params",
-        "principles",
-        "private",
-        "ranking",
-        "redirect",
-        "removed",
-        "scores",
-        "shame",
-        "src",
-        "string",
-        "violation",
-        "web"
-      ],
-      "exports": [
-        "LeaderboardPage"
-      ],
-      "imports": [
-        "next/navigation"
-      ]
-    },
     "apps/web/src/app/[locale]/(dashboard)/life/page.tsx": {
       "path": "apps/web/src/app/[locale]/(dashboard)/life/page.tsx",
       "type": "typescript",
@@ -27277,7 +27231,7 @@
     "packages/swarm/tests/test_notifier.py": {
       "path": "packages/swarm/tests/test_notifier.py",
       "type": "python",
-      "size": 5272,
+      "size": 5671,
       "keywords": [
         "_force_deliver",
         "_isolate_log_and_vacation",
@@ -33881,7 +33835,7 @@
     "memory/swarm/perspective_weights.json": {
       "path": "memory/swarm/perspective_weights.json",
       "type": "json",
-      "size": 1742,
+      "size": 1838,
       "keywords": [
         "debate_weight",
         "json",
@@ -36329,45 +36283,6 @@
         "swarm",
         "themselves",
         "verified"
-      ]
-    },
-    "memory/swarm/skills/self-review.md": {
-      "path": "memory/swarm/skills/self-review.md",
-      "type": "markdown",
-      "size": 1662,
-      "keywords": [
-        "agent",
-        "agents",
-        "always",
-        "atlas",
-        "audit",
-        "before",
-        "check",
-        "drift",
-        "entries",
-        "every",
-        "extract",
-        "failures",
-        "fires",
-        "health",
-        "heartbeat",
-        "improving",
-        "journal",
-        "last_active",
-        "memory",
-        "minutes",
-        "modified",
-        "packages",
-        "review",
-        "self",
-        "skills",
-        "stale",
-        "state",
-        "statuses",
-        "swarm",
-        "target",
-        "timestamp",
-        "users"
       ]
     },
     "memory/swarm/skills/startup-registration-finder.md": {

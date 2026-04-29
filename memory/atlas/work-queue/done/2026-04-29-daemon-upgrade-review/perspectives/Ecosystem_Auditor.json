@@ -1,0 +1,28 @@
+{
+  "perspective": "Ecosystem Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\":\"Ecosystem Auditor\",\"findings\":[{\"severity\":\"CRITICAL\",\"file_or_area\":\"ECOSYSTEM-CONSTITUTION.md\",\"issue\":\"Foundation Law 2 (Energy Adaptation) is missing in 4/5 products. Only MindShift implements it. Daemon upgrade does nothing to enforce cross-product compliance. Law 2 violation = unconstitutional drift.\",\"recommended_fix\":\"Add Constitution guardrail check to daemon self-check loop. Block any ecosystem change that degrades Law 2 coverage. Require proof of implementation in all 5 products.\"},{\"severity\":\"HIGH\",\"file_or_area\":\"atlas_swarm_daemon.py\",\"issue\":\"Self-check loop creates tasks but no validation against current code-index freshness. Risk of stale index triggering stale fixes. Code-index rebuilt every 6h but not verified against git HEAD.\",\"recommended_fix\":\"On each self-check, compare index timestamp with latest git commit. If >15min lag, trigger rebuild before creating any task.\"},{\"severity\":\"MEDIUM\",\"file_or_area\":\"safe executors\",\"issue\":\"rebuild_code_index is flagged 'safe' but runs expensive disk+CPU operations. Under concurrent load, could starve other processes. Blast radius unbounded.\",\"recommended_fix\":\"Cap rebuild concurrency to 1, add resource limits, and expose /healthz-index-build endpoint for external monitoring.\"}],\"overall_verdict\":\"warn\",\"whistleblower_flag\":null}",
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "ECOSYSTEM-CONSTITUTION.md",
+      "issue": "Foundation Law 2 (Energy Adaptation) is missing in 4/5 products. Only MindShift implements it. Daemon upgrade does nothing to enforce cross-product compliance. Law 2 violation = unconstitutional drift.",
+      "recommended_fix": "Add Constitution guardrail check to daemon self-check loop. Block any ecosystem change that degrades Law 2 coverage. Require proof of implementation in all 5 products."
+    },
+    {
+      "severity": "HIGH",
+      "file_or_area": "atlas_swarm_daemon.py",
+      "issue": "Self-check loop creates tasks but no validation against current code-index freshness. Risk of stale index triggering stale fixes. Code-index rebuilt every 6h but not verified against git HEAD.",
+      "recommended_fix": "On each self-check, compare index timestamp with latest git commit. If >15min lag, trigger rebuild before creating any task."
+    },
+    {
+      "severity": "MEDIUM",
+      "file_or_area": "safe executors",
+      "issue": "rebuild_code_index is flagged 'safe' but runs expensive disk+CPU operations. Under concurrent load, could starve other processes. Blast radius unbounded.",
+      "recommended_fix": "Cap rebuild concurrency to 1, add resource limits, and expose /healthz-index-build endpoint for external monitoring."
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

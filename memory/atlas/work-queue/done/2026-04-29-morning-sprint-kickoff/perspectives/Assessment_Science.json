@@ -1,0 +1,40 @@
+{
+  "perspective": "Assessment Science",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\n  \"perspective\": \"Assessment Science\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"IRT 3PL parameters (a, b, c) are guessed, not calibrated from real data\",\n      \"recommended_fix\": \"Calibrate parameters using historical assessment data to reduce SEM impact\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"Question pool size per competency is less than 15 for some competencies\",\n      \"recommended_fix\": \"Increase question pool size to at least 15 per competency for reliable CAT differentiation\"\n    },\n    {\n      \"severity\": \"low\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"DIF analysis is not regularly performed to detect biased questions\",\n      \"recommended_fix\": \"Schedule regular DIF analysis to identify and remove biased questions against AZ/CIS test-takers\"\n    },\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"CAT stopping rules are not properly configured, potentially leading to inaccurate assessments\",\n      \"recommended_fix\": \"Review and adjust CAT stopping rules to ensure appropriate SE threshold and assessment accuracy\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"Temporal decay rationale is not evidence-based, potentially affecting assessment validity\",\n      \"recommended_fix\": \"Update temporal decay rationale with evidence-based research to ensure assessment validity\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "apps/api/app/core/assessment/engine.py",
+      "issue": "IRT 3PL parameters (a, b, c) are guessed, not calibrated from real data",
+      "recommended_fix": "Calibrate parameters using historical assessment data to reduce SEM impact"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "apps/api/app/core/assessment/engine.py",
+      "issue": "Question pool size per competency is less than 15 for some competencies",
+      "recommended_fix": "Increase question pool size to at least 15 per competency for reliable CAT differentiation"
+    },
+    {
+      "severity": "low",
+      "file_or_area": "apps/api/app/core/assessment/engine.py",
+      "issue": "DIF analysis is not regularly performed to detect biased questions",
+      "recommended_fix": "Schedule regular DIF analysis to identify and remove biased questions against AZ/CIS test-takers"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "apps/api/app/core/assessment/engine.py",
+      "issue": "CAT stopping rules are not properly configured, potentially leading to inaccurate assessments",
+      "recommended_fix": "Review and adjust CAT stopping rules to ensure appropriate SE threshold and assessment accuracy"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "apps/api/app/core/assessment/engine.py",
+      "issue": "Temporal decay rationale is not evidence-based, potentially affecting assessment validity",
+      "recommended_fix": "Update temporal decay rationale with evidence-based research to ensure assessment validity"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

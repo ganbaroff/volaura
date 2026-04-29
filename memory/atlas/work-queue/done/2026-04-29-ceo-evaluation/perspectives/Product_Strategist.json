@@ -1,0 +1,28 @@
+{
+  "perspective": "Product Strategist",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Product Strategist\", \"findings\": [\n  {\"severity\": \"low\", \"file_or_area\": \"resource management\", \"issue\": \"cash flow management on a $100/month budget is risky\", \"recommended_fix\": \"Explore cost-saving measures or funding options to ensure financial stability\"},\n  {\"severity\": \"medium\", \"file_or_area\": \"self-care & sustainability\", \"issue\": \"3am work sessions may lead to burnout\", \"recommended_fix\": \"Establish a sustainable work schedule and prioritize self-care\"},\n  {\"severity\": \"high\", \"file_or_area\": \"decision speed\", \"issue\": \"rapid decision-making may lead to oversights\", \"recommended_fix\": \"Implement a decision-making framework to ensure thorough consideration of options\"}\n], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "low",
+      "file_or_area": "resource management",
+      "issue": "cash flow management on a $100/month budget is risky",
+      "recommended_fix": "Explore cost-saving measures or funding options to ensure financial stability"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "self-care & sustainability",
+      "issue": "3am work sessions may lead to burnout",
+      "recommended_fix": "Establish a sustainable work schedule and prioritize self-care"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "decision speed",
+      "issue": "rapid decision-making may lead to oversights",
+      "recommended_fix": "Implement a decision-making framework to ensure thorough consideration of options"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

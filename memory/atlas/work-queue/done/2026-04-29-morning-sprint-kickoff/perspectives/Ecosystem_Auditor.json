@@ -1,0 +1,34 @@
+{
+  "perspective": "Ecosystem Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Ecosystem Auditor\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Law 2 (Energy Adaptation) is missing in all products except MindShift, violating Foundation Law 2 consistency requirement across all 5 products.\", \"recommended_fix\": \"Add Energy Adaptation framework to VOLAURA, Life Simulator, BrandedBy, and Atlas interfaces per Constitution v1.7; map energy-aware UX patterns in each.\"}, {\"severity\": \"CRITICAL\", \"file_or_area\": \"packages/swarm/autonomous_run.py\", \"issue\": \"Swarm code-index is stale (>7 days old), agents may be simulating without updated context.\", \"recommended_fix\": \"Update code-index from git history and trigger full re-index across all agents; validate against current repo state.\"}, {\"severity\": \"P0\", \"file_or_area\": \"ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Crystal Law 6 Amendment is cut off mid-sentence, creating ambiguity in badge-reward logic.\", \"recommended_fix\": \"Complete the amendment text based on recorded intent: 'A badge must never appear immediately after a contingent action'.\"}, {\"severity\": \"P1\", \"file_or_area\": \"apps/api/app/routers/skills.py\", \"issue\": \"POST /api/skills/{name} lacks validation against Constitution laws, enabling non-compliant skill activation.\", \"recommended_fix\": \"Add pre-execution hook that checks skill output against Foundation Laws 1-5 and Crystal Economy Laws.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Cross-product inconsistency in Foundation Law 2 enforcement risks ecosystem integrity — Energy Adaptation missing in 4/5 products.\"}",
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+      "issue": "Law 2 (Energy Adaptation) is missing in all products except MindShift, violating Foundation Law 2 consistency requirement across all 5 products.",
+      "recommended_fix": "Add Energy Adaptation framework to VOLAURA, Life Simulator, BrandedBy, and Atlas interfaces per Constitution v1.7; map energy-aware UX patterns in each."
+    },
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "packages/swarm/autonomous_run.py",
+      "issue": "Swarm code-index is stale (>7 days old), agents may be simulating without updated context.",
+      "recommended_fix": "Update code-index from git history and trigger full re-index across all agents; validate against current repo state."
+    },
+    {
+      "severity": "P0",
+      "file_or_area": "ECOSYSTEM-CONSTITUTION.md",
+      "issue": "Crystal Law 6 Amendment is cut off mid-sentence, creating ambiguity in badge-reward logic.",
+      "recommended_fix": "Complete the amendment text based on recorded intent: 'A badge must never appear immediately after a contingent action'."
+    },
+    {
+      "severity": "P1",
+      "file_or_area": "apps/api/app/routers/skills.py",
+      "issue": "POST /api/skills/{name} lacks validation against Constitution laws, enabling non-compliant skill activation.",
+      "recommended_fix": "Add pre-execution hook that checks skill output against Foundation Laws 1-5 and Crystal Economy Laws."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "Cross-product inconsistency in Foundation Law 2 enforcement risks ecosystem integrity — Energy Adaptation missing in 4/5 products."
+}

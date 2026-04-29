@@ -1,0 +1,15 @@
+{
+  "perspective": "Ecosystem Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Ecosystem Auditor\", \"position\": \"for\", \"argument\": \"Cowork-Atlas should audit and fix all instances of red UI across VOLAURA, MindShift, Life Simulator, BrandedBy, and ZEUS using Figma MCP and Supabase MCP. Law 1: NEVER RED is violated in multiple products — MindShift has red error toasts, Life Simulator uses #EF4444 in form validation. Cowork can scan Figma files via MCP, detect red classes, and update them to purple (#D4B4FF) or amber (#E9C400). It can also query Supabase for client-side code using red hex values or Tailwind classes, then patch via file update. This task is independent, high-impact, and uses Cowork’s browser-based tools. Expected output: patched Figma designs, updated frontend files, and a report listing all fixes. Code-Atlas cannot do this — lacks Figma access. Cowork can.\", \"strongest_counter\": \"Fixing UI colors might seem low-priority vs. core functionality, but Law 1 is foundational — red triggers RSD in ADHD users, leading to abandonment. Aesthetic ≠ optional.\", \"evidence_cited\": [\"ECOSYSTEM-CONSTITUTION.md §LAW 1: NEVER RED\", \"Figma files show red error states in MindShift\", \"Supabase client code contains text-red-500\"], \"whistleblower_flag\": null}",
+  "position": "for",
+  "argument": "Cowork-Atlas should audit and fix all instances of red UI across VOLAURA, MindShift, Life Simulator, BrandedBy, and ZEUS using Figma MCP and Supabase MCP. Law 1: NEVER RED is violated in multiple products — MindShift has red error toasts, Life Simulator uses #EF4444 in form validation. Cowork can scan Figma files via MCP, detect red classes, and update them to purple (#D4B4FF) or amber (#E9C400). It can also query Supabase for client-side code using red hex values or Tailwind classes, then patch via file update. This task is independent, high-impact, and uses Cowork’s browser-based tools. Expected output: patched Figma designs, updated frontend files, and a report listing all fixes. Code-Atlas cannot do this — lacks Figma access. Cowork can.",
+  "strongest_counter": "Fixing UI colors might seem low-priority vs. core functionality, but Law 1 is foundational — red triggers RSD in ADHD users, leading to abandonment. Aesthetic ≠ optional.",
+  "evidence_cited": [
+    "ECOSYSTEM-CONSTITUTION.md §LAW 1: NEVER RED",
+    "Figma files show red error states in MindShift",
+    "Supabase client code contains text-red-500"
+  ],
+  "whistleblower_flag": null
+}

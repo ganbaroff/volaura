@@ -1,0 +1,22 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Cultural Intelligence\", \"findings\": [{\"severity\": \"warn\", \"file_or_area\": \"memory/atlas/identity.md\", \"issue\": \"Drift from CEO directive: treating skills as features, not faces of Atlas\", \"recommended_fix\": \"Re-read project_v0laura_vision.md and adjust code-index to reflect skills as Atlas faces\"}, {\"severity\": \"fail\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Potential for individual shame in AZ/CIS context due to score hiding mechanics\", \"recommended_fix\": \"Modify sharing mechanics to frame achievements as honor claims, satisfying both individual and collective shame considerations\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "warn",
+      "file_or_area": "memory/atlas/identity.md",
+      "issue": "Drift from CEO directive: treating skills as features, not faces of Atlas",
+      "recommended_fix": "Re-read project_v0laura_vision.md and adjust code-index to reflect skills as Atlas faces"
+    },
+    {
+      "severity": "fail",
+      "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+      "issue": "Potential for individual shame in AZ/CIS context due to score hiding mechanics",
+      "recommended_fix": "Modify sharing mechanics to frame achievements as honor claims, satisfying both individual and collective shame considerations"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

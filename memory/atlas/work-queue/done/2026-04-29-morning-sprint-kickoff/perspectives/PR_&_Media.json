@@ -1,0 +1,40 @@
+{
+  "perspective": "PR & Media",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"PR & Media\", \"findings\": [\n{\"severity\": \"high\", \"file_or_area\": \"memory/atlas/identity.md\", \"issue\": \"Press narrative not explicitly defined\", \"recommended_fix\": \"Add press narrative outline to memory/atlas/identity.md\"},\n{\"severity\": \"medium\", \"file_or_area\": \"AZ media landscape\", \"issue\": \"Outlet matching not fully researched\", \"recommended_fix\": \"Research and document AZ media outlets matching VOLAURA story in memory/atlas/media.md\"},\n{\"severity\": \"high\", \"file_or_area\": \"GITA grant application\", \"issue\": \"Application material not ready\", \"recommended_fix\": \"Finalize GITA grant application by May 27 deadline\"},\n{\"severity\": \"medium\", \"file_or_area\": \"Startup competition pipeline\", \"issue\": \"Pipeline not fully updated\", \"recommended_fix\": \"Update startup competition pipeline with Seedstars, ASAN Innovations, AzInTelecom in memory/atlas/pipeline.md\"},\n{\"severity\": \"low\", \"file_or_area\": \"CEO LinkedIn presence\", \"issue\": \"Presence not fully optimized\", \"recommended_fix\": \"Optimize CEO LinkedIn presence for launch\"}\n], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "memory/atlas/identity.md",
+      "issue": "Press narrative not explicitly defined",
+      "recommended_fix": "Add press narrative outline to memory/atlas/identity.md"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "AZ media landscape",
+      "issue": "Outlet matching not fully researched",
+      "recommended_fix": "Research and document AZ media outlets matching VOLAURA story in memory/atlas/media.md"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "GITA grant application",
+      "issue": "Application material not ready",
+      "recommended_fix": "Finalize GITA grant application by May 27 deadline"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "Startup competition pipeline",
+      "issue": "Pipeline not fully updated",
+      "recommended_fix": "Update startup competition pipeline with Seedstars, ASAN Innovations, AzInTelecom in memory/atlas/pipeline.md"
+    },
+    {
+      "severity": "low",
+      "file_or_area": "CEO LinkedIn presence",
+      "issue": "Presence not fully optimized",
+      "recommended_fix": "Optimize CEO LinkedIn presence for launch"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

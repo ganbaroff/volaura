@@ -1,0 +1,374 @@
+{
+  "task_id": "2026-04-29-next-10-fixes",
+  "task_type": "audit",
+  "completed_at": "2026-04-29T04:30:33.506134+00:00",
+  "perspectives_dispatched": 5,
+  "perspectives_responded": 5,
+  "perspectives_failed": 0,
+  "providers_used": {
+    "cerebras": 3,
+    "nvidia": 2
+  },
+  "whistleblower_flags": [
+    {
+      "perspective": "Security Auditor",
+      "flag": "SECRET_KEY in repo is active credential — rotate immediately"
+    },
+    {
+      "perspective": "Ecosystem Auditor",
+      "flag": "Law 2 (Energy Adaptation) is isolated to MindShift — foundational ecosystem risk."
+    }
+  ],
+  "perspectives": [
+    {
+      "perspective": "Scaling Engineer",
+      "provider": "cerebras",
+      "model": "qwen-3-235b",
+      "raw": "{\"perspective\": \"Scaling Engineer\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/api/app/routers/skills.py\", \"issue\": \"Unbounded pagination in GET /skills/{name} — risks OOM at scale\", \"recommended_fix\": \"Add default limit=50, require explicit offset/limit params, enforce max limit=500\"}, {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/services/zeus/assessment_engine.py\", \"issue\": \"Synchronous database calls in generate_assessment() — blocks event loop under load\", \"recommended_fix\": \"Rewrite with asyncpg, use connection pool, add timeout=10s\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/lib/api.ts\", \"issue\": \"API base URL hardcoded in multiple files — breaks multi-region deploy\", \"recommended_fix\": \"Move to ENV var NEXT_PUBLIC_API_BASE, use edge proxy routing\"}, {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/main.py\", \"issue\": \"No request size limit — vulnerable to body payload DoS\", \"recommended_fix\": \"Add FastAPI middleware with max_content_length=10_485_760 (10MB)\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/components/Feed.tsx\", \"issue\": \"Infinite scroll fetches next page on render — causes n+1 waterfall at scale\", \"recommended_fix\": \"Implement cursor-based loading with useEffect, throttle triggers\"}, {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/db/session.py\", \"issue\": \"Database session reused across requests — data leakage and connection contention\", \"recommended_fix\": \"Enforce dependency-injected session per request, close after response\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/hooks/useProfile.ts\", \"issue\": \"Profile data fetched on every component mount — redundant under heavy component trees\", \"recommended_fix\": \"Migrate to React Query with stale-while-revalidate, 5m cache\"}, {\"severity\": \"critical\", \"file_or_area\": \"apps/api/app/routers/assessment.py\", \"issue\": \"Unindexed query on assessment_results.user_id — full table scan at scale\", \"recommended_fix\": \"CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_assessment_results_user_id ON assessment_results(user_id)\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/utils/logger.ts\", \"issue\": \"Client-side console logs include full error stacks — exposes internal structure\", \"recommended_fix\": \"Sanitize and redact before client log, forward details to server-side only\"}, {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/services/llm/provider_router.py\", \"issue\": \"Hot loop over LLM providers without circuit breaker — cascading failure risk\", \"recommended_fix\": \"Add tenacity retry with exponential backoff, circuit breaker at 3 failures\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/routers/skills.py",
+          "issue": "Unbounded pagination in GET /skills/{name} — risks OOM at scale",
+          "recommended_fix": "Add default limit=50, require explicit offset/limit params, enforce max limit=500"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/services/zeus/assessment_engine.py",
+          "issue": "Synchronous database calls in generate_assessment() — blocks event loop under load",
+          "recommended_fix": "Rewrite with asyncpg, use connection pool, add timeout=10s"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/web/src/lib/api.ts",
+          "issue": "API base URL hardcoded in multiple files — breaks multi-region deploy",
+          "recommended_fix": "Move to ENV var NEXT_PUBLIC_API_BASE, use edge proxy routing"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/main.py",
+          "issue": "No request size limit — vulnerable to body payload DoS",
+          "recommended_fix": "Add FastAPI middleware with max_content_length=10_485_760 (10MB)"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/web/src/components/Feed.tsx",
+          "issue": "Infinite scroll fetches next page on render — causes n+1 waterfall at scale",
+          "recommended_fix": "Implement cursor-based loading with useEffect, throttle triggers"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/db/session.py",
+          "issue": "Database session reused across requests — data leakage and connection contention",
+          "recommended_fix": "Enforce dependency-injected session per request, close after response"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/web/src/hooks/useProfile.ts",
+          "issue": "Profile data fetched on every component mount — redundant under heavy component trees",
+          "recommended_fix": "Migrate to React Query with stale-while-revalidate, 5m cache"
+        },
+        {
+          "severity": "critical",
+          "file_or_area": "apps/api/app/routers/assessment.py",
+          "issue": "Unindexed query on assessment_results.user_id — full table scan at scale",
+          "recommended_fix": "CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_assessment_results_user_id ON assessment_results(user_id)"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/web/src/utils/logger.ts",
+          "issue": "Client-side console logs include full error stacks — exposes internal structure",
+          "recommended_fix": "Sanitize and redact before client log, forward details to server-side only"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/services/llm/provider_router.py",
+          "issue": "Hot loop over LLM providers without circuit breaker — cascading failure risk",
+          "recommended_fix": "Add tenacity retry with exponential backoff, circuit breaker at 3 failures"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Security Auditor",
+      "provider": "cerebras",
+      "model": "qwen-3-235b",
+      "raw": "{\"perspective\": \"Security Auditor\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/api/app/routers/skills.py\", \"issue\": \"RLS missing on GET /skills/{name} — allows enumeration of internal skill names by unauthenticated users\", \"recommended_fix\": \"Add @router.get(..., dependencies=[Depends(RootTokenHeader)]) to enforce authentication\"}, {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/main.py\", \"issue\": \"Missing rate limit on /api/skills POST — vulnerable to brute-force skill injection\", \"recommended_fix\": \"Apply fastapi-limiter decorator with 5/minute limit per IP\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/lib/api.ts\", \"issue\": \"API base URL hardcoded in client — risk of exposing staging envs in prod builds\", \"recommended_fix\": \"Use runtime environment variable VITE_API_URL\"}, {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/routers/assessment.py\", \"issue\": \"Unvalidated input in assessment_id — susceptible to UUID injection attacks\", \"recommended_fix\": \"Add Pydantic UUID4 validation and server-side existence check\"}, {\"severity\": \"critical\", \"file_or_area\": \"apps/api/.env\", \"issue\": \"SECRET_KEY present in codebase — exposed in git history and client builds\", \"recommended_fix\": \"Move to Supabase secrets, access via os.getenv('SECRET_KEY')\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/routes/AssessmentResult.svelte\", \"issue\": \"Direct DOM insertion of assessment feedback — risk of XSS from malicious skill output\", \"recommended_fix\": \"Sanitize with DOMPurify before innerHTML assignment\"}, {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/routers/auth.py\", \"issue\": \"Incomplete OWASP Top 10 compliance — missing security headers (HSTS, CSP, X-Content-Type-Options)\", \"recommended_fix\": \"Add SecurityHeaders middleware with strict policy\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/api/app/routers/profile.py\", \"issue\": \"Overfetching in /profile GET — returns full user object including is_platform_admin\", \"recommended_fix\": \"Return strict subset: id, avatar_url, account_type only\"}, {\"severity\": \"low\", \"file_or_area\": \"apps/web/src/lib/analytics.js\", \"issue\": \"Analytics tracker sends raw assessment answers — violates data minimization principle\", \"recommended_fix\": \"Hash answers client-side before transmission\"}, {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/routers/zeus.py\", \"issue\": \"Missing RLS on GET /zeus/events — exposes governance logs to unauthenticated users\", \"recommended_fix\": \"Enforce RootTokenHeader dependency and scope to requesting user\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"SECRET_KEY in repo is active credential — rotate immediately\"}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/routers/skills.py",
+          "issue": "RLS missing on GET /skills/{name} — allows enumeration of internal skill names by unauthenticated users",
+          "recommended_fix": "Add @router.get(..., dependencies=[Depends(RootTokenHeader)]) to enforce authentication"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/main.py",
+          "issue": "Missing rate limit on /api/skills POST — vulnerable to brute-force skill injection",
+          "recommended_fix": "Apply fastapi-limiter decorator with 5/minute limit per IP"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/web/src/lib/api.ts",
+          "issue": "API base URL hardcoded in client — risk of exposing staging envs in prod builds",
+          "recommended_fix": "Use runtime environment variable VITE_API_URL"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/routers/assessment.py",
+          "issue": "Unvalidated input in assessment_id — susceptible to UUID injection attacks",
+          "recommended_fix": "Add Pydantic UUID4 validation and server-side existence check"
+        },
+        {
+          "severity": "critical",
+          "file_or_area": "apps/api/.env",
+          "issue": "SECRET_KEY present in codebase — exposed in git history and client builds",
+          "recommended_fix": "Move to Supabase secrets, access via os.getenv('SECRET_KEY')"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/web/src/routes/AssessmentResult.svelte",
+          "issue": "Direct DOM insertion of assessment feedback — risk of XSS from malicious skill output",
+          "recommended_fix": "Sanitize with DOMPurify before innerHTML assignment"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/routers/auth.py",
+          "issue": "Incomplete OWASP Top 10 compliance — missing security headers (HSTS, CSP, X-Content-Type-Options)",
+          "recommended_fix": "Add SecurityHeaders middleware with strict policy"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/api/app/routers/profile.py",
+          "issue": "Overfetching in /profile GET — returns full user object including is_platform_admin",
+          "recommended_fix": "Return strict subset: id, avatar_url, account_type only"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "apps/web/src/lib/analytics.js",
+          "issue": "Analytics tracker sends raw assessment answers — violates data minimization principle",
+          "recommended_fix": "Hash answers client-side before transmission"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/routers/zeus.py",
+          "issue": "Missing RLS on GET /zeus/events — exposes governance logs to unauthenticated users",
+          "recommended_fix": "Enforce RootTokenHeader dependency and scope to requesting user"
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": "SECRET_KEY in repo is active credential — rotate immediately"
+    },
+    {
+      "perspective": "Code Quality Engineer",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Code Quality Engineer\", \n\"findings\": [\n    {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/routers/skills.py\", \"issue\": \"Lack of input validation\", \"recommended_fix\": \"Add try-except blocks for potential errors and validate user input\"},\n    {\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/components/Profile.js\", \"issue\": \"Unused imports\", \"recommended_fix\": \"Remove unused imports to improve code readability and performance\"},\n    {\"severity\": \"low\", \"file_or_area\": \"apps/api/app/models/User.py\", \"issue\": \"Type hinting missing\", \"recommended_fix\": \"Add type hints for function parameters and return types to improve code maintainability\"},\n    {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/services/Auth.py\", \"issue\": \"Potential SQL injection vulnerability\", \"recommended_fix\": \"Use parameterized queries or an ORM to prevent SQL injection attacks\"},\n    {\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/components/Login.js\", \"issue\": \"Insecure password storage\", \"recommended_fix\": \"Use a secure password hashing algorithm like bcrypt or Argon2\"},\n    {\"severity\": \"low\", \"file_or_area\": \"apps/api/app/utils/helpers.py\", \"issue\": \"Unused functions\", \"recommended_fix\": \"Remove unused functions to improve code readability and performance\"},\n    {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/routers/users.py\", \"issue\": \"Missing authentication checks\", \"recommended_fix\": \"Add authentication checks to prevent unauthorized access\"},\n    {\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/components/Dashboard.js\", \"issue\": \"Incorrect data rendering\", \"recommended_fix\": \"Fix data rendering to display correct information to users\"},\n    {\"severity\": \"low\", \"file_or_area\": \"apps/api/app/models/Profile.py\", \"issue\": \"Missing docstrings\", \"recommended_fix\": \"Add docstrings to improve code readability and maintainability\"},\n    {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/services/Email.py\", \"issue\": \"Potential email injection vulnerability\", \"recommended_fix\": \"Use a secure email library to prevent email injection attacks\"}\n], \n\"overall_verdict\": \"warn\", \n\"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/routers/skills.py",
+          "issue": "Lack of input validation",
+          "recommended_fix": "Add try-except blocks for potential errors and validate user input"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/web/src/components/Profile.js",
+          "issue": "Unused imports",
+          "recommended_fix": "Remove unused imports to improve code readability and performance"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "apps/api/app/models/User.py",
+          "issue": "Type hinting missing",
+          "recommended_fix": "Add type hints for function parameters and return types to improve code maintainability"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/services/Auth.py",
+          "issue": "Potential SQL injection vulnerability",
+          "recommended_fix": "Use parameterized queries or an ORM to prevent SQL injection attacks"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/web/src/components/Login.js",
+          "issue": "Insecure password storage",
+          "recommended_fix": "Use a secure password hashing algorithm like bcrypt or Argon2"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "apps/api/app/utils/helpers.py",
+          "issue": "Unused functions",
+          "recommended_fix": "Remove unused functions to improve code readability and performance"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/routers/users.py",
+          "issue": "Missing authentication checks",
+          "recommended_fix": "Add authentication checks to prevent unauthorized access"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/web/src/components/Dashboard.js",
+          "issue": "Incorrect data rendering",
+          "recommended_fix": "Fix data rendering to display correct information to users"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "apps/api/app/models/Profile.py",
+          "issue": "Missing docstrings",
+          "recommended_fix": "Add docstrings to improve code readability and maintainability"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/services/Email.py",
+          "issue": "Potential email injection vulnerability",
+          "recommended_fix": "Use a secure email library to prevent email injection attacks"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Ecosystem Auditor",
+      "provider": "cerebras",
+      "model": "qwen-3-235b",
+      "raw": "{\"perspective\": \"Ecosystem Auditor\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"apps/web/src/components/AssessmentForm.tsx\", \"issue\": \"Progress bar depletes in red on error — violates Law 1: NEVER RED.\", \"recommended_fix\": \"Change depletion color to purple (#D4B4FF) in ProgressBar component.\"}, {\"severity\": \"CRITICAL\", \"file_or_area\": \"apps/web/src/lib/zeus-client.ts\", \"issue\": \"No energy adaptation logic present — Law 2 (Energy Adaptation) missing in all products except MindShift.\", \"recommended_fix\": \"Inject energy-throttling middleware that caps assessment length based on user's last 7-day focus score.\"}, {\"severity\": \"HIGH\", \"file_or_area\": \"apps/api/app/routers/skills.py\", \"issue\": \"Skills endpoint returns full agent list even if user has reduced motion enabled — violates Law 4: ANIMATION SAFETY.\", \"recommended_fix\": \"Filter out animated agents when `prefers-reduced-motion` is true.\"}, {\"severity\": \"HIGH\", \"file_or_area\": \"apps/web/src/components/BadgeUnlock.tsx\", \"issue\": \"Badge reveal uses bounce+rotate+sparkle — violates Law 4: UNLIMITED ANIMATION.\", \"recommended_fix\": \"Replace with scale-only entrance, max 1.2x, gentle spring damping ≥14.\"}, {\"severity\": \"MEDIUM\", \"file_or_area\": \"apps/web/src/components/DashboardCTAList.tsx\", \"issue\": \"Four filled buttons visible at once — violates Law 5: ONE PRIMARY ACTION.\", \"recommended_fix\": \"Promote only 'Start Session' to filled; others to ghost buttons.\"}, {\"severity\": \"HIGH\", \"file_or_area\": \"apps/web/src/i18n/en/strings.json\", \"issue\": \"Contains 'You haven't completed your profile' — violates Law 3: SHAME-FREE LANGUAGE.\", \"recommended_fix\": \"Remove string; replace empty state with 'Ready when you are'.\"}, {\"severity\": \"MEDIUM\", \"file_or_area\": \"apps/web/src/components/CrystalCounter.tsx\", \"issue\": \"Counts up over 2s on earn — violates Law 4: UNSAFE COUNT-UP ANIMATION.\", \"recommended_fix\": \"Show final value instantly or animate within 800ms.\"}, {\"severity\": \"LOW\", \"file_or_area\": \"apps/web/src/components/AssessmentResultCard.tsx\", \"issue\": \"Shows '0 of 5 completed' — violates Law 3: SHAME-FREE LANGUAGE.\", \"recommended_fix\": \"Replace with 'Start →' when 0, otherwise show '3 completed'.\"}, {\"severity\": \"HIGH\", \"file_or_area\": \"apps/api/app/skills/behavior-pattern-analyzer.py\", \"issue\": \"MindShift-only energy adaptation model — Law 2 not propagated to other skills.\", \"recommended_fix\": \"Extract energy-adaptation logic to shared lib, import into all skill runtimes.\"}, {\"severity\": \"MEDIUM\", \"file_or_area\": \"apps/web/src/components/Confetti.tsx\", \"issue\": \"Emits 50 particles on achievement — violates Law 4: CONFETTI EXCEEDS 12 PARTICLES.\", \"recommended_fix\": \"Cap at 12 particles, duration 1.5s, contained within card.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Law 2 (Energy Adaptation) is isolated to MindShift — foundational ecosystem risk.\"}",
+      "findings": [
+        {
+          "severity": "CRITICAL",
+          "file_or_area": "apps/web/src/components/AssessmentForm.tsx",
+          "issue": "Progress bar depletes in red on error — violates Law 1: NEVER RED.",
+          "recommended_fix": "Change depletion color to purple (#D4B4FF) in ProgressBar component."
+        },
+        {
+          "severity": "CRITICAL",
+          "file_or_area": "apps/web/src/lib/zeus-client.ts",
+          "issue": "No energy adaptation logic present — Law 2 (Energy Adaptation) missing in all products except MindShift.",
+          "recommended_fix": "Inject energy-throttling middleware that caps assessment length based on user's last 7-day focus score."
+        },
+        {
+          "severity": "HIGH",
+          "file_or_area": "apps/api/app/routers/skills.py",
+          "issue": "Skills endpoint returns full agent list even if user has reduced motion enabled — violates Law 4: ANIMATION SAFETY.",
+          "recommended_fix": "Filter out animated agents when `prefers-reduced-motion` is true."
+        },
+        {
+          "severity": "HIGH",
+          "file_or_area": "apps/web/src/components/BadgeUnlock.tsx",
+          "issue": "Badge reveal uses bounce+rotate+sparkle — violates Law 4: UNLIMITED ANIMATION.",
+          "recommended_fix": "Replace with scale-only entrance, max 1.2x, gentle spring damping ≥14."
+        },
+        {
+          "severity": "MEDIUM",
+          "file_or_area": "apps/web/src/components/DashboardCTAList.tsx",
+          "issue": "Four filled buttons visible at once — violates Law 5: ONE PRIMARY ACTION.",
+          "recommended_fix": "Promote only 'Start Session' to filled; others to ghost buttons."
+        },
+        {
+          "severity": "HIGH",
+          "file_or_area": "apps/web/src/i18n/en/strings.json",
+          "issue": "Contains 'You haven't completed your profile' — violates Law 3: SHAME-FREE LANGUAGE.",
+          "recommended_fix": "Remove string; replace empty state with 'Ready when you are'."
+        },
+        {
+          "severity": "MEDIUM",
+          "file_or_area": "apps/web/src/components/CrystalCounter.tsx",
+          "issue": "Counts up over 2s on earn — violates Law 4: UNSAFE COUNT-UP ANIMATION.",
+          "recommended_fix": "Show final value instantly or animate within 800ms."
+        },
+        {
+          "severity": "LOW",
+          "file_or_area": "apps/web/src/components/AssessmentResultCard.tsx",
+          "issue": "Shows '0 of 5 completed' — violates Law 3: SHAME-FREE LANGUAGE.",
+          "recommended_fix": "Replace with 'Start →' when 0, otherwise show '3 completed'."
+        },
+        {
+          "severity": "HIGH",
+          "file_or_area": "apps/api/app/skills/behavior-pattern-analyzer.py",
+          "issue": "MindShift-only energy adaptation model — Law 2 not propagated to other skills.",
+          "recommended_fix": "Extract energy-adaptation logic to shared lib, import into all skill runtimes."
+        },
+        {
+          "severity": "MEDIUM",
+          "file_or_area": "apps/web/src/components/Confetti.tsx",
+          "issue": "Emits 50 particles on achievement — violates Law 4: CONFETTI EXCEEDS 12 PARTICLES.",
+          "recommended_fix": "Cap at 12 particles, duration 1.5s, contained within card."
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": "Law 2 (Energy Adaptation) is isolated to MindShift — foundational ecosystem risk."
+    },
+    {
+      "perspective": "CTO Watchdog",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"CTO Watchdog\", \"findings\": [\n{\"severity\": \"high\", \"file_or_area\": \"apps/api/app/routers/skills.py\", \"issue\": \"Lack of input validation for skill names\", \"recommended_fix\": \"Add try-except block to handle invalid skill names and return 400 error\"},\n{\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/components/Button.js\", \"issue\": \"Unused import statement\", \"recommended_fix\": \"Remove unused import statement\"},\n{\"severity\": \"low\", \"file_or_area\": \"apps/api/app/models/User.py\", \"issue\": \"Typo in docstring\", \"recommended_fix\": \"Correct typo in docstring\"},\n{\"severity\": \"high\", \"file_or_area\": \"apps/api/app/serializers/UserSerializer.py\", \"issue\": \"Inconsistent serialization of user data\", \"recommended_fix\": \"Standardize user data serialization\"},\n{\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/utils/api.js\", \"issue\": \"Unclear variable naming\", \"recommended_fix\": \"Rename variables for clarity\"},\n{\"severity\": \"high\", \"file_or_area\": \"apps/api/app/views/UserView.py\", \"issue\": \"Potential SQL injection vulnerability\", \"recommended_fix\": \"Use parameterized queries to prevent SQL injection\"},\n{\"severity\": \"low\", \"file_or_area\": \"apps/web/src/components/Header.js\", \"issue\": \"Unused CSS class\", \"recommended_fix\": \"Remove unused CSS class\"},\n{\"severity\": \"medium\", \"file_or_area\": \"apps/api/app/mixins/UserMixin.py\", \"issue\": \"Inconsistent method naming\", \"recommended_fix\": \"Standardize method naming\"},\n{\"severity\": \"high\", \"file_or_area\": \"apps/api/app/permissions.py\", \"issue\": \"Inadequate permission checks\", \"recommended_fix\": \"Implement robust permission checks\"},\n{\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/utils/helpers.js\", \"issue\": \"Unclear function naming\", \"recommended_fix\": \"Rename functions for clarity\"}\n], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/routers/skills.py",
+          "issue": "Lack of input validation for skill names",
+          "recommended_fix": "Add try-except block to handle invalid skill names and return 400 error"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/web/src/components/Button.js",
+          "issue": "Unused import statement",
+          "recommended_fix": "Remove unused import statement"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "apps/api/app/models/User.py",
+          "issue": "Typo in docstring",
+          "recommended_fix": "Correct typo in docstring"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/serializers/UserSerializer.py",
+          "issue": "Inconsistent serialization of user data",
+          "recommended_fix": "Standardize user data serialization"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/web/src/utils/api.js",
+          "issue": "Unclear variable naming",
+          "recommended_fix": "Rename variables for clarity"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/views/UserView.py",
+          "issue": "Potential SQL injection vulnerability",
+          "recommended_fix": "Use parameterized queries to prevent SQL injection"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "apps/web/src/components/Header.js",
+          "issue": "Unused CSS class",
+          "recommended_fix": "Remove unused CSS class"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/api/app/mixins/UserMixin.py",
+          "issue": "Inconsistent method naming",
+          "recommended_fix": "Standardize method naming"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/permissions.py",
+          "issue": "Inadequate permission checks",
+          "recommended_fix": "Implement robust permission checks"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/web/src/utils/helpers.js",
+          "issue": "Unclear function naming",
+          "recommended_fix": "Rename functions for clarity"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    }
+  ]
+}

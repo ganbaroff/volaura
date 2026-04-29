@@ -1,0 +1,17 @@
+{
+  "perspective": "Ecosystem Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Ecosystem Auditor\", \"summary\": \"Cross-product audit reveals critical gaps: Energy Adaptation (Law 2) missing in 4/5 products; code-index stale by 9 days (CRITICAL — agents simulating); BrandedBy video pipeline R&D ignores P0 shame-free TTS requirement from MindShift integration spec. Azure path可行 via Stripe Atlas Perks with EIN + US corp, no SSN needed. ElevenLabs $99 tier fits budget, but TTS output must be screened for shame-laden prosody per Law 3.\", \"key_sources\": [\"ECOSYSTEM-CONSTITUTION.md\", \"MINDSHIFT-INTEGRATION-SPEC\", \"docs/ECOSYSTEM-MAP.md\"], \"gaps_in_current_canon\": [\"No Energy Adaptation in VOLAURA, Life Simulator, BrandedBy, ZEUS; code-index last updated 2026-04-27; ElevenLabs prosody risks not assessed against Law 3\"], \"whistleblower_flag\": null, \"proposed_action\": \"1. Flag stale index — halt agent simulations until sync. 2. Add Energy Adaptation to all products per Law 2. 3. Route ElevenLabs output through MindShift's tone verifier before BrandedBy use. 4. Execute Azure registration via Stripe Atlas dashboard using EIN 37-2231884 and corp docs.\"}",
+  "summary": "Cross-product audit reveals critical gaps: Energy Adaptation (Law 2) missing in 4/5 products; code-index stale by 9 days (CRITICAL — agents simulating); BrandedBy video pipeline R&D ignores P0 shame-free TTS requirement from MindShift integration spec. Azure path可行 via Stripe Atlas Perks with EIN + US corp, no SSN needed. ElevenLabs $99 tier fits budget, but TTS output must be screened for shame-laden prosody per Law 3.",
+  "key_sources": [
+    "ECOSYSTEM-CONSTITUTION.md",
+    "MINDSHIFT-INTEGRATION-SPEC",
+    "docs/ECOSYSTEM-MAP.md"
+  ],
+  "gaps_in_current_canon": [
+    "No Energy Adaptation in VOLAURA, Life Simulator, BrandedBy, ZEUS; code-index last updated 2026-04-27; ElevenLabs prosody risks not assessed against Law 3"
+  ],
+  "whistleblower_flag": null,
+  "proposed_action": "1. Flag stale index — halt agent simulations until sync. 2. Add Energy Adaptation to all products per Law 2. 3. Route ElevenLabs output through MindShift's tone verifier before BrandedBy use. 4. Execute Azure registration via Stripe Atlas dashboard using EIN 37-2231884 and corp docs."
+}

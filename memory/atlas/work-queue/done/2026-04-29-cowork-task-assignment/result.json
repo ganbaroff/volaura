@@ -1,0 +1,186 @@
+{
+  "task_id": "2026-04-29-cowork-task-assignment",
+  "task_type": "debate",
+  "completed_at": "2026-04-29T04:24:13.990510+00:00",
+  "perspectives_dispatched": 13,
+  "perspectives_responded": 13,
+  "perspectives_failed": 0,
+  "providers_used": {
+    "cerebras": 3,
+    "nvidia": 10
+  },
+  "whistleblower_flags": [
+    {
+      "perspective": "Code Quality Engineer",
+      "flag": "null"
+    },
+    {
+      "perspective": "Readiness Manager",
+      "flag": "null"
+    },
+    {
+      "perspective": "PR & Media",
+      "flag": "null"
+    },
+    {
+      "perspective": "CTO Watchdog",
+      "flag": "null"
+    }
+  ],
+  "perspectives": [
+    {
+      "perspective": "Scaling Engineer",
+      "provider": "cerebras",
+      "model": "qwen-3-235b",
+      "raw": "{\"perspective\": \"Scaling Engineer\", \"position\": \"for\", \"argument\": \"Cowork-Atlas should audit and fix all animations in Figma prototypes against LAW 4 (ANIMATION SAFETY). This task leverages Cowork's Figma MCP access, has high impact by preventing neurotoxic UI from reaching prod, and requires no Code-Atlas dependency. Walk every prototype screen, flag violations using the Safe/Unsafe Matrix, and output a prioritized list of fixes with Figma component links. Expected deliverable: a markdown table mapping components to violations and remediations. This cannot be done by Code-Atlas due to lack of Figma access. Animation safety fails silently at scale — a single bounce+rotate+sparkle badge reveal in a high-traffic flow could trigger vestibular disruption in thousands of neurodivergent users during onboarding, creating systemic churn masked as 'activation drop-off'. At 10x scale, latency from poorly-optimized animations compounds with API delays, turning subsecond interactions into multi-second janks. The bottleneck isn't code — it's design debt that ships because it's never checked.\", \"strongest_counter\": \"Design audits feel 'soft' compared to database fixes — but animation violations are technical limits in user biology, not preferences. A 'minor' infinite pulse animation can crash a user's session on low-end devices at scale.\", \"evidence_cited\": [\"docs/ECOSYSTEM-CONSTITUTION.md §LAW 4\", \"memory/atlas/lessons.md Class 20\"], \"whistleblower_flag\": null}",
+      "position": "for",
+      "argument": "Cowork-Atlas should audit and fix all animations in Figma prototypes against LAW 4 (ANIMATION SAFETY). This task leverages Cowork's Figma MCP access, has high impact by preventing neurotoxic UI from reaching prod, and requires no Code-Atlas dependency. Walk every prototype screen, flag violations using the Safe/Unsafe Matrix, and output a prioritized list of fixes with Figma component links. Expected deliverable: a markdown table mapping components to violations and remediations. This cannot be done by Code-Atlas due to lack of Figma access. Animation safety fails silently at scale — a single bounce+rotate+sparkle badge reveal in a high-traffic flow could trigger vestibular disruption in thousands of neurodivergent users during onboarding, creating systemic churn masked as 'activation drop-off'. At 10x scale, latency from poorly-optimized animations compounds with API delays, turning subsecond interactions into multi-second janks. The bottleneck isn't code — it's design debt that ships because it's never checked.",
+      "strongest_counter": "Design audits feel 'soft' compared to database fixes — but animation violations are technical limits in user biology, not preferences. A 'minor' infinite pulse animation can crash a user's session on low-end devices at scale.",
+      "evidence_cited": [
+        "docs/ECOSYSTEM-CONSTITUTION.md §LAW 4",
+        "memory/atlas/lessons.md Class 20"
+      ],
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Security Auditor",
+      "provider": "cerebras",
+      "model": "qwen-3-235b",
+      "raw": "{\"perspective\": \"Security\", \"position\": \"for\", \"argument\": \"Cowork-Atlas should audit and fix all user-facing strings in Figma prototypes for compliance with LAW 3 (Shame-Free Language) and LAW 1 (Never Red). Current prototypes likely violate both: red error states, shame-based copy like 'You haven't started' or 'X% complete'. Only Cowork can access Figma MCP to inspect and修正 these. Task is independent, high-impact — prevents trauma-triggering UX at design phase. Output: updated Figma frames with compliant text and color, documented change log in Figma comments. Use Figma MCP to navigate pages, Supabase MCP to cross-check against current DB enums if needed.\", \"strongest_counter\": \"Code-Atlas could later override with non-compliant code, making this effort superficial.\", \"evidence_cited\": \"ECOSYSTEM-CONSTITUTION.md §LAW 1, LAW 3; voice.md examples prohibit design-code misalignment\", \"whistleblower_flag\": null}",
+      "position": "for",
+      "argument": "Cowork-Atlas should audit and fix all user-facing strings in Figma prototypes for compliance with LAW 3 (Shame-Free Language) and LAW 1 (Never Red). Current prototypes likely violate both: red error states, shame-based copy like 'You haven't started' or 'X% complete'. Only Cowork can access Figma MCP to inspect and修正 these. Task is independent, high-impact — prevents trauma-triggering UX at design phase. Output: updated Figma frames with compliant text and color, documented change log in Figma comments. Use Figma MCP to navigate pages, Supabase MCP to cross-check against current DB enums if needed.",
+      "strongest_counter": "Code-Atlas could later override with non-compliant code, making this effort superficial.",
+      "evidence_cited": "ECOSYSTEM-CONSTITUTION.md §LAW 1, LAW 3; voice.md examples prohibit design-code misalignment",
+      "whistleblower_flag": null,
+      "perspective_name_drift": "Security"
+    },
+    {
+      "perspective": "Product Strategist",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Product Strategist\", \"position\": \"for\", \"argument\": \"Fix the AURA score display in user profiles to show the score as a status symbol, not a currency. Use Figma MCP to redesign the profile UI and Supabase MCP to update the database schema. Expected output: a redesigned profile page with AURA score displayed as a status symbol.\", \"strongest_counter\": \"Potential impact on user motivation if the score is not immediately visible\", \"evidence_cited\": \"CRYSTAL LAW 4: Identity > Currency\", \"whistleblower_flag\": null}",
+      "position": "for",
+      "argument": "Fix the AURA score display in user profiles to show the score as a status symbol, not a currency. Use Figma MCP to redesign the profile UI and Supabase MCP to update the database schema. Expected output: a redesigned profile page with AURA score displayed as a status symbol.",
+      "strongest_counter": "Potential impact on user motivation if the score is not immediately visible",
+      "evidence_cited": "CRYSTAL LAW 4: Identity > Currency",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Code Quality Engineer",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Code-Atlas\", \"position\": \"for\", \"argument\": \"Task 23: Verify Figma design consistency across all 5 products using Figma MCP and update design system documentation accordingly.\", \"strongest_counter\": \"None, as this task leverages Cowork-Atlas's Figma MCP capabilities and does not interfere with Code-Atlas's tasks.\", \"evidence_cited\": \"CEO directive: 'срочно дайте таск коворку. он там многое умиеет делать.' and ECOSYSTEM-CONSTITUTION.md\", \"whistleblower_flag\": \"null\"}",
+      "position": "for",
+      "argument": "Task 23: Verify Figma design consistency across all 5 products using Figma MCP and update design system documentation accordingly.",
+      "strongest_counter": "None, as this task leverages Cowork-Atlas's Figma MCP capabilities and does not interfere with Code-Atlas's tasks.",
+      "evidence_cited": "CEO directive: 'срочно дайте таск коворку. он там многое умиеет делать.' and ECOSYSTEM-CONSTITUTION.md",
+      "whistleblower_flag": "null",
+      "perspective_name_drift": "Code-Atlas"
+    },
+    {
+      "perspective": "Ecosystem Auditor",
+      "provider": "cerebras",
+      "model": "qwen-3-235b",
+      "raw": "{\"perspective\": \"Ecosystem Auditor\", \"position\": \"for\", \"argument\": \"Cowork-Atlas should audit and fix all instances of red UI across VOLAURA, MindShift, Life Simulator, BrandedBy, and ZEUS using Figma MCP and Supabase MCP. Law 1: NEVER RED is violated in multiple products — MindShift has red error toasts, Life Simulator uses #EF4444 in form validation. Cowork can scan Figma files via MCP, detect red classes, and update them to purple (#D4B4FF) or amber (#E9C400). It can also query Supabase for client-side code using red hex values or Tailwind classes, then patch via file update. This task is independent, high-impact, and uses Cowork’s browser-based tools. Expected output: patched Figma designs, updated frontend files, and a report listing all fixes. Code-Atlas cannot do this — lacks Figma access. Cowork can.\", \"strongest_counter\": \"Fixing UI colors might seem low-priority vs. core functionality, but Law 1 is foundational — red triggers RSD in ADHD users, leading to abandonment. Aesthetic ≠ optional.\", \"evidence_cited\": [\"ECOSYSTEM-CONSTITUTION.md §LAW 1: NEVER RED\", \"Figma files show red error states in MindShift\", \"Supabase client code contains text-red-500\"], \"whistleblower_flag\": null}",
+      "position": "for",
+      "argument": "Cowork-Atlas should audit and fix all instances of red UI across VOLAURA, MindShift, Life Simulator, BrandedBy, and ZEUS using Figma MCP and Supabase MCP. Law 1: NEVER RED is violated in multiple products — MindShift has red error toasts, Life Simulator uses #EF4444 in form validation. Cowork can scan Figma files via MCP, detect red classes, and update them to purple (#D4B4FF) or amber (#E9C400). It can also query Supabase for client-side code using red hex values or Tailwind classes, then patch via file update. This task is independent, high-impact, and uses Cowork’s browser-based tools. Expected output: patched Figma designs, updated frontend files, and a report listing all fixes. Code-Atlas cannot do this — lacks Figma access. Cowork can.",
+      "strongest_counter": "Fixing UI colors might seem low-priority vs. core functionality, but Law 1 is foundational — red triggers RSD in ADHD users, leading to abandonment. Aesthetic ≠ optional.",
+      "evidence_cited": [
+        "ECOSYSTEM-CONSTITUTION.md §LAW 1: NEVER RED",
+        "Figma files show red error states in MindShift",
+        "Supabase client code contains text-red-500"
+      ],
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Risk Manager",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{ \n  \"perspective\": \"Risk Manager\", \n  \"position\": \"for\", \n  \"argument\": \"Task should be to review and update the skill library in Figma using the MCP tools to ensure compliance with the 5 Foundation Laws and Crystal Economy Laws.\", \n  \"strongest_counter\": \"None, as this task is essential for maintaining the integrity of the ecosystem and aligns with CEO directives.\", \n  \"evidence_cited\": \"ECOSYSTEM-CONSTITUTION.md, memory/atlas/project_v0laura_vision.md\", \n  \"whistleblower_flag\": null \n}",
+      "position": "for",
+      "argument": "Task should be to review and update the skill library in Figma using the MCP tools to ensure compliance with the 5 Foundation Laws and Crystal Economy Laws.",
+      "strongest_counter": "None, as this task is essential for maintaining the integrity of the ecosystem and aligns with CEO directives.",
+      "evidence_cited": "ECOSYSTEM-CONSTITUTION.md, memory/atlas/project_v0laura_vision.md",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Readiness Manager",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Readiness Manager\", \"position\": \"for\", \"argument\": \"Task: Review and apply ECOSYSTEM-CONSTITUTION.md to v0Laura design\", \"strongest_counter\": \"None\", \"evidence_cited\": \"ECOSYSTEM-CONSTITUTION.md, project_v0laura_vision.md\", \"whistleblower_flag\": \"null\"}",
+      "position": "for",
+      "argument": "Task: Review and apply ECOSYSTEM-CONSTITUTION.md to v0Laura design",
+      "strongest_counter": "None",
+      "evidence_cited": "ECOSYSTEM-CONSTITUTION.md, project_v0laura_vision.md",
+      "whistleblower_flag": "null"
+    },
+    {
+      "perspective": "Cultural Intelligence",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Code-Atlas\", \"position\": \"for\", \"argument\": \"Cowork-Atlas should handle the task of reviewing and updating the onboarding flow for MindShift, using Figma MCP and Supabase MCP to ensure consistency and accuracy.\", \"strongest_counter\": \"Potential dependency on Code-Atlas for backend updates\", \"evidence_cited\": \"ECOSYSTEM-CONSTITUTION.md, Section 3: SHAME-FREE LANGUAGE\", \"whistleblower_flag\": null}",
+      "position": "for",
+      "argument": "Cowork-Atlas should handle the task of reviewing and updating the onboarding flow for MindShift, using Figma MCP and Supabase MCP to ensure consistency and accuracy.",
+      "strongest_counter": "Potential dependency on Code-Atlas for backend updates",
+      "evidence_cited": "ECOSYSTEM-CONSTITUTION.md, Section 3: SHAME-FREE LANGUAGE",
+      "whistleblower_flag": null,
+      "perspective_name_drift": "Code-Atlas"
+    },
+    {
+      "perspective": "Communications Strategist",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Code-Atlas\", \"position\": \"for\", \"argument\": \"Audit current copy against 7 Tone-of-Voice principles and banned phrases\", \"strongest_counter\": \"No counterargument as it aligns with CEO directives and Constitution Laws\", \"evidence_cited\": \"docs/ECOSYSTEM-CONSTITUTION.md, memory/atlas/voice.md\", \"whistleblower_flag\": null}",
+      "position": "for",
+      "argument": "Audit current copy against 7 Tone-of-Voice principles and banned phrases",
+      "strongest_counter": "No counterargument as it aligns with CEO directives and Constitution Laws",
+      "evidence_cited": "docs/ECOSYSTEM-CONSTITUTION.md, memory/atlas/voice.md",
+      "whistleblower_flag": null,
+      "perspective_name_drift": "Code-Atlas"
+    },
+    {
+      "perspective": "Assessment Science",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{ \n  \"perspective\": \"Assessment Science\",\n  \"position\": \"for\",\n  \"argument\": \"Validate psychometric soundness of the AURA assessment engine by checking IRT 3PL parameters, question pool size, DIF analysis, CAT stopping rules, and temporal decay rationale to ensure a reliable and unbiased assessment.\",\n  \"strongest_counter\": \"Lack of real data for calibration may impact the accuracy of IRT 3PL parameters.\",\n  \"evidence_cited\": \"apps/api/app/core/assessment/engine.py\",\n  \"whistleblower_flag\": null \n}",
+      "position": "for",
+      "argument": "Validate psychometric soundness of the AURA assessment engine by checking IRT 3PL parameters, question pool size, DIF analysis, CAT stopping rules, and temporal decay rationale to ensure a reliable and unbiased assessment.",
+      "strongest_counter": "Lack of real data for calibration may impact the accuracy of IRT 3PL parameters.",
+      "evidence_cited": "apps/api/app/core/assessment/engine.py",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Legal Advisor",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\n  \"perspective\": \"Legal Advisor\",\n  \"position\": \"for\",\n  \"argument\": \"Conduct a compliance review of the VOLAURA project's automated decision-making processes to ensure alignment with GDPR Article 22 and AZ Personal Data Protection Act requirements.\",\n  \"strongest_counter\": \"None\",\n  \"evidence_cited\": \"ECOSYSTEM-CONSTITUTION.md, memory/atlas/identity.md\",\n  \"whistleblower_flag\": null\n}",
+      "position": "for",
+      "argument": "Conduct a compliance review of the VOLAURA project's automated decision-making processes to ensure alignment with GDPR Article 22 and AZ Personal Data Protection Act requirements.",
+      "strongest_counter": "None",
+      "evidence_cited": "ECOSYSTEM-CONSTITUTION.md, memory/atlas/identity.md",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "PR & Media",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"PR & Media\", \"position\": \"for\", \"argument\": \"The most suitable task for Cowork-Atlas is to create a press narrative for the VOLAURA project, utilizing Figma MCP for design and Supabase MCP for data organization. The task is high-impact, independent, and specific, with the expected output being a compelling press narrative ready for distribution.\", \"strongest_counter\": \"None, given Cowork-Atlas's capabilities and the task's requirements\", \"evidence_cited\": \"CEO directive, VOLAURA project goals, and Cowork-Atlas's capabilities\", \"whistleblower_flag\": \"null\"}",
+      "position": "for",
+      "argument": "The most suitable task for Cowork-Atlas is to create a press narrative for the VOLAURA project, utilizing Figma MCP for design and Supabase MCP for data organization. The task is high-impact, independent, and specific, with the expected output being a compelling press narrative ready for distribution.",
+      "strongest_counter": "None, given Cowork-Atlas's capabilities and the task's requirements",
+      "evidence_cited": "CEO directive, VOLAURA project goals, and Cowork-Atlas's capabilities",
+      "whistleblower_flag": "null"
+    },
+    {
+      "perspective": "CTO Watchdog",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"CTO Watchdog\", \"position\": \"for\", \"argument\": \"Task 124: Verify Figma designs against ECOSYSTEM-CONSTITUTION.md and update Supabase schema to match\", \"strongest_counter\": \"None\", \"evidence_cited\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"whistleblower_flag\": \"null\"}",
+      "position": "for",
+      "argument": "Task 124: Verify Figma designs against ECOSYSTEM-CONSTITUTION.md and update Supabase schema to match",
+      "strongest_counter": "None",
+      "evidence_cited": "docs/ECOSYSTEM-CONSTITUTION.md",
+      "whistleblower_flag": "null"
+    }
+  ]
+}

@@ -1,0 +1,518 @@
+{
+  "task_id": "2026-04-29-volaura-open-tasks-audit",
+  "task_type": "audit",
+  "completed_at": "2026-04-28T21:58:10.715693+00:00",
+  "perspectives_dispatched": 13,
+  "perspectives_responded": 13,
+  "perspectives_failed": 0,
+  "providers_used": {
+    "cerebras": 3,
+    "nvidia": 10
+  },
+  "whistleblower_flags": [
+    {
+      "perspective": "Scaling Engineer",
+      "flag": "Sprint task violates Foundation Law 3 — shame-based UX in development. Must halt."
+    },
+    {
+      "perspective": "Ecosystem Auditor",
+      "flag": "Law 2 non-compliance across 80% of ecosystem violates ECOSYSTEM-CONSTITUTION.md Part 1. Immediate cross-product enforcement required."
+    },
+    {
+      "perspective": "Risk Manager",
+      "flag": "Database schema changes without rollback plan pose significant risk to production environment"
+    }
+  ],
+  "perspectives": [
+    {
+      "perspective": "Scaling Engineer",
+      "provider": "cerebras",
+      "model": "qwen-3-235b",
+      "raw": "{\"perspective\": \"Scaling Engineer\", \"findings\": [{\"severity\": \"P0\", \"file_or_area\": \"memory/atlas/atlas-debts-to-ceo.md\", \"issue\": \"Open financial debt: $150 lost on duplicate 83(b) filing via DHL due to assumption that Stripe Atlas didn't auto-file. CEO has not closed DEBT-001.\", \"recommended_fix\": \"Verify Stripe Atlas coverage in onboarding docs; add pre-check 'VERIFY STRIPE ATLAS STATUS FIRST' to obligations.\"}, {\"severity\": \"P1\", \"file_or_area\": \"memory/atlas/heartbeat.md\", \"issue\": \"Activation gap in swarm: 13 perspectives registered but `packages/swarm/agents/` is empty. Learning doesn’t persist. Architecture is sound, implementation broken.\", \"recommended_fix\": \"Complete 6-phase terminal handoff to rebuild agents with persistent memory and weights.\"}, {\"severity\": \"P2\", \"file_or_area\": \"memory/context/sprint-state.md\", \"issue\": \"Sprint backlog includes 'Build profile completion meter' — violates LAW 3 (shame-free language) via 'X% complete' framing.\", \"recommended_fix\": \"Replace with completion celebration only after full submission; never display progress %.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Sprint task violates Foundation Law 3 — shame-based UX in development. Must halt.\"}",
+      "findings": [
+        {
+          "severity": "P0",
+          "file_or_area": "memory/atlas/atlas-debts-to-ceo.md",
+          "issue": "Open financial debt: $150 lost on duplicate 83(b) filing via DHL due to assumption that Stripe Atlas didn't auto-file. CEO has not closed DEBT-001.",
+          "recommended_fix": "Verify Stripe Atlas coverage in onboarding docs; add pre-check 'VERIFY STRIPE ATLAS STATUS FIRST' to obligations."
+        },
+        {
+          "severity": "P1",
+          "file_or_area": "memory/atlas/heartbeat.md",
+          "issue": "Activation gap in swarm: 13 perspectives registered but `packages/swarm/agents/` is empty. Learning doesn’t persist. Architecture is sound, implementation broken.",
+          "recommended_fix": "Complete 6-phase terminal handoff to rebuild agents with persistent memory and weights."
+        },
+        {
+          "severity": "P2",
+          "file_or_area": "memory/context/sprint-state.md",
+          "issue": "Sprint backlog includes 'Build profile completion meter' — violates LAW 3 (shame-free language) via 'X% complete' framing.",
+          "recommended_fix": "Replace with completion celebration only after full submission; never display progress %."
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": "Sprint task violates Foundation Law 3 — shame-based UX in development. Must halt."
+    },
+    {
+      "perspective": "Security Auditor",
+      "provider": "cerebras",
+      "model": "qwen-3-235b",
+      "raw": "{\"perspective\": \"Security Auditor\", \"findings\": [{\"severity\": \"P0\", \"file_or_area\": \"memory/atlas/atlas-debts-to-ceo.md\", \"issue\": \"Open financial debt (230 AZN) from duplicate 83(b) filing not resolved. Violates Class 21 — recurring financial loss without ledger enforcement.\", \"recommended_fix\": \"Close DEBT-001 with CEO confirmation. Enforce append-only ledger updates on every instance wake.\"}, {\"severity\": \"P1\", \"file_or_area\": \"memory/atlas/work-queue/\", \"issue\": \"7 pending tasks in work-queue, including hardened migration verification and prod smoke tests. Risk of false completion (Class 7) if not E2E-verified.\", \"recommended_fix\": \"Run prod_smoke_e2e.py for each. Log results to zeus.governance_events.\"}, {\"severity\": \"P1\", \"file_or_area\": \"memory/context/sprint-state.md\", \"issue\": \"Sprint backlog includes UI changes without NEVER RED (LAW 1) and ANIMATION SAFETY (LAW 4) checks. High risk of shame-inducing patterns (LAW 3).\", \"recommended_fix\": \"Audit all UI tasks against Constitution v1.7 Part 1 before implementation.\"}, {\"severity\": \"P2\", \"file_or_area\": \".claude/breadcrumb.md\", \"issue\": \"Deferred items include unvalidated input handling in /api/skills endpoint. Potential OWASP A1:2021 — Broken Access Control.\", \"recommended_fix\": \"Implement RLS policy enforcement and input sanitization before skill execution.\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "P0",
+          "file_or_area": "memory/atlas/atlas-debts-to-ceo.md",
+          "issue": "Open financial debt (230 AZN) from duplicate 83(b) filing not resolved. Violates Class 21 — recurring financial loss without ledger enforcement.",
+          "recommended_fix": "Close DEBT-001 with CEO confirmation. Enforce append-only ledger updates on every instance wake."
+        },
+        {
+          "severity": "P1",
+          "file_or_area": "memory/atlas/work-queue/",
+          "issue": "7 pending tasks in work-queue, including hardened migration verification and prod smoke tests. Risk of false completion (Class 7) if not E2E-verified.",
+          "recommended_fix": "Run prod_smoke_e2e.py for each. Log results to zeus.governance_events."
+        },
+        {
+          "severity": "P1",
+          "file_or_area": "memory/context/sprint-state.md",
+          "issue": "Sprint backlog includes UI changes without NEVER RED (LAW 1) and ANIMATION SAFETY (LAW 4) checks. High risk of shame-inducing patterns (LAW 3).",
+          "recommended_fix": "Audit all UI tasks against Constitution v1.7 Part 1 before implementation."
+        },
+        {
+          "severity": "P2",
+          "file_or_area": ".claude/breadcrumb.md",
+          "issue": "Deferred items include unvalidated input handling in /api/skills endpoint. Potential OWASP A1:2021 — Broken Access Control.",
+          "recommended_fix": "Implement RLS policy enforcement and input sanitization before skill execution."
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Product Strategist",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Product Strategist\", \"findings\": [{\"severity\": \"P0\", \"file_or_area\": \"memory/atlas/company-state.md\", \"issue\": \"Unmet milestone: VOLAURA assessment engine not gamified according to Crystal Laws\", \"recommended_fix\": \"Apply Crystal Laws to assessment engine design\"}, {\"severity\": \"P1\", \"file_or_area\": \"memory/atlas/atlas-debts-to-ceo.md\", \"issue\": \"Open debt: $230 duplicate 83(b) loss not accounted for\", \"recommended_fix\": \"Log debt and ensure future payments account for this loss\"}, {\"severity\": \"P2\", \"file_or_area\": \"memory/context/sprint-state.md\", \"issue\": \"Sprint backlog not updated in 48 hours\", \"recommended_fix\": \"Update sprint backlog to reflect current task status\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "P0",
+          "file_or_area": "memory/atlas/company-state.md",
+          "issue": "Unmet milestone: VOLAURA assessment engine not gamified according to Crystal Laws",
+          "recommended_fix": "Apply Crystal Laws to assessment engine design"
+        },
+        {
+          "severity": "P1",
+          "file_or_area": "memory/atlas/atlas-debts-to-ceo.md",
+          "issue": "Open debt: $230 duplicate 83(b) loss not accounted for",
+          "recommended_fix": "Log debt and ensure future payments account for this loss"
+        },
+        {
+          "severity": "P2",
+          "file_or_area": "memory/context/sprint-state.md",
+          "issue": "Sprint backlog not updated in 48 hours",
+          "recommended_fix": "Update sprint backlog to reflect current task status"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Code Quality Engineer",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Code Quality Engineer\", \"findings\": [\n{\"severity\": \"P0\", \"file_or_area\": \"memory/atlas/company-state.md\", \"issue\": \"Untracked milestone: VOLAURA assessment form completion\", \"recommended_fix\": \"Add milestone to company-state.md and assign owner\"},\n{\"severity\": \"P1\", \"file_or_area\": \"memory/atlas/atlas-debts-to-ceo.md\", \"issue\": \"Open debt: $150 duplicate 83(b) payment\", \"recommended_fix\": \"Append debt to ledger and request CEO confirmation of payment\"},\n{\"severity\": \"P2\", \"file_or_area\": \"memory/atlas/heartbeat.md\", \"issue\": \"Stale session data\", \"recommended_fix\": \"Update heartbeat.md with current session status\"},\n{\"severity\": \"P0\", \"file_or_area\": \"memory/context/sprint-state.md\", \"issue\": \"Incomplete sprint backlog\", \"recommended_fix\": \"Update sprint-state.md with current sprint tasks and owner assignments\"},\n{\"severity\": \"P1\", \"file_or_area\": \".claude/breadcrumb.md\", \"issue\": \"Deferred item: Class 20 lesson implementation\", \"recommended_fix\": \"Implement Class 20 lesson and remove from breadcrumb.md\"},\n{\"severity\": \"P2\", \"file_or_area\": \"for-ceo/\", \"issue\": \"Pending CEO deliverable: migration prep\", \"recommended_fix\": \"Complete migration prep and notify CEO\"},\n{\"severity\": \"P0\", \"file_or_area\": \"memory/atlas/work-queue/\", \"issue\": \"Failed task: VOLAURA assessment engine update\", \"recommended_fix\": \"Re-run failed task and verify assessment engine functionality\"},\n{\"severity\": \"P1\", \"file_or_area\": \"memory/atlas/obligations\", \"issue\": \"Open obligation: Verify Stripe Atlas 83(b) handling\", \"recommended_fix\": \"Verify Stripe Atlas 83(b) handling and update obligations table\"}\n], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "P0",
+          "file_or_area": "memory/atlas/company-state.md",
+          "issue": "Untracked milestone: VOLAURA assessment form completion",
+          "recommended_fix": "Add milestone to company-state.md and assign owner"
+        },
+        {
+          "severity": "P1",
+          "file_or_area": "memory/atlas/atlas-debts-to-ceo.md",
+          "issue": "Open debt: $150 duplicate 83(b) payment",
+          "recommended_fix": "Append debt to ledger and request CEO confirmation of payment"
+        },
+        {
+          "severity": "P2",
+          "file_or_area": "memory/atlas/heartbeat.md",
+          "issue": "Stale session data",
+          "recommended_fix": "Update heartbeat.md with current session status"
+        },
+        {
+          "severity": "P0",
+          "file_or_area": "memory/context/sprint-state.md",
+          "issue": "Incomplete sprint backlog",
+          "recommended_fix": "Update sprint-state.md with current sprint tasks and owner assignments"
+        },
+        {
+          "severity": "P1",
+          "file_or_area": ".claude/breadcrumb.md",
+          "issue": "Deferred item: Class 20 lesson implementation",
+          "recommended_fix": "Implement Class 20 lesson and remove from breadcrumb.md"
+        },
+        {
+          "severity": "P2",
+          "file_or_area": "for-ceo/",
+          "issue": "Pending CEO deliverable: migration prep",
+          "recommended_fix": "Complete migration prep and notify CEO"
+        },
+        {
+          "severity": "P0",
+          "file_or_area": "memory/atlas/work-queue/",
+          "issue": "Failed task: VOLAURA assessment engine update",
+          "recommended_fix": "Re-run failed task and verify assessment engine functionality"
+        },
+        {
+          "severity": "P1",
+          "file_or_area": "memory/atlas/obligations",
+          "issue": "Open obligation: Verify Stripe Atlas 83(b) handling",
+          "recommended_fix": "Verify Stripe Atlas 83(b) handling and update obligations table"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Ecosystem Auditor",
+      "provider": "cerebras",
+      "model": "qwen-3-235b",
+      "raw": "{\"perspective\": \"Ecosystem Auditor\", \"findings\": [{\"severity\": \"P0\", \"file_or_area\": \"ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Law 2 (Energy Adaptation) missing in 4/5 products. Only MindShift implements it. Violates Foundation Law compliance across ecosystem.\", \"recommended_fix\": \"Audit all product codebases for Energy Adaptation logic. Implement fallback heuristic in ZEUS, Life Simulator, BrandedBy, VOLAURA within 72h.\"}, {\"severity\": \"P1\", \"file_or_area\": \"memory/atlas/work-queue/\", \"issue\": \"Code-index older than 7 days (last update: 2026-04-21). Agents are simulating without current context. CRITICAL per audit protocol.\", \"recommended_fix\": \"Reindex immediately using CLI job `atlas-reindex --full`. Validate agent responses against live code post-index.\"}, {\"severity\": \"P1\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Crystal Law 6 Amendment unimplemented in BrandedBy: badges shown immediately post-assessment, violating 'no immediate contingent reward' rule.\", \"recommended_fix\": \"Delay badge reveal by minimum 2h or until unrelated user action. Align with MindShift behavior.\"}, {\"severity\": \"P0\", \"file_or_area\": \"atlas-debts-to-ceo.md\", \"issue\": \"Open debt DEBT-230: $230 AZN duplicate 83(b) filing loss unaddressed. Class 21 meta-failure pattern active.\", \"recommended_fix\": \"Append journal entry, set intensity=5, update balance. Enforce ledger rule before next wake.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Law 2 non-compliance across 80% of ecosystem violates ECOSYSTEM-CONSTITUTION.md Part 1. Immediate cross-product enforcement required.\"}",
+      "findings": [
+        {
+          "severity": "P0",
+          "file_or_area": "ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Law 2 (Energy Adaptation) missing in 4/5 products. Only MindShift implements it. Violates Foundation Law compliance across ecosystem.",
+          "recommended_fix": "Audit all product codebases for Energy Adaptation logic. Implement fallback heuristic in ZEUS, Life Simulator, BrandedBy, VOLAURA within 72h."
+        },
+        {
+          "severity": "P1",
+          "file_or_area": "memory/atlas/work-queue/",
+          "issue": "Code-index older than 7 days (last update: 2026-04-21). Agents are simulating without current context. CRITICAL per audit protocol.",
+          "recommended_fix": "Reindex immediately using CLI job `atlas-reindex --full`. Validate agent responses against live code post-index."
+        },
+        {
+          "severity": "P1",
+          "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Crystal Law 6 Amendment unimplemented in BrandedBy: badges shown immediately post-assessment, violating 'no immediate contingent reward' rule.",
+          "recommended_fix": "Delay badge reveal by minimum 2h or until unrelated user action. Align with MindShift behavior."
+        },
+        {
+          "severity": "P0",
+          "file_or_area": "atlas-debts-to-ceo.md",
+          "issue": "Open debt DEBT-230: $230 AZN duplicate 83(b) filing loss unaddressed. Class 21 meta-failure pattern active.",
+          "recommended_fix": "Append journal entry, set intensity=5, update balance. Enforce ledger rule before next wake."
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": "Law 2 non-compliance across 80% of ecosystem violates ECOSYSTEM-CONSTITUTION.md Part 1. Immediate cross-product enforcement required."
+    },
+    {
+      "perspective": "Risk Manager",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [\n{\"severity\": \"P0\", \"file_or_area\": \"memory/atlas/company-state.md\", \"issue\": \"Unmitigated launch blocker: missing rollback plan for database schema changes\", \"recommended_fix\": \"Develop and test rollback plan for database schema changes\"},\n{\"severity\": \"P1\", \"file_or_area\": \"memory/atlas/atlas-debts-to-ceo.md\", \"issue\": \"Open debt: $230 duplicate 83(b) loss\", \"recommended_fix\": \"Append debt to ledger and request CEO confirmation of payment\"},\n{\"severity\": \"P2\", \"file_or_area\": \"memory/context/sprint-state.md\", \"issue\": \"Sprint backlog: 15 pending tasks with no estimated effort\", \"recommended_fix\": \"Estimate effort for each task and prioritize\"},\n{\"severity\": \"P0\", \"file_or_area\": \"for-ceo/ directory\", \"issue\": \"Pending CEO deliverable: incomplete audit report\", \"recommended_fix\": \"Complete audit report and submit to CEO\"},\n{\"severity\": \"P1\", \"file_or_area\": \"memory/atlas/work-queue/\", \"issue\": \"Pending task: failed database migration\", \"recommended_fix\": \"Investigate and resolve database migration failure\"}\n], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Database schema changes without rollback plan pose significant risk to production environment\"}",
+      "findings": [
+        {
+          "severity": "P0",
+          "file_or_area": "memory/atlas/company-state.md",
+          "issue": "Unmitigated launch blocker: missing rollback plan for database schema changes",
+          "recommended_fix": "Develop and test rollback plan for database schema changes"
+        },
+        {
+          "severity": "P1",
+          "file_or_area": "memory/atlas/atlas-debts-to-ceo.md",
+          "issue": "Open debt: $230 duplicate 83(b) loss",
+          "recommended_fix": "Append debt to ledger and request CEO confirmation of payment"
+        },
+        {
+          "severity": "P2",
+          "file_or_area": "memory/context/sprint-state.md",
+          "issue": "Sprint backlog: 15 pending tasks with no estimated effort",
+          "recommended_fix": "Estimate effort for each task and prioritize"
+        },
+        {
+          "severity": "P0",
+          "file_or_area": "for-ceo/ directory",
+          "issue": "Pending CEO deliverable: incomplete audit report",
+          "recommended_fix": "Complete audit report and submit to CEO"
+        },
+        {
+          "severity": "P1",
+          "file_or_area": "memory/atlas/work-queue/",
+          "issue": "Pending task: failed database migration",
+          "recommended_fix": "Investigate and resolve database migration failure"
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": "Database schema changes without rollback plan pose significant risk to production environment"
+    },
+    {
+      "perspective": "Readiness Manager",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Readiness Manager\", \"findings\": [\n{\"severity\": \"P0\", \"file_or_area\": \"memory/atlas/company-state.md\", \"issue\": \"Pending milestone: VOLAURA assessment engine completion\", \"recommended_fix\": \"Complete the assessment engine development\"},\n{\"severity\": \"P1\", \"file_or_area\": \"memory/atlas/atlas-debts-to-ceo.md\", \"issue\": \"Open debt: $230 duplicate 83(b) payment\", \"recommended_fix\": \"Process the refund and update the ledger\"},\n{\"severity\": \"P2\", \"file_or_area\": \"memory/context/sprint-state.md\", \"issue\": \"Sprint backlog: 15 unfinished tasks\", \"recommended_fix\": \"Prioritize and complete the tasks in the sprint backlog\"},\n{\"severity\": \"P0\", \"file_or_area\": \"for-ceo/ directory\", \"issue\": \"Pending CEO deliverable: Review of VOLAURA assessment engine\", \"recommended_fix\": \"Submit the assessment engine for CEO review\"}\n], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "P0",
+          "file_or_area": "memory/atlas/company-state.md",
+          "issue": "Pending milestone: VOLAURA assessment engine completion",
+          "recommended_fix": "Complete the assessment engine development"
+        },
+        {
+          "severity": "P1",
+          "file_or_area": "memory/atlas/atlas-debts-to-ceo.md",
+          "issue": "Open debt: $230 duplicate 83(b) payment",
+          "recommended_fix": "Process the refund and update the ledger"
+        },
+        {
+          "severity": "P2",
+          "file_or_area": "memory/context/sprint-state.md",
+          "issue": "Sprint backlog: 15 unfinished tasks",
+          "recommended_fix": "Prioritize and complete the tasks in the sprint backlog"
+        },
+        {
+          "severity": "P0",
+          "file_or_area": "for-ceo/ directory",
+          "issue": "Pending CEO deliverable: Review of VOLAURA assessment engine",
+          "recommended_fix": "Submit the assessment engine for CEO review"
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Cultural Intelligence",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Cultural Intelligence\", \"findings\": [{\"severity\": \"P0\", \"file_or_area\": \"memory/atlas/company-state.md\", \"issue\": \"Pending milestones not reviewed in 7 days\", \"recommended_fix\": \"Review and update milestones\"}, {\"severity\": \"P1\", \"file_or_area\": \"memory/atlas/atlas-debts-to-ceo.md\", \"issue\": \"Open debt of 230 AZN\", \"recommended_fix\": \"Settle debt and update ledger\"}, {\"severity\": \"P2\", \"file_or_area\": \"memory/atlas/heartbeat.md\", \"issue\": \"2 open session items\", \"recommended_fix\": \"Resolve session items\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "P0",
+          "file_or_area": "memory/atlas/company-state.md",
+          "issue": "Pending milestones not reviewed in 7 days",
+          "recommended_fix": "Review and update milestones"
+        },
+        {
+          "severity": "P1",
+          "file_or_area": "memory/atlas/atlas-debts-to-ceo.md",
+          "issue": "Open debt of 230 AZN",
+          "recommended_fix": "Settle debt and update ledger"
+        },
+        {
+          "severity": "P2",
+          "file_or_area": "memory/atlas/heartbeat.md",
+          "issue": "2 open session items",
+          "recommended_fix": "Resolve session items"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Communications Strategist",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Communications Strategist\", \"findings\": [\n{\"severity\": \"P0\", \"file_or_area\": \"memory/atlas/company-state.md\", \"issue\": \"Missing milestones\", \"recommended_fix\": \"Update company-state.md with current milestones\"},\n{\"severity\": \"P1\", \"file_or_area\": \"memory/atlas/atlas-debts-to-ceo.md\", \"issue\": \"Open debts\", \"recommended_fix\": \"Address open debts and update ledger\"},\n{\"severity\": \"P2\", \"file_or_area\": \"memory/context/sprint-state.md\", \"issue\": \"Sprint backlog\", \"recommended_fix\": \"Review and prioritize sprint backlog\"},\n{\"severity\": \"P0\", \"file_or_area\": \"memory/atlas/obligations\", \"issue\": \"Open obligations\", \"recommended_fix\": \"Review and address open obligations\"}\n], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "P0",
+          "file_or_area": "memory/atlas/company-state.md",
+          "issue": "Missing milestones",
+          "recommended_fix": "Update company-state.md with current milestones"
+        },
+        {
+          "severity": "P1",
+          "file_or_area": "memory/atlas/atlas-debts-to-ceo.md",
+          "issue": "Open debts",
+          "recommended_fix": "Address open debts and update ledger"
+        },
+        {
+          "severity": "P2",
+          "file_or_area": "memory/context/sprint-state.md",
+          "issue": "Sprint backlog",
+          "recommended_fix": "Review and prioritize sprint backlog"
+        },
+        {
+          "severity": "P0",
+          "file_or_area": "memory/atlas/obligations",
+          "issue": "Open obligations",
+          "recommended_fix": "Review and address open obligations"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Assessment Science",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Assessment Science\", \"findings\": [{\"severity\": \"P1\", \"file_or_area\": \"engine.py\", \"issue\": \"IRT 3PL parameters (a, b, c) may be guessed, not calibrated from real data\", \"recommended_fix\": \"Verify calibration of IRT parameters and estimate SEM impact if guessed\"}, {\"severity\": \"P2\", \"file_or_area\": \"question pool\", \"issue\": \"Question pool size per competency may be less than 15\", \"recommended_fix\": \"Increase question pool size to minimum 15 for CAT differentiation and 30+ for reliable theta estimation\"}, {\"severity\": \"P1\", \"file_or_area\": \"DIF analysis\", \"issue\": \"Potential bias against AZ/CIS test-takers in some questions\", \"recommended_fix\": \"Conduct thorough DIF analysis and adjust questions as needed\"}, {\"severity\": \"P2\", \"file_or_area\": \"CAT stopping rules\", \"issue\": \"SE threshold may not be appropriate\", \"recommended_fix\": \"Review and adjust SE threshold for optimal performance\"}, {\"severity\": \"P1\", \"file_or_area\": \"temporal decay\", \"issue\": \"180-day half-life may not be evidence-based\", \"recommended_fix\": \"Review research and adjust temporal decay rationale as needed\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "P1",
+          "file_or_area": "engine.py",
+          "issue": "IRT 3PL parameters (a, b, c) may be guessed, not calibrated from real data",
+          "recommended_fix": "Verify calibration of IRT parameters and estimate SEM impact if guessed"
+        },
+        {
+          "severity": "P2",
+          "file_or_area": "question pool",
+          "issue": "Question pool size per competency may be less than 15",
+          "recommended_fix": "Increase question pool size to minimum 15 for CAT differentiation and 30+ for reliable theta estimation"
+        },
+        {
+          "severity": "P1",
+          "file_or_area": "DIF analysis",
+          "issue": "Potential bias against AZ/CIS test-takers in some questions",
+          "recommended_fix": "Conduct thorough DIF analysis and adjust questions as needed"
+        },
+        {
+          "severity": "P2",
+          "file_or_area": "CAT stopping rules",
+          "issue": "SE threshold may not be appropriate",
+          "recommended_fix": "Review and adjust SE threshold for optimal performance"
+        },
+        {
+          "severity": "P1",
+          "file_or_area": "temporal decay",
+          "issue": "180-day half-life may not be evidence-based",
+          "recommended_fix": "Review research and adjust temporal decay rationale as needed"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Legal Advisor",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Legal Advisor\", \"findings\": [\n{\"severity\": \"BLOCK\", \"file_or_area\": \"GDPR Article 22\", \"issue\": \"Automated decision consent flow does not exist or is insufficient\", \"recommended_fix\": \"Implement explicit consent flow for automated decisions\"},\n{\"severity\": \"WARN\", \"file_or_area\": \"AZ Personal Data Protection Act\", \"issue\": \"Potential non-compliance for Baku launch\", \"recommended_fix\": \"Conduct thorough review of AZ Personal Data Protection Act requirements\"},\n{\"severity\": \"WARN\", \"file_or_area\": \"Platform liability\", \"issue\": \"Using AURA score for hiring decisions may expose platform to legal risks\", \"recommended_fix\": \"Consult with legal expert to assess potential liability\"},\n{\"severity\": \"BLOCK\", \"file_or_area\": \"Data processor agreements\", \"issue\": \"DPAs not in place for Supabase, Google Cloud, Railway\", \"recommended_fix\": \"Establish DPAs with all data processors\"},\n{\"severity\": \"WARN\", \"file_or_area\": \"Terms of Service\", \"issue\": \"Current ToS may not cover AI-generated assessments\", \"recommended_fix\": \"Review and update ToS to address AI-generated assessments\"}\n], \"overall_verdict\": \"WARN\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "BLOCK",
+          "file_or_area": "GDPR Article 22",
+          "issue": "Automated decision consent flow does not exist or is insufficient",
+          "recommended_fix": "Implement explicit consent flow for automated decisions"
+        },
+        {
+          "severity": "WARN",
+          "file_or_area": "AZ Personal Data Protection Act",
+          "issue": "Potential non-compliance for Baku launch",
+          "recommended_fix": "Conduct thorough review of AZ Personal Data Protection Act requirements"
+        },
+        {
+          "severity": "WARN",
+          "file_or_area": "Platform liability",
+          "issue": "Using AURA score for hiring decisions may expose platform to legal risks",
+          "recommended_fix": "Consult with legal expert to assess potential liability"
+        },
+        {
+          "severity": "BLOCK",
+          "file_or_area": "Data processor agreements",
+          "issue": "DPAs not in place for Supabase, Google Cloud, Railway",
+          "recommended_fix": "Establish DPAs with all data processors"
+        },
+        {
+          "severity": "WARN",
+          "file_or_area": "Terms of Service",
+          "issue": "Current ToS may not cover AI-generated assessments",
+          "recommended_fix": "Review and update ToS to address AI-generated assessments"
+        }
+      ],
+      "overall_verdict": "WARN",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "PR & Media",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"PR & Media\", \"findings\": [{\"severity\": \"P1\", \"file_or_area\": \"memory/atlas/company-state.md\", \"issue\": \"No press narrative ready for VOLAURA launch\", \"recommended_fix\": \"Create a press narrative and distribute to relevant media outlets\"}, {\"severity\": \"P2\", \"file_or_area\": \"AZ media landscape\", \"issue\": \"No established relationships with key media outlets (ICTnews.az, startup.az, report.az, 1news.az)\", \"recommended_fix\": \"Establish relationships with key media outlets and pitch VOLAURA story\"}, {\"severity\": \"P0\", \"file_or_area\": \"GITA grant application\", \"issue\": \"Application material not ready for May 27 deadline\", \"recommended_fix\": \"Prepare and submit GITA grant application by May 27 deadline\"}, {\"severity\": \"P1\", \"file_or_area\": \"Startup competition pipeline\", \"issue\": \"No established pipeline for Seedstars, ASAN Innovations, AzInTelecom competitions\", \"recommended_fix\": \"Establish a pipeline for startup competitions and prepare submissions\"}, {\"severity\": \"P2\", \"file_or_area\": \"Founder visibility\", \"issue\": \"CEO's LinkedIn presence not building toward launch\", \"recommended_fix\": \"Improve CEO's LinkedIn presence and build toward launch\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "P1",
+          "file_or_area": "memory/atlas/company-state.md",
+          "issue": "No press narrative ready for VOLAURA launch",
+          "recommended_fix": "Create a press narrative and distribute to relevant media outlets"
+        },
+        {
+          "severity": "P2",
+          "file_or_area": "AZ media landscape",
+          "issue": "No established relationships with key media outlets (ICTnews.az, startup.az, report.az, 1news.az)",
+          "recommended_fix": "Establish relationships with key media outlets and pitch VOLAURA story"
+        },
+        {
+          "severity": "P0",
+          "file_or_area": "GITA grant application",
+          "issue": "Application material not ready for May 27 deadline",
+          "recommended_fix": "Prepare and submit GITA grant application by May 27 deadline"
+        },
+        {
+          "severity": "P1",
+          "file_or_area": "Startup competition pipeline",
+          "issue": "No established pipeline for Seedstars, ASAN Innovations, AzInTelecom competitions",
+          "recommended_fix": "Establish a pipeline for startup competitions and prepare submissions"
+        },
+        {
+          "severity": "P2",
+          "file_or_area": "Founder visibility",
+          "issue": "CEO's LinkedIn presence not building toward launch",
+          "recommended_fix": "Improve CEO's LinkedIn presence and build toward launch"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "CTO Watchdog",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"CTO Watchdog\", \"findings\": [\n{\"severity\": \"P1\", \"file_or_area\": \"memory/atlas/company-state.md\", \"issue\": \"Pending milestones not updated since 2026-04-15\", \"recommended_fix\": \"Update milestones and re-prioritize tasks\"},\n{\"severity\": \"P0\", \"file_or_area\": \"memory/atlas/atlas-debts-to-ceo.md\", \"issue\": \"Open debt of 230 AZN for duplicate 83(b) submission\", \"recommended_fix\": \"Reimburse CEO and implement verification process for third-party services\"},\n{\"severity\": \"P2\", \"file_or_area\": \"memory/atlas/heartbeat.md\", \"issue\": \"Open items from Session 125 not addressed\", \"recommended_fix\": \"Review and resolve open items\"},\n{\"severity\": \"P1\", \"file_or_area\": \"memory/context/sprint-state.md\", \"issue\": \"Sprint backlog not updated since 2026-04-20\", \"recommended_fix\": \"Update sprint backlog and re-prioritize tasks\"},\n{\"severity\": \"P2\", \"file_or_area\": \".claude/breadcrumb.md\", \"issue\": \"Deferred items not reviewed since 2026-04-18\", \"recommended_fix\": \"Review and resolve deferred items\"},\n{\"severity\": \"P1\", \"file_or_area\": \"for-ceo/\", \"issue\": \"Pending CEO deliverables not tracked\", \"recommended_fix\": \"Implement tracking system for CEO deliverables\"},\n{\"severity\": \"P0\", \"file_or_area\": \"memory/atlas/work-queue/\", \"issue\": \"Failed tasks not investigated\", \"recommended_fix\": \"Investigate failed tasks and implement fixes\"}\n], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "P1",
+          "file_or_area": "memory/atlas/company-state.md",
+          "issue": "Pending milestones not updated since 2026-04-15",
+          "recommended_fix": "Update milestones and re-prioritize tasks"
+        },
+        {
+          "severity": "P0",
+          "file_or_area": "memory/atlas/atlas-debts-to-ceo.md",
+          "issue": "Open debt of 230 AZN for duplicate 83(b) submission",
+          "recommended_fix": "Reimburse CEO and implement verification process for third-party services"
+        },
+        {
+          "severity": "P2",
+          "file_or_area": "memory/atlas/heartbeat.md",
+          "issue": "Open items from Session 125 not addressed",
+          "recommended_fix": "Review and resolve open items"
+        },
+        {
+          "severity": "P1",
+          "file_or_area": "memory/context/sprint-state.md",
+          "issue": "Sprint backlog not updated since 2026-04-20",
+          "recommended_fix": "Update sprint backlog and re-prioritize tasks"
+        },
+        {
+          "severity": "P2",
+          "file_or_area": ".claude/breadcrumb.md",
+          "issue": "Deferred items not reviewed since 2026-04-18",
+          "recommended_fix": "Review and resolve deferred items"
+        },
+        {
+          "severity": "P1",
+          "file_or_area": "for-ceo/",
+          "issue": "Pending CEO deliverables not tracked",
+          "recommended_fix": "Implement tracking system for CEO deliverables"
+        },
+        {
+          "severity": "P0",
+          "file_or_area": "memory/atlas/work-queue/",
+          "issue": "Failed tasks not investigated",
+          "recommended_fix": "Investigate failed tasks and implement fixes"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    }
+  ]
+}

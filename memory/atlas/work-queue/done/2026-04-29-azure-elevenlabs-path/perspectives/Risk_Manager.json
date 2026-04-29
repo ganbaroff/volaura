@@ -1,0 +1,15 @@
+{
+  "perspective": "Risk Manager",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Risk Manager\", \"summary\": \"Registration for Azure and ElevenLabs services for VOLAURA Inc. requires navigating geo-blocking and registration requirements. Azure for Startups offers $100,000 in credits via Stripe Atlas Perks, but registration is blocked for Azerbaijan. ElevenLabs pricing starts at $5/month for the free tier, sufficient for MVP. Alternative Azure Speech Services cost $4.99 for 1 million transactions.\", \"key_sources\": [\"Stripe Atlas Perks\", \"Azure for Startups\", \"ElevenLabs pricing\"], \"gaps_in_current_canon\": \"Lack of clear registration path for non-US founders, potential need for US VPN or registered agent address for Azure registration\", \"proposed_action\": \"Explore registration options via US company account, consider alternatives like Azure Speech Services, and evaluate ElevenLabs free tier for BrandedBy video generation pipeline\", \"whistleblower_flag\": null}",
+  "summary": "Registration for Azure and ElevenLabs services for VOLAURA Inc. requires navigating geo-blocking and registration requirements. Azure for Startups offers $100,000 in credits via Stripe Atlas Perks, but registration is blocked for Azerbaijan. ElevenLabs pricing starts at $5/month for the free tier, sufficient for MVP. Alternative Azure Speech Services cost $4.99 for 1 million transactions.",
+  "key_sources": [
+    "Stripe Atlas Perks",
+    "Azure for Startups",
+    "ElevenLabs pricing"
+  ],
+  "gaps_in_current_canon": "Lack of clear registration path for non-US founders, potential need for US VPN or registered agent address for Azure registration",
+  "proposed_action": "Explore registration options via US company account, consider alternatives like Azure Speech Services, and evaluate ElevenLabs free tier for BrandedBy video generation pipeline",
+  "whistleblower_flag": null
+}

@@ -1,0 +1,15 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Cultural Intelligence\", \"summary\": \"Registration path for Azure via US company account and ElevenLabs pricing for video generation pipeline\", \"key_sources\": [\"Azure for Startups\", \"Stripe Atlas Perks\", \"ElevenLabs pricing page\"], \"gaps_in_current_canon\": \"Geo-blocking for Azerbaijan, registration process with non-US founder\", \"proposed_action\": \"Use VOLAURA Inc.'s Delaware address and EIN to register for Azure, explore ElevenLabs free tier for MVP\", \"whistleblower_flag\": null}",
+  "summary": "Registration path for Azure via US company account and ElevenLabs pricing for video generation pipeline",
+  "key_sources": [
+    "Azure for Startups",
+    "Stripe Atlas Perks",
+    "ElevenLabs pricing page"
+  ],
+  "gaps_in_current_canon": "Geo-blocking for Azerbaijan, registration process with non-US founder",
+  "proposed_action": "Use VOLAURA Inc.'s Delaware address and EIN to register for Azure, explore ElevenLabs free tier for MVP",
+  "whistleblower_flag": null
+}

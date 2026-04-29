@@ -1,0 +1,34 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Cultural Intelligence\", \n\"findings\": [\n{\"severity\": \"medium\", \"file_or_area\": \"leadership style\", \"issue\": \"may prioritize vision over self-care\", \"recommended_fix\": \"establish clear boundaries and prioritize CEO well-being\"}, \n{\"severity\": \"low\", \"file_or_area\": \"decision-making\", \"issue\": \"may delegate too much\", \"recommended_fix\": \"strike balance between delegation and oversight\"}, \n{\"severity\": \"high\", \"file_or_area\": \"resource management\", \"issue\": \"operates on extremely limited budget\", \"recommended_fix\": \"explore funding options or adjust spending habits\"}, \n{\"severity\": \"low\", \"file_or_area\": \"team trust\", \"issue\": \"may trust swarm decisions too readily\", \"recommended_fix\": \"establish clear protocols for decision-making and oversight\"}\n], \n\"overall_verdict\": \"warn\", \n\"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "medium",
+      "file_or_area": "leadership style",
+      "issue": "may prioritize vision over self-care",
+      "recommended_fix": "establish clear boundaries and prioritize CEO well-being"
+    },
+    {
+      "severity": "low",
+      "file_or_area": "decision-making",
+      "issue": "may delegate too much",
+      "recommended_fix": "strike balance between delegation and oversight"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "resource management",
+      "issue": "operates on extremely limited budget",
+      "recommended_fix": "explore funding options or adjust spending habits"
+    },
+    {
+      "severity": "low",
+      "file_or_area": "team trust",
+      "issue": "may trust swarm decisions too readily",
+      "recommended_fix": "establish clear protocols for decision-making and oversight"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

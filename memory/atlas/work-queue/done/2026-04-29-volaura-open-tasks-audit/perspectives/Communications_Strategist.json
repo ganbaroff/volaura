@@ -1,0 +1,34 @@
+{
+  "perspective": "Communications Strategist",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Communications Strategist\", \"findings\": [\n{\"severity\": \"P0\", \"file_or_area\": \"memory/atlas/company-state.md\", \"issue\": \"Missing milestones\", \"recommended_fix\": \"Update company-state.md with current milestones\"},\n{\"severity\": \"P1\", \"file_or_area\": \"memory/atlas/atlas-debts-to-ceo.md\", \"issue\": \"Open debts\", \"recommended_fix\": \"Address open debts and update ledger\"},\n{\"severity\": \"P2\", \"file_or_area\": \"memory/context/sprint-state.md\", \"issue\": \"Sprint backlog\", \"recommended_fix\": \"Review and prioritize sprint backlog\"},\n{\"severity\": \"P0\", \"file_or_area\": \"memory/atlas/obligations\", \"issue\": \"Open obligations\", \"recommended_fix\": \"Review and address open obligations\"}\n], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "P0",
+      "file_or_area": "memory/atlas/company-state.md",
+      "issue": "Missing milestones",
+      "recommended_fix": "Update company-state.md with current milestones"
+    },
+    {
+      "severity": "P1",
+      "file_or_area": "memory/atlas/atlas-debts-to-ceo.md",
+      "issue": "Open debts",
+      "recommended_fix": "Address open debts and update ledger"
+    },
+    {
+      "severity": "P2",
+      "file_or_area": "memory/context/sprint-state.md",
+      "issue": "Sprint backlog",
+      "recommended_fix": "Review and prioritize sprint backlog"
+    },
+    {
+      "severity": "P0",
+      "file_or_area": "memory/atlas/obligations",
+      "issue": "Open obligations",
+      "recommended_fix": "Review and address open obligations"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

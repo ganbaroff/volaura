@@ -1,0 +1,52 @@
+{
+  "perspective": "CTO Watchdog",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"CTO Watchdog\", \"findings\": [\n{\"severity\": \"P1\", \"file_or_area\": \"memory/atlas/company-state.md\", \"issue\": \"Pending milestones not updated since 2026-04-15\", \"recommended_fix\": \"Update milestones and re-prioritize tasks\"},\n{\"severity\": \"P0\", \"file_or_area\": \"memory/atlas/atlas-debts-to-ceo.md\", \"issue\": \"Open debt of 230 AZN for duplicate 83(b) submission\", \"recommended_fix\": \"Reimburse CEO and implement verification process for third-party services\"},\n{\"severity\": \"P2\", \"file_or_area\": \"memory/atlas/heartbeat.md\", \"issue\": \"Open items from Session 125 not addressed\", \"recommended_fix\": \"Review and resolve open items\"},\n{\"severity\": \"P1\", \"file_or_area\": \"memory/context/sprint-state.md\", \"issue\": \"Sprint backlog not updated since 2026-04-20\", \"recommended_fix\": \"Update sprint backlog and re-prioritize tasks\"},\n{\"severity\": \"P2\", \"file_or_area\": \".claude/breadcrumb.md\", \"issue\": \"Deferred items not reviewed since 2026-04-18\", \"recommended_fix\": \"Review and resolve deferred items\"},\n{\"severity\": \"P1\", \"file_or_area\": \"for-ceo/\", \"issue\": \"Pending CEO deliverables not tracked\", \"recommended_fix\": \"Implement tracking system for CEO deliverables\"},\n{\"severity\": \"P0\", \"file_or_area\": \"memory/atlas/work-queue/\", \"issue\": \"Failed tasks not investigated\", \"recommended_fix\": \"Investigate failed tasks and implement fixes\"}\n], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "P1",
+      "file_or_area": "memory/atlas/company-state.md",
+      "issue": "Pending milestones not updated since 2026-04-15",
+      "recommended_fix": "Update milestones and re-prioritize tasks"
+    },
+    {
+      "severity": "P0",
+      "file_or_area": "memory/atlas/atlas-debts-to-ceo.md",
+      "issue": "Open debt of 230 AZN for duplicate 83(b) submission",
+      "recommended_fix": "Reimburse CEO and implement verification process for third-party services"
+    },
+    {
+      "severity": "P2",
+      "file_or_area": "memory/atlas/heartbeat.md",
+      "issue": "Open items from Session 125 not addressed",
+      "recommended_fix": "Review and resolve open items"
+    },
+    {
+      "severity": "P1",
+      "file_or_area": "memory/context/sprint-state.md",
+      "issue": "Sprint backlog not updated since 2026-04-20",
+      "recommended_fix": "Update sprint backlog and re-prioritize tasks"
+    },
+    {
+      "severity": "P2",
+      "file_or_area": ".claude/breadcrumb.md",
+      "issue": "Deferred items not reviewed since 2026-04-18",
+      "recommended_fix": "Review and resolve deferred items"
+    },
+    {
+      "severity": "P1",
+      "file_or_area": "for-ceo/",
+      "issue": "Pending CEO deliverables not tracked",
+      "recommended_fix": "Implement tracking system for CEO deliverables"
+    },
+    {
+      "severity": "P0",
+      "file_or_area": "memory/atlas/work-queue/",
+      "issue": "Failed tasks not investigated",
+      "recommended_fix": "Investigate failed tasks and implement fixes"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

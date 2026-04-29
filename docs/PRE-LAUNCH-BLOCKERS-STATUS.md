@@ -34,17 +34,25 @@ No audit script in repo. Needs: pull assessment_sessions + question responses gr
 ### 8. Voice data routing disclosure 🟡 partial
 Voice path not in shipped flow, so no user-facing disclosure exists. When voice ships, disclosure copy needs to land. Not an active blocker for text-only MVP.
 
-### 9. Formal grievance mechanism (ISO 10667-2) 🟥 ready to build
-No endpoint exists. Minimum path: `/api/aura/grievance` POST → Supabase `grievances` table → admin review queue → response within 30 days. ~1 day of work including UI. Schema + email template.
+### 9. Formal grievance mechanism (ISO 10667-2) ✅ done
+`apps/api/app/routers/grievance.py` — 548 lines. Full ISO 10667-2 §7 compliance.
+User: POST/GET /api/aura/grievance. Admin: pending queue + resolve/reject with mandatory resolution.
+GDPR Art.22 human review: POST /api/aura/human-review + admin transition.
+SLA deadline tracking in human_review_requests. E2E test #6 verified on prod.
+Verified Session 128 by code read (was marked 🟥 incorrectly — code predates this audit).
 
 ### 10. ADHD language ban in AZ copy 🟡 partial
 Spot-checked landing + assessment; no "ты не справляешься / ты медленный" copy found. But there's no CI-enforced regex check. Cowork could scan the whole AZ locale file vs a banned-terms list.
 
-### 11. Community Signal widget (G44) 🟥 ready to build
-No widget component. G44 requires showing "N professionals took this assessment today" without leaderboard framing. `/api/analytics/community-signal` endpoint + simple number display.
+### 11. Community Signal widget (G44) ✅ done
+`apps/web/src/components/community/community-signal-inline.tsx` + `use-community-signal.ts` hook.
+Shows "professionals_this_week" on assessment page. Imported in assessment/page.tsx.
+Verified Session 128 by grep (was marked 🟥 incorrectly).
 
-### 12. Landing sample AURA profile 🟥 ready to build
-Landing hero does not currently show a fictional Leyla 74 Communication Silver profile. Sunk-Cost Registration pattern (from Constitution v1.7) — a visual AURA card demo without login gate.
+### 12. Landing sample AURA profile ✅ done
+`apps/web/src/components/landing/sample-aura-preview.tsx` on landing page (gated by SAMPLE_PROFILE_ENABLED).
+Full sample profile page at `/sample` with `sample-profile-view.tsx` + `data/sample-profile.ts`.
+Verified Session 128 by grep (was marked 🟥 incorrectly).
 
 ### 13. Vulnerability Window content (Rule 29) 🟡 partial
 Post-assessment page exists but the specific "what IS shown during 5-min vulnerability window" content may not match Rule 29 exactly. Needs review against current assessment complete page.
@@ -78,16 +86,17 @@ Design System v2 is in Figma and mostly deployed. No item-by-item audit against 
 ## Scope split for current launch readiness
 
 **Must-ship before public launch (P0):**
-- #4 (Art. 9 consent) — legal review
-- #5 (SADPP registration) — Yusif
-- #9 (grievance mechanism) — Atlas ~1 day
-- #11 (Community Signal widget) — Atlas ~0.5 day
-- #12 (Landing sample profile) — Atlas ~0.5 day
-- #14 (Ghosting Grace) — Atlas ~1 day
+- #4 (Art. 9 consent) — legal review (CEO)
+- #5 (SADPP registration) — Yusif (legal filing)
+- ~~#9 (grievance mechanism)~~ — ✅ DONE (548 lines, verified Session 128)
+- ~~#11 (Community Signal widget)~~ — ✅ DONE (verified Session 128)
+- ~~#12 (Landing sample profile)~~ — ✅ DONE (verified Session 128)
+- #14 (Ghosting Grace) — Atlas ~1 day (ONLY remaining Atlas code P0)
 - #18 (Credential display split verify) — Atlas ~2h audit
-- S2 (role_level gaming audit) — Atlas ~1h
+- S2 (role_level gaming audit) — partial, discovery.py validates. Schema flagged. ~1h to complete.
 
-Total Atlas work for the current P0 launch scope: ~4 days. Total CEO work: legal review + SADPP + Soniox DPA (if voice).
+Revised Atlas work: ~1.5 days (was 4 days — 3 items were already built but doc was stale).
+CEO work unchanged: legal review + SADPP.
 
 **Can defer to post-launch (P1):**
 - #7 (DIF bias audit)

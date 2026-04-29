@@ -61,6 +61,17 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
+# Load .env for Telegram credentials and API keys
+_env_file = REPO_ROOT / "apps" / "api" / ".env"
+if _env_file.exists():
+    for line in _env_file.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if line and not line.startswith("#") and "=" in line:
+            k, _, v = line.partition("=")
+            k, v = k.strip(), v.strip().strip("'\"")
+            if k and v and k not in os.environ:
+                os.environ[k] = v
+
 from packages.swarm.autonomous_run import PERSPECTIVES  # type: ignore
 from packages.swarm.perspective_registry import PerspectiveRegistry  # type: ignore
 from packages.swarm.code_index import build_index, INDEX_FILE  # type: ignore

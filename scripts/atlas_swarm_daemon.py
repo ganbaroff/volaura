@@ -428,6 +428,30 @@ async def _call_sub_agent(model_label: str, base_url: str, api_key: str, model: 
         return ""
 
 
+async def _call_azure_sub_agent(endpoint: str, api_key: str, sub_prompt: str,
+                                deployment: str = "gpt-4.1-nano") -> str:
+    """Azure OpenAI sub-agent ($1,000 credits). Uses azure-specific client."""
+    try:
+        from openai import AsyncAzureOpenAI
+        client = AsyncAzureOpenAI(
+            api_key=api_key,
+            azure_endpoint=endpoint,
+            api_version="2024-10-21",
+        )
+        resp = await asyncio.wait_for(
+            client.chat.completions.create(
+                model=deployment,
+                messages=[{"role": "user", "content": sub_prompt}],
+                temperature=1.0,
+                max_tokens=500,
+            ),
+            timeout=20.0,
+        )
+        return resp.choices[0].message.content or ""
+    except Exception:
+        return ""
+
+
 async def _fan_out_sub_agents(perspective_name: str, task_summary: str) -> str:
     """Spawn 2-3 sub-agents on free models for additional angles.
 
@@ -456,6 +480,11 @@ async def _fan_out_sub_agents(perspective_name: str, task_summary: str) -> str:
         sub_calls.append(_call_sub_agent(
             "groq-sub", "https://api.groq.com/openai/v1", groq_key,
             "llama-3.3-70b-versatile", sub_prompt, timeout_s=15.0))
+    azure_key = os.getenv("AZURE_OPENAI_API_KEY", "")
+    azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT", "")
+    if azure_key and azure_endpoint:
+        sub_calls.append(_call_azure_sub_agent(azure_endpoint, azure_key, sub_prompt, "gpt-4.1-nano"))
+        sub_calls.append(_call_azure_sub_agent(azure_endpoint, azure_key, sub_prompt, "gpt-4o"))
 
     if not sub_calls:
         return ""

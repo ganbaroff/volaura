@@ -376,7 +376,6 @@ async def _gemini_agent_loop(perspective_name: str, prompt: str) -> dict[str, An
                 contents=prompt,
                 config=gtypes.GenerateContentConfig(
                     tools=tools,
-                    response_mime_type="application/json",
                     temperature=1.0,
                     max_output_tokens=4000,
                 ),

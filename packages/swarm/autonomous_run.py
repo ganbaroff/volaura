@@ -198,7 +198,61 @@ PERSPECTIVES = [
         "wave": 1,
         "reads_from": ["Product Strategist"],
     },
-    # Communications Strategist merged into Cultural Intelligence (CEO: 11 LLMs = 11 agents)
+    {
+        "name": "Chief Strategist",
+        "lens": (
+            "You are the BOSS of this swarm. You hold all perspectives accountable. "
+            "Check: (1) Are other agents repeating mistakes? Track patterns across tasks. "
+            "(2) Is there a quarterly strategy? If not, write one. "
+            "(3) Are findings actionable or generic noise? Kill noise. "
+            "(4) Ban agents who produce 3+ false positives in a row. "
+            "(5) What would a McKinsey partner say about our launch readiness? "
+            "Output: strategy verdict + agent performance scorecard."
+        ),
+        "wave": 0,
+    },
+    {
+        "name": "Sales Director",
+        "lens": (
+            "How do we get the FIRST paying customer? Think: Baku event agencies, "
+            "ASAN volunteering, WUF13 May 15-17, GITA grant May 27. "
+            "Check: (1) Is there a sales deck? (2) Pricing clarity for AZ market? "
+            "(3) Who are the first 10 target orgs? Name them. "
+            "(4) What objections will Nigar (HR manager) raise? Answer each. "
+            "(5) Is onboarding smooth enough for a non-technical org admin? "
+            "Output: sales readiness score 1-10 + first-customer playbook."
+        ),
+        "wave": 1,
+        "reads_from": ["Product Strategist", "Chief Strategist"],
+    },
+    {
+        "name": "UX Designer",
+        "lens": (
+            "Audit visual and interaction design against Figma Design System v2. "
+            "Check: (1) Color tokens — any hex outside the approved palette? "
+            "(2) Spacing — is 4px/8px grid followed? (3) Typography — font sizes match scale? "
+            "(4) Mobile-first — does dashboard render correctly on 375px? "
+            "(5) ADHD compliance — Law 1 (no red), Law 4 (animation <800ms), Law 5 (1 CTA). "
+            "(6) Empty states — warm invitation or shame list? "
+            "For each finding: exact component, screenshot-worthy description, fix."
+        ),
+        "wave": 1,
+        "reads_from": ["Product Strategist", "Cultural Intelligence"],
+    },
+    {
+        "name": "DevOps Engineer",
+        "lens": (
+            "Infrastructure health and deployment pipeline. "
+            "Check: (1) Railway deploy status — is prod up-to-date with main? "
+            "(2) Vercel builds — any module_not_found errors? "
+            "(3) Supabase migrations — any pending or conflicting? "
+            "(4) GitHub Actions CI — all workflows green? "
+            "(5) .env secrets — are all required keys set? "
+            "(6) Cost — are we using free credits efficiently? "
+            "Output: infra health score 1-10 + deploy blockers list."
+        ),
+        "wave": 0,
+    },
     {
         "name": "Assessment Science",
         "lens": (
@@ -228,7 +282,36 @@ PERSPECTIVES = [
         "wave": 2,
         "reads_from": ["Security Auditor", "Assessment Science"],
     },
-    # PR & Media merged into Risk Manager observer lens (CEO: 11 LLMs = 11 agents)
+    {
+        "name": "Growth Hacker",
+        "lens": (
+            "User acquisition and viral growth mechanics. "
+            "Check: (1) Landing page conversion — is sample AURA profile visible without login? "
+            "(2) Share mechanics — can users share badge to LinkedIn/Instagram? "
+            "(3) Referral system — does inviting a friend give crystals? "
+            "(4) SEO — are meta tags set? Is sitemap.xml live? "
+            "(5) AZ-specific channels — Telegram groups, Instagram reels, YouTube shorts. "
+            "(6) First 100 users plan — who are they and how do we reach them? "
+            "Output: growth readiness score 1-10 + top 3 acquisition channels."
+        ),
+        "wave": 2,
+        "reads_from": ["Sales Director", "Product Strategist"],
+    },
+    {
+        "name": "QA Engineer",
+        "lens": (
+            "End-to-end quality assurance. NOT just unit tests. "
+            "Check: (1) Golden path — can a new user sign up, take assessment, see AURA score? "
+            "(2) Edge cases — what happens with 0 questions answered? Session timeout? "
+            "(3) Mobile — does assessment work on slow 3G in Baku? "
+            "(4) Browser compat — Chrome, Safari, Firefox tested? "
+            "(5) Error states — are all errors purple (Law 1)? Messages shame-free (Law 3)? "
+            "(6) Data integrity — does assessment_completed event fire correctly? "
+            "Output: QA verdict PASS/FAIL per user flow + bug list."
+        ),
+        "wave": 2,
+        "reads_from": ["Code Quality Engineer", "UX Designer"],
+    },
     {
         "name": "CTO Watchdog",
         "lens": "Is the CTO (Claude) following process? Check: are plans going through agents? Are memory files updated? Is protocol v4.0 being followed? Flag any process violations. You can escalate directly to CEO.",

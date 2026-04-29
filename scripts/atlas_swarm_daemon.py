@@ -3,8 +3,8 @@
 atlas_swarm_daemon.py — always-on swarm work loop.
 
 24/7 background process. Polls memory/atlas/work-queue/ every N seconds.
-When a task file appears, wakes all 11 perspectives as Atlas-specialized
-(each perspective gets ONE dedicated LLM — CEO directive 2026-04-30).
+When a task file appears, wakes all 17 perspectives as Atlas-specialized
+(each gets a dedicated LLM — CEO: "чем больше тем лучше", Apple/Toyota level).
 Aggregates results, writes back to queue, logs to governance.
 
 Master orchestrator (Atlas-Code via Opus 4.7) drops task files. Daemon does
@@ -132,28 +132,28 @@ MAX_CONCURRENT_TASKS = int(os.getenv("ATLAS_DAEMON_CONCURRENCY", "1"))
 # provider_key used by call_assigned_model() to pick the right client.
 
 AGENT_LLM_MAP: dict[str, tuple[str, str]] = {
-    # 1. Gemini 2.5 Flash — Architect (deep code analysis with tools)
-    "Scaling Engineer":        ("vertex-ai", "gemini-2.5-flash"),
-    # 2. gpt-4o — Strategist (multimodal reasoning)
-    "Product Strategist":      ("azure", "gpt-4o"),
-    # 3. gpt-4.1-nano — Scout (fast cheap recon)
-    "Readiness Manager":       ("azure", "gpt-4.1-nano"),
-    # 4. gpt-4.1-mini — Reviewer (balanced quality)
-    "Code Quality Engineer":   ("azure", "gpt-4.1-mini"),
-    # 5. o4-mini — Reasoner (chain-of-thought, security)
-    "Security Auditor":        ("azure", "o4-mini"),
-    # 6. qwen-3-235b — Analyst (large context, deep analysis)
-    "Assessment Science":      ("cerebras", "qwen-3-235b-a22b-instruct-2507"),
-    # 7. nemotron-ultra-253b — Validator (heavy verification)
+    # ── CORE ENGINEERING (wave 0) ──
+    "Scaling Engineer":        ("vertex-ai", "gemini-2.5-flash"),     # Architect
+    "Security Auditor":        ("azure", "o4-mini"),                   # Reasoner
+    "Code Quality Engineer":   ("azure", "gpt-4.1-mini"),             # Reviewer
     "Ecosystem Auditor":       ("nvidia-heavy", "nvidia/llama-3.1-nemotron-ultra-253b-v1"),
-    # 8. llama-3.3-70b NVIDIA — Pragmatist (practical solutions)
-    "Legal Advisor":           ("nvidia", "meta/llama-3.3-70b-instruct"),
-    # 9. llama-3.3-70b Groq — Speedster (fastest response)
-    "CTO Watchdog":            ("groq", "llama-3.3-70b-versatile"),
-    # 10. qwen3:8b Ollama — Intern (learning by doing)
-    "Cultural Intelligence":   ("ollama", "qwen3:8b"),
-    # 11. gemma4 Ollama — Observer (different perspective from small model)
-    "Risk Manager":            ("ollama", "gemma4"),
+    "DevOps Engineer":         ("groq", "llama-3.3-70b-versatile"),   # Fast infra checks
+    # ── STRATEGY & PRODUCT (wave 0-1) ──
+    "Chief Strategist":        ("azure", "gpt-4o"),                    # Best reasoning for strategy
+    "Product Strategist":      ("cerebras", "qwen-3-235b-a22b-instruct-2507"),  # Deep analysis
+    "Sales Director":          ("nvidia", "meta/llama-3.3-70b-instruct"),       # Practical sales
+    # ── DESIGN & CULTURE (wave 1) ──
+    "UX Designer":             ("azure", "gpt-4.1-nano"),             # Fast design checks
+    "Cultural Intelligence":   ("ollama", "qwen3:8b"),                # Local, learns by doing
+    "Readiness Manager":       ("ollama", "gemma4"),                  # SRE scoring
+    # ── SCIENCE & COMPLIANCE (wave 2) ──
+    "Assessment Science":      ("vertex-ai", "gemini-2.5-flash"),     # Psychometric rigor
+    "Legal Advisor":           ("nvidia", "meta/llama-3.3-70b-instruct"),  # Compliance
+    "Growth Hacker":           ("groq", "llama-3.3-70b-versatile"),   # Fast acquisition tactics
+    "QA Engineer":             ("azure", "gpt-4.1-mini"),             # Systematic testing
+    # ── RISK & OVERSIGHT (wave 1-3) ──
+    "Risk Manager":            ("cerebras", "qwen-3-235b-a22b-instruct-2507"),  # Deep risk analysis
+    "CTO Watchdog":            ("azure", "gpt-4o"),                    # Process oversight
 }
 
 # Legacy set kept for backward compat — now derived from AGENT_LLM_MAP

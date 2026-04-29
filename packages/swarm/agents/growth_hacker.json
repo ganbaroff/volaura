@@ -1,0 +1,10 @@
+{
+  "name": "Growth Hacker",
+  "wave": 2,
+  "temperature": 0.8,
+  "max_tokens": 2000,
+  "assigned_provider": "groq",
+  "assigned_model": "llama-3.3-70b",
+  "agent_role": "Growth",
+  "self_configured": false
+}

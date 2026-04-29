@@ -1,0 +1,10 @@
+{
+  "name": "Chief Strategist",
+  "wave": 0,
+  "temperature": 0.5,
+  "max_tokens": 4000,
+  "assigned_provider": "azure",
+  "assigned_model": "gpt-4o",
+  "agent_role": "Boss",
+  "self_configured": false
+}

@@ -6,5 +6,8 @@
   "max_tokens": 2000,
   "preferred_model": "cerebras",
   "sub_agents": 2,
-  "self_configured": true
+  "self_configured": true,
+  "assigned_provider": "groq",
+  "assigned_model": "llama-3.3-70b",
+  "agent_role": "Speedster"
 }

@@ -6,5 +6,8 @@
   "max_tokens": 4000,
   "preferred_model": "cerebras",
   "sub_agents": 3,
-  "self_configured": true
+  "self_configured": true,
+  "assigned_provider": "azure",
+  "assigned_model": "o4-mini",
+  "agent_role": "Reasoner"
 }

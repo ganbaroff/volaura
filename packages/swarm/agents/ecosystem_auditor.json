@@ -6,5 +6,8 @@
   "max_tokens": 3000,
   "preferred_model": "vertex-ai",
   "sub_agents": 2,
-  "self_configured": true
+  "self_configured": true,
+  "assigned_provider": "nvidia",
+  "assigned_model": "nemotron-ultra-253b",
+  "agent_role": "Validator"
 }

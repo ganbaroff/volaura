@@ -6,5 +6,8 @@
   "max_tokens": 2000,
   "preferred_model": "nvidia",
   "sub_agents": 1,
-  "self_configured": true
+  "self_configured": true,
+  "assigned_provider": "azure",
+  "assigned_model": "gpt-4.1-nano",
+  "agent_role": "Scout"
 }

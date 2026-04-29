@@ -1,0 +1,10 @@
+{
+  "name": "PR & Media",
+  "wave": 2,
+  "lens": "Press narrative, AZ media landscape, grant applications, CEO visibility.",
+  "temperature": 1.2,
+  "max_tokens": 2000,
+  "preferred_model": "nvidia",
+  "sub_agents": 1,
+  "self_configured": true
+}

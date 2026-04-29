@@ -28,8 +28,12 @@ No code — this is a legal filing with the AZ State Agency. Owner: Yusif (legal
 ### 6. Soniox/Deepgram DPA verification ⏸️ blocked-external
 No code — vendor DPA sign-off. Owner: Yusif (legal). Note: voice processing is not in the shipped product path, so this blocker only fires if voice-answer is re-enabled pre-launch.
 
-### 7. DIF bias audit (Mantel-Haenszel) 🟥 ready to build
-No audit script in repo. Needs: pull assessment_sessions + question responses grouped by demographic (gender, age band), run Mantel-Haenszel delta on item-level response rates, flag items with |ΔMH| > 1.5. ~200 lines of Python. No blocking dependency — the data schema already stores what's needed.
+### 7. DIF bias audit (Mantel-Haenszel) ✅ done (script ready)
+`scripts/audit_dif_bias.py` — 190 lines. Groups by language (en/az) and role_level.
+Computes Mantel-Haenszel delta, flags items |delta| > 1.5. Outputs CSV to
+`memory/swarm/dif_audit_results.csv`. Session 129.
+Note: no gender/age columns in profiles yet — groups by available fields only.
+Needs 300+ completed sessions for publishable findings.
 
 ### 8. Voice data routing disclosure 🟡 partial
 Voice path not in shipped flow, so no user-facing disclosure exists. When voice ships, disclosure copy needs to land. Not an active blocker for text-only MVP.

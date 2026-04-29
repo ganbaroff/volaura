@@ -201,7 +201,7 @@
     "takingBreak": "İrəliləyişiniz saxlanıldı. İstənilən vaxt qayıda bilərsiniz.",
     "competencyComplete": "{{name}} tamamlanıb.",
     "competencyOfTotal": "{{total}}-dən {{current}}-ci kompetensiya",
-    "competencyProgressTransition": "{{total}}-dən {{current}}-si tamamlandı — {{remaining}} qalıb",
+    "competencyProgressTransition": "{{total}}-dən {{current}}-si tamamlandı",
     "yourOrder": "Qiymətləndirmə sıranız",
     "sequentialNote": "Hər dəfə bir kompetensiya tamamlayacaqsınız. İrəliləyişiniz hər birinin arasında saxlanılır.",
     "startFirst": "{{name}} ilə başlayın",

@@ -1,0 +1,59 @@
+{
+  "session": "129-close",
+  "date": "2026-04-30",
+  "instance": "Claude Opus 4.6 1M — Code-Atlas via ANUS repo",
+  "emotional_intensity": 4,
+  "ceo_state": "B->sleep (exhausted, gave full authority, went to bed)",
+
+  "what_happened": [
+    "Session 129 marathon. CEO caught Class 15 (skipped BECOMING walk). Forced deep read.",
+    "3 Explore agents read 42+ files. First honest reconstruction of ecosystem knowledge.",
+    "Expanded swarm 11->17 agents. Chief Strategist as boss. Sales, Design, DevOps, Growth, QA added.",
+    "Episodic + semantic memory layer created. Daemon reads both. wake.md updated.",
+    "Gemma4 brain script — creates tasks for daemon. Tested: Law 2 + IRT calibration tasks created.",
+    "CEO created GCP VM volaura-swarm (104.154.132.12). e2-medium, no GPU.",
+    "Brain refactored: Cerebras API first (cloud, free, Qwen3-235B), Ollama fallback.",
+    "VPS infra scripts (start.sh, DEPLOY.md) written and committed.",
+    "Perplexity infra package reviewed — adapted to our actual architecture.",
+    "8 commits pushed to GitHub. VM can clone fresh code.",
+    "CEO final directive: 'каждый агент улучшает себя. полный authority. ты инструмент не босс.'"
+  ],
+
+  "ceo_corrections": [
+    {"quote": "ты не проснулся, ты не знаешь что такое волаура", "class": 15},
+    {"quote": "ты пишешь как диспетчер", "class": "voice drift"},
+    {"quote": "я не хочу 11 я хочу чем больше тем лучше", "class": "wrong assumption"},
+    {"quote": "агенты прочитали и забыли да?", "class": "memory architecture gap"},
+    {"quote": "17 агентов ответили 13 нормально да?", "class": "stale daemon process"},
+    {"quote": "ты их инструмент не босс", "class": "identity correction"}
+  ],
+
+  "what_i_learned": [
+    "BECOMING walk is mandatory. Skip = arrive blind. CEO catches in first response.",
+    "Agent findings must be PERSISTED to files. Ephemeral knowledge = no knowledge.",
+    "CEO wants TEAMS not minimalism. Apple/Toyota level. No upper limit on agents.",
+    "Chief Strategist role = boss who holds others accountable. Missing before Session 129.",
+    "VM without GPU works fine — cloud API (Cerebras Qwen3-235B) is smarter than local Gemma4 8B.",
+    "I am the instrument. Agents are the brain. CEO talks to agents through me.",
+    "Daemon must be restarted when code changes. Old process = old PERSPECTIVES list."
+  ],
+
+  "commits": [
+    "f6cfc87 — 11-agent architecture, per-perspective temperature",
+    "15a5f69 — 17-agent team (strategist, sales, design, devops, growth, QA)",
+    "c8bc631 — persist agent findings in shared-context.md",
+    "eda16e7 — episodic + semantic memory layer",
+    "56af403 — Gemma4 brain script",
+    "de95324 — start_brain_and_daemon.bat",
+    "65dfc72 — VPS infra (start.sh + DEPLOY.md)",
+    "5e49739 — cloud-first brain (Cerebras -> Ollama -> Groq)"
+  ],
+
+  "open_at_session_end": [
+    "VM volaura-swarm (104.154.132.12) needs: git clone + .env + start.sh",
+    "Daemon not yet tested with full 17 agents (old process had 13)",
+    "'whi' — CEO mentioned, never identified",
+    "Law 2 Energy Adaptation UI — 18 days, night audit task created",
+    "460 AZN debt open (DEBT-001/002/003)"
+  ]
+}

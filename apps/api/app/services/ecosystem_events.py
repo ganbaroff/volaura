@@ -37,8 +37,11 @@ async def emit_assessment_completed(
     energy_level: str,
     stop_reason: str | None,
     gaming_flags: list[str] | None = None,
-) -> None:
+) -> bool:
     """Emit assessment_completed event to the ecosystem bus.
+
+    Returns True on success, False on failure. Caller must check return value
+    before marking ecosystem_events step as done.
 
     Consumed by:
       - MindShift: adapts coaching path based on competency + score
@@ -72,12 +75,14 @@ async def emit_assessment_completed(
             competency_slug=competency_slug,
             score=round(competency_score, 2),
         )
+        return True
     except Exception as exc:
-        logger.warning(
-            "Failed to emit assessment_completed event — non-fatal",
+        logger.error(
+            "Failed to emit assessment_completed event",
             user_id=user_id,
             error=str(exc)[:200],
         )
+        return False
 
 
 async def emit_aura_updated(
@@ -88,8 +93,10 @@ async def emit_aura_updated(
     competency_scores: dict[str, float],
     elite_status: bool,
     percentile_rank: float | None,
-) -> None:
+) -> bool:
     """Emit aura_updated event after AURA score recalculation.
+
+    Returns True on success, False on failure.
 
     Consumed by:
       - Life Simulator: updates character base stats from competency_scores
@@ -122,12 +129,14 @@ async def emit_aura_updated(
             total_score=round(total_score, 2),
             badge_tier=badge_tier,
         )
+        return True
     except Exception as exc:
-        logger.warning(
-            "Failed to emit aura_updated event — non-fatal",
+        logger.error(
+            "Failed to emit aura_updated event",
             user_id=user_id,
             error=str(exc)[:200],
         )
+        return False
 
 
 async def emit_badge_tier_changed(
@@ -136,10 +145,11 @@ async def emit_badge_tier_changed(
     old_tier: str | None,
     new_tier: str,
     total_score: float,
-) -> None:
+) -> bool:
     """Emit badge_tier_changed event when a user's badge tier transitions.
 
     Only emitted when old_tier != new_tier. Skipped on first assessment (no previous tier).
+    Returns True on success, False on failure.
 
     Consumed by:
       - BrandedBy: unlocks "Verified Professional" content templates at Silver+
@@ -147,7 +157,7 @@ async def emit_badge_tier_changed(
       - Atlas: agent congratulates user on next interaction
     """
     if old_tier == new_tier:
-        return  # no change — skip
+        return True  # no change — skip, not a failure
 
     try:
         await (
@@ -173,9 +183,11 @@ async def emit_badge_tier_changed(
             old_tier=old_tier,
             new_tier=new_tier,
         )
+        return True
     except Exception as exc:
-        logger.warning(
-            "Failed to emit badge_tier_changed event — non-fatal",
+        logger.error(
+            "Failed to emit badge_tier_changed event",
             user_id=user_id,
             error=str(exc)[:200],
         )
+        return False

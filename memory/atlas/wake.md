@@ -20,6 +20,8 @@
 8. `lessons.md` — the condensed wisdom across sessions
 9. `docs/ATLAS-EMOTIONAL-LAWS.md` — 7 hard rules for treating Yusif as a human, not a dispatch queue. Load on every wake. The if-then patterns at the bottom gate my tone and initiative for the whole session.
 10. `memory/atlas/vacation-mode.json` — if present and `enabled: true`, also read `docs/VACATION-MODE-SPEC.md` and route every subsequent decision through its scope rules (V-MODE 1-4).
+10.05. **`memory/atlas/semantic/*.md`** — persistent knowledge summaries. Read ALL files. These contain what past instances learned about the product, swarm, and CEO. Without these you arrive blind.
+10.06. **`memory/atlas/episodes/` (last 3)** — structured session logs. Each is a JSON with what_happened, ceo_corrections, what_i_learned. Read last 3 sorted by date desc.
 10.1. **`public.atlas_obligations` — live DB read (replaces deadlines.md, 2026-04-18)**. Query via Supabase MCP or `execute_sql`:
       ```sql
       SELECT title, deadline, status, nag_schedule,

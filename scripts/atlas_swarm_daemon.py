@@ -321,13 +321,26 @@ One JSON. No prose before or after.
 
 
 async def _gemini_agent_loop(perspective_name: str, prompt: str) -> dict[str, Any] | None:
-    """Gemini agent loop with file reading tools. Real autonomy — agent reads code itself."""
+    """Gemini agent loop with file reading tools. Real autonomy — agent reads code itself.
+
+    Uses Vertex AI (GCP project credits) if service account exists,
+    otherwise falls back to API key (free tier).
+    """
+    gcp_sa = REPO_ROOT / "apps" / "api" / ".gcp-service-account.json"
     gemini_key = os.getenv("GEMINI_API_KEY")
-    if not gemini_key:
+    if not gemini_key and not gcp_sa.exists():
         return None
     try:
         from google import genai
         from google.genai import types as gtypes
+
+        if gcp_sa.exists():
+            os.environ.setdefault("GOOGLE_APPLICATION_CREDENTIALS", str(gcp_sa))
+            client = genai.Client(vertexai=True, project="volaura-inc", location="us-central1")
+            provider_label = "vertex-ai-agent"
+        else:
+            client = genai.Client(api_key=gemini_key)
+            provider_label = "gemini-agent"
 
         def read_project_file(file_path: str) -> str:
             """Read a file from the VOLAURA project."""
@@ -368,7 +381,6 @@ async def _gemini_agent_loop(perspective_name: str, prompt: str) -> dict[str, An
 
         tools = [read_project_file, grep_project, list_directory]
 
-        client = genai.Client(api_key=gemini_key)
         response = await asyncio.wait_for(
             asyncio.to_thread(
                 client.models.generate_content,
@@ -383,10 +395,11 @@ async def _gemini_agent_loop(perspective_name: str, prompt: str) -> dict[str, An
             timeout=120.0,
         )
         log_event({"event": "gemini_agent_loop", "perspective": perspective_name,
+                    "provider": provider_label,
                     "tool_calls": len(response.candidates[0].content.parts) if response.candidates else 0})
         return {
             "perspective": perspective_name,
-            "provider": "gemini-agent",
+            "provider": provider_label,
             "model": "gemini-2.5-flash+tools",
             "raw": response.text or "",
         }
@@ -448,12 +461,17 @@ async def call_provider_chain(perspective: dict, prompt: str) -> dict[str, Any]:
         except Exception as e:
             log_event({"event": "provider_failed", "perspective": name, "provider": "nvidia", "error": str(e)})
 
-    # 4. Gemini
+    # 4. Gemini (Vertex AI if GCP SA exists, else API key)
     gemini_key = os.getenv("GEMINI_API_KEY")
-    if gemini_key:
+    _gcp_sa = REPO_ROOT / "apps" / "api" / ".gcp-service-account.json"
+    if gemini_key or _gcp_sa.exists():
         try:
             from google import genai
-            client = genai.Client(api_key=gemini_key)
+            if _gcp_sa.exists():
+                os.environ.setdefault("GOOGLE_APPLICATION_CREDENTIALS", str(_gcp_sa))
+                client = genai.Client(vertexai=True, project="volaura-inc", location="us-central1")
+            else:
+                client = genai.Client(api_key=gemini_key)
             resp = await asyncio.wait_for(
                 asyncio.to_thread(
                     client.models.generate_content,

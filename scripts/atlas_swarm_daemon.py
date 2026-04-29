@@ -858,7 +858,71 @@ async def process_task(task_path: Path) -> None:
         "task_id": task_id,
         "summary": {k: v for k, v in summary.items() if k != "perspectives"},
     })
-    print(f"[{datetime.now().strftime('%H:%M:%S')}] {target.parent.name.upper()}: {task_id} — {summary['perspectives_responded']}/{summary['perspectives_dispatched']} responded")
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] {target.parent.name.upper()}: {task_id} -- {summary['perspectives_responded']}/{summary['perspectives_dispatched']} responded")
+
+    # Telegram report to CEO — one short message per completed task
+    await _telegram_report(task_id, meta, summary)
+
+
+async def _telegram_report(task_id: str, meta: dict, summary: dict) -> None:
+    """Send concise task completion report to CEO via Telegram."""
+    token = os.getenv("TELEGRAM_BOT_TOKEN", "")
+    chat_id = os.getenv("TELEGRAM_CEO_CHAT_ID", "")
+    if not token or not chat_id:
+        return
+
+    responded = summary.get("perspectives_responded", 0)
+    dispatched = summary.get("perspectives_dispatched", 0)
+    task_type = meta.get("type", "?")
+    title = meta.get("title", task_id)[:80]
+
+    flags = [f for f in summary.get("whistleblower_flags", [])
+             if f.get("flag") and f["flag"] != "null"]
+
+    # Count critical findings
+    crits = 0
+    verdicts: dict[str, int] = {}
+    for p in summary.get("perspectives", []):
+        raw = p.get("raw", "")
+        if isinstance(raw, str):
+            try:
+                raw = json.loads(raw[raw.find("{"):raw.rfind("}") + 1])
+            except Exception:
+                continue
+        v = str(raw.get("overall_verdict", raw.get("vote", "?"))).lower()
+        verdicts[v] = verdicts.get(v, 0) + 1
+        for f in raw.get("findings", []):
+            if isinstance(f, dict) and str(f.get("severity", "")).lower() in ("critical", "p0", "block"):
+                crits += 1
+
+    verdict_str = ", ".join(f"{v}={c}" for v, c in sorted(verdicts.items(), key=lambda x: -x[1])[:3])
+
+    msg = f"Swarm [{task_type}]: {title}\n"
+    msg += f"{responded}/{dispatched} responded | {verdict_str}\n"
+    if crits:
+        msg += f"CRITICAL: {crits}\n"
+    if flags:
+        msg += f"WHISTLEBLOWER: {len(flags)}\n"
+        for fl in flags[:2]:
+            msg += f"  {fl['perspective']}: {str(fl['flag'])[:80]}\n"
+
+    import urllib.request
+    import urllib.parse
+    try:
+        data = urllib.parse.urlencode({
+            "chat_id": chat_id,
+            "text": msg,
+            "disable_web_page_preview": "true",
+        }).encode()
+        req = urllib.request.Request(
+            f"https://api.telegram.org/bot{token}/sendMessage",
+            data=data, method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=10):
+            pass
+        log_event({"event": "telegram_report_sent", "task_id": task_id})
+    except Exception as e:
+        log_event({"event": "telegram_report_failed", "task_id": task_id, "error": str(e)[:100]})
 
 
 def handle_signal(signum, frame):

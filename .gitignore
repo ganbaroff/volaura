@@ -109,3 +109,4 @@ apps/api/whisper_startup.vbs
 # Cross-instance courier protocol v1 — replay-detection ledger
 # (per docs/architecture/cross-instance-courier-signing-protocol.md)
 memory/atlas/courier-replay-ledger.jsonl
+.gcp-service-account.json

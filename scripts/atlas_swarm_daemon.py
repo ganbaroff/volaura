@@ -127,22 +127,62 @@ def parse_task_frontmatter(text: str) -> tuple[dict, str]:
 
 
 def load_atlas_context() -> str:
-    """Same canonical memory layer for every perspective."""
+    """Full awareness context for every perspective.
+
+    CEO directive Session 128: agents must READ docs, SEE code-index,
+    KNOW blockers, REMEMBER their history. Not just identity+constitution.
+    """
     files = [
         ATLAS_MEMORY / "identity.md",
-        ATLAS_MEMORY / "voice.md",
-        ATLAS_MEMORY / "project_v0laura_vision.md",
+        ATLAS_MEMORY / "relationships.md",
         ATLAS_MEMORY / "lessons.md",
         DOCS / "ECOSYSTEM-CONSTITUTION.md",
+        DOCS / "PRE-LAUNCH-BLOCKERS-STATUS.md",
+        DOCS / "INDEX.md",
     ]
     parts = []
     for f in files:
         if not f.exists():
             continue
         text = f.read_text(encoding="utf-8")
-        if len(text) > 8000:
-            text = text[:8000] + "\n\n... [truncated]"
+        max_len = 12000 if "CONSTITUTION" in f.name else 6000
+        if len(text) > max_len:
+            text = text[:max_len] + "\n\n... [truncated]"
         parts.append(f"=== {f.relative_to(REPO_ROOT)} ===\n{text}")
+
+    # Code-index summary — what files actually exist
+    ci_path = REPO_ROOT / "memory" / "swarm" / "code-index.json"
+    if ci_path.exists():
+        try:
+            ci = json.loads(ci_path.read_text(encoding="utf-8"))
+            summary = f"=== CODE-INDEX SUMMARY (DO NOT FABRICATE PATHS) ===\n"
+            summary += f"Total files indexed: {ci.get('total_files', 0)}\n"
+            summary += f"Built at: {ci.get('built_at', '?')}\n"
+            summary += "Top directories:\n"
+            dirs: dict[str, int] = {}
+            for path in ci.get("files", {}):
+                d = "/".join(path.split("/")[:3])
+                dirs[d] = dirs.get(d, 0) + 1
+            for d, count in sorted(dirs.items(), key=lambda x: -x[1])[:15]:
+                summary += f"  {d}: {count} files\n"
+            summary += "\nRULE: if you cite a file path, it MUST exist in this index. If unsure, say 'unverified path'.\n"
+            parts.append(summary)
+        except Exception:
+            pass
+
+    # Perspective weights — their own learning history
+    pw_path = REPO_ROOT / "memory" / "swarm" / "perspective_weights.json"
+    if pw_path.exists():
+        try:
+            pw = json.loads(pw_path.read_text(encoding="utf-8"))
+            pw_summary = "=== YOUR LEARNING HISTORY (perspective_weights.json) ===\n"
+            for name, data in sorted(pw.items()):
+                pw_summary += f"  {name}: weight={data.get('debate_weight', '?'):.3f} runs={data.get('spawn_count', 0)} last={data.get('last_updated', '?')[:10]}\n"
+            pw_summary += "\nYour weight reflects your accuracy. Low weight = you've been wrong often. Improve.\n"
+            parts.append(pw_summary)
+        except Exception:
+            pass
+
     return "\n\n".join(parts)
 
 

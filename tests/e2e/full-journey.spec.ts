@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 const BASE_URL = process.env.VOLAURA_URL || "https://volaura.app";
 const API_URL =
   process.env.VOLAURA_API_URL ||
-  "https://modest-happiness-production.up.railway.app";
+  "https://volauraapi-production.up.railway.app";
 const E2E_SECRET = process.env.E2E_TEST_SECRET || "";
 const TEST_EMAIL = process.env.E2E_TEST_EMAIL || `e2e_${Date.now()}@test.volaura.app`;
 const TEST_PASSWORD = process.env.E2E_TEST_PASSWORD || "Test1234!@#$";

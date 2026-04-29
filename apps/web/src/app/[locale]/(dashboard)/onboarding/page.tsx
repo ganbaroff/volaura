@@ -175,7 +175,7 @@ export default function OnboardingPage() {
     location: "",
     languages: [],
     selectedCompetency: "communication",  // BATCH-O ON1: pre-select highest-weight competency so Finish is immediately active
-    visible_to_orgs: true,
+    visible_to_orgs: false,
   });
 
   // Task 4 (UX-LOGIC-AUDIT-2026-04-18 #4): session draft rehydration.

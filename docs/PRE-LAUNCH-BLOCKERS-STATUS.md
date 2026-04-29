@@ -57,8 +57,12 @@ Verified Session 128 by grep (was marked 🟥 incorrectly).
 ### 13. Vulnerability Window content (Rule 29) 🟡 partial
 Post-assessment page exists but the specific "what IS shown during 5-min vulnerability window" content may not match Rule 29 exactly. Needs review against current assessment complete page.
 
-### 14. Ghosting Grace for pre-activation users (Rule 30) 🟥 ready to build
-No 48h warm re-entry email or notification. Users who sign up but don't finish assessment should get one gentle nudge within 48h. Requires Resend + scheduled worker (already have pg_cron infrastructure). ~1 day including copy.
+### 14. Ghosting Grace for pre-activation users (Rule 30) ✅ done
+`apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx` — NewUserWelcomeCard
+checks `profile.created_at` > 48h. Shows warm re-entry copy:
+"Still thinking about it? Start when you're ready — there's no deadline."
+CTA: "Start when ready →". Shame-free (Law 3), single CTA (Law 5).
+Frontend-only, no email (swarm voted 3-2 for Option A). Session 128.
 
 ### 15. Open Badges 3.0 VC compliance 🟥 ready to build (large)
 No DID issuer, no cryptographic proof generation, no revocation endpoint. Largest item on this list — 3-5 days of work. Can defer to post-launch if badges are shown as internal-only first.
@@ -91,7 +95,7 @@ Design System v2 is in Figma and mostly deployed. No item-by-item audit against 
 - ~~#9 (grievance mechanism)~~ — ✅ DONE (548 lines, verified Session 128)
 - ~~#11 (Community Signal widget)~~ — ✅ DONE (verified Session 128)
 - ~~#12 (Landing sample profile)~~ — ✅ DONE (verified Session 128)
-- #14 (Ghosting Grace) — Atlas ~1 day (ONLY remaining Atlas code P0)
+- ~~#14 (Ghosting Grace)~~ — ✅ DONE (Session 128, frontend-only)
 - #18 (Credential display split verify) — Atlas ~2h audit
 - S2 (role_level gaming audit) — partial, discovery.py validates. Schema flagged. ~1h to complete.
 

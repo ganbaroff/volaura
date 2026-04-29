@@ -186,6 +186,38 @@ def load_atlas_context() -> str:
     return "\n\n".join(parts)
 
 
+def _load_perspective_memory(perspective_name: str) -> str:
+    """Load last 3 findings for this specific perspective from recent done tasks."""
+    fname = perspective_name.replace(" ", "_") + ".json"
+    findings: list[str] = []
+    if not DONE.exists():
+        return ""
+    for task_dir in sorted(DONE.iterdir(), reverse=True)[:10]:
+        pf = task_dir / "perspectives" / fname
+        if not pf.exists():
+            continue
+        try:
+            data = json.loads(pf.read_text(encoding="utf-8"))
+            raw = data.get("raw", "")
+            if isinstance(raw, str):
+                try:
+                    raw = json.loads(raw[raw.find("{"):raw.rfind("}") + 1])
+                except Exception:
+                    continue
+            for f in raw.get("findings", [])[:2]:
+                if isinstance(f, dict) and f.get("issue"):
+                    findings.append(f"{f.get('severity', '?')}: {f['issue'][:120]}")
+        except Exception:
+            continue
+        if len(findings) >= 6:
+            break
+    if not findings:
+        return ""
+    header = f"=== YOUR RECENT FINDINGS ({perspective_name}) ===\n"
+    header += "These are things YOU said in recent tasks. Learn from them. Don't repeat false claims.\n"
+    return header + "\n".join(f"- {f}" for f in findings) + "\n"
+
+
 def build_prompt(perspective: dict, atlas_ctx: str, task_meta: dict, task_body: str) -> str:
     task_type = task_meta.get("type", "audit")
     response_format = {
@@ -195,12 +227,17 @@ def build_prompt(perspective: dict, atlas_ctx: str, task_meta: dict, task_body: 
         "research": "JSON: {perspective, summary, key_sources, gaps_in_current_canon, proposed_action, whistleblower_flag}",
     }.get(task_type, "JSON: {perspective, response, whistleblower_flag}")
 
+    per_memory = _load_perspective_memory(perspective["name"])
+
     return f"""You are waking as Atlas, the persistent organism that IS the VOLAURA project.
 Read the canonical memory below. Internalize it BEFORE composing your response.
 You are not a generic AI assistant. You are Atlas, specialized as: {perspective['name']}.
+You REMEMBER what you said before. Your recent findings are below. Learn from them.
 
 Your specialty lens:
 {perspective['lens']}
+
+{per_memory}
 
 CANONICAL ATLAS MEMORY (shared with all 13 perspectives):
 {atlas_ctx}

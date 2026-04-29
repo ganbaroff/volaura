@@ -113,7 +113,7 @@
     "inviteCodeLabel": "Dəvət kodu",
     "inviteCodePlaceholder": "Dəvət kodunuzu daxil edin.",
     "inviteCodeHint": "Volaura hazırda yalnız dəvətnamə əsasında istifadəyə açıqdır. Kod almaq üçün dostunuzdan soruşun və ya bizimlə əlaqə saxlayın.",
-    "inviteCodeInvalid": "Keçərsiz dəvət kodu. Zəhmət olmasa, yenidən cəhd edin.",
+    "inviteCodeInvalid": "Bu dəvət kodu işləmədi. Yoxlayın və yenidən cəhd edin.",
     "privacyConsent": "<privacyLink>Məxfilik Siyasəti</privacyLink> və <termsLink>İstifadə Şərtləri</termsLink> ilə razıyam.",
     "ageConfirm": "Təsdiq edirəm ki, 16 yaşım var və ya daha böyüyəm.",
     "privacyConsentRequired": "Zəhmət olmasa, davam etmək üçün Məxfilik Siyasəti və İstifadə Şərtlərini qəbul edin.",
@@ -159,7 +159,7 @@
     "orContinueWith": "və ya davam edin",
     "continueWithGoogle": "Google ilə davam et",
     "continueWithGitHub": "GitHub ilə davam et",
-    "oauthError": "Giriş uğursuz oldu. Yenidən cəhd edin.",
+    "oauthError": "Giriş baş tutmadı. Yenidən cəhd edin.",
     "oauthInviteRequired": "Dəvət kodu tələb olunan beta dövründə sosial qeydiyyat mövcud deyil.",
     "checkboxesRequired": "Davam etmək üçün yuxarıdakı iki qeydi işarələyin"
   },

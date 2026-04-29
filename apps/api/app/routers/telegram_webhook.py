@@ -838,6 +838,48 @@ async def _execute_proposal(db, chat_id: int | str, proposal_id: str) -> None:
         await _send_message(chat_id, f"⚠️ Execute error: {str(e)[:150]}")
 
 
+async def _trigger_autonomous_work(chat_id: int | str) -> None:
+    """CEO says 'продолжайте' — trigger autonomous swarm workflow on GitHub Actions."""
+    import httpx
+
+    gh_token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN", "")
+    if not gh_token:
+        await _send_message(
+            chat_id,
+            "⚠️ GITHUB_TOKEN not set on Railway.\n"
+            "Set it in Railway dashboard to enable autonomous work.\n"
+            "`railway variables set GITHUB_TOKEN=ghp_...`",
+        )
+        return
+
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            resp = await client.post(
+                "https://api.github.com/repos/ganbaroff/volaura/actions/workflows/swarm-daily.yml/dispatches",
+                headers={
+                    "Authorization": f"Bearer {gh_token}",
+                    "Accept": "application/vnd.github.v3+json",
+                },
+                json={"ref": "main", "inputs": {"mode": "daily-ideation"}},
+            )
+
+        if resp.status_code in (204, 200):
+            await _send_message(
+                chat_id,
+                "🚀 Рой запущен на GitHub Actions.\n\n"
+                "13 перспектив анализируют, Aider фиксит код, результат придет сюда.\n"
+                "Комп не нужен.",
+            )
+        else:
+            await _send_message(
+                chat_id,
+                f"⚠️ GitHub Actions не запустился (HTTP {resp.status_code}).\n"
+                f"Попробуй: `gh workflow run 'Swarm Daily Autonomy'`",
+            )
+    except Exception as e:
+        await _send_message(chat_id, f"⚠️ Trigger error: {str(e)[:150]}")
+
+
 async def _handle_agents(chat_id: int | str) -> None:
     """Show all 44 Atlas agents with live status from agent-state.json."""
     live = _load_agent_state()
@@ -2361,6 +2403,8 @@ async def _handle_telegram_update(update: dict, db: AsyncClient) -> None:
                 if msg.lower().startswith(trigger):
                     msg = msg[len(trigger) :].strip()
             await _handle_atlas(db, chat_id, msg or "проснись")
+        elif text.startswith("/work") or text.lower() in ("продолжайте", "продолжай", "работайте", "пашите"):
+            await _trigger_autonomous_work(chat_id)
         elif text.startswith("/help") or text.startswith("/start"):
             await _handle_help(chat_id)
         elif text.lower().startswith(("act ", "dismiss ", "defer ")):

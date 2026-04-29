@@ -244,6 +244,11 @@ def load_atlas_context() -> str:
         DOCS / "PRE-LAUNCH-BLOCKERS-STATUS.md",
         DOCS / "INDEX.md",
     ]
+    # Semantic memory — persistent knowledge from past sessions
+    semantic_dir = ATLAS_MEMORY / "semantic"
+    if semantic_dir.exists():
+        for sf in sorted(semantic_dir.glob("*.md")):
+            files.append(sf)
     parts = []
     for f in files:
         if not f.exists():
@@ -286,6 +291,24 @@ def load_atlas_context() -> str:
             parts.append(pw_summary)
         except Exception:
             pass
+
+    # Last 3 episodes — what happened in recent sessions
+    episodes_dir = ATLAS_MEMORY / "episodes"
+    if episodes_dir.exists():
+        episode_files = sorted(episodes_dir.glob("*.json"), reverse=True)[:3]
+        if episode_files:
+            ep_summary = "=== RECENT SESSION EPISODES ===\n"
+            for ef in episode_files:
+                try:
+                    ep = json.loads(ef.read_text(encoding="utf-8"))
+                    ep_summary += f"\nSession {ep.get('session', '?')} ({ep.get('date', '?')}):\n"
+                    for item in ep.get("what_happened", [])[:3]:
+                        ep_summary += f"  - {item[:120]}\n"
+                    for lesson in ep.get("what_i_learned", [])[:2]:
+                        ep_summary += f"  LEARNED: {lesson[:120]}\n"
+                except Exception:
+                    continue
+            parts.append(ep_summary)
 
     return "\n\n".join(parts)
 

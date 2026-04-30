@@ -168,7 +168,7 @@ perspectives: all
     return True
 
 
-async def call_brain_llm(prompt: str, max_tokens: int = 4000) -> str:
+def call_brain_llm(prompt: str, max_tokens: int = 4000) -> str:
     """Call brain LLM. Tries: Cerebras (cloud, free) -> Ollama (local) -> Groq (cloud).
 
     CEO: "без даемона тоже можно" — brain works on VM without GPU via cloud API.

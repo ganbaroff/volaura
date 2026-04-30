@@ -311,8 +311,12 @@ TASK2_BODY: <body or NONE>
 Do NOT write anything else. No explanation. No preamble. Just the fields above.
 """
 
-    response = await asyncio.to_thread(call_brain_llm, prompt, 800)
-    if not response:
+    try:
+        response = call_brain_llm(prompt, 800)
+    except Exception as e:
+        log_event({"event": "brain_think_error", "error": str(e)[:200]})
+        return
+    if not response or not isinstance(response, str):
         log_event({"event": "brain_think_empty"})
         return
 

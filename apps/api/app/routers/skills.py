@@ -367,7 +367,7 @@ async def _log_automated_decision(
 
 @router.get("/")
 @limiter.limit(RATE_DEFAULT)
-async def list_skills(request: Request):
+async def list_skills(request: Request, _user: CurrentUserId):
     """List all available product skills."""
     skills = []
     if SKILLS_DIR.exists():

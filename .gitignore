@@ -111,3 +111,6 @@ apps/api/whisper_startup.vbs
 memory/atlas/courier-replay-ledger.jsonl
 .gcp-service-account.json
 memory/atlas/work-queue/daemon.log.jsonl
+memory/atlas/work-queue/daemon.log.jsonl
+memory/atlas/work-queue/brain.log.jsonl
+memory/atlas/work-queue/archivist.log.jsonl

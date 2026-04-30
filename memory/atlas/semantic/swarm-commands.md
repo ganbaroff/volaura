@@ -2,6 +2,13 @@
 
 Updated by daemon after each task. Instrument reads on every wake.
 
+## WARNING: Swarm false positive rate is HIGH
+Deep search 2026-05-01: 3/3 checked findings were FALSE:
+- "Missing rate limit on /start" → EXISTS line 181
+- "Unbounded query /next" → .limit(1) on all queries, /next endpoint doesn't exist
+- "Law 2 broken 4/5 products" → SAME false claim, 116 files with energy
+Swarm is NOT reading code. Fix: stronger evidence gate in daemon prompts.
+
 ## Current Priority (from 2026-05-01 swarm cycle)
 1. Fix doc contradictions (product-truth.md said Law 2 "BROKEN" — actually 116 files) — DONE
 2. Legal: GDPR Art.22 consent text review — BLOCKED (CEO legal)

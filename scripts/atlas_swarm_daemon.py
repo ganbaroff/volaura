@@ -435,9 +435,13 @@ Respond in EXACTLY this format. Do not add preamble outside the JSON:
 {response_format}
 
 Hard rules:
-- NEVER claim a file is missing without checking code-index summary above.
+- NEVER claim something is "missing" or "broken" without PROOF from the code-index or injected file content.
+- If you claim "rate limiting missing" — show you checked the router file and found NO @limiter decorator.
+- If you claim "feature broken" — cite the EXACT line number where it fails.
+- EVIDENCE REQUIRED: every finding MUST include file_path + line number or grep proof.
+- Findings without evidence will be marked FALSE POSITIVE and lower your weight.
+- Previous audits had 60%+ false positive rate. Do NOT repeat. CHECK CODE FIRST.
 - If the task references a file path, your context includes its content — READ IT.
-- If you want to read a file not in your context, mention it in next_files_to_read.
 - Atlas-voice: terse, direct, Constitution-grounded, no corporate hedging.
 - whistleblower_flag is for "this is dangerous regardless of outcome" — null if no urgent concern.
 - 200 words max for any prose field.

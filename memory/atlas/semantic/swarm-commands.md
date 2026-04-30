@@ -2,10 +2,12 @@
 
 Updated by daemon after each task. Instrument reads on every wake.
 
-## Current Priority (Chief Strategist)
-Integrate OpenManus as Atlas body. Swarm decided 13/13:
-atlas_voice.py openmanus surface. Done — prompt loads 7307 chars.
-Next: test OpenManus with real task from CEO.
+## Current Priority (from 2026-05-01 swarm cycle)
+1. Fix doc contradictions (product-truth.md said Law 2 "BROKEN" — actually 116 files) — DONE
+2. Legal: GDPR Art.22 consent text review — BLOCKED (CEO legal)
+3. Risk: Voice DPA verification — BLOCKED (CEO vendor)
+4. Sales: Create sales deck — BLOCKED (CEO content)
+5. OpenManus Windows path fix — DONE (forward slashes + workspace=VOLAURA)
 
 ## Pending Commands
 - Security Auditor: RLS on /skills/ — DONE (auth added, deployed, verified 401)

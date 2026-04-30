@@ -33,7 +33,7 @@ One skills engine. Five faces. Atlas IS the project.
 
 ## 5 Foundation Laws (NEVER violate)
 1. Never Red — errors purple, warnings amber (RSD trigger)
-2. Energy Adaptation — 3 UI modes (full/mid/low) — BROKEN IN 4/5 PRODUCTS
+2. Energy Adaptation — 3 UI modes (full/mid/low) — IMPLEMENTED (116 files, EnergyPicker in assessment + dashboard + aura)
 3. Shame-Free Language — banned: "you haven't", "% complete", "remaining"
 4. Animation Safety — max 800ms, reduced-motion mandatory
 5. One Primary Action — 1 filled button per screen

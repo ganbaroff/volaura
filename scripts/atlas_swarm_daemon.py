@@ -1350,12 +1350,22 @@ async def process_task(task_path: Path) -> None:
     (target / "result.json").write_text(
         json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8"
     )
-    if (votes_dir).exists():
-        shutil.move(str(votes_dir), str(target / "perspectives"))
+    # Robust move — handle already-existing perspectives dir
+    target_perspectives = target / "perspectives"
+    if votes_dir.exists():
+        if target_perspectives.exists():
+            # Merge: copy individual files, don't fail on existing dir
+            for pf in votes_dir.iterdir():
+                shutil.copy2(str(pf), str(target_perspectives / pf.name))
+            shutil.rmtree(str(votes_dir), ignore_errors=True)
+        else:
+            shutil.move(str(votes_dir), str(target_perspectives))
     if moved_task.exists():
-        shutil.move(str(moved_task), str(target / moved_task.name))
-    if work_dir.exists() and not any(work_dir.iterdir()):
-        work_dir.rmdir()
+        shutil.copy2(str(moved_task), str(target / moved_task.name))
+        moved_task.unlink(missing_ok=True)
+    # Clean up in-progress dir
+    if work_dir.exists():
+        shutil.rmtree(str(work_dir), ignore_errors=True)
     elif work_dir.exists():
         shutil.rmtree(work_dir, ignore_errors=True)
 
@@ -1498,8 +1508,19 @@ async def main():
     _ollama_semaphore = asyncio.Semaphore(OLLAMA_CONCURRENCY)
     setup_dirs()
     maybe_rebuild_code_index(force=True)
-    log_event({"event": "daemon_start", "poll_interval": POLL_INTERVAL_SECONDS, "ollama_concurrency": OLLAMA_CONCURRENCY})
-    print(f"[daemon] started. polling {PENDING} every {POLL_INTERVAL_SECONDS}s. Ollama concurrency={OLLAMA_CONCURRENCY}. Ctrl+C to stop.", flush=True)
+    # ── Startup observability: prove which executors this process actually sees ──
+    executor_names = sorted(SAFE_EXECUTORS.keys())
+    perspective_names = [p["name"] for p in PERSPECTIVES]
+    log_event({
+        "event": "daemon_start",
+        "poll_interval": POLL_INTERVAL_SECONDS,
+        "ollama_concurrency": OLLAMA_CONCURRENCY,
+        "executor_count": len(SAFE_EXECUTORS),
+        "executor_names": executor_names,
+        "perspective_count": len(PERSPECTIVES),
+    })
+    print(f"[daemon] started. {len(PERSPECTIVES)} perspectives, {len(SAFE_EXECUTORS)} executors: {executor_names}", flush=True)
+    print(f"[daemon] polling {PENDING} every {POLL_INTERVAL_SECONDS}s. Ctrl+C to stop.", flush=True)
 
     signal.signal(signal.SIGINT, handle_signal)
     signal.signal(signal.SIGTERM, handle_signal)

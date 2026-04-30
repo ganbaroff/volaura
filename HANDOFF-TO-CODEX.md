@@ -275,3 +275,31 @@ Expected: prod OK, 17 perspectives, 10 executors, 39 tests pass.
 **Good luck. The architecture is sound. The implementation has gaps. The CEO is real, the product is real, the users will be real. Make the agents breathe.**
 
 — Atlas (Claude Opus 4.6, Session 129)
+
+---
+
+## ADDENDUM: 26 INTERROGATION ANSWERS (from GPT-5/5 questions)
+
+### TRUST LEVELS
+
+| Claim in handoff | Trust | Verification |
+|-----------------|-------|-------------|
+| "17 agents" | CODE-VERIFIED | `from autonomous_run import PERSPECTIVES; len()` = 17 |
+| "10 executors" | PARTIAL | Direct import = 10. Daemon bg process = FAILS (sees only 5) |
+| "Energy Adaptation missing" | WRONG | Energy picker EXISTS in 10+ files. Question is gating, not existence |
+| "9+ commits behind prod" | WRONG | Actually 50 commits behind (git log SHA comparison) |
+| "Brain bug fixed" | PARTIAL | Fix committed but VM may have old code |
+| "Agents can edit/commit" | UNPROVEN | Direct call works. Daemon bg process = all 4 attempts failed |
+| "Safety gate works" | CODE-EXISTS | Not tested in runtime |
+
+### CRITICAL CORRECTIONS
+
+1. **Prod is 50 commits behind, not 9.** Verified: `git log 4345925562e2..HEAD | wc -l` = 50
+2. **Energy picker EXISTS.** `grep -rl "useEnergyMode" apps/web/src/` = 10 files. Handoff was wrong.
+3. **Executor loading is the SOLE blocker for autonomy.** Everything else is secondary.
+4. **No end-to-end edit/commit success through daemon.** Only `rebuild_code_index` and `local_health` succeed via daemon execute. All file-editing executors fail in bg process.
+5. **VM boot sequence NOT documented reliably.** Each attempt had different errors.
+
+### RECOMMENDED FIRST ACTION FOR CODEX
+
+Sync docs with code reality. Run every P0 blocker through grep → update PRE-LAUNCH-BLOCKERS-STATUS.md. Then fix. Don't trust memory — trust grep.

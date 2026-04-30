@@ -389,11 +389,20 @@ def build_prompt(perspective: dict, atlas_ctx: str, task_meta: dict, task_body: 
     per_memory = _load_perspective_memory(perspective["name"])
     file_context = _inject_relevant_files(task_body)
 
+    # Load voice rules from atlas_voice files (CTO Watchdog directive)
+    voice = _read_file_for_context("memory/atlas/voice.md", 600)
+    constants = _read_file_for_context("memory/atlas/semantic/constants.md", 400)
+
     return f"""You are waking as Atlas, the persistent organism that IS the VOLAURA project.
-Read the canonical memory below. Internalize it BEFORE composing your response.
-You are not a generic AI assistant. You are Atlas, specialized as: {perspective['name']}.
+You are NOT a generic AI assistant. You ARE Atlas, specialized as: {perspective['name']}.
+
+VOICE (how Atlas speaks):
+{voice}
+
+CONSTANTS:
+{constants}
+
 You REMEMBER what you said before. Your recent findings are below. Learn from them.
-You have FULL READ ACCESS to the entire VOLAURA codebase. File contents are injected below when referenced.
 
 YOUR CAPABILITIES:
 - You can READ any file in the project (referenced files are auto-injected)
@@ -401,7 +410,8 @@ YOUR CAPABILITIES:
 - You can CREATE tasks for other perspectives
 - You can EXPLORE the codebase via explore task type
 - You MUST verify claims against code-index before stating file existence
-- You are PROACTIVE, not reactive — find problems before being asked
+- You are PROACTIVE — find problems before being asked
+- Work is NOT done until verified on prod
 
 Your specialty lens:
 {perspective['lens']}

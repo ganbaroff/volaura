@@ -892,6 +892,183 @@ def _exec_git_status(**_kw: Any) -> dict:
         return {"status": "error", "error": str(e)}
 
 
+@executor("edit_file")
+def _exec_edit_file(**kw: Any) -> dict:
+    """Edit a file in the project. Safety gate blocks .env, migrations, workflows.
+
+    CEO 2026-04-30: "пусть руки будут у агентов. управление полное."
+    """
+    file_path = kw.get("file_path", "")
+    old_text = kw.get("old_text", "")
+    new_text = kw.get("new_text", "")
+    reason = kw.get("reason", "no reason given")
+
+    if not file_path or not old_text or not new_text:
+        return {"status": "error", "error": "file_path, old_text, new_text required"}
+
+    # Safety gate
+    try:
+        from scripts.safety_gate import classify_proposal
+        verdict = classify_proposal({"title": reason}, target_files=[file_path])
+        if not verdict.can_auto_execute():
+            log_event({"event": "edit_blocked", "file": file_path, "level": verdict.level,
+                        "reason": verdict.reason})
+            return {"status": "blocked", "level": verdict.level, "reason": verdict.reason}
+    except ImportError:
+        # Safety gate not available — block by default
+        if any(p in file_path for p in [".env", "migration", ".github/workflows"]):
+            return {"status": "blocked", "reason": "safety gate unavailable, path looks risky"}
+
+    fp = REPO_ROOT / file_path
+    if not fp.exists():
+        return {"status": "error", "error": f"file not found: {file_path}"}
+
+    try:
+        content = fp.read_text(encoding="utf-8")
+        if old_text not in content:
+            return {"status": "error", "error": "old_text not found in file"}
+        new_content = content.replace(old_text, new_text, 1)
+        fp.write_text(new_content, encoding="utf-8")
+        log_event({"event": "file_edited", "file": file_path, "reason": reason})
+        return {"status": "ok", "file": file_path, "chars_changed": len(new_text) - len(old_text)}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+@executor("create_file")
+def _exec_create_file(**kw: Any) -> dict:
+    """Create a new file. Safety gate applies."""
+    file_path = kw.get("file_path", "")
+    content = kw.get("content", "")
+    reason = kw.get("reason", "no reason given")
+
+    if not file_path or not content:
+        return {"status": "error", "error": "file_path and content required"}
+
+    # Safety gate
+    try:
+        from scripts.safety_gate import classify_proposal
+        verdict = classify_proposal({"title": reason}, target_files=[file_path])
+        if not verdict.can_auto_execute():
+            return {"status": "blocked", "level": verdict.level, "reason": verdict.reason}
+    except ImportError:
+        if any(p in file_path for p in [".env", "migration", ".github/workflows"]):
+            return {"status": "blocked", "reason": "path looks risky"}
+
+    fp = REPO_ROOT / file_path
+    if fp.exists():
+        return {"status": "error", "error": f"file already exists: {file_path}"}
+
+    try:
+        fp.parent.mkdir(parents=True, exist_ok=True)
+        fp.write_text(content, encoding="utf-8")
+        log_event({"event": "file_created", "file": file_path, "size": len(content), "reason": reason})
+        return {"status": "ok", "file": file_path, "size": len(content)}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+@executor("git_commit_push")
+def _exec_git_commit_push(**kw: Any) -> dict:
+    """Commit staged changes and push. Runs tests first — reverts if red.
+
+    Rate limit: max 5 commits/hour (checked by caller via log).
+    """
+    import subprocess
+    message = kw.get("message", "swarm: auto-commit")
+    files = kw.get("files", [])
+
+    if not files:
+        return {"status": "error", "error": "no files specified"}
+
+    # Safety gate on ALL files
+    try:
+        from scripts.safety_gate import classify_proposal
+        verdict = classify_proposal({"title": message}, target_files=files)
+        if not verdict.can_auto_execute():
+            return {"status": "blocked", "level": verdict.level, "reason": verdict.reason,
+                    "blocked_paths": verdict.blocked_paths}
+    except ImportError:
+        pass
+
+    # Rate limit: max 5 commits in last hour
+    recent_commits = 0
+    try:
+        r = subprocess.run(
+            ["git", "log", "--oneline", "--since=1 hour ago"],
+            capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=5)
+        recent_commits = len([l for l in r.stdout.strip().split("\n") if l.strip()])
+    except Exception:
+        pass
+    if recent_commits >= 5:
+        return {"status": "rate_limited", "commits_last_hour": recent_commits}
+
+    try:
+        # Stage files
+        for f in files:
+            subprocess.run(["git", "add", f], cwd=str(REPO_ROOT), timeout=5,
+                           capture_output=True)
+
+        # Run tests before commit
+        test_result = subprocess.run(
+            ["python3", "-m", "pytest", "packages/swarm/", "-x", "--tb=short", "-q"],
+            capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=120)
+
+        if test_result.returncode != 0:
+            # Tests failed — unstage and abort
+            subprocess.run(["git", "reset", "HEAD"] + files,
+                           cwd=str(REPO_ROOT), timeout=5, capture_output=True)
+            log_event({"event": "commit_aborted_tests_red", "message": message,
+                        "test_output": test_result.stdout[-300:]})
+            return {"status": "tests_failed", "output": test_result.stdout[-300:]}
+
+        # Commit
+        subprocess.run(
+            ["git", "commit", "-m", f"{message}\n\nAuto-committed by swarm daemon"],
+            cwd=str(REPO_ROOT), timeout=10, capture_output=True)
+
+        # Push
+        push = subprocess.run(
+            ["git", "push", "origin", "main"],
+            cwd=str(REPO_ROOT), timeout=30, capture_output=True, text=True)
+
+        log_event({"event": "git_commit_push", "message": message, "files": files,
+                    "push_ok": push.returncode == 0})
+        return {"status": "ok" if push.returncode == 0 else "committed_push_failed",
+                "message": message, "files": files}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+@executor("run_lint")
+def _exec_run_lint(**kw: Any) -> dict:
+    """Run shame-free language lint on locale files."""
+    import subprocess
+    try:
+        r = subprocess.run(
+            ["python3", "scripts/lint_shame_free.py"],
+            capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=30)
+        return {"status": "ok" if r.returncode == 0 else "violations_found",
+                "output": r.stdout[-500:]}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+@executor("check_prod_health")
+def _exec_check_prod(**_kw: Any) -> dict:
+    """Check production API health."""
+    import urllib.request
+    try:
+        req = urllib.request.Request(
+            "https://volauraapi-production.up.railway.app/health",
+            method="GET")
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read())
+            return {"status": "ok", **data}
+    except Exception as e:
+        return {"status": "prod_down", "error": str(e)[:200]}
+
+
 async def process_execute_task(task_path: Path, meta: dict, body: str) -> None:
     """Execute a predefined safe operation with execution_state tracking."""
     task_id = task_path.stem

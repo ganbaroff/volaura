@@ -110,3 +110,4 @@ apps/api/whisper_startup.vbs
 # (per docs/architecture/cross-instance-courier-signing-protocol.md)
 memory/atlas/courier-replay-ledger.jsonl
 .gcp-service-account.json
+memory/atlas/work-queue/daemon.log.jsonl

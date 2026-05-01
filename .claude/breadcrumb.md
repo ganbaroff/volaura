@@ -1,8 +1,11 @@
-# Atlas Breadcrumb — Session 129
+# Atlas Breadcrumb — Session 129 (continued May 1)
 
-**Last update:** 2026-04-30
-**Session:** 129 — 11-agent architecture + cleanup
-**Daemon:** 11 agents, 11 LLMs, per-perspective config wired, smart temperature
+**Last update:** 2026-05-01 11:30 Baku
+**Session:** 129 continued — autonomy + fixes + deploy
+**Daemon:** 17 agents, 10 executors, voice.md injected into prompts
+**Prod:** Railway deployed, Vercel deployed, privacy+terms fixed (were 404)
+**PostHog:** ✅ LIVE (Provider in layout.tsx line 65, $50K credits)
+**VM:** volaura-swarm 104.154.132.12, daemon+brain running (needs git pull)
 
 ## Session 129 — what shipped
 

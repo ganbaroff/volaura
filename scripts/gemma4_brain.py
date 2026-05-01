@@ -44,33 +44,20 @@ THINK_INTERVAL = 300  # 5 minutes
 # How often to re-read project state
 FULL_REREAD_INTERVAL = 3600  # 1 hour
 
-# Priority files to read first (fit in 128K context)
+# Compact canonical input — architecture mandate: NO giant text dumps
+# Only these 7 sources. Target < 15K chars total.
 PRIORITY_FILES = [
-    # Core identity + product
-    "memory/atlas/semantic/product-truth.md",
-    "memory/atlas/semantic/swarm-state.md",
-    "memory/atlas/identity.md",
-    "memory/atlas/relationships.md",
-    "memory/atlas/lessons.md",
-    "memory/atlas/remember_everything.md",
-    # Constitution
-    "docs/ECOSYSTEM-CONSTITUTION.md",
-    "docs/CONSTITUTION_AI_SWARM.md",
-    # Current state
-    "docs/PRE-LAUNCH-BLOCKERS-STATUS.md",
-    ".claude/breadcrumb.md",
-    "memory/swarm/shared-context.md",
-    # Swarm state
-    "memory/swarm/daily-health-log.md",
+    "memory/atlas/semantic/product-truth.md",       # what VOLAURA is
+    "memory/atlas/semantic/swarm-state.md",          # swarm architecture
+    "memory/atlas/semantic/swarm-commands.md",       # what to do next
+    "memory/atlas/semantic/false-positives.md",      # don't repeat these
+    "memory/atlas/semantic/architecture-mandate.md", # how to work
+    "docs/PRE-LAUNCH-BLOCKERS-STATUS.md",            # current blockers
+    ".claude/breadcrumb.md",                         # session state
 ]
 
-# Secondary files — read on full reread cycle
-SECONDARY_PATTERNS = [
-    "docs/*.md",
-    "memory/atlas/*.md",
-    "memory/swarm/skills/*.md",
-    "memory/atlas/episodes/*.json",
-]
+# No secondary patterns — architecture mandate forbids giant dumps
+SECONDARY_PATTERNS = []
 
 
 def log_event(event: dict) -> None:
@@ -84,7 +71,7 @@ def read_project_context(full: bool = False) -> str:
     """Read priority MD files into a single context string."""
     parts = []
     total_chars = 0
-    max_chars = 100_000  # leave room for prompt + response in 128K
+    max_chars = 15_000  # compact canonical input per architecture mandate
 
     # Priority files first
     for rel in PRIORITY_FILES:

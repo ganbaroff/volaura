@@ -16,6 +16,8 @@ Swarm is NOT reading code. Fix: stronger evidence gate in daemon prompts.
 3. Risk: Voice DPA verification — BLOCKED (CEO vendor)
 4. Sales: Create sales deck — BLOCKED (CEO content)
 5. OpenManus Windows path fix — DONE (forward slashes + workspace=VOLAURA)
+6. Privacy + Terms pages 404 — DONE (Vercel deploy, now 200)
+7. Vercel frontend deployed to production — DONE (dpl_AHspHXbGsKNisuTjTAgMyXr4SeGE)
 
 ## Pending Commands
 - Security Auditor: RLS on /skills/ — DONE (auth added, deployed, verified 401)

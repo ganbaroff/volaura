@@ -388,7 +388,7 @@ def _get_ecosystem_context() -> str:
             parts.append("=== VOLAURA HEARTBEAT ===\n" + volaura_hb.read_text(encoding="utf-8")[:1200])
 
     # MindShift heartbeat
-    mindshift_hb = Path("C:/Users/user/Downloads/mindshift/memory/heartbeat.md")
+    mindshift_hb = _REPO_ROOT.parent / "mindshift" / "memory" / "heartbeat.md"
     if mindshift_hb.exists():
         with contextlib.suppress(Exception):
             parts.append("=== MINDSHIFT HEARTBEAT ===\n" + mindshift_hb.read_text(encoding="utf-8")[:800])

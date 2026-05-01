@@ -49,9 +49,9 @@ def _verify_sentry_signature(body: bytes, signature_header: str) -> bool:
     if not settings.sentry_webhook_secret:
         return False
     expected = hmac.new(
-        key=settings.sentry_webhook_secret.encode("utf-8"),
-        msg=body,
-        digestmod=hashlib.sha256,
+        settings.sentry_webhook_secret.encode("utf-8"),
+        body,
+        hashlib.sha256,
     ).hexdigest()
     return hmac.compare_digest(expected, signature_header or "")
 
@@ -93,7 +93,7 @@ def _is_regression_event(payload: dict[str, Any]) -> bool:
     We also accept action == 'resolved' reversed (reopened).
     """
     action = payload.get("action", "")
-    if action in {"resolved", "unresolved", "reopened"}:
+    if action in {"unresolved", "reopened"}:
         return True
     data = payload.get("data", {}) or {}
     issue = data.get("issue") or {}

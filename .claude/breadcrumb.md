@@ -1,8 +1,8 @@
-# Atlas Breadcrumb — Session 129 close (May 1)
+# Atlas Breadcrumb — Session 130 (May 1)
 
 **Last update:** 2026-05-01
-**Session:** 129 — 61 hours, 74+ commits, pre-compaction state
-**Prod:** Railway deployed, Vercel deployed, prod ok
+**Session:** 130 — continuation of 129 post-compaction
+**Prod:** Railway deployed, Vercel deployed, prod ok (curl verified)
 **Architecture mandate:** active (reliability over novelty, feature freeze)
 
 ## Verified state
@@ -11,9 +11,9 @@
 - 17 perspectives (import verified), 10 executors (import verified)
 - 12/19 blockers done, 7 open (3 CEO-blocked, 2 large builds, 2 partial polish)
 - Brain: compact 15K input (code-changed, runtime quality not verified)
-- HANDS: direct-call proven, daemon bg process NOT proven on Linux VM
-- FP enforcement: prompt-enforced, runtime effect not verified
-- Autonomy levels: prompt-defined, NOT hard-gated
+- HANDS: E2E proven on Linux VM (pending→daemon→6/17 responded→done→Telegram, commit 8b67c8c)
+- FP enforcement: code-enforced via _apply_evidence_gate() in daemon (verified by grep)
+- Autonomy levels: hard-gated via safety_gate.py path patterns (verified by grep)
 - CEO digest: script works, Telegram sent, receipt not confirmed
 - PostHog: Provider in layout.tsx line 65, key configured
 

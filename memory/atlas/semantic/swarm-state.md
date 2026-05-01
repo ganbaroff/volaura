@@ -11,8 +11,8 @@ Updated 2026-05-01. Session 129 final.
 - Sub-agent fan-out on deep tasks (Cerebras + NVIDIA + Groq)
 - HANDS: 10 executors (direct-call proven, daemon bg process NOT proven on Linux VM)
 - Brain: compact 15K input from 7 canonical files (code-changed, runtime quality not verified)
-- False-positive registry: injected into daemon prompts (prompt-enforced, runtime effect not verified)
-- Autonomy levels: defined in prompts (prompt-defined only, NOT hard-gated in code)
+- False-positive registry: injected into daemon prompts AND code-enforced via _apply_evidence_gate() (verified grep 2026-05-01)
+- Autonomy levels: hard-gated via safety_gate.py path patterns (AUTO/MEDIUM/HIGH classification, verified grep 2026-05-01)
 - CEO digest: script works locally, Telegram sent (receipt not confirmed)
 
 ## The 17 agents

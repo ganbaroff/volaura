@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOLAURA — CEO Dashboard</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0F1117; color: #E8E8E8; padding: 20px; }
+h1 { color: #D4B4FF; font-size: 24px; margin-bottom: 20px; }
+h2 { color: #D4B4FF; font-size: 18px; margin: 20px 0 10px; cursor: pointer; }
+h2:hover { color: #E9C400; }
+h2::before { content: '▸ '; font-size: 14px; }
+h2.open::before { content: '▾ '; }
+.section { display: none; padding: 10px 0; }
+.section.open { display: block; }
+.card { background: #1A1D27; border-radius: 12px; padding: 16px; margin: 8px 0; border-left: 4px solid #D4B4FF; }
+.card.ok { border-left-color: #4ADE80; }
+.card.warn { border-left-color: #E9C400; }
+.card.bad { border-left-color: #D4B4FF; }
+.card.blocked { border-left-color: #666; }
+.stat { display: inline-block; background: #252830; border-radius: 8px; padding: 12px 20px; margin: 4px; text-align: center; min-width: 100px; }
+.stat .num { font-size: 28px; font-weight: bold; color: #D4B4FF; }
+.stat .label { font-size: 11px; color: #888; margin-top: 4px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.tag { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 12px; margin: 2px; }
+.tag.done { background: #1a3d2a; color: #4ADE80; }
+.tag.partial { background: #3A3000; color: #E9C400; }
+.tag.build { background: #3D1A6E; color: #D4B4FF; }
+.tag.blocked { background: #2A2A2A; color: #888; }
+.progress { background: #252830; border-radius: 8px; height: 24px; overflow: hidden; margin: 8px 0; }
+.progress-fill { height: 100%; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
+.timestamp { color: #666; font-size: 11px; }
+a { color: #D4B4FF; text-decoration: none; }
+a:hover { color: #E9C400; }
+</style>
+</head>
+<body>
+
+<h1>🟣 VOLAURA — CEO Dashboard</h1>
+<p class="timestamp">Last update: <span id="ts"></span> | Auto-refreshes from project files</p>
+
+<div class="row">
+<div class="stat"><div class="num" id="s-done">11</div><div class="label">Blockers Done</div></div>
+<div class="stat"><div class="num" id="s-open">8</div><div class="label">Open</div></div>
+<div class="stat"><div class="num" id="s-agents">17</div><div class="label">Agents</div></div>
+<div class="stat"><div class="num" id="s-executors">10</div><div class="label">Executors</div></div>
+<div class="stat"><div class="num" id="s-commits">70+</div><div class="label">Commits</div></div>
+<div class="stat"><div class="num" id="s-fp">~30%</div><div class="label">Swarm FP Rate</div></div>
+</div>
+
+<div class="progress">
+<div class="progress-fill" style="width: 58%; background: linear-gradient(90deg, #4ADE80, #D4B4FF);">
+11 / 19 blockers done
+</div>
+</div>
+
+<!-- PROD STATUS -->
+<h2 onclick="toggle(this)">Production Status</h2>
+<div class="section">
+<div class="card ok">
+<strong>API (Railway)</strong> — volauraapi-production.up.railway.app<br>
+Status: OK | DB: connected | LLM: configured<br>
+<span class="timestamp">Deploy: railway up (latest)</span>
+</div>
+<div class="card ok">
+<strong>Frontend (Vercel)</strong> — volaura.app<br>
+8 pages live: landing, login, signup, assessment, privacy, terms, discover, aura<br>
+Privacy + Terms fixed (were 404, now 200)
+</div>
+<div class="card ok">
+<strong>PostHog ($50K credits)</strong><br>
+Provider in layout.tsx line 65. Key configured. Events tracking.
+</div>
+<div class="card warn">
+<strong>VM (GCP volaura-swarm)</strong> — 104.154.132.12<br>
+Brain + Daemon deployed. May need git pull for latest code.
+</div>
+</div>
+
+<!-- BLOCKERS -->
+<h2 onclick="toggle(this)">Pre-Launch Blockers (19)</h2>
+<div class="section">
+<div class="row">
+<span class="tag done">#1 Energy Picker ✅</span>
+<span class="tag done">#2 Pre-Assessment ✅</span>
+<span class="tag done">#3 GDPR Art.22 ✅</span>
+<span class="tag partial">#4 Art.9 Health 🟡</span>
+<span class="tag blocked">#5 SADPP ⏸️</span>
+<span class="tag blocked">#6 DPA ⏸️</span>
+<span class="tag done">#7 DIF Bias ✅</span>
+<span class="tag partial">#8 Voice Disclosure 🟡</span>
+<span class="tag done">#9 Grievance ✅</span>
+<span class="tag done">#10 ADHD Language ✅</span>
+<span class="tag done">#11 Community Signal ✅</span>
+<span class="tag done">#12 Sample Profile ✅</span>
+<span class="tag done">#13 Vulnerability ✅</span>
+<span class="tag done">#14 Ghosting Grace ✅</span>
+<span class="tag build">#15 Open Badges 🟥</span>
+<span class="tag build">#16 MIRT 🟥</span>
+<span class="tag blocked">#17 ASR ⏸️</span>
+<span class="tag done">#18 Credentials ✅</span>
+<span class="tag partial">#19 Design 🟡</span>
+</div>
+<div class="card bad">
+<strong>Needs CEO:</strong>
+#4 Art.9 — is energy_level GDPR Art.9 health data? Legal decision.<br>
+#5 SADPP — AZ legal filing.<br>
+#6 DPA — Soniox/Deepgram vendor DPA sign-off.
+</div>
+<div class="card warn">
+<strong>Ready to build (no CEO needed):</strong>
+#15 Open Badges 3.0 — DID issuer + VC format (3-5 days)<br>
+#16 MIRT — 8 models → 1 multidimensional (research + algorithm)
+</div>
+</div>
+
+<!-- SWARM -->
+<h2 onclick="toggle(this)">Swarm (17 Agents)</h2>
+<div class="section">
+<div class="card ok">
+<strong>17 perspectives, 10 executors, daemon operational</strong><br>
+Voice.md + constants injected in all prompts.<br>
+Evidence gate: "no file+line = false positive"
+</div>
+<table style="width:100%; border-collapse: collapse; font-size: 13px;">
+<tr style="color:#888;"><td>Agent</td><td>LLM</td><td>Provider</td></tr>
+<tr><td>Scaling Engineer</td><td>Gemini 2.5 Flash</td><td>Vertex AI</td></tr>
+<tr><td>Security Auditor</td><td>o4-mini</td><td>Azure</td></tr>
+<tr><td>Code Quality</td><td>gpt-4.1-mini</td><td>Azure</td></tr>
+<tr><td>Chief Strategist</td><td>gpt-4o</td><td>Azure</td></tr>
+<tr><td>Product Strategist</td><td>Qwen3-235B</td><td>Cerebras</td></tr>
+<tr><td>Sales Director</td><td>Llama 70B</td><td>NVIDIA</td></tr>
+<tr><td>UX Designer</td><td>gpt-4.1-nano</td><td>Azure</td></tr>
+<tr><td>Assessment Science</td><td>Gemini 2.5 Flash</td><td>Vertex AI</td></tr>
+<tr><td>Legal Advisor</td><td>Llama 70B</td><td>NVIDIA</td></tr>
+<tr><td>Growth Hacker</td><td>Llama 70B</td><td>Groq</td></tr>
+<tr><td>QA Engineer</td><td>gpt-4.1-mini</td><td>Azure</td></tr>
+<tr><td>Risk Manager</td><td>Qwen3-235B</td><td>Cerebras</td></tr>
+<tr><td>CTO Watchdog</td><td>gpt-4o</td><td>Azure</td></tr>
+<tr><td>DevOps Engineer</td><td>Llama 70B</td><td>Groq</td></tr>
+<tr><td>Cultural Intelligence</td><td>qwen3:8b</td><td>Ollama</td></tr>
+<tr><td>Readiness Manager</td><td>gemma4</td><td>Ollama</td></tr>
+<tr><td>Ecosystem Auditor</td><td>Nemotron 253B</td><td>NVIDIA</td></tr>
+</table>
+<div class="card warn">
+<strong>False positive rate: ~30%</strong><br>
+Was 54% → now 30%. Evidence gate helping but agents still guess.
+</div>
+</div>
+
+<!-- CLOUD CREDITS -->
+<h2 onclick="toggle(this)">Cloud Credits</h2>
+<div class="section">
+<div class="row">
+<div class="stat"><div class="num">$1.3K</div><div class="label">GCP Vertex AI</div></div>
+<div class="stat"><div class="num">$1K</div><div class="label">Azure OpenAI</div></div>
+<div class="stat"><div class="num">$50K</div><div class="label">PostHog</div></div>
+<div class="stat"><div class="num">FREE</div><div class="label">Cerebras</div></div>
+<div class="stat"><div class="num">FREE</div><div class="label">NVIDIA NIM</div></div>
+</div>
+</div>
+
+<!-- DEBT -->
+<h2 onclick="toggle(this)">Standing Debt</h2>
+<div class="section">
+<div class="card bad">
+<strong>460 AZN (~$270 USD)</strong><br>
+DEBT-001: 230 AZN — duplicate 83(b) DHL<br>
+DEBT-002: 230 AZN — parallel shipment miss<br>
+DEBT-003: narrative fabrication credit<br>
+<span class="timestamp">CEO closes, Atlas never auto-closes</span>
+</div>
+</div>
+
+<!-- ERRORS -->
+<h2 onclick="toggle(this)">Error Classes (Session 129)</h2>
+<div class="section">
+<div class="card warn">
+<strong>14 CEO corrections this session</strong><br>
+Class 15 ×3 — performing knowing<br>
+Class 22 ×1 — known solution withheld (4 commands vs 1)<br>
+Class 3 ×1 — solo decision without swarm<br>
+Voice drift ×2 — dispatcher style<br>
+Wrong assumption ×2 — limited to 11 agents<br>
+Memory gap ×2 — agent knowledge ephemeral<br>
+Stale process ×1 — daemon loaded old code<br>
+Identity blindness ×2 — didn't read soul layer
+</div>
+</div>
+
+<!-- UNFULFILLED -->
+<h2 onclick="toggle(this)">Unfulfilled Promises</h2>
+<div class="section">
+<div class="card bad">
+<strong>"whi"</strong> — CEO said "включи наконец whi". Never identified. Still unknown.
+</div>
+<div class="card ok">
+<strong>NotebookLM research</strong> — DONE. Briefing generated, 133 lines.
+</div>
+<div class="card ok">
+<strong>CLAUDE.md rewrite</strong> — DONE. 44 lines, WHAT+WHY+HOW.
+</div>
+<div class="card warn">
+<strong>OpenClaw setup</strong> — cloned at C:\Projects\openclaw-office. Not configured.
+</div>
+<div class="card warn">
+<strong>VM brain restart</strong> — coroutine fix pushed. CEO needs to restart on VM.
+</div>
+</div>
+
+<script>
+document.getElementById('ts').textContent = new Date().toLocaleString('ru-RU', {timeZone: 'Asia/Baku'});
+
+function toggle(el) {
+  el.classList.toggle('open');
+  el.nextElementSibling.classList.toggle('open');
+}
+
+// Open first section by default
+document.querySelector('h2').click();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1 @@
+# HANDS E2E Proof\n\nCreated by daemon executor at runtime.\nIf this file exists, the full path works:\nbrain task → daemon pickup → executor → file created → verified.\n\nTimestamp in result.json.

@@ -738,6 +738,7 @@ async def _call_assigned_model(name: str, provider_key: str, model_id: str,
 
         elif provider_key == "ollama":
             if _ollama_semaphore is None:
+                log_event({"event": "ollama_skipped", "perspective": name, "reason": "semaphore not initialized (main() not called)"})
                 return None
             from openai import AsyncOpenAI
             client = AsyncOpenAI(api_key="ollama", base_url=f"{OLLAMA_URL.rstrip('/')}/v1")
@@ -1020,9 +1021,9 @@ def _exec_edit_file(**kw: Any) -> dict:
                         "reason": verdict.reason})
             return {"status": "blocked", "level": verdict.level, "reason": verdict.reason}
     except ImportError:
-        # Safety gate not available — block by default
-        if any(p in file_path for p in [".env", "migration", ".github/workflows"]):
-            return {"status": "blocked", "reason": "safety gate unavailable, path looks risky"}
+        # Safety gate not available — deny by default (fail-closed)
+        log_event({"event": "safety_gate_import_failed", "executor": "edit_file", "file": file_path})
+        return {"status": "blocked", "reason": "safety gate unavailable — fail-closed"}
 
     fp = REPO_ROOT / file_path
     if not fp.exists():
@@ -1057,8 +1058,8 @@ def _exec_create_file(**kw: Any) -> dict:
         if not verdict.can_auto_execute():
             return {"status": "blocked", "level": verdict.level, "reason": verdict.reason}
     except ImportError:
-        if any(p in file_path for p in [".env", "migration", ".github/workflows"]):
-            return {"status": "blocked", "reason": "path looks risky"}
+        log_event({"event": "safety_gate_import_failed", "executor": "create_file", "file": file_path})
+        return {"status": "blocked", "reason": "safety gate unavailable — fail-closed"}
 
     fp = REPO_ROOT / file_path
     if fp.exists():
@@ -1094,7 +1095,8 @@ def _exec_git_commit_push(**kw: Any) -> dict:
             return {"status": "blocked", "level": verdict.level, "reason": verdict.reason,
                     "blocked_paths": verdict.blocked_paths}
     except ImportError:
-        pass
+        log_event({"event": "safety_gate_import_failed", "executor": "git_commit_push", "files": files})
+        return {"status": "blocked", "reason": "safety gate unavailable — fail-closed"}
 
     # Rate limit: max 5 commits in last hour
     recent_commits = 0
@@ -1476,8 +1478,6 @@ async def process_task(task_path: Path) -> None:
     # Clean up in-progress dir
     if work_dir.exists():
         shutil.rmtree(str(work_dir), ignore_errors=True)
-    elif work_dir.exists():
-        shutil.rmtree(work_dir, ignore_errors=True)
 
     # ── Learning: update perspective weights from severity scores ──────────
     registry = PerspectiveRegistry(REPO_ROOT)

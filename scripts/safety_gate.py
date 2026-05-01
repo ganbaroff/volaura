@@ -100,6 +100,10 @@ MEDIUM_RISK_PATTERNS = [
     r"tsconfig\.json",              # TypeScript config
     r"packages/swarm/coordinator", # swarm core
     r"packages/swarm/autonomous_run", # swarm core
+    r"scripts/atlas_swarm_daemon\.py", # daemon — self-modification vector
+    r"scripts/safety_gate\.py",     # safety gate — self-modification vector
+    r"scripts/gemma4_brain\.py",    # brain — self-modification vector
+    r"scripts/ceo_digest\.py",      # CEO comms — trust-critical
 ]
 
 # Patterns that are SAFE to auto-edit (AUTO level)

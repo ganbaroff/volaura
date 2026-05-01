@@ -717,9 +717,9 @@ async def decide_proposal(
 async def get_swarm_findings(
     request: Request,
     admin_id: PlatformAdminId,
-    limit: int = 50,
+    limit: int = Query(default=50, ge=1, le=200),
     category: str = "",
-    min_importance: int = 1,
+    min_importance: int = Query(default=1, ge=0, le=10),
 ) -> dict:
     """Return typed FindingContract results from shared memory (SQLite blackboard).
 

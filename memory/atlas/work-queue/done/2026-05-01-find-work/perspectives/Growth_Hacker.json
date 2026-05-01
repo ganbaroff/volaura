@@ -1,0 +1,29 @@
+{
+  "perspective": "Growth Hacker",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "raw": "{\n  \"perspective\": \"Growth Hacker\",\n   \"findings\": [\n       {\n           \"severity\": \"high\",\n           \"file_or_area\": \"apps/web/src/app/globals.css\",\n           \"issue\": \"Landing page conversion is not optimized as the sample AURA profile is not visible without login\",\n           \"recommended_fix\": \"Edit apps/web/src/app/globals.css to add a sample AURA profile link on the landing page\"\n       },\n       {\n           \"severity\": \"medium\",\n           \"file_or_area\": \"apps/api/app/routers/assessment.py\",\n           \"issue\": \"Share mechanics to LinkedIn/Instagram are not implemented\",\n           \"recommended_fix\": \"Implement share mechanics for LinkedIn and Instagram in apps/api/app/routers/assessment.py\"\n       },\n       {\n           \"severity\": \"high\",\n           \"file_or_area\": \"memory/atlas/relationships.md\",\n           \"issue\": \"Referral system does not give crystals for inviting a friend\",\n           \"recommended_fix\": \"Update memory/atlas/relationships.md to include referral system details and implement crystal rewards\"\n       }\n   ],\n   \"overall_verdict\": \"warn\",\n   \"whistleblower_flag\": null\n}",
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "apps/web/src/app/globals.css",
+      "issue": "Landing page conversion is not optimized as the sample AURA profile is not visible without login",
+      "recommended_fix": "Edit apps/web/src/app/globals.css to add a sample AURA profile link on the landing page"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "apps/api/app/routers/assessment.py",
+      "issue": "Share mechanics to LinkedIn/Instagram are not implemented",
+      "recommended_fix": "Implement share mechanics for LinkedIn and Instagram in apps/api/app/routers/assessment.py"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "memory/atlas/relationships.md",
+      "issue": "Referral system does not give crystals for inviting a friend",
+      "recommended_fix": "Update memory/atlas/relationships.md to include referral system details and implement crystal rewards"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

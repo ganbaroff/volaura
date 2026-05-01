@@ -1,0 +1,43 @@
+{
+  "perspective": "Readiness Manager",
+  "provider": "ollama",
+  "model": "gemma4",
+  "raw": "```json\n{\n  \"assessment\": {\n    \"task\": \"Review and propose modifications for the implementation of Item Response Theory (IRT) within the assessment framework.\",\n    \"context_summary\": \"The goal is to integrate IRT principles into the assessment process to improve the psychometric rigor of test item scoring and candidate profiling. This requires reviewing the current data ingestion, scoring logic, and calibration procedures.\",\n    \"findings\": [\n      {\n        \"area\": \"Data Ingestion & Item Parameters\",\n        \"severity\": \"High\",\n        \"description\": \"The current system appears to rely on raw score aggregation rather than item-specific difficulty (b) and discrimination (a) parameters required by IRT. A dedicated module for item parameter estimation (e.g., using Maximum Likelihood Estimation - MLE) needs to be implemented.\",\n        \"recommendation\": \"Implement a dedicated Item Parameter Estimation module. This module must ingest raw response data and calculate item parameters (a, b, guess/lower asymptote). Consider using established psychometric libraries (e.g., R packages or Python equivalents) for robust estimation.\"\n      },\n      {\n        \"area\": \"Scoring Logic & Model Selection\",\n        \"severity\": \"High\",\n        \"description\": \"The scoring mechanism must transition from simple summation to a model-based approach, such as the 2-PL or 3-PL model, depending on the nature of the assessment items (e.g., distinguishing between guessing and true ability).\",\n        \"recommendation\": \"Adopt the 3-Parameter Logistic (3PL) model initially, as it accounts for guessing ability (lower asymptote). The final ability estimate ($\\\\theta$) should be derived from the model's latent trait scale, rather than the raw item score.\"\n      },\n      {\n        \"area\": \"Calibration & Longitudinal Use\",\n        \"severity\": \"Medium\",\n        \"description\": \"IRT models require periodic re-calibration using new data to maintain parameter stability. The current process lacks a defined mechanism for monitoring parameter drift.\",\n        \"recommendation\": \"Establish a mandatory 'Calibration Cycle' flag. After a set number of test administrations (e.g., 500), the system must trigger a re-estimation of item parameters using the accumulated data pool. Implement monitoring dashboards for parameter stability.\"\n      },\n      {\n        \"area\": \"Integration Point\",\n        \"severity\": \"Medium\",\n        \"description\": \"The output of the IRT module ($\\\\theta$) must seamlessly replace the current raw score variable in downstream modules (e.g., reporting, comparison).\",\n        \"recommendation\": \"Create a standardized 'Ability Score' output field. This field must be the primary input for all subsequent decision-making processes, ensuring that the psychometrically derived score is consistently used.\"\n      }\n    ],\n    \"action_plan\": [\n      \"Phase 1 (Data Prep): Audit existing item bank to ensure items are suitable for IRT (i.e., possess measurable difficulty and discrimination).\",\n      \"Phase 2 (Development): Build and unit-test the MLE-based Item Parameter Estimation module.\",\n      \"Phase 3 (Integration): Replace raw score calculation with $\\\\theta$ calculation in the scoring pipeline. Validate against historical data using the new model.\",\n      \"Phase 4 (Deployment): Implement the automated Calibration Cycle trigger and deploy the updated psychometric scoring engine.\"\n    ]\n  }\n}\n```",
+  "assigned_llm": true,
+  "assessment": {
+    "task": "Review and propose modifications for the implementation of Item Response Theory (IRT) within the assessment framework.",
+    "context_summary": "The goal is to integrate IRT principles into the assessment process to improve the psychometric rigor of test item scoring and candidate profiling. This requires reviewing the current data ingestion, scoring logic, and calibration procedures.",
+    "findings": [
+      {
+        "area": "Data Ingestion & Item Parameters",
+        "severity": "High",
+        "description": "The current system appears to rely on raw score aggregation rather than item-specific difficulty (b) and discrimination (a) parameters required by IRT. A dedicated module for item parameter estimation (e.g., using Maximum Likelihood Estimation - MLE) needs to be implemented.",
+        "recommendation": "Implement a dedicated Item Parameter Estimation module. This module must ingest raw response data and calculate item parameters (a, b, guess/lower asymptote). Consider using established psychometric libraries (e.g., R packages or Python equivalents) for robust estimation."
+      },
+      {
+        "area": "Scoring Logic & Model Selection",
+        "severity": "High",
+        "description": "The scoring mechanism must transition from simple summation to a model-based approach, such as the 2-PL or 3-PL model, depending on the nature of the assessment items (e.g., distinguishing between guessing and true ability).",
+        "recommendation": "Adopt the 3-Parameter Logistic (3PL) model initially, as it accounts for guessing ability (lower asymptote). The final ability estimate ($\\theta$) should be derived from the model's latent trait scale, rather than the raw item score."
+      },
+      {
+        "area": "Calibration & Longitudinal Use",
+        "severity": "Medium",
+        "description": "IRT models require periodic re-calibration using new data to maintain parameter stability. The current process lacks a defined mechanism for monitoring parameter drift.",
+        "recommendation": "Establish a mandatory 'Calibration Cycle' flag. After a set number of test administrations (e.g., 500), the system must trigger a re-estimation of item parameters using the accumulated data pool. Implement monitoring dashboards for parameter stability."
+      },
+      {
+        "area": "Integration Point",
+        "severity": "Medium",
+        "description": "The output of the IRT module ($\\theta$) must seamlessly replace the current raw score variable in downstream modules (e.g., reporting, comparison).",
+        "recommendation": "Create a standardized 'Ability Score' output field. This field must be the primary input for all subsequent decision-making processes, ensuring that the psychometrically derived score is consistently used."
+      }
+    ],
+    "action_plan": [
+      "Phase 1 (Data Prep): Audit existing item bank to ensure items are suitable for IRT (i.e., possess measurable difficulty and discrimination).",
+      "Phase 2 (Development): Build and unit-test the MLE-based Item Parameter Estimation module.",
+      "Phase 3 (Integration): Replace raw score calculation with $\\theta$ calculation in the scoring pipeline. Validate against historical data using the new model.",
+      "Phase 4 (Deployment): Implement the automated Calibration Cycle trigger and deploy the updated psychometric scoring engine."
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "perspective": "Assessment Science",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Assessment Science\", \"findings\": [{\"severity\": \"critical\", \"file_or_area\": \"apps/api/app/core/assessment/engine.py\", \"issue\": \"IRT 3PL parameters (a, b, c) are guessed or defaulted, not calibrated from real data\", \"recommended_fix\": \"Calibrate IRT 3PL parameters using real data\"}, {\"severity\": \"high\", \"file_or_area\": \"scripts/audit_dif_bias.py\", \"issue\": \"No evidence of DIF analysis in assessment engine\", \"recommended_fix\": \"Implement DIF analysis to detect biased questions\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "critical",
+      "file_or_area": "apps/api/app/core/assessment/engine.py",
+      "issue": "IRT 3PL parameters (a, b, c) are guessed or defaulted, not calibrated from real data",
+      "recommended_fix": "Calibrate IRT 3PL parameters using real data"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "scripts/audit_dif_bias.py",
+      "issue": "No evidence of DIF analysis in assessment engine",
+      "recommended_fix": "Implement DIF analysis to detect biased questions"
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null
+}

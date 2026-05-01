@@ -1,67 +1,82 @@
 {
   "Scaling Engineer": {
-    "debate_weight": 0.7605,
-    "spawn_count": 34,
-    "last_updated": "2026-04-29T04:30:33.510150+00:00"
+    "debate_weight": 0.7534,
+    "spawn_count": 43,
+    "last_updated": "2026-05-01T06:12:58.028116+00:00"
   },
   "Security Auditor": {
-    "debate_weight": 0.763,
-    "spawn_count": 34,
-    "last_updated": "2026-04-29T04:30:33.510990+00:00"
+    "debate_weight": 0.7685,
+    "spawn_count": 35,
+    "last_updated": "2026-05-01T06:06:39.803673+00:00"
   },
   "Product Strategist": {
-    "debate_weight": 0.8096,
-    "spawn_count": 32,
-    "last_updated": "2026-04-29T04:24:13.997345+00:00"
+    "debate_weight": 0.6492,
+    "spawn_count": 42,
+    "last_updated": "2026-05-01T06:12:58.028948+00:00"
   },
   "Code Quality Engineer": {
-    "debate_weight": 0.7439,
-    "spawn_count": 34,
-    "last_updated": "2026-04-29T04:30:33.511743+00:00"
+    "debate_weight": 0.7523,
+    "spawn_count": 35,
+    "last_updated": "2026-05-01T06:06:39.805179+00:00"
   },
   "CTO Watchdog": {
-    "debate_weight": 0.7208,
-    "spawn_count": 31,
-    "last_updated": "2026-04-29T04:30:33.513116+00:00"
+    "debate_weight": 0.7327,
+    "spawn_count": 32,
+    "last_updated": "2026-05-01T06:06:39.812646+00:00"
   },
   "Risk Manager": {
-    "debate_weight": 0.9049,
-    "spawn_count": 30,
-    "last_updated": "2026-04-29T04:24:14.000216+00:00"
+    "debate_weight": 0.9741,
+    "spawn_count": 39,
+    "last_updated": "2026-05-01T06:12:58.029602+00:00"
   },
   "Readiness Manager": {
-    "debate_weight": 0.6735,
-    "spawn_count": 30,
-    "last_updated": "2026-04-29T04:24:14.001096+00:00"
+    "debate_weight": 0.6028,
+    "spawn_count": 39,
+    "last_updated": "2026-05-01T06:12:58.030234+00:00"
   },
   "Ecosystem Auditor": {
-    "debate_weight": 0.9448,
-    "spawn_count": 33,
-    "last_updated": "2026-04-29T04:30:33.512439+00:00"
+    "debate_weight": 0.9531,
+    "spawn_count": 34,
+    "last_updated": "2026-05-01T06:06:39.805894+00:00"
   },
   "Cultural Intelligence": {
-    "debate_weight": 0.8334,
-    "spawn_count": 20,
-    "last_updated": "2026-04-29T04:24:14.001999+00:00"
+    "debate_weight": 0.6851,
+    "spawn_count": 28,
+    "last_updated": "2026-05-01T06:12:58.030892+00:00"
   },
   "Communications Strategist": {
-    "debate_weight": 0.6268,
-    "spawn_count": 21,
-    "last_updated": "2026-04-29T04:24:14.002923+00:00"
+    "debate_weight": 0.6528,
+    "spawn_count": 22,
+    "last_updated": "2026-05-01T06:06:39.809015+00:00"
   },
   "Assessment Science": {
-    "debate_weight": 0.6575,
-    "spawn_count": 21,
-    "last_updated": "2026-04-29T04:24:14.003645+00:00"
+    "debate_weight": 0.5882,
+    "spawn_count": 30,
+    "last_updated": "2026-05-01T06:12:58.032269+00:00"
   },
   "Legal Advisor": {
     "debate_weight": 1.0,
-    "spawn_count": 21,
-    "last_updated": "2026-04-29T04:24:14.004394+00:00"
+    "spawn_count": 28,
+    "last_updated": "2026-05-01T06:12:58.032934+00:00"
   },
   "PR & Media": {
-    "debate_weight": 0.6762,
-    "spawn_count": 21,
-    "last_updated": "2026-04-29T04:24:14.005273+00:00"
+    "debate_weight": 0.6948,
+    "spawn_count": 22,
+    "last_updated": "2026-05-01T06:06:39.811881+00:00"
+  },
+  "Sales Director": {
+    "debate_weight": 0.9044,
+    "spawn_count": 4,
+    "last_updated": "2026-05-01T06:02:56.420855+00:00"
+  },
+  "DevOps Engineer": {
+    "debate_weight": 0.8754,
+    "spawn_count": 7,
+    "last_updated": "2026-05-01T06:12:58.031606+00:00"
+  },
+  "Growth Hacker": {
+    "debate_weight": 0.8754,
+    "spawn_count": 7,
+    "last_updated": "2026-05-01T06:12:58.033565+00:00"
   }
 }

@@ -1,0 +1,24 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Legal Advisor\",\n  \"findings\": [\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"db/assessments/raw_data.csv\",\n      \"issue\": \"No existing IRT calibration script detected in code-indexed directories\",\n      \"recommended_fix\": \"Create new Python script with MLE implementation in packages/swarm/tools/irt_calibration.py\"\n    },\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"docs/engineering/skills\",\n      \"issue\": \"No documented calibration methodology for volatile competencies\",\n      \"recommended_fix\": \"Add calibration protocol to docs/engineering/skills/irt_guidelines.md\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "warn",
+      "file_or_area": "db/assessments/raw_data.csv",
+      "issue": "No existing IRT calibration script detected in code-indexed directories",
+      "recommended_fix": "Create new Python script with MLE implementation in packages/swarm/tools/irt_calibration.py"
+    },
+    {
+      "severity": "warn",
+      "file_or_area": "docs/engineering/skills",
+      "issue": "No documented calibration methodology for volatile competencies",
+      "recommended_fix": "Add calibration protocol to docs/engineering/skills/irt_guidelines.md"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Legal Advisor"
+}

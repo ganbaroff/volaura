@@ -1,0 +1,22 @@
+{
+  "perspective": "Communications Strategist",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{ \n  \"perspective\": \"Communications Strategist\", \n  \"findings\": [\n    { \n      \"severity\": \"high\", \n      \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \n      \"issue\": \"Landing page does not include zero-commitment entry point as required by Research #1\", \n      \"recommended_fix\": \"Add 'See a sample AURA profile' link to landing page\"\n    },\n    { \n      \"severity\": \"medium\", \n      \"file_or_area\": \"apps/web/src/components/assessment/energy-picker.tsx\", \n      \"issue\": \"Energy picker does not account for AZ/CIS cultural differences in shame-free language\", \n      \"recommended_fix\": \"Implement collectivist shame considerations for AZ/CIS users\"\n    }\n  ], \n  \"overall_verdict\": \"warn\", \n  \"whistleblower_flag\": null \n}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+      "issue": "Landing page does not include zero-commitment entry point as required by Research #1",
+      "recommended_fix": "Add 'See a sample AURA profile' link to landing page"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "apps/web/src/components/assessment/energy-picker.tsx",
+      "issue": "Energy picker does not account for AZ/CIS cultural differences in shame-free language",
+      "recommended_fix": "Implement collectivist shame considerations for AZ/CIS users"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

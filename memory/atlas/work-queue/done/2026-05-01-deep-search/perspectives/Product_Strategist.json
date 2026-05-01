@@ -1,0 +1,16 @@
+{
+  "perspective": "Product Strategist",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Product Strategist\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/web/src/components/assessment/energy-picker.tsx\", \"issue\": \"Energy Adaptation UI does not dynamically adapt based on real-time user behavior or system load\", \"recommended_fix\": \"Implement dynamic adaptation using real-time data and system load monitoring\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "apps/web/src/components/assessment/energy-picker.tsx",
+      "issue": "Energy Adaptation UI does not dynamically adapt based on real-time user behavior or system load",
+      "recommended_fix": "Implement dynamic adaptation using real-time data and system load monitoring"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

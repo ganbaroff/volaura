@@ -1,0 +1,16 @@
+{
+  "perspective": "Assessment Science",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Assessment Science\", \"findings\": [{\"severity\": \"critical\", \"file_or_area\": \"services/assessment/irt_calibration.py\", \"issue\": \"IRT 3PL parameters (a, b, c) are not calibrated from real data\", \"recommended_fix\": \"Develop a data pipeline to ingest anonymized user performance data and run IRT parameter calibrations using R or Python libraries\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "critical",
+      "file_or_area": "services/assessment/irt_calibration.py",
+      "issue": "IRT 3PL parameters (a, b, c) are not calibrated from real data",
+      "recommended_fix": "Develop a data pipeline to ingest anonymized user performance data and run IRT parameter calibrations using R or Python libraries"
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null
+}

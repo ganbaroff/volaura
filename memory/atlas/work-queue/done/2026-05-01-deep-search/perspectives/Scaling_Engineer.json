@@ -1,0 +1,33 @@
+{
+  "perspective": "Scaling Engineer",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Scaling Engineer\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/api/app/routers/assessment.py\", \"issue\": \"Unbounded database query in /assessment/next endpoint: fetches all items regardless of user level, risking OOM at scale.\", \"recommended_fix\": \"Add LIMIT 50 and index on (competency, difficulty) for paginated item retrieval.\"}, {\"severity\": \"high\", \"file_or_area\": \"engine.py\", \"issue\": \"IRT scoring computed on every request without caching; latency will spike at 10x users.\", \"recommended_fix\": \"Cache theta estimates per user in Redis with 5m TTL and trigger async recalc on item submit.\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/hooks/use-energy-mode.ts\", \"issue\": \"Energy mode update fires 4x per change via duplicate event listeners, increasing latency.\", \"recommended_fix\": \"Consolidate Supabase and local storage sync into single handler.\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"apps/api/app/routers/assessment.py\", \"engine.py\", \"apps/web/src/hooks/use-energy-mode.ts\"]}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "apps/api/app/routers/assessment.py",
+      "issue": "Unbounded database query in /assessment/next endpoint: fetches all items regardless of user level, risking OOM at scale.",
+      "recommended_fix": "Add LIMIT 50 and index on (competency, difficulty) for paginated item retrieval."
+    },
+    {
+      "severity": "high",
+      "file_or_area": "engine.py",
+      "issue": "IRT scoring computed on every request without caching; latency will spike at 10x users.",
+      "recommended_fix": "Cache theta estimates per user in Redis with 5m TTL and trigger async recalc on item submit."
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "apps/web/src/hooks/use-energy-mode.ts",
+      "issue": "Energy mode update fires 4x per change via duplicate event listeners, increasing latency.",
+      "recommended_fix": "Consolidate Supabase and local storage sync into single handler."
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "next_files_to_read": [
+    "apps/api/app/routers/assessment.py",
+    "engine.py",
+    "apps/web/src/hooks/use-energy-mode.ts"
+  ]
+}

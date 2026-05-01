@@ -1,0 +1,22 @@
+{
+  "perspective": "Risk Manager",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"Pre-Launch Blockers\", \"issue\": \"Blocker #15 status is false. Partial Open Badges 3.0 VC implementation exists in `packages/badge_issuer/open_badges_3_0_vc.py` and `src/credentials/openbadges/v3/schema.ts`, contradicting blockers doc claim of 'ready to build'. Unverified claims in audit docs create false risk exposure.\", \"recommended_fix\": \"Update PRE-LAUNCH-BLOCKERS-STATUS.md to 🟡 partial. Verify all 19 blockers against code-index before asserting status. Implement CI check that rejects unverified blocker status updates.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Blocker tracking is operating on fiction, not code. This is a launch-critical governance failure.\", \"next_files_to_read\": [\"packages/badge_issuer/open_badges_3_0_vc.py\", \"src/credentials/openbadges/v3/schema.ts\"]}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "Pre-Launch Blockers",
+      "issue": "Blocker #15 status is false. Partial Open Badges 3.0 VC implementation exists in `packages/badge_issuer/open_badges_3_0_vc.py` and `src/credentials/openbadges/v3/schema.ts`, contradicting blockers doc claim of 'ready to build'. Unverified claims in audit docs create false risk exposure.",
+      "recommended_fix": "Update PRE-LAUNCH-BLOCKERS-STATUS.md to 🟡 partial. Verify all 19 blockers against code-index before asserting status. Implement CI check that rejects unverified blocker status updates."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "Blocker tracking is operating on fiction, not code. This is a launch-critical governance failure.",
+  "next_files_to_read": [
+    "packages/badge_issuer/open_badges_3_0_vc.py",
+    "src/credentials/openbadges/v3/schema.ts"
+  ]
+}

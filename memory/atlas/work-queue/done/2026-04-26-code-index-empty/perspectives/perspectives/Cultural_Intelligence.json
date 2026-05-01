@@ -1,0 +1,24 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Code Index Auditor\",\n  \"findings\": [\n    {\n      \"severity\": \"critical\",\n      \"file_or_area\": \"code-index.json\",\n      \"issue\": \"Empty index file despite recent timestamp\",\n      \"recommended_fix\": \"Rebuild index by running build_index() function in code_index.py\"\n    },\n    {\n      \"severity\": \"warning\",\n      \"file_or_area\": \"packages/swarm/archive/code_index.py\",\n      \"issue\": \"File resides in skipped directory (archive)\",\n      \"recommended_fix\": \"Move file to indexed path or update SKIP_DIRS to exclude archive\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "critical",
+      "file_or_area": "code-index.json",
+      "issue": "Empty index file despite recent timestamp",
+      "recommended_fix": "Rebuild index by running build_index() function in code_index.py"
+    },
+    {
+      "severity": "warning",
+      "file_or_area": "packages/swarm/archive/code_index.py",
+      "issue": "File resides in skipped directory (archive)",
+      "recommended_fix": "Move file to indexed path or update SKIP_DIRS to exclude archive"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Code Index Auditor"
+}

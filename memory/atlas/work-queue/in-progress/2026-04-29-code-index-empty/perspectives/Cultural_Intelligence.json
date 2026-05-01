@@ -1,0 +1,24 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Code Index Auditor\",\n  \"findings\": [\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"code-index.json\",\n      \"issue\": \"Empty index despite recent timestamp\",\n      \"recommended_fix\": \"Verify builder execution; check if code_index.py was moved from root to archive directory\"\n    },\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"packages/swarm/archive/code_index.py\",\n      \"issue\": \"Incomplete _parse_python function\",\n      \"recommended_fix\": \"Restore full function implementation and ensure file remains in root directory\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "warn",
+      "file_or_area": "code-index.json",
+      "issue": "Empty index despite recent timestamp",
+      "recommended_fix": "Verify builder execution; check if code_index.py was moved from root to archive directory"
+    },
+    {
+      "severity": "warn",
+      "file_or_area": "packages/swarm/archive/code_index.py",
+      "issue": "Incomplete _parse_python function",
+      "recommended_fix": "Restore full function implementation and ensure file remains in root directory"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Code Index Auditor"
+}

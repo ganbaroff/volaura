@@ -1,0 +1,22 @@
+{
+  "perspective": "Product Strategist",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Product Strategist\", \"findings\": [{\"file_path\": \"apps/api/app/services/ecosystem_events.py\", \"what_exists\": \"Service module for emitting cross-product events to `character_events` table.\", \"what_it_does\": \"Emits assessment completion, AURA updates, and badge changes to an ecosystem event bus. Uses fire-and-forget pattern with error logging. Schema versioned, source-tagged.\", \"quality_assessment\": \"High quality: clear error handling, logging, schema versioning. Passes code review. No dead code or unused imports. Constitution-compliant (no red, shame-free).\"}], \"summary\": \"ecosystem_events.py is a robust, production-ready service that enables cross-product reactions to assessment outcomes. It adheres to security and Constitution standards, with proper error isolation and logging. No bugs or violations found.\", \"next_files_to_read\": [\"apps/api/app/services/cross_product_bridge.py\", \"supabase/migrations/*_character_events.sql\"], \"whistleblower_flag\": null}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "file_path": "apps/api/app/services/ecosystem_events.py",
+      "what_exists": "Service module for emitting cross-product events to `character_events` table.",
+      "what_it_does": "Emits assessment completion, AURA updates, and badge changes to an ecosystem event bus. Uses fire-and-forget pattern with error logging. Schema versioned, source-tagged.",
+      "quality_assessment": "High quality: clear error handling, logging, schema versioning. Passes code review. No dead code or unused imports. Constitution-compliant (no red, shame-free)."
+    }
+  ],
+  "summary": "ecosystem_events.py is a robust, production-ready service that enables cross-product reactions to assessment outcomes. It adheres to security and Constitution standards, with proper error isolation and logging. No bugs or violations found.",
+  "next_files_to_read": [
+    "apps/api/app/services/cross_product_bridge.py",
+    "supabase/migrations/*_character_events.sql"
+  ],
+  "whistleblower_flag": null
+}

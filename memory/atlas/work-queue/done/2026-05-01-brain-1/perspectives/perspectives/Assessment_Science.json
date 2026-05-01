@@ -1,0 +1,18 @@
+{
+  "perspective": "Assessment Science",
+  "provider": "vertex-ai-agent",
+  "model": "gemini-2.5-flash+tools",
+  "raw": "```json\n{\n  \"perspective\": \"Assessment Science\",\n  \"findings\": [\n    {\n      \"severity\": \"critical\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py and assessment user interface\",\n      \"issue\": \"Conflicting internal reports regarding the implementation status of Law 2 (Energy Adaptation) (`swarm-commands.md` states 'RESOLVED' while `swarm-state.md` lists 'Law 2 Energy Adaptation missing 4/5 products' as a 'Convergent signal'). If Energy Adaptation is inconsistently or incompletely applied within the assessment experience, it creates differential testing conditions. This can introduce construct-irrelevant variance, potentially leading to Differential Item Functioning (DIF) related to the chosen energy mode, and compromising the psychometric validity of IRT parameter estimation and theta scores.\",\n      \"recommended_fix\": \"Immediately resolve the contradiction in internal reporting on Law 2 implementation. Conduct a comprehensive psychometric audit of the AURA assessment across all three energy adaptation modes (Full, Mid, Low). This audit must include DIF analysis, using energy mode as a grouping variable, to detect any bias introduced by the adaptation. Ensure consistent item presentation, timing, and overall user experience across all assessment components, verifying the uniform application and functionality of the 'EnergyPicker' as claimed.\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}\n```",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "critical",
+      "file_or_area": "apps/api/app/core/assessment/engine.py and assessment user interface",
+      "issue": "Conflicting internal reports regarding the implementation status of Law 2 (Energy Adaptation) (`swarm-commands.md` states 'RESOLVED' while `swarm-state.md` lists 'Law 2 Energy Adaptation missing 4/5 products' as a 'Convergent signal'). If Energy Adaptation is inconsistently or incompletely applied within the assessment experience, it creates differential testing conditions. This can introduce construct-irrelevant variance, potentially leading to Differential Item Functioning (DIF) related to the chosen energy mode, and compromising the psychometric validity of IRT parameter estimation and theta scores.",
+      "recommended_fix": "Immediately resolve the contradiction in internal reporting on Law 2 implementation. Conduct a comprehensive psychometric audit of the AURA assessment across all three energy adaptation modes (Full, Mid, Low). This audit must include DIF analysis, using energy mode as a grouping variable, to detect any bias introduced by the adaptation. Ensure consistent item presentation, timing, and overall user experience across all assessment components, verifying the uniform application and functionality of the 'EnergyPicker' as claimed."
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

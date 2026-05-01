@@ -1,0 +1,22 @@
+{
+  "perspective": "Risk Manager",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"apps/api/app/schemas/assessment.py\", \"issue\": \"Hardcoded validation threshold of 0.5 in assessment data ingestion; no dynamic outlier detection for response times or incomplete submissions\", \"recommended_fix\": \"Replace static threshold with adaptive statistical bounds using IQR or z-score; add schema-level enforcement for required response fields and minimum response time (e.g., 1s)\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Data integrity compromise risks invalidating IRT calibration, leading to biased AURA scores and potential GDPR/ISO 10667-2 non-compliance.\", \"next_files_to_read\": [\"apps/api/app/routers/assessment.py\", \"scripts/audit_dif_bias.py\"]}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "apps/api/app/schemas/assessment.py",
+      "issue": "Hardcoded validation threshold of 0.5 in assessment data ingestion; no dynamic outlier detection for response times or incomplete submissions",
+      "recommended_fix": "Replace static threshold with adaptive statistical bounds using IQR or z-score; add schema-level enforcement for required response fields and minimum response time (e.g., 1s)"
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "Data integrity compromise risks invalidating IRT calibration, leading to biased AURA scores and potential GDPR/ISO 10667-2 non-compliance.",
+  "next_files_to_read": [
+    "apps/api/app/routers/assessment.py",
+    "scripts/audit_dif_bias.py"
+  ]
+}

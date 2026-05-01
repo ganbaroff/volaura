@@ -1,0 +1,286 @@
+{
+  "task_id": "2026-04-30-explore-aura_py",
+  "task_type": "explore",
+  "completed_at": "2026-04-30T21:41:46.101827+00:00",
+  "perspectives_dispatched": 17,
+  "perspectives_responded": 5,
+  "perspectives_failed": 12,
+  "providers_used": {
+    "vertex-ai-agent": 2,
+    "cerebras": 2,
+    "nvidia": 1
+  },
+  "whistleblower_flags": [
+    {
+      "perspective": "Scaling Engineer",
+      "flag": "The direct contradiction between the security warning in `_MODEL_CONFIDENCE` and the exposure of `model_confidence` in `AuraExplanationResponse` is a high-severity security concern that needs immediate resolution."
+    },
+    {
+      "perspective": "Product Strategist",
+      "flag": "P0: Badge tier logic absent. Users currently see immediate badges post-assessment — direct violation of Crystal Law 6 Amendment. Gamification corrupts mastery."
+    },
+    {
+      "perspective": "Assessment Science",
+      "flag": {
+        "reason": "The direct violation of Crystal Law 5 (no leaderboards) is a non-negotiable constitutional breach that undermines the core principles of the ecosystem's design to prevent shame and foster collaboration. This is a critical design flaw that must be addressed immediately.",
+        "severity": "critical"
+      }
+    }
+  ],
+  "perspectives": [
+    {
+      "perspective": "Scaling Engineer",
+      "provider": "vertex-ai-agent",
+      "model": "gemini-2.5-flash+tools",
+      "raw": "```json\n{\n \"perspective\": \"Scaling Engineer\",\n \"findings\": [\n  {\n   \"file_path\": \"apps/api/app/routers/aura.py\",\n   \"what_exists\": \"FastAPI endpoints for managing AURA scores, including retrieval, updates, visibility controls, sharing permissions, and administrative functions like badge granting and score resets. It also includes logic for calculating a decay-adjusted 'effective_score' and mapping internal model names to confidence labels.\",\n   \"what_it_does\": \"This file exposes the AURA scoring system via a REST API. It allows users to fetch their AURA score and associated details, control its visibility, and manage sharing. Administrative endpoints facilitate manual adjustments and badge issuance. The `effective_score` is computed dynamically, incorporating decay and activity boosts.\",\n   \"quality_assessment\": \"The code is well-structured with clear endpoint definitions and Pydantic models for responses. Rate limiting is implemented, which is good for scaling. The use of a helper function `_with_effective_score` improves readability. However, there are several areas of concern regarding security, Constitutional compliance, and proactive scaling.\",\n   \"bugs_security_violations\": [\n    {\n     \"type\": \"Security Vulnerability\",\n     \"description\": \"The `_MODEL_CONFIDENCE` dictionary explicitly warns against exposing internal model names due to calibration attack risks. Yet, `AuraExplanationResponse` (which is returned by `/me/explanation`) includes `model_confidence` derived from this mapping. If the mapping is too granular or directly reflects internal model identifiers, this is a direct contradiction and a potential security exposure.\",\n     \"severity\": \"high\"\n    },\n    {\n     \"type\": \"Constitution Law 3 Violation (Shame-Free Language)\",\n     \"description\": \"The `HTTPException` message in `get_my_aura` states: 'No AURA score yet — complete an assessment first'. This phrasing is directive and implies user failure, bordering on the 'You haven't done X yet' banned phrase. It needs rephrasing to be shame-free.\",\n     \"severity\": \"medium\"\n    },\n    {\n     \"type\": \"Crystal Law 6 Amendment Violation (Badge Display)\",\n     \"description\": \"The `AuraScoreResponse` model, returned by `/me`, directly includes `badge_tier`. Crystal Law 6 Amendment states that badge tier updates should be shown on the Profile page at the NEXT visit as a 'surprise discovery', not immediately after an assessment. If `/me` is called immediately post-assessment, this endpoint directly violates that rule by providing the badge tier instantly.\",\n     \"severity\": \"medium\"\n    },\n    {\n     \"type\": \"Scaling Concern\",\n     \"description\": \"The `get_all_aura_scores` admin endpoint lacks pagination. While an admin function, at scale, fetching all scores could lead to Out-of-Memory (OOM) errors or excessive latency, blocking the event loop.\",\n     \"severity\": \"medium\"\n    }\n   ],\n   \"dead_code_unused_imports\": [\n    \"The `UTC` import from `datetime` is not explicitly used in the provided snippet.\",\n    \"The `logger` import from `loguru` is not explicitly used in the provided snippet.\"\n   ],\n   \"improvements\": [\n    \"Refine the `HTTPException` message in `get_my_aura` to comply with Law 3 (Shame-Free Language).\",\n    \"Re-evaluate the exposure of `model_confidence` in `AuraExplanationResponse` to ensure it does not leak sensitive information or enable calibration attacks, aligning with the security comment in `_MODEL_CONFIDENCE`.\",\n    \"Implement a mechanism to defer the display of `badge_tier` in `AuraScoreResponse` if `/me` is called immediately after an assessment, ensuring compliance with Crystal Law 6 Amendment's 'surprise discovery' rule.\",\n    \"Add pagination to the `get_all_aura_scores` admin endpoint to prevent performance degradation at scale.\",\n    \"Either use the `UTC` import or remove it. Ensure `logger` is actively used for relevant events.\"\n   ]\n  }\n ],\n \"summary\": \"The `aura.py` router provides essential AURA score management but contains critical security and Constitutional compliance issues. The exposure of model confidence contradicts an explicit security warning, and error messages violate shame-free language principles. The immediate return of badge tiers also conflicts with the 'surprise discovery' rule. Additionally, the lack of pagination in an admin endpoint poses a scaling risk. These issues require immediate attention to maintain security, user trust, and system stability.\",\n \"next_files_to_read\": [\n  \"app/schemas/aura.py\",\n  \"app/core/assessment/aura_calc.py\",\n  \"app/middleware/rate_limit.py\"\n ],\n \"whistleblower_flag\": \"The direct contradiction between the security warning in `_MODEL_CONFIDENCE` and the exposure of `model_confidence` in `AuraExplanationResponse` is a high-severity security concern that needs immediate resolution.\"\n}\n```",
+      "sub_agents_used": true,
+      "assigned_llm": true,
+      "findings": [
+        {
+          "file_path": "apps/api/app/routers/aura.py",
+          "what_exists": "FastAPI endpoints for managing AURA scores, including retrieval, updates, visibility controls, sharing permissions, and administrative functions like badge granting and score resets. It also includes logic for calculating a decay-adjusted 'effective_score' and mapping internal model names to confidence labels.",
+          "what_it_does": "This file exposes the AURA scoring system via a REST API. It allows users to fetch their AURA score and associated details, control its visibility, and manage sharing. Administrative endpoints facilitate manual adjustments and badge issuance. The `effective_score` is computed dynamically, incorporating decay and activity boosts.",
+          "quality_assessment": "The code is well-structured with clear endpoint definitions and Pydantic models for responses. Rate limiting is implemented, which is good for scaling. The use of a helper function `_with_effective_score` improves readability. However, there are several areas of concern regarding security, Constitutional compliance, and proactive scaling.",
+          "bugs_security_violations": [
+            {
+              "type": "Security Vulnerability",
+              "description": "The `_MODEL_CONFIDENCE` dictionary explicitly warns against exposing internal model names due to calibration attack risks. Yet, `AuraExplanationResponse` (which is returned by `/me/explanation`) includes `model_confidence` derived from this mapping. If the mapping is too granular or directly reflects internal model identifiers, this is a direct contradiction and a potential security exposure.",
+              "severity": "high"
+            },
+            {
+              "type": "Constitution Law 3 Violation (Shame-Free Language)",
+              "description": "The `HTTPException` message in `get_my_aura` states: 'No AURA score yet — complete an assessment first'. This phrasing is directive and implies user failure, bordering on the 'You haven't done X yet' banned phrase. It needs rephrasing to be shame-free.",
+              "severity": "medium"
+            },
+            {
+              "type": "Crystal Law 6 Amendment Violation (Badge Display)",
+              "description": "The `AuraScoreResponse` model, returned by `/me`, directly includes `badge_tier`. Crystal Law 6 Amendment states that badge tier updates should be shown on the Profile page at the NEXT visit as a 'surprise discovery', not immediately after an assessment. If `/me` is called immediately post-assessment, this endpoint directly violates that rule by providing the badge tier instantly.",
+              "severity": "medium"
+            },
+            {
+              "type": "Scaling Concern",
+              "description": "The `get_all_aura_scores` admin endpoint lacks pagination. While an admin function, at scale, fetching all scores could lead to Out-of-Memory (OOM) errors or excessive latency, blocking the event loop.",
+              "severity": "medium"
+            }
+          ],
+          "dead_code_unused_imports": [
+            "The `UTC` import from `datetime` is not explicitly used in the provided snippet.",
+            "The `logger` import from `loguru` is not explicitly used in the provided snippet."
+          ],
+          "improvements": [
+            "Refine the `HTTPException` message in `get_my_aura` to comply with Law 3 (Shame-Free Language).",
+            "Re-evaluate the exposure of `model_confidence` in `AuraExplanationResponse` to ensure it does not leak sensitive information or enable calibration attacks, aligning with the security comment in `_MODEL_CONFIDENCE`.",
+            "Implement a mechanism to defer the display of `badge_tier` in `AuraScoreResponse` if `/me` is called immediately after an assessment, ensuring compliance with Crystal Law 6 Amendment's 'surprise discovery' rule.",
+            "Add pagination to the `get_all_aura_scores` admin endpoint to prevent performance degradation at scale.",
+            "Either use the `UTC` import or remove it. Ensure `logger` is actively used for relevant events."
+          ]
+        }
+      ],
+      "summary": "The `aura.py` router provides essential AURA score management but contains critical security and Constitutional compliance issues. The exposure of model confidence contradicts an explicit security warning, and error messages violate shame-free language principles. The immediate return of badge tiers also conflicts with the 'surprise discovery' rule. Additionally, the lack of pagination in an admin endpoint poses a scaling risk. These issues require immediate attention to maintain security, user trust, and system stability.",
+      "next_files_to_read": [
+        "app/schemas/aura.py",
+        "app/core/assessment/aura_calc.py",
+        "app/middleware/rate_limit.py"
+      ],
+      "whistleblower_flag": "The direct contradiction between the security warning in `_MODEL_CONFIDENCE` and the exposure of `model_confidence` in `AuraExplanationResponse` is a high-severity security concern that needs immediate resolution."
+    },
+    {
+      "perspective": "Security Auditor",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Product Strategist",
+      "provider": "cerebras",
+      "model": "qwen-3-235b-a22b-instruct-2507",
+      "raw": "{\"perspective\": \"Product Strategist\", \"findings\": [{\"file_path\": \"apps/api/app/routers/aura.py\", \"what_exists\": \"AURA score endpoints: get_my_aura, get_aura_explanation, update_sharing_permission, update_visibility\", \"what_it_does\": \"Retrieves and computes AURA scores with decay and activity boost; enforces model confidence masking; handles sharing permissions. Does NOT issue badges or manage badge tiers.\", \"quality_assessment\": \"High. Clean FastAPI structure, proper rate limiting, security via model name abstraction, effective_score decay logic. Passes code review.\"}], \"summary\": \"File correctly implements AURA score retrieval and decay mechanics but does not handle badge issuance or tier logic — badge system is missing from backend. Violates Crystal Law 6 Amendment: badge tier updates must not be immediate post-assessment, but no logic exists to delay or decouple tier display.\", \"next_files_to_read\": [\"apps/web/src/hooks/use-aura-badge.ts\", \"apps/api/app/core/assessment/badge_engine.py\", \"docs/adr/ADR-005-aura-scoring.md\"], \"whistleblower_flag\": \"P0: Badge tier logic absent. Users currently see immediate badges post-assessment — direct violation of Crystal Law 6 Amendment. Gamification corrupts mastery.\"}",
+      "sub_agents_used": true,
+      "assigned_llm": true,
+      "findings": [
+        {
+          "file_path": "apps/api/app/routers/aura.py",
+          "what_exists": "AURA score endpoints: get_my_aura, get_aura_explanation, update_sharing_permission, update_visibility",
+          "what_it_does": "Retrieves and computes AURA scores with decay and activity boost; enforces model confidence masking; handles sharing permissions. Does NOT issue badges or manage badge tiers.",
+          "quality_assessment": "High. Clean FastAPI structure, proper rate limiting, security via model name abstraction, effective_score decay logic. Passes code review."
+        }
+      ],
+      "summary": "File correctly implements AURA score retrieval and decay mechanics but does not handle badge issuance or tier logic — badge system is missing from backend. Violates Crystal Law 6 Amendment: badge tier updates must not be immediate post-assessment, but no logic exists to delay or decouple tier display.",
+      "next_files_to_read": [
+        "apps/web/src/hooks/use-aura-badge.ts",
+        "apps/api/app/core/assessment/badge_engine.py",
+        "docs/adr/ADR-005-aura-scoring.md"
+      ],
+      "whistleblower_flag": "P0: Badge tier logic absent. Users currently see immediate badges post-assessment — direct violation of Crystal Law 6 Amendment. Gamification corrupts mastery."
+    },
+    {
+      "perspective": "Code Quality Engineer",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Ecosystem Auditor",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Risk Manager",
+      "provider": "cerebras",
+      "model": "qwen-3-235b-a22b-instruct-2507",
+      "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [{\"file_path\": \"apps/api/app/routers/aura.py\", \"what_exists\": \"FastAPI router for AURA score retrieval and explanation, with decay and activity boost logic.\", \"what_it_does\": \"Implements /aura/me and /aura/me/explanation endpoints. Calculates effective score using time decay and event participation boost. Returns badge tier, percentile, and reliability status. Security: masks internal model names.\", \"quality_assessment\": \"High quality. Clean structure, proper error handling, security-aware (model name hiding), rate-limited. Passes code review. Minor: some docstrings incomplete, e.g. get_aura_explanation.\"}], \"summary\": \"File is secure, functional, and Constitution-compliant. Core scoring logic is sound. No critical bugs. Risk: badge tier exposure post-assessment may violate Crystal Law 6 if shown immediately.\", \"next_files_to_read\": [\"app/core/assessment/aura_calc.py\", \"docs/ECOSYSTEM-CONSTITUTION.md#crystal-law-6-amendment\"], \"whistleblower_flag\": null}",
+      "sub_agents_used": true,
+      "assigned_llm": true,
+      "findings": [
+        {
+          "file_path": "apps/api/app/routers/aura.py",
+          "what_exists": "FastAPI router for AURA score retrieval and explanation, with decay and activity boost logic.",
+          "what_it_does": "Implements /aura/me and /aura/me/explanation endpoints. Calculates effective score using time decay and event participation boost. Returns badge tier, percentile, and reliability status. Security: masks internal model names.",
+          "quality_assessment": "High quality. Clean structure, proper error handling, security-aware (model name hiding), rate-limited. Passes code review. Minor: some docstrings incomplete, e.g. get_aura_explanation."
+        }
+      ],
+      "summary": "File is secure, functional, and Constitution-compliant. Core scoring logic is sound. No critical bugs. Risk: badge tier exposure post-assessment may violate Crystal Law 6 if shown immediately.",
+      "next_files_to_read": [
+        "app/core/assessment/aura_calc.py",
+        "docs/ECOSYSTEM-CONSTITUTION.md#crystal-law-6-amendment"
+      ],
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Readiness Manager",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Cultural Intelligence",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Chief Strategist",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Sales Director",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Sales Director\", \"findings\": [{\"file_path\": \"apps/api/app/routers/aura.py\", \"what_exists\": \"AURA score endpoints\", \"what_it_does\": \"Handles AURA score calculations, explanations, and visibility updates\", \"quality_assessment\": \"Generally well-structured, but some complex logic and potential security concerns\"}], \"summary\": \"The aura.py file manages AURA scores, including calculations, explanations, and visibility. It uses various models and confidence labels, but may have security vulnerabilities and complex logic that could be improved.\", \"next_files_to_read\": [\"apps/api/app/schemas/aura.py\", \"apps/api/app/core/assessment/aura_calc.py\"], \"whistleblower_flag\": null}",
+      "assigned_llm": true,
+      "findings": [
+        {
+          "file_path": "apps/api/app/routers/aura.py",
+          "what_exists": "AURA score endpoints",
+          "what_it_does": "Handles AURA score calculations, explanations, and visibility updates",
+          "quality_assessment": "Generally well-structured, but some complex logic and potential security concerns"
+        }
+      ],
+      "summary": "The aura.py file manages AURA scores, including calculations, explanations, and visibility. It uses various models and confidence labels, but may have security vulnerabilities and complex logic that could be improved.",
+      "next_files_to_read": [
+        "apps/api/app/schemas/aura.py",
+        "apps/api/app/core/assessment/aura_calc.py"
+      ],
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "UX Designer",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "DevOps Engineer",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Assessment Science",
+      "provider": "vertex-ai-agent",
+      "model": "gemini-2.5-flash+tools",
+      "raw": "```json\n{\n \"perspective\": \"Assessment Science\",\n \"findings\": [\n  {\n   \"file_path\": \"apps/api/app/routers/aura.py\",\n   \"what_exists\": \"This file defines FastAPI endpoints for retrieving and managing AURA scores and associated data, including competency scores, badge tiers, visibility settings, and historical data. It implements score decay and activity boosts via `_with_effective_score` and includes security measures like mapping internal model names to generic confidence labels (`_MODEL_CONFIDENCE`). It also provides endpoints for various contexts like public profiles, admin dashboards, talent discovery, and leaderboards.\",\n   \"what_it_does\": \"The code calculates a decay-adjusted 'effective_score' for AURA based on `last_updated` and `total_score`, applying an activity boost from `events_attended`. It exposes multiple GET endpoints for fetching AURA data tailored to different user roles (current user, public, admin, organization, talent discovery) and specific data types (explanation, history, competency, reliability, badge display). It also includes PUT endpoints for updating AURA visibility and requesting sharing permissions. Rate limiting is applied to most endpoints.\",\n   \"quality_assessment\": \"The code is well-structured with clear function names, type hints, and appropriate error handling for `AURA_NOT_FOUND`. The use of `_MODEL_CONFIDENCE` for security is a good practice. However, the presence of leaderboard-related endpoints directly violates a core Ecosystem Constitution law, which is a critical flaw. The numerous `get_aura_for_badge_display_*` endpoints suggest potential for consolidation.\",\n   \"constitution_violations\": [\n    {\n     \"law\": \"Crystal Law 5: Collaborative > Zero-Sum\",\n     \"detail\": \"The existence of `/aura/leaderboard` and `/aura/badge_display_leaderboard` endpoints directly violates the prohibition against leaderboards of any kind, which are explicitly banned to prevent social comparison and shame spirals. This is a critical violation of a non-negotiable foundation law.\",\n     \"severity\": \"critical\"\n    },\n    {\n     \"law\": \"Crystal Law 6 Amendment: Badge Is Not An Immediate Contingent Reward\",\n     \"detail\": \"While the API itself doesn't force immediate display, the numerous `get_aura_for_badge_display` endpoints provide the mechanism for a frontend to violate this law by showing badge tiers immediately after assessment completion. This enables a 'contingent reward for a mastery task' which is explicitly forbidden. The API should ideally enforce this by design or at least include strong warnings.\",\n     \"severity\": \"high\"\n    }\n   ],\n   \"bugs\": [],\n   \"security_issues\": [],\n   \"dead_code_or_unused_imports\": [\n    {\n     \"code\": \"from datetime import UTC\",\n     \"detail\": \"`UTC` is imported but not explicitly used in the provided snippet. While `datetime.fromisoformat` is used, `UTC` itself is not directly referenced for timezone-aware operations within this truncated view.\"\n    }\n   ],\n   \"improvements\": [\n    \"**Remove Leaderboard Endpoints:** Immediately remove `/aura/leaderboard` and `/aura/badge_display_leaderboard` to comply with Crystal Law 5.\",\n    \"**Enforce Crystal Law 6 Amendment:** Implement a mechanism in badge display endpoints (e.g., a query parameter with strict validation or a dedicated internal-only endpoint) to prevent their use for immediate post-assessment badge revelation.\",\n    \"**Consolidate Badge Display Endpoints:** Refactor the multiple `get_aura_for_badge_display_*` endpoints into a single, more flexible endpoint using a context parameter to reduce redundancy and improve maintainability.\",\n    \"**Temporal Decay Rationale:** While not a code issue in this file, the Assessment Science perspective notes that the rationale for the 180-day half-life and activity boost in `calculate_effective_score` and `apply_activity_boost` should be documented and evidence-based, as per the specialty lens requirements.\"\n   ]\n  }\n ],\n \"summary\": \"The `aura.py` router is functional and well-structured, implementing core AURA score retrieval and management, including score decay and activity boosts. However, it contains critical violations of the Ecosystem Constitution, specifically Crystal Law 5 regarding leaderboards, and enables potential violations of Crystal Law 6 Amendment concerning immediate badge display. These constitutional breaches are severe and require immediate remediation.\",\n \"next_files_to_read\": [],\n \"whistleblower_flag\": {\n  \"reason\": \"The direct violation of Crystal Law 5 (no leaderboards) is a non-negotiable constitutional breach that undermines the core principles of the ecosystem's design to prevent shame and foster collaboration. This is a critical design flaw that must be addressed immediately.\",\n  \"severity\": \"critical\"\n }\n}\n```",
+      "sub_agents_used": true,
+      "assigned_llm": true,
+      "findings": [
+        {
+          "file_path": "apps/api/app/routers/aura.py",
+          "what_exists": "This file defines FastAPI endpoints for retrieving and managing AURA scores and associated data, including competency scores, badge tiers, visibility settings, and historical data. It implements score decay and activity boosts via `_with_effective_score` and includes security measures like mapping internal model names to generic confidence labels (`_MODEL_CONFIDENCE`). It also provides endpoints for various contexts like public profiles, admin dashboards, talent discovery, and leaderboards.",
+          "what_it_does": "The code calculates a decay-adjusted 'effective_score' for AURA based on `last_updated` and `total_score`, applying an activity boost from `events_attended`. It exposes multiple GET endpoints for fetching AURA data tailored to different user roles (current user, public, admin, organization, talent discovery) and specific data types (explanation, history, competency, reliability, badge display). It also includes PUT endpoints for updating AURA visibility and requesting sharing permissions. Rate limiting is applied to most endpoints.",
+          "quality_assessment": "The code is well-structured with clear function names, type hints, and appropriate error handling for `AURA_NOT_FOUND`. The use of `_MODEL_CONFIDENCE` for security is a good practice. However, the presence of leaderboard-related endpoints directly violates a core Ecosystem Constitution law, which is a critical flaw. The numerous `get_aura_for_badge_display_*` endpoints suggest potential for consolidation.",
+          "constitution_violations": [
+            {
+              "law": "Crystal Law 5: Collaborative > Zero-Sum",
+              "detail": "The existence of `/aura/leaderboard` and `/aura/badge_display_leaderboard` endpoints directly violates the prohibition against leaderboards of any kind, which are explicitly banned to prevent social comparison and shame spirals. This is a critical violation of a non-negotiable foundation law.",
+              "severity": "critical"
+            },
+            {
+              "law": "Crystal Law 6 Amendment: Badge Is Not An Immediate Contingent Reward",
+              "detail": "While the API itself doesn't force immediate display, the numerous `get_aura_for_badge_display` endpoints provide the mechanism for a frontend to violate this law by showing badge tiers immediately after assessment completion. This enables a 'contingent reward for a mastery task' which is explicitly forbidden. The API should ideally enforce this by design or at least include strong warnings.",
+              "severity": "high"
+            }
+          ],
+          "bugs": [],
+          "security_issues": [],
+          "dead_code_or_unused_imports": [
+            {
+              "code": "from datetime import UTC",
+              "detail": "`UTC` is imported but not explicitly used in the provided snippet. While `datetime.fromisoformat` is used, `UTC` itself is not directly referenced for timezone-aware operations within this truncated view."
+            }
+          ],
+          "improvements": [
+            "**Remove Leaderboard Endpoints:** Immediately remove `/aura/leaderboard` and `/aura/badge_display_leaderboard` to comply with Crystal Law 5.",
+            "**Enforce Crystal Law 6 Amendment:** Implement a mechanism in badge display endpoints (e.g., a query parameter with strict validation or a dedicated internal-only endpoint) to prevent their use for immediate post-assessment badge revelation.",
+            "**Consolidate Badge Display Endpoints:** Refactor the multiple `get_aura_for_badge_display_*` endpoints into a single, more flexible endpoint using a context parameter to reduce redundancy and improve maintainability.",
+            "**Temporal Decay Rationale:** While not a code issue in this file, the Assessment Science perspective notes that the rationale for the 180-day half-life and activity boost in `calculate_effective_score` and `apply_activity_boost` should be documented and evidence-based, as per the specialty lens requirements."
+          ]
+        }
+      ],
+      "summary": "The `aura.py` router is functional and well-structured, implementing core AURA score retrieval and management, including score decay and activity boosts. However, it contains critical violations of the Ecosystem Constitution, specifically Crystal Law 5 regarding leaderboards, and enables potential violations of Crystal Law 6 Amendment concerning immediate badge display. These constitutional breaches are severe and require immediate remediation.",
+      "next_files_to_read": [],
+      "whistleblower_flag": {
+        "reason": "The direct violation of Crystal Law 5 (no leaderboards) is a non-negotiable constitutional breach that undermines the core principles of the ecosystem's design to prevent shame and foster collaboration. This is a critical design flaw that must be addressed immediately.",
+        "severity": "critical"
+      }
+    },
+    {
+      "perspective": "Legal Advisor",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Growth Hacker",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "QA Engineer",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "CTO Watchdog",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    }
+  ]
+}

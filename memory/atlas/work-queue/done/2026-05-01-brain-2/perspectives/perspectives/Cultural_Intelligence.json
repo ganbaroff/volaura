@@ -1,0 +1,24 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Ecosystem Auditor\",\n  \"findings\": [\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"memory/swarm/research/irt_calibration.md\",\n      \"issue\": \"Missing data schema validation step for user response distributions\",\n      \"recommended_fix\": \"Add schema validation endpoint in apps/api/app/irt_validator.py\"\n    },\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"packages/swarm/providers/stats_library.py\",\n      \"issue\": \"Incomplete statistical library for IRT parameter estimation\",\n      \"recommended_fix\": \"Integrate statsmodels for maximum likelihood estimation\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "warn",
+      "file_or_area": "memory/swarm/research/irt_calibration.md",
+      "issue": "Missing data schema validation step for user response distributions",
+      "recommended_fix": "Add schema validation endpoint in apps/api/app/irt_validator.py"
+    },
+    {
+      "severity": "warn",
+      "file_or_area": "packages/swarm/providers/stats_library.py",
+      "issue": "Incomplete statistical library for IRT parameter estimation",
+      "recommended_fix": "Integrate statsmodels for maximum likelihood estimation"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Ecosystem Auditor"
+}

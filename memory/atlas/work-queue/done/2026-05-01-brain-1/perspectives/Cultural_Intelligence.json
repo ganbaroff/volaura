@@ -1,0 +1,10 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Legal Advisor\",\n  \"response\": \"Review memory/swarm/skills/energy-adaptation.md for UI mode definitions. Update apps/web/src/assessment-engine.js to support full/mid/low energy states. Modify dashboard.js to conditionally render UI layers based on user energy score. Update aura-score.js to display mode-specific visual cues. Verify all changes persist to files.\",\n  \"whistleblower_flag\": null\n}",
+  "assigned_llm": true,
+  "response": "Review memory/swarm/skills/energy-adaptation.md for UI mode definitions. Update apps/web/src/assessment-engine.js to support full/mid/low energy states. Modify dashboard.js to conditionally render UI layers based on user energy score. Update aura-score.js to display mode-specific visual cues. Verify all changes persist to files.",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Legal Advisor"
+}

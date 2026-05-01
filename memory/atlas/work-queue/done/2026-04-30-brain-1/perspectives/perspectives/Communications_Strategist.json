@@ -1,0 +1,16 @@
+{
+  "perspective": "Communications Strategist",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Communications Strategist\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"frontend/src/components/Layout.jsx\", \"issue\": \"Energy adaptation modes are not correctly enforced across all components\", \"recommended_fix\": \"Introduce a context provider to manage EnergyLevel state and conditionally render components based on this state\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "frontend/src/components/Layout.jsx",
+      "issue": "Energy adaptation modes are not correctly enforced across all components",
+      "recommended_fix": "Introduce a context provider to manage EnergyLevel state and conditionally render components based on this state"
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null
+}

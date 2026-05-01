@@ -1,0 +1,17 @@
+{
+  "perspective": "Sales Director",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Sales Director\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"docs/INDEX.md\", \"issue\": \"No sales deck found\", \"recommended_fix\": \"Create a sales deck for VOLAURA\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "docs/INDEX.md",
+      "issue": "No sales deck found",
+      "recommended_fix": "Create a sales deck for VOLAURA"
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null
+}

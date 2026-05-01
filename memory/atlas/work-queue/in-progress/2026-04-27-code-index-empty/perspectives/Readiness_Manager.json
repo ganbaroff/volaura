@@ -1,0 +1,16 @@
+{
+  "perspective": "Readiness Manager",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Readiness Manager\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"packages/swarm/archive/code_index.py\", \"issue\": \"code-index.json is empty despite recent built_at timestamp\", \"recommended_fix\": \"Investigate why the builder produced empty output and propose a fix. Check if packages/swarm/archive/code_index.py was moved to archive accidentally.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "packages/swarm/archive/code_index.py",
+      "issue": "code-index.json is empty despite recent built_at timestamp",
+      "recommended_fix": "Investigate why the builder produced empty output and propose a fix. Check if packages/swarm/archive/code_index.py was moved to archive accidentally."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null
+}

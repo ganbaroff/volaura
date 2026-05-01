@@ -1,0 +1,28 @@
+{
+  "perspective": "Risk Manager",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"src/assessment/irt_engine.py\", \"issue\": \"IRT parameters (a, b, c) are hardcoded (a=1.5, b=0.0, c=0.25) and not calibrated from real response data, violating psychometric validity. No data pipeline exists for recalibration.\", \"recommended_fix\": \"Implement data pipeline to collect response logs; integrate `calibrate_parameters()` with safeguards (min N=300, detect aberrant responses). Automate monthly re-estimation.\"}, {\"severity\": \"HIGH\", \"file_or_area\": \"src/assessment/irt_engine.py\", \"issue\": \"`calibrate_parameters()` lacks input validation: no checks for minimum sample size, missing data, or aberrant response patterns (e.g., all correct/wrong).\", \"recommended_fix\": \"Add pre-validation: enforce N≥300, compute outfit/infit stats, filter non-random responders. Fail closed if criteria not met.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Psychometric invalidity in scoring engine risks ISO 10667-2 non-compliance and undermines AURA score credibility.\", \"next_files_to_read\": [\"scripts/audit_dif_bias.py\", \"packages/assessment/irt/calibration_pipeline.py\"]}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "src/assessment/irt_engine.py",
+      "issue": "IRT parameters (a, b, c) are hardcoded (a=1.5, b=0.0, c=0.25) and not calibrated from real response data, violating psychometric validity. No data pipeline exists for recalibration.",
+      "recommended_fix": "Implement data pipeline to collect response logs; integrate `calibrate_parameters()` with safeguards (min N=300, detect aberrant responses). Automate monthly re-estimation."
+    },
+    {
+      "severity": "HIGH",
+      "file_or_area": "src/assessment/irt_engine.py",
+      "issue": "`calibrate_parameters()` lacks input validation: no checks for minimum sample size, missing data, or aberrant response patterns (e.g., all correct/wrong).",
+      "recommended_fix": "Add pre-validation: enforce N≥300, compute outfit/infit stats, filter non-random responders. Fail closed if criteria not met."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "Psychometric invalidity in scoring engine risks ISO 10667-2 non-compliance and undermines AURA score credibility.",
+  "next_files_to_read": [
+    "scripts/audit_dif_bias.py",
+    "packages/assessment/irt/calibration_pipeline.py"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "perspective": "Assessment Science",
+  "provider": "vertex-ai-agent",
+  "model": "gemini-2.5-flash+tools",
+  "raw": "```json\n{\n  \"perspective\": \"Assessment Science\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"scripts/audit_dif_bias.py\",\n      \"issue\": \"The DIF bias audit script is ready, but the document states 300+ completed sessions are needed for publishable findings. This means the actual psychometric analysis for bias against AZ/CIS test-takers is not yet actionable due to insufficient data, preventing validation of psychometric fairness.\",\n      \"recommended_fix\": \"Prioritize data collection to reach the 300+ session threshold for meaningful DIF analysis.\"\n    },\n    {\n      \"severity\": \"high",
+  "sub_agents_used": true,
+  "assigned_llm": true
+}

@@ -1,0 +1,18 @@
+{
+  "perspective": "Readiness Manager",
+  "provider": "ollama",
+  "model": "gemma4",
+  "raw": "```json\n{\n  \"task_description\": \"Audit the implementation status of 'Open Badges 3.0' based on available context, specifically checking if it exists or if it requires development.\",\n  \"analysis\": {\n    \"context_review\": \"The provided context (system prompts, history, and file structures) does not contain any direct references, code snippets, or documentation related to 'Open Badges 3.0'.\",\n    \"inference\": \"The request appears to be based on external knowledge or a specific project requirement not present in the current operational context. Therefore, I cannot confirm its implementation status (built, partially built, or not started) based solely on the provided data.\",\n    \"action_required\": \"To perform this audit, I require access to the relevant codebase, design documents, or project specifications pertaining to 'Open Badges 3.0'.\"\n  },\n  \"output\": {\n    \"status\": \"Cannot Determine\",\n    \"reason\": \"No context found for 'Open Badges 3.0'.\",\n    \"recommendation\": \"Please provide the relevant codebase or documentation for this feature.\"\n  }\n}\n```",
+  "assigned_llm": true,
+  "task_description": "Audit the implementation status of 'Open Badges 3.0' based on available context, specifically checking if it exists or if it requires development.",
+  "analysis": {
+    "context_review": "The provided context (system prompts, history, and file structures) does not contain any direct references, code snippets, or documentation related to 'Open Badges 3.0'.",
+    "inference": "The request appears to be based on external knowledge or a specific project requirement not present in the current operational context. Therefore, I cannot confirm its implementation status (built, partially built, or not started) based solely on the provided data.",
+    "action_required": "To perform this audit, I require access to the relevant codebase, design documents, or project specifications pertaining to 'Open Badges 3.0'."
+  },
+  "output": {
+    "status": "Cannot Determine",
+    "reason": "No context found for 'Open Badges 3.0'.",
+    "recommendation": "Please provide the relevant codebase or documentation for this feature."
+  }
+}

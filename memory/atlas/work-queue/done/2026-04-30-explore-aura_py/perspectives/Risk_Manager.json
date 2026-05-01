@@ -1,0 +1,22 @@
+{
+  "perspective": "Risk Manager",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [{\"file_path\": \"apps/api/app/routers/aura.py\", \"what_exists\": \"FastAPI router for AURA score retrieval and explanation, with decay and activity boost logic.\", \"what_it_does\": \"Implements /aura/me and /aura/me/explanation endpoints. Calculates effective score using time decay and event participation boost. Returns badge tier, percentile, and reliability status. Security: masks internal model names.\", \"quality_assessment\": \"High quality. Clean structure, proper error handling, security-aware (model name hiding), rate-limited. Passes code review. Minor: some docstrings incomplete, e.g. get_aura_explanation.\"}], \"summary\": \"File is secure, functional, and Constitution-compliant. Core scoring logic is sound. No critical bugs. Risk: badge tier exposure post-assessment may violate Crystal Law 6 if shown immediately.\", \"next_files_to_read\": [\"app/core/assessment/aura_calc.py\", \"docs/ECOSYSTEM-CONSTITUTION.md#crystal-law-6-amendment\"], \"whistleblower_flag\": null}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "file_path": "apps/api/app/routers/aura.py",
+      "what_exists": "FastAPI router for AURA score retrieval and explanation, with decay and activity boost logic.",
+      "what_it_does": "Implements /aura/me and /aura/me/explanation endpoints. Calculates effective score using time decay and event participation boost. Returns badge tier, percentile, and reliability status. Security: masks internal model names.",
+      "quality_assessment": "High quality. Clean structure, proper error handling, security-aware (model name hiding), rate-limited. Passes code review. Minor: some docstrings incomplete, e.g. get_aura_explanation."
+    }
+  ],
+  "summary": "File is secure, functional, and Constitution-compliant. Core scoring logic is sound. No critical bugs. Risk: badge tier exposure post-assessment may violate Crystal Law 6 if shown immediately.",
+  "next_files_to_read": [
+    "app/core/assessment/aura_calc.py",
+    "docs/ECOSYSTEM-CONSTITUTION.md#crystal-law-6-amendment"
+  ],
+  "whistleblower_flag": null
+}

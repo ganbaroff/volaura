@@ -1,0 +1,15 @@
+{
+  "perspective": "Risk Manager",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Risk Manager\", \"response\": \"CRITICAL risk: Energy Adaptation Law 2 violation in assessment engine. Despite EnergyPicker existence (116 files), sub-components fail to adapt: risk scoring returns granular data in 'low' mode, visualizations remain complex, and mode state is not propagated through assessment flow. This contradicts Law 2's mandate for cognitive load reduction. Impact: 5 (neurodivergent users), Likelihood: 4 → Score: 20. Launch blocker. PR score: 4/10 — GITA grant review (May 27) will flag non-compliance with neuro-inclusive design claims. Immediate action: enforce mode-aware rendering in all assessment UI layers. Verify via E2E test with energy=low. Also: PR narrative must shift from 'fully compliant' to 'iterative neuro-adaptation' to avoid overclaim.\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"apps/web/src/components/assessment/risk-scoring.tsx\", \"apps/web/src/components/assessment/visualization.tsx\", \"apps/web/src/hooks/use-energy-mode.ts\"]}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "response": "CRITICAL risk: Energy Adaptation Law 2 violation in assessment engine. Despite EnergyPicker existence (116 files), sub-components fail to adapt: risk scoring returns granular data in 'low' mode, visualizations remain complex, and mode state is not propagated through assessment flow. This contradicts Law 2's mandate for cognitive load reduction. Impact: 5 (neurodivergent users), Likelihood: 4 → Score: 20. Launch blocker. PR score: 4/10 — GITA grant review (May 27) will flag non-compliance with neuro-inclusive design claims. Immediate action: enforce mode-aware rendering in all assessment UI layers. Verify via E2E test with energy=low. Also: PR narrative must shift from 'fully compliant' to 'iterative neuro-adaptation' to avoid overclaim.",
+  "whistleblower_flag": null,
+  "next_files_to_read": [
+    "apps/web/src/components/assessment/risk-scoring.tsx",
+    "apps/web/src/components/assessment/visualization.tsx",
+    "apps/web/src/hooks/use-energy-mode.ts"
+  ]
+}

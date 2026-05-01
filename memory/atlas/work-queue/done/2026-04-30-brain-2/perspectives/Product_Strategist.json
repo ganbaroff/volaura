@@ -1,0 +1,22 @@
+{
+  "perspective": "Product Strategist",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Product Strategist\", \"findings\": [{\"severity\": \"P0\", \"file_or_area\": \"src/assessment/irt_engine.py\", \"issue\": \"IRT parameters (a, b, c, theta) are hardcoded, preventing model calibration from real-world data. This invalidates CAT logic and undermines AURA score validity.\", \"recommended_fix\": \"Refactor irt_engine.py to ingest item response data from Supabase `assessment_responses` table. Implement monthly MML calibration pipeline via script/irt_calibrate.py. Store item parameters in `irt_parameters` table with versioning.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"P0 scoring integrity risk: AURA scores are not psychometrically valid without empirical calibration. Current implementation violates ADR-004 and Constitution Foundation Law 1 (Never Red — integrity failure).\", \"next_files_to_read\": [\"adr/ADR-004-assessment-engine.md\", \"apps/api/app/models/assessment.py\"]}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "P0",
+      "file_or_area": "src/assessment/irt_engine.py",
+      "issue": "IRT parameters (a, b, c, theta) are hardcoded, preventing model calibration from real-world data. This invalidates CAT logic and undermines AURA score validity.",
+      "recommended_fix": "Refactor irt_engine.py to ingest item response data from Supabase `assessment_responses` table. Implement monthly MML calibration pipeline via script/irt_calibrate.py. Store item parameters in `irt_parameters` table with versioning."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "P0 scoring integrity risk: AURA scores are not psychometrically valid without empirical calibration. Current implementation violates ADR-004 and Constitution Foundation Law 1 (Never Red — integrity failure).",
+  "next_files_to_read": [
+    "adr/ADR-004-assessment-engine.md",
+    "apps/api/app/models/assessment.py"
+  ]
+}

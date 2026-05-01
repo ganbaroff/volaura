@@ -1,0 +1,32 @@
+{
+  "perspective": "Assessment Science",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Assessment Science\", \"findings\": [{\"severity\": \"critical\", \"file_or_area\": \"apps/web/src/components/assessment/engine.py\", \"issue\": \"IRT 3PL parameters (a, b, c) are guessed, not calibrated from real data\", \"recommended_fix\": \"Calibrate IRT 3PL parameters using real assessment data\"}, {\"severity\": \"high\", \"file_or_area\": \"apps/web/src/components/assessment/question_pool.py\", \"issue\": \"Question pool size per competency is less than 15\", \"recommended_fix\": \"Increase question pool size to at least 15 per competency\"}, {\"severity\": \"medium\", \"file_or_area\": \"scripts/audit_dif_bias.py\", \"issue\": \"DIF analysis script exists, but no evidence of regular execution\", \"recommended_fix\": \"Schedule regular execution of DIF analysis script\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"apps/web/src/components/assessment/cat_stopping_rules.py\", \"apps/web/src/components/assessment/temporal_decay_rationale.py\"]}",
+  "findings": [
+    {
+      "severity": "critical",
+      "file_or_area": "apps/web/src/components/assessment/engine.py",
+      "issue": "IRT 3PL parameters (a, b, c) are guessed, not calibrated from real data",
+      "recommended_fix": "Calibrate IRT 3PL parameters using real assessment data"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "apps/web/src/components/assessment/question_pool.py",
+      "issue": "Question pool size per competency is less than 15",
+      "recommended_fix": "Increase question pool size to at least 15 per competency"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "scripts/audit_dif_bias.py",
+      "issue": "DIF analysis script exists, but no evidence of regular execution",
+      "recommended_fix": "Schedule regular execution of DIF analysis script"
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null,
+  "next_files_to_read": [
+    "apps/web/src/components/assessment/cat_stopping_rules.py",
+    "apps/web/src/components/assessment/temporal_decay_rationale.py"
+  ]
+}

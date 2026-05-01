@@ -1,0 +1,22 @@
+{
+  "perspective": "Code Quality Engineer",
+  "provider": "gemini",
+  "model": "gemini-2.5-flash",
+  "raw": "{\n  \"perspective\": \"Code Quality Engineer\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"frontend/src/components/Layout.jsx\",\n      \"issue\": \"The specified path `frontend/src/components/Layout.jsx` does not exist in the `CODE-INDEX SUMMARY`. The primary web application source is `apps/web/src`. This impedes the direct audit of the requested central layout component and its related context providers.\",\n      \"recommended_fix\": \"Verify and provide the correct canonical path for the main application layout component. This is critical for future audits and code comprehension.\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"Law 2: Energy Adaptation (Public Profile, Organization Search)\",\n      \"issue\": \"While `PRE-LAUNCH-BLOCKERS-STATUS.md` confirms `data-energy` on `<html>` and specific adaptation for the assessment and dashboard, explicit enforcement of Law 2 for 'Public Profile' and 'Organization Search' components is not detailed. This leaves a gap in verifying full ecosystem compliance.\",\n      \"recommended_fix\": \"Create an `explore` task to analyze `apps/web/src` for explicit energy mode adaptations within public profile and organization search components. Confirm if these surfaces hide elements or adjust rendering based on `EnergyLevel` beyond global CSS attributes.\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "frontend/src/components/Layout.jsx",
+      "issue": "The specified path `frontend/src/components/Layout.jsx` does not exist in the `CODE-INDEX SUMMARY`. The primary web application source is `apps/web/src`. This impedes the direct audit of the requested central layout component and its related context providers.",
+      "recommended_fix": "Verify and provide the correct canonical path for the main application layout component. This is critical for future audits and code comprehension."
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "Law 2: Energy Adaptation (Public Profile, Organization Search)",
+      "issue": "While `PRE-LAUNCH-BLOCKERS-STATUS.md` confirms `data-energy` on `<html>` and specific adaptation for the assessment and dashboard, explicit enforcement of Law 2 for 'Public Profile' and 'Organization Search' components is not detailed. This leaves a gap in verifying full ecosystem compliance.",
+      "recommended_fix": "Create an `explore` task to analyze `apps/web/src` for explicit energy mode adaptations within public profile and organization search components. Confirm if these surfaces hide elements or adjust rendering based on `EnergyLevel` beyond global CSS attributes."
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

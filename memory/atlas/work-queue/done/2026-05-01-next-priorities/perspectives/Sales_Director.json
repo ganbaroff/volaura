@@ -1,0 +1,43 @@
+{
+  "perspective": "Sales Director",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\n  \"perspective\": \"Sales Director\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"sales deck\",\n      \"issue\": \"No sales deck found\",\n      \"recommended_fix\": \"Create a sales deck to effectively communicate the value proposition of VOLAURA\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"pricing\",\n      \"issue\": \"Pricing clarity for AZ market\",\n      \"recommended_fix\": \"Research and establish clear pricing for the AZ market to facilitate sales\"\n    },\n    {\n      \"severity\": \"low\",\n      \"file_or_area\": \"target organizations\",\n      \"issue\": \"First 10 target orgs not identified\",\n      \"recommended_fix\": \"Identify the first 10 target organizations for VOLAURA and develop a strategy to approach them\"\n    },\n    {\n      \"severity\": \"low\",\n      \"file_or_area\": \"objections\",\n      \"issue\": \"Anticipated objections from Nigar (HR manager)\",\n      \"recommended_fix\": \"Develop a list of potential objections from Nigar and prepare responses to address them\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"onboarding\",\n      \"issue\": \"Onboarding process for non-technical org admin\",\n      \"recommended_fix\": \"Simplify the onboarding process to make it accessible for non-technical organization administrators\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null,\n  \"sales_readiness_score\": 6,\n  \"first_customer_playbook\": \"1. Develop a sales deck, 2. Establish clear pricing for the AZ market, 3. Identify the first 10 target organizations, 4. Anticipate and address potential objections, 5. Simplify the onboarding process\"\n}",
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "sales deck",
+      "issue": "No sales deck found",
+      "recommended_fix": "Create a sales deck to effectively communicate the value proposition of VOLAURA"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "pricing",
+      "issue": "Pricing clarity for AZ market",
+      "recommended_fix": "Research and establish clear pricing for the AZ market to facilitate sales"
+    },
+    {
+      "severity": "low",
+      "file_or_area": "target organizations",
+      "issue": "First 10 target orgs not identified",
+      "recommended_fix": "Identify the first 10 target organizations for VOLAURA and develop a strategy to approach them"
+    },
+    {
+      "severity": "low",
+      "file_or_area": "objections",
+      "issue": "Anticipated objections from Nigar (HR manager)",
+      "recommended_fix": "Develop a list of potential objections from Nigar and prepare responses to address them"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "onboarding",
+      "issue": "Onboarding process for non-technical org admin",
+      "recommended_fix": "Simplify the onboarding process to make it accessible for non-technical organization administrators"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "sales_readiness_score": 6,
+  "first_customer_playbook": "1. Develop a sales deck, 2. Establish clear pricing for the AZ market, 3. Identify the first 10 target organizations, 4. Anticipate and address potential objections, 5. Simplify the onboarding process"
+}

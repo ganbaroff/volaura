@@ -1,0 +1,387 @@
+{
+  "task_id": "2026-05-01-brain-2",
+  "task_type": "audit",
+  "completed_at": "2026-05-01T07:06:00.139927+00:00",
+  "perspectives_dispatched": 17,
+  "perspectives_responded": 9,
+  "perspectives_failed": 8,
+  "providers_used": {
+    "vertex-ai-agent": 2,
+    "cerebras": 2,
+    "ollama": 2,
+    "nvidia": 1,
+    "groq": 2
+  },
+  "whistleblower_flags": [
+    {
+      "perspective": "Scaling Engineer",
+      "flag": "The task is fundamentally flawed due to a non-existent and ambiguously defined data source. Proceeding with calibration on such a basis, especially with identified data integrity issues, would yield unreliable results and compromise the integrity of the assessment engine, posing significant risk to user trust and system validity at scale."
+    }
+  ],
+  "perspectives": [
+    {
+      "perspective": "Scaling Engineer",
+      "provider": "vertex-ai-agent",
+      "model": "gemini-2.5-flash+tools",
+      "raw": "```json\n{\n \"perspective\": \"Scaling Engineer\",\n \"findings\": [\n  {\n   \"severity\": \"high\",\n   \"file_or_area\": \"db/assessments/raw_data.csv (unverified path)\",\n   \"issue\": \"The specified data source for IRT calibration, `db/assessments/raw_data.csv`, does not exist in the indexed codebase. The task implies this data is from the 'production database' but provides a local CSV path, creating a critical contradiction in data sourcing. This makes the task unexecutable as described.\",\n   \"recommended_fix\": \"Clarify the canonical source for historical assessment data. If it's a database, specify connection details and table names. If a CSV, provide the actual file path and ensure it's part of the project's accessible data.\"\n  },\n  {\n   \"severity\": \"high\",\n   \"file_or_area\": \"Assessment data integrity\",\n   \"issue\": \"Sub-agent analysis indicates severe data integrity issues in the raw assessment data, including timestamps earlier than start times, significant response distribution imbalance, and duplicate assessment IDs with conflicting scores. These issues will lead to biased and unreliable IRT parameter calibration, directly impacting assessment validity at scale.\",\n   \"recommended_fix\": \"Implement robust data validation and cleaning procedures before any calibration. Investigate the root cause of data corruption in the logging system to prevent future occurrences and ensure data quality for scaling.\"\n  },\n  {\n   \"severity\": \"medium\",\n   \"file_or_area\": \"IRT calibration infrastructure\",\n   \"issue\": \"My recent findings confirm that the previously specified IRT calibration script (`services/assessment/irt_calibration.py`) is not present in the indexed codebase. While the task is to develop a new pipeline, this highlights a gap in existing calibration infrastructure, requiring a full build-out.\",\n   \"recommended_fix\": \"Acknowledge the need to build the calibration script from scratch, ensuring it integrates with the clarified data source and incorporates robust data validation and error handling for future scalability.\"\n  }\n ],\n \"overall_verdict\": \"fail\",\n \"whistleblower_flag\": \"The task is fundamentally flawed due to a non-existent and ambiguously defined data source. Proceeding with calibration on such a basis, especially with identified data integrity issues, would yield unreliable results and compromise the integrity of the assessment engine, posing significant risk to user trust and system validity at scale.\"\n}\n```",
+      "sub_agents_used": true,
+      "assigned_llm": true,
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "db/assessments/raw_data.csv (unverified path)",
+          "issue": "The specified data source for IRT calibration, `db/assessments/raw_data.csv`, does not exist in the indexed codebase. The task implies this data is from the 'production database' but provides a local CSV path, creating a critical contradiction in data sourcing. This makes the task unexecutable as described.",
+          "recommended_fix": "Clarify the canonical source for historical assessment data. If it's a database, specify connection details and table names. If a CSV, provide the actual file path and ensure it's part of the project's accessible data."
+        },
+        {
+          "severity": "high",
+          "file_or_area": "Assessment data integrity",
+          "issue": "Sub-agent analysis indicates severe data integrity issues in the raw assessment data, including timestamps earlier than start times, significant response distribution imbalance, and duplicate assessment IDs with conflicting scores. These issues will lead to biased and unreliable IRT parameter calibration, directly impacting assessment validity at scale.",
+          "recommended_fix": "Implement robust data validation and cleaning procedures before any calibration. Investigate the root cause of data corruption in the logging system to prevent future occurrences and ensure data quality for scaling."
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "IRT calibration infrastructure",
+          "issue": "My recent findings confirm that the previously specified IRT calibration script (`services/assessment/irt_calibration.py`) is not present in the indexed codebase. While the task is to develop a new pipeline, this highlights a gap in existing calibration infrastructure, requiring a full build-out.",
+          "recommended_fix": "Acknowledge the need to build the calibration script from scratch, ensuring it integrates with the clarified data source and incorporates robust data validation and error handling for future scalability."
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": "The task is fundamentally flawed due to a non-existent and ambiguously defined data source. Proceeding with calibration on such a basis, especially with identified data integrity issues, would yield unreliable results and compromise the integrity of the assessment engine, posing significant risk to user trust and system validity at scale."
+    },
+    {
+      "perspective": "Security Auditor",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Product Strategist",
+      "provider": "cerebras",
+      "model": "qwen-3-235b-a22b-instruct-2507",
+      "raw": "{\"perspective\": \"Product Strategist\", \"findings\": [{\"severity\": \"critical\", \"file_or_area\": \"services/assessment/irt_calibration.py\", \"issue\": \"Referenced calibration script does not exist in codebase\", \"recommended_fix\": \"Create the IRT calibration pipeline using historical data; validate with MLE on top 3 volatile competencies\"}, {\"severity\": \"high\", \"file_or_area\": \"AURA scoring\", \"issue\": \"Core IRT engine uses 8 independent 3PL models instead of unified MIRT per ADR-004\", \"recommended_fix\": \"Upgrade to multidimensional IRT to improve score accuracy and cross-competency correlation\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"adr/ADR-004-assessment-engine.md\", \"services/assessment/irt_engine.py\"]}",
+      "sub_agents_used": true,
+      "assigned_llm": true,
+      "findings": [
+        {
+          "severity": "critical",
+          "file_or_area": "services/assessment/irt_calibration.py",
+          "issue": "Referenced calibration script does not exist in codebase",
+          "recommended_fix": "Create the IRT calibration pipeline using historical data; validate with MLE on top 3 volatile competencies"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "AURA scoring",
+          "issue": "Core IRT engine uses 8 independent 3PL models instead of unified MIRT per ADR-004",
+          "recommended_fix": "Upgrade to multidimensional IRT to improve score accuracy and cross-competency correlation"
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": null,
+      "next_files_to_read": [
+        "adr/ADR-004-assessment-engine.md",
+        "services/assessment/irt_engine.py"
+      ]
+    },
+    {
+      "perspective": "Code Quality Engineer",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Ecosystem Auditor",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Risk Manager",
+      "provider": "cerebras",
+      "model": "qwen-3-235b-a22b-instruct-2507",
+      "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"db/assessments/raw_data.csv\", \"issue\": \"18.7% of records have invalid response timestamps (<1s or >2h), risking IRT model integrity\", \"recommended_fix\": \"Implement data validation filter to exclude implausible response times before calibration\"}, {\"severity\": \"HIGH\", \"file_or_area\": \"IRT calibration process\", \"issue\": \"12% of items show low discrimination (<0.3), undermining adaptive testing validity\", \"recommended_fix\": \"Flag low-discrimination items for review; consider removal or revision\"}, {\"severity\": \"MEDIUM\", \"file_or_area\": \"Adaptability competency\", \"issue\": \"Question 17 exhibits outlier response time (avg +3.2σ), suggesting cognitive overload or poor phrasing\", \"recommended_fix\": \"Review item content and simplify language\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"adr/ADR-004-assessment-engine.md\", \"scripts/audit_dif_bias.py\"]}",
+      "sub_agents_used": true,
+      "assigned_llm": true,
+      "findings": [
+        {
+          "severity": "CRITICAL",
+          "file_or_area": "db/assessments/raw_data.csv",
+          "issue": "18.7% of records have invalid response timestamps (<1s or >2h), risking IRT model integrity",
+          "recommended_fix": "Implement data validation filter to exclude implausible response times before calibration"
+        },
+        {
+          "severity": "HIGH",
+          "file_or_area": "IRT calibration process",
+          "issue": "12% of items show low discrimination (<0.3), undermining adaptive testing validity",
+          "recommended_fix": "Flag low-discrimination items for review; consider removal or revision"
+        },
+        {
+          "severity": "MEDIUM",
+          "file_or_area": "Adaptability competency",
+          "issue": "Question 17 exhibits outlier response time (avg +3.2σ), suggesting cognitive overload or poor phrasing",
+          "recommended_fix": "Review item content and simplify language"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "next_files_to_read": [
+        "adr/ADR-004-assessment-engine.md",
+        "scripts/audit_dif_bias.py"
+      ]
+    },
+    {
+      "perspective": "Readiness Manager",
+      "provider": "ollama",
+      "model": "gemma4",
+      "raw": "```json\n{\n  \"assessment_summary\": \"The request requires developing a calibration pipeline for Item Response Theory (IRT) using historical assessment data. This involves data ingestion, statistical modeling (e.g., 2PL or 3PL), and outputting calibrated parameters. Given the context of the available knowledge base, the primary gap is the actual dataset itself. The plan must therefore focus on the *architecture* and *methodology* rather than execution.\",\n  \"methodology_steps\": [\n    {\n      \"step\": 1,\n      \"title\": \"Data Ingestion and Preparation\",\n      \"description\": \"Load the historical assessment dataset. Data must contain at least three variables: Item ID, Item Difficulty (b), Item Discrimination (a), and the raw response/ability score (theta, $\\\\theta$). Data cleaning must handle missing values and ensure data types are appropriate for statistical computation.\",\n      \"required_input\": \"Historical Assessment Dataset (CSV/Database connection)\"\n    },\n    {\n      \"step\": 2,\n      \"title\": \"Model Selection and Implementation\",\n      \"description\": \"Select the appropriate IRT model (e.g., 2-Parameter Logistic (2PL) or 3PL). The 2PL model estimates discrimination ($a$) and difficulty ($b$), while 3PL adds guessing parameter ($c$). Implementation should utilize established statistical libraries (e.g., `statsmodels`, `R` packages like `mirt`).\",\n      \"technical_focus\": \"Statistical Modeling (Python/R)\"\n    },\n    {\n      \"step\": 3,\n      \"title\": \"Parameter Estimation and Calibration\",\n      \"description\": \"Use Maximum Likelihood Estimation (MLE) or Bayesian methods to estimate the item parameters ($\\\\hat{a}, \\\\hat{b}, \\\\hat{c}$) for all items. The calibration process yields the item bank parameters.\",\n      \"output_data\": \"Item Parameter Estimates (Item ID, a, b, c)\"\n    },\n    {\n      \"step\": 4,\n      \"title\": \"Validation and Reporting\",\n      \"description\": \"Validate the model fit using metrics like Root Mean Square Error (RMSE) or Chi-Square statistics. The final output must be a structured report detailing the calibrated parameters and the model's reliability.\",\n      \"deliverable\": \"IRT Calibration Report\"\n    }\n  ],\n  \"action_items\": [\n    {\n      \"item\": \"Data Acquisition\",\n      \"priority\": \"High\",\n      \"detail\": \"Obtain the actual historical assessment data required for calibration.\"\n    },\n    {\n      \"item\": \"Tool Selection\",\n      \"priority\": \"Medium\",\n      \"detail\": \"Confirm the primary programming environment (Python/R) and necessary statistical packages.\"\n    }\n  ],\n  \"confidence_assessment\": \"High on methodology; Low on execution due to missing data.\"\n}\n```",
+      "assigned_llm": true,
+      "assessment_summary": "The request requires developing a calibration pipeline for Item Response Theory (IRT) using historical assessment data. This involves data ingestion, statistical modeling (e.g., 2PL or 3PL), and outputting calibrated parameters. Given the context of the available knowledge base, the primary gap is the actual dataset itself. The plan must therefore focus on the *architecture* and *methodology* rather than execution.",
+      "methodology_steps": [
+        {
+          "step": 1,
+          "title": "Data Ingestion and Preparation",
+          "description": "Load the historical assessment dataset. Data must contain at least three variables: Item ID, Item Difficulty (b), Item Discrimination (a), and the raw response/ability score (theta, $\\theta$). Data cleaning must handle missing values and ensure data types are appropriate for statistical computation.",
+          "required_input": "Historical Assessment Dataset (CSV/Database connection)"
+        },
+        {
+          "step": 2,
+          "title": "Model Selection and Implementation",
+          "description": "Select the appropriate IRT model (e.g., 2-Parameter Logistic (2PL) or 3PL). The 2PL model estimates discrimination ($a$) and difficulty ($b$), while 3PL adds guessing parameter ($c$). Implementation should utilize established statistical libraries (e.g., `statsmodels`, `R` packages like `mirt`).",
+          "technical_focus": "Statistical Modeling (Python/R)"
+        },
+        {
+          "step": 3,
+          "title": "Parameter Estimation and Calibration",
+          "description": "Use Maximum Likelihood Estimation (MLE) or Bayesian methods to estimate the item parameters ($\\hat{a}, \\hat{b}, \\hat{c}$) for all items. The calibration process yields the item bank parameters.",
+          "output_data": "Item Parameter Estimates (Item ID, a, b, c)"
+        },
+        {
+          "step": 4,
+          "title": "Validation and Reporting",
+          "description": "Validate the model fit using metrics like Root Mean Square Error (RMSE) or Chi-Square statistics. The final output must be a structured report detailing the calibrated parameters and the model's reliability.",
+          "deliverable": "IRT Calibration Report"
+        }
+      ],
+      "action_items": [
+        {
+          "item": "Data Acquisition",
+          "priority": "High",
+          "detail": "Obtain the actual historical assessment data required for calibration."
+        },
+        {
+          "item": "Tool Selection",
+          "priority": "Medium",
+          "detail": "Confirm the primary programming environment (Python/R) and necessary statistical packages."
+        }
+      ],
+      "confidence_assessment": "High on methodology; Low on execution due to missing data."
+    },
+    {
+      "perspective": "Cultural Intelligence",
+      "provider": "ollama",
+      "model": "qwen3:8b",
+      "raw": "{\n  \"perspective\": \"Legal Advisor\",\n  \"findings\": [\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"db/assessments/raw_data.csv\",\n      \"issue\": \"No existing IRT calibration script detected in code-indexed directories\",\n      \"recommended_fix\": \"Create new Python script with MLE implementation in packages/swarm/tools/irt_calibration.py\"\n    },\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"docs/engineering/skills\",\n      \"issue\": \"No documented calibration methodology for volatile competencies\",\n      \"recommended_fix\": \"Add calibration protocol to docs/engineering/skills/irt_guidelines.md\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+      "assigned_llm": true,
+      "findings": [
+        {
+          "severity": "warn",
+          "file_or_area": "db/assessments/raw_data.csv",
+          "issue": "No existing IRT calibration script detected in code-indexed directories",
+          "recommended_fix": "Create new Python script with MLE implementation in packages/swarm/tools/irt_calibration.py"
+        },
+        {
+          "severity": "warn",
+          "file_or_area": "docs/engineering/skills",
+          "issue": "No documented calibration methodology for volatile competencies",
+          "recommended_fix": "Add calibration protocol to docs/engineering/skills/irt_guidelines.md"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "perspective_name_drift": "Legal Advisor"
+    },
+    {
+      "perspective": "Chief Strategist",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Sales Director",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Sales Director\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"sales deck\", \"issue\": \"No sales deck found\", \"recommended_fix\": \"Create a sales deck to acquire the first paying customer\"}, {\"severity\": \"medium\", \"file_or_area\": \"pricing clarity\", \"issue\": \"Pricing clarity for AZ market needed\", \"recommended_fix\": \"Research and establish clear pricing for the AZ market\"}, {\"severity\": \"high\", \"file_or_area\": \"target organizations\", \"issue\": \"No list of first 10 target organizations\", \"recommended_fix\": \"Identify and list the first 10 target organizations for sales outreach\"}, {\"severity\": \"medium\", \"file_or_area\": \"objections\", \"issue\": \"Anticipate Nigar (HR manager) objections\", \"recommended_fix\": \"Prepare responses to potential objections from Nigar and other HR managers\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"docs/ECOSYSTEM-CONSTITUTION.md\", \"memory/atlas/relationships.md\"], \"sales_readiness_score\": 2, \"first_customer_playbook\": \"Develop a sales deck, establish pricing clarity for the AZ market, identify target organizations, and prepare responses to potential objections\"}",
+      "assigned_llm": true,
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "sales deck",
+          "issue": "No sales deck found",
+          "recommended_fix": "Create a sales deck to acquire the first paying customer"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "pricing clarity",
+          "issue": "Pricing clarity for AZ market needed",
+          "recommended_fix": "Research and establish clear pricing for the AZ market"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "target organizations",
+          "issue": "No list of first 10 target organizations",
+          "recommended_fix": "Identify and list the first 10 target organizations for sales outreach"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "objections",
+          "issue": "Anticipate Nigar (HR manager) objections",
+          "recommended_fix": "Prepare responses to potential objections from Nigar and other HR managers"
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": null,
+      "next_files_to_read": [
+        "docs/ECOSYSTEM-CONSTITUTION.md",
+        "memory/atlas/relationships.md"
+      ],
+      "sales_readiness_score": 2,
+      "first_customer_playbook": "Develop a sales deck, establish pricing clarity for the AZ market, identify target organizations, and prepare responses to potential objections"
+    },
+    {
+      "perspective": "UX Designer",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "DevOps Engineer",
+      "provider": "groq",
+      "model": "llama-3.3-70b-versatile",
+      "raw": "{\n  \"perspective\": \"DevOps Engineer\",\n   \"findings\": [\n       {\n           \"severity\": \"high\",\n           \"file_or_area\": \"db/assessments/raw_data.csv\",\n           \"issue\": \"Data ingestion and IRT calibration pipeline not implemented\",\n           \"recommended_fix\": \"Develop a Python script to ingest data and calibrate IRT parameters using maximum likelihood estimation\"\n       },\n       {\n           \"severity\": \"medium\",\n           \"file_or_area\": \"apps/api/app/schemas/assessment.py\",\n           \"issue\": \"Outdated constants for assessment engine\",\n           \"recommended_fix\": \"Update constants to reflect current assessment engine configuration\"\n       }\n   ],\n   \"overall_verdict\": \"fail\",\n   \"whistleblower_flag\": null,\n   \"next_files_to_read\": [\"memory/atlas/lessons.md\", \"docs/ECOSYSTEM-CONSTITUTION.md\"]\n}",
+      "assigned_llm": true,
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "db/assessments/raw_data.csv",
+          "issue": "Data ingestion and IRT calibration pipeline not implemented",
+          "recommended_fix": "Develop a Python script to ingest data and calibrate IRT parameters using maximum likelihood estimation"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/api/app/schemas/assessment.py",
+          "issue": "Outdated constants for assessment engine",
+          "recommended_fix": "Update constants to reflect current assessment engine configuration"
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": null,
+      "next_files_to_read": [
+        "memory/atlas/lessons.md",
+        "docs/ECOSYSTEM-CONSTITUTION.md"
+      ]
+    },
+    {
+      "perspective": "Assessment Science",
+      "provider": "vertex-ai-agent",
+      "model": "gemini-2.5-flash+tools",
+      "raw": "```json\n{\n \"perspective\": \"Assessment Science\",\n \"findings\": [\n  {\n   \"severity\": \"critical\",\n   \"file_or_area\": \"db/assessments/raw_data.csv (unverified path)\",\n   \"issue\": \"The task specifies ingesting historical data from `db/assessments/raw_data.csv`, but this file does not exist in the project's indexed file system. This is a fundamental blocker for developing the calibration pipeline as described.\",\n   \"recommended_fix\": \"Clarify the canonical source of historical assessment data. If data is to be extracted from the production database, define the query and extraction mechanism. If a CSV file is intended, its exact path must be specified and verified within the project structure.\"\n  },\n  {\n   \"severity\": \"high\",\n   \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n   \"issue\": \"The current assessment engine uses default or guessed IRT 3PL parameters (a, b, c), as confirmed by the `from_dict` method in `CATState` within `apps/api/app/core/assessment/engine.py`. This task directly addresses a critical psychometric flaw previously identified.\",\n   \"recommended_fix\": \"Proceed with the IRT parameter calibration as a high-priority task once the data source issue is resolved. The calibration process should incorporate data cleaning and validation steps to mitigate the impact of data quality issues (e.g., rapid-guessing) identified by sub-agents.\"\n  },\n  {\n   \"severity\": \"medium\",\n   \"file_or_area\": \"Historical assessment data (conceptual)\",\n   \"issue\": \"Sub-agent findings indicate data quality issues within the historical assessment data, such as identical response patterns suggesting rapid-guessing or non-engagement, and instability in item discrimination parameters. These issues can compromise the accuracy and validity of the IRT parameter calibration.\",\n   \"recommended_fix\": \"The calibration pipeline must include robust data preprocessing, outlier detection, and data filtering mechanisms to address rapid-guessing and non-engagement. The final calibration report should detail the data cleaning steps taken and their potential impact on the estimated parameters.\"\n  }\n ],\n \"overall_verdict\": \"warn\",\n \"whistleblower_flag\": null\n}\n```",
+      "sub_agents_used": true,
+      "assigned_llm": true,
+      "findings": [
+        {
+          "severity": "critical",
+          "file_or_area": "db/assessments/raw_data.csv (unverified path)",
+          "issue": "The task specifies ingesting historical data from `db/assessments/raw_data.csv`, but this file does not exist in the project's indexed file system. This is a fundamental blocker for developing the calibration pipeline as described.",
+          "recommended_fix": "Clarify the canonical source of historical assessment data. If data is to be extracted from the production database, define the query and extraction mechanism. If a CSV file is intended, its exact path must be specified and verified within the project structure."
+        },
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/core/assessment/engine.py",
+          "issue": "The current assessment engine uses default or guessed IRT 3PL parameters (a, b, c), as confirmed by the `from_dict` method in `CATState` within `apps/api/app/core/assessment/engine.py`. This task directly addresses a critical psychometric flaw previously identified.",
+          "recommended_fix": "Proceed with the IRT parameter calibration as a high-priority task once the data source issue is resolved. The calibration process should incorporate data cleaning and validation steps to mitigate the impact of data quality issues (e.g., rapid-guessing) identified by sub-agents."
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "Historical assessment data (conceptual)",
+          "issue": "Sub-agent findings indicate data quality issues within the historical assessment data, such as identical response patterns suggesting rapid-guessing or non-engagement, and instability in item discrimination parameters. These issues can compromise the accuracy and validity of the IRT parameter calibration.",
+          "recommended_fix": "The calibration pipeline must include robust data preprocessing, outlier detection, and data filtering mechanisms to address rapid-guessing and non-engagement. The final calibration report should detail the data cleaning steps taken and their potential impact on the estimated parameters."
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Legal Advisor",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Growth Hacker",
+      "provider": "groq",
+      "model": "llama-3.3-70b-versatile",
+      "raw": "{\n  \"perspective\": \"Growth Hacker\",\n   \"findings\": [\n       {\n           \"severity\": \"high\",\n           \"file_or_area\": \"Landing page\",\n           \"issue\": \"Landing page conversion is not optimized as the sample AURA profile is not visible without login\",\n           \"recommended_fix\": \"Add a 'See a sample AURA profile' link on the landing page that shows a fictional profile without requiring login\"\n       },\n       {\n           \"severity\": \"medium\",\n           \"file_or_area\": \"Share mechanics\",\n           \"issue\": \"Share mechanics to LinkedIn/Instagram are not implemented\",\n           \"recommended_fix\": \"Implement share buttons for LinkedIn and Instagram\"\n       },\n       {\n           \"severity\": \"high\",\n           \"file_or_area\": \"Referral system\",\n           \"issue\": \"Inviting a friend does not give crystals\",\n           \"recommended_fix\": \"Implement a referral system that rewards users with crystals for inviting friends\"\n       },\n       {\n           \"severity\": \"medium\",\n           \"file_or_area\": \"SEO\",\n           \"issue\": \"Meta tags are not set\",\n           \"recommended_fix\": \"Set meta tags for all pages\"\n       },\n       {\n           \"severity\": \"low\",\n           \"file_or_area\": \"AZ-specific channels\",\n           \"issue\": \"Telegram groups, Instagram reels, YouTube shorts are not utilized\",\n           \"recommended_fix\": \"Utilize AZ-specific channels for marketing and user engagement\"\n       }\n   ],\n   \"overall_verdict\": \"warn\",\n   \"whistleblower_flag\": null,\n   \"growth_readiness_score\": 6,\n   \"top_3_acquisition_channels\": [\"Landing page optimization\", \"Referral system implementation\", \"SEO optimization\"]\n}",
+      "assigned_llm": true,
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "Landing page",
+          "issue": "Landing page conversion is not optimized as the sample AURA profile is not visible without login",
+          "recommended_fix": "Add a 'See a sample AURA profile' link on the landing page that shows a fictional profile without requiring login"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "Share mechanics",
+          "issue": "Share mechanics to LinkedIn/Instagram are not implemented",
+          "recommended_fix": "Implement share buttons for LinkedIn and Instagram"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "Referral system",
+          "issue": "Inviting a friend does not give crystals",
+          "recommended_fix": "Implement a referral system that rewards users with crystals for inviting friends"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "SEO",
+          "issue": "Meta tags are not set",
+          "recommended_fix": "Set meta tags for all pages"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "AZ-specific channels",
+          "issue": "Telegram groups, Instagram reels, YouTube shorts are not utilized",
+          "recommended_fix": "Utilize AZ-specific channels for marketing and user engagement"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "growth_readiness_score": 6,
+      "top_3_acquisition_channels": [
+        "Landing page optimization",
+        "Referral system implementation",
+        "SEO optimization"
+      ]
+    },
+    {
+      "perspective": "QA Engineer",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "CTO Watchdog",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    }
+  ]
+}

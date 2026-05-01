@@ -1,0 +1,20 @@
+{
+  "perspective": "Risk Manager",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"src/assessment/irt_calibration.py\", \"issue\": \"Hardcoded IRT parameters (a=1.5, b=0.0, c=0.25) without calibration from historical data\", \"recommended_fix\": \"Implement a data-driven calibration pipeline using historical assessment data to determine optimal IRT parameters\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"null\", \"next_files_to_read\": [\"docs/ECOSYSTEM-CONSTITUTION.md\", \"docs/research/ECOSYSTEM-REDESIGN-BRIEF-2026-04-14.md\"]}",
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "src/assessment/irt_calibration.py",
+      "issue": "Hardcoded IRT parameters (a=1.5, b=0.0, c=0.25) without calibration from historical data",
+      "recommended_fix": "Implement a data-driven calibration pipeline using historical assessment data to determine optimal IRT parameters"
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "null",
+  "next_files_to_read": [
+    "docs/ECOSYSTEM-CONSTITUTION.md",
+    "docs/research/ECOSYSTEM-REDESIGN-BRIEF-2026-04-14.md"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Cultural Intelligence\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"packages/swarm/archive/code_index.py\", \"issue\": \"code-index.json is empty despite recent build\", \"recommended_fix\": \"Rebuild index, verify code_index.py is not accidentally archived\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"memory/swarm/code-index.json\", \"packages/swarm/archive/code_index.py\"]}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "packages/swarm/archive/code_index.py",
+      "issue": "code-index.json is empty despite recent build",
+      "recommended_fix": "Rebuild index, verify code_index.py is not accidentally archived"
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null,
+  "next_files_to_read": [
+    "memory/swarm/code-index.json",
+    "packages/swarm/archive/code_index.py"
+  ]
+}

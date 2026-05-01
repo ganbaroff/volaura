@@ -1,0 +1,32 @@
+{
+  "perspective": "Readiness Manager",
+  "provider": "ollama",
+  "model": "gemma4",
+  "raw": "```json\n{\n  \"analysis\": {\n    \"task_description\": \"Review the data pipeline for IRT calibration, focusing on data flow, necessary components, and potential weaknesses.\",\n    \"key_areas_to_investigate\": [\n      \"Data Ingestion Source (Raw Data)\",\n      \"Data Preprocessing/Cleaning (Handling Missingness, Outliers)\",\n      \"IRT Model Selection/Implementation (e.g., 2PL, 3PL)\",\n      \"Calibration/Estimation Process (Maximum Likelihood Estimation, EM Algorithm)\",\n      \"Output/Validation (Report Generation, Model Fit Statistics)\"\n    ],\n    \"potential_weaknesses_identified\": [\n      \"Data linkage integrity between raw scores and demographic variables.\",\n      \"Assumptions validation (e.g., unidimensionality, local independence) must be explicitly coded and tested.\",\n      \"Handling of item response data sparsity or extreme item difficulty.\",\n      \"Version control for the underlying IRT model parameters and statistical packages used.\"\n    ]\n  },\n  \"recommendation\": {\n    \"action_items\": [\n      \"Map the end-to-end data flow diagram, explicitly labeling transformation steps.\",\n      \"Implement automated checks for model assumption violations before running the primary calibration.\",\n      \"Establish a dedicated validation dataset (hold-out set) to test the final calibrated parameters.\"\n    ],\n    \"confidence_level\": \"High\",\n    \"next_steps\": \"Request access to the data pipeline documentation and the primary statistical script for review.\"\n  }\n}\n```",
+  "assigned_llm": true,
+  "analysis": {
+    "task_description": "Review the data pipeline for IRT calibration, focusing on data flow, necessary components, and potential weaknesses.",
+    "key_areas_to_investigate": [
+      "Data Ingestion Source (Raw Data)",
+      "Data Preprocessing/Cleaning (Handling Missingness, Outliers)",
+      "IRT Model Selection/Implementation (e.g., 2PL, 3PL)",
+      "Calibration/Estimation Process (Maximum Likelihood Estimation, EM Algorithm)",
+      "Output/Validation (Report Generation, Model Fit Statistics)"
+    ],
+    "potential_weaknesses_identified": [
+      "Data linkage integrity between raw scores and demographic variables.",
+      "Assumptions validation (e.g., unidimensionality, local independence) must be explicitly coded and tested.",
+      "Handling of item response data sparsity or extreme item difficulty.",
+      "Version control for the underlying IRT model parameters and statistical packages used."
+    ]
+  },
+  "recommendation": {
+    "action_items": [
+      "Map the end-to-end data flow diagram, explicitly labeling transformation steps.",
+      "Implement automated checks for model assumption violations before running the primary calibration.",
+      "Establish a dedicated validation dataset (hold-out set) to test the final calibrated parameters."
+    ],
+    "confidence_level": "High",
+    "next_steps": "Request access to the data pipeline documentation and the primary statistical script for review."
+  }
+}

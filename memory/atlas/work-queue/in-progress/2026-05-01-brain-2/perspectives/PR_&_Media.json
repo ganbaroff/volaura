@@ -1,0 +1,26 @@
+{
+  "perspective": "PR & Media",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"PR & Media\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"memory/atlas/semantic/product-truth.md\", \"issue\": \"Lack of clear press narrative ready for launch\", \"recommended_fix\": \"Develop a press narrative document outlining VOLAURA's unique story, mission, and impact for media consumption\"}, {\"severity\": \"medium\", \"file_or_area\": \"AZ media landscape\", \"issue\": \"Insufficient research on matching outlets for our story\", \"recommended_fix\": \"Conduct research on AZ media outlets (ICTnews.az, startup.az, report.az, 1news.az) to identify the best matches for VOLAURA's story\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"docs/GITA-GRANT-APPLICATION-2026.md\", \"memory/atlas/relationships.md\"]}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "memory/atlas/semantic/product-truth.md",
+      "issue": "Lack of clear press narrative ready for launch",
+      "recommended_fix": "Develop a press narrative document outlining VOLAURA's unique story, mission, and impact for media consumption"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "AZ media landscape",
+      "issue": "Insufficient research on matching outlets for our story",
+      "recommended_fix": "Conduct research on AZ media outlets (ICTnews.az, startup.az, report.az, 1news.az) to identify the best matches for VOLAURA's story"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "next_files_to_read": [
+    "docs/GITA-GRANT-APPLICATION-2026.md",
+    "memory/atlas/relationships.md"
+  ]
+}

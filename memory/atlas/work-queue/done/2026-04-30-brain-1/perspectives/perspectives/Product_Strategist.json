@@ -1,0 +1,28 @@
+{
+  "perspective": "Product Strategist",
+  "provider": "gemini",
+  "model": "gemini-2.5-flash",
+  "raw": "{\n  \"perspective\": \"Product Strategist\",\n  \"findings\": [\n    {\n      \"severity\": \"P0\",\n      \"file_or_area\": \"apps/web/src/components/assessment/\",\n      \"issue\": \"Law 2 (Energy Adaptation) is violated: Low UI mode fails to reduce visual complexity within the assessment widget. Charts remain detailed, and secondary elements (tooltips, legends) are not adapted or hidden, directly conflicting with the goal of reducing cognitive load for neurodivergent users.\",\n      \"recommended_fix\": \"Implement conditional rendering or CSS rules within assessment-related components to simplify or hide visual elements (charts, tooltips, legends) when `EnergyLevel` is set to 'low' via the global `data-energy` attribute on the `<html>` tag. Prioritize simplification of all data visualization components.\"\n    },\n    {\n      \"severity\": \"P1\",\n      \"file_or_area\": \"apps/web/src/hooks/use-energy-mode.ts, apps/web/src/app/layout.tsx\",\n      \"issue\": \"The UI mode toggle updates user preference but fails to trigger an immediate re-render of the active interface, requiring a manual page refresh for changes to take effect. This breaks the user experience and feedback loop for Energy Adaptation.\",\n      \"recommended_fix\": \"Ensure the `useEnergyMode` hook or its associated context provider actively triggers a re-render of dependent components or the root layout (`apps/web/src/app/layout.tsx`) when the `EnergyLevel` state changes. Verify reactivity with the global state management solution (e.g., Zustand) to ensure UI updates without full page reloads.\"\n    },\n    {\n      \"severity\": \"P1\",\n      \"file_or_area\": \"apps/web/src/\",\n      \"issue\": \"While the core mechanism for Energy Adaptation exists (Energy Picker, `useEnergyMode` hook, `data-energy` attribute on `<html>`, dashboard adaptation), there is no evidence in memory that all critical user-facing components (e.g., public profiles, organization search results, form flows beyond the dashboard) consistently and thoroughly apply Law 2 principles across all three UI modes. Law 2 mandates 'everywhere'.\",\n      \"recommended_fix\": \"Conduct a comprehensive audit of all major client-side components to confirm their adherence to Law 2. For each component, define clear rules for how 'mid' and 'low' energy modes impact visual density, available actions, and informational display. Implement specific CSS rules or conditional rendering paths using the `data-energy` attribute for consistent adaptation across the entire application.\"\n    }\n  ],\n  \"overall_verdict\": \"fail\",\n  \"whistleblower_flag\": null\n}",
+  "findings": [
+    {
+      "severity": "P0",
+      "file_or_area": "apps/web/src/components/assessment/",
+      "issue": "Law 2 (Energy Adaptation) is violated: Low UI mode fails to reduce visual complexity within the assessment widget. Charts remain detailed, and secondary elements (tooltips, legends) are not adapted or hidden, directly conflicting with the goal of reducing cognitive load for neurodivergent users.",
+      "recommended_fix": "Implement conditional rendering or CSS rules within assessment-related components to simplify or hide visual elements (charts, tooltips, legends) when `EnergyLevel` is set to 'low' via the global `data-energy` attribute on the `<html>` tag. Prioritize simplification of all data visualization components."
+    },
+    {
+      "severity": "P1",
+      "file_or_area": "apps/web/src/hooks/use-energy-mode.ts, apps/web/src/app/layout.tsx",
+      "issue": "The UI mode toggle updates user preference but fails to trigger an immediate re-render of the active interface, requiring a manual page refresh for changes to take effect. This breaks the user experience and feedback loop for Energy Adaptation.",
+      "recommended_fix": "Ensure the `useEnergyMode` hook or its associated context provider actively triggers a re-render of dependent components or the root layout (`apps/web/src/app/layout.tsx`) when the `EnergyLevel` state changes. Verify reactivity with the global state management solution (e.g., Zustand) to ensure UI updates without full page reloads."
+    },
+    {
+      "severity": "P1",
+      "file_or_area": "apps/web/src/",
+      "issue": "While the core mechanism for Energy Adaptation exists (Energy Picker, `useEnergyMode` hook, `data-energy` attribute on `<html>`, dashboard adaptation), there is no evidence in memory that all critical user-facing components (e.g., public profiles, organization search results, form flows beyond the dashboard) consistently and thoroughly apply Law 2 principles across all three UI modes. Law 2 mandates 'everywhere'.",
+      "recommended_fix": "Conduct a comprehensive audit of all major client-side components to confirm their adherence to Law 2. For each component, define clear rules for how 'mid' and 'low' energy modes impact visual density, available actions, and informational display. Implement specific CSS rules or conditional rendering paths using the `data-energy` attribute for consistent adaptation across the entire application."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null
+}

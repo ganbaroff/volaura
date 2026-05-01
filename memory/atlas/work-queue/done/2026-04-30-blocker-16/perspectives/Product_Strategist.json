@@ -1,0 +1,23 @@
+{
+  "perspective": "Product Strategist",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Product Strategist\", \"findings\": [{\"severity\": \"P0\", \"file_or_area\": \"apps/api/app/assessment/engine.py\", \"issue\": \"MIRT upgrade not implemented — still using 8 independent 3PL models\", \"recommended_fix\": \"Rewrite assessment engine to use multidimensional IRT with competency loadings. Create new model file: `models/mirt_model.py`. Update engine to unify scoring logic and generate composite AURA score with dimension weights.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Migrating to MIRT is critical for score validity. Delaying risks user distrust in AURA score integrity.\", \"next_files_to_read\": [\"apps/api/app/assessment/engine.py\", \"models/mirt_model.py\", \"adr/ADR-004-assessment-engine.md\"]}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "P0",
+      "file_or_area": "apps/api/app/assessment/engine.py",
+      "issue": "MIRT upgrade not implemented — still using 8 independent 3PL models",
+      "recommended_fix": "Rewrite assessment engine to use multidimensional IRT with competency loadings. Create new model file: `models/mirt_model.py`. Update engine to unify scoring logic and generate composite AURA score with dimension weights."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "Migrating to MIRT is critical for score validity. Delaying risks user distrust in AURA score integrity.",
+  "next_files_to_read": [
+    "apps/api/app/assessment/engine.py",
+    "models/mirt_model.py",
+    "adr/ADR-004-assessment-engine.md"
+  ]
+}

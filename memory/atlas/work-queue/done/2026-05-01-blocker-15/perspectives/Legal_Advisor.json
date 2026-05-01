@@ -1,0 +1,17 @@
+{
+  "perspective": "Legal Advisor",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Legal Advisor\", \"findings\": [{\"severity\": \"BLOCK\", \"file_or_area\": \"apps/api/app/routers/assessment.py\", \"issue\": \"Insufficient or non-existent consent flow for automated decision-making under GDPR Article 22\", \"recommended_fix\": \"Implement explicit consent flow for automated decision-making, ensuring compliance with GDPR Article 22\"}], \"overall_verdict\": \"BLOCK\", \"whistleblower_flag\": null}",
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "BLOCK",
+      "file_or_area": "apps/api/app/routers/assessment.py",
+      "issue": "Insufficient or non-existent consent flow for automated decision-making under GDPR Article 22",
+      "recommended_fix": "Implement explicit consent flow for automated decision-making, ensuring compliance with GDPR Article 22"
+    }
+  ],
+  "overall_verdict": "BLOCK",
+  "whistleblower_flag": null
+}

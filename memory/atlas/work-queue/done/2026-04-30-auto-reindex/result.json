@@ -1,0 +1,21 @@
+{
+  "task_id": "2026-04-30-auto-reindex",
+  "executor": "rebuild_code_index",
+  "execution_state": {
+    "task_id": "2026-04-30-auto-reindex",
+    "task_title": "Auto-rebuild stale code-index",
+    "max_retries": 3,
+    "state": "success",
+    "attempt": 1,
+    "errors": [],
+    "strategies_used": [],
+    "result": {
+      "status": "ok",
+      "total_files": 1064
+    },
+    "started_at": "2026-04-30T21:37:11.281121+00:00",
+    "completed_at": "2026-04-30T21:37:14.251879+00:00"
+  },
+  "status": "ok",
+  "total_files": 1064
+}

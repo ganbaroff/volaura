@@ -1,0 +1,8 @@
+{
+  "perspective": "Assessment Science",
+  "provider": "vertex-ai-agent",
+  "model": "gemini-2.5-flash+tools",
+  "raw": "```json\n{\n  \"perspective\": \"Assessment Science\",\n  \"findings\": [\n    {\n      \"severity\": \"critical\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"The core assessment engine file, `apps/api/app/core/assessment/engine.py`, which is explicitly referenced in my specialty lens for psychometric validation, was not provided in the context. This prevents me from verifying critical psychometric aspects such as IRT 3PL parameters (a, b, c) calibration, CAT stopping rules, and temporal decay rationale, directly impacting the assessment of AURA's psychometric soundness.\",\n      \"recommended_fix\": \"Add a",
+  "sub_agents_used": true,
+  "assigned_llm": true
+}

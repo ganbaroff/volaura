@@ -1,0 +1,29 @@
+{
+  "perspective": "Ecosystem Auditor",
+  "provider": "vertex-ai-agent",
+  "model": "gemini-2.5-flash+tools",
+  "raw": "```json\n{\n  \"perspective\": \"Ecosystem Auditor\",\n  \"findings\": [\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"Public Profile components\",\n      \"issue\": \"Law 2: Energy Adaptation is confirmed implemented for dashboard, TopBar, settings, and assessment variants. However, `PRE-LAUNCH-BLOCKERS-STATUS.md` does not explicitly confirm that public profile components (referenced under item #18, `/u/[username]`) also conditionally render based on the `EnergyLevel` state, violating Foundation Law 2's 'ALL FIVE' product scope if not addressed.\",\n      \"recommended_fix\": \"Verify that public profile components (e.g., `apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx` or `apps/web/src/components/landing/sample-aura-preview.tsx` for relevant sections) correctly utilize the `data-energy` attribute on `<html>` or the `useEnergyMode` hook to adapt their UI for all three energy modes (Full, Mid, Low).\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"Organization Search components\",\n      \"issue\": \"The implementation status of Law 2: Energy Adaptation for 'organization search' functionality is unconfirmed. The provided documentation (including `PRE-LAUNCH-BLOCKERS-STATUS.md`) does not specify whether this feature respects the three UI modes based on `EnergyLevel`, which would be a compliance gap against Foundation Law 2's mandate for 'ALL FIVE' products.\",\n      \"recommended_fix\": \"Identify all components related to organization search within `apps/web/src`. Audit these components to ensure they implement conditional rendering and UI adaptation consistent with Law 2, leveraging `data-energy` or `useEnergyMode`.\"\n    },\n    {\n      \"severity\": \"critical\",\n      \"file_or_area\": \"Sub-Agent Findings Accuracy\",\n      \"issue\": \"Sub-agent reports referenced `frontend/src/components/Layout.jsx`. This file path is not present in the provided `CODE-INDEX SUMMARY`, indicating a potential misdirection or reliance on an outdated codebase snapshot by the sub-agents. This affects the reliability of their analyses and could lead to wasted effort.\",\n      \"recommended_fix\": \"Cross-reference all sub-agent claims against the canonical `CODE-INDEX SUMMARY` to prevent auditing non-existent or incorrect file paths. Recalibrate sub-agents to ensure they operate strictly within the provided project context.\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}\n```",
+  "sub_agents_used": true,
+  "findings": [
+    {
+      "severity": "medium",
+      "file_or_area": "Public Profile components",
+      "issue": "Law 2: Energy Adaptation is confirmed implemented for dashboard, TopBar, settings, and assessment variants. However, `PRE-LAUNCH-BLOCKERS-STATUS.md` does not explicitly confirm that public profile components (referenced under item #18, `/u/[username]`) also conditionally render based on the `EnergyLevel` state, violating Foundation Law 2's 'ALL FIVE' product scope if not addressed.",
+      "recommended_fix": "Verify that public profile components (e.g., `apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx` or `apps/web/src/components/landing/sample-aura-preview.tsx` for relevant sections) correctly utilize the `data-energy` attribute on `<html>` or the `useEnergyMode` hook to adapt their UI for all three energy modes (Full, Mid, Low)."
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "Organization Search components",
+      "issue": "The implementation status of Law 2: Energy Adaptation for 'organization search' functionality is unconfirmed. The provided documentation (including `PRE-LAUNCH-BLOCKERS-STATUS.md`) does not specify whether this feature respects the three UI modes based on `EnergyLevel`, which would be a compliance gap against Foundation Law 2's mandate for 'ALL FIVE' products.",
+      "recommended_fix": "Identify all components related to organization search within `apps/web/src`. Audit these components to ensure they implement conditional rendering and UI adaptation consistent with Law 2, leveraging `data-energy` or `useEnergyMode`."
+    },
+    {
+      "severity": "critical",
+      "file_or_area": "Sub-Agent Findings Accuracy",
+      "issue": "Sub-agent reports referenced `frontend/src/components/Layout.jsx`. This file path is not present in the provided `CODE-INDEX SUMMARY`, indicating a potential misdirection or reliance on an outdated codebase snapshot by the sub-agents. This affects the reliability of their analyses and could lead to wasted effort.",
+      "recommended_fix": "Cross-reference all sub-agent claims against the canonical `CODE-INDEX SUMMARY` to prevent auditing non-existent or incorrect file paths. Recalibrate sub-agents to ensure they operate strictly within the provided project context."
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

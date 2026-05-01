@@ -1,0 +1,13 @@
+{
+  "perspective": "Growth Hacker",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "raw": "{\n  \"perspective\": \"Growth Hacker\",\n   \"response\": \"Landing page conversion is not optimized as the sample AURA profile is not visible without login. Share mechanics to LinkedIn/Instagram are not implemented. Referral system does not give crystals. SEO meta tags are set, but sitemap.xml is not live. AZ-specific channels like Telegram groups, Instagram reels, and YouTube shorts are not utilized. First 100 users plan is unclear. Growth readiness score: 2/10. Top 3 acquisition channels: 1) Influencer partnerships, 2) Paid social media ads, 3) Content marketing.\",\n   \"whistleblower_flag\": null,\n   \"next_files_to_read\": [\"memory/atlas/lessons.md\", \"docs/ECOSYSTEM-CONSTITUTION.md\"]\n}",
+  "assigned_llm": true,
+  "response": "Landing page conversion is not optimized as the sample AURA profile is not visible without login. Share mechanics to LinkedIn/Instagram are not implemented. Referral system does not give crystals. SEO meta tags are set, but sitemap.xml is not live. AZ-specific channels like Telegram groups, Instagram reels, and YouTube shorts are not utilized. First 100 users plan is unclear. Growth readiness score: 2/10. Top 3 acquisition channels: 1) Influencer partnerships, 2) Paid social media ads, 3) Content marketing.",
+  "whistleblower_flag": null,
+  "next_files_to_read": [
+    "memory/atlas/lessons.md",
+    "docs/ECOSYSTEM-CONSTITUTION.md"
+  ]
+}

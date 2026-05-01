@@ -1,0 +1,22 @@
+{
+  "perspective": "Product Strategist",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Product Strategist\", \"findings\": [{\"file_path\": \"apps/api/app/routers/auth.py\", \"what_exists\": \"Auth endpoints for register, login, logout, password reset, email verification, and user data export. Uses Supabase Auth, rate limiting, HMAC verification for Telegram, and validates GDPR/age consent.\", \"what_it_does\": \"Handles authentication flow with security controls: input validation, rate limiting (5/min), Supabase integration, and metadata capture for compliance. Exposes /me for profile fetch, /export for data download.\", \"quality_assessment\": \"High. Clean FastAPI structure, proper error handling, security-first (rate limits, input checks). Passes code review. Minor: some unused imports (e.g., `re` partially unused), `field_validator` logic could be simplified. No dead code.\"}], \"summary\": \"Auth system is robust and Constitution-compliant. No critical bugs. Security and GDPR are properly addressed. Minor code hygiene improvements possible.\", \"next_files_to_read\": [\"apps/api/app/routers/profile.py\", \"apps/web/src/hooks/use-auth.ts\"], \"whistleblower_flag\": null}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "file_path": "apps/api/app/routers/auth.py",
+      "what_exists": "Auth endpoints for register, login, logout, password reset, email verification, and user data export. Uses Supabase Auth, rate limiting, HMAC verification for Telegram, and validates GDPR/age consent.",
+      "what_it_does": "Handles authentication flow with security controls: input validation, rate limiting (5/min), Supabase integration, and metadata capture for compliance. Exposes /me for profile fetch, /export for data download.",
+      "quality_assessment": "High. Clean FastAPI structure, proper error handling, security-first (rate limits, input checks). Passes code review. Minor: some unused imports (e.g., `re` partially unused), `field_validator` logic could be simplified. No dead code."
+    }
+  ],
+  "summary": "Auth system is robust and Constitution-compliant. No critical bugs. Security and GDPR are properly addressed. Minor code hygiene improvements possible.",
+  "next_files_to_read": [
+    "apps/api/app/routers/profile.py",
+    "apps/web/src/hooks/use-auth.ts"
+  ],
+  "whistleblower_flag": null
+}

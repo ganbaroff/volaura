@@ -1,0 +1,24 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Legal Advisor\",\n  \"findings\": [\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"docs/design/ECOSYSTEM-REDESIGN-2026-04-15\",\n      \"issue\": \"Law 2 Energy Adaptation missing 4/5 products (convergent flags: 6)\",\n      \"recommended_fix\": \"Verify implementation in memory/swarm/skills/*.md and docs/engineering/skills/*.md\"\n    },\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"memory/swarm/research\",\n      \"issue\": \"No direct reference to Energy Adaptation in code-indexed files\",\n      \"recommended_fix\": \"Cross-check with docs/research/az-capital-crisis-2026/*.md\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "warn",
+      "file_or_area": "docs/design/ECOSYSTEM-REDESIGN-2026-04-15",
+      "issue": "Law 2 Energy Adaptation missing 4/5 products (convergent flags: 6)",
+      "recommended_fix": "Verify implementation in memory/swarm/skills/*.md and docs/engineering/skills/*.md"
+    },
+    {
+      "severity": "warn",
+      "file_or_area": "memory/swarm/research",
+      "issue": "No direct reference to Energy Adaptation in code-indexed files",
+      "recommended_fix": "Cross-check with docs/research/az-capital-crisis-2026/*.md"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Legal Advisor"
+}

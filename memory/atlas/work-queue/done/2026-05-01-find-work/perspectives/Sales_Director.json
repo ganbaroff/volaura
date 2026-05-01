@@ -1,0 +1,17 @@
+{
+  "perspective": "Sales Director",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Sales Director\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"memory/atlas/semantic/product-truth.md\", \"issue\": \"No sales deck found for acquiring the first paying customer\", \"recommended_fix\": \"Create a sales deck based on the product truth and CEO vision\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "memory/atlas/semantic/product-truth.md",
+      "issue": "No sales deck found for acquiring the first paying customer",
+      "recommended_fix": "Create a sales deck based on the product truth and CEO vision"
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null
+}

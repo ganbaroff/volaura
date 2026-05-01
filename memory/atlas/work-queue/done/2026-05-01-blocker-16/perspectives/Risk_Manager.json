@@ -1,0 +1,22 @@
+{
+  "perspective": "Risk Manager",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"apps/api/app/models/assessment.py\", \"issue\": \"MIRT upgrade not implemented — still using 8 independent 3PL IRT models instead of unified multidimensional model. Violates research-backed design for psychometric validity.\", \"recommended_fix\": \"Rewrite assessment engine to implement 1 multidimensional IRT model with competency loadings. Estimated: 300-400 lines across models/, services/, and evaluation modules. Requires parameter re-estimation on historical data.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"The current scoring model inflates dimension independence, risking AURA score invalidity under audit. This undermines VOLAURA's core value proposition.\", \"next_files_to_read\": [\"apps/api/app/models/assessment.py\", \"apps/api/app/services/evaluation.py\"]}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "apps/api/app/models/assessment.py",
+      "issue": "MIRT upgrade not implemented — still using 8 independent 3PL IRT models instead of unified multidimensional model. Violates research-backed design for psychometric validity.",
+      "recommended_fix": "Rewrite assessment engine to implement 1 multidimensional IRT model with competency loadings. Estimated: 300-400 lines across models/, services/, and evaluation modules. Requires parameter re-estimation on historical data."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "The current scoring model inflates dimension independence, risking AURA score invalidity under audit. This undermines VOLAURA's core value proposition.",
+  "next_files_to_read": [
+    "apps/api/app/models/assessment.py",
+    "apps/api/app/services/evaluation.py"
+  ]
+}

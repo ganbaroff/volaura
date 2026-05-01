@@ -1,0 +1,68 @@
+{
+  "perspective": "Readiness Manager",
+  "provider": "ollama",
+  "model": "gemma4",
+  "raw": "```json\n{\n  \"audit_report\": [\n    {\n      \"perspective\": \"Frontend/UX Consistency\",\n      \"findings\": [\n        {\n          \"severity\": \"Medium\",\n          \"description\": \"The color palette definitions for primary/secondary actions are spread across multiple files (e.g., CSS variables, component props). Centralizing these variables in a single theme provider or design token file would improve maintainability and ensure visual consistency across all future components.\",\n          \"location\": \"Theming/Design Tokens\",\n          \"recommendation\": \"Create a global `theme.js` or `design-tokens.css` file to house all core colors, spacing units, and typography scales. Reference this single source of truth everywhere.\"\n        },\n        {\n          \"severity\": \"Low\",\n          \"description\": \"Error message presentation varies. Some use inline red text, others use dedicated alert components. Standardizing the error component (e.g., `<ErrorDisplay message={msg} type={type} />`) will provide a unified, accessible user experience.\",\n          \"location\": \"UI Components\",\n          \"recommendation\": \"Audit all forms and modals to ensure they use the standardized error component.\"\n        }\n      ]\n    },\n    {\n      \"perspective\": \"Backend/API Design & Security\",\n      \"findings\": [\n        {\n          \"severity\": \"High\",\n          \"description\": \"Authentication endpoints (`/api/auth/login`, `/api/auth/refresh`) do not appear to enforce rate limiting robustly enough. This is a primary vector for brute-force and credential stuffing attacks.\",\n          \"location\": \"Auth Middleware\",\n          \"recommendation\": \"Implement strict rate limiting (e.g., 5 attempts per IP/user per 15 minutes) on all login and password reset endpoints. Consider using CAPTCHA integration.\"\n        },\n        {\n          \"severity\": \"Medium\",\n          \"description\": \"Input validation for user-submitted data (especially profile updates or search queries) needs to be consistently applied server-side. Relying solely on client-side validation is insufficient.\",\n          \"location\": \"API Controllers\",\n          \"recommendation\": \"Use a centralized validation library (like Joi or class-validator) on all incoming request bodies and query parameters to sanitize and validate data types/lengths before business logic execution.\"\n        }\n      ]\n    },\n    {\n      \"perspective\": \"Performance/Optimization\",\n      \"findings\": [\n        {\n          \"severity\": \"Medium\",\n          \"description\": \"Large data grids or tables that display hundreds of records are likely causing significant initial load time and memory usage. Virtualization is required for optimal performance.\",\n          \"location\": \"Data Display Components\",\n          \"recommendation\": \"Implement windowing/virtualization techniques (e.g., using react-window) for any component displaying more than 50 rows of data.\"\n        },\n        {\n          \"severity\": \"Low\",\n          \"description\": \"Image optimization is inconsistent. Some images are served uncompressed, leading to unnecessary bandwidth usage and slow perceived load times.\",\n          \"location\": \"Asset Pipeline\",\n          \"recommendation\": \"Implement responsive image techniques using the `<picture>` element or `srcset` attribute, and ensure all images are served in modern formats (WebP) where supported.\"\n        }\n      ]\n    }\n  ],\n  \"summary\": {\n    \"overall_risk\": \"Medium-High\",\n    \"priority_actions\": [\n      \"Implement strict rate limiting on all authentication endpoints (Security).\",\n      \"Centralize design tokens for consistent UI/UX (Frontend).\",\n      \"Apply server-side validation universally across all API inputs (Backend).\"\n    ]\n  }\n}\n```",
+  "assigned_llm": true,
+  "audit_report": [
+    {
+      "perspective": "Frontend/UX Consistency",
+      "findings": [
+        {
+          "severity": "Medium",
+          "description": "The color palette definitions for primary/secondary actions are spread across multiple files (e.g., CSS variables, component props). Centralizing these variables in a single theme provider or design token file would improve maintainability and ensure visual consistency across all future components.",
+          "location": "Theming/Design Tokens",
+          "recommendation": "Create a global `theme.js` or `design-tokens.css` file to house all core colors, spacing units, and typography scales. Reference this single source of truth everywhere."
+        },
+        {
+          "severity": "Low",
+          "description": "Error message presentation varies. Some use inline red text, others use dedicated alert components. Standardizing the error component (e.g., `<ErrorDisplay message={msg} type={type} />`) will provide a unified, accessible user experience.",
+          "location": "UI Components",
+          "recommendation": "Audit all forms and modals to ensure they use the standardized error component."
+        }
+      ]
+    },
+    {
+      "perspective": "Backend/API Design & Security",
+      "findings": [
+        {
+          "severity": "High",
+          "description": "Authentication endpoints (`/api/auth/login`, `/api/auth/refresh`) do not appear to enforce rate limiting robustly enough. This is a primary vector for brute-force and credential stuffing attacks.",
+          "location": "Auth Middleware",
+          "recommendation": "Implement strict rate limiting (e.g., 5 attempts per IP/user per 15 minutes) on all login and password reset endpoints. Consider using CAPTCHA integration."
+        },
+        {
+          "severity": "Medium",
+          "description": "Input validation for user-submitted data (especially profile updates or search queries) needs to be consistently applied server-side. Relying solely on client-side validation is insufficient.",
+          "location": "API Controllers",
+          "recommendation": "Use a centralized validation library (like Joi or class-validator) on all incoming request bodies and query parameters to sanitize and validate data types/lengths before business logic execution."
+        }
+      ]
+    },
+    {
+      "perspective": "Performance/Optimization",
+      "findings": [
+        {
+          "severity": "Medium",
+          "description": "Large data grids or tables that display hundreds of records are likely causing significant initial load time and memory usage. Virtualization is required for optimal performance.",
+          "location": "Data Display Components",
+          "recommendation": "Implement windowing/virtualization techniques (e.g., using react-window) for any component displaying more than 50 rows of data."
+        },
+        {
+          "severity": "Low",
+          "description": "Image optimization is inconsistent. Some images are served uncompressed, leading to unnecessary bandwidth usage and slow perceived load times.",
+          "location": "Asset Pipeline",
+          "recommendation": "Implement responsive image techniques using the `<picture>` element or `srcset` attribute, and ensure all images are served in modern formats (WebP) where supported."
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "overall_risk": "Medium-High",
+    "priority_actions": [
+      "Implement strict rate limiting on all authentication endpoints (Security).",
+      "Centralize design tokens for consistent UI/UX (Frontend).",
+      "Apply server-side validation universally across all API inputs (Backend)."
+    ]
+  }
+}

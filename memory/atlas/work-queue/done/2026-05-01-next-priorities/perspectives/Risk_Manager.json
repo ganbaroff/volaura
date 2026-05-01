@@ -1,0 +1,28 @@
+{
+  "perspective": "Risk Manager",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"voice.md integration\", \"issue\": \"Voice data handling module lacks encryption and DPA verification, creating legal and security risks.\", \"recommended_fix\": \"Add end-to-end encryption for voice data in transit and at rest. Verify Soniox/Deepgram DPA status before enabling voice features.\"}, {\"severity\": \"HIGH\", \"file_or_area\": \"Energy Adaptation Law 2\", \"issue\": \"Workflow status undocumented; 'wa' flag suggests incomplete implementation despite file presence.\", \"recommended_fix\": \"Document completion status and verification steps for Energy Adaptation in all products.\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": \"Voice data processing without encryption violates GDPR and AZ PDPA.\", \"next_files_to_read\": [\"docs/PRE-LAUNCH-BLOCKERS-STATUS.md\", \"apps/api/app/routers/voice.py\"]}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "voice.md integration",
+      "issue": "Voice data handling module lacks encryption and DPA verification, creating legal and security risks.",
+      "recommended_fix": "Add end-to-end encryption for voice data in transit and at rest. Verify Soniox/Deepgram DPA status before enabling voice features."
+    },
+    {
+      "severity": "HIGH",
+      "file_or_area": "Energy Adaptation Law 2",
+      "issue": "Workflow status undocumented; 'wa' flag suggests incomplete implementation despite file presence.",
+      "recommended_fix": "Document completion status and verification steps for Energy Adaptation in all products."
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": "Voice data processing without encryption violates GDPR and AZ PDPA.",
+  "next_files_to_read": [
+    "docs/PRE-LAUNCH-BLOCKERS-STATUS.md",
+    "apps/api/app/routers/voice.py"
+  ]
+}

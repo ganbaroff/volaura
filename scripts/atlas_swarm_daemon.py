@@ -51,6 +51,7 @@ USAGE:
 import asyncio
 import json
 import os
+import re
 import shutil
 import signal
 import sys
@@ -380,7 +381,7 @@ def build_prompt(perspective: dict, atlas_ctx: str, task_meta: dict, task_body: 
     response_format = {
         "vote": "JSON: {perspective, vote: yes|no|amended-yes, amendment_if_yes_amended, rationale, risk_if_other_side_wins, constitutional_violations_detected, whistleblower_flag}",
         "debate": "JSON: {perspective, position: for|against|nuanced, argument, strongest_counter, evidence_cited, whistleblower_flag}",
-        "audit": "JSON: {perspective, findings: [{severity, file_or_area, issue, recommended_fix}], overall_verdict: pass|warn|fail, whistleblower_flag}",
+        "audit": "JSON: {perspective, findings: [{severity, file_path, line, issue, recommended_fix}], overall_verdict: pass|warn|fail, whistleblower_flag}",
         "research": "JSON: {perspective, summary, key_sources, gaps_in_current_canon, proposed_action, whistleblower_flag}",
         "self-modify": "JSON: {perspective, new_lens: string, new_reads: [file_paths], reason: string, whistleblower_flag}",
         "explore": "JSON: {perspective, findings: [{file_path, what_exists, what_it_does, quality_assessment}], summary, next_files_to_read, whistleblower_flag}",
@@ -798,6 +799,83 @@ def parse_json_safe(raw: str) -> dict | None:
         return json.loads(raw[start : end + 1])
     except Exception:
         return None
+
+
+PATH_CANDIDATE_RE = re.compile(
+    r"(?P<path>(?:apps|packages|docs|memory|supabase|scripts|\.github)/[\w./@()[\]-]+(?:\.\w+)?)"
+)
+LINE_PROOF_RE = re.compile(
+    r"(?i)(?:\bline(?:s)?\s*[:#]?\s*\d+\b|\bL\d+\b|:\d+\b|\bgrep\b|\brg\b|@limiter|\.limit\(|select\()"
+)
+
+
+def _finding_text(finding: dict[str, Any]) -> str:
+    parts: list[str] = []
+    for value in finding.values():
+        if isinstance(value, str):
+            parts.append(value)
+        elif isinstance(value, list):
+            parts.extend(str(item) for item in value)
+        elif value is not None:
+            parts.append(str(value))
+    return "\n".join(parts)
+
+
+def _existing_evidence_paths(finding: dict[str, Any]) -> list[str]:
+    text = _finding_text(finding)
+    paths: list[str] = []
+    for match in PATH_CANDIDATE_RE.finditer(text.replace("\\", "/")):
+        candidate = match.group("path").strip("`'\".,);:")
+        if (REPO_ROOT / candidate).is_file() and candidate not in paths:
+            paths.append(candidate)
+    return paths
+
+
+def _mark_finding_evidence(finding: dict[str, Any]) -> dict[str, Any]:
+    """Mark findings with hard repo evidence before they affect learning."""
+    marked = dict(finding)
+    paths = _existing_evidence_paths(marked)
+    line_value = marked.get("line") or marked.get("line_number") or marked.get("start")
+    has_structured_line = isinstance(line_value, int) or (
+        isinstance(line_value, str) and line_value.strip().isdigit()
+    )
+    has_line_or_grep = has_structured_line or bool(LINE_PROOF_RE.search(_finding_text(marked)))
+    if paths and has_line_or_grep:
+        marked["evidence_status"] = "verified"
+        marked["evidence_paths"] = paths
+        return marked
+    marked["evidence_status"] = "unverified"
+    marked["evidence_paths"] = paths
+    marked["evidence_reason"] = (
+        "no_existing_file_path" if not paths else "missing_line_or_grep_proof"
+    )
+    return marked
+
+
+def _apply_evidence_gate(result: dict[str, Any]) -> dict[str, Any]:
+    findings = result.get("findings")
+    if not isinstance(findings, list):
+        return result
+    marked_findings = [
+        _mark_finding_evidence(f) if isinstance(f, dict) else f
+        for f in findings
+    ]
+    verified = [
+        f for f in marked_findings
+        if isinstance(f, dict) and f.get("evidence_status") == "verified"
+    ]
+    unverified = [
+        f for f in marked_findings
+        if isinstance(f, dict) and f.get("evidence_status") == "unverified"
+    ]
+    result["findings"] = marked_findings
+    result["evidence_backed_findings"] = verified
+    result["unverified_findings"] = unverified
+    result["evidence_gate"] = {
+        "verified": len(verified),
+        "unverified": len(unverified),
+    }
+    return result
 
 
 SAFE_EXECUTORS: dict[str, Any] = {}
@@ -1331,6 +1409,7 @@ async def process_task(task_path: Path) -> None:
         merged = {**r, **parsed, "perspective": dispatched_name}
         if parsed.get("perspective") and parsed["perspective"] != dispatched_name:
             merged["perspective_name_drift"] = parsed["perspective"]
+        merged = _apply_evidence_gate(merged)
         parsed_results.append(merged)
         fname = dispatched_name.replace(" ", "_") + ".json"
         (votes_dir / fname).write_text(
@@ -1346,6 +1425,10 @@ async def process_task(task_path: Path) -> None:
         "perspectives_responded": sum(1 for r in parsed_results if r.get("provider")),
         "perspectives_failed": sum(1 for r in parsed_results if not r.get("provider")),
         "providers_used": {r.get("provider"): sum(1 for x in parsed_results if x.get("provider") == r.get("provider")) for r in parsed_results if r.get("provider")},
+        "evidence_gate": {
+            "verified_findings": sum(len(r.get("evidence_backed_findings", [])) for r in parsed_results),
+            "unverified_findings": sum(len(r.get("unverified_findings", [])) for r in parsed_results),
+        },
         "whistleblower_flags": [
             {"perspective": r.get("perspective"), "flag": r.get("whistleblower_flag")}
             for r in parsed_results
@@ -1392,21 +1475,15 @@ async def process_task(task_path: Path) -> None:
         name = r.get("perspective", "")
         if not name or not r.get("provider"):
             continue
-        findings = []
-        raw = r.get("raw", "")
-        if isinstance(raw, str):
-            try:
-                raw = json.loads(raw[raw.find("{"):raw.rfind("}") + 1])
-            except Exception:
-                raw = {}
-        if isinstance(raw, dict):
-            findings = raw.get("findings", [])
+        findings = r.get("evidence_backed_findings", [])
         if findings and isinstance(findings, list):
             max_sev = max(
                 (SEVERITY_TO_SCORE.get(f.get("severity", ""), 2) for f in findings if isinstance(f, dict)),
                 default=2,
             )
             registry.update(name, max_sev)
+        elif r.get("unverified_findings"):
+            registry.update(name, 1)
         else:
             registry.update(name, None)
     log_event({"event": "weights_updated", "task_id": task_id})

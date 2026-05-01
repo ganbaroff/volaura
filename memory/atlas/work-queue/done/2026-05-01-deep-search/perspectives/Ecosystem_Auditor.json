@@ -1,0 +1,32 @@
+{
+  "perspective": "Ecosystem Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Ecosystem Auditor\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Law 2 (Energy Adaptation) is violated across 4/5 products. Only MindShift implements Full/Mid/Low energy modes. VOLAURA, Life Simulator, BrandedBy, and Atlas lack mode persistence and UI adaptation.\", \"recommended_fix\": \"Uniformly implement energy-mode context in all products using Supabase sync from MindShift's useEnergyMode hook. Extend data-energy attribute to all templates.\"}, {\"severity\": \"CRITICAL\", \"file_or_area\": \"code-index summary\", \"issue\": \"Code-index last built 2026-04-30 — 5 days ago. Stale index risks hallucinated paths and false confidence. Agents are simulating.\", \"recommended_fix\": \"Regenerate code-index immediately and add pre-commit hook to update on every push.\"}, {\"severity\": \"HIGH\", \"file_or_area\": \"PRE-LAUNCH-BLOCKERS-STATUS.md\", \"issue\": \"Open Badges 3.0 VC compliance (P0 blocker #15) marked as ready-to-build but no DID or revocation logic exists. Badge tiers shown immediately post-assessment violate CRYSTAL LAW 6 amendment.\", \"recommended_fix\": \"Defer public badge display until VC backend is built. Show only competence feedback post-assessment.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"CRITICAL: Stale code-index and unenforced Foundation Laws enable systemic drift. Prod integrity compromised.\", \"next_files_to_read\": [\"apps/web/src/hooks/use-energy-mode.ts\", \"memory/swarm/dif_audit_results.csv\"]}",
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "ECOSYSTEM-CONSTITUTION.md",
+      "issue": "Law 2 (Energy Adaptation) is violated across 4/5 products. Only MindShift implements Full/Mid/Low energy modes. VOLAURA, Life Simulator, BrandedBy, and Atlas lack mode persistence and UI adaptation.",
+      "recommended_fix": "Uniformly implement energy-mode context in all products using Supabase sync from MindShift's useEnergyMode hook. Extend data-energy attribute to all templates."
+    },
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "code-index summary",
+      "issue": "Code-index last built 2026-04-30 — 5 days ago. Stale index risks hallucinated paths and false confidence. Agents are simulating.",
+      "recommended_fix": "Regenerate code-index immediately and add pre-commit hook to update on every push."
+    },
+    {
+      "severity": "HIGH",
+      "file_or_area": "PRE-LAUNCH-BLOCKERS-STATUS.md",
+      "issue": "Open Badges 3.0 VC compliance (P0 blocker #15) marked as ready-to-build but no DID or revocation logic exists. Badge tiers shown immediately post-assessment violate CRYSTAL LAW 6 amendment.",
+      "recommended_fix": "Defer public badge display until VC backend is built. Show only competence feedback post-assessment."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "CRITICAL: Stale code-index and unenforced Foundation Laws enable systemic drift. Prod integrity compromised.",
+  "next_files_to_read": [
+    "apps/web/src/hooks/use-energy-mode.ts",
+    "memory/swarm/dif_audit_results.csv"
+  ]
+}

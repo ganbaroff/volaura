@@ -2,8 +2,9 @@
 
 Updated by daemon after each task. Instrument reads on every wake.
 
-## WARNING: Swarm false positive rate is 54% (7/13)
-Deep search 2026-05-01: 7 of 13 findings were FALSE or NOISE:
+## WARNING: Swarm false positive rate still ~40%
+Deep search: 7/13 false. Find-work: 2/7 false (animation 2000ms not in CSS, role_level already Literal-validated).
+Improving — Readiness Manager gave honest PASS. But most agents still guess.
 - "Missing rate limit on /start" → EXISTS line 181
 - "Unbounded query /next" → .limit(1) on all queries, /next endpoint doesn't exist
 - "Law 2 broken 4/5 products" → SAME false claim, 116 files with energy

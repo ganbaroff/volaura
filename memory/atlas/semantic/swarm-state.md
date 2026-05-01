@@ -1,14 +1,19 @@
 # Swarm State — what the brain knows
 
-Written 2026-04-30 by Code-Atlas. Session 129.
+Updated 2026-05-01. Session 129 final.
 
 ## Architecture
-- 17 perspectives in autonomous_run.py PERSPECTIVES
-- Each has dedicated LLM in daemon's AGENT_LLM_MAP
-- Per-perspective temperature from packages/swarm/agents/<name>.json
-- Smart temp: code/audit capped at 0.3
-- Daemon polls work-queue/pending/ every 20 seconds
+- 17 perspectives in autonomous_run.py PERSPECTIVES (runtime-verified via import)
+- Each has dedicated LLM in daemon's AGENT_LLM_MAP (code-changed, VM runtime not re-verified)
+- Per-perspective temperature from packages/swarm/agents/<name>.json (code-changed)
+- Smart temp: code/audit capped at 0.3 (code-changed)
+- Daemon polls work-queue/pending/ every 20 seconds (runtime-verified locally)
 - Sub-agent fan-out on deep tasks (Cerebras + NVIDIA + Groq)
+- HANDS: 10 executors (direct-call proven, daemon bg process NOT proven on Linux VM)
+- Brain: compact 15K input from 7 canonical files (code-changed, runtime quality not verified)
+- False-positive registry: injected into daemon prompts (prompt-enforced, runtime effect not verified)
+- Autonomy levels: defined in prompts (prompt-defined only, NOT hard-gated in code)
+- CEO digest: script works locally, Telegram sent (receipt not confirmed)
 
 ## The 17 agents
 | Agent | LLM | Role |

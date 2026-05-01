@@ -1,11 +1,28 @@
-# Atlas Breadcrumb — Session 129 (continued May 1)
+# Atlas Breadcrumb — Session 129 close (May 1)
 
-**Last update:** 2026-05-01 11:30 Baku
-**Session:** 129 continued — autonomy + fixes + deploy
-**Daemon:** 17 agents, 10 executors, voice.md injected into prompts
-**Prod:** Railway deployed, Vercel deployed, privacy+terms fixed (were 404)
-**PostHog:** ✅ LIVE (Provider in layout.tsx line 65, $50K credits)
-**VM:** volaura-swarm 104.154.132.12, daemon+brain running (needs git pull)
+**Last update:** 2026-05-01
+**Session:** 129 — 61 hours, 74+ commits, pre-compaction state
+**Prod:** Railway deployed, Vercel deployed, prod ok
+**Architecture mandate:** active (reliability over novelty, feature freeze)
+
+## Verified state
+- Prod API: ok, DB connected (curl verified)
+- Vercel: 8 pages 200, privacy+terms fixed
+- 17 perspectives (import verified), 10 executors (import verified)
+- 12/19 blockers done, 7 open (3 CEO-blocked, 2 large builds, 2 partial polish)
+- Brain: compact 15K input (code-changed, runtime quality not verified)
+- HANDS: direct-call proven, daemon bg process NOT proven on Linux VM
+- FP enforcement: prompt-enforced, runtime effect not verified
+- Autonomy levels: prompt-defined, NOT hard-gated
+- CEO digest: script works, Telegram sent, receipt not confirmed
+- PostHog: Provider in layout.tsx line 65, key configured
+
+## Blocked on CEO
+- A: HANDS proof on Linux VM (needs SSH)
+- Art.9 legal decision
+- SADPP filing
+- DPA vendor agreement
+- "whi" — never identified
 
 ## Session 129 — what shipped
 

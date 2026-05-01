@@ -1,6 +1,7 @@
 # Swarm Command Board
 
 Updated by daemon after each task. Instrument reads on every wake.
+Language: English only. Russian only in CEO storytelling mode when requested.
 
 ## WARNING: Swarm false positive rate still ~40%
 Deep search: 7/13 false. Find-work: 2/7 false (animation 2000ms not in CSS, role_level already Literal-validated).

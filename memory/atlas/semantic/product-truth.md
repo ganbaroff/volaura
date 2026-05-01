@@ -1,6 +1,7 @@
 # Product Truth — what VOLAURA actually is
 
 Written 2026-04-30 by Code-Atlas after deep read of 42+ files.
+Updated 2026-05-01: Energy Adaptation confirmed working (116 files), language switched to English.
 Future instances: READ THIS before touching any code.
 
 ## One sentence

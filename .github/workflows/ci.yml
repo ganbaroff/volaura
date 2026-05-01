@@ -74,6 +74,17 @@ jobs:
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
+  shame-free:
+    name: Constitution Law 3 (Shame-Free Language)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Shame-free language check
+        run: python scripts/lint_shame_free.py
+
   tg-mini:
     name: Telegram Mini App
     runs-on: ubuntu-latest

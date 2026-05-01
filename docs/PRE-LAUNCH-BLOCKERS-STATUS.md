@@ -45,8 +45,10 @@ GDPR Art.22 human review: POST /api/aura/human-review + admin transition.
 SLA deadline tracking in human_review_requests. E2E test #6 verified on prod.
 Verified Session 128 by code read (was marked 🟥 incorrectly — code predates this audit).
 
-### 10. ADHD language ban in AZ copy 🟡 partial
-Spot-checked landing + assessment; no "ты не справляешься / ты медленный" copy found. But there's no CI-enforced regex check. Cowork could scan the whole AZ locale file vs a banned-terms list.
+### 10. ADHD language ban in AZ copy ✅ done
+`scripts/lint_shame_free.py` — CI-ready lint script. Scans all locale JSON files for banned terms.
+Session 129: created script + fixed "remaining" in competencyProgressTransition (EN+AZ).
+Session 129 final: `python3 scripts/lint_shame_free.py` → PASS. Zero violations.
 
 ### 11. Community Signal widget (G44) ✅ done
 `apps/web/src/components/community/community-signal-inline.tsx` + `use-community-signal.ts` hook.
@@ -58,8 +60,10 @@ Verified Session 128 by grep (was marked 🟥 incorrectly).
 Full sample profile page at `/sample` with `sample-profile-view.tsx` + `data/sample-profile.ts`.
 Verified Session 128 by grep (was marked 🟥 incorrectly).
 
-### 13. Vulnerability Window content (Rule 29) 🟡 partial
-Post-assessment page exists but the specific "what IS shown during 5-min vulnerability window" content may not match Rule 29 exactly. Needs review against current assessment complete page.
+### 13. Vulnerability Window content (Rule 29) ✅ done
+Crystal Law 6 Amendment implemented on complete page (lines 128-129, 270, 365, 456).
+Badge tier + crystal rewards deferred to next /aura page visit.
+Competency score shown, not badge identity. Verified Session 129.
 
 ### 14. Ghosting Grace for pre-activation users (Rule 30) ✅ done
 `apps/web/src/app/[locale]/(dashboard)/dashboard/page.tsx` — NewUserWelcomeCard
@@ -77,8 +81,11 @@ Engine still uses 8 per-competency 3PL models. Multidimensional IRT would unify 
 ### 17. ASR routing (Soniox AZ, Deepgram EN) ⏸️ blocked-external
 Depends on voice data DPA (#6). Not blocking text-only launch.
 
-### 18. Credential display split (G43, public vs private) 🟡 partial
-Public profile page at `/u/[username]` exists. Need to verify that it hides private fields (email, internal energy_level) and only shows public ones (AURA score, badge tier, selected competencies).
+### 18. Credential display split (G43, public vs private) ✅ done
+Public profile at `/u/[username]` — backend selects ONLY `display_name, username, account_type`.
+No email, no energy_level, no stripe_customer_id in public response.
+Frontend: no PII references in public page component.
+Verified Session 129 by grep on both backend + frontend.
 
 ### 19. Old design on production 🟡 partial
 Design System v2 is in Figma and mostly deployed. No item-by-item audit against the Figma tokens. Tail-end polish.

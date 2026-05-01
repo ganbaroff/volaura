@@ -1,0 +1,20 @@
+{
+  "perspective": "Ecosystem Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Ecosystem Auditor\", \"findings\": [{\"file_path\": \"apps/api/app/routers/grievance.py\", \"what_exists\": \"Formal grievance intake and admin review API for AURA scores, compliant with ISO 10667-2 §7 and GDPR Art.22.\", \"what_it_does\": \"Handles user-submitted grievances (POST /api/aura/grievance), allows users to retrieve their grievances (GET), and exposes admin endpoints to manage pending cases and resolve them. Persists data verbatim, logs transitions, enforces auth and rate limits.\", \"quality_assessment\": \"High. Clean FastAPI structure, proper error handling, audit-ready logging, and robust security (rate limiting, auth, platform admin check). Passes code review. Minor: redundant Future import.\"}], \"summary\": \"grievance.py fully implements Constitution G35 and ISO 10667-2. No bugs or violations found. Solid security and compliance foundation. Only nit: unused Future import.\", \"next_files_to_read\": [\"apps/web/src/components/grievance/GrievanceForm.tsx\", \"apps/api/app/models/grievance.py\"], \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "file_path": "apps/api/app/routers/grievance.py",
+      "what_exists": "Formal grievance intake and admin review API for AURA scores, compliant with ISO 10667-2 §7 and GDPR Art.22.",
+      "what_it_does": "Handles user-submitted grievances (POST /api/aura/grievance), allows users to retrieve their grievances (GET), and exposes admin endpoints to manage pending cases and resolve them. Persists data verbatim, logs transitions, enforces auth and rate limits.",
+      "quality_assessment": "High. Clean FastAPI structure, proper error handling, audit-ready logging, and robust security (rate limiting, auth, platform admin check). Passes code review. Minor: redundant Future import."
+    }
+  ],
+  "summary": "grievance.py fully implements Constitution G35 and ISO 10667-2. No bugs or violations found. Solid security and compliance foundation. Only nit: unused Future import.",
+  "next_files_to_read": [
+    "apps/web/src/components/grievance/GrievanceForm.tsx",
+    "apps/api/app/models/grievance.py"
+  ],
+  "whistleblower_flag": null
+}

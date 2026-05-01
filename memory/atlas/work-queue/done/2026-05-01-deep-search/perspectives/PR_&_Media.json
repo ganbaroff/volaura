@@ -1,0 +1,45 @@
+{
+  "perspective": "PR & Media",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{ \n  \"perspective\": \"PR & Media\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\",\n      \"issue\": \"Lack of clear press narrative ready for launch\",\n      \"recommended_fix\": \"Develop a comprehensive press kit and media outreach strategy\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"AZ media landscape\",\n      \"issue\": \"Insufficient research on matching outlets for our story\",\n      \"recommended_fix\": \"Conduct thorough research on AZ media outlets and identify relevant contacts\"\n    },\n    {\n      \"severity\": \"low\",\n      \"file_or_area\": \"GITA grant application\",\n      \"issue\": \"Uncertainty about application material readiness\",\n      \"recommended_fix\": \"Verify application material completeness and submit by May 27 deadline\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"Startup competition pipeline\",\n      \"issue\": \"Incomplete pipeline with potential opportunities like Seedstars, ASAN Innovations, and AzInTelecom\",\n      \"recommended_fix\": \"Research and prioritize relevant startup competitions for application\"\n    },\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"CEO's LinkedIn presence\",\n      \"issue\": \"Insufficient visibility and engagement on LinkedIn ahead of launch\",\n      \"recommended_fix\": \"Develop a LinkedIn content strategy and engagement plan for the CEO\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null,\n  \"next_files_to_read\": [\"memory/atlas/wake.md\", \"docs/PRE-LAUNCH-BLOCKERS-STATUS.md\"],\n  \"PR_readiness_score\": 6\n}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+      "issue": "Lack of clear press narrative ready for launch",
+      "recommended_fix": "Develop a comprehensive press kit and media outreach strategy"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "AZ media landscape",
+      "issue": "Insufficient research on matching outlets for our story",
+      "recommended_fix": "Conduct thorough research on AZ media outlets and identify relevant contacts"
+    },
+    {
+      "severity": "low",
+      "file_or_area": "GITA grant application",
+      "issue": "Uncertainty about application material readiness",
+      "recommended_fix": "Verify application material completeness and submit by May 27 deadline"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "Startup competition pipeline",
+      "issue": "Incomplete pipeline with potential opportunities like Seedstars, ASAN Innovations, and AzInTelecom",
+      "recommended_fix": "Research and prioritize relevant startup competitions for application"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "CEO's LinkedIn presence",
+      "issue": "Insufficient visibility and engagement on LinkedIn ahead of launch",
+      "recommended_fix": "Develop a LinkedIn content strategy and engagement plan for the CEO"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "next_files_to_read": [
+    "memory/atlas/wake.md",
+    "docs/PRE-LAUNCH-BLOCKERS-STATUS.md"
+  ],
+  "PR_readiness_score": 6
+}

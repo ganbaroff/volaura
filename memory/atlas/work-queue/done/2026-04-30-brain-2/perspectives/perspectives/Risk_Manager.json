@@ -1,0 +1,29 @@
+{
+  "perspective": "Risk Manager",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"IRT parameter calibration\", \"issue\": \"IRT parameters (a, b, c) are hardcoded (a=1.5, b=0.0, c=0.25) and not calibrated from real or synthetic data, violating psychometric validity. Sub-agent analysis confirms parameter drift (Item 3 a=0.42, Item 5 a>1.5), risking score inaccuracy and assessment invalidity.\", \"recommended_fix\": \"Implement `calibrate_parameters()` using real pilot data (min 300 responses) or high-fidelity synthetic data. Integrate checks for sample size, missing data, and aberrant responses. Automate re-calibration on new data batches.\"}, {\"severity\": \"HIGH\", \"file_or_area\": \"`calibrate_parameters()` function\", \"issue\": \"Function lacks input validation: no checks for minimum sample size, missing data, or aberrant response patterns, increasing risk of model overfitting or collapse.\", \"recommended_fix\": \"Add validation: enforce N≥300, <10% missing per item, no straight-lining or random patterns. Use IRT-specific fit statistics (S-X2, INFIT/OUTFIT).\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"This undermines the scientific foundation of AURA scoring. Uncalibrated IRT invalidates competency claims, exposing VOLAURA to legal and reputational risk under ISO 10667-2.\", \"next_files_to_read\": [\"packages/assessment/scoring/irt.py\", \"scripts/calibrate_parameters.py\", \"docs/adr/ADR-004-assessment-engine.md\"]}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "IRT parameter calibration",
+      "issue": "IRT parameters (a, b, c) are hardcoded (a=1.5, b=0.0, c=0.25) and not calibrated from real or synthetic data, violating psychometric validity. Sub-agent analysis confirms parameter drift (Item 3 a=0.42, Item 5 a>1.5), risking score inaccuracy and assessment invalidity.",
+      "recommended_fix": "Implement `calibrate_parameters()` using real pilot data (min 300 responses) or high-fidelity synthetic data. Integrate checks for sample size, missing data, and aberrant responses. Automate re-calibration on new data batches."
+    },
+    {
+      "severity": "HIGH",
+      "file_or_area": "`calibrate_parameters()` function",
+      "issue": "Function lacks input validation: no checks for minimum sample size, missing data, or aberrant response patterns, increasing risk of model overfitting or collapse.",
+      "recommended_fix": "Add validation: enforce N≥300, <10% missing per item, no straight-lining or random patterns. Use IRT-specific fit statistics (S-X2, INFIT/OUTFIT)."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "This undermines the scientific foundation of AURA scoring. Uncalibrated IRT invalidates competency claims, exposing VOLAURA to legal and reputational risk under ISO 10667-2.",
+  "next_files_to_read": [
+    "packages/assessment/scoring/irt.py",
+    "scripts/calibrate_parameters.py",
+    "docs/adr/ADR-004-assessment-engine.md"
+  ]
+}

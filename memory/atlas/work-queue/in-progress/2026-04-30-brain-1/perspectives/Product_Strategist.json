@@ -1,0 +1,18 @@
+{
+  "perspective": "Product Strategist",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Product Strategist\", \"findings\": [{\"severity\": \"critical\", \"file_or_area\": \"ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Foundation Law implementation is conflated with constitutional laws; no distinct 'Foundation Law' exists in codebase or docs. Confusion risks misalignment with CEO's intent.\", \"recommended_fix\": \"Clarify whether 'Foundation Law' refers to existing Constitution Part 1 (Laws 1-5) or a new legal entity framework. If the latter, define in `docs/` and link to incorporation tasks in `memory/atlas/company-state`.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "critical",
+      "file_or_area": "ECOSYSTEM-CONSTITUTION.md",
+      "issue": "Foundation Law implementation is conflated with constitutional laws; no distinct 'Foundation Law' exists in codebase or docs. Confusion risks misalignment with CEO's intent.",
+      "recommended_fix": "Clarify whether 'Foundation Law' refers to existing Constitution Part 1 (Laws 1-5) or a new legal entity framework. If the latter, define in `docs/` and link to incorporation tasks in `memory/atlas/company-state`."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null
+}

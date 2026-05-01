@@ -1,0 +1,8 @@
+{
+  "perspective": "Assessment Science",
+  "provider": "vertex-ai-agent",
+  "model": "gemini-2.5-flash+tools",
+  "raw": "```json\n{\n  \"perspective\": \"Assessment Science\",\n  \"findings\": [\n    {\n      \"severity\": \"critical\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"IRT 3PL parameters (a, b, c) are defaulted to guessed values (1.0, 0.0, 0.0) if not explicitly provided, severely compromising psychometric validity and reliability. This is a fundamental flaw for a psychometric assessment engine. The Standard Error of Measurement (SEM) will be artificially low or high, not reflecting the true precision of the estimate.\",\n      \"recommended_fix\": \"In `apps/api/app/core",
+  "sub_agents_used": true,
+  "assigned_llm": true
+}

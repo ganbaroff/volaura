@@ -1,0 +1,32 @@
+{
+  "perspective": "Security Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Security Auditor\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/api/app/routers/assessment.py\", \"issue\": \"RLS policy missing on historical_scores view. Unauthorized users could access sensitive pre-production assessment data.\", \"recommended_fix\": \"Add RLS policy enforcing org_id/team_id ownership or research role. Validate access via PostgREST directly.\"}, {\"severity\": \"medium\", \"file_or_area\": \"data/assessment/historical_scores.csv\", \"issue\": \"File contains raw PII-like data (emails, names) despite 'anonymized' label. Potential GDPR/Art.9 risk.\", \"recommended_fix\": \"Strip all direct identifiers. Use synthetic IDs mapped in isolated storage. Re-validate anonymization process.\"}, {\"severity\": \"low\", \"file_or_area\": \"src/assessment/irt_calibration.py\", \"issue\": \"Script writes calibration output to world-readable path. Risk of exposing model parameters.\", \"recommended_fix\": \"Write to secure, access-controlled location. Apply least-privilege permissions.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Unauthorized data access risk via missing RLS on assessment data views.\", \"next_files_to_read\": [\"apps/api/app/supabase/rls/policies/assessment_rls.sql\", \"docs/SECURITY-STANDARDS\"]}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "apps/api/app/routers/assessment.py",
+      "issue": "RLS policy missing on historical_scores view. Unauthorized users could access sensitive pre-production assessment data.",
+      "recommended_fix": "Add RLS policy enforcing org_id/team_id ownership or research role. Validate access via PostgREST directly."
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "data/assessment/historical_scores.csv",
+      "issue": "File contains raw PII-like data (emails, names) despite 'anonymized' label. Potential GDPR/Art.9 risk.",
+      "recommended_fix": "Strip all direct identifiers. Use synthetic IDs mapped in isolated storage. Re-validate anonymization process."
+    },
+    {
+      "severity": "low",
+      "file_or_area": "src/assessment/irt_calibration.py",
+      "issue": "Script writes calibration output to world-readable path. Risk of exposing model parameters.",
+      "recommended_fix": "Write to secure, access-controlled location. Apply least-privilege permissions."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "Unauthorized data access risk via missing RLS on assessment data views.",
+  "next_files_to_read": [
+    "apps/api/app/supabase/rls/policies/assessment_rls.sql",
+    "docs/SECURITY-STANDARDS"
+  ]
+}

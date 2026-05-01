@@ -1,0 +1,16 @@
+{
+  "perspective": "Code Quality Engineer",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Code Quality Engineer\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"services/assessment/irt_calibration.py\", \"issue\": \"Missing input validation for user performance data\", \"recommended_fix\": \"Add validation checks for raw response times and item difficulty scores to prevent calibration errors\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "services/assessment/irt_calibration.py",
+      "issue": "Missing input validation for user performance data",
+      "recommended_fix": "Add validation checks for raw response times and item difficulty scores to prevent calibration errors"
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null
+}

@@ -1,0 +1,36 @@
+{
+  "perspective": "Assessment Science",
+  "provider": "vertex-ai-agent",
+  "model": "gemini-2.5-flash+tools",
+  "raw": "```json\n{\n  \"perspective\": \"Assessment Science\",\n  \"findings\": [\n    {\n      \"severity\": \"critical\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"The assessment engine currently implements a unidimensional 3PL IRT model, not a Multidimensional IRT (MIRT) model. This confirms Blocker #16 is 'ready to build' as stated in PRE-LAUNCH-BLOCKERS-STATUS.md. The system assesses competencies independently rather than as a unified construct, which limits psychometric efficiency and validity for a multi-competency assessment.\",\n      \"recommended_fix\": \"Implement MIRT. This requires: (1) Redefining item parameters in `ItemRecord` to support multiple dimensions. (2) Rewriting `_prob_3pl`, `_fisher_information`, and `_estimate_eap` to handle multidimensional ability (theta vector) and item information matrices. (3) Updating item selection logic in `select_next_item` to optimize information gain across all relevant dimensions. This is a large task, estimated at 500-1000 lines of new/modified code in `apps/api/app/core/assessment/engine.py` and potentially new schema definitions.\"\n    },\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"Assessment Engine (overall)\",\n      \"issue\": \"Prior findings indicate IRT 3PL parameters (a, b, c) are guessed, not calibrated from real data. The current code in `engine.py` uses these parameters directly but does not address their source or calibration methodology. This significantly impacts the validity and reliability of the assessment.\",\n      \"recommended_fix\": \"Prioritize calibration of IRT parameters using real response data. If real data is insufficient, implement a robust simulation study to estimate the impact of guessed parameters on measurement error (SEM) and provide a clear rationale for parameter choices.\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"Assessment Engine (overall)\",\n      \"issue\": \"Prior findings indicate insufficient question pool size per competency (less than 15 for CAT, less than 30 for reliable theta estimation). While the code doesn't directly manage pool size, this is a known limitation that affects the effectiveness of the CAT algorithm implemented in `engine.py`.\",\n      \"recommended_fix\": \"Increase the question pool size for all competencies to a minimum of 30 items to ensure reliable theta estimation and effective CAT differentiation.\"\n    },\n    {\n      \"severity\": \"low\",\n      \"file_or_area\": \"docs/PRE-LAUNCH-BLOCKERS-STATUS.md\",\n      \"issue\": \"Blocker #7 (DIF bias audit) is marked 'done (script ready)' but notes 'Needs 300+ completed sessions for publishable findings.' This implies the audit is not yet actively informing item bank decisions or identifying biased items.\",\n      \"recommended_fix\": \"Ensure the DIF audit script is run regularly as data accumulates, and its findings are integrated into item bank review processes to remove or adjust biased items.\"\n    }\n  ],\n  \"overall_verdict\": \"fail\",\n  \"whistleblower_flag\": null\n}\n```",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "critical",
+      "file_or_area": "apps/api/app/core/assessment/engine.py",
+      "issue": "The assessment engine currently implements a unidimensional 3PL IRT model, not a Multidimensional IRT (MIRT) model. This confirms Blocker #16 is 'ready to build' as stated in PRE-LAUNCH-BLOCKERS-STATUS.md. The system assesses competencies independently rather than as a unified construct, which limits psychometric efficiency and validity for a multi-competency assessment.",
+      "recommended_fix": "Implement MIRT. This requires: (1) Redefining item parameters in `ItemRecord` to support multiple dimensions. (2) Rewriting `_prob_3pl`, `_fisher_information`, and `_estimate_eap` to handle multidimensional ability (theta vector) and item information matrices. (3) Updating item selection logic in `select_next_item` to optimize information gain across all relevant dimensions. This is a large task, estimated at 500-1000 lines of new/modified code in `apps/api/app/core/assessment/engine.py` and potentially new schema definitions."
+    },
+    {
+      "severity": "high",
+      "file_or_area": "Assessment Engine (overall)",
+      "issue": "Prior findings indicate IRT 3PL parameters (a, b, c) are guessed, not calibrated from real data. The current code in `engine.py` uses these parameters directly but does not address their source or calibration methodology. This significantly impacts the validity and reliability of the assessment.",
+      "recommended_fix": "Prioritize calibration of IRT parameters using real response data. If real data is insufficient, implement a robust simulation study to estimate the impact of guessed parameters on measurement error (SEM) and provide a clear rationale for parameter choices."
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "Assessment Engine (overall)",
+      "issue": "Prior findings indicate insufficient question pool size per competency (less than 15 for CAT, less than 30 for reliable theta estimation). While the code doesn't directly manage pool size, this is a known limitation that affects the effectiveness of the CAT algorithm implemented in `engine.py`.",
+      "recommended_fix": "Increase the question pool size for all competencies to a minimum of 30 items to ensure reliable theta estimation and effective CAT differentiation."
+    },
+    {
+      "severity": "low",
+      "file_or_area": "docs/PRE-LAUNCH-BLOCKERS-STATUS.md",
+      "issue": "Blocker #7 (DIF bias audit) is marked 'done (script ready)' but notes 'Needs 300+ completed sessions for publishable findings.' This implies the audit is not yet actively informing item bank decisions or identifying biased items.",
+      "recommended_fix": "Ensure the DIF audit script is run regularly as data accumulates, and its findings are integrated into item bank review processes to remove or adjust biased items."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null
+}

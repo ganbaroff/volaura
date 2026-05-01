@@ -1,0 +1,18 @@
+{
+  "perspective": "Assessment Science",
+  "provider": "vertex-ai-agent",
+  "model": "gemini-2.5-flash+tools",
+  "raw": "```json\n{\n  \"perspective\": \"Assessment Science\",\n  \"findings\": [\n    {\n      \"severity\": \"critical\",\n      \"file_or_area\": \"apps/web/src/hooks/use-energy-mode.ts, apps/web/src/components/assessment/energy-picker.tsx, apps/web/src/* (UI components)\",\n      \"issue\": \"Energy Adaptation Law 2 is violated. While the `useEnergyMode` hook correctly sets the `data-energy` attribute on the `<html>` element and the `EnergyPicker` component allows users to select modes, the UI components across the VOLAURA web app (and other products) are not consistently responding to these energy levels. Specifically, the 'low' UI mode is reported as not correctly toggling or appearing as 'mid' mode, and MindShift stub's navigation fails to adapt.\",\n      \"recommended_fix\": \"Conduct a comprehensive audit of all UI components in `apps/web/src` (and other product stubs) to ensure they correctly apply visual and functional adaptations based on the `data-energy` attribute set by `useEnergyMode`. Prioritize fixing the 'low' energy mode display and functionality to match the specifications in `useEnergyMode.ts` comments (single CTA, max 3 elements, zero animation, muted colors).\"\n    }\n  ],\n  \"overall_verdict\": \"fail\",\n  \"whistleblower_flag\": null\n}\n```",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "critical",
+      "file_or_area": "apps/web/src/hooks/use-energy-mode.ts, apps/web/src/components/assessment/energy-picker.tsx, apps/web/src/* (UI components)",
+      "issue": "Energy Adaptation Law 2 is violated. While the `useEnergyMode` hook correctly sets the `data-energy` attribute on the `<html>` element and the `EnergyPicker` component allows users to select modes, the UI components across the VOLAURA web app (and other products) are not consistently responding to these energy levels. Specifically, the 'low' UI mode is reported as not correctly toggling or appearing as 'mid' mode, and MindShift stub's navigation fails to adapt.",
+      "recommended_fix": "Conduct a comprehensive audit of all UI components in `apps/web/src` (and other product stubs) to ensure they correctly apply visual and functional adaptations based on the `data-energy` attribute set by `useEnergyMode`. Prioritize fixing the 'low' energy mode display and functionality to match the specifications in `useEnergyMode.ts` comments (single CTA, max 3 elements, zero animation, muted colors)."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null
+}

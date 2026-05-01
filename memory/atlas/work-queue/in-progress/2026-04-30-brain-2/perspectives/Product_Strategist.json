@@ -1,0 +1,23 @@
+{
+  "perspective": "Product Strategist",
+  "provider": "gemini",
+  "model": "gemini-2.5-flash",
+  "raw": "{\n  \"perspective\": \"Assessment Science\",\n  \"findings\": [\n    {\n      \"severity\": \"P0\",\n      \"file_or_area\": \"data/assessment/historical_scores.csv\",\n      \"issue\": \"The specified historical assessment data file `data/assessment/historical_scores.csv`, crucial for IRT parameter calibration, is not found within the codebase index. Without this foundational data, psychometric validation and calibration are impossible.\",\n      \"recommended_fix\": \"Create `data/assessment/historical_scores.csv` containing anonymized historical assessment response data. This file must include item responses and corresponding respondent IDs for all 8 AURA dimensions to enable proper calibration.\"\n    },\n    {\n      \"severity\": \"P0\",\n      \"file_or_area\": \"src/assessment/irt_calibration.py\",\n      \"issue\": \"The target Python script for IRT parameter calibration, `src/assessment/irt_calibration.py`, is missing from the codebase index. This prevents the development and execution of the psychometric validation pipeline.\",\n      \"recommended_fix\": \"Create `src/assessment/irt_calibration.py` as a new file. Implement a robust pipeline within this script to ingest historical data, calibrate the 8 independent 3PL models (as per current system design), and output validation metrics (e.g., item fit, standard errors, model parameters).\"\n    }\n  ],\n  \"overall_verdict\": \"fail\",\n  \"whistleblower_flag\": null\n}",
+  "findings": [
+    {
+      "severity": "P0",
+      "file_or_area": "data/assessment/historical_scores.csv",
+      "issue": "The specified historical assessment data file `data/assessment/historical_scores.csv`, crucial for IRT parameter calibration, is not found within the codebase index. Without this foundational data, psychometric validation and calibration are impossible.",
+      "recommended_fix": "Create `data/assessment/historical_scores.csv` containing anonymized historical assessment response data. This file must include item responses and corresponding respondent IDs for all 8 AURA dimensions to enable proper calibration."
+    },
+    {
+      "severity": "P0",
+      "file_or_area": "src/assessment/irt_calibration.py",
+      "issue": "The target Python script for IRT parameter calibration, `src/assessment/irt_calibration.py`, is missing from the codebase index. This prevents the development and execution of the psychometric validation pipeline.",
+      "recommended_fix": "Create `src/assessment/irt_calibration.py` as a new file. Implement a robust pipeline within this script to ingest historical data, calibrate the 8 independent 3PL models (as per current system design), and output validation metrics (e.g., item fit, standard errors, model parameters)."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Assessment Science"
+}

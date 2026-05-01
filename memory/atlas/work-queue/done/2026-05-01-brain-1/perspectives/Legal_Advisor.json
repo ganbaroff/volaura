@@ -1,0 +1,9 @@
+{
+  "perspective": "Legal Advisor",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Legal Advisor\", \"response\": \"Compliance checklist: (1) GDPR Article 22 — automated decision consent flow exists and is legally sufficient: OK, (2) AZ Personal Data Protection Act — compliance for Baku launch: WARN, (3) Platform liability — if AURA score is used for hiring decisions, legal exposure exists: BLOCK, (4) Data processor agreements — Supabase, Google Cloud, Railway as processors, DPAs are partially in place: WARN, (5) Terms of Service — current ToS covers AI-generated assessments: OK\", \"whistleblower_flag\": null}",
+  "assigned_llm": true,
+  "response": "Compliance checklist: (1) GDPR Article 22 — automated decision consent flow exists and is legally sufficient: OK, (2) AZ Personal Data Protection Act — compliance for Baku launch: WARN, (3) Platform liability — if AURA score is used for hiring decisions, legal exposure exists: BLOCK, (4) Data processor agreements — Supabase, Google Cloud, Railway as processors, DPAs are partially in place: WARN, (5) Terms of Service — current ToS covers AI-generated assessments: OK",
+  "whistleblower_flag": null
+}

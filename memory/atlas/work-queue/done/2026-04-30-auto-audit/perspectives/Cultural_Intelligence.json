@@ -1,0 +1,24 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Legal & Compliance\",\n  \"findings\": [\n    {\n      \"severity\": \"gap\",\n      \"file_or_area\": \"Art. 9 health data consent\",\n      \"issue\": \"No explicit 'health data' classification or separate consent screen for energy/burnout data\",\n      \"recommended_fix\": \"Implement Art. 9 consent flow with explicit opt-in for health data collection\"\n    },\n    {\n      \"severity\": \"gap\",\n      \"file_or_area\": \"Voice data routing disclosure\",\n      \"issue\": \"Truncated file reference suggests incomplete documentation of voice data handling\",\n      \"recommended_fix\": \"Complete and verify voice data disclosure documentation per GDPR requirements\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "gap",
+      "file_or_area": "Art. 9 health data consent",
+      "issue": "No explicit 'health data' classification or separate consent screen for energy/burnout data",
+      "recommended_fix": "Implement Art. 9 consent flow with explicit opt-in for health data collection"
+    },
+    {
+      "severity": "gap",
+      "file_or_area": "Voice data routing disclosure",
+      "issue": "Truncated file reference suggests incomplete documentation of voice data handling",
+      "recommended_fix": "Complete and verify voice data disclosure documentation per GDPR requirements"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Legal & Compliance"
+}

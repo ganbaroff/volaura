@@ -1,65 +1,68 @@
 {
   "task_id": "2026-04-28-code-index-empty",
   "task_type": "audit",
-  "completed_at": "2026-04-28T20:32:52.664185+00:00",
+  "completed_at": "2026-04-30T23:04:17.636720+00:00",
   "perspectives_dispatched": 13,
   "perspectives_responded": 13,
   "perspectives_failed": 0,
   "providers_used": {
-    "cerebras": 3,
-    "nvidia": 10
+    "vertex-ai-agent": 3,
+    "gemini": 7,
+    "nvidia": 3
   },
-  "whistleblower_flags": [
-    {
-      "perspective": "Ecosystem Auditor",
-      "flag": "CRITICAL: Empty code-index forces swarm to operate blind — violates Foundation Law 2 (Energy Adaptation) by blocking adaptive verification across all 5 products. Atlas cannot govern what it cannot see."
-    }
-  ],
+  "whistleblower_flags": [],
   "perspectives": [
     {
       "perspective": "Scaling Engineer",
-      "provider": "cerebras",
-      "model": "qwen-3-235b",
-      "raw": "{\"perspective\": \"Scaling Engineer\", \"findings\": [{\"severity\": \"critical\", \"file_or_area\": \"packages/swarm/archive/code_index.py\", \"issue\": \"Builder script appears to have been moved to archive but not replaced in active modules. code-index.json shows recent built_at timestamp with zero content, indicating silent failure.\", \"recommended_fix\": \"1. Restore code_index.py from archive. 2. Add healthcheck: if module count = 0 after build, fail explicitly. 3. Add to CI: validate code-index.json contains >0 endpoints pre-deploy.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+      "provider": "vertex-ai-agent",
+      "model": "gemini-2.5-flash+tools",
+      "raw": "```json\n{\n \"perspective\": \"Scaling Engineer\",\n \"findings\": [\n  {\n   \"severity\": \"high\",\n   \"file_or_area\": \"code-index.json / Task Premise\",\n   \"issue\": \"The task states that `code-index.json` has 0 modules and 0 endpoints. This is contradicted by the provided `CODE-INDEX SUMMARY`, which explicitly states 'Total files indexed: 1041' and lists populated directories. The premise for investigating an empty index is false.\",\n   \"recommended_fix\": \"Reconcile task definitions with the canonical `CODE-INDEX SUMMARY` before assignment. The `code-index.json` is populated and appears functional per the summary.\"\n  },\n  {\n   \"severity\": \"medium\",\n   \"file_or_area\": \"packages/swarm/archive/code_index.py\",\n   \"issue\": \"The `code_index.py` script, responsible for building the code index, resides in `packages/swarm/archive/`. Its internal `SKIP_DIRS` configuration explicitly includes 'archive'. If this script is an active, critical component, its placement in a skipped directory means the indexer will not index its own source code, which is an organizational inconsistency.\",\n   \"recommended_fix\": \"If `code_index.py` is an active indexer, it should be moved out of the `archive` directory to a location that is indexed (e.g., `packages/swarm/tools/` or `packages/swarm/scripts/`). If it is truly an archived script, the task to investigate it implies a misunderstanding of its current role.\"\n  }\n ],\n \"overall_verdict\": \"warn\",\n \"whistleblower_flag\": null\n}\n```",
+      "sub_agents_used": true,
       "findings": [
         {
-          "severity": "critical",
+          "severity": "high",
+          "file_or_area": "code-index.json / Task Premise",
+          "issue": "The task states that `code-index.json` has 0 modules and 0 endpoints. This is contradicted by the provided `CODE-INDEX SUMMARY`, which explicitly states 'Total files indexed: 1041' and lists populated directories. The premise for investigating an empty index is false.",
+          "recommended_fix": "Reconcile task definitions with the canonical `CODE-INDEX SUMMARY` before assignment. The `code-index.json` is populated and appears functional per the summary."
+        },
+        {
+          "severity": "medium",
           "file_or_area": "packages/swarm/archive/code_index.py",
-          "issue": "Builder script appears to have been moved to archive but not replaced in active modules. code-index.json shows recent built_at timestamp with zero content, indicating silent failure.",
-          "recommended_fix": "1. Restore code_index.py from archive. 2. Add healthcheck: if module count = 0 after build, fail explicitly. 3. Add to CI: validate code-index.json contains >0 endpoints pre-deploy."
+          "issue": "The `code_index.py` script, responsible for building the code index, resides in `packages/swarm/archive/`. Its internal `SKIP_DIRS` configuration explicitly includes 'archive'. If this script is an active, critical component, its placement in a skipped directory means the indexer will not index its own source code, which is an organizational inconsistency.",
+          "recommended_fix": "If `code_index.py` is an active indexer, it should be moved out of the `archive` directory to a location that is indexed (e.g., `packages/swarm/tools/` or `packages/swarm/scripts/`). If it is truly an archived script, the task to investigate it implies a misunderstanding of its current role."
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Security Auditor",
+      "provider": "vertex-ai-agent",
+      "model": "gemini-2.5-flash+tools",
+      "raw": "```json\n{\n  \"perspective\": \"Security Auditor\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"memory/swarm/code-index.json, packages/swarm/archive/code_index.py\",\n      \"issue\": \"The `code-index.json` file is empty (0 modules, 0 endpoints) despite a `built_at` timestamp, indicating a critical failure in the code indexing process. The designated indexer script, `code_index.py`, is located within an `archive` directory, suggesting it is not actively maintained or executed.\",\n      \"recommended_fix\": \"Verify if `packages/swarm/archive/code_index.py` is the canonical indexer. If so, move it out of the `archive` directory to an active location (e.g., `packages/swarm/scripts/`) and ensure its execution is integrated into the project's continuous integration or build pipeline. Then, trigger a rebuild of `code-index.json` and confirm it is populated with accurate project data. An unpopulated code index means other agents or automated security tooling operate with severely outdated or non-existent metadata, increasing risk.\"\n    }\n  ],\n  \"overall_verdict\": \"fail\",\n  \"whistleblower_flag\": null\n}\n```",
+      "sub_agents_used": true,
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "memory/swarm/code-index.json, packages/swarm/archive/code_index.py",
+          "issue": "The `code-index.json` file is empty (0 modules, 0 endpoints) despite a `built_at` timestamp, indicating a critical failure in the code indexing process. The designated indexer script, `code_index.py`, is located within an `archive` directory, suggesting it is not actively maintained or executed.",
+          "recommended_fix": "Verify if `packages/swarm/archive/code_index.py` is the canonical indexer. If so, move it out of the `archive` directory to an active location (e.g., `packages/swarm/scripts/`) and ensure its execution is integrated into the project's continuous integration or build pipeline. Then, trigger a rebuild of `code-index.json` and confirm it is populated with accurate project data. An unpopulated code index means other agents or automated security tooling operate with severely outdated or non-existent metadata, increasing risk."
         }
       ],
       "overall_verdict": "fail",
       "whistleblower_flag": null
     },
     {
-      "perspective": "Security Auditor",
-      "provider": "cerebras",
-      "model": "qwen-3-235b",
-      "raw": "{\"perspective\": \"Security\", \"findings\": [{\"severity\": \"critical\", \"file_or_area\": \"packages/swarm/archive/code_index.py\", \"issue\": \"Builder script moved to archive directory but still referenced by live pipeline. code-index.json regeneration fails silently because path resolution points to archived, non-executable location. Empty output violates integrity of dependency mapping.\", \"recommended_fix\": \"Move code_index.py from archive/ back to active package directory. Add pipeline step to verify code-index.json non-emptiness post-build. Add CI check that scans for *.py files in archive/ and blocks execution if referenced in active configs.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+      "perspective": "Product Strategist",
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "raw": "{\n  \"perspective\": \"Product Strategist\",\n  \"findings\": [\n    {\n      \"severity\": \"critical\",\n      \"file_or_area\": \"packages/swarm/archive/code_index.py\",\n      \"issue\": \"The core code index builder (`code_index.py`) is incorrectly located within the `archive/` directory. This directory is explicitly in the `SKIP_DIRS` list, causing the builder to ignore itself and any other files in `archive/` from being indexed. While the summary indicates 1041 files are counted, the task states zero modules/endpoints, suggesting a systemic failure in structured code element (functions, classes, exports) extraction during indexing.\",\n      \"recommended_fix\": \"1. Relocate `packages/swarm/archive/code_index.py` to an active, logical directory such as `packages/swarm/tools/code_index.py`. 2. Conduct a deep debug and complete the parsing logic within the indexer (e.g., `_parse_python`, `_parse_typescript`) to correctly extract and populate module, function, class, and export details. 3. Immediately trigger a full index rebuild upon fixing.\"\n    }\n  ],\n  \"overall_verdict\": \"fail\",\n  \"whistleblower_flag\": null\n}",
       "findings": [
         {
           "severity": "critical",
           "file_or_area": "packages/swarm/archive/code_index.py",
-          "issue": "Builder script moved to archive directory but still referenced by live pipeline. code-index.json regeneration fails silently because path resolution points to archived, non-executable location. Empty output violates integrity of dependency mapping.",
-          "recommended_fix": "Move code_index.py from archive/ back to active package directory. Add pipeline step to verify code-index.json non-emptiness post-build. Add CI check that scans for *.py files in archive/ and blocks execution if referenced in active configs."
-        }
-      ],
-      "overall_verdict": "fail",
-      "whistleblower_flag": null,
-      "perspective_name_drift": "Security"
-    },
-    {
-      "perspective": "Product Strategist",
-      "provider": "nvidia",
-      "model": "meta/llama-3.3-70b-instruct",
-      "raw": "{\"perspective\": \"Product Strategist\", \"findings\": [{\"severity\": \"fail\", \"file_or_area\": \"code-index.json\", \"issue\": \"Empty output despite recent built_at timestamp\", \"recommended_fix\": \"Investigate code_index.py builder, check for accidental archiving or logic errors\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
-      "findings": [
-        {
-          "severity": "fail",
-          "file_or_area": "code-index.json",
-          "issue": "Empty output despite recent built_at timestamp",
-          "recommended_fix": "Investigate code_index.py builder, check for accidental archiving or logic errors"
+          "issue": "The core code index builder (`code_index.py`) is incorrectly located within the `archive/` directory. This directory is explicitly in the `SKIP_DIRS` list, causing the builder to ignore itself and any other files in `archive/` from being indexed. While the summary indicates 1041 files are counted, the task states zero modules/endpoints, suggesting a systemic failure in structured code element (functions, classes, exports) extraction during indexing.",
+          "recommended_fix": "1. Relocate `packages/swarm/archive/code_index.py` to an active, logical directory such as `packages/swarm/tools/code_index.py`. 2. Conduct a deep debug and complete the parsing logic within the indexer (e.g., `_parse_python`, `_parse_typescript`) to correctly extract and populate module, function, class, and export details. 3. Immediately trigger a full index rebuild upon fixing."
         }
       ],
       "overall_verdict": "fail",
@@ -67,15 +70,21 @@
     },
     {
       "perspective": "Code Quality Engineer",
-      "provider": "nvidia",
-      "model": "meta/llama-3.3-70b-instruct",
-      "raw": "{\"perspective\": \"Code Quality Engineer\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"code-index.json\", \"issue\": \"empty output despite recent built_at timestamp\", \"recommended_fix\": \"investigate code_index.py builder and verify its execution path, check for accidental archiving or permissions issues\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "raw": "{\n  \"perspective\": \"Code Quality Engineer\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"packages/swarm/archive/code_index.py\",\n      \"issue\": \"The script responsible for building the detailed codebase index (`code_index.py`) is located in an `archive` directory. This placement indicates it is either deprecated, misplaced, or not the actively maintained index builder, despite being designed to capture granular code structure (functions, classes, etc.). This introduces ambiguity regarding the canonical index generation process and may lead to the `code-index.json` lacking essential detail.\",\n      \"recommended_fix\": \"Relocate `packages/swarm/archive/code_index.py` to `packages/swarm/code_index.py`. This clarifies its status as the active, canonical index builder. If another index builder is in use, consolidate its functionality or deprecate it, ensuring `code_index.py` is the single source for detailed code indexing. Verify that `build_index()` is actively invoked in a CI/CD pipeline or scheduled task.\"\n    },\n    {\n      \"severity\": \"critical\",\n      \"file_or_area\": \"memory/swarm/code-index.json\",\n      \"issue\": \"The canonical `code-index.json` file is reported to have '0 modules and 0 endpoints,' directly contradicting the `CODE-INDEX SUMMARY` which indicates 'Total files indexed: 1041.' This discrepancy points to a severe data integrity issue. The index file either lacks the granular parsing data (functions, classes, exports) that `code_index.py` is designed to extract, or the system consuming it is failing to interpret this data, making the index functionally empty for detailed code analysis.\",\n      \"recommended_fix\": \"After relocating `code_index.py`, ensure its `build_index()` function is executed to rebuild `memory/swarm/code-index.json`. Subsequently, inspect the generated `code-index.json` to confirm it accurately contains parsed data (functions, classes for Python; exports for TypeScript). Debug the `_parse_python` and `_parse_typescript` functions within `code_index.py` if detailed parsing data remains absent in the output, addressing any syntax errors or parsing failures. This ensures the index reflects the actual codebase structure as intended.\"\n    }\n  ],\n  \"overall_verdict\": \"fail\",\n  \"whistleblower_flag\": null\n}",
       "findings": [
         {
           "severity": "high",
-          "file_or_area": "code-index.json",
-          "issue": "empty output despite recent built_at timestamp",
-          "recommended_fix": "investigate code_index.py builder and verify its execution path, check for accidental archiving or permissions issues"
+          "file_or_area": "packages/swarm/archive/code_index.py",
+          "issue": "The script responsible for building the detailed codebase index (`code_index.py`) is located in an `archive` directory. This placement indicates it is either deprecated, misplaced, or not the actively maintained index builder, despite being designed to capture granular code structure (functions, classes, etc.). This introduces ambiguity regarding the canonical index generation process and may lead to the `code-index.json` lacking essential detail.",
+          "recommended_fix": "Relocate `packages/swarm/archive/code_index.py` to `packages/swarm/code_index.py`. This clarifies its status as the active, canonical index builder. If another index builder is in use, consolidate its functionality or deprecate it, ensuring `code_index.py` is the single source for detailed code indexing. Verify that `build_index()` is actively invoked in a CI/CD pipeline or scheduled task."
+        },
+        {
+          "severity": "critical",
+          "file_or_area": "memory/swarm/code-index.json",
+          "issue": "The canonical `code-index.json` file is reported to have '0 modules and 0 endpoints,' directly contradicting the `CODE-INDEX SUMMARY` which indicates 'Total files indexed: 1041.' This discrepancy points to a severe data integrity issue. The index file either lacks the granular parsing data (functions, classes, exports) that `code_index.py` is designed to extract, or the system consuming it is failing to interpret this data, making the index functionally empty for detailed code analysis.",
+          "recommended_fix": "After relocating `code_index.py`, ensure its `build_index()` function is executed to rebuild `memory/swarm/code-index.json`. Subsequently, inspect the generated `code-index.json` to confirm it accurately contains parsed data (functions, classes for Python; exports for TypeScript). Debug the `_parse_python` and `_parse_typescript` functions within `code_index.py` if detailed parsing data remains absent in the output, addressing any syntax errors or parsing failures. This ensures the index reflects the actual codebase structure as intended."
         }
       ],
       "overall_verdict": "fail",
@@ -83,31 +92,25 @@
     },
     {
       "perspective": "Ecosystem Auditor",
-      "provider": "cerebras",
-      "model": "qwen-3-235b",
-      "raw": "{\"perspective\": \"Ecosystem Auditor\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"code-index.json\", \"issue\": \"Empty despite recent built_at timestamp — agents are simulating on stale or missing codebase data. This matches CANONICAL MEMORY Class 3: solo execution risk when index is stale (>7d) or empty.\", \"recommended_fix\": \"Rebuild immediately; verify builder isn't failing silently. Check if packages/swarm/archive/code_index.py was moved or broken during archive refactor.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"CRITICAL: Empty code-index forces swarm to operate blind — violates Foundation Law 2 (Energy Adaptation) by blocking adaptive verification across all 5 products. Atlas cannot govern what it cannot see.\"}",
-      "findings": [
-        {
-          "severity": "CRITICAL",
-          "file_or_area": "code-index.json",
-          "issue": "Empty despite recent built_at timestamp — agents are simulating on stale or missing codebase data. This matches CANONICAL MEMORY Class 3: solo execution risk when index is stale (>7d) or empty.",
-          "recommended_fix": "Rebuild immediately; verify builder isn't failing silently. Check if packages/swarm/archive/code_index.py was moved or broken during archive refactor."
-        }
-      ],
-      "overall_verdict": "fail",
-      "whistleblower_flag": "CRITICAL: Empty code-index forces swarm to operate blind — violates Foundation Law 2 (Energy Adaptation) by blocking adaptive verification across all 5 products. Atlas cannot govern what it cannot see."
+      "provider": "vertex-ai-agent",
+      "model": "gemini-2.5-flash+tools",
+      "raw": "```json\n{\n \"perspective\": \"Ecosystem Auditor\",\n \"findings\": [\n  {\n   \"severity\": \"CRITICAL\",\n   \"file_or_area\": \"code-index.json\",\n   \"issue\": \"The `code-index.json` file is reported to contain '0 modules and 0 endpoints' despite a 'built_at' timestamp of 2026-04-29 and a 'Total files indexed: 1041' in the `CODE-INDEX SUMMARY`. This contradiction indicates that while files are being found and processed, the crucial details (functions, classes, exports) are not being correctly extracted or persisted within the index entries. This leads to a functionally empty index for actionable code elements",
+      "sub_agents_used": true
     },
     {
       "perspective": "Risk Manager",
-      "provider": "nvidia",
-      "model": "meta/llama-3.3-70b-instruct",
-      "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"code-index.json\", \"issue\": \"Empty output despite recent build\", \"recommended_fix\": \"Investigate code_index.py and rebuild\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "raw": "{\n  \"perspective\": \"Risk Manager\",\n  \"findings\": [\n    {\n      \"severity\": \"CRITICAL\",\n      \"likelihood\": 5,\n      \"impact\": 5,\n      \"score\": 25,\n      \"file_or_area\": \"packages/swarm/archive/code_index.py & memory/swarm/code-index.json\",\n      \"issue\": \"The `code-index.json` is reported as having 0 modules and 0 endpoints, indicating a critical failure in parsing codebase elements (functions, classes, exports) despite indexing 1041 files. This renders the index functionally useless for agents. The index builder (`code_index.py`) is located in an 'archive' directory, raising concerns about its active status, maintainability, and potential for execution issues. This creates false confidence in tooling and directly impedes Atlas's ability to comprehend the project codebase.\",\n      \"recommended_fix\": \"1. Relocate `packages/swarm/archive/code_index.py` to an active, non-archive directory (e.g., `packages/swarm/tools/code_index.py`) to clarify its operational status. 2. Conduct a full audit of the relocated `code_index.py` script, focusing on the `_walk_repo` function and its file type parsers (especially `_parse_python` and any `_parse_typescript` implementation). Ensure these functions correctly extract and store functions, classes, and exports for all relevant file types. 3. Verify the generated `code-index.json` for proper population of these content-specific fields within each file's entry.\"\n    }\n  ],\n  \"overall_verdict\": \"fail\",\n  \"whistleblower_flag\": null\n}",
       "findings": [
         {
           "severity": "CRITICAL",
-          "file_or_area": "code-index.json",
-          "issue": "Empty output despite recent build",
-          "recommended_fix": "Investigate code_index.py and rebuild"
+          "likelihood": 5,
+          "impact": 5,
+          "score": 25,
+          "file_or_area": "packages/swarm/archive/code_index.py & memory/swarm/code-index.json",
+          "issue": "The `code-index.json` is reported as having 0 modules and 0 endpoints, indicating a critical failure in parsing codebase elements (functions, classes, exports) despite indexing 1041 files. This renders the index functionally useless for agents. The index builder (`code_index.py`) is located in an 'archive' directory, raising concerns about its active status, maintainability, and potential for execution issues. This creates false confidence in tooling and directly impedes Atlas's ability to comprehend the project codebase.",
+          "recommended_fix": "1. Relocate `packages/swarm/archive/code_index.py` to an active, non-archive directory (e.g., `packages/swarm/tools/code_index.py`) to clarify its operational status. 2. Conduct a full audit of the relocated `code_index.py` script, focusing on the `_walk_repo` function and its file type parsers (especially `_parse_python` and any `_parse_typescript` implementation). Ensure these functions correctly extract and store functions, classes, and exports for all relevant file types. 3. Verify the generated `code-index.json` for proper population of these content-specific fields within each file's entry."
         }
       ],
       "overall_verdict": "fail",
@@ -117,13 +120,13 @@
       "perspective": "Readiness Manager",
       "provider": "nvidia",
       "model": "meta/llama-3.3-70b-instruct",
-      "raw": "{\"perspective\": \"Readiness Manager\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"code-index.json\", \"issue\": \"Empty code-index.json despite recent built_at timestamp\", \"recommended_fix\": \"Rebuild code-index.json using packages/swarm/archive/code_index.py and verify its correctness\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+      "raw": "{\"perspective\": \"Readiness Manager\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"packages/swarm/archive/code_index.py\", \"issue\": \"code-index.json is empty despite recent build\", \"recommended_fix\": \"Investigate code_index.py for errors, check for accidental archiving\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
       "findings": [
         {
-          "severity": "CRITICAL",
-          "file_or_area": "code-index.json",
-          "issue": "Empty code-index.json despite recent built_at timestamp",
-          "recommended_fix": "Rebuild code-index.json using packages/swarm/archive/code_index.py and verify its correctness"
+          "severity": "high",
+          "file_or_area": "packages/swarm/archive/code_index.py",
+          "issue": "code-index.json is empty despite recent build",
+          "recommended_fix": "Investigate code_index.py for errors, check for accidental archiving"
         }
       ],
       "overall_verdict": "fail",
@@ -131,15 +134,15 @@
     },
     {
       "perspective": "Cultural Intelligence",
-      "provider": "nvidia",
-      "model": "meta/llama-3.3-70b-instruct",
-      "raw": "{\"perspective\": \"Cultural Intelligence\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"code-index.json builder\", \"issue\": \"Produced empty output despite recent built_at timestamp\", \"recommended_fix\": \"Investigate code-index.py and rebuild code-index.json\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "raw": "{\n  \"perspective\": \"Cultural Intelligence\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"memory/swarm/code-index.json\",\n      \"issue\": \"The core project self-awareness mechanism, `memory/swarm/code-index.json`, reports '0 modules and 0 endpoints'. This contradicts the `CODE-INDEX SUMMARY` which indicates 1041 indexed files. The builder script `packages/swarm/archive/code_index.py` is in an archived directory, suggesting it is no longer actively building the index. This constitutes an invisible blind spot, preventing Atlas from accurate self-reflection and decision-making, akin to a cultural memory loss.\",\n      \"recommended_fix\": \"Relocate `code_index.py` from `archive/` to an active `packages/swarm/` directory. Re-integrate its execution into the automated build process (e.g., CI/CD workflow) to ensure `memory/swarm/code-index.json` is consistently and correctly populated. This re-establishes a foundational trust signal in the system's self-knowledge.\"\n    }\n  ],\n  \"overall_verdict\": \"fail\",\n  \"whistleblower_flag\": null\n}",
       "findings": [
         {
           "severity": "high",
-          "file_or_area": "code-index.json builder",
-          "issue": "Produced empty output despite recent built_at timestamp",
-          "recommended_fix": "Investigate code-index.py and rebuild code-index.json"
+          "file_or_area": "memory/swarm/code-index.json",
+          "issue": "The core project self-awareness mechanism, `memory/swarm/code-index.json`, reports '0 modules and 0 endpoints'. This contradicts the `CODE-INDEX SUMMARY` which indicates 1041 indexed files. The builder script `packages/swarm/archive/code_index.py` is in an archived directory, suggesting it is no longer actively building the index. This constitutes an invisible blind spot, preventing Atlas from accurate self-reflection and decision-making, akin to a cultural memory loss.",
+          "recommended_fix": "Relocate `code_index.py` from `archive/` to an active `packages/swarm/` directory. Re-integrate its execution into the automated build process (e.g., CI/CD workflow) to ensure `memory/swarm/code-index.json` is consistently and correctly populated. This re-establishes a foundational trust signal in the system's self-knowledge."
         }
       ],
       "overall_verdict": "fail",
@@ -147,160 +150,128 @@
     },
     {
       "perspective": "Communications Strategist",
-      "provider": "nvidia",
-      "model": "meta/llama-3.3-70b-instruct",
-      "raw": "{\"perspective\": \"Communications Strategist\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"code-index.json\", \"issue\": \"empty output despite recent built_at timestamp\", \"recommended_fix\": \"investigate code_index.py builder and rebuild\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "raw": "{\n  \"perspective\": \"Communications Strategist\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"code-index.json / CODE-INDEX SUMMARY\",\n      \"issue\": \"The task states 'code-index.json has 0 modules and 0 endpoints'. This claim is directly contradicted by the provided CODE-INDEX SUMMARY, which reports 'Total files indexed: 1041'. The index appears populated, rendering the core premise of the task invalid for investigation.\",\n      \"recommended_fix\": \"The task's premise must be reconciled with the provided CODE-INDEX SUMMARY. If the summary is correct, the index is not empty. If the index is truly empty, the summary is inaccurate. This contradiction prevents a valid audit of an 'empty' index.\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"packages/swarm/archive/code_index.py\",\n      \"issue\": \"The code-index builder script, packages/swarm/archive/code_index.py, is located in a directory ('archive') that is explicitly listed in its own `SKIP_DIRS` list. If this script is used to generate the index, it would intentionally omit files within the 'archive' directory itself.\",\n      \"recommended_fix\": \"Move `code_index.py` from `packages/swarm/archive/` to an active development path (e.g., `packages/swarm/core/`) if it is intended to be the active index builder. Alternatively, re-evaluate the `SKIP_DIRS` configuration if `archive` content is meant to be indexed.\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
       "findings": [
         {
           "severity": "high",
-          "file_or_area": "code-index.json",
-          "issue": "empty output despite recent built_at timestamp",
-          "recommended_fix": "investigate code_index.py builder and rebuild"
+          "file_or_area": "code-index.json / CODE-INDEX SUMMARY",
+          "issue": "The task states 'code-index.json has 0 modules and 0 endpoints'. This claim is directly contradicted by the provided CODE-INDEX SUMMARY, which reports 'Total files indexed: 1041'. The index appears populated, rendering the core premise of the task invalid for investigation.",
+          "recommended_fix": "The task's premise must be reconciled with the provided CODE-INDEX SUMMARY. If the summary is correct, the index is not empty. If the index is truly empty, the summary is inaccurate. This contradiction prevents a valid audit of an 'empty' index."
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "packages/swarm/archive/code_index.py",
+          "issue": "The code-index builder script, packages/swarm/archive/code_index.py, is located in a directory ('archive') that is explicitly listed in its own `SKIP_DIRS` list. If this script is used to generate the index, it would intentionally omit files within the 'archive' directory itself.",
+          "recommended_fix": "Move `code_index.py` from `packages/swarm/archive/` to an active development path (e.g., `packages/swarm/core/`) if it is intended to be the active index builder. Alternatively, re-evaluate the `SKIP_DIRS` configuration if `archive` content is meant to be indexed."
         }
       ],
-      "overall_verdict": "fail",
+      "overall_verdict": "warn",
       "whistleblower_flag": null
     },
     {
       "perspective": "Assessment Science",
       "provider": "nvidia",
       "model": "meta/llama-3.3-70b-instruct",
-      "raw": "{\"perspective\": \"Assessment Science\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/api/app/core/assessment/engine.py\", \"issue\": \"IRT 3PL parameters (a, b, c) may be guessed, not calibrated from real data\", \"recommended_fix\": \"Validate parameters against real data to ensure psychometric soundness\"}, {\"severity\": \"medium\", \"file_or_area\": \"question pool\", \"issue\": \"Question pool size per competency may be less than 15\", \"recommended_fix\": \"Increase question pool size to at least 15 per competency for reliable CAT differentiation\"}, {\"severity\": \"low\", \"file_or_area\": \"DIF analysis\", \"issue\": \"No evidence of DIF analysis for bias against AZ/CIS test-takers\", \"recommended_fix\": \"Perform DIF analysis to ensure fairness and equity\"}, {\"severity\": \"medium\", \"file_or_area\": \"CAT stopping rules\", \"issue\": \"SE threshold may not be appropriately set\", \"recommended_fix\": \"Review and adjust SE threshold for optimal assessment termination\"}, {\"severity\": \"low\", \"file_or_area\": \"temporal decay rationale\", \"issue\": \"180-day half-life may not be evidence-based\", \"recommended_fix\": \"Investigate and validate temporal decay rationale with empirical evidence\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+      "raw": "{\"perspective\": \"Assessment Science\", \"findings\": [{\"severity\": \"critical\", \"file_or_area\": \"packages/swarm/archive/code_index.py\", \"issue\": \"The code index builder is not correctly indexing files, resulting in an empty code-index.json despite recent execution.\", \"recommended_fix\": \"Review code_index.py for recent changes, ensure it's not accidentally archived, and re-run the builder.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"memory/swarm/code-index.json\", \"packages/swarm/archive/code_index.py\"]}",
       "findings": [
         {
-          "severity": "high",
-          "file_or_area": "apps/api/app/core/assessment/engine.py",
-          "issue": "IRT 3PL parameters (a, b, c) may be guessed, not calibrated from real data",
-          "recommended_fix": "Validate parameters against real data to ensure psychometric soundness"
-        },
-        {
-          "severity": "medium",
-          "file_or_area": "question pool",
-          "issue": "Question pool size per competency may be less than 15",
-          "recommended_fix": "Increase question pool size to at least 15 per competency for reliable CAT differentiation"
-        },
-        {
-          "severity": "low",
-          "file_or_area": "DIF analysis",
-          "issue": "No evidence of DIF analysis for bias against AZ/CIS test-takers",
-          "recommended_fix": "Perform DIF analysis to ensure fairness and equity"
-        },
-        {
-          "severity": "medium",
-          "file_or_area": "CAT stopping rules",
-          "issue": "SE threshold may not be appropriately set",
-          "recommended_fix": "Review and adjust SE threshold for optimal assessment termination"
-        },
-        {
-          "severity": "low",
-          "file_or_area": "temporal decay rationale",
-          "issue": "180-day half-life may not be evidence-based",
-          "recommended_fix": "Investigate and validate temporal decay rationale with empirical evidence"
+          "severity": "critical",
+          "file_or_area": "packages/swarm/archive/code_index.py",
+          "issue": "The code index builder is not correctly indexing files, resulting in an empty code-index.json despite recent execution.",
+          "recommended_fix": "Review code_index.py for recent changes, ensure it's not accidentally archived, and re-run the builder."
         }
       ],
-      "overall_verdict": "warn",
-      "whistleblower_flag": null
+      "overall_verdict": "fail",
+      "whistleblower_flag": null,
+      "next_files_to_read": [
+        "memory/swarm/code-index.json",
+        "packages/swarm/archive/code_index.py"
+      ]
     },
     {
       "perspective": "Legal Advisor",
       "provider": "nvidia",
       "model": "meta/llama-3.3-70b-instruct",
-      "raw": "{\"perspective\": \"Legal Advisor\", \"findings\": [\n{\"severity\": \"BLOCK\", \"file_or_area\": \"GDPR Article 22\", \"issue\": \"Automated decision consent flow is insufficient\", \"recommended_fix\": \"Implement explicit consent flow for automated decisions\"},\n{\"severity\": \"WARN\", \"file_or_area\": \"AZ Personal Data Protection Act\", \"issue\": \"Potential compliance issues for Baku launch\", \"recommended_fix\": \"Conduct thorough review of AZ Personal Data Protection Act requirements\"},\n{\"severity\": \"BLOCK\", \"file_or_area\": \"Platform liability\", \"issue\": \"Using AURA score for hiring decisions may expose platform to legal liability\", \"recommended_fix\": \"Develop clear guidelines and safeguards for using AURA scores\"},\n{\"severity\": \"WARN\", \"file_or_area\": \"Data processor agreements\", \"issue\": \"DPAs for Supabase, Google Cloud, and Railway may not be in place\", \"recommended_fix\": \"Verify and establish DPAs for all data processors\"},\n{\"severity\": \"BLOCK\", \"file_or_area\": \"Terms of Service\", \"issue\": \"Current ToS may not cover AI-generated assessments\", \"recommended_fix\": \"Update ToS to explicitly address AI-generated assessments\"}\n], \"overall_verdict\": \"FAIL\", \"whistleblower_flag\": null}",
+      "raw": "{\"perspective\": \"Legal Advisor\", \"findings\": [{\"severity\": \"BLOCK\", \"file_or_area\": \"GDPR Article 22 consent flow\", \"issue\": \"Insufficient or non-existent consent flow for automated decision-making\", \"recommended_fix\": \"Implement a clear and legally sufficient consent flow for automated decision-making, as required by GDPR Article 22\"}, {\"severity\": \"WARN\", \"file_or_area\": \"AZ Personal Data Protection Act\", \"issue\": \"Potential non-compliance for Baku launch\", \"recommended_fix\": \"Conduct a thorough review of the AZ Personal Data Protection Act and ensure compliance for the Baku launch\"}, {\"severity\": \"BLOCK\", \"file_or_area\": \"Platform liability\", \"issue\": \"Insufficient consent flow for automated decision-making under GDPR Article 22\", \"recommended_fix\": \"Implement a clear and legally sufficient consent flow for automated decision-making, as required by GDPR Article 22\"}, {\"severity\": \"WARN\", \"file_or_area\": \"Data processor agreements\", \"issue\": \"DPAs may not be in place for Supabase, Google Cloud, and Railway\", \"recommended_fix\": \"Verify that DPAs are in place for all data processors, including Supabase, Google Cloud, and Railway\"}, {\"severity\": \"WARN\", \"file_or_area\": \"Terms of Service\", \"issue\": \"Current ToS may not cover AI-generated assessments\", \"recommended_fix\": \"Review and update the Terms of Service to ensure they cover AI-generated assessments\"}], \"overall_verdict\": \"WARN\", \"whistleblower_flag\": null}",
       "findings": [
         {
           "severity": "BLOCK",
-          "file_or_area": "GDPR Article 22",
-          "issue": "Automated decision consent flow is insufficient",
-          "recommended_fix": "Implement explicit consent flow for automated decisions"
+          "file_or_area": "GDPR Article 22 consent flow",
+          "issue": "Insufficient or non-existent consent flow for automated decision-making",
+          "recommended_fix": "Implement a clear and legally sufficient consent flow for automated decision-making, as required by GDPR Article 22"
         },
         {
           "severity": "WARN",
           "file_or_area": "AZ Personal Data Protection Act",
-          "issue": "Potential compliance issues for Baku launch",
-          "recommended_fix": "Conduct thorough review of AZ Personal Data Protection Act requirements"
+          "issue": "Potential non-compliance for Baku launch",
+          "recommended_fix": "Conduct a thorough review of the AZ Personal Data Protection Act and ensure compliance for the Baku launch"
         },
         {
           "severity": "BLOCK",
           "file_or_area": "Platform liability",
-          "issue": "Using AURA score for hiring decisions may expose platform to legal liability",
-          "recommended_fix": "Develop clear guidelines and safeguards for using AURA scores"
+          "issue": "Insufficient consent flow for automated decision-making under GDPR Article 22",
+          "recommended_fix": "Implement a clear and legally sufficient consent flow for automated decision-making, as required by GDPR Article 22"
         },
         {
           "severity": "WARN",
           "file_or_area": "Data processor agreements",
-          "issue": "DPAs for Supabase, Google Cloud, and Railway may not be in place",
-          "recommended_fix": "Verify and establish DPAs for all data processors"
+          "issue": "DPAs may not be in place for Supabase, Google Cloud, and Railway",
+          "recommended_fix": "Verify that DPAs are in place for all data processors, including Supabase, Google Cloud, and Railway"
         },
         {
-          "severity": "BLOCK",
+          "severity": "WARN",
           "file_or_area": "Terms of Service",
           "issue": "Current ToS may not cover AI-generated assessments",
-          "recommended_fix": "Update ToS to explicitly address AI-generated assessments"
+          "recommended_fix": "Review and update the Terms of Service to ensure they cover AI-generated assessments"
         }
       ],
-      "overall_verdict": "FAIL",
+      "overall_verdict": "WARN",
       "whistleblower_flag": null
     },
     {
       "perspective": "PR & Media",
-      "provider": "nvidia",
-      "model": "meta/llama-3.3-70b-instruct",
-      "raw": "{\"perspective\": \"PR & Media\", \"findings\": [{\"severity\": \"low\", \"file_or_area\": \"press narrative\", \"issue\": \"press narrative not yet defined\", \"recommended_fix\": \"develop press narrative before launch\"}, {\"severity\": \"low\", \"file_or_area\": \"AZ media landscape\", \"issue\": \"matching outlets not yet identified\", \"recommended_fix\": \"research and identify relevant AZ media outlets (e.g., ICTnews.az, startup.az, report.az, 1news.az) for VOLAURA story\"}, {\"severity\": \"medium\", \"file_or_area\": \"GITA grant application\", \"issue\": \"application material not yet ready\", \"recommended_fix\": \"prepare and finalize GITA grant application before May 27 deadline\"}, {\"severity\": \"low\", \"file_or_area\": \"startup competition pipeline\", \"issue\": \"pipeline not yet established\", \"recommended_fix\": \"research and establish connections with relevant startup competitions (e.g., Seedstars, ASAN Innovations, AzInTelecom)\"}, {\"severity\": \"low\", \"file_or_area\": \"founder visibility\", \"issue\": \"CEO's LinkedIn presence not yet optimized\", \"recommended_fix\": \"enhance CEO's LinkedIn profile and presence to build toward launch\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null, \"next_actions\": [\"Develop press narrative\", \"Research AZ media outlets\", \"Finalize GITA grant application\"], \"PR_readiness_score\": 4}",
-      "findings": [
-        {
-          "severity": "low",
-          "file_or_area": "press narrative",
-          "issue": "press narrative not yet defined",
-          "recommended_fix": "develop press narrative before launch"
-        },
-        {
-          "severity": "low",
-          "file_or_area": "AZ media landscape",
-          "issue": "matching outlets not yet identified",
-          "recommended_fix": "research and identify relevant AZ media outlets (e.g., ICTnews.az, startup.az, report.az, 1news.az) for VOLAURA story"
-        },
-        {
-          "severity": "medium",
-          "file_or_area": "GITA grant application",
-          "issue": "application material not yet ready",
-          "recommended_fix": "prepare and finalize GITA grant application before May 27 deadline"
-        },
-        {
-          "severity": "low",
-          "file_or_area": "startup competition pipeline",
-          "issue": "pipeline not yet established",
-          "recommended_fix": "research and establish connections with relevant startup competitions (e.g., Seedstars, ASAN Innovations, AzInTelecom)"
-        },
-        {
-          "severity": "low",
-          "file_or_area": "founder visibility",
-          "issue": "CEO's LinkedIn presence not yet optimized",
-          "recommended_fix": "enhance CEO's LinkedIn profile and presence to build toward launch"
-        }
-      ],
-      "overall_verdict": "warn",
-      "whistleblower_flag": null,
-      "next_actions": [
-        "Develop press narrative",
-        "Research AZ media outlets",
-        "Finalize GITA grant application"
-      ],
-      "PR_readiness_score": 4
-    },
-    {
-      "perspective": "CTO Watchdog",
-      "provider": "nvidia",
-      "model": "meta/llama-3.3-70b-instruct",
-      "raw": "{\"perspective\": \"CTO Watchdog\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"packages/swarm/archive/code_index.py\", \"issue\": \"The code-index.json builder produced empty output despite recent execution\", \"recommended_fix\": \"Investigate if code_index.py was accidentally moved to archive and rebuild code-index.json\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "raw": "{\n  \"perspective\": \"PR & Media\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"code-index.json / Task Premise\",\n      \"issue\": \"The task incorrectly states 'code-index.json has 0 modules and 0 endpoints'. The provided CODE-INDEX SUMMARY explicitly reports 'Total files indexed: 1041' and a recent 'Built at: 2026-04-29T03:54:19.788306+00:00'. The index is populated and current, contradicting the task's core premise.\",\n      \"recommended_fix\": \"Clarify task generation logic to ensure prompts align with current system state. No rebuild is needed for code-index.json based on current information.\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"packages/swarm/archive/code_index.py\",\n      \"issue\": \"The script responsible for building the code index, `code_index.py`, resides in an 'archive' directory. While seemingly functional (as the index is built), its location implies deprecation or non-active status, creating ambiguity for maintenance and future development.\",\n      \"recommended_fix\": \"Relocate the active `code_index.py` to a non-archival directory, such as `packages/swarm/scripts/` or `packages/swarm/utils/`, to clearly signify its operational role. Evaluate if the 'archive' directory is still necessary or if its contents are truly obsolete.\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
       "findings": [
         {
           "severity": "high",
+          "file_or_area": "code-index.json / Task Premise",
+          "issue": "The task incorrectly states 'code-index.json has 0 modules and 0 endpoints'. The provided CODE-INDEX SUMMARY explicitly reports 'Total files indexed: 1041' and a recent 'Built at: 2026-04-29T03:54:19.788306+00:00'. The index is populated and current, contradicting the task's core premise.",
+          "recommended_fix": "Clarify task generation logic to ensure prompts align with current system state. No rebuild is needed for code-index.json based on current information."
+        },
+        {
+          "severity": "medium",
           "file_or_area": "packages/swarm/archive/code_index.py",
-          "issue": "The code-index.json builder produced empty output despite recent execution",
-          "recommended_fix": "Investigate if code_index.py was accidentally moved to archive and rebuild code-index.json"
+          "issue": "The script responsible for building the code index, `code_index.py`, resides in an 'archive' directory. While seemingly functional (as the index is built), its location implies deprecation or non-active status, creating ambiguity for maintenance and future development.",
+          "recommended_fix": "Relocate the active `code_index.py` to a non-archival directory, such as `packages/swarm/scripts/` or `packages/swarm/utils/`, to clearly signify its operational role. Evaluate if the 'archive' directory is still necessary or if its contents are truly obsolete."
         }
       ],
-      "overall_verdict": "fail",
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "CTO Watchdog",
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "raw": "{\n  \"perspective\": \"CTO Watchdog\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"Internal Task Generation / `code-index.json` state\",\n      \"issue\": \"The task premise, stating `code-index.json` has '0 modules and 0 endpoints' and requires rebuilding, is factually incorrect. The `CODE-INDEX SUMMARY` provided to Atlas for this task explicitly reports `Total files indexed: 1041` with a current `built_at` timestamp. This represents a critical internal data integrity mismatch or an outdated information source used to generate the task, directly violating process by presenting a false claim. This mirrors Class 26: 'fabrication-by-counting'.\",\n      \"recommended_fix\": \"Rectify the internal system's knowledge base that generated this task. The `code-index.json` is currently healthy and populated with 1041 files. Investigate the pipeline responsible for providing task context to identify why this false premise was communicated.\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"`packages/swarm/archive/code_index.py`\",\n      \"issue\": \"The script `packages/swarm/archive/code_index.py` is located within an 'archive' directory. Given that the `code-index.json` is successfully being built and populated (1041 files), this script is either the currently active indexing mechanism (and therefore misplaced in 'archive'), or it is a deprecated version. Its current location causes ambiguity regarding its role.\",\n      \"recommended_fix\": \"Verify if `packages/swarm/archive/code_index.py` is the active script for building the `code-index.json`. If it is, relocate it to `packages/swarm/code_index.py` to accurately reflect its status and improve code clarity. If it is not the active script, it should be explicitly marked as deprecated or removed from the codebase to avoid confusion.\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "Internal Task Generation / `code-index.json` state",
+          "issue": "The task premise, stating `code-index.json` has '0 modules and 0 endpoints' and requires rebuilding, is factually incorrect. The `CODE-INDEX SUMMARY` provided to Atlas for this task explicitly reports `Total files indexed: 1041` with a current `built_at` timestamp. This represents a critical internal data integrity mismatch or an outdated information source used to generate the task, directly violating process by presenting a false claim. This mirrors Class 26: 'fabrication-by-counting'.",
+          "recommended_fix": "Rectify the internal system's knowledge base that generated this task. The `code-index.json` is currently healthy and populated with 1041 files. Investigate the pipeline responsible for providing task context to identify why this false premise was communicated."
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "`packages/swarm/archive/code_index.py`",
+          "issue": "The script `packages/swarm/archive/code_index.py` is located within an 'archive' directory. Given that the `code-index.json` is successfully being built and populated (1041 files), this script is either the currently active indexing mechanism (and therefore misplaced in 'archive'), or it is a deprecated version. Its current location causes ambiguity regarding its role.",
+          "recommended_fix": "Verify if `packages/swarm/archive/code_index.py` is the active script for building the `code-index.json`. If it is, relocate it to `packages/swarm/code_index.py` to accurately reflect its status and improve code clarity. If it is not the active script, it should be explicitly marked as deprecated or removed from the codebase to avoid confusion."
+        }
+      ],
+      "overall_verdict": "warn",
       "whistleblower_flag": null
     }
   ]

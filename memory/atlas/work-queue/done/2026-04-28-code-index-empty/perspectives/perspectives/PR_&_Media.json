@@ -1,0 +1,16 @@
+{
+  "perspective": "PR & Media",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"PR & Media\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"packages/swarm/archive/code_index.py\", \"issue\": \"code-index.json is empty despite recent built_at timestamp\", \"recommended_fix\": \"Rebuild code-index.json by running packages/swarm/archive/code_index.py\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "packages/swarm/archive/code_index.py",
+      "issue": "code-index.json is empty despite recent built_at timestamp",
+      "recommended_fix": "Rebuild code-index.json by running packages/swarm/archive/code_index.py"
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null
+}

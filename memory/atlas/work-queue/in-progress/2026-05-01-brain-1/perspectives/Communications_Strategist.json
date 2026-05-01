@@ -1,0 +1,16 @@
+{
+  "perspective": "Communications Strategist",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Communications Strategist\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/web/src/components/assessment/energy-picker.tsx\", \"issue\": \"Energy mode switching logic is incomplete for AZ/CIS cultural differences\", \"recommended_fix\": \"Update energy-picker.tsx to include collectivist shame considerations and honor claims for sharing mechanics\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "apps/web/src/components/assessment/energy-picker.tsx",
+      "issue": "Energy mode switching logic is incomplete for AZ/CIS cultural differences",
+      "recommended_fix": "Update energy-picker.tsx to include collectivist shame considerations and honor claims for sharing mechanics"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

@@ -1,0 +1,24 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Design System\",\n  \"findings\": [\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"apps/web/src/app/globals.css\",\n      \"issue\": \"Animation duration on line 42 (2000ms) exceeds Constitution LAW 1's 800ms maximum for accessible UI motion\",\n      \"recommended_fix\": \"Edit apps/web/src/app/globals.css line 42: change animation duration from 2000ms to 800ms\"\n    },\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"apps/api/app/routers/assessment.py\",\n      \"issue\": \"Missing input validation for role_level parameter in _log_assessment_a function (line 199)\",\n      \"recommended_fix\": \"Fix apps/api/app/routers/assessment.py line 199: add input validation for role_level\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "warn",
+      "file_or_area": "apps/web/src/app/globals.css",
+      "issue": "Animation duration on line 42 (2000ms) exceeds Constitution LAW 1's 800ms maximum for accessible UI motion",
+      "recommended_fix": "Edit apps/web/src/app/globals.css line 42: change animation duration from 2000ms to 800ms"
+    },
+    {
+      "severity": "warn",
+      "file_or_area": "apps/api/app/routers/assessment.py",
+      "issue": "Missing input validation for role_level parameter in _log_assessment_a function (line 199)",
+      "recommended_fix": "Fix apps/api/app/routers/assessment.py line 199: add input validation for role_level"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Design System"
+}

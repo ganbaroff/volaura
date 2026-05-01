@@ -1,0 +1,16 @@
+{
+  "perspective": "Assessment Science",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Assessment Science\", \"findings\": [{\"severity\": \"critical\", \"file_or_area\": \"packages/swarm/archive/code_index.py\", \"issue\": \"Code index builder is archived and not running regularly\", \"recommended_fix\": \"Move code_index.py back to packages/swarm/ and schedule regular runs via GitHub Actions\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+  "findings": [
+    {
+      "severity": "critical",
+      "file_or_area": "packages/swarm/archive/code_index.py",
+      "issue": "Code index builder is archived and not running regularly",
+      "recommended_fix": "Move code_index.py back to packages/swarm/ and schedule regular runs via GitHub Actions"
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null
+}

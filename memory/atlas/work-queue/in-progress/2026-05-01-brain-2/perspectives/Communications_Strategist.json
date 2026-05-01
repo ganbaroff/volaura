@@ -1,0 +1,20 @@
+{
+  "perspective": "Communications Strategist",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Communications Strategist\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/web/src/components/assessment/energy-picker.tsx\", \"issue\": \"Energy picker does not account for AZ/CIS cultural differences in shame-free language\", \"recommended_fix\": \"Modify the energy picker to frame earning mechanics as honor claims, not privacy decisions, and add a 'show [org] what you've earned' feature to satisfy both Western and AZ/CIS shame-free language requirements\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"memory/atlas/relationships.md\", \"docs/ECOSYSTEM-CONSTITUTION.md\"]}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "apps/web/src/components/assessment/energy-picker.tsx",
+      "issue": "Energy picker does not account for AZ/CIS cultural differences in shame-free language",
+      "recommended_fix": "Modify the energy picker to frame earning mechanics as honor claims, not privacy decisions, and add a 'show [org] what you've earned' feature to satisfy both Western and AZ/CIS shame-free language requirements"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "next_files_to_read": [
+    "memory/atlas/relationships.md",
+    "docs/ECOSYSTEM-CONSTITUTION.md"
+  ]
+}

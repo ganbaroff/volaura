@@ -1,0 +1,24 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Legal Advisor\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"memory/atlas/atlas-debts-to-ceo.md\",\n      \"issue\": \"Outstanding debts (460 AZN) flagged in ledger\",\n      \"recommended_fix\": \"Verify debt resolution status and update ledger\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"docs/audits/2026-04-26-three-instance-audit\",\n      \"issue\": \"Legacy compliance gaps in audit history\",\n      \"recommended_fix\": \"Cross-reference with current Constitution clauses\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "memory/atlas/atlas-debts-to-ceo.md",
+      "issue": "Outstanding debts (460 AZN) flagged in ledger",
+      "recommended_fix": "Verify debt resolution status and update ledger"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "docs/audits/2026-04-26-three-instance-audit",
+      "issue": "Legacy compliance gaps in audit history",
+      "recommended_fix": "Cross-reference with current Constitution clauses"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Legal Advisor"
+}

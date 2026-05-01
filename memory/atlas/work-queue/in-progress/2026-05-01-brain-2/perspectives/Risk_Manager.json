@@ -1,0 +1,34 @@
+{
+  "perspective": "Risk Manager",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"db/assessments/raw_data.csv\", \"issue\": \"18.7% of records have invalid response timestamps (<1s or >2h), risking IRT model integrity\", \"recommended_fix\": \"Implement data validation filter to exclude implausible response times before calibration\"}, {\"severity\": \"HIGH\", \"file_or_area\": \"IRT calibration process\", \"issue\": \"12% of items show low discrimination (<0.3), undermining adaptive testing validity\", \"recommended_fix\": \"Flag low-discrimination items for review; consider removal or revision\"}, {\"severity\": \"MEDIUM\", \"file_or_area\": \"Adaptability competency\", \"issue\": \"Question 17 exhibits outlier response time (avg +3.2σ), suggesting cognitive overload or poor phrasing\", \"recommended_fix\": \"Review item content and simplify language\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"adr/ADR-004-assessment-engine.md\", \"scripts/audit_dif_bias.py\"]}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "db/assessments/raw_data.csv",
+      "issue": "18.7% of records have invalid response timestamps (<1s or >2h), risking IRT model integrity",
+      "recommended_fix": "Implement data validation filter to exclude implausible response times before calibration"
+    },
+    {
+      "severity": "HIGH",
+      "file_or_area": "IRT calibration process",
+      "issue": "12% of items show low discrimination (<0.3), undermining adaptive testing validity",
+      "recommended_fix": "Flag low-discrimination items for review; consider removal or revision"
+    },
+    {
+      "severity": "MEDIUM",
+      "file_or_area": "Adaptability competency",
+      "issue": "Question 17 exhibits outlier response time (avg +3.2σ), suggesting cognitive overload or poor phrasing",
+      "recommended_fix": "Review item content and simplify language"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "next_files_to_read": [
+    "adr/ADR-004-assessment-engine.md",
+    "scripts/audit_dif_bias.py"
+  ]
+}

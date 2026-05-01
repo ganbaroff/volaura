@@ -1,0 +1,27 @@
+{
+  "perspective": "Risk Manager",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"packages/swarm/archive/code_index.py\", \"issue\": \"code-index.json is empty due to builder being moved to archive/ and not running; critical path for agent context intelligence is broken\", \"recommended_fix\": \"Restore code_index.py to active modules, fix glob path resolution by aligning cwd with project_root, and add CI check that index has >100 files\"}, {\"severity\": \"HIGH\", \"file_or_area\": \"code-index.json\", \"issue\": \"Empty index causes all agents to operate blind, increasing solo-execution (Class 3) and false-completion (Class 7) risks\", \"recommended_fix\": \"Add pre-execution guard: halt if code-index.json has <100 entries or built_at is stale (>1h)\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"code-index failure undermines swarm cognition — active risk to Constitution adherence\", \"next_files_to_read\": [\"packages/swarm/arch/config.ts\"]}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "packages/swarm/archive/code_index.py",
+      "issue": "code-index.json is empty due to builder being moved to archive/ and not running; critical path for agent context intelligence is broken",
+      "recommended_fix": "Restore code_index.py to active modules, fix glob path resolution by aligning cwd with project_root, and add CI check that index has >100 files"
+    },
+    {
+      "severity": "HIGH",
+      "file_or_area": "code-index.json",
+      "issue": "Empty index causes all agents to operate blind, increasing solo-execution (Class 3) and false-completion (Class 7) risks",
+      "recommended_fix": "Add pre-execution guard: halt if code-index.json has <100 entries or built_at is stale (>1h)"
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "code-index failure undermines swarm cognition — active risk to Constitution adherence",
+  "next_files_to_read": [
+    "packages/swarm/arch/config.ts"
+  ]
+}

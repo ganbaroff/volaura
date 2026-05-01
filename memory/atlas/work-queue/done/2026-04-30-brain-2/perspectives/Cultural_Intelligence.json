@@ -1,0 +1,24 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Assessment Science\",\n  \"findings\": [\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"src/assessment/irt_engine.py\",\n      \"issue\": \"No data ingestion pipeline defined for real-world candidate performance calibration\",\n      \"recommended_fix\": \"Implement pipeline for dynamic parameter recalibration using historical performance data\"\n    },\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"src/assessment/irt_engine.py\",\n      \"issue\": \"Missing calibration logic for 3PL model parameters\",\n      \"recommended_fix\": \"Add iterative recalibration routine using validation set performance metrics\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "warn",
+      "file_or_area": "src/assessment/irt_engine.py",
+      "issue": "No data ingestion pipeline defined for real-world candidate performance calibration",
+      "recommended_fix": "Implement pipeline for dynamic parameter recalibration using historical performance data"
+    },
+    {
+      "severity": "warn",
+      "file_or_area": "src/assessment/irt_engine.py",
+      "issue": "Missing calibration logic for 3PL model parameters",
+      "recommended_fix": "Add iterative recalibration routine using validation set performance metrics"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Assessment Science"
+}

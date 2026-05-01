@@ -1,0 +1,318 @@
+{
+  "task_id": "2026-04-30-brain-1",
+  "task_type": "audit",
+  "completed_at": "2026-04-30T22:55:19.085398+00:00",
+  "perspectives_dispatched": 17,
+  "perspectives_responded": 8,
+  "perspectives_failed": 9,
+  "providers_used": {
+    "vertex-ai-agent": 2,
+    "cerebras": 2,
+    "ollama": 2,
+    "nvidia": 2
+  },
+  "whistleblower_flags": [],
+  "perspectives": [
+    {
+      "perspective": "Scaling Engineer",
+      "provider": "vertex-ai-agent",
+      "model": "gemini-2.5-flash+tools",
+      "raw": "```json\n{\n  \"perspective\": \"Scaling Engineer\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"apps/web/src/components/assessment/energy-picker.tsx, apps/web/src/hooks/use-energy-mode.ts, and ecosystem-wide UI components\",\n      \"issue\": \"Critical contradiction in Energy Adaptation Law 2 implementation. While `PRE-LAUNCH-BLOCKERS-STATUS.md` marks the energy picker as \\\"✅ done\\\" for the assessment, my recent findings explicitly state Law 2 is \\\"BROKEN IN 4/5 PRODUCTS\\\" and the 'Low' UI mode is \\\"not correctly toggled\\\". This indicates a partial or inconsistent ecosystem-wide implementation.\",\n      \"recommended_fix\": \"Conduct an urgent, comprehensive audit of Energy Adaptation Law 2 across all five products. Implement a centralized mechanism or enforce strict guidelines to ensure consistent and correct application of energy modes, especially the 'Low' mode, to prevent unnecessary client-side resource consumption and data transfer.\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"docs/design/ANIMATION-SYSTEM and all UI components across the ecosystem\",\n      \"issue\": \"Lack of explicit, verifiable enforcement mechanisms for Animation Safety Law 4. While the law defines safe animation parameters and mandates `prefers-reduced-motion`, there's no clear indication of automated checks or a system-wide audit to ensure these rules are consistently applied across all products and components.\",\n      \"recommended_fix\": \"Implement automated testing (e.g., Playwright visual regression tests, static analysis for CSS/animation properties) to enforce Animation Safety Law 4, particularly `prefers-reduced-motion` and animation duration/particle limits. Conduct a targeted audit of high-traffic UI components.\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null,\n  \"next_files",
+      "sub_agents_used": true,
+      "assigned_llm": true
+    },
+    {
+      "perspective": "Security Auditor",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Product Strategist",
+      "provider": "cerebras",
+      "model": "qwen-3-235b-a22b-instruct-2507",
+      "raw": "{\"perspective\": \"Product Strategist\", \"findings\": [{\"severity\": \"critical\", \"file_or_area\": \"ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Foundation Law implementation is conflated with constitutional laws; no distinct 'Foundation Law' exists in codebase or docs. Confusion risks misalignment with CEO's intent.\", \"recommended_fix\": \"Clarify whether 'Foundation Law' refers to existing Constitution Part 1 (Laws 1-5) or a new legal entity framework. If the latter, define in `docs/` and link to incorporation tasks in `memory/atlas/company-state`.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+      "sub_agents_used": true,
+      "assigned_llm": true,
+      "findings": [
+        {
+          "severity": "critical",
+          "file_or_area": "ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Foundation Law implementation is conflated with constitutional laws; no distinct 'Foundation Law' exists in codebase or docs. Confusion risks misalignment with CEO's intent.",
+          "recommended_fix": "Clarify whether 'Foundation Law' refers to existing Constitution Part 1 (Laws 1-5) or a new legal entity framework. If the latter, define in `docs/` and link to incorporation tasks in `memory/atlas/company-state`."
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Code Quality Engineer",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Ecosystem Auditor",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Risk Manager",
+      "provider": "cerebras",
+      "model": "qwen-3-235b-a22b-instruct-2507",
+      "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Foundation Laws are referenced but not fully implemented in code; Law 3 (Shame-Free Language) violated by potential guilt-inducing patterns in onboarding flows.\", \"recommended_fix\": \"Enforce banned phrases via i18n linter in CI/CD. Audit all user-facing strings against Law 3 table.\"}, {\"severity\": \"HIGH\", \"file_or_area\": \"apps/web/src/components/onboarding\", \"issue\": \"Onboarding may trigger decision paralysis — multiple CTAs observed, violating Law 5 (One Primary Action).\", \"recommended_fix\": \"Reduce tappable elements to ≤5, ensure one primary CTA per screen.\"}, {\"severity\": \"MEDIUM\", \"file_or_area\": \"design/ANIMATION-SYSTEM\", \"issue\": \"Animation specs lack `prefers-reduced-motion` branches, violating Law 4.\", \"recommended_fix\": \"Add reduced-motion variants for all animations; enforce in design system audit.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"apps/web/src/components/onboarding/index.tsx\", \"apps/web/src/styles/animation.ts\"]}",
+      "sub_agents_used": true,
+      "assigned_llm": true,
+      "findings": [
+        {
+          "severity": "CRITICAL",
+          "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Foundation Laws are referenced but not fully implemented in code; Law 3 (Shame-Free Language) violated by potential guilt-inducing patterns in onboarding flows.",
+          "recommended_fix": "Enforce banned phrases via i18n linter in CI/CD. Audit all user-facing strings against Law 3 table."
+        },
+        {
+          "severity": "HIGH",
+          "file_or_area": "apps/web/src/components/onboarding",
+          "issue": "Onboarding may trigger decision paralysis — multiple CTAs observed, violating Law 5 (One Primary Action).",
+          "recommended_fix": "Reduce tappable elements to ≤5, ensure one primary CTA per screen."
+        },
+        {
+          "severity": "MEDIUM",
+          "file_or_area": "design/ANIMATION-SYSTEM",
+          "issue": "Animation specs lack `prefers-reduced-motion` branches, violating Law 4.",
+          "recommended_fix": "Add reduced-motion variants for all animations; enforce in design system audit."
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": null,
+      "next_files_to_read": [
+        "apps/web/src/components/onboarding/index.tsx",
+        "apps/web/src/styles/animation.ts"
+      ]
+    },
+    {
+      "perspective": "Readiness Manager",
+      "provider": "ollama",
+      "model": "gemma4",
+      "raw": "```json\n{\n  \"findings\": [\n    {\n      \"severity\": \"Critical\",\n      \"description\": \"The core principle of the 'Foundation' (the foundational layer of trust and operation) is not explicitly defined or enforced across all modules. While several security and compliance points are mentioned, a single, overarching, and non-negotiable 'Foundation' policy is missing, creating potential systemic risk.\",\n      \"location\": \"System Architecture/Policy Layer\",\n      \"recommendation\": \"Define a 'Foundation Layer' policy document that dictates minimum acceptable standards for data integrity, user authentication, and operational resilience. This must be referenced and enforced by all subsequent feature development.\",\n      \"related_policy\": \"Foundation Policy v1.0\"\n    },\n    {\n      \"severity\": \"High\",\n      \"description\": \"Authentication mechanisms are fragmented. While 'OAuth 2.0' and 'MFA' are mentioned, there is no clear, centralized flow for session management or token revocation across all integrated services. This creates potential session hijacking vectors.\",\n      \"location\": \"Authentication/Authorization Module\",\n      \"recommendation\": \"Implement a centralized Identity Provider (IdP) service responsible for all token issuance, validation, and immediate revocation. Standardize on a single token format (e.g., JWT with defined expiry/refresh cycles).\",\n      \"related_policy\": \"Centralized Auth Flow\"\n    },\n    {\n      \"severity\": \"Medium\",\n      \"description\": \"Data handling protocols lack explicit classification enforcement. The system handles PII, financial data, and general operational data, but the rules for encryption-at-rest vs. encryption-in-transit are not uniformly applied or audited.\",\n      \"location\": \"Data Persistence Layer\",\n      \"recommendation\": \"Mandate data classification (Public, Internal, Confidential, Restricted). Implement automated checks during data ingress/egress to ensure the correct encryption standard is applied based on the classification tag.\",\n      \"related_policy\": \"Data Classification Standard\"\n    },\n    {\n      \"severity\": \"Low\",\n      \"description\": \"Error handling is inconsistent. Different services appear to return different error codes or formats (e.g., HTTP status codes vs. custom JSON error bodies). This complicates client-side integration and debugging.\",\n      \"location\": \"API Gateway/Service Mesh\",\n      \"recommendation\": \"Establish a standardized error response schema (e.g., RFC 7807 Problem Details for HTTP APIs) that all services must adhere to, ensuring consistent error codes and machine-readable details.\",\n      \"related_policy\": \"Standard Error Schema\"\n    }\n  ],\n  \"summary\": \"The system has strong feature coverage but suffers from architectural fragmentation, particularly in foundational security and data governance. The primary risk is the lack of a single, enforced 'Foundation Layer' policy that governs authentication, data handling, and error reporting across disparate services. Addressing these foundational gaps is critical before scaling or introducing high-risk features.\",\n  \"overall_risk_score\": \"Medium-High\"\n}\n```",
+      "assigned_llm": true,
+      "findings": [
+        {
+          "severity": "Critical",
+          "description": "The core principle of the 'Foundation' (the foundational layer of trust and operation) is not explicitly defined or enforced across all modules. While several security and compliance points are mentioned, a single, overarching, and non-negotiable 'Foundation' policy is missing, creating potential systemic risk.",
+          "location": "System Architecture/Policy Layer",
+          "recommendation": "Define a 'Foundation Layer' policy document that dictates minimum acceptable standards for data integrity, user authentication, and operational resilience. This must be referenced and enforced by all subsequent feature development.",
+          "related_policy": "Foundation Policy v1.0"
+        },
+        {
+          "severity": "High",
+          "description": "Authentication mechanisms are fragmented. While 'OAuth 2.0' and 'MFA' are mentioned, there is no clear, centralized flow for session management or token revocation across all integrated services. This creates potential session hijacking vectors.",
+          "location": "Authentication/Authorization Module",
+          "recommendation": "Implement a centralized Identity Provider (IdP) service responsible for all token issuance, validation, and immediate revocation. Standardize on a single token format (e.g., JWT with defined expiry/refresh cycles).",
+          "related_policy": "Centralized Auth Flow"
+        },
+        {
+          "severity": "Medium",
+          "description": "Data handling protocols lack explicit classification enforcement. The system handles PII, financial data, and general operational data, but the rules for encryption-at-rest vs. encryption-in-transit are not uniformly applied or audited.",
+          "location": "Data Persistence Layer",
+          "recommendation": "Mandate data classification (Public, Internal, Confidential, Restricted). Implement automated checks during data ingress/egress to ensure the correct encryption standard is applied based on the classification tag.",
+          "related_policy": "Data Classification Standard"
+        },
+        {
+          "severity": "Low",
+          "description": "Error handling is inconsistent. Different services appear to return different error codes or formats (e.g., HTTP status codes vs. custom JSON error bodies). This complicates client-side integration and debugging.",
+          "location": "API Gateway/Service Mesh",
+          "recommendation": "Establish a standardized error response schema (e.g., RFC 7807 Problem Details for HTTP APIs) that all services must adhere to, ensuring consistent error codes and machine-readable details.",
+          "related_policy": "Standard Error Schema"
+        }
+      ],
+      "summary": "The system has strong feature coverage but suffers from architectural fragmentation, particularly in foundational security and data governance. The primary risk is the lack of a single, enforced 'Foundation Layer' policy that governs authentication, data handling, and error reporting across disparate services. Addressing these foundational gaps is critical before scaling or introducing high-risk features.",
+      "overall_risk_score": "Medium-High"
+    },
+    {
+      "perspective": "Cultural Intelligence",
+      "provider": "ollama",
+      "model": "qwen3:8b",
+      "raw": "{\n  \"perspective\": \"Legal Advisor\",\n  \"findings\": [\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"apps/web/src/components/Notification.jsx\",\n      \"issue\": \"Error states use red (#FF3B30) instead of purple (#800080) as per Law 1\",\n      \"recommended_fix\": \"Update error color codes to match Foundation Law specifications\"\n    },\n    {\n      \"severity\": \"fail\",\n      \"file_or_area\": \"apps/web/src/energy-mode.js\",\n      \"issue\": \"Energy adaptation modes (Full/Mid/Low) not implemented across all UI components\",\n      \"recommended_fix\": \"Implement energy mode toggle and conditional styling in all UI elements\"\n    },\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"docs/UX-COPY-AZ-EN\",\n      \"issue\": \"Contains phrases like 'You failed' which violate Shame-Free Language (Law 3)\",\n      \"recommended_fix\": \"Replace guilt-inducing language with neutral feedback phrasing\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+      "assigned_llm": true,
+      "findings": [
+        {
+          "severity": "warn",
+          "file_or_area": "apps/web/src/components/Notification.jsx",
+          "issue": "Error states use red (#FF3B30) instead of purple (#800080) as per Law 1",
+          "recommended_fix": "Update error color codes to match Foundation Law specifications"
+        },
+        {
+          "severity": "fail",
+          "file_or_area": "apps/web/src/energy-mode.js",
+          "issue": "Energy adaptation modes (Full/Mid/Low) not implemented across all UI components",
+          "recommended_fix": "Implement energy mode toggle and conditional styling in all UI elements"
+        },
+        {
+          "severity": "warn",
+          "file_or_area": "docs/UX-COPY-AZ-EN",
+          "issue": "Contains phrases like 'You failed' which violate Shame-Free Language (Law 3)",
+          "recommended_fix": "Replace guilt-inducing language with neutral feedback phrasing"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "perspective_name_drift": "Legal Advisor"
+    },
+    {
+      "perspective": "Chief Strategist",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Sales Director",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Sales Director\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"sales deck\", \"issue\": \"No sales deck found\", \"recommended_fix\": \"Create a sales deck for the AZ market\"}, {\"severity\": \"medium\", \"file_or_area\": \"pricing\", \"issue\": \"Pricing clarity for AZ market needed\", \"recommended_fix\": \"Define pricing strategy for AZ market\"}, {\"severity\": \"low\", \"file_or_area\": \"target organizations\", \"issue\": \"First 10 target organizations not identified\", \"recommended_fix\": \"Research and identify first 10 target organizations in AZ market\"}, {\"severity\": \"low\", \"file_or_area\": \"objections\", \"issue\": \"Nigar's potential objections not anticipated\", \"recommended_fix\": \"Develop a list of potential objections from Nigar and prepare responses\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"memory/atlas/wake.md\", \"docs/ECOSYSTEM-CONSTITUTION.md\"], \"sales_readiness_score\": 2}",
+      "assigned_llm": true,
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "sales deck",
+          "issue": "No sales deck found",
+          "recommended_fix": "Create a sales deck for the AZ market"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "pricing",
+          "issue": "Pricing clarity for AZ market needed",
+          "recommended_fix": "Define pricing strategy for AZ market"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "target organizations",
+          "issue": "First 10 target organizations not identified",
+          "recommended_fix": "Research and identify first 10 target organizations in AZ market"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "objections",
+          "issue": "Nigar's potential objections not anticipated",
+          "recommended_fix": "Develop a list of potential objections from Nigar and prepare responses"
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": null,
+      "next_files_to_read": [
+        "memory/atlas/wake.md",
+        "docs/ECOSYSTEM-CONSTITUTION.md"
+      ],
+      "sales_readiness_score": 2
+    },
+    {
+      "perspective": "UX Designer",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "DevOps Engineer",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Assessment Science",
+      "provider": "vertex-ai-agent",
+      "model": "gemini-2.5-flash+tools",
+      "raw": "```json\n{\n  \"perspective\": \"Assessment Science\",\n  \"findings\": [\n    {\n      \"severity\": \"critical\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py, docs/PRE-LAUNCH-BLOCKERS-STATUS.md\",\n      \"issue\": \"Foundation Law 3 (Shame-Free Language) is partially implemented for AZ copy, as noted in `PRE-LAUNCH-BLOCKERS-STATUS.md` (Blocker 10). The assessment engine (`engine.py`) lacks integrated Differential Item Functioning (DIF) analysis to detect potential bias arising from non-compliant language, which directly impacts the psychometric validity and fairness of the assessment for AZ/CIS test-takers.\",\n      \"recommended_fix\": \"Fully implement Foundation Law 3 across all locales, ensuring all assessment items and feedback are shame-free. Integrate DIF analysis (e.g., by operationalizing `scripts/audit_dif_bias.py`) into the item calibration or selection pipeline to identify and remove biased items, thereby ensuring psychometric fairness.\"\n    },\n    {\n      \"severity\": \"critical\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"The IRT 3PL parameters (a, b, c) are confirmed to be guessed or defaulted (a=1.0, b=0.0, c=0.0) if not explicitly provided in `engine.py`. This fundamental flaw undermines the psychometric accuracy, reliability, and validity of the Computerized Adaptive Testing (CAT) engine, making any ability estimates unreliable.\",\n      \"recommended_fix\": \"Calibrate IRT parameters (a, b, c) from real, empirical response data using appropriate psychometric software. This is a prerequisite for a psychometrically sound assessment.\"\n    }\n  ],\n  \"overall_verdict\": \"fail\",\n  \"whistleblower_flag\": null\n}\n```",
+      "sub_agents_used": true,
+      "assigned_llm": true,
+      "findings": [
+        {
+          "severity": "critical",
+          "file_or_area": "apps/api/app/core/assessment/engine.py, docs/PRE-LAUNCH-BLOCKERS-STATUS.md",
+          "issue": "Foundation Law 3 (Shame-Free Language) is partially implemented for AZ copy, as noted in `PRE-LAUNCH-BLOCKERS-STATUS.md` (Blocker 10). The assessment engine (`engine.py`) lacks integrated Differential Item Functioning (DIF) analysis to detect potential bias arising from non-compliant language, which directly impacts the psychometric validity and fairness of the assessment for AZ/CIS test-takers.",
+          "recommended_fix": "Fully implement Foundation Law 3 across all locales, ensuring all assessment items and feedback are shame-free. Integrate DIF analysis (e.g., by operationalizing `scripts/audit_dif_bias.py`) into the item calibration or selection pipeline to identify and remove biased items, thereby ensuring psychometric fairness."
+        },
+        {
+          "severity": "critical",
+          "file_or_area": "apps/api/app/core/assessment/engine.py",
+          "issue": "The IRT 3PL parameters (a, b, c) are confirmed to be guessed or defaulted (a=1.0, b=0.0, c=0.0) if not explicitly provided in `engine.py`. This fundamental flaw undermines the psychometric accuracy, reliability, and validity of the Computerized Adaptive Testing (CAT) engine, making any ability estimates unreliable.",
+          "recommended_fix": "Calibrate IRT parameters (a, b, c) from real, empirical response data using appropriate psychometric software. This is a prerequisite for a psychometrically sound assessment."
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Legal Advisor",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Legal Advisor\", \"findings\": [\n{\"severity\": \"BLOCK\", \"file_or_area\": \"GDPR Article 22 consent flow\", \"issue\": \"Insufficient or non-existent consent flow for automated decision-making\", \"recommended_fix\": \"Implement explicit consent flow for automated decision-making, ensuring compliance with GDPR Article 22\"},\n{\"severity\": \"WARN\", \"file_or_area\": \"AZ Personal Data Protection Act\", \"issue\": \"Potential non-compliance for Baku launch\", \"recommended_fix\": \"Conduct thorough review of AZ Personal Data Protection Act requirements and ensure compliance before launch\"},\n{\"severity\": \"BLOCK\", \"file_or_area\": \"Platform liability\", \"issue\": \"Insufficient consideration of legal exposure for AURA score usage in hiring decisions\", \"recommended_fix\": \"Develop clear guidelines and disclaimers for AURA score usage, ensuring compliance with relevant laws and regulations\"},\n{\"severity\": \"WARN\", \"file_or_area\": \"Data processor agreements\", \"issue\": \"Potential gaps in DPAs with Supabase, Google Cloud, and Railway\", \"recommended_fix\": \"Review and update DPAs with all data processors to ensure compliance with GDPR and other relevant regulations\"},\n{\"severity\": \"OK\", \"file_or_area\": \"Terms of Service\", \"issue\": \"None\", \"recommended_fix\": \"None\"}\n], \"overall_verdict\": \"WARN\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"supabase/migrations/\", \"apps/api/app/routers/assessment.py\"]}",
+      "assigned_llm": true,
+      "findings": [
+        {
+          "severity": "BLOCK",
+          "file_or_area": "GDPR Article 22 consent flow",
+          "issue": "Insufficient or non-existent consent flow for automated decision-making",
+          "recommended_fix": "Implement explicit consent flow for automated decision-making, ensuring compliance with GDPR Article 22"
+        },
+        {
+          "severity": "WARN",
+          "file_or_area": "AZ Personal Data Protection Act",
+          "issue": "Potential non-compliance for Baku launch",
+          "recommended_fix": "Conduct thorough review of AZ Personal Data Protection Act requirements and ensure compliance before launch"
+        },
+        {
+          "severity": "BLOCK",
+          "file_or_area": "Platform liability",
+          "issue": "Insufficient consideration of legal exposure for AURA score usage in hiring decisions",
+          "recommended_fix": "Develop clear guidelines and disclaimers for AURA score usage, ensuring compliance with relevant laws and regulations"
+        },
+        {
+          "severity": "WARN",
+          "file_or_area": "Data processor agreements",
+          "issue": "Potential gaps in DPAs with Supabase, Google Cloud, and Railway",
+          "recommended_fix": "Review and update DPAs with all data processors to ensure compliance with GDPR and other relevant regulations"
+        },
+        {
+          "severity": "OK",
+          "file_or_area": "Terms of Service",
+          "issue": "None",
+          "recommended_fix": "None"
+        }
+      ],
+      "overall_verdict": "WARN",
+      "whistleblower_flag": null,
+      "next_files_to_read": [
+        "supabase/migrations/",
+        "apps/api/app/routers/assessment.py"
+      ]
+    },
+    {
+      "perspective": "Growth Hacker",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "QA Engineer",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "CTO Watchdog",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    }
+  ]
+}

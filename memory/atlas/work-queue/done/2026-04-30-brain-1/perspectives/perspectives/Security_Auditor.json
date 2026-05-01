@@ -1,0 +1,22 @@
+{
+  "perspective": "Security Auditor",
+  "provider": "cerebras",
+  "model": "qwen-3-235b",
+  "raw": "{\"perspective\": \"Security Auditor\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/web/src/components/Layout.jsx\", \"issue\": \"EnergyMode context does not enforce RLS-bound profile data. Unauthenticated users can bypass mode restrictions by manipulating client state.\", \"recommended_fix\": \"Move EnergyLevel validation to Supabase RLS policy on profiles table. Authenticate context via middleware, not client state.\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/components/assessment/energy-picker.tsx\", \"issue\": \"EnergyLevel input lacks server-side validation. Possible for malicious client to spoof 'Low' mode to bypass engagement tracking.\", \"recommended_fix\": \"Validate and log EnergyLevel changes in edge function, tie to session hash.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Energy Adaptation logic is client-trusted — violates Constitution Law 0: System Integrity.\"}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "apps/web/src/components/Layout.jsx",
+      "issue": "EnergyMode context does not enforce RLS-bound profile data. Unauthenticated users can bypass mode restrictions by manipulating client state.",
+      "recommended_fix": "Move EnergyLevel validation to Supabase RLS policy on profiles table. Authenticate context via middleware, not client state."
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "apps/web/src/components/assessment/energy-picker.tsx",
+      "issue": "EnergyLevel input lacks server-side validation. Possible for malicious client to spoof 'Low' mode to bypass engagement tracking.",
+      "recommended_fix": "Validate and log EnergyLevel changes in edge function, tie to session hash."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "Energy Adaptation logic is client-trusted — violates Constitution Law 0: System Integrity."
+}

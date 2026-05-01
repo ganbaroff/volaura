@@ -1,0 +1,22 @@
+{
+  "perspective": "Risk Manager",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"Pre-Launch Blockers Status\", \"issue\": \"Blocker #15 marked as ready-to-build but code exists in `src/credentials/openbadges/vc-converter.ts` and `badge_issuer.issue_verifiable_credential`\", \"recommended_fix\": \"Verify Open Badges 3.0 VC compliance implementation at `src/credentials/openbadges/vc-converter.ts` and `packages/badge_issuer/issue_verifiable_credential.py`. If compliant, update `PRE-LAUNCH-BLOCKERS-STATUS.md` to ✅ done with evidence. If incomplete, document gaps in DIF audit trail.\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"src/credentials/openbadges/vc-converter.ts\", \"packages/badge_issuer/issue_verifiable_credential.py\"]}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "Pre-Launch Blockers Status",
+      "issue": "Blocker #15 marked as ready-to-build but code exists in `src/credentials/openbadges/vc-converter.ts` and `badge_issuer.issue_verifiable_credential`",
+      "recommended_fix": "Verify Open Badges 3.0 VC compliance implementation at `src/credentials/openbadges/vc-converter.ts` and `packages/badge_issuer/issue_verifiable_credential.py`. If compliant, update `PRE-LAUNCH-BLOCKERS-STATUS.md` to ✅ done with evidence. If incomplete, document gaps in DIF audit trail."
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "next_files_to_read": [
+    "src/credentials/openbadges/vc-converter.ts",
+    "packages/badge_issuer/issue_verifiable_credential.py"
+  ]
+}

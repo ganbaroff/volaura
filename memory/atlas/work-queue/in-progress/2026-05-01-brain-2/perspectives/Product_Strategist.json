@@ -1,0 +1,28 @@
+{
+  "perspective": "Product Strategist",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Product Strategist\", \"findings\": [{\"severity\": \"critical\", \"file_or_area\": \"services/assessment/irt_calibration.py\", \"issue\": \"Referenced calibration script does not exist in codebase\", \"recommended_fix\": \"Create the IRT calibration pipeline using historical data; validate with MLE on top 3 volatile competencies\"}, {\"severity\": \"high\", \"file_or_area\": \"AURA scoring\", \"issue\": \"Core IRT engine uses 8 independent 3PL models instead of unified MIRT per ADR-004\", \"recommended_fix\": \"Upgrade to multidimensional IRT to improve score accuracy and cross-competency correlation\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"adr/ADR-004-assessment-engine.md\", \"services/assessment/irt_engine.py\"]}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "critical",
+      "file_or_area": "services/assessment/irt_calibration.py",
+      "issue": "Referenced calibration script does not exist in codebase",
+      "recommended_fix": "Create the IRT calibration pipeline using historical data; validate with MLE on top 3 volatile competencies"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "AURA scoring",
+      "issue": "Core IRT engine uses 8 independent 3PL models instead of unified MIRT per ADR-004",
+      "recommended_fix": "Upgrade to multidimensional IRT to improve score accuracy and cross-competency correlation"
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null,
+  "next_files_to_read": [
+    "adr/ADR-004-assessment-engine.md",
+    "services/assessment/irt_engine.py"
+  ]
+}

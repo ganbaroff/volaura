@@ -1,0 +1,22 @@
+{
+  "perspective": "Risk Manager",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"src/components/ui/AdaptiveLayout.jsx\", \"issue\": \"Mid and Low UI modes fail to fully deactivate non-essential components, violating Law 2 (Energy Adaptation) and Law 5 (One Primary Action). Sub-agent findings confirm broken state transitions and blank fallbacks in Low mode.\", \"recommended_fix\": \"Rewrite AdaptiveLayout state machine to enforce mode-specific component visibility. Implement verified fallbacks for all widgets in Low mode. Add end-to-end test for all three modes.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Law 2 non-compliance undermines ADHD safety core to VOLAURA's identity.\", \"next_files_to_read\": [\"apps/web/src/components/ui/AdaptiveLayout.jsx\", \"apps/web/src/hooks/use-energy-mode.ts\"]}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "src/components/ui/AdaptiveLayout.jsx",
+      "issue": "Mid and Low UI modes fail to fully deactivate non-essential components, violating Law 2 (Energy Adaptation) and Law 5 (One Primary Action). Sub-agent findings confirm broken state transitions and blank fallbacks in Low mode.",
+      "recommended_fix": "Rewrite AdaptiveLayout state machine to enforce mode-specific component visibility. Implement verified fallbacks for all widgets in Low mode. Add end-to-end test for all three modes."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "Law 2 non-compliance undermines ADHD safety core to VOLAURA's identity.",
+  "next_files_to_read": [
+    "apps/web/src/components/ui/AdaptiveLayout.jsx",
+    "apps/web/src/hooks/use-energy-mode.ts"
+  ]
+}

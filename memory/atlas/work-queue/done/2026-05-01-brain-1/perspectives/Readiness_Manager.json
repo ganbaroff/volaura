@@ -1,0 +1,36 @@
+{
+  "perspective": "Readiness Manager",
+  "provider": "ollama",
+  "model": "gemma4",
+  "raw": "```json\n{\n  \"persona\": \"AI Assistant\",\n  \"task_summary\": \"Implement Foundation Law 2 (Energy Adaptation) across UI layers.\",\n  \"action_plan\": [\n    {\n      \"step\": 1,\n      \"description\": \"Analyze existing UI components for energy consumption indicators.\",\n      \"focus\": \"Identify points where energy levels or adaptation status must be displayed.\"\n    },\n    {\n      \"step\": 2,\n      \"description\": \"Develop modular components for Energy Level visualization.\",\n      \"focus\": \"Create reusable widgets (e.g., progress bars, color-coded indicators) representing energy reserves.\"\n    },\n    {\n      \"step\": 3,\n      \"description\": \"Implement adaptive logic for UI elements.\",\n      \"focus\": \"Ensure that non-critical UI elements degrade gracefully or simplify when energy levels drop below a threshold (Low/Critical).\"\n    },\n    {\n      \"step\": 4,\n      \"description\": \"Review and update documentation/guidelines.\",\n      \"focus\": \"Document the new 'Energy Adaptation' standard for future development cycles.\"\n    }\n  ],\n  \"priority\": \"High\",\n  \"risk_assessment\": {\n    \"risk\": \"UI/UX inconsistency\",\n    \"mitigation\": \"Use centralized component library and conduct cross-platform testing.\"\n  }\n}\n```",
+  "assigned_llm": true,
+  "persona": "AI Assistant",
+  "task_summary": "Implement Foundation Law 2 (Energy Adaptation) across UI layers.",
+  "action_plan": [
+    {
+      "step": 1,
+      "description": "Analyze existing UI components for energy consumption indicators.",
+      "focus": "Identify points where energy levels or adaptation status must be displayed."
+    },
+    {
+      "step": 2,
+      "description": "Develop modular components for Energy Level visualization.",
+      "focus": "Create reusable widgets (e.g., progress bars, color-coded indicators) representing energy reserves."
+    },
+    {
+      "step": 3,
+      "description": "Implement adaptive logic for UI elements.",
+      "focus": "Ensure that non-critical UI elements degrade gracefully or simplify when energy levels drop below a threshold (Low/Critical)."
+    },
+    {
+      "step": 4,
+      "description": "Review and update documentation/guidelines.",
+      "focus": "Document the new 'Energy Adaptation' standard for future development cycles."
+    }
+  ],
+  "priority": "High",
+  "risk_assessment": {
+    "risk": "UI/UX inconsistency",
+    "mitigation": "Use centralized component library and conduct cross-platform testing."
+  }
+}

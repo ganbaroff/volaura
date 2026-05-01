@@ -1,0 +1,20 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "raw": "{\"perspective\": \"Cultural Intelligence\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Invisible exclusion in AZ/CIS context due to Western-centric design\", \"recommended_fix\": \"Apply collectivist shame considerations to sharing mechanics and badge display\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"memory/atlas/relationships.md\", \"docs/INDEX.md\"]}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+      "issue": "Invisible exclusion in AZ/CIS context due to Western-centric design",
+      "recommended_fix": "Apply collectivist shame considerations to sharing mechanics and badge display"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "next_files_to_read": [
+    "memory/atlas/relationships.md",
+    "docs/INDEX.md"
+  ]
+}

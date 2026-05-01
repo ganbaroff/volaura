@@ -1,0 +1,18 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Legal Advisor\",\n  \"findings\": [\n    {\n      \"severity\": \"critical\",\n      \"file_or_area\": \"apps/web/src/open-badges-vc.ts\",\n      \"issue\": \"No implementation found for Open Badges 3.0 VC compliance\",\n      \"recommended_fix\": \"Implement VC issuance endpoint with W3C standards in apps/web/src/open-badges-vc.ts\"\n    }\n  ],\n  \"overall_verdict\": \"fail\",\n  \"whistleblower_flag\": null\n}",
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "critical",
+      "file_or_area": "apps/web/src/open-badges-vc.ts",
+      "issue": "No implementation found for Open Badges 3.0 VC compliance",
+      "recommended_fix": "Implement VC issuance endpoint with W3C standards in apps/web/src/open-badges-vc.ts"
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Legal Advisor"
+}

@@ -1,0 +1,22 @@
+{
+  "perspective": "Risk Manager",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"apps/api/app/assessment/engine.py\", \"issue\": \"MIRT upgrade not implemented — still using 8 independent 3PL models; no multidimensional IRT integration\", \"recommended_fix\": \"Rewrite assessment engine to unify 8 competencies into single MIRT model using compensatory priors and cross-loadings. Path: apps/api/app/assessment/mirt_engine.py (new), update router and schema. Estimate: 350 lines.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Loss of psychometric validity undermines AURA score credibility — launch blocker\", \"next_files_to_read\": [\"apps/api/app/assessment/engine.py\", \"apps/api/app/schemas/assessment.py\"]}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "apps/api/app/assessment/engine.py",
+      "issue": "MIRT upgrade not implemented — still using 8 independent 3PL models; no multidimensional IRT integration",
+      "recommended_fix": "Rewrite assessment engine to unify 8 competencies into single MIRT model using compensatory priors and cross-loadings. Path: apps/api/app/assessment/mirt_engine.py (new), update router and schema. Estimate: 350 lines."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "Loss of psychometric validity undermines AURA score credibility — launch blocker",
+  "next_files_to_read": [
+    "apps/api/app/assessment/engine.py",
+    "apps/api/app/schemas/assessment.py"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "perspective": "Product Strategist",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Product Strategist\", \"findings\": [{\"severity\": \"P0\", \"file_or_area\": \"assessment engine\", \"issue\": \"IRT parameters (a, b, c, theta) are hardcoded, preventing model calibration from real-world or synthetic data. This invalidates CAT logic and undermines AURA score validity.\", \"recommended_fix\": \"Implement parameter calibration pipeline using real pilot data or synthetic response patterns. Update 8 independent 3PL models to support dynamic parameter injection. Begin migration toward MIRT as per ADR-004.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"AURA scores are scientifically invalid under current hardcoded IRT model. This violates ECOSYSTEM-CONSTITUTION foundation laws on evidence-based design and risks user trust at scale.\", \"next_files_to_read\": [\"adr/ADR-004-assessment-engine.md\", \"scripts/audit_dif_bias.py\", \"apps/api/app/schemas/assessment.py\"]}",
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "P0",
+      "file_or_area": "assessment engine",
+      "issue": "IRT parameters (a, b, c, theta) are hardcoded, preventing model calibration from real-world or synthetic data. This invalidates CAT logic and undermines AURA score validity.",
+      "recommended_fix": "Implement parameter calibration pipeline using real pilot data or synthetic response patterns. Update 8 independent 3PL models to support dynamic parameter injection. Begin migration toward MIRT as per ADR-004."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "AURA scores are scientifically invalid under current hardcoded IRT model. This violates ECOSYSTEM-CONSTITUTION foundation laws on evidence-based design and risks user trust at scale.",
+  "next_files_to_read": [
+    "adr/ADR-004-assessment-engine.md",
+    "scripts/audit_dif_bias.py",
+    "apps/api/app/schemas/assessment.py"
+  ]
+}

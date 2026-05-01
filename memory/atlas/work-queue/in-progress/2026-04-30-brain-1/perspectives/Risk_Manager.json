@@ -1,0 +1,34 @@
+{
+  "perspective": "Risk Manager",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Foundation Laws are referenced but not fully implemented in code; Law 3 (Shame-Free Language) violated by potential guilt-inducing patterns in onboarding flows.\", \"recommended_fix\": \"Enforce banned phrases via i18n linter in CI/CD. Audit all user-facing strings against Law 3 table.\"}, {\"severity\": \"HIGH\", \"file_or_area\": \"apps/web/src/components/onboarding\", \"issue\": \"Onboarding may trigger decision paralysis — multiple CTAs observed, violating Law 5 (One Primary Action).\", \"recommended_fix\": \"Reduce tappable elements to ≤5, ensure one primary CTA per screen.\"}, {\"severity\": \"MEDIUM\", \"file_or_area\": \"design/ANIMATION-SYSTEM\", \"issue\": \"Animation specs lack `prefers-reduced-motion` branches, violating Law 4.\", \"recommended_fix\": \"Add reduced-motion variants for all animations; enforce in design system audit.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"apps/web/src/components/onboarding/index.tsx\", \"apps/web/src/styles/animation.ts\"]}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+      "issue": "Foundation Laws are referenced but not fully implemented in code; Law 3 (Shame-Free Language) violated by potential guilt-inducing patterns in onboarding flows.",
+      "recommended_fix": "Enforce banned phrases via i18n linter in CI/CD. Audit all user-facing strings against Law 3 table."
+    },
+    {
+      "severity": "HIGH",
+      "file_or_area": "apps/web/src/components/onboarding",
+      "issue": "Onboarding may trigger decision paralysis — multiple CTAs observed, violating Law 5 (One Primary Action).",
+      "recommended_fix": "Reduce tappable elements to ≤5, ensure one primary CTA per screen."
+    },
+    {
+      "severity": "MEDIUM",
+      "file_or_area": "design/ANIMATION-SYSTEM",
+      "issue": "Animation specs lack `prefers-reduced-motion` branches, violating Law 4.",
+      "recommended_fix": "Add reduced-motion variants for all animations; enforce in design system audit."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null,
+  "next_files_to_read": [
+    "apps/web/src/components/onboarding/index.tsx",
+    "apps/web/src/styles/animation.ts"
+  ]
+}

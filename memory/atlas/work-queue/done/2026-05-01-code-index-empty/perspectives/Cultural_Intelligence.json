@@ -1,0 +1,24 @@
+{
+  "perspective": "Cultural Intelligence",
+  "provider": "ollama",
+  "model": "qwen3:8b",
+  "raw": "{\n  \"perspective\": \"Legal Advisor\",\n  \"findings\": [\n    {\n      \"severity\": \"fail\",\n      \"file_or_area\": \"code-index.json\",\n      \"issue\": \"Empty index despite recent timestamp, indicating builder failed to populate data\",\n      \"recommended_fix\": \"Check if code_index.py was moved to archive directory. If so, move it back to packages/swarm or update INDEXED_PATHS to include archive directory.\"\n    },\n    {\n      \"severity\": \"warn\",\n      \"file_or_area\": \"packages/swarm/archive/code_index.py\",\n      \"issue\": \"File location may cause indexing exclusion due to SKIP_DIRS pattern\",\n      \"recommended_fix\": \"Verify project_root calculation. If file is in archive, adjust INDEXED_PATHS to include archive directory or move file to indexed path.\"\n    }\n  ],\n  \"overall_verdict\": \"fail\",\n  \"whistleblower_flag\": null\n}",
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "fail",
+      "file_or_area": "code-index.json",
+      "issue": "Empty index despite recent timestamp, indicating builder failed to populate data",
+      "recommended_fix": "Check if code_index.py was moved to archive directory. If so, move it back to packages/swarm or update INDEXED_PATHS to include archive directory."
+    },
+    {
+      "severity": "warn",
+      "file_or_area": "packages/swarm/archive/code_index.py",
+      "issue": "File location may cause indexing exclusion due to SKIP_DIRS pattern",
+      "recommended_fix": "Verify project_root calculation. If file is in archive, adjust INDEXED_PATHS to include archive directory or move file to indexed path."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Legal Advisor"
+}

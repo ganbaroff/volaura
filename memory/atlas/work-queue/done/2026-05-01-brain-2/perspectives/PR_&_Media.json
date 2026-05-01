@@ -1,0 +1,46 @@
+{
+  "perspective": "PR & Media",
+  "provider": "gemini",
+  "model": "gemini-2.5-flash",
+  "raw": "{\n  \"perspective\": \"PR & Media\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"Task Routing / Core Function Alignment\",\n      \"issue\": \"The assigned task 'Calibrate IRT parameters using historical, anonymized data' falls outside the specialized scope and capabilities of the PR & Media lens. This task requires expertise in assessment science and data pipeline engineering, not pre-launch awareness building or media landscape analysis.\",\n      \"recommended_fix\": \"Route this task to an appropriate agent, such as 'Assessment Science', 'Product Strategist', or 'CTO Watchdog'. Review task assignment protocols for better alignment with agent specializations.\"\n    },\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"Press Narrative\",\n      \"issue\": \"Lack of a clear, consolidated press narrative document outlining VOLAURA's unique story, mission, and impact for media consumption. While `docs/TONE-OF-VOICE` defines style, it does not provide the core narrative content for press releases.\",\n      \"recommended_fix\": \"Develop a dedicated 'Press Narrative' document (e.g., `docs/pr/press_narrative.md`) with key messaging, target audience benefits, and a compelling launch story.\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"AZ Media Landscape Research\",\n      \"issue\": \"Insufficient targeted research on matching our story with specific sections or journalists at key Azerbaijani media outlets (ICTnews.az, startup.az, report.az, 1news.az). Current findings indicate a general lack of in-depth analysis.\",\n      \"recommended_fix\": \"Conduct detailed research to identify appropriate contacts and angles within the listed AZ media, creating a media outreach plan.\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"GITA Grant Application Readiness\",\n      \"issue\": \"The `docs/GITA-GRANT-APPLICATION-2026` document exists, but its completeness and final readiness for the May 27 deadline from a submission perspective are unverified within the PR & Media scope. 'Ready' means fully compliant and reviewed.\",\n      \"recommended_fix\": \"Initiate a dedicated audit of the GITA grant application material to confirm all sections are complete, compelling, and aligned with submission requirements. Collaborate with a 'Readiness Manager' agent.\"\n    },\n    {\n      \"severity\": \"low\",\n      \"file_or_area\": \"Startup Competition Pipeline & Founder Visibility\",\n      \"issue\": \"No explicit records or files found for active engagement in the identified startup competitions (Seedstars, ASAN Innovations, AzInTelecom) or for a strategic build-up of the CEO's LinkedIn presence towards launch.\",\n      \"recommended_fix\": \"Begin initial research into application timelines and requirements for target startup competitions. Develop a LinkedIn content strategy for the CEO to build pre-launch visibility.\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null,\n  \"pr_readiness_score\": 3,\n  \"next_3_concrete_actions\": [\n    \"Draft a core press narrative (e.g., `docs/pr/press_narrative.md`) defining VOLAURA's story, unique value, and launch messaging.\",\n    \"Perform deep dive research into ICTnews.az, startup.az, report.az, and 1news.az to identify specific journalists and content areas aligned with our story.\",\n    \"Audit the GITA grant application material in `docs/GITA-GRANT-APPLICATION-2026` for completeness and alignment with submission criteria, ensuring readiness for the May 27 deadline.\"\n  ]\n}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "Task Routing / Core Function Alignment",
+      "issue": "The assigned task 'Calibrate IRT parameters using historical, anonymized data' falls outside the specialized scope and capabilities of the PR & Media lens. This task requires expertise in assessment science and data pipeline engineering, not pre-launch awareness building or media landscape analysis.",
+      "recommended_fix": "Route this task to an appropriate agent, such as 'Assessment Science', 'Product Strategist', or 'CTO Watchdog'. Review task assignment protocols for better alignment with agent specializations."
+    },
+    {
+      "severity": "high",
+      "file_or_area": "Press Narrative",
+      "issue": "Lack of a clear, consolidated press narrative document outlining VOLAURA's unique story, mission, and impact for media consumption. While `docs/TONE-OF-VOICE` defines style, it does not provide the core narrative content for press releases.",
+      "recommended_fix": "Develop a dedicated 'Press Narrative' document (e.g., `docs/pr/press_narrative.md`) with key messaging, target audience benefits, and a compelling launch story."
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "AZ Media Landscape Research",
+      "issue": "Insufficient targeted research on matching our story with specific sections or journalists at key Azerbaijani media outlets (ICTnews.az, startup.az, report.az, 1news.az). Current findings indicate a general lack of in-depth analysis.",
+      "recommended_fix": "Conduct detailed research to identify appropriate contacts and angles within the listed AZ media, creating a media outreach plan."
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "GITA Grant Application Readiness",
+      "issue": "The `docs/GITA-GRANT-APPLICATION-2026` document exists, but its completeness and final readiness for the May 27 deadline from a submission perspective are unverified within the PR & Media scope. 'Ready' means fully compliant and reviewed.",
+      "recommended_fix": "Initiate a dedicated audit of the GITA grant application material to confirm all sections are complete, compelling, and aligned with submission requirements. Collaborate with a 'Readiness Manager' agent."
+    },
+    {
+      "severity": "low",
+      "file_or_area": "Startup Competition Pipeline & Founder Visibility",
+      "issue": "No explicit records or files found for active engagement in the identified startup competitions (Seedstars, ASAN Innovations, AzInTelecom) or for a strategic build-up of the CEO's LinkedIn presence towards launch.",
+      "recommended_fix": "Begin initial research into application timelines and requirements for target startup competitions. Develop a LinkedIn content strategy for the CEO to build pre-launch visibility."
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "pr_readiness_score": 3,
+  "next_3_concrete_actions": [
+    "Draft a core press narrative (e.g., `docs/pr/press_narrative.md`) defining VOLAURA's story, unique value, and launch messaging.",
+    "Perform deep dive research into ICTnews.az, startup.az, report.az, and 1news.az to identify specific journalists and content areas aligned with our story.",
+    "Audit the GITA grant application material in `docs/GITA-GRANT-APPLICATION-2026` for completeness and alignment with submission criteria, ensuring readiness for the May 27 deadline."
+  ]
+}

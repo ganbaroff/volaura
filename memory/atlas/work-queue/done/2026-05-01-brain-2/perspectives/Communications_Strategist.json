@@ -1,0 +1,22 @@
+{
+  "perspective": "Communications Strategist",
+  "provider": "gemini",
+  "model": "gemini-2.5-flash",
+  "raw": "{\n  \"perspective\": \"Communications Strategist\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"Task Assignment\",\n      \"issue\": \"Task 'Calibrate IRT parameters using historical, anonymized data' falls outside the Communications Strategist's specialty lens. This perspective audits user-facing text for Tone-of-Voice principles, Law 3 compliance, and narrative arc coherence, not internal technical calibration pipelines.\",\n      \"recommended_fix\": \"Re-route this task to a relevant technical perspective, such as 'Assessment Science', 'CTO Watchdog', or 'Code Quality Engineer'.\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"services/assessment/irt_calibration.py\",\n      \"issue\": \"The referenced file path 'services/assessment/irt_calibration.py' is an unverified path, as it is not present in the current CODE-INDEX SUMMARY.\",\n      \"recommended_fix\": \"Verify all file paths with the CODE-INDEX before referencing them in tasks.\"\n    }\n  ],\n  \"overall_verdict\": \"fail\",\n  \"whistleblower_flag\": null\n}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "Task Assignment",
+      "issue": "Task 'Calibrate IRT parameters using historical, anonymized data' falls outside the Communications Strategist's specialty lens. This perspective audits user-facing text for Tone-of-Voice principles, Law 3 compliance, and narrative arc coherence, not internal technical calibration pipelines.",
+      "recommended_fix": "Re-route this task to a relevant technical perspective, such as 'Assessment Science', 'CTO Watchdog', or 'Code Quality Engineer'."
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "services/assessment/irt_calibration.py",
+      "issue": "The referenced file path 'services/assessment/irt_calibration.py' is an unverified path, as it is not present in the current CODE-INDEX SUMMARY.",
+      "recommended_fix": "Verify all file paths with the CODE-INDEX before referencing them in tasks."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null
+}

@@ -1,0 +1,21 @@
+{
+  "perspective": "Risk Manager",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"packages/swarm/archive/code_index.py\", \"issue\": \"Index builder fails due to AST parsing errors and skipped files; archived despite active dependency. INDEXED_PATHS includes 'apps/api/app' but parser breaks on syntax, returning empty.\", \"recommended_fix\": \"Move code_index.py out of archive/ and fix AST error handling to continue on failure. Validate all INDEXED_PATHS are readable and within project_root.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Index is falsely reporting recent build while containing no data — creates critical blind spot in codebase awareness\", \"next_files_to_read\": [\"memory/swarm/code-index.json\"]}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "CRITICAL",
+      "file_or_area": "packages/swarm/archive/code_index.py",
+      "issue": "Index builder fails due to AST parsing errors and skipped files; archived despite active dependency. INDEXED_PATHS includes 'apps/api/app' but parser breaks on syntax, returning empty.",
+      "recommended_fix": "Move code_index.py out of archive/ and fix AST error handling to continue on failure. Validate all INDEXED_PATHS are readable and within project_root."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "Index is falsely reporting recent build while containing no data — creates critical blind spot in codebase awareness",
+  "next_files_to_read": [
+    "memory/swarm/code-index.json"
+  ]
+}

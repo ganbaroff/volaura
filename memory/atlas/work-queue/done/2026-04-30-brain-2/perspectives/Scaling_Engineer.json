@@ -1,0 +1,36 @@
+{
+  "perspective": "Scaling Engineer",
+  "provider": "vertex-ai-agent",
+  "model": "gemini-2.5-flash+tools",
+  "raw": "```json\n{\n  \"perspective\": \"Scaling Engineer\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"IRT item parameters (a, b, c) are not empirically calibrated and default to static values (1.0, 0.0, 0.0) if not provided. This leads to inaccurate ability estimation and compromises the validity of assessments at scale.\",\n      \"recommended_fix\": \"Implement a robust data ingestion and parameter estimation pipeline to regularly calibrate IRT item parameters from real-world candidate response data. Store calibrated parameters in the database and ensure `engine.py` retrieves them dynamically.\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"The `select_next_item` function lacks item exposure control, potentially leading to overuse of certain items. This risks test security, depletes the effective item bank, and reduces long-term adaptivity.\",\n      \"recommended_fix\": \"Integrate item exposure control mechanisms (e.g., Sympson-Hetter, weighted likelihood) into the `select_next_item` logic to ensure balanced item usage and maintain test validity and security at scale.\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"The assessment engine currently uses a unidimensional 3PL model, while the AURA score is multi-dimensional. This is a known pre-launch blocker (#16) for MIRT upgrade.\",\n      \"recommended_fix\": \"Prioritize the MIRT (Multidimensional Item Response Theory) upgrade to accurately model the 8 dimensions of the AURA score. This is crucial for the quality and utility of the assessment as the project scales.\"\n    },\n    {\n      \"severity\": \"low\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"The `CATState` tracks `eap_failures`, indicating potential issues with ability estimation, but there is no explicit monitoring or alerting for this metric.\",\n      \"recommended_fix\": \"Implement monitoring and alerting for `eap_failures` to detect and address issues with the core ability estimation process promptly, ensuring assessment accuracy at scale.\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}\n```",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "apps/api/app/core/assessment/engine.py",
+      "issue": "IRT item parameters (a, b, c) are not empirically calibrated and default to static values (1.0, 0.0, 0.0) if not provided. This leads to inaccurate ability estimation and compromises the validity of assessments at scale.",
+      "recommended_fix": "Implement a robust data ingestion and parameter estimation pipeline to regularly calibrate IRT item parameters from real-world candidate response data. Store calibrated parameters in the database and ensure `engine.py` retrieves them dynamically."
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "apps/api/app/core/assessment/engine.py",
+      "issue": "The `select_next_item` function lacks item exposure control, potentially leading to overuse of certain items. This risks test security, depletes the effective item bank, and reduces long-term adaptivity.",
+      "recommended_fix": "Integrate item exposure control mechanisms (e.g., Sympson-Hetter, weighted likelihood) into the `select_next_item` logic to ensure balanced item usage and maintain test validity and security at scale."
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "apps/api/app/core/assessment/engine.py",
+      "issue": "The assessment engine currently uses a unidimensional 3PL model, while the AURA score is multi-dimensional. This is a known pre-launch blocker (#16) for MIRT upgrade.",
+      "recommended_fix": "Prioritize the MIRT (Multidimensional Item Response Theory) upgrade to accurately model the 8 dimensions of the AURA score. This is crucial for the quality and utility of the assessment as the project scales."
+    },
+    {
+      "severity": "low",
+      "file_or_area": "apps/api/app/core/assessment/engine.py",
+      "issue": "The `CATState` tracks `eap_failures`, indicating potential issues with ability estimation, but there is no explicit monitoring or alerting for this metric.",
+      "recommended_fix": "Implement monitoring and alerting for `eap_failures` to detect and address issues with the core ability estimation process promptly, ensuring assessment accuracy at scale."
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null
+}

@@ -1,0 +1,27 @@
+{
+  "perspective": "Growth Hacker",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "raw": "{\n  \"perspective\": \"Growth Hacker\",\n   \"findings\": [\n       {\n           \"severity\": \"high\",\n           \"file_or_area\": \"Landing page\",\n           \"issue\": \"Landing page conversion is not optimized as the sample AURA profile is not visible without login\",\n           \"recommended_fix\": \"Add a 'See a sample AURA profile' link on the landing page that shows a fictional profile without requiring login\"\n       },\n       {\n           \"severity\": \"medium\",\n           \"file_or_area\": \"Share mechanics\",\n           \"issue\": \"Share mechanics to LinkedIn/Instagram are not implemented\",\n           \"recommended_fix\": \"Implement share buttons for LinkedIn and Instagram to facilitate user sharing of badges\"\n       }\n   ],\n   \"overall_verdict\": \"warn\",\n   \"whistleblower_flag\": null,\n   \"next_files_to_read\": [\"memory/atlas/relationships.md\", \"docs/INDEX.md\"]\n}",
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "Landing page",
+      "issue": "Landing page conversion is not optimized as the sample AURA profile is not visible without login",
+      "recommended_fix": "Add a 'See a sample AURA profile' link on the landing page that shows a fictional profile without requiring login"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "Share mechanics",
+      "issue": "Share mechanics to LinkedIn/Instagram are not implemented",
+      "recommended_fix": "Implement share buttons for LinkedIn and Instagram to facilitate user sharing of badges"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "next_files_to_read": [
+    "memory/atlas/relationships.md",
+    "docs/INDEX.md"
+  ]
+}

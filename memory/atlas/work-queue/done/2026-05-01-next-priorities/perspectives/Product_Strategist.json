@@ -1,0 +1,22 @@
+{
+  "perspective": "Product Strategist",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Product Strategist\", \"findings\": [{\"severity\": \"P0\", \"file_or_area\": \"apps/web/src/components/assessment/energy-picker.tsx\", \"issue\": \"Energy Adaptation UI exists but does not dynamically adapt based on real-time user behavior or system load. Static thresholds undermine Law 2 (Energy Adaptation) by failing to personalize energy modes.\", \"recommended_fix\": \"Integrate dynamic threshold calibration using user interaction latency and task completion patterns. Update energy-picker.tsx to adjust mode triggers based on observed behavior over 3+ sessions.\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"apps/web/src/hooks/use-energy-mode.ts\", \"memory/swarm/skills/energy-adaptation-behavioral-model.md\"]}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "P0",
+      "file_or_area": "apps/web/src/components/assessment/energy-picker.tsx",
+      "issue": "Energy Adaptation UI exists but does not dynamically adapt based on real-time user behavior or system load. Static thresholds undermine Law 2 (Energy Adaptation) by failing to personalize energy modes.",
+      "recommended_fix": "Integrate dynamic threshold calibration using user interaction latency and task completion patterns. Update energy-picker.tsx to adjust mode triggers based on observed behavior over 3+ sessions."
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "next_files_to_read": [
+    "apps/web/src/hooks/use-energy-mode.ts",
+    "memory/swarm/skills/energy-adaptation-behavioral-model.md"
+  ]
+}

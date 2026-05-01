@@ -1,0 +1,37 @@
+{
+  "task_id": "2026-04-30-auto-health",
+  "executor": "local_health",
+  "execution_state": {
+    "task_id": "2026-04-30-auto-health",
+    "task_title": "System health check -- stale weights",
+    "max_retries": 3,
+    "state": "success",
+    "attempt": 1,
+    "errors": [],
+    "strategies_used": [],
+    "result": {
+      "status": "ok",
+      "git_head": "0c3b2f2 Merge branch 'main' of https://github.com/ganbaroff/volaura",
+      "zero_learning_perspectives": [],
+      "total_perspective_runs": 362,
+      "code_index_age_hours": 0.0,
+      "code_index_files": 1041,
+      "queue": {
+        "pending": 1,
+        "done": 40
+      }
+    },
+    "started_at": "2026-04-30T23:04:32.381749+00:00",
+    "completed_at": "2026-04-30T23:04:32.501393+00:00"
+  },
+  "status": "ok",
+  "git_head": "0c3b2f2 Merge branch 'main' of https://github.com/ganbaroff/volaura",
+  "zero_learning_perspectives": [],
+  "total_perspective_runs": 362,
+  "code_index_age_hours": 0.0,
+  "code_index_files": 1041,
+  "queue": {
+    "pending": 1,
+    "done": 40
+  }
+}

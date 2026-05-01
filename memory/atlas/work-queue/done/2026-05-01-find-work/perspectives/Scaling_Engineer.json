@@ -1,0 +1,8 @@
+{
+  "perspective": "Scaling Engineer",
+  "provider": "vertex-ai-agent",
+  "model": "gemini-2.5-flash+tools",
+  "raw": "```json\n{\n  \"perspective\": \"Scaling Engineer\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"apps/api/app/routers/assessment.py\",\n      \"issue\": \"IRT scoring (theta_to_score) is computed on every assessment completion request without caching. At 10x user load, this will lead to increased API latency and potential database load if the underlying IRT model calculations are complex and not optimized for repeated execution.\",\n      \"recommended_fix\": \"Implement caching for the `theta_to_score` function's output, or the assessment result itself, to avoid redundant computations for deterministic inputs. While a full caching solution requires more than one",
+  "sub_agents_used": true,
+  "assigned_llm": true
+}

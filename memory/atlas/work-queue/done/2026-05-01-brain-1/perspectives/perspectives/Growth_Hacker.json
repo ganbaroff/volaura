@@ -1,0 +1,47 @@
+{
+  "perspective": "Growth Hacker",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "raw": "{\n  \"perspective\": \"Growth Hacker\",\n   \"findings\": [\n       {\n           \"severity\": \"high\",\n           \"file_or_area\": \"Landing page\",\n           \"issue\": \"Sample AURA profile is not visible without login\",\n           \"recommended_fix\": \"Add a 'See a sample AURA profile' link on the landing page\"\n       },\n       {\n           \"severity\": \"medium\",\n           \"file_or_area\": \"Share mechanics\",\n           \"issue\": \"Share mechanics to LinkedIn/Instagram are not implemented\",\n           \"recommended_fix\": \"Implement share buttons for LinkedIn and Instagram\"\n       },\n       {\n           \"severity\": \"high\",\n           \"file_or_area\": \"Referral system\",\n           \"issue\": \"Inviting a friend does not give crystals\",\n           \"recommended_fix\": \"Implement a referral system that rewards users with crystals for inviting friends\"\n       },\n       {\n           \"severity\": \"medium\",\n           \"file_or_area\": \"SEO\",\n           \"issue\": \"Meta tags are not set\",\n           \"recommended_fix\": \"Set meta tags for all pages\"\n       },\n       {\n           \"severity\": \"low\",\n           \"file_or_area\": \"AZ-specific channels\",\n           \"issue\": \"Telegram groups, Instagram reels, YouTube shorts are not utilized\",\n           \"recommended_fix\": \"Create and utilize AZ-specific channels for marketing and user engagement\"\n       }\n   ],\n   \"overall_verdict\": \"warn\",\n   \"whistleblower_flag\": null,\n   \"growth_readiness_score\": 4,\n   \"top_3_acquisition_channels\": [\"Landing page optimization\", \"Referral system implementation\", \"SEO optimization\"]\n}",
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "Landing page",
+      "issue": "Sample AURA profile is not visible without login",
+      "recommended_fix": "Add a 'See a sample AURA profile' link on the landing page"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "Share mechanics",
+      "issue": "Share mechanics to LinkedIn/Instagram are not implemented",
+      "recommended_fix": "Implement share buttons for LinkedIn and Instagram"
+    },
+    {
+      "severity": "high",
+      "file_or_area": "Referral system",
+      "issue": "Inviting a friend does not give crystals",
+      "recommended_fix": "Implement a referral system that rewards users with crystals for inviting friends"
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "SEO",
+      "issue": "Meta tags are not set",
+      "recommended_fix": "Set meta tags for all pages"
+    },
+    {
+      "severity": "low",
+      "file_or_area": "AZ-specific channels",
+      "issue": "Telegram groups, Instagram reels, YouTube shorts are not utilized",
+      "recommended_fix": "Create and utilize AZ-specific channels for marketing and user engagement"
+    }
+  ],
+  "overall_verdict": "warn",
+  "whistleblower_flag": null,
+  "growth_readiness_score": 4,
+  "top_3_acquisition_channels": [
+    "Landing page optimization",
+    "Referral system implementation",
+    "SEO optimization"
+  ]
+}

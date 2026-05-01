@@ -1,0 +1,35 @@
+{
+  "perspective": "Readiness Manager",
+  "provider": "ollama",
+  "model": "gemma4",
+  "raw": "```json\n{\n  \"task_description\": \"Calibrate Item Response Theory (IRT) parameters using synthetic data to improve measurement accuracy for a new assessment module.\",\n  \"task_context\": \"The assessment module measures 'Adaptive Problem Solving' (APS). Current IRT parameters are based on limited, real-world data. We need to simulate data using known item characteristics (difficulty, discrimination) to stabilize parameter estimates before live deployment.\",\n  \"required_inputs\": [\n    \"Synthetic Data Set (S_data): N=500 simulated student responses.\",\n    \"Item Bank (I_bank): 20 items, each with known parameters (b_i, a_i).\",\n    \"Target Parameter Range: Estimate Theta (latent ability) distribution for the population.\"\n  ],\n  \"methodology_steps\": [\n    \"1. Simulate Trait Scores: Use the known item parameters (a_i, b_i) and the simulated student responses (S_data) to calculate the expected latent trait score (Theta_s) for each simulated student.\",\n    \"2. Estimate Item Parameters: Apply Maximum Likelihood Estimation (MLE) or Expectation-Maximization (EM) algorithm to the simulated data to refine the item parameters (a_i, b_i) based on the simulated response pattern.\",\n    \"3. Calibrate Theta Scale: Fit a normal distribution (N(mu, sigma)) to the derived Theta_s scores to establish the preliminary population ability scale (mu, sigma).\",\n    \"4. Validation: Compare the resulting parameter estimates against the original known parameters to quantify the stability and convergence of the calibration process.\"\n  ],\n  \"potential_risks\": [\n    \"Overfitting: The model might fit the synthetic noise too closely, leading to parameters that perform poorly on real data.\",\n    \"Assumption Violation: If the underlying construct (APS) is not truly unidimensional, the standard IRT model will yield biased parameters.\",\n    \"Computational Load: Iterative MLE/EM fitting on large synthetic datasets can be resource-intensive.\"\n  ],\n  \"deliverables\": [\n    \"Calibrated Item Parameters Table (a'_i, b'_i)\",\n    \"Estimated Population Theta Distribution (mu, sigma)\",\n    \"Convergence Report detailing MLE/EM iteration stability.\"\n  ],\n  \"action_items\": [\n    \"Execute simulation script using S_data and I_bank.\",\n    \"Run iterative MLE fitting for parameter refinement.\",\n    \"Generate final calibration report for review.\"\n  ]\n}\n```",
+  "assigned_llm": true,
+  "task_description": "Calibrate Item Response Theory (IRT) parameters using synthetic data to improve measurement accuracy for a new assessment module.",
+  "task_context": "The assessment module measures 'Adaptive Problem Solving' (APS). Current IRT parameters are based on limited, real-world data. We need to simulate data using known item characteristics (difficulty, discrimination) to stabilize parameter estimates before live deployment.",
+  "required_inputs": [
+    "Synthetic Data Set (S_data): N=500 simulated student responses.",
+    "Item Bank (I_bank): 20 items, each with known parameters (b_i, a_i).",
+    "Target Parameter Range: Estimate Theta (latent ability) distribution for the population."
+  ],
+  "methodology_steps": [
+    "1. Simulate Trait Scores: Use the known item parameters (a_i, b_i) and the simulated student responses (S_data) to calculate the expected latent trait score (Theta_s) for each simulated student.",
+    "2. Estimate Item Parameters: Apply Maximum Likelihood Estimation (MLE) or Expectation-Maximization (EM) algorithm to the simulated data to refine the item parameters (a_i, b_i) based on the simulated response pattern.",
+    "3. Calibrate Theta Scale: Fit a normal distribution (N(mu, sigma)) to the derived Theta_s scores to establish the preliminary population ability scale (mu, sigma).",
+    "4. Validation: Compare the resulting parameter estimates against the original known parameters to quantify the stability and convergence of the calibration process."
+  ],
+  "potential_risks": [
+    "Overfitting: The model might fit the synthetic noise too closely, leading to parameters that perform poorly on real data.",
+    "Assumption Violation: If the underlying construct (APS) is not truly unidimensional, the standard IRT model will yield biased parameters.",
+    "Computational Load: Iterative MLE/EM fitting on large synthetic datasets can be resource-intensive."
+  ],
+  "deliverables": [
+    "Calibrated Item Parameters Table (a'_i, b'_i)",
+    "Estimated Population Theta Distribution (mu, sigma)",
+    "Convergence Report detailing MLE/EM iteration stability."
+  ],
+  "action_items": [
+    "Execute simulation script using S_data and I_bank.",
+    "Run iterative MLE fitting for parameter refinement.",
+    "Generate final calibration report for review."
+  ]
+}

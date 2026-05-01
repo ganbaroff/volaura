@@ -1,0 +1,21 @@
+{
+  "perspective": "Product Strategist",
+  "provider": "cerebras",
+  "model": "qwen-3-235b-a22b-instruct-2507",
+  "raw": "{\"perspective\": \"Product Strategist\", \"findings\": [{\"severity\": \"critical\", \"file_or_area\": \"packages/swarm/archive/code_index.py\", \"issue\": \"Index builder in archive/ is skipped because SKIP_DIRS includes 'archive', preventing file discovery. Index is stale and empty despite recent timestamp.\", \"recommended_fix\": \"Move code_index.py out of archive/ to packages/swarm/code_index.py and update all references. Verify INDEXED_PATHS includes the new location.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"Index is completely broken — agents are operating blind, violating Level 0 laws of context integrity.\", \"next_files_to_read\": [\"memory/swarm/code-index.json\"]}",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "critical",
+      "file_or_area": "packages/swarm/archive/code_index.py",
+      "issue": "Index builder in archive/ is skipped because SKIP_DIRS includes 'archive', preventing file discovery. Index is stale and empty despite recent timestamp.",
+      "recommended_fix": "Move code_index.py out of archive/ to packages/swarm/code_index.py and update all references. Verify INDEXED_PATHS includes the new location."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": "Index is completely broken — agents are operating blind, violating Level 0 laws of context integrity.",
+  "next_files_to_read": [
+    "memory/swarm/code-index.json"
+  ]
+}

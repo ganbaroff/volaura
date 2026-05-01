@@ -1319,3 +1319,52 @@ Next-ranked option for daemon to pick up: **OPTION A — courier-loop signing pr
 
 Status: code-index resync ✅ done, courier-loop ⏭️ queued, Law 2 (Energy Adaptation) ⏸ deferred to post-A.
 
+
+---
+
+## 2026-05-01 09:49 Baku — DAILY HEALTH
+
+**Team score:** 7.0/10 (autonomous loop healthy, original-roster engagement low)
+**Agents active runtime:** 16/16 perspectives (autonomous_run.py) — see perspective_weights.json
+**Original-roster agents active:** 0/6 (Security/Architecture/Product/Needs/QA/Growth — none invoked Apr 30, swarm ran via runtime perspectives instead)
+**Hired skills loaded:** 0/6 — BNE, Cultural Intelligence, Sales Deal, Sales Discovery, LinkedIn, Accessibility Auditor — all 0 findings on roster (CRITICAL)
+**Note:** Cultural Intelligence IS active as runtime perspective (25 spawns, weight 0.78) — disconnect between roster and runtime accounting
+
+### Yesterday (2026-04-30) — daemon delivered
+
+Tasks completed by daemon-seeder + autonomous_run loop:
+- auto-audit, auto-health, auto-reindex (daemon health triad)
+- blocker-15, blocker-16 (closes Session 128 morning sprint)
+- brain-1, brain-2 (memory infra)
+- 5 explore tasks (aura.py, auth.py, ecosystem_events.py, grievance.py, skills.py)
+- code-index-empty recurring closed
+- Total perspective runs: 362 → 373 (+11 since auto-health Apr 30)
+- code_index_files: 1041, fresh (last rebuild 5h ago via daemon)
+- Pending queue: 3 / Done queue: 41 (healthy throughput)
+- git HEAD: 0c3b2f2 (merge from origin/main)
+
+Top weights yesterday: Legal Advisor 1.00 (26 runs), Risk Manager 0.96, Ecosystem Auditor 0.94, Sales Director 0.92, DevOps Engineer + Growth Hacker 0.90 each.
+
+### Critical gaps
+
+1. **Daily-health-log was stale 19 days** (last entry 2026-04-12, then one-off P0 vote note 2026-04-26). Scheduled task itself was not running. Today's entry is first since gap closure.
+2. **Roster vs runtime drift** — agent-roster.md tracks 6 original + 38 hired/specialist agents; perspective_weights.json shows 16 runtime perspectives. Roster scoring is decoupled from actual swarm work. Roster has not been updated since Session 83 (2026-04-03).
+3. **Growth Agent retirement still unresolved** — flagged Apr 12, 0 findings ever, no decision recorded. Replaced de facto by Growth Hacker runtime perspective (5 runs, weight 0.90).
+4. **Hired skills (BNE / Cultural Intelligence) listed dormant on roster** but Cultural Intelligence runs as runtime perspective. BNE not in runtime list — ADHD-first claims still unvalidated as of 2026-05-01.
+5. **Daemon's `pending: 3` queue** — investigate which 3 tasks awaiting pickup; auto-health doesn't surface their titles.
+6. **Sales Director / DevOps Engineer / Growth Hacker** runtime perspectives carry high weights (0.90+) but only 3-5 spawn-counts → not statistically calibrated yet, weights may regress.
+
+### CTO action items — TODAY
+
+P0:
+- **Reconcile agent-roster.md with autonomous_run.PERSPECTIVES.** Single source of truth or roster becomes archaeological. Either: (a) demote roster to "skill catalog" and treat perspective_weights.json as live agent table, or (b) wire daemon to update roster scores from weights.json deltas.
+- **Inspect 3 pending daemon tasks.** `ls memory/atlas/work-queue/pending/` and decide whether to escalate or close.
+
+P1:
+- **Close Growth Agent line item on roster** — replace row with Growth Hacker runtime perspective stats. Document the swap in agent-feedback-log.md.
+- **Verify BNE skill is loadable** — runtime perspective list omits it; if intentional, mark Behavioral Nudge Engine as retired in agent-roster.md; if unintentional, add to PERSPECTIVES.
+
+P2:
+- **Daily-health-log automation** — task ran today (manually invoked), but the silent gap suggests scheduled-tasks runner isn't firing daily. Verify cron entry (`mcp__scheduled-tasks__list_scheduled_tasks`) and re-arm if missing.
+- **Roster freshness review** — agent-roster.md last update 2026-04-03 (Session 83). Sync against today's runtime state in next session.
+

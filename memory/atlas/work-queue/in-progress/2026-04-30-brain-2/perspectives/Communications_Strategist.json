@@ -1,0 +1,29 @@
+{
+  "perspective": "Communications Strategist",
+  "provider": "gemini",
+  "model": "gemini-2.5-flash",
+  "raw": "{\n  \"perspective\": \"Assessment Science\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"data/assessment/historical_scores.csv\",\n      \"issue\": \"The required input data file for IRT parameter calibration, 'data/assessment/historical_scores.csv', is not found in the codebase index. Calibration cannot proceed without this historical data.\",\n      \"recommended_fix\": \"Provide the 'data/assessment/historical_scores.csv' file with anonymized historical assessment data, ensuring it is indexed and accessible, or specify its correct, existing path.\"\n    },\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"src/assessment/irt_calibration.py\",\n      \"issue\": \"The specified target path for the calibration script, 'src/assessment/irt_calibration.py', does not align with the established project structure as indexed. The directory 'src/assessment/' is not found, preventing the creation of the script in the requested location.\",\n      \"recommended_fix\": \"Clarify the intended, existing, and indexed location for 'irt_calibration.py'. Common script locations include 'apps/api/app/scripts/' or 'packages/swarm/tools/', which exist in the codebase. Create the necessary directory structure if 'src/assessment' is a new, intended top-level component, or choose an existing logical location.\"\n    },\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"Psychometric Integrity\",\n      \"issue\": \"Without the necessary historical data and a designated script location, the psychometric integrity of the current 3PL model cannot be validated. Uncalibrated or unvalidated IRT parameters pose a direct risk to the accuracy and fairness of AURA scores, potentially violating Law 3 (Shame-Free Language) by providing unreliable feedback or undermining the 'honor claim' of verified scores, particularly for personas like Leyla and Kamal who rely on these credentials for career advancement.\",\n      \"recommended_fix\": \"Prioritize the provision of historical data and the establishment of a proper script path. This validation is critical for maintaining user trust and ensuring the constitutional principle of shame-free, accurate assessment is upheld across all user-facing interactions.\"\n    }\n  ],\n  \"overall_verdict\": \"fail\",\n  \"whistleblower_flag\": null\n}",
+  "findings": [
+    {
+      "severity": "high",
+      "file_or_area": "data/assessment/historical_scores.csv",
+      "issue": "The required input data file for IRT parameter calibration, 'data/assessment/historical_scores.csv', is not found in the codebase index. Calibration cannot proceed without this historical data.",
+      "recommended_fix": "Provide the 'data/assessment/historical_scores.csv' file with anonymized historical assessment data, ensuring it is indexed and accessible, or specify its correct, existing path."
+    },
+    {
+      "severity": "high",
+      "file_or_area": "src/assessment/irt_calibration.py",
+      "issue": "The specified target path for the calibration script, 'src/assessment/irt_calibration.py', does not align with the established project structure as indexed. The directory 'src/assessment/' is not found, preventing the creation of the script in the requested location.",
+      "recommended_fix": "Clarify the intended, existing, and indexed location for 'irt_calibration.py'. Common script locations include 'apps/api/app/scripts/' or 'packages/swarm/tools/', which exist in the codebase. Create the necessary directory structure if 'src/assessment' is a new, intended top-level component, or choose an existing logical location."
+    },
+    {
+      "severity": "high",
+      "file_or_area": "Psychometric Integrity",
+      "issue": "Without the necessary historical data and a designated script location, the psychometric integrity of the current 3PL model cannot be validated. Uncalibrated or unvalidated IRT parameters pose a direct risk to the accuracy and fairness of AURA scores, potentially violating Law 3 (Shame-Free Language) by providing unreliable feedback or undermining the 'honor claim' of verified scores, particularly for personas like Leyla and Kamal who rely on these credentials for career advancement.",
+      "recommended_fix": "Prioritize the provision of historical data and the establishment of a proper script path. This validation is critical for maintaining user trust and ensuring the constitutional principle of shame-free, accurate assessment is upheld across all user-facing interactions."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null,
+  "perspective_name_drift": "Assessment Science"
+}

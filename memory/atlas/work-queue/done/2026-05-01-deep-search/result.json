@@ -1,0 +1,400 @@
+{
+  "task_id": "2026-05-01-deep-search",
+  "task_type": "audit",
+  "completed_at": "2026-04-30T22:33:17.495025+00:00",
+  "perspectives_dispatched": 13,
+  "perspectives_responded": 13,
+  "perspectives_failed": 0,
+  "providers_used": {
+    "cerebras": 3,
+    "nvidia": 9,
+    "ollama": 1
+  },
+  "whistleblower_flags": [
+    {
+      "perspective": "Ecosystem Auditor",
+      "flag": "CRITICAL: Stale code-index and unenforced Foundation Laws enable systemic drift. Prod integrity compromised."
+    }
+  ],
+  "perspectives": [
+    {
+      "perspective": "Scaling Engineer",
+      "provider": "cerebras",
+      "model": "qwen-3-235b",
+      "raw": "{\"perspective\": \"Scaling Engineer\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/api/app/routers/assessment.py\", \"issue\": \"Unbounded database query in /assessment/next endpoint: fetches all items regardless of user level, risking OOM at scale.\", \"recommended_fix\": \"Add LIMIT 50 and index on (competency, difficulty) for paginated item retrieval.\"}, {\"severity\": \"high\", \"file_or_area\": \"engine.py\", \"issue\": \"IRT scoring computed on every request without caching; latency will spike at 10x users.\", \"recommended_fix\": \"Cache theta estimates per user in Redis with 5m TTL and trigger async recalc on item submit.\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/hooks/use-energy-mode.ts\", \"issue\": \"Energy mode update fires 4x per change via duplicate event listeners, increasing latency.\", \"recommended_fix\": \"Consolidate Supabase and local storage sync into single handler.\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"apps/api/app/routers/assessment.py\", \"engine.py\", \"apps/web/src/hooks/use-energy-mode.ts\"]}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/routers/assessment.py",
+          "issue": "Unbounded database query in /assessment/next endpoint: fetches all items regardless of user level, risking OOM at scale.",
+          "recommended_fix": "Add LIMIT 50 and index on (competency, difficulty) for paginated item retrieval."
+        },
+        {
+          "severity": "high",
+          "file_or_area": "engine.py",
+          "issue": "IRT scoring computed on every request without caching; latency will spike at 10x users.",
+          "recommended_fix": "Cache theta estimates per user in Redis with 5m TTL and trigger async recalc on item submit."
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/web/src/hooks/use-energy-mode.ts",
+          "issue": "Energy mode update fires 4x per change via duplicate event listeners, increasing latency.",
+          "recommended_fix": "Consolidate Supabase and local storage sync into single handler."
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "next_files_to_read": [
+        "apps/api/app/routers/assessment.py",
+        "engine.py",
+        "apps/web/src/hooks/use-energy-mode.ts"
+      ]
+    },
+    {
+      "perspective": "Security Auditor",
+      "provider": "cerebras",
+      "model": "qwen-3-235b",
+      "raw": "{\"perspective\": \"Security Auditor\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/api/app/routers/assessment.py\", \"issue\": \"Missing rate limiting on /assessment/start endpoint. Allows brute-force profile creation and resource exhaustion.\", \"recommended_fix\": \"Implement rate limiter using FastAPI middleware (e.g., slowapi) with limits per IP or user.\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/web/src/hooks/use-energy-mode.ts\", \"issue\": \"Energy level stored in Supabase without RLS policy enforcement. Potential data leakage if policies misconfigured.\", \"recommended_fix\": \"Verify RLS policy 'enable_rls_on_user_settings' exists and enforces row-level security for user-owned records.\"}, {\"severity\": \"high\", \"file_or_area\": \"apps/api/app/schemas/assessment.py\", \"issue\": \"automated_decision_consent field is required but not validated for non-nullable in database. Risk of incomplete GDPR Art. 22 compliance.\", \"recommended_fix\": \"Ensure Supabase column has NOT NULL constraint and default value set to false.\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"apps/api/app/main.py\", \"supabase/init.sql\"]}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/routers/assessment.py",
+          "issue": "Missing rate limiting on /assessment/start endpoint. Allows brute-force profile creation and resource exhaustion.",
+          "recommended_fix": "Implement rate limiter using FastAPI middleware (e.g., slowapi) with limits per IP or user."
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/web/src/hooks/use-energy-mode.ts",
+          "issue": "Energy level stored in Supabase without RLS policy enforcement. Potential data leakage if policies misconfigured.",
+          "recommended_fix": "Verify RLS policy 'enable_rls_on_user_settings' exists and enforces row-level security for user-owned records."
+        },
+        {
+          "severity": "high",
+          "file_or_area": "apps/api/app/schemas/assessment.py",
+          "issue": "automated_decision_consent field is required but not validated for non-nullable in database. Risk of incomplete GDPR Art. 22 compliance.",
+          "recommended_fix": "Ensure Supabase column has NOT NULL constraint and default value set to false."
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "next_files_to_read": [
+        "apps/api/app/main.py",
+        "supabase/init.sql"
+      ]
+    },
+    {
+      "perspective": "Product Strategist",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Product Strategist\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/web/src/components/assessment/energy-picker.tsx\", \"issue\": \"Energy Adaptation UI does not dynamically adapt based on real-time user behavior or system load\", \"recommended_fix\": \"Implement dynamic adaptation using real-time data and system load monitoring\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "apps/web/src/components/assessment/energy-picker.tsx",
+          "issue": "Energy Adaptation UI does not dynamically adapt based on real-time user behavior or system load",
+          "recommended_fix": "Implement dynamic adaptation using real-time data and system load monitoring"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Code Quality Engineer",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Code Quality Engineer\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/web/src/components/assessment/energy-picker.tsx\", \"issue\": \"Missing input validation for energy level selection\", \"recommended_fix\": \"Add type checking and bounds validation for energy level input\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/api/app/routers/grievance.py\", \"issue\": \"Incomplete implementation of ISO 10667-2 grievance mechanism\", \"recommended_fix\": \"Finish implementing the grievance resolution workflow and add logging for audit purposes\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"apps/web/src/hooks/use-energy-mode.ts\", \"docs/ECOSYSTEM-CONSTITUTION.md\"]}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "apps/web/src/components/assessment/energy-picker.tsx",
+          "issue": "Missing input validation for energy level selection",
+          "recommended_fix": "Add type checking and bounds validation for energy level input"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/api/app/routers/grievance.py",
+          "issue": "Incomplete implementation of ISO 10667-2 grievance mechanism",
+          "recommended_fix": "Finish implementing the grievance resolution workflow and add logging for audit purposes"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "next_files_to_read": [
+        "apps/web/src/hooks/use-energy-mode.ts",
+        "docs/ECOSYSTEM-CONSTITUTION.md"
+      ]
+    },
+    {
+      "perspective": "Ecosystem Auditor",
+      "provider": "cerebras",
+      "model": "qwen-3-235b",
+      "raw": "{\"perspective\": \"Ecosystem Auditor\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Law 2 (Energy Adaptation) is violated across 4/5 products. Only MindShift implements Full/Mid/Low energy modes. VOLAURA, Life Simulator, BrandedBy, and Atlas lack mode persistence and UI adaptation.\", \"recommended_fix\": \"Uniformly implement energy-mode context in all products using Supabase sync from MindShift's useEnergyMode hook. Extend data-energy attribute to all templates.\"}, {\"severity\": \"CRITICAL\", \"file_or_area\": \"code-index summary\", \"issue\": \"Code-index last built 2026-04-30 — 5 days ago. Stale index risks hallucinated paths and false confidence. Agents are simulating.\", \"recommended_fix\": \"Regenerate code-index immediately and add pre-commit hook to update on every push.\"}, {\"severity\": \"HIGH\", \"file_or_area\": \"PRE-LAUNCH-BLOCKERS-STATUS.md\", \"issue\": \"Open Badges 3.0 VC compliance (P0 blocker #15) marked as ready-to-build but no DID or revocation logic exists. Badge tiers shown immediately post-assessment violate CRYSTAL LAW 6 amendment.\", \"recommended_fix\": \"Defer public badge display until VC backend is built. Show only competence feedback post-assessment.\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": \"CRITICAL: Stale code-index and unenforced Foundation Laws enable systemic drift. Prod integrity compromised.\", \"next_files_to_read\": [\"apps/web/src/hooks/use-energy-mode.ts\", \"memory/swarm/dif_audit_results.csv\"]}",
+      "findings": [
+        {
+          "severity": "CRITICAL",
+          "file_or_area": "ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Law 2 (Energy Adaptation) is violated across 4/5 products. Only MindShift implements Full/Mid/Low energy modes. VOLAURA, Life Simulator, BrandedBy, and Atlas lack mode persistence and UI adaptation.",
+          "recommended_fix": "Uniformly implement energy-mode context in all products using Supabase sync from MindShift's useEnergyMode hook. Extend data-energy attribute to all templates."
+        },
+        {
+          "severity": "CRITICAL",
+          "file_or_area": "code-index summary",
+          "issue": "Code-index last built 2026-04-30 — 5 days ago. Stale index risks hallucinated paths and false confidence. Agents are simulating.",
+          "recommended_fix": "Regenerate code-index immediately and add pre-commit hook to update on every push."
+        },
+        {
+          "severity": "HIGH",
+          "file_or_area": "PRE-LAUNCH-BLOCKERS-STATUS.md",
+          "issue": "Open Badges 3.0 VC compliance (P0 blocker #15) marked as ready-to-build but no DID or revocation logic exists. Badge tiers shown immediately post-assessment violate CRYSTAL LAW 6 amendment.",
+          "recommended_fix": "Defer public badge display until VC backend is built. Show only competence feedback post-assessment."
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": "CRITICAL: Stale code-index and unenforced Foundation Laws enable systemic drift. Prod integrity compromised.",
+      "next_files_to_read": [
+        "apps/web/src/hooks/use-energy-mode.ts",
+        "memory/swarm/dif_audit_results.csv"
+      ]
+    },
+    {
+      "perspective": "Risk Manager",
+      "provider": "ollama",
+      "model": "qwen3:8b",
+      "raw": "{\n  \"perspective\": \"Legal Advisor\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"apps/web/src/components/AuraScore.jsx\",\n      \"issue\": \"AURA score display lacks constitutional safeguards for sensitive user data\",\n      \"recommended_fix\": \"Implement access controls per ECOSYSTEM-CONSTITUTION §4.2.1\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"apps/api/app/routers/assessment.py\",\n      \"issue\": \"Assessment endpoint missing consent verification for data collection\",\n      \"recommended_fix\": \"Add GDPR-compliant consent check before processing user input\"\n    },\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"memory/swarm/skills/skill_analysis.py\",\n      \"issue\": \"Skill analysis module exposes unbounded query parameters\",\n      \"recommended_fix\": \"Implement input sanitization per OWASP ASV guidelines\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "apps/web/src/components/AuraScore.jsx",
+          "issue": "AURA score display lacks constitutional safeguards for sensitive user data",
+          "recommended_fix": "Implement access controls per ECOSYSTEM-CONSTITUTION §4.2.1"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/api/app/routers/assessment.py",
+          "issue": "Assessment endpoint missing consent verification for data collection",
+          "recommended_fix": "Add GDPR-compliant consent check before processing user input"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "memory/swarm/skills/skill_analysis.py",
+          "issue": "Skill analysis module exposes unbounded query parameters",
+          "recommended_fix": "Implement input sanitization per OWASP ASV guidelines"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "perspective_name_drift": "Legal Advisor"
+    },
+    {
+      "perspective": "Readiness Manager",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Readiness Manager\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/web/src/components/assessment/energy-picker.tsx\", \"issue\": \"Energy Adaptation mode is not properly synced across devices\", \"recommended_fix\": \"Implement device syncing for Energy Adaptation mode using Supabase\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/api/app/routers/grievance.py\", \"issue\": \"Grievance mechanism does not handle GDPR Article 22 consent properly\", \"recommended_fix\": \"Update grievance mechanism to handle GDPR Article 22 consent according to Constitution Law 3\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"memory/atlas/atlas-debts-to-ceo.md\", \"docs/ECOSYSTEM-CONSTITUTION.md\"]}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "apps/web/src/components/assessment/energy-picker.tsx",
+          "issue": "Energy Adaptation mode is not properly synced across devices",
+          "recommended_fix": "Implement device syncing for Energy Adaptation mode using Supabase"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/api/app/routers/grievance.py",
+          "issue": "Grievance mechanism does not handle GDPR Article 22 consent properly",
+          "recommended_fix": "Update grievance mechanism to handle GDPR Article 22 consent according to Constitution Law 3"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "next_files_to_read": [
+        "memory/atlas/atlas-debts-to-ceo.md",
+        "docs/ECOSYSTEM-CONSTITUTION.md"
+      ]
+    },
+    {
+      "perspective": "Cultural Intelligence",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Cultural Intelligence\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/web/src/components/assessment/energy-picker.tsx\", \"issue\": \"Potential Western bias in energy mode selection\", \"recommended_fix\": \"Add cultural adaptability to energy mode selection, consider AZ/CIS context collectivist shame dynamics\"}, {\"severity\": \"medium\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Lack of explicit cultural adaptation in Constitution Laws\", \"recommended_fix\": \"Review and revise Constitution Laws to ensure cultural sensitivity and adaptability, especially for AZ/CIS context\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"memory/atlas/relationships.md\", \"docs/INDEX.md\"]}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "apps/web/src/components/assessment/energy-picker.tsx",
+          "issue": "Potential Western bias in energy mode selection",
+          "recommended_fix": "Add cultural adaptability to energy mode selection, consider AZ/CIS context collectivist shame dynamics"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Lack of explicit cultural adaptation in Constitution Laws",
+          "recommended_fix": "Review and revise Constitution Laws to ensure cultural sensitivity and adaptability, especially for AZ/CIS context"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "next_files_to_read": [
+        "memory/atlas/relationships.md",
+        "docs/INDEX.md"
+      ]
+    },
+    {
+      "perspective": "Communications Strategist",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{ \n  \"perspective\": \"Communications Strategist\", \n  \"findings\": [\n    { \n      \"severity\": \"high\", \n      \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \n      \"issue\": \"Landing page does not include zero-commitment entry point as required by Research #1\", \n      \"recommended_fix\": \"Add 'See a sample AURA profile' link to landing page\"\n    },\n    { \n      \"severity\": \"medium\", \n      \"file_or_area\": \"apps/web/src/components/assessment/energy-picker.tsx\", \n      \"issue\": \"Energy picker does not account for AZ/CIS cultural differences in shame-free language\", \n      \"recommended_fix\": \"Implement collectivist shame considerations for AZ/CIS users\"\n    }\n  ], \n  \"overall_verdict\": \"warn\", \n  \"whistleblower_flag\": null \n}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Landing page does not include zero-commitment entry point as required by Research #1",
+          "recommended_fix": "Add 'See a sample AURA profile' link to landing page"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/web/src/components/assessment/energy-picker.tsx",
+          "issue": "Energy picker does not account for AZ/CIS cultural differences in shame-free language",
+          "recommended_fix": "Implement collectivist shame considerations for AZ/CIS users"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Assessment Science",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Assessment Science\", \"findings\": [{\"severity\": \"critical\", \"file_or_area\": \"apps/api/app/core/assessment/engine.py\", \"issue\": \"IRT 3PL parameters (a, b, c) are guessed or defaulted, not calibrated from real data\", \"recommended_fix\": \"Calibrate IRT 3PL parameters using real data\"}, {\"severity\": \"high\", \"file_or_area\": \"scripts/audit_dif_bias.py\", \"issue\": \"No evidence of DIF analysis in assessment engine\", \"recommended_fix\": \"Implement DIF analysis to detect biased questions\"}], \"overall_verdict\": \"fail\", \"whistleblower_flag\": null}",
+      "findings": [
+        {
+          "severity": "critical",
+          "file_or_area": "apps/api/app/core/assessment/engine.py",
+          "issue": "IRT 3PL parameters (a, b, c) are guessed or defaulted, not calibrated from real data",
+          "recommended_fix": "Calibrate IRT 3PL parameters using real data"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "scripts/audit_dif_bias.py",
+          "issue": "No evidence of DIF analysis in assessment engine",
+          "recommended_fix": "Implement DIF analysis to detect biased questions"
+        }
+      ],
+      "overall_verdict": "fail",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Legal Advisor",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Legal Advisor\", \"findings\": [\n{\"severity\": \"BLOCK\", \"file_or_area\": \"apps/api/app/routers/assessment.py\", \"issue\": \"Insufficient consent flow for automated decision-making under GDPR Article 22\", \"recommended_fix\": \"Implement explicit user consent for automated decision-making before assessment start\"},\n{\"severity\": \"WARN\", \"file_or_area\": \"docs/INDEX.md\", \"issue\": \"Potential non-compliance with AZ Personal Data Protection Act for Baku launch\", \"recommended_fix\": \"Review and update data processing agreements to ensure compliance with AZ PDPA\"},\n{\"severity\": \"BLOCK\", \"file_or_area\": \"apps/web/src/components/assessment/assessment.tsx\", \"issue\": \"Potential platform liability if AURA score is used for hiring decisions without proper validation\", \"recommended_fix\": \"Implement validation and verification mechanisms for AURA scores used in hiring decisions\"},\n{\"severity\": \"WARN\", \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\", \"issue\": \"Data processor agreements with Supabase, Google Cloud, and Railway may not be up-to-date\", \"recommended_fix\": \"Review and update data processor agreements with all relevant parties\"},\n{\"severity\": \"WARN\", \"file_or_area\": \"docs/content/posts/terms-of-service.md\", \"issue\": \"Terms of Service may not fully cover AI-generated assessments\", \"recommended_fix\": \"Review and update Terms of Service to explicitly address AI-generated assessments\"}\n], \"overall_verdict\": \"WARN\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"supabase/migrations/\", \"apps/api/app/schemas/assessment.py\"]}",
+      "findings": [
+        {
+          "severity": "BLOCK",
+          "file_or_area": "apps/api/app/routers/assessment.py",
+          "issue": "Insufficient consent flow for automated decision-making under GDPR Article 22",
+          "recommended_fix": "Implement explicit user consent for automated decision-making before assessment start"
+        },
+        {
+          "severity": "WARN",
+          "file_or_area": "docs/INDEX.md",
+          "issue": "Potential non-compliance with AZ Personal Data Protection Act for Baku launch",
+          "recommended_fix": "Review and update data processing agreements to ensure compliance with AZ PDPA"
+        },
+        {
+          "severity": "BLOCK",
+          "file_or_area": "apps/web/src/components/assessment/assessment.tsx",
+          "issue": "Potential platform liability if AURA score is used for hiring decisions without proper validation",
+          "recommended_fix": "Implement validation and verification mechanisms for AURA scores used in hiring decisions"
+        },
+        {
+          "severity": "WARN",
+          "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Data processor agreements with Supabase, Google Cloud, and Railway may not be up-to-date",
+          "recommended_fix": "Review and update data processor agreements with all relevant parties"
+        },
+        {
+          "severity": "WARN",
+          "file_or_area": "docs/content/posts/terms-of-service.md",
+          "issue": "Terms of Service may not fully cover AI-generated assessments",
+          "recommended_fix": "Review and update Terms of Service to explicitly address AI-generated assessments"
+        }
+      ],
+      "overall_verdict": "WARN",
+      "whistleblower_flag": null,
+      "next_files_to_read": [
+        "supabase/migrations/",
+        "apps/api/app/schemas/assessment.py"
+      ]
+    },
+    {
+      "perspective": "PR & Media",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{ \n  \"perspective\": \"PR & Media\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"docs/ECOSYSTEM-CONSTITUTION.md\",\n      \"issue\": \"Lack of clear press narrative ready for launch\",\n      \"recommended_fix\": \"Develop a comprehensive press kit and media outreach strategy\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"AZ media landscape\",\n      \"issue\": \"Insufficient research on matching outlets for our story\",\n      \"recommended_fix\": \"Conduct thorough research on AZ media outlets and identify relevant contacts\"\n    },\n    {\n      \"severity\": \"low\",\n      \"file_or_area\": \"GITA grant application\",\n      \"issue\": \"Uncertainty about application material readiness\",\n      \"recommended_fix\": \"Verify application material completeness and submit by May 27 deadline\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"Startup competition pipeline\",\n      \"issue\": \"Incomplete pipeline with potential opportunities like Seedstars, ASAN Innovations, and AzInTelecom\",\n      \"recommended_fix\": \"Research and prioritize relevant startup competitions for application\"\n    },\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"CEO's LinkedIn presence\",\n      \"issue\": \"Insufficient visibility and engagement on LinkedIn ahead of launch\",\n      \"recommended_fix\": \"Develop a LinkedIn content strategy and engagement plan for the CEO\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null,\n  \"next_files_to_read\": [\"memory/atlas/wake.md\", \"docs/PRE-LAUNCH-BLOCKERS-STATUS.md\"],\n  \"PR_readiness_score\": 6\n}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "docs/ECOSYSTEM-CONSTITUTION.md",
+          "issue": "Lack of clear press narrative ready for launch",
+          "recommended_fix": "Develop a comprehensive press kit and media outreach strategy"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "AZ media landscape",
+          "issue": "Insufficient research on matching outlets for our story",
+          "recommended_fix": "Conduct thorough research on AZ media outlets and identify relevant contacts"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "GITA grant application",
+          "issue": "Uncertainty about application material readiness",
+          "recommended_fix": "Verify application material completeness and submit by May 27 deadline"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "Startup competition pipeline",
+          "issue": "Incomplete pipeline with potential opportunities like Seedstars, ASAN Innovations, and AzInTelecom",
+          "recommended_fix": "Research and prioritize relevant startup competitions for application"
+        },
+        {
+          "severity": "high",
+          "file_or_area": "CEO's LinkedIn presence",
+          "issue": "Insufficient visibility and engagement on LinkedIn ahead of launch",
+          "recommended_fix": "Develop a LinkedIn content strategy and engagement plan for the CEO"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "next_files_to_read": [
+        "memory/atlas/wake.md",
+        "docs/PRE-LAUNCH-BLOCKERS-STATUS.md"
+      ],
+      "PR_readiness_score": 6
+    },
+    {
+      "perspective": "CTO Watchdog",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"CTO Watchdog\", \"findings\": [{\"severity\": \"high\", \"file_or_area\": \"apps/web/src/components/assessment/energy-picker.tsx\", \"issue\": \"Energy Adaptation mode not properly handled for users with high adenosine levels\", \"recommended_fix\": \"Add a check for adenosine levels in the energy-picker component and adjust the mode accordingly\"}, {\"severity\": \"medium\", \"file_or_area\": \"apps/api/app/schemas/assessment.py\", \"issue\": \"GDPR Article 22 consent screen not properly validated\", \"recommended_fix\": \"Add validation for the GDPR Article 22 consent screen to ensure it is properly filled out\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"apps/web/src/components/assessment/pre-assessment-summary.tsx\", \"apps/api/app/routers/grievance.py\"]}",
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "apps/web/src/components/assessment/energy-picker.tsx",
+          "issue": "Energy Adaptation mode not properly handled for users with high adenosine levels",
+          "recommended_fix": "Add a check for adenosine levels in the energy-picker component and adjust the mode accordingly"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "apps/api/app/schemas/assessment.py",
+          "issue": "GDPR Article 22 consent screen not properly validated",
+          "recommended_fix": "Add validation for the GDPR Article 22 consent screen to ensure it is properly filled out"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "next_files_to_read": [
+        "apps/web/src/components/assessment/pre-assessment-summary.tsx",
+        "apps/api/app/routers/grievance.py"
+      ]
+    }
+  ]
+}

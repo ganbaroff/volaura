@@ -1,0 +1,330 @@
+{
+  "task_id": "2026-05-01-next-priorities",
+  "task_type": "audit",
+  "completed_at": "2026-04-30T22:05:24.581833+00:00",
+  "perspectives_dispatched": 17,
+  "perspectives_responded": 8,
+  "perspectives_failed": 9,
+  "providers_used": {
+    "vertex-ai-agent": 2,
+    "cerebras": 2,
+    "ollama": 2,
+    "nvidia": 2
+  },
+  "whistleblower_flags": [
+    {
+      "perspective": "Risk Manager",
+      "flag": "Voice data processing without encryption violates GDPR and AZ PDPA."
+    }
+  ],
+  "perspectives": [
+    {
+      "perspective": "Scaling Engineer",
+      "provider": "vertex-ai-agent",
+      "model": "gemini-2.5-flash+tools",
+      "raw": "```json\n{\n  \"perspective\": \"Scaling Engineer\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"ECOSYSTEM-CONSTITUTION.md, memory/atlas/semantic/product-truth.md, apps/\",\n      \"issue\": \"There is a critical contradiction regarding the implementation of Energy Adaptation Law 2. `product-truth.md` explicitly states it is 'BROKEN IN 4/5 PRODUCTS', directly violating a Foundation Law. However, the Product Strategist marked this as 'RESOLVED (false positive)' based on the energy picker's existence. This indicates a failure to verify correct, ecosystem-wide functionality, posing a significant scaling risk due to potential user experience degradation and constitutional non-compliance across most products.\",\n      \"recommended_fix\": \"Initiate a comprehensive audit of Energy Adaptation Law 2 across all five products (VOLAURA, MindShift, LifeSimulator, BrandedBy, ZEUS). Verify that the 'full/mid/low' UI modes are correctly implemented, toggled, and functionally impact the user interface and backend behavior in each product, as per the ECOSYSTEM-CONSTITUTION. This audit must go beyond file existence to confirm actual user-facing compliance.\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}\n```",
+      "sub_agents_used": true,
+      "assigned_llm": true,
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "ECOSYSTEM-CONSTITUTION.md, memory/atlas/semantic/product-truth.md, apps/",
+          "issue": "There is a critical contradiction regarding the implementation of Energy Adaptation Law 2. `product-truth.md` explicitly states it is 'BROKEN IN 4/5 PRODUCTS', directly violating a Foundation Law. However, the Product Strategist marked this as 'RESOLVED (false positive)' based on the energy picker's existence. This indicates a failure to verify correct, ecosystem-wide functionality, posing a significant scaling risk due to potential user experience degradation and constitutional non-compliance across most products.",
+          "recommended_fix": "Initiate a comprehensive audit of Energy Adaptation Law 2 across all five products (VOLAURA, MindShift, LifeSimulator, BrandedBy, ZEUS). Verify that the 'full/mid/low' UI modes are correctly implemented, toggled, and functionally impact the user interface and backend behavior in each product, as per the ECOSYSTEM-CONSTITUTION. This audit must go beyond file existence to confirm actual user-facing compliance."
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Security Auditor",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Product Strategist",
+      "provider": "cerebras",
+      "model": "qwen-3-235b-a22b-instruct-2507",
+      "raw": "{\"perspective\": \"Product Strategist\", \"findings\": [{\"severity\": \"P0\", \"file_or_area\": \"apps/web/src/components/assessment/energy-picker.tsx\", \"issue\": \"Energy Adaptation UI exists but does not dynamically adapt based on real-time user behavior or system load. Static thresholds undermine Law 2 (Energy Adaptation) by failing to personalize energy modes.\", \"recommended_fix\": \"Integrate dynamic threshold calibration using user interaction latency and task completion patterns. Update energy-picker.tsx to adjust mode triggers based on observed behavior over 3+ sessions.\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": null, \"next_files_to_read\": [\"apps/web/src/hooks/use-energy-mode.ts\", \"memory/swarm/skills/energy-adaptation-behavioral-model.md\"]}",
+      "sub_agents_used": true,
+      "assigned_llm": true,
+      "findings": [
+        {
+          "severity": "P0",
+          "file_or_area": "apps/web/src/components/assessment/energy-picker.tsx",
+          "issue": "Energy Adaptation UI exists but does not dynamically adapt based on real-time user behavior or system load. Static thresholds undermine Law 2 (Energy Adaptation) by failing to personalize energy modes.",
+          "recommended_fix": "Integrate dynamic threshold calibration using user interaction latency and task completion patterns. Update energy-picker.tsx to adjust mode triggers based on observed behavior over 3+ sessions."
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "next_files_to_read": [
+        "apps/web/src/hooks/use-energy-mode.ts",
+        "memory/swarm/skills/energy-adaptation-behavioral-model.md"
+      ]
+    },
+    {
+      "perspective": "Code Quality Engineer",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Ecosystem Auditor",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Risk Manager",
+      "provider": "cerebras",
+      "model": "qwen-3-235b-a22b-instruct-2507",
+      "raw": "{\"perspective\": \"Risk Manager\", \"findings\": [{\"severity\": \"CRITICAL\", \"file_or_area\": \"voice.md integration\", \"issue\": \"Voice data handling module lacks encryption and DPA verification, creating legal and security risks.\", \"recommended_fix\": \"Add end-to-end encryption for voice data in transit and at rest. Verify Soniox/Deepgram DPA status before enabling voice features.\"}, {\"severity\": \"HIGH\", \"file_or_area\": \"Energy Adaptation Law 2\", \"issue\": \"Workflow status undocumented; 'wa' flag suggests incomplete implementation despite file presence.\", \"recommended_fix\": \"Document completion status and verification steps for Energy Adaptation in all products.\"}], \"overall_verdict\": \"warn\", \"whistleblower_flag\": \"Voice data processing without encryption violates GDPR and AZ PDPA.\", \"next_files_to_read\": [\"docs/PRE-LAUNCH-BLOCKERS-STATUS.md\", \"apps/api/app/routers/voice.py\"]}",
+      "sub_agents_used": true,
+      "assigned_llm": true,
+      "findings": [
+        {
+          "severity": "CRITICAL",
+          "file_or_area": "voice.md integration",
+          "issue": "Voice data handling module lacks encryption and DPA verification, creating legal and security risks.",
+          "recommended_fix": "Add end-to-end encryption for voice data in transit and at rest. Verify Soniox/Deepgram DPA status before enabling voice features."
+        },
+        {
+          "severity": "HIGH",
+          "file_or_area": "Energy Adaptation Law 2",
+          "issue": "Workflow status undocumented; 'wa' flag suggests incomplete implementation despite file presence.",
+          "recommended_fix": "Document completion status and verification steps for Energy Adaptation in all products."
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": "Voice data processing without encryption violates GDPR and AZ PDPA.",
+      "next_files_to_read": [
+        "docs/PRE-LAUNCH-BLOCKERS-STATUS.md",
+        "apps/api/app/routers/voice.py"
+      ]
+    },
+    {
+      "perspective": "Readiness Manager",
+      "provider": "ollama",
+      "model": "gemma4",
+      "raw": "```json\n{\n  \"Security_Audit\": {\n    \"Security_Auditor\": {\n      \"Security_Auditor\": {\n        \"security_check\": \"Review authentication/authorization flows for session management and API endpoint access.\",\n        \"findings\": [\n          {\n            \"severity\": \"High\",\n            \"description\": \"Potential for insecure direct object reference (IDOR) in user profile endpoints if resource IDs are not validated against the authenticated user's scope.\",\n            \"recommendation\": \"Implement strict ownership checks (e.g., `user_id` in the database query must match the authenticated session's user ID) on all GET/PUT/DELETE requests targeting user-specific resources.\"\n          },\n          {\n            \"severity\": \"Medium\",\n            \"description\": \"Session tokens might lack appropriate expiration or revocation mechanisms, leading to potential session hijacking if tokens are leaked.\",\n            \"recommendation\": \"Enforce short, absolute session timeouts (e.g., 15 minutes inactivity). Implement a centralized token revocation endpoint callable upon logout or password change.\"\n          }\n        ],\n        \"priority\": \"Immediate\"\n      }\n    }\n  },\n  \"Performance_Audit\": {\n    \"Performance_Auditor\": {\n      \"Performance_Auditor\": {\n        \"performance_check\": \"Analyze database query efficiency and API response times under simulated peak load.\",\n        \"findings\": [\n          {\n            \"severity\": \"Medium\",\n            \"description\": \"Complex reporting queries (e.g., generating monthly usage reports) are likely performing full table scans due to missing indexes on join columns.\",\n            \"recommendation\": \"Analyze slow query logs. Add composite indexes to join columns used in reporting queries, especially those involving date ranges and user IDs.\"\n          },\n          {\n            \"severity\": \"Low\",\n            \"description\": \"Large data payloads returned from endpoints might be inefficiently serialized (e.g., returning entire object graphs when only a subset is needed).\",\n            \"recommendation\": \"Implement GraphQL or use DTOs (Data Transfer Objects) to allow clients to request only the necessary fields, reducing payload size and serialization time.\"\n          }\n        ],\n        \"priority\": \"Scheduled\"\n      }\n    }\n  },\n  \"Compliance_Audit\": {\n    \"Compliance_Auditor\": {\n      \"Compliance_Auditor\": {\n        \"compliance_check\": \"Verify adherence to data privacy regulations (e.g., GDPR, CCPA) regarding data retention and consent management.\",\n        \"findings\": [\n          {\n            \"severity\": \"High\",\n            \"description\": \"Lack of explicit, granular consent tracking for different types of data processing (e.g., analytics vs. marketing).\",\n            \"recommendation\": \"Revamp the consent management system to record specific consent flags per user, per purpose, and per time period. Provide an easily accessible 'Withdraw Consent' mechanism.\"\n          },\n          {\n            \"severity\": \"Medium\",\n            \"description\": \"Data retention policies for inactive user accounts are not uniformly enforced, potentially leading to the indefinite storage of PII.\",\n            \"recommendation\": \"Implement automated data lifecycle management jobs that pseudonymize or permanently delete user data after the legally defined retention period (e.g., 7 years post-account closure).\"\n          }\n        ],\n        \"priority\": \"Critical\"\n      }\n    }\n  }\n}\n```",
+      "assigned_llm": true,
+      "Security_Audit": {
+        "Security_Auditor": {
+          "Security_Auditor": {
+            "security_check": "Review authentication/authorization flows for session management and API endpoint access.",
+            "findings": [
+              {
+                "severity": "High",
+                "description": "Potential for insecure direct object reference (IDOR) in user profile endpoints if resource IDs are not validated against the authenticated user's scope.",
+                "recommendation": "Implement strict ownership checks (e.g., `user_id` in the database query must match the authenticated session's user ID) on all GET/PUT/DELETE requests targeting user-specific resources."
+              },
+              {
+                "severity": "Medium",
+                "description": "Session tokens might lack appropriate expiration or revocation mechanisms, leading to potential session hijacking if tokens are leaked.",
+                "recommendation": "Enforce short, absolute session timeouts (e.g., 15 minutes inactivity). Implement a centralized token revocation endpoint callable upon logout or password change."
+              }
+            ],
+            "priority": "Immediate"
+          }
+        }
+      },
+      "Performance_Audit": {
+        "Performance_Auditor": {
+          "Performance_Auditor": {
+            "performance_check": "Analyze database query efficiency and API response times under simulated peak load.",
+            "findings": [
+              {
+                "severity": "Medium",
+                "description": "Complex reporting queries (e.g., generating monthly usage reports) are likely performing full table scans due to missing indexes on join columns.",
+                "recommendation": "Analyze slow query logs. Add composite indexes to join columns used in reporting queries, especially those involving date ranges and user IDs."
+              },
+              {
+                "severity": "Low",
+                "description": "Large data payloads returned from endpoints might be inefficiently serialized (e.g., returning entire object graphs when only a subset is needed).",
+                "recommendation": "Implement GraphQL or use DTOs (Data Transfer Objects) to allow clients to request only the necessary fields, reducing payload size and serialization time."
+              }
+            ],
+            "priority": "Scheduled"
+          }
+        }
+      },
+      "Compliance_Audit": {
+        "Compliance_Auditor": {
+          "Compliance_Auditor": {
+            "compliance_check": "Verify adherence to data privacy regulations (e.g., GDPR, CCPA) regarding data retention and consent management.",
+            "findings": [
+              {
+                "severity": "High",
+                "description": "Lack of explicit, granular consent tracking for different types of data processing (e.g., analytics vs. marketing).",
+                "recommendation": "Revamp the consent management system to record specific consent flags per user, per purpose, and per time period. Provide an easily accessible 'Withdraw Consent' mechanism."
+              },
+              {
+                "severity": "Medium",
+                "description": "Data retention policies for inactive user accounts are not uniformly enforced, potentially leading to the indefinite storage of PII.",
+                "recommendation": "Implement automated data lifecycle management jobs that pseudonymize or permanently delete user data after the legally defined retention period (e.g., 7 years post-account closure)."
+              }
+            ],
+            "priority": "Critical"
+          }
+        }
+      }
+    },
+    {
+      "perspective": "Cultural Intelligence",
+      "provider": "ollama",
+      "model": "qwen3:8b",
+      "raw": "{\n  \"perspective\": \"Legal Advisor\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"memory/atlas/atlas-debts-to-ceo.md\",\n      \"issue\": \"Outstanding debts (460 AZN) flagged in ledger\",\n      \"recommended_fix\": \"Verify debt resolution status and update ledger\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"docs/audits/2026-04-26-three-instance-audit\",\n      \"issue\": \"Legacy compliance gaps in audit history\",\n      \"recommended_fix\": \"Cross-reference with current Constitution clauses\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null\n}",
+      "assigned_llm": true,
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "memory/atlas/atlas-debts-to-ceo.md",
+          "issue": "Outstanding debts (460 AZN) flagged in ledger",
+          "recommended_fix": "Verify debt resolution status and update ledger"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "docs/audits/2026-04-26-three-instance-audit",
+          "issue": "Legacy compliance gaps in audit history",
+          "recommended_fix": "Cross-reference with current Constitution clauses"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "perspective_name_drift": "Legal Advisor"
+    },
+    {
+      "perspective": "Chief Strategist",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Sales Director",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\n  \"perspective\": \"Sales Director\",\n  \"findings\": [\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"sales deck\",\n      \"issue\": \"No sales deck found\",\n      \"recommended_fix\": \"Create a sales deck to effectively communicate the value proposition of VOLAURA\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"pricing\",\n      \"issue\": \"Pricing clarity for AZ market\",\n      \"recommended_fix\": \"Research and establish clear pricing for the AZ market to facilitate sales\"\n    },\n    {\n      \"severity\": \"low\",\n      \"file_or_area\": \"target organizations\",\n      \"issue\": \"First 10 target orgs not identified\",\n      \"recommended_fix\": \"Identify the first 10 target organizations for VOLAURA and develop a strategy to approach them\"\n    },\n    {\n      \"severity\": \"low\",\n      \"file_or_area\": \"objections\",\n      \"issue\": \"Anticipated objections from Nigar (HR manager)\",\n      \"recommended_fix\": \"Develop a list of potential objections from Nigar and prepare responses to address them\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"onboarding\",\n      \"issue\": \"Onboarding process for non-technical org admin\",\n      \"recommended_fix\": \"Simplify the onboarding process to make it accessible for non-technical organization administrators\"\n    }\n  ],\n  \"overall_verdict\": \"warn\",\n  \"whistleblower_flag\": null,\n  \"sales_readiness_score\": 6,\n  \"first_customer_playbook\": \"1. Develop a sales deck, 2. Establish clear pricing for the AZ market, 3. Identify the first 10 target organizations, 4. Anticipate and address potential objections, 5. Simplify the onboarding process\"\n}",
+      "assigned_llm": true,
+      "findings": [
+        {
+          "severity": "high",
+          "file_or_area": "sales deck",
+          "issue": "No sales deck found",
+          "recommended_fix": "Create a sales deck to effectively communicate the value proposition of VOLAURA"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "pricing",
+          "issue": "Pricing clarity for AZ market",
+          "recommended_fix": "Research and establish clear pricing for the AZ market to facilitate sales"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "target organizations",
+          "issue": "First 10 target orgs not identified",
+          "recommended_fix": "Identify the first 10 target organizations for VOLAURA and develop a strategy to approach them"
+        },
+        {
+          "severity": "low",
+          "file_or_area": "objections",
+          "issue": "Anticipated objections from Nigar (HR manager)",
+          "recommended_fix": "Develop a list of potential objections from Nigar and prepare responses to address them"
+        },
+        {
+          "severity": "medium",
+          "file_or_area": "onboarding",
+          "issue": "Onboarding process for non-technical org admin",
+          "recommended_fix": "Simplify the onboarding process to make it accessible for non-technical organization administrators"
+        }
+      ],
+      "overall_verdict": "warn",
+      "whistleblower_flag": null,
+      "sales_readiness_score": 6,
+      "first_customer_playbook": "1. Develop a sales deck, 2. Establish clear pricing for the AZ market, 3. Identify the first 10 target organizations, 4. Anticipate and address potential objections, 5. Simplify the onboarding process"
+    },
+    {
+      "perspective": "UX Designer",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "DevOps Engineer",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "Assessment Science",
+      "provider": "vertex-ai-agent",
+      "model": "gemini-2.5-flash+tools",
+      "raw": "```json\n{\n  \"perspective\": \"Assessment Science\",\n  \"findings\": [\n    {\n      \"severity\": \"critical\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"IRT 3PL parameters (a, b, c) are defaulted to guessed values (1.0, 0.0, 0.0) if not explicitly provided, severely compromising psychometric validity and reliability. This is a fundamental flaw for a psychometric assessment engine. The Standard Error of Measurement (SEM) will be artificially low or high, not reflecting the true precision of the estimate.\",\n      \"recommended_fix\": \"In `apps/api/app/core",
+      "sub_agents_used": true,
+      "assigned_llm": true
+    },
+    {
+      "perspective": "Legal Advisor",
+      "provider": "nvidia",
+      "model": "meta/llama-3.3-70b-instruct",
+      "raw": "{\"perspective\": \"Legal Advisor\", \"findings\": [\n    {\"severity\": \"BLOCK\", \"file_or_area\": \"GDPR Article 22 consent flow\", \"issue\": \"Insufficient or non-existent consent flow for automated decision-making\", \"recommended_fix\": \"Implement a clear and legally sufficient consent flow for automated decision-making\"},\n    {\"severity\": \"WARN\", \"file_or_area\": \"AZ Personal Data Protection Act\", \"issue\": \"Potential non-compliance for Baku launch\", \"recommended_fix\": \"Conduct a thorough review of the AZ Personal Data Protection Act and ensure compliance for the Baku launch\"},\n    {\"severity\": \"BLOCK\", \"file_or_area\": \"Platform liability\", \"issue\": \"Legal exposure exists if AURA score is used for hiring decisions\", \"recommended_fix\": \"Develop clear guidelines and disclaimers for the use of AURA scores in hiring decisions\"},\n    {\"severity\": \"BLOCK\", \"file_or_area\": \"Data processor agreements\", \"issue\": \"DPAs may not be in place for Supabase, Google Cloud, and Railway\", \"recommended_fix\": \"Verify the existence and completeness of DPAs for all data processors\"}\n], \"overall_verdict\": \"BLOCK\", \"whistleblower_flag\": null}",
+      "assigned_llm": true,
+      "findings": [
+        {
+          "severity": "BLOCK",
+          "file_or_area": "GDPR Article 22 consent flow",
+          "issue": "Insufficient or non-existent consent flow for automated decision-making",
+          "recommended_fix": "Implement a clear and legally sufficient consent flow for automated decision-making"
+        },
+        {
+          "severity": "WARN",
+          "file_or_area": "AZ Personal Data Protection Act",
+          "issue": "Potential non-compliance for Baku launch",
+          "recommended_fix": "Conduct a thorough review of the AZ Personal Data Protection Act and ensure compliance for the Baku launch"
+        },
+        {
+          "severity": "BLOCK",
+          "file_or_area": "Platform liability",
+          "issue": "Legal exposure exists if AURA score is used for hiring decisions",
+          "recommended_fix": "Develop clear guidelines and disclaimers for the use of AURA scores in hiring decisions"
+        },
+        {
+          "severity": "BLOCK",
+          "file_or_area": "Data processor agreements",
+          "issue": "DPAs may not be in place for Supabase, Google Cloud, and Railway",
+          "recommended_fix": "Verify the existence and completeness of DPAs for all data processors"
+        }
+      ],
+      "overall_verdict": "BLOCK",
+      "whistleblower_flag": null
+    },
+    {
+      "perspective": "Growth Hacker",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "QA Engineer",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    },
+    {
+      "perspective": "CTO Watchdog",
+      "provider": null,
+      "model": null,
+      "raw": "",
+      "error": "assigned_model_failed"
+    }
+  ]
+}

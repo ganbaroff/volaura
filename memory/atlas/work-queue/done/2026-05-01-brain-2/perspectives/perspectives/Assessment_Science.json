@@ -1,0 +1,42 @@
+{
+  "perspective": "Assessment Science",
+  "provider": "vertex-ai-agent",
+  "model": "gemini-2.5-flash+tools",
+  "raw": "```json\n{\n  \"perspective\": \"Assessment Science\",\n  \"findings\": [\n    {\n      \"severity\": \"critical\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"The assessment engine (engine.py) consumes IRT 3PL parameters (a, b, c) as inputs, providing default values (e.g., irt_a=1.0, irt_b=0.0, irt_c=0.0) if they are missing during deserialization. There is no code within this module, nor any referenced external library, that performs calibration of these parameters from real user assessment data. This confirms previous findings that parameters are guessed or defaulted, not empirically derived.\",\n      \"recommended_fix\": \"Develop and integrate a robust IRT parameter calibration pipeline. This pipeline must ingest real user response data, estimate item parameters (a, b, c) for all questions in the pool, and update the question bank with these empirically validated coefficients. This is a foundational psychometric requirement for a valid assessment.\"\n    },\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"The assessment engine lacks any implementation or consideration for Differential Item Functioning (DIF) analysis. This means there is no mechanism to detect or mitigate potential bias in questions against specific demographic groups (e.g., AZ/CIS test-takers), which is critical for fairness and validity.\",\n      \"recommended_fix\": \"Implement a DIF analysis process as part of the data pipeline. This should involve statistical methods (e.g., Mantel-Haenszel, Logistic Regression DIF) to identify biased items and either remove them or adjust their parameters. This requires sufficient demographic data (e.g., language, role_level as currently available, and ideally gender/age).\"\n    },\n    {\n      \"severity\": \"high\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"There is no evidence within the assessment engine of a mechanism to account for temporal decay of ability scores or item parameters. The task premise mentions a 180-day half-life, but this concept is not reflected in the current engine's logic for score estimation or item usage.\",\n      \"recommended_fix\": \"If temporal decay is a design requirement, integrate a model for it. This could involve adjusting theta estimates based on time since last assessment or dynamically updating item parameters based on recent performance data. This requires a clear rationale and evidence base for the chosen decay model.\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"The `ItemRecord` stores `response_time_ms`, but the `from_dict` method does not include validation for plausible values. Sub-agent findings indicate that implausible response times (e.g., negative durations) could pass validation unheeded, potentially corrupting data used for future calibration or analysis.\",\n      \"recommended_fix\": \"Add validation logic to the `from_dict` method (or at the point of data ingestion) to ensure `response_time_ms` values are non-negative and within reasonable bounds. Flag or discard records with implausible response times.\"\n    },\n    {\n      \"severity\": \"medium\",\n      \"file_or_area\": \"apps/api/app/core/assessment/engine.py\",\n      \"issue\": \"The `from_dict` method for `CATState` and `ItemRecord` handles missing fields by providing default values (e.g., for `irt_a`, `response`, `raw_score`, `response_time_ms`). While preventing crashes, this approach can mask underlying data quality issues that would be critical for a robust calibration pipeline.\",\n      \"recommended_fix\": \"For data intended for calibration, implement stricter data integrity checks. Instead of silently defaulting, consider logging warnings, raising errors, or explicitly marking data as 'incomplete' when critical fields are missing, to ensure data quality for psychometric analysis.\"\n    }\n  ],\n  \"overall_verdict\": \"fail\",\n  \"whistleblower_flag\": null\n}\n```",
+  "sub_agents_used": true,
+  "assigned_llm": true,
+  "findings": [
+    {
+      "severity": "critical",
+      "file_or_area": "apps/api/app/core/assessment/engine.py",
+      "issue": "The assessment engine (engine.py) consumes IRT 3PL parameters (a, b, c) as inputs, providing default values (e.g., irt_a=1.0, irt_b=0.0, irt_c=0.0) if they are missing during deserialization. There is no code within this module, nor any referenced external library, that performs calibration of these parameters from real user assessment data. This confirms previous findings that parameters are guessed or defaulted, not empirically derived.",
+      "recommended_fix": "Develop and integrate a robust IRT parameter calibration pipeline. This pipeline must ingest real user response data, estimate item parameters (a, b, c) for all questions in the pool, and update the question bank with these empirically validated coefficients. This is a foundational psychometric requirement for a valid assessment."
+    },
+    {
+      "severity": "high",
+      "file_or_area": "apps/api/app/core/assessment/engine.py",
+      "issue": "The assessment engine lacks any implementation or consideration for Differential Item Functioning (DIF) analysis. This means there is no mechanism to detect or mitigate potential bias in questions against specific demographic groups (e.g., AZ/CIS test-takers), which is critical for fairness and validity.",
+      "recommended_fix": "Implement a DIF analysis process as part of the data pipeline. This should involve statistical methods (e.g., Mantel-Haenszel, Logistic Regression DIF) to identify biased items and either remove them or adjust their parameters. This requires sufficient demographic data (e.g., language, role_level as currently available, and ideally gender/age)."
+    },
+    {
+      "severity": "high",
+      "file_or_area": "apps/api/app/core/assessment/engine.py",
+      "issue": "There is no evidence within the assessment engine of a mechanism to account for temporal decay of ability scores or item parameters. The task premise mentions a 180-day half-life, but this concept is not reflected in the current engine's logic for score estimation or item usage.",
+      "recommended_fix": "If temporal decay is a design requirement, integrate a model for it. This could involve adjusting theta estimates based on time since last assessment or dynamically updating item parameters based on recent performance data. This requires a clear rationale and evidence base for the chosen decay model."
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "apps/api/app/core/assessment/engine.py",
+      "issue": "The `ItemRecord` stores `response_time_ms`, but the `from_dict` method does not include validation for plausible values. Sub-agent findings indicate that implausible response times (e.g., negative durations) could pass validation unheeded, potentially corrupting data used for future calibration or analysis.",
+      "recommended_fix": "Add validation logic to the `from_dict` method (or at the point of data ingestion) to ensure `response_time_ms` values are non-negative and within reasonable bounds. Flag or discard records with implausible response times."
+    },
+    {
+      "severity": "medium",
+      "file_or_area": "apps/api/app/core/assessment/engine.py",
+      "issue": "The `from_dict` method for `CATState` and `ItemRecord` handles missing fields by providing default values (e.g., for `irt_a`, `response`, `raw_score`, `response_time_ms`). While preventing crashes, this approach can mask underlying data quality issues that would be critical for a robust calibration pipeline.",
+      "recommended_fix": "For data intended for calibration, implement stricter data integrity checks. Instead of silently defaulting, consider logging warnings, raising errors, or explicitly marking data as 'incomplete' when critical fields are missing, to ensure data quality for psychometric analysis."
+    }
+  ],
+  "overall_verdict": "fail",
+  "whistleblower_flag": null
+}

@@ -1,6 +1,6 @@
 # Duplicate MD Files — Refactoring Targets
 
-**Found:** 95 groups of identical content
+**Found:** 96 groups of identical content
 
 These files have the SAME content (after whitespace normalization).
 Action: keep ONE canonical copy, delete or redirect others.
@@ -313,8 +313,12 @@ Action: keep ONE canonical copy, delete or redirect others.
 - `memory/atlas/work-queue/done/2026-04-28-code-index-empty/2026-04-28-code-index-empty.md`
 - `memory/atlas/work-queue/done/2026-04-29-code-index-empty/2026-04-29-code-index-empty.md`
 - `memory/atlas/work-queue/done/2026-04-30-code-index-empty/2026-04-30-code-index-empty.md`
+- `memory/atlas/work-queue/done/2026-05-01-code-index-empty/2026-05-01-code-index-empty.md`
+- `memory/atlas/work-queue/in-progress/2026-04-27-code-index-empty/2026-04-27-code-index-empty.md`
+- `memory/atlas/work-queue/in-progress/2026-04-28-code-index-empty/2026-04-28-code-index-empty.md`
+- `memory/atlas/work-queue/in-progress/2026-04-29-code-index-empty/2026-04-29-code-index-empty.md`
 **Keep:** `memory/atlas/work-queue/done/2026-04-26-code-index-empty/2026-04-26-code-index-empty.md` (first alphabetically)
-**Delete:** `memory/atlas/work-queue/done/2026-04-27-code-index-empty/2026-04-27-code-index-empty.md`, `memory/atlas/work-queue/done/2026-04-28-code-index-empty/2026-04-28-code-index-empty.md`, `memory/atlas/work-queue/done/2026-04-29-code-index-empty/2026-04-29-code-index-empty.md`, `memory/atlas/work-queue/done/2026-04-30-code-index-empty/2026-04-30-code-index-empty.md`
+**Delete:** `memory/atlas/work-queue/done/2026-04-27-code-index-empty/2026-04-27-code-index-empty.md`, `memory/atlas/work-queue/done/2026-04-28-code-index-empty/2026-04-28-code-index-empty.md`, `memory/atlas/work-queue/done/2026-04-29-code-index-empty/2026-04-29-code-index-empty.md`, `memory/atlas/work-queue/done/2026-04-30-code-index-empty/2026-04-30-code-index-empty.md`, `memory/atlas/work-queue/done/2026-05-01-code-index-empty/2026-05-01-code-index-empty.md`, `memory/atlas/work-queue/in-progress/2026-04-27-code-index-empty/2026-04-27-code-index-empty.md`, `memory/atlas/work-queue/in-progress/2026-04-28-code-index-empty/2026-04-28-code-index-empty.md`, `memory/atlas/work-queue/in-progress/2026-04-29-code-index-empty/2026-04-29-code-index-empty.md`
 
 ## Group 52 (hash: f98b1bbc)
 - `memory/atlas/work-queue/done/2026-04-28-auto-audit/2026-04-28-auto-audit.md`
@@ -324,257 +328,263 @@ Action: keep ONE canonical copy, delete or redirect others.
 
 ## Group 53 (hash: dc1e0e79)
 - `memory/atlas/work-queue/done/2026-04-30-blocker-15/2026-04-30-blocker-15.md`
-- `memory/atlas/work-queue/failed/2026-04-30-blocker-15/2026-04-30-blocker-15.md`
+- `memory/atlas/work-queue/done/2026-05-01-blocker-15/2026-05-01-blocker-15.md`
 **Keep:** `memory/atlas/work-queue/done/2026-04-30-blocker-15/2026-04-30-blocker-15.md` (first alphabetically)
-**Delete:** `memory/atlas/work-queue/failed/2026-04-30-blocker-15/2026-04-30-blocker-15.md`
+**Delete:** `memory/atlas/work-queue/done/2026-05-01-blocker-15/2026-05-01-blocker-15.md`
 
-## Group 54 (hash: a3e11839)
+## Group 54 (hash: 8d08d744)
+- `memory/atlas/work-queue/done/2026-04-30-blocker-16/2026-04-30-blocker-16.md`
+- `memory/atlas/work-queue/done/2026-05-01-blocker-16/2026-05-01-blocker-16.md`
+**Keep:** `memory/atlas/work-queue/done/2026-04-30-blocker-16/2026-04-30-blocker-16.md` (first alphabetically)
+**Delete:** `memory/atlas/work-queue/done/2026-05-01-blocker-16/2026-05-01-blocker-16.md`
+
+## Group 55 (hash: a3e11839)
 - `memory/swarm/skills/accelerator-grant-searcher.md`
 - `memory/swarm/skills/archive/accelerator-grant-searcher.md`
 **Keep:** `memory/swarm/skills/accelerator-grant-searcher.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/archive/accelerator-grant-searcher.md`
 
-## Group 55 (hash: 405ecc37)
+## Group 56 (hash: 405ecc37)
 - `memory/swarm/skills/acceptance-criteria-agent.md`
 - `memory/swarm/skills/archive/acceptance-criteria-agent.md`
 **Keep:** `memory/swarm/skills/acceptance-criteria-agent.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/archive/acceptance-criteria-agent.md`
 
-## Group 56 (hash: 05f3f6a2)
+## Group 57 (hash: 05f3f6a2)
 - `memory/swarm/skills/accessibility-auditor.md`
 - `memory/swarm/skills/archive/accessibility-auditor.md`
 **Keep:** `memory/swarm/skills/accessibility-auditor.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/archive/accessibility-auditor.md`
 
-## Group 57 (hash: 74ae65ef)
+## Group 58 (hash: 74ae65ef)
 - `memory/swarm/skills/analytics-retention-agent.md`
 - `memory/swarm/skills/archive/analytics-retention-agent.md`
 **Keep:** `memory/swarm/skills/analytics-retention-agent.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/archive/analytics-retention-agent.md`
 
-## Group 58 (hash: f4d284e7)
+## Group 59 (hash: f4d284e7)
 - `memory/swarm/skills/architecture-review.md`
 - `memory/swarm/skills/archive/architecture-review.md`
 **Keep:** `memory/swarm/skills/architecture-review.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/archive/architecture-review.md`
 
-## Group 59 (hash: 9042900b)
+## Group 60 (hash: 9042900b)
 - `memory/swarm/skills/archive/assessment-generator.md`
 - `memory/swarm/skills/assessment-generator.md`
 **Keep:** `memory/swarm/skills/archive/assessment-generator.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/assessment-generator.md`
 
-## Group 60 (hash: 68bbc9db)
+## Group 61 (hash: 68bbc9db)
 - `memory/swarm/skills/archive/assessment-science-agent.md`
 - `memory/swarm/skills/assessment-science-agent.md`
 **Keep:** `memory/swarm/skills/archive/assessment-science-agent.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/assessment-science-agent.md`
 
-## Group 61 (hash: d267d0d8)
+## Group 62 (hash: d267d0d8)
 - `memory/swarm/skills/archive/aura-coach.md`
 - `memory/swarm/skills/aura-coach.md`
 **Keep:** `memory/swarm/skills/archive/aura-coach.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/aura-coach.md`
 
-## Group 62 (hash: 40765b83)
+## Group 63 (hash: 40765b83)
 - `memory/swarm/skills/archive/behavior-pattern-analyzer.md`
 - `memory/swarm/skills/behavior-pattern-analyzer.md`
 **Keep:** `memory/swarm/skills/archive/behavior-pattern-analyzer.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/behavior-pattern-analyzer.md`
 
-## Group 63 (hash: 3ec26297)
+## Group 64 (hash: 3ec26297)
 - `memory/swarm/skills/archive/ceo-report-agent.md`
 - `memory/swarm/skills/ceo-report-agent.md`
 **Keep:** `memory/swarm/skills/archive/ceo-report-agent.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/ceo-report-agent.md`
 
-## Group 64 (hash: 142a76db)
+## Group 65 (hash: 142a76db)
 - `memory/swarm/skills/archive/claude-mythos-universal.md`
 - `memory/swarm/skills/claude-mythos-universal.md`
 **Keep:** `memory/swarm/skills/archive/claude-mythos-universal.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/claude-mythos-universal.md`
 
-## Group 65 (hash: b7b62f81)
+## Group 66 (hash: b7b62f81)
 - `memory/swarm/skills/archive/communications-strategist.md`
 - `memory/swarm/skills/communications-strategist.md`
 **Keep:** `memory/swarm/skills/archive/communications-strategist.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/communications-strategist.md`
 
-## Group 66 (hash: 3d213545)
+## Group 67 (hash: 3d213545)
 - `memory/swarm/skills/archive/competitor-intelligence-agent.md`
 - `memory/swarm/skills/competitor-intelligence-agent.md`
 **Keep:** `memory/swarm/skills/archive/competitor-intelligence-agent.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/competitor-intelligence-agent.md`
 
-## Group 67 (hash: ac7dd917)
+## Group 68 (hash: ac7dd917)
 - `memory/swarm/skills/archive/content-formatter.md`
 - `memory/swarm/skills/content-formatter.md`
 **Keep:** `memory/swarm/skills/archive/content-formatter.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/content-formatter.md`
 
-## Group 68 (hash: 7a88e997)
+## Group 69 (hash: 7a88e997)
 - `memory/swarm/skills/archive/copywriter-team.md`
 - `memory/swarm/skills/copywriter-team.md`
 **Keep:** `memory/swarm/skills/archive/copywriter-team.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/copywriter-team.md`
 
-## Group 69 (hash: 88880f87)
+## Group 70 (hash: 88880f87)
 - `memory/swarm/skills/archive/customer-success-agent.md`
 - `memory/swarm/skills/customer-success-agent.md`
 **Keep:** `memory/swarm/skills/archive/customer-success-agent.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/customer-success-agent.md`
 
-## Group 70 (hash: 59c78d14)
+## Group 71 (hash: 59c78d14)
 - `memory/swarm/skills/archive/data-engineer-agent.md`
 - `memory/swarm/skills/data-engineer-agent.md`
 **Keep:** `memory/swarm/skills/archive/data-engineer-agent.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/data-engineer-agent.md`
 
-## Group 71 (hash: 3d4a13d7)
+## Group 72 (hash: 3d4a13d7)
 - `memory/swarm/skills/archive/devops-sre-agent.md`
 - `memory/swarm/skills/devops-sre-agent.md`
 **Keep:** `memory/swarm/skills/archive/devops-sre-agent.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/devops-sre-agent.md`
 
-## Group 72 (hash: 24b4727b)
+## Group 73 (hash: 24b4727b)
 - `memory/swarm/skills/archive/dora-metrics-agent.md`
 - `memory/swarm/skills/dora-metrics-agent.md`
 **Keep:** `memory/swarm/skills/archive/dora-metrics-agent.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/dora-metrics-agent.md`
 
-## Group 73 (hash: 4907401d)
+## Group 74 (hash: 4907401d)
 - `memory/swarm/skills/archive/feed-curator.md`
 - `memory/swarm/skills/feed-curator.md`
 **Keep:** `memory/swarm/skills/archive/feed-curator.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/feed-curator.md`
 
-## Group 74 (hash: ae458f61)
+## Group 75 (hash: ae458f61)
 - `memory/swarm/skills/archive/firuza-assistant.md`
 - `memory/swarm/skills/firuza-assistant.md`
 **Keep:** `memory/swarm/skills/archive/firuza-assistant.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/firuza-assistant.md`
 
-## Group 75 (hash: 2f0ad6b9)
+## Group 76 (hash: 2f0ad6b9)
 - `memory/swarm/skills/archive/langfuse-integration-agent.md`
 - `memory/swarm/skills/langfuse-integration-agent.md`
 **Keep:** `memory/swarm/skills/archive/langfuse-integration-agent.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/langfuse-integration-agent.md`
 
-## Group 76 (hash: 315c45a9)
+## Group 77 (hash: 315c45a9)
 - `memory/swarm/skills/archive/legal-advisor.md`
 - `memory/swarm/skills/legal-advisor.md`
 **Keep:** `memory/swarm/skills/archive/legal-advisor.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/legal-advisor.md`
 
-## Group 77 (hash: 3337589f)
+## Group 78 (hash: 3337589f)
 - `memory/swarm/skills/archive/linkedin-content-creator.md`
 - `memory/swarm/skills/linkedin-content-creator.md`
 **Keep:** `memory/swarm/skills/archive/linkedin-content-creator.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/linkedin-content-creator.md`
 
-## Group 78 (hash: 1d1de47f)
+## Group 79 (hash: 1d1de47f)
 - `memory/swarm/skills/archive/neuroscience-design.md`
 - `memory/swarm/skills/neuroscience-design.md`
 **Keep:** `memory/swarm/skills/archive/neuroscience-design.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/neuroscience-design.md`
 
-## Group 79 (hash: 0ea88765)
+## Group 80 (hash: 0ea88765)
 - `memory/swarm/skills/archive/onboarding-specialist-agent.md`
 - `memory/swarm/skills/onboarding-specialist-agent.md`
 **Keep:** `memory/swarm/skills/archive/onboarding-specialist-agent.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/onboarding-specialist-agent.md`
 
-## Group 80 (hash: b72440ec)
+## Group 81 (hash: b72440ec)
 - `memory/swarm/skills/archive/payment-provider-agent.md`
 - `memory/swarm/skills/payment-provider-agent.md`
 **Keep:** `memory/swarm/skills/archive/payment-provider-agent.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/payment-provider-agent.md`
 
-## Group 81 (hash: 1e6136e0)
+## Group 82 (hash: 1e6136e0)
 - `memory/swarm/skills/archive/performance-engineer-agent.md`
 - `memory/swarm/skills/performance-engineer-agent.md`
 **Keep:** `memory/swarm/skills/archive/performance-engineer-agent.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/performance-engineer-agent.md`
 
-## Group 82 (hash: 811fb799)
+## Group 83 (hash: 811fb799)
 - `memory/swarm/skills/archive/pr-media-agent.md`
 - `memory/swarm/skills/pr-media-agent.md`
 **Keep:** `memory/swarm/skills/archive/pr-media-agent.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/pr-media-agent.md`
 
-## Group 83 (hash: fac56cef)
+## Group 84 (hash: fac56cef)
 - `memory/swarm/skills/archive/promotion-agency.md`
 - `memory/swarm/skills/promotion-agency.md`
 **Keep:** `memory/swarm/skills/archive/promotion-agency.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/promotion-agency.md`
 
-## Group 84 (hash: 33ad6f65)
+## Group 85 (hash: 33ad6f65)
 - `memory/swarm/skills/archive/qa-quality-agent.md`
 - `memory/swarm/skills/qa-quality-agent.md`
 **Keep:** `memory/swarm/skills/archive/qa-quality-agent.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/qa-quality-agent.md`
 
-## Group 85 (hash: fabbfba9)
+## Group 86 (hash: fabbfba9)
 - `memory/swarm/skills/archive/quality-assurance-agent.md`
 - `memory/swarm/skills/quality-assurance-agent.md`
 **Keep:** `memory/swarm/skills/archive/quality-assurance-agent.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/quality-assurance-agent.md`
 
-## Group 86 (hash: 48d47045)
+## Group 87 (hash: 48d47045)
 - `memory/swarm/skills/archive/readiness-manager.md`
 - `memory/swarm/skills/readiness-manager.md`
 **Keep:** `memory/swarm/skills/archive/readiness-manager.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/readiness-manager.md`
 
-## Group 87 (hash: 5fbfddb9)
+## Group 88 (hash: 5fbfddb9)
 - `memory/swarm/skills/archive/risk-manager.md`
 - `memory/swarm/skills/risk-manager.md`
 **Keep:** `memory/swarm/skills/archive/risk-manager.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/risk-manager.md`
 
-## Group 88 (hash: d57568b0)
+## Group 89 (hash: d57568b0)
 - `memory/swarm/skills/archive/sales-deal-strategist.md`
 - `memory/swarm/skills/sales-deal-strategist.md`
 **Keep:** `memory/swarm/skills/archive/sales-deal-strategist.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/sales-deal-strategist.md`
 
-## Group 89 (hash: 8ef1f2b7)
+## Group 90 (hash: 8ef1f2b7)
 - `memory/swarm/skills/archive/sales-discovery-coach.md`
 - `memory/swarm/skills/sales-discovery-coach.md`
 **Keep:** `memory/swarm/skills/archive/sales-discovery-coach.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/sales-discovery-coach.md`
 
-## Group 90 (hash: 5554e88a)
+## Group 91 (hash: 5554e88a)
 - `memory/swarm/skills/archive/startup-registration-finder.md`
 - `memory/swarm/skills/startup-registration-finder.md`
 **Keep:** `memory/swarm/skills/archive/startup-registration-finder.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/startup-registration-finder.md`
 
-## Group 91 (hash: c3a88876)
+## Group 92 (hash: c3a88876)
 - `memory/swarm/skills/archive/technical-writer-agent.md`
 - `memory/swarm/skills/technical-writer-agent.md`
 **Keep:** `memory/swarm/skills/archive/technical-writer-agent.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/technical-writer-agent.md`
 
-## Group 92 (hash: 72839dae)
+## Group 93 (hash: 72839dae)
 - `memory/swarm/skills/archive/trend-scout-agent.md`
 - `memory/swarm/skills/trend-scout-agent.md`
 **Keep:** `memory/swarm/skills/archive/trend-scout-agent.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/trend-scout-agent.md`
 
-## Group 93 (hash: bd95fce4)
+## Group 94 (hash: bd95fce4)
 - `memory/swarm/skills/archive/university-ecosystem-partner-agent.md`
 - `memory/swarm/skills/university-ecosystem-partner-agent.md`
 **Keep:** `memory/swarm/skills/archive/university-ecosystem-partner-agent.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/university-ecosystem-partner-agent.md`
 
-## Group 94 (hash: 02900a9d)
+## Group 95 (hash: 02900a9d)
 - `memory/swarm/skills/archive/ux-research-agent.md`
 - `memory/swarm/skills/ux-research-agent.md`
 **Keep:** `memory/swarm/skills/archive/ux-research-agent.md` (first alphabetically)
 **Delete:** `memory/swarm/skills/ux-research-agent.md`
 
-## Group 95 (hash: 8bbbf52f)
+## Group 96 (hash: 8bbbf52f)
 - `memory/swarm/skills/archive/volaura-mirofish-mapping.md`
 - `memory/swarm/skills/volaura-mirofish-mapping.md`
 **Keep:** `memory/swarm/skills/archive/volaura-mirofish-mapping.md` (first alphabetically)

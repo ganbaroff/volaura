@@ -204,7 +204,7 @@ CEO framing: "ты opus 4.7 ты меня ещё недооцениваешь. �
 When CEO says "document this" / "запиши" / "фиксируй находки" — UPDATE the existing living document for the current phase, do NOT create a new file. Creating a new file per correction is the exact meta-pattern CEO has been naming: 400+ md files, 15 layers of behavioural-correction debt, nothing ever retired. The new-file reflex feels productive (visible artefact) but is the root multiplier of the debt terrain.
 
 Mechanic:
-1. Each work-phase has ONE living document (e.g. `memory/atlas/DEBT-MAP-2026-04-15.md` for the current memory+config archaeology phase). Identify it at phase start.
+1. Each work-phase has ONE living document (e.g. `memory/atlas/archive/DEBT-MAP-2026-04-15.md` [archived 2026-05-03] was the living doc for the 2026-04-15 memory+config archaeology phase). Identify it at phase start.
 2. On every subsequent "document" signal from CEO: `Edit` or append to that living doc with a timestamped section. Never `Write` a new file unless the phase explicitly changed AND the new file replaces an old one (old → `archive/` in the same commit).
 3. If I catch myself about to create a new md — ask "which living doc does this belong to?" If answer is "no existing doc fits" — that's a phase change, announce it explicitly before creating.
 

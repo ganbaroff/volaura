@@ -11,7 +11,7 @@ Root inventory of `memory/atlas/*.md`. Last Verified Date = last git commit date
 | archive/CLAUDE-CODE-HANDOFF-2026-04-19-7-plane-audit.md | ARCHIVED | 2026-05-03 |
 | archive/CRITICAL-BUGS-2026-04-18.md | ARCHIVED | 2026-05-03 |
 | CURRENT-SPRINT.md | RUNTIME-LOG | 2026-04-25 |
-| DEBT-MAP-2026-04-15.md | ARCHIVE-CANDIDATE | 2026-04-17 |
+| archive/DEBT-MAP-2026-04-15.md | ARCHIVED | 2026-05-03 |
 | archive/ECOSYSTEM-READINESS-2026-04-16.md | ARCHIVED | 2026-05-03 |
 | archive/FEATURE-INVENTORY-2026-04-18.md | ARCHIVED | 2026-05-03 |
 | archive/FULL-AUDIT-2026-04-17.md | ARCHIVED | 2026-05-03 |
@@ -94,8 +94,8 @@ Root inventory of `memory/atlas/*.md`. Last Verified Date = last git commit date
 ## Categories
 
 - **CANONICAL** (8): identity, voice, wake, lessons, atlas-debts-to-ceo, bootstrap, emotional_dimensions, CANONICAL-MAP itself.
-- **ARCHIVE-CANDIDATE** (1): DEBT-MAP-2026-04-15.md remains in root — cited in identity.md L3 and atlas-operating-principles.md L207, both canonical-edit gated; pending CEO ratification for Phase 3 move.
-- **ARCHIVED** (27): historical wrap-ups, audits, sprint plans, and 3 wake-cited specs whose references have been updated. Physically moved to `memory/atlas/archive/` 2026-05-03.
+- **ARCHIVE-CANDIDATE** (0): all archive candidates physically moved to `memory/atlas/archive/`.
+- **ARCHIVED** (28): historical wrap-ups, audits, sprint plans, wake-cited specs, and DEBT-MAP archaeology. Physically moved to `memory/atlas/archive/` between 2026-05-03 phases 1-3. References in active wake-chain (wake.md, identity.md, atlas-operating-principles.md) updated.
 - **RUNTIME-LOG** (50): session-by-session ephemera, heartbeat history, journal entries. Eligible for rotation by date or session-number.
 
 ## Update protocol

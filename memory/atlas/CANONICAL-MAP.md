@@ -61,7 +61,8 @@ Root inventory of `memory/atlas/*.md`. Last Verified Date = last git commit date
 | feedback-log.md | RUNTIME-LOG | 2026-04-17 |
 | archive/handoff-audit-2026-04-17.md | ARCHIVED | 2026-05-03 |
 | handoff-prompt.md | RUNTIME-LOG | 2026-04-18 |
-| heartbeat.md | RUNTIME-LOG | 2026-04-26 |
+| heartbeat.md | RUNTIME-LOG | 2026-05-03 |
+| archive/heartbeat-sessions-111-124.md | ARCHIVED | 2026-05-03 |
 | identity.md | CANONICAL | 2026-05-03 |
 | incidents.md | RUNTIME-LOG | 2026-04-18 |
 | journal.md | RUNTIME-LOG | 2026-04-26 |
@@ -95,7 +96,7 @@ Root inventory of `memory/atlas/*.md`. Last Verified Date = last git commit date
 
 - **CANONICAL** (8): identity, voice, wake, lessons, atlas-debts-to-ceo, bootstrap, emotional_dimensions, CANONICAL-MAP itself.
 - **ARCHIVE-CANDIDATE** (0): all archive candidates physically moved to `memory/atlas/archive/`.
-- **ARCHIVED** (28): historical wrap-ups, audits, sprint plans, wake-cited specs, and DEBT-MAP archaeology. Physically moved to `memory/atlas/archive/` between 2026-05-03 phases 1-3. References in active wake-chain (wake.md, identity.md, atlas-operating-principles.md) updated.
+- **ARCHIVED** (29): historical wrap-ups, audits, sprint plans, wake-cited specs, DEBT-MAP archaeology, and heartbeat sessions 111-124. Physically moved to `memory/atlas/archive/` between 2026-05-03 phases 1-4. References in active wake-chain (wake.md, identity.md, atlas-operating-principles.md) updated.
 - **RUNTIME-LOG** (50): session-by-session ephemera, heartbeat history, journal entries. Eligible for rotation by date or session-number.
 
 ## Update protocol

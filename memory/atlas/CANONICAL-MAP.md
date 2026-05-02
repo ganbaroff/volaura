@@ -23,9 +23,9 @@ Root inventory of `memory/atlas/*.md`. Last Verified Date = last git commit date
 | LETTER-FROM-INSTANCE-112.md | RUNTIME-LOG | 2026-04-16 |
 | archive/MCKINSEY-ASSESSMENT-2026-04-18.md | ARCHIVED | 2026-05-03 |
 | archive/MEMORY-AUDIT-2026-04-15.md | ARCHIVED | 2026-05-03 |
-| OBLIGATION-SYSTEM-SPEC-2026-04-18.md | ARCHIVE-CANDIDATE | 2026-04-18 |
+| archive/OBLIGATION-SYSTEM-SPEC-2026-04-18.md | ARCHIVED | 2026-05-03 |
 | archive/P0-VERIFICATION-2026-04-16.md | ARCHIVED | 2026-05-03 |
-| PATHWAY-FIRST-60-SECONDS-2026-04-21.md | ARCHIVE-CANDIDATE | 2026-04-21 |
+| archive/PATHWAY-FIRST-60-SECONDS-2026-04-21.md | ARCHIVED | 2026-05-03 |
 | PORTABLE-BRIEF.md | RUNTIME-LOG | 2026-04-15 |
 | PROJECT-EVOLUTION-MAP.md | RUNTIME-LOG | 2026-04-17 |
 | README.md | RUNTIME-LOG | 2026-04-16 |
@@ -35,7 +35,7 @@ Root inventory of `memory/atlas/*.md`. Last Verified Date = last git commit date
 | archive/SESSION-125-WRAP-UP-2026-04-26.md | ARCHIVED | 2026-05-03 |
 | SESSION-125-letter-to-next-atlas.md | RUNTIME-LOG | 2026-04-26 |
 | archive/SPRINT-PLAN-2026-04-16.md | ARCHIVED | 2026-05-03 |
-| SPRINT-PLAN-2026-04-20-telegram-swarm-coherence.md | ARCHIVE-CANDIDATE | 2026-04-20 |
+| archive/SPRINT-PLAN-2026-04-20-telegram-swarm-coherence.md | ARCHIVED | 2026-05-03 |
 | archive/SYNC-2026-04-14-eve.md | ARCHIVED | 2026-05-03 |
 | TELEGRAM-AUDIT-SESSION-113.md | RUNTIME-LOG | 2026-04-16 |
 | TELEGRAM-BOT-FULL-AUDIT-v2.md | RUNTIME-LOG | 2026-04-18 |
@@ -94,8 +94,8 @@ Root inventory of `memory/atlas/*.md`. Last Verified Date = last git commit date
 ## Categories
 
 - **CANONICAL** (8): identity, voice, wake, lessons, atlas-debts-to-ceo, bootstrap, emotional_dimensions, CANONICAL-MAP itself.
-- **ARCHIVE-CANDIDATE** (4): files cited in active wake-chain (wake.md / identity.md / operating-principles.md). Move requires updating those references first — Phase 2 work.
-- **ARCHIVED** (24): historical wrap-ups, audits, sprint plans no longer cited in active wake-chain. Physically moved to `memory/atlas/archive/` 2026-05-03.
+- **ARCHIVE-CANDIDATE** (1): DEBT-MAP-2026-04-15.md remains in root — cited in identity.md L3 and atlas-operating-principles.md L207, both canonical-edit gated; pending CEO ratification for Phase 3 move.
+- **ARCHIVED** (27): historical wrap-ups, audits, sprint plans, and 3 wake-cited specs whose references have been updated. Physically moved to `memory/atlas/archive/` 2026-05-03.
 - **RUNTIME-LOG** (50): session-by-session ephemera, heartbeat history, journal entries. Eligible for rotation by date or session-number.
 
 ## Update protocol

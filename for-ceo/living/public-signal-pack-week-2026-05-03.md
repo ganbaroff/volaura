@@ -8,7 +8,7 @@
 
 ## 1. Founder narrative for this week
 
-Volaura is open at `volaura.app`. The assessment is live, the privacy and terms pages are live, and the API is healthy. That's it. We are not launching this week. We are letting the work be visible, in public, in the smallest possible voice.
+Volaura is open at `volaura.app`. The assessment entry and engine are live, the privacy and terms pages are live, and the API is healthy. That's it. We are not launching this week. We are letting the work be visible, in public, in the smallest possible voice.
 
 The narrative for the week is this: **verified competency over vibes**. Most platforms ask you to type your skills into a profile and trust you. We built a psychometric assessment that adapts to your energy, asks 5 to 20 items per competency depending on how you're doing today, and produces an AURA score that is mathematically anchored. You can take it for free. You can keep it private. You can share it when you want.
 
@@ -46,7 +46,7 @@ If you're tired, every extra item is noise. If you're sharp, ten items is inform
 - Mid energy: up to 12 items, medium threshold
 - Low energy: up to 5 items, lighter threshold
 
-Same engine. Different paths. Same fairness, because the score is anchored in the same item-response model.
+Same engine. Same scoring model. Different path. The score is anchored in the same item-response model regardless of which path you took.
 
 This isn't a marketing line. It's in the code. It runs.
 
@@ -153,7 +153,7 @@ Five lead types, four leads each. Each row in the sheet you'll build on Tuesday 
 ### Lead type B — International talent-acquisition managers (SaaS / remote-first)
 
 - **Who to target:** TA managers at remote-first SaaS companies hiring in Eastern Europe / Caucasus, talent-ops leaders at companies actively hiring junior-to-mid English-speaking remote engineers.
-- **Why they care:** AURA's English-proficiency score is one of eight competencies and is psychometrically calibrated, not self-rated. That's the gap they fight every quarter.
+- **Why they care:** AURA's English-proficiency score is one of eight competencies and is IRT-based and adaptive, not self-rated. That's the gap they fight every quarter.
 - **Message angle:** "your hardest filter is English-as-a-real-skill — we measure it adaptively, not with a 5-minute Zoom."
 
 ### Lead type C — ADHD coaches and neurodivergent-talent advocates
@@ -197,7 +197,7 @@ Five lead types, four leads each. Each row in the sheet you'll build on Tuesday 
 ### Allowed this week
 
 - VOLAURA is a verified professional talent platform.
-- The assessment is live at `volaura.app` and free to take.
+- The assessment is available to try at `volaura.app` and free to take.
 - AURA is calculated from an IRT-based psychometric engine.
 - The assessment is energy-adaptive: 5 to 20 items per competency depending on user-reported energy.
 - Eight competencies are scored: communication, reliability, English proficiency, leadership, event performance, tech literacy, adaptability, empathy/safeguarding.

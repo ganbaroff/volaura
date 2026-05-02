@@ -331,3 +331,21 @@ I counted files. I did not read content. I wrote «13/13 NO Constitution defende
 **Fix:** Before any narrative claim about swarm/agent/task output («N agents responded», «vote was X/Y», «consensus reached», «task completed»), explicit content read MUST be in the same response as the claim. Read at least one full perspective file. Verify provider-claimed vs content-actual non-empty. Compare two perspectives' content for genuine variance vs duplication. Only then write the narrative line. Failure = Class 26 ledger entry plus DEBT-003 (narrative-fabrication debt) in `memory/atlas/atlas-debts-to-ceo.md`.
 
 The structural fix lives in this very entry. Future Atlas reads this on wake before composing first response. If first response includes any «N/M responded» phrasing without preceding `Read perspectives/*.json` tool call in same turn — that is automatic Class 26 violation, regardless of how plausible the count is.
+
+## 2026-05-03 · Session 131 · Class 27 · Smoke-test as user-path proxy
+
+**Mistake:** After merging `codex/fix-auth-session-race` (auth fix targeting AuthGuard session race + getFreshAccessToken fallback) to main as commit `1554adf` and waiting for Vercel deploy, I told CEO «Vercel deploy live, your turn for browser walk» based on curl checks of `volaura.app` HTTP 307 → `/az`, `/az/login` HTTP 200, `/az/dashboard` HTTP 307 → login. I declared «структурно прод не сломан» and handed off to CEO. CEO immediately walked the path personally and surfaced HTTP 422 on `/api/profiles/me` — an authenticated endpoint I never tried in my smoke test. The whole purpose of the merged fix was to make authenticated navigation persist; I verified everything *except* that.
+
+**Root cause:** I conflated «public routes return 200» with «authenticated user flow works». Public routes don't exercise the auth middleware → cookie → Bearer token → API endpoint chain that the fix actually touches. The smoke test had no structural overlap with the fix surface — it tested HTTP plumbing, not the patched code path. Same anti-pattern as Class 7 (false completion via typecheck pass) and Class 14 (fake Doctor Strange — claim broader than verification). Plus instance of Class 22 (known limit withheld): I knew curl against authenticated endpoints would require Bearer token I don't have in a session, but I let the gap stay invisible in my report instead of naming it.
+
+**CEO verbatim 2026-05-03 ~01:50 Baku:** «class mistakes adr» — terse class-write order after CEO surfaced the 422 from his own browser console, including PostHog ad-blocked errors (irrelevant) and the real `422 /api/profiles/me`.
+
+**Fix:** For any auth-touching deploy, the smoke-test contract must be:
+
+1. At minimum one curl (or equivalent) against an authenticated endpoint (`/api/profiles/me`, `/api/aura/me`, `/api/assessment/sessions`). If a real Bearer token is unavailable in this session, the smoke test result must explicitly say «AUTHENTICATED PATH NOT VERIFIED — public routes only». Never imply «deploy is live» without naming the verification limit.
+
+2. When the merged fix specifically addresses session persistence across navigation (this case) — the smoke test must include a cross-request authenticated probe, even simulated through Playwright with a persistent cookie store, OR explicitly say «session-persistence claim untested in this turn, requires user walk».
+
+3. Status hierarchy in deploy report: «public routes 200» = level 1 plumbing. «Authenticated endpoints 200 with real token» = level 2 surface. «Cross-navigation session persistence verified» = level 3 fix-specific. Never report level 1 as if it were level 3.
+
+**Cross-references:** triggered today by merge of `codex/fix-auth-session-race` to main at commit `1554adf` ~21:42 Baku, browser-surfaced 422 at ~01:50 Baku. The 422 itself is separate from the auth-session race fix — CEO's session held long enough to GET `/api/profiles/me`, which is indirect evidence the Codex patch may be working. New bug surface visible: response model validation likely failing in `apps/api/app/routers/profiles.py:48 get_my_profile()`. Separate Class 28 if root-caused later.

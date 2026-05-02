@@ -112,8 +112,11 @@ async def get_my_twin(
     db: SupabaseAdmin,
 ) -> AITwinOut | None:
     """Get the current user's AI Twin (or null if none)."""
-    result = await db.table("brandedby_ai_twins").select("*").eq("user_id", user_id).maybe_single().execute()
-    if not result.data:
+    try:
+        result = await db.table("brandedby_ai_twins").select("*").eq("user_id", user_id).maybe_single().execute()
+    except Exception:
+        result = None
+    if not result or not result.data:
         return None
     return AITwinOut(**result.data)
 

@@ -77,7 +77,7 @@ async def create_twin(
 ) -> AITwinOut:
     """Create the user's AI Twin. One per user (MVP)."""
     # Check if user already has a twin
-    existing = await db.schema("brandedby").table("ai_twins").select("id").eq("user_id", user_id).execute()
+    existing = await db.table("brandedby_ai_twins").select("id").eq("user_id", user_id).execute()
     if existing.data:
         raise HTTPException(
             status_code=409,
@@ -91,7 +91,7 @@ async def create_twin(
         "photo_url": body.photo_url,
         "status": "draft",
     }
-    result = await db.schema("brandedby").table("ai_twins").insert(row).execute()
+    result = await db.table("brandedby_ai_twins").insert(row).execute()
 
     if not result.data:
         logger.error("Failed to create AI Twin", user_id=user_id)
@@ -112,7 +112,7 @@ async def get_my_twin(
     db: SupabaseAdmin,
 ) -> AITwinOut | None:
     """Get the current user's AI Twin (or null if none)."""
-    result = await db.schema("brandedby").table("ai_twins").select("*").eq("user_id", user_id).maybe_single().execute()
+    result = await db.table("brandedby_ai_twins").select("*").eq("user_id", user_id).maybe_single().execute()
     if not result.data:
         return None
     return AITwinOut(**result.data)
@@ -130,7 +130,7 @@ async def update_twin(
     """Update the user's AI Twin. Only owner can update."""
     # Verify ownership
     existing = (
-        await db.schema("brandedby").table("ai_twins").select("id, user_id").eq("id", twin_id).maybe_single().execute()
+        await db.table("brandedby_ai_twins").select("id, user_id").eq("id", twin_id).maybe_single().execute()
     )
     if not existing.data:
         raise HTTPException(
@@ -150,7 +150,7 @@ async def update_twin(
             detail={"code": "NO_CHANGES", "message": "No fields to update"},
         )
 
-    result = await db.schema("brandedby").table("ai_twins").update(updates).eq("id", twin_id).execute()
+    result = await db.table("brandedby_ai_twins").update(updates).eq("id", twin_id).execute()
 
     if not result.data:
         raise HTTPException(
@@ -179,8 +179,7 @@ async def refresh_personality(
     """
     # Verify ownership + get display_name
     twin = (
-        await db.schema("brandedby")
-        .table("ai_twins")
+        await db.table("brandedby_ai_twins")
         .select("id, user_id, display_name")
         .eq("id", twin_id)
         .maybe_single()
@@ -212,8 +211,7 @@ async def refresh_personality(
 
     # Store in twin record
     result = (
-        await db.schema("brandedby")
-        .table("ai_twins")
+        await db.table("brandedby_ai_twins")
         .update({"personality_prompt": personality})
         .eq("id", twin_id)
         .execute()
@@ -247,8 +245,7 @@ async def activate_twin(
     Once active, the twin can accept generation requests.
     """
     twin = (
-        await db.schema("brandedby")
-        .table("ai_twins")
+        await db.table("brandedby_ai_twins")
         .select("id, user_id, status, photo_url, personality_prompt")
         .eq("id", twin_id)
         .maybe_single()
@@ -286,7 +283,7 @@ async def activate_twin(
             },
         )
 
-    result = await db.schema("brandedby").table("ai_twins").update({"status": "active"}).eq("id", twin_id).execute()
+    result = await db.table("brandedby_ai_twins").update({"status": "active"}).eq("id", twin_id).execute()
 
     logger.info("AI Twin activated", twin_id=twin_id, user_id=user_id)
     return AITwinOut(**result.data[0])
@@ -309,8 +306,7 @@ async def create_generation(
     """
     # Verify twin ownership
     twin = (
-        await db.schema("brandedby")
-        .table("ai_twins")
+        await db.table("brandedby_ai_twins")
         .select("id, user_id, status")
         .eq("id", str(body.twin_id))
         .maybe_single()
@@ -406,8 +402,7 @@ async def create_generation(
     queue_position = 0
     if not body.skip_queue:
         queued = (
-            await db.schema("brandedby")
-            .table("generations")
+            await db.table("brandedby_generations")
             .select("id", count="exact")
             .eq("status", "queued")
             .execute()
@@ -431,7 +426,7 @@ async def create_generation(
         "crystal_cost": crystal_cost,
         "atlas_note": atlas_note,
     }
-    result = await db.schema("brandedby").table("generations").insert(row).execute()
+    result = await db.table("brandedby_generations").insert(row).execute()
 
     if not result.data:
         logger.error("Failed to create generation", user_id=user_id)
@@ -461,8 +456,7 @@ async def list_generations(
 ) -> list[GenerationOut]:
     """List the current user's generation jobs (newest first)."""
     result = (
-        await db.schema("brandedby")
-        .table("generations")
+        await db.table("brandedby_generations")
         .select("*")
         .eq("user_id", user_id)
         .order("created_at", desc=True)
@@ -482,8 +476,7 @@ async def get_generation(
 ) -> GenerationOut:
     """Get a single generation job by ID."""
     result = (
-        await db.schema("brandedby")
-        .table("generations")
+        await db.table("brandedby_generations")
         .select("*")
         .eq("id", gen_id)
         .eq("user_id", user_id)

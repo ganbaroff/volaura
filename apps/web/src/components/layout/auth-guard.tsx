@@ -15,17 +15,30 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 
     // Get initial session
     supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
+      const cachedSession = useAuthStore.getState().session;
+      const effectiveSession = data.session ?? cachedSession;
+      if (data.session) {
+        setSession(data.session);
+      } else if (!effectiveSession) {
+        setSession(null);
+      }
       setLoading(false);
-      if (!data.session) {
+      if (!effectiveSession) {
         router.replace(`/${locale}/login`);
       }
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (!session) {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        setSession(session);
+        return;
+      }
+
+      // Supabase can emit INITIAL_SESSION with null while browser storage is
+      // still catching up after login. Only an explicit sign-out should eject.
+      if (event === "SIGNED_OUT") {
+        setSession(null);
         router.replace(`/${locale}/login`);
       }
     });

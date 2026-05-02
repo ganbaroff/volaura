@@ -7,6 +7,7 @@
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { getFreshAccessToken } from "./get-fresh-token";
+import { useAuthStore } from "@/stores/auth-store";
 
 // ── JWT helpers ───────────────────────────────────────────────────────────────
 
@@ -47,6 +48,7 @@ vi.mock("@/lib/supabase/client", () => ({
 describe("getFreshAccessToken", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    useAuthStore.getState().clear();
   });
 
   it("returns fresh token directly — no refreshSession call", async () => {
@@ -105,6 +107,45 @@ describe("getFreshAccessToken", () => {
 
     expect(token).toBeNull();
     expect(mockRefreshSession).not.toHaveBeenCalled();
+  });
+
+  it("returns cached store token when Supabase storage is temporarily empty", async () => {
+    mockGetSession.mockResolvedValue({ data: { session: null } });
+    useAuthStore.getState().setSession({
+      access_token: FRESH_TOKEN,
+      refresh_token: "refresh-from-store",
+      user: { id: "user-1" },
+    } as never);
+
+    const token = await getFreshAccessToken();
+
+    expect(token).toBe(FRESH_TOKEN);
+    expect(mockRefreshSession).not.toHaveBeenCalled();
+  });
+
+  it("refreshes with cached store refresh_token when cached access token is stale", async () => {
+    mockGetSession.mockResolvedValue({ data: { session: null } });
+    mockRefreshSession.mockResolvedValue({
+      data: {
+        session: {
+          access_token: REFRESHED_TOKEN,
+          refresh_token: "refresh-new",
+          user: { id: "user-1" },
+        },
+      },
+      error: null,
+    });
+    useAuthStore.getState().setSession({
+      access_token: STALE_TOKEN,
+      refresh_token: "refresh-from-store",
+      user: { id: "user-1" },
+    } as never);
+
+    const token = await getFreshAccessToken();
+
+    expect(mockRefreshSession).toHaveBeenCalledWith({ refresh_token: "refresh-from-store" });
+    expect(token).toBe(REFRESHED_TOKEN);
+    expect(useAuthStore.getState().session?.access_token).toBe(REFRESHED_TOKEN);
   });
 
   it("returns null when getSession() throws", async () => {

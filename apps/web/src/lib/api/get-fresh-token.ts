@@ -16,6 +16,8 @@
  */
 
 import { createClient } from "@/lib/supabase/client";
+import { useAuthStore } from "@/stores/auth-store";
+import type { Session } from "@supabase/supabase-js";
 
 /** Refresh if the token expires within 60 seconds. */
 const REFRESH_BUFFER_SECONDS = 60;
@@ -59,20 +61,32 @@ export async function getFreshAccessToken(): Promise<string | null> {
       data: { session },
     } = await supabase.auth.getSession();
 
-    if (!session?.access_token) return null;
+    let effectiveSession = session;
 
-    if (!isStale(session.access_token)) {
+    if (!effectiveSession?.access_token) {
+      effectiveSession = useAuthStore.getState().session;
+    }
+
+    if (!effectiveSession?.access_token) return null;
+
+    if (!isStale(effectiveSession.access_token)) {
       // Token is fresh — no network call needed.
-      return session.access_token;
+      return effectiveSession.access_token;
     }
 
     // Token is expired or expiring soon — refresh it.
-    const { data: refreshed, error: refreshErr } = await supabase.auth.refreshSession();
+    const refreshInput = effectiveSession.refresh_token
+      ? { refresh_token: effectiveSession.refresh_token }
+      : undefined;
+    const { data: refreshed, error: refreshErr } = refreshInput
+      ? await supabase.auth.refreshSession(refreshInput)
+      : await supabase.auth.refreshSession();
     if (refreshErr || !refreshed.session?.access_token) {
       // Refresh failed — return the stale token and let the API return 401.
       // The caller's 401 recovery path (e.g. draft-save + redirect) handles it.
-      return session.access_token;
+      return effectiveSession.access_token;
     }
+    useAuthStore.getState().setSession(refreshed.session as Session);
     return refreshed.session.access_token;
   } catch {
     return null;

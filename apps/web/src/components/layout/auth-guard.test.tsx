@@ -137,6 +137,19 @@ describe("AuthGuard", () => {
     expect(mockReplace).toHaveBeenCalledWith("/az/login");
   });
 
+  it("does not redirect on transient INITIAL_SESSION null when a cached session exists", () => {
+    storeState = { ...storeState, isLoading: false, session: fakeSession() };
+    let capturedCb: (event: string, session: null) => void = () => {};
+    mockOnAuthStateChange.mockImplementation((cb: typeof capturedCb) => {
+      capturedCb = cb;
+      return makeSubscription();
+    });
+    render(<AuthGuard><div>Child</div></AuthGuard>);
+    capturedCb("INITIAL_SESSION", null);
+    expect(mockReplace).not.toHaveBeenCalled();
+    expect(mockSetSession).not.toHaveBeenCalledWith(null);
+  });
+
   // 7. onAuthStateChange fires with session — calls setSession
   it("calls setSession when onAuthStateChange emits a valid session", () => {
     const session = fakeSession();

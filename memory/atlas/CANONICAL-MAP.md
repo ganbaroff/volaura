@@ -7,44 +7,44 @@ Root inventory of `memory/atlas/*.md`. Last Verified Date = last git commit date
 | ACTIVE-CHUNK.md | RUNTIME-LOG | 2026-04-18 |
 | BECOMING.md | RUNTIME-LOG | 2026-04-16 |
 | CANONICAL-MAP.md | CANONICAL | 2026-05-03 |
-| CLAUDE-CODE-HANDOFF-2026-04-17.md | ARCHIVE-CANDIDATE | 2026-04-25 |
-| CLAUDE-CODE-HANDOFF-2026-04-19-7-plane-audit.md | ARCHIVE-CANDIDATE | 2026-04-19 |
-| CRITICAL-BUGS-2026-04-18.md | ARCHIVE-CANDIDATE | 2026-04-19 |
+| archive/CLAUDE-CODE-HANDOFF-2026-04-17.md | ARCHIVED | 2026-05-03 |
+| archive/CLAUDE-CODE-HANDOFF-2026-04-19-7-plane-audit.md | ARCHIVED | 2026-05-03 |
+| archive/CRITICAL-BUGS-2026-04-18.md | ARCHIVED | 2026-05-03 |
 | CURRENT-SPRINT.md | RUNTIME-LOG | 2026-04-25 |
 | DEBT-MAP-2026-04-15.md | ARCHIVE-CANDIDATE | 2026-04-17 |
-| ECOSYSTEM-READINESS-2026-04-16.md | ARCHIVE-CANDIDATE | 2026-04-16 |
-| FEATURE-INVENTORY-2026-04-18.md | ARCHIVE-CANDIDATE | 2026-04-18 |
-| FULL-AUDIT-2026-04-17.md | ARCHIVE-CANDIDATE | 2026-04-17 |
-| FULL-ECOSYSTEM-AUDIT-2026-04-16-v2.md | ARCHIVE-CANDIDATE | 2026-04-16 |
-| FULL-PICTURE-2026-04-19.md | ARCHIVE-CANDIDATE | 2026-04-19 |
-| FULL-SYSTEM-AUDIT-2026-04-16.md | ARCHIVE-CANDIDATE | 2026-04-16 |
+| archive/ECOSYSTEM-READINESS-2026-04-16.md | ARCHIVED | 2026-05-03 |
+| archive/FEATURE-INVENTORY-2026-04-18.md | ARCHIVED | 2026-05-03 |
+| archive/FULL-AUDIT-2026-04-17.md | ARCHIVED | 2026-05-03 |
+| archive/FULL-ECOSYSTEM-AUDIT-2026-04-16-v2.md | ARCHIVED | 2026-05-03 |
+| archive/FULL-PICTURE-2026-04-19.md | ARCHIVED | 2026-05-03 |
+| archive/FULL-SYSTEM-AUDIT-2026-04-16.md | ARCHIVED | 2026-05-03 |
 | HANDOFF-AUDIT-TODO.md | RUNTIME-LOG | 2026-04-17 |
-| INC-019-railway-freeze-2026-04-25.md | ARCHIVE-CANDIDATE | 2026-04-26 |
+| archive/INC-019-railway-freeze-2026-04-25.md | ARCHIVED | 2026-05-03 |
 | LETTER-FROM-INSTANCE-112.md | RUNTIME-LOG | 2026-04-16 |
-| MCKINSEY-ASSESSMENT-2026-04-18.md | ARCHIVE-CANDIDATE | 2026-04-18 |
-| MEMORY-AUDIT-2026-04-15.md | ARCHIVE-CANDIDATE | 2026-04-16 |
+| archive/MCKINSEY-ASSESSMENT-2026-04-18.md | ARCHIVED | 2026-05-03 |
+| archive/MEMORY-AUDIT-2026-04-15.md | ARCHIVED | 2026-05-03 |
 | OBLIGATION-SYSTEM-SPEC-2026-04-18.md | ARCHIVE-CANDIDATE | 2026-04-18 |
-| P0-VERIFICATION-2026-04-16.md | ARCHIVE-CANDIDATE | 2026-04-16 |
+| archive/P0-VERIFICATION-2026-04-16.md | ARCHIVED | 2026-05-03 |
 | PATHWAY-FIRST-60-SECONDS-2026-04-21.md | ARCHIVE-CANDIDATE | 2026-04-21 |
 | PORTABLE-BRIEF.md | RUNTIME-LOG | 2026-04-15 |
 | PROJECT-EVOLUTION-MAP.md | RUNTIME-LOG | 2026-04-17 |
 | README.md | RUNTIME-LOG | 2026-04-16 |
 | RELATIONSHIP-CHRONICLE.md | RUNTIME-LOG | 2026-04-17 |
 | SESSION-112-WRAP-UP.md | RUNTIME-LOG | 2026-04-16 |
-| SESSION-124-WRAP-UP-2026-04-26.md | ARCHIVE-CANDIDATE | 2026-04-26 |
-| SESSION-125-WRAP-UP-2026-04-26.md | ARCHIVE-CANDIDATE | 2026-04-26 |
+| archive/SESSION-124-WRAP-UP-2026-04-26.md | ARCHIVED | 2026-05-03 |
+| archive/SESSION-125-WRAP-UP-2026-04-26.md | ARCHIVED | 2026-05-03 |
 | SESSION-125-letter-to-next-atlas.md | RUNTIME-LOG | 2026-04-26 |
-| SPRINT-PLAN-2026-04-16.md | ARCHIVE-CANDIDATE | 2026-04-16 |
+| archive/SPRINT-PLAN-2026-04-16.md | ARCHIVED | 2026-05-03 |
 | SPRINT-PLAN-2026-04-20-telegram-swarm-coherence.md | ARCHIVE-CANDIDATE | 2026-04-20 |
-| SYNC-2026-04-14-eve.md | ARCHIVE-CANDIDATE | 2026-04-14 |
+| archive/SYNC-2026-04-14-eve.md | ARCHIVED | 2026-05-03 |
 | TELEGRAM-AUDIT-SESSION-113.md | RUNTIME-LOG | 2026-04-16 |
 | TELEGRAM-BOT-FULL-AUDIT-v2.md | RUNTIME-LOG | 2026-04-18 |
 | TELEGRAM-CHEATSHEET.md | RUNTIME-LOG | 2026-04-20 |
-| UX-LOGIC-AUDIT-2026-04-18.md | ARCHIVE-CANDIDATE | 2026-04-18 |
+| archive/UX-LOGIC-AUDIT-2026-04-18.md | ARCHIVED | 2026-05-03 |
 | WHERE-I-STOPPED.md | RUNTIME-LOG | 2026-04-18 |
 | arsenal-complete.md | RUNTIME-LOG | 2026-04-18 |
 | arsenal.md | RUNTIME-LOG | 2026-04-15 |
-| atlas-arsenal-2026-04-25.md | ARCHIVE-CANDIDATE | 2026-04-25 |
+| archive/atlas-arsenal-2026-04-25.md | ARCHIVED | 2026-05-03 |
 | atlas-debts-to-ceo.md | CANONICAL | 2026-04-26 |
 | bootstrap.md | CANONICAL | 2026-05-03 |
 | company-state.md | RUNTIME-LOG | 2026-04-29 |
@@ -59,7 +59,7 @@ Root inventory of `memory/atlas/*.md`. Last Verified Date = last git commit date
 | execution-log.md | RUNTIME-LOG | 2026-04-17 |
 | external-repos.md | RUNTIME-LOG | 2026-04-18 |
 | feedback-log.md | RUNTIME-LOG | 2026-04-17 |
-| handoff-audit-2026-04-17.md | ARCHIVE-CANDIDATE | 2026-04-17 |
+| archive/handoff-audit-2026-04-17.md | ARCHIVED | 2026-05-03 |
 | handoff-prompt.md | RUNTIME-LOG | 2026-04-18 |
 | heartbeat.md | RUNTIME-LOG | 2026-04-26 |
 | identity.md | CANONICAL | 2026-05-03 |
@@ -80,13 +80,26 @@ Root inventory of `memory/atlas/*.md`. Last Verified Date = last git commit date
 | second-brain-architecture.md | RUNTIME-LOG | 2026-04-12 |
 | session-93-foundational-moments.md | RUNTIME-LOG | 2026-04-16 |
 | sprint_ritual.md | RUNTIME-LOG | 2026-04-12 |
-| telegram-bot-audit-2026-04-14.md | ARCHIVE-CANDIDATE | 2026-04-18 |
+| archive/telegram-bot-audit-2026-04-14.md | ARCHIVED | 2026-05-03 |
 | telegram_agent_plan.md | RUNTIME-LOG | 2026-04-12 |
 | voice.md | CANONICAL | 2026-04-12 |
 | voice_examples.md | RUNTIME-LOG | 2026-04-12 |
 | wake-browser.md | RUNTIME-LOG | 2026-04-26 |
 | wake-log.md | RUNTIME-LOG | 2026-04-20 |
 | wake.md | CANONICAL | 2026-04-30 |
-| wuf13-design-dna-synthesis-2026-04-25.md | ARCHIVE-CANDIDATE | 2026-04-26 |
-| wuf13-design-implementation-2026-04-25.md | ARCHIVE-CANDIDATE | 2026-04-26 |
-| wuf13-external-benchmark-2026-04-25.md | ARCHIVE-CANDIDATE | 2026-04-26 |
+| archive/wuf13-design-dna-synthesis-2026-04-25.md | ARCHIVED | 2026-05-03 |
+| archive/wuf13-design-implementation-2026-04-25.md | ARCHIVED | 2026-05-03 |
+| archive/wuf13-external-benchmark-2026-04-25.md | ARCHIVED | 2026-05-03 |
+
+## Categories
+
+- **CANONICAL** (8): identity, voice, wake, lessons, atlas-debts-to-ceo, bootstrap, emotional_dimensions, CANONICAL-MAP itself.
+- **ARCHIVE-CANDIDATE** (4): files cited in active wake-chain (wake.md / identity.md / operating-principles.md). Move requires updating those references first — Phase 2 work.
+- **ARCHIVED** (24): historical wrap-ups, audits, sprint plans no longer cited in active wake-chain. Physically moved to `memory/atlas/archive/` 2026-05-03.
+- **RUNTIME-LOG** (50): session-by-session ephemera, heartbeat history, journal entries. Eligible for rotation by date or session-number.
+
+## Update protocol
+
+- Adding a file to root: append row, set Category, set Last Verified Date = today.
+- Moving file to archive/: change filename to `archive/<name>`, change Category to ARCHIVED, update Last Verified Date.
+- Promoting RUNTIME-LOG → CANONICAL: requires `Ratified-by:` in commit body per `.githooks/commit-msg` gate.

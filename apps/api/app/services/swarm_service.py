@@ -56,15 +56,21 @@ async def evaluate_answer(
         return await bars_evaluate(question_en, answer, expected_concepts, return_details=return_details)
 
 
-import docker
-
-
 async def _swarm_evaluate_scores(
     question_en: str,
     answer: str,
     expected_concepts: list[dict[str, Any]],
 ) -> dict[str, float]:
-    """Run SwarmEngine to get multi-model concept scores. Returns raw concept scores dict."""
+    """Run SwarmEngine to get multi-model concept scores. Returns raw concept scores dict.
+
+    Lazy-imports the `docker` library inside the function body so that hosts
+    without the docker pip package (e.g. Railway production container) never
+    trigger ModuleNotFoundError at import time. If docker is missing OR the
+    Docker daemon is unreachable (`docker.from_env()` raises), this function
+    raises RuntimeError, which the outer `evaluate_answer` catches and falls
+    back to bars.evaluate_answer — preserving the documented contract that
+    swarm failures degrade gracefully to BARS.
+    """
     import os
     import sys
 
@@ -75,6 +81,17 @@ async def _swarm_evaluate_scores(
     packages_path = os.path.join(project_root, "packages")
     if packages_path not in sys.path:
         sys.path.insert(0, packages_path)
+
+    # Lazy import — fails closed with a RuntimeError that the outer
+    # evaluate_answer try/except converts into a BARS fallback.
+    try:
+        import docker as _docker
+    except ImportError as e:
+        logger.warning(
+            "swarm_service: docker library not installed in this runtime — "
+            "falling back to BARS evaluation"
+        )
+        raise RuntimeError(f"docker library unavailable: {e}") from e
 
     from swarm import DomainTag, StakesLevel, SwarmConfig, SwarmEngine
 
@@ -100,9 +117,20 @@ async def _swarm_evaluate_scores(
     if settings.groq_api_key:
         env["GROQ_API_KEY"] = settings.groq_api_key
 
-    # Create a new Docker container for the ANUS agent
-    client = docker.from_env()
-    container = client.containers.run("anus-agent", detach=True)
+    # Create a new Docker container for the ANUS agent.
+    # Both `from_env()` and `containers.run()` raise docker.errors.DockerException
+    # if the daemon is unreachable (e.g. Railway container has no Docker daemon).
+    # Caught and re-raised as RuntimeError so the outer fallback engages.
+    try:
+        client = _docker.from_env()
+        container = client.containers.run("anus-agent", detach=True)
+    except Exception as e:
+        logger.warning(
+            "swarm_service: docker daemon unreachable or anus-agent image missing — "
+            "falling back to BARS evaluation",
+            error=str(e)[:200],
+        )
+        raise RuntimeError(f"docker runtime unavailable: {e}") from e
 
     engine = SwarmEngine(env=env, container=container)
 

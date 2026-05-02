@@ -352,7 +352,7 @@ export default function AuraPage() {
 
   // ── Error state ──
 
-  if (auraError && !(auraError instanceof ApiError && auraError.status === 401)) {
+  if (auraError && !(auraError instanceof ApiError && (auraError.status === 401 || auraError.status === 404))) {
     return (
       <>
         <TopBar title={t("aura.title")} />

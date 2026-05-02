@@ -66,8 +66,7 @@ async def _recover_stale_jobs(db: AsyncClient) -> None:
     stale_cutoff = (datetime.now(UTC) - timedelta(seconds=STALE_TIMEOUT_S)).isoformat()
     try:
         result = (
-            await db.schema("brandedby")
-            .table("generations")
+            await db.table("brandedby_generations")
             .update({"status": "queued", "processing_started_at": None})
             .eq("status", "processing")
             .lt("processing_started_at", stale_cutoff)
@@ -87,8 +86,7 @@ async def _fetch_next_job(db: AsyncClient) -> dict[str, Any] | None:
     """Return the oldest queued job (queue_position ASC), or None if empty."""
     try:
         result = (
-            await db.schema("brandedby")
-            .table("generations")
+            await db.table("brandedby_generations")
             .select("id, twin_id, user_id, gen_type, input_text, retry_count")
             .eq("status", "queued")
             .order("queue_position", desc=False)
@@ -115,8 +113,7 @@ async def _lock_job(db: AsyncClient, gen_id: str) -> bool:
     """Set status='processing' + processing_started_at. Returns False if already locked."""
     try:
         result = (
-            await db.schema("brandedby")
-            .table("generations")
+            await db.table("brandedby_generations")
             .update(
                 {
                     "status": "processing",
@@ -139,8 +136,7 @@ async def _lock_job(db: AsyncClient, gen_id: str) -> bool:
 async def _mark_completed(db: AsyncClient, gen_id: str, video_url: str) -> None:
     try:
         await (
-            db.schema("brandedby")
-            .table("generations")
+            db.table("brandedby_generations")
             .update(
                 {
                     "status": "completed",
@@ -177,8 +173,7 @@ async def _mark_failed(db: AsyncClient, gen_id: str, error: str, retry_count: in
         )
     try:
         await (
-            db.schema("brandedby")
-            .table("generations")
+            db.table("brandedby_generations")
             .update(
                 {
                     "status": new_status,
@@ -216,8 +211,7 @@ async def _process_job(db: AsyncClient, job: dict[str, Any]) -> None:
     # Get twin's photo_url
     try:
         twin_result = (
-            await db.schema("brandedby")
-            .table("ai_twins")
+            await db.table("brandedby_ai_twins")
             .select("photo_url, personality_prompt")
             .eq("id", twin_id)
             .single()

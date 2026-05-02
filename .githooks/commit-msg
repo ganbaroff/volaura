@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Atlas memory governance gate — active commit-msg hook.
+# This is a thin wrapper. Real logic lives in scripts/commit-msg-governance-gate.sh.
+# Repo uses core.hooksPath = .githooks, so this is what git actually invokes.
+
+set -e
+
+SCRIPT_PATH="$(git rev-parse --show-toplevel)/scripts/commit-msg-governance-gate.sh"
+
+if [ -x "$SCRIPT_PATH" ]; then
+    exec "$SCRIPT_PATH" "$@"
+elif [ -f "$SCRIPT_PATH" ]; then
+    exec bash "$SCRIPT_PATH" "$@"
+else
+    echo "⚠️  .githooks/commit-msg: governance gate script missing at $SCRIPT_PATH" >&2
+    echo "    Expected: scripts/commit-msg-governance-gate.sh in repo root." >&2
+    # Fail-open rather than block all commits if the script is missing — better
+    # to lose the gate than to brick commit ability when source is gone.
+    exit 0
+fi

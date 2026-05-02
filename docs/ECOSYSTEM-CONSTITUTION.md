@@ -837,7 +837,7 @@ type OfficeAgentState =
 | System | Location | Agents | Trigger | Memory |
 |--------|----------|--------|---------|--------|
 | Node.js Gateway | `claw3d-fork/server/` | 39 (static) | Real-time events (Railway/GitHub/Sentry webhooks) | `claw3d-fork/memory/session-context.md` |
-| Python Swarm | `packages/swarm/` | 44 (hive lifecycle) | GitHub Actions cron (09:00 Baku daily) | `memory/swarm/shared-context.md` |
+| Python Swarm | `packages/swarm/` | 17 | GitHub Actions cron (09:00 Baku daily) | `memory/swarm/shared-context.md` |
 
 **Planned bridge (20 lines Python):** Python swarm sends HIGH/CRITICAL findings to Node.js `/event` endpoint → unified real-time visibility.
 

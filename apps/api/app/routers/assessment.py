@@ -1294,7 +1294,8 @@ async def complete_assessment(
                 gaming_flags=gaming_flags,
             )
             side_effects = mark_side_effect(
-                side_effects, "ecosystem_events",
+                side_effects,
+                "ecosystem_events",
                 status="done" if emitted else "failed",
             )
             job = await save_completion_job(db_admin, job, side_effects=side_effects, result_context=result_context)

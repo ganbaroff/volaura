@@ -132,9 +132,7 @@ async def update_twin(
 ) -> AITwinOut:
     """Update the user's AI Twin. Only owner can update."""
     # Verify ownership
-    existing = (
-        await db.table("brandedby_ai_twins").select("id, user_id").eq("id", twin_id).maybe_single().execute()
-    )
+    existing = await db.table("brandedby_ai_twins").select("id, user_id").eq("id", twin_id).maybe_single().execute()
     if not existing.data:
         raise HTTPException(
             status_code=404,
@@ -214,10 +212,7 @@ async def refresh_personality(
 
     # Store in twin record
     result = (
-        await db.table("brandedby_ai_twins")
-        .update({"personality_prompt": personality})
-        .eq("id", twin_id)
-        .execute()
+        await db.table("brandedby_ai_twins").update({"personality_prompt": personality}).eq("id", twin_id).execute()
     )
 
     if not result.data:
@@ -404,12 +399,7 @@ async def create_generation(
     # Calculate queue position (0 if skipped, otherwise count of queued jobs ahead)
     queue_position = 0
     if not body.skip_queue:
-        queued = (
-            await db.table("brandedby_generations")
-            .select("id", count="exact")
-            .eq("status", "queued")
-            .execute()
-        )
+        queued = await db.table("brandedby_generations").select("id", count="exact").eq("status", "queued").execute()
         queue_position = (queued.count or 0) + 1
 
     # E5: attach Atlas memory anchor (fire-and-forget — never blocks the generation)

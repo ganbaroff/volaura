@@ -99,6 +99,7 @@ def make_chain(data=None, count=None, side_effect=None) -> MagicMock:
         "lt",
         "not_",
         "insert",
+        "upsert",
         "update",
         "is_",
     ):

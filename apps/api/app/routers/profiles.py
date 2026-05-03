@@ -121,7 +121,13 @@ async def create_my_profile(
             user_id=user_id,
         )
 
-    result = await db.table("profiles").insert(insert_data).execute()
+    # Idempotent on (id) — second call by the same user no longer 500s on
+    # profiles_pkey. The bridge path (auth_bridge._ensure_profile_row) also
+    # uses upsert; this mirrors that for the direct VOLAURA frontend onboarding
+    # flow. Username uniqueness is enforced by the SELECT check above plus the
+    # DB UNIQUE constraint on profiles.username (separate path; not redesigned
+    # here). Sentry root-cause: VOLAURA-API-6Y / VOLAURA-API-2M (2026-05-03).
+    result = await db.table("profiles").upsert(insert_data, on_conflict="id").execute()
     if not result or not result.data:
         raise HTTPException(status_code=500, detail={"code": "CREATE_FAILED", "message": "Failed to create profile"})
 

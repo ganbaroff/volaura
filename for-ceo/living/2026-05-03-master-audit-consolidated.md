@@ -393,7 +393,7 @@ Adversarial security research found 5+ attack vectors and gaming strategies for 
 
 ### 7.2. Sentry hot-path errors — IN-PROGRESS
 
-Today: 8 unresolved level=error firstSeen=-7d. Top 3 covered in §2.14, §2.15. Lower severity: BrandedBy twins schema invalid (2 events), header injection on /refresh-personality (1), AURA uuid syntax (1), tribe streak record fail at assessment.py:1188 (7 events). Sprint 8 in 10-sprint roadmap covers full sweep. Source: this session Sentry MCP search.
+Today: 8 unresolved level=error firstSeen=-7d. Top 3 covered in §2.14, §2.15. Lower severity: BrandedBy twins schema invalid (2 events), header injection on /refresh-personality (1), AURA uuid syntax (1). Tribe streak record fail at assessment.py:1188 (7 events) — resolved later in §11 via commit 02cb246. Sprint 8 in 10-sprint roadmap covers full sweep. Source: this session Sentry MCP search.
 
 ---
 
@@ -436,8 +436,6 @@ Consolidates "what is not done" across all audits. Each item carries source and 
 - Mercury Bank application after EIN. Source: SESSION-125 ledger.
 - ASAN visit with ITIN packet. Source: SESSION-125 ledger.
 - DHL drop for ITIN. Source: SESSION-125 ledger.
-- Profile 422 PR review (`fix/profile-422-invited-by-org-id`). Source: this session 132.
-- Swarm-service docker fix PR review (`fix/swarm-service-lazy-docker-import`). Source: this session 132.
 - Voice runtime walk on MindShift v1.0-3 APK. Source: reality-audit-2026-04-26 §3.8.
 
 ### 10.2. IN-PROGRESS engineering

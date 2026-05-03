@@ -109,7 +109,7 @@ async def create_my_profile(
     # schema-cache APIError surfacing as 422 to the frontend (Sentry 2026-05-02).
     insert_data = {
         "id": user_id,
-        **payload.model_dump(exclude={"invited_by_org_id"}),
+        **payload.model_dump(exclude={"invited_by_org_id", "age_confirmed"}),
     }
     if payload.age_confirmed:
         insert_data["terms_accepted_at"] = datetime.now(UTC).isoformat()

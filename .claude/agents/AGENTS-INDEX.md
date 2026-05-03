@@ -37,7 +37,7 @@ Decision pending: keep, archive, or delete.
 
 ## Python swarm (separate system)
 
-17 perspectives + ~118 skill modules live in `packages/swarm/` (Python). They run on cron via
+17 perspectives + ~50 skill markdown modules in `memory/swarm/skills/` live in `packages/swarm/` (Python). They run on cron via
 `.github/workflows/swarm-daily.yml`. They are NOT the same as `.claude/agents/`
 above — these are autonomous background workers, the `.claude/agents/` are
 on-demand specialists invoked from Claude Code sessions.

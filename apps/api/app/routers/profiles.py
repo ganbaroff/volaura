@@ -102,7 +102,15 @@ async def create_my_profile(
     # GDPR consent capture — write terms_accepted_at at profile creation time.
     # The user already accepted terms at signup; profile creation happens immediately
     # after (onboarding flow). This timestamp is the audit trail required by GDPR Art. 7.
-    insert_data = {"id": user_id, **payload.model_dump()}
+    #
+    # Exclude `invited_by_org_id` from the INSERT payload: it's request-only metadata
+    # used downstream (lines 121-138) to mark organization_invites.status='accepted',
+    # but the profiles table has no column for it. Including it caused PostgREST
+    # schema-cache APIError surfacing as 422 to the frontend (Sentry 2026-05-02).
+    insert_data = {
+        "id": user_id,
+        **payload.model_dump(exclude={"invited_by_org_id"}),
+    }
     if payload.age_confirmed:
         insert_data["terms_accepted_at"] = datetime.now(UTC).isoformat()
     else:

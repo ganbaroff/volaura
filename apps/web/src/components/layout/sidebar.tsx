@@ -21,7 +21,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/aura",           labelKey: "nav.aura",           icon: "◈" },
   { href: "/assessment",     labelKey: "nav.assessment",     icon: "◑" },
   { href: "/brandedby",      labelKey: "nav.brandedby",      icon: "✦", flagged: !BRANDEDBY_ENABLED },
-  { href: "/events",         labelKey: "nav.events",         icon: "◎" },
+  { href: "/eventshift",      labelKey: "nav.events",         icon: "◎" },
   { href: "/my-organization", labelKey: "nav.myOrganization", icon: "🏢", orgOnly: true },
   { href: "/org-talent",  labelKey: "nav.orgTalent",  icon: "👥", orgOnly: true },
   { href: "/discover",        labelKey: "nav.discover",       icon: "🔍", orgOnly: true },

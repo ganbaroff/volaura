@@ -55,6 +55,7 @@ def _make_mock_db():
     db.table = MagicMock(return_value=db)
     db.select = MagicMock(return_value=db)
     db.insert = MagicMock(return_value=db)
+    db.upsert = MagicMock(return_value=db)
     db.update = MagicMock(return_value=db)
     db.eq = MagicMock(return_value=db)
     db.single = MagicMock(return_value=db)
@@ -1326,7 +1327,7 @@ async def test_create_my_profile_age_confirmed_sets_terms_at():
         inserted_payloads.append(data)
         return db
 
-    db.insert = MagicMock(side_effect=capturing_insert)
+    db.upsert = MagicMock(side_effect=lambda data, **_: capturing_insert(data))
 
     db.execute = AsyncMock(
         side_effect=[
@@ -1367,7 +1368,7 @@ async def test_age_confirmed_false_omits_terms_accepted_at():
         inserted_payloads.append(data)
         return db
 
-    db.insert = MagicMock(side_effect=capturing_insert)
+    db.upsert = MagicMock(side_effect=lambda data, **_: capturing_insert(data))
     db.execute = AsyncMock(
         side_effect=[
             MagicMock(data=[]),  # username uniqueness check
